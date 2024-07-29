@@ -1,183 +1,187 @@
-Return-Path: <linux-kernel+bounces-266406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538D693FF73
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:29:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7BF93FF77
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91E14B23A1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:29:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A01701C22732
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD34918D4AB;
-	Mon, 29 Jul 2024 20:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431A4189F54;
+	Mon, 29 Jul 2024 20:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BN7Vb6gp"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RuByZOAN"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40E8188CAD;
-	Mon, 29 Jul 2024 20:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D66189F27;
+	Mon, 29 Jul 2024 20:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722284807; cv=none; b=PRpMW13vkz4S6pw+M2+ydSAcQEXMakUqp6aFHoEUNlvZaP1pEC0XZMsPHsRTG5lhc/PzdWgutk7CApzdz1flLb8KCTowKsEkpxaqBUyexootxYgxsIEtp7P+uckIEADUfzCNseuAL1oRhJnaFcVyV3evHN0zQJljLj2qBP48NRU=
+	t=1722284911; cv=none; b=H9NdH0r39izQIDTgrhJUkR2R/9xYjuFineGZ56/7vSI+mrWlXGpuhrfqAk09r9awJrm3dLzWLBxU3Qwsq9kLCsreqVMGFTM5hqofQwKqRqiYbpOcGAX7QagjxOFe9fhYDBVYHsQKBThh+i9IXxsMQDFesf17MpKUx44yuEK6NwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722284807; c=relaxed/simple;
-	bh=4/M8PcMZ2pA0pcZmryHMaEkMSb1FJtRBcnrDbxk0+To=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uWhmYnNxOpFuLQh5Cl9fgJsYO55L/kBjfWpZVynRPC8aTKtX6dcGn30XyGjOuROgy+3oW11pDNPUjdGGDamX8J0eixcwNSaBobskly+nn3JVbnV/jHJxJqBRQCaZnf7JQGgo6iJ6S28WzHtITKCDoDNnXXg+5oBx2OkYceLKXbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BN7Vb6gp; arc=none smtp.client-ip=209.85.167.48
+	s=arc-20240116; t=1722284911; c=relaxed/simple;
+	bh=S7hvrf+9Paq/uhlTpuFZrrrwvEqHdkAAKsQXj61NzuI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kQ3rLi7PdjFElRxWEr2STJDR7u5xPAzbRTCRkUTn39SIORmtsYUAIo/nKmAHs7fqKI5d7NyGIa5J3s99idiTp95p1wrEkkzqLUTil6JQaawp7ejl7guXs7PYF7Y+YFoFKyVuX9SeMUbIlJ5/WjJ1Z6UhLW0Mvzgcm54BWfVIVzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RuByZOAN; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52f01b8738dso3940012e87.1;
-        Mon, 29 Jul 2024 13:26:44 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so13376365e9.1;
+        Mon, 29 Jul 2024 13:28:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722284803; x=1722889603; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2rU7VZ19DglSuk5shkD1EMAqDI834OMZeaLgq5GKE6U=;
-        b=BN7Vb6gptT9xq4c0egpAxIFR6M5oFjB3yGSWIJH/Pasa7koOpfE42Hx53fxOJ+M4Gz
-         0/fQs1KS4SUwcdIkA2i80pk2pfKnbNy5Te9vY+DY9T4zKS1WIKYS3nVS57wRHfrgU9L8
-         jimRx+EwZnJAREFxmfWcK2ZhNdmoD58s+wxDf7TDVyJqwdJl/FuSgAvD1GHbu3eSRSon
-         EZs8MZVMoDj935ruzfsNsoG5vCp+b5/hAZDM7jbkiYzZEKm4NrfsUUAJiChNLuDhhqGx
-         ZJB0C3rE4eR2X7XTBR9GmxtX1FNIejbApCWKfmue5+CDCGktfDNb+r+dZasK7lC7SDIN
-         qC4Q==
+        d=gmail.com; s=20230601; t=1722284908; x=1722889708; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W285L47FymCa5B1MY1AIE9W3CgMuwpH/hLzuxYQVFR8=;
+        b=RuByZOANP1ltJxsB6dJB26JDg+OHC6xNPuUIdW0ugZy7ALu8tUALXYPgStG+5wqp9P
+         dimfxlA0KPO3f9Gx2UfqT730DRSMJA3/wRBE/DdOugxQf4eqXdJLcKysT5Vb5gKUcuc0
+         lt9DsJ06dnqMtwEuBWBPC7/Mr9QMZRZwGipSZv/M03M8U1eK9xvEgVAf9eAvk/4Gpc3s
+         +uYAsmoLmP9cxa/SAQDFWfbc82lF5Ruf6ct0eb2LybG3GNy54bfL5oSATau8TXp5F9bN
+         bVdI1u/yfeKdkTZOXiWFX9BrOCqaaQW2VW04f+WHfM6KSPwZGZ1iGGRQ9p/XVsT/0Ari
+         cddA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722284803; x=1722889603;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2rU7VZ19DglSuk5shkD1EMAqDI834OMZeaLgq5GKE6U=;
-        b=Qi3VxXOgVeR60YyFugyDPCwQD50XApCv8XF1wTFVOdTSwjX3lx6nusLy2bvAHMP8s3
-         9u5Az0bwVvgmpMFHeSKaa42IN5zh8A8uQomeXrn98ROREohF7uWEWVaS/F9pyMr8Kmks
-         Ix0ciTAL9xNUV5IYRSESoaO24Irex4ergtaujNVrBIZDjeEL+akgaW0PipHGQeKA69kf
-         ol5mweMF5dKnuWInHCCdWZcSx2LTpnlpBZS1o37Ip/byloknIkpygReua02HatxFPoMw
-         j6+0D7QOqxWL3HvS7ZUgGkK01cvwgNH80l2mFQCFDYrVM/LYc1+w5l94kw23Z36eVzC8
-         Hbzw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8omjlbt8z0tqJZGANfwzxxapPLcHyTcjl5H4sAg/I272KL1ZrWadMc1wDPrD6GE0O87PtWBava//9CcKKHv7rnT/Vx+cyMc/P66vO8edEBlI1bJPHYjOMljJg4coZTa1MM/cuuzl3fA==
-X-Gm-Message-State: AOJu0Yzem1V2CSfN+llgnbae6MVmme93DH5sTfWeTagGmoAm06Qz4Zh5
-	55I13w9emSR/+b+4FgEMG6YYxWM+g1ACPtZ9C2Ym9XnkGmCXh7aSo4L/SKD7IvVffFf/bXE8c4u
-	SPxmDermCcGj3MUR6lnVsc0W5ISrPoB4Q
-X-Google-Smtp-Source: AGHT+IG0UEsFBtOPY7uXQsDudxNq+y4z8DNZ8n5CElyHwQbjhii9onrKv8HSUxTFkPJ5Sfnv8H3r9y+Tgnn4sXcGfHQ=
-X-Received: by 2002:a05:6512:e99:b0:52d:6673:11da with SMTP id
- 2adb3069b0e04-5309b2ce6c5mr5846093e87.57.1722284802685; Mon, 29 Jul 2024
- 13:26:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722284908; x=1722889708;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W285L47FymCa5B1MY1AIE9W3CgMuwpH/hLzuxYQVFR8=;
+        b=rKRPhbvk1dCDVIPMlqIwo3T8VbdM8A34/M2t81BWNJJoimjzjy3AzEyX3BXgs+XjF6
+         JBeKDk/ffx4MkCEMz8i7CRIFG80ozXDvHrUpIvPTdK/Z4hUItzGLQpPrLfHa0pdRS73F
+         fNjt8CPhpvZymmSlpcRtVJNtcNSJF+pbymxnb/ZCqIfUFCxJhf+p61w6zj1oXSkLkfgm
+         rS6o34oYFceE0V6Of+30odad1lcbfPVCLCXrN9PtPwVcHKqQeQpHdRGekqrVSVI6XCnE
+         Kk73BhJS1juptoWvyRPOEXunlAw7ith1LrXSgjssOLtAjg2OhuHWVb+rzXIpq2zntllW
+         I7TA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvkJEcGqh9iTg/ULzEmfech2K9gzLaXAz52lrNCCMVG2PLy9U/T5gvxzVHdUneXlSGg7406DJMogNEFsT9Hptjypi4eo/N8btcEiKzhZeFAWWlI4bqjsCi9RumqwEvhJqfQtAiZJfoqk6Y4UZnlu2xf0l8LvsijfbdrjcIOLs9D95bVQ==
+X-Gm-Message-State: AOJu0YxgmiKfGwB4C9WnM7B/SKfPAqrzEfq0y26qbe9uH63pq7yHqEN9
+	9DcGkN6ie5nPXBIFEmHpEJ4+982z82bkyeqGorQ1LhbWrd8xfQW6
+X-Google-Smtp-Source: AGHT+IG7DX+8vGSp1IdYAI7LCaAtmO5EJO4lzP9zDgbDSE/2BA6sGAhtL1/ioaanHmeuCpLuC3OP5A==
+X-Received: by 2002:a05:600c:35d4:b0:428:b48:8eed with SMTP id 5b1f17b1804b1-42811e52248mr58321195e9.7.1722284907299;
+        Mon, 29 Jul 2024 13:28:27 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:91c0:6bc7:8f80:c05e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280f484cdesm125478115e9.44.2024.07.29.13.28.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 13:28:26 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v5 0/3] Add CPG support for RZ/V2H(P) SoC
+Date: Mon, 29 Jul 2024 21:26:42 +0100
+Message-Id: <20240729202645.263525-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAH2r5ms+vyNND3XPkBo+HYEj3-YMSwqZJup8BSt2B3LYOgPF+A@mail.gmail.com>
- <5DBD1307-465D-4145-A42E-36AD04BB41A6@dilger.ca>
-In-Reply-To: <5DBD1307-465D-4145-A42E-36AD04BB41A6@dilger.ca>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 29 Jul 2024 15:26:31 -0500
-Message-ID: <CAH2r5muGmbafMMJozVxan+=qz3fXyLgV74pgEoewsfn30rbAQg@mail.gmail.com>
-Subject: Re: Why do very few filesystems have umount helpers
-To: Andreas Dilger <adilger@dilger.ca>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
->  even though the filesystem on the host is kept mounted the whole time.  =
-If the host filesystem
-> is flushing its cache "in anticipation" of being fully unmounted, but is =
-actually servicing dozens
-> of guests, then it could be a significant hit to system performance
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The good news (at least with cifs.ko) is that when multiple
-superblocks get mounted on the same share
-("tree connection" in cifs.ko) then the cached files (deferred close
-for network handles with file leases) and
-directory entries (with directory leases) won't get freed until the
-last superblock mounted to that //server/sharename
-is unmounted.
+Hi All,
 
+This patch series aims to add the CPG support for the Renesas
+RZ/V2H(P) SoC.
 
-On Mon, Jul 29, 2024 at 12:31=E2=80=AFPM Andreas Dilger <adilger@dilger.ca>=
- wrote:
->
-> On Jul 28, 2024, at 1:09 PM, Steve French <smfrench@gmail.com> wrote:
-> >
-> > I noticed that nfs has a umount helper (/sbin/umount.nfs) as does hfs
-> > (as does /sbin/umount.udisks2).  Any ideas why those are the only
-> > three filesystems have them but other fs don't?
->
-> I think one of the reasons for this is that *unmount* helpers have been
-> available only for a relatively short time compared to *mount* helpers,
-> so not nearly as many filesystems have created them (though I'd wanted
-> this functionality on occasion over the years).
->
-> > Since umount does not notify the filesystem on unmount until
-> > references are closed (unless you do "umount --force") and therefore
-> > the filesystem is only notified at kill_sb time, an easier approach to
-> > fixing some of the problems where resources are kept around too long
-> > (e.g. cached handles or directory entries etc. or references on the
-> > mount are held) may be to add a mount helper which notifies the fs
-> > (e.g. via fs specific ioctl) when umount has begun.   That may be an
-> > easier solution that adding a VFS call to notify the fs when umount
-> > begins.
->
-> I don't think that would be easier in the end, since you still need to
-> change the kernel code to handle the new ioctl, and coordinate the umount
-> helper to call this ioctl in userspace, rather than just have the kernel
-> notify that an unmount is being called.
->
-> One potential issue is with namespaces and virtualization, which may
-> "unmount" the filesystem pretty frequently, even though the filesystem
-> on the host is kept mounted the whole time.  If the host filesystem is
-> flushing its cache "in anticipation" of being fully unmounted, but is
-> actually servicing dozens of guests, then it could be a significant hit
-> to system performance each time a guest/container starts and stops.
->
-> Cheers, Andreas
->
-> > As you can see from fs/namespace.c there is no mount
-> > notification normally (only on "force" unmounts)
-> >
-> >        /*
-> >         * If we may have to abort operations to get out of this
-> >         * mount, and they will themselves hold resources we must
-> >         * allow the fs to do things. In the Unix tradition of
-> >         * 'Gee thats tricky lets do it in userspace' the umount_begin
-> >         * might fail to complete on the first run through as other task=
-s
-> >         * must return, and the like. Thats for the mount program to wor=
-ry
-> >         * about for the moment.
-> >         */
-> >
-> >        if (flags & MNT_FORCE && sb->s_op->umount_begin) {
-> >                sb->s_op->umount_begin(sb);
-> >        }
-> >
-> >
-> > Any thoughts on why those three fs are the only cases where there are
-> > umount helpers? And why they added them?
-> >
-> > I do notice umount failures (which can cause the subsequent mount to
-> > fail) on some of our functional test runs e.g. generic/043 and
-> > generic/044 often fail to Samba with
-> >
-> >     QA output created by 043
-> >    +umount: /mnt-local-xfstest/scratch: target is busy.
-> >    +mount error(16): Device or resource busy
->
->
-> Cheers, Andreas
->
->
->
->
->
+v4->v5
+- Included RB tag form Geert for patchs 1/3 and 3/3
+- Packed resets array
+- Updated rzv2h_cpg_reset_xlate() to get index
+- Dropped description for info member from struct rzv2h_cpg_priv
 
+v3 -> v4
+- Included RB tag form Krzysztof for patch 1/3
+- Changed reset and clock values to hex
+- Renamed __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__ to
+  __DT_BINDINGS_CLOCK_RENESAS_R9A09G057_CPG_H__
+- Dropped masking of parent clks with 0xffff
+- Dropped storing mod clk id and now calculating it
+  based on index and bit.
+- Made parent to u16 in struct rzv2h_mod_clk
+- Made a copy of resets array in struct rzv2h_cpg_priv
+- Added a comment for core clocks in patch 3/3
+- Made r9a09g057_mod_clks as __initconst
+- Made r9a09g057_resets as __initconst
+- Made r9a09g057_cpg_info as __initconst
 
---=20
-Thanks,
+v2 -> v3
+- Dropped '|' for CPG description
+- Dropped description for '#power-domain-cells' property
+- Added 3 clock inputs for CPG
+- Dropped label in example node
+- Used 4 spaces for example node
+- Renamed r9a09g057-cpg.h -> renesas,r9a09g057-cpg.h
+- Merged adding renesas,r9a09g057-cpg.h in DT binding patch
+- Updated commit message for patch 1/3
+- Dropped num_hw_resets from struct rzv2h_cpg_priv
+- Dropped range_check for module clocks
+- Made mon_index to s8 instead of u8 in struct rzv2h_mod_clk
+- Added support for critical module clocks with DEF_MOD_CRITICAL
+- Added check for mon_index in rzv2h_mod_clock_endisable and
+  rzv2h_mod_clock_is_enabled()
+- Added CLK_PLLDTY
+- Added core clocks sys_0_pclk and iotop_0_shclk
+- Dropped r9a09g057_crit_mod_clks
 
-Steve
+v1 -> v2
+- Updated commit message
+- Updated description for binding as suggested by Geert
+- Updated descriptions for clocks and resets property
+- Renamed extal->qextal
+- Updated '#power-domain-cells' value
+- Dropped the module clocks and just added the core clocks
+- Introduced family specific config option
+- Now using register indexes for CLKON/CLKMON/RST/RSTMON
+- Introduced PLL_CONF macro
+- Dropped function pointer to get PLL_CLK1/2 offsets
+- Added range check for core clks
+- Dropped NULLified clocks check
+- Dropped pll_clk1/clk2_offset
+- Made r9a09g057_mod_clks/r9a09g057_resets as static const
+
+v1: https://patchwork.kernel.org/project/linux-renesas-soc/cover/20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (3):
+  dt-bindings: clock: renesas: Document RZ/V2H(P) SoC CPG
+  clk: renesas: Add family-specific clock driver for RZ/V2H(P)
+  clk: renesas: Add RZ/V2H(P) CPG driver
+
+ .../bindings/clock/renesas,rzv2h-cpg.yaml     |  80 ++
+ drivers/clk/renesas/Kconfig                   |   9 +
+ drivers/clk/renesas/Makefile                  |   2 +
+ drivers/clk/renesas/r9a09g057-cpg.c           |  80 ++
+ drivers/clk/renesas/rzv2h-cpg.c               | 689 ++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h               | 151 ++++
+ .../dt-bindings/clock/renesas,r9a09g057-cpg.h |  21 +
+ 7 files changed, 1032 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
+ create mode 100644 drivers/clk/renesas/r9a09g057-cpg.c
+ create mode 100644 drivers/clk/renesas/rzv2h-cpg.c
+ create mode 100644 drivers/clk/renesas/rzv2h-cpg.h
+ create mode 100644 include/dt-bindings/clock/renesas,r9a09g057-cpg.h
+
+-- 
+2.34.1
+
 
