@@ -1,116 +1,166 @@
-Return-Path: <linux-kernel+bounces-265522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0FBC93F25E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:16:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE11093F265
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4653A280F81
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:16:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 910F2282327
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CDF14262C;
-	Mon, 29 Jul 2024 10:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F16E14388F;
+	Mon, 29 Jul 2024 10:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="mc/1nV4m"
-Received: from mail-43167.protonmail.ch (mail-43167.protonmail.ch [185.70.43.167])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WyRYojp2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B88B13A25F;
-	Mon, 29 Jul 2024 10:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.167
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC5D78C9A;
+	Mon, 29 Jul 2024 10:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722248175; cv=none; b=QAEJ4c0PZeJi1GDYk44zEkr7tkEj/DgYK0SiWQg2sJGy6rdNK1WuycwQvp6wic+rl2nNHav9xK2kucssMGHvyPfJVzJyiyPtcDWfni7VpyJ4Ayn9E115oefhvG+9WW8kdi954tJtUW9Rya5WO7lJ4QCoRFYitT27i82VGpVu2VY=
+	t=1722248219; cv=none; b=NbIHRYEGgxaj17W5mLNfckcDcK7NdH7Heui2Db7DOC5V89uDNIHSaO8XGliQSFOKsKipt68KjYebn+L3OGG1SA2qsodKocwrBqs0MWUJ7dMrdILh6ZvelF156rQilkhrb68G9tboGBtXgz6391l/s20OcuQa+jtUd/NxMHS64Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722248175; c=relaxed/simple;
-	bh=S2kDna0y+5oSBmGdHqrrYsJkaPHhKDJXjStLwhOwkz4=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ALk1udYTzyoZKVxRsmwvQGLvgq7ajXEtZueR33q9opum+JnefJUP16k5F5JMmgiG78q5YIy8hsOToi46iqoP52QOxJfuU+pk4auUdnxp66+UU3eD4wCYvpdVKBptmhRgrc2KYUz98FTlchPIpJgjKejxB1W71bD8W+YUZsDcA9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=mc/1nV4m; arc=none smtp.client-ip=185.70.43.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1722248170; x=1722507370;
-	bh=S2kDna0y+5oSBmGdHqrrYsJkaPHhKDJXjStLwhOwkz4=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=mc/1nV4m8TMMGJeIUMii9ZkH6oZomOab96hwvnxWu2gNI3S1ZVUnJ0v7Zed2yjXbn
-	 As+t2qSXVrAbemPFvrTNio927NzUZiGO68n03CRMo48JkQq0GBnNVFHQrG/9WEMvhR
-	 8ITLplTApB0EwO2nJhfcW0JEAxWVLXyFfhVxjTwyeOPq/4aUrQ/y5XDjvfzp7GLTgv
-	 i4JPcs1zShaNrnPF1B45jSotEIB+vq3FL+DJanNBp4XYD1KA9SweE50fAWSQ1r19TJ
-	 xllms2BUBPXvfcoUZnnIdmH6ReKgnFf4032J509CYFJSqc2NiqqE4UIU48Ow4OWcrS
-	 W2Smoi8ufMUvA==
-Date: Mon, 29 Jul 2024 10:16:04 +0000
-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-From: "edmund.raile" <edmund.raile@proton.me>
-Cc: linux-sound@vger.kernel.org, stable@vger.kernel.org, tiwai@suse.com, clemens@ladisch.de, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] ALSA: firewire-lib: restore process context workqueue to prevent deadlock
-Message-ID: <ora25phw5xyiog2z5xmlkrwvgffpwjq27algi6hqjs7s76b2qg@wbgokl2mblbq>
-Feedback-ID: 45198251:user:proton
-X-Pm-Message-ID: a09e72281001a8ca1419aa95857d79dea51fda67
+	s=arc-20240116; t=1722248219; c=relaxed/simple;
+	bh=jjp57nvPQEwRVjAgPR6xh7+R+vkP4HcusY4ESqE4FTw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YgtqBE44GxcZ29mb1TVGP4gg3u7eLBcx1rtxbGJ///wDPBjWif52onv+j7CZa/OZpxXVHzr2ckBhMhub2ZIM5BDqD7+4V2roMMx0Ru4SiVbCWYhkwzwx2ynfKONnMpyGkAAWyZYKIldeyqtxTXN89F58pfuFSkkWuYs+PCmGhOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WyRYojp2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TAGeMb014793;
+	Mon, 29 Jul 2024 10:16:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OQBx4E9NJITGYlg4+yqJlk1ZFgje2YwaH9cW3Vpsu2U=; b=WyRYojp2wcQXGjS+
+	SVyIhTDhbGOj1wUvkQPiiXJq41iIpsrcG1+CfEpD+f6W0wHwH3Myz/0Adp2lzBMF
+	jEh74H5u+iOtYSFcoBCDz/aT9QE+woIfBMHuc2R4cRn8zFwYiNnBKHn/2AWAXIk0
+	hn6p6EebQArtfx8VIe3N28KFr0Vpk8xDTDpzzohG+9pE0MMVxuq5Q6KrHzWroFeI
+	xLjwKnvt4ET7e2UxFoNeTHEawXEmqJBeasB0pmBhvAMw6/9Atu1RfJdv2oqN75jA
+	KhC2vQkhRRZOn2yqDitIZQ+jGG/BYzVqmluB14nGdN4gZrliYRC0+priXY8ThM0S
+	h8JkVw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mr7gkxf6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:16:42 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TAGfPN008326
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:16:41 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
+ 2024 03:16:35 -0700
+Message-ID: <0a4bf05e-b682-4d9d-8984-ca085cf8af88@quicinc.com>
+Date: Mon, 29 Jul 2024 18:16:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: watchdog: qcom-wdt: document QCS9100
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck
+	<linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Rajendra Nayak
+	<quic_rjendra@quicinc.com>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240709-document_qcs9100_apss_wdt_compatible-v2-1-beeba6288c97@quicinc.com>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <20240709-document_qcs9100_apss_wdt_compatible-v2-1-beeba6288c97@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: -0C4joMSpPbhFsqj8NEpXVXiITLpzcXi
+X-Proofpoint-GUID: -0C4joMSpPbhFsqj8NEpXVXiITLpzcXi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-29_08,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ impostorscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ spamscore=0 clxscore=1011 priorityscore=1501 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2407290069
 
-> Thank you for your sending the revised patches, it looks better than the
-> previous one. However, I have an additional request.
-Allright, patch v3 it is.
 
-> [1] https://git-scm.com/docs/git-revert
-Should have known git has something like that, how handy!
 
-> $ git revert -s b5b519965c4c
-Yes, 5b5 can be removed via revert, but what is the difference in
-effect? Just time saving?
-> $ git revert -s 7ba5ca32fe6e
-This one I'd like to ask you about:
-The original inline comment in amdtp-stream.c
-amdtp_domain_stream_pcm_pointer()
-```
-// This function is called in software IRQ context of
-// period_work or process context.
-//
-// When the software IRQ context was scheduled by software IRQ
-// context of IT contexts, queued packets were already handled.
-// Therefore, no need to flush the queue in buffer furthermore.
-//
-// When the process context reach here, some packets will be
-// already queued in the buffer. These packets should be handled
-// immediately to keep better granularity of PCM pointer.
-//
-// Later, the process context will sometimes schedules software
-// IRQ context of the period_work. Then, no need to flush the
-// queue by the same reason as described in the above
-```
-(let's call the above v1) was replaced with
-```
-// In software IRQ context, the call causes dead-lock to disable the taskle=
-t
-// synchronously.
-```
-on occasion of 7ba5ca32fe6e (let's call this v2).
+On 7/9/2024 10:21 PM, Tengfei Fan wrote:
+> Document the QCS9100 watchdog compatible.
+> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+> platform use non-SCMI resource. In the future, the SA8775p platform will
+> move to use SCMI resources and it will have new sa8775p-related device
+> tree. Consequently, introduce "qcom,apss-wdt-qcs9100" to describe
+> non-SCMI based watchdog.
+> 
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> ---
+> Introduce support for the QCS9100 SoC device tree (DTSI) and the
+> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+> While the QCS9100 platform is still in the early design stage, the
+> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+> mounts the QCS9100 SoC instead of the SA8775p SoC.
+> 
+> The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+> all the compatible strings will be updated from "SA8775p" to "QCS9100".
+> The QCS9100 device tree patches will be pushed after all the device tree
+> bindings and device driver patches are reviewed.
+> 
+> The final dtsi will like:
+> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
+> 
+> The detailed cover letter reference:
+> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+> ---
+> Changes in v2:
+>    - Split huge patch series into different patch series according to
+>      subsytems
+>    - Update patch commit message
+> 
+> prevous disscussion here:
+> [1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+> ---
+>   Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
+> index 47587971fb0b..5a78816aeece 100644
+> --- a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
+> +++ b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
+> @@ -26,6 +26,7 @@ properties:
+>                 - qcom,apss-wdt-msm8994
+>                 - qcom,apss-wdt-qcm2290
+>                 - qcom,apss-wdt-qcs404
+> +              - qcom,apss-wdt-qcs9100
+>                 - qcom,apss-wdt-sa8775p
+>                 - qcom,apss-wdt-sc7180
+>                 - qcom,apss-wdt-sc7280
+> 
+> ---
+> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+> change-id: 20240709-document_qcs9100_apss_wdt_compatible-71744c461527
+> 
+> Best regards,
 
-I sought to replace it with
-```
-// use wq to prevent deadlock between process context spin_lock
-// of snd_pcm_stream_lock_irq() in snd_pcm_status64() and
-// softIRQ context spin_lock of snd_pcm_stream_lock_irqsave()
-// in snd_pcm_period_elapsed()
-```
-to prevent this issue from occurring again (let's call this v3).
+After considering the feedback provided on the subject, We have decided
+to keep current SA8775p compatible and ABI compatibility in drivers.
+Let's close this session and ignore the current patche here.
+Thank you for your input.
 
-Should I include v1, v3 or a combination of v1 and v3 in my next patch?
-
-> Just for safe, it is preferable to execute 'scripts/checkpatch.pl' in
-> kernel tree to check the patchset generated by send-email subcommand[3].
-Absolutely should have done so, sorry.
-
-Thank you for your patience and guidance,
-Edmund Raile.
-
+-- 
+Thx and BRs,
+Tengfei Fan
 
