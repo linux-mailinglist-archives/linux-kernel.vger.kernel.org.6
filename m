@@ -1,175 +1,129 @@
-Return-Path: <linux-kernel+bounces-266000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73CF993F8FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:03:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 455B793F906
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29DBD282586
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:03:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8A03282E56
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794C515572A;
-	Mon, 29 Jul 2024 15:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05089156230;
+	Mon, 29 Jul 2024 15:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="MQ1hsHbo"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tm2Ia2Su"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE515154C17
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C02D14830F;
+	Mon, 29 Jul 2024 15:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722265414; cv=none; b=plOhYfaXxqpp4WOi6IF8hvPjaPbvoXTZbACrmS0lD9cpBMLV2eLJuDVewsSPJxbgR27JIU90kWua7jb9GyTD4DCfSgHzY2uyeQGEtmPyCmyqxXCKGlwMHsOJ2SRcr/m/j0QKy3jlxQs4nBEy1fZmOzkee+bcypYTMu6wCf8ZBlU=
+	t=1722265459; cv=none; b=ppmYw0H0P6sFZ3ptXEg0Sj4LqOgyZWasjlUtGJPbg39aIp59VrO49023fgFp7x1CNF1KISs53EpAzUM1q9ITdHm/UHDiWuQSOUnvURSLerxlH/fdOj+M/jjMP8xecUCA9S5zebih00LBZG2H3BrFeNAkwFLluiC/ioN46Pnm814=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722265414; c=relaxed/simple;
-	bh=LixSEKAWirX0NOPhznGfzZIIzCKChSYlVSRBuDE3gCg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YbbiBUMkdi2LD8ozZWmdDEAGK25I7fv1y6X2pzneB1MEnTk/+0oW3bBwpTKaAl6HicpqxngO5pcnDaihloW5n6ascq2VVsYwHtmgLU5b7adGeYBpNJ2ZJxSiX1Zbrvm57s+FVO9dHmkhCB1w0+pU374icC3pNRQXDFmM1RruiNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=MQ1hsHbo; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f032cb782dso38097371fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1722265411; x=1722870211; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lGkbzrAqMpJOKzg1gN9QMr+Bs2M7SGlMJ9VaOqKnPoI=;
-        b=MQ1hsHboyYlBqO+vsbhDBktxTL/xJ0rl1qSap20TbmZegi+g4xh3qNhFPYWLz3Z7bD
-         8hXbpAEPdOMqDHSotIbLC4i4ZSVYx/F77saP7kccsOu5hyvt1a94cAovpce/IrmdA+Ul
-         5Lqj8swFJNCHnVzgPmUwQvR9wxZlbdej6xv6p3zaNAbqyvKx9UHy0QZDYH0gDXQz3vid
-         eJVSedrtXyhuvM4ov7ZP0D0FcNG+rhSOm0Vk7duNWy1KE/rTNuGI2uc+Tk4SA+Dhfk7j
-         IkKJLARfvDlEi9arYERHW5B6DGtS//oxoIUjNeaslvYnrHf4eDGvD1jVNuSv9wRgc4I6
-         tDng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722265411; x=1722870211;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lGkbzrAqMpJOKzg1gN9QMr+Bs2M7SGlMJ9VaOqKnPoI=;
-        b=pBSWq//Ro1O4Y4oLIoLY3E2Op/jcwsms1IWK72EFDYfObX8rr9lse3ZrceGryWmz+N
-         OURFoDmvI0xm+72vY0vEVdvZPDOs8/e9Qs/Lc7Y2LKXWAQis+RFlGOtAb9JXBW4yiIER
-         yIB0LYfCuRjD6cm1USrGDMsmU5wDh9sMIuZi8AAWaBmOsAnGgezDqWMVsxLtCUapXCR7
-         MQ7Xe38DEOwTpsUHCG7K7UpT9a4T7I4WIiFTWQZYTHL9TH/uFT5jOQmuirhdpzfCfuT/
-         cb18D5MbnxwMUJUhXsCHwXNveXUAY9vGGoK9JnyjsJYsW+JqGhA6ZxbK2EqzqdA0S/R8
-         PDCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEey4ox45bfFiEzoFVXQdstpOfzN6peA70JvbhJ1y57P+psGX8ZxNid9YKl2NpgVBUrs3dyEbGSfZaqFC12eknIj6jG5L7M/JL5eVq
-X-Gm-Message-State: AOJu0YwFREQ6Ff8ew5Vdv1BT1XVvVFqCWIAHlesC+kIELE/iDghUEafg
-	nzLfHNWlyyZ148W02CRf57S/uTJhNlSfCWs2V2uqQo/mlx5FdxSRYbqjGDQltw0=
-X-Google-Smtp-Source: AGHT+IGk/iWA5wi1P/B8XTv9G4vLUSNAph/qAsd9e1PTA/AJ+yhzpqUakiDFr/71iqFzUruHa/NSXw==
-X-Received: by 2002:a2e:7307:0:b0:2ef:26f2:d3e6 with SMTP id 38308e7fff4ca-2f12ee5bd37mr52432071fa.34.1722265410471;
-        Mon, 29 Jul 2024 08:03:30 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a777:82b0:b20f:20e1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42802e2f525sm111899025e9.0.2024.07.29.08.03.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 08:03:30 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Antoine Tenart <atenart@kernel.org>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH net v2] net: phy: aquantia: only poll GLOBAL_CFG regs on aqr113, aqr113c and aqr115c
-Date: Mon, 29 Jul 2024 17:03:14 +0200
-Message-ID: <20240729150315.65798-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722265459; c=relaxed/simple;
+	bh=WefnLXd3E1nfnuZA/krRi3p9Qvy4P9MRlIum+ADvtKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iqGMkJW3hUKF88bzJyl0J4wfivR2doK/np5x6yzEU5uGufyebYSg96zoPBEKCwHGnGf5l4S30xxfsSc1+ukKqjDF8yQ8tBpcJtGz+rLrNxTcuIFLRzsR3dvbOSEB2SagGa7vjFvORX5u3o+BmBPqVYE5rcI8waQ1fz/G7XbT4XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tm2Ia2Su; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59C39C4AF09;
+	Mon, 29 Jul 2024 15:04:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722265458;
+	bh=WefnLXd3E1nfnuZA/krRi3p9Qvy4P9MRlIum+ADvtKo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tm2Ia2Su7rKEDolTzEONcCbhJWmWOIDSSO5z7BfklFwkQpf0+m80olpg24mL+V9XC
+	 QEM2MQ+NsYaVS4TNXS+wM80fF59kYp1VmIBcMebWPUFcqSqjrGLGgilqqQp1NjEHSr
+	 tC6FGtonF+atpvQ47PMCmzd3FY2nDNlePO8HNy1vS5Te92DqARXtl82ec/V2oxYWmx
+	 8boR5Oe7P1+rlK8VqwJkx9d+WhdESj9lKXEG3jZ2dDWyG22pXVlcv95usGUIhHx1U/
+	 eGaUlha4NFv9W0zEYm/G6aE5Q8U7otCLRPBTmw0dTaQ5+gZ8jhn/PUV/yplmAanp+n
+	 fNN9BNVv45xlg==
+Message-ID: <6c5acb84-0d09-4a87-adb2-d0b10c67b98d@kernel.org>
+Date: Mon, 29 Jul 2024 17:04:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] soc: qcom: smd-rpm: add qcom,smd-rpm compatible
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
+ Stephan Gerhold <stephan@gerhold.net>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240729-fix-smd-rpm-v1-0-99a96133cc65@linaro.org>
+ <20240729-fix-smd-rpm-v1-2-99a96133cc65@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240729-fix-smd-rpm-v1-2-99a96133cc65@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 29/07/2024 13:04, Dmitry Baryshkov wrote:
+> The device node has the compatible string, so the glink channel name
+> isn't used for modprobing. Add the qcom,smd-rpm compatible to let the
+> module be automatically loaded when required.
 
-Commit 708405f3e56e ("net: phy: aquantia: wait for the GLOBAL_CFG to
-start returning real values") introduced a workaround for an issue
-observed on aqr115c. However there were never any reports of it
-happening on other models and the workaround has been reported to cause
-and issue on aqr113c (and it may cause the same on any other model not
-supporting 10M mode).
+So autoloading is not working? I don't understand whether you are fixing
+real issue or just making something complete based on your feelings.
+> 
+> Fixes: bcabe1e09135 ("soc: qcom: smd-rpm: Match rpmsg channel instead of compatible")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/soc/qcom/smd-rpm.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
 
-Let's limit the impact of the workaround to aqr113, aqr113c and aqr115c
-and poll the 100M GLOBAL_CFG register instead as both models are known
-to support it correctly.
-
-Reported-by: Jon Hunter <jonathanh@nvidia.com>
-Closes: https://lore.kernel.org/lkml/7c0140be-4325-4005-9068-7e0fc5ff344d@nvidia.com/
-Fixes: 708405f3e56e ("net: phy: aquantia: wait for the GLOBAL_CFG to start returning real values")
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
-v1 -> v2:
-- update the commit message to mention aqr113 too
-- fix the comment in the source file: 10M -> 100M
-
- drivers/net/phy/aquantia/aquantia_main.c | 29 +++++++++++++++++-------
- 1 file changed, 21 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
-index d12e35374231..e982e9ce44a5 100644
---- a/drivers/net/phy/aquantia/aquantia_main.c
-+++ b/drivers/net/phy/aquantia/aquantia_main.c
-@@ -653,13 +653,7 @@ static int aqr107_fill_interface_modes(struct phy_device *phydev)
- 	unsigned long *possible = phydev->possible_interfaces;
- 	unsigned int serdes_mode, rate_adapt;
- 	phy_interface_t interface;
--	int i, val, ret;
--
--	ret = phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
--					VEND1_GLOBAL_CFG_10M, val, val != 0,
--					1000, 100000, false);
--	if (ret)
--		return ret;
-+	int i, val;
- 
- 	/* Walk the media-speed configuration registers to determine which
- 	 * host-side serdes modes may be used by the PHY depending on the
-@@ -708,6 +702,25 @@ static int aqr107_fill_interface_modes(struct phy_device *phydev)
- 	return 0;
- }
- 
-+static int aqr113c_fill_interface_modes(struct phy_device *phydev)
-+{
-+	int val, ret;
-+
-+	/* It's been observed on some models that - when coming out of suspend
-+	 * - the FW signals that the PHY is ready but the GLOBAL_CFG registers
-+	 * continue on returning zeroes for some time. Let's poll the 100M
-+	 * register until it returns a real value as both 113c and 115c support
-+	 * this mode.
-+	 */
-+	ret = phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
-+					VEND1_GLOBAL_CFG_100M, val, val != 0,
-+					1000, 100000, false);
-+	if (ret)
-+		return ret;
-+
-+	return aqr107_fill_interface_modes(phydev);
-+}
-+
- static int aqr113c_config_init(struct phy_device *phydev)
- {
- 	int ret;
-@@ -725,7 +738,7 @@ static int aqr113c_config_init(struct phy_device *phydev)
- 	if (ret)
- 		return ret;
- 
--	return aqr107_fill_interface_modes(phydev);
-+	return aqr113c_fill_interface_modes(phydev);
- }
- 
- static int aqr107_probe(struct phy_device *phydev)
--- 
-2.43.0
+Best regards,
+Krzysztof
 
 
