@@ -1,55 +1,67 @@
-Return-Path: <linux-kernel+bounces-265983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46FF293F8BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:52:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5727593F8C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 042382813E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:52:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E3C428305F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135E3155C8F;
-	Mon, 29 Jul 2024 14:51:50 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD933146580;
-	Mon, 29 Jul 2024 14:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90BF15538C;
+	Mon, 29 Jul 2024 14:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QUqEX4Sj"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672AA15383A;
+	Mon, 29 Jul 2024 14:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722264709; cv=none; b=QIrL70LHYU6lcAlRh17y07WfhGbM3+AbLsFHJlSjkqxI6dIp8CzxrKlUH+kZ9cMwBreLUnS2JgR1hQvgEenXbZxg2JiPX+zxYeYw0L9z0wnppRO651JqzfhEEWOnlyB40QuOQvBU/6O2+qYzsREWzmiIcd2ics4ZY9Q93Q4Vb8g=
+	t=1722264735; cv=none; b=OFoZB36NUQ/INpgvrGfwg3z0oPtIozIu5W9Ylx1sgw8z9rdovc86ARC0OMwY9JE0ZkBaI/bfj2oTuhxINN39iR61rDHMIttzgmhiP5r5EH+JwXl1ql0ajys/R9rU86XSDUDht8vkjlrPezc8d2PbdL8Xo6LUZRDyfgOmNvrnv60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722264709; c=relaxed/simple;
-	bh=JwxZkruffVOFu0w1m6bzqfxuk0TYMxYEJc4mNatpIX0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=VC+qxv6W7Q/TZCcRZ5N1XoHFJIRFwB7usivcB2ToB0TpNaczUjPwtvwIOPR0kxftU/p/BqVv8cHDLsSWkUyh6ziSFSUllFm6zg61IqPldlkBSVnnWemlOzWHnvIGFm7IQyPxXygYBrXQASnuc99f/eRHaqgpLCGBnwCwl8kSe5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 3FC4D92009C; Mon, 29 Jul 2024 16:51:37 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 3971892009B;
-	Mon, 29 Jul 2024 15:51:37 +0100 (BST)
-Date: Mon, 29 Jul 2024 15:51:37 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-cc: Matthew W Carlis <mattc@purestorage.com>, alex.williamson@redhat.com, 
-    Bjorn Helgaas <bhelgaas@google.com>, christophe.leroy@csgroup.eu, 
-    "David S. Miller" <davem@davemloft.net>, david.abdurachmanov@gmail.com, 
-    edumazet@google.com, kuba@kernel.org, leon@kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org, 
-    linux-rdma@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-    Lukas Wunner <lukas@wunner.de>, mahesh@linux.ibm.com, 
-    Mika Westerberg <mika.westerberg@linux.intel.com>, mpe@ellerman.id.au, 
-    Netdev <netdev@vger.kernel.org>, npiggin@gmail.com, oohall@gmail.com, 
-    pabeni@redhat.com, pali@kernel.org, saeedm@nvidia.com, sr@denx.de, 
-    Jim Wilson <wilson@tuliptree.org>
-Subject: Re: PCI: Work around PCIe link training failures
-In-Reply-To: <914b7d34-9ed5-cd99-cb76-f6f8eccb842e@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.2407291540120.48387@angie.orcam.me.uk>
-References: <20240724191830.4807-1-mattc@purestorage.com> <20240726080446.12375-1-mattc@purestorage.com> <914b7d34-9ed5-cd99-cb76-f6f8eccb842e@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1722264735; c=relaxed/simple;
+	bh=vxcbGccfMSfGNehJ2LcMJTELjJug/egUl7ukelRUedo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tQ9XZaIbmtVFJ0cF04wCh2NbECTBL2VXEWDrX3u/cyT70UpQQ1RBhRXGO58SXcDPMNfqvUqApm2MrrNo9pcEjv69or43/8j777kUsa8Y2OVpCAvC1GHGoRLs0DqHDvn77RNCKt3OmeoeAqL5+++H05bu4N50wItHfdF5YCyv3C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QUqEX4Sj; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722264731;
+	bh=vxcbGccfMSfGNehJ2LcMJTELjJug/egUl7ukelRUedo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QUqEX4Sj2ycGyTrVvE8RkKiPFIGE41YXymnDIF+2nFf/dln7xFJCWydFBFNFKQldk
+	 TPvSMzeNJtsiLJrzLhIkcqnFGOZO1ioaQVAuEPcRggzE7R5Fn6UfooYhglsQ6SvEAz
+	 /kocTbQJJ583TYKhhUXx1ZdVRnep06tfBLQ4ZyevZ27UDERiqqEV9UktrbRPwi7PB7
+	 oZVA+Td1d48Hawk68G+QpsOBJfO6kWoWE43tvXw4ppwrYjChhdyPEXf4CnTJkdv43e
+	 ii+sBPVKrCvByhZDFdhlUMjKezvJHQ3nxaEqIx0gq60obYR3vpIVjgJo/vKCm49+mm
+	 mO3owTCNZV+Pw==
+Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2C75B3780480;
+	Mon, 29 Jul 2024 14:52:11 +0000 (UTC)
+From: Laura Nao <laura.nao@collabora.com>
+To: skhan@linuxfoundation.org
+Cc: gregkh@linuxfoundation.org,
+	kernel@collabora.com,
+	laura.nao@collabora.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	nfraprado@collabora.com,
+	shuah@kernel.org
+Subject: Re: [PATCH] selftests: ksft: Track skipped tests when finishing the test suite
+Date: Mon, 29 Jul 2024 16:52:22 +0200
+Message-Id: <20240729145222.119830-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <9009f4df-ca7e-4961-97e4-446afc4e87d2@linuxfoundation.org>
+References: <9009f4df-ca7e-4961-97e4-446afc4e87d2@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,48 +69,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 
-On Mon, 29 Jul 2024, Ilpo Järvinen wrote:
+Hi Shuah,
 
-> > > The main reason is it is believed that it is the downstream device
-> > > causing the issue, and obviously you can't fetch its ID if you can't
-> > > negotiate link so as to talk to it in the first place.
-> > 
-> > Have had some more time to look into this issue. So, I think the problem
-> > with this change is that it is quite strict in its assumptions about what
-> > it means when a device fails to train, but in an environment where hot-plug
-> > is exercised frequently you are essentially bound have something interrupt
-> > the link training. In the first case where we caught this problem our test
-> > automation was doing some power cycle tortures on our endpoints. If you catch
-> > the right timing the link will be forced down to Gen1 forever without some other
-> > automation to recover you unless your device is the one single device in the
-> > allowlist which had the hardware bug in the first place.
-> > 
-> > I wonder if we can come up with some kind of alternative.
+On 7/23/24 18:17, Shuah Khan wrote:
+> On 7/22/24 09:43, Laura Nao wrote:
+>> Consider skipped tests in addition to passed tests when evaluating the
+>> overall result of the test suite in the finished() helper.
+>>
+>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+>> ---
+>>   tools/testing/selftests/kselftest/ksft.py | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/tools/testing/selftests/kselftest/ksft.py 
+>> b/tools/testing/selftests/kselftest/ksft.py
+>> index cd89fb2bc10e..bf215790a89d 100644
+>> --- a/tools/testing/selftests/kselftest/ksft.py
+>> +++ b/tools/testing/selftests/kselftest/ksft.py
+>> @@ -70,7 +70,7 @@ def test_result(condition, description=""):
+>>   def finished():
+>> -    if ksft_cnt["pass"] == ksft_num_tests:
+>> +    if ksft_cnt["pass"] + ksft_cnt["skip"] == ksft_num_tests:
+>>           exit_code = KSFT_PASS
 > 
-> The most obvious solution is to not leave the speed at Gen1 on failure in 
-> Target Speed quirk but to restore the original Target Speed value. The 
-> downside with that is if the current retraining interface (function) is 
-> used, it adds delay. But the retraining functions could be reworked such 
-> that the retraining is only triggered in case the Target Speed quirk 
-> fails but we don't wait for its result (which will very likely fail 
-> anyway).
+> Laura and Nícolas,
+> 
+> I saw both your emails explaining how this fixes the problem in
+> a previous patch.
+> 
+> However looks like you haven't see my response about the implications
+> of the exit_code = KSFT_PASS when tests are skipped.
+> 
+> if ksft_cnt["pass"] + ksft_cnt["skip"] == ksft_num_tests:
+>>           exit_code = KSFT_PASS
+> 
+> Let me reiterate in case you missed it:
+> 
+> There is a reason why you don't want to mark all tests passed
+> when there are several skips.Skips are an indication that
+> there are several tests and/or test cases that couldn't not
+> be run because of unmet dependencies. This condition needs
+> to be investigated to see if there are any config options
+> that could be enabled to get a better coverage.
+> 
+> Including skips to determine pass gives a false sense security
+> that all is well when it isn't.
+> 
+> So it is incorrect to set the exit code to KSFT_PASS when there
+> are skipped tests.
 
- This is what I have also been thinking of.
+Just to be clear, the logic in ksft_finished() in kselftest.h (the C
+helper) is to exit with KSFT_PASS when there are only passed and skipped 
+tests. You're suggesting we change it to exit with KSFT_FAIL in that 
+case?
 
- After these many years it took from the inception of this change until it 
-landed upstream I'm not sure anymore what my original idea was behind 
-leaving the link clamped on a retrain failure, but I think it was either 
-not to fiddle with the setting beyond the absolute necessity at hand 
-(which the scenarios such as Matthew's prove wrong) or to leave the 
-setting in a hope that training will eventually have succeeded (but it 
-seems to make little sense as there'll be nothing there to actually 
-observe the success unless the bus gets rescanned for another reason).
+Under this new logic, the runner would effectively treat skips as 
+failures, impacting existing kselftests.
 
- I'll be at my lab towards the end of the week with a maintenance visit, 
-so I'll allocate some time to fiddle with this issue on that occasion and 
-implement such an update.
+> +    if ksft_cnt["pass"] + ksft_cnt["skip"] == ksft_num_tests:
+> 
+> 
+>>       else:
+>>           exit_code = KSFT_FAIL
+> 
+> The logic here seems to not take into account when you have a
+> conditions where you have a mixed results of passed tests,
+> skipped tests, and failed tests.
+>
+> Please revisit and figure out how to address this and report
+> the status correctly.
 
-  Maciej
+The logic ensures that if there’s a mix of passed, skipped, and failed 
+tests, the exit code returned is KSFT_FAIL. I believe that if there is at 
+least one failed test, the overall test should be reported as failed, 
+which is what happens in this case.
+
+Thanks,
+
+Laura
 
