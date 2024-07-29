@@ -1,133 +1,149 @@
-Return-Path: <linux-kernel+bounces-265044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C98093EBDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 05:26:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7775693EBD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 05:24:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA269B21042
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:26:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07AF4B20FBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBB88063C;
-	Mon, 29 Jul 2024 03:26:06 +0000 (UTC)
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.62.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36FF7E782;
+	Mon, 29 Jul 2024 03:24:30 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7731E1E519;
-	Mon, 29 Jul 2024 03:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.62.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688EA1E519
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 03:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722223565; cv=none; b=kwL44g0/XFHTf6515UZU8MPaGDO6FCUyTQF7XNVaRyuGCwwLl3C7YD+LPCQxAq8VSJstKJswnqvEch6DjiDOqH+WvRrt5XITfAIcbzplIyBBCVRCYj4BNcQ6U6HDYuuGe5vin1rrG7O5zimjo09Dggxn1CTlHLxwV38u9uVZb2Q=
+	t=1722223470; cv=none; b=ZJ1uYEgWqfEIMM5RiPOb04eAu9M2DkUnMK6CrXtGEoerFDw/6q464KOm3QSsi4DG5siVa1IjOHhAEelIWeEUlPgjv8PQH0vXE8eejckcqSJkRJTSPmOhqoaVkMZD6KetWlZq9NEiZYNyNLmEY5ObrF7usDJvlnEfxMSFXMEcnxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722223565; c=relaxed/simple;
-	bh=ywlI4xYYPN88ELlT5BGdH69MAfU3alsciWBsJa9iA9w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M5/lTGSlWjQ3kZSBViBXRr/F4dCYCGxLzYRkNnpiKWXsi9scN7/HK8wghZ148LlbHWQRbYmkCaaAVF4Zqvl3nrdF0/QUnbt86FICHCce7lEyjFeeoEvW70QBWMH0a3AyMjYD4AR3U7fsuzzUPv4+9Y3nqQ/XRltBfU5/gbWL0uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=114.132.62.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-X-QQ-mid: bizesmtpsz8t1722223539tw72q0w
-X-QQ-Originating-IP: z6tOQ/fazQWyf5mZUgViihYVJ7fQ6fNMtKSkysN5D38=
-Received: from uniontech.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 29 Jul 2024 11:25:32 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 13007263000915058031
-From: Erpeng Xu <xuerpeng@uniontech.com>
-To: stable@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	sashal@kernel.org,
-	hildawu@realtek.com,
-	wangyuli@uniontech.com,
-	jagan@edgeble.ai
-Cc: marcel@holtmann.org,
-	luiz.dentz@gmail.com,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	guanwentao@uniontech.com,
-	luiz.von.dentz@intel.com,
-	Erpeng Xu <xuerpeng@uniontech.com>
-Subject: [PATCH 6.6 3/3] Bluetooth: btusb: Add Realtek RTL8852BE support ID 0x13d3:0x3591
-Date: Mon, 29 Jul 2024 11:22:54 +0800
-Message-ID: <A8A861A3B03BA706+20240729032444.15274-3-xuerpeng@uniontech.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240729032444.15274-1-xuerpeng@uniontech.com>
-References: <20240729032444.15274-1-xuerpeng@uniontech.com>
+	s=arc-20240116; t=1722223470; c=relaxed/simple;
+	bh=Bva/JzVXr203viIyjg4oY3XJzNBRJqfdLmLgk+52V/k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tCE7jZzeIg9Dj3FwSX4HkzgzId8LtgvOAnyyhK6MI78+O+q8F0s60EQ9Pq3g1bdCmOktL+vvg7+YyVPKTOK6eiu7bpbwFnjc2WUW/xVpwmMt9ZGISkRc5KFNs0FztW98FS0wYMezSgngMqiORkoYs/wxIJpNohUCtOdqdt6+xcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WXNvs6QshzdkLj;
+	Mon, 29 Jul 2024 11:22:33 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 482851800D0;
+	Mon, 29 Jul 2024 11:24:23 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 29 Jul 2024 11:24:22 +0800
+Message-ID: <564e362d-5e8c-5d23-9c54-bfb811794169@huawei.com>
+Date: Mon, 29 Jul 2024 11:24:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v5] crash: Fix crash memory reserve exceed system memory
+ bug
+Content-Language: en-US
+To: Baoquan He <bhe@redhat.com>
+CC: <vgoyal@redhat.com>, <dyoung@redhat.com>, <paul.walmsley@sifive.com>,
+	<palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <rppt@kernel.org>,
+	<kexec@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-riscv@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20240723020746.3945016-1-ruanjinjie@huawei.com>
+ <Zp8859QW+YV1KqQ9@MiWiFi-R3L-srv>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <Zp8859QW+YV1KqQ9@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-From: WangYuli <wangyuli@uniontech.com>
 
-commit 39467e918e512d6907689dae0e4f035cccc10ab4 upstream
 
-Add the support ID(0x13d3, 0x3591) to usb_device_id table for
-Realtek RTL8852BE.
+On 2024/7/23 13:17, Baoquan He wrote:
+> On 07/23/24 at 10:07am, Jinjie Ruan wrote:
+>> On x86_32 Qemu machine with 1GB memory, the cmdline "crashkernel=4G" is ok
+>> as below:
+>> 	crashkernel reserved: 0x0000000020000000 - 0x0000000120000000 (4096 MB)
+>>
+>> It's similar on other architectures, such as ARM32 and RISCV32.
+>>
+>> The cause is that the crash_size is parsed and printed with "unsigned long
+>> long" data type which is 8 bytes but allocated used with "phys_addr_t"
+>> which is 4 bytes in memblock_phys_alloc_range().
+>>
+>> Fix it by checking if crash_size is greater than system RAM size and
+>> return error if so.
+>>
+>> After this patch, there is no above confusing reserve success info.
+>>
+>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>> Suggested-by: Baoquan He <bhe@redhat.com>
+>> Suggested-by: Mike Rapoport <rppt@kernel.org>
+> 
+> 
+> My Suggested-by can be taken off because I suggested to check the parsed
+> value after parse_crashkernel(), Mike's suggestion is better.
 
-The device table is as follows:
+Hi, Can the suggested-by be removed when this version is merged, or a
+new version needs to be sent?
 
-T:  Bus=01 Lev=02 Prnt=03 Port=00 Cnt=01 Dev#=  5 Spd=12   MxCh= 0
-D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=13d3 ProdID=3591 Rev= 0.00
-S:  Manufacturer=Realtek
-S:  Product=Bluetooth Radio
-S:  SerialNumber=00e04c000001
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
-Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Signed-off-by: Erpeng Xu <xuerpeng@uniontech.com>
----
- drivers/bluetooth/btusb.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index da1d297bc090..d1320cab4bf2 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -553,6 +553,8 @@ static const struct usb_device_id quirks_table[] = {
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x13d3, 0x3572), .driver_info = BTUSB_REALTEK |
- 						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x13d3, 0x3591), .driver_info = BTUSB_REALTEK |
-+						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x0489, 0xe125), .driver_info = BTUSB_REALTEK |
- 						     BTUSB_WIDEBAND_SPEECH },
- 
--- 
-2.45.2
-
+> 
+> For this version,
+> 
+> Acked-by: Baoquan He <bhe@redhat.com>
+> 
+>> ---
+>> v5:
+>> - Fix it in common parse_crashkernel() instead of per-arch.
+>> - Add suggested-by.
+>>
+>> v4:
+>> - Update the warn info to align with parse_crashkernel_mem().
+>> - Rebased on the "ARM: Use generic interface to simplify crashkernel
+>>   reservation" patch.
+>> - Also fix for riscv32.
+>> - Update the commit message.
+>>
+>> v3:
+>> - Handle the check in reserve_crashkernel() Baoquan suggested.
+>> - Split x86_32 and arm32.
+>> - Add Suggested-by.
+>> - Drop the wrong fix tag.
+>>
+>> v2:
+>> - Also fix for x86_32.
+>> - Update the fix method.
+>> - Peel off the other two patches.
+>> - Update the commit message.
+>> ---
+>>  kernel/crash_reserve.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
+>> index ad5b3f2c5487..5387269114f6 100644
+>> --- a/kernel/crash_reserve.c
+>> +++ b/kernel/crash_reserve.c
+>> @@ -335,6 +335,9 @@ int __init parse_crashkernel(char *cmdline,
+>>  	if (!*crash_size)
+>>  		ret = -EINVAL;
+>>  
+>> +	if (*crash_size >= system_ram)
+>> +		ret = -EINVAL;
+>> +
+>>  	return ret;
+>>  }
+>>  
+>> -- 
+>> 2.34.1
+>>
+> 
+> 
 
