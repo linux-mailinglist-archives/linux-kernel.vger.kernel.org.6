@@ -1,147 +1,178 @@
-Return-Path: <linux-kernel+bounces-265689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7473C93F474
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:50:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 266AC93F478
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7BE21F21B7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:50:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BA341C21F4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2FD146003;
-	Mon, 29 Jul 2024 11:49:51 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5CA14659B;
+	Mon, 29 Jul 2024 11:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ch5gCmXp";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0yH1hbNV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="r9/A1NFm";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RtZdSplE"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0307213AA26
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02BC13AA26;
+	Mon, 29 Jul 2024 11:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722253791; cv=none; b=pGvVvX8AXoVo3r9bGrSJD+OdSD+iAdNpVuP6C2kC3YNFKgkFh/W2EDJ1pas40SBg430EkyO5zoF+kCoH63xw+DpAc112j/vg1YqeZGFATLwDVYBux6CmiJCrkD2zzPETdt1n7kcG1vG6exP1w1/fKpaSJaZ5uSFiWdh9ztgwomc=
+	t=1722253811; cv=none; b=ODlUk8swkcAibeYxWRCjGJieusODCD5QZPe3owYzN5r4IRWkQmjjRAI4F8PMKF0ckk9mHdwW3ln/yB+JX721UYAdIe9d6Q83jeRF0bSMHDpxPSjm4wWbNAkvTUAQK222Y1zWXU4nFjiI5yfZVLFSSgOnrniPjfcYGlJjy53YYpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722253791; c=relaxed/simple;
-	bh=JLCY5qPvbYBcS+lsUKiVGZQ/CoHUs/uAtUUwHf/j4rA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=BhI7g0nqk59uTKoFen35wX9gpdPWTzVGbKMhBSYwmb6Q0HcKI+eX4Bo07cpUMYGlF8RULi45RZioaM2nRC3KdT7Ze8Tm4F+RxnG2vm/XVPd1lvJOlZZkf3XK+M+BQDvaLZbPsHHrIyq50APsFimxEQi31Ur1rH9JYXQR8O0dsjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3987dace329so64153645ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 04:49:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722253789; x=1722858589;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q5Mu7mu3T+YW/XcQY0fzrTrBn7OZb3PrUgRiRmHWzIY=;
-        b=nvSNysP6a/n25vBzmBNYbaiKpysVQstbq6a90IQIkDy4wRk4BRTfxCq9tJF8IvPKRv
-         4hetTnrKrQefMy+17FBm93jSP6Ij/8vVVVqxmLFcZgq9ZNwqpGS80SEzuDZm3jETPxgp
-         ACvZT4suXp5CSoKNG88oRgTi/9rvpheaAlhokgyTbHHZB23Ua5swjLJElacCkOfNbtFD
-         P6lE6pBTG2vTbYS2DMojbgYsxN/oCvNpZLfLXa58J9V+zRoJUD1DJjaVILv6aeSqwQ+V
-         9xT4cXFlCRQUaZwgopy7eJeB+kM4AC1tqgCR5dsZoaUzrrIYcVTu71AjCov1a0mhziun
-         53JA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAnyWTKAXsGuN/WD5cxYGxCzTWwtkzY8WwbijRVcJqfjy7NqkjHVBMr2jGkcrl8XwTA8AMSboEyoqCXxlX7/cmhrsRRO2XVkGarq1s
-X-Gm-Message-State: AOJu0Yz2AfuFOwqirctCCPxMSm8mYXoqDz8nnQvYwib5DBrOk3OfX5re
-	ZPD+PVzdJKFEQCJTvSK2p+0YJHFzhKMCIbGmMh9YNw7zwolCAw49Clhr4BeUlG3K0+gbk8mKhq3
-	/GwC8YY5IbKarpSNnWd8nUZZvWNYpa+lYi13ad34NnrbIMTIoTj//wRI=
-X-Google-Smtp-Source: AGHT+IFGxT0upbKN5XWc4zf/MbDcatg0y0fagMYFUlu74SiZJHCJfGvuVLxr5RlXVc+Q0ttjdH6Irm3V4AKrIAuyIvHsAps4yROS
+	s=arc-20240116; t=1722253811; c=relaxed/simple;
+	bh=vflESx+RwYGCXjHJ/F0x2Q74Zpg0GCpO+YVUkEqPyR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cFZew7xndz8vE4R2rkVZMMoiYSUuu2S2X0smCeXtaeLoxg45xwDx3OFeAtO35bYVMXNOr2riZM0ScM3mB7wHtm/JnWRzA2RrEibUM6sXtavi/8i0LWbf6/Od5PKIv/KA4BTO4iN4YSVRlS1iABB+EFTcIfzoA82lvXRxFMxWyIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ch5gCmXp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0yH1hbNV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=r9/A1NFm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RtZdSplE; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D56061F790;
+	Mon, 29 Jul 2024 11:50:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722253808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I2SpeZCMfnPe28cYGli29hQINLIW7jIo2yLrFjcKqEc=;
+	b=Ch5gCmXp0sbzN35nOicOEmYbvv34FcULDnzDOTecWXEDES/PLUQ7xeW/XyxbL6q3if05NV
+	i8iXZZi03eGOViMr9XbtoJkbIruJ8NpWB/bCzbWIPKfLraRd2WKL8kRTsrJYRCzWI2GwvB
+	WR97aW/w63+2iywb0VPXZdl07nFadsU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722253808;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I2SpeZCMfnPe28cYGli29hQINLIW7jIo2yLrFjcKqEc=;
+	b=0yH1hbNVAt8kRN9pmVweEW57WmZwugAhbMHhs6EUQ2pl/rWHU6zOrCQ9T6387OzF/HYbnq
+	WHzyhmfd13W4yHAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722253807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I2SpeZCMfnPe28cYGli29hQINLIW7jIo2yLrFjcKqEc=;
+	b=r9/A1NFmlMo3dikoSExETh5Y/c4rWqqmcTOYaulMGBqYRs2Wm6MIJ3Eo7dN3X97XgUSL//
+	vca0/Z5vZu1qc8RzTd9WlergLZ/4RNKIIH8E0STj+3c2n1hXuxi+kTaTC2CLtp/KP4mdcl
+	YyvgtBNlI+gBPS8yAPATRuQt4nPXOkk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722253807;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I2SpeZCMfnPe28cYGli29hQINLIW7jIo2yLrFjcKqEc=;
+	b=RtZdSplEKwVNV3/TwPuwufG9GvNTqujlgLJmhr7YP8xmk42J6iUlPAbezuS0NpJwtP3LFH
+	nzGR2+0qp5u+WLCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CA89F1368A;
+	Mon, 29 Jul 2024 11:50:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CqRyMe+Bp2azNwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 29 Jul 2024 11:50:07 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 7B265A099C; Mon, 29 Jul 2024 13:49:59 +0200 (CEST)
+Date: Mon, 29 Jul 2024 13:49:59 +0200
+From: Jan Kara <jack@suse.cz>
+To: mohitpawar@mitaoe.ac.in
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fixed: fs: file_table_c: Missing blank line warnings and
+ struct declaration improved
+Message-ID: <20240729114959.lxhpjhve7lhpf2jm@quack3>
+References: <linux-fsdevel@vger.kernel.org>
+ <20240727072134.130962-1-mohitpawar@mitaoe.ac.in>
+ <20240727072134.130962-2-mohitpawar@mitaoe.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d15:b0:39a:14c9:3f80 with SMTP id
- e9e14a558f8ab-39aec44de30mr5315645ab.5.1722253789121; Mon, 29 Jul 2024
- 04:49:49 -0700 (PDT)
-Date: Mon, 29 Jul 2024 04:49:49 -0700
-In-Reply-To: <6b40e022-369c-8083-07d4-3036de1d3e65@katalix.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005060f2061e6175b6@google.com>
-Subject: Re: [syzbot] [net?] BUG: unable to handle kernel paging request in net_generic
-From: syzbot <syzbot+6acef9e0a4d1f46c83d4@syzkaller.appspotmail.com>
-To: jchapman@katalix.com
-Cc: davem@davemloft.net, edumazet@google.com, jchapman@katalix.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240727072134.130962-2-mohitpawar@mitaoe.ac.in>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.60 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_NONE(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.60
 
-> On 26/07/2024 16:02, Jakub Kicinski wrote:
->> CC: James [L2TP]
->> 
->> On Thu, 25 Jul 2024 03:37:24 -0700 syzbot wrote:
->>> Hello,
->>>
->>> syzbot found the following issue on:
->>>
->>> HEAD commit:    c912bf709078 Merge remote-tracking branches 'origin/arm64-..
->>> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=1625a15e980000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=79a49b0b9ffd6585
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=6acef9e0a4d1f46c83d4
->>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
->>> userspace arch: arm64
->>>
->>> Unfortunately, I don't have any reproducer for this issue yet.
->>>
->>> Downloadable assets:
->>> disk image: https://storage.googleapis.com/syzbot-assets/fea69a9d153c/disk-c912bf70.raw.xz
->>> vmlinux: https://storage.googleapis.com/syzbot-assets/be06762a72ef/vmlinux-c912bf70.xz
->>> kernel image: https://storage.googleapis.com/syzbot-assets/6c8e58b4215d/Image-c912bf70.gz.xz
->>>
->>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>> Reported-by: syzbot+6acef9e0a4d1f46c83d4@syzkaller.appspotmail.com
->>>
->>> Unable to handle kernel paging request at virtual address dfff800000000257
->>> KASAN: probably user-memory-access in range [0x00000000000012b8-0x00000000000012bf]
->  >> ...
->>> Call trace:
->>>  net_generic+0xd0/0x250 include/net/netns/generic.h:46
->>>  l2tp_pernet net/l2tp/l2tp_core.c:125 [inline]
->>>  l2tp_tunnel_get+0x90/0x464 net/l2tp/l2tp_core.c:207
->>>  l2tp_udp_recv_core net/l2tp/l2tp_core.c:852 [inline]
->>>  l2tp_udp_encap_recv+0x314/0xb3c net/l2tp/l2tp_core.c:933
->>>  udpv6_queue_rcv_one_skb+0x1870/0x1ad4 net/ipv6/udp.c:727
->>>  udpv6_queue_rcv_skb+0x3bc/0x574 net/ipv6/udp.c:789
->>>  udp6_unicast_rcv_skb+0x1cc/0x320 net/ipv6/udp.c:929
->>>  __udp6_lib_rcv+0xbcc/0x1330 net/ipv6/udp.c:1018
->>>  udpv6_rcv+0x88/0x9c net/ipv6/udp.c:1133
->>>  ip6_protocol_deliver_rcu+0x988/0x12a4 net/ipv6/ip6_input.c:438
->>>  ip6_input_finish+0x164/0x298 net/ipv6/ip6_input.c:483
->>> ...
->
-> This crash is the result of a call to net_generic() being unable to 
-> dereference net when handling a received l2tpv2 packet.
->
-> The stack frame indicates that l2tp_udp_recv_core finds that the 
-> packet's tunnel_id does not match the tunnel pointer derived from 
-> sk_user_data of the receiving socket. This can happen when more than one 
-> socket shares the same 5-tuple address. When a tunnel ID mismatch is 
-> detected, l2tp looks up the tunnel using the ID from the packet. It is 
-> this lookup which segfaults in net_generic() when l2tp tries to access 
-> its per-net tunnel list.
->
-> The code implicated by the crash, which added support for aliased 
-> sockets, is no longer in linux-net or net-next. l2tp no longer looks up 
-> tunnels in the datapath; instead it looks up sessions without finding 
-> the parent tunnel first. The commits are:
->
->   * support for aliased sockets was added in 628bc3e5a1be ("l2tp: 
-> Support several sockets with same IP/port quadruple") May 2024.
->
->   * l2tp's receive path was refactored in ff6a2ac23cb0 ("l2tp: refactor 
-> udp recv to lookup to not use sk_user_data") June 2024.
->
-> Is 628bc3e5a1be in any LTS or stable kernel? I didn't find it in 
-> linux-stable.git
->
-> A possible fix is attached.
->
-> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git 
+On Sat 27-07-24 12:51:34, mohitpawar@mitaoe.ac.in wrote:
+> From: Mohit0404 <mohitpawar@mitaoe.ac.in>
+> 
+> Fixed-
+> 	WARNING: Missing a blank line after declarations
+> 	WARNING: Missing a blank line after declarations
+> 	Declaration format: improved struct file declaration format
+> 
+> Signed-off-by: Mohit0404 <mohitpawar@mitaoe.ac.in>
+> ---
+>  fs/file_table.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index ca7843dde56d..306d57623447 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -136,6 +136,7 @@ static int __init init_fs_stat_sysctls(void)
+>  	register_sysctl_init("fs", fs_stat_sysctls);
+>  	if (IS_ENABLED(CONFIG_BINFMT_MISC)) {
+>  		struct ctl_table_header *hdr;
+> +
+>  		hdr = register_sysctl_mount_point("fs/binfmt_misc");
+>  		kmemleak_not_leak(hdr);
+>  	}
+> @@ -383,7 +384,10 @@ EXPORT_SYMBOL_GPL(alloc_file_pseudo_noaccount);
+>  struct file *alloc_file_clone(struct file *base, int flags,
+>  				const struct file_operations *fops)
+>  {
+> -	struct file *f = alloc_file(&base->f_path, flags, fops);
+> +	struct file *f;
+> +
+> +	f = alloc_file(&base->f_path, flags, fops);
+> +
 
-This crash does not have a reproducer. I cannot test it.
+When you separated the function call from the declaration of 'f' this empty
+line is superfluous. Maybe Christian can fix it up in his tree (or maybe he
+already did). Otherwise the patch looks good. Feel free to add:
 
-> for-kernelci
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
