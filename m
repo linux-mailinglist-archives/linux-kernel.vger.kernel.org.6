@@ -1,101 +1,93 @@
-Return-Path: <linux-kernel+bounces-265025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43EE93EB7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 04:43:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF74E93EB86
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 04:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D87591C216B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:43:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7FC7282D47
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1ABD7D3F1;
-	Mon, 29 Jul 2024 02:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9C07F7CA;
+	Mon, 29 Jul 2024 02:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hh2HE0f4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5E17CF39;
-	Mon, 29 Jul 2024 02:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="aeIDMdDG"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4AB1E49E;
+	Mon, 29 Jul 2024 02:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722220984; cv=none; b=Kd+Ndtq7JVOPSo6L+CT2KOgaMQb3r71b2NUGffMrXyTxT/q4Hrn1deOhC7rlYUVw4cEc6BhY6/sMwAhna4WgeuoofaS9eOFeAHB33VT5R/vaouGdhyJIuCcWy1LTqpGTQDTpWY6looUZQzylxxSan1XEHu6PAGJGywLxCDMeguw=
+	t=1722221103; cv=none; b=oqfLJedW+Ts9IKff0mTXOYKh+N0Ra00+nGOHUroMndheSLDpZ1hiaGIVNh0rwMnwsasYPvM3OgLFGKZk/kByT9sBSdiPMOUcuz61wPsntIrRFquSJKsUcG+zw8WRvY8iIjusOnqIuB6dtz3DyhKEmTdLUWfP2B1VerBLlcadYSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722220984; c=relaxed/simple;
-	bh=/J9X9cTXpjkzJ4gmht/FCGx5HSMtviqHuUp+nsPY85Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R2h23Gk6mVTzqq7OhnC8qD1THVmcTklRZB3COw9keiH0iybOQeCqZ3FyUQFadGcuMTvkb6jdNvGLvV/H+yh+cg2tp4/aTZBdZTY2CkBOc0PsiG+zPV6f9TSMr9z4sZVJXIB8Ly6gKUjd6QxUXu5g7YVML8CDg1VA4Hu77k5fHps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hh2HE0f4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77537C116B1;
-	Mon, 29 Jul 2024 02:42:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722220982;
-	bh=/J9X9cTXpjkzJ4gmht/FCGx5HSMtviqHuUp+nsPY85Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hh2HE0f4BHMHgxqCfvVLysy51EM/iwDRQltyxUTYukRmx09SoMv1sxWeHQpvIi4b7
-	 aX25vVS/BlcJS1VoT4Obd3U0SjQ1eYW2Agk8SnCvP1y2B681aO+2cpfhnZQDrJGZh5
-	 7rPLGE+wdpUcfkk80bJjFCC2pH7g7c9hurm/MQsSoAl220Oan7og5QGdstJ6eCDS41
-	 gOodgxQsZZQ+m00Cp4d0gf2XxJ7qKJY2A+bDVpZKsljIQqJKM94rsKBpSkwJZ4gUUz
-	 uN9tPSl0uTYXO/YU3zVkWys1rsAjSqIRFd6DHreulSc0/qMvp0+TUm2qC8tr0nl96J
-	 2kBHw5ozp6dtA==
-Date: Mon, 29 Jul 2024 08:12:55 +0530
-From: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: [PATCH v3 00/25] context_tracking, rcu: Spring cleaning of
- dynticks references
-Message-ID: <20240729024255.GA210579@neeraj.linux>
-References: <20240724144325.3307148-1-vschneid@redhat.com>
- <20240725152212.GA927726@neeraj.linux>
- <xhsmhed7gciye.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1722221103; c=relaxed/simple;
+	bh=/3T3nVZnNNLASnDz6+rykGbtHRDtkaHp0CYR19w3tzI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=I62Zi0ZzNnSvrfSdeCwBlUdfT9GT8bxJTY6xNLI1j5UT2J4hxnICoh45VM/cZuVLHwNMqIn6fl9gvjwT2OTudhNTaSEk64jNc3wX71Fxv0tKrnl2mdVZqetby4kC6HJ8GEuzjEZDs14IC7kKKsFMp1uyDJh6hOxy0QiWXL7oKMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=aeIDMdDG reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=gRgYzzpxI7K2DOYkmRJXnELCFTcBfJpMncVVeIaMHxQ=; b=a
+	eIDMdDG2y9kM20BuLdVns9ymTKesx4xSsropFA6QZJ/OXOqBZ9uMmxBXrxE+l6wy
+	/AJ9dn3xOi0uUbRrKSy/9Cg9UyuA7pHB00FkWpmNnDVMtWpbi/G/0D98HbcxZz+Y
+	O1UR93w06BLAhMmpWYKMKfNZpaXrUR4wGaIx+ocWAM=
+Received: from xavier_qy$163.com ( [59.82.45.102] ) by
+ ajax-webmail-wmsvr-40-128 (Coremail) ; Mon, 29 Jul 2024 10:44:08 +0800
+ (CST)
+Date: Mon, 29 Jul 2024 10:44:08 +0800 (CST)
+From: Xavier  <xavier_qy@163.com>
+To: "Tejun Heo" <tj@kernel.org>, "Waiman Long" <longman@redhat.com>
+Cc: akpm@linux-foundation.org, lizefan.x@bytedance.com, hannes@cmpxchg.org, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	torvalds@linux-foundation.org, mkoutny@suse.com
+Subject: Re:Re: [PATCH-cpuset v11 0/2] Add Union-Find and use it to optimize
+ cpuset
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <ZowyKf3RlMI0q1P-@slm.duckdns.org>
+References: <f9e55eb8-82a8-45f2-a949-1db182e95fc8@redhat.com>
+ <20240704062444.262211-1-xavier_qy@163.com>
+ <e20fe0dc-a3ef-4f55-a991-6efe1a9ddecd@redhat.com>
+ <ZowyKf3RlMI0q1P-@slm.duckdns.org>
+X-CM-CTRLMSGS: JVIT3nBsdXM9MTcyMjIyMTA0OTYwNV9lY2NlYzNiNGQzNWY4MmJlOWZiMDU2N
+ 2IzNzYzMmUzNw==
+X-NTES-SC: AL_Qu2ZAP6Zvkgv7iKdbOkfmk4aj+k+XsG0vfUj34FWOp9wjA7p2y4sYHZ6EX/kyPyJMA2WuyGudB5tyP9mYbJecaUtoyGtxbu3R9B6iAKhZuRM2w==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xhsmhed7gciye.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Message-ID: <5c90d42c.2c03.190fc5fb1c8.Coremail.xavier_qy@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3f5b4AadmnCJlAA--.48941W
+X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiwgQrEGWXv4LGOQAHsK
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Fri, Jul 26, 2024 at 04:43:21PM +0200, Valentin Schneider wrote:
-> On 25/07/24 20:52, Neeraj Upadhyay wrote:
-> > On Wed, Jul 24, 2024 at 04:43:00PM +0200, Valentin Schneider wrote:
-> >> Git info
-> >> ========
-> >>
-> >> The series is based on rcu/next at:
-> >> f395ae346be5 ("Merge branches 'doc.2024.06.06a', 'fixes.2024.06.06a', 'mb.2024.06.03a', 'nocb.2024.06.03a', 'rcu-tasks.2024.06.06a' and 'rcutorture.2024.06.06a' into HEAD")
-> >>
-> >
-> > Hi Valentin,
-> >
-> > I see that this series is based on paulmck/linux-rcu.git next branch,
-> > whereas the RCU tree has moved to shared tree now [1] and the next
-> > branch there is pulled for v6.11 (tag: rcu.2024.07.12a). I get merge
-> > conflicts while applying it. Can you please rebase?
-> >
-> 
-> FYI I've stashed what will be v4 at the below, based on rcu.2024.07.12a:
-> 
-> https://gitlab.com/vschneid/linux.git -b redhat/isolirq/defer/v3-rcu-v4
-
-Thanks!
-
-- Neeraj
-
-> 
+CkhpIFRlanVuLAoKSSBzYXcgb24ga2VybmVsLm9yZyB0aGF0IHY2LjExLXJjMSBoYXMgYmVlbiBy
+ZWxlYXNlZC4gSXQgbWlnaHQgYmUgdGltZSB0byBzdGFydCBtZXJnaW5nCnRoaXMgcGF0Y2guIAoK
+QnkgdGhlIHdheSwgIEkgaGF2ZSBzdWJtaXR0ZWQgYW4gb3B0aW1pemF0aW9uIHBhdGNoIGZvciBS
+VCBncm91cCBzY2hlZHVsaW5nLCBidXQgYWZ0ZXIKdHdvIHJvdW5kcyBvZiBjb21tdW5pY2F0aW9u
+LCBJIGhhdmVuJ3QgcmVjZWl2ZWQgYW55IGZ1cnRoZXIgcmVzcG9uc2VzLiBDb3VsZCB5b3UKcHJv
+dmlkZSBtZSB3aXRoIHNvbWUgYWR2aWNlPwoKaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIw
+MjQwNjI3MTcyMTU2LjIzNTQyMS0xLXhhdmllcl9xeUAxNjMuY29tLwoKVGhhbmtzLgoKCkF0IDIw
+MjQtMDctMDkgMDI6Mzg6MzMsICJUZWp1biBIZW8iIDx0akBrZXJuZWwub3JnPiB3cm90ZToKPk9u
+IFN1biwgSnVsIDA3LCAyMDI0IGF0IDA5OjU5OjU1UE0gLTA0MDAsIFdhaW1hbiBMb25nIHdyb3Rl
+Ogo+PiBUaGUgcGF0Y2ggc2VyaWVzIGxvb2tzIGdvb2QgdG8gbWUuIEhvd2V2ZXIsIGl0IGlzIGEg
+c3RpbGwgbWFqb3IgY2hhbmdlIGluCj4+IHRoZSBkb21haW4gZ2VuZXJhdGlvbiBhbGdvcml0aG0g
+YW5kIGl0IGlzIHRvbyBsYXRlIGZvciB2Ni4xMS4gSSB3b3VsZCBhbHNvCj4+IGxpa2UgaXQgdG8g
+c3BlbmQgbW9yZSB0aW1lIGluIGxpbnV4LW5leHQgYXMgSSBkb24ndCBoYXZlIGEgZ29vZCBzZXQg
+b2YKPj4gY2dyb3VwIHYxIHRlc3QuIEkgd2lsbCBzdXBwb3J0IG1lcmdpbmcgdGhpcyBmb3IgdjYu
+MTIuCj4+IAo+PiBBY2tlZC1ieTogV2FpbWFuIExvbmcgPGxvbmdtYW5AcmVkaGF0LmNvbT4KPgo+
+WGF2aWVyLCBhcyB3ZSdyZSBwcmV0dHkgY2xvc2UgdG8gdGhlIG1lcmdlIHdpbmRvdywgSSB0aGlu
+ayBpdCdkIGJlIGJlc3QgdG8KPmRvIHRoaXMgaW4gdGhlIG5leHQgbWVyZ2Ugd2luZG93IGFzIFdh
+aW1hbiBzYWlkLiBDYW4geW91IHBsZWFzZSBwaW5nIG1lIG9uY2UKPnY2LjExLXJjMSBpcyBjdXQ/
+IEknbGwgYXBwbHkgdGhlIHR3byBwYXRjaGVzIG9uIGNncm91cC9mb3ItNi4xMi4KPgoKCgotLQpC
+ZXN0IFJlZ2FyZHMsClhhdmllcgo=
 
