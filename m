@@ -1,64 +1,54 @@
-Return-Path: <linux-kernel+bounces-265055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2011E93EBF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 05:44:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D26993EC00
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 05:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DE4D1C21871
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:44:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD73B1C215B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0E380C0C;
-	Mon, 29 Jul 2024 03:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A16180BFC;
+	Mon, 29 Jul 2024 03:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MuXV5vDz"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJEQu2mF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A779081723
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 03:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C489964A98;
+	Mon, 29 Jul 2024 03:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722224637; cv=none; b=Qm688bcoFaw14BHXXpelhKT6kVqGorokSjwLVEmzYslcanjSNiaJNWP6DqI1pa9mUzwNjUdVgRE2xvQ6sRJcNZAUDWt1mlAbdEAUIWpt2H7t+eSXQfojrZAirr6lNByzMTXfjvQWZtr5ZO4jSz26bsyMRCHVKupo/JfvdtnR9YE=
+	t=1722224865; cv=none; b=EdZrkjuySQWolfPnJ13aBV0czcpkVN4hLdj9MHLhLAV12JoqNYNJlK7mcu/zgftOAtkuEWvowfWONLHzswu3fOrBI0e5n/2m37FHj3LjGiAPYAxfYY8Cbh7pASFBl+0fp/95/cbgF65qBNeciar4PZVvfMP3CUGMn7I2hAgZoxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722224637; c=relaxed/simple;
-	bh=G58qs7uHqGpCN0Kip3Kda1+HdZmwd66TMVkqk4RIqLs=;
+	s=arc-20240116; t=1722224865; c=relaxed/simple;
+	bh=oJ0IQ1Ze9SUqhUekQMR5jj/3oORn2b6FJ8uTQJ0K0Ug=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dZRhMoSoLWE4RoVkPi1Mo1UwDXdW/pTiVJ4zit5Qd4cPIctn6qzPftObPJjczEN0hOPqDTEZMaHKaypQVnVbfGieAY8u7Xr0Lpgfa3CzPHP9bhhmNdmCppmanSvs2aX6ealEB72txQV9W8WWOmeYn3GIUVZapYiDqgsJEL4P70A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MuXV5vDz; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=F8hJQKEke5IRYxPjZGrirscb0oTcHFcMOJmtf/7z7i4=; b=MuXV5vDzAruUH4R48u/nmPpAN0
-	SVRXxX8B8kmAgoswA015IyX2l7Ffi/VbGKTBs1QzYyMjxV3p1rtiymARbWl7l2VYGW7wgw/8E5UHO
-	yuMWp6rz0tfY/YS3g5CGyDg+k1jafe1aGYlQbPHo5ufRoJZ1f66yaUjt1AzoZumyzsSYzt4bT0Lgu
-	CkAoWBrh6fDJry2ftDvbzC/mUT0bQk+rx7zcbBpGSvQgvaanTlqHheldnNf8Kk6sEaG2aOliFxSmq
-	k/BbrEkxEy5xkONV8EUoibqBVLQkIvy02g6U8BhB+ARTu/weIBWBwBgH1D/1IOLRAwQfIxZP8DrKa
-	zzt30kBA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sYHIQ-0000000D7e1-1sbT;
-	Mon, 29 Jul 2024 03:43:38 +0000
-Date: Mon, 29 Jul 2024 04:43:38 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Barry Song <21cnbao@gmail.com>
-Cc: yosryahmed@google.com, akpm@linux-foundation.org,
-	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com,
-	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com,
-	kasong@tencent.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, mhocko@suse.com, minchan@kernel.org,
-	nphamcs@gmail.com, ryan.roberts@arm.com, senozhatsky@chromium.org,
-	shakeel.butt@linux.dev, shy828301@gmail.com, surenb@google.com,
-	v-songbaohua@oppo.com, xiang@kernel.org, ying.huang@intel.com
-Subject: Re: [PATCH v5 2/4] mm: Introduce
- mem_cgroup_swapin_uncharge_swap_nr() helper for large folios swap-in
-Message-ID: <ZqcP6ucX6yHA0l9i@casper.infradead.org>
-References: <CAJD7tkbho1a6pwZq82aHBa8BpXijqVopde3k-RnageOtdO32pw@mail.gmail.com>
- <20240729020222.36389-1-21cnbao@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fgUyf8cKpgI1ydr9f1ZW4pDrYFCIlwODow/0LUDiP+PRRKlwUhraDnL0Gv3R5QDmizXJ7/ask8a7BQo6looI5vrHWJ3vv6ZJMBjW5OmDAHVOkC7iNFgLgmut3xHqTufH6ZSgL7Yd5heOylc4aIAOK0Nf4vOYFfk2ZRugEkscQaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJEQu2mF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 712D6C32786;
+	Mon, 29 Jul 2024 03:47:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722224865;
+	bh=oJ0IQ1Ze9SUqhUekQMR5jj/3oORn2b6FJ8uTQJ0K0Ug=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YJEQu2mFbQPWORhV6zPtXyj4R4DKDF2KeYwXpMIU3eFjHChIPTcOAtFzbblulG55Y
+	 y8gsOUeBhSf9cr4ZUg2x/dcG7iSopUxo183yH79SeRbWgcZgEvW7cutrJR0CkgtHZ0
+	 ULse3VL2HrOfwjhPYyEljkBZOCctQuZ6uFGZSW8lYMsSuChyixa5GiQdMsCGi/8/T1
+	 whFdxRHIy1nbz5RD/3YqL0J8tZRXmwva4nFkGXeCph79FRIYy8bLHtZ5AvPhk/rDni
+	 8CPIDEoYH8xk1IRb/nS5phCvZnMx6vgka2IZfH6sK8kjzkqAyULhnn0hyyuTHi+3yj
+	 MD7zVCUZr9ilw==
+Date: Mon, 29 Jul 2024 03:47:42 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Patryk Duda <patrykd@google.com>
+Cc: Guenter Roeck <groeck@chromium.org>, Benson Leung <bleung@chromium.org>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] platform/chrome: cros_ec_proto: Lock device when
+ updating MKBP version
+Message-ID: <ZqcQ3rjY6Wu4lU6t@google.com>
+References: <20240725175714.1769080-1-patrykd@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,20 +57,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240729020222.36389-1-21cnbao@gmail.com>
+In-Reply-To: <20240725175714.1769080-1-patrykd@google.com>
 
-On Mon, Jul 29, 2024 at 02:02:22PM +1200, Barry Song wrote:
-> -void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry);
-> +
-> +void mem_cgroup_swapin_uncharge_swap_nr(swp_entry_t entry, unsigned int nr_pages);
-[...]
-> +static inline void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry)
-> +{
-> +	mem_cgroup_swapin_uncharge_swap_nr(entry, 1);
-> +}
+On Thu, Jul 25, 2024 at 05:57:13PM +0000, Patryk Duda wrote:
+> The cros_ec_get_host_command_version_mask() function requires that the
+> caller must have ec_dev->lock mutex before calling it. This requirement
+> was not met and as a result it was possible that two commands were sent
+> to the device at the same time.
 
-There are only two callers of mem_cgroup_swapin_uncharge_swap!  Just
-add an argument to mem_cgroup_swapin_uncharge_swap() and change the two
-callers.  It would be _less_ code than this extra wrapper, and certainly
-less confusing.
+To clarify:
+- What would happen if multiple cros_ec_get_host_command_version_mask() calls
+  at the same time?
+- What are the callees?  I'm trying to understand the source of parallelism.
+
+Also, the patch also needs an unlock at [1].
+
+[1]: https://elixir.bootlin.com/linux/v6.10/source/drivers/platform/chrome/cros_ec_proto.c#L819
+
+> The problem was observed while using UART backend which doesn't use any
+> additional locks, unlike SPI backend which locks the controller until
+> response is received.
+
+Is it a general issue if multiple commands send to EC at a time?  If yes, it
+should serialize that in the UART transportation.
 
