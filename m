@@ -1,199 +1,135 @@
-Return-Path: <linux-kernel+bounces-265940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 943F293F7F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:30:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C338793F800
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C7052829EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:30:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE6351C20D10
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A256E15A87C;
-	Mon, 29 Jul 2024 14:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAC415B986;
+	Mon, 29 Jul 2024 14:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R4BN3y01"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="q9r9NFG5"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1702E158DA7
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4D618FDCF
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722262983; cv=none; b=tX38Mfndp/bE5HhlyA1DpQWPSs7sux5zuyx/p3Zts50VIPPCukBndaotOP9M7HjNghVIjMOIknnnZ70z0lVpHmHJV6vxvF4F1bd3V0eRJ8o1TD/wKt8naYtOSdZTd9TMkvWQZrPY7edMS2TNXEeEvzwqNWNv9nExG+MtvJ6XUNU=
+	t=1722262989; cv=none; b=JjYhupCi9suoDqJ6I2GiYYgRNeTzXtKOR5uVhvqq7fwbQsuCSf2rqCbqd9NhuZ0yvggJmxqomR1JlQlE7fI46clBAfFKxv2e3IUmQ2EoMX/6Fay5tc/ONNd/J+AixOx27RtIEwXTOjv7Pg1jciOXSkgEKhdQDfJ/TjaZzyXsw0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722262983; c=relaxed/simple;
-	bh=RX0RqNRyzzyoW/MQJOHkbfIcM2eu3kixAI50jtAtAag=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZvRKwWFtJPDbJO0lDyTT0270q/BxZY56ceo8o6PZ8olhMZOscT9HOTCO32ci6f3vJiV1IyOLBq29Bbi98nVP4bEH/7Qy3Vl7Jsmyg88FWVcBa2wrI/zvi/AWdsiyq9oechlB4lkygeRN0yLhwMhYihSkaGx7fKOWtTP+P2hQa/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R4BN3y01; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6506bfeaf64so58966507b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:23:01 -0700 (PDT)
+	s=arc-20240116; t=1722262989; c=relaxed/simple;
+	bh=+FndQvliZxQtM6btRXMk7tSQbXJiUxwffq+ZuJfIpC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ayPhB/o3skWjH4WhA2RupPtVK3R7n87obLumSVrW3xWGUkvNGpRGW42QvkIPXZe6Z56iZALlofMXDthTsuiR3lp4JDR+rCV/FjKl2NLX0z+w9JXF/mFnI1czpm3n7y/M4NTb2PjMlQeuF/PF3vzhTb6yoIfNMiK72sROKmLa+6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=q9r9NFG5; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-70936061d0dso1892738a34.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:23:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722262981; x=1722867781; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vfulPrfSicc+WNyOjayW5unzLu2GM9o7n+2trJ/3FuM=;
-        b=R4BN3y01xyviaKYeAozT1p5Sqw70ZlC1CAGtJjkGJFFvYUpvL7+4FRa66frWqnNx3Y
-         ppSRqhV0gHWI+6xirfEZC/hwSTrYo304bnMYxput6ExvKw+c1QkUn1u3x6h/K8wiUYsq
-         6mD/crPAosYYakOChrpDv5VHlY9TRuHelZ+Bs2vKrNuM2CHq6aApejf6uVIPvA0zgVui
-         JJzdhNOc9z13pGpEqLLWUo2esZ6XkK37jA7EVUCLZMR8ILaybBgrvPUFxzb++Imbgqcr
-         XTYG/ojB4qh8WmvfyQIVjWlds02ZEOKieMoAspZcIUu/cyprLIxkxQvwsojcyKZ73SmQ
-         iuKw==
+        d=gourry.net; s=google; t=1722262986; x=1722867786; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4LXNIPi3GQ0yATRS1VEygNKstEkvEbJ00GT3K3Vkj5U=;
+        b=q9r9NFG54XuP1iqPBjNMcStHic65LrkbQUuLwXhqjU/Y4vqfFgLK6oQt5hoREEqtkK
+         1vCZ+7lIT0wPzFvYQKH1trE9nlcd9ApcdWW127AMqJNCUyZh6foJYFpzQLZd8W0Rng0n
+         O7AdUFH98U0y1Db9FNGNzm/IBVf73xv0rBlhKRJcn7pjXI4jLdtbyy2z2kEZ8AYiymww
+         Uce/Z7X15pFCFgeTFjlGLHh0w0osXsUt9LNglQFIqwLTQmhaISrQ/vJAMiBtFaXZ28C8
+         8Vhi+UnTd1RKOykm7Xawi/uVUqMEqQXBQjDHKYWk45/yKq01OHeuBfc9WMT9WRjzu6BA
+         NnUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722262981; x=1722867781;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vfulPrfSicc+WNyOjayW5unzLu2GM9o7n+2trJ/3FuM=;
-        b=lnwoYIuraKmoWcw3dH8gzkcvEpbJF1vIlkKrmNBjKMVFt64muorblvllXTv5IbVztg
-         eQpnSnK0iouwj3pIk3GSO8kUu4H/rBrJSlTQiMHeJ6dbOYs0EujXbJ3tFshkLcHBMxi+
-         +r8p3iC/zvjyfBlEvSz2Rm9FOniYIJQMqpxsOng8DD1/JmM1CBq6312KWWz/7Pv+DFcd
-         GnFFhwSftauuUijtKibjKeRyT66TxeGOuoHllr4vQZmu/6Sys6KO/XmQ0t/dODE99Gsf
-         z6J2FYMUvFD15+AoYBjdNK/Qx13Krv5iHZB8AGdef8AzBGwLZgpp2LQYs24gPyorXhcG
-         tjrw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9uLcO5hKDt9Zn8TO9ZMww6dPEiyhp0DFR0nnFNcAmMyIYwbvfVsCKqT+YvhG2f+W3tvZehcmrlElHCO9W3kfmpTUbeHprh7UIgF5U
-X-Gm-Message-State: AOJu0YzPQhNAkC7BR93f6WJh6A/X4VK2IGV6pCLfYZF2WDYPAN+vUVGX
-	Ayqpp5OoYLYPwsv3vV/8vVbaGravI1ahzhQL5Br2wAC/bdV4wT1I92efQwBMZjiTnWnoCTgDLPQ
-	qk7Gd3hh/sspAIw==
-X-Google-Smtp-Source: AGHT+IG1bISzjta4IGanTLnwN52d5QDMD5IDSQZWzKIOirqZWoAEkezelFYmM4/kNamX3YXHmq9SDd5H7LEll/E=
-X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
- (user=aliceryhl job=sendgmr) by 2002:a81:b049:0:b0:669:f244:2ae5 with SMTP id
- 00721157ae682-67a0625130amr1706417b3.3.1722262981080; Mon, 29 Jul 2024
- 07:23:01 -0700 (PDT)
-Date: Mon, 29 Jul 2024 14:22:50 +0000
-In-Reply-To: <20240729-shadow-call-stack-v4-0-2a664b082ea4@google.com>
+        d=1e100.net; s=20230601; t=1722262986; x=1722867786;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4LXNIPi3GQ0yATRS1VEygNKstEkvEbJ00GT3K3Vkj5U=;
+        b=Rc4koI/vk2LK2jFCv/u5IO6JR+9wt2UAterecgd6t0ZP6OgrA7/WD/VurKOXEqjIuw
+         MzkouC8fU3WCFLM1Xvwv5XBP2w8MgneauG2Tahhe01qJTj3/FbYdb+BloMnJN5I6geLH
+         RrnAjGbulBBoyjzKWIvLY9bTgLf5UsAxd/plTNtcq2u+a7iPt6MTlJNcQUdeVvj4KR8q
+         8NDyHuHOHZXJrTkrFAZSFi/ymEAHqX5Jwfr+VNtbF0B1iUhiYvTkMdeVz7QCuw36HpKS
+         MksPtOsVYLMCGscClnTDJgP7NUVjq+VmukYc5Xb+5x5aXeCvuSbnTcDmp1r91s4POEIF
+         TmLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdnRJZ+HLTnA8rgXlGtMnXNOVBA/JUh7SSU8Uh3TR0lxANTKc401pmIQUZ7eXAj800XYHERP/0l/inCohHg2zP+FEbZdawaz0IifUR
+X-Gm-Message-State: AOJu0YwnDCJxydj0OBXK4lOjYP1gtg9OT3NpkaL7Kzph9HONtUQcIPAU
+	marv4RHIhZHFrYj+y4uB5xJB19BqgeMBRhXg0yA+mE4VGk5X4RQK0hizLLpbER/cF/pnyxaqLxY
+	yeXw=
+X-Google-Smtp-Source: AGHT+IE4Uc9GN+gfcvZXZsg6oZ02yCqpJXlwIS5AqIAosbUfh5gO+aYR2YPZRWJiMcCTq/IvQzqNNg==
+X-Received: by 2002:a05:6830:730d:b0:703:6ec7:64e1 with SMTP id 46e09a7af769-70940ba1bd2mr6431952a34.0.1722262986486;
+        Mon, 29 Jul 2024 07:23:06 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1fa4462adsm39342685a.100.2024.07.29.07.23.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 07:23:06 -0700 (PDT)
+Date: Mon, 29 Jul 2024 10:22:52 -0400
+From: Gregory Price <gourry@gourry.net>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, dave.jiang@intel.com,
+	Jonathan.Cameron@huawei.com, horenchuang@bytedance.com,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	dan.j.williams@intel.com, lenb@kernel.org
+Subject: Re: [PATCH] acpi/hmat,mm/memtier: always register hmat adist
+ calculation callback
+Message-ID: <ZqelvPwM2MIG26wY@PC2K9PVX.TheFacebook.com>
+References: <20240726215548.10653-1-gourry@gourry.net>
+ <87ttg91046.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240729-shadow-call-stack-v4-0-2a664b082ea4@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3399; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=RX0RqNRyzzyoW/MQJOHkbfIcM2eu3kixAI50jtAtAag=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmp6W7wE19VEoXfd9d7Bo4mIIcb77rX+tm389IC
- TcKknj6Ye+JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZqeluwAKCRAEWL7uWMY5
- RlJJD/4zoQUSAdVgq/uz58fBHA6iQGG/4ockLdhyAueNkNmadzLCyF3t5un1s4DMvdqLDICjJ47
- GYg45pLRUiYN0OWG9rrx2S/a+EYStltg9aOvqtLgesvSUUQk2SHs7fpKMn2+61Yo56qFPSl26ju
- cIeGWunfkKTkqLjZ2Xv4szXNPTRlkGbBRWIXnzKWgRxypvl+cyir6qeDXivzfzrJkt9/gYrvCnR
- UzFjwXgAyzjZCxA9elABsZJ5N1Xnzmr7lJ7DhZtFqlaYbYPGm7mDTMa0LqM7wJvdkLGZ6kveNMD
- FAqqcMmk1T2+R04mdloAaRlKgHNJmSBJNtCxwPEnsVDKAJxFVlWJ3yZeIN0vB+h5uSoqWRaL1y6
- GywKJabv0aPZxJw6uN+BDNUtJuEFp9+XLwOYGbVwSLyOYTuWQIJCFFSyTcLh65ky69IDa2tWUDX
- XJtQVnrXJ8wZDPkU3fhRnVM7r/qUmGI34eMdb/wo4oVyvnYELUf8URPR/xkjfgWUXamVrK8ETSH
- 2cH+V2Q966dMhrfSS3repxrr0I9rlb5A/Cl1EoLJTwSVzkmVOZLSsrZoHnsscBvvHY30W54QgsX
- E/91A1f6yI4iAfciIB4xrpegIOF7hZKp8xbyCBpewqmR0Np4K+GMNryX14r29XQA/rvwQEqcg5X NNBGNzVRCXiJ+Zg==
-X-Mailer: b4 0.13-dev-26615
-Message-ID: <20240729-shadow-call-stack-v4-2-2a664b082ea4@google.com>
-Subject: [PATCH v4 2/2] rust: support for shadow call stack sanitizer
-From: Alice Ryhl <aliceryhl@google.com>
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Conor Dooley <conor@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Mark Brown <broonie@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Valentin Obst <kernel@valentinobst.de>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, rust-for-linux@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ttg91046.fsf@yhuang6-desk2.ccr.corp.intel.com>
 
-To use the shadow call stack sanitizer, you must pass special flags:
+On Mon, Jul 29, 2024 at 09:02:33AM +0800, Huang, Ying wrote:
+> Gregory Price <gourry@gourry.net> writes:
+> 
+> > In the event that hmat data is not available for the DRAM tier,
+> > or if it is invalid (bandwidth or latency is 0), we can still register
+> > a callback to calculate the abstract distance for non-cpu nodes
+> > and simply assign it a different tier manually.
+> >
+> > In the case where DRAM HMAT values are missing or not sane we
+> > manually assign adist=(MEMTIER_ADISTANCE_DRAM + MEMTIER_CHUNK_SIZE).
+> >
+> > If the HMAT data for the non-cpu tier is invalid (e.g. bw = 0), we
+> > cannot reasonable determine where to place the tier, so it will default
+> > to MEMTIER_ADISTANCE_DRAM (which is the existing behavior).
+> 
+> Why do we need this?  Do you have machines with broken HMAT table?  Can
+> you ask the vendor to fix the HMAT table?
+>
 
-* On arm64, you must pass -ffixed-x18 to your compiler.
-* On riscv, you must pass --no-relax-gp to your linker.
+It's a little unclear from the ACPI specification whether HMAT is
+technically optional or not (given that the kernel handles missing HMAT
+gracefully, it certainly seems optional). In one scenario I have seen
+incorrect data, and in another scenario I have seen the HMAT omitted
+entirely. In another scenario I have seen the HMAT-SLLBI omitted while
+the CDAT is present.
 
-These requirements also apply to Rust code. When using Rust on arm64,
-you must pass the -Zfixed-x18 flag to rustc, which has the same effect
-as the -ffixed-x18 flag does for C code. The -Zfixed-x18 flag requires
-rustc version 1.80.0 or greater.
+In all scenarios the result is the same: all nodes in the same tier.
 
-There is no need to pass any flags to rustc on riscv as only the linker
-requires additional flags on this platform.
 
-On older versions of Rust, it is still possible to use shadow call stack
-by passing -Ctarget-feature=+reserve-x18 instead of -Zfixed-x18.
-However, this flag emits a warning during the build, so this patch does
-not add support for using it.
+The HMAT is explicitly described as "A hint" in the ACPI spec.
 
-Currently, the compiler thinks that the aarch64-unknown-none target
-doesn't support -Zsanitizer=shadow-call-stack, so the build will fail if
-you enable shadow call stack in non-dynamic mode. See [1] for the
-relevant feature request. To avoid this compilation failure, Kconfig is
-set up to reject such configurations.
+ACPI 5.2.28.1 HMAT Overview
 
-The `depends on` clause is placed on `config RUST` to avoid a situation
-where enabling Rust silently turns off the sanitizer. Instead, turning
-on the sanitizer results in Rust being disabled. We generally do not
-want changes to CONFIG_RUST to result in any mitigations being changed
-or turned off.
+"The software is expected to use this information as a hint for
+optimization, or when the system has heterogeneous memory"
 
-Link: https://github.com/rust-lang/rust/issues/121972 [1]
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- Makefile            | 1 +
- arch/arm64/Makefile | 3 +++
- init/Kconfig        | 2 +-
- 3 files changed, 5 insertions(+), 1 deletion(-)
+If something is "a hint", then it should not be used prescriptively.
 
-diff --git a/Makefile b/Makefile
-index 2b5f9f098b6f..66daca7a9b57 100644
---- a/Makefile
-+++ b/Makefile
-@@ -928,6 +928,7 @@ ifdef CONFIG_SHADOW_CALL_STACK
- ifndef CONFIG_DYNAMIC_SCS
- CC_FLAGS_SCS	:= -fsanitize=shadow-call-stack
- KBUILD_CFLAGS	+= $(CC_FLAGS_SCS)
-+KBUILD_RUSTFLAGS += -Zsanitizer=shadow-call-stack
- endif
- export CC_FLAGS_SCS
- endif
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index f6bc3da1ef11..b058c4803efb 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -57,9 +57,11 @@ KBUILD_AFLAGS	+= $(call cc-option,-mabi=lp64)
- ifneq ($(CONFIG_UNWIND_TABLES),y)
- KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables -fno-unwind-tables
- KBUILD_AFLAGS	+= -fno-asynchronous-unwind-tables -fno-unwind-tables
-+KBUILD_RUSTFLAGS += -Cforce-unwind-tables=n
- else
- KBUILD_CFLAGS	+= -fasynchronous-unwind-tables
- KBUILD_AFLAGS	+= -fasynchronous-unwind-tables
-+KBUILD_RUSTFLAGS += -Cforce-unwind-tables=y -Zuse-sync-unwind=n
- endif
- 
- ifeq ($(CONFIG_STACKPROTECTOR_PER_TASK),y)
-@@ -114,6 +116,7 @@ endif
- 
- ifeq ($(CONFIG_SHADOW_CALL_STACK), y)
- KBUILD_CFLAGS	+= -ffixed-x18
-+KBUILD_RUSTFLAGS += -Zfixed-x18
- endif
- 
- ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
-diff --git a/init/Kconfig b/init/Kconfig
-index 914edf51b068..103957466cee 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1909,7 +1909,7 @@ config RUST
- 	depends on !MODVERSIONS
- 	depends on !GCC_PLUGINS
- 	depends on !RANDSTRUCT
--	depends on !SHADOW_CALL_STACK
-+	depends on !SHADOW_CALL_STACK || RUSTC_VERSION >= 108000 && UNWIND_PATCH_PAC_INTO_SCS
- 	depends on !DEBUG_INFO_BTF || PAHOLE_HAS_LANG_EXCLUDE
- 	help
- 	  Enables Rust support in the kernel.
+Right now HMAT appears to be used prescriptively, this despite the fact
+that there was a clear intent to separate CPU-nodes and non-CPU-nodes in
+the memory-tier code. So this patch simply realizes this intent when the
+hints are not very reasonable.
 
--- 
-2.46.0.rc1.232.g9752f9e123-goog
-
+~Gregory
 
