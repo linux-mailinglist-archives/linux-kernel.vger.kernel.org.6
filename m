@@ -1,137 +1,126 @@
-Return-Path: <linux-kernel+bounces-265793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E30693F606
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:00:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 593DE93F610
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A0A4B22DF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:00:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E616FB23378
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170B314D29C;
-	Mon, 29 Jul 2024 13:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F44914901B;
+	Mon, 29 Jul 2024 13:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="aiBfOjPZ"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="1GSkuUcM"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81164149DEA
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9691DFCF;
+	Mon, 29 Jul 2024 13:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722258005; cv=none; b=ZELMDd+CNw/nOJRZiBuyOqukxQr3Hxl1OY84+m9T/8fUk2wRMXkuAwcR8rsC485h8xNC+KPYZ8EhxLKPqbNut728+zAF23U1JrQg6jePv+rDHYKENAvUULsxELiVEIB4B0BJ0Cw2HXI198BJ7c9/xkQhL9VWiNaVSztrZWZE0g4=
+	t=1722258095; cv=none; b=LGMeNvUqNnjRWDaMICGzivPB+kD60QQD2jCMZZ1UMS8d7C8EaK8D8Zw1VyiKg12Hy2nDAz+OOlX94do2Qm6swrRNAno1QqySj4dfwvbiG/KYVkwhDpbEUV97cHvbQB4tXX1hOuP7qUCHHKSlslCrmMU6NC7+PtXTyVn+JuPkv5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722258005; c=relaxed/simple;
-	bh=iyhMtCj+2ug3HhoQzLL3MI2M8A3X8GrsNcqfvZ9UIiU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YR7Pex2Uj5LwKImbT7F8j83cJjfiDJx6JW7tv9WhQUE4xxqL5FtVGGBayc1NDHJJD2MHbZTLyFRO8+u8O/d2bCdHOv9eWBtvZ8oNGRYwFkDnB+VJ8FaurGbE1AQz7Eq/vZR5Z8aSsY6rVgt0JwMX2fycrS0z4juPJhKbqFV71Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=aiBfOjPZ; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52efc89dbedso4063139e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:00:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1722258002; x=1722862802; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iyhMtCj+2ug3HhoQzLL3MI2M8A3X8GrsNcqfvZ9UIiU=;
-        b=aiBfOjPZZZoN1/w5Ki2V4y92xSRQk0g7P0kaTqP1/H1gsmaUOILHtxVJVF+TjB+Kyc
-         crWkRASabvimGzeXhjVUbrNCdec93ls+swwatfXbCUZYhVqHpwZPOgt0GqHlNl5/FOl9
-         F0TkwwRoqVqkhB7dZTDEm0HJtGW95P77KQcY8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722258002; x=1722862802;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iyhMtCj+2ug3HhoQzLL3MI2M8A3X8GrsNcqfvZ9UIiU=;
-        b=OSbHPUyWpBZKo5SHmoihdwsmZqc2/AcfgvrwilHWI74IEc2546uZ9qaDkqnNv5kms8
-         Xm7hkElaib3MqYs7QHaNXvs3iugJY9yWJoSO5WokfjTS642lJI6ozfNO8/TOhUsFI1f2
-         J6Ndpktmjzb4vSm2fvidyuyC0g5P4cx9q533ojlpE4aXVSXN3mO6kwSqraG5eR+KCC4r
-         PqW/aV4V1jp+T/wRWk6wnzEKrBhlZMu1Yb8yqQkd1/nplOs3r2Iyadr0CBM0/6RkSPvN
-         6+yAurfllKoUHR8Qp+HlA0tjzZ4xGlKoautanL8pWUk10sA7ODE+bhni1In/3B2SfiCM
-         eApw==
-X-Gm-Message-State: AOJu0Yx+4Sd7JP2xeORPth5tclDG/TOxgV3QC9mNg/zl6IeYtDBGuCb9
-	L8iTT9GKXF7Kh+eP7u+D2L17nYAjli6uvrtBm3aNDpwFWguJYLQSNFm4/MhctMvuGJlaj8wwZlV
-	nrBtxi3cP+Dw7f7CZ8a/BA7E2ClIAwpVWx07x
-X-Google-Smtp-Source: AGHT+IErnIW9gMUrEfSZ991mf9g4mdjcR9dgoWOZFwNbvCiRLPFhTkxLVHvFqQj4f+dAKocJUgn+Hxy2jFfqs0TTSH0=
-X-Received: by 2002:a05:6512:487:b0:52c:deba:7e6e with SMTP id
- 2adb3069b0e04-5309b2804f1mr5059532e87.29.1722258001356; Mon, 29 Jul 2024
- 06:00:01 -0700 (PDT)
+	s=arc-20240116; t=1722258095; c=relaxed/simple;
+	bh=lyMQxeeEfari71/LaXTaod34URVqznPpnYytJZ6gTr0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bfAPWDRQpOVFW2mEdObYXU8jOpLkrhfN49Qrk/CmHpnL3GlMM434p1cdU6Zpz3YPjCP5jg62JMsO3rNHMk1kYuwXjdRkM0c9H76MyS71URzMacDAvXOPlSprLwRWflzfxAO6o/QCxp5uPKkIs/3BPTreUqR1bJ8+FTeQw3h+Q9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=1GSkuUcM; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=dCor073xQJijp8I3RK3+ty7FjGp2GGPrVnPyb5mRIYg=; b=1GSkuUcMy+MnQlrUUZPZiL0Ly1
+	wOJOpFW9Dt0n42j9nsc0LVGkc3G+6GPbXxx+ZDe53eeqx673xKGuCnzOrTx4epdFvaYwzMsxkTSRR
+	gLtYX28JoCoPRJ87N0XRwsvLOCpF6My7Oj2j7wen56JhKivm+CKuH/au6IXd/PC6kmGAzWZRBSz5r
+	ozwMLyEdlI8UkrK5WHK8xSjQRp9/SQvCCUzUGatWht/0O3UNm5r29E2wr3+ccshTiNNn/Ec79Nrfl
+	iV9EgtQoX1Tj0DeCd/h9othUdgE6IGfc9O8kKzYQh4O/c4Kcvoqru5wAqHlb2WW2nGzbFeMChzKlR
+	f0BFD+Mw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46248)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sYPzP-0004Lu-1R;
+	Mon, 29 Jul 2024 14:00:35 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sYPzQ-0004L5-68; Mon, 29 Jul 2024 14:00:36 +0100
+Date: Mon, 29 Jul 2024 14:00:36 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 6/6] net: mvpp2: use device_for_each_child_node() to
+ access device child nodes
+Message-ID: <ZqeSdMMOk+GbVzHj@shell.armlinux.org.uk>
+References: <20240706-device_for_each_child_node-available-v1-0-8a3f7615e41c@gmail.com>
+ <20240706-device_for_each_child_node-available-v1-6-8a3f7615e41c@gmail.com>
+ <ZqdRgDkK1PzoI2Pf@shell.armlinux.org.uk>
+ <aa440f7c-0ccc-443c-8435-50c864edd1c2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725201517.3c52e4b0@gandalf.local.home> <CAD2QZ9b7=Y_x6o6R2UGwDRCky522A0fbiX_BxrY9w2LPyd=0sw@mail.gmail.com>
- <20240726120337.40e77833@rorschach.local.home>
-In-Reply-To: <20240726120337.40e77833@rorschach.local.home>
-From: Ajay Kaher <ajay.kaher@broadcom.com>
-Date: Mon, 29 Jul 2024 18:29:49 +0530
-Message-ID: <CAD2QZ9aFHOTLSryw88PKdvXBQaug9di=CDQ9KjPBhuOTNhjxTQ@mail.gmail.com>
-Subject: Re: [PATCH] tracing: Have format file honor EVENT_FILE_FL_FREED
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Mathias Krause <minipli@grsecurity.net>, 
-	=?UTF-8?B?SWxra2EgTmF1bGFww6TDpA==?= <digirigawa@gmail.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	regressions@leemhuis.info, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Beau Belgrave <beaub@linux.microsoft.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Alexey Makhalov <alexey.makhalov@broadcom.com>, 
-	Vasavi Sirnapalli <vasavi.sirnapalli@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aa440f7c-0ccc-443c-8435-50c864edd1c2@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, Jul 26, 2024 at 9:33=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
->
-> On Fri, 26 Jul 2024 18:00:18 +0530
-> Ajay Kaher <ajay.kaher@broadcom.com> wrote:
->
-> > Some doubt:
-> > Because of the same race condition, it may happen that kmem_cache_free(=
-file)
-> > was executed while f_start() is waiting to get event_mutex. Once
-> > f_start() acquires
-> > event_mutex, it will access the *file which points to the freed cache.
-> > I am assuming in this case KASAN will not show anything as *file
-> > belongs to cache.
->
-> No, the file is freed by the callback from eventfs when the last referenc=
-e
-> to the file is released. That is, there's no more references to the files
-> (nothing has it opened). As this code is only called when the file is
-> opened, it will not race with the freeing of the descriptor.
->
-> See event_create_dir(), it registers the dynamically created directory
-> and files. It will also do call event_file_get() that adds a reference
-> on this file/directory descriptor. It also registers the
-> "event_release" function to be called when the last reference of all
-> open files are closed in that directory.
->
-> That event_release() will call event_file_put() that does the final
-> release and frees the file. This prevents file from being freed while
-> anything has it opened.
->
-> While looking at this code I did realize that the "format" doesn't
-> register an "event_release" and there's no bug with its data pointing
-> to the call with respect to freeing something it shouldn't be. But it
-> still needs the file pointer anyway so that it can have access to its
-> flags.
+On Mon, Jul 29, 2024 at 11:23:47AM +0200, Javier Carrasco wrote:
+> Apart from that, there is a suspicious check towards the end of the same
+> function:
+> 
+>  if (is_acpi_node(port_fwnode))
+> 		return;
+> 
+> At the point it is called in the current implementation, port_fwnode
+> could have been cleaned. And after removing the loop, it is simply
+> uninitialized. Was that meant to be pdev->dev->fwnode?
 
-Got it, VFS calls the callback tracefs_d_release() -> ... ->
-kmem_cache_free(file). And this will happen on close of the last
-reference.
+If you're referring to the one before the clk_disable_unprepare() calls,
+it's only slightly suspicious:
 
-Following is not related to this bug:
-event_release callback executed once 'dir' closed (no more ref), any
-specific reason to register with 'dir'/'enable' file. If not, could we
-register with the 'dir' instead of 'enable'.
+These clocks are setup in a:
 
--Ajay
+        if (dev_of_node(&pdev->dev)) {
+		...
+	}
+
+block, so they're only setup if we have device tree. So, avoiding it
+for ACPI is entirely reasonable. However, we also have software nodes
+as well, so the test should be:
+
+	if (!dev_of_node(&pdev->dev))
+		return;
+
+to match what the probe function is doing.
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
