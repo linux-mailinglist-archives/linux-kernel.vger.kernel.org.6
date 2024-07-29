@@ -1,89 +1,106 @@
-Return-Path: <linux-kernel+bounces-265733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B23493F552
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:27:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B457593F503
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33875280ABD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:27:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E36961C2165C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B93B13CFA5;
-	Mon, 29 Jul 2024 12:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495AA1474D9;
+	Mon, 29 Jul 2024 12:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=habana.ai header.i=@habana.ai header.b="ggZkLv3J"
-Received: from mail02.habana.ai (habanamailrelay02.habana.ai [62.90.112.121])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bXCKb3WQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33E71482F4
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.90.112.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2391465A1;
+	Mon, 29 Jul 2024 12:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722256007; cv=none; b=uAEFBW/2VUW4H3y+7m3tc3bIG9/XRTqwSthtssTSlYTteFU13HSITzjjah8oJnOjsqhCn4qqs2BKff+Ov34XENRviD26Y+N5S4QtFXb/5UicKxMDLmea5QpJPtM0Pefa/ki+cbt3iGmJ8RC7iPStixYzJKR9TCTDvGko2yN6RvI=
+	t=1722255486; cv=none; b=G0vTNUXKyW8DmlMVhi2rlVxvEH4W33kNPtNGTupvUsj4KPqtHuzb8d//o2xqRa/kTI10dDzIibSbetQ4gkePVn19z78Z6Oerm1xXcYHhh5RgBiiT3MAR3IfqbPEGs1WHH44p2oHN1GNTEs/xD0dqJXkb+BXQ6HadVdzqEfVyut8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722256007; c=relaxed/simple;
-	bh=aNa/8knRw4MxPkdgNaHGL3/rnMqufhdnerVUeIvW5wk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Rvcl7zjQ/2a137aROI13c9tj1nbufpmb4LSIs37LFa0azSi5WNlm9Q+Y8O/+MhwSHGLcKZC7fbAsnWsDMnWzcuq6VMSdS2+A5ayFSg0vKzBUDwHhnqGPXaklm5UTLNnAZ19Lfo/BHp57RrBHdCVcHq6/m8hMDVjt7cUyDNaWgyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=habana.ai; spf=pass smtp.mailfrom=habana.ai; dkim=pass (2048-bit key) header.d=habana.ai header.i=@habana.ai header.b=ggZkLv3J; arc=none smtp.client-ip=62.90.112.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=habana.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=habana.ai
-Received: internal info suppressed
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=habana.ai; s=default;
-	t=1722255451; bh=aNa/8knRw4MxPkdgNaHGL3/rnMqufhdnerVUeIvW5wk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ggZkLv3JYbhghVVkJTM2JWAqpXCd+MJBYwZ0okDjqcS5ax5zWp+JEu8yHeNoXo9WD
-	 /hF6O8z9xtMB2jA+SGsAi7YD4/X3W1FdIE8hewEUbEnzZvmXjEpcs7x9l/4NpjLMeE
-	 t+w1AjFY2GK7ZKOGsnchBx9cDRla8GEDoJLYvmudSuNtcTpuYV3kTdRJM2Gc3+kVj8
-	 nAq7OlKYvKhBYu6Uq8BO5cqtMtLy251lKJbuKVbULcwHL7dNYYH8QPsxwihGo5XDgj
-	 ugSjmC8PFkEi+xG9U+zc4dtIhzY2RYuznqEDuYxzG2IgNThPowywiubhJWRbphalQQ
-	 eRuqVGr8CenUA==
-Received: from obitton-vm-u22.habana-labs.com (localhost [127.0.0.1])
-	by obitton-vm-u22.habana-labs.com (8.15.2/8.15.2/Debian-22ubuntu3) with ESMTP id 46TCHIZs540506;
-	Mon, 29 Jul 2024 15:17:19 +0300
-From: Ofir Bitton <obitton@habana.ai>
-To: linux-kernel@vger.kernel.org, airlied@gmail.com, daniel@ffwll.ch,
-        gregkh@linuxfoundation.org, dri-devel@lists.freedesktop.org,
-        sfr@canb.auug.org.au
-Cc: jgg@nvidia.com, yaron.avizrat@intel.com
-Subject: [PATCH 1/1] MAINTAINERS: Change habanalabs maintainer
-Date: Mon, 29 Jul 2024 15:17:18 +0300
-Message-Id: <20240729121718.540489-2-obitton@habana.ai>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240729121718.540489-1-obitton@habana.ai>
-References: <20240729121718.540489-1-obitton@habana.ai>
+	s=arc-20240116; t=1722255486; c=relaxed/simple;
+	bh=M7Hnrz26bsy5Tr1t7esb5UBzrw3GNQZ5FccICOao0lo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EE3IQqLLuNs015zl75vROj72fxZFQwyBbbdSTagK5+NcI9avyI+lkLjbaxKyh+9PCZN97aSTf5R8vJKUInysRLmhMXXXAionGdoNte+H9hdStu5UphL6FCA9UNO+xXBLm/9Tr72sWO27TA71u9Y2lO2M8bK1THxGRRXbdpgZQqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bXCKb3WQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2FF9C32786;
+	Mon, 29 Jul 2024 12:18:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722255486;
+	bh=M7Hnrz26bsy5Tr1t7esb5UBzrw3GNQZ5FccICOao0lo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bXCKb3WQhuIC+038/AFjxfT9z18DzXyWDnJ39Ewv/7ctmv6NSe8hbr2msZz8QFTzu
+	 EkxJhbPQeOoQ/SA4bl0rT74xYGzm0M1Fb2NJSQ3x69WYDfB6+jnPg4+SAHe/c2d+i+
+	 OqkEmOYORwzDcHxeLJr2IdgcENbANatRqNAv7ZfBmt1uLYf8anSp/s+LblpSyMEeBn
+	 1sToUt97mbQdDCoSZ0bJNcWdy6BH/5FiSMn0ktk+1KH9Mirx1gr/9V4sRmCoTcpLfQ
+	 KqdyYrR9GDWJRFhFcoC8EXI6nc8L6kTIvjxigBv4MQjn/v9U64+Gsm57ilZyFhsxaw
+	 uzXxkMSb/VlsA==
+Date: Mon, 29 Jul 2024 14:18:02 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: mohitpawar@mitaoe.ac.in, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fixed: fs: file_table_c: Missing blank line warnings and
+ struct declaration improved
+Message-ID: <20240729-abgeordnete-attest-d20071dfb242@brauner>
+References: <linux-fsdevel@vger.kernel.org>
+ <20240727072134.130962-1-mohitpawar@mitaoe.ac.in>
+ <20240727072134.130962-2-mohitpawar@mitaoe.ac.in>
+ <20240729114959.lxhpjhve7lhpf2jm@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240729114959.lxhpjhve7lhpf2jm@quack3>
 
-I will be leaving Intel soon, Yaron Avizrat will take the role
-of habanalabs driver maintainer.
+On Mon, Jul 29, 2024 at 01:49:59PM GMT, Jan Kara wrote:
+> On Sat 27-07-24 12:51:34, mohitpawar@mitaoe.ac.in wrote:
+> > From: Mohit0404 <mohitpawar@mitaoe.ac.in>
+> > 
+> > Fixed-
+> > 	WARNING: Missing a blank line after declarations
+> > 	WARNING: Missing a blank line after declarations
+> > 	Declaration format: improved struct file declaration format
+> > 
+> > Signed-off-by: Mohit0404 <mohitpawar@mitaoe.ac.in>
+> > ---
+> >  fs/file_table.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/file_table.c b/fs/file_table.c
+> > index ca7843dde56d..306d57623447 100644
+> > --- a/fs/file_table.c
+> > +++ b/fs/file_table.c
+> > @@ -136,6 +136,7 @@ static int __init init_fs_stat_sysctls(void)
+> >  	register_sysctl_init("fs", fs_stat_sysctls);
+> >  	if (IS_ENABLED(CONFIG_BINFMT_MISC)) {
+> >  		struct ctl_table_header *hdr;
+> > +
+> >  		hdr = register_sysctl_mount_point("fs/binfmt_misc");
+> >  		kmemleak_not_leak(hdr);
+> >  	}
+> > @@ -383,7 +384,10 @@ EXPORT_SYMBOL_GPL(alloc_file_pseudo_noaccount);
+> >  struct file *alloc_file_clone(struct file *base, int flags,
+> >  				const struct file_operations *fops)
+> >  {
+> > -	struct file *f = alloc_file(&base->f_path, flags, fops);
+> > +	struct file *f;
+> > +
+> > +	f = alloc_file(&base->f_path, flags, fops);
+> > +
+> 
+> When you separated the function call from the declaration of 'f' this empty
+> line is superfluous. Maybe Christian can fix it up in his tree (or maybe he
+> already did). Otherwise the patch looks good. Feel free to add:
 
-Signed-off-by: Ofir Bitton <obitton@habana.ai>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ed2d2dbcec81..a4b36590061e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9599,7 +9599,7 @@ S:	Maintained
- F:	block/partitions/efi.*
- 
- HABANALABS PCI DRIVER
--M:	Ofir Bitton <obitton@habana.ai>
-+M:	Yaron Avizrat <yaron.avizrat@intel.com>
- L:	dri-devel@lists.freedesktop.org
- S:	Supported
- C:	irc://irc.oftc.net/dri-devel
--- 
-2.34.1
-
+I already did. :)
 
