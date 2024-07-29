@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-266132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8537493FB8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:42:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E100993FB8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3351F1F2308B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:42:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BB011F22F37
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA5C17F4FF;
-	Mon, 29 Jul 2024 16:41:21 +0000 (UTC)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702C91862B8;
+	Mon, 29 Jul 2024 16:41:23 +0000 (UTC)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2582615A4B5
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FDA181339
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722271280; cv=none; b=uVWxb8XQy5z6hAOHiq2HQXq/Ts+6Ea1561jCSg+XIcfEXyQ1GifCJg1N301T6Ew/ENvvJTPxTJlJEuYBTJoCIf505rBDk5YZU3w/XWwIGBrtMgZJ3PirCJxs/ArksRd1bZ6cBlNOGi7BCnc4uUOAxrvYU9MpOklq8atxiokBprA=
+	t=1722271283; cv=none; b=jVSbSATKSacA+BBBzjSHRkUdDuASVe85foc22ogYy3ZT4uhXB3g1Lcww42/ng00iVrZGMu+7lCJEiQ2VFVLP+wbx2q25qOABizmzgLC9cLSZUVAhXMsyFalipoyK54IR389K6/g0Y0CSM7Wnek2nQZNVVWuztbbnJH0UZ5SWZAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722271280; c=relaxed/simple;
-	bh=6rcMagJ7mWbCEq35zb7pMeRMD5LXdRD0AysXQUEy7Xo=;
+	s=arc-20240116; t=1722271283; c=relaxed/simple;
+	bh=Vetwzj4+BAGwDqtXnQb61Ek8qLkJQ4cLw/LDmoJs5sU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dOsCw5S3dyqlfWF2REUGUDMfoOGzG9M1eCvzgTtbR9bYSYvxZnx1LkIkYdx4+CtOmxcFYHDKLmyLZYqO4KDSogBfGepsScHlzvg9IT1JidouGB+qRDSzsn+5diPwk7LSfnXj4BnPu+hNVJMym7D2sHABzFSYyOFFW00wXItwwvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
+	 MIME-Version; b=O64dq5cFNjzrps4jLcRI8Ne3IASCDpqexjqzzD4r6vJXCiNnF2SMmbg86R4BgfI1jnTkTjU29a7UHDdeCnoJu4xOWUFMcy1oNHQSeV5HUM9O9j9pEQxiZnCBBWZXLNlFgageExCvqRWVfFNCOf2RC+dZ/Za9H45sBRO8bxe+rn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so426406666b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:41:18 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f040733086so41543421fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:41:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722271277; x=1722876077;
+        d=1e100.net; s=20230601; t=1722271279; x=1722876079;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=s2j5jkjNn2B0/XVzt+Dt9KYJOFlfA2VHs6r7IWJt9nQ=;
-        b=DY2bw7wXIihnLyN8vnfnaV6C0Kpx/WmH0OQMrZpQGm6teYpRRPFxYmLgbN303U8zSZ
-         9eNYXD4K3QL9giaHw7YJACMib5bfAsP2s0p3qt0DdWDtCxwLPGytdP4eYaskDaP+lQS5
-         2fHxGkkTLL6iCF2+nZ9O+xOgvjohZX+A88UB+3WeNEbc/98pBwMCRQH+o5OqLzVnTzbW
-         NGg8HqgsJIHw33g6lqDxRK0+qN42o6dcVaR5rpCiKES+j/tj7eHUSJnJYy5jaJwAZEoN
-         8EPcnfjT8hGGF3VOKqAtt/5a32nmDprKimJI3+p1UWMZ357gABTQUdzw+niRECvl+ke1
-         IHsQ==
-X-Gm-Message-State: AOJu0Yxp11/01Yu4BSmOmHut8lOmJQV3wzsxT3niaRLycj3zU9ECnD7k
-	4XxJaMlo7dCRaxm8MzPcS+quEs1DhYyGPO6YQmxf7qXwsXzA7g5M
-X-Google-Smtp-Source: AGHT+IF+MZIu/xl68Na6XzN3+Qbkw27J7pAi6f3W23QeGMj/hVOZB7S9FCINqfXtuEAcE/t3I45O1w==
-X-Received: by 2002:a17:907:7202:b0:a77:e48d:bc3 with SMTP id a640c23a62f3a-a7d3ffa1f5cmr699463066b.19.1722271277239;
-        Mon, 29 Jul 2024 09:41:17 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab4de47sm531016266b.67.2024.07.29.09.41.16
+        bh=aUCVAJzM03hSmUp8rx6/+vyvfot9/woi+dBlewNF6vQ=;
+        b=jCS5MDDYsXUebW9jARqy7+DCgzOz4lMVw/ltXDV0KIe68E55YETLS6myRdaY825eLV
+         BWqRz3ND4wJN37T1s7CXitL2qus+U6WcRMFmOalCcDJyT777zSlwyEKAdpTVcAY+VnJD
+         LBGdhGS7mz56ueL0Eml9+CPAikMxQ7MbLNJT7obye2baaATPaMRpGSVAi+4sOZZDsU0+
+         UIKIG/ZsXxM/WAEEcoBdLyfXZzLQJa7XOljfw2q7IAO+nc3XyUXQS38dTPVkkj5bnsrV
+         7EpnmMJX/oG8HXQ23Czl98Dr7bRBPxARMJwI5SK7GX377pLbM78Y9UuxSyh3WtOGBxI/
+         Y2bg==
+X-Gm-Message-State: AOJu0YyYKAfKECPjB0ahBwmV0bpoBPGKm+zppyUmYdbta7mZj9PjiLxE
+	qlHeeWWdLHVBZCgim+aD16rvcXoAlvTyA/IeHljAfEj9rdHcK/Y4
+X-Google-Smtp-Source: AGHT+IEB3bkjoKK/5TlCN3OfXywkHCB59aNi1wGGX8uLLlYEEpAG+93FtAuoUkUlzkgrTBjPDwZLUw==
+X-Received: by 2002:a2e:924c:0:b0:2f0:1a19:f3f3 with SMTP id 38308e7fff4ca-2f12ee4229fmr57966541fa.33.1722271279133;
+        Mon, 29 Jul 2024 09:41:19 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-115.fbsv.net. [2a03:2880:30ff:73::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac64eb3591sm5984356a12.67.2024.07.29.09.41.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 09:41:16 -0700 (PDT)
+        Mon, 29 Jul 2024 09:41:18 -0700 (PDT)
 From: Breno Leitao <leitao@debian.org>
 To: bp@alien8.de,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -62,9 +62,9 @@ To: bp@alien8.de,
 	Josh Poimboeuf <jpoimboe@kernel.org>,
 	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v4 01/11] x86/bugs: Add a separate config for MDS
-Date: Mon, 29 Jul 2024 09:40:49 -0700
-Message-ID: <20240729164105.554296-2-leitao@debian.org>
+Subject: [PATCH v4 02/11] x86/bugs: Add a separate config for TAA
+Date: Mon, 29 Jul 2024 09:40:50 -0700
+Message-ID: <20240729164105.554296-3-leitao@debian.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240729164105.554296-1-leitao@debian.org>
 References: <20240729164105.554296-1-leitao@debian.org>
@@ -81,51 +81,53 @@ where some mitigations have entries in Kconfig, and they could be
 modified, while others mitigations do not have Kconfig entries, and
 could not be controlled at build time.
 
-Create an entry for the MDS CPU mitigation under
+Create an entry for the TAA CPU mitigation under
 CONFIG_SPECULATION_MITIGATIONS. This allow users to enable or disable
 it at compilation time.
 
 Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
 Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
- arch/x86/Kconfig           | 9 +++++++++
- arch/x86/kernel/cpu/bugs.c | 3 ++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ arch/x86/Kconfig           | 11 +++++++++++
+ arch/x86/kernel/cpu/bugs.c |  3 ++-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 007bab9f2a0e..36e871ab1ef9 100644
+index 36e871ab1ef9..712a4f8cb7dd 100644
 --- a/arch/x86/Kconfig
 +++ b/arch/x86/Kconfig
-@@ -2650,6 +2650,15 @@ config MITIGATION_SPECTRE_BHI
- 	  indirect branches.
- 	  See <file:Documentation/admin-guide/hw-vuln/spectre.rst>
- 
-+config MITIGATION_MDS
-+	bool "Mitigate Microarchitectural Data Sampling (MDS) hardware bug"
+@@ -2659,6 +2659,17 @@ config MITIGATION_MDS
+ 	  a hardware vulnerability which allows unprivileged speculative access
+ 	  to data which is available in various CPU internal buffers.
+ 	  See also <file:Documentation/admin-guide/hw-vuln/mds.rst>
++
++config MITIGATION_TAA
++	bool "Mitigate TSX Asynchronous Abort (TAA) hardware bug"
 +	depends on CPU_SUP_INTEL
 +	default y
 +	help
-+	  Enable mitigation for Microarchitectural Data Sampling (MDS). MDS is
-+	  a hardware vulnerability which allows unprivileged speculative access
-+	  to data which is available in various CPU internal buffers.
-+	  See also <file:Documentation/admin-guide/hw-vuln/mds.rst>
++	  Enable mitigation for TSX Asynchronous Abort (TAA). TAA is a hardware
++	  vulnerability that allows unprivileged speculative access to data
++	  which is available in various CPU internal buffers by using
++	  asynchronous aborts within an Intel TSX transactional region.
++	  See also <file:Documentation/admin-guide/hw-vuln/tsx_async_abort.rst>
  endif
  
  config ARCH_HAS_ADD_PAGES
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 45675da354f3..dbfc7d5c5f48 100644
+index dbfc7d5c5f48..ab306986762d 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -233,7 +233,8 @@ static void x86_amd_ssb_disable(void)
- #define pr_fmt(fmt)	"MDS: " fmt
+@@ -294,7 +294,8 @@ enum taa_mitigations {
+ };
  
- /* Default mitigation for MDS-affected CPUs */
--static enum mds_mitigations mds_mitigation __ro_after_init = MDS_MITIGATION_FULL;
-+static enum mds_mitigations mds_mitigation __ro_after_init =
-+	IS_ENABLED(CONFIG_MITIGATION_MDS) ? MDS_MITIGATION_FULL : MDS_MITIGATION_OFF;
- static bool mds_nosmt __ro_after_init = false;
+ /* Default mitigation for TAA-affected CPUs */
+-static enum taa_mitigations taa_mitigation __ro_after_init = TAA_MITIGATION_VERW;
++static enum taa_mitigations taa_mitigation __ro_after_init =
++	IS_ENABLED(CONFIG_MITIGATION_TAA) ? TAA_MITIGATION_VERW : TAA_MITIGATION_OFF;
+ static bool taa_nosmt __ro_after_init;
  
- static const char * const mds_strings[] = {
+ static const char * const taa_strings[] = {
 -- 
 2.43.0
 
