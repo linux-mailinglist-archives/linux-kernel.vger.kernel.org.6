@@ -1,144 +1,90 @@
-Return-Path: <linux-kernel+bounces-265742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE4F93F576
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:33:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E43093F579
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 117B91F22C32
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:33:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEC68282E37
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABED1487E7;
-	Mon, 29 Jul 2024 12:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7541148850;
+	Mon, 29 Jul 2024 12:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EYKlgrDD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JC4xxslR"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA43145B19
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C8233CC4;
+	Mon, 29 Jul 2024 12:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722256382; cv=none; b=fq7pALypSOKK3aD9xFydlekNsXg7zFqOsZqAuTC4o+t4QX/HoXCqPhCwwliDtimdMcNZG/miKR7DMA8K70C2lScdRRkzb9Bvx9ZapQ9EC91P95r3jzXiwQLMI39eaNG8WqYwymeeEyVT/sjLL1K1ixNCFGh6xQXM4GWs9dA6ruI=
+	t=1722256383; cv=none; b=acXU7D5thwXRvU9Dcnrn7otw9JgDZTmmiU0fK+kXEwLjMfTnzXYPMu4OEsG/98p7YHx7uFn19Y8Y6/Gqz9lpKVFpMx6oAd3hHAcIamuh0rhWelg0sPJjK42AXRDlymMxWUhduI2RoKsas3bk/8g7+itxiMxXITdHsF0GQ2Z8LJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722256382; c=relaxed/simple;
-	bh=OZ5jXVlwnFT9jWJUdVRr5iRq5783wksRo2iASegfAXs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mT4ubFEOG0gOGVt6XWnQGspvlsK8Y5FUpy7KUi1JfQuqkGflTVBX/IVZan2Lr2sKcSUW3pQgZvlOgOfOMQW2VKIzgcTEXvzGo7XALW0k8MnKGUSVwJzihosqwIBSaSBiXLX9X6kTGN0fVETSWutVfK8EX5f1rvZMnzZ6FmsZQdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EYKlgrDD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722256379;
+	s=arc-20240116; t=1722256383; c=relaxed/simple;
+	bh=486EBKZCXcRa78kDX5kskMncYP2Rrz0gd4BMaLyz2yk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xg4sMpEQG52sqOJ5WjKsJaAZGIGu89YRiFiKLw80dCCya/1gcWMFSQfQmkMs3Q7k2AuHLGaT+qg8w5OM9eGttx37ZEPtJAhh2066TZE5cxCn0aVSKFJ+kAT03bPPTmLMojpFBkD9dMMKsDYi+0CmFDmp11cZrv+7vWRkjmUdVhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JC4xxslR; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 001C840005;
+	Mon, 29 Jul 2024 12:32:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1722256372;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=w0xks81TdKZTJ22FJnbrdp5glJu0PgYtd3j9EKuYo38=;
-	b=EYKlgrDDCBXXU9SAqObC9jPSnhbfHcfKkYCYdTgu7WWv1UaeGjtOVtICI2HIB91quy9HdB
-	ZleG8h+bwvKdCkW6jB6AiTuWZT0cWLOuUdGCIosz2zaAowY4UjfUeOhWPn2yq2oX51UNLm
-	2IUa5yd42ECB3ik/h1ZV/qAylbiIYMk=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-49-86vu1Qi1ODmH9Ngj9XTfXw-1; Mon,
- 29 Jul 2024 08:32:56 -0400
-X-MC-Unique: 86vu1Qi1ODmH9Ngj9XTfXw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8202919560AA;
-	Mon, 29 Jul 2024 12:32:53 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.136])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 45AAA1955D47;
-	Mon, 29 Jul 2024 12:32:46 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: dsimic@manjaro.org
-Cc: UNGLinuxDriver@microchip.com,
-	andrew@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	f.fainelli@gmail.com,
-	gregkh@linuxfoundation.org,
-	jtornosm@redhat.com,
-	kuba@kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	lucas.demarchi@intel.com,
-	masahiroy@kernel.org,
-	mcgrof@kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	woojung.huh@microchip.com
-Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy module
-Date: Mon, 29 Jul 2024 14:32:43 +0200
-Message-ID: <20240729123244.18780-1-jtornosm@redhat.com>
-In-Reply-To: <4db38805936d28fe1578c525a18f7849@manjaro.org>
-References: <4db38805936d28fe1578c525a18f7849@manjaro.org>
+	bh=cNEaXAf9TE/pb+tSX4cZMggMhG1O+aODHSBLYm6YUnQ=;
+	b=JC4xxslRNDLVUuq6ou0LJnKQnufX22/9r8b2xSMKyuvLCVC9ryVumnQb3z89D3ZEjX+f38
+	RrRpaMOEm3e+ymAyornk1zrxr9XDpoyO08EGDGpT1WLL2szv4ALVDZyxtt2U8rpMb2UtgW
+	IdgRRnfcQ7yYnyHvP1RSMDqoTIN4osSXl9gMjSxl4FTWKnZ2GS1BZOkEa0NuM1KAuJ9JOd
+	ZDIZS8VVOW8T2HzRsArA1wAhn9dAewkRgoBkWShxARQdZVbHHwaCmbkaPWAy301Td9vwtY
+	uKB08SlmtGvFDVLamr/bj3MBDYfa74Ufcy/7G/JlqlXG5bcvoDeZ5xjzGYko/Q==
+Date: Mon, 29 Jul 2024 14:32:50 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Peng Fan
+ <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 1/2] of: property: add of_property_for_each_u64
+Message-ID: <20240729143250.624060b0@booty>
+In-Reply-To: <20240729-clk-u64-v2-1-ffa62ee437e6@nxp.com>
+References: <20240729-clk-u64-v2-0-ffa62ee437e6@nxp.com>
+	<20240729-clk-u64-v2-1-ffa62ee437e6@nxp.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hello Dragan and others,
+Hello Peng Fan,
 
-> I see and agree, but please note that other people highly disagree about
-> that being an issue at all.  Thus, I'd suggest that you provide a 
-> detailed
-> explanation of why and how that presents an issue that weakdeps solve.
-I think that the problem that I am trying to fix related to initramfs
-generation is understood. At least what I tried to explain at the beginning
-of this thread with my messages and the help of Lucas. But maybe you are  
-right, so let me provide a more specific explanation.
+On Mon, 29 Jul 2024 10:30:52 +0800
+"Peng Fan (OSS)" <peng.fan@oss.nxp.com> wrote:
 
-The only thing that I could repeat and/remark is that I am not modifying
-anything in the current kernel behavior, and specifically for this case 
-(lan78xx) with a network driver and related phy modules: I am just trying
-to add a flag (and nothing else) to complete the information of the
-necessary modules to be collected by the tools that build the initramfs.
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Preparing for assigned-clock-rates-u64 support, add function
+> of_property_for_each_u64 to iterate each u64 value
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-And if this information about the necessary modules is not correctly
-collected, the kernel is not going to work from initramfs, Especially if
-the network drivers are not working (because the phy module is not found),
-some initial and necessary resources could not be available before and
-after initramfs stage, because unless the network driver is unloaded and
-loaded again after initramfs stage (then the phy modules would be available
-from rootfs), it is going to be in the same situation, that is, not
-correctly initialized and not working.
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-Including in the initramfs all the phy modules is an option but I think it
-would be better to include only the necessary stuff (this is the default
-behavior for the tools that are used to build the initramfs). This is valid
-for embedded and not-embedded systems.
-
-If this patch, to only add the related flag of the network driver to inform
-about the possible phy modules, is rejected because a more general solution
-is preferred, I would like to dig into it, at least to know if it is possible
-to do better.
-Maybe Andrew in other part of the thread, after the interesting comments
-from Jakub, can help and provide some new (for me) inputs.
-
-> Regarding Lima and Panfrost, I agree that weakdeps are a better solution
-> than softdeps, but please see also harddeps. [1]  I'd appreciate if 
-> you'd provide your opinion about the proposed harddeps.
-> [1] 
-> https://lore.kernel.org/linux-modules/04e0676b0e77c5eb69df6972f41d77cdf061265a.1721906745.git.dsimic@manjaro.org/T/#u
-Ok, I will think more about it.
-After a quick first look I agree with Lucas, but let's go little by little
-(at least I don't have a lot of time before my holidays). 
-
-Thanks
-
-Best regards
-José Ignacio
-
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
