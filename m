@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-265556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD9493F2CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:34:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C16693F2D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17D2B28259B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:34:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BCFE1C21CBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1E0145336;
-	Mon, 29 Jul 2024 10:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6038E145A1F;
+	Mon, 29 Jul 2024 10:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kx6GQhkP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XUZvzKdp"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W//XaMmO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5E8uy83x"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6926A2F5A;
-	Mon, 29 Jul 2024 10:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AFF1448F3;
+	Mon, 29 Jul 2024 10:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722249247; cv=none; b=kOtUzDnLr7qvTQH3rRvaDVCboaoAFqFOLKMayHskMsyE1f7OmRzvACD9aCCyr2H88PHI1szpvADldEqJBNrEAn8yK9Ah4v1tMbKgKOb747ki5ptPN2XbRDfYs6Mpnu3sOkzZbXnmEq5KAAKZrOsKfZzN2zQxF7PeI/pWlCFd/RQ=
+	t=1722249248; cv=none; b=cy6idyFr6a/BAYA4l89SWftdZ0q72CEnmXr7DM9hgHCMRETVL1uHZdrhLaGI+sdyh4nwJmfzXGanoMTnSMVgoEdRo/1bVLg9ZHXvAhBRcT3nr5n9bWY9G75qogFRv1p9leo4KCKwYvf539Cls4/ROy0UISF+S0rT1PiwsYPlC+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722249247; c=relaxed/simple;
-	bh=5qz9fpPxtCZu5WNl2l5a6EqpktBRujJzLwCp9d9hGFc=;
+	s=arc-20240116; t=1722249248; c=relaxed/simple;
+	bh=YICC0EdxUtmC3LTz6AASi3KddQQocdD9N1HyqB0o9Sg=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=eo/N96anS5PaEAAO0xNAduDF06nsCYKppvg9lGmyj7TNMDgbsVLdH3rfklCPB1mWvZwldx3dVPxfMtTIwNUN/dHcrFBucScdErBwxpNTQY1tZI0ttB7Av9PcjuNCc+VgPtgbJ5+2h+gNHFqW84Wa5Q10WwSTAYUrh5+aORhcZAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kx6GQhkP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XUZvzKdp; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=BYbeo4z++tJhb/Ke+whVTnjBEQb94zZy6QQ/VHvk1HRF/Snf/PhLSMbBMeLCMRGta4fGo2qC3tgQzddyB18SEEgBOlZTFNm5b9VNHZV6ziSp5SAM7HUR5QpQDejKRLo2R2ATvWFP6X9v9J/nSpjZDYVVVrwVQG3AEdASu5pTvfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W//XaMmO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5E8uy83x; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 29 Jul 2024 10:34:03 -0000
+Date: Mon, 29 Jul 2024 10:34:04 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722249243;
+	s=2020; t=1722249244;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uhPTDWt8IQpy/8LPh+Px5qySLzpoG6ZiRvyNjzWxaRQ=;
-	b=Kx6GQhkPDLlbXMx1kqVyPUduOw16eR7zNfYXxew3orLALSiKp/lZeugKSH68w1O1aaXpXD
-	viyP6zO+l0NyaknObQ7+pkjEO8rrE4op9oFWq9BJ+0BOWLVJwFqF+EFFYJU6X0FTv+lcih
-	PSGx4fwBGYHvSRSaieue0vo73oqL8JjQd+2SxBiXU/rtAh5hUkK3zYw6mMr56FDLc1ZWer
-	5F9gu+rZsqbQLa68kFeOEDJvmc/42sBIdz6iRBUSEaYpL8vIW9npxUDhsdAQ8wkr46tqkS
-	+Q18zY9fs2+YiIX4+W13DpOzrb+uGNvjKp8MR5CVQypjVui+QO/MxK1I3HfSyA==
+	bh=sIfvDqP80s6nYTtuMBzFE6Ka4elOoQckFV3A4OniDdQ=;
+	b=W//XaMmONhNxf8f/uRfk8SY+i4GOZFvA4s5PWo+H3XQg/BEC3AelAG9UGhC0/wCxHZ5UVO
+	mNgQUrrY6zCGiCy12p7JnfxnntVRNGqOWToQIWHVZ4XE09GNHpCKsxlelY1yUj7xbafwVS
+	CS48aq3sp3y05tBpO/ywx8ivqqCySwSenK1XxVzFgC7io8e1VT0G6t2fT8p0OZQNG61Lvo
+	7418xHeHmUhlgV/+vwlHfuYSCexEbE4dICNRVhhrF7odzvKga7G7XEFTHEdGXM02JscbNT
+	0yfrYkzYxdQcortaqmf8pacz1VJ+5l8CE6ZaJdIxFyzd8+xm0Am0u2eB0kY3WQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722249243;
+	s=2020e; t=1722249244;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uhPTDWt8IQpy/8LPh+Px5qySLzpoG6ZiRvyNjzWxaRQ=;
-	b=XUZvzKdpSIj4bvRspUhPui6eHmIIqwZNnru+zKI/kiIjT1DeKCqbNNkLNujXepz7+IQcMm
-	eaLAUDPcSQ5wpaBw==
-From: "tip-bot2 for Daniel Bristot de Oliveira" <tip-bot2@linutronix.de>
+	bh=sIfvDqP80s6nYTtuMBzFE6Ka4elOoQckFV3A4OniDdQ=;
+	b=5E8uy83xYsJ7Srl/uqkF90ghDKrYHWq7EPH/qAYwpjDJx37TdaqfxBITN0UvLD/nrQNp+l
+	4HPyjoxwRZ0Xb3CQ==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/fair: Fair server interface
-Cc: Daniel Bristot de Oliveira <bristot@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+Subject: [tip: sched/core] sched/fair: Add trivial fair server
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Daniel Bristot de Oliveira <bristot@kernel.org>,
  Juri Lelli <juri.lelli@redhat.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
 In-Reply-To:
- <a9ef9fc69bcedb44bddc9bc34f2b313296052819.1716811044.git.bristot@kernel.org>
+ <b6b0bcefaf25391bcf5b6ecdb9f1218de402d42e.1716811044.git.bristot@kernel.org>
 References:
- <a9ef9fc69bcedb44bddc9bc34f2b313296052819.1716811044.git.bristot@kernel.org>
+ <b6b0bcefaf25391bcf5b6ecdb9f1218de402d42e.1716811044.git.bristot@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172224924353.2215.847554989590119475.tip-bot2@tip-bot2>
+Message-ID: <172224924449.2215.14087360548232857166.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -84,391 +84,202 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     d741f297bceaf52aa1b97b997708fc0cd853c73e
-Gitweb:        https://git.kernel.org/tip/d741f297bceaf52aa1b97b997708fc0cd853c73e
-Author:        Daniel Bristot de Oliveira <bristot@kernel.org>
-AuthorDate:    Mon, 27 May 2024 14:06:52 +02:00
+Commit-ID:     557a6bfc662c4d560f909b78adb1270c9862efa8
+Gitweb:        https://git.kernel.org/tip/557a6bfc662c4d560f909b78adb1270c9862efa8
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Mon, 27 May 2024 14:06:50 +02:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Mon, 29 Jul 2024 12:22:36 +02:00
 
-sched/fair: Fair server interface
+sched/fair: Add trivial fair server
 
-Add an interface for fair server setup on debugfs.
+Use deadline servers to service fair tasks.
 
-Each CPU has two files under /debug/sched/fair_server/cpu{ID}:
+This patch adds a fair_server deadline entity which acts as a container
+for fair entities and can be used to fix starvation when higher priority
+(wrt fair) tasks are monopolizing CPU(s).
 
- - runtime: set runtime in ns
- - period:  set period in ns
-
-This then leaves /proc/sys/kernel/sched_rt_{period,runtime}_us to set
-bounds on admission control.
-
-The interface also add the server to the dl bandwidth accounting.
-
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Daniel Bristot de Oliveira <bristot@kernel.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Tested-by: Juri Lelli <juri.lelli@redhat.com>
-Link: https://lore.kernel.org/r/a9ef9fc69bcedb44bddc9bc34f2b313296052819.1716811044.git.bristot@kernel.org
+Link: https://lore.kernel.org/r/b6b0bcefaf25391bcf5b6ecdb9f1218de402d42e.1716811044.git.bristot@kernel.org
 ---
- kernel/sched/deadline.c | 103 ++++++++++++++++++++-----
- kernel/sched/debug.c    | 159 +++++++++++++++++++++++++++++++++++++++-
- kernel/sched/sched.h    |   3 +-
- kernel/sched/topology.c |   8 ++-
- 4 files changed, 256 insertions(+), 17 deletions(-)
+ kernel/sched/core.c     |  1 +
+ kernel/sched/deadline.c | 23 +++++++++++++++++++++++
+ kernel/sched/fair.c     | 34 ++++++++++++++++++++++++++++++++++
+ kernel/sched/sched.h    |  4 ++++
+ 4 files changed, 62 insertions(+)
 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 1074ae8..f95600c 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -8336,6 +8336,7 @@ void __init sched_init(void)
+ #endif /* CONFIG_SMP */
+ 		hrtick_rq_init(rq);
+ 		atomic_set(&rq->nr_iowait, 0);
++		fair_server_init(rq);
+ 
+ #ifdef CONFIG_SCHED_CORE
+ 		rq->core = rq;
 diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 1b29531..747c0c5 100644
+index f59e5c1..f5b5313 100644
 --- a/kernel/sched/deadline.c
 +++ b/kernel/sched/deadline.c
-@@ -320,19 +320,12 @@ void sub_running_bw(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
- 		__sub_running_bw(dl_se->dl_bw, dl_rq);
- }
- 
--static void dl_change_utilization(struct task_struct *p, u64 new_bw)
-+static void dl_rq_change_utilization(struct rq *rq, struct sched_dl_entity *dl_se, u64 new_bw)
- {
--	struct rq *rq;
--
--	WARN_ON_ONCE(p->dl.flags & SCHED_FLAG_SUGOV);
--
--	if (task_on_rq_queued(p))
--		return;
-+	if (dl_se->dl_non_contending) {
-+		sub_running_bw(dl_se, &rq->dl);
-+		dl_se->dl_non_contending = 0;
- 
--	rq = task_rq(p);
--	if (p->dl.dl_non_contending) {
--		sub_running_bw(&p->dl, &rq->dl);
--		p->dl.dl_non_contending = 0;
- 		/*
- 		 * If the timer handler is currently running and the
- 		 * timer cannot be canceled, inactive_task_timer()
-@@ -340,13 +333,25 @@ static void dl_change_utilization(struct task_struct *p, u64 new_bw)
- 		 * will not touch the rq's active utilization,
- 		 * so we are still safe.
- 		 */
--		if (hrtimer_try_to_cancel(&p->dl.inactive_timer) == 1)
--			put_task_struct(p);
-+		if (hrtimer_try_to_cancel(&dl_se->inactive_timer) == 1) {
-+			if (!dl_server(dl_se))
-+				put_task_struct(dl_task_of(dl_se));
-+		}
+@@ -1382,6 +1382,13 @@ throttle:
  	}
--	__sub_rq_bw(p->dl.dl_bw, &rq->dl);
-+	__sub_rq_bw(dl_se->dl_bw, &rq->dl);
- 	__add_rq_bw(new_bw, &rq->dl);
- }
  
-+static void dl_change_utilization(struct task_struct *p, u64 new_bw)
-+{
-+	WARN_ON_ONCE(p->dl.flags & SCHED_FLAG_SUGOV);
-+
-+	if (task_on_rq_queued(p))
-+		return;
-+
-+	dl_rq_change_utilization(task_rq(p), &p->dl, new_bw);
-+}
-+
- static void __dl_clear_params(struct sched_dl_entity *dl_se);
- 
- /*
-@@ -1621,11 +1626,17 @@ void dl_server_start(struct sched_dl_entity *dl_se)
- {
- 	struct rq *rq = dl_se->rq;
- 
-+	/*
-+	 * XXX: the apply do not work fine at the init phase for the
-+	 * fair server because things are not yet set. We need to improve
-+	 * this before getting generic.
+ 	/*
++	 * The fair server (sole dl_server) does not account for real-time
++	 * workload because it is running fair work.
 +	 */
- 	if (!dl_server(dl_se)) {
- 		/* Disabled */
--		dl_se->dl_runtime = 0;
--		dl_se->dl_deadline = 1000 * NSEC_PER_MSEC;
--		dl_se->dl_period = 1000 * NSEC_PER_MSEC;
-+		u64 runtime = 0;
-+		u64 period = 1000 * NSEC_PER_MSEC;
-+
-+		dl_server_apply_params(dl_se, runtime, period, 1);
- 
- 		dl_se->dl_server = 1;
- 		dl_se->dl_defer = 1;
-@@ -1660,6 +1671,64 @@ void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
- 	dl_se->server_pick = pick;
- }
- 
-+void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq)
-+{
-+	u64 new_bw = dl_se->dl_bw;
-+	int cpu = cpu_of(rq);
-+	struct dl_bw *dl_b;
-+
-+	dl_b = dl_bw_of(cpu_of(rq));
-+	guard(raw_spinlock)(&dl_b->lock);
-+
-+	if (!dl_bw_cpus(cpu))
++	if (dl_se == &rq->fair_server)
 +		return;
 +
-+	__dl_add(dl_b, new_bw, dl_bw_cpus(cpu));
++	/*
+ 	 * Because -- for now -- we share the rt bandwidth, we need to
+ 	 * account our runtime there too, otherwise actual rt tasks
+ 	 * would be able to exceed the shared quota.
+@@ -1414,15 +1421,31 @@ void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec)
+ 
+ void dl_server_start(struct sched_dl_entity *dl_se)
+ {
++	struct rq *rq = dl_se->rq;
++
+ 	if (!dl_server(dl_se)) {
++		/* Disabled */
++		dl_se->dl_runtime = 0;
++		dl_se->dl_deadline = 1000 * NSEC_PER_MSEC;
++		dl_se->dl_period = 1000 * NSEC_PER_MSEC;
++
+ 		dl_se->dl_server = 1;
+ 		setup_new_dl_entity(dl_se);
+ 	}
++
++	if (!dl_se->dl_runtime)
++		return;
++
+ 	enqueue_dl_entity(dl_se, ENQUEUE_WAKEUP);
++	if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &rq->curr->dl))
++		resched_curr(dl_se->rq);
+ }
+ 
+ void dl_server_stop(struct sched_dl_entity *dl_se)
+ {
++	if (!dl_se->dl_runtime)
++		return;
++
+ 	dequeue_dl_entity(dl_se, DEQUEUE_SLEEP);
+ }
+ 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 99c80ab..aba23b0 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5765,6 +5765,7 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
+ 	struct sched_entity *se;
+ 	long task_delta, idle_task_delta, dequeue = 1;
++	long rq_h_nr_running = rq->cfs.h_nr_running;
+ 
+ 	raw_spin_lock(&cfs_b->lock);
+ 	/* This will start the period timer if necessary */
+@@ -5837,6 +5838,9 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	sub_nr_running(rq, task_delta);
+ 
+ done:
++	/* Stop the fair server if throttling resulted in no runnable tasks */
++	if (rq_h_nr_running && !rq->cfs.h_nr_running)
++		dl_server_stop(&rq->fair_server);
+ 	/*
+ 	 * Note: distribution will already see us throttled via the
+ 	 * throttled-list.  rq->lock protects completion.
+@@ -5854,6 +5858,7 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
+ 	struct sched_entity *se;
+ 	long task_delta, idle_task_delta;
++	long rq_h_nr_running = rq->cfs.h_nr_running;
+ 
+ 	se = cfs_rq->tg->se[cpu_of(rq)];
+ 
+@@ -5929,6 +5934,10 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ unthrottle_throttle:
+ 	assert_list_leaf_cfs_rq(rq);
+ 
++	/* Start the fair server if un-throttling resulted in new runnable tasks */
++	if (!rq_h_nr_running && rq->cfs.h_nr_running)
++		dl_server_start(&rq->fair_server);
++
+ 	/* Determine whether we need to wake up potentially idle CPU: */
+ 	if (rq->curr == rq->idle && rq->cfs.nr_running)
+ 		resched_curr(rq);
+@@ -6759,6 +6768,9 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	 */
+ 	util_est_enqueue(&rq->cfs, p);
+ 
++	if (!throttled_hierarchy(task_cfs_rq(p)) && !rq->cfs.h_nr_running)
++		dl_server_start(&rq->fair_server);
++
+ 	/*
+ 	 * If in_iowait is set, the code below may not trigger any cpufreq
+ 	 * utilization updates, so do it here explicitly with the IOWAIT flag
+@@ -6903,6 +6915,9 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 		rq->next_balance = jiffies;
+ 
+ dequeue_throttle:
++	if (!throttled_hierarchy(task_cfs_rq(p)) && !rq->cfs.h_nr_running)
++		dl_server_stop(&rq->fair_server);
++
+ 	util_est_update(&rq->cfs, p, task_sleep);
+ 	hrtick_update(rq);
+ }
+@@ -8602,6 +8617,25 @@ static struct task_struct *__pick_next_task_fair(struct rq *rq)
+ 	return pick_next_task_fair(rq, NULL, NULL);
+ }
+ 
++static bool fair_server_has_tasks(struct sched_dl_entity *dl_se)
++{
++	return !!dl_se->rq->cfs.nr_running;
 +}
 +
-+int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 period, bool init)
++static struct task_struct *fair_server_pick(struct sched_dl_entity *dl_se)
 +{
-+	u64 old_bw = init ? 0 : to_ratio(dl_se->dl_period, dl_se->dl_runtime);
-+	u64 new_bw = to_ratio(period, runtime);
-+	struct rq *rq = dl_se->rq;
-+	int cpu = cpu_of(rq);
-+	struct dl_bw *dl_b;
-+	unsigned long cap;
-+	int retval = 0;
-+	int cpus;
++	return pick_next_task_fair(dl_se->rq, NULL, NULL);
++}
 +
-+	dl_b = dl_bw_of(cpu);
-+	guard(raw_spinlock)(&dl_b->lock);
++void fair_server_init(struct rq *rq)
++{
++	struct sched_dl_entity *dl_se = &rq->fair_server;
 +
-+	cpus = dl_bw_cpus(cpu);
-+	cap = dl_bw_capacity(cpu);
++	init_dl_entity(dl_se);
 +
-+	if (__dl_overflow(dl_b, cap, old_bw, new_bw))
-+		return -EBUSY;
-+
-+	if (init) {
-+		__add_rq_bw(new_bw, &rq->dl);
-+		__dl_add(dl_b, new_bw, cpus);
-+	} else {
-+		__dl_sub(dl_b, dl_se->dl_bw, cpus);
-+		__dl_add(dl_b, new_bw, cpus);
-+
-+		dl_rq_change_utilization(rq, dl_se, new_bw);
-+	}
-+
-+	dl_se->dl_runtime = runtime;
-+	dl_se->dl_deadline = period;
-+	dl_se->dl_period = period;
-+
-+	dl_se->runtime = 0;
-+	dl_se->deadline = 0;
-+
-+	dl_se->dl_bw = to_ratio(dl_se->dl_period, dl_se->dl_runtime);
-+	dl_se->dl_density = to_ratio(dl_se->dl_deadline, dl_se->dl_runtime);
-+
-+	return retval;
++	dl_server_init(dl_se, rq, fair_server_has_tasks, fair_server_pick);
 +}
 +
  /*
-  * Update the current task's runtime statistics (provided it is still
-  * a -deadline task and has not been removed from the dl_rq).
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index 90c4a99..72f2715 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -333,8 +333,165 @@ static const struct file_operations sched_debug_fops = {
- 	.release	= seq_release,
- };
- 
-+enum dl_param {
-+	DL_RUNTIME = 0,
-+	DL_PERIOD,
-+};
-+
-+static unsigned long fair_server_period_max = (1 << 22) * NSEC_PER_USEC; /* ~4 seconds */
-+static unsigned long fair_server_period_min = (100) * NSEC_PER_USEC;     /* 100 us */
-+
-+static ssize_t sched_fair_server_write(struct file *filp, const char __user *ubuf,
-+				       size_t cnt, loff_t *ppos, enum dl_param param)
-+{
-+	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-+	struct rq *rq = cpu_rq(cpu);
-+	u64 runtime, period;
-+	size_t err;
-+	int retval;
-+	u64 value;
-+
-+	err = kstrtoull_from_user(ubuf, cnt, 10, &value);
-+	if (err)
-+		return err;
-+
-+	scoped_guard (rq_lock_irqsave, rq) {
-+		runtime  = rq->fair_server.dl_runtime;
-+		period = rq->fair_server.dl_period;
-+
-+		switch (param) {
-+		case DL_RUNTIME:
-+			if (runtime == value)
-+				break;
-+			runtime = value;
-+			break;
-+		case DL_PERIOD:
-+			if (value == period)
-+				break;
-+			period = value;
-+			break;
-+		}
-+
-+		if (runtime > period ||
-+		    period > fair_server_period_max ||
-+		    period < fair_server_period_min) {
-+			return  -EINVAL;
-+		}
-+
-+		if (rq->cfs.h_nr_running) {
-+			update_rq_clock(rq);
-+			dl_server_stop(&rq->fair_server);
-+		}
-+
-+		retval = dl_server_apply_params(&rq->fair_server, runtime, period, 0);
-+		if (retval)
-+			cnt = retval;
-+
-+		if (!runtime)
-+			printk_deferred("Fair server disabled in CPU %d, system may crash due to starvation.\n",
-+					cpu_of(rq));
-+
-+		if (rq->cfs.h_nr_running)
-+			dl_server_start(&rq->fair_server);
-+	}
-+
-+	*ppos += cnt;
-+	return cnt;
-+}
-+
-+static size_t sched_fair_server_show(struct seq_file *m, void *v, enum dl_param param)
-+{
-+	unsigned long cpu = (unsigned long) m->private;
-+	struct rq *rq = cpu_rq(cpu);
-+	u64 value;
-+
-+	switch (param) {
-+	case DL_RUNTIME:
-+		value = rq->fair_server.dl_runtime;
-+		break;
-+	case DL_PERIOD:
-+		value = rq->fair_server.dl_period;
-+		break;
-+	}
-+
-+	seq_printf(m, "%llu\n", value);
-+	return 0;
-+
-+}
-+
-+static ssize_t
-+sched_fair_server_runtime_write(struct file *filp, const char __user *ubuf,
-+				size_t cnt, loff_t *ppos)
-+{
-+	return sched_fair_server_write(filp, ubuf, cnt, ppos, DL_RUNTIME);
-+}
-+
-+static int sched_fair_server_runtime_show(struct seq_file *m, void *v)
-+{
-+	return sched_fair_server_show(m, v, DL_RUNTIME);
-+}
-+
-+static int sched_fair_server_runtime_open(struct inode *inode, struct file *filp)
-+{
-+	return single_open(filp, sched_fair_server_runtime_show, inode->i_private);
-+}
-+
-+static const struct file_operations fair_server_runtime_fops = {
-+	.open		= sched_fair_server_runtime_open,
-+	.write		= sched_fair_server_runtime_write,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
-+static ssize_t
-+sched_fair_server_period_write(struct file *filp, const char __user *ubuf,
-+			       size_t cnt, loff_t *ppos)
-+{
-+	return sched_fair_server_write(filp, ubuf, cnt, ppos, DL_PERIOD);
-+}
-+
-+static int sched_fair_server_period_show(struct seq_file *m, void *v)
-+{
-+	return sched_fair_server_show(m, v, DL_PERIOD);
-+}
-+
-+static int sched_fair_server_period_open(struct inode *inode, struct file *filp)
-+{
-+	return single_open(filp, sched_fair_server_period_show, inode->i_private);
-+}
-+
-+static const struct file_operations fair_server_period_fops = {
-+	.open		= sched_fair_server_period_open,
-+	.write		= sched_fair_server_period_write,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
- static struct dentry *debugfs_sched;
- 
-+static void debugfs_fair_server_init(void)
-+{
-+	struct dentry *d_fair;
-+	unsigned long cpu;
-+
-+	d_fair = debugfs_create_dir("fair_server", debugfs_sched);
-+	if (!d_fair)
-+		return;
-+
-+	for_each_possible_cpu(cpu) {
-+		struct dentry *d_cpu;
-+		char buf[32];
-+
-+		snprintf(buf, sizeof(buf), "cpu%lu", cpu);
-+		d_cpu = debugfs_create_dir(buf, d_fair);
-+
-+		debugfs_create_file("runtime", 0644, d_cpu, (void *) cpu, &fair_server_runtime_fops);
-+		debugfs_create_file("period", 0644, d_cpu, (void *) cpu, &fair_server_period_fops);
-+	}
-+}
-+
- static __init int sched_init_debug(void)
- {
- 	struct dentry __maybe_unused *numa;
-@@ -374,6 +531,8 @@ static __init int sched_init_debug(void)
- 
- 	debugfs_create_file("debug", 0444, debugfs_sched, NULL, &sched_debug_fops);
- 
-+	debugfs_fair_server_init();
-+
- 	return 0;
- }
- late_initcall(sched_init_debug);
+  * Account for a descheduled task:
+  */
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 64fb677..b777ac3 100644
+index 8a07102..7416bcd 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -366,6 +366,9 @@ extern void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
- extern void dl_server_update_idle_time(struct rq *rq,
- 		    struct task_struct *p);
- extern void fair_server_init(struct rq *rq);
-+extern void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq);
-+extern int dl_server_apply_params(struct sched_dl_entity *dl_se,
-+		    u64 runtime, u64 period, bool init);
+@@ -363,6 +363,8 @@ extern void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+ 		    dl_server_has_tasks_f has_tasks,
+ 		    dl_server_pick_f pick);
  
++extern void fair_server_init(struct rq *rq);
++
  #ifdef CONFIG_CGROUP_SCHED
  
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 76504b7..9748a4c 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -516,6 +516,14 @@ void rq_attach_root(struct rq *rq, struct root_domain *rd)
- 	if (cpumask_test_cpu(rq->cpu, cpu_active_mask))
- 		set_rq_online(rq);
+ extern struct list_head task_groups;
+@@ -1039,6 +1041,8 @@ struct rq {
+ 	struct rt_rq		rt;
+ 	struct dl_rq		dl;
  
-+	/*
-+	 * Because the rq is not a task, dl_add_task_root_domain() did not
-+	 * move the fair server bw to the rd if it already started.
-+	 * Add it now.
-+	 */
-+	if (rq->fair_server.dl_server)
-+		__dl_server_attach_root(&rq->fair_server, rq);
++	struct sched_dl_entity	fair_server;
 +
- 	rq_unlock_irqrestore(rq, &rf);
- 
- 	if (old_rd)
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 	/* list of leaf cfs_rq on this CPU: */
+ 	struct list_head	leaf_cfs_rq_list;
 
