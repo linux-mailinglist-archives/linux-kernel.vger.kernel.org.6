@@ -1,179 +1,159 @@
-Return-Path: <linux-kernel+bounces-265871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35EA393F70B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:53:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D042193F712
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97DB8B21B42
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:53:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDE111C21C80
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264B114A0B7;
-	Mon, 29 Jul 2024 13:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3477D14F115;
+	Mon, 29 Jul 2024 13:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="kai37MHg"
-Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DhKZrnP3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5391C146D54
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88ECD14B07E
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722261177; cv=none; b=Tjh8i6xhgzpTEUUeypsK+CufpoTKHPIMbMs/pw8IsbMyNGKjvqtDbQJZ6seHiCZJUok8cFYFMnwgSoDbaTkIEy4jWLWT3jE/xa6Qdil4XfOGvioi19ahgn5Yt2Ni8C+Uv71dC1xvr+TX3amxXpzgd5W6DqdQMfCkXp1+qWRQUkk=
+	t=1722261222; cv=none; b=oYBBrnIUttZ4CNRu6LMxnIJBkmNL4wT2HwzNJRpjrvhYw0uQj2i+nT95sWfYik9PNC0MbxTVsk1P0QTTz7eWFkyBjCRV+3v/eqxYWc0gn1y5IM2NtZFXOJOxdjGqA8ggFvVoKA8tc9715IqgdBPWLkcNx7qx1WcMo3us0lDKMLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722261177; c=relaxed/simple;
-	bh=aS2tgG9/NzOOkn84vlgGJGG9s7liXIhI3pGPOOkuqbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KtAKAnqLjivIc9pHkpmTyx7Dk2oH1+fNA0WrJYjuOnvhhIwezJbEEMfA98ZtmWk2f+IMFbgp7hr/2cOf7tdiunRFO+a95vFcMJv6IMhvriwh2I5gCArwndicxQIqghCFPs7mp3OLjBZxwB/Ye31tYmv4Tlvd3P456S4jDFXLx9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=kai37MHg; arc=none smtp.client-ip=35.89.44.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5002a.ext.cloudfilter.net ([10.0.29.215])
-	by cmsmtp with ESMTPS
-	id YJ9Vsy3MHumtXYQnxsfoq6; Mon, 29 Jul 2024 13:52:49 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id YQnvsFnd2eieBYQnvs0t9H; Mon, 29 Jul 2024 13:52:48 +0000
-X-Authority-Analysis: v=2.4 cv=BoBWwpX5 c=1 sm=1 tr=0 ts=66a79eb0
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=pGLkceISAAAA:8 a=P-IC7800AAAA:8
- a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=ti5tFa4rv3dDs8Lo-yEA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22 a=AjGcO6oz07-iQ99wixmX:22
- a=Yupwre4RP9_Eg_Bd0iYG:22 a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Ey2z5Jk9GDQ7+0LaSP6jd5R9aWzGr9Rh6NdHpDOCB+I=; b=kai37MHgpvalZbEpchcX6jDY/K
-	No8pAgIVBfStEWX+wEjD4poVRFool4yjGT1H8iMuoeiyO2r6b8pUsRsWD1HmoiYecH4tcY8iSYYuB
-	Yg0z6UxSfw1O8vphV89EKQ6djIoTVZ1YAi+mATiVHaedZ5w6hzRIHcIcz+DzND6CTZQmypbNKMVs7
-	FR39vd3xeKOG9JXx7Q0dp8aDMfnm4iKo31Zmj9btjvwS+fPuXU/ioTYxbr/itInv1Ti/hSva/71uz
-	x2SAz1JVOFjya39kvrEIPq1Obqbn39Xm7g3Qd6u43oJ04bLCxfaqoAbhHKn9JyiYuU36N+vmUG2OS
-	UQqcXy2w==;
-Received: from [201.172.173.139] (port=55406 helo=[192.168.15.5])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sYQnv-003KJN-0H;
-	Mon, 29 Jul 2024 08:52:47 -0500
-Message-ID: <d5b55e8d-a346-4dd8-adbe-bafafa43175e@embeddedor.com>
-Date: Mon, 29 Jul 2024 07:52:39 -0600
+	s=arc-20240116; t=1722261222; c=relaxed/simple;
+	bh=zevFigggh9gav77vOeUqQEZLN00S3klYyCxmhPrpO0k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WMBqcsm1ESG07uQuCXzf6N/kxd84hBijmdJNN0a8MikMBOGV/dRh3RqrBldCDCwwHfsgoybjy4ID/Gvn4MuuWm8fV5VLOP58KA06DKXoBEaQVzNnm62vwXYtZKmeJ05vjp4alNiia9S2wdHxxSykt08pTudyGV0WHAXUrDrSFuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DhKZrnP3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722261219;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6yEq5CChoNdWngYsHC+lDcujFG99veLH/xTIPSOMsNE=;
+	b=DhKZrnP3TxhUnvl5fLyd12xOmSxvn4skU5fsVqsQEV2PT8pCCWG/snxQSYP+VTDtLyRo90
+	Gpjvpz1poJL9YSYjHOXtWRY8rEVO6jkk+BtlifOZvFf6yzfjiYvc+00vnClJDauvtOWjqT
+	W+zda9g/c/ZUCPEZV6kUQdqLMPJVYxs=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-244-fgaIHUdIO5itErucwhmKSQ-1; Mon, 29 Jul 2024 09:53:38 -0400
+X-MC-Unique: fgaIHUdIO5itErucwhmKSQ-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4280c0b3017so19521165e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:53:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722261217; x=1722866017;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6yEq5CChoNdWngYsHC+lDcujFG99veLH/xTIPSOMsNE=;
+        b=FD2VOq2z/MWyx6T8pz+DfojPQIkmqCmp23RqHkG+eIsCTL5C6MZY19BnpfF96SnBPI
+         FrXDeh9/euwJ2kn1idwaI6NrR2EJsEDpXvoA5ysk9sVJkZpAtF0JO+mEqRz80f/SSkcU
+         xggMhPqg7YzU0yRXl9DN+NQRB8B1WlYolRo3No9lHv+m3z1mI5t+NpVtTPuUOkL3j+CW
+         GOPB7w9sXmraD8Q1xwzNZlagylwHGlNuY9VbIwXVZ3CiUufi+kKBfGf+uHQUwIug0GLg
+         j/93H06XJc+/5U1oLM/bOFD+g4KOuyHzqOfi+bMKEyStbezVTOGysEsMeASHq30gZfPa
+         6BEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWD6BL/RaYKKykHpXeYOLii/M1khaAcko1Wpbb4V6vQaNhnPCIrvrPx+Klw/nzda1CajxVJt1RpvgDQq8njD5OwVyaNjiDwasnNcZ/n
+X-Gm-Message-State: AOJu0Yx1F/tkThi4XTo/vJGCPTeuPPsYneMKL+rZp++kBmGHCaUhT7Z4
+	kWianFflGv05ZduiMNAVG0hgUaD8cGaOxPXCWCb8r5kaxvS5+YQIYbVbheKXRzLzvl9iUPWRWTq
+	qqihpVRcGZzj/aO7WSz+ARCrxytlt1z3rnM/6cSTBt2viUc0U8B/5Syfr+vlIjA==
+X-Received: by 2002:a05:600c:444d:b0:426:65bf:5cc2 with SMTP id 5b1f17b1804b1-42811d83c38mr50666375e9.1.1722261216883;
+        Mon, 29 Jul 2024 06:53:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEQ34nlwG6HFfNMqNvetJJ+pbG8/TxeOUBuPfISPhjduWTs2MRaELaUuF0Pc7fNro9Ocof+NQ==
+X-Received: by 2002:a05:600c:444d:b0:426:65bf:5cc2 with SMTP id 5b1f17b1804b1-42811d83c38mr50666185e9.1.1722261216359;
+        Mon, 29 Jul 2024 06:53:36 -0700 (PDT)
+Received: from fedora (g2.ign.cz. [91.219.240.8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280d13570bsm123111095e9.7.2024.07.29.06.53.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 06:53:36 -0700 (PDT)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Nicolas Saenz Julienne <nsaenz@amazon.com>,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: pbonzini@redhat.com, seanjc@google.com, linux-doc@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, graf@amazon.de, dwmw2@infradead.org,
+ pdurrant@amazon.com, mlevitsk@redhat.com, jgowans@amazon.com,
+ corbet@lwn.net, decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+ amoorthy@google.com
+Subject: Re: [PATCH 01/18] KVM: x86: hyper-v: Introduce XMM output support
+In-Reply-To: <D2RVJ6QCVNOU.XC0OC54QHI51@amazon.com>
+References: <20240609154945.55332-1-nsaenz@amazon.com>
+ <20240609154945.55332-2-nsaenz@amazon.com> <87tth0rku3.fsf@redhat.com>
+ <D2RVJ6QCVNOU.XC0OC54QHI51@amazon.com>
+Date: Mon, 29 Jul 2024 15:53:34 +0200
+Message-ID: <878qxk5mox.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [drivers/gpio] Question about `ljca_gpio_config`: misuse of
- __counted_by
-To: Linus Walleij <linus.walleij@linaro.org>, Haoyu Li
- <lihaoyu499@gmail.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <CAPbMC77iDKaJvc_8Qq2SqQ-mnkAJyeeADGhWx-jgUV7KsCi28Q@mail.gmail.com>
- <CACRpkdbaRNigfU_mLqcJJckwFz0+14NqWP_TpYqbONCa6wAH6g@mail.gmail.com>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <CACRpkdbaRNigfU_mLqcJJckwFz0+14NqWP_TpYqbONCa6wAH6g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sYQnv-003KJN-0H
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.5]) [201.172.173.139]:55406
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfOwv30v92sXqGWjJCdy7KOSwX2S8/DZ8yjspQwefRoqwY5iX5vnRzGLSA5jFqEnL/zHPDKs8712m0odV6lsnCRLsvkzR2DX1XhMaPPd5kDVw806SFm8J
- ENNXFZymXDP78jVM2tvTaKp7OqrIe7snxFuuYnPt5PElyS80r2lMCBXea2uAbo2b+jEgMwW4AOQk/dN3528mMj0vdd4EtTHiwb7Wj4aPQZ5dWHPB8LNBS8+9
+Content-Type: text/plain
 
-Hi all,
+Nicolas Saenz Julienne <nsaenz@amazon.com> writes:
 
-On 26/07/24 14:07, Linus Walleij wrote:
-> Hi Haoyu,
-> 
-> On Wed, Jul 24, 2024 at 11:12 AM Haoyu Li <lihaoyu499@gmail.com> wrote:
-> 
->> Dear Linux Developers for GPIO SUBSYSTEM,
+> Hi Vitaly,
+> Thanks for having a look at this.
+>
+> On Mon Jul 8, 2024 at 2:59 PM UTC, Vitaly Kuznetsov wrote:
+>> Nicolas Saenz Julienne <nsaenz@amazon.com> writes:
 >>
->> We are curious about the use of `struct ljca_gpio_packet *packet` in the function `ljca_gpio_config` (https://elixir.bootlin.com/linux/v6.10/source/drivers/gpio/gpio-ljca.c#L80).
->> ```
->> static int ljca_gpio_config(struct ljca_gpio_dev *ljca_gpio, u8 gpio_id,
->>     u8 config)
->> {
->> struct ljca_gpio_packet *packet =
->> (struct ljca_gpio_packet *)ljca_gpio->obuf;
->> int ret;
+>> > Prepare infrastructure to be able to return data through the XMM
+>> > registers when Hyper-V hypercalls are issues in fast mode. The XMM
+>> > registers are exposed to user-space through KVM_EXIT_HYPERV_HCALL and
+>> > restored on successful hypercall completion.
+>> >
+>> > Signed-off-by: Nicolas Saenz Julienne <nsaenz@amazon.com>
+>> >
+>> > ---
+>> >
+>> > There was some discussion in the RFC about whether growing 'struct
+>> > kvm_hyperv_exit' is ABI breakage. IMO it isn't:
+>> > - There is padding in 'struct kvm_run' that ensures that a bigger
+>> >   'struct kvm_hyperv_exit' doesn't alter the offsets within that struct.
+>> > - Adding a new field at the bottom of the 'hcall' field within the
+>> >   'struct kvm_hyperv_exit' should be fine as well, as it doesn't alter
+>> >   the offsets within that struct either.
+>> > - Ultimately, previous updates to 'struct kvm_hyperv_exit's hint that
+>> >   its size isn't part of the uABI. It already grew when syndbg was
+>> >   introduced.
 >>
->> mutex_lock(&ljca_gpio->trans_lock);
->> packet->item[0].index = gpio_id;
->> packet->item[0].value = config | ljca_gpio->connect_mode[gpio_id];
->> packet->num = 1;
->>
->> ret = ljca_transfer(ljca_gpio->ljca, LJCA_GPIO_CONFIG, (u8 *)packet,
->>     struct_size(packet, item, packet->num), NULL, 0);
->> mutex_unlock(&ljca_gpio->trans_lock);
->>
->> return ret < 0 ? ret : 0;
->> }
->> ```
->> The definition of `struct ljca_gpio_packet` is at https://elixir.bootlin.com/linux/v6.10/source/drivers/gpio/gpio-ljca.c#L53.
->> ```
->> struct ljca_gpio_packet {
->> u8 num;
->> struct ljca_gpio_op item[] __counted_by(num);
->> } __packed;
->> ```
->>
->> Our question is: The `item` member of `struct ljca_gpio_packet` is annotated with "__counted_by". Only if we set `packet->num = 1` before accessing `packet->item[0]`, the flexible member `item` can be properly bounds-checked at run-time when enabling CONFIG_UBSAN_BOUNDS and CONFIG_FORTIFY_SOURCE. Or there will be a warning from each access prior to the initialization because the number of elements is zero.
->> So we think relocating `packet->num = 1` before accessing `packet->item[0]` is needed.
->>
->> Here is a fix example of a similar situation : https://lore.kernel.org/stable/20240613113225.898955993@linuxfoundation.org/.
->>
->> Please kindly correct us if we missed any key information. Looking forward to your response!
-> 
-> This is a Gustavo AR Silvia question, so let's loop him in.
-> (I think you're right, and we should make a patch.)
+>> Yes but SYNDBG exit comes with KVM_EXIT_HYPERV_SYNDBG. While I don't see
+>> any immediate issues with the current approach, we may want to introduce
+>> something like KVM_EXIT_HYPERV_HCALL_XMM: the userspace must be prepared
+>> to handle this new information anyway and it is better to make
+>> unprepared userspace fail with 'unknown exit' then to mishandle a
+>> hypercall by ignoring XMM portion of the data.
+>
+> OK, I'll go that way. Just wanted to get a better understanding of why
+> you felt it was necessary.
+>
 
-Yes! `packet->num = 1;` should be relocated:
+(sorry for delayed reply, I was on vacation)
 
-diff --git a/drivers/gpio/gpio-ljca.c b/drivers/gpio/gpio-ljca.c
-index dfec9fbfc7a9..c2a9b4253974 100644
---- a/drivers/gpio/gpio-ljca.c
-+++ b/drivers/gpio/gpio-ljca.c
-@@ -82,9 +82,9 @@ static int ljca_gpio_config(struct ljca_gpio_dev *ljca_gpio, u8 gpio_id,
-         int ret;
+I don't think it's an absolute must but it appears as a cleaner approach
+to me. 
 
-         mutex_lock(&ljca_gpio->trans_lock);
-+       packet->num = 1;
-         packet->item[0].index = gpio_id;
-         packet->item[0].value = config | ljca_gpio->connect_mode[gpio_id];
--       packet->num = 1;
+Imagine there's some userspace which handles KVM_EXIT_HYPERV_HCALL today
+and we want to add XMM handling there. How would we know if xmm portion
+of the data is actually filled by KVM or not? With your patch, we can of
+course check for HV_X64_HYPERCALL_XMM_OUTPUT_AVAILABLE in
+KVM_GET_SUPPORTED_HV_CPUID but this is not really straightforward, is
+it? Checking the size is not good either. E.g. think about downstream
+versions of KVM which may or may not have certain backports. In case we
+(theoretically) do several additions to 'struct kvm_hyperv_exit', it
+will quickly become a nightmare.
 
-         ret = ljca_transfer(ljca_gpio->ljca, LJCA_GPIO_CONFIG, (u8 *)packet,
-                             struct_size(packet, item, packet->num), NULL, 0);
+On the contrary, KVM_EXIT_HYPERV_HCALL_XMM (or just
+KVM_EXIT_HYPERV_HCALL2) approach looks cleaner: once userspace sees it,
+it knows that 'xmm' portion of the data can be relied upon.
 
-stable should be CC'd and the following tag included:
+-- 
+Vitaly
 
-Fixes: 1034cc423f1b ("1034cc423f1b4a7a9a56d310ca980fcd2753e11d")
-
-Thanks for catching this! :)
---
-Gustavo
 
