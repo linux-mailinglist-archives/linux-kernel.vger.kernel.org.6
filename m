@@ -1,121 +1,72 @@
-Return-Path: <linux-kernel+bounces-266563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073EB9401B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:19:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 092469401B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3826AB21B61
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:19:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63A5AB21814
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DF718F2CF;
-	Mon, 29 Jul 2024 23:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248F818EFDF;
+	Mon, 29 Jul 2024 23:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="guOnPFPZ"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MhhBmRoC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE0218D4D3
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633EB288BD;
+	Mon, 29 Jul 2024 23:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722295171; cv=none; b=B5wK5+MUEqmTZnKh1ihO/5eF/ThQ4UXEiOz5mq66e9nGg3QBm1USIxqpO2DiVHqi7LCuCAI0z+6CSlfhAHlj8Wo8BpXKvXlyAjn/piJ350PyeOPa2NdGZSFJB0Z8/7wDL724ev6fyGDmwMFn560+4A+/7Iqx1dmyI44M4cN3SKA=
+	t=1722295202; cv=none; b=rHkiBlYuKHKWCSNbBsGSST80xGlJh3Ob8LCN9IW8dgQgDfFEGqsYx/TrpERlwip2pkZC0hl+atZRE3dARhuLVecTPqUcDzR8pHxfRrRbtyqPs6MCIVmTsyV+96AotAuF5g+Zzh74kfpcXvMBISaTy5vXPfy6ikbyB68NhgD1x80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722295171; c=relaxed/simple;
-	bh=OHOVO4dxB3APauYeyYI+8Ic96yRsKCBkvy6zgnD8xWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qZJpz/Ro5dpkFv7jIh3CkB56nhfXWxre+D4rkg4zlrKTIh7mEdYsbZjLxGgtWZ475ayMW5ccPld+I8OxPHQ5pqii5YYwPN+mKzRDchqiWJiNeDJppjvjSIr1puhZv5VrzB8ZPhGVinGbbYV55dA5JlB/8RpR6dA2FLMTkEPGoU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=guOnPFPZ; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc5549788eso28536945ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:19:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1722295169; x=1722899969; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kihfTujYbv2E1XGq+VQixBC4l+TTMCr6DBpIWmnfqrM=;
-        b=guOnPFPZRNdRSHj5O9pLnp2KPEUVd2YPSfY1gFfIwhA6TLAlFHzTE1EpKetRp7T7v0
-         bIVmQswq73PISeOxMqD7SLl6mPRTLcuzZgM4wn8cvyHlaLyfXeo6Evxn9/CV5kVbKlft
-         pHryclYSUX/l3cF2a4DNg+SNAF23TXCpSaerdAUtonsdgLvjcr1Bj2fseQN3WTgYtrkU
-         TcE4WcULwNlTyTONN9+426q2I756YuntohtWigtnn84q2F6qvM/+BE8ng/uW9e8AMsjM
-         0YRO9ZhDwaHHo5CUR9vy6bCJajO/xn8PXb4pnDTZus7dE87UwWBW6MsxtlAfqpHCly0c
-         bpPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722295169; x=1722899969;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kihfTujYbv2E1XGq+VQixBC4l+TTMCr6DBpIWmnfqrM=;
-        b=c+QvUpqljx+303JNS4m8wAj5n2vB5PnhIl2JlOisV8sEtw5Htxl8TOz05R/A9/RXB7
-         jdlsCNy0gWGi59HiYudq9Qnk7yTewsvHsb6kUBMGWzN/xbBV5WYkkCLYyk2Ygzn0kc1O
-         3qDKV+XPbgXfEbm5EtyscNqpfWZ2QY9QhoqV+vwAUyaqfCTwYrYsvA5U97+GCyVeF3cn
-         ytoM5cJ39qrnBDIh9z53H7ocCZw4lGW4n9qE0wETlUErDnhrXS3TZz/R8DnfxTWofxf3
-         M87I2RcbUlb6Wbn5D35EEOnH3HmJePfr9EG1+pIZqgCzoaxNvMztTqj/PDrK/nbC+1mO
-         6Avg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKMsdzzsI17ihucHH1m3A3CTo6YB3klp3042tbOWYXbCeI8UC8sL8XkgXOP95awpWJiGq9cB9mtxFuc4bnc4xD2hZqAIXQqPjwWJxp
-X-Gm-Message-State: AOJu0YzJnpE8I8Hf6hg5Oq6u+XXk2j7nfP5wSoYIeMD/uucl2Gl2d5B5
-	vSsCJcYcrRzYlGUVaQCBChTcjlXlTJYQRbUlsN8IHs1xkqjhGt1gH+JbSbEx0sYR8/7PtH5DIxJ
-	8
-X-Google-Smtp-Source: AGHT+IFVnVpiGMv4QE3tIHnY31CZIyj8nSZogBjINNMpgFa1/B5ceMrCZ21SvgHhoE64ol7erQYeRA==
-X-Received: by 2002:a17:903:22cd:b0:1fc:2ee3:d46f with SMTP id d9443c01a7336-1ff047dd5e0mr145558165ad.11.1722295169539;
-        Mon, 29 Jul 2024 16:19:29 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ffcb9dsm88690665ad.306.2024.07.29.16.19.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 16:19:29 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sYZeI-00G4Uf-29;
-	Tue, 30 Jul 2024 09:19:26 +1000
-Date: Tue, 30 Jul 2024 09:19:26 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, Florian Weimer <fweimer@redhat.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: Testing if two open descriptors refer to the same inode
-Message-ID: <Zqgjftq6H3cDO8D0@dread.disaster.area>
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
- <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
- <875xsoqy58.fsf@oldenburg.str.redhat.com>
- <vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
- <87sevspit1.fsf@oldenburg.str.redhat.com>
- <CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
- <20240729.114221-bumpy.fronds.spare.forts-a2tVepJTDtVb@cyphar.com>
- <CAGudoHFQ9TtG-5__38-ND4KTxYCpEKVv_X9HhZixcdnVMUBEwQ@mail.gmail.com>
+	s=arc-20240116; t=1722295202; c=relaxed/simple;
+	bh=uX7VwlDqNgfUpg2s2F8JxYe1gxHFDl4plbquYzcgJng=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=X0WC6ptibfeBBlhwMyE7EOAZyb2EDF+uAYSoappzfiVqbelVhKxvue15cTVTNe5TPQHi3dhXjsjUBaMklRRG8HDyUoZmi9MYPYy+LkJyYwax3BcD2LB8bVatn2t4zYAaDpWNCBBINb3PZqMfT+WGIlGaJXPzCsmqitzyBqBMmSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MhhBmRoC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC335C32786;
+	Mon, 29 Jul 2024 23:20:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722295202;
+	bh=uX7VwlDqNgfUpg2s2F8JxYe1gxHFDl4plbquYzcgJng=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=MhhBmRoC++Q7b4J+bnmsrh8seHolzYY5DFI2Ak7THB8OE8y/hntHwccz2ycYGRZjW
+	 uX0tPnIeX7NYAOf5TLpxZ0XKZda0XP6V9j2rKJvY5Cs55uYJOhtzlUPiN8o3BfUUVN
+	 QZ5tWeZzo2RnrzyTp0aOVFpwHHPPJN8QYs8qKwrWOi+AwKEq0v0IpfxkIzfNGVsa8N
+	 gTaWqTjXNXAdVTysxwhm8/FYZ11nbJCYvo4MD91o5sXDWAqgpivTCKpIFsbuxRFs5b
+	 XNERy5sxYNLKlm2Pnfry/RkTFEEVn9Iih4Pwo+lMNVpfvl1a3uLQ75cSFudRn68epG
+	 0Yx2O/lt2TYiw==
+Message-ID: <befaae6341af835dab1349eb351b0bca.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGudoHFQ9TtG-5__38-ND4KTxYCpEKVv_X9HhZixcdnVMUBEwQ@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240720152447.311442-1-david.hunter.linux@gmail.com>
+References: <20240720152447.311442-1-david.hunter.linux@gmail.com>
+Subject: Re: [PATCH] da8xx-cfgchip.c: replace of_node_put with __free improves cleanup
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: David Hunter <david.hunter.linux@gmail.com>, julia.lawall@inria.fr, skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
+To: David Hunter <david.hunter.linux@gmail.com>, david@lechnology.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, mturquette@baylibre.com
+Date: Mon, 29 Jul 2024 16:19:59 -0700
+User-Agent: alot/0.10
 
-On Mon, Jul 29, 2024 at 02:12:15PM +0200, Mateusz Guzik wrote:
-> There needs to be a dev + ino replacement which retains the property
-> of being reliable between reboots and so on.
+Quoting David Hunter (2024-07-20 08:24:47)
+> The use of the __free function allows the cleanup to be based on scope
+> instead of on another function called later. This makes the cleanup
+> automatic and less susceptible to errors later.
+>=20
+> This code was compiled without errors or warnings.
+>=20
+> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+> ---
 
-Yes, that's exactly what filehandles provide.
-
-OTOH, dev + ino by itself does not provide this guarantee, as st_dev
-is not guaranteed to be constant across reboots because of things
-like async device discovery and enumeration. i.e. userspace has to
-do a bunch of work to determine the "st_dev" for a given filesystem
-actually refers to the same filesystem it did before the system
-restarted (e.g. via FS uuid checks).
-
-Filehandles already contain persistent filesystem identifiers, and
-so userspace doesn't have to do anything special to ensure that
-comparisons across reboots are valid.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Applied to clk-next
 
