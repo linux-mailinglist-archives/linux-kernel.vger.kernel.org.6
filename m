@@ -1,70 +1,47 @@
-Return-Path: <linux-kernel+bounces-266010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07DBC93F927
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:11:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B78F193F92E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C31D1F22A8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:11:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61057283280
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48FD156661;
-	Mon, 29 Jul 2024 15:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E22157A59;
+	Mon, 29 Jul 2024 15:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CEuVl/kV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLvLepuk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5057315624C;
-	Mon, 29 Jul 2024 15:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7156F15624C;
+	Mon, 29 Jul 2024 15:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722265866; cv=none; b=Gl8Xssh0v/xOncnYsIhwSiWCAUaQaJT3mWlotLM70QS5eXt6rmN1rmT94FM4FCr9o5j7SS3UHWoHPkMehFADietK98XI+ncF87X0Wef3S8jhs2z0a5c+6AdP6SYlR00F2WgnXogxgvU8UUNat2z4smRRsC5Df+dZS7cRqyTtePk=
+	t=1722265990; cv=none; b=dfkT2mbSiFD/EmATLnWaYPuUvs9kf5vgKWGq4OuG0ohE6o55iis8IoHsYwGEPI5Jx4E5+oXBThO1HU1uUk8yyyoQVRmfaUcMGpsPfILOmBYSLBOVF0clSkzfhDS9rxwt2SXPS3dFKwG+aWBJYVChMCgELqhHKQIpBN7fjGXonyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722265866; c=relaxed/simple;
-	bh=alzKCTE5dsQxSpcqgyj4UKYtuLeyJc1AtNu8l3lCzho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oo7jPW1kcMJz2JGbkqlNMduAyhBtA4kT+A6Y82xl61gDdoVBR12TxcTxk7Dl3TzdvoN5G4RGZmbowj+BhkGme3icpo0Jonc8W2TPV9JUx4d4nlsp7nGyypkHvb3Y7AYBt4mHL4AgWoNCjANPh1LsvH9VcNW2kdeNWZHtBDrkV2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CEuVl/kV; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722265864; x=1753801864;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=alzKCTE5dsQxSpcqgyj4UKYtuLeyJc1AtNu8l3lCzho=;
-  b=CEuVl/kVn7dgh67usDIpJhQVg+OdjrZasmzQFaJHTZ2Km6wo7VjALMvD
-   5luSqjePWYq/6fbNi60F01AlK8L6x9LfRbb8t5MJRyiF8blZWZ8ENmkst
-   mI3t7fJGeIZWU7cfBdZ+W6+vKvVse9ofBcH6VBuPB+0X0EiLKqclQonVZ
-   cUgzivyZPwyoF5jkIE++LjXVfQo+Cov1yfR+QAH6utMU/jb8GVeyE8fRQ
-   UHHo0+1+gwKrqkMPZVpWAotrNOYNIwVeO8lgzWX/JKllnmnxmBO1Da80P
-   d/YkNErMbUirBtHjC7z+T07rvSY2nWMiIgRYy4/UuqrJIFHCXwoKqObRQ
-   g==;
-X-CSE-ConnectionGUID: oCEDddBTTVO/H7stWq+84g==
-X-CSE-MsgGUID: yi/KR1+IQwqMX4Rjb3U8jw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="19731064"
-X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
-   d="scan'208";a="19731064"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 08:11:03 -0700
-X-CSE-ConnectionGUID: 1ot7KxbXR16p42lzywTy7Q==
-X-CSE-MsgGUID: RCINIsxYRuSBf5HarEByOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
-   d="scan'208";a="59100038"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 08:11:03 -0700
-Received: from [10.212.79.71] (kliang2-mobl1.ccr.corp.intel.com [10.212.79.71])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 20FFC20BA6EC;
-	Mon, 29 Jul 2024 08:11:01 -0700 (PDT)
-Message-ID: <0f95d601-418f-4307-bcd1-5fcebac8018f@linux.intel.com>
-Date: Mon, 29 Jul 2024 11:10:59 -0400
+	s=arc-20240116; t=1722265990; c=relaxed/simple;
+	bh=lqnvlkLMFozm2wwc3+7Pn5KfGkqDgWA8zFqYfPHqMwQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Css49ERYqDan5eWg6jymVf5KQPfnE68wZU3w6oY5W+UryMo4mn/6KcB5YvNRF6D2y18QhsKotuxgLuJ84f6QyzoiUYhIFMwIjgiGGAXvnG/brkOh/ux6tIoY9pz5WYA74P63zx2rT2NOL9zKvOqovigTy4Z2WI6nqgDhjCzJ+QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLvLepuk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ABC0C32786;
+	Mon, 29 Jul 2024 15:13:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722265990;
+	bh=lqnvlkLMFozm2wwc3+7Pn5KfGkqDgWA8zFqYfPHqMwQ=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=TLvLepukpOP2F8N4Dv4txfPbezkREc1aTC3uvBFwEDV5tE4x1gElGfjR5w5kC3xSx
+	 K9sXgiz7DfMLspa5ukpOZfGV0BifdQ+hRa82/ztEgH3J3e3LumgoFPRG9WyaeM/j11
+	 xRHWF+l4FHdnDnHrsQVcGBuiX8zR/1wQo6SSH9HozZ/TtkBk1R3qtoiTfkpsVrWp0l
+	 r6JD54awGqwgiievGjLW8M1NeWodfxSjRcRLSlCnomS11IQLI7mcOIWjEtfx7Ze0dS
+	 X+ESMgT/JhnycQuec66WIEutrV2w+yD8c1PirvlSgYig13ffh7CxQo/HFI1JqSVQPF
+	 E8s8F2CgSd+3Q==
+Message-ID: <3ae2671d-d8ff-426d-8cc8-c1603e616f8c@kernel.org>
+Date: Mon, 29 Jul 2024 17:13:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,115 +49,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf/x86: Fix smp_processor_id()-in-preemptible
- warnings
-To: Li Huafei <lihuafei1@huawei.com>, peterz@infradead.org, mingo@redhat.com
-Cc: acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, tglx@linutronix.de, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- ak@linux.intel.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240729220928.325449-1-lihuafei1@huawei.com>
+Subject: Re: [PATCH v5 2/5] dt-bindings: usb: qcom,dwc3: Update ipq5332 clock
+ details
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, gregkh@linuxfoundation.org,
+ konrad.dybcio@linaro.org, djakov@kernel.org, quic_wcheng@quicinc.com,
+ quic_kathirav@quicinc.com, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20240725104528.3504967-1-quic_varada@quicinc.com>
+ <20240725104528.3504967-3-quic_varada@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240729220928.325449-1-lihuafei1@huawei.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240725104528.3504967-3-quic_varada@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 2024-07-29 6:09 p.m., Li Huafei wrote:
-> The following bug was triggered on a system built with
-> CONFIG_DEBUG_PREEMPT=y:
+On 25/07/2024 12:45, Varadarajan Narayanan wrote:
+> USB uses icc-clk framework to enable the NoC interface clock.
+> Hence the 'iface' clock is removed from the list of clocks.
+> Update the clock-names list accordingly.
 > 
->  # echo p > /proc/sysrq-trigger
-> 
->  BUG: using smp_processor_id() in preemptible [00000000] code: sh/117
->  caller is perf_event_print_debug+0x1a/0x4c0
->  CPU: 3 UID: 0 PID: 117 Comm: sh Not tainted 6.11.0-rc1 #109
->  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
->  Call Trace:
->   <TASK>
->   dump_stack_lvl+0x4f/0x60
->   check_preemption_disabled+0xc8/0xd0
->   perf_event_print_debug+0x1a/0x4c0
->   __handle_sysrq+0x140/0x180
->   write_sysrq_trigger+0x61/0x70
->   proc_reg_write+0x4e/0x70
->   vfs_write+0xd0/0x430
->   ? handle_mm_fault+0xc8/0x240
->   ksys_write+0x9c/0xd0
->   do_syscall_64+0x96/0x190
->   entry_SYSCALL_64_after_hwframe+0x4b/0x53
-> 
-> This is because the commit d4b294bf84db ("perf/x86: Hybrid PMU support
-> for counters") took smp_processor_id() outside the irq critical section.
-> If a preemption occurs in perf_event_print_debug() and the task is
-> migrated to another cpu, we may get incorrect pmu debug information.
-> Move smp_processor_id() back inside the irq critical section to fix this
-> issue.
-> 
-> Fixes: d4b294bf84db ("perf/x86: Hybrid PMU support for counters")
-> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
-
-Looks good to me.
-
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
-
-Thanks,
-Kan
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 > ---
-> v2:
->  - "cpu" and "idx" are defined together.
->  - Use guard(irqsave)() instead of local_irq_save{restore}() to avoid
->    forgetting to restore irq when returning early.
-> ---
->  arch/x86/events/core.c | 22 ++++++++++++----------
->  1 file changed, 12 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index 12f2a0c14d33..2cadfdd8dd99 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -1521,19 +1521,22 @@ void perf_event_print_debug(void)
->  {
->  	u64 ctrl, status, overflow, pmc_ctrl, pmc_count, prev_left, fixed;
->  	u64 pebs, debugctl;
-> -	int cpu = smp_processor_id();
-> -	struct cpu_hw_events *cpuc = &per_cpu(cpu_hw_events, cpu);
-> -	unsigned long *cntr_mask = hybrid(cpuc->pmu, cntr_mask);
-> -	unsigned long *fixed_cntr_mask = hybrid(cpuc->pmu, fixed_cntr_mask);
-> -	struct event_constraint *pebs_constraints = hybrid(cpuc->pmu, pebs_constraints);
-> -	unsigned long flags;
-> -	int idx;
-> +	int cpu, idx;
-> +	struct cpu_hw_events *cpuc;
-> +	unsigned long *cntr_mask, *fixed_cntr_mask;
-> +	struct event_constraint *pebs_constraints;
-> +
-> +	guard(irqsave)();
-> +
-> +	cpu = smp_processor_id();
-> +	cpuc = &per_cpu(cpu_hw_events, cpu);
-> +	cntr_mask = hybrid(cpuc->pmu, cntr_mask);
-> +	fixed_cntr_mask = hybrid(cpuc->pmu, fixed_cntr_mask);
-> +	pebs_constraints = hybrid(cpuc->pmu, pebs_constraints);
->  
->  	if (!*(u64 *)cntr_mask)
->  		return;
->  
-> -	local_irq_save(flags);
-> -
->  	if (x86_pmu.version >= 2) {
->  		rdmsrl(MSR_CORE_PERF_GLOBAL_CTRL, ctrl);
->  		rdmsrl(MSR_CORE_PERF_GLOBAL_STATUS, status);
-> @@ -1577,7 +1580,6 @@ void perf_event_print_debug(void)
->  		pr_info("CPU#%d: fixed-PMC%d count: %016llx\n",
->  			cpu, idx, pmc_count);
->  	}
-> -	local_irq_restore(flags);
->  }
->  
->  void x86_pmu_stop(struct perf_event *event, int flags)
+
+Explanation you gave in v4 should be in the commit msg.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
 
