@@ -1,69 +1,92 @@
-Return-Path: <linux-kernel+bounces-265415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 140AB93F0C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:16:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B83293F0C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC4BA288477
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:16:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 174EB288089
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51F913F426;
-	Mon, 29 Jul 2024 09:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA04013DBBF;
+	Mon, 29 Jul 2024 09:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="QjIOX5Py"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YHLRz/FZ"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141E26F2F7;
-	Mon, 29 Jul 2024 09:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED74B7F47F
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722244579; cv=none; b=L/JE2BLJRvfUCa8m4zCpCrJFFEKhF4b2r/1qYx3Umc231dUNimLQM6o35wKgBskFrivmxdWHq7sOL7GFN6JghQmdjklyj6qFWdAyE0IvkklMESqCivtGclOpncZ7mOdhPE2s0g3kfujUAVazvuhlq92ldXzQx10ljEHvVixxZdg=
+	t=1722244576; cv=none; b=EP4krJGEfUpcjIX8lvjJnyi18w5cGncY4RHV3JC8+Z9GBwEBIYZdhMoXKROycd1obxP2fO1dvNghC9Pu0cbtGDyDkDXbHVIKCuIcOiXQ63uvldyzK8y+CmIAZ8Wvv0Ihz7BqNEXWVvN4NNPr6cPLt2Yaldk3KUhSDwVdXYlhZKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722244579; c=relaxed/simple;
-	bh=AkX6G6z885Q5T5CpW6N0zxY91QJ/CgPE6kJycFRUhv4=;
+	s=arc-20240116; t=1722244576; c=relaxed/simple;
+	bh=gbutE41D4l1tBCm8vtQ7p4LBr9tDpADqql74TXHZ5nE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dZXshkxg5Dn4XiYkKgQFwDuAD0OxVi2muXJCGNliTy8SJ7yTjforpPlhb+3KEr2FTz4HDYjVSx9gpUTSqilxKsUVzFQXSYtd/yfvmyaIRFEBd2tzZQCFaT3jTglxZexbAo3yqDHto6bOvoD8sXJ66vofYRT9jN6qehPTPBl8+Cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=QjIOX5Py; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=lYDuApbFcnvR3FtABndQmjg0ANtGaAe67G8GpyHWIyE=; b=QjIOX5PyrzYrwolLgxOFBu1Zcx
-	zqTzcDDT2IZU1WW9831ZJlZF1Ukv6UdMxExGYXkxpIfAoqmeJzTsLqfsHeoniMjbKb3qOvS8H+c5Q
-	62U20zJzG6tBciAPh/0UC6tabRNhv9WuJH7aU1TmDFP9e+zKMfLYCovsypAQygLvUhvgWJNlnQqPR
-	q/siV5occB8x78aT4SQCk7t5h1u6ZJrST6qdk6hhsyssADoqt1rSMEOHtwGsom+OIo5XKlpxQ48dQ
-	StPplvMplOV2E1HgbeSpJL4Le5z1u9G6zNd9oOhA9i/SMwS3x4Vuy12AZzqsej8bPJUGOtqgFfgvn
-	nwThTn6Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49390)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sYMU9-0003Sn-0N;
-	Mon, 29 Jul 2024 10:16:05 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sYMUA-0004Cy-It; Mon, 29 Jul 2024 10:16:06 +0100
-Date: Mon, 29 Jul 2024 10:16:06 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
-	andrew@lunn.ch, horms@kernel.org, hkallweit1@gmail.com,
-	richardcochran@gmail.com, rdunlap@infradead.org,
-	bryan.whitehead@microchip.com, edumazet@google.com,
-	pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH net-next V2 3/4] net: lan743x: Migrate phylib to phylink
-Message-ID: <Zqdd1mfSUDK9EifJ@shell.armlinux.org.uk>
-References: <20240716113349.25527-1-Raju.Lakkaraju@microchip.com>
- <20240716113349.25527-4-Raju.Lakkaraju@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TXMZKX8h1ERdTirXP4qxDNBBl+ScLFaSviQXy9oyGYYV64XUJqsNVXDW/8sxXjtBLQYXxu0vGmfRHZyBmlxkgMtoMRUWHOmha5icg2y/+IsibuhIjr6RiFUFQGQz4peSqtTvUFjB4AUTVnDUBdF/BDqS/Mc+/JPoCtC4hNZm+PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YHLRz/FZ; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a79df5af51so9101474a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 02:16:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1722244572; x=1722849372; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hYc1ZmJx2XVqtcsHWUqPHgPqOHsYUXN3rnFWYgqlyJE=;
+        b=YHLRz/FZdjfdrTmcEcS+5+JHfzDSJjUUPeoPges/uXa3KqXhyPu1goiOtaF9viTsQM
+         IKTwG6lESycYHxGjlGkTwsw3GDrcHF4RlKbdHJxOUp5FG5yiIUsaAf61VxFbkHQubn3Y
+         3m+mhAYSU9NibPZX1Kg5xqiX3Prq9c3upH9acI+VQBeY7Cvv4FtSdnAT4N8uiPNVQ5wW
+         OP9SvgAMA7zPCwnP3OwLB4B/eqxwyXGNgqV8rkkzWdzK9IlsA5uC0gJs0KvWuajstVIu
+         jPRx6wDqHsfWMIsf9aye6ZZujnAKF1mCR1ZaNrSDftj5m/ixccoEyZhcv76I1S860sLJ
+         /Lbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722244572; x=1722849372;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hYc1ZmJx2XVqtcsHWUqPHgPqOHsYUXN3rnFWYgqlyJE=;
+        b=ifXNJ00NRlrDTdMkBVfm8KpGrTXCGZ1tOFGoKqYOlTCXT6CDtNss2KMj3ifQ9nGbu8
+         PZ8CO+guZbwPtkABY9Shmw+5m+1ab44PttI417HDlC8ZGTES652B6KQoCFDTGjGa+2B0
+         zqxnuZ0cFcvz+IpauEFaScDCyAYUa9u7GvhJIeNvm+/HUjahaoD5IrtqHfmAyccoqSL1
+         Yab0gz+hkiouh0+rJtcnH4SYXWJlpu4HtshIYONgK9ZliKpzU2eTSwqw+q7Cw7ev0vBh
+         M80DsqzfXlVdECz/RJOwkXNsOBSk8u3eUAU9BgQ6Ox6pWDVHUtkgUwn8SnwU4BHe80lE
+         09QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmDLnLe90Dt2iC2hFUxi6NUXgHk5MkveOyQdu45F4NtFKcbv8WjW2GBRaoxT9Kx+vLCljCfProj17YIjxIzgPYfHfHDXbKhV6tj4Vh
+X-Gm-Message-State: AOJu0Yw1x7X3qXZ4o2+NTFr3ihoBsLCKOboICy7wYAvw54o4hPW1jn9i
+	/MS5YpGblBWzI2GcnoHw5lqoHc7EX4SkYV3WsswdTIU7wTOs6hzM8A1kPACtklU=
+X-Google-Smtp-Source: AGHT+IHfPz/S4gRwLZOUpjeY/bmDb/vX8NBuPNNZeC5crnI63zQ6Uu6zXFZa9IsC6LicBp9V4HxVgQ==
+X-Received: by 2002:a17:906:bc11:b0:a72:7ede:4d12 with SMTP id a640c23a62f3a-a7d3f81dc4dmr681570166b.5.1722244572272;
+        Mon, 29 Jul 2024 02:16:12 -0700 (PDT)
+Received: from localhost (109-81-83-231.rct.o2.cz. [109.81.83.231])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab233aasm481728766b.8.2024.07.29.02.16.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 02:16:12 -0700 (PDT)
+Date: Mon, 29 Jul 2024 11:16:11 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>
+Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Yasunori Gotou (Fujitsu)" <y-goto@fujitsu.com>
+Subject: Re: [PATCH RFC] mm: Avoid triggering oom-killer during memory
+ hot-remove operations
+Message-ID: <Zqdd25XhcEDPEQIS@tiehlicka>
+References: <20240726084456.1309928-1-lizhijian@fujitsu.com>
+ <ZqNpwz5UW44WOdHr@tiehlicka>
+ <fd6e84d5-9dba-47fb-a39e-1f7f0995fdf5@fujitsu.com>
+ <2ab277af-06ed-41a9-a2b4-91dd1ffce733@fujitsu.com>
+ <ZqczDQ_qAjOGmBk0@tiehlicka>
+ <264840d7-d770-29a0-7c36-6ede9063d06f@fujitsu.com>
+ <ZqdHch4VZG9UC2yM@tiehlicka>
+ <f2b49b7f-7622-4322-a34f-cd4b1756b791@fujitsu.com>
+ <ZqdPmtDjwDUoKJA2@tiehlicka>
+ <280af822-577f-468b-953f-b70190551b6f@fujitsu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,163 +95,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240716113349.25527-4-Raju.Lakkaraju@microchip.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <280af822-577f-468b-953f-b70190551b6f@fujitsu.com>
 
-On Tue, Jul 16, 2024 at 05:03:48PM +0530, Raju Lakkaraju wrote:
-> +static void lan743x_phylink_mac_link_up(struct phylink_config *config,
-> +					struct phy_device *phydev,
-> +					unsigned int link_an_mode,
-> +					phy_interface_t interface,
-> +					int speed, int duplex,
-> +					bool tx_pause, bool rx_pause)
-> +{
-> +	struct net_device *netdev = to_net_dev(config->dev);
-> +	struct lan743x_adapter *adapter = netdev_priv(netdev);
-> +	int mac_cr;
-> +	u8 cap;
-> +
-> +	mac_cr = lan743x_csr_read(adapter, MAC_CR);
-> +	/* Pre-initialize register bits.
-> +	 * Resulting value corresponds to SPEED_10
-> +	 */
-> +	mac_cr &= ~(MAC_CR_CFG_H_ | MAC_CR_CFG_L_);
-> +	if (speed == SPEED_2500)
-> +		mac_cr |= (MAC_CR_CFG_H_ | MAC_CR_CFG_L_);
-> +	else if (speed == SPEED_1000)
-> +		mac_cr |= (MAC_CR_CFG_H_);
-> +	else if (speed == SPEED_100)
-> +		mac_cr |= (MAC_CR_CFG_L_);
+On Mon 29-07-24 08:53:11, Zhijian Li (Fujitsu) wrote:
+[...]
+> >>>> [13853.758192] pagefault_out_of_memory: 4055 callbacks suppressed
+> >>>> [13853.758243] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> >>>
+> >>> This shouldn't really happen and it indicates that some memory
+> >>> allocation in the pagefault path has failed.
+> >>
+> >> May I know if this will cause side effect to other processes.
+> > 
+> > This eill mean that the #PF handler has failed to allocate memory and
+> > the VM_FAULT_OOM error has unwound all the way up to the exception
+> > handler and that will restart the instruction that has caused the #PF.
+> > > In essence, as long as the process triggering this is not killed or the
+> > allocation doesn't suceed it will be looping in the #PF path. This
+> > normally doesn't happen because our allocators do not fail for small
+> > allocation requests.
+> 
+> Thanks again for your detailed explanation.
+> 
+> I think this is acceptable for the process bound to the being removed node, isn't it?
 
-These parens in each of these if() sub-blocks is not required. |=
-operates the same way as = - all such operators are treated the same
-in C.
-
-> +
-> +	lan743x_csr_write(adapter, MAC_CR, mac_cr);
-> +
-> +	lan743x_ptp_update_latency(adapter, speed);
-> +
-> +	/* Flow Control operation */
-> +	cap = 0;
-> +	if (tx_pause)
-> +		cap |= FLOW_CTRL_TX;
-> +	if (rx_pause)
-> +		cap |= FLOW_CTRL_RX;
-> +
-> +	lan743x_mac_flow_ctrl_set_enables(adapter,
-> +					  cap & FLOW_CTRL_TX,
-> +					  cap & FLOW_CTRL_RX);
-> +
-> +	netif_tx_wake_all_queues(to_net_dev(config->dev));
-
-You already have "netdev", so there's no need to do the to_net_dev()
-dance again here.
-
-> +}
-> +
-> +static const struct phylink_mac_ops lan743x_phylink_mac_ops = {
-> +	.mac_config = lan743x_phylink_mac_config,
-> +	.mac_link_down = lan743x_phylink_mac_link_down,
-> +	.mac_link_up = lan743x_phylink_mac_link_up,
-> +};
-
-I guess as there's no PCS support here, you don't support inband mode
-for 1000base-X (which is rather fundamental for it).
-
-> +
-> +static int lan743x_phylink_create(struct net_device *netdev)
-> +{
-> +	struct lan743x_adapter *adapter = netdev_priv(netdev);
-> +	struct phylink *pl;
-> +
-> +	adapter->phylink_config.dev = &netdev->dev;
-> +	adapter->phylink_config.type = PHYLINK_NETDEV;
-> +	adapter->phylink_config.mac_managed_pm = false;
-> +
-> +	adapter->phylink_config.mac_capabilities = MAC_ASYM_PAUSE |
-> +		MAC_SYM_PAUSE | MAC_10 | MAC_100 | MAC_1000FD | MAC_2500FD;
-> +
-> +	lan743x_phy_interface_select(adapter);
-> +
-> +	switch (adapter->phy_interface) {
-> +	case PHY_INTERFACE_MODE_SGMII:
-> +		__set_bit(PHY_INTERFACE_MODE_SGMII,
-> +			  adapter->phylink_config.supported_interfaces);
-> +		__set_bit(PHY_INTERFACE_MODE_1000BASEX,
-> +			  adapter->phylink_config.supported_interfaces);
-> +		__set_bit(PHY_INTERFACE_MODE_2500BASEX,
-> +			  adapter->phylink_config.supported_interfaces);
-> +		break;
-> +	case PHY_INTERFACE_MODE_GMII:
-> +		__set_bit(PHY_INTERFACE_MODE_GMII,
-> +			  adapter->phylink_config.supported_interfaces);
-> +		break;
-> +	case PHY_INTERFACE_MODE_MII:
-> +		__set_bit(PHY_INTERFACE_MODE_MII,
-> +			  adapter->phylink_config.supported_interfaces);
-> +		break;
-> +	default:
-> +		__set_bit(PHY_INTERFACE_MODE_RGMII,
-> +			  adapter->phylink_config.supported_interfaces);
-
-Do you really only support RGMII and not RGMII_ID/RGMII_TXID/RGMII_RXID
-(which are normally implemented by tweaking the delays at the PHY end
-of the RGMII link) ?
-
-> +static bool lan743x_phy_handle_exists(struct device_node *dn)
-> +{
-> +	dn = of_parse_phandle(dn, "phy-handle", 0);
-> +	of_node_put(dn);
-> +	if (IS_ERR(dn))
-> +		return false;
-> +
-> +	return true;
-
-This likely doesn't work. Have you checked what the return values for
-of_parse_phandle() actually are before creating this, because to me
-this looks like you haven't - and thus what you've created is wrong.
-of_parse_phandle() doesn't return error-pointers when it fails, it
-returns NULL. Therefore, this will always return true.
-
-We have another implementation of something very similar in the macb
-driver - see macb_phy_handle_exists(), and this one is implemented
-correctly.
-
-> +}
-> +
-> +static int lan743x_phylink_connect(struct lan743x_adapter *adapter)
-> +{
-> +	struct device_node *dn = adapter->pdev->dev.of_node;
-> +	struct net_device *dev = adapter->netdev;
-> +	struct fixed_phy_status fphy_status = {
-> +		.link = 1,
-> +		.speed = SPEED_1000,
-> +		.duplex = DUPLEX_FULL,
-> +	};
-> +	struct phy_device *phydev;
-> +	int ret;
-> +
-> +	if (dn)
-> +		ret = phylink_of_phy_connect(adapter->phylink, dn, 0);
-> +
-> +	if (!dn || (ret && !lan743x_phy_handle_exists(dn))) {
-> +		phydev = phy_find_first(adapter->mdiobus);
-> +		if (!phydev) {
-> +			if (((adapter->csr.id_rev & ID_REV_ID_MASK_) ==
-> +			      ID_REV_ID_LAN7431_) || adapter->is_pci11x1x) {
-> +				phydev = fixed_phy_register(PHY_POLL,
-> +							    &fphy_status,
-> +							    NULL);
-> +				if (IS_ERR(phydev)) {
-> +					netdev_err(dev, "No PHY/fixed_PHY found\n");
-> +					return PTR_ERR(phydev);
-> +				}
-
-Eww. Given that phylink has its own internal fixed-PHY support, can we
-not find some way to avoid the legacy fixed-PHY usage here?
+It shouldn't be happening really. This is a sign that something doesn't
+behave properly. E.g. some of the #PF returning VM_FAULT_OOM without
+calling into the allocator.
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Michal Hocko
+SUSE Labs
 
