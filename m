@@ -1,142 +1,142 @@
-Return-Path: <linux-kernel+bounces-265258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2C5793EE91
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:37:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7FFB93EE96
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E32B51C219FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:37:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D261628244B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEAD12D1FC;
-	Mon, 29 Jul 2024 07:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9633B12F5B7;
+	Mon, 29 Jul 2024 07:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fa6fveY5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j6enCwsV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1133312D758;
-	Mon, 29 Jul 2024 07:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C751F2F46;
+	Mon, 29 Jul 2024 07:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722238587; cv=none; b=PrnVCAh71yXWJBCzz558VYmmJLQpnnGRMutyBYqiGvNZn7i8idXuCow3OEs9Yicwmn7Z39+GXTz+bZP2aAphznWVIm5x/MVjN6EUs4EKElpqecJy6HL4FQ8GlrN/Wb0M5n709f7+Ml2MCAHVvXUnbMRU36M3Ul4R8D/tFZY9VQs=
+	t=1722238592; cv=none; b=n5cVYtZgMjUtGUQtM4eXal5GWJ2v3JAjKEBa3cAqVvkrdOuX1zPzktiPGCWk+gEAJjhYftyyaBBVA4OMNosMcoGknSlDQVtNfk3pmWZVsV9aVQVEx1+vT/B/dc1WCTXHJ0UAlbrUZmYD1Qnaw8lsauY1ALsIt3IGGJiExkKOs3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722238587; c=relaxed/simple;
-	bh=I7SM50EkhC2nL2ONJulc7JgZPylZSIxXMjC88jHd45E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GmNaPuuT6l8QaQHBW4ixf+pNsAw08Z1mMGCYLr2A39SzdaEvxjlcGnt+Ulbz8JoKb2nGJw9P5fEJbKa13KPi1ejCJfFSzA5UqdOeQlXtUdulFidL4NSpsl3h9mxvG5SCF/swWYpGo0IufybH82eo8cAbcztfwaTbxa+9f0kd1VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fa6fveY5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D8ACC4AF1D;
+	s=arc-20240116; t=1722238592; c=relaxed/simple;
+	bh=XosIECa9dwDc/SeeYGOHoU+Fn74A7HJoCXZZbfGRZFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KIoqouOiqYqPH4Halb9AdlfIHt2YpmdSXBE6zJI3Lk04ca/BCJGawh25i9qFMdxv4HnAGFiIUi/njJANZTgYGyU8d0Hvy11T506t010+n3Z98oIvvq2zPF50NH7vvwuNXB472N1y5nVHdMZdg3AlGwa+9kAidPorTeQxVQuBSUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j6enCwsV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B43FBC4AF60;
 	Mon, 29 Jul 2024 07:36:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722238586;
-	bh=I7SM50EkhC2nL2ONJulc7JgZPylZSIxXMjC88jHd45E=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Fa6fveY5Ozp8Qi0n3/hPO5DEd1iGrETkxxvEaxa2i8VIOrt9BWpJ4/r9gOd+QIXwJ
-	 JO+HzPBJUvPG6z6MpyCp9NcOh+P4gPsC6BU7o+qv29WgvbVlXkZ3C29uHh6JHWex+K
-	 kIpnBY0Rpy9gQOZe3A243Hdm+DPesmd8KhhPrHyutUtjjlwMzctdHFD6/joCgVlJt7
-	 tNsLT8oUQDeu1l5kwcMRHTkqlfzD2/n20qDKMWxx+nQNyEnfb4F5izjYZv+PrGW8TA
-	 Q0iaUB92LfW7JeSUJV6MVDt+0aLs608/WwPxq41g341/jrptITnIkbkftwjWMTWYlN
-	 UzMrR5qb/yXRw==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ef2ed592f6so35690621fa.0;
-        Mon, 29 Jul 2024 00:36:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVNMwrdGTqu71H7eZwuZDSGQYmVS6gZIscH0Pf5YpkJNAs0zIH0mFHehzXR48cPRXI52Lr093reR2xgi0B743etvRkTkQ4fiKEZmEqvGuKtryjlnLqFnfa73BHi8tOu8j+9LJZmulW9Wl8b2JtUmSU8E/WYQUDsE1fwl3Qb6MmEObMyiJ/4dI3y5UgJckCT4Ae3SbT/92KEHeYPAmKC6kS8VkDW2l1CazUadh9GzXug+kWfOILb/lGy8DLcWQ==
-X-Gm-Message-State: AOJu0YxnM0UdeObyFPn7cwdBODzEkh7cNriOMCZrxsnWyt+CxotIvk0m
-	pWaLpdqREJ8Ff8DXT4MiC10bFDahI7HbkQ6uFRTJE+uHMN0KwA9GFn0VEJYpmG3hf6sbzeRSEoB
-	+VOHsm7MEP9Jgu8aggZwt+LyIkIk=
-X-Google-Smtp-Source: AGHT+IH5q1QJoJgi2M+CBahXKgkZVjCTvPJ0BnyNWvUsOEOWg5UXlc8Ue86En+VxK2Wx5SAGgAROLzJpHmdnKGVd0n4=
-X-Received: by 2002:a2e:b4ba:0:b0:2ef:2311:cc66 with SMTP id
- 38308e7fff4ca-2f12ee62913mr36565691fa.44.1722238584976; Mon, 29 Jul 2024
- 00:36:24 -0700 (PDT)
+	s=k20201202; t=1722238592;
+	bh=XosIECa9dwDc/SeeYGOHoU+Fn74A7HJoCXZZbfGRZFg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=j6enCwsVQxxlnY1e9z84CpSYf/8pmAqCtE1N5yic67wkXsxY9dX7qPCdwZvnjYFAb
+	 MXBUvjaGIoOYHt0TW4ro1e4bKK6vaHEgIxOCIaz/p1O+/vUaQ7n7y06gaAoPAJHC9O
+	 dLATESsLY8XJyzlZFDgE3vlrw5i7tTEbBwsec2CaUQXdptO5MfhYjFaDPM2fty5YZb
+	 E4tOKUBlCjj33W7tMGOXzSQHCLO/yzo5yK9uoLeCqJAM1TY12L+mUUoUcr8MXkKSny
+	 +TR6yUSL3HUPhUI8XokUTFgdHb9Xp1LAHp9TnnOzcctPnwg5tVPAdz8FdOEEcsUiRm
+	 ZSYNq2jYSVyoQ==
+Message-ID: <dceb85da-0518-4215-9963-2d577b183021@kernel.org>
+Date: Mon, 29 Jul 2024 09:36:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240728203001.2551083-1-xur@google.com> <20240728203001.2551083-7-xur@google.com>
- <63eb1654-c614-4f6a-9bc5-8c8085eadf8c@app.fastmail.com>
-In-Reply-To: <63eb1654-c614-4f6a-9bc5-8c8085eadf8c@app.fastmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 29 Jul 2024 16:35:48 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT9EU1ZAUh9SAEQ4Ar5LY-wUstaCjGLt7=Kr=uJMNfJvQ@mail.gmail.com>
-Message-ID: <CAK7LNAT9EU1ZAUh9SAEQ4Ar5LY-wUstaCjGLt7=Kr=uJMNfJvQ@mail.gmail.com>
-Subject: Re: [PATCH 6/6] Add Propeller configuration for kernel build.
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Rong Xu <xur@google.com>, Han Shen <shenhan@google.com>, 
-	Sriraman Tallam <tmsriram@google.com>, David Li <davidxl@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, John Moon <john@jmoon.dev>, 
-	Andrew Morton <akpm@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, 
-	Mike Rapoport <rppt@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Rafael Aquini <aquini@redhat.com>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Eric DeVolder <eric.devolder@oracle.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Randy Dunlap <rdunlap@infradead.org>, 
-	Benjamin Segall <bsegall@google.com>, Breno Leitao <leitao@debian.org>, 
-	Wei Yang <richard.weiyang@gmail.com>, Brian Gerst <brgerst@gmail.com>, 
-	Juergen Gross <jgross@suse.com>, Palmer Dabbelt <palmer@rivosinc.com>, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, Kees Cook <kees@kernel.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Xiao W Wang <xiao.w.wang@intel.com>, 
-	Jan Kiszka <jan.kiszka@siemens.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-efi@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, 
-	llvm@lists.linux.dev, Krzysztof Pszeniczny <kpszeniczny@google.com>, 
-	Stephane Eranian <eranian@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: clock: mt6765: Add missing PMIC clock
+To: Arseniy Velikanov <me@adomerle.xyz>, mturquette@baylibre.com,
+ sboyd@kernel.org, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, sean.wang@kernel.org,
+ linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, frank.li@vivo.com, jiasheng@iscas.ac.cn,
+ mars.cheng@mediatek.com, owen.chen@mediatek.com, macpaul.lin@mediatek.com,
+ zh.chen@mediatek.com, argus.lin@mediatek.com
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240729073428.28983-1-me@adomerle.xyz>
+ <20240729073428.28983-2-me@adomerle.xyz>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240729073428.28983-2-me@adomerle.xyz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 29, 2024 at 4:02=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
-:
->
-> On Sun, Jul 28, 2024, at 22:29, Rong Xu wrote:
-> >  Documentation/dev-tools/index.rst     |   1 +
-> >  Documentation/dev-tools/propeller.rst | 188 ++++++++++++++++++++++++++
-> >  MAINTAINERS                           |   7 +
-> >  Makefile                              |   1 +
-> >  arch/Kconfig                          |  22 +++
-> >  arch/x86/Kconfig                      |   1 +
-> >  arch/x86/boot/compressed/Makefile     |   3 +
-> >  arch/x86/kernel/vmlinux.lds.S         |   4 +
-> >  arch/x86/platform/efi/Makefile        |   1 +
-> >  drivers/firmware/efi/libstub/Makefile |   2 +
-> >  include/asm-generic/vmlinux.lds.h     |   8 +-
-> >  scripts/Makefile.lib                  |  10 ++
-> >  scripts/Makefile.propeller            |  25 ++++
-> >  tools/objtool/check.c                 |   1 +
->
-> I have not looked in much detail, but I see that you need
-> a special case for arch/x86/boot/compressed and
-> drivers/firmware/efi, which makes it likely that you
-> need to also disable properller support for
-> arch/x86/purgatory/Makefile, which tends to have similar
-> requirements.
->
->      Arnd
+On 29/07/2024 09:34, Arseniy Velikanov wrote:
+> Add PWRAP clock binding and shift the following ones
+> 
+> Fixes: eb7beb65ac30 ("clk: mediatek: add mt6765 clock IDs")
 
+Please describe the bug and its observable impact.
 
+> Signed-off-by: Arseniy Velikanov <me@adomerle.xyz>
+> ---
+>  include/dt-bindings/clock/mt6765-clk.h | 131 +++++++++++++------------
+>  1 file changed, 66 insertions(+), 65 deletions(-)
+> 
+> diff --git a/include/dt-bindings/clock/mt6765-clk.h b/include/dt-bindings/clock/mt6765-clk.h
+> index eb97e568518e..5d3a603a0d36 100644
+> --- a/include/dt-bindings/clock/mt6765-clk.h
+> +++ b/include/dt-bindings/clock/mt6765-clk.h
+> @@ -161,71 +161,72 @@
+>  #define CLK_TOP_NR_CLK			126
+>  
+>  /* INFRACFG */
+> -#define CLK_IFR_ICUSB			0
 
+NAK, you cannot change the bindings. Especially without bigger
+description where the bug is.
 
-I applied the following commits:
+Best regards,
+Krzysztof
 
- - 9c2d1328f88adb6cbfb218163623254b96f680d3
- - 7f7f6f7ad654b326897c9f54438a06f03454bd0d
-
-
-
-This might be another case to apply a similar approach
-instead of sprinkling PROPELLER__PROFILE=3Dn.
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
 
