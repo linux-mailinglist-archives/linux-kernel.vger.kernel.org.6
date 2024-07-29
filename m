@@ -1,239 +1,292 @@
-Return-Path: <linux-kernel+bounces-266204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16C793FC68
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:26:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 213B593FC6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E8171F220BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:26:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB9652837A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABA6161321;
-	Mon, 29 Jul 2024 17:26:23 +0000 (UTC)
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A634215F402;
+	Mon, 29 Jul 2024 17:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bywx2ui1"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EFC8003F;
-	Mon, 29 Jul 2024 17:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF537E58D;
+	Mon, 29 Jul 2024 17:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722273982; cv=none; b=oq9Xl/gT+SuP48AbZ0+xqaUmqj6RIBevPbdpo/ea8LXzp1y0n4GCqt9H5ptRS//ABgPjI/MSgYcrHUkEaaEm4e/sNYoxzFP4v06OIWOYouLUdE1xe9/n9Ev9mSF+lND/+hS99J2E7c3JoNsUxAEnkmsQCPZho5DIiJx2Md9WSCk=
+	t=1722274019; cv=none; b=ERuFyF5GM8e2MoLVJkkc7vh0HG6ToaO/cGchnj4T5Vp1Mae34PhNSPyft1gvA1+YxJjhz7X9j+P1LWNjLbIS3JBUZweBHMo3E3K3/TxFOsRwCv0V6kkNCLBaTxI35L1myh1QmfK8I26qtfYn1Lqc/GoccWhszakShVhf+i7sj84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722273982; c=relaxed/simple;
-	bh=s3W/ZR9RUgDln2YYFIN0eUwWU/8ubWibwKHbTbyIqmQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UGl+Eoc6exl0TdNzPjb+itefTgIn8suBHigLxfpumUvJDR/2HgexCjUKKiKSSpNt/m5LvxFhCHMdG6bGxoVuSHkXqhqqaeG+0Ey+qXIZYTSMcFbSF9uGUzOchyBegS7SExfuhF42+ndpWnyvE6XgW+wdJEDzeC8GB9DHYM132X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Mon, 29 Jul
- 2024 20:26:09 +0300
-Received: from [192.168.211.130] (10.0.253.138) by Ex16-01.fintech.ru
- (10.0.10.18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Mon, 29 Jul
- 2024 20:26:08 +0300
-Message-ID: <e497f5cb-a3cb-477b-8947-f96276e401b7@fintech.ru>
-Date: Mon, 29 Jul 2024 10:26:08 -0700
+	s=arc-20240116; t=1722274019; c=relaxed/simple;
+	bh=HldEWcI2ogojh9h+MUJsOKUdpNIk7Aa342bQANYPFDY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MG3BkW7Raodp8TnVuRiOTLHCS7o8rxUcRKXCz4rlrOhmj05E5XQhG+t0a5A8v355hV1p0tQ1R6T17N+kazhfN/Xv6FcL2Tr4mCCMNV65zpIcoaOzV5susWfmKa77RVJ2jn5zUC0ieG/sx9bqLyr6dzryRr+7H/mCzmF2Ouj82E4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bywx2ui1; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2cb5787b4a5so2127569a91.2;
+        Mon, 29 Jul 2024 10:26:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722274017; x=1722878817; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AR5yeX17UGq4U9wLE9WErCeh9H/LofY6XOuRJLfNZ/A=;
+        b=bywx2ui1QTEomvMG7s6ENMoIMX6T1asrvxmy9Qn/BUdjhB7IArutwxFRGmLmHhOJJr
+         VNG8x4+aLpJpaTZDxtSj8KAt+pS1Ez0NHIVhNt8c2Sdl1pFVAUst/JBKFdVFifzzMIb6
+         JSwrfB911kLEseXCf8E9eSx87fnTBtj+2Ko/LcQuDEJN/r23ZhsWkYobOe8tFxdAqbYB
+         HitUqBkUyB4awY649cxTZPkfnx7GlhG5zMgKhVOfpFbqrYeXF07FE0WRy1ZSb49TicUc
+         CzsUQOMbccjAPQdhwDnbQFzGwOxHz2mS0N0gIN6t/Lyj6ywBsePfBj9DSRE1MwJ1BQPp
+         YVmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722274017; x=1722878817;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AR5yeX17UGq4U9wLE9WErCeh9H/LofY6XOuRJLfNZ/A=;
+        b=kCDGQkoJZqBWLnTeScrzvyJtzw3i75kYRXEz9jlSxBmFw9iGXDX6OwU4J70drA8Lr1
+         EQGXrdQsZiW/pnRhSddWftjiloyb/hDohqmlX/jAQHX/63L9OXp6qCUSEN4TJWeszHc6
+         QKNnrUaFIEw33itCtwNHqUnVQj6VOtjU5l9wOvMfjFjTvSztTxx+4b04i54g1g3gj4el
+         f4t0SIhuLOLD81n+Gccx+p+mpZIeeIXYmP19s6dbL3psZvitjfA0rGK/spyMhM87ip6f
+         0A+o8GuTMxFvUQPE4l8J2I79a+zZhmu4OY8mCmnjIvddnYwM47YENjNmxSqUcnKaRBkH
+         JGEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVX6aiYDeZzXU07Ki8nNPkWP/Fwf2ZMdUPHTvPorlgDJb+yookxRcdxZEPrmpkhN4cNViOjUJFc6SKJk8x2gj2SioWORdlae+DaK6/gIj3gExIKdztOhNf7+dTUR2KXIPkDv6/v7WwF6uOY0g==
+X-Gm-Message-State: AOJu0YyKMeT/LVu5THdZhrXmUC9RJuOVKRPvIUv6y6Taa9BGfetHoNT0
+	cTH5eLPwIZXpqSgLntlvb11Wj0/m3j6Z+tgTRkaedQzqkAtszLwSRtejpUijOQospBbftNITLdG
+	3Mao02jmADlEgbvfrGeguLKj/3M0=
+X-Google-Smtp-Source: AGHT+IEFHIgZALYvf1AZp3C5etY6j9w34vDz7OKb2duLwIw2Re4C18oa1CUxQqvHgV4P2MSLaZPShByYs9GFbqIlbio=
+X-Received: by 2002:a17:90a:4b81:b0:2c8:a8f:c97 with SMTP id
+ 98e67ed59e1d1-2cf7e71b723mr5975518a91.37.1722274017294; Mon, 29 Jul 2024
+ 10:26:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/radeon/evergreen_cs: fix int overflow errors in cs
- track offsets
-Content-Language: en-US
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Alex Deucher
-	<alexdeucher@gmail.com>
-CC: Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, "Jerome
- Glisse" <jglisse@redhat.com>, Dave Airlie <airlied@redhat.com>,
-	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>,
-	<stable@vger.kernel.org>
-References: <20240725180950.15820-1-n.zhandarovich@fintech.ru>
- <e5199bf0-0861-4b79-8f32-d14a784b116f@amd.com>
- <CADnq5_PuzU12x=M09HaGkG7Yqg8Lk1M1nWDAut7iP09TT33D6g@mail.gmail.com>
- <fb530f45-df88-402a-9dc0-99298b88754c@amd.com>
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-In-Reply-To: <fb530f45-df88-402a-9dc0-99298b88754c@amd.com>
+References: <20240711100038.268803-1-vladimir.lypak@gmail.com> <20240711100038.268803-4-vladimir.lypak@gmail.com>
+In-Reply-To: <20240711100038.268803-4-vladimir.lypak@gmail.com>
+From: Connor Abbott <cwabbott0@gmail.com>
+Date: Mon, 29 Jul 2024 18:26:45 +0100
+Message-ID: <CACu1E7HkRN7pkBOUeC3G59K5rbsMRj81HvfAocpHuG6XuNbCyQ@mail.gmail.com>
+Subject: Re: [PATCH 3/4] drm/msm/a5xx: fix races in preemption evaluation stage
+To: Vladimir Lypak <vladimir.lypak@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Jordan Crouse <jordan@cosmicpenguin.net>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Thu, Jul 11, 2024 at 11:10=E2=80=AFAM Vladimir Lypak
+<vladimir.lypak@gmail.com> wrote:
+>
+> On A5XX GPUs when preemption is used it's invietable to enter a soft
+> lock-up state in which GPU is stuck at empty ring-buffer doing nothing.
+> This appears as full UI lockup and not detected as GPU hang (because
+> it's not). This happens due to not triggering preemption when it was
+> needed. Sometimes this state can be recovered by some new submit but
+> generally it won't happen because applications are waiting for old
+> submits to retire.
+>
+> One of the reasons why this happens is a race between a5xx_submit and
+> a5xx_preempt_trigger called from IRQ during submit retire. Former thread
+> updates ring->cur of previously empty and not current ring right after
+> latter checks it for emptiness. Then both threads can just exit because
+> for first one preempt_state wasn't NONE yet and for second one all rings
+> appeared to be empty.
+>
+> To prevent such situations from happening we need to establish guarantee
+> for preempt_trigger to be called after each submit. To implement it this
+> patch adds trigger call at the end of a5xx_preempt_irq to re-check if we
+> should switch to non-empty or higher priority ring. Also we find next
+> ring in new preemption state "EVALUATE". If the thread that updated some
+> ring with new submit sees this state it should wait until it passes.
+>
+> Fixes: b1fc2839d2f9 ("drm/msm: Implement preemption for A5XX targets")
+> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+> ---
+>  drivers/gpu/drm/msm/adreno/a5xx_gpu.c     |  6 +++---
+>  drivers/gpu/drm/msm/adreno/a5xx_gpu.h     | 11 +++++++----
+>  drivers/gpu/drm/msm/adreno/a5xx_preempt.c | 24 +++++++++++++++++++----
+>  3 files changed, 30 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/=
+adreno/a5xx_gpu.c
+> index 6c80d3003966..266744ee1d5f 100644
+> --- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+> @@ -110,7 +110,7 @@ static void a5xx_submit_in_rb(struct msm_gpu *gpu, st=
+ruct msm_gem_submit *submit
+>         }
+>
+>         a5xx_flush(gpu, ring, true);
+> -       a5xx_preempt_trigger(gpu);
+> +       a5xx_preempt_trigger(gpu, true);
+>
+>         /* we might not necessarily have a cmd from userspace to
+>          * trigger an event to know that submit has completed, so
+> @@ -240,7 +240,7 @@ static void a5xx_submit(struct msm_gpu *gpu, struct m=
+sm_gem_submit *submit)
+>         a5xx_flush(gpu, ring, false);
+>
+>         /* Check to see if we need to start preemption */
+> -       a5xx_preempt_trigger(gpu);
+> +       a5xx_preempt_trigger(gpu, true);
+>  }
+>
+>  static const struct adreno_five_hwcg_regs {
+> @@ -1296,7 +1296,7 @@ static irqreturn_t a5xx_irq(struct msm_gpu *gpu)
+>                 a5xx_gpmu_err_irq(gpu);
+>
+>         if (status & A5XX_RBBM_INT_0_MASK_CP_CACHE_FLUSH_TS) {
+> -               a5xx_preempt_trigger(gpu);
+> +               a5xx_preempt_trigger(gpu, false);
+>                 msm_gpu_retire(gpu);
+>         }
+>
+> diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.h b/drivers/gpu/drm/msm/=
+adreno/a5xx_gpu.h
+> index c7187bcc5e90..1120824853d4 100644
+> --- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.h
+> +++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.h
+> @@ -57,10 +57,12 @@ void a5xx_debugfs_init(struct msm_gpu *gpu, struct dr=
+m_minor *minor);
+>   * through the process.
+>   *
+>   * PREEMPT_NONE - no preemption in progress.  Next state START.
+> - * PREEMPT_START - The trigger is evaulating if preemption is possible. =
+Next
+> - * states: TRIGGERED, NONE
+> + * PREEMPT_EVALUATE - The trigger is evaulating if preemption is possibl=
+e. Next
+> + * states: START, ABORT
+>   * PREEMPT_ABORT - An intermediate state before moving back to NONE. Nex=
+t
+>   * state: NONE.
+> + * PREEMPT_START - The trigger is preparing for preemption. Next state:
+> + * TRIGGERED
+>   * PREEMPT_TRIGGERED: A preemption has been executed on the hardware. Ne=
+xt
+>   * states: FAULTED, PENDING
+>   * PREEMPT_FAULTED: A preemption timed out (never completed). This will =
+trigger
+> @@ -71,8 +73,9 @@ void a5xx_debugfs_init(struct msm_gpu *gpu, struct drm_=
+minor *minor);
+>
+>  enum preempt_state {
+>         PREEMPT_NONE =3D 0,
+> -       PREEMPT_START,
+> +       PREEMPT_EVALUATE,
+>         PREEMPT_ABORT,
+> +       PREEMPT_START,
+>         PREEMPT_TRIGGERED,
+>         PREEMPT_FAULTED,
+>         PREEMPT_PENDING,
+> @@ -156,7 +159,7 @@ void a5xx_set_hwcg(struct msm_gpu *gpu, bool state);
+>
+>  void a5xx_preempt_init(struct msm_gpu *gpu);
+>  void a5xx_preempt_hw_init(struct msm_gpu *gpu);
+> -void a5xx_preempt_trigger(struct msm_gpu *gpu);
+> +void a5xx_preempt_trigger(struct msm_gpu *gpu, bool new_submit);
+>  void a5xx_preempt_irq(struct msm_gpu *gpu);
+>  void a5xx_preempt_fini(struct msm_gpu *gpu);
+>
+> diff --git a/drivers/gpu/drm/msm/adreno/a5xx_preempt.c b/drivers/gpu/drm/=
+msm/adreno/a5xx_preempt.c
+> index 67a8ef4adf6b..f8d09a83c5ae 100644
+> --- a/drivers/gpu/drm/msm/adreno/a5xx_preempt.c
+> +++ b/drivers/gpu/drm/msm/adreno/a5xx_preempt.c
+> @@ -87,21 +87,33 @@ static void a5xx_preempt_timer(struct timer_list *t)
+>  }
+>
+>  /* Try to trigger a preemption switch */
+> -void a5xx_preempt_trigger(struct msm_gpu *gpu)
+> +void a5xx_preempt_trigger(struct msm_gpu *gpu, bool new_submit)
+>  {
+>         struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
+>         struct a5xx_gpu *a5xx_gpu =3D to_a5xx_gpu(adreno_gpu);
+>         unsigned long flags;
+>         struct msm_ringbuffer *ring;
+> +       enum preempt_state state;
+>
+>         if (gpu->nr_rings =3D=3D 1)
+>                 return;
+>
+>         /*
+> -        * Try to start preemption by moving from NONE to START. If
+> -        * unsuccessful, a preemption is already in flight
+> +        * Try to start preemption by moving from NONE to EVALUATE. If cu=
+rrent
+> +        * state is EVALUATE/ABORT we can't just quit because then we can=
+'t
+> +        * guarantee that preempt_trigger will be called after ring is up=
+dated
+> +        * by new submit.
+>          */
+> -       if (!try_preempt_state(a5xx_gpu, PREEMPT_NONE, PREEMPT_START))
+> +       state =3D atomic_cmpxchg(&a5xx_gpu->preempt_state, PREEMPT_NONE,
+> +                              PREEMPT_EVALUATE);
+> +       while (new_submit && (state =3D=3D PREEMPT_EVALUATE ||
+> +                             state =3D=3D PREEMPT_ABORT)) {
 
-On 7/29/24 02:23, Christian König wrote:
-> Am 26.07.24 um 14:52 schrieb Alex Deucher:
->> On Fri, Jul 26, 2024 at 3:05 AM Christian König
->> <christian.koenig@amd.com> wrote:
->>> Am 25.07.24 um 20:09 schrieb Nikita Zhandarovich:
->>>> Several cs track offsets (such as 'track->db_s_read_offset')
->>>> either are initialized with or plainly take big enough values that,
->>>> once shifted 8 bits left, may be hit with integer overflow if the
->>>> resulting values end up going over u32 limit.
->>>>
->>>> Some debug prints take this into account (see according dev_warn() in
->>>> evergreen_cs_track_validate_stencil()), even if the actual
->>>> calculated value assigned to local 'offset' variable is missing
->>>> similar proper expansion.
->>>>
->>>> Mitigate the problem by casting the type of right operands to the
->>>> wider type of corresponding left ones in all such cases.
->>>>
->>>> Found by Linux Verification Center (linuxtesting.org) with static
->>>> analysis tool SVACE.
->>>>
->>>> Fixes: 285484e2d55e ("drm/radeon: add support for evergreen/ni
->>>> tiling informations v11")
->>>> Cc: stable@vger.kernel.org
->>> Well first of all the long cast doesn't makes the value 64bit, it
->>> depends on the architecture.
->>>
->>> Then IIRC the underlying hw can only handle a 32bit address space so
->>> having the offset as long is incorrect to begin with.
->> Evergreen chips support a 36 bit internal address space and NI and
->> newer support a 40 bit one, so this is applicable.
-> 
-> In that case I strongly suggest that we replace the unsigned long with
-> u64 or otherwise we get different behavior on 32 and 64bit machines.
-> 
-> Regards,
-> Christian.
-> 
+This isn't enough because even if new_submit is false then we may
+still need to guarantee that evaluation happens. We've seen a hang in
+a scenario like:
 
-To be clear, I'll prepare v2 patch that changes 'offset' to u64 as well
-as the cast of 'track->db_z_read_offset' (and the likes) to u64 too.
+1. A job is submitted and executed on ring 0.
+2. A job is submitted on ring 2 while ring 0 is still active but
+almost finished.
+3. The submission thread starts evaluating and sees that ring 0 is still bu=
+sy.
+4. The job on ring 0 finishes and a CACHE_FLUSH IRQ is raised.
+5. The IRQ tries to trigger a preemption but the state is still
+PREEMPT_EVALUATE or PREEMPT_ABORT and exits.
+6. The submission thread finishes update_wptr() and finally sets the
+state to PREEMPT_NONE too late.
 
-On the other note, should I also include casting to wider type of the
-expression surf.layer_size * mslice (example down below) in
-evergreen_cs_track_validate_cb() and other similar functions? I can't
-properly gauge if the result will definitively fit into u32, maybe it
-makes sense to expand it as well?
+Then we never preempt to ring 2 and there's a soft lockup.
 
-441         }
-442
-443         offset += surf.layer_size * mslice;
-444         if (offset > radeon_bo_size(track->cb_color_bo[id])) {
-445                 /* old ddx are broken they allocate bo with w*h*bpp
+Connor
 
-Regards,
-Nikita
->>
->> Alex
->>
->>> And finally that is absolutely not material for stable.
->>>
->>> Regards,
->>> Christian.
->>>
->>>> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
->>>> ---
->>>> P.S. While I am not certain that track->cb_color_bo_offset[id]
->>>> actually ends up taking values high enough to cause an overflow,
->>>> nonetheless I thought it prudent to cast it to ulong as well.
->>>>
->>>>    drivers/gpu/drm/radeon/evergreen_cs.c | 18 +++++++++---------
->>>>    1 file changed, 9 insertions(+), 9 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/radeon/evergreen_cs.c
->>>> b/drivers/gpu/drm/radeon/evergreen_cs.c
->>>> index 1fe6e0d883c7..d734d221e2da 100644
->>>> --- a/drivers/gpu/drm/radeon/evergreen_cs.c
->>>> +++ b/drivers/gpu/drm/radeon/evergreen_cs.c
->>>> @@ -433,7 +433,7 @@ static int evergreen_cs_track_validate_cb(struct
->>>> radeon_cs_parser *p, unsigned i
->>>>                return r;
->>>>        }
->>>>
->>>> -     offset = track->cb_color_bo_offset[id] << 8;
->>>> +     offset = (unsigned long)track->cb_color_bo_offset[id] << 8;
->>>>        if (offset & (surf.base_align - 1)) {
->>>>                dev_warn(p->dev, "%s:%d cb[%d] bo base %ld not
->>>> aligned with %ld\n",
->>>>                         __func__, __LINE__, id, offset,
->>>> surf.base_align);
->>>> @@ -455,7 +455,7 @@ static int evergreen_cs_track_validate_cb(struct
->>>> radeon_cs_parser *p, unsigned i
->>>>                                min = surf.nby - 8;
->>>>                        }
->>>>                        bsize = radeon_bo_size(track->cb_color_bo[id]);
->>>> -                     tmp = track->cb_color_bo_offset[id] << 8;
->>>> +                     tmp = (unsigned
->>>> long)track->cb_color_bo_offset[id] << 8;
->>>>                        for (nby = surf.nby; nby > min; nby--) {
->>>>                                size = nby * surf.nbx * surf.bpe *
->>>> surf.nsamples;
->>>>                                if ((tmp + size * mslice) <= bsize) {
->>>> @@ -476,10 +476,10 @@ static int
->>>> evergreen_cs_track_validate_cb(struct radeon_cs_parser *p, unsigned i
->>>>                        }
->>>>                }
->>>>                dev_warn(p->dev, "%s:%d cb[%d] bo too small (layer
->>>> size %d, "
->>>> -                      "offset %d, max layer %d, bo size %ld, slice
->>>> %d)\n",
->>>> +                      "offset %ld, max layer %d, bo size %ld, slice
->>>> %d)\n",
->>>>                         __func__, __LINE__, id, surf.layer_size,
->>>> -                     track->cb_color_bo_offset[id] << 8, mslice,
->>>> -                     radeon_bo_size(track->cb_color_bo[id]), slice);
->>>> +                     (unsigned long)track->cb_color_bo_offset[id]
->>>> << 8,
->>>> +                     mslice,
->>>> radeon_bo_size(track->cb_color_bo[id]), slice);
->>>>                dev_warn(p->dev, "%s:%d problematic surf: (%d %d) (%d
->>>> %d %d %d %d %d %d)\n",
->>>>                         __func__, __LINE__, surf.nbx, surf.nby,
->>>>                        surf.mode, surf.bpe, surf.nsamples,
->>>> @@ -608,7 +608,7 @@ static int
->>>> evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
->>>>                return r;
->>>>        }
->>>>
->>>> -     offset = track->db_s_read_offset << 8;
->>>> +     offset = (unsigned long)track->db_s_read_offset << 8;
->>>>        if (offset & (surf.base_align - 1)) {
->>>>                dev_warn(p->dev, "%s:%d stencil read bo base %ld not
->>>> aligned with %ld\n",
->>>>                         __func__, __LINE__, offset, surf.base_align);
->>>> @@ -627,7 +627,7 @@ static int
->>>> evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
->>>>                return -EINVAL;
->>>>        }
->>>>
->>>> -     offset = track->db_s_write_offset << 8;
->>>> +     offset = (unsigned long)track->db_s_write_offset << 8;
->>>>        if (offset & (surf.base_align - 1)) {
->>>>                dev_warn(p->dev, "%s:%d stencil write bo base %ld not
->>>> aligned with %ld\n",
->>>>                         __func__, __LINE__, offset, surf.base_align);
->>>> @@ -706,7 +706,7 @@ static int
->>>> evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
->>>>                return r;
->>>>        }
->>>>
->>>> -     offset = track->db_z_read_offset << 8;
->>>> +     offset = (unsigned long)track->db_z_read_offset << 8;
->>>>        if (offset & (surf.base_align - 1)) {
->>>>                dev_warn(p->dev, "%s:%d stencil read bo base %ld not
->>>> aligned with %ld\n",
->>>>                         __func__, __LINE__, offset, surf.base_align);
->>>> @@ -722,7 +722,7 @@ static int
->>>> evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
->>>>                return -EINVAL;
->>>>        }
->>>>
->>>> -     offset = track->db_z_write_offset << 8;
->>>> +     offset = (unsigned long)track->db_z_write_offset << 8;
->>>>        if (offset & (surf.base_align - 1)) {
->>>>                dev_warn(p->dev, "%s:%d stencil write bo base %ld not
->>>> aligned with %ld\n",
->>>>                         __func__, __LINE__, offset, surf.base_align);
-> 
+> +               cpu_relax();
+> +               state =3D atomic_cmpxchg(&a5xx_gpu->preempt_state, PREEMP=
+T_NONE,
+> +                                      PREEMPT_EVALUATE);
+> +       }
+> +
+> +       if (state !=3D PREEMPT_NONE)
+>                 return;
+>
+>         /* Get the next ring to preempt to */
+> @@ -130,6 +142,8 @@ void a5xx_preempt_trigger(struct msm_gpu *gpu)
+>                 return;
+>         }
+>
+> +       set_preempt_state(a5xx_gpu, PREEMPT_START);
+> +
+>         /* Make sure the wptr doesn't update while we're in motion */
+>         spin_lock_irqsave(&ring->preempt_lock, flags);
+>         a5xx_gpu->preempt[ring->id]->wptr =3D get_wptr(ring);
+> @@ -188,6 +202,8 @@ void a5xx_preempt_irq(struct msm_gpu *gpu)
+>         update_wptr(gpu, a5xx_gpu->cur_ring);
+>
+>         set_preempt_state(a5xx_gpu, PREEMPT_NONE);
+> +
+> +       a5xx_preempt_trigger(gpu, false);
+>  }
+>
+>  void a5xx_preempt_hw_init(struct msm_gpu *gpu)
+> --
+> 2.45.2
+>
 
