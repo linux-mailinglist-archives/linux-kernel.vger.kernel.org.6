@@ -1,58 +1,55 @@
-Return-Path: <linux-kernel+bounces-266200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D59F93FC46
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:19:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06EB993FC47
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E6ED1C22515
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:19:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B77BD281E6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E07518A926;
-	Mon, 29 Jul 2024 17:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7BFF18A943;
+	Mon, 29 Jul 2024 17:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KWRUWMIQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+VWSTCR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCC818309C;
-	Mon, 29 Jul 2024 17:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DAF189F5C;
+	Mon, 29 Jul 2024 17:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722273465; cv=none; b=g6WXoNvfQy7yNt4ClUXRGPh4VIMwhYUG4Vw05C+7ciy0jQLrk7DXDbkXQPSULXeeR2Xs7L+QgPml8qyTewUNZoTrzcC1m8WsdFRwwlWgSSzVvDyXe+FMHlg1ydlP5fo+yZEFCOjVD2PtFNVWEkqKwWQpOe7UfllYrofNs8sd5b4=
+	t=1722273468; cv=none; b=GYQHuyzm90qc40sQmF+jXlMkYRyxX9yoxebbovRCvuBrOiAja8loZp/6Y8dRZ2x+6giuQFoqM4zgRJKrOMOQje6qZAQ4qtHwjuHtvZ0H4Kl211PEKXHvu/xyo5s0TiXANFesFmQHeo1Aiadhigct7V+rKwJm+sLSxXnYZaVJHps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722273465; c=relaxed/simple;
-	bh=PgElLeI3tFPy/LsURTvcVNpZeWCApAcr+hd4F8EhJ/c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FSbJS/4Efiw/HXvu9H+TjkoNUdkMkjJNaAyhDdvzbVAcJM+VuRZGKAaUqQQUP8G/vHLH2KV8Jn+kUZhFOje6efJqQllqh1tfMfGc7zZSbjMVIsjoqWV/rfmkLXMCckEJGTD5sCkxcVORCKzIt6GnUoV/yVnLwGcoUileLn7XFT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KWRUWMIQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E468C32786;
-	Mon, 29 Jul 2024 17:17:43 +0000 (UTC)
+	s=arc-20240116; t=1722273468; c=relaxed/simple;
+	bh=1AXx8rFJNUqsR/rjr9CYdYIKj9bw+WWAX5/bRoey6RQ=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=idwLnzLaSSuMAcHGnCGvfnDTfvSCmS9zEBz9GV5cV/GjeyC+H9xDccKjqPSzrTqXxlvZ5SUtU8nTNj3bZeleKtLME1c7QtvL6oix99xWtNfbJAH4VO/yMru5yCmU6lz56Ku+YpcUO9e3W6b0sz0p1aHWu8JRv2MP7ON7j5rsLN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e+VWSTCR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8862C32786;
+	Mon, 29 Jul 2024 17:17:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722273465;
-	bh=PgElLeI3tFPy/LsURTvcVNpZeWCApAcr+hd4F8EhJ/c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=KWRUWMIQdA/RvQwuPlYCs6Dtxi6qaZm+SsgMtmWr9hwxabdg2BhDaq4EMijH4kec9
-	 V8hzV+g/HVG7F/57DtSm8Fl4vBcTuBd7vqtpCkkcBQIcxoDOBiLovpgI1qJeouFh+b
-	 5dXSd8cOxY85kyj39TZ2lN44hOJyOcnOu4derSo0Ed7M0wpYE2Q2pLJ3ih+3lbdM0n
-	 Vd7NvZvH0njAY6a3nvIaIjV82lCgXglUix9iuOXleR3bxbqDPU8gs5la2vl48mM4Jh
-	 gBb9+/Ob/cFZdVOH6yh9uuM3RXdT1YP6CvguuUW8+BzMPH7zeTIlTWclAoQsihafT5
-	 k87n9fNRU9JlQ==
+	s=k20201202; t=1722273467;
+	bh=1AXx8rFJNUqsR/rjr9CYdYIKj9bw+WWAX5/bRoey6RQ=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=e+VWSTCRS67QyjbZBYjVn6C40m0wjdti4hEASGwPlWj8h6esj3dGVDP3NVflNHa0e
+	 2o7vHEPspJR9BvmM0wCH7n3OfswLwO+NpuQEjIdkDHOUOKe1F4/yl4BPmABC02MlI4
+	 FJg6MIM6CJjVIrRf3EgRKDwcOyzCZKOcexLADO+a5EcD0aYq6rJcgRoq1JfvhcmWAk
+	 vaJDsEr9uuL8g/ZQD3qOU4W0hxnTDv3teoR6sXVN3AVTlM/wYqVdGOatqBaOI+Fo0k
+	 Ah0VWAUO9wU8OyiAIJlnSF1GFS6hdieowZsOb8qHLZ2QojqbcE2oqhlQy20e9m0BtN
+	 UR4EDg+Qey/Dw==
 From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240725-asoc-wsa88xx-port-arrays-v1-0-80a03f440c72@linaro.org>
-References: <20240725-asoc-wsa88xx-port-arrays-v1-0-80a03f440c72@linaro.org>
-Subject: Re: [PATCH 0/7] ASoC: codecs: wsa88xx and wcd93xx: Soundwire port
- non-functional cleanup
-Message-Id: <172227346318.109775.1944723976181257603.b4-ty@kernel.org>
-Date: Mon, 29 Jul 2024 18:17:43 +0100
+To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ mario.limonciello@amd.com, end.to.start@mail.ru, me@jwang.link, 
+ git@augustwikerfors.se, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bruno Ancona <brunoanconasala@gmail.com>
+In-Reply-To: <20240729045032.223230-1-brunoanconasala@gmail.com>
+References: <20240729045032.223230-1-brunoanconasala@gmail.com>
+Subject: Re: [PATCH] ASoC: amd: yc: Support mic on HP 14-em0002la
+Message-Id: <172227346561.109775.3534143218713152764.b4-ty@kernel.org>
+Date: Mon, 29 Jul 2024 18:17:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,12 +60,10 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
-On Thu, 25 Jul 2024 13:23:42 +0200, Krzysztof Kozlowski wrote:
-> Few cleanups to make the code more robust or readable.  No functional
-> impact (compiled objects stay the same).
+On Sun, 28 Jul 2024 22:50:32 -0600, Bruno Ancona wrote:
+> Add support for the internal microphone for HP 14-em0002la laptop using
+> a quirk entry.
 > 
-> Best regards,
-> Krzysztof
 > 
 
 Applied to
@@ -77,20 +72,8 @@ Applied to
 
 Thanks!
 
-[1/7] ASoC: codecs: wsa881x: Use designator array initializers for Soundwire ports
-      commit: 874d04fe15d12cafa09dd36e8555cea4eb0653f6
-[2/7] ASoC: codecs: wsa883x: Use designator array initializers for Soundwire ports
-      commit: add41ea55060d5e41d62268aa0bda2a27e0f5053
-[3/7] ASoC: codecs: wsa884x: Use designator array initializers for Soundwire ports
-      commit: 125ed86b0d669334dbc567f441d10163ff0c44bc
-[4/7] ASoC: codecs: wcd938x: Drop unused defines and enums
-      commit: 06fa8271273d8181cb8727e63aeec3f87a48d8c7
-[5/7] ASoC: codecs: wcd937x: Move max port number defines to enum
-      commit: 42f3a2caf80910d0c251b2a407d4d220c0d3a79f
-[6/7] ASoC: codecs: wcd938x: Move max port number defines to enum
-      commit: 5e388488f0a1dd6d340f3925e7b371e212ee3cc2
-[7/7] ASoC: codecs: wcd939x: Move max port number defines to enum
-      commit: a9d843e6b231e550f8141f27e930f90ded4edae2
+[1/1] ASoC: amd: yc: Support mic on HP 14-em0002la
+      commit: c118478665f467e57d06b2354de65974b246b82b
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
