@@ -1,140 +1,185 @@
-Return-Path: <linux-kernel+bounces-265164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630A993ED79
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:29:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D759693ED7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1348D282BE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:29:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9851F224E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB72D84D34;
-	Mon, 29 Jul 2024 06:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFDC82862;
+	Mon, 29 Jul 2024 06:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="E6FW32CY"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="cD5hgNPv"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD704328B6;
-	Mon, 29 Jul 2024 06:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C242F7F47F
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722234560; cv=none; b=jqv6LphloLPE+/H5uRDx2Hsx/2DXJ3j2Wxv47fDd8dkMzjnBjWZjjAw+bcPUbpjsFkXUbnpZV3vuWHIJ44JbytgA2wR7L4lvQc9W5KPx9oIvz7PnOBe+OXk/pdY8qDMq9AYU6veAm3warT67fJ9ZHd/x6t1elk+AF6lc9j45MqY=
+	t=1722234680; cv=none; b=aXraWCHTNwehxES6Iz9/dSls9KhfekEM+7uYmPzqDp7SYRcJxMozOJio5yybdJau4SgB5fAoznSmPDVefZ+I936jAaIEhl91oQ9XJ8QAc0SCI12L5VbmlI3dBfidtUrEMUTbaIapfvLdOaBEWJqbNIZPKLt4CGzBSBL1AveDSTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722234560; c=relaxed/simple;
-	bh=rKtXm5j9uGr85ju3QPUS0Y0jZZMtc/lRWL71qwrZ+aQ=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=bHga/UNdyYWiRsTwHPUA2mdvDlC+h7EzWrCoIUhZ7Fqls0aWFLtKzA/6cBnyFt23aUIEHJ8NFsuAkzmkbWVRPzyA8H0CcTtEsOsfWWpYvI8tHxIbX/KHE8RF2GR7pFe9Tzn6+isFr1cjH/2MOc5uRaHTJ9jFlQKBR1s5r3ZU7fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=E6FW32CY; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1722234680; c=relaxed/simple;
+	bh=/C3B0Oct8zCSYrOl8yi03Lq+0uiGOJZUjSa+xisHWCQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ESvGE/JVEKFXTH3/kw9eAJmJQtdTBE++xVyP/naLIBBkRyje5kAcDPZPAh/fxqWKjy6CvHnnujX955W8iOHvrdBO6kadxu3r9wKm/ELwvNYCMiicjdNvGNy52z9Mb1XQsXb80W/PHtxln24yw+aPKnqtYxMiZvYSW1rxFxez93g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=cD5hgNPv; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2cb5789297eso1586667a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 23:31:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1722234678; x=1722839478; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9nWoiF4yuxuiqN4YSC5480YbCBqC3nr5lj8cUGhjIgQ=;
+        b=cD5hgNPvlydlk/diyXLYdE24iZ3XSF59XPopCZEzIsgx8vWEw9lsBVSCDmZWaye2bL
+         qaSddJzWPq0pSTMSkpjMMaZq6KYMjFQdOAT3mbzWLHsyUrmkujIu/gdTB79UR76l1KDZ
+         bngZjidciHQKMD7M/6DJwI0w2tLGFeGFotLLf1QbnPoy1lnVf66AjO1/VpVIwkddQtH9
+         z321tX0IrRfPULEKPFqZkrv0i5XB2I4TxZsyumfPRdLQn092A9R6E3A6O/SdgQrXhKVR
+         uVVISJQgLo5R8tQXlkdmHGL83tTZqw7mtXHSXL5iBWYbqZNuS5TZVARdy6g+Xw4AtKHz
+         4+gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722234678; x=1722839478;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9nWoiF4yuxuiqN4YSC5480YbCBqC3nr5lj8cUGhjIgQ=;
+        b=lobruqTXNMSPpln3FYaqNMCkWl80yMbOoGtAq61ButdwfBqjtbfso2wuxDeu/aSxd+
+         s4pOD5OXipK1XwhMaWkoljioZxofbNAmNpbCjlYHA0zbjSy60JlCAqI87lxlxz5nkUKa
+         Tn5XuUHOebi79/i9nmjC/CK557BmkSmhj47P0ibI8NGzny/tEHA3+1oy5Ws7I0BVSeYP
+         Ul1K0K5ZkRP2YiT2Fd+a7G6G3+BtdH6a96N4PALPIjzgeGayfO83A4VjTeec+/3vprsL
+         zHR05eJptDH+Y9n41HnoNwqKwMYiK1t0u+VY5pzcKK2WwpAYxxK3453RxChdZ9kiYzCb
+         k2Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ2sFkIN74GNQ7ejmP0ecxDhV8jN9hF6A4RrIAy7RJzDlN/4tfjR3Kv536ZvfUPB3jUzunGC+J/ANmCjbyn88FnOxOSqKLC+2DZAYs
+X-Gm-Message-State: AOJu0YyKUkvAc33bO7gLogZeGZBcz3wDjK3cDtdj3ndI0Nvdd2mx8nGX
+	pp+GaI1Fckyjsp04g5BHrXC95/tDL5/pfwO7Q3dO/ax2k1cj6rNxkG73jRxPMNQ=
+X-Google-Smtp-Source: AGHT+IFBAB3zGDkyPt3DXHHvQeAOIU1sLHtjrAIPrLPMrDJrsJNaVKrgBkR465ShyKpSJnXwtkyP6g==
+X-Received: by 2002:a17:90a:d812:b0:2cf:5c8b:aa96 with SMTP id 98e67ed59e1d1-2cf7e09b500mr4396218a91.9.1722234678047;
+        Sun, 28 Jul 2024 23:31:18 -0700 (PDT)
+Received: from [10.84.153.104] ([203.208.167.151])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb65158bfsm9862931a91.0.2024.07.28.23.31.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Jul 2024 23:31:17 -0700 (PDT)
+Message-ID: <1cc3630c-6b2c-4eee-9757-873c17d42e9e@bytedance.com>
+Date: Mon, 29 Jul 2024 14:31:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1722234554;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zuLO0Hu9JrNxFAuTuQzFrX0yn6O99topF2F+vT4EkqA=;
-	b=E6FW32CYSeBOTn4pufFUmDh2PV0zA8RkoOvsbBbpPsmVaumq8tXY/hb0xRD6TcDxESw8n/
-	vvi3ixqcsX5ogQs7WNylIFZZXnA2kKCGRkOd+b2I30MdOTHK1CNYKXpCy+RTBAuMGSr9Bn
-	+gg8IJnwvKC+w0jU6ho30COFfqwzh2DXX4hv5czsU5cVXokx0BctpZRfNYyBNd40ht45if
-	/9HzH4QuhrZfxZ/IIkmDcLWir1EQY0cadPkFZUaazJSVjeU1Yv5JsvDnmjAmLwycLguBxF
-	zveA/w6JTDVwYcyhp68VZtyd4RBX6x+wiSFHvbqPjQhYFhoHy0DkvznIhehynw==
-Date: Mon, 29 Jul 2024 08:29:13 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Greg KH <gregkh@linuxfoundation.org>, mcgrof@kernel.org,
- jtornosm@redhat.com
-Cc: Andrew Lunn <andrew@lunn.ch>, UNGLinuxDriver@microchip.com,
- davem@davemloft.net, edumazet@google.com, f.fainelli@gmail.com,
- kuba@kernel.org, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, lucas.demarchi@intel.com, masahiroy@kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com, woojung.huh@microchip.com
-Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy
- module
-In-Reply-To: <2024072923-galleria-gumdrop-5c56@gregkh>
-References: <bcc81ea0-78e1-476e-928c-b873a064b479@lunn.ch>
- <20240726121530.193547-1-jtornosm@redhat.com>
- <b96d9801-d370-4ddd-97fd-5eac2a2656f4@lunn.ch>
- <931b582808f237aa3746c5b0a96b3665@manjaro.org>
- <3e895811-ad23-4687-b440-5375ad2af2ff@lunn.ch>
- <a520ee4da331c8edb99f2c14d22a3531@manjaro.org>
- <3a3f49b5-45b2-4999-a364-60d035bbd11f@lunn.ch>
- <98d200777d62dc9b447557b2758613e5@manjaro.org>
- <3a6ef66a-e98f-44df-9fef-3b26bede4c07@lunn.ch>
- <36bfb8da08b90fb14108e99853f49d0f@manjaro.org>
- <2024072923-galleria-gumdrop-5c56@gregkh>
-Message-ID: <b8a2831c4f2d49469d5af04c03bb1a5b@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] psi: Inherit parent cgroup psi enable state
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: chengming.zhou@linux.dev, linux-kernel@vger.kernel.org, tj@kernel.org,
+ hannes@cmpxchg.org, mkoutny@suse.com, surenb@google.com, peterz@infradead.org
+References: <20240729034100.1876510-1-zhouchuyi@bytedance.com>
+ <0a6182b4-e5e8-0eb6-234a-9097fffe5069@amd.com>
+From: Chuyi Zhou <zhouchuyi@bytedance.com>
+In-Reply-To: <0a6182b4-e5e8-0eb6-234a-9097fffe5069@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello Greg, Jose and Luis,
+Hello,
 
-On 2024-07-29 08:13, Greg KH wrote:
-> On Mon, Jul 29, 2024 at 06:43:40AM +0200, Dragan Simic wrote:
->> On 2024-07-28 22:57, Andrew Lunn wrote:
->> > > In other words, this patch doesn't subtract anything.  Instead, it
->> > > just
->> > > adds a weakdep link between the lan78xx and micrel modules, so the
->> > > kernel
->> > > itself can report that dependency, which may actually result in one
->> > > more
->> > > PHY driver added to a generated initial ramdisk.
->> >
->> > So at the moment, does the initramfs contain all PHY modules? I guess
->> > it does, because you have no knowledge which are actually needed. And
->> > this does not help you in any way, as you said, it does not subtract
->> > anything.
->> 
->> Basically, an initial ramdisk shouldn't contain any PHY modules that
->> aren't automatically detected as needed on a particular system, for
->> which the initial ramdisk is built.  That's how selecting modules
->> while building the initial ramdisks works.  On the other hand, if it's
->> some initial ramdisk built by a Linux distribution and intended to
->> support multiple systems or boards, it may contain whatever the
->> distribution sees fit.
->> 
->> Having weakdeps defined actually does help here.  For example, a Linux
->> distribution mentioned above no longer needs to hand-craft the rules
->> for initial ramdisk generation for the PHY modules that should be put
->> into an initial ramdisk together with the lan78xx driver, if the Linux
->> distribution chooses to include the lax78xx driver.  Having weakdep(s)
->> defined makes the kernel do that instead.  Also, there's no point in
->> including every single PHY driver module, because not all of them are
->> needed for a particular selection of MAC drivers, which comes from the
->> intended purpose of the initial ramdisk built by a Linux distribution,
->> i.e. the target architecture, supported board category, etc.
->> 
->> Let's also keep in mind that including all PHY modules into an initial
->> ramdisk inevitably makes it larger, which often isn't an option for
->> resource-constrained embedded systems.
+在 2024/7/29 12:45, K Prateek Nayak 写道:
+> Hello Chuyi,
 > 
-> resource-constrained embedded systems know their dependancies and their
-> hardware configurations, so I don't see how the weak-deps help at all
-> here.
+> On 7/29/2024 9:11 AM, Chuyi Zhou wrote:
+>> Currently when a parent cgroup disables psi through cgroup.pressure, 
+>> newly
+>> created child cgroups do not inherit the psi state of the parent cgroup.
+>>
+>> This patch tries to solve this issue. When a child cgroup is created, it
+>> would inherit the psi enabled state of the parent in group_init().
+>> Once the enable state is found to be false in the css_populate_dir(), the
+>> {cpu, io, memory}.pressure files will be hidden using cgroup_file_show().
+>>
+>> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
+>> ---
+>>   kernel/cgroup/cgroup.c | 21 +++++++++++++++++++--
+>>   kernel/sched/psi.c     |  4 ++--
+>>   2 files changed, 21 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+>> index c8e4b62b436a4..775fe528efcad 100644
+>> --- a/kernel/cgroup/cgroup.c
+>> +++ b/kernel/cgroup/cgroup.c
+>> @@ -1719,6 +1719,24 @@ static void css_clear_dir(struct 
+>> cgroup_subsys_state *css)
+>>       }
+>>   }
+>> +static int populate_psi_files(struct cgroup_subsys_state *css)
+>> +{
+>> +    struct cgroup *cgrp = css->cgroup;
+>> +    int ret, i;
+>> +
+>> +    ret = cgroup_addrm_files(css, cgrp, cgroup_psi_files, true);
+>> +    if (ret < 0)
+>> +        return ret;
+>> +
+>> +    if (cgrp->psi && !cgrp->psi->enabled) {
+>> +        for (i = 0; i < NR_PSI_RESOURCES; i++)
+>> +            cgroup_file_show(&cgrp->psi_files[i], 0);
+>> +    }
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +
+>>   /**
+>>    * css_populate_dir - create subsys files in a cgroup directory
+>>    * @css: target css
+>> @@ -1742,8 +1760,7 @@ static int css_populate_dir(struct 
+>> cgroup_subsys_state *css)
+>>                   return ret;
+>>               if (cgroup_psi_enabled()) {
+>> -                ret = cgroup_addrm_files(css, cgrp,
+>> -                             cgroup_psi_files, true);
+>> +                ret = populate_psi_files(css);
+>>                   if (ret < 0) {
+>>                       cgroup_addrm_files(css, cgrp,
+>>                                  cgroup_base_files, false);
+>> diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+>> index 020d58967d4e8..d0aa17b368819 100644
+>> --- a/kernel/sched/psi.c
+>> +++ b/kernel/sched/psi.c
+>> @@ -180,7 +180,7 @@ static void group_init(struct psi_group *group)
+>>   {
+>>       int cpu;
+>> -    group->enabled = true;
+>> +    group->enabled = group->parent ? group->parent->enabled : true;
 > 
-> You are arguing two different things it seems, neither of which this
-> change helps out at all with, so I will provide a:
+> Since this is only the init path, if the user later enables PSI
+> accounting for a parent, should it not re-evaluate it for the groups
+> down the hierarchy?
 > 
->   Nacked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Looking at "cgroup_pressure_write()", I could not spot it calling
+> "css_populate_dir()". Should it not walk the hierarchy and do a
+> "cgroup_file_show()" considering the changes in you patch?
 > 
-> here until it gets straightened out.
+> (P.S. I'm not too familiar with this piece of code so please do let me
+>   know if I missed something obvious)
 
-Quite frankly, all this makes me wonder why weakdeps were merged into
-the mainline kernel [1] with no real consumers?  Perhaps this is good
-time for Jose and Luis to chime in.
+Perhaps my description in the commit log was not clear enough. This 
+patch is intended to make child cgroups inherit the state of the parent 
+node *during initialization*. The cgroup.pressure interface remains the 
+same as before, only changing the enable state at the current level.
 
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/include/linux/module.h?id=61842868de13aa7fd7391c626e889f4d6f1450bf
+In production environments, the overhead of PSI could be significant on 
+some machines (with many deep levels of cgroups). For certain tasks 
+(such as /sys/fs/cgroup/offline/pod_xxx), we may not need to monitor 
+their PSI metrics. With this patch, after disabling 
+/sys/fs/cgroup/offline/cgroup.pressure, any subsequently deployed 
+offline pods will not enable PSI. Although users can disable PSI by 
+traversing all cgroups under /sys/fs/cgroup/offline/, this may not be 
+convenient enough.
+
+Thanks.
 
