@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-266128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53AA793FB7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:41:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 780C893FB7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148B8282161
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:41:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3F3EB23356
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443D5187324;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02090186E35;
 	Mon, 29 Jul 2024 16:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxGffYre"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCzN9v2g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376C31534EC;
-	Mon, 29 Jul 2024 16:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3767D150981
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722271180; cv=none; b=WjsjJNi31QGI277pVjUFlFVzWQ+jiHBNt1M6Rmlip0DWXdcAP4FLfZl/gaKJiGiS3EhtHuIxFXiGPVZb+Hc0evaHRK+soOxk1gFh8wgSSe6reHji64dm+3pQ2Y2k4MPTvjg/qehf9VthXUKyHwdiTOzqErda1pAROSy5TUaeq5Y=
+	t=1722271180; cv=none; b=Y6G2CibJR5ihOZkluBWwwDGL9lUUSSd7Xyjh9gY0J2wIv6RgTqoUt9aIqTmHaHY4MAymmz/NG9gcKud6n6ZNqJJMImMVMABPZWKU9FJ4+JuTTKyEG4OBm1dWhmtb7mooiCMEBphBcS2KsH9SqKP00tpV7pHJNI9JDx66aMjQ7SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722271180; c=relaxed/simple;
-	bh=ACOFD4CnvNQvgxH3c3fJIkYLBWpRIGrdoWdi94w0LGY=;
+	bh=tV0WP6zuukv/K7rpCEKp9CjVyvve7l3T8OQ4RSahhJA=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=O9d+GNMMWs0eMqVpSe76P8lJ9WIHzvyAYEsVKRN4BTb3I2Tu90iQBbmcf+hCqGbx7BdwTkGwS2ZJADReQfE26HcRphM9LNyCDaOMHso+e+XbZ93CCtzbZFy2elwIe8GrHbChS7FJzSvP6vvcGDY/fX0R/kAUiLOAdvi1OuduckA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxGffYre; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D5937C4AF0C;
+	 In-Reply-To:To:Cc; b=Vfa8r8scW4MsZRqPV/JlVLa81AzzmzeDgn5o04zRHlE8Mvlkuin+EeoQW9T9dceb4wJMrvBMv4wv51Y9XzagFaOMfyAEU6uJC4KbPgF0YJhdw5gOthevbkg015xTts6c5N1Ft6Kw1SUEvAW0golJoJsU09Os3rcZ2qTmNAptZ4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WCzN9v2g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E2731C4AF0A;
 	Mon, 29 Jul 2024 16:39:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722271179;
-	bh=ACOFD4CnvNQvgxH3c3fJIkYLBWpRIGrdoWdi94w0LGY=;
+	bh=tV0WP6zuukv/K7rpCEKp9CjVyvve7l3T8OQ4RSahhJA=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=MxGffYremrlYV7IoL+PFdzTVghbhUmYE24NoiOXwot130hJR092fMDPljyjOFHVdc
-	 BwOk8pSOjwwKbEdqNqxYUxpql4UoUKiFJ2lsCDqaei8fiv2nLmq0phzDybvS4Ruc8d
-	 z/XfJg+CKgAclYeW7CbbQLEE7gLL/hM0xFPcU/zrpTnoN8mAo4/WHGmlPe/dDySyr4
-	 +P5sQueNRxv+PdBs1m2FMKXNsYAKLBJPpcrqn+AXFKcM9NOrWmX7bCZDnXiuc8wZZk
-	 cgjYyQYbzjQhie1m/6w7FgPL23bO3WKyoer9qNey5Cb3pqkqUfzFfvK9OYAA6SDF3G
-	 K/Q0xuxSAzaPQ==
+	b=WCzN9v2gTw/VXhcnzDeDSTwz3IOxts6+aG/u1k3IUN8HNNTS6E3qdvgkUB/vjLb2V
+	 wWGyJk/Im5VCJ/TfiAnj+rQ4oIXTVoUAggkZdUCLJW15u2uzcEvzRpX4ng97U59mMO
+	 mJ0llnZYgLLOXoQQrNFPe+CaAIZZRgw6ZRXoCXsYfP3Xrajf+uUlhxG3/b9yUSXApm
+	 qbDRNCExeu74cYZvak5zlSR3Tcish5YKTDh9kMUT2A5ldLGrtkmv6w3Dgief//IO9X
+	 GZxkEbHXTSJRulnR7M7gzmMXnfurpbMDoWMWXisooaga9+qr+Jjxa0O/Q7nsyRRxr0
+	 jflGvgmgnphrQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id BBA0BC43613;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CB457C43443;
 	Mon, 29 Jul 2024 16:39:39 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,50 +51,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [GIT PULL] sysctl constification changes for v6.11-rc1
+Subject: Re: [PATCH] riscv: Remove unnecessary int cast in variable_fls()
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172227117976.3603.14526183264046270376.git-patchwork-notify@kernel.org>
+ <172227117982.3603.14088911643823119013.git-patchwork-notify@kernel.org>
 Date: Mon, 29 Jul 2024 16:39:39 +0000
-References: <20240724210014.mc6nima6cekgiukx@joelS2.panther.com>
-In-Reply-To: <20240724210014.mc6nima6cekgiukx@joelS2.panther.com>
-To: Joel Granados <j.granados@samsung.com>
-Cc: linux-riscv@lists.infradead.org, torvalds@linux-foundation.org,
- linux@weissschuh.net, mcgrof@kernel.org, kees@kernel.org, kuba@kernel.org,
- david@fromorbit.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-security-module@vger.kernel.org, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, bpf@vger.kernel.org, kexec@lists.infradead.org,
- linux-hardening@vger.kernel.org, bridge@lists.linux.dev,
- mptcp@lists.linux.dev, lvs-devel@vger.kernel.org, linux-rdma@vger.kernel.org,
- rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org,
- linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com
+References: <20240710202416.710880-3-thorsten.blum@toblux.com>
+In-Reply-To: <20240710202416.710880-3-thorsten.blum@toblux.com>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: linux-riscv@lists.infradead.org, yury.norov@gmail.com,
+ linux@rasmusvillemoes.dk, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org
 
 Hello:
 
-This pull request was applied to riscv/linux.git (fixes)
-by Linus Torvalds <torvalds@linux-foundation.org>:
+This patch was applied to riscv/linux.git (fixes)
+by Yury Norov <yury.norov@gmail.com>:
 
-On Wed, 24 Jul 2024 23:00:14 +0200 you wrote:
-> Linus
+On Wed, 10 Jul 2024 22:24:18 +0200 you wrote:
+> __builtin_clz() returns an int and casting the whole expression to int
+> is unnecessary. Remove it.
 > 
-> Constifying ctl_table structs will prevent the modification of
-> proc_handler function pointers as they would reside in .rodata. To get
-> there, the proc_handler arguments must first be const qualified which
-> requires this (fairly large) treewide PR. Sending it in the tail end of
-> of the merge window after a suggestion from Kees to avoid unneeded merge
-> conflicts. It has been rebased on top of 7a3fad30fd8b4b5e370906b3c554f64026f56c2f.
-> I can send it later if it makes more sense on your side; please tell me
-> what you prefer.
-> 
-> [...]
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+>  arch/riscv/include/asm/bitops.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Here is the summary with links:
-  - [GIT,PULL] sysctl constification changes for v6.11-rc1
-    https://git.kernel.org/riscv/c/f8a8b94d0698
+  - riscv: Remove unnecessary int cast in variable_fls()
+    https://git.kernel.org/riscv/c/fb9086e95ad8
 
 You are awesome, thank you!
 -- 
