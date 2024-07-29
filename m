@@ -1,99 +1,104 @@
-Return-Path: <linux-kernel+bounces-265362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 038B693F00B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:44:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3401D93F02C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DC1A1F224F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:44:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E08531F22DCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5085513CFB8;
-	Mon, 29 Jul 2024 08:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1423913DB99;
+	Mon, 29 Jul 2024 08:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VTaSDRxq"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="155WS3aF"
+Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D72B1EA91;
-	Mon, 29 Jul 2024 08:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBA113210D;
+	Mon, 29 Jul 2024 08:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722242653; cv=none; b=NI6Z0m98V8qHEhfxTctRV/Z+8ifqHtPPW6CwU6sMcbJAc8KhexoWITrkodJWtmMx5JqzDUCOIAS0RM/yym0qGyWNJhCgBHCLzfsleohV45BTzFVdZVbQHY2ygw+g8d17NUuRFYPbFFx86hvbsoPIjQdULMfeyHUwXt4wka9SWYc=
+	t=1722243099; cv=none; b=Pq9X6cq+QIfjBdcV/6edYGshU13rFYEeZjlFxmmOSvj1fGW+Q8Q5CkMRjV/33Im5+SPTvd4FwNV4i+6gCAKBog8r5tlVwiRqlWt7AhwGJZS0E3HMOiLWWwH394w+iz6nXFWZ3h+RlZsC0zScWUsG5tvPbOV5aLnrdc2G5VqXtQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722242653; c=relaxed/simple;
-	bh=rShIewyZd6avg7JKkjg564MWU/YMLcep4oE8pH0jYsc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=GbxqGJnDb4WW9j2PcOMTAPdcAkfgD5ba7C3jXKGbVhncQQOtoMDaczRS2kooQJmphXVII6P26gQhDbXLd/ZM9ZHfXvbQ7BrK5v6VE707xvvn+hDXUFh75S4UhMXVltaa1dO6Yez0BrZn0+0SrKpzSXQhtxXFCvPGtNOTj5Kchso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VTaSDRxq; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1722242631; x=1722847431; i=markus.elfring@web.de;
-	bh=rShIewyZd6avg7JKkjg564MWU/YMLcep4oE8pH0jYsc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=VTaSDRxqKK7wsrKh/JRzSm2IOmZmxbzvTB/otk4sDf1yinhgn6xi4LP0vaQnWBhO
-	 Lf8vBVHzRiads7QW3RZhU/ieGnByK4oeXzX+SNjh1NEI9E33ELwpPVfflJZHcr+zb
-	 M/Z0iU1grqw2+rmGZ+TEMycGhyXXbAChTh/IqZnJv1dXhCVqBx7kznO7LHaTwMJiJ
-	 v7S6uEDnLQ0KzqepQz2Mop5Cvj9w3SRP+aH77lOI/HBIpm+wZwXi3Irax7eP8WLi5
-	 PC5yFL9C6DPDAbONX3BO+A8LDlLOYM4HJoq+rFVyiTCSngbM23zoF+2ucPujdGLuI
-	 tOZdgVZSievcNHHMNA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mhnvw-1s3g0734N6-00jR4l; Mon, 29
- Jul 2024 10:43:51 +0200
-Message-ID: <7d572400-519f-474a-a664-82d142c71666@web.de>
-Date: Mon, 29 Jul 2024 10:43:49 +0200
+	s=arc-20240116; t=1722243099; c=relaxed/simple;
+	bh=J0bsix4Qoxdi1CXAtomePnZehGLX5EbMnGJ5fiPl1WI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E/DIpl1cFh5LawT9WevmLvLigac0F2eOMQmlxGaUFL+ohPo/UKsD0qxdgttSIjbcQT+0S/ByizwZcLCnngg+ggG5Hzb+4/qU9uuFyp3PTN/Zjr33mDwabss32kQto+1XES5AjbXu+AvX4EDHSKRQltstBxYkuw+lyTwXugljgO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=155WS3aF; arc=none smtp.client-ip=195.181.215.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
+	t=1722242658; bh=J0bsix4Qoxdi1CXAtomePnZehGLX5EbMnGJ5fiPl1WI=;
+	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
+	b=155WS3aFv6TUpvsEiUAz/lHlTuEuHSFjqqhRPD6fF6uxXUb/HYszg3gCQXwOIwZuY
+	 ZRnNNfxRBQnRJN0EZg+A1Q9sZX+u/H234clES5Cq9XjLmR0YozbADzv9ASGUenWBbt
+	 QUwbXDDv52YuxsLnFoJV5DqEp/+9mOaW/im7UskI=
+Date: Mon, 29 Jul 2024 10:44:12 +0200
+From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org, 
+	krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org, 
+	arend.vanspriel@broadcom.com, efectn@protonmail.com, jagan@edgeble.ai, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, arend@broadcom.com, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, duoming@zju.edu.cn, bhelgaas@google.com, 
+	minipli@grsecurity.net, brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com, 
+	nick@khadas.com
+Subject: Re: [PATCH v4 4/5] wifi: brcmfmac: Add optional lpo clock enable
+ support
+Message-ID: <qetrwlvqekobedpwexeltaxqpnemenlfhky2t2razmcdtwlcv3@qdlesuiac2mr>
+Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
+	Dragan Simic <dsimic@manjaro.org>, Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org, 
+	krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org, 
+	arend.vanspriel@broadcom.com, efectn@protonmail.com, jagan@edgeble.ai, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, arend@broadcom.com, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, duoming@zju.edu.cn, bhelgaas@google.com, 
+	minipli@grsecurity.net, brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com, 
+	nick@khadas.com
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
+References: <20240729070102.3770318-1-jacobe.zang@wesion.com>
+ <20240729070102.3770318-5-jacobe.zang@wesion.com>
+ <d7068c96e102eaf6c35a77eb76cd067d@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Ashish Mhetre <amhetre@nvidia.com>, iommu@lists.linux.dev,
- linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?=
- <joro@8bytes.org>, Robin Murphy <robin.murphy@arm.com>,
- Will Deacon <will@kernel.org>
-References: <20240717100619.108250-1-amhetre@nvidia.com>
-Subject: Re: [PATCH 1/2] iommu: Optimize IOMMU UnMap
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240717100619.108250-1-amhetre@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:CTK6q2tTm7sA/4gebZfgbj/zQpzebhTTRcVXvHZ+jsy2LRsBXkf
- hfERQdSQQCYkUtPYYC7qbF30zwEpqEuM4mQN0H7e7fKCROi/5MCXwIrHtCMVCtNNQCljLHF
- BKpcOboOjtmE46nbPRz16jWmmgh0qZNs/5sKbbwJ3jvButRDnKHQb5W041WvCBa+O0ZtiDz
- sw3wsjjl7jSVs7U2IuMYw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:0781h9qRdxg=;gXlPtzcIEO2AdXWwwxmoFIeTEIm
- /N7EQPStyb+TR5mEsFWlNiDuF0rRh31dnNG6D742hcy3n07Ev5fKOWZmY/XXNv3zFhuQ0wv5k
- 6+t3bd39D25VjIUydP8p8Yr/94nJFkzLU5i1nUZL2o/Wy7o1iSq5mu11PfqZHG/4t3SBqYL3z
- VEyv3C8EeZhDixhMdMBp4p95v6a6HErza9RL8pnAbafdNMfoQO047pIXAcBpKhhN31WGJGS9b
- ZcesQCtdDTCPtkL8GINt2SWHqTzsDVo4D2Di2ZTteQNN8c74EyJakp60MCu8np0B37IeFwHHy
- qm7jUBH7uEPm7IsxwJKJVYeLkrMTEJBi7/abS5SMlcdiXMTcqy/XOOoBHsJ+RwG6lNGKN5f6y
- V8VDCx83uSkYO9Uy+dtLmXdgx2+avYNvl/zNqbc/rz6HPid/r2vIUTvgjFFzsM+Src9u0CS99
- XXakMJMRuc8WIhAKttchwGWRr5XwQO19/P1rLtvlq/dNNGpJ2d89UAuT2FEi+WN3/rzs+rQHx
- pnzULv15LF9IZwHU7SqGBhwQ8lxW7M2SVCmp4RNUZkzaoq+ZMht1swGbLzrIB3OySrYqUI2WL
- lvE8LrNo0l95kExjYUKcMEfBmrvdQ16oauv5aNjEV7WbHznCjIrFp/wTL+1RzBI72lt6cGjib
- eTRi+GcguZBQaGtLJuTaegGnZk0OS0MH6hKCztdI8DqgzWdrhTMyOI5E+ppD5F/HDz+betOrx
- rs+x0eVJhQjF2V/iU7RpYm7fpL5M3MVG8TJLJcZ33l6+0SMQuUZTRQ4n7w5uqfye8HrkhjO/4
- HgWY57/iaKiAPmIutR5vlNrw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d7068c96e102eaf6c35a77eb76cd067d@manjaro.org>
 
-=E2=80=A6
-> This patch optimizes =E2=80=A6
+On Mon, Jul 29, 2024 at 09:12:20AM GMT, Dragan Simic wrote:
+> Hello Jacobe,
+> 
+> [...]
+>
+> > 
+> > +	clk = devm_clk_get_optional_enabled(dev, "lpo");
+> > +	if (IS_ERR(clk))
+> > +	if (clk) {
+> 
+> These two lines looks really confusing.  Shouldn't it be just a single
+> "if (!IS_ERR(clk)) {" line instead?
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10#n94
+It should be `!IS_ERR(clk) && clk` otherwise the debug message will be
+incorrect.
 
-Regards,
-Markus
+Kind regards,
+	o.
+
+> > +		brcmf_dbg(INFO, "enabling 32kHz clock\n");
+> > +		clk_set_rate(clk, 32768);
+> > +	}
+> > +
+> >  	if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
+> >  		return;
 
