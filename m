@@ -1,272 +1,196 @@
-Return-Path: <linux-kernel+bounces-266262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBAFB93FD49
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:24:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8F1593FD4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4088C1F22194
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:24:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 164D9B21E17
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FE8183087;
-	Mon, 29 Jul 2024 18:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A9A183087;
+	Mon, 29 Jul 2024 18:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qW3Y8KHX"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Zlw5Hgiz"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2083.outbound.protection.outlook.com [40.107.96.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784C878274
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722277490; cv=none; b=h+rIIVMeHwFzaVbAxjSDW5pHci9ZFtzN/lndr0km1/AXF7Qhf6yANtYSeiOpCA3Qe3IQueN3EqivYbm+sYYOF5JK9+LEpkxv8HCNVvslWdbJRi7/JL2kZaGiVRspnvtgrhZ3AE4sWzf9eIbxJzc+aMqyW9shkdNry+EkEOY4hSc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722277490; c=relaxed/simple;
-	bh=VOtiW87Ij47TEXhQambPEUE47bIha9QtT8neNgt+iSY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o3p+auFkO9T8tSZzdKvSjAYFUlIuSOOZeiXAIAn/3UfAM5kLlgQ6jifzBgGY1GX9zQw/xqZiIEZPmreUQdjyFsYs0WGfWS5sewYMmVpUjZTh/X8jszUnrnE4R6C9hdjj46kHO4loP+AWAIm8Fbq+B9EMIImB6uk0Ww8rRad+0AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qW3Y8KHX; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so8441182e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:24:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722277486; x=1722882286; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ruasPNPK8KVxSRl2ha7YpZazMWY1eezny9YoCe+Cc3U=;
-        b=qW3Y8KHXV9ygRTnJyt4EsmZQ6Tq1MeYOvcWHAsRWq777dH//6E6veUjT3sfB/9xNqA
-         qhbxzS0B/f02LqMIN5MYrAX1wgM085uTnuOWEVHgc+PxHCKMIf8ndz5rrDpHj/kFygz/
-         EbvjwT7Y5e1odgMcSs6mdkSLMcngQ+RnbArqsRT0/NR+DhdKPvVYTb/Vt9Lq4ZoNuD8H
-         qewTXS5jtkS2eeFUqxK1tpaqoW3qN6sgMUTJ5rQTp/QjalRk1VZAr/C5p+vWqW/cCUsu
-         6PMkbrULnM1aGxETSuCQwsfSjw/yG3ewb7s8HnB8/jGSEVqFpm2V23R5AbeMsOtPfdHv
-         zstw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722277486; x=1722882286;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ruasPNPK8KVxSRl2ha7YpZazMWY1eezny9YoCe+Cc3U=;
-        b=u8jOde/OYdzs/VSVX3rcv5QQAL1DGjOAP8sVRVqogq4XdoczhC325s9wqNetzVEr46
-         D0tDk2Um65w+fFNHm6i9BNLty8oH3mZeQnFdmt3yztXrZlLKaM456eGjBUIUb+IWby9v
-         PxWy9nJtYCoJMW7nOTWruPcyY4+Nk0f5uSDt+pQbRjFsYJ/tAaft8UBOP35Er19OQYhz
-         i/BbP+rQyopxW7wbUDVTRwUKZFYTr+gGz3ICh6cFmKd/+7D9iV0is02zJ8viZIR6yICb
-         pRlGMuYbTv56dDfAwsQhs/Q6/8jGD8Se059dumqnyQKoGvl6tCwf94QeDfME9kEPqxDB
-         KWNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFW5Uw1aUVsXPs7+DZJKZPlwEQGYMmAc+xX7HLxAfCRU9mDRaXU1MlveaRjpJRN5dXLUUkXNWlKSLfJnbhiiz6o5+LhTVpu2xuWsCe
-X-Gm-Message-State: AOJu0YxKHAkg46D9w3Pp4IQ7v2erUdwXzwAnfPxgpDIYUjxwSIpaQAZN
-	nlpqOfft92P0mRfbcuzVRaurROtoPQC7+8Cv5/3xYBTyuN1RRmkyBdFiEQELob4VvsB+9ZdgkBT
-	w2pgWiGpnLa/2L9OTf1DxR7dBndLHbO4JwTjV
-X-Google-Smtp-Source: AGHT+IEPwV28ddsiGG5nMpSWP/Lv2Q5KF4eM3YF1a6FKjfIDQvczLFRKGlmwbqc/3mLBIKOssKU+bJdDRX8eS4JyYms=
-X-Received: by 2002:a05:6512:32cb:b0:52e:9f7a:6e6 with SMTP id
- 2adb3069b0e04-5309b2caa3bmr6952185e87.41.1722277485916; Mon, 29 Jul 2024
- 11:24:45 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A7C78274
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722277499; cv=fail; b=pIxxbUE0g1I3Qow6gDi02AJcXV2UT2Npvlj8Cl2OdzanVWFQEgMAVGsFndimSJ/gF8MZ5jk9qqjAAeTSiYKF4y1G2iFxjf96rmij/cQQXbdcIO++ULwVhrKu93Urrgrp5VUctKjjTzfARd5TcufoIsxM4ZxXJQf7ERiyf97BtHg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722277499; c=relaxed/simple;
+	bh=HCziss3mFZEO1Plo3B4eYNX23Ny8HJ1Uf8aOI/Nyciw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=N4XwU3h7hmYvIpFf4Jz8IUt+GQqBP6KQWSZAAJW/y7o2hWU18OiFTKv+DUdBOQcPzM47Av3l/VL9WeMk6MadF9pHkScz23P2UdLxDMmV8ew54T9t9Tq2XsEJ2x8tK0F6+L0h2aybPkBIHj7+jb3TpcVVNtJP02paHfRIpNVyPU0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Zlw5Hgiz; arc=fail smtp.client-ip=40.107.96.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Pjn1gNqu2+NLODkm5x/3CJfygjxmevDDhWsJsRhXW8olMyXinI5jDRk4+AQtDOr2Sf5lZMFiwRLmCX8DOWjNBLIRmps42EHA8O7uEIF1weuqErN3bewVT+RkLpsvU1nHYphUS+nRSen35FIF/esuCsrIQMF7oNlAUXN9JrcSZD2uXSD3I4HVbWc47SBBYlIlnrXMuhRKgCYFjJzlXRGit3mUh4Pra2Cwt1GXB0A0gREfv2fmsP/msVB/mkIHQkV7wKDYVMzvFI8+8q0KjYstQbBg0EMKRz3/6HWucVc8r5hxQBmxZzKpCC15FvjkjXAcYugG8XUJJMMtOLEYGm4yYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=D/37TINbP9IEllLchNaEk2jdM6PRJEoJuhqFkSEn8mw=;
+ b=rnBZQyAX7MnYoKlr6s3vjgDdHw6KvNqmiFjKG1woqpYuhxBjS76/0h+8Jotk00aJr0I53s9kDzqI/GsTJOdQRMEgO4iMnslzZYhbNwg53QNRDzR5WXoeLQb6xiGdcRdJSVaflI1tDkB6O4wH2xx5+BASFCYhyNUF6+Jd1peZDl+yCmh/AqRUx0+ycjv+Gt4/NXR7TKiVb2IiPVWzutnTxPz3zwSLNzucvIaOPmS2p9Ggqku5JBM3B0dnWxrCPARc0qp9aPOTyuAaqddiU1qmc/fY5EYnlzl4ukmK+q511QLaSgTxcDtjaYvL+sGLRn3P6COLoXBbZRTlXrTYsW5IeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D/37TINbP9IEllLchNaEk2jdM6PRJEoJuhqFkSEn8mw=;
+ b=Zlw5HgizOuAM9A/zfyRIIDknMHf0urIO1E5uJ3i9hUhtYLsyg77LgM8jJGbVuMn4SWoBS1m/ny2BMQm8Y6h+GEL6dlw/wpQAe/5Sqtg8uTbFrHrBA6h3d6yDzDRIH2G8o5V3mdCUI8Ki9RQld8zT6djuXhd4ZwbR8g+iCfHxtMufaPU0j7deKcMgx7YoSTmQ7clhBvoHgaDma6Po9g7e0UovmK9JRRrZQ43et005pBnURzgk7vMe0/yh7yuCSDy+kHIqMlVxpqrzJWbsk7UJ4NlHCOeOsFEXsxtyBjI7YZP4Jo5kINvN0y8jueiKnszHe4JH1Kzpx7gqor8pMmNxqQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by CY5PR12MB6250.namprd12.prod.outlook.com (2603:10b6:930:22::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Mon, 29 Jul
+ 2024 18:24:47 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
+ 18:24:47 +0000
+Date: Mon, 29 Jul 2024 15:24:46 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, yi.l.liu@intel.com, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommufd: Enforce IOMMU_RESV_SW_MSI upon hwpt_paging
+ allocation
+Message-ID: <20240729182446.GH3371438@nvidia.com>
+References: <20240728235106.2435208-1-nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240728235106.2435208-1-nicolinc@nvidia.com>
+X-ClientProxiedBy: BL1PR13CA0397.namprd13.prod.outlook.com
+ (2603:10b6:208:2c2::12) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240727230635.3170-1-flintglass@gmail.com> <20240727230635.3170-2-flintglass@gmail.com>
-In-Reply-To: <20240727230635.3170-2-flintglass@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 29 Jul 2024 11:24:08 -0700
-Message-ID: <CAJD7tkYKC8Cy0tCc=1m5x=bXVaXPhzRhWjeP5n6YofuPeTgOwg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] mm: zswap: fix global shrinker memcg iteration
-To: Takero Funaki <flintglass@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|CY5PR12MB6250:EE_
+X-MS-Office365-Filtering-Correlation-Id: 07c61741-ccc3-4808-45b7-08dcaffbba2d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?UG07BmgNPd0TKD8iRdoPt85MCEOOi8DBRmj8MWTXtAoJSOJQNmzEedpi1XhI?=
+ =?us-ascii?Q?cnuh/XBXe36qjNGs+xl5jBC1yLI9GvrMsLodreY0iJYBPSSl7A1Tm2Evfd7+?=
+ =?us-ascii?Q?nLVrfTkFW0uoImM/8DTZqdQuoTOd47YPEGySc9hDfqNJT04Myac5IliP0qcP?=
+ =?us-ascii?Q?4XDxR/3Boln5LP2LRh1QmmR1hdxSV5KYtXi+3Bf8KO6GV9paR9HWtebRXJRY?=
+ =?us-ascii?Q?7484Iuppql64cf1ifVo+TlLHAxI5bnI0XFNk0m4MMZfbBqlLBEbx717Fzsd1?=
+ =?us-ascii?Q?bjgZGRPlGtLWPKJ6puEH6iKA2dhMa6zeua3c+7c8rf+lQXFHf/u/5jGVBXUS?=
+ =?us-ascii?Q?IEJjhPzS5dCxwlu9XW5JCPqj1AhPY3NZKjw9/sQHNSb2pnUGfZJWUmee55mE?=
+ =?us-ascii?Q?I5zKMYF5o4snBZVNGzCpfWG817Pwv09f2HPy8UP/2sZXZD+n7HAvIOChmhcJ?=
+ =?us-ascii?Q?WSecxQV/LUpGIoLSGN1glJ7g6lxriLJ6b1hKIOQ8EuvYSUSXvUPbE4O4KGCC?=
+ =?us-ascii?Q?ny7tLE545uhcW4ua/nnrOQ3kI8ALO2b+xD+SW4fkFrS0mkhs7rbYWwz2Zvm/?=
+ =?us-ascii?Q?i7bdXAnTT6bjoKaK1pOO8h01HdcM8OsbjdAcpa4oZ5NRAa0MATIZ9pA0ha01?=
+ =?us-ascii?Q?W0rP6Mdo4oU2zccz/tjV+8jG03U2oRQm1yQBvZCekYdFAYtbw6kcF/+8jtVK?=
+ =?us-ascii?Q?XT11lq0OY+4TkNwV6KBOHAkxY0UAo+FhEGuljOcUz1CpItOxLl9pw3MZWaev?=
+ =?us-ascii?Q?5mEKI9B0gbTsUlEqvL7PyV6XJJAM5NogipDhiGOgi9cWFa5M1zZdR3vHw7gF?=
+ =?us-ascii?Q?aUeu4Dq8G1EPgGmYQsVnKjMdLh17wvetkzqEBeRS3zdsL2KgJWu/+05XGaDI?=
+ =?us-ascii?Q?NWpMcvOtKGDlcQrXV94hWQ2OL+dlb3TE1H9ZMtnbmQxKgLIeMuy/7+uZZImS?=
+ =?us-ascii?Q?C2/aDVQlMQGtvP/591hcpJf2V6YntEmQ7rMqmY45K8MWh+PxgdjyOMrrHgDl?=
+ =?us-ascii?Q?eYe+K4gE7gTfH9G8ms1Wc3IhnRebFhTX3VMl9HK8ozvWOklREwVbrOMmS4bt?=
+ =?us-ascii?Q?/fif7T1FTaqp2sjkJHmF+OqdTmeuiWr7xV5AQLUAtH3/v1FsO3s8yV0vvIL9?=
+ =?us-ascii?Q?jD2vblWGxbaMyCFPf3EoB13iEU9aKG/e/3XjRrU8uOpqjp0iXaJPwKUasSGv?=
+ =?us-ascii?Q?p+Un9MpxP1XedDzqZL+Lzhi06cAx8T+STaNCsPhHsCxpJz478w5L0NcB/5WT?=
+ =?us-ascii?Q?nIkyRnjc8R6JGaCRvG/4h+ocY/QCem46ym60ExpW4GV+PkICHDIdfUgB09QU?=
+ =?us-ascii?Q?NJsGMkUfWfFS8AJ5jEj7H2GGlurKcL6XntaKM/cXxPGjoQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?mN9j18s1heBRiCVS8dWbVr0zWimo2j90seP7oN7yZLOgfOuldbRYHPUV+Th6?=
+ =?us-ascii?Q?qInKx3bviGU3t0vbI42DrusT5214d/jsBTAwbxwiumC4sdYxyTmkS03jVh9H?=
+ =?us-ascii?Q?16jIMxbOWrfwp4R7rBhpiImfhryzWtTyqgF0Ivia7oX3JYyBO8Kt0YKUeCkR?=
+ =?us-ascii?Q?8m43+Ngzr45LlLK2WJ3HZbLICYMfU2T9ODOnTP7brzlZp6rHGVzKJRcFYZjZ?=
+ =?us-ascii?Q?q5RG1sgsiwtWZu+AN5voh5m6KFS6wSi8fn9tHxv9E7S4nGjtd/v8I+sAtjrI?=
+ =?us-ascii?Q?dJ7TAaL8rJx7IZXPX4/IrhwtliVQ7HTyMdJw+etb6cQe5ngdzfWFJLSGWEZn?=
+ =?us-ascii?Q?cBXq1cCv2uqZhN4SQJqjyRU+nMBLlSplz3uPRswHraGwCJOL+U48nKlGF5eG?=
+ =?us-ascii?Q?64mZLhTzWZASaWbUPd99Wk1jnYFe69o0qsVQXxR4V9dXVchRasfGG0xSImzB?=
+ =?us-ascii?Q?aivAxXr7zG38t6bYHPC5UC4YVIczTWgPHMUxFtnlbNpXc/uNUtwUJGCwrnIi?=
+ =?us-ascii?Q?zTF8Ygl40modH3wjCIXihoFqIgO1LMccaC0OF14fiXl3ppbbRUM48KRvumc2?=
+ =?us-ascii?Q?0sw9wGVUshM64/37ai1auH9fax99tKMTAwZhSvQqJyObvCImnnIn1qz5/jqh?=
+ =?us-ascii?Q?+4M0+HBB4jwyxJYylG+lUwG+6TGgd7uo93249hw2MgdLEbG2hXQGHAKXsuUk?=
+ =?us-ascii?Q?+xfEqzhApZfTz8NaiOn/PYp0Eitz7YlxxqF3kNA1VQShBhq6w6IQwm7JTEfB?=
+ =?us-ascii?Q?ndpeMQnzSlXJ7IO0iJe2a3IXTJhRvttcvDkC6OAUMZLeEjS0/rBZRcRbj8mB?=
+ =?us-ascii?Q?GHu9XdavHTh8ogtzAJkukQq1tOCjZuW5mj1xJzjJZ3i7cDJoMzp19rBrjyBc?=
+ =?us-ascii?Q?HazSjxG1cf4YKaFjRHP2We8DZoncVHH/qu1Qn8C+QlsInQiiXvrU8yT2jpVn?=
+ =?us-ascii?Q?MCrYYvRVbo0O9c96+Jmm6Oy2YuL1usV/gMFxa+HtbpfmZqHxiEMnelbHPRaT?=
+ =?us-ascii?Q?MpIDAXx12YCC5VFzHB9QRMeryPiWCgYXSUmX8zkrY9QRapOS/WDNrFUU0ppB?=
+ =?us-ascii?Q?wBqqHflU+TkYz7INLwplKzGZVF4X+7GvR+rVEdS68JV7s+BQNdmrkRFcAQ38?=
+ =?us-ascii?Q?KR61VLquftBZpRtZVWPRkbDsKf7QxCIaQ+Jbkjpf0Tszjs3t1jHfOhOyFO9T?=
+ =?us-ascii?Q?hFM6aF+o/uW/dSf16sSThdzXmzGHeAJNi33kJoVbkbmkgmK7uxBEn4XQRGlq?=
+ =?us-ascii?Q?OIilNaDbPgSylG4l+kIB39+2aGKn0gecjxhQJuOUUg4CYUZgxsovVcVetVEn?=
+ =?us-ascii?Q?Iqq72YdZbNdEXk9jsVy+M15Ndl0tlsmh6k0IU1D/piFDxRueVbUIjZKlTneW?=
+ =?us-ascii?Q?atRtqMsBmfUYauSuLL/7sbzOJHUy2MC2gHlvcQNHNy74ANMyt/e6iTiPRye/?=
+ =?us-ascii?Q?HD+7UpAfocrGI5jbGECgAMpSBAyrkEi5Z3lJKiBDQtXoTGmI/tsVDI2uXJoo?=
+ =?us-ascii?Q?aOw9AiUurzITH/HCruasLiyXSkR5Ytuisz640g2jnOC2K8k+2LjSKA8VTlsv?=
+ =?us-ascii?Q?EomgtuQHMaOgkaUeW1J80UkCUNut3HID0Qpo1vBK?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07c61741-ccc3-4808-45b7-08dcaffbba2d
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 18:24:47.6486
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7J2wStPEYeTncaXx3InVMdI88Y0Lr7t84Igg935TL2nVFEkI9jNXcZcZT7gj5EAC
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6250
 
-On Sat, Jul 27, 2024 at 4:06=E2=80=AFPM Takero Funaki <flintglass@gmail.com=
-> wrote:
->
-> This patch fixes an issue where the zswap global shrinker stopped
-> iterating through the memcg tree.
->
-> The problem was that shrink_worker() would restart iterating memcg tree
-> from the tree root, considering an offline memcg as a failure, and abort
-> shrinking after encountering the same offline memcg 16 times even if
-> there is only one offline memcg. After this change, an offline memcg in
-> the tree is no longer considered a failure. This allows the shrinker to
-> continue shrinking the other online memcgs regardless of whether an
-> offline memcg exists, gives higher zswap writeback activity.
->
-> To avoid holding refcount of offline memcg encountered during the memcg
-> tree walking, shrink_worker() must continue iterating to release the
-> offline memcg to ensure the next memcg stored in the cursor is online.
->
-> The offline memcg cleaner has also been changed to avoid the same issue.
-> When the next memcg of the offlined memcg is also offline, the refcount
-> stored in the iteration cursor was held until the next shrink_worker()
-> run. The cleaner must release the offline memcg recursively.
->
-> Fixes: a65b0e7607cc ("zswap: make shrinking memcg-aware")
-> Signed-off-by: Takero Funaki <flintglass@gmail.com>
-> ---
->  mm/zswap.c | 73 ++++++++++++++++++++++++++++++++++++------------------
->  1 file changed, 49 insertions(+), 24 deletions(-)
->
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index adeaf9c97fde..e9b5343256cd 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -765,12 +765,31 @@ void zswap_folio_swapin(struct folio *folio)
->         }
->  }
->
-> +/*
-> + * This function should be called when a memcg is being offlined.
-> + *
-> + * Since the global shrinker shrink_worker() may hold a reference
-> + * of the memcg, we must check and release the reference in
-> + * zswap_next_shrink.
-> + *
-> + * shrink_worker() must handle the case where this function releases
-> + * the reference of memcg being shrunk.
-> + */
->  void zswap_memcg_offline_cleanup(struct mem_cgroup *memcg)
->  {
->         /* lock out zswap shrinker walking memcg tree */
->         spin_lock(&zswap_shrink_lock);
-> -       if (zswap_next_shrink =3D=3D memcg)
-> -               zswap_next_shrink =3D mem_cgroup_iter(NULL, zswap_next_sh=
-rink, NULL);
-> +       if (zswap_next_shrink =3D=3D memcg) {
-> +               do {
-> +                       zswap_next_shrink =3D mem_cgroup_iter(NULL, zswap=
-_next_shrink, NULL);
-> +               } while (zswap_next_shrink && !mem_cgroup_online(zswap_ne=
-xt_shrink));
-> +               /*
-> +                * We verified the next memcg is online.  Even if the nex=
-t
-> +                * memcg is being offlined here, another cleaner must be
-> +                * waiting for our lock.  We can leave the online memcg
-> +                * reference.
-> +                */
+On Sun, Jul 28, 2024 at 04:51:06PM -0700, Nicolin Chen wrote:
+> IOMMU_RESV_SW_MSI is a unique region defined by an IOMMU driver. Though it
+> is eventually used by a device for address translation to an MSI location
+> (including nested cases), practically it is a universal region across all
+> domains allocated for the IOMMU that defines it.
+> 
+> Currently IOMMUFD core fetches and reserves the region during an attach to
+> an hwpt_paging. It works with a hwpt_paging-only case, but might not work
+> with a nested case where a device could directly attach to a hwpt_nested,
+> bypassing the hwpt_paging attachment.
 
-I thought we agreed to drop this comment :)
+Well, it does this because the attach is the only place where we have
+*all* the devices available.
 
-> +       }
->         spin_unlock(&zswap_shrink_lock);
->  }
->
-> @@ -1304,43 +1323,49 @@ static void shrink_worker(struct work_struct *w)
->         /* Reclaim down to the accept threshold */
->         thr =3D zswap_accept_thr_pages();
->
-> -       /* global reclaim will select cgroup in a round-robin fashion. */
-> +       /* global reclaim will select cgroup in a round-robin fashion.
+Doing it doing allocation means you get only one device.
 
-nit: s/global/Global
+So, I'd imagine more like we allocate the MSI region during allocation
+for the device specific during allocation
 
-> +        *
-> +        * We save iteration cursor memcg into zswap_next_shrink,
-> +        * which can be modified by the offline memcg cleaner
-> +        * zswap_memcg_offline_cleanup().
-> +        *
-> +        * Since the offline cleaner is called only once, we cannot leave=
- an
-> +        * offline memcg reference in zswap_next_shrink.
-> +        * We can rely on the cleaner only if we get online memcg under l=
-ock.
-> +        *
-> +        * If we get an offline memcg, we cannot determine if the cleaner=
- has
-> +        * already been called or will be called later. We must put back =
-the
-> +        * reference before returning from this function. Otherwise, the
-> +        * offline memcg left in zswap_next_shrink will hold the referenc=
-e
-> +        * until the next run of shrink_worker().
-> +        */
->         do {
->                 spin_lock(&zswap_shrink_lock);
-> -               zswap_next_shrink =3D mem_cgroup_iter(NULL, zswap_next_sh=
-rink, NULL);
-> -               memcg =3D zswap_next_shrink;
->
->                 /*
-> -                * We need to retry if we have gone through a full round =
-trip, or if we
-> -                * got an offline memcg (or else we risk undoing the effe=
-ct of the
-> -                * zswap memcg offlining cleanup callback). This is not c=
-atastrophic
-> -                * per se, but it will keep the now offlined memcg hostag=
-e for a while.
-> -                *
-> +                * Start shrinking from the next memcg after zswap_next_s=
-hrink.
-> +                * When the offline cleaner has already advanced the curs=
-or,
-> +                * advancing the cursor here overlooks one memcg, but thi=
-s
-> +                * should be negligibly rare.
-> +                */
-> +               do {
-> +                       memcg =3D mem_cgroup_iter(NULL, zswap_next_shrink=
-, NULL);
-> +                       zswap_next_shrink =3D memcg;
-> +               } while (memcg && !mem_cgroup_tryget_online(memcg));
+But continue to enforce that every attached device also has its MSI
+region allocated.. Which probably just means checking that the
+driver's reported MSI address is the same as the address during
+allocation?
 
-Let's move spin_lock() and spin_unlock() to be right above and before
-the do-while loop, similar to zswap_memcg_offline_cleanup(). This
-should make it more obvious what the lock is protecting.
+> @@ -364,7 +305,8 @@ int iommufd_hw_pagetable_attach(struct iommufd_hw_pagetable *hwpt,
+>  	}
+>  
+>  	if (hwpt_is_paging(hwpt)) {
+> -		rc = iommufd_hwpt_paging_attach(to_hwpt_paging(hwpt), idev);
+> +		rc = iopt_table_enforce_dev_resv_regions(
+> +				&to_hwpt_paging(hwpt)->ioas->iopt, idev->dev);
+>  		if (rc)
+>  			goto err_unlock;
 
-Actually, maybe it would be cleaner at this point to move the
-iteration to find the next online memcg under lock into a helper, and
-use it here and in zswap_memcg_offline_cleanup(). zswap_shrink_lock
-and zswap_next_shrink can be made static to this helper and maybe some
-of the comments could live there instead. Something like
-zswap_next_shrink_memcg().
+And this seems kind of weird, shouldn't any change the ioas regions
+happen when the domain is joined to the ioas with the MSI mapping, not
+during attach?? Like we don't want any change of the IOAS to blow away
+the MSI region.
 
-This will abstract this whole iteration logic and make shrink_worker()
-significantly easier to follow. WDYT?
+This should probably get selftest coverage as well, it seems easy
+enough to add to the mock iommu driver?
 
-I can do that in a followup cleanup patch if you prefer this as well.
-
-> +               /*
->                  * Note that if we got an online memcg, we will keep the =
-extra
->                  * reference in case the original reference obtained by m=
-em_cgroup_iter
->                  * is dropped by the zswap memcg offlining callback, ensu=
-ring that the
->                  * memcg is not killed when we are reclaiming.
->                  */
-> -               if (!memcg) {
-> -                       spin_unlock(&zswap_shrink_lock);
-> -                       if (++failures =3D=3D MAX_RECLAIM_RETRIES)
-> -                               break;
-> -
-> -                       goto resched;
-> -               }
-> -
-> -               if (!mem_cgroup_tryget_online(memcg)) {
-> -                       /* drop the reference from mem_cgroup_iter() */
-> -                       mem_cgroup_iter_break(NULL, memcg);
-> -                       zswap_next_shrink =3D NULL;
-> -                       spin_unlock(&zswap_shrink_lock);
-> +               spin_unlock(&zswap_shrink_lock);
->
-> +               if (!memcg) {
->                         if (++failures =3D=3D MAX_RECLAIM_RETRIES)
->                                 break;
->
->                         goto resched;
->                 }
-> -               spin_unlock(&zswap_shrink_lock);
->
->                 ret =3D shrink_memcg(memcg);
->                 /* drop the extra reference */
-> --
-> 2.43.0
->
+Jason
 
