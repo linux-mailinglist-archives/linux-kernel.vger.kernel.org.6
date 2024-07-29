@@ -1,148 +1,275 @@
-Return-Path: <linux-kernel+bounces-265454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AE6A93F16E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:45:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B89E893F173
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B41531C21C3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:45:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D182C1C208F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9518E13F42F;
-	Mon, 29 Jul 2024 09:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9323113E032;
+	Mon, 29 Jul 2024 09:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="UA3P/trA";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="ltiJPzbF"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ae8VY5io"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067DB84FDF;
-	Mon, 29 Jul 2024 09:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5477581F
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722246328; cv=none; b=DBSdibC3W9NE686tjYkPk6AOQvo7OSE+VNNnn455Xj7DdhD0BNuk7p3k6wo28xnvm0UEoQ9P21yTAM66Q3sb/R4RIxOy0yVdXpwqol+caAgXPcRDzpAIu06dOyPypjjcPyHof3n2yH7zU8DF/QwU9qAbLcKzVmZ/RgRfVipp/Hg=
+	t=1722246400; cv=none; b=jv8Tzh5xEkyfV3gJqhajshQpxoXLMCoZqLMLNv1gTNVlc7ulf1YG3ZaqhnGuoM+/v0UW5/VuFAkLP51SJsbOdVyj3F6vvaMV3aq6hmLMoy1idf33JwPqB8AjZBJp8p7zLGPlAfwYvDIeXEhAXM59LS2NIWkV1QWTvIWSSS5AjCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722246328; c=relaxed/simple;
-	bh=BhaZ7Rc9aF9i9ArddOfTXrgPz6tl9rJUNGxa29a61yE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V7e7peZxObQxhGY2EnaUQROMq4tCKgntymqVHFrkXzkAurcLD/wnOOGK4SrTrwUlHJeoiHo7jKm1nxNV2YCoxXUaCl6CvY2Nx4w3MNgCvlL/wOT6sgNe+oaZ1g3uSVHtARro2V6jlZF3Ng5W6f56p40nrECrdy/UjhtcKm/KyJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=UA3P/trA; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=ltiJPzbF reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1722246325; x=1753782325;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=L/Jlbrty+MzML5G8tyzzNVjp9Rsyo7JZTTPa+J3gl+E=;
-  b=UA3P/trAgFMd2HmKsxzHw8gUcKpcj9tHRE2O1ErkcUXZyRzIwTTGhN7l
-   v4imTTr1Mi1tUqW/1Caw+/Hce+8HcK3FvB0eu+qXoLxW8alwgA1DNp6u5
-   7n9CYo2qQy+uon0OEWqUW8A8QGjVd2vyrLLZdFBk9iqU1hipEtxkq8PBw
-   YWb7a2t3/klC4Ict59NoPVeYLwXirgK1bMo+LsDK9sD8uu9wY9hSpHr7Q
-   hgVlt/ba6UrN99MVI+fLj4hdcLVg6BLh2Fb4w8Vfq96LyPt4ZCu+LWQlR
-   2bsFwovLxJXZHMI8mAKj8duiZdZ1AEOIjUhkvsUE+5A6knWTPSSqsIos+
-   Q==;
-X-CSE-ConnectionGUID: WhuqI1NHSkWRwviwQYtdlA==
-X-CSE-MsgGUID: SBieUcVESaS1e0LRa0kXAg==
-X-IronPort-AV: E=Sophos;i="6.09,245,1716242400"; 
-   d="scan'208";a="38121794"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 29 Jul 2024 11:45:16 +0200
-X-CheckPoint: {66A764AC-17-E6D9A9-F72EA055}
-X-MAIL-CPID: 21804CAF3C8574BEB2D5434E4405EE3F_4
-X-Control-Analysis: str=0001.0A782F15.66A764AC.0136,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 23648161486;
-	Mon, 29 Jul 2024 11:45:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1722246312; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=L/Jlbrty+MzML5G8tyzzNVjp9Rsyo7JZTTPa+J3gl+E=;
-	b=ltiJPzbFhPHwDr/MsWqnk1ArQIjbSe/kNebypNeVBvk589n5QmV7V4tPFXnQhKAoRKZC/r
-	/+AHn8bYS9wLzW4pyteIHttWRQ5+fljm3OuhUw+0KzsNSAX8c5/dsU7r196mhWm3ikMqv0
-	x0zZZP5AgoNpZb7J7DYulz3HnPtHA4p3iHkbU6jxiQxRGEHgHTsc7/X5H7r2gSRKOW+1rU
-	WuATx4UOkyGK+23NAe4B/9k8ovoCp5sv4Z0jNSmJKM1wSUWWMdwqLlVnRjKjelIyMOogJY
-	8oQk8lyIa2Oj4dLJaZ8UX9U7S6GYR0GCkWT70WMAN7emw1xGlnXwNzGvJp6qqg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Clark Wang <xiaoning.wang@nxp.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] arm64: dts: imx8-ss-dma: enable dma support for lpspi
-Date: Mon, 29 Jul 2024 11:45:10 +0200
-Message-Id: <20240729094511.159467-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722246400; c=relaxed/simple;
+	bh=1zUqEV9uKWRKbZcOJDccWIU6L3YJKgdXBhzCtbMiD/Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MvRoBUKWUZKL2jpbcQpzxEXtZnWtXhk+rCtcgHBGXZOtitXTjqsP6oDI6qYPJI2A1OwArwmCIT2GoOEDABc0BH+1gvM4r5HxQMfPkZ2EH46Ihq+zwNPJfc1LqfBGui7iacfCfYN/oGninp/soZi+rVzYS/Xv0YnCNld9oBY88Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ae8VY5io; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722246398; x=1753782398;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=1zUqEV9uKWRKbZcOJDccWIU6L3YJKgdXBhzCtbMiD/Q=;
+  b=Ae8VY5iouofESI16AhggnTBVy0gXEQDTnsro24lnCaRSVE7DvADCxxaj
+   CMunLcrS2emUNBuGoFQkKaLPdtcHP/G1hAO7eb5nRqJKZ83aiQzVn7Pac
+   z852vtuF1uGzmRLffAqpj2ClihxPf/g5XU99B2TjUxlSQ4EubIr8/VxAZ
+   Sg/bAX0VEWq+EwVZv1d4AqCxdDlCTe4dQEsSJMlwMdbwAQ3FeGhgMIzEG
+   tMVSNnKGbeb/hqb89dy9qUO0hqbpjPrKVTQD3cGXoNgC7TUfdV4QMJTWC
+   D7vZwJBf2ghwweESLZ8u0lD/Lq2eLcgJQC1Z2lU8BXtcWuwOvE+N77JMn
+   w==;
+X-CSE-ConnectionGUID: +wG80K6cTqq66lmkD6Gryw==
+X-CSE-MsgGUID: /vebVpaMSoWR9R1ceh+S/g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="31383584"
+X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
+   d="scan'208";a="31383584"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 02:46:37 -0700
+X-CSE-ConnectionGUID: SM/v6pFrQteiKFWjdaCc/g==
+X-CSE-MsgGUID: La5a1TbPQWSP1Dj6lWav+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
+   d="scan'208";a="53884755"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.185])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 02:46:34 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Alex Deucher
+ <alexander.deucher@amd.com>, Christian =?utf-8?Q?K=C3=B6nig?=
+ <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Xinhui
+ Pan <Xinhui.Pan@amd.com>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
+ <linux@weissschuh.net>
+Subject: Re: [PATCH v2 1/2] drm/amdgpu: convert bios_hardcoded_edid to drm_edid
+In-Reply-To: <20240726-amdgpu-edid-bios-v2-1-8a0326654253@weissschuh.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240726-amdgpu-edid-bios-v2-0-8a0326654253@weissschuh.net>
+ <20240726-amdgpu-edid-bios-v2-1-8a0326654253@weissschuh.net>
+Date: Mon, 29 Jul 2024 12:46:30 +0300
+Message-ID: <877cd4zg21.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Clark Wang <xiaoning.wang@nxp.com>
+On Fri, 26 Jul 2024, Thomas Wei=C3=9Fschuh <linux@weissschuh.net> wrote:
+> Instead of manually passing around 'struct edid *' and its size,
+> use 'struct drm_edid', which encapsulates a validated combination of
+> both.
+>
+> As the drm_edid_ can handle NULL gracefully, the explicit checks can be
+> dropped.
+>
+> Also save a few characters by transforming '&array[0]' to the equivalent
+> 'array' and using 'max_t(int, ...)' instead of manual casts.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c |  6 +-----
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h       |  4 ++--
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c       |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/atombios_encoders.c | 17 ++++++-----------
+>  drivers/gpu/drm/amd/amdgpu/dce_v10_0.c         |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/dce_v11_0.c         |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/dce_v6_0.c          |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/dce_v8_0.c          |  2 +-
+>  8 files changed, 14 insertions(+), 23 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c b/drivers/gpu=
+/drm/amd/amdgpu/amdgpu_connectors.c
+> index bd0fbdc5f55d..344e0a9ee08a 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
+> @@ -249,11 +249,7 @@ amdgpu_connector_find_encoder(struct drm_connector *=
+connector,
+>  static struct edid *
+>  amdgpu_connector_get_hardcoded_edid(struct amdgpu_device *adev)
+>  {
+> -	if (adev->mode_info.bios_hardcoded_edid) {
+> -		return kmemdup((unsigned char *)adev->mode_info.bios_hardcoded_edid,
+> -			       adev->mode_info.bios_hardcoded_edid_size, GFP_KERNEL);
+> -	}
+> -	return NULL;
+> +	return drm_edid_duplicate(drm_edid_raw(adev->mode_info.bios_hardcoded_e=
+did));
+>  }
+>=20=20
+>  static void amdgpu_connector_get_edid(struct drm_connector *connector)
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h b/drivers/gpu/drm/a=
+md/amdgpu/amdgpu_mode.h
+> index d002b845d8ac..5e3faefc5510 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
+> @@ -51,6 +51,7 @@ struct amdgpu_encoder;
+>  struct amdgpu_router;
+>  struct amdgpu_hpd;
+>  struct edid;
+> +struct drm_edid;
+>=20=20
+>  #define to_amdgpu_crtc(x) container_of(x, struct amdgpu_crtc, base)
+>  #define to_amdgpu_connector(x) container_of(x, struct amdgpu_connector, =
+base)
+> @@ -326,8 +327,7 @@ struct amdgpu_mode_info {
+>  	/* FMT dithering */
+>  	struct drm_property *dither_property;
+>  	/* hardcoded DFP edid from BIOS */
+> -	struct edid *bios_hardcoded_edid;
+> -	int bios_hardcoded_edid_size;
+> +	const struct drm_edid *bios_hardcoded_edid;
+>=20=20
+>  	/* firmware flags */
+>  	u32 firmware_flags;
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c b/drivers/gpu/drm/a=
+md/amdgpu/amdgpu_vkms.c
+> index 6415d0d039e1..e5f508d34ed8 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
+> @@ -549,7 +549,7 @@ static int amdgpu_vkms_sw_fini(void *handle)
+>=20=20
+>  	adev->mode_info.mode_config_initialized =3D false;
+>=20=20
+> -	kfree(adev->mode_info.bios_hardcoded_edid);
+> +	drm_edid_free(adev->mode_info.bios_hardcoded_edid);
+>  	kfree(adev->amdgpu_vkms_output);
+>  	return 0;
+>  }
+> diff --git a/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c b/drivers/gpu=
+/drm/amd/amdgpu/atombios_encoders.c
+> index ebf83fee43bb..8defca3705d5 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
+> @@ -2064,23 +2064,18 @@ amdgpu_atombios_encoder_get_lcd_info(struct amdgp=
+u_encoder *encoder)
+>  				case LCD_FAKE_EDID_PATCH_RECORD_TYPE:
+>  					fake_edid_record =3D (ATOM_FAKE_EDID_PATCH_RECORD *)record;
+>  					if (fake_edid_record->ucFakeEDIDLength) {
+> -						struct edid *edid;
+> +						const struct drm_edid *edid;
 
-Add DMA configurations for LPSPI nodes on i.MX8QX/QM/DXL.
+Bikeshedding follows, up to you and the AMD maintainers to decide
+whether it matters.
 
-Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-Using the DMA configuration bits from downstream kernel.
-Tested on TQMa8XxS.
+I know it's a bit verbose, but personally I've named the struct drm_edid
+variables drm_edid everywhere when making conversions, just to make a
+clear distinction from struct edid. And I like the fact that it forces
+you to account for every place the variable is used, in particular
+passing it to functions that don't have type safety e.g. kfree().
 
- arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+>  						int edid_size;
+>=20=20
+>  						if (fake_edid_record->ucFakeEDIDLength =3D=3D 128)
+>  							edid_size =3D fake_edid_record->ucFakeEDIDLength;
+>  						else
+>  							edid_size =3D fake_edid_record->ucFakeEDIDLength * 128;
+> -						edid =3D kmemdup(&fake_edid_record->ucFakeEDIDString[0],
+> -							       edid_size, GFP_KERNEL);
+> -						if (edid) {
+> -							if (drm_edid_is_valid(edid)) {
+> -								adev->mode_info.bios_hardcoded_edid =3D edid;
+> -								adev->mode_info.bios_hardcoded_edid_size =3D edid_size;
+> -							} else {
+> -								kfree(edid);
+> -							}
+> -						}
+> +						edid =3D drm_edid_alloc(fake_edid_record->ucFakeEDIDString, edid_s=
+ize);
+> +						if (drm_edid_valid(edid))
+> +							adev->mode_info.bios_hardcoded_edid =3D edid;
+> +						else
+> +							drm_edid_free(edid);
+>  						record +=3D struct_size(fake_edid_record,
+>  								      ucFakeEDIDString,
+>  								      edid_size);
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi b/arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi
-index 1ee9496c988c5..8ae5f065b4180 100644
---- a/arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi
-@@ -34,6 +34,8 @@ lpspi0: spi@5a000000 {
- 		assigned-clocks = <&clk IMX_SC_R_SPI_0 IMX_SC_PM_CLK_PER>;
- 		assigned-clock-rates = <60000000>;
- 		power-domains = <&pd IMX_SC_R_SPI_0>;
-+		dma-names = "tx","rx";
-+		dmas = <&edma2 1 0 0>, <&edma2 0 0 FSL_EDMA_RX>;
- 		status = "disabled";
- 	};
- 
-@@ -50,6 +52,8 @@ lpspi1: spi@5a010000 {
- 		assigned-clocks = <&clk IMX_SC_R_SPI_1 IMX_SC_PM_CLK_PER>;
- 		assigned-clock-rates = <60000000>;
- 		power-domains = <&pd IMX_SC_R_SPI_1>;
-+		dma-names = "tx","rx";
-+		dmas = <&edma2 3 0 0>, <&edma2 2 0 FSL_EDMA_RX>;
- 		status = "disabled";
- 	};
- 
-@@ -66,6 +70,8 @@ lpspi2: spi@5a020000 {
- 		assigned-clocks = <&clk IMX_SC_R_SPI_2 IMX_SC_PM_CLK_PER>;
- 		assigned-clock-rates = <60000000>;
- 		power-domains = <&pd IMX_SC_R_SPI_2>;
-+		dma-names = "tx","rx";
-+		dmas = <&edma2 5 0 0>, <&edma2 4 0 FSL_EDMA_RX>;
- 		status = "disabled";
- 	};
- 
-@@ -82,6 +88,8 @@ lpspi3: spi@5a030000 {
- 		assigned-clocks = <&clk IMX_SC_R_SPI_3 IMX_SC_PM_CLK_PER>;
- 		assigned-clock-rates = <60000000>;
- 		power-domains = <&pd IMX_SC_R_SPI_3>;
-+		dma-names = "tx","rx";
-+		dmas = <&edma2 7 0 0>, <&edma2 6 0 FSL_EDMA_RX>;
- 		status = "disabled";
- 	};
- 
--- 
-2.34.1
+It also makes review easier because you don't have to check what goes on
+outside of the patch context here. It just won't build.
 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c b/drivers/gpu/drm/amd=
+/amdgpu/dce_v10_0.c
+> index dddb5fe16f2c..742adbc460c9 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
+> @@ -2846,7 +2846,7 @@ static int dce_v10_0_sw_fini(void *handle)
+>  {
+>  	struct amdgpu_device *adev =3D (struct amdgpu_device *)handle;
+>=20=20
+> -	kfree(adev->mode_info.bios_hardcoded_edid);
+> +	drm_edid_free(adev->mode_info.bios_hardcoded_edid);
+>=20=20
+>  	drm_kms_helper_poll_fini(adev_to_drm(adev));
+>=20=20
+> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c b/drivers/gpu/drm/amd=
+/amdgpu/dce_v11_0.c
+> index 11780e4d7e9f..8d46ebadfa46 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
+> @@ -2973,7 +2973,7 @@ static int dce_v11_0_sw_fini(void *handle)
+>  {
+>  	struct amdgpu_device *adev =3D (struct amdgpu_device *)handle;
+>=20=20
+> -	kfree(adev->mode_info.bios_hardcoded_edid);
+> +	drm_edid_free(adev->mode_info.bios_hardcoded_edid);
+>=20=20
+>  	drm_kms_helper_poll_fini(adev_to_drm(adev));
+>=20=20
+> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/=
+amdgpu/dce_v6_0.c
+> index 05c0df97f01d..f08dc6a3886f 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+> @@ -2745,7 +2745,7 @@ static int dce_v6_0_sw_fini(void *handle)
+>  {
+>  	struct amdgpu_device *adev =3D (struct amdgpu_device *)handle;
+>=20=20
+> -	kfree(adev->mode_info.bios_hardcoded_edid);
+> +	drm_edid_free(adev->mode_info.bios_hardcoded_edid);
+>=20=20
+>  	drm_kms_helper_poll_fini(adev_to_drm(adev));
+>=20=20
+> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c b/drivers/gpu/drm/amd/=
+amdgpu/dce_v8_0.c
+> index dc73e301d937..a6a3adf2ae13 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
+> @@ -2766,7 +2766,7 @@ static int dce_v8_0_sw_fini(void *handle)
+>  {
+>  	struct amdgpu_device *adev =3D (struct amdgpu_device *)handle;
+>=20=20
+> -	kfree(adev->mode_info.bios_hardcoded_edid);
+> +	drm_edid_free(adev->mode_info.bios_hardcoded_edid);
+>=20=20
+>  	drm_kms_helper_poll_fini(adev_to_drm(adev));
+
+--=20
+Jani Nikula, Intel
 
