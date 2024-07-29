@@ -1,181 +1,140 @@
-Return-Path: <linux-kernel+bounces-265737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF3E93F565
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:29:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C0493F567
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C10E7283032
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:29:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02FAA1C220D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E421487FF;
-	Mon, 29 Jul 2024 12:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166A514831D;
+	Mon, 29 Jul 2024 12:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kiFaHVi3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFAJ6zS2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49741145A01;
-	Mon, 29 Jul 2024 12:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F15148848;
+	Mon, 29 Jul 2024 12:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722256131; cv=none; b=kcctLwkTdJIVrQ/Saqr/rYUst1dvgpXjg/Ti0Jiw96BUPMujXc9c9tYid8HjF3FVpLhQyDV2h2jqvOE4CqOOBiQslHWjYvEiqycJ/hkkYoe8NHaD97/RsGptTesrytd750UYzc70L64L3L4LFEipZ92b/rg3gjsg10bR7SPIzro=
+	t=1722256135; cv=none; b=Hmvs9VkU+r6YeOt761r+W/bspmR/ACU+MFnBoIM3IiVBXUtN5ZU1hH8yE+lBDx+4cySI6CEx97cOKWRyknkZRaW+AK0/rEKwz5VJ5LExBZNc9oSo0mkoHFh6/Dp7L7tHRTmvjhp+wA69olDhEIW+tmDCDYCRsc8VJESPMJ7wj8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722256131; c=relaxed/simple;
-	bh=IRqd+oo1mq+g4LO1zPcPaDVg+dznO3Layv/JAbNPjyI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uM0epPq4FqmSuuFZh6nx6KODH4h3QOk4ZLWKLFOhRfFyUT2zsnspZKfDZx5V2IJ0vq2D8cqyw2YKTyTPE6ImjdOoMeu/M9WD5Ze/kPte7Ssa9b3xHlTG7VaAM6boNWjsmUFROLd9futgAMEiIdqAtphK+OZ2H3a/WCSZ6sG+rVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kiFaHVi3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TATHpO023650;
-	Mon, 29 Jul 2024 12:28:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3DEt+ZdHR6AdfF8Av7/wPvcvAXWbOzS3yxyQqXgfbBU=; b=kiFaHVi3YnH1RT5p
-	3Yz06r5IHwNEUpLRnw1m8NCxdFPi053RGAlsVONmwbjxhDuBkiC4hiy/WXDS/j/c
-	8OFNJhKaxdhH9iSfGbt03imuEGYeWbQjD8SqVBNhq223HFmLCXfLNbnGs9dWn9DP
-	iJAdiLkxbWEGzhLkIvvbPcJh7BVa9igN9B24pzYRzpJo6vMiCHmZK4CUTJoWWNiK
-	WxRlkRw+gMHWuLGTqqbTQ/2LhBG1rD5GIgBzUsAObAWENacBMTJZ6f7rh4UkH6zq
-	u/azpv+PyMm5ecvWSvnht5Porv7GMs7QXFnTutxTtNAHEBd0mr3bSt6mdbP6xjHr
-	oysgXg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mt68m4ev-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 12:28:38 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TCSbuU018418
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 12:28:37 GMT
-Received: from [10.216.48.244] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
- 2024 05:28:34 -0700
-Message-ID: <98264d15-fb30-32e0-7eba-72b3a50347e0@quicinc.com>
-Date: Mon, 29 Jul 2024 17:58:31 +0530
+	s=arc-20240116; t=1722256135; c=relaxed/simple;
+	bh=i/f9RNjegDbAVcIH695L6x7YuHT0EcJod2GMkAu014M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T05sxgm6GdYUyGEzI2n9Rd8MhmosbxoWW3MOXIdtxyS3bpLm1zDMFPVBW37VDCz1wp+1vOsMVlUf7rP7D8tV3swN/RKjPFyQaG6TlZhgIlwWW1L79EdRch+jpY1hfkZnkwICCtIAvrHsJ9LxW3mkSA0xahePsN8wi968/3bOFCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFAJ6zS2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1177C32786;
+	Mon, 29 Jul 2024 12:28:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722256135;
+	bh=i/f9RNjegDbAVcIH695L6x7YuHT0EcJod2GMkAu014M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rFAJ6zS2BAdUbmKideEICIZgJbU6ZGIwa9bvbYbI2ZDuPVtNA0IH0pbzaAwQLZJHQ
+	 xJfDEZtdxJThBrc76Lu2B9a0+/HUs+2ps6qbxXveetV72tFYhw+6/vtlbaoQMwaNwr
+	 /YuGeujOhXm16pi06K1UPA10h1tQpfFJt5rX9/kLlWDE6/brDizB3WLlUt4uj3fiPc
+	 OBW3A6NpmgcJH/Eo4XEBtIfxj4a0tWRJxMvnNciWUWi4wyvlr5INJoJooB2XKnXfbF
+	 qeaVTEJWzcHDvRhsXkDADzyVzJLRB35S5Nlsmk3wfOoo57v/MTIIbnyziRtA0pZ/1o
+	 5CiA2AChnWqmw==
+Message-ID: <b5edd9f8-4764-41e3-a4ea-5d9838acd5f9@kernel.org>
+Date: Mon, 29 Jul 2024 14:28:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] PCI: qcom-ep: Move controller cleanups to
- qcom_pcie_perst_deassert()
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] drm/tiny: Add driver for Sharp Memory LCD
+To: Alex Lanzano <lanzano.alex@gmail.com>,
+ Markus Elfring <Markus.Elfring@web.de>
+Cc: Mehdi Djait <mehdi.djait@bootlin.com>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+ Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+References: <20240729014311.1746371-3-lanzano.alex@gmail.com>
+ <0b1ee6f7-b24d-49a6-ba90-d917c864ecf4@web.de>
+ <darls2mffvsw2ktkirzimzij6w5w45hxylvfcfwgmd3k3elmar@xeg6mfpa3yax>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        <lpieralisi@kernel.org>, <kw@linux.com>
-CC: <robh@kernel.org>, <bhelgaas@google.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240729122245.33410-1-manivannan.sadhasivam@linaro.org>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20240729122245.33410-1-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: i_B38skPQuLZgVvanh0FB5a8iG_rSYiV
-X-Proofpoint-GUID: i_B38skPQuLZgVvanh0FB5a8iG_rSYiV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-29_10,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 adultscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0
- impostorscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
- clxscore=1015 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407290084
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <darls2mffvsw2ktkirzimzij6w5w45hxylvfcfwgmd3k3elmar@xeg6mfpa3yax>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 29/07/2024 14:05, Alex Lanzano wrote:
+>> Under which circumstances would you become interested to apply a statement
+>> like “guard(mutex)(&smd->tx_mutex);”?
+>> https://elixir.bootlin.com/linux/v6.10.2/source/include/linux/mutex.h#L196
+>>
+> 
+> Ah, I didn't realize guarded mutexes were implemented. That's really
+> good to know.
+> 
+> I'd usually use them when it's possible to return before mutex_unlock is
+> called to avoid goto cleanup logic. But it's probably best to just use them
+> by default.
+> 
+> Thanks for the review. Will clean up in v4.
 
+<form letter>
+Feel free to ignore all comments from Markus, regardless whether the
+suggestion is reasonable or not. This person is banned from LKML and
+several maintainers ignore Markus' feedback, because it is just a waste
+of time.
+</form letter>
 
-On 7/29/2024 5:52 PM, Manivannan Sadhasivam wrote:
-> Currently, the endpoint cleanup function dw_pcie_ep_cleanup() and EPF
-> deinit notify function pci_epc_deinit_notify() are called during the
-> execution of qcom_pcie_perst_assert() i.e., when the host has asserted
-> PERST#. But quickly after this step, refclk will also be disabled by the
-> host.
-> 
-> All of the Qcom endpoint SoCs supported as of now depend on the refclk from
-> the host for keeping the controller operational. Due to this limitation,
-> any access to the hardware registers in the absence of refclk will result
-> in a whole endpoint crash. Unfortunately, most of the controller cleanups
-> require accessing the hardware registers (like eDMA cleanup performed in
-> dw_pcie_ep_cleanup(), powering down MHI EPF etc...). So these cleanup
-> functions are currently causing the crash in the endpoint SoC once host
-> asserts PERST#.
-> 
-> One way to address this issue is by generating the refclk in the endpoint
-> itself and not depending on the host. But that is not always possible as
-> some of the endpoint designs do require the endpoint to consume refclk from
-> the host (as I was told by the Qcom engineers).
-> 
-> So let's fix this crash by moving the controller cleanups to the start of
-> the qcom_pcie_perst_deassert() function. qcom_pcie_perst_deassert() is
-> called whenever the host has deasserted PERST# and it is guaranteed that
-> the refclk would be active at this point. So at the start of this function,
-> the controller cleanup can be performed. Once finished, rest of the code
-> execution for PERST# deassert can continue as usual.
-> 
-How about doing the cleanup as part of pme turnoff message.
-As host waits for L23 ready from the device side. we can use that time
-to cleanup the host before sending L23 ready.
+Best regards,
+Krzysztof
 
-- Krishna Chaitanya.
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->   drivers/pci/controller/dwc/pcie-qcom-ep.c | 12 ++++++++++--
->   1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> index 2319ff2ae9f6..e024b4dcd76d 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> @@ -186,6 +186,8 @@ struct qcom_pcie_ep_cfg {
->    * @link_status: PCIe Link status
->    * @global_irq: Qualcomm PCIe specific Global IRQ
->    * @perst_irq: PERST# IRQ
-> + * @cleanup_pending: Cleanup is pending for the controller (because refclk is
-> + *                   needed for cleanup)
->    */
->   struct qcom_pcie_ep {
->   	struct dw_pcie pci;
-> @@ -214,6 +216,7 @@ struct qcom_pcie_ep {
->   	enum qcom_pcie_ep_link_status link_status;
->   	int global_irq;
->   	int perst_irq;
-> +	bool cleanup_pending;
->   };
->   
->   static int qcom_pcie_ep_core_reset(struct qcom_pcie_ep *pcie_ep)
-> @@ -389,6 +392,12 @@ static int qcom_pcie_perst_deassert(struct dw_pcie *pci)
->   		return ret;
->   	}
->   
-> +	if (pcie_ep->cleanup_pending) {
-> +		pci_epc_deinit_notify(pci->ep.epc);
-> +		dw_pcie_ep_cleanup(&pci->ep);
-> +		pcie_ep->cleanup_pending = false;
-> +	}
-> +
->   	/* Assert WAKE# to RC to indicate device is ready */
->   	gpiod_set_value_cansleep(pcie_ep->wake, 1);
->   	usleep_range(WAKE_DELAY_US, WAKE_DELAY_US + 500);
-> @@ -522,10 +531,9 @@ static void qcom_pcie_perst_assert(struct dw_pcie *pci)
->   {
->   	struct qcom_pcie_ep *pcie_ep = to_pcie_ep(pci);
->   
-> -	pci_epc_deinit_notify(pci->ep.epc);
-> -	dw_pcie_ep_cleanup(&pci->ep);
->   	qcom_pcie_disable_resources(pcie_ep);
->   	pcie_ep->link_status = QCOM_PCIE_EP_LINK_DISABLED;
-> +	pcie_ep->cleanup_pending = true;
->   }
->   
->   /* Common DWC controller ops */
 
