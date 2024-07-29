@@ -1,460 +1,297 @@
-Return-Path: <linux-kernel+bounces-264933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8984B93EA52
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:35:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6BA993EA58
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2AF1F21EB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:35:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13B421C213D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB154436;
-	Mon, 29 Jul 2024 00:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB7823CE;
+	Mon, 29 Jul 2024 00:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="XwDr3ScL"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.9])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431F8BE49;
-	Mon, 29 Jul 2024 00:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722213333; cv=none; b=jynWGWxZhgiUM8zVoOvFshIkvZ+IDUBJdxbOfGEOpHSfMy5gKoIuJMOjtIqncZHdFpuj/UOihsZ+NmC+Z1kkNx/cj5xLw5H/C0dsAPYHuEaE9QzVEMxkQAbUYAZDUcvNzsR3apT/tjdN+J3qKlqSPvvE4fAB5bYGSD/MPiquSfE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722213333; c=relaxed/simple;
-	bh=Is9adxogrhVdBuvYTtU+g9EGkmDjPM+8gUoRVWuPJ7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qwHS8k0kWhfepQpm/lVllByOeSIDWilmH9X7Ii8TfmuuAjBac22NEgh3KTelcAMIj0ZhtzJkJRwfNfLdKtoTFWXacHWE6cBMgmy23IMZx8XtV8KCoV7SWvluuWeWpXyfyRGS38POz5Vz+SpAWD+smS+rpJdbzy/2eoq1l3vfjZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=XwDr3ScL; arc=none smtp.client-ip=117.135.210.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=Q1ux3joHYsKx9ZZwmtarTr/KEJ/FgoSg290VwRwyfD0=;
-	b=XwDr3ScLL8xpyigTPkkebzZZDkUDyu20688GtvhX0v/obSsC4BSRjgD2WLFSns
-	7gwVdtocWil8jwODw65/2O4Wnqbm2cvvfLpj5HhVEy+VVYXzz9WIYQmAnPkAZAmS
-	nSpDtDYEYbxtgh3+DVNpZp18WvB6CHHNSE0DQrsuksjcI=
-Received: from [172.21.22.210] (unknown [118.242.3.34])
-	by gzga-smtp-mta-g1-1 (Coremail) with SMTP id _____wD3v2Kh46ZmQoOBAg--.6080S2;
-	Mon, 29 Jul 2024 08:34:43 +0800 (CST)
-Message-ID: <c1bf8b02-5c00-4759-a40f-0afdae5e3da9@126.com>
-Date: Mon, 29 Jul 2024 08:34:40 +0800
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="hD/f0+pq"
+Received: from esa11.fujitsucc.c3s2.iphmx.com (esa11.fujitsucc.c3s2.iphmx.com [216.71.156.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7818F44
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 00:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.156.121
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722213526; cv=fail; b=QiOZi4D4iPNI1XpzcLxUUNWlMTepyEaVy2VHFMAFO8mtP2806Mn33L0k6q5ymR0VImuF+tQ3uHwW4MrIZAW9zTZoaG9WHnjBGCZjzqp32X9FYJWit65sHXSt7HVRQPi/hvDTOw+QF2H7OL07H835jwpvryQz31oiaqXOsVoDPnU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722213526; c=relaxed/simple;
+	bh=aw2Q2iONNCNe9XlzU47P51mELfqLYTsRwIr0nDsdW9Y=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=C+5yVg8HO2eD4odQtR7Xjp3aZAmXISc3u04bGDZLb79oacXpfl14NdTSR/ih35AAwH68SMwxcyDAClUc6+6ml/XJpw3NhwNJUjaSAFPk1UKe9RqPPcpVECiCZdRSWxyHgGgY5NfrBb1YItfSddz24ZaK3vm4V7wXmjXOKA/9GjI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=hD/f0+pq; arc=fail smtp.client-ip=216.71.156.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
+  t=1722213523; x=1753749523;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=aw2Q2iONNCNe9XlzU47P51mELfqLYTsRwIr0nDsdW9Y=;
+  b=hD/f0+pqokVA5SrruS93oLJSa9pZxtxNS5DGILeYQELxZO5776XyTZAu
+   6QNnqL0fA/GPpjud1k2u52Y17nBBLP5o494qjdWJFzoHY8wF4riLl4D2R
+   jg55/gfuDzmG6ZPaJiYWsmkhWleq2lqIBIawHMD8CXc0CKG05Y3PYoOyc
+   tfL7BytJ4t/qoC0wo0P4+WFHkXn9ue73QCJ3J78Hb38mrZvd8QwXovOj2
+   Jo08DlIWCSszGwjZaqGPJRWNZ280pXyX8AWcT5IZ6vmBREHuT3WLKB2Wr
+   2opjw5/ufuMHhMpx2RVl67dJ+F0O6g0z2/4Tp4Qkd6+K5BBxFcNw5SAYG
+   A==;
+X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="127267732"
+X-IronPort-AV: E=Sophos;i="6.09,245,1716217200"; 
+   d="scan'208";a="127267732"
+Received: from mail-japaneastazlp17010002.outbound.protection.outlook.com (HELO TY3P286CU002.outbound.protection.outlook.com) ([40.93.73.2])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 09:37:30 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GNYuVS/VVzzyVa00zW/DmfxZ93uu1/w/D9y8k3Wpd0EsclhIi0M8MvccjOyaNJE7kN9Hx33027tScb7vJoXCBEubhyApfFBLjKQHxzp+4brMGZz2snw+xYun7YxugcjrQb2wy+2zaUddJCS0Z5EEbbAiE1b0AgeQH/wSLUyyW8nxZLv8+Z84FYOIW0d5FqGlMIHNNt66J1oPskO5NA3PN6IfaAGnrSQ0IatXXvcn2FlgnIIY1OdCCnWXBkU/C4JZCsYQYE9vS14anYWAyHalo8hQ6yk5h49xpZkh8DHJOCToxnkds7C9VEixyfH273nAMtQDFT754ZvnI8uio/LFnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aw2Q2iONNCNe9XlzU47P51mELfqLYTsRwIr0nDsdW9Y=;
+ b=I94ABbMehLx/eaqzT+DNLgqCiOCP5sxNMSmyOxiRZA5xltLrSIToJ1sFWJagv6nCuNvWCrGER+GDiOjU/TxjK/W6nUdyieS3GNqSvHQmBAe1DNQMvV+Be5gUpfFFXHs0eR3xqcJzuiaI3jwc4/sjLJyov2TkQrZ05m9cJ6Y2bGA/+Hkt7YieOzlBsbZ2ZqOaIKTLrfkpZe/UHpWOVFRGImtpFwJw7uPwbIPo4KhAeGt1ibCEvj8XlyTwU/LHdUtys8rStiwWf5BaY8TB4f8Qz/2KaymanDWzI0C1FnciDPTa6dfmHOUhwPC0qDTuVs/67+p4aB/OQYkw9w8dQMMhAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (2603:1096:403:6::12)
+ by TY4PR01MB12635.jpnprd01.prod.outlook.com (2603:1096:405:1e3::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Mon, 29 Jul
+ 2024 00:37:27 +0000
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::d9ba:425a:7044:6377]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::d9ba:425a:7044:6377%6]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
+ 00:37:27 +0000
+From: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>
+To: Michal Hocko <mhocko@suse.com>
+CC: "linux-mm@kvack.org" <linux-mm@kvack.org>, Andrew Morton
+	<akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, Oscar
+ Salvador <osalvador@suse.de>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Yasunori Gotou (Fujitsu)"
+	<y-goto@fujitsu.com>
+Subject: Re: [PATCH RFC] mm: Avoid triggering oom-killer during memory
+ hot-remove operations
+Thread-Topic: [PATCH RFC] mm: Avoid triggering oom-killer during memory
+ hot-remove operations
+Thread-Index: AQHa3zgpkku48clQz0iGM14ekjFxLLIIuvWAgAQlj4A=
+Date: Mon, 29 Jul 2024 00:37:26 +0000
+Message-ID: <fd6e84d5-9dba-47fb-a39e-1f7f0995fdf5@fujitsu.com>
+References: <20240726084456.1309928-1-lizhijian@fujitsu.com>
+ <ZqNpwz5UW44WOdHr@tiehlicka>
+In-Reply-To: <ZqNpwz5UW44WOdHr@tiehlicka>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY1PR01MB1562:EE_|TY4PR01MB12635:EE_
+x-ms-office365-filtering-correlation-id: 1c9846a4-8c19-496a-62d3-08dcaf669e9a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|1800799024|38070700018|1580799027;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?Z00yUGlIVUxUQUNHclBPZUtZeFdpdnhiVVdxRDV4OEZMdGphcWppeU9xR3lz?=
+ =?utf-8?B?OURsSXRsREpTbXlhdWhQSGVkV2RkcnlBbjJxVHpWbXd1MUhnc3o1c293K3JV?=
+ =?utf-8?B?MHhjdDY2aUorWEZwT1pSYVlFeFlMQko3NFpZYmIwMUxmeGlhNGxpNHdDMkZC?=
+ =?utf-8?B?amYweDBSOEl2NXpQU2NvS2hETlJHcjBQMjJiZllqb0FSK0V0czE0LzM3bjBW?=
+ =?utf-8?B?QlVFdW1lM1dRZlZaS0hIQ0Nma1FGdWJjZFcyRWh2ejFXMUI5TFo5cmE0S2po?=
+ =?utf-8?B?L2IzZ3V0VnpmTTVURFppKzlhNXZlbnVBd0tLcC9YZ3dRaG1WNTVZaHAvWDZE?=
+ =?utf-8?B?M1FpeGsrNW9OME9nVklRZzVlKzBpdVRhcE05YkNNZ3FPeDA2bG16cHhGWEQ4?=
+ =?utf-8?B?MmZyTXFKQldiMjk4d09XVGZKczYzaEFtZlBvV2Y4R0dTWHBvbWNCc24xNWFw?=
+ =?utf-8?B?OTJRb0VEQnVEMFRIRHJ3OTFNcEhINkZVTncwNW81dElXbGx4NERBMjRYdWhF?=
+ =?utf-8?B?TWhSb2JGZzQwS3BrOWV4WTRHdEI5a0V6cHJHMytmUWpSMlY3SmdEMEhtazZL?=
+ =?utf-8?B?RVhqWlQyMHpiZktMeXgxdkw4VjdaVGh0bVRlcnZxa3RhdzkzVTRZVmlJdHpK?=
+ =?utf-8?B?b1BQUHQvYk1RNS90d2FhYUl6UzdiaGcrbEs4VUVOaG1tb2FDeE91VHFwZGQx?=
+ =?utf-8?B?ZjcyRGgyOFVXUEcvbjNMYnY4MkFoaHNmWGZTM0c1UFB6ZnI2KzN3ZWlqSTl6?=
+ =?utf-8?B?dEdLaTFMYXIvRE1xYmR4blAwSG5WMlNQM3hLeXNvUjMzSnllalVFOEZlZC83?=
+ =?utf-8?B?ZHJyQzVTRzF0dzBqemtldzEyZ0xoNzJFT21vbS9XVHViM01vcGxaN084OUNn?=
+ =?utf-8?B?T01ubVB1V0JWbUdaUHk3UmNQMG1RQ1E0aStQSi83SDhuaXE1aUtmenptTkVj?=
+ =?utf-8?B?Q1lNbXJHZ2dDRnlkWkdURGZSOFpUZUtTTVRrN1Y5RlBSQVg2RXVRZmxXVWhR?=
+ =?utf-8?B?SGVaNUNEWUtjZUpKeHcrV3FqNHBRcW5rQ05yQUVuZk9TdTNndFd5eHdHaGJK?=
+ =?utf-8?B?NmhRN1lzTDYveHJXSnljUVVjR1B1TWh1UU5janBTa0lkaUpUTFF2ekxCU1lO?=
+ =?utf-8?B?VWtWOE5ESHZxbys3Zkc4cTJ0Z1MzNW1NMkRIeXhIczg1cjY3dytWTVlZOG5Q?=
+ =?utf-8?B?SEl1U3dUT2dLYkYvUkxHR3Bna04vM2RnSlR1eEhiMFpEY2dMalM5a3pncDlv?=
+ =?utf-8?B?RTlRV0RZOEo1STZMWVkvOHdsUXpHZ2pLcUNvcG5ENWZBYWVmcW9PRTA3bTly?=
+ =?utf-8?B?dDlBVzVaVnNNei9IamJXWFVsOGVZWVJzbkYxdGNITWJPSWlGSG5xQ2t1dFJD?=
+ =?utf-8?B?M2VKUU85SWdvd1l5SkRLWFZENExQV3FLZEtDRGpwS3dwRVhqc2p5aVNNdjBl?=
+ =?utf-8?B?VC9wUmE5d1A4Sk1naXU5U1dGc3hjVGdKaUhTaFo0MnZCcTdjRkdObDVvLys0?=
+ =?utf-8?B?UDdsZDFzUjhaQWUxbDc1amZIMlBmU2ZmUVlDUkNtbDd1MmhRKzdqRUxNNHho?=
+ =?utf-8?B?dGRKakM1QlA1ZXhJdGhMUnpCTURnQXNCbUM3T1ZXNC80MTFIWXJDa2g3TmVD?=
+ =?utf-8?B?OVRqQjFxQllJMjB4WXRQQU03b2tFYTFqNVcyeHEyYmZZRVN4K01mamczQ1E2?=
+ =?utf-8?B?azVGZGFyUTJzUkR3V1BnM0dWaGo3YWluZi80OTFlbEpWQjlBWDRZWi9LVFNI?=
+ =?utf-8?B?bzhRNkJ0NmlvblpWbk5sN0dFbGtzQlR4WEp5YzJROE5icWowNmRUSHlzYUpm?=
+ =?utf-8?B?SGtOY1N4NTc2bUhhSjFqbmNNREZSWlROVFZkbkFucUdQcjE5WGxxR1lVUXRm?=
+ =?utf-8?Q?jbK3UFrAGguWx?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018)(1580799027);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?VU5tRC9rQzR6VWxLMW1XRTgrcHo1YnVhWHJGaldyZlc0cmtOUlloSVpUSUNM?=
+ =?utf-8?B?WXlFKzF2TURIMGovclcxVC9iWWNFVW0yR05oUVhDQVNuK09acUgrYVhSWHhy?=
+ =?utf-8?B?S0ZwNFFPNS95dWpNSmZSMzlnVjdva1ZXdUpZZEs4a1FvS1RpVlRHclRRSjNC?=
+ =?utf-8?B?YlhBVk5WR0J4S0ZNcDU5YTZQV0FlV2VPbjA0Ynk4V0kwd2EzVkliTGc2QWFL?=
+ =?utf-8?B?c0hiYWtoVkNEOGNSN1VNTkVGdGJTclp2OVZ5c3R5S3pPZVhGN0prMUFzRlFJ?=
+ =?utf-8?B?a0lNVEl0Vm5EUVR4bmlmUlVGRldZTkZXcjlqazZoc01aYTV0R1dySUpVSW1V?=
+ =?utf-8?B?cE1Vd0VtUHdZRzdmbDBJWXM5UGszMkpNTGVrTnBRZjB3SWNCQkNURVF6ckQz?=
+ =?utf-8?B?eG82VjdzaE1mVW9najFtNXBGVlJFZURubmR0T3FFSDZHTUR2Q3ZqdmlFTkRS?=
+ =?utf-8?B?bkVFQm5nTXllV3BWUytaL2owMnJtZXA2WFVTaHRlbnhVTmJMWU1NeDZDa01B?=
+ =?utf-8?B?RDhlVWFGaTRhNUdqNFdiTDZ2Y0NXbzAvKytUYTMzVFdZV2NvRTBtRUNEZkZa?=
+ =?utf-8?B?eFpSN3dpbTN3d2RRUVkva1Nxa2lHWXQ3ZFVtUmI4bWFzRXlONVRYUlZEZzBY?=
+ =?utf-8?B?NHNESkQrU3Nod0VvRmlnb21odDlNWGtXT1FaOUhBemtadFgxUUZkMUwvdHI4?=
+ =?utf-8?B?QW5QWTgrSG1ZNkdRUjFEbWdBeW1Mc2VhUG9lQ0E3WkNnZ04vWFVhWVFNLzhE?=
+ =?utf-8?B?L2Noa25tSHBxb2FXL01IRWE5Y0dVdXdVQzRVZG9sTWJ4OFg0d3Qrem5RdWNz?=
+ =?utf-8?B?Q1VuMWNnVEdYSEdyR05pbWJnK1R2UWpZTEdmUDZEL0hzQURmZmJYOVg1T1pD?=
+ =?utf-8?B?VktRVWl1UkpYZVJKSVJBOERnU0V0REF5LzllNlpKOXhlVWlvTklsZnk2cGZK?=
+ =?utf-8?B?WTl0ZTYvaDFoc3I5TXdmSVJoWU0vWDl1YnBFeVBTZGFJZzY2a1FHeGh5UWNZ?=
+ =?utf-8?B?Z3Jtb3h0VDVrb2czY0N0YUZsVVpkUzdaNzZ0c2M3WDZ2bG9FKysrQkhLaW1T?=
+ =?utf-8?B?S0ZQQUFvK2JuMDcxa0ZXSEs1MUdBOUpkMjdWQWx0U1IyNDI3dUpQalM1Y1VG?=
+ =?utf-8?B?MzZWTVNreElYWDhIWFdGUXE3bEVNMjU0dEdRTldJNmNoVmNVVkN3STVrNmhz?=
+ =?utf-8?B?aWlLNHBDK2FiOXdFZ0dSSFV0OE81NzNzWnRXcUJidXAxcTFZbmdUNWc4S1Zy?=
+ =?utf-8?B?bmlHV3p3QzFndHdaQ0w5N1VCanFVSzJiU0RYc0JCKy80MzZRNEh0SUNGQWVB?=
+ =?utf-8?B?S1ZLbTN5aG1wSEFWc3JpUzdFclM4cCt4di81ZFE3TUhuVmdITnowZmFtd2Rj?=
+ =?utf-8?B?RjQvOHVoSlBzaFc4R1FDRE9PWHlPSDQ3U3IyajBNSzJsQUlKOVk0MStLazNP?=
+ =?utf-8?B?OVg1Z1BFaWZobkFhcVF4Q0J5dVh6Mms3SEhha205UEZpYlc5VHdHSzdWMWhj?=
+ =?utf-8?B?eWpzN0M4L2o5dkRqZXkzRGVpZ2tLejNmamlVQ1RyTDczcjlSSHFZSi9Cdjhx?=
+ =?utf-8?B?eFhUelBhN1FnU0JYYU80VVZhWVJmVEl1UGtzMm5SWjlTWVU4NEwwMXpncDJw?=
+ =?utf-8?B?ZVhVa1cyNnZVY3JMMDE1Ty9iaWQ2TGNxQkxMZzI1OFkzRm1UZGpUVU5wM1Fa?=
+ =?utf-8?B?VWk4UG90RG5mc2RIeDUybmQyc2lXbUx1OHVJblJpay9WaERUU2hRQnFCV2M3?=
+ =?utf-8?B?Y3FlaC9NUTlhUEx5R3dGcjNJenJWQkVkNEk4dGpDdHdIdG1HTE5WTUl2OEhX?=
+ =?utf-8?B?VDdyU1BIVTZuUjFtTS8rbEdsS2t3YnRPY2ppdGNxSUgzRWQ0TStmbkhtUTBS?=
+ =?utf-8?B?QWhzbHFqU3FRaGJ4Nnh4ODc3TC8vNFdtRzllc1QzSjBwS2IwWG9ZUVRIMWNq?=
+ =?utf-8?B?eHNuVm5qUGdRSzlpemFEVTJRQjA5WXZrTkxpQXZIaHdDekxESjJTbUVkWHZk?=
+ =?utf-8?B?ZDJ3YWUxSkRhQ2QvYnA2cWE2TnNtODR5MjlkTis1em1Yd2NYVDF4NHRhK280?=
+ =?utf-8?B?aUtRTWNXU2RQeXVLVnZZQXhOVnZjUkJVQjZwOUVhWHZsYmZZc29QUTExVWdp?=
+ =?utf-8?B?Nk1UNm1BUkk5NnpqY1htR2h6S1AxNUxPdk5aS0Z2WVZYZmJkNWg5V2JRTDNy?=
+ =?utf-8?B?a0E9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A93FC6062E9D614EACB7DC3A5B1A5C34@jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] mm/gup: Clear the LRU flag of a page before adding to
- LRU batch
-To: Chris Li <chrisl@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
- Barry Song <21cnbao@gmail.com>, David Hildenbrand <david@redhat.com>,
- baolin.wang@linux.alibaba.com, liuzixing@hygon.cn,
- Hugh Dickins <hughd@google.com>
-References: <1719038884-1903-1-git-send-email-yangge1116@126.com>
- <CAF8kJuNP5iTj2p07QgHSGOJsiUfYpJ2f4R1Q5-3BN9JiD9W_KA@mail.gmail.com>
-From: Ge Yang <yangge1116@126.com>
-In-Reply-To: <CAF8kJuNP5iTj2p07QgHSGOJsiUfYpJ2f4R1Q5-3BN9JiD9W_KA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3v2Kh46ZmQoOBAg--.6080S2
-X-Coremail-Antispam: 1Uf129KBjvAXoW3trWDKrWDJFy8JFy7KF45Wrg_yoW8Wr4fXo
-	WfAw4jv3y8GF1SyFW8uFy7Ja13WwnagF1xtr4xAr4UAF42qryqkayxAF4kXr1fXr1jqFWU
-	uF9rJr1UK3y3tws3n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU7SoGUUUUU
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiGAUrG2VLcyfv9gAAsO
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	8X6UsCvIrnOcGvQ5rlYDMwt6a6b/BolerTWOrbudubDQj4ELhLKJaSljbfCf/vSM5eTSMtZrAvb1+M3a3gL5EbNxjhcwh49hcnKuGq20xECQfiM/fzvl3uXdyom0s8h0gBWC1X19cznkCu7z8YRwwm21oMzb75snIE+d+ep/CJGxBcbNbUzRd0Jj3dlAAi0d6HgZHmHiaNAsYe9Xf8UeRr/vp8KvL+Uynx5bYvE1uudvSuG+0amcjxlVG7OaGZvOMiefITX9Q870eN57ld2FC3fvmHfBdxbUb6qkW/hDWczteshPWTVpQOv/FoWj7/8zr4iop9nOJA50DkSzJqIb+JqBcEavG5MkOmG68W/YVSi9kRUg/amxDpG5CeiPzYsgGOnbf4ix+bVUsXBbjbyELNnkxolL+sS7s2FijbjwiTVm4QHjewoXeKNSrApCjLXFS/kDJt/Z6ng11v5ioJn7gwTioo9yPbCvVATsvoGzjBZrdh1yA3X7QTRLPQaIppPTrKurD52dh2deiupcj1usVvutXE9QEKqXlbCUVzx0wwsQvR9IO7B9gXgZuSJHLAlcfoNwQgi87/ksmIFpswrszTOO2VXpWqBlS/Zb7rjxv8SHqDYwTl0ieWq9oS2fzJE3
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY1PR01MB1562.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c9846a4-8c19-496a-62d3-08dcaf669e9a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2024 00:37:26.1886
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rQcxvZNFvrq+4pFnvKQNkhqmMQYPYvFr6aJ88bhujF2qLwAebbV5qHcDQZTqYWWuui0+mjUzcxlDxjEZmRG4rA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB12635
 
-
-
-在 2024/7/28 6:33, Chris Li 写道:
-> Hello Ge Yang,
-> 
-> Sorry for joining this discussion late.
-> 
-> I recently found a regression on mm-unstable during my swap stress
-> test, using tmpfs to compile linux. The test hit OOM very soon after
-> the make spawn many cc processes.
-> 
-> This is preventing me from stress testing the swap allocator series on
-> mm-unstable and mm-stable. I finally spent some time doing a kernel
-> git bisect. It bisects down to this commit:
-> 
-> 33dfe9204f29b415bbc0abb1a50642d1ba94f5e9 is the first bad commit
-> commit 33dfe9204f29b415bbc0abb1a50642d1ba94f5e9
-> Author: yangge <yangge1116@126.com>
-> Date:   Wed Jul 3 20:02:33 2024 +0800
->      mm/gup: clear the LRU flag of a page before adding to LRU batch
->   mm/swap.c | 43 +++++++++++++++++++++++++++++++------------
->   1 file changed, 31 insertions(+), 12 deletions(-)
-> bisect found first bad commit
-> 
-> 
-> Here the git bisect log:
-> $ git bisect log
-> # bad: [66ebbdfdeb093e097399b1883390079cd4c3022b] Merge tag
-> 'irq-msi-2024-07-22' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> # good: [0c3836482481200ead7b416ca80c68a29cfdaabd] Linux 6.10
-> git bisect start 'remotes/akpm/mm-stable' 'v6.10'
-> # good: [280e36f0d5b997173d014c07484c03a7f7750668] nsfs: use cleanup guard
-> git bisect good 280e36f0d5b997173d014c07484c03a7f7750668
-> # good: [07e773db19f16f4111795b658c4748da22c927bb] Merge tag
-> 'tpmdd-next-6.11-rc1-roundtwo' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd
-> git bisect good 07e773db19f16f4111795b658c4748da22c927bb
-> # good: [ef035628c326af9aa645af1b91fbb72fdfec874e] Merge tag
-> 'i2c-for-6.11-rc1-try2' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux
-> git bisect good ef035628c326af9aa645af1b91fbb72fdfec874e
-> # good: [2c9b3512402ed192d1f43f4531fb5da947e72bd0] Merge tag
-> 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm
-> git bisect good 2c9b3512402ed192d1f43f4531fb5da947e72bd0
-> # bad: [30d77b7eef019fa4422980806e8b7cdc8674493e] mm/mglru: fix
-> ineffective protection calculation
-> git bisect bad 30d77b7eef019fa4422980806e8b7cdc8674493e
-> # good: [c02525a33969000fa7b595b743deb4d79804916b] ftrace: unpoison
-> ftrace_regs in ftrace_ops_list_func()
-> git bisect good c02525a33969000fa7b595b743deb4d79804916b
-> # good: [8ef6fd0e9ea83a792ba53882ddc6e0d38ce0d636] Merge branch
-> 'mm-hotfixes-stable' into mm-stable to pick up "mm: fix crashes from
-> deferred split racing folio migration", needed by "mm: migrate: split
-> folio_migrate_mapping()".
-> git bisect good 8ef6fd0e9ea83a792ba53882ddc6e0d38ce0d636
-> # good: [a898530eea3d0ba08c17a60865995a3bb468d1bc] powerpc/64e: split
-> out nohash Book3E 64-bit code
-> git bisect good a898530eea3d0ba08c17a60865995a3bb468d1bc
-> # good: [00f58104202c472e487f0866fbd38832523fd4f9] mm: fix khugepaged
-> activation policy
-> git bisect good 00f58104202c472e487f0866fbd38832523fd4f9
-> # good: [53dabce2652fb854eae84609ce9c37429d5d87ba] mm, page_alloc: put
-> should_fail_alloc_page() back behing CONFIG_FAIL_PAGE_ALLOC
-> git bisect good 53dabce2652fb854eae84609ce9c37429d5d87ba
-> # good: [6ab42fe21c84d72da752923b4bd7075344f4a362] alloc_tag: fix
-> page_ext_get/page_ext_put sequence during page splitting
-> git bisect good 6ab42fe21c84d72da752923b4bd7075344f4a362
-> # bad: [33dfe9204f29b415bbc0abb1a50642d1ba94f5e9] mm/gup: clear the
-> LRU flag of a page before adding to LRU batch
-> git bisect bad 33dfe9204f29b415bbc0abb1a50642d1ba94f5e9
-> # good: [af649773fb25250cd22625af021fb6275c56a3ee] mm/numa_balancing:
-> teach mpol_to_str about the balancing mode
-> git bisect good af649773fb25250cd22625af021fb6275c56a3ee
-> # first bad commit: [33dfe9204f29b415bbc0abb1a50642d1ba94f5e9] mm/gup:
-> clear the LRU flag of a page before adding to LRU batch
-> 
-> I double checked this commit 33dfe9204f29b415bbc0abb1a50642d1ba94f5e9
-> ("mm/gup: clear the LRU flag of a page before adding to LRU batch")
-> fail the swap stress test very quickly.
-> 
-> The previous commit af649773fb25250cd22625af021fb6275c56a3ee
-> ("mm/numa_balancing: teach mpol_to_str about the balancing mode") can
-> pass the swap stress test fine.
-> 
-> Please feel free to send me patches to test out the issue. As it is, I
-> believe it is a regression on the swapping behavior.
-> 
-
-Thanks, I'm trying to reproduce this problem.
-
-
-> Here is the dmesg of the OOM kill:
-> 
-> [   93.326752] cc1 invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL),
-> order=0, oom_score_adj=0
-> [   93.327330] CPU: 3 PID: 5225 Comm: cc1 Tainted: G          I
-> 6.10.0-rc6+ #34
-> [   93.328277] Hardware name: HP ProLiant DL360 G7, BIOS P68 08/16/2015
-> [   93.328757] Call Trace:
-> [   93.328977]  <TASK>
-> [   93.329515]  dump_stack_lvl+0x5d/0x80
-> [   93.329842]  dump_header+0x44/0x18d
-> [   93.330422]  oom_kill_process.cold+0xa/0xaa
-> [   93.330723]  out_of_memory+0x219/0x4b0
-> [   93.331037]  mem_cgroup_out_of_memory+0x12d/0x160
-> [   93.331755]  try_charge_memcg+0x488/0x630
-> [   93.332044]  __mem_cgroup_charge+0x42/0xb0
-> [   93.332321]  do_anonymous_page+0x32a/0x8b0
-> [   93.332553]  ? __pte_offset_map+0x1b/0x180
-> [   93.332857]  __handle_mm_fault+0xc05/0x1080
-> [   93.333141]  ? sched_balance_trigger+0x14c/0x3f0
-> [   93.333840]  ? sched_tick+0xee/0x320
-> [   93.334142]  handle_mm_fault+0xcd/0x2a0
-> [   93.334419]  do_user_addr_fault+0x217/0x620
-> [   93.334694]  exc_page_fault+0x7e/0x180
-> [   93.334960]  asm_exc_page_fault+0x26/0x30
-> [   93.335194] RIP: 0033:0x147a0b3
-> [   93.335852] Code: a0 00 48 89 fb 49 89 f4 41 89 d5 74 7a 31 d2 31
-> f6 b9 01 00 00 00 bf 18 00 00 00 e8 97 b6 f8 ff 66 0f ef c0 66 41 83
-> 3c 24 2b <4c> 89 60 10 48 89 c5 49 89 c6 0f 11 00 74 7e 48 8b 43 08 80
-> 48 02
-> [   93.337577] RSP: 002b:00007ffe666e3e10 EFLAGS: 00010216
-> [   93.337966] RAX: 00007f4dd9d0e000 RBX: 00007ffe666e3e50 RCX: 00000000000000a9
-> [   93.338896] RDX: 0000000000000018 RSI: 0000000000000006 RDI: 00000000000000aa
-> [   93.339849] RBP: 00007f4dd9d0a0e0 R08: 0000000000000040 R09: 0000000000000001
-> [   93.340801] R10: 0000000000000000 R11: 0000000004c04560 R12: 00007f4dd9d04fd8
-> [   93.341675] R13: 0000000000000004 R14: 0000000000000000 R15: 000000007ffea943
-> [   93.342584]  </TASK>
-> [   93.342762] memory: usage 481280kB, limit 481280kB, failcnt 9789
-> [   93.343556] swap: usage 123404kB, limit 9007199254740988kB, failcnt 0
-> [   93.343984] Memory cgroup stats for /build-kernel-tmpfs:
-> [   93.344051] anon 461377536
-> [   93.344586] file 10264576
-> [   93.344795] kernel 20480000
-> [   93.344987] kernel_stack 2146304
-> [   93.345615] pagetables 9916416
-> [   93.346283] sec_pagetables 0
-> [   93.346878] percpu 54496
-> [   93.347080] sock 0
-> [   93.347607] vmalloc 0
-> [   93.347837] shmem 24576
-> [   93.347984] zswap 0
-> [   93.348510] zswapped 0
-> [   93.348661] file_mapped 9805824
-> [   93.349286] file_dirty 0
-> [   93.349484] file_writeback 0
-> [   93.350085] swapcached 24576
-> [   93.350706] anon_thp 213909504
-> [   93.351335] file_thp 0
-> [   93.351544] shmem_thp 0
-> [   93.351681] inactive_anon 180965376
-> [   93.352348] active_anon 291487744
-> [   93.352993] inactive_file 1298432
-> [   93.353632] active_file 7987200
-> [   93.354281] unevictable 0
-> [   93.354483] slab_reclaimable 943096
-> [   93.355085] slab_unreclaimable 6340520
-> [   93.355369] slab 7283616
-> [   93.355597] workingset_refault_anon 1138
-> [   93.355857] workingset_refault_file 180
-> [   93.356135] workingset_activate_anon 627
-> [   93.356410] workingset_activate_file 123
-> [   93.356694] workingset_restore_anon 579
-> [   93.357001] workingset_restore_file 115
-> [   93.382485] workingset_nodereclaim 0
-> [   93.457426] pgscan 101315
-> [   93.457631] pgsteal 51494
-> [   93.457843] pgscan_kswapd 0
-> [   93.458033] pgscan_direct 101315
-> [   93.458725] pgscan_khugepaged 0
-> [   93.459494] pgsteal_kswapd 0
-> [   93.460338] pgsteal_direct 51494
-> [   93.461046] pgsteal_khugepaged 0
-> [   93.461701] pgfault 994774
-> [   93.461895] pgmajfault 1839
-> [   93.462123] pgrefill 134581
-> [   93.462315] pgactivate 32506
-> [   93.463086] pgdeactivate 0
-> [   93.463314] pglazyfree 0
-> [   93.463527] pglazyfreed 0
-> [   93.463727] zswpin 0
-> [   93.463912] zswpout 0
-> [   93.464114] zswpwb 0
-> [   93.464321] thp_fault_alloc 485
-> [   93.464963] thp_collapse_alloc 0
-> [   93.465578] thp_swpout 4
-> [   93.465815] thp_swpout_fallback 0
-> [   93.466457] Tasks state (memory values in pages):
-> [   93.467153] [  pid  ]   uid  tgid total_vm      rss rss_anon
-> rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
-> [   93.467917] [   1461]  1000  1461     1795      530       53
-> 477         0    45056        0             0 kbench
-> [   93.468600] [   4170]  1000  4170      636      321        0
-> 321         0    45056        0             0 time
-> [   93.569307] [   4171]  1000  4171     3071      810       48
-> 762         0    69632       48             0 make
-> [   93.570111] [   4172]  1000  4172     2706      827      144
-> 683         0    65536      192             0 make
-> [   93.571015] [   4951]  1000  4951     2733      791      144
-> 647         0    61440      192             0 make
-> [   93.571747] [   4956]  1000  4956     2560      852      144
-> 708         0    69632        0             0 make
-> [   93.572478] [   4957]  1000  4957     2541      803       96
-> 707         0    61440       96             0 make
-> [   93.573244] [   4958]  1000  4958     2541      750       96
-> 654         0    53248       48             0 make
-> [   93.574016] [   4960]  1000  4960     2565      753       96
-> 657         0    65536       48             0 make
-> [   93.674651] [   4961]  1000  4961     2538      837      144
-> 693         0    53248        0             0 make
-> [   93.675446] [   4962]  1000  4962     2569      845      192
-> 653         0    69632        0             0 make
-> [   93.676220] [   4963]  1000  4963     2567      852      192
-> 660         0    57344        0             0 make
-> [   93.676946] [   4964]  1000  4964     2536      901      192
-> 709         0    65536        0             0 make
-> [   93.677679] [   4965]  1000  4965     2540      887      192
-> 695         0    61440        0             0 make
-> [   93.678377] [   4967]  1000  4967     2563      853      144
-> 709         0    61440       48             0 make
-> [   93.679168] [   4969]  1000  4969     2538      836      144
-> 692         0    57344       48             0 make
-> [   93.679937] [   4973]  1000  4973     2535      827      144
-> 683         0    61440       48             0 make
-> [   93.680628] [   4976]  1000  4976     2571      878      192
-> 686         0    57344        0             0 make
-> [   93.681397] [   4977]  1000  4977     2534      850      192
-> 658         0    53248        0             0 make
-> [   93.682121] [   4978]  1000  4978     1797      766       48
-> 718         0    49152        0             0 sh
-> [   93.683272] [   4980]  1000  4980     2540      839      192
-> 647         0    65536       48             0 make
-> [   93.709270] [   4982]  1000  4982     2539      853      144
-> 709         0    65536        0             0 make
-> [   93.784725] [   4983]  1000  4983     1798      885       96
-> 789         0    61440        0             0 sh
-> [   93.785895] [   4984]  1000  4984     2539      878      192
-> 686         0    57344        0             0 make
-> [   93.786661] [   4986]  1000  4986     2537      863      192
-> 671         0    61440        0             0 make
-> [   93.787378] [   4988]  1000  4988     2540      824      144
-> 680         0    61440       48             0 make
-> [   93.788060] [   4989]  1000  4989     2538      792      144
-> 648         0    65536        0             0 make
-> [   93.788873] [   4990]  1000  4990     1282      810       48
-> 762         0    45056        0             0 gcc
-> 
-> Chris
-> 
-> On Fri, Jun 21, 2024 at 11:48 PM <yangge1116@126.com> wrote:
->>
->> From: yangge <yangge1116@126.com>
->>
->> If a large number of CMA memory are configured in system (for example, the
->> CMA memory accounts for 50% of the system memory), starting a virtual
->> virtual machine, it will call pin_user_pages_remote(..., FOLL_LONGTERM,
->> ...) to pin memory.  Normally if a page is present and in CMA area,
->> pin_user_pages_remote() will migrate the page from CMA area to non-CMA
->> area because of FOLL_LONGTERM flag. But the current code will cause the
->> migration failure due to unexpected page refcounts, and eventually cause
->> the virtual machine fail to start.
->>
->> If a page is added in LRU batch, its refcount increases one, remove the
->> page from LRU batch decreases one. Page migration requires the page is not
->> referenced by others except page mapping. Before migrating a page, we
->> should try to drain the page from LRU batch in case the page is in it,
->> however, folio_test_lru() is not sufficient to tell whether the page is
->> in LRU batch or not, if the page is in LRU batch, the migration will fail.
->>
->> To solve the problem above, we modify the logic of adding to LRU batch.
->> Before adding a page to LRU batch, we clear the LRU flag of the page so
->> that we can check whether the page is in LRU batch by folio_test_lru(page).
->> Seems making the LRU flag of the page invisible a long time is no problem,
->> because a new page is allocated from buddy and added to the lru batch,
->> its LRU flag is also not visible for a long time.
->>
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: yangge <yangge1116@126.com>
->> ---
->>   mm/swap.c | 43 +++++++++++++++++++++++++++++++------------
->>   1 file changed, 31 insertions(+), 12 deletions(-)
->>
->> diff --git a/mm/swap.c b/mm/swap.c
->> index dc205bd..9caf6b0 100644
->> --- a/mm/swap.c
->> +++ b/mm/swap.c
->> @@ -211,10 +211,6 @@ static void folio_batch_move_lru(struct folio_batch *fbatch, move_fn_t move_fn)
->>          for (i = 0; i < folio_batch_count(fbatch); i++) {
->>                  struct folio *folio = fbatch->folios[i];
->>
->> -               /* block memcg migration while the folio moves between lru */
->> -               if (move_fn != lru_add_fn && !folio_test_clear_lru(folio))
->> -                       continue;
->> -
->>                  folio_lruvec_relock_irqsave(folio, &lruvec, &flags);
->>                  move_fn(lruvec, folio);
->>
->> @@ -255,11 +251,16 @@ static void lru_move_tail_fn(struct lruvec *lruvec, struct folio *folio)
->>   void folio_rotate_reclaimable(struct folio *folio)
->>   {
->>          if (!folio_test_locked(folio) && !folio_test_dirty(folio) &&
->> -           !folio_test_unevictable(folio) && folio_test_lru(folio)) {
->> +           !folio_test_unevictable(folio)) {
->>                  struct folio_batch *fbatch;
->>                  unsigned long flags;
->>
->>                  folio_get(folio);
->> +               if (!folio_test_clear_lru(folio)) {
->> +                       folio_put(folio);
->> +                       return;
->> +               }
->> +
->>                  local_lock_irqsave(&lru_rotate.lock, flags);
->>                  fbatch = this_cpu_ptr(&lru_rotate.fbatch);
->>                  folio_batch_add_and_move(fbatch, folio, lru_move_tail_fn);
->> @@ -352,11 +353,15 @@ static void folio_activate_drain(int cpu)
->>
->>   void folio_activate(struct folio *folio)
->>   {
->> -       if (folio_test_lru(folio) && !folio_test_active(folio) &&
->> -           !folio_test_unevictable(folio)) {
->> +       if (!folio_test_active(folio) && !folio_test_unevictable(folio)) {
->>                  struct folio_batch *fbatch;
->>
->>                  folio_get(folio);
->> +               if (!folio_test_clear_lru(folio)) {
->> +                       folio_put(folio);
->> +                       return;
->> +               }
->> +
->>                  local_lock(&cpu_fbatches.lock);
->>                  fbatch = this_cpu_ptr(&cpu_fbatches.activate);
->>                  folio_batch_add_and_move(fbatch, folio, folio_activate_fn);
->> @@ -700,6 +705,11 @@ void deactivate_file_folio(struct folio *folio)
->>                  return;
->>
->>          folio_get(folio);
->> +       if (!folio_test_clear_lru(folio)) {
->> +               folio_put(folio);
->> +               return;
->> +       }
->> +
->>          local_lock(&cpu_fbatches.lock);
->>          fbatch = this_cpu_ptr(&cpu_fbatches.lru_deactivate_file);
->>          folio_batch_add_and_move(fbatch, folio, lru_deactivate_file_fn);
->> @@ -716,11 +726,16 @@ void deactivate_file_folio(struct folio *folio)
->>    */
->>   void folio_deactivate(struct folio *folio)
->>   {
->> -       if (folio_test_lru(folio) && !folio_test_unevictable(folio) &&
->> -           (folio_test_active(folio) || lru_gen_enabled())) {
->> +       if (!folio_test_unevictable(folio) && (folio_test_active(folio) ||
->> +           lru_gen_enabled())) {
->>                  struct folio_batch *fbatch;
->>
->>                  folio_get(folio);
->> +               if (!folio_test_clear_lru(folio)) {
->> +                       folio_put(folio);
->> +                       return;
->> +               }
->> +
->>                  local_lock(&cpu_fbatches.lock);
->>                  fbatch = this_cpu_ptr(&cpu_fbatches.lru_deactivate);
->>                  folio_batch_add_and_move(fbatch, folio, lru_deactivate_fn);
->> @@ -737,12 +752,16 @@ void folio_deactivate(struct folio *folio)
->>    */
->>   void folio_mark_lazyfree(struct folio *folio)
->>   {
->> -       if (folio_test_lru(folio) && folio_test_anon(folio) &&
->> -           folio_test_swapbacked(folio) && !folio_test_swapcache(folio) &&
->> -           !folio_test_unevictable(folio)) {
->> +       if (folio_test_anon(folio) && folio_test_swapbacked(folio) &&
->> +           !folio_test_swapcache(folio) && !folio_test_unevictable(folio)) {
->>                  struct folio_batch *fbatch;
->>
->>                  folio_get(folio);
->> +               if (!folio_test_clear_lru(folio)) {
->> +                       folio_put(folio);
->> +                       return;
->> +               }
->> +
->>                  local_lock(&cpu_fbatches.lock);
->>                  fbatch = this_cpu_ptr(&cpu_fbatches.lru_lazyfree);
->>                  folio_batch_add_and_move(fbatch, folio, lru_lazyfree_fn);
->> --
->> 2.7.4
->>
->>
-
+TWljaGFsLA0KDQpTb3JyeSB0byB0aGUgbGF0ZSByZXBseS4NCg0KDQpPbiAyNi8wNy8yMDI0IDE3
+OjE3LCBNaWNoYWwgSG9ja28gd3JvdGU6DQo+IE9uIEZyaSAyNi0wNy0yNCAxNjo0NDo1NiwgTGkg
+WmhpamlhbiB3cm90ZToNCj4+IFdoZW4gYSBwcm9jZXNzIGlzIGJvdW5kIHRvIGEgbm9kZSB0aGF0
+IGlzIGJlaW5nIGhvdC1yZW1vdmVkLCBhbnkgbWVtb3J5DQo+PiBhbGxvY2F0aW9uIGF0dGVtcHRz
+IGZyb20gdGhhdCBub2RlIHNob3VsZCBmYWlsIGdyYWNlZnVsbHkgd2l0aG91dA0KPj4gdHJpZ2dl
+cmluZyB0aGUgT09NLWtpbGxlci4gSG93ZXZlciwgdGhlIGN1cnJlbnQgYmVoYXZpb3IgY2FuIGNh
+dXNlIHRoZQ0KPj4gb29tLWtpbGxlciB0byBiZSBpbnZva2VkLCBsZWFkaW5nIHRvIHRoZSB0ZXJt
+aW5hdGlvbiBvZiBwcm9jZXNzZXMgb24gb3RoZXINCj4+IG5vZGVzLCBldmVuIHdoZW4gdGhlcmUg
+aXMgc3VmZmljaWVudCBtZW1vcnkgYXZhaWxhYmxlIGluIHRoZSBzeXN0ZW0uDQo+IA0KPiBCdXQg
+eW91IHNhaWQgdGhleSBhcmUgYm91bmQgdG8gdGhlIG5vZGUgdGhhdCBpcyBvZmZsaW5lZC4NCj4g
+ICANCj4+IFByZXZlbnQgdGhlIG9vbS1raWxsZXIgZnJvbSBiZWluZyB0cmlnZ2VyZWQgYnkgcHJv
+Y2Vzc2VzIGJvdW5kIHRvIGENCj4+IG5vZGUgdW5kZXJnb2luZyBob3QtcmVtb3ZlIG9wZXJhdGlv
+bnMuIEluc3RlYWQsIHRoZSBhbGxvY2F0aW9uIGF0dGVtcHRzDQo+PiBmcm9tIHRoZSBvZmZsaW5p
+bmcgbm9kZSB3aWxsIHNpbXBseSBmYWlsLCBhbGxvd2luZyB0aGUgcHJvY2VzcyB0byBoYW5kbGUN
+Cj4+IHRoZSBmYWlsdXJlIGFwcHJvcHJpYXRlbHkgd2l0aG91dCBjYXVzaW5nIGRpc3J1cHRpb24g
+dG8gdGhlIHN5c3RlbS4NCj4gDQo+IE5BSy4NCj4gDQo+IEFsc28gaXQgaXMgbm90IHJlYWxseSBj
+bGVhciB3aHkgcHJvY2VzcyBvZiBvZmZsaW5pbmcgc2hvdWxkIGJlaGF2ZSBhbnkNCj4gZGlmZmVy
+ZW50IGZyb20gYWZ0ZXIgdGhlIG5vZGUgaXMgb2ZmbGluZWQuIENvdWxkIHlvdSBkZXNjcmliZSBh
+biBhY3R1YWwNCj4gcHJvYmxlbSB5b3UgYXJlIGZhY2luZyB3aXRoIG11Y2ggbW9yZSBkZXRhaWxz
+IHBsZWFzZT8NCg0KV2UgZW5jb3VudGVyZWQgdGhhdCBzb21lIHByb2Nlc3NlcyhpbmNsdWRpbmcg
+c29tZSBzeXN0ZW0gY3JpdGljYWwgc2VydmljZXMsIGZvciBleGFtcGxlIHNzaGQsIHJzeXNsb2dk
+LCBsb2dpbikNCndlcmUga2lsbGVkIGR1cmluZyBvdXIgbWVtb3J5IGhvdC1yZW1vdmUgdGVzdGlu
+Zy4gT3VyIHRlc3QgcHJvZ3JhbSBhcmUgZGVzY3JpYmVkIHByZXZpb3VzIG1haWxbMV0NCg0KSW4g
+c2hvcnQsIHdlIGhhdmUgMyBtZW1vcnkgbm9kZXMsIG5vZGUwIGFuZCBub2RlMSBhcmUgRFJBTSwg
+d2hpbGUgbm9kZTIgaXMgQ1hMIHZvbGF0aWxlIG1lbW9yeSB0aGF0IGlzIG9ubGluZWQNCnRvIFpP
+TkVfTU9WQUJMRS4gV2hlbiB3ZSBhdHRlbXB0ZWQgdG8gcmVtb3ZlIHRoZSBub2RlMiwgb29tLWtp
+bGxlZCB3YXMgaW52b2tlZCB0byBraWxsIG90aGVyIHByb2Nlc3Nlcw0KKHNzaGQsIHJzeXNsb2dk
+LCBsb2dpbikgZXZlbiB0aG91Z2ggdGhlcmUgaXMgZW5vdWdoIG1lbW9yeSBvbiBub2RlMCtub2Rl
+MS4NCg0KVGhpcyBvb20ta2lsbGVkIHdhcyB0cmlnZ2VyZWQgYnkgYWxsb2NhdGluZyBtZW1vcnkg
+cGF0aCBvZiBvdXIgb3duIHRlc3RpbmcgcHJvY2VzcyB3aGljaCB3YXMgYm91bmQgdG8gbm9kZTIu
+DQoNClNvIEkgZXhwZWN0LA0KLSBvdXIgb3duIHRlcyBwcm9jZXNzIGZhaWxlZCB0byBhbGxvY2F0
+ZSBtZW1vcnkgZnJvbSBub2RlMiB3aGljaCBpcyBiZWluZyBob3QtcmVtb3ZlZCBpcyBhY2NlcHRh
+YmxlLg0KLSBvb20ta2lsbGVyIHNob3VsZCBub3QgYmUgaW52b2tlZCB0byBraWxsIHByb2Nlc3Nl
+cyBvdGhlciB0aGFuIHJ1bm5pbmcgb24gbm9kZTIuDQoNCg0KWzFdIGh0dHBzOi8vbG9yZS5rZXJu
+ZWwub3JnL2xpbnV4LW1tLzZhMDcxMjVmLWU3MjAtNDA0Yy1iMmY5LWU1NWYzZjE2NmU4NUBmdWpp
+dHN1LmNvbS8NCg0KDQo+ICAgDQo+PiBTaWduZWQtb2ZmLWJ5OiBMaSBaaGlqaWFuIDxsaXpoaWpp
+YW5AZnVqaXRzdS5jb20+DQo+PiAtLS0NCj4+ICAgaW5jbHVkZS9saW51eC9tZW1vcnlfaG90cGx1
+Zy5oIHwgIDYgKysrKysrDQo+PiAgIG1tL21lbW9yeV9ob3RwbHVnLmMgICAgICAgICAgICB8IDIx
+ICsrKysrKysrKysrKysrKysrKysrKw0KPj4gICBtbS9wYWdlX2FsbG9jLmMgICAgICAgICAgICAg
+ICAgfCAgNiArKysrKysNCj4+ICAgMyBmaWxlcyBjaGFuZ2VkLCAzMyBpbnNlcnRpb25zKCspDQo+
+Pg0KPj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvbWVtb3J5X2hvdHBsdWcuaCBiL2luY2x1
+ZGUvbGludXgvbWVtb3J5X2hvdHBsdWcuaA0KPj4gaW5kZXggN2E5ZmY0NjQ2MDhkLi4wY2E4MDQy
+MTVlMTEgMTAwNjQ0DQo+PiAtLS0gYS9pbmNsdWRlL2xpbnV4L21lbW9yeV9ob3RwbHVnLmgNCj4+
+ICsrKyBiL2luY2x1ZGUvbGludXgvbWVtb3J5X2hvdHBsdWcuaA0KPj4gQEAgLTMzMiw2ICszMzIs
+NyBAQCBleHRlcm4gaW50IG9mZmxpbmVfcGFnZXModW5zaWduZWQgbG9uZyBzdGFydF9wZm4sIHVu
+c2lnbmVkIGxvbmcgbnJfcGFnZXMsDQo+PiAgIGV4dGVybiBpbnQgcmVtb3ZlX21lbW9yeSh1NjQg
+c3RhcnQsIHU2NCBzaXplKTsNCj4+ICAgZXh0ZXJuIHZvaWQgX19yZW1vdmVfbWVtb3J5KHU2NCBz
+dGFydCwgdTY0IHNpemUpOw0KPj4gICBleHRlcm4gaW50IG9mZmxpbmVfYW5kX3JlbW92ZV9tZW1v
+cnkodTY0IHN0YXJ0LCB1NjQgc2l6ZSk7DQo+PiArYm9vbCBpc19vZmZsaW5pbmdfbm9kZShub2Rl
+bWFza190IG5vZGVzKTsNCj4+ICAgDQo+PiAgICNlbHNlDQo+PiAgIHN0YXRpYyBpbmxpbmUgdm9p
+ZCB0cnlfb2ZmbGluZV9ub2RlKGludCBuaWQpIHt9DQo+PiBAQCAtMzQ4LDYgKzM0OSwxMSBAQCBz
+dGF0aWMgaW5saW5lIGludCByZW1vdmVfbWVtb3J5KHU2NCBzdGFydCwgdTY0IHNpemUpDQo+PiAg
+IH0NCj4+ICAgDQo+PiAgIHN0YXRpYyBpbmxpbmUgdm9pZCBfX3JlbW92ZV9tZW1vcnkodTY0IHN0
+YXJ0LCB1NjQgc2l6ZSkge30NCj4+ICsNCj4+ICtzdGF0aWMgaW5saW5lIGJvb2wgaXNfb2ZmbGlu
+aW5nX25vZGUobm9kZW1hc2tfdCBub2RlcykNCj4+ICt7DQo+PiArCXJldHVybiBmYWxzZTsNCj4+
+ICt9DQo+PiAgICNlbmRpZiAvKiBDT05GSUdfTUVNT1JZX0hPVFJFTU9WRSAqLw0KPj4gICANCj4+
+ICAgI2lmZGVmIENPTkZJR19NRU1PUllfSE9UUExVRw0KPj4gZGlmZiAtLWdpdCBhL21tL21lbW9y
+eV9ob3RwbHVnLmMgYi9tbS9tZW1vcnlfaG90cGx1Zy5jDQo+PiBpbmRleCA0MzFiMWY2NzUzYzAu
+LmRhMzk4Mjc1MWJhOSAxMDA2NDQNCj4+IC0tLSBhL21tL21lbW9yeV9ob3RwbHVnLmMNCj4+ICsr
+KyBiL21tL21lbW9yeV9ob3RwbHVnLmMNCj4+IEBAIC0xOTM4LDYgKzE5MzgsMjIgQEAgc3RhdGlj
+IGludCBjb3VudF9zeXN0ZW1fcmFtX3BhZ2VzX2NiKHVuc2lnbmVkIGxvbmcgc3RhcnRfcGZuLA0K
+Pj4gICAJcmV0dXJuIDA7DQo+PiAgIH0NCj4+ICAgDQo+PiArc3RhdGljIG5vZGVtYXNrX3Qgb2Zm
+bGluaW5nX25vZGUgPSBOT0RFX01BU0tfTk9ORTsNCj4+ICsNCj4+ICtib29sIGlzX29mZmxpbmlu
+Z19ub2RlKG5vZGVtYXNrX3Qgbm9kZXMpDQo+PiArew0KPj4gKwlyZXR1cm4gbm9kZXNfZXF1YWwo
+b2ZmbGluaW5nX25vZGUsIG5vZGVzKTsNCj4+ICt9DQo+PiArDQo+PiArc3RhdGljIHZvaWQgb2Zm
+bGluZV9wYWdlc19zdGFydChpbnQgbm9kZSkNCj4+ICt7DQo+PiArCW5vZGVfc2V0KG5vZGUsIG9m
+ZmxpbmluZ19ub2RlKTsNCj4+ICt9DQo+PiArDQo+PiArc3RhdGljIHZvaWQgb2ZmbGluZV9wYWdl
+c19lbmQodm9pZCkNCj4+ICt7DQo+PiArCW9mZmxpbmluZ19ub2RlID0gTk9ERV9NQVNLX05PTkU7
+DQo+PiArfQ0KPj4gICAvKg0KPj4gICAgKiBNdXN0IGJlIGNhbGxlZCB3aXRoIG1lbV9ob3RwbHVn
+X2xvY2sgaW4gd3JpdGUgbW9kZS4NCj4+ICAgICovDQo+PiBAQCAtMTk5MSw2ICsyMDA3LDcgQEAg
+aW50IF9fcmVmIG9mZmxpbmVfcGFnZXModW5zaWduZWQgbG9uZyBzdGFydF9wZm4sIHVuc2lnbmVk
+IGxvbmcgbnJfcGFnZXMsDQo+PiAgIAkJZ290byBmYWlsZWRfcmVtb3ZhbDsNCj4+ICAgCX0NCj4+
+ICAgDQo+PiArCW9mZmxpbmVfcGFnZXNfc3RhcnQobm9kZSk7DQo+PiAgIAkvKg0KPj4gICAJICog
+RGlzYWJsZSBwY3BsaXN0cyBzbyB0aGF0IHBhZ2UgaXNvbGF0aW9uIGNhbm5vdCByYWNlIHdpdGgg
+ZnJlZWluZw0KPj4gICAJICogaW4gYSB3YXkgdGhhdCBwYWdlcyBmcm9tIGlzb2xhdGVkIHBhZ2Vi
+bG9jayBhcmUgbGVmdCBvbiBwY3BsaXN0cy4NCj4+IEBAIC0yMTA3LDYgKzIxMjQsOCBAQCBpbnQg
+X19yZWYgb2ZmbGluZV9wYWdlcyh1bnNpZ25lZCBsb25nIHN0YXJ0X3BmbiwgdW5zaWduZWQgbG9u
+ZyBucl9wYWdlcywNCj4+ICAgDQo+PiAgIAltZW1vcnlfbm90aWZ5KE1FTV9PRkZMSU5FLCAmYXJn
+KTsNCj4+ICAgCXJlbW92ZV9wZm5fcmFuZ2VfZnJvbV96b25lKHpvbmUsIHN0YXJ0X3BmbiwgbnJf
+cGFnZXMpOw0KPj4gKwlvZmZsaW5lX3BhZ2VzX2VuZCgpOw0KPj4gKw0KPj4gICAJcmV0dXJuIDA7
+DQo+PiAgIA0KPj4gICBmYWlsZWRfcmVtb3ZhbF9pc29sYXRlZDoNCj4+IEBAIC0yMTIxLDYgKzIx
+NDAsOCBAQCBpbnQgX19yZWYgb2ZmbGluZV9wYWdlcyh1bnNpZ25lZCBsb25nIHN0YXJ0X3Bmbiwg
+dW5zaWduZWQgbG9uZyBucl9wYWdlcywNCj4+ICAgCQkgKHVuc2lnbmVkIGxvbmcgbG9uZykgc3Rh
+cnRfcGZuIDw8IFBBR0VfU0hJRlQsDQo+PiAgIAkJICgodW5zaWduZWQgbG9uZyBsb25nKSBlbmRf
+cGZuIDw8IFBBR0VfU0hJRlQpIC0gMSwNCj4+ICAgCQkgcmVhc29uKTsNCj4+ICsNCj4+ICsJb2Zm
+bGluZV9wYWdlc19lbmQoKTsNCj4+ICAgCXJldHVybiByZXQ7DQo+PiAgIH0NCj4+ICAgDQo+PiBk
+aWZmIC0tZ2l0IGEvbW0vcGFnZV9hbGxvYy5jIGIvbW0vcGFnZV9hbGxvYy5jDQo+PiBpbmRleCAx
+NzgwZGYzMWQ1ZjUuLmFjZGFiNmIxMTRhNSAxMDA2NDQNCj4+IC0tLSBhL21tL3BhZ2VfYWxsb2Mu
+Yw0KPj4gKysrIGIvbW0vcGFnZV9hbGxvYy5jDQo+PiBAQCAtMzU2Myw2ICszNTYzLDEyIEBAIF9f
+YWxsb2NfcGFnZXNfbWF5X29vbShnZnBfdCBnZnBfbWFzaywgdW5zaWduZWQgaW50IG9yZGVyLA0K
+Pj4gICAJaWYgKHBhZ2UpDQo+PiAgIAkJZ290byBvdXQ7DQo+PiAgIA0KPj4gKwkvKiBob3QtcmVt
+b3ZlIGlzIG9uLWdvaW5nLCBpdCBnZW5lcmFsbHkgZmFpbHMgdG8gYWxsb2NhdGUgbWVtb3J5IGZy
+b20NCj4+ICsJICogdGhlIGJlaW5nIHJlbW92ZWQgbWVtb3J5IG5vZGUuIExlYXZlIGl0IGFsb25l
+Lg0KPj4gKwkgKi8NCj4+ICsJaWYgKGlzX29mZmxpbmluZ19ub2RlKCphYy0+bm9kZW1hc2spKQ0K
+Pj4gKwkJZ290byBvdXQ7DQo+PiArDQo+PiAgIAkvKiBDb3JlZHVtcHMgY2FuIHF1aWNrbHkgZGVw
+bGV0ZSBhbGwgbWVtb3J5IHJlc2VydmVzICovDQo+PiAgIAlpZiAoY3VycmVudC0+ZmxhZ3MgJiBQ
+Rl9EVU1QQ09SRSkNCj4+ICAgCQlnb3RvIG91dDsNCj4+IC0tIA0KPj4gMi4yOS4yDQo+Pg0KPiA=
 
