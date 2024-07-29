@@ -1,145 +1,141 @@
-Return-Path: <linux-kernel+bounces-265364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1FCB93F00E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:44:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F28B93F012
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F831F210A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:44:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10B73B21BE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE46413D291;
-	Mon, 29 Jul 2024 08:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="uqjOXaVM"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDD613DB99;
+	Mon, 29 Jul 2024 08:45:23 +0000 (UTC)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BF513CA95;
-	Mon, 29 Jul 2024 08:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C415A13D2A9
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722242678; cv=none; b=Xq1oUQzexPGnduNETeV/06y6ApS5gRvJNmkWlN2uotz91Uixr+6vPsM1hjjyGbvUIURtSNYVxoneyXp9HrBxsKgzwfaAb/R/Y+Lz9dZd+MOajYTwn8B6BZlgLT9IFllk/4fGNJphN0S4q8s9cYOKEKMrQUZxmjdYa09yGBh6sL0=
+	t=1722242723; cv=none; b=FUDOFW9UiyGQPUhW8RXPM8oX2QWVU4ZJwYVpMxQYT3IeQAtQPdQ9lAUP79pdHxWdE7I/EhBkeUBmu3tawS53aZykTvosvumntnBuchQzOLSUQZtXzhP/xoP7eAsvJKuTtX9W9VGs29JuEAfXPk765fBXHFI9pjvRKOVP6wjB3Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722242678; c=relaxed/simple;
-	bh=sUzxl/I0BxPm2sNMAsakjMuhdwuD8G3WNcAs5INaddY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=l65TbMfw/QD+QgUB+GzOem4y1ylvQape6jT9cJlgIfx3csRk5R+lI/1aLiujt1ILqDokssLDBb0W59/9ZwpOKKolP34mtUZfm3tBbmO/fLCDAcEi7rQ97Yw7tioZV6wytnHBzTcMauErgB2kJBABiFoWALzWLqZlNB3/Dj+bEYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=uqjOXaVM; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Cc:From:References:To:Subject:Reply-To:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=qvmM1LnMtxEgPpQ4kkzr+8JDGpi0m4C+JZPiDrVi5IM=;
-	t=1722242676; x=1722674676; b=uqjOXaVMt4IKSPHr52LWuDaojG7W8tqELrrXnFbGgAh3KnA
-	JH1lkybm7MNzIkicBUujeUFZ3b9ijSSOM2CwIi1UEflBKaKt2HELoVUWWMRqq5oqRhno2LCat5Rtf
-	tyfFY42kg0M+VcM3Zp/uGx641uN8BYELPFQkmTYxbm6V5IF+GlWFj/jmdFqX0xsmP+I3YFfMLIl7h
-	KCej49TQmtRk/5953sUVP/0wf+OAc4lNenJiaZHvCT3EZ4BXttupjHkQ6e5AqRaBwXiKg5uEYwans
-	KIgSi5csEqrS3WTCb5rJbtc9pF5L9bhW+VacQ2q7ISsSejMGAIZxRY/o2Q/BWpYw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sYLzd-0006iU-LI; Mon, 29 Jul 2024 10:44:33 +0200
-Message-ID: <1d5d764b-65a4-42a2-8cc7-37d558aab381@leemhuis.info>
-Date: Mon, 29 Jul 2024 10:44:33 +0200
+	s=arc-20240116; t=1722242723; c=relaxed/simple;
+	bh=AHiP/+QNH5fh+ikjMrKSTqjSntg0RzkyLEi5w2In0CQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cj5De1meOQO2L6/KvomUthOpOFpqvL21U1uQGu/AD1ASoBP95okR5CoYFYks2JJbVIrAWJOtbUQH//v3MIoq96AZJi9zpJSn2STw/kY7p3RqkfCIdg+Y9PokE/AWr+gD/d2pWV22ZJWnVjeEHFNWbqVuURIbb5xKaEW3wgOWjwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7a9e25008aso417977966b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 01:45:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722242720; x=1722847520;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WZRLolYCc5eb0y9v7K/t4D2hRAhcTkQ4s2KgdfYlIYM=;
+        b=PSy+/+GTWNTzzSc+kyKqC1qifS6750ruAhXH1yKGs/V+UsalVK7mNRmumnoyyoBoik
+         NZC64MFYwtKYkFjVY1J4IpFrcW2JzJ50IbikIse/GWG0AeS6ZQZqe5cq7jr7Yqt25nbW
+         GVksnXsmCwx9H1qpJTRp9JBzvaLsFmSEmnnjTU9wv6KS6hRrX3ikqzWikQFbGYWScEE5
+         4OH+W0sZsAsfUqZh53vTJiHss0MzN7y8auRCwacv+UjN2r7yT6y5QRXKEzJf1+4HZqGw
+         rls7w42PQbzgIDsp9GjMgfoOpB1IGk+kk1nKJ124AcGzLP+pPHJSxNbUenncyjpko3Y3
+         vPxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ7kQBqmLv3QprcuOEN2Ddgo6tRqgUmkunVMzrBvE5xhWzobSr1jbNwyX6V91Ear0lI135Kl/2XsJw2i/drL+Wo+zfxhsSNuY6fyNH
+X-Gm-Message-State: AOJu0YyLkwpfyITj/5aS41QBkVyjCuzNgBZooGKh7OAaTCqwjI60pLc1
+	nPwXwV2XgV8legpXPWzzJ8AHsieAbp16JxA7BI198HIHW/HWW0RT
+X-Google-Smtp-Source: AGHT+IFrkN02wWTC3ZEtwaVDI/gj+jV61hNlM/Ccq24zeA960+qxYs5jKVilc8+S1YnEomNimjdeZQ==
+X-Received: by 2002:a17:907:c50a:b0:a7a:bae8:f299 with SMTP id a640c23a62f3a-a7d40166eb1mr422963366b.51.1722242719917;
+        Mon, 29 Jul 2024 01:45:19 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acac615c0sm477438266b.97.2024.07.29.01.45.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 01:45:19 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: akinobu.mita@gmail.com,
+	akpm@linux-foundation.org
+Cc: leit@meta.com,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] fault-injection: Enhance failcmd to exit on non-hex address input
+Date: Mon, 29 Jul 2024 01:45:08 -0700
+Message-ID: <20240729084512.3349928-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Re: ntfs3: Folders mounted with 555 permissions?
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-References: <edcd6eb8-8682-6552-a5f6-584ac103d0e9@gmail.com>
- <05b8cdbf-6ca7-40b8-9292-f332e1ad3a84@gmail.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Cc: Julian Sikorski <belegdol@gmail.com>, ntfs3@lists.linux.dev,
- Linux kernel regressions list <regressions@lists.linux.dev>,
- LKML <linux-kernel@vger.kernel.org>,
- Linux kernel regressions list <regressions@lists.linux.dev>
-In-Reply-To: <05b8cdbf-6ca7-40b8-9292-f332e1ad3a84@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1722242676;0ed11e12;
-X-HE-SMSGID: 1sYLzd-0006iU-LI
 
-Top-posting: adding Konstantin to the list of recipients, he might have
-missed this on the list.
+The failcmd.sh script in the fault-injection toolkit does not currently
+validate whether the provided address is in hexadecimal format. This can
+lead to silent failures if the address is sourced from places like
+`/proc/kallsyms`, which omits the '0x' prefix, potentially causing users
+to operate under incorrect assumptions.
 
-Side note: this seems to be a regression, but given that it seems only
-few people care and apparently is caused by the removal of a feature not
-working properly beforehand, I don't think this is something covered by
-the no regressions" rule.
+Introduce a new function, `exit_if_not_hex`, which checks the format of
+the provided address and exits with an error message if the address is
+not a valid hexadecimal number.
 
-Ciao, Thorsten
+This enhancement prevents users from running the command with
+improperly formatted addresses, thus improving the robustness and
+usability of the failcmd tool.
 
-On 27.07.24 22:34, Julian Sikorski wrote:
-> Am 11.07.23 um 10:04 schrieb Julian Sikorski:
->>
->> with linux-6.4, now that noacsrules option is gone, an old issue has
->> become problematic. When I mount my windows drive, some of the folders
->> in Users are mounted with 555 permissions, including the ones I would
->> like to edit:
->>
->> $ ls -l /mnt/windows/ | grep Users
->> lrwxrwxrwx. 1 julas julas          8  1. Dez 2018  Documents and
->> Settings -> ./Users
->> lrwxrwxrwx. 1 julas julas          8  9. Okt 2022  Dokumente und
->> Einstellungen -> ./Users
->> dr-xr-xr-x. 1 julas julas       4096  9. Okt 2022  Users
->>
->> $ ls -l /mnt/windows/Users/beleg/ | grep Documents
->> dr-xr-xr-x. 1 julas julas    8192  7. Jul 15:28 Documents
->> lrwxrwxrwx. 1 julas julas      24  9. Okt 2022  Eigene Dateien ->
->> ./../../Users/beleg/Documents
->> lrwxrwxrwx. 1 julas julas      24  1. Nov 2021  Moje dokumenty ->
->> ./../../Users/beleg/Documents
->>
->> Is this intended behaviour? It appears to be quite an old issue [1].
->> If so, is there any other fix than running a recursive chmod?
->>
->> Best regards,
->> Julian
->>
->> [1]
->> https://www.reddit.com/r/archlinux/comments/r325t3/permissions_problems_with_the_new_ntfs3_driver/
-> 
-> One year later the issue is still there with kernel 6.9.11:
-> 
-> $ ls -lh /mnt/windows/Users/beleg/
-> insgesamt 18M
-> dr-xr-xr-x. 1 julas julas    0 19. Jul 2020  '3D Objects'
-> -rwxr-xr-x. 1 julas julas  77K 20. Nov 2022   AMDRM_Install.log
-> -rwxr-xr-x. 1 julas julas 2,7M 20. Nov 2022   AMD_RyzenMaster.log
-> drwxr-xr-x. 1 julas julas    0  2. Dez 2018   ansel
-> lrwxrwxrwx. 1 julas julas   30  9. Okt 2022   Anwendungsdaten ->
-> ./../../Users/beleg/AppData/Roaming
-> drwxr-xr-x. 1 julas julas    0  9. Okt 2022   AppData
-> -rwxr-xr-x. 1 julas julas 1,4K 18. Feb 15:30  aqtinstall.log
-> dr-xr-xr-x. 1 julas julas    0  9. Okt 2022   Contacts
-> lrwxrwxrwx. 1 julas julas   58  9. Okt 2022   Cookies ->
-> ./../../Users/beleg/AppData/Local/Microsoft/Windows/INetCookies
-> lrwxrwxrwx. 1 julas julas   30  1. Nov 2021  'Dane aplikacji' ->
-> ./../../Users/beleg/AppData/Roaming
-> dr-xr-xr-x. 1 julas julas 4,0K 15. Mai 20:41  Desktop
-> dr-xr-xr-x. 1 julas julas 8,0K  5. Jul 22:43  Documents
-> 
-> Here are the mount options:
-> /dev/nvme0n1p4 on /mnt/windows type ntfs3
-> (rw,relatime,uid=1000,gid=1000,iocharset=utf8)
-> 
-> It is the main issue preventing me from switching away from ntfs-3g. Can
-> I somehow investigate this further to help fixing this?
-> 
-> Best regards,
-> Julian
-> 
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changelog:
+ v2:
+	* Write error message to stderr (Akinobu Mita)
+	* Remove the file permission change (100755) in this patch. Going
+ 	  to send in a separate patch.
+
+ tools/testing/fault-injection/failcmd.sh | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/tools/testing/fault-injection/failcmd.sh b/tools/testing/fault-injection/failcmd.sh
+index 78dac34264be..c4f2432750f4 100644
+--- a/tools/testing/fault-injection/failcmd.sh
++++ b/tools/testing/fault-injection/failcmd.sh
+@@ -64,6 +64,14 @@ ENVIRONMENT
+ EOF
+ }
+ 
++exit_if_not_hex() {
++    local value="$1"
++    if ! [[ $value =~ ^0x[0-9a-fA-F]+$ ]]; then
++        echo "Error: The provided value '$value' is not a valid hexadecimal number." >&2
++        exit 1
++    fi
++}
++
+ if [ $UID != 0 ]; then
+ 	echo must be run as root >&2
+ 	exit 1
+@@ -160,18 +168,22 @@ while true; do
+ 		shift 2
+ 		;;
+ 	--require-start)
++		exit_if_not_hex "$2"
+ 		echo $2 > $FAULTATTR/require-start
+ 		shift 2
+ 		;;
+ 	--require-end)
++		exit_if_not_hex "$2"
+ 		echo $2 > $FAULTATTR/require-end
+ 		shift 2
+ 		;;
+ 	--reject-start)
++		exit_if_not_hex "$2"
+ 		echo $2 > $FAULTATTR/reject-start
+ 		shift 2
+ 		;;
+ 	--reject-end)
++		exit_if_not_hex "$2"
+ 		echo $2 > $FAULTATTR/reject-end
+ 		shift 2
+ 		;;
+-- 
+2.43.0
+
 
