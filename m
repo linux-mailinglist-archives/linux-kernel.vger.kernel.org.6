@@ -1,188 +1,276 @@
-Return-Path: <linux-kernel+bounces-266014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0213593F941
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:20:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 870D593F948
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21AB11C21F97
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:20:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12F141F22FC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51513156665;
-	Mon, 29 Jul 2024 15:19:55 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB8C157A41;
+	Mon, 29 Jul 2024 15:23:27 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604E614EC71
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C531E4A2
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722266394; cv=none; b=ADaAloYeRAd6V0jH/xH9ICxxD/2H/RGpSBph/T5eVRqIRV/NrcisJvyXbSYd8C1ba8Hz6KJUWRn/rMXM4UZPNbUsQLpIUfZ9UBZxZEj0Ks/F7aoWp0GWPDbqxCQzwzj4NQ19DKMAKFDB7xafDGDdgK+FMwl9nm56yZNApY02H9s=
+	t=1722266606; cv=none; b=naJYiV+GUl97mSvw1yJjVGILoBLnX1dcKGPr07mRxZ6kSpmjZlP+dXWws1y+uVnILRnIAeYkp6cSMQM9hMs5HzvUHXnhQGPPXw2A2/1OK6hrsbQ84nuxhDYtKaY1XPOA+3ywzvR45Fl+cBpjsrJbDyMKlB+hQO9HKqGQPkAyx9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722266394; c=relaxed/simple;
-	bh=NYCN56nKzaw4xD2f8FflikeMHC4Si0h4fXEFwtZoj4k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G9Yxei3AnZoljcWcFcM+c6er0+IzQRV8whgTM2ZYt7eHkjtfeDl2ab9cmNlcwesLvwrFvgXQ4bimJXL4Ykvb3wZSIw/AFk1vXOrwEp7LGbvUPiKhOytynEkTDsDr9cvIN3DS+tQlWVIHtMSSkc0yjVHxVd8kdAGQbGc68Hs87LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4WXhQ34Wlwz9v7HN
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:01:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 1821F1400CA
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:19:49 +0800 (CST)
-Received: from [10.221.99.159] (unknown [10.221.99.159])
-	by APP2 (Coremail) with SMTP id GxC2BwCHpMEJs6dmGaYkAA--.5463S2;
-	Mon, 29 Jul 2024 16:19:48 +0100 (CET)
-Message-ID: <e45bd166-348a-95b6-c17c-dcd2525f263c@huaweicloud.com>
-Date: Mon, 29 Jul 2024 17:19:34 +0200
+	s=arc-20240116; t=1722266606; c=relaxed/simple;
+	bh=qYomeXMkVFuXrgdGSB8/1iMUmIyedm6/4wkFQU+rvMM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MwZaJmTvC+51RN54ZW83dlN0v/TNz913lsUA98V2CttWvvZqkj44clQWhegYj/zZkFs9T0NoLzuHW4HDof+aa80oqKgMvYLVqPm1Nv4RExfgDCIspd+ipGf8cjZDwNt5DrCU+ufnmLSceHF72ldOtg3g+Ah/mO0zM8IsfdsGhAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f86fc9fdaso572233639f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:23:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722266604; x=1722871404;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ug6pUn7w8BPfCU3F0BD0f8l6pYsg9PaPyBynog0myRk=;
+        b=lNF6MU8yWsFZQnmT1lcDaQ0LoADb7LUmIyBaRa1ret/mSmbdaOHfOr67Y2plikX4fe
+         LOpM7fXM1Mq6UcpKNDNV49SLe/2Cnt7hQM0LR2BWmcIEajFUMiJVyrTmpM0B1RL5JVCn
+         0zAJgKZGr69Ojb7/NtZmqywLVA56SvS5eRhPOOA76tgX8CGahuqyTEA/OnjbRKVm4gY+
+         x+e6XeDeeGtzvmeUAl30Kuaz1BoHZNnINDC02w/UiSH37XG22ioMq/DULDjhjT+n+DFn
+         ndQhNaxGdI2a517qMHYT4PV95vUhpSzJVBh0O5H4a1S7lAGeFq8fo4+G8ftv0IZddOox
+         J9jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYWjINUVhoSZInYuN6+YUR6wp1ihjU/P4IyROyw5wEndIwcqy9Lnqxh/atpq64HgZLMLXYOjUM7To4HLHhutWkPrZTa3UE5FZ9iFq5
+X-Gm-Message-State: AOJu0Yx75sZXMfdu5vSq6lJg9XD/oxKksuQXGaITRcv5zEdpbLDWEf4S
+	7OSqpe7e8ceqBA6DikXlNubTQfi3WMOyIwYdsS9f/Re2eu49s0xCh02Bf2C/H5oW4nj1go2yaOI
+	iZin/zCxAQMHqNgkyEFlH68DZ358lYSuZ0jgt7JjioVq4sHBcAjcueEg=
+X-Google-Smtp-Source: AGHT+IFrRIj/C3ns4WiWQ7hSHn7roIVoQmhlw74yzJcq7hLTEbmG5h/INNA8BTlF5kIDTscFN5JlrUDfbgpQS/9Uo57Ffbqn76qP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCHv2 0/4] tools/memory-model: Define more of LKMM in
- tools/memory-model
-Content-Language: en-US
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
- Alan Stern <stern@rowland.harvard.edu>
-Cc: paulmck@kernel.org, parri.andrea@gmail.com, will@kernel.org,
- peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
- dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
- urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
- linux-kernel@vger.kernel.org, lkmm@lists.linux.dev
-References: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
- <88c1ebc8-4805-4d1d-868a-889043899979@rowland.harvard.edu>
- <bbc3bd10-3bf5-4b1a-a275-dd328c42e307@huaweicloud.com>
- <f93f140b-13bc-4d00-adee-46cc1c016480@rowland.harvard.edu>
- <4792c9e7-2594-3600-5d82-4cb1443fe670@huaweicloud.com>
- <d6a76968-d10b-c60b-245a-f58116eca6af@huaweicloud.com>
- <eb9548de-e66e-3dcd-9136-8702a5bc2934@huaweicloud.com>
- <00f58d20-f92d-461e-beac-b307905cab3b@huaweicloud.com>
-From: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-In-Reply-To: <00f58d20-f92d-461e-beac-b307905cab3b@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwCHpMEJs6dmGaYkAA--.5463S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCry7WF48AFyfZF4DGFWDCFg_yoW5tFWrpF
-	yrtFW5Krs7KF4fArn2yrnYqFySvFWxJF15XF15trWUKryqvFyYkr4Fyrn0kFyq9rs3Wr42
-	vrWUt34xZ3WDZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUP2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF
-	7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42
-	xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
-	GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYY7kG6xAYrw
-	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
-	67AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
-	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8eH
-	q7UUUUU==
-X-CM-SenderInfo: xkhu0tnqos00pfhgvzhhrqqx5xdzvxpfor3voofrz/
+X-Received: by 2002:a05:6638:264f:b0:4c2:8e08:f579 with SMTP id
+ 8926c6da1cb9f-4c63f1e9e23mr360973173.2.1722266603795; Mon, 29 Jul 2024
+ 08:23:23 -0700 (PDT)
+Date: Mon, 29 Jul 2024 08:23:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000020c8d0061e647124@google.com>
+Subject: [syzbot] [net?] INFO: task hung in addrconf_dad_work (5)
+From: syzbot <syzbot+82ccd564344eeaa5427d@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/29/2024 4:45 PM, Jonas Oberhauser wrote:
-> 
-> 
-> Am 7/29/2024 um 3:30 PM schrieb Hernan Ponce de Leon:
->> On 7/12/2024 10:06 AM, Hernan Ponce de Leon wrote:
->>> On 6/10/2024 10:38 AM, Hernan Ponce de Leon wrote:
->>>> On 6/8/2024 3:00 AM, Alan Stern wrote:
->>>>> On Wed, Jun 05, 2024 at 09:58:42PM +0200, Jonas Oberhauser wrote:
->>>>>>
->>>>>>
->>>>>> Am 6/4/2024 um 7:56 PM schrieb Alan Stern:
->>>>>>> Just to clarify: Your first step encompasses patches 1 - 3, and the
->>>>>>> second step is patch 4.  The first three patches can be applied 
->>>>>>> now, but
->>>>>>> the last one needs to wait until herd7 has been updated.  Is this 
->>>>>>> all
->>>>>>> correct?
->>>>>>
->>>>>> Exactly.
->>>>>
->>>>> With regard to patch 4, how much thought have you and Hernan given to
->>>>> backward compatibility?  Once herd7 is changed, old memory model files
->>>>> will no longer work correctly.
->>>>>
->>>>
->>>> Honestly, I did not think much about this (at least until Akira 
->>>> mentioned in my PR). My hope was that changes to the model could be 
->>>> back-ported to previous kernel versions. However that would not work 
->>>> for existing out-of-tree files.
->>>>
->>>> My question is: is compatibility with out-of-tree files really a 
->>>> requirement? I would argue that if people are using outdated models, 
->>>> they may get wrong results anyway. This is because some of the 
->>>> changes done to lkmm during the last few years change the expected 
->>>> result for some litmus tests.
->>>>
->>>> Hernan
->>>
->>> I pushed some new changes to the code for backward compatibility [1]. 
->>> The series also needs the patch at the bottom to properly deal with 
->>> the ordering of failing CAses and non-returning operations. With it, 
->>> all litmus tests return the correct result (the script needs to pass 
->>> option -lkmm-legacy false to herd).
->>
->> I have been playing around with an alternative to this.
->>
->> Rather than implementing this as an "option", I can implemented it as 
->> a "model variant (*)" and add this to the model
-> 
-> How exactly do these model variants get selected?
-> 
-> I was thinking that another good approach could be to have a new generic 
-> C model which doesn't know anything about LKMM. I believe this would be 
-> specified in the header of the .litmus files?
-> 
-> 
->> flag ~empty (if "lkmmlatest" then 0 else _)
->>    as new-lkmm-models-require-variant-lkmmlatest
->>
->> If the user forgets to set the variant for the new model, herd7 will 
->> flag the executions showing that something is off.
->>
->> To be fully backward compatible, we would need to backport this to old 
->> models
->>
->> flag ~empty (if "lkmmlatest" then 1 else _)
->>    as new-lkmm-models-require-variant-lkmmlatest
-> 
-> should this be then _ else 0  ? or what does the _ do here?
+Hello,
 
-Yes, my bad.
+syzbot found the following issue on:
 
-> 
-> I also don't think we can backport things to old models
+HEAD commit:    dc1c8034e31b minmax: simplify min()/max()/clamp() implemen..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=135baf03980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8b0cca2f3880513d
+dashboard link: https://syzkaller.appspot.com/bug?extid=82ccd564344eeaa5427d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-IIRC I have seen (non lkmm related) patches being backported to stable 
-kernel versions. Why can't we do this for lkmm if backward compatibility 
-is really a requirement? Otherwise I don't see a way of preventing 
-developers to use old models with the new option (since I plan to keep 
-the "old variant" as default, this would have to be done on purpose, but 
-still).
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> 
->> If the user (wrongly) sets the variant for an old model, the the 
->> executions will be flagged.
->>
->> Any thoughts?
->>
->> Hernan
->>
->> (*) This trick seems to be used for some arm models
->>
->> https://github.com/herd/herdtools7/blob/master/herd/libdir/arm-models/mixed/ec.cat#L66C1-L67C67
-> 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/29a310f3ad21/disk-dc1c8034.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4d35d3afb396/vmlinux-dc1c8034.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ed329ce5166e/bzImage-dc1c8034.xz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+82ccd564344eeaa5427d@syzkaller.appspotmail.com
+
+INFO: task kworker/u8:2:35 blocked for more than 143 seconds.
+      Not tainted 6.11.0-rc1-syzkaller-00004-gdc1c8034e31b #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u8:2    state:D stack:20272 pid:35    tgid:35    ppid:2      flags:0x00004000
+Workqueue: ipv6_addrconf addrconf_dad_work
+
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6621
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ addrconf_dad_work+0xd0/0x16f0 net/ipv6/addrconf.c:4194
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2e/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task dhcpcd:4884 blocked for more than 144 seconds.
+      Not tainted 6.11.0-rc1-syzkaller-00004-gdc1c8034e31b #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:dhcpcd          state:D stack:21632 pid:4884  tgid:4884  ppid:1      flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6621
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ genl_lock net/netlink/genetlink.c:35 [inline]
+ genl_op_lock net/netlink/genetlink.c:60 [inline]
+ genl_rcv_msg+0x121/0xec0 net/netlink/genetlink.c:1209
+ netlink_rcv_skb+0x1e5/0x430 net/netlink/af_netlink.c:2550
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f2/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x223/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
+ ___sys_sendmsg net/socket.c:2651 [inline]
+ __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa250dd6a4b
+RSP: 002b:00007fff5e4c9d68 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00005616070a494f RCX: 00007fa250dd6a4b
+RDX: 0000000000000000 RSI: 00007fff5e4c9db0 RDI: 0000000000000010
+RBP: 00007fff5e4ce8a8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000010
+R13: 00007fff5e4cde10 R14: 0000000000000000 R15: 0000561624964ba0
+ </TASK>
+INFO: task kworker/1:11:6096 blocked for more than 146 seconds.
+      Not tainted 6.11.0-rc1-syzkaller-00004-gdc1c8034e31b #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/1:11    state:D
+ stack:19768 pid:6096  tgid:6096  ppid:2      flags:0x00004000
+Workqueue: events linkwatch_event
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6621
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ linkwatch_event+0xe/0x60 net/core/link_watch.c:276
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2e/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task kworker/1:0:9989 blocked for more than 148 seconds.
+      Not tainted 6.11.0-rc1-syzkaller-00004-gdc1c8034e31b #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/1:0     state:D stack:21208 pid:9989  tgid:9989  ppid:2      flags:0x00004000
+Workqueue: events switchdev_deferred_process_work
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6621
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ switchdev_deferred_process_work+0xe/0x20 net/switchdev/switchdev.c:104
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2e/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task syz-executor:12923 blocked for more than 149 seconds.
+      Not tainted 6.11.0-rc1-syzkaller-00004-gdc1c8034e31b #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D
+ stack:20992 pid:12923 tgid:12923 ppid:1      flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6621
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ rtnl_lock net/core/rtnetlink.c:79 [inline]
+ rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6644
+ netlink_rcv_skb+0x1e5/0x430 net/netlink/af_netlink.c:2550
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f2/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x223/0x270 net/socket.c:745
+ __sys_sendto+0x3a4/0x4f0 net/socket.c:2204
+ __do_sys_sendto net/socket.c:2216 [inline]
+ __se_sys_sendto net/socket.c:2212 [inline]
+ __x64_sys_sendto+0xde/0x100 net/socket.c:2212
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f365877902c
+RSP: 002b:00007ffd4ffb8c30 EFLAGS: 00000293
+ ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 00007f3659434620 RCX: 00007f365877902c
+RDX: 0000000000000020 RSI: 00007f3659434670 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00007ffd4ffb8c84 R09: 000000000000000c
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
+R13: 0000000000000000 R14: 00007f3659434670 R15: 0000000000000000
+ </TASK>
+INFO: task syz-executor:13157 blocked for more than 151 seconds.
+      Not tainted 6.11.0-rc1-syzkaller-00004-gdc1c8034e31b #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D
+ stack:19152 pid:13157 tgid:13157 ppid:1      flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6621
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ wg_set_device+0x102/0x2160 drivers/net/wireguard/netlink.c:504
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb16/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e5/0x430 net/netlink/af_netlink.c:2550
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f2/0x990 net/netlink/af_netlink.c:1357
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
