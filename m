@@ -1,168 +1,122 @@
-Return-Path: <linux-kernel+bounces-265491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C5F93F1D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:56:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95ADE93F1E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B34C21C21EF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:56:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C62C21C21C0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8741442FB;
-	Mon, 29 Jul 2024 09:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BF114386E;
+	Mon, 29 Jul 2024 09:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QLX3cZ1W"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nNxfuwMT"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F32F13C69A;
-	Mon, 29 Jul 2024 09:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DC177107
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722246690; cv=none; b=Z4KTUkc8t226O07pG+oqY1ZHi6mvVyZx6GrcjlUXTLQWkkdhduvkWHC+4YhsvRWHh41aIzriH5bm4NcIZeUlVEm4M4fTWG5UuP6CiA6dYTKvd6XZyLmwOP4MoNxFCZhG1XN7Y/33uhqAh6Lupah4BLN+ML2St8FNdFyfLP8So+M=
+	t=1722246787; cv=none; b=hGwtV9r3Y0zcq4vrb3DGFwm5+RUZGxIrtxiq61BahrD9fHjWRp+0lwWWreq2UjULdxkQpDfmXEb6gTX5Cj2PelR8rbDps4jqQO5VspbD1rz3RNxjzkYD2UOK962dC2KdZ4Ee1rbUFMyBPFEoNzahSOcXRaM58PJEj+Poepl6cHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722246690; c=relaxed/simple;
-	bh=DOTu0rJ3iILK3+V+lnH6jhOZA1lOsErN42ACsBX1ySQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lGxi8NP7+uz/RD0Kj+WpqZaKNdubxNejWdkWP0ca8Zc354JdrUMGTibhd+qOC0SBR5h6deRBH00zx3Xg0C/4E+zzowlWj3y3Yesz2BCt0Npizx+HpPPoA3QZcIlgFmQRhpbiOYBVQ5eUqXXIFihHOkoIpyTo7lH4le+ncRKkm+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QLX3cZ1W; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46T0Mnk3021749;
-	Mon, 29 Jul 2024 09:51:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	m7Pz+WwT/MdZcCPf9EI5hI3gkf8LyJ4h4WvRd1mUXVY=; b=QLX3cZ1WSOwVn8MH
-	u4tSE74cnMsk4yEbHbXKR4Fxhi8hvykVuLcbPfsreIxYGvcMZmRIR6IYiEzNydUV
-	whKgeIuM9dnEqMrHXEdFU+13ng5y2Bdv3Xp6c3fvgQLWfzjP7Zxa98cUlhhIjn0m
-	RSTA02aqjWGi1c0mdr3Fr4Ww9P04SiXDWjFQXwU6fcAtDqGMNYQuy3Y75b72I/oU
-	tlIqmC1ps9bQjNxFMPpKqmlq8Zc/D7SbXxMzfPX+K2KodfqJTluh8ZCMGoJac3db
-	cmUVX0vAiQGuBWAWzl83uxoiV4gOs/gO2oVkoVta4xLigBepxH/nlZwV3O/3ez2x
-	eNXqyQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mrfxkr36-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 09:51:01 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46T9p0Ze030806
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 09:51:00 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
- 2024 02:50:52 -0700
-Message-ID: <972803d2-eec3-4b67-b541-d3fd68475681@quicinc.com>
-Date: Mon, 29 Jul 2024 17:50:50 +0800
+	s=arc-20240116; t=1722246787; c=relaxed/simple;
+	bh=waGwMlMybwNO3CltygzQrDphXSMn46LZiyi6g/R+yFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DdeQmGMn6blLgfdLph46WO1Kv2mGCJe5+qcVr7fI40SjDvAJ39C2FU9Ra0uA5WFs0zn0KuBX9kHG611TpgpoT07dORAohlIjsC5pNU/ACrJfZQ0R0LOCT4XHMQzg6Au3uZ+RkHwoKuaoqx+BDvwdsQ1oFzLirY53uHtszUWTADA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nNxfuwMT; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jjG+pKIqGn1D+6CeUBJo2nl6wL62M7n6k540Ij2MXrA=; b=nNxfuwMT+vQO2UECrfkJeM/Ij8
+	klMYiiXJ2Fe+pRKQGp8v0P+WGTRieUHCYRFial9e21r3/M5G6rlbH/Lw6Q+4zrKsi1dRBhNEZvPO3
+	fYpMrXvrRt00mrbQTlz7dHIcekYQYFM868EC29eRAdp6ChUHTx/yq4WfvHhIB24JVpxpW+aCYJpuM
+	h8aJTxiFg9bTN3JmB7twL3/lCYjjlb8cCNTn3u4b4uABIDcGApJYChhOXskIGhBHuvhekQrFcNUZE
+	TqjJ5bkzJ1/L3LKv3VQWsbldpxPjGM/bcwdAFsGotHdZIJZuTk+ouFKWSHR9458/SoxoaqEudAsZf
+	+000/EFw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sYN3v-00000004lAs-2ucq;
+	Mon, 29 Jul 2024 09:53:04 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2D409300439; Mon, 29 Jul 2024 11:53:03 +0200 (CEST)
+Date: Mon, 29 Jul 2024 11:53:03 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Rong Xu <xur@google.com>
+Cc: Han Shen <shenhan@google.com>, Sriraman Tallam <tmsriram@google.com>,
+	David Li <davidxl@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	John Moon <john@jmoon.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Rafael Aquini <aquini@redhat.com>, Petr Pavlu <petr.pavlu@suse.com>,
+	Eric DeVolder <eric.devolder@oracle.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Benjamin Segall <bsegall@google.com>,
+	Breno Leitao <leitao@debian.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Brian Gerst <brgerst@gmail.com>, Juergen Gross <jgross@suse.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Kees Cook <kees@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Xiao Wang <xiao.w.wang@intel.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org,
+	llvm@lists.linux.dev, Krzysztof Pszeniczny <kpszeniczny@google.com>,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH 6/6] Add Propeller configuration for kernel build.
+Message-ID: <20240729095303.GD37996@noisy.programming.kicks-ass.net>
+References: <20240728203001.2551083-1-xur@google.com>
+ <20240728203001.2551083-7-xur@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: net: qcom,ethqos: add description for
- qcs9100
-To: Vinod Koul <vkoul@kernel.org>, "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        "Paolo
- Abeni" <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bhupesh
- Sharma <bhupesh.sharma@linaro.org>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>
-CC: <kernel@quicinc.com>, <netdev@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20240709-add_qcs9100_ethqos_compatible-v2-0-ba22d1a970ff@quicinc.com>
- <20240709-add_qcs9100_ethqos_compatible-v2-1-ba22d1a970ff@quicinc.com>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <20240709-add_qcs9100_ethqos_compatible-v2-1-ba22d1a970ff@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: _kYcTH8GoA-YQKZUtBSHPmNd2bH7hQul
-X-Proofpoint-ORIG-GUID: _kYcTH8GoA-YQKZUtBSHPmNd2bH7hQul
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-29_07,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- lowpriorityscore=0 priorityscore=1501 mlxlogscore=999 malwarescore=0
- bulkscore=0 phishscore=0 clxscore=1011 mlxscore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407290065
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240728203001.2551083-7-xur@google.com>
 
-
-
-On 7/9/2024 10:13 PM, Tengfei Fan wrote:
-> Add the compatible for the MAC controller on qcs9100 platforms.
-> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
-> platform use non-SCMI resource. In the future, the SA8775p platform will
-> move to use SCMI resources and it will have new sa8775p-related device
-> tree. Consequently, introduce "qcom,qcs9100-ethqos" to describe non-SCMI
-> based ethqos.
+On Sun, Jul 28, 2024 at 01:29:59PM -0700, Rong Xu wrote:
+> Add the build support for using Clang's Propeller optimizer. Like
+> AutoFDO, Propeller uses hardware sampling to gather information
+> about the frequency of execution of different code paths within a
+> binary. This information is then used to guide the compiler's
+> optimization decisions, resulting in a more efficient binary.
 > 
-> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
-> ---
->   Documentation/devicetree/bindings/net/qcom,ethqos.yaml | 1 +
->   Documentation/devicetree/bindings/net/snps,dwmac.yaml  | 2 ++
->   2 files changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/qcom,ethqos.yaml b/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
-> index 6672327358bc..8ab11e00668c 100644
-> --- a/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
-> +++ b/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
-> @@ -20,6 +20,7 @@ properties:
->     compatible:
->       enum:
->         - qcom,qcs404-ethqos
-> +      - qcom,qcs9100-ethqos
->         - qcom,sa8775p-ethqos
->         - qcom,sc8280xp-ethqos
->         - qcom,sm8150-ethqos
-> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> index 0ab124324eec..291252f2f30d 100644
-> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> @@ -67,6 +67,7 @@ properties:
->           - loongson,ls2k-dwmac
->           - loongson,ls7a-dwmac
->           - qcom,qcs404-ethqos
-> +        - qcom,qcs9100-ethqos
->           - qcom,sa8775p-ethqos
->           - qcom,sc8280xp-ethqos
->           - qcom,sm8150-ethqos
-> @@ -611,6 +612,7 @@ allOf:
->                 - ingenic,x1830-mac
->                 - ingenic,x2000-mac
->                 - qcom,qcs404-ethqos
-> +              - qcom,qcs9100-ethqos
->                 - qcom,sa8775p-ethqos
->                 - qcom,sc8280xp-ethqos
->                 - qcom,sm8150-ethqos
-> 
+> The support requires a Clang compiler LLVM 19 or later, and the
+> create_llvm_prof tool
+> (https://github.com/google/autofdo/releases/tag/v0.30.1). This
 
-After considering the feedback provided on the subject, We have decided
-to keep current SA8775p compatible and ABI compatibility in drivers.
-Let's close this session and ignore all the current patches here.
-Thank you for your input.
+What's the relation between this and llvm-profgen? Is the above simply
+a google 'internal' proof of concept thing that will eventually make its
+way into llvm-profgen?
 
--- 
-Thx and BRs,
-Tengfei Fan
+It seems a bit weird LLVM landed propeller without the required profile
+generation tool.
 
