@@ -1,87 +1,123 @@
-Return-Path: <linux-kernel+bounces-266357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C51493FEAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:00:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A2B93FEAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 484B11F224C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:00:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6906B21D10
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBC5186E46;
-	Mon, 29 Jul 2024 20:00:07 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB83A187348;
+	Mon, 29 Jul 2024 20:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FG+EurpQ"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF771891D6
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97D973466;
+	Mon, 29 Jul 2024 20:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722283207; cv=none; b=gkBJoYQTPkWW3zC747Wz/jWopeHlFwlEosay7pHF1jlKEyAn1YrJXiIwVkt1YPBZkUB3BfRYluQgcejf4fQfGTKPgVadQtfev1kTHXxQJVIFLCxltDOZ8qtPtDN7Lit+kJM7dk+kqeCn5EGmNMFcgIo7gyRP1xuI1pczon15w/M=
+	t=1722283228; cv=none; b=DfcVHfhQbi/g7xUkItMqxYP+oKLe7zrErLXR+e9Kv8BajxXneIrRqn9OZ8P9VCWJ5UB+H53Qy8beoY3NnOiVpmmcFXO3n31irTeMIxIf1FQ02V5IXgM8a7+avckOseb0RJ86fMJtEe8kCH+9C+ECATI2MMo5mBiBWrN9GOGd5os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722283207; c=relaxed/simple;
-	bh=k6BKGK6zvvx1FTptgx+Z1Rfw+VltyDEbzn/+HluoFNE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Y7skEdwHstWwIb5JxFlTSKgN2A7AI8YaER7pl4uUYWwXhBkieexzWKrh5Q98+axbzYnxcgkU0ctzrzd+1+lB3bvrcsMlQNxIYJ8x9IwHYOfTiwFYRdjJUvIuZe8CEOblP3JLkb7n4uWJDt/9yihsgu9VQSskYoyi303itxVGzlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39ad7e6b4deso55456665ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:00:05 -0700 (PDT)
+	s=arc-20240116; t=1722283228; c=relaxed/simple;
+	bh=C2Lpz4N0X8waVL7qIFIfw3p1BGaPYs+PheP+sqFqMUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EUcq7wb3EtwOIXVteUiTCmBPX0f5eCffxYcsJiXF1XOHM+kPSZo8eFAXoQsBwNkWENiM9VqbXulx6C2ySx/l15FV65uAoSkZ+ti/Kg7SMsNh4EcOpCD+xvdxCvDjS1H1+Ge9Uol/MGCEspFVtMY2umtTTQmPSUbA4T2LzVUDkrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FG+EurpQ; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fc6a017abdso21044835ad.0;
+        Mon, 29 Jul 2024 13:00:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722283224; x=1722888024; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=N7diD9YNWJdflXMg0pyESRcp/QtgJub9rwz7KcBMStI=;
+        b=FG+EurpQbmI3SSIymqGxYI83MgD60Dj4ghQCic7CAY4tLVxAAOcDMOB42rwPLpC8w1
+         UQXyD3HCkc+yQQZ/7+BShr2Z8Tav7zddj0RTowNvOPa/f15bsGwfSdWAMbydD5xL+BNZ
+         LMAra9u3mpP6U/yW9gycaHPRh723TXc1bh8e0mgOfdP7haEEwQQDi+RLOQZWlRB3IXKC
+         dFYPJ9QutUVx6xw6z/7sW51tcvAjrmLWGwd6APXAsovWSzgnkBWckdeJVIX+rmJmAOJP
+         bqdFoHTj4WC4XNGQHClDTPMGDhzMhomIvoVqioEe1V0xABFiHyOlxtr1Lculck7qTAMU
+         Ypng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722283205; x=1722888005;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FD2BT1A/vVoyYUFr1yXG0cNDdoGiIzYRMHcW8QayngE=;
-        b=WHQAdM0ZMjDDtLLQXVoSZAFaSu+rD6Xx5yZIA2Vrwbd3yuN7d+giW2rhzZDsWHeta1
-         QYuFRSWb5WZyN3TD87cuQq/l4yRJ8/+4g0SkNZbnVBo61o8X0OlhObnj4P9E/aid4aSd
-         coLYPnFCCWqAnT+kk8AURGK/N4l9TKuN7NoWZg/zNsrGW9x0UeznHa9LfjeU0o1c7jCm
-         cAOw11DSGurm1oe2uOe6EXWUlVatUmlDHFx4Oj4ZhkyWBRUUKGwJOsZIrZ16ZFudPv6G
-         7mK2KfV8HpH2cn+x8IL4750vNnARE8imnSbk6cQBZKjuipczab5n5JNkbF2cJuOK2ewD
-         onAA==
-X-Gm-Message-State: AOJu0YyUUBqMb55orbbf113a12KrRD7oGLDoputTGFtd5DFoJwiLEyCu
-	Ta1jEoa6IzKBRjH8p7lHgRVtmiIIB+IZDjIlXAY18UM5b+wTNeIMIRuMzxq1e9grvbcKccnagMh
-	mlPLain00ujzXwPa2nyq5qzGuPE7In8PwvWYC3y94Mpimw4V+QT1AzD0=
-X-Google-Smtp-Source: AGHT+IExrDm0332VUVax83+e/2y/2uKOBWocpWYLm6HxJRvLLIh1W6yYxsU1rub+r8ob2O91cAZzAY6C9mqIXh0VEu3sbxc5/eL+
+        d=1e100.net; s=20230601; t=1722283224; x=1722888024;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N7diD9YNWJdflXMg0pyESRcp/QtgJub9rwz7KcBMStI=;
+        b=sRdNW2MJ08N6mXPbPQIXT8UNYqUsEY3El1mvHVkW3WHquk/DRpSHzyMxuBV6GrewrF
+         yp0g4fOdHbjxECDDDAaTdXO05k12i0Xhgu8JxbJwVT4tXzDkkpQVU5KK8B460MyTrMrZ
+         Gtl7Z04mYmmiSQhriZ84W1fjfUwiXZeZBadMcu3eIc1njF0gw77HtXIth9U022ObyKKz
+         nicXBSJq+Db9buoQGf46t5IOfLbJDLvfu3/8cf4awHC/zUZnQxg4meDGIrZXMKIkT+OE
+         Oeo22E+b3aMpGlnyzf8Hqc0AlOTPwTQb4Orrv6ctKlHKSOZPOJAu+ZMPcI1yCv43nTcQ
+         8Jqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpTKqREoTsEKDL8PpOcJJY3ogLVe/kqEtr8RYGODOfkmIf4JfR2yow0gyPfGQ2iu0EEEbsEcqNx9g9Mg==@vger.kernel.org, AJvYcCX5fnhD7oIhplAP5NPuh/13jWrFg9IZppB4TQ7idzXeQClHZ8WRoXO0KMKaWKIGASlOL6/EvMOoYKV6NFem@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6wxJmW5TvMIHSy5ORzSbUKtlmcV0k/8xJzsxtQIn9P3evlHn1
+	CmR6gO0yaeRwWe+h6ZRxrx1FrkOBkF6l3J12+ffRq4bAR9DFrgItZm5Tgg==
+X-Google-Smtp-Source: AGHT+IEqRUbcfibcxrQeu5Whs1HlVLHdvJXwsmuZi7g9QuR6WO5EXEU0Gv5opZOvpI5/Gdjpf+wGrQ==
+X-Received: by 2002:a17:902:e5ca:b0:1fb:3d7:1d01 with SMTP id d9443c01a7336-1ff048e4fd6mr71587505ad.59.1722283223962;
+        Mon, 29 Jul 2024 13:00:23 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:f53a:d352:6282:526b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c7f66esm87435085ad.15.2024.07.29.13.00.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 13:00:23 -0700 (PDT)
+Date: Mon, 29 Jul 2024 13:00:16 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Henrik Rydberg <rydberg@bitmath.org>,
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH (resend)] Input: MT - limit max slots
+Message-ID: <Zqf00C_eOBwcEiWG@google.com>
+References: <f9b4ff23-ee3e-418f-b65d-c40fe28fbba8@I-love.SAKURA.ne.jp>
+ <2024072930-badge-trilogy-c041@gregkh>
+ <Zqe76gATYUcDVLaG@google.com>
+ <CAHk-=wgweFg4hOus9rhDEa437kpkdV88cvmOHeZWwhgSa5ia1g@mail.gmail.com>
+ <ZqfYfIp3n7Qfo1-Q@google.com>
+ <CAHk-=wiT8RzFUVXe=r3S9dfCpV+FhARgtb5SxLDSOKCJKCLOZA@mail.gmail.com>
+ <Zqfg8FW-SFFedebo@google.com>
+ <CAHk-=wg4peLPGB+Lyvdtwxe6nVeprvTbZiO8_=E8-R_M+VyWow@mail.gmail.com>
+ <ZqfpgmmLgKti0Xrf@google.com>
+ <CAHk-=wgo9iEZ20wB4rOpt6h36Dymudqf6HXww1N094bVoqyMmg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c245:0:b0:381:24e:7a8c with SMTP id
- e9e14a558f8ab-39aec2ca2bemr8248005ab.1.1722283204763; Mon, 29 Jul 2024
- 13:00:04 -0700 (PDT)
-Date: Mon, 29 Jul 2024 13:00:04 -0700
-In-Reply-To: <4442a354-87f1-4f7c-a2b0-96fbb29191d1@rowland.harvard.edu>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009f6f85061e684e92@google.com>
-Subject: Re: [syzbot] [media?] [usb?] WARNING in smsusb_init_device/usb_submit_urb
-From: syzbot <syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-usb@vger.kernel.org, mchehab@kernel.org, stern@rowland.harvard.edu, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgo9iEZ20wB4rOpt6h36Dymudqf6HXww1N094bVoqyMmg@mail.gmail.com>
 
-Hello,
+On Mon, Jul 29, 2024 at 12:27:05PM -0700, Linus Torvalds wrote:
+> On Mon, 29 Jul 2024 at 12:12, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+> >
+> > OK, if you want to have limits be it. You probably want to lower from
+> > 1024 to 128 or something, because with 1024 slots the structure will be
+> > larger than one page and like I said mt->red table will be 4Mb.
+> 
+> So this is why subsystem maintainers should be involved and helpful.
+> It's hard to know what practical limits are.
+> 
+> That said, a 4MB allocation for some test code is nothing.
+> 
+> And yes, if syzbot hits other cases where the input layer just takes
+> user input without any limit sanity checking, those should be fixed
+> *too*.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hmm, maybe the checks should go into drivers/input/misc/uinput.c which
+is the only place that allows userspace to create input device instances
+and drive them rather than into input core logic because all other
+devices are backed by real hardware.
 
-Reported-by: syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com
-Tested-by: syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com
+Thanks.
 
-Tested on:
-
-commit:         93306970 Merge tag '6.11-rc-smb3-server-fixes' of git:..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=150f68d3980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8cdd6022e793d4ad
-dashboard link: https://syzkaller.appspot.com/bug?extid=85e3ddbf0ddbfbc85f1e
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15b341c9980000
-
-Note: testing is done by a robot and is best-effort only.
+-- 
+Dmitry
 
