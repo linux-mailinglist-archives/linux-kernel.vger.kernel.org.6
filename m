@@ -1,213 +1,146 @@
-Return-Path: <linux-kernel+bounces-265357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 634EB93EFFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:35:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3509993EFFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C887281792
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:35:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAB031F22849
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E312613CFB8;
-	Mon, 29 Jul 2024 08:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E798113C685;
+	Mon, 29 Jul 2024 08:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="ynZGUnMm"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xCqf2Uwd";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6g/j110t"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64CE13C3CA;
-	Mon, 29 Jul 2024 08:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC8D13C3C9
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722242135; cv=none; b=AUcp7HevkyMcezZfWx4/X5ihJ0OSPchEtcZgmqUNVB14Je+t/+UsZidGO0vqsW4RLT3/Ig9TqjW78/aJBa4OU0s3il4ZC/rXYs08Q/L4P+ELXfrjus00g856nZhdHGMp/Ry8SvwZkrWiTFwk49d8s5xBZxsOchoXqXUqIuJbHj4=
+	t=1722242168; cv=none; b=Lo6UjWq9ePYtntaWPCZp6iL7qbONKRNIHgJFpkak9KCUnln2FXk5DmviE6cxPsdmLUqyHymRlg6oWe8v7Ted9yBCvZroGAHEMpejmNSYVEzKNEmLEpZZ5UdPzHd/LuPfDCCMLcOdNbunXdJeviWFMJc7xuHN/mBBY6YWyh2EAJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722242135; c=relaxed/simple;
-	bh=oc6YQLjiSBFE+djFMS5QGcWDNmvJNJb8tfti403Gmrg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sQd+k4jt/i+9kAF6UHPw8ZTGcvtYKdkUhgu8FayB5CxihbM/F9wQW8rbkwqeyvaY8XMURoftK6ruIKy+yMbzGKSrzGIczsa8wpLnYFJywQ/5LU4d5wgVqvUBN2p6yxZV8t5vSXQbNJjYJvzfRS+UpLUTuQq2MG731yCgw0Fb0+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=ynZGUnMm; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=hCYlTQ17YHOGNp0OKHgpYTRh6FCoAUsIqBGDapwrN1A=;
-	t=1722242133; x=1722674133; b=ynZGUnMmn2XywyEmWYkmOsewkFYAQX4Az6lOlPw+zWsoNFU
-	fMRPLCcZESVtgqDyKvtYx4gjFcXlPRwE/lWS7eY0sZ0WDjMpFPczyYETHDJWdOPeIQWcp398su/oq
-	A5MPseKkUR/HlxMznEThfPKVfohC/wFcyRWrKDvAleyBIpwK/g/JltfWCJM12C2vGC5KBzP4hy2Nv
-	f/vWGHTYbqyMNIV3R+rzERanEe6IxMnzX1C7t70x/b/Ug2ViZ9PgxegD3aCJAADw2v/wBce6eg8sY
-	ZXmr4SOyYBahkwTjq/pkruK3RkN94zFz/BRPLygTEhqIPpo+Q0KfSXzhqkh62c2A==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sYLqs-0004yw-5c; Mon, 29 Jul 2024 10:35:30 +0200
-Message-ID: <e2050c2e-582f-4c6c-bf5f-54c5abd375cb@leemhuis.info>
-Date: Mon, 29 Jul 2024 10:35:28 +0200
+	s=arc-20240116; t=1722242168; c=relaxed/simple;
+	bh=m/cVxycBaCP6m2KMp0poN4M55GPvSXbTLcNI2BwZ/uw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DZcZWJuzxuyWA5rhXigpBysPrT8mOs/3Jffz/9n/ORjLUKAvTtT7VBYJtJMHU0PT6Fujtf1Yfiiy5hEHEWVIMdpKqktBhPNn1r+iJDAR55SXDZIdMC/jCETwIKRNG+IC6UcroW7lZG5Ic7emaeAxi6bAjaXj8yg6PH4YYEL+mBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xCqf2Uwd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6g/j110t; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722242165;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qzM88Rh9E4HZyFscQRm+i0+1KObsBD1PAAlVcReVmNo=;
+	b=xCqf2Uwdfw0nm8f29bIZGnNjjYhmcZotcCfKWWlDNq8QzBDV6osLOci/6vOzxRtnvOtv8z
+	UKpHIwF1qiilFErsTRvMfO0wvpEVlil39HWEX7YAPjFmCUbFe9GmgKxHc9YPyVOvOJ0Wy2
+	2G7Cnidjdggcnz7fz5IDwAErPnZ0BIpf4k8zBpt2MSGsrgljZLqT0/EDuDLg4GWB7p3Z+C
+	dkuT70z8SviURzd+jKeAQ4BQbR4uRZPt5MGYOiCdDjXh2v9cti5cS9cv2yZOxhH4N1VRxw
+	kkxbdnidFCRBsYRis2bIJh1X7Ga5lhs8EibOn1rmJUByYUOFzpPh9buAu/BiyA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722242165;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qzM88Rh9E4HZyFscQRm+i0+1KObsBD1PAAlVcReVmNo=;
+	b=6g/j110tnfZK8YpruK7DOqKSK/ytEexD7N6LJB6jRzrGTI7NQT0eMk+qiqZjRAYecbpVdM
+	JyDRY1GjMGdOcmDA==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v3 03/19] printk: nbcon: Add function for
+ printers to reacquire ownership
+In-Reply-To: <ZqOVsZ1KGh3rkxE6@pathway.suse.cz>
+References: <20240722171939.3349410-1-john.ogness@linutronix.de>
+ <20240722171939.3349410-4-john.ogness@linutronix.de>
+ <ZqOVsZ1KGh3rkxE6@pathway.suse.cz>
+Date: Mon, 29 Jul 2024 10:42:04 +0206
+Message-ID: <87cymwfvd7.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] No image on 4k display port displays connected
- through usb-c dock in kernel 6.10
-To: Greg KH <gregkh@linuxfoundation.org>, "Lin, Wayne" <Wayne.Lin@amd.com>
-Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- ML dri-devel <dri-devel@lists.freedesktop.org>,
- "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
- "Wu, Hersen" <hersenxs.wu@amd.com>,
- "Deucher, Alexander" <Alexander.Deucher@amd.com>,
- "kevin@holm.dev" <kevin@holm.dev>,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <d74a7768e957e6ce88c27a5bece0c64dff132e24@holm.dev>
- <9ca719e4-2790-4804-b2cb-4812899adfe8@leemhuis.info>
- <fd8ece71459cd79f669efcfd25e4ce38b80d4164@holm.dev>
- <CO6PR12MB54897CE472F9271B25883DF6FCB72@CO6PR12MB5489.namprd12.prod.outlook.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <CO6PR12MB54897CE472F9271B25883DF6FCB72@CO6PR12MB5489.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1722242133;0bf6608e;
-X-HE-SMSGID: 1sYLqs-0004yw-5c
+Content-Type: text/plain
 
-[+Greg +stable]
-
-On 29.07.24 10:16, Lin, Wayne wrote:
+On 2024-07-26, Petr Mladek <pmladek@suse.com> wrote:
+> On Mon 2024-07-22 19:25:23, John Ogness wrote:
+>> Since ownership can be lost at any time due to handover or
+>> takeover, a printing context _must_ be prepared to back out
+>> immediately and carefully. However, there are scenarios where
+>> the printing context must reacquire ownership in order to
+>> finalize or revert hardware changes.
+>> 
+>> One such example is when interrupts are disabled during
+>> printing. No other context will automagically re-enable the
+>> interrupts. For this case, the disabling context _must_
+>> reacquire nbcon ownership so that it can re-enable the
+>> interrupts.
 >
-> Thanks for the report.
-> 
-> Patch fa57924c76d995 ("drm/amd/display: Refactor function dm_dp_mst_is_port_support_mode()")
-> is kind of correcting problems causing by commit:
-> 4df96ba6676034 ("drm/amd/display: Add timing pixel encoding for mst mode validation")
-> 
-> Sorry if it misses fixes tag and would suggest to backport to fix it. Thanks!
+> I am still not sure how this is going to be used. It is suspicious.
+> If the context lost the ownership than another started flushing
+> higher priority messages.
+>
+> Is it really safe to manipulate the HW at this point?
+> Won't it break the higher priority context?
 
-Greg, seem it would be wise to pick up fa57924c76d995 for 6.10.y as
-well, despite a lack of Fixes or stable tags.
+Why would it break anything? It spins until it normally and safely
+acquires ownership again. The commit message provides a simple example
+of why it is necessary. With a threaded printer, this situation happens
+almost every time a warning occurs.
 
-Ciao, Thorsten
+>> --- a/kernel/printk/nbcon.c
+>> +++ b/kernel/printk/nbcon.c
+>> @@ -911,6 +948,15 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt)
+>>  		return false;
+>>  	}
+>>  
+>> +	if (!wctxt->outbuf) {
+>
+> This check works only when con->write_atomic() called
+> nbcon_reacquire_nobuf().
 
->> -----Original Message-----
->> From: kevin@holm.dev <kevin@holm.dev>
->> Sent: Sunday, July 28, 2024 12:43 AM
->> To: Linux regressions mailing list <regressions@lists.linux.dev>; Deucher,
->> Alexander <Alexander.Deucher@amd.com>; Wu, Hersen
->> <hersenxs.wu@amd.com>; Lin, Wayne <Wayne.Lin@amd.com>
->> Cc: regressions@lists.linux.dev; stable@vger.kernel.org; LKML <linux-
->> kernel@vger.kernel.org>; ML dri-devel <dri-devel@lists.freedesktop.org>;
->> amd-gfx@lists.freedesktop.org
->> Subject: Re: [REGRESSION] No image on 4k display port displays connected
->> through usb-c dock in kernel 6.10
->>
->>> [adding a few people and lists to the recipients]
->>>
->>> Hi! Thx for your rpeort.
->>>
->>> On 27.07.24 18:07, kevin@holm.dev wrote:
->>>
->>>>
->>>> Connecting two 4k displays with display port through a lenovo usb-c
->>>>
->>>>  dock (type 40AS) to a Lenovo P14s Gen 2 (type 21A0) results in no
->>>>
->>>>  image on the connected displays.
->>>>
->>>>
->>>>
->>>>  The CPU in the Lenovo P14s is a 'AMD Ryzen 7 PRO 5850U with Radeon
->>>>
->>>>  Graphics' and it has no discrete GPU.
->>>>
->>>>
->>>>
->>>>  I first noticed the issue with kernel version '6.10.0-arch1-2'
->>>>
->>>>  provided by arch linux. With the previous kernel version
->>>>
->>>>  '6.9.10.arch1-1' both connected displays worked normally. I reported
->>>>
->>>>  the issue in the arch forums at
->>>>
->>>>  https://bbs.archlinux.org/viewtopic.php?id=297999 and was guided to
->>>>
->>>>  do a bisection to find the commit that caused the problem. Through
->>>>
->>>>  testing I identified that the issue is not present in the latest
->>>>
->>>>  kernel directly compiled from the trovalds/linux git repository.
->>>>
->>>>
->>>>
->>>>  With git bisect I identified
->> 4df96ba66760345471a85ef7bb29e1cd4e956057
->>>>
->>>
->>> That's 4df96ba6676034 ("drm/amd/display: Add timing pixel encoding for
->>>
->>> mst mode validation") [v6.10-rc1] from Hersen Wu.
->>>
->>> Did you try if reverting that commit is possible and might fix the problem?
->>
->> Reverting is not easily possible:
->>
->> $ git checkout v6.10
->> [...]
->> HEAD is now at 0c3836482481 Linux 6.10
->>
->> $ git revert 4df96ba66760345471a85ef7bb29e1cd4e956057
->> Auto-merging
->> drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
->> CONFLICT (content): Merge conflict in
->> drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
->> error: could not revert 4df96ba66760... drm/amd/display: Add timing pixel
->> encoding for mst mode validation
->>
->> I do not know enough to try and solve the conflict myself without breaking
->> more things.
->>
->>>
->>>>
->>>> as the first bad commit and
->> fa57924c76d995e87ca3533ec60d1d5e55769a27
->>>>
->>>
->>> That's fa57924c76d995 ("drm/amd/display: Refactor function
->>>
->>> dm_dp_mst_is_port_support_mode()") [v6.10-post] from Wayne Lin.
->>>
->>>>
->>>> as the first commit that fixed the problem again.
->>>>
->>>
->>> Hmm, the latter commit does not have a fixes tag and might or might not
->>>
->>> be to invasive to backport to 6.10. Let's see what the AMD developers say.
->>>
->>>>
->>>> The initial commit only still shows an image on one of the connected
->>>>
->>>>  4k screens. I have not investigated further to find out at what point
->>>>
->>>>  both displays stopped showing an image.
->>>>
->>>
->>> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
->>>
->>> --
->>>
->>> Everything you wanna know about Linux kernel regression tracking:
->>>
->>> https://linux-regtracking.leemhuis.info/about/#tldr
->>>
->>> If I did something stupid, please tell me, as explained on that page.
->>>
+Exactly. That is what it is for.
+
+> At least, we should clear the buffer also in nbcon_enter_unsafe() and
+> nbcon_exit_unsafe() when they realize that they do own the context.
+
+OK.
+
+> Even better would be to add a check whether we still own the context.
+> Something like:
+>
+> bool nbcon_can_proceed(struct nbcon_write_context *wctxt)
+> {
+> 	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
+> 	struct nbcon_state cur;
+>
+> 	nbcon_state_read(con, &cur);
+>
+> 	return nbcon_context_can_proceed(ctxt, &cur);
+> }
+
+nbcon_can_proceed() is meant to check ownership. And it only makes sense
+to use it within an unsafe section. Otherwise it is racy.
+
+Once a reacquire has occurred, the driver is allowed to proceed. It just
+is not allowed to print (because its buffer is gone).
+
+>> +		/*
+>> +		 * Ownership was lost and reacquired by the driver.
+>> +		 * Handle it as if ownership was lost.
+>> +		 */
+>> +		nbcon_context_release(ctxt);
+>> +		return false;
+
+John
 
