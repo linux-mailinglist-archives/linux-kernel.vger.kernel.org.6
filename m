@@ -1,57 +1,73 @@
-Return-Path: <linux-kernel+bounces-265420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED3A93F0D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:19:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F60F93F0DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CF78280D62
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:19:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB8FEB21183
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0F513DDCE;
-	Mon, 29 Jul 2024 09:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B72A13E039;
+	Mon, 29 Jul 2024 09:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AIoD8F90"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TpUEkn8C"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47EA13DB92;
-	Mon, 29 Jul 2024 09:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D69D13DDCC
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722244769; cv=none; b=jWitFSBZbPbksFhAUPcOqVmA2dT2udTrCwVRCp8thQ+81ISo702OAFXNBdYdv/UHWBSo3qh1+IstfBUQoMSpFC0ouuhtHqdxnUUgGzzyKRUbEplwMZOM4D79J/fMT4d4CUfaB4oESOb+cRbq0ctSNibDT/pHyxi/2y+xQdPEDTU=
+	t=1722244883; cv=none; b=mwke2mesBTBpePQEZhMbOQRKwooEjIr6s04ohbHNFcMV1XtxmG1ye0wH1B/Ut1pd8yoo9cf9jHlflvYVbE7j5vowREg/vKdIL2ckbXOp3smfvmOfGc2gg/xH0FxImbnfSgJJYXmXTXBqi04yQA5FoKfs5L1mZ6/zVnAnnOfRadQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722244769; c=relaxed/simple;
-	bh=NmA4UnYG3ps2ZxJ6n5TCugcQhBXbGtG7XO01jZ7+OdA=;
+	s=arc-20240116; t=1722244883; c=relaxed/simple;
+	bh=wdH24kndMVx8PfW4zk0n7/2Blacu0Xbz2/cYCuxgUdE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gKs7A5+kzrDmrjveg9YADdjuCvIV+E6mP5MMyqhy/Muh0x/oKwYeK0wtKQYsqhL0UHsoIgDmz32apUpBnzTmVTPzSiPS4ESOExJYpYPRhIMcajsg/dhxpcXtza9MetJ+enawwqt8XdO5S/WNCaD73u2v2ZJFyrnfHmtCTyVej7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=AIoD8F90; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-63-112.net.vodafone.it [5.90.63.112])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AEAD145A;
-	Mon, 29 Jul 2024 11:18:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1722244718;
-	bh=NmA4UnYG3ps2ZxJ6n5TCugcQhBXbGtG7XO01jZ7+OdA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=kdd3lrbhI6QMZTnMH+cft7sswBM4wXmUGlsFfQGE2wIBXMisPkOxSFxQUo1AkahAgLlS/BuNhFtWQctNvqRLMbkDmHLbSAwwfovo7eKdrDSAIKdFxiaFRFGnkMVhj2+NAKIooCTwxNP/8fbpNbYJGK5SdyJrJbqcuVmXO0xSyIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TpUEkn8C; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EDF7840E0185;
+	Mon, 29 Jul 2024 09:21:18 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id FMVcALq_nEzJ; Mon, 29 Jul 2024 09:21:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1722244876; bh=WUhgRVSXMYMF2xk9qkzoRJxpqm8e3AsuCfaP30+d2Yg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AIoD8F90Bb20zqs9/yFDFe76dwdlwm1S2Z2KU8aI+bkpkhzZ1UtgiiCmQFd8ZpHXo
-	 dN9TJ/4x5t78sqFC4ZuoTU6XFu2TeuZXOnLMMN+QTZn/Djo9EYuA2oM7uCFdC9skoE
-	 XjEqmfBHVw1AqYe3Ktqrz/crN11BsMcBSsWwUSJg=
-Date: Mon, 29 Jul 2024 11:19:22 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Umang Jain <umang.jain@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	linux-media@vger.kernel.org, Kieran Bingham <kieran.bingham@ideasonboard.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, open list <linux-kernel@vger.kernel.org>, 
-	Tommaso Merciai <tomm.merciai@gmail.com>
-Subject: Re: [PATCH] media: imx335: Fix reset-gpio handling
-Message-ID: <tyo5etjwsfznuk6vzwqmcphbu4pz4lskrg3fjieojq5qc3mg6s@6jbwavmapwmf>
-References: <20240729060535.3227-1-umang.jain@ideasonboard.com>
- <4me3tw572feft3x4dn3ritpr6avss6ebupixrg7qrlsy5z6kny@mqeoqhr7uh2x>
- <f521ed1b-17ce-4ccb-b14e-53fe5fbfee64@ideasonboard.com>
+	b=TpUEkn8CSaWmAI2Y99GiaJDEW6/zcubLU+1g+Y6pIGJM6qvj1gtQv36iKusuR4kFb
+	 5dy/8jVouIpIU4Z3ICVsucvMd21YjTTe64OBJAw3qLOmcEIl2+d8fETIAbZzcBRGzD
+	 0VpC0dFA2OLgFgauVJN3DPNaUfXUlbjOYphcz4CLE8JaFjt0oUn/lTJTzeFIfZgfjY
+	 N1oKGyU2aob3ZfTVe2o8arekrdKvsfW7PKCAY5eqjNq0IRHvouNOoBkTd2igM/pQ6o
+	 OXjBQ1kZ6KPcil8hEDlpMoC3A0UBz63bJdu9Dz4b1sw/IneTxzFRJZ2wyAY6C2r0sf
+	 ZAHC00fKRCChNNbAUBFd3Ku7+ER/IUEKphTj9lQevXSHZTIqewdyam7NWLUD9J+cxb
+	 vPZBNYOjdIxAUMOrihq8jVusZiAanXnu6TyTHBRdbRh3k/y0kCW7FtzKX8M6daAGaR
+	 FaEqD/xZEeiCyX4ncJYa5ndi/iffcKFn5VfN4K5izF/eUUqO9GyYaYf9uyv4A50FDQ
+	 evPkW4loNbK7p6HBpDvpA036tpzcYKvvNsMN30U34L3d7yMRTKePbsNb/ZlLbscyX8
+	 sOJUCowJ02FudEbfeXBh8j4GGW2S3iNgBtupOQPy2s+cU/gkd9mPDLYVUJtDHUAAnJ
+	 KZUUeoTCXJd2MX+8zgvglkkc=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D184D40E019C;
+	Mon, 29 Jul 2024 09:21:08 +0000 (UTC)
+Date: Mon, 29 Jul 2024 11:21:02 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Breno Leitao <leitao@debian.org>
+Cc: jpoimboe@kernel.org, mingo@redhat.com, x86@kernel.org,
+	tglx@linutronix.de, linux-kernel@vger.kernel.org,
+	pawan.kumar.gupta@linux.intel.com
+Subject: Re: [PATCH v3 00/10] x86/bugs: Separate config for mitigations
+Message-ID: <20240729092102.GAZqde_tdP_Ca-chhl@fat_crate.local>
+References: <20240422165830.2142904-1-leitao@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,133 +76,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f521ed1b-17ce-4ccb-b14e-53fe5fbfee64@ideasonboard.com>
+In-Reply-To: <20240422165830.2142904-1-leitao@debian.org>
 
-Hi Umang
+On Mon, Apr 22, 2024 at 09:58:14AM -0700, Breno Leitao wrote:
+> Breno Leitao (10):
+>   x86/bugs: Add a separate config for GDS
+>   x86/bugs: Add a separate config for MDS
+>   x86/bugs: Add a separate config for TAA
+>   x86/bugs: Add a separate config for MMIO Stable Data
+>   x86/bugs: Add a separate config for L1TF
+>   x86/bugs: Add a separate config for RETBLEED
+>   x86/bugs: Add a separate config for Spectre v1
+>   x86/bugs: Add a separate config for SRBDS
+>   x86/bugs: Add a separate config for Spectre V2
+>   x86/bugs: Add a separate config for SSB
+> 
+>  arch/x86/Kconfig           | 117 +++++++++++++++++++++++++++++++++++--
+>  arch/x86/kernel/cpu/bugs.c |  46 +++++++++------
+>  2 files changed, 140 insertions(+), 23 deletions(-)
 
-On Mon, Jul 29, 2024 at 02:18:20PM GMT, Umang Jain wrote:
-> Hi Jacopo
->
-> On 29/07/24 1:42 pm, Jacopo Mondi wrote:
-> > Hi Umang
-> >
-> > On Mon, Jul 29, 2024 at 11:35:35AM GMT, Umang Jain wrote:
-> > > The imx335 reset-gpio is initialised with GPIO_OUT_LOW during probe.
-> > How is this related to this change ? The value to which the GPIO is
-> > initialized to in probe is the physical level.
-> >
-> > What matters is the gpio line active level, which should be described
-> > in the sensor's datasheet. What's the active level of the reset gpio
-> > line ?
->
-> The XCLR active level is "Low" at the init time. It is set to "high" during
-> power-on / normal operation
->
+Ok, rest looks ok. You can send a new version with all feedback addressed.
 
-Sorry for not being clear, but the physical active level is a property
-of the chip, and doesn't depend on the setting at init time made by
-the driver.
+Thx.
 
-According to the imx335 datasheet, the XCLR pin is said to be:
-High: normal
-Low: clear
+-- 
+Regards/Gruss,
+    Boris.
 
-Which I presume means a physical low level puts the chip in "reset"
-state.
-
-> >
-> > > However, the reset-gpio logical value is set to 1 in during power-on
-> > > and to 0 on power-off. This is incorrect as the reset line
-> > > cannot be high during power-on and low during power-off.
-> > If the line is physically high or low only depends on how the active
-> > level is specified in DTS, not by the logical value provided to
-> > gpiod_set_value[_cansleep]()
->
-> True.
->
-> AS far as I can see, the DT binding schema specifies 'reset-gpios:' -
-> without the active level
->
-> The active level is I suppose, intentionally left to the DT implementation ?
-
-Not really a decision of the DT implementation, but rather a property
-of the chip, so I guess the line should be described as active low in
-bindings and initialized accordingly in DTS with the GPIO_ACTIVE_LOW
-flag.
-
->
-> > > Rectify the logical value of reset-gpio so that it is set to
-> > > 0 during power-on and to 1 during power-off.
-> > This is correct, the reset line should be set to logical 0 (inactive)
-> > during power on and to logical 1 (active) when powering off. However
-> > the GPIO active state should have been specified in bindings and as
-> > this driver has been mainline quite some time, this change will break
-> > .dtbo already used succesfully with previous kernel releases.
-> >
-> > Is this an issue ?
->
-> Yes, if the patch is accepted, the Device-tree implementation for IMX335
-> will need to be adjusted accordingly. This can be an issue definitely - but
-> on the other hand, this attempts to rectify a mistake, no?
->
-
-Indeed it does rectify a mistake, but I presume existing dtbos have the
-gpio line described with GPIO_ACTIVE_HIGH, otherwise they wouldn't
-work with the existing driver version. Now, you change (or rather,
-fix) the driver, and existing dtbos in the wild (iow not in the
-mainline code base (*)) won't work anymore. The
-expectation is that we don't break working dtbos with new kernel
-releases, however I'm not sure how much this is actually enforced.
-I'll defer this call to maintainers.
-
-In case it is fine to break existing dtbos, I think a patch to the
-bindings to specify the gpio line active level would be required too ?
-
-Thanks
-  j
-
-(*) as far as I can tell no dts in mainline uses imx335.
-
-> >
-> > > Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
-> > > ---
-> > >   drivers/media/i2c/imx335.c | 6 +++---
-> > >   1 file changed, 3 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
-> > > index cd150606a8a9..878d88b5f476 100644
-> > > --- a/drivers/media/i2c/imx335.c
-> > > +++ b/drivers/media/i2c/imx335.c
-> > > @@ -1171,7 +1171,7 @@ static int imx335_power_on(struct device *dev)
-> > >   	usleep_range(500, 550); /* Tlow */
-> > >
-> > >   	/* Set XCLR */
-> > > -	gpiod_set_value_cansleep(imx335->reset_gpio, 1);
-> > > +	gpiod_set_value_cansleep(imx335->reset_gpio, 0);
-> > >
-> > >   	ret = clk_prepare_enable(imx335->inclk);
-> > >   	if (ret) {
-> > > @@ -1184,7 +1184,7 @@ static int imx335_power_on(struct device *dev)
-> > >   	return 0;
-> > >
-> > >   error_reset:
-> > > -	gpiod_set_value_cansleep(imx335->reset_gpio, 0);
-> > > +	gpiod_set_value_cansleep(imx335->reset_gpio, 1);
-> > >   	regulator_bulk_disable(ARRAY_SIZE(imx335_supply_name), imx335->supplies);
-> > >
-> > >   	return ret;
-> > > @@ -1201,7 +1201,7 @@ static int imx335_power_off(struct device *dev)
-> > >   	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-> > >   	struct imx335 *imx335 = to_imx335(sd);
-> > >
-> > > -	gpiod_set_value_cansleep(imx335->reset_gpio, 0);
-> > > +	gpiod_set_value_cansleep(imx335->reset_gpio, 1);
-> > >   	clk_disable_unprepare(imx335->inclk);
-> > >   	regulator_bulk_disable(ARRAY_SIZE(imx335_supply_name), imx335->supplies);
-> > >
-> > > --
-> > > 2.45.0
-> > >
-> > >
->
+https://people.kernel.org/tglx/notes-about-netiquette
 
