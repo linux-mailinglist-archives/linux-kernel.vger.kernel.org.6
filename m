@@ -1,46 +1,83 @@
-Return-Path: <linux-kernel+bounces-265878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D47B93F72A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:01:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE4593F733
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D33D41F22730
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:01:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3898B20AD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D5B149DE1;
-	Mon, 29 Jul 2024 14:01:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEA52D05D;
-	Mon, 29 Jul 2024 14:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C721514F8;
+	Mon, 29 Jul 2024 14:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cq8TufW6"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD6D2D05D
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722261697; cv=none; b=XRucaU9r2XbgVQ80EFBUWm828XgqlI4Nne0wBcRC7B7Z7aR2kVufDW3jH2eMmvWPmeRHYVbdZrRF0j6RztF6lalh7Un8GCrF+0KeiUAPQDgv/Q3vPPR68+y1q/7yCl3DvOjFPUT5gvAjaEXmqrdkhC01Cv7sTQ42WCfvSkWAiTs=
+	t=1722261736; cv=none; b=sE17qAi/oIn9sDoRHcReYms3j4obsJiNq/ypOVcgdqAMTkjDQ6dYed0rD6anVLFVdGJm4diOk+qSeAHLku0VvvHZpBO6QyCUko0hKxDUkSHOiOUjwcvUWUhV8Z14e01v0eR7ChtO7wH55XfqbcV/zVMOy9jp2l3y4WMsrC8pgIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722261697; c=relaxed/simple;
-	bh=sgjboYkTTk6vU0bvlwcipJgHGWfOKI2kUzAjXUJKn7Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bu7rm+4R+9pn+MqfR+sTM55REnKZG7UU3gyXVW4WKeNL5GyqxuGRcNjf+L6s2cwAVowt/zfwLc1NysSk/T7PkPbaQ/lj0z0iW1aC44dN6JEEKaX8Nv0f0Fpjmq0VMGy5ozj2cBTzwnIRvDSwJSMAj7eJzHFUNiXWjVlhyUSjcBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CABF01007;
-	Mon, 29 Jul 2024 07:01:58 -0700 (PDT)
-Received: from e133380.cambridge.arm.com (e133380.arm.com [10.1.197.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4DB733F64C;
-	Mon, 29 Jul 2024 07:01:32 -0700 (PDT)
-From: Dave Martin <Dave.Martin@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-doc@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Matthew Wilcox <willy@infradead.org>,
-	Mike Rapoport <rppt@kernel.org>
-Subject: [PATCH] docs/core-api: memory-allocation: GFP_NOWAIT doesn't need __GFP_NOWARN
-Date: Mon, 29 Jul 2024 15:01:27 +0100
-Message-Id: <20240729140127.244606-1-Dave.Martin@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722261736; c=relaxed/simple;
+	bh=55XENsnNCk84FLNa+lraTuZ6bEgW732leOZMMeH2J88=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y7OMiFUhCLyLihgCMwfT2GQAQoas0W5whSWQxm1E2clHPDbcCdX/LyWNRzx5KPDfmNsLI7cZ7whpQ8SeAB56CUJPBAW8hGE073pMfxbJiVxbR9y8cOled2PgTZYoT012mepQf+K23MBHK1Dc2SIkaNzOAXId5SosiVEHiIJ4N8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Cq8TufW6; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3687fd09251so1407074f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:02:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722261733; x=1722866533; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BmtHBomoMa6GjrD4GHzO5YGBhc3NcYaKKlfZd4lImTc=;
+        b=Cq8TufW6HY6VjApUxJAiacfY6MGeHxS8O2nQSBlHxtSKCH54cfqxs9eSBmVhma5alY
+         SBGQ1YBcsXZpDz4+nNmw2GqjxJa3SNZgtHJrJm70HSVw/HEiqbUOMX/OSRnhDhsOPogx
+         DckvY8jSafUnmxCMLY1xAa1KuBMp//ndZgti5XJUuKqidDl4Jq1UXb0wuVKhYqWW5sC1
+         /z/ufP8D9e5Y4Uq3d9toMLffcAHMAIZTxvFfBPPRrHiyrVURt4/jzjU3QGtDQeexVsrT
+         gz/FopY20ksusRG+XzHdIJJ9syfTYQ5vh3jYb1aBkgOrlyxvsMAuHX5/0jm3PmKnzqg+
+         7GWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722261733; x=1722866533;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BmtHBomoMa6GjrD4GHzO5YGBhc3NcYaKKlfZd4lImTc=;
+        b=npSkwv9mL9IFzPQZnhO6TRV2U0w6mP52cAJtJuhjxyi+VBu20s9z2voHoZrnnpzHtJ
+         LtojpR3etyIIsvcyzJIt9FtG16tmlJNnEx9ts/lsIu90HiDWhLyNVCUl6iC00xuObwKt
+         1tgX2zqeRSvHFFEXaEFWt1SFRnmPm68Hsf4Uip3WjtoGkJ4ksKD5mb+hhfTh9FR+aE1k
+         cfbqWuP/K+fBjwEEx0gwidnH8X7yKDo34vP1iRMZRrhhnvcJOR03v0PnI5irwgPo34e1
+         WuvmT9xkXOJw25r9NcYF8qHsh4BuGm6/4rGkrV4VadQVuMCi6WcqOikDe+i2MkmopQ5v
+         1DgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWSthYtBfyDdhePOK7XH06FkIOeirWan1Avw+lNrTVhF6itABoyUUTFFpGihUwvm/7RxmMx1/W06QrKBFkBOG19DfwUUDpTZQeU4SO
+X-Gm-Message-State: AOJu0Yz1bEn7oin3SG/3TkdeB9yHO1zgjA/ndSiG0OWCFpXrssbq54Hv
+	S4q05xLqemJpWam0T3Hf1rgQkSHLrFairMTbgCsuE2uhOHCt1p6fz2Z8tPuWTMY=
+X-Google-Smtp-Source: AGHT+IGV0v4M42FoTYGpDxA/2lFq7kTxKgkZ753sgQBpfRFo1ZH43NSLN1QY9dJKGrzBR6PmH5CHCw==
+X-Received: by 2002:adf:fa0f:0:b0:368:3717:10c7 with SMTP id ffacd0b85a97d-36b5cee324fmr4444568f8f.4.1722261721007;
+        Mon, 29 Jul 2024 07:02:01 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b368709fdsm12283163f8f.116.2024.07.29.07.01.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 07:02:00 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Vinod Koul <vkoul@kernel.org>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Sanyog Kale <sanyog.r.kale@intel.com>,
+	Shreyas NC <shreyas.nc@intel.com>,
+	alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] soundwire: stream: fix programming slave ports for non-continous port maps
+Date: Mon, 29 Jul 2024 16:01:57 +0200
+Message-ID: <20240729140157.326450-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,50 +86,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since v6.8 the definition of GFP_NOWAIT has implied __GFP_NOWARN,
-so it is now redundant to add this flag explicitly.
+Two bitmasks in 'struct sdw_slave_prop' - 'source_ports' and
+'sink_ports' - define which ports to program in
+sdw_program_slave_port_params().  The masks are used to get the
+appropriate data port properties ('struct sdw_get_slave_dpn_prop') from
+an array.
 
-Update the docs to match, and emphasise the need for a fallback
-when using GFP_NOWAIT.
+Bitmasks can be non-continuous or can start from index different than 0,
+thus when looking for matching port property for given port, we must
+iterate over mask bits, not from 0 up to number of ports.
 
-Fixes: 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT")
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+This fixes allocation and programming slave ports, when a source or sink
+masks start from further index.
 
+Fixes: f8101c74aa54 ("soundwire: Add Master and Slave port programming")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
+ drivers/soundwire/stream.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Based on: v6.11-rc1
-
-This change also evaporates the apparent typo of __GFP_NOWARN without
-the underscores in the documentation, but that doesn't really feel like
-it merits a dedicated patch.
-
-Not sure if this really merits a Fixes tag, but the docmuentation
-update might as well be picked into trees that have the corresponding
-code change.
-
----
- Documentation/core-api/memory-allocation.rst | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/core-api/memory-allocation.rst b/Documentation/core-api/memory-allocation.rst
-index 8b84eb4bdae7..0f19dd524323 100644
---- a/Documentation/core-api/memory-allocation.rst
-+++ b/Documentation/core-api/memory-allocation.rst
-@@ -45,8 +45,9 @@ here we briefly outline their recommended usage:
-   * If the allocation is performed from an atomic context, e.g interrupt
-     handler, use ``GFP_NOWAIT``. This flag prevents direct reclaim and
-     IO or filesystem operations. Consequently, under memory pressure
--    ``GFP_NOWAIT`` allocation is likely to fail. Allocations which
--    have a reasonable fallback should be using ``GFP_NOWARN``.
-+    ``GFP_NOWAIT`` allocation is likely to fail. Users of this flag need
-+    to provide a suitable fallback to cope with such failures where
-+    appropriate.
-   * If you think that accessing memory reserves is justified and the kernel
-     will be stressed unless allocation succeeds, you may use ``GFP_ATOMIC``.
-   * Untrusted allocations triggered from userspace should be a subject
-
-base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
+index 7aa4900dcf31..f275143d7b18 100644
+--- a/drivers/soundwire/stream.c
++++ b/drivers/soundwire/stream.c
+@@ -1291,18 +1291,18 @@ struct sdw_dpn_prop *sdw_get_slave_dpn_prop(struct sdw_slave *slave,
+ 					    unsigned int port_num)
+ {
+ 	struct sdw_dpn_prop *dpn_prop;
+-	u8 num_ports;
++	unsigned long mask;
+ 	int i;
+ 
+ 	if (direction == SDW_DATA_DIR_TX) {
+-		num_ports = hweight32(slave->prop.source_ports);
++		mask = slave->prop.source_ports;
+ 		dpn_prop = slave->prop.src_dpn_prop;
+ 	} else {
+-		num_ports = hweight32(slave->prop.sink_ports);
++		mask = slave->prop.sink_ports;
+ 		dpn_prop = slave->prop.sink_dpn_prop;
+ 	}
+ 
+-	for (i = 0; i < num_ports; i++) {
++	for_each_set_bit(i, &mask, 32) {
+ 		if (dpn_prop[i].num == port_num)
+ 			return &dpn_prop[i];
+ 	}
 -- 
-2.34.1
+2.43.0
 
 
