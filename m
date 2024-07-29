@@ -1,391 +1,122 @@
-Return-Path: <linux-kernel+bounces-265102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B94D93ECA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:38:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0685093ECA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53B37B21D37
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 04:38:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B06BD281332
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 04:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DEA8289A;
-	Mon, 29 Jul 2024 04:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537388248C;
+	Mon, 29 Jul 2024 04:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JKbdIZ61"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cxe35vGg"
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A85082862
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 04:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722227878; cv=fail; b=MAvG+mhpUU484JJzT55j2ldMPEfnJ22RcrBFnGKNWzDabOlCOAem7p8WJ21CT/3DSQoCMI32gzIldtybZcLTgicA2/uWOmnHF4xx+N6LS4wO1YAg6/dtEnxhiObDWeOCv6FnZawntB/+3PbYaSlYHGlGPW+VvrqmISqWwkAsUFQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722227878; c=relaxed/simple;
-	bh=NTRUmtsosDkmk3YL9QW0mC+7ETASukm6Xfdoz9glQF8=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=NU7Ig/h66wD+XPpWEnkOHB52h7SKUYfLpD/J5U9wQnSnXxeyyVSplFaqUOjotd4zkk8iSficYwauLbvfhReKcQ/8F4hZiC3ecjrFf4fJQaO90NpOqWJhIqb8ycC3vhNrFZNhrRlWa678Ll0Qm4ESfeTZKufe7uGfoGE7oWjj9WM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JKbdIZ61; arc=fail smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722227876; x=1753763876;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   mime-version;
-  bh=NTRUmtsosDkmk3YL9QW0mC+7ETASukm6Xfdoz9glQF8=;
-  b=JKbdIZ61Gg6R3vvWFXyFa0aIMz65/p+4h0fp+R+slOTEZ3DR/ivE11S6
-   YcVbxfWiILNmiXCK5HvAaZZ4S6bCJAYibD++7nHJE+870gQSuTSQho4wD
-   ij1BAcaOAkV6qC+h09ISPV1GsJCmh9xJ5Ruo2aTwhi8fxq0GAbgyyYGJT
-   5IQYLHf//y4FZ0Rz2ZAKVxEmlIQ6SuLxD9jZe8EhOy6hBAZCixWIGUxAZ
-   mC1cjOalk5RCV3TYZtOMixB4DSL2soq8CEWp6wokJoKkol+n2oifG4n4t
-   keB+wvsPGAhXS6s/umzHDsPbuYdn0Qyqa+TlheHJrBzsz8+8j7nV30vbq
-   g==;
-X-CSE-ConnectionGUID: djZKZDzwRLmMVDaFZfbcXw==
-X-CSE-MsgGUID: fHzlfdGiTYqNTLF5Z1smog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="30621756"
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="30621756"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2024 21:37:55 -0700
-X-CSE-ConnectionGUID: gKo8Zo5dTYSsYFo4OjfKOg==
-X-CSE-MsgGUID: SX0JyswSQvysKn4pfpgIGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="58141761"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Jul 2024 21:37:54 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 28 Jul 2024 21:37:54 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 28 Jul 2024 21:37:53 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sun, 28 Jul 2024 21:37:53 -0700
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.44) by
- edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sun, 28 Jul 2024 21:37:53 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=msXb4uxFyJJKSa/g08r+gpsGS2njRA7iuyfECejDcMIxhTfIEjWpEKN1OVVVAzCHrwN06McQkvIk+RjW6Z62P0SLcRzxVgYSFVU9oJj97xKZTGhfp/ODTBP4wX8h1GxSpu6uin/K6u7yN5IhhzTXD6D65NMGVnPeIP+AnD+8O47YQJXNnjj/WHI6MqJ1jbE7Mu8MLMVRkfTCH4XzwUdBcoEU/FiRAIafomIvzH07zotAcn40ZvMbXmMGoisrDl8eLPxrAP4qjcrFjav5S9RetYOkFAOkXQL7amfrflQqLREmuezrZHZwUzO3jbytFQc41MtwAYxKKwf++kZlSNhKWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9nBwq9uTDRw4UR9fuOzfVnU48fjWa9fcZVWWxcTEST8=;
- b=vNWyoPHmipjwIL18zyai32s5Uel2bi61oBPUp57bFyrwkCtN3asDr6+z52GFZHVqdilwvPtnxBaEQGBk/7XfkGNANHL5DDidRJTHZ4TnR0bv8iZwjpUGpTeLdlv/mxQPzVIynPi4UV0HBSa68XLOs70lyIqdaKyhsfUkq+Et9QEt64k4c1a1G+7ekbJf9FK1LEyHlFzIb/88LIi7K+edfBgShEyGlEf8Mt7KrTWK+s9N3LFuHUjHekTBxIm6fK/TJo395EpiTum2Mgxh4oyfnuDgw3ZqBJeMYcByYS+qkLpcix1Jos4FAuTvzwfRzoxuPN+T3UbIRx8TSVxaMQU03g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB8587.namprd11.prod.outlook.com (2603:10b6:a03:568::21)
- by DM4PR11MB7278.namprd11.prod.outlook.com (2603:10b6:8:10a::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Mon, 29 Jul
- 2024 04:37:50 +0000
-Received: from SJ2PR11MB8587.namprd11.prod.outlook.com
- ([fe80::4050:8bc7:b7c9:c125]) by SJ2PR11MB8587.namprd11.prod.outlook.com
- ([fe80::4050:8bc7:b7c9:c125%6]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
- 04:37:49 +0000
-Date: Mon, 29 Jul 2024 12:37:37 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Jann Horn <jannh@google.com>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <kasan-dev@googlegroups.com>,
-	<linux-mm@kvack.org>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, "Alexander
- Potapenko" <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino
-	<vincenzo.frascino@arm.com>, Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, "David
- Rientjes" <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Marco Elver <elver@google.com>,
-	<linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>,
-	<oliver.sang@intel.com>
-Subject: Re: [PATCH v3 2/2] slub: Introduce CONFIG_SLUB_RCU_DEBUG
-Message-ID: <202407291014.2ead1e72-oliver.sang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240725-kasan-tsbrcu-v3-2-51c92f8f1101@google.com>
-X-ClientProxiedBy: SI2PR02CA0010.apcprd02.prod.outlook.com
- (2603:1096:4:194::15) To SJ2PR11MB8587.namprd11.prod.outlook.com
- (2603:10b6:a03:568::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37ADC1B86D6
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 04:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722228089; cv=none; b=BYOWSuzabylmx05T43rh4kmid19pZvTkDO7V4IRTCAe40xyJTCeCMpHgZAmZ/kRijdx2o20Njog/FTYhzxRXpUroE5zOfzahkndlOo11gW0SbtcWmm+/EhtSE5I8M1uyGWO+PZgAZP6b4oG6YPb5PSxa7SuFzsV/Vb8crvvIqNU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722228089; c=relaxed/simple;
+	bh=TxCdXQbt+FYKJwFmb+VaHqTIx+1OvckkeV2C8PBGeC4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FDYRp15ciAoc+TUO+RxIAVq29ohfgrnXJvAf9FZdvQLzkj6Td4a4GlgstCwS74scbEsBNWLrOoX4tUiDpXkm5PMlbXcXeh+ez54oBPwjrI0aZBbBQq5TpC1h8WJiwXej1wb0CfZtoXQpmxLbmrkbXIMGYgo2lPiO2DEPA+lIwuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cxe35vGg; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-493d7455231so442936137.0
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 21:41:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722228087; x=1722832887; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RvMehHFovVJWeBpH4SDKvqU5fsitO2FHmL29ZzK4oEA=;
+        b=Cxe35vGgNjrxosDlwHHSClvnUwSCxctsgHoyepzygqCCVL/dBcLBvg3QVtab4OWB9I
+         bVBgAX+K6KAuwk2VeIKhhG1aq0TuJQaoxxhadcRQAWv40oXpWIvwsenTG8uWV5ip8gQR
+         RfNPcT5IM5fGjDjHwIyFfI3H8oagQR6vXeN4HotQ904A1gyGkLhuJuVk773tCRZCxpxO
+         UkBTk3j+OKBzd5VaHOv4t0Yn1d5im1+qenJpzkSTnowb1cNdztXAnwUmijLCjdPOMs07
+         9+r3AV0Yhm1two/GjSEj3XtF1Bp8zghkSVZIWcHoei1I2MVVrAHmUes27pte6ymBlVNC
+         wP/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722228087; x=1722832887;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RvMehHFovVJWeBpH4SDKvqU5fsitO2FHmL29ZzK4oEA=;
+        b=CvaqLaIF02AnDaOXycsH7Kl6S8vIuCqvHlJIx0kN/7Y7FAXJKj856CkL4UwJsLe34t
+         DvwtlNxKySgS3l46fSf0z2cv19OB0fNjX9XotURhVFGSTZjmQEMIBmu4cz0xPgjGtzWx
+         uGtRRhjBub69JTkV0S+s0DtxsneREsw5G8VHL16IitZVfdjuGn7Yp4tl5vFkZ0/UMPYG
+         oRDJpnjsf5y3YliXmis4XY2Otr8PUapqZuGpRKXCNxPe7WNAiRae20JuV3WwqFaxVGeo
+         CHgEZses2UrWHjGBMxEqzTwiwoEPkNyzO4J/HJ4hWIy0uhOlfR5EAp7ZKPSVkp2EDR6a
+         3rxA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7gRdHlQs+MmnyevZai7oJAzezM1EV9ExtkFNE8pxMNJ4R4H57xUfOyTDJEujnicVGhmAru+bPyk5x1BRy59aaWFWRra0Xk4CX4LGL
+X-Gm-Message-State: AOJu0YxtUYERXW8DcPLopO98Jeu7r9qIQPHqH/7GHEL8FY4GacTEBMrr
+	fGlFAd36lo4+X03UWXDi0sGTNDks0BnqwKtYhZJ4DbL3OhQdXtkvPtVvQD0unth+Qiv8m/gr7lu
+	dSpcjng23h+Y27zB/zfvJULf2U68=
+X-Google-Smtp-Source: AGHT+IEGUlbD6eLPUKNik9e3P1JeR0U0VL6y3soem8DsRydlwQrTBk+IkxA8QN5IelQ2sITl6PKNPtCOSCRgj+MVrEc=
+X-Received: by 2002:a05:6102:3f0e:b0:493:e585:6ce3 with SMTP id
+ ada2fe7eead31-493fadd965emr7177806137.31.1722228087038; Sun, 28 Jul 2024
+ 21:41:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB8587:EE_|DM4PR11MB7278:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0dc38930-9f52-420d-eaa9-08dcaf88335e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?kdQJmAZhiG4XGxcK/MeHuYGD8iJ2Y7iEJbcgwcr6XbLKAeRxvTu36V9XGmoH?=
- =?us-ascii?Q?7IoHfORWeIt86m8PcnkmdOZAgPxjOxOuCUx5PYvQHHjQDIsdS7mUeB10Di+9?=
- =?us-ascii?Q?Gn348taG/3Xp8ugH+yJ9fIzLAa+ZdnlQRnHXAwyiHlUMi07RKfEr2weL+txF?=
- =?us-ascii?Q?tdx2vCFKkaEhnOjzD8ZDjRT4OYhanozy81kLcc5gHZjD3nfwvuxSBr/w89eG?=
- =?us-ascii?Q?TUboGid4LxtGxNkjBWeoUExII4lLzmK6elGmMUodZ2ZYUUavS+pSfAoNRxCf?=
- =?us-ascii?Q?0FPqYwOmXkb8rl1s08DkE6w7Ci9/oyud5IeZd/9uWgh4Al4CauVtVDXegaKu?=
- =?us-ascii?Q?MiQtWLoFdcT2J6Er5ajtY1IHA+CxZ2yLz/sDaqCaO3HdZzxiMPkGeDWfe+ok?=
- =?us-ascii?Q?JB6l8grbgBVauwiGkqj3xbFNVKl29fI+7U1aRTLQVBiNmPRxED+sxe/RRfCF?=
- =?us-ascii?Q?KZ5KguaHjogKTjL6C6aoqR+s5t5GvB3FaeIXWtBlJeXD0k1nT0AX6sU1ZfbN?=
- =?us-ascii?Q?4HWx20aHV++EKHJb3//w9LI3gRYcCgDMlXdW7KpcndO74WiGV0sX6yJqcN/i?=
- =?us-ascii?Q?WD28lHuZACZkHSsumCPxyQe9MlGN0m7Op0BLXzX3I1JP4DSO3XKILvuu+LUE?=
- =?us-ascii?Q?AThCbgLIoqG5zKqVRiEXMhhYs/TKYedQeoWt+T3BRm8PrVM74W+te0VLWOOc?=
- =?us-ascii?Q?SbNRb4Jp/QECXG9uO5oICLCjz9yQK1VLZGYShFAI2UHrkTO1Ki48tHkSmdOn?=
- =?us-ascii?Q?9/fU2KYig7kiJdoYjEwJofpAgVlnovccI2w6XmaSaTynY1LOAqQPN4MO1I35?=
- =?us-ascii?Q?lQQvPBlG20d9CW90PwikrM+FG9wN/0CFNLdvCtH0gXjySZJYJ2JuWNEQs8u7?=
- =?us-ascii?Q?dA8k1c6dRLt/xTDZrdT8V8Evva1ivP64Rbp1Hiz0YOzATCMG5vhB8RIKIUPJ?=
- =?us-ascii?Q?MhuPT40vkQWNgL7OFF1wwBEo3F1Q5Tv4ZbcGHPx2pjR/ujjZ0pic0w2biVzl?=
- =?us-ascii?Q?ydQDUGDaUeoQrbdAonPjQQhwgOh7hbre3/dDId/uCzBasn5a1whbCuzu5d0v?=
- =?us-ascii?Q?szPGKyVrMUXSdp+3yJsERnqLR+V3+didxN9wLc1Nbe1Qxse3aLXBy6rW6xmZ?=
- =?us-ascii?Q?ww/j4S6nCUjh1oEGbR6VYwYTW7XhzPZvP43NnW6gbymQdEiWztDtauSdpPly?=
- =?us-ascii?Q?fxlA2qGgllVi2FxrYqk4rQwQcHXAlcg3f/180wCfQ8dpIaaM4CSd7N/MLjPy?=
- =?us-ascii?Q?UU1hy59NRB/LBJkEdwEnuTJKA5dk6kg11Ne0xdPswh/8/kLqaBj5qTs14GZn?=
- =?us-ascii?Q?vI69sUpY0dhSMYrATIQWrSN8?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB8587.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?v/hGKsIVDZdS/1+AoOmt0dMcU8KNaLfQO8cCSLz7n8n+U09MZ6x17si7uPXV?=
- =?us-ascii?Q?LGM/nONoBqb8iJw2MD9ummWnQLCTojegHC9+KZHEzBGayj4tS/eZvU8vNdEe?=
- =?us-ascii?Q?r7bBrkGXRHF22Gx9Vk5l5QFYyuYyGoBiEjOUW+1Fl06GBZHgSYY07FpZYj/O?=
- =?us-ascii?Q?BHbmZpKByqS4ud/OpaPnG3bHEjrlLgP/XI6HYbiFjMZ8b+7A1Xqc8/E1AwCH?=
- =?us-ascii?Q?4LyT5LYgZIJ6L++IK0GltZJwqoG6CLzgL29HQE9davCdJVF2oIEUZ99vsr+0?=
- =?us-ascii?Q?/bDmMKU1wQ89Fb87FPvuhDzHW57yA+fvS78UTszyM2unme2crzWFAscOsPF2?=
- =?us-ascii?Q?0w6klNWgZZwmwA1wXr2r6szHqorulxDcC7lB9X4J9nv6kRcNdDfvXZ1qtdST?=
- =?us-ascii?Q?lh2Il9Db7QHhczyRkys9Z5EoddQNtQDjlPxCZRS8I/7ojbOeFdyQGIZSggie?=
- =?us-ascii?Q?WyMaekTuCJNTb6O+0XjypUxqkGaKHUsLrHiYudjWsFIj8Uktp3Yt76fHpxM8?=
- =?us-ascii?Q?KLA4fOhMzY3FKywH3ngeaqqXumvwOHxe52MTNcTErW91UHiGGd9xbJaQDx/J?=
- =?us-ascii?Q?seh0YBjo0e+ixkSwu6ussHhnUMBsDm+H2F6RQQnhHfR82X+h6fOnXcKDJpp3?=
- =?us-ascii?Q?DvwPriuUpVatZWZhrW0v/qBwlPE2WT7fIm29iRpXeRcRqFvMeUT2N4EPm+3i?=
- =?us-ascii?Q?gnnfHNS5eFJkPmvHyCZEVmlV0Q8hDG3wphaoJi8YOv88mDL12J0LCFMWqNS5?=
- =?us-ascii?Q?53WXlp/ON/OIk2y8ysOTo6Er46X+KQ1pwStxz2o7syqIljtwQO8xzBUu/Swh?=
- =?us-ascii?Q?AdaM2y9VKYDyDwxOSw6EFUzaGQWDYTO2g5vdhfSaEvtxy8oyb49iXkm9ERDF?=
- =?us-ascii?Q?ZkwNXgVKwiSPvZjmZpGLjco2PerWOQb7pvIzR4RMuOZcsUzRSSDY9KLm8bGm?=
- =?us-ascii?Q?ohrRzmTmO8CPvuz7cGQBaBQRIa8J1kigln9W+NQAxa5CQwcl46XRZqQW/Uv2?=
- =?us-ascii?Q?tzov9VvQ5YdoLYvQ5L4gpm8b87T239EpP1aiCOUPvysIWtT5Fm08cZy7ZoJA?=
- =?us-ascii?Q?aRNaOEqlymcLqQoJajGa1LDLnwUevNlEKGCGMvkyFwyjvQRJLFJ3WTxzQhah?=
- =?us-ascii?Q?dgH8ab9EgejsrJi4MVEA61OsYXYxhyBhsZWMvJqj/Mf9XJbX9j8GK+I3UYLe?=
- =?us-ascii?Q?2DoAsxNkqUj38BdUg58OeV5RT1knRo5jLjZujnYug2aNsQdBPhd3za7ISMjp?=
- =?us-ascii?Q?XUWcykjzV4Wp/K7KQq/X9+hnu8iIy/VwR0TvPOmjqroZgH/IaZGUWf/sMUAk?=
- =?us-ascii?Q?XwFVazZrCHcBpckoH+EmKHahXEkZ8nJDuRh+gC97QDfcRnTnsMBRZI/cHEro?=
- =?us-ascii?Q?9znfjorn3tzQxti/TLWp/7MAPBCpD8Z9qexBB6H6+it6km52/X4RX+TcNmPv?=
- =?us-ascii?Q?X8fINkbQQSPaT2Qr8djJgSb6rHXH5VmP9G3FZNSnFdD1dWLozU5+gjFnVugl?=
- =?us-ascii?Q?KLbxAied0LsgdGbRuDvQ5kVLziPYRWlNLWDLO4XKlqa7E2Png+luCHh0fq0B?=
- =?us-ascii?Q?1pXkoMwnE9emnc51VrvIcT+++NBH+oKLQRrNfIu7?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0dc38930-9f52-420d-eaa9-08dcaf88335e
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB8587.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 04:37:49.5642
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9vlzBCSp9/InHluLmPzQ9mDkDnco2Qw479PTLSqyun8/q4sM0gX0Qrc/uIf6PIfhauo27gNFymIHdnB/VtwkHQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7278
-X-OriginatorOrg: intel.com
+References: <20240726094618.401593-1-21cnbao@gmail.com> <20240726094618.401593-4-21cnbao@gmail.com>
+ <ZqcRqxGaJsAwZD3C@casper.infradead.org>
+In-Reply-To: <ZqcRqxGaJsAwZD3C@casper.infradead.org>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 29 Jul 2024 16:41:16 +1200
+Message-ID: <CAGsJ_4xQkPtw1Cw=2mcRjpTdp-c9tSFCuW_U6JKzJ3zHGYQWrA@mail.gmail.com>
+Subject: Re: [PATCH v5 3/4] mm: support large folios swapin as a whole for
+ zRAM-like swapfile
+To: Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, ying.huang@intel.com, 
+	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com, 
+	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
+	kasong@tencent.com, linux-kernel@vger.kernel.org, mhocko@suse.com, 
+	minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
+	senozhatsky@chromium.org, shakeel.butt@linux.dev, shy828301@gmail.com, 
+	surenb@google.com, v-songbaohua@oppo.com, xiang@kernel.org, 
+	yosryahmed@google.com, Chuanhua Han <hanchuanhua@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jul 29, 2024 at 3:51=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Fri, Jul 26, 2024 at 09:46:17PM +1200, Barry Song wrote:
+> > -                     folio =3D vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0=
+,
+> > -                                             vma, vmf->address, false)=
+;
+> > +                     folio =3D alloc_swap_folio(vmf);
+> >                       page =3D &folio->page;
+>
+> This is no longer correct.  You need to set 'page' to the precise page
+> that is being faulted rather than the first page of the folio.  It was
+> fine before because it always allocated a single-page folio, but now it
+> must use folio_page() or folio_file_page() (whichever has the correct
+> semantics for you).
+>
+> Also you need to fix your test suite to notice this bug.  I suggest
+> doing that first so that you know whether you've got the calculation
+> correct.
 
+I don't understand why the code is designed in the way the page
+is the first page of this folio. Otherwise, we need lots of changes
+later while mapping the folio in ptes and rmap.
 
-Hello,
+>
 
-kernel test robot noticed "WARNING:possible_circular_locking_dependency_detected" on:
-
-commit: 17049be0e1bcf0aa8809faf84f3ddd8529cd6c4c ("[PATCH v3 2/2] slub: Introduce CONFIG_SLUB_RCU_DEBUG")
-url: https://github.com/intel-lab-lkp/linux/commits/Jann-Horn/kasan-catch-invalid-free-before-SLUB-reinitializes-the-object/20240726-045709
-patch link: https://lore.kernel.org/all/20240725-kasan-tsbrcu-v3-2-51c92f8f1101@google.com/
-patch subject: [PATCH v3 2/2] slub: Introduce CONFIG_SLUB_RCU_DEBUG
-
-in testcase: rcutorture
-version: 
-with following parameters:
-
-	runtime: 300s
-	test: cpuhotplug
-	torture_type: tasks-rude
-
-
-
-compiler: clang-18
-test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-
-(please refer to attached dmesg/kmsg for entire log/backtrace)
-
-
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202407291014.2ead1e72-oliver.sang@intel.com
-
-
-[  136.014616][    C1] WARNING: possible circular locking dependency detected
-[  136.014618][    C1] 6.10.0-00002-g17049be0e1bc #1 Not tainted
-[  136.014621][    C1] ------------------------------------------------------
-[  136.014622][    C1] swapper/1/0 is trying to acquire lock:
-[ 136.014625][ C1] ffffffff868f04a0 (console_owner){-.-.}-{0:0}, at: console_flush_all (include/linux/rcupdate.h:? include/linux/srcu.h:232 kernel/printk/printk.c:286 kernel/printk/printk.c:2971) 
-[  136.014668][    C1]
-[  136.014668][    C1] but task is already holding lock:
-[ 136.014670][ C1] ffff888102658518 (&n->list_lock){-.-.}-{2:2}, at: free_to_partial_list (mm/slub.c:?) 
-[  136.014685][    C1]
-[  136.014685][    C1] which lock already depends on the new lock.
-[  136.014685][    C1]
-[  136.014687][    C1]
-[  136.014687][    C1] the existing dependency chain (in reverse order) is:
-[  136.014688][    C1]
-[  136.014688][    C1] -> #4 (&n->list_lock){-.-.}-{2:2}:
-[ 136.014694][ C1] _raw_spin_lock_irqsave (include/linux/spinlock_api_smp.h:110 kernel/locking/spinlock.c:162) 
-[ 136.014704][ C1] ___slab_alloc (mm/slub.c:2717) 
-[ 136.014709][ C1] kmem_cache_alloc_noprof (mm/slub.c:3797 mm/slub.c:3850 mm/slub.c:4030 mm/slub.c:4049) 
-[ 136.014712][ C1] debug_objects_fill_pool (lib/debugobjects.c:168) 
-[ 136.014717][ C1] debug_object_activate (lib/debugobjects.c:492 lib/debugobjects.c:706) 
-[ 136.014721][ C1] enqueue_hrtimer (arch/x86/include/asm/jump_label.h:27 include/linux/jump_label.h:207 include/trace/events/timer.h:222 kernel/time/hrtimer.c:479 kernel/time/hrtimer.c:1085) 
-[ 136.014726][ C1] hrtimer_start_range_ns (kernel/time/hrtimer.c:1302) 
-[ 136.014730][ C1] __enqueue_rt_entity (kernel/sched/rt.c:122) 
-[ 136.014735][ C1] enqueue_task_rt (kernel/sched/rt.c:1453) 
-[ 136.014738][ C1] __sched_setscheduler (kernel/sched/core.c:?) 
-[ 136.014742][ C1] sched_set_fifo (kernel/sched/core.c:8024) 
-[ 136.014745][ C1] drm_vblank_worker_init (drivers/gpu/drm/drm_vblank_work.c:?) 
-[ 136.014750][ C1] drm_vblank_init (drivers/gpu/drm/drm_vblank.c:555) 
-[ 136.014755][ C1] vkms_init (drivers/gpu/drm/vkms/vkms_drv.c:210) 
-[ 136.014759][ C1] do_one_initcall (init/main.c:1267) 
-[ 136.014762][ C1] do_initcall_level (init/main.c:1328) 
-[ 136.014766][ C1] do_initcalls (init/main.c:1342) 
-[ 136.014769][ C1] kernel_init_freeable (init/main.c:1582) 
-[ 136.014772][ C1] kernel_init (init/main.c:1469) 
-[ 136.014776][ C1] ret_from_fork (arch/x86/kernel/process.c:153) 
-[ 136.014783][ C1] ret_from_fork_asm (arch/x86/entry/entry_64.S:257) 
-[  136.014786][    C1]
-[  136.014786][    C1] -> #3 (hrtimer_bases.lock){-.-.}-{2:2}:
-[ 136.014792][ C1] _raw_spin_lock_irqsave (include/linux/spinlock_api_smp.h:110 kernel/locking/spinlock.c:162) 
-[ 136.014798][ C1] hrtimer_start_range_ns (kernel/time/hrtimer.c:?) 
-[ 136.014801][ C1] rpm_suspend (drivers/base/power/runtime.c:?) 
-[ 136.014807][ C1] rpm_resume (drivers/base/power/runtime.c:?) 
-[ 136.014810][ C1] pm_runtime_work (drivers/base/power/runtime.c:?) 
-[ 136.014814][ C1] process_scheduled_works (kernel/workqueue.c:?) 
-[ 136.014818][ C1] worker_thread (include/linux/list.h:373 kernel/workqueue.c:947 kernel/workqueue.c:3410) 
-[ 136.014820][ C1] kthread (kernel/kthread.c:391) 
-[ 136.014824][ C1] ret_from_fork (arch/x86/kernel/process.c:153) 
-[ 136.014826][ C1] ret_from_fork_asm (arch/x86/entry/entry_64.S:257) 
-[  136.014832][    C1]
-[  136.014832][    C1] -> #2 (&dev->power.lock){-.-.}-{2:2}:
-[ 136.014837][ C1] _raw_spin_lock_irqsave (include/linux/spinlock_api_smp.h:110 kernel/locking/spinlock.c:162) 
-[ 136.014840][ C1] __pm_runtime_resume (drivers/base/power/runtime.c:1171) 
-[ 136.014843][ C1] __uart_start (drivers/tty/serial/serial_core.c:149) 
-[ 136.014849][ C1] uart_write (include/linux/spinlock.h:406 include/linux/serial_core.h:669 drivers/tty/serial/serial_core.c:634) 
-[ 136.014851][ C1] n_tty_write (drivers/tty/n_tty.c:574 drivers/tty/n_tty.c:2389) 
-[ 136.014855][ C1] file_tty_write (drivers/tty/tty_io.c:1021) 
-[ 136.014859][ C1] do_iter_readv_writev (fs/read_write.c:742) 
-[ 136.014864][ C1] vfs_writev (fs/read_write.c:971) 
-[ 136.014867][ C1] do_writev (fs/read_write.c:1018) 
-[ 136.014870][ C1] __do_fast_syscall_32 (arch/x86/entry/common.c:?) 
-[ 136.014874][ C1] do_fast_syscall_32 (arch/x86/entry/common.c:411) 
-[ 136.014877][ C1] entry_SYSENTER_compat_after_hwframe (arch/x86/entry/entry_64_compat.S:127) 
-[  136.014883][    C1]
-[  136.014883][    C1] -> #1 (&port_lock_key){-.-.}-{2:2}:
-[ 136.014888][ C1] _raw_spin_lock_irqsave (include/linux/spinlock_api_smp.h:110 kernel/locking/spinlock.c:162) 
-[ 136.014891][ C1] serial8250_console_write (include/linux/serial_core.h:? drivers/tty/serial/8250/8250_port.c:3352) 
-[ 136.014894][ C1] console_flush_all (kernel/printk/printk.c:2917) 
-[ 136.014897][ C1] console_unlock (kernel/printk/printk.c:3048) 
-[ 136.014900][ C1] vprintk_emit (kernel/printk/printk.c:?) 
-[ 136.014903][ C1] _printk (kernel/printk/printk.c:2376) 
-[ 136.014907][ C1] register_console (kernel/printk/printk.c:3537) 
-[ 136.014910][ C1] univ8250_console_init (drivers/tty/serial/8250/8250_core.c:?) 
-[ 136.014914][ C1] console_init (arch/x86/include/asm/jump_label.h:27 include/linux/jump_label.h:207 include/trace/events/initcall.h:48 kernel/printk/printk.c:3728) 
-[ 136.014919][ C1] start_kernel (init/main.c:1039) 
-[ 136.014922][ C1] x86_64_start_reservations (??:?) 
-[ 136.014926][ C1] x86_64_start_kernel (??:?) 
-[ 136.014931][ C1] common_startup_64 (arch/x86/kernel/head_64.S:421) 
-[  136.014935][    C1]
-[  136.014935][    C1] -> #0 (console_owner){-.-.}-{0:0}:
-[ 136.014940][ C1] __lock_acquire (kernel/locking/lockdep.c:3135) 
-[ 136.014947][ C1] lock_acquire (kernel/locking/lockdep.c:5754) 
-[ 136.014951][ C1] console_flush_all (kernel/printk/printk.c:1873) 
-[ 136.014955][ C1] console_unlock (kernel/printk/printk.c:3048) 
-[ 136.014958][ C1] vprintk_emit (kernel/printk/printk.c:?) 
-[ 136.014961][ C1] _printk (kernel/printk/printk.c:2376) 
-[ 136.014964][ C1] slab_bug (mm/slub.c:1030) 
-[ 136.014968][ C1] slab_err (mm/slub.c:967 mm/slub.c:1131) 
-[ 136.014970][ C1] free_to_partial_list (mm/slub.c:3337) 
-[ 136.014974][ C1] slab_free_after_rcu_debug (mm/slub.c:? mm/slub.c:4528) 
-[ 136.014978][ C1] rcu_do_batch (include/linux/rcupdate.h:339 kernel/rcu/tree.c:2537) 
-[ 136.014984][ C1] rcu_core (kernel/rcu/tree.c:2811) 
-[ 136.014987][ C1] handle_softirqs (arch/x86/include/asm/jump_label.h:27 include/linux/jump_label.h:207 include/trace/events/irq.h:142 kernel/softirq.c:555) 
-[ 136.014991][ C1] __irq_exit_rcu (kernel/softirq.c:617 kernel/softirq.c:639) 
-[ 136.014994][ C1] irq_exit_rcu (kernel/softirq.c:651) 
-[ 136.014996][ C1] sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1043) 
-[ 136.015000][ C1] asm_sysvec_apic_timer_interrupt (arch/x86/include/asm/idtentry.h:702) 
-[ 136.015003][ C1] default_idle (arch/x86/include/asm/irqflags.h:37 arch/x86/include/asm/irqflags.h:72 arch/x86/kernel/process.c:743) 
-[ 136.015007][ C1] default_idle_call (include/linux/cpuidle.h:143 kernel/sched/idle.c:118) 
-[ 136.015010][ C1] do_idle (kernel/sched/idle.c:? kernel/sched/idle.c:332) 
-[ 136.015014][ C1] cpu_startup_entry (kernel/sched/idle.c:429) 
-[ 136.015017][ C1] start_secondary (arch/x86/kernel/smpboot.c:313) 
-[ 136.015021][ C1] common_startup_64 (arch/x86/kernel/head_64.S:421) 
-[  136.015024][    C1]
-[  136.015024][    C1] other info that might help us debug this:
-[  136.015024][    C1]
-[  136.015025][    C1] Chain exists of:
-[  136.015025][    C1]   console_owner --> hrtimer_bases.lock --> &n->list_lock
-[  136.015025][    C1]
-[  136.015031][    C1]  Possible unsafe locking scenario:
-[  136.015031][    C1]
-[  136.015032][    C1]        CPU0                    CPU1
-[  136.015033][    C1]        ----                    ----
-[  136.015034][    C1]   lock(&n->list_lock);
-[  136.015037][    C1]                                lock(hrtimer_bases.lock);
-[  136.015039][    C1]                                lock(&n->list_lock);
-[  136.015042][    C1]   lock(console_owner);
-[  136.015044][    C1]
-[  136.015044][    C1]  *** DEADLOCK ***
-[  136.015044][    C1]
-[  136.015045][    C1] 4 locks held by swapper/1/0:
-[ 136.015048][ C1] #0: ffffffff868fb5a0 (rcu_callback){....}-{0:0}, at: rcu_do_batch (kernel/rcu/tree.c:?) 
-[ 136.015057][ C1] #1: ffff888102658518 (&n->list_lock){-.-.}-{2:2}, at: free_to_partial_list (mm/slub.c:?) 
-[ 136.015065][ C1] #2: ffffffff864ffd60 (console_lock){+.+.}-{0:0}, at: _printk (kernel/printk/printk.c:2376) 
-[ 136.015075][ C1] #3: ffffffff864ff950 (console_srcu){....}-{0:0}, at: console_flush_all (include/linux/rcupdate.h:? include/linux/srcu.h:232 kernel/printk/printk.c:286 kernel/printk/printk.c:2971) 
-[  136.015086][    C1]
-[  136.015086][    C1] stack backtrace:
-[  136.015088][    C1] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 6.10.0-00002-g17049be0e1bc #1
-[  136.015093][    C1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[  136.015099][    C1] Call Trace:
-[  136.015102][    C1]  <IRQ>
-[ 136.015104][ C1] dump_stack_lvl (lib/dump_stack.c:116) 
-[ 136.015109][ C1] check_noncircular (kernel/locking/lockdep.c:?) 
-[ 136.015115][ C1] __lock_acquire (kernel/locking/lockdep.c:3135) 
-[ 136.015126][ C1] lock_acquire (kernel/locking/lockdep.c:5754) 
-[ 136.015133][ C1] ? console_flush_all (include/linux/rcupdate.h:? include/linux/srcu.h:232 kernel/printk/printk.c:286 kernel/printk/printk.c:2971) 
-[ 136.015138][ C1] ? do_raw_spin_unlock (arch/x86/include/asm/atomic.h:23) 
-[ 136.015143][ C1] console_flush_all (kernel/printk/printk.c:1873) 
-[ 136.015147][ C1] ? console_flush_all (include/linux/rcupdate.h:? include/linux/srcu.h:232 kernel/printk/printk.c:286 kernel/printk/printk.c:2971) 
-[ 136.015152][ C1] ? console_flush_all (include/linux/rcupdate.h:? include/linux/srcu.h:232 kernel/printk/printk.c:286 kernel/printk/printk.c:2971) 
-[ 136.015158][ C1] console_unlock (kernel/printk/printk.c:3048) 
-[ 136.015163][ C1] vprintk_emit (kernel/printk/printk.c:?) 
-[ 136.015168][ C1] _printk (kernel/printk/printk.c:2376) 
-[ 136.015173][ C1] ? __asan_memcpy (mm/kasan/shadow.c:105) 
-[ 136.015178][ C1] slab_bug (mm/slub.c:1030) 
-[ 136.015184][ C1] slab_err (mm/slub.c:967 mm/slub.c:1131) 
-[ 136.015192][ C1] free_to_partial_list (mm/slub.c:3337) 
-[ 136.015197][ C1] ? slab_free_after_rcu_debug (mm/slub.c:4423 mm/slub.c:4528) 
-[ 136.015202][ C1] ? rcu_do_batch (include/linux/rcupdate.h:339 kernel/rcu/tree.c:2537) 
-[ 136.015206][ C1] slab_free_after_rcu_debug (mm/slub.c:? mm/slub.c:4528) 
-[ 136.015211][ C1] ? rcu_do_batch (kernel/rcu/tree.c:?) 
-[ 136.015214][ C1] ? __cfi_slab_free_after_rcu_debug (mm/slub.c:4508) 
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20240729/202407291014.2ead1e72-oliver.sang@intel.com
-
-
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Thanks
+Barry
 
