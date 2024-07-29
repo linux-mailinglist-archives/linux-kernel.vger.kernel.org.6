@@ -1,55 +1,57 @@
-Return-Path: <linux-kernel+bounces-266192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD3B93FC32
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:17:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 496D393FC34
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E0052836EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:17:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6693B22F50
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F7C183098;
-	Mon, 29 Jul 2024 17:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FAA186E29;
+	Mon, 29 Jul 2024 17:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hqTKBPlh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+JLfyg3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8990A17CA1A;
-	Mon, 29 Jul 2024 17:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7393B15F32E;
+	Mon, 29 Jul 2024 17:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722273437; cv=none; b=rqUVspJBYFRf91/oqmD78cF7EtmzeNBAQD0erbprl6Tq2irWsA0YRYKwZRBEXEfJ5oIKIBvMrVvKYHHYj+6CRNXonYSYm81CFf1tFD5Jag0p2fkq2/1UATSspAUAXhQ6CoVQTm6N2FhrCz13FEP0or29QJoswKxnLZYpma9Lt2M=
+	t=1722273439; cv=none; b=ikkbu6EDmH0tkwChxQ6zP6TfAu38gVhic6jX/2PVQGvNB68nMt1hHcAl2wIgUVnPT2WtHmDO+Nkqty5GCPPlQ3wbUTFnrhdrNxb6ZyQ0Oqo2hIU1Nnge7SFX/XoTJd5c2EEP6/mmpbqc6uLeg52v2Zkb/EzxRV3HAg9srflhzZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722273437; c=relaxed/simple;
-	bh=7xDGXC/XNZ2t3fcsCAVbIoBM3ZgG2zfflMxd9N1oaFM=;
+	s=arc-20240116; t=1722273439; c=relaxed/simple;
+	bh=ub2XiA1hn6+BNDRtOQD/sPOjh2gGpJW/+F3Q1VdfMhI=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=mQd09ajkBnLB8hv8pO7npFmkaM3Tu1zxJ6tj8bxhetRwSeM3mQGgNE/IkZdbzV9fdvtt9F2N8eI34mQp6t/UFDnI/1OvdQNZcpZGYoOr7TWFckvVKuKMQnbRfJf8fc8bN3pZ8yeqysdRSZfPJQvjsdJPCLtu3SYnEc8POz5roo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hqTKBPlh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 830D7C4AF0A;
-	Mon, 29 Jul 2024 17:17:15 +0000 (UTC)
+	 MIME-Version:Content-Type; b=l8urUQwAPviA9X2wUG/pO4p2AyH3MqpMHJQsQyXsr45/HnFVTMDHvIKvB6fqJ0nmLrD/BO55Xv75/pp8f+uJA88bDLe2Gi7pqwap8MlFQQmEMc56TE/s6Fh9kSM02R34vdkQjrMg1ZN3vhj5Pm5l8VAvesszSMsoixjR4OnGvBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+JLfyg3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 918A5C32786;
+	Mon, 29 Jul 2024 17:17:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722273437;
-	bh=7xDGXC/XNZ2t3fcsCAVbIoBM3ZgG2zfflMxd9N1oaFM=;
+	s=k20201202; t=1722273439;
+	bh=ub2XiA1hn6+BNDRtOQD/sPOjh2gGpJW/+F3Q1VdfMhI=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=hqTKBPlh0aJB4aqVi2pavqZ3Ec8lhU1VgkKJdNTbwJpornn3H1e5Pgj/8h0VdTUKO
-	 WFJeOoTeco0eU7GC0MVF9CaXmngUIgR1HlWNQMNeCd5pYHmJtZNgzZsX7lt0jNcudw
-	 vdXuS6l6SqxNCU9BFie9h92H2Y4B8E/3ot6g9EKXZ0WdfGVWiaLjYA/3rKbOi+Sj3c
-	 cSKnjtVquntHDNEsvrHDcNXQu2FIXw55aeFDRfhJI/xAk9GrHdAonNZPAdRVetKJyL
-	 0qyI/+nha8eVgS9GLghpwc/E/X2bBtJRCFHqGM/2qyMtA0qoaynv8YniBMSPX8CZkz
-	 D9cxFwSGyIA1A==
+	b=X+JLfyg3c2NX3tX7wRg2IeKF7YlAao4mH63kBi8XW7YE005iUnHJ1n3NfGGj8+ZPW
+	 biDFN3tcPTnQB1r6/L3LU/RiPfu3mtLHsmm5P3cWk3jmND/9sEoM831lSQ02wK7Dg/
+	 xNfBnyRIOL2RjcStQwfSMDCCYJib+tTSjW8EHokLMl5/OGkMnUvX56MHI9o/eQrQpV
+	 xIkUEOOyFi3c497IOHyvNdNUtrIwQnPaYGuS2kg+PN0GNYNDN8cn7CTkcreU6tBuJK
+	 QAbN1YFm954ZdEMRMOCZVAJODbeTKI7g27Ba+Ni8uhafUyZ3OvRF9VUwEsniXVaJOO
+	 WIDHG+j882qkA==
 From: Mark Brown <broonie@kernel.org>
-To: oder_chiou@realtek.com, lgirdwood@gmail.com, perex@perex.cz, 
- tiwai@suse.com, derek.fang@realtek.com, Ma Ke <make24@iscas.ac.cn>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240717115436.3449492-1-make24@iscas.ac.cn>
-References: <20240717115436.3449492-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] ASoC: rt5682s: Return devm_of_clk_add_hw_provider to
- transfer the error
-Message-Id: <172227343526.109775.10900399135589562597.b4-ty@kernel.org>
-Date: Mon, 29 Jul 2024 18:17:15 +0100
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240717134729.51661-1-animeshagarwal28@gmail.com>
+References: <20240717134729.51661-1-animeshagarwal28@gmail.com>
+Subject: Re: [PATCH v2] ASoC: dt-bindings: ti,pcm512x: Convert to dtschema
+Message-Id: <172227343732.109775.15565180087385393576.b4-ty@kernel.org>
+Date: Mon, 29 Jul 2024 18:17:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,10 +62,9 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
-On Wed, 17 Jul 2024 19:54:36 +0800, Ma Ke wrote:
-> Return devm_of_clk_add_hw_provider() in order to transfer the error, if it
-> fails due to resource allocation failure or device tree clock provider
-> registration failure.
+On Wed, 17 Jul 2024 19:17:21 +0530, Animesh Agarwal wrote:
+> Convert the PCM512x and TAS575x audio CODECs/amplifiers bindings to DT
+> schema format. Add missing sound-dai-cells property.
 > 
 > 
 
@@ -73,8 +74,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: rt5682s: Return devm_of_clk_add_hw_provider to transfer the error
-      commit: 3ff810b9bebe5578a245cfa97c252ab602e703f1
+[1/1] ASoC: dt-bindings: ti,pcm512x: Convert to dtschema
+      commit: 00425bf8cbc9981bd975a5475cec4964544fb297
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
