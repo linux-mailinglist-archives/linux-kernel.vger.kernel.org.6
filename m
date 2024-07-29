@@ -1,117 +1,122 @@
-Return-Path: <linux-kernel+bounces-266331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 623A793FE3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:27:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E4A793FE3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:27:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93DD11C22264
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:27:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC451B221CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29FE188CA5;
-	Mon, 29 Jul 2024 19:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E204B188CD5;
+	Mon, 29 Jul 2024 19:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QRQXKTf9"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Rau8zEAd"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4924E187322;
-	Mon, 29 Jul 2024 19:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6653218734F
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 19:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722281247; cv=none; b=VRYElihG7IVraTJ+R6JU3DC/8UT9kNy1KC/Kg/4bqA16bXgGIP6o+u0dQeRA+StAgxm+M8Fo51WWD9aoBMfNvAOi0TFP4sK37UT0RNjEXZLtUAQD+xSG2JOS4bVt3zyP4pVRps3iPYe18mgKSiZQn3MSjFkT7SR33c92z4yT2/Q=
+	t=1722281248; cv=none; b=QxgInnnICiCgLuYXycjvUwyvVz/Ev6EnX8coj6FY9ndKQTt8yGFny1pCNI3DYpW/Ge2Yb6A5qRv5JsZKC6tpEjFSZ9EDwDFp7QjGJQTfEZaA6WlgzATBnH9P7omh4iNJwu8YsVMUu0E3jvNBvyP1cTJ5rIpK92kfcZWtb9L+v98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722281247; c=relaxed/simple;
-	bh=Sx5GnLyFD86DhvvRIf0ymkAYo91m0ZR+VpQ3SCr3aCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QnMZokLokaNgeBFj+kQEfZay1OGA5UJLd4lLOuCiib25ptZ6QpG4PoP5S3LE26kx/sUHogiB4wLF64s3NY4u1+8z2p6FKbyooycoMTCcUoGQPnBtZS3+5Vo8hFQus3173LO7xozIH2K/9dy3+duPwlq6ANhQ03g4UnK/CAZDizY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QRQXKTf9; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=SPWJtm427QjfDF7wPVvtx41fVv4rQ2hu/R2QSwgK83Y=; b=QRQXKTf95sTqQZ3pCXczu3HPxh
-	RrNU7+s7H8s6ve3l50tTqcU2rL5khfEfGL/AvOQr9S5GNDw/42DnM04lR5C4UJFTcLPb1jM/EQ+eC
-	HRdmjLpnAzt0R665oqXCIV+SMX3K7uAa3oPeQ2PCmRDlTGhovX7RsNC2Pw6ES6NVxYoQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sYW1Q-003Uzh-5d; Mon, 29 Jul 2024 21:27:04 +0200
-Date: Mon, 29 Jul 2024 21:27:04 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Martin =?iso-8859-1?Q?Hundeb=F8ll?= <martin@geanix.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Vibhore Vardhan <vibhore@ti.com>,
-	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
-	Conor Dooley <conor@kernel.org>, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/7] can: m_can: Map WoL to device_set_wakeup_enable
-Message-ID: <15424d0f-9538-402f-bc5d-cdd630c7c5e9@lunn.ch>
-References: <20240729074135.3850634-1-msp@baylibre.com>
- <20240729074135.3850634-3-msp@baylibre.com>
+	s=arc-20240116; t=1722281248; c=relaxed/simple;
+	bh=wuV0CJ6b56yl9jpPmCcBO0ysR9/+51iVD3eCn2Pl17c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U0wbL1gZPVZjMf8dkYR0sN4YCcjkyKa0NBveWBQLawYcHhBkWzd0vU1P6p+JWdXiuY59tlmS7DsXeEjqiZj1c8JOhY+GZHvTP3rpL4d1g0MxyiKIoLoYnzrfycXmi1rOgfsRTZXD21xZkVxH7mCuPHfjVApqa+UFcldNCEuP+zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Rau8zEAd; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52efdf02d13so6011992e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1722281243; x=1722886043; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kSNi0pjVxejT/B7YEh+vGAJOW4I46TVEhUbFiwaZ0+8=;
+        b=Rau8zEAdV8TJq8wRN3hgwLVEfS3NFAgQfMMpoVJ1wDygcZRQzxLai+zlP/zYcHJrSz
+         IKgR7kHfKzTc9d+UMGsDUSo87tn50BUxQvHFCJXhmnTIM5Llzx7cxzhFWojrXxYjl37i
+         ssXHrdPLDWuuGYsiEGa6vw+Zs3IUwFnE9WRf0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722281243; x=1722886043;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kSNi0pjVxejT/B7YEh+vGAJOW4I46TVEhUbFiwaZ0+8=;
+        b=XsjmO2nVxWWJ1B/PG5vCvpQIf4zLTYU/b0kgMibdGkYCOlnz20h0fqjV5OwsR7VMf+
+         IXuPkAvVJx3F8MhL2n/Lwkf9pzNBUZT6c7xei55YaASInDQv/5pRb9JpNT+3WNkMBLdY
+         HFArELQtGQElIbsI+1y0UYTrGv01Vz7mbHsYAK8H4ohPNb77QWcfX+kwph8xWO9DMYXa
+         Z5BLzw6NnMuvpdyJ4wOKZ75XGWneB/KrGLJo3ln1mirI2MuA9f/80p7RSE/2bzkASYK4
+         R6cIfXzymIw0rBq2Fcf9R7qGl548kwEx9E3eOMz6errQ3hKrqaaxpqcOrKp5oiDxjpEZ
+         FDkA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5uqBJbZo9gw/zHWVn1sNDK3LswRgNXcomow3udM6+OqFCd8uBFx/uaR92n5ma4fWOkbTlpbsVssQPhZpSIsQWCp8OBnir3W8lvVr9
+X-Gm-Message-State: AOJu0Yyq29j6sZbGQpv5EUWdqUG5oc9y6UI+2vOTx8WJZXPWChOxF7sG
+	ip93Q0ikx21nBjlhZ/nP/9CzI5V8UN+Kv1LHnxI/9ep/VV/V1I5U/VYJFvYtcN5aNF61SKgTNQx
+	mQf3HKQ==
+X-Google-Smtp-Source: AGHT+IHWFCpL59x9LMC+wALeH6FrpWpDc2mfPGtg8eow1bWlGnTg7ct0HWFyBxQNBoxmpnKLuAbdVg==
+X-Received: by 2002:ac2:5506:0:b0:52e:710e:e4d2 with SMTP id 2adb3069b0e04-5309b2a5cdemr6567220e87.33.1722281243189;
+        Mon, 29 Jul 2024 12:27:23 -0700 (PDT)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab231f2sm543246466b.7.2024.07.29.12.27.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jul 2024 12:27:22 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7ab63a388bso304921866b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:27:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU5zHcHWy5G9ktR+h+FxwUlSxmPcgnO06GZ6hroClM9q7Ou8Sw5zJsL+Sy0ln2yK6OBRBp1qHhqwwU6Zf1R7M3uEpkgCCkzqv7JmCdE
+X-Received: by 2002:a05:6402:268d:b0:5a2:65cb:7335 with SMTP id
+ 4fb4d7f45d1cf-5b021d22bf0mr7507356a12.19.1722281241607; Mon, 29 Jul 2024
+ 12:27:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729074135.3850634-3-msp@baylibre.com>
+References: <a7eb34e0-28cf-4e18-b642-ea8d7959f0c7@I-love.SAKURA.ne.jp>
+ <2024072944-appraisal-panning-a0b1@gregkh> <f9b4ff23-ee3e-418f-b65d-c40fe28fbba8@I-love.SAKURA.ne.jp>
+ <2024072930-badge-trilogy-c041@gregkh> <Zqe76gATYUcDVLaG@google.com>
+ <CAHk-=wgweFg4hOus9rhDEa437kpkdV88cvmOHeZWwhgSa5ia1g@mail.gmail.com>
+ <ZqfYfIp3n7Qfo1-Q@google.com> <CAHk-=wiT8RzFUVXe=r3S9dfCpV+FhARgtb5SxLDSOKCJKCLOZA@mail.gmail.com>
+ <Zqfg8FW-SFFedebo@google.com> <CAHk-=wg4peLPGB+Lyvdtwxe6nVeprvTbZiO8_=E8-R_M+VyWow@mail.gmail.com>
+ <ZqfpgmmLgKti0Xrf@google.com>
+In-Reply-To: <ZqfpgmmLgKti0Xrf@google.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 29 Jul 2024 12:27:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgo9iEZ20wB4rOpt6h36Dymudqf6HXww1N094bVoqyMmg@mail.gmail.com>
+Message-ID: <CAHk-=wgo9iEZ20wB4rOpt6h36Dymudqf6HXww1N094bVoqyMmg@mail.gmail.com>
+Subject: Re: [PATCH (resend)] Input: MT - limit max slots
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Henrik Rydberg <rydberg@bitmath.org>, 
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 29, 2024 at 09:41:30AM +0200, Markus Schneider-Pargmann wrote:
-> In some devices the pins of the m_can module can act as a wakeup source.
-> This patch helps do that by connecting the PHY_WAKE WoL option to
-> device_set_wakeup_enable. By marking this device as being wakeup
-> enabled, this setting can be used by platform code to decide which
-> sleep or poweroff mode to use.
-> 
-> Also this prepares the driver for the next patch in which the pinctrl
-> settings are changed depending on the desired wakeup source.
-> 
-> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
-> ---
->  drivers/net/can/m_can/m_can.c | 37 +++++++++++++++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
-> 
-> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-> index 81e05746d7d4..2e4ccf05e162 100644
-> --- a/drivers/net/can/m_can/m_can.c
-> +++ b/drivers/net/can/m_can/m_can.c
-> @@ -2182,6 +2182,36 @@ static int m_can_set_coalesce(struct net_device *dev,
->  	return 0;
->  }
->  
-> +static void m_can_get_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
-> +{
-> +	struct m_can_classdev *cdev = netdev_priv(dev);
-> +
-> +	wol->supported = device_can_wakeup(cdev->dev) ? WAKE_PHY : 0;
-> +	wol->wolopts = device_may_wakeup(cdev->dev) ? WAKE_PHY : 0;
-> +}
+On Mon, 29 Jul 2024 at 12:12, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+>
+> OK, if you want to have limits be it. You probably want to lower from
+> 1024 to 128 or something, because with 1024 slots the structure will be
+> larger than one page and like I said mt->red table will be 4Mb.
 
-It is nice to see Ethernet WoL mapped to CAN :-)
+So this is why subsystem maintainers should be involved and helpful.
+It's hard to know what practical limits are.
 
-So will any activity on the CAN BUS wake the device? Or does it need
-to be addresses to this device?
+That said, a 4MB allocation for some test code is nothing.
 
-	Andrew
+And yes, if syzbot hits other cases where the input layer just takes
+user input without any limit sanity checking, those should be fixed
+*too*.
+
+"The allocation failed" is not some graceful thing. Large pointless
+allocations can be very very very expensive *before* they fail,
+because the VM layer will spend lots of time trying to clean things
+up.
+
+So a sane limit *UP FRONT* instead of "let's see if this random
+allocation succeeds" is always the right answer when at all possible.
+
+                Linus
 
