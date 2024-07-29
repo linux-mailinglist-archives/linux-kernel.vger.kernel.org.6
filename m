@@ -1,147 +1,116 @@
-Return-Path: <linux-kernel+bounces-266230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE43F93FCC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:50:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C5493FCCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B98D1C223C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:50:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA390B20511
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF301862B5;
-	Mon, 29 Jul 2024 17:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB051741C6;
+	Mon, 29 Jul 2024 17:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JCsUWP4d"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DrZK72TN"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C7418C353;
-	Mon, 29 Jul 2024 17:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788BF15ECF7
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 17:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722275290; cv=none; b=LoPlXWneQ3yupVbJwBDQDeHGuiEi/yrAl8SGC9ZQAo+LpGHb8/mgiScyGQ1hmWv18o1Qup/J+B7R4FlShGYCg8V0WW8/32HDfbmP/9bO1WkGyDzLEDksWnxoBvzvafyQkc7kKS95fS2AgWsk8TQxgSBG2sfZW4p1MJybuSyEpsc=
+	t=1722275402; cv=none; b=EJn8fckQeYSHgc5hioVf/7QZicOyeejY+ZdSCo0DLymw0Fyue9oQmDvnPk6fVH4xTgYeYOdkYjwggxgOx9qIKArwkj+qSm7K/OIJFNFpCrL+zUZF4JgKOI2PVeZOW9jmQ/g0SPN4ulVVhSHu62Tm59WCoAP8x9+xTMjGVOiULZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722275290; c=relaxed/simple;
-	bh=caLjgArHqT0iX4aNbMz7ThFMSlU4O/1uHusrmF0QQ/8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=W8xYdQvRQ77KsY8pVP3RELR++Z+5kU9EQlzhwY3AnRS13Lq82eJzV6JxmVZoIlW1JOTqhNmVYA+msl80JipauydWXpKGvrd9ig7L7k+qY9ztuFx7Nq2PT28AK6BP2933AWZqX9pOn3Jg6sKbT45wJA477mFJg5kGJW9lgXYiMiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JCsUWP4d; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-368712acb8dso1525981f8f.2;
-        Mon, 29 Jul 2024 10:48:08 -0700 (PDT)
+	s=arc-20240116; t=1722275402; c=relaxed/simple;
+	bh=bihYQoBOOiJiGuf2B6GESNpxVhKjMGZpNIOW4gqLU2o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rL8TnsskHLKHNcR2zXN6vKYuMlvd4p1qzZGvAZ1rlAl8c0HfOnNwyyYN7y4Mf9fos178YnwgqWY4AojjC2E5M2ar3LtvnQyZFDdScfK5HNAIPNJcbVVrcQu0mTgXHVCDaN1p/cCSiW4rE0agiAnviUJMyZtGqFyaGmjxfL88Q50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DrZK72TN; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-66ca5e8cc51so25537917b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 10:50:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722275287; x=1722880087; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PHSCo9OtmlT0uXzVvp8H+25FMgbSAgLEpICh0lbC9n8=;
-        b=JCsUWP4dsV9Lq6lDmbtXQhmSuIfZVWGI7N8ZcUq4W9LxOrE+mFrjSSXPJe6NGTjbp+
-         haeYwOo2jTrvdHtjnN6mI/R5otoak7fdPAENTkAzXMRo4U7vcFhUeaexFQhLG+gHAzQ3
-         DeClsuQ3Fnv4HK0ArVtXXggmd6ctsg+CPdptYUPYIqpcbVO8NiUzWBx8hmfr1oV1PjMN
-         vj+9sVKYVGhqVcR4e0f13S3yJfBEQGq9FQOD9nDExlTJp89HevsY9wUS7lxR6KhJuCbv
-         s1w8pp/tDJwu6NtfqvXBInbFzfz4vtL9NvuAbKuhY4TKMjjCIREM9Sf5wzcDU4BFTABJ
-         XJ6w==
+        d=linaro.org; s=google; t=1722275399; x=1722880199; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=U48fpdCm4NGtwo1sTgsrUBIRZd2qhEbh1HbahK/oVr8=;
+        b=DrZK72TNN2Bw9yhAy8wcAzarLK+KX8QP0P5ydHneLlLRYIXNOUCvu9lxO9Aqxo/kso
+         b1KBujIOyzuDQK9sd6JWAwk3cKBbRif9IOohVQ0q5GXxz4mrhOM4uCrRF37y2RQappqm
+         M7k2/zGbv9RwsedClBsBUjHii8dXkrZEt4a5JtF2fLJKaflJW++0f9a/RGd4/2TR0hq6
+         lqncgsk2EYDvF98zG+tiVY4wSPEPMHhmLtMvE6+cmbu5E9apSyluqoWfcUAUj/Vi5VhX
+         s8lHL7DKT3wFlZSNje5x11NBvZv5/DcasPdmvqnVm6jxeAtBe8gofDbSPhEgI7s7CuAo
+         k7gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722275287; x=1722880087;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PHSCo9OtmlT0uXzVvp8H+25FMgbSAgLEpICh0lbC9n8=;
-        b=o8QKX3XT7OnAJCtqULbYCCTjmKFGkStLgSoqp80u0roxom9EUAuhwoZVZ0yHqK2YKG
-         1b6gNxIFvtuVguqP3xE6Nb5q/BBRLjFPiF/smjo3WCEPp2jjBf19sEGGryFJ0hVvVdiO
-         QrYP7lCx7vgtQOlG4Ad8HAzuT+jz6MPmyp9WTjOc+BiJyl5jkqofPMxtvm3ME72sdlNG
-         yUY6JEGSINNeYv/SUO/Up1QEIsm/MSSen6R+1luL6hr/3EL6NranLPuDD5Oi+vjyaHyi
-         PUGMYYIKJu+TfCK9NBJBAmZWBdLHXDfUugADY+RjRc//LJSnwc0LKnkIOj7H8mSMUP76
-         875Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXwGL5vZkWGxdseOnuXBim+MeQVQGf7FmdXWWO+YEmaPpILFMiId1IqXNJYZhgdmHuFm0Bb/fjDZi3kYKGp8VLJ/PthtgSOeAzfvMrgfc8R//lN7WGHdLQWs8pwYlmcm2JLJ3n0VNJWiJLIgRbrIdBbGGY5/HYUHGwC4RdWuUIH6bVeLkyCbNA8/AwQJRd8pZ4Khf+iKV6l6iTwXUKhht8PHhFfsts=
-X-Gm-Message-State: AOJu0Yy0C5o1xJOGm6keGDGGHu0cNwyAkz6hzYRGahPXIDsPTivajr0b
-	/5bNJ33oJVlbxqMCZd7KfTRmz35+wobVkBHnCq9WBY801V6tIkac
-X-Google-Smtp-Source: AGHT+IGwptssli/bPxkEfWvX7Isew7g3cblPii2OfQfYYq8mJymlTY5DXHn5VDrv9RDKBYkdgnCFrg==
-X-Received: by 2002:a5d:460e:0:b0:360:96d8:ab7c with SMTP id ffacd0b85a97d-36b5cee9dc6mr6137919f8f.11.1722275287312;
-        Mon, 29 Jul 2024 10:48:07 -0700 (PDT)
-Received: from tablet.my.domain ([37.30.0.99])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367fc8a7sm12716550f8f.59.2024.07.29.10.48.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 10:48:06 -0700 (PDT)
-From: Artur Weber <aweber.kernel@gmail.com>
-Date: Mon, 29 Jul 2024 19:47:44 +0200
-Subject: [PATCH v3 10/10] ARM: dts: exynos4212-tab3: Drop CHARGER regulator
+        d=1e100.net; s=20230601; t=1722275399; x=1722880199;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U48fpdCm4NGtwo1sTgsrUBIRZd2qhEbh1HbahK/oVr8=;
+        b=LnahOph6WyNV3T/xiobJCgyjNBxDDtwFQBQriKtk0xj3UPKcCI8avlcANoOb6YefZ5
+         ZhgbadGRFNcQ7c4C+y8rT1OdId9MpktrUO9t/o9qpdsKwIThL1LOye+8pKFUBHIXDWVz
+         a4g5PcBwQbqh3Y1Mb+C+jtB4fcIusymmqzRt/YQHi0oSMiOdnL294dc33j1C4WD7QTQD
+         BxHV3i1hyqV0aU84FjI/S192LfHM959jekkym65ymGUwCL6xGx/eOQxViDYNxm4Hsp8W
+         ncVrSwU5V2ui1+9nZIegciXjPI0bSOHRiXWuAdzTjltT9l/QGME3t0yifnTiFEZHSgUa
+         vy4g==
+X-Forwarded-Encrypted: i=1; AJvYcCW8rRdtFDnh91GrPPFQacyoWv1HwAf7tYBeQn2RSNTU73VOJJbsiS1nRN/FktYTUUEClwY8woUhtPs1+jZ0oetc4xRQ8N6Mad6jFEnx
+X-Gm-Message-State: AOJu0Yxc3KuR9rn3eZUYQAoe4EtRZhcAzoFehBIR5PX0WbtcTM6s5ZOC
+	1R7LO+jxoNA5O7xqVXCL0dTCR3cz+YEDxugu2YwzqggCVSmMHUuG7G/bNE69FjaFTWgvFwCUv4C
+	VLFoE4iC6sMGA3lwk3iI7Ug/q4cHK7/ZSBHud2A==
+X-Google-Smtp-Source: AGHT+IGyAtQWoTJobqaZBwhClULReeX2eVYFV263RkPuVkU/hSqxYd91PSjHx1mgomnc4KTeZggZZGZiQG6l1PmOvJM=
+X-Received: by 2002:a05:690c:3384:b0:675:a51b:fafc with SMTP id
+ 00721157ae682-67a0959640fmr100729907b3.30.1722275399444; Mon, 29 Jul 2024
+ 10:49:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240729-max77693-charger-extcon-v3-10-02315a6869d4@gmail.com>
-References: <20240729-max77693-charger-extcon-v3-0-02315a6869d4@gmail.com>
-In-Reply-To: <20240729-max77693-charger-extcon-v3-0-02315a6869d4@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>, 
- Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>, 
- Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>, 
- Artur Weber <aweber.kernel@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=916;
- i=aweber.kernel@gmail.com; h=from:subject:message-id;
- bh=caLjgArHqT0iX4aNbMz7ThFMSlU4O/1uHusrmF0QQ/8=;
- b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBmp9W/WGax3Jobdmy7vUBKLwCxJvPKRgZI5znqk
- 7rkTrRhG3GJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCZqfVvwAKCRCzu/ihE6BR
- aLZrD/9pqcbCSRs8SwBt76KCrY+d6MUKKK+BMgFJcj6I/MS6ta2DQWlccNns9Tpqzls+ZvMa/Gu
- xlgSxIePd6CaRl03IsdW8e+OsoBHsdoVqDitjYChSOKpCfTZPcI87FinaxOFvJWmFDrdVvQBoXm
- 9M2YhJY3ozq20eJ0lZscBXOw4uJ3rneXZ8rtYBRuQfYLSlAZc+8zk4o3gOjVnD3PlJ/HUBgA9hg
- GlDV2/yzuCYR1Mcw6KGXLUYu7VqF8pfDp461Bdo4WlUcZ1JEKVQl51kF32MRjqLXYyUVQ7VxM5W
- yDGtZW4EXGHKmkbmVORTC4vGszMKjavhr+tDcK+pPAFpZC5hHIygtyW1PduQbThS5Gw/VtaCK30
- uhiUN0YgQM13nkCdN3f34rXlHA1sAYOa8jQ83Zut4Co05NnSuB98Ewf+rO9OZ1EJF3bQU0v4L0s
- fP+WIUyqutDEzcoV2krQWkYDUJBvx6aSTuEfpmrrvcCuVwbV5eWBwRGmLBQ+tTT1MFE//kF3OP6
- rt41RF9y9OLF1s3fuMjoMYPvdcP/OCaygRRxILFAgC3yGjHS4ZYEozTkPLvr3VNNX3kZPxVgJTo
- NkEMPwLKabX9b1ir0OBhVp7DFuvWrxZNyKxQuycffyMotbqLaorahQPBrhqn55AjQKFH6l2Yf6E
- ZFiV/WWlfApXfjw==
-X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
- fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
+References: <20240729-fix-smd-rpm-v1-0-99a96133cc65@linaro.org>
+ <20240729-fix-smd-rpm-v1-2-99a96133cc65@linaro.org> <6c5acb84-0d09-4a87-adb2-d0b10c67b98d@kernel.org>
+In-Reply-To: <6c5acb84-0d09-4a87-adb2-d0b10c67b98d@kernel.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 29 Jul 2024 20:49:48 +0300
+Message-ID: <CAA8EJppO_fohT_NWJ1P95YYejgAnZQdzrBpz7Ooceiu-t_MkQg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] soc: qcom: smd-rpm: add qcom,smd-rpm compatible
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andy Gross <agross@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-We don't use it for managing charging, and it interferes with the
-extcon-based charging mode switching.
+On Mon, 29 Jul 2024 at 18:04, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On 29/07/2024 13:04, Dmitry Baryshkov wrote:
+> > The device node has the compatible string, so the glink channel name
+> > isn't used for modprobing. Add the qcom,smd-rpm compatible to let the
+> > module be automatically loaded when required.
+>
+> So autoloading is not working? I don't understand whether you are fixing
+> real issue or just making something complete based on your feelings.
 
-Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
----
-Changes in v3:
-- Added this commit
----
- arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 7 -------
- 1 file changed, 7 deletions(-)
+Yes, autoloading of smd-rpm is not working since bcabe1e09135, kernel
+looks for qcom,rpm-FOO rather than the rpmsg:rpm_requests.
+The obvious fix is to revert the commit, but I don't think that
+listing all the chipsets there is a correct thing.
 
-diff --git a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-index 7309b4e1cc3d..2006cdcf3909 100644
---- a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-+++ b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-@@ -148,13 +148,6 @@ esafeout1_reg: ESAFEOUT1 {
- 				esafeout2_reg: ESAFEOUT2 {
- 					regulator-name = "ESAFEOUT2";
- 				};
--
--				charger_reg: CHARGER {
--					regulator-name = "CHARGER";
--					regulator-min-microamp = <60000>;
--					regulator-max-microamp = <2580000>;
--					regulator-boot-on;
--				};
- 			};
- 
- 			muic {
+> >
+> > Fixes: bcabe1e09135 ("soc: qcom: smd-rpm: Match rpmsg channel instead of compatible")
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  drivers/soc/qcom/smd-rpm.c | 11 ++++++++++-
+> >  1 file changed, 10 insertions(+), 1 deletion(-)
+>
+> Best regards,
+> Krzysztof
+>
+
 
 -- 
-2.45.2
-
+With best wishes
+Dmitry
 
