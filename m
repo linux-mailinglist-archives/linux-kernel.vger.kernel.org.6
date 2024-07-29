@@ -1,161 +1,174 @@
-Return-Path: <linux-kernel+bounces-265444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23CA93F150
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:37:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC67593F156
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8C42842D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:37:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DD9D1F22EC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77055140E4D;
-	Mon, 29 Jul 2024 09:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B036F140E29;
+	Mon, 29 Jul 2024 09:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="oBpHymHf"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12olkn2059.outbound.protection.outlook.com [40.92.22.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dr5YyqSA"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADAB14036D;
-	Mon, 29 Jul 2024 09:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.22.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722245848; cv=fail; b=oWf339zU7ZJ42mcLb1KObu5TDcud531gEdcvz1tqx7A7BXECBKesIrt7X7kOnngCVZNXSUBIDJYXDBTmqeok1rRWIhuo0YRCPYBrHoW5U0w8qRQMawnZNC3Dyi1AlJvWd2lPZpToxErFtFO8/XMqwbLSYK7xegGcfIHEvhbfAZ4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722245848; c=relaxed/simple;
-	bh=MXdUo+zdyNsuzasYO84xnlByNR5cs5j5M/OBnpxCRdk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=D2To2af97V9Aab9TUVWIqJW9ef+JJf1l0zvQLuH5V/egRU/jbPlz/cDEamEYc3mWgeb54iV/aVGtoZUxYI+mkjs69FU/5fkQVzGYRXrFkOr2iGDMW7CV+hiuWE/JxmLTXA8wHgDGSM0hi7/BuWiR2oHyJk3oTlmZQZPyBuW1bAE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=oBpHymHf; arc=fail smtp.client-ip=40.92.22.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dneN8tHjDN22Y4PkW5SQHSdKq6K2W71/UvhRE7yzN7CTXBNaJe10UJspzUkaaqLsdKcjUM3wpIX+xRmMfkB+mPzjPZJs9SMT0+4Mw9pIWT2/WwHi4k6XIOzYWlnmjS+qwcXknildcrYXpqP8Z3dU5LP7Fp0FpZ7+Vc1a1qDdeGWj0XQuX0qEkdF2MuhpUZ/bq1/E+MtVaSdZRpl6dcOs6LAroHUaj0/vLCMjl1VfjUFJHhEc4z1Ns528N2YeFdY/OCnEV/52BldbZtN3bDJz2Vazd+QSgBwlOosFs/2p0bOsUDuwpXt1RgRiDCLZtyBjYcllVip/HkLlSc9FlNQeHA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W7uuD7H5Z0wxuRl7qyJxLb4n5Fjdv49obW8QICZAP9I=;
- b=k5A+FbMFlQoifIuJtwozess0zPPHF5xX/i8Xdo/LSpnoufbGbyxU6ClaxYDPyWTQZ857lsodxeXCvXoP5ELPV9qjZHHlw4nrleFVd9f1YBQbpxFuf0gshtQSUKq/JStn4plzSfrUzscrAGquoefn+6a2uVwuOLlNSgqfm7YuUWPh77x6XAkNIPisJRwM0xTBzLgoc9Nb9zNSfHj83+uu+rZD9Rxka7CpakJzzLNsUGYJ+qY28tpcCJ1psPaIiOsqsojAaAhh0l+q8aiXT0a34/ZI71mP+Buyu+Jehq73ijmtQoCBBY3R8W9fUW/HZJXG6TlSAym1z1uhS8FgLFGicQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W7uuD7H5Z0wxuRl7qyJxLb4n5Fjdv49obW8QICZAP9I=;
- b=oBpHymHfgJdkha0X//IS3JBc8ZRLICipOxWJePFmbi1KloZS0xzDYQZNwQQ/MT5antyWHbIpTDUsuii/Of+Rja15dXRAeoQsaZts2vil1avSstWDBGDzUiF2aIu/vWPdqgTabgeOtJp0VHwiaDKbp07PWdoH0WzZz9KD109SKo78CIRXk04AIZRNinU6OFAj7NJexgIOevYzsfNPN6QvNm44HqB0yoi1yGUPEe0ISp4/i5XknCY1SP6eA9MkAi4HkwvOT8ZYuXcE5rsqI0tJt3qBwRQX9FyDxoUIOQjKDWzgDEmtHzyl9ga20ILBU/VGsLUI/xxOLmRY6hTC9r9RuQ==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by PH7PR20MB5057.namprd20.prod.outlook.com (2603:10b6:510:1f3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Mon, 29 Jul
- 2024 09:37:24 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149%5]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
- 09:37:23 +0000
-Date: Mon, 29 Jul 2024 17:36:56 +0800
-From: Inochi Amaoto <inochiama@outlook.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Inochi Amaoto <inochiama@outlook.com>, "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	dmaengine@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
-	Liu Gui <kenneth.liu@sophgo.com>, linux-riscv@lists.infradead.org, 
-	Chen Wang <unicorn_wang@outlook.com>, Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v8 RESEND 1/3] dt-bindings: dmaengine: Add dma
- multiplexer for CV18XX/SG200X series SoC
-Message-ID:
- <IA1PR20MB4953E8436095217610B333E2BBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
-References: <IA1PR20MB49535EC188F8EE3F8FD0B68DBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
- <IA1PR20MB4953865775FA926B2BA4580CBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
- <172223050278.2763977.11180028101195359000.robh@kernel.org>
- <IA1PR20MB4953E3AEACAC85765AE9442BBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
- <2e4b504c-6413-42fc-a544-472d4cc1a06b@linaro.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2e4b504c-6413-42fc-a544-472d4cc1a06b@linaro.org>
-X-TMN: [sb0JTKb2GpaXOw6sdtoW5fV5M4dt6ekqKXx/BJUFAak=]
-X-ClientProxiedBy: TYCPR01CA0196.jpnprd01.prod.outlook.com
- (2603:1096:405:7a::20) To IA1PR20MB4953.namprd20.prod.outlook.com
- (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <3ii4xqzzniqkwiwlycscikjv57de6kc7zaksr6yvqvm3ht6k77@nfsmknvmfzsy>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10336801;
+	Mon, 29 Jul 2024 09:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722245871; cv=none; b=DVRgxRfrT2ESvIBH0ce73GUsVc6BfPQM9G3RpHu2C4RSEu4mMHpxKxiD10RzMyIv/D0PQNnfR5SAMpTtuFL3l/PSiuQUBwtFnrM8ZIw8vNYu0IpvXagjNW7veTz/OYMdQWLDCKfa+ar4fEoVMA+W3fnZmDO5jxgxf91+S/7QD1w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722245871; c=relaxed/simple;
+	bh=dUb6XFAWURF5fTzbw/+1MFJZCob3+hK/YpTTVucusdc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HAAv6Ti8Qbo8aZ/ZELzb5O4E0waZ80IMvIhwfaj0NVQytVMsJOm6/i/vQ1fF/G7OkOVA/991SIjdE8nQKIxXpO6nR3LAwHE4snxAvWWCaZVYFYZwDF7/h5ErcctVHFM0qXMnHgdB9ST2GCjvZ8/jzRy844gqIySl6H3sMIWzbV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dr5YyqSA; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a15692b6f6so5404917a12.0;
+        Mon, 29 Jul 2024 02:37:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722245868; x=1722850668; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NR8EYDbZcj20ngdxq0iIEW20+Ft9Qj88x8IgpUrOrXQ=;
+        b=dr5YyqSAcubG8CeYTN9kYwm7zWd5uBsn+5BJX9nXBFEqUu418iZReomUg6lLOSaRak
+         agfHW6VpSZ3aqQ3di2AjKCiCMJWIHrwVXATX/TvMAY8ib2YCCHv0S4X0EOYsYkTfOXdh
+         yMRYOOc8qxmmQteiUlivyJJt79snq7a+nGt/GqQ4teZWheVo8TQVkLqdm9P2IcjcdKjJ
+         5Vdi+T5BpHZusNB2vNne1pSYQINUjaW8a5Pj7A0ADfcMaHoiD/yqHlz75krk6f81OeCV
+         aIk8ljht1JFNXQSBP7vQGU2dI0q6iIX3sr7lVFNgObZuzE8xLRd2uVw5pLvhGjahZ75j
+         wmNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722245868; x=1722850668;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NR8EYDbZcj20ngdxq0iIEW20+Ft9Qj88x8IgpUrOrXQ=;
+        b=DShrrn3wpCfeqVGtXWNVmiE1p9X/RuW/jjssMvf4oB3MTQzioX6EFeuY5zwOBzfWy3
+         gc8SriR/3fTuyjEoETfWsODIb0mrSpYiUrXG7fG7WfVJBjfqQtU/2CpMjv+Ob38k9GG+
+         GrJ6Zfhtz9oZkgiu4Mb1UB3dQD/2oJc4w9izoSO6eUfsnrIJo2+zPgjHmLkaHEXuIrRS
+         NFL/KJcRitcw5pu+htGGi3jIpUuBlvLFubFjkdDorv6/m40PBu/ti0rVarJrPj4BpxA7
+         AwFgZuoP1KixgRaOkezDk9+rvxvCC5TDNqchOOhLfYDDShk4msQXb4iSxbqZ+tWdIVs2
+         RZFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxgAqxeMCiTCTDBvxmVry0Zmlp51paC/X9gilCKKVzLUWyO/R1CMLjQLjj211V/OpwcHOEnQ4Q0JnKMRCZD9NKUkGCSEyBmqW/vPbfmbV3PcEpSKNPbUduvy3QuCUzI9U0uukYn96bqxM=
+X-Gm-Message-State: AOJu0YyF2IR4d8N0J+s4HoiPyL+sezC0a2V1srtfRtdmp2r3RdzVBTH0
+	QJJkQuYy3B9sDN9vAQTWXLBSSU2iYheFlHh60LyX/69In6aE3N9UqnI21S6g
+X-Google-Smtp-Source: AGHT+IGB+vRrdX/B/2dg/ESisrGwMj2AyPaJblfTpT4noAFpKg4KyVyg7wAt53T8pHgMroSEYzYs/Q==
+X-Received: by 2002:a17:907:96a0:b0:a7a:a0c9:124e with SMTP id a640c23a62f3a-a7d3ffadf1amr581593566b.4.1722245867939;
+        Mon, 29 Jul 2024 02:37:47 -0700 (PDT)
+Received: from [127.0.1.1] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad41b24sm481617966b.116.2024.07.29.02.37.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 02:37:47 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH v2 0/2] {ASoC,media}: constify snd_soc_component_driver
+ when used as read-only
+Date: Mon, 29 Jul 2024 11:37:36 +0200
+Message-Id: <20240729-const_snd_soc_component_driver-v2-0-1994f44f1ec2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|PH7PR20MB5057:EE_
-X-MS-Office365-Filtering-Correlation-Id: 60d13113-89d9-4f40-48f6-08dcafb20c81
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|19110799003|5072599006|8060799006|461199028|1602099012|440099028|4302099013|3412199025|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	Q7sxwQgtj7fVmgknjbj7xDtPj4KDVe3S8qTUgMcV5IVpKfCqlC10eCDaclwHdmOrQLwW5NntEzzWKk+2um53ISIZ8NUO4HQ4fYPCcCB4XpAF3+JgnZHck5ELy2RB1Ohf9UKELVxrYrfjNnkGKJzzXxfwv8x1zgJIPq52bODIIevpiHKOM/0DRZiNIFahbFe+7etnoFR23w0AIMmXsFbcwNSGwQh+qerrZtq6Ps4BTfpNnRKJtE4BLWUDN3jyrjU52LdYt9WsCvI2978gWvRKs+vZvKJu5200DLf/pr7MlXRPaTHh0pLnTbwEwuC+VMXAELJgQyFFGlHbnAwNIpICzmUTRMU9FVXylDfFbbNuiDC3WJAl+QjsuggOKHTXIJxPsk3Netqxb8UFp7uDpglvG5UqRMvUg2t3PNpcoAI0QCm6jGMnagA9/zPdk8a+ETJMdBETurdrJtRQZDiORup4ZkcLOdhPaTfNw8otg72QN2HvZpzC++zPDkvX5eGmiL5QTJsN0cDZM2fAlCfiqzqCniFw3V1IrQgz2hyaWuhpiW0L79oT/Mn9N1/sLTYVPHW9ofhy1/imq5Zy+ZUco86PiF4XONAqKbJaNksShNnBuYa/0PiYAq4JrSU5yTkcdBxGVVkRDDfomyXw9lwx47hjL+GaecW6cgqcUgYbaGTjWaS5J2+isOikwLZs9IOODTAkL7G3aO3uV665vOD6htRpiGv91Alpn26INqoa0v2QWO0GG+r/Wq/hu4ovvprHS0ApcHgJH2UVjXOzF/mJWayeWXAu7U8eOAhT/lb2483FWV9B+71Wqpj7YxGHZpznx7J4
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Gxafybrm1Iv2pprayFHi3ZZ6fEUo9yZ1lM1TKadBx8j8jhYjFpOgeNW8acn5?=
- =?us-ascii?Q?+d+pFJE2tNs3U1s7WEByblNCBbhYcHSEElS6XcHHejPwekoxOztbPl67ONKS?=
- =?us-ascii?Q?JJOu4KAkpsW5rLGeaRrDy8K5jrTw8RQbMa9nUytBa/6kII7/ciW5mjYS4oZY?=
- =?us-ascii?Q?45ZObDf4VH6zIpNbB6AvSssrPJExHGOgoTpeiVlMh/tagZXO531lchJfVunR?=
- =?us-ascii?Q?1sKPnswr22biuF0WiIHR0erfSyzwahzQ4meGfvXZ9Vm9RDzfiz3YyBclyUMt?=
- =?us-ascii?Q?zeExyi9anjjlNsb0XJ8mcJeUACFpcpoZl5qC5r52K/Qkmyc4SD3ZMVCyt0Qy?=
- =?us-ascii?Q?LIZV/YEmTC/lmSJ2UhZ0hJqaz7Wv1+PLSdbigPcTjDnCLTObw18TajQm8Fdg?=
- =?us-ascii?Q?ntZzngUZN76yyBmO9gwO4KwJx1OqUCuwTroOjURpfaGUTkXtqZz4DKGbX15C?=
- =?us-ascii?Q?U7jwVV/dTdp46ZXhCavHQHmgJfkyqFegSh/XEy+jP92ld9QNB66ogxxzaEuH?=
- =?us-ascii?Q?vjLG8USlSiBeCDgjP81NXQJxCwkBlk9/QU4SUJGOWwNww1uWSdrfRINdvRET?=
- =?us-ascii?Q?GiyDa2MNzi3wLUBy0pKdrTMO7XBcs0BKq+alntk+PZOS7G/sE3XN6fQln2QV?=
- =?us-ascii?Q?qjJMRvmcM5LiYSA2/RdnXw8uwXLOSolFGDCuv4pemG/L6K/HdfohP9X14ctQ?=
- =?us-ascii?Q?91B8PAmcowA37xZVQEW5gEddQ96eV1G0SU+1L8Du0W7kuaYFK06c9E6i0YR2?=
- =?us-ascii?Q?iJW/oy/ZfkdhPNcw+ddODTx42QY27Qb6gKbXU8MJvoWkpgLu11bVWYiPnb5L?=
- =?us-ascii?Q?1JBW5q+gdZeXG9TMeHy0JE48yzYSLjWrd3JhSzpeSbrDKjVgGzcQGeEB0aEk?=
- =?us-ascii?Q?wfUFnXhiPlfbSibQOLkl2MKUv+ybm7xuJtc18KAViHXTJbtWL2wm2slnB+tZ?=
- =?us-ascii?Q?Ofm+Via5cYNKmL2rrmKP186hY/rHu6kdHUjst+W4YKXM/UfV092y8vr3k8Xo?=
- =?us-ascii?Q?L5rShZ21f6upZxvyfBSl9EZ9IRulq+biutKVTGGUYtQdIuZoSwZSKAMrh1ni?=
- =?us-ascii?Q?kIvG5hPD6+q5Mvjx47eNyEg4H6t/qonL/6y9nle0D0X2KuJRVytSM0Rr/Yk7?=
- =?us-ascii?Q?o9FgpzjypelYz6JkqM/j9I8AhAXuwK0GYBei9eRE0jGoJF0g4sh4XaQ+XMNE?=
- =?us-ascii?Q?lnz5UAYsy/Tiv7iq8D3pJe3wJYdQ4z4lK5SGBfAg7b6Q4o2UGlUGGzHXxcUU?=
- =?us-ascii?Q?fu9ZzOuGl2jLjYasS0ni?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60d13113-89d9-4f40-48f6-08dcafb20c81
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 09:37:23.2235
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR20MB5057
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOBip2YC/42NQQ6CMBBFr0JmbU2pINSV9zCkgXaESaQlHdJoC
+ He3cgKX7+fnvQ0YIyHDrdggYiKm4DOoUwF26v2IglxmUFJVslG1sMHzatg7w8EaG+YlePSrcZE
+ SRjHoq9K9rgddtZAlS8QnvY/Ao8s8Ea8hfo5eKn/r3+pUCikurkGULZZKD/dx7ul1zkfo9n3/A
+ ucOmcHMAAAA
+To: Tim Harvey <tharvey@gateworks.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
+ Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+ Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ alsa-devel@alsa-project.org, linux-stm32@st-md-mailman.stormreply.com, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722245866; l=2529;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=dUb6XFAWURF5fTzbw/+1MFJZCob3+hK/YpTTVucusdc=;
+ b=RPp7DAhUclessfFNFbcWgORq5LFwt1sEuXGSZwmnwQyt6PJKpGQSAD09Ku+TP7WOneIIyaxWv
+ s/TEiuxzbZNCW6/irPcZOG1uLKlqLQvxJpgMvBhbXL3qIH7lZwJQGEF
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Mon, Jul 29, 2024 at 11:30:20AM GMT, Krzysztof Kozlowski wrote:
-> On 29/07/2024 09:00, Inochi Amaoto wrote:
-> >> yamllint warnings/errors:
-> >>
-> >> dtschema/dtc warnings/errors:
-> >> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
-> >> 	from schema $id: http://devicetree.org/schemas/dma/sophgo,cv1800-dmamux.yaml#
-> >> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
-> >> 	from schema $id: http://devicetree.org/schemas/dma/sophgo,cv1800-dmamux.yaml#
-> >> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
-> >> 	from schema $id: http://devicetree.org/schemas/dma/dma-router.yaml#
-> >> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
-> >> 	from schema $id: http://devicetree.org/schemas/dma/dma-router.yaml#
-> >>
-> > 
-> > Hi Rob,
-> > 
-> > Could you share some suggestions? I can not reproduce this error with
-> > latest dtschema. I think this is more like a misreporting.
-> 
-> You would need dtschema from the master branch, so newer than 2024.05.
-> 
-> Best regards,
-> Krzysztof
-> 
+Declare `snd_soc_component_driver` as const to move their declarations
+to read-only sections for the drivers that do not modify the struct
+after its declaration.
 
-Thanks, I will have a try.
+Apart from a single case under media/, the affected drivers are members
+of the ASoC subsystem.
+
+To: Tim Harvey <tharvey@gateworks.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>
+To: Mark Brown <broonie@kernel.org>
+To: Jaroslav Kysela <perex@perex.cz>
+To: Takashi Iwai <tiwai@suse.com>
+To: Ray Jui <rjui@broadcom.com>
+To: Scott Branden <sbranden@broadcom.com>
+To: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+To: Shenghao Ding <shenghao-ding@ti.com>
+To: Kevin Lu <kevin-lu@ti.com>
+To: Baojun Xu <baojun.xu@ti.com>
+To: Olivier Moysan <olivier.moysan@foss.st.com>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+To: Alexandre Torgue <alexandre.torgue@foss.st.com>
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-sound@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: alsa-devel@alsa-project.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
+Changes in v2:
+- drop cs43130 and sti-sas, as they modifiy the struct in the probe
+  function.
+- Link to v1: https://lore.kernel.org/r/20240725-const_snd_soc_component_driver-v1-0-3d7ee08e129b@gmail.com
+
+---
+Javier Carrasco (2):
+      media: i2c: tda1997x: constify snd_soc_component_driver struct
+      ASoC: constify snd_soc_component_driver struct
+
+ drivers/media/i2c/tda1997x.c         | 2 +-
+ sound/soc/au1x/dbdma2.c              | 2 +-
+ sound/soc/au1x/dma.c                 | 2 +-
+ sound/soc/bcm/cygnus-pcm.c           | 2 +-
+ sound/soc/codecs/cpcap.c             | 2 +-
+ sound/soc/codecs/pcm186x.c           | 4 ++--
+ sound/soc/codecs/pcm5102a.c          | 2 +-
+ sound/soc/codecs/spdif_receiver.c    | 2 +-
+ sound/soc/codecs/spdif_transmitter.c | 2 +-
+ sound/soc/codecs/tas6424.c           | 2 +-
+ sound/soc/stm/stm32_adfsdm.c         | 2 +-
+ sound/soc/uniphier/evea.c            | 2 +-
+ 12 files changed, 13 insertions(+), 13 deletions(-)
+---
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+change-id: 20240725-const_snd_soc_component_driver-b9629a95b948
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
