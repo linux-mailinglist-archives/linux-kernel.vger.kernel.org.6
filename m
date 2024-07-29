@@ -1,243 +1,180 @@
-Return-Path: <linux-kernel+bounces-265720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 793E293F4EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:12:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52CFF93F721
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98B6C1C2160E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:12:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1131F2824CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431621474A4;
-	Mon, 29 Jul 2024 12:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KAY1oBVy"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D832614EC71;
+	Mon, 29 Jul 2024 13:59:27 +0000 (UTC)
+Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D17080034;
-	Mon, 29 Jul 2024 12:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA761E515
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.123.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722255153; cv=none; b=FOlFh0wIjURgrevBRZPzWHQuFgxVO8cPJKfUfKaSPDYqu1YjD26AbzjWK323WqMcHpP+qVU4ZiBYxxrQF/fLc4IxyhbYXKoM/9iVmBW+LGMiOuHTvNxnbehag0LENUbe28NIiZ3x8sGpbPnu/MHQA1h9bJQ6kgDBdmc6Y5ooDLg=
+	t=1722261567; cv=none; b=l++TBxpE8+TKluaa587WJqfY/sFXTbCtN1buCCx+ToNvsBLxUsCNEPn5gUI20cuvwczEQ6UtGmShDNoMSqERBR4i7TXU6Xb5BfEtWfoz9GTO6j5f4IhtDuAn18awRvYOlbPf/mJ8q2DL+AlzpC/Gp6WyXQs4BGIlSFyoovEWmKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722255153; c=relaxed/simple;
-	bh=676pxmrdMG379dy9Banv9LMk0s/zvJkHYmSuRMT0izY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qO24dA6WO2n2DAsTBd9UebvmMjKzNrsXEOLCdnSKUK1UOvgtrip6Md+lsydXT6cgx8uAsUqmqh+vx8rYeqjP6gQbbF1oZDXHFO39c/qIniv+LpLNTHITwF/m/pcHVcSNMB+CuAnOElj16GfYfrMLplUDr2ozMywdtZepM7sRNvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KAY1oBVy; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so394480066b.1;
-        Mon, 29 Jul 2024 05:12:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722255149; x=1722859949; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lHUHE5omJDhLqkutfEXF8xChoXoFAMjo0TECDsNJhK0=;
-        b=KAY1oBVyjfBtbvWzgoM3zLSFfAtt9cmtRI4XbpW5dtAst/a+XHODX6j3Aw6e5+q0Mf
-         L8xxSiBk6c7nX7kJwO/YUkVqPGrlq8nymV50yLxYXTGA6O0jClcS97mqQlEm7rGze52F
-         +cjG/5fIPvahycKHZuUe516Ni3im3HOKZJnqEF4DZ22qHKzV7l3wpEhtuY+31UmrHR+B
-         D44Vh5cxadxKY+xnoZ3oihY4SlMUhX2lRLHpBWAkvaw6tBGFhSv087oUq/sIjYCEHFUJ
-         e1nfz4/fMbKWt9nB1ZjpG72yLGxQR47wAHgwnciyEIMNvXnWoP0eDHSjDJzSUmvSljLF
-         bFqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722255149; x=1722859949;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lHUHE5omJDhLqkutfEXF8xChoXoFAMjo0TECDsNJhK0=;
-        b=Cb1yhirT5HNTN8JbgSr3ys5xi23qH4HociW4W0IBd9zUZsd0UhiWO6T4qCYNSvjW1g
-         7qwjqA/j9xFYqqdrSh+HU5AdBoOI3x/5BIh7eF2L2sxl+nHOWemSKaX9oZ6J78UFTbly
-         TXERdAByiwkaMYsJ3anOaXND8dzZaisuHMYT1Z+nrcC9FHFOO/xKkPgEvky1Xz/2ciMu
-         SrDbWSJaE4pnwSO53+FCj/AhApmLe70SjiXKcegi4XH1vFMp8G7ZEh5c9GL1qRYBWwcT
-         /pnhCvBIDKX/yuPwjAGx5PqHRu9Fzax07o3ceQnctjUZB/Lx3LfbVFLZcN8TxFPg9wHW
-         oWKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCI6Pt4PBvgN4AeOcLYWGznUDnbt9dkYw97G66piB9V/LDB1wbYOTmhG6XPx18yqV6StpIv2MbCJFlqFWAHaiNmQS4ZqdkU26cuV4qmlR4PPjINk4/Vfrxhmjf7pvikSVRGNnj9NaIpZcSKvjv9+BBRXwo8S4XpNSFHAQMYYRmJvzt26qGHw==
-X-Gm-Message-State: AOJu0YxsZsp5o4m0AIchmwoEX6m974vRUStgIOT2wGhicqFVLiosEhmf
-	yD8M/Bd6zDBXr0pQ/0VHvCys7e7ot1bkYgI7xWzTO3flWk6K81iLOn+r4rVVNQCxGewvBF0e0Wa
-	iLTmTYBc39PPgz2AEOmPlwYsnqLI=
-X-Google-Smtp-Source: AGHT+IF3qWMnouMsh8zKfGd7dmW+6bIUeyEBdwqvkO5x/YzUnTyGD7rh3Ma8NXLNR8uTYTkJVh6YOqj62cIBbt5nXyw=
-X-Received: by 2002:a17:906:d551:b0:a75:2781:a5c4 with SMTP id
- a640c23a62f3a-a7d3ffedb21mr605346666b.29.1722255148508; Mon, 29 Jul 2024
- 05:12:28 -0700 (PDT)
+	s=arc-20240116; t=1722261567; c=relaxed/simple;
+	bh=LVDUmFv7UA9ijcy4nvqrOeIdryfWQmOVHnYWex4La00=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TYn5KV/e0Eam45G8hdc6IXIV78I8gA//ffaNbjjFdD8iuJeEvFWZEPiIj+FyWtXdhhy+FWxZkVo8I0xfFlq9bvQ0y26zOIYuykOMtrtfDxYyPo3aYFty1vfC5UdffJ1/uByEa1/4vZI90lzg/BZ5jBJKVcCLowOvscsYFhaua8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com; spf=pass smtp.mailfrom=h3c.com; arc=none smtp.client-ip=60.191.123.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
+Received: from h3cspam02-ex.h3c.com (localhost [127.0.0.2] (may be forged))
+	by h3cspam02-ex.h3c.com with ESMTP id 46TCCCSI027469
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:12:12 +0800 (GMT-8)
+	(envelope-from zhang.chunA@h3c.com)
+Received: from mail.maildlp.com ([172.25.15.154])
+	by h3cspam02-ex.h3c.com with ESMTP id 46TCBa6O026906;
+	Mon, 29 Jul 2024 20:11:36 +0800 (GMT-8)
+	(envelope-from zhang.chunA@h3c.com)
+Received: from DAG6EX09-BJD.srv.huawei-3com.com (unknown [10.153.34.11])
+	by mail.maildlp.com (Postfix) with ESMTP id D99332004721;
+	Mon, 29 Jul 2024 20:16:19 +0800 (CST)
+Received: from localhost.localdomain.com (10.99.206.13) by
+ DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1258.27; Mon, 29 Jul 2024 20:11:39 +0800
+From: zhangchun <zhang.chuna@h3c.com>
+To: <akpm@linux-foundation.org>
+CC: <jiaoxupo@h3c.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <shaohaojize@126.com>, <zhang.chuna@h3c.com>,
+        <zhang.zhansheng@h3c.com>, <zhang.zhengming@h3c.com>
+Subject: [PATCH v3] =?UTF-8?q?mm:=20Give=20kmap=5Flock=20before=20call=20flus?= =?UTF-8?q?h=5Ftlb=5Fkernel=5Frang=EF=BC=8Cavoid=20kmap=5Fhigh=20deadlock.?=
+Date: Mon, 29 Jul 2024 20:13:08 +0800
+Message-ID: <1722255188-4478-1-git-send-email-zhang.chuna@h3c.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com> <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
- <875xsoqy58.fsf@oldenburg.str.redhat.com> <vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
- <87sevspit1.fsf@oldenburg.str.redhat.com> <CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
- <20240729.114221-bumpy.fronds.spare.forts-a2tVepJTDtVb@cyphar.com>
-In-Reply-To: <20240729.114221-bumpy.fronds.spare.forts-a2tVepJTDtVb@cyphar.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 29 Jul 2024 14:12:15 +0200
-Message-ID: <CAGudoHFQ9TtG-5__38-ND4KTxYCpEKVv_X9HhZixcdnVMUBEwQ@mail.gmail.com>
-Subject: Re: Testing if two open descriptors refer to the same inode
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Florian Weimer <fweimer@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
-	Dave Chinner <dchinner@redhat.com>, Christian Brauner <brauner@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BJSMTP01-EX.srv.huawei-3com.com (10.63.20.132) To
+ DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11)
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:h3cspam02-ex.h3c.com 46TCCCSI027469
 
-On Mon, Jul 29, 2024 at 1:47=E2=80=AFPM Aleksa Sarai <cyphar@cyphar.com> wr=
-ote:
->
-> On 2024-07-29, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> > On Mon, Jul 29, 2024 at 12:57=E2=80=AFPM Florian Weimer <fweimer@redhat=
-.com> wrote:
-> > >
-> > > * Mateusz Guzik:
-> > >
-> > > > On Mon, Jul 29, 2024 at 12:40:35PM +0200, Florian Weimer wrote:
-> > > >> * Mateusz Guzik:
-> > > >>
-> > > >> > On Mon, Jul 29, 2024 at 08:55:46AM +0200, Florian Weimer wrote:
-> > > >> >> It was pointed out to me that inode numbers on Linux are no lon=
-ger
-> > > >> >> expected to be unique per file system, even for local file syst=
-ems.
-> > > >> >
-> > > >> > I don't know if I'm parsing this correctly.
-> > > >> >
-> > > >> > Are you claiming on-disk inode numbers are not guaranteed unique=
- per
-> > > >> > filesystem? It sounds like utter breakage, with capital 'f'.
-> > > >>
-> > > >> Yes, POSIX semantics and traditional Linux semantics for POSIX-lik=
-e
-> > > >> local file systems are different.
-> > > >
-> > > > Can you link me some threads about this?
-> > >
-> > > Sorry, it was an internal thread.  It's supposed to be common knowled=
-ge
-> > > among Linux file system developers.  Aleksa referenced LSF/MM
-> > > discussions.
-> > >
-> >
-> > So much for open development :-P
-> >
-> > > > I had this in mind (untested modulo compilation):
-> > > >
-> > > > diff --git a/fs/fcntl.c b/fs/fcntl.c
-> > > > index 300e5d9ad913..5723c3e82eac 100644
-> > > > --- a/fs/fcntl.c
-> > > > +++ b/fs/fcntl.c
-> > > > @@ -343,6 +343,13 @@ static long f_dupfd_query(int fd, struct file =
-*filp)
-> > > >       return f.file =3D=3D filp;
-> > > >  }
-> > > >
-> > > > +static long f_dupfd_query_inode(int fd, struct file *filp)
-> > > > +{
-> > > > +     CLASS(fd_raw, f)(fd);
-> > > > +
-> > > > +     return f.file->f_inode =3D=3D filp->f_inode;
-> > > > +}
-> > > > +
-> > > >  static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
-> > > >               struct file *filp)
-> > > >  {
-> > > > @@ -361,6 +368,9 @@ static long do_fcntl(int fd, unsigned int cmd, =
-unsigned long arg,
-> > > >       case F_DUPFD_QUERY:
-> > > >               err =3D f_dupfd_query(argi, filp);
-> > > >               break;
-> > > > +     case F_DUPFD_QUERY_INODE:
-> > > > +             err =3D f_dupfd_query_inode(argi, filp);
-> > > > +             break;
-> > > >       case F_GETFD:
-> > > >               err =3D get_close_on_exec(fd) ? FD_CLOEXEC : 0;
-> > > >               break;
-> > > > diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.=
-h
-> > > > index c0bcc185fa48..2e93dbdd8fd2 100644
-> > > > --- a/include/uapi/linux/fcntl.h
-> > > > +++ b/include/uapi/linux/fcntl.h
-> > > > @@ -16,6 +16,8 @@
-> > > >
-> > > >  #define F_DUPFD_QUERY        (F_LINUX_SPECIFIC_BASE + 3)
-> > > >
-> > > > +#define F_DUPFD_QUERY_INODE (F_LINUX_SPECIFIC_BASE + 4)
-> > > > +
-> > > >  /*
-> > > >   * Cancel a blocking posix lock; internal use only until we expose=
- an
-> > > >   * asynchronous lock api to userspace:
-> > >
-> > > It's certainly much easier to use than name_to_handle_at, so it looks
-> > > like a useful option to have.
-> > >
-> > > Could we return a three-way comparison result for sorting?  Or would
-> > > that expose too much about kernel pointer values?
-> > >
-> >
-> > As is this would sort by inode *address* which I don't believe is of
-> > any use -- the order has to be assumed arbitrary.
-> >
-> > Perhaps there is something which is reliably the same and can be
-> > combined with something else to be unique system-wide (the magic
-> > handle thing?).
-> >
-> > But even then you would need to justify trying to sort by fcntl calls,
-> > which sounds pretty dodgey to me.
->
-> Programs need to key things by (dev, ino) currently, so you need to be
-> able to get some kind of ordinal that you can sort with.
->
+ CPU 0:                                                 CPU 1:
+ kmap_high(){                                           kmap_xxx() {
+               ...                                        irq_disable();
+        spin_lock(&kmap_lock)
+               ...
+        map_new_virtual                                     ...
+           flush_all_zero_pkmaps
+              flush_tlb_kernel_range         /* CPU0 holds the kmap_lock */
+                      smp_call_function_many         spin_lock(&kmap_lock)
+                      ...                                   ....
+        spin_unlock(&kmap_lock)
+               ...
 
-That I know, except normally that's done by sorting by (f)stat results.
+CPU 0 holds the kmap_lock, waiting for CPU 1 respond to IPI. But CPU 1 has
+disabled irqs, waiting for kmap_lock, cannot answer the IPI. Fix this by 
+releasing kmap_lock before call flush_tlb_kernel_range, avoid kmap_lock
+deadlock.
 
-> If we really want to make an interface to let you do this without
-> exposing hashes in statx, then kcmp(2) makes more sense, but having to
-> keep a file descriptor for each entry in a hashtable would obviously
-> cause -EMFILE issues.
->
+        if (need_flush) {
+            unlock_kmap();
+            flush_tlb_kernel_range(PKMAP_ADDR(0), PKMAP_ADDR(LAST_PKMAP));
+            lock_kmap();
+        }
 
-Agreed, hence the proposal to extend statx.
+Dropping the lock like this is safe. kmap_lock is used to protect
+pkmap_count, pkmap_page_table and last_pkmap_nr(static variable). 
+When call flush_tlb_kernel_range(PKMAP_ADDR(0), PKMAP_ADDR(LAST_PKMAP)), 
+flush_tlb_kernel_range will neither modify nor read these variables. 
+Leave that data unprotected here is safe.
 
-> > Given that thing I *suspect* statx() may want to get extended with
-> > some guaranteed unique identifier. Then you can sort in userspace all
-> > you want.
->
-> Yeah, this is what the hashed fhandle patch I have does.
->
+map_new_virtual aims to find an usable entry pkmap_count[last_pkmap_nr].
+When read and modify the pkmap_count[last_pkmap_nr], the kmap_lock is 
+not dropped. "if (!pkmap_count[last_pkmap_nr])" determine 
+pkmap_count[last_pkmap_nr] is usable or not. If unusable, try agin.
 
-Ok, I see your other e-mail.
+Furthermore, the value of static variable last_pkmap_nr is stored in
+a local variable last_pkmap_nr, when kmap_lock is acquired, this is 
+thread-safe.
 
-> > Based on your opening mail I assumed you only need to check 2 files,
-> > for which the proposed fcntl does the trick.
-> >
-> > Or to put it differently: there seems to be more to the picture than
-> > in the opening mail, so perhaps you could outline what you are looking
-> > for.
->
-> Hardlink detection requires creating a hashmap of (dev, ino) to find
-> hardlinks. Pair-wise checking is not sufficient for that usecase (which
-> AFAIK is the most common thing people use inode numbers for -- it's at
-> least probably the most common thing people run in practice since
-> archive tools do this.)
->
+In an extreme case, if Thread A and Thread B access the same last_pkmap_nr,
+Thread A calls function flush_tlb_kernel_range and release the kmap_lock,
+and Thread B then acquires the kmap_lock and modifies the variable
+pkmap_count[last_pkmap_nr]. After Thread A completes the execution 
+of function the variable pkmap_count[last_pkmap_nr]. After Thread A 
+completes the execution of function flush_tlb_kernel_range, it will
+check the variable pkmap_count[last_pkmap_nr].
 
-So if you have *numerous* files to check then indeed the fcntl is no
-good, but the sorting variant is no good either -- you don't know what
-key to look stuff up by since you don't know any of the addresses
-(obfuscated or otherwise).
+static inline unsigned long map_new_virtual(struct page *page)
+{
+        unsigned long vaddr;
+        int count;
+        unsigned int last_pkmap_nr; // local variable to store static variable last_pkmap_nr
+        unsigned int color = get_pkmap_color(page);
 
-There needs to be a dev + ino replacement which retains the property
-of being reliable between reboots and so on.
+start:
+      ...
+                        flush_all_zero_pkmaps();// release kmap_lock, then acquire it
+                        count = get_pkmap_entries_count(color);
+                }
+                ...
+                if (!pkmap_count[last_pkmap_nr]) // pkmap_count[last_pkmap_nr] is used or not
+                        break;  /* Found a usable entry */
+                if (--count)
+                        continue;
 
-Since you said you have a patchset which exports something in statx,
-chances are this is sorted out -- I'm gong to wait for that, meanwhile
-I'm not going to submit my fcntl anywhere -- hopefuly it will be
-avoided. :)
---
-Mateusz Guzik <mjguzik gmail.com>
+               ...
+        vaddr = PKMAP_ADDR(last_pkmap_nr);
+        set_pte_at(&init_mm, vaddr,
+                   &(pkmap_page_table[last_pkmap_nr]), mk_pte(page, kmap_prot));
+
+        pkmap_count[last_pkmap_nr] = 1;
+        ...
+        return vaddr;
+}
+
+Fixes: 3297e760776a ("highmem: atomic highmem kmap page pinning")
+Signed-off-by: zhangchun <zhang.chuna@h3c.com>
+Co-developed-by: zhangzhansheng <zhang.zhansheng@h3c.com>
+Signed-off-by: zhangzhansheng <zhang.zhansheng@h3c.com>
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Reviewed-by: zhangzhengming <zhang.zhengming@h3c.com>
+---
+ mm/highmem.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/mm/highmem.c b/mm/highmem.c
+index ef3189b..07f2c67 100644
+--- a/mm/highmem.c
++++ b/mm/highmem.c
+@@ -231,8 +231,18 @@ static void flush_all_zero_pkmaps(void)
+ 		set_page_address(page, NULL);
+ 		need_flush = 1;
+ 	}
+-	if (need_flush)
++	if (need_flush) {
++		/*
++		 * In multi-core system one CPU holds the kmap_lock, waiting
++		 * for other CPUs respond to IPI. But other CPUS has disabled
++		 * irqs, waiting for kmap_lock, cannot answer the IPI. Release
++		 * kmap_lock before call flush_tlb_kernel_range, avoid kmap_lock
++		 * deadlock.
++		 */
++		unlock_kmap();
+ 		flush_tlb_kernel_range(PKMAP_ADDR(0), PKMAP_ADDR(LAST_PKMAP));
++		lock_kmap();
++	}
+ }
+ 
+ void __kmap_flush_unused(void)
+-- 
+1.8.3.1
+
 
