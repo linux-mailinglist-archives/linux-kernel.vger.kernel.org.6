@@ -1,107 +1,74 @@
-Return-Path: <linux-kernel+bounces-265407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31FDD93F0B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:13:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14ABD93F0B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC8211F22F3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:13:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C491C212ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AA513E032;
-	Mon, 29 Jul 2024 09:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10346140E30;
+	Mon, 29 Jul 2024 09:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="jelfHMZe"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DAjtlnzW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D6D13D63D;
-	Mon, 29 Jul 2024 09:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5169313DDAF;
+	Mon, 29 Jul 2024 09:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722244347; cv=none; b=MdHjPwiVYNjxLd9jYSvqZfE3THxlAGRPUDZLZN+VJGXv6xwjeM7xQVY6iGUpjKkagtKn4o5TGAt1Tj9/vSF3MKNMCfZlFB8LRtLNRDE0lRM4stC1wlHz3dYuxc8dt5HF4du8ixjXEj7UYFuKzp3YlWBg/dRFVj0a24QstAzxU10=
+	t=1722244376; cv=none; b=HALUghBWf8jlRNjfVZsy9XFz1GbDP1PB+oyBSh5obVayDruBxolufkVCG58Z+PmYEe0DZg8JSZNMDlFmqr1H5i+Kt3FJWm2DwWZF88p5CoUtyCaV1/0ACyxqHfmLqLP5orgsd+jAjyt9YNWWGYF5H6zRdCWxUrrP1naZt/r4Yh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722244347; c=relaxed/simple;
-	bh=UsWGMWJQJ2WgdALuKi1nebGY0MGxQLg/y0f9U8d4lH0=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=GSBwq8qgytn7zjWD4F3FiBLjghSa6gyCmt/vQn1aiG3cx1oCu7PbgQaj9zlfROj9QpQpvrerZpI3gcn9OPAWOSZafjpedbb/3hIk0b80pvzgtCorIQcGKhJNYkbAzKk2h3GBNo0Pi1Z8FDe7+AeTzkOl+6kSX2KxYuap38uxR2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=jelfHMZe; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1722244376; c=relaxed/simple;
+	bh=70Yk2qWcEPq0YMz5MhPbsRjtysROwfSfU6XQ4d1lilw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tDL6ISmyhc/ZsS4fVmmUG5EmnAccOLL/jPrVIG+zxS14a5a6QgiQugTyLAF0qeNnQaA+QGPyYm6G+ha/GK989o+gNHNGJvOhyUfw9nbmynCYI0aenckq1ACVKXPGA/CgzhznobbI96TZwFDudjEXMh8idDus6d9mG7zX7BHXagk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DAjtlnzW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2A7BC32786;
+	Mon, 29 Jul 2024 09:12:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722244375;
+	bh=70Yk2qWcEPq0YMz5MhPbsRjtysROwfSfU6XQ4d1lilw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DAjtlnzWHzPxkYgtWHZAC7sewSaL0SzIP9FsGhGYnbV/AapwMRSIGy0QM1f7+fLwg
+	 qFGxqXBHQa3w4W9Zs1hNyVf2U0mWBz6byCdmSeGspWPHx9e7QHI2I9DBvq2iayILjR
+	 U/j2usEMvqKVbB9MYxmG00DuUmiDGdUCWKDAzlLcSgxGNzHygiJYLSTlAW6oeeC61J
+	 mw4tCk1vx2ZmA29b1O8OuobdRyyQasP4tm+vle6vhngQFwdJo/F21kIoKUHOJjhBM4
+	 w6XKnCzBxxUECKzU18txH5ZtAyMFYM83E49AMasoXlLG/tVP69HP2Y4zmkzBpS4Y+f
+	 023TqhICib0gw==
+Date: Mon, 29 Jul 2024 11:12:51 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Haifeng Xu <haifeng.xu@shopee.com>
+Cc: jack@suse.cz, axboe@kernel.dk, tj@kernel.org, viro@zeniv.linux.org.uk, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] fs/writeback: fix kernel-doc warnings
+Message-ID: <20240729-endabrechnung-proletarisch-4843dd0ea1bd@brauner>
+References: <20240729020606.332894-1-haifeng.xu@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1722244342;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pswipPAaVOFmPwBSVAMERH4Feh9aaMUGuX9A7jGGpDg=;
-	b=jelfHMZeLyyD0sapjj+wGdwlqNR8cQumQFm2t56MTOnLKQccXRYSWmnMsLSEZVc7C1Iss0
-	jdETKXZ6hftIhwKI+lYVHPv5R0g4CzqB4bjK2fFmE9ksA5oXusgU6SazoBgKKJ2ZaWPTQ1
-	TL9EVQlFA6+WzdHR+1P+41DBnWhd+QJXkeQOtLLnGY1DqCQfO5Lg/6mjBomJtuMYL3Wbt3
-	5zBAqBcI7GanYJLZmHe7A83habOlPkJbPs7qM/LZBiD2+HNZNEck9K6YZsA4Ddzq7abFnh
-	MWqGTYJefH5bg78jP7Z2KYp06+SwaTQ53XU1RUaag6O7SenK98RCuGC2yTm90g==
-Date: Mon, 29 Jul 2024 11:12:19 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org,
- krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- conor+dt@kernel.org, arend.vanspriel@broadcom.com, efectn@protonmail.com,
- jagan@edgeble.ai, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, arend@broadcom.com,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org, duoming@zju.edu.cn,
- bhelgaas@google.com, minipli@grsecurity.net, brcm80211@lists.linux.dev,
- brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com
-Subject: Re: [PATCH v4 4/5] wifi: brcmfmac: Add optional lpo clock enable
- support
-In-Reply-To: <qetrwlvqekobedpwexeltaxqpnemenlfhky2t2razmcdtwlcv3@qdlesuiac2mr>
-References: <20240729070102.3770318-1-jacobe.zang@wesion.com>
- <20240729070102.3770318-5-jacobe.zang@wesion.com>
- <d7068c96e102eaf6c35a77eb76cd067d@manjaro.org>
- <qetrwlvqekobedpwexeltaxqpnemenlfhky2t2razmcdtwlcv3@qdlesuiac2mr>
-Message-ID: <9f248b0e2645a29b83ee503701e04d57@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240729020606.332894-1-haifeng.xu@shopee.com>
 
-Hello Ondrej,
-
-On 2024-07-29 10:44, Ondřej Jirman wrote:
-> On Mon, Jul 29, 2024 at 09:12:20AM GMT, Dragan Simic wrote:
->> Hello Jacobe,
->> 
->> [...]
->> 
->> >
->> > +	clk = devm_clk_get_optional_enabled(dev, "lpo");
->> > +	if (IS_ERR(clk))
->> > +	if (clk) {
->> 
->> These two lines looks really confusing.  Shouldn't it be just a single
->> "if (!IS_ERR(clk)) {" line instead?
+On Mon, Jul 29, 2024 at 10:06:06AM GMT, Haifeng Xu wrote:
+> The kernel test robot reported kernel-doc warnings here:
 > 
-> It should be `!IS_ERR(clk) && clk` otherwise the debug message will be
-> incorrect.
+>     fs/fs-writeback.c:1144: warning: Function parameter or struct member 'sb' not described in 'cgroup_writeback_umount'
+> 
+> cgroup_writeback_umount() is missing an argument description, fix it.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202407261749.LkRbgZxK-lkp@intel.com/
+> Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
+> ---
 
-Ah, I see now, thanks.  There's also IS_ERR_OR_NULL, so the condition
-can actually be "!IS_ERR_OR_NULL(clk)".
-
->> > +		brcmf_dbg(INFO, "enabling 32kHz clock\n");
->> > +		clk_set_rate(clk, 32768);
->> > +	}
->> > +
->> >  	if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
->> >  		return;
+Unfortunately I had already fixed that before applying. Thanks though!
 
