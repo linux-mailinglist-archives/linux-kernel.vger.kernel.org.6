@@ -1,138 +1,128 @@
-Return-Path: <linux-kernel+bounces-265669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933C993F436
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:37:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD07893F43C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9401F2260E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:37:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71BB22838E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D179D145330;
-	Mon, 29 Jul 2024 11:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FD5145B25;
+	Mon, 29 Jul 2024 11:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M2XiL5R4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DSfscIuU"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B7A145FEE
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9157407A
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722253031; cv=none; b=emIPTtT5VKroLTVAU0m3dWtB1PPTn5nPFW4DlYwPONDGFhJXHuk2ie1I6MCn5lalEjbwRiIg0D996qNw43tQWmhpR4drGHdxvzaat5bmOePKNfYj2x9wHfMvOg+Q7swfK2p5ti1ZlTsmTPSNl2SEE8stIV8kz0wgN/kAYxTtWe0=
+	t=1722253061; cv=none; b=TG05eJju1DtTY8pEfimvjVEYiL20smuwgbQ579wIDZ6YgNISlsiAMEjdtCthdm90FnpvdXS4ZBgLqWyFanzaZokfTYigoaajcDIBF0S664rDCdT9BH8/hsf8O8PPxMoQxPoM+HKzdzzVtIsU522vG1GBBiVEnFp90BjdMmZZMbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722253031; c=relaxed/simple;
-	bh=d1eQ4ssNsC40NFMV3AiIXdST+OmypBvaqEVrV3I+FdQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DtKUE4VCatIcy63/hKNrSfhd1fbmzpG8oCkE4OEvTFzCim0bdKTKcNEPUM7vvGzqNEGX4wgyRZSCg+NhZLCfMLanntuG1Gjguug8XYAjiJ+IEzA52VaMblADmmpH+oEeUKkvdZwTSnihl/524ZG6Wd5HDS6W0a5YcQ6r2IvegEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M2XiL5R4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722253028;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2dgIjtdy9bxsyN5Iula/p7KGAXyxnKNn8eNDxdgyZ60=;
-	b=M2XiL5R4bN3+/PTmfL3uh4N1kmtTRzqfVcw6kFu/3BehIYDK3yQ/6Gsiz872fXQfdqf/R1
-	nj9sZQ4N3r8J9NDX40haW+8ma6fTHmr1iPEBELFFGU55iSokD/2NY5CuzeM2wbGKeonXhd
-	Pwh3fJdroTrbM6mNI2jm+ZWDNdnDl6c=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-191-pFefaXg6M7uA4WgyIrOz2g-1; Mon,
- 29 Jul 2024 07:37:06 -0400
-X-MC-Unique: pFefaXg6M7uA4WgyIrOz2g-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9D23019560A1;
-	Mon, 29 Jul 2024 11:37:05 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.31])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 18DF71955D42;
-	Mon, 29 Jul 2024 11:37:02 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-api@vger.kernel.org,  Dave Chinner <dchinner@redhat.com>,
-  Christian Brauner <brauner@kernel.org>
-Subject: Re: Testing if two open descriptors refer to the same inode
-In-Reply-To: <CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
-	(Mateusz Guzik's message of "Mon, 29 Jul 2024 13:06:28 +0200")
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
-	<ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
-	<875xsoqy58.fsf@oldenburg.str.redhat.com>
-	<vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
-	<87sevspit1.fsf@oldenburg.str.redhat.com>
-	<CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
-Date: Mon, 29 Jul 2024 13:36:59 +0200
-Message-ID: <87cymwpgys.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1722253061; c=relaxed/simple;
+	bh=UMkg+emiOqLVL4nu4GJN12oeT/RpjoaPHzJuxhx2oak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ow+6F7mnjwkNsxZ/KgFCpysP3FHMQKj9lilsozQFh5s2w/7YIvzGtvRJlIH0zwOMNonPcR5U9Vxvn53QzF7AxAOoB+/60wPVZLmB0HsNzFjvydskMzInNfcrbFyo6YJ/gqcd3Zz7bnJbc0TFKf4KrinV67SId9ozQ6GIT7oOrRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DSfscIuU; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-368313809a4so1041976f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 04:37:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1722253057; x=1722857857; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UMkg+emiOqLVL4nu4GJN12oeT/RpjoaPHzJuxhx2oak=;
+        b=DSfscIuURCi3jRmaMtGT1zMF2A6zOs3/5RyGTRIQDsoHQ0avTt/HnLfj6yRlV7OrhQ
+         mFjZ2sVsrLTTUiRA/lqRyVNy1xdfJjOF5U7kYJ2ya3TPI8XuWRiokqRfj6orJaZLWiQs
+         CKgOT+BxeqqeLLuQXRnuhetC+4em4plX/D+3JjrGbDPaxuItXPyRzecQ0hjWxLiTmAHo
+         2Szypa4C4uW55cHXIk/BOrwk6adDWrMQTYEjDICRDWsSt3lco5P9yyaU8yw5iHMFBLZw
+         ghIzD7C99YO+4agtLD7luM86/QhbFhnsxRWwcD5E1/+H4AEn+k8omCPC4mRMo7JSWUp0
+         WFTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722253057; x=1722857857;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UMkg+emiOqLVL4nu4GJN12oeT/RpjoaPHzJuxhx2oak=;
+        b=RHW+5UQS4Vd8ePbf6MJyl8tEBNuVOcYFEGlzn78ZRLGSpfannAb5cNCuck4Cq0Wboj
+         0DqGPXDdmHdcjOJXNc/kmjcZtXrjgAlqdHq2yG9uJK3XG1AervxXhvaZGA6Grg7G+7b5
+         hkl4RSgMQvFnNu/i5OeavZRy9OWzfI1k0PinIxQjUJwMkY3TtVKB97BC0yNdpEtgA1QS
+         8AmFOAOhFJszy78rVxK38lLItM9AU53ySN8/lfrRqaXXqWPINQndr3bpJt3Llfgz9mW8
+         dTIkT5wiVXSzdRCL9AR4MdB0EvwSNlcO/EELDuhyLvHB6gRdJRNh20q8sXfJnwCbMgTx
+         VJjw==
+X-Forwarded-Encrypted: i=1; AJvYcCViMHNcDYt6iyf+PvAN8VR4x4EdfIy70Dg+fK8f9c+BkVMBEFhteTF4609EUTNU/auXtXrHfwOMc45yxmKHjTN06BUxJdaCuNJFvRT5
+X-Gm-Message-State: AOJu0YzWw7MQkp/o9/KDTCU4fv/AcJ8ccSKxmgQyvfs4kWzRaC5f58AM
+	lYIcGqPcynuMWTZk51bhhqupB2H4LIGeKadmJYQ0SpSHvHsa0nL4kjkG+VtN1wU=
+X-Google-Smtp-Source: AGHT+IGA3UsThwAcVwD716jWhKy1lQNtTr9Jegqy5NdqB0mgtrvu+30lgXe0KA7W0Qd/qyqgK0dtOQ==
+X-Received: by 2002:adf:e84e:0:b0:360:7856:fa62 with SMTP id ffacd0b85a97d-36b5d7cffdemr4718333f8f.15.1722253057229;
+        Mon, 29 Jul 2024 04:37:37 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fc3ce3sm80759405ad.277.2024.07.29.04.37.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 04:37:36 -0700 (PDT)
+Date: Mon, 29 Jul 2024 13:37:28 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chuyi Zhou <zhouchuyi@bytedance.com>
+Cc: tj@kernel.org, hannes@cmpxchg.org, surenb@google.com, 
+	peterz@infradead.org, chengming.zhou@linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] psi: Inherit parent cgroup psi enable state
+Message-ID: <dxwvcccihuuxddycohyi5dj66o42rjekmkgxc7pzs344kvwuhd@3x6e5prw3xld>
+References: <20240729034100.1876510-1-zhouchuyi@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="crgn7wpegjt47bzp"
+Content-Disposition: inline
+In-Reply-To: <20240729034100.1876510-1-zhouchuyi@bytedance.com>
 
-* Mateusz Guzik:
 
-> On Mon, Jul 29, 2024 at 12:57=E2=80=AFPM Florian Weimer <fweimer@redhat.c=
-om> wrote:
->>
->> * Mateusz Guzik:
->>
->> > On Mon, Jul 29, 2024 at 12:40:35PM +0200, Florian Weimer wrote:
->> >> * Mateusz Guzik:
->> >>
->> >> > On Mon, Jul 29, 2024 at 08:55:46AM +0200, Florian Weimer wrote:
->> >> >> It was pointed out to me that inode numbers on Linux are no longer
->> >> >> expected to be unique per file system, even for local file systems.
->> >> >
->> >> > I don't know if I'm parsing this correctly.
->> >> >
->> >> > Are you claiming on-disk inode numbers are not guaranteed unique per
->> >> > filesystem? It sounds like utter breakage, with capital 'f'.
->> >>
->> >> Yes, POSIX semantics and traditional Linux semantics for POSIX-like
->> >> local file systems are different.
->> >
->> > Can you link me some threads about this?
->>
->> Sorry, it was an internal thread.  It's supposed to be common knowledge
->> among Linux file system developers.  Aleksa referenced LSF/MM
->> discussions.
->>
->
-> So much for open development :-P
+--crgn7wpegjt47bzp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I found this pretty quickly, so it does seem widely known:
+Hello Chuyi.
 
-  [LSF TOPIC] statx extensions for subvol/snapshot filesystems & more
-  <https://lore.kernel.org/linux-fsdevel/2uvhm6gweyl7iyyp2xpfryvcu2g3padaga=
-eqcbiavjyiis6prl@yjm725bizncq/>
+On Mon, Jul 29, 2024 at 11:41:00AM GMT, Chuyi Zhou <zhouchuyi@bytedance.com> wrote:
+> This patch tries to solve this issue. When a child cgroup is created, it
+> would inherit the psi enabled state of the parent in group_init().
+> Once the enable state is found to be false in the css_populate_dir(), the
+> {cpu, io, memory}.pressure files will be hidden using cgroup_file_show().
 
->> It's certainly much easier to use than name_to_handle_at, so it looks
->> like a useful option to have.
->>
->> Could we return a three-way comparison result for sorting?  Or would
->> that expose too much about kernel pointer values?
->>
->
-> As is this would sort by inode *address* which I don't believe is of
-> any use -- the order has to be assumed arbitrary.
+I'd consider such an inheritance cgroupv1-ism. Notably,
+mmemory.swappiness also had inheritance and it caused some headaches
+because of its susceptibility to races (cgroup creation vs parent
+configuration).
 
-Doesn't the order remain valid while the files remain open?  Anything
-else doesn't seem reasonable to expect anyway.
+What about adding an option (mount option?) to determine the default of
+per-cgroup pressure accounting?
+(Based on reading about your use case in other mail.) With that you
+could only enable it for the "online" groups of interest.
+
+(I admit I only assume it'd be possible thanks to existence of
+psi_cgroup_restart(), I didn't look at how easy it'd be.)
 
 Thanks,
-Florian
+Michal
 
+--crgn7wpegjt47bzp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZqd+5AAKCRAt3Wney77B
+ScXXAP970hkRXZ1uqV68TT0aS/OXr1USW4LVTdVn5LEms87OgAD8C5/Hpf8Nvv81
+SQLJ4Ea0onFoknz8L2CXCTgcIdcE2AE=
+=H86Q
+-----END PGP SIGNATURE-----
+
+--crgn7wpegjt47bzp--
 
