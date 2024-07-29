@@ -1,96 +1,226 @@
-Return-Path: <linux-kernel+bounces-265731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4842793F550
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:26:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AADBB93F554
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53E001C21CD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:26:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DE751C22047
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B021482F6;
-	Mon, 29 Jul 2024 12:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7131482FE;
+	Mon, 29 Jul 2024 12:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y8NkkoXe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="Wv8UTGDD"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99E013CFA5;
-	Mon, 29 Jul 2024 12:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A7E147C9A;
+	Mon, 29 Jul 2024 12:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722255983; cv=none; b=NIhClSPvDES0vl+dp1dG574TKCwiD6j+zDzRHvzXd+vIs2yKi5c2qZndnkBDa6paGRO0zgeQDFUSmjT0GD5q0NQGffxMNUPIe3hvRM7XGNzYuPP4E0rWeYF2Yjb+ARwlU04dtfTiaJY2FRQH2NddX77Fq7c77mVhcmShG9SHyBs=
+	t=1722256025; cv=none; b=aNHgnZ+vFDnXyQkzt6A85ClUes9lbFEmesQmgESqrORiBo7dRteMdD60FrCPhCAmsdgezNTGej1E3hf8U8K/cU6mFwDjeGf1YW5U7I93pKQFnzm8UhHkygwm5yOsdPlCIXFZpfdDrKIHKEXyBfk7ixB8rYcb/k5EiP8S8ZoDs1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722255983; c=relaxed/simple;
-	bh=KHLR5QjelL6FQP+UX88+36x9KSEqAeOkUvdgU6uiv/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C5pWUO+KFfzID32taljVgRyFekzIicqkKO/D1cG6ApxGG11/3g5ANgJPIqDVjBYBeT4K2wr3TXHbwaO5uJ1Ea7G0T0VKPeWxxdvmAJsOk+3NQ3YU9pSowIGebRKc3zS7sMUI6lNI92fcr5VKaK4L6+RfZfjfILsDr5416ulH42w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y8NkkoXe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C48BC32786;
-	Mon, 29 Jul 2024 12:26:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722255982;
-	bh=KHLR5QjelL6FQP+UX88+36x9KSEqAeOkUvdgU6uiv/Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y8NkkoXeGxVWNTdLZ1Rh+wBe0GpWjGeHVBK4jFo/IsXKV/IUTYWg/4SGEahjaKj26
-	 uUuLB2VM9i1v6K2N/Pi7oQ1oW4HMqFecYKNd0RlvbtDSP72xbB93Fk6eyL283pd793
-	 FAb3WpPQcSuMl99zPeLYXFhoecQfOQruXSJ/w7GaoZSrxWwkoZ31kxJem6N4CquFTj
-	 Z3HSPr4dtZWV/r4YJhuhEVdcAk8Dn1iWpD860Hx3x8DyHj3mDqT4OF1xHPN0Ood4i4
-	 6fAMmvfuxFdHuRLuJt1r0E/jiXDI5vssABs21yKSqxcFcot9u88xpVjxSoh2Ymov22
-	 pe8f8Kfe33Y4g==
-Date: Mon, 29 Jul 2024 14:26:17 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Florian Weimer <fweimer@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-Subject: Re: Testing if two open descriptors refer to the same inode
-Message-ID: <20240729-respekt-tonnen-9c8f6c4d3bff@brauner>
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
- <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
+	s=arc-20240116; t=1722256025; c=relaxed/simple;
+	bh=2JCClrtDHwHTnAwdTN2TVJw53Z3QW8OApgvSbOs6DvA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=vA+++IxxPBVWlswuvbsDxfwSWIZcIsr16CYfl6hQNdTafEpKNfgGtHvX1K1G+Wx5h+m+PXneau/QHMqmo14XSsSNwpt/9RA9QttDhnegc2WavVaIrH2obAlxGaQowrRJXc++o0bDBcx5JRl2IB3sDgKYTUF8UGgzBNXyU/vYP2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=Wv8UTGDD; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46TCQS2o83970616, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1722255988; bh=2JCClrtDHwHTnAwdTN2TVJw53Z3QW8OApgvSbOs6DvA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=Wv8UTGDD9mdrMN540+8+erlfzpauY/Wu48rgtQZptkCJuYtBbKDqqoGKhIF7PQpcm
+	 sGZwPiMafG5f2ZiNYNpGHc7von3nJUSoj9OAMD/l+4cWyRaym4OSeSQ+A9paquZIu3
+	 67kuahe9652S+YKGDmdrPTctD8Mppp0KJhWDlK0KrS62YhK1e29Fxd+XH7xDIlKy2i
+	 9DfJADW4JIFoYWX6JRRul9YrhRKKvAADPJZaowgdXvqlSEVzihEwMIIPUPbeKXMlSg
+	 /ucQoToxS/NjDN7bsAT1+oU99zBll8Wk3h3bjXVe+N061+nJC6pgwXi1I6E9X7nyb8
+	 Dz80jhDZO0l/w==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46TCQS2o83970616
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 29 Jul 2024 20:26:28 +0800
+Received: from RTEXMBS05.realtek.com.tw (172.21.6.98) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 29 Jul 2024 20:26:29 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS05.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Mon, 29 Jul 2024 20:26:27 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
+ RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
+ 15.01.2507.035; Mon, 29 Jul 2024 20:26:26 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Joe Damato <jdamato@fastly.com>
+CC: "kuba@kernel.org" <kuba@kernel.org>,
+        "davem@davemloft.net"
+	<davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "jiri@resnulli.us" <jiri@resnulli.us>,
+        "horms@kernel.org" <horms@kernel.org>,
+        "rkannoth@marvell.com" <rkannoth@marvell.com>,
+        Ping-Ke Shih
+	<pkshih@realtek.com>,
+        Larry Chiu <larry.chiu@realtek.com>
+Subject: RE: [PATCH net-next v25 08/13] rtase: Implement net_device_ops
+Thread-Topic: [PATCH net-next v25 08/13] rtase: Implement net_device_ops
+Thread-Index: AQHa4YARnlUWdwvH+0WY0xFzPyuoM7IM+z0AgACXoYD//4CbAIAAjipw
+Date: Mon, 29 Jul 2024 12:26:26 +0000
+Message-ID: <6b6deed6193c4e0082f0eaaa9b92171d@realtek.com>
+References: <20240729062121.335080-1-justinlai0215@realtek.com>
+ <20240729062121.335080-9-justinlai0215@realtek.com>
+ <ZqdvAmRc3sBzDFYI@LQ3V64L9R2> <f55076d3231f40dead386fe6d7de58c9@realtek.com>
+ <ZqeDVl5rGXfEjv4m@LQ3V64L9R2>
+In-Reply-To: <ZqeDVl5rGXfEjv4m@LQ3V64L9R2>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
 
-On Mon, Jul 29, 2024 at 12:18:15PM GMT, Mateusz Guzik wrote:
-> On Mon, Jul 29, 2024 at 08:55:46AM +0200, Florian Weimer wrote:
-> > It was pointed out to me that inode numbers on Linux are no longer
-> > expected to be unique per file system, even for local file systems.
-> 
-> I don't know if I'm parsing this correctly.
-> 
-> Are you claiming on-disk inode numbers are not guaranteed unique per
-> filesystem? It sounds like utter breakage, with capital 'f'.
-> 
-> I know the 32-bit inode allocation code can result in unintentional
-> duplicates after wrap around (see get_next_ino), but that's for
-> in-memory stuff only(?) like pipes, so perhaps tolerable.
-> 
-> Anyhow, the kernel recently got F_DUPFD_QUERY which tests if the *file*
-> object is the same.
-> 
-> While the above is not what's needed here, I guess it sets a precedent
-> for F_DUPINODE_QUERY (or whatever other name) to be added to handily
-> compare inode pointers. It may be worthwhile regardless of the above.
-> (or maybe kcmp could be extended?)
+> On Mon, Jul 29, 2024 at 11:39:03AM +0000, Justin Lai wrote:
+> > > On Mon, Jul 29, 2024 at 02:21:16PM +0800, Justin Lai wrote:
+> > > > 1. Implement .ndo_set_rx_mode so that the device can change
+> > > > address list filtering.
+> > > > 2. Implement .ndo_set_mac_address so that mac address can be
+> changed.
+> > > > 3. Implement .ndo_change_mtu so that mtu can be changed.
+> > > > 4. Implement .ndo_tx_timeout to perform related processing when
+> > > > the transmitter does not make any progress.
+> > > > 5. Implement .ndo_get_stats64 to provide statistics that are
+> > > > called when the user wants to get network device usage.
+> > > > 6. Implement .ndo_vlan_rx_add_vid to register VLAN ID when the
+> > > > device supports VLAN filtering.
+> > > > 7. Implement .ndo_vlan_rx_kill_vid to unregister VLAN ID when the
+> > > > device supports VLAN filtering.
+> > > > 8. Implement the .ndo_setup_tc to enable setting any "tc"
+> > > > scheduler, classifier or action on dev.
+> > > > 9. Implement .ndo_fix_features enables adjusting requested feature
+> > > > flags based on device-specific constraints.
+> > > > 10. Implement .ndo_set_features enables updating device
+> > > > configuration to new features.
+> > > >
+> > > > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+> > > > ---
+> > > >  .../net/ethernet/realtek/rtase/rtase_main.c   | 235
+> ++++++++++++++++++
+> > > >  1 file changed, 235 insertions(+)
+> > > >
+> > > > diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > > > b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > > > index 8fd69d96219f..80673fa1e9a3 100644
+> > >
+> > > [...]
+> > >
+> > > > +static void rtase_dump_state(const struct net_device *dev) {
+> > >
+> > > [...]
+> > >
+> > > > +
+> > > > +     netdev_err(dev, "tx_packets %lld\n",
+> > > > +                le64_to_cpu(counters->tx_packets));
+> > > > +     netdev_err(dev, "rx_packets %lld\n",
+> > > > +                le64_to_cpu(counters->rx_packets));
+> > > > +     netdev_err(dev, "tx_errors %lld\n",
+> > > > +                le64_to_cpu(counters->tx_errors));
+> > > > +     netdev_err(dev, "rx_errors %d\n",
+> > > > +                le32_to_cpu(counters->rx_errors));
+> > > > +     netdev_err(dev, "rx_missed %d\n",
+> > > > +                le16_to_cpu(counters->rx_missed));
+> > > > +     netdev_err(dev, "align_errors %d\n",
+> > > > +                le16_to_cpu(counters->align_errors));
+> > > > +     netdev_err(dev, "tx_one_collision %d\n",
+> > > > +                le32_to_cpu(counters->tx_one_collision));
+> > > > +     netdev_err(dev, "tx_multi_collision %d\n",
+> > > > +                le32_to_cpu(counters->tx_multi_collision));
+> > > > +     netdev_err(dev, "rx_unicast %lld\n",
+> > > > +                le64_to_cpu(counters->rx_unicast));
+> > > > +     netdev_err(dev, "rx_broadcast %lld\n",
+> > > > +                le64_to_cpu(counters->rx_broadcast));
+> > > > +     netdev_err(dev, "rx_multicast %d\n",
+> > > > +                le32_to_cpu(counters->rx_multicast));
+> > > > +     netdev_err(dev, "tx_aborted %d\n",
+> > > > +                le16_to_cpu(counters->tx_aborted));
+> > > > +     netdev_err(dev, "tx_underun %d\n",
+> > > > +                le16_to_cpu(counters->tx_underun));
+> > >
+> > > You use le64/32/16_to_cpu here for all stats, but below in
+> > > rtase_get_stats64, it is only used for tx_errors.
+> > >
+> > > The code should probably be consistent? Either you do or don't need
+> > > to use them?
+> > >
+> > > > +}
+> > > > +
+> > > [...]
+> > > > +
+> > > > +static void rtase_get_stats64(struct net_device *dev,
+> > > > +                           struct rtnl_link_stats64 *stats) {
+> > > > +     const struct rtase_private *tp =3D netdev_priv(dev);
+> > > > +     const struct rtase_counters *counters;
+> > > > +
+> > > > +     counters =3D tp->tally_vaddr;
+> > > > +
+> > > > +     dev_fetch_sw_netstats(stats, dev->tstats);
+> > > > +
+> > > > +     /* fetch additional counter values missing in stats collected=
+ by
+> driver
+> > > > +      * from tally counter
+> > > > +      */
+> > > > +     rtase_dump_tally_counter(tp);
+> > > > +     stats->rx_errors =3D tp->stats.rx_errors;
+> > > > +     stats->tx_errors =3D le64_to_cpu(counters->tx_errors);
+> > > > +     stats->rx_dropped =3D tp->stats.rx_dropped;
+> > > > +     stats->tx_dropped =3D tp->stats.tx_dropped;
+> > > > +     stats->multicast =3D tp->stats.multicast;
+> > > > +     stats->rx_length_errors =3D tp->stats.rx_length_errors;
+> > >
+> > > See above; le64_to_cpu for tx_errors, but not the rest of the stats. =
+Why?
+> >
+> > The rtase_dump_state() function is primarily used to dump certain
+> > hardware information. Following discussions with Jakub, it was
+> > suggested that we should design functions to accumulate the 16-bit and
+> > 32-bit counter values to prevent potential overflow issues due to the
+> > limited size of the counters. However, the final decision was to
+> > temporarily refrain from reporting 16-bit and 32-bit counter
+> > information. Additionally, since tx_packet and rx_packet data are
+> > already provided through tstat, we ultimately opted to modify it to the
+> current rtase_get_stats64() function.
+>=20
+> Your response was a bit confusing, but after re-reading the code I think =
+I
+> understand now that I misread the code above.
+>=20
+> The answer seems to be that tx_errors is accumulated in rtase_counters
+> (which needs le*_to_cpu), but the other counters are accumulated in tp->s=
+tats
+> which do not need le*_to_cpu because they are already being accounted in
+> whatever endianness the CPU uses.
+>=20
+> OK.
 
-We don't use kcmp() for such core operations. It's overkill and security
-sensitive so quite a few configs don't enable it. See [1] for details
-how kcmp() can be used to facilitate UAF attacks and defeat
-probabilistic UAF mitigations by using ordering information. So that
-ordering requirement should really go out the window.
+I apologize for misunderstanding your question earlier. However, your
+current understanding is correct.
 
-Another thing is that kcmp() works cross-process which is also out of
-scope for this. kcmp() really should be reserved for stuff that
-checkpoint/restore in userspace needs and that's otherwise too fruity to
-be implemented in our regular apis.
-
-[1]: https://googleprojectzero.blogspot.com/2021/10/how-simple-linux-kernel-memory.html
+Thanks
+Justin
 
