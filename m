@@ -1,135 +1,390 @@
-Return-Path: <linux-kernel+bounces-265107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6044493ECB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:47:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0BF93ECB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2420A2819C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 04:47:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CC2E1C21799
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 04:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2240481219;
-	Mon, 29 Jul 2024 04:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9B381AC7;
+	Mon, 29 Jul 2024 04:47:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L6nF5bZJ"
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="HdVZnDxc"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012004.outbound.protection.outlook.com [52.101.66.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9C678C8E
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 04:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722228415; cv=none; b=usmn62h5/+gQaSiRlCK+qLLPXAFFBz3WjIxWaIikAc6hkAH3IJSes+WVmrT1/tbRq+7DVlCnt+TDJhv7ki8NBs5NSx/NUWfmPSw9yN3QqSHNepm1ykS5QJEjlApdQ/z6FcsiLWWtRrTPuGynq2qtC9jynKmwNEgee3bJ2GoCY7I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722228415; c=relaxed/simple;
-	bh=sVXnjAxmRkfGoBkGn/gPFJEr4afsmYREEfHn9CEzdk4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y/5KAPSGqOmPIy6P0jQ3xJ9Jm8yHdP4f34v7RPf0U8a0vTRCWqb1eArgVyX5m0yYIMrJsjO5levsTJPHYsrvHZ4RIzQCFYcV1x/bzoOY5RfwPfr6TvPug4LLLWvsDS4EHF1UCGdaHPS7sR1DD63uBkZJbp+DSpE4RCq6fiz3Ie0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L6nF5bZJ; arc=none smtp.client-ip=209.85.217.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-49297ff2594so475742137.1
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 21:46:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722228413; x=1722833213; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JIfrxqdGjofysDt2XnlAf0w5onRMNtZvYCQKUGP2fbU=;
-        b=L6nF5bZJH/Or+rwaHqrnsNtonEAFF8cwaO6Zg3ECZTshj4MKVuFOUuReDdYJ9JLmmD
-         FhF8S8N/cJFug5pZePwO1PHsHs+d9H5RWxQ9AEJP/PsvWi/H9BhOYiIT6rayem1GeKy7
-         BQqmIdEIjKZ1DVFUI+wp5+i6KnOaO6ivK0nE1XB08Ioyygbrz8Yzu/jzZg2DU9Ol1g2S
-         XFDSZnzH17rR0WWOBNYNOKZ2A5EfKlcpuBNtJyIvKrJw1RIjvP+1AvJ0j0hiipDkYIEk
-         nlnnIaSb4kGfdHFkVEwv4oWs/5WEV330xJqxHwKDER/WhRCC9Jdn6Xco0qiYwpifFnC2
-         ng0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722228413; x=1722833213;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JIfrxqdGjofysDt2XnlAf0w5onRMNtZvYCQKUGP2fbU=;
-        b=iBKDO3aNNOW3G++uTovepjhLSzZoft88qXEDcb4hsdeJCSrDBvKCBupQOLFCdo+1P7
-         gz0Dayymls5fjsDaIIuCEZ/ZY755Q6srzf3nusSlgbyhCFHH3q6y4L2l0gGTNfby/vw4
-         4l7l1oiGGxPkLeBtfQIk8VESRqFReXkt9kfYw5SYZjZsfkhRM2wyXcdhFuOnyNPiGMRm
-         NfpYAe6rlgTZ8uXuMD4jLq+4vLnokxzkOqovkwLAXw0GEjQjRkpeI7b7qEX+70xVfW6F
-         /B2BRBMoNHubbvwSW+4OZ6SZu/g+0WadHhhg3jhkLGV4DB4/XOzR4hHD1HoY79g5icS9
-         hhng==
-X-Forwarded-Encrypted: i=1; AJvYcCWY85VeG1Md/Ahlz3lHMrbVF29LudzgBobNJD12QedrVJJ9XwgQxD6zihgfddLqfHy23fqhktpCKLUkzMYhM5EibRH6e6ri6J5hktAO
-X-Gm-Message-State: AOJu0YxoPaWYPZf9TSmKAbDMFv2P9yM0I+r2SEeABsdmg9xS7A7KSXSL
-	tS7qQ5eZKM34RgOo+s6/GNdA6PMjY915IS+NV2KzYFcl/KUdjjApAJWmVO+tMJlNosAhkGewWZ/
-	7vRiVMUxwDI8d3msKCMYtCnltfYg=
-X-Google-Smtp-Source: AGHT+IF1UvHKFXDeCU8sPTVdZGXnNX/70vz5xwO6TIoFEz+xxy1Cb8FNJaku230OaiJqvTadGEMuqBrbRrjZeLpAC+Q=
-X-Received: by 2002:a05:6102:3ec2:b0:493:b2b4:3708 with SMTP id
- ada2fe7eead31-493fad54e1fmr6672772137.27.1722228412696; Sun, 28 Jul 2024
- 21:46:52 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE1F757E0;
+	Mon, 29 Jul 2024 04:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722228453; cv=fail; b=j11WnWhocP8bdFjj6vBAsQobrk9BusYV/Dp8IDum1i0b+Hyu2bNg9Ctl7Z8l0C/3DY+0exiwiizhDTUeqDjBDjb2w7RumzvHQmfAprNmDOt8yL5ot1VM7G/4yvwMWh4gogSBouRtkE7JMto87deb8Gm4fXeKbIcl+pdSQePFpaU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722228453; c=relaxed/simple;
+	bh=fHqRob5lQd/VjtR5Bzjr97IKLZyiqW17O/6CSk+THcc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=qX7Wex+RsSgmtS9CG7Zn97LkTwjhzW//hGMBdBjbw5XQ91wFmszn6UhUIh59uqmN/fANXalrq++K8WDL2SUudJ61OZ11V4SWIqE+VTZO0OC5kLu7xrjrk550XjAih8+4vgraVR0/3ddhFRldIG2OM7bpg5UYyLtDGYBtn8QlBmY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=HdVZnDxc; arc=fail smtp.client-ip=52.101.66.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RFLlnYhzdaqHu0XPbW15ncIHkYq/4ffBie9c4kWDVHzxZJl5Vz5qh1QGb4/u9yMqBEFJImMiQGWC7/lVEHkqcgFAcOade1fkVDqJYBVJzphd+tVNYLpASAoq2awZalvAd+v2rFleyWgUaxg5G1rGpUC1f6W5Ekf9pw3hRUx8FmefUX51Rfe6YtzXjew/QQbaNkJkOKB3Wb6zElKtHTykesy/KkyqTjJH1rJIdNf3H86Z1FePxjn1zV1LlzM6Ldd5cMgutcW5/G8QEeT9E+ML8Vesw2yK+GTBxCyKTGa4g1TPlbQnJP3omITe/oiV5uelK1svtznG9/+tF9yNABGeog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3o7UgIfZEvf+MOTgbkWNJ/IzTOCN7xLwGatTi0C3wOg=;
+ b=MSLdzvUSUNzZXR/59BFUBpdCxSYfCGIrng2O8lKz2EWAtiV2rzmWvm1jkbENySGn4/QZxaXhiyrHlTFCYSL5rp1xdAJHb+jS7SYfKvuobjCLDwF4H930a7O4kiOHZkcjsX8veqx1ScfnqE2TuP17tdzzC+ZLASiTt5JqZclGgSw5TfyfMEwxYyPBZAscBn3PQJa8eZ84KM8i0L2v9DA3jopZ/SyEt/laAycOHAT5W6PXXxRtdiODek/7CLaZbFrtQzr3BL4wJABlrHhP35huQ4PtnLcgAuKGiFVWgVsuDNZmpz5KhFxKMztRXjWIptQro1p7kLaAfBUkER59ZNR5NQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3o7UgIfZEvf+MOTgbkWNJ/IzTOCN7xLwGatTi0C3wOg=;
+ b=HdVZnDxcdPpw1D4flIf7VUEmzYfwnBhH3RXnUJhCDLg4yzeI2IPPn7IV394fC+D6gl9Q0MJqHK7o75ijaNldIpD+SKjuffqiTEip3cj1pCVEEBNIN6N+go0/44vCPguPBZkM6qAVFEeHHUJMaJTQ27ePSAb/1NorscTv2Ul6lGhVGMsOqMGW9a1t5G0Hav30oNeoVDgXAamGz77qRaDSf0CMc52tmsw4lrvr5kpUkhbwF/NlShSB+QBUT+qOmmaBrnnXtxoklphJzW5YOyYt5nAvmfYT7CHR6UKmX0ogyjXMtmM0YvVEQr9ch4ecnZPyhYtUGUngWf88/f2p/B1eoQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by AS5PR04MB9875.eurprd04.prod.outlook.com (2603:10a6:20b:652::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Mon, 29 Jul
+ 2024 04:47:28 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%2]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
+ 04:47:28 +0000
+Message-ID: <2488314e-7a0f-406c-acec-ee106038f238@nxp.com>
+Date: Mon, 29 Jul 2024 12:47:58 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] ARM: dts: imx53-qsb: Add MCIMX-LVDS1 display module
+ support
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+ kernel@pengutronix.de, festevam@gmail.com, saravanak@google.com
+References: <20240726065012.618606-1-victor.liu@nxp.com>
+ <xoj4sypxndql62k64ztmco5ufddeysp26fyc46prwr4ezik223@sssy5zmefwtg>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <xoj4sypxndql62k64ztmco5ufddeysp26fyc46prwr4ezik223@sssy5zmefwtg>
+Content-Type: text/plain; charset=UTF-8
+X-ClientProxiedBy: SI2PR02CA0034.apcprd02.prod.outlook.com
+ (2603:1096:4:195::9) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726094618.401593-1-21cnbao@gmail.com> <20240726094618.401593-4-21cnbao@gmail.com>
- <ZqcRqxGaJsAwZD3C@casper.infradead.org> <CAGsJ_4xQkPtw1Cw=2mcRjpTdp-c9tSFCuW_U6JKzJ3zHGYQWrA@mail.gmail.com>
-In-Reply-To: <CAGsJ_4xQkPtw1Cw=2mcRjpTdp-c9tSFCuW_U6JKzJ3zHGYQWrA@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Mon, 29 Jul 2024 16:46:42 +1200
-Message-ID: <CAGsJ_4wxUZAysyg3cCVnHhOFt5SbyAMUfq3tJcX-Wb6D4BiBhA@mail.gmail.com>
-Subject: Re: [PATCH v5 3/4] mm: support large folios swapin as a whole for
- zRAM-like swapfile
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, ying.huang@intel.com, 
-	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com, 
-	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
-	kasong@tencent.com, linux-kernel@vger.kernel.org, mhocko@suse.com, 
-	minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
-	senozhatsky@chromium.org, shakeel.butt@linux.dev, shy828301@gmail.com, 
-	surenb@google.com, v-songbaohua@oppo.com, xiang@kernel.org, 
-	yosryahmed@google.com, Chuanhua Han <hanchuanhua@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AS5PR04MB9875:EE_
+X-MS-Office365-Filtering-Correlation-Id: 31259253-21df-4e5e-9782-08dcaf898c7e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RDNBeDYxWnduU0ZmNWtRYlZkMy8zU05FeDRpdWlYMW5XKzFDaFNiOW9nS1BW?=
+ =?utf-8?B?UHl4LzJPcnFlZ1QyVDBaT1RjMDBJWXRRNGRHT0lJUGhCM0tFYWgrY0tlNGNQ?=
+ =?utf-8?B?L01ZV0FES1p6ODcwaG1KalY1TzZmcHkvR2FXKzJ3VlhvQnAwZlkzMnRMV2Jz?=
+ =?utf-8?B?dGt6Wk9hRzZDN05QdVhvemhRNFlvZnFvMTF5S3dNcEplcmNvbE1Fa09pZFM2?=
+ =?utf-8?B?WXdxdm4rSmc2bHc0b3VIbDZ5UmVqTHhvcEVybkdCZTk4MHBFOTVub3RUT0hp?=
+ =?utf-8?B?TGxOVm9yckhUdS91SGlvMTV1WmxtK1FsZk1WUTMxUHJLOHdSeVkvY0htZGFE?=
+ =?utf-8?B?UGx5RHN6SzZmS2tZQU40VzhzZHRjSS8wRE4vaFBDM05ZS3VjalRkOFdqVTll?=
+ =?utf-8?B?ZHV3SUlqdXpvdnFXNDhxV0lOS0lXWEtOclJhZlcwRUpQZ3VKK21VZWtSN3E0?=
+ =?utf-8?B?dnUrLzhpendFVkVNNURGeE53dTlqWXFFTE5BNkg2L2ZwWXNZNmJ5OEZEaWpp?=
+ =?utf-8?B?M21yL0JZSmNPbUR1VmN5Y0d2eFJCclhqTkpnZEdVTi9PdmxCNVB4MDhodCtZ?=
+ =?utf-8?B?MnQ5ejAwNHhycG5LazYrby9ENlFLaXVVcVFPWm90S0pCWDRSbVdpTHVmd2JO?=
+ =?utf-8?B?V3hTYmRYYVV3TlU1alpIU0lmYnBBTGJRTU9sb0d0ZVUzemhrbTh0enVLWWxx?=
+ =?utf-8?B?dFhHNGxmamRHWUpaYlhMd3A1dnVhSTBsdDEvZHVDb05KRFpTMzJiazYwK094?=
+ =?utf-8?B?cUxjTHJQREFTOTB1cGh0bG1ETzNybHlOdmtYdFFPMWxTanhTeFpadzllRnlY?=
+ =?utf-8?B?bGVJcUNRTGRnTVFHYW5NNjlCRzhmWm9vWlV5WXRyYjRrQlFoSGNGSW9KWmV6?=
+ =?utf-8?B?S3Q3aGVkMWZzdE1uWGxnbDgwR0FHMmFnQTMxZnVIZnNqc3kzd21lT0ROWERQ?=
+ =?utf-8?B?WVd1MHBkM3krOStFWTdzMmhaRTdWQXVOMGtIbjZKMnpVSi9BdGNaNUcvNDhW?=
+ =?utf-8?B?L2k0OGhjNHo3Q2lTQzdpUFlXcHlDQm4xSlBLN0lhNFJXMVd6blhqZSt3R0tJ?=
+ =?utf-8?B?NnNkaFI3M3VMYkxlNERLcngydkFxNnFhYlNqV2huaVBkMWJSZEhqL3NHaTZX?=
+ =?utf-8?B?NG5YMGYrWnhkUms0YVdEWWlPaFhYdnpBZE1hUk9QU21oeVZOZ0J2YmpNbjJR?=
+ =?utf-8?B?L3MxRHVFVHloTkhBRlU3WVFaMmxBQUdCNE1YYWZhOXlrMGNPclRiTGpnajAr?=
+ =?utf-8?B?Q3dQRDNRNVpKNGsra2ZkbmNCMTg0NkJERjZERzZEMmY1Yy8zbUFnR1RxeE55?=
+ =?utf-8?B?L1orc1dwSWZVclJFeDkvYmFveVN5dzdvSStYQmgxa2thNXovVEdvd0lRdDRC?=
+ =?utf-8?B?UjBQaTg0ZXM1OXI2VjRWRnRPMFNOaTU2ei8yNnpmVlJVYjNrMnBTS2lJK2hi?=
+ =?utf-8?B?dUtGODY3d25waEVkVURPeHpoL3R2QnNRR1BMeUlHYnFVVmZjU2ZHRGRaK29N?=
+ =?utf-8?B?WlNVa0lXTU9Rb09Fa2l2R3g4YjJTSlVMOGV4Vml1MzVIRGZNRWNFeXdFUkd1?=
+ =?utf-8?B?Y3VHanZvMzVuTTZ5dmdINW1HWHlnRnVsYndNUDQ5cFVsdWQ1NnlDQzU2ZVRC?=
+ =?utf-8?B?cFVFeU9qbFU0QVhEQmNSeHVRcDZIOWtEMDBYOEJrSDZmWm9HWlMyc0RCenFT?=
+ =?utf-8?B?QTg0ZjJKbkxoUElYb0Ywa0pnWDdwYis3VGxzempXMktHaVloN0MvbjdWbS9m?=
+ =?utf-8?B?czJSNFZmUXBaNFd4NmlwK254Uk5uREdqWDZ1QTlnRGYrWDhXT1hyZDE4WGtZ?=
+ =?utf-8?B?alQ0Uk4vS0dCdlh5RVJMdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dUlhRC9Pd2E1Nzc0YzZhRGFjc1VxVzhWekJ0TWxIK2grRXpuclJ5Y1BxOE9i?=
+ =?utf-8?B?Y2l0OTRaM01xODRJTGRMelhFcUE2Wm55UFg2dURuVmpYeHJMa3Y3SCtUb0Jr?=
+ =?utf-8?B?aDVJOVphdzllMitpbjFNY1NoT1V5cnRYOTYrb2dwdXBBWmVRUkl4bEhzZ2pr?=
+ =?utf-8?B?dUZIRjlOZzUvMDM5UXh1dmZqMU5GcHFDa2hGd09VWnd6UzhUNkN2VytSQzg3?=
+ =?utf-8?B?Rm1aVkZGMU42SXUxdld3TGpTU1FnSnBFdFNydzB1TFluczVINW5va0RGeUh3?=
+ =?utf-8?B?WXlzZk5LWlJxZ3JldEJaa3dnUmdUdDM1QlZ4ZjVpWlh4RGNBL2R5Y0YrVHVI?=
+ =?utf-8?B?Q0dGTVJPU3lXTFQvQU9lNVl2ZG03Slo3SlpuU2MwTGw2dUhHNUVXVFpxalNx?=
+ =?utf-8?B?S2FJUWNDMk1XWWp1eEFDNFVOdTF0WEdxSlRXc3ErZENwcUZmNFhNc2wwQW9X?=
+ =?utf-8?B?N01DN3gxeWdmSGMvaXIvS1pDOW1ZZFZhV3VEbTZGTkNtaWJ6ZlloQS9OTk15?=
+ =?utf-8?B?YytTWFZFeFB5NEZLT2wzb1luOWpWWVVZN2tYQkJER3VsVzJrYWYyUVl5d3dR?=
+ =?utf-8?B?UVRmcEViZnBJM202R1l3NlZPQXZ0OEhZOTJrVlZ0OXZQSDZIZ2RFeVVPNlhK?=
+ =?utf-8?B?WUhwOVFTUC9wYzlDZ2w5VWIwOUljTDJGaWpYTVZPRURybTB6cU53Y0RTQTZU?=
+ =?utf-8?B?K0F2RXlaZ011TE9IeFNIdC9zZ3krMmhEM004WE5nRlBGWTV5SjU2dlNtOHpy?=
+ =?utf-8?B?WmJoRUZUZHNoNFdnTlJoK0xEeDd0cTJlQzR2K0ZDTysrQXd3RmZ0VVVnN05T?=
+ =?utf-8?B?WG42cHNhaTJDaDVIUmtMOVg0T3krdG1wc3VVUitwQmhERkhsdVJ6UlRXcTFR?=
+ =?utf-8?B?SVZ2YzEzeG1YLzZrbWoyNk1zeVFvempwZnFtaDIrQW1pSi9PZjgzeEU2ejFY?=
+ =?utf-8?B?L1luNzRyQ3lIYUpXU2dsMnR3bVdya1ZHdUdLbkdPL0dwUUNIZjhDZ3RWSGxB?=
+ =?utf-8?B?MGpYcWl5VjlmaDc1L2t1MkVZamxOQWs3WnArOWVWbllhRjN3TjNTKzdYT1Zr?=
+ =?utf-8?B?aHVueXo1T256bXNwYXBsYkw0STg1Q0VmSjlXYmhDd3dlNFYwR094Ky81V1VL?=
+ =?utf-8?B?YTFYQ0V3bEVZQ25mdTFiekNGSTRPRW1MTnZNWlJ0WDFOVnlwZmdDYm92QWxh?=
+ =?utf-8?B?YkI2M21paUpnY0FsV043NjFaOUhwbjBpcHFvSDc1TUJVVVVYVDJXMW1uVzBM?=
+ =?utf-8?B?b21IWFcwTHhrVUZ4YXI3Q1lxVXI0UlZhMEZPV1YwR0N2RHJSandUa05zUEVI?=
+ =?utf-8?B?N28zNXRITHBGcTgyc1V0OU5UWGovSHhJckZxR0NMdm92SGQ5ZFNFWHU3cndW?=
+ =?utf-8?B?T21mMThzUm1OUmxBZU5IV3VCbDNaSVlva2dNRXhrdWQ3TGI0c2dqN2NuR2Ix?=
+ =?utf-8?B?ZmZtVlV6OVp6WlBsNVVmYk81Y3A1bE1kZm0rd2ZQNXFmcEJJYjJlaVVjVTcr?=
+ =?utf-8?B?dEROMUxEWXpqYzVjeWRNKytRcFB3SG0wdVRNQWZQRnFoTEo0N3FjcUxVWWFy?=
+ =?utf-8?B?QUUyV1p1SFB2cUFvVW9rUFo3M1JmVGc1dlBRZjh5bFlKaHZnN05lK2g2RGpq?=
+ =?utf-8?B?OEl6Yk9mN3N5ekZqWDhNVFIzditQYll3Ykc1YWxMMGxaaVk4Q2VndnM4MW9V?=
+ =?utf-8?B?U0xZandlQnZ6NWxLUE5EUHBxOE1WSDR6TGJocktPQWY1VUd0Y0t0OU9pNUVQ?=
+ =?utf-8?B?a3hSWVlpRmk0b3pQZzh2QkdzZ1JSTUd1NTIxSUU0QnFIS0s3QTZHRk43SWRi?=
+ =?utf-8?B?Tmd0TGlhWUQwOUVzaFMwMi9jVk9LcnFwM3RleGZIVDR1UGlmWTZhMUlOVGsz?=
+ =?utf-8?B?SjhQV2xwT0wyU212bzNmYWpZUnRldncwN3J4NjN5ck43cm5pQjVkSmdaQ0RD?=
+ =?utf-8?B?djhtcWZOWTdrTDY2UGJaMTVhQnVYNHVBNlZLaWQ1R1RxNWlEWEQwUzBGcDM3?=
+ =?utf-8?B?bnFIWDJJZnNyUFJBbFl1TW53VU5WK284M3RuVWgzcEZ5QUVDNFFISTJrZGM3?=
+ =?utf-8?B?MDgvZ2l2T2dCWThSNUlGOWNsZzRmcXM5TW5wb1VQQW1zZDMvTDljTk84b3l4?=
+ =?utf-8?Q?nV/5k1WrrE6gmmgB6lDzEJJiO?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31259253-21df-4e5e-9782-08dcaf898c7e
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 04:47:28.3147
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Zzp1FC1wCFLqPeVRJhXOmyTDm0X+a4x3vrffPrsGsIakmG9W65ygunYd1ACORjbgZb5R9fWDOWKfgLxefUS9EA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9875
 
-On Mon, Jul 29, 2024 at 4:41=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> On Mon, Jul 29, 2024 at 3:51=E2=80=AFPM Matthew Wilcox <willy@infradead.o=
-rg> wrote:
-> >
-> > On Fri, Jul 26, 2024 at 09:46:17PM +1200, Barry Song wrote:
-> > > -                     folio =3D vma_alloc_folio(GFP_HIGHUSER_MOVABLE,=
- 0,
-> > > -                                             vma, vmf->address, fals=
-e);
-> > > +                     folio =3D alloc_swap_folio(vmf);
-> > >                       page =3D &folio->page;
-> >
-> > This is no longer correct.  You need to set 'page' to the precise page
-> > that is being faulted rather than the first page of the folio.  It was
-> > fine before because it always allocated a single-page folio, but now it
-> > must use folio_page() or folio_file_page() (whichever has the correct
-> > semantics for you).
-> >
-> > Also you need to fix your test suite to notice this bug.  I suggest
-> > doing that first so that you know whether you've got the calculation
-> > correct.
->
-> I don't understand why the code is designed in the way the page
-> is the first page of this folio. Otherwise, we need lots of changes
-> later while mapping the folio in ptes and rmap.
+Hi Dmitry,
 
-For both accessing large folios in the swapcache and allocating
-new large folios, the page points to the first page of the folio. we
-are mapping the whole folio not the specific page.
+On 07/27/2024, Dmitry Baryshkov wrote:
+> On Fri, Jul 26, 2024 at 02:50:12PM GMT, Liu Ying wrote:
+>> MCIMX-LVDS1[1] display module integrates a HannStar HSD100PXN1 LVDS
+>> display panel and a touch IC.  Add an overlay to support the LVDS
+>> panel on i.MX53 QSB / QSRB platforms.
+>>
+>> [1] https://www.nxp.com/part/MCIMX-LVDS1
+>>
+>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+>> ---
+>> I mark RFC in patch subject prefix because if the DT overlay is used, both ldb
+>> and panel devices end up as devices deferred.  However, if the DT overlay is
+>> not used and the devices are defined in imx53-qsb-common.dtsi, then they can be
+>> probed ok.
+>>
+>> With a dev_err_probe() added to imx_ldb_probe() in imx-ldb.c, devices_deferred
+>> indicates 53fa8008.ldb and panel-lvds kind of depend on each other.
+>>
+>> root@imx53qsb:~# cat /sys/kernel/debug/devices_deferred
+>> 53fa8008.ldb    imx-ldb: failed to find panel or bridge for channel0
+>> panel-lvds      platform: wait for supplier /soc/bus@50000000/ldb@53fa8008/lvds-channel@0
+>>
+>> It looks like the issue is related to fw_devlink, because if "fw_devlink=off"
+>> is added to kernel bootup command line, then the issue doesn't happen.
+> 
+> Could you please fdtdump /sys/firmware/fdt (or just generated DTB files)
+> in both cases and compare the dumps for sensible differences?
 
-for swapcache cases, you can find the same thing here,
+I fdtdump imx53-qsrb-mcimx-lvds1.dtb and imx53-qsrb.dtb.
 
-        if (folio_test_large(folio) && folio_test_swapcache(folio)) {
-                ...
-                entry =3D folio->swap;
-                page =3D &folio->page;
-        }
+I see three sensible differences.
+1) panel-lvds node position.
+   For imx53-qsrb-mcimx-lvds1.dtb, it comes very early and is next to
+   'compatible = "fsl,imx53-qsrb", "fsl,imx53";'.
+   For imx53-qsrb.dtb, it comes later and is next to panel node in '/' node.
 
-Thanks
-Barry
+2) properties order in panel-lvds node.
+   For imx53-qsrb-mcimx-lvds1.dtb, it shows
+   panel-lvds {                                                                 
+        power-supply = <0x0000001c>;                                             
+        backlight = <0x00000030>;                                                
+        compatible = "hannstar,hsd100pxn1";                                      
+        port {                                                                   
+            endpoint {                                                           
+                phandle = <0x0000007d>;                                          
+                remote-endpoint = <0x0000007c>;                                  
+            };                                                                   
+        };                                                                       
+    };
+    For imx53-qsrb.dtb, it shows
+    panel-lvds {                                                                 
+        compatible = "hannstar,hsd100pxn1";                                      
+        backlight = <0x00000031>;                                                
+        power-supply = <0x0000001d>;                                             
+        port {                                                                   
+            endpoint {                                                           
+                remote-endpoint = <0x00000033>;                                      
+                phandle = <0x00000017>;                                              
+            };                                                                   
+        };                                                                       
+    };         
+
+3) No 'lvds0_out' and 'panel_lvds_in' in __symbols__ node for
+   imx53-qsrb-mcimx-lvds1.dtb, but for imx53-qsrb.dtb they are in it.
+lvds0_out = "/soc/bus@50000000/ldb@53fa8008/lvds-channel@0/port@2/endpoint";
+panel_lvds_in = "/panel-lvds/port/endpoint";
+
+BTW, reverting Saravana's commits
+7cb50f6c9fba ("of: property: fw_devlink: Fix stupid bug in remote-endpoint parsing")
+and/or
+7fddac12c382 ("driver core: Fix device_link_flag_is_sync_state_only()")
+avoids the issue from happening.
+
+> 
+>>
+>> Saravana, DT folks, any ideas?
+>>
+>> Thanks.
+>>
+>>  arch/arm/boot/dts/nxp/imx/Makefile            |  4 ++
+>>  .../boot/dts/nxp/imx/imx53-qsb-common.dtsi    |  4 +-
+>>  .../dts/nxp/imx/imx53-qsb-mcimx-lvds1.dtso    | 43 +++++++++++++++++++
+>>  3 files changed, 49 insertions(+), 2 deletions(-)
+>>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx53-qsb-mcimx-lvds1.dtso
+>>
+>> diff --git a/arch/arm/boot/dts/nxp/imx/Makefile b/arch/arm/boot/dts/nxp/imx/Makefile
+>> index 92e291603ea1..7116889e1515 100644
+>> --- a/arch/arm/boot/dts/nxp/imx/Makefile
+>> +++ b/arch/arm/boot/dts/nxp/imx/Makefile
+>> @@ -46,8 +46,10 @@ dtb-$(CONFIG_SOC_IMX53) += \
+>>  	imx53-ppd.dtb \
+>>  	imx53-qsb.dtb \
+>>  	imx53-qsb-hdmi.dtb \
+>> +	imx53-qsb-mcimx-lvds1.dtb \
+>>  	imx53-qsrb.dtb \
+>>  	imx53-qsrb-hdmi.dtb \
+>> +	imx53-qsrb-mcimx-lvds1.dtb \
+>>  	imx53-sk-imx53.dtb \
+>>  	imx53-sk-imx53-atm0700d4-lvds.dtb \
+>>  	imx53-sk-imx53-atm0700d4-rgb.dtb \
+>> @@ -57,7 +59,9 @@ dtb-$(CONFIG_SOC_IMX53) += \
+>>  	imx53-usbarmory.dtb \
+>>  	imx53-voipac-bsb.dtb
+>>  imx53-qsb-hdmi-dtbs := imx53-qsb.dtb imx53-qsb-hdmi.dtbo
+>> +imx53-qsb-mcimx-lvds1-dtbs := imx53-qsb.dtb imx53-qsb-mcimx-lvds1.dtbo
+>>  imx53-qsrb-hdmi-dtbs := imx53-qsrb.dtb imx53-qsb-hdmi.dtbo
+>> +imx53-qsrb-mcimx-lvds1-dtbs := imx53-qsrb.dtb imx53-qsb-mcimx-lvds1.dtbo
+>>  dtb-$(CONFIG_SOC_IMX6Q) += \
+>>  	imx6dl-alti6p.dtb \
+>>  	imx6dl-apf6dev.dtb \
+>> diff --git a/arch/arm/boot/dts/nxp/imx/imx53-qsb-common.dtsi b/arch/arm/boot/dts/nxp/imx/imx53-qsb-common.dtsi
+>> index 05d7a462ea25..430792a91ccf 100644
+>> --- a/arch/arm/boot/dts/nxp/imx/imx53-qsb-common.dtsi
+>> +++ b/arch/arm/boot/dts/nxp/imx/imx53-qsb-common.dtsi
+>> @@ -16,7 +16,7 @@ memory@70000000 {
+>>  		      <0xb0000000 0x20000000>;
+>>  	};
+>>  
+>> -	backlight_parallel: backlight-parallel {
+>> +	backlight: backlight {
+> 
+> Nit: this seems unrelated to the LVDS support
+
+Do you suggest to do this in a separate patch?
+If yes, is it worth adding a Fixes tag?
+
+> 
+>>  		compatible = "pwm-backlight";
+>>  		pwms = <&pwm2 0 5000000 0>;
+>>  		brightness-levels = <0 4 8 16 32 64 128 255>;
+>> @@ -89,7 +89,7 @@ panel_dpi: panel {
+>>  		compatible = "sii,43wvf1g";
+>>  		pinctrl-names = "default";
+>>  		pinctrl-0 = <&pinctrl_display_power>;
+>> -		backlight = <&backlight_parallel>;
+>> +		backlight = <&backlight>;
+>>  		enable-gpios = <&gpio3 24 GPIO_ACTIVE_HIGH>;
+>>  
+>>  		port {
+>> diff --git a/arch/arm/boot/dts/nxp/imx/imx53-qsb-mcimx-lvds1.dtso b/arch/arm/boot/dts/nxp/imx/imx53-qsb-mcimx-lvds1.dtso
+>> new file mode 100644
+>> index 000000000000..27f6bedf3d39
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/nxp/imx/imx53-qsb-mcimx-lvds1.dtso
+>> @@ -0,0 +1,43 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Copyright 2024 NXP
+>> + */
+>> +
+>> +/dts-v1/;
+>> +/plugin/;
+>> +
+>> +&{/} {
+>> +	panel-lvds {
+> 
+> Nit: Just 'panel' should be enough.
+
+Nope.
+
+'panel-lvds' is needed to differentiate it from 'panel' in
+imx53-qsb-common.dtsi which is a DPI panel.
+
+Using 'panel-lvds', procfs lists exactly the properties needed.
+root@imx53qsb:~# ls /proc/device-tree/panel-lvds/
+backlight     compatible    name          port          power-supply
+
+Using 'panel', more are listed.
+root@imx53qsb:~# ls /proc/device-tree/panel/
+backlight      compatible     enable-gpios   name           phandle        pinctrl-0      pinctrl-names  port           power-supply
+
+> 
+>> +		compatible = "hannstar,hsd100pxn1";
+>> +		backlight = <&backlight>;
+>> +		power-supply = <&reg_3p2v>;
+>> +
+>> +		port {
+>> +			panel_lvds_in: endpoint {
+>> +				remote-endpoint = <&lvds0_out>;
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&ldb {
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	status = "okay";
+>> +
+>> +	lvds-channel@0 {
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +		fsl,data-mapping = "spwg";
+>> +		fsl,data-width = <18>;
+>> +		status = "okay";
+>> +
+>> +		port@2 {
+>> +			reg = <2>;
+>> +
+>> +			lvds0_out: endpoint {
+>> +				remote-endpoint = <&panel_lvds_in>;
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> -- 
+>> 2.34.1
+>>
+> 
+
+-- 
+Regards,
+Liu Ying
+
 
