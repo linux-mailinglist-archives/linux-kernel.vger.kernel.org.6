@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-265350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB34593EFE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:30:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7835693EFE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76D1A1F22D0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:30:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72E9B1C21C6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85CB13B7BE;
-	Mon, 29 Jul 2024 08:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37A31353FE;
+	Mon, 29 Jul 2024 08:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="2GIutL1H"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g9Jpp6Sq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842D0130A7D;
-	Mon, 29 Jul 2024 08:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C185E091
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722241796; cv=none; b=tNS238wSOYeTWOUXn9tkGi0rs+6qhkxmG2SNd89z3gSW8Hhl8BY4ov7UiDi3R03jUpnon2QeyoNrfw/AI4A27gYrBsanCX4aJBulMve+QzNayvxmwvy6F8MnrsDueuEg4fNkXnLpV8gyuzZi8OKY6Q54g9GwmipFP5/v5ELbCIU=
+	t=1722241853; cv=none; b=OS7Eql/y8r8+u4zvlR/ED7bscNuULMr3Ukryg2V0ZCO5N3BabxOpVIBB/Ez4u4y6nr+62Z+xfCJrUD7OPewCPACRYVmdc0Ybsd1r4OLr+p6tdctE3M9tr0YApmfMWSV+mffvLXnBfW45iv1xGaShzX0qvvaorBn5/SllujRWajY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722241796; c=relaxed/simple;
-	bh=SQtWsaa0Wk3Mf10zCh4eJU/N27v9lwbRkQk9wBgdq9Q=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Nq7sbOfmsZ/j6+gJh0zsz2Wev3Lwh7gzJW/HadAuKiOkY3IOBP1St65DRhscHIhWQQz7v/tKmAD2N7n35PtU1XC9KesyHJOOJ77SQVDCEnqGH1svI0+/SfF1oUp/fIBpuuWdXsBrrsqATeEMCA6mlCOr3HmwMOQuaoxHu5DErJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=2GIutL1H; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722241792;
-	bh=SQtWsaa0Wk3Mf10zCh4eJU/N27v9lwbRkQk9wBgdq9Q=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=2GIutL1HBHwBMdYQm+Cmb/4ZmAR9xi5NsbFTwEEnzUAP/7gScHgUdgptT3I+RxYqh
-	 PunJqO8ylVjaO1y0nhCknF5g7sAHQVXV1q6XaSdyJuhXx2lvDfL7vKfBkO60fJQr+7
-	 j8GjPjlgNEy4x3dMeYZ607eNkHITmFwaxDWfX9Ag294KAk1jBrp+NwXWPipezDFHWH
-	 G07Qfez35Q089pApnSNL6aFQsr6veUxDORx/IRTKRMhp0EwlSZ23IfDQgsI6VBw/l8
-	 Y0OdpJiyAhcIvFLJ9iDqbvLcQVo73Q7PGIvKRGsfGk/sx4AU+m/3Jehq/0oMu/SwP9
-	 N2j/ujL7DD88A==
-Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1722241853; c=relaxed/simple;
+	bh=KeXFv/CyfID6eslo/AuwDRbpvQikpvEwe43DE7qvXZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V/09vTzYIlAupxakFnyoWoo+CnVk/iYjqrSNknEdid7SXZJDavWj8gzst85BGyTdE3oAqQDMeYWk4gC+quTE5qlDlmo/ITIZeu/JA4g0LjkV72UK9BfYZ61XZQz5r2CDl6qWrHePef9eDjnDo/D/OQsn4ghI43nDwFRhK9wA+ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g9Jpp6Sq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722241850;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BXyPUaLFEwtL9HdgLuVBIuBGMnXshUe7E68g55fuMDY=;
+	b=g9Jpp6SqLJ972ha3PnB//402Cpl82+Zq6MFLSlbxppa4eMWQyc4pJeTpatczgy43aexy+w
+	N7gqsShgt4bWVSvQmuAeRGyrMJAPnanLhk9kU3uwfiDGYoLW7mT4XBvUQSfxC2rwfGT4ln
+	ktZEJOkceDPjkoThCpk1Oiqi13iyQo8=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-652-wb0pl83oPHywSPCvyvl9Vg-1; Mon,
+ 29 Jul 2024 04:30:44 -0400
+X-MC-Unique: wb0pl83oPHywSPCvyvl9Vg-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 55DF83780BC9;
-	Mon, 29 Jul 2024 08:29:50 +0000 (UTC)
-Message-ID: <49108735-c776-4b6f-8264-62a827dd7b26@collabora.com>
-Date: Mon, 29 Jul 2024 13:29:48 +0500
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0AF4F19560A2;
+	Mon, 29 Jul 2024 08:30:42 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.54])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 38D701955D42;
+	Mon, 29 Jul 2024 08:30:39 +0000 (UTC)
+Date: Mon, 29 Jul 2024 16:30:35 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Adrian Huang <adrianhuang0701@gmail.com>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@infradead.org>, kasan-dev@googlegroups.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Adrian Huang <ahuang12@lenovo.com>, Jiwei Sun <sunjw10@lenovo.com>
+Subject: Re: [PATCH 1/1] mm/vmalloc: Combine all TLB flush operations of
+ KASAN shadow virtual address into one operation
+Message-ID: <ZqdTK+i9fH/hxB2A@MiWiFi-R3L-srv>
+References: <20240726165246.31326-1-ahuang12@lenovo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com
-Subject: Re: [PATCH 0/3] bitmap: Convert test_bitmap to kunit test
-To: Shuah Khan <skhan@linuxfoundation.org>,
- Andrew Morton <akpm@linux-foundation.org>, Yury Norov
- <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kees@kernel.org,
- David Gow <davidgow@google.com>, John Hubbard <jhubbard@nvidia.com>
-References: <20240726110658.2281070-1-usama.anjum@collabora.com>
- <27b91030-b01f-44e4-82f7-93b3e11e8d74@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <27b91030-b01f-44e4-82f7-93b3e11e8d74@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240726165246.31326-1-ahuang12@lenovo.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 7/27/24 12:26 AM, Shuah Khan wrote:
-> On 7/26/24 05:06, Muhammad Usama Anjum wrote:
->> In this series, test_bitmap is being converted to kunit test. Multiple
->> patches will make the review process smooth.
->>
->> - Patch-1: Convert the tests in lib/test_bitmap.c to kunit
->> - Patch-2: Rename the lib/test_bitmap.c to lib/bitmap_kunit.c and other
->>             configuration options
->> - Patch-3: Remove the bitmap.sh selftest
->>
->> Muhammad Usama Anjum (3):
->>    bitmap: convert test_bitmap to KUnit test
->>    bitmap: Rename module
->>    selftests: lib: remove test_bitmap
->>
->>   MAINTAINERS                           |   2 +-
->>   lib/Kconfig.debug                     |  15 +-
->>   lib/Makefile                          |   2 +-
->>   lib/{test_bitmap.c => bitmap_kunit.c} | 624 ++++++++++++--------------
->>   tools/testing/selftests/lib/Makefile  |   2 +-
->>   tools/testing/selftests/lib/bitmap.sh |   3 -
->>   tools/testing/selftests/lib/config    |   1 -
->>   7 files changed, 295 insertions(+), 354 deletions(-)
->>   rename lib/{test_bitmap.c => bitmap_kunit.c} (70%)
->>   delete mode 100755 tools/testing/selftests/lib/bitmap.sh
->>
+On 07/27/24 at 12:52am, Adrian Huang wrote:
+...... 
+> If we combine all TLB flush operations of the KASAN shadow virtual
+> address into one operation in the call path
+> 'purge_vmap_node()->kasan_release_vmalloc()', the running time of
+> drain_vmap_area_work() can be saved greatly. The idea is from the
+> flush_tlb_kernel_range() call in __purge_vmap_area_lazy(). And, the
+> soft lockup won't not be triggered.
+              ~~~~~~~~~~~
+               typo
 > 
-> Can you tell me how this conversion helps?
+> Here is the test result based on 6.10:
 > 
-> It is removing the ability to run bitmap tests during boot.
-> It doesn't make sense to blindly convert all test under lib
-> to kunit - Nack on this change or any change that takes away
-> the ability to run tests and makes them dependent on kunit.
-Let's discuss this on discussion thread [1].
-
-[1]
-https://lore.kernel.org/all/a3083ad4-e9dc-40da-bf57-8391bcd96a6c@collabora.com
-
+> [6.10 wo/ the patch]
+>   1. ftrace latency profiling (record a trace if the latency > 20s).
+>      echo 20000000 > /sys/kernel/debug/tracing/tracing_thresh
+>      echo drain_vmap_area_work > /sys/kernel/debug/tracing/set_graph_function
+>      echo function_graph > /sys/kernel/debug/tracing/current_tracer
+>      echo 1 > /sys/kernel/debug/tracing/tracing_on
 > 
-> thanks,
-> -- Shuah
+...... 
+>   The worst execution time of drain_vmap_area_work() is about 1 second.
+> 
+> Link: https://lore.kernel.org/lkml/ZqFlawuVnOMY2k3E@pc638.lan/
+> Fixes: 282631cb2447 ("mm: vmalloc: remove global purge_vmap_area_root rb-tree")
+> Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
+> Co-developed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> Tested-by: Jiwei Sun <sunjw10@lenovo.com>
+> ---
+>  include/linux/kasan.h | 12 +++++++++---
+>  mm/kasan/shadow.c     | 14 ++++++++++----
+>  mm/vmalloc.c          | 34 ++++++++++++++++++++++++++--------
+>  3 files changed, 45 insertions(+), 15 deletions(-)
 
--- 
-BR,
-Muhammad Usama Anjum
+LGTM,
+
+Reviewed-by: Baoquan He <bhe@redhat.com>
+
 
