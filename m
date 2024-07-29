@@ -1,233 +1,181 @@
-Return-Path: <linux-kernel+bounces-265525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9295A93F267
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:17:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8199993F26C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B48771C2190C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:17:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26BD22820E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65D614374C;
-	Mon, 29 Jul 2024 10:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55DA143C43;
+	Mon, 29 Jul 2024 10:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="Hj5p9XMX"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U8kvQa7s"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EC675808
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 10:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A141E1428FE;
+	Mon, 29 Jul 2024 10:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722248244; cv=none; b=Tki+GIJMK4wVoKpdhfFNsXdqZ06aiaSfTV8sTSaqCplldqfGzAxNEnNKvmPhQVFBFU0ZKYZy2TV3+Pxezv2mT8BZxao58LxSS+GWJ3S3WK2iLVZTEFyqBv8Bw5D71x8xFhTkXdkWn1HTsSfx1AjCGUGovPIR6+MxBdVPgqmLWzU=
+	t=1722248257; cv=none; b=j9F22jKEDeH+/5gWyinpiHepkxrqeQ8KCT3qO6wEMhvlG+AoI4M11YV91EsBxmxvRYSCOk7vpZmJQhMABuJx/RAMqrBNYI3+gSHhxV4ys2rchogGWMCEgScHHHd57MB6fYwLYwy8S7NtOTF8ZzgjAvorm6y0n/1ig3bOY1nzBLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722248244; c=relaxed/simple;
-	bh=jzXG97HqPWVYU8NHMW+4Hs/kKhHz5TASHRFwrP5nf4U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dPwmBj47CD5wt+OCqkaqnkKK+6u7549GQB8zsgsHtW6DHdWpWhK+Fn/Yhynyw8ARTXU7DvOA5VEhgDM6DZf3he5vuE73PoHQpUTstIcf54PpoJysJHfK9AvH5kboDI7eS9+djAZrMSb8K08bJ2PMAaJELhbfiftjNkom3EPfHx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=Hj5p9XMX; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7a8a4f21aeso436293166b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 03:17:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1722248240; x=1722853040; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TWANLo4eRjMcIZ8EuCsLzBr7AVx8n5Ln9Hy8TjY7UqM=;
-        b=Hj5p9XMX/APUDvO5QF9Oa1pyJ6smkP+FOTyiyZS5nwcTdtfZXuJjFXG/pwdj102821
-         uJCFgj6ujfw5dyUIJlKSTfyfZ7rC8BIbRBxJU+Kb/B5WOcCF1TwscpI8cYSIZIZHZeVz
-         6nmMBLtNpu8VaJGqYueFIwoxvOSd2EX0klIBuL+GYv1sX9asnY4asRetvryWvDS7sYlF
-         qt5WTbK0lS9W/aOgaekJqlLJp3VI0W2r0NRI8XGdFqQJMdGji0pIkHi7h2D9aqNvhF48
-         mQiwJDLN6M+Afur0k77i0Rr1ypd4UQDTeHEUkRLoWqyXER9uwpC5fE6iFp27qTNUeiPa
-         m0BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722248240; x=1722853040;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TWANLo4eRjMcIZ8EuCsLzBr7AVx8n5Ln9Hy8TjY7UqM=;
-        b=FIRXkVgyfFNO/PwMU+7aeha/OYe04/EyN7xjjDVbE47TttJ6XhWAL0FyzwgwmAnaZ+
-         tSM5o/vf/MUFdN1xphnBWa9U0wrxb4BDt+NS2ckVX/m30P4ZxvPwkieYVC/6RmOihHg1
-         IOn07iWm5n947NJI0xbbiYKiySoB1AzJuib2CDE/R46EO8rH7YtUZEPA26fBtegDtcUr
-         MC+UpXwLproymlw4M5XRJGXIIZep3AjM7Lw2EdZh2pHsgmLgaBDmSsyiqVDBrbiUOSx+
-         pFp8VyaIax6PcsEnwQxMft/nztYpUWov3Z6+LRAV2O4H/I4uOM6i2EzVl9sII26wkxJc
-         VY1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXuJbo9cfiH1CQnUwjYc8l+dNl5gj2LKunNrwg+02KOMhG1C0OHojB4CUtObbtFyCbmYLwfIBvyB9n3vnSeEBQcAa3rKnycrdkd2FVU
-X-Gm-Message-State: AOJu0YwEj5w8lmzBcpGXmqULxzRbIBgZOIMTOYSjeNweYwhJ/6wHCqYX
-	ojx91Mz2RzpAoKCSfEq3FqAt9aTMdoPX1Elk+KdGrTFnCSiFGVAWrxLehC9pK4lPtrG93Fd8/0k
-	EQDDjhUf1YycpsBKfCir7a0qF/R5+ArtXjYOivQ==
-X-Google-Smtp-Source: AGHT+IE8RWxrTgVdSBtvCEBCbzWs0T9CYvRFXeg3zq8/3QjJXhhhZPL50BiQ+DTswnbjSR6g/u2ccWzWojNCg41j0dU=
-X-Received: by 2002:a17:907:9486:b0:a7a:bd5a:1ec0 with SMTP id
- a640c23a62f3a-a7d40042964mr491050866b.29.1722248240568; Mon, 29 Jul 2024
- 03:17:20 -0700 (PDT)
+	s=arc-20240116; t=1722248257; c=relaxed/simple;
+	bh=WfQW0nu+tTflofi5Wm3y2KaGn8nAZ0DqR6ZUsyiPDtY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=McnzhcO9rJUwJnu23bTWmwVVB9mvlF5eZB7PAK9+Ai3gZ2wq8wM0otcv/5dZ7+0IPV25WIs5g2cTGS5q9zEE5ne9ljW3fKdtqpiPQrdNOQLOgp+/CzBCgbd0DMb+sIqip3jXORmUZHFzVPiaJHWDSJ+QOVX8TVhbPFE0K9QKQLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U8kvQa7s; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TAGKpd023699;
+	Mon, 29 Jul 2024 10:17:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2FS8ccFb334bCr0B1cypfRsnHjV37oyh1MM7jBzg3Rw=; b=U8kvQa7sAR66ImAo
+	9wCcMbln2G835w8Oeyn+8krN4QawU6cEtKizOcPbbMk1B1VV9NErD+42lWOCNnQm
+	xxQplXLjOPz2GrYTVW3IOR+NeeXoO43UAS3EOD0UH7Ml4Q3lA7eJEPJlgnRtikce
+	meYxQwPmNE76ly2glpyNzatq0dzRU+Enyn3o9VpqnI12PJNQ/CYFL2Xi3p6r1lBU
+	X3nObNXqHSmTAfYlQTf9kdLEovRR3WXNgW5CpCUxcBDFU0Y3hsYdav0DRktkRPsn
+	Ixafp9nnVU7O11Ik1Vo4PsgUOZpaTnCmcAPkqr97PuzC7oOSkU6BRyMVZbSgoCgG
+	n5GBKA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mrytuvr4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:17:32 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TAHUSW009566
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:17:30 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
+ 2024 03:17:26 -0700
+Message-ID: <5c15c22d-54a4-4184-a75a-ea581eccbc4b@quicinc.com>
+Date: Mon, 29 Jul 2024 18:17:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKPOu+_DA8XiMAA2ApMj7Pyshve_YWknw8Hdt1=zCy9Y87R1qw@mail.gmail.com>
- <CAKPOu+8s3f8WdhyEPqfXMBrbE+j4OqzGXCUv=rTTmWzbWvr-Tg@mail.gmail.com>
-In-Reply-To: <CAKPOu+8s3f8WdhyEPqfXMBrbE+j4OqzGXCUv=rTTmWzbWvr-Tg@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 29 Jul 2024 12:17:09 +0200
-Message-ID: <CAKPOu+9xQXpYndbeCdx-sDZb1ZF3q5R-KC-ZYv_Z1nRezTn2fQ@mail.gmail.com>
-Subject: Re: RCU stalls and GPFs in ceph/netfs
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	ceph-devel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: usb: dwc3: Add QCS9100 compatible
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Wesley Cheng <quic_wcheng@quicinc.com>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240709-document_qcs9100_dwc3_compatible-v2-1-ed543ae02117@quicinc.com>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <20240709-document_qcs9100_dwc3_compatible-v2-1-ed543ae02117@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: z4dJNTE_oJyiSSrUODzjxS4Qy9Rxdi4c
+X-Proofpoint-GUID: z4dJNTE_oJyiSSrUODzjxS4Qy9Rxdi4c
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-29_08,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 suspectscore=0 bulkscore=0 adultscore=0 spamscore=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=993
+ mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407290069
 
-On Mon, Jul 29, 2024 at 11:18=E2=80=AFAM Max Kellermann
-<max.kellermann@ionos.com> wrote:
-> I posted two candidate patches which both fix this bug;
->
-> Minimal fix: https://lore.kernel.org/lkml/20240729090639.852732-1-max.kel=
-lermann@ionos.com/
-> Fix which removes a bunch of obsolete code:
-> https://lore.kernel.org/lkml/20240729091532.855688-1-max.kellermann@ionos=
-.com/
 
-These patches do fix the RCU stall bug (and should be merged), but
-after running one cluster with my patch for a while, I found more Ceph
-crashes:
 
- ------------[ cut here ]------------
- WARNING: CPU: 3 PID: 1925 at fs/ceph/caps.c:3386
-ceph_put_wrbuffer_cap_refs+0x1bb/0x1f0
- Modules linked in:
- CPU: 3 PID: 1925 Comm: kworker/3:2 Not tainted 6.10.2-cm4all1-vm+ #168
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01=
-/2014
- Workqueue: ceph-cap ceph_cap_reclaim_work
- RIP: 0010:ceph_put_wrbuffer_cap_refs+0x1bb/0x1f0
- Code: 30 45 89 f5 bd 01 00 00 00 41 83 c6 01 31 d2 e9 fa fe ff ff 45
-8d 6e ff 31 ed 31 d2 48 83 bb 18 04 00 00 00 0f 84 e4 fe ff ff <0f> 0b
-e9 dd fe ff ff 45 8d 6e ff bd 01 00 00 00 ba 01 00 00 00 48
- RSP: 0018:ffffb9a7406cba78 EFLAGS: 00010282
- RAX: ffff9a2d42b7eb20 RBX: ffff9a2d42b7e688 RCX: ffffdbdadc446d80
- RDX: 0000000000000000 RSI: ffff9a2d42b7eb18 RDI: ffff9a2d42b7e940
- RBP: 0000000000000000 R08: ffffffffffffffc0 R09: ffff9a2d4254fc40
- R10: 0000000000000020 R11: fefefefefefefeff R12: ffff9a2d42b7e940
- R13: 00000000ffffffff R14: 0000000000000000 R15: 0000000000000000
- FS:  0000000000000000(0000) GS:ffff9a384eec0000(0000) knlGS:00000000000000=
-00
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 000055b248c82657 CR3: 000000010d31c002 CR4: 00000000001706b0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- Call Trace:
-  <TASK>
-  ? __warn+0x7c/0x110
-  ? ceph_put_wrbuffer_cap_refs+0x1bb/0x1f0
-  ? report_bug+0x14c/0x170
-  ? handle_bug+0x3c/0x70
-  ? exc_invalid_op+0x13/0x60
-  ? asm_exc_invalid_op+0x16/0x20
-  ? ceph_put_wrbuffer_cap_refs+0x1bb/0x1f0
-  ? ceph_put_wrbuffer_cap_refs+0x27/0x1f0
-  ceph_invalidate_folio+0x9a/0xc0
-  truncate_cleanup_folio+0x52/0x90
-  truncate_inode_pages_range+0xfe/0x400
-  ceph_evict_inode+0x40/0x200
-  evict+0xc5/0x170
-  __dentry_kill+0x6e/0x160
-  dput+0xcb/0x180
-  __dentry_leases_walk+0x28d/0x430
-  ceph_trim_dentries+0xac/0x100
-  ceph_cap_reclaim_work+0x15/0x50
-  process_one_work+0x138/0x2e0
-  worker_thread+0x2b9/0x3d0
-  ? __pfx_worker_thread+0x10/0x10
-  kthread+0xba/0xe0
-  ? __pfx_kthread+0x10/0x10
-  ret_from_fork+0x30/0x50
-  ? __pfx_kthread+0x10/0x10
-  ret_from_fork_asm+0x1a/0x30
-  </TASK>
- ---[ end trace 0000000000000000 ]---
- BUG: kernel NULL pointer dereference, address: 0000000000000356
- #PF: supervisor write access in kernel mode
- #PF: error_code(0x0002) - not-present page
- PGD 0 P4D 0
- Oops: Oops: 0002 [#1] SMP PTI
- CPU: 3 PID: 1925 Comm: kworker/3:2 Tainted: G        W
-6.10.2-cm4all1-vm+ #168
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01=
-/2014
- Workqueue: ceph-cap ceph_cap_reclaim_work
- RIP: 0010:ceph_put_snap_context+0xf/0x30
- Code: 0f 1f 84 00 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90
-90 90 90 90 90 90 0f 1f 44 00 00 48 85 ff 74 12 b8 ff ff ff ff <f0> 0f
-c1 07 83 f8 01 74 09 85 c0 7e 0a c3 cc cc cc cc e9 3a 62 70
- RSP: 0018:ffffb9a7406cbaa8 EFLAGS: 00010206
- RAX: 00000000ffffffff RBX: ffffdbdadc4465c0 RCX: ffffdbdadc446d80
- RDX: 0000000000000000 RSI: ffff9a2d42b7eb18 RDI: 0000000000000356
- RBP: 0000000000001000 R08: ffffffffffffffc0 R09: ffff9a2d4254fc40
- R10: 0000000000000020 R11: fefefefefefefeff R12: 0000000000000356
- R13: ffff9a2d42b7e688 R14: ffffffffffffffff R15: 0000000000000001
- FS:  0000000000000000(0000) GS:ffff9a384eec0000(0000) knlGS:00000000000000=
-00
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 0000000000000356 CR3: 000000010d31c002 CR4: 00000000001706b0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- Call Trace:
-  <TASK>
-  ? __die+0x1f/0x60
-  ? page_fault_oops+0x158/0x450
-  ? search_extable+0x22/0x30
-  ? ceph_put_snap_context+0xf/0x30
-  ? search_module_extables+0xe/0x40
-  ? exc_page_fault+0x62/0x120
-  ? asm_exc_page_fault+0x22/0x30
-  ? ceph_put_snap_context+0xf/0x30
-  ceph_invalidate_folio+0xa2/0xc0
-  truncate_cleanup_folio+0x52/0x90
-  truncate_inode_pages_range+0xfe/0x400
-  ceph_evict_inode+0x40/0x200
-  evict+0xc5/0x170
-  __dentry_kill+0x6e/0x160
-  dput+0xcb/0x180
-  __dentry_leases_walk+0x28d/0x430
-  ceph_trim_dentries+0xac/0x100
-  ceph_cap_reclaim_work+0x15/0x50
-  process_one_work+0x138/0x2e0
-  worker_thread+0x2b9/0x3d0
-  ? __pfx_worker_thread+0x10/0x10
-  kthread+0xba/0xe0
-  ? __pfx_kthread+0x10/0x10
-  ret_from_fork+0x30/0x50
-  ? __pfx_kthread+0x10/0x10
-  ret_from_fork_asm+0x1a/0x30
-  </TASK>
- Modules linked in:
- CR2: 0000000000000356
- ---[ end trace 0000000000000000 ]---
- RIP: 0010:ceph_put_snap_context+0xf/0x30
- Code: 0f 1f 84 00 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90
-90 90 90 90 90 90 0f 1f 44 00 00 48 85 ff 74 12 b8 ff ff ff ff <f0> 0f
-c1 07 83 f8 01 74 09 85 c0 7e 0a c3 cc cc cc cc e9 3a 62 70
- RSP: 0018:ffffb9a7406cbaa8 EFLAGS: 00010206
- RAX: 00000000ffffffff RBX: ffffdbdadc4465c0 RCX: ffffdbdadc446d80
- RDX: 0000000000000000 RSI: ffff9a2d42b7eb18 RDI: 0000000000000356
- RBP: 0000000000001000 R08: ffffffffffffffc0 R09: ffff9a2d4254fc40
- R10: 0000000000000020 R11: fefefefefefefeff R12: 0000000000000356
- R13: ffff9a2d42b7e688 R14: ffffffffffffffff R15: 0000000000000001
- FS:  0000000000000000(0000) GS:ffff9a384eec0000(0000) knlGS:00000000000000=
-00
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 0000000000000356 CR3: 000000010d31c002 CR4: 00000000001706b0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- note: kworker/3:2[1925] exited with irqs disabled
+On 7/9/2024 10:17 PM, Tengfei Fan wrote:
+> Document the QCS9100 dwc3 compatible.
+> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+> platform use non-SCMI resource. In the future, the SA8775p platform will
+> move to use SCMI resources and it will have new sa8775p-related device
+> tree. Consequently, introduce "qcom,qcs9100-dwc3" to describe non-SCMI
+> based DWC3.
+> 
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> ---
+> Introduce support for the QCS9100 SoC device tree (DTSI) and the
+> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+> While the QCS9100 platform is still in the early design stage, the
+> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+> mounts the QCS9100 SoC instead of the SA8775p SoC.
+> 
+> The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+> all the compatible strings will be updated from "SA8775p" to "QCS9100".
+> The QCS9100 device tree patches will be pushed after all the device tree
+> bindings and device driver patches are reviewed.
+> 
+> The final dtsi will like:
+> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
+> 
+> The detailed cover letter reference:
+> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+> ---
+> Changes in v2:
+>    - Split huge patch series into different patch series according to
+>      subsytems
+>    - Update patch commit message
+> 
+> prevous disscussion here:
+> [1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+> ---
+>   Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+> index efde47a5b145..07b0b6530b78 100644
+> --- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+> +++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+> @@ -26,6 +26,7 @@ properties:
+>             - qcom,msm8998-dwc3
+>             - qcom,qcm2290-dwc3
+>             - qcom,qcs404-dwc3
+> +          - qcom,qcs9100-dwc3
+>             - qcom,qdu1000-dwc3
+>             - qcom,sa8775p-dwc3
+>             - qcom,sc7180-dwc3
+> @@ -199,6 +200,7 @@ allOf:
+>                 - qcom,msm8953-dwc3
+>                 - qcom,msm8996-dwc3
+>                 - qcom,msm8998-dwc3
+> +              - qcom,qcs9100-dwc3
+>                 - qcom,sa8775p-dwc3
+>                 - qcom,sc7180-dwc3
+>                 - qcom,sc7280-dwc3
+> @@ -448,6 +450,7 @@ allOf:
+>                 - qcom,ipq4019-dwc3
+>                 - qcom,ipq8064-dwc3
+>                 - qcom,msm8994-dwc3
+> +              - qcom,qcs9100-dwc3
+>                 - qcom,qdu1000-dwc3
+>                 - qcom,sa8775p-dwc3
+>                 - qcom,sc7180-dwc3
+> 
+> ---
+> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+> change-id: 20240709-document_qcs9100_dwc3_compatible-a767738e13c9
+> 
+> Best regards,
 
-The bug hunt continues.
+After considering the feedback provided on the subject, We have decided
+to keep current SA8775p compatible and ABI compatibility in drivers.
+Let's close this session and ignore the current patche here.
+Thank you for your input.
 
-Max
+-- 
+Thx and BRs,
+Tengfei Fan
 
