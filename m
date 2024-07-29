@@ -1,131 +1,134 @@
-Return-Path: <linux-kernel+bounces-265326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD0693EF90
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:13:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18A7A93EF91
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CACD283B7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:13:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E24401C21E3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435A313B295;
-	Mon, 29 Jul 2024 08:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660BC13A868;
+	Mon, 29 Jul 2024 08:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="TyGFGQ/Z"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="t0vSuPkI"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F4E12C46D
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE26D139568;
+	Mon, 29 Jul 2024 08:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722240763; cv=none; b=nQCP+eBMYLi0X7jNP1EYeJq3PUshpZR1m2P2nwUs9YBFq8bz9TVkNZXIerWxqpzhNC40iAn3DOjhsmRM/QwEfUCAoz7HJox9Lb/ueQn261yTd7q7kVNM2Kl8AQSypZ+uUadZSxRD1ZXEkyn3ePObq6WP1HeVttLIUDHro3DNjOo=
+	t=1722240771; cv=none; b=QJXaRDCE9Ofsk4IoetiEz3beskJenUQeqMPWY965cdOaBKeeIgXj9IHb8/3W0jVUdRjJeCLGw5AvSaMnec7dNFQLW8xRGoJCGJci4vEXdsUHK3lDPegWiCKsxG12w+3GcUPCQw2fku8hW0mFSUjydvRRJr6HKay/sSH27WrbhG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722240763; c=relaxed/simple;
-	bh=vmbCOUmKZ1dFjF8DwS4l7Dx84hYJKYmzgXMywQQNOdM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ftn8c52kwtySHUNjCaLlcslPeRkOtjfqZhXN5aVzijYNoMOFcrGEKXzo5CNK32W2BPlImhvnnpkh7AiNvg3EKbaUEo9/cHYxpGZUNp92q0G9P1z0fJf2dAYxkwQtiwhV7CgsYoMs9aQ5z+8lmk7OH89HGyPozfyvfSkcD/MpIZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=TyGFGQ/Z; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52fcc56c882so2287707e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 01:12:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1722240759; x=1722845559; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mgbLi1WuzrWYkt+kvg6tYyooxYHTBlvpYn0Wnr6oVFM=;
-        b=TyGFGQ/ZcGpOSXwZb+5zdr1hjNZtCMyGR6bVXN8St4b2J7PJ/NbwTkjbIAHE9wLyCH
-         DQ9/irDa+4IKrTV0SGoa7fUa6i9XMoivJ27aJNTgtFgw4fqHLp8NlxMt7WcMOt96EiGL
-         TUtou8NZ3GHs+VBg8AdUy5DwT8CSFbDq0tvFZaxMc9LKi0571xEEOC3XZPZ6zvmNH3rH
-         wAqREpBivm4GLboWAsacuygmvM06McLLRQEVx7XPhwYW9WVAFAEkqu2FFJ+5pGU+I/8E
-         UZS4KvY6io79902C5YSO7J7hfq2Ij5fZgjyIH9YPEAG6vSSend0ab9ppIO5ihLDaiqB/
-         8rfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722240759; x=1722845559;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mgbLi1WuzrWYkt+kvg6tYyooxYHTBlvpYn0Wnr6oVFM=;
-        b=GA72gzEwtOP++ciSSgn+xeso/Tc8dxiema/QXWffslPeLrRw0a0QUOVhB7oL+tmQod
-         wzZWxemo86z2cHD2m/kB6OJdukmP6jHFudD2eE7xZo9RaqPz8QWmDvrVTNAwRLIhhoOD
-         Pg6LG06aAkzNxKLh44VezsrH3X+wn4rOQ1Ezu7KGSLjglwFS23SDhvcfbvmV4DQeEfkc
-         8pk50T0wT9SFQWFskvM+36LhHMwKYoXVJCd+aah5dhiGq1mbPhZgHQ7xRHq1m0h+bhJj
-         jlAidBEUJEBKGMUpPYd3Oo7kL5OV97CZNESsbP9KyDVm1fQsZTR6w0CPuuyUKqD1bLjl
-         ppNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjIjymU7DnWQNhJpZW+eGsi2RfutqVAolp752b68wUv052hO5LQK1E1VfweXtOeD+n5AeAfgQZ0W87zTvErPAuJ9Q6oTl1I9qjVYPx
-X-Gm-Message-State: AOJu0YwYfrDuGPJncP5THA1gJuay3ScazELoKnHz0bVTrEXq5CxxL1Fj
-	ARZtYSIv3hj2bd5azWkquHaNjR7YFF6HDTssMGS4jKG6PeHD0MyxGVQAxZ0wUyPiJssXncenrL6
-	HQEhWDLcIB15wdTZSGzvJMaBBtWrigrwHkk56Jewiv5kf0uxd
-X-Google-Smtp-Source: AGHT+IEpYgo+6X9lNxr1Sp8ZEgqfjm0yra5DVMaSzynDm065fn1Hei1MMr6+kuuUK8+GhzuRQj4R6RUR/dmGI8kwNY4=
-X-Received: by 2002:ac2:46e9:0:b0:52c:d7d9:9ba4 with SMTP id
- 2adb3069b0e04-5309b720abfmr1414105e87.31.1722240758621; Mon, 29 Jul 2024
- 01:12:38 -0700 (PDT)
+	s=arc-20240116; t=1722240771; c=relaxed/simple;
+	bh=83CiqU+QrBWVBllgbln4QZY+abqFLmce4N2heMdSqrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t1WYp2xwf9VJuVxm+oKf3pMkGxIA4Mf7VKDH/Hyt6JCqrJJFRInuQPHZGf8K8hZ3MRO03Kfrcah3fEPcOrBsVLAU13dTDIrVNHKkhp5drP4P+Ne0NlhyjmokoZRO4AN9IWRwHt4oegBbJXLwMXfpUNguENpHED2lq/RN1gM9VuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=t0vSuPkI; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (mob-5-90-63-112.net.vodafone.it [5.90.63.112])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F0FB8596;
+	Mon, 29 Jul 2024 10:12:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1722240721;
+	bh=83CiqU+QrBWVBllgbln4QZY+abqFLmce4N2heMdSqrA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t0vSuPkIc4382keCYfaPa3COeCYFHwnw0CZiahEblfcLEifoUuOeyKI4Gxd/yIjrp
+	 jww/bVSeDJJAG222ueQ9846Zp6j+rhEs5FIgo73Vo7/0JrlnMESsSNn3ZIu1mV++6C
+	 Ob5XhVDMp95ggBz2DlNyRIY91MrDWt66MA427xz0=
+Date: Mon, 29 Jul 2024 10:12:43 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Umang Jain <umang.jain@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, 
+	Kieran Bingham <kieran.bingham@ideasonboard.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	open list <linux-kernel@vger.kernel.org>, Tommaso Merciai <tomm.merciai@gmail.com>
+Subject: Re: [PATCH] media: imx335: Fix reset-gpio handling
+Message-ID: <4me3tw572feft3x4dn3ritpr6avss6ebupixrg7qrlsy5z6kny@mqeoqhr7uh2x>
+References: <20240729060535.3227-1-umang.jain@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725-pwrseq-wcn-config-v1-1-021dce9f2513@redhat.com>
-In-Reply-To: <20240725-pwrseq-wcn-config-v1-1-021dce9f2513@redhat.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 29 Jul 2024 10:12:27 +0200
-Message-ID: <CAMRc=Mcop3+00G3kZo+dazpemuj0PjXNc_3+EiyFukLevBGd_A@mail.gmail.com>
-Subject: Re: [PATCH] power: sequencing: pwrseq-qcom-wcn: Depend on WCN36XX
-To: Andrew Halaney <ahalaney@redhat.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240729060535.3227-1-umang.jain@ideasonboard.com>
 
-On Thu, Jul 25, 2024 at 6:28=E2=80=AFPM Andrew Halaney <ahalaney@redhat.com=
-> wrote:
+Hi Umang
+
+On Mon, Jul 29, 2024 at 11:35:35AM GMT, Umang Jain wrote:
+> The imx335 reset-gpio is initialised with GPIO_OUT_LOW during probe.
+
+How is this related to this change ? The value to which the GPIO is
+initialized to in probe is the physical level.
+
+What matters is the gpio line active level, which should be described
+in the sensor's datasheet. What's the active level of the reset gpio
+line ?
+
+> However, the reset-gpio logical value is set to 1 in during power-on
+> and to 0 on power-off. This is incorrect as the reset line
+> cannot be high during power-on and low during power-off.
+
+If the line is physically high or low only depends on how the active
+level is specified in DTS, not by the logical value provided to
+gpiod_set_value[_cansleep]()
 >
-> This driver does sequencing for the hardware driven by WCN36XX, let's
-> make it depend on that. Without WCN36XX, we're sequencing power for
-> nothing.
+> Rectify the logical value of reset-gpio so that it is set to
+> 0 during power-on and to 1 during power-off.
+
+This is correct, the reset line should be set to logical 0 (inactive)
+during power on and to logical 1 (active) when powering off. However
+the GPIO active state should have been specified in bindings and as
+this driver has been mainline quite some time, this change will break
+.dtbo already used succesfully with previous kernel releases.
+
+Is this an issue ?
+
 >
-> Fixes: 2f1630f437df ("power: pwrseq: add a driver for the PMU module on t=
-he QCom WCN chipsets")
-> Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
+> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
 > ---
-> I *think* this makes sense, but if you disagree please let me know. I
-> was sorting out configs in fedora and noticed this was being asked for
-> builds that didn't have WCN36XX enabled, which seems odd to me at least.
-> ---
->  drivers/power/sequencing/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/media/i2c/imx335.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 >
-> diff --git a/drivers/power/sequencing/Kconfig b/drivers/power/sequencing/=
-Kconfig
-> index c9f1cdb665248..a4765cb33a80e 100644
-> --- a/drivers/power/sequencing/Kconfig
-> +++ b/drivers/power/sequencing/Kconfig
-> @@ -16,6 +16,7 @@ if POWER_SEQUENCING
->  config POWER_SEQUENCING_QCOM_WCN
->         tristate "Qualcomm WCN family PMU driver"
->         default m if ARCH_QCOM
-> +       depends on WCN36XX
->         help
->           Say Y here to enable the power sequencing driver for Qualcomm
->           WCN Bluetooth/WLAN chipsets.
+> diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
+> index cd150606a8a9..878d88b5f476 100644
+> --- a/drivers/media/i2c/imx335.c
+> +++ b/drivers/media/i2c/imx335.c
+> @@ -1171,7 +1171,7 @@ static int imx335_power_on(struct device *dev)
+>  	usleep_range(500, 550); /* Tlow */
 >
-> ---
-> base-commit: 2347b4c79f5e6cd3f4996e80c2d3c15f53006bf5
-> change-id: 20240725-pwrseq-wcn-config-0b6668b5c620
+>  	/* Set XCLR */
+> -	gpiod_set_value_cansleep(imx335->reset_gpio, 1);
+> +	gpiod_set_value_cansleep(imx335->reset_gpio, 0);
 >
-> Best regards,
+>  	ret = clk_prepare_enable(imx335->inclk);
+>  	if (ret) {
+> @@ -1184,7 +1184,7 @@ static int imx335_power_on(struct device *dev)
+>  	return 0;
+>
+>  error_reset:
+> -	gpiod_set_value_cansleep(imx335->reset_gpio, 0);
+> +	gpiod_set_value_cansleep(imx335->reset_gpio, 1);
+>  	regulator_bulk_disable(ARRAY_SIZE(imx335_supply_name), imx335->supplies);
+>
+>  	return ret;
+> @@ -1201,7 +1201,7 @@ static int imx335_power_off(struct device *dev)
+>  	struct v4l2_subdev *sd = dev_get_drvdata(dev);
+>  	struct imx335 *imx335 = to_imx335(sd);
+>
+> -	gpiod_set_value_cansleep(imx335->reset_gpio, 0);
+> +	gpiod_set_value_cansleep(imx335->reset_gpio, 1);
+>  	clk_disable_unprepare(imx335->inclk);
+>  	regulator_bulk_disable(ARRAY_SIZE(imx335_supply_name), imx335->supplies);
+>
 > --
-> Andrew Halaney <ahalaney@redhat.com>
+> 2.45.0
 >
-
-What if we want to disable the WLAN driver but keep the Bluetooth
-driver enabled?
-
-Bart
+>
 
