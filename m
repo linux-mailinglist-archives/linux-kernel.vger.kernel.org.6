@@ -1,178 +1,131 @@
-Return-Path: <linux-kernel+bounces-265392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08EFA93F091
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:02:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A67A193F098
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79C8D1F225B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:02:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 389CAB2194B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735F413DDCD;
-	Mon, 29 Jul 2024 09:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0EA13CA95;
+	Mon, 29 Jul 2024 09:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="CanKCy4e"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="UIRM+pa3"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BAD84DFE
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F83B13CFBC
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722243728; cv=none; b=DcOzD+TzpIFFgOkJdT2JCMCTu0JNRWDBU9SfAWqhM/9QE4l0qgNSG8AeKo3Yny26pCCodWnvzJvTCwPlKf0plflCFktsSEQedGyUvaHI4sYbR20V3t6MYJA7G2Aw2mIt8XK4W+THlYSZ1IJs+mC04jrBWfdn4tYzThcc5/9VQEw=
+	t=1722244014; cv=none; b=ZeUC7IQLfsCxtwXwzKtDkTTMfU9d+LBJE5ms2/NFGtEonu3QJWYJVX7NsbkHlguHBT55WV5OffcDP4USF7KtFuDYuc59ztxwkm0EpKGDcdM9AUCbspUfdnVqtZNGlh7ktG5LrGfXwuk3dJI7uC7YIjB2YiG4CS8VkBDGmxL+Ta8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722243728; c=relaxed/simple;
-	bh=p+Q7HMNfNEC+Eu29iPw6j+62HUX/9UJFi/4nW9MpsLI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CywEc1FrMfHNGlpToZqXN67Fhz9PHIfF9fhQB2SpsaqvXBcRri3oLkp1R1+it189QPVUwtBYN03gc1SmU5MrS/gRAqg8sQx0BVe2zPn6MZhGGSBFqhTYh72FA9cyevy+iRCH5wxTSnqyITyIKI6g/mcNSkuLstYvVs5OTmBIw5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=CanKCy4e; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b7aed340daso19602406d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 02:02:05 -0700 (PDT)
+	s=arc-20240116; t=1722244014; c=relaxed/simple;
+	bh=hykvftg3vhQtA4vVyQKMdRddESCKg0yCsxhDTFA9jWM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qx2/VExSu/0UmXHYZcJeERxoZnSowFZoHi184D3fy4aU9OY2bWDEjxD0Y2XCI/BKLhxSEM80u05cOo6sbNKsnLHOW/7HrAPnUWIyW6NBllRpGwR2t12Kv1cvAHNCBhmYRrUFHwe19wXbvTMGzcr5mJTqF4RMLamfJLIJ3CxoN/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=UIRM+pa3; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f035ae1083so43159671fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 02:06:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1722243725; x=1722848525; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=yW1OO+skBc1eCv7kSQixud2h2uSiGX+bRNa0JQW8fcc=;
-        b=CanKCy4ecAmWcD9E/VN3Kgy8thITCHF2C1To5Gop8yOQ/AQOrvHWsGJo2eGxUTW3qW
-         PByGHSBJVAVXFUl7W54Qw8A94lbkNhEhGfumYld1I7Bp62GNe5E41qS5VItyK/mG3dIv
-         6Ka14rRy5ayKiaFfzfMZNF64+GB/Jw6Jf8LO4=
+        d=ionos.com; s=google; t=1722244010; x=1722848810; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7iJw9k6D1Ud7dg7cELMS+oQmF5+B7DIbU5iHUw2ERek=;
+        b=UIRM+pa3ixAnUoVh4g5qMCKIxJIMQIyxA2EIAAiyV94JGCFSDGFCxeYoemZrIxjjqC
+         lbtOSHZW7xkP+clvbV09jvOQOWYGGRTIdpxiEZKT0k9KiRHt+Mnuo0oC014EXEWz/YSP
+         Hk5aFgpOcQy+S+RSG9oIqZd90J9KIQcj3MVTifBYc0f4rWMUTBd5WMBukswmE8CPxIp5
+         P1WR58BBLeaYwthiZFCAfP6kc2lZCGZ2ls2En921/ZAlV7tswXyTO3Sbs+1YOWJekhBb
+         tMu4CqFsmFKmvX1HaTeHfKt6uk2J0/elPbF8tsQ92h1IiiL1gai2PNJOsAPWbuNEONdQ
+         xA2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722243725; x=1722848525;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yW1OO+skBc1eCv7kSQixud2h2uSiGX+bRNa0JQW8fcc=;
-        b=pVjSu61QVyjp9wfpEG7yMMmAmHvX8XYZskSY7RNtECTj0Zeu1kxhmrKSoamXr4GAWh
-         IghPDZVhZOxMLjs+jCZIbvYLH4bsMKLsZ6gOjnqG9ZBabY2ou3IkFblyNjJTaJKj6gfp
-         UjunvHI5rduV0anYhfyRfim3W0zTPXY4EM/a8vm78nEMSR6NJRfeKM+V7/Xa2E9Buwhy
-         co15hEp9+HpiGEHPn/PGqkv3oqrvoD/Z71uF1PLqIOFHlSC4TNYhXvOSSIsvQtBiCyYQ
-         XxDvoSNjedQQeYZFjhZ74CVt5v3hi2MZJq1YREiT0+vbg7OgC6zUCIsRYpI5T1hrrCDb
-         pXWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW78V3iqEGAsMuKadmbGO0J12FmUm7Ekfunv9DsecvUHy4Eh6tY3tyiEKxGmTXgMNR7CVDty00qtqzEiGBn3zRB/9vc4LWXaDPcvbI5
-X-Gm-Message-State: AOJu0Yw3Rd7TLGkjzk2pLx8o2mXlaVm6X4kkCgwtzgK2GTyCwIMwyxKs
-	idY0b7XGmXQl6c/UIQ3y2MsGmSV5lxXczgUHFrJMnozetF3od2Ctyn8RvyX5wQ==
-X-Google-Smtp-Source: AGHT+IGfVpIWeoLiZdliqYD6w6MUHUy5e1ltf8zZbU1y1lynDYoJKE4YmHmc0uMuWNlwhLCGFfNsjg==
-X-Received: by 2002:ad4:5be5:0:b0:6b0:9479:cdd7 with SMTP id 6a1803df08f44-6bb55acbe54mr103099816d6.54.1722243724747;
-        Mon, 29 Jul 2024 02:02:04 -0700 (PDT)
-Received: from [10.176.68.61] ([192.19.176.250])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3f8d81e2sm49047726d6.25.2024.07.29.02.02.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jul 2024 02:02:04 -0700 (PDT)
-Message-ID: <225279b3-882b-4d97-b7f4-08129c1f05a7@broadcom.com>
-Date: Mon, 29 Jul 2024 11:01:59 +0200
+        d=1e100.net; s=20230601; t=1722244010; x=1722848810;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7iJw9k6D1Ud7dg7cELMS+oQmF5+B7DIbU5iHUw2ERek=;
+        b=ck9mn63ZvV9TMNNTZyCaDqSu+6v5KAh73p1IxV2ZTBDscqghUggfvlqzsiklLawox1
+         nWy0huDdtOJfm1AMWbspf/ibnJnxAHoTN3aRjRjQmeFb+sOYVaA2ZYJj4IvRC1kHcYB3
+         cXQRDxrelp62sImaCg+HbfNvEebx4B35MJp0CW02n9RpbePpCZPos/kOjR3R2qvwW8O+
+         ioKN+0EhdiO7Qy18dSSGKLscJMBy2Ssvroiu9TmcW09RNESVUEc1/3LtfaLp02zgXWph
+         Bx+e25tC7YHn3AO4mry51yzV9SPLoeXmp3KakauhT2Mi4CgScjr8zv0NTSfLMjLli/6P
+         SfNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBZUe98HDnAdIkJn/+felslweUzFD8PcFLODbQY8h2Jj57OMQvSuIQo6ldJG6RhfvhluIT9YdLWkZq7SETTbEeqiZQoaBqcZZ7ZHcH
+X-Gm-Message-State: AOJu0YwSo7n+7PqEsbSfiQj6Fx1FNbLBY6lvDrnsiV9is+P/kRpqI88X
+	SfLlR7BHpRp+zgOhdRbWgdW3wQn2vayttLLpwzJjNuZPnxf4/s/wEZs739enhpw=
+X-Google-Smtp-Source: AGHT+IH0aAp6nqFToH47ycIHryIQNXERRaRXnmdtYJYfX6Q5qoO3wtejC77Lmfcly4PoTitp0zXv9A==
+X-Received: by 2002:a2e:330e:0:b0:2ef:2472:300a with SMTP id 38308e7fff4ca-2f12edfc2a1mr45943311fa.2.1722244009483;
+        Mon, 29 Jul 2024 02:06:49 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f03cd00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f03:cd00:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63b59bfesm5456620a12.44.2024.07.29.02.06.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 02:06:49 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: dhowells@redhat.com,
+	jlayton@kernel.org
+Cc: willy@infradead.org,
+	linux-cachefs@redhat.com,
+	linux-fsdevel@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Max Kellermann <max.kellermann@ionos.com>
+Subject: [PATCH] fs/ceph/addr: pass using_pgpriv2=false to fscache_write_to_cache()
+Date: Mon, 29 Jul 2024 11:06:39 +0200
+Message-ID: <20240729090639.852732-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/5] dt-bindings: net: wireless: brcm4329-fmac: add
- clock description for AP6275P Wi-Fi device
-To: Jacobe Zang <jacobe.zang@wesion.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "heiko@sntech.de"
- <heiko@sntech.de>, "kvalo@kernel.org" <kvalo@kernel.org>,
- "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>,
- "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
- <pabeni@redhat.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>
-Cc: "efectn@protonmail.com" <efectn@protonmail.com>,
- "dsimic@manjaro.org" <dsimic@manjaro.org>,
- "jagan@edgeble.ai" <jagan@edgeble.ai>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "arend@broadcom.com" <arend@broadcom.com>,
- "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "megi@xff.cz"
- <megi@xff.cz>, "duoming@zju.edu.cn" <duoming@zju.edu.cn>,
- "bhelgaas@google.com" <bhelgaas@google.com>,
- "minipli@grsecurity.net" <minipli@grsecurity.net>,
- "brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>,
- "brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>,
- Nick Xie <nick@khadas.com>
-References: <20240729070102.3770318-1-jacobe.zang@wesion.com>
- <20240729070102.3770318-3-jacobe.zang@wesion.com>
- <1724f480-369d-4b4a-9384-1c6b33b00433@kernel.org>
- <TYZPR03MB7001247E93FB6473128FEB2480B72@TYZPR03MB7001.apcprd03.prod.outlook.com>
-Content-Language: en-US
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
- 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
-In-Reply-To: <TYZPR03MB7001247E93FB6473128FEB2480B72@TYZPR03MB7001.apcprd03.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/29/2024 10:17 AM, Jacobe Zang wrote:
->>> Add clocks and clock-names for brcm4329-fmac.
->>
->> Why? Which devices have it? If only your newest addon, then squash the
->> patches and add appropriate allOf:if:then disallowing the clocks for
->> others. Or maybe all of them have it? Why commit msg does not explain
->> anything about the hardware?
-> 
-> Alright... Becuase of the datasheet said hardware has one LPO clock input. So
-> I will add allOf:if:then for this specific hardware
+This piece was missing in commit ae678317b95e ("netfs: Remove
+deprecated use of PG_private_2 as a second writeback flag").
 
-Maybe this can help clarifying the commit message. All Broadcom wireless 
-chips have this clock input, but often the chip end up on a wifi module 
-that may or may not provide the clock. From chip perspective the clock 
-input is always present, but it is optional as the chip can also use an 
-internal clock.
+There is one remaining use of PG_private_2: the function
+__fscache_clear_page_bits(), whose only purpose is to clear
+PG_private_2.  This is done via folio_end_private_2() which also
+releases the folio reference which was supposed to be taken by
+folio_start_private_2() (via ceph_set_page_fscache()).
 
-As such I would not choose to make this specific to this AP6275P 
-hardware (just my 2 cents).
+__fscache_clear_page_bits() is called by __fscache_write_to_cache(),
+but only if the parameter using_pgpriv2 is true; the only caller of
+that function is ceph_fscache_write_to_cache() which still passes
+true.
 
-Regards,
-Arend
+By calling folio_end_private_2() without folio_start_private_2(), the
+folio refcounter breaks and causes trouble like RCU stalls and general
+protection faults.
+
+Cc: stable@vger.kernel.org
+Fixes: ae678317b95e ("netfs: Remove deprecated use of PG_private_2 as a second writeback flag")
+Link: https://lore.kernel.org/ceph-devel/CAKPOu+_DA8XiMAA2ApMj7Pyshve_YWknw8Hdt1=zCy9Y87R1qw@mail.gmail.com/
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ fs/ceph/addr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 8c16bc5250ef..aacea3e8fd6d 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -512,7 +512,7 @@ static void ceph_fscache_write_to_cache(struct inode *inode, u64 off, u64 len, b
+ 	struct fscache_cookie *cookie = ceph_fscache_cookie(ci);
+ 
+ 	fscache_write_to_cache(cookie, inode->i_mapping, off, len, i_size_read(inode),
+-			       ceph_fscache_write_terminated, inode, true, caching);
++			       ceph_fscache_write_terminated, inode, false, caching);
+ }
+ #else
+ static inline void ceph_fscache_write_to_cache(struct inode *inode, u64 off, u64 len, bool caching)
+-- 
+2.43.0
+
 
