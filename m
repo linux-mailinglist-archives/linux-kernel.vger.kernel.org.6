@@ -1,110 +1,228 @@
-Return-Path: <linux-kernel+bounces-266418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E606693FFA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:41:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C087893FFAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A74202838B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:41:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76270282BF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D516E18C325;
-	Mon, 29 Jul 2024 20:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C2F18A934;
+	Mon, 29 Jul 2024 20:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aveEfELR"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YzS1IyPb"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BB215B98D
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A00770F6;
+	Mon, 29 Jul 2024 20:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722285660; cv=none; b=RS5N7BNmsu+Qn0fRFTGUl/aF9vsmCOKv82Jn7LBjvJhirz2m38PNkci7KEy6lFUmuDTxF9wLlL96h0Lq3BrGgLdf39UZBTumw8BN+7DIpIK6U3R7jAgGSqevxF3EmIrDLhnlpiP52JVcT0hh1t521RWIxZ/B8ma/Mzea4RF5lXo=
+	t=1722285740; cv=none; b=fmUC/jdhrTtSkbRHEJxBnGsS9f5euye+2ODVGD8WvcpSRzjUxeOIkrehRSGe4YMqvm3TxBt2hYSx0CBms8kf1jgzgyE293iFxLAM35GNTbboLmCXRO2sdbNkiSv07A9MG4QvGBsak6psVYsC5fs3sN30sc9zbw7u7hx7bIHzLYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722285660; c=relaxed/simple;
-	bh=JDPEiWSJjysWusTQvGLI5kdhss1TZceatUOZLyfukGw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=sQxGVmPiYnRQj2P/m+iLKS3SFEo/bFaYlCu9YgZOWeQ88oPNv9X9Mpk205DnzzAyG51yVMPNqIAzahY6+S1Uwp5SNactl+ohVFNPbNBLgeo2Gn8YQzE9uZ2pRS08Es3xKG/LwsL3W/MSS1HnRulQo/6H9akVmb/aZL0IG+DM1rI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--zenghuchen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aveEfELR; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--zenghuchen.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0b329ba782so5098118276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:40:58 -0700 (PDT)
+	s=arc-20240116; t=1722285740; c=relaxed/simple;
+	bh=IQiKkzaTDl7twmBKLWj9YjzgADMmay2FkJMxC7ZbwrQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MJUOYzh9mIBAG2zUWaiOC2RHtwR6NMybT+tfbbGZlnerqSbZ7ABEmM+VFYEUNA2ByrVt0KBd9P3lgKGMFXfwhuIPVRfqHwrayhqWJl3kRREAtpuPURkBvE6rOpcyi/yKDX14/ywrpVnTaT4gxiGkmBw1tGqk69KoSDK2aB7/WXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YzS1IyPb; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-595856e2336so8001053a12.1;
+        Mon, 29 Jul 2024 13:42:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722285658; x=1722890458; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=n7ZbQjS7fYcpPV8CeoeZ/SVTCnctOwY25lHwhKuyOmE=;
-        b=aveEfELRynQDeu6m8lfJxC6PffSi4c+Vhkq+X7jVBgjQE0aDy1c7VcyQpsUNY/EyxF
-         BaBkhKp2aKsDAleAZ46Byo9Ndf93Ibvxj+UNXoPe0ylGelBb3vjLuzE2QJwuUDeN3SXm
-         wYAHlA841E8nuGqxJDfWQM42fhec94XxdWkKc2Zlod1BBH8Eg9rlqQC8uPKdZg6w6bpf
-         FjJUqxWhpSUjmE/Q20Sllq/+hIzYH+XHAKDD045ryFkrANFkSBB6MoxABldNFUeZTHXi
-         ov0kTWTJLkVx2nyx/Svfa5SOC9zickePGuoMNY7G/xJLRf3TUMpepZ15l+w+QQ3SsXCM
-         IOFg==
+        d=gmail.com; s=20230601; t=1722285737; x=1722890537; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KZpqW1FNzf6K1KcY9MxfqaCZ/LDFNl8Inmwxrmuyygw=;
+        b=YzS1IyPbXCyxmUaKntUJSmbICOXoCFxFNBW4seweHEM9ufMM4uMqpaf5qgkqF/cS7A
+         NRHiBToBRQlECIPZu0ZfvDwRs2Q87RN4/dYz7yK6kmZyg2gwcG1R/Ab8RGi/o/kOps3L
+         2tC9HCioEbrlsyXp15g+V28eU1/69lTFgTqyGIMoKCvGjgPO7P94lpTgU/au0Tv0s9md
+         M7sjB95swjzNfcxx2mZ5L6UOieswM0yHfsRGkEKV2/VmkLNcif979VWxTJLqZNFuWwgp
+         CNBDqTvJ+o2d7xwqRN5bhP68hiP6Wuqpesxr5k0i2hlrIzKMBqueEvDFYMLo73d+4JqG
+         Q6fQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722285658; x=1722890458;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n7ZbQjS7fYcpPV8CeoeZ/SVTCnctOwY25lHwhKuyOmE=;
-        b=bxJysgrLEIoaiob6pfHPb0drMR9V2O9g6tI2jmP2xDfRarVeywKGUYf3ksUNLqx6PK
-         Ivf89BuA8P2IoEcKjqyOFkv1BU0c6V4r5OySyKxvpbKh0LnujU63XFQ9+U2p/ywIjLUO
-         US7Tne5NXTHGzNj2So8uHS9b/39WMcTSTmUYzA5k1a2WmDuvOAgE41vJk0q4/3WpQ4N1
-         7sXi1h4+xsfVbQMkoxQt00g91ZQUHyAenadHe2kjqRRGLwkMVknyU8ptTcLPaFqVWCW7
-         M3cnOX1kHYae9nBwpL0xmDud4OXyXxU3Wj9XzpSxGTZeXA88T1MJW6ywAm/Tr85N23mB
-         KnQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8mENZxMvJ/hy14VukVV1VEOXovyqayV7U4KepF8h832s9S8uBpjAa6UONJhZm1SBZxyJDkyihD821JSnZEgvmSvt/bBwhDeMAF0kp
-X-Gm-Message-State: AOJu0Yx6od4TRlRXQe/Zax9lEzQLrW7SgDokx4XQ/xSGSwgY32k26wQa
-	SgimXWm0TwTmTQBtL2P51oe9cVz1ot0JLxyI0KEau5Vr2tmXT7l7KcmTIaS/BdgTiV8zWPTkkxQ
-	BVA16hxegYkA7Pou5kg==
-X-Google-Smtp-Source: AGHT+IF42e6dPo93pFDAH6b7KWc5DCBD36rR4/DxpqnZk4t1+1z42eObI3nYz2JdBz4NjrRNYjjHK3hIHceT3N/F
-X-Received: from zenghuchen.c.googlers.com ([fda3:e722:ac3:cc00:2b:7d90:c0a8:2448])
- (user=zenghuchen job=sendgmr) by 2002:a05:6902:2b0d:b0:e05:fb86:1909 with
- SMTP id 3f1490d57ef6-e0b5445e804mr861185276.6.1722285657746; Mon, 29 Jul 2024
- 13:40:57 -0700 (PDT)
-Date: Mon, 29 Jul 2024 16:40:54 -0400
+        d=1e100.net; s=20230601; t=1722285737; x=1722890537;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KZpqW1FNzf6K1KcY9MxfqaCZ/LDFNl8Inmwxrmuyygw=;
+        b=J1Yp80hL7yUfTEMR7PL1Qtyc89tFV0/bKZ6sExuEoKe6loTEfwaWAP7nqtAMW314c+
+         7CqRv6P7xeYDeACo5jDdDQNuuz+6sw3Se2ICwzMvYOY37XgCI1LzjtspukLX3KNzKa/r
+         Nh7uCTqhtkNmrdV934zJ+RE8rSUlZZAY5NJFy6boonzqJxs1W6O6KMJE1UcIx26ooNBc
+         b/TrdN2n+dhn2C/FlmtJ9hXQLw9PRls0piVQkTJdO4V9uJn6Q0xPKVFsY5rpzUIN1L+R
+         fFr62vf/krj9pnPhhPzfYf7JnuST1lteAc2GF7gc+6m6L1I6ADBKcZ9YZ9Swx1/PWSST
+         8NCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJV+dANSjio/AuT8/sXQC9O/0Sq1jNw72BaaQxo1FDLpzrtghN9IEgmlAu6hnuhISoDRf+eL+tOoMSRnGM2lVFOZ7/Fm/w90Wxr+O8H0ko5F+rQMj9mjJnG9g9HNqM27wDatNRHiUMzqqiggfHS8fTGNAs9j6yj5ZlwKEeaJ8eKFo43nOMh8g=
+X-Gm-Message-State: AOJu0YxiHtE+6sCUWf/nk28qkzKc76JNlMrVFGYRa0eeHCh+oxn+Qf94
+	BJeO9eiWirpvA1qrj5FxO5s7eidZHOEGCwvkvcPZi1qjPF6xjrXuIyB+65in8GLIq/4+XmO/O4i
+	Ds3DCR9xrgOKrrxmFaYnWcbpNX0o=
+X-Google-Smtp-Source: AGHT+IELVmUsxUqYVsUBpaSO4qSLMUdrKZlg0f0o3R5olNU3hsTcYbTRf6kbLbRKSE2iOv0ZVYTu2ALyuE6vHzEW+Ws=
+X-Received: by 2002:a50:9984:0:b0:57d:3e48:165d with SMTP id
+ 4fb4d7f45d1cf-5b016cdaa27mr8243785a12.4.1722285736445; Mon, 29 Jul 2024
+ 13:42:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.rc1.232.g9752f9e123-goog
-Message-ID: <20240729204054.2269031-1-zenghuchen@google.com>
-Subject: [PATCH] leds: lm3601x: reset led controller during init
-From: Jack Chen <zenghuchen@google.com>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Vadim Pasternak <vadimp@nvidia.com>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jack Chen <zenghuchen@google.com>, 
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+MIME-Version: 1.0
+References: <20240719-topic-t14s_upstream-v1-0-d7d97fdebb28@linaro.org>
+ <20240719-topic-t14s_upstream-v1-3-d7d97fdebb28@linaro.org>
+ <Zp055OR+OzSgiHhX@linaro.org> <824edc08-f67f-4b2f-b4aa-da5df69b9df4@linaro.org>
+ <Zp4vghH5SK/rLEce@linaro.org> <CAF6AEGszzRFiW16VzQQVF21U79uLcTNwwuGsHs98Zp_UGGTEBA@mail.gmail.com>
+ <4w4b5pjrrl7jnanx3uodsjxw4cfenc3i6tgmp6kblgn6gavn45@uu2milys4n2z>
+ <atjcj5qnetxilrnoom7xisqbl5yhq5ktg3jb7dfnkdnzbqblb5@qbkqupznvrua> <87o76ng5mr.fsf@bloch.sibelius.xs4all.nl>
+In-Reply-To: <87o76ng5mr.fsf@bloch.sibelius.xs4all.nl>
+From: Rob Clark <robdclark@gmail.com>
+Date: Mon, 29 Jul 2024 13:42:04 -0700
+Message-ID: <CAF6AEGvjkStnnL=51LCVnyqMyupzfUT-HVrgyREXW+uAFWCTgQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: Add X1E78100 ThinkPad T14s Gen 6
+To: Mark Kettenis <mark.kettenis@xs4all.nl>
+Cc: Bjorn Andersson <andersson@kernel.org>, dmitry.baryshkov@linaro.org, abel.vesa@linaro.org, 
+	konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, marijn.suijten@somainline.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, johan@kernel.org, patrick@openbsd.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-LED controller should be reset during initialization to avoid abnormal
-behaviors. For example, when power to SoC is recycled but power to LED
-controller is not, LED controller should not presume to be in original
-state.
+On Tue, Jul 23, 2024 at 2:28=E2=80=AFPM Mark Kettenis <mark.kettenis@xs4all=
+.nl> wrote:
+>
+> > Date: Tue, 23 Jul 2024 13:55:20 -0500
+> > From: Bjorn Andersson <andersson@kernel.org>
+> >
+> > On Mon, Jul 22, 2024 at 07:03:43PM GMT, Dmitry Baryshkov wrote:
+> > > On Mon, Jul 22, 2024 at 08:00:19AM GMT, Rob Clark wrote:
+> > > > On Mon, Jul 22, 2024 at 3:11=E2=80=AFAM Abel Vesa <abel.vesa@linaro=
+.org> wrote:
+> > > > >
+> > > > > On 24-07-22 10:42:57, Konrad Dybcio wrote:
+> > > > > > On 21.07.2024 6:40 PM, Abel Vesa wrote:
+> > > > > > > On 24-07-19 22:16:38, Konrad Dybcio wrote:
+> > > > > > >> Add support for the aforementioned laptop. That includes:
+> > > > > > >>
+> > > > > > >> - input methods, incl. lid switch (keyboard needs the pdc
+> > > > > > >>   wakeup-parent removal hack..)
+> > > > > > >> - NVMe, WiFi
+> > > > > > >> - USB-C ports
+> > > > > > >> - GPU, display
+> > > > > > >> - DSPs
+> > > > > > >>
+> > > > > > >> Notably, the USB-A ports on the side are depenedent on the U=
+SB
+> > > > > > >> multiport controller making it upstream.
+> > > > > > >>
+> > > > > > >> At least one of the eDP panels used (non-touchscreen) identi=
+fies as
+> > > > > > >> BOE 0x0b66.
+> > > > > > >>
+> > > > > > >> See below for the hardware description from the OEM.
+> > > > > > >>
+> > > > > > >> Link: https://www.lenovo.com/us/en/p/laptops/thinkpad/thinkp=
+adt/lenovo-thinkpad-t14s-gen-6-(14-inch-snapdragon)/len101t0099
+> > > > > > >> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> > > > > > >
+> > > > > > > Few comments below. Otherwise, LGTM.
+> > > > > > >
+> > > > > > > Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+> > > > > > >
+> > > > > > >> ---
+> > > > > > >>  arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+> > > > > > >>  .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts     | 792 ++=
++++++++++++++++++++
+> > > > > > >>  2 files changed, 793 insertions(+)
+> > > > > > >>
+> > > > > > >> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/=
+boot/dts/qcom/Makefile
+> > > > > > >> index 0e5c810304fb..734a05e04c4a 100644
+> > > > > > >> --- a/arch/arm64/boot/dts/qcom/Makefile
+> > > > > > >> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> > > > > > >> @@ -261,6 +261,7 @@ dtb-$(CONFIG_ARCH_QCOM)        +=3D sm86=
+50-hdk-display-card.dtb
+> > > > > > >>  dtb-$(CONFIG_ARCH_QCOM)   +=3D sm8650-hdk.dtb
+> > > > > > >>  dtb-$(CONFIG_ARCH_QCOM)   +=3D sm8650-mtp.dtb
+> > > > > > >>  dtb-$(CONFIG_ARCH_QCOM)   +=3D sm8650-qrd.dtb
+> > > > > > >> +dtb-$(CONFIG_ARCH_QCOM)   +=3D x1e78100-lenovo-thinkpad-t14=
+s.dtb
+> > > > > > >>  dtb-$(CONFIG_ARCH_QCOM)   +=3D x1e80100-asus-vivobook-s15.d=
+tb
+> > > > > > >>  dtb-$(CONFIG_ARCH_QCOM)   +=3D x1e80100-crd.dtb
+> > > > > > >>  dtb-$(CONFIG_ARCH_QCOM)   +=3D x1e80100-lenovo-yoga-slim7x.=
+dtb
+> > > > > > >> diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkp=
+ad-t14s.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
+> > > > > > >
+> > > > > > > So what happens for SKUs of this model wil have x1e80100 ?
+> > > > > > >
+> > > > > > > Maybe we should stick to x1e80100 ?
+> > > > > >
+> > > > > > This one only ships with 78100
+> > > > > >
+> > > > >
+> > > > > Sure, but then in upstream we only have 80100. Plus, it is includ=
+ed in
+> > > > > this file as well.
+> > > > >
+> > > > > I don't know what's the right thing to do here. But I think it ke=
+eps
+> > > > > things more simple if we keep everything under the x1e80100 umbre=
+lla.
+> > > >
+> > > > plus sticking to x1e80100 will avoid angering tab completion :-P
+> > >
+> > > This is an old argument, with no clear answer. For some devices we
+> > > choose to use correct SoC name (sda660-inforce-ifc6560). For other we
+> > > didn't (sdm845-db845c, which really is SDA845). However for most of t=
+he
+> > > devices the goal is to be accurate (think about all the qcs vs qcm
+> > > stories). So my 2c. would go to x1e78100.
+> > >
+> >
+> > I agree, x1e78100 follows the naming scheme we have agreed upon - for
+> > better or worse.
+>
+> So should the device trees for the Asus Vivobook S15 and the Lenovo
+> Yoga Slim 7x be renamed then?  Since those also (only) ship with
+> X1E-78-100 variants of the SoC.
+>
+> There is supposed to be a variant of the Vivobook with the X1P-64-100
+> (I haven't seen it actually for sale yet).  Since that one has only 10
+> CPU cores, should that one gets its own device tree?  That may not be
+> possible.  I have a strong suspicion that all the variants are just
+> binned versions of the same SoC, where the X1P just has two of the
+> cores disabled.  If Qualcomm, like Apple, attempts to increase the
+> yield by binning SoCs with broken or badly performing cores as X1P it
+> might be a lottery which of the 12 cores get disabled.
+>
+> And for the vendors that do offer models with different X1E variants,
+> are there going to multiple device trees, one for each variant?
+>
+> I'm asking because on OpenBSD we load the device trees in our
+> bootloader and map SMBIOS vendor and product names to a device tree
+> name.  So a consistent naming scheme for the device trees is
+> desirable.
 
-Signed-off-by: Jack Chen <zenghuchen@google.com>
----
- drivers/leds/flash/leds-lm3601x.c | 4 ++++
- 1 file changed, 4 insertions(+)
+multi-sku laptops are going to make this a mess..  We really should
+just reconsider.. or maybe sidestep the issue and call them all
+"x1-crd.dts", "x1-lenovo-yoga-7x.dts", etc
 
-diff --git a/drivers/leds/flash/leds-lm3601x.c b/drivers/leds/flash/leds-lm3601x.c
-index 7e93c447fec5..978256310540 100644
---- a/drivers/leds/flash/leds-lm3601x.c
-+++ b/drivers/leds/flash/leds-lm3601x.c
-@@ -434,6 +434,10 @@ static int lm3601x_probe(struct i2c_client *client)
- 		return ret;
- 	}
- 
-+	ret = regmap_write(led->regmap, LM3601X_DEV_ID_REG, LM3601X_SW_RESET);
-+	if (ret)
-+		dev_warn(&client->dev, "led controller is failed to reset\n");
-+
- 	mutex_init(&led->lock);
- 
- 	return lm3601x_register_leds(led, fwnode);
--- 
-2.46.0.rc1.232.g9752f9e123-goog
+BR,
+-R
 
+> Thanks,
+>
+> Mark
+>
+> > Regards,
+> > Bjorn
+> >
+> > > --
+> > > With best wishes
+> > > Dmitry
+> >
 
