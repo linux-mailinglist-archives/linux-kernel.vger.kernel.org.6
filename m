@@ -1,137 +1,158 @@
-Return-Path: <linux-kernel+bounces-265883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B3A93F739
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:06:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA0193F73C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:06:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C9281F2268A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:06:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01F171F22683
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0EF149C7B;
-	Mon, 29 Jul 2024 14:06:15 +0000 (UTC)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033BF14EC4E;
+	Mon, 29 Jul 2024 14:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="FYClwVgF"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F35B548F7
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722261975; cv=none; b=QX1fzfOZD9Lp3uoTHcbxTQ2WH+lAExzbzRhXK2/7D1qVc/YRKharcTk6LyDBC/cs4b2n+ioWNPx+bPK7pbKYI+8DyLFBXMqDnysG52yThhjZXpC7b/9cV02wTczPIa3oTQySN9tNIVBlEHBD9SFS0rwg84vkniLtVQnpKO2TMqI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722261975; c=relaxed/simple;
-	bh=Vt/KlsYqlfzY5w+zk4qKtAzaKg3pBAlXwsSaQbwVEoc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FilQHJepGqv9eKtPeXjE1UMWixQ8hFwikT/VxME3VIcgnKlKHYC/87pmP3KF9GNMJ4Jd6B1vs5h3JX5sokKSbpU/jhR6OuRrf+8IvDWWpM0+A5i0487WqkkK27R10zbjNl/T1Z+5XB2u4sd1pk1R/SQCdzWHB+arjxDkwggl4fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a156556fb4so5702873a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:06:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722261972; x=1722866772;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=owwE/MAw6I8JV49oV4oTjGC158EU/LbbStqtPHPBtTM=;
-        b=qbdRf8TNjP/2M8lxTpxDsA+9rzfU1/VRw2kz5F3JmbvJXiHb+kOLiA27MIrn0Mj3mZ
-         uDw+CYjMyLzHFr/JDW7Z0owfI0UJT6xyulhQYN89NC6eCriXJnij9xSHFgUovTkeFEtm
-         6wib+WQVZuWmCZpRz6pBfnR5R62l8uup93PFrMJb9DnxiOG7PpotNZqTNRDG16U9voqF
-         OpWI7KIORQhp+fYthM2zOVE82igFHxXq4NQdq7ve9T5cDarfnWlVgX27SFia+ejBTS/y
-         fGJ9fMjP/6I7azgEUQLIm9JmjJllEqBz7pAAN2IjMGVL9q7wOUgVuqbEmPc2YvVmZGYW
-         S/Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCX4R/rxBniYYnBiTkAX8gtSwNd88BbGWBWsFUmTN0LjChtZawgwCR3saA2VWOWtM2UFMF73Vb7Ff4SxZ7/W9OI+v1dS0CqEd7KLGFZM
-X-Gm-Message-State: AOJu0YynTN5DNzsJ03lbLjxZD8lXSwxvatx3/UZT3z0EKjN7H7WdbgbG
-	Bv4uusNvb031jb7g6+MaDS9oK43m7siqzmg5rXQBo3v7dGHDsoQy
-X-Google-Smtp-Source: AGHT+IFyarz1U50wTNKGNnpgVwME+kJVnePgE9zm8/V1pGilDItbAsfCY4q2LXf3goYhSGr0CPbGvg==
-X-Received: by 2002:a50:9f4f:0:b0:5a1:8984:977e with SMTP id 4fb4d7f45d1cf-5b0202ef5a3mr3979950a12.8.1722261971390;
-        Mon, 29 Jul 2024 07:06:11 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac631b03a0sm5846501a12.2.2024.07.29.07.06.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 07:06:11 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: leit@meta.com,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Wei Liu <wei.liu@kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Adrian Huang <ahuang12@lenovo.com>,
-	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-Subject: [PATCH] x86/apic: Add retry mechanism to add_pin_to_irq_node()
-Date: Mon, 29 Jul 2024 07:06:01 -0700
-Message-ID: <20240729140604.2814597-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F096548F7;
+	Mon, 29 Jul 2024 14:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722261984; cv=pass; b=FRde3qGn/A9Tgrv/JYslXN6PNyr16babZAX2bD2Vly4qeXimNtQ9Q66aghmMEjCPdDctpffeCb5TiG4AdHJMD7/q/rdlX/gy2KpizAyHaIM/rA7nuSiyHB0eoVEsFxjwytpfoU494/zMf/PKiddeQYebvauw0WSJ6nrpc6aIjH8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722261984; c=relaxed/simple;
+	bh=0o3cxwVIX6W+JSBJZMsbzybCNjUAO646XscSaOWFHcM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=RPO7ErpND3eehexVy/nGiLLexh/keCRa61pbJNFjfG4XTL8YhdQkvL61zt7ovrFO+qerHaNOAui3azr2uEqnAmGsdaBZ2w1+8lubwKxBj/0OBZ2hLHpsbBxHFsGTCoYsNgzyxPULTdqR6X/3Lk5VLYhhAuzrD+bdBVY1eirG9Ag=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=FYClwVgF; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from localhost (91-154-92-171.elisa-laajakaista.fi [91.154.92.171])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sakkinen)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4WXgBb2tF7z49Pxq;
+	Mon, 29 Jul 2024 17:06:15 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1722261977;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=58xFwHqBtPauSUnJMDeUcsN8ZTBzN4flN8E7xsxQpJg=;
+	b=FYClwVgFHKv02sXRaOC/ibIl0mC3QhLo/onAfUuqwzht9b1MdlyKDrzNZZFgWVgZgcFnhh
+	Dz3gslwvtgp2+UC85ypVjqAA4anHMW6YxoIkdTal13COuw6MPAcMX31yqpP89+lZaxa4zO
+	N1ZbKg1glD41auyQXvZra0BR/N6i8UaylUEx40bGvYdYOzvWC1sFBtqHK2SE00eaH+g9lo
+	majts9ymKHijqgwSEY7qQJLwNWRkQjCT+T+wWjG9JYK3LeNQabPBm8DFK4KiXqP7TTdgfX
+	lcuSNWNpRyTj1I27KEUV8LVAMIamXfMkR1jJXkzMZf6oyWfkbkAPJl1/fEHyfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1722261977;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=58xFwHqBtPauSUnJMDeUcsN8ZTBzN4flN8E7xsxQpJg=;
+	b=cuTYR1eN2b37S5vLrAJxCP9GkBrE21BrlMNKBhXR1CmvuhbQpPKeHl+xf1xwt57AQekYdE
+	pj++tpWNvSao1wv/7/2oxeNlAIO76cZiAEnAiOZA88m17S7ABGk+t6tZ1BqOdPh7Q66z8V
+	10lqwBI/bMKuUWVCwzT//k1XofboxP92WCPvOCq/o5lCAFNepGZemCbWg/3Cf4FSf/W9P/
+	/3JHtDYNan4hIuGJQneZbjyFe9zURNIkDhp2y/WSnlXvtiHKemRU6onOyTPaX4SvGr1q2O
+	rgC8TzXGCskXvst9uPgcIygOgIXWRBsOuhxtbW6pBLvJvmsopcCxjaFbpVcjhA==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1722261977; a=rsa-sha256;
+	cv=none;
+	b=lmx6rNhe5uPEUbPHVDLi9ffTrrvPbgmBMc1chO2Q2BLGJd31b19DCD+5TTiUpGgk01QxXm
+	7MsmQg2enUCQy2jw4Y+kxMwl18fZjUhk3swVh/1fv4xYSzxTLbCUVMlMW+RovNi7LryiBf
+	h3pdTcl7ScpE57ELLddpAH1n1hsj1C7EdLO+f+qg/aL2C1+DF8PO0U10ZLOwqt5upR8Xdn
+	ieCyvlhIwSo7d6NlcJUvxhpnzxafoln4J2i0w3jTp35atZtLwdgBsubHKpUooZqriDaqzI
+	swgQKlyGpU2lXNY2DAXdJ8KMVG8ekM2PJklXWnc+ccRhQHn1+VwHXbaZoc9Cpg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 29 Jul 2024 17:06:14 +0300
+Message-Id: <D322X0D8UBYG.3FIRWQEBNURZF@iki.fi>
+Cc: =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, "James Morris"
+ <jmorris@namei.org>, "Jann Horn" <jannh@google.com>, "Kees Cook"
+ <kees@kernel.org>, "Paul Moore" <paul@paul-moore.com>,
+ <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to
+ ptrace_may_access()
+From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
+To: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, "David Howells"
+ <dhowells@redhat.com>, "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.18.0
+References: <20240729125846.1043211-1-mic@digikod.net>
+In-Reply-To: <20240729125846.1043211-1-mic@digikod.net>
 
-I've been running some experiments with failslab fault injector running
-to detect a different problem, and the machine always crash with the
-following stack:
+On Mon Jul 29, 2024 at 3:58 PM EEST, Micka=C3=ABl Sala=C3=BCn wrote:
+> A process can modify its parent's credentials with
+> KEYCTL_SESSION_TO_PARENT when their EUID and EGID are the same.  This
+> doesn't take into account all possible access controls.
 
-	can not alloc irq_pin_list (-1,0,20)
-	Kernel panic - not syncing: IO-APIC: failed to add irq-pin. Can not proceed
+Add a smoke test transcript here, which demonstrates the above
+for A/B testing sake so that there is no need to invent one by
+the reviewer.
 
-	Call Trace:
-	 panic
-	   _printk
-	   panic_smp_self_stop
-	   rcu_is_watching
-	   intel_irq_remapping_free
+Otherwise, it is too involved to give tested-by tag to this patch.
 
-This happens because add_pin_to_irq_node() function would panic if
-adding a pin to an IRQ failed due to -ENOMEM (which was injected by
-failslab fault injector).  I've been running with this patch in my test
-cases in order to be able to pick real bugs, and I thought it might be a
-good idea to have it upstream also, so, other people trying to find real
-bugs don't stumble upon this one. Also, this makes sense in a real
-world(?), when retrying a few times might be better than just panicking.
+>
+> Enforce the same access checks as for impersonating a process.
+>
+> The current credentials checks are untouch because they check against
+> EUID and EGID, whereas ptrace_may_access() checks against UID and GID.
+>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: G=C3=BCnther Noack <gnoack@google.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Cc: Kees Cook <kees@kernel.org>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Fixes: ee18d64c1f63 ("KEYS: Add a keyctl to install a process's session k=
+eyring on its parent [try #6]")
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20240729125846.1043211-1-mic@digikod.net
+> ---
+>  security/keys/keyctl.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+> index ab927a142f51..511bf79fa14c 100644
+> --- a/security/keys/keyctl.c
+> +++ b/security/keys/keyctl.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/security.h>
+>  #include <linux/uio.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/ptrace.h>
+>  #include <keys/request_key_auth-type.h>
+>  #include "internal.h"
+> =20
+> @@ -1687,6 +1688,10 @@ long keyctl_session_to_parent(void)
+>  	    !gid_eq(pcred->sgid, mycred->egid))
+>  		goto unlock;
+> =20
+> +	/* The child must be allowed to impersonate its parent process. */
+> +	if (!ptrace_may_access(parent, PTRACE_MODE_ATTACH_REALCREDS))
+> +		goto unlock;
+> +
+>  	/* the keyrings must have the same UID */
+>  	if ((pcred->session_keyring &&
+>  	     !uid_eq(pcred->session_keyring->uid, mycred->euid)) ||
+>
+> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
 
-Introduce a retry mechanism that attempts to add the pin up to 3 times
-before giving up and panicking. This should improve the robustness of
-the IO-APIC code in the face of transient errors.
 
-Since __add_pin_to_irq_node() only returns 0 or -ENOMEM, the retry is only
-for -ENOMEM case only.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- arch/x86/kernel/apic/io_apic.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
-index 477b740b2f26..2846a90366f2 100644
---- a/arch/x86/kernel/apic/io_apic.c
-+++ b/arch/x86/kernel/apic/io_apic.c
-@@ -390,8 +390,14 @@ static void __remove_pin_from_irq(struct mp_chip_data *data, int apic, int pin)
- static void add_pin_to_irq_node(struct mp_chip_data *data,
- 				int node, int apic, int pin)
- {
--	if (__add_pin_to_irq_node(data, node, apic, pin))
--		panic("IO-APIC: failed to add irq-pin. Can not proceed\n");
-+	int ret, i;
-+
-+	for (i = 0; i < 3; i++) {
-+		ret = __add_pin_to_irq_node(data, node, apic, pin);
-+		if (!ret)
-+			return;
-+	}
-+	panic("IO-APIC: failed to add irq-pin. Can not proceed\n");
- }
- 
- /*
--- 
-2.43.0
-
+BR, Jarkko
 
