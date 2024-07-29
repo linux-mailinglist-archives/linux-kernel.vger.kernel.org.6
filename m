@@ -1,136 +1,96 @@
-Return-Path: <linux-kernel+bounces-265287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68B7893EEFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:50:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E65993EF07
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E7461F20FAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:50:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECA0B1F21066
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6066312C530;
-	Mon, 29 Jul 2024 07:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693E512D1FA;
+	Mon, 29 Jul 2024 07:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Si/a4T+z"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wo1dGVmA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671F2126F2A
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7248C84A2F;
+	Mon, 29 Jul 2024 07:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722239399; cv=none; b=GzCyU0SYI1E2S69mGjaxs+++ewIIvoM11oF3j14cDbVCRPpJPn/pT32Us1pG7OzUtjcX1fqc6eaDmu6h+wgcq6S5P81YbGdhSLHfwxeaLKTzeXe0mg/LoaBaW8NYcNi+7zxFZNpFuPVeRGk3tW9y4g2cagQwfi23TUNXnwm9z1U=
+	t=1722239464; cv=none; b=BSlGSnsrCsDex9VVfzGhaiC0tWja9luM/7Km1k1yvFQOzE6GjAC/qtlfNRVhONDdZ9KYQ2+QAmpDBBV9tPbqXb+tTha7VWlUHHqEy3CsoCi9/FjcmbWA4RG1gNMzqCJp62AXdNrFHObZJiam0jfAm6kUBRFUxYpg3WmklmNLm84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722239399; c=relaxed/simple;
-	bh=HKJfNf/ZFgM9Vr/ActzM0EId85ptHfLLtveUNz/1Rok=;
+	s=arc-20240116; t=1722239464; c=relaxed/simple;
+	bh=0YD5qebvvvHTdKYH4uTspAUHYUhUPXH0+THdAkSMD10=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C+3QC2wHAYctPmozLFuLH4VZyUcPYoLNTUP5txpsGlqurGiDWBiVA4T+HDln8KeZLSxFCn8Zyy1/7rbbMITlT/QnfeHZcPNt18VcxfyGghsaIvlhtr+Wqo1N/CK+w85vgN2MkNMOLWkPp9Xo5ap7nBer3fLkyJbwy1TSwDktJKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Si/a4T+z; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=HKJf
-	Nf/ZFgM9Vr/ActzM0EId85ptHfLLtveUNz/1Rok=; b=Si/a4T+zsjEJT5pxoTy3
-	4dtVO++LPhr3xU/feBoe7uvbwalOqQpMLjVKz/K7+JuxCcH9uFX5Nfl6sRR2iImB
-	jTR1fPiplzZ7z7GJZFaUcQV0uJpne2Vs4p/UehcERDEbddOwmIldRJOtkmgUrSGO
-	5mIsS2ZZyH8FOZqvM1NLF1nEtYs12Wsf0Vresxg82orAOTaqNJ6qlPZMj9f2QPiA
-	0YYSsdqAu3Tmzq/4xGhjHtO7el5f8AVFK7gBzk3kLvBaxo7L8yHE6WWxoPEYjrFS
-	KhoOBRBPZz3Gm6txVNHsQJQ8yzdNW4ZuntLefSj8LVRojRbPVd4a+28GaKqvKBm1
-	9g==
-Received: (qmail 4021576 invoked from network); 29 Jul 2024 09:49:50 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Jul 2024 09:49:50 +0200
-X-UD-Smtp-Session: l3s3148p1@iIwTG14ePsQujnsv
-Date: Mon, 29 Jul 2024 09:49:50 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Wolfram Sang <wsa@kernel.org>, Jean Delvare <khali@linux-fr.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] i2c: smbus: Improve handling of stuck alerts
-Message-ID: <ZqdJngPM5_4qXy8S@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <linux@roeck-us.net>, Wolfram Sang <wsa@kernel.org>,
-	Jean Delvare <khali@linux-fr.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20220110172857.2980523-1-linux@roeck-us.net>
- <20220110172857.2980523-2-linux@roeck-us.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O/pGU0otSAJ0Prr4l1GSDUQr40obZKTThe6SQtxP096mtZ34Sb3Clzk1LVw7gvUNIMQiWmiublEkVVkgOipHm+XezbVbb1QazLJtBP8WBNSBQhGmHt144/FFNruCf3heWB+Ge1/tWBkgPKcyGdN3+m7r9DRwF+29wGRPXbOINsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wo1dGVmA; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722239464; x=1753775464;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0YD5qebvvvHTdKYH4uTspAUHYUhUPXH0+THdAkSMD10=;
+  b=Wo1dGVmAqKIfY0QCOusUd3ZwdlTzJ2FTVoFyyd3dO19RurOrxBGJ+AiA
+   GfH6QAIuP8i1k6DG/uRtpi9svNgR6SFDF0V5e7eVA6kehwIqEbSA1+VEZ
+   AnutB2SwdI4j+bpn7KdqgYnkNHCCAgqaognCY/mP6Tu6PlJXBfVpMWxTa
+   tluW/7H9/+iTCCNnGxmMlDeyTYDDioiqcasDIk4SbSdbuH3GpDlX0xE6l
+   Wigcwl5ChMCUMgAL58V9gQbpvbOfTI15sSWtQoEgCAM0neL5We0ugHS9F
+   NXZmkvlKJ5zl6tB8YqIb6/Kei/LGZFaKE1mDFTxQZQ+oeLoNMOZuEl3M0
+   A==;
+X-CSE-ConnectionGUID: X5rNtRMtRAawMk3vprKd6g==
+X-CSE-MsgGUID: ED9l6VOhTG2PT4Isg7cQsA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="23773186"
+X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
+   d="scan'208";a="23773186"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 00:51:03 -0700
+X-CSE-ConnectionGUID: jPK51ZwOT3mXCLTYHRfEFw==
+X-CSE-MsgGUID: LsJMygX5RFWqJq4o2bT1cA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
+   d="scan'208";a="84536935"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 00:51:01 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 4B1E811F8A8;
+	Mon, 29 Jul 2024 10:50:57 +0300 (EEST)
+Date: Mon, 29 Jul 2024 07:50:57 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Bingbu Cao <bingbu.cao@linux.intel.com>
+Cc: linux-media@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
+	Andreas Helbech Kleist <andreaskleist@gmail.com>
+Subject: Re: [PATCH 1/1] media: ipu6: Depend on AUXILIARY_BUS
+Message-ID: <ZqdJ4c5NICbLZIQF@kekkonen.localdomain>
+References: <202407161833.7BEFXejx-lkp@intel.com>
+ <20240729071026.3775341-1-sakari.ailus@linux.intel.com>
+ <2da2103f-1f54-c70e-d8c4-ddcf3e4037d1@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CKmgZ7Su3xMLo1p3"
-Content-Disposition: inline
-In-Reply-To: <20220110172857.2980523-2-linux@roeck-us.net>
-
-
---CKmgZ7Su3xMLo1p3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <2da2103f-1f54-c70e-d8c4-ddcf3e4037d1@linux.intel.com>
 
-On Mon, Jan 10, 2022 at 09:28:56AM -0800, Guenter Roeck wrote:
-> The following messages were observed while testing alert functionality
-> on systems with multiple I2C devices on a single bus if alert was active
-> on more than one chip.
->=20
-> smbus_alert 3-000c: SMBALERT# from dev 0x0c, flag 0
-> smbus_alert 3-000c: no driver alert()!
->=20
-> and:
->=20
-> smbus_alert 3-000c: SMBALERT# from dev 0x28, flag 0
->=20
-> Once it starts, this message repeats forever at high rate. There is no
-> device at any of the reported addresses.
->=20
-> Analysis shows that this is seen if multiple devices have the alert pin
-> active. Apparently some devices do not support SMBus arbitration correctl=
-y.
-> They keep sending address bits after detecting an address collision and
-> handle the collision not at all or too late.
-> Specifically, address 0x0c is seen with ADT7461A at address 0x4c and
-> ADM1021 at address 0x18 if alert is active on both chips. Address 0x28 is
-> seen with ADT7483 at address 0x2a and ADT7461 at address 0x4c if alert is
-> active on both chips.
->=20
-> Once the system is in bad state (alert is set by more than one chip),
-> it often only recovers by power cycling.
->=20
-> To reduce the impact of this problem, abort the endless loop in
-> smbus_alert() if the same address is read more than once and not
-> handled by a driver.
->=20
-> Fixes: b5527a7766f0 ("i2c: Add SMBus alert support")
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+On Mon, Jul 29, 2024 at 03:37:03PM +0800, Bingbu Cao wrote:
+> Sakari,
+> 
+> I also submitted one before :).
+> https://patchwork.kernel.org/project/linux-media/patch/20240717074050.4067898-1-bingbu.cao@intel.com/
 
-Applied to for-current (with the minor changes mentioned before),
-thanks!
+Oh well... I seem to have even read it earlier. I blame the holidays. ;)
 
+I'll pick yours as it was there first.
 
---CKmgZ7Su3xMLo1p3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmanSZoACgkQFA3kzBSg
-KbakAA//Ze8SxEL7waktRFZpMWweYooM4nfZLyLzq6Gi0km2fWhDBrd753wvmnUC
-ueuQl2M+9Q8Gr3pGRiOlKZx4choi1eX/V51mx2ZhX71hG+qSeoiputbPuVlCDLDp
-WK6mK5MB5eKLT2S+or0FmLGBD87n3xKICtm6OvvaFZpPIGl7DWj8m3cpJh1ca7vk
-uzRjYEXrcEP+MeVW3xPxFp0sdw48JSUtdvgkpsP7pzeQ85mZmVVWBm/XZTCmi1uH
-C03XB/ESnpwiUyXgcPlpPIE8Ae0bcpwOfj4y/zUP7cXmoiUEpZwnZeoEaKUurcNI
-HfNystD/D76MZVEIgT4ufDWiM6qcSfowrzJt4zU9HEpL3S9pvgNIXX+XKyNNPdVm
-YEHAdvHo1cWbLckmEmtUjmVMuyMgrY0JwBLo5925J/kXCWkS3lZVv6SaW6PUIzyv
-rEOwusUQ8HzTq7GNiWr43ju9x/2s2Oy+Rzf8g6nrj6aMTKHcRxbX8HYpmrMh03AU
-PR5/0rK/Bk2gb4T9CJoebBZXMBDXajo1YruSFawFCnqmApy3QnbtoWQPoZ4oio52
-LwIBHbQ2TSMrE+TFJtryfdUVb3KbyULmfRzfL0YyUaKmD8Zuhi1fNpKk1WQb9Wid
-KouT5+YYbQMmKbN9Q0WCPF/JOdO9WVPO//VNRqp1k0TE8ieAySE=
-=/jz/
------END PGP SIGNATURE-----
-
---CKmgZ7Su3xMLo1p3--
+-- 
+Sakari Ailus
 
