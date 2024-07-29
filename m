@@ -1,133 +1,168 @@
-Return-Path: <linux-kernel+bounces-265433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E38AE93F12C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:30:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A41AF93F12F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8224F284DFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:30:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D9D1F22E0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE47142E6F;
-	Mon, 29 Jul 2024 09:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7405D13FD86;
+	Mon, 29 Jul 2024 09:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MGkLeCxy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uUNsmzyw"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F201E13FD86
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC9513AA26
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722245404; cv=none; b=ZogowPnfVFmHfbFPThfGJ3zj7Y6VbrhHaejl3CMiLFTTtU5m1BPYmc6bQ3imL/FD9ctPA7TEhjZUAh/CafFJDgdFqB+VMdW29S3Y1dyUC9ok/sWB1ftPI842tKX70Ii+eeG2+xLHmgkh3NzjaEsv8/dws1FiR3K0WHL2xcqHyds=
+	t=1722245426; cv=none; b=UYhYm8rxznGR8X3/jGHaYl5vcOHjbfhD3IUNH39GZREXxPz+m2ps7ph/b1aij+E3tZ0VKjuJbkQFz77glOMgUnRWlunJ3IrPYWVaGSpcb4hYP1JrciYHcXKfhlOUb1cDYZ2PdNmB/8v0XGZDsceUjuY3o8mP9MHnAHV9/b85Msw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722245404; c=relaxed/simple;
-	bh=u5RBreyVfXRXoOakitt/Ifw1gmojIQrfXV5ulIFhMQM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SXTvU9n2E14ecxRwL8xtGPlgusDRznB1NrLoe015720L3mccSx1M/gSYB7cQjJtZNmwwaVjq7IEKhxL7pPSwPIJbs+dLbI3bmM8KcsRgc0e+MYOPWJYR7rSCgAhy14uInTCTas+MqSeq1h3rHUdt/UZ19lhmFxsooVJUOHugFs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MGkLeCxy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722245401;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IZTAP+nDSgd5C9ys1nFKui+wNX+zNnEPNP6ru+kr8iY=;
-	b=MGkLeCxylmb6v0PKbWcgu2AohLc3HspMkKixKOE7aa4HXoj55pP3PcTyaSGCpT4XaLT6hL
-	fFNtTJqJGh68axR/Ap95xMyjGxSf/XnoGuxkRItVJJ4mWe17phtVuSx1NeEjP/hR8sGfTg
-	gsL5N+Kplh7yrIaFdXysGa7ZDgg4Zmk=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-76-4mD4iOlSM5qQFIZtJyOz1w-1; Mon,
- 29 Jul 2024 05:29:56 -0400
-X-MC-Unique: 4mD4iOlSM5qQFIZtJyOz1w-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F2B801955D44;
-	Mon, 29 Jul 2024 09:29:54 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.31])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9C8AE19560AE;
-	Mon, 29 Jul 2024 09:29:52 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-api@vger.kernel.org,  Dave Chinner <dchinner@redhat.com>
-Subject: Re: Testing if two open descriptors refer to the same inode
-In-Reply-To: <20240729.085339-ebony.subplot.isolated.pops-b8estyg9vB9Q@cyphar.com>
-	(Aleksa Sarai's message of "Mon, 29 Jul 2024 19:09:56 +1000")
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
-	<20240729.085339-ebony.subplot.isolated.pops-b8estyg9vB9Q@cyphar.com>
-Date: Mon, 29 Jul 2024 11:29:49 +0200
-Message-ID: <87a5i0r1f6.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1722245426; c=relaxed/simple;
+	bh=4+piwLozy2/i8T597AK+yK8facZmJpTwMOgYQT1eDGU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s6H3Rb2t09SVBDBDUjGWAWaaLI+cfe6k+rltZA6HRpY+bC4yHXwy4J77MCuCOtVWivEjToM2jVfwKZV1lajdK1NFJWk6aXKdTNFAhOuuisOMPYc03TXOn2sS+WFIY6DyNJx7DGYHAIkMMiejtbGYel9Ht5Wg8PA+voXDy+iq0gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uUNsmzyw; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7a94478a4eso665782466b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 02:30:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722245423; x=1722850223; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=aV3PW9Q+T8WVlKXik0h6AGNKPPNqajwdBhC9hGjQ9eE=;
+        b=uUNsmzywOD+92hOYuJ+qaQi19js1f0pWhRHQvw6q26cEFtMlO6WdGTjOFOdEzNWKtd
+         uoUX+bODAmSpn6XcHPhptaA5c5c7tl37tfknA2JdS9gF9DtnNKq2lORMOL1IPyZCQI/Y
+         wBme4uhoK+7celf736vTni8v3Nug+uny9lmFh7MidyfNkxSSQFyDyb/JlYHgRPq52CN9
+         u65xuyjnXGFyDhHZMb+d+Orjf62gGftmfcDDYDUPOtb3gqc8mWqB7gDsPumBKdXBC599
+         H89YnrzdQdoiVO6j1WNn1wY4hsbXGZWkxEItFrHLbtlcV927T2gsjaxwBa7bLAvAoZWD
+         i1lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722245423; x=1722850223;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aV3PW9Q+T8WVlKXik0h6AGNKPPNqajwdBhC9hGjQ9eE=;
+        b=mH6oLthk+QRdb/KLQQ9sciH3KBaswfbQt+wKfh63sy2xgX0elx1YEbfjG/Kv6Q7MRM
+         zu84hmB2Pg3253x/7wzMaHx9TjB+xFh6D77a3ZwZU/MlDh8H5un34mrIX1Sg2XTfvof2
+         Z4EYXM8+ZCt6Lm7yN0qQrYparDAIEZbWx1gcEQUPaQb0NwXYsZtUJ6gDVL5beqoDSp/o
+         J1gitUdJSxls9dJ/7uf9ZLvF3Dyfimit/wyqgk/w2Wdbf7MZLTEd/1PqbV+TjOuj8Kid
+         aJFEhdgNTY0R9n2lQfxRRS3cxX2pjJ/JU3qB5qAXeEhZWT4n2DUwZ/UmFi0DdBkaEToz
+         HUxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmBYf+IpBj/OblpqrEHL88gaALGYyRTSxgPmZuwRC6jjryiFutqdP4lDdTVqTI/g7/7/U1mE8AI8NKGmNI343orvfZT6eg9Drk5JEX
+X-Gm-Message-State: AOJu0YxgdhG77EkiOJdSs7JhV9Tu38xVBvbSJx+NXL8ApPJQGcM9gyQT
+	uuCeqp+sqrbr+7vNVEtANmLG58MEU7iDSpU03pVPsMAlDCCXZmJRR+mZ6ioveJ0=
+X-Google-Smtp-Source: AGHT+IEjQiPuxRMkCHwcXMmUGSLOax/z+o10eRfMdAEtq7yIDvLoJwmptvweron5G07DSKUHTSpxOA==
+X-Received: by 2002:a17:907:9694:b0:a77:dbf9:118f with SMTP id a640c23a62f3a-a7d3f85b976mr820066866b.13.1722245422995;
+        Mon, 29 Jul 2024 02:30:22 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7aca51eea0sm484162866b.0.2024.07.29.02.30.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jul 2024 02:30:22 -0700 (PDT)
+Message-ID: <2e4b504c-6413-42fc-a544-472d4cc1a06b@linaro.org>
+Date: Mon, 29 Jul 2024 11:30:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 RESEND 1/3] dt-bindings: dmaengine: Add dma multiplexer
+ for CV18XX/SG200X series SoC
+To: Inochi Amaoto <inochiama@outlook.com>, "Rob Herring (Arm)"
+ <robh@kernel.org>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ dmaengine@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ Liu Gui <kenneth.liu@sophgo.com>, linux-riscv@lists.infradead.org,
+ Chen Wang <unicorn_wang@outlook.com>, Vinod Koul <vkoul@kernel.org>
+References: <IA1PR20MB49535EC188F8EE3F8FD0B68DBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB4953865775FA926B2BA4580CBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <172223050278.2763977.11180028101195359000.robh@kernel.org>
+ <IA1PR20MB4953E3AEACAC85765AE9442BBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <IA1PR20MB4953E3AEACAC85765AE9442BBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-* Aleksa Sarai:
+On 29/07/2024 09:00, Inochi Amaoto wrote:
+>> yamllint warnings/errors:
+>>
+>> dtschema/dtc warnings/errors:
+>> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
+>> 	from schema $id: http://devicetree.org/schemas/dma/sophgo,cv1800-dmamux.yaml#
+>> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
+>> 	from schema $id: http://devicetree.org/schemas/dma/sophgo,cv1800-dmamux.yaml#
+>> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
+>> 	from schema $id: http://devicetree.org/schemas/dma/dma-router.yaml#
+>> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
+>> 	from schema $id: http://devicetree.org/schemas/dma/dma-router.yaml#
+>>
+> 
+> Hi Rob,
+> 
+> Could you share some suggestions? I can not reproduce this error with
+> latest dtschema. I think this is more like a misreporting.
 
-> On 2024-07-29, Florian Weimer <fweimer@redhat.com> wrote:
->> It was pointed out to me that inode numbers on Linux are no longer
->> expected to be unique per file system, even for local file systems.
->> Applications sometimes need to check if two (open) files are the same.
->> For example, a program may want to use a temporary file if is invoked
->> with input and output files referring to the same file.
->
-> Based on the discussions we had at LSF/MM, I believe the "correct" way
-> now is to do
->
->   name_to_handle_at(fd, "", ..., AT_EMPTY_PATH|AT_HANDLE_FID)
->
-> and then use the fhandle as the key to compare inodes. AT_HANDLE_FID is
-> needed for filesystems that don't support decoding file handles, and was
-> added in Linux 6.6[1]. However, I think this inode issue is only
-> relevant for btree filesystems, and I think both btrfs and bcachefs both
-> support decoding fhandles so this should work on fairly old kernels
-> without issue (though I haven't checked).
+You would need dtschema from the master branch, so newer than 2024.05.
 
-> [1]: commit 96b2b072ee62 ("exportfs: allow exporting non-decodeable file handles to userspace")
-
-
-Thanks, it's not too bad.  The name_to_handle_at manual page says that
-the handle is supposed to be treated as an opaque value, although it
-mentions AT_HANDLE_FID.  I think this needs to be fixed that it's
-expected to compare the handle bytes, and also say whether it's
-necessary to compare the type or not.
-
-> Lennart suggested there should be a way to get this information from
-> statx(2) so that you can get this new inode identifier without doing a
-> bunch of extra syscalls to verify that inode didn't change between the
-> two syscalls. I have a patchset for this, but I suspect it's too ugly
-> (we can't return the full file handle so we need to hash it). I'll send
-> an RFC later this week or next.
-
-Hashing these things is rather nasty because it makes things impossible
-to test.
-
->> How can we check for this?  The POSIX way is to compare st_ino and
->> st_dev in stat output, but if inode numbers are not unique, that will
->> result in files falsely being reported as identical.  It's harmless in
->> the temporary file case, but it in other scenarios, it may result in
->> data loss.
->
-> (Another problem is that st_dev can be different for the same mount due
-> to subvolumes.)
-
-Uh-oh.  If st_dev are different, is it still possible that truncating
-one path will affect the other with the different st_dev value?
-
-Thanks,
-Florian
+Best regards,
+Krzysztof
 
 
