@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-265560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08EB393F2E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:36:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD9493F2CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F61B1C21403
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:35:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17D2B28259B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB11146000;
-	Mon, 29 Jul 2024 10:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1E0145336;
+	Mon, 29 Jul 2024 10:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qNBGXLLR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kUtPSExk"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kx6GQhkP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XUZvzKdp"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2ABD1448F1;
-	Mon, 29 Jul 2024 10:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6926A2F5A;
+	Mon, 29 Jul 2024 10:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722249249; cv=none; b=b1DyD92sOk9R+rPBFz8SIpPUCLRrRTTpHYTbMFEnKooq4TjunLYNNqSq5dqV37Q1WgKx55B1LMQ6naCb2cFhvOGKDvRizZGTmZfOVGWKv/2jEyZ20UL0CbIrYJ1WTngA32gGV0/EsHwvXc+D3VB4Ihr6HQztFkhMNtxuoWuzOwQ=
+	t=1722249247; cv=none; b=kOtUzDnLr7qvTQH3rRvaDVCboaoAFqFOLKMayHskMsyE1f7OmRzvACD9aCCyr2H88PHI1szpvADldEqJBNrEAn8yK9Ah4v1tMbKgKOb747ki5ptPN2XbRDfYs6Mpnu3sOkzZbXnmEq5KAAKZrOsKfZzN2zQxF7PeI/pWlCFd/RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722249249; c=relaxed/simple;
-	bh=40yJUPpl4ogaHUr69DbrginbWc5J9fl0ZRsBI1RnvwU=;
+	s=arc-20240116; t=1722249247; c=relaxed/simple;
+	bh=5qz9fpPxtCZu5WNl2l5a6EqpktBRujJzLwCp9d9hGFc=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=j1n5aZWTGa3IZyLjG+fO1NPBJfoZiOCygBTGtxY8OqqLB5nByiimCcmvdq1seaDxxztiJl5gCu+waZpRMiv1xc1jRu0E550kZqt1F1tZ83ovjpYNXMddQ8BghG2o4uhydA95vVr3I9Gy0gidtssLxlWpT33vuzcmi+wszDSbWQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qNBGXLLR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kUtPSExk; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=eo/N96anS5PaEAAO0xNAduDF06nsCYKppvg9lGmyj7TNMDgbsVLdH3rfklCPB1mWvZwldx3dVPxfMtTIwNUN/dHcrFBucScdErBwxpNTQY1tZI0ttB7Av9PcjuNCc+VgPtgbJ5+2h+gNHFqW84Wa5Q10WwSTAYUrh5+aORhcZAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kx6GQhkP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XUZvzKdp; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Mon, 29 Jul 2024 10:34:03 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722249244;
+	s=2020; t=1722249243;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3MnW7Hz7iwecCfe96rZTc4oaJp1SlM/skQ52HnoiVj4=;
-	b=qNBGXLLR97+JZpoAzq/UWAo/6lOSVYuCeiCGFIf/4l0w2w8nfYAT30ynBd8DzLs2SwCC0m
-	pJTD4FdfgmcqIquykEtoIlscyWFHqux/3/kyKT264qtUeVDFYyQE6pKWx+VpJpYZECQ1sm
-	jh5sFLzxsQ+hx6qOZ3wq0SyrTPcq3/A+ghZ/UOhgC1hgQR8fY7iJeA5q9qoEsP3Hq0AAud
-	vubcHQ4Bdx6TkZxDethhlXw1+Ps5GoAKpX0AdV8EgF0Yl8yebkkdC5DU8Dn4KMFUnXLwQl
-	+YT3cXF7YPBTLmEcMbVSn+Jr8DxyNMAv1dnyxUXQdtQAtpbJnE9PWNZbSSCpOw==
+	bh=uhPTDWt8IQpy/8LPh+Px5qySLzpoG6ZiRvyNjzWxaRQ=;
+	b=Kx6GQhkPDLlbXMx1kqVyPUduOw16eR7zNfYXxew3orLALSiKp/lZeugKSH68w1O1aaXpXD
+	viyP6zO+l0NyaknObQ7+pkjEO8rrE4op9oFWq9BJ+0BOWLVJwFqF+EFFYJU6X0FTv+lcih
+	PSGx4fwBGYHvSRSaieue0vo73oqL8JjQd+2SxBiXU/rtAh5hUkK3zYw6mMr56FDLc1ZWer
+	5F9gu+rZsqbQLa68kFeOEDJvmc/42sBIdz6iRBUSEaYpL8vIW9npxUDhsdAQ8wkr46tqkS
+	+Q18zY9fs2+YiIX4+W13DpOzrb+uGNvjKp8MR5CVQypjVui+QO/MxK1I3HfSyA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722249244;
+	s=2020e; t=1722249243;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3MnW7Hz7iwecCfe96rZTc4oaJp1SlM/skQ52HnoiVj4=;
-	b=kUtPSExkApB0SOuNByHxEwLlO3pxuBFdLgb6AMCrzJDDMoK6E2SNUwFjmcIn1ZA9CT3pGt
-	zaOJUip5pT+doPDQ==
+	bh=uhPTDWt8IQpy/8LPh+Px5qySLzpoG6ZiRvyNjzWxaRQ=;
+	b=XUZvzKdpSIj4bvRspUhPui6eHmIIqwZNnru+zKI/kiIjT1DeKCqbNNkLNujXepz7+IQcMm
+	eaLAUDPcSQ5wpaBw==
 From: "tip-bot2 for Daniel Bristot de Oliveira" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/deadline: Deferrable dl server
+Subject: [tip: sched/core] sched/fair: Fair server interface
 Cc: Daniel Bristot de Oliveira <bristot@kernel.org>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>,
  Juri Lelli <juri.lelli@redhat.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
 In-Reply-To:
- <dd175943c72533cd9f0b87767c6499204879cc38.1716811044.git.bristot@kernel.org>
+ <a9ef9fc69bcedb44bddc9bc34f2b313296052819.1716811044.git.bristot@kernel.org>
 References:
- <dd175943c72533cd9f0b87767c6499204879cc38.1716811044.git.bristot@kernel.org>
+ <a9ef9fc69bcedb44bddc9bc34f2b313296052819.1716811044.git.bristot@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172224924396.2215.3885071729330734.tip-bot2@tip-bot2>
+Message-ID: <172224924353.2215.847554989590119475.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -84,601 +84,391 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     a110a81c52a9de73e2e57e826dd3bf0fd4c22226
-Gitweb:        https://git.kernel.org/tip/a110a81c52a9de73e2e57e826dd3bf0fd4c22226
+Commit-ID:     d741f297bceaf52aa1b97b997708fc0cd853c73e
+Gitweb:        https://git.kernel.org/tip/d741f297bceaf52aa1b97b997708fc0cd853c73e
 Author:        Daniel Bristot de Oliveira <bristot@kernel.org>
-AuthorDate:    Mon, 27 May 2024 14:06:51 +02:00
+AuthorDate:    Mon, 27 May 2024 14:06:52 +02:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Mon, 29 Jul 2024 12:22:36 +02:00
 
-sched/deadline: Deferrable dl server
+sched/fair: Fair server interface
 
-Among the motivations for the DL servers is the real-time throttling
-mechanism. This mechanism works by throttling the rt_rq after
-running for a long period without leaving space for fair tasks.
+Add an interface for fair server setup on debugfs.
 
-The base dl server avoids this problem by boosting fair tasks instead
-of throttling the rt_rq. The point is that it boosts without waiting
-for potential starvation, causing some non-intuitive cases.
+Each CPU has two files under /debug/sched/fair_server/cpu{ID}:
 
-For example, an IRQ dispatches two tasks on an idle system, a fair
-and an RT. The DL server will be activated, running the fair task
-before the RT one. This problem can be avoided by deferring the
-dl server activation.
+ - runtime: set runtime in ns
+ - period:  set period in ns
 
-By setting the defer option, the dl_server will dispatch an
-SCHED_DEADLINE reservation with replenished runtime, but throttled.
+This then leaves /proc/sys/kernel/sched_rt_{period,runtime}_us to set
+bounds on admission control.
 
-The dl_timer will be set for the defer time at (period - runtime) ns
-from start time. Thus boosting the fair rq at defer time.
-
-If the fair scheduler has the opportunity to run while waiting
-for defer time, the dl server runtime will be consumed. If
-the runtime is completely consumed before the defer time, the
-server will be replenished while still in a throttled state. Then,
-the dl_timer will be reset to the new defer time
-
-If the fair server reaches the defer time without consuming
-its runtime, the server will start running, following CBS rules
-(thus without breaking SCHED_DEADLINE). Then the server will
-continue the running state (without deferring) until it fair
-tasks are able to execute as regular fair scheduler (end of
-the starvation).
+The interface also add the server to the dl bandwidth accounting.
 
 Signed-off-by: Daniel Bristot de Oliveira <bristot@kernel.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Tested-by: Juri Lelli <juri.lelli@redhat.com>
-Link: https://lore.kernel.org/r/dd175943c72533cd9f0b87767c6499204879cc38.1716811044.git.bristot@kernel.org
+Link: https://lore.kernel.org/r/a9ef9fc69bcedb44bddc9bc34f2b313296052819.1716811044.git.bristot@kernel.org
 ---
- include/linux/sched.h   |  12 ++-
- kernel/sched/deadline.c | 301 +++++++++++++++++++++++++++++++++------
- kernel/sched/fair.c     |  24 ++-
- kernel/sched/idle.c     |   2 +-
- kernel/sched/sched.h    |   4 +-
- 5 files changed, 298 insertions(+), 45 deletions(-)
+ kernel/sched/deadline.c | 103 ++++++++++++++++++++-----
+ kernel/sched/debug.c    | 159 +++++++++++++++++++++++++++++++++++++++-
+ kernel/sched/sched.h    |   3 +-
+ kernel/sched/topology.c |   8 ++-
+ 4 files changed, 256 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 1c771ea..4edd7e2 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -641,12 +641,24 @@ struct sched_dl_entity {
- 	 * overruns.
- 	 *
- 	 * @dl_server tells if this is a server entity.
-+	 *
-+	 * @dl_defer tells if this is a deferred or regular server. For
-+	 * now only defer server exists.
-+	 *
-+	 * @dl_defer_armed tells if the deferrable server is waiting
-+	 * for the replenishment timer to activate it.
-+	 *
-+	 * @dl_defer_running tells if the deferrable server is actually
-+	 * running, skipping the defer phase.
- 	 */
- 	unsigned int			dl_throttled      : 1;
- 	unsigned int			dl_yielded        : 1;
- 	unsigned int			dl_non_contending : 1;
- 	unsigned int			dl_overrun	  : 1;
- 	unsigned int			dl_server         : 1;
-+	unsigned int			dl_defer	  : 1;
-+	unsigned int			dl_defer_armed	  : 1;
-+	unsigned int			dl_defer_running  : 1;
- 
- 	/*
- 	 * Bandwidth enforcement timer. Each -deadline task has its
 diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index f5b5313..1b29531 100644
+index 1b29531..747c0c5 100644
 --- a/kernel/sched/deadline.c
 +++ b/kernel/sched/deadline.c
-@@ -771,6 +771,15 @@ static inline void replenish_dl_new_period(struct sched_dl_entity *dl_se,
- 	/* for non-boosted task, pi_of(dl_se) == dl_se */
- 	dl_se->deadline = rq_clock(rq) + pi_of(dl_se)->dl_deadline;
- 	dl_se->runtime = pi_of(dl_se)->dl_runtime;
-+
-+	/*
-+	 * If it is a deferred reservation, and the server
-+	 * is not handling an starvation case, defer it.
-+	 */
-+	if (dl_se->dl_defer & !dl_se->dl_defer_running) {
-+		dl_se->dl_throttled = 1;
-+		dl_se->dl_defer_armed = 1;
-+	}
+@@ -320,19 +320,12 @@ void sub_running_bw(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+ 		__sub_running_bw(dl_se->dl_bw, dl_rq);
  }
  
- /*
-@@ -809,6 +818,9 @@ static inline void setup_new_dl_entity(struct sched_dl_entity *dl_se)
- 	replenish_dl_new_period(dl_se, rq);
- }
- 
-+static int start_dl_timer(struct sched_dl_entity *dl_se);
-+static bool dl_entity_overflow(struct sched_dl_entity *dl_se, u64 t);
-+
- /*
-  * Pure Earliest Deadline First (EDF) scheduling does not deal with the
-  * possibility of a entity lasting more than what it declared, and thus
-@@ -837,9 +849,18 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
- 	/*
- 	 * This could be the case for a !-dl task that is boosted.
- 	 * Just go with full inherited parameters.
-+	 *
-+	 * Or, it could be the case of a deferred reservation that
-+	 * was not able to consume its runtime in background and
-+	 * reached this point with current u > U.
-+	 *
-+	 * In both cases, set a new period.
- 	 */
--	if (dl_se->dl_deadline == 0)
--		replenish_dl_new_period(dl_se, rq);
-+	if (dl_se->dl_deadline == 0 ||
-+	    (dl_se->dl_defer_armed && dl_entity_overflow(dl_se, rq_clock(rq)))) {
-+		dl_se->deadline = rq_clock(rq) + pi_of(dl_se)->dl_deadline;
-+		dl_se->runtime = pi_of(dl_se)->dl_runtime;
-+	}
- 
- 	if (dl_se->dl_yielded && dl_se->runtime > 0)
- 		dl_se->runtime = 0;
-@@ -873,6 +894,44 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
- 		dl_se->dl_yielded = 0;
- 	if (dl_se->dl_throttled)
- 		dl_se->dl_throttled = 0;
-+
-+	/*
-+	 * If this is the replenishment of a deferred reservation,
-+	 * clear the flag and return.
-+	 */
-+	if (dl_se->dl_defer_armed) {
-+		dl_se->dl_defer_armed = 0;
-+		return;
-+	}
-+
-+	/*
-+	 * A this point, if the deferred server is not armed, and the deadline
-+	 * is in the future, if it is not running already, throttle the server
-+	 * and arm the defer timer.
-+	 */
-+	if (dl_se->dl_defer && !dl_se->dl_defer_running &&
-+	    dl_time_before(rq_clock(dl_se->rq), dl_se->deadline - dl_se->runtime)) {
-+		if (!is_dl_boosted(dl_se) && dl_se->server_has_tasks(dl_se)) {
-+
-+			/*
-+			 * Set dl_se->dl_defer_armed and dl_throttled variables to
-+			 * inform the start_dl_timer() that this is a deferred
-+			 * activation.
-+			 */
-+			dl_se->dl_defer_armed = 1;
-+			dl_se->dl_throttled = 1;
-+			if (!start_dl_timer(dl_se)) {
-+				/*
-+				 * If for whatever reason (delays), a previous timer was
-+				 * queued but not serviced, cancel it and clean the
-+				 * deferrable server variables intended for start_dl_timer().
-+				 */
-+				hrtimer_try_to_cancel(&dl_se->dl_timer);
-+				dl_se->dl_defer_armed = 0;
-+				dl_se->dl_throttled = 0;
-+			}
-+		}
-+	}
- }
- 
- /*
-@@ -1023,6 +1082,15 @@ static void update_dl_entity(struct sched_dl_entity *dl_se)
- 		}
- 
- 		replenish_dl_new_period(dl_se, rq);
-+	} else if (dl_server(dl_se) && dl_se->dl_defer) {
-+		/*
-+		 * The server can still use its previous deadline, so check if
-+		 * it left the dl_defer_running state.
-+		 */
-+		if (!dl_se->dl_defer_running) {
-+			dl_se->dl_defer_armed = 1;
-+			dl_se->dl_throttled = 1;
-+		}
- 	}
- }
- 
-@@ -1055,8 +1123,21 @@ static int start_dl_timer(struct sched_dl_entity *dl_se)
- 	 * We want the timer to fire at the deadline, but considering
- 	 * that it is actually coming from rq->clock and not from
- 	 * hrtimer's time base reading.
-+	 *
-+	 * The deferred reservation will have its timer set to
-+	 * (deadline - runtime). At that point, the CBS rule will decide
-+	 * if the current deadline can be used, or if a replenishment is
-+	 * required to avoid add too much pressure on the system
-+	 * (current u > U).
- 	 */
--	act = ns_to_ktime(dl_next_period(dl_se));
-+	if (dl_se->dl_defer_armed) {
-+		WARN_ON_ONCE(!dl_se->dl_throttled);
-+		act = ns_to_ktime(dl_se->deadline - dl_se->runtime);
-+	} else {
-+		/* act = deadline - rel-deadline + period */
-+		act = ns_to_ktime(dl_next_period(dl_se));
-+	}
-+
- 	now = hrtimer_cb_get_time(timer);
- 	delta = ktime_to_ns(now) - rq_clock(rq);
- 	act = ktime_add_ns(act, delta);
-@@ -1106,6 +1187,62 @@ static void __push_dl_task(struct rq *rq, struct rq_flags *rf)
- #endif
- }
- 
-+/* a defer timer will not be reset if the runtime consumed was < dl_server_min_res */
-+static const u64 dl_server_min_res = 1 * NSEC_PER_MSEC;
-+
-+static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_dl_entity *dl_se)
-+{
-+	struct rq *rq = rq_of_dl_se(dl_se);
-+	u64 fw;
-+
-+	scoped_guard (rq_lock, rq) {
-+		struct rq_flags *rf = &scope.rf;
-+
-+		if (!dl_se->dl_throttled || !dl_se->dl_runtime)
-+			return HRTIMER_NORESTART;
-+
-+		sched_clock_tick();
-+		update_rq_clock(rq);
-+
-+		if (!dl_se->dl_runtime)
-+			return HRTIMER_NORESTART;
-+
-+		if (!dl_se->server_has_tasks(dl_se)) {
-+			replenish_dl_entity(dl_se);
-+			return HRTIMER_NORESTART;
-+		}
-+
-+		if (dl_se->dl_defer_armed) {
-+			/*
-+			 * First check if the server could consume runtime in background.
-+			 * If so, it is possible to push the defer timer for this amount
-+			 * of time. The dl_server_min_res serves as a limit to avoid
-+			 * forwarding the timer for a too small amount of time.
-+			 */
-+			if (dl_time_before(rq_clock(dl_se->rq),
-+					   (dl_se->deadline - dl_se->runtime - dl_server_min_res))) {
-+
-+				/* reset the defer timer */
-+				fw = dl_se->deadline - rq_clock(dl_se->rq) - dl_se->runtime;
-+
-+				hrtimer_forward_now(timer, ns_to_ktime(fw));
-+				return HRTIMER_RESTART;
-+			}
-+
-+			dl_se->dl_defer_running = 1;
-+		}
-+
-+		enqueue_dl_entity(dl_se, ENQUEUE_REPLENISH);
-+
-+		if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &dl_se->rq->curr->dl))
-+			resched_curr(rq);
-+
-+		__push_dl_task(rq, rf);
-+	}
-+
-+	return HRTIMER_NORESTART;
-+}
-+
- /*
-  * This is the bandwidth enforcement timer callback. If here, we know
-  * a task is not on its dl_rq, since the fact that the timer was running
-@@ -1128,28 +1265,8 @@ static enum hrtimer_restart dl_task_timer(struct hrtimer *timer)
- 	struct rq_flags rf;
- 	struct rq *rq;
- 
--	if (dl_server(dl_se)) {
--		struct rq *rq = rq_of_dl_se(dl_se);
--		struct rq_flags rf;
--
--		rq_lock(rq, &rf);
--		if (dl_se->dl_throttled) {
--			sched_clock_tick();
--			update_rq_clock(rq);
--
--			if (dl_se->server_has_tasks(dl_se)) {
--				enqueue_dl_entity(dl_se, ENQUEUE_REPLENISH);
--				resched_curr(rq);
--				__push_dl_task(rq, &rf);
--			} else {
--				replenish_dl_entity(dl_se);
--			}
--
--		}
--		rq_unlock(rq, &rf);
--
--		return HRTIMER_NORESTART;
--	}
-+	if (dl_server(dl_se))
-+		return dl_server_timer(timer, dl_se);
- 
- 	p = dl_task_of(dl_se);
- 	rq = task_rq_lock(p, &rf);
-@@ -1319,22 +1436,10 @@ static u64 grub_reclaim(u64 delta, struct rq *rq, struct sched_dl_entity *dl_se)
- 	return (delta * u_act) >> BW_SHIFT;
- }
- 
--static inline void
--update_stats_dequeue_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se,
--                        int flags);
--static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec)
-+s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec)
+-static void dl_change_utilization(struct task_struct *p, u64 new_bw)
++static void dl_rq_change_utilization(struct rq *rq, struct sched_dl_entity *dl_se, u64 new_bw)
  {
- 	s64 scaled_delta_exec;
+-	struct rq *rq;
+-
+-	WARN_ON_ONCE(p->dl.flags & SCHED_FLAG_SUGOV);
+-
+-	if (task_on_rq_queued(p))
+-		return;
++	if (dl_se->dl_non_contending) {
++		sub_running_bw(dl_se, &rq->dl);
++		dl_se->dl_non_contending = 0;
  
--	if (unlikely(delta_exec <= 0)) {
--		if (unlikely(dl_se->dl_yielded))
--			goto throttle;
--		return;
--	}
--
--	if (dl_entity_is_special(dl_se))
--		return;
--
- 	/*
- 	 * For tasks that participate in GRUB, we implement GRUB-PA: the
- 	 * spare reclaimed bandwidth is used to clock down frequency.
-@@ -1353,8 +1458,64 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 
- 		scaled_delta_exec = cap_scale(scaled_delta_exec, scale_cpu);
+-	rq = task_rq(p);
+-	if (p->dl.dl_non_contending) {
+-		sub_running_bw(&p->dl, &rq->dl);
+-		p->dl.dl_non_contending = 0;
+ 		/*
+ 		 * If the timer handler is currently running and the
+ 		 * timer cannot be canceled, inactive_task_timer()
+@@ -340,13 +333,25 @@ static void dl_change_utilization(struct task_struct *p, u64 new_bw)
+ 		 * will not touch the rq's active utilization,
+ 		 * so we are still safe.
+ 		 */
+-		if (hrtimer_try_to_cancel(&p->dl.inactive_timer) == 1)
+-			put_task_struct(p);
++		if (hrtimer_try_to_cancel(&dl_se->inactive_timer) == 1) {
++			if (!dl_server(dl_se))
++				put_task_struct(dl_task_of(dl_se));
++		}
  	}
+-	__sub_rq_bw(p->dl.dl_bw, &rq->dl);
++	__sub_rq_bw(dl_se->dl_bw, &rq->dl);
+ 	__add_rq_bw(new_bw, &rq->dl);
+ }
  
-+	return scaled_delta_exec;
++static void dl_change_utilization(struct task_struct *p, u64 new_bw)
++{
++	WARN_ON_ONCE(p->dl.flags & SCHED_FLAG_SUGOV);
++
++	if (task_on_rq_queued(p))
++		return;
++
++	dl_rq_change_utilization(task_rq(p), &p->dl, new_bw);
 +}
 +
-+static inline void
-+update_stats_dequeue_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se,
-+			int flags);
-+static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec)
-+{
-+	s64 scaled_delta_exec;
-+
-+	if (unlikely(delta_exec <= 0)) {
-+		if (unlikely(dl_se->dl_yielded))
-+			goto throttle;
-+		return;
-+	}
-+
-+	if (dl_server(dl_se) && dl_se->dl_throttled && !dl_se->dl_defer)
-+		return;
-+
-+	if (dl_entity_is_special(dl_se))
-+		return;
-+
-+	scaled_delta_exec = dl_scaled_delta_exec(rq, dl_se, delta_exec);
-+
- 	dl_se->runtime -= scaled_delta_exec;
+ static void __dl_clear_params(struct sched_dl_entity *dl_se);
+ 
+ /*
+@@ -1621,11 +1626,17 @@ void dl_server_start(struct sched_dl_entity *dl_se)
+ {
+ 	struct rq *rq = dl_se->rq;
  
 +	/*
-+	 * The fair server can consume its runtime while throttled (not queued/
-+	 * running as regular CFS).
-+	 *
-+	 * If the server consumes its entire runtime in this state. The server
-+	 * is not required for the current period. Thus, reset the server by
-+	 * starting a new period, pushing the activation.
++	 * XXX: the apply do not work fine at the init phase for the
++	 * fair server because things are not yet set. We need to improve
++	 * this before getting generic.
 +	 */
-+	if (dl_se->dl_defer && dl_se->dl_throttled && dl_runtime_exceeded(dl_se)) {
-+		/*
-+		 * If the server was previously activated - the starving condition
-+		 * took place, it this point it went away because the fair scheduler
-+		 * was able to get runtime in background. So return to the initial
-+		 * state.
-+		 */
-+		dl_se->dl_defer_running = 0;
+ 	if (!dl_server(dl_se)) {
+ 		/* Disabled */
+-		dl_se->dl_runtime = 0;
+-		dl_se->dl_deadline = 1000 * NSEC_PER_MSEC;
+-		dl_se->dl_period = 1000 * NSEC_PER_MSEC;
++		u64 runtime = 0;
++		u64 period = 1000 * NSEC_PER_MSEC;
 +
-+		hrtimer_try_to_cancel(&dl_se->dl_timer);
-+
-+		replenish_dl_new_period(dl_se, dl_se->rq);
-+
-+		/*
-+		 * Not being able to start the timer seems problematic. If it could not
-+		 * be started for whatever reason, we need to "unthrottle" the DL server
-+		 * and queue right away. Otherwise nothing might queue it. That's similar
-+		 * to what enqueue_dl_entity() does on start_dl_timer==0. For now, just warn.
-+		 */
-+		WARN_ON_ONCE(!start_dl_timer(dl_se));
-+
-+		return;
-+	}
-+
- throttle:
- 	if (dl_runtime_exceeded(dl_se) || dl_se->dl_yielded) {
- 		dl_se->dl_throttled = 1;
-@@ -1414,9 +1575,46 @@ throttle:
- 	}
- }
- 
-+/*
-+ * In the non-defer mode, the idle time is not accounted, as the
-+ * server provides a guarantee.
-+ *
-+ * If the dl_server is in defer mode, the idle time is also considered
-+ * as time available for the fair server, avoiding a penalty for the
-+ * rt scheduler that did not consumed that time.
-+ */
-+void dl_server_update_idle_time(struct rq *rq, struct task_struct *p)
-+{
-+	s64 delta_exec, scaled_delta_exec;
-+
-+	if (!rq->fair_server.dl_defer)
-+		return;
-+
-+	/* no need to discount more */
-+	if (rq->fair_server.runtime < 0)
-+		return;
-+
-+	delta_exec = rq_clock_task(rq) - p->se.exec_start;
-+	if (delta_exec < 0)
-+		return;
-+
-+	scaled_delta_exec = dl_scaled_delta_exec(rq, &rq->fair_server, delta_exec);
-+
-+	rq->fair_server.runtime -= scaled_delta_exec;
-+
-+	if (rq->fair_server.runtime < 0) {
-+		rq->fair_server.dl_defer_running = 0;
-+		rq->fair_server.runtime = 0;
-+	}
-+
-+	p->se.exec_start = rq_clock_task(rq);
-+}
-+
- void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec)
- {
--	update_curr_dl_se(dl_se->rq, dl_se, delta_exec);
-+	/* 0 runtime = fair server disabled */
-+	if (dl_se->dl_runtime)
-+		update_curr_dl_se(dl_se->rq, dl_se, delta_exec);
- }
- 
- void dl_server_start(struct sched_dl_entity *dl_se)
-@@ -1430,6 +1628,7 @@ void dl_server_start(struct sched_dl_entity *dl_se)
- 		dl_se->dl_period = 1000 * NSEC_PER_MSEC;
++		dl_server_apply_params(dl_se, runtime, period, 1);
  
  		dl_se->dl_server = 1;
-+		dl_se->dl_defer = 1;
- 		setup_new_dl_entity(dl_se);
- 	}
- 
-@@ -1447,6 +1646,9 @@ void dl_server_stop(struct sched_dl_entity *dl_se)
- 		return;
- 
- 	dequeue_dl_entity(dl_se, DEQUEUE_SLEEP);
-+	hrtimer_try_to_cancel(&dl_se->dl_timer);
-+	dl_se->dl_defer_armed = 0;
-+	dl_se->dl_throttled = 0;
+ 		dl_se->dl_defer = 1;
+@@ -1660,6 +1671,64 @@ void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+ 	dl_se->server_pick = pick;
  }
  
- void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
-@@ -1758,7 +1960,7 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
- 	 * be counted in the active utilization; hence, we need to call
- 	 * add_running_bw().
- 	 */
--	if (dl_se->dl_throttled && !(flags & ENQUEUE_REPLENISH)) {
-+	if (!dl_se->dl_defer && dl_se->dl_throttled && !(flags & ENQUEUE_REPLENISH)) {
- 		if (flags & ENQUEUE_WAKEUP)
- 			task_contending(dl_se, flags);
- 
-@@ -1780,6 +1982,25 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
- 		setup_new_dl_entity(dl_se);
- 	}
- 
-+	/*
-+	 * If the reservation is still throttled, e.g., it got replenished but is a
-+	 * deferred task and still got to wait, don't enqueue.
-+	 */
-+	if (dl_se->dl_throttled && start_dl_timer(dl_se))
++void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq)
++{
++	u64 new_bw = dl_se->dl_bw;
++	int cpu = cpu_of(rq);
++	struct dl_bw *dl_b;
++
++	dl_b = dl_bw_of(cpu_of(rq));
++	guard(raw_spinlock)(&dl_b->lock);
++
++	if (!dl_bw_cpus(cpu))
 +		return;
 +
-+	/*
-+	 * We're about to enqueue, make sure we're not ->dl_throttled!
-+	 * In case the timer was not started, say because the defer time
-+	 * has passed, mark as not throttled and mark unarmed.
-+	 * Also cancel earlier timers, since letting those run is pointless.
-+	 */
-+	if (dl_se->dl_throttled) {
-+		hrtimer_try_to_cancel(&dl_se->dl_timer);
-+		dl_se->dl_defer_armed = 0;
-+		dl_se->dl_throttled = 0;
++	__dl_add(dl_b, new_bw, dl_bw_cpus(cpu));
++}
++
++int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 period, bool init)
++{
++	u64 old_bw = init ? 0 : to_ratio(dl_se->dl_period, dl_se->dl_runtime);
++	u64 new_bw = to_ratio(period, runtime);
++	struct rq *rq = dl_se->rq;
++	int cpu = cpu_of(rq);
++	struct dl_bw *dl_b;
++	unsigned long cap;
++	int retval = 0;
++	int cpus;
++
++	dl_b = dl_bw_of(cpu);
++	guard(raw_spinlock)(&dl_b->lock);
++
++	cpus = dl_bw_cpus(cpu);
++	cap = dl_bw_capacity(cpu);
++
++	if (__dl_overflow(dl_b, cap, old_bw, new_bw))
++		return -EBUSY;
++
++	if (init) {
++		__add_rq_bw(new_bw, &rq->dl);
++		__dl_add(dl_b, new_bw, cpus);
++	} else {
++		__dl_sub(dl_b, dl_se->dl_bw, cpus);
++		__dl_add(dl_b, new_bw, cpus);
++
++		dl_rq_change_utilization(rq, dl_se, new_bw);
 +	}
 +
- 	__enqueue_dl_entity(dl_se);
- }
- 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index aba23b0..1ea5ec8 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1156,12 +1156,13 @@ s64 update_curr_common(struct rq *rq)
- static void update_curr(struct cfs_rq *cfs_rq)
- {
- 	struct sched_entity *curr = cfs_rq->curr;
-+	struct rq *rq = rq_of(cfs_rq);
- 	s64 delta_exec;
- 
- 	if (unlikely(!curr))
- 		return;
- 
--	delta_exec = update_curr_se(rq_of(cfs_rq), curr);
-+	delta_exec = update_curr_se(rq, curr);
- 	if (unlikely(delta_exec <= 0))
- 		return;
- 
-@@ -1169,8 +1170,19 @@ static void update_curr(struct cfs_rq *cfs_rq)
- 	update_deadline(cfs_rq, curr);
- 	update_min_vruntime(cfs_rq);
- 
--	if (entity_is_task(curr))
--		update_curr_task(task_of(curr), delta_exec);
-+	if (entity_is_task(curr)) {
-+		struct task_struct *p = task_of(curr);
++	dl_se->dl_runtime = runtime;
++	dl_se->dl_deadline = period;
++	dl_se->dl_period = period;
 +
-+		update_curr_task(p, delta_exec);
++	dl_se->runtime = 0;
++	dl_se->deadline = 0;
 +
-+		/*
-+		 * Any fair task that runs outside of fair_server should
-+		 * account against fair_server such that it can account for
-+		 * this time and possibly avoid running this period.
-+		 */
-+		if (p->dl_server != &rq->fair_server)
-+			dl_server_update(&rq->fair_server, delta_exec);
++	dl_se->dl_bw = to_ratio(dl_se->dl_period, dl_se->dl_runtime);
++	dl_se->dl_density = to_ratio(dl_se->dl_deadline, dl_se->dl_runtime);
++
++	return retval;
++}
++
+ /*
+  * Update the current task's runtime statistics (provided it is still
+  * a -deadline task and has not been removed from the dl_rq).
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index 90c4a99..72f2715 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -333,8 +333,165 @@ static const struct file_operations sched_debug_fops = {
+ 	.release	= seq_release,
+ };
+ 
++enum dl_param {
++	DL_RUNTIME = 0,
++	DL_PERIOD,
++};
++
++static unsigned long fair_server_period_max = (1 << 22) * NSEC_PER_USEC; /* ~4 seconds */
++static unsigned long fair_server_period_min = (100) * NSEC_PER_USEC;     /* 100 us */
++
++static ssize_t sched_fair_server_write(struct file *filp, const char __user *ubuf,
++				       size_t cnt, loff_t *ppos, enum dl_param param)
++{
++	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
++	struct rq *rq = cpu_rq(cpu);
++	u64 runtime, period;
++	size_t err;
++	int retval;
++	u64 value;
++
++	err = kstrtoull_from_user(ubuf, cnt, 10, &value);
++	if (err)
++		return err;
++
++	scoped_guard (rq_lock_irqsave, rq) {
++		runtime  = rq->fair_server.dl_runtime;
++		period = rq->fair_server.dl_period;
++
++		switch (param) {
++		case DL_RUNTIME:
++			if (runtime == value)
++				break;
++			runtime = value;
++			break;
++		case DL_PERIOD:
++			if (value == period)
++				break;
++			period = value;
++			break;
++		}
++
++		if (runtime > period ||
++		    period > fair_server_period_max ||
++		    period < fair_server_period_min) {
++			return  -EINVAL;
++		}
++
++		if (rq->cfs.h_nr_running) {
++			update_rq_clock(rq);
++			dl_server_stop(&rq->fair_server);
++		}
++
++		retval = dl_server_apply_params(&rq->fair_server, runtime, period, 0);
++		if (retval)
++			cnt = retval;
++
++		if (!runtime)
++			printk_deferred("Fair server disabled in CPU %d, system may crash due to starvation.\n",
++					cpu_of(rq));
++
++		if (rq->cfs.h_nr_running)
++			dl_server_start(&rq->fair_server);
 +	}
- 
- 	account_cfs_rq_runtime(cfs_rq, delta_exec);
- }
-@@ -6768,8 +6780,12 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 	 */
- 	util_est_enqueue(&rq->cfs, p);
- 
--	if (!throttled_hierarchy(task_cfs_rq(p)) && !rq->cfs.h_nr_running)
-+	if (!throttled_hierarchy(task_cfs_rq(p)) && !rq->cfs.h_nr_running) {
-+		/* Account for idle runtime */
-+		if (!rq->nr_running)
-+			dl_server_update_idle_time(rq, rq->curr);
- 		dl_server_start(&rq->fair_server);
++
++	*ppos += cnt;
++	return cnt;
++}
++
++static size_t sched_fair_server_show(struct seq_file *m, void *v, enum dl_param param)
++{
++	unsigned long cpu = (unsigned long) m->private;
++	struct rq *rq = cpu_rq(cpu);
++	u64 value;
++
++	switch (param) {
++	case DL_RUNTIME:
++		value = rq->fair_server.dl_runtime;
++		break;
++	case DL_PERIOD:
++		value = rq->fair_server.dl_period;
++		break;
 +	}
++
++	seq_printf(m, "%llu\n", value);
++	return 0;
++
++}
++
++static ssize_t
++sched_fair_server_runtime_write(struct file *filp, const char __user *ubuf,
++				size_t cnt, loff_t *ppos)
++{
++	return sched_fair_server_write(filp, ubuf, cnt, ppos, DL_RUNTIME);
++}
++
++static int sched_fair_server_runtime_show(struct seq_file *m, void *v)
++{
++	return sched_fair_server_show(m, v, DL_RUNTIME);
++}
++
++static int sched_fair_server_runtime_open(struct inode *inode, struct file *filp)
++{
++	return single_open(filp, sched_fair_server_runtime_show, inode->i_private);
++}
++
++static const struct file_operations fair_server_runtime_fops = {
++	.open		= sched_fair_server_runtime_open,
++	.write		= sched_fair_server_runtime_write,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= single_release,
++};
++
++static ssize_t
++sched_fair_server_period_write(struct file *filp, const char __user *ubuf,
++			       size_t cnt, loff_t *ppos)
++{
++	return sched_fair_server_write(filp, ubuf, cnt, ppos, DL_PERIOD);
++}
++
++static int sched_fair_server_period_show(struct seq_file *m, void *v)
++{
++	return sched_fair_server_show(m, v, DL_PERIOD);
++}
++
++static int sched_fair_server_period_open(struct inode *inode, struct file *filp)
++{
++	return single_open(filp, sched_fair_server_period_show, inode->i_private);
++}
++
++static const struct file_operations fair_server_period_fops = {
++	.open		= sched_fair_server_period_open,
++	.write		= sched_fair_server_period_write,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= single_release,
++};
++
+ static struct dentry *debugfs_sched;
  
- 	/*
- 	 * If in_iowait is set, the code below may not trigger any cpufreq
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index 6e78d07..d560f7f 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -452,12 +452,14 @@ static void wakeup_preempt_idle(struct rq *rq, struct task_struct *p, int flags)
- 
- static void put_prev_task_idle(struct rq *rq, struct task_struct *prev)
++static void debugfs_fair_server_init(void)
++{
++	struct dentry *d_fair;
++	unsigned long cpu;
++
++	d_fair = debugfs_create_dir("fair_server", debugfs_sched);
++	if (!d_fair)
++		return;
++
++	for_each_possible_cpu(cpu) {
++		struct dentry *d_cpu;
++		char buf[32];
++
++		snprintf(buf, sizeof(buf), "cpu%lu", cpu);
++		d_cpu = debugfs_create_dir(buf, d_fair);
++
++		debugfs_create_file("runtime", 0644, d_cpu, (void *) cpu, &fair_server_runtime_fops);
++		debugfs_create_file("period", 0644, d_cpu, (void *) cpu, &fair_server_period_fops);
++	}
++}
++
+ static __init int sched_init_debug(void)
  {
-+	dl_server_update_idle_time(rq, prev);
- }
+ 	struct dentry __maybe_unused *numa;
+@@ -374,6 +531,8 @@ static __init int sched_init_debug(void)
  
- static void set_next_task_idle(struct rq *rq, struct task_struct *next, bool first)
- {
- 	update_idle_core(rq);
- 	schedstat_inc(rq->sched_goidle);
-+	next->se.exec_start = rq_clock_task(rq);
- }
+ 	debugfs_create_file("debug", 0444, debugfs_sched, NULL, &sched_debug_fops);
  
- #ifdef CONFIG_SMP
++	debugfs_fair_server_init();
++
+ 	return 0;
+ }
+ late_initcall(sched_init_debug);
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 7416bcd..64fb677 100644
+index 64fb677..b777ac3 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -335,7 +335,7 @@ extern bool __checkparam_dl(const struct sched_attr *attr);
- extern bool dl_param_changed(struct task_struct *p, const struct sched_attr *attr);
- extern int  dl_cpuset_cpumask_can_shrink(const struct cpumask *cur, const struct cpumask *trial);
- extern int  dl_bw_check_overflow(int cpu);
--
-+extern s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec);
- /*
-  * SCHED_DEADLINE supports servers (nested scheduling) with the following
-  * interface:
-@@ -363,6 +363,8 @@ extern void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
- 		    dl_server_has_tasks_f has_tasks,
- 		    dl_server_pick_f pick);
- 
-+extern void dl_server_update_idle_time(struct rq *rq,
-+		    struct task_struct *p);
+@@ -366,6 +366,9 @@ extern void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+ extern void dl_server_update_idle_time(struct rq *rq,
+ 		    struct task_struct *p);
  extern void fair_server_init(struct rq *rq);
++extern void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq);
++extern int dl_server_apply_params(struct sched_dl_entity *dl_se,
++		    u64 runtime, u64 period, bool init);
  
  #ifdef CONFIG_CGROUP_SCHED
+ 
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 76504b7..9748a4c 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -516,6 +516,14 @@ void rq_attach_root(struct rq *rq, struct root_domain *rd)
+ 	if (cpumask_test_cpu(rq->cpu, cpu_active_mask))
+ 		set_rq_online(rq);
+ 
++	/*
++	 * Because the rq is not a task, dl_add_task_root_domain() did not
++	 * move the fair server bw to the rd if it already started.
++	 * Add it now.
++	 */
++	if (rq->fair_server.dl_server)
++		__dl_server_attach_root(&rq->fair_server, rq);
++
+ 	rq_unlock_irqrestore(rq, &rf);
+ 
+ 	if (old_rd)
 
