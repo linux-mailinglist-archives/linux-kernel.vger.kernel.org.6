@@ -1,118 +1,174 @@
-Return-Path: <linux-kernel+bounces-265672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0245D93F442
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:39:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C60393F444
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E3281F22559
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:39:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C39E91C21EAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A08B145B3B;
-	Mon, 29 Jul 2024 11:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C4714658C;
+	Mon, 29 Jul 2024 11:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GUBgOF9X"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HtNa+Aft"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2871422C4;
-	Mon, 29 Jul 2024 11:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17956146015;
+	Mon, 29 Jul 2024 11:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722253140; cv=none; b=FXjgbiFIKLCvyQz9+yVz5EGFUSpZ9VlKQs5xlHp1/8hPXynEWIqhGPmoJbgsDb3vq318iNa0VA6qMexqII5i4bL3AjVDQwDOjm70j0gzNBAanjUPG6swNMkTZ6nIlPMv8jH2Seix3nzomm85J/u10TsX7ZxwuTLqTw0fYeQ0ZS0=
+	t=1722253144; cv=none; b=fsyyuuCilTf1kX1pOIZick5N0WJf0yKIow9xlASSU/eHC57sSF4ME5xFgq8XuKN/H098InvLGNBxwzULQpF+rBP6zudjGvmPlFSCwDjMKbDmnuHAhapM6I81jSCpEd+M1RBlbm4PaNU2IPND/oUQ/bq5bnjeD6+QctunfHIymVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722253140; c=relaxed/simple;
-	bh=TD6EXM4kVLwJX3pO87Jj3iLBgEokmITV99XHcrCbz8A=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=t6gb8wroyNRMMOHs3Y4GfIetVltGVQ5MkcTxh9W1ZewV0cQgHPifYkKekMPfo1ldRl//3+49TP5rJMTJFXY3jjyuH32MOJ25d+LkrCi3T58cmoPUES+ZxscMfjwbUPrXvN1hkq++Ps2KkI7wvRZ9qwt0760q92He1VdALaMfwd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GUBgOF9X; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1722253097; x=1722857897; i=markus.elfring@web.de;
-	bh=uEAC/L6ulAgRBK7yshpqZXqeMAXPvPPVORtFM67NtzY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=GUBgOF9Xli7CwuuHwjs8OKVQ22hlk8G/lgquh2nvsmRyxvIsBkfspwJbPH1/BSII
-	 yjfVL9MVrdTNJC/NahRfATjq29p6zPn7zDOku3Jalk1I4RV5wfkrVFm8ZuKr4XLe2
-	 Ju52Wk68jaiIzdeKz9wiTcX6qjYXlhF//rqXOq7miLpqqgyV7uVmOTZ8EKS4gm/TP
-	 NGJ3BTVQFCD9IG/WWK9lbynCjxvNTf5fJRD0zyiUpv/APMCwsdBQz9vVelGgE1kSZ
-	 v/l4tYVtlmqstPbEcsne8MHRfu6DofA3n/CaQgA9ZkdbaO+RnBa1M5L9sN2I6IVi9
-	 bUIUZhdV16eB5Xbayg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MPKFF-1sv7ae2P4H-00SrVu; Mon, 29
- Jul 2024 13:38:17 +0200
-Message-ID: <633f5f40-481f-4063-ab5d-f383e981b0fe@web.de>
-Date: Mon, 29 Jul 2024 13:38:06 +0200
+	s=arc-20240116; t=1722253144; c=relaxed/simple;
+	bh=G2Hxq5SH6mbRM8TQwL+GQBN/WkWJKoHCUsfMqH0CoXA=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=F3OX5I1ys+pRcVCCCruyVI+aDrO+6GNEB+Mra8u9AfALIBtM4Iocbr/gIxJkcOAlaoC6Uqslm4Fg0Vl5TroqcTUn/NsLrBNOQtMsJuChXlboHI2zTsF03YBkkmOyJx3LGlTNCZfK0UcCx05s0gWFik/CE0jxUzWyaUlDEvMyoAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HtNa+Aft; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722253143; x=1753789143;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=G2Hxq5SH6mbRM8TQwL+GQBN/WkWJKoHCUsfMqH0CoXA=;
+  b=HtNa+AftHcuSm75RtKC0R1GIYGtzscNSTeo2UvVAqJ/57U36MsVHgas8
+   AQWwwDBDPuO2H5wD5fI3wj1OHqFhnvN8PKP0XRFno5VS9JcxjEEyi1Jf9
+   mkwHZz1ekIhkDdgTqboYQXpT+Qp5MjGjEu3PZPqDMW2X59ysaCfvjaAZF
+   HeL2LJR4CyE0LpTkLKXO+zFlfmbPOYpTL66susbonlvhyZyRVWalbqrNx
+   vvHJ6optgSfgYbgSMsqm6sa+FpttP1lVDu81McefhhRvJx44JqMQ6wnZC
+   DGtc5PhL0upsDEjM8TGjRnn2lgUnDdtNzmtHnPYLxNoIXZFNpD3rVI727
+   A==;
+X-CSE-ConnectionGUID: Vj86qRKhSIiGDltFMj/+9A==
+X-CSE-MsgGUID: vIM38PbLQNe5FrUuXsKm2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="22911019"
+X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
+   d="scan'208";a="22911019"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 04:39:02 -0700
+X-CSE-ConnectionGUID: VNKbjXX0QM2GakN6lLTgSQ==
+X-CSE-MsgGUID: ga+LzIzZQN+D+Gp3TUIEcQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
+   d="scan'208";a="84593276"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.151])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 04:39:01 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 29 Jul 2024 14:38:57 +0300 (EEST)
+To: Kane Chen <kane.chen@intel.com>
+cc: LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 1/1] platform/x86/intel/pmc: Show live substate
+ requirements
+In-Reply-To: <20240719122807.3853292-1-kane.chen@intel.com>
+Message-ID: <edfd1b36-7532-c0ba-6d24-b3e296e1cf0b@linux.intel.com>
+References: <20240719122807.3853292-1-kane.chen@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Inochi Amaoto <inochiama@outlook.com>, dmaengine@vger.kernel.org,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- Albert Ou <aou@eecs.berkeley.edu>, Chen Wang <unicorn_wang@outlook.com>,
- Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>,
- Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Jingbao Qiu <qiujingbao.dlmu@gmail.com>, Jisheng Zhang <jszhang@kernel.org>,
- Liu Gui <kenneth.liu@sophgo.com>, Yixun Lan <dlan@gentoo.org>
-References: <IA1PR20MB4953438ED600110E71F9D092BB042@IA1PR20MB4953.namprd20.prod.outlook.com>
-Subject: Re: [PATCH v8 3/3] dmaengine: add driver for Sophgo CV18XX/SG200X
- dmamux
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <IA1PR20MB4953438ED600110E71F9D092BB042@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:GuWTcqeMLKlGqfoVB2IgHQverNB8k9DzW7aGPu5et/thqYoUxeV
- KEaLGtlbDU3IoswCwFmckdVvcDKB8i1tshlQCalFohaz8Rc36HME6RrXwaPL/mz3kfZ1izs
- M9ItePqwVvC53KrJEBxcqW/qvTdzotvUs3yFd+vMfeT0DANp/43whYy5MToOvtrhHGOj91q
- P9KxYNHMlp2nwwq0tFDdA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:08Yd6C93Dv8=;WU8IyE2VzIfMaK/x1K0zR89Plvb
- G+1CETmKoqcHYDBdnun/+wkAQTGMZu+RQo7BNlFBGkM/tsNY5wLqFr2hX9U6H5yyDWc62r/0q
- x68A8e8PZLrpDfBcZLDe+gLMsokXWetCaYG1JykNU9teOWQoTZML0X+VpunA9G/dvObgSMBMt
- lE8pL+kfqfgL7ysj3GA0RHavuhnf1cU80yMjt8uIPFuFs8iM5MCkhfGtoKVUcu9qTBg64TgfA
- OD/VEOB+cCqmFahz/HJMzYeQs+X99JVNp4pmj3bDgsNiz4YsE0R6UM6GqLfSuZmtr7nVXLH8P
- +NM6+GYrO+FM4qHustw07vxRnwxMXyViEOoKzuCYncHUQpBySnFtSYBmeHzMY0CgIztQCwfoK
- nZ//FZPxkYOG4MUC9/aRJiV3jv7Z6LU6MAzr8x/GIVr68CeRJEfU2gHkj26NFCYESw4E2S9cY
- 8TSooqezO0UP2LZb4tfky0EmHS2jUVNP+OBCjaaxHeggWJ8sLTMbCz4yHTVCryT7FiE4C17vm
- tL+fslgrA3QnWBpPojEvUBhw1x9N03MHgb7qcOTHaJp/H9c5brx5ga5XwuLXhqz5pU/BGVG/Y
- aj9knUeus/+/6TlwH0k44WBGjqfp6zyZA8HqqPzLlQa8toPR4NwkkIDySLOuI0x5ss0Crz2mb
- MiIOFqnv6zO6Ghz8Vw1lO4gTVZSu2X7yf5qVyunCrarhYIraYr9PoEujNzKmek4nsbUH0rbeW
- D6RrV2hIZgJmMmpZ2RESXOPBCXzXEudGTtzZLB+gE4djooAb+mk7aRsjvwIothxNM8uPxKetX
- 3h3QH2An+MXbZcxVasF2y70g==
+Content-Type: multipart/mixed; boundary="8323328-713672148-1722253137=:983"
 
-=E2=80=A6
-> +++ b/drivers/dma/cv1800-dmamux.c
-> @@ -0,0 +1,259 @@
-=E2=80=A6
-> +static void cv1800_dmamux_free(struct device *dev, void *route_data)
-> +{
-=E2=80=A6
-> +	unsigned long flags;
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-713672148-1722253137=:983
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Fri, 19 Jul 2024, Kane Chen wrote:
+
+> While debugging runtime s0ix, we do need to check which required IPs
+> are not power gated. This patch adds code to show live substate status
+> vs requirements in sys/kernel/debug/pmc_core/substate_requirements to
+> help runtime s0ix debug.
+>=20
+> Signed-off-by: Kane Chen <kane.chen@intel.com>
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+> ---
+>  drivers/platform/x86/intel/pmc/core.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86=
+/intel/pmc/core.c
+> index 2ad2f8753e5d4..b93ecc5169745 100644
+> --- a/drivers/platform/x86/intel/pmc/core.c
+> +++ b/drivers/platform/x86/intel/pmc/core.c
+> @@ -791,13 +791,15 @@ static void pmc_core_substate_req_header_show(struc=
+t seq_file *s, int pmc_index)
+>  =09pmc_for_each_mode(i, mode, pmcdev)
+>  =09=09seq_printf(s, " %9s |", pmc_lpm_modes[mode]);
+> =20
+> -=09seq_printf(s, " %9s |\n", "Status");
+> +=09seq_printf(s, " %9s |", "Status");
+> +=09seq_printf(s, " %11s |\n", "Live Status");
+>  }
+> =20
+>  static int pmc_core_substate_req_regs_show(struct seq_file *s, void *unu=
+sed)
+>  {
+>  =09struct pmc_dev *pmcdev =3D s->private;
+>  =09u32 sts_offset;
+> +=09u32 sts_offset_live;
+>  =09u32 *lpm_req_regs;
+>  =09int num_maps, mp, pmc_index;
+> =20
+> @@ -811,6 +813,7 @@ static int pmc_core_substate_req_regs_show(struct seq=
+_file *s, void *unused)
+>  =09=09maps =3D pmc->map->lpm_sts;
+>  =09=09num_maps =3D pmc->map->lpm_num_maps;
+>  =09=09sts_offset =3D pmc->map->lpm_status_offset;
+> +=09=09sts_offset_live =3D pmc->map->lpm_live_status_offset;
+>  =09=09lpm_req_regs =3D pmc->lpm_req_regs;
+> =20
+>  =09=09/*
+> @@ -828,6 +831,7 @@ static int pmc_core_substate_req_regs_show(struct seq=
+_file *s, void *unused)
+>  =09=09for (mp =3D 0; mp < num_maps; mp++) {
+>  =09=09=09u32 req_mask =3D 0;
+>  =09=09=09u32 lpm_status;
+> +=09=09=09u32 lpm_status_live;
+>  =09=09=09const struct pmc_bit_map *map;
+>  =09=09=09int mode, idx, i, len =3D 32;
+> =20
+> @@ -842,6 +846,9 @@ static int pmc_core_substate_req_regs_show(struct seq=
+_file *s, void *unused)
+>  =09=09=09/* Get the last latched status for this map */
+>  =09=09=09lpm_status =3D pmc_core_reg_read(pmc, sts_offset + (mp * 4));
+> =20
+> +=09=09=09/* Get the runtime status for this map */
+> +=09=09=09lpm_status_live =3D pmc_core_reg_read(pmc, sts_offset_live + (m=
+p * 4));
 > +
-> +	spin_lock_irqsave(&dmamux->lock, flags);
-=E2=80=A6
-> +	spin_unlock_irqrestore(&dmamux->lock, flags);
-=E2=80=A6
+>  =09=09=09/*  Loop over elements in this map */
+>  =09=09=09map =3D maps[mp];
+>  =09=09=09for (i =3D 0; map[i].name && i < len; i++) {
+> @@ -868,6 +875,9 @@ static int pmc_core_substate_req_regs_show(struct seq=
+_file *s, void *unused)
+>  =09=09=09=09/* In Status column, show the last captured state of this ag=
+ent */
+>  =09=09=09=09seq_printf(s, " %9s |", lpm_status & bit_mask ? "Yes" : " ")=
+;
+> =20
+> +=09=09=09=09/* In Live status column, show the live state of this agent =
+*/
+> +=09=09=09=09seq_printf(s, " %11s |", lpm_status_live & bit_mask ? "Yes" =
+: " ");
+> +
+>  =09=09=09=09seq_puts(s, "\n");
+>  =09=09=09}
+>  =09=09}
+>=20
 
-Under which circumstances would you become interested to apply a statement
-like =E2=80=9Cguard(spinlock_irqsave)(&dmamux->lock);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.10.2/source/include/linux/spinlock.h#L=
-574
-
-Regards,
-Markus
+--8323328-713672148-1722253137=:983--
 
