@@ -1,204 +1,334 @@
-Return-Path: <linux-kernel+bounces-266387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC15193FF2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:22:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CDCF93FEFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 724C0281496
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:22:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40CA81C223DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8691118FDB1;
-	Mon, 29 Jul 2024 20:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8736189F2B;
+	Mon, 29 Jul 2024 20:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="KbEb8r3D";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="UCPjXga2"
-Received: from fallback3.i.mail.ru (fallback3.i.mail.ru [79.137.243.69])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="YUYrhZva"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013052.outbound.protection.outlook.com [52.101.67.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C220818F2C9;
-	Mon, 29 Jul 2024 20:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.69
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722284379; cv=none; b=AP6FJB3FWOtZYsv7ZETdos3wfp3ifaXS/kc11rG7yRf69WtQhlebCTsCDnvLnKjPKiIBbaK4xDv5c76rVdjCxYf4h6IOlaQrfJYyyOk+TXFdCJWyFxbsY9hyETdVg92+q8Ch7QkHmqu4eRhl4Vv6HXv6CFqdv+yzwn/KxTDzy80=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722284379; c=relaxed/simple;
-	bh=JuxkhGo+6i+iGlorl/cy0LN+tmPfArJS8baFYb4WxE8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LeqjomFaE6f/DA57cjTBshzDTx8vWvvoN1kia9HzWQhW7GgFseZvmzQdiuvnmwJiJSadZZlBletIdByhPNkBOlkt4tonPjlk18DdtTmfFCDPj/yYgh3+tQbynUhzAAZG3vH7dWCHUtSuq+FNZZ4A2A4wBC7JuqNNq8NgQhQGKtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com; spf=pass smtp.mailfrom=jiaxyga.com; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=KbEb8r3D; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=UCPjXga2; arc=none smtp.client-ip=79.137.243.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jiaxyga.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com; s=mailru;
-	h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=x06RUocVILuU4BpbXLAR6eGwbntwzZ/8jlZgy8GJdOk=;
-	t=1722284377;x=1722374377; 
-	b=KbEb8r3DzzfvRXkMhlt62ZE65+33dQIIZjdm3LiiZLlMagettrr7xQyVR1t+uYv5s9sACqVQWuxBN2xWUVahRnLGWtjHgzcQaAo+vPA3oV/MorrwW9VtHhbLfPmw808CiY9HbD/Qe+5vW0S/orhV8hW1/w1sKYdXauW8Z8WN3fw=;
-Received: from [10.12.4.10] (port=53210 helo=smtp34.i.mail.ru)
-	by fallback3.i.mail.ru with esmtp (envelope-from <danila@jiaxyga.com>)
-	id 1sYWq8-000ajd-MR; Mon, 29 Jul 2024 23:19:29 +0300
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com
-	; s=mailru; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:Subject:Cc:To:From:From:Sender:Reply-To:To:Cc:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
-	References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
-	List-Owner:List-Archive:X-Cloud-Ids:Disposition-Notification-To;
-	bh=x06RUocVILuU4BpbXLAR6eGwbntwzZ/8jlZgy8GJdOk=; t=1722284368; x=1722374368; 
-	b=UCPjXga28mFvzJk9ZAtMnlaA7FtNiReLAvOCg7U4CuoYc19a6v9rLyFMwoQV50MTzgimx3vfoPx
-	1+FN5+HEEMttAsF00fBurizN/kwU74C5+wXUiHtZQGWcQSOsTZOjk2Il9wqFrrwistPw66NPuqg1O
-	xDff6oWUetdBddor44U=;
-Received: by exim-smtp-868bf69f6c-8kchf with esmtpa (envelope-from <danila@jiaxyga.com>)
-	id 1sYWpX-00000000CoU-3Jhd; Mon, 29 Jul 2024 23:18:52 +0300
-From: Danila Tikhonov <danila@jiaxyga.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	andersson@kernel.org,
-	konrad.dybcio@linaro.org,
-	rafael@kernel.org,
-	viresh.kumar@linaro.org,
-	heikki.krogerus@linux.intel.com,
-	gregkh@linuxfoundation.org,
-	kees@kernel.org,
-	tony.luck@intel.com,
-	gpiccoli@igalia.com,
-	sudeep.holla@arm.com,
-	quic_rjendra@quicinc.com,
-	andre.przywara@arm.com,
-	ulf.hansson@linaro.org,
-	davidwronek@gmail.com,
-	neil.armstrong@linaro.org,
-	heiko.stuebner@cherry.de,
-	rafal@milecki.pl,
-	macromorgan@hotmail.com,
-	linus.walleij@linaro.org,
-	dmitry.baryshkov@linaro.org,
-	johan+linaro@kernel.org,
-	javier.carrasco.cruz@gmail.com,
-	quic_kriskura@quicinc.com,
-	lpieralisi@kernel.org,
-	fekz115@gmail.com
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux@mainlining.org,
-	Danila Tikhonov <danila@jiaxyga.com>
-Subject: [PATCH 00/11] Add Nothing Phone (1) support
-Date: Mon, 29 Jul 2024 23:18:07 +0300
-Message-ID: <20240729201843.142918-1-danila@jiaxyga.com>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D7E37708;
+	Mon, 29 Jul 2024 20:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722284330; cv=fail; b=Z3imQVqVzAxPuGVIF2tsYme6/GNZWRYUWlovfH2hASLm/QbtalVrNviC4j2KJTuVPPk6IClfqhra3PiMxJpIRn41SrIZ8Ah7Qh4MA41svNXmxI6zy09QmR/H5PJPenv89ukfNg1mT0mVxW/TrYlQfbovO5EuQl7+E7Ukekc4Q1E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722284330; c=relaxed/simple;
+	bh=Ffs1+RB8zVSXRpBvSqedgow8kXkvN9nVsdLWI+U0kAU=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=fJu5UjQjg8xRuSTbCmGr0o5+2UxodI0Rl0YWDInGENSWm2uVURPNObEM3ieJleSCO67bQezvxTYPdFYzgeE6SXVxy0U8B7VVcvxzKqtYAQgHQZ0NB8J+BIuU8a01LqfmHQ2IrkEquwmW9WelPI8Zsh+T6UQKUCSOf2Ct9eZSGTc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=YUYrhZva; arc=fail smtp.client-ip=52.101.67.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ly4d6JDBOhmmRkvBxCw3SL3mFdQecmnoYZ0mqtdSmSKSi9rOnY/9oEfiVa3ePMwLKmCrIgAAELMChicQDszkkqYSdxkde0PHq6D8Qu3YoAwENPhn2KWK2VWUjDj+Nu4nhz/+HK+LTK+XTEmU5dYSP2vBZbB0c2IzxzljJpNsNz/tp3w+eNsqx2Df7C5F9UsODmiikG3jeqHY4JxXeq/ay2Q57EgdPiW6zAYV3wHuDjrDHZJtexpqIGnuk3N9Ryl5RZxgLZP46BZTKxDGgcvgje825NStHw9UcXhQZHTtUgHkyftA/DiJ5lO23HcLikqHysPQtI36lALV4cf5s4QQVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wgF23gu8zop/1zsRCishfLSSZV7ex2erAzBR3fsZWJ0=;
+ b=QELfBnee9vA04SDm3nDoUyCwCZpDyjkc66iZleHJaDa/QCz4h7zk1z/pxOq6gFZLnUJAzEOdCfuOWsahFbbFo7sHjt7ZmzJIPsdz7loJDrf/F+EVPf2fdCe2F1nBYffP6vS9feIQ4bb2O1B7+secqe5lDLRHVOUvm1f8K/YPPAOHhBAyuSYhB5UsZ2Z009YSpSGE408N5w88vlsQ35/TlN08TUcR8N1frNEixrA3ZBT2r4wqlXuPutsc7r+0Qq8WdbT/FYv8GggSKU3Nvg9ukzT373wF4QpeMazbNOiY3I0uG06GQcvkwzg6lI0fM1Rz8QSq6u7ZuQE9qPgO0rc4LA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wgF23gu8zop/1zsRCishfLSSZV7ex2erAzBR3fsZWJ0=;
+ b=YUYrhZva376K531UJ0XqxPYo1uzvOYdqnpXm/eyjbupXrLfvpqOxUEH1IFlJxv6GY28exEEQQBX5ViikuPVr3evoc9omqUE2J2eZVg+p81vFnYL4BGRVJrZP3Z+53JbA8t9fOotBK2QcxjlkG9KHBSS5OumHmR96xSmIMRV98Un2yK0s/Fqo2b26WQu6IyaE02AGxaVbKHzfDsX20XKbmep7UKSSqMS5tPSuu/k8aVC2V5adP1yCLdBVGTUy0KDWMquqWyj0cOHLjXrttRoPQl9OH2//doUNYx3cXCgBIhzy7QIMeh+nbwxbeK+i6jo0Fojb+prAr34AW52tdE1Paw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PA2PR04MB10240.eurprd04.prod.outlook.com (2603:10a6:102:410::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Mon, 29 Jul
+ 2024 20:18:43 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
+ 20:18:43 +0000
+From: Frank Li <Frank.Li@nxp.com>
+Subject: [PATCH v8 00/11] PCI: imx6: Fix\rename\clean up and add lut
+ information for imx95
+Date: Mon, 29 Jul 2024 16:18:07 -0400
+Message-Id: <20240729-pci2_upstream-v8-0-b68ee5ef2b4d@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAD5p2YC/3XQy26DMBAF0F+JvC7VePwasup/VFXlF40XAYRTl
+ Cri32uycQF1eS2fey0/WI5TipmdTw82xTnlNPQl0MuJ+Yvtv2KTQskMASUgmmb0CT+/x3ybor0
+ 24EPgreWKa8GKGafYpfuz7/2j5EvKt2H6edbPfD39r2nmDTSuVdiREEKDfuvv46sfrmztmbFaA
+ XJvsVgbwHgVnQ7abK2otizvrSiWQEguXXBSwNbKahUc3iyLjeQJAplyYber/likvVXFGgXWmhg
+ cRdxaXa3mh1297gIhR0Fd2+52TbUGDrtm/SsP4Igb2VFb7bIsv3TABboQAgAA
+To: Richard Zhu <hongxing.zhu@nxp.com>, 
+ Lucas Stach <l.stach@pengutronix.de>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pci@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, devicetree@vger.kernel.org, 
+ Frank Li <Frank.Li@nxp.com>, Jason Liu <jason.hui.liu@nxp.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.13-dev-e586c
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722284317; l=6156;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=Ffs1+RB8zVSXRpBvSqedgow8kXkvN9nVsdLWI+U0kAU=;
+ b=F+I/R76AA9lkCiBJWjRITKL3DGltBqAYHnLCApRYj66IMAIi7IMFmEK1se6TwyZD6ZdQPvhKC
+ aT6F9xKxK1CCWimEkmj9k8ag3d09kPCCFL0RBx/xcxzdQ8bCtF9UlPP
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-ClientProxiedBy: SJ0PR03CA0069.namprd03.prod.outlook.com
+ (2603:10b6:a03:331::14) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
-X-Mailru-Src: smtp
-X-7564579A: B8F34718100C35BD
-X-77F55803: 4F1203BC0FB41BD9000B6812E77BE1C65D76B8F852291B0987B035B9E54BA07F182A05F53808504093CF743E2B4E18D43DE06ABAFEAF6705C5699BC6C321C2869EC546CAE4A36CACB58C0E165F9F46AE
-X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE75644E22E05AA81AEB287FD4696A6DC2FA8DF7F3B2552694A4E2F5AFA99E116B42401471946AA11AF176DF2183F8FC7C0C8F626AC60F7C5938F08D7030A58E5AD1A62830130A00468AEEEE3FBA3A834EE7353EFBB55337566818EF6061DF249E94AAB4185F56D818E0235020D60A938C319BD9FE6965ECEBF389733CBF5DBD5E913377AFFFEAFD269176DF2183F8FC7C0ECC8AC47CD0EDEFF8941B15DA834481FCF19DD082D7633A0EF3E4896CB9E6436389733CBF5DBD5E9D5E8D9A59859A8B68CE9D8A6861299E6CC7F00164DA146DA6F5DAA56C3B73B237318B6A418E8EAB8D32BA5DBAC0009BE9E8FC8737B5C2249CECE95E22271FC9676E601842F6C81A12EF20D2F80756B5FB606B96278B59C4276E601842F6C81A127C277FBC8AE2E8B545F05E2AC4851F83AA81AA40904B5D99C9F4D5AE37F343AD1F44FA8B9022EA23BBE47FD9DD3FB595F5C1EE8F4F765FC72CEEB2601E22B093A03B725D353964B0B7D0EA88DDEDAC722CA9DD8327EE4930A3850AC1BE2E735262FEC7FBD7D1F5BB5C8C57E37DE458BEDA766A37F9254B7
-X-C1DE0DAB: 0D63561A33F958A5B15FC401B038DCAB5002B1117B3ED696AE2B5492C74B06420E58516B1639A14B823CB91A9FED034534781492E4B8EEADA2D5570B22232E1EC79554A2A72441328621D336A7BC284946AD531847A6065A17B107DEF921CE79BDAD6C7F3747799A
-X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF77DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CF7B68F0B533CA1F756B1F41225A78AAA1A5E1909E3830DBA87EEF75AF6ADEEFD1EB3733EA1EE6A1F267C7AAC6E25A2086A032D1D7FAE62A63633D7FB3044967C2A053CA34DC4B4A4061A41C79C593F3F002C26D483E81D6BE72B480F99247062FEE42F474E8A1C6FD34D382445848F2F3
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojX2k8aL79D6WMT55LfpWa8w==
-X-Mailru-Sender: 9EB879F2C80682A09F26F806C73949811F832B91E20AE7E2A80142CFDE86685D87446AF578F939E636D289BC4E1CBFF62C62728BC403A049225EC17F3711B6CF1A6F2E8989E84EC137BFB0221605B344978139F6FA5A77F05FEEDEB644C299C0ED14614B50AE0675
-X-Mras: Ok
-X-7564579A: B8F34718100C35BD
-X-77F55803: 6242723A09DB00B431B8944160407DD0C2EAA1E6BA7F9BE0FA19858876EF5BFA68F3CF0E9FE49B69543DADA4AE4E3247B699522B5268EDC4640F0F74BA7A2A329729BAF73F2561CA
-X-7FA49CB5: 0D63561A33F958A591B612254AA1B90373CDF9D6CD53B7E0BC0B973DFF4BDD898941B15DA834481FA18204E546F3947CEF76DA0ED039B67DF6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F7900637718608EF75D9B849389733CBF5DBD5E9B5C8C57E37DE458BD96E472CDF7238E0725E5C173C3A84C3C839A5C92C19B5C335872C767BF85DA2F004C90652538430E4A6367B16DE6309
-X-87b9d050: 1
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojX2k8aL79D6WD66ER7ctBxA==
-X-Mailru-MI: 8000000000000800
-X-Mras: Ok
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA2PR04MB10240:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e97f76e-3b43-488f-999c-08dcb00ba4a0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|52116014|366016|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QmdSVVZONzFicmxVaGh2dnRyUWp3MkNPZjdTYlZrOHBidzZNdStnVXk4cm5l?=
+ =?utf-8?B?eFhNdDlmb0diaGdoU0p1dGwrMm5GakhaMFc1cENXTlAvRlBQY3kzL0RmeW5p?=
+ =?utf-8?B?bFFpSWdqbm9IS2p1N1hySGRrOXgxT3RIcXd6b1R5VWNTMG5FSXVTWkpraXhz?=
+ =?utf-8?B?WGNRL2RUSWVjVkxySWNKTW0xb1h0WnIyZ3BmQUsyWitZTVl2ZVkvQ3FqYlJh?=
+ =?utf-8?B?ay9VWm1xOXVhL2xzdHp4enJBWGZXaTh2MDFDQ2lNY3h2RWVhSTNaSHcvSDFH?=
+ =?utf-8?B?UGRCZWJyWDV2TDhDL3ZLYmZ0Y24vYUo2SEl3eDNBeW4rck5ZbHFyMVA5SUEy?=
+ =?utf-8?B?Ri9xYkhrVzlCaG9hYmswanZPa2FGV3lsV1pGT3hPZU1KYmFwVkZELzhySHZI?=
+ =?utf-8?B?SHBId2dMdy92NlVnWlJENmZhb3llLzh4dm9QT1FsWWp1LzA2VXlaSUZKSmYv?=
+ =?utf-8?B?a0tHVjU0SG1BSlBhVER4aUxpRjRFakg1VnZVdk5zc2NLaW12MlN2OXoyalB1?=
+ =?utf-8?B?OWdsZlpxTVQ5eldoMHRxdmNhYWk1ZWZtVzFibnd3ditMekQ3VjBoMmJBa0Y0?=
+ =?utf-8?B?VGJUMTFtbklWb2paN1kxclR2ZHZvczYyRmFQd0Vrb3VxUkZzWEEyZnBsMUJD?=
+ =?utf-8?B?cDhtb0x4dHlpUzNyTEwwNEY3d0lHWUF4Skt2Zkh3dE9kbUFIQXRwTUVxV1RS?=
+ =?utf-8?B?aUE2N2dlZ3pZb25tbU82TUwzT1NIbHdvRFFrNWdxWTdWQWJidE1HOC9FK3ZC?=
+ =?utf-8?B?dHlJY1RDYVZCRGhMS2pScHRuUHRTN21GeUo5eFhUTHR4YzQ4UjVEako4a3VD?=
+ =?utf-8?B?akZLbFNUV3NPb0ovZkZhd0VzNG02ay9kZWFMSGNPSGNSVUd3SHRseHdrS24v?=
+ =?utf-8?B?QXQxd3JIVlQ5QzY1VEswdGVTWUZpOCtPWHV0OTBzVVIwL1p0RGlWcjR3eWhj?=
+ =?utf-8?B?ZlVBU0lCZmM0N3Y0WHl1ZFRHTjMxdk4wbFIyTW9nSjlUOE94a1JzVWlQdEF5?=
+ =?utf-8?B?MGlpMktjUFg1TDRWZGZncWlveG9pQUdtdlRGeWo5a3JkMlh3SmRqYkJydHFT?=
+ =?utf-8?B?cCs0ME1EbG9HNHRTRUE3cmF1ampldW9DWEd1N3BmMFFxK2tya0o1cTBXYlZp?=
+ =?utf-8?B?cnJTWU9sbXlGNFd1VFJQNDVid0Q3emg2c25tbUg4QWIvbDZEM1M0Z2ZTQmhL?=
+ =?utf-8?B?NzZOZFlaSjhFeTE0bnRBNzh3MVRvbVNlWG92Mmg5aVora1BtdElUa3NXSE1m?=
+ =?utf-8?B?bGdXWTNqbEVNbHlYckZTNU9IWFNwcU1Ya2ZGSjhxYlUvbDh3Smgxb1ZkK1Zk?=
+ =?utf-8?B?RnZoeW1rVHVadmx4Y1NhYjRWSzNkZnhac09kYWtsa0tYK2hhRTN5RFVQVm1V?=
+ =?utf-8?B?eHJ5V1hkV0QxTll5MnRlRnRDc3BORG5DZGd5OFMxUGxSNEhoa05CQVJKMW10?=
+ =?utf-8?B?M0d2RjBNeWtER1BOWG9ZWHRDMzVGYVBJYk54WTNWVm9lUGNvdW5HMC8yTmpW?=
+ =?utf-8?B?VUxzMU9tTzBqZlQwUEVibHdjN3YySU1YdndUSXJOOFVrdFp2T1ZKV24xU1NJ?=
+ =?utf-8?B?UW85ODNxWk5OYlJxcGN1MXZKejYwYmJDS0dWK2hPV1k4UGdXS2lORW9pOFIx?=
+ =?utf-8?B?Vkx5WVVQaENRNElPcFl6RExYMWVaVUdUMDlXUmtLL3hqQkhic29SckxIUCtr?=
+ =?utf-8?B?KzFzYTFWakIxR2RVQnlhWE1iZEhQWW1yQUM3L3MwNXd0YW5DRnVaSGdUQUV3?=
+ =?utf-8?B?ZFdMUXFhVS82ajlWU1NGdlhCOTE2OW9JRGQ0ZUg4QmU0dkhHNDVyWW1NeDZS?=
+ =?utf-8?B?NU03T3ZIRlNjcFFaNnZXVDFGcW1DTkdrSkVKWFd3Qlg2eFlLaUpXTTYwd0NH?=
+ =?utf-8?Q?WVzBImqGQrElA?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(52116014)(366016)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z1hmaHVrVk1keGdZRWRhTmtqSUdTdGdhYjVwT0ZCZjlKVEdaQVE1MDhxbFZs?=
+ =?utf-8?B?SThkeVVKaElUZkxhdEM5cy9oZjZ1RDAyMU5MWS9wcHFJVWQzMlB3UWlrUkQ0?=
+ =?utf-8?B?TVhJOFRSM1Y3L0JZdmVpQlJWWFhEYllYUERHYUZRbUtLMlA3TGU5Y3o0S0tq?=
+ =?utf-8?B?b2I0Vm1USFhld0NNcGJ2Q2YrOVlhMGNvRmtKNTNQWUliTXVZK1FNVGV6azBB?=
+ =?utf-8?B?eFBzWE1CYkZiamlwdFhRWWpsV3JGeHJEMExTL1lYL3kzR2hiOWFmMnlIOTli?=
+ =?utf-8?B?Uk9CTmZsSTcxN0R2OG5lZWh5R3dOeHg0S2prckdrZVR5bFA4Q3VON0RRL2RP?=
+ =?utf-8?B?eUNjZHJoODhQOEYxWWhSbmFXeFNJRnVrQW81Q3Joa0RtODFKYk9yY0NxSUlU?=
+ =?utf-8?B?MUhuNVBPN0VNaTNyMzdlaFRpQmQwVGhZT0dlL3FJU0NMSzNPRHUxdmQvOGNZ?=
+ =?utf-8?B?a1lKZlJYMTBVQXRlY2RKQmtLQUZpV3VYQXBxVlRrRUZVNjVJTnhYSDVSaWVL?=
+ =?utf-8?B?eXk1SkFieUJPOTdmTHdVckpUbytLaXpNYlU0azFoVzBzcVRzZGlSYjdjbXVh?=
+ =?utf-8?B?TXZuellueVRTRTEzbGxKQUF5WGNYM3FBQmFSNkliZlVUS0pMTzY0OW1GdTZp?=
+ =?utf-8?B?emk5UGV5L3pOQWphdll2L0xUZFhQUnNEOTlvMHh2ckxYZnpIZUlMajB5eXZC?=
+ =?utf-8?B?VS9ZUW1TdlNIZ1pOaDc2TDc2UWwzYWt0dk5UTGlKMXZmUGU1TWduRGsxYUN3?=
+ =?utf-8?B?aEIzcGJhTE04MC92VkpMU0htSnpzZDVndU1LdEVjNkw3aHg4Q29YSUFBZUdp?=
+ =?utf-8?B?b1FjZEJWcVVuc0YrbTJOdWREeGlNWHhZL1BpcG9USlo1WlVkSUdXZHBBa3l4?=
+ =?utf-8?B?cVpQc2NnZVMwcElsUERlK2tZTFhYWlpiN1MxMjNzbEtKMzZiamRhQ0kvTVpr?=
+ =?utf-8?B?OHVHN2dLRG5wQU9uQmNxNjJNcHMra2tPQTRvT2lvWGdFeGdGOG1IUzI0Y0dY?=
+ =?utf-8?B?SWRQUk1oWkgweFhxczJSSXppK2hJeDVTWU8zeEhjbTlUaFQrL0VzSEVFOHV2?=
+ =?utf-8?B?UVFNT3dodDdwLytZeVVFaE0zUjlaLzIzY3haOXVGeStqZDNtQlNROFdPWVdp?=
+ =?utf-8?B?bGc2ejNMc1duS3FlNXJDUTAzbmMzdXVPYXJFZjZoSWZKMVRQTE13UkpoNnZG?=
+ =?utf-8?B?bGFFa1ovSUs0VlU2TlExWFZNUnVMNlVCMTVmbllhcTNBYk5QVEJiVjBxTnpq?=
+ =?utf-8?B?SnlWaTFpRElHM0hyTGx3UnplTGUvbitiRzJjekFOcmdEUDJwYVBzWVRPNVQz?=
+ =?utf-8?B?MkRtcnVNY0U1b3Q4Q1dwWTMzN003UzlVNXdaYk52Ym9TbloxeVlEYUI4SXNq?=
+ =?utf-8?B?bWlpVVRDSU5YbHA2YjZORFlLemtMMlZLZWdpTE5vK0s5bFk3UHlScUZEZ3Rw?=
+ =?utf-8?B?RkxhTEJ0NHVPbjJ2WWxaQkhlTHV6SEZZVDJBSWpNSXU5aDZUbEJCZzBiYWFi?=
+ =?utf-8?B?VEMrK0Z1OVRQRWgrTEh0QkZCaFdmTDBtMWt5ZFVuN3IzaDFUR3NQMm8vRFkw?=
+ =?utf-8?B?RnBiV01CQkREWE9tdkFFTU53Yk9wbmVzbFRLLzBnK1VaeXNoQmxnSmVDQkh2?=
+ =?utf-8?B?T1lUQ0d1dGZMdW1LTG5ReDA3UDgzVFFQZUcyWEVPM1ZLbUM0Z0RmNFVqSkFY?=
+ =?utf-8?B?Z0tHNU5aQVBEZjJxbVB6MlQzbDdmQWtBeEpZbHp0SW92L0dBK2FrL3ZJbWxw?=
+ =?utf-8?B?QzZ6eldZOVNPNDhHY3BMWGZGVXRIemw3NlBzL20zSVJZRVMzNUxRMCtDSk1H?=
+ =?utf-8?B?UXNyTlZJYjlZVVBCbEtlaTBtYUVUWmxoTHVCT0laWDRJeURxOVQ3cjNpM0lk?=
+ =?utf-8?B?U1F0SEl6ZTVRU2JBZWJzQ2VoTExmWGhBVWZuSEs5YUVnMlhqWkFDejlZazMx?=
+ =?utf-8?B?ckEyZGpUMng5SHJwNnRkNDV5TEpXWWF3bFJHa3l0cURFRkdiM2VzQlpwVXJ3?=
+ =?utf-8?B?OUZOd0ZidWVxa3hzWDhjTWlLTU41eHFScWVYaGY5UjkrcksvMW9UNHVWRVdE?=
+ =?utf-8?B?eXZaMVQ1WENlT1V4WHhUQTlncDhvT0Z5emtrTTJvUnZXQmlTNXgyYmplVlZ1?=
+ =?utf-8?Q?swZX2O4lhrlKJt04vyJCnj9XM?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e97f76e-3b43-488f-999c-08dcb00ba4a0
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 20:18:43.4587
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ynlqHsBAmwiqFjtLOXJcwlzBTUwfZXVv4YOIAhJpxMq+4tIJPnmYIeZeC0glBVY97W4dboPe66WAAdQB8ZNsPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR04MB10240
 
-This series of patches adds support for the Nothing Phone (1), identified
-as nothing,spacewar. The Nothing Phone (1) is built on the Qualcomm
-Snapdragon 778G+ (SM7325-AE, also known as yupik).
+Fixed 8mp EP mode problem.
 
-SM7325 is identical to SC7280 just as SM7125 is identical to SC7180, so
-SM7325 devicetree imports SC7280 devicetree as a base.
+imx6 actaully for all imx chips (imx6*, imx7*, imx8*, imx9*). To avoid
+confuse, rename all imx6_* to imx_*, IMX6_* to IMX_*. pci-imx6.c to
+pci-imx.c to avoid confuse.
 
-All of these patches are essential for the integration of the Nothing
-Phone (1) into the kernel. The inclusion of SoC IDs is particularly
-important, as I encounter crash dumps if the device tree lacks msm and
-board id information.
+Using callback to reduce switch case for core reset and refclk.
 
-To: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Kees Cook <kees@kernel.org>
-To: Tony Luck <tony.luck@intel.com>
-To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-To: Andre Przywara <andre.przywara@arm.com>
-To: Rajendra Nayak <quic_rjendra@quicinc.com>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-To: David Wronek <davidwronek@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-To: Heiko Stuebner <heiko.stuebner@cherry.de>
-To: "Rafał Miłecki" <rafal@milecki.pl>
-To: Chris Morgan <macromorgan@hotmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-To: Luca Weiss <luca@lucaweiss.eu>
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
+Base on linux 6.11-rc1
+
+To: Richard Zhu <hongxing.zhu@nxp.com>
+To: Lucas Stach <l.stach@pengutronix.de>
 To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Eugene Lepshy <fekz115@gmail.com>
-Cc: devicetree@vger.kernel.org
+To: Krzysztof Wilczyński <kw@linux.com>
+To: Rob Herring <robh@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+To: Shawn Guo <shawnguo@kernel.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+To: Pengutronix Kernel Team <kernel@pengutronix.de>
+To: Fabio Estevam <festevam@gmail.com>
+To: NXP Linux Team <linux-imx@nxp.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+To: Liam Girdwood <lgirdwood@gmail.com>
+To: Mark Brown <broonie@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+To: Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pci@vger.kernel.org
+Cc: imx@lists.linux.dev
+Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-usb@vger.kernel.org
-Cc: linux-hardening@vger.kernel.org
-Cc: linux@mainlining.org
-Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+Cc: bpf@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Danila Tikhonov (9):
-  dt-bindings: arm: qcom,ids: Add IDs for SM7325 family
-  soc: qcom: socinfo: Add Soc IDs for SM7325 family
-  cpufreq: Add SM7325 to cpufreq-dt-platdev blocklist
-  soc: qcom: pd_mapper: Add SM7325 compatible
-  dt-bindings: soc: qcom: qcom,pmic-glink: Document SM7325 compatible
-  usb: typec: ucsi: Add qcom,sm7325-pmic-glink as needing PDOS quirk
-  dt-bindings: arm: cpus: Add qcom kryo670 compatible
-  dt-bindings: vendor-prefixes: Add Nothing Technology Limited
-  dt-bindings: arm: qcom: Add SM7325 Nothing Phone 1
+Changes in v8:                                                             
+- Rebase to 6.11-rc1
+- Add Mani's review tags for 2, 6, 8, 9, 10
+- Add fix patch PCI: imx6: Fix missing call to phy_power_off() in error handling
+- keep enable_ref_clk(), I will add more code to make disabe/enable symtric
+- Link to v7: https://lore.kernel.org/r/20240708-pci2_upstream-v7-0-ac00b8174f89@nxp.com
 
-Eugene Lepshy (2):
-  arm64: dts: qcom: Add SM7325 device tree
-  arm64: dts: qcom: sm7325: Add device-tree for Nothing Phone 1
+Changes in v7:
+- rework commit message for PCI: imx6: Fix i.MX8MP PCIe EP's occasional failure to trigger MSI 
+- Add Mani's review tags for patch 1, 5
+- Fix errata number in commit message for patch 6
+- replace set_ref_clk with enable_ref_clk in patch 4
+- using regmap_set(clear)_bits in patch 4
+- Use exactly the same logic with original code at patch 4
+- Add errata doc link for patch 6
+- Fix miss "." at comment form patch 6.
+- order include header for patch 9
+- use cap register to set_speed for patch 9
+- use PCIe in error msg for patch 9
+- Remove reduntant ':' at patch 9' subject.
+- Change range to ranges for patch 10.
+- Change error code to -ENODEV for patch 10.
+- Link to v6: https://lore.kernel.org/r/20240617-pci2_upstream-v6-0-e0821238f997@nxp.com
 
- .../devicetree/bindings/arm/cpus.yaml         |    1 +
- .../devicetree/bindings/arm/qcom.yaml         |    6 +
- .../bindings/soc/qcom/qcom,pmic-glink.yaml    |    1 +
- .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
- arch/arm64/boot/dts/qcom/Makefile             |    1 +
- .../boot/dts/qcom/sm7325-nothing-spacewar.dts | 1261 +++++++++++++++++
- arch/arm64/boot/dts/qcom/sm7325.dtsi          |   17 +
- drivers/cpufreq/cpufreq-dt-platdev.c          |    1 +
- drivers/soc/qcom/qcom_pd_mapper.c             |    1 +
- drivers/soc/qcom/socinfo.c                    |    2 +
- drivers/usb/typec/ucsi/ucsi_glink.c           |    1 +
- include/dt-bindings/arm/qcom,ids.h            |    2 +
- 12 files changed, 1296 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/sm7325-nothing-spacewar.dts
- create mode 100644 arch/arm64/boot/dts/qcom/sm7325.dtsi
+Changes in v6:
+- Base on Linux 6.10-rc1 by Bjorn's required.
+- Remove imx95 LUT patch because it need more time to work out the
+solution. This patch add 8qxp and 8qm and support and some bug fixes.
+- Link to v5: https://lore.kernel.org/r/20240528-pci2_upstream-v5-0-750aa7edb8e2@nxp.com
 
--- 
-2.45.2
+Changes in v5:
+- Rebase to linux-pci next. fix conflict with gpiod change
+- Add rob and cornor's review tag
+- Link to v4: https://lore.kernel.org/r/20240507-pci2_upstream-v4-0-e8c80d874057@nxp.com
+
+Changes in v4:
+- Improve comment message for patch 1 and 2.
+- Rework commit message for patch 3 and add mani's review tag
+- Remove file rename patch and update maintainer patch
+- [PATCH v3 06/11] PCI: imx: Simplify switch-case logic by involve set_ref_clk callback
+	remove extra space.
+	keep original comments format (wrap at 80 column width)
+	update error message "'Failed to enable PCIe REFCLK'"
+- PATCH v3 07/11] PCI: imx: Simplify switch-case logic by involve core_reset callback
+	keep exact the logic as original code
+- Add patch to update comment about workaround ERR010728
+- Add patch about help function imx_pcie_match_device()
+- Using bus device notify to update LUT information for imx95 to avoid
+parse iommu-map and msi-map in driver code.  Bus notify will better and
+only update lut when device added.
+- split patch call PHY interface function.
+- Improve commit message for imx8q. remove local-address dts proptery. and
+use standard "range" to convert cpu address to bus address.
+- Check entry in cpu_fix function is too late. Check it at probe
+- Link to v3: https://lore.kernel.org/r/20240402-pci2_upstream-v3-0-803414bdb430@nxp.com
+
+Changes in v3:
+- Add an EP fixed patch
+  PCI: imx6: Fix PCIe link down when i.MX8MM and i.MX8MP PCIe is EP mode
+  PCI: imx6: Fix i.MX8MP PCIe EP can not trigger MSI
+- Add 8qxp rc support
+dt-bing yaml pass binding check
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8  dt_binding_check DT_SCHEMA_FILES=fsl,imx6q-pcie.yaml
+  LINT    Documentation/devicetree/bindings
+  DTEX    Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.example.dts
+  CHKDT   Documentation/devicetree/bindings/processed-schema.json
+  SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+  DTC_CHK Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.example.dtb
+
+- Link to v2: https://lore.kernel.org/r/20240304-pci2_upstream-v2-0-ad07c5eb6d67@nxp.com
+
+Changes in v2:
+- remove file to 'pcie-imx.c'
+- keep CONFIG unchange.
+- Link to v1: https://lore.kernel.org/r/20240227-pci2_upstream-v1-0-b952f8333606@nxp.com
+
+---
+Frank Li (7):
+      PCI: imx6: Fix missing call to phy_power_off() in error handling
+      PCI: imx6: Rename imx6_* with imx_*
+      PCI: imx6: Introduce SoC specific callbacks for controlling REFCLK
+      PCI: imx6: Simplify switch-case logic by involve core_reset callback
+      PCI: imx6: Improve comment for workaround ERR010728
+      PCI: imx6: Consolidate redundant if-checks
+      PCI: imx6: Call common PHY API to set mode, speed, and submode
+
+Richard Zhu (4):
+      PCI: imx6: Fix establish link failure in EP mode for iMX8MM and iMX8MP
+      PCI: imx6: Fix i.MX8MP PCIe EP's occasional failure to trigger MSI
+      dt-bindings: imx6q-pcie: Add i.MX8Q pcie compatible string
+      PCI: imx6: Add i.MX8Q PCIe root complex (RC) support
+
+ .../devicetree/bindings/pci/fsl,imx6q-pcie.yaml    |  16 +
+ drivers/pci/controller/dwc/pci-imx6.c              | 989 +++++++++++----------
+ 2 files changed, 542 insertions(+), 463 deletions(-)
+---
+base-commit: c428091cdcf7f368ad9884f8caa68b79cd6c333a
+change-id: 20240227-pci2_upstream-0cdd19a15163
+
+Best regards,
+---
+Frank Li <Frank.Li@nxp.com>
 
 
