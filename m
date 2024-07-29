@@ -1,86 +1,99 @@
-Return-Path: <linux-kernel+bounces-266116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 688CF93FB4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:34:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794E793FB38
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E8461F22435
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:34:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31BC4283E9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4C618A92E;
-	Mon, 29 Jul 2024 16:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946FB16D4C3;
+	Mon, 29 Jul 2024 16:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="fYNcVWsC"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m+1c8rKJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EF4186E46;
-	Mon, 29 Jul 2024 16:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36B9155CB3;
+	Mon, 29 Jul 2024 16:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722270470; cv=none; b=PV89FMfRGWKvYTdviz/x5/iQhi24Q3WOYeKpxQeOVl4qMSci8TveXPLZyMKwxKpDgf9TttOcwPlB7AOeQkoFiyxeRxHRJI2zFaE+6ASi3NgBZZXCX8G5Ro+3QbYtoUwTyRp5F3LAaa5aT/FcWOFjpjpk+PFh4cCckY9HiHPwyAQ=
+	t=1722270263; cv=none; b=iyQvtIb0vGnDOX6Dq9Tz+wWoUjJUKOwqmLRwSheGyv85VGSL7uJ/HrhyCVE/GHeLLHKZf0q9IRYWeQ4TZIzNpVfw2oXTfGoOgig4osN3rI/9hKC9FYAqN0egx9Psk+o/9jnYB39z1FTpH4vDSo1b2iVjBHpMCTxC1DAnYuQPQgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722270470; c=relaxed/simple;
-	bh=XXKQhSlrPr0msb++fBrVIUxJyyToBAblG0wxzgLhInU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fM6GsJMhg8sHvkhcDGwFLs7UDy3fH4yrR8lVtfijRdWyOWXy5iDEdYG5TL8pGe7IQElddsgQsAOm7403UZtZvUbyzpPKXMf2E1iTScrAbosR2qvUgu4+7le2gV53nchXocy38HjIPdPOGdsaOAQB0Ro1c9JwRbyiqB+gt39PdQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=fYNcVWsC reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 071fa75fd5c660ca; Mon, 29 Jul 2024 18:27:46 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id D270677357F;
-	Mon, 29 Jul 2024 18:27:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1722270466;
-	bh=XXKQhSlrPr0msb++fBrVIUxJyyToBAblG0wxzgLhInU=;
-	h=From:To:Cc:Subject:Date;
-	b=fYNcVWsCJDfsN1FR2rokihx1N8gzyvqgRFcuVg8XaxbqnQYyZniwr/v2U3cHEy7hk
-	 0FdI8z81YQ67sNU4uIbgaLOOjFp9xltKg7nxRrxbd0mScmstGXO6PqHqXmimblJBYw
-	 /hIzoHjGmXm2sY0HbX/76GWr73sQOgSkkyc7T9uCy4B9m81cwWu7WI/jBq2GbBanBU
-	 e2+2L/Wp6T6Vb7g/+K3KPL9Cc5LYhGhue4i+AuVL9dcTsjSsPHFeyocav6gNnW92As
-	 qv/D2lIZR7kiEMpDA3Nwebb707jW5h4ZdiHK3Sa2gUWRZKzeQGqQb4OAam7Kd7RquB
-	 xzehvBnf0ONug==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>
-Subject:
- [PATCH v1 0/3] thermal: sysfs: Get to trip attributes via the attribute
- argument of show/store
-Date: Mon, 29 Jul 2024 18:24:02 +0200
-Message-ID: <1960840.taCxCBeP46@rjwysocki.net>
+	s=arc-20240116; t=1722270263; c=relaxed/simple;
+	bh=l8H2IXNduLjaDFq4uzdv2ABfSwp1JmIL297CIumWoH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b82YJ1StO4sTNF2mZRUkjb0JHu9/plPnr3UZN2Qt9y5CAxHyyEMiMPyDscFSQp7kKWxB00QrT24Gt+opkCTHb0Ocnp8V1rztC3SAkDA5xVGv0qA2xjDRj4FeVoQPnUj3GRFati+c97gT3HcEBgzTl7nntjeQRHQwsTPG9yTTf4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m+1c8rKJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34FD1C32786;
+	Mon, 29 Jul 2024 16:24:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722270263;
+	bh=l8H2IXNduLjaDFq4uzdv2ABfSwp1JmIL297CIumWoH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m+1c8rKJD+oaqxi/02EDAQuLll17nKIH9QHqxOYX1qCasqal85zLqU4akTuDz+3rO
+	 I6m1jhOlerd1GzYGp50LTjIIg0grmhOWBomsAwSz8z3JvTTlrVZ0XtC+MgmpkSFVMl
+	 Z93OMHMz21smvszr3lxoiwXAFBOoWLRwJEpD8J7120wa65RsBXZkS7Tbss0WDBfF+e
+	 gHpQaIv1ko0x0leR19wL37wXHqqsmxiX4Z9S72e5Qg66lk7uPOkVHcn70LmWMSMxvy
+	 79wQME/KN7GraryR8vyDwcGzsEmDHys7v6fpiWZ5Ow5G2AqCrQGQ4RGo92rrWEsGch
+	 W7B7EE0hL2kqw==
+Date: Mon, 29 Jul 2024 10:24:20 -0600
+From: Rob Herring <robh@kernel.org>
+To: Varshini Rajendran <varshini.rajendran@microchip.com>
+Cc: tglx@linutronix.de, krzk+dt@kernel.org, conor+dt@kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev, dharma.b@microchip.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 16/27] dt-bindings: interrupt-controller: Add support
+ for sam9x7 aic
+Message-ID: <20240729162420.GA855988-robh@kernel.org>
+References: <20240729065603.1986074-1-varshini.rajendran@microchip.com>
+ <20240729070818.1991013-1-varshini.rajendran@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrjedvgddutddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepffffffekgfehheffleetieevfeefvefhleetjedvvdeijeejledvieehueevueffnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepgedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729070818.1991013-1-varshini.rajendran@microchip.com>
 
-Hi Everyone,
+On Mon, Jul 29, 2024 at 12:38:18PM +0530, Varshini Rajendran wrote:
+> Document the support added for the Advanced interrupt controller(AIC)
+> chip in the sam9x7 SoC family.
 
-This series reworks the trip point sysfs interface to get to trips via the
-attribute argument of show/store instead of using the attribute name to get
-a trip ID and look up a trip using it.
+The diff tells us that. What would be useful is how it's different from 
+prior designs. Number of interrupts for example...
 
-It also adds a small cleanup (the last patch) for a good measure.
-
-Thanks!
-
-
-
+> 
+> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+> ---
+> Changes in v6:
+> 
+>  - Changed the compatible list to only sam9x7's. Removed the Acked-by
+>    tag as there is functional change in the patch.
+> ---
+>  .../devicetree/bindings/interrupt-controller/atmel,aic.yaml      | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.yaml b/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.yaml
+> index d4658fe3867c..d671ed884c9e 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.yaml
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.yaml
+> @@ -23,6 +23,7 @@ properties:
+>        - atmel,sama5d3-aic
+>        - atmel,sama5d4-aic
+>        - microchip,sam9x60-aic
+> +      - microchip,sam9x7-aic
+>  
+>    reg:
+>      maxItems: 1
+> -- 
+> 2.25.1
+> 
 
