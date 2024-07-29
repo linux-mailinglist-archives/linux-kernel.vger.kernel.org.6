@@ -1,135 +1,147 @@
-Return-Path: <linux-kernel+bounces-265295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6184293EF35
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:57:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B484F93EF37
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B1F028357D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:57:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70F37283744
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9059B1353FE;
-	Mon, 29 Jul 2024 07:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E601B12EBF2;
+	Mon, 29 Jul 2024 07:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="SgN9VmcE"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D54130A7D
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FAegundN"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D348812C554;
+	Mon, 29 Jul 2024 07:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722239834; cv=none; b=ZHKfFtTcLgcAnd+idTy0WPrAiC/jF3md7PzO7xAMjvMPrh44srYUFNMaj0svm95OQ/mMH4N+L3tMJqQT7WAnmzWaku3lq9xngc6hogMSK7KXBz71AHV92qMIpcf0crh92LuORMqaVW74nQQRM/lP0RN0g0Tqw7UG3f+HnfqOKm0=
+	t=1722239847; cv=none; b=ON9FlCVfV7p/S5/DZ6kZ0kZouvGi1kZR6nmiS2KsSt5wFB45srmsxvPf2gI++OK6ulWzJZ5jQjuSAsDVIoEuExFJTDSzxYZodcu1YPcxsAoAAeFpLMl4asKxZKgScGH9FN6G9IEue8Nmjb9NcObqngiOoNnDfABty0JMlqx8A9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722239834; c=relaxed/simple;
-	bh=0pmFYSHLJF0nMzU2zthIKlZ+WNb7UahZwvJRW0ih96A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=epNOQQAnA0c2CgHQR7GgdrUJA/WUOExjPshjaPgAvIslMzLTaEIVQF6BF7FnUqLLK13lwrr9PpL6HisvMm4PznqFmXlp/wVQ7rkBf6j/pPQgxZz3cRlib42egFTcZuZvGFqv+/a8oi7mhrq/29Lho3RvS9iBdjVF6/8fJd/4Gcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=SgN9VmcE; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=S6sW
-	8jss2M4MV9hL7QWF2v02HzjqcI4qjr5zZRvln24=; b=SgN9VmcERgrdVXChYvaw
-	bM2fqXK+pCRFxN2ZrlUZs2OfHc5fF1qNf3r/3LGfdW/LxVafTLcZ9vPQDFYM3XLl
-	Lloo+/I3Q4ovvaYXYkx+K1PgLNhjIqAaCrL3QUuonnjf1Cv5VLWw1vLqvFzvogXZ
-	JToShLrixaZaGv/DulH6k/3X2tEh59sAry35Hg8mgOoRRvv/B8bbOi/XTWZNyHq/
-	gBxyVDzLz/L++BS6dAaaKGQVH0J/xfBramvTAq28rIVgF7JOWPegCEjXm8Ggr3ep
-	WHLYD6/I3Wo8NrOrojyQejhrc7dN4dr04ypsGxYdzb+Ix96zVd9Aov5CabS4plfh
-	7w==
-Received: (qmail 4023567 invoked from network); 29 Jul 2024 09:57:10 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Jul 2024 09:57:10 +0200
-X-UD-Smtp-Session: l3s3148p1@NcdPNV4eWIcujnsv
-Date: Mon, 29 Jul 2024 09:57:10 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Wolfram Sang <wsa@kernel.org>, Jean Delvare <khali@linux-fr.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] i2c: smbus: Send alert notifications to all devices
- if source not found
-Message-ID: <ZqdLVg6IVTjsTWb4@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <linux@roeck-us.net>, Wolfram Sang <wsa@kernel.org>,
-	Jean Delvare <khali@linux-fr.org>, linux-i2c@vger.kernel.org,
+	s=arc-20240116; t=1722239847; c=relaxed/simple;
+	bh=E+4ng40p84sYiLuqrBr5jcgXIrWa8wstAWyUiSRq6ew=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=ffGjvdp67vuXA2d0cOj5lGDM/3cTFrKHBNuVmooGNzoFKYeaaedjbrEc6ch29t6ahNsAoe/McmmX+QL9ZIM+YSh34+BRVF5X9rqMBt38YP39p91PXQUBFxdI+NFb7x06tG1STYN6RnoXDeiGjGj7XkprUf+XJF/yMH+fR0GLRso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=FAegundN; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 5ACFD20B7165;
+	Mon, 29 Jul 2024 00:57:25 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5ACFD20B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1722239845;
+	bh=N+yZOFi8rOxscuUS9f+CxqP9fQTSJt1NSxQLvBCFrNU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FAegundNMv1TUQNp/1EqB9u/BQRMyrre6c6JwfsCFJoe71y8wPTA+DUxKfUmtcoZe
+	 rz5DBBwSXV4oGlQQY+8KTqXCoPnvWphgG/x6+pPLdTRNeHIYqcIPvHIn7gEIKWOK6/
+	 3YEtEZ3iiR+RUnGLuPEtIW0zNJMDNUIOCS3WnrN0=
+From: Saurabh Sengar <ssengar@linux.microsoft.com>
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	linux-hyperv@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-References: <20220110172857.2980523-1-linux@roeck-us.net>
- <20220110172857.2980523-3-linux@roeck-us.net>
- <ZqakaAn3f9Kg6Lgy@shikoro>
- <7ad68f35-2e90-41b7-a95d-efe5f7db8f3b@roeck-us.net>
+Cc: ssengar@microsoft.com,
+	srivatsa@csail.mit.edu
+Subject: [PATCH v2] Drivers: hv: vmbus: Optimize boot time by concurrent execution of hv_synic_init()
+Date: Mon, 29 Jul 2024 00:57:18 -0700
+Message-Id: <1722239838-10957-1-git-send-email-ssengar@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="A2G7ZnwO/aPIJdKm"
-Content-Disposition: inline
-In-Reply-To: <7ad68f35-2e90-41b7-a95d-efe5f7db8f3b@roeck-us.net>
+
+Currently on a very large system with 1780 CPUs, hv_acpi_init() takes
+around 3 seconds to complete. This is because of sequential synic
+initialization for each CPU performed by hv_synic_init().
+
+Schedule these tasks parallelly so that each CPU executes hv_synic_init()
+in parallel to take full advantage of multiple CPUs.
+
+This solution saves around 2 seconds of boot time on a 1780 CPU system,
+which is around 66% improvement in the existing logic.
+
+Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+---
+[V2]
+ - used cpuhp_setup_state_nocalls_cpuslocked instead of internal function
+ - improve commit message and subject
+ - Added a comment for cpu hotplug callback
 
 
---A2G7ZnwO/aPIJdKm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+ drivers/hv/vmbus_drv.c | 34 +++++++++++++++++++++++++++++++---
+ 1 file changed, 31 insertions(+), 3 deletions(-)
 
-Hi Guenter,
+diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+index c857dc3975be..f769b34445b8 100644
+--- a/drivers/hv/vmbus_drv.c
++++ b/drivers/hv/vmbus_drv.c
+@@ -1306,6 +1306,13 @@ static irqreturn_t vmbus_percpu_isr(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
++static void vmbus_percpu_work(struct work_struct *work)
++{
++	unsigned int cpu = smp_processor_id();
++
++	hv_synic_init(cpu);
++}
++
+ /*
+  * vmbus_bus_init -Main vmbus driver initialization routine.
+  *
+@@ -1316,7 +1323,8 @@ static irqreturn_t vmbus_percpu_isr(int irq, void *dev_id)
+  */
+ static int vmbus_bus_init(void)
+ {
+-	int ret;
++	int ret, cpu;
++	struct work_struct __percpu *works;
+ 
+ 	ret = hv_init();
+ 	if (ret != 0) {
+@@ -1355,12 +1363,32 @@ static int vmbus_bus_init(void)
+ 	if (ret)
+ 		goto err_alloc;
+ 
++	works = alloc_percpu(struct work_struct);
++	if (!works) {
++		ret = -ENOMEM;
++		goto err_alloc;
++	}
++
+ 	/*
+ 	 * Initialize the per-cpu interrupt state and stimer state.
+ 	 * Then connect to the host.
+ 	 */
+-	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "hyperv/vmbus:online",
+-				hv_synic_init, hv_synic_cleanup);
++	cpus_read_lock();
++	for_each_online_cpu(cpu) {
++		struct work_struct *work = per_cpu_ptr(works, cpu);
++
++		INIT_WORK(work, vmbus_percpu_work);
++		schedule_work_on(cpu, work);
++	}
++
++	for_each_online_cpu(cpu)
++		flush_work(per_cpu_ptr(works, cpu));
++
++	/* register the callback for hotplug CPUs */
++	ret = cpuhp_setup_state_nocalls_cpuslocked(CPUHP_AP_ONLINE_DYN, "hyperv/vmbus:online",
++						   hv_synic_init, hv_synic_cleanup);
++	cpus_read_unlock();
++	free_percpu(works);
+ 	if (ret < 0)
+ 		goto err_alloc;
+ 	hyperv_cpuhp_online = ret;
+-- 
+2.43.0
 
-thanks for the feedback!
-
-> > High level question: why the retry? Did you experience address
-> > collisions going away on the second try? My guess is that they would be
-> > mostly persistent, so we could call smbus_do_alert_force() right away?
-> >=20
->=20
-> I honestly don't recall. I had some brute force code to trigger alerts
-> on connected chips. Maybe the idea was to catch situations where another
-> alert was raised after or during the first cycle.
-
-Hmm, I'd think that SMBAlert then stays asserted and the whole alert
-handling will be started right away a second time? Given that all
-hardware works correctly, of course. Your setup showed that arbitration
-does not work well with actual hardware. Props for finding this out!
-
-> As for "call smbus_do_alert_force() right away", I am not sure I understa=
-nd.
-> Isn't that what the code is doing twice ?
-
-It calls smbus_do_alert() twice (without '_force'). If that fails, it
-calls the _force version. I am wondering now if we can't call the _force
-version right after smbus_do_alert() fails once. Meaning we could remove
-all the "retries" code from your patch. If there is no clear reason for
-the code, not having it is easier to maintain. That's why I ask.
-
-I hope the question is understandable now.
-
-Happy hacking,
-
-   Wolfram
-
-
---A2G7ZnwO/aPIJdKm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmanS1YACgkQFA3kzBSg
-Kbb4ZBAApJjcmr3njHPjN4DXoGobRQFLog923G+cg4ZC0nVItt0/CKt8yG4+EcVi
-9Gs0CRvtq5HL3OuA1cxConwyAaXBFZKckZHOOklV/r/lktCqzl9kWstQ0WTWAYbV
-VBQEIKsViER0KCVJZazzQGP8PmPjZNyZcvVAYo9AgQ0AGzvuEntLDAQpjkNv4ILw
-NrQ19d2SfLeWxlg3RjfzWayVpD7quwVgSeDdCrizzBYHInXBltBGAEOWSqnX/eJm
-FEp3sWoNySjnwKo/S02cfyFILTIsnnL+PCiBho+icgFY4TrVKM4D6ijjzmbTcAMf
-uH/QzH2AWrJ/l1GopCnFTRXZBuHnNq2z/TAdztRUnjdwMFsdA99Pg81JQO4VkNou
-c+qE679nKaIsSFtvJjO5bW65ztfXbo5mIAXfyApUTsNzeMc7A7DagcnoaagNC8TK
-a6jbzEom/eO2+E4cNX5vUyDEic/5i8zO1dsywKjhE15lwBMdY7roqfDv91epKo7f
-fRWOeZfPrUGWptZ8iLD/D3fbc1OmYQeZWJ0TboYvrAHc9eGMkTo/ceab+2eJgygm
-apq+tL034wBB+pr/vXNb70FT+DNyvb1ztKsqERujiBhcd1MApk5wnZub+s24uXOL
-fe4vhTsbctm2Nfe0DflhZcHKGmtGg6hzn44XdduJ6SBcYCIJfmY=
-=AHUN
------END PGP SIGNATURE-----
-
---A2G7ZnwO/aPIJdKm--
 
