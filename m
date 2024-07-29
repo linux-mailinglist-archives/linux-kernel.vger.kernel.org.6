@@ -1,159 +1,183 @@
-Return-Path: <linux-kernel+bounces-265872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D042193F712
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:53:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6AF93F71B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDE111C21C80
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:53:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DACCF1C21A9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3477D14F115;
-	Mon, 29 Jul 2024 13:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DCD14F9EE;
+	Mon, 29 Jul 2024 13:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DhKZrnP3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U4KY2sbU"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88ECD14B07E
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D87D14F133
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722261222; cv=none; b=oYBBrnIUttZ4CNRu6LMxnIJBkmNL4wT2HwzNJRpjrvhYw0uQj2i+nT95sWfYik9PNC0MbxTVsk1P0QTTz7eWFkyBjCRV+3v/eqxYWc0gn1y5IM2NtZFXOJOxdjGqA8ggFvVoKA8tc9715IqgdBPWLkcNx7qx1WcMo3us0lDKMLE=
+	t=1722261356; cv=none; b=TiuDGJ+lILk1ESN3o5CSNfvKEQkwCwXUZ55LooTFYNHtNK1yyWg+oEk05zJdSn/3Wmm7vWEJWcDWrMtAaxRxs/twpw1vkSoV7IvhatjyXaOmaPZ4a920uA4/uC+KEhD3nZsLtTmwAoir2f/vfFaMy4Csa7RxgGcO+kJzt7tCSCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722261222; c=relaxed/simple;
-	bh=zevFigggh9gav77vOeUqQEZLN00S3klYyCxmhPrpO0k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WMBqcsm1ESG07uQuCXzf6N/kxd84hBijmdJNN0a8MikMBOGV/dRh3RqrBldCDCwwHfsgoybjy4ID/Gvn4MuuWm8fV5VLOP58KA06DKXoBEaQVzNnm62vwXYtZKmeJ05vjp4alNiia9S2wdHxxSykt08pTudyGV0WHAXUrDrSFuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DhKZrnP3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722261219;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6yEq5CChoNdWngYsHC+lDcujFG99veLH/xTIPSOMsNE=;
-	b=DhKZrnP3TxhUnvl5fLyd12xOmSxvn4skU5fsVqsQEV2PT8pCCWG/snxQSYP+VTDtLyRo90
-	Gpjvpz1poJL9YSYjHOXtWRY8rEVO6jkk+BtlifOZvFf6yzfjiYvc+00vnClJDauvtOWjqT
-	W+zda9g/c/ZUCPEZV6kUQdqLMPJVYxs=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-244-fgaIHUdIO5itErucwhmKSQ-1; Mon, 29 Jul 2024 09:53:38 -0400
-X-MC-Unique: fgaIHUdIO5itErucwhmKSQ-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4280c0b3017so19521165e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:53:38 -0700 (PDT)
+	s=arc-20240116; t=1722261356; c=relaxed/simple;
+	bh=8FsX442TrJAitQSS3/8Wi6HaPs2O4RrdmTumQLmlQb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rHx1nrZF5PG9jROZSFf/GkkxYTN94Jy22Opa6WXbvp4NT6gnAPUYFruCLTybPvdnKnGLwXL4KR7PdkO5XMioMDJPHAIYsal1qdY9yWDy24szTOuqWqwH2kWyvL0VbXMcjTxkdUil8EEj9JPOH2v2a1JuPGmBgkVSxMFf+OM2f6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U4KY2sbU; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc587361b6so19045885ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:55:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722261354; x=1722866154; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2+5OClieG7NMsxupjTRDIrQz18pxxk1qh4xfUGzZfN8=;
+        b=U4KY2sbUlQ+SfvNX06BGHJspNBXGmaQzO9G2WDUwl30n2dASLf2b/X8nOCj6Gr2m4R
+         hwOCKZYPQ8R7wLbjybJ2jtwFrnHzD/YAZW/gF/khlto84BzhJRi5S7WirsgA+GBCMQVc
+         1ECMTzD9/anDU7NAkiA640Cu12i32DPSXdwgyixexENmfdAeqaqawvn+gHTAmZnI4JlF
+         +StNvFxrr9vxajNKnbWkv6Mr0DlhMOjf09c14B1YkmIGF1DZ6C/HlLARQGeUYENFYnAY
+         kSHTDfef5ZmSK5d51YsCqV6uSdRb1S3pFDMOu4taZlEQ5ZwJH6cj9DmBJ2GlTSCac9Rd
+         3UjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722261217; x=1722866017;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6yEq5CChoNdWngYsHC+lDcujFG99veLH/xTIPSOMsNE=;
-        b=FD2VOq2z/MWyx6T8pz+DfojPQIkmqCmp23RqHkG+eIsCTL5C6MZY19BnpfF96SnBPI
-         FrXDeh9/euwJ2kn1idwaI6NrR2EJsEDpXvoA5ysk9sVJkZpAtF0JO+mEqRz80f/SSkcU
-         xggMhPqg7YzU0yRXl9DN+NQRB8B1WlYolRo3No9lHv+m3z1mI5t+NpVtTPuUOkL3j+CW
-         GOPB7w9sXmraD8Q1xwzNZlagylwHGlNuY9VbIwXVZ3CiUufi+kKBfGf+uHQUwIug0GLg
-         j/93H06XJc+/5U1oLM/bOFD+g4KOuyHzqOfi+bMKEyStbezVTOGysEsMeASHq30gZfPa
-         6BEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWD6BL/RaYKKykHpXeYOLii/M1khaAcko1Wpbb4V6vQaNhnPCIrvrPx+Klw/nzda1CajxVJt1RpvgDQq8njD5OwVyaNjiDwasnNcZ/n
-X-Gm-Message-State: AOJu0Yx1F/tkThi4XTo/vJGCPTeuPPsYneMKL+rZp++kBmGHCaUhT7Z4
-	kWianFflGv05ZduiMNAVG0hgUaD8cGaOxPXCWCb8r5kaxvS5+YQIYbVbheKXRzLzvl9iUPWRWTq
-	qqihpVRcGZzj/aO7WSz+ARCrxytlt1z3rnM/6cSTBt2viUc0U8B/5Syfr+vlIjA==
-X-Received: by 2002:a05:600c:444d:b0:426:65bf:5cc2 with SMTP id 5b1f17b1804b1-42811d83c38mr50666375e9.1.1722261216883;
-        Mon, 29 Jul 2024 06:53:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEQ34nlwG6HFfNMqNvetJJ+pbG8/TxeOUBuPfISPhjduWTs2MRaELaUuF0Pc7fNro9Ocof+NQ==
-X-Received: by 2002:a05:600c:444d:b0:426:65bf:5cc2 with SMTP id 5b1f17b1804b1-42811d83c38mr50666185e9.1.1722261216359;
-        Mon, 29 Jul 2024 06:53:36 -0700 (PDT)
-Received: from fedora (g2.ign.cz. [91.219.240.8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280d13570bsm123111095e9.7.2024.07.29.06.53.35
+        d=1e100.net; s=20230601; t=1722261354; x=1722866154;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2+5OClieG7NMsxupjTRDIrQz18pxxk1qh4xfUGzZfN8=;
+        b=jIkpxZ5gKhCi7QigubLhfQMArTzaHY6F1xN4eNufXE2TeVMD2mnNQbDuNY8L45jWKc
+         Dedd5Pn7NOtrJ0t02H1Fq7dQ+RLxBDN8tvylGSydSzud6xaN4dn27qUATshV4eL4Phii
+         F58Lzwn9WLJEA6sXYsIJ0slMyanwJeJuVROeFZARH5Aj619s0WFX5dCIu+GoANitSulT
+         mimG0/64ld8Jun/o6FbutoaUbivpeV6rs/qactoY54Gco1BXiMBRTHzecqC0lKla08Jf
+         kAXqv02sFoiPLDIC2Y6XBIhCvDqFsCcOSDt4SOAd40gVK7PNh0qpjUDCxtFmSgnwWOop
+         eAJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVh9zRXeNWAiS3/cjzgV1Mq8cR08xwMDXcNv9RTrf5p18zCbij135YD1bxEjB753xKRsYgIYrtMXUzYq4lb681Egiq1bz9t0qj/wK40
+X-Gm-Message-State: AOJu0YzNGghYGGd/BrH22sfqbqNA6PS2RvHJSwY4LmNrWDpTIfU5R48f
+	gUIci6OB2X+s28yRU1M2M6o2Odo2OfdCXHyxwm3FpOi9MKOYLxsn/jxMiAjNPQ==
+X-Google-Smtp-Source: AGHT+IEpWREOXzCfJ/w7X4EUv4bKcIueXlIPDaNU2qeXOLxxg9D0oeCWz2ilLfsq+HJr3p5t97hNzA==
+X-Received: by 2002:a17:902:ea02:b0:1fd:d7a7:f581 with SMTP id d9443c01a7336-1ff047e4613mr70860035ad.7.1722261354184;
+        Mon, 29 Jul 2024 06:55:54 -0700 (PDT)
+Received: from thinkpad ([120.60.74.128])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fe9cccsm82678495ad.289.2024.07.29.06.55.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 06:53:36 -0700 (PDT)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Nicolas Saenz Julienne <nsaenz@amazon.com>,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: pbonzini@redhat.com, seanjc@google.com, linux-doc@vger.kernel.org,
- linux-hyperv@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, graf@amazon.de, dwmw2@infradead.org,
- pdurrant@amazon.com, mlevitsk@redhat.com, jgowans@amazon.com,
- corbet@lwn.net, decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
- amoorthy@google.com
-Subject: Re: [PATCH 01/18] KVM: x86: hyper-v: Introduce XMM output support
-In-Reply-To: <D2RVJ6QCVNOU.XC0OC54QHI51@amazon.com>
-References: <20240609154945.55332-1-nsaenz@amazon.com>
- <20240609154945.55332-2-nsaenz@amazon.com> <87tth0rku3.fsf@redhat.com>
- <D2RVJ6QCVNOU.XC0OC54QHI51@amazon.com>
-Date: Mon, 29 Jul 2024 15:53:34 +0200
-Message-ID: <878qxk5mox.fsf@redhat.com>
+        Mon, 29 Jul 2024 06:55:53 -0700 (PDT)
+Date: Mon, 29 Jul 2024 19:25:47 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: qcom-ep: Move controller cleanups to
+ qcom_pcie_perst_deassert()
+Message-ID: <20240729135547.GA35559@thinkpad>
+References: <20240729122245.33410-1-manivannan.sadhasivam@linaro.org>
+ <98264d15-fb30-32e0-7eba-72b3a50347e0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <98264d15-fb30-32e0-7eba-72b3a50347e0@quicinc.com>
 
-Nicolas Saenz Julienne <nsaenz@amazon.com> writes:
+On Mon, Jul 29, 2024 at 05:58:31PM +0530, Krishna Chaitanya Chundru wrote:
+> 
+> 
+> On 7/29/2024 5:52 PM, Manivannan Sadhasivam wrote:
+> > Currently, the endpoint cleanup function dw_pcie_ep_cleanup() and EPF
+> > deinit notify function pci_epc_deinit_notify() are called during the
+> > execution of qcom_pcie_perst_assert() i.e., when the host has asserted
+> > PERST#. But quickly after this step, refclk will also be disabled by the
+> > host.
+> > 
+> > All of the Qcom endpoint SoCs supported as of now depend on the refclk from
+> > the host for keeping the controller operational. Due to this limitation,
+> > any access to the hardware registers in the absence of refclk will result
+> > in a whole endpoint crash. Unfortunately, most of the controller cleanups
+> > require accessing the hardware registers (like eDMA cleanup performed in
+> > dw_pcie_ep_cleanup(), powering down MHI EPF etc...). So these cleanup
+> > functions are currently causing the crash in the endpoint SoC once host
+> > asserts PERST#.
+> > 
+> > One way to address this issue is by generating the refclk in the endpoint
+> > itself and not depending on the host. But that is not always possible as
+> > some of the endpoint designs do require the endpoint to consume refclk from
+> > the host (as I was told by the Qcom engineers).
+> > 
+> > So let's fix this crash by moving the controller cleanups to the start of
+> > the qcom_pcie_perst_deassert() function. qcom_pcie_perst_deassert() is
+> > called whenever the host has deasserted PERST# and it is guaranteed that
+> > the refclk would be active at this point. So at the start of this function,
+> > the controller cleanup can be performed. Once finished, rest of the code
+> > execution for PERST# deassert can continue as usual.
+> > 
+> How about doing the cleanup as part of pme turnoff message.
+> As host waits for L23 ready from the device side. we can use that time
+> to cleanup the host before sending L23 ready.
+> 
 
-> Hi Vitaly,
-> Thanks for having a look at this.
->
-> On Mon Jul 8, 2024 at 2:59 PM UTC, Vitaly Kuznetsov wrote:
->> Nicolas Saenz Julienne <nsaenz@amazon.com> writes:
->>
->> > Prepare infrastructure to be able to return data through the XMM
->> > registers when Hyper-V hypercalls are issues in fast mode. The XMM
->> > registers are exposed to user-space through KVM_EXIT_HYPERV_HCALL and
->> > restored on successful hypercall completion.
->> >
->> > Signed-off-by: Nicolas Saenz Julienne <nsaenz@amazon.com>
->> >
->> > ---
->> >
->> > There was some discussion in the RFC about whether growing 'struct
->> > kvm_hyperv_exit' is ABI breakage. IMO it isn't:
->> > - There is padding in 'struct kvm_run' that ensures that a bigger
->> >   'struct kvm_hyperv_exit' doesn't alter the offsets within that struct.
->> > - Adding a new field at the bottom of the 'hcall' field within the
->> >   'struct kvm_hyperv_exit' should be fine as well, as it doesn't alter
->> >   the offsets within that struct either.
->> > - Ultimately, previous updates to 'struct kvm_hyperv_exit's hint that
->> >   its size isn't part of the uABI. It already grew when syndbg was
->> >   introduced.
->>
->> Yes but SYNDBG exit comes with KVM_EXIT_HYPERV_SYNDBG. While I don't see
->> any immediate issues with the current approach, we may want to introduce
->> something like KVM_EXIT_HYPERV_HCALL_XMM: the userspace must be prepared
->> to handle this new information anyway and it is better to make
->> unprepared userspace fail with 'unknown exit' then to mishandle a
->> hypercall by ignoring XMM portion of the data.
->
-> OK, I'll go that way. Just wanted to get a better understanding of why
-> you felt it was necessary.
->
+Yes, but that's only applicable if the host properly powers down the device. But
+it won't work in the case of host crash or host abrupt poweroff.
 
-(sorry for delayed reply, I was on vacation)
+- Mani
 
-I don't think it's an absolute must but it appears as a cleaner approach
-to me. 
-
-Imagine there's some userspace which handles KVM_EXIT_HYPERV_HCALL today
-and we want to add XMM handling there. How would we know if xmm portion
-of the data is actually filled by KVM or not? With your patch, we can of
-course check for HV_X64_HYPERCALL_XMM_OUTPUT_AVAILABLE in
-KVM_GET_SUPPORTED_HV_CPUID but this is not really straightforward, is
-it? Checking the size is not good either. E.g. think about downstream
-versions of KVM which may or may not have certain backports. In case we
-(theoretically) do several additions to 'struct kvm_hyperv_exit', it
-will quickly become a nightmare.
-
-On the contrary, KVM_EXIT_HYPERV_HCALL_XMM (or just
-KVM_EXIT_HYPERV_HCALL2) approach looks cleaner: once userspace sees it,
-it knows that 'xmm' portion of the data can be relied upon.
+> - Krishna Chaitanya.
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >   drivers/pci/controller/dwc/pcie-qcom-ep.c | 12 ++++++++++--
+> >   1 file changed, 10 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> > index 2319ff2ae9f6..e024b4dcd76d 100644
+> > --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> > +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> > @@ -186,6 +186,8 @@ struct qcom_pcie_ep_cfg {
+> >    * @link_status: PCIe Link status
+> >    * @global_irq: Qualcomm PCIe specific Global IRQ
+> >    * @perst_irq: PERST# IRQ
+> > + * @cleanup_pending: Cleanup is pending for the controller (because refclk is
+> > + *                   needed for cleanup)
+> >    */
+> >   struct qcom_pcie_ep {
+> >   	struct dw_pcie pci;
+> > @@ -214,6 +216,7 @@ struct qcom_pcie_ep {
+> >   	enum qcom_pcie_ep_link_status link_status;
+> >   	int global_irq;
+> >   	int perst_irq;
+> > +	bool cleanup_pending;
+> >   };
+> >   static int qcom_pcie_ep_core_reset(struct qcom_pcie_ep *pcie_ep)
+> > @@ -389,6 +392,12 @@ static int qcom_pcie_perst_deassert(struct dw_pcie *pci)
+> >   		return ret;
+> >   	}
+> > +	if (pcie_ep->cleanup_pending) {
+> > +		pci_epc_deinit_notify(pci->ep.epc);
+> > +		dw_pcie_ep_cleanup(&pci->ep);
+> > +		pcie_ep->cleanup_pending = false;
+> > +	}
+> > +
+> >   	/* Assert WAKE# to RC to indicate device is ready */
+> >   	gpiod_set_value_cansleep(pcie_ep->wake, 1);
+> >   	usleep_range(WAKE_DELAY_US, WAKE_DELAY_US + 500);
+> > @@ -522,10 +531,9 @@ static void qcom_pcie_perst_assert(struct dw_pcie *pci)
+> >   {
+> >   	struct qcom_pcie_ep *pcie_ep = to_pcie_ep(pci);
+> > -	pci_epc_deinit_notify(pci->ep.epc);
+> > -	dw_pcie_ep_cleanup(&pci->ep);
+> >   	qcom_pcie_disable_resources(pcie_ep);
+> >   	pcie_ep->link_status = QCOM_PCIE_EP_LINK_DISABLED;
+> > +	pcie_ep->cleanup_pending = true;
+> >   }
+> >   /* Common DWC controller ops */
 
 -- 
-Vitaly
-
+மணிவண்ணன் சதாசிவம்
 
