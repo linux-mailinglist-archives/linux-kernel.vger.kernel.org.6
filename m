@@ -1,129 +1,188 @@
-Return-Path: <linux-kernel+bounces-266430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33AFD93FFCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 516FD93FFD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7A60283CDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:52:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3A55283D20
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780EB1891B8;
-	Mon, 29 Jul 2024 20:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A5518786A;
+	Mon, 29 Jul 2024 20:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="UZPB3l3h"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ineyUz0G"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884A483A19
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8811E187340
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722286336; cv=none; b=iKpFhlPTHvokHHFoD/khTfnLdBvlqNFebqUDI6EULZSAJC8F99CEZVna2XveuyQ28mjE1dewozTimPqX3Aca0qqcUoKczALL4SMSjhP25TmU0ohmrO7+4GUIxZEyMbIeZ0jwlYHB7C/Fl+WNGmu0nVW6/GLkTFPVD25Fm9JlW8w=
+	t=1722286388; cv=none; b=BgqE5Q9VtxwjnzVs5ZDLiAWAfDSonus4iauDhVGNfcItbOLrXNAYvMubwdn1q2qKZ7rfwONKM6rRldXFqOlwN8myFLEWmTwYVDGBKjZm0QwpmXtQu2WxNPA3CFYstnCu2NkkqbpMJ3SDYFOdei4oewO5qq7I6X4DHw9WcmpnuPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722286336; c=relaxed/simple;
-	bh=Ra1T5q4RNazRGN8kU1OO8fgNtI1jjkVQcxvAH+SiBTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DxZ+uvhBlu+GBZYQvNxNIF9ICONscK0kwhSlDaxjX1ftExRzlmwk+WyIjiRzKPiuOobdn9Cs7t5OpQef6hX8GGi8pPBBdMjeCO/ukzga31dskKvODcZo5TL3CuKmn4UZ2xoXFMx17pTsoWb4Ag8hxx47jo6leheT9RKemEVnjY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=UZPB3l3h; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=BDCN
-	a0vDyLIBvZBo2xSTpcs0HzDlyX3pc8pgUvgJSNc=; b=UZPB3l3hdotF+X4k6YUd
-	r9OaXaIVn6AjlDwdC6kZ/ppKg766uTU/69Z/zg1rD+jhuKMZML08Z1q1DFtm9RsT
-	/WoctJ2KkNa80i47nwm5N4M8h141zzod7OLHgUypbEETYaicdLsXVSkD8OdnSkSx
-	XRRqaJU3GKTeJBZS01T0uEiR9BdKe+mCVckT9pDPT902zZTnorvQe6gE87fZbo66
-	9pkQmI5+5FH7+pG2VGfusXDajchRsSQ72Qdmetg7HepLbiP3wDx9RqB4a4tudb/G
-	CVm8eUMskVYholImeaRYVopeDCm0uDr2k6LChMHEycVTdp0wQ+VJbKiK10quYTdz
-	Qw==
-Received: (qmail 13399 invoked from network); 29 Jul 2024 22:52:09 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Jul 2024 22:52:09 +0200
-X-UD-Smtp-Session: l3s3148p1@O6rcCGkemsEujnsv
-Date: Mon, 29 Jul 2024 22:52:09 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Wolfram Sang <wsa@kernel.org>, Jean Delvare <khali@linux-fr.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] i2c: smbus: Send alert notifications to all devices
- if source not found
-Message-ID: <ZqgA-Qo8bccaouUr@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <linux@roeck-us.net>, Wolfram Sang <wsa@kernel.org>,
-	Jean Delvare <khali@linux-fr.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20220110172857.2980523-1-linux@roeck-us.net>
- <20220110172857.2980523-3-linux@roeck-us.net>
- <ZqakaAn3f9Kg6Lgy@shikoro>
- <7ad68f35-2e90-41b7-a95d-efe5f7db8f3b@roeck-us.net>
- <ZqdLVg6IVTjsTWb4@shikoro>
- <3adf0b8f-2e12-413a-a76f-866e56bf096c@roeck-us.net>
- <ZqfhPffOTu53bfwU@shikoro>
- <c58ca576-2763-4f73-bc0e-c33677c5228b@roeck-us.net>
+	s=arc-20240116; t=1722286388; c=relaxed/simple;
+	bh=29JW7/dtjpDrW5DZNhY9crHWpW8ENrh1RbNqrfIMOPs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pxlhy6g+YzUp2bVPtgRRI2cqeQk3RYXsn3j3ELtE5LQ3b1AN0Fo++ZEaQ3WFtGNoYZF6+tseNZUU4ugqduRvkoIwGElKZXp8Te7i5DVAIOdhslFt4LF45cD/qcjY3vs434xyqde+uAyE+ZhGRVa5ga17x5BmukuQWWiVShKDCSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ineyUz0G; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-44fee2bfd28so28561cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:53:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722286385; x=1722891185; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=29JW7/dtjpDrW5DZNhY9crHWpW8ENrh1RbNqrfIMOPs=;
+        b=ineyUz0GGNj5orEMaw13Gq3Ve9i0/saPuoYdIITTcP3j77Rgt+3qS9yy2j5SBd85Co
+         gNOnImi5AWdNIMuUIgfJnl7fii72bOQ46+lp0KTiuNezcHhlj/zXqio/qCmO3zk1zvKc
+         NvZK1Adc7nxuKS5Rbw5niY3BBRVpAmZbexIk4IZGDcjKglVFV0aK9QcO7Fgg4qWOcgGs
+         r+pZsnw7vvGvCa0yDNALESBmqNo4qQmoUloBzzWipuqYjitAq1bWHiTi0FqwdRVlYiQG
+         wjbh1SvUY/EapqhSPGZTTAJ0vQ2dbUV8GSFGI5k8AASDiXbpMrejSAi8jvrlunvQ8E0v
+         5dag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722286385; x=1722891185;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=29JW7/dtjpDrW5DZNhY9crHWpW8ENrh1RbNqrfIMOPs=;
+        b=TN7hk1NBT+JGPqyvAFPu429jubbRzSDFHYAOjwIK0E8rI6THM5IFPQm84kUbhQTUzr
+         o4dMs5Cx9GeH75VQHYMw/OrLg+hX2TSLt2knZvDIyWUvJbLBNpIoJGJdssi5QE97ZV78
+         kX+nsSyIsY2E2Oks8TfbmpDPPawkNp1MnbQfcLaztO5hroImvm4BF/oU7+QBwk8cz+hJ
+         QSah33T6QbLpSCUtrCaxJ5G991A/t0d/t4jnN7KNL1Wj3XOYgVu6Q8ckWIAacAPKTU6t
+         FY9ASjgsXBwKou4EvDowRpofbwtuuzGtq+0ygsyQgagRDAD52HBM7mbpKil7y6J46Av3
+         un6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVZAQyZ2hzB9g3rE+dDe/s3pWjFa2xfAvvE7mhENhlzou54EZhSHaY17x6Zxqh74EnGuEbnL0UEcLNwtUb3FO91q6APoubu69Ie1Gfk
+X-Gm-Message-State: AOJu0YygoYKXQ6Al/23rVLm0rG4g7cYHSzcd45eMwSGXdZCMqu9NrsYx
+	6tk3o/br92dd03b7Qcn0yNyQlXDKJXabLDW+S/PbmlPkMmRdSgZGh6K2cX69/iAwdBMziVfVP4O
+	+B62JujzoRWjmvogtu8IGlc2LivGr8oqqdW6h
+X-Google-Smtp-Source: AGHT+IGdqHt+6En/vkut7lMYPmR6m6S3gJX5/4bnNDNPFadeFEDiu1DKJHGnDb+xcPgIp5dT/Iy1GTSikIgnXMmJuos=
+X-Received: by 2002:a05:622a:4cb:b0:447:d78d:773b with SMTP id
+ d75a77b69052e-4503634c227mr56671cf.6.1722286385326; Mon, 29 Jul 2024 13:53:05
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Ag7yFxqGCLrZ6wGF"
-Content-Disposition: inline
-In-Reply-To: <c58ca576-2763-4f73-bc0e-c33677c5228b@roeck-us.net>
-
-
---Ag7yFxqGCLrZ6wGF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240728203001.2551083-1-xur@google.com> <20240729085052.GA37996@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240729085052.GA37996@noisy.programming.kicks-ass.net>
+From: Rong Xu <xur@google.com>
+Date: Mon, 29 Jul 2024 13:52:51 -0700
+Message-ID: <CAF1bQ=RfESfkYj3DPHjjNOEJxwwKBHgYp84=Tnk4=NwkjPuMxw@mail.gmail.com>
+Subject: Re: [PATCH 0/6] Add AutoFDO and Propeller support for Clang build
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Han Shen <shenhan@google.com>, Sriraman Tallam <tmsriram@google.com>, 
+	David Li <davidxl@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, John Moon <john@jmoon.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, 
+	Mike Rapoport <rppt@kernel.org>, "Paul E . McKenney" <paulmck@kernel.org>, Rafael Aquini <aquini@redhat.com>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Eric DeVolder <eric.devolder@oracle.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Randy Dunlap <rdunlap@infradead.org>, 
+	Benjamin Segall <bsegall@google.com>, Breno Leitao <leitao@debian.org>, 
+	Wei Yang <richard.weiyang@gmail.com>, Brian Gerst <brgerst@gmail.com>, 
+	Juergen Gross <jgross@suse.com>, Palmer Dabbelt <palmer@rivosinc.com>, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>, Kees Cook <kees@kernel.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Xiao Wang <xiao.w.wang@intel.com>, 
+	Jan Kiszka <jan.kiszka@siemens.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jul 29, 2024 at 1:51=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Sun, Jul 28, 2024 at 01:29:53PM -0700, Rong Xu wrote:
+> > Hi,
+> >
+> > This patch series is to integrate AutoFDO and Propeller support into
+> > the Linux kernel. AutoFDO is a profile-guided optimization technique
+> > that leverages hardware sampling to enhance binary performance.
+> > Unlike Instrumentation-based FDO (iFDO), AutoFDO offers a user-friendly
+> > and straightforward application process. While iFDO generally yields
+> > superior profile quality and performance, our findings reveal that
+> > AutoFDO achieves remarkable effectiveness, bringing performance close
+> > to iFDO for benchmark applications. Similar to AutoFDO, Propeller too
+> > utilizes hardware sampling to collect profiles and apply post-link
+> > optimizations to improve the benchmark=E2=80=99s performance over and a=
+bove
+> > AutoFDO.
+> >
+> > Our empirical data demonstrates significant performance improvements
+> > with AutoFDO and Propeller, up to 10% on microbenchmarks and up to 5%
+> > on large warehouse-scale benchmarks. This makes a strong case for their
+> > inclusion as supported features in the upstream kernel.
+> >
+> > Background
+> >
+> > A significant fraction of fleet processing cycles (excluding idle time)
+> > from data center workloads are attributable to the kernel. Ware-house
+> > scale workloads maximize performance by optimizing the production kerne=
+l
+> > using iFDO (a.k.a instrumented PGO, Profile Guided Optimization).
+> >
+> > iFDO can significantly enhance application performance but its use
+> > within the kernel has raised concerns. AutoFDO is a variant of FDO that
+> > uses the hardware=E2=80=99s Performance Monitoring Unit (PMU) to collec=
+t
+> > profiling data. While AutoFDO typically yields smaller performance
+> > gains than iFDO, it presents unique benefits for optimizing kernels.
+> >
+> > AutoFDO eliminates the need for instrumented kernels, allowing a single
+> > optimized kernel to serve both execution and profile collection. It als=
+o
+> > minimizes slowdown during profile collection, potentially yielding
+> > higher-fidelity profiling, especially for time-sensitive code, compared
+> > to iFDO. Additionally, AutoFDO profiles can be obtained from production
+> > environments via the hardware=E2=80=99s PMU whereas iFDO profiles requi=
+re
+> > carefully curated load tests that are representative of real-world
+> > traffic.
+> >
+> > AutoFDO facilitates profile collection across diverse targets.
+> > Preliminary studies indicate significant variation in kernel hot spots
+> > within Google=E2=80=99s infrastructure, suggesting potential performanc=
+e gains
+> > through target-specific kernel customization.
+> >
+> > Furthermore, other advanced compiler optimization techniques, including
+> > ThinLTO and Propeller can be stacked on top of AutoFDO, similar to iFDO=
+.
+> > ThinLTO achieves better runtime performance through whole-program
+> > analysis and cross module optimizations. The main difference between
+> > traditional LTO and ThinLTO is that the latter is scalable in time and
+> > memory.
+>
+> This,
+>
+> > Propeller is a profile-guided, post-link optimizer that improves
+> > the performance of large-scale applications compiled with LLVM. It
+> > operates by relinking the binary based on an additional round of runtim=
+e
+> > profiles, enabling precise optimizations that are not possible at
+> > compile time.
+>
+> should be on top somewhere, not hidden away inside a giant wall of text
+> somewhere at the end.
 
-> > The code I am suggesting is bascially yours without the retries
-> > variable:
-> >=20
-> > 	status =3D device_for_each_child(&ara->adapter->dev, &data,
-> > 				       smbus_do_alert);
-> > 	if (data.addr =3D=3D prev_addr && status !=3D -EBUSY) {
-> > 		device_for_each_child(&ara->adapter->dev, &data,
-> > 				      smbus_do_alert_force);
-> > 		break;
-> > 	}
-> > 	prev_addr =3D data.addr;
-> >=20
-> > Makes sense or am I missing something?
-> >=20
->=20
-> Yes, that should work and is indeed simpler. You are correct, the
-> additional loop should not be necessary since smbus_do_alert_force()
-> should already call all connected drivers and hopefully clear
-> the alert condition on those.
+Thanks for the suggestion. I'll move it up. Maybe after the first
+paragraph in Background.
 
-Great that we are aligned now! Do you have time to rework and test the
-patch?
+Sorry if you received a duplicated message -- I'm resending this in
+plain text mode.
 
-
---Ag7yFxqGCLrZ6wGF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaoAO0ACgkQFA3kzBSg
-KbZ6rA//ZqjSGMho4gLtYLdACdEGezVn5VWki0NOdLTh5zVXLtYS7ri3Jn9rysn9
-9B1KxK5nI2XFVAbtjDM7PqVFLHLsbXFwun26jLFXUWu1XF3Uisz+TQ/1Epica4q+
-08AJWlGkZtgNI4BCJiPYBcSkbh5hsh5A+8fde4dQvKezR6jcVwwSexYwWs+Os0b2
-gDLCaKuSoScUNlGMpWzU9mnY3BlpAUeEDLs+9ROmvSl5FU5ngbHgFxW35SSxQ+HI
-+kAAku5WRRmzQOyqmRV4ljVA0CzQgQMrIf7Vh2hqrJhVC46EenNcURoqUG3WSWYC
-jW3o6myO7CNUj1BynzPWGd8tgEYetEewxjB01fRGzKFHStVrKYS7CQvZdev8lnnJ
-+GjY8Ey/pqRe+rGiEUUb/tnTbQMP0IABfOBE7mRPjFBOQ9jxAkrYFeO0Kjnf0rtx
-PlFXYV2D1Gg1/w5vC2nvdlM5MCripBbD3LWybCfRcNTycGOmYSfOyLS6SwcO41JQ
-yJw4Vm66x4tfdh18HkghlFWqNXaVD2DdZCDBSy0WRyox40Cjk5UbvGDlb1Mk4LSa
-uKc9rrr4pjH14hI32wnWduVP8Lm+KORa6Y33hz5DIffXvIJOiRqIA3zxu0/Pq7Mr
-BDC/YoUi45iKn4dRgggxd3s+cHvYbbnUl2xhVw0GSAGb4jit23o=
-=MU2X
------END PGP SIGNATURE-----
-
---Ag7yFxqGCLrZ6wGF--
+-Rong
 
