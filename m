@@ -1,54 +1,40 @@
-Return-Path: <linux-kernel+bounces-265297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 123D893EF3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:58:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 372D593EF3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B269F2838DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:58:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC673280DD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BE81304AB;
-	Mon, 29 Jul 2024 07:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dcp82qsb"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B43112D1FD;
-	Mon, 29 Jul 2024 07:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A2D12EBC7;
+	Mon, 29 Jul 2024 07:58:21 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7477312D75A;
+	Mon, 29 Jul 2024 07:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722239871; cv=none; b=MU7PK7l+aNSNXdadp1Ka9/CIpOBnmeOyaj1NfEFWPD13TPrdxhezaEcTDsNvenJ/53MgteiBjA8VKc+8vR/zyo+BGZlcac4SvclQUk+0+y3NA+aS5RLYala4ffQnMt5HZ1r8tyi8tv6Z9Zw5DnhbYrADKcLi7L0k/vaw0j3z3Nc=
+	t=1722239900; cv=none; b=E3W2Q5rdBUFSKfR+wz47CTZXXqnshvO5ZSCt2k1/822Q80/HJqa9bYu2LWVEeJg+p0CPcn3hTmvHu/RKS2pCCzCX4z7Y44HOV+l2ILJuQ0JrjSglPRS0doo7LziC/3YnHDod3QgONorMRKyJRL8qJ2pWUWisL3TVZoWat4qNIvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722239871; c=relaxed/simple;
-	bh=rd+cf3hmcj9TDEtVadV6eKgFpK0vDNsBJh4Z4k7rdh0=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=g6cYRpcSAfWlgh1819uUI9cgsLzRRpZk1IVPcK0C7hcYuEXckcFGDuyG9q2acwBDB56WGQ3N/T72SddGbkeg8+GU63XwKTExMK29zaS9M9F/MiffKgfmawHujCP/n6lNuMmQbyM4FxP6zEmQ7+PVahmHRdDKUivZv0B/jnDmWAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dcp82qsb; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722239866;
-	bh=rd+cf3hmcj9TDEtVadV6eKgFpK0vDNsBJh4Z4k7rdh0=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=dcp82qsbtUdoel9myWwIZmA4YlNAQ8IqXAN/8ivZ+6rV1NlSCXwV9DlYPtdKytVFn
-	 ye9RlkW+hJNVBesetntCcS3htgACxDefzTkhC49osRxrsAODa7KT7azf97xFdpSizN
-	 x66RmoNHTc1i7koziYyed5AdaQRLVkfUXudXQM3ORpfXDgbaQjcXsKGzHnaXKF0OoI
-	 gXA2j971Ga5m/nc46iJoJ0ZDGaHzquQxTsneuQfWpbdv8i09pA5RyHqT9s9JRxNFc+
-	 qY4YyOAYiuu1h6TiqUpDvOGN2mwKGFECOgr0TFhbX1zh5CvXbfJnDpAg7EeXXSjEy8
-	 M8MYXPoFxYPyA==
-Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 46D7837809CE;
-	Mon, 29 Jul 2024 07:57:44 +0000 (UTC)
-Message-ID: <ba6cac02-615b-4db3-a591-fb1cb4e52823@collabora.com>
-Date: Mon, 29 Jul 2024 12:57:41 +0500
+	s=arc-20240116; t=1722239900; c=relaxed/simple;
+	bh=1Dz4UYhHm9Lqb38HxHPj8a2Eh9aFHgOekszNJPUIK9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lShSNiLtnHZ/uE7l98KzsYbwolIP7J+vOlMJdcSdDgYkgdXum2RS67dMCI9gIV2mIz6y/sYPHt9AgjQRN3OPWnPTpagp5jZh4Yulohr/34oXd/CqklYs0dcWv3iRBUYR1vaIpuqBw5xCcH0TodqMKjUFsmekdx/lkSj643dWa14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-IronPort-AV: E=Sophos;i="6.09,245,1716217200"; 
+   d="asc'?scan'208";a="213872124"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 29 Jul 2024 16:58:10 +0900
+Received: from [10.226.92.233] (unknown [10.226.92.233])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E19D441B4307;
+	Mon, 29 Jul 2024 16:58:06 +0900 (JST)
+Message-ID: <b3d42d0e-fd39-4f0b-93f6-2c257206ded7@bp.renesas.com>
+Date: Mon, 29 Jul 2024 08:58:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,73 +42,188 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com
-Subject: Re: [PATCH 2/3] bitmap: Rename module
-To: John Hubbard <jhubbard@nvidia.com>,
- Andrew Morton <akpm@linux-foundation.org>, Yury Norov
- <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kees@kernel.org,
- David Gow <davidgow@google.com>
-References: <20240726110658.2281070-1-usama.anjum@collabora.com>
- <20240726110658.2281070-3-usama.anjum@collabora.com>
- <f5aeeea3-1b6f-4ace-b346-b6650d6937a4@nvidia.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <f5aeeea3-1b6f-4ace-b346-b6650d6937a4@nvidia.com>
+Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Return -EINVAL if the pin
+ doesn't support PIN_CFG_OEN
+To: Prabhakar <prabhakar.csengg@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240723164744.505233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Language: en-GB
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+Organization: Renesas Electronics Corporation
+In-Reply-To: <20240723164744.505233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------40TXotLw2TT5s60mtBfrG0HF"
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------40TXotLw2TT5s60mtBfrG0HF
+Content-Type: multipart/mixed; boundary="------------9B27NfCA7uEzs6kQhSPTQ7w3";
+ protected-headers="v1"
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <b3d42d0e-fd39-4f0b-93f6-2c257206ded7@bp.renesas.com>
+Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Return -EINVAL if the pin
+ doesn't support PIN_CFG_OEN
+References: <20240723164744.505233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240723164744.505233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+--------------9B27NfCA7uEzs6kQhSPTQ7w3
+Content-Type: multipart/mixed; boundary="------------L5GEll9szdB9r6gnjBt1FwVr"
+
+--------------L5GEll9szdB9r6gnjBt1FwVr
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-On 7/26/24 11:45 PM, John Hubbard wrote:
-> On 7/26/24 4:06 AM, Muhammad Usama Anjum wrote:
->> Rename module to bitmap_kunit and rename the configuration option
->> compliant with kunit framework.
->>
->> Cc: kees@kernel.org
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->>   MAINTAINERS                           |  2 +-
->>   lib/Kconfig.debug                     | 15 ++++++++-------
->>   lib/Makefile                          |  2 +-
->>   lib/{test_bitmap.c => bitmap_kunit.c} |  0
->>   4 files changed, 10 insertions(+), 9 deletions(-)
->>   rename lib/{test_bitmap.c => bitmap_kunit.c} (100%)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 12b870712da4a..289b727344d64 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -3814,13 +3814,13 @@ F:    include/linux/find.h
->>   F:    include/linux/nodemask.h
->>   F:    include/linux/nodemask_types.h
->>   F:    include/vdso/bits.h
->> +F:    lib/bitmap_kunit.c
->>   F:    lib/bitmap-str.c
->>   F:    lib/bitmap.c
->>   F:    lib/cpumask.c
->>   F:    lib/cpumask_kunit.c
->>   F:    lib/find_bit.c
->>   F:    lib/find_bit_benchmark.c
->> -F:    lib/test_bitmap.c
-> 
-> This changes the situation from "works for Linus' tab completion
-> case", to "causes a tab completion problem"! :)
-> 
-> I think a tests/ subdir is how we eventually decided to do this [1],
-> right?
-Yes, Thank you for mentioning it. I'd missed the naming scheme. I'll fix it.
+On 23/07/2024 17:47, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> Update the rzg2l_pinctrl_pinconf_get() function to return -EINVAL for
+> PIN_CONFIG_OUTPUT_ENABLE config if the pin doesn't support the PIN_CFG_=
+OEN
+> configuration.
+>=20
+> -EINVAL is a valid error when dumping the pin configurations. Returning=
 
-> 
-> So:
-> 
->     lib/tests/bitmap_kunit.c
-> 
-> 
-> [1] https://lore.kernel.org/20240724201354.make.730-kees@kernel.org
-> 
-> thanks,
+> -EOPNOTSUPP for a pin that does not support PIN_CFG_OEN resulted in the=
 
--- 
-BR,
-Muhammad Usama Anjum
+> message 'ERROR READING CONFIG SETTING 16' being printed during dumping
+> pinconf-pins.
+>=20
+> For consistency do similar change in rzg2l_pinctrl_pinconf_set() for
+> PIN_CONFIG_OUTPUT_ENABLE config.
+>=20
+> Fixes: a9024a323af2 ("pinctrl: renesas: rzg2l: Clean up and refactor OE=
+N read/write functions")
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  drivers/pinctrl/renesas/pinctrl-rzg2l.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/=
+renesas/pinctrl-rzg2l.c
+> index 632180570b70..3ef20f2fa88e 100644
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -1261,7 +1261,9 @@ static int rzg2l_pinctrl_pinconf_get(struct pinct=
+rl_dev *pctldev,
+>  		break;
+> =20
+>  	case PIN_CONFIG_OUTPUT_ENABLE:
+> -		if (!pctrl->data->oen_read || !(cfg & PIN_CFG_OEN))
+> +		if (!(cfg & PIN_CFG_OEN))
+> +			return -EINVAL;
+> +		if (!pctrl->data->oen_read)
+>  			return -EOPNOTSUPP;
+>  		arg =3D pctrl->data->oen_read(pctrl, _pin);
+>  		if (!arg)
+> @@ -1402,7 +1404,9 @@ static int rzg2l_pinctrl_pinconf_set(struct pinct=
+rl_dev *pctldev,
+> =20
+>  		case PIN_CONFIG_OUTPUT_ENABLE:
+>  			arg =3D pinconf_to_config_argument(_configs[i]);
+> -			if (!pctrl->data->oen_write || !(cfg & PIN_CFG_OEN))
+> +			if (!(cfg & PIN_CFG_OEN))
+> +				return -EINVAL;
+> +			if (!pctrl->data->oen_write)
+>  				return -EOPNOTSUPP;
+>  			ret =3D pctrl->data->oen_write(pctrl, _pin, !!arg);
+>  			if (ret)
+
+Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+
+--=20
+Paul Barker
+--------------L5GEll9szdB9r6gnjBt1FwVr
+Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
+Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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3D
+=3DsIIN
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------L5GEll9szdB9r6gnjBt1FwVr--
+
+--------------9B27NfCA7uEzs6kQhSPTQ7w3--
+
+--------------40TXotLw2TT5s60mtBfrG0HF
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZqdLjQUDAAAAAAAKCRDbaV4Vf/JGvfr1
+AP9WJQUho8ceoAS9T9mSCJptM+HUfW0/F7Cup+bCVDp10gEAgxCEaBxc/I+441SMiynuIp7WJbCJ
+geBYc3wdI6VCSwI=
+=cRXF
+-----END PGP SIGNATURE-----
+
+--------------40TXotLw2TT5s60mtBfrG0HF--
 
