@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-265567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACFC693F2EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:37:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45ED893F2ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C96D1F22AD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:37:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74A6F1C219AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5EC146D75;
-	Mon, 29 Jul 2024 10:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417581474BC;
+	Mon, 29 Jul 2024 10:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="h28YEXze";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rx8bsSHF"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XtaEwQbx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Av/G+CHW"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C831459F0;
-	Mon, 29 Jul 2024 10:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81262145B0F;
+	Mon, 29 Jul 2024 10:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722249251; cv=none; b=CtF0Tkajqi4XVJ9102eNk874jX1ReQ88jcfHRdrcOnS2x1zHaGLsRFf+gwTYBGVMZnW1aXHpPlHAzsQr6ZFVzPv7h/0lbJh2Ut0k96aUhCBeQv0elTfROy6Yl9jC4GtjFGQiqVlSWyRyMP5sP4t29lnLyq7D25WPElA2yVryiPM=
+	t=1722249252; cv=none; b=UAJLGaRimb2qiY985o9one780dJayHH+KF9gyJbr6cQryqv0Aqex0Q2REKvWMQcctnRVKFkZ61BC/o4vMlk0an+Bcm2cqzmLjVb+B107OFKAqfOdHJ591KjfBEwI0byKboNFPYx1Vbs5ZKyKD7Qo65c0v6bQhqdOwldqXBnEvZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722249251; c=relaxed/simple;
-	bh=y94oUwd5wR0SgGj2t0nfDF4mGQ6zdyRAwqhLwzfdpmM=;
+	s=arc-20240116; t=1722249252; c=relaxed/simple;
+	bh=GaEnoQN6H9zjkJ4x1b95aj4Sfu9q0/fiAXumczSbj9M=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=C5oHroUI7GT/SRAORQKjqIwChsaTjlc0gNjhdnpQMmj7BZ7IeDgtaUnjk1s+4LnDIfxZuxAhreqYVdI+Hk1MZtncSNsCFhk4+7qHs9BFydIrBpYuijXYYaTEXFzZAQ+Kl6CX5q9dl4uiwgAswiPSc0aujvo7ru8V04iuaxYxdx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=h28YEXze; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rx8bsSHF; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=b6Z2odz3EtmrAvZ0SVKVqag2MTlecuI4IAb+tWDU/YAr9pIDcUksLB8nYzM1QcBUkRWELx4XC6RBIb9kI1AdbYo3ujkqQmcOqU6GS5YRY4F0DNOU7Dd8rTomuG/rKNLS/eY231FUOM3LLoexzQ2lLmD3Z707rN5KeihrSsJaVPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XtaEwQbx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Av/G+CHW; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 29 Jul 2024 10:34:07 -0000
+Date: Mon, 29 Jul 2024 10:34:08 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722249247;
+	s=2020; t=1722249248;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=C1NhJyqaHj5n0U/lXqdiO8r3r3TrlehMJk+3GUnA708=;
-	b=h28YEXzeBBst97q6moBInZKgHR8zgTec5U6pQHHR7G+EsTQiKOSfhO4hUrJmGll5osq8+k
-	JdYTv+vVOQUmnr8gfJMeCmzj/l5QSkB9ojm7Yg+7TPHsVZjUeg6o9fEhKMv5aqKcnxUNIn
-	f+wszlF6JYG5fYR7fEdt2W8o/V3tREz6nRI+aFquUyn6YYQF6F5itOQK4pN3N9O2Vxozh5
-	H0BVuxWzgUdjMR0HMbKvjvJRoGqQbtqgdXj1N+6iN50cEPWaJ6OMLrfoiL96O7IhzX1ZCx
-	cfpRBWeSE3qNv7mYGuDRMBkhqMWxYRfB7oJFEQXrQ0IgBPuzgVYNgqfCYcVXAA==
+	bh=8PThzawAbRW7P3Gqsb1ChCBZTxHUkqIECE9Yk1iZUMY=;
+	b=XtaEwQbxQTh783tDVByEj1r8F+zDTX44KeoD8NFbYubsqKFCuqke8Yj5k95ihqoe/PfEVb
+	gKhVsvfAWi/TEVuJfPeGEH7l1ydqMVrqIsiS1vWFnOvZAc72EU+pRy6j6CTavZBxsN6Hi+
+	8TI8T0wygH3vvfaLcrFgC+icTuN1wgjrJHuTDcuojBoBAVaRh/EnQUOPVCXdqttfm6UuJ4
+	Lh+tqxEXx/iZuWZ+TO10bsXhmZThG+via1C43bEI9hNHnJ9qnz1konNJIMW3J3jJZp3C4n
+	0JRmSQErwSqF4KFMAkeYQ7iBiAxx5/4QA0C26qHggUOqd8lCnk/ct3Yl5r6rqQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722249247;
+	s=2020e; t=1722249248;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=C1NhJyqaHj5n0U/lXqdiO8r3r3TrlehMJk+3GUnA708=;
-	b=rx8bsSHFAO5FWs4x91m5yeB9E6Z7JYjAMcGThRBclhXMVI0Yp85sBL6BS3StKAEZ/14U+R
-	wI5dW7tuc3kLZcCA==
-From: "tip-bot2 for Peilin He" <tip-bot2@linutronix.de>
+	bh=8PThzawAbRW7P3Gqsb1ChCBZTxHUkqIECE9Yk1iZUMY=;
+	b=Av/G+CHWfQsHGMhxWynOpBlT3HiJjl4Ve76O34EXk+MRoVkMJKd4vy0KW1tfsCk2+/lWW6
+	7BXyeEx9xSg7sNCA==
+From: "tip-bot2 for Yang Yingliang" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/core: Add WARN_ON_ONCE() to check overflow
- for migrate_disable()
-Cc: Peter Zijlstra <peterz@infradead.org>, Peilin He <he.peilin@zte.com.cn>,
- xu xin <xu.xin16@zte.com.cn>, Yunkai Zhang <zhang.yunkai@zte.com.cn>,
- Qiang Tu <tu.qiang35@zte.com.cn>, Kun Jiang <jiang.kun2@zte.com.cn>,
- Fan Yu <fan.yu9@zte.com.cn>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240716104244764N2jD8gnBpnsLjCDnQGQ8c@zte.com.cn>
-References: <20240716104244764N2jD8gnBpnsLjCDnQGQ8c@zte.com.cn>
+Subject: [tip: sched/core] sched/core: Fix unbalance set_rq_online/offline()
+ in sched_cpu_deactivate()
+Cc: stable@kernel.org, Yang Yingliang <yangyingliang@huawei.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240703031610.587047-5-yangyingliang@huaweicloud.com>
+References: <20240703031610.587047-5-yangyingliang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172224924751.2215.13825232512894013809.tip-bot2@tip-bot2>
+Message-ID: <172224924844.2215.10671969655043849003.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,100 +82,36 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     0ec8d5aed4d14055aab4e2746def33f8b0d409c3
-Gitweb:        https://git.kernel.org/tip/0ec8d5aed4d14055aab4e2746def33f8b0d409c3
-Author:        Peilin He <he.peilin@zte.com.cn>
-AuthorDate:    Tue, 16 Jul 2024 10:42:44 +08:00
+Commit-ID:     fe7a11c78d2a9bdb8b50afc278a31ac177000948
+Gitweb:        https://git.kernel.org/tip/fe7a11c78d2a9bdb8b50afc278a31ac177000948
+Author:        Yang Yingliang <yangyingliang@huawei.com>
+AuthorDate:    Wed, 03 Jul 2024 11:16:10 +08:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 29 Jul 2024 12:22:34 +02:00
+CommitterDate: Mon, 29 Jul 2024 12:22:33 +02:00
 
-sched/core: Add WARN_ON_ONCE() to check overflow for migrate_disable()
+sched/core: Fix unbalance set_rq_online/offline() in sched_cpu_deactivate()
 
-Background
-==========
-When repeated migrate_disable() calls are made with missing the
-corresponding migrate_enable() calls, there is a risk of
-'migration_disabled' going upper overflow because
-'migration_disabled' is a type of unsigned short whose max value is
-65535.
+If cpuset_cpu_inactive() fails, set_rq_online() need be called to rollback.
 
-In PREEMPT_RT kernel, if 'migration_disabled' goes upper overflow, it may
-make the migrate_disable() ineffective within local_lock_irqsave(). This
-is because, during the scheduling procedure, the value of
-'migration_disabled' will be checked, which can trigger CPU migration.
-Consequently, the count of 'rcu_read_lock_nesting' may leak due to
-local_lock_irqsave() and local_unlock_irqrestore() occurring on different
-CPUs.
-
-Usecase
-========
-For example, When I developed a driver, I encountered a warning like
-"WARNING: CPU: 4 PID: 260 at kernel/rcu/tree_plugin.h:315
-rcu_note_context_switch+0xa8/0x4e8" warning. It took me half a month
-to locate this issue. Ultimately, I discovered that the lack of upper
-overflow detection mechanism in migrate_disable() was the root cause,
-leading to a significant amount of time spent on problem localization.
-
-If the upper overflow detection mechanism was added to migrate_disable(),
-the root cause could be very quickly and easily identified.
-
-Effect
-======
-Using WARN_ON_ONCE() to check if 'migration_disabled' is upper overflow
-can help developers identify the issue quickly.
-
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Peilin He<he.peilin@zte.com.cn>
-Signed-off-by: xu xin <xu.xin16@zte.com.cn>
+Fixes: 120455c514f7 ("sched: Fix hotplug vs CPU bandwidth control")
+Cc: stable@kernel.org
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Yunkai Zhang <zhang.yunkai@zte.com.cn>
-Reviewed-by: Qiang Tu <tu.qiang35@zte.com.cn>
-Reviewed-by: Kun Jiang <jiang.kun2@zte.com.cn>
-Reviewed-by: Fan Yu <fan.yu9@zte.com.cn>
-Link: https://lkml.kernel.org/r/20240716104244764N2jD8gnBpnsLjCDnQGQ8c@zte.com.cn
+Link: https://lore.kernel.org/r/20240703031610.587047-5-yangyingliang@huaweicloud.com
 ---
- kernel/sched/core.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ kernel/sched/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 2c61b4f..db5823f 100644
+index 4d119e9..f3951e4 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -2233,6 +2233,12 @@ void migrate_disable(void)
- 	struct task_struct *p = current;
- 
- 	if (p->migration_disabled) {
-+#ifdef CONFIG_DEBUG_PREEMPT
-+		/*
-+		 *Warn about overflow half-way through the range.
-+		 */
-+		WARN_ON_ONCE((s16)p->migration_disabled < 0);
-+#endif
- 		p->migration_disabled++;
- 		return;
- 	}
-@@ -2251,14 +2257,20 @@ void migrate_enable(void)
- 		.flags     = SCA_MIGRATE_ENABLE,
- 	};
- 
-+#ifdef CONFIG_DEBUG_PREEMPT
-+	/*
-+	 * Check both overflow from migrate_disable() and superfluous
-+	 * migrate_enable().
-+	 */
-+	if (WARN_ON_ONCE((s16)p->migration_disabled <= 0))
-+		return;
-+#endif
-+
- 	if (p->migration_disabled > 1) {
- 		p->migration_disabled--;
- 		return;
- 	}
- 
--	if (WARN_ON_ONCE(!p->migration_disabled))
--		return;
--
- 	/*
- 	 * Ensure stop_task runs either before or after this, and that
- 	 * __set_cpus_allowed_ptr(SCA_MIGRATE_ENABLE) doesn't schedule().
+@@ -8022,6 +8022,7 @@ int sched_cpu_deactivate(unsigned int cpu)
+ 	ret = cpuset_cpu_inactive(cpu);
+ 	if (ret) {
+ 		sched_smt_present_inc(cpu);
++		sched_set_rq_online(rq, cpu);
+ 		balance_push_set(cpu, false);
+ 		set_cpu_active(cpu, true);
+ 		sched_update_numa(cpu, true);
 
