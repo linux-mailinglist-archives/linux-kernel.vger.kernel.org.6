@@ -1,229 +1,228 @@
-Return-Path: <linux-kernel+bounces-264955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8305093EA8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:37:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63BFB93EA9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93585281471
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 01:37:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 854B11C2114D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 01:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5CC2AEE4;
-	Mon, 29 Jul 2024 01:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0ED87E112;
+	Mon, 29 Jul 2024 01:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+zygdE+"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SIwVbaam"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1CA257B
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 01:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498DC7D095
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 01:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722217061; cv=none; b=qWzfZ5LgpGQLCR6GTGgOoa/61s4Ionq/Yhit6L1fklyNBOn67SQaWf0PDRIbmOpY8B7GZgFL/4UYxpaLqS5fyo2eH1ksm25etLBpD7cPwFLckfqoOEqhZ4vPOoabxxxCCmg83is881SAnaDHsKiBeNkpeCwiy/nRU+hbXMpYztc=
+	t=1722217299; cv=none; b=T0jmv7NrWNm9vMIrCsTmfUEXW51rUASw6dvnQxv/lB1uqYPthypaLerYfsAi/1QkKsS5+ae/AUY4hYQYTHKYM0pSBKSUW0nCagpRQ8tcIkpA0J+/ithfArQ6QnlBeK3YGhwhYClrjgVK2pym1i6axNCuPqlEY5gaL7+MVIQkCGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722217061; c=relaxed/simple;
-	bh=FoEvWRWRIq3LZM8FagKdWnsauuDyIuWJChBOgCYgjYU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nkdrZtZq25Oo1bjbBCLUzVN+V9yiCSaOMqx1P/VcK34F9rAjerMU/KTP6ggXe79jDeE2RJX63XDuz+hhh9ZM8uJe5MjzH4eqnpK44TGVYUrnvbNOUrj65xvN+NmMWBoLGS2Vu4meZN/kjke6c0Of+/1TaeqqQDc3EDR1tcSkM4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c+zygdE+; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fc4fccdd78so13988295ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 18:37:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722217059; x=1722821859; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=laihnHn0tEWhiMwgpFPbHKhBIJSPYc/4lHmU8vF732k=;
-        b=c+zygdE+AjF78IAuvRBEgACEZCeh1rEThHBK4fdvYOsTBKoSvluP0dcYqx5BFJTF8/
-         0GfV0/1oYU7CmNFHLqrEfa32QhVRAzSdTlbkeCgVcGejVrl7qEjqGncY/6+QqRQSUX5b
-         VdznKf2lOGh/x+jp2Sd3UQpor0k5JIsiktvpFTbMdOpzmE64fiw+x+I02XtF8p7IqJb6
-         Ed6Xnfie6UB8txG7OQXbsCBPwg8+I1wzFiR279qVOuOcgW9uzARZrGN0VxLyXd92Xgq9
-         qCVrefY198rRzBD+uYyWigfgZC80UeU2qXYyUlfu0Xf5qTGkjP6H8sXkpdg8KknmA1Ro
-         X2Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722217059; x=1722821859;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=laihnHn0tEWhiMwgpFPbHKhBIJSPYc/4lHmU8vF732k=;
-        b=SfMZ7a9jZ4uuCjNVVvLfHOtiS3f8wFsVot2Q5pP8voERzEmB9OMDEbiDTCtod1vMie
-         CWHaJoo8JFof4XyknKVTQ6UWs8pMHihN9jJCK4FaLFI4XydKpnHfGd2iDM14zQHz+S3N
-         /Cv372LsDJuSAWAaWdjLj2wrtrgtff5DzhElimcFn87koLfmGqYicfD/vHcikwhKz0U0
-         8f9hoNQI14+Osn7BvEkSz4KCefvAvFzF0OheqQJoVhzRnQWNCmAiCR4kJTMH7e9zsa75
-         ERhLMbqN9LBOFMZPUwsFyu9CVgQUfsBr5YQUHn0oZxg42osZLy2UPfjh5yl3LHxTL/1B
-         aDOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWJ2YaTQvh4uiuAfn75pickePJk/ex6758bT4JnJ6e+crxuAbihzpCUb2/UB4+H6DEoPMEp49FP7tg6V0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmbZeDXcAGTmQE8eaOEgK6xRBompfRKgtbEGHk8hS/Z506Z3kw
-	N7/y3d7PnUoZCP1M8SZVg9MFO32iP1Pn/n1nuZYdzrBMLe4NYKs5
-X-Google-Smtp-Source: AGHT+IFQdjRDbsHHZ4F9XyP8gJxPgF26gezLPByuD4QowAXZQtzR3gQYVihGWbncvmz8YnJvRgq63Q==
-X-Received: by 2002:a17:902:c994:b0:1fc:4bdc:d413 with SMTP id d9443c01a7336-1ff0493be42mr35839175ad.60.1722217059162;
-        Sun, 28 Jul 2024 18:37:39 -0700 (PDT)
-Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ee6a1esm70873795ad.164.2024.07.28.18.37.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Jul 2024 18:37:38 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: lkp@intel.com
-Cc: 21cnbao@gmail.com,
-	akpm@linux-foundation.org,
-	baolin.wang@linux.alibaba.com,
-	chrisl@kernel.org,
-	david@redhat.com,
-	hannes@cmpxchg.org,
-	hughd@google.com,
-	kaleshsingh@google.com,
-	kasong@tencent.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	mhocko@suse.com,
-	minchan@kernel.org,
-	nphamcs@gmail.com,
-	oe-kbuild-all@lists.linux.dev,
-	ryan.roberts@arm.com,
-	senozhatsky@chromium.org,
-	shakeel.butt@linux.dev,
-	shy828301@gmail.com,
-	surenb@google.com,
-	v-songbaohua@oppo.com,
-	willy@infradead.org,
-	xiang@kernel.org,
-	ying.huang@intel.com,
-	yosryahmed@google.com
-Subject: Re: [PATCH v5 4/4] mm: Introduce per-thpsize swapin control policy
-Date: Mon, 29 Jul 2024 13:37:18 +1200
-Message-Id: <20240729013718.13901-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <202407271351.ffZPMT6W-lkp@intel.com>
-References: <202407271351.ffZPMT6W-lkp@intel.com>
+	s=arc-20240116; t=1722217299; c=relaxed/simple;
+	bh=uh0eBmCXbZHpjajD6vccLotxjYSai5IciHgQNK5l0+U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=to4dvIYMMTt/x0hy+Spj4Ko8J6gDV8z2VeM5i3fcGxt8ZnE1srcCXCDdm1ceKRefcLGer9Sbuh++tpAcGd0hGMfqIee4wk9o7hp0yPY8bOZsF9/srpFRvTFTSqPmU6m3UO/slQI8MDoDK3UzFTwKSWk4LnWq/nP6iXiBzL0S7Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SIwVbaam; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722217298; x=1753753298;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=uh0eBmCXbZHpjajD6vccLotxjYSai5IciHgQNK5l0+U=;
+  b=SIwVbaamqh9WDV5vnXhAfxVi9X9BixrtG1EePEpBzI1bI2arzXMUTkPm
+   ntpuv5C+Sdo/9qVVM38J4dwpJ4VwPBOdCW1cR5pJGjPEbbJJfX+o1lQif
+   9Ho8yv/amFRiEHyCT0kRCi+imIBsUyLsEbfbC4gKbPrhP41hCnvDjd0Ap
+   JFk9t7JE7Zx6XwaJm6KTP/Zthe/VdcgozznKS9YtbzkWUyo5W9kfJsO0r
+   cgEaIXLnDnX7ZxiEkJwxgJZC2jNBIfZIup/lztrekRtKFPhfYUJauvqg5
+   o+r5AH8IiCerszornCvl9KJBZZVF+nsETrDBzqzcVpwRYs8gsHgR95VPR
+   Q==;
+X-CSE-ConnectionGUID: AQa287JdTEOSoAiOGWJR/Q==
+X-CSE-MsgGUID: +0kXzBFcQ5ubliuj+prdiA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="20079580"
+X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
+   d="scan'208";a="20079580"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2024 18:41:37 -0700
+X-CSE-ConnectionGUID: MVt0tDl5T3yrBqBs+YW+Qw==
+X-CSE-MsgGUID: grbf3j9ORR+Xc7ow14Qolw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
+   d="scan'208";a="53473307"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2024 18:41:34 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/migrate: fix deadlock in migrate_pages_batch() on
+ large folios
+In-Reply-To: <20240728154913.4023977-1-hsiangkao@linux.alibaba.com> (Gao
+	Xiang's message of "Sun, 28 Jul 2024 23:49:13 +0800")
+References: <20240728154913.4023977-1-hsiangkao@linux.alibaba.com>
+Date: Mon, 29 Jul 2024 09:38:01 +0800
+Message-ID: <87plqx0yh2.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ascii
 
+Hi, Xiang,
 
-On Sat, Jul 27, 2024 at 5:58 PM kernel test robot <lkp@intel.com> wrote:
+Gao Xiang <hsiangkao@linux.alibaba.com> writes:
+
+> Currently, migrate_pages_batch() can lock multiple locked folios
+> with an arbitrary order.  Although folio_trylock() is used to avoid
+> deadlock as commit 2ef7dbb26990 ("migrate_pages: try migrate in batch
+> asynchronously firstly") mentioned, it seems try_split_folio() is
+> still missing.
 >
-> Hi Barry,
+> It was found by compaction stress test when I explicitly enable EROFS
+> compressed files to use large folios, which case I cannot reproduce with
+> the same workload if large folio support is off (current mainline).
+> Typically, filesystem reads (with locked file-backed folios) could use
+> another bdev/meta inode to load some other I/Os (e.g. inode extent
+> metadata or caching compressed data), so the locking order will be:
 >
-> kernel test robot noticed the following build warnings:
+>   file-backed folios  (A)
+>      bdev/meta folios (B)
 >
-> [auto build test WARNING on akpm-mm/mm-everything]
+> The following calltrace shows the deadlock:
+>    Thread 1 takes (B) lock and tries to take folio (A) lock
+>    Thread 2 takes (A) lock and tries to take folio (B) lock
+>
+> [Thread 1]
+> INFO: task stress:1824 blocked for more than 30 seconds.
+>       Tainted: G           OE      6.10.0-rc7+ #6
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:stress          state:D stack:0     pid:1824  tgid:1824  ppid:1822   flags:0x0000000c
+> Call trace:
+>  __switch_to+0xec/0x138
+>  __schedule+0x43c/0xcb0
+>  schedule+0x54/0x198
+>  io_schedule+0x44/0x70
+>  folio_wait_bit_common+0x184/0x3f8
+> 			<-- folio mapping ffff00036d69cb18 index 996  (**)
+>  __folio_lock+0x24/0x38
+>  migrate_pages_batch+0x77c/0xea0	// try_split_folio (mm/migrate.c:1486:2)
+> 						// migrate_pages_batch (mm/migrate.c:1734:16)
+> 		<--- LIST_HEAD(unmap_folios) has
+> 			..
+> 			folio mapping 0xffff0000d184f1d8 index 1711;   (*)
+> 			folio mapping 0xffff0000d184f1d8 index 1712;
+> 			..
+>  migrate_pages+0xb28/0xe90
+>  compact_zone+0xa08/0x10f0
+>  compact_node+0x9c/0x180
+>  sysctl_compaction_handler+0x8c/0x118
+>  proc_sys_call_handler+0x1a8/0x280
+>  proc_sys_write+0x1c/0x30
+>  vfs_write+0x240/0x380
+>  ksys_write+0x78/0x118
+>  __arm64_sys_write+0x24/0x38
+>  invoke_syscall+0x78/0x108
+>  el0_svc_common.constprop.0+0x48/0xf0
+>  do_el0_svc+0x24/0x38
+>  el0_svc+0x3c/0x148
+>  el0t_64_sync_handler+0x100/0x130
+>  el0t_64_sync+0x190/0x198
+>
+> [Thread 2]
+> INFO: task stress:1825 blocked for more than 30 seconds.
+>       Tainted: G           OE      6.10.0-rc7+ #6
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:stress          state:D stack:0     pid:1825  tgid:1825  ppid:1822   flags:0x0000000c
+> Call trace:
+>  __switch_to+0xec/0x138
+>  __schedule+0x43c/0xcb0
+>  schedule+0x54/0x198
+>  io_schedule+0x44/0x70
+>  folio_wait_bit_common+0x184/0x3f8
+> 			<-- folio = 0xfffffdffc6b503c0 (mapping == 0xffff0000d184f1d8 index == 1711) (*)
+>  __folio_lock+0x24/0x38
+>  z_erofs_runqueue+0x384/0x9c0 [erofs]
+>  z_erofs_readahead+0x21c/0x350 [erofs]       <-- folio mapping 0xffff00036d69cb18 range from [992, 1024] (**)
+>  read_pages+0x74/0x328
+>  page_cache_ra_order+0x26c/0x348
+>  ondemand_readahead+0x1c0/0x3a0
+>  page_cache_sync_ra+0x9c/0xc0
+>  filemap_get_pages+0xc4/0x708
+>  filemap_read+0x104/0x3a8
+>  generic_file_read_iter+0x4c/0x150
+>  vfs_read+0x27c/0x330
+>  ksys_pread64+0x84/0xd0
+>  __arm64_sys_pread64+0x28/0x40
+>  invoke_syscall+0x78/0x108
+>  el0_svc_common.constprop.0+0x48/0xf0
+>  do_el0_svc+0x24/0x38
+>  el0_svc+0x3c/0x148
+>  el0t_64_sync_handler+0x100/0x130
+>  el0t_64_sync+0x190/0x198
+>
+> Fixes: 5dfab109d519 ("migrate_pages: batch _unmap and _move")
+> Cc: "Huang, Ying" <ying.huang@intel.com>
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> ---
+>  mm/migrate.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 20cb9f5f7446..a912e4b83228 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -1483,7 +1483,8 @@ static inline int try_split_folio(struct folio *folio, struct list_head *split_f
+>  {
+>  	int rc;
+>  
+> -	folio_lock(folio);
+> +	if (!folio_trylock(folio))
+> +		return -EAGAIN;
+>  	rc = split_folio_to_list(folio, split_folios);
+>  	folio_unlock(folio);
+>  	if (!rc)
 
-Hi Thanks!
-Would you check if the below patch fixes the problem?
+Good catch!  Thanks for the fixing!
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 41460847988c..06984a325af7 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -80,7 +80,7 @@ unsigned long huge_zero_pfn __read_mostly = ~0UL;
- unsigned long huge_anon_orders_always __read_mostly;
- unsigned long huge_anon_orders_madvise __read_mostly;
- unsigned long huge_anon_orders_inherit __read_mostly;
--unsigned long huge_anon_orders_swapin_always __read_mostly;
-+static unsigned long huge_anon_orders_swapin_always __read_mostly;
+The deadlock is similar as the one we fixed in commit fb3592c41a44
+("migrate_pages: fix deadlock in batched migration").  But apparently,
+we missed this case.
+
+For the fix, I think that we should still respect migrate_mode because
+users may prefer migration success over blocking.
+
+@@ -1492,11 +1492,17 @@ static int unmap_and_move_huge_page(new_folio_t get_new_folio,
+ 	return rc;
+ }
  
- unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
- 					 unsigned long vm_flags,
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Barry-Song/mm-swap-introduce-swapcache_prepare_nr-and-swapcache_clear_nr-for-large-folios-swap-in/20240726-181412
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-> patch link:    https://lore.kernel.org/r/20240726094618.401593-5-21cnbao%40gmail.com
-> patch subject: [PATCH v5 4/4] mm: Introduce per-thpsize swapin control policy
-> config: x86_64-randconfig-121-20240727 (https://download.01.org/0day-ci/archive/20240727/202407271351.ffZPMT6W-lkp@intel.com/config)
-> compiler: gcc-11 (Ubuntu 11.4.0-4ubuntu1) 11.4.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240727/202407271351.ffZPMT6W-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202407271351.ffZPMT6W-lkp@intel.com/
->
-> sparse warnings: (new ones prefixed by >>)
-> >> mm/huge_memory.c:83:15: sparse: sparse: symbol 'huge_anon_orders_swapin_always' was not declared. Should it be static?
->    mm/huge_memory.c: note: in included file (through include/linux/smp.h, include/linux/lockdep.h, include/linux/spinlock.h, ...):
->    include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
->    mm/huge_memory.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/mm.h):
->    include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
->    include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
->    mm/huge_memory.c:1867:20: sparse: sparse: context imbalance in 'madvise_free_huge_pmd' - unexpected unlock
->    include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
->    mm/huge_memory.c:1905:28: sparse: sparse: context imbalance in 'zap_huge_pmd' - unexpected unlock
->    mm/huge_memory.c:2016:28: sparse: sparse: context imbalance in 'move_huge_pmd' - unexpected unlock
->    mm/huge_memory.c:2156:20: sparse: sparse: context imbalance in 'change_huge_pmd' - unexpected unlock
->    mm/huge_memory.c:2306:12: sparse: sparse: context imbalance in '__pmd_trans_huge_lock' - wrong count at exit
->    mm/huge_memory.c:2323:12: sparse: sparse: context imbalance in '__pud_trans_huge_lock' - wrong count at exit
->    mm/huge_memory.c:2347:28: sparse: sparse: context imbalance in 'zap_huge_pud' - unexpected unlock
->    mm/huge_memory.c:2426:18: sparse: sparse: context imbalance in '__split_huge_zero_page_pmd' - unexpected unlock
->    mm/huge_memory.c:2640:18: sparse: sparse: context imbalance in '__split_huge_pmd_locked' - unexpected unlock
->    include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
->    mm/huge_memory.c: note: in included file (through include/linux/smp.h, include/linux/lockdep.h, include/linux/spinlock.h, ...):
->    include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
->    include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
->    mm/huge_memory.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/mm.h):
->    include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
->    mm/huge_memory.c:3031:30: sparse: sparse: context imbalance in '__split_huge_page' - unexpected unlock
->    mm/huge_memory.c:3306:17: sparse: sparse: context imbalance in 'split_huge_page_to_list_to_order' - different lock contexts for basic block
->    mm/huge_memory.c: note: in included file (through include/linux/smp.h, include/linux/lockdep.h, include/linux/spinlock.h, ...):
->    include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
->    mm/huge_memory.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/mm.h):
->    include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
->    mm/huge_memory.c: note: in included file (through include/linux/smp.h, include/linux/lockdep.h, include/linux/spinlock.h, ...):
->    include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
->    mm/huge_memory.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/mm.h):
->    include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
->    include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
->
-> vim +/huge_anon_orders_swapin_always +83 mm/huge_memory.c
->
->     51 
->     52  /*
->     53   * By default, transparent hugepage support is disabled in order to avoid
->     54   * risking an increased memory footprint for applications that are not
->     55   * guaranteed to benefit from it. When transparent hugepage support is
->     56   * enabled, it is for all mappings, and khugepaged scans all mappings.
->     57   * Defrag is invoked by khugepaged hugepage allocations and by page faults
->     58   * for all hugepage allocations.
->     59   */
->     60  unsigned long transparent_hugepage_flags __read_mostly =
->     61  #ifdef CONFIG_TRANSPARENT_HUGEPAGE_ALWAYS
->     62          (1<<TRANSPARENT_HUGEPAGE_FLAG)|
->     63  #endif
->     64  #ifdef CONFIG_TRANSPARENT_HUGEPAGE_MADVISE
->     65          (1<<TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG)|
->     66  #endif
->     67          (1<<TRANSPARENT_HUGEPAGE_DEFRAG_REQ_MADV_FLAG)|
->     68          (1<<TRANSPARENT_HUGEPAGE_DEFRAG_KHUGEPAGED_FLAG)|
->     69          (1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG);
->     70 
->     71  static struct shrinker *deferred_split_shrinker;
->     72  static unsigned long deferred_split_count(struct shrinker *shrink,
->     73                                            struct shrink_control *sc);
->     74  static unsigned long deferred_split_scan(struct shrinker *shrink,
->     75                                           struct shrink_control *sc);
->     76 
->     77  static atomic_t huge_zero_refcount;
->     78  struct folio *huge_zero_folio __read_mostly;
->     79  unsigned long huge_zero_pfn __read_mostly = ~0UL;
->     80  unsigned long huge_anon_orders_always __read_mostly;
->     81  unsigned long huge_anon_orders_madvise __read_mostly;
->     82  unsigned long huge_anon_orders_inherit __read_mostly;
->   > 83  unsigned long huge_anon_orders_swapin_always __read_mostly;
->     84 
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+-static inline int try_split_folio(struct folio *folio, struct list_head *split_folios)
++static inline int try_split_folio(struct folio *folio, struct list_head *split_folios,
++				  enum migrate_mode mode)
+ {
+ 	int rc;
+ 
+-	folio_lock(folio);
++	if (mode == MIGRATE_ASYNC) {
++		if (!folio_trylock(folio))
++			return -EAGAIN;
++	} else {
++		folio_lock(folio);
++	}
+ 	rc = split_folio_to_list(folio, split_folios);
+ 	folio_unlock(folio);
+ 	if (!rc)
 
-Thanks
-Barry
 
+--
+Best Regards,
+Huang, Ying
 
