@@ -1,204 +1,165 @@
-Return-Path: <linux-kernel+bounces-266053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B218393F9E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:54:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB89393F9E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCAD21C21F73
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:54:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD9191C21B47
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932C015CD46;
-	Mon, 29 Jul 2024 15:53:54 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E457C15A87C;
+	Mon, 29 Jul 2024 15:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oxv/F4LL"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DA78004F
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1051598EE
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722268434; cv=none; b=rjZwXqZpRJ96LvXz34/525h+I4Hd51sXsD5RSG4TPNDPPY/pcpUAGQJu+rG1RNLwxqzBgx6HHyuD+vIb0R34Bf2QTllY0gv/GMxfvV+5EeK7iygPdIIUBx3xu/o6V/WI2xFmaR5zZq9AEMSEN/OFM/1NT+TD5TPu5yUSiPH10PI=
+	t=1722268443; cv=none; b=Y+VElernELBJMoBhVYwuARfKHK6wkUyJRRhpWwOhVQ+W4iiCtcgfySZDnMpAP2sVga1M/1PdpnvWEQZwm6Y1vSUXF/NUVPuTFdQkaDqQdEh7yGtV7aGMJvaj+5YxLHWJrV1MhyTckr1WyHv69XdGddyWVm8v7BhPxmjm05MwI7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722268434; c=relaxed/simple;
-	bh=d90sHxRYX3H/y/PoRA4nPTN4ZYPcwBKZRwbFDTttc1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iE3vb077m1aLgM7GM65jJltN160lWSwoi786srBl7LxY0Sw0E2fU6Ef3CUfONXGKao3PZJDYt+lsT11wI9s1uOmA61EbcCssDKhGagDp6MIH/AK9nxwyEqyrD9NCFR82LOe0x3nWoBDf9wo1x93bylAXsSyl49wmtlaEmA5Viuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4WXj9H56Hvz9v7Hp
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:35:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id ABA55140DAE
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:53:37 +0800 (CST)
-Received: from [10.221.99.159] (unknown [10.221.99.159])
-	by APP1 (Coremail) with SMTP id LxC2BwAXm4X1uqdmn7gkAA--.4420S2;
-	Mon, 29 Jul 2024 16:53:37 +0100 (CET)
-Message-ID: <cd5a269a-9c6a-a311-d796-ce65c935887b@huaweicloud.com>
-Date: Mon, 29 Jul 2024 17:53:23 +0200
+	s=arc-20240116; t=1722268443; c=relaxed/simple;
+	bh=vit//5frB+Bxo4uCQ9TaphFpIjNsNOImUZUDRYyDM/I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X2czSC44Gh3wckhUTElAcp5S01oVYVCaOGAocwnTANjDP4rM7yHSTSA9VufpLDcCmgHHS3fCOw9W4KI2ZQXIdw+1yMQSja9Dfd31unuNcF0L63m6JK39CwQQYJxRVuP2tqrKRKlq5/MEKTLdy/hgtjWM1RvB3sawR6fU+31mMEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oxv/F4LL; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-44fe76fa0b8so402841cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:54:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722268440; x=1722873240; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G7NVQIGmQXJU9zMY7yOvP9B85E2qvUl+m8Pl4MaC7co=;
+        b=oxv/F4LLxy+vbJLTZDaX/oqMNYAmd9nPH/gfq/uEWK4IW/BDclXna8qBS8gsmmkWAD
+         9DXQH7/J8cS2NLjAAcg6NyyPPVd45ucO/z1f425miSfV7CLxCsA1h+zXvRLDBoV0TaG0
+         tZ2JpbvrbFV57Z0xIV5lAOCV2BQKxhdbmMTSegslJ8XLMS52hgtMwChQkc7pd8GojCoD
+         EZ6C1lgtWh2V7IHhpJ+oqpn3/Xtl015AmqHtAypmrgJ6yAg2Re3CnIVBkQ/ySvN+ts3b
+         9/F9N9STfw1lP0k3HGfNITP7Nc4WKMubSuIBNPSG+/Wo5z/hOhTmeXQK9tuevDESEUK+
+         kE3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722268440; x=1722873240;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G7NVQIGmQXJU9zMY7yOvP9B85E2qvUl+m8Pl4MaC7co=;
+        b=cLjf+k6Ts79DVsaSJmOU1F+4j5bwuUPC7YOTzlSkSmmBc0J7l9z79TzFfP/2N1PPjE
+         DD5PqDA6NdlaLxZGeY977BwYh2mJlGoOK1kGpQccrxyd+PJy4al6uh1mxR9avwPQ1IVi
+         nVaQ8fNTJrFQFQEovRjd2UqvKbDDC1WbYZhVgbqLcWKd8oGYTsdOd4Wo2GDtdtKvcKSG
+         BTD80OUJp0zKVbBcPKAQgp3oE95YYaGo5iKTrb60FToPhoAnkxENiivTFm/5Yw9m+J6z
+         2E0ymtwq8wM2OlLAXZpf0K043maWypE8eWwOnEbt5LH+eG/UoonPseX473JlEhJJ7qYu
+         +URw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Ej2LMptgDeJVeTYtOspNY1LuhFOU1xMLBm7wHP88qRk+pnZxFSWhTGOZWEwgidVwMEIxjX8oBG7D7meX+Q6kYjkImRfQ8VQa5CFI
+X-Gm-Message-State: AOJu0YzIDX64iikerP2UVmUGb2YdmvDl2i2/1kcDZZzSKzmF11p1izxj
+	j5SHf44+v+R1y5wwe3/xM/wg74lmOETL8Vqrlrn5yk4Z/L7hzsTjNrT5QqSKerTSklVkuoxGS9+
+	YlUG22R4fuDy5+4vHI0MoqhZzsgw1TM/UuAaL
+X-Google-Smtp-Source: AGHT+IGtbd0iBqee7SwSoc94TJ7CIzVF+bo02bFcdiIhIU5AVsKcZ+YG/U7J2gyGGtrfLKplipYfybTILWWzXf+wdc0=
+X-Received: by 2002:a05:622a:303:b0:44f:e12e:3015 with SMTP id
+ d75a77b69052e-450329acd26mr220951cf.25.1722268439856; Mon, 29 Jul 2024
+ 08:53:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCHv2 0/4] tools/memory-model: Define more of LKMM in
- tools/memory-model
-Content-Language: en-US
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
- Alan Stern <stern@rowland.harvard.edu>
-Cc: paulmck@kernel.org, parri.andrea@gmail.com, will@kernel.org,
- peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
- dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
- urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
- linux-kernel@vger.kernel.org, lkmm@lists.linux.dev
-References: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
- <88c1ebc8-4805-4d1d-868a-889043899979@rowland.harvard.edu>
- <bbc3bd10-3bf5-4b1a-a275-dd328c42e307@huaweicloud.com>
- <f93f140b-13bc-4d00-adee-46cc1c016480@rowland.harvard.edu>
- <4792c9e7-2594-3600-5d82-4cb1443fe670@huaweicloud.com>
- <d6a76968-d10b-c60b-245a-f58116eca6af@huaweicloud.com>
- <eb9548de-e66e-3dcd-9136-8702a5bc2934@huaweicloud.com>
- <00f58d20-f92d-461e-beac-b307905cab3b@huaweicloud.com>
- <e45bd166-348a-95b6-c17c-dcd2525f263c@huaweicloud.com>
- <9ac4a586-ef37-4c48-8e66-df3d02b53b6a@huaweicloud.com>
-From: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-In-Reply-To: <9ac4a586-ef37-4c48-8e66-df3d02b53b6a@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwAXm4X1uqdmn7gkAA--.4420S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWw13AryDurykJFykur1Dtrb_yoWrCF1UpF
-	y5JF45Krs7tr4xJrn2yrn5XF12qFW7tF15Xr15trZrKr90yry5tr4Yyr4YkFyqvrs3Xr42
-	vrWUt34xZFyUJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
-	WxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wr
-	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRH
-	UDLUUUUU=
-X-CM-SenderInfo: xkhu0tnqos00pfhgvzhhrqqx5xdzvxpfor3voofrz/
+References: <20240727175919.1041468-1-linux@treblig.org> <CAP-5=fW+VbDaFV+YQCMMKYzrraMLLuVqb=BChL0o=-D5Y=4N_w@mail.gmail.com>
+ <ZqewJ6oIprdRY8C5@gallifrey>
+In-Reply-To: <ZqewJ6oIprdRY8C5@gallifrey>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 29 Jul 2024 08:53:48 -0700
+Message-ID: <CAP-5=fUHVZDS9y4Bm=OesD5qpHHv7qqo2ALU70EPdS5WiQs1-w@mail.gmail.com>
+Subject: Re: [PATCH] perf test pmu: Remove unused test_pmus
+To: "Dr. David Alan Gilbert" <linux@treblig.org>, Nick Desaulniers <ndesaulniers@google.com>, llvm@lists.linux.dev
+Cc: kan.liang@linux.intel.com, acme@kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/29/2024 5:44 PM, Jonas Oberhauser wrote:
-> 
-> 
-> Am 7/29/2024 um 5:19 PM schrieb Hernan Ponce de Leon:
->> On 7/29/2024 4:45 PM, Jonas Oberhauser wrote:
->>>
->>>
->>> Am 7/29/2024 um 3:30 PM schrieb Hernan Ponce de Leon:
->>>> On 7/12/2024 10:06 AM, Hernan Ponce de Leon wrote:
->>>>> On 6/10/2024 10:38 AM, Hernan Ponce de Leon wrote:
->>>>>> On 6/8/2024 3:00 AM, Alan Stern wrote:
->>>>>>> On Wed, Jun 05, 2024 at 09:58:42PM +0200, Jonas Oberhauser wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> Am 6/4/2024 um 7:56 PM schrieb Alan Stern:
->>>>>>>>> Just to clarify: Your first step encompasses patches 1 - 3, and 
->>>>>>>>> the
->>>>>>>>> second step is patch 4.  The first three patches can be applied 
->>>>>>>>> now, but
->>>>>>>>> the last one needs to wait until herd7 has been updated.  Is 
->>>>>>>>> this all
->>>>>>>>> correct?
->>>>>>>>
->>>>>>>> Exactly.
->>>>>>>
->>>>>>> With regard to patch 4, how much thought have you and Hernan 
->>>>>>> given to
->>>>>>> backward compatibility?  Once herd7 is changed, old memory model 
->>>>>>> files
->>>>>>> will no longer work correctly.
->>>>>>>
->>>>>>
->>>>>> Honestly, I did not think much about this (at least until Akira 
->>>>>> mentioned in my PR). My hope was that changes to the model could 
->>>>>> be back-ported to previous kernel versions. However that would not 
->>>>>> work for existing out-of-tree files.
->>>>>>
->>>>>> My question is: is compatibility with out-of-tree files really a 
->>>>>> requirement? I would argue that if people are using outdated 
->>>>>> models, they may get wrong results anyway. This is because some of 
->>>>>> the changes done to lkmm during the last few years change the 
->>>>>> expected result for some litmus tests.
->>>>>>
->>>>>> Hernan
->>>>>
->>>>> I pushed some new changes to the code for backward compatibility 
->>>>> [1]. The series also needs the patch at the bottom to properly deal 
->>>>> with the ordering of failing CAses and non-returning operations. 
->>>>> With it, all litmus tests return the correct result (the script 
->>>>> needs to pass option -lkmm-legacy false to herd).
->>>>
->>>> I have been playing around with an alternative to this.
->>>>
->>>> Rather than implementing this as an "option", I can implemented it 
->>>> as a "model variant (*)" and add this to the model
->>>
->>> How exactly do these model variants get selected?
->>>
->>> I was thinking that another good approach could be to have a new 
->>> generic C model which doesn't know anything about LKMM. I believe 
->>> this would be specified in the header of the .litmus files?
->>>
->>>
->>>> flag ~empty (if "lkmmlatest" then 0 else _)
->>>>    as new-lkmm-models-require-variant-lkmmlatest
->>>>
->>>> If the user forgets to set the variant for the new model, herd7 will 
->>>> flag the executions showing that something is off.
->>>>
->>>> To be fully backward compatible, we would need to backport this to 
->>>> old models
->>>>
->>>> flag ~empty (if "lkmmlatest" then 1 else _)
->>>>    as new-lkmm-models-require-variant-lkmmlatest
->>>
->>> should this be then _ else 0  ? or what does the _ do here?
->>
->> Yes, my bad.
->>
->>>
->>> I also don't think we can backport things to old models
->>
->> IIRC I have seen (non lkmm related) patches being backported to stable 
->> kernel versions. Why can't we do this for lkmm if backward 
->> compatibility is really a requirement? Otherwise I don't see a way of 
->> preventing developers to use old models with the new option (since I 
->> plan to keep the "old variant" as default, this would have to be done 
->> on purpose, but still).
-> 
-> I don't think this is a problem. If the old version is the default, and 
-> we define it in the .cfg file for the tree version of LKMM, then it will 
-> work correctly for both the old and new versions. People playing around 
-> with Memory Models should be careful enough not to intentionally break 
-> the model by passing bogus options.
+On Mon, Jul 29, 2024 at 8:07=E2=80=AFAM Dr. David Alan Gilbert
+<linux@treblig.org> wrote:
+>
+> * Ian Rogers (irogers@google.com) wrote:
+> > On Sat, Jul 27, 2024 at 10:59=E2=80=AFAM <linux@treblig.org> wrote:
+> > >
+> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > >
+> > > Commit aa1551f299ba ("perf test pmu: Refactor format test and exposed
+> > > test APIs") added the 'test_pmus' list, but didn't use it.
+> > > (It seems to put them on the other_pmus list?)
+> > >
+> > > Remove it.
+> > >
+> > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> >
+> > Strange that the compiler doesn't warn about unused stuff like this,
+> > we get unused variables within a function and unused static
+> > functions...
+>
+> The problem is that LIST_HEAD initialises the list to point to itself;
+> so it *is* used - but only in it's own initialiser.
+> I did file:
+>    https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D115027
 
-The same was true for my implementation using the lkmm-legacy option 
-rather than the model variant, but this was still considered to break 
-backward compatibility.
+Nice, the bug already has a fix - good work! Hopefully clang can follow sui=
+t.
 
-https://github.com/herd/herdtools7/pull/865#issuecomment-2229930493
+> > Reviewed-by: Ian Rogers <irogers@google.com>
+>
+> Thanks,
+>
+> > Possibly:
+> > Fixes: aa1551f299ba ("perf test pmu: Refactor format test and exposed
+> > test APIs")
+>
+> Given it's got no actual effect other than a few bytes
+> saved, I'm not sure it's worth the Fixes.
 
-> 
-> Of course, defining a new syntax identifier and putting it in all 
-> headers would be more robust. But it's more work and I would only do 
-> that if we really got rid of all the LKMM specifics.
-> 
-> Have fun,
->    jonas
+Ack. I mention it so the maintainers can make a decision about fixing
+in 6.11 (still in rc stage) or whether to hold for 6.12. It seems
+pretty safe either way, but for 6.11 probably better to have a fixes
+tag. If the GCC warning becomes a thing there's a chance the code
+won't build without the fix :-)
 
+Thanks,
+Ian
+
+> Dave
+>
+> > Thanks,
+> > Ian
+> >
+> > > ---
+> > >  tools/perf/tests/pmu.c | 3 ---
+> > >  1 file changed, 3 deletions(-)
+> > >
+> > > diff --git a/tools/perf/tests/pmu.c b/tools/perf/tests/pmu.c
+> > > index 40132655ccd1..0b2f04a55d7b 100644
+> > > --- a/tools/perf/tests/pmu.c
+> > > +++ b/tools/perf/tests/pmu.c
+> > > @@ -18,9 +18,6 @@
+> > >  #include <sys/stat.h>
+> > >  #include <sys/types.h>
+> > >
+> > > -/* Fake PMUs created in temp directory. */
+> > > -static LIST_HEAD(test_pmus);
+> > > -
+> > >  /* Cleanup test PMU directory. */
+> > >  static int test_pmu_put(const char *dir, struct perf_pmu *pmu)
+> > >  {
+> > > --
+> > > 2.45.2
+> > >
+> --
+>  -----Open up your eyes, open up your mind, open up your code -------
+> / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \
+> \        dave @ treblig.org |                               | In Hex /
+>  \ _________________________|_____ http://www.treblig.org   |_______/
 
