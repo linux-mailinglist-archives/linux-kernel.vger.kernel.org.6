@@ -1,75 +1,107 @@
-Return-Path: <linux-kernel+bounces-265646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0526093F400
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:26:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E13193F402
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7730C1F2295E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:26:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67364B20953
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FEC145FFB;
-	Mon, 29 Jul 2024 11:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707AA145B27;
+	Mon, 29 Jul 2024 11:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QNpG3twY"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="w3fPnfNX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k9E/dqw2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="w3fPnfNX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k9E/dqw2"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9CF145FE1
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82BE1DA24;
+	Mon, 29 Jul 2024 11:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722252395; cv=none; b=QkTvDNfTVZekWMYL31zVqyv1z9avcv3MsutuUxmADtKknImFZ5srytFGAd/bs4uxGiHymvX7bmBdzqArFz3j3ABsBJFbgFSwBl8tGz2uzJMI4O9wB6WXAwuIsL/vF1j5pIjJ/Knh2s19r0VCYfLyVJ1CSQ7ZEaAKNHN+wTgqtiU=
+	t=1722252486; cv=none; b=n3QVSF9bUq9ysI8weWdyH/FIXMSY8qhnT/IgEs1RW0ebeHeEYJOQkxm9hozVCV5/rXwNHhFfEnsSTi6r9FD6nwuqPQgfAU5TKQFSwcPIQR5sjiYtyrv3fdKzm782GiDmJ7sVQtioVXeoY0CCneQ4+v5S42b8qazSI2nqIEO11ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722252395; c=relaxed/simple;
-	bh=8MkwynnXFVbjdZHNToOy7lnR3zTzpWQbyXZtkGx7KBo=;
+	s=arc-20240116; t=1722252486; c=relaxed/simple;
+	bh=64wCMHSRx+3w86acTbFol7vjqbpkywyn79By4+qP8vI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tmHZdl2r5FCX97pHg0keMegzaOU2Q6err74W4OESGC3iYUkAB+UEN756DokAMk27n8WyofRgrkSUtIRL28vGk5NEtUMKVpcvWhZI5LMJAuN2tDmt3koZxYFdZ6KbcuXq5FGV8KIMB8O4LySYtCQZ0FKnpNlT5DJkQ0VqqaCz2zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QNpG3twY; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D693B40E0205;
-	Mon, 29 Jul 2024 11:26:30 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id iqTEXWE2H-NC; Mon, 29 Jul 2024 11:26:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1722252386; bh=GuDXkXCGhTX08yqWrA8jRr3VoIg3kntTZ1rboi0IwCI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QNpG3twYuf/Au+We0UtQefoCXFOMzuv5h4fOhlZV3k/5xGO0ArNOYwOjWnodKcAqY
-	 plpt1iCwkcnW5dlCaGFcSqILaNCZJydbAFlsMDJ2hXcpWbD24pl+MzplicWIH8N+b9
-	 9AKD2ORo3DKAS1Pf31lg4eILQHzo3uw2wFd5RGaPHHv2ZtAcZRBcTGn6qAkKj2j6u/
-	 NfBfJoL5JZq7kxoD7aJLghMOe4NZVvwNqYq1iG4F4YB0T1liWlJpWYB/1sCtoZLlRT
-	 DasnnEfffqVWD+RJjZGsXM/NAw4ugWptzqTk4whR2TbPJCjTnZmPQR+0F7RIR6xZTI
-	 DI4trQIqQbg5wB8pjYPggvhL0L1ti7M0z+9h4NDnybmWMjcZPhBwrvCwI2AFj6mZ75
-	 c6SbLHDykOfX6ytldGk1UymhHvBBt4P71yxr2q1cLqHHeNkNGjIYgKGP6UU2JWqEiT
-	 fbzTIfezXx5iLfZbyVY4AZo4qdD8KSBBvHQC0+zlfjKpJdtKiGxe/slqPHBC7E9WH2
-	 VPf8yEIC1w5jc+8H6HQ5HkUxbXWIEr9OlrUfAzDxQaQ+GDamvfarQBclNm8mhO+2XI
-	 B9C1L/rc4vn/+2kn3fOaG1s0PmgmDMDJkXH6dtrk8aVZnrINbpcoLjW3yhj4GZpE6x
-	 lBbrh4YQspFC0afybKHLAnJY=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	 Content-Type:Content-Disposition:In-Reply-To; b=gchDuK7ZoSjc4gDVgnrUtBGted3g46+bcrrEoeGCoqRt/x0pto78ElNeBC5fph4MQmylJb+2lSJRUYQ0yihvo50XhJDOm8V/a1ONGR0oTLBsnhNAW8lDADIhZnZg3beH8Z1s20xl6qnsTR1wHbh8dkli/smT2Fr2iDdPsZr+aHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=w3fPnfNX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k9E/dqw2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=w3fPnfNX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k9E/dqw2; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D4DEA40E01BB;
-	Mon, 29 Jul 2024 11:26:19 +0000 (UTC)
-Date: Mon, 29 Jul 2024 13:26:14 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: kernel test robot <lkp@intel.com>,
-	Nathan Chancellor <nathan@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [tip:x86/microcode 1/1]
- arch/x86/kernel/cpu/microcode/amd.c:714:6: warning: variable 'equiv_id' is
- used uninitialized whenever 'if' condition is false
-Message-ID: <20240729112614.GBZqd8Vu27mFVSHynA@fat_crate.local>
-References: <202407291815.gJBST0P3-lkp@intel.com>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C9C3C1F78D;
+	Mon, 29 Jul 2024 11:28:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722252482; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zHUy40S81Hi4I9W9Ak/AUgKQ+mpmORJOALnG2nRnuZM=;
+	b=w3fPnfNXR7uSSln120H+4F0BucM5UqvqvxvUAQ4OQduS4RA5+TwUjEHWI5i6oCBJEH9FtN
+	LesNzcVoghICMVYj0tqTu2X9hzFlGlRU1W50Ws092evHeJU5nA32m5y8AQQn9JXJcm8C7q
+	hmXV6o2fBXjIl4iIiHiAmO6RLBtpRFg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722252482;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zHUy40S81Hi4I9W9Ak/AUgKQ+mpmORJOALnG2nRnuZM=;
+	b=k9E/dqw2MvhFlDgqEBRwJ38Ig/L5V33Nz87eZTwStImN3ZRmR+Vv+po62CMaLMCUbLMtVx
+	OAodIzr8smLBsLAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722252482; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zHUy40S81Hi4I9W9Ak/AUgKQ+mpmORJOALnG2nRnuZM=;
+	b=w3fPnfNXR7uSSln120H+4F0BucM5UqvqvxvUAQ4OQduS4RA5+TwUjEHWI5i6oCBJEH9FtN
+	LesNzcVoghICMVYj0tqTu2X9hzFlGlRU1W50Ws092evHeJU5nA32m5y8AQQn9JXJcm8C7q
+	hmXV6o2fBXjIl4iIiHiAmO6RLBtpRFg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722252482;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zHUy40S81Hi4I9W9Ak/AUgKQ+mpmORJOALnG2nRnuZM=;
+	b=k9E/dqw2MvhFlDgqEBRwJ38Ig/L5V33Nz87eZTwStImN3ZRmR+Vv+po62CMaLMCUbLMtVx
+	OAodIzr8smLBsLAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BD3FF1368A;
+	Mon, 29 Jul 2024 11:28:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id DsgtLsJ8p2YjMQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 29 Jul 2024 11:28:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 6F770A099C; Mon, 29 Jul 2024 13:28:02 +0200 (CEST)
+Date: Mon, 29 Jul 2024 13:28:02 +0200
+From: Jan Kara <jack@suse.cz>
+To: Baokun Li <libaokun@huaweicloud.com>
+Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, ritesh.list@gmail.com,
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH 08/20] ext4: get rid of ppath in ext4_find_extent()
+Message-ID: <20240729112802.eqkmgf66ebnc22u5@quack3>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-9-libaokun@huaweicloud.com>
+ <20240725103823.fvvinixcctacf4fx@quack3>
+ <0046d3b3-24ce-4cdb-a40a-4022b79a5a7b@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,85 +110,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <202407291815.gJBST0P3-lkp@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0046d3b3-24ce-4cdb-a40a-4022b79a5a7b@huaweicloud.com>
+X-Spamd-Result: default: False [-2.10 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_LAST(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,mit.edu,dilger.ca,gmail.com,huawei.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,huawei.com:email,suse.cz:email,suse.com:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -2.10
 
-+ Nathan.
-
-On Mon, Jul 29, 2024 at 07:04:51PM +0800, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/microcode
-> head:   94838d230a6c835ced1bad06b8759e0a5f19c1d3
-> commit: 94838d230a6c835ced1bad06b8759e0a5f19c1d3 [1/1] x86/microcode/AMD: Use the family,model,stepping encoded in the patch ID
-> config: i386-buildonly-randconfig-001-20240729 (https://download.01.org/0day-ci/archive/20240729/202407291815.gJBST0P3-lkp@intel.com/config)
-> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240729/202407291815.gJBST0P3-lkp@intel.com/reproduce)
+On Sat 27-07-24 14:18:33, Baokun Li wrote:
+> On 2024/7/25 18:38, Jan Kara wrote:
+> > On Wed 10-07-24 12:06:42, libaokun@huaweicloud.com wrote:
+> > > From: Baokun Li <libaokun1@huawei.com>
+> > > 
+> > > The use of path and ppath is now very confusing, so to make the code more
+> > > readable, pass path between functions uniformly, and get rid of ppath.
+> > > 
+> > > Getting rid of ppath in ext4_find_extent() requires its caller to update
+> > > ppath. These ppaths will also be dropped later. No functional changes.
+> > > 
+> > > Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> > One nit below, otherwise feel free to add:
+> > 
+> > Reviewed-by: Jan Kara <jack@suse.cz>
+> > 
+> > > @@ -3260,11 +3257,12 @@ static int ext4_split_extent_at(handle_t *handle,
+> > >   	 * WARN_ON may be triggered in ext4_da_update_reserve_space() due to
+> > >   	 * an incorrect ee_len causing the i_reserved_data_blocks exception.
+> > >   	 */
+> > > -	path = ext4_find_extent(inode, ee_block, ppath,
+> > > +	path = ext4_find_extent(inode, ee_block, *ppath,
+> > >   				flags | EXT4_EX_NOFAIL);
+> > >   	if (IS_ERR(path)) {
+> > >   		EXT4_ERROR_INODE(inode, "Failed split extent on %u, err %ld",
+> > >   				 split, PTR_ERR(path));
+> > > +		*ppath = NULL;
+> > >   		return PTR_ERR(path);
+> > >   	}
+> > I think here you forgot to update ppath on success case. It will go away by
+> > the end of the series but still it's good to keep thing consistent...
+> > 
+> > 								Honza
 > 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202407291815.gJBST0P3-lkp@intel.com/
+> Hi Honza,
 > 
-> All warnings (new ones prefixed by >>):
+> Thank you for your review！
 > 
-> >> arch/x86/kernel/cpu/microcode/amd.c:714:6: warning: variable 'equiv_id' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
->      714 |         if (x86_family(bsp_cpuid_1_eax) < 0x17) {
->          |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    arch/x86/kernel/cpu/microcode/amd.c:720:31: note: uninitialized use occurs here
->      720 |         return cache_find_patch(uci, equiv_id);
->          |                                      ^~~~~~~~
->    arch/x86/kernel/cpu/microcode/amd.c:714:2: note: remove the 'if' if its condition is always true
->      714 |         if (x86_family(bsp_cpuid_1_eax) < 0x17) {
->          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    arch/x86/kernel/cpu/microcode/amd.c:706:14: note: initialize the variable 'equiv_id' to silence this warning
->      706 |         u16 equiv_id;
->          |                     ^
->          |                      = 0
->    1 warning generated.
+> In patch 5, the ppath is already updated in case of success, so there
+> is no need to add it here. This update was not shown when the patch
+> was made and it looks like this：
 > 
-> 
-> vim +714 arch/x86/kernel/cpu/microcode/amd.c
-> 
->    701	
->    702	static struct ucode_patch *find_patch(unsigned int cpu)
->    703	{
->    704		struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
->    705		u32 rev, dummy __always_unused;
->    706		u16 equiv_id;
->    707	
->    708		/* fetch rev if not populated yet: */
->    709		if (!uci->cpu_sig.rev) {
->    710			rdmsr(MSR_AMD64_PATCH_LEVEL, rev, dummy);
->    711			uci->cpu_sig.rev = rev;
->    712		}
->    713	
->  > 714		if (x86_family(bsp_cpuid_1_eax) < 0x17) {
->    715			equiv_id = find_equiv_id(&equiv_table, uci->cpu_sig.sig);
->    716			if (!equiv_id)
->    717				return NULL;
->    718		}
->    719	
->    720		return cache_find_patch(uci, equiv_id);
->    721	}
->    722	
+> -       path = ext4_find_extent(inode, ee_block, ppath,
+> +       path = ext4_find_extent(inode, ee_block, *ppath,
+>                                 flags | EXT4_EX_NOFAIL);
+>         if (IS_ERR(path)) {
+>                 EXT4_ERROR_INODE(inode, "Failed split extent on %u, err
+> %ld",
+>                                  split, PTR_ERR(path));
+> +               *ppath = NULL;
+>                 return PTR_ERR(path);
+>         }
+>         depth = ext_depth(inode);
+>         ex = path[depth].p_ext;
+>         *ppath = path;
 
-That's a false positive, I think.
+Yes, you are right. I didn't realize the update was already there. So I
+withdraw my comment :)
 
-clang can't see that equiv_id is used in cache_find_patch() ->
-patch_cpus_equivalent() *only* in the
-
-	if (x86_family(bsp_cpuid_1_eax) < 0x17)
-
-case.
-
-And that case is handled properly in this function.
-
-So, unless I'm missing something else, it's a good thing this warning is
-behind a W=1. Keep it there.
-
-Thx.
+								Honza
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
