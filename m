@@ -1,186 +1,203 @@
-Return-Path: <linux-kernel+bounces-266434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1AD293FFDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:55:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2724493FFE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21AF6B215E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:55:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 922251F21922
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234A81891B8;
-	Mon, 29 Jul 2024 20:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F9E18C350;
+	Mon, 29 Jul 2024 20:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ebesWIuc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OXS47I/Z";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="voSem+vf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WYVrhlH0"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h/nnWeya"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E1718D4A2;
-	Mon, 29 Jul 2024 20:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6550918A92A
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722286510; cv=none; b=SSA9IrVJAz+y9N8pTuLgEWkOcM65DVTfbVGO8KjllkoqxQXXJE/CpHBv252lf+bSbuZuBghdpMT8TuaFCtq2VKJDa1dpDWLca1LbpD3tTOkLI/lGGL5qQCbtETtEBdsACDIxTWMkVhTya3hGVdJ0JsknSfs1gw84oPKdUTzMOdU=
+	t=1722286526; cv=none; b=onHqvplgmtPzOlZrmPqy/UnotSbPvqzmYkqSXsa9Fmncz6b/lzT/wWMneQ6pFGWjtTgVQfgeOxiRaFsra1ETarABxFj1QunW0gWJBwBvQpH9/f7t8L9IX33Jo01gHfSlb0BjB8IL9rhlaWIBmlzVr6JbYJUDMI3EhrzqkJpt2s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722286510; c=relaxed/simple;
-	bh=e2vueFmg0RlqKjBsjeyf+u3Ms90LOD6pNHrIgplDljo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bXXHD4gBaE0j4mvgj0MuQZdhFp/MT2X0dLC0kn3TNV3gCyuMfRByCeYzf6T/p4PyPenepRQTfG8LVR48s6wg693HP1B+T1HfJ0lJivdHavaSvQd5pJwV1zCMgw1lW4peiqgyLSVFT5lBpNObSPQAdHESpGE+EW6NTBU+8Kliajk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ebesWIuc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OXS47I/Z; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=voSem+vf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WYVrhlH0; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D922E21A47;
-	Mon, 29 Jul 2024 20:55:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722286505;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s3oBy0L+5qRJ/bohtI7+Je9Ik7QHAuM+6OqGs9Vu+xw=;
-	b=ebesWIucjjfxiJNLhTs2gRriRC+fBIu2kHQ0r2kbj72R1nOXY7qFK00kqpCgvA0nOTJz+j
-	DkZQTuti1fkMXbxeq1IitIJ+C/rMIsqMOYA2KR7aT6h6MdPPbZno5t7Rdz4R1L8GsgdLun
-	qGbMtCjuf/Qbmh0kFYH+kGETEUucB0I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722286505;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s3oBy0L+5qRJ/bohtI7+Je9Ik7QHAuM+6OqGs9Vu+xw=;
-	b=OXS47I/ZWxUUjzjRU3ec1557R3JEbvf+LR1kA0BlNmprmbtScuJQL5GNUgXiao8FzH2n30
-	m6nN7naahpQooCDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722286504;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s3oBy0L+5qRJ/bohtI7+Je9Ik7QHAuM+6OqGs9Vu+xw=;
-	b=voSem+vfoe+4sXpiU7//1PDQ1/XRT3WYtGQGEKm8M+sZWF0x4RUjiFlO2RAo1X4TN3eWgd
-	/9D3eXxLzSsKMz6zr3V91Qj+PCXofYD7NX3mHtu0xbX08KB2jgcbPCgFvmiASGiCWi+E2b
-	8kQ24t7oYyXjiRkTancyfQ9XS31X6Hc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722286504;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s3oBy0L+5qRJ/bohtI7+Je9Ik7QHAuM+6OqGs9Vu+xw=;
-	b=WYVrhlH0MfTdJxvrbWatL6OJ4G7rsLH0JFfj+3m5KUTQL0VP7L51pjud8NQxn8cHJFgncM
-	kZAvr5EuGebl+4BA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B42B3138A7;
-	Mon, 29 Jul 2024 20:55:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id JB56K6gBqGZBUQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 29 Jul 2024 20:55:04 +0000
-Date: Mon, 29 Jul 2024 22:55:03 +0200
-From: David Sterba <dsterba@suse.cz>
-To: cve@kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-cve-announce@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: CVE-2024-41067: btrfs: scrub: handle RST lookup error correctly
-Message-ID: <20240729205503.GT17473@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <2024072907-CVE-2024-41067-bc18@gregkh>
+	s=arc-20240116; t=1722286526; c=relaxed/simple;
+	bh=RTz+0z5SbA8fg9idABtdR1W3LTdJAfQ+K1FoGhBcJKo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l/BelTWuM11UcjGv6Q7+/OYd89i86VFwHb/gmSVRejSU4aa0tCcnz9ZxFDA1ZI+2cGmO+y4oVmHqz9AFitM0+tbmFf1YON5UbQLI2EbLlXhL19IPQgUwPENYzlqTG2kkO008GDYotYgSp3f22YydgU9S4G8D2pVlgnDxkWCQIfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h/nnWeya; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-45029af1408so24301cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:55:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722286522; x=1722891322; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=niejWPzSGiHspwj4YntTxK5/QOZFWVp8np2sDleyrVI=;
+        b=h/nnWeyaW27Ao2xvbbFSE/Zt2VJmO48EkAeQz0RZj8F23e7gNiryg8lymrcGLWEWT7
+         fHdVAEg0XPtUc0g56RjGO+qOEix/2Io800UeFfwXdUZLQrKZZtAJdCuWJYiuVg/8QvDQ
+         YEcOLiM3HeSBtMi82IDcBqR397rtWDLLuUIBJQ+qJhfZJPuDB4Vme1SjbtedSxs0OC7y
+         97Cl5VKseASfQI2QSiqLovTiSBLLL6edYy3S1Bd0khZUsKr1nwQOPdH3Kub/5Glj8GBN
+         M3RELBvQnEbtI0qYiF2z6Id20NHzjZeQJ2G1SE3uvcHxiWgH4MwXwNukN4MOuRHVTcJ9
+         cb1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722286522; x=1722891322;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=niejWPzSGiHspwj4YntTxK5/QOZFWVp8np2sDleyrVI=;
+        b=VTthoXtuEOqbtqXRBF5d+eDDiGyI/TZ8zZw7f+Tk81w50CAAgwmcBUFyV121owcAyq
+         QbE2HUJIP9cl8vQyl6mgoT1fhG31FUeJy/S570oN+1aYnOxLvxO/pE+Ey29RejOa3mue
+         r6wdHmPrAVYV8SPPlVETfBMqRmlTZPGS1ri7XUL/rlDOE8p+lfJFGX2D8kHT0vQJNT0A
+         +Pc0evDeUbPOKRKUJHHamDpc7uYnL9cTiqovPCOibKwXjWHUuTy+pJTeTAdWYiM1G+wH
+         ALoobTahUgJ6ef12uBTqaf6JNk7Tywd8IV4bOcy90uYUaHcjmGvtrB3FE+XcQVZsCW3W
+         6tXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtfh1qRlq99cOZh7zWcm5W6XaPJhdU8jRqSbMcaOwoQV5oRSP72A/8EPTcJIdpOMgIl/NuN5vReoB9rbydL+t1/eJjRM55snFkbk9p
+X-Gm-Message-State: AOJu0YwpVVOxyf68TlUCafochO4jj7JLYtxJdqrc6pOOgJysHZcyoP/C
+	Yr5Oo3CbPxLPBvIqNbGiUkz5wYHxFtWa+pY8CLTurDahzhm1XhiAFvGDwbMfQxY0FkiwwSjqEkI
+	8i3ePj0aEWww4cs5hNvlevDGc97UWRsnuuNAL
+X-Google-Smtp-Source: AGHT+IH2rSZTSsniocXI2j9VEsSuvZAH/+8U38Hr61bPybhBcITR+1rWGMzIbas1ALvho8R2h8RifAfAD1wu6fS6OdI=
+X-Received: by 2002:ac8:5910:0:b0:447:eaaa:c852 with SMTP id
+ d75a77b69052e-45032ac32c8mr1554811cf.23.1722286521955; Mon, 29 Jul 2024
+ 13:55:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024072907-CVE-2024-41067-bc18@gregkh>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,imap1.dmz-prg2.suse.org:helo];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+References: <20240728203001.2551083-1-xur@google.com> <20240728203001.2551083-4-xur@google.com>
+ <20240729093405.GC37996@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240729093405.GC37996@noisy.programming.kicks-ass.net>
+From: Rong Xu <xur@google.com>
+Date: Mon, 29 Jul 2024 13:55:10 -0700
+Message-ID: <CAF1bQ=QgBBEBt1sZYM0HfGf_NhC+cX73Vf+wcu7dSsZ639EGXQ@mail.gmail.com>
+Subject: Re: [PATCH 3/6] Change the symbols order when --ffuntion-sections is enabled
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Han Shen <shenhan@google.com>, Sriraman Tallam <tmsriram@google.com>, 
+	David Li <davidxl@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, John Moon <john@jmoon.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, 
+	Mike Rapoport <rppt@kernel.org>, "Paul E . McKenney" <paulmck@kernel.org>, Rafael Aquini <aquini@redhat.com>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Eric DeVolder <eric.devolder@oracle.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Randy Dunlap <rdunlap@infradead.org>, 
+	Benjamin Segall <bsegall@google.com>, Breno Leitao <leitao@debian.org>, 
+	Wei Yang <richard.weiyang@gmail.com>, Brian Gerst <brgerst@gmail.com>, 
+	Juergen Gross <jgross@suse.com>, Palmer Dabbelt <palmer@rivosinc.com>, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>, Kees Cook <kees@kernel.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Xiao Wang <xiao.w.wang@intel.com>, 
+	Jan Kiszka <jan.kiszka@siemens.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev, 
+	Krzysztof Pszeniczny <kpszeniczny@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 04:58:13PM +0200, Greg Kroah-Hartman wrote:
-> Description
-> ===========
-> 
-> In the Linux kernel, the following vulnerability has been resolved:
-> 
-> btrfs: scrub: handle RST lookup error correctly
-> 
-> [BUG]
-> When running btrfs/060 with forced RST feature, it would crash the
-> following ASSERT() inside scrub_read_endio():
-> 
-> 	ASSERT(sector_nr < stripe->nr_sectors);
-> 
-> Before that, we would have tree dump from
-> btrfs_get_raid_extent_offset(), as we failed to find the RST entry for
-> the range.
-> 
-> [CAUSE]
-> Inside scrub_submit_extent_sector_read() every time we allocated a new
-> bbio we immediately called btrfs_map_block() to make sure there was some
-> RST range covering the scrub target.
-> 
-> But if btrfs_map_block() fails, we immediately call endio for the bbio,
-> while the bbio is newly allocated, it's completely empty.
-> 
-> Then inside scrub_read_endio(), we go through the bvecs to find
-> the sector number (as bi_sector is no longer reliable if the bio is
-> submitted to lower layers).
-> 
-> And since the bio is empty, such bvecs iteration would not find any
-> sector matching the sector, and return sector_nr == stripe->nr_sectors,
-> triggering the ASSERT().
-> 
-> [FIX]
-> Instead of calling btrfs_map_block() after allocating a new bbio, call
-> btrfs_map_block() first.
-> 
-> Since our only objective of calling btrfs_map_block() is only to update
-> stripe_len, there is really no need to do that after btrfs_alloc_bio().
-> 
-> This new timing would avoid the problem of handling empty bbio
-> completely, and in fact fixes a possible race window for the old code,
-> where if the submission thread is the only owner of the pending_io, the
-> scrub would never finish (since we didn't decrease the pending_io
-> counter).
-> 
-> Although the root cause of RST lookup failure still needs to be
-> addressed.
-> 
-> The Linux kernel CVE team has assigned CVE-2024-41067 to this issue.
+On Mon, Jul 29, 2024 at 2:34=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Sun, Jul 28, 2024 at 01:29:56PM -0700, Rong Xu wrote:
+> > When the -ffunction-sections compiler option is enabled, each function
+> > is placed in a separate section named .text.function_name rather than
+> > putting all functions in a single .text section.
+> >
+> > However, using -function-sections can cause problems with the
+> > linker script. The comments included in include/asm-generic/vmlinux.lds=
+.h
+> > note these issues.:
+> >   =E2=80=9CTEXT_MAIN here will match .text.fixup and .text.unlikely if =
+dead
+> >    code elimination is enabled, so these sections should be converted
+> >    to use ".." first.=E2=80=9D
+> >
+> > It is unclear whether there is a straightforward method for converting
+> > a suffix to "..". This patch modifies the order of subsections within t=
+he
+> > text output section when the -ffunction-sections flag is enabled.
+> > Specifically, it repositions sections with certain fixed patterns (for
+> > example .text.unlikely) before TEXT_MAIN, ensuring that they are groupe=
+d
+> > and matched together.
+> >
+> > Note that the limitation arises because the linker script employs glob
+> > patterns instead of regular expressions for string matching. While ther=
+e
+> > is a method to maintain the current order using complex patterns, this
+> > significantly complicates the pattern and increases the likelihood of
+> > errors.
+> >
+> > Co-developed-by: Han Shen <shenhan@google.com>
+> > Signed-off-by: Han Shen <shenhan@google.com>
+> > Signed-off-by: Rong Xu <xur@google.com>
+> > Suggested-by: Sriraman Tallam <tmsriram@google.com>
+> > Suggested-by: Krzysztof Pszeniczny <kpszeniczny@google.com>
+> > ---
+> >  include/asm-generic/vmlinux.lds.h | 19 ++++++++++++++++---
+> >  1 file changed, 16 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vm=
+linux.lds.h
+> > index 5703526d6ebf..f3de66bda293 100644
+> > --- a/include/asm-generic/vmlinux.lds.h
+> > +++ b/include/asm-generic/vmlinux.lds.h
+> > @@ -582,9 +582,21 @@
+> >   * during second ld run in second ld pass when generating System.map
+> >   *
+> >   * TEXT_MAIN here will match .text.fixup and .text.unlikely if dead
+> > - * code elimination is enabled, so these sections should be converted
+> > - * to use ".." first.
+> > + * code elimination or function-section is enabled. Match these symbol=
+s
+> > + * first when in these builds.
+> >   */
+> > +#if defined(CONFIG_LD_DEAD_CODE_DATA_ELIMINATION) || defined(CONFIG_LT=
+O_CLANG)
+> > +#define TEXT_TEXT                                                    \
+> > +             *(.text.asan.* .text.tsan.*)                            \
+> > +             *(.text.unknown .text.unknown.*)                        \
+> > +             *(.text.unlikely .text.unlikely.*)                      \
+> > +             ALIGN_FUNCTION();                                       \
+>
+> Why leave the above text sections unaligned?
 
-Please drop the CVE. It's a fix for feature that's still in development
-and is not enabled on production kernels (requires CONFIG_BTRFS_DEBUG).
-There was even a recent on-disk format change (mkfs required), this is
-not really for environments where security matters. Thanks.
+They are considered cold text. They are not aligned before the change.
+But I have no objections to making it aligned.
+
+(Sorry if you receive a duplicated message. I'm resending this in
+plain text mode.)
+
+>
+> > +             *(.text.hot .text.hot.*)                                \
+> > +             *(TEXT_MAIN .text.fixup)                                \
+> > +             NOINSTR_TEXT                                            \
+> > +             *(.ref.text)                                            \
+> > +     MEM_KEEP(init.text*)
+> > +#else
+> >  #define TEXT_TEXT                                                    \
+> >               ALIGN_FUNCTION();                                       \
+> >               *(.text.hot .text.hot.*)                                \
+> > @@ -594,7 +606,8 @@
+> >               NOINSTR_TEXT                                            \
+> >               *(.ref.text)                                            \
+> >               *(.text.asan.* .text.tsan.*)                            \
+> > -     MEM_KEEP(init.text*)                                            \
+> > +     MEM_KEEP(init.text*)
+> > +#endif
+> >
+> >
+> >  /* sched.text is aling to function alignment to secure we have same
+> > --
+> > 2.46.0.rc1.232.g9752f9e123-goog
+> >
 
