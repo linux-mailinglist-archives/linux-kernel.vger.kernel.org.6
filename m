@@ -1,109 +1,93 @@
-Return-Path: <linux-kernel+bounces-265798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0833B93F618
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:03:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82EA593F61F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 675FC281587
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:03:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37F181F22FAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC42A14901B;
-	Mon, 29 Jul 2024 13:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3287914EC47;
+	Mon, 29 Jul 2024 13:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="RmZ9YGTy"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="hOXkNMSv"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E231465B4
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5751465B4
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722258200; cv=none; b=fq0UI1FtgxmyYnj5cj6+WnweEdWRDxoIOGS9Hun920YD4NCwaB635ayJbZDTkSmdmc5WKD4Rq4hfsG3yOLWacwjkIxx9vGs5jbxJNmcFdfoI9qzJinWzkwxSJp1IvXZnPO2Www3iiheOErnC6XfxKLkURriWWtfKE9eurBWjuBg=
+	t=1722258314; cv=none; b=JWAcuaacy24T9QO0VBNeB4UGTiNNTbTHCHp0Ff/6c6bBoFyH4KzFsK4Davlk20/p+8YnzLUm901Y5J/EzwV6wiaiAtrftVtE6X7iegkcH+IhuNk2H+rM1ThwWNbpyP4MVA+f2Z7z+pJ5yiXK6KsyLP1/jGlXzGCriZqqfbr5eDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722258200; c=relaxed/simple;
-	bh=Dj7bP9sSC3CrTfSJAxRjp0FSlhqS+U7DUfQIpJIUFbA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bsm74HYTsKzd12AdZvQ0lNRj8Inx8h5u++5CKdEqwAeXTs+hFnVJxO5W3xuYYEKhs6UgiTVIxrW+294EKAuXbY5Gyu6qTzgGSCGiLX0YicK53DcRxW0kKryGrUJuv0J7kV9qBvCMURadFX90Krd4klZKcuor96KDmeeR6Lrw1pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=RmZ9YGTy; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=7Fa3
-	FvYszI2v7tZhjSBxOKf5nK/7KsdWSyZ8VQRbAyE=; b=RmZ9YGTy1Lql42Nce0XQ
-	DCxRz2HxWnTwXJfgPaI/CjbbhJlxrcGTP2v2+BileckUZRVtHwmyvYYZ+GF4sA/T
-	jPNJUNvhpGn9wpbmDQJctHb0vzURBBt33iYrjt/NxsadNySKffvqdAQ2LGwqhyCY
-	nlsGFq06rT1bqOBUn/s9i76a7gzupMZ1XZ/rFG08uxGULDn8lIzcries8WqLiH/a
-	qdwYiMYNFzKRQIeT7Z9aPQOeelP+XwOKscd885b+NoGjfiEUuVxj2asd3tsCH47R
-	Tvmxsu+BcwUe8QUgryD3QNdLaMZAhLVHTSGQQgCIy3hF5GvPUrvWluqAJKnbNSaj
-	wA==
-Received: (qmail 4110312 invoked from network); 29 Jul 2024 15:03:14 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Jul 2024 15:03:14 +0200
-X-UD-Smtp-Session: l3s3148p1@8AjSe2Ie+15tKPFk
-Date: Mon, 29 Jul 2024 15:03:12 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Konrad Dybcio <konradybcio@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: update email for Konrad Dybcio
-Message-ID: <ZqeTEGVjMD0VqRRx@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Konrad Dybcio <konradybcio@gmail.com>, linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, linux-pm@vger.kernel.org
-References: <20240729125225.2090-2-wsa+renesas@sang-engineering.com>
- <a1ff72a2-7992-4ebd-b48b-2bb85335edaf@gmail.com>
+	s=arc-20240116; t=1722258314; c=relaxed/simple;
+	bh=Nwdk1Zb376HFbM1m2aApZjKPiZ11wbxbpIpoPekhWTs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iLQE/G46dMfL16cS2s7kkZUsk6bEerQ2r8SAnVIjFIdCQ/SOSoWmlL9tJMWpGnv85KPOBwf0FKIgrCPzv7/3YByMcnmwwKMByKPIvwVC2ELBq3WT6BsiKCwwsAs1UO/YNvrsgpsYj9MLJSK+q4L/w+5pT2vYWDx8FqbeIvZu+kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=hOXkNMSv; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7a8caef11fso379808766b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:05:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1722258311; x=1722863111; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nwdk1Zb376HFbM1m2aApZjKPiZ11wbxbpIpoPekhWTs=;
+        b=hOXkNMSvLOzz3irBecp3MxDUVaNByZNfDwzrGas0ykxItE7BSuBSS8gm9HQrYV/7+Z
+         rKeld+8m9mlDyxsovQm8uqfD/UIC/Xq6Ti+4ipfCQFgDg2QPDewb2HnkccGa0NnZpD2+
+         Ps8LhgmDNJEZCit5ygCCarR5bH8Gmxa7wIyOFxQ/ULcVGuxDVvB2wypBX50cXE5P+94L
+         Lw7k6X04AFrr384CTs8cYCDe9IMUxI8pLWFYbIR3vM1dKEOGjoUQG3NH4dTQ9msGfXKp
+         kWGqqd5hS3ywAa35v63/yd0uwBktaibM3eCqme8WPyJ7DV/4qSzqzUeZfIAY1zBoCl2l
+         t3sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722258311; x=1722863111;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Nwdk1Zb376HFbM1m2aApZjKPiZ11wbxbpIpoPekhWTs=;
+        b=lfRK9Tq2EhHh6RoSiHtjaczN2ET7z3le+gPi8Z/xUxsmOzPUjhCHwveBbuEjiURGCr
+         iUh456byCzTnTPKjqhyBKr7Mg4La2rICqDHUJABfs7qUTvIVSdMve/0Ki6idrZfFDX7S
+         z1g0Vb1hUIvPGuwgMBANZ+T5EqCuBolvyvVoW0cGpMjfZdOFEpfIr1aAG4vsv4nMreIZ
+         AD5ya0PiBWFXBGtXxkSt6u3kNPBq6IrEuge2XvDx0UsBFmMHrSVOcH0+9oYinxfutdsq
+         iXWXx5Ako8RitrbH8GFTqaIiqVgG87qippMpb/431d57HxGmIezg8/zNcDnxDR5xvBIq
+         kKkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoLtlHTF8weidej0200+/NZQDYAOwGn1mqtkplRFvXtwNP7beBHcI3vLdfUxMr3wtcqnLABH7CfXyfIwxq6iVILaPrcQ5uy2RIPt8l
+X-Gm-Message-State: AOJu0YwVHcfYF4KQ1aueQnmFZHr8S1hxgJN701UnJwqbwEv6gr8zU1dd
+	M/ZK/ttCVCPQ/V2aBSHPKb8iQaUSOwBqhHiM2COurpBl++X/MvUfb8OhJNk4va9KimN00ptWOR7
+	iwC9+XKuMtMxU5X8QER7sFXdI9FFpGoAgBVASnQ==
+X-Google-Smtp-Source: AGHT+IF3q5HRQsp30wvL513VaLZ8ou7ZSERFd1RF1FMGbO2FLdRRU63BXpRqD92PQM6mpbVkAMHS0DgJYlggtS8sCLo=
+X-Received: by 2002:a17:906:d54f:b0:a77:de2a:aef7 with SMTP id
+ a640c23a62f3a-a7d40150ad2mr553058766b.44.1722258310918; Mon, 29 Jul 2024
+ 06:05:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/FJwCOto+3YIJsnZ"
-Content-Disposition: inline
-In-Reply-To: <a1ff72a2-7992-4ebd-b48b-2bb85335edaf@gmail.com>
+References: <20240729091532.855688-1-max.kellermann@ionos.com> <d03ba5c264de1d3601853d91810108d9897661fb.camel@kernel.org>
+In-Reply-To: <d03ba5c264de1d3601853d91810108d9897661fb.camel@kernel.org>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 29 Jul 2024 15:04:59 +0200
+Message-ID: <CAKPOu+_3hfsEMPYTk30x2x2BoJSb054oV-gy1xtxqGycvyXLMQ@mail.gmail.com>
+Subject: Re: [PATCH] fs/netfs/fscache_io: remove the obsolete "using_pgpriv2" flag
+To: Jeff Layton <jlayton@kernel.org>
+Cc: dhowells@redhat.com, willy@infradead.org, linux-cachefs@redhat.com, 
+	linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, xiubli@redhat.com, 
+	Ilya Dryomov <idryomov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jul 29, 2024 at 2:56=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+> Nice work! I'd prefer this patch over the first one. It looks like the
+> Fixes: commit went into v6.10. Did it go into earlier kernels too?
 
---/FJwCOto+3YIJsnZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Konrad,
-
-> Already sent a series of fixups, but thanks for keeping track
-
-Welcome. Cool that you are at it!
-
-Happy hacking,
-
-   Wolfram
-
-
---/FJwCOto+3YIJsnZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmankw0ACgkQFA3kzBSg
-KbauLQ//VGH3tiB3g4Zj5iz7b/4cBTixu6XyY7JOrDL2k62xzR2eUiDzJEdR3kP4
-p8umhzW69kiEqeOP1CWsGMNfJ5ypd99zrAevJYo5w+YwFeFLofb4oeI+BqUjIlVL
-GsFD9KKW14EbRRk1oAELInqkfNCH/0SDWKq/6fpSPmke6Qzwei2VeASua8XtoFp7
-Fw8HMjADYi2I0B+EpkL4yzjckLfafmgdtpwrpCWL5hSQ8xKuevEM/OGt+LTTh7lO
-vz7Gm7llwr9IZBxe9sVK0WPxs2oPAPhhuwbk9W++FKF7kGcid2QHg2S3zz4MfVSa
-7JRGwTGusGpNkmRRpew5033VJ8c1UXYcSRxaEtMYnpoU8F8U5g+TDKzvhkVBofin
-aTvK+YdU9+TBzceM/qqfXusoSxvpo6sgNEWrgz1MCg8iSMuygT+G0NK4UCcChSTD
-Ys6QTV10FI5cF4CsNEYTDFOnhALtnq68D8wWMIG5Gsn6Wkpazsg+IeYwmNV6pnG5
-pVrUeM7ETz9/7xoyRDMc4aPEZjNtzy+uB1STUEb50ag/NbhX9EjO2C7U7BIinCzY
-pzvAWFH/cCm8o2yyPSt/3ifNAKe8//lJq9zUZ6c+adHr3GHnKCeO3bjhT15ZrQbR
-rs7xewbujhdqeD5jhrkLFyzIttjRVK/Tnn03cnEnFUl9biTKV7I=
-=44Db
------END PGP SIGNATURE-----
-
---/FJwCOto+3YIJsnZ--
+No, it's 6.10 only.
 
