@@ -1,180 +1,158 @@
-Return-Path: <linux-kernel+bounces-265874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52CFF93F721
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:59:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1CCD93F4F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:13:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1131F2824CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:59:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81FE61C2120B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D832614EC71;
-	Mon, 29 Jul 2024 13:59:27 +0000 (UTC)
-Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7480146D7C;
+	Mon, 29 Jul 2024 12:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVQY8JZU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA761E515
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.123.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BF180034;
+	Mon, 29 Jul 2024 12:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722261567; cv=none; b=l++TBxpE8+TKluaa587WJqfY/sFXTbCtN1buCCx+ToNvsBLxUsCNEPn5gUI20cuvwczEQ6UtGmShDNoMSqERBR4i7TXU6Xb5BfEtWfoz9GTO6j5f4IhtDuAn18awRvYOlbPf/mJ8q2DL+AlzpC/Gp6WyXQs4BGIlSFyoovEWmKM=
+	t=1722255204; cv=none; b=MgBrOOFTV4a1Y+dO+AeB3vKVIjfuXbK4XuX14wlJVh3b3X9G274U+Rl54RCgulLrutHHk4J+un8+5wJ6HfjA/wI+UNqYFtvE9AUSpEJR0hWfD4wm7Yx2osaFxqeJf1dIiaTmx4tHUN1Phtpbo+v3bDdXuy6qOHjRhwZW8EBAd9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722261567; c=relaxed/simple;
-	bh=LVDUmFv7UA9ijcy4nvqrOeIdryfWQmOVHnYWex4La00=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TYn5KV/e0Eam45G8hdc6IXIV78I8gA//ffaNbjjFdD8iuJeEvFWZEPiIj+FyWtXdhhy+FWxZkVo8I0xfFlq9bvQ0y26zOIYuykOMtrtfDxYyPo3aYFty1vfC5UdffJ1/uByEa1/4vZI90lzg/BZ5jBJKVcCLowOvscsYFhaua8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com; spf=pass smtp.mailfrom=h3c.com; arc=none smtp.client-ip=60.191.123.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
-Received: from h3cspam02-ex.h3c.com (localhost [127.0.0.2] (may be forged))
-	by h3cspam02-ex.h3c.com with ESMTP id 46TCCCSI027469
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:12:12 +0800 (GMT-8)
-	(envelope-from zhang.chunA@h3c.com)
-Received: from mail.maildlp.com ([172.25.15.154])
-	by h3cspam02-ex.h3c.com with ESMTP id 46TCBa6O026906;
-	Mon, 29 Jul 2024 20:11:36 +0800 (GMT-8)
-	(envelope-from zhang.chunA@h3c.com)
-Received: from DAG6EX09-BJD.srv.huawei-3com.com (unknown [10.153.34.11])
-	by mail.maildlp.com (Postfix) with ESMTP id D99332004721;
-	Mon, 29 Jul 2024 20:16:19 +0800 (CST)
-Received: from localhost.localdomain.com (10.99.206.13) by
- DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1258.27; Mon, 29 Jul 2024 20:11:39 +0800
-From: zhangchun <zhang.chuna@h3c.com>
-To: <akpm@linux-foundation.org>
-CC: <jiaoxupo@h3c.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <shaohaojize@126.com>, <zhang.chuna@h3c.com>,
-        <zhang.zhansheng@h3c.com>, <zhang.zhengming@h3c.com>
-Subject: [PATCH v3] =?UTF-8?q?mm:=20Give=20kmap=5Flock=20before=20call=20flus?= =?UTF-8?q?h=5Ftlb=5Fkernel=5Frang=EF=BC=8Cavoid=20kmap=5Fhigh=20deadlock.?=
-Date: Mon, 29 Jul 2024 20:13:08 +0800
-Message-ID: <1722255188-4478-1-git-send-email-zhang.chuna@h3c.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1722255204; c=relaxed/simple;
+	bh=bmKyeNJ8spozwo0XX+T9shKICyNJDGinEDD400P3wjk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Sr7vawxVGFX+DdM39MAkgfmTAyOv8n8Gh+k6Th5upFvCmQySeXS4DpsrXMTzumhPzATCHgCfdb0SEb7FW+iDWuF9glyoxOp5ZANyuByczrXhMorESBexzqVHUsefKmVuw3bviVPPDrvEfnXs0ybleekv5FFnLdsanNI5XLOwBtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVQY8JZU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45C0FC32786;
+	Mon, 29 Jul 2024 12:13:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722255203;
+	bh=bmKyeNJ8spozwo0XX+T9shKICyNJDGinEDD400P3wjk=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=SVQY8JZUx3BiTcOuDCkpsqvnzYYDrax1Tb2+N1qiaJtgcE855KPcaia8wMFkEdKiw
+	 E9M6rNuCnTQ4RZcBLZ6I/d8agamn9yTMsmNc7lSlp/nyRB2c0UQvbnAv7tVk36DoPf
+	 CxfLpSClORNG+LOIvtRzJxioAdqHLMRD8zybUrBWLNezIthOL8aCbKUasg7VfkAnqe
+	 0QmUls2CfO+UBeOkjT/1mtZcslKc10jHTZ79cpEeYgcur+L/DCH+VJvPivuPsiih1Z
+	 eXrbV3yot1eyw4lSxW4izBNkbErRI23vSVyEitcpbI/nXT7Y/8V0rcbduiDCHHox9z
+	 n1JRASoFnmmAQ==
+Message-ID: <87607d2c-a4b1-4923-ba9f-9cfc56a0aa38@kernel.org>
+Date: Mon, 29 Jul 2024 14:13:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BJSMTP01-EX.srv.huawei-3com.com (10.63.20.132) To
- DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11)
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:h3cspam02-ex.h3c.com 46TCCCSI027469
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/5] drm/msm/adreno: Implement SMEM-based speed bin
+From: Konrad Dybcio <konradybcio@kernel.org>
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Elliot Berman <quic_eberman@quicinc.com>
+References: <20240709-topic-smem_speedbin-v5-0-e2146be0c96f@linaro.org>
+ <20240709-topic-smem_speedbin-v5-1-e2146be0c96f@linaro.org>
+ <20240715200419.l47ng6efa25in6sg@hu-akhilpo-hyd.qualcomm.com>
+ <8e2ebc97-f455-4f41-81da-af56263e6cf6@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ JDZelR9Xqh8=
+In-Reply-To: <8e2ebc97-f455-4f41-81da-af56263e6cf6@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
- CPU 0:                                                 CPU 1:
- kmap_high(){                                           kmap_xxx() {
-               ...                                        irq_disable();
-        spin_lock(&kmap_lock)
-               ...
-        map_new_virtual                                     ...
-           flush_all_zero_pkmaps
-              flush_tlb_kernel_range         /* CPU0 holds the kmap_lock */
-                      smp_call_function_many         spin_lock(&kmap_lock)
-                      ...                                   ....
-        spin_unlock(&kmap_lock)
-               ...
+On 16.07.2024 1:56 PM, Konrad Dybcio wrote:
+> On 15.07.2024 10:04 PM, Akhil P Oommen wrote:
+>> On Tue, Jul 09, 2024 at 12:45:29PM +0200, Konrad Dybcio wrote:
+>>> On recent (SM8550+) Snapdragon platforms, the GPU speed bin data is
+>>> abstracted through SMEM, instead of being directly available in a fuse.
+>>>
+>>> Add support for SMEM-based speed binning, which includes getting
+>>> "feature code" and "product code" from said source and parsing them
+>>> to form something that lets us match OPPs against.
+>>>
+>>> Due to the product code being ignored in the context of Adreno on
+>>> production parts (as of SM8650), hardcode it to SOCINFO_PC_UNKNOWN.
+>>>
+>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>> ---
+> 
+> [...]
+> 
+>>>  
+>>> -	if (adreno_read_speedbin(dev, &speedbin) || !speedbin)
+>>> +	if (adreno_read_speedbin(adreno_gpu, dev, &speedbin) || !speedbin)
+>>>  		speedbin = 0xffff;
+>>> -	adreno_gpu->speedbin = (uint16_t) (0xffff & speedbin);
+>>> +	adreno_gpu->speedbin = speedbin;
+>>
+>> There are some chipsets which uses both Speedbin and Socinfo data for
+>> SKU detection [1].
+> 
+> 0_0
+> 
+> 
+>> We don't need to worry about that logic for now. But
+>> I am worried about mixing Speedbin and SKU_ID in the UABI with this patch.
+>> It will be difficult when we have to expose both to userspace.
+>>
+>> I think we can use a separate bitfield to expose FCODE/PCODE. Currently,
+>> the lower 32 bit is reserved for chipid and 33-48 is reserved for speedbin,
+>> so I think we can use the rest of the 16 bits for SKU_ID. And within that
+>> 16bits, 12 bits should be sufficient for FCODE and the rest 8 bits
+>> reserved for future PCODE.
+> 
+> Right, sounds reasonable. Hopefully nothing overflows..
 
-CPU 0 holds the kmap_lock, waiting for CPU 1 respond to IPI. But CPU 1 has
-disabled irqs, waiting for kmap_lock, cannot answer the IPI. Fix this by 
-releasing kmap_lock before call flush_tlb_kernel_range, avoid kmap_lock
-deadlock.
++CC Elliot
 
-        if (need_flush) {
-            unlock_kmap();
-            flush_tlb_kernel_range(PKMAP_ADDR(0), PKMAP_ADDR(LAST_PKMAP));
-            lock_kmap();
-        }
+Would you know whether these sizes ^ are going to be sufficient for
+the foreseeable future?
 
-Dropping the lock like this is safe. kmap_lock is used to protect
-pkmap_count, pkmap_page_table and last_pkmap_nr(static variable). 
-When call flush_tlb_kernel_range(PKMAP_ADDR(0), PKMAP_ADDR(LAST_PKMAP)), 
-flush_tlb_kernel_range will neither modify nor read these variables. 
-Leave that data unprotected here is safe.
-
-map_new_virtual aims to find an usable entry pkmap_count[last_pkmap_nr].
-When read and modify the pkmap_count[last_pkmap_nr], the kmap_lock is 
-not dropped. "if (!pkmap_count[last_pkmap_nr])" determine 
-pkmap_count[last_pkmap_nr] is usable or not. If unusable, try agin.
-
-Furthermore, the value of static variable last_pkmap_nr is stored in
-a local variable last_pkmap_nr, when kmap_lock is acquired, this is 
-thread-safe.
-
-In an extreme case, if Thread A and Thread B access the same last_pkmap_nr,
-Thread A calls function flush_tlb_kernel_range and release the kmap_lock,
-and Thread B then acquires the kmap_lock and modifies the variable
-pkmap_count[last_pkmap_nr]. After Thread A completes the execution 
-of function the variable pkmap_count[last_pkmap_nr]. After Thread A 
-completes the execution of function flush_tlb_kernel_range, it will
-check the variable pkmap_count[last_pkmap_nr].
-
-static inline unsigned long map_new_virtual(struct page *page)
-{
-        unsigned long vaddr;
-        int count;
-        unsigned int last_pkmap_nr; // local variable to store static variable last_pkmap_nr
-        unsigned int color = get_pkmap_color(page);
-
-start:
-      ...
-                        flush_all_zero_pkmaps();// release kmap_lock, then acquire it
-                        count = get_pkmap_entries_count(color);
-                }
-                ...
-                if (!pkmap_count[last_pkmap_nr]) // pkmap_count[last_pkmap_nr] is used or not
-                        break;  /* Found a usable entry */
-                if (--count)
-                        continue;
-
-               ...
-        vaddr = PKMAP_ADDR(last_pkmap_nr);
-        set_pte_at(&init_mm, vaddr,
-                   &(pkmap_page_table[last_pkmap_nr]), mk_pte(page, kmap_prot));
-
-        pkmap_count[last_pkmap_nr] = 1;
-        ...
-        return vaddr;
-}
-
-Fixes: 3297e760776a ("highmem: atomic highmem kmap page pinning")
-Signed-off-by: zhangchun <zhang.chuna@h3c.com>
-Co-developed-by: zhangzhansheng <zhang.zhansheng@h3c.com>
-Signed-off-by: zhangzhansheng <zhang.zhansheng@h3c.com>
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Reviewed-by: zhangzhengming <zhang.zhengming@h3c.com>
----
- mm/highmem.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/mm/highmem.c b/mm/highmem.c
-index ef3189b..07f2c67 100644
---- a/mm/highmem.c
-+++ b/mm/highmem.c
-@@ -231,8 +231,18 @@ static void flush_all_zero_pkmaps(void)
- 		set_page_address(page, NULL);
- 		need_flush = 1;
- 	}
--	if (need_flush)
-+	if (need_flush) {
-+		/*
-+		 * In multi-core system one CPU holds the kmap_lock, waiting
-+		 * for other CPUs respond to IPI. But other CPUS has disabled
-+		 * irqs, waiting for kmap_lock, cannot answer the IPI. Release
-+		 * kmap_lock before call flush_tlb_kernel_range, avoid kmap_lock
-+		 * deadlock.
-+		 */
-+		unlock_kmap();
- 		flush_tlb_kernel_range(PKMAP_ADDR(0), PKMAP_ADDR(LAST_PKMAP));
-+		lock_kmap();
-+	}
- }
- 
- void __kmap_flush_unused(void)
--- 
-1.8.3.1
-
+Konrad
 
