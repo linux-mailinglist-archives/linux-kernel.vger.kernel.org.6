@@ -1,288 +1,201 @@
-Return-Path: <linux-kernel+bounces-265345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582A293EFD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:22:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7308C93EFD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF0091F22D7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:22:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5808B22516
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BB313B593;
-	Mon, 29 Jul 2024 08:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82EA13BACC;
+	Mon, 29 Jul 2024 08:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JwmAoOy7"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2060.outbound.protection.outlook.com [40.107.244.60])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="yqmS2yCV"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A0C13B78F;
-	Mon, 29 Jul 2024 08:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722241283; cv=fail; b=UoV9mtYIaEbMbC/w3dvefDn3QmmMHqZEssSF5B4MieSPo+Z+MzZrZBwgYQe68CcC0iOCde6g1TkctttM3Dwanq2RaS1Wn2tWVNhKFXg8dFjUN60yODT8f034UMS1EZCKKkQJTP7HBov6aS7SaSL3zwGjtp+0U0ZjosFXeE4UTJI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722241283; c=relaxed/simple;
-	bh=q1I4ka1X6QLvik3qEpucVwqq30K2JEcE/Dk6LKoDb/U=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=B33v8g11acECB5fuB8yv+QqP/xcAPmwj1UGJcQ829IXBQnT+KcgfizpF4nHbjtHq6+OZFV3oPBn99CpecX+JT3K11c7q+f0JF/iSXrqkcPRWQY71Itc7sm7AuJ03g2GdXGvMzZDUHa2oqXBICMozQmVDctMFDsjph7PK63qPK3c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JwmAoOy7; arc=fail smtp.client-ip=40.107.244.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K8PTWv3XFZzvP8UPOn3l6wEAHjAqXIxhrzDO2QOS2SItUM5YfHws6sYl6WRgBljiRakOWoiL/yAfbb0e0zIfuLrL6FT8wDKg7QmTFU8YevBHho7Ku1Bgttlku0q8RgjWDaZ38AQY1AXAvkiu0vjeukyq9db11Swe4OTqvrygAc89YtxAFRXtzag1GfwoESun6nSAL0r5Vz9sjViCLw/1JNaTOgmFur5zEP8o4P9jTtiEFrBQUtAbIszuJhtINTJ93+Azi33r5DeqvWhoZ1QPglizdVhOEK+qxC6YowWyzX2CXRCcv2nnXU3bbT8nGRh0pTJkEAZk46PdF9kWN+BvKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TmO+J4gWLKOjtTrDFgGIwPcNZ6+PZiskAbLdM1ney8s=;
- b=mAPAWPdimoy9wLTcp8F/ktuEkciXJlVdH5MW5xFFD+MlxvQifBZJYg9riuF6z814AzCNSTdEi4mshOyY61yuzzqGKaJ2BnpG36xX6Xz4+EsSABUWg7lvsfPeCNgjey/X11rFoh57I6Hq4Owc8bwS6za/TI2DUqOb4VpD/ukmLhD/cT8qY/HhUwt4n4jhq0LSziZ+5vBlr2h3cYivWoIYNFUfddHQ6e+7YOb4xhIwbYT4qMHk0valJ8fcdnDhx1SbcIuDjLNV97xAiJWsMbzo6vKuHHzqi34JR13OvRotPMmJVpzr8FljyX2KluWnGr3QnNTVRAKvvUm5lK1gtwbuhA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TmO+J4gWLKOjtTrDFgGIwPcNZ6+PZiskAbLdM1ney8s=;
- b=JwmAoOy7pAJnFMWBER8mA2kq9K+dNlIKGnDbsbT+YW8Sk0KkQ904u598lC2DAKjomoynunJ5Uj2NSUDhtkYnpZdtLb8YR0dLRwrXzIn3YmWJGmieInp9XBtokSgFmk3FYTYB6wXKh3Q5M8ojfWHGA4/797XcMDVUdOWUNKExrxqC4M5dMak+Zaug12xEEEOn40sxT3fQpJ3P/sMti72QLmLoi3vTCi84wxTRmHjQH+SywEwX6W1sl0K9PpxHgUolMz+/PmEHadTomAcgBG8hGNVAI/5Oghjkb/+QsmXw5sr7yJepkpbdXI4lbF9KBa/aHobxQHVUBaR381lOmjtWCQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB7426.namprd12.prod.outlook.com (2603:10b6:510:201::18)
- by CH3PR12MB8901.namprd12.prod.outlook.com (2603:10b6:610:180::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.26; Mon, 29 Jul
- 2024 08:21:17 +0000
-Received: from PH7PR12MB7426.namprd12.prod.outlook.com
- ([fe80::6fdd:1491:4d83:ac33]) by PH7PR12MB7426.namprd12.prod.outlook.com
- ([fe80::6fdd:1491:4d83:ac33%6]) with mapi id 15.20.7762.027; Mon, 29 Jul 2024
- 08:21:17 +0000
-Message-ID: <05b76fd3-74ca-45ad-a5c6-31719f5e1f0f@nvidia.com>
-Date: Mon, 29 Jul 2024 13:51:08 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] iommu: Optimize IOMMU UnMap
-To: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org
-Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20240717100619.108250-1-amhetre@nvidia.com>
-Content-Language: en-US
-From: Ashish Mhetre <amhetre@nvidia.com>
-In-Reply-To: <20240717100619.108250-1-amhetre@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BMXPR01CA0088.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:54::28) To PH7PR12MB7426.namprd12.prod.outlook.com
- (2603:10b6:510:201::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9E5163;
+	Mon, 29 Jul 2024 08:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722241441; cv=none; b=o5dBR6CoRBBnWFjGFvFvwbZvpL+49rq/LA/uqbolJsk+KgwoHhPE+82yviaCMWvLMv9xc0zUJXm6gjGnJ0eiCZ5j5f41BDSybYNustXtiIdQq197effLCYIcn3sS3WWzDmtwjz55DoNhiS1KKwQko3616u0JOaE0EyT55cQVvjs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722241441; c=relaxed/simple;
+	bh=7X5xnHFefvuElntNGSqCpczzz7wiyzBF3tNMyaeA8D4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W2Rngvs3MqvGivVShc10+Zw9a9JndPSCKG374aWLOyMrv91cwTuwXK7/XHHY/aghm1S9Ae4M1XfnAeI2HBdVG4QMd5tDMg6KORtnej07CSDWuOvHc3PAQ5d+nRr3jsajQjB2Yyt6eMoGEUHYwAonaOGmgPMwSdoJeFl3evRJ40M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=yqmS2yCV; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=mrWuVJBqtXXYWh1tuazQKatQsFaPa3sBlAWQOq6z7vg=; b=yqmS2yCVLIM4Y3ahJwyIQfrNtz
+	iANxgSSpa79Sv7aC63NctW+C/c9m6w/86Tkzv0dz9T8ggCEJXpJ4grVsVI8u7s9BzfYNxVW6NwCQP
+	gfPiQmsbV+CI0ARm3JQyH18FjVroQuszf9Tpwfx3IRQYrf/su4r7Mnr7JlnrMhps26ZK/Wip/3be3
+	V0UiIRG3JbGg9510ifzaTTHPjp7HPMoKDDBeXZZzpyhNmkldkcfrzmfP7eJHA39kMTXn/pplsvIgk
+	BLyUiVj0wy0ziQ4N82lJd91IOiYvP2aIQ5KWq37rcc8SdWQgv/+e4+Imj3d2tJjvfjm5K1umRSZTd
+	KCyJWggw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40970)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sYLfC-0003Ok-17;
+	Mon, 29 Jul 2024 09:23:26 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sYLfE-0004AV-FT; Mon, 29 Jul 2024 09:23:28 +0100
+Date: Mon, 29 Jul 2024 09:23:28 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 6/6] net: mvpp2: use device_for_each_child_node() to
+ access device child nodes
+Message-ID: <ZqdRgDkK1PzoI2Pf@shell.armlinux.org.uk>
+References: <20240706-device_for_each_child_node-available-v1-0-8a3f7615e41c@gmail.com>
+ <20240706-device_for_each_child_node-available-v1-6-8a3f7615e41c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB7426:EE_|CH3PR12MB8901:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6431e3e9-9dda-4b20-4a75-08dcafa76b0e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T0hHMDUvQmZ5N0ZrbG1KaHI4TFRmUjM5WlZ5ZkplQlVhSUVWeUtDUlBFQVZX?=
- =?utf-8?B?alZ1NHVzbmtKclFpcVhPcENSQXVMZUU3SnRYekxQQm52YS93R1J0Nk41d1g2?=
- =?utf-8?B?azlJa1l6N1l3a0UzTDBWQUJLQ0VFTVhqMklKNjgzekQ0dUhtRHNPbmF0Y0dJ?=
- =?utf-8?B?bSttYlB4S1l6K1BDM2FFNU1BL3NHaXRnVjlsYXBuajlBNWxkL1Q0TTRlNTBO?=
- =?utf-8?B?enlQOEdiY2QxK2xtZzZPdmxtYnh5NFowdXVvMXNHNDAzdk5IS3l4T0g0a2NE?=
- =?utf-8?B?WVFNWStZeGh6bFZiYk04cUl1NXpyaFd4MXpUUnM4d2k4UDAvTUoxeFJ4aS9N?=
- =?utf-8?B?cHdWZ05vQ1VydGxDejV4SVlCTGcwVis1UXBNZ3FSbDI1c295T2w1WFhha1d6?=
- =?utf-8?B?TVZlaThndDBmQngwV0NTK2FORzFCQ0tuYnVQNDk2dWVKWmRjWE9yRW9aM0ly?=
- =?utf-8?B?TVVUcnlmMkNXMXg2US9OZTI3aElaTm93VlNGWTJ4NHBiT0QwRm9odmc3VVFU?=
- =?utf-8?B?QmhYSk9OT2xGeXNzOWRBMjhVN2hnc3l2OEpTWENmaERlVm5rWXlhNXRxbWxi?=
- =?utf-8?B?Ni9MajByVS9UczVZdTNhSHJ4QzdDKzlzVEtwSFRUdEtRWXpTOGtQcDdkUC9z?=
- =?utf-8?B?SUg0VlRWd3NNNUppYTh4YWJrNXpkdndjYjRoUk02ei9XUHh2UnQ4QytLVDdG?=
- =?utf-8?B?Unk4WFkwSU12UEZvQnMvL0tadlBIeXg4bVdwSDk2bXpLdy9XSEFoMElwM0pC?=
- =?utf-8?B?MkVtYUpmS3lwZ0UwM3QzODVOeSt2L09LTC9SYlZTY2RzMjUreFdEYlg3VmlN?=
- =?utf-8?B?bWptcjRtcGppbVpuRDlSeHR1V1FidFpSLzN3eHNzcWlJczREV0FzSzJIUDdp?=
- =?utf-8?B?TW5uMEgrT3RReFQ5RjNxUUlEWVNsNG1NajFlMitFVGxicmtqY1FWZVluTE9Y?=
- =?utf-8?B?QURFS05QOUNVdTNOQkYxUHJUNDlySFVSaHF5aFhjb1VlY3VTNUFBUVdZVEJz?=
- =?utf-8?B?eXhmRE1zSTlhaS82VDdSSDhvOXRVZW9xSDhMN3pMZVZsUHhYeTBkZkJGbVZm?=
- =?utf-8?B?SUx5RU1yS0p2Vk4rNmRXb2VUVVZnV0JRR1BRbEk2a1BxbTViK21Nb1lNL2VS?=
- =?utf-8?B?aXFhc2lNd2xwMGFSN3hkbERxa25ob0tjZy9vYWRCQVpKUFV5VkppMGU0eVlD?=
- =?utf-8?B?cXN5cEViRmF3QzhoN3o0MnJ1dWRpMDRxNDJRTjBzWWVlSitxSVJTbGROWGZW?=
- =?utf-8?B?bzFab3QvUlExcElyRnhjWXpWck9wY0loUXJ5Rk84aDNPWWlqdVJYMWx2L1U1?=
- =?utf-8?B?N2F0RzExaU5ZbFRzbkxCYWYvYjR5SWxFRklZQmRYbGpyWFZsV2lVc1Ywd1dS?=
- =?utf-8?B?QTJLVVlwd2ZjSTIxMnNMdjNiakhOY2t1cjVSbE9nMW01WXhnUndGNWg1aGt6?=
- =?utf-8?B?cGVsNUZmelpQa1NleTFvSk9Qc1BnWUZmU2N6NU9HZ0hhMG1HdzZUeldrdjdw?=
- =?utf-8?B?RHVQQWlXR2pkU2ppaFpMWllhcHFKQm43VFkzR0NwYVRGVk8vNlpyMnRpMWx0?=
- =?utf-8?B?ZGVjK2g1dkhPbS80MzRmRnVkWFhIblozMndKYklaVUVaU2hxQkZmaFFDRGho?=
- =?utf-8?B?LyszbFIwcFRYWDJZNUdHYzVhRllIUThlL0pqUmxwZXh6Q205M3hkeTQ2aytI?=
- =?utf-8?B?VmxQOTJocnRaLzJrek92VHpDeHphV3pqVDNuMXRuTklWdU43T2U1TVlPaGV6?=
- =?utf-8?B?NkdpcE1qd2s0MjJ3NmdvU2Q2QXBIOUpOVWFDamp6N0xwTm5jL2ZUQS9HZ0d3?=
- =?utf-8?B?Mm5GUFZWQ1BFdnd5Sk5xdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB7426.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?a0F5b3p3djhxWlk1RXNIYTB4eHp3bG01NjFWTEZVRE1DSC84T0tjUmhmYlcy?=
- =?utf-8?B?dnU3RVZleG1jT2RmUm9Gb1NrVFFqL25EbnVtSStJQlBvNXI3cnloWTZrdThw?=
- =?utf-8?B?aE9hMHN5aGlpSVlJRmlpb2pRQVlSdW5mMTd2aTVZWlVkbWd6MjdBM0xvODVx?=
- =?utf-8?B?OUxkdlhhVmVNckkzMVZFV053OUx4cmQwTGhrU2oxWE0raTRwV0xXYWVqeVJN?=
- =?utf-8?B?NmVObkZwUWI4OG5YZ3BjRjBWbTRKRDhGMjdYUzBqR25rcnZBRWR1OGVuZ3ZS?=
- =?utf-8?B?NG05N050a3VYYUNIbWkvcEpQdW8zdGVic0k0MmdtSXh6SUJxYlZCbmw1V2tH?=
- =?utf-8?B?eTVocFIvamVva2NqRGwrWjIrbWtLQ0svckR4TytEcW5leWpZQUF5c2ZGN3Bx?=
- =?utf-8?B?WnNrbWExVXRPMHg2WG1md3J0SFdZcWtCbVY5TE5TS3pRVUxFUVM5NWdsU255?=
- =?utf-8?B?djRoNnVrazVFRzV3UEpLSzhUdHl5dkxlNVQ4VTVUVksrS2NJd01vL09GQ05z?=
- =?utf-8?B?aDVhQVZ0MDI4TXlPYVFQR2FpMm5WWGRqbTlLTW9GMkFVTzZRT0ttMFp4bWdi?=
- =?utf-8?B?bkdDNmU2MHoxcEZWaXAvUTlwNDZjamJXTm9YT2dQRWlMWkkzLzhPVlJsTFo0?=
- =?utf-8?B?V0xOMFZpRkY3Znc3aEQxMEMrTzYvZmJ3cWRsUkdySVNBQk5XaHY0ZWhLVVJt?=
- =?utf-8?B?SWZWZ3o1UlIvMlRwaVZhWWJZTEpVUFllL2huZFJ4VUFvYjhWd1hvV2dCbzdk?=
- =?utf-8?B?SzBoS1loNWpHTDhjSEdwYzRGa290bkE2MldkaXhSSXZmbk15RVFjZ1R5ck0x?=
- =?utf-8?B?S3V4UGI3U3VQUVhQTWhNczF0UU1MS2t1VjBoaUtiTk5tTVFGS1E1U0lsTDYv?=
- =?utf-8?B?OFdxWFpvU05qVFpWN1BQdmdHQmV2eTc0UG1IYllsT1E3di9qMEFmTGtRUkVT?=
- =?utf-8?B?TDBEemI0OFZGNmFtTStncy9hMXdRanpxTHVxVHFkQlhzZitrUTJNaFo3ZlUz?=
- =?utf-8?B?NDJEaE9ybU9ZMUl0Z1prN1h0bUdsdHZKb3NMQVFtbENzSEs5ZHB0WDdUOXll?=
- =?utf-8?B?aXJabm5Ra3JVV0FQRzVmR3RwNlFtYWhZeEZJTGZDc1EranVyalRoSnM4ZGdZ?=
- =?utf-8?B?eUVScGk3czBwZU9FNXJvSmp1b0xjUzI2WDBaRk1TcEs1MDVQRGVobU9jZEho?=
- =?utf-8?B?RzRzdzFIZm1KT0RMdWtJWEtnT3hSQVhuZlNTVzY4b1hUa2FuMkh3NCtjNVQ1?=
- =?utf-8?B?dHZCdkNqeDVMNXhNYWkxbWVjeTNwcGc4WXFqQk5FV3hUYkxLb1cya0FrUjVn?=
- =?utf-8?B?VXdmd0pwOFFyVkxxSzZGdmFYYWQvZ0VrUmQxNkpKSTl1M1dMbUdlZlk3ZitV?=
- =?utf-8?B?dGZ1eVAzUjlISW9GcjZIZTVsRG8rb0xyeXFhb3lFMWVXU1ExWFlMK01oZnRT?=
- =?utf-8?B?SXp5YmZQQzdEZ0IraDgwWE5leUppSytvdENSTVZ0SWFNdmRiNW41aFVyRmIx?=
- =?utf-8?B?VFB1eUpZdk1meEkwTU9ST2E3bHpaZzNwYkpsRE1vYm9lY0N0NlI4d1pVS1kz?=
- =?utf-8?B?L29pMVBsL3lESlh0VVlpb0RqMk9DSm8xM0pKWWxpeVplSEwvWXc4OWRsT0Nt?=
- =?utf-8?B?ZzgxRTdQeFAyWTdtOVkyZElUWDd6dVJIUjNQcWhZbUJ5YitEV0d3NUFUbU1P?=
- =?utf-8?B?b2dDVThvek9xRUlNQnc4U2RPN2VMQkpZQkxYRmdIWkpmR2JCL3p2NTE0UUVT?=
- =?utf-8?B?RExPU3Y1a215b3N4cEw3U0owVTFpR3JkZythbFU3ZWM4ZXhidjBFZnkyeEtY?=
- =?utf-8?B?bWFMbGVaa2VITUJXZlcxRDAyQjF4eWMvc2tQWGxXQ0UzYnNTNFRRejUxTVJw?=
- =?utf-8?B?WDFUWVBBa2UzRTdKZTdPR2NneXZDeGNpclFxdEVBeGFsUS9uemZZWjQxTTBu?=
- =?utf-8?B?TTNJQmExNVFzYWVXM0psU2ZkekVzQnFnanVta09EZm54RGl6TFoxbDBVVWhO?=
- =?utf-8?B?LzZkVUJxNG0wc0xjVmN5ZzdEVlRUTDRhZ1Fla2I3bldTdEczcFBSRC9SUzN1?=
- =?utf-8?B?aEtDd2wxNk5kVWdjTHlsNEdnYlB5V05NSkxVVHJ2OFlVcTJWWTBOUkZWNDV3?=
- =?utf-8?Q?mmXsaarkZpQEDyLqge1n/JFg3?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6431e3e9-9dda-4b20-4a75-08dcafa76b0e
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB7426.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 08:21:17.4305
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GgCJDFLxdZ0pj8eP7H/WwN/QnUwGym8riAOXEjL1/ngG7y+JZVRSqQ3Sw3RVLxOL2XZDwY/X9e3+h/Uz3XDB4w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8901
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240706-device_for_each_child_node-available-v1-6-8a3f7615e41c@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
+On Sat, Jul 06, 2024 at 05:23:38PM +0200, Javier Carrasco wrote:
+> The iterated nodes are direct children of the device node, and the
+> `device_for_each_child_node()` macro accounts for child node
+> availability.
+> 
+> `fwnode_for_each_available_child_node()` is meant to access the child
+> nodes of an fwnode, and therefore not direct child nodes of the device
+> node.
+> 
+> The child nodes within mvpp2_probe are not accessed outside the lopps,
 
-On 7/17/2024 3:36 PM, Ashish Mhetre wrote:
-> The current __arm_lpae_unmap() function calls dma_sync() on individual
-> PTEs after clearing them. Overall unmap performance can be improved by
-> around 25% for large buffer sizes by combining the syncs for adjacent
-> leaf entries.
-> This patch optimizes the unmap time by clearing all the leaf entries and
-> issuing a single dma_sync() for them.
-> Below is detailed analysis of average unmap latency(in us) with and
-> without this optimization obtained by running dma_map_benchmark for
-> different buffer sizes.
->
-> 		UnMap Latency(us)
-> Size	Without		With		% gain with
-> 	optimiztion	optimization	optimization
->
-> 4KB	3		3		0
-> 8KB	4		3.8		5
-> 16KB	6.1		5.4		11.48
-> 32KB	10.2		8.5		16.67
-> 64KB	18.5		14.9		19.46
-> 128KB	35		27.5		21.43
-> 256KB	67.5		52.2		22.67
-> 512KB	127.9		97.2		24.00
-> 1MB	248.6		187.4		24.62
-> 2MB	65.5		65.5		0
-> 4MB	119.2		119		0.17
->
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+"lopps" ?
+
+> and the socped version of the macro can be used to automatically
+
+"socped" ?
+
+> decrement the refcount on early exits.
+> 
+> Use `device_for_each_child_node()` and its scoped variant to indicate
+> device's direct child nodes.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 > ---
->   drivers/iommu/io-pgtable-arm.c | 34 +++++++++++++++++++++-------------
->   1 file changed, 21 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-> index f5d9fd1f45bf..1787615eec24 100644
-> --- a/drivers/iommu/io-pgtable-arm.c
-> +++ b/drivers/iommu/io-pgtable-arm.c
-> @@ -274,13 +274,15 @@ static void __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
->   				   sizeof(*ptep) * num_entries, DMA_TO_DEVICE);
->   }
->   
-> -static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg)
-> +static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg, int num_entries)
->   {
-> +	int i;
->   
-> -	*ptep = 0;
-> +	for (i = 0; i < num_entries; i++)
-> +		ptep[i] = 0;
->   
->   	if (!cfg->coherent_walk)
-> -		__arm_lpae_sync_pte(ptep, 1, cfg);
-> +		__arm_lpae_sync_pte(ptep, num_entries, cfg);
->   }
->   
->   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
-> @@ -635,9 +637,10 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->   			       unsigned long iova, size_t size, size_t pgcount,
->   			       int lvl, arm_lpae_iopte *ptep)
->   {
-> +	bool gather_queued;
->   	arm_lpae_iopte pte;
->   	struct io_pgtable *iop = &data->iop;
-> -	int i = 0, num_entries, max_entries, unmap_idx_start;
-> +	int i = 0, j = 0, num_entries, max_entries, unmap_idx_start;
->   
->   	/* Something went horribly wrong and we ran out of page table */
->   	if (WARN_ON(lvl == ARM_LPAE_MAX_LEVELS))
-> @@ -652,28 +655,33 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->   	/* If the size matches this level, we're in the right place */
->   	if (size == ARM_LPAE_BLOCK_SIZE(lvl, data)) {
->   		max_entries = ARM_LPAE_PTES_PER_TABLE(data) - unmap_idx_start;
-> +		gather_queued = iommu_iotlb_gather_queued(gather);
->   		num_entries = min_t(int, pgcount, max_entries);
->   
-> -		while (i < num_entries) {
-> -			pte = READ_ONCE(*ptep);
-> +		/* Find and handle non-leaf entries */
-> +		for (i = 0; i < num_entries; i++) {
-> +			pte = READ_ONCE(ptep[i]);
->   			if (WARN_ON(!pte))
->   				break;
->   
-> -			__arm_lpae_clear_pte(ptep, &iop->cfg);
+>  drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 13 ++++---------
+>  1 file changed, 4 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> index 9adf4301c9b1..97f1faab6f28 100644
+> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> @@ -7417,8 +7417,6 @@ static int mvpp2_get_sram(struct platform_device *pdev,
+>  
+>  static int mvpp2_probe(struct platform_device *pdev)
+>  {
+> -	struct fwnode_handle *fwnode = pdev->dev.fwnode;
+> -	struct fwnode_handle *port_fwnode;
+>  	struct mvpp2 *priv;
+>  	struct resource *res;
+>  	void __iomem *base;
+> @@ -7591,7 +7589,7 @@ static int mvpp2_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	/* Map DTS-active ports. Should be done before FIFO mvpp2_init */
+> -	fwnode_for_each_available_child_node(fwnode, port_fwnode) {
+> +	device_for_each_child_node_scoped(&pdev->dev, port_fwnode) {
+>  		if (!fwnode_property_read_u32(port_fwnode, "port-id", &i))
+>  			priv->port_map |= BIT(i);
+>  	}
+> @@ -7614,7 +7612,7 @@ static int mvpp2_probe(struct platform_device *pdev)
+>  		goto err_axi_clk;
+>  
+>  	/* Initialize ports */
+> -	fwnode_for_each_available_child_node(fwnode, port_fwnode) {
+> +	device_for_each_child_node_scoped(&pdev->dev, port_fwnode) {
+>  		err = mvpp2_port_probe(pdev, port_fwnode, priv);
+>  		if (err < 0)
+>  			goto err_port_probe;
+> @@ -7653,10 +7651,8 @@ static int mvpp2_probe(struct platform_device *pdev)
+>  	return 0;
+>  
+>  err_port_probe:
+> -	fwnode_handle_put(port_fwnode);
 > -
->   			if (!iopte_leaf(pte, lvl, iop->fmt)) {
-> +				__arm_lpae_clear_pte(ptep, &iop->cfg, 1);
-> +
->   				/* Also flush any partial walks */
->   				io_pgtable_tlb_flush_walk(iop, iova + i * size, size,
->   							  ARM_LPAE_GRANULE(data));
->   				__arm_lpae_free_pgtable(data, lvl + 1, iopte_deref(pte, data));
-> -			} else if (!iommu_iotlb_gather_queued(gather)) {
-> -				io_pgtable_tlb_add_page(iop, gather, iova + i * size, size);
->   			}
-> -
-> -			ptep++;
-> -			i++;
->   		}
->   
-> +		/* Clear the remaining entries */
-> +		if (i)
-> +			__arm_lpae_clear_pte(ptep, &iop->cfg, i);
-> +
-> +		if (!gather_queued)
-> +			for (j = 0; j < i; j++)
-> +				io_pgtable_tlb_add_page(iop, gather, iova + j * size, size);
-> +
->   		return i * size;
->   	} else if (iopte_leaf(pte, lvl, iop->fmt)) {
->   		/*
-Hi all,
+>  	i = 0;
+> -	fwnode_for_each_available_child_node(fwnode, port_fwnode) {
+> +	device_for_each_child_node_scoped(&pdev->dev, port_fwnode) {
+>  		if (priv->port_list[i])
+>  			mvpp2_port_remove(priv->port_list[i]);
+>  		i++;
+> @@ -7677,13 +7673,12 @@ static int mvpp2_probe(struct platform_device *pdev)
+>  static void mvpp2_remove(struct platform_device *pdev)
+>  {
+>  	struct mvpp2 *priv = platform_get_drvdata(pdev);
+> -	struct fwnode_handle *fwnode = pdev->dev.fwnode;
+>  	int i = 0, poolnum = MVPP2_BM_POOLS_NUM;
+>  	struct fwnode_handle *port_fwnode;
+>  
+>  	mvpp2_dbgfs_cleanup(priv);
+>  
+> -	fwnode_for_each_available_child_node(fwnode, port_fwnode) {
+> +	device_for_each_child_node(&pdev->dev, port_fwnode) {
+>  		if (priv->port_list[i]) {
+>  			mutex_destroy(&priv->port_list[i]->gather_stats_lock);
+>  			mvpp2_port_remove(priv->port_list[i]);
 
-Can you please review the patches and provide feedback?
-Thanks,
-Ashish Mhetre
+This loop is just silly. There is no need to iterate the child nodes.
+port_fwnode is not used, and the loop boils down to:
 
+	for (i = 0; i < priv->port_count; i++) {
+		mutex_destroy(&priv->port_list[i]->gather_stats_lock);
+		mvpp2_port_remove(priv->port_list[i]);
+	}
+
+Not only is walking the child nodes not necessary, but checking whether
+the pointer is NULL is also unnecessary. mvpp2_port_probe() populates
+the array using:
+
+        priv->port_list[priv->port_count++] = port;
+
+and "port" can not be NULL here, so we're guaranteed that all port_list
+entries for 0..priv->port_count will be non-NULL, and the driver makes
+this assumption in multiple places.
+
+In fact, I'd say that using fwnode_for_each_available_child_node() or
+device_for_each_child_node() is buggy here if the availability of the
+children change - it could leave ports not cleaned up.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
