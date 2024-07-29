@@ -1,223 +1,129 @@
-Return-Path: <linux-kernel+bounces-266149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CBB93FBAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB9593FBB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFAB6284A6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:46:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2AFC2846AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CAE186E40;
-	Mon, 29 Jul 2024 16:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF8615F318;
+	Mon, 29 Jul 2024 16:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ov+Nd+CA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="E/Qowm//"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20939186E27
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E861553A2;
+	Mon, 29 Jul 2024 16:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722271437; cv=none; b=fwsVrwAX2P/Wj08zI33ZR+apPw4hQhJ4DH9M4uixxEq3Eqm2mg9Z5jKIOTyzI1JDrI0EGRnVK9HeusD6wOWbIYFBWXZxWDj3WxAngkPH5hOrZt7Ff3d5PH+JXV6TweKvF7yaC65LexfeP2mU7UI5Y4iBQqItwfw6fEfHNdhJ3Ks=
+	t=1722271492; cv=none; b=m6DHE+6zsMv5uaZie3YAkIYh+sraEAu423TE3WFnnv1eW997vzo07Q5DqDHyVgL8SnGgMs91U8ziDJT/jsDdDQElw6TCO55BIOv7uqiKw9LmstnczGYygz/0mJQXUeKmLiLhoV4YXaYiTcsydDOiJlDkIyVr4b2oSpQP97KY7U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722271437; c=relaxed/simple;
-	bh=3RnVbJ7Xp2mSnHzWgy1Sv+7m9uJ+ThcVDNDbMpd2XDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UvNVHja47vVYE5cfiQ8HWpS93MmK37PEmfU3ciS4k7B+snvLPi861fbeW6PtBAq27gO0l9wriUF0pigYzWAhkEHN0/Qh6ifJ2XR7hJVSksUXkSK+aZOdLa07SsHb+6QWqFY+uax07WfyX/qfrz9T0bWT80uNWYTsvmah/oe1HEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ov+Nd+CA; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722271436; x=1753807436;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=3RnVbJ7Xp2mSnHzWgy1Sv+7m9uJ+ThcVDNDbMpd2XDI=;
-  b=Ov+Nd+CAlPtUgwR9EZIXXNHrXdgMOjrNiiXSrK8VSw50nl5AUGc4Tbcm
-   qVVZ2lA/Pnmkxs4L/T9pSp0XiG2welhns2kBKN2uWEJBUQh+F+IYehRb9
-   YhQSPEv2PY7281TEZXd7LYMaRA0FcZgXXAL69GP3+eANt/m2AyAaBn5J2
-   XdQgVjYJfUk2+5PWeCjVYiFFY/KnWl7/C2tKkwigDQmK87vGSKWmH57C4
-   clB/6jF5UtGUDALGlI7IpbTz0o+B2AyaryYYT1gW+gjtWIylcN/6/MAGs
-   KhymUYHUDnZCtiJ3TXOcYKS1HNmtXmvgZ+2JHQCO+Lk2JnH3fP0G8YkUn
-   w==;
-X-CSE-ConnectionGUID: oCxaEmFoTteuABUf0ssY4w==
-X-CSE-MsgGUID: 1VLdUO42QJiguNhVr8FOvw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="20194785"
-X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
-   d="scan'208";a="20194785"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 09:43:56 -0700
-X-CSE-ConnectionGUID: dxCHd/mpT3CxmobZmpYZCA==
-X-CSE-MsgGUID: 76bPsDBrRQu8xUlSRQPoLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
-   d="scan'208";a="54004480"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 29 Jul 2024 09:43:54 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sYTTT-000rre-1o;
-	Mon, 29 Jul 2024 16:43:51 +0000
-Date: Tue, 30 Jul 2024 00:43:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [paulmck-rcu:dev.2024.07.25a 15/43] kernel/rcu/rcuscale.c:1021:2:
- error: use of undeclared identifier 'writer_done'
-Message-ID: <202407300009.05X7YXZC-lkp@intel.com>
+	s=arc-20240116; t=1722271492; c=relaxed/simple;
+	bh=oH+olM6I7y3I1y9P3irFOh3arxrk8pcDdOtNWjRHv/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X11dubpZURCPFrkty1W37MeYckygU8iHZx8jkDGNMHY4+EDkeWTqMYl5ZpZaMhGbd68/s1I5cLiqlIqQnaRDI6LtLNNYLbFgTsBO9WmoBsdtS6gQjmbWTZJ9mGDXdO+TgRtWSx2CyctKFylBRN50mbuPQoJ8F3GyiCr0rJykIok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=E/Qowm//; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1722271461; x=1722876261; i=markus.elfring@web.de;
+	bh=oH+olM6I7y3I1y9P3irFOh3arxrk8pcDdOtNWjRHv/M=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=E/Qowm//FEJpjRev5Ap4irpO9l+cXikVkU3zc3zGZsoxJYOusI2ckl4veusxgiQb
+	 Rg2yhNrrMWoDhKWMpt9DXcAOLhfgXmCKJ1MT9LP+xEP67oFF18lFkzqkvZ1pvW6K8
+	 B0+3NpEdcAoWpbHN2u9hONx1EW/r7lQNRs0gBHrJ0ncPVLmwCpOxj3ITkTAQtYJ6D
+	 vKzkhJPFPM8Gj81sWfAtZkHYEDJBycetO+Q3uUNrMukhSPP6+Nb5Pfz3ypbZx5Ogh
+	 7Ly+BG6nS1nUci1VglWeSrpxm49RxJOZHYdWdmvwmTA8NZr/BrhmDQHZzvgXPRmEO
+	 VL6hFUlPZkGYXnDUEA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MT7aV-1shW8o2Qjn-00OxHK; Mon, 29
+ Jul 2024 18:44:21 +0200
+Message-ID: <c8a42211-3b39-4258-93a7-354ce729eb7f@web.de>
+Date: Mon, 29 Jul 2024 18:44:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v25 01/13] rtase: Add support for a pci table in
+ this module
+To: Andrew Lunn <andrew@lunn.ch>, Justin Lai <justinlai0215@realtek.com>,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Jakub Kicinski <kuba@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jiri Pirko <jiri@resnulli.us>, Joe Damato <jdamato@fastly.com>,
+ Larry Chiu <larry.chiu@realtek.com>, Paolo Abeni <pabeni@redhat.com>,
+ Ping-Ke Shih <pkshih@realtek.com>, Ratheesh Kannoth <rkannoth@marvell.com>,
+ Simon Horman <horms@kernel.org>
+References: <20240729062121.335080-2-justinlai0215@realtek.com>
+ <446be4e4-ea7e-47ec-9eba-9130ed662e2c@web.de>
+ <7d85ae3a-28d3-4267-9182-6e799ba8ae0a@lunn.ch>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <7d85ae3a-28d3-4267-9182-6e799ba8ae0a@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:O/ElXgFssvC7tc0PdUY7AJiUcYrBLQNGzSHieilyUsCDP9652fx
+ xFi+HliWX4SGt8W/kDYov/j6hrtD0P6HNs+SozINunMOPI38nv1kzhBpEoWsgYSyCzlRqfN
+ Bm5+bYHennkBpGCi2U5uFUPRw/Jx1wup9BzRZ9hG44ovKdl3TzdzZ0F0xin+O/N3v1XUe5V
+ oj8ECaf9H6Yiv33P20SeQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:hhE2jWa+UT4=;yRxzkVhsLJGIPVHoMN7YdqsBOF/
+ Gm/rlHexnZG7P2mlsPM+/jfj2qRAKFudxIJTL9/WYfqDWrpGwpYXzM/mtelILaRFSorWL66CY
+ N0K6LD9wjJoxBhoGFJehpnwwZJ+YPA6lsyjQVifaJErTbHXLxZxn69/F1iIBXuIBn26UTPmLH
+ a1uWXqFNDhNEa6Rh88dFQWvp9EXaS+Ig5ixjrci1tERg5CNKgQQ0dpADJz6V4MteHfHIXTICS
+ ml6pAP/4e1IAI/U4IkVz2XCvymZhdLQkt3vI42KWY8cczdekZYQ8ZcVgEbEnmOb06+XRvAiL1
+ Bmx/jT5f7D+uORkC0ulb7U8DjF108xZYoanHCxJ0OZvqX5IQxtdtGqr0T7DHGIpSYVOTLGAtN
+ r/Q1QLwAEZRJmfyVyCmgQs2EA2dqsTFgcNX/nvfpgDTATVxOoJNOn/mBo4l2fOvLSv8gSM1Dp
+ NgIPLXrVXiob6yYtUXE1z4Ps1nDHaIiLIJDnXN67MQJiJH7Ahj1hcMei8mxrqgWCT4NlVvu4r
+ RYVzqZlpDlqlSGpVLlDeMPpA30hfftQnzhJm5sPCbY7YIhb3+TZUzK10qs1LSwKNdX/xFbSZu
+ +S/AN6iDslSBlaqSYxeMIKFND+aeE8eCVr19KFL7MxBI/lc0QfnA0h6VwweaWML/mBGaX8jdM
+ BjglKXN+7Fr/Q2VT1zOrpRdUkXVLx7ZliXU6F7AQ3HtOYEUOKhk76qQjqJE5nDKe3SpforiSW
+ 6Jvhts676oIKcBWbUkP7rwJMcyOI63JXVomuWip8FFPsa5ljHWakE9RUCrPjdEwtcR3ToCLu2
+ QVQmPFUzcogRqjgOS7OBh0hw==
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2024.07.25a
-head:   24e3bccdf4bc0ae57b0e89e0313fd4450fde12af
-commit: 54ff7b22b9062495092737217877be2bdd3dabd4 [15/43] rcuscale: Save a few lines with whitespace-only change
-config: x86_64-randconfig-071-20240728 (https://download.01.org/0day-ci/archive/20240730/202407300009.05X7YXZC-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240730/202407300009.05X7YXZC-lkp@intel.com/reproduce)
+>> =E2=80=A6
+>>> +++ b/drivers/net/ethernet/realtek/rtase/rtase.h
+>>> @@ -0,0 +1,338 @@
+>> =E2=80=A6
+>>> +#ifndef _RTASE_H_
+>>> +#define _RTASE_H_
+>> =E2=80=A6
+>>
+>> I suggest to omit leading underscores from such identifiers.
+>> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+o=
+r+define+a+reserved+identifier
+>
+> Do you have a reference to a Linux kernel document which suggests not
+> to do this?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407300009.05X7YXZC-lkp@intel.com/
-
-Note: the paulmck-rcu/dev.2024.07.25a HEAD 24e3bccdf4bc0ae57b0e89e0313fd4450fde12af builds fine.
-      It only hurts bisectability.
-
-All errors (new ones prefixed by >>):
-
->> kernel/rcu/rcuscale.c:1021:2: error: use of undeclared identifier 'writer_done'
-    1021 |         writer_done = kcalloc(nrealwriters, sizeof(writer_done[0]), GFP_KERNEL);
-         |         ^
-   kernel/rcu/rcuscale.c:1021:45: error: use of undeclared identifier 'writer_done'
-    1021 |         writer_done = kcalloc(nrealwriters, sizeof(writer_done[0]), GFP_KERNEL);
-         |                                                    ^
-   kernel/rcu/rcuscale.c:1021:45: error: use of undeclared identifier 'writer_done'
-   kernel/rcu/rcuscale.c:1022:68: error: use of undeclared identifier 'writer_done'
-    1022 |         if (!writer_tasks || !writer_durations || !writer_n_durations || !writer_done) {
-         |                                                                           ^
-   4 errors generated.
+I assume that you would become interested to clarify corresponding concern=
+s
+according to compliance (or deviations) from the standard of the programmi=
+ng language =E2=80=9CC=E2=80=9D.
 
 
-vim +/writer_done +1021 kernel/rcu/rcuscale.c
+> My grep foo is not great, but there appears to be around 20,000
+> instances of #define _[A-Z] in the kernel. So i doubt adding a couple
+> more is going to be an issue.
 
-   946	
-   947	static int __init
-   948	rcu_scale_init(void)
-   949	{
-   950		long i;
-   951		int firsterr = 0;
-   952		static struct rcu_scale_ops *scale_ops[] = {
-   953			&rcu_ops, &srcu_ops, &srcud_ops, TASKS_OPS TASKS_RUDE_OPS TASKS_TRACING_OPS
-   954		};
-   955	
-   956		if (!torture_init_begin(scale_type, verbose))
-   957			return -EBUSY;
-   958	
-   959		/* Process args and announce that the scalability'er is on the job. */
-   960		for (i = 0; i < ARRAY_SIZE(scale_ops); i++) {
-   961			cur_ops = scale_ops[i];
-   962			if (strcmp(scale_type, cur_ops->name) == 0)
-   963				break;
-   964		}
-   965		if (i == ARRAY_SIZE(scale_ops)) {
-   966			pr_alert("rcu-scale: invalid scale type: \"%s\"\n", scale_type);
-   967			pr_alert("rcu-scale types:");
-   968			for (i = 0; i < ARRAY_SIZE(scale_ops); i++)
-   969				pr_cont(" %s", scale_ops[i]->name);
-   970			pr_cont("\n");
-   971			firsterr = -EINVAL;
-   972			cur_ops = NULL;
-   973			goto unwind;
-   974		}
-   975		if (cur_ops->init)
-   976			cur_ops->init();
-   977	
-   978		if (cur_ops->rso_gp_kthread) {
-   979			kthread_tp = cur_ops->rso_gp_kthread();
-   980			if (kthread_tp)
-   981				kthread_stime = kthread_tp->stime;
-   982		}
-   983		if (kfree_rcu_test)
-   984			return kfree_scale_init();
-   985	
-   986		nrealwriters = compute_real(nwriters);
-   987		nrealreaders = compute_real(nreaders);
-   988		atomic_set(&n_rcu_scale_reader_started, 0);
-   989		atomic_set(&n_rcu_scale_writer_started, 0);
-   990		atomic_set(&n_rcu_scale_writer_finished, 0);
-   991		rcu_scale_print_module_parms(cur_ops, "Start of test");
-   992	
-   993		/* Start up the kthreads. */
-   994	
-   995		if (shutdown) {
-   996			init_waitqueue_head(&shutdown_wq);
-   997			firsterr = torture_create_kthread(rcu_scale_shutdown, NULL,
-   998							  shutdown_task);
-   999			if (torture_init_error(firsterr))
-  1000				goto unwind;
-  1001			schedule_timeout_uninterruptible(1);
-  1002		}
-  1003		reader_tasks = kcalloc(nrealreaders, sizeof(reader_tasks[0]),
-  1004				       GFP_KERNEL);
-  1005		if (reader_tasks == NULL) {
-  1006			SCALEOUT_ERRSTRING("out of memory");
-  1007			firsterr = -ENOMEM;
-  1008			goto unwind;
-  1009		}
-  1010		for (i = 0; i < nrealreaders; i++) {
-  1011			firsterr = torture_create_kthread(rcu_scale_reader, (void *)i,
-  1012							  reader_tasks[i]);
-  1013			if (torture_init_error(firsterr))
-  1014				goto unwind;
-  1015		}
-  1016		while (atomic_read(&n_rcu_scale_reader_started) < nrealreaders)
-  1017			schedule_timeout_uninterruptible(1);
-  1018		writer_tasks = kcalloc(nrealwriters, sizeof(writer_tasks[0]), GFP_KERNEL);
-  1019		writer_durations = kcalloc(nrealwriters, sizeof(*writer_durations), GFP_KERNEL);
-  1020		writer_n_durations = kcalloc(nrealwriters, sizeof(*writer_n_durations), GFP_KERNEL);
-> 1021		writer_done = kcalloc(nrealwriters, sizeof(writer_done[0]), GFP_KERNEL);
-  1022		if (!writer_tasks || !writer_durations || !writer_n_durations || !writer_done) {
-  1023			SCALEOUT_ERRSTRING("out of memory");
-  1024			firsterr = -ENOMEM;
-  1025			goto unwind;
-  1026		}
-  1027		for (i = 0; i < nrealwriters; i++) {
-  1028			writer_durations[i] =
-  1029				kcalloc(MAX_MEAS, sizeof(*writer_durations[i]),
-  1030					GFP_KERNEL);
-  1031			if (!writer_durations[i]) {
-  1032				firsterr = -ENOMEM;
-  1033				goto unwind;
-  1034			}
-  1035			firsterr = torture_create_kthread(rcu_scale_writer, (void *)i,
-  1036							  writer_tasks[i]);
-  1037			if (torture_init_error(firsterr))
-  1038				goto unwind;
-  1039		}
-  1040		torture_init_end();
-  1041		return 0;
-  1042	
-  1043	unwind:
-  1044		torture_init_end();
-  1045		rcu_scale_cleanup();
-  1046		if (shutdown) {
-  1047			WARN_ON(!IS_MODULE(CONFIG_RCU_SCALE_TEST));
-  1048			kernel_power_off();
-  1049		}
-  1050		return firsterr;
-  1051	}
-  1052	
+I suggest to improve case distinctions accordingly.
+Can it be more desirable to avoid undefined behaviour another bit?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+How will development interests evolve further?
+
+Regards,
+Markus
 
