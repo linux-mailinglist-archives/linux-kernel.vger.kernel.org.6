@@ -1,152 +1,230 @@
-Return-Path: <linux-kernel+bounces-266359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BADB193FEAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:03:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220DB93FEE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D62861C21D47
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:03:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4484E1C2241F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD9B161321;
-	Mon, 29 Jul 2024 20:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044BC18A921;
+	Mon, 29 Jul 2024 20:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YPQ46c/C"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="X1ABmKZ4"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C64C43152
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8AC188CB3;
+	Mon, 29 Jul 2024 20:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722283399; cv=none; b=PpCVYnL6ygUkl0LUMdSgKaMDF2/GmJyRxj4pjtgvdbczFG80eSfaHLLhr2lKHGDJgTqDOaZSadZnLucBs8rR5gJCesDqVGC8V2uzT3N+ihSKJcFS6NneCOOvvkK+pWBdteNQjyWDufYxnLAkgAnfxPOcOe8NZa2OmT6gr/A85z0=
+	t=1722283983; cv=none; b=hxdvfq2DwU92VldLit3I3Kz0NSpnRodxcV8l8Kw+88jW/NX8Sc1zkpkfKeEIzoVZ7qEGY+SRjxuXerU6LcXI5cMFLAZerfDNSl6LANtaqdFq08AZbxzyuchqdRfgYzZxy340CE3uRo4WOyhn8cMpEZkJHZ0TY81TQbmGVjzx6/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722283399; c=relaxed/simple;
-	bh=sH3OxyjISoV9gmzP4kGzgGw1Gd/8+8tJoyV1r0EshMc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vp16qMdf2laa01uF169sLJcQYRZetwBN4QFci00fbjaSgC6O7Q+8NqrKRjgn23JGYxwG03fNjK2zHYTCP6Dw416EZzt2kAJrNNRdXIV6i8o3ndowARR1IzrIAT0y671YjLzH/CWyo6Dh7qbTmErH8gWjmD430Aalz+/om1LlMNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YPQ46c/C; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5c661e75ff6so2710573eaf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:03:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722283396; x=1722888196; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uDq1Gdt3n+usFmiUTBcsV00Y3w2xz3JMkPDIMEdofYk=;
-        b=YPQ46c/CE3f0zNN3prQ0OtHUMPAFdSnCMsgdP0F1gwvcGQjLzi3rmj7EBdFdvnrCUq
-         MWxnXntp738ii3VeRlu9TQYabg+q4ekrHemIGWWaO/HSMDCr1CCdn1TAks7w8sxpgOtB
-         J9YumCR5XQfoDYwS0clZ5/O4PQP2bbV+TLFwXON9SZ4v3KEYSBYlrKG7meJX/EAeq1Kw
-         Q519g8bOumIqcH4nSDEfqkt09jKLPpIa4g5C+O/WUcTD5DIGENNePmOxPCL6UEAzdePs
-         u2eGAeQm5lbyKc2r+IsRA6K3yr96L+OFS2VwD3O8Q3wQwEmv0EACs8fRzBh3wyGj8bVd
-         +Bsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722283396; x=1722888196;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uDq1Gdt3n+usFmiUTBcsV00Y3w2xz3JMkPDIMEdofYk=;
-        b=AGBFtpDsjsTOTO6hZUGDAqLIJ/FqRyo1G6w738r+blmyH5p8jkjLGJggw5Qld6we/2
-         clnJrP0bZu+siRqv8vi9JJx01dxL/+jGPDYZeBdpnF21cYEpkGXrGlnvJXl1Vod7ecB1
-         PRbNFP0pFlvq9Rrn8LqmERKyY45k3cOJM86ncORNp6qS0hXViJ+z15xiarP+hHEwI+BK
-         Y6+xkTqbek1c7p3cu4iwR5bQ/A+NtEmI2ui0NWPRwOP1UCTG9NkcfRqrjvasWiHB5wwS
-         q6qcLJFBkFKST196pAT0G4IjB60jB0JZ5fcawdUoDyLPQ3jVKca2lILoxJFHwTr5Vwxj
-         U6VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNuvTIu/tFMNvpr5XuIjqam/Ye5Ln5dW1a4DB5LMfhnMHxmVaeFmjpeGPRf0Iu/hh6j7iJq1KaGHpkCGiQ3VZ1ra/eh6vhLUFURqYx
-X-Gm-Message-State: AOJu0Yzt8F2CFFi8kpxwrTAsEvprmOQZJea9bvfJ6+1q/u8Bf6biAL78
-	BqjOIX0J6pzdRm7iRjS8Z4CNLPxxck+wSUgTGulqR46DZbH+ra5x3HhSFfFxOG1AeiS0MlO6GV/
-	ZwwmsYw7kRHuqA9V5xihiA+EBwDw=
-X-Google-Smtp-Source: AGHT+IGbZo8tM4Jx81FtIJRkLT4fg5oCgMI5kCyd+x+xfpAEG9W3DAU19E1zTOQK5uTv4avib9PWrMnP0uS+k/fDFa4=
-X-Received: by 2002:a05:6358:d26:b0:1aa:b9ec:50ca with SMTP id
- e5c5f4694b2df-1adcbf03d0cmr1459541055d.25.1722283396404; Mon, 29 Jul 2024
- 13:03:16 -0700 (PDT)
+	s=arc-20240116; t=1722283983; c=relaxed/simple;
+	bh=crICF1i5RQKEnw5gmthwsCxsW7dV+fc7ifqG4NAJLHE=;
+	h=Message-ID:Date:MIME-Version:In-Reply-To:To:CC:From:Subject:
+	 Content-Type; b=jQ0epu8aBDU2Umyz53hq9AFaLVq8U6YhNPidTLxgx58L1yOh65fKowCwaxyrIpbUWM+sdJguC/Cu9IG2LwSplVoZbvBLkcKB5vSAf1NoZIJaIoLvWChAFFUKDeFC+earSKX04VQuV2ksjqM0u38xDIxejug4Rztb7Zzq/QWDdU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=X1ABmKZ4; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id E8F50120003;
+	Mon, 29 Jul 2024 23:12:56 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru E8F50120003
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1722283976;
+	bh=wqCOH0OMZnBR80J18ev/8FeOuZRcI6ZPg6yEni5bP5E=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type:From;
+	b=X1ABmKZ44Jlf8L31CHuQAeIk4ZIqA6FntZHkexU9nNc/jFP1zP/GqdXt8tmR7aRMK
+	 hEXlF60medUb1VpmwEdY2Y78WUdmT8XBBB5wJSljFT6TrIDVQZWlSFJxxKpxTzxL67
+	 TIpv7Dctt1Rxat40rZVpl75dUMp+7ohkUBxK5f2qxfZbad28FuC5mqduVUtMX29L2B
+	 uKqrvUuC76txADmCn6hykswCviJN2lJe2SS/Yw0nyaOwe2P/Fp8a/Ub9npGnph8hhp
+	 tpMLqcRmiINh5AiqbgvlWCWZECR6KtPcgC5d2cEBoEohi196cjA4z5FnM+CJuNRAQM
+	 L/wZAreMfwHOw==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Mon, 29 Jul 2024 23:12:56 +0300 (MSK)
+Received: from [172.28.128.200] (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Mon, 29 Jul 2024 23:12:55 +0300
+Message-ID: <e1647f5f-5056-5cf0-e81c-5ef71fd6efd0@salutedevices.com>
+Date: Mon, 29 Jul 2024 23:00:36 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726094618.401593-1-21cnbao@gmail.com> <20240726094618.401593-4-21cnbao@gmail.com>
- <ZqcRqxGaJsAwZD3C@casper.infradead.org> <CAGsJ_4xQkPtw1Cw=2mcRjpTdp-c9tSFCuW_U6JKzJ3zHGYQWrA@mail.gmail.com>
- <CAGsJ_4wxUZAysyg3cCVnHhOFt5SbyAMUfq3tJcX-Wb6D4BiBhA@mail.gmail.com>
- <ZqePwtX4b18wiubO@casper.infradead.org> <CAGsJ_4zXfYT4KxBnLx1F8tpK-5s6PX3PQ7wf7tteuzEyKS+ZPQ@mail.gmail.com>
- <ZqexmNIc00Xlwy2c@casper.infradead.org>
-In-Reply-To: <ZqexmNIc00Xlwy2c@casper.infradead.org>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 30 Jul 2024 08:03:05 +1200
-Message-ID: <CAGsJ_4yqLVvCUFpHjWmNAYvPRMzGK8JJWYMXJLR7d9UhKp+QDA@mail.gmail.com>
-Subject: Re: [PATCH v5 3/4] mm: support large folios swapin as a whole for
- zRAM-like swapfile
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, ying.huang@intel.com, 
-	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com, 
-	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
-	kasong@tencent.com, linux-kernel@vger.kernel.org, mhocko@suse.com, 
-	minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
-	senozhatsky@chromium.org, shakeel.butt@linux.dev, shy828301@gmail.com, 
-	surenb@google.com, v-songbaohua@oppo.com, xiang@kernel.org, 
-	yosryahmed@google.com, Chuanhua Han <hanchuanhua@oppo.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Content-Language: en-US
+In-Reply-To: <20240710212555.1617795-8-amery.hung@bytedance.com>
+To: <stefanha@redhat.com>, <sgarzare@redhat.com>, <mst@redhat.com>,
+	<jasowang@redhat.com>, <xuanzhuo@linux.alibaba.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<kys@microsoft.com>, <haiyangz@microsoft.com>, <wei.liu@kernel.org>,
+	<decui@microsoft.com>, <bryantan@vmware.com>, <vdasa@vmware.com>,
+	<pv-drivers@vmware.com>
+CC: <dan.carpenter@linaro.org>, <simon.horman@corigine.com>,
+	<oxffffaa@gmail.com>, <kvm@vger.kernel.org>,
+	<virtualization@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-hyperv@vger.kernel.org>,
+	<bpf@vger.kernel.org>, <bobby.eshleman@bytedance.com>,
+	<jiang.wang@bytedance.com>, <amery.hung@bytedance.com>,
+	<ameryhung@gmail.com>, <xiyou.wangcong@gmail.com>, <kernel@sberdevices.ru>
+From: Arseniy Krasnov <avkrasnov@salutedevices.com>
+Subject: [RFC PATCH net-next v6 07/14] virtio/vsock: add common datagram send
+ path
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186779 [Jul 29 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;100.64.160.123:7.1.2;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/29 16:49:00 #26175127
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Tue, Jul 30, 2024 at 3:13=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Tue, Jul 30, 2024 at 01:11:31AM +1200, Barry Song wrote:
-> > for this zRAM case, it is a new allocated large folio, only
-> > while all conditions are met, we will allocate and map
-> > the whole folio. you can check can_swapin_thp() and
-> > thp_swap_suitable_orders().
->
-> YOU ARE DOING THIS WRONGLY!
->
-> All of you anonymous memory people are utterly fixated on TLBs AND THIS
-> IS WRONG.  Yes, TLB performance is important, particularly with crappy
-> ARM designs, which I know a lot of you are paid to work on.  But you
-> seem to think this is the only consideration, and you're making bad
-> design choices as a result.  It's overly complicated, and you're leaving
-> performance on the table.
->
-> Look back at the results Ryan showed in the early days of working on
-> large anonymous folios.  Half of the performance win on his system came
-> from using larger TLBs.  But the other half came from _reduced software
-> overhead_.  The LRU lock is a huge problem, and using large folios cuts
-> the length of the LRU list, hence LRU lock hold time.
->
-> Your _own_ data on how hard it is to get hold of a large folio due to
-> fragmentation should be enough to convince you that the more large folios
-> in the system, the better the whole system runs.  We should not decline t=
-o
-> allocate large folios just because they can't be mapped with a single TLB=
-!
+Hi,
 
-I am not convinced. for a new allocated large folio, even alloc_anon_folio(=
-)
-of do_anonymous_page() does the exactly same thing
+> diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
+> index a1c76836d798..46cd1807f8e3 100644
+> --- a/net/vmw_vsock/virtio_transport_common.c
+> +++ b/net/vmw_vsock/virtio_transport_common.c
+> @@ -1040,13 +1040,98 @@ int virtio_transport_shutdown(struct vsock_sock *vsk, int mode)
+>  }
+>  EXPORT_SYMBOL_GPL(virtio_transport_shutdown);
+>  
+> +static int virtio_transport_dgram_send_pkt_info(struct vsock_sock *vsk,
+> +						struct virtio_vsock_pkt_info *info)
+> +{
+> +	u32 src_cid, src_port, dst_cid, dst_port;
+> +	const struct vsock_transport *transport;
+> +	const struct virtio_transport *t_ops;
+> +	struct sock *sk = sk_vsock(vsk);
+> +	struct virtio_vsock_hdr *hdr;
+> +	struct sk_buff *skb;
+> +	void *payload;
+> +	int noblock = 0;
+> +	int err;
+> +
+> +	info->type = virtio_transport_get_type(sk_vsock(vsk));
+> +
+> +	if (info->pkt_len > VIRTIO_VSOCK_MAX_PKT_BUF_SIZE)
+> +		return -EMSGSIZE;
 
-alloc_anon_folio()
-{
-        /*
-         * Get a list of all the (large) orders below PMD_ORDER that are en=
-abled
-         * for this vma. Then filter out the orders that can't be allocated=
- over
-         * the faulting address and still be fully contained in the vma.
-         */
-        orders =3D thp_vma_allowable_orders(vma, vma->vm_flags,
-                        TVA_IN_PF | TVA_ENFORCE_SYSFS, BIT(PMD_ORDER) - 1);
-        orders =3D thp_vma_suitable_orders(vma, vmf->address, orders);
+Small suggestion, i think we can check for packet length earlier ? Before
+info->type = ...
 
-}
+> +
+> +	transport = vsock_dgram_lookup_transport(info->remote_cid, info->remote_flags);
+> +	t_ops = container_of(transport, struct virtio_transport, transport);
+> +	if (unlikely(!t_ops))
+> +		return -EFAULT;
+> +
+> +	if (info->msg)
+> +		noblock = info->msg->msg_flags & MSG_DONTWAIT;
+> +
+> +	/* Use sock_alloc_send_skb to throttle by sk_sndbuf. This helps avoid
+> +	 * triggering the OOM.
+> +	 */
+> +	skb = sock_alloc_send_skb(sk, info->pkt_len + VIRTIO_VSOCK_SKB_HEADROOM,
+> +				  noblock, &err);
+> +	if (!skb)
+> +		return err;
+> +
+> +	skb_reserve(skb, VIRTIO_VSOCK_SKB_HEADROOM);
+> +
+> +	src_cid = t_ops->transport.get_local_cid();
+> +	src_port = vsk->local_addr.svm_port;
+> +	dst_cid = info->remote_cid;
+> +	dst_port = info->remote_port;
+> +
+> +	hdr = virtio_vsock_hdr(skb);
+> +	hdr->type	= cpu_to_le16(info->type);
+> +	hdr->op		= cpu_to_le16(info->op);
+> +	hdr->src_cid	= cpu_to_le64(src_cid);
+> +	hdr->dst_cid	= cpu_to_le64(dst_cid);
+> +	hdr->src_port	= cpu_to_le32(src_port);
+> +	hdr->dst_port	= cpu_to_le32(dst_port);
+> +	hdr->flags	= cpu_to_le32(info->flags);
+> +	hdr->len	= cpu_to_le32(info->pkt_len);
 
-you are not going to allocate a mTHP for an unaligned address for a new
-PF.
-Please point out where it is wrong.
+There is function 'virtio_transport_init_hdr()' in this file, may be reuse it ?
 
-Thanks
-Barry
+> +
+> +	if (info->msg && info->pkt_len > 0) {
+
+If pkt_len is 0, do we really need to send such packets ? Because for connectible
+sockets, we ignore empty OP_RW packets.
+
+> +		payload = skb_put(skb, info->pkt_len);
+> +		err = memcpy_from_msg(payload, info->msg, info->pkt_len);
+> +		if (err)
+> +			goto out;
+> +	}
+> +
+> +	trace_virtio_transport_alloc_pkt(src_cid, src_port,
+> +					 dst_cid, dst_port,
+> +					 info->pkt_len,
+> +					 info->type,
+> +					 info->op,
+> +					 info->flags,
+> +					 false);
+
+^^^ For SOCK_DGRAM, include/trace/events/vsock_virtio_transport_common.h also should
+be updated?
+
+> +
+> +	return t_ops->send_pkt(skb);
+> +out:
+> +	kfree_skb(skb);
+> +	return err;
+> +}
+> +
+>  int
+>  virtio_transport_dgram_enqueue(struct vsock_sock *vsk,
+>  			       struct sockaddr_vm *remote_addr,
+>  			       struct msghdr *msg,
+>  			       size_t dgram_len)
+>  {
+> -	return -EOPNOTSUPP;
+> +	/* Here we are only using the info struct to retain style uniformity
+> +	 * and to ease future refactoring and merging.
+> +	 */
+> +	struct virtio_vsock_pkt_info info = {
+> +		.op = VIRTIO_VSOCK_OP_RW,
+> +		.remote_cid = remote_addr->svm_cid,
+> +		.remote_port = remote_addr->svm_port,
+> +		.remote_flags = remote_addr->svm_flags,
+> +		.msg = msg,
+> +		.vsk = vsk,
+> +		.pkt_len = dgram_len,
+> +	};
+> +
+> +	return virtio_transport_dgram_send_pkt_info(vsk, &info);
+>  }
+>  EXPORT_SYMBOL_GPL(virtio_transport_dgram_enqueue);
+>  
+> -- 
+> 2.20.1
+
+Thanks, Arseniy
 
