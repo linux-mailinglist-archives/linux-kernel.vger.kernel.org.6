@@ -1,225 +1,107 @@
-Return-Path: <linux-kernel+bounces-265991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13CD393F8D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:58:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA2793F8DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33E9F1C21998
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:58:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBA46282CAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4092315624C;
-	Mon, 29 Jul 2024 14:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0762A157466;
+	Mon, 29 Jul 2024 14:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lWIYDCVH"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xb6GvoqG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0FC14601E;
-	Mon, 29 Jul 2024 14:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1B114601E;
+	Mon, 29 Jul 2024 14:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722265063; cv=none; b=eIV+dtmy6WAzVPXBxyFtXgIh9rVi1gPBQUiydLpCqsbGjQrhx71bpw3BFzunErEZhbktA6TBYHgs7OtzrJdgf0vgFTuJcqn+Jfs8c31bbwuugSFUuPgBSR8s7W0A/GvnjnDq/oUUzraFHZt+aFOrEO4SSZzBQf+ffIqNa1UWKq4=
+	t=1722265069; cv=none; b=rKkTTUYeAebOaGxJZtRw/dcIs4yOGs0vPoA7UFtSFGBnt1aKPMlf6WHjFkEpf25folRbOHRKAMPf+Fv37ESRplJ94JKq1HgrCrfzxZpE84se1eDesxM+DmOYi6eIoZ6VkWmvbXC6TFQk8wjgX54tDU3jAOZ54npvIbk7OE2QkVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722265063; c=relaxed/simple;
-	bh=XVKgyTWR8+f7LtxjNU/kic+26Xoff6phqUlkCrKMH9s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=izhKa1wZAGBozYIXEir6UMoSvZkQXf4NaaHX0W/9R8GM8uusmJjuHrtMKGq/g5g98vmxzsJxPMnbj5GGFhxj2BYEH57m0ikLMuK9B5exdE8zo9arLANC94TARrR/pfbjapIpi/kkFhDG68F7lOHg0oTFc9zPKN4mSrolX54fn8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lWIYDCVH; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722265060;
-	bh=XVKgyTWR8+f7LtxjNU/kic+26Xoff6phqUlkCrKMH9s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lWIYDCVHmQyK59Nns2eQOkyexXlSc98SxM/QPPBXdjHesZTC82SeuhdziL19hAuLZ
-	 5QvSIY5GXX4/1TvqhoIwNjxXPLPMhR0RZLJLCt5Y3nQu/HVxh6YzZtPEUdriU8Epf9
-	 /e96UR39cBRBYFkJAEZcXM3eCwwNUVDPRyI4STJHbGaDVZL2Yv1e6prDOhLoWWeTpk
-	 oY2PCgBg5WqRzzFr3CobHlyLRP2xV53xm6ETdfu/dhyMYm5L+dVTp4DXkQUzYFGXdG
-	 UCF5rgwkkHo8+e0yKUbo2JIWCsx+PyJCwi1nzNux/LvmRGkuoMPZeqj2yP8gKsZHUT
-	 BDSdlFWpX78Og==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id CC6F03780C11;
-	Mon, 29 Jul 2024 14:57:38 +0000 (UTC)
-Message-ID: <92b18918-979d-43f6-890d-888caea08561@collabora.com>
-Date: Mon, 29 Jul 2024 16:57:37 +0200
+	s=arc-20240116; t=1722265069; c=relaxed/simple;
+	bh=ZADXTVsTGrVacdBgCCarfqdtdLQHOFYNF/ehrnbdlQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h34kQRpfA6aT3UNZWSoOvLfZnShsoguWNoBMQLz6Yf7WnRzK12+pAIEWZJrkGfq1lLrO8ZIzUvfbl04WEr/Mia4X/sVzhcTOhipznMYWisd+WkdceRiqcZlI295VAKB+l/PirNNwfIkvyc1t6sxo92AJFTNDvBQcU6FrjQZcPQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xb6GvoqG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF209C32786;
+	Mon, 29 Jul 2024 14:57:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722265068;
+	bh=ZADXTVsTGrVacdBgCCarfqdtdLQHOFYNF/ehrnbdlQc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xb6GvoqG2LSiTPtNeoHicsrmitIZ6cWNx+VWig9OIh2FGCBjAKeSl2BNCjBHVYoQJ
+	 hEdbBQzs4RIcX6gM4JhIib3D4DPc+9gbqNTCVb2dYzP6qikWxIu30x/ZCV/9F/lLVw
+	 cZ+VkDxmyKfWSexDInz35StfFFH6faf8FidIQfPT/+K0kF6z/l9CjrdHcQ02BWpuV8
+	 3wXItYyyuQcgSMffVvwDsnzBEJJb2xNewjDjoxFF/oOZbGFiIraEUqOt6M4Qec2/Y2
+	 4qwiSqoU6uFXswQzLwzOI6NESl+wOYC5X6FU5QO4QZBJxkNkIDFRAnDQBLTVVGg6Nq
+	 QKwD5XhrL8Kdg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sYRow-000000005SD-0D0x;
+	Mon, 29 Jul 2024 16:57:54 +0200
+Date: Mon, 29 Jul 2024 16:57:54 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+Subject: Re: [PATCH 1/2] soc: qcom: pd_mapper: Add X1E80100
+Message-ID: <Zqet8iInnDhnxkT9@hovoldconsulting.com>
+References: <20240708-x1e80100-pd-mapper-v1-0-854386af4cf5@linaro.org>
+ <20240708-x1e80100-pd-mapper-v1-1-854386af4cf5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/5] dt-bindings: media: add mediatek ISP3.0 sensor
- interface
-To: Julien Stephan <jstephan@baylibre.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Andy Hsieh <andy.hsieh@mediatek.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, Louis Kuo <louis.kuo@mediatek.com>,
- Phi-Bang Nguyen <pnguyen@baylibre.com>
-References: <20240729-add-mtk-isp-3-0-support-v6-0-c374c9e0c672@baylibre.com>
- <20240729-add-mtk-isp-3-0-support-v6-1-c374c9e0c672@baylibre.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240729-add-mtk-isp-3-0-support-v6-1-c374c9e0c672@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240708-x1e80100-pd-mapper-v1-1-854386af4cf5@linaro.org>
 
-Il 29/07/24 16:48, Julien Stephan ha scritto:
-> From: Louis Kuo <louis.kuo@mediatek.com>
-> 
-> This adds the bindings, for the mediatek ISP3.0 SENINF module embedded in
-> some Mediatek SoC, such as the mt8365
-> 
-> Signed-off-by: Louis Kuo <louis.kuo@mediatek.com>
-> Signed-off-by: Phi-Bang Nguyen <pnguyen@baylibre.com>
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> ---
->   .../bindings/media/mediatek,mt8365-seninf.yaml     | 259 +++++++++++++++++++++
->   MAINTAINERS                                        |   7 +
->   2 files changed, 266 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/mediatek,mt8365-seninf.yaml b/Documentation/devicetree/bindings/media/mediatek,mt8365-seninf.yaml
-> new file mode 100644
-> index 000000000000..8bd78ef424ac
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/mediatek,mt8365-seninf.yaml
-> @@ -0,0 +1,259 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (c) 2023 MediaTek, BayLibre
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/mediatek,mt8365-seninf.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek Sensor Interface 3.0
-> +
+On Mon, Jul 08, 2024 at 06:22:09PM +0200, Stephan Gerhold wrote:
+> X1E80100 has the same protection domains as SM8550, except that MPSS is
+> missing. Add it to the in-kernel pd-mapper to avoid having to run the
+> daemon in userspace for charging and audio functionality.
 
-..snip..
+I'm seeing a bunch of new errors when running with this patch applied on
+top of 6.11-rc1. I'm assuming it is due to changes in timing that are
+either exposing existing bugs or there is a general problem with the
+in-kernel pd-mapper implementation.
 
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/mediatek,mt8365-clk.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/phy/phy.h>
-> +    #include <dt-bindings/power/mediatek,mt8365-power.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        csi@15040000 {
-> +            compatible = "mediatek,mt8365-seninf";
-> +            reg = <0 0x15040000 0 0x6000>;
-> +            interrupts = <GIC_SPI 210 IRQ_TYPE_LEVEL_LOW>;
-> +            clocks = <&camsys CLK_CAM_SENIF>,
-> +                     <&topckgen CLK_TOP_SENIF_SEL>;
-> +            clock-names = "camsys", "top_mux";
-> +
-> +            power-domains = <&spm MT8365_POWER_DOMAIN_CAM>;
-> +
-> +            phys = <&mipi_csi0 PHY_TYPE_DPHY>, <&mipi_csi1>;
-> +            phy-names = "csi0", "csi1";
-> +
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                port@0 {
-> +                    reg = <0>;
-> +                    seninf_in1: endpoint {
-> +                        clock-lanes = <2>;
-> +                        data-lanes = <1 3 0 4>;
-> +                        remote-endpoint = <&isp1_out>;
-> +                    };
-> +                };
-> +
-> +                port@1 {
-> +                    reg = <1>;
-> +                };
-> +
-> +                port@2 {
-> +                    reg = <2>;
-> +                };
-> +
-> +                port@3 {
-> +                    reg = <3>;
-> +                };
+In any case, this does does not seem to be specific to x1e80100 even if
+I'm not seeing as many issues on sc8280xp (there is one new error there
+too however).
 
-I don't really get why you got all those empty ports here, as you could simply
-avoid adding all of the empty nodes instead.
+It doesn't happen on every boot, but with the in-kernel pd-mapper I
+often (every 3-4 boots) see the following errors on the x1e80100 CRD
+during boot:
 
-I don't have strong opinions about that anyway so, regardless of that....
+	[    9.799719] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to send altmode request: 0x10 (-125)
+        [    9.812446] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to request altmode notifications: -125
+        [    9.831796] ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: failed to send UCSI read request: -125
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+	[    9.269230] qcom_battmgr.pmic_glink_power_supply pmic_glink.power-supply.0: failed to request power notifications
 
-> +
-> +                port@4 {
-> +                    reg = <4>;
-> +                    seninf_camsv1_endpoint: endpoint {
-> +                        remote-endpoint = <&camsv1_endpoint>;
-> +                    };
-> +                };
-> +
-> +                port@5 {
-> +                    reg = <5>;
-> +                    seninf_camsv2_endpoint: endpoint {
-> +                        remote-endpoint = <&camsv2_endpoint>;
-> +                    };
-> +                };
-> +
-> +                port@6 {
-> +                    reg = <6>;
-> +                };
-> +
-> +                port@7 {
-> +                    reg = <7>;
-> +                };
-> +
-> +                port@8 {
-> +                    reg = <8>;
-> +                };
-> +
-> +                port@9 {
-> +                    reg = <9>;
-> +                };
-> +            };
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d6c90161c7bf..6bd7df1c3e08 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14158,6 +14158,13 @@ M:	Sean Wang <sean.wang@mediatek.com>
->   S:	Maintained
->   F:	drivers/char/hw_random/mtk-rng.c
->   
-> +MEDIATEK ISP3.0 DRIVER
-> +M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> +M:	Julien Stephan <jstephan@baylibre.com>
-> +M:	Andy Hsieh <andy.hsieh@mediatek.com>
-> +S:	Supported
-> +F:	Documentation/devicetree/bindings/media/mediatek,mt8365-seninf.yaml
-> +
->   MEDIATEK SMI DRIVER
->   M:	Yong Wu <yong.wu@mediatek.com>
->   L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
-> 
+I've also seen the following, which may also be related:
 
+	[   14.565059] PDR: avs/audio get domain list txn wait failed: -110
+        [   14.571943] PDR: service lookup for avs/audio failed: -110
+
+I haven't seen the -ECANCELED (-125) errors in 30 reboots with the patch
+reverted again.
+
+I once saw
+
+	power_supply qcom-battmgr-bat: driver failed to report `status' property: -110
+
+on the Lenovo ThinkPad X13s which may or may not be related.
+
+Johan
 
