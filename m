@@ -1,40 +1,54 @@
-Return-Path: <linux-kernel+bounces-265298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 372D593EF3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:58:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32EBF93EF41
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC673280DD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:58:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83AFBB20BD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A2D12EBC7;
-	Mon, 29 Jul 2024 07:58:21 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7477312D75A;
-	Mon, 29 Jul 2024 07:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74BA1304AD;
+	Mon, 29 Jul 2024 07:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="zHQiCVl2"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA3D12D1FA;
+	Mon, 29 Jul 2024 07:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722239900; cv=none; b=E3W2Q5rdBUFSKfR+wz47CTZXXqnshvO5ZSCt2k1/822Q80/HJqa9bYu2LWVEeJg+p0CPcn3hTmvHu/RKS2pCCzCX4z7Y44HOV+l2ILJuQ0JrjSglPRS0doo7LziC/3YnHDod3QgONorMRKyJRL8qJ2pWUWisL3TVZoWat4qNIvc=
+	t=1722239974; cv=none; b=pyXxmFygqyfPwE4L6uXONB1nlA6Ud9ZaWRHBxyFxnj6nbrYYWfxiIewH03epx3IUrOG9BE3/gqQjNdlytqnVeyQJ4Ix31HdWhRq6Y/Y5in8+ZDmWQxHA2GZiCXg6FDUiv409axZYrc7+/SToAR39tF+S97XiAW8F3BYnhhMDqzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722239900; c=relaxed/simple;
-	bh=1Dz4UYhHm9Lqb38HxHPj8a2Eh9aFHgOekszNJPUIK9M=;
+	s=arc-20240116; t=1722239974; c=relaxed/simple;
+	bh=fzVSMdR2QxHZlMfsS7rulnJXcfjo/rELHom0IR6qjsE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lShSNiLtnHZ/uE7l98KzsYbwolIP7J+vOlMJdcSdDgYkgdXum2RS67dMCI9gIV2mIz6y/sYPHt9AgjQRN3OPWnPTpagp5jZh4Yulohr/34oXd/CqklYs0dcWv3iRBUYR1vaIpuqBw5xCcH0TodqMKjUFsmekdx/lkSj643dWa14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.09,245,1716217200"; 
-   d="asc'?scan'208";a="213872124"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 29 Jul 2024 16:58:10 +0900
-Received: from [10.226.92.233] (unknown [10.226.92.233])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E19D441B4307;
-	Mon, 29 Jul 2024 16:58:06 +0900 (JST)
-Message-ID: <b3d42d0e-fd39-4f0b-93f6-2c257206ded7@bp.renesas.com>
-Date: Mon, 29 Jul 2024 08:58:05 +0100
+	 In-Reply-To:Content-Type; b=COy28pfC63Rp2hFbIRlA/UFKrXpIr3OLmSKGgZ1qrr4jxL/lSEWmFApcZ4iZk/EmzDFn9tMmD8pXJRWAJqmgRO89QYWG3fvlD+vqwk6ObilsMZBhEk3TWcZetqjH0i7Z3p4avYg6dzpCQTR5no1UILxb1lWUtx10f1ovQiZpcnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=zHQiCVl2; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722239970;
+	bh=fzVSMdR2QxHZlMfsS7rulnJXcfjo/rELHom0IR6qjsE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=zHQiCVl2n0w7TV43R1MMuAInYVtVCnw5Mls9c6zb7s742CpKptJrfechxO3jWcbPD
+	 aWLabwPjjBXHbXY8b86v83LeK3T7Pj3zPoni9gM5JbcmCTPFvMlheP4Ygacl58Fvus
+	 R2bPjPNa+ISI1dkutCDNA9ATWs5Ie3vmdxOrJ6Wa2TXn1EU7p5x3KeJB1hAOgv46tm
+	 SO+nH7Qs/oW1yWEkaTzfid3X4a4cjzCNLgm7SqDNUVQgSmHGFEMpPDvRL2YdpeYMoq
+	 vG36aU6ca4xoQbq82O8OqP61VbSbXeUpsSZOqKvRrJitTpa/7fcAAzH/QrAKxvKUu1
+	 tVgTtLwPfVwJg==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1324A37809CE;
+	Mon, 29 Jul 2024 07:59:30 +0000 (UTC)
+Message-ID: <51f0f4f3-11a5-4d74-981e-3f24f8475c7f@collabora.com>
+Date: Mon, 29 Jul 2024 09:59:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,188 +56,147 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Return -EINVAL if the pin
- doesn't support PIN_CFG_OEN
-To: Prabhakar <prabhakar.csengg@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240723164744.505233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Language: en-GB
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-Organization: Renesas Electronics Corporation
-In-Reply-To: <20240723164744.505233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------40TXotLw2TT5s60mtBfrG0HF"
+Subject: Re: [PATCH] arm64: dts: mediatek: mt8195: Add missing clock for xhci1
+ controller
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20240722-usb-1129-probe-pci-clk-fix-v1-1-99ea804228b6@collabora.com>
+ <CAGXv+5H_pxR18sHeqdWPy9_FARrnLwyyOHV4VXCn9p5OExseiQ@mail.gmail.com>
+ <f12ba385-090b-4772-8c52-e515e25b00ac@collabora.com>
+ <CAGXv+5G92=-k5MDH4BPcM8tgPwcGTJ60trJwr7BwTGHD=wpnDw@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAGXv+5G92=-k5MDH4BPcM8tgPwcGTJ60trJwr7BwTGHD=wpnDw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------40TXotLw2TT5s60mtBfrG0HF
-Content-Type: multipart/mixed; boundary="------------9B27NfCA7uEzs6kQhSPTQ7w3";
- protected-headers="v1"
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-ID: <b3d42d0e-fd39-4f0b-93f6-2c257206ded7@bp.renesas.com>
-Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Return -EINVAL if the pin
- doesn't support PIN_CFG_OEN
-References: <20240723164744.505233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240723164744.505233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Il 26/07/24 17:11, Chen-Yu Tsai ha scritto:
+> On Fri, Jul 26, 2024 at 8:11 PM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+>>
+>> Il 25/07/24 12:34, Chen-Yu Tsai ha scritto:
+>>> Hi,
+>>>
+>>> On Mon, Jul 22, 2024 at 11:27 PM Nícolas F. R. A. Prado
+>>> <nfraprado@collabora.com> wrote:
+>>>>
+>>>> Currently if the xhci1 controller happens to probe before the pcie1
+>>>> controller then it fails with the following errors:
+>>>>
+>>>> xhci-mtk 11290000.usb: clocks are not stable (0x1003d0f)
+>>>> xhci-mtk 11290000.usb: can't setup: -110
+>>>> xhci-mtk: probe of 11290000.usb failed with error -110
+>>>>
+>>>> The issue has been tracked down to the CLK_INFRA_AO_PCIE_P1_TL_96M
+>>>> clock, although exactly why this pcie clock is needed for the usb
+>>>> controller is still unknown. Add the clock to the xhci1 controller so it
+>>>> always probes successfully and use a placeholder clock name for it.
+>>>>
+>>>> Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
+>>>> Closes: https://lore.kernel.org/all/9fce9838-ef87-4d1b-b3df-63e1ddb0ec51@notapiano/
+>>>> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+>>>
+>>> So I asked MediaTek about this, and it seems the correct thing to do is
+>>> disable USB 3 on this host controller using the following snippet. The
+>>> snippet is copy-pasted from our issue tracker and won't apply directly.
+>>>
+>>> This is also seen in mt8395-kontron-3-5-sbc-i1200.dts, on which xhci1
+>>> is used only for USB 2.0 on an M.2 slot.
+>>>
+>>
+>> Uhm, okay, but why should USB3 be disabled on a controller that supports USB3?
+>>
+>> I agree about disabling it on specific boards that use only the USB 2.0 lines of
+>> this controller, but doing that globally looks wrong... and looks like being a
+>> workaround for an error that gets solved with adding a clock as well.
+>>
+>> In short, the question is: why would that be the correct thing to do?
+> 
+> We can disable it in mt8195-cherry.dtsi then?
 
---------------9B27NfCA7uEzs6kQhSPTQ7w3
-Content-Type: multipart/mixed; boundary="------------L5GEll9szdB9r6gnjBt1FwVr"
+That device does not use this controller, so yes we can disable it, but that still
+doesn't resolve the issue pointed out by Nicolas...!
 
---------------L5GEll9szdB9r6gnjBt1FwVr
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Please note that the issue that he sees doesn't happen only on Tomato, but also on
+other MediaTek MT8195/MT8395 boards - and applying this commit makes disabling the
+controller, or disabling the USB 3 lines on the controller, kinda redundant, as
+this will effectively fix probing it... but again, fixing the actual issue with
+this controller is something that must be done.
 
-On 23/07/2024 17:47, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> Update the rzg2l_pinctrl_pinconf_get() function to return -EINVAL for
-> PIN_CONFIG_OUTPUT_ENABLE config if the pin doesn't support the PIN_CFG_=
-OEN
-> configuration.
->=20
-> -EINVAL is a valid error when dumping the pin configurations. Returning=
+Disabling the controller on Tomato is a different topic - here we are discussing
+about fixing the issue, and that will happen, again, on any board that has this
+controller enabled with USB3 lines. :-)
 
-> -EOPNOTSUPP for a pin that does not support PIN_CFG_OEN resulted in the=
+So, unless there is any specific reason for which applying this commit is a bad
+idea, or any alternative fix to this that is better than the proposed one, and
+not a workaround... I'm applying this one.
 
-> message 'ERROR READING CONFIG SETTING 16' being printed during dumping
-> pinconf-pins.
->=20
-> For consistency do similar change in rzg2l_pinctrl_pinconf_set() for
-> PIN_CONFIG_OUTPUT_ENABLE config.
->=20
-> Fixes: a9024a323af2 ("pinctrl: renesas: rzg2l: Clean up and refactor OE=
-N read/write functions")
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  drivers/pinctrl/renesas/pinctrl-rzg2l.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/=
-renesas/pinctrl-rzg2l.c
-> index 632180570b70..3ef20f2fa88e 100644
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -1261,7 +1261,9 @@ static int rzg2l_pinctrl_pinconf_get(struct pinct=
-rl_dev *pctldev,
->  		break;
-> =20
->  	case PIN_CONFIG_OUTPUT_ENABLE:
-> -		if (!pctrl->data->oen_read || !(cfg & PIN_CFG_OEN))
-> +		if (!(cfg & PIN_CFG_OEN))
-> +			return -EINVAL;
-> +		if (!pctrl->data->oen_read)
->  			return -EOPNOTSUPP;
->  		arg =3D pctrl->data->oen_read(pctrl, _pin);
->  		if (!arg)
-> @@ -1402,7 +1404,9 @@ static int rzg2l_pinctrl_pinconf_set(struct pinct=
-rl_dev *pctldev,
-> =20
->  		case PIN_CONFIG_OUTPUT_ENABLE:
->  			arg =3D pinconf_to_config_argument(_configs[i]);
-> -			if (!pctrl->data->oen_write || !(cfg & PIN_CFG_OEN))
-> +			if (!(cfg & PIN_CFG_OEN))
-> +				return -EINVAL;
-> +			if (!pctrl->data->oen_write)
->  				return -EOPNOTSUPP;
->  			ret =3D pctrl->data->oen_write(pctrl, _pin, !!arg);
->  			if (ret)
+Cheers,
+Angelo
 
-Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> 
+> ChenYu
+> 
+>> Cheers,
+>> Angelo
+>>
+>>>
+>>> ChenYu
+>>>
+>>> index 8b7307cdefc6..2dac9f706a58
+>>> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+>>> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+>>> @@ -1447,6 +1447,7 @@
+>>>                                         "xhci_ck";
+>>>                           mediatek,syscon-wakeup = <&pericfg 0x400 104>;
+>>>                           wakeup-source;
+>>> +                       mediatek,u3p-dis-msk = <0x1>;
+>>>                           status = "disabled";
+>>>                   };
+>>>
+>>>> ---
+>>>>    arch/arm64/boot/dts/mediatek/mt8195.dtsi | 10 ++++++++--
+>>>>    1 file changed, 8 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+>>>> index 2ee45752583c..cc5169871f1c 100644
+>>>> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+>>>> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+>>>> @@ -1453,9 +1453,15 @@ xhci1: usb@11290000 {
+>>>>                                    <&topckgen CLK_TOP_SSUSB_P1_REF>,
+>>>>                                    <&apmixedsys CLK_APMIXED_USB1PLL>,
+>>>>                                    <&clk26m>,
+>>>> -                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>;
+>>>> +                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>,
+>>>> +                                /*
+>>>> +                                 * This clock is required due to a hardware
+>>>> +                                 * bug. The 'frmcnt_ck' clock name is used as a
+>>>> +                                 * placeholder.
+>>>> +                                 */
+>>>> +                                <&infracfg_ao CLK_INFRA_AO_PCIE_P1_TL_96M>;
+>>>>                           clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck",
+>>>> -                                     "xhci_ck";
+>>>> +                                     "xhci_ck", "frmcnt_ck";
+>>>>                           mediatek,syscon-wakeup = <&pericfg 0x400 104>;
+>>>>                           wakeup-source;
+>>>>                           status = "disabled";
+>>>>
+>>>> ---
+>>>> base-commit: dee7f101b64219f512bb2f842227bd04c14efe30
+>>>> change-id: 20240722-usb-1129-probe-pci-clk-fix-ef8646f46aac
+>>>>
+>>>> Best regards,
+>>>> --
+>>>> Nícolas F. R. A. Prado <nfraprado@collabora.com>
+>>>>
+>>>>
+>>
+>>
+>>
 
---=20
-Paul Barker
---------------L5GEll9szdB9r6gnjBt1FwVr
-Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
-Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-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3D
-=3DsIIN
------END PGP PUBLIC KEY BLOCK-----
-
---------------L5GEll9szdB9r6gnjBt1FwVr--
-
---------------9B27NfCA7uEzs6kQhSPTQ7w3--
-
---------------40TXotLw2TT5s60mtBfrG0HF
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZqdLjQUDAAAAAAAKCRDbaV4Vf/JGvfr1
-AP9WJQUho8ceoAS9T9mSCJptM+HUfW0/F7Cup+bCVDp10gEAgxCEaBxc/I+441SMiynuIp7WJbCJ
-geBYc3wdI6VCSwI=
-=cRXF
------END PGP SIGNATURE-----
-
---------------40TXotLw2TT5s60mtBfrG0HF--
 
