@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-265948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A284993F80D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:32:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C097593F80F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B54791C2034E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:32:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C08A1F223D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8CF190675;
-	Mon, 29 Jul 2024 14:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF82715F32E;
+	Mon, 29 Jul 2024 14:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="TXHKdDQ4"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="kC+ig75z"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86AA15EFA0
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E1415EFB6
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722263017; cv=none; b=pXNJbFgzn/rId/hIB5cAN4sM4zJhuHwFFP2nENh5D4esHzJXPGuK1TgHS9sXk1fZ4b2+5xtxioHCksLP2kND7GMyoSB5xkW7JOFYc7cJwXQo3xR6yXvIyj0H9HkspY8oId59C79HF16kRAvI7LOdZNKKoKNN6Ce+sVUPEwpH/+c=
+	t=1722263023; cv=none; b=ikLYL+VKWaj8TyxVUuuE/dAXPOsSarc0OA5hLVnuvC109bQKtnTVXCnuuOkCpyLe83W+Cxg4l8eLUMujFV5+qjmGr5xAFE14EuIhz616Xxt1aVma2TW4CcqN4JRNNcQ60wOuoYi1f4/+TBBMTE97/aKc69gUsOii0OJz6mmi3KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722263017; c=relaxed/simple;
-	bh=qJRebCqrm7pwIO+IpT+0VoIBqHNcWGYUdekFfnvXGMY=;
+	s=arc-20240116; t=1722263023; c=relaxed/simple;
+	bh=clij5LMJhAkONXrZiTSgfsNtHRNuVw9zPAYSRnbzf08=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IlL+VnF2bjmkoxc0IMB80NB7XeetApUYHWQOZroY5sCkBtc8WfaSKwLn3MvPqyzG7m46opHzdgd5E0ugIkAK4IaBk/glGVgzJX2i5NorKa+epczB8tzW+x62HUM/VtirTZ/5c1P3W+MXlU4TZSStBACj5gd2eGZoA4gfDVcPbcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=TXHKdDQ4; arc=none smtp.client-ip=209.85.214.174
+	 MIME-Version; b=mHSkW5lFFL9fDOJGrXoS1RmyDgU3N1QNO3r28/655s1UAQYBItMbnJZ8LyoUPbogZUoXrbCB4KB25Dp4yDf4eLmWHQgsdpCHSgCounbgdgt8b4jwPBqCypDPJyHIL273ekwQNzvt7NWbVzdGlWQQGNIet80n7trk2HtozEtgkY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=kC+ig75z; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc6ee64512so19632405ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:23:35 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc5239faebso17764595ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:23:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1722263015; x=1722867815; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1722263020; x=1722867820; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=w6K3rvuzx+kcxCA/RkAijYB8PiaVxGHgknWl7+W2h8I=;
-        b=TXHKdDQ4xIAxUmFpLGgGpg6RiblaD4O+4pxC6YxCVCqCBZSjyQAJHBO+Mn1Y0Ug2lR
-         lOCvFgDJ/SKX/IizXJkfW9Pt3lstAwvxjGsZ/Fd+gNw2WQhFqRN4XNPTeQSTmvs2dUT+
-         2aK9IFObYKe2Vg/Stk57hfWoop6m/ScE/3OPjjUDbMdrQRybEFTuTUNxQmqRXf8+UjD8
-         xeNJQvhyidWRZqbZk+1B655x+RZZCbs75EZpCiEvZnqSkUZz+qmQ8ipiVYr0gGz428aq
-         Fw8HDIK/2nVJbtp9nrXrbBYbs2VrK3KVAljS+j+Je5A9pSMIpiuaqqPcA2oGVV4vHYuW
-         JUxg==
+        bh=SFDunmtzDxNSJrEf+jYEf48MjjKh1U2DF8SfSHqhi3s=;
+        b=kC+ig75zr9kQ6wgvHx8coZNoz+ThRIKd7bC8Mmb+UDrie+D5uoI5UsVP1QcxdumVnn
+         K6t/W5c+qgzoAPOoB+w2LDDc6VmkakQGx0sHjv0QXQ9zQtiDe0Jker6YDq2ANH0mqvjY
+         /lSq2Vin8BFgynt9dEXKDHIb3tgnl1oDqm7p/UuBX/tq/DNts6qiCdW10dZ20KVWpxhD
+         lgri9u5YNrd0oC+BCKmcbrDxKmFo4u2BdQ3k848kRSdnc0Yqylk7LCv+0nKATcKRtDLf
+         B3jzryaxAMH7GXigiR9c5facqWQfQkFIJEM4g9ZtExaq/1uLHSE/aWWZvFd2/od+IFDv
+         h/yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722263015; x=1722867815;
+        d=1e100.net; s=20230601; t=1722263020; x=1722867820;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=w6K3rvuzx+kcxCA/RkAijYB8PiaVxGHgknWl7+W2h8I=;
-        b=G43JHQulc3G1hWcB/nzY7h4qx88anDUd7w46lEFERcLqe/kZtkTRCMPUWJ518fVTWo
-         2SRmBUflJ/wEA1JpaBBkNfwiGw4bFrwnLIjry6bhU3nNKnAxaxzrVq0qLlLs2rDLZK29
-         dfqVlzrGcwcNX5rhhU67ufMMvtuaMegKqvvMhd+PvhflCCK9VaWeO4/lWGPN+hp6AagG
-         nVfO442Ur+QFcEtpMKKkylz5bUyhNDAiOS3dLhV2ai1WyleakxY6XKoxX+kpj3kLTiJP
-         Wr55OTlLzqj1f9QlBBe0UaTpFMWwJbB8ADJJ839K4SwXjnp9xXeGKArVg1Om4OQBnmvx
-         dYhA==
-X-Gm-Message-State: AOJu0YzPSlqvCuptdNT2+2JGeKZs+lpXxHaXVcR+Sjdc2SlPcZJdb5kc
-	fJvLr2RyuzSk4ONYDnhzLjSQFkB07aoXKO3I2ImPbHELSapvzoxl6KLtavTzCYh9AOtsAFUPfYI
-	MO2Fb7g==
-X-Google-Smtp-Source: AGHT+IHuqnyr1wGz5leAhutHIAJO97R4WBnGGYBJopHkXMNgwgilRpOmng0OCq0p9dkCz8Wkxaglow==
-X-Received: by 2002:a17:903:8d0:b0:1fd:9105:7dd3 with SMTP id d9443c01a7336-1ff049711f5mr56820415ad.64.1722263014706;
-        Mon, 29 Jul 2024 07:23:34 -0700 (PDT)
+        bh=SFDunmtzDxNSJrEf+jYEf48MjjKh1U2DF8SfSHqhi3s=;
+        b=oZc9xiKbZJCkgR0C5xZkwrCXiNPkN9GIooA8sHFBxVpaRkRSVVeRd/4PAj4t+zp6XF
+         +mLpgoS204+RvY0GTJU1R+GdZPSrUZQvi/ZdFFQ+i/hDwRUPV+cAHqUTSLvSQ1NEDihd
+         sIOzm4RfKxWaOnwT89CCpGDKeg6T8y0TEaNaUacq1yjuUvaY0o9AJ0FZ8fZKUMZM5fCg
+         ++CLwO920GSB2zXOxZUtIgX3OMixENzjP/+NwlbFac9WSqPKqznTZpx16m5NNeIgDydW
+         6Uoq6S1hjSyUmZxfm/7f9jxW6VDK8NJCy/aFWzMZz9hVIpkqU0xrURAn5y1fsLTOaUR+
+         Ol0A==
+X-Gm-Message-State: AOJu0YwC6y5SGF06Y7xznKfJ1veHaMRId1SKiHnPz7DoLKUlVtKWT0XO
+	Uv/AGrOjsvdAH/kwnpiz0gv2RHy3BwDV/Ubw57LE84bV6ehV6bvywDDfp0BU7Kfk/rIn2PEWis5
+	ZmYhZwg==
+X-Google-Smtp-Source: AGHT+IGU3odbD3sPqAp4C/YNgby17mm2kU5A273xs06JOeimMLExymMBUikKyGUV8C6cXEETPaqERA==
+X-Received: by 2002:a17:902:e84a:b0:1fb:82f5:6641 with SMTP id d9443c01a7336-1ff0481bb94mr68486545ad.23.1722263020193;
+        Mon, 29 Jul 2024 07:23:40 -0700 (PDT)
 Received: from sunil-pc.tail07344b.ts.net ([106.51.198.16])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fa988dsm83512965ad.263.2024.07.29.07.23.29
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fa988dsm83512965ad.263.2024.07.29.07.23.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 07:23:34 -0700 (PDT)
+        Mon, 29 Jul 2024 07:23:39 -0700 (PDT)
 From: Sunil V L <sunilvl@ventanamicro.com>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
@@ -88,9 +88,9 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>,
 	Atish Kumar Patra <atishp@rivosinc.com>,
 	Drew Fustini <dfustini@tenstorrent.com>,
 	Sunil V L <sunilvl@ventanamicro.com>
-Subject: [PATCH v7 07/17] ACPI: bus: Add RINTC IRQ model for RISC-V
-Date: Mon, 29 Jul 2024 19:52:29 +0530
-Message-ID: <20240729142241.733357-8-sunilvl@ventanamicro.com>
+Subject: [PATCH v7 08/17] ACPI: pci_link: Clear the dependencies after probe
+Date: Mon, 29 Jul 2024 19:52:30 +0530
+Message-ID: <20240729142241.733357-9-sunilvl@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240729142241.733357-1-sunilvl@ventanamicro.com>
 References: <20240729142241.733357-1-sunilvl@ventanamicro.com>
@@ -102,39 +102,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the IRQ model for RISC-V INTC so that acpi_set_irq_model can use this
-for RISC-V.
+RISC-V platforms need to use dependencies between PCI host bridge, Link
+devices and the interrupt controllers to ensure probe order. The
+dependency is like below.
+
+Interrupt controller <-- Link Device <-- PCI Host bridge.
+
+If there is no dependency added between Link device and PCI Host Bridge,
+then the PCI end points can get probed prior to link device, unable to
+get mapping for INTx.
+
+So, add the link device's HID to dependency honor list and also clear it
+after its probe.
 
 Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
 ---
- drivers/acpi/bus.c   | 3 +++
- include/linux/acpi.h | 1 +
- 2 files changed, 4 insertions(+)
+ drivers/acpi/pci_link.c | 2 ++
+ drivers/acpi/scan.c     | 1 +
+ 2 files changed, 3 insertions(+)
 
-diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
-index 48d277657203..16917dc3ad60 100644
---- a/drivers/acpi/bus.c
-+++ b/drivers/acpi/bus.c
-@@ -1203,6 +1203,9 @@ static int __init acpi_bus_init_irq(void)
- 	case ACPI_IRQ_MODEL_LPIC:
- 		message = "LPIC";
- 		break;
-+	case ACPI_IRQ_MODEL_RINTC:
-+		message = "RINTC";
-+		break;
- 	default:
- 		pr_info("Unknown interrupt routing model\n");
- 		return -ENODEV;
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 892025d873f0..3a21f1cf126f 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -107,6 +107,7 @@ enum acpi_irq_model_id {
- 	ACPI_IRQ_MODEL_PLATFORM,
- 	ACPI_IRQ_MODEL_GIC,
- 	ACPI_IRQ_MODEL_LPIC,
-+	ACPI_IRQ_MODEL_RINTC,
- 	ACPI_IRQ_MODEL_COUNT
+diff --git a/drivers/acpi/pci_link.c b/drivers/acpi/pci_link.c
+index aa1038b8aec4..b727db968f33 100644
+--- a/drivers/acpi/pci_link.c
++++ b/drivers/acpi/pci_link.c
+@@ -748,6 +748,8 @@ static int acpi_pci_link_add(struct acpi_device *device,
+ 	if (result)
+ 		kfree(link);
+ 
++	acpi_dev_clear_dependencies(device);
++
+ 	return result < 0 ? result : 1;
+ }
+ 
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index 28a221f956d7..753539a1f26b 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -863,6 +863,7 @@ static const char * const acpi_honor_dep_ids[] = {
+ 	"INTC10CF", /* IVSC (MTL) driver must be loaded to allow i2c access to camera sensors */
+ 	"RSCV0001", /* RISC-V PLIC */
+ 	"RSCV0002", /* RISC-V APLIC */
++	"PNP0C0F",  /* PCI Link Device */
+ 	NULL
  };
  
 -- 
