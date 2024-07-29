@@ -1,62 +1,42 @@
-Return-Path: <linux-kernel+bounces-266203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C2193FC60
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:22:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F16C793FC68
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 737D11F228F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:22:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E8171F220BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146A515F3EA;
-	Mon, 29 Jul 2024 17:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bw4u57GD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABA6161321;
+	Mon, 29 Jul 2024 17:26:23 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29E65028C
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 17:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EFC8003F;
+	Mon, 29 Jul 2024 17:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722273755; cv=none; b=KVG1A7knqXtmFMpjAjdhJLvWvROSNpPbvf+NXJfGdCPUO+4uMYyhrqCXg3JcY4xSlXrsUJmf5i9OOR7jfteAgM2n6a3CDBny0+X3zQdx1lA/nx2spooKjfYqyM1LorM2z7/aIfo4XfhMgICXvGDsn7aeD53b7TC7DZ6DAX/wQaA=
+	t=1722273982; cv=none; b=oq9Xl/gT+SuP48AbZ0+xqaUmqj6RIBevPbdpo/ea8LXzp1y0n4GCqt9H5ptRS//ABgPjI/MSgYcrHUkEaaEm4e/sNYoxzFP4v06OIWOYouLUdE1xe9/n9Ev9mSF+lND/+hS99J2E7c3JoNsUxAEnkmsQCPZho5DIiJx2Md9WSCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722273755; c=relaxed/simple;
-	bh=H3jZuJ7l26FGD1L3Ta4V9xw48SpcuXJsWmaSUmljt+E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kPFZVpDVA8Ei/9B+D+Oqs/j+OGU4ZVrAktxbAPakQxjdrj5KVUCtVVAAlQiCu5dTdXpvDsDrJALtywVvGLqpR7TxMcsyURgTfxNQ5PNIBfp2BlFaVD6qtzL71y/Lll8/mzbgUeZw9Wse+G0hGavRYqc9Ck5ftrbmyQCt6YrXcR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bw4u57GD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722273752;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lVMN9GtOLgXku8n83Z5zLiYjiZTYppqVPat7mUMDTgg=;
-	b=Bw4u57GDjBNjmA0va2dT4jRqkLLN+rpuDIlfbDNMj3u/Ri23oiedjpqTtQ4y9IstCdIS2B
-	vncQ2Hhf6HB1kln+HGDf2h/SH0QvWjGQqPnXnMOhNxCdi9WaY7OPsjMt//MABARgyfGmSl
-	1tXUUgZa3myPtEvnrffiZaOHRZggDZo=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-96-2eooKGJRNoKMmCzYdgzCcQ-1; Mon,
- 29 Jul 2024 13:22:29 -0400
-X-MC-Unique: 2eooKGJRNoKMmCzYdgzCcQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A4E401955D4F;
-	Mon, 29 Jul 2024 17:22:27 +0000 (UTC)
-Received: from [10.2.16.113] (unknown [10.2.16.113])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2FD3119560B2;
-	Mon, 29 Jul 2024 17:22:26 +0000 (UTC)
-Message-ID: <706a4fd7-e0b0-4ada-b269-04978b0a5265@redhat.com>
-Date: Mon, 29 Jul 2024 13:22:25 -0400
+	s=arc-20240116; t=1722273982; c=relaxed/simple;
+	bh=s3W/ZR9RUgDln2YYFIN0eUwWU/8ubWibwKHbTbyIqmQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UGl+Eoc6exl0TdNzPjb+itefTgIn8suBHigLxfpumUvJDR/2HgexCjUKKiKSSpNt/m5LvxFhCHMdG6bGxoVuSHkXqhqqaeG+0Ey+qXIZYTSMcFbSF9uGUzOchyBegS7SExfuhF42+ndpWnyvE6XgW+wdJEDzeC8GB9DHYM132X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Mon, 29 Jul
+ 2024 20:26:09 +0300
+Received: from [192.168.211.130] (10.0.253.138) by Ex16-01.fintech.ru
+ (10.0.10.18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Mon, 29 Jul
+ 2024 20:26:08 +0300
+Message-ID: <e497f5cb-a3cb-477b-8947-f96276e401b7@fintech.ru>
+Date: Mon, 29 Jul 2024 10:26:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,80 +44,196 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lockdep: suggest the fix for "lockdep bfs error:-1" on
- print_bfs_bug
-To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
-References: <ZqKdZZp7TI69DWRE@uudg.org> <ZqQUDI3Ai9GP9hUO@boqun-archlinux>
- <ZqfJDTn9rCQ1eVnz@uudg.org>
+Subject: Re: [PATCH] drm/radeon/evergreen_cs: fix int overflow errors in cs
+ track offsets
 Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <ZqfJDTn9rCQ1eVnz@uudg.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Alex Deucher
+	<alexdeucher@gmail.com>
+CC: Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, "Jerome
+ Glisse" <jglisse@redhat.com>, Dave Airlie <airlied@redhat.com>,
+	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>,
+	<stable@vger.kernel.org>
+References: <20240725180950.15820-1-n.zhandarovich@fintech.ru>
+ <e5199bf0-0861-4b79-8f32-d14a784b116f@amd.com>
+ <CADnq5_PuzU12x=M09HaGkG7Yqg8Lk1M1nWDAut7iP09TT33D6g@mail.gmail.com>
+ <fb530f45-df88-402a-9dc0-99298b88754c@amd.com>
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+In-Reply-To: <fb530f45-df88-402a-9dc0-99298b88754c@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
+Hi,
 
-On 7/29/24 12:53, Luis Claudio R. Goncalves wrote:
-> On Fri, Jul 26, 2024 at 02:24:28PM -0700, Boqun Feng wrote:
->> On Thu, Jul 25, 2024 at 03:45:57PM -0300, Luis Claudio R. Goncalves wrote:
->>> When lockdep fails while performing the Breadth-first-search operation
->>> due to lack of memory, hint that increasing the value of the configuration
->>> switch LOCKDEP_CIRCULAR_QUEUE_BITS should fix the warning.
+On 7/29/24 02:23, Christian König wrote:
+> Am 26.07.24 um 14:52 schrieb Alex Deucher:
+>> On Fri, Jul 26, 2024 at 3:05 AM Christian König
+>> <christian.koenig@amd.com> wrote:
+>>> Am 25.07.24 um 20:09 schrieb Nikita Zhandarovich:
+>>>> Several cs track offsets (such as 'track->db_s_read_offset')
+>>>> either are initialized with or plainly take big enough values that,
+>>>> once shifted 8 bits left, may be hit with integer overflow if the
+>>>> resulting values end up going over u32 limit.
+>>>>
+>>>> Some debug prints take this into account (see according dev_warn() in
+>>>> evergreen_cs_track_validate_stencil()), even if the actual
+>>>> calculated value assigned to local 'offset' variable is missing
+>>>> similar proper expansion.
+>>>>
+>>>> Mitigate the problem by casting the type of right operands to the
+>>>> wider type of corresponding left ones in all such cases.
+>>>>
+>>>> Found by Linux Verification Center (linuxtesting.org) with static
+>>>> analysis tool SVACE.
+>>>>
+>>>> Fixes: 285484e2d55e ("drm/radeon: add support for evergreen/ni
+>>>> tiling informations v11")
+>>>> Cc: stable@vger.kernel.org
+>>> Well first of all the long cast doesn't makes the value 64bit, it
+>>> depends on the architecture.
 >>>
->>> Preface the scary bactrace with the suggestion:
->>>
->>>      [  163.849242] Increase LOCKDEP_CIRCULAR_QUEUE_BITS to avoid this warning:
->>>      [  163.849248] ------------[ cut here ]------------
->>>      [  163.849250] lockdep bfs error:-1
->>>      [  163.849263] WARNING: CPU: 24 PID: 2454 at kernel/locking/lockdep.c:2091 print_bfs_bug+0x27/0x40
->>>      ...
->>>
->>> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
->>> ---
->>>   kernel/locking/lockdep.c | 3 +++
->>>   1 file changed, 3 insertions(+)
->>>
->>> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
->>> index 58c88220a478a..1cf6d9fdddc9c 100644
->>> --- a/kernel/locking/lockdep.c
->>> +++ b/kernel/locking/lockdep.c
->>> @@ -2067,6 +2067,9 @@ static noinline void print_bfs_bug(int ret)
->>>   	/*
->>>   	 * Breadth-first-search failed, graph got corrupted?
->>>   	 */
->>> +	if (ret  == BFS_EQUEUEFULL)
->> This line has an extra space after "ret", but otherwise it looks fine.
-> Should I send a v2 of the patch with the extra whitespace removed?
->
-> Luis
+>>> Then IIRC the underlying hw can only handle a 32bit address space so
+>>> having the offset as long is incorrect to begin with.
+>> Evergreen chips support a 36 bit internal address space and NI and
+>> newer support a 40 bit one, so this is applicable.
+> 
+> In that case I strongly suggest that we replace the unsigned long with
+> u64 or otherwise we get different behavior on 32 and 64bit machines.
+> 
+> Regards,
+> Christian.
+> 
 
-Yes, you should. Other than the extra space, the patch looks good to me too.
+To be clear, I'll prepare v2 patch that changes 'offset' to u64 as well
+as the cast of 'track->db_z_read_offset' (and the likes) to u64 too.
 
-Reviewed-by: Waiman Long <longman@redhat.com>
+On the other note, should I also include casting to wider type of the
+expression surf.layer_size * mslice (example down below) in
+evergreen_cs_track_validate_cb() and other similar functions? I can't
+properly gauge if the result will definitively fit into u32, maybe it
+makes sense to expand it as well?
 
-You can also add our review-by tags in your v2 patch.
+441         }
+442
+443         offset += surf.layer_size * mslice;
+444         if (offset > radeon_bo_size(track->cb_color_bo[id])) {
+445                 /* old ddx are broken they allocate bo with w*h*bpp
 
-Cheers,
-Longman
-
->
->> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+Regards,
+Nikita
 >>
->> Regards,
->> Boqun
+>> Alex
 >>
->>> +		pr_warn("Increase LOCKDEP_CIRCULAR_QUEUE_BITS to avoid this warning:\n");
->>> +
->>>   	WARN(1, "lockdep bfs error:%d\n", ret);
->>>   }
->>>   
->>> -- 
->>> 2.45.2
+>>> And finally that is absolutely not material for stable.
 >>>
-> ---end quoted text---
->
-
+>>> Regards,
+>>> Christian.
+>>>
+>>>> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+>>>> ---
+>>>> P.S. While I am not certain that track->cb_color_bo_offset[id]
+>>>> actually ends up taking values high enough to cause an overflow,
+>>>> nonetheless I thought it prudent to cast it to ulong as well.
+>>>>
+>>>>    drivers/gpu/drm/radeon/evergreen_cs.c | 18 +++++++++---------
+>>>>    1 file changed, 9 insertions(+), 9 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/radeon/evergreen_cs.c
+>>>> b/drivers/gpu/drm/radeon/evergreen_cs.c
+>>>> index 1fe6e0d883c7..d734d221e2da 100644
+>>>> --- a/drivers/gpu/drm/radeon/evergreen_cs.c
+>>>> +++ b/drivers/gpu/drm/radeon/evergreen_cs.c
+>>>> @@ -433,7 +433,7 @@ static int evergreen_cs_track_validate_cb(struct
+>>>> radeon_cs_parser *p, unsigned i
+>>>>                return r;
+>>>>        }
+>>>>
+>>>> -     offset = track->cb_color_bo_offset[id] << 8;
+>>>> +     offset = (unsigned long)track->cb_color_bo_offset[id] << 8;
+>>>>        if (offset & (surf.base_align - 1)) {
+>>>>                dev_warn(p->dev, "%s:%d cb[%d] bo base %ld not
+>>>> aligned with %ld\n",
+>>>>                         __func__, __LINE__, id, offset,
+>>>> surf.base_align);
+>>>> @@ -455,7 +455,7 @@ static int evergreen_cs_track_validate_cb(struct
+>>>> radeon_cs_parser *p, unsigned i
+>>>>                                min = surf.nby - 8;
+>>>>                        }
+>>>>                        bsize = radeon_bo_size(track->cb_color_bo[id]);
+>>>> -                     tmp = track->cb_color_bo_offset[id] << 8;
+>>>> +                     tmp = (unsigned
+>>>> long)track->cb_color_bo_offset[id] << 8;
+>>>>                        for (nby = surf.nby; nby > min; nby--) {
+>>>>                                size = nby * surf.nbx * surf.bpe *
+>>>> surf.nsamples;
+>>>>                                if ((tmp + size * mslice) <= bsize) {
+>>>> @@ -476,10 +476,10 @@ static int
+>>>> evergreen_cs_track_validate_cb(struct radeon_cs_parser *p, unsigned i
+>>>>                        }
+>>>>                }
+>>>>                dev_warn(p->dev, "%s:%d cb[%d] bo too small (layer
+>>>> size %d, "
+>>>> -                      "offset %d, max layer %d, bo size %ld, slice
+>>>> %d)\n",
+>>>> +                      "offset %ld, max layer %d, bo size %ld, slice
+>>>> %d)\n",
+>>>>                         __func__, __LINE__, id, surf.layer_size,
+>>>> -                     track->cb_color_bo_offset[id] << 8, mslice,
+>>>> -                     radeon_bo_size(track->cb_color_bo[id]), slice);
+>>>> +                     (unsigned long)track->cb_color_bo_offset[id]
+>>>> << 8,
+>>>> +                     mslice,
+>>>> radeon_bo_size(track->cb_color_bo[id]), slice);
+>>>>                dev_warn(p->dev, "%s:%d problematic surf: (%d %d) (%d
+>>>> %d %d %d %d %d %d)\n",
+>>>>                         __func__, __LINE__, surf.nbx, surf.nby,
+>>>>                        surf.mode, surf.bpe, surf.nsamples,
+>>>> @@ -608,7 +608,7 @@ static int
+>>>> evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
+>>>>                return r;
+>>>>        }
+>>>>
+>>>> -     offset = track->db_s_read_offset << 8;
+>>>> +     offset = (unsigned long)track->db_s_read_offset << 8;
+>>>>        if (offset & (surf.base_align - 1)) {
+>>>>                dev_warn(p->dev, "%s:%d stencil read bo base %ld not
+>>>> aligned with %ld\n",
+>>>>                         __func__, __LINE__, offset, surf.base_align);
+>>>> @@ -627,7 +627,7 @@ static int
+>>>> evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
+>>>>                return -EINVAL;
+>>>>        }
+>>>>
+>>>> -     offset = track->db_s_write_offset << 8;
+>>>> +     offset = (unsigned long)track->db_s_write_offset << 8;
+>>>>        if (offset & (surf.base_align - 1)) {
+>>>>                dev_warn(p->dev, "%s:%d stencil write bo base %ld not
+>>>> aligned with %ld\n",
+>>>>                         __func__, __LINE__, offset, surf.base_align);
+>>>> @@ -706,7 +706,7 @@ static int
+>>>> evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
+>>>>                return r;
+>>>>        }
+>>>>
+>>>> -     offset = track->db_z_read_offset << 8;
+>>>> +     offset = (unsigned long)track->db_z_read_offset << 8;
+>>>>        if (offset & (surf.base_align - 1)) {
+>>>>                dev_warn(p->dev, "%s:%d stencil read bo base %ld not
+>>>> aligned with %ld\n",
+>>>>                         __func__, __LINE__, offset, surf.base_align);
+>>>> @@ -722,7 +722,7 @@ static int
+>>>> evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
+>>>>                return -EINVAL;
+>>>>        }
+>>>>
+>>>> -     offset = track->db_z_write_offset << 8;
+>>>> +     offset = (unsigned long)track->db_z_write_offset << 8;
+>>>>        if (offset & (surf.base_align - 1)) {
+>>>>                dev_warn(p->dev, "%s:%d stencil write bo base %ld not
+>>>> aligned with %ld\n",
+>>>>                         __func__, __LINE__, offset, surf.base_align);
+> 
 
