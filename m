@@ -1,156 +1,125 @@
-Return-Path: <linux-kernel+bounces-266080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F79993FA6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:16:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0F793FA67
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF594283D25
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:16:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 355271C2237D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F85915ECFD;
-	Mon, 29 Jul 2024 16:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26679150981;
+	Mon, 29 Jul 2024 16:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="lAZyPgK4"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="nFLP2IPC"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E407EECC;
-	Mon, 29 Jul 2024 16:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1119ECC;
+	Mon, 29 Jul 2024 16:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722269786; cv=none; b=L//5ySQFk/1eTHn/zlKm0whPDiBrUCpoCq48aGz3la1YY8zxCe0pJOmNT0wBKjKu4WNOGze8y1oKevvlKj56IBAeRq97E2Jq2GeYaT7UrVpOaN/SLD/gOXqaLBdGwpeE90MCfcEAC2O7hg1Wizrjw/NlsiPnd/ac4MutiI0So0k=
+	t=1722269743; cv=none; b=NRDvc+VTgTT8n28EvfKscQNBQKjauOIp14sVO29LpHci4cH35gL0BesZOS6O8v4dOJKQghckBZWrRTsulMIcNq37Qeu4C/EGPkloh+kL/lGpyey20rCK0FHljapKcM+6ijnU1W1nkfcSB7/PCPcm34l4TohRzMGTcByTh6SkSPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722269786; c=relaxed/simple;
-	bh=ehBurIQi8ijJxGWEavJbL4QmtSsIOXItx8pphGSIR+o=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iIKfOoqlNLQ3bqw/K4g20uYE+e8Mla6L3tGnDHVMg6JfzcGoDizUh/TzOcNBF5gAkqM4uB4wPWhhxz3CKGvy/mo1Mj5TPlJRU+NMUcjN8t9dbEZ5uwKLuG/xOwvRVBm2FkoitCTp/rouCaS7JcAMg0SJEwKCSAziKElsX2KeoBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=lAZyPgK4; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1722269782; x=1722528982;
-	bh=eJtp2KWKzRi7UdjYcjMOVvWqstwMnIlMin59bDf22H4=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=lAZyPgK4J5Nw+ks/pODD45/5HP9SQTEv0ZEpG1AKkAFCsKLQ72OWwWucyb2cEUWpS
-	 DontLS6u0v1oz8mMivdFISx/Z4VN7158dP80pjViRG5ryXY+fMWM+OlhN4Xr53pDWb
-	 s8abQey3kif4pcxp1WUl0Jwp0qw/W5W3tDE9KU2sPpOZRgb17hLesBFMoFR7pnjc3S
-	 TGvyrFKUTB+Cl4FLFvvUyg9l+eOzJTz6kSm5bWNhnEVVCpKi3+3Bkuj0UGrk6CqGZ2
-	 eTBz2ByS9vpCZtPh5djNqce5orXyjpshxNNa4FpjUN85YY9uG/FKagTawqXMNmOGNI
-	 3vzSl+HpBOBQw==
-Date: Mon, 29 Jul 2024 16:15:28 +0000
-To: Alex Mantel <alexmantel93@mailbox.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Benno Lossin <benno.lossin@proton.me>
-Subject: Re: [PATCH v3] rust: Implement the smart pointer `InPlaceInit` for `Arc`
-Message-ID: <6688a873-20d6-4e45-82c1-83a226f5bba4@proton.me>
-In-Reply-To: <20240727042442.682109-1-alexmantel93@mailbox.org>
-References: <20240727042442.682109-1-alexmantel93@mailbox.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 21dec5c1b2754a5b6a4d34c5e6428e38f1be1711
+	s=arc-20240116; t=1722269743; c=relaxed/simple;
+	bh=e25RnGm3UUfzN+5y7ZyHo2fNUQbHueNz+JQ13IN92Q8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BjOv3FAjPxF60X9DdcBfiaBSIvlCP51yEDKQ2bXsEPur0LetjQop+b80FXFm0oU3dl8igg/rOXgTxdzbocAyIVHxiCABy88lyCOuJn/9TIv15gblAig1jgjOAZPU+JDzh/R14HfH0GnYDQ8AXSPCzWLoZci6unopKCfH4TWWMjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=nFLP2IPC; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TFGMTM019487;
+	Mon, 29 Jul 2024 11:15:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=qRzBBbqoXOWQyyYO
+	JMgkXOAR8+qV4bh0yhqqlwUEGVA=; b=nFLP2IPC2OwvDdvbC44c7L85phYx/Lz+
+	aavMdD6RmN/mkSRX9N/a/bUz9SiEI/Gg8FU/yEC6Wer/XZhFH5B2HaG6h13TIlK9
+	Hv5PxrNsPRikZ1+KD9tvgX/KSBLh6ELrdJRQKEXU2Kj6yT3HUfpvTrNxgGh3GSZf
+	sxAV7mvY8g9GK1CcwAPM9r1bb2+ELpuCFgPBy4m9IKu0GMHQu2GmBXFm6V320GBr
+	9Qnl33OzKSErJRGAIJgtqS0bISnI/eeCT3IcnMJBvSmY53ae1ZrIVyviFifosaju
+	0So/5sAQVTNF0KRbzZz88NWQvW0/PlFQzjFKjwzafkvbi0xuW4KZLQ==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 40mwajtbgb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 11:15:36 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
+ 2024 17:15:34 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Mon, 29 Jul 2024 17:15:34 +0100
+Received: from lonswws01.ad.cirrus.com (lonswws01.ad.cirrus.com [198.90.188.26])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 3E6F6820244;
+	Mon, 29 Jul 2024 16:15:34 +0000 (UTC)
+From: Simon Trimmer <simont@opensource.cirrus.com>
+To: <tiwai@suse.com>
+CC: <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        "Simon
+ Trimmer" <simont@opensource.cirrus.com>
+Subject: [PATCH] ALSA: hda: cs35l56: Stop creating ALSA controls for firmware coefficients
+Date: Mon, 29 Jul 2024 16:15:32 +0000
+Message-ID: <20240729161532.147893-1-simont@opensource.cirrus.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: JDXsPmEN9C12lN1Lyq9L7W6c4TiV9wzo
+X-Proofpoint-ORIG-GUID: JDXsPmEN9C12lN1Lyq9L7W6c4TiV9wzo
+X-Proofpoint-Spam-Reason: safe
 
-On 27.07.24 06:24, Alex Mantel wrote:
-> For pinned and unpinned initialization of structs, a trait named
-> `InPlaceInit` exists for uniform access. `Arc` did not implement
-> `InPlaceInit` yet, although the functions already existed. The main
-> reason for that, was that the trait itself returned a `Pin<Self>`. The
-> `Arc` implementation of the kernel is already implicitly pinned.
->=20
-> To enable `Arc` to implement `InPlaceInit` and to have uniform access,
-> for in-place and pinned in-place initialization, an associated type is
-> introduced for `InPlaceInit`. The new implementation of `InPlaceInit`
-> for `Arc` sets `Arc` as the associated type. Older implementations use
-> an explicit `Pin<T>` as the associated type. The implemented methods for
-> `Arc` are mostly moved from a direct implementation on `Arc`. There
-> should be no user impact. The implementation for `ListArc` is omitted,
-> because it is not merged yet.
->=20
-> Link: https://github.com/Rust-for-Linux/linux/issues/1079
-> Signed-off-by: Alex Mantel <alexmantel93@mailbox.org>
+A number of laptops have gone to market with old firmware versions that
+export controls that have since been hidden, but we can't just install a
+newer firmware because the firmware for each product is customized and
+qualified by the OEM. The issue is that alsactl save and restore has no
+idea what controls are good to persist which can lead to
+misconfiguration.
 
-One documentation nit below, otherwise this LGTM:
+As the ALSA controls for the firmware coefficients are not used in
+normal operation they can all be hidden, but add a kernel parameter so
+that they can be re-enabled for debugging.
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-
-> ---
-> Hello again!
->=20
-> This is the 3rd version of my very first patch. I applied the
-> suggestions on the 2nd submission. Thank you again for your feedback,
-> looking for more!
->=20
-> v1:
->   * https://lore.kernel.org/rust-for-linux/20240717034801.262343-2-alexma=
-ntel93@mailbox.org/
->=20
-> v2:
->   * remove the `From:` from the patch.
->   * add the prefix `rust: ` to the subject.
->   * Remove the empty line between `Link` and `Signed-off-by`.
->   * https://lore.kernel.org/all/20240719192234.330341-1-alexmantel93@mail=
-box.org/
->=20
-> v3:
->   * Rename PinnedResult to PinnedSelf
->   * Adjust documentation for PinnedSelf
->=20
->  rust/kernel/init.rs     | 39 +++++++++++++++++++++++++++++++++++----
->  rust/kernel/sync/arc.rs | 25 ++-----------------------
->  2 files changed, 37 insertions(+), 27 deletions(-)
->=20
-> diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
-> index 68605b633..fa5f182fe 100644
-> --- a/rust/kernel/init.rs
-> +++ b/rust/kernel/init.rs
-> @@ -213,6 +213,7 @@
->  use crate::{
->      alloc::{box_ext::BoxExt, AllocError, Flags},
->      error::{self, Error},
-> +    sync::Arc,
->      sync::UniqueArc,
->      types::{Opaque, ScopeGuard},
->  };
-> @@ -1112,11 +1113,17 @@ unsafe fn __pinned_init(self, slot: *mut T) -> Re=
-sult<(), E> {
->=20
->  /// Smart pointer that can initialize memory in-place.
->  pub trait InPlaceInit<T>: Sized {
-> +    /// Pinned version of Rusts `Self`.
-
-I would not have mentioned "Rust" here, since that should be obvious.
-
+Fixes: 73cfbfa9caea ("ALSA: hda/cs35l56: Add driver for Cirrus Logic CS35L56 amplifier")
+Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
 ---
-Cheers,
-Benno
+ sound/pci/hda/cs35l56_hda.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> +    ///
-> +    /// If a type already implicitly pins its pointee, `Pin<Self>` is un=
-necessary. In this case use
-> +    /// `Self`, otherwise just use `Pin<Self>`.
-> +    type PinnedSelf;
-> +
->      /// Use the given pin-initializer to pin-initialize a `T` inside of =
-a new smart pointer of this
->      /// type.
->      ///
->      /// If `T: !Unpin` it will not be able to move afterwards.
-> -    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result=
-<Pin<Self>, E>
-> +    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result=
-<Self::PinnedSelf, E>
->      where
->          E: From<AllocError>;
->=20
+diff --git a/sound/pci/hda/cs35l56_hda.c b/sound/pci/hda/cs35l56_hda.c
+index 96d3f13c5abf..1494383b22c9 100644
+--- a/sound/pci/hda/cs35l56_hda.c
++++ b/sound/pci/hda/cs35l56_hda.c
+@@ -23,6 +23,10 @@
+ #include "hda_cs_dsp_ctl.h"
+ #include "hda_generic.h"
+ 
++static bool expose_dsp_controls;
++module_param(expose_dsp_controls, bool, 0444);
++MODULE_PARM_DESC(expose_dsp_controls, "Expose firmware controls as ALSA controls 0=no (default), 1=yes");
++
+  /*
+   * The cs35l56_hda_dai_config[] reg sequence configures the device as
+   *  ASP1_BCLK_FREQ = 3.072 MHz
+@@ -758,6 +762,9 @@ static int cs35l56_hda_bind(struct device *dev, struct device *master, void *mas
+ 
+ 	cs35l56_hda_create_controls(cs35l56);
+ 
++	if (expose_dsp_controls)
++		cs35l56_hda_add_dsp_controls(cs35l56);
++
+ #if IS_ENABLED(CONFIG_SND_DEBUG)
+ 	cs35l56->debugfs_root = debugfs_create_dir(dev_name(cs35l56->base.dev), sound_debugfs_root);
+ 	cs_dsp_init_debugfs(&cs35l56->cs_dsp, cs35l56->debugfs_root);
+-- 
+2.43.0
 
 
