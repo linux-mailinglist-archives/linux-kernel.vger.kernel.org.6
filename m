@@ -1,138 +1,109 @@
-Return-Path: <linux-kernel+bounces-265727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB52993F538
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:23:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 495F193F539
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:24:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CF6D282C4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:23:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50F4D282804
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A711482F6;
-	Mon, 29 Jul 2024 12:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585BD148318;
+	Mon, 29 Jul 2024 12:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S5/IL0hK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TeKRYsRe"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A071474BF;
-	Mon, 29 Jul 2024 12:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CD2147C74
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722255812; cv=none; b=ooGdwEHc0r9g+zC9ZBcDfY71sLA1mWKP7NNr6amd8meJwyDCqW4aX+hmXMLfEKEcm5yFSa+WqO44Qeb84nNbm0v7/SL8tYbh20F7JLahMjGakmBJbWc86PGZ5v9UX8zZP9J6tvmBeNOrCpe9x1k5LrwzOSToEFwm5zW5w4Bjcqo=
+	t=1722255821; cv=none; b=kEXj0ahw3yhsxeReEHOtVDD3Aqxp7cgrumcIBby6sx6mxwKWI4o2H5wTux0tTMrq9KG2vCQPqiUpgBdsP18mx7/8H3BZKnjuHcKf+NTlH/KF90cljspjBs9+UDBkBJmiaLco2EwpT6RfTWDiaoVYT593sgj9exnOYG63tA+ILCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722255812; c=relaxed/simple;
-	bh=1N+ztFIlf30RwFKnrqwKSYju6X0Gb4F8KBDdvM6jD3M=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=JHS1F08xK7gc9XKaOGpJnSE2sIhHtITkKJvE0sSlMmZoavn1cOYUPViQjfmIUCg0Oduw92zVrSgMrh7uzA/QkoeAKnTQ5CxgGsLGGIc6Wh0KJplCs2Stk5VrgWugGp5FRNU9q8wKI0Kyz2AfOklxz/a5XPP1/XJ+ZWTXZ1pbfJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S5/IL0hK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90F4EC32786;
-	Mon, 29 Jul 2024 12:23:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722255811;
-	bh=1N+ztFIlf30RwFKnrqwKSYju6X0Gb4F8KBDdvM6jD3M=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=S5/IL0hKXN/3UiQR2cF9IqO9RK7He/LLqmltqft7Exes7d+2fFRAtJ4iFBFCNkdQU
-	 i2DHaJJNx/2fPc+N4DOrOUWO0zp4G9HAvplP2NWeKe41P6MNyx6C2a3RnKbS+eomqe
-	 pKaywOSD0E/DgPgl6t+u5AsLXPiW7Ey5/oN5AD/YIdxjpo5wMPqdGA30YOWkvDOfVm
-	 Pesuui9BsOuh83nFO7uUxS5hLjZOs4NqFx0fX9/T3k7Q2lb49Cgo53Ev09qGT7WJ0v
-	 oBrQ/rE0wnfjNj3dj36+m8Uv9/Dq7LmBDScGiSEI5yv8JFBZfm9WLq/xGHAxC2fx8f
-	 g5LHaTa5UBNVQ==
-Date: Mon, 29 Jul 2024 07:23:30 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1722255821; c=relaxed/simple;
+	bh=l4wtlpGxiDuUNNO7seUVBPrhKKPr15GuT0Xz+RjLV1E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=B8Doz8LZ69dhXMXYB5AUQsz5WW8m/84wMXlQBXFB5IE1MbmvfPg5kJBfy6fu4YkNeQAoMAe68+3UQzBIPKRabOAc4a1+Su1rpcPBT6hwnmBfHIS6hJfMUmstC76zUL8Hor+8+rTI4AmCxjD+Iqss9eDxg14tDhK9/Jf2IDX6hJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TeKRYsRe; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-368584f9e36so1270261f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 05:23:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722255818; x=1722860618; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gcxhcCNMxc3/Qo4UN6vxYU71BcAnj0w0jQQev6c+Yms=;
+        b=TeKRYsRePsMMw+mR+RllBATSM2LG0wR9s+O6cr/rq26cLiIKdci0W7XlgOS4/z+gnP
+         m3skjXwwGRmMfid0Om+i3cKeLtZk2bfZM2MmFpG0M9RsnABw8blfhFRYBy+G2ybITm5p
+         75CKKvleuBBgVM1QtPYs0ZXxbBEhi5S7UA4Dnk8hC7aUYz+SFSV/BnjiLsieL49o4wv5
+         sSzBDNIIGW+OiP8nVhe45wOpZeLbfcgcsDFiV6uMeHpRX8t7nDa9tkpvAGjBMa0MVKs9
+         I+v2WM160Ln8J1T64qaGHbKUUzozKth1KoZhKPmULe1jRTityWfbB3dR28W+kjai4jbI
+         mSLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722255818; x=1722860618;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gcxhcCNMxc3/Qo4UN6vxYU71BcAnj0w0jQQev6c+Yms=;
+        b=alNE/SC0AHpVMmdvrtUoyGlqaQBGEQP6WvaN4cpEtARo4XyqqxXyvI4Pc7kCIW3DhS
+         nJ4nqOUFAABizjWAfkLOdbbPgyI+9MT0yFIXEexpJH4kTf5ttc3wffqQcTPlzH3SU8BR
+         c185jkeiTen5ux+Ky3YJ7NjXUmL9iH0Mr2WDPes2HJd0OvBcTD2l5a29RNMAn1fk8vtn
+         vDM3zVBRRh06oRzzkkFN9r1rIi78tlYqJjFVfhFSzUtnMdvgvgIUBoezlFCBhOGXol8+
+         BEvmj71KbLo6+Bu0Uv0b1L2yzDuy5p5NxubXEQ8sDQjcpGgzhL9ujr+AA3LLekTBmjQm
+         69Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCWC3G2Kq9FyJGaWfR/t+mFbE7BZEvsYFwbzxk0+xHawMrPfUZoSBYthfq/mYggyYjnnm9eNL6IE7HGkDiCS3w1EIpANLIlvygq6hMiu
+X-Gm-Message-State: AOJu0Yy88CDOBbRrD2CCQQv7xFEVw5cLFdUGize3IxwJHYWZMkq9srQ/
+	4oQ89MVRARCz2YigZVkM/k+An4k2sUaNNEoG8DjqHmeuHOMG2gqyL9YVww3QVD4=
+X-Google-Smtp-Source: AGHT+IFRuYT0Y4jSgNDYWdZfJ2AbEF9HGHfkGAHlCRK8AhOMQmpX/n9oFEPATe+nLyTOpCWZ+00PeQ==
+X-Received: by 2002:a5d:64c5:0:b0:368:7f4f:9ead with SMTP id ffacd0b85a97d-36b5cecf32amr6013462f8f.7.1722255818250;
+        Mon, 29 Jul 2024 05:23:38 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36858197sm12393243f8f.68.2024.07.29.05.23.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 05:23:37 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Wolfram Sang <wsa@kernel.org>, linux-kernel@vger.kernel.org
+In-Reply-To: <20240725160909.326143-2-u.kleine-koenig@baylibre.com>
+References: <20240725160909.326143-2-u.kleine-koenig@baylibre.com>
+Subject: Re: [PATCH] w1: ds2482: Drop explicit initialization of struct
+ i2c_device_id::driver_data to 0
+Message-Id: <172225581721.279382.13628225936081847049.b4-ty@linaro.org>
+Date: Mon, 29 Jul 2024 14:23:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Stephan Gerhold <stephan@gerhold.net>, devicetree@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org
-In-Reply-To: <20240729-fix-smd-rpm-v1-1-99a96133cc65@linaro.org>
-References: <20240729-fix-smd-rpm-v1-0-99a96133cc65@linaro.org>
- <20240729-fix-smd-rpm-v1-1-99a96133cc65@linaro.org>
-Message-Id: <172225581057.232302.5916799518300911282.robh@kernel.org>
-Subject: Re: [PATCH 1/4] dt-bindings: soc: qcom: smd-rpm: add generic
- compatible
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.1
 
 
-On Mon, 29 Jul 2024 14:04:45 +0300, Dmitry Baryshkov wrote:
-> Add generic compatible to all smd-rpm devices, they follow the same
-> RPMSG protocol.
+On Thu, 25 Jul 2024 18:09:07 +0200, Uwe Kleine-König wrote:
+> This driver doesn't use the driver_data member of struct i2c_device_id,
+> so don't explicitly initialize this member.
 > 
-> Fixes: bcabe1e09135 ("soc: qcom: smd-rpm: Match rpmsg channel instead of compatible")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  .../devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml | 52 +++++++++++-----------
->  1 file changed, 27 insertions(+), 25 deletions(-)
+> This prepares putting driver_data in an anonymous union which requires
+> either no initialization or named designators. But it's also a nice
+> cleanup on its own.
 > 
+> [...]
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Applied, thanks!
 
-yamllint warnings/errors:
+[1/1] w1: ds2482: Drop explicit initialization of struct i2c_device_id::driver_data to 0
+      https://git.kernel.org/krzk/linux-w1/c/e940ff286ec47067cf5043fde41bea45d7ec4a5f
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,glink-rpm-edge.example.dtb: glink-edge: rpm-requests:compatible: ['qcom,rpm-msm8996'] is too short
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,glink-rpm-edge.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,glink-rpm-edge.example.dtb: glink-edge: rpm-requests: Unevaluated properties are not allowed ('compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,glink-rpm-edge.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,glink-rpm-edge.example.dtb: rpm-requests: compatible: ['qcom,rpm-msm8996'] is too short
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,smd-rpm.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,rpm-proc.example.dtb: remoteproc: smd-edge:rpm-requests:compatible: ['qcom,rpm-msm8916'] is too short
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,rpm-proc.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,rpm-proc.example.dtb: smd-edge: rpm-requests:compatible: ['qcom,rpm-msm8916'] is too short
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,smd-edge.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,rpm-proc.example.dtb: rpm-requests: compatible: ['qcom,rpm-msm8916'] is too short
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,smd-rpm.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,rpm-proc.example.dtb: remoteproc: glink-edge:rpm-requests:compatible: ['qcom,rpm-qcm2290'] is too short
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,rpm-proc.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,rpm-proc.example.dtb: remoteproc: glink-edge:rpm-requests: Unevaluated properties are not allowed ('compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,rpm-proc.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,rpm-proc.example.dtb: glink-edge: rpm-requests:compatible: ['qcom,rpm-qcm2290'] is too short
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,glink-rpm-edge.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,rpm-proc.example.dtb: glink-edge: rpm-requests: Unevaluated properties are not allowed ('compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,glink-rpm-edge.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,rpm-proc.example.dtb: rpm-requests: compatible: ['qcom,rpm-qcm2290'] is too short
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,smd-rpm.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,smd.example.dtb: shared-memory: rpm:rpm-requests:compatible: ['qcom,rpm-msm8974'] is too short
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,smd.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,smd.example.dtb: shared-memory: rpm: Unevaluated properties are not allowed ('rpm-requests' was unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,smd.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,smd.example.dtb: rpm-requests: compatible: ['qcom,rpm-msm8974'] is too short
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,smd-rpm.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.example.dtb: remoteproc: smd-edge:rpm-requests:compatible: ['qcom,rpm-msm8916'] is too short
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,rpm-proc.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.example.dtb: smd-edge: rpm-requests:compatible: ['qcom,rpm-msm8916'] is too short
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,smd-edge.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.example.dtb: rpm-requests: compatible: ['qcom,rpm-msm8916'] is too short
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,smd-rpm.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,rpmcc.example.dtb: rpm-requests: compatible: ['qcom,rpm-msm8916'] is too short
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,smd-rpm.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240729-fix-smd-rpm-v1-1-99a96133cc65@linaro.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
