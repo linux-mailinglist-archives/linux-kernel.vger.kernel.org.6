@@ -1,390 +1,227 @@
-Return-Path: <linux-kernel+bounces-266247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FED793FD28
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:12:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A86F93FD29
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4351D1C21ECC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:12:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4C0F282F24
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC01183087;
-	Mon, 29 Jul 2024 18:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B759F185606;
+	Mon, 29 Jul 2024 18:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nooh6ege"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2082.outbound.protection.outlook.com [40.107.236.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="zp0fZmlJ"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6911E86F;
-	Mon, 29 Jul 2024 18:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722276732; cv=fail; b=FS3RFeGsyL5luBIq/fE4RoML6xQ+BIE6zLREcyuNQktXq+xYO2KgkzCyhg3ePbIdA+ukl8CsBlkrFgMfBgXxHewAWCEYd3Wu6ENf4PuHJVXC4iudERJk8Zk9oxTlOuCV5oT9LruATwUFEpQlkanUr56yACZNuMq0D3wYrq/PRvk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722276732; c=relaxed/simple;
-	bh=oC8o3afmU63i/OnVRC8kmIjIGehNYLa2FjMP7zFSoEU=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=JFweCEmAOHrOHmb2ZFGlUOyfgmTnx9b8zZAtxm/DCc/S5bHAnrLnwV1opO7ku+pDEtY9C5abrmXaa1zItlhZx6vVCyBkXPSzy1xMZqGsrvzeg6mHAiPnUjqYXjGTzsDlZvB4oSqVVPoYbbXCyfuqfEMagxQLUi+dmQ6j9KRQb5s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nooh6ege; arc=fail smtp.client-ip=40.107.236.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SvhkwaGn0hFkTuUlxUJCKHskM/5bgV7YilRZmzSmrSmijTOcnQ2q+5cCNwdc1a3QfFpUHJtqLLwVGLdhE2XmfWUtPLitDycYlYk9IzfaUSxBT+0QTgvDQURJsKGSILIxujhiZ0hAysCtfKxmdE3vsamXjnRtqnElX2pMNs0lKRqGMolyyI+6QRBJk/wS51CaZmo0pv16smmwNHmpCh2j9P18cpRcUA0wH2byk+Vj5oEMcBAItwWuqr3CC4uq3uAe7hL7dJv04JfioOzE8inMatSPN0TXJPG2rDIomt4BbXE8pqCU8JEDs/Bq5aUxQCukhoZSI+rtX0QsE9Wcy67nSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SraV6Y3epCgdc02KsjO9zz2WNXy2XgweMb2G5QcUBbA=;
- b=yjgieEUcyTNvDKf0dZZ7mzpYGNVdMTRamYLOIdezReDixjkc0VGvTkHlhexprRChiWBmsmIszBCA1nafiuvXhyqjEs517dUe+mK1u3MloegfTLq1ijdxI73cFJnZW8R27E2bo2P1DPfVLDqWSeI9ahku4kxQDSiZWDfhE/EA+20hlonpzmZVV3G5cbSskoDgorBhYwNPP8Fiw3iuVP2rUdVQk1A6LRI/yCvPjwUuAVbV30zPcCp/f0Ya1caaYsaRSAGQL6RvKOLgf7AqMHR++TFnb2nJ8pfplCYervmyBHU+EAxf/rRJggdAkrCsyAEdBDK/xeQOmeNiNwe7qW0ucA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SraV6Y3epCgdc02KsjO9zz2WNXy2XgweMb2G5QcUBbA=;
- b=nooh6egexj6aneOOFqjv/9KRst8qWU3mTiDMrfuxi5HOHcSKhvOn1xsGiZC/y+oPdlk2R73q0Rkoj29HvzLkJEO8Ta1zFyYzBOK50ZU/Dy+uqVRMIOwVhQ5vPtcRyxmqpXVpqeDXZy62v39KHc4OyHa0Bt1xwSJVdmQokJ7+5Jw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by BY1PR12MB8446.namprd12.prod.outlook.com (2603:10b6:a03:52d::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.28; Mon, 29 Jul
- 2024 18:12:07 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
- 18:12:07 +0000
-Message-ID: <cb85a5c1-526b-4024-8e8f-23c2fe0d8381@amd.com>
-Date: Mon, 29 Jul 2024 20:12:00 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/radeon/evergreen_cs: fix int overflow errors in cs
- track offsets
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
- Alex Deucher <alexdeucher@gmail.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan
- <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Jerome Glisse <jglisse@redhat.com>,
- Dave Airlie <airlied@redhat.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org, stable@vger.kernel.org
-References: <20240725180950.15820-1-n.zhandarovich@fintech.ru>
- <e5199bf0-0861-4b79-8f32-d14a784b116f@amd.com>
- <CADnq5_PuzU12x=M09HaGkG7Yqg8Lk1M1nWDAut7iP09TT33D6g@mail.gmail.com>
- <fb530f45-df88-402a-9dc0-99298b88754c@amd.com>
- <e497f5cb-a3cb-477b-8947-f96276e401b7@fintech.ru>
- <1914cfcb-9700-4274-8120-9746e241cb54@amd.com>
-Content-Language: en-US
-In-Reply-To: <1914cfcb-9700-4274-8120-9746e241cb54@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0276.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e6::6) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080371E86F
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722276751; cv=none; b=PKuzYYAFFLUb36Cei7Wcpxo/yhkmd//0rrmHjwG4zqa6hlhuACFtgvNk83IoRZQ+JHpWGvMgQFV9mxudIHoe6nHbRHkS7XAr7yWdw157yLOrPTaAvvsIaLVM9prJWKIxoOHveW+BXX2vtOT6Zd8U1GQhOBfKxLsQ6rPjiSVe8gc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722276751; c=relaxed/simple;
+	bh=g+bIymRfLKdNCWnmqGLhZflwa7/fmi5J+ue4x91nCvc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ae1eLSznXAzT3iV32T7IqGF7jId92Zc3WFdL21SyvpPalK8wYN+a+i3BEiEDzoYOd0R/PwskMytvzs7ZXv5wb3oEiuv2Pi6lDbsTbAIebtMxu9CJD6ITRGMpPQJE+iqEF3nSX8evP2BezgGfcFlz6FXWiKitlIcHMWkUD8QyzZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=zp0fZmlJ; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70d333d5890so3439102b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:12:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722276749; x=1722881549; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jMq7wNNFkACLtIEFF1Sm/WrnsanjDAmU+DNeQs049lE=;
+        b=zp0fZmlJ4dmb8IccRuQloxNKiZ9M+lOPX3Mt521auNTli1ezy+Y6bhrAGCaWv0pfmj
+         KSODTLeyc/OXGkDUCBqEK3vhoCDnOPKVb1dAt7zmh5EJBWkzEtcAKhan8UJofNzcul3o
+         zf3UrGJi4dsDJP8vd7srMetb9/Yb/trW9ws9h9oMv0F9IfoVGn7lst3OBqSzL97/H8i0
+         AszsZOBDulJd8IxhmKmTsolHDJJKO7jptFtIVDJU1QVnbDi8gKTzYgmJ173uQymr4Hng
+         zRPnybF98leO40ccjGYOd88AZ2u4uDJe1bwCCDEImYxcUtjK/6eEaOX3aPHR733kAQlN
+         aK8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722276749; x=1722881549;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jMq7wNNFkACLtIEFF1Sm/WrnsanjDAmU+DNeQs049lE=;
+        b=Gr9uNmtspBFZ7wEaCodBq1sEL7e90W6bd95NtiYOR2Sl9J15W5Xh8bO0jvD8zBF1fk
+         qCT3RP2tZHbNnNCzV++4R2OBSPeqU7JaRRKk8GyEq3jvE9MeR19duZqMHiGUW3rmQB0Y
+         1Dk/aiZ2nZIOh+whwEOZ/I64d1iIqp35m6UZm80/hIWaLPR5sx6KqEAV2cxx6tOyBoRv
+         lYAJ02hdSf3T0OgiI57kCXwwSQa4fN0HX2pTGLOJ/2ExyrsXyKsEDDxnTHzy9FaTEMSY
+         EssD0U0b8qJAY5Pld2bHJrx6nqr7V7RDnMJcPJNevNvJXnSG6N2w/GTHg7pZlynTEtnr
+         JN7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVbOudadC+BcnS2WTjSvjpdn17l7Thu5HReLnsOabQcSKOesyfHPxP9/ISxQbhZEPe31BU3AipOwK//LF1/UtAhwnhajGJ8hmWCmxdj
+X-Gm-Message-State: AOJu0YxaFl64dD82vgbfZwtgFdhm9e4mXJkPNa/dXy/sxHf8CB2nrVmn
+	TktM9tt8SiYbRaOmw6JYv26Qg6CbQUQcfMz+X2YDFk3E1vEzB9oMg25zTPEv9ME=
+X-Google-Smtp-Source: AGHT+IGZPAFCVBLn6KPFdsUdG1pJTnQRQdxlqkE0IiPTY/LUVPpXHEHYA4ONndyS0YLuN1mMZ9EPHg==
+X-Received: by 2002:a05:6a00:1826:b0:706:6384:a826 with SMTP id d2e1a72fcca58-70eceda1f46mr13855706b3a.20.1722276749228;
+        Mon, 29 Jul 2024 11:12:29 -0700 (PDT)
+Received: from atishp.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f9fbd4b0sm6434433a12.72.2024.07.29.11.12.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 11:12:28 -0700 (PDT)
+From: Atish Patra <atishp@rivosinc.com>
+To: eric.lin@sifive.com
+Cc: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	peterlin@andestech.com,
+	dminus@andestech.com,
+	locus84@andestech.com,
+	jisheng.teoh@starfivetech.com,
+	inochiama@outlook.com,
+	n.shubin@yadro.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Samuel Holland <samuel.holland@sifive.com>
+Subject: Re: [v2] perf arch events: Fix duplicate RISC-V SBI firmware event name
+Date: Mon, 29 Jul 2024 11:12:18 -0700
+Message-Id: <20240729181218.1712102-1-atishp@rivosinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240719115018.27356-1-eric.lin@sifive.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|BY1PR12MB8446:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9d44fc42-8b46-4773-eb4f-08dcaff9f4e5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WVdyaWNQVks2cWt6ZlpUeHAxNEw2SndXTVBISmhwdTRBMWF1SDN3eXdFeWZh?=
- =?utf-8?B?c0dpSURsalFTamxBMUJET3RvMi9hSlkzSzdoVDZyWlVlOFIvMGR0a0MyRVk3?=
- =?utf-8?B?SUhFZ0M1emZ5dlNrb09MTzBjR1FiR0RaMHRCOXNtZ3NiZ013MVhROGZ1d1Vt?=
- =?utf-8?B?Q0E1N21vWjVOelNXMURqcFh4eDMreWl4SVFFTFlmVEZBc0hQWSttTXNHbHdL?=
- =?utf-8?B?dWY4b3BzekEvN05WYUp6ZjJDM2IwSWExQi9lU051Y2I0SmNYcUVRem9hZStV?=
- =?utf-8?B?WUdyK21DNDRPT1NHbHFobkNtcFJVYTFva0NHbGRHemV1MDRrZVdCekRZcFBP?=
- =?utf-8?B?aDBYVFI1ZEhNNmtyMzhyVThNR2xPMDhjNUJBRUg4RXZJcnBENFZZdzdJSVEx?=
- =?utf-8?B?MWRBUS9ZMEpramFBbk85dThMMG11cUh5Sm1nWXNxSDlLRXh6R3NKUGFMa3Vy?=
- =?utf-8?B?MlJlcVgrZVB1bXdGTGlLVTNYU0ZnQ3JtSWVHaDg3ZGZCTlBMSUVEbThsV3ho?=
- =?utf-8?B?enVLdzM2bnNOMUYyZWlhcThNOXpFTSt2ZVh5a2g3SkZZclB6bGNBRThaZSt5?=
- =?utf-8?B?UjNaNWF4bG5ZOURkeE9vbHhzSmhUOWZ6RHFOdERoVnpqUFo4Vm5BWlpiMktT?=
- =?utf-8?B?NzZOQTA5ZnpjOHEvUUFaQThpdjdQbC9ETlc4Y0F6L3N2NHgwNE12S29yek5N?=
- =?utf-8?B?QUI0SzZYVHdrYXR4MUxpRVV4NVFhMTJhQ3hKQW9QN0NRK2NtaGJOYTVjRmE3?=
- =?utf-8?B?SW1rdlhybGRzOFgrUjBVSDgxemxkYkI2T3Z4N2h3SEtoaWhnQ0FueFZoMEtT?=
- =?utf-8?B?UndpUS93aEpNSWphMHN4dkpUamJTYk1hT1BpVktYMmI3WHlxRUVuTGRoY3Vp?=
- =?utf-8?B?dEk2NktIcW5nMnJVTmJmRlRhOUlmWDdIOWh3VUtRN3RMSTVpd0Uzb1ZZVmI0?=
- =?utf-8?B?dWNwZldkRHVvNXEraXkwb3pCOE5XZUs0TlhXbUE0YXZMR1VUWjlFaGFSWkZi?=
- =?utf-8?B?eitnVktiTDlSQnJiQ3ljaVkrR2R6U2FabmRUVXVCNXRrTHpVV0NLM2Nvb21n?=
- =?utf-8?B?QlVCV1F6c0huTExGeVhublRTN1pWVFhMWmF1LzZGdUR1SDdGaDZ2cnlERVg1?=
- =?utf-8?B?Ym9UektxNmp3d3RHWjFEK2EzeTB1U3A3WklJSUZndDRrd0Y0aTZvckNzRkNn?=
- =?utf-8?B?RjlQdjc0U01nOE1pSFNQVE5tbDZ1aGZRaEVEdVMxNlpqV2N0VHlHZzJycm5F?=
- =?utf-8?B?Y0ZZUDlVbUovd3A2L24zTWVLcTdScjFFVEI2aFNjVkFBUldsR2lETDJQekg0?=
- =?utf-8?B?aEcvZlFpWFhLUDQ0YU8yZk5DK0Q3Q1JoeituWFdxRVdKK0lyRCtkNi9RS0Vi?=
- =?utf-8?B?SmhLREhCeDZ1dlpmSCtKbGprekZlbk9TdTcvRjlSM3hBbXZvQkVsRkhpc0Jt?=
- =?utf-8?B?RWduUHkyU3Nrb28rOEg1TklRMEgxditKdlF0NFJGSFhyZGZDeXJJQ3BnQStm?=
- =?utf-8?B?YXU5aXI4RUJ2VkZETHlBYmtXbWFLMEhrUGl5MzVSZUMxcTRaRkE3em1VNHhy?=
- =?utf-8?B?YXJvZ1I0bHlGVzBHRXpnMG1GMVpSbWhPalJCVkZHMFN3UmpYS0NxODFnWmtO?=
- =?utf-8?B?T1F3Rm1HdC9CQ1VNcWc2T0M4ajhiNC9Yd2VRQS92THNMa1oxUGpCdEc1ZnZQ?=
- =?utf-8?B?bFZQUkVJaVdaYXBQWUNYcTRFeEZqUXNuR0ZReDlYcitVMnFlQm5tNnhzOThw?=
- =?utf-8?B?UjRybTdvekwvWkdvQWlTR256VVBUTVJKM3FjY2FmUXhqUTVsUGlnMkNJWUFY?=
- =?utf-8?B?WkljbDFyVUhBTWs1YVcvQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?L24zUjU3RENoRXg0OVEzb0dUV3ZMOTd6bnIzRllzTHVFV3JCOUdMaTEwZk5C?=
- =?utf-8?B?blFEcmdNdGYxcWJIT3dVYk9ja01sNC9NTFFYb0krZHFhTDg5WkFkU1Vnc2lm?=
- =?utf-8?B?SzJOd2Zod2VacmVwUjZraTEyNTBWeG0wUVViT1ZzTGFCcGdURkdUUWZPWExK?=
- =?utf-8?B?cXczaGUwajJxcDhFQVBDWnoyZ0duUk0yZ1FQdGtGQ21OWjduZkRHbEtKL1ZK?=
- =?utf-8?B?c0xrNjFtYjN4dldzNFc4REFTT1A3OFhBOURYZnJQYjNyT2l2TS9xQ0h4TTEw?=
- =?utf-8?B?dUpneXRCZjZYYjF4d3gyKytNakhFR1BrSmRDb2JXYnRPT0lnRm90eGlWL3pn?=
- =?utf-8?B?WCtkb21KSFhFanpGWC9XZTh3ZW1KWkVndEptOTJEc0lDbGtQNTVsQm10QWYy?=
- =?utf-8?B?ZThlNk82VXUzT1JEb2VtblN6L0plS1B1YTJBWkJHRjNFdXZmam1HRi9DSyt1?=
- =?utf-8?B?aUpJaDJaN2RncCtIa0UwSGlWMG14ZWw1QW9wV2hDU3RJaHdWb1lYd2tSVG41?=
- =?utf-8?B?TGtSY3RUSHoySUZIMC9yQTgxOXlxQXhjMXU0SUd0SkYzakQ3NU9SVlhqbzA2?=
- =?utf-8?B?SldIUGYzSW91WGx3elBqenVEQ3ZsT0JMWFQ2ejBRaVg4U0M4cUkwbTVEbmxZ?=
- =?utf-8?B?ak43dUFHaUwxbHQ0cVZFVDlxT0Y3czBBTDloOGtmUXpad1EwMGt5bTBocndw?=
- =?utf-8?B?SktDN3FvZHJQVFZEUnJ4T2RTR2xtQWF5eDB6aFFYZTdqek1GUG9OZHdENFZ1?=
- =?utf-8?B?WVY4aThjVTBWZGo3TmVPYlFTOEpmbEdyckFYbzA0VHBzc1VzOXdVM3ZhRC95?=
- =?utf-8?B?MlFNM1o0cU9aREdkeFg2UWN2YytRMHgzUDlFRlNaL1NJVXdYeVByTmNqL3hG?=
- =?utf-8?B?OFRIVlJFV2FDUjBYcWR0bno0YkRFTnhNdFJrMEpGZ0FtMUpLSWNPem5IdVVS?=
- =?utf-8?B?TjZUN1J3N3dGMVJaZ0dnbHlkeDZ5WXpGcHZkM0tBWGxlVHNZV2FqcVRudjZp?=
- =?utf-8?B?eEJuYmhsUlhQeEZ5eGtYUHpkNWU1bldWTE5iRnBBYVJXdWxWelFWQlRFN3JH?=
- =?utf-8?B?YzNIZ2sydHZKU2hMOXdEeklJWTNqM1RVU3JPYVBIYmZaVkVBNHljT2s5aThY?=
- =?utf-8?B?V2hKWU5WUUZ1Z1ZkYWNzdHJKaHNrTE1LcUsyVkV5RGM0N2taMUNub3drVUMw?=
- =?utf-8?B?bThVeGVTNmJHclZhdThrSTZhSjRwWTBsMGJENW1rMWlTdUhrVnEreVVYZDgr?=
- =?utf-8?B?bHB5akNFbGdvM1VUTHdjTmx4N0tadGlXQXZGT2dnUGpPYjBQT0djcnMvTzRF?=
- =?utf-8?B?ejdlZ28wemhmVkRZWDI0SkFSRS9Bci9aZVlMRDZqSWNoMVhLTFBKaFVVY3cw?=
- =?utf-8?B?Y011WUNFRTZIb1B0bzFPNFhtT3Z2UXdCZXJQZTlvSHErc2lrWkRZa0xoMnVN?=
- =?utf-8?B?UFhlaG9yMnVqT3NZbHpoM2huVGdGNFpqK2FRNDIzTVJGTDlWOENKa1pGTXNZ?=
- =?utf-8?B?T0t6QUNMbTBzSlo0Smhhc0p0MllMdnFNRE9ac0dSVEFYcnFHcW13V1lBWHVx?=
- =?utf-8?B?WTBNNWFZWWVkNzRyRmc2STRFMjY1MWVmWkhONGY5VUo1bjJzRmlHWUU0Yytw?=
- =?utf-8?B?cDNDcDAxYzBWUjM2b0xZNms2NXBwdDZGd2dvWFpyNC9VZHI0cTFycTFrQkxh?=
- =?utf-8?B?QVcvRHU2TENLTU9OZGJJbUZDKzNvaTM4elk4TmFWMmFQQnh4UTFxay92bGcy?=
- =?utf-8?B?cUlOTnlCTzJ3SWR0WUxqZFVTeGpvbDVISEIwNnJ3VWlZTitycEk0Lzgzamo4?=
- =?utf-8?B?dFdwaHRyZlZrNUFld1JFNXZERnZuWmRmQTMrc3Q3bTJOaUpXbzZZTlhWWHEv?=
- =?utf-8?B?bzZ6UTZyWXU0a2Y1MUdpeEpheEhXeXZtR1NCTzVaTTBXdlBhRVkyTW0wM3lO?=
- =?utf-8?B?NHpJTnVMbUZBT3BQM3FOa1U0MmhBZTRxS0ZDWi9JeDc2QSt5YzhCQkJYSlNw?=
- =?utf-8?B?a1ZxTzNiV0QycmtiSlAyRXJ2N0hMVEUzZS94YURoOWRRanBrUFV4SHFiRGpZ?=
- =?utf-8?B?QkpMeGYyQTlsNHlrbit4VkRUSEl2Q0F0UjNnc2Zkd1UxUy96aTR6aFB1WW9L?=
- =?utf-8?Q?8y3td8VzpQlc5VAzVLxqlO6YN?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d44fc42-8b46-4773-eb4f-08dcaff9f4e5
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 18:12:07.1369
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Fxjd0Rkz0HKuk4A8JhUxi6fU/vOe4JYCpyue6/mgY14x2cT5Mog3dlqYmfntsFwW
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR12MB8446
+Content-Transfer-Encoding: 8bit
 
-Am 29.07.24 um 20:04 schrieb Christian König:
-> Am 29.07.24 um 19:26 schrieb Nikita Zhandarovich:
->> Hi,
->>
->> On 7/29/24 02:23, Christian König wrote:
->>> Am 26.07.24 um 14:52 schrieb Alex Deucher:
->>>> On Fri, Jul 26, 2024 at 3:05 AM Christian König
->>>> <christian.koenig@amd.com> wrote:
->>>>> Am 25.07.24 um 20:09 schrieb Nikita Zhandarovich:
->>>>>> Several cs track offsets (such as 'track->db_s_read_offset')
->>>>>> either are initialized with or plainly take big enough values that,
->>>>>> once shifted 8 bits left, may be hit with integer overflow if the
->>>>>> resulting values end up going over u32 limit.
->>>>>>
->>>>>> Some debug prints take this into account (see according 
->>>>>> dev_warn() in
->>>>>> evergreen_cs_track_validate_stencil()), even if the actual
->>>>>> calculated value assigned to local 'offset' variable is missing
->>>>>> similar proper expansion.
->>>>>>
->>>>>> Mitigate the problem by casting the type of right operands to the
->>>>>> wider type of corresponding left ones in all such cases.
->>>>>>
->>>>>> Found by Linux Verification Center (linuxtesting.org) with static
->>>>>> analysis tool SVACE.
->>>>>>
->>>>>> Fixes: 285484e2d55e ("drm/radeon: add support for evergreen/ni
->>>>>> tiling informations v11")
->>>>>> Cc: stable@vger.kernel.org
->>>>> Well first of all the long cast doesn't makes the value 64bit, it
->>>>> depends on the architecture.
->>>>>
->>>>> Then IIRC the underlying hw can only handle a 32bit address space so
->>>>> having the offset as long is incorrect to begin with.
->>>> Evergreen chips support a 36 bit internal address space and NI and
->>>> newer support a 40 bit one, so this is applicable.
->>> In that case I strongly suggest that we replace the unsigned long with
->>> u64 or otherwise we get different behavior on 32 and 64bit machines.
->>>
->>> Regards,
->>> Christian.
->>>
->> To be clear, I'll prepare v2 patch that changes 'offset' to u64 as well
->> as the cast of 'track->db_z_read_offset' (and the likes) to u64 too.
->>
->> On the other note, should I also include casting to wider type of the
->> expression surf.layer_size * mslice (example down below) in
->> evergreen_cs_track_validate_cb() and other similar functions? I can't
->> properly gauge if the result will definitively fit into u32, maybe it
->> makes sense to expand it as well?
->
-> The integer overflows caused by shifts are irrelevant and doesn't need 
-> any fixing in the first place.
-
-Wait a second.
-
-Thinking more about it the integer overflows are actually necessary 
-because that is exactly what happens in the hardware as well.
-
-If you don't overflow those shifts you actually create a security 
-problem because the HW the might access at a different offset then you 
-calculated here.
-
-We need to use something like a mask or use lower_32_bits() here.
-
-Regards,
-Christian.
-
->
-> The point is rather that we need to avoid multiplication overflows and 
-> the security problems which come with those.
->
->>
->> 441         }
->> 442
->> 443         offset += surf.layer_size * mslice;
->
-> In other words that here needs to be validated correctly.
->
-> Regards,
-> Christian.
->
->> 444         if (offset > radeon_bo_size(track->cb_color_bo[id])) {
->> 445                 /* old ddx are broken they allocate bo with w*h*bpp
->>
->> Regards,
->> Nikita
->>>> Alex
->>>>
->>>>> And finally that is absolutely not material for stable.
->>>>>
->>>>> Regards,
->>>>> Christian.
->>>>>
->>>>>> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
->>>>>> ---
->>>>>> P.S. While I am not certain that track->cb_color_bo_offset[id]
->>>>>> actually ends up taking values high enough to cause an overflow,
->>>>>> nonetheless I thought it prudent to cast it to ulong as well.
->>>>>>
->>>>>>     drivers/gpu/drm/radeon/evergreen_cs.c | 18 +++++++++---------
->>>>>>     1 file changed, 9 insertions(+), 9 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/gpu/drm/radeon/evergreen_cs.c
->>>>>> b/drivers/gpu/drm/radeon/evergreen_cs.c
->>>>>> index 1fe6e0d883c7..d734d221e2da 100644
->>>>>> --- a/drivers/gpu/drm/radeon/evergreen_cs.c
->>>>>> +++ b/drivers/gpu/drm/radeon/evergreen_cs.c
->>>>>> @@ -433,7 +433,7 @@ static int evergreen_cs_track_validate_cb(struct
->>>>>> radeon_cs_parser *p, unsigned i
->>>>>>                 return r;
->>>>>>         }
->>>>>>
->>>>>> -     offset = track->cb_color_bo_offset[id] << 8;
->>>>>> +     offset = (unsigned long)track->cb_color_bo_offset[id] << 8;
->>>>>>         if (offset & (surf.base_align - 1)) {
->>>>>>                 dev_warn(p->dev, "%s:%d cb[%d] bo base %ld not
->>>>>> aligned with %ld\n",
->>>>>>                          __func__, __LINE__, id, offset,
->>>>>> surf.base_align);
->>>>>> @@ -455,7 +455,7 @@ static int evergreen_cs_track_validate_cb(struct
->>>>>> radeon_cs_parser *p, unsigned i
->>>>>>                                 min = surf.nby - 8;
->>>>>>                         }
->>>>>>                         bsize = 
->>>>>> radeon_bo_size(track->cb_color_bo[id]);
->>>>>> -                     tmp = track->cb_color_bo_offset[id] << 8;
->>>>>> +                     tmp = (unsigned
->>>>>> long)track->cb_color_bo_offset[id] << 8;
->>>>>>                         for (nby = surf.nby; nby > min; nby--) {
->>>>>>                                 size = nby * surf.nbx * surf.bpe *
->>>>>> surf.nsamples;
->>>>>>                                 if ((tmp + size * mslice) <= 
->>>>>> bsize) {
->>>>>> @@ -476,10 +476,10 @@ static int
->>>>>> evergreen_cs_track_validate_cb(struct radeon_cs_parser *p, 
->>>>>> unsigned i
->>>>>>                         }
->>>>>>                 }
->>>>>>                 dev_warn(p->dev, "%s:%d cb[%d] bo too small (layer
->>>>>> size %d, "
->>>>>> -                      "offset %d, max layer %d, bo size %ld, slice
->>>>>> %d)\n",
->>>>>> +                      "offset %ld, max layer %d, bo size %ld, slice
->>>>>> %d)\n",
->>>>>>                          __func__, __LINE__, id, surf.layer_size,
->>>>>> -                     track->cb_color_bo_offset[id] << 8, mslice,
->>>>>> - radeon_bo_size(track->cb_color_bo[id]), slice);
->>>>>> +                     (unsigned long)track->cb_color_bo_offset[id]
->>>>>> << 8,
->>>>>> +                     mslice,
->>>>>> radeon_bo_size(track->cb_color_bo[id]), slice);
->>>>>>                 dev_warn(p->dev, "%s:%d problematic surf: (%d %d) 
->>>>>> (%d
->>>>>> %d %d %d %d %d %d)\n",
->>>>>>                          __func__, __LINE__, surf.nbx, surf.nby,
->>>>>>                         surf.mode, surf.bpe, surf.nsamples,
->>>>>> @@ -608,7 +608,7 @@ static int
->>>>>> evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
->>>>>>                 return r;
->>>>>>         }
->>>>>>
->>>>>> -     offset = track->db_s_read_offset << 8;
->>>>>> +     offset = (unsigned long)track->db_s_read_offset << 8;
->>>>>>         if (offset & (surf.base_align - 1)) {
->>>>>>                 dev_warn(p->dev, "%s:%d stencil read bo base %ld not
->>>>>> aligned with %ld\n",
->>>>>>                          __func__, __LINE__, offset, 
->>>>>> surf.base_align);
->>>>>> @@ -627,7 +627,7 @@ static int
->>>>>> evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
->>>>>>                 return -EINVAL;
->>>>>>         }
->>>>>>
->>>>>> -     offset = track->db_s_write_offset << 8;
->>>>>> +     offset = (unsigned long)track->db_s_write_offset << 8;
->>>>>>         if (offset & (surf.base_align - 1)) {
->>>>>>                 dev_warn(p->dev, "%s:%d stencil write bo base %ld 
->>>>>> not
->>>>>> aligned with %ld\n",
->>>>>>                          __func__, __LINE__, offset, 
->>>>>> surf.base_align);
->>>>>> @@ -706,7 +706,7 @@ static int
->>>>>> evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
->>>>>>                 return r;
->>>>>>         }
->>>>>>
->>>>>> -     offset = track->db_z_read_offset << 8;
->>>>>> +     offset = (unsigned long)track->db_z_read_offset << 8;
->>>>>>         if (offset & (surf.base_align - 1)) {
->>>>>>                 dev_warn(p->dev, "%s:%d stencil read bo base %ld not
->>>>>> aligned with %ld\n",
->>>>>>                          __func__, __LINE__, offset, 
->>>>>> surf.base_align);
->>>>>> @@ -722,7 +722,7 @@ static int
->>>>>> evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
->>>>>>                 return -EINVAL;
->>>>>>         }
->>>>>>
->>>>>> -     offset = track->db_z_write_offset << 8;
->>>>>> +     offset = (unsigned long)track->db_z_write_offset << 8;
->>>>>>         if (offset & (surf.base_align - 1)) {
->>>>>>                 dev_warn(p->dev, "%s:%d stencil write bo base %ld 
->>>>>> not
->>>>>> aligned with %ld\n",
->>>>>>                          __func__, __LINE__, offset, 
->>>>>> surf.base_align);
->
-
+> Currently, the RISC-V firmware JSON file has duplicate event name
+> "FW_SFENCE_VMA_RECEIVED". According to the RISC-V SBI PMU extension[1],
+> the event name should be "FW_SFENCE_VMA_ASID_SENT".
+> 
+> Before this patch:
+> $ perf list
+> 
+> firmware:
+>   fw_access_load
+>        [Load access trap event. Unit: cpu]
+>   fw_access_store
+>        [Store access trap event. Unit: cpu]
+> ....
+>  fw_set_timer
+>        [Set timer event. Unit: cpu]
+>   fw_sfence_vma_asid_received
+>        [Received SFENCE.VMA with ASID request from other HART event. Unit: cpu]
+>   fw_sfence_vma_received
+>        [Sent SFENCE.VMA with ASID request to other HART event. Unit: cpu]
+> 
+> After this patch:
+> $ perf list
+> 
+> firmware:
+>   fw_access_load
+>        [Load access trap event. Unit: cpu]
+>   fw_access_store
+>        [Store access trap event. Unit: cpu]
+> .....
+>   fw_set_timer
+>        [Set timer event. Unit: cpu]
+>   fw_sfence_vma_asid_received
+>        [Received SFENCE.VMA with ASID request from other HART event. Unit: cpu]
+>   fw_sfence_vma_asid_sent
+>        [Sent SFENCE.VMA with ASID request to other HART event. Unit: cpu]
+>   fw_sfence_vma_received
+>        [Received SFENCE.VMA request from other HART event. Unit: cpu]
+> 
+> Link: https://github.com/riscv-non-isa/riscv-sbi-doc/blob/master/src/ext-pmu.adoc#event-firmware-events-type-15 [1]
+> Fixes: 8f0dcb4e7364 ("perf arch events: riscv sbi firmware std event files")
+> Fixes: c4f769d4093d ("perf vendor events riscv: add Sifive U74 JSON file")
+> Fixes: acbf6de674ef ("perf vendor events riscv: Add StarFive Dubhe-80 JSON file")
+> Fixes: 7340c6df49df ("perf vendor events riscv: add T-HEAD C9xx JSON file")
+> Fixes: f5102e31c209 ("riscv: andes: Support specifying symbolic firmware and hardware raw event")
+> Signed-off-by: Eric Lin <eric.lin@sifive.com>
+> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+> Reviewed-by: Nikita Shubin <n.shubin@yadro.com>
+> ---
+> Changes since V1:
+>  - Add "Fixes:" tag for every patch that copied firmware.json
+> ---
+>  tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json       | 2 +-
+>  tools/perf/pmu-events/arch/riscv/riscv-sbi-firmware.json        | 2 +-
+>  tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json       | 2 +-
+>  .../perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json  | 2 +-
+>  .../perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json  | 2 +-
+>  5 files changed, 5 insertions(+), 5 deletions(-)
+> diff --git a/tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json b/tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json
+> index 9b4a032186a7..7149caec4f80 100644
+> --- a/tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json
+> +++ b/tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json
+> @@ -36,7 +36,7 @@
+>      "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+>    },
+>    {
+> -    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+> +    "ArchStdEvent": "FW_SFENCE_VMA_ASID_SENT"
+>    },
+>    {
+>      "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
+> diff --git a/tools/perf/pmu-events/arch/riscv/riscv-sbi-firmware.json b/tools/perf/pmu-events/arch/riscv/riscv-sbi-firmware.json
+> index a9939823b14b..0c9b9a2d2958 100644
+> --- a/tools/perf/pmu-events/arch/riscv/riscv-sbi-firmware.json
+> +++ b/tools/perf/pmu-events/arch/riscv/riscv-sbi-firmware.json
+> @@ -74,7 +74,7 @@
+>    {
+>      "PublicDescription": "Sent SFENCE.VMA with ASID request to other HART event",
+>      "ConfigCode": "0x800000000000000c",
+> -    "EventName": "FW_SFENCE_VMA_RECEIVED",
+> +    "EventName": "FW_SFENCE_VMA_ASID_SENT",
+>      "BriefDescription": "Sent SFENCE.VMA with ASID request to other HART event"
+>    },
+>    {
+> diff --git a/tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json b/tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json
+> index 9b4a032186a7..7149caec4f80 100644
+> --- a/tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json
+> +++ b/tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json
+> @@ -36,7 +36,7 @@
+>      "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+>    },
+>    {
+> -    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+> +    "ArchStdEvent": "FW_SFENCE_VMA_ASID_SENT"
+>    },
+>    {
+>      "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
+> diff --git a/tools/perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json b/tools/perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json
+> index 9b4a032186a7..7149caec4f80 100644
+> --- a/tools/perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json
+> +++ b/tools/perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json
+> @@ -36,7 +36,7 @@
+>      "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+>    },
+>    {
+> -    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+> +    "ArchStdEvent": "FW_SFENCE_VMA_ASID_SENT"
+>    },
+>    {
+>      "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
+> diff --git a/tools/perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json b/tools/perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json
+> index 9b4a032186a7..7149caec4f80 100644
+> --- a/tools/perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json
+> +++ b/tools/perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json
+> @@ -36,7 +36,7 @@
+>      "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+>    },
+>    {
+> -    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+> +    "ArchStdEvent": "FW_SFENCE_VMA_ASID_SENT"
+>    },
+>    {
+>      "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
+> 
 
