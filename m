@@ -1,180 +1,158 @@
-Return-Path: <linux-kernel+bounces-266028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A6493F979
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:31:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E6393F97B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185BA1F21A8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:31:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3CE0B2254A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1763A156880;
-	Mon, 29 Jul 2024 15:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A074515A86D;
+	Mon, 29 Jul 2024 15:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXgZqMzJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ODA8ePg3"
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4377D1494DC;
-	Mon, 29 Jul 2024 15:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CB215A85F
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722267079; cv=none; b=SNGPOEKM1QYc+aHSkQujjUgvB/jTC0VtirwhzroqAlUGXiGl8M7cfy7IfmPtDrw0dOaneRt+YR3i5HiFDUZF1cj42W9Gvxj/bCFwYK2jbjG+5kewoF9EU671u4gVFYyZjLyRBdhEPJbV5jOEc0SjeKejG8jlSkypLzgkC6aUGV0=
+	t=1722267084; cv=none; b=ILhkaC/z1JHeZB9vyYBTyGYcR3xarp7OzxIgoiXLZCne0owqEngkCAJd74v4RqV4FCWaey5YmCWOOmG1Z/oBQuxiJHTtIgudUgGwTTXCxsMbIfNfVnymMoZfyc6JA80/6UmQjrYVn/i0H+ojQZwLJOri2IjqGeu9GP72Ik96Wog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722267079; c=relaxed/simple;
-	bh=koUyD7aox0HAEQE+rmy8pQQqygbJWnJvy7PxdrM4gZk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t+7fNW4m6G5WJBIQBwnloBqaEj9tRfdlPbN46dhCD2kKdFcYY7PhGSlHNPBZd4vQ4Q5MrpxXPzW/OPkGtEvz/SpDHJfjqekPR8j+ouvaUoBzr1LZ5Rp9eifC8vKkCKjapv1YME4/vKqdVA1w+Nx/+C4bLOXkHhSUOMwK2PtDKjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXgZqMzJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90B3EC4AF09;
-	Mon, 29 Jul 2024 15:31:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722267078;
-	bh=koUyD7aox0HAEQE+rmy8pQQqygbJWnJvy7PxdrM4gZk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZXgZqMzJ6v5VjFl/P1Cw3QOo6+CmEbAWcChu2X/YCfqs5s5j7wRzSIPgjV4PBFAb8
-	 t1hCkNaXuoI6BuBZxB5JBQOuZvXMOBJ26GMdyYiJBKLnQHgUn/s/LdY2iVQu6BGopA
-	 w/T7sGniEYdrgHlpDD/Pse8JK/FWgzMhSfthFO5sVKdHG9hG7bbSiAkOnlO1GsaihK
-	 zdU6EnFqZXY65nQ7XiY7Mcu1JoURflUihFMiHTuqPje5l3QbbqHEiwoCDrQSz1XwVA
-	 T/yAoaFMvYMRucglsl+wnWbVbVIbnZxk2ve4SLxlTqs9c9+UpGef+XD2/42M9Y4wtn
-	 bt1nVtFYh+xWw==
-Message-ID: <8b75756d-aec9-4c28-96be-81cd12496757@kernel.org>
-Date: Mon, 29 Jul 2024 17:31:16 +0200
+	s=arc-20240116; t=1722267084; c=relaxed/simple;
+	bh=nMRedrIDpiQfBKEZwZLAtsO2l+vfALPP2GCneA2DJeE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=b6csauUdzIdU9Ro6MifbVfvIavJfZVHVrqJhSN5mprnqRli/Ab1HGwrlSkAQodV2U50kke5/wxf69/3nKpKbmb4NHx7uvHhaDVI7cKfBeAuQYK0erJXN+3hInj9aWNxPo9CPIBjne/j6opkWfh1SJjdV4Kl1d5ZbnCSVxDV5+2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ODA8ePg3; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-25d634c5907so2213179fac.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:31:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722267082; x=1722871882; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uxgOzZ9wt6xYia5fWSbdpgGngVyCVzmloiaeIDkpJyU=;
+        b=ODA8ePg3j9b4y9vPkFGf/q5qRHVKZvNUKs2+mxYIN0437xkOpf6LMp/N/5j9vzc/pX
+         hkKDC+94scLtMtm2+XOVSbaW5Foynk64aS/X0qNrXotP//CppgiZUAGy/FQWA13EMwbm
+         IDlkR3gUa2dmi1YmpwgPET2cAygzuim2G97fmGYjSMJFa09OOyjNdUfMhgQMApfOtaer
+         CALAcbmd6WO05vwuAxgyyLiN6PWX9kpscwZbLt3HcJpASjOHhPxpJ2awReRrG5xSTJiR
+         F2IPHmMdypFF2Wcp5GHV9L08DewmatDnOTT5Y7RWPtzhSTuL1s0r4kzJW8LSIVkWo/6s
+         WwqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722267082; x=1722871882;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uxgOzZ9wt6xYia5fWSbdpgGngVyCVzmloiaeIDkpJyU=;
+        b=ou3VClOjE6vx1IukgAIdeWzxn6mwrQs5EMEnuyzHgA/aDJwIhiuD8JErarRZKr1QjC
+         ZdQs2NwuV39b1qL69TgLRZ21EpihgXTYlNo0EH/QUn/K/OinLlE79na38DBFhv15y5pa
+         erozVtq1UgZrJc78NZ/hSPdN0q9BHC8bdUYLichp6FY3alJ+2A5wNvD4ciTcdurinp1O
+         tZOSz8FhnreTYTXpOxXzBlCLV/R3kuou0/Y5eZ1QzVgoJ+p/hW320CdV2am62800LZnz
+         FJ4pJ4WO0sdT5v4S94dVGqPx1Rot+K5y8i3347YZEMcQvMFac/jnfM9jHuWTsKXVpYs6
+         8GGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMlBOFAgvTQNbDgU9SwMSbEeuPeZdESSKuQim0QFU3JORR+aCKC6EjULAFBw07f7tByGp/907rEbHkT2c4czEEqr2wsxNJ5yzgrIbX
+X-Gm-Message-State: AOJu0YysQpYdjEz8nHXfQddPwpOjPvslfDjnCdDIOq9ptoZh7qjADycp
+	8uLmjUQmzPznNBKLpKNxSwWf9kvU1d7zVNlXvhKGNO83sJryVU1VafRPJBIeVIU=
+X-Google-Smtp-Source: AGHT+IHaNouuhzQ1M1UrMMhpFB2OYkekDxpOwvZS4ZCvpyA/cVxQfuO1chwsPix33xJ5/ckC5Qt+ig==
+X-Received: by 2002:a05:6870:b625:b0:260:fb01:5651 with SMTP id 586e51a60fabf-267d4d2dc08mr9917991fac.12.1722267082223;
+        Mon, 29 Jul 2024 08:31:22 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700::17c0])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2653cfcf7edsm1889857fac.3.2024.07.29.08.31.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 08:31:21 -0700 (PDT)
+Date: Mon, 29 Jul 2024 10:31:20 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev,
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	linux-iio@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Nuno Sa <nuno.sa@analog.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	Ivan Mikhaylov <fr0st61te@gmail.com>,
+	Mike Looijmans <mike.looijmans@topic.nl>,
+	Marcus Folkesson <marcus.folkesson@gmail.com>,
+	Liam Beguin <liambeguin@gmail.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] drivers: iio: adc: add support for ad777x family
+Message-ID: <ee65606b-aef1-48c1-8e61-3f00302416ff@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/7] memory: tegra: Cleanup Tegra210 EMC frequency
- scaling
-To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240724155517.12470-5-ramona.nechita@analog.com>
 
-On 04/07/2024 13:31, Diogo Ivo wrote:
-> Hello,
-> 
-> This patch series consists of a general cleanup of the Tegra210 EMC
-> frequency scaling code for revision 7.
-> 
-> Currently the code is relying heavily on a function, update_clock_tree_delay(),
-> that is responsible for too many things, making it long and confusing.
-> The general idea with these patches is to simplify this function and its
-> surrounding code, making it more modular.
-> 
-> The motivation behind these changes (besides improving readability and
-> maintainability) is to make it simpler to add support in the future for
-> frequency change revisions other than 7, where we can reuse a large
-> portion of the modularized code rather than essentially repeating 2k
-> lines of code with minimal changes.
-> 
-> There are no functional changes with this patch set, as it is only meant
-> as preparation for following patches where revision 6 support is added.
-> 
-> Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-> ---
-> Changes in v4:
-> - PATCH 07/07: Add missing parenthesis around operands when calculating
->   delay
-> - Link to v3: https://lore.kernel.org/r/20240507093056.3921-1-diogo.ivo@tecnico.ulisboa.pt
-> 
-> ---
-> Diogo Ivo (7):
->       memory: tegra: Remove periodic compensation duplicate calls
->       memory: tegra: Move DQSOSC measurement to common place
->       memory: tegra: Reword and correct comments
->       memory: tegra: Change macros to interpret parameter as integer
->       memory: tegra: Loop update_clock_tree_delay()
->       memory: tegra: Move compare/update current delay values to a function
->       memory: tegra: Rework update_clock_tree_delay()
-> 
->  drivers/memory/tegra/tegra210-emc-cc-r21021.c | 429 ++++++--------------------
->  1 file changed, 86 insertions(+), 343 deletions(-)
-> ---
-> base-commit: 22a40d14b572deb80c0648557f4bd502d7e83826
-> change-id: 20240704-tegra210_emcfreq-9d2466310cec
+Hi Ramona,
 
-I don't understand what happened with this series. lore cannot find
-anything for above change-id. b4 diff also fails:
-b4 diff '<20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt>'
-Grabbing thread from
-lore.kernel.org/all/20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt/t.mbox.gz
-Checking for older revisions
-Grabbing search results from lore.kernel.org
-Nothing matching that query.
----
-Analyzing 8 messages in the thread
-Could not find lower series to compare against.
+kernel test robot noticed the following build warnings:
 
-Link to v3 does not point to v3, but to some resend. Changelog is
-incomplete - mentions only v3, but what happened between v1->v2, v2->v3?
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-There is canonical way to send patches which makes everything
-straightforward (and IMHO easy). It's called b4. But you can just use
-git format-patch and git send-email. Whatever you choose, this makes
-maintainer life easy.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ramona-Alexandra-Nechita/dt-bindings-iio-adc-add-a7779-doc/20240725-000001
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20240724155517.12470-5-ramona.nechita%40analog.com
+patch subject: [PATCH v4 3/3] drivers: iio: adc: add support for ad777x family
+config: hexagon-randconfig-r081-20240728 (https://download.01.org/0day-ci/archive/20240729/202407290151.pCUNfKeG-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project ccae7b461be339e717d02f99ac857cf0bc7d17fc)
 
-Way you sent patches is somehow broken, I don't know how, but it does
-not make maintainer life easy.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202407290151.pCUNfKeG-lkp@intel.com/
 
-Please reply with changelog and explanation where is original v3.
+smatch warnings:
+drivers/iio/adc/ad7779.c:779 ad7779_probe() error: uninitialized symbol 'ret'.
 
+vim +/ret +779 drivers/iio/adc/ad7779.c
 
-Best regards,
-Krzysztof
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  761  static int ad7779_probe(struct spi_device *spi)
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  762  {
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  763  	struct iio_dev *indio_dev;
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  764  	struct ad7779_state *st;
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  765  	struct gpio_desc *reset_gpio, *start_gpio;
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  766  	int ret;
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  767  
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  768  	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  769  	if (!indio_dev)
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  770  		return -ENOMEM;
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  771  
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  772  	st = iio_priv(indio_dev);
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  773  
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  774  	st->mclk = devm_clk_get_enabled(&spi->dev, "mclk");
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  775  	if (IS_ERR(st->mclk))
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  776  		return PTR_ERR(st->mclk);
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  777  
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  778  	if (!spi->irq)
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24 @779  		return dev_err_probe(&spi->dev, ret,
+                                                                                                        ^^^
+s/ret/-EINVAL/
+
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  780  				     "DRDY irq not present\n"); 
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  781  
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  782  	reset_gpio = devm_gpiod_get_optional(&spi->dev, "reset", GPIOD_OUT_LOW);
+ed8e3886f0d748 Ramona Alexandra Nechita 2024-07-24  783  	if (IS_ERR(reset_gpio))
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
