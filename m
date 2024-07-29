@@ -1,116 +1,150 @@
-Return-Path: <linux-kernel+bounces-265546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B842C93F2A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:28:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BACA693F2A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36BA7B24473
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:28:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34793B24674
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868DC1448C0;
-	Mon, 29 Jul 2024 10:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECF4144306;
+	Mon, 29 Jul 2024 10:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m5rgXWsM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1a2rk9l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA212143873;
-	Mon, 29 Jul 2024 10:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E727D143873;
+	Mon, 29 Jul 2024 10:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722248879; cv=none; b=kCeKt2ItW4qD1/hlodcbVjBYiW2GeU7NMlsb6JO5i40XbUG3V4FiCJ10cBaOHQ/zX6PjaxiI/7EdOZoMYNGp9YDAIdvCLWYB84QrZsuYseweT70x7ZtbKwgorrOphtieWBXHhfne16sqHxGt5DZ5V2Gh462unG06yNUsr1Wqfw8=
+	t=1722248892; cv=none; b=YzNIMK0aezvFvoqBOYl/SObcIPJ5UBYOGePCSZPl1ucoJ3ZmLkPqd1kW/gaEOgKZrEwahzyW+Y7k6gZ5XHnKI/iX7jHCik1m/uKQzscHxhyZVYaqewT660Q8xOJE+pXtOv05cQFQNg4xz66IHsBgfGlHqwLLwRYa++joCiNm8iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722248879; c=relaxed/simple;
-	bh=Bt99ge3UUZGPkVxOwjK0CeLHXnSXdbcs1gevqufOntg=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ewr2AD7j6paN+I8bqNEoQmyZMdU7LvqZjImdhhpJWEJ7F5Oj+TkdmmvlBNnk10Ua3CrPd+Q2CU8SiMd+yj17urmISGPAeIeti7pEd87ArKXBRtn3B/KSlhEo0K7HbVmBZQuOHp/Y4wxU5herIlrzJ81zq6zurc0HzsY6sPNAAD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m5rgXWsM; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722248878; x=1753784878;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Bt99ge3UUZGPkVxOwjK0CeLHXnSXdbcs1gevqufOntg=;
-  b=m5rgXWsMaVGy12/4ilQY1djYu9Q37+mvkuxorQppjNccBnxkRHF69VSv
-   KiGdSSeAEX/hU5SpG3MOEduL9QUY1Z1EgXjoww8z3uk/1C5i//BbHdJJd
-   t2oCR7v6M8qgemiJyhWAaBBPQ0j8w2IfubWtIkOPvM1ytK1iEt5pHv+9a
-   fXp1Y3qljI8FV3X2CnMh/7cEf8AUzJLzAwAzdVlGduFBSyrl4iICI0xW+
-   u4Haa/T6xRwBjOXYkfKSn4Jl6x/qcm5AIjrTDB8FG+6V018IVCAnTxiB1
-   WhoAZcl/Kb4OBf6+PjVAvrleACduwARVe+WwKJy8veHt/Ka6WNKcZdXJQ
-   A==;
-X-CSE-ConnectionGUID: TGJvmAnvS4aKhXpdVNx+lw==
-X-CSE-MsgGUID: cwTsFYcJSZW1RrFCwrXejg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="37502565"
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="37502565"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 03:27:57 -0700
-X-CSE-ConnectionGUID: Ynsp7EQmRje2W4uZXxa9yQ==
-X-CSE-MsgGUID: ZV+fiUwNQXmPYSqHZqNgKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="77171478"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.151])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 03:27:48 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 29 Jul 2024 13:27:44 +0300 (EEST)
-To: Matthew W Carlis <mattc@purestorage.com>
-cc: macro@orcam.me.uk, alex.williamson@redhat.com, bhelgaas@google.com, 
-    christophe.leroy@csgroup.eu, davem@davemloft.net, 
-    david.abdurachmanov@gmail.com, edumazet@google.com, kuba@kernel.org, 
-    leon@kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, 
-    linuxppc-dev@lists.ozlabs.org, Lukas Wunner <lukas@wunner.de>, 
-    mahesh@linux.ibm.com, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-    mpe@ellerman.id.au, Netdev <netdev@vger.kernel.org>, npiggin@gmail.com, 
-    oohall@gmail.com, pabeni@redhat.com, pali@kernel.org, saeedm@nvidia.com, 
-    sr@denx.de, wilson@tuliptree.org
-Subject: Re: PCI: Work around PCIe link training failures
-In-Reply-To: <20240726080446.12375-1-mattc@purestorage.com>
-Message-ID: <914b7d34-9ed5-cd99-cb76-f6f8eccb842e@linux.intel.com>
-References: <20240724191830.4807-1-mattc@purestorage.com> <20240726080446.12375-1-mattc@purestorage.com>
+	s=arc-20240116; t=1722248892; c=relaxed/simple;
+	bh=KuzVOdTe+hO7Q9gOCAU1cgdeJs4oTsd+ZTmC99wf0o8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TKKIWGK1NnLu4ozjPZlH5lEz5CtVPgMvvAl4mZBY+GAUZbZ9OoSMnnq4fPuD7gTG+Dl7oXrN/NKschrD5VssQLiNwSp/ADEAGTCb3ThML19rP1Z3/dspTTBks8HZ1iKeslalIu46l/nfSKaRt8PAGSNyQpqZDtJbaTJRbIaHxUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1a2rk9l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACD0CC4AF0A;
+	Mon, 29 Jul 2024 10:28:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722248891;
+	bh=KuzVOdTe+hO7Q9gOCAU1cgdeJs4oTsd+ZTmC99wf0o8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U1a2rk9lQllu79+405YVwLqJgJVAm4OxAJrnNMwo1dIHOL4CYoFWk4f/VXJf3rY3S
+	 sGPT96RzP8fiAnSr08OIsw1NLP5gwztytDF8ZQg4zDTN0qfyhPKK78avJNX9hHwkCH
+	 T9Z5ceOjLkzubEacjKSk/8osk7tj791Wa9Q4VZ4cEOSp4gZJRGjbqdAEX4nkfvtEto
+	 V4Nbols+cZ1tM34A8qw6ioxgKTCCSwEsLAOTw1+SxwF1fuoqKAitoLGbP9NgTeajX7
+	 RPx9hujv/r4ObGNN5lRmHZWBUHSAdcTOBd0DUopVAXOCY7mTwqDVlnJdybx26paQ7G
+	 DC0OoIpFX5bDA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sYNbz-000000007W7-2zXI;
+	Mon, 29 Jul 2024 12:28:16 +0200
+Date: Mon, 29 Jul 2024 12:28:15 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Maximilian Luz <luzmaximilian@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Amirreza Zarrabi <quic_azarrabi@quicinc.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Elliot Berman <quic_eberman@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [PATCH] Revert "firmware: qcom: qseecom: convert to using the TZ
+ allocator"
+Message-ID: <Zqduv66H2OczRgaH@hovoldconsulting.com>
+References: <20240729095542.21097-1-johan+linaro@kernel.org>
+ <CAMRc=McuqEv1Sk9O6kn4aHo9wOfzskZS0z2QxzNM=q2N8XZ3zw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=McuqEv1Sk9O6kn4aHo9wOfzskZS0z2QxzNM=q2N8XZ3zw@mail.gmail.com>
 
-On Fri, 26 Jul 2024, Matthew W Carlis wrote:
-
-> On Mon, 22 Jul 2024, Maciej W. Rozycki wrote:
+On Mon, Jul 29, 2024 at 12:03:55PM +0200, Bartosz Golaszewski wrote:
+> On Mon, Jul 29, 2024 at 11:58 AM Johan Hovold <johan+linaro@kernel.org> wrote:
+> >
+> > This reverts commit 6612103ec35af6058bb85ab24dae28e119b3c055.
+> >
+> > Using the "TZ allocator" for qcseecom breaks efivars on machines like
+> > the Lenovo ThinkPad X13s and x1e80100 CRD:
+> >
+> >         qcom_scm firmware:scm: qseecom: scm call failed with error -22
+> >
+> > Reverting to the 6.10 state makes qseecom work again.
+> >
+> > Fixes: 6612103ec35a ("firmware: qcom: qseecom: convert to using the TZ allocator")
+> > Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> > ---
+> > Cc: regressions@lists.linux.dev
+> >
+> > #regzbot introduced: 6612103ec35a
 > 
-> > The main reason is it is believed that it is the downstream device
-> > causing the issue, and obviously you can't fetch its ID if you can't
-> > negotiate link so as to talk to it in the first place.
+> How about at least giving me the chance to react to the report and fix
+> it instead of reverting it right away?
+
+Lots of folks have been running linux-next on Qualcomm machines for a
+month without reporting or fixing the issue. And v10 of the offending
+patch was apparently never even tested before being merged.
+
+I'm sure you'll have a few days to look at this before we revert.
+
+I'll be on holiday for a few weeks, but you have an X13s so you should
+be able to reproduce this yourself.
+
+> Are there any other messages about SHM bridge/SCM calls in the kernel log?
+
+I've also seen this combo:
+
+	[    3.219296] qcom_scm firmware:scm: qseecom: scm call failed with error -22
+        [    3.227153] efivars: get_next_variable: status=8000000000000007
+
+But usually the first message is the only hint why efivars is completely
+broken.
+
+> Do you have QCOM_TZMEM_MODE_GENERIC=y or QCOM_TZMEM_MODE_SHM_BRIDGE=y
+> in your config? If the latter: can you try changing it to the former
+> and retest?
+
+I have the former in my config but have tested both, made no difference.
+
+> > It's a little frustrating to find that no-one tested this properly or
+> > even noticed the regression for the past month that this has been
+> > sitting in linux-next.
 > 
-> Have had some more time to look into this issue. So, I think the problem
-> with this change is that it is quite strict in its assumptions about what
-> it means when a device fails to train, but in an environment where hot-plug
-> is exercised frequently you are essentially bound have something interrupt
-> the link training. In the first case where we caught this problem our test
-> automation was doing some power cycle tortures on our endpoints. If you catch
-> the right timing the link will be forced down to Gen1 forever without some other
-> automation to recover you unless your device is the one single device in the
-> allowlist which had the hardware bug in the first place.
+> I have tested many platforms and others have done the same but
+> unfortunately cannot possibly test every single use-case on every
+> platform. This is what next is for after all.
+
+I doubt this is specific to sc8280xp and x1e80100. Which platforms did
+you test qseecom and efivars on?
+
+> > Looks like Maximilian may have hit this with v9 too:
+> >
+> >         https://lore.kernel.org/lkml/CAMRc=Mf_pvrh2VMfTVE-ZTypyO010p=to-cd8Q745DzSDXLGFw@mail.gmail.com/
+> >
+> > even if there were further issues with that revision.
 > 
-> I wonder if we can come up with some kind of alternative.
+> This is a different issue that was fixed in a later iteration.
 
-The most obvious solution is to not leave the speed at Gen1 on failure in 
-Target Speed quirk but to restore the original Target Speed value. The 
-downside with that is if the current retraining interface (function) is 
-used, it adds delay. But the retraining functions could be reworked such 
-that the retraining is only triggered in case the Target Speed quirk 
-fails but we don't wait for its result (which will very likely fail 
-anyway).
+The symptoms appear to be the same once you get past the locking splats:
 
--- 
- i.
+	[    2.507347] qcom_scm firmware:scm: qseecom: scm call failed with error -22
+	[    2.507813] efivars: get_next_variable: status=8000000000000007
 
+So it's possible that this never worked.
+
+Johan
 
