@@ -1,273 +1,127 @@
-Return-Path: <linux-kernel+bounces-265609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A541293F3B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:11:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E79FB93F3B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78A41C218C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:11:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 040DE1C2082B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AE2145B06;
-	Mon, 29 Jul 2024 11:11:02 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B070145A17;
+	Mon, 29 Jul 2024 11:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lKGy0aNN"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1BF145A0A;
-	Mon, 29 Jul 2024 11:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE4023CE
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722251461; cv=none; b=XSpOebKzl+QGSGfM3YSg1ZY1wtGdFZxzaR5AgJZ+o80etYA3FWHe6scCdYpBPkydkz6agVUjIjXwJUEqqWQvz5l+YqXMc/XI3vAMzdRntlSSNy7xALyI7G++6uklnMwmwJzW5V5xazJ2kyYF4gZHCV4uo5PmWfnhytiIL7c5t4E=
+	t=1722251550; cv=none; b=g5+qqjWENq0NZdhDITieFSBmaEyRzfu37PMvfyo9KFSpmQ0LokYnkQB6cttfTHWAJJVBZO32l7uD9P43cCtzMs+g5MItoAhYdKNELWjIJ2wt9Y0dx8KlO4rV2F7ewf+a7cYmmKi0fF9gdn/I1prQBiFiabQRFP7/SQF6zHWgO3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722251461; c=relaxed/simple;
-	bh=SJ//61zs9YkpjXbm861D0K8GgZ1Ki0bah6gnhT2Kb+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Um9+NapZh0fDG6a9ficR7BMaARM29ZKajVRtiBmLhdArSkOOy71f3HsXnOYDf1rlMo05/G+f6Vr4pxP5t8BbrhxMTEorMt6/I/Li4kOA8LqaOoygTSfh0QFctYzRTS5mCAfBTODBK78N3ic7BDEHE2qxMVcZ6CBx6q6JWASsJ3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WXbBT34HRzyNwn;
-	Mon, 29 Jul 2024 19:05:53 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8BE72140135;
-	Mon, 29 Jul 2024 19:10:49 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 29 Jul 2024 19:10:48 +0800
-Message-ID: <f7be9126-e153-cfa6-2c16-f99bc89c5430@huawei.com>
-Date: Mon, 29 Jul 2024 19:10:47 +0800
+	s=arc-20240116; t=1722251550; c=relaxed/simple;
+	bh=998IHP0Apss4Il6EUL6cVol+ZhwkZCCx3CDIIvhuSwE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jfdbBChn930RkpDbgxq+KHVXq4h8Nn4UWe61b6sBwURq6jGcXB+RSKYtAgQ/XK/i84G9qSkw4ZFQlrgjc7MGRRWyp+Ff/ke0mn6lBP6/bZftNyYb84ySzcDCFV8maSmJkHDObjU1pSBdaauEZvyVaghqzVV8gpeUO4bc2xcBtfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lKGy0aNN; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a1337cfbb5so5846196a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 04:12:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722251547; x=1722856347; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rdY4mJRd0oeIvInVYbrZM2hv5BYVyhNVq+NkJ96ZB1o=;
+        b=lKGy0aNN3saYBv4bTrqQJYzCAYrD5jWBoJpnuMezwxwl3EhvNisAvEYOIGVdZHQz1+
+         5XsXaH6qVfLpdDteHljsKknobDKWpIZVfrc1bhd9MtGVvADr/Bbe5nbZL7bPJj/t/wst
+         r3P3DLZ2ANRKoGQnvKXjGlR5vzzgfbPQxgkFh705uBoRk6ZsCcSQGJxz+goF+HZw9jNx
+         8/sb05o3H7eXzAvmm6sDAjIg89FAoUB2kOPqQc02WIua/jckfdlinfTXvf/Aa6HYecmr
+         97fjEO/kSJtxMryy2DDlrAeFuKtVZZgORHqN6ui3Vi7bBbXxKrnUQYbc+tqAFegbwkvO
+         uMeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722251547; x=1722856347;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rdY4mJRd0oeIvInVYbrZM2hv5BYVyhNVq+NkJ96ZB1o=;
+        b=KRiUHzQCJx7DorBlU5ilOiiatEy4O7y7ATJ3QP31ufy3L54SpfZHia6qojMmJrYJ9/
+         vmbztkkbkwxQmz/tq6mxcQmprI9PS0Z+QjI4GQwWGZbf7inmTiGqDAUrk6ikAUzEPC42
+         yWx6OSPXa5yr2mOZqYKUdfbU4d1LOHTm9LNRjBW9dkZYRjCr6bNEkXovpc9PIJxBli8J
+         Bo5ijaf1oyOHxDiraOGmoDp8sY73sPtBMTpp3w0Ak0nQTABM7/65LnB9Mn5ThwBt/Xog
+         fG/W9VsYQGNIieCEgWESSIiXfILe9YJ8F2jtOQulciJmj5KIIREt5qGpYAJkPLyntmrJ
+         NDoA==
+X-Forwarded-Encrypted: i=1; AJvYcCXe/wBNHTTW9Go/l8I58bXMx6b9aLzV+H9KIO30jlkaNsxrD6ipf0oOpkXwqM4uyNcKVw0nT1agrxWoe/X8gU9tTzaeNA4e7qm3AIFV
+X-Gm-Message-State: AOJu0Yzx4CRgBFj3XeVtLDT3rYYLob6HRriFGjTUSqZIIs2kazZJx8sY
+	IlD8d+MDkLTpoe/yAGC1DeAK69ywus0z5HNuvVuE9R2ThlcGbXwi2J3RAfeOQA8KWd2q3oJf6yK
+	KQknmG7C5XBMG/Q4qpmecVHrkhIA=
+X-Google-Smtp-Source: AGHT+IFpYaI7E8RYTe30mmeB9PwuJeWdWuINGfRSgZsGWtXgNUwi7s9dWJpFA+BGWsGxl2VUvW1CTs+NwqC6Ux278ps=
+X-Received: by 2002:a05:6402:35d6:b0:5a2:3453:aaf2 with SMTP id
+ 4fb4d7f45d1cf-5b0205d6d60mr5778076a12.10.1722251546666; Mon, 29 Jul 2024
+ 04:12:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v2] irqchip: Remove asmlinkage for *handle_irq() functions
-Content-Language: en-US
-To: Mark Rutland <mark.rutland@arm.com>
-CC: <tglx@linutronix.de>, <maz@kernel.org>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
-	<shc_work@mail.ru>, <linusw@kernel.org>, <kaloz@openwrt.org>,
-	<aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
-	<rogerq@kernel.org>, <tony@atomide.com>, <joey.gouly@arm.com>,
-	<catalin.marinas@arm.com>, <will@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-omap@vger.kernel.org>
-References: <20240729024752.1250618-1-ruanjinjie@huawei.com>
- <ZqdjUZCiQFl-_UMM@J2N7QTR9R3>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <ZqdjUZCiQFl-_UMM@J2N7QTR9R3>
+References: <20240726165246.31326-1-ahuang12@lenovo.com> <20240728141851.aece5581f6e13fb6d6280bc4@linux-foundation.org>
+In-Reply-To: <20240728141851.aece5581f6e13fb6d6280bc4@linux-foundation.org>
+From: Huang Adrian <adrianhuang0701@gmail.com>
+Date: Mon, 29 Jul 2024 19:12:15 +0800
+Message-ID: <CAHKZfL3PjWSEFRa3f6kBqx4YSsCWumK8zi0V1UEX_x+oDZZ1pQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mm/vmalloc: Combine all TLB flush operations of KASAN
+ shadow virtual address into one operation
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Christoph Hellwig <hch@infradead.org>, Baoquan He <bhe@redhat.com>, kasan-dev@googlegroups.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Adrian Huang <ahuang12@lenovo.com>, Jiwei Sun <sunjw10@lenovo.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jul 29, 2024 at 5:18=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Sat, 27 Jul 2024 00:52:46 +0800 Adrian Huang <adrianhuang0701@gmail.co=
+m> wrote:
+>
+> > From: Adrian Huang <ahuang12@lenovo.com>
+> >
+> > When compiling kernel source 'make -j $(nproc)' with the up-and-running
+> > KASAN-enabled kernel on a 256-core machine, the following soft lockup
+> > is shown:
+> >
+> > ...
+> >
+> >         # CPU  DURATION                  FUNCTION CALLS
+> >         # |     |   |                     |   |   |   |
+> >           76) $ 50412985 us |    } /* __purge_vmap_area_lazy */
+> >
+> > ...
+> >
+> >      # CPU  DURATION                  FUNCTION CALLS
+> >      # |     |   |                     |   |   |   |
+> >        23) $ 1074942 us  |    } /* __purge_vmap_area_lazy */
+> >        23) $ 1074950 us  |  } /* drain_vmap_area_work */
+> >
+> >   The worst execution time of drain_vmap_area_work() is about 1 second.
+>
+> Cool, thanks.
+>
+> But that's still pretty dreadful and I bet there are other workloads
+> which will trigger the lockup detector in this path?
 
+Yes, this path can be reproduced by other workloads. The stress-ng
+command `stress-ng --exec $(nproc) --timeout 5m` can also trigger the
+lockup detector in this path. (Confirmed on v6.11-rc1)
 
-On 2024/7/29 17:39, Mark Rutland wrote:
-> On Mon, Jul 29, 2024 at 10:47:52AM +0800, Jinjie Ruan wrote:
->> Since commit 064dbfb41691 ("arm64: entry: convert IRQ+FIQ handlers to C"),
->> the gic_handle_irq() is only called by C functions.
->>
->> And since commit a7b0872e964c ("irq: arm: perform irqentry in entry code"),
->> aic_handle(), aic5_handle(), clps711x_irqh(), davinci_cp_intc_handle_irq(),
->> ft010_irqchip_handle_irq(), ixp4xx_handle_irq(), omap_intc_handle_irq(),
->> sa1100_handle_irq() and fpga_handle_irq() are only called by C functions.
->>
->> So remove the asmlinkages.
-> 
-> This commit message isn't quite right -- GICv3 can also be used on 32-bit arm,
-> and so even after commit 064dbfb41691 it could be called from assembly until
-> commit a7b0872e964c.
-
-You are right! ARCH_AIROHA and ARCH_VIRT also use GICv3.
-
-> 
-> I think it'd be better to say:
-> 
->   Currently, all architectures with set_handle_irq() call the root irqchip
->   handler from C code, so there's no need for these to be asmlinkage.
-> 
->   Remove asmlinkage for all handlers registered with set_handle_irq().
-> 
->> Fixes: 064dbfb41691 ("arm64: entry: convert IRQ+FIQ handlers to C")
->> Fixes: a7b0872e964c ("irq: arm: perform irqentry in entry code")
-> 
-> This is a cleanup, not a fix. Please don't add Fixes tags unless this
-> fixes a real functional issue.
-> 
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> 
-> With the commit message cleaned up and the fixes tags gone:
-
-Thank you! I'll update it.
-
-> 
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-> 
-> Mark.
-> 
->> ---
->> v2:
->> - Also fix for arm32 irqchip as Thomas suggested.
->> - Add Suggested-by.
->> ---
->>  drivers/irqchip/irq-atmel-aic.c       | 3 +--
->>  drivers/irqchip/irq-atmel-aic5.c      | 3 +--
->>  drivers/irqchip/irq-clps711x.c        | 2 +-
->>  drivers/irqchip/irq-davinci-cp-intc.c | 3 +--
->>  drivers/irqchip/irq-ftintc010.c       | 2 +-
->>  drivers/irqchip/irq-gic-v3.c          | 2 +-
->>  drivers/irqchip/irq-ixp4xx.c          | 3 +--
->>  drivers/irqchip/irq-omap-intc.c       | 3 +--
->>  drivers/irqchip/irq-sa11x0.c          | 3 +--
->>  drivers/irqchip/irq-versatile-fpga.c  | 2 +-
->>  10 files changed, 10 insertions(+), 16 deletions(-)
->>
->> diff --git a/drivers/irqchip/irq-atmel-aic.c b/drivers/irqchip/irq-atmel-aic.c
->> index 4631f6847953..3839ad79ad31 100644
->> --- a/drivers/irqchip/irq-atmel-aic.c
->> +++ b/drivers/irqchip/irq-atmel-aic.c
->> @@ -57,8 +57,7 @@
->>  
->>  static struct irq_domain *aic_domain;
->>  
->> -static asmlinkage void __exception_irq_entry
->> -aic_handle(struct pt_regs *regs)
->> +static void __exception_irq_entry aic_handle(struct pt_regs *regs)
->>  {
->>  	struct irq_domain_chip_generic *dgc = aic_domain->gc;
->>  	struct irq_chip_generic *gc = dgc->gc[0];
->> diff --git a/drivers/irqchip/irq-atmel-aic5.c b/drivers/irqchip/irq-atmel-aic5.c
->> index 145535bd7560..c0f55dc7b050 100644
->> --- a/drivers/irqchip/irq-atmel-aic5.c
->> +++ b/drivers/irqchip/irq-atmel-aic5.c
->> @@ -67,8 +67,7 @@
->>  
->>  static struct irq_domain *aic5_domain;
->>  
->> -static asmlinkage void __exception_irq_entry
->> -aic5_handle(struct pt_regs *regs)
->> +static void __exception_irq_entry aic5_handle(struct pt_regs *regs)
->>  {
->>  	struct irq_chip_generic *bgc = irq_get_domain_generic_chip(aic5_domain, 0);
->>  	u32 irqnr;
->> diff --git a/drivers/irqchip/irq-clps711x.c b/drivers/irqchip/irq-clps711x.c
->> index e731e0784f7e..806ebb1de201 100644
->> --- a/drivers/irqchip/irq-clps711x.c
->> +++ b/drivers/irqchip/irq-clps711x.c
->> @@ -69,7 +69,7 @@ static struct {
->>  	struct irq_domain_ops	ops;
->>  } *clps711x_intc;
->>  
->> -static asmlinkage void __exception_irq_entry clps711x_irqh(struct pt_regs *regs)
->> +static void __exception_irq_entry clps711x_irqh(struct pt_regs *regs)
->>  {
->>  	u32 irqstat;
->>  
->> diff --git a/drivers/irqchip/irq-davinci-cp-intc.c b/drivers/irqchip/irq-davinci-cp-intc.c
->> index 7482c8ed34b2..f4f8e9fadbbf 100644
->> --- a/drivers/irqchip/irq-davinci-cp-intc.c
->> +++ b/drivers/irqchip/irq-davinci-cp-intc.c
->> @@ -116,8 +116,7 @@ static struct irq_chip davinci_cp_intc_irq_chip = {
->>  	.flags		= IRQCHIP_SKIP_SET_WAKE,
->>  };
->>  
->> -static asmlinkage void __exception_irq_entry
->> -davinci_cp_intc_handle_irq(struct pt_regs *regs)
->> +static void __exception_irq_entry davinci_cp_intc_handle_irq(struct pt_regs *regs)
->>  {
->>  	int gpir, irqnr, none;
->>  
->> diff --git a/drivers/irqchip/irq-ftintc010.c b/drivers/irqchip/irq-ftintc010.c
->> index 359efc1d1be7..b91c358ea6db 100644
->> --- a/drivers/irqchip/irq-ftintc010.c
->> +++ b/drivers/irqchip/irq-ftintc010.c
->> @@ -125,7 +125,7 @@ static struct irq_chip ft010_irq_chip = {
->>  /* Local static for the IRQ entry call */
->>  static struct ft010_irq_data firq;
->>  
->> -static asmlinkage void __exception_irq_entry ft010_irqchip_handle_irq(struct pt_regs *regs)
->> +static void __exception_irq_entry ft010_irqchip_handle_irq(struct pt_regs *regs)
->>  {
->>  	struct ft010_irq_data *f = &firq;
->>  	int irq;
->> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
->> index c19083bfb943..0efa3443c323 100644
->> --- a/drivers/irqchip/irq-gic-v3.c
->> +++ b/drivers/irqchip/irq-gic-v3.c
->> @@ -930,7 +930,7 @@ static void __gic_handle_irq_from_irqsoff(struct pt_regs *regs)
->>  	__gic_handle_nmi(irqnr, regs);
->>  }
->>  
->> -static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
->> +static void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
->>  {
->>  	if (unlikely(gic_supports_nmi() && !interrupts_enabled(regs)))
->>  		__gic_handle_irq_from_irqsoff(regs);
->> diff --git a/drivers/irqchip/irq-ixp4xx.c b/drivers/irqchip/irq-ixp4xx.c
->> index 5fba907b9052..f23b02f62a5c 100644
->> --- a/drivers/irqchip/irq-ixp4xx.c
->> +++ b/drivers/irqchip/irq-ixp4xx.c
->> @@ -105,8 +105,7 @@ static void ixp4xx_irq_unmask(struct irq_data *d)
->>  	}
->>  }
->>  
->> -static asmlinkage void __exception_irq_entry
->> -ixp4xx_handle_irq(struct pt_regs *regs)
->> +static void __exception_irq_entry ixp4xx_handle_irq(struct pt_regs *regs)
->>  {
->>  	struct ixp4xx_irq *ixi = &ixirq;
->>  	unsigned long status;
->> diff --git a/drivers/irqchip/irq-omap-intc.c b/drivers/irqchip/irq-omap-intc.c
->> index dc82162ba763..ad84a2f03368 100644
->> --- a/drivers/irqchip/irq-omap-intc.c
->> +++ b/drivers/irqchip/irq-omap-intc.c
->> @@ -325,8 +325,7 @@ static int __init omap_init_irq(u32 base, struct device_node *node)
->>  	return ret;
->>  }
->>  
->> -static asmlinkage void __exception_irq_entry
->> -omap_intc_handle_irq(struct pt_regs *regs)
->> +static void __exception_irq_entry omap_intc_handle_irq(struct pt_regs *regs)
->>  {
->>  	extern unsigned long irq_err_count;
->>  	u32 irqnr;
->> diff --git a/drivers/irqchip/irq-sa11x0.c b/drivers/irqchip/irq-sa11x0.c
->> index 31c202a1ae62..9d0b80271949 100644
->> --- a/drivers/irqchip/irq-sa11x0.c
->> +++ b/drivers/irqchip/irq-sa11x0.c
->> @@ -127,8 +127,7 @@ static int __init sa1100irq_init_devicefs(void)
->>  
->>  device_initcall(sa1100irq_init_devicefs);
->>  
->> -static asmlinkage void __exception_irq_entry
->> -sa1100_handle_irq(struct pt_regs *regs)
->> +static void __exception_irq_entry sa1100_handle_irq(struct pt_regs *regs)
->>  {
->>  	uint32_t icip, icmr, mask;
->>  
->> diff --git a/drivers/irqchip/irq-versatile-fpga.c b/drivers/irqchip/irq-versatile-fpga.c
->> index 5018a06060e6..ca471c6fee99 100644
->> --- a/drivers/irqchip/irq-versatile-fpga.c
->> +++ b/drivers/irqchip/irq-versatile-fpga.c
->> @@ -128,7 +128,7 @@ static int handle_one_fpga(struct fpga_irq_data *f, struct pt_regs *regs)
->>   * Keep iterating over all registered FPGA IRQ controllers until there are
->>   * no pending interrupts.
->>   */
->> -static asmlinkage void __exception_irq_entry fpga_handle_irq(struct pt_regs *regs)
->> +static void __exception_irq_entry fpga_handle_irq(struct pt_regs *regs)
->>  {
->>  	int i, handled;
->>  
->> -- 
->> 2.34.1
->>
-> 
+-- Adrian
 
