@@ -1,115 +1,95 @@
-Return-Path: <linux-kernel+bounces-265827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD42D93F683
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:14:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8459593F686
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAB902850B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:14:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC88A1C22243
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F151420D0;
-	Mon, 29 Jul 2024 13:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bclbK1iY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A672D1494A6;
+	Mon, 29 Jul 2024 13:15:41 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA4A145B3E;
-	Mon, 29 Jul 2024 13:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1933C24;
+	Mon, 29 Jul 2024 13:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722258848; cv=none; b=i5mJ9zI1TeszZBQmz5kRW9qA4hu0UA0hxMOgSz0M69b35IyvPvRMrRvaa2AhGMroUDbiErJnw75JNpRH1pMoDYDG6ExsLHKbCtatL9pVg3YTdBDGyL1nTx87B4vut2+c0T8PMu8FleuxqoyAs1FreVbJgS+KeiJ7Udxm410B/zw=
+	t=1722258941; cv=none; b=mlY+PUID4W7gybZnJXGe+gC8Lj88cTE/1WSWoITAax/FJdAC5sLWUQ4UMfMU42TTwkDIw42mUI0v5NPQfqZ+MiggDViclu2cHXr7wW63IZpCKl6logVLqfobSIF9/JGDa8LDIDWYDBrJtEJfxkEtzySHeXmhIV8Y/qhhqBb3JLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722258848; c=relaxed/simple;
-	bh=2/YZLHYwe6VeiM3pUFkU5Uwf+RFlzvvWMDWutDwHs1Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T2BubfQAfdYgymnwz0RN4mq4mAxsL/3CqB62x3wAHZrJ3qG7cx/6NMUclLmiWgpkIVp/UDNSMt9feDYa0Io0yoZ8cTEqfbXUunwFTBu8Eb4dIPuN79dsZ5Liixyqwn0AWIpe34/fco2s9wH8bAJuFbUxTufLdliFOwmx1Koyj7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bclbK1iY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39A48C32786;
-	Mon, 29 Jul 2024 13:14:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722258848;
-	bh=2/YZLHYwe6VeiM3pUFkU5Uwf+RFlzvvWMDWutDwHs1Q=;
-	h=From:To:Cc:Subject:Date:From;
-	b=bclbK1iYJNgcrsT5kdKuydrNKIIhB9Xkxuu1vbCk/IdIchAHY6fpEbFbDii9Glg8A
-	 0/Qbp/aoa7Axdt7t/0BEA4CsN1wHaj7u5GNvphqVma1VRiAhZs649aYytLB3nM0oml
-	 0/6VaNQmEls7l/T0BYUAVW5rJL/5DUL7F4xgS980I3Kahyo+Nek+D/G3/hVJwdbRLx
-	 YqmlZRo0FlELbCfH7iCamL0xvOhnpQX2TjiPtqu1cDrL3J6jUVl/R6TVgMkwyaPzqK
-	 xV/8LfAblWT7U5DkEL/SqAvZJJrQXP4CwZdKpxwlZzofWC/fr0PMh9rJU6AO0g1N2O
-	 JH9JhCwmkpcGw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1sYQCa-000000007G9-1tX1;
-	Mon, 29 Jul 2024 15:14:13 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Banajit Goswami <bgoswami@quicinc.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	alsa-devel@alsa-project.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	regressions@lists.linux.dev
-Subject: [PATCH] ASoC: codecs: lpass-macro: fix missing codec version
-Date: Mon, 29 Jul 2024 15:13:51 +0200
-Message-ID: <20240729131351.27886-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.44.2
+	s=arc-20240116; t=1722258941; c=relaxed/simple;
+	bh=h8xRu8LsNWNa8EWzLy5DooHRaMgYnciqNZEMwnIPldw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vaqf/yTQcKPMQiH2SVvM7525actKu4xllzqDRIVzJdH1cvdK5mRLqCZEUKFnTVGeATwyshO8GffGAuzKeFU0Zb2GH0J/WM2rvT5aGuFTmWMtjLpaRgApwBBiXXmxaKzIUx6lzg9vO/gU08/5GP2YGdgISyCLARSTKsqMZ61nknM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav111.sakura.ne.jp (fsav111.sakura.ne.jp [27.133.134.238])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46TDFQnY043626;
+	Mon, 29 Jul 2024 22:15:26 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav111.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp);
+ Mon, 29 Jul 2024 22:15:26 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46TDFQXw043622
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 29 Jul 2024 22:15:26 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <f9b4ff23-ee3e-418f-b65d-c40fe28fbba8@I-love.SAKURA.ne.jp>
+Date: Mon, 29 Jul 2024 22:15:26 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH (resend)] Input: MT - limit max slots
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Henrik Rydberg <rydberg@bitmath.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <a7eb34e0-28cf-4e18-b642-ea8d7959f0c7@I-love.SAKURA.ne.jp>
+ <2024072944-appraisal-panning-a0b1@gregkh>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <2024072944-appraisal-panning-a0b1@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Recent changes that started checking the codec version broke audio on
-the Lenovo ThinkPad X13s:
+On 2024/07/29 22:05, Greg Kroah-Hartman wrote:
+> On Mon, Jul 29, 2024 at 09:51:30PM +0900, Tetsuo Handa wrote:
+>> syzbot is reporting too large allocation at input_mt_init_slots(), for
+>> num_slots is supplied from userspace using ioctl(UI_DEV_CREATE).
+>>
+>> Since nobody knows possible max slots, this patch chose 1024.
+>>
+>> Reported-by: syzbot <syzbot+0122fa359a69694395d5@syzkaller.appspotmail.com>
+>> Closes: https://syzkaller.appspot.com/bug?extid=0122fa359a69694395d5
+>> Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> ---
+>> This patch was tested in linux-next between next-20240611 and next-20240729
+>> via my tree. Who can take this patch? If nobody can, I will send to Linus.
+> 
+> What is wrong with the normal input maintainer and tree?  Why not send
+> it there?
 
-	wsa_macro 3240000.codec: Unsupported Codec version (0)
-	wsa_macro 3240000.codec: probe with driver wsa_macro failed with error -22
-	rx_macro 3200000.rxmacro: Unsupported Codec version (0)
-	rx_macro 3200000.rxmacro: probe with driver rx_macro failed with error -22
+I don't know why. I couldn't get further response from Dmitry Torokhov.
+Who can make final decision and what tree is used?
 
-Add the missing codec version to the lookup table so that the codec
-drivers probe successfully.
-
-Note that I'm just assuming that this is a 2.0 codec based on the fact
-that this device uses the older register layout.
-
-Fixes: 378918d59181 ("ASoC: codecs: lpass-macro: add helpers to get codec version")
-Fixes: dbacef05898d ("ASoC: codec: lpass-rx-macro: prepare driver to accomdate new codec versions")
-Fixes: 727de4fbc546 ("ASoC: codecs: lpass-wsa-macro: Correct support for newer v2.5 version")
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
-Cc: regressions@lists.linux.dev
-#regzbot introduced: 378918d59181
-
-
- sound/soc/codecs/lpass-va-macro.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/sound/soc/codecs/lpass-va-macro.c b/sound/soc/codecs/lpass-va-macro.c
-index b852cc7ffad9..a62ccd09bacd 100644
---- a/sound/soc/codecs/lpass-va-macro.c
-+++ b/sound/soc/codecs/lpass-va-macro.c
-@@ -1472,6 +1472,8 @@ static void va_macro_set_lpass_codec_version(struct va_macro *va)
- 
- 	if ((core_id_0 == 0x01) && (core_id_1 == 0x0F))
- 		version = LPASS_CODEC_VERSION_2_0;
-+	if ((core_id_0 == 0x02) && (core_id_1 == 0x0F) && core_id_2 == 0x01)
-+		version = LPASS_CODEC_VERSION_2_0;
- 	if ((core_id_0 == 0x02) && (core_id_1 == 0x0E))
- 		version = LPASS_CODEC_VERSION_2_1;
- 	if ((core_id_0 == 0x02) && (core_id_1 == 0x0F) && (core_id_2 == 0x50 || core_id_2 == 0x51))
--- 
-2.44.2
+e.g.
+2022-11-23  0:28 https://lkml.kernel.org/r/03e8c3f0-bbbf-af37-6f52-67547cbd4cde@I-love.SAKURA.ne.jp
+2023-09-03 13:55 https://lkml.kernel.org/r/07350163-de52-a2bf-58bf-88c3d9d8d85b@I-love.SAKURA.ne.jp
+2024-05-27 10:35 https://lkml.kernel.org/r/7b7f9cf5-a1de-4e5a-8d30-bb2979309f02@I-love.SAKURA.ne.jp
 
 
