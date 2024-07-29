@@ -1,123 +1,227 @@
-Return-Path: <linux-kernel+bounces-265653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05E4D93F40D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:30:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57E9B93F40C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3100EB225FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:30:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A2581C21F2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3469145B19;
-	Mon, 29 Jul 2024 11:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EAD145B3E;
+	Mon, 29 Jul 2024 11:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VPFnkrdy"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dbdgQhVJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4996F145FE0
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8441448FA;
+	Mon, 29 Jul 2024 11:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722252602; cv=none; b=pjpZgAqTNdguoHonCqSyq1XXiySpyaA8SnNT1dvPlDk3+TdbJd/Sy7FBMLrYmXsUEby1balbYewY8S7ZniSG5clVO7Wyxhv71h7K328Tmgu2LseNFr+oWW5dk4k6PtuyeGq6UhwnvQzRISZR4BZw4yQtYmwPL1Qxw8ObVrU6Cyk=
+	t=1722252600; cv=none; b=JgLxhbrM1i/7xvjrduzwMWL+JvMI4sHeiA8GeV7sUPBZSfuj9wJI1sv2TEHMoysfsM6hjida+qhj3pjBYLg6FMOJ3HgTAt3uun/s8he9k77Q7bMd20IPcNqESpDxiqTK8XzQTLPklfwdyvArUhZClix+uJFs40jnFazgJp/chfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722252602; c=relaxed/simple;
-	bh=TipJLAp0H5sPs0dIPuvouVg0CMwOZ5mJT4nmIW/gW74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WKSGpkHKyPYoyNy4RLVykXmR+FLDNGI1jMrZFDKMLokwywM+BJfVSOygkrTHbSMoLXX6Vd2saldD0Kb/YJGW+Av2fgUxp0ceLBqWPx5wNRNxfzoth4gyXO0KOxov5IWkZGJAGl6Z0AnF725TCv/Ne7leGB9/hMOvcGxWj7HYQgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VPFnkrdy; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2082840E01BB;
+	s=arc-20240116; t=1722252600; c=relaxed/simple;
+	bh=jU5MdIjEGVQCjk1wsJHSVEQFdc3ni/pdNCW7HkOiyEc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z9fsSVuJlbNiTlwDy6ae4LIau8hUlHUKqqRMqDZvjnoDcWnu3N+x3QWLLgAR5xM2rCVM+MEeLnEutrXoTHVwLbXWv3hD53rFAjsMXojqXLJCoSURGk54fGCi0rwleAZPvo5W4yxjUi4ndfmF86Mrchw6Hw+I9sriRlhWwhlz3ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dbdgQhVJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42632C32786;
 	Mon, 29 Jul 2024 11:29:59 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id GHOm4pgWY5FW; Mon, 29 Jul 2024 11:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1722252595; bh=KG8CQ1KpLh65pKJVY3yFSoZNet0pxmhw1NBNwH+ki5o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VPFnkrdy9eI+mk47prim7u5B0t0009V/erEUG3ooBQFZvphCNy6oo1hhJjCcX6Qpc
-	 +cUFDvI34Pr7lVGVRjbXi0KXT09YETU4DyX3KYJ/HF7TsKJuQWEF172FxrD+/aSnvO
-	 pekJi6ylLN4isF5860ktgonn//4dB2LDy2yMdiZCUq7sNHlXmamMp3Ot1IIhm5If36
-	 AiNWhDNgjCb7NJW667wBRmUJUDj7R+qfMN7qRkBCQ/x1Lx76S4PZ1H3mL2LV7nsHp+
-	 NFvSVNv31tkNqjijhIUqCfA7BjFn4ZbgNy0xDFMp0rgvVl+iOUPnNfhpjYOL6BuJ3G
-	 9cPQ/zlL+MBustMik0w/Rf1eqOUvKWC6izx+3pjeD+KpSVn0G1E6b0Hei1/3jhG9Nr
-	 DAmd/ZeygtcSnqb2sHHY+5B5++jtq4TKwsSxsuPGfs6AXzWI143pbaVm/8Cw61P1OB
-	 NBWgPByMVnhvkoKMibfEj7zqZYhvFE17W4jpKU//BGAYgU8eSb24wjU4jzq2QU2cH6
-	 Z2K2Trdxx/ciZWAbzR68+93iRqEcGfUybYglzVGcH5mHbmge/ThOp0+wjPtPMrHRt0
-	 xaXscIpeEreuimI9Kip4fnf9KRMQssPkz3hPQoro1LfEIbtoHX77CIlx5nshl++zp4
-	 YGFwEcqoPWUKTJ/Fzv1di8EI=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E173340E00F4;
-	Mon, 29 Jul 2024 11:29:38 +0000 (UTC)
-Date: Mon, 29 Jul 2024 13:29:38 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-	rafael.j.wysocki@intel.com, catalin.marinas@arm.com,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, Terry.bowman@amd.com,
-	linuxarm@huawei.com, guohanjun@huawei.com, gshan@redhat.com,
-	miguel.luis@oracle.com,
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	shameerali.kolothum.thodi@huawei.com
-Subject: Re: [PATCH] x86/aperfmperf: Fix deadlock on cpu_hotplug_lock
-Message-ID: <20240729112938.GCZqd9IvTZmKXVGt9T@fat_crate.local>
-References: <20240729105504.2170-1-Jonathan.Cameron@huawei.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722252599;
+	bh=jU5MdIjEGVQCjk1wsJHSVEQFdc3ni/pdNCW7HkOiyEc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dbdgQhVJc6pf0kEzta9tlx02VjbM+40HHBUHujn5XodAgJv0E/E1XhOUeW667HgWE
+	 2BKSA4ZsJ7B52CVSsXXCAo/6kT50ifGvBNdiWLHNKPcNHUEDcPyUgvjX1RDsLRJCHt
+	 AMFzLJ4jjeWSspJf8oFdczqHSTk6pfgIdtWYhsuvY97oru2WC6DMzEG6RO00+jdZhp
+	 G5CTPMIIHVQ4paD9bvQzvOcJfrJd2smBH8oiqgcOIONha3UKgdgryrHY92F5lV6xcH
+	 Zu6Tkgf65ydK2IHRC+wJiuOtkyt2QeiZrz3lZonSBReeyLG2sS/OKSmiMFnVqsazQ/
+	 DP4N4U1uqrKsQ==
+Message-ID: <d4bb01e9-0293-4d6a-a2c1-3d37b3a368ca@kernel.org>
+Date: Mon, 29 Jul 2024 20:29:58 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240729105504.2170-1-Jonathan.Cameron@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: Fix devres regression in pci_intx()
+To: pstanner@redhat.com, Bjorn Helgaas <bhelgaas@google.com>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240725120729.59788-2-pstanner@redhat.com>
+ <6ce4c9f4-7c75-4451-8c6f-fe3d6a3dd913@kernel.org>
+ <ee44ea7ac760e73edad3f20b30b4d2fff66c1a85.camel@redhat.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <ee44ea7ac760e73edad3f20b30b4d2fff66c1a85.camel@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 29, 2024 at 11:55:04AM +0100, Jonathan Cameron wrote:
-> The broken patch results in a call to init_freq_invariance_cppc() in a CPU
-> hotplug handler in both the path for initially present CPUs and those
-> hotplugged later.  That function includes a one time call to
-> amd_set_max_freq_ratio() which in turn calls freq_invariance_enable() that
-> has a static_branch_enable() which takes the cpu_hotlug_lock which is
-> already held.
+On 7/27/24 03:43, pstanner@redhat.com wrote:
+>> That said, I do not see that as an issue in itself. What I fail to
+>> understand
+>> though is why that intx devres is not deleted on device teardown. I
+>> think this
+>> may have something to do with the fact that pcim_intx() always does
+>> "res->orig_intx = !enable;", that is, it assumes that if there is a
+>> call to
+>> pcim_intx(dev, 0), then it is because intx where enabled already,
+>> which I do not
+>> think is true for most drivers... So we endup with INTX being wrongly
+>> enabled on
+>> device teardown by pcim_intx_restore(), and because of that, the intx
+>> resource
+>> is not deleted ?
 > 
-> Avoid the deadlock by using static_branch_enable_cpuslocked() as the lock
-> will always be already held.  The equivalent path on Intel does not
-> already hold this lock, so take it around the call to
-> freq_invariance_enable(), which results in it being held over the call to
-> register_syscall_ops, which looks to be safe to do.
+> Spoiler: The device resources that have initially been created do get
+> deleted. Devres works as intended. The issue is that the forces of evil
+> invoke pci_intx() through another path, hidden behind an API, through
+> another devres callback.
 > 
-> Fixes: c1385c1f0ba3 ("ACPI: processor: Simplify initial onlining to use same path for cold and hotplug")
-> Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-> Closes: https://lore.kernel.org/all/CABXGCsPvqBfL5hQDOARwfqasLRJ_eNPBbCngZ257HOe=xbWDkA@mail.gmail.com/
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> ---
->  arch/x86/kernel/cpu/aperfmperf.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> So the device resource never gets deleated because it is *created* on
+> driver detach, when devres already ran.
 
-Tested-by: Borislav Petkov (AMD) <bp@alien8.de>
+That explains the issue :)
 
-I'll take it through tip if no one objects...
+>> Re-enabling intx on teardown is wrong I think, but that still does
+>> not explain
+>> why that resource is not deleted. I fail to see why.
+> 
+> You came very close to the truth ;)
+> 
+> With some help from my favorite coworker I did some tracing today and
+> found this when doing `rmmod ahci`:
+> 
+> => pci_intx
+> => pci_msi_shutdown
+> => pci_disable_msi
+> => devres_release_all
+> => device_unbind_cleanup
+> => device_release_driver_internal
+> => driver_detach
+> => bus_remove_driver
+> => pci_unregister_driver
+> => __do_sys_delete_module
+> => do_syscall_64
+> => entry_SYSCALL_64_after_hwframe
+> 
+> The SYSCALL is my `rmmod`.
+> 
+> As you can see, pci_intx() is invoked indirectly through
+> pci_disable_msi() – which gets invoked by devres, which is precisely
+> one reason why you could not find the suspicious pci_intx() call in the
+> ahci code base.
+> 
+> Now the question is: Who set up that devres callback which indirectly
+> calls pci_intx()?
+> 
+> It is indeed MSI, here in msi/msi.c:
+> 
+> static void pcim_msi_release(void *pcidev)
+> {
+>  struct pci_dev *dev = pcidev;
+> 
+>  dev->is_msi_managed = false;
+>  pci_free_irq_vectors(dev); // <-- calls pci_disable_msi(), which calls pci_intx(), which re-registers yet another devres callback
+> }
+> 
+> /*
+>  * Needs to be separate from pcim_release to prevent an ordering problem
+> 
+> ==> Oh, here they even had a warning about that interacting with devres somehow...
+> 
+>  * vs. msi_device_data_release() in the MSI core code.
+>  */
+> static int pcim_setup_msi_release(struct pci_dev *dev)
+> {
+>  int ret;
+> 
+>  if (!pci_is_managed(dev) || dev->is_msi_managed)
+>  return 0;
+> 
+>  ret = devm_add_action(&dev->dev, pcim_msi_release, dev);
+>  if (ret)
+>  return ret;
+> 
+>  dev->is_msi_managed = true;
+>  return 0;
+> }
+> 
+> I don't know enough about AHCI to see where exactly it jumps into
+> these, but a candidate would be:
+>  * pci_enable_msi(), called among others in acard-ahci.c
+> 
+> Another path is:
+>    1. ahci_init_one() calls
+>    2. ahci_init_msi() calls
+>    3. pci_alloc_irq_vectors() calls
+>    4. pci_alloc_irq_vectors_affinity() calls
+>    5. __pci_enable_msi_range() OR __pci_enable_msix_range() call
+>    6. pci_setup_msi_context() calls
+>    7. pcim_setup_msi_release() which registers the callback to
+>       pci_intx()
 
-Thx.
+ahci_init_one() is the function used by the default AHCI driver (ahci.ko), so
+this path is correct.
+
+> Ha!
+> 
+> I think I earned myself a Friday evening beer now 8-)
+
+I was way ahead of you :)
+
+> Now the interesting question will be how the heck we're supposed to
+> clean that up.
+
+If pcim_intx() always gets called on device release, AND MSI/MSIX are also
+managed interrupts with a devres action on release, I would say that
+pcim_msi_release() should NOT lead to a path calling pci_intx(dev, 0), as that
+would create the intx devres again. But given the comment you point out above,
+it seems that there are some ordering constraints between disabling msi and intx
+? If that is the case, then may be this indeed will be tricky.
+
+> Another interesting question is: Did that only work by coincidence
+> during the last 15 years, or is it by design that the check in
+> pci_intx():
+> 
+> if (new != pci_command)
+> 
+> only evaluates to true if we are not in a detach path.
+
+I would say that it evaluates to true for any device using intx, which tend to
+be rare these days. In such case, then enabling on device attach and disabling
+on detach would lead to new != pci_command, including in the hidden intx disable
+path triggered by disabling msi. But the devres being recreated on detach
+definitely seem to depend on the disabling order though. So we may have been
+lucky indeed.
+
+> 
+> If it were coincidence, it would not have caused faults as it did now
+> with my recent work, because the old version did not allocate in
+> pci_intx().
+> 
+> But it could certainly have been racy and might run into a UAF since
+> the old pci_intx() would have worked on memory that is also managed by
+> devres, but has been registered at a different place. I guess that is
+> what that comment in the MSI code quoted above is hinting at.
+> 
+> 
+> Christoph indeed rightfully called it voodoo ^^
+> 
+> 
+> Cheers,
+> P.
+> 
+> 
 
 -- 
-Regards/Gruss,
-    Boris.
+Damien Le Moal
+Western Digital Research
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
