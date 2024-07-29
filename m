@@ -1,133 +1,111 @@
-Return-Path: <linux-kernel+bounces-265176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11B293ED99
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B782193ED9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E551281B9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:44:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 704CB281DEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E22B84DEB;
-	Mon, 29 Jul 2024 06:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DBE84FA0;
+	Mon, 29 Jul 2024 06:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="goIIPy+T"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Fxru4Y+t"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192C284052;
-	Mon, 29 Jul 2024 06:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1F12119;
+	Mon, 29 Jul 2024 06:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722235448; cv=none; b=gYCxZhhQwMYeVPNQuOs/nIKJraYH1/qcbUkTqlIQvDMJKvm/2em9rNkQQjpiGMCclZ16m4J0Rpg+AfWguHklH+HeT+/6txQPWIXZl3vR8+YLvU1eGIO6fpDEM1BOi5SZZeUcb2TPC5OoDYma8uRKwRL8uKpyZOmRLcauIl6C/CI=
+	t=1722235574; cv=none; b=G6ZSWRvNb4TUwWbKevNiY2qnR0s88mHU04S8uZvQUMjNM10hG13LEYTsHb82Y0TJzDPcUCA1kHVsK+aGsDxDLGjKPKJblpojnM6nQ1U5ZMCjiMUAgpHKrgUvfiO8HIaJXpcEHmHSbvuYDFY4Nt0dgR3KqKFuA3mEucpvBvzxni4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722235448; c=relaxed/simple;
-	bh=nfZFHQsuPpII2CMYTDR/XbTt1dybrlIDSqbwDvoHSnE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nFO5rDgCzQRJ/viEnxFWtewvW3ark+VAta4kDr5LSY9BmDeciDtWD9vfrAANs/oLQeM6azP9fthSQNbTOn4jelWPuPxgRqgJKkihtJcA9bOhCehXrQSVEZlVoxg24O+BPk8DlfXZdYaFNJuNGge/V/Cr2cRlomej8ZOpXq/0DRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=goIIPy+T; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7a1d6f4714bso212016685a.1;
-        Sun, 28 Jul 2024 23:44:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722235446; x=1722840246; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HwbgBKukoclBXA9WyOb5l4iDdLNe3EoU9Xh9fHVo2QY=;
-        b=goIIPy+TkfVOicKnNgweS8Wv5LwsioHpmGSAV5Xh8XpU8Fsnyyo9aN7B6ZbBWbxXhA
-         FmR+RUf6MwWfX1GHjC+BMhKReq4RI+6301EfidAIbtpSiRHbMxkpkQbf0tufVRaXP8n1
-         K1aMaa4EAeQHXtbXclUA8P2PuiKIS/NbWYsh+NI1odrGsBVob7iyypcWnZ3+nAwPT9ro
-         U7S7u22BiNiWLl5YbZVgkqOzWH9DGBTdebgRD2nUsENfQfsRsedXFwmHM3IZGzgzU6Ar
-         NZ9wUkiQXqJ4kjdiKbnfSq7DdQzmrnGzB/yg7bDBiydYWTReYR/NZ8Z040j5H2M5DZJY
-         3tkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722235446; x=1722840246;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HwbgBKukoclBXA9WyOb5l4iDdLNe3EoU9Xh9fHVo2QY=;
-        b=YHUzp6oOh46AmXK/KdNToOO0+42YzeVbwaWyo9SapuLqsGGzeSWVC7XE3lduiiql0w
-         jgc67+KwzAi5UzkcqOH0vdLuvx22ShmYcPtseIOzzPws58XJO7myfgbFX3gEHEpAdZ4V
-         fiQAX9iTS0bpeMFGJAlyBKAa2Ov8GBlTeBaIooTFjH3JtyH9VGJbtn1zqMgTBhTdJCrx
-         zkh6Zv95RINWOV3hYMXv5O83DzmzatSeYrOziAImojNwl58HTyEt3N+Z/eCxOfsUPRmH
-         R9aOeIqxvDmUBm48VGuH4bs6ViQHxQz/T+66CZqrHEYj65jBUm4t4brXKskNRFHymFLd
-         s4Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCXkLIvNvzFfF6InPoGI27JA25oBUFaYiO4tqlNGRuS5RH427sjMHU1d6s1PRNGN5jT4StNnleRVAi5ybf5KHOzJKZccAOpE2t2LRo6dF7Gy09f6FxbgkKI6Tjk8FcrlF/21zICWj0KMOwtGKA==
-X-Gm-Message-State: AOJu0Yyl67/abSpVwcHFONC8V2k9mzb/hX95uQ3s230PHHM8OztVcyTO
-	F73uKR4OPvstj8hV9IXLguo5yxcyBTCTow2iJXkOTBj2yPJWjJ345v3O6qxfZnyYxTGjTiJI4/Z
-	5/deTxpbMATXyrOWBY/LunoTg+qM=
-X-Google-Smtp-Source: AGHT+IFmvsdi/z9/ZLozcv1MG4GRT/Jreb5Y/MsK0RO45WV+X6e0LsDpdj7sCrXgQ4LSfonW0K5zRBqZ9d+bEZ6tIXc=
-X-Received: by 2002:a05:620a:1a12:b0:795:5f15:f9e8 with SMTP id
- af79cd13be357-7a1e57a7708mr1115233885a.31.1722235445868; Sun, 28 Jul 2024
- 23:44:05 -0700 (PDT)
+	s=arc-20240116; t=1722235574; c=relaxed/simple;
+	bh=R3wogILUarLMuOKLK0lDpfm3PIGb/vJu4lEvZa0OeBM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=UQ9JftTsImWvYkkVtsDpE66x1SDp3MLHtbiTr7g+RbimHe9JR7mNeZKg5/EGYqFA3LroCuBb5NGTsKkaAspkDfvJsPtNZPSdBugbecpMqzlzuyGv8fsjZLCu/muA8JiSgFH4VIMo0cr43VL5M04I7rRMrt1bVRv3xLzC0fXxF+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Fxru4Y+t; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=R3wogILUarLMuOKLK0lDpfm3PIGb/vJu4lEvZa0OeBM=; b=Fxru4Y+toyFmdCw6icmB/YNWlv
+	j9jVZ7bm1SbESqDXtPHmtxrXQAOQOE0H0oSCGedJ1I+Kc8/K3MyMnf2Pu4vsPR7LMk1BXMWKPUb01
+	TmuScp7QY9dxgDUhr0TOehkRw/RxA6kQqBZKWWoG+yAMXxloOiUiS3NkCZcI/oXAYfDzOaRk4n+r1
+	it7UJNTjsT6qv1P4Rh0fbB6HtCA9CHciNGmKxWIOvJWn6LAEitXfz1ga200CmJGS4uLQcKHRElUuM
+	kUFWYuhQFhY3qQnO/g99i0aAQLE5YuhJvXFdEdXwcjPDfkRGI6tVlRU45gi05n64a/SPKI24bCNFj
+	WWshRG+w==;
+Received: from dyn-224.woodhou.se ([90.155.92.224] helo=[127.0.0.1])
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sYK8s-00000004jfc-44xo;
+	Mon, 29 Jul 2024 06:45:59 +0000
+Date: Mon, 29 Jul 2024 07:45:59 +0100
+From: David Woodhouse <dwmw2@infradead.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+CC: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Peter Hilber <peter.hilber@opensynergy.com>, linux-kernel@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>,
+ virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>,
+ "Chashper, David" <chashper@amazon.com>,
+ "Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>,
+ "Christopher S . Hall" <christopher.s.hall@intel.com>,
+ Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
+ netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Alessandro Zummo <a.zummo@towertech.it>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH] ptp: Add vDSO-style vmclock support
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240728111746-mutt-send-email-mst@kernel.org>
+References: <20240725081502-mutt-send-email-mst@kernel.org> <f55e6dfc4242d69eed465f26d6ad7719193309dc.camel@infradead.org> <20240725082828-mutt-send-email-mst@kernel.org> <db786be69aed3800f1aca71e8c4c2a6930e3bb0b.camel@infradead.org> <20240725083215-mutt-send-email-mst@kernel.org> <98813a70f6d3377d3a9d502fd175be97334fcc87.camel@infradead.org> <20240726174958.00007d10@Huawei.com> <811E8A25-3DBC-452D-B594-F9B7B0B61335@infradead.org> <20240728062521-mutt-send-email-mst@kernel.org> <9817300C-9280-4CC3-B9DB-37D24C8C20B5@infradead.org> <20240728111746-mutt-send-email-mst@kernel.org>
+Message-ID: <92D47BE5-4D57-4C4A-A250-20B9C9EFD862@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729034324.366148-1-haifeng.xu@shopee.com>
-In-Reply-To: <20240729034324.366148-1-haifeng.xu@shopee.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 29 Jul 2024 09:43:54 +0300
-Message-ID: <CAOQ4uxi4B8JHYHF=yn6OrRZCdkoPUj3-+PuZTZy6iJR7RNWcbA@mail.gmail.com>
-Subject: Re: [PATCH] ovl: don't set the superblock's errseq_t manually
-To: Haifeng Xu <haifeng.xu@shopee.com>
-Cc: miklos@szeredi.hu, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Jul 29, 2024 at 6:43=E2=80=AFAM Haifeng Xu <haifeng.xu@shopee.com> =
-wrote:
->
-> Since commit 5679897eb104 ("vfs: make sync_filesystem return errors from
-> ->sync_fs"), the return value from sync_fs callback can be seen in
-> sync_filesystem(). Thus the errseq_set opreation can be removed here.
->
-> Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
+On 28 July 2024 16:23:49 BST, "Michael S=2E Tsirkin" <mst@redhat=2Ecom> wro=
+te:
+>On Sun, Jul 28, 2024 at 02:07:01PM +0100, David Woodhouse wrote:
+>> On 28 July 2024 11:37:04 BST, "Michael S=2E Tsirkin" <mst@redhat=2Ecom>=
+ wrote:
+>> >Glad you asked :)
+>>=20
+>> Heh, I'm not sure I'm so glad=2E Did I mention I hate ACPI? Perhaps it'=
+s still not too late for me just to define a DT binding and use PRP0001 for=
+ it :)
+>>=20
+>> >Long story short, QEMUVGID is indeed out of spec, but it works
+>> >both because of guest compatibility with ACPI 1=2E0, and because no on=
+e
+>> >much uses it=2E
 
-I would add either Fixes: or Depends-on: to prevent accidental
-backporting without the dependency.
+But why *did* it change from QEMU0003 which was in some of the patches tha=
+t got posted?
 
-Otherwise you may add:
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+>> I think it's reasonable enough to follow that example and use AMZNVCLK =
+(or QEMUVCLK, but there seems little point in both) then?
+>
+>I'd stick to spec=2E If you like puns, QEMUC10C maybe?
 
-Thanks,
-Amir.
+Meh, might as well be sensible=2E I'll chase up which of my colleagues cur=
+ates the AMZN space (which will no doubt be me by the end of that thread), =
+and issue the next one from that=2E
 
-> ---
->  fs/overlayfs/super.c | 10 ++--------
->  1 file changed, 2 insertions(+), 8 deletions(-)
->
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 06a231970cb5..fe511192f83c 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -202,15 +202,9 @@ static int ovl_sync_fs(struct super_block *sb, int w=
-ait)
->         int ret;
->
->         ret =3D ovl_sync_status(ofs);
-> -       /*
-> -        * We have to always set the err, because the return value isn't
-> -        * checked in syncfs, and instead indirectly return an error via
-> -        * the sb's writeback errseq, which VFS inspects after this call.
-> -        */
-> -       if (ret < 0) {
-> -               errseq_set(&sb->s_wb_err, -EIO);
-> +
-> +       if (ret < 0)
->                 return -EIO;
-> -       }
->
->         if (!ret)
->                 return ret;
-> --
-> 2.25.1
->
 
