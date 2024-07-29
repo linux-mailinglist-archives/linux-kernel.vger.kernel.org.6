@@ -1,159 +1,122 @@
-Return-Path: <linux-kernel+bounces-266346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D01093FE77
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:46:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 573D293FE7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D02CF283EFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:46:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E63851F221C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C95F188CB6;
-	Mon, 29 Jul 2024 19:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FC318784F;
+	Mon, 29 Jul 2024 19:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="s2l733R6"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gg/n+0qx"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D362A15F3EA
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 19:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ECC8479
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 19:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722282397; cv=none; b=G2Roj9uCxlLvfXnFPxcJ3xOdlq61wIILTTPBD9tiYQfNOHzNFqekjCYUZcDV10JIXvTk2KjK8HkCWtJEgCyMgYDkVyX5U3L6PINadoxCUlLBb0TTUCO/oQzZIqpFTLgSZNcalcq8b9L4/OnXbPEpUgDY7SRRNZaOrfoYOvkttsc=
+	t=1722282655; cv=none; b=l8cXuInchoxiTdyJEGrYQK07BkoLyvXVwYU3TEmLq6nwfBugS+EhtE7e49R2jQEaerAcY25i83Y6Tmc9guud7L/mZcY1RYUK8+uF/PrtkoD44n13KNc1n3rQZI2q3NqVRZfdLQ7fyVXAJ30GkBEvK2nYN6pGNw3vmeaFBlAJZnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722282397; c=relaxed/simple;
-	bh=FR/x2IiQiKwgWe94ryrQfqytEtpInOGLjD8sTqSrMEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQiAhbcvf0c0EQMDVNB4QniAxtt5iAhcVTcjTAlrME5MFe/GhSdLweL3Z+lZ1kIrNgIID0XV44mMwCqNvCMDF0WsZiSz/UMClFZXevtAnnfar+6E2ZaeffpOQSUsb+l67kTvJoWnjt6A+vR/gyZmrlZ+wUxl66C1gD4qdSNjYOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=s2l733R6; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70d357040dbso2801326b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:46:35 -0700 (PDT)
+	s=arc-20240116; t=1722282655; c=relaxed/simple;
+	bh=UwPmtlWq84IcAFL6qRfqv9UndI5Fn6iEXMD04ihIqNg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QjIr+FQGi5H/lXIFao6NyQl7WM2xcIBfEcQV/vR2gbJzs6LBNtkt1dSlPcW9P7rQ1c3WcCIox2A3hcQeS7U6KBopYz4EjdTTucNQCCuxcuVZGJdH3WXcsi8B8N3PNZCLWbHokT86fyBs8HVoXyemov7zxsowrNHBD8L646zxR3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gg/n+0qx; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52f025ab3a7so6052913e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:50:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722282395; x=1722887195; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Eb6u1v+rp+L34/fq+ePdWX4sBR+FCrH0jIJkH5yVcjY=;
-        b=s2l733R6qWbw3INNvzlgjBMnhj5F6w1vFVhl0MZJu1sq0XlL7bi+PXUanH1DbuKNKo
-         3wYfXBw7DDJBBwn1/LDIv9YdmAmqgUa842XXeuTlZ0Glfb9Xr+j5t4sIMGkaML+0tpjE
-         ZsWf3RFOI4GUgtswmX2FbBPz46rhA10pfNr84SdSfj/2YxcIn69/MigfjmHbBvWy92fq
-         sADQ9s9JLspqttPl6UQggWDLLw8LZjhTIiKMdMHhghQNjyGPXzuR/ELwZ7gWBQFMsAdV
-         DnAGOHcyJSeBI+reVuBpGO6Y6QUYUtHoDcbwoLyNk/QbXH/mTlMNwv3UsKSzE1c49y2J
-         AS0w==
+        d=linux-foundation.org; s=google; t=1722282651; x=1722887451; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WwxEFIYqnVGHhr8kmrb9sUEThb6F9FzPLLTaFyHHqxM=;
+        b=gg/n+0qxptaOh5gzb6660rt9v7lbKWHkWESRLOr2J2d4gEoFOTd5y6TJRLQ/FQlrsX
+         2Pb7fCqvL3JevPVJqT2TsSisJZcycW0IngGA81xDYQuVAD3rBlNwK0CwpCtfLlJl9gI3
+         qHEVOZBfLYf1La+V3VsQcjPYCRaoy0rH95HPM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722282395; x=1722887195;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Eb6u1v+rp+L34/fq+ePdWX4sBR+FCrH0jIJkH5yVcjY=;
-        b=nCISV4+gEkOoyZnrnD0RosiTJFlrSc7b6+C0ePJS++uDIbovpnDDt57hFo3kpln1Iz
-         ciLFx807axxMEBf5mqOsx1BUIoG//Rw18fGEJ1gXO0b+r7roeWjx2HkJGASiLR7aNHMR
-         byf4KKp7wA/d6Y7GkedW344aaJZNatwL+wDWfSEvdX3T7ySkJLilwDmTGUAAtBw0gCQv
-         cc2uNce4k7Z9Jc21OrDQdcm1shs/3PVTnKymFK4teKDBgrZ9XVaFNhj3aoMINW6haPRZ
-         PySwwjP7isp69Jp5grfLUnleDn++XIlTGMFB9zPwVU90cwMtz4IbZfO99ZEi58JBOEdl
-         UCSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrPoVHtfEtjMLNNi+A7VDpEsu3c2sHE3nD6G4K6mXFjH1lPwdu6jXRb6oqQ9CYiVae7Vno5ZEI2i5hNtArSyZuJU7Rne2Amicm1s27
-X-Gm-Message-State: AOJu0YyzeZHRD2KObm0TZhYIgC/JfPk07CDAk6RxWGDgqqXD0LtBKY0X
-	XF5Da+GVu9V6CL1AT4r+MUOZQBEI/r8ePQ9DzUvYUpLduqq3mE7qnURHy51muXI=
-X-Google-Smtp-Source: AGHT+IF2xMDcCMLViVzTPYLxX6qawEepMk2EQYJGWmKToargwVSNSokPyBL0gjsTSIrYtJNenIhKYw==
-X-Received: by 2002:a05:6a20:430f:b0:1c0:f675:ed08 with SMTP id adf61e73a8af0-1c4a129a73bmr8141673637.6.1722282395112;
-        Mon, 29 Jul 2024 12:46:35 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead712f25sm7141309b3a.81.2024.07.29.12.46.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 12:46:34 -0700 (PDT)
-Date: Mon, 29 Jul 2024 12:46:31 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v2 2/8] libbpf: Move opts code into dedicated header
-Message-ID: <Zqfxl82VCxUUi3R+@ghost>
-References: <20240726-overflow_check_libperf-v2-0-7d154dcf6bea@rivosinc.com>
- <20240726-overflow_check_libperf-v2-2-7d154dcf6bea@rivosinc.com>
- <CAEf4BzZ8MGa8Ywp_9ztJh6naywqtfrbeGWs4=izw-e-p4GGxcA@mail.gmail.com>
- <ZqfXd0FKtXCJ5dwH@ghost>
- <CAEf4BzZ9B=CPuti9smOqDKD1dRvs3Ug7h9pHupr6jFeKEppJ4g@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1722282651; x=1722887451;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WwxEFIYqnVGHhr8kmrb9sUEThb6F9FzPLLTaFyHHqxM=;
+        b=JgMkmRpYLl6M1Z9/moRsB63AD9JH+e4d/mM02db/Sitj+j1MO+2d0ODxEoHO1v9aWA
+         wI4X+608U5ZsfFtAVBYml5BAF/HfItR7Rc3bfjpPwVUcLnliXENabVDnWjO0sYRZQVnM
+         9MZTBtjuhMzyaML3eLyz6qom9MyJ3YJwFKFVo4C/xFvnQaZfn+7c3KpwajfrBjT4ZjMN
+         DFhHVSqJTllobhvRzGrWTTlnT5L9dkhp2UBilAdq0KxMQZ98IrR78su8xjFPHI+y2466
+         cEcUdSj3lP+Bq2wlzNdoEvh8nRvtNYklzyFXmvjj6NsDvwzAIdMqcKeJuKlo9+sMLnYM
+         ipuw==
+X-Gm-Message-State: AOJu0Yyir7cNWCJuWo9fpuU9bNAS7rM2tvn444WH1Ygvtdj3WBctims9
+	4J/LjGsVE7nR+oAixoAFp97yD0spjNR49UtMYCUeNC4bpu0+qEOm9K0C1GzOCODGOLIHeGME7aS
+	w/xTvdw==
+X-Google-Smtp-Source: AGHT+IE45JdoKNfpVKLdOxlA+2EE+MapPUp4eRrvZR87GFAefrnbatvMX9/xGg6eTQiUz2J2MiCtAw==
+X-Received: by 2002:a05:6512:3e1e:b0:52e:7444:162e with SMTP id 2adb3069b0e04-5309b2e0ae6mr7324689e87.55.1722282650762;
+        Mon, 29 Jul 2024 12:50:50 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c2fdb9sm1618112e87.286.2024.07.29.12.50.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jul 2024 12:50:50 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ef2fccca2cso47723881fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:50:49 -0700 (PDT)
+X-Received: by 2002:a2e:a615:0:b0:2ef:2c0f:2846 with SMTP id
+ 38308e7fff4ca-2f12ee05031mr54973551fa.17.1722282649585; Mon, 29 Jul 2024
+ 12:50:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZ9B=CPuti9smOqDKD1dRvs3Ug7h9pHupr6jFeKEppJ4g@mail.gmail.com>
+References: <CAHk-=wiyNokz0d3b=GRORij=mGvwoYHy=+bv6m2Hu_VqNdg66g@mail.gmail.com>
+ <f8677c93-a76d-473c-8abc-8dc7b4403691@roeck-us.net> <CAHk-=wi-U672Eji+tz1x7JCVyEBjEGmm04umj9JqwfD5n8BMGg@mail.gmail.com>
+In-Reply-To: <CAHk-=wi-U672Eji+tz1x7JCVyEBjEGmm04umj9JqwfD5n8BMGg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 29 Jul 2024 12:50:33 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgEyzSxTs467NDOVfBSzWvUS6ztcwhiy=M3xog==KBmTw@mail.gmail.com>
+Message-ID: <CAHk-=wgEyzSxTs467NDOVfBSzWvUS6ztcwhiy=M3xog==KBmTw@mail.gmail.com>
+Subject: Re: Linux 6.11-rc1
+To: Guenter Roeck <linux@roeck-us.net>, Peter Zijlstra <peterz@infradead.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 29, 2024 at 11:59:47AM -0700, Andrii Nakryiko wrote:
-> On Mon, Jul 29, 2024 at 10:55 AM Charlie Jenkins <charlie@rivosinc.com> wrote:
-> >
-> > On Mon, Jul 29, 2024 at 10:01:05AM -0700, Andrii Nakryiko wrote:
-> > > On Mon, Jul 29, 2024 at 9:46 AM Charlie Jenkins <charlie@rivosinc.com> wrote:
-> > > >
-> > > > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> > > > ---
-> > > >  tools/include/tools/opts.h      | 68 +++++++++++++++++++++++++++++++++++++++++
-> > > >  tools/lib/bpf/bpf.c             |  1 +
-> > > >  tools/lib/bpf/btf.c             |  1 +
-> > > >  tools/lib/bpf/btf_dump.c        |  1 +
-> > > >  tools/lib/bpf/libbpf.c          |  3 +-
-> > > >  tools/lib/bpf/libbpf_internal.h | 48 -----------------------------
-> > > >  tools/lib/bpf/linker.c          |  1 +
-> > > >  tools/lib/bpf/netlink.c         |  1 +
-> > > >  tools/lib/bpf/ringbuf.c         |  1 +
-> > > >  9 files changed, 76 insertions(+), 49 deletions(-)
-> > > >
-> > >
-> > > Nope, sorry, I don't think I want to do this for libbpf. This will
-> > > just make Github synchronization trickier, and I don't really see a
-> > > point.
-> > >
-> > > I'm totally fine with libperf making a copy of these helpers, though
-> > > (this is not complicated or tricky code). I also don't think it will
-> > > change much, so there is little risk of any sort of divergence.
-> >
-> > I did this because there were two comments on the previous version of
-> > this patch that asked to change the functions that were copied over.  I
-> > had a couple of choices, have the implementations diverge, not change
-> > the implementation in perf to keep it the same as bpf, update both perf
-> > and bpf, or share the implementations. I figured the last option was the
-> > best to avoid immediate divergence. However, both of the comments can be
-> > safely ignored, and also perhaps divergence doesn't matter.
-> >
-> 
-> I mean, feel free to diverge. First and foremost the code has to make
-> sense to specific library and specific use case. If libperf has some
-> extra things that it needs to enforce or check, by all means. I just
-> want to avoid unnecessary code sharing, given the code isn't tricky or
-> complicated, but will complicate libbpf's sync story to Github (libbpf
-> kind of lives in two places, kernel repo and Github repo).
+On Mon, 29 Jul 2024 at 12:23, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> And that fix (if it fixes it - I think it will) still leaves the alpha
+> allmodconfig build and all the failed tests.
+>
+> I'll take a look.
 
-Alright, I like to avoid copy-pasting code but if that's what is
-required I will do that.
+Well, the alpha allmodconfig case is apparently
 
-> 
-> > - Charlie
-> >
-> > >
-> > > [...]
+  ERROR: modpost: "iowrite64be" [drivers/crypto/caam/caam_jr.ko] undefined!
+
+which I suspect it just a result of commit beba3771d9e0 ("crypto:
+caam: Make CRYPTO_DEV_FSL_CAAM dependent of COMPILE_TEST").
+
+IOW, that is almost certainly simply due to better build test
+coverage, not a new bug.
+
+But I didn't look into *why* it would fail. We have a comment about
+iowrite64be saying
+
+ * These get provided from <asm-generic/iomap.h> since alpha does not
+ * select GENERIC_IOMAP.
+
+and I'm not sure why that isn't correct.
+
+I get a feeling that lib/iomap.c is missing a couple of functions, but
+didn't look into it a lot.
+
+I suspect Arnd may be the right person to ask. Arnd?
+
+           Linus
 
