@@ -1,149 +1,198 @@
-Return-Path: <linux-kernel+bounces-265391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD8693F08C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:01:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E4D93F064
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 186061F225F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:01:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A466283A4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A4213D61A;
-	Mon, 29 Jul 2024 09:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BC013D890;
+	Mon, 29 Jul 2024 08:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="zGYOajJ0"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JRxF2Ww1"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0462D7E782;
-	Mon, 29 Jul 2024 09:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EEA13D258
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722243694; cv=none; b=ApPmt3BP8mGowDyOJ+pqOVAnectglRkgDVySQwnjZ0lOQuJhfYhs9+MMYww8/NcUo5OeFW7TeazJFjvbvuszGC/gJRLpR3S/Q5SbKiEJMdptPgaDl441yL1xt5Yk2sX9FC3XFYaN2LkTorda5gd918ns4uMZX0qoP3cHaPFVHa4=
+	t=1722243422; cv=none; b=K7+gng4r8ysU64ohr+8V9JgLcuquGXmV6yZEAeg813jjkN+FwlXlPWak2hcoNnuQYmQ/ud5DJczMs43S5X+bgmbafUqEJeGyT+sC4lS/e5857u7A+yO6Vmgil/85FCXgVujwJ1UN6BYqUa7naiQ7WyZUDI+quoiEbefsHHmgqe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722243694; c=relaxed/simple;
-	bh=N+NwBbz+/aJSBJUMWMagSHJ6kZuiXC8iiLcDvJJtxAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLPYoJlmj6BS4NcImvSM67xxcxpjfbN/8WD4CS00IAwLVu3OpZTbAMbw+Rrt81e+ynEKAl/WL9y9Fy02vfhn0pMJQHhnJJSgcvDSt7kRuNU+8Apqb+hQNuG7Q/5B7EROQec7G26C/Yc55Ad9x+wmL3XMmmHV/Ssrs1dEJ4nj09A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=zGYOajJ0; arc=none smtp.client-ip=212.227.126.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1722243684; x=1722848484; i=christian@heusel.eu;
-	bh=N+NwBbz+/aJSBJUMWMagSHJ6kZuiXC8iiLcDvJJtxAM=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=zGYOajJ03DwVcnKOxN1bGVpI3JtnErUyrQNPoNGG8hKJ6Us3ddPW5Jr4DssgCnF8
-	 bP+DcwgFSTEsGMjfa55acrh2l19OcvuKJbkUZt0AfZtTO9cHM01HVgA2F9fuQXRt3
-	 CRxEyCYjTGNe3ZZNspZeGzHcCVOWNDS7/cmDUI1j8qK0p1UiItqpyPxMZJJxF9LiB
-	 cQ/uOb6eVRCe5B4792P6P/wCi4VQJyepm3ZtQ+BFEMddKSgDG9XsyMrsqg4si+d4a
-	 Se7agM2gVJOnqf6L/6NteYI0NB/ByNbIjJ+jkz2WPKJ5jD6r7X7eek4EXqV0nH/Wt
-	 38b+T4c9DLvaz47/og==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue012
- [212.227.15.167]) with ESMTPSA (Nemesis) id 1MVJZv-1sfBg84Bkt-00Ukrx; Mon, 29
- Jul 2024 10:48:00 +0200
-Date: Mon, 29 Jul 2024 10:47:58 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: Greg KH <gregkh@linuxfoundation.org>, "Lin, Wayne" <Wayne.Lin@amd.com>, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	ML dri-devel <dri-devel@lists.freedesktop.org>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, 
-	"Wu, Hersen" <hersenxs.wu@amd.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, 
-	"kevin@holm.dev" <kevin@holm.dev>
-Subject: Re: [REGRESSION] No image on 4k display port displays connected
- through usb-c dock in kernel 6.10
-Message-ID: <b7f0f3e1-522b-4763-be31-dcee1948f7b3@heusel.eu>
-References: <d74a7768e957e6ce88c27a5bece0c64dff132e24@holm.dev>
- <9ca719e4-2790-4804-b2cb-4812899adfe8@leemhuis.info>
- <fd8ece71459cd79f669efcfd25e4ce38b80d4164@holm.dev>
- <CO6PR12MB54897CE472F9271B25883DF6FCB72@CO6PR12MB5489.namprd12.prod.outlook.com>
- <e2050c2e-582f-4c6c-bf5f-54c5abd375cb@leemhuis.info>
+	s=arc-20240116; t=1722243422; c=relaxed/simple;
+	bh=KeM4c07VojYtCdZczysyYfuZpF3y8mYfOdd+YnFoDww=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=PHTbfVgI7hBOQGEkBC5MozVENaeHZkrZXXpc+puS3LgqxM7S38sYAHRHZ9EIItpqQuXXIWyZJcN+bgMoFP/v8qJ5443wc14to7WWo9KQIk3iRGsPVjgn/NQRzuDsiufKp/BqHpCXHqeSjBtk1RhwOApZNhk5m1DvpH0jt1nwOsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=JRxF2Ww1; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240729085657epoutp0343229f64294e24c937542eb7a6f0fa41~mo0NnpRtp3039830398epoutp03h
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:56:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240729085657epoutp0343229f64294e24c937542eb7a6f0fa41~mo0NnpRtp3039830398epoutp03h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1722243417;
+	bh=zwhFL/gFFCFxNmLG6KqLHIpMvmHthZPS+iq4mspQerE=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=JRxF2Ww1ruIj0eDPVvkIIOWAFi2qunK+kkjnzw+SwywFQ7o64KahYjfG9nERI6y3v
+	 ahWMVV/wuckQ8owT1b3U9iXXhxCQxxJ14+XfH5VZAlonLSe9I95npTWWmeJWlUgu+X
+	 Zkv+XmuqEWrMScb/3TsfaBnmCJ2yS8QkB3bKU5rY=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240729085656epcas5p261330f99ada0d207dc2881afc16858ab~mo0M_C3m51791617916epcas5p2U;
+	Mon, 29 Jul 2024 08:56:56 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4WXXKf2cZ7z4x9Q1; Mon, 29 Jul
+	2024 08:56:54 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	19.DC.09640.65957A66; Mon, 29 Jul 2024 17:56:54 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240729084804epcas5p2c93a488d15753f398057711aedf40494~mosc4uBNA0809708097epcas5p2e;
+	Mon, 29 Jul 2024 08:48:04 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240729084804epsmtrp2436317382069a6653acd163ab60b2192~mosc2fhqL2719827198epsmtrp2I;
+	Mon, 29 Jul 2024 08:48:04 +0000 (GMT)
+X-AuditID: b6c32a49-a57ff700000025a8-f6-66a759564d7d
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	65.97.07567.34757A66; Mon, 29 Jul 2024 17:48:03 +0900 (KST)
+Received: from FDSFTE596 (unknown [107.122.82.131]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240729084800epsmtip29b1ee1110bd8de8987e49c08d4a39727~mosaBiuzY2816328163epsmtip2i;
+	Mon, 29 Jul 2024 08:48:00 +0000 (GMT)
+From: "Swathi K S" <swathi.ks@samsung.com>
+To: "'Andrew Lunn'" <andrew@lunn.ch>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+	<richardcochran@gmail.com>, <alexandre.torgue@foss.st.com>,
+	<joabreu@synopsys.com>, <mcoquelin.stm32@gmail.com>,
+	<alim.akhtar@samsung.com>, <linux-fsd@tesla.com>,
+	<pankaj.dubey@samsung.com>, <ravi.patel@samsung.com>,
+	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <22eae086-0f77-4df7-9d70-e7249d67b106@lunn.ch>
+Subject: RE: [PATCH v3 1/4] dt-bindings: net: Add FSD EQoS device tree
+ bindings
+Date: Mon, 29 Jul 2024 14:17:59 +0530
+Message-ID: <003001dae194$06218380$12648a80$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="n63a2yfaefc6qmdi"
-Content-Disposition: inline
-In-Reply-To: <e2050c2e-582f-4c6c-bf5f-54c5abd375cb@leemhuis.info>
-X-Provags-ID: V03:K1:VUQmBHNbUxSuivJa3UWDZUqROOuD+vc3R6CCCrrh1OCODtgXJZY
- whBiOcObwswdViHJ7YQFJWyEGkXfr5cc17ziisLlaAyGJQtzW9LNeUIG1daJeIbnckfphJr
- kIfm1yEZmZtTsw+BEw6S2QdqYF3E0UzgvrM6rkWWVIL3M3rsVmwO6MxdO1CKyRkQkRKwRik
- u5VMTw6Z6RC7sZmXJ+NcQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+4I8fJmNOAo=;6USdeDx0VA9MfugZc889578EMYq
- VLc8LHLmB5hVVq/x8HSEEwKZkLM0+V95CXkZJ7c7Qe5naqciCpkaNpxFQFxxL9jfT03mq3Z7e
- qsQG3k75CdPV9MStJTPp1U3uc2HcQJz42BqzW0IBVtF0USO+HQ4GJE3wqDi9mqUpN0TnZHjgM
- eh4MarDo5i7yFwFzZ9/KY8eKy0r6HjtjZmdgDBaaYGBcxNdQ0SQQgBve8LGIT927QetoCVc58
- +kWc1r95yWkTqXayt0Rbmx8kF03w61AbuCAVGIdar7IghOQ/vPtexmMmv+O0W3/tKe4x1V1QE
- alUTZP/gUQ2c+8cRUcE8VP7CM8Up7V1JuCixC3H0SR/QM+/GeKedFKhagX/ODbrqtkM5tqeO+
- to23Zssmp03tvKoAIZGsVlukqxWFZSUWzFQLBcsC9LK7b901K+M+Q3mA3XLM5dRKtmIncQzzi
- L2lijFTHhGD5XamGxJpgFit0Zac/xp7rlemZpxhr/1fS47QELrX1rzI37HPMSd4Aay3KF+9er
- dJc94n1LWlSez+8VCj1Mx5LFIJML03GfOkUZJ/kNob/MRq3O0sDb3Z4jnavJu6BIHJyHgbwqD
- lpuLJCOKiSOpgZRF4Jvziq5cVSa5VEnmdhOyhWTP9RyRx08kgEDK5PsG9ysUUuZ3vzLHz8G9w
- vnXxGeM60ZV8mlL8ot2eSHsh5jEiyaxeYaOFvuAgpf87Q/wlJgwIKhcdN8A59OryaodPbDIv6
- i0dgEJI4td8SSs2/9e/OpA3B8V+z4BumA==
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQG0kE2cByMDcfrFjxkR49X5VWx9JAKGcKNgAXd78/0C+uayQwF2+vVQAedCxeOyB05I0A==
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTdxTHd3vb3sJSc4egP7roSDcmZeFRHvUWBF+M3G3GoUs084+VO3qh
+	DPpYbwvTxc0tIPKwSngMutIRIkMQBCpvLErL1AmBJhYygyWCMHlYcOBMGMOt7YWN/z7ne873
+	d3LOL4cD++QgPE66QkOqFUQmn+3N7LAKgkJOfFqXGt5yDcVW58oh7LGxg42NOCww1mgeZmCG
+	kRwm9tPAMAubuTOFYBM1iyxMNzsJY7YOHQszPRljYZPzJ7EHPQY2VjHSx8CM600s7E71Duzl
+	4DMIq2l/gWCTz28i2MDQLIzlmgeQA354W/1DBj5zqR3Bu/UOBK82aXFTQz4bfzR2k43fuPIt
+	3t21wsCX+kbZuK6tAcLbbq1A+KvvqxB8xbQ7iXsqY5+MJKSkOoBUpCil6Yq0OP5Hn0gOS6JF
+	4cIQoRjbyw9QEHIyjp9wJCkkMT3TNTA/IIvI1LqkJIKi+GHx+9RKrYYMkCkpTRyfVEkzVVGq
+	UIqQU1pFWqiC1MQIw8Mjol2FyRkyXUkZQ9XB/WrQucw8Bz3yLoA4HIBGgdp+cQHkzfFBeyFQ
+	v3wJKYC8XMEyBFYtyXTiJQTqRq8yNw3lpQdo3QwBs82J0MEsBDob/2S73Ww0GNTo+jwv+aLv
+	AGNVKcNdBKM9TDCUV8x0J7zQWNBS0e7h7egxYPy9wmNmooFAX74AuZmLioGjwcqk+Q3wa+W0
+	h2H0LdDpNMBuBmgAWJ35mUU3OwGeOg0sumYn+GW1CHY3BmivF3DaLRBtSACNNbYN3g7m77Yh
+	NPPAyqKZTbMEXNONMmmWAcdfxRv6fnDbbvCsAkYFoLknjJZ3gbL71xl0323g4to0g9a5oMu4
+	yW+D9YWxjSf9QUftEnIZ4uu3jKbfMpp+ywj6/7tVQ8wGyJ9UUfI0kopWCRVk9n//naKUmyDP
+	OQR/0AU5Hj8PtUAMDmSBAAfm+3Il9tpUH66UOH2GVCslam0mSVmgaNe+i2GeX4rSdU8KjUQY
+	JQ6PEolEUeJIkZC/k7uQWyX1QdMIDZlBkipSveljcLx45xjNewbTj74/0R32Y1ApqzhVULbr
+	lZwaj7w7Z7xwMnl/rBZnvm5qnU0saoomI7EH+f/kLNk+thcW6hopQdC7g3vYiP9929EB05mJ
+	w/eeVCfGnp8usTb734sfX9MHcr7cMVwo91tPePpDXfnnlVMp1+UR9VeOp0f0Zh06+E3810VD
+	aU19gcP2D79b/Kw/NV5BHtqdrcrONj/b+/Dvlj8iwbpPTHn8IpXMmOuxtqrycu1vGo9cTHGK
+	DmatCa+yMlpvVFsl0uNrt3jwBcyxkC/mcaZfIyoLl/tjfnvvi/GakpHTztvrgsUl8flteW3W
+	rmOtZ09NBRKyeZPvC7lBsGI72y7shPlMSkYIg2E1RfwLgDzTdZcEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDIsWRmVeSWpSXmKPExsWy7bCSvK5z+PI0g0e7zS1+vpzGaPFg3jY2
+	i/N3DzFbrNl7jslizvkWFov5R86xWjw99ojd4t6id6wWfS8eMltc2NbHarHp8TVWi4evwi0u
+	75rDZjHj/D4mi3l/17JaHFsgZvHt9BtGi0Vbv7BbPPywh93iyJkXzBate4+wO4h6bFl5k8nj
+	af9Wdo+ds+6yeyzYVOqxaVUnm8eda3vYPDYvqffYueMzk8f7fVfZPPq2rGL02LL/M6PHv6a5
+	7B6fN8kF8EZx2aSk5mSWpRbp2yVwZfRNnspUsI234vTbTywNjHe4uhg5OCQETCSmTXHoYuTi
+	EBLYzShxpKWJqYuREyguKfGpeSorhC0ssfLfc3aIomeMEs9aTzODJNgEtCQW9e1jB7FFBFQk
+	5s2dwgRSxCxwjkWi73gHI0THWSaJxyuWgI3lFLCW2DBjKwuILSzgL7Fux1Q2EJtFQFVi1rTX
+	jCA2r4ClxN1Vh1kgbEGJkzOfsICcyiygJ9G2EayEWUBeYvvbOcwQ1ylI/Hy6jBXiiDCJ52/n
+	sELUiEsc/dnDPIFReBaSSbMQJs1CMmkWko4FjCyrGCVTC4pz03OTDQsM81LL9YoTc4tL89L1
+	kvNzNzGCE4SWxg7Ge/P/6R1iZOJgPMQowcGsJMIbf2VpmhBvSmJlVWpRfnxRaU5q8SFGaQ4W
+	JXFewxmzU4QE0hNLUrNTUwtSi2CyTBycUg1M63IPzFuj8nni9ah70hGsEknb77BNMpx3Yvun
+	sAtO/y3K7/ZXh51e++KWjPCviXs3np9z74b4RlelgCMKdTuPB7s8PO5nw/QmV1xnVaX9Ucuz
+	/y/zBIdZSKdlXc384dHuuuvSf+8VmmLXfd+VF21UKOc8ork+oN/c8bOR+LFVxmG8bssLp32Y
+	yK08pYxpud8By5SFpSdaLjyTqVz03ivj4GPGBydfmXilWvz4NEWu8/EGsw/P1vXGrEwQf8dV
+	ed6tuy9hRq7Sn+r9bM8zeK08pxxTdlWfUd/MmVgoF6ompcL96ceNd1yntgpaXexbZxYclZEY
+	+Pdp7ePEttPLjrya2bZ3RWO1cvWZmJ3qUptilFiKMxINtZiLihMBQNjKBn8DAAA=
+X-CMS-MailID: 20240729084804epcas5p2c93a488d15753f398057711aedf40494
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230814112605epcas5p31aca7b23e70e8d93df11414291f7ce66
+References: <20230814112539.70453-1-sriranjani.p@samsung.com>
+	<CGME20230814112605epcas5p31aca7b23e70e8d93df11414291f7ce66@epcas5p3.samsung.com>
+	<20230814112539.70453-2-sriranjani.p@samsung.com>
+	<4e745c2a-57bd-45da-8bd2-ee1cb2bab84f@lunn.ch>
+	<000201dab7f2$1c8d4580$55a7d080$@samsung.com>
+	<22eae086-0f77-4df7-9d70-e7249d67b106@lunn.ch>
 
 
---n63a2yfaefc6qmdi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 24/07/29 10:35AM, Linux regression tracking (Thorsten Leemhuis) wrote:
-> [+Greg +stable]
->=20
-> On 29.07.24 10:16, Lin, Wayne wrote:
+> -----Original Message-----
+> From: Andrew Lunn <andrew@lunn.ch>
+> Sent: 06 June 2024 18:56
+> To: Swathi K S <swathi.ks@samsung.com>
+> Cc: davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
+> pabeni@redhat.com; robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
+> conor+dt@kernel.org; richardcochran@gmail.com;
+> alexandre.torgue@foss.st.com; joabreu@synopsys.com;
+> mcoquelin.stm32@gmail.com; alim.akhtar@samsung.com; linux-
+> fsd@tesla.com; pankaj.dubey@samsung.com; ravi.patel@samsung.com;
+> netdev@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org
+> Subject: Re: [PATCH v3 1/4] dt-bindings: net: Add FSD EQoS device tree
+bindings
+> 
+> > > > +  fsd-rx-clock-skew:
+> > > > +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > > > +    items:
+> > > > +      - items:
+> > > > +          - description: phandle to the syscon node
+> > > > +          - description: offset of the control register
+> > > > +    description:
+> > > > +      Should be phandle/offset pair. The phandle to the syscon
+node.
+> > >
+> > > What clock are you skew-ing here? And why?
 > >
-> > Thanks for the report.
-> >=20
-> > Patch fa57924c76d995 ("drm/amd/display: Refactor function dm_dp_mst_is_=
-port_support_mode()")
-> > is kind of correcting problems causing by commit:
-> > 4df96ba6676034 ("drm/amd/display: Add timing pixel encoding for mst mod=
-e validation")
-> >=20
-> > Sorry if it misses fixes tag and would suggest to backport to fix it. T=
-hanks!
->=20
-> Greg, seem it would be wise to pick up fa57924c76d995 for 6.10.y as
-> well, despite a lack of Fixes or stable tags.
->=20
-> Ciao, Thorsten
+> > As per customer's requirement, we need 2ns delay in fsys block both in
+> > TX and RX path.
+> 
+> Lots of people get RGMII delays wrong. Please look back at the mailing
+list
+> where there is plenty of discussion about this. I don't want to have to
+repeat
+> myself yet again...
 
-The issue is that the fixing commit does not apply to the 6.10 series
-without conflict and the offending commit does not revert cleanly
-aswell.
+Sorry for the delay.
+We took time to confirm with the board designer regarding this delay.
+This is not a mandatory one to have and hence we are dropping clock-skewing
+here.
 
-Cheers,
-Chris
+> 
+>      Andrew
 
---n63a2yfaefc6qmdi
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Swathi
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmanVz4ACgkQwEfU8yi1
-JYUDMQ//Y8/U38qoRUI7sbmJIBjtkpE62b//dAJYdlSyjbvLe2/qOs+pp0oXFn4D
-bkw39ja845pauQ0ISjSOm3lJkxLxsHHhU4Ea9z1ww1wrONnPTPImpf3v7bKPnVJu
-pHS6fYP61Wfpktv+lXbsscprlWyvejjRwlwSJT8NXKdPtIn7qXK/hQkmYZQg7CwO
-GGjBMAOG/ocpLk9UGkmCN8ncArXDpzP+jIJMl0LE6TNtiBl6V6rtFsqEm2dVCqtJ
-pLE4FT/t3/FfAaRMn2U1HyLTsxYy/FIYtQr5eogDcShmkKL2k9mHfTJuKxKhvYWU
-z1qfWD0T1pxGnl+EnKUmnuX+ypACWYpGRLWdoIWJLke9aKCjpF559xEArom3djfb
-KK3yOm9EjxXQYqZuroLCYn8IA+OlWuIZX8wo2g/6/WsVnxM5pb6QeuZMNAs9Il/8
-UxaOxBNMx5eyGqNEvlBaG3re/wsfwKucjA3fqnjVqoc31527EpNcH/3edRtwdARd
-ApvEueEJXC//c+liEQFhXwc+p+yGAWpf0jAagpd5Z3XdvQkcMOEFrejsOLuZb7/Z
-nnEluHAheR+CrUAQEefHWjjjcrNx8/yFKmLj7yTeV7T9VwKkbTEW7mJFgFp56fFf
-MlSoriJ2BgHDaHW7gRUisq0D+CopuNS3nQUBGc4unCALCCLlIGI=
-=jOkp
------END PGP SIGNATURE-----
-
---n63a2yfaefc6qmdi--
 
