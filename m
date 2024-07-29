@@ -1,253 +1,145 @@
-Return-Path: <linux-kernel+bounces-266107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE96E93FB30
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:32:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E01093FAAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F4581F23582
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:32:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF74FB22D2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96848193085;
-	Mon, 29 Jul 2024 16:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB954187862;
+	Mon, 29 Jul 2024 16:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DHXcUfrK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RvEaVZVK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2AB188CA8
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D1E187853
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722270205; cv=none; b=bRt5/eMLQgCsEVWI/d95n0DX8UhUO/SltFExTw1Yg8AUdifw5PnK5NOOYUdGSyIKN/JpAgZIgvc2g2W55ZHgoyWL/6cRXB9zwg0OZ6f33jEzXEB4HqyRnZzV1TW6nOhkJErWyr1VbjxYw0lpA0G2joDqmHAQ8i+HIs7EWDwx0/I=
+	t=1722270064; cv=none; b=bWr4+JVg/yC7jyX2wRy0B3LMsu5trhGKKcnqWnhRTwvzGsD6MEZFfCI/5oW2HdrdeyBxl3wxpjFnbvJKLhwwm4HA98Xy6BJgwLtTA6oPS03uZMNp/v4q6ejmUDLp4obhGyFV+Oli2308zFsMfmV5Aa0n2YULrYjVFQPz3R8Sisg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722270205; c=relaxed/simple;
-	bh=7EJT5FBCdwGirnjLuTy4MWaS3dLZ6ItNJ7hGR3xr5wA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TPa+8JCeXKI+gXCJ2vJkGyrGG+DhTULAAopG1Zf7tUpUDyfT0j5XPa5Zl5yViSmHigdaoZQyfJW7szxoDY870uMtBR2Lno2H0QzNEG95kgkWHfN5lgb3zAPuh/Ax4yV0xLFy8joKWTpyjn8B/2CJ7LiOlc9fnuWERGN7VweyEIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DHXcUfrK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722270203;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R2k6li9/r5cEcbpMZCeQm71pTBPmJTS708jWII1Wsr4=;
-	b=DHXcUfrKoaGKkawL8eX08IjdKv+7ZJdSQOyAsQU/cOSEwqdMahCQDrsjrlPO60PwTzp/F9
-	DY9OqJsdwjARSXzmd6ytR2iKoeL5Kg5gszYVIfcZUqrtJmNsMMNkhPQ5zb/0yYEh28hsiw
-	arXCwH4nEAUzZt7/rlnFfLDrVBg3xQU=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-281-ggb6HApwM0-NT275O_fz1g-1; Mon,
- 29 Jul 2024 12:23:20 -0400
-X-MC-Unique: ggb6HApwM0-NT275O_fz1g-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 744701955D47;
-	Mon, 29 Jul 2024 16:23:12 +0000 (UTC)
-Received: from warthog.procyon.org.uk.com (unknown [10.42.28.216])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 29B481955D42;
-	Mon, 29 Jul 2024 16:23:05 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>,
-	Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Steve French <sfrench@samba.org>,
-	Enzo Matsumiya <ematsumiya@suse.de>
-Subject: [PATCH 24/24] cifs: Don't support ITER_XARRAY
-Date: Mon, 29 Jul 2024 17:19:53 +0100
-Message-ID: <20240729162002.3436763-25-dhowells@redhat.com>
-In-Reply-To: <20240729162002.3436763-1-dhowells@redhat.com>
-References: <20240729162002.3436763-1-dhowells@redhat.com>
+	s=arc-20240116; t=1722270064; c=relaxed/simple;
+	bh=L6jcEa8CfEldUuj1WusbJIcpD6rrcXH0GVGphBmFRwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lZyhxMZ6KU55qbogidPJgmUW71/xPFFhMAEI1v9Uu1T96V+aLK89JScy2y4hZNgn9cXxnqTYiIkRBFuRRPhO7ToW0kmzY8trrGPXEnbfORLNWCSeVKcI4bgkFkzO0jvAIDcQAW0uH2kBQAS0W6HK3MPGVvSTd8mMDE5l4wfAlYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RvEaVZVK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68BEBC4AF19;
+	Mon, 29 Jul 2024 16:21:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722270063;
+	bh=L6jcEa8CfEldUuj1WusbJIcpD6rrcXH0GVGphBmFRwg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RvEaVZVKOp986/b3JSq7HO+zqtJTxfVCLOEH5WROoYKTVhKIsEXEvTEaDoSlwVtrf
+	 g4sJ9q1hNLetbliwaOap3O9yPw2vmOY1Cz0jcl7W2N9EadlfEcEqS3hCOkXEhhMAkU
+	 LGo+H1Q/+rD3gocQ4okL7fERC1XVxxe7hLfKzX1PXnqBpTbsZtzv/LLmB8kPE4+8A5
+	 PRgvhDJjlk129VH4MXAfIPBVPkvuOHwQA1CO5u9rNECztOvKzH8U8ux/oyG+blRQEa
+	 qgt7nPx1cOm01PoA/8fmoEtz1FeqVMW2up1ovkd2Sw0HNe7foQYdg52U+8eQMP1lCV
+	 juwf9kz7BwZ0Q==
+Date: Mon, 29 Jul 2024 16:21:01 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] f2fs: don't traverse directory blocks after EOF
+Message-ID: <ZqfBbQGxwpAvCO2m@google.com>
+References: <20240712073415.227226-1-chao@kernel.org>
+ <ZqKDnpzwX85RyGaa@google.com>
+ <c2b7d0cd-ea10-4e25-829c-53967927bd03@kernel.org>
+ <ZqRpHOJyWU3Sn8Ma@google.com>
+ <74dbb5f1-1565-4971-ae5c-c176d62cfa8f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <74dbb5f1-1565-4971-ae5c-c176d62cfa8f@kernel.org>
 
-There's now no need to support ITER_XARRAY in cifs as netfslib hands down
-ITER_FOLIOQ instead - and that's simpler to use with iterate_and_advance()
-as it doesn't hold the RCU read lock over the step function.
+On 07/29, Chao Yu wrote:
+> On 2024/7/27 11:27, Jaegeuk Kim wrote:
+> > On 07/26, Chao Yu wrote:
+> > > On 2024/7/26 0:55, Jaegeuk Kim wrote:
+> > > > On 07/12, Chao Yu wrote:
+> > > > > All directory blocks are within the scope of i_size, so let's limit
+> > > > > the end_block to just check valid dirent blocks.
+> > > > 
+> > > > Do we really need this?
+> > > 
+> > > f2fs_readdir() and f2fs_empty_dir() uses dir_blocks() for upper boundary,
+> > > this patch aligns find_in_level() w/ them.
+> > > 
+> > > Also, it can avoid grabbing never used page cache across EOF.
+> > > 
+> > > So, we can consider taking this patch?
+> > 
+> > I'm wondering whether the current code has a bug or not.
+> 
+> I think it's not a bug, but, in corner case it may waste memory and
+> cause a bit performance reduction.
 
-This is part of the process of phasing out ITER_XARRAY.
+Well, I don't think it's really a problem.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Tom Talpey <tom@talpey.com>
-cc: Enzo Matsumiya <ematsumiya@suse.de>
-cc: linux-cifs@vger.kernel.org
----
- fs/smb/client/cifsencrypt.c | 51 -------------------------------------
- fs/smb/client/smbdirect.c   | 49 -----------------------------------
- 2 files changed, 100 deletions(-)
-
-diff --git a/fs/smb/client/cifsencrypt.c b/fs/smb/client/cifsencrypt.c
-index 991a1ab047e7..7481b21a0489 100644
---- a/fs/smb/client/cifsencrypt.c
-+++ b/fs/smb/client/cifsencrypt.c
-@@ -25,54 +25,6 @@
- #include "../common/arc4.h"
- #include <crypto/aead.h>
- 
--/*
-- * Hash data from an XARRAY-type iterator.
-- */
--static ssize_t cifs_shash_xarray(const struct iov_iter *iter, ssize_t maxsize,
--				 struct shash_desc *shash)
--{
--	struct folio *folios[16], *folio;
--	unsigned int nr, i, j, npages;
--	loff_t start = iter->xarray_start + iter->iov_offset;
--	pgoff_t last, index = start / PAGE_SIZE;
--	ssize_t ret = 0;
--	size_t len, offset, foffset;
--	void *p;
--
--	if (maxsize == 0)
--		return 0;
--
--	last = (start + maxsize - 1) / PAGE_SIZE;
--	do {
--		nr = xa_extract(iter->xarray, (void **)folios, index, last,
--				ARRAY_SIZE(folios), XA_PRESENT);
--		if (nr == 0)
--			return -EIO;
--
--		for (i = 0; i < nr; i++) {
--			folio = folios[i];
--			npages = folio_nr_pages(folio);
--			foffset = start - folio_pos(folio);
--			offset = foffset % PAGE_SIZE;
--			for (j = foffset / PAGE_SIZE; j < npages; j++) {
--				len = min_t(size_t, maxsize, PAGE_SIZE - offset);
--				p = kmap_local_page(folio_page(folio, j));
--				ret = crypto_shash_update(shash, p, len);
--				kunmap_local(p);
--				if (ret < 0)
--					return ret;
--				maxsize -= len;
--				if (maxsize <= 0)
--					return 0;
--				start += len;
--				offset = 0;
--				index++;
--			}
--		}
--	} while (nr == ARRAY_SIZE(folios));
--	return 0;
--}
--
- static size_t cifs_shash_step(void *iter_base, size_t progress, size_t len,
- 			      void *priv, void *priv2)
- {
-@@ -96,9 +48,6 @@ static int cifs_shash_iter(const struct iov_iter *iter, size_t maxsize,
- 	struct iov_iter tmp_iter = *iter;
- 	int err = -EIO;
- 
--	if (iov_iter_type(iter) == ITER_XARRAY)
--		return cifs_shash_xarray(iter, maxsize, shash);
--
- 	if (iterate_and_advance_kernel(&tmp_iter, maxsize, shash, &err,
- 				       cifs_shash_step) != maxsize)
- 		return err;
-diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
-index 52acead63d9d..ee63c570d505 100644
---- a/fs/smb/client/smbdirect.c
-+++ b/fs/smb/client/smbdirect.c
-@@ -2584,52 +2584,6 @@ static ssize_t smb_extract_folioq_to_rdma(struct iov_iter *iter,
- 	return ret;
- }
- 
--/*
-- * Extract folio fragments from an XARRAY-class iterator and add them to an
-- * RDMA list.  The folios are not pinned.
-- */
--static ssize_t smb_extract_xarray_to_rdma(struct iov_iter *iter,
--					  struct smb_extract_to_rdma *rdma,
--					  ssize_t maxsize)
--{
--	struct xarray *xa = iter->xarray;
--	struct folio *folio;
--	loff_t start = iter->xarray_start + iter->iov_offset;
--	pgoff_t index = start / PAGE_SIZE;
--	ssize_t ret = 0;
--	size_t off, len;
--	XA_STATE(xas, xa, index);
--
--	rcu_read_lock();
--
--	xas_for_each(&xas, folio, ULONG_MAX) {
--		if (xas_retry(&xas, folio))
--			continue;
--		if (WARN_ON(xa_is_value(folio)))
--			break;
--		if (WARN_ON(folio_test_hugetlb(folio)))
--			break;
--
--		off = offset_in_folio(folio, start);
--		len = min_t(size_t, maxsize, folio_size(folio) - off);
--
--		if (!smb_set_sge(rdma, folio_page(folio, 0), off, len)) {
--			rcu_read_unlock();
--			return -EIO;
--		}
--
--		maxsize -= len;
--		ret += len;
--		if (rdma->nr_sge >= rdma->max_sge || maxsize <= 0)
--			break;
--	}
--
--	rcu_read_unlock();
--	if (ret > 0)
--		iov_iter_advance(iter, ret);
--	return ret;
--}
--
- /*
-  * Extract page fragments from up to the given amount of the source iterator
-  * and build up an RDMA list that refers to all of those bits.  The RDMA list
-@@ -2657,9 +2611,6 @@ static ssize_t smb_extract_iter_to_rdma(struct iov_iter *iter, size_t len,
- 	case ITER_FOLIOQ:
- 		ret = smb_extract_folioq_to_rdma(iter, rdma, len);
- 		break;
--	case ITER_XARRAY:
--		ret = smb_extract_xarray_to_rdma(iter, rdma, len);
--		break;
- 	default:
- 		WARN_ON_ONCE(1);
- 		return -EIO;
-
+> 
+> Thanks,
+> 
+> > 
+> > > 
+> > > Thanks,
+> > > 
+> > > > 
+> > > > > 
+> > > > > Meanwhile, it uses dir_blocks() instead of variable for cleanup in
+> > > > > __f2fs_find_entry().
+> > > > > 
+> > > > > Signed-off-by: Chao Yu <chao@kernel.org>
+> > > > > ---
+> > > > >    fs/f2fs/dir.c | 6 ++++--
+> > > > >    1 file changed, 4 insertions(+), 2 deletions(-)
+> > > > > 
+> > > > > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> > > > > index 02c9355176d3..d4591c215f07 100644
+> > > > > --- a/fs/f2fs/dir.c
+> > > > > +++ b/fs/f2fs/dir.c
+> > > > > @@ -305,18 +305,21 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
+> > > > >    	int s = GET_DENTRY_SLOTS(fname->disk_name.len);
+> > > > >    	unsigned int nbucket, nblock;
+> > > > >    	unsigned int bidx, end_block;
+> > > > > +	unsigned long last_block;
+> > > > >    	struct page *dentry_page;
+> > > > >    	struct f2fs_dir_entry *de = NULL;
+> > > > >    	pgoff_t next_pgofs;
+> > > > >    	bool room = false;
+> > > > >    	int max_slots;
+> > > > > +	last_block = dir_blocks(dir);
+> > > > >    	nbucket = dir_buckets(level, F2FS_I(dir)->i_dir_level);
+> > > > >    	nblock = bucket_blocks(level);
+> > > > >    	bidx = dir_block_index(level, F2FS_I(dir)->i_dir_level,
+> > > > >    			       le32_to_cpu(fname->hash) % nbucket);
+> > > > >    	end_block = bidx + nblock;
+> > > > > +	end_block = min_t(unsigned int, end_block, last_block);
+> > > > >    	while (bidx < end_block) {
+> > > > >    		/* no need to allocate new dentry pages to all the indices */
+> > > > > @@ -361,7 +364,6 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+> > > > >    					 const struct f2fs_filename *fname,
+> > > > >    					 struct page **res_page)
+> > > > >    {
+> > > > > -	unsigned long npages = dir_blocks(dir);
+> > > > >    	struct f2fs_dir_entry *de = NULL;
+> > > > >    	unsigned int max_depth;
+> > > > >    	unsigned int level;
+> > > > > @@ -373,7 +375,7 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+> > > > >    		goto out;
+> > > > >    	}
+> > > > > -	if (npages == 0)
+> > > > > +	if (dir_blocks(dir) == 0)
+> > > > >    		goto out;
+> > > > >    	max_depth = F2FS_I(dir)->i_current_depth;
+> > > > > -- 
+> > > > > 2.40.1
 
