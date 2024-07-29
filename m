@@ -1,255 +1,251 @@
-Return-Path: <linux-kernel+bounces-266539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8203A94015C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 00:51:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5483B940163
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 00:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A25E41C202F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:51:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 785041C21D60
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F8D18A940;
-	Mon, 29 Jul 2024 22:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D809518F2C0;
+	Mon, 29 Jul 2024 22:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6VQuomt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="agfj04Yn"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43751824AD;
-	Mon, 29 Jul 2024 22:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094CF824AD;
+	Mon, 29 Jul 2024 22:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722293465; cv=none; b=GjF+riSSOenkY/1eXnFrBY/TM9sc1FCMyyCriWwSmMTTbDbCggNEt6ibAqhrj+EjEL9cvAkUjEUqt3d2pCtZ3JLuadR/2Vk/pOKJwGTotBCPFzUQ0CJf1Kj81JfNT3ulFgPAzVS5hV2q0UWGWVNG2EtN4bVe2qAHLk79lFjXjos=
+	t=1722293528; cv=none; b=FkPXOSjZjjSA0gsBAbOKjATzITXG7PJ+1KqmFKIyMv9L+Qoys228Zodckh/z26rXd6SwcjuASrjEZ1QIfXuqX4XPIJouBnNKruFszrAukiJg31CStXB6QMLksb3xixF76CfWN4SuGrQ38uNTvCe01JFYCDV+C6KvchO9yL6Nc+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722293465; c=relaxed/simple;
-	bh=R/3Bp5nDPxYfZYzMdq/s37q7W4NYEETC7u1zeH2tWc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=hC/xRyQVz8wcIN4o2+Jjym9QnQQg4hUVbQoKebT/yxVPUqM32Ypeqs8Bnf7PmP3oDrQyUU0KY5ll7jkU2Dsw0E6Q2/p0XO0ymDXnnmMRN2ppSPSU27nMmsERDaxutAF/LY6XM5AaAMt440dLDXesxqnRWQ4Mp8ggsvGwtu9eeNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6VQuomt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82E76C32786;
-	Mon, 29 Jul 2024 22:51:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722293464;
-	bh=R/3Bp5nDPxYfZYzMdq/s37q7W4NYEETC7u1zeH2tWc4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=S6VQuomt2fZvGkX1iXywyQ8YuZgrsr/M1I+SS2lpQedfDdY//XYtmd5FVhY8RptEh
-	 k/M3c/PAwnnam6q9EIM8y/DVF2X4C0l1ptrzHdffOs7P/bl1OrRFxqlFQkqImb//51
-	 mYGqSAIiM/D5/DiJ1nRY4gCA40l6AeDg3GjpqsiVo5E2ss2t57vzkoElRZ7yCQErEp
-	 BhOICcRWuqDDNfuybSnd6slLMUmCiKEzFiNaWUpI3JN2u9xBkFExut8B27O7IRK5kg
-	 /Lx45HqDVhvZ1Wfw87iWrlzoMfNuM9Wl4mSdM5fQVD2pKbVnDLNYV4HLSrudVFVGtJ
-	 9m6ufy8GOJMYw==
-Date: Mon, 29 Jul 2024 17:51:02 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
-Cc: jingoohan1@gmail.com, manivannan.sadhasivam@linaro.org,
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	quic_mrana@quicinc.com
-Subject: Re: [PATCH v3 2/2] PCI: qcom: Avoid DBI and ATU register space
- mirror to BAR/MMIO region
-Message-ID: <20240729225102.GA8214@bhelgaas>
+	s=arc-20240116; t=1722293528; c=relaxed/simple;
+	bh=jtcBiybF18rrhoGoJIJZVMTIuu4MOYpa6C8hIZbgkFM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KXTobOUYCBJuSGxHE4Uf4KnQSvKe+UyghhdvukjCJej96zCWA54jT22FwFfFbTW5fZMAqEuWKNRWikmFk25rqtsdm5Wt0bK3Expi8F0zW0rkyEG3hFNF+J+ye6n6lsXcC+QmuQvVQDRzMTzjqCDBlUSXKWio3RAlgAjzdiWm18Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=agfj04Yn; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e0b7efa1c1bso1647565276.3;
+        Mon, 29 Jul 2024 15:52:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722293524; x=1722898324; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gg5HeEiGHzT8hT6f5/evSH/gSzb5Mo4puYNGhy7jr5U=;
+        b=agfj04YnbKN5N478SFAzsYlFasD9ypv8qdLWT5wZ7Tma5jt8aU8cT++iF8mOiJdo9b
+         yGTY98UTOLLqtuXnMSAiiBY7SA3kkuIhELfAKrT+lPmWUsWqMSXQt8pyRd3Ked3zj/fc
+         c7Q53EdZmwdS2K0wssx4PdaTOE0oVADp3jPJjl0QlxKO85FhwhBLxNnwUlqYlVAoyUUJ
+         A09JgayC02fE/cTyfi9X4FKnorX0nfhC/P7jNIR4MEg/idT4q7XgfkF6et444HX69Oj3
+         O3Ip71ihrzVEHc4fvgF6GTfLajV9G99xgcmugYz8f0rLJxlY7156x6W3jvGZGR13XbHg
+         HzAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722293524; x=1722898324;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gg5HeEiGHzT8hT6f5/evSH/gSzb5Mo4puYNGhy7jr5U=;
+        b=rEcLRUj1vk54N0MGmOVZtkfMHdQWYlfZc6CkNj8j+spBHhD15H+0bNBrJD0HEhuIHW
+         9XB7s7/oX5lvgVxdzNn8I+n/PD9lpyAIE2vqKuvtPJOfyKCa951swUfA08ZR4fi0CfWu
+         RB8V3EztPB+AXTP75hgqfG5vu0XlRCoKuebfk4eEcAfpby83J2eVencQHKUzc4cdxUiv
+         SaQOQFyRwy95l4XQZJ/txmBoQz8XuAP5M6rX7VIwdnnr4y1N9U99a66jG0jq50o4yC9Y
+         gxq28qFFGkJ58BgMBUz5Ar6uqmyJ/+8yBBpmMOE5pc6kxgsv4Lc3XlWkIpDt58rnCPQx
+         SV4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWREFPvkaXBiAKz5hlHwaF9RdIemcy4J6ww+djhAZOtuHcPVO8dA5VU1cBWyHreNbh0kAuURIbAikolEosyMZMSfJrVYmvcPtEUY5UVXPXYTr1e9FgBAhzjqsa+DpqADM7QzcQsSaMAOA19xtntMI1A7eb+cr2gJ/sCYKrPnnGS6K+O5cCEJH3Ele6AQ9f2+1USgw65hFJnhA27LvniM69tSaiqk/wEWgiocgdM
+X-Gm-Message-State: AOJu0YwFwel12BGXuZVyKwS6YAcJOTT4IWmkyRfnVHJ0XWaytlCtASAF
+	j1stjye2WyhBZ+c3RElCtZQFPfhMOibSNYQTlfeUvPtrXs56cY7WgWR46B2ibthhL1vFJZwNK9w
+	TuM2Po06K/SEijBD5q4Hgozo+Tfo=
+X-Google-Smtp-Source: AGHT+IFp1maKkseHyDEiVQrlMWP8F7GBiHqFsuJ7fcviqwFGiyOAHy2I1TSLKaLeQ7ojbPuZs/dqshqB1RUfEPRFJvM=
+X-Received: by 2002:a25:dfc4:0:b0:e0b:1241:cc19 with SMTP id
+ 3f1490d57ef6-e0b544cbe9dmr10355797276.32.1722293523937; Mon, 29 Jul 2024
+ 15:52:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <704e4cd2-06ce-47f4-bdd0-1d5ddbe06850@quicinc.com>
+References: <20240710212555.1617795-8-amery.hung@bytedance.com> <e1647f5f-5056-5cf0-e81c-5ef71fd6efd0@salutedevices.com>
+In-Reply-To: <e1647f5f-5056-5cf0-e81c-5ef71fd6efd0@salutedevices.com>
+From: Amery Hung <ameryhung@gmail.com>
+Date: Mon, 29 Jul 2024 15:51:52 -0700
+Message-ID: <CAMB2axMXzcxrFr+zWV6CFJxDrKwH+U85F7dkeXfJjAO10EmSAg@mail.gmail.com>
+Subject: Re: [RFC PATCH net-next v6 07/14] virtio/vsock: add common datagram
+ send path
+To: Arseniy Krasnov <avkrasnov@salutedevices.com>
+Cc: stefanha@redhat.com, sgarzare@redhat.com, mst@redhat.com, 
+	jasowang@redhat.com, xuanzhuo@linux.alibaba.com, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, kys@microsoft.com, 
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com, 
+	bryantan@vmware.com, vdasa@vmware.com, pv-drivers@vmware.com, 
+	dan.carpenter@linaro.org, simon.horman@corigine.com, oxffffaa@gmail.com, 
+	kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, bpf@vger.kernel.org, 
+	bobby.eshleman@bytedance.com, jiang.wang@bytedance.com, 
+	amery.hung@bytedance.com, xiyou.wangcong@gmail.com, kernel@sberdevices.ru
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 04:03:56PM -0700, Prudhvi Yarlagadda wrote:
-> Hi Bjorn,
-> 
-> Thanks for the review comments.
-> 
-> On 7/24/2024 11:43 AM, Bjorn Helgaas wrote:
-> > On Tue, Jul 23, 2024 at 07:27:19PM -0700, Prudhvi Yarlagadda wrote:
-> >> PARF hardware block which is a wrapper on top of DWC PCIe controller
-> >> mirrors the DBI and ATU register space. It uses PARF_SLV_ADDR_SPACE_SIZE
-> >> register to get the size of the memory block to be mirrored and uses
-> >> PARF_DBI_BASE_ADDR, PARF_ATU_BASE_ADDR registers to determine the base
-> >> address of DBI and ATU space inside the memory block that is being
-> >> mirrored.
-> >>
-> >> When a memory region which is located above the SLV_ADDR_SPACE_SIZE
-> >> boundary is used for BAR region then there could be an overlap of DBI and
-> >> ATU address space that is getting mirrored and the BAR region. This
-> >> results in DBI and ATU address space contents getting updated when a PCIe
-> >> function driver tries updating the BAR/MMIO memory region. Reference
-> >> memory map of the PCIe memory region with DBI and ATU address space
-> >> overlapping BAR region is as below.
-> >>
-> >>                         |---------------|
-> >>                         |               |
-> >>                         |               |
-> >>         ------- --------|---------------|
-> >>            |       |    |---------------|
-> >>            |       |    |       DBI     |
-> >>            |       |    |---------------|---->DBI_BASE_ADDR
-> >>            |       |    |               |
-> >>            |       |    |               |
-> >>            |    PCIe    |               |---->2*SLV_ADDR_SPACE_SIZE
-> >>            |    BAR/MMIO|---------------|
-> >>            |    Region  |       ATU     |
-> >>            |       |    |---------------|---->ATU_BASE_ADDR
-> >>            |       |    |               |
-> >>         PCIe       |    |---------------|
-> >>         Memory     |    |       DBI     |
-> >>         Region     |    |---------------|---->DBI_BASE_ADDR
-> >>            |       |    |               |
-> >>            |    --------|               |
-> >>            |            |               |---->SLV_ADDR_SPACE_SIZE
-> >>            |            |---------------|
-> >>            |            |       ATU     |
-> >>            |            |---------------|---->ATU_BASE_ADDR
-> >>            |            |               |
-> >>            |            |---------------|
-> >>            |            |       DBI     |
-> >>            |            |---------------|---->DBI_BASE_ADDR
-> >>            |            |               |
-> >>            |            |               |
-> >>         ----------------|---------------|
-> >>                         |               |
-> >>                         |               |
-> >>                         |               |
-> >>                         |---------------|
-> >>
-> >> Currently memory region beyond the SLV_ADDR_SPACE_SIZE boundary is not
-> >> used for BAR region which is why the above mentioned issue is not
-> >> encountered. This issue is discovered as part of internal testing when we
-> >> tried moving the BAR region beyond the SLV_ADDR_SPACE_SIZE boundary. Hence
-> >> we are trying to fix this.
-> >>
-> >> As PARF hardware block mirrors DBI and ATU register space after every
-> >> PARF_SLV_ADDR_SPACE_SIZE (default 0x1000000) boundary multiple, write
-> >> U32_MAX (all 0xFF's) to PARF_SLV_ADDR_SPACE_SIZE register to avoid
-> >> mirroring DBI and ATU to BAR/MMIO region. Write the physical base address
-> >> of DBI and ATU register blocks to PARF_DBI_BASE_ADDR (default 0x0) and
-> >> PARF_ATU_BASE_ADDR (default 0x1000) respectively to make sure DBI and ATU
-> >> blocks are at expected memory locations.
-> >>
-> >> The register offsets PARF_DBI_BASE_ADDR_V2, PARF_SLV_ADDR_SPACE_SIZE_V2
-> >> and PARF_ATU_BASE_ADDR are applicable for platforms that use PARF
-> >> Qcom IP rev 1.9.0, 2.7.0 and 2.9.0. PARF_DBI_BASE_ADDR_V2 and
-> >> PARF_SLV_ADDR_SPACE_SIZE_V2 are applicable for PARF Qcom IP rev 2.3.3.
-> >> PARF_DBI_BASE_ADDR and PARF_SLV_ADDR_SPACE_SIZE are applicable for PARF
-> >> Qcom IP rev 1.0.0, 2.3.2 and 2.4.0. Updating the init()/post_init()
-> >> functions of the respective PARF versions to program applicable
-> >> PARF_DBI_BASE_ADDR, PARF_SLV_ADDR_SPACE_SIZE and PARF_ATU_BASE_ADDR
-> >> register offsets. And remove the unused SLV_ADDR_SPACE_SZ macro.
-> >>
-> >> Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
-> >> Reviewed-by: Mayank Rana <quic_mrana@quicinc.com>
-> >> ---
-> >>  drivers/pci/controller/dwc/pcie-qcom.c | 62 +++++++++++++++++++-------
-> >>  1 file changed, 45 insertions(+), 17 deletions(-)
-> >>
-> >> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> >> index 0180edf3310e..6976efb8e2f0 100644
-> >> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> >> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> >> @@ -45,6 +45,7 @@
-> >>  #define PARF_PHY_REFCLK				0x4c
-> >>  #define PARF_CONFIG_BITS			0x50
-> >>  #define PARF_DBI_BASE_ADDR			0x168
-> >> +#define PARF_SLV_ADDR_SPACE_SIZE		0x16C
-> >>  #define PARF_MHI_CLOCK_RESET_CTRL		0x174
-> >>  #define PARF_AXI_MSTR_WR_ADDR_HALT		0x178
-> >>  #define PARF_AXI_MSTR_WR_ADDR_HALT_V2		0x1a8
-> >> @@ -52,8 +53,13 @@
-> >>  #define PARF_LTSSM				0x1b0
-> >>  #define PARF_SID_OFFSET				0x234
-> >>  #define PARF_BDF_TRANSLATE_CFG			0x24c
-> >> -#define PARF_SLV_ADDR_SPACE_SIZE		0x358
-> >> +#define PARF_DBI_BASE_ADDR_V2			0x350
-> >> +#define PARF_DBI_BASE_ADDR_V2_HI		0x354
-> >> +#define PARF_SLV_ADDR_SPACE_SIZE_V2		0x358
-> >> +#define PARF_SLV_ADDR_SPACE_SIZE_V2_HI		0x35C
-> >>  #define PARF_NO_SNOOP_OVERIDE			0x3d4
-> >> +#define PARF_ATU_BASE_ADDR			0x634
-> >> +#define PARF_ATU_BASE_ADDR_HI			0x638
-> >>  #define PARF_DEVICE_TYPE			0x1000
-> >>  #define PARF_BDF_TO_SID_TABLE_N			0x2000
-> >>  #define PARF_BDF_TO_SID_CFG			0x2c00
-> >> @@ -107,9 +113,6 @@
-> >>  /* PARF_CONFIG_BITS register fields */
-> >>  #define PHY_RX0_EQ(x)				FIELD_PREP(GENMASK(26, 24), x)
-> >>  
-> >> -/* PARF_SLV_ADDR_SPACE_SIZE register value */
-> >> -#define SLV_ADDR_SPACE_SZ			0x10000000
-> >> -
-> >>  /* PARF_MHI_CLOCK_RESET_CTRL register fields */
-> >>  #define AHB_CLK_EN				BIT(0)
-> >>  #define MSTR_AXI_CLK_EN				BIT(1)
-> >> @@ -324,6 +327,39 @@ static void qcom_pcie_clear_hpc(struct dw_pcie *pci)
-> >>  	dw_pcie_dbi_ro_wr_dis(pci);
-> >>  }
-> >>  
-> >> +static void qcom_pcie_configure_dbi_base(struct qcom_pcie *pcie)
-> >> +{
-> >> +	struct dw_pcie *pci = pcie->pci;
-> >> +
-> >> +	if (pci->dbi_phys_addr) {
-> >> +		writel(lower_32_bits(pci->dbi_phys_addr), pcie->parf +
-> >> +							PARF_DBI_BASE_ADDR);
-> >> +		writel(U32_MAX, pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
-> >> +	}
-> >> +}
-> >> +
-> >> +static void qcom_pcie_configure_dbi_atu_base(struct qcom_pcie *pcie)
-> >> +{
-> >> +	struct dw_pcie *pci = pcie->pci;
-> >> +
-> >> +	if (pci->dbi_phys_addr) {
-> >> +		writel(lower_32_bits(pci->dbi_phys_addr), pcie->parf +
-> >> +							PARF_DBI_BASE_ADDR_V2);
-> >> +		writel(upper_32_bits(pci->dbi_phys_addr), pcie->parf +
-> >> +						PARF_DBI_BASE_ADDR_V2_HI);
-> >> +
-> >> +		if (pci->atu_phys_addr) {
-> >> +			writel(lower_32_bits(pci->atu_phys_addr), pcie->parf +
-> >> +							PARF_ATU_BASE_ADDR);
-> >> +			writel(upper_32_bits(pci->atu_phys_addr), pcie->parf +
-> >> +							PARF_ATU_BASE_ADDR_HI);
-> >> +		}
-> >> +
-> >> +		writel(U32_MAX, pcie->parf + PARF_SLV_ADDR_SPACE_SIZE_V2);
-> >> +		writel(U32_MAX, pcie->parf + PARF_SLV_ADDR_SPACE_SIZE_V2_HI);
-> >> +	}
-> >> +}
-> > 
-> > These functions write CPU physical addresses into registers.  I don't
-> > know where these registers live.  If they are on the PCI side of the
-> > world, they most likely should contain PCI bus addresses, not CPU
-> > physical addresses.
-> > 
-> > In some systems, PCI bus addresses are the same as CPU physical
-> > addresses, but on many systems they are not the same, so it's better
-> > if we don't make implicit assumptions that they are the same.  
-> 
-> On Qualcomm platforms, CPU physical address and PCI bus addresses
-> for DBI and ATU registers are same. PARF registers live outside the
-> PCI address space in the system memory.
-> 
-> There is a mapping logic in the QCOM PARF wrapper which detects any
-> incoming read/write transactions from the NOC towards PCIe
-> controller and checks its addresses against PARF_DBI_BASE_ADDR and
-> PARF_ATU_BASE_ADDR registers so that these transactions can be
-> routed to DBI and ATU registers inside the PCIe controller.
-> 
-> So, these PARF registers needs to be programmed with base CPU
-> physical addresses of DBI and ATU as the incoming DBI and ATU
-> transactions from the NOC contain CPU physical adresses.
+On Mon, Jul 29, 2024 at 1:12=E2=80=AFPM Arseniy Krasnov
+<avkrasnov@salutedevices.com> wrote:
+>
+> Hi,
+>
+> > diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/vi=
+rtio_transport_common.c
+> > index a1c76836d798..46cd1807f8e3 100644
+> > --- a/net/vmw_vsock/virtio_transport_common.c
+> > +++ b/net/vmw_vsock/virtio_transport_common.c
+> > @@ -1040,13 +1040,98 @@ int virtio_transport_shutdown(struct vsock_sock=
+ *vsk, int mode)
+> >  }
+> >  EXPORT_SYMBOL_GPL(virtio_transport_shutdown);
+> >
+> > +static int virtio_transport_dgram_send_pkt_info(struct vsock_sock *vsk=
+,
+> > +                                             struct virtio_vsock_pkt_i=
+nfo *info)
+> > +{
+> > +     u32 src_cid, src_port, dst_cid, dst_port;
+> > +     const struct vsock_transport *transport;
+> > +     const struct virtio_transport *t_ops;
+> > +     struct sock *sk =3D sk_vsock(vsk);
+> > +     struct virtio_vsock_hdr *hdr;
+> > +     struct sk_buff *skb;
+> > +     void *payload;
+> > +     int noblock =3D 0;
+> > +     int err;
+> > +
+> > +     info->type =3D virtio_transport_get_type(sk_vsock(vsk));
+> > +
+> > +     if (info->pkt_len > VIRTIO_VSOCK_MAX_PKT_BUF_SIZE)
+> > +             return -EMSGSIZE;
+>
+> Small suggestion, i think we can check for packet length earlier ? Before
+> info->type =3D ...
 
-Can you add a comment to this effect that these registers are
-effectively in the CPU address domain, not the PCI bus domain?
-Otherwise the next person who reviews this will have the same
-question, and somebody may even try to "fix" this by converting it to
-a PCI bus address.
+Certainly.
 
-Bjorn
+>
+> > +
+> > +     transport =3D vsock_dgram_lookup_transport(info->remote_cid, info=
+->remote_flags);
+> > +     t_ops =3D container_of(transport, struct virtio_transport, transp=
+ort);
+> > +     if (unlikely(!t_ops))
+> > +             return -EFAULT;
+> > +
+> > +     if (info->msg)
+> > +             noblock =3D info->msg->msg_flags & MSG_DONTWAIT;
+> > +
+> > +     /* Use sock_alloc_send_skb to throttle by sk_sndbuf. This helps a=
+void
+> > +      * triggering the OOM.
+> > +      */
+> > +     skb =3D sock_alloc_send_skb(sk, info->pkt_len + VIRTIO_VSOCK_SKB_=
+HEADROOM,
+> > +                               noblock, &err);
+> > +     if (!skb)
+> > +             return err;
+> > +
+> > +     skb_reserve(skb, VIRTIO_VSOCK_SKB_HEADROOM);
+> > +
+> > +     src_cid =3D t_ops->transport.get_local_cid();
+> > +     src_port =3D vsk->local_addr.svm_port;
+> > +     dst_cid =3D info->remote_cid;
+> > +     dst_port =3D info->remote_port;
+> > +
+> > +     hdr =3D virtio_vsock_hdr(skb);
+> > +     hdr->type       =3D cpu_to_le16(info->type);
+> > +     hdr->op         =3D cpu_to_le16(info->op);
+> > +     hdr->src_cid    =3D cpu_to_le64(src_cid);
+> > +     hdr->dst_cid    =3D cpu_to_le64(dst_cid);
+> > +     hdr->src_port   =3D cpu_to_le32(src_port);
+> > +     hdr->dst_port   =3D cpu_to_le32(dst_port);
+> > +     hdr->flags      =3D cpu_to_le32(info->flags);
+> > +     hdr->len        =3D cpu_to_le32(info->pkt_len);
+>
+> There is function 'virtio_transport_init_hdr()' in this file, may be reus=
+e it ?
+
+Will do.
+
+>
+> > +
+> > +     if (info->msg && info->pkt_len > 0) {
+>
+> If pkt_len is 0, do we really need to send such packets ? Because for con=
+nectible
+> sockets, we ignore empty OP_RW packets.
+
+Thanks for pointing this out. I think virtio dgram should also follow that.
+
+>
+> > +             payload =3D skb_put(skb, info->pkt_len);
+> > +             err =3D memcpy_from_msg(payload, info->msg, info->pkt_len=
+);
+> > +             if (err)
+> > +                     goto out;
+> > +     }
+> > +
+> > +     trace_virtio_transport_alloc_pkt(src_cid, src_port,
+> > +                                      dst_cid, dst_port,
+> > +                                      info->pkt_len,
+> > +                                      info->type,
+> > +                                      info->op,
+> > +                                      info->flags,
+> > +                                      false);
+>
+> ^^^ For SOCK_DGRAM, include/trace/events/vsock_virtio_transport_common.h =
+also should
+> be updated?
+
+Can you elaborate what needs to be changed?
+
+Thank you,
+Amery
+
+>
+> > +
+> > +     return t_ops->send_pkt(skb);
+> > +out:
+> > +     kfree_skb(skb);
+> > +     return err;
+> > +}
+> > +
+> >  int
+> >  virtio_transport_dgram_enqueue(struct vsock_sock *vsk,
+> >                              struct sockaddr_vm *remote_addr,
+> >                              struct msghdr *msg,
+> >                              size_t dgram_len)
+> >  {
+> > -     return -EOPNOTSUPP;
+> > +     /* Here we are only using the info struct to retain style uniform=
+ity
+> > +      * and to ease future refactoring and merging.
+> > +      */
+> > +     struct virtio_vsock_pkt_info info =3D {
+> > +             .op =3D VIRTIO_VSOCK_OP_RW,
+> > +             .remote_cid =3D remote_addr->svm_cid,
+> > +             .remote_port =3D remote_addr->svm_port,
+> > +             .remote_flags =3D remote_addr->svm_flags,
+> > +             .msg =3D msg,
+> > +             .vsk =3D vsk,
+> > +             .pkt_len =3D dgram_len,
+> > +     };
+> > +
+> > +     return virtio_transport_dgram_send_pkt_info(vsk, &info);
+> >  }
+> >  EXPORT_SYMBOL_GPL(virtio_transport_dgram_enqueue);
+> >
+> > --
+> > 2.20.1
+>
+> Thanks, Arseniy
 
