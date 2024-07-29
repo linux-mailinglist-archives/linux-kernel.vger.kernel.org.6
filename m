@@ -1,202 +1,445 @@
-Return-Path: <linux-kernel+bounces-266117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BDEE93FB4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:35:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EE1593FB51
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE0B41C219A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:35:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4288A1C2176B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB1118C33A;
-	Mon, 29 Jul 2024 16:28:32 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19191553A2;
+	Mon, 29 Jul 2024 16:31:17 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5603415EFC0
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A1877119
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722270512; cv=none; b=m/kJ2NCxHQTkBpxA550xDbwzDzN2G0TekhyNPMdESRhQ5X1MAf3Z09rzGMVQAWT4bf879T+0/2rREoQGjjFNYcqXMf00RxSocWYfjYb5E3u99rooZ7vyouja5mzBT8oH4dcucr9eLSIbKWRs8HUik9o1XtUfak2IKpQFTxqh0Rk=
+	t=1722270677; cv=none; b=qLhOEe7H13ukaZdwI04tlj+3NgL3NQyUSsD3ghqMj3pHWqt8h9PR2ymfVAMMb15wtlXIDqVtc1TfYYUyeTOO6aMNCwCwI7EYJh7aVnGv5ek7EtdFUs8Keh/+9bTOamgHfyd+RDYHRbSm/AfPtIGblvycD2f4NVpaPx1DZikOqLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722270512; c=relaxed/simple;
-	bh=dTQNpHRVJ2ak1aFJg/YkRVnRIXwzYF4no6e2/nG1f3c=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Vd7TP+s1Mefpcc+IRdi1cV9KJpo9hZch6urKOMzoWpCiqLrebYmCxEJA3girELxAwqiXIEOux/hlbHDpXrrjuS1JWiYXxKK6Lho4Vx6Y9hSaaGjpDVI18+k5ZYZo4FbQTo6VwbZSVbbiLtyBposdkNJdHuVVdTN28pqdbl2wRgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f8f5e8a7bso504600939f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:28:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722270509; x=1722875309;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oYwzfCLYVAPwKlCSey3OuTXhjgiWSRtY/wIJsDeAetE=;
-        b=SUN5HZrpDdoEXcY0LoQGUbjp5gD1f6u8PzFrPD5yqwJJOBtrtz2NQE9GHMh20BUTVZ
-         AwXb8H8YsxJdOXmlgZ6q2b0L4pHqVwm70n5ofL8QISO1YfAFJb8VvbXvxNZXhbz5i957
-         UpVnmWcFf5bKia4R3Mld7k6uSILLDV4rZ9uWOTrrHeRJp3hxv3BJYWI068u/FwDqXzim
-         U29JGIS7Pe5X8M8Y/3ILgUoll805xfHAYI/UT7Illia4hjAu0BCwJDCFhfQaHw8dDjq3
-         8NQ1Rd7DQXmkFTyK2OKfRjzRzgtQXGEr0c7qJ5lGIDggTuYTLOiIBAwmnIWjvK5UA7YU
-         lrlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNGCJuhdrOJ5rz/0fjOiCExu3A8WzNjppvpRenmoEo77P24pH9sdikv8to7I1PL320DMBqUn93j0/rLDvhoZdEuMUnEnmWKOtxIzhX
-X-Gm-Message-State: AOJu0YyEL2++cwIwYtSUT7x/AN3EUZNDfBfedX7HWFP+00I9m9XQLB0L
-	frJIuJNn0HYjnjrrgcej2alew8BcEmkLSgDR9MlcpxynvG7cClyxvrM/KO1V+jsTAk3MezplAiW
-	J40tNNof+jXJdVwP2L6E1Wl5jUQtelUVSBAbw7sF1UdxNKGFbeISrzGY=
-X-Google-Smtp-Source: AGHT+IGkz7HJkvORJwdEHiYIsc4m6V544J3mwBg5oVA+RWwjmExtfaiu0edZbZ6+uLqajzcTqCbemq2u4ich5JJb50PaFhWLw6uH
+	s=arc-20240116; t=1722270677; c=relaxed/simple;
+	bh=xpS7kTXTYMwLuis6HlzqWV0ggv22DEAJa7wVj/vExkE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gioUbFY2kZfgiJ8R+30mhSotB/eZiZmTwxCLFaj7Zv3Rw18TQS5NJItOolEe0bp+cZ/Gi0o9i5KXJmdG7NkBOC50vcfyPqP8SIhhaY/cU3g0lDP3UbLSrZFHwEDOf06sgg+JyOHv8IndgZskcl0s6bKDWwiJFE/LMDm8HLeOEkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WXkM05dSpz6K5nF;
+	Tue, 30 Jul 2024 00:28:44 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 22A07140B38;
+	Tue, 30 Jul 2024 00:31:11 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 29 Jul
+ 2024 17:31:10 +0100
+Date: Mon, 29 Jul 2024 17:31:09 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Shiju Jose <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+	Ani Sinha <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, Eric
+ Blake <eblake@redhat.com>, Igor Mammedov <imammedo@redhat.com>, Markus
+ Armbruster <armbru@redhat.com>, Michael Roth <michael.roth@amd.com>, Paolo
+ Bonzini <pbonzini@redhat.com>, Peter Maydell <peter.maydell@linaro.org>,
+	<linux-kernel@vger.kernel.org>, <qemu-arm@nongnu.org>,
+	<qemu-devel@nongnu.org>
+Subject: Re: [PATCH v4 6/6] acpi/ghes: Add a logic to inject ARM processor
+ CPER
+Message-ID: <20240729173109.00006911@Huawei.com>
+In-Reply-To: <7e0c1ae181e9792e876ec0e7d2a9e7f32d7b60ac.1722259246.git.mchehab+huawei@kernel.org>
+References: <cover.1722259246.git.mchehab+huawei@kernel.org>
+	<7e0c1ae181e9792e876ec0e7d2a9e7f32d7b60ac.1722259246.git.mchehab+huawei@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6415:b0:80f:81f5:b484 with SMTP id
- ca18e2360f4ac-81f95bca5cdmr45717739f.2.1722270509524; Mon, 29 Jul 2024
- 09:28:29 -0700 (PDT)
-Date: Mon, 29 Jul 2024 09:28:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ed7445061e65591f@google.com>
-Subject: [syzbot] [net?] general protection fault in reuseport_add_sock (3)
-From: syzbot <syzbot+e6979a5d2f10ecb700e4@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, lucien.xin@gmail.com, netdev@vger.kernel.org, 
-	nhorman@tuxdriver.com, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Hello,
+On Mon, 29 Jul 2024 15:21:10 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-syzbot found the following issue on:
+> Add an ACPI APEI GHES error injection logic for ARM
+> processor CPER, allowing to set fields at from
+> UEFI spec 2.10 tables N.16 and N.17 to any valid
+> value.
+> 
+> As some GHES functions require handling addresses, add
+> a helper function to support it.
+> 
+> Before starting erorr inject, the QAPI requires to negociate
+> QMP with:
+> 
+> { "execute": "qmp_capabilities" }
+> 
+> Afterwards, errors can be injected with:
+> 
+> 	{ "execute": "arm-inject-error" }
+> 
+> The error injection events supports several optional arguments,
+> having Processor Error Information (PEI) mapped into an array.
+> 
+> So, it is possible to inject multiple errors at the same CPER record,
+> as defined at UEFI spec, with:
+> 
+> 	{ "execute": "arm-inject-error", "arguments": {
+> 	   "error": [ {"type": [ "cache-error" ]},
+> 		      {"type": [ "tlb-error" ]} ] } }
+> 
+> The above generates a single CPER record with two PEI info, one
+> reporting a cache error, and the other one a TLB error, using
+> default values for other fields.
+> 
+> As all fields from ARM Processor CPER are mapped, so, the error
+> could contain physical/virtual addresses, register dumps,
+> vendor-specific data, etc.
+> 
+> This patch is co-authored:
+> - ghes logic to inject a simple ARM record by Shiju Jose;
+> - generic logic to handle block addresses by Jonathan Cameron;
+> - logic to allow changing all fields by Mauro Carvalho Chehab;
+> 
+> Co-authored-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Co-authored-by: Shiju Jose <shiju.jose@huawei.com>
+> Co-authored-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-HEAD commit:    301927d2d2eb Merge tag 'for-net-2024-07-26' of git://git.k..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=17332fad980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=968c4fa762577d3f
-dashboard link: https://syzkaller.appspot.com/bug?extid=e6979a5d2f10ecb700e4
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d0a623980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1538ac55980000
+A few minor comments inline.
+This crossed (I think) with a reply from Markus though so there are
+some other bits to address from that.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/cb9ce2729d35/disk-301927d2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/644eaaef61a5/vmlinux-301927d2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2f92322485c3/bzImage-301927d2.xz
+Jonathan
 
-The issue was bisected to:
+> diff --git a/configs/targets/aarch64-softmmu.mak b/configs/targets/aarch64-softmmu.mak
+> index 84cb32dc2f4f..b4b3cd97934a 100644
+> --- a/configs/targets/aarch64-softmmu.mak
+> +++ b/configs/targets/aarch64-softmmu.mak
+> @@ -5,3 +5,4 @@ TARGET_KVM_HAVE_GUEST_DEBUG=y
+>  TARGET_XML_FILES= gdb-xml/aarch64-core.xml gdb-xml/aarch64-fpu.xml gdb-xml/arm-core.xml gdb-xml/arm-vfp.xml gdb-xml/arm-vfp3.xml gdb-xml/arm-vfp-sysregs.xml gdb-xml/arm-neon.xml gdb-xml/arm-m-profile.xml gdb-xml/arm-m-profile-mve.xml gdb-xml/aarch64-pauth.xml
+>  # needed by boot.c
+>  TARGET_NEED_FDT=y
+> +CONFIG_ARM_EINJ=y
+> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> index 9346f45c59a5..e435c9aa0961 100644
+> --- a/hw/acpi/ghes.c
+> +++ b/hw/acpi/ghes.c
+> @@ -27,6 +27,7 @@
+>  #include "hw/acpi/generic_event_device.h"
+>  #include "hw/nvram/fw_cfg.h"
+>  #include "qemu/uuid.h"
+> +#include "qapi/qapi-types-arm-error-inject.h"
+>  
+>  #define ACPI_GHES_ERRORS_FW_CFG_FILE        "etc/hardware_errors"
+>  #define ACPI_GHES_DATA_ADDR_FW_CFG_FILE     "etc/hardware_errors_addr"
+> @@ -53,6 +54,12 @@
+>  /* The memory section CPER size, UEFI 2.6: N.2.5 Memory Error Section */
+>  #define ACPI_GHES_MEM_CPER_LENGTH           80
+>  
+> +/*
+> + * ARM Processor error section CPER sizes - UEFI 2.10: N.2.4.4
+> + */
+> +#define ACPI_GHES_ARM_CPER_LENGTH           40
+> +#define ACPI_GHES_ARM_CPER_PEI_LENGTH       32
+> +
+>  /* Masks for block_status flags */
+>  #define ACPI_GEBS_UNCORRECTABLE         1
+>  
+> @@ -234,6 +241,152 @@ static int acpi_ghes_record_mem_error(uint64_t error_block_address,
+>      return 0;
+>  }
+>  
+> +/* UEFI 2.9: N.2.4.4 ARM Processor Error Section */
+> +static void acpi_ghes_build_append_arm_cper(ArmError err, uint32_t cper_length,
+> +                                            GArray *table)
+> +{
+> +    unsigned int i, j;
+> +
+> +    /*
+> +     * ARM Processor Error Record
+> +     */
+> +
+> +    /* Validation Bits */
 
-commit 6ba84574026792ce33a40c7da721dea36d0f3973
-Author: Xin Long <lucien.xin@gmail.com>
-Date:   Mon Nov 12 10:27:17 2018 +0000
+Given nice naming, maybe drop the comments where the field
+name makes it obvious?
 
-    sctp: process sk_reuseport in sctp_get_port_local
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14ad25bd980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=16ad25bd980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12ad25bd980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e6979a5d2f10ecb700e4@syzkaller.appspotmail.com
-Fixes: 6ba845740267 ("sctp: process sk_reuseport in sctp_get_port_local")
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000002: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000010-0x0000000000000017]
-CPU: 1 UID: 0 PID: 10230 Comm: syz-executor119 Not tainted 6.10.0-syzkaller-12585-g301927d2d2eb #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-RIP: 0010:reuseport_add_sock+0x27e/0x5e0 net/core/sock_reuseport.c:350
-Code: 00 0f b7 5d 00 bf 01 00 00 00 89 de e8 1b a4 ff f7 83 fb 01 0f 85 a3 01 00 00 e8 6d a0 ff f7 49 8d 7e 12 48 89 f8 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 4b 02 00 00 41 0f b7 5e 12 49 8d 7e 14
-RSP: 0018:ffffc9000b947c98 EFLAGS: 00010202
-RAX: 0000000000000002 RBX: ffff8880252ddf98 RCX: ffff888079478000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000012
-RBP: 0000000000000001 R08: ffffffff8993e18d R09: 1ffffffff1fef385
-R10: dffffc0000000000 R11: fffffbfff1fef386 R12: ffff8880252ddac0
-R13: dffffc0000000000 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007f24e45b96c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffcced5f7b8 CR3: 00000000241be000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __sctp_hash_endpoint net/sctp/input.c:762 [inline]
- sctp_hash_endpoint+0x52a/0x600 net/sctp/input.c:790
- sctp_listen_start net/sctp/socket.c:8570 [inline]
- sctp_inet_listen+0x767/0xa20 net/sctp/socket.c:8625
- __sys_listen_socket net/socket.c:1883 [inline]
- __sys_listen+0x1b7/0x230 net/socket.c:1894
- __do_sys_listen net/socket.c:1902 [inline]
- __se_sys_listen net/socket.c:1900 [inline]
- __x64_sys_listen+0x5a/0x70 net/socket.c:1900
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f24e46039b9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 91 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f24e45b9228 EFLAGS: 00000246 ORIG_RAX: 0000000000000032
-RAX: ffffffffffffffda RBX: 00007f24e468e428 RCX: 00007f24e46039b9
-RDX: 00007f24e46039b9 RSI: 0000000000000003 RDI: 0000000000000004
-RBP: 00007f24e468e420 R08: 00007f24e45b96c0 R09: 00007f24e45b96c0
-R10: 00007f24e45b96c0 R11: 0000000000000246 R12: 00007f24e468e42c
-R13: 00007f24e465a5dc R14: 0020000000000001 R15: 00007ffcced5f7d8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:reuseport_add_sock+0x27e/0x5e0 net/core/sock_reuseport.c:350
-Code: 00 0f b7 5d 00 bf 01 00 00 00 89 de e8 1b a4 ff f7 83 fb 01 0f 85 a3 01 00 00 e8 6d a0 ff f7 49 8d 7e 12 48 89 f8 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 4b 02 00 00 41 0f b7 5e 12 49 8d 7e 14
-RSP: 0018:ffffc9000b947c98 EFLAGS: 00010202
-RAX: 0000000000000002 RBX: ffff8880252ddf98 RCX: ffff888079478000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000012
-RBP: 0000000000000001 R08: ffffffff8993e18d R09: 1ffffffff1fef385
-R10: dffffc0000000000 R11: fffffbfff1fef386 R12: ffff8880252ddac0
-R13: dffffc0000000000 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007f24e45b96c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffcced5f7b8 CR3: 00000000241be000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	00 0f                	add    %cl,(%rdi)
-   2:	b7 5d                	mov    $0x5d,%bh
-   4:	00 bf 01 00 00 00    	add    %bh,0x1(%rdi)
-   a:	89 de                	mov    %ebx,%esi
-   c:	e8 1b a4 ff f7       	call   0xf7ffa42c
-  11:	83 fb 01             	cmp    $0x1,%ebx
-  14:	0f 85 a3 01 00 00    	jne    0x1bd
-  1a:	e8 6d a0 ff f7       	call   0xf7ffa08c
-  1f:	49 8d 7e 12          	lea    0x12(%r14),%rdi
-  23:	48 89 f8             	mov    %rdi,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 0f b6 04 28       	movzbl (%rax,%r13,1),%eax <-- trapping instruction
-  2f:	84 c0                	test   %al,%al
-  31:	0f 85 4b 02 00 00    	jne    0x282
-  37:	41 0f b7 5e 12       	movzwl 0x12(%r14),%ebx
-  3c:	49 8d 7e 14          	lea    0x14(%r14),%rdi
+> +    build_append_int_noprefix(table, err.validation, 4);
+> +
+> +    /* Error Info Num */
+> +    build_append_int_noprefix(table, err.err_info_num, 2);
+> +
+> +    /* Context Info Num */
+> +    build_append_int_noprefix(table, err.context_info_num, 2);
+> +
+> +    /* Section length */
+> +    build_append_int_noprefix(table, cper_length, 4);
+> +
+> +    /* Error affinity level */
+> +    build_append_int_noprefix(table, err.affinity_level, 1);
+> +
+> +    /* Reserved */
+> +    build_append_int_noprefix(table, 0, 3);
+> +
+> +    /* MPIDR_EL1 */
+> +    build_append_int_noprefix(table, err.mpidr_el1, 8);
+> +
+> +    /* MIDR_EL1 */
+> +    build_append_int_noprefix(table, err.midr_el1, 8);
+> +
+> +    /* Running state */
+> +    build_append_int_noprefix(table, err.running_state, 4);
+> +
+> +    /* PSCI state: only valid when running state is zero  */
+> +    build_append_int_noprefix(table, err.psci_state, 4);
+> +
+> +    for (i = 0; i < err.err_info_num; i++) {
+> +        /* ARM Propcessor error information */
+> +        /* Version */
+> +        build_append_int_noprefix(table, 0, 1);
+> +
+> +        /*  Length */
+> +        build_append_int_noprefix(table, ACPI_GHES_ARM_CPER_PEI_LENGTH, 1);
+> +
+> +        /* Validation Bits */
+> +        build_append_int_noprefix(table, err.pei[i].validation, 2);
+> +
+> +        /* Type */
+> +        build_append_int_noprefix(table, err.pei[i].type, 1);
+> +
+> +        /* Multiple error count */
+> +        build_append_int_noprefix(table, err.pei[i].multiple_error, 2);
+> +
+> +        /* Flags  */
+> +        build_append_int_noprefix(table, err.pei[i].flags, 1);
+> +
+> +        /* Error information  */
+> +        build_append_int_noprefix(table, err.pei[i].error_info, 8);
+> +
+> +        /* Virtual fault address  */
+> +        build_append_int_noprefix(table, err.pei[i].virt_addr, 8);
+> +
+> +        /* Physical fault address  */
+> +        build_append_int_noprefix(table, err.pei[i].phy_addr, 8);
+> +    }
+> +
+> +    for (i = 0; i < err.context_info_num; i++) {
+> +        /* ARM Propcessor error context information */
+> +        /* Version */
+> +        build_append_int_noprefix(table, 0, 2);
+> +
+> +        /* Validation type */
+> +        build_append_int_noprefix(table, err.context[i].type, 2);
+> +
+> +        /* Register array size */
+> +        build_append_int_noprefix(table, err.context[i].size * 8, 4);
+> +
+> +        /* Register array (byte 8 of Context info) */
+> +        for (j = 0; j < err.context[i].size; j++) {
+> +            build_append_int_noprefix(table, err.context[i].array[j], 8);
+> +        }
+> +    }
+> +
+> +    for (i = 0; i < err.vendor_num; i++) {
+> +        build_append_int_noprefix(table, err.vendor[i], 1);
+> +    }
+> +}
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+...
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> diff --git a/hw/arm/arm_error_inject.c b/hw/arm/arm_error_inject.c
+> new file mode 100644
+> index 000000000000..5ebbdf2b2adc
+> --- /dev/null
+> +++ b/hw/arm/arm_error_inject.c
+> @@ -0,0 +1,420 @@
+> +/*
+> + * ARM Processor error injection
+> + *
+> + * Copyright(C) 2024 Huawei LTD.
+> + *
+> + * This code is licensed under the GPL version 2 or later. See the
+> + * COPYING file in the top-level directory.
+> + *
+> + */
+> +
+> +#include "qemu/osdep.h"
+> +#include "qapi/error.h"
+> +#include "hw/boards.h"
+> +#include "hw/acpi/ghes.h"
+> +#include "cpu.h"
+> +
+> +#define ACPI_GHES_ARM_CPER_CTX_DEFAULT_NREGS 74
+> +
+> +/* Handle ARM Processor Error Information (PEI) */
+> +static const ArmProcessorErrorInformationList *default_pei = { 0 };
+> +
+> +static ArmPEI *qmp_arm_pei(uint16_t *err_info_num,
+> +              bool has_error,
+> +              ArmProcessorErrorInformationList const *error_list)
+> +{
+> +    ArmProcessorErrorInformationList const *next;
+> +    ArmPeiValidationBitsList const *validation_list;
+> +    ArmPEI *pei = NULL;
+> +    uint16_t i;
+> +
+> +    if (!has_error) {
+> +        error_list = default_pei;
+> +    }
+> +
+> +    *err_info_num = 0;
+> +
+> +    for (next = error_list; next; next = next->next) {
+> +        (*err_info_num)++;
+> +
+> +        if (*err_info_num >= 255) {
+> +            break;
+> +        }
+> +    }
+> +
+> +    pei = g_new0(ArmPEI, (*err_info_num));
+> +
+> +    for (next = error_list, i = 0;
+> +                i < *err_info_num; i++, next = next->next) {
+> 
+Odd alignment.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> +/* For ARM processor errors */
+> +void qmp_arm_inject_error(bool has_validation,
+> +                    ArmProcessorValidationBitsList *validation_list,
+> +                    bool has_affinity_level,
+> +                    uint8_t affinity_level,
+> +                    bool has_mpidr_el1,
+> +                    uint64_t mpidr_el1,
+> +                    bool has_midr_el1,
+> +                    uint64_t midr_el1,
+> +                    bool has_running_state,
+> +                    ArmProcessorRunningStateList *running_state_list,
+> +                    bool has_psci_state,
+> +                    uint32_t psci_state,
+> +                    bool has_context,
+> +                    ArmProcessorContextList *context_list,
+> +                    bool has_vendor_specific,
+> +                    uint8List *vendor_specific_list,
+> +                    bool has_error,
+> +                    ArmProcessorErrorInformationList *error_list,
+> +                    Error **errp)
+> +{
+...
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> +
+> +    if (error.context) {
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+No need for check. If context_info_num is zero their
+won't be a loop iteration. 
 
-If you want to undo deduplication, reply with:
-#syz undup
+> +        for (i = 0; i < error.context_info_num; i++) {
+> +            g_free(error.context[i].array);
+> +        }
+> +    }
+> +    g_free(error.context);
+> +    g_free(error.pei);
+> +    g_free(error.vendor);
+> +
+> +    return;
+> +}
+> diff --git a/hw/arm/arm_error_inject_stubs.c b/hw/arm/arm_error_inject_stubs.c
+> new file mode 100644
+> index 000000000000..be6e8be2d0d9
+> --- /dev/null
+> +++ b/hw/arm/arm_error_inject_stubs.c
+> @@ -0,0 +1,34 @@
+> +/*
+> + * QMP stub for ARM processor error injection.
+> + *
+> + * Copyright(C) 2024 Huawei LTD.
+> + *
+> + * This code is licensed under the GPL version 2 or later. See the
+> + * COPYING file in the top-level directory.
+> + *
+> + */
+> +
+> +#include "qemu/osdep.h"
+> +#include "qapi/error.h"
+> +#include "hw/acpi/ghes.h"
+> +
+> +void qmp_arm_inject_error(bool has_validation,
+> +                        ArmProcessorValidationBitsList *validation,
+> +                        bool has_affinity_level,
+> +                        uint8_t affinity_level,
+> +                        bool has_mpidr_el1,
+> +                        uint64_t mpidr_el1,
+> +                        bool has_midr_el1,
+> +                        uint64_t midr_el1,
+> +                        bool has_running_state,
+> +                        ArmProcessorRunningStateList *running_state,
+> +                        bool has_psci_state,
+> +                        uint32_t psci_state,
+> +                        bool has_context, ArmProcessorContextList *context,
+> +                        bool has_vendor_specific, uint8List *vendor_specific,
+> +                        bool has_error,
+> +                        ArmProcessorErrorInformationList *error,
+> +                        Error **errp)
+> +{
+> +    error_setg(errp, "ARM processor error support is not compiled in");
+> +}
+Markus suggested:
+
+> A target-specific command like this one should be conditional.  Try
+> this:
+> 
+>     { 'command': 'arm-inject-error',
+>       'data': { 'errortypes': ['ArmProcessorErrorType'] },
+>       'features': [ 'unstable' ],
+>       'if': 'TARGET_ARM' }
+>
+> No need to provide a qmp_arm_inject_error() stub then.
+
+(I noticed because never knew you could do this.)
+
+Probably crossed with your v4 posting.
+
+> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+> index 4f1ab1a73a06..c591a5fb02c4 100644
+> --- a/include/hw/acpi/ghes.h
+> +++ b/include/hw/acpi/ghes.h
+
+...
+
+> +/* ARM processor - UEFI 2.10 table N.16 */
+> +typedef struct ArmError {
+> +    uint16_t validation;
+> +
+> +    uint8_t affinity_level;
+> +    uint64_t mpidr_el1;
+> +    uint64_t midr_el1;
+> +    uint32_t running_state;
+> +    uint32_t psci_state;
+> +
+> +    /* Those are calculated based on the input data */
+    /* Calculated based on the input data */
+> +    uint16_t err_info_num;
+> +    uint16_t context_info_num;
+> +    uint32_t vendor_num;
+> +    uint32_t context_length;
+> +
+> +    ArmPEI *pei;
+> +    ArmContext *context;
+> +    uint8_t *vendor;
+> +} ArmError;
+
 
