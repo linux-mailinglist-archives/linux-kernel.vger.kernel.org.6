@@ -1,130 +1,144 @@
-Return-Path: <linux-kernel+bounces-265243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8486793EE5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:24:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 529F593EE5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D0C928243F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:24:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F54B28243A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084DA86267;
-	Mon, 29 Jul 2024 07:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6323184A39;
+	Mon, 29 Jul 2024 07:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="TMQkV8Ag";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YADfwGZH"
-Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ku9FskPd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E906F2F8;
-	Mon, 29 Jul 2024 07:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12766F2F8
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722237887; cv=none; b=D7hlb/ElWK9u8R5i7yxnrJaT8FK4gItdQ7w9Y8LFVMMmcQTjPLRNx5geYvtxtIZ9zBy+ELc0U/v6BU4Afjg8GZmJTO/2hq5b8wB06+sRjJcXq4xZpaMKV+1/tMJ1nBLDswbnbhgb/SfkX4HPQMzfS7i1syRBL9Y5L6KOX/+ra6c=
+	t=1722237908; cv=none; b=TxnJMk/x+new+5mI2n0c6g+jtwOaRX/fUrfDfiyA+YuC2c7J249Ex9SnwAYtKHAvJct90jaeAbIGZ3IanjqXcOQxSiigMVq8PZ1UPiucE/RiYrvuEmpPeimETJ3klIrRvy9Dcnn+S0gH6v3RR7fM50mMTNna+Kb60yNWVPDXwsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722237887; c=relaxed/simple;
-	bh=WoGGOCw7xWleVYZzOoaqWgZlO4EDOO1kJDz368kdDAs=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=TF/gd3T8fy0RksviN5zhEIbcU2xCFWcjxgVkRZDiRr23XDQXZ1umkPMxmf2GMjKCnJ2/0+qRqopyBhiatYFgk+gTc9rYer8diahCK/4+eW6wYQsZ0E8ZAZAsiCPcYq5O3VMvVvdyT8OMIKnh4OXXL7Jkfl1LOukwZy49weuytTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=TMQkV8Ag; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YADfwGZH; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id B1BCA1140148;
-	Mon, 29 Jul 2024 03:24:44 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Mon, 29 Jul 2024 03:24:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1722237884; x=1722324284; bh=Ofuu1TCntz
-	fikhbeovXRTmmMPX5HR+XZ//nxfXttXOg=; b=TMQkV8AgbkCTaSSndsBfwEHjd2
-	1Okrt418o6IVoTD1oWGhAB5di0lzIpmCPjjriYIen6l9+rEPx7S6QYRkTpbSL1hU
-	Tchi0PayPrbH79cBjWr4gm/UejTNrRGw4M6vaTIUOZn5A2iKBpxzmT57/gsSDM4Q
-	NBwQoG2Hx+vD1tQixbU51kwIDCzrBXXMxrdeqIqbsd6MjXzWM7kBpo/ft361Xz9I
-	wyCVMzdjoCKyScBWRbIo5IekOI08G7b4cNfxXhb4Uk39ECV6QeI3dA8IkA7JPxn3
-	paqNjjGroFhBM5ijupkPj++ZAjEgg+MzKGsgtZE2lR8+Hn1ol6X/1Szy9tKA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1722237884; x=1722324284; bh=Ofuu1TCntzfikhbeovXRTmmMPX5H
-	R+XZ//nxfXttXOg=; b=YADfwGZHeuiNeO1oDXpN21Eh06KGjs3tVzxMuBbJYqlj
-	ZDRB2ooI8phA5m50r9T2j9QxQiRPNxExmSkDzrmt5uqRxgox+GiScOnrVnc4/oIv
-	n3S6jrwHd7OAoaDn+QFR9x3YfWbcyQAHhuNZ2Gfzc7/srI2hpUAOaVVhkqx5Xh4J
-	+1JZFHMeZwHYywXVZAT3WYX3/4M08u2cDkFRpFMIGQm0U2gKch5EPcCFlOwwF1z8
-	vii5+tm7b3fEhMVdjYzObsp0nb4rw/43ZAPk3+4MF7SNUFa5WpKrKUjy0q6w7JcM
-	gbtVYyQQd9LRXQED1FyWXRI96+Rtrfq7n2yze3Dd7A==
-X-ME-Sender: <xms:vEOnZuhn6FBbdu0yxdGWslKPGUWOSg1jU81sGjJWEsbla8Vh9papsw>
-    <xme:vEOnZvDJJIIChZJWueAXVSXKfj-BuEgVTgnbqWp_yAZRrCpkv51F821HgSv4H0H0I
-    L5E47-k_nopgQOVbAw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjedugdduvddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:vEOnZmHzt7eP4m9B5WLI-6JU84WWYUpGlPVUeqGlny6mEXUePun-6A>
-    <xmx:vEOnZnQySz4xiAZTKIv0ciXtoAzv6UbChX5TjAT3qQIEG_SYVJGr4g>
-    <xmx:vEOnZrx3jGwdWIAR7a8dmr_BjF9Eqz3pWsIw3xWkUsFnhvTcbHxQzQ>
-    <xmx:vEOnZl5_mFXXOLxlKa1f3r48UHH9hE1veFhT7OwrmTHhEgEUOnvHMA>
-    <xmx:vEOnZil2PvUhs1M5Bw2qK_0u3M00_InZ4n-l_aCAOAWmvwktR1Za__6P>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 2967AB6008D; Mon, 29 Jul 2024 03:24:44 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
+	s=arc-20240116; t=1722237908; c=relaxed/simple;
+	bh=PxY9OfyCxQQ8fcubazRFKXRnv9iR3nUeGTLtBKNYxsM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jS/FgQ+90G+H6Nb3wMSsbXP5wcsLNGYfePomQD9hsFwkoo52W5C0dVgc5FrY0NJoimjCjJ31Sbd7lsn0rAlg8g9IkzbmfgFRYfAkIvjOZoHpfql3XeZODhlT6eF75HW3KtyfqRtjUWFUYLozhnQMqnzzIhcyT1oWjoFgdP00800=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ku9FskPd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EB54C32786;
+	Mon, 29 Jul 2024 07:25:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722237908;
+	bh=PxY9OfyCxQQ8fcubazRFKXRnv9iR3nUeGTLtBKNYxsM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ku9FskPdEYt1ftVEY0gpdB3QZNTtf7WllULvSqLsL0Ox4MWN21lgzsRS3la1B4/QK
+	 z2KGsGL0KfTJeHY/v5G5FE0ubcc00cYwEyTBHrKRN2qvw83G5jBRcoEX4Q4hTmNJg0
+	 3OrUI+M/I4u+4AP87108kNp8DqzyQ4KvI5/tH6E/zqbqVJLomiGHKlGz/w7tIKDOWY
+	 Q2XsbHOzBDTmMnd3ixZOFh4umZsDw6c9+nBUQx70dH7Z1KUMDnKCTtBB84AWU6zUjw
+	 FtvckMz3pDGyOWtrMi4gvTl3qhOBZEj/N27ql8u4VFcgAfw6x0DYgmHb5Mof06ye+Q
+	 zkqKM91vsti9Q==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sYKkj-00GDrF-Ry;
+	Mon, 29 Jul 2024 08:25:06 +0100
+Date: Mon, 29 Jul 2024 08:25:04 +0100
+Message-ID: <86y15k1wz3.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Zhou Wang <wangzhou1@hisilicon.com>
+Subject: Re: [PATCH] irqchip/gic-v4: Fix ordering between vmapp and vpe locks
+In-Reply-To: <875xsrvpt3.ffs@tglx>
+References: <20240723175203.3193882-1-maz@kernel.org>
+	<875xsrvpt3.ffs@tglx>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-Id: <c05a72dd-1821-43ba-b3b4-caa9334e4016@app.fastmail.com>
-In-Reply-To: <Zqc-tY7LPLdEbZ-9@kekkonen.localdomain>
-References: <20240719095403.3607027-1-arnd@kernel.org>
- <Zqc-tY7LPLdEbZ-9@kekkonen.localdomain>
-Date: Mon, 29 Jul 2024 09:24:23 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Sakari Ailus" <sakari.ailus@linux.intel.com>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Bingbu Cao" <bingbu.cao@intel.com>,
- "Mauro Carvalho Chehab" <mchehab@kernel.org>,
- "Hans Verkuil" <hverkuil-cisco@xs4all.nl>,
- "Andreas Helbech Kleist" <andreaskleist@gmail.com>,
- "Tianshu Qiu" <tian.shu.qiu@intel.com>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: ipu-bridge: fix ipu6 Kconfig dependencies
-Content-Type: text/plain
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, wangzhou1@hisilicon.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Jul 29, 2024, at 09:03, Sakari Ailus wrote:
->> To make it consistent with the other IPU drivers as well as avoid this warning,
->> change the 'select' into 'depends on'.
->
-> Thanks for the patch. I'm not sure how I managed to miss the IPU6 driver...
+On Fri, 26 Jul 2024 21:52:40 +0100,
+Thomas Gleixner <tglx@linutronix.de> wrote:
+> 
+> On Tue, Jul 23 2024 at 18:52, Marc Zyngier wrote:
+> > @@ -3808,7 +3802,7 @@ static int its_vpe_set_affinity(struct irq_data *d,
+> >  	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
+> >  	unsigned int from, cpu = nr_cpu_ids;
+> >  	struct cpumask *table_mask;
+> > -	unsigned long flags;
+> > +	unsigned long flags, vmapp_flags;
+> 
+> What's this flags business for? its_vpe_set_affinity() is called with
+> interrupts disabled, no?
+>   
+> >  	/*
+> >  	 * Changing affinity is mega expensive, so let's be as lazy as
+> > @@ -3822,7 +3816,14 @@ static int its_vpe_set_affinity(struct irq_data *d,
+> >  	 * protect us, and that we must ensure nobody samples vpe->col_idx
+> >  	 * during the update, hence the lock below which must also be
+> >  	 * taken on any vLPI handling path that evaluates vpe->col_idx.
+> > +	 *
+> > +	 * Finally, we must protect ourselves against concurrent
+> > +	 * updates of the mapping state on this VM should the ITS list
+> > +	 * be in use.
+> >  	 */
+> > +	if (its_list_map)
+> > +		raw_spin_lock_irqsave(&vpe->its_vm->vmapp_lock, vmapp_flags);
+> 
+> Confused. This changes the locking from unconditional to
+> conditional. What's the rationale here?
 
-The driver was only adding in 6.10, so your patch was correct
-at the time.
+Haven't managed to sleep much, but came to the conclusion that I
+wasn't that stupid in my initial patch. Let's look at the full
+picture, starting with its_send_vmovp():
 
-> I think we also need, besides IPU_BRIDGE, || !IPU_BRIDGE, as the IPU_BRIDGE
-> has additional dependencies (I2C) compared to VIDEO_INTEL_IPU6. I'll add
-> that while applying. Please let me know if you have concerns.
+        if (!its_list_map) {
+                its = list_first_entry(&its_nodes, struct its_node, entry);
+                desc.its_vmovp_cmd.col = &its->collections[col_id];
+                its_send_single_vcommand(its, its_build_vmovp_cmd, &desc);
+                return;
+        }
 
-Makes sense, yes. I went with a hard dependency since that stays
-close to the current version with the select. I tried build-testing
-IPU6 now with IPU_BRIDGE=n and I2C=n/I2C=m, which works fine.
+        /*
+         * Protect against concurrent updates of the mapping state on
+         * individual VMs.
+         */
+        guard(raw_spinlock_irqsave)(&vpe->its_vm->vmapp_lock);
 
-However, the testing showed that IPU6 also missed a 'select AUXILIARY_BUS',
-which I had not found in randconfig testing because that usually gets
-selected by one of is other 30 users.
+The vmapp locking *is* conditional. Which makes a lot of sense as the
+presence of ITS list is the only thing that prevents the VPEs from
+being mapped eagerly at VM startup time (although this is a
+performance reason, and not a correctness issue).
 
-Since you are changing my patch already, maybe you can also add
-that at the same time. Thanks,
+So there is no point in taking that lock if there is no ITS list,
+given that the VPEs are mapped before we can do anything else. This
+has the massive benefit of allowing concurrent VPE affinity changes on
+modern HW.
 
-     Arnd
+This means that on GICv4.0 without ITSList or GICv4.1, the only lock
+we need to acquire is the VPE lock itself on VPE affinity change.
+
+I'll respin the patch shortly.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
