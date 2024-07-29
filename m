@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-265208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9F993EE00
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:07:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 058F093EE01
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C68911F236A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:07:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8064A280CF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC9812D1E0;
-	Mon, 29 Jul 2024 07:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8102112D75C;
+	Mon, 29 Jul 2024 07:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="CISnNhmX"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Y2pCf0Mt"
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834AA12C7FD;
-	Mon, 29 Jul 2024 07:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42ECC86AE3
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722236829; cv=none; b=IWzoGJIhzik4rSRv/Kul0eI68AOVLc8MIE76zPTNolK+6L4EDW527BihwpS/jGeNiJj1Xen9wyRf74vGBJ5e7a4KZu+zXtvY4cTUo51pCiAQIPMuCDFkZLwjMpXzwIkVB0qfo7iqM+2rY96gtKk7hY/H0rPV05QM0ZhGp1A8Pxs=
+	t=1722236830; cv=none; b=qSFMlV3mZKInQFJjdG/UfhKi94PaYYac/gwrqT0M6sxqX1smVpoWi/XLShIzm3xBnhiy2/+M9IZGq6R4AaiYstKub1o0DWqasdSkRlnwITTP33dOW3+QKi/hRi0X7D+miZxhMoTQy1dmIFjtGbvr6EmbFK7P4KcaOYAH7QIN0uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722236829; c=relaxed/simple;
-	bh=PSn+93YxahuM4/eEil9r4edmIQw42eptfiHBu+CeLF0=;
+	s=arc-20240116; t=1722236830; c=relaxed/simple;
+	bh=QH6iVLDsFa2jo+SBqkx8ftjMcYybPbIGSfZAEccKHgc=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MgIdjUF3SNURuZPA/ajOMqPUorG2Pji0OwL3kwCNmZPTWnGPGe84TwAcjfnTdpT+OSomsz4xmo4vYiuVEuuSx04vxGX0/OfA3o7/D6EjIKuORq0lBrIs5lxgt2nxZQubZ6BlJT1BuiZ0BqIC1IAxgbLbYj3YWqXTorCy2iasWRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=CISnNhmX; arc=none smtp.client-ip=68.232.154.123
+	 MIME-Version:Content-Type; b=ktHTN4tm03SaRWXTRAj5DjnNNTmB/uTv0mOiD9YeXR7jg1P+shQSYAbq5J9HRrT1kVm5YRUbPTdbzRM97IiQ8Zq0puFZZ6ITM3cFMqdWP/hQ1dEadcpyCsZ7UKlRQCXdigrKgxmRZWcqatGDxVVmcERqsx5Coh9RT56/2afruJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Y2pCf0Mt; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1722236828; x=1753772828;
+  t=1722236829; x=1753772829;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=PSn+93YxahuM4/eEil9r4edmIQw42eptfiHBu+CeLF0=;
-  b=CISnNhmX4A0Ka59HNgpTR1BOZYhCRxOco/OTM4A/SJXr6WHjXOeBmtVM
-   AOtBPo+aJMDgdP7M8TBO60jlZhkdD7nYl20WYi0gsuMP8p3r8jKzKgGG6
-   ZNhCINJCRQ1dnAdOiHdbzlV2ls+YQTHjIBM4P1kuY1DwFLDNjc4VqOMad
-   cmFGhmDoSde7tIXPP2+8r/DjLrt4YiGCaoSkwTimbbm1UlUNL52+KN0fR
-   dWm4Bv5xoMGEmDhW3KyZiROnzbqIiWQQktEFvQ9Jn5uCib+2qwZYJaCa7
-   fMM7owor9lU/a9LI5JLrptqMmIaaRGOIrc1R9SB+UaciI5TJ+fvpXEsYt
-   g==;
+  bh=QH6iVLDsFa2jo+SBqkx8ftjMcYybPbIGSfZAEccKHgc=;
+  b=Y2pCf0MtGbvioUd3OQ7ObKo7dDgiGgJsDXbFDqhjTqis2+J5g64REaGK
+   YBWDCA2+/LFyJZZRey3ONTiaIJNsIuhQl/gIDV8cvpzP8NHzjNFGEALot
+   JujCaYiAKFJKjoDLnkVKL7oFsU2g9GcYWO3zqkr/FXXi04VfkuSuPbZ41
+   +/yd/9ahU7t3V9CaKTWg9ym2P8hRJdniO3AQPGTeYWlFermvIc1HrgURY
+   kncggZTdsFsEHcWAR5fO6MabWYCuDFeZJ7NEp339mjnuHmUE4j3rxXDy4
+   jKJZ9D0KUpSGXLbEEeBbO6PfwRPSagoFFPGwMh6oTSLPmoflmp2g3lUwm
+   w==;
 X-CSE-ConnectionGUID: pQjOSLNzTjuj0oMDb/547w==
-X-CSE-MsgGUID: yLpZle7ZSI6AhsOFjTjvyw==
+X-CSE-MsgGUID: bpiantCIRn6jzEOqMW+n7g==
 X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="197213810"
+   d="scan'208";a="197213812"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Jul 2024 00:07:06 -0700
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Jul 2024 00:07:07 -0700
 Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
  chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 29 Jul 2024 00:06:58 -0700
+ 15.1.2507.35; Mon, 29 Jul 2024 00:07:05 -0700
 Received: from che-lt-i67070.microchip.com (10.10.85.11) by
  chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 29 Jul 2024 00:06:54 -0700
+ 15.1.2507.35 via Frontend Transport; Mon, 29 Jul 2024 00:07:01 -0700
 From: Varshini Rajendran <varshini.rajendran@microchip.com>
-To: <conor@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <devicetree@vger.kernel.org>,
+To: <linux@armlinux.org.uk>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <varshini.rajendran@microchip.com>
-Subject: [PATCH v6 05/27] dt-bindings: microchip: atmel,at91rm9200-tcb: add sam9x7 compatible
-Date: Mon, 29 Jul 2024 12:36:49 +0530
-Message-ID: <20240729070649.1990427-1-varshini.rajendran@microchip.com>
+CC: <varshini.rajendran@microchip.com>, Claudiu Beznea
+	<claudiu.beznea@microchip.com>
+Subject: [PATCH v6 06/27] ARM: at91: pm: add support for sam9x7 SoC family
+Date: Mon, 29 Jul 2024 12:36:59 +0530
+Message-ID: <20240729070659.1990506-1-varshini.rajendran@microchip.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240729065603.1986074-1-varshini.rajendran@microchip.com>
 References: <20240729065603.1986074-1-varshini.rajendran@microchip.com>
@@ -78,48 +78,93 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Add support for sam9x7 device compatible.
+Add support and pm init config for sam9x7 SoC.
 
 Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
 Changes in v6:
 
-- New patch in v6 to document tcb compatible.
+- Sorted the compatibles alphanumerically.
 ---
- .../soc/microchip/atmel,at91rm9200-tcb.yaml   | 20 ++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ arch/arm/mach-at91/generic.h |  2 ++
+ arch/arm/mach-at91/pm.c      | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/microchip/atmel,at91rm9200-tcb.yaml b/Documentation/devicetree/bindings/soc/microchip/atmel,at91rm9200-tcb.yaml
-index a46411149571..2c7275c4503b 100644
---- a/Documentation/devicetree/bindings/soc/microchip/atmel,at91rm9200-tcb.yaml
-+++ b/Documentation/devicetree/bindings/soc/microchip/atmel,at91rm9200-tcb.yaml
-@@ -15,13 +15,19 @@ description: |
+diff --git a/arch/arm/mach-at91/generic.h b/arch/arm/mach-at91/generic.h
+index 0c3960a8b3eb..acf0b3c82a30 100644
+--- a/arch/arm/mach-at91/generic.h
++++ b/arch/arm/mach-at91/generic.h
+@@ -12,6 +12,7 @@
+ extern void __init at91rm9200_pm_init(void);
+ extern void __init at91sam9_pm_init(void);
+ extern void __init sam9x60_pm_init(void);
++extern void __init sam9x7_pm_init(void);
+ extern void __init sama5_pm_init(void);
+ extern void __init sama5d2_pm_init(void);
+ extern void __init sama7_pm_init(void);
+@@ -19,6 +20,7 @@ extern void __init sama7_pm_init(void);
+ static inline void __init at91rm9200_pm_init(void) { }
+ static inline void __init at91sam9_pm_init(void) { }
+ static inline void __init sam9x60_pm_init(void) { }
++static inline void __init sam9x7_pm_init(void) { }
+ static inline void __init sama5_pm_init(void) { }
+ static inline void __init sama5d2_pm_init(void) { }
+ static inline void __init sama7_pm_init(void) { }
+diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+index 345b91dc6627..b9b995f8a36e 100644
+--- a/arch/arm/mach-at91/pm.c
++++ b/arch/arm/mach-at91/pm.c
+@@ -233,6 +233,13 @@ static const struct of_device_id sama7g5_ws_ids[] = {
+ 	{ /* sentinel */ }
+ };
  
- properties:
-   compatible:
--    items:
--      - enum:
--          - atmel,at91rm9200-tcb
--          - atmel,at91sam9x5-tcb
--          - atmel,sama5d2-tcb
--      - const: simple-mfd
--      - const: syscon
-+    oneOf:
-+      - items:
-+          - enum:
-+              - atmel,at91rm9200-tcb
-+              - atmel,at91sam9x5-tcb
-+              - atmel,sama5d2-tcb
-+          - const: simple-mfd
-+          - const: syscon
-+      - items:
-+          - const: microchip,sam9x7-tcb
-+          - const: atmel,sama5d2-tcb
-+          - const: simple-mfd
-+          - const: syscon
++static const struct of_device_id sam9x7_ws_ids[] = {
++	{ .compatible = "microchip,sam9x7-rtc",		.data = &ws_info[1] },
++	{ .compatible = "microchip,sam9x7-rtt",		.data = &ws_info[4] },
++	{ .compatible = "microchip,sam9x7-gem",		.data = &ws_info[5] },
++	{ /* sentinel */ }
++};
++
+ static int at91_pm_config_ws(unsigned int pm_mode, bool set)
+ {
+ 	const struct wakeup_source_info *wsi;
+@@ -1361,6 +1368,7 @@ static const struct of_device_id atmel_pmc_ids[] __initconst = {
+ 	{ .compatible = "atmel,sama5d4-pmc", .data = &pmc_infos[1] },
+ 	{ .compatible = "atmel,sama5d2-pmc", .data = &pmc_infos[1] },
+ 	{ .compatible = "microchip,sam9x60-pmc", .data = &pmc_infos[4] },
++	{ .compatible = "microchip,sam9x7-pmc", .data = &pmc_infos[4] },
+ 	{ .compatible = "microchip,sama7g5-pmc", .data = &pmc_infos[5] },
+ 	{ /* sentinel */ },
+ };
+@@ -1499,6 +1507,27 @@ void __init sam9x60_pm_init(void)
+ 	soc_pm.config_pmc_ws = at91_sam9x60_config_pmc_ws;
+ }
  
-   reg:
-     maxItems: 1
++void __init sam9x7_pm_init(void)
++{
++	static const int modes[] __initconst = {
++		AT91_PM_STANDBY, AT91_PM_ULP0,
++	};
++	int ret;
++
++	if (!IS_ENABLED(CONFIG_SOC_SAM9X7))
++		return;
++
++	at91_pm_modes_validate(modes, ARRAY_SIZE(modes));
++	ret = at91_dt_ramc(false);
++	if (ret)
++		return;
++
++	at91_pm_init(NULL);
++
++	soc_pm.ws_ids = sam9x7_ws_ids;
++	soc_pm.config_pmc_ws = at91_sam9x60_config_pmc_ws;
++}
++
+ void __init at91sam9_pm_init(void)
+ {
+ 	int ret;
 -- 
 2.25.1
 
