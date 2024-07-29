@@ -1,117 +1,131 @@
-Return-Path: <linux-kernel+bounces-265786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2558A93F5EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:55:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1AE893F5F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C48EF1F230DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:55:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27647B230FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793881494AB;
-	Mon, 29 Jul 2024 12:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1588C148FF8;
+	Mon, 29 Jul 2024 12:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z3h2O27S"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cH/nuxBN"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC3F1442FB
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE01148FE1;
+	Mon, 29 Jul 2024 12:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722257740; cv=none; b=oEqp7OQgTRuAkzW6XjJHa14YIm5GNSTHC4o2UN0yIyuwyV9l3ymou0hBor3EzUYFXM0v1+Yyh+jdIMRrD4P0HQcuwHVZoZse3YcQuIRG5L0IOBb9OCUGvUB3dv7wpdkaMJbDUPa2ojJ6+kXpmuKdkfojGTBz1H/ZqiracmJHPaA=
+	t=1722257764; cv=none; b=op1USOD/K/02nUjtCAyLeHnuR/CJEKDWVKj6IeMgmUbDmtFkJGdXoQNi4ZgL+5oeOvdz7WDrUwuaVfWMwtxnPNL/AkMnD67he3RS2ot4PJI+jcvdBUZYrBUKBFs4HezvjClfdQCe/uyOrPze9zEPRk9gSJAQhW/LtKZWNedwtj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722257740; c=relaxed/simple;
-	bh=ApFBGEKrXGZ5wlAkBjBHyCnfi54MpPWXk2MQoc3J3CQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VOxDpHEHIDLhlQkaQ9LKYzoh/PAAAQvterCwr9m2C1/VR/ZOwwat5XjX/RUFHh7PPWD4dJNbZZvNwTITAEvC6kA9tqNcntcfxCRsz7HuXA6hYRlGLHtLFJk/vM9CZDJuMRLZrDDyMcn7iKy/GOrlyWAnirPXfhCWC5ztXlC+et0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Z3h2O27S; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=opEWLaRlUPPuTcVF9JQV5B1iYQkixzeRREUKAI6824o=; b=Z3h2O27S0fXUvOG/m2g3CSn1iQ
-	s0wXWD8/fD7spO399wDArSxC8+8WM2vk15vnvNiBv6IiUUHSBr7j1wOgH+gyZYk1O+oITdb2j7yeA
-	Rb+Qu/d73aXY3LXHhGv+RKBJV6HVpjKUWVS/8k4EnXlbPw4tY5Jo063WyHGZJL/FFDOf5xZqWnU+r
-	+1ZyDxJgj72Vr/WDgoM2E4Ek4HaXRc8cORZs/E6UJ91+7it71Y2soJiZtzYpZ6wz1DB/qx7BZxCrd
-	H5deqH4KLMRAd6hUqLr5AEhf09bFQHflG8wdayykkjv2OexzpdKaziehGEe5AacQzrxzvgO/7HZlS
-	aicELm1w==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sYPuN-0000000DZnp-1691;
-	Mon, 29 Jul 2024 12:55:23 +0000
-Date: Mon, 29 Jul 2024 13:55:23 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Chuanhua Han <chuanhuahan@gmail.com>
-Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
-	linux-mm@kvack.org, ying.huang@intel.com,
-	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com,
-	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com,
-	kasong@tencent.com, linux-kernel@vger.kernel.org, mhocko@suse.com,
-	minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com,
-	senozhatsky@chromium.org, shakeel.butt@linux.dev,
-	shy828301@gmail.com, surenb@google.com, v-songbaohua@oppo.com,
-	xiang@kernel.org, yosryahmed@google.com,
-	Chuanhua Han <hanchuanhua@oppo.com>
-Subject: Re: [PATCH v5 3/4] mm: support large folios swapin as a whole for
- zRAM-like swapfile
-Message-ID: <ZqeRO9gedIPcbm3E@casper.infradead.org>
-References: <20240726094618.401593-1-21cnbao@gmail.com>
- <20240726094618.401593-4-21cnbao@gmail.com>
- <ZqcRqxGaJsAwZD3C@casper.infradead.org>
- <CANzGp4J3et+yo8v8iDngvAb3nrn-gSDh0_j0=65OEiw9jKJbPQ@mail.gmail.com>
+	s=arc-20240116; t=1722257764; c=relaxed/simple;
+	bh=yp8Y9Dip8DSGCmHHwje5HV5mtF25REE/X+2S8lF6exw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EPLmOPBrevrjGBvPn2zlw3Y/uLDv6n2kUTNkSnL7g9HB4FSyRs6W1tK5IT8sUTKpZtsfDS5Wn5CEmSa9xbbXEsT/VJNUe03CanojYan+mxHLBAdXrc28HGX9mdsDbZWGD7MzU5k/OzqB0/2MtoA1TPZL6KIGyDLci7jfR8NVDas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cH/nuxBN; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f0dfdc9e16so39987351fa.2;
+        Mon, 29 Jul 2024 05:56:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722257761; x=1722862561; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k+SHx7NLarzUQJttZx/UL50p3XbT43LUQzIyvyMh5qc=;
+        b=cH/nuxBNmwpm1f7b9NNuTT4BAZ9LOotD18TI/zGU8S49oiAAQdLyIyzFuFLTCfovuD
+         /NWmrbGI5VAFt3Z/aUdKpWyeEFuJSHDsbzW7sDSU3wx5Ad2mINIQBmVC5zAt4TrT2GaC
+         6rCGfLIRNzIe5c1Wzvng4LVKOco7tvrFMQMhFEA4YIXKTcHKK05fUVKM++OjeZktgA8d
+         Yr48y1LADcDK1y6e2+1WZs+JTK1oXwq1/MJCWWq8xlGBf4qD4UJJs49hGM9o4GUNqMgN
+         spG8lDpA7XIQjO5o16Xt5qpf2pL6Wmg/RDqzBG7OtX4txArSaQ+DkEVy8NvsDTaqB6kz
+         9DbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722257761; x=1722862561;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k+SHx7NLarzUQJttZx/UL50p3XbT43LUQzIyvyMh5qc=;
+        b=FED+VIQ33xtoThO2zTHT6NuPv6YGqD/1nz3pYR8pYwBXrKpnx/IQEGARBadUuwHUla
+         Ukq+Q2Nd8vRygCK2pv+WGS9bZc4qI4WOBzVHlJ+FVliUbAsBIgdG20TFEFtfKnyECvBC
+         NtZVhoC0EB/LinNLNU19sWxHD7l+fAGEmVx+9iSX+fndx9ALD4gjCztCz0qJNDAlvqrH
+         oSokljRWPNVWjzKPMRqxjPIf3ulOTbMapRjPPji9dVZ08pANCnbBiRAtaqp26kuYKUFK
+         oJX0yIkkFB27HVPLFkDzCemJAfhRoqJ4Y1zHs53tNN/unj7rsfGnK1/83gfBCQ2nHAbr
+         ie0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXkp0YCRRrbcchXl3dJmSmv+LhqY53UyOrzXNWSyNiyGDMXJTUEmP9rxSyLImCyyXKaOx1gy4hIFP4aDSrl9z6m7i+PUbXSLjFOuKDfgFL8FlYWWtWzDCAJflfmGf25I2U1SuHa0fPAFmO5hQR/hc/KmnwSboXEkNYrMW4YM/bkx3roqCg=
+X-Gm-Message-State: AOJu0YzD9gfrlvwChP8mwrrCgx8i6r6dg5aJpNPugiLfwviqK6PL36QO
+	NwUTM+qO3xDrgl4XG69P7uAwr15yfwysdIyRClN3HHPwuivwk/bKnoj7TnPJ85m6vULcQ2y66Ur
+	lApbDKKqkdQ790A20SS98qYv3Ia4=
+X-Google-Smtp-Source: AGHT+IFx/JAJN6hMd2OA7VlWKt2ZMfRpaXKwoXE5AXkNHXjAt/8Vn3UBgg+/SdvA9YVDCyRXZkJUyfyKstWkcGE9bGE=
+X-Received: by 2002:a2e:a314:0:b0:2ef:20ae:d113 with SMTP id
+ 38308e7fff4ca-2f12ee5abf3mr46470491fa.40.1722257760588; Mon, 29 Jul 2024
+ 05:56:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANzGp4J3et+yo8v8iDngvAb3nrn-gSDh0_j0=65OEiw9jKJbPQ@mail.gmail.com>
+References: <20240726-loongson1-dma-v10-2-31bf095a6fa6@gmail.com> <624be618-1a1a-422c-85e9-be3e1d182adf@web.de>
+In-Reply-To: <624be618-1a1a-422c-85e9-be3e1d182adf@web.de>
+From: Keguang Zhang <keguang.zhang@gmail.com>
+Date: Mon, 29 Jul 2024 20:55:24 +0800
+Message-ID: <CAJhJPsUb4KibbFtPJ3-byrsB2Yv82eGczkcysNrJjJ7WiYYhxQ@mail.gmail.com>
+Subject: Re: [PATCH v10 2/2] dmaengine: Loongson1: Add Loongson-1 APB DMA driver
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-mips@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Vinod Koul <vkoul@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 02:36:38PM +0800, Chuanhua Han wrote:
-> Matthew Wilcox <willy@infradead.org> 于2024年7月29日周一 11:51写道：
-> >
-> > On Fri, Jul 26, 2024 at 09:46:17PM +1200, Barry Song wrote:
-> > > -                     folio = vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0,
-> > > -                                             vma, vmf->address, false);
-> > > +                     folio = alloc_swap_folio(vmf);
-> > >                       page = &folio->page;
-> >
-> > This is no longer correct.  You need to set 'page' to the precise page
-> > that is being faulted rather than the first page of the folio.  It was
-> > fine before because it always allocated a single-page folio, but now it
-> > must use folio_page() or folio_file_page() (whichever has the correct
-> > semantics for you).
-> >
-> > Also you need to fix your test suite to notice this bug.  I suggest
-> > doing that first so that you know whether you've got the calculation
-> > correct.
-> 
-> >
-> >
-> This is no problem now, we support large folios swapin as a whole, so
-> the head page is used here instead of the page that is being faulted.
-> You can also refer to the current code context, now support large
-> folios swapin as a whole, and previously only support small page
-> swapin is not the same.
+On Sun, Jul 28, 2024 at 5:40=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> > This patch adds =E2=80=A6
+>
+> See also:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
+ocumentation/process/submitting-patches.rst?h=3Dv6.10#n94
+>
+Will drop "This patch".
+>
+> =E2=80=A6
+> > +++ b/drivers/dma/loongson1-apb-dma.c
+> > @@ -0,0 +1,675 @@
+> =E2=80=A6
+> > +static int ls1x_dma_resume(struct dma_chan *dchan)
+> > +{
+> =E2=80=A6
+> > +     spin_lock_irqsave(&chan->vchan.lock, flags);
+> > +     ret =3D ls1x_dma_start(chan, &chan->curr_lli->phys);
+> > +     spin_unlock_irqrestore(&chan->vchan.lock, flags);
+> > +
+> > +     return ret;
+> > +}
+> =E2=80=A6
+>
+> Under which circumstances would you become interested to apply a statemen=
+t
+> like =E2=80=9Cguard(spinlock_irqsave)(&chan->vchan.lock);=E2=80=9D?
+> https://elixir.bootlin.com/linux/v6.10.2/source/include/linux/spinlock.h#=
+L574
+>
+Will switch to guard() and scoped_guard().
+Thanks!
 
-You have completely failed to understand the problem.  Let's try it this
-way:
+> Regards,
+> Markus
 
-We take a page fault at address 0x123456789000.
-If part of a 16KiB folio, that's page 1 of the folio at 0x123456788000.
-If you now map page 0 of the folio at 0x123456789000, you've
-given the user the wrong page!  That looks like data corruption.
 
-The code in
-        if (folio_test_large(folio) && folio_test_swapcache(folio)) {
-as Barry pointed out will save you -- but what if those conditions fail?
-What if the mmap has been mremap()ed and the folio now crosses a PMD
-boundary?  mk_pte() will now be called on the wrong page.
+
+--=20
+Best regards,
+
+Keguang Zhang
 
