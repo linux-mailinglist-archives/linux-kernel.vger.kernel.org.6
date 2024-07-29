@@ -1,145 +1,156 @@
-Return-Path: <linux-kernel+bounces-265519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D6B93F257
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:13:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F91993F258
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E98C1F22674
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:13:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62C152813C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED975143725;
-	Mon, 29 Jul 2024 10:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D140B13B780;
+	Mon, 29 Jul 2024 10:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hJ7ZvKE0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vpMjoXmZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QtOQUdL1"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE90F1420D8;
-	Mon, 29 Jul 2024 10:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B487F28FF
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 10:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722248017; cv=none; b=eCzOAop3wv/VJWOCtg2EaA6jS4X1m9MhCfoRE4XtiONRUF2wNEGS5X8iRuPn/LXwjp1gdB4roJvn/fnFKpOP/qPRSM20x+S5nCadSmPdnOfpXnPQmvZrx7l4EEXNJbvr+RKONzggzLQKrtCQrMZyoXOhX0FVjKoLQsq+2ObKUIE=
+	t=1722248118; cv=none; b=TXNUHzA2bsZyy3m0W5oZocWB72wfuHauI8jTnT42YnJyJThjTg8IodbYnM6pQW4Za2Q+Gigze9X9T+YF4Htw48B4zrXQHOqGk5SITH1RbCIHLKrxmv1kYweyH50YlqQNUvABMmq2aiGBuXdttMyeL5wAhgMt8xrRN06v1jUuD/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722248017; c=relaxed/simple;
-	bh=uu4Ndu+dSnO0AKF4DXyDHytZPKsKTnjtBm1O4LGlIZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qoCpiOtL00dI/nURXU1Kim3NwV1pwP0IpsxDCw/UGnfaW8jTawTSyFa651nwmpWo0sqYUNIcaD0whStuqk5i5YvkRcT3IEe4ImZWOtMEwO/39vos2QA6h4R8BCe89GdQTkKmVpuyga3WSTCqYqGAJelNYiqiAZTtDPFlJhH2kaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hJ7ZvKE0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46SNrqHx031449;
-	Mon, 29 Jul 2024 10:13:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eFZszWFP/3fZ3P8WTHLQnK8a/nQ31EXl9Fet3fpHMrQ=; b=hJ7ZvKE0FO22mRMv
-	Gz5OWuknk43xkTBbf3RQozGM66WpSlsM++UUAaI5umpCnS9XtM61EpDQxSJsomb0
-	5MStc8gBgUPWMXwqSXFYu3v7kMohIPGGN/1v//GkKIio+8QytHgqMjPRgyJPvVdN
-	hUu018RAvXbUghuEA5DB0XBRWn6V6HpYpv6Z3jmXudzlfWTwh/Uyd5uy9+gCoWFo
-	wceq5bh61U3quXPAYXr+KoVsqKy0kZCBQn7TNky0qYwxeOeYBFlw0OUSzpRBbohX
-	WvOvIgO7dZo+haOJhttDujKGwYZCMHkEhTXLq9i3huPwVMFlmSxLmPqPhohOd4qK
-	GOMMEQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mt2kkpcu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 10:13:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TADV6K022909
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 10:13:31 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
- 2024 03:13:26 -0700
-Message-ID: <c19dc3c8-8d29-46fc-9386-37e83b9217b5@quicinc.com>
-Date: Mon, 29 Jul 2024 18:13:24 +0800
+	s=arc-20240116; t=1722248118; c=relaxed/simple;
+	bh=rI3ExtRhNpZtuklBz/NwIEO77N1uYemiiUfVa06bI7k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XHt6kAqiTxQB+yQaeWh/QVAug7G5d0xqQ+FwQz25zR5QMMIXuWCHfslgH0g6d1SVYzApXEtye4ZGtPX7FxefpQK2G0pqwqggl9qkk1whqx0TyqDjVDc5GH72TdHN5bgeqLp/WoqpUmRyEO5SIldLdnJveDj1KSY3k+JyQfeWOas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vpMjoXmZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QtOQUdL1; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722248115;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EfdndD/Xx64Wa78DiIlYHBcJxUQnI0VAD9raf5njdF4=;
+	b=vpMjoXmZxB1nEqSKrt3KxuiRJoeBW3nsUe4BTGr3QBLJfMy1UnxiNkVBiRfnPhsg24+tWw
+	jbTxipYmOto+k0amyuEZlkF3JDOyfGzpSM7BvdXXQ67lV+QLD4ppkgIqzC9iZRjBXx5ufO
+	1GdEhPQcw6kzmd5Ns1AfK488obgD6NO8oBUQ6GyMJM6yZQLbhcBTuMg0fRw47jtkK/Ht76
+	r3IcPRBq4fu3faFHPq+tNIPntfQFGw1AJKBE5Wt6nxDaiykc1343kwCceB32OTlGUBnK6f
+	4nLshhmsdp1obSYma0CeMXN4oyM78VXxGSLdP6d4fnGesHfKa0e/dqr06oOHQA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722248115;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EfdndD/Xx64Wa78DiIlYHBcJxUQnI0VAD9raf5njdF4=;
+	b=QtOQUdL1oE/+ojtVnJcZpu70vMRwGTwRyEwIvGRZLAv+ac4MYpogdy5CwM1O2WzQc7F/8S
+	LUJmDQJYyBL6qBBw==
+To: Yipeng Zou <zouyipeng@huawei.com>, maz@kernel.org, majun258@huawei.com,
+ guohanjun@huawei.com, wangwudi@hisilicon.com, liaochang1@huawei.com,
+ linux-kernel@vger.kernel.org
+Cc: zouyipeng@huawei.com
+Subject: Re: [PATCH] irqchip/mbigen: Fix mbigen node address layout
+In-Reply-To: <20240720013538.3251995-1-zouyipeng@huawei.com>
+References: <20240720013538.3251995-1-zouyipeng@huawei.com>
+Date: Mon, 29 Jul 2024 12:15:14 +0200
+Message-ID: <87r0bc8pxp.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] pinctrl: qcom: add the tlmm driver support for
- qcs9100 platform
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <kernel@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240709-add_qcs9100_tlmm_compatible-v2-0-d025b58ea196@quicinc.com>
- <20240709-add_qcs9100_tlmm_compatible-v2-2-d025b58ea196@quicinc.com>
- <CACMJSevpinkT+jFTK6ijpRF2ULEeAFiWLkWEmQ6bJfJdofyO8g@mail.gmail.com>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <CACMJSevpinkT+jFTK6ijpRF2ULEeAFiWLkWEmQ6bJfJdofyO8g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: -bT-emD6QiEu28QK6kmCmQf3EKDjtktw
-X-Proofpoint-GUID: -bT-emD6QiEu28QK6kmCmQf3EKDjtktw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-29_08,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- malwarescore=0 spamscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0
- suspectscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407290069
+Content-Type: text/plain
 
+On Sat, Jul 20 2024 at 09:35, Yipeng Zou wrote:
+> Mbigen chip contains several mbigen nodes, and mapped address space per
+> nodes one by one.
+>
+>                     mbigen chip
+>        |-----------------|------------|--------------|
+>    mgn_node_0         mgn_node_1     ...         mgn_node_i
+> |--------------|   |--------------|       |----------------------|
+> [0x0000, 0x1000)   [0x1000, 0x2000)       [i*0x1000, (i+1)*0x1000)
+>
+> Mbigen also defined a clear register with all other mbigen nodes in
+> uniform address space.
+>
+>                          mbigen chip
+>     |-----------|--------|--------|---------------|--------|
+> mgn_node_0  mgn_node_1  ...  mgn_clear_register  ...   mgn_node_i
+>                             |-----------------|
+>                              [0xA000, 0xB000)
+>
+> Everything is OK for now, when the mbigen nodes number less than 10,
+> there is no conflict with clear register.
+>
+> Once we defined mbigen node more than 10, it's going to touch clear
+> register in unexpected way.
+>
+> There should have a gap of 0x1000 between mgn_node9 and mgn_node10.
+>
+> The simplest solution is directly skip clear register when access to
+> more than 10 mbigen nodes.
 
+I see what you are trying to tell. Something like this makes it more
+clear:
 
-On 7/9/2024 11:39 PM, Bartosz Golaszewski wrote:
-> On Tue, 9 Jul 2024 at 15:05, Tengfei Fan <quic_tengfan@quicinc.com> wrote:
->>
->> Add the tlmm driver support for QCS9100 platform.
->> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
->> platform use non-SCMI resource. In the future, the SA8775p platform will
->> move to use SCMI resources and it will have new sa8775p-related device
->> tree. Consequently, introduce "qcom,qcs9100-tlmm" to the pinctrl device
->> match table.
->>
->> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
->> ---
->>   drivers/pinctrl/qcom/pinctrl-sa8775p.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/pinctrl/qcom/pinctrl-sa8775p.c b/drivers/pinctrl/qcom/pinctrl-sa8775p.c
->> index 5459c0c681a2..4687e11dfe75 100644
->> --- a/drivers/pinctrl/qcom/pinctrl-sa8775p.c
->> +++ b/drivers/pinctrl/qcom/pinctrl-sa8775p.c
->> @@ -1519,6 +1519,7 @@ static int sa8775p_pinctrl_probe(struct platform_device *pdev)
->>   }
->>
->>   static const struct of_device_id sa8775p_pinctrl_of_match[] = {
->> +       { .compatible = "qcom,qcs9100-tlmm", },
->>          { .compatible = "qcom,sa8775p-tlmm", },
->>          { },
->>   };
->>
->> --
->> 2.25.1
->>
-> 
-> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+   The mbigen interrupt chip has its per node registers located in a
+   contiguous region of page sized chunks. The code maps them into
+   virtual address space as a contiguous region and determines the
+   address of a node by using the node ID as index.
 
-After considering the feedback provided on the subject, We have decided
-to keep current SA8775p compatible and ABI compatibility in drivers.
-Let's close this session and ignore the current patche here.
-Thank you for your input.
+   This works correctly up to 10 nodes, but then fails because the
+   11th's array slot is used for the MGN_CLEAR registers.
 
--- 
-Thx and BRs,
-Tengfei Fan
+   Skip the MGN_CLEAR register space when calculating the offset for
+   node IDs greater or equal ten.
+
+Hmm?
+
+> Fixes: a6c2f87b8820 ("irqchip/mbigen: Implement the mbigen irq chip operation functions")
+> Signed-off-by: Yipeng Zou <zouyipeng@huawei.com>
+> ---
+>  drivers/irqchip/irq-mbigen.c | 18 ++++++++++++++++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/irqchip/irq-mbigen.c b/drivers/irqchip/irq-mbigen.c
+> index 58881d313979..b600637f5cd7 100644
+> --- a/drivers/irqchip/irq-mbigen.c
+> +++ b/drivers/irqchip/irq-mbigen.c
+> @@ -64,6 +64,20 @@ struct mbigen_device {
+>  	void __iomem		*base;
+>  };
+>  
+> +static inline unsigned int get_mbigen_node_offset(unsigned int nid)
+> +{
+> +	unsigned int offset = nid * MBIGEN_NODE_OFFSET;
+> +
+> +	/**
+
+This is not a kernel doc comment. Please use '/*'
+
+> +	 * To avoid touched clear register in unexpected way, we need to directly
+> +	 * skip clear register when access to more than 10 mbigen nodes.
+> +	 */
+
+> @@ -72,7 +86,7 @@ static inline unsigned int get_mbigen_vec_reg(irq_hw_number_t hwirq)
+>  	nid = hwirq / IRQS_PER_MBIGEN_NODE + 1;
+>  	pin = hwirq % IRQS_PER_MBIGEN_NODE;
+>  
+> -	return pin * 4 + nid * MBIGEN_NODE_OFFSET
+> +	return pin * 4 + get_mbigen_node_offset(nid)
+>  			+ REG_MBIGEN_VEC_OFFSET;
+
+Please get rid of these pointless line breaks.
+
+Thanks,
+
+        tglx
 
