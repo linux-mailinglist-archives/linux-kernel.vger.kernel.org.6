@@ -1,286 +1,148 @@
-Return-Path: <linux-kernel+bounces-266409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22DA793FF82
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:30:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D0E93FF8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46CD01C227E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:30:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22C371C22840
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E93C18E775;
-	Mon, 29 Jul 2024 20:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559641862B7;
+	Mon, 29 Jul 2024 20:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jMxoi5h0"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KQngmwtR"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFD718D4C8;
-	Mon, 29 Jul 2024 20:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E035188CA7
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722284915; cv=none; b=eCYzGEmcQfBCIF7pXwJYxKrufGavgJWCvWuEkx764WboLlG7VCqIU/Sc7GOdEMeh/PSoBt5iCvPLwW/EKTX3I7AX6SBBLIAryDLBNg/pGijaS7XGeZ3R9VLDbcBdu1WOrLs0lXQmELHXCmd8x1kl65oNEjOzBhhbE5btUAkp1oM=
+	t=1722285072; cv=none; b=trzNIDtuWrx9JV+1VU4tanqYu8As1LbRFX+p4rQZhP1pGCMxrplXpwy6COJzC98jIfuPm9/s30dc20itku5OvaEQVQuCcvGGn1cb9sgMJl6FpnOp69H7gYBCEuCTJOS+l5qWdDJlgQ4eTEMSoT7/tYn6by9qK1DrHADjM7g1FB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722284915; c=relaxed/simple;
-	bh=cF4aFcy0SvXNNNhLQlTYToc9MBbA4gE1pLcWsdHKoPo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oOE01Xu2d77qxYBR4cTt67ARaNZphgW+X6ZU5mMWDQeRnRndk+eQxp+HtdYvFoKfTwo9wWmvBj1cpnevGlkwrlJHbrzn9KxVur2CihQQ/hGs82ys5z+lr8U5WH3eOQ6HL87nVKm+lcnRgOKMkYOz/bPMZau/VhX+y1lbpaZf8d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jMxoi5h0; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4257d5fc9b7so26311515e9.2;
-        Mon, 29 Jul 2024 13:28:32 -0700 (PDT)
+	s=arc-20240116; t=1722285072; c=relaxed/simple;
+	bh=v1aS1lQVKXhrl5osmvtQvkwGB3PQXy+5n+7ZkC2IU7k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UpsbnBjUoalWRAfwA0OOfBPUX5r5YEgrXMr6uBUzATZIYaD83LDEX0ZcXzFRlrdI/flVWkpLlTUT343DntGdbUDxg1l4gvE5oCGSmwpfkb0lVCtMNgFfrDkao90BNZTgDGPdmZ9rjnFI67bM2snv8CrfMCsyaanMaScbs7NNkfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KQngmwtR; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e02c4983bfaso2529049276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:31:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722284911; x=1722889711; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=plfEDRpMuhRong+wPM9OUJEVupuquO7naYjdA+F1/zs=;
-        b=jMxoi5h08AviRUnNS9+Ifo54YHMNhBS2WCH0GgPOWWZA41gjnnfcmm+2J456eWDrXZ
-         hIiqsv+eJ3z4fPayILV7EfYPmdKqSV8RBTXBFi0isUeRVg8rfzfCwLnwuqI4MsvW/PPP
-         BxRuU/95WrfXLZ2mGaqX/LRXd8M+GaUDCcgHQ9Fdnnd5TyqaEofy69BrwlTmfd1Qs+9j
-         ZWMfMkUbRUy9WhIbJ5RLo6g6QbQph258H4DirQQCZbnpQA2pVE5ocVi54raqECq1/LcK
-         3VXEATVlwg06qb2L7I+KS6vAFN31HhLzpcoKZ2AABEyp+GP/qS9w73hQdQZRX+Qd3Wv4
-         ngwQ==
+        d=linaro.org; s=google; t=1722285068; x=1722889868; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=v1aS1lQVKXhrl5osmvtQvkwGB3PQXy+5n+7ZkC2IU7k=;
+        b=KQngmwtRP5cPVG0MyedAHOP6kErCF9qnqQXLqr0rhQR4m72Sc4+f3Fa0g/AzKqqqFN
+         5wlO2pgjZjFdrEUTls+fT8doj63YCLamJPcVK3t5IIhdSlYP4zgBilApoCj3eAuxdYwh
+         hykS4C/9NCIRFmTg8hXUvM0LvYECA3k5rAkDBRZe+4hhslzNyY+u+xGagzbrcCxNIxmu
+         Npmw0WmgIa/yBuzm87mpqvULt4Gje1ZuqkW1zqvnWVT9hc4yVt8jr/4DTZh+oTAf0PPN
+         UMJFUkhza3ntX3rgNGu8BdKa3JgkazK+gThFhVOQoMJgra4FuA0lD8oOOqtsZtisX6oT
+         1NjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722284911; x=1722889711;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=plfEDRpMuhRong+wPM9OUJEVupuquO7naYjdA+F1/zs=;
-        b=K0h4tI/bLbvSDDr+pxqLkOhlXaVWOhbP7IunbuvmxxJKWea8x9JC5zoSurqFytiHQw
-         FiBvrHiEL43fn9eeDSPs90i/ZW2V+f1hA0293joQqPhlf8HgS9lgM6i1uROBqTMtw3LT
-         A2xaS7WD9v8K58Bs1bZ/r9Kaqua9LBFrZ2Pi7QOLCgSNr20JaF46PF5ac6kgICNgSzCv
-         OZk26ASQKC7B76NNdniwDQysKHDsDINH2f0ijz36F+i74HkdSOadliCBadfiUnOtaGSR
-         jo62ls3iJshD6N1WdCZgs7NIP1tI0OZk9ekunf0iEr4kfWzkTNLbXexlKkRFSSmdt9bS
-         34rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBya3qxcguxvxslu6bz4yfEFjHa8DzHaoQkDdEL070LvZCfN73VWlZc99BXTLtHdAbUU6i3o2Wtl9gPWlhqaDy+xt+9SO5c6O8LihWtCntyXnIYo7Ed+CS/lD9a9mo57W9UJswXfzSGRPG5jbhwZQf4WWEyO0w6GpMrtdT7JQvWf+9eQ==
-X-Gm-Message-State: AOJu0Yzzu3gR/G/rVW5yLcQXu4MOAivzVE2/zBQ4RqZbgOWlpEJPdqb6
-	pc7PeJMCpXnhXvcYa3EsJejyMbuGeKkhyVVqCq0WjBXo/vgrMiCK
-X-Google-Smtp-Source: AGHT+IH3lHntMgM3gGqJ7u/yaGZvb0ul2183EVNLjHdkRXzzKUj5b7V7cBmKXNvPVk/PXsrn6TUdTQ==
-X-Received: by 2002:a05:600c:5124:b0:425:81bd:e5ee with SMTP id 5b1f17b1804b1-42811d9f01bmr75131275e9.16.1722284911201;
-        Mon, 29 Jul 2024 13:28:31 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:91c0:6bc7:8f80:c05e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280f484cdesm125478115e9.44.2024.07.29.13.28.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 13:28:30 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v5 3/3] clk: renesas: Add RZ/V2H(P) CPG driver
-Date: Mon, 29 Jul 2024 21:26:45 +0100
-Message-Id: <20240729202645.263525-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240729202645.263525-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240729202645.263525-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        d=1e100.net; s=20230601; t=1722285068; x=1722889868;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v1aS1lQVKXhrl5osmvtQvkwGB3PQXy+5n+7ZkC2IU7k=;
+        b=qyPE7KS1ULnXxfV7INqXCQ2KaJgzfVQ4XRJx2ir1V8tjtCDjrDaHYunmI5D0uHOQst
+         8oK0AhO0T6y/3k+kZSrVYZTY5S+8m0AVIDX6rtxUSbfEJ4yRtnhih/orCT4O2II37iH6
+         wd8tEB6LTTWyx6WIZoj3FbdE4Sl1e4BvFQ8/U+Dbis/Fd7uep+lLQpjXG9WiirbKF8ty
+         uAitc/wNUQzsNPvkh+D0+mQz/1P3ytjpr5NG7nBU78qzq2BAiF60h9bV1BDv09mkeNG+
+         06RDB1oP+DzKBkVDuVBhqEZYPiCLovVG4yQ6o7AP3YlA2c1vf60s6VtM4MKzyiTuNJyZ
+         PEkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeb13exDm68I3bBnjVkqzjX8l07C+Zp3H66S6H6FnCJwyhJ1yfezLag2/itL17irlrLWjzcWNJHt/SH7V2TcGaO9N2ZvtODfi9HF/S
+X-Gm-Message-State: AOJu0YwrSmt93PLY/KE0mdbpaZl8sB7Z68Om/EWu7HS6NQz1ot6jW8x1
+	QIrPji/qdNngige5vJca7dXuHJJiEccNb0UEemDA8NCm8P1PE5zCYQPEkOlOD1qW4yDyAPe9R0v
+	SSU6kuqwaR/Hdag6THecXCuIuQsFTBuCEmmlXxA==
+X-Google-Smtp-Source: AGHT+IE6PA+41Auz36YFIeCSe3gwULhATNq0ZrmnNpIMKRjzsevvjklMTd8qJRePRRiUM6vSVA+XVdVmqlOtJX4UP9w=
+X-Received: by 2002:a05:6902:c09:b0:e0b:3c55:747d with SMTP id
+ 3f1490d57ef6-e0b545af5f2mr9330015276.37.1722285068532; Mon, 29 Jul 2024
+ 13:31:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
+ <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
+ <20240711131637.opzrayksfadimgq4@vireshk-i7> <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
+ <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7> <CAPDyKFqCqDqSz2AGrNvkoWzn8-oYnS2fT1dyiMC8ZP1yqYvLKg@mail.gmail.com>
+ <20240725060211.e5pnfk46c6lxedpg@vireshk-i7> <CAPDyKFpSmZgxtmCtiTrFOwgj7ZpNpkDMhxsK0KnuGsWi1a9U5g@mail.gmail.com>
+ <20240725112519.d6ec7obtclsf3ace@vireshk-i7> <CAPDyKFqTtqYEFfaHq-jbxnp5gD7qm9TbLrah=k=VD2TRArvU8A@mail.gmail.com>
+ <20240729060550.crgrmbnlv66645w2@vireshk-i7>
+In-Reply-To: <20240729060550.crgrmbnlv66645w2@vireshk-i7>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 29 Jul 2024 22:30:31 +0200
+Message-ID: <CAPDyKFosi4dhf36iNaNgGN6RHLDunL1nEwD+A_aW2khxER59nQ@mail.gmail.com>
+Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Mon, 29 Jul 2024 at 08:05, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 28-07-24, 22:05, Ulf Hansson wrote:
+> > > > > I think that design is rather correct, just like other frameworks. Just that we
+> > > > > need to do only set-level for genpds and nothing else. That will have exactly
+> > > > > the same behavior that you want.
+> > > >
+> > > > I don't quite understand what you are proposing. Do you want to add a
+> > > > separate path for opp-levels?
+> > >
+> > > Not separate paths, but ignore clk/regulator changes if the table belongs to a
+> > > genpd.
+> > >
+> > > > The problem with that would be that platforms (Tegra at least) are
+> > > > already using a combination of opp-level and clocks.
+> > >
+> > > If they are using both for a genpd's OPP table (and changes are made for both
+> > > opp-level and clock by the OPP core), then it should already be wrong, isn't it?
+> >
+> > They are changing the clock through the device's OPP table and the
+> > level (performance-state) via genpd's table (using required OPPs).
+> > This works fine as of today.
+>
+> There is a problem here I guess then. Lets say there are two devices A and B,
+> that depend on a genpd.
+>
+> A requests required OPP 5 (level 5, clk 1.4 GHz), followed by
+> B requests required OPP 3 (level 3, clk 1 GHz).
+>
+> After this level will be configured to 5 and clk to 1 GHz I think.
 
-Add RZ/V2H(P) CPG driver.
+The level would be 5, as the aggregated votes in genpd would be
+correct in this case.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4->v5
-- Included RB tag from Geert
+In regards to the clocks, I assume this is handled correctly too, as
+the clocks are per device clocks that don't belong to the genpd.
 
-v3->v4
-- Added a comment for core clocks
-- Made r9a09g057_mod_clks as __initconst
-- Made r9a09g057_resets as __initconst
-- Made r9a09g057_cpg_info as __initconst
+>
+> > It's working today for *opp-level* only, because of the commit above.
+> > That's correct.
+>
+> Good.
+>
+> > My point is that calling dev_pm_opp_set_opp() recursively from
+> > _set_required_opps() doesn't make sense for the single PM domain case,
+> > as we can't assign a required-dev for it. This leads to an
+> > inconsistent behaviour when managing the required-OPPs.
+>
+> We won't be calling that because of the above patch. In case of a single dev,
+> the required device isn't set and so we will never end up calling
+> dev_pm_opp_set_opp() for a single genpd case.
 
-v2->v3
-- Added CLK_PLLDTY
-- Added core clocks sys_0_pclk and iotop_0_shclk
-- Dropped r9a09g057_crit_mod_clks
+That's right, but why do we want to call dev_pm_opp_set_opp() for the
+multiple PM domain case then? It makes the behaviour inconsistent.
 
-v1->v2
-- Updated commit description
-- Dropped pll_clk1/clk2_offset
-- Made r9a09g057_mod_clks/r9a09g057_resets as static const
-- Now using register indexes
----
- drivers/clk/renesas/Kconfig         |  5 ++
- drivers/clk/renesas/Makefile        |  1 +
- drivers/clk/renesas/r9a09g057-cpg.c | 80 +++++++++++++++++++++++++++++
- drivers/clk/renesas/rzv2h-cpg.c     |  4 ++
- drivers/clk/renesas/rzv2h-cpg.h     |  2 +
- 5 files changed, 92 insertions(+)
- create mode 100644 drivers/clk/renesas/r9a09g057-cpg.c
-
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index f078ccb635bb..76791a1c50ac 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -40,6 +40,7 @@ config CLK_RENESAS
- 	select CLK_R9A07G054 if ARCH_R9A07G054
- 	select CLK_R9A08G045 if ARCH_R9A08G045
- 	select CLK_R9A09G011 if ARCH_R9A09G011
-+	select CLK_R9A09G057 if ARCH_R9A09G057
- 	select CLK_SH73A0 if ARCH_SH73A0
- 
- if CLK_RENESAS
-@@ -193,6 +194,10 @@ config CLK_R9A09G011
- 	bool "RZ/V2M clock support" if COMPILE_TEST
- 	select CLK_RZG2L
- 
-+config CLK_R9A09G057
-+       bool "RZ/V2H(P) clock support" if COMPILE_TEST
-+       select CLK_RZV2H
-+
- config CLK_SH73A0
- 	bool "SH-Mobile AG5 clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index d81a62e78345..23d2e26051c8 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -37,6 +37,7 @@ obj-$(CONFIG_CLK_R9A07G044)		+= r9a07g044-cpg.o
- obj-$(CONFIG_CLK_R9A07G054)		+= r9a07g044-cpg.o
- obj-$(CONFIG_CLK_R9A08G045)		+= r9a08g045-cpg.o
- obj-$(CONFIG_CLK_R9A09G011)		+= r9a09g011-cpg.o
-+obj-$(CONFIG_CLK_R9A09G057)		+= r9a09g057-cpg.o
- obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
- 
- # Family
-diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
-new file mode 100644
-index 000000000000..9722b810e027
---- /dev/null
-+++ b/drivers/clk/renesas/r9a09g057-cpg.c
-@@ -0,0 +1,80 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Renesas RZ/V2H(P) CPG driver
-+ *
-+ * Copyright (C) 2024 Renesas Electronics Corp.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/clock/renesas,r9a09g057-cpg.h>
-+
-+#include "rzv2h-cpg.h"
-+
-+enum clk_ids {
-+	/* Core Clock Outputs exported to DT */
-+	LAST_DT_CORE_CLK = R9A09G057_IOTOP_0_SHCLK,
-+
-+	/* External Input Clocks */
-+	CLK_AUDIO_EXTAL,
-+	CLK_RTXIN,
-+	CLK_QEXTAL,
-+
-+	/* PLL Clocks */
-+	CLK_PLLCM33,
-+	CLK_PLLDTY,
-+	CLK_PLLCA55,
-+
-+	/* Internal Core Clocks */
-+	CLK_PLLCM33_DIV16,
-+
-+	/* Module Clocks */
-+	MOD_CLK_BASE,
-+};
-+
-+static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
-+	/* External Clock Inputs */
-+	DEF_INPUT("audio_extal", CLK_AUDIO_EXTAL),
-+	DEF_INPUT("rtxin", CLK_RTXIN),
-+	DEF_INPUT("qextal", CLK_QEXTAL),
-+
-+	/* PLL Clocks */
-+	DEF_FIXED(".pllcm33", CLK_PLLCM33, CLK_QEXTAL, 200, 3),
-+	DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
-+	DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLL_CONF(0x64)),
-+
-+	/* Internal Core Clocks */
-+	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
-+
-+	/* Core Clocks */
-+	DEF_FIXED("sys_0_pclk", R9A09G057_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
-+	DEF_FIXED("iotop_0_shclk", R9A09G057_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1, 1),
-+};
-+
-+static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
-+	DEF_MOD("scif_0_clk_pck",		CLK_PLLCM33_DIV16, 8, 15, 4, 15),
-+};
-+
-+static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
-+	DEF_RST(9, 5, 4, 6),		/* SCIF_0_RST_SYSTEM_N */
-+};
-+
-+const struct rzv2h_cpg_info r9a09g057_cpg_info __initconst = {
-+	/* Core Clocks */
-+	.core_clks = r9a09g057_core_clks,
-+	.num_core_clks = ARRAY_SIZE(r9a09g057_core_clks),
-+	.last_dt_core_clk = LAST_DT_CORE_CLK,
-+	.num_total_core_clks = MOD_CLK_BASE,
-+
-+	/* Module Clocks */
-+	.mod_clks = r9a09g057_mod_clks,
-+	.num_mod_clks = ARRAY_SIZE(r9a09g057_mod_clks),
-+	.num_hw_mod_clks = 25 * 16,
-+
-+	/* Resets */
-+	.resets = r9a09g057_resets,
-+	.num_resets = ARRAY_SIZE(r9a09g057_resets),
-+};
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
-index 23430bce7ab4..412a8015933e 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -665,6 +665,10 @@ static int __init rzv2h_cpg_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id rzv2h_cpg_match[] = {
-+	{
-+		.compatible = "renesas,r9a09g057-cpg",
-+		.data = &r9a09g057_cpg_info,
-+	},
- 	{ /* sentinel */ }
- };
- 
-diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
-index ab6beaa50296..6df59e041701 100644
---- a/drivers/clk/renesas/rzv2h-cpg.h
-+++ b/drivers/clk/renesas/rzv2h-cpg.h
-@@ -146,4 +146,6 @@ struct rzv2h_cpg_info {
- 	unsigned int num_resets;
- };
- 
-+extern const struct rzv2h_cpg_info r9a09g057_cpg_info;
-+
- #endif	/* __RENESAS_RZV2H_CPG_H__ */
--- 
-2.34.1
-
+Kind regards
+Uffe
 
