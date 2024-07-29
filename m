@@ -1,206 +1,323 @@
-Return-Path: <linux-kernel+bounces-266217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 198F893FC94
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:46:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A054C93FC95
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D08C1F22B7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:46:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2296F1F22DC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050781741D1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E6F174EE4;
 	Mon, 29 Jul 2024 17:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ba9xDLOn"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VlUwNvLx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEC883A17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA2683A09
 	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 17:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722275195; cv=none; b=hrfAckxDvnzpKXJRLFRUsO4x+2F8Dd+uqcVn26ueiGzdL3Z6cDN11w3F5dLHS7n4ruEDt+3TdvpDcaicBajUKDIfWxscOamn6JEOlwtxvYM2T4zXJEpdbNUG/hv/rPkRpg5OWbVk8/VTeVfm6+0TtG5gcb9dfeQqHg3Rvq5+pbY=
+	t=1722275195; cv=none; b=F0H3KvgXCoprzHd4Q8v06ZtsRRWPh5LiA68w7FzIKu3rCCHO/tIFowKL6HOyK78mWJPzqy+yyGrLD9eb7OuiUCOEqHXITcCyilGVuYluE78p5//0gZyBQWBILHe38GewaA2ueweXOeLV9FQfy3OXX+fztuykvDZIpJaCLfTeX9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722275195; c=relaxed/simple;
-	bh=x54E6CsVNHB8nlMMNY3p9jMlRbphqBDzrlOcojJrB+w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gH3WueroZB39Keb+pT8qreWqgZk5a1uq2XG6EKiuQAtLPyNBLBq7DwpsbPJ7KUHQvqk9rw6UTEGslFp40UhSTKkjZSrxQDjW6w2tidpiPzh2JOajpNPP464YzRI1/p97VXxRt/P7w9GP/Xr9gqw5bVg5XdUvL28Z640YFVu22/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ba9xDLOn; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso1606a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 10:46:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722275191; x=1722879991; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oH1DiYL4kdG8EVj9AsvFV25K/u74YDHNoemmf3irk7A=;
-        b=ba9xDLOnc6mGzgW+oWpD4qBuF+LiInUdeVcuYnR7oO3xZ1DThyRRXSmp2cPrYdhLjN
-         Vi8cVjhEcjgid1zIH8k0YhJ/lvJ3YLEXROxUNtc7YNesnX7MhoURl+7cbz2kaHcAPezM
-         zP5P8uBEpUWZrQHTgatpQtA4UdXSGkhvbNynks9sB05B4I+jnRDMLYxwn9nEwDyLa7pf
-         7qbTAS2ljgnljdhgFXL2Glfs+cR4i9a7zot+qcrxvysdydrnnOcOBjmhKOegoy42+cAO
-         05ISP08XmkvqqxSNMC54YGi20MHnzY+HNAKjR2n4cVKyWfZ7NYHsouWJED98xXIpSBAO
-         lylQ==
+	bh=EfAdzvWQrs5EE/djGHLmtqOmvquMhuBeGQOoABl2mjQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F5E4x99cHO4G+sy76v/ZtzAdiq3/KO4xmlxo3/iTsLZ4BlBdxZGnOBY0j8DY3Gz05hWJLHg62IWN21WrF72ImwnwfuRdU8TaCRegswNgHYR23quhLFIL6cQAZXxplfy61VMBL4mpkBlvQ9nPqccRxR1mjBxsZoC+/2dVGdw9npE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VlUwNvLx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722275192;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=H3cjyU7DcRzlmh09Caqy7nDbYhyFo4sNrIlJX/deP18=;
+	b=VlUwNvLxUIxnS1Qivo338I2cndTcqBr+h8wQpqU67Nk3/Nft2wFLtIxFBuh2HKWZcn4ZcS
+	5Kwyi2kavuKFWshSX1K2mtOuEuyENnhoY+xLH0QFuT9i/PF/dGgq/DsKM2RlHD4X3BnLVF
+	r9wPDYdjNCfijoy2bmEXmAUfODlIOOo=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-378-Gcmh9aFfOti8_HYFWi3aRA-1; Mon, 29 Jul 2024 13:46:29 -0400
+X-MC-Unique: Gcmh9aFfOti8_HYFWi3aRA-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-369bf135b49so1194725f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 10:46:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722275191; x=1722879991;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oH1DiYL4kdG8EVj9AsvFV25K/u74YDHNoemmf3irk7A=;
-        b=DDtAM1ebzhbN6Y0yD8yXG5LA/o3MbRuGfMrArJ11+WBQ3T8C7IdHAGwegYZIzDiaGy
-         zFAoKBYfLyTHSbllsIUelydPrkvY5yrBfPhat3Cx2hT1pbHepd8APVKgqhKlTRNWeIkd
-         /K+KxFzM2kd2lkwcwdSctPB6xYrloE4mXL27MEE81FQIi7ql++JKC+T5CJsKfWc67G8j
-         958Cewfc2r2YsjLHWHNF7clthW1G9U1TKHhV3q7PYlEtJ9GMyVu3zMyHJApdx9+3zO+h
-         5ZY2gb+V+4XIGBOjtctCVbaNxDzmfTGcsdZM44KUo0w9X7P/rtOEf49a4RgfdPp0BAvO
-         WGJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUn0eJfYg9EpHOHVAe4tOxdWppuVgaEwDAaJBNXDdRgk9xSjQonqL0s9m2FaDtIgMXQn3c7UTCqcsRjF/XFjCmSrzZOs7kiFFVgkg1q
-X-Gm-Message-State: AOJu0YzN07oCRECYu4aiLZb6cxH3y1AzOfxGaCgbiPoSXE37RVT/ok4G
-	WtAcKBfMbmstAcRK6sGMN0BBCsYHKMpToqrPTCLpz7pqaGMwVswW/XH/lxyVzivdEAlxm9R/97Z
-	GHfKLaqf2SQ1CfleR1iRuxKAYqy9vqtmTSN6q
-X-Google-Smtp-Source: AGHT+IF8TSv1Ug1AIHMZ96AEE7sYh9pBStaEEW0UjSF63jl4lvS9Dm0d9y/JZ49L9hgFK+kwJqihL2kmCwpyXk2q3x8=
-X-Received: by 2002:a05:6402:51d0:b0:57d:32ff:73ef with SMTP id
- 4fb4d7f45d1cf-5b40d4a2ad8mr35907a12.6.1722275190338; Mon, 29 Jul 2024
- 10:46:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722275188; x=1722879988;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=H3cjyU7DcRzlmh09Caqy7nDbYhyFo4sNrIlJX/deP18=;
+        b=QNcOGJ+a0hC2PwwZvH1lyPW1sE2jTytucbpzqweacu7bwEzXmcniXrgg0lE6nHsu0j
+         M0lCikcSm6VZfmegObOu6Oe0CjAqHDONbLxgjIfrJa804XfXhsW/w9PKySeHVKimz04Z
+         j7Ld8KN9q+km4YFwLlY1HvjkZKcmlNMQXSGiJAZSiRbB8St+x4QjBeJ/6ocVpQbOo23d
+         MFmiiGSP44d0AAA63UXTp+EJ4NYgmLMmJUwKu1T0F1nibaZgZHSVnhenDcR6j+/SZB5F
+         UnoMwoJvVAKvM2s3LnjmdGbeYAc8I6iTsQEnmYH1APJzqq7YqFuI7OAH+PusZPah1icN
+         Btww==
+X-Gm-Message-State: AOJu0YzEe8GtfbuwpJKVM1MXcAu7fSsfNa1udqF6PMiJgXwNMFpRyj9Y
+	09pYODhkhPmwwP+YD0LfpobVOxfCtFVPlrx3tSQAUlDN4K+4l81f/HRt+IJgbFtqC3m7Qwkwd5I
+	iSfVZLQwxKrNXMsdFf9W9xdu5kjaR8/LdhDjZDX++rR73KcrzY3bng3FTcA7ZrA==
+X-Received: by 2002:adf:e7c9:0:b0:366:eadc:573f with SMTP id ffacd0b85a97d-36b5d83c14fmr4906306f8f.27.1722275188613;
+        Mon, 29 Jul 2024 10:46:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGZZdz9GwKmRLcZjIxmGDbi30MVDRDKGHp+RJFOkOUOAEfvMMbnz5F5ov80upTpSYDKQf74Ng==
+X-Received: by 2002:adf:e7c9:0:b0:366:eadc:573f with SMTP id ffacd0b85a97d-36b5d83c14fmr4906291f8f.27.1722275188152;
+        Mon, 29 Jul 2024 10:46:28 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c732:e100:8ba:76bc:e880:d17? (p200300cbc732e10008ba76bce8800d17.dip0.t-ipconnect.de. [2003:cb:c732:e100:8ba:76bc:e880:d17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280573f935sm187168345e9.14.2024.07.29.10.46.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jul 2024 10:46:27 -0700 (PDT)
+Message-ID: <da433043-d17c-43e0-ab6f-c4897061b4a1@redhat.com>
+Date: Mon, 29 Jul 2024 19:46:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729163326.16386-1-aha310510@gmail.com>
-In-Reply-To: <20240729163326.16386-1-aha310510@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 29 Jul 2024 19:46:15 +0200
-Message-ID: <CANn89i+SgDaA-vkTXxziA3OLZncgYUTViC-WaX6dGVx_0kLUww@mail.gmail.com>
-Subject: Re: [PATCH net] net: annotate data race around dev->flags in __dev_change_flags
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, jiri@resnulli.us, 
-	syzbot+113b65786d8662e21ff7@syzkaller.appspotmail.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] mm: let pte_lockptr() consume a pte_t pointer
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
+ Qi Zheng <zhengqi.arch@bytedance.com>, Hugh Dickins <hughd@google.com>
+References: <20240725183955.2268884-1-david@redhat.com>
+ <20240725183955.2268884-2-david@redhat.com> <ZqPCjd35OdNRrcfl@x1n>
+ <bf2069ed-f2b8-49d4-baf0-dbd2189362f9@redhat.com> <ZqQVDwv4RM-wIW7S@x1n>
+ <9e671388-a5c6-4de1-8c85-b7af8aee7f44@redhat.com> <ZqfCmFUFyPU3WGES@x1n>
+ <ZqfF2hhe60TE8xhQ@x1n>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZqfF2hhe60TE8xhQ@x1n>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 29, 2024 at 6:34=E2=80=AFPM Jeongjun Park <aha310510@gmail.com>=
- wrote:
->
-> According to KCSAN report, there is a read/write race between
-> __dev_change_flags and netif_is_bond_master for dev->flags.
->
-> Thereforce, __dev_change_flags() needs protection.
->
-> <syzbot>
-> BUG: KCSAN: data-race in __dev_change_flags / is_upper_ndev_bond_master_f=
-ilter
->
-> read-write to 0xffff888112d970b0 of 4 bytes by task 4888 on cpu 0:
->  __dev_change_flags+0x9a/0x410 net/core/dev.c:8755
->  rtnl_configure_link net/core/rtnetlink.c:3321 [inline]
->  rtnl_newlink_create net/core/rtnetlink.c:3518 [inline]
->  __rtnl_newlink net/core/rtnetlink.c:3730 [inline]
->  rtnl_newlink+0x121e/0x1690 net/core/rtnetlink.c:3743
->  rtnetlink_rcv_msg+0x85e/0x910 net/core/rtnetlink.c:6635
->  netlink_rcv_skb+0x12c/0x230 net/netlink/af_netlink.c:2564
->  rtnetlink_rcv+0x1c/0x30 net/core/rtnetlink.c:6653
->  netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
->  netlink_unicast+0x58d/0x660 net/netlink/af_netlink.c:1361
->  netlink_sendmsg+0x5ca/0x6e0 net/netlink/af_netlink.c:1905
->  sock_sendmsg_nosec net/socket.c:730 [inline]
->  __sock_sendmsg+0x140/0x180 net/socket.c:745
->  ____sys_sendmsg+0x312/0x410 net/socket.c:2585
->  ___sys_sendmsg net/socket.c:2639 [inline]
->  __sys_sendmsg+0x1e9/0x280 net/socket.c:2668
->  __do_sys_sendmsg net/socket.c:2677 [inline]
->  __se_sys_sendmsg net/socket.c:2675 [inline]
->  __x64_sys_sendmsg+0x46/0x50 net/socket.c:2675
->  x64_sys_call+0xb25/0x2d70 arch/x86/include/generated/asm/syscalls_64.h:4=
-7
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> read to 0xffff888112d970b0 of 4 bytes by task 11 on cpu 1:
->  netif_is_bond_master include/linux/netdevice.h:5020 [inline]
->  is_upper_ndev_bond_master_filter+0x2b/0xb0 drivers/infiniband/core/roce_=
-gid_mgmt.c:275
->  ib_enum_roce_netdev+0x124/0x1d0 drivers/infiniband/core/device.c:2310
->  ib_enum_all_roce_netdevs+0x8a/0x100 drivers/infiniband/core/device.c:233=
-7
->  netdevice_event_work_handler+0x15b/0x3c0 drivers/infiniband/core/roce_gi=
-d_mgmt.c:626
->  process_one_work kernel/workqueue.c:3248 [inline]
->  process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3329
->  worker_thread+0x526/0x720 kernel/workqueue.c:3409
->  kthread+0x1d1/0x210 kernel/kthread.c:389
->  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->
-> value changed: 0x00001002 -> 0x00000202
->
-> Reported-by: syzbot+113b65786d8662e21ff7@syzkaller.appspotmail.com
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
->  net/core/dev.c | 17 +++++++++--------
->  1 file changed, 9 insertions(+), 8 deletions(-)
->
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index 6ea1d20676fb..3b9626cdfd9a 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -8799,7 +8799,7 @@ EXPORT_SYMBOL(dev_get_flags);
->  int __dev_change_flags(struct net_device *dev, unsigned int flags,
->                        struct netlink_ext_ack *extack)
->  {
-> -       unsigned int old_flags =3D dev->flags;
-> +       unsigned int old_flags =3D READ_ONCE(dev->flags);
->         int ret;
->
->         ASSERT_RTNL();
-> @@ -8808,12 +8808,13 @@ int __dev_change_flags(struct net_device *dev, un=
-signed int flags,
->          *      Set the flags on our device.
->          */
->
-> -       dev->flags =3D (flags & (IFF_DEBUG | IFF_NOTRAILERS | IFF_NOARP |
-> -                              IFF_DYNAMIC | IFF_MULTICAST | IFF_PORTSEL =
-|
-> -                              IFF_AUTOMEDIA)) |
-> -                    (dev->flags & (IFF_UP | IFF_VOLATILE | IFF_PROMISC |
-> -                                   IFF_ALLMULTI));
-> +       unsigned int new_flags =3D (flags & (IFF_DEBUG | IFF_NOTRAILERS |=
- IFF_NOARP |
-> +                                          IFF_DYNAMIC | IFF_MULTICAST | =
-IFF_PORTSEL |
-> +                                          IFF_AUTOMEDIA)) |
-> +                                (READ_ONCE(dev->flags) & (IFF_UP | IFF_V=
-OLATILE | IFF_PROMISC |
-> +                                               IFF_ALLMULTI));
->
-> +       WRITE_ONCE(dev->flags, new_flags);
->         /*
->          *      Load in the correct multicast list now the flags have cha=
-nged.
->          */
-> @@ -8839,12 +8840,12 @@ int __dev_change_flags(struct net_device *dev, un=
-signed int flags,
->
->         if ((flags ^ dev->gflags) & IFF_PROMISC) {
->                 int inc =3D (flags & IFF_PROMISC) ? 1 : -1;
-> -               unsigned int old_flags =3D dev->flags;
-> +               unsigned int old_flags =3D READ_ONCE(dev->flags);
->
->                 dev->gflags ^=3D IFF_PROMISC;
->
->                 if (__dev_set_promiscuity(dev, inc, false) >=3D 0)
-> -                       if (dev->flags !=3D old_flags)
-> +                       if (READ_ONCE(dev->flags) !=3D old_flags)
->                                 dev_set_rx_mode(dev);
->         }
->
+On 29.07.24 18:39, Peter Xu wrote:
+> On Mon, Jul 29, 2024 at 12:26:00PM -0400, Peter Xu wrote:
+>> On Fri, Jul 26, 2024 at 11:48:01PM +0200, David Hildenbrand wrote:
+>>> On 26.07.24 23:28, Peter Xu wrote:
+>>>> On Fri, Jul 26, 2024 at 06:02:17PM +0200, David Hildenbrand wrote:
+>>>>> On 26.07.24 17:36, Peter Xu wrote:
+>>>>>> On Thu, Jul 25, 2024 at 08:39:54PM +0200, David Hildenbrand wrote:
+>>>>>>> pte_lockptr() is the only *_lockptr() function that doesn't consume
+>>>>>>> what would be expected: it consumes a pmd_t pointer instead of a pte_t
+>>>>>>> pointer.
+>>>>>>>
+>>>>>>> Let's change that. The two callers in pgtable-generic.c are easily
+>>>>>>> adjusted. Adjust khugepaged.c:retract_page_tables() to simply do a
+>>>>>>> pte_offset_map_nolock() to obtain the lock, even though we won't actually
+>>>>>>> be traversing the page table.
+>>>>>>>
+>>>>>>> This makes the code more similar to the other variants and avoids other
+>>>>>>> hacks to make the new pte_lockptr() version happy. pte_lockptr() users
+>>>>>>> reside now only in  pgtable-generic.c.
+>>>>>>>
+>>>>>>> Maybe, using pte_offset_map_nolock() is the right thing to do because
+>>>>>>> the PTE table could have been removed in the meantime? At least it sounds
+>>>>>>> more future proof if we ever have other means of page table reclaim.
+>>>>>>
+>>>>>> I think it can't change, because anyone who wants to race against this
+>>>>>> should try to take the pmd lock first (which was held already)?
+>>>>>
+>>>>> That doesn't explain why it is safe for us to assume that after we took the
+>>>>> PMD lock that the PMD actually still points at a completely empty page
+>>>>> table. Likely it currently works by accident, because we only have a single
+>>>>> such user that makes this assumption. It might certainly be a different once
+>>>>> we asynchronously reclaim page tables.
+>>>>
+>>>> I think it's safe because find_pmd_or_thp_or_none() returned SUCCEED, and
+>>>> we're holding i_mmap lock for read.  I don't see any way that this pmd can
+>>>> become a non-pgtable-page.
+>>>>
+>>>> I meant, AFAIU tearing down pgtable in whatever sane way will need to at
+>>>> least take both mmap write lock and i_mmap write lock (in this case, a file
+>>>> mapping), no?
+>>>
+>>> Skimming over [1] where I still owe a review I think we can now do it now
+>>> purely under the read locks, with the PMD lock held.
+>>
+>> Err, how I missed that.. yeah you're definitely right, and that's the
+>> context here where we're collapsing.  I think I somehow forgot all Hugh's
+>> work when I replied there, sorry.
+>>
+>>>
+>>> I think this is also what collapse_pte_mapped_thp() ends up doing: replace a
+>>> PTE table that maps a folio by a PMD (present or none, depends) that maps a
+>>> folio only while holding the mmap lock in read mode. Of course, here the
+>>> table is not empty but we need similar ways of making PT walkers aware of
+>>> concurrent page table retraction.
+>>>
+>>> IIRC, that was the magic added to __pte_offset_map(), such that
+>>> pte_offset_map_nolock/pte_offset_map_lock can fail on races.
+>>
+>> Said that, I still think current code (before this patch) is safe, same to
+>> a hard-coded line to lock the pte pgtable lock.  Again, I'm fine if you
+>> prefer pte_offset_map_nolock() but I just think the rcu read lock and stuff
+>> can be avoided.
+>>
+>> I think it's because such collapse so far can only happen in such path
+>> where we need to hold the large folio (PMD-level) lock first.  It means
+>> anyone who could change this pmd entry to be not a pte pgtable is blocked
+>> already, hence it must keeping being a pte pgtable page even if we don't
+>> take any rcu.
+>>
+>>>
+>>>
+>>> But if we hold the PMD lock, nothing should actually change (so far my
+>>> understanding) -- we cannot suddenly rip out a page table.
+>>>
+>>> [1]
+>>> https://lkml.kernel.org/r/cover.1719570849.git.zhengqi.arch@bytedance.com
+>>>
+>>>>
+>>>>>
+>>>>> But yes, the PMD cannot get modified while we hold the PMD lock, otherwise
+>>>>> we'd be in trouble
+>>>>>
+>>>>>>
+>>>>>> I wonder an open coded "ptlock_ptr(page_ptdesc(pmd_page(*pmd)))" would be
+>>>>>> nicer here, but only if my understanding is correct.
+>>>>>
+>>>>> I really don't like open-coding that. Fortunately we were able to limit the
+>>>>> use of ptlock_ptr to a single user outside of arch/x86/xen/mmu_pv.c so far.
+>>>>
+>>>> I'm fine if you prefer like that; I don't see it a huge deal to me.
+>>>
+>>> Let's keep it like that, unless we can come up with something neater. At
+>>> least it makes the code also more consistent with similar code in that file
+>>> and the overhead should be  minimal.
+>>>
+>>> I was briefly thinking about actually testing if the PT is full of
+>>> pte_none(), either as a debugging check or to also handle what is currently
+>>> handled via:
+>>>
+>>> if (likely(!vma->anon_vma && !userfaultfd_wp(vma))) {
+>>>
+>>> Seems wasteful just because some part of a VMA might have a private page
+>>> mapped / uffd-wp active to let all other parts suffer.
+>>>
+>>> Will think about if that is really worth it.
+>>>
+>>> ... also because I still want to understand why the PTL of the PMD table is
+>>> required at all. What if we lock it first and somebody else wants to lock it
+>>> after us while we already ripped it out? Sure there must be some reason for
+>>> the lock, I just don't understand it yet :/.
+>>
+>> IIUC the pte pgtable lock will be needed for checking anon_vma safely.
+>>
+>> e.g., consider if we don't take the pte pgtable lock, I think it's possible
+>> some thread tries to inject a private pte (and prepare anon_vma before
+>> that) concurrently with this thread trying to collapse the pgtable into a
+>> huge pmd.  I mean, when without the pte pgtable lock held, I think it's
+>> racy to check this line:
+>>
+>>          if (unlikely(vma->anon_vma || userfaultfd_wp(vma))) {
+>>                  ...
+>>          }
+>>
+>> On the 1st condition.
+> 
+> Hmm, right after I replied, I think it also guarantees safety on the 2nd
+> condition..
+> 
+> Note that one thing I still prefer a hard-coded line over
+> pte_offset_map_nolock() is that, the new code seems to say we can treat the
+> pte pgtable page differently from the pte pgtable lock.  But I think
+> they're really in the same realm.
+> 
+> In short, AFAIU the rcu lock not only protects the pte pgtable's existance,
+> but also protects the pte lock.
+> 
+>  From that POV, below new code in this patch:
+> 
+> -               ptl = pte_lockptr(mm, pmd);
+> +
+> +               /*
+> +                * No need to check the PTE table content, but we'll grab the
+> +                * PTE table lock while we zap it.
+> +                */
+> +               pte = pte_offset_map_nolock(mm, pmd, addr, &ptl);
+> +               if (!pte)
+> +                       goto unlock_pmd;
+>                  if (ptl != pml)
+>                          spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
+> +               pte_unmap(pte);
+> 
+> Could be very misleading, where it seems to say that it's fine to use the
+> pte pgtable lock even after rcu unlock.  It might make the code harder to
+> understand.
 
-These READ_ONCE() in RTNL protected regions are not necessary, because
-dev->flags can not be changed by another thread.
+I see what you mean but this is a very similar pattern as used in 
+collapse_pte_mapped_thp(), no? There we have
+
+start_pte = pte_offset_map_nolock(mm, pmd, haddr, &ptl);
+...
+if (!pml)
+	spin_lock(ptl);
+...
+pte_unmap(start_pte);
+if (!pml)
+	spin_unlock(ptl);
+
+
+Again, I don't have a strong opinion on this, but doing it more similar 
+to collapse_pte_mapped_thp() to obtain locks makes it clearer to me. But 
+if I am missing something obvious please shout and I'll change it.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
