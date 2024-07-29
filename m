@@ -1,119 +1,204 @@
-Return-Path: <linux-kernel+bounces-266051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA2393F9DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:51:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B218393F9E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C784D1C21C04
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:51:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCAD21C21F73
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2985A15ADB1;
-	Mon, 29 Jul 2024 15:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaV8kUDb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932C015CD46;
+	Mon, 29 Jul 2024 15:53:54 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFAC8004F;
-	Mon, 29 Jul 2024 15:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DA78004F
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722268281; cv=none; b=J1yglG9t0O+FajhOAz1R8BZawXezp8Zkz7aNoiaequugwgieSse/7XW6TzM7PavFzDld9nQ6L28gT0vdnL67BVzu6mMW0uFRXi5yaaqu19HvwGVvE6ebXfvkbDngHfaQCqBDqzz2YsFSSNngEGD82EY3OK2sY+If4d2agfNz1Bw=
+	t=1722268434; cv=none; b=rjZwXqZpRJ96LvXz34/525h+I4Hd51sXsD5RSG4TPNDPPY/pcpUAGQJu+rG1RNLwxqzBgx6HHyuD+vIb0R34Bf2QTllY0gv/GMxfvV+5EeK7iygPdIIUBx3xu/o6V/WI2xFmaR5zZq9AEMSEN/OFM/1NT+TD5TPu5yUSiPH10PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722268281; c=relaxed/simple;
-	bh=Xjk9/3K2La58GqYFP1mT6tUiDmazLKWz3gdhSQvHVoA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Z2kE5KBisqtYNzBmq/AmgicFq70eIczzUEdeRCtjl1w/yY4sIODzUhLlqhCXsUyqEFNPpsweYyB+QWE5UqbX4pon1eyXH+nYpZwAu/YOfd1POnjJA31vdVkverpRMAGC/z50CzkyrS58VcLjhp0RbySc5kg11hl4RmZ1CPnryLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaV8kUDb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC964C32786;
-	Mon, 29 Jul 2024 15:51:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722268281;
-	bh=Xjk9/3K2La58GqYFP1mT6tUiDmazLKWz3gdhSQvHVoA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=qaV8kUDbcoLuDqbBio3SBFAPhJn3z2pExnW07qRef4jQS7O0tUzd/ABSIAaT594na
-	 FOmDVoYDPMAaSPRXGmcNSDbr6d9rsIFw+hMjJyMQaJx4y0pWgtYTm4WuLTfsD1Qcon
-	 Hs4S9kZ6qW69jd1hVA4aQlzSursiCpjwa4bT+WwCs5xSFzy3lKH6XeNOpX2VOgXfOh
-	 WN41CL6BfX6wbLRXSJgFnA4/p7KsPhO4+2RlwVxT+TBNzsKW1Bz8DvE3XyT/GlTwn0
-	 ehLGSOe1zf0ksfaBfQ8m3OA5Ibm3oh5bYduvv09K01yVipZWKeX1GbIPOCBrxEmQ/I
-	 nN4rpjfyMpU+w==
-Message-ID: <422ab8b216ea792156d12f5321f9fa1a12dbb93d.camel@kernel.org>
-Subject: Re: [PATCH] fs/netfs/fscache_io: remove the obsolete
- "using_pgpriv2" flag
-From: Jeff Layton <jlayton@kernel.org>
-To: Max Kellermann <max.kellermann@ionos.com>, dhowells@redhat.com
-Cc: willy@infradead.org, linux-cachefs@redhat.com, 
- linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, xiubli@redhat.com,
- Ilya Dryomov <idryomov@gmail.com>
-Date: Mon, 29 Jul 2024 11:51:18 -0400
-In-Reply-To: <CAKPOu+8fgsNi3UVfrZQf9WBHwrXq_D=6oauqWJeiOqSeQedgaw@mail.gmail.com>
-References: <20240729091532.855688-1-max.kellermann@ionos.com>
-	 <d03ba5c264de1d3601853d91810108d9897661fb.camel@kernel.org>
-	 <CAKPOu+8fgsNi3UVfrZQf9WBHwrXq_D=6oauqWJeiOqSeQedgaw@mail.gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1722268434; c=relaxed/simple;
+	bh=d90sHxRYX3H/y/PoRA4nPTN4ZYPcwBKZRwbFDTttc1A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iE3vb077m1aLgM7GM65jJltN160lWSwoi786srBl7LxY0Sw0E2fU6Ef3CUfONXGKao3PZJDYt+lsT11wI9s1uOmA61EbcCssDKhGagDp6MIH/AK9nxwyEqyrD9NCFR82LOe0x3nWoBDf9wo1x93bylAXsSyl49wmtlaEmA5Viuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4WXj9H56Hvz9v7Hp
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:35:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id ABA55140DAE
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:53:37 +0800 (CST)
+Received: from [10.221.99.159] (unknown [10.221.99.159])
+	by APP1 (Coremail) with SMTP id LxC2BwAXm4X1uqdmn7gkAA--.4420S2;
+	Mon, 29 Jul 2024 16:53:37 +0100 (CET)
+Message-ID: <cd5a269a-9c6a-a311-d796-ce65c935887b@huaweicloud.com>
+Date: Mon, 29 Jul 2024 17:53:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCHv2 0/4] tools/memory-model: Define more of LKMM in
+ tools/memory-model
+Content-Language: en-US
+To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+ Alan Stern <stern@rowland.harvard.edu>
+Cc: paulmck@kernel.org, parri.andrea@gmail.com, will@kernel.org,
+ peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+ dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+ akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+ urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
+ linux-kernel@vger.kernel.org, lkmm@lists.linux.dev
+References: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
+ <88c1ebc8-4805-4d1d-868a-889043899979@rowland.harvard.edu>
+ <bbc3bd10-3bf5-4b1a-a275-dd328c42e307@huaweicloud.com>
+ <f93f140b-13bc-4d00-adee-46cc1c016480@rowland.harvard.edu>
+ <4792c9e7-2594-3600-5d82-4cb1443fe670@huaweicloud.com>
+ <d6a76968-d10b-c60b-245a-f58116eca6af@huaweicloud.com>
+ <eb9548de-e66e-3dcd-9136-8702a5bc2934@huaweicloud.com>
+ <00f58d20-f92d-461e-beac-b307905cab3b@huaweicloud.com>
+ <e45bd166-348a-95b6-c17c-dcd2525f263c@huaweicloud.com>
+ <9ac4a586-ef37-4c48-8e66-df3d02b53b6a@huaweicloud.com>
+From: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
+In-Reply-To: <9ac4a586-ef37-4c48-8e66-df3d02b53b6a@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwAXm4X1uqdmn7gkAA--.4420S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWw13AryDurykJFykur1Dtrb_yoWrCF1UpF
+	y5JF45Krs7tr4xJrn2yrn5XF12qFW7tF15Xr15trZrKr90yry5tr4Yyr4YkFyqvrs3Xr42
+	vrWUt34xZFyUJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
+	WxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wr
+	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRH
+	UDLUUUUU=
+X-CM-SenderInfo: xkhu0tnqos00pfhgvzhhrqqx5xdzvxpfor3voofrz/
 
-On Mon, 2024-07-29 at 17:35 +0200, Max Kellermann wrote:
-> On Mon, Jul 29, 2024 at 2:56=E2=80=AFPM Jeff Layton <jlayton@kernel.org>
-> wrote:
-> > Either way, you can add this to both patches:
-> >=20
-> > Reviewed-by: Jeff Layton <jlayton@kernel.org>
->=20
-> Stop the merge :-)
->=20
-> I just found that my patch introduces another lockup; copy_file_range
-> locks up this way:
->=20
-> =C2=A0[<0>] folio_wait_private_2+0xd9/0x140
-> =C2=A0[<0>] ceph_write_begin+0x56/0x90
-> =C2=A0[<0>] generic_perform_write+0xc0/0x210
-> =C2=A0[<0>] ceph_write_iter+0x4e2/0x650
-> =C2=A0[<0>] iter_file_splice_write+0x30d/0x550
-> =C2=A0[<0>] splice_file_range_actor+0x2c/0x40
-> =C2=A0[<0>] splice_direct_to_actor+0xee/0x270
-> =C2=A0[<0>] splice_file_range+0x80/0xc0
-> =C2=A0[<0>] ceph_copy_file_range+0xbb/0x5b0
-> =C2=A0[<0>] vfs_copy_file_range+0x33e/0x5d0
-> =C2=A0[<0>] __x64_sys_copy_file_range+0xf7/0x200
-> =C2=A0[<0>] do_syscall_64+0x64/0x100
-> =C2=A0[<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
->=20
-> Turns out that there are still private_2 users left in both fs/ceph
-> and fs/netfs. My patches fix one problem, but cause another problem.
-> Too bad!
->=20
-> This leaves me confused again: how shall I fix this? Can all
-> folio_wait_private_2() calls simply be removed?
-> This looks like some refactoring gone wrong, and some parts don't
-> make
-> sense (like netfs and ceph claim ownership of the folio_private
-> pointer). I could try to fix the mess, but I need to know how this is
-> meant to be. David, can you enlighten me?
->=20
-> Max
+On 7/29/2024 5:44 PM, Jonas Oberhauser wrote:
+> 
+> 
+> Am 7/29/2024 um 5:19 PM schrieb Hernan Ponce de Leon:
+>> On 7/29/2024 4:45 PM, Jonas Oberhauser wrote:
+>>>
+>>>
+>>> Am 7/29/2024 um 3:30 PM schrieb Hernan Ponce de Leon:
+>>>> On 7/12/2024 10:06 AM, Hernan Ponce de Leon wrote:
+>>>>> On 6/10/2024 10:38 AM, Hernan Ponce de Leon wrote:
+>>>>>> On 6/8/2024 3:00 AM, Alan Stern wrote:
+>>>>>>> On Wed, Jun 05, 2024 at 09:58:42PM +0200, Jonas Oberhauser wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> Am 6/4/2024 um 7:56 PM schrieb Alan Stern:
+>>>>>>>>> Just to clarify: Your first step encompasses patches 1 - 3, and 
+>>>>>>>>> the
+>>>>>>>>> second step is patch 4.  The first three patches can be applied 
+>>>>>>>>> now, but
+>>>>>>>>> the last one needs to wait until herd7 has been updated.  Is 
+>>>>>>>>> this all
+>>>>>>>>> correct?
+>>>>>>>>
+>>>>>>>> Exactly.
+>>>>>>>
+>>>>>>> With regard to patch 4, how much thought have you and Hernan 
+>>>>>>> given to
+>>>>>>> backward compatibility?  Once herd7 is changed, old memory model 
+>>>>>>> files
+>>>>>>> will no longer work correctly.
+>>>>>>>
+>>>>>>
+>>>>>> Honestly, I did not think much about this (at least until Akira 
+>>>>>> mentioned in my PR). My hope was that changes to the model could 
+>>>>>> be back-ported to previous kernel versions. However that would not 
+>>>>>> work for existing out-of-tree files.
+>>>>>>
+>>>>>> My question is: is compatibility with out-of-tree files really a 
+>>>>>> requirement? I would argue that if people are using outdated 
+>>>>>> models, they may get wrong results anyway. This is because some of 
+>>>>>> the changes done to lkmm during the last few years change the 
+>>>>>> expected result for some litmus tests.
+>>>>>>
+>>>>>> Hernan
+>>>>>
+>>>>> I pushed some new changes to the code for backward compatibility 
+>>>>> [1]. The series also needs the patch at the bottom to properly deal 
+>>>>> with the ordering of failing CAses and non-returning operations. 
+>>>>> With it, all litmus tests return the correct result (the script 
+>>>>> needs to pass option -lkmm-legacy false to herd).
+>>>>
+>>>> I have been playing around with an alternative to this.
+>>>>
+>>>> Rather than implementing this as an "option", I can implemented it 
+>>>> as a "model variant (*)" and add this to the model
+>>>
+>>> How exactly do these model variants get selected?
+>>>
+>>> I was thinking that another good approach could be to have a new 
+>>> generic C model which doesn't know anything about LKMM. I believe 
+>>> this would be specified in the header of the .litmus files?
+>>>
+>>>
+>>>> flag ~empty (if "lkmmlatest" then 0 else _)
+>>>>    as new-lkmm-models-require-variant-lkmmlatest
+>>>>
+>>>> If the user forgets to set the variant for the new model, herd7 will 
+>>>> flag the executions showing that something is off.
+>>>>
+>>>> To be fully backward compatible, we would need to backport this to 
+>>>> old models
+>>>>
+>>>> flag ~empty (if "lkmmlatest" then 1 else _)
+>>>>    as new-lkmm-models-require-variant-lkmmlatest
+>>>
+>>> should this be then _ else 0  ? or what does the _ do here?
+>>
+>> Yes, my bad.
+>>
+>>>
+>>> I also don't think we can backport things to old models
+>>
+>> IIRC I have seen (non lkmm related) patches being backported to stable 
+>> kernel versions. Why can't we do this for lkmm if backward 
+>> compatibility is really a requirement? Otherwise I don't see a way of 
+>> preventing developers to use old models with the new option (since I 
+>> plan to keep the "old variant" as default, this would have to be done 
+>> on purpose, but still).
+> 
+> I don't think this is a problem. If the old version is the default, and 
+> we define it in the .cfg file for the tree version of LKMM, then it will 
+> work correctly for both the old and new versions. People playing around 
+> with Memory Models should be careful enough not to intentionally break 
+> the model by passing bogus options.
 
-I suspect the folio_wait_private_2 call in ceph_write_begin should have
-also been removed in ae678317b95, and it just got missed somehow in the
-original patch. All of the other callsites that did anything with
-private_2 were removed in that patch.
+The same was true for my implementation using the lkmm-legacy option 
+rather than the model variant, but this was still considered to break 
+backward compatibility.
 
-David, can you confirm that?
---=20
-Jeff Layton <jlayton@kernel.org>
+https://github.com/herd/herdtools7/pull/865#issuecomment-2229930493
+
+> 
+> Of course, defining a new syntax identifier and putting it in all 
+> headers would be more robust. But it's more work and I would only do 
+> that if we really got rid of all the LKMM specifics.
+> 
+> Have fun,
+>    jonas
+
 
