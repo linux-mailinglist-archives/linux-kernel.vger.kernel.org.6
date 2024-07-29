@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-266033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7399F93F991
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:35:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FC8593F998
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FAE828331E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:35:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 904251F22D9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE8D15A4B5;
-	Mon, 29 Jul 2024 15:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E5A15B13C;
+	Mon, 29 Jul 2024 15:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="imN75jyn"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="WHw1wrHq"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F66158A30
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550F01494CA
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722267299; cv=none; b=bVJ4kQ9XSW3M2pCqnC2Vp8QHdTvzkiElWcs6cI4MDw4OmLM+6/oIP9Go6xGUEz7RH9o4O2XUCE5tdzvqvPN0EjxvKpi0G/ivMI7Z8dRUW7uzRtBhQzf5FP55/iWra3lcZCrFs5Y3oNPm88wncbDXr9XTOZ/HY9K2Ci5OAUbZzXY=
+	t=1722267371; cv=none; b=lTSfztEubDiKkBat/+0XUrAxC0/pTa31DQhJFkYTFG3d9jbZ1PEg8qQCbXi3rHG1YltsoZCvF2FBN6vx2V35DpTHNH+8+rWTCyj9K857SSKqWc6LJe5UEiyX0PMZVeYVn3stHsGkaAJfhpP6C4Q6vYO1+25MWXv/CVoMATX6NQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722267299; c=relaxed/simple;
-	bh=St2oF3CEhrw25LU2LpX/lf+cvRv7TUHNtWwkHL5vmIA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kHz81aWaXMg8R0MOhXYm5NQ6DAwBxJ3ekGuzetxapltHy7JpJ2LFhvT1pQ4Num2SZHjGA1vo/iT50jGjbADvu0Ve8fteOnAgCa097UedB76GbCLgkpCxk3A++rbmPjHdtFMOJP1dq/dS3noB7Q2b4ly75iNQYu3hSCtlH7GZ9n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=imN75jyn; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-672bea19dd3so64394587b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:34:57 -0700 (PDT)
+	s=arc-20240116; t=1722267371; c=relaxed/simple;
+	bh=ocxWEMAgXfcr9s1eHy+pgOW2BSzmq6AtWSWNCH4xXoI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kmm5Zw5kpguRviSKTH6ZTKJ9G/Ue9we96VHn1ZSsWyE+vCcxMw2El9l4hr5HFvBLKHbI8xgA69zrhWl8cOkbz1arU2ooVO6nfre9Ly0i1sSkcm5NR89sYFCpqZaefEjH9NWG08/VhTtQ9YBTK0G03RNKOrxUPzKSyXiki1m4Al4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=WHw1wrHq; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7a8a4f21aeso477470766b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:36:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722267297; x=1722872097; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=P5BO85kKfrP3kPw9rl6zi5w//RZnq6rehhthruUWfX8=;
-        b=imN75jynXgiAfBZkddT5zvTOcnFaXG7xuErJuhRJi04wvvk0lfCB/2PYfdrcXjC6jL
-         P25sAC4CoBn/aT+HnDa1AdcEVfSuTjyMmJrB6b4TdfJwqDJXWxyk0qwYH1up3fM35Ps7
-         vJoUtxwSVvKVqKsHaCKna51H7kMsYEvUUs2FVF8kyweR3L+dfX97xAKhjPGPXBAOpq78
-         YNPg7VL8ysu2ejAUr1elmYzNPwEMXV01DQbAMeVyR15uZ04pnxOdcA8jwnBfUgpLT9M1
-         C/5eExUBi2EpWl7nxSAbiQkf5cyRM60eSq+3w09uBhsahQFIYt5Bc7TcdELyKUkF28uN
-         cgSg==
+        d=ionos.com; s=google; t=1722267367; x=1722872167; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ocxWEMAgXfcr9s1eHy+pgOW2BSzmq6AtWSWNCH4xXoI=;
+        b=WHw1wrHqBPJ+zZ0PwHxGHDESdNdToLjkHGKhRGIlNmWtyaazePZwF/EDa2wM53kczX
+         3Jc1bXKHbopbQHJuokvrgQf2087o0rmT8Xh830J+PjbggoJSEFKLPMUx8zBTWPMZ4p9I
+         Kp4WnnsoCZODr1zavcojUuoX+1BDrRVYJRmfcg/cjK6EUWuDso8j9i41s2wcteSOszeR
+         tRBEpRBKp7eVHZrKx66GoAxuZe7nYALw8xvyLDfhiBsQSk0kUgnGjOftvpf0TiWtO3B7
+         rvzQHFs9w5pXIV3TYWxKQwmd3gIxwV+o/RSVS2zXj9Zq5IXo0dv3wqG/XFNAU1aw4eNy
+         0jew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722267297; x=1722872097;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P5BO85kKfrP3kPw9rl6zi5w//RZnq6rehhthruUWfX8=;
-        b=fAE3nhhEnY7wHVz/OvJ+tyaXmq4iNuyt9dqROR1oL92pBdhfVqYvvpTaon719OumoP
-         I3F/wIdLsKiAkdXOcJGAJ+/39N4Imlir3NbmQvUy+lzmNPEv8F89M/V3Lkva0PlPhOMr
-         48fCMDM24tV1zDu6pswPZJr88qCbYTIIHncSiZ6U3SwGG8/+b2e1zlEjSzaYQGcPvNTP
-         U5OtIH16DKbYNXA9PMoH5+fesgzy9444nqM85fgLlUEc3XHmI05mCvrQoWW7mWedZUSx
-         mORNGT99Kt1SpNoF8jKxY9ATVUS/rU2Y34YT2rsErInVzoRCtpahLkGlZlPBkHieF+hv
-         /lcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlDV82Cx41gJNM7SpkLfphbzMAf54GmC2ePy3q9xaKZb48UwVIn/cpqRw8Vg7EemdGdCbeh2Ju5VYB1EZf6LOAj5d/J7oTJnzf1hTY
-X-Gm-Message-State: AOJu0YwVDImvtcVmojUl6j4FWp4z97AnSOHVS4p/udgpqRwKUfD6vIEe
-	by8a0GHHoo9/sdd4dOeK7Ces9RaRvXme5I2rMhduFKhjjiPJ3kG/tZPvZCwpFZ5F6fXFFP4gZjq
-	zgA==
-X-Google-Smtp-Source: AGHT+IGGp7Xu/kWdEKL3yO6fLEKcGo5tqaTPTzr2R/VUyXOa/WPokijfHNwntnFNTXLNUiGFfxA29lz41fc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:14:b0:622:cd7d:fec4 with SMTP id
- 00721157ae682-67a0a5185c6mr1924627b3.9.1722267297035; Mon, 29 Jul 2024
- 08:34:57 -0700 (PDT)
-Date: Mon, 29 Jul 2024 08:34:55 -0700
-In-Reply-To: <f9b2f9e949a982e07c9ea5ead316ab3809e40543.camel@redhat.com>
+        d=1e100.net; s=20230601; t=1722267367; x=1722872167;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ocxWEMAgXfcr9s1eHy+pgOW2BSzmq6AtWSWNCH4xXoI=;
+        b=hyE3ElFM4SYlgAV93Otkef0oalLeHgQTqvxDe6/a3hDxYJK7tCthyOyTUKpd4moW0J
+         I4ILtA35SQ8DAu5Tea8GKKTwR4Xf7vckDkL72SKC4lj6bTeca2vi26mjDr4RTAh0yz2P
+         XLDfFHmgkl5OXKh6VMxPHvYOyI9QFrzt2ut/uH61/pQzTaHvphop9rzlzeImXScivFlo
+         +DFzrqwRQTVF+feHCgCqL+LPUdz9xClbiIoJr7lLlRmzVCV5FwrZHOLG4DDR7PEKJqWD
+         cgaIkOybYh1iwBHzNIWuGAb12vFV66XoiOv8K89uQljrZIepcECTOMrShw6DbQUrDKzv
+         0cuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWh0bG+MMHkw9lQtZUahH81Cf1Yy6yR535LL9w2GN19YSw+HZex3KU0yoId/Rc6ms0KtSpkQCU48dEljKyFDSu+DMTNmwk5WfkJ379w
+X-Gm-Message-State: AOJu0YwXFke4ae7FplMOiOBsbgPcUjN0AvCP4M6erL8S9DWRP9OrSng/
+	KEyroLUtTmAmxo1c52SJTvRJASj45lgMH2Pyz2VSnq4H+FKgFr3cQj6qnbsoxOt9tlWtLAIr8NA
+	xfMwed5k4ql6C4jBCSZw5MZrJfhX2new5hdv4SA==
+X-Google-Smtp-Source: AGHT+IFKGWOaf1XB1ZjzjA0Mr1+q4/qtfehNJNYG4kNlUncpGLDTuedMctPdToKvZVjv5J+J5MEk7dLKDeTfIxGpGLI=
+X-Received: by 2002:a17:907:7205:b0:a7a:9ca6:527 with SMTP id
+ a640c23a62f3a-a7d3ff7cce8mr575337166b.8.1722267366583; Mon, 29 Jul 2024
+ 08:36:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-41-seanjc@google.com>
- <030c973172dcf3a24256ddc8ddc5e9ef57ecabcb.camel@redhat.com>
- <Zox_4OoDmGDHOaSA@google.com> <f9b2f9e949a982e07c9ea5ead316ab3809e40543.camel@redhat.com>
-Message-ID: <Zqe2n4e4HtdgUWgm@google.com>
-Subject: Re: [PATCH v2 40/49] KVM: x86: Initialize guest cpu_caps based on KVM support
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20240729091532.855688-1-max.kellermann@ionos.com> <d03ba5c264de1d3601853d91810108d9897661fb.camel@kernel.org>
+In-Reply-To: <d03ba5c264de1d3601853d91810108d9897661fb.camel@kernel.org>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 29 Jul 2024 17:35:55 +0200
+Message-ID: <CAKPOu+8fgsNi3UVfrZQf9WBHwrXq_D=6oauqWJeiOqSeQedgaw@mail.gmail.com>
+Subject: Re: [PATCH] fs/netfs/fscache_io: remove the obsolete "using_pgpriv2" flag
+To: Jeff Layton <jlayton@kernel.org>
+Cc: dhowells@redhat.com, willy@infradead.org, linux-cachefs@redhat.com, 
+	linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, xiubli@redhat.com, 
+	Ilya Dryomov <idryomov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 24, 2024, Maxim Levitsky wrote:
-> On Mon, 2024-07-08 at 17:10 -0700, Sean Christopherson wrote:
-> > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> > index 0e64a6332052..dbc3f6ce9203 100644
-> > --- a/arch/x86/kvm/cpuid.c
-> > +++ b/arch/x86/kvm/cpuid.c
-> > @@ -448,7 +448,7 @@ void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
-> >                 if (!entry)
-> >                         continue;
-> >  
-> > -               cpuid_func_emulated(&emulated, cpuid.function);
-> > +               cpuid_func_emulated(&emulated, cpuid.function, false);
-> >  
-> >                 /*
-> >                  * A vCPU has a feature if it's supported by KVM and is enabled
-> > @@ -1034,7 +1034,8 @@ static struct kvm_cpuid_entry2 *do_host_cpuid(struct kvm_cpuid_array *array,
-> >         return entry;
-> >  }
-> >  
-> > -static int cpuid_func_emulated(struct kvm_cpuid_entry2 *entry, u32 func)
-> > +static int cpuid_func_emulated(struct kvm_cpuid_entry2 *entry, u32 func,
-> > +                              bool only_advertised)
-> 
-> I'll say, lets call this boolean, 'include_partially_emulated', 
-> (basically features that kvm emulates but only partially,
-> and thus doesn't advertise, aka mwait)
-> 
-> and then it doesn't look that bad, assuming that comes with a comment.
+On Mon, Jul 29, 2024 at 2:56=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+> Either way, you can add this to both patches:
+>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
-Works for me.  I was trying to figure out a way to say "emulated_on_ud", but I
-can't get the polarity right, at least not without ridiculous verbosity.  E.g.
-include_not_emulated_on_ud is awful.
+Stop the merge :-)
+
+I just found that my patch introduces another lockup; copy_file_range
+locks up this way:
+
+ [<0>] folio_wait_private_2+0xd9/0x140
+ [<0>] ceph_write_begin+0x56/0x90
+ [<0>] generic_perform_write+0xc0/0x210
+ [<0>] ceph_write_iter+0x4e2/0x650
+ [<0>] iter_file_splice_write+0x30d/0x550
+ [<0>] splice_file_range_actor+0x2c/0x40
+ [<0>] splice_direct_to_actor+0xee/0x270
+ [<0>] splice_file_range+0x80/0xc0
+ [<0>] ceph_copy_file_range+0xbb/0x5b0
+ [<0>] vfs_copy_file_range+0x33e/0x5d0
+ [<0>] __x64_sys_copy_file_range+0xf7/0x200
+ [<0>] do_syscall_64+0x64/0x100
+ [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+Turns out that there are still private_2 users left in both fs/ceph
+and fs/netfs. My patches fix one problem, but cause another problem.
+Too bad!
+
+This leaves me confused again: how shall I fix this? Can all
+folio_wait_private_2() calls simply be removed?
+This looks like some refactoring gone wrong, and some parts don't make
+sense (like netfs and ceph claim ownership of the folio_private
+pointer). I could try to fix the mess, but I need to know how this is
+meant to be. David, can you enlighten me?
+
+Max
 
