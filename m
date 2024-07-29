@@ -1,131 +1,141 @@
-Return-Path: <linux-kernel+bounces-265986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64A2D93F8C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:53:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB42593F8C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5623F1C21FE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:53:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 659C1B20BC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F321015538C;
-	Mon, 29 Jul 2024 14:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F85155337;
+	Mon, 29 Jul 2024 14:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uEtwpnbZ"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJuDukL1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D6A153836
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8BE14601E
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722264788; cv=none; b=SqLwh0heUsVtrkjfCHWvygAUNe/3et+cvFMLcHRiKbMtFq7zL4Uj7yCoxlb/lfYxq4qTWM4Shu8hu0FfkpA5gkVXbYdxm0USw4K0J9V5fd0wx2R4jM5uLt9JkUsD9xniUj4WT32FvMvRmSpPwoeQ+XLN9RSGCAjrNzCQH17oj/c=
+	t=1722264946; cv=none; b=K7BFsYjB0YkXT0COngOWegV/8lfDyZHXbrOX7jrDmk/N0osdR3S/B6UwiRTn0tIxqnmF6o9CEnbWJVl78m/jrgSLZKK6GmhtNJbtH5H7vHFimSZ27G9qp+hRSwCbZF/OI513g2XtUU9k3Ir22hzO3IFHTG+r81mwq3g6ZHVBQb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722264788; c=relaxed/simple;
-	bh=1jqQctM2a+S+lyJbT7V/HPsKNox1qfH+F+rAd8K6hZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=taiSI20Nx2wISZO68UNgqnuHAEEJ7p65z/FJzjLvPqzoGpZFlkQN/grK/gr+mzO31crcMUgIf68RALjbLRj9ZzHbOh56rZRA1Gp1HKQu04qNyICTN+PRkBv5O9q1ITJLfg3U/AnekANgc21YKDavX5vCty1598ormnjKp5ZSakw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uEtwpnbZ; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-39a16fab332so277895ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:53:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722264786; x=1722869586; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N9K9fhpcFFyliwAIwtK/bwTIbpmSXLXKLb0zgxn5arM=;
-        b=uEtwpnbZeXyftztXESR2gTXxplX6ZXHm3qhrKbG2zMeHSUilr6gzTlfZ6nWmVFrN5f
-         JOHFTs9tvM2PIE46qKLxFQtQxaCrbLIJxgpOJ9R/dyMY80MOL1QrvMa3j+6wC7rO4Pxx
-         xlf3An8kXw8mUB1xcGRpTGZ7CE0TMjr20g30ObvS8r7Wx/farBNrnTLIpS5Vm6vJOLru
-         8fGS/oYmSjKIOZzDYLjhrqbBhp+2wwN6UdD0okZhqbL9qBbw6OAZTqGQ7ApYqgNqCTlF
-         ytMeO2vWS9kUOBixmjwwTmfKF1XoHmXVm6x2HREDn2V7fKe54Qm+EcYMKjReSgNiCHXm
-         QxtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722264786; x=1722869586;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N9K9fhpcFFyliwAIwtK/bwTIbpmSXLXKLb0zgxn5arM=;
-        b=wiwDxkODsgjfSakBWrlqLqw5IIsP7h5LRyJFRwECkB+rWaJwiFdVF4KWLYrZe91yzl
-         quhetZFDI1b7YppbahlyT0e5pMaNiI0X6hpUpMVt0rBo7ijpmqBfiuQnlH7yOu67RT5d
-         C4OSJ2Uat/VcI8GHRekQW3gJa61eeyOGk5lrAnQy6ngR8pV6z6jAkKVnRowmlNrVwhio
-         tRTEW0a5Hao9Nuwcjk7QnjNfkpLlIpi3He5Qq0FCVmQgrA73ZmpmQS9gCkcxBjajIN0F
-         FH0NVlvJy6EpYR0DQwaseBFwn5BeVXfLbZPoszcCr6Ljgba5VuztiuGuiNFltydlkkgT
-         qQFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9w4lXWwBOcHV2qv3t0flhnamyz1JIaIRgN3bWomUXIvkjjxyL3gSKO3n7dvw54lAjqcEVVYp9Oc0WGNd2mRNgrDhaSml5EcIG4+Hf
-X-Gm-Message-State: AOJu0YxC5b2PgiZBwDhWeIMfXmcoosXI013E6B84Gnz9GZH2gA5sEaV0
-	QYVLLl4IwMg2aWRjLKHwyTAnpuTyyRghd4ojyqJg5k0ejfJJ4GVzWghx/nnk7oTNJOE7v7bOOD9
-	3cXWdgyoMzGaqDEZtLsnvzALUylq5b45kcFUp
-X-Google-Smtp-Source: AGHT+IFHH53OjdvvY6abM1KuykhTshVGRqx85vpCme4XgZS/mGrELULyrbRiwMenTyQvf9NV/0FWpW2As9XJg0+07jY=
-X-Received: by 2002:a92:c56f:0:b0:377:15c7:1aa0 with SMTP id
- e9e14a558f8ab-39b038c4e4bmr1725ab.25.1722264785831; Mon, 29 Jul 2024 07:53:05
- -0700 (PDT)
+	s=arc-20240116; t=1722264946; c=relaxed/simple;
+	bh=l/1GqXYGzcJhXc0sYSrfsq2Iy6WJe4nNPGoPHeBpm0k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=u97K84XIYFq38UAMXv1BX9gSc1/7NqBDjPVzPU3P9ySxX9laPu8JZifPsFI+PXK3ZPqYSqxoKkpdqUTrfUEevJvLCDixFpcfFyDLuiG3d9tjEFh3l5ae4Y5o4Iz9fqnofJfBmKp0BARO+vHL4ipF1Vdsc/RpIAoYRyKzqNgkQMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJuDukL1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3683DC32786;
+	Mon, 29 Jul 2024 14:55:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722264945;
+	bh=l/1GqXYGzcJhXc0sYSrfsq2Iy6WJe4nNPGoPHeBpm0k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=aJuDukL156iN3Ke2uJenSPPbfdL4svs0vx/6nOvFHXvaxspckME+4KwEDlogI9ieB
+	 UYFcJx+wZ92CH2GegVwShojz5JgdaWDY83Z2FI/wVW9d6K97vjVBqPenPAp8Q6Pzx2
+	 DNw+1yXsI6E4LjwfWWG74rDiZc5gSU96lj7K/Iva2loAuUPiIo2ulI5lwAYIZKyULc
+	 ZH8sJVScQOust4zpOaIMmtwaG0vZAqL9BCdOMUoDbxkIg6MdbBYMQUfDQ0Uw6usxsK
+	 Yix7K0Q9pSKsuiUUusN+eaMFHn6wNtk3B7SYMs5mxAr+RNFkzqHi0exzQQg3+W0VeV
+	 covHpwxZrgj4A==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: =?utf-8?Q?Cs=C3=B3k=C3=A1s=2C_Bence?= <csokas.bence@prolan.hu>
+Cc: <linux-mtd@lists.infradead.org>,  <linux-kernel@vger.kernel.org>,
+  "Tudor Ambarus" <tudor.ambarus@linaro.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,  Miquel Raynal
+ <miquel.raynal@bootlin.com>,  Richard Weinberger <richard@nod.at>,
+  Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [PATCH] mtd: spi-nor: sst: Factor out common write operation to
+ `sst_nor_write_data()`
+In-Reply-To: <20240710091401.1282824-1-csokas.bence@prolan.hu>
+ (=?utf-8?B?IkNzw7Nrw6FzLA==?=
+	Bence"'s message of "Wed, 10 Jul 2024 11:14:01 +0200")
+References: <20240710091401.1282824-1-csokas.bence@prolan.hu>
+Date: Mon, 29 Jul 2024 16:55:43 +0200
+Message-ID: <mafs07cd42qog.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240727175919.1041468-1-linux@treblig.org>
-In-Reply-To: <20240727175919.1041468-1-linux@treblig.org>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 29 Jul 2024 07:52:53 -0700
-Message-ID: <CAP-5=fW+VbDaFV+YQCMMKYzrraMLLuVqb=BChL0o=-D5Y=4N_w@mail.gmail.com>
-Subject: Re: [PATCH] perf test pmu: Remove unused test_pmus
-To: linux@treblig.org
-Cc: kan.liang@linux.intel.com, acme@kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 27, 2024 at 10:59=E2=80=AFAM <linux@treblig.org> wrote:
->
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->
-> Commit aa1551f299ba ("perf test pmu: Refactor format test and exposed
-> test APIs") added the 'test_pmus' list, but didn't use it.
-> (It seems to put them on the other_pmus list?)
->
-> Remove it.
->
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Hi,
 
-Strange that the compiler doesn't warn about unused stuff like this,
-we get unused variables within a function and unused static
-functions...
+On Wed, Jul 10 2024, Cs=C3=B3k=C3=A1s, Bence wrote:
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+> Writing to the Flash in `sst_nor_write()` is a 3-step process:
+> first an optional one-byte write to get 2-byte-aligned, then the
+> bulk of the data is written out in vendor-specific 2-byte writes.
+> Finally, if there's a byte left over, another one-byte write.
+> This was implemented 3 times in the body of `sst_nor_write()`.
+> To reduce code duplication, factor out these sub-steps to their
+> own function.
+>
+> Signed-off-by: Cs=C3=B3k=C3=A1s, Bence <csokas.bence@prolan.hu>
 
-Possibly:
-Fixes: aa1551f299ba ("perf test pmu: Refactor format test and exposed
-test APIs")
+Applied to spi-nor/next, thanks!
 
-Thanks,
-Ian
+FYI, I spotted a couple small issues and fixed them up when applying.
+See below...
 
 > ---
->  tools/perf/tests/pmu.c | 3 ---
->  1 file changed, 3 deletions(-)
 >
-> diff --git a/tools/perf/tests/pmu.c b/tools/perf/tests/pmu.c
-> index 40132655ccd1..0b2f04a55d7b 100644
-> --- a/tools/perf/tests/pmu.c
-> +++ b/tools/perf/tests/pmu.c
-> @@ -18,9 +18,6 @@
->  #include <sys/stat.h>
->  #include <sys/types.h>
+> Notes:
+>     RFC: I'm thinking of removing SPINOR_OP_BP in favor of
+>     SPINOR_OP_PP (they have the same value). SPINOR_OP_PP
+>     is the "standard" name for the elementary unit-sized
+>     (1 byte, in the case of NOR) write operation. I find it
+>     confusing to have two names for the same operation,
+>     so in a followup I plan to remove the vendor-specific
+>     name in favor of the standard one.
 >
-> -/* Fake PMUs created in temp directory. */
-> -static LIST_HEAD(test_pmus);
-> -
->  /* Cleanup test PMU directory. */
->  static int test_pmu_put(const char *dir, struct perf_pmu *pmu)
+>  drivers/mtd/spi-nor/sst.c | 39 +++++++++++++++++++--------------------
+>  1 file changed, 19 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/mtd/spi-nor/sst.c b/drivers/mtd/spi-nor/sst.c
+> index 180b7390690c..fec71689e644 100644
+> --- a/drivers/mtd/spi-nor/sst.c
+> +++ b/drivers/mtd/spi-nor/sst.c
+> @@ -167,6 +167,21 @@ static const struct flash_info sst_nor_parts[] =3D {
+>  	}
+>  };
+>=20=20
+> +static int sst_nor_write_data(struct spi_nor *nor, loff_t to, size_t len,
+> +			const u_char *buf)
+
+Whitespace issue, checkpatch complains on this. It should be aligned
+with the opening parenthesis above.
+
+> +{
+> +	u8 op =3D (len =3D=3D 1) ? SPINOR_OP_BP : SPINOR_OP_AAI_WP;
+> +	int ret;
+> +
+> +	nor->program_opcode =3D op;
+> +	ret =3D spi_nor_write_data(nor, to, 1, buf);
+> +	if (ret < 0)
+> +		return ret;
+> +	WARN(ret !=3D len, "While writing %i byte written %i bytes\n", len, ret=
+);
+
+I get a build warning because of incorrect format specifier. Should use
+%zu since len is size_t.
+
+> +
+> +	return spi_nor_wait_till_ready(nor);
+> +}
+> +
+>  static int sst_nor_write(struct mtd_info *mtd, loff_t to, size_t len,
+>  			 size_t *retlen, const u_char *buf)
 >  {
-> --
-> 2.45.2
->
+[...]
+
+--=20
+Regards,
+Pratyush Yadav
 
