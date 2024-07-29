@@ -1,79 +1,65 @@
-Return-Path: <linux-kernel+bounces-265457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E2093F18A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:48:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B0A93F18E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FA511F236EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:48:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5DF61C20B93
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BDC13F42F;
-	Mon, 29 Jul 2024 09:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D131713E40D;
+	Mon, 29 Jul 2024 09:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lZ/iGgKS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EEFvBQyg";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S6CzZ6hF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408BC13D255
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C590A84FDF
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722246474; cv=none; b=aMEU3eFMnxU1fJ8wlRFWr79th1jtKuzMImxIRK5EEg3K4BgWvTSVcuGmoy9MEYvZHqFDoT3rXQ1r1GcbkfMGjSG0/yHueCH9DJnGTikP779Za41c+Jljz5pRL2PZluZo33JBBAHAtSg69E+FsIFnHqSMKhTF/eW4hYipiI7VLcI=
+	t=1722246504; cv=none; b=gkpF9irrgnEvDTZRFzDLvLwdgyYmi8KSZI4SL3eiPRF7Ipalmmg21cvmDid0uURu+rLBeJi1OsEO6grKuud10AoFRUxp5lpmoId5AbCBe95KCZig/n5bX5GLsRNf56MzDOUcCQAG5kZXuGI65ef8hiW9igApOJGNn2N0qByjMmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722246474; c=relaxed/simple;
-	bh=RsomBzoCT2Ys4129Ye8pTLrTKipGkhhvsMm7FxcIZXM=;
+	s=arc-20240116; t=1722246504; c=relaxed/simple;
+	bh=jyQSrwETJrUYG7JZ3cfIb1oba3+qpqPrbWutSpX7N0Q=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Qix95KPl6FMcWPh5cJmQyiZHj5VOUlC6zw1vH8vxkJdxIoHDsytgV1jXTyexpJBZEDmgQXQL93FVHnw1vtaydG8/uLoKxkbkJr3WX6B9ruYesodnLaw7dYWsgtaAtOhX0pRHbO87IQIN1sj78JnTcYOVXdmhXtlm9KcYa7f7hcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lZ/iGgKS; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722246473; x=1753782473;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=RsomBzoCT2Ys4129Ye8pTLrTKipGkhhvsMm7FxcIZXM=;
-  b=lZ/iGgKSb+RqpysLPiw8OsO+kmi7GVCmIYvEmYSPg6se1dIttXGURaEx
-   NBeRmuzBkGXpqeCDI91GrVrD8kOI+d/JCUWISF0HYl0cagcxtMq992Hrf
-   UT7Wr2/YL6PMcIyUlxVOAVoz4OLIDpYowz1iMGPCxWqLPozwR9PTDr9SJ
-   Ck0KYeBTvVb7GGkthYJgpWdYQT8H0PT+YJA5gSrRIim6qpgIKP9jxK3wa
-   qlcUPT1U+X+8xZnOHr78YKJOPb+K5o1uQqOPUuoKu3jcVo9BkVzsVQo/H
-   qnEt8jopZj3ULCvQpuJPogRYlA1VjQBztwW3LrmyHeJhA+E0/CvOFlpOU
-   A==;
-X-CSE-ConnectionGUID: mIaZeYZ4Q86LCixONLXV8g==
-X-CSE-MsgGUID: YV1gF8/TS3qmcDH1Vt7q9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="23851498"
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="23851498"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 02:47:52 -0700
-X-CSE-ConnectionGUID: 2yMcJEKfRiiYRrkCukWK5w==
-X-CSE-MsgGUID: V5lA0qVPRZ20S6Se2HssBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="58062474"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.185])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 02:47:49 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Alex Deucher <alexdeucher@gmail.com>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
- <linux@weissschuh.net>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Christian =?utf-8?Q?K=C3=B6n?=
- =?utf-8?Q?ig?=
- <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, Daniel
- Vetter <daniel@ffwll.ch>, Xinhui Pan <Xinhui.Pan@amd.com>,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] drm/radeon: convert bios_hardcoded_edid to drm_edid
-In-Reply-To: <CADnq5_NwCJV0exdGJ+nCFKdSZ-D85LsLQqCucF54jxtSa=yvSA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240726-amdgpu-edid-bios-v2-0-8a0326654253@weissschuh.net>
- <20240726-amdgpu-edid-bios-v2-2-8a0326654253@weissschuh.net>
- <CADnq5_NwCJV0exdGJ+nCFKdSZ-D85LsLQqCucF54jxtSa=yvSA@mail.gmail.com>
-Date: Mon, 29 Jul 2024 12:47:45 +0300
-Message-ID: <874j88zfzy.fsf@intel.com>
+	 MIME-Version:Content-Type; b=qFLkwcbFXmIjxPiSTH3F7GRU3mT6h7JTSK0lv77wGJT+rAduX0bMK0swA4w/WOoUHcACAjXTje/+s324CPS+ULqVAgPMg7VsDbR5pA8POr0CfzbbSovrOWUGBmy1xHBfytV/CFPVFDOuhrsGlS8ITQZrTquOk89D61fvtEoL8eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EEFvBQyg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S6CzZ6hF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722246501;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=scy5GNLyCVPvAA5J9VSYbLUa7zArNl9+ZZGGqimm8II=;
+	b=EEFvBQygRPCgLIRplU+wxNf8jwrrzLG6bvHRLhOecqOg61a8Q1nHhmc8MD/Di6Cf3UmuZG
+	8R9v1gHOXtQLvjjLLCWwvKbSbOtGGi1BZVbGxzpsFmgdSqaIvikNB7FceW2M+RkVOIct+3
+	wBPH3n44u7q165icqKSufZsbTDX0cV8p8yvmFHC7btg2/Tse2zrRxdR+WM5d8F5l2WStgy
+	XnFq4vbwA0Q1KF/mZRbHTL92CZm7wJel6xnmjBj23T1XbhoWTL7SFcK6cyOEYo1osYdZES
+	w7M6F9+jUaU0mHK5XXP6LjV3Yegcy3VfmAUaba02fpbWy4rvfnMwNAf4/kx2iw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722246501;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=scy5GNLyCVPvAA5J9VSYbLUa7zArNl9+ZZGGqimm8II=;
+	b=S6CzZ6hFuRuyLA44FkWP9NNK027WOf/jj85WiBcXcJd+Wko7CrOWicWH/Nj6sVAq4Oo1vL
+	Zm+pf4BEDC2LsBCw==
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Zhou
+ Wang <wangzhou1@hisilicon.com>
+Subject: Re: [PATCH] irqchip/gic-v4: Fix ordering between vmapp and vpe locks
+In-Reply-To: <86y15k1wz3.wl-maz@kernel.org>
+References: <20240723175203.3193882-1-maz@kernel.org> <875xsrvpt3.ffs@tglx>
+ <86y15k1wz3.wl-maz@kernel.org>
+Date: Mon, 29 Jul 2024 11:48:20 +0200
+Message-ID: <87ttg88r6j.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,15 +68,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-On Fri, 26 Jul 2024, Alex Deucher <alexdeucher@gmail.com> wrote:
-> Applied the series.  Thanks!
+On Mon, Jul 29 2024 at 08:25, Marc Zyngier wrote:
+> On Fri, 26 Jul 2024 21:52:40 +0100,
+> Thomas Gleixner <tglx@linutronix.de> wrote:
+>> Confused. This changes the locking from unconditional to
+>> conditional. What's the rationale here?
+>
+> Haven't managed to sleep much, but came to the conclusion that I
+> wasn't that stupid in my initial patch. Let's look at the full
+> picture, starting with its_send_vmovp():
+>
+>         if (!its_list_map) {
+>                 its = list_first_entry(&its_nodes, struct its_node, entry);
+>                 desc.its_vmovp_cmd.col = &its->collections[col_id];
+>                 its_send_single_vcommand(its, its_build_vmovp_cmd, &desc);
+>                 return;
+>         }
+>
+>         /*
+>          * Protect against concurrent updates of the mapping state on
+>          * individual VMs.
+>          */
+>         guard(raw_spinlock_irqsave)(&vpe->its_vm->vmapp_lock);
+>
+> The vmapp locking *is* conditional. Which makes a lot of sense as the
 
-Ah, replied to patch 1 before noticing this. Never mind about the
-bikeshedding. :)
-
-BR,
-Jani.
-
--- 
-Jani Nikula, Intel
+Misread the patch ...
 
