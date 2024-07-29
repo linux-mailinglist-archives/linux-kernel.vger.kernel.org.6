@@ -1,159 +1,127 @@
-Return-Path: <linux-kernel+bounces-266336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C874F93FE50
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:33:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C4D93FE56
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DC491F22B8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:33:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 379FE283E1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD19518732A;
-	Mon, 29 Jul 2024 19:33:11 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A281818732A;
+	Mon, 29 Jul 2024 19:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Jhyd14iu"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28B385947
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 19:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AC385947
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 19:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722281591; cv=none; b=t2hKTBxgoqnPNmUG9hXdFjT2hCpE54YdwNdK0iW7HihrJdONI/xBVnb/FeRis0mH5MlzqUYrEV6M+GVibqMRgFmQNnPy+/LXcFHGrqS0vSl/EhgV1Y35eUDFFx5IrRywNGvvW6JFz8rsFDDU8tcqwd53vpwLSARozQzlKMJCzuA=
+	t=1722281788; cv=none; b=rwh/3bY5VzhB4MAHmnRGPic2dJYoJwyRywrDa8ZsMfkBtoMhL4aXr/vhl9lN7zqBvphEb3cVu2o2tYaOFSQ7Tl/+W+QZXfyxHIP4o1nxwVdPHDb89RJfNHtGyvo0vETRUA5TBuOgJQ2UZ0YmtJgNq1OyZ036QFkW312m1faspSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722281591; c=relaxed/simple;
-	bh=M+XYDALNe0CwnTV7fx0pNLydFW/LAkjJVXywgGSrNlI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MdF9yB7ReJxO+ByfusTNt3G8CstFgQKU8YwU0x4C//kQ/ATuXF3DEkEHUABw+NpFL7z42KCirYR+E0WSXOJPgcZJ9sMgQBectr1nvnOUVHo2v6y319MOgzwqG/Vx//U8CrD4e/q9T+K2wG/dttsHcSNGHouAGuNV13KOnhI/AuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sYW6X-0004Z4-BK; Mon, 29 Jul 2024 21:32:21 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sYW6T-003790-EX; Mon, 29 Jul 2024 21:32:17 +0200
-Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 9789A31134B;
-	Mon, 29 Jul 2024 19:32:15 +0000 (UTC)
-Date: Mon, 29 Jul 2024 21:32:14 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Markus Schneider-Pargmann <msp@baylibre.com>, 
-	Chandrasekar Ramakrishnan <rcsekar@samsung.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
-	Michal Kubiak <michal.kubiak@intel.com>, Vibhore Vardhan <vibhore@ti.com>, 
-	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, Conor Dooley <conor@kernel.org>, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/7] can: m_can: Map WoL to device_set_wakeup_enable
-Message-ID: <20240729-blue-cockle-of-vigor-7d7670-mkl@pengutronix.de>
-References: <20240729074135.3850634-1-msp@baylibre.com>
- <20240729074135.3850634-3-msp@baylibre.com>
- <15424d0f-9538-402f-bc5d-cdd630c7c5e9@lunn.ch>
+	s=arc-20240116; t=1722281788; c=relaxed/simple;
+	bh=kStYPtpT360r7+lPNaq4678G1cMKho//gPyH3YttFxY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SRLp7/IAFq/zjuX7JX5JxAT1eYiJsTFDz+YrAU3pKhWfdO8v9AI9gWoh3N2EPE3DEriTIi02CWMc7Vle5GAd4YskvK0qMbJste5hMinPXKWQK96COaYv13aHuV0b/Vr5RFsJfrpU27GKGYpNcsobkQpi6B9tZsmqg772LQUJ2Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Jhyd14iu; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52f024f468bso5718617e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:36:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1722281785; x=1722886585; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YRLMvV4In2riP1OtNBuScOq98+Tr4p6Bv5zWorH35kE=;
+        b=Jhyd14iuWu+SuaUMlcyd6YHVvYmSnTOQeBM4KabpC1Raeg4kVeTMauFYj/W/ZSZ88/
+         bqIuHmvVxu2HrBM+MHz9IBqIDqM0VPHdFYDlLWG0KROAo1As5Uem7/P1vbqyll9fM3Qg
+         7mo/uxPUvATtsEuTPIBmFbbd9L4nUH8ajdlM4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722281785; x=1722886585;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YRLMvV4In2riP1OtNBuScOq98+Tr4p6Bv5zWorH35kE=;
+        b=LXPSlH84X0bq/vc8ZIGwQBE047X0XM93ojSn2bbMSaLLZNO4EgN8NRmYe5jon6RB6x
+         PmX22/EvAJwx4I2xkGUjhrSHnYPDw5bgD32chK1q0/CiVUYlvhHJLA/R4KSaOmPuh15y
+         Ibw+IdzgQv2DZWMD6Rk/peiQ8KY7nuCHARgh6Gry+If9Xb81Hc35BmndRXpDQNoa2zp6
+         6IETkfrBkXv5RPTMfBaNnJu4UcSnTtC43kTyCCmCYXBV1SE+8h6QWpPTjF9rcvlEKO9B
+         CY4K6wCjuEjRqTgrbmA63HoSLHKtfzUeStMT8aKboTO8C+NwCtzG5+GUEoah5XukF7Xh
+         2o7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX6wlD/Dp2j6E3I93sKHiaKud4DyrwXF34Nv8U3D3OI6w8ztUDg6XlSjOkKRKrmNKHQZtlYnrWtHTBfWJxWpM+ArEEF/Btk1eBayoIH
+X-Gm-Message-State: AOJu0YzcypX00SBB9qeky9yA3wpeU3k+y5dGyWrNU/qoc5xW9KXLkXU3
+	nEaiLACX4BimT3z8L76E0AopiJknSciJL/4mqEnm7TZI3bZhUBtwS5QFuk4LuYIzrr8WywNRtpf
+	qGW7M9g==
+X-Google-Smtp-Source: AGHT+IGXncZjFf6pSnTPunuQ2QGZvtdlu6/WvVYGO9JlekRlElp0ktMutJOdpzJUWrt8ABQqGwUTvg==
+X-Received: by 2002:a05:6512:128b:b0:52d:582e:4117 with SMTP id 2adb3069b0e04-5309b2ce92dmr6000619e87.54.1722281784720;
+        Mon, 29 Jul 2024 12:36:24 -0700 (PDT)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5bc3f27sm1608547e87.48.2024.07.29.12.36.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jul 2024 12:36:23 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f04c29588so6910092e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:36:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUpK0UXmckryThhNragEnyaxF138EDRYzFI249hXHe3YqgsaGJpYJDYfVmRtH+FXd0ZiMNEn0g2b/UNp5Xwl0uZ57PyQJtfw3PNsTAw
+X-Received: by 2002:a2e:a78a:0:b0:2ef:1b93:d2b6 with SMTP id
+ 38308e7fff4ca-2f12ebcaeb4mr62729131fa.8.1722281783067; Mon, 29 Jul 2024
+ 12:36:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gymxo6uklvdsbh6i"
-Content-Disposition: inline
-In-Reply-To: <15424d0f-9538-402f-bc5d-cdd630c7c5e9@lunn.ch>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <5e42ce13-3203-4431-b984-57d702837015@I-love.SAKURA.ne.jp>
+ <CAHk-=wgs52BxT4Zjmjz8aNvHWKxf5_ThBY4bYL1Y6CTaNL2dTw@mail.gmail.com> <87a5i2ttv0.ffs@tglx>
+In-Reply-To: <87a5i2ttv0.ffs@tglx>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 29 Jul 2024 12:36:06 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whRa0rQrdJc8SQMkC=CzzonzZk5QnZq7BgqD3+vKP+qWA@mail.gmail.com>
+Message-ID: <CAHk-=whRa0rQrdJc8SQMkC=CzzonzZk5QnZq7BgqD3+vKP+qWA@mail.gmail.com>
+Subject: Re: [PATCH] profiling: remove prof_cpu_mask
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	Anna-Maria Gleixner <anna-maria@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Mel Gorman <mgorman@techsingularity.net>, 
+	Michal Hocko <mhocko@suse.com>, Peter Zijlstra <peterz@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Sat, 27 Jul 2024 at 14:20, Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> Only people who indulge in nostalgia will notice :)
 
---gymxo6uklvdsbh6i
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So let's see. Any bets on whether anybody actually notices?
 
-On 29.07.2024 21:27:04, Andrew Lunn wrote:
-> On Mon, Jul 29, 2024 at 09:41:30AM +0200, Markus Schneider-Pargmann wrote:
-> > In some devices the pins of the m_can module can act as a wakeup source.
-> > This patch helps do that by connecting the PHY_WAKE WoL option to
-> > device_set_wakeup_enable. By marking this device as being wakeup
-> > enabled, this setting can be used by platform code to decide which
-> > sleep or poweroff mode to use.
-> >=20
-> > Also this prepares the driver for the next patch in which the pinctrl
-> > settings are changed depending on the desired wakeup source.
-> >=20
-> > Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
-> > ---
-> >  drivers/net/can/m_can/m_can.c | 37 +++++++++++++++++++++++++++++++++++
-> >  1 file changed, 37 insertions(+)
-> >=20
-> > diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_ca=
-n.c
-> > index 81e05746d7d4..2e4ccf05e162 100644
-> > --- a/drivers/net/can/m_can/m_can.c
-> > +++ b/drivers/net/can/m_can/m_can.c
-> > @@ -2182,6 +2182,36 @@ static int m_can_set_coalesce(struct net_device =
-*dev,
-> >  	return 0;
-> >  }
-> > =20
-> > +static void m_can_get_wol(struct net_device *dev, struct ethtool_wolin=
-fo *wol)
-> > +{
-> > +	struct m_can_classdev *cdev =3D netdev_priv(dev);
-> > +
-> > +	wol->supported =3D device_can_wakeup(cdev->dev) ? WAKE_PHY : 0;
-> > +	wol->wolopts =3D device_may_wakeup(cdev->dev) ? WAKE_PHY : 0;
-> > +}
->=20
-> It is nice to see Ethernet WoL mapped to CAN :-)
->=20
-> So will any activity on the CAN BUS wake the device? Or does it need
-> to be addresses to this device?
+I took Tetsuo's fix for the syzbot issue, and then I did a "remove all
+the flip buffer code" in commit 2accfdb7eff6 ("profiling: attempt to
+remove per-cpu profile flip buffer").
 
-Unless you have a special filtering transceiver, which is the CAN
-equivalent of a PHY, CAN interfaces usually wake up on the first
-message on the bus. That message is usually lost.
+If somebody ends up having a real use-case for this old horrid code,
+we may just have to remove it.
 
-Note: The details of the m_can IP core might be different.
+But it might also be the case that somebody actually does want the
+boot-time profiling, and then the runtime overhead is annoying just
+because they are on a multi-socket machine and the profiling just
+keeps going - even after better profilers are available.
 
-regards,
-Marc
+So it might be that nobody wants to actually re-instate the flip
+buffer thing, but instead just turn the thing off entirely.
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+Technically you can do that by writing to /proc/profile with a
+"profiling multiplier" that effectively turns it off, but very few
+architectures actually support that (see "setup_profiling_timer()").
 
---gymxo6uklvdsbh6i
-Content-Type: application/pgp-signature; name="signature.asc"
+End result: maybe we should add a way to just say "I'm done profiling
+now" if somebody reports that it causes performance issues after boot.
 
------BEGIN PGP SIGNATURE-----
+But I hope (and think it's very possible) that nobody will ever notice
+any other way than from following this LKML discussion.
 
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAman7jsACgkQKDiiPnot
-vG/ekQf/UazIMc4lJG3SED8MsgayQ8NHDp/+4mf0my6KoBoV1C4NRTwVqNE6HF3t
-qWWYAnY98fNAq4kEniEDAYDM/EYZHsTZSYAFTK7eUjxD2C8nh9VDF4xiCg8M/ZyT
-iC/TkPU0JQ6OJStTrCmD1s/xpHH6JnyWp2J1ReByVp+3E+HgOR7Ugss3P7nkKZp2
-bpzsveXbeAd7nU6Atpti4NUtGyGBwx5rw2u2iqY5bGlHtpqjcuW8jceifGfrJHiH
-1kYW2s6otcCbvkulf0tgfhQExkC8PP2fU3Kr2bxoSiU2X1UQLJNVJSwW7Z1Yn6tB
-iAyzOKi7Mor09c9q4wdE5MVhFINhaQ==
-=8S1o
------END PGP SIGNATURE-----
-
---gymxo6uklvdsbh6i--
+              Linus
 
