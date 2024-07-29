@@ -1,95 +1,240 @@
-Return-Path: <linux-kernel+bounces-266018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9913493F94F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:24:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D844093F950
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C8C4B21502
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:24:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 687E12836D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746B61586DB;
-	Mon, 29 Jul 2024 15:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B46156883;
+	Mon, 29 Jul 2024 15:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UL+GnERz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NrMCwAKa"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDEC154C0C;
-	Mon, 29 Jul 2024 15:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE76B154C0C;
+	Mon, 29 Jul 2024 15:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722266684; cv=none; b=Ax5r0NgDRWzDA60z8WMiRTtbbf2cxYYHwKMG49/UymgVeRagz32F5a2cXgN05KDxPXJWxUJIjZ2Ro0YkJ7pgcdrdKL2KaI3L2FqhUoGAa6qzoYq3aj6KvNHHj8D6B0HsYEv1nZDThuO9eIJuiKX3lhMeQ5PDzK3dVvEk5vO3Y4A=
+	t=1722266700; cv=none; b=N1rN2LiCj6s3vJJjfiK9BOFGJ2B9eGBJlqUJlU2tPucGAEyZA0jUGMoUD4n39FjFjUTu810Mg7tWCgj4rFmnGqXN6YNuXZpETwsbvIj4sZgAb46jOeR0Gb5FH48lGd6UqCzWPOr5Iaj38KphFo6XMADCnOtbK3R11Seo5qjfErU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722266684; c=relaxed/simple;
-	bh=IV6VxQVQk69smlu9QxmbULLkxhEzAF8V7DvqmyX572Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SGIZ8c2SM3vIk3s7wnhCuV+0eDuTBvZNWdhRJJqsoWsM32LHlcP5HlYKY5p8WllwFMd6E+HcSo9GEr6tuuRQtd5POo1VY7f51DVegQwmFV3aZJiRSUQdPK+An3uCUjY8S97ZM6+jSQAAAWyt2d5yqVaLFNRyWUvOB/wGCS5kjro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UL+GnERz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86633C32786;
-	Mon, 29 Jul 2024 15:24:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722266684;
-	bh=IV6VxQVQk69smlu9QxmbULLkxhEzAF8V7DvqmyX572Q=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=UL+GnERz173cSufLEisaQT3icbwJoxwGungiPtZC1NN1YSQ2vx2Ln9/uA1e7FSzL6
-	 zMBwIpw4i3nAWc89xMxcn+ZqXGKf16J9BrFUwQYfXCt1OT9inUf+ZVBCGijYvkqiYs
-	 MqK36+EqEZ8Y9NODYlfvR58jhbqdppx4DJNrOUR08NOMRpffldamW/3luwBPnvuYov
-	 SA28THmPqB4kc2cbY9GctqhhDl+yJX1CC6Zb9PGkvdfllmQUoQs8RJU1GtpNjAD6it
-	 qiTI1xuTPP2Sp/HlkTwWZwFfq0ru0pe876qR5tOoaTh+E8cfCFejdy9dSxzhmJcAVp
-	 5fcEpTWm/RdZg==
-Message-ID: <a13bff5812cb36adf3fed80093cbe1de601ec506.camel@kernel.org>
-Subject: Re: Testing if two open descriptors refer to the same inode
-From: Jeff Layton <jlayton@kernel.org>
-To: Florian Weimer <fweimer@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Cc: Dave Chinner <dchinner@redhat.com>
-Date: Mon, 29 Jul 2024 11:24:41 -0400
-In-Reply-To: <874j88sn4d.fsf@oldenburg.str.redhat.com>
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1722266700; c=relaxed/simple;
+	bh=QP++Bsl3vngh40fhy1FftozspKdpktl2FxdG68Z69tU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FIUhSJPaOG9agQ40YguUKCOlRlTjd9CNqGTp9zGYGcX8WGiE6Z8O9uGSP/KvQgB8tjwpYtKpqxhlwNe4z6ylMKiZmaUp746uYcK6zxO524uQw/fIbg8Y6dL5/AR4UtMYfpe1zOlUkIHtaiyLoISMFyG4AMzUPB3cyRHEMRujPrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NrMCwAKa; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-66a048806e6so21459057b3.3;
+        Mon, 29 Jul 2024 08:24:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722266698; x=1722871498; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hrWzyoHDY0V4iGBJS/oMZhZ3e1fyseejnIzoqwILk7k=;
+        b=NrMCwAKaSJvLzvYVIcpQ0CrZivE7TwSIUnCDeN1QgqcaVUQPRDTZS+5js5DQ0oM9/p
+         Ni6ikgIeKL3NED0i5eZDcQlvnnPECw2jjmTsYCnvcZ/uIXpFte9HVIfBBQYdK+HGVRXk
+         niOucjyMSr9xMiLHC9sc4BaEqsDbjimhS3N1LDBNpTCaDO9zlC8+a7v/fz3iBkZpIJe9
+         ct1d8Sog+DTy1j2usrmQawRxYLOT3NuehbQo0wV+PWLzw4TNymK4+WylnMgC5zCSqogX
+         k2DSGW6uhwyYHfpJCHYtjFMVi21xJZWBZr95rxJuda0zfgjCkJw9mKYn7i8VG/g9xCiu
+         Umiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722266698; x=1722871498;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hrWzyoHDY0V4iGBJS/oMZhZ3e1fyseejnIzoqwILk7k=;
+        b=MYIm9COrWODsvJXItFMtAsDQW0VrfsV7FkMN8qt1K+qm2ZwshPwTqYt1QT/7bzAX41
+         dmaHYw1c7dX2xTqTigw0cHemPSkOr+Qw++uqH5huJmUJ+p859aas/gs+3E1xYjVef3oy
+         e5mJOk0N0m1ww2K3eBkwDiCs8jWRsY6m47T0dNgT7NP/IR0kVW97hgdGoyTOtFjvQxYc
+         NjnAITbLEQ6Q7tWRKRIfdFieZuzISv4CePZWkCCEJIFel2ATwWG6ojBkk773JfXyK21h
+         Tinfe7RYb437PeziDVt6aIMz1Oy5yDZH63H396H37X01HdEL3uaFoAjzeYI2Cku2uqu0
+         1icw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIgSCnEKwnDKTk7zXw63el2VUQdNJzvt2n4hWS2JUeecW/YkqcZRg2CbGDJ2UlYeA8qsSFxPqN5KtIJQnxn7vJGO4wUogv4eAfLFp99GL78l/R59JCVbrZi9Gex5TV7Bo+TnMTc+6DSGXkipW4xw==
+X-Gm-Message-State: AOJu0YzVZxJlpnJM1s8lgtCai9PXC5DhJH3+Go9q3S3g4SQQd2+mQ7zG
+	3N3UjiXTSbBlkCUev0FqMw1IUf8SKwzhHAiZT3gFvrYXX7RdHNzVGQcOA4YKgAess1qs15V2Ab2
+	Le4qzWaaKV57Zp9Z5iDihmrsYc9iTEU04Kv8=
+X-Google-Smtp-Source: AGHT+IFi1mUw7+OXZM88XpZHe1uOHrLiQ08btL6rXZKEZ1bU7UM8Cxy8sQUiNrvhbyqWtZ9G/byeLF9mxfNurz5sv+0=
+X-Received: by 2002:a81:b410:0:b0:645:8fb:71c8 with SMTP id
+ 00721157ae682-67a0a13665amr94555087b3.37.1722266697647; Mon, 29 Jul 2024
+ 08:24:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240726102826.787004-1-howardchu95@gmail.com> <ZqbutBvHOJ0SPd64@google.com>
+In-Reply-To: <ZqbutBvHOJ0SPd64@google.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Mon, 29 Jul 2024 23:24:47 +0800
+Message-ID: <CAH0uvogRFE_gXhSQTbXJiu-Yj2b+H1U4K40bDOgwTFyTOtHFDA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] Dump off-cpu samples directly
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: irogers@google.com, acme@kernel.org, adrian.hunter@intel.com, 
+	jolsa@kernel.org, kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2024-07-29 at 08:55 +0200, Florian Weimer wrote:
-> It was pointed out to me that inode numbers on Linux are no longer
-> expected to be unique per file system, even for local file systems.
-> Applications sometimes need to check if two (open) files are the
-> same.
-> For example, a program may want to use a temporary file if is invoked
-> with input and output files referring to the same file.
->=20
-> How can we check for this?=C2=A0 The POSIX way is to compare st_ino and
-> st_dev in stat output, but if inode numbers are not unique, that will
-> result in files falsely being reported as identical.=C2=A0 It's harmless
-> in
-> the temporary file case, but it in other scenarios, it may result in
-> data loss.
->=20
+Hello Namhyung,
 
-I believe this is the problem that STATX_SUBVOL was intended to solve.
+Thanks for reviewing this patch.
 
-Both bcachefs and btrfs will provide this attribute if requested. So,
-basically to uniquely ID an inode using statx, you need a tuple of:
+On Mon, Jul 29, 2024 at 9:21=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hello Howard,
+>
+> On Fri, Jul 26, 2024 at 06:28:21PM +0800, Howard Chu wrote:
+> > As mentioned in: https://bugzilla.kernel.org/show_bug.cgi?id=3D207323
+> >
+> > Currently, off-cpu samples are dumped when perf record is exiting. This
+> > results in off-cpu samples being after the regular samples. This patch
+> > series makes possible dumping off-cpu samples on-the-fly, directly into
+> > perf ring buffer. And it dispatches those samples to the correct format
+> > for perf.data consumers.
+>
+> Thanks for your work!
+>
+> But I'm not sure we need a separate event for offcpu-time-direct.  If we
+> fix the format for the direct event, we can adjust the format of offcpu-
+> time when it dumps at the end.
 
-stx_dev_major/minor
-stx_subvol
-stx_ino
+Thank you and Ian for this advice, I'll do that.
 
-If the filesystem doesn't provide STATX_SUBVOL, then one can (likely)
-conclude that stx_dev_* and stx_ino are enough.
---=20
-Jeff Layton <jlayton@kernel.org>
+>
+> Anyway, as far as I can see you don't need to fill the sample info in
+> the offcpu-time-direct manually in your BPF program.  Because the
+> bpf_perf_event_output() will call perf_event_output() which fills all
+> the sample information according to the sample_type flags.
+>
+> Well.. it'll set IP to the schedule function, but it should be ok.
+> (updating IP using CALLCHAIN like in off_cpu_write() is a kinda hack and
+> not absoluately necessary, probably I can get rid of it..  Let's go with
+> simple for now.)
+>
+> So I think what you need is to ensure it has the uncessary flags.  And
+> the only info it needs to fill is the time between the previous schedule
+> and this can be added to the raw data.
+
+Sure thing, thank you. Other than the off-cpu duration, do you think
+we should collect the callchain as well?
+
+This idea is great because it minimizes the data we need to transfer
+from kernel space to user space. But with this, the whole
+"full-fledged sample in BPF output" is not the case anymore, because
+we only take a couple of things(such as the time between the
+schedules) from the raw data. This idea is more like an extension of
+the sample data, I think it's interesting, will try to implement it.
+
+Thanks,
+Howard
+>
+> Thanks,
+> Namhyung
+>
+> >
+> > Changes in v3:
+> >  - Add off-cpu-thresh argument
+> >  - Process direct off-cpu samples in post
+> >
+> > Changes in v2:
+> >  - Remove unnecessary comments.
+> >  - Rename function off_cpu_change_type to off_cpu_prepare_parse
+> >
+> > Before:
+> > ```
+> >      migration/0      21 [000] 27981.041319: 2944637851    cycles:P:  f=
+fffffff90d2e8aa record_times+0xa ([kernel.kallsyms])
+> >             perf  770116 [001] 27981.041375:          1    cycles:P:  f=
+fffffff90ee4960 event_function+0xf0 ([kernel.kallsyms])
+> >             perf  770116 [001] 27981.041377:          1    cycles:P:  f=
+fffffff90c184b1 intel_bts_enable_local+0x31 ([kernel.kallsyms])
+> >             perf  770116 [001] 27981.041379:      51611    cycles:P:  f=
+fffffff91a160b0 native_sched_clock+0x30 ([kernel.kallsyms])
+> >      migration/1      26 [001] 27981.041400: 4227682775    cycles:P:  f=
+fffffff90d06a74 wakeup_preempt+0x44 ([kernel.kallsyms])
+> >      migration/2      32 [002] 27981.041477: 4159401534    cycles:P:  f=
+fffffff90d11993 update_load_avg+0x63 ([kernel.kallsyms])
+> >
+> > sshd  708098 [000] 18446744069.414584:     286392 offcpu-time:
+> >           79a864f1c8bb ppoll+0x4b (/usr/lib/libc.so.6)
+> >           585690935cca [unknown] (/usr/bin/sshd)
+> > ```
+> >
+> > After:
+> > ```
+> >             perf  774767 [003] 28178.033444:        497           cycle=
+s:P:  ffffffff91a160c3 native_sched_clock+0x43 ([kernel.kallsyms])
+> >             perf  774767 [003] 28178.033445:     399440           cycle=
+s:P:  ffffffff91c01f8d nmi_restore+0x25 ([kernel.kallsyms])
+> >          swapper       0 [001] 28178.036639:  376650973           cycle=
+s:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+> >          swapper       0 [003] 28178.182921:  348779378           cycle=
+s:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+> >     blueman-tray    1355 [000] 28178.627906:  100184571 offcpu-time-dir=
+ect:
+> >           7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
+> >           7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
+> >           7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-=
+2.0.so.0.8000.2)
+> >           7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.=
+0.8000.2)
+> >           7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
+> >           7fff24e862d8 [unknown] ([unknown])
+> >
+> >
+> >     blueman-tray    1355 [000] 28178.728137:  100187539 offcpu-time-dir=
+ect:
+> >           7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
+> >           7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
+> >           7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-=
+2.0.so.0.8000.2)
+> >           7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.=
+0.8000.2)
+> >           7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
+> >           7fff24e862d8 [unknown] ([unknown])
+> >
+> >
+> >          swapper       0 [000] 28178.463253:  195945410           cycle=
+s:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+> >      dbus-broker     412 [002] 28178.464855:  376737008           cycle=
+s:P:  ffffffff91c000a0 entry_SYSCALL_64+0x20 ([kernel.kallsyms])
+> > ```
+> >
+> > Howard Chu (5):
+> >   perf record off-cpu: Add direct off-cpu event
+> >   perf record off-cpu: Dumping samples in BPF
+> >   perf record off-cpu: processing of embedded sample
+> >   perf record off-cpu: save embedded sample type
+> >   perf record off-cpu: Add direct off-cpu test
+> >
+> >  tools/perf/builtin-record.c             |   2 +
+> >  tools/perf/builtin-script.c             |   2 +-
+> >  tools/perf/tests/builtin-test.c         |   1 +
+> >  tools/perf/tests/shell/record_offcpu.sh |  29 +++++
+> >  tools/perf/tests/tests.h                |   1 +
+> >  tools/perf/tests/workloads/Build        |   1 +
+> >  tools/perf/tests/workloads/offcpu.c     |  16 +++
+> >  tools/perf/util/bpf_off_cpu.c           |  53 ++++++++-
+> >  tools/perf/util/bpf_skel/off_cpu.bpf.c  | 143 ++++++++++++++++++++++++
+> >  tools/perf/util/evsel.c                 |  16 ++-
+> >  tools/perf/util/evsel.h                 |  13 +++
+> >  tools/perf/util/header.c                |  12 ++
+> >  tools/perf/util/off_cpu.h               |   1 +
+> >  tools/perf/util/record.h                |   1 +
+> >  tools/perf/util/session.c               |  23 +++-
+> >  15 files changed, 309 insertions(+), 5 deletions(-)
+> >  create mode 100644 tools/perf/tests/workloads/offcpu.c
+> >
+> > --
+> > 2.45.2
+> >
 
