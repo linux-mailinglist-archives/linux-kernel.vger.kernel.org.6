@@ -1,150 +1,138 @@
-Return-Path: <linux-kernel+bounces-265584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A1CF93F32C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:51:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC9193F33D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F5BD1C21C38
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:51:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AE4CB22D6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A384F144D03;
-	Mon, 29 Jul 2024 10:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5258614535B;
+	Mon, 29 Jul 2024 10:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Zal9Q2EK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b="oxb6c/Eu"
+Received: from mail.tkos.co.il (mail.tkos.co.il [84.110.109.230])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85AF413FD86;
-	Mon, 29 Jul 2024 10:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C9613D281;
+	Mon, 29 Jul 2024 10:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.110.109.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722250275; cv=none; b=Ji8VcTwbNvrOmZKlADC0y8cRGVaHdeVujAY77a2ISIbqLfbGXJNhDsoZ1qopxnuJbTOy1KIB16dLzvmmUjAQlZ7MWKxzbLgTA8SvYhjGqBxsQE37tQk9TguyNBjvkr5QeLkYaPTA3+e/YsFT09co0RMKREQ12geLFhWgOALV6pM=
+	t=1722250321; cv=none; b=dbCt2gjptL3dRRULmm2hFH/xpZEdD7thB+FGw+JqlEwyvbpnsWJAaE8LPmrXSMdQVTHUdnF0i93q1WPUBl78hoiB0/7H86aktm0X0H1mir8pLFKS9DI2pSP2bucdmfDobsFh0ZUcqSqZW69SpfQIz/dfyvzoFHQZi1XoVHS6ucc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722250275; c=relaxed/simple;
-	bh=TXqbYLWNavBhio6QJtDaBL3LRySSdcZhgC+Ki8PQPps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VrE9gtbGcrb60w+5Ht+SQo/HSAnsW7WRBadT/JYWlWOj922Kgv6U38QBXjXQOwsQdcvC9rF39R5fCUoOqQdBehiRohR3uu4JrsC7FPVZzkJTPzzybInmYiF1CxwAtbM0U5/N2U6ID/mUx4v+qxTFd3qQPrh+9UPDV6t4K1g1xzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Zal9Q2EK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TAKjVP000633;
-	Mon, 29 Jul 2024 10:51:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	iflcpP1kqonyTgoKqWDBjTj20vn/CqguM7cHmTJC/wQ=; b=Zal9Q2EK4BUcnLFK
-	dCHTxTgjU/ie4GEGOE6F5RRY7nlUknKM0ZtpynnsKUWC+IMpiFnZUomhMaDFpREv
-	zNpL7CmjE0lXOlTKkDoSr1FnCWegeSH5xBatCAY95yk0TZ+Uqo0Aaz38n/NNbzgb
-	pNDaFVl9Nx04sv7p5nlcxe1NrPexsJ+BhKQQ63TGzGBfABiKziS9CUh5Dy/3N0HW
-	OnkihK3X+BTaQDd6rkfnF4EuUuDgcdqBwdJp0wqp2gDIVTT7L8moybCFv8qYvRYL
-	4sEXMJ4RoBr8WYwdSIk+FayfVVwGdIjs2rtan2iGgkwL6vFDuRJifeLCk05oP4yO
-	dBFpZg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mt2kkuh3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 10:51:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TAp8X0015980
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 10:51:08 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
- 2024 03:51:03 -0700
-Message-ID: <a9cfb48f-7dcc-4582-a677-3abac0295630@quicinc.com>
-Date: Mon, 29 Jul 2024 18:50:56 +0800
+	s=arc-20240116; t=1722250321; c=relaxed/simple;
+	bh=fW3seKu3qSWQ63GvanpzjS9o30g/c8HO+hDOTWVeunY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QjVKtJ8+voTQlXPCbJOIzZha4iovSoEKCQPVaYD2YreyedIgE6IMj5oGlSUTcoPlK+4CcnM+69lEhthnOj6dlTDWTvTRFKNXjlgFdUnk81wspMNjx7RRWg42F86a8GP3N7XBuVarVD0XcGfyDzPtoFeGdw8VfDqdlw5ZZDDXOy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il; spf=pass smtp.mailfrom=tkos.co.il; dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b=oxb6c/Eu; arc=none smtp.client-ip=84.110.109.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tkos.co.il
+Received: from tarshish.tkos.co.il (unknown [10.0.8.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail.tkos.co.il (Postfix) with ESMTPS id 5C85044077F;
+	Mon, 29 Jul 2024 13:50:32 +0300 (IDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
+	s=default; t=1722250232;
+	bh=fW3seKu3qSWQ63GvanpzjS9o30g/c8HO+hDOTWVeunY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oxb6c/Eu6R3lnFbBk1ATcjrT04NEVWB9QlcbuP6HUW8mgWd+gF1a/nKIokODTXVEa
+	 OPq8XiyDhAxh7nRm91I3O5m+7MK740rLnMhBRvbhasdMcwGkbi26eNM/wG5j4zx6kg
+	 RUo7n483hb7jswtzULahoaXd3+3arO6GytgHs/6b3Sr7Pv5lBZptycGtoF2RzPY+oR
+	 hnpqgsVLqN8b3fvK4wTH0IzCg5Srw5G0QnQdFHmIbO7LBBDAHHpSTMe/xSTfjVKt/A
+	 ouC0R5aURB3/Sn2fLU2NJut7AYOriSMaeAYYf4ywM42DhNjkBh6oEknuwRbvGmBvjo
+	 30+SvOeUXew4A==
+From: Baruch Siach <baruch@tkos.co.il>
+To: Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: Baruch Siach <baruch@tkos.co.il>,
+	Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org,
+	=?UTF-8?q?Petr=20Tesa=C5=99=C3=ADk?= <petr@tesarici.cz>,
+	Ramon Fried <ramon@neureality.ai>,
+	Elad Nachman <enachman@marvell.com>
+Subject: [PATCH v3 0/3] dma: support DMA zone starting above 4GB
+Date: Mon, 29 Jul 2024 13:51:23 +0300
+Message-ID: <cover.1722249878.git.baruch@tkos.co.il>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: sa8775p: Add TCSR halt register
- space
-To: Mukesh Ojha <quic_mojha@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzk@kernel.org>
-CC: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-References: <20240705153252.1571814-1-quic_mojha@quicinc.com>
- <20240705153252.1571814-2-quic_mojha@quicinc.com>
- <50d0bdd6-2262-4404-9a26-29b1f2e6fe92@kernel.org>
- <ZowPCeNFh/Mw8ev0@hu-mojha-hyd.qualcomm.com>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <ZowPCeNFh/Mw8ev0@hu-mojha-hyd.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: vbtk-eI_m1LVSJ-Q0GPfQWCB84N7la4s
-X-Proofpoint-GUID: vbtk-eI_m1LVSJ-Q0GPfQWCB84N7la4s
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-29_09,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- malwarescore=0 spamscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0
- suspectscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407290073
+Content-Transfer-Encoding: 8bit
 
+DMA zones code assumes that DMA lower limit is zero. When there is no RAM 
+below 4GB, arm64 platform code sets DMA/DMA32 zone limits to cover the entire 
+RAM[0].
 
+My target platform has RAM starting at 32GB. Devices with 30-bit DMA mask are 
+mapped to 1GB at the bottom of RAM, between 32GB - 33GB. DMA zone over the 
+entire RAM breaks DMA allocation for these devices.
 
-On 7/9/2024 12:08 AM, Mukesh Ojha wrote:
-> On Sun, Jul 07, 2024 at 02:46:59PM +0200, Krzysztof Kozlowski wrote:
->> On 05/07/2024 17:32, Mukesh Ojha wrote:
->>> Enable download mode for sa8775p which can help collect
->>> ramdump for this SoC.
->>>
->>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
->>> ---
->>>   arch/arm64/boot/dts/qcom/sa8775p.dtsi | 6 ++++++
->>>   1 file changed, 6 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>> index 23f1b2e5e624..a46d00b1ddda 100644
->>> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>> @@ -221,6 +221,7 @@ eud_in: endpoint {
->>>   	firmware {
->>>   		scm {
->>>   			compatible = "qcom,scm-sa8775p", "qcom,scm";
->>> +			qcom,dload-mode = <&tcsr 0x13000>;
->>>   			memory-region = <&tz_ffi_mem>;
->>>   		};
->>>   	};
->>> @@ -2824,6 +2825,11 @@ tcsr_mutex: hwlock@1f40000 {
->>>   			#hwlock-cells = <1>;
->>>   		};
->>>   
->>> +		tcsr: syscon@1fc0000 {
->>> +			compatible = "qcom,sa8775p-tcsr", "syscon";
->>
->> The file is going away. This change is very confusing.
->>
->> Please align first with your colleagues instead of sending conflicting
->> work without any explanation.
-> 
-> Sure, let me check with Tengfei if this can be sent along with his patches.
-> 
-> -Mukesh
+In response to a previous RFC hack[1] Catalin Marinas suggested to add a
+separate offset value as base address for the DMA zone, and then refined the 
+suggestion to use start of RAM[3]. This RFC series attempts to implement that 
+suggestion.
 
-After considering the feedback provided on the subject, We have decided
-to keep current SA8775p compatible and ABI compatibility in drivers.
-Therefore, this patch is still needed, please continue to review this
-patch.
-Thank you for your input.
+With this series applied, the DMA zone covers the right RAM range for my 
+platform.
+
+v3:
+
+  * Rebase on v6.11-rc1.
+
+  * Drop zone_dma_base. Use memblock_start_of_DRAM() instead.
+
+  * Drop DT patches. Low DMA range limit no longer needed.
+
+  * Add patch to improve dma_direct_optimal_gfp_mask() heuristics as Catalin 
+    suggested.
+
+RFC v2:
+
+  * Add patch from Catalin[2] changing zone_dma_bits to zone_dma_limit to 
+    simplify subsequent patches
+
+  * Test on real hardware
+
+RFC v1: https://lore.kernel.org/all/cover.1703683642.git.baruch@tkos.co.il/
+
+[0] See commit 791ab8b2e3db ("arm64: Ignore any DMA offsets in the 
+    max_zone_phys() calculation")
+
+[1] https://lore.kernel.org/all/9af8a19c3398e7dc09cfc1fbafed98d795d9f83e.1699464622.git.baruch@tkos.co.il/
+
+[2] https://lore.kernel.org/all/ZZ2HnHJV3gdzu1Aj@arm.com/
+
+[3] https://lore.kernel.org/all/ZnH-VU2iz9Q2KLbr@arm.com/
+
+Baruch Siach (2):
+  dma-mapping: improve DMA zone selection
+  dma-direct: use RAM start to offset zone_dma_limit
+
+Catalin Marinas (1):
+  dma-mapping: replace zone_dma_bits by zone_dma_limit
+
+ arch/arm64/mm/init.c       | 34 +++++++++++++---------------------
+ arch/powerpc/mm/mem.c      |  9 ++++-----
+ arch/s390/mm/init.c        |  2 +-
+ include/linux/dma-direct.h |  2 +-
+ kernel/dma/direct.c        | 15 ++++++++-------
+ kernel/dma/pool.c          |  3 ++-
+ kernel/dma/swiotlb.c       |  4 ++--
+ 7 files changed, 31 insertions(+), 38 deletions(-)
 
 -- 
-Thx and BRs,
-Tengfei Fan
+2.43.0
+
 
