@@ -1,98 +1,93 @@
-Return-Path: <linux-kernel+bounces-265683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83E793F45F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:45:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C4F93F45E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67C08281C61
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:45:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23C82281B75
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C451465BC;
-	Mon, 29 Jul 2024 11:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14A8145FED;
+	Mon, 29 Jul 2024 11:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="0rwxMVDP"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QjAfDo5v";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XcbfXzYE"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D3B1448FA;
-	Mon, 29 Jul 2024 11:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA44E79B8E
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722253491; cv=none; b=MmtXbmCXoU8XjQ2Qb43n8itgSRoD79Rxn3OqtPuojgyJNtqWY5iNL0X7j47gkOJRf0bS+GnGmvMkpv+ylwSdRC2H7EfL7oE6LOtgoYK07E2LlBQ5mtFue6sUalt2LfRy79BWzO+Y/4zDZf4vruU/Zsa+S+4oEd4YvKbNRCteuDQ=
+	t=1722253491; cv=none; b=Q/1ivF/kcEHxxDnH9HPZ7N+AraPoGUOQ5qvZT0yZpTr167pJyq+QP7f2k8Iv1+ArSFwUmwhcbvVNXt1dCbD4kSTjGbTysOfP350p6ZO/MPv1qhXAE17i2QZNFFBiJ5wTgP2eHaCTo6DLNzuoMeFudV4vU14VBK1pnS816WZ/dD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722253491; c=relaxed/simple;
-	bh=Ti06r/XMSH0sbGat8+mJUkakLg/McgmwIPMyZU2BdF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kFIxCfrMXBjJuUnUW4oQjp4HbtehZt9e/mCJn3cJWMOozjTa8BtemGlTK+2XcwySl3l0u7a6kbMzNh3TuTdcvFjvuXseDxm+Q70eCJ7+xt1OzAXlCi4giy8XA/mphlq/DXGjSBg8QQcShq8UJIHWc3qCQPm/MuO9e6JHdrV755c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=0rwxMVDP; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Ha36RNBh+gI1N0zYIGKCjyTBYU6moV0YKmXSZ5w/dN8=; b=0rwxMVDPTECcTCLQSNraQAKBZy
-	ksUM4TsSq4C75xehqddQoOEi6Shjsa0vxZoRgSzvh4C5QrkFEZaep6K8qFnQTOimaj7NFLNXsrAYt
-	GTr7DbbvTxLWTWMZYKf5IHcQZOSQgpw/KvRRQYLaXJzXpOtS9SI0573BcZZWePp/E8uCZlZ7p7z+t
-	xfIS9NNuNgR2MTroKfE/T70LNX0i9UpeUARI2GiRKh39TM9DHX510mwHBYEdadpphasWcJu1M9jE1
-	T/b7UZ8WEFtc2PgH78s2DGoqDVAT0nGuV2hSN5RjwVqAVAG39CZEAIUzWxYuywjm5QmvHEcXSK7dd
-	Z5M8qSGw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40146)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sYOno-0004AW-1Q;
-	Mon, 29 Jul 2024 12:44:34 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sYOns-0004Ic-MN; Mon, 29 Jul 2024 12:44:36 +0100
-Date: Mon, 29 Jul 2024 12:44:36 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "Frank.Sae" <Frank.Sae@motor-comm.com>, hkallweit1@gmail.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yuanlai.cui@motor-comm.com, hua.sun@motor-comm.com,
-	xiaoyong.li@motor-comm.com, suting.hu@motor-comm.com,
-	jie.han@motor-comm.com
-Subject: Re: [PATCH 2/2] net: phy: Add driver for Motorcomm yt8821 2.5G
- ethernet phy
-Message-ID: <ZqeApCpnq0752ZG4@shell.armlinux.org.uk>
-References: <20240727092031.1108690-1-Frank.Sae@motor-comm.com>
- <fa2a7a4a-a5fc-4b05-b012-3818f65631c4@lunn.ch>
+	bh=0tmFNypyshnRwkpg51uHNNisxl2nXHYyJxMT0DsI7EM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZFGtRd1XODOKztvQwRZNJfKgXqm4Jpn70McMkfWA4Gbqs+YBHysXTAZQdQLOU8Ug7LmYWBvgBH8wGqNaG1m8kYuP8cW/ZfxMqtIP3OtUqe9O+Ngj0Ix70OMwH12jWrHY6GKo94NpxGvceZKNOVutdNp5Eh3royhrVraGEGoXGTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QjAfDo5v; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XcbfXzYE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722253487;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0tmFNypyshnRwkpg51uHNNisxl2nXHYyJxMT0DsI7EM=;
+	b=QjAfDo5vU2fxJ+UagZoVc6NX4d9xN+KazfRA3LTgdNpUbJ7BBinSR1UQiCaD587XKQ5Wji
+	CMrmHwXhe+cPCJidB9K+yeQp5jV8TNwD9JKzMdWTNeaA7/6vpdNJmFfd5Jtv+I7dfktwTX
+	nG4xCShu0+l0uHwnMDa1+jQMWiFMAZndHVjKffBBPatlTB18nHp6WQmtAt/g/s3IQEQ/Wx
+	/Xg3BAVs4gkJU+hb/zRlxET2BfZkVI9kLrN7ix0F6hiDg+irShPpF746y6zin/1HF9gLmx
+	3bZ6cxJbcHDpTsZzlpNTOeqCA7OG1IoGrSyrSFtDIT40FigZ/tojuK5A/QqeoQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722253487;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0tmFNypyshnRwkpg51uHNNisxl2nXHYyJxMT0DsI7EM=;
+	b=XcbfXzYEBAqt0exLFcDLaJilej8ah8SNEOftkTqRVmXA9D9qCbxziTibE+h/SnKduH4Epn
+	8H7qpPLTJWAJoACw==
+To: =?utf-8?B?5pyx5oG65Lm+?= <zhukaiqian@xiaomi.com>, Daniel Lezcano
+ <daniel.lezcano@linaro.org>,
+ =?utf-8?B?5byg5ZiJ5Lyf?= <zhangjiawei8@xiaomi.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ =?utf-8?B?546L6Z+s?=
+ <lingyue@xiaomi.com>, =?utf-8?B?54aK5Lqu?= <xiongliang@xiaomi.com>,
+ "isaacmanjarres@google.com" <isaacmanjarres@google.com>, Frederic
+ Weisbecker <frederic@kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, =?utf-8?B?5qKB5Lyf6bmP?=
+ <weipengliang@xiaomi.com>, =?utf-8?B?57+B6YeR6aOe?=
+ <wengjinfei@xiaomi.com>
+Subject: RE: [External Mail]Re: Race condition when replacing the broadcast
+ timer
+In-Reply-To: <87o775uh0y.ffs@tglx>
+References: <042520850d394f0bb0004a226db63d0d@xiaomi.com>
+ <87o77m1v9r.ffs@tglx> <b07f9746a58d46919b1600b22f5dff05@xiaomi.com>
+ <835d5847-1aa0-4852-89c7-6a6996b3eb65@linaro.org>
+ <bc1a086b932f454f9379c49221983675@xiaomi.com> <87o775uh0y.ffs@tglx>
+Date: Mon, 29 Jul 2024 13:44:47 +0200
+Message-ID: <87frrs8lsg.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fa2a7a4a-a5fc-4b05-b012-3818f65631c4@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 27, 2024 at 01:36:25PM +0200, Andrew Lunn wrote:
-> The idea of this phydev->possible_interfaces is to allow the core to
-> figure out what mode is most appropriate. So i would drop the mode in
-> DT, default to auto, and let the core tell you it wants 2500 BaseX if
-> that is all the MAC can do.
+On Wed, Jul 10 2024 at 22:30, Thomas Gleixner wrote:
+> On Mon, Jul 01 2024 at 02:11, =E6=9C=B1=E6=81=BA=E4=B9=BE wrote:
+>> Jiawei,
+>> Please update here when you have the test result
+>
+> Any update on this?
 
-phydev->possible_interfaces reports the bitmap of interfaces that the
-PHY _will_ switch between on its MAC facing side depending on the
-negotiated media-side link.
-
-It would be nice if this driver always filled in
-phydev->possible_interfaces, even if there is only one interface
-when it's using rate matching.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Gentle reminder.
 
