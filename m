@@ -1,310 +1,95 @@
-Return-Path: <linux-kernel+bounces-266017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8407993F94B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:24:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9913493F94F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02E8E2833C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:24:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C8C4B21502
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FDD156F28;
-	Mon, 29 Jul 2024 15:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746B61586DB;
+	Mon, 29 Jul 2024 15:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="M85n6TUe"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UL+GnERz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC8F154C0C
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDEC154C0C;
+	Mon, 29 Jul 2024 15:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722266664; cv=none; b=CwMgn5rfFayt4MHGUE1Z5uaA2ityY0fpeWJ8T7SlNnwfu91KGlb9yi7EyKeep9PgKtCtUdRsYa4xa1outlfb4ENBTD5BqHHb/uYBLfrE7Kqlim4cFELhXiVnohO4y8T5dTzdJIYL/+nAHSdmaZImJ6ChlZlkre8mtMm1JB4L1U8=
+	t=1722266684; cv=none; b=Ax5r0NgDRWzDA60z8WMiRTtbbf2cxYYHwKMG49/UymgVeRagz32F5a2cXgN05KDxPXJWxUJIjZ2Ro0YkJ7pgcdrdKL2KaI3L2FqhUoGAa6qzoYq3aj6KvNHHj8D6B0HsYEv1nZDThuO9eIJuiKX3lhMeQ5PDzK3dVvEk5vO3Y4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722266664; c=relaxed/simple;
-	bh=7ZYhuQwFDvEuR5LHIpfB/SUWoWtzvaHVBlqgQ3iFkbM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=awRVy5w6299VH5rcdw+EvApi3DdwdGrJ0sTwq5+IrFIqx5XJ5mfga06vmmy2A/zw9uWhsdzoq0AOnl8V0rxaPvkb/aGDS6fCbetIuXAuQTwjzRiCkhIS1O/L2ZKMp4bdAw0zwklLU3OVIre6M5SK2SFOR8TCXuldJn42YrfNxBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=M85n6TUe; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ef2fbf1d14so37033831fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:24:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1722266660; x=1722871460; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kAiYIw1Z392IG0LqC8DLND+mwLsgWVnOWeRgccONO+4=;
-        b=M85n6TUeHH8RSeVh0d7hJbniAB4Vvuz2Th4MTX7t/AO4xtSATdmKUrxcON9LgrjKZY
-         eXSSQROKMrjuV/V7m0CImSfpEFtUw9HjLPwVTfSDabEdgFA2rZqiSS3fTXDAevh0M3Ft
-         JvK+g1Rj0hLxDJoSz5Mr6rHAJTpWG4VmbRrvw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722266660; x=1722871460;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kAiYIw1Z392IG0LqC8DLND+mwLsgWVnOWeRgccONO+4=;
-        b=BaDVsan5dE5WYPZD6HzdAnjuvqLANv9X+yjNDTPm4DTjxxrBgfNcIttKq7G83UN0GS
-         fdiJ8mSA/tYTOhzZd3bKDrymg8OLUbyfqLP+QKo/PQ/Y+snGuZruthcQAo/Zz/+XEyai
-         K48Bd2Qh8yDktEbgJfOehNLV0IJAliVQihdTq68C1q6Ot5Hu77rZgYjlIZCXgt4SheL0
-         8kEBxC3FLIJbr5sg07GrLjPBAOvJnI26wGNuSsP1hbmqMULOBB8p/dTV7Y69ALxDefqS
-         PLtqkYqIqjxa+kbsbPJPo/mxi9s8FXi2rfnNBy0btvSyOlNrH9hfJ7rqcu03y+iXKYif
-         yOaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVs2trgFGqxcd3El/ajSPGnIhh8TJ0TVYXZM0T/IoFoi5lNQgnxQoI/2OaKvdocwm2nNIeMv2hhHqAtP6wq8SH+CD2HSwAz0HpCeMha
-X-Gm-Message-State: AOJu0Yxh/+yGJCzcGubA6r93o/oc1ZDajXsVO0iaHqGNL+W8ASUNP3ZO
-	eXiu42Z0HapTzCco8iTUSvJcRfWThsTTT4/L1R7XEeEM3t9zQ8UNX/Fe/OTlhbUATVBNIoTonYZ
-	KyHRF619iEGX2eucOAjzgeG5AhJ65ZkglRSNG
-X-Google-Smtp-Source: AGHT+IH0vpbCw0jo7vxBObrl1wvldYLE88ZP5DcaeGMMDQBuLmQRFG3gjcASk2kXHJC1vgYuNwMfaKH7HOaQMe+q6E0=
-X-Received: by 2002:ac2:4c56:0:b0:52e:9558:167c with SMTP id
- 2adb3069b0e04-5309b6e1d9emr2381647e87.10.1722266660055; Mon, 29 Jul 2024
- 08:24:20 -0700 (PDT)
+	s=arc-20240116; t=1722266684; c=relaxed/simple;
+	bh=IV6VxQVQk69smlu9QxmbULLkxhEzAF8V7DvqmyX572Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SGIZ8c2SM3vIk3s7wnhCuV+0eDuTBvZNWdhRJJqsoWsM32LHlcP5HlYKY5p8WllwFMd6E+HcSo9GEr6tuuRQtd5POo1VY7f51DVegQwmFV3aZJiRSUQdPK+An3uCUjY8S97ZM6+jSQAAAWyt2d5yqVaLFNRyWUvOB/wGCS5kjro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UL+GnERz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86633C32786;
+	Mon, 29 Jul 2024 15:24:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722266684;
+	bh=IV6VxQVQk69smlu9QxmbULLkxhEzAF8V7DvqmyX572Q=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=UL+GnERz173cSufLEisaQT3icbwJoxwGungiPtZC1NN1YSQ2vx2Ln9/uA1e7FSzL6
+	 zMBwIpw4i3nAWc89xMxcn+ZqXGKf16J9BrFUwQYfXCt1OT9inUf+ZVBCGijYvkqiYs
+	 MqK36+EqEZ8Y9NODYlfvR58jhbqdppx4DJNrOUR08NOMRpffldamW/3luwBPnvuYov
+	 SA28THmPqB4kc2cbY9GctqhhDl+yJX1CC6Zb9PGkvdfllmQUoQs8RJU1GtpNjAD6it
+	 qiTI1xuTPP2Sp/HlkTwWZwFfq0ru0pe876qR5tOoaTh+E8cfCFejdy9dSxzhmJcAVp
+	 5fcEpTWm/RdZg==
+Message-ID: <a13bff5812cb36adf3fed80093cbe1de601ec506.camel@kernel.org>
+Subject: Re: Testing if two open descriptors refer to the same inode
+From: Jeff Layton <jlayton@kernel.org>
+To: Florian Weimer <fweimer@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Cc: Dave Chinner <dchinner@redhat.com>
+Date: Mon, 29 Jul 2024 11:24:41 -0400
+In-Reply-To: <874j88sn4d.fsf@oldenburg.str.redhat.com>
+References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716213131.6036-1-james.quinlan@broadcom.com>
- <20240716213131.6036-4-james.quinlan@broadcom.com> <20240725043111.GD2317@thinkpad>
- <CA+-6iNz9R5uMogd6h+BkgRvKrsmyH2VXsGO_5e=6yqC=JzjigA@mail.gmail.com>
- <20240726050423.GB2628@thinkpad> <CA+-6iNzpfh7_rXUEXNjZLCLQKu-e_bYMAO6PdKaxqReJRKjuAQ@mail.gmail.com>
- <20240727064013.GA2974@thinkpad>
-In-Reply-To: <20240727064013.GA2974@thinkpad>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Mon, 29 Jul 2024 11:24:07 -0400
-Message-ID: <CA+-6iNwz5PD__OhDrOZWws8i-3uWELxk1hBb-xFt31gp0bi4Bg@mail.gmail.com>
-Subject: Re: [PATCH v4 03/12] PCI: brcmstb: Use common error handling code in brcm_pcie_probe()
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
-	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="00000000000085110f061e6474dc"
 
---00000000000085110f061e6474dc
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2024-07-29 at 08:55 +0200, Florian Weimer wrote:
+> It was pointed out to me that inode numbers on Linux are no longer
+> expected to be unique per file system, even for local file systems.
+> Applications sometimes need to check if two (open) files are the
+> same.
+> For example, a program may want to use a temporary file if is invoked
+> with input and output files referring to the same file.
+>=20
+> How can we check for this?=C2=A0 The POSIX way is to compare st_ino and
+> st_dev in stat output, but if inode numbers are not unique, that will
+> result in files falsely being reported as identical.=C2=A0 It's harmless
+> in
+> the temporary file case, but it in other scenarios, it may result in
+> data loss.
+>=20
 
-On Sat, Jul 27, 2024 at 2:40=E2=80=AFAM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Fri, Jul 26, 2024 at 02:34:54PM -0400, Jim Quinlan wrote:
-> > On Fri, Jul 26, 2024 at 1:04=E2=80=AFAM Manivannan Sadhasivam
-> > <manivannan.sadhasivam@linaro.org> wrote:
-> > >
-> > > On Thu, Jul 25, 2024 at 03:45:59PM -0400, Jim Quinlan wrote:
-> > > > On Thu, Jul 25, 2024 at 12:31=E2=80=AFAM Manivannan Sadhasivam
-> > > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > > >
-> > > > > On Tue, Jul 16, 2024 at 05:31:18PM -0400, Jim Quinlan wrote:
-> > > > > > o Move the clk_prepare_enable() below the resource allocations.
-> > > > > > o Add a jump target (clk_out) so that a bit of exception handli=
-ng can be
-> > > > > >   better reused at the end of this function implementation.
-> > > > > >
-> > > > > > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> > > > > > Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
-> > > > > > Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> > > > > > ---
-> > > > > >  drivers/pci/controller/pcie-brcmstb.c | 29 +++++++++++++++----=
---------
-> > > > > >  1 file changed, 16 insertions(+), 13 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pc=
-i/controller/pcie-brcmstb.c
-> > > > > > index c08683febdd4..c257434edc08 100644
-> > > > > > --- a/drivers/pci/controller/pcie-brcmstb.c
-> > > > > > +++ b/drivers/pci/controller/pcie-brcmstb.c
-> > > > > > @@ -1613,31 +1613,30 @@ static int brcm_pcie_probe(struct platf=
-orm_device *pdev)
-> > > > > >
-> > > > > >       pcie->ssc =3D of_property_read_bool(np, "brcm,enable-ssc"=
-);
-> > > > > >
-> > > > > > -     ret =3D clk_prepare_enable(pcie->clk);
-> > > > > > -     if (ret) {
-> > > > > > -             dev_err(&pdev->dev, "could not enable clock\n");
-> > > > > > -             return ret;
-> > > > > > -     }
-> > > > > >       pcie->rescal =3D devm_reset_control_get_optional_shared(&=
-pdev->dev, "rescal");
-> > > > > > -     if (IS_ERR(pcie->rescal)) {
-> > > > > > -             clk_disable_unprepare(pcie->clk);
-> > > > > > +     if (IS_ERR(pcie->rescal))
-> > > > > >               return PTR_ERR(pcie->rescal);
-> > > > > > -     }
-> > > > > > +
-> > > > > >       pcie->perst_reset =3D devm_reset_control_get_optional_exc=
-lusive(&pdev->dev, "perst");
-> > > > > > -     if (IS_ERR(pcie->perst_reset)) {
-> > > > > > -             clk_disable_unprepare(pcie->clk);
-> > > > > > +     if (IS_ERR(pcie->perst_reset))
-> > > > > >               return PTR_ERR(pcie->perst_reset);
-> > > > > > +
-> > > > > > +     ret =3D clk_prepare_enable(pcie->clk);
-> > > > > > +     if (ret) {
-> > > > > > +             dev_err(&pdev->dev, "could not enable clock\n");
-> > > > > > +             return ret;
-> > > > > >       }
-> > > > > >
-> > > > > >       ret =3D reset_control_reset(pcie->rescal);
-> > > > > > -     if (ret)
-> > > > > > +     if (ret) {
-> > > > > >               dev_err(&pdev->dev, "failed to deassert 'rescal'\=
-n");
-> > > > > > +             goto clk_out;
-> > > > >
-> > > > > Please use a descriptive name for the err labels. Here this err p=
-ath disables
-> > > > > and unprepares the clk, so use 'clk_disable_unprepare'.
-> > > > ack
-> > > > >
-> > > > > > +     }
-> > > > > >
-> > > > > >       ret =3D brcm_phy_start(pcie);
-> > > > > >       if (ret) {
-> > > > > >               reset_control_rearm(pcie->rescal);
-> > > > > > -             clk_disable_unprepare(pcie->clk);
-> > > > > > -             return ret;
-> > > > > > +             goto clk_out;
-> > > > > >       }
-> > > > > >
-> > > > > >       ret =3D brcm_pcie_setup(pcie);
-> > > > > > @@ -1676,6 +1675,10 @@ static int brcm_pcie_probe(struct platfo=
-rm_device *pdev)
-> > > > > >
-> > > > > >       return 0;
-> > > > > >
-> > > > > > +clk_out:
-> > > > > > +     clk_disable_unprepare(pcie->clk);
-> > > > > > +     return ret;
-> > > > > > +
-> > > > >
-> > > > > This is leaking the resources. Move this new label below 'fail'.
-> > > > What resources is it leaking?  At "clk_out" the return value will b=
-e negative
-> > > > and only managed resources have been allocated at that juncture.
-> > > >
-> > >
-> > > Right, but what about the err path below this one? If that path is ta=
-ken, then
-> > > clks won't be released, right?
-> > No, that is the same situation.  The clock is originally allocated
-> > with "devm_clk_get_optional()", i.e. it is a managed resource.
-> >  If the probe fails, and it does in both of these error paths,
-> > Linux deallocates the newly formed device structure and all of its reso=
-urces.
-> > Perhaps I am missing something?
-> >
->
-> No, I missed the fact that __brcm_pcie_remove() is freeing all resources.=
- But
-> grouping all release functions in a single helper and using it in multipl=
-e err
-> paths even when the err path need not release everything the helper is
-> releasing, warrants trouble.
+I believe this is the problem that STATX_SUBVOL was intended to solve.
 
-Got it, I will address this.
+Both bcachefs and btrfs will provide this attribute if requested. So,
+basically to uniquely ID an inode using statx, you need a tuple of:
 
-Regards,
-Jim Quinlan
-Broadcom STB/CM
->
-> - Mani
->
-> --
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
+stx_dev_major/minor
+stx_subvol
+stx_ino
 
---00000000000085110f061e6474dc
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
-AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCAWWPMFo9nBpPBz4RmGiQntDOAmXZdZ
-yUKy8LQpVWe//DAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA3
-MjkxNTI0MjBaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEAmaygnzqh1ai5dqtbXgK8qxyhLGNjXCAf1J4j1EyLYS3MWQOJ
-qsAcBByBKM6bLfSOTpKqSyRzUGLpsjcv+ggfvgK2g8W4VS+okuvVxhaNzSdoWf+dtlKDygkXPhDQ
-Hvdy1pNH33IXPmCDku2MElg4aFTyeWYyZXN+yZc6G7Av9yIm/5Rp5OTY1wT05VGSrKq2pOLK5q6B
-QY+ns7euMpGogN9+F+AlO+4svvt4o8VKFk/y/qstJDOuT/6glh36ydvwwB6OapTPzzmneLekJVsK
-nEEn9rjp6/ZzVhag/4fXCMliWjwVf/HXNJYClRKSQKgs0/vw3+eMTeYQ1AZizr6NSQ==
---00000000000085110f061e6474dc--
+If the filesystem doesn't provide STATX_SUBVOL, then one can (likely)
+conclude that stx_dev_* and stx_ino are enough.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
