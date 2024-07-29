@@ -1,174 +1,210 @@
-Return-Path: <linux-kernel+bounces-265673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C60393F444
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:39:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8126093F449
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C39E91C21EAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:39:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CDCC1C21F39
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C4714658C;
-	Mon, 29 Jul 2024 11:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB8E14659B;
+	Mon, 29 Jul 2024 11:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HtNa+Aft"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="XWGQvg2w"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17956146015;
-	Mon, 29 Jul 2024 11:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB21145B3B;
+	Mon, 29 Jul 2024 11:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722253144; cv=none; b=fsyyuuCilTf1kX1pOIZick5N0WJf0yKIow9xlASSU/eHC57sSF4ME5xFgq8XuKN/H098InvLGNBxwzULQpF+rBP6zudjGvmPlFSCwDjMKbDmnuHAhapM6I81jSCpEd+M1RBlbm4PaNU2IPND/oUQ/bq5bnjeD6+QctunfHIymVw=
+	t=1722253171; cv=none; b=iKr2SoUSesLXLYLDhBovkNQmieAeDMSzHokB1r4c+zvj4PAxmHl92x2K9SPxVgTKpBW3nCY3sNdBthSTWSUeb9503xF+a0aQFsbXI/l+b3WTi5RCmAsU2tW+gYiiysv3aoXWht/D4NQYxvyX0WLyRNHlTafuCjDK6CiNjsva+4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722253144; c=relaxed/simple;
-	bh=G2Hxq5SH6mbRM8TQwL+GQBN/WkWJKoHCUsfMqH0CoXA=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=F3OX5I1ys+pRcVCCCruyVI+aDrO+6GNEB+Mra8u9AfALIBtM4Iocbr/gIxJkcOAlaoC6Uqslm4Fg0Vl5TroqcTUn/NsLrBNOQtMsJuChXlboHI2zTsF03YBkkmOyJx3LGlTNCZfK0UcCx05s0gWFik/CE0jxUzWyaUlDEvMyoAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HtNa+Aft; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722253143; x=1753789143;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=G2Hxq5SH6mbRM8TQwL+GQBN/WkWJKoHCUsfMqH0CoXA=;
-  b=HtNa+AftHcuSm75RtKC0R1GIYGtzscNSTeo2UvVAqJ/57U36MsVHgas8
-   AQWwwDBDPuO2H5wD5fI3wj1OHqFhnvN8PKP0XRFno5VS9JcxjEEyi1Jf9
-   mkwHZz1ekIhkDdgTqboYQXpT+Qp5MjGjEu3PZPqDMW2X59ysaCfvjaAZF
-   HeL2LJR4CyE0LpTkLKXO+zFlfmbPOYpTL66susbonlvhyZyRVWalbqrNx
-   vvHJ6optgSfgYbgSMsqm6sa+FpttP1lVDu81McefhhRvJx44JqMQ6wnZC
-   DGtc5PhL0upsDEjM8TGjRnn2lgUnDdtNzmtHnPYLxNoIXZFNpD3rVI727
-   A==;
-X-CSE-ConnectionGUID: Vj86qRKhSIiGDltFMj/+9A==
-X-CSE-MsgGUID: vIM38PbLQNe5FrUuXsKm2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="22911019"
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="22911019"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 04:39:02 -0700
-X-CSE-ConnectionGUID: VNKbjXX0QM2GakN6lLTgSQ==
-X-CSE-MsgGUID: ga+LzIzZQN+D+Gp3TUIEcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="84593276"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.151])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 04:39:01 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 29 Jul 2024 14:38:57 +0300 (EEST)
-To: Kane Chen <kane.chen@intel.com>
-cc: LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH 1/1] platform/x86/intel/pmc: Show live substate
- requirements
-In-Reply-To: <20240719122807.3853292-1-kane.chen@intel.com>
-Message-ID: <edfd1b36-7532-c0ba-6d24-b3e296e1cf0b@linux.intel.com>
-References: <20240719122807.3853292-1-kane.chen@intel.com>
+	s=arc-20240116; t=1722253171; c=relaxed/simple;
+	bh=uwMSRHQv4M1HsfaKWWnP6QSj4MiMrFSxDzgsURzOyHg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=b0pyOrRsyFTiA7jRRHclCL59WsdXWKTtXX0NiO4iVeIbw7eRSIVmHnLwROE3ZUno+Yyjf1163SqWSgMlq+oPQrOmKFgnwUfYfKkeToyHPmkiaO0pQeTP7OAYj2qaXx9vE73JnL/C4WcKFKH7NQKJ6sN+1UJv/9Dmx+zbuQ/FLFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=XWGQvg2w; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46TBd4oB53920833, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1722253144; bh=uwMSRHQv4M1HsfaKWWnP6QSj4MiMrFSxDzgsURzOyHg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=XWGQvg2wpYW99gXeqQiTUdFjavoXAgPpRVV65uLveP18ixtVPoo4iDh9x6IvqjcRE
+	 A7xG7u0JvXRfipgvSb1iPjxW+8FUuKo5J9VH/tEsfsF/UmW0uZLsFfTOcd1Qc49ln2
+	 nIhWUZYUqXMu1sDU86hAUpEX2IJ0PRI5RxDoBGUtYBE6vi/f8k6vVvgEScTHLFFWm7
+	 DvtqStXSk/rmNXEnCI9QKrXIHyLwVv9sXLXYx6VgqhDCKA+LszT4qXeBE+k8cXW2bP
+	 Y6bDlUu08c70t/TtI293Mu6OHLdQFv7RD9xKhU2bOXyDKfA3SjhV2HSwRNDA7Uguxq
+	 JlWq52RjGPUCA==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46TBd4oB53920833
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 29 Jul 2024 19:39:04 +0800
+Received: from RTEXMBS02.realtek.com.tw (172.21.6.95) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 29 Jul 2024 19:39:04 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Mon, 29 Jul 2024 19:39:03 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
+ RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
+ 15.01.2507.035; Mon, 29 Jul 2024 19:39:03 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Joe Damato <jdamato@fastly.com>
+CC: "kuba@kernel.org" <kuba@kernel.org>,
+        "davem@davemloft.net"
+	<davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "jiri@resnulli.us" <jiri@resnulli.us>,
+        "horms@kernel.org" <horms@kernel.org>,
+        "rkannoth@marvell.com" <rkannoth@marvell.com>,
+        Ping-Ke Shih
+	<pkshih@realtek.com>,
+        Larry Chiu <larry.chiu@realtek.com>
+Subject: RE: [PATCH net-next v25 08/13] rtase: Implement net_device_ops
+Thread-Topic: [PATCH net-next v25 08/13] rtase: Implement net_device_ops
+Thread-Index: AQHa4YARnlUWdwvH+0WY0xFzPyuoM7IM+z0AgACXoYA=
+Date: Mon, 29 Jul 2024 11:39:03 +0000
+Message-ID: <f55076d3231f40dead386fe6d7de58c9@realtek.com>
+References: <20240729062121.335080-1-justinlai0215@realtek.com>
+ <20240729062121.335080-9-justinlai0215@realtek.com>
+ <ZqdvAmRc3sBzDFYI@LQ3V64L9R2>
+In-Reply-To: <ZqdvAmRc3sBzDFYI@LQ3V64L9R2>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS02.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-713672148-1722253137=:983"
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323328-713672148-1722253137=:983
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-
-On Fri, 19 Jul 2024, Kane Chen wrote:
-
-> While debugging runtime s0ix, we do need to check which required IPs
-> are not power gated. This patch adds code to show live substate status
-> vs requirements in sys/kernel/debug/pmc_core/substate_requirements to
-> help runtime s0ix debug.
+> On Mon, Jul 29, 2024 at 02:21:16PM +0800, Justin Lai wrote:
+> > 1. Implement .ndo_set_rx_mode so that the device can change address
+> > list filtering.
+> > 2. Implement .ndo_set_mac_address so that mac address can be changed.
+> > 3. Implement .ndo_change_mtu so that mtu can be changed.
+> > 4. Implement .ndo_tx_timeout to perform related processing when the
+> > transmitter does not make any progress.
+> > 5. Implement .ndo_get_stats64 to provide statistics that are called
+> > when the user wants to get network device usage.
+> > 6. Implement .ndo_vlan_rx_add_vid to register VLAN ID when the device
+> > supports VLAN filtering.
+> > 7. Implement .ndo_vlan_rx_kill_vid to unregister VLAN ID when the
+> > device supports VLAN filtering.
+> > 8. Implement the .ndo_setup_tc to enable setting any "tc" scheduler,
+> > classifier or action on dev.
+> > 9. Implement .ndo_fix_features enables adjusting requested feature
+> > flags based on device-specific constraints.
+> > 10. Implement .ndo_set_features enables updating device configuration
+> > to new features.
+> >
+> > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+> > ---
+> >  .../net/ethernet/realtek/rtase/rtase_main.c   | 235 ++++++++++++++++++
+> >  1 file changed, 235 insertions(+)
+> >
+> > diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > index 8fd69d96219f..80673fa1e9a3 100644
 >=20
-> Signed-off-by: Kane Chen <kane.chen@intel.com>
-
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
-> ---
->  drivers/platform/x86/intel/pmc/core.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
+> [...]
 >=20
-> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86=
-/intel/pmc/core.c
-> index 2ad2f8753e5d4..b93ecc5169745 100644
-> --- a/drivers/platform/x86/intel/pmc/core.c
-> +++ b/drivers/platform/x86/intel/pmc/core.c
-> @@ -791,13 +791,15 @@ static void pmc_core_substate_req_header_show(struc=
-t seq_file *s, int pmc_index)
->  =09pmc_for_each_mode(i, mode, pmcdev)
->  =09=09seq_printf(s, " %9s |", pmc_lpm_modes[mode]);
-> =20
-> -=09seq_printf(s, " %9s |\n", "Status");
-> +=09seq_printf(s, " %9s |", "Status");
-> +=09seq_printf(s, " %11s |\n", "Live Status");
->  }
-> =20
->  static int pmc_core_substate_req_regs_show(struct seq_file *s, void *unu=
-sed)
->  {
->  =09struct pmc_dev *pmcdev =3D s->private;
->  =09u32 sts_offset;
-> +=09u32 sts_offset_live;
->  =09u32 *lpm_req_regs;
->  =09int num_maps, mp, pmc_index;
-> =20
-> @@ -811,6 +813,7 @@ static int pmc_core_substate_req_regs_show(struct seq=
-_file *s, void *unused)
->  =09=09maps =3D pmc->map->lpm_sts;
->  =09=09num_maps =3D pmc->map->lpm_num_maps;
->  =09=09sts_offset =3D pmc->map->lpm_status_offset;
-> +=09=09sts_offset_live =3D pmc->map->lpm_live_status_offset;
->  =09=09lpm_req_regs =3D pmc->lpm_req_regs;
-> =20
->  =09=09/*
-> @@ -828,6 +831,7 @@ static int pmc_core_substate_req_regs_show(struct seq=
-_file *s, void *unused)
->  =09=09for (mp =3D 0; mp < num_maps; mp++) {
->  =09=09=09u32 req_mask =3D 0;
->  =09=09=09u32 lpm_status;
-> +=09=09=09u32 lpm_status_live;
->  =09=09=09const struct pmc_bit_map *map;
->  =09=09=09int mode, idx, i, len =3D 32;
-> =20
-> @@ -842,6 +846,9 @@ static int pmc_core_substate_req_regs_show(struct seq=
-_file *s, void *unused)
->  =09=09=09/* Get the last latched status for this map */
->  =09=09=09lpm_status =3D pmc_core_reg_read(pmc, sts_offset + (mp * 4));
-> =20
-> +=09=09=09/* Get the runtime status for this map */
-> +=09=09=09lpm_status_live =3D pmc_core_reg_read(pmc, sts_offset_live + (m=
-p * 4));
-> +
->  =09=09=09/*  Loop over elements in this map */
->  =09=09=09map =3D maps[mp];
->  =09=09=09for (i =3D 0; map[i].name && i < len; i++) {
-> @@ -868,6 +875,9 @@ static int pmc_core_substate_req_regs_show(struct seq=
-_file *s, void *unused)
->  =09=09=09=09/* In Status column, show the last captured state of this ag=
-ent */
->  =09=09=09=09seq_printf(s, " %9s |", lpm_status & bit_mask ? "Yes" : " ")=
-;
-> =20
-> +=09=09=09=09/* In Live status column, show the live state of this agent =
-*/
-> +=09=09=09=09seq_printf(s, " %11s |", lpm_status_live & bit_mask ? "Yes" =
-: " ");
-> +
->  =09=09=09=09seq_puts(s, "\n");
->  =09=09=09}
->  =09=09}
+> > +static void rtase_dump_state(const struct net_device *dev) {
 >=20
+> [...]
+>=20
+> > +
+> > +     netdev_err(dev, "tx_packets %lld\n",
+> > +                le64_to_cpu(counters->tx_packets));
+> > +     netdev_err(dev, "rx_packets %lld\n",
+> > +                le64_to_cpu(counters->rx_packets));
+> > +     netdev_err(dev, "tx_errors %lld\n",
+> > +                le64_to_cpu(counters->tx_errors));
+> > +     netdev_err(dev, "rx_errors %d\n",
+> > +                le32_to_cpu(counters->rx_errors));
+> > +     netdev_err(dev, "rx_missed %d\n",
+> > +                le16_to_cpu(counters->rx_missed));
+> > +     netdev_err(dev, "align_errors %d\n",
+> > +                le16_to_cpu(counters->align_errors));
+> > +     netdev_err(dev, "tx_one_collision %d\n",
+> > +                le32_to_cpu(counters->tx_one_collision));
+> > +     netdev_err(dev, "tx_multi_collision %d\n",
+> > +                le32_to_cpu(counters->tx_multi_collision));
+> > +     netdev_err(dev, "rx_unicast %lld\n",
+> > +                le64_to_cpu(counters->rx_unicast));
+> > +     netdev_err(dev, "rx_broadcast %lld\n",
+> > +                le64_to_cpu(counters->rx_broadcast));
+> > +     netdev_err(dev, "rx_multicast %d\n",
+> > +                le32_to_cpu(counters->rx_multicast));
+> > +     netdev_err(dev, "tx_aborted %d\n",
+> > +                le16_to_cpu(counters->tx_aborted));
+> > +     netdev_err(dev, "tx_underun %d\n",
+> > +                le16_to_cpu(counters->tx_underun));
+>=20
+> You use le64/32/16_to_cpu here for all stats, but below in rtase_get_stat=
+s64, it
+> is only used for tx_errors.
+>=20
+> The code should probably be consistent? Either you do or don't need to us=
+e
+> them?
+>=20
+> > +}
+> > +
+> [...]
+> > +
+> > +static void rtase_get_stats64(struct net_device *dev,
+> > +                           struct rtnl_link_stats64 *stats) {
+> > +     const struct rtase_private *tp =3D netdev_priv(dev);
+> > +     const struct rtase_counters *counters;
+> > +
+> > +     counters =3D tp->tally_vaddr;
+> > +
+> > +     dev_fetch_sw_netstats(stats, dev->tstats);
+> > +
+> > +     /* fetch additional counter values missing in stats collected by =
+driver
+> > +      * from tally counter
+> > +      */
+> > +     rtase_dump_tally_counter(tp);
+> > +     stats->rx_errors =3D tp->stats.rx_errors;
+> > +     stats->tx_errors =3D le64_to_cpu(counters->tx_errors);
+> > +     stats->rx_dropped =3D tp->stats.rx_dropped;
+> > +     stats->tx_dropped =3D tp->stats.tx_dropped;
+> > +     stats->multicast =3D tp->stats.multicast;
+> > +     stats->rx_length_errors =3D tp->stats.rx_length_errors;
+>=20
+> See above; le64_to_cpu for tx_errors, but not the rest of the stats. Why?
 
---8323328-713672148-1722253137=:983--
+The rtase_dump_state() function is primarily used to dump certain hardware
+information. Following discussions with Jakub, it was suggested that we
+should design functions to accumulate the 16-bit and 32-bit counter values
+to prevent potential overflow issues due to the limited size of the
+counters. However, the final decision was to temporarily refrain from
+reporting 16-bit and 32-bit counter information. Additionally, since
+tx_packet and rx_packet data are already provided through tstat, we
+ultimately opted to modify it to the current rtase_get_stats64() function.
+
+Thanks
+Justin
 
