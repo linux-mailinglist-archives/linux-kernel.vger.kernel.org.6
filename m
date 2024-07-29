@@ -1,306 +1,206 @@
-Return-Path: <linux-kernel+bounces-266214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3C1293FC8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:44:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 198F893FC94
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5BEB1C2160E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:44:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D08C1F22B7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C711607A1;
-	Mon, 29 Jul 2024 17:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050781741D1;
+	Mon, 29 Jul 2024 17:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="h45ne54h";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I7DkM/6j"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ba9xDLOn"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C187603A
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 17:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEC883A17
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 17:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722275054; cv=none; b=Qa+7K1Jjgn4qar1p29HpTayFN5GiaQcLrYb1kRwERakp6+BD+an+ttW9mjCnFA8nZVI1YNj4rfePGtbf3PFqGaNn0j1zMhLQrl1jECzZzCtjhimfs1G9wof+bCxH4Q+V25ZTKUL7N3xblupVMTzlDlT9M8AQERq3tGTQ5gaUgyY=
+	t=1722275195; cv=none; b=hrfAckxDvnzpKXJRLFRUsO4x+2F8Dd+uqcVn26ueiGzdL3Z6cDN11w3F5dLHS7n4ruEDt+3TdvpDcaicBajUKDIfWxscOamn6JEOlwtxvYM2T4zXJEpdbNUG/hv/rPkRpg5OWbVk8/VTeVfm6+0TtG5gcb9dfeQqHg3Rvq5+pbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722275054; c=relaxed/simple;
-	bh=3ZbbyYLavJnNgwF/dxPkEMw/CSb6lryQly9CUruVttw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=D16OI1JXd+7IR91Jes/b8OTLxvo2Kg1sD/FTF+iVc1t8XtVD/XE2MRHI++ozjnywT5mWOYLvgONZw7X9uVnw3CkfyKJfnwWxX3xQv6clw7vc/ZwDeC0Ywc77PgRhYCr0oXdQKqMqiwRwMNcfFRV6fHP+TgxtdykL90RkSheIB1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=h45ne54h; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I7DkM/6j; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722275050;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UR7j056kBeqA/y85jD/XvZyYPoCK+5ZQRQSva+HT7yk=;
-	b=h45ne54hVSCmpgBX2gZBYa6L08BXHDfGS+eZvOfnNg3EUpWC5z9pZZAhZkNsn1rLWIrOkz
-	KbstIKk+SQX3YR66ySRWuf1p2vDTrHabsj9Y5hoEUmO5mx/O26nN9xBUUthfi5ZSg83v1I
-	5MIxo0W+pRa81Nq+NHHc3McrwOpaiw16ljNsCN0HnOi4Y/CRJu8Pek8hSEZPn+6LtSHI8K
-	WQ6GwyLDqczVgk2N0BcDDaHffUq/ErmWUW39zCA0zFdJFof4gcUzWTNFastmu43U6pk/6r
-	35xSgise5TqhzcY/GSjcKRoF4lpneOEjHEJkM2M8IrK0XqhPl1QSG9QZe9dFXA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722275050;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UR7j056kBeqA/y85jD/XvZyYPoCK+5ZQRQSva+HT7yk=;
-	b=I7DkM/6j35AENgrZRyoNm15Oh3Bf9A0dugig+UApWtqsBB0RmUCmlY4SL6+FmZtsrZxniZ
-	JFPmzqrZge23NkAQ==
-To: Breno Leitao <leitao@debian.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, leit@meta.com, "Peter Zijlstra (Intel)"
- <peterz@infradead.org>, Wei Liu <wei.liu@kernel.org>, Marc Zyngier
- <maz@kernel.org>, Adrian Huang <ahuang12@lenovo.com>, "open list:X86
- ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/apic: Add retry mechanism to add_pin_to_irq_node()
-In-Reply-To: <ZqfJmUF8sXIyuSHN@gmail.com>
-References: <20240729140604.2814597-1-leitao@debian.org>
- <874j8889ch.ffs@tglx> <ZqfJmUF8sXIyuSHN@gmail.com>
-Date: Mon, 29 Jul 2024 19:44:09 +0200
-Message-ID: <871q3c855i.ffs@tglx>
+	s=arc-20240116; t=1722275195; c=relaxed/simple;
+	bh=x54E6CsVNHB8nlMMNY3p9jMlRbphqBDzrlOcojJrB+w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gH3WueroZB39Keb+pT8qreWqgZk5a1uq2XG6EKiuQAtLPyNBLBq7DwpsbPJ7KUHQvqk9rw6UTEGslFp40UhSTKkjZSrxQDjW6w2tidpiPzh2JOajpNPP464YzRI1/p97VXxRt/P7w9GP/Xr9gqw5bVg5XdUvL28Z640YFVu22/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ba9xDLOn; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso1606a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 10:46:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722275191; x=1722879991; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oH1DiYL4kdG8EVj9AsvFV25K/u74YDHNoemmf3irk7A=;
+        b=ba9xDLOnc6mGzgW+oWpD4qBuF+LiInUdeVcuYnR7oO3xZ1DThyRRXSmp2cPrYdhLjN
+         Vi8cVjhEcjgid1zIH8k0YhJ/lvJ3YLEXROxUNtc7YNesnX7MhoURl+7cbz2kaHcAPezM
+         zP5P8uBEpUWZrQHTgatpQtA4UdXSGkhvbNynks9sB05B4I+jnRDMLYxwn9nEwDyLa7pf
+         7qbTAS2ljgnljdhgFXL2Glfs+cR4i9a7zot+qcrxvysdydrnnOcOBjmhKOegoy42+cAO
+         05ISP08XmkvqqxSNMC54YGi20MHnzY+HNAKjR2n4cVKyWfZ7NYHsouWJED98xXIpSBAO
+         lylQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722275191; x=1722879991;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oH1DiYL4kdG8EVj9AsvFV25K/u74YDHNoemmf3irk7A=;
+        b=DDtAM1ebzhbN6Y0yD8yXG5LA/o3MbRuGfMrArJ11+WBQ3T8C7IdHAGwegYZIzDiaGy
+         zFAoKBYfLyTHSbllsIUelydPrkvY5yrBfPhat3Cx2hT1pbHepd8APVKgqhKlTRNWeIkd
+         /K+KxFzM2kd2lkwcwdSctPB6xYrloE4mXL27MEE81FQIi7ql++JKC+T5CJsKfWc67G8j
+         958Cewfc2r2YsjLHWHNF7clthW1G9U1TKHhV3q7PYlEtJ9GMyVu3zMyHJApdx9+3zO+h
+         5ZY2gb+V+4XIGBOjtctCVbaNxDzmfTGcsdZM44KUo0w9X7P/rtOEf49a4RgfdPp0BAvO
+         WGJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUn0eJfYg9EpHOHVAe4tOxdWppuVgaEwDAaJBNXDdRgk9xSjQonqL0s9m2FaDtIgMXQn3c7UTCqcsRjF/XFjCmSrzZOs7kiFFVgkg1q
+X-Gm-Message-State: AOJu0YzN07oCRECYu4aiLZb6cxH3y1AzOfxGaCgbiPoSXE37RVT/ok4G
+	WtAcKBfMbmstAcRK6sGMN0BBCsYHKMpToqrPTCLpz7pqaGMwVswW/XH/lxyVzivdEAlxm9R/97Z
+	GHfKLaqf2SQ1CfleR1iRuxKAYqy9vqtmTSN6q
+X-Google-Smtp-Source: AGHT+IF8TSv1Ug1AIHMZ96AEE7sYh9pBStaEEW0UjSF63jl4lvS9Dm0d9y/JZ49L9hgFK+kwJqihL2kmCwpyXk2q3x8=
+X-Received: by 2002:a05:6402:51d0:b0:57d:32ff:73ef with SMTP id
+ 4fb4d7f45d1cf-5b40d4a2ad8mr35907a12.6.1722275190338; Mon, 29 Jul 2024
+ 10:46:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240729163326.16386-1-aha310510@gmail.com>
+In-Reply-To: <20240729163326.16386-1-aha310510@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 29 Jul 2024 19:46:15 +0200
+Message-ID: <CANn89i+SgDaA-vkTXxziA3OLZncgYUTViC-WaX6dGVx_0kLUww@mail.gmail.com>
+Subject: Re: [PATCH net] net: annotate data race around dev->flags in __dev_change_flags
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, jiri@resnulli.us, 
+	syzbot+113b65786d8662e21ff7@syzkaller.appspotmail.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Breno!
-
-On Mon, Jul 29 2024 at 09:55, Breno Leitao wrote:
->> > 	 panic
->> > 	   _printk
->> > 	   panic_smp_self_stop
->> > 	   rcu_is_watching
->> > 	   intel_irq_remapping_free
->> 
->> This completely lacks context. When does this happen? What's the system
->> state? What has intel_irq_remapping_free() to do with the allocation path?
+On Mon, Jul 29, 2024 at 6:34=E2=80=AFPM Jeongjun Park <aha310510@gmail.com>=
+ wrote:
 >
-> Sorry, let me clarify it a bit better:
+> According to KCSAN report, there is a read/write race between
+> __dev_change_flags and netif_is_bond_master for dev->flags.
 >
-> 1) This happens when the machine is booted up, and being under stress
-> 2) This happens when I have failslab fault injection enabled.
-> 3) The machine crashes after hitting this error.
-> 4) This is reproducible with `stress-ng` using the `--aggressive` parameter
-> 5) This is the full stack (sorry for not decoding the stack, but if you
->    need it, I am more than happy to give you a decoded stack)
-
-Ok. That makes sense.
-
->> While it seems to make sense, the reality is that this is mostly early
->> boot code. If there is a real world memory allocation failure during
->> early boot then retries will not help at all.
+> Thereforce, __dev_change_flags() needs protection.
 >
-> This is not happening at early boot, this is reproducible when running
-> stress-ng in this aggressive mode.
+> <syzbot>
+> BUG: KCSAN: data-race in __dev_change_flags / is_upper_ndev_bond_master_f=
+ilter
 >
-> Since I have failslab injecting a kmalloc fault,
-> __add_pin_to_irq_noder() returns -ENOMEM, which causes the undesired
-> panic().
-
-Fine. During runtime that allocation fail should not be fatal. It just
-needs to be properly propagated.
-
->> > Introduce a retry mechanism that attempts to add the pin up to 3 times
->> > before giving up and panicking. This should improve the robustness of
->> > the IO-APIC code in the face of transient errors.
->> 
->> I'm absolutely not convinced by this loop heuristic. That's just a bad
->> hack.
+> read-write to 0xffff888112d970b0 of 4 bytes by task 4888 on cpu 0:
+>  __dev_change_flags+0x9a/0x410 net/core/dev.c:8755
+>  rtnl_configure_link net/core/rtnetlink.c:3321 [inline]
+>  rtnl_newlink_create net/core/rtnetlink.c:3518 [inline]
+>  __rtnl_newlink net/core/rtnetlink.c:3730 [inline]
+>  rtnl_newlink+0x121e/0x1690 net/core/rtnetlink.c:3743
+>  rtnetlink_rcv_msg+0x85e/0x910 net/core/rtnetlink.c:6635
+>  netlink_rcv_skb+0x12c/0x230 net/netlink/af_netlink.c:2564
+>  rtnetlink_rcv+0x1c/0x30 net/core/rtnetlink.c:6653
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
+>  netlink_unicast+0x58d/0x660 net/netlink/af_netlink.c:1361
+>  netlink_sendmsg+0x5ca/0x6e0 net/netlink/af_netlink.c:1905
+>  sock_sendmsg_nosec net/socket.c:730 [inline]
+>  __sock_sendmsg+0x140/0x180 net/socket.c:745
+>  ____sys_sendmsg+0x312/0x410 net/socket.c:2585
+>  ___sys_sendmsg net/socket.c:2639 [inline]
+>  __sys_sendmsg+0x1e9/0x280 net/socket.c:2668
+>  __do_sys_sendmsg net/socket.c:2677 [inline]
+>  __se_sys_sendmsg net/socket.c:2675 [inline]
+>  __x64_sys_sendmsg+0x46/0x50 net/socket.c:2675
+>  x64_sys_call+0xb25/0x2d70 arch/x86/include/generated/asm/syscalls_64.h:4=
+7
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 >
-> I will not disagree with you here, but I need to use this patch in order
-> to be able t keep the system not panicking and stable while fault
-> injecting slab errors and trying to reproduce a real bug in the network
-> stack.
+> read to 0xffff888112d970b0 of 4 bytes by task 11 on cpu 1:
+>  netif_is_bond_master include/linux/netdevice.h:5020 [inline]
+>  is_upper_ndev_bond_master_filter+0x2b/0xb0 drivers/infiniband/core/roce_=
+gid_mgmt.c:275
+>  ib_enum_roce_netdev+0x124/0x1d0 drivers/infiniband/core/device.c:2310
+>  ib_enum_all_roce_netdevs+0x8a/0x100 drivers/infiniband/core/device.c:233=
+7
+>  netdevice_event_work_handler+0x15b/0x3c0 drivers/infiniband/core/roce_gi=
+d_mgmt.c:626
+>  process_one_work kernel/workqueue.c:3248 [inline]
+>  process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3329
+>  worker_thread+0x526/0x720 kernel/workqueue.c:3409
+>  kthread+0x1d1/0x210 kernel/kthread.c:389
+>  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> value changed: 0x00001002 -> 0x00000202
+>
+> Reported-by: syzbot+113b65786d8662e21ff7@syzkaller.appspotmail.com
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> ---
+>  net/core/dev.c | 17 +++++++++--------
+>  1 file changed, 9 insertions(+), 8 deletions(-)
+>
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index 6ea1d20676fb..3b9626cdfd9a 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -8799,7 +8799,7 @@ EXPORT_SYMBOL(dev_get_flags);
+>  int __dev_change_flags(struct net_device *dev, unsigned int flags,
+>                        struct netlink_ext_ack *extack)
+>  {
+> -       unsigned int old_flags =3D dev->flags;
+> +       unsigned int old_flags =3D READ_ONCE(dev->flags);
+>         int ret;
+>
+>         ASSERT_RTNL();
+> @@ -8808,12 +8808,13 @@ int __dev_change_flags(struct net_device *dev, un=
+signed int flags,
+>          *      Set the flags on our device.
+>          */
+>
+> -       dev->flags =3D (flags & (IFF_DEBUG | IFF_NOTRAILERS | IFF_NOARP |
+> -                              IFF_DYNAMIC | IFF_MULTICAST | IFF_PORTSEL =
+|
+> -                              IFF_AUTOMEDIA)) |
+> -                    (dev->flags & (IFF_UP | IFF_VOLATILE | IFF_PROMISC |
+> -                                   IFF_ALLMULTI));
+> +       unsigned int new_flags =3D (flags & (IFF_DEBUG | IFF_NOTRAILERS |=
+ IFF_NOARP |
+> +                                          IFF_DYNAMIC | IFF_MULTICAST | =
+IFF_PORTSEL |
+> +                                          IFF_AUTOMEDIA)) |
+> +                                (READ_ONCE(dev->flags) & (IFF_UP | IFF_V=
+OLATILE | IFF_PROMISC |
+> +                                               IFF_ALLMULTI));
+>
+> +       WRITE_ONCE(dev->flags, new_flags);
+>         /*
+>          *      Load in the correct multicast list now the flags have cha=
+nged.
+>          */
+> @@ -8839,12 +8840,12 @@ int __dev_change_flags(struct net_device *dev, un=
+signed int flags,
+>
+>         if ((flags ^ dev->gflags) & IFF_PROMISC) {
+>                 int inc =3D (flags & IFF_PROMISC) ? 1 : -1;
+> -               unsigned int old_flags =3D dev->flags;
+> +               unsigned int old_flags =3D READ_ONCE(dev->flags);
+>
+>                 dev->gflags ^=3D IFF_PROMISC;
+>
+>                 if (__dev_set_promiscuity(dev, inc, false) >=3D 0)
+> -                       if (dev->flags !=3D old_flags)
+> +                       if (READ_ONCE(dev->flags) !=3D old_flags)
+>                                 dev_set_rx_mode(dev);
+>         }
+>
 
-Something like the untested below should just work.
-
-Thanks,
-
-        tglx
----
---- a/arch/x86/kernel/apic/io_apic.c
-+++ b/arch/x86/kernel/apic/io_apic.c
-@@ -352,27 +352,26 @@ static void ioapic_mask_entry(int apic,
-  * shared ISA-space IRQs, so we have to support them. We are super
-  * fast in the common case, and fast for shared ISA-space IRQs.
-  */
--static int __add_pin_to_irq_node(struct mp_chip_data *data,
--				 int node, int apic, int pin)
-+static bool add_pin_to_irq_node(struct mp_chip_data *data, int node, int apic, int pin)
- {
- 	struct irq_pin_list *entry;
- 
- 	/* don't allow duplicates */
--	for_each_irq_pin(entry, data->irq_2_pin)
-+	for_each_irq_pin(entry, data->irq_2_pin) {
- 		if (entry->apic == apic && entry->pin == pin)
--			return 0;
-+			return true;
-+	}
- 
- 	entry = kzalloc_node(sizeof(struct irq_pin_list), GFP_ATOMIC, node);
- 	if (!entry) {
--		pr_err("can not alloc irq_pin_list (%d,%d,%d)\n",
--		       node, apic, pin);
--		return -ENOMEM;
-+		pr_err("can not alloc irq_pin_list (%d,%d,%d)\n", node, apic, pin);
-+		return false;
- 	}
-+
- 	entry->apic = apic;
- 	entry->pin = pin;
- 	list_add_tail(&entry->list, &data->irq_2_pin);
--
--	return 0;
-+	return true;
- }
- 
- static void __remove_pin_from_irq(struct mp_chip_data *data, int apic, int pin)
-@@ -387,35 +386,6 @@ static void __remove_pin_from_irq(struct
- 		}
- }
- 
--static void add_pin_to_irq_node(struct mp_chip_data *data,
--				int node, int apic, int pin)
--{
--	if (__add_pin_to_irq_node(data, node, apic, pin))
--		panic("IO-APIC: failed to add irq-pin. Can not proceed\n");
--}
--
--/*
-- * Reroute an IRQ to a different pin.
-- */
--static void __init replace_pin_at_irq_node(struct mp_chip_data *data, int node,
--					   int oldapic, int oldpin,
--					   int newapic, int newpin)
--{
--	struct irq_pin_list *entry;
--
--	for_each_irq_pin(entry, data->irq_2_pin) {
--		if (entry->apic == oldapic && entry->pin == oldpin) {
--			entry->apic = newapic;
--			entry->pin = newpin;
--			/* every one is different, right? */
--			return;
--		}
--	}
--
--	/* old apic/pin didn't exist, so just add new ones */
--	add_pin_to_irq_node(data, node, newapic, newpin);
--}
--
- static void io_apic_modify_irq(struct mp_chip_data *data, bool masked,
- 			       void (*final)(struct irq_pin_list *entry))
- {
-@@ -1002,8 +972,7 @@ static int alloc_isa_irq_from_domain(str
- 	if (irq_data && irq_data->parent_data) {
- 		if (!mp_check_pin_attr(irq, info))
- 			return -EBUSY;
--		if (__add_pin_to_irq_node(irq_data->chip_data, node, ioapic,
--					  info->ioapic.pin))
-+		if (!add_pin_to_irq_node(irq_data->chip_data, node, ioapic, info->ioapic.pin))
- 			return -ENOMEM;
- 	} else {
- 		info->flags |= X86_IRQ_ALLOC_LEGACY;
-@@ -2131,10 +2100,10 @@ static int __init disable_timer_pin_setu
- }
- early_param("disable_timer_pin_1", disable_timer_pin_setup);
- 
--static int mp_alloc_timer_irq(int ioapic, int pin)
-+static int __init mp_alloc_timer_irq(int ioapic, int pin)
- {
--	int irq = -1;
- 	struct irq_domain *domain = mp_ioapic_irqdomain(ioapic);
-+	int irq = -1;
- 
- 	if (domain) {
- 		struct irq_alloc_info info;
-@@ -2150,6 +2119,24 @@ static int mp_alloc_timer_irq(int ioapic
- 	return irq;
- }
- 
-+static void __init replace_pin_at_irq_node(struct mp_chip_data *data, int node,
-+					   int oldapic, int oldpin,
-+					   int newapic, int newpin)
-+{
-+	struct irq_pin_list *entry;
-+
-+	for_each_irq_pin(entry, data->irq_2_pin) {
-+		if (entry->apic == oldapic && entry->pin == oldpin) {
-+			entry->apic = newapic;
-+			entry->pin = newpin;
-+			return;
-+		}
-+	}
-+
-+	/* Old apic/pin didn't exist, so just add a new one */
-+	add_pin_to_irq_node(data, node, newapic, newpin);
-+}
-+
- /*
-  * This code may look a bit paranoid, but it's supposed to cooperate with
-  * a wide range of boards and BIOS bugs.  Fortunately only the timer IRQ
-@@ -2996,9 +2983,9 @@ int mp_irqdomain_alloc(struct irq_domain
- 		       unsigned int nr_irqs, void *arg)
- {
- 	struct irq_alloc_info *info = arg;
-+	int ret = -ENOMEM, ioapic, pin;
- 	struct mp_chip_data *data;
- 	struct irq_data *irq_data;
--	int ret, ioapic, pin;
- 	unsigned long flags;
- 
- 	if (!info || nr_irqs > 1)
-@@ -3016,22 +3003,21 @@ int mp_irqdomain_alloc(struct irq_domain
- 	if (!data)
- 		return -ENOMEM;
- 
--	ret = irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, info);
--	if (ret < 0) {
--		kfree(data);
--		return ret;
--	}
--
- 	INIT_LIST_HEAD(&data->irq_2_pin);
- 	irq_data->hwirq = info->ioapic.pin;
- 	irq_data->chip = (domain->parent == x86_vector_domain) ?
- 			  &ioapic_chip : &ioapic_ir_chip;
- 	irq_data->chip_data = data;
- 	mp_irqdomain_get_attr(mp_pin_to_gsi(ioapic, pin), data, info);
-+	mp_preconfigure_entry(data);
- 
--	add_pin_to_irq_node(data, ioapic_alloc_attr_node(info), ioapic, pin);
-+	if (!add_pin_to_irq_node(data, ioapic_alloc_attr_node(info), ioapic, pin))
-+		goto out_data;
-+
-+	ret = irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, info);
-+	if (ret < 0)
-+		goto out_pin;
- 
--	mp_preconfigure_entry(data);
- 	mp_register_handler(virq, data->is_level);
- 
- 	local_irq_save(flags);
-@@ -3044,6 +3030,12 @@ int mp_irqdomain_alloc(struct irq_domain
- 		    ioapic, mpc_ioapic_id(ioapic), pin, virq,
- 		    data->is_level, data->active_low);
- 	return 0;
-+
-+out_pin:
-+	__remove_pin_from_irq(data, ioapic, (int)irq_data->hwirq);
-+out_data:
-+	kfree(data);
-+	return ret;
- }
- 
- void mp_irqdomain_free(struct irq_domain *domain, unsigned int virq,
+These READ_ONCE() in RTNL protected regions are not necessary, because
+dev->flags can not be changed by another thread.
 
