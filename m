@@ -1,115 +1,143 @@
-Return-Path: <linux-kernel+bounces-265313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 521DB93EF5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79FE393EF60
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0651728101B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:04:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08D752812B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D278139D0B;
-	Mon, 29 Jul 2024 08:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833BC137903;
+	Mon, 29 Jul 2024 08:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="CbhaTnYy"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UxVZWGew"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F4B136E21
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C24213AD22;
+	Mon, 29 Jul 2024 08:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722240279; cv=none; b=GMbYLDSG1UrTwzzYuAr2x6Hj3hTa6q6sNV+9wDKsVmLGkwxAPCY91tjgPyIrOt8FR5G6EQJUQW6nBPzSf/C7fRBe+H3L9hpvPApPp9Me00SbLfMaEGl62zMpYELp0LWAbgJEy8XQbh4miX1Rx1m+8JZuGQxXXC9zNuSJqXsuHoc=
+	t=1722240293; cv=none; b=ElmffQ6ZNP/YOoozVipVzdhUHIKRDre/CueP3eV3B3Op7FMwCg5jHzrFc/RnlW0xFLWbdx5HAwblkljzqcutFwlWIt5KGRV7dPpSeLvH97NEWUFBC71nS9c+8E56dXR4MN4pGwQtIyAbV4zDKG3fj+Wc05PA69UbW/OvAdky5Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722240279; c=relaxed/simple;
-	bh=CDZ0MBUFqX50yePb3p0ZQmToR/m3XVu2w81bkufPTxA=;
+	s=arc-20240116; t=1722240293; c=relaxed/simple;
+	bh=kcplikNPTfJ49hcPkFXkshkzKNenhjH7qdszq0zdwLw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aOB0iOSyz3yeSHcY0qi4ioGk3oelAzWajsLI5H9b3OPUrgSAQ7gN2jXsAPIGzGDIkeGzWe0sNfTN/fFUgIppuFJtDiZMHCxMTSIOdO9NeMO2rndLGx9B0Lm2xNV2qa6lQdsOFgiGEDCyngo8Rgl4Mnm8ZfqDi96uxuBiDIZaIyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=CbhaTnYy; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=CDZ0
-	MBUFqX50yePb3p0ZQmToR/m3XVu2w81bkufPTxA=; b=CbhaTnYyJGc9/b4oM2QU
-	MmkHC5V2NEMmxSP1mzULYZ6Bgj4H88tEC2VUEG5HVOmwh+woEwZBTk1bMqXRb05j
-	FUuTv7PR6ELiK7yuC5CtCRR3ID3+aTF2HVdhIpFc30QrirI2CmPOTeePkfLuwc0r
-	76t5J7TNue5niYBQ4FSAK54c33+BRo+OmvndSlE1lRnw/wRDxNoKspByB6tTZFwC
-	sEyXEQOCcLE1QvvLbMUWKRYBgrrVqANo1/4mI/MbaMGlsH6FkvncrYzX+7yE0wGR
-	HebhxQvzS+7E1X9vk66TyWm3VfH26kHUwwgsyx1/3i1PzFP/1/Uv+hhDYZfV58sC
-	sw==
-Received: (qmail 4025975 invoked from network); 29 Jul 2024 10:04:35 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Jul 2024 10:04:35 +0200
-X-UD-Smtp-Session: l3s3148p1@js3TT14e+NYujnsv
-Date: Mon, 29 Jul 2024 10:04:35 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Wolfram Sang <wsa@kernel.org>, Jean Delvare <khali@linux-fr.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] i2c: smbus: Handle stuck alerts
-Message-ID: <ZqdNE2nFEmRU2y-l@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <linux@roeck-us.net>, Wolfram Sang <wsa@kernel.org>,
-	Jean Delvare <khali@linux-fr.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20220110172857.2980523-1-linux@roeck-us.net>
- <ZqajBUknxDaMp5wy@shikoro>
- <f5886c83-27c2-475d-b75a-4ad107d039ed@roeck-us.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AnH5+DzoIPVDmCKET7wKgGw+BZo5RRqJ/M4U3BDPGvTf2BFPz2WJLYg89St3tg7XPZgxy54TsrJoS+pw08x5Qh/VP4Yr9E91UfttGZpkxMxXHp3b8UsbJ8/7Qx00x85ibDmsA4KwUpCubishkJB0WuVrqbBcTlMHDNzGMUsWucM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UxVZWGew; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722240292; x=1753776292;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kcplikNPTfJ49hcPkFXkshkzKNenhjH7qdszq0zdwLw=;
+  b=UxVZWGewlwg5jRb4273nmtMej640HC366MRAzilKo8U1f0/QAPT7Audu
+   LDtPx2tkkpm64nHHUucoYgqpx0uyZDYmqx1JOAeEP+gdsJU7+QpvdD7iq
+   yfIA5wGOJkIS3dwnOBChJBhPlJIhTMlsemE1wsETUrM55tAMtRzUy5e0I
+   e8uVO+m7/hVzdqDIfd03ylhKIUj034ksnz1qk7pANZ+JM69XQPmWiI0fb
+   0UPgv9hFMvQSk+XwQJvo8Bznzg5c3UaOKXiQ9mwsNN90HW7G2rqYfeu1L
+   IeWrU0aF1okMDrSjwyQ4iAlir8UKyGBZTJtzNTuYO3cIr1dAbLa6CohWb
+   A==;
+X-CSE-ConnectionGUID: zJ5w6hXuQE6icunEl+h43A==
+X-CSE-MsgGUID: 3j/xbynCTI2AldUVbFkS6w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="19859107"
+X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
+   d="scan'208";a="19859107"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 01:04:52 -0700
+X-CSE-ConnectionGUID: md5Tyjj9R7GXs2yfcRv6eA==
+X-CSE-MsgGUID: 41yRA9BTQn2WB+JnTw5Tew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
+   d="scan'208";a="58030907"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa003.fm.intel.com with ESMTP; 29 Jul 2024 01:04:44 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 88D0F19E; Mon, 29 Jul 2024 11:04:41 +0300 (EEST)
+Date: Mon, 29 Jul 2024 11:04:41 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Esther Shimanovich <eshimanovich@chromium.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Rajat Jain <rajatja@google.com>
+Subject: Re: [PATCH v4] PCI: Relabel JHL6540 on Lenovo X1 Carbon 7,8
+Message-ID: <20240729080441.GG1532424@black.fi.intel.com>
+References: <20240511043832.GD4162345@black.fi.intel.com>
+ <20240511054323.GE4162345@black.fi.intel.com>
+ <CA+Y6NJF+sJs_zQEF7se5QVMBAhoXJR3Y7x0PHfnBQZyCBbbrQg@mail.gmail.com>
+ <ZkUcihZR_ZUUEsZp@wunner.de>
+ <20240516083017.GA1421138@black.fi.intel.com>
+ <20240516100315.GC1421138@black.fi.intel.com>
+ <CA+Y6NJH8vEHVtpVd7QB0UHZd=OSgX1F-QAwoHByLDjjJqpj7MA@mail.gmail.com>
+ <ZnvWTo1M_z0Am1QC@wunner.de>
+ <20240626085945.GA1532424@black.fi.intel.com>
+ <ZqZmleIHv1q3WvsO@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sQ06tBKQpmyQTR8K"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f5886c83-27c2-475d-b75a-4ad107d039ed@roeck-us.net>
+In-Reply-To: <ZqZmleIHv1q3WvsO@wunner.de>
 
+On Sun, Jul 28, 2024 at 05:41:09PM +0200, Lukas Wunner wrote:
+> On Wed, Jun 26, 2024 at 11:59:45AM +0300, Mika Westerberg wrote:
+> > On Wed, Jun 26, 2024 at 10:50:22AM +0200, Lukas Wunner wrote:
+> > > On Mon, Jun 24, 2024 at 11:58:46AM -0400, Esther Shimanovich wrote:
+> > > > On Wed, May 15, 2024 at 4:45???PM Lukas Wunner <lukas@wunner.de> wrote:
+> > > > > Could you add this to the command line:
+> > > > >   thunderbolt.dyndbg ignore_loglevel log_buf_len=10M
+> > > > >
+> > > > > and this to your kernel config:
+> > > > >   CONFIG_DYNAMIC_DEBUG=y
+> > > > >
+> > > > > You should see "... is associated with ..." messages in dmesg.
+> > > > 
+> > > > I tried Lukas's patches again, after enabling the Thunderbolt driver
+> > > > in the config and also verbose messages, so that I can see
+> > > > "thunderbolt:" messages, but it still never reaches the
+> > > > tb_pci_notifier_call function. I don't see "associated with" in any of
+> > > > the logs. The config on the image I am testing does not have the
+> > > > thunderbolt driver enabled by default, so this patch wouldn't help my
+> > > > use case even if I did manage to get it to work.
+> > > 
+> > > Mika, what do you make of this?  Are the ChromeBooks in question
+> > > using ICM-based tunneling instead of native tunneling?  I thought
+> > > this is all native nowadays and ICM is only used on older (pre-USB4)
+> > > products.
+> > 
+> > I think these are not Chromebooks. They are "regular" PCs with
+> > Thunderbolt 3 host controller which is ICM as you suggest.
+> > 
+> > There is still Maple Ridge and Tiger Lake (non-Chrome) that are ICM
+> > (firmware based connection manager) that are USB4 but everything after
+> > that is software based connection manager.
+> 
+> Even with ICM, the DROM of the root switch seems to be retrieved:
+> 
+>   icm_start()
+>     tb_switch_add()
+>       tb_drom_read()
+> 
+> Assuming the DROM contains proper PCIe Upstream and Downstream Adapter
+> Entries, all the data needed to at least associate the PCIe Adapters
+> on the root switch should be there.  So I'm surprised Esther is not
+> seeing *any* messages.
+> 
+> Do the DROMs on ICM root switches generally lack PCIe Upstream and
+> Downstream Adapter Entries?
+> What am I missing?
 
---sQ06tBKQpmyQTR8K
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-
-> > I think this can only work if we require .alert-handlers to start with a
-> > sanity check to make sure their device really raised an interrupt
-> > condition. And then return either -EBUSY or 0, similar to IRQ_HANDLED or
-> > IRQ_NONE. Or?
->=20
-> I think so, but I am not sure if it is worth the effort. It would require
-> changing the API, and each driver supporting alert callbacks would have
-> to implement code to detect if it actually got an interrupt.
-
-The more I think about it, the more I like this proposal. I mean, irq
-subsystem has IRQ_NONE also for a reason. And we do not have that many
-alert handlers to convert. They could all return EBUSY by default
-because that is what they currently behave like anyhow. That being said,
-it will not be a top priority on my list.
-
-
---sQ06tBKQpmyQTR8K
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmanTRMACgkQFA3kzBSg
-KbbdJA//Z9cKpMQGyjFHhfJho+NAJZ8+C3JY0naTlcW47CtpkTxoNgeueM3nRcDt
-DQzh5CPDyAWKP/8TCE1dwFn9N5Af8OaBQACr+bF/4GHelxStuVKB9xse8clBh8Ix
-PSYs2nkutmFMJcQiYuN43nzn+eA5521sz3Rf6u1InoW0B3VGQkR+rRGrdccQapSi
-Ag1oqNdPld7O6W2DksLkb9d2GXcB9n+qf9NlR0bDJtAF10Nlt6691WjhdNIsVAP7
-diEiPwIGN/UrU+6ukUV/kWhnsraTn+n0cHENk44rdpOo4o39DMJrARtIVoGW2LUl
-GujG/3s66d+sHohs3EViG7DX+Pi3iHe4F+YMYR0/NV93va9UTGGobmuqeeO0Cus/
-48x5sB9k8zsEmgCOqvCPnxpaL813LeBSo9K0PhRaMAYYjvYUijSnSXy4cCB7hlLB
-3ezxNyfKp/HyYosKacVzDd8H4IRPIaeEsotndSGJJ3eYyhv2A+8wLeOIsdgpHRxJ
-zUZLj5VsIGNxSMntVUXb1fPW6xnbZFRy8OMw6uU7SNhh2lbBlIKgK1iLAV7S7N/f
-daDsfuwaUR6ihl2loV43OhjpdTu+D7zNf3VyOwyZIHEOOVqWstRmuJS21ZMRvGxU
-l3EPTqDzDxTGhXT+XtP11md/SIiXTBoOCeHfIpLf0/RkDx6ay6A=
-=OVFI
------END PGP SIGNATURE-----
-
---sQ06tBKQpmyQTR8K--
+My guess is that they are not populated for ICM host router DROM
+entries. These are pretty much Apple stuff and USB4 dropped them
+completely in favour of the router operations.
 
