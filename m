@@ -1,122 +1,117 @@
-Return-Path: <linux-kernel+bounces-265103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0685093ECA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:41:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F75D93ECAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B06BD281332
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 04:41:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3B3EB2156A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 04:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537388248C;
-	Mon, 29 Jul 2024 04:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E1182890;
+	Mon, 29 Jul 2024 04:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cxe35vGg"
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="aDaXiQjn"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37ADC1B86D6
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 04:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8FE1B86D6;
+	Mon, 29 Jul 2024 04:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722228089; cv=none; b=BYOWSuzabylmx05T43rh4kmid19pZvTkDO7V4IRTCAe40xyJTCeCMpHgZAmZ/kRijdx2o20Njog/FTYhzxRXpUroE5zOfzahkndlOo11gW0SbtcWmm+/EhtSE5I8M1uyGWO+PZgAZP6b4oG6YPb5PSxa7SuFzsV/Vb8crvvIqNU=
+	t=1722228227; cv=none; b=P5cobVN4rtHDhs5ZQ6IlmpC1bGhzfcMpqXTDORej33Z6kb+waah1yIQRRkCrTEcCTm4FJ0CRzy7QAEwWZQL1n2N92Pu/sOqnKR7bLFOSPOooICBeUm4Bm/zEe+2H0RVS+x0Hp4F0oyZXp312WctU6M01s788QGv4KN4k73H9Jkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722228089; c=relaxed/simple;
-	bh=TxCdXQbt+FYKJwFmb+VaHqTIx+1OvckkeV2C8PBGeC4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FDYRp15ciAoc+TUO+RxIAVq29ohfgrnXJvAf9FZdvQLzkj6Td4a4GlgstCwS74scbEsBNWLrOoX4tUiDpXkm5PMlbXcXeh+ez54oBPwjrI0aZBbBQq5TpC1h8WJiwXej1wb0CfZtoXQpmxLbmrkbXIMGYgo2lPiO2DEPA+lIwuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cxe35vGg; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-493d7455231so442936137.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 21:41:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722228087; x=1722832887; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RvMehHFovVJWeBpH4SDKvqU5fsitO2FHmL29ZzK4oEA=;
-        b=Cxe35vGgNjrxosDlwHHSClvnUwSCxctsgHoyepzygqCCVL/dBcLBvg3QVtab4OWB9I
-         bVBgAX+K6KAuwk2VeIKhhG1aq0TuJQaoxxhadcRQAWv40oXpWIvwsenTG8uWV5ip8gQR
-         RfNPcT5IM5fGjDjHwIyFfI3H8oagQR6vXeN4HotQ904A1gyGkLhuJuVk773tCRZCxpxO
-         UkBTk3j+OKBzd5VaHOv4t0Yn1d5im1+qenJpzkSTnowb1cNdztXAnwUmijLCjdPOMs07
-         9+r3AV0Yhm1two/GjSEj3XtF1Bp8zghkSVZIWcHoei1I2MVVrAHmUes27pte6ymBlVNC
-         wP/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722228087; x=1722832887;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RvMehHFovVJWeBpH4SDKvqU5fsitO2FHmL29ZzK4oEA=;
-        b=CvaqLaIF02AnDaOXycsH7Kl6S8vIuCqvHlJIx0kN/7Y7FAXJKj856CkL4UwJsLe34t
-         DvwtlNxKySgS3l46fSf0z2cv19OB0fNjX9XotURhVFGSTZjmQEMIBmu4cz0xPgjGtzWx
-         uGtRRhjBub69JTkV0S+s0DtxsneREsw5G8VHL16IitZVfdjuGn7Yp4tl5vFkZ0/UMPYG
-         oRDJpnjsf5y3YliXmis4XY2Otr8PUapqZuGpRKXCNxPe7WNAiRae20JuV3WwqFaxVGeo
-         CHgEZses2UrWHjGBMxEqzTwiwoEPkNyzO4J/HJ4hWIy0uhOlfR5EAp7ZKPSVkp2EDR6a
-         3rxA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7gRdHlQs+MmnyevZai7oJAzezM1EV9ExtkFNE8pxMNJ4R4H57xUfOyTDJEujnicVGhmAru+bPyk5x1BRy59aaWFWRra0Xk4CX4LGL
-X-Gm-Message-State: AOJu0YxtUYERXW8DcPLopO98Jeu7r9qIQPHqH/7GHEL8FY4GacTEBMrr
-	fGlFAd36lo4+X03UWXDi0sGTNDks0BnqwKtYhZJ4DbL3OhQdXtkvPtVvQD0unth+Qiv8m/gr7lu
-	dSpcjng23h+Y27zB/zfvJULf2U68=
-X-Google-Smtp-Source: AGHT+IEGUlbD6eLPUKNik9e3P1JeR0U0VL6y3soem8DsRydlwQrTBk+IkxA8QN5IelQ2sITl6PKNPtCOSCRgj+MVrEc=
-X-Received: by 2002:a05:6102:3f0e:b0:493:e585:6ce3 with SMTP id
- ada2fe7eead31-493fadd965emr7177806137.31.1722228087038; Sun, 28 Jul 2024
- 21:41:27 -0700 (PDT)
+	s=arc-20240116; t=1722228227; c=relaxed/simple;
+	bh=Q5e8Uzrp5dxS8GorkeTBvz/wu5JObFOkFhTXsqePR7k=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=pP0zJx1wmJySOBSCc6rkc0WiaZP22XJwSzbfofg5y3p8MeNvBORHTLtIpeI0SZhmR9tZcqeyX2muwDo5JqrEWYNu5fNCLstZsMwiRznmf7dt76PaZr9NUnlDLeAQaj6JFqdKPMKuXmTbfMcYzBMTs6camLlVIAOqOWnCsfDDC9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=aDaXiQjn; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726094618.401593-1-21cnbao@gmail.com> <20240726094618.401593-4-21cnbao@gmail.com>
- <ZqcRqxGaJsAwZD3C@casper.infradead.org>
-In-Reply-To: <ZqcRqxGaJsAwZD3C@casper.infradead.org>
-From: Barry Song <21cnbao@gmail.com>
-Date: Mon, 29 Jul 2024 16:41:16 +1200
-Message-ID: <CAGsJ_4xQkPtw1Cw=2mcRjpTdp-c9tSFCuW_U6JKzJ3zHGYQWrA@mail.gmail.com>
-Subject: Re: [PATCH v5 3/4] mm: support large folios swapin as a whole for
- zRAM-like swapfile
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, ying.huang@intel.com, 
-	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com, 
-	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
-	kasong@tencent.com, linux-kernel@vger.kernel.org, mhocko@suse.com, 
-	minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
-	senozhatsky@chromium.org, shakeel.butt@linux.dev, shy828301@gmail.com, 
-	surenb@google.com, v-songbaohua@oppo.com, xiang@kernel.org, 
-	yosryahmed@google.com, Chuanhua Han <hanchuanhua@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1722228221;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wGVbLMPx8Stje83aOheuLD1Nwba68LXvsDOLLEVn4dU=;
+	b=aDaXiQjnBSeYxvGTLqWjbY+QeXjp35finEMH57ZT7KqNkdvmgn4YrPnR/V+U6OLQ1EIu7z
+	DK/PWIw1zNEQnzgonIjQc2BNDU+JxX3BxkTzRd6lw1WcfspetjC/1fFS7rlS3k88olYWzC
+	yPh/hl0zi2gM/jhogfkSxNsn+5q41doi/or2xvOFXOaMwp1mycBjlQGMV75L4oKsz+nZ33
+	bjVdAwg85uxoBlbmH0K3v6jPDhlL7PBcuuRJ0Jhi4weivs2sGqt2/Pe/KECu56c0jhTA1n
+	2LmqRo/i42JugTDOhTSk4eZ1Xh1S72ipRkH9K6xBIyhHReRDbRgzpho8RiV4/Q==
+Date: Mon, 29 Jul 2024 06:43:40 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>,
+ UNGLinuxDriver@microchip.com, davem@davemloft.net, edumazet@google.com,
+ f.fainelli@gmail.com, gregkh@linuxfoundation.org, kuba@kernel.org,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, lucas.demarchi@intel.com, masahiroy@kernel.org,
+ mcgrof@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ woojung.huh@microchip.com
+Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy
+ module
+In-Reply-To: <3a6ef66a-e98f-44df-9fef-3b26bede4c07@lunn.ch>
+References: <bcc81ea0-78e1-476e-928c-b873a064b479@lunn.ch>
+ <20240726121530.193547-1-jtornosm@redhat.com>
+ <b96d9801-d370-4ddd-97fd-5eac2a2656f4@lunn.ch>
+ <931b582808f237aa3746c5b0a96b3665@manjaro.org>
+ <3e895811-ad23-4687-b440-5375ad2af2ff@lunn.ch>
+ <a520ee4da331c8edb99f2c14d22a3531@manjaro.org>
+ <3a3f49b5-45b2-4999-a364-60d035bbd11f@lunn.ch>
+ <98d200777d62dc9b447557b2758613e5@manjaro.org>
+ <3a6ef66a-e98f-44df-9fef-3b26bede4c07@lunn.ch>
+Message-ID: <36bfb8da08b90fb14108e99853f49d0f@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Mon, Jul 29, 2024 at 3:51=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Fri, Jul 26, 2024 at 09:46:17PM +1200, Barry Song wrote:
-> > -                     folio =3D vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0=
-,
-> > -                                             vma, vmf->address, false)=
-;
-> > +                     folio =3D alloc_swap_folio(vmf);
-> >                       page =3D &folio->page;
->
-> This is no longer correct.  You need to set 'page' to the precise page
-> that is being faulted rather than the first page of the folio.  It was
-> fine before because it always allocated a single-page folio, but now it
-> must use folio_page() or folio_file_page() (whichever has the correct
-> semantics for you).
->
-> Also you need to fix your test suite to notice this bug.  I suggest
-> doing that first so that you know whether you've got the calculation
-> correct.
+On 2024-07-28 22:57, Andrew Lunn wrote:
+>> In other words, this patch doesn't subtract anything.  Instead, it 
+>> just
+>> adds a weakdep link between the lan78xx and micrel modules, so the 
+>> kernel
+>> itself can report that dependency, which may actually result in one 
+>> more
+>> PHY driver added to a generated initial ramdisk.
+> 
+> So at the moment, does the initramfs contain all PHY modules? I guess
+> it does, because you have no knowledge which are actually needed. And
+> this does not help you in any way, as you said, it does not subtract
+> anything.
 
-I don't understand why the code is designed in the way the page
-is the first page of this folio. Otherwise, we need lots of changes
-later while mapping the folio in ptes and rmap.
+Basically, an initial ramdisk shouldn't contain any PHY modules that
+aren't automatically detected as needed on a particular system, for
+which the initial ramdisk is built.  That's how selecting modules
+while building the initial ramdisks works.  On the other hand, if it's
+some initial ramdisk built by a Linux distribution and intended to
+support multiple systems or boards, it may contain whatever the
+distribution sees fit.
 
->
+Having weakdeps defined actually does help here.  For example, a Linux
+distribution mentioned above no longer needs to hand-craft the rules
+for initial ramdisk generation for the PHY modules that should be put
+into an initial ramdisk together with the lan78xx driver, if the Linux
+distribution chooses to include the lax78xx driver.  Having weakdep(s)
+defined makes the kernel do that instead.  Also, there's no point in
+including every single PHY driver module, because not all of them are
+needed for a particular selection of MAC drivers, which comes from the
+intended purpose of the initial ramdisk built by a Linux distribution,
+i.e. the target architecture, supported board category, etc.
 
-Thanks
-Barry
+Let's also keep in mind that including all PHY modules into an initial
+ramdisk inevitably makes it larger, which often isn't an option for
+resource-constrained embedded systems.
 
