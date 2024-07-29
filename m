@@ -1,134 +1,119 @@
-Return-Path: <linux-kernel+bounces-265998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60BB893F8F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:02:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D2AE93F8EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 906981C21F08
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:02:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBE311F212F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E77156661;
-	Mon, 29 Jul 2024 15:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F142415572A;
+	Mon, 29 Jul 2024 15:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHBU/s7F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o6iGGnrt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BB9155A21;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3833C74E09;
 	Mon, 29 Jul 2024 15:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722265324; cv=none; b=QnrflTQ48t4tR4zV+Ic4KwjyK+XbBqKUpTtL309TgAQVjLAZaP+Ya/r4SQ+zPAtTanX9wedCqMiqBwGO/htjSdR+ueCfUDW3WFtikZUF9ybD73Nhu3WDB13OlkaeiIXkk7oMIMsaxLnsnvvvXCHg0nfbu0UuCJ7y+cp70gL4fa0=
+	t=1722265323; cv=none; b=ZT9icloBEqAERv9WYOZfocg50tnahAjfqX67RRYnYMfWZxiK7gul9gvkBnxHtBOdP3lFWb3zjQlvgXKs2wyevq9LeFKcTjfzYAgJaoo6VAVENA86MYcaLbvQKZ7+U0xUnA5G3nUKPm6c4N+rSu/JvFWgomRvxNan0BiPbo/Xx9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722265324; c=relaxed/simple;
-	bh=aSG63Ny9qBbpu8tNKh1V6tarP45rHiFMLWwrEqyHz88=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IxOb4pRIYkUTNH29w0KwbrMHsDL3LdmZXyF9R7IJ8e1FUTpVbeOUXzz440nplOzOPQxxbceisDpxQG4ViHJQv3UKwCLdnxEoC7ozFy/8XyB9TF19QyUy9zQyBAr8sTNqO+fSNv92Dv5+pbuQmeG9SkLTjzvmydjlrfvVfb6t+DY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHBU/s7F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AB79C32786;
-	Mon, 29 Jul 2024 15:02:01 +0000 (UTC)
+	s=arc-20240116; t=1722265323; c=relaxed/simple;
+	bh=Z3oEEBdSHgN0bkthRPf/JvesgDNuaiaeKjStAc4mw50=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L1fIp5jZSK5l+Rhr5xmmcgdaV3dLtG3JXiZcmEDJSccrhnznjwg1n4ytOi/ld0GZ6pMZcNak9NOXlzTVFMZn8SRpb19ryBxPGFhLgmYTKmDLRdmX6/bYZ+pUDjQh6k+XvCakA4cpkiGzYQqiwSthAne+GYDE8vPvmX0G43GWzME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o6iGGnrt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD8DCC4AF0A;
+	Mon, 29 Jul 2024 15:02:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722265323;
-	bh=aSG63Ny9qBbpu8tNKh1V6tarP45rHiFMLWwrEqyHz88=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VHBU/s7F8LqSvNYru6R2LOrBHT2AOnv0oGB575qAsNroL4HOrwpa3km09Y3ccPWjn
-	 g3FI8xyaW171ZJrguZUHgWdUBLQqupOOptP/7sRd/k2Hbz6zH5ezu6RgpP2RU+WPcz
-	 UYotS1raULmv9YX0cp2YgdBstaRWcgsbQwyHAjTzs+XztKOP6rA6nW2tVOeJzgUG7/
-	 T2ez78lDWCzjrVEHXXlNw/w2LYnUFolhPS7f+ah6CJOYKh1jc+/ljvkp3obbrW23Mx
-	 sa/hrRDqRmd/4cvTKcLdNiHOrC8mPEoT4le0WUtT00pw9KP5bqW+TGvRDqKsmIkzrJ
-	 1OU1HjarJbylA==
-Message-ID: <75a6b4fd-f81c-4bd7-a07b-7f7165ece2fe@kernel.org>
-Date: Mon, 29 Jul 2024 17:01:59 +0200
+	bh=Z3oEEBdSHgN0bkthRPf/JvesgDNuaiaeKjStAc4mw50=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o6iGGnrtRtgbzF+GVoKbEna+hIBbGBcUCsSMuF5McoWT/DJ4yBe2042p+ul1uG3RU
+	 2f/r7rAnOKSv4zOlkVZnI9FYajrktdEVoxTm5yr4sVZDJqeYVSu13jfrsFipQmCoJi
+	 B5t3OAqmCNnacxvx4bVTt4+WAxFMNmswFHbvFfBrGsuCMlf/ZI/phWU86Z3gPce3Ua
+	 GIC9K8NmupfdOLfEUI5DbZMNT8nDEWtMLTotRUJiwVDw8J3Qux0QySHGHGMG7AoVvI
+	 FhsiHc300H7YJEHW1hMpXL3Z467J3QKSAKRk3U4JxDU3ZLT7h/MD+PYuk9WxzTIHhd
+	 BejSYQcZDgP4A==
+Date: Mon, 29 Jul 2024 10:02:01 -0500
+From: Rob Herring <robh@kernel.org>
+To: Inochi Amaoto <inochiama@outlook.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	dmaengine@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Liu Gui <kenneth.liu@sophgo.com>, linux-riscv@lists.infradead.org,
+	Chen Wang <unicorn_wang@outlook.com>, Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH v8 RESEND 1/3] dt-bindings: dmaengine: Add dma
+ multiplexer for CV18XX/SG200X series SoC
+Message-ID: <20240729150201.GA334758-robh@kernel.org>
+References: <IA1PR20MB49535EC188F8EE3F8FD0B68DBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB4953865775FA926B2BA4580CBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <172223050278.2763977.11180028101195359000.robh@kernel.org>
+ <IA1PR20MB4953E3AEACAC85765AE9442BBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <2e4b504c-6413-42fc-a544-472d4cc1a06b@linaro.org>
+ <IA1PR20MB4953343445D88F046E1D28EFBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: soc: qcom: smd-rpm: add generic
- compatible
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
- Stephan Gerhold <stephan@gerhold.net>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240729-fix-smd-rpm-v1-0-99a96133cc65@linaro.org>
- <20240729-fix-smd-rpm-v1-1-99a96133cc65@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240729-fix-smd-rpm-v1-1-99a96133cc65@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <IA1PR20MB4953343445D88F046E1D28EFBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
 
-On 29/07/2024 13:04, Dmitry Baryshkov wrote:
-> Add generic compatible to all smd-rpm devices, they follow the same
-> RPMSG protocol.
+On Mon, Jul 29, 2024 at 08:28:09PM +0800, Inochi Amaoto wrote:
+> On Mon, Jul 29, 2024 at 11:30:20AM GMT, Krzysztof Kozlowski wrote:
+> > On 29/07/2024 09:00, Inochi Amaoto wrote:
+> > >> yamllint warnings/errors:
+> > >>
+> > >> dtschema/dtc warnings/errors:
+> > >> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
+> > >> 	from schema $id: http://devicetree.org/schemas/dma/sophgo,cv1800-dmamux.yaml#
+> > >> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
+> > >> 	from schema $id: http://devicetree.org/schemas/dma/sophgo,cv1800-dmamux.yaml#
+> > >> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
+> > >> 	from schema $id: http://devicetree.org/schemas/dma/dma-router.yaml#
+> > >> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
+> > >> 	from schema $id: http://devicetree.org/schemas/dma/dma-router.yaml#
+> > >>
+> > > 
+> > > Hi Rob,
+> > > 
+> > > Could you share some suggestions? I can not reproduce this error with
+> > > latest dtschema. I think this is more like a misreporting.
+> > 
+> > You would need dtschema from the master branch, so newer than 2024.05.
+> > 
+> > Best regards,
+> > Krzysztof
+> > 
 > 
-> Fixes: bcabe1e09135 ("soc: qcom: smd-rpm: Match rpmsg channel instead of compatible")
+> Is it a must for the type array to have more than 1 element?
+> I have tested the value "<&dmac 0>" and "<&dmac>, <&dmac>".
+> Both pass the check (These value are just for test, not the
+> real hardware).
+> 
+> Setting dma-masters to type "phandle" also has no change. 
+> It do not accept the value "<&dmac>", Is there any suggestion
+> for this? Thanks in advance.
 
-I do not see a bug being fixed here. Whether you have fallback or not,
-is a design decision with both options reasonable in certain cases.
-
-More over, some explanation, why you are doing this or what is the
-benefit, is missing.
-
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  .../devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml | 52 +++++++++++-----------
->  1 file changed, 27 insertions(+), 25 deletions(-)
+The issue is 'dma-masters' is also defined as a uint32 in the Spear 
+binding. Types aren't local to a binding, so when there's a 4 byte 
+value, is that a phandle or plain uint32? I'm working on a fix in 
+dtschema for this. It should be committed shortly.
 
 
-Best regards,
-Krzysztof
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
+Rob
 
