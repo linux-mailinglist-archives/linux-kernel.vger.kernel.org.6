@@ -1,134 +1,164 @@
-Return-Path: <linux-kernel+bounces-265574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AAF293F300
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:41:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 519DE93F306
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DACBE1F242CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:41:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1F6E1C21D42
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8D91448F1;
-	Mon, 29 Jul 2024 10:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F301448E7;
+	Mon, 29 Jul 2024 10:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AaVgNFMk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yoU0dLV8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cniBhTpR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8578F28399;
-	Mon, 29 Jul 2024 10:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C060728399;
+	Mon, 29 Jul 2024 10:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722249688; cv=none; b=AkGOby9pH4FaRKyjbSdf8obmoqBPU2Cgfgc9f8EobhHdR0v8kPpqYHgR0WxdcQXIvIVXZzk3wjP8jeM2ftlZrw+UNBdt99FQjpzGdU68xwXX12rFqam5G9jTsomzbMqfN7yBAnAMEZdOOnrfDwNBMMwZ/w+osc06hrBpjUNHAGw=
+	t=1722249753; cv=none; b=KqjC8vLBNTF5Tn7EigstmqaaxPuCcm/p5rbz7I6zB0eOZE1KZe2YZThd9ZcUkSAyFohGtDIrKmxzbh8i6uJRQJS+j+Q05WN/e/gL39ccKpF3Z/2wQ0bW6HSO0h76bpbHzm544yZNgWzyygEY3Kv86GJJr5BVHAuSldXuIBb5shw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722249688; c=relaxed/simple;
-	bh=klov7AXJrBxt4kaO1ORqh6ORD4spqavsP0E/bA24oao=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BuOrno1vTCcqyq46C3xKNkDO/vZN2SD6srhxEO8idXoKe6JLtDiK0KfwCcTX1VHx/YJNLk6/GC4vqblymmBFPeL1EsrO8Iy4pgj+2Y03nF5M6wTrWNjJ9ah5TiIGHDFMGCCV8B2lXryFSgNJXV8lK4azqaUcFRIyApug+c7DsY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AaVgNFMk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yoU0dLV8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722249686;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mUtMMscAr42lfvfhAq0RSAVA54FsqUgqvVfRKCjfdf4=;
-	b=AaVgNFMkjq2oSMoVgoXhHi8LyJtviLBVSbxF2c2Onnr0cVbEL2dWnEIR8wazERXBh78577
-	nlD5mJOiO1x63PUXZM29zP3SGWCXwRDmxql5v1QZ1eYu0PdiqE0jfP0SChD/DZJ6Q43mFz
-	QP0/bQd97GSh9cM+Kln5SUjeBogFdcefq6cF/IfVsQbiAeHa8KHfONlqRrLrhwocxmxwdc
-	Uc+v8LqB3ykRTd/5XPcIyhX88IBXcNtLHyxSO7gVC4YiIkD2lNw8cA3fbR7ohCt5csbYyQ
-	5Ou4xHjkm38M8rBleSg8FasjB6rff/3oqorf4V2Httv+6BKZxQE6RfoD/iNrnA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722249686;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mUtMMscAr42lfvfhAq0RSAVA54FsqUgqvVfRKCjfdf4=;
-	b=yoU0dLV8/0NscyaF1HrCpNKZHshPsYNYXrjGhuYCXTBhgY+EB4PNTIsqh8CYm5h5eH1ckX
-	5msg3Z8GpP54PyBQ==
-To: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org
-Cc: conor@kernel.org, conor.dooley@microchip.com, Marc Zyngier
- <maz@kernel.org>, Daire McNamara <daire.mcnamara@microchip.com>, Linus
- Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [RFC v7 3/6] irqchip: add mpfs gpio interrupt mux
-In-Reply-To: <20240723-flatworm-cornflake-8023212f6584@wendy>
-References: <20240723-supervise-drown-d5d3b303e7fd@wendy>
- <20240723-flatworm-cornflake-8023212f6584@wendy>
-Date: Mon, 29 Jul 2024 12:41:25 +0200
-Message-ID: <87le1k8oq2.ffs@tglx>
+	s=arc-20240116; t=1722249753; c=relaxed/simple;
+	bh=ub1Yg50JFq2NvU0SP9zoVeXxU57j9kAS131Hh5GxOdA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=P6igi8m7/lZO/alKgDFsoOX/ps8kZEH51FE6xeymhTxemme5Lp7ygO71rkzdG3Hm9TV65I/xt4qxUoV21pQEpmXq3AmyCZOIg9Lpnikpph88TCHI9wiOtmK3T9Ezh6f7N1l6lNoIKm9RhNIZQZZGTB0qmpOaXL/tD0uLqn+QLnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cniBhTpR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TAL2Jm003937;
+	Mon, 29 Jul 2024 10:42:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	S4+tVbYQJ9/WcrhaBo8VTgIcQFifwH8ByYr5edpAI2U=; b=cniBhTpRcUIxatUA
+	HEt3GTsz09yXcEIFTuc/TbnphujtPKEeDbWr4atc9ZZy2gSH60aD+wFs89n1/xBE
+	Pj+FNYW6shnf/gtxD2z7Gky8qgdhMD/+k+G/077Iy9DQjoAy3CeW3uF4Ws03Y06Z
+	g0qyxV5APAPOKlvVA3u+jUTQLuewGmeLhM5mvGJhtOIb4n5VTTlJdxfQ19eG6p/U
+	1ChgSlKIC0cxz/F4xLgYLlCaGeAgMTueX7OmWILv3Pqwv6OfWnHpUkYvZ2LCd566
+	dzx+sMVwTPF4wB8UeKjTE1Q3OzTin9pvLXG6mJ9L7TQB5nOV+AbROHusfzDYFtXE
+	wbF8DQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mt2kktyk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:42:26 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TAgPXx023504
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:42:25 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
+ 2024 03:42:21 -0700
+Message-ID: <080b47dc-c8e0-4962-a358-aa4c39e5e868@quicinc.com>
+Date: Mon, 29 Jul 2024 18:42:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/8] arm64: dts: qcom: Add support for multimedia clock
+ controllers
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_imrashai@quicinc.com>, <quic_jkona@quicinc.com>,
+        Tingwei
+	<quic_tingweiz@quicinc.com>,
+        "Aiqun(Maria) Yu" <quic_aiquny@quicinc.com>
+References: <20240715-sa8775p-mm-v3-v1-0-badaf35ed670@quicinc.com>
+ <20240715-sa8775p-mm-v3-v1-7-badaf35ed670@quicinc.com>
+ <d40d540c-a3b9-449d-8f34-cb2972ddc2ef@kernel.org>
+ <12be3f5a-5bc6-40cc-a7af-7f098a7be04e@linaro.org>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <12be3f5a-5bc6-40cc-a7af-7f098a7be04e@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: HM2PyIKl8NHnPBET8wbla8QAKSNMogQ7
+X-Proofpoint-GUID: HM2PyIKl8NHnPBET8wbla8QAKSNMogQ7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-29_09,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ malwarescore=0 spamscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0
+ suspectscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407290072
 
-On Tue, Jul 23 2024 at 12:27, Conor Dooley wrote:
-> +
-> +struct mpfs_irq_mux_bank_config {
-> +	u32 mask;
-> +	u8 shift;
-> +};
 
-Please see:
 
-  https://www.kernel.org/doc/html/latest/process/maintainer-tip.html
+On 7/16/2024 8:09 PM, Konrad Dybcio wrote:
+> On 16.07.2024 9:45 AM, Krzysztof Kozlowski wrote:
+>> On 15/07/2024 10:23, Taniya Das wrote:
+>>> Add support for video, camera, display0 and display1 clock
+>>> controllers on SA8775P platform.
+>>>
+>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/sa8775p.dtsi | 56 +++++++++++++++++++++++++++++++++++
+>>>   1 file changed, 56 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>>> index 23f1b2e5e624..8fd68a8aa916 100644
+>>> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>>> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>>> @@ -2911,6 +2911,47 @@ llcc: system-cache-controller@9200000 {
+>>>   			interrupts = <GIC_SPI 580 IRQ_TYPE_LEVEL_HIGH>;
+>>>   		};
+>>>   
+>>> +		videocc: clock-controller@abf0000 {
+>>> +			compatible = "qcom,sa8775p-videocc";
+>>> +			reg = <0x0 0x0abf0000 0x0 0x10000>;
+>>> +			clocks = <&gcc GCC_VIDEO_AHB_CLK>,
+>>> +				 <&rpmhcc RPMH_CXO_CLK>,
+>>> +				 <&rpmhcc RPMH_CXO_CLK_A>,
+>>> +				 <&sleep_clk>;
+>>> +			power-domains = <&rpmhpd SA8775P_MMCX>;
+>>
+>> Not sure if these are correct. I had impression the clocks are going
+>> away from sa8775p?
+> 
+> Right, the patches look mostly good, but are still going to be on hold
+> until the 8775 situation is cleared out.. We recently had the gigantic
+> patchset [1] that shifted things around, and seemingly there was rather
+> little closure on that, so we're waiting for the dust to settle and
+> people to agree on things..
+> 
+> Konrad
+> 
+> [1] https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
 
-vs. coding style.
+After considering the feedback provided on the subject, We have decided
+to keep current SA8775p compatible and ABI compatibility in drivers.
+Therefore, this patch is still needed, please continue to review this
+patch.
+Thank you for your input.
 
-> +/*
-> + * Returns an unsigned long, where a set bit indicates the corresponding
-> + * interrupt is in non-direct/muxed mode for that bank/GPIO controller.
-> + */
-> +static inline unsigned long mpfs_irq_mux_get_muxed_irqs(struct mpfs_irq_mux *priv,
-> +							unsigned int bank)
-> +{
-> +	unsigned long mux_config = priv->mux_config, muxed_irqs = -1;
-> +	struct mpfs_irq_mux_bank_config bank_config = mpfs_irq_mux_bank_configs[bank];
-> +
-> +	/*
-> +	 * If a bit is set in the mux, GPIO the corresponding interrupt from
-> +	 * controller 2 is direct and that controllers 0 or 1 is muxed.
-
-This is not a coherent sentence.
-
-> +	 * Invert the bits in the configuration register, so that set bits
-> +	 * equate to non-direct mode, for GPIO controller 2.
-> +	 */
-> +	if (bank == 2u)
-> +		mux_config = ~mux_config;
-> +
-
-> +static int mpfs_irq_mux_nondirect_alloc(struct irq_domain *d, unsigned int virq,
-> +					struct irq_fwspec *fwspec, struct mpfs_irq_mux *priv)
-> +{
-> +	unsigned int bank = fwspec->param[0] / MPFS_MAX_IRQS_PER_GPIO;
-> +
-> +	if (bank > 2)
-> +		return -EINVAL;
-> +
-> +	priv->nondirect_irqchips[bank].domain = d;
-> +
-> +	irq_domain_set_hwirq_and_chip(d, virq, fwspec->param[0],
-> +				      &mpfs_irq_mux_nondirect_irq_chip, priv);
-> +	irq_set_chained_handler_and_data(virq, handle_untracked_irq,
-
-Why does this use handle_untracked_irq()? This sets up a chained handler
-but handle_untracked_irq() is a regular interrupt handler.
-
-> +					 &priv->nondirect_irqchips[bank]);
-
-Thanks,
-
-        tglx
+-- 
+Thx and BRs,
+Tengfei Fan
 
