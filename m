@@ -1,54 +1,47 @@
-Return-Path: <linux-kernel+bounces-266008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89CBC93F920
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:09:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D97B593F926
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:11:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2411F22CA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:09:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E39CF1C21A3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87F4156665;
-	Mon, 29 Jul 2024 15:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB23156661;
+	Mon, 29 Jul 2024 15:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="K0d48MAF"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9ZXO8d5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E40415573D;
-	Mon, 29 Jul 2024 15:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D3E14B087;
+	Mon, 29 Jul 2024 15:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722265736; cv=none; b=VXKFDm6GWo/XpKlSuCQ2tW3Y7ETLkFmFW7x5v1RsvEeXlAiwNuvtjKXnAusLZQXhkJNxttFKdyj74Gd45Q5CqHpoUnOMn1dk+IAcN1/E+Q7vxPWzYlfI59ism0ErAH8aE+bqewgwtiSGU8SJ0Zn3jMCpOtfHGjC5TJSpn4ipN7o=
+	t=1722265853; cv=none; b=iUxULAJ0+JYNuwcpotAuMQMell1o0HKFLtz1kQVKmRsL3nEMCVOubRLBKtyD9ZlERImHN1itetgn9PmGDi/vSjPwM0OLYB48L9KzyJas4n7K7aryM9WgB+QXFOeBPI1dbepP2htmqvyE9ef6j6tStJZOov79g+54cmWL3FXGiXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722265736; c=relaxed/simple;
-	bh=aAbjuBpvIUGViH+nWkjTxRXW47KgMyjW6ht1VbHNVVo=;
+	s=arc-20240116; t=1722265853; c=relaxed/simple;
+	bh=jcci7z4PwjhgEDOaAxC+tw4UeosmJl4Bgx+sNpCjg+s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GOh3b6AzWtDzRiJMFvsoPQ5Z1iVGGp3smFIZPhi0g8X9Y8B6zm+tvPkPGkYw7Syp0XZbIZrd8GvVSOY9s7vHoskbQK9kYP8thuxQuN84j+Mo9ouf7aN7PkSjVtmBwt0lLEc1C8Gy6OpIjD9rTQfMPjUrvn0OewF4Dr31xmbBuP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=K0d48MAF; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722265733;
-	bh=aAbjuBpvIUGViH+nWkjTxRXW47KgMyjW6ht1VbHNVVo=;
+	 In-Reply-To:Content-Type; b=p4Yk43ipybeRsmeZJsv53IDUYJ7QcpCgg7Cdt5wcLyV1Fe8NO0Ha0MaFclxxOzVDNv6G5JNcrALpIJDM/T2NoMJjiZLEKqEd3mRmNJMaOrRUOS3mJYxGpyvN0/njwrecyeUbb4CcnfKh/z6gQxX7LSOFYSPO/9ukv2TdInhrutw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9ZXO8d5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1773DC32786;
+	Mon, 29 Jul 2024 15:10:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722265853;
+	bh=jcci7z4PwjhgEDOaAxC+tw4UeosmJl4Bgx+sNpCjg+s=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K0d48MAFOsPJPuZxzUKierWTMxK6/6DD+ZV1qG1R++MQ9J2Ri0x7CqK2zaZSXRYdP
-	 ablxsWAO3YD2/HNTwWbNeP4uBlQrzfEEJKgLAHGQpFtP4pJCIvWb2/42Ggg72+9HV8
-	 ufdZ2cq0F2w5DHdukuqPRQhRxkmLmqkZCm/Rk/j3pYUGADab7p0anbLZ2PyFLoU6qc
-	 K36kvascrBDl6QZGiFDt8jpjGjMZsFRrQc4SQ9S8n4z7f7ry9RHutm1hUxYOnhxwzH
-	 WHStHbIV/LDFj1BLy4DFGuQmzA2xirXlS3zm55YKkADa0IZRpzLZPNtfvOuP8oxan9
-	 tWvEaQllSt2Mg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 603D63780C11;
-	Mon, 29 Jul 2024 15:08:50 +0000 (UTC)
-Message-ID: <f2e4d8a1-f683-415d-853f-b55abdb8c27c@collabora.com>
-Date: Mon, 29 Jul 2024 17:08:48 +0200
+	b=V9ZXO8d5hXIc/yfn5uK3Ft/hyQWL4K9MU0OcWNS0dStS4pehZnhlJ8MJpiIWQz2+o
+	 +zvOX8gFfhSxzy2pP2KJVuqNafsAztOO2kyVk9QKPL2jJFxSoq3+90ozoh+718y/pV
+	 8I7yb30BtNBpRX8XJuCAJ6g0LZ1Ge8m6JBwVb5kB9GSMsxdJQlkh+aJl0d8jhVmEYk
+	 Qg2vt2K9g7PF+Lbt5zs98HtfPZxSMb6kHOMXDQSFl61exvV70v0+O7W+IUkXinKnl6
+	 y9bSlotJi0ST6d23ZyIDJymL4vJJT/ukYMZEfI6O4548Ag1d9vQI+wmG9oPeooZM/2
+	 /Z/RJgUN91IVw==
+Message-ID: <6c6bb89e-a9d8-4d5c-837a-30f3bae56f0f@kernel.org>
+Date: Mon, 29 Jul 2024 17:10:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,129 +49,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/5] arm64: dts: mediatek: mt8365: Add support for
- camera
-To: Julien Stephan <jstephan@baylibre.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Andy Hsieh <andy.hsieh@mediatek.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20240729-add-mtk-isp-3-0-support-v6-0-c374c9e0c672@baylibre.com>
- <20240729-add-mtk-isp-3-0-support-v6-5-c374c9e0c672@baylibre.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 1/1] arm64: dts: imx8-ss-dma: enable dma support for lpspi
+To: Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: Clark Wang <xiaoning.wang@nxp.com>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240729094511.159467-1-alexander.stein@ew.tq-group.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20240729-add-mtk-isp-3-0-support-v6-5-c374c9e0c672@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240729094511.159467-1-alexander.stein@ew.tq-group.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Il 29/07/24 16:48, Julien Stephan ha scritto:
-> Add base support for cameras for mt8365 platforms. This requires nodes
-> for the sensor interface, camsv, and CSI receivers.
+On 29/07/2024 11:45, Alexander Stein wrote:
+> From: Clark Wang <xiaoning.wang@nxp.com>
 > 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> Add DMA configurations for LPSPI nodes on i.MX8QX/QM/DXL.
+> 
+> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 > ---
->   arch/arm64/boot/dts/mediatek/mt8365.dtsi | 125 +++++++++++++++++++++++++++++++
->   1 file changed, 125 insertions(+)
+> Using the DMA configuration bits from downstream kernel.
+> Tested on TQMa8XxS.
 > 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8365.dtsi b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-> index 24581f7410aa..cabdb51f4041 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-> @@ -10,6 +10,7 @@
->   #include <dt-bindings/interrupt-controller/irq.h>
->   #include <dt-bindings/phy/phy.h>
->   #include <dt-bindings/power/mediatek,mt8365-power.h>
-> +#include <dt-bindings/memory/mediatek,mt8365-larb-port.h>
->   
->   / {
->   	compatible = "mediatek,mt8365";
-> @@ -703,6 +704,23 @@ ethernet: ethernet@112a0000 {
->   			status = "disabled";
->   		};
->   
-> +		mipi_csi0: mipi-csi0@11c10000 {
+>  arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi b/arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi
+> index 1ee9496c988c5..8ae5f065b4180 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi
+> @@ -34,6 +34,8 @@ lpspi0: spi@5a000000 {
+>  		assigned-clocks = <&clk IMX_SC_R_SPI_0 IMX_SC_PM_CLK_PER>;
+>  		assigned-clock-rates = <60000000>;
+>  		power-domains = <&pd IMX_SC_R_SPI_0>;
+> +		dma-names = "tx","rx";
 
-Names must be generic. This is mipi-csi-phy@xyz or csi-phy@xyz as it looks
-like it's not the entire CSI interface but just its PHY. Am I wrong?
+Missing spaces. Unexpected order, unless that's the coding style for imx.
 
-> +			compatible = "mediatek,mt8365-csi-rx";
-> +			reg = <0 0x11c10000 0 0x2000>;
-> +			status = "disabled";
-> +			num-lanes = <4>;
-> +			#phy-cells = <1>;
-> +		};
-> +
-> +		mipi_csi1: mipi-csi1@11c12000 {
-
-Same for this one.
-
-> +			compatible = "mediatek,mt8365-csi-rx";
-> +			reg = <0 0x11c12000 0 0x2000>;
-> +			phy-type = <PHY_TYPE_DPHY>;
-
-...so the secondary CSIPHY only supports DPHY, while the first one supports either
-C or D?
-
-> +			status = "disabled";
-> +			num-lanes = <4>;
-> +			#phy-cells = <0>;
-
-...and then, it's confusing, one CSI has got one PHY cell, one has got two?
-
-> +		};
-> +
->   		u3phy: t-phy@11cc0000 {
->   			compatible = "mediatek,mt8365-tphy", "mediatek,generic-tphy-v2";
->   			#address-cells = <1>;
-> @@ -773,6 +791,113 @@ larb2: larb@15001000 {
->   			mediatek,larb-id = <2>;
->   		};
->   
-> +		seninf: seninf@15040000 {
-> +			compatible = "mediatek,mt8365-seninf";
-> +			reg = <0 0x15040000 0 0x6000>;
-> +			interrupts = <GIC_SPI 210 IRQ_TYPE_LEVEL_LOW>;
-> +			clocks = <&camsys CLK_CAM_SENIF>,
-> +				 <&topckgen CLK_TOP_SENIF_SEL>;
-> +			clock-names = "camsys", "top_mux";
-> +
-> +			power-domains = <&spm MT8365_POWER_DOMAIN_CAM>;
-> +
-> +			phys = <&mipi_csi0 PHY_TYPE_DPHY>, <&mipi_csi1>;
-> +			phy-names = "csi0", "csi1";
-> +
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +				};
-> +
-> +				port@2 {
-> +					reg = <2>;
-> +				};
-> +
-> +				port@3 {
-> +					reg = <3>;
-> +				};
-> +
-
-Empty ports, why?
-
-Regards,
-Angelo
-
+Best regards,
+Krzysztof
 
 
