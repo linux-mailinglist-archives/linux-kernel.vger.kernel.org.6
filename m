@@ -1,125 +1,107 @@
-Return-Path: <linux-kernel+bounces-265261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD20793EE99
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:37:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D2293EE9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 568A11F225E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:37:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F78228261D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3AA12BF25;
-	Mon, 29 Jul 2024 07:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D98C12BEBB;
+	Mon, 29 Jul 2024 07:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vsifve2c"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RBPm5t71"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A90823A9;
-	Mon, 29 Jul 2024 07:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CE12F46
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722238666; cv=none; b=HI/8EERatIZEqM63fNz9JaBvuGUzhYK7FlfMpVroYtzeuuGCYuInL9QLk0XN6nDpQnf3awCIRE/J0lLbpgTMOZYAPvDIhMsj+zKvaiBNqe5ksgz2KQmj7VLIReEsorsQfPO+01BDt/X3vqUAy82p/xlBFTOI+A0mw/Q4TLz1R8Y=
+	t=1722238685; cv=none; b=lKfxFCPJrdw11SrALhhE3feS+0qV+1Xv1OAgyoXUPGbqEpExrRUIBSncSDxGXTu/b8hYNo3cHqWvEmhpWKlAV2LoA8CpBjeKbcHKF3rJ4Z3k55AItWL3UHviQnMQQ+we+N4W807/wm0UFyfK4Hv2XjqTOsfKSntdfVsyDN2K2Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722238666; c=relaxed/simple;
-	bh=ZBoqFreWAKMqFYjh2gTvIGOAWHVQUwkpk+FeSPzwiM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQLxEyQsrjRfuym47u/pa7Vo03S1hQSlYSqn6eTOnkqLcftOofTECBmdcX4ZRXd9r6jmHfMR5YNhIrRfNqE0l93q4lQYEOozOygOmiqp6uSgeZJcocdW/e4egnAVxeSJx3rvtbfq/LP2ckEOAVYcskdMN4Knmcw9Hbm9obmhAg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vsifve2c; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722238666; x=1753774666;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZBoqFreWAKMqFYjh2gTvIGOAWHVQUwkpk+FeSPzwiM8=;
-  b=Vsifve2cExh5BiEOzL7SDqY/6hmZkTZ1EM0bMlBTmlpgyobTgwUOpcnn
-   HUYQuoPJw97P/Rg2l98VFiCTzpq/mtXyz4AYSirWOyC9xDkx4gC2nzoay
-   AMblwjLUdJA6jlnJKz6XJPOoXvzT3ZUfCoPWWp3mxlfER9O3NA7y7lRVa
-   I9T+38fHohP8dCxnR8l4OPHblJ1WyPyDZNMA6DMmLGNqQuJIhZRhnkOdS
-   1YncafDrIejAzkCn59O7aT+J8AnLn08rsjDP75nDlBxHgs41c/JpCRtqH
-   uUUra97XgHfWfd29Ukpf4TgVV9lyLxD7L53oxjNKWk4xJ+Vy6lkkcpnDv
-   w==;
-X-CSE-ConnectionGUID: UeMst2okRdu0VV7DTgg18A==
-X-CSE-MsgGUID: dSGdPRJLTAOBSR2YBhwKbg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="23726735"
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="23726735"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 00:37:45 -0700
-X-CSE-ConnectionGUID: oqRTXN42TeSeVTE4mc8DrA==
-X-CSE-MsgGUID: WOie8nfDRFWCj8eeanvpdA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="54682805"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 00:37:42 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id A51E911F8A8;
-	Mon, 29 Jul 2024 10:37:39 +0300 (EEST)
-Date: Mon, 29 Jul 2024 07:37:39 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>, Bingbu Cao <bingbu.cao@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Andreas Helbech Kleist <andreaskleist@gmail.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: ipu-bridge: fix ipu6 Kconfig dependencies
-Message-ID: <ZqdGw9dIGameP2j9@kekkonen.localdomain>
-References: <20240719095403.3607027-1-arnd@kernel.org>
- <Zqc-tY7LPLdEbZ-9@kekkonen.localdomain>
- <c05a72dd-1821-43ba-b3b4-caa9334e4016@app.fastmail.com>
+	s=arc-20240116; t=1722238685; c=relaxed/simple;
+	bh=RW7csqoWilsK1WhZ75VStOARcpj2a82rVOOY0DGzebM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jkfhyHt+zf40qoxCaobGMNxUYiuooYnBqHcsjWhUjqKJXiew4ao+6FURGx56u7i8S5XiXHcW/AqO9h7+a0WWoE6WA0yDK+Akr2s6Rzpdgceiib9+2/jPAwrrfJlQewZHecieZ3MtSRhuh77xt905aN/6l292x+TYsi1I1WMD99Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RBPm5t71; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1722238673; x=1722843473; i=markus.elfring@web.de;
+	bh=0CPFbrdSom84C5+RvbVnCnfxjIQGcRT/sOcVP5UzK38=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=RBPm5t71frrmy7MgIHRSRUOhB/6++qR/uBCb4No0JoPVWZy970gPOgVvKUcHkPgn
+	 EWMDYX3jLyX1VbKYJ2Qhn0mOiBeOk6TOLffuDyho/sFGjwI3isS2l988kyT5Q0oto
+	 I6IrnTE9jWfWtgEEQTqosZsfYd2iy4sdv2MfAqEAo9KXPih2GG2Z5h4Ytt6t6yx1z
+	 oK2swIK+wbVFMN7EgepHU3PrL/doCpaZLa1xoXnc7byRLUPG05HIo8fHnSNIqXvdW
+	 62xCh4ubvm/Shhz5Ps6ieZjnCf9FCUKdrdyqic2/B6EI7tPsFoWg0os6LbXOqzZxx
+	 DXZ69HTLni/eMA/dEA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MIL4Y-1sSsuT2SSC-00G413; Mon, 29
+ Jul 2024 09:37:53 +0200
+Message-ID: <ce9b1d27-75a6-4505-b17c-773b51c173d0@web.de>
+Date: Mon, 29 Jul 2024 09:37:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c05a72dd-1821-43ba-b3b4-caa9334e4016@app.fastmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] drm/loongson: Introduce component framework
+ support
+To: Sui Jingfeng <sui.jingfeng@linux.dev>, dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+References: <20240728152858.346211-1-sui.jingfeng@linux.dev>
+ <20240728152858.346211-2-sui.jingfeng@linux.dev>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240728152858.346211-2-sui.jingfeng@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Cachk3OfMSi6UNiFkC8paaYPD3qjgGBDzL8VOhC2QXWG1z2oFzI
+ pyci5a30NJa7h/V/rIK7uqt8UqXitAiKnc9rsL+b+wWFWICcYUJOgcr0SCPh6dBPmVpmfas
+ dxnr34pvPctNXm1gHfUjjRsniuc22o1JcVmCL7bF3aQIQj5k35YWGHc1XnqHnza8q1quBF3
+ GaNlgImDaw7PgfNgcNVuQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:uL55tRs2TFc=;kA8Vr46z/bsfDkWUIaEmCe9FF6y
+ 9jZ6W4QLXZLVFAlyGdUX+Nu799jsFJynVaPOeaYdPU6keqABSAhL+5Tg9uS/4bqmVjAsiehN1
+ ytITkAIUqCw2mdQPEOXiV0omPa6r18McBmkXuIBMazavWhVpQZwKsYEE5U3Fl22p997D8n4pL
+ 4swv+uthA3R0oTW/7CoDP3gmk08XmrxyFsNYvadl0K4oBtqbt5zxIyCZPaZ4WKqpe/eQlu4px
+ MThWwCIiWek0ds5sAfp6dz4PCdU1jXEciDO2lLG/FrKEWA7QUCTweW3EkvfhkhjD2oOerFzNC
+ Xn3uDpkUKeHTNUmTGGoIrCKeDZWxuBtYev3gLqQVrKyQNy73p+vpRn9OsqsnrvIBYd5c9kRRq
+ 3Reh4blpgwoUXMG/RWXNX/HBPsKIWveXNHMuQq2rOeRCSZeuxlfcrpQnnmBaLHaBCTeXIAP/+
+ e79O7rl72nte1eQDFJPFzbUpryGPl9pgJ8rzFIWng3UkHw/G58CFC3mXGlAKjoMrt8U5bZSVr
+ qYf9qHGKpFlSPIAaZ3RVfv39nspw4uys7s1uTtBHoOWX2IqnMYEVyzHPn1XN70DX1yOk2DIeS
+ c+hvtXIjJYPpvnFC0jyyptTjs95jVgXwRYzbvtgQcsaZlF/UvX7yj8mScqhbhB1tEMqweubMv
+ pCL0bqKAy6qfH1Z1qOGT5U7JeHxNOZ2bh4Fn8cHs1zmI+8z8Y6LaEzIS1mKj0w6iS9lUkzhi2
+ vGvOegr9z1fzLzLhmhfuvhXAZgA2qbuVZZpJaAaADTwHUHP4TLhYHDh812LTGAIQzmmYGMrGA
+ VuZJPOi0iOZ1zIMQvCWKvrMA==
 
-Hi Arnd,
+=E2=80=A6
+> +++ b/drivers/gpu/drm/loongson/loongson_drv.c
+> @@ -0,0 +1,298 @@
+=E2=80=A6
+> +static int loongson_drm_driver_probe(struct platform_device *pdev)
+> +{
+=E2=80=A6
+> +	dev_info(&pdev->dev, "probed\n");
+=E2=80=A6
+> +}
+=E2=80=A6
 
-On Mon, Jul 29, 2024 at 09:24:23AM +0200, Arnd Bergmann wrote:
-> On Mon, Jul 29, 2024, at 09:03, Sakari Ailus wrote:
-> >> To make it consistent with the other IPU drivers as well as avoid this warning,
-> >> change the 'select' into 'depends on'.
-> >
-> > Thanks for the patch. I'm not sure how I managed to miss the IPU6 driver...
-> 
-> The driver was only adding in 6.10, so your patch was correct
-> at the time.
-> 
-> > I think we also need, besides IPU_BRIDGE, || !IPU_BRIDGE, as the IPU_BRIDGE
-> > has additional dependencies (I2C) compared to VIDEO_INTEL_IPU6. I'll add
-> > that while applying. Please let me know if you have concerns.
-> 
-> Makes sense, yes. I went with a hard dependency since that stays
-> close to the current version with the select. I tried build-testing
-> IPU6 now with IPU_BRIDGE=n and I2C=n/I2C=m, which works fine.
-> 
-> However, the testing showed that IPU6 also missed a 'select AUXILIARY_BUS',
-> which I had not found in randconfig testing because that usually gets
-> selected by one of is other 30 users.
-> 
-> Since you are changing my patch already, maybe you can also add
-> that at the same time. Thanks,
+Do you find such information really relevant?
 
-Well, yes. I got an lkp test report on this and wrote a patch to address
-it:
-<URL:https://lore.kernel.org/linux-media/20240729071026.3775341-1-sakari.ailus@linux.intel.com/T/#u>.
-
-I'll send a PR on the two in a few hours if there are no further issues,
-hoping to get it to rc2.
-
--- 
-Kind regards,
-
-Sakari Ailus
+Regards,
+Markus
 
