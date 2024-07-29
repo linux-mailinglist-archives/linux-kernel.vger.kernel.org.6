@@ -1,119 +1,109 @@
-Return-Path: <linux-kernel+bounces-265997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D2AE93F8EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:02:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAD4B93F8F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBE311F212F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:02:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668951F22CCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F142415572A;
-	Mon, 29 Jul 2024 15:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C32115539F;
+	Mon, 29 Jul 2024 15:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o6iGGnrt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="k/8V+Utu"
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3833C74E09;
-	Mon, 29 Jul 2024 15:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBF674E09
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722265323; cv=none; b=ZT9icloBEqAERv9WYOZfocg50tnahAjfqX67RRYnYMfWZxiK7gul9gvkBnxHtBOdP3lFWb3zjQlvgXKs2wyevq9LeFKcTjfzYAgJaoo6VAVENA86MYcaLbvQKZ7+U0xUnA5G3nUKPm6c4N+rSu/JvFWgomRvxNan0BiPbo/Xx9c=
+	t=1722265372; cv=none; b=oSc2VzcJjukg5ifw9+qTxBpy60SgdbUY97e2vzLSlkL9yRp/DL2MILL7qo6uNPvVd4TQ+oRCkT6+VnaEw5k7jof8e+qecs+LIYIgoLaDykuQHKi6HrT9V4dbPtTwCTztegvYN7wcuFWvx+2cT/QD0kQA0M478aYIV8mO0ubaC3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722265323; c=relaxed/simple;
-	bh=Z3oEEBdSHgN0bkthRPf/JvesgDNuaiaeKjStAc4mw50=;
+	s=arc-20240116; t=1722265372; c=relaxed/simple;
+	bh=onBbiaEWw8YNvIODJmcayzpy+8J+PVNXsDSfrhQlNes=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L1fIp5jZSK5l+Rhr5xmmcgdaV3dLtG3JXiZcmEDJSccrhnznjwg1n4ytOi/ld0GZ6pMZcNak9NOXlzTVFMZn8SRpb19ryBxPGFhLgmYTKmDLRdmX6/bYZ+pUDjQh6k+XvCakA4cpkiGzYQqiwSthAne+GYDE8vPvmX0G43GWzME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o6iGGnrt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD8DCC4AF0A;
-	Mon, 29 Jul 2024 15:02:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722265323;
-	bh=Z3oEEBdSHgN0bkthRPf/JvesgDNuaiaeKjStAc4mw50=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y7Hs9m9LLLnNxWj2NVwlQeAxPLuIQg+drULN39iqZaMzXCw8AADvrCIj/5VND8Wp070KWjp/nHFFWMQmaOtYTuClxabNkYmb5qSopsr1A7YYJnjtZ2YD8KwIHMf5AN+WY/BmY8Jr1gqsTZqnEnJXgvaz20rQWUpRqm1KsHgrhCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=k/8V+Utu; arc=none smtp.client-ip=185.125.25.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WXhRm5vdzzWrC;
+	Mon, 29 Jul 2024 17:02:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1722265364;
+	bh=9LGQN8Vc3Rs6TsiKBFEp9Lr0Cof6R+g+itZnhj1fmxs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o6iGGnrtRtgbzF+GVoKbEna+hIBbGBcUCsSMuF5McoWT/DJ4yBe2042p+ul1uG3RU
-	 2f/r7rAnOKSv4zOlkVZnI9FYajrktdEVoxTm5yr4sVZDJqeYVSu13jfrsFipQmCoJi
-	 B5t3OAqmCNnacxvx4bVTt4+WAxFMNmswFHbvFfBrGsuCMlf/ZI/phWU86Z3gPce3Ua
-	 GIC9K8NmupfdOLfEUI5DbZMNT8nDEWtMLTotRUJiwVDw8J3Qux0QySHGHGMG7AoVvI
-	 FhsiHc300H7YJEHW1hMpXL3Z467J3QKSAKRk3U4JxDU3ZLT7h/MD+PYuk9WxzTIHhd
-	 BejSYQcZDgP4A==
-Date: Mon, 29 Jul 2024 10:02:01 -0500
-From: Rob Herring <robh@kernel.org>
-To: Inochi Amaoto <inochiama@outlook.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	dmaengine@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Liu Gui <kenneth.liu@sophgo.com>, linux-riscv@lists.infradead.org,
-	Chen Wang <unicorn_wang@outlook.com>, Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v8 RESEND 1/3] dt-bindings: dmaengine: Add dma
- multiplexer for CV18XX/SG200X series SoC
-Message-ID: <20240729150201.GA334758-robh@kernel.org>
-References: <IA1PR20MB49535EC188F8EE3F8FD0B68DBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
- <IA1PR20MB4953865775FA926B2BA4580CBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
- <172223050278.2763977.11180028101195359000.robh@kernel.org>
- <IA1PR20MB4953E3AEACAC85765AE9442BBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
- <2e4b504c-6413-42fc-a544-472d4cc1a06b@linaro.org>
- <IA1PR20MB4953343445D88F046E1D28EFBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
+	b=k/8V+UtuS28xmHYtqebOtZ1h+gw0saUyWy9nNjqNzdJQMGh2tqUYuDTa1kHMWYr0c
+	 dpnU0keYfYF7c3K2Y0A5MFAD/7rp9OTFKT9b8V/D8Gliaam664/PMqKrHMq0u1hxpY
+	 D26x6Kn+Sk7GNFUJD/vlEwpzYkDufHqKq6dhO0fs=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WXhRm0dkYz6N6;
+	Mon, 29 Jul 2024 17:02:44 +0200 (CEST)
+Date: Mon, 29 Jul 2024 17:02:41 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jann Horn <jannh@google.com>
+Cc: David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	James Morris <jmorris@namei.org>, Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to
+ ptrace_may_access()
+Message-ID: <20240729.rayi3Chi9aef@digikod.net>
+References: <20240729125846.1043211-1-mic@digikod.net>
+ <CAG48ez3DzxGMWN9GDhSqpHrDJnZDg2k=VEMD_DFiET5yDr07rw@mail.gmail.com>
+ <20240729.cho6saegoHei@digikod.net>
+ <CAG48ez1=xbGd8az4+iNJ_v1z4McMN8dsvWff-PH=ozLYnbzPqg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <IA1PR20MB4953343445D88F046E1D28EFBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez1=xbGd8az4+iNJ_v1z4McMN8dsvWff-PH=ozLYnbzPqg@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Mon, Jul 29, 2024 at 08:28:09PM +0800, Inochi Amaoto wrote:
-> On Mon, Jul 29, 2024 at 11:30:20AM GMT, Krzysztof Kozlowski wrote:
-> > On 29/07/2024 09:00, Inochi Amaoto wrote:
-> > >> yamllint warnings/errors:
-> > >>
-> > >> dtschema/dtc warnings/errors:
-> > >> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
-> > >> 	from schema $id: http://devicetree.org/schemas/dma/sophgo,cv1800-dmamux.yaml#
-> > >> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
-> > >> 	from schema $id: http://devicetree.org/schemas/dma/sophgo,cv1800-dmamux.yaml#
-> > >> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
-> > >> 	from schema $id: http://devicetree.org/schemas/dma/dma-router.yaml#
-> > >> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
-> > >> 	from schema $id: http://devicetree.org/schemas/dma/dma-router.yaml#
-> > >>
-> > > 
-> > > Hi Rob,
-> > > 
-> > > Could you share some suggestions? I can not reproduce this error with
-> > > latest dtschema. I think this is more like a misreporting.
-> > 
-> > You would need dtschema from the master branch, so newer than 2024.05.
-> > 
-> > Best regards,
-> > Krzysztof
-> > 
+On Mon, Jul 29, 2024 at 04:21:01PM +0200, Jann Horn wrote:
+> On Mon, Jul 29, 2024 at 4:09 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Mon, Jul 29, 2024 at 03:49:29PM +0200, Jann Horn wrote:
+> > > On Mon, Jul 29, 2024 at 2:59 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > A process can modify its parent's credentials with
+> > > > KEYCTL_SESSION_TO_PARENT when their EUID and EGID are the same.  This
+> > > > doesn't take into account all possible access controls.
+> > > >
+> > > > Enforce the same access checks as for impersonating a process.
+> > > >
+> > > > The current credentials checks are untouch because they check against
+> > > > EUID and EGID, whereas ptrace_may_access() checks against UID and GID.
+> > >
+> > > FWIW, my understanding is that the intended usecase of
+> > > KEYCTL_SESSION_TO_PARENT is that command-line tools (like "keyctl
+> > > new_session" and "e4crypt new_session") want to be able to change the
+> > > keyring of the parent process that spawned them (which I think is
+> > > usually a shell?); and Yama LSM, which I think is fairly widely used
+> > > at this point, by default prevents a child process from using
+> > > PTRACE_MODE_ATTACH on its parent.
+> >
+> > About Yama, the patched keyctl_session_to_parent() function already
+> > check if the current's and the parent's credentials are the same before
+> > this new ptrace_may_access() check.
 > 
-> Is it a must for the type array to have more than 1 element?
-> I have tested the value "<&dmac 0>" and "<&dmac>, <&dmac>".
-> Both pass the check (These value are just for test, not the
-> real hardware).
-> 
-> Setting dma-masters to type "phandle" also has no change. 
-> It do not accept the value "<&dmac>", Is there any suggestion
-> for this? Thanks in advance.
+> prepare_exec_creds() in execve() always creates new credentials which
+> are stored in bprm->cred and then later committed in begin_new_exec().
+> Also, fork() always copies the credentials in copy_creds().
+> So the "mycred == pcred" condition in keyctl_session_to_parent()
+> basically never applies, I think.
+> Also: When that condition is true, the whole operation is a no-op,
+> since if the credentials are the same, then the session keyring that
+> the credentials point to must also be the same.
 
-The issue is 'dma-masters' is also defined as a uint32 in the Spear 
-binding. Types aren't local to a binding, so when there's a 4 byte 
-value, is that a phandle or plain uint32? I'm working on a fix in 
-dtschema for this. It should be committed shortly.
-
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
-Rob
+Correct, it's not a content comparison.  We could compare the
+credential's data for this specific KEYCTL_SESSION_TO_PARENT call, I
+guess this should not be performance sensitive.
 
