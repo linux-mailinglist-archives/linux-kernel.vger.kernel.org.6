@@ -1,131 +1,132 @@
-Return-Path: <linux-kernel+bounces-265542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E582993F296
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:25:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E5F93F2A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C1A5B240A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:25:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78B191C2188D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC8914535E;
-	Mon, 29 Jul 2024 10:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A49E144D1E;
+	Mon, 29 Jul 2024 10:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G7nWnVbG";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TiB5xsZR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oA5avX6q"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0533C1448C8;
-	Mon, 29 Jul 2024 10:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1368674055;
+	Mon, 29 Jul 2024 10:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722248693; cv=none; b=bqdF/SFcJAkmLEtK8aUQ7jYnqCJq/9hokHb1ovjoqu0OSDRBeCWYpSocs/YwJpGnff71g8bKxjwIjaE8x6C8WlKINdsq6j6EQNZFykmL86niH/w75e1U/fD9Bdhjw+QAqn2Q4B3rQNo2DMf5A+DI0sZpKHsG7/yrPJrEyJB1g8Q=
+	t=1722248770; cv=none; b=JwzLQ810KiCS01F0+l/BYmeRcpnY7lr44EEqnBRzP5ckf/oces1FXag/bI9+1a6Sf5ZuPWa8O98+N0JYHdtV3r9DFhq8H0oUXg1AxFNnPL7AT2ieuZR0oKAxYnoF5aKj1l9A8HO208ZEKi80yV6qAyRytb+EoGa0c98/kM0g53A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722248693; c=relaxed/simple;
-	bh=tLAPy3f58OoVOqSXKhNhOpeZ9cOV0ls8Nl/LSknMI+g=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ujBoSWLDeonfh6tgUpZZM81xxD+XJYRIK435KRuu62EXGtfbwcZO/nDeNZkfUzdzVKnkdgdaeBeyNgjzDJ1GI/zApY+tLBYJiR+vyLsBxpTRmqR6NCgQEDe8xQgatULcMJXWkTzO4LF13g4a2NZmTXB+hc6UTkcAOFubeP17vNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G7nWnVbG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TiB5xsZR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 29 Jul 2024 10:24:49 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722248689;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X9CpPChjpJG8n/hB06rBoS+ADx5Vp67nvwNi09une7g=;
-	b=G7nWnVbG9idPZz2ABV3XKxkmcXg26yPExx+azFg4Si+6M6aH24rI9ZvWOuYjBrxdXBQaEC
-	kFgAM2fGGNPF4qGkSAq00jlmzkZmoSd3OduFx/HkHs9SBdQHMUX+vk4G5lG0BirT5CRicC
-	tP8J5gDjPtV5JrofF6tnYs3MJZQYVJhQkzCNAxHSJM4SGJq/bfKUynqL698m6YcwTjjQ6t
-	Qb1abUGPYASvcSuDeZxpA/f+7fJCZzye2yNL/f9EGjB3NJfwaE2Im2XuPhEbo1tYJ68AML
-	9NT2CaobErAS+6bmmjqAwNj5DKj2Blbnj1kds4QgW8AiKrlk8moMqcbp2QCCeg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722248689;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X9CpPChjpJG8n/hB06rBoS+ADx5Vp67nvwNi09une7g=;
-	b=TiB5xsZRIAT71UhogohHw5nwhp2jsiJXCCknY/3uUi+n2tyn6nKhaN05hbLBSTaRoU02H5
-	/nCrLbnEk2ILBzBA==
-From: "tip-bot2 for Zhenyu Wang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/x86/intel/cstate: Add pkg C2 residency counter
- for Sierra Forest
-Cc: Zhenyu Wang <zhenyuw@linux.intel.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Kan Liang <kan.liang@linux.intel.com>, Wendy Wang <wendy.wang@intel.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240717031609.74513-1-zhenyuw@linux.intel.com>
-References: <20240717031609.74513-1-zhenyuw@linux.intel.com>
+	s=arc-20240116; t=1722248770; c=relaxed/simple;
+	bh=bX6iFlfN0q1Gk2S9aLfzY0rCA8hJ02u78BUo63ZvLGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fRLy3v83g48zsNjnV4B3MTzvwcfrv8agAZyGXpkfMy4uwo+Z8HhWGkzXSG4qp/0fIsPZaqeNy4Rk7o+s2C/sfJCTOeJv9Fpe6wZS7nqgPiviBDM+PTTSjPgKkRmHasDPjtSSur5gihGOUSxzvp6uKgt9ACqUYM8wrolGbwXIx/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oA5avX6q; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TAHiJa025339;
+	Mon, 29 Jul 2024 10:26:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	n80z9PgK00hA1131y8xwu/x/kpeyMX96EJWcMLCX5pE=; b=oA5avX6qzf6sQJ28
+	VMQrVnvr/DpLmcdziiCqiafU3LQ7NeLgnsEnzYRNowMnasyEPg0r5kwl+LPyrGKV
+	GJLcjFLYaX/VFi6iGmLD+C1RssfEcU6/YuKyzXiNFjaz+OdthX6LsPT7UPX/dIvk
+	CXVDE0uQtlqET5qCPllZ1q+ykae7hcxnVHGEfAQrEeXibGyJz0l2uqofPmkJbb0M
+	0nriRY0gX+ZJDlP+cudPwMh2keYvn05+k+kqfO2fElRmYS+DM6hglhAw4cg7BIXh
+	ZIbH5gPCkzo8jPmIDH0vOXmKXI1Q7h75xQ5sLSrWz4tSQorBTOJNE2o0W0Sj3gDH
+	36MB5w==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mr7gm0jk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:25:59 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TAPwoP015923
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:25:58 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
+ 2024 03:25:52 -0700
+Message-ID: <2d5af39a-e7ae-47c6-8a6e-f8da5454c8d4@quicinc.com>
+Date: Mon, 29 Jul 2024 18:25:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172224868941.2215.15632178560218109190.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: ufs: qcom: document QCS9100 UFS
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>, "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Andy
+ Gross" <agross@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240709-document_qcs9100_ufshc_compatible-v2-1-c6e6bcd0c494@quicinc.com>
+ <94710b3c-9d94-4ecf-88f4-7827a67f7f13@kernel.org>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <94710b3c-9d94-4ecf-88f4-7827a67f7f13@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 4x9E2YCbpVXQXkX96w3pwpRPfAsCTUsU
+X-Proofpoint-GUID: 4x9E2YCbpVXQXkX96w3pwpRPfAsCTUsU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-29_08,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ impostorscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ spamscore=0 clxscore=1011 priorityscore=1501 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2407290070
 
-The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     b1d0e15c8725d21a73c22c099418a63940261041
-Gitweb:        https://git.kernel.org/tip/b1d0e15c8725d21a73c22c099418a63940261041
-Author:        Zhenyu Wang <zhenyuw@linux.intel.com>
-AuthorDate:    Wed, 17 Jul 2024 11:16:09 +08:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 29 Jul 2024 12:16:22 +02:00
 
-perf/x86/intel/cstate: Add pkg C2 residency counter for Sierra Forest
+On 7/10/2024 6:17 PM, Krzysztof Kozlowski wrote:
+> On 09/07/2024 15:21, Tengfei Fan wrote:
+>> Document the compatible string for the UFS found on QCS9100.
+>> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+>> platform use non-SCMI resource. In the future, the SA8775p platform will
+>> move to use SCMI resources and it will have new sa8775p-related device
+>> tree. Consequently, introduce "qcom,qcs9100-ufshc" to describe non-SCMI
+>> based UFS.
+>>
+>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> Best regards,
+> Krzysztof
+> 
 
-Package C2 residency counter is also available on Sierra Forest.
-So add it support in srf_cstates.
+After considering the feedback provided on the subject, We have decided
+to keep current SA8775p compatible and ABI compatibility in drivers.
+Let's close this session and ignore the current patche here.
+Thank you for your input.
 
-Fixes: 3877d55a0db2 ("perf/x86/intel/cstate: Add Sierra Forest support")
-Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
-Tested-by: Wendy Wang <wendy.wang@intel.com>
-Link: https://lore.kernel.org/r/20240717031609.74513-1-zhenyuw@linux.intel.com
----
- arch/x86/events/intel/cstate.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
-index be58cfb..9f116df 100644
---- a/arch/x86/events/intel/cstate.c
-+++ b/arch/x86/events/intel/cstate.c
-@@ -64,7 +64,7 @@
-  *			       perf code: 0x00
-  *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL,
-  *						KBL,CML,ICL,ICX,TGL,TNT,RKL,ADL,
-- *						RPL,SPR,MTL,ARL,LNL
-+ *						RPL,SPR,MTL,ARL,LNL,SRF
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C3_RESIDENCY:  Package C3 Residency Counter.
-  *			       perf code: 0x01
-@@ -693,7 +693,8 @@ static const struct cstate_model srf_cstates __initconst = {
- 	.core_events		= BIT(PERF_CSTATE_CORE_C1_RES) |
- 				  BIT(PERF_CSTATE_CORE_C6_RES),
- 
--	.pkg_events		= BIT(PERF_CSTATE_PKG_C6_RES),
-+	.pkg_events		= BIT(PERF_CSTATE_PKG_C2_RES) |
-+				  BIT(PERF_CSTATE_PKG_C6_RES),
- 
- 	.module_events		= BIT(PERF_CSTATE_MODULE_C6_RES),
- };
+-- 
+Thx and BRs,
+Tengfei Fan
 
