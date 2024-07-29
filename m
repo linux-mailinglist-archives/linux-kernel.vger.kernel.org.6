@@ -1,204 +1,207 @@
-Return-Path: <linux-kernel+bounces-266168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 181BA93FBE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:56:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3117093FBE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A5001C21CE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:56:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B160A1F22496
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE7F15B542;
-	Mon, 29 Jul 2024 16:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Uf6hQzWl"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2063.outbound.protection.outlook.com [40.107.243.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563B315F3EA;
+	Mon, 29 Jul 2024 16:56:00 +0000 (UTC)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B98878B50;
-	Mon, 29 Jul 2024 16:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722272153; cv=fail; b=I8DO9tb9yzu3czdR0bgF5B0wcAeDpCbKQ93aMEnNEt+vUk7genl/TmxqScpaVbszc7V4vfElfSAni9m8M5xZHnk8Ajs2lW9ZOTJ41N17Rkkoyhaa8s0572NaRPyTLrrpBgiwdwckoR2uSefq+CQpxi4QXn1KYxu+K/UQTk1gmwg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722272153; c=relaxed/simple;
-	bh=22ezeCHomg0cGNQlL2T2udQ7QYlk/ookSXhuozfdays=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y/qrqA92jZ9p/U5kX4+vpkFytpN5fmlu/sL3g+Lwk6A8vJmCnzJIxm4n7PgKqbxUcH34RjLOsntEFOzv+LS5NR+0UxFBS5WX83qDhDHA9g4CY7DGa7Lk9yuawrQldiO2zO1Nh0Z94leAkngo3S5DHNtdXTDLAz44BfxIN5Ohw6w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Uf6hQzWl; arc=fail smtp.client-ip=40.107.243.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OArMKu7J8tp9JqaTHmkFqi7TA9Fnns2cU05piiel+kdfgemsF8qej461bkXSeoKAcu1FtCfNTvPM/f1u2L3jMTxf2TgDfNvDA3nBQcPFFBVvAVB3mTfVDvuRaQ44kjvycxGpn/UpACLlP7c3WV0mF0DPpYqIqSlW7OQ4Q9Y39ruzfA9Lkfo8i96v9z/Mzvw39c3XeLlYnqWYAuXYrgpm5AC3IPyFRQYLPRqy3XfwOcehAcP/2TLH4kHY6146NVBbOiPf7hCuFMKjR5zkRGrrvv3kRLcqUbzSx5dA/bXCMQ6rsH3g+ZqvdJPdIbwZUWwghKOgwCQZuewWSJDTyvRpxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0SLFtvJTjFBZdpsSgVh9kRgRsUmwkGckey0TPBLL+2c=;
- b=Dq7VFsdmxVMp7F1dlTy34MxxTrE/HloTAq73kgZoXxrOIPM4g68niqxwNohIP6axY0cjMUESJC4REztUNzxj9ivohlcvfP/rklu9BFG/8AaYUeIELkwQuBA68Vf8HHC7JIxaU5Od1lgjH+F+uClReRYSHL9AN2v3Q2m1nVSv874c03EVjucMKh56Ai/gtQsz0CWUxZvnYwpE0r0uUO7lr5MiSxfJJqRJBRgckZ6Rq/pVkmUWBAkQyoAI3OQulQUdLvc5hIjPhjSEpAV+lKee7vvOWqMWnAHgdefkTVV9UynNmoPvPtZZkAgyVVSrTm4BkYaD5VqlSel1SQtfcywyNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0SLFtvJTjFBZdpsSgVh9kRgRsUmwkGckey0TPBLL+2c=;
- b=Uf6hQzWluc8uge8NkejzlhM5ra2QVZgL52pAxygEBon8iGM8kvWtaiH7VwETU4iLiUtNoBhN6ejaIHlI4xA5Ri82DmJG1VABJfjJbI96UJqKeNTz2ecEcXcVSFp1kw9/8YsL7aMkATZYVGW4Yg6/LjlDhzHqYILzQR2igK2NLLG36+kYnRBPx2NdBKIWd1RIwP9mvYpAbmYFHHKWwezuUdPAOkHmHCo+9JE3Kkp40fh1J01guzOBktpV0fT7DafWH47QvrwpvLo1Fv2I1ASle4vPk2JG1I3vjImtkU7SxtGcsFkEB1QckeoD59Fmc/bBw85VZKuuw/dfOCTIFcDiEQ==
-Received: from BL1P223CA0002.NAMP223.PROD.OUTLOOK.COM (2603:10b6:208:2c4::7)
- by IA1PR12MB8189.namprd12.prod.outlook.com (2603:10b6:208:3f0::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.26; Mon, 29 Jul
- 2024 16:55:49 +0000
-Received: from BL6PEPF0001AB78.namprd02.prod.outlook.com
- (2603:10b6:208:2c4:cafe::15) by BL1P223CA0002.outlook.office365.com
- (2603:10b6:208:2c4::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.34 via Frontend
- Transport; Mon, 29 Jul 2024 16:55:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL6PEPF0001AB78.mail.protection.outlook.com (10.167.242.171) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7828.19 via Frontend Transport; Mon, 29 Jul 2024 16:55:49 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 29 Jul
- 2024 09:55:35 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 29 Jul
- 2024 09:55:34 -0700
-Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Mon, 29 Jul 2024 09:55:33 -0700
-Date: Mon, 29 Jul 2024 09:55:31 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: kernel test robot <lkp@intel.com>
-CC: <will@kernel.org>, <llvm@lists.linux.dev>,
-	<oe-kbuild-all@lists.linux.dev>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-	<jgg@nvidia.com>, <thierry.reding@gmail.com>, <vdumpa@nvidia.com>,
-	<jonathanh@nvidia.com>, <linux-kernel@vger.kernel.org>,
-	<iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v10 8/9] iommu/arm-smmu-v3: Add in-kernel support for
- NVIDIA Tegra241 (Grace) CMDQV
-Message-ID: <ZqfJgxMt77WqqeNH@Asurada-Nvidia>
-References: <ca671f4d090546c21a0aba6fa4ddda8da26d4474.1722206275.git.nicolinc@nvidia.com>
- <202407292157.BauV7TPf-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A2A15EFC0
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722272159; cv=none; b=IS2b/LG9naxbvx+zRyTY1Bk3E6PDOJevmG9nbsYqQk+JqoQ0JUMvJY9u0I6vTiKn1xkOLLiKsaYHFQYr+omq5mSkFOCkqQowu3KslM7oZmnDmK2DMhFnIFConfLJWMsYJ3tI5dlI/Jw1xHSiazSze4uJP9/Cs2KcxcY+ZOhXUtA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722272159; c=relaxed/simple;
+	bh=GBcQxEcm76aRw5bm5m7TK9aRH3OcNZY833zuwx7b+Ac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=srT7iqhhytrzcgnsgm7VVdSret5u9Gn0renuuV+uWFAdqwKMo43OXvUR5KVUv92MrcusoMBQI9WSY4kAxiiCwNhGTrXbFFpWhTEEseSP6XLCkAlQaFkqAHMf7AVe9+vd9NpkOux4UxSog/aixq07mbFIkuN2N2irShImIwnxJQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a10835480bso5572015a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:55:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722272156; x=1722876956;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pInQiHS1SIzp/gP7f63T6ThFWloDP+HBPBas+N8DhlI=;
+        b=rBtFIMLWHEqUQO3bKUDBWhJWjPhaCp88v4XUdLsGESUc8N/o/2ZCkXHGJBVTsk5bKl
+         bprvHMtlqS2k4vDs+Xlb2CVBSGaQXKzgpdNgshZzCC+rN3ldmyWwZUtngVpVmWwME1s8
+         D71V1/bUzzsauUUmO53MlVt4Xr5RyJzu9+9KDSgPB5Kmm1MTO+S/hGR/Js4PiaUh+WEN
+         Bx8Yn8KTKL7PruSd18wpSMB+/pfhWG6adl9Z5OePrEA9yzuUADbH36jPs+eQxAWaIeVX
+         aHX7RbaPHRQ3jX6KnIGkO7ExROP1qxgSDbc5WtgcQ6vz0cjwysKp4wAFUGkpk2K0VTqE
+         tROQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBYAEYSQeUYbOM2xjh47dIZiWA3HnSbINRc8DwMwOZPViVmLRFVjxKGpQDMc536ooDoKdt8AEhLzjA/jz+edGBDcg/a77toZm8GHN1
+X-Gm-Message-State: AOJu0YzuFErNjrBpNkPxUmWFzcNGlRoAr6srijbSLLn2EjDmbYwGw0I9
+	MYNXH/3/QYCodi0gHySkxMQ7QZeygxfCYPnBIZmSYVa1aM9fhbqf
+X-Google-Smtp-Source: AGHT+IF9nMyWswyCHwij8Zvuwt8VRzAnVK4GY2dn8OzlZ3itNwyWmyv8AqHsXb/XQ+UlJW8H6JM8lw==
+X-Received: by 2002:a05:6402:3546:b0:5a2:2b56:e08e with SMTP id 4fb4d7f45d1cf-5b020cbe0a3mr6143374a12.18.1722272156078;
+        Mon, 29 Jul 2024 09:55:56 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-112.fbsv.net. [2a03:2880:30ff:70::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac64eb3cb8sm5929111a12.77.2024.07.29.09.55.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 09:55:55 -0700 (PDT)
+Date: Mon, 29 Jul 2024 09:55:53 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, leit@meta.com,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Wei Liu <wei.liu@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Adrian Huang <ahuang12@lenovo.com>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/apic: Add retry mechanism to add_pin_to_irq_node()
+Message-ID: <ZqfJmUF8sXIyuSHN@gmail.com>
+References: <20240729140604.2814597-1-leitao@debian.org>
+ <874j8889ch.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202407292157.BauV7TPf-lkp@intel.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB78:EE_|IA1PR12MB8189:EE_
-X-MS-Office365-Filtering-Correlation-Id: 856e779d-4827-4e7f-b87b-08dcafef4c5c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pYaWIWS55FZ16FHabLToZ8oR9Kkw/JRqubnX1OTFjLKx6eOFRPJFzyG8YUU3?=
- =?us-ascii?Q?lIdEtMEetZZCC4O2B5oaBBAkAGpSvN1FZzddxiOkGppES570vZnhQK29JbkM?=
- =?us-ascii?Q?87VUTNQgUBfOHVd9qW7VR+ir8WfUnoMIroP6VGyiAIXIWWpsRqiJ7yDcjJ2o?=
- =?us-ascii?Q?WRcPe+GQGeEel7roSoW9dcgqiPSXfpmQR9Cc1fYdmKEdbMjb0Jn/4E01UQ66?=
- =?us-ascii?Q?C05KHzpl+ILPoCZcnM5p7BZ0oZGOTo43gDiI+RMVbt4OLbMbdBhI8qyZuDD+?=
- =?us-ascii?Q?PPSyqpOTJpoxQGACNg2R6M4386Ioe3joj+nTA+7RnWR22BnXSzDLvMQh1AZQ?=
- =?us-ascii?Q?GKTDTh+Y8+kcqfmlJsgCahaiF5t1JBlYmJLjzaSm0C7GULIeUQUqvxxWXHN5?=
- =?us-ascii?Q?5v5K1zgBD7hyKznO8n0CrfY5SqL5Lxy6oXGpOPwberiq1yRHi0pSnRP27bgu?=
- =?us-ascii?Q?px2IDFHEr0PrIMzkj7LJe3V61NzijGrBGKtbx7ukuB91uPzZZBRST2ImpxX8?=
- =?us-ascii?Q?MlEtXA6q6hoR4fTmeSP8ztr/6v73vL6+CxVa4AzMLZtG1g2iQWp+2YCEjYPC?=
- =?us-ascii?Q?8edz74OlmjtCusFgPxlQYoXqltxKFlv0avo0yDnD2x0tx46+vkvAFbKIeDAc?=
- =?us-ascii?Q?m4vHxHGmXKDUV5njaa7oQ73syyae7a6ubdXLsyC6Oo6jCveKuUF7QQbbFrRT?=
- =?us-ascii?Q?2LlI9xL7JWN9O4zS3ZeclIxOnKSW3c2C8OWifABX0zxPu79HRD3+DbQgwA0l?=
- =?us-ascii?Q?vVekKItAN/SYxmvUiF60cH/eX0A9HyAe6234RGrZHtecTTzA8fBek37dwepQ?=
- =?us-ascii?Q?BiYd4xnwfeSLqOFVMG1Qp4oCDUU3xA86gxec5Dua+IxhuauLYy83nB1pWSpt?=
- =?us-ascii?Q?lpSSbvj4kkCtfnPoUMBmFv3rCpnkPUhwnmEY1xAW8VGY1AXkRDZlz1fMUwOe?=
- =?us-ascii?Q?tf6u0XSVbeb1zcgvMqLVCVmcU1AKwvpFSPtnQlBfLeWIdNWGVcSjzKwBCaPN?=
- =?us-ascii?Q?atBNqC7QAacHMDfbf+8rv35RFfYmb3yJszfEGpXI4mY9ogRHb3rz7icU1GOw?=
- =?us-ascii?Q?C66jlw91RRUXpywPAH46bOpnSWrQJ5iLBBhZGzKZ+SFQ8p5xsXvUfepmJvfu?=
- =?us-ascii?Q?Boecr7L+kGrA4bYzgeQyeZJZFPy5Eq2phFp2TvVd40J95ZtG3DRQIf6b9Jl4?=
- =?us-ascii?Q?AxEXYn537CmhSTPrY6aW8lnv450V3hebN+LMFdMykc/3HiO+ZtVc5IyXlxA/?=
- =?us-ascii?Q?WhS0Xx/4Crux2zWfsQnnsOM96BGup+hIAZQoAMqSaHwp0G6yP3qXPNvtUTI6?=
- =?us-ascii?Q?wWBSQV+xsWCxhHMvIVg9lmVolUCibkEUzDG0oUy58ln5J7BHYjBKJ2Pc+d+p?=
- =?us-ascii?Q?smMOUjl4JWImOBi9qfPvZKmEdoncoktw4y19M6FXNMmh6PQ3359QzpTQvFFd?=
- =?us-ascii?Q?rrTUlIukxixZAvA1LOgp2LACZe9tKWHs?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 16:55:49.0926
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 856e779d-4827-4e7f-b87b-08dcafef4c5c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB78.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8189
+In-Reply-To: <874j8889ch.ffs@tglx>
 
-On Mon, Jul 29, 2024 at 10:01:10PM +0800, kernel test robot wrote:
- 
-> All warnings (new ones prefixed by >>):
+Hello Thomas,
+
+On Mon, Jul 29, 2024 at 06:13:34PM +0200, Thomas Gleixner wrote:
+> On Mon, Jul 29 2024 at 07:06, Breno Leitao wrote:
+> > I've been running some experiments with failslab fault injector running
+> > to detect a different problem, and the machine always crash with the
+> > following stack:
+> >
+> > 	can not alloc irq_pin_list (-1,0,20)
+> > 	Kernel panic - not syncing: IO-APIC: failed to add irq-pin. Can not proceed
+> >
+> > 	Call Trace:
+> > 	 panic
+> > 	   _printk
+> > 	   panic_smp_self_stop
+> > 	   rcu_is_watching
+> > 	   intel_irq_remapping_free
 > 
-> >> drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:186: warning: Function parameter or struct member 'vintfs' not described in 'tegra241_cmdqv'
-> >> drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:186: warning: Excess struct member 'vtinfs' description in 'tegra241_cmdqv'
+> This completely lacks context. When does this happen? What's the system
+> state? What has intel_irq_remapping_free() to do with the allocation path?
+
+Sorry, let me clarify it a bit better:
+
+1) This happens when the machine is booted up, and being under stress
+2) This happens when I have failslab fault injection enabled.
+3) The machine crashes after hitting this error.
+4) This is reproducible with `stress-ng` using the `--aggressive` parameter
+5) This is the full stack (sorry for not decoding the stack, but if you
+   need it, I am more than happy to give you a decoded stack)
+
+
+ 04:12:34  can not alloc irq_pin_list (-1,0,20)
+           Kernel panic - not syncing: IO-APIC: failed to add irq-pin. Can not proceed
+           CPU: 11 UID: 0 PID: 335023 Comm: stress-ng-dev Kdump: loaded Tainted: G S          E    N 6.10.0-12563-gdb0610128a16 #48
+
+           Call Trace:
+            <TASK>
+            panic+0x4e9/0x590
+            ? _printk+0xb3/0xe0
+            ? panic_smp_self_stop+0x70/0x70
+            ? rcu_is_watching+0xe/0xb0
+            ? intel_irq_remapping_free+0x30/0x30
+            ? __add_pin_to_irq_node+0xf4/0x2d0
+            ? rcu_is_watching+0xe/0xb0
+            mp_irqdomain_alloc+0x9ab/0xa80
+            ? IO_APIC_get_PCI_irq_vector+0x850/0x850
+            ? __kmalloc_cache_node_noprof+0x1e0/0x360
+            ? mutex_lock_io_nested+0x1420/0x1420
+            irq_domain_alloc_irqs_locked+0x25d/0x8d0
+            __irq_domain_alloc_irqs+0x80/0x110
+            mp_map_pin_to_irq+0x645/0x890
+            ? __acpi_get_override_irq+0x350/0x350
+            ? mutex_lock_io_nested+0x1420/0x1420
+            ? lockdep_hardirqs_on_prepare+0x400/0x400
+            ? mp_map_gsi_to_irq+0xe6/0x1b0
+            acpi_register_gsi_ioapic+0xe6/0x150
+            ? acpi_unregister_gsi_ioapic+0x40/0x40
+            ? mark_held_locks+0x9f/0xe0
+            ? _raw_spin_unlock_irq+0x24/0x50
+            hpet_open+0x313/0x480
+            misc_open+0x306/0x420
+            chrdev_open+0x218/0x660
+            ? __unregister_chrdev+0xe0/0xe0
+            ? security_file_open+0x3d4/0x740
+            do_dentry_open+0x4a1/0x1300
+            ? __unregister_chrdev+0xe0/0xe0
+            vfs_open+0x7e/0x350
+            path_openat+0xb46/0x2740
+            ? kernel_tmpfile_open+0x60/0x60
+            ? lock_acquire+0x1e4/0x650
+            do_filp_open+0x1af/0x3e0
+            ? path_openat+0x2740/0x2740
+            ? do_raw_spin_lock+0x12d/0x270
+            ? spin_bug+0x1d0/0x1d0
+            ? _raw_spin_unlock+0x29/0x40
+            ? alloc_fd+0x1e6/0x640
+            do_sys_openat2+0x117/0x150
+            ? build_open_flags+0x450/0x450
+            ? lock_downgrade+0x690/0x690
+            __x64_sys_openat+0x11f/0x1d0
+            ? __x64_sys_open+0x1a0/0x1a0
+            ? do_syscall_64+0x36/0x190
+            do_syscall_64+0x6e/0x190
+            entry_SYSCALL_64_after_hwframe+0x4b/0x53
+           RIP: 0033:0x7f6c406fd784
+           Code: 24 20 eb 8f 66 90 44 89 54 24 0c e8 d6 88 f8 ff 44 8b 54 24 0c 44 89 e2 48 89 ee 41 89 c0 bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 77 34 44 89 c7 89 44 24 0c e8 28 89 f8 ff 8b 44
+           RSP: 002b:00007fff72413a70 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
+           RAX: ffffffffffffffda RBX: 00007f6c408c43a8 RCX: 00007f6c406fd784
+           RDX: 0000000000000800 RSI: 000055759a5fc910 RDI: 00000000ffffff9c
+           RBP: 000055759a5fc910 R08: 0000000000000000 R09: 0000000000000001
+           R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000800
+           R13: 00007fff72413c90 R14: 000055759a5fc910 R15: 00007f6c408c43a8
+            </TASK>
+
+> > This happens because add_pin_to_irq_node() function would panic if
+> > adding a pin to an IRQ failed due to -ENOMEM (which was injected by
+> > failslab fault injector).  I've been running with this patch in my test
+> > cases in order to be able to pick real bugs, and I thought it might be a
+> > good idea to have it upstream also, so, other people trying to find real
+> > bugs don't stumble upon this one. Also, this makes sense in a real
+> > world(?), when retrying a few times might be better than just
+> > panicking.
 > 
+> While it seems to make sense, the reality is that this is mostly early
+> boot code. If there is a real world memory allocation failure during
+> early boot then retries will not help at all.
+
+This is not happening at early boot, this is reproducible when running
+stress-ng in this aggressive mode.
+
+Since I have failslab injecting a kmalloc fault,
+__add_pin_to_irq_noder() returns -ENOMEM, which causes the undesired
+panic().
+
+> > Introduce a retry mechanism that attempts to add the pin up to 3 times
+> > before giving up and panicking. This should improve the robustness of
+> > the IO-APIC code in the face of transient errors.
 > 
-> vim +186 drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-> 
->    160
->    161  /**
->    162   * struct tegra241_cmdqv - CMDQ-V for SMMUv3
->    163   * @smmu: SMMUv3 device
->    164   * @base: MMIO base address
->    165   * @irq: IRQ number
->    166   * @num_vintfs: Total number of VINTFs
->    167   * @num_vcmdqs: Total number of VCMDQs
->    168   * @num_lvcmdqs_per_vintf: Number of logical VCMDQs per VINTF
->    169   * @vintf_ids: VINTF id allocator
+> I'm absolutely not convinced by this loop heuristic. That's just a bad
+> hack.
 
->    170   * @vtinfs: List of VINTFs
+I will not disagree with you here, but I need to use this patch in order
+to be able t keep the system not panicking and stable while fault
+injecting slab errors and trying to reproduce a real bug in the network
+stack.
 
-s/vtinfs/vintfs
-
-Will include the typo fix in next ver.
-
-Thanks
-Nicolin
-
->    171   */
->    172  struct tegra241_cmdqv {
->    173          struct arm_smmu_device smmu;
->    174
->    175          void __iomem *base;
->    176          int irq;
->    177
->    178          /* CMDQV Hardware Params */
->    179          u16 num_vintfs;
->    180          u16 num_vcmdqs;
->    181          u16 num_lvcmdqs_per_vintf;
->    182
->    183          struct ida vintf_ids;
->    184
->    185          struct tegra241_vintf **vintfs;
->  > 186  };
->    187
-> 
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+Thanks for the review,
+--breno
 
