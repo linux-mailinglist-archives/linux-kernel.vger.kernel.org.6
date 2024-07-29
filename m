@@ -1,101 +1,109 @@
-Return-Path: <linux-kernel+bounces-265889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D163B93F74F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:10:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 455B193F752
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C1EA1C218F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:10:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 753A41C20A9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDC115380A;
-	Mon, 29 Jul 2024 14:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88814153812;
+	Mon, 29 Jul 2024 14:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AxDGDwdQ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="JLaeGXNk"
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA8E1E515;
-	Mon, 29 Jul 2024 14:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DB11E515
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722262198; cv=none; b=roz3jVKSoy0LD7O9/hqK0uDZVGFnt1BvjP0LpuPECHbcZ24SkgYms/LV62fxRLMSDYXv7QoBTDK21J/MWqOPxMGFZ8yhh+eAHjCY9ZUeGFuv7OrffqDv0UVXEoiNuvSA5c023I6LcNaOhr8YSSk1jxMx1bgZfmh19bkU+0dKhHE=
+	t=1722262210; cv=none; b=hdywU1FM0Id4mt/ejx6I7ILddC7ggusWZVXtK8FISfnheYi6TccBR6n2jFuVoouBoFibR6pI2f04QyHw7GF11FmSwvpF5JI6yQCJDmFAn26sG1e+81aEFd4urh8Oig7HZ1RWE/bCT2l7JTESsifTwOASOXhStak7QkJMfY7KK80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722262198; c=relaxed/simple;
-	bh=G2ICX+0B0sJ4OTP8KnB/JRwckHNWcsVzpMUwi7GmNC0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZG/6c94SoQa+eB3J+YrpeDch9Tslvy0HwecYMHDo9KGWtxzzxaBShV3+M1cqafsTAzgNVTRDOx7pd7tkHtkMd36UKQxea5YJWOClJqlLDWfbdSrOrCqTMrw8YhtWeIciWXJzVtmpLBW6nq1FTsp1nC0rdLidpTClQSw6aT01ong=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AxDGDwdQ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=YKMg1eR49nU9mP5BT5H80HJtVwM4UN3XCxiq9AlD6Qs=; b=AxDGDwdQkUIyPfzsG2RzIdV5Jz
-	CMpT6EUqG7pfoDOQoF96JLLvy5tb4Asm5+5cSoZwrrJdg9i5CmZ9U8aTtq7VQhQaAJbYDGCkt+VvI
-	jIME6iXfONJePp9guNLFtNktysPG1T8zX6EZ99tJydbg2CbCf8gd7fDLMM5dIPSYjTnc6rFhMmpca
-	MU9w1vQPUUOC2SG0KNb6JXnvQRF6ulWJQtgV1x3H567bMse2x/jdm4MzAi2ih+Xa+RPEmrSTL0uQX
-	/QgQfHAdY5pe2Fi2CD+7FeS89eN4nXl5/PY/MTliZ9iOKUoq3m80rd8/vSsUzadjWHme5FZOoAltJ
-	vCE+TFkA==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sYR4U-0000000BW64-0izi;
-	Mon, 29 Jul 2024 14:09:54 +0000
-Message-ID: <c0e5978b-7c11-4657-bd07-9962cd04bf9a@infradead.org>
-Date: Mon, 29 Jul 2024 07:09:52 -0700
+	s=arc-20240116; t=1722262210; c=relaxed/simple;
+	bh=vyFLUUl3RqBsYrKATy7kglM3lc3UZ7rHLTHg7tKfzYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vB4k3GSg09zLIzBK7HJ+4Efnkc2uPbJOfQ41fn7wuZFw/0qU2w6WAAYjubWzNH+TQw0nzGGrJgxzuFvHIaAUMdt+SNYpeyuUprcU+qBbijoLb6be6JGn0/wA35Xv1whmuBx/wPevZyCqTfXPvNAi5hciA4tbK6Im2jbi37tD3LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=JLaeGXNk; arc=none smtp.client-ip=83.166.143.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WXgGv2Q5yzHBp;
+	Mon, 29 Jul 2024 16:09:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1722262199;
+	bh=SIWtCB8Vnu1NtLQ2ovdqmSr4f6/uzaKar+Jlyb4V5Ws=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JLaeGXNk5g2EqmYDsO5/GLJzLkp3Zqbq00iwlNsEmkVnVfRnCQI8FzHv2AarIn47/
+	 roCNajCc+rcety/GEYRv+KxCpE7ZnH2b8ql9frpq2REcpoVO0ZOkcgmSn/Y4SydR4g
+	 5vfH71J9TGVJmjAuYhXF1O3QMIMxDQzccIuaO8Ww=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WXgGt2HdNzCSQ;
+	Mon, 29 Jul 2024 16:09:58 +0200 (CEST)
+Date: Mon, 29 Jul 2024 16:09:56 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jann Horn <jannh@google.com>
+Cc: David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	James Morris <jmorris@namei.org>, Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to
+ ptrace_may_access()
+Message-ID: <20240729.cho6saegoHei@digikod.net>
+References: <20240729125846.1043211-1-mic@digikod.net>
+ <CAG48ez3DzxGMWN9GDhSqpHrDJnZDg2k=VEMD_DFiET5yDr07rw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] bitmap: Rename module
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Yury Norov <yury.norov@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kees@kernel.org, David Gow <davidgow@google.com>,
- John Hubbard <jhubbard@nvidia.com>, kernel@collabora.com
-References: <20240726110658.2281070-1-usama.anjum@collabora.com>
- <20240726110658.2281070-3-usama.anjum@collabora.com>
- <ZqUvy_h4YblYkIXU@yury-ThinkPad>
- <85f575b4-4842-4189-9bba-9ee1085a5e80@collabora.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <85f575b4-4842-4189-9bba-9ee1085a5e80@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez3DzxGMWN9GDhSqpHrDJnZDg2k=VEMD_DFiET5yDr07rw@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-
-
-On 7/29/24 1:07 AM, Muhammad Usama Anjum wrote:
-> On 7/27/24 10:35 PM, Yury Norov wrote:
->> On Fri, Jul 26, 2024 at 04:06:57PM +0500, Muhammad Usama Anjum wrote:
->>> Rename module to bitmap_kunit and rename the configuration option
->>> compliant with kunit framework.
->>
->> ... , so those enabling bitmaps testing in their configs by setting
->> "CONFIG_TEST_BITMAP=y" will suddenly get it broken, and will likely
->> not realize it until something nasty will happen.
-> CONFIG_TEST_BITMAP was being enabled by the kselftest suite lib. The bitmap
-> test and its config option would disappear. The same test can be run by
-> just enabling KUNIT default config option:
+On Mon, Jul 29, 2024 at 03:49:29PM +0200, Jann Horn wrote:
+> On Mon, Jul 29, 2024 at 2:59 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > A process can modify its parent's credentials with
+> > KEYCTL_SESSION_TO_PARENT when their EUID and EGID are the same.  This
+> > doesn't take into account all possible access controls.
+> >
+> > Enforce the same access checks as for impersonating a process.
+> >
+> > The current credentials checks are untouch because they check against
+> > EUID and EGID, whereas ptrace_may_access() checks against UID and GID.
 > 
-> KUNIT_ALL_TESTS=y enables this bitmap config by default.
+> FWIW, my understanding is that the intended usecase of
+> KEYCTL_SESSION_TO_PARENT is that command-line tools (like "keyctl
+> new_session" and "e4crypt new_session") want to be able to change the
+> keyring of the parent process that spawned them (which I think is
+> usually a shell?); and Yama LSM, which I think is fairly widely used
+> at this point, by default prevents a child process from using
+> PTRACE_MODE_ATTACH on its parent.
+
+About Yama, the patched keyctl_session_to_parent() function already
+check if the current's and the parent's credentials are the same before
+this new ptrace_may_access() check.  So this change should be OK with
+Yama and most use cases.
+
 > 
->>
->> Sorry, NAK for config rename.
->>  
+> I think KEYCTL_SESSION_TO_PARENT is not a great design, but I'm not
+> sure if we can improve it much without risking some breakage.
+> 
 
-I agree with Yury. Using KUNIT takes away test coverage for people who
-are willing to run selftests but not use KUNIT.
+I think this is a security issue that a process can change another
+process's credentials.  If the main use cases is for shell commands, it
+should be OK.
 
+The alternative would be to restore the key_session_to_parent LSM hook
+[1], and update most LSMs to block this kind of credential tampering,
+which will lead to the same result but with only partial users being
+protected.
 
--- 
-~Randy
+[1] commit 3011a344cdcd ("security: remove dead hook key_session_to_parent")
 
