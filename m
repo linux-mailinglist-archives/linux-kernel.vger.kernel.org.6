@@ -1,149 +1,89 @@
-Return-Path: <linux-kernel+bounces-265058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58C9093EC01
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 05:50:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89DA993EC06
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 05:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0803A1F21336
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E53E1F21B6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34F881AC7;
-	Mon, 29 Jul 2024 03:50:05 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0C978276;
-	Mon, 29 Jul 2024 03:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25ADC8121F;
+	Mon, 29 Jul 2024 03:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oUoxZGvT"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE367F7C3
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 03:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722225005; cv=none; b=Ur3FYFcHu9ZtefpPsEI4TQOxAUDQssH4UR8XSK5bdrlk+wK8q5O6Sf4INJKCF092PU5BxLRn7rzJeXeDhyafJsVTrztf9gjiNdTsQeBWSY+OKZWqthDzYJIetXdxYH6LL90APMl+gDIE1R8XsrsF51C9bYS+YLBh0vvFJt9XLkg=
+	t=1722225086; cv=none; b=obpb0lwNwlE97pG0aAaDjRfkj4jDoqYt2eD6cjeKEKuTfj24knIcwQgS8aIcn3FZjlarb6TKPqydDnnpjZyGZ3gmescwHNtH39aIg5Yp6vZcvCx/jsfX4ZJhE5sH2HwmG69i93ovfHcx0TLjGHmx5j982H8M9BbCvoZmTQli1Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722225005; c=relaxed/simple;
-	bh=d9ugLOY3YSPTwydIDtkHiCrwApM0k3T2ez6oBbM0aDk=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=oGJ60s2V6kps665vy8NMhyOmMCvfSdrS2u6ezpk529cTmSXcTPdkN1gp0VvHsuLQHDQUi4FHLXlE+Jl61gAse6ryk78nRPUYnYKBCS2ILt524tSixNy/MTs+w9vKmdYymjYmU69MeTkbmq7YtltMjD5QUOCZr2b5oIX284FOy7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8CxruthEadma18DAA--.11862S3;
-	Mon, 29 Jul 2024 11:49:53 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMCxf8deEadmNiIEAA--.20240S3;
-	Mon, 29 Jul 2024 11:49:53 +0800 (CST)
-Subject: Re: [PATCH] KVM: Loongarch: Remove undefined a6 argument comment for
- kvm_hypercall
-To: WangYuli <wangyuli@uniontech.com>, Huacai Chen <chenhuacai@kernel.org>
-Cc: Dandan Zhang <zhangdandan@uniontech.com>, zhaotianrui@loongson.cn,
- kernel@xen0n.name, kvm@vger.kernel.org, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, Wentao Guan <guanwentao@uniontech.com>,
- baimingcong@uniontech.com
-References: <6D5128458C9E19E4+20240725134820.55817-1-zhangdandan@uniontech.com>
- <c40854ac-38ef-4781-6c6b-4f74e24f265c@loongson.cn>
- <CAAhV-H5R_kamf=YJ62hb+iFr7Y+cvCaBBrY1rdk_wEEq4+6D_w@mail.gmail.com>
- <a9245b66-be6e-7211-49dd-a9a2d23ec2cf@loongson.cn>
- <CAAhV-H7Op_W0B7d4uQQVU_BEkpyQmwf9TCxQA9bYx3=JrQZ8pg@mail.gmail.com>
- <9bad6e47-dac5-82d2-1828-57df3ec840f8@loongson.cn>
- <DB945E243D91EB2F+df447e7b-ddd6-459d-9951-d92fcfceb92c@uniontech.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <a984a8a7-135a-934f-f3f0-e77d6ae59e52@loongson.cn>
-Date: Mon, 29 Jul 2024 11:49:50 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1722225086; c=relaxed/simple;
+	bh=r/JpuUdV1/Q5QNt180mJzf5qoQlTuP5Ec5tH6UZGmZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gsMK9ou9oLKJ3b/WQFg1Jo63dJC8SeO98qttVXs0qhienYj2vBW7VHCt65xRft/wmhh1Rk288ZX42Xc9XFMKXf15nw2SYlvGKPSXWE6u4qyaCgSHNfuIZ/o4kz3d5XdyF04ywal5uI0yQHNSptR1+evAxPg4u/QXUhBWWTviK6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oUoxZGvT; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=yAJ5Bm9rr84H9SSEudLui4/PD79oow3oFLakZDURc/4=; b=oUoxZGvT69EmvgCWAJt3LNCltZ
+	W5hCcF6P0/uYLx+QC78e1zrcq2iRf4jJbfIcYdzP7/tbIl4KxIzaJjlUiKnQtYmXatAYhrf4LWjod
+	v1ATEaTPmsgkltgSLiYXPwCZiR7BFHXDCEG4jNqmZyLniWE39fsfd14A6pfdGF7uOr5PQOQGPhV38
+	aHHceC6XOHDTAQfikenOFvCHgpN3jVsRBMkrKT1Pw8afFbdPh0AGu8en1InpEjPfS573yz4im+0/L
+	eZJiTjZ5ihxhj6//mkvnkT9vAf4HjOjFCWa9n1MIalTT41wMN6EBRNYushvR5oOLJ8oSc5VEwIjnW
+	DrVvFmZQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sYHPf-0000000D7yD-2rAD;
+	Mon, 29 Jul 2024 03:51:07 +0000
+Date: Mon, 29 Jul 2024 04:51:07 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, ying.huang@intel.com,
+	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com,
+	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com,
+	kasong@tencent.com, linux-kernel@vger.kernel.org, mhocko@suse.com,
+	minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com,
+	senozhatsky@chromium.org, shakeel.butt@linux.dev,
+	shy828301@gmail.com, surenb@google.com, v-songbaohua@oppo.com,
+	xiang@kernel.org, yosryahmed@google.com,
+	Chuanhua Han <hanchuanhua@oppo.com>
+Subject: Re: [PATCH v5 3/4] mm: support large folios swapin as a whole for
+ zRAM-like swapfile
+Message-ID: <ZqcRqxGaJsAwZD3C@casper.infradead.org>
+References: <20240726094618.401593-1-21cnbao@gmail.com>
+ <20240726094618.401593-4-21cnbao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <DB945E243D91EB2F+df447e7b-ddd6-459d-9951-d92fcfceb92c@uniontech.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxf8deEadmNiIEAA--.20240S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7ZF45Wry3Jw4DGw13Xr4UWrX_yoW8Gw4fpa
-	yUt3W3CFnaqr4kA3W3Aw1UZr1rGr4fWanFqwn5Jr1UCrs8GFn3t3yxtwn0yFykW3yFqFyY
-	vF40q345XFy5ZFXCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E
-	14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
-	CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1x
-	MIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnI
-	WIevJa73UjIFyTuYvjxU7_MaUUUUU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240726094618.401593-4-21cnbao@gmail.com>
 
+On Fri, Jul 26, 2024 at 09:46:17PM +1200, Barry Song wrote:
+> -			folio = vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0,
+> -						vma, vmf->address, false);
+> +			folio = alloc_swap_folio(vmf);
+>  			page = &folio->page;
 
+This is no longer correct.  You need to set 'page' to the precise page
+that is being faulted rather than the first page of the folio.  It was
+fine before because it always allocated a single-page folio, but now it
+must use folio_page() or folio_file_page() (whichever has the correct
+semantics for you).
 
-On 2024/7/29 上午11:03, WangYuli wrote:
-> Hi Bibo and Huacai,
-> 
-> 
-> Ah... tell me you two aren't arguing, right?
-> 
-> 
-> Both of you are working towards the same goal—making the upstream
-> 
-> code for the Loongarch architecture as clean and elegant as possible.
-> 
-> If it's just a disagreement about how to handle this small patch,
-> 
-> there's no need to make things complicated.
-> 
-> 
-> As a partner of yours and a community developer passionate about
-> 
-> Loongson CPU, I'd much rather see you two working together
-> 
-> harmoniously than complaining about each other's work. I have full
-> 
-> confidence in Bibo's judgment on the direction of KVM for Loongarch,
-> 
-> and I also believe that Huacai, as the Loongarch maintainer, has always
-> 
-> been fulfilling his responsibilities.
-> 
-> 
-> You are both excellent Linux developers. That's all.
-> 
-> 
-> To be specific about the controversy caused by this particular commit,
-> 
-> I think the root cause is that the KVM documentation for Loongarch
-> 
-> hasn't been upstreamed. In my opinion, the documentation seems
-> 
-> ready to be upstreamed. If you're all busy with more important work,
-> 
-> I can take the time to submit them and provide a Chinese translation.
-> 
-> 
-> If this is feasible, it would be better to merge this commit after that.
-Yuli,
-
-The argument is normal in the work and life :)
-
-You are right, KVM document is important and any contribution is welcome.
-
-Regards
-Bibo Mao
-> 
-> 
-> Best wishes,
-> 
-> 
-> -- 
-> 
-> WangYuli
-> 
-> 
+Also you need to fix your test suite to notice this bug.  I suggest
+doing that first so that you know whether you've got the calculation
+correct.
 
 
