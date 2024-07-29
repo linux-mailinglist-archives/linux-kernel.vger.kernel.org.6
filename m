@@ -1,148 +1,140 @@
-Return-Path: <linux-kernel+bounces-265163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC0C93ED75
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:28:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630A993ED79
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D1DA1C21C10
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:28:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1348D282BE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C128084A36;
-	Mon, 29 Jul 2024 06:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB72D84D34;
+	Mon, 29 Jul 2024 06:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="cjfHh76B"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="E6FW32CY"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9966C8287E
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD704328B6;
+	Mon, 29 Jul 2024 06:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722234505; cv=none; b=s8z7TIxQ3qEpxGp9g5XpjBw7BuHDcRidN405d86xjX8sM0ep882pWKuwHlDxE13H/KnEpEoG1hlFMTeyMce6IOuZK4SjT6XHCng5GGkO8xE3OUbxQLmKJsxYlsU5Z813tTNlNysiF+X/3ZYKEN9K6t7TeYtZtgx9THulzdiaP9E=
+	t=1722234560; cv=none; b=jqv6LphloLPE+/H5uRDx2Hsx/2DXJ3j2Wxv47fDd8dkMzjnBjWZjjAw+bcPUbpjsFkXUbnpZV3vuWHIJ44JbytgA2wR7L4lvQc9W5KPx9oIvz7PnOBe+OXk/pdY8qDMq9AYU6veAm3warT67fJ9ZHd/x6t1elk+AF6lc9j45MqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722234505; c=relaxed/simple;
-	bh=nHiEo1ErGhfWHnITXXyXVIz+TpkqlULio0NdjcvTGxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iv0+wN2OCK4VpkvlvwRjonOjH8e4ncJdBEY/zNQ7lGnRIiEsfpHBWmiRUQPuPTPKrBAaZ0hZjLLohdb93pb50Cs/OeaZrs9v63IgKYrdQJMWhYkdaDoF4yppxk5SufDGINZ3Yc0hjGy7cFY1sFS9T23i1ify5+CxbM0YXOtNpd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=cjfHh76B; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70d28023accso1943417b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 23:28:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1722234503; x=1722839303; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9LhZsel+ZXOFBLouKmnPn+e0gC2RjgaR8JO/hzKLRAg=;
-        b=cjfHh76BjPOLV13RfB/kPgZkdjxTGgdLy8kbnka4Rr+6sswIFcPqm9Lrzo9YXsibHD
-         MBwjXSaCJgXp4ry+syXpSBT6+31jlWvLKoWbmNQhZ0+DPjOiDYJ+cA92CptVxjhZK10j
-         L1KI5OtUV8b8rV1L3uznFRcO7cejTq4Ja34uoJLRfEpLXbA1PfiwKax/bKRdIkbTR3OF
-         qEsboOn6QVvWnQdWKlQoZ+MeaWNOag7M29znUz7P8a1ZSoBy+Fhrv57WhPttKgo7M691
-         JRXI60WfsuLKBTqmyB67fBYDFHDJgg26Bui624siTg/qupNPqjpIWetmaOMDQl/MISDa
-         dpcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722234503; x=1722839303;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9LhZsel+ZXOFBLouKmnPn+e0gC2RjgaR8JO/hzKLRAg=;
-        b=FHuSFEyjnQZRt+QxmwafgQLkSdlmL/VcNDKIDHDNCsvCCbi1+vkDA31NNEvSTmDq5c
-         JiK8/6TWgj0UJrt3xGiA1duL0I3+nVvJZ77rIjAiRuu0vkgzE6uaaytMkYJXzUipCbW7
-         4Ccv1VHQXdXO6Huqrq2Y0EEsq9IL1K18uqW8q8Pq5RiqQm9JS5hnNNNht4ZgvuH11UhN
-         57C3YkH5iwR+saP+FBZg+/2ig+UQ8cYNpBU/ShBgyYxmsd7yvRYLnaGY+PzR2Dn9J6dy
-         ksKIWu3eyjMkPHkN08Z1TuSGDHOGYpkp08jBAwBIsEMqGlm8QRaVykS+YiiBTRKYEk1h
-         3A3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXM5z0bg7Anq8J4u2VTteqofLE/f9w8Slp13faVKMBuxMszA009KS+cG/2hmIP5M2nzD5T45rboKybLU2+F8fwwg+UFVyijMWHB3nT8
-X-Gm-Message-State: AOJu0YzqnmTgOlJgT/FYPjs2UZEdqFyp1apjla+XxpftK+bpQXabDLUa
-	gdN0RBY0xm00rBimD+4gRm05tAjtiS/HLrwNYvIv4gLtcyaJBhy0oPxOSJugjAw=
-X-Google-Smtp-Source: AGHT+IFxLwq27q0Hdj/w8FwvESdnHQBwsPuqDTmOipebs/uzejoVKO14hWPOPPbb4dFbQ7eyO/Gv0w==
-X-Received: by 2002:a05:6a00:6f64:b0:706:6bdc:4de5 with SMTP id d2e1a72fcca58-70ecea1dd24mr4120390b3a.7.1722234502813;
-        Sun, 28 Jul 2024 23:28:22 -0700 (PDT)
-Received: from sunil-laptop ([106.51.198.16])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead715540sm6132019b3a.45.2024.07.28.23.28.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Jul 2024 23:28:22 -0700 (PDT)
-Date: Mon, 29 Jul 2024 11:58:13 +0530
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: Haibo Xu <haibo1.xu@intel.com>
-Cc: xiaobo55x@gmail.com, ajones@ventanamicro.com,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Gavin Shan <gshan@redhat.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	James Morse <james.morse@arm.com>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] ACPI: NUMA: initialize all values of acpi_early_node_map
- to NUMA_NO_NODE
-Message-ID: <Zqc2fQr4KJrJW9IB@sunil-laptop>
-References: <20240729035958.1957185-1-haibo1.xu@intel.com>
+	s=arc-20240116; t=1722234560; c=relaxed/simple;
+	bh=rKtXm5j9uGr85ju3QPUS0Y0jZZMtc/lRWL71qwrZ+aQ=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=bHga/UNdyYWiRsTwHPUA2mdvDlC+h7EzWrCoIUhZ7Fqls0aWFLtKzA/6cBnyFt23aUIEHJ8NFsuAkzmkbWVRPzyA8H0CcTtEsOsfWWpYvI8tHxIbX/KHE8RF2GR7pFe9Tzn6+isFr1cjH/2MOc5uRaHTJ9jFlQKBR1s5r3ZU7fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=E6FW32CY; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729035958.1957185-1-haibo1.xu@intel.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1722234554;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zuLO0Hu9JrNxFAuTuQzFrX0yn6O99topF2F+vT4EkqA=;
+	b=E6FW32CYSeBOTn4pufFUmDh2PV0zA8RkoOvsbBbpPsmVaumq8tXY/hb0xRD6TcDxESw8n/
+	vvi3ixqcsX5ogQs7WNylIFZZXnA2kKCGRkOd+b2I30MdOTHK1CNYKXpCy+RTBAuMGSr9Bn
+	+gg8IJnwvKC+w0jU6ho30COFfqwzh2DXX4hv5czsU5cVXokx0BctpZRfNYyBNd40ht45if
+	/9HzH4QuhrZfxZ/IIkmDcLWir1EQY0cadPkFZUaazJSVjeU1Yv5JsvDnmjAmLwycLguBxF
+	zveA/w6JTDVwYcyhp68VZtyd4RBX6x+wiSFHvbqPjQhYFhoHy0DkvznIhehynw==
+Date: Mon, 29 Jul 2024 08:29:13 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Greg KH <gregkh@linuxfoundation.org>, mcgrof@kernel.org,
+ jtornosm@redhat.com
+Cc: Andrew Lunn <andrew@lunn.ch>, UNGLinuxDriver@microchip.com,
+ davem@davemloft.net, edumazet@google.com, f.fainelli@gmail.com,
+ kuba@kernel.org, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, lucas.demarchi@intel.com, masahiroy@kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com, woojung.huh@microchip.com
+Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy
+ module
+In-Reply-To: <2024072923-galleria-gumdrop-5c56@gregkh>
+References: <bcc81ea0-78e1-476e-928c-b873a064b479@lunn.ch>
+ <20240726121530.193547-1-jtornosm@redhat.com>
+ <b96d9801-d370-4ddd-97fd-5eac2a2656f4@lunn.ch>
+ <931b582808f237aa3746c5b0a96b3665@manjaro.org>
+ <3e895811-ad23-4687-b440-5375ad2af2ff@lunn.ch>
+ <a520ee4da331c8edb99f2c14d22a3531@manjaro.org>
+ <3a3f49b5-45b2-4999-a364-60d035bbd11f@lunn.ch>
+ <98d200777d62dc9b447557b2758613e5@manjaro.org>
+ <3a6ef66a-e98f-44df-9fef-3b26bede4c07@lunn.ch>
+ <36bfb8da08b90fb14108e99853f49d0f@manjaro.org>
+ <2024072923-galleria-gumdrop-5c56@gregkh>
+Message-ID: <b8a2831c4f2d49469d5af04c03bb1a5b@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Mon, Jul 29, 2024 at 11:59:55AM +0800, Haibo Xu wrote:
-> Currently, only acpi_early_node_map[0] was initialized to NUMA_NO_NODE.
-> To ensure all the values were properly initialized, switch to initialize
-> all of them to NUMA_NO_NODE.
-> 
-> Suggested-by: Andrew Jones <ajones@ventanamicro.com>
-> Signed-off-by: Haibo Xu <haibo1.xu@intel.com>
-> ---
->  arch/arm64/kernel/acpi_numa.c | 2 +-
->  arch/riscv/kernel/acpi_numa.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/acpi_numa.c b/arch/arm64/kernel/acpi_numa.c
-> index 0c036a9a3c33..2465f291c7e1 100644
-> --- a/arch/arm64/kernel/acpi_numa.c
-> +++ b/arch/arm64/kernel/acpi_numa.c
-> @@ -27,7 +27,7 @@
->  
->  #include <asm/numa.h>
->  
-> -static int acpi_early_node_map[NR_CPUS] __initdata = { NUMA_NO_NODE };
-> +static int acpi_early_node_map[NR_CPUS] __initdata = { [0 ... NR_CPUS - 1] = NUMA_NO_NODE };
->  
->  int __init acpi_numa_get_nid(unsigned int cpu)
->  {
-> diff --git a/arch/riscv/kernel/acpi_numa.c b/arch/riscv/kernel/acpi_numa.c
-> index 0231482d6946..ff95aeebee3e 100644
-> --- a/arch/riscv/kernel/acpi_numa.c
-> +++ b/arch/riscv/kernel/acpi_numa.c
-> @@ -28,7 +28,7 @@
->  
->  #include <asm/numa.h>
->  
-> -static int acpi_early_node_map[NR_CPUS] __initdata = { NUMA_NO_NODE };
-> +static int acpi_early_node_map[NR_CPUS] __initdata = { [0 ... NR_CPUS - 1] = NUMA_NO_NODE };
->  
-The change looks good to me. However, I was wondering whether it needs
-"Fixes" tag in which case I think you will have to split this patch into
-two.
+Hello Greg, Jose and Luis,
 
-Otherwise,
-Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
-
-Thanks!
-Sunil
->  int __init acpi_numa_get_nid(unsigned int cpu)
->  {
-> -- 
-> 2.34.1
+On 2024-07-29 08:13, Greg KH wrote:
+> On Mon, Jul 29, 2024 at 06:43:40AM +0200, Dragan Simic wrote:
+>> On 2024-07-28 22:57, Andrew Lunn wrote:
+>> > > In other words, this patch doesn't subtract anything.  Instead, it
+>> > > just
+>> > > adds a weakdep link between the lan78xx and micrel modules, so the
+>> > > kernel
+>> > > itself can report that dependency, which may actually result in one
+>> > > more
+>> > > PHY driver added to a generated initial ramdisk.
+>> >
+>> > So at the moment, does the initramfs contain all PHY modules? I guess
+>> > it does, because you have no knowledge which are actually needed. And
+>> > this does not help you in any way, as you said, it does not subtract
+>> > anything.
+>> 
+>> Basically, an initial ramdisk shouldn't contain any PHY modules that
+>> aren't automatically detected as needed on a particular system, for
+>> which the initial ramdisk is built.  That's how selecting modules
+>> while building the initial ramdisks works.  On the other hand, if it's
+>> some initial ramdisk built by a Linux distribution and intended to
+>> support multiple systems or boards, it may contain whatever the
+>> distribution sees fit.
+>> 
+>> Having weakdeps defined actually does help here.  For example, a Linux
+>> distribution mentioned above no longer needs to hand-craft the rules
+>> for initial ramdisk generation for the PHY modules that should be put
+>> into an initial ramdisk together with the lan78xx driver, if the Linux
+>> distribution chooses to include the lax78xx driver.  Having weakdep(s)
+>> defined makes the kernel do that instead.  Also, there's no point in
+>> including every single PHY driver module, because not all of them are
+>> needed for a particular selection of MAC drivers, which comes from the
+>> intended purpose of the initial ramdisk built by a Linux distribution,
+>> i.e. the target architecture, supported board category, etc.
+>> 
+>> Let's also keep in mind that including all PHY modules into an initial
+>> ramdisk inevitably makes it larger, which often isn't an option for
+>> resource-constrained embedded systems.
 > 
+> resource-constrained embedded systems know their dependancies and their
+> hardware configurations, so I don't see how the weak-deps help at all
+> here.
+> 
+> You are arguing two different things it seems, neither of which this
+> change helps out at all with, so I will provide a:
+> 
+>   Nacked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> here until it gets straightened out.
+
+Quite frankly, all this makes me wonder why weakdeps were merged into
+the mainline kernel [1] with no real consumers?  Perhaps this is good
+time for Jose and Luis to chime in.
+
+[1] 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/include/linux/module.h?id=61842868de13aa7fd7391c626e889f4d6f1450bf
 
