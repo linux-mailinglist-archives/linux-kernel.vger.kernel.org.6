@@ -1,132 +1,128 @@
-Return-Path: <linux-kernel+bounces-265246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EDFD93EE66
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:28:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33C1D93EE69
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2E2B1F212D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:28:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 649711C215D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E9C127E18;
-	Mon, 29 Jul 2024 07:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDF312C475;
+	Mon, 29 Jul 2024 07:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eFsXWBme"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBRL7kxS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328CE84E11
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC5D85931;
+	Mon, 29 Jul 2024 07:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722238073; cv=none; b=tQH7P2NpB7Qq1r8x3U26PoWE3NBdhYa2vz4j3fwg4Q0OSuujFfZkazuRulGINQywvr72ncPrlA7m++JSWLbsMjsK7Uj3/C30wPensXpzq7NUG38cA7mTJb+ks0pKggmtsnkJlnvMkg59Y/gPRDcElxHTNvyZeG9lqGqaO1xFjY4=
+	t=1722238084; cv=none; b=TWFhCORnWmNw47XgpWStFa36RIcNcsmon65IWvvpCWV2xcN7vIXi9KwS+oRDy999SVY7n5U1a0ga4gwd3y7CsVZC0B3vbwu+AHd9kLIM7w4rooTcDgLgLB/pfFnpWc9DVqAcTvjZ2o3l+A32ycpJxkVabwlihyBirwkmEHJcWyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722238073; c=relaxed/simple;
-	bh=g1Bfdx1NZahC3TeP1Q0uSYngscxSAC9NK7v3LPtb4g4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NdxiHfDz0NAaG89If/30l6MSPTPFUbkmYhlYhOuRHrjMXO8DGnvYGFeLPAmRMGyD3DVR0Ovsuva7CtqBH5VD5Viiqvid+tdpwM3v++tpIpLKNuF7F0tSkVQVLkI3W5TMqcj6aLxMQ4H4wnMoY0MSgUcDnRQ/2H7OL9IzkjZdMMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eFsXWBme; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52efcbfacb9so249887e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 00:27:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722238069; x=1722842869; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZzbU8q+FWgrm3i/pjC78LeEzfxb8uIRGDB17iTu2b90=;
-        b=eFsXWBme8AAe5Tgpl7oj6KJNizsd4sLixRGTDUZZsR5/tPdcxJ5Srt3+NV6lghW2wG
-         3zgVFM/3S0K+BZvu8bhTbPT3V3OyULCCRy6MOs16DQI53OHDm8hri7gEU9h5emb41PyP
-         UfCxoCxYqAH3clmnz8YsBLjWppmOZ1vBn4MsU4JAzmhINnIORn/yAHT+Lul9v7B23qpn
-         qn6vupRObr0pLT7p08GWyoeAJkz+OmG4a6S0s8JCr5r9rbUTyt/I+SACugOwfQxG/Rpl
-         kMHuCfhZStI/HMn7teEjen87OHljLMLg8uhMFm8pQwQrZGqLCgRqeLimK1yHYr34x8e3
-         9dvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722238069; x=1722842869;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZzbU8q+FWgrm3i/pjC78LeEzfxb8uIRGDB17iTu2b90=;
-        b=o2XPQEjvU+peaAj0f+pzZE4ycUurHWJ1w743yZrdBYPB2+ddOj5cn6ZVjE5C+mikEh
-         JXn/qiGzGmZV/cjbWJe1ty1AnV2hPn7h1TwnSDMnZD5q6h9nfyEuLo2jmLjyCWtrOffl
-         A4bwsgDvi7LuXHIfGVEGxQDMdMWciqUcIDgCq7CH/5LqwbQhM7/PXv642LjPpTAHHrAt
-         lgmEGF4267RGchRkoT0tfbkC28NlFjp0kXqIC5ntU2cFUP/wtd49/JtEAMjtUfp5y24b
-         4qs/JfHOx7+k8uHVzY0yNCWkxGXQ4EUgvs6DiyLL53Z/7I70GxXCHa1B/OLDZfP7YRbJ
-         W0Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoIXO9uEBFi/EZic9nY85hFSUPQWd5FO2mTTrAwhr02l9ekrlEaehxjvGQrLKJJ1Yl3DBqskf/3ciLcFZuZpQzw14fWGPt6xF0Mkfa
-X-Gm-Message-State: AOJu0YzcWkYYTiXZFLJ+89K5S6HwODHji9jv8Rp8k+is9rSshgLdwKSC
-	ayuLb6rsMO2GCH6jXDLvugG9cl01fXDiC/oUo5Bb+NjCRE4CZuOShyzE3hOZ1Kw=
-X-Google-Smtp-Source: AGHT+IHGka7Vyt+PFTMS4CYDvtnk6UifRKtbJJ+Elb2ByPtE3I5NLETmc6bBkdbUhn4+QGJPOhZ1+g==
-X-Received: by 2002:a05:6512:3b84:b0:52e:9beb:bc09 with SMTP id 2adb3069b0e04-52fd5275421mr4871735e87.3.1722238069148;
-        Mon, 29 Jul 2024 00:27:49 -0700 (PDT)
-Received: from [10.8.0.5] (mleia.com. [178.79.152.223])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5bd127csm1372806e87.89.2024.07.29.00.27.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jul 2024 00:27:48 -0700 (PDT)
-Message-ID: <d760dfb1-b86b-4d1b-a927-575416e780fd@linaro.org>
-Date: Mon, 29 Jul 2024 10:27:36 +0300
+	s=arc-20240116; t=1722238084; c=relaxed/simple;
+	bh=nTe+LEwmiTqq7Wz4+BdXJBXIFgMWqWI6PEk+/MQWfSA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NsJ4bIv6yYQjNEDZErBTSrzFLuoSrya8RGqWFj+7TpIxTlaXOPuRjxbMoQ2Z+FkAVE1TYu9gGB2iA9DSKMhHs+JEQgjwGcxegpPLSeZ4HAr7fzz9nzSPYt9dpx7U80cZHSGlcrz6q4fmF6/wjjte9o1DEaLiAKpDZ4MZPD9WHZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBRL7kxS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5369C4AF0A;
+	Mon, 29 Jul 2024 07:28:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722238083;
+	bh=nTe+LEwmiTqq7Wz4+BdXJBXIFgMWqWI6PEk+/MQWfSA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bBRL7kxSfQNXUNdka0ix/8yVf7BHRiwXNgTER3e7t0qx946gOZTmqLlsz5S0nnMWW
+	 Tgxk0Mh6jf4K7nsiiDbD08Pd3dNz+zRmV60TU7jK3UaAp0c9zC0rTaRe+/kZNwnIqB
+	 6wsznrqbaApYJll3n/BSFBO60h7EZUiwDPC/2sU27rkzuvDTRm8tDdJ3DOzHPcHsOm
+	 0dQKePBvWUXmF+i2ujiOBVx9PA90UgkPDE7YpzGT6JSdainHwQxidDYM9Pp8bE8pPe
+	 tyyIh5aj4CbvuTMZKhfEpssCiPUN0GCxQC9ntdn7Z1twWDAAk/+2jUVvukFX0jHmv5
+	 57x38QTOa3xGg==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52ed741fe46so3220025e87.0;
+        Mon, 29 Jul 2024 00:28:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVO63eK9deuCYkYxuAhtwz8v8fFXEAr+vQvwpWd4CeEpAF2UGwpXMDKhpj0idN/UZPV/g4BmMUHbMIYYHbIiFlRKTGANJW+C5feGpcqWcky1zCNpeKXOF1z7HLof21siEwOUrFv/4IE
+X-Gm-Message-State: AOJu0YwVuWOfged83eWjz6AygZjj4EquUlYZTNrkpkbcb/OX5xKN0jJH
+	yVx7HQdciXjIRUtIDNE8KbMdZVQqR8uVN8b15CxnCOepzECtecqXVlBDfqL2TVMxRCAroEXHwIU
+	oXSjFkbvZ0FnV/TFcUNh23LE1SWc=
+X-Google-Smtp-Source: AGHT+IF6E/EJSyzV/z6BavQ/MNgNZ/Am/TVKHY91KVCycq5PMVyti+hTtB4ojcls+9EnMjH9ZvIbILPAwTFSftdt9IU=
+X-Received: by 2002:a05:6512:458:b0:52e:764b:b20d with SMTP id
+ 2adb3069b0e04-5309b27be39mr4134890e87.28.1722238082058; Mon, 29 Jul 2024
+ 00:28:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] dt-bindings: clock: qcom: Remove required-opps from
- required list on SM8650
-Content-Language: en-US
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Ajit Pandey <quic_ajipan@quicinc.com>, kernel test robot <lkp@intel.com>
-References: <20240720052818.26441-1-quic_jkona@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20240720052818.26441-1-quic_jkona@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <ZqElRH38f_XV3fKK@wunner.de> <20240728220343.40fc64f7@redecorated-mbp>
+In-Reply-To: <20240728220343.40fc64f7@redecorated-mbp>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 29 Jul 2024 09:27:50 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHw0_MicBifz0FdLCOcjjD73AJcM-dyG1J6Ah=BjuQNcw@mail.gmail.com>
+Message-ID: <CAMj1kXHw0_MicBifz0FdLCOcjjD73AJcM-dyG1J6Ah=BjuQNcw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
+To: Orlando Chamberlain <orlandoch.dev@gmail.com>
+Cc: lukas@wunner.de, gargaditya08@live.com, hdegoede@redhat.com, 
+	kekrby@gmail.com, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sharpenedblade@proton.me
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jagadeesh,
+On Sun, 28 Jul 2024 at 14:03, Orlando Chamberlain
+<orlandoch.dev@gmail.com> wrote:
+>
+> On Wed, 24 Jul 2024 18:01:08 +0200, Lukas Wunner Wrote:
+> > On Tue, Jul 23, 2024 at 04:25:19PM +0000, Aditya Garg wrote:
+> > > On Wed, Jul 17, 2024 at 04:35:15PM +0000, Aditya Garg wrote:
+> > > > For the Macs having a single GPU, in case a person uses an eGPU,
+> > > > they still need this apple-set-os quirk for hybrid graphics.
+> > >
+> > > Sending this message again as for some reason it got sent only to
+> > > Lukas:
+> > >
+> > > Full model name: Mac mini (2018) (Macmini8,1)
+> > >
+> > > The drive link below has the logs:
+> > >
+> > > https://drive.google.com/file/d/1P3-GlksU6WppvzvWC0A-nAoTZh7oPPxk/view?usp=drive_link
+> >
+> > Some observations:
+> >
+> > * dmesg-with-egpu.txt:  It seems the system was actually booted
+> >   *without* an eGPU, so the filename appears to be a misnomer.
+> >
+> > * The two files in the with_apple_set_os_efi directory only contain
+> >   incomplete dmesg output.  Boot with log_buf_len=16M to solve this.
+> >   Fortunately the truncated log is sufficient to see what's going on.
+>
+> Hi Lukas, in case it helps, I got the user with the macmini and egpu to
+> get logs that don't have the start cut off [0].
+>
+> >   We could constrain apple_set_os to newer models by checking for
+> >   presence of the T2 PCI device [106b:1802].  Alternatively, we could
+> >   use the BIOS date (DMI_BIOS_DATE in SMBIOS data) to enforce a
+> >   cut-off such that only machines with a recent BIOS use apple_set_os.
+>
+> It might be simpler to match "iBridge" in the DMI bios_version as this
+> indicates that a computer has the T2 (aka iBridge which runs bridgeOS).
+> I don't think there have been any issues from when the downstream T2
+> kernels had apple-set-os unconditionally so it should be fine to enable
+> for all T2 macs at least. This would exclude the T1 Macs with possibly
+> missing trackpad dimensions in applespi that you mentioned [1].
+>
+> On my MacBookPro16,1:
+>
+> $ cat /sys/class/dmi/id/bios_version
+> 1715.60.5.0.0 (iBridge: 19.16.10647.0.0,0)
+>
+> [0]: https://gist.github.com/Redecorating/8111324065016363223b5ce719e48676/
+> [1]: https://lore.kernel.org/all/ZoJPgSlZJ3ZlU2zL@wunner.de/
+>
 
-On 7/20/24 08:28, Jagadeesh Kona wrote:
-> On SM8650, the minimum voltage corner supported on MMCX from cmd-db is
-> sufficient for clock controllers to operate and there is no need to specify
-> the required-opps. Hence remove the required-opps property from the list of
-> required properties for SM8650 camcc and videocc bindings.
-> 
-> This fixes:
-> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@aaf0000:
-> 'required-opps' is a required property
-> 
-> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@ade0000:
-> 'required-opps' is a required property
-> 
-> Fixes: a6a61b9701d1 ("dt-bindings: clock: qcom: Add SM8650 video clock controller")
-> Fixes: 1ae3f0578e0e ("dt-bindings: clock: qcom: Add SM8650 camera clock controller")
-> Reported-by: kernel test robot <lkp@intel.com>
+Thanks, this seems useful.
 
-Well, I believe I reported about this problem way before the change has been merged
-and the problem reported by the robot, however it was not taken into account in time:
-
-https://lore.kernel.org/all/0f13ab6b-dff1-4b26-9707-704ae2e2b535@linaro.org/
-
-> Closes: https://lore.kernel.org/oe-kbuild-all/202407070147.C9c3oTqS-lkp@intel.com/
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-
---
-Best wishes,
-Vladimir
-
+Does this mean we can drop the type1 product name list, and just look
+for 'iBridge' in the type0 version string? Or does that list contain
+non-T2 hardware as well?
 
