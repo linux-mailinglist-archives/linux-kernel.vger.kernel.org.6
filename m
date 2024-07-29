@@ -1,51 +1,92 @@
-Return-Path: <linux-kernel+bounces-265401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 552FE93F0A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:11:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDDC293F0A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5C60284902
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:11:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C20D1C2197A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE04D143734;
-	Mon, 29 Jul 2024 09:10:43 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25D513DBB7;
+	Mon, 29 Jul 2024 09:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NBotca+t";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="14BhT2RB";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NBotca+t";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="14BhT2RB"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1B014263B
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2A1142E8D
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722244243; cv=none; b=mc5QRPfjsbSp8+7s2I9S68hbQdDfsS74+VOBCHv9dwz8ttKrrbCZYNPvxNrXkSAAl+JX8OCI4v7rEv3C0UPS2YZXUMKEc5xWIXQcnn+9Ch2maTk1wx/tz6EwmMZSA8WeNlNGDCa7KyNbmkhv14CEtY7oJHroLIM39Fd0JDvjOfo=
+	t=1722244244; cv=none; b=ArfG4wy7fUrNKOxpAQZMd8SfMY7YV9G+uIoUXaHoocPSi6+M9uxHyGvkaDhs/ft1GO+XuLdtJu1m+gUCwkvzENSXIpz545UbPldNSqoM1UMkgPXv2Owu9ZylVOJFQld/6SkW9J2e/pViBSPgBj52TooLhKz5ETRqWLIyl3lEaPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722244243; c=relaxed/simple;
-	bh=Bu39IAoeotpZQS+JPqNZI0U0fNYKWTYVrHQJZ/FZuEE=;
+	s=arc-20240116; t=1722244244; c=relaxed/simple;
+	bh=BbWAl6iTUX3Xn1n0ukfD0VIqCh2vEyR9AWD2ZEjuvFc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EnPODeUYVERd7ho4oxhFvD020NyUcC9Kdn2m0om2cLjsZsrC8vlScv81tXyDvn4tkb4VCinnFt5xuD8wACqkCXD1YxSShBv7y+qWZQMPuCm+C/v/cbJyQYoUdOQs013tx/MiLWMIarpemwhPdtO/89adL6vV7DYMW4ouiof4O/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=kzsTSNlOSHDaBttjLiiwKyR8slux3Rz695vVkpLghG+V4EzmnrzQoDTeoilhD6U9tKEdNFfV3/SS9pOqwJ81bRdup1fjXxKj89U11CFYATj4TjGqXOLr2RmosaF1UCbaaGavE9MgAhfk3ZLnB4Uc/RB7kjFqviH4FklYZUMhdHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NBotca+t; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=14BhT2RB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NBotca+t; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=14BhT2RB; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DE10A1F78C;
-	Mon, 29 Jul 2024 09:10:39 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6D81A21BC1;
+	Mon, 29 Jul 2024 09:10:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722244241; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0D03v0CNtg8d+Z2YRTExLn0FsjKOf1vcUEKVYVI3qZA=;
+	b=NBotca+t+NBVJkyG1KJ2BeT9oBB/GpLOboqMQvQRyRmYQLl3N6NHlzOVlDWDH1sORtTOhA
+	1zUXHQqSgna1nRsWzLZzaXfnvWLAeI5drBIMYRa/l6YP5SLGieif5frv4j3qGDpo5bK2v7
+	dvqvFn4MiD+m6D0JmS4htP6SQZtPagI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722244241;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0D03v0CNtg8d+Z2YRTExLn0FsjKOf1vcUEKVYVI3qZA=;
+	b=14BhT2RBgWuQS9/HaH/h2wDy/QpKlbdFsF/BybzmpSt4rFaVYQ3UWlxckbnxKScwK1hSUj
+	ZImZpXgjy2e1LlDw==
+Authentication-Results: smtp-out1.suse.de;
 	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722244241; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0D03v0CNtg8d+Z2YRTExLn0FsjKOf1vcUEKVYVI3qZA=;
+	b=NBotca+t+NBVJkyG1KJ2BeT9oBB/GpLOboqMQvQRyRmYQLl3N6NHlzOVlDWDH1sORtTOhA
+	1zUXHQqSgna1nRsWzLZzaXfnvWLAeI5drBIMYRa/l6YP5SLGieif5frv4j3qGDpo5bK2v7
+	dvqvFn4MiD+m6D0JmS4htP6SQZtPagI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722244241;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0D03v0CNtg8d+Z2YRTExLn0FsjKOf1vcUEKVYVI3qZA=;
+	b=14BhT2RBgWuQS9/HaH/h2wDy/QpKlbdFsF/BybzmpSt4rFaVYQ3UWlxckbnxKScwK1hSUj
+	ZImZpXgjy2e1LlDw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9D0651368A;
-	Mon, 29 Jul 2024 09:10:38 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 125F91368A;
+	Mon, 29 Jul 2024 09:10:39 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mLXnH45cp2Z4BgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Mon, 29 Jul 2024 09:10:38 +0000
+	id IAAiO49cp2Z4BgAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Mon, 29 Jul 2024 09:10:39 +0000
 From: Oscar Salvador <osalvador@suse.de>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org,
@@ -58,9 +99,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Vlastimil Babka <vbabka@suse.cz>,
 	Michal Hocko <mhocko@suse.com>,
 	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v2 5/9] arch/powerpc: Teach book3s64 arch_get_unmapped_area{_topdown} to handle hugetlb mappings
-Date: Mon, 29 Jul 2024 11:10:14 +0200
-Message-ID: <20240729091018.2152-6-osalvador@suse.de>
+Subject: [PATCH v2 6/9] mm: Make hugetlb mappings go through mm_get_unmapped_area_vmflags
+Date: Mon, 29 Jul 2024 11:10:15 +0200
+Message-ID: <20240729091018.2152-7-osalvador@suse.de>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240729091018.2152-1-osalvador@suse.de>
 References: <20240729091018.2152-1-osalvador@suse.de>
@@ -71,108 +112,154 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Rspamd-Queue-Id: DE10A1F78C
 X-Spam-Level: 
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.60 / 50.00];
+	REPLY(-4.00)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_ALL(0.00)[]
 X-Spam-Flag: NO
-X-Spam-Score: -4.00
+X-Spam-Score: -3.60
 
-We want to stop special casing hugetlb mappings and make them go
-through generic channels, so teach arch_get_unmapped_area{_topdown}
-to handle those.
-Reshuffle file_to_psize() definition so arch_get_unmapped_area{_topdown}
-can make use of it.
+Hugetlb mappings will no longer be special cased but rather go through
+the generic mm_get_unmapped_area_vmflags function.
+For that to happen, let us remove the .get_unmapped_area from
+hugetlbfs_file_operations struct, and hint __get_unmapped_area
+that it should not send hugetlb mappings through thp_get_unmapped_area_vmflags
+but through mm_get_unmapped_area_vmflags.
+
+Create also a function called hugetlb_mmap_check_and_align() where a
+couple of safety checks are being done and the addr is aligned to
+the huge page size.
+Otherwise we will have to do this in every single function, which
+duplicates quite a lot of code.
 
 Signed-off-by: Oscar Salvador <osalvador@suse.de>
 ---
- arch/powerpc/mm/book3s64/slice.c | 39 ++++++++++++++++++++++++--------
- 1 file changed, 29 insertions(+), 10 deletions(-)
+ fs/hugetlbfs/inode.c    | 22 ++++++++++++++--------
+ include/linux/hugetlb.h |  8 +++-----
+ mm/mmap.c               | 15 ++++++++++++++-
+ 3 files changed, 31 insertions(+), 14 deletions(-)
 
-diff --git a/arch/powerpc/mm/book3s64/slice.c b/arch/powerpc/mm/book3s64/slice.c
-index ef3ce37f1bb3..6914b8de627c 100644
---- a/arch/powerpc/mm/book3s64/slice.c
-+++ b/arch/powerpc/mm/book3s64/slice.c
-@@ -633,17 +633,36 @@ unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 9f6cff356796..5d47a2785a5d 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -258,15 +258,22 @@ generic_hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
+ 			pgoff, flags);
  }
- EXPORT_SYMBOL_GPL(slice_get_unmapped_area);
  
-+#ifdef CONFIG_HUGETLB_PAGE
-+static int file_to_psize(struct file *file)
-+{
-+	struct hstate *hstate = hstate_file(file);
-+	return shift_to_mmu_psize(huge_page_shift(hstate));
-+}
-+#else
-+static int file_to_psize(struct file *file)
-+{
-+	return 0;
-+}
-+#endif
-+
- unsigned long arch_get_unmapped_area(struct file *filp,
- 				     unsigned long addr,
- 				     unsigned long len,
- 				     unsigned long pgoff,
- 				     unsigned long flags)
+-#ifndef HAVE_ARCH_HUGETLB_UNMAPPED_AREA
+-static unsigned long
+-hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
+-			  unsigned long len, unsigned long pgoff,
+-			  unsigned long flags)
++unsigned long
++hugetlb_mmap_check_and_align(struct file *file, unsigned long addr,
++			     unsigned long len, unsigned long flags)
  {
-+	unsigned int psize;
+-	return generic_hugetlb_get_unmapped_area(file, addr, len, pgoff, flags);
++	unsigned long addr0 = 0;
++	struct hstate *h = hstate_file(file);
 +
- 	if (radix_enabled())
- 		return generic_get_unmapped_area(filp, addr, len, pgoff, flags);
- 
--	return slice_get_unmapped_area(addr, len, flags,
--				       mm_ctx_user_psize(&current->mm->context), 0);
-+	if (filp && is_file_hugepages(filp))
-+		psize = file_to_psize(filp);
-+	else
-+		psize = mm_ctx_user_psize(&current->mm->context);
++	if (len & ~huge_page_mask(h))
++		return -EINVAL;
++	if ((flags & MAP_FIXED) && prepare_hugepage_range(file, addr, len))
++		return -EINVAL;
++	if (addr)
++		addr0 = ALIGN(addr, huge_page_size(h));
 +
-+	return slice_get_unmapped_area(addr, len, flags, psize, 0);
++	return addr0;
  }
+-#endif
  
- unsigned long arch_get_unmapped_area_topdown(struct file *filp,
-@@ -652,11 +671,17 @@ unsigned long arch_get_unmapped_area_topdown(struct file *filp,
- 					     const unsigned long pgoff,
- 					     const unsigned long flags)
- {
-+	unsigned int psize;
-+
- 	if (radix_enabled())
- 		return generic_get_unmapped_area_topdown(filp, addr0, len, pgoff, flags);
- 
--	return slice_get_unmapped_area(addr0, len, flags,
--				       mm_ctx_user_psize(&current->mm->context), 1);
-+	if (filp && is_file_hugepages(filp))
-+		psize = file_to_psize(filp);
-+	else
-+		psize = mm_ctx_user_psize(&current->mm->context);
-+
-+	return slice_get_unmapped_area(addr0, len, flags, psize, 1);
+ /*
+  * Someone wants to read @bytes from a HWPOISON hugetlb @page from @offset.
+@@ -1300,7 +1307,6 @@ static const struct file_operations hugetlbfs_file_operations = {
+ 	.read_iter		= hugetlbfs_read_iter,
+ 	.mmap			= hugetlbfs_file_mmap,
+ 	.fsync			= noop_fsync,
+-	.get_unmapped_area	= hugetlb_get_unmapped_area,
+ 	.llseek			= default_llseek,
+ 	.fallocate		= hugetlbfs_fallocate,
+ 	.fop_flags		= FOP_HUGE_PAGES,
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 0ec14e5e0890..1413cdcfdb1a 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -549,11 +549,9 @@ static inline struct hstate *hstate_inode(struct inode *i)
  }
+ #endif /* !CONFIG_HUGETLBFS */
  
- unsigned int notrace get_slice_psize(struct mm_struct *mm, unsigned long addr)
-@@ -787,12 +812,6 @@ unsigned long vma_mmu_pagesize(struct vm_area_struct *vma)
- 	return 1UL << mmu_psize_to_shift(get_slice_psize(vma->vm_mm, vma->vm_start));
- }
+-#ifdef HAVE_ARCH_HUGETLB_UNMAPPED_AREA
+-unsigned long hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
+-					unsigned long len, unsigned long pgoff,
+-					unsigned long flags);
+-#endif /* HAVE_ARCH_HUGETLB_UNMAPPED_AREA */
++unsigned long
++hugetlb_mmap_check_and_align(struct file *file, unsigned long addr,
++			     unsigned long len, unsigned long flags);
  
--static int file_to_psize(struct file *file)
--{
--	struct hstate *hstate = hstate_file(file);
--	return shift_to_mmu_psize(huge_page_shift(hstate));
--}
--
- unsigned long hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
- 					unsigned long len, unsigned long pgoff,
- 					unsigned long flags)
+ unsigned long
+ generic_hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 7b623811d82a..f755d8a298c5 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -849,6 +849,7 @@ __get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
+ 				  unsigned long, unsigned long, unsigned long)
+ 				  = NULL;
+ 
++	bool is_hugetlb = false;
+ 	unsigned long error = arch_mmap_check(addr, len, flags);
+ 	if (error)
+ 		return error;
+@@ -857,6 +858,9 @@ __get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
+ 	if (len > TASK_SIZE)
+ 		return -ENOMEM;
+ 
++	if (file && is_file_hugepages(file))
++		is_hugetlb = true;
++
+ 	if (file) {
+ 		if (file->f_op->get_unmapped_area)
+ 			get_area = file->f_op->get_unmapped_area;
+@@ -874,11 +878,20 @@ __get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
+ 
+ 	if (get_area) {
+ 		addr = get_area(file, addr, len, pgoff, flags);
+-	} else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
++	} else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && !is_hugetlb) {
+ 		/* Ensures that larger anonymous mappings are THP aligned. */
+ 		addr = thp_get_unmapped_area_vmflags(file, addr, len,
+ 						     pgoff, flags, vm_flags);
+ 	} else {
++		/*
++		 * Consolidate hugepages checks in one place, and also align addr
++		 * to hugepage size.
++		 */
++		if (is_hugetlb) {
++			addr = hugetlb_mmap_check_and_align(file, addr, len, flags);
++			if (IS_ERR_VALUE(addr))
++				return addr;
++		}
+ 		addr = mm_get_unmapped_area_vmflags(current->mm, file, addr, len,
+ 						    pgoff, flags, vm_flags);
+ 	}
 -- 
 2.45.2
 
