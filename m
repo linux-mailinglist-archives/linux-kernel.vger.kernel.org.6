@@ -1,133 +1,131 @@
-Return-Path: <linux-kernel+bounces-265035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED71C93EBBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 05:02:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEFD493EBC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 05:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27A7D1C214FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:02:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A55D2815BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759F48063C;
-	Mon, 29 Jul 2024 03:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xJ/0a1P0"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13997F484;
+	Mon, 29 Jul 2024 03:04:03 +0000 (UTC)
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4693E2B9D2;
-	Mon, 29 Jul 2024 03:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AC22B9D2;
+	Mon, 29 Jul 2024 03:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722222123; cv=none; b=o9IPcO1lVVGfmQu11ai4/lEU7y7vRvndqm77Pc+GYsEa4eUPCiRMEE4+3NFOT5/B9JZ6HmLuBpnuyRxaLkZ7SRS1xHf1HK338SEuprDyOA0dTt9EdvOUKT8IVuI3KJJX1qWJnVS7KZEshHCZdfgE1YmzeGYaSNZApTLq/Z5hx0I=
+	t=1722222243; cv=none; b=e2mFBIzG38A3CixMxk9MZ8jRLX7L9cX3tiztauMvtHTG7XeGOevo8ehiWTTnAffQe3YhH+S7pG29JjvZdq9Ucr9b+S/Ifr8m48zoDUlXV0z5RZ5o3SY1iCVqHRvOdcUAESchtyvXCGFitcF2z751IWpFH//Y+cOsmLEJOErj9vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722222123; c=relaxed/simple;
-	bh=ejK+JLHw98fyL4yw9lBzd9vdjVs1PyEJPzes0fN3DzE=;
+	s=arc-20240116; t=1722222243; c=relaxed/simple;
+	bh=iyTLuCU18Y/3DWAq8FeUpyOEVu74g6lZH7xKIil/U9s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=InZr2uACIAbIVtrug2Cem0HiTYAcT4LReY98anvns/H/URUvSwQBaLcCVFSoVp8Up9BgZasr4a+NMwHgFFunt97IKlYOLT+MR1SFcD5E7XdiBbxWGurwUJiSasej1bavem88BNq/HpInDcjPMjEWxazgomdp05L65qv/N4bX23M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xJ/0a1P0; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ca823522-fe78-4eb7-ae1d-b017d16e39fe@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722222119;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z9wqau/zSknzCnsohqqshMiTMDATCIJu7G0AysZkCDg=;
-	b=xJ/0a1P0NwUNNMLY6DohbukOFlCjl5lRE89SJL1joXlE8aGAxS5D9t45QWPahYN2fzjZfv
-	p8Q5R/c1tXLpuC7784AJnVdCdqfTi74D920vJy8uLEGQYmqMsB+FwSqUaG9paPfQKJO6Pl
-	aJbeS7+79P91ANxNHHLtZgO+JAF2WtE=
-Date: Mon, 29 Jul 2024 11:01:29 +0800
+	 In-Reply-To:Content-Type; b=Z4JGwYmwbzAvG/amV50McS0nkMWYbKGLohom4MBeaCT5FiCW++MgsFctvhujkccMJNZGp1UOpsMuYVF+7NMKwUMiE04KVXn0uK7zEERoZIW0Z017xB2APohIh9UPZePOY2S4KFkl2JK8Ixr3fzH5aPyScBHfdryp/P40iQshZAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+X-QQ-mid: bizesmtpsz13t1722222194t7q1ay
+X-QQ-Originating-IP: 1uHf6tV6CXls7qg6zV58CTomlkOggcYwzjNdHAf0UP4=
+Received: from [10.20.53.89] ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 29 Jul 2024 11:03:12 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 7791691834705649597
+Message-ID: <DB945E243D91EB2F+df447e7b-ddd6-459d-9951-d92fcfceb92c@uniontech.com>
+Date: Mon, 29 Jul 2024 11:03:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
- module_subeixt helper macros
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Christoph Hellwig <hch@infradead.org>, David Sterba <dsterba@suse.cz>,
- Arnd Bergmann <arnd@arndb.de>, kreijack@inwind.it,
- Luis Chamberlain <mcgrof@kernel.org>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Chao Yu <chao@kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Youling Tang <tangyouling@kylinos.cn>
-References: <ZqJwa2-SsIf0aA_l@infradead.org>
- <68584887-3dec-4ce5-8892-86af50651c41@libero.it>
- <ZqKreStOD-eRkKZU@infradead.org>
- <91bfea9b-ad7e-4f35-a2c1-8cd41499b0c0@linux.dev>
- <ZqOs84hdYkSV_YWd@infradead.org> <20240726152237.GH17473@twin.jikos.cz>
- <20240726175800.GC131596@mit.edu> <ZqPmPufwqbGOTyGI@infradead.org>
- <20240727145232.GA377174@mit.edu>
- <23862652-a702-4a5d-b804-db9ee9f6f539@linux.dev>
- <20240729024412.GD377174@mit.edu>
-Content-Language: en-US, en-AU
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <20240729024412.GD377174@mit.edu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: Loongarch: Remove undefined a6 argument comment for
+ kvm_hypercall
+To: maobibo <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>
+Cc: Dandan Zhang <zhangdandan@uniontech.com>, zhaotianrui@loongson.cn,
+ kernel@xen0n.name, kvm@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Wentao Guan <guanwentao@uniontech.com>,
+ baimingcong@uniontech.com
+References: <6D5128458C9E19E4+20240725134820.55817-1-zhangdandan@uniontech.com>
+ <c40854ac-38ef-4781-6c6b-4f74e24f265c@loongson.cn>
+ <CAAhV-H5R_kamf=YJ62hb+iFr7Y+cvCaBBrY1rdk_wEEq4+6D_w@mail.gmail.com>
+ <a9245b66-be6e-7211-49dd-a9a2d23ec2cf@loongson.cn>
+ <CAAhV-H7Op_W0B7d4uQQVU_BEkpyQmwf9TCxQA9bYx3=JrQZ8pg@mail.gmail.com>
+ <9bad6e47-dac5-82d2-1828-57df3ec840f8@loongson.cn>
+From: WangYuli <wangyuli@uniontech.com>
+Autocrypt: addr=wangyuli@uniontech.com; keydata=
+ xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
+ IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
+ qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
+ 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
+ 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
+ VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
+ DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
+ o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
+Disposition-Notification-To: WangYuli <wangyuli@uniontech.com>
+In-Reply-To: <9bad6e47-dac5-82d2-1828-57df3ec840f8@loongson.cn>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-On 29/07/2024 10:44, Theodore Ts'o wrote:
-> On Mon, Jul 29, 2024 at 09:46:17AM +0800, Youling Tang wrote:
->> 1. Previous version implementation: array mode (see link 1) :
->>     Advantages:
->>     - Few changes, simple principle, easy to understand code.
->>     Disadvantages:
->>     - Each modified module needs to maintain an array, more code.
->>
->> 2. Current implementation: explicit call subinit in initcall (see link 2) :
->>     Advantages:
->>     - Direct use of helpes macros, the subinit call sequence is
->>       intuitive, and the implementation is relatively simple.
->>     Disadvantages:
->>     - helper macros need to be implemented compared to array mode.
->>
->> 3. Only one module_subinit per file (not implemented, see link 3) :
->>     Advantage:
->>     - No need to display to call subinit.
->>     Disadvantages:
->>     - Magic order based on Makefile makes code more fragile,
->>     - Make sure that each file has only one module_subinit,
->>     - It is not intuitive to know which subinits the module needs
->>       and in what order (grep and Makefile are required),
->>     - With multiple subinits per module, it would be difficult to
->>       define module_{subinit, subexit} by MODULE, and difficult to
->>       rollback when initialization fails (I haven't found a good way
->>       to do this yet).
->>
->>
->> Personally, I prefer the implementation of method two.
-> But there's also method zero --- keep things the way they are, and
-> don't try to add a new astraction.
->
-> Advantage:
->
->   -- Code has worked for decades, so it is very well tested
->   -- Very easy to understand and maintain
->
-> Disadvantage
->
->   --- A few extra lines of C code.
-The number of lines of code is not important, the main point is to
-better ensure that subexit runs in the reverse order of subinit when
-init fails.
+Hi Bibo and Huacai,
 
-Thanks,
-Youling.
 
->
-> which we need to weigh against the other choices.
->
->        	      	       	       	   - Ted
+Ah... tell me you two aren't arguing, right?
+
+
+Both of you are working towards the same goal—making the upstream
+
+code for the Loongarch architecture as clean and elegant as possible.
+
+If it's just a disagreement about how to handle this small patch,
+
+there's no need to make things complicated.
+
+
+As a partner of yours and a community developer passionate about
+
+Loongson CPU, I'd much rather see you two working together
+
+harmoniously than complaining about each other's work. I have full
+
+confidence in Bibo's judgment on the direction of KVM for Loongarch,
+
+and I also believe that Huacai, as the Loongarch maintainer, has always
+
+been fulfilling his responsibilities.
+
+
+You are both excellent Linux developers. That's all.
+
+
+To be specific about the controversy caused by this particular commit,
+
+I think the root cause is that the KVM documentation for Loongarch
+
+hasn't been upstreamed. In my opinion, the documentation seems
+
+ready to be upstreamed. If you're all busy with more important work,
+
+I can take the time to submit them and provide a Chinese translation.
+
+
+If this is feasible, it would be better to merge this commit after that.
+
+
+Best wishes,
+
+
+--
+
+WangYuli
+
 
 
