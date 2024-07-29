@@ -1,186 +1,180 @@
-Return-Path: <linux-kernel+bounces-266027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01F3093F976
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:30:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68A6493F979
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 213251C222A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:30:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185BA1F21A8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33527158853;
-	Mon, 29 Jul 2024 15:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1763A156880;
+	Mon, 29 Jul 2024 15:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r3FNmVmx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXgZqMzJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC7014F9FD;
-	Mon, 29 Jul 2024 15:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4377D1494DC;
+	Mon, 29 Jul 2024 15:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722267011; cv=none; b=HNfTuxo3IbYMByoCo3+57a7DqeWdOXV2Zxu3Z1nfcx8n1Nj4+h0zuqQJHxdkYMBQWz2dqVfCVGk7hCbR+1vbfn82RjaHelhNp0rNZ1rMgScPIjQCpPp0aDlJHM+nShcZV1FExNFlOk3GDHjfXTRrkGsGkkVjVnIiGh+hXmvqORM=
+	t=1722267079; cv=none; b=SNGPOEKM1QYc+aHSkQujjUgvB/jTC0VtirwhzroqAlUGXiGl8M7cfy7IfmPtDrw0dOaneRt+YR3i5HiFDUZF1cj42W9Gvxj/bCFwYK2jbjG+5kewoF9EU671u4gVFYyZjLyRBdhEPJbV5jOEc0SjeKejG8jlSkypLzgkC6aUGV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722267011; c=relaxed/simple;
-	bh=ndzDCEmWVqlMpqggu+GgSzXYK/Y1s948Sog4W6pkXyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D+tAmD4ZgVqkm0pqERl7v8dFsAmprsT+YKzBxCckJAk9dvI0C73hh2MxqIAFzKk0xoYiWr5D6SUOt2ey50GB97sweh2d5smQznHhF8SReXHbAIXMBEHZzJw4Vt0bsjQFkJad9Ye5/lPqK3WC6G2HLjkz4bkMQlK9UOEOz6B4qXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r3FNmVmx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9557CC32786;
-	Mon, 29 Jul 2024 15:30:10 +0000 (UTC)
+	s=arc-20240116; t=1722267079; c=relaxed/simple;
+	bh=koUyD7aox0HAEQE+rmy8pQQqygbJWnJvy7PxdrM4gZk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t+7fNW4m6G5WJBIQBwnloBqaEj9tRfdlPbN46dhCD2kKdFcYY7PhGSlHNPBZd4vQ4Q5MrpxXPzW/OPkGtEvz/SpDHJfjqekPR8j+ouvaUoBzr1LZ5Rp9eifC8vKkCKjapv1YME4/vKqdVA1w+Nx/+C4bLOXkHhSUOMwK2PtDKjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXgZqMzJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90B3EC4AF09;
+	Mon, 29 Jul 2024 15:31:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722267011;
-	bh=ndzDCEmWVqlMpqggu+GgSzXYK/Y1s948Sog4W6pkXyw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r3FNmVmxJSENQY/tBVzlojnsnOO/XLYOme3j10H4ISrIgxicyoteQ69TS9QDNELTQ
-	 BVx24grjry2+duu1MS1L5TYMKK5T83OyyuLQjhpIPrmDD1C8XfPD90Ajfj10+xEGe3
-	 9SBlBzaW6Ufie66kKdAHGqPf7gvzM7CgycphWWQSszX0j0PVdyfj4quoHFyMiW2xDd
-	 Ht9fuSubV6AvdmFh5XWm+Z9aR0UBM5LXjrEZ82g6s+A9GC+omYcNkx3qFutThl7jsa
-	 86ATPOv6cIbtI0eV5/O3uNqcTBWVFuRzuTzKRT2Ipz2p2rkhVkvOn8r8xlQZ3sCvqO
-	 G4YQXLxYWK4Tg==
-Date: Mon, 29 Jul 2024 08:30:08 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: kernel test robot <lkp@intel.com>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [tip:x86/microcode 1/1]
- arch/x86/kernel/cpu/microcode/amd.c:714:6: warning: variable 'equiv_id' is
- used uninitialized whenever 'if' condition is false
-Message-ID: <20240729153008.GA685493@thelio-3990X>
-References: <202407291815.gJBST0P3-lkp@intel.com>
- <20240729112614.GBZqd8Vu27mFVSHynA@fat_crate.local>
+	s=k20201202; t=1722267078;
+	bh=koUyD7aox0HAEQE+rmy8pQQqygbJWnJvy7PxdrM4gZk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZXgZqMzJ6v5VjFl/P1Cw3QOo6+CmEbAWcChu2X/YCfqs5s5j7wRzSIPgjV4PBFAb8
+	 t1hCkNaXuoI6BuBZxB5JBQOuZvXMOBJ26GMdyYiJBKLnQHgUn/s/LdY2iVQu6BGopA
+	 w/T7sGniEYdrgHlpDD/Pse8JK/FWgzMhSfthFO5sVKdHG9hG7bbSiAkOnlO1GsaihK
+	 zdU6EnFqZXY65nQ7XiY7Mcu1JoURflUihFMiHTuqPje5l3QbbqHEiwoCDrQSz1XwVA
+	 T/yAoaFMvYMRucglsl+wnWbVbVIbnZxk2ve4SLxlTqs9c9+UpGef+XD2/42M9Y4wtn
+	 bt1nVtFYh+xWw==
+Message-ID: <8b75756d-aec9-4c28-96be-81cd12496757@kernel.org>
+Date: Mon, 29 Jul 2024 17:31:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729112614.GBZqd8Vu27mFVSHynA@fat_crate.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/7] memory: tegra: Cleanup Tegra210 EMC frequency
+ scaling
+To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Boris,
-
-On Mon, Jul 29, 2024 at 01:26:14PM +0200, Borislav Petkov wrote:
-> + Nathan.
+On 04/07/2024 13:31, Diogo Ivo wrote:
+> Hello,
 > 
-> On Mon, Jul 29, 2024 at 07:04:51PM +0800, kernel test robot wrote:
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/microcode
-> > head:   94838d230a6c835ced1bad06b8759e0a5f19c1d3
-> > commit: 94838d230a6c835ced1bad06b8759e0a5f19c1d3 [1/1] x86/microcode/AMD: Use the family,model,stepping encoded in the patch ID
-> > config: i386-buildonly-randconfig-001-20240729 (https://download.01.org/0day-ci/archive/20240729/202407291815.gJBST0P3-lkp@intel.com/config)
-> > compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240729/202407291815.gJBST0P3-lkp@intel.com/reproduce)
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202407291815.gJBST0P3-lkp@intel.com/
-> > 
-> > All warnings (new ones prefixed by >>):
-> > 
-> > >> arch/x86/kernel/cpu/microcode/amd.c:714:6: warning: variable 'equiv_id' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-> >      714 |         if (x86_family(bsp_cpuid_1_eax) < 0x17) {
-> >          |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >    arch/x86/kernel/cpu/microcode/amd.c:720:31: note: uninitialized use occurs here
-> >      720 |         return cache_find_patch(uci, equiv_id);
-> >          |                                      ^~~~~~~~
-> >    arch/x86/kernel/cpu/microcode/amd.c:714:2: note: remove the 'if' if its condition is always true
-> >      714 |         if (x86_family(bsp_cpuid_1_eax) < 0x17) {
-> >          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >    arch/x86/kernel/cpu/microcode/amd.c:706:14: note: initialize the variable 'equiv_id' to silence this warning
-> >      706 |         u16 equiv_id;
-> >          |                     ^
-> >          |                      = 0
-> >    1 warning generated.
-> > 
-> > 
-> > vim +714 arch/x86/kernel/cpu/microcode/amd.c
-> > 
-> >    701	
-> >    702	static struct ucode_patch *find_patch(unsigned int cpu)
-> >    703	{
-> >    704		struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
-> >    705		u32 rev, dummy __always_unused;
-> >    706		u16 equiv_id;
-> >    707	
-> >    708		/* fetch rev if not populated yet: */
-> >    709		if (!uci->cpu_sig.rev) {
-> >    710			rdmsr(MSR_AMD64_PATCH_LEVEL, rev, dummy);
-> >    711			uci->cpu_sig.rev = rev;
-> >    712		}
-> >    713	
-> >  > 714		if (x86_family(bsp_cpuid_1_eax) < 0x17) {
-> >    715			equiv_id = find_equiv_id(&equiv_table, uci->cpu_sig.sig);
-> >    716			if (!equiv_id)
-> >    717				return NULL;
-> >    718		}
-> >    719	
-> >    720		return cache_find_patch(uci, equiv_id);
-> >    721	}
-> >    722	
+> This patch series consists of a general cleanup of the Tegra210 EMC
+> frequency scaling code for revision 7.
 > 
-> That's a false positive, I think.
+> Currently the code is relying heavily on a function, update_clock_tree_delay(),
+> that is responsible for too many things, making it long and confusing.
+> The general idea with these patches is to simplify this function and its
+> surrounding code, making it more modular.
 > 
-> clang can't see that equiv_id is used in cache_find_patch() ->
-> patch_cpus_equivalent() *only* in the
+> The motivation behind these changes (besides improving readability and
+> maintainability) is to make it simpler to add support in the future for
+> frequency change revisions other than 7, where we can reuse a large
+> portion of the modularized code rather than essentially repeating 2k
+> lines of code with minimal changes.
 > 
-> 	if (x86_family(bsp_cpuid_1_eax) < 0x17)
+> There are no functional changes with this patch set, as it is only meant
+> as preparation for following patches where revision 6 support is added.
 > 
-> case.
+> Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+> ---
+> Changes in v4:
+> - PATCH 07/07: Add missing parenthesis around operands when calculating
+>   delay
+> - Link to v3: https://lore.kernel.org/r/20240507093056.3921-1-diogo.ivo@tecnico.ulisboa.pt
+> 
+> ---
+> Diogo Ivo (7):
+>       memory: tegra: Remove periodic compensation duplicate calls
+>       memory: tegra: Move DQSOSC measurement to common place
+>       memory: tegra: Reword and correct comments
+>       memory: tegra: Change macros to interpret parameter as integer
+>       memory: tegra: Loop update_clock_tree_delay()
+>       memory: tegra: Move compare/update current delay values to a function
+>       memory: tegra: Rework update_clock_tree_delay()
+> 
+>  drivers/memory/tegra/tegra210-emc-cc-r21021.c | 429 ++++++--------------------
+>  1 file changed, 86 insertions(+), 343 deletions(-)
+> ---
+> base-commit: 22a40d14b572deb80c0648557f4bd502d7e83826
+> change-id: 20240704-tegra210_emcfreq-9d2466310cec
 
-Right, as clang does not perform interprocedural analysis for the sake
-of warnings. That's partly why GCC's version of this warning was
-disabled in commit 78a5255ffb6a ("Stop the ad-hoc games with
--Wno-maybe-initialized").
+I don't understand what happened with this series. lore cannot find
+anything for above change-id. b4 diff also fails:
+b4 diff '<20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt>'
+Grabbing thread from
+lore.kernel.org/all/20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt/t.mbox.gz
+Checking for older revisions
+Grabbing search results from lore.kernel.org
+Nothing matching that query.
+---
+Analyzing 8 messages in the thread
+Could not find lower series to compare against.
 
-> And that case is handled properly in this function.
+Link to v3 does not point to v3, but to some resend. Changelog is
+incomplete - mentions only v3, but what happened between v1->v2, v2->v3?
 
-While it may be properly handled now, I think this pattern of
-conditionally avoiding using a variable uninitialized is dubious.
+There is canonical way to send patches which makes everything
+straightforward (and IMHO easy). It's called b4. But you can just use
+git format-patch and git send-email. Whatever you choose, this makes
+maintainer life easy.
 
-> So, unless I'm missing something else, it's a good thing this warning is
-> behind a W=1. Keep it there.
+Way you sent patches is somehow broken, I don't know how, but it does
+not make maintainer life easy.
 
-It's not behind W=1, this happens in a normal build:
+Please reply with changelog and explanation where is original v3.
 
-  $ make -skj"$(nproc)" ARCH=x86_64 LLVM=1 mrproper defconfig arch/x86/kernel/cpu/microcode/amd.o
-  arch/x86/kernel/cpu/microcode/amd.c:714:6: error: variable 'equiv_id' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
-    714 |         if (x86_family(bsp_cpuid_1_eax) < 0x17) {
-        |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  arch/x86/kernel/cpu/microcode/amd.c:720:31: note: uninitialized use occurs here
-    720 |         return cache_find_patch(uci, equiv_id);
-        |                                      ^~~~~~~~
-  arch/x86/kernel/cpu/microcode/amd.c:714:2: note: remove the 'if' if its condition is always true
-    714 |         if (x86_family(bsp_cpuid_1_eax) < 0x17) {
-        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  arch/x86/kernel/cpu/microcode/amd.c:706:14: note: initialize the variable 'equiv_id' to silence this warning
-    706 |         u16 equiv_id;
-        |                     ^
-        |                      = 0
-  1 error generated.
 
-Even GCC would warn about this code if not for the commit I mentioned
-above:
+Best regards,
+Krzysztof
 
-  $ make -skj"$(nproc)" ARCH=x86_64 CROSS_COMPILE=x86_64-linux- KCFLAGS=-Wmaybe-uninitialized mrproper defconfig arch/x86/kernel/cpu/microcode/amd.o
-  In function 'cache_find_patch',
-      inlined from 'find_patch' at arch/x86/kernel/cpu/microcode/amd.c:720:9:
-  arch/x86/kernel/cpu/microcode/amd.c:647:20: error: 'equiv_id' may be used uninitialized [-Werror=maybe-uninitialized]
-    647 |                 if (patch_cpus_equivalent(p, &n))
-        |                    ^
-  arch/x86/kernel/cpu/microcode/amd.c: In function 'find_patch':
-  arch/x86/kernel/cpu/microcode/amd.c:706:13: note: 'equiv_id' was declared here
-    706 |         u16 equiv_id;
-        |             ^~~~~~~~
-  cc1: all warnings being treated as errors
-
-So I guess you can just ignore this if you want but others (maybe even
-Linus) will likely notice this and report it as well.
-
-Cheers,
-Nathan
 
