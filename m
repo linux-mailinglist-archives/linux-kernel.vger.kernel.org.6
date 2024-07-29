@@ -1,135 +1,232 @@
-Return-Path: <linux-kernel+bounces-266499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354369400AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:57:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9A179400CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 00:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96BB9B22187
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:57:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 651F0283A53
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49E618E772;
-	Mon, 29 Jul 2024 21:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6782A18E76B;
+	Mon, 29 Jul 2024 22:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="k8SFm33b"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eDLEhkGc"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A492518D4B9
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 21:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A341422C8
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 22:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722290263; cv=none; b=H2PCfDG8BZ2dw8o56YZteu7SNpgrslMNNYcjrno+pw8Y6JFYh3fjF9jtG1cj2PIBGcmmL3xXwAh3sjYrKRoAcYLei8fimeSvqCKiT29KxgfRCoLnkk5vxvdqy92k5ndaHfKEIwmMfIjygzMWlAkpq0UTUfvyvojmNLridk5U/yw=
+	t=1722290476; cv=none; b=EW7G42a5pF/69MfZmWIzc1JjC2PyQNELutPoZH03kMySKTCkMeIdOrIYU7WbyVrGrHayNilVCljjkcjwom/mJs8EzxDYD5b4RTbG5kCv/orVnrfec/oMZRN0Jqm7m/PnlkdML8LBy7c621tfOeuAPgrJf5EShSmGcWQxrri4VEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722290263; c=relaxed/simple;
-	bh=nHl2Y5IWaProKCvXUomzic+RUjes+RyRmoyy8eze+JA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MDaBA40vOgec0TVEnHr2ct+Uxcbp6DIz5nhMSp2dVIRlVs5rojE1lnS8QYu9sT45ZDXR/oyD2D/RvAWdYqMBEl5xaNGPz0cJd0suGItsDdrg/qne73Jyk5BPmCXEEMI985WCKvW5+S6wf0ISDdOM2VFVTZ+5doPx0CTM4pXTBL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=k8SFm33b; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fd78c165eeso31235565ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:57:40 -0700 (PDT)
+	s=arc-20240116; t=1722290476; c=relaxed/simple;
+	bh=XJnJPKl6k4rR66kbaouimkNBomtd+aY7wEs9T53fPio=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gT05kzIcvJ2QbKUBRWx5m0tqD51qm8ml5VVdzRNIq9KHTLTx6pfS8yM/8i0W/Ine1hH/vWQby1A52H/emZVeyF5+0qh81FT0UMzPm5dxB3PkbSic25Xj5FbG4PwNq+6+6XCZFxvipCg68z0/mpKmIoScuIsPZylBivmrIEW8HBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--prohr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eDLEhkGc; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--prohr.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e05e3938a37so4742619276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:01:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722290260; x=1722895060; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0/uG0RbPF+t6wEe0TF57sCA99ACL1gtkgDLZUWdqXsM=;
-        b=k8SFm33btmfByCBNlcfMVA1+1GUpX+duHXFPnIT/vPNIK54hXAgzzisdygMVLSpZGs
-         /0gmvxC3ckTqnp/6ESFzNuqR1npSrfv2rToxEZv9ebUMVcUsNox33rOO1V/IJ0aZns4d
-         +gxBV+KHY/XArV6fatKXZVk+vShwj3gVKcvi1JNsp0XJU+B6bFggpB8VcEeDKWKRIA3F
-         H9IDx9NXxJ8Hl34RfRfhZiO+qbvctBocM7AkvbiVq/fCW6rafkWtNbnL84Dea6Stqo4S
-         Xcae6LUyvPeuT9+gDhLgAhxZCWG5wB4Cfd+DG6CFyxHzRgF4qOx1KoUT0/r4EuIRgyj8
-         U91g==
+        d=google.com; s=20230601; t=1722290474; x=1722895274; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QmEC+vBSWhMJr7hZmB+mz7nYIOW4vfmDm0ALSisHKII=;
+        b=eDLEhkGcigf29WCGQlcDg8DBF2Sg02OSSbG5l2ybnN4A0OMAsJ1vlSxF7wNOlJMo6s
+         U/TBxHunpTCk/m7aJaEqwK3r9KFsxLmNaF5R4HwfCuSOx8ZF8Ofu0/3Y5sgrrJpQ3H3x
+         T1PsbvTuLR5iPr6Ha+jDV0uiOsmCmSBltIj25M04ov0Xc5m4ORW8UYwNdYt42T+bKvzm
+         baO+AnVd4q2u8jhGf/RFqHfyiWT6H2UtlYqDqPZ6jgCtkf+aOF0l6Q7YEATjCFmQiaze
+         jOu7pg7YTyETHKK16RAbXocpBNNWuBa9zjMysORb9adIWFYZ0HoiVtUUqqm27DDY4BMZ
+         iqDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722290260; x=1722895060;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1722290474; x=1722895274;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0/uG0RbPF+t6wEe0TF57sCA99ACL1gtkgDLZUWdqXsM=;
-        b=iTvqkCefCpxPFeKrCxmPgS0sSW1/OzpdK+VWx9wJ6shSxxSV3wT9wDuC4+hqONEYfj
-         Z+33zoevTn3w+cYzObNbrTfOqkGEAbZmwZXVC0NltS2P5pXA3RCavMUdnmeJLPFm3hC9
-         qvlYyQxMyjBC3CAfGRyNNoGH8v2P0/Rf2YF2pJpP1KDqHTSQtfWFJZz8uceAZn3chU+g
-         x+sZbJCoUoCMqlFWqZ0XtT1+RUgzOJ7Ym4qLfcanXmyQscVYo5vbL0SeLKnnn/Re4het
-         aWWAhQLv6gaxwxXIa+FUCv61AbZ6JqTfT3EUp36ZwLlrBwrWIUt2WNqSQ3CO/KEFZ66V
-         YV6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWskEAEycpQdWdYw7r1fKUHkgiZc7s/yorGg6YnIAJT2sJOr4t1VvJ5WCs/FvSqKGgwPmdDDDikAOtIqPOr4A6H0ttvOTLC3U3fYfO3
-X-Gm-Message-State: AOJu0Yw1mXdkGgUAzMqG+uUf/lR3SzZCPDuZeQXAAmbxlR5iZJCTuHsb
-	uKpH+ac9TMOA6jdaSiNeJWBIsR2NYOo3jpsSYqIi8UrSXT3QawiyMUyyOhs2+YQ=
-X-Google-Smtp-Source: AGHT+IHwZkZt24czu8/lKOn2GWi2SUrhVTkh/FSI6AFzn2vEWdyOC7cANh35tDrGnaCxah8UqaL2rQ==
-X-Received: by 2002:a17:902:f542:b0:1fb:779e:4fd0 with SMTP id d9443c01a7336-1ff04824612mr112584575ad.24.1722290259864;
-        Mon, 29 Jul 2024 14:57:39 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff0fead748sm45010935ad.74.2024.07.29.14.57.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 14:57:39 -0700 (PDT)
-Date: Mon, 29 Jul 2024 14:57:36 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Christoph =?iso-8859-1?Q?M=FCllner?= <christoph.muellner@vrull.eu>,
-	linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] tools: selftests: riscv: Fix spelling mistake
- "regesters" -> "registers"
-Message-ID: <ZqgQUKmoNrSAeoQI@ghost>
-References: <20240729091734.42259-1-colin.i.king@gmail.com>
+        bh=QmEC+vBSWhMJr7hZmB+mz7nYIOW4vfmDm0ALSisHKII=;
+        b=aiatsUrl9ZNhVaGu0DctDu377IjUI78DDDODkKaYcvf855kB+PQbosaKyAPTcAOOjG
+         hW5p/wAQ0Cz6o0e+sOCsh196blazhOucEU7hQ46zh0RFcUuMLTQ2yHovqga2dycvNuK2
+         Yo62ECI5sguMKbrMiPLQnSNtXfiPKxAscQckTceYU86y+ZlEjLOmqeGyyTzg5Y6GrAcH
+         QT4p2JemCtsn5tGc3/FyQFwHDXXB5LHbZJqJuCk1CQipfLZnvC26XDzn/ECTOBqMW6EY
+         Q4Vajzno7ewMfZd4qZHjRsUy5r+x2/vRIsqAkpF3tt7HbhVKcEhSHlTSI37bLTNak48N
+         ahBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQtGc6iHH0oM7fDdjBAoE+RzBfyuorvcN02SnyU1dmaTbYPRbc/BlpeNPB5zy0ssGwDmJOG1M4M2cN5lOjgH4BpftHBIvSoBYfBy7x
+X-Gm-Message-State: AOJu0YzXNo3er6XrM/QyHNgdMKZCVLxlW8BFQh2PHyr5Y1BxeJIL+LXx
+	Sn8PEk0OppM7X4HJ5qusbnoM0+B+X/77FUjQTu6NICUUUC6JgkfTqHKGgmkincdvFOkTyhwfLQ=
+	=
+X-Google-Smtp-Source: AGHT+IFRYIg5y0aQjnn1vPqTa4tVFCxy5z25n9bXTBYy/ueK8g5T5uD31bQF416LChe13HliDNXteQQupQ==
+X-Received: from prohr-desktop.mtv.corp.google.com ([2620:15c:211:200:5e6e:b2c2:4fea:7f19])
+ (user=prohr job=sendgmr) by 2002:a5b:943:0:b0:e0b:4eb5:510a with SMTP id
+ 3f1490d57ef6-e0b5445d9eemr306533276.4.1722290474045; Mon, 29 Jul 2024
+ 15:01:14 -0700 (PDT)
+Date: Mon, 29 Jul 2024 15:00:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729091734.42259-1-colin.i.king@gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.rc1.232.g9752f9e123-goog
+Message-ID: <20240729220059.3018247-1-prohr@google.com>
+Subject: [PATCH net-next v2] Add support for PIO p flag
+From: Patrick Rohr <prohr@google.com>
+To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	David Ahern <dsahern@kernel.org>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Patrick Rohr <prohr@google.com>, 
+	"=?UTF-8?q?Maciej=20=C5=BBenczykowski?=" <maze@google.com>, Lorenzo Colitti <lorenzo@google.com>, 
+	David Lamparter <equinox@opensourcerouting.org>, Simon Horman <horms@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 10:17:34AM +0100, Colin Ian King wrote:
-> There are a couple of spelling mistakes in ksft_test_result_fail messages.
-> Fix them.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  tools/testing/selftests/riscv/vector/v_initval_nolibc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/riscv/vector/v_initval_nolibc.c b/tools/testing/selftests/riscv/vector/v_initval_nolibc.c
-> index 1dd94197da30..6838c561e4c9 100644
-> --- a/tools/testing/selftests/riscv/vector/v_initval_nolibc.c
-> +++ b/tools/testing/selftests/riscv/vector/v_initval_nolibc.c
-> @@ -49,14 +49,14 @@ int main(void)
->  	ksft_print_msg("vl = %lu\n", vl);
->  
->  	if (datap[0] != 0x00 && datap[0] != 0xff) {
-> -		ksft_test_result_fail("v-regesters are not properly initialized\n");
-> +		ksft_test_result_fail("v-registers are not properly initialized\n");
->  		dump(datap, vl * 4);
->  		exit(-1);
->  	}
->  
->  	for (i = 1; i < vl * 4; i++) {
->  		if (datap[i] != datap[0]) {
-> -			ksft_test_result_fail("detect stale values on v-regesters\n");
-> +			ksft_test_result_fail("detect stale values on v-registers\n");
->  			dump(datap, vl * 4);
->  			exit(-2);
->  		}
-> -- 
-> 2.39.2
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+draft-ietf-6man-pio-pflag is adding a new flag to the Prefix Information
+Option to signal that the network can allocate a unique IPv6 prefix per
+client via DHCPv6-PD (see draft-ietf-v6ops-dhcp-pd-per-device).
 
-I fixed this and some incorrect error reporting in a different patch:
-https://lore.kernel.org/lkml/20240724-xtheadvector-v8-12-cf043168e137@rivosinc.com/
+When ra_honor_pio_pflag is enabled, the presence of a P-flag causes
+SLAAC autoconfiguration to be disabled for that particular PIO.
 
-- Charlie
+An automated test has been added in Android (r.android.com/3195335) to
+go along with this change.
+
+Cc: Maciej =C5=BBenczykowski <maze@google.com>
+Cc: Lorenzo Colitti <lorenzo@google.com>
+Cc: David Lamparter <equinox@opensourcerouting.org>
+Cc: Simon Horman <horms@kernel.org>
+Signed-off-by: Patrick Rohr <prohr@google.com>
+---
+ Documentation/networking/ip-sysctl.rst | 14 ++++++++++++++
+ include/linux/ipv6.h                   |  1 +
+ include/net/addrconf.h                 | 10 +++++++---
+ net/ipv6/addrconf.c                    | 15 ++++++++++++++-
+ 4 files changed, 36 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/networking/ip-sysctl.rst b/Documentation/network=
+ing/ip-sysctl.rst
+index 3616389c8c2d..eacf8983e230 100644
+--- a/Documentation/networking/ip-sysctl.rst
++++ b/Documentation/networking/ip-sysctl.rst
+@@ -2362,6 +2362,20 @@ ra_honor_pio_life - BOOLEAN
+=20
+ 	Default: 0 (disabled)
+=20
++ra_honor_pio_pflag - BOOLEAN
++	The Prefix Information Option P-flag indicates the network can
++	allocate a unique IPv6 prefix per client using DHCPv6-PD.
++	This sysctl can be enabled when a userspace DHCPv6-PD client
++	is running to cause the P-flag to take effect: i.e. the
++	P-flag suppresses any effects of the A-flag within the same
++	PIO. For a given PIO, P=3D1 and A=3D1 is treated as A=3D0.
++
++	- If disabled, the P-flag is ignored.
++	- If enabled, the P-flag will disable SLAAC autoconfiguration
++	  for the given Prefix Information Option.
++
++	Default: 0 (disabled)
++
+ accept_ra_rt_info_min_plen - INTEGER
+ 	Minimum prefix length of Route Information in RA.
+=20
+diff --git a/include/linux/ipv6.h b/include/linux/ipv6.h
+index 383a0ea2ab91..a6e2aadbb91b 100644
+--- a/include/linux/ipv6.h
++++ b/include/linux/ipv6.h
+@@ -89,6 +89,7 @@ struct ipv6_devconf {
+ 	__u8		ioam6_enabled;
+ 	__u8		ndisc_evict_nocarrier;
+ 	__u8		ra_honor_pio_life;
++	__u8		ra_honor_pio_pflag;
+=20
+ 	struct ctl_table_header *sysctl_header;
+ };
+diff --git a/include/net/addrconf.h b/include/net/addrconf.h
+index 62a407db1bf5..b18e81f0c9e1 100644
+--- a/include/net/addrconf.h
++++ b/include/net/addrconf.h
+@@ -37,10 +37,14 @@ struct prefix_info {
+ 		struct __packed {
+ #if defined(__BIG_ENDIAN_BITFIELD)
+ 			__u8	onlink : 1,
+-			 	autoconf : 1,
+-				reserved : 6;
++				autoconf : 1,
++				routeraddr : 1,
++				preferpd : 1,
++				reserved : 4;
+ #elif defined(__LITTLE_ENDIAN_BITFIELD)
+-			__u8	reserved : 6,
++			__u8	reserved : 4,
++				preferpd : 1,
++				routeraddr : 1,
+ 				autoconf : 1,
+ 				onlink : 1;
+ #else
+diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
+index 55a0fd589fc8..4febf679a435 100644
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -239,6 +239,7 @@ static struct ipv6_devconf ipv6_devconf __read_mostly =
+=3D {
+ 	.ioam6_id_wide		=3D IOAM6_DEFAULT_IF_ID_WIDE,
+ 	.ndisc_evict_nocarrier	=3D 1,
+ 	.ra_honor_pio_life	=3D 0,
++	.ra_honor_pio_pflag	=3D 0,
+ };
+=20
+ static struct ipv6_devconf ipv6_devconf_dflt __read_mostly =3D {
+@@ -302,6 +303,7 @@ static struct ipv6_devconf ipv6_devconf_dflt __read_mos=
+tly =3D {
+ 	.ioam6_id_wide		=3D IOAM6_DEFAULT_IF_ID_WIDE,
+ 	.ndisc_evict_nocarrier	=3D 1,
+ 	.ra_honor_pio_life	=3D 0,
++	.ra_honor_pio_pflag	=3D 0,
+ };
+=20
+ /* Check if link is ready: is it up and is a valid qdisc available */
+@@ -2762,6 +2764,7 @@ void addrconf_prefix_rcv(struct net_device *dev, u8 *=
+opt, int len, bool sllao)
+ 	u32 addr_flags =3D 0;
+ 	struct inet6_dev *in6_dev;
+ 	struct net *net =3D dev_net(dev);
++	bool ignore_autoconf =3D false;
+=20
+ 	pinfo =3D (struct prefix_info *) opt;
+=20
+@@ -2864,7 +2867,8 @@ void addrconf_prefix_rcv(struct net_device *dev, u8 *=
+opt, int len, bool sllao)
+=20
+ 	/* Try to figure out our local address for this prefix */
+=20
+-	if (pinfo->autoconf && in6_dev->cnf.autoconf) {
++	ignore_autoconf =3D READ_ONCE(in6_dev->cnf.ra_honor_pio_pflag) && pinfo->=
+preferpd;
++	if (pinfo->autoconf && in6_dev->cnf.autoconf && !ignore_autoconf) {
+ 		struct in6_addr addr;
+ 		bool tokenized =3D false, dev_addr_generated =3D false;
+=20
+@@ -6926,6 +6930,15 @@ static const struct ctl_table addrconf_sysctl[] =3D =
+{
+ 		.extra1		=3D SYSCTL_ZERO,
+ 		.extra2		=3D SYSCTL_ONE,
+ 	},
++	{
++		.procname	=3D "ra_honor_pio_pflag",
++		.data		=3D &ipv6_devconf.ra_honor_pio_pflag,
++		.maxlen		=3D sizeof(u8),
++		.mode		=3D 0644,
++		.proc_handler	=3D proc_dou8vec_minmax,
++		.extra1		=3D SYSCTL_ZERO,
++		.extra2		=3D SYSCTL_ONE,
++	},
+ #ifdef CONFIG_IPV6_ROUTER_PREF
+ 	{
+ 		.procname	=3D "accept_ra_rtr_pref",
+--=20
+2.46.0.rc1.232.g9752f9e123-goog
 
 
