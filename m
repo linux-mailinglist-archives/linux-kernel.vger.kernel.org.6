@@ -1,246 +1,108 @@
-Return-Path: <linux-kernel+bounces-265612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A384693F3C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:14:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC5393F3C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B05A11C21E84
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:14:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27C9B1C21C17
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F247145B21;
-	Mon, 29 Jul 2024 11:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C47C145B25;
+	Mon, 29 Jul 2024 11:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="I7dUGmPZ"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="wpXzLqRc"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9DE140363;
-	Mon, 29 Jul 2024 11:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC075914C
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722251654; cv=none; b=PeJjFxB65f4xS+8irshbjHMjMLMjmGsmQ+85gcImWe12TMAGnO735DPXKNqfm1oNdh7sSJDB7h3MN/QYi6roepGrYfB9XIgqO0/aBRpwHF/xSNyKCrnwwcpPFnGI6yeOi3N1rmywsA2B++8Bxvs3HkCjD6J8AgxB01mm3OHuykU=
+	t=1722251710; cv=none; b=Asm/WfujwSNgGzpgEyw5QId93DqBwPUgmW1XkePdL4b6+QrhVvU6p4aHXyZOsR1kZrrS9xnXNabO6RYS4NgTwTyCjRZjo4nv+lfs0RdXQqgpv1ZVIK+DAjRkayndLT3RBJ/Li43rS3FFWpCxZrzvIC5/f0jTboVXtzrsK4jwKc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722251654; c=relaxed/simple;
-	bh=t7wX+aL1HlfiwcGy2buh3bECW1GJ9PGepZeKPA+JOp0=;
+	s=arc-20240116; t=1722251710; c=relaxed/simple;
+	bh=BF97mXIMcRg82sLvmqS7RFNne+EAy9xtVjopMTPtmfY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P0Wky3JzPPHqYLmg6hCCLXOEItdb6Q86TeINHFQOLLdyW8ZUHQCsWOOI04erVkleoFyyzsii5NkiXBUhiYq2LCxbPGRcOrv11EZfyleF/aF2mhWmNUET2sQUT+pyGnRu27PZVsGIzyyLo+sqkxyI7XovTfZ/PljydE3dP0Bv2wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=I7dUGmPZ; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TAc8Cm001491;
-	Mon, 29 Jul 2024 11:14:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:content-transfer-encoding:in-reply-to; s=pp1; bh=1
-	gs6YnTcqP0KDMgj9iXPwFr3Dpb/8bcmwNBHWzaJYYs=; b=I7dUGmPZuFjYgLTif
-	kmcQYm9gLQbTC2gYu1LiD+AzTgn76nDLNeBbyEd6qWEAlNYb4hqpS0ZFiwb5OIKY
-	aCiKuXA/VDZPW4K3ryh+Nc3Vt3nGU80pREx7jajBTEN2dLtZ7rAZcvMGaXmh0R5d
-	HthGOxBdNJeoqHCN+k3+tV0FeYLKzr+ep51WpAjwzApmDyGmBTD5Nr7ck+IjJdzq
-	dblg1Tq+XJTivOp5o7OhBqHyD4ZiQXWh7oWkue8aSeltW/G+7sjbN8eMMfbvuLdr
-	NfAneQ2N4Z8dIcRgxFA4Dsl+7li3cxLzkm1KPD7O1dE3rqNXU6OZHAEVUyOvdyOv
-	dtzRQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40p10294b8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 11:13:59 +0000 (GMT)
-Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46TBDxH2029072;
-	Mon, 29 Jul 2024 11:13:59 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40p10294b5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 11:13:59 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46T9QucQ007479;
-	Mon, 29 Jul 2024 11:13:58 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 40nb7txhp3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 11:13:58 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46TBDqpg56557926
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 29 Jul 2024 11:13:54 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BA0892004D;
-	Mon, 29 Jul 2024 11:13:52 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AEBB62004B;
-	Mon, 29 Jul 2024 11:13:49 +0000 (GMT)
-Received: from li-e7e2bd4c-2dae-11b2-a85c-bfd29497117c.ibm.com (unknown [9.109.198.40])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 29 Jul 2024 11:13:49 +0000 (GMT)
-Date: Mon, 29 Jul 2024 16:43:43 +0530
-From: Amit Machhiwal <amachhiw@linux.ibm.com>
-To: Lizhi Hou <lizhi.hou@amd.com>
-Cc: Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Saravana Kannan <saravanak@google.com>,
-        Kowshik Jois B S <kowsjois@linux.ibm.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        Vaidyanathan Srinivasan <svaidy@linux.ibm.com>,
-        Lukas Wunner <lukas@wunner.de>, Nicholas Piggin <npiggin@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Vaibhav Jain <vaibhav@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2] PCI: Fix crash during pci_dev hot-unplug on pseries
- KVM guest
-Message-ID: <6mjt477ltxhr4sudizyzbspkqb7yspxvnoiblzeiwxw5kwwsmq@bchicp4bmtzq>
-Mail-Followup-To: Lizhi Hou <lizhi.hou@amd.com>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	Saravana Kannan <saravanak@google.com>, Kowshik Jois B S <kowsjois@linux.ibm.com>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org, 
-	Vaidyanathan Srinivasan <svaidy@linux.ibm.com>, Lukas Wunner <lukas@wunner.de>, 
-	Nicholas Piggin <npiggin@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Vaibhav Jain <vaibhav@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
-References: <CAL_JsqKKkcXDJ2nz98WNCvsSFzzc3dVXVnxMCntFXsCP=MeKsA@mail.gmail.com>
- <a6c92c73-13fb-8e9c-29de-1437654c3880@amd.com>
- <20240723162107.GA501469-robh@kernel.org>
- <a8d2e310-9446-6cfa-fe00-4ef83cdb6590@amd.com>
- <CAL_JsqJjhaLFm9jiswJTfi4yZFYGKJUdC+HV662RLWEkJjxACw@mail.gmail.com>
- <ac3aeec4-70fc-cd9e-498c-acab0b218d9b@amd.com>
- <p6cs4fxzistpyqkc5bv2sb76inrw7fterocdcu3snnyjpqydbr@thxna6v2umrl>
- <d20b78cd-ed34-3e5a-0176-c20ee5afd0db@amd.com>
- <CAL_JsqJAuVexFAz6gWWuTtX1Go-FnHe6vJapv0znHBERSCtv+Q@mail.gmail.com>
- <0b1be7b7-e65b-8d8e-0659-388dec303039@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BaZq/6tT8UO1PL9glJ0Y24BDveFbBJeFWIpHyFYJmnxY/xdPXAkudcHoRich0GjlhJwdXxHtTfZdj4lzZwIyzvI9orzGZ5dXgeCzICVaPaeEc4l/EJa4AZlFzLWeqqVhV4bQKp5dKLap5pdFTocAFi/xZow8eUZZrp0SEpiQGvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=wpXzLqRc; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=hd5f5qnrIZWu7RKgPSX6OOXWMRFjvTGBPlhsF7CF4xU=; b=wpXzLqRcHVgMqa9bTFgUs+s9fo
+	7qTLLtiRecHWm4Q3FIDpErkilaSQ6qIfST1F5JYodi1CB6YiQrw3d03v6BBWdy7ukm0jFeo3tv+3o
+	IPTRcOUOn4zX3jbvbdOYVdNaDDVO4teviZP3Z46RWFCOek+yqL/vIAX4BwRw+TmcGh79WKiEKPVQV
+	asqUZxffJEzLCoW/cR55Y67yWvIewlPTS0H7AXwSfFiiF+YtsRa1gi6rs4BBh/GC3Pd4P//T8RiW7
+	JTdhCTpHJYi11CU2qXHdLYkkCBGPT+BeZvXN4iwPWy0TAC2bdgbbN0h7KneO6ukura2PYjQQpcPfX
+	/sNczz2A==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60836)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sYOKe-00040L-2h;
+	Mon, 29 Jul 2024 12:14:25 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sYOKc-0004H1-VH; Mon, 29 Jul 2024 12:14:22 +0100
+Date: Mon, 29 Jul 2024 12:14:22 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com, arnd@arndb.de,
+	gregkh@linuxfoundation.org, deller@gmx.de, javierm@redhat.com,
+	bhe@redhat.com, robh@kernel.org, alexghiti@rivosinc.com,
+	bjorn@rivosinc.com, akpm@linux-foundation.org, namcao@linutronix.de,
+	dawei.li@shingroup.cn, chenjiahao16@huawei.com, rppt@kernel.org,
+	julian.stecklina@cyberus-technology.de, rafael.j.wysocki@intel.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] ARM: Fix crash memory reserve exceed system
+ memory bug
+Message-ID: <Zqd5joQ/hB8wfebg@shell.armlinux.org.uk>
+References: <20240722035701.696874-1-ruanjinjie@huawei.com>
+ <20240722035701.696874-3-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0b1be7b7-e65b-8d8e-0659-388dec303039@amd.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: rc17lGWPFBYXtbMfuL_DVAKA2x0JxuLl
-X-Proofpoint-GUID: 4tGW0z5h9ARYRTEuJ_avk15AcJCpM8FZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-29_09,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 malwarescore=0 mlxscore=0 adultscore=0 mlxlogscore=999
- priorityscore=1501 bulkscore=0 phishscore=0 impostorscore=0 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407290073
+In-Reply-To: <20240722035701.696874-3-ruanjinjie@huawei.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi Lizhi,
+On Mon, Jul 22, 2024 at 11:57:00AM +0800, Jinjie Ruan wrote:
+> Similar with x86_32, on Qemu vexpress-a9 with 1GB memory, the crash kernel
+> "crashkernel=4G" is ok as below:
+> 	Reserving 4096MB of memory at 2432MB for crashkernel (System RAM: 1024MB)
+> 
+> The cause is that the crash_size is parsed and printed with "unsigned long
+> long" data type which is 8 bytes but allocated used with "phys_addr_t"
+> which is 4 bytes in memblock_phys_alloc_range().
+> 
+> Fix it by checking if the crash_size is greater than system RAM size and
+> warn out as parse_crashkernel_mem() do it if so as Baoquan suggested.
+> 
+> After this patch, it fails and there is no above confusing reserve
+> success info.
+> 
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Suggested-by: Baoquan He <bhe@redhat.com>
 
-On 2024/07/26 11:45 AM, Lizhi Hou wrote:
-> 
-> On 7/26/24 10:52, Rob Herring wrote:
-> > On Thu, Jul 25, 2024 at 6:06 PM Lizhi Hou <lizhi.hou@amd.com> wrote:
-> > > Hi Amit,
-> > > 
-> > > 
-> > > I try to follow the option which add a OF flag. If Rob is ok with this,
-> > > I would suggest to use it instead of V1 patch
-> > > 
-> > > diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-> > > index dda6092e6d3a..a401ed0463d9 100644
-> > > --- a/drivers/of/dynamic.c
-> > > +++ b/drivers/of/dynamic.c
-> > > @@ -382,6 +382,11 @@ void of_node_release(struct kobject *kobj)
-> > >                                  __func__, node);
-> > >           }
-> > > 
-> > > +       if (of_node_check_flag(node, OF_CREATED_WITH_CSET)) {
-> > > +               of_changeset_revert(node->data);
-> > > +               of_changeset_destroy(node->data);
-> > > +       }
-> > What happens if multiple nodes are created in the changeset?
-> Ok. multiple nodes will not work.
-> > 
-> > > +
-> > >           if (node->child)
-> > >                   pr_err("ERROR: %s() unexpected children for %pOF/%s\n",
-> > >                           __func__, node->parent, node->full_name);
-> > > @@ -507,6 +512,7 @@ struct device_node *of_changeset_create_node(struct
-> > > of_changeset *ocs,
-> > >           np = __of_node_dup(NULL, full_name);
-> > >           if (!np)
-> > >                   return NULL;
-> > > +       of_node_set_flag(np, OF_CREATED_WITH_CSET);
-> > This should be set where the data ptr is set.
-> 
-> Ok. It sounds the fix could be simplified to 3 lines change.
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
-Thanks for the patch. The hot-plug and hot-unplug of PCI device seem to work
-fine as expected. I see this patch would attempt to remove only the nodes which
-were created in `of_pci_make_dev_node()` with the help of the newly introduced
-flag, which looks good to me.
+Thanks!
 
-Also, since a call to `of_pci_make_dev_node()` from `pci_bus_add_device()`, that
-creates devices nodes only for bridge devices, is conditional on
-`pci_is_bridge()`, it only makes sense to retain the logical symmetry and call
-`of_pci_remove_node()` conditionally on `pci_is_bridge()` as well in
-`pci_stop_dev()`. Hence, I would like to propose the below change along with the
-above patch:
-
-diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
-index 910387e5bdbf..c6394bf562cd 100644
---- a/drivers/pci/remove.c
-+++ b/drivers/pci/remove.c
-@@ -23,7 +23,8 @@ static void pci_stop_dev(struct pci_dev *dev)
-                device_release_driver(&dev->dev);
-                pci_proc_detach_device(dev);
-                pci_remove_sysfs_dev_files(dev);
--               of_pci_remove_node(dev);
-+               if (pci_is_bridge(dev))
-+                       of_pci_remove_node(dev);
- 
-                pci_dev_assign_added(dev, false);
-        }
-
-Please let me know of your thoughts on this and based on that I can spin the v3
-of this patch.
-
-In addition to this, can this patch be taken as part of 6.11 as a bug fix?
-
-Thanks,
-Amit
-
-> 
-> 
-> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-> index 51e3dd0ea5ab..0b3ba1e1b18c 100644
-> --- a/drivers/pci/of.c
-> +++ b/drivers/pci/of.c
-> @@ -613,7 +613,7 @@ void of_pci_remove_node(struct pci_dev *pdev)
->         struct device_node *np;
-> 
->         np = pci_device_to_OF_node(pdev);
-> -       if (!np || !of_node_check_flag(np, OF_DYNAMIC))
-> +       if (!np || !of_node_check_flag(np, OF_CREATED_WITH_CSET))
->                 return;
->         pdev->dev.of_node = NULL;
-> 
-> @@ -672,6 +672,7 @@ void of_pci_make_dev_node(struct pci_dev *pdev)
->         if (ret)
->                 goto out_free_node;
-> 
-> +       of_node_set_flag(np, OF_CREATED_WITH_CSET);
->         np->data = cset;
->         pdev->dev.of_node = np;
->         kfree(name);
-> diff --git a/include/linux/of.h b/include/linux/of.h
-> index a0bedd038a05..a46317f6626e 100644
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-> @@ -153,6 +153,7 @@ extern struct device_node *of_stdout;
->  #define OF_POPULATED_BUS       4 /* platform bus created for children */
->  #define OF_OVERLAY             5 /* allocated for an overlay */
->  #define OF_OVERLAY_FREE_CSET   6 /* in overlay cset being freed */
-> +#define OF_CREATED_WITH_CSET    7 /* created by of_changeset_create_node */
-> 
->  #define OF_BAD_ADDR    ((u64)-1)
-> 
-> 
-> Lizhi
-> 
-> > 
-> > Rob
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
