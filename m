@@ -1,69 +1,83 @@
-Return-Path: <linux-kernel+bounces-265553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10DDD93F2C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:34:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FC693F2CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F5711F227BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:34:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD5F1F213AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2594F1442E8;
-	Mon, 29 Jul 2024 10:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792F3145334;
+	Mon, 29 Jul 2024 10:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TYPpS1Wf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xb0Q1ETf"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q4Gm7IMU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W+6w18kl"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D031E142E60;
-	Mon, 29 Jul 2024 10:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C7F143873;
+	Mon, 29 Jul 2024 10:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722249245; cv=none; b=sbZrSEK6mg7+jQo5tf8iWgqqyxudHEUe4e3fRxbdxd/j4z2ALzuhCS9swqZklkFrokAz+cLqiNyu9AGcjumZlGPlNfPrxHCGdhl69Wh5jOi0eaABKMRGUepVUJmZftEyB/PCLGSYGfLTaTctqVCHvfOmYGtup2AJskAhL6BvQJE=
+	t=1722249247; cv=none; b=YsgOWZvvXSG27akh2DQnnKGoLXaFF+x6Ih+uBl3NaSnTf/WSwVxZmWVyTMlYF/F7y8b8Zb1OL3yAAOfXUqDxVgBTTLDR1ogML8PquMRrkv1PKLTL5zbtLWSr5V+3MM7KaujEuoDDkR/Fbgy9qwO1JzMnefe7XK8DN5S7UoQFz5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722249245; c=relaxed/simple;
-	bh=GXykx07upjboy+rQvDxyBu6yu0XCtZFcn5nwlGy1Z30=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=KvL3C10mCvE8sBMqKOj9x5Mr2Ii7ikCWfe6QWLhLDe+hlhMnREZIqHFraVMNs+xIQ111mQKxBD/IdlkxyBLk9Gqid0lVo8lZJTBNFGuyy9GeHLBxc/jgVV8AkhxFU8WOdMlGaahZoJ4EfuPEYPU6EPzBFKNdHFA4Dwe7HRi/qi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TYPpS1Wf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xb0Q1ETf; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1722249247; c=relaxed/simple;
+	bh=zIHWDrJs2RXpLhehu4rA00hG9qgjdcou5i4v6wUA7MM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=FJey5q60/Halx6UMgQ4UqwXgiN0nQukc9sBf6yqctaphxfFpV/v7biHZ4UWE/vH/WOdhAwiTg111ZEadqyl2WvtU7t6oonVEEmP5+Bm/YNGX30Q00dr6aP/R30xODqAHdLV1m3KVxJb5nC//CI3nz7WQIpJZO37naYdxKYevaD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q4Gm7IMU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W+6w18kl; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 29 Jul 2024 10:34:01 -0000
+Date: Mon, 29 Jul 2024 10:34:02 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722249242;
+	s=2020; t=1722249243;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=KkSh9HmgnIEc7i9rWYjamN9DQ+ha7qGBOUyx7dNUbkE=;
-	b=TYPpS1WftVmW8Uws553XTFL/L3xFXMygaBoIKC3/3QmHLZE0dkf4zmbb5PYvDwlrHrLxAO
-	6KCbjlZURq3x11EUfz4WmDhuU9bgqA/GJVlR0lH7CIMkHPAw2rXBpG0cxyZoBTkd072RC2
-	na/zdrFouSGQpVke5QSk0EwcmfWgcJ8uUZYW5A8FQWtzUQ8mT9nuxl/JIjDxeGt/kZ/ony
-	2Q/X+S+Rdk0/jaWqHYu/ImdnYk3A66igoHrQ4iyZW15bXzrNFIvYliphkI3wPj+zm2ZA5/
-	LcCicl3trX38Bunb2lxnAzrV6xJI5MOGag5b1kaBVyJTZBXwGYCCWx9hlPbDiw==
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EvKTJcJ65cCSvd8gt7vqwEYIEh39ixGD5M1XXmMlgy4=;
+	b=q4Gm7IMUn0SUYnl0LodmOLgzaVGGXLwdEqmngcDDEmBpwjOnJ3gTJaIOSI2nmSbMxSxWvW
+	OqqTh/xnG4YVpdYaLP1bLO8271Pv0oktS8dYriS7wsUDtn1vXEG8x65scorzDeGVKcwjis
+	gIMFIr2gbLImNa9kH9NTGcZWPJJU/W4oCCtLFqG9nY0Rz7fPYrdPToW2XSopRFoAxpIVW7
+	iTTR/CaU6ZAplByR66ZLO4WOAm7C4LZ1OSgSCIg1LdT1iJVZtXnK+h9ysy63vHOQW2htKU
+	T8tx7u9PuXf1A3f5e71+ncGQ0CIvQzUkmbxfpozEVJrxYyRUYrrsmBN4ZjsN0A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722249242;
+	s=2020e; t=1722249243;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=KkSh9HmgnIEc7i9rWYjamN9DQ+ha7qGBOUyx7dNUbkE=;
-	b=xb0Q1ETfQ0GDAWdCxAVWnntjWmTFJd4u+pLHDUdtpK18MkCBK720vY2uzobt+eyEjS9okU
-	9vEaAqtcwn1aceDQ==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EvKTJcJ65cCSvd8gt7vqwEYIEh39ixGD5M1XXmMlgy4=;
+	b=W+6w18klSNkoAqX9qAW6AQ71TyrDC+z5XaeL3x//HHTqZ3avxLWEPkPUy0OUkKZ5sCxF1o
+	A2gXFZZyJmftRFCg==
+From: "tip-bot2 for Joel Fernandes (Google)" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/fair: Cleanup fair_server
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+Subject: [tip: sched/core] sched/core: Fix picking of tasks for core
+ scheduling with DL server
+Cc: Suleiman Souhlal <suleiman@google.com>,
+ "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+ Daniel Bristot de Oliveira <bristot@kernel.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Vineeth Pillai <vineeth@bitbyteword.org>, Juri Lelli <juri.lelli@redhat.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To:
+ <b10489ab1f03d23e08e6097acea47442e7d6466f.1716811044.git.bristot@kernel.org>
+References:
+ <b10489ab1f03d23e08e6097acea47442e7d6466f.1716811044.git.bristot@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172224924149.2215.6350653470281116147.tip-bot2@tip-bot2>
+Message-ID: <172224924259.2215.9246085118455972956.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -73,120 +87,188 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     cea5a3472ac43f18590e1bd6b842f808347a810c
-Gitweb:        https://git.kernel.org/tip/cea5a3472ac43f18590e1bd6b842f808347a810c
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Fri, 26 Jul 2024 16:27:04 +02:00
+Commit-ID:     c8a85394cfdb4696b4e2f8a0f3066a1c921af426
+Gitweb:        https://git.kernel.org/tip/c8a85394cfdb4696b4e2f8a0f3066a1c921af426
+Author:        Joel Fernandes (Google) <joel@joelfernandes.org>
+AuthorDate:    Mon, 27 May 2024 14:06:54 +02:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Mon, 29 Jul 2024 12:22:37 +02:00
 
-sched/fair: Cleanup fair_server
+sched/core: Fix picking of tasks for core scheduling with DL server
 
-The throttle interaction made my brain hurt, make it consistently
-about 0 transitions of h_nr_running.
+* Use simple CFS pick_task for DL pick_task
 
+  DL server's pick_task calls CFS's pick_next_task_fair(), this is wrong
+  because core scheduling's pick_task only calls CFS's pick_task() for
+  evaluation / checking of the CFS task (comparing across CPUs), not for
+  actually affirmatively picking the next task. This causes RB tree
+  corruption issues in CFS that were found by syzbot.
+
+* Make pick_task_fair clear DL server
+
+  A DL task pick might set ->dl_server, but it is possible the task will
+  never run (say the other HT has a stop task). If the CFS task is picked
+  in the future directly (say without DL server), ->dl_server will be
+  set. So clear it in pick_task_fair().
+
+This fixes the KASAN issue reported by syzbot in set_next_entity().
+
+(DL refactoring suggestions by Vineeth Pillai).
+
+Reported-by: Suleiman Souhlal <suleiman@google.com>
+Signed-off-by: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Signed-off-by: Daniel Bristot de Oliveira <bristot@kernel.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Vineeth Pillai <vineeth@bitbyteword.org>
+Tested-by: Juri Lelli <juri.lelli@redhat.com>
+Link: https://lore.kernel.org/r/b10489ab1f03d23e08e6097acea47442e7d6466f.1716811044.git.bristot@kernel.org
 ---
- kernel/sched/fair.c | 32 +++++++++++++++++---------------
- 1 file changed, 17 insertions(+), 15 deletions(-)
+ include/linux/sched.h   |  3 ++-
+ kernel/sched/deadline.c | 27 ++++++++++++++++++++++-----
+ kernel/sched/fair.c     | 23 +++++++++++++++++++++--
+ kernel/sched/sched.h    |  3 ++-
+ 4 files changed, 47 insertions(+), 9 deletions(-)
 
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 4edd7e2..2c1b4ee 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -686,7 +686,8 @@ struct sched_dl_entity {
+ 	 */
+ 	struct rq			*rq;
+ 	dl_server_has_tasks_f		server_has_tasks;
+-	dl_server_pick_f		server_pick;
++	dl_server_pick_f		server_pick_next;
++	dl_server_pick_f		server_pick_task;
+ 
+ #ifdef CONFIG_RT_MUTEXES
+ 	/*
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 747c0c5..8571bc9 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1664,11 +1664,13 @@ void dl_server_stop(struct sched_dl_entity *dl_se)
+ 
+ void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+ 		    dl_server_has_tasks_f has_tasks,
+-		    dl_server_pick_f pick)
++		    dl_server_pick_f pick_next,
++		    dl_server_pick_f pick_task)
+ {
+ 	dl_se->rq = rq;
+ 	dl_se->server_has_tasks = has_tasks;
+-	dl_se->server_pick = pick;
++	dl_se->server_pick_next = pick_next;
++	dl_se->server_pick_task = pick_task;
+ }
+ 
+ void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq)
+@@ -2399,7 +2401,12 @@ static struct sched_dl_entity *pick_next_dl_entity(struct dl_rq *dl_rq)
+ 	return __node_2_dle(left);
+ }
+ 
+-static struct task_struct *pick_task_dl(struct rq *rq)
++/*
++ * __pick_next_task_dl - Helper to pick the next -deadline task to run.
++ * @rq: The runqueue to pick the next task from.
++ * @peek: If true, just peek at the next task. Only relevant for dlserver.
++ */
++static struct task_struct *__pick_next_task_dl(struct rq *rq, bool peek)
+ {
+ 	struct sched_dl_entity *dl_se;
+ 	struct dl_rq *dl_rq = &rq->dl;
+@@ -2413,7 +2420,10 @@ again:
+ 	WARN_ON_ONCE(!dl_se);
+ 
+ 	if (dl_server(dl_se)) {
+-		p = dl_se->server_pick(dl_se);
++		if (IS_ENABLED(CONFIG_SMP) && peek)
++			p = dl_se->server_pick_task(dl_se);
++		else
++			p = dl_se->server_pick_next(dl_se);
+ 		if (!p) {
+ 			WARN_ON_ONCE(1);
+ 			dl_se->dl_yielded = 1;
+@@ -2428,11 +2438,18 @@ again:
+ 	return p;
+ }
+ 
++#ifdef CONFIG_SMP
++static struct task_struct *pick_task_dl(struct rq *rq)
++{
++	return __pick_next_task_dl(rq, true);
++}
++#endif
++
+ static struct task_struct *pick_next_task_dl(struct rq *rq)
+ {
+ 	struct task_struct *p;
+ 
+-	p = pick_task_dl(rq);
++	p = __pick_next_task_dl(rq, false);
+ 	if (!p)
+ 		return p;
+ 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index ee251ac..795ceef 100644
+index 1ea5ec8..ee251ac 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -5849,10 +5849,10 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
- 	/* At this point se is NULL and we are at root level*/
- 	sub_nr_running(rq, task_delta);
+@@ -8479,6 +8479,14 @@ again:
+ 		cfs_rq = group_cfs_rq(se);
+ 	} while (cfs_rq);
  
--done:
- 	/* Stop the fair server if throttling resulted in no runnable tasks */
- 	if (rq_h_nr_running && !rq->cfs.h_nr_running)
- 		dl_server_stop(&rq->fair_server);
-+done:
- 	/*
- 	 * Note: distribution will already see us throttled via the
- 	 * throttled-list.  rq->lock protects completion.
-@@ -5940,16 +5940,16 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
- 			goto unthrottle_throttle;
- 	}
- 
-+	/* Start the fair server if un-throttling resulted in new runnable tasks */
-+	if (!rq_h_nr_running && rq->cfs.h_nr_running)
-+		dl_server_start(&rq->fair_server);
++	/*
++	 * This can be called from directly from CFS's ->pick_task() or indirectly
++	 * from DL's ->pick_task when fair server is enabled. In the indirect case,
++	 * DL will set ->dl_server just after this function is called, so its Ok to
++	 * clear. In the direct case, we are picking directly so we must clear it.
++	 */
++	task_of(se)->dl_server = NULL;
 +
- 	/* At this point se is NULL and we are at root level*/
- 	add_nr_running(rq, task_delta);
- 
- unthrottle_throttle:
- 	assert_list_leaf_cfs_rq(rq);
- 
--	/* Start the fair server if un-throttling resulted in new runnable tasks */
--	if (!rq_h_nr_running && rq->cfs.h_nr_running)
--		dl_server_start(&rq->fair_server);
--
- 	/* Determine whether we need to wake up potentially idle CPU: */
- 	if (rq->curr == rq->idle && rq->cfs.nr_running)
- 		resched_curr(rq);
-@@ -6771,6 +6771,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 	struct sched_entity *se = &p->se;
- 	int idle_h_nr_running = task_has_idle_policy(p);
- 	int task_new = !(flags & ENQUEUE_WAKEUP);
-+	int rq_h_nr_running = rq->cfs.h_nr_running;
- 
- 	/*
- 	 * The code below (indirectly) updates schedutil which looks at
-@@ -6780,13 +6781,6 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 	 */
- 	util_est_enqueue(&rq->cfs, p);
- 
--	if (!throttled_hierarchy(task_cfs_rq(p)) && !rq->cfs.h_nr_running) {
--		/* Account for idle runtime */
--		if (!rq->nr_running)
--			dl_server_update_idle_time(rq, rq->curr);
--		dl_server_start(&rq->fair_server);
--	}
--
- 	/*
- 	 * If in_iowait is set, the code below may not trigger any cpufreq
- 	 * utilization updates, so do it here explicitly with the IOWAIT flag
-@@ -6832,6 +6826,13 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 			goto enqueue_throttle;
- 	}
- 
-+	if (!rq_h_nr_running && rq->cfs.h_nr_running) {
-+		/* Account for idle runtime */
-+		if (!rq->nr_running)
-+			dl_server_update_idle_time(rq, rq->curr);
-+		dl_server_start(&rq->fair_server);
-+	}
-+
- 	/* At this point se is NULL and we are at root level*/
- 	add_nr_running(rq, 1);
- 
-@@ -6872,6 +6873,7 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 	int task_sleep = flags & DEQUEUE_SLEEP;
- 	int idle_h_nr_running = task_has_idle_policy(p);
- 	bool was_sched_idle = sched_idle_rq(rq);
-+	int rq_h_nr_running = rq->cfs.h_nr_running;
- 
- 	util_est_dequeue(&rq->cfs, p);
- 
-@@ -6926,14 +6928,14 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 	/* At this point se is NULL and we are at root level*/
- 	sub_nr_running(rq, 1);
- 
-+	if (rq_h_nr_running && !rq->cfs.h_nr_running)
-+		dl_server_stop(&rq->fair_server);
-+
- 	/* balance early to pull high priority tasks */
- 	if (unlikely(!was_sched_idle && sched_idle_rq(rq)))
- 		rq->next_balance = jiffies;
- 
- dequeue_throttle:
--	if (!throttled_hierarchy(task_cfs_rq(p)) && !rq->cfs.h_nr_running)
--		dl_server_stop(&rq->fair_server);
--
- 	util_est_update(&rq->cfs, p, task_sleep);
- 	hrtick_update(rq);
+ 	return task_of(se);
  }
+ #endif
+@@ -8638,7 +8646,16 @@ static bool fair_server_has_tasks(struct sched_dl_entity *dl_se)
+ 	return !!dl_se->rq->cfs.nr_running;
+ }
+ 
+-static struct task_struct *fair_server_pick(struct sched_dl_entity *dl_se)
++static struct task_struct *fair_server_pick_task(struct sched_dl_entity *dl_se)
++{
++#ifdef CONFIG_SMP
++	return pick_task_fair(dl_se->rq);
++#else
++	return NULL;
++#endif
++}
++
++static struct task_struct *fair_server_pick_next(struct sched_dl_entity *dl_se)
+ {
+ 	return pick_next_task_fair(dl_se->rq, NULL, NULL);
+ }
+@@ -8649,7 +8666,9 @@ void fair_server_init(struct rq *rq)
+ 
+ 	init_dl_entity(dl_se);
+ 
+-	dl_server_init(dl_se, rq, fair_server_has_tasks, fair_server_pick);
++	dl_server_init(dl_se, rq, fair_server_has_tasks, fair_server_pick_next,
++		       fair_server_pick_task);
++
+ }
+ 
+ /*
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index b777ac3..f7e028b 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -361,7 +361,8 @@ extern void dl_server_start(struct sched_dl_entity *dl_se);
+ extern void dl_server_stop(struct sched_dl_entity *dl_se);
+ extern void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+ 		    dl_server_has_tasks_f has_tasks,
+-		    dl_server_pick_f pick);
++		    dl_server_pick_f pick_next,
++		    dl_server_pick_f pick_task);
+ 
+ extern void dl_server_update_idle_time(struct rq *rq,
+ 		    struct task_struct *p);
 
