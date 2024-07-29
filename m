@@ -1,71 +1,126 @@
-Return-Path: <linux-kernel+bounces-266554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F3694018E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:11:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3CC39401A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A04581F231AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:11:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AED91F23014
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B679118EFFB;
-	Mon, 29 Jul 2024 23:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E31B19005A;
+	Mon, 29 Jul 2024 23:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FZsjA2Z9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BvBu26FM"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB1D18A948;
-	Mon, 29 Jul 2024 23:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FBD18FC7D;
+	Mon, 29 Jul 2024 23:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722294698; cv=none; b=sTVjHUtUjmX2rQBTrO0ySKFWwLDsAk8fEu+86WGBMvtQ3qR4RLLxveEbDN1tnBLFCsJ2KsEOLdQDVlBEMG+9KpLd22DTH4BvNznYpK6Ti9Mo+uizTj7tb4BD0jnTVcgDR1FrYJYbo8puKBsqtpzmlCp+NmT+dmyibWs9IpeVzk4=
+	t=1722294850; cv=none; b=joHP27yjmWiNl0PZRBz3syXJUDAb0XvHth8uR1Ya0hfZrE5efCMO3UYFmHwGfAI/9l5UwJMOmvL/wmNUYeL2wNbXmrY0uaOa03gsPvoo3OZblzdZNrD4qfblNKJNbfLu9J8nSKSdwwIS4609ruTSHkV7KDYQysb3F27f8R5U+/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722294698; c=relaxed/simple;
-	bh=zRWYUsOVWmCW1ARRgFXXssRkqPSAfDAPe8/80wD4ars=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=JrAJDBy0qQf3mZ4GE5WOx/0eFlRoClhf1rpvtJz7c+pxPWFmNUQilGniApfOSL+yjqpYlxTmyzu4d0PMl5LZnA+eQjeiDgT31tnwVQ17jqsucFBnsZB/NpSIfspuFa88ID83LQvfdlFmA2h42TGtVah68zJXBwg+HQqz5BnUxbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FZsjA2Z9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B6D5C32786;
-	Mon, 29 Jul 2024 23:11:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722294697;
-	bh=zRWYUsOVWmCW1ARRgFXXssRkqPSAfDAPe8/80wD4ars=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=FZsjA2Z9icRNAfDBcYD+obscw/zmL9iQkCsVmgzoFdUzkNzMhqpiA594H2Kr/zcpe
-	 jSkJMnG6O17tWP8VmOhpIYjKBxeZ731Wvu9KAWl6yjI84gYTF/A6cFc5N9bSVx1iyG
-	 EJAyohZSWzi227B8Dc2USOkWzqfMZ458az4ThNe0f2BYcj1Uk118NEmHW2l6hXvlua
-	 3BWicbIwwzKOtA8q32lJGrp9EgAxnzRroSK0BFooJ5f1lhOcXjD3x7CiZ2OxNAyE3T
-	 sOGR/rfzVBleTDRE4dvrdagVZS43Kn6GBkiXhJOLigGe+V7vlUV/vHr8n0e3K1gGHY
-	 ZApXXKdQlH9mg==
-Message-ID: <076d5370a9b163f46170a6f581088246.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1722294850; c=relaxed/simple;
+	bh=EEYPIJlox5X3reF5E6wHd/OxgAx0gL8CasJ9+oh9Tn8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o00Wh7/vlWw3JTmmeaSXGq/um2gFKTnrhbsh70KTcpOUYwwZtvjhAhnXxmTPY5X54V3o8CD4ezzqnM5zVaAkpMJ5VbPdAc4NBfIBKnuX+8VYnue2qsseBnnpNyaEAKYP8npE+f8ZggixLtTrCclJNNB93gig10Pf4/rf91QBuQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BvBu26FM; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TAojIO011082;
+	Mon, 29 Jul 2024 23:13:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=GwqvFPodPkROMymiwKIP9m
+	NCnn73iUGSFRT5hIbTuSk=; b=BvBu26FMn4tQVlIVCkXTmNQG9+8NhGpg5v6nyv
+	qVmufmlMe5GrKg1lPxuFz2yhTLVNYqPEaGi9Dj2JprCZWcGInwQXfH3RP+xqlt7/
+	1+WXZFwGlutiUxxyNBMGAKL943crCDnDGfLLyF7+0UOPlHhH+pPyw3I/WQZHqHk6
+	aAWO28hQr49dD7paQX2tOS2//AXaa3CqsjUOoTlpIb+AxW3yGM+V96iMvZFBPel7
+	rteWGaPea4hRTomhpQLsRC5gHy9cbE8d5ZL8ZkOjXHJtIgnOTzlX8ZUmGlQhsKGM
+	HC/8s8PNNgAhUiDthj/LgSakht3DU0FYbk7cOi7xrIicEzSQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mqurnkub-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 23:13:39 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TNDcsc032462
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 23:13:38 GMT
+Received: from hu-amelende-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 29 Jul 2024 16:13:38 -0700
+From: Anjelique Melendez <quic_amelende@quicinc.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <amitk@kernel.org>, <thara.gopinath@gmail.com>, <andersson@kernel.org>
+CC: <quic_collinsd@quicinc.com>, <rafael@kernel.org>,
+        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Anjelique
+ Melendez" <quic_amelende@quicinc.com>
+Subject: [PATCH 0/5] thermal: qcom-spmi-temp-alarm: add support for new TEMP_ALARM subtypes
+Date: Mon, 29 Jul 2024 16:12:54 -0700
+Message-ID: <20240729231259.2122976-1-quic_amelende@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240718082528.220750-1-angelogioacchino.delregno@collabora.com>
-References: <20240718082528.220750-1-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH] clk: mediatek: reset: Remove unused mtk_register_reset_controller()
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, mturquette@baylibre.com, p.zabel@pengutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org, kernel@collabora.com
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Date: Mon, 29 Jul 2024 16:11:35 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: TCcHzBEoVo6yBJUc5lOPVn85bsQsCLn9
+X-Proofpoint-ORIG-GUID: TCcHzBEoVo6yBJUc5lOPVn85bsQsCLn9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-29_20,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
+ clxscore=1011 bulkscore=0 malwarescore=0 mlxscore=0 impostorscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407290159
 
-Quoting AngeloGioacchino Del Regno (2024-07-18 01:25:28)
-> Now that all clock controllers have been migrated to the new
-> mtk_register_reset_controller_with_dev() function, the one taking
-> struct device node is now unused: remove it.
->=20
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
-> ---
+Add support in the qcom-spmi-temp-alarm driver for the new PMIC
+TEMP_ALARM peripheral subtypes: GEN2 rev 2 and LITE.  The GEN2 rev 2
+subtype provides greater flexibility in temperature threshold
+specification by using an independent register value to configure
+each of the three thresholds.  The LITE subtype utilizes a simplified
+set of control registers to configure two thresholds: warning and
+shutdown.
 
-Applied to clk-next
+Also add support to avoid a potential issue on certain versions of
+the TEMP_ALARM GEN2 subtype when automatic stage 2 partial shutdown
+is disabled.
+
+This patch series is a continuation of the original series from 1/2023:
+https://lore.kernel.org/lkml/cover.1674602698.git.quic_collinsd@quicinc.com/
+
+Anjelique Melendez (4):
+  dt-bindings: qcom,spmi-temp-alarm: Add compatible for GEN2 rev2 temp
+    alarm
+  dt-bindings: qcom,spmi-temp-alarm: Add compatible for lite temp alarm
+  thermal: qcom-spmi-temp-alarm: add support for GEN2 rev 2 PMIC
+    peripherals
+  thermal: qcom-spmi-temp-alarm: add support for LITE PMIC peripherals
+
+David Collins (1):
+  thermal: qcom-spmi-temp-alarm: enable stage 2 shutdown when required
+
+ .../thermal/qcom,spmi-temp-alarm.yaml         |  50 +-
+ drivers/thermal/qcom/qcom-spmi-temp-alarm.c   | 433 +++++++++++++++++-
+ 2 files changed, 463 insertions(+), 20 deletions(-)
+
+-- 
+2.34.1
+
 
