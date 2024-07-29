@@ -1,125 +1,116 @@
-Return-Path: <linux-kernel+bounces-266002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64A5F93F90E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:06:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C1793F914
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92E271C21C09
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:06:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BAEA28351F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A9815624D;
-	Mon, 29 Jul 2024 15:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45C4157E6C;
+	Mon, 29 Jul 2024 15:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzC56+RB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="beeS/0AH"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13F33C24;
-	Mon, 29 Jul 2024 15:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1443156250
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722265575; cv=none; b=J915uJPJLBki41YeEiQrfMmmTFUYM/IsIqPl12qqQ7xXvE/9R5dZ0ST3j3VP/qHW14XPv5kDE0ymOuefHeQzQmEnH1uJUz/bBaQ05Jv/0yvFv3jR8K8bzrGBIo8jg5QieLZN9XU2EhlnXACjo/V5wDuP94kf16y5zG11tC/RU6Y=
+	t=1722265616; cv=none; b=tDuDU+MsHnOg2UuN9avBcofq/tp4UzrJ1BSJCA30IYifEe9hWLVJi86fXTRBn6hxEMAK4kIVz2moxAfaCQ3W9IK5HRSUHrXk7uGGAQYvD4kVTv3G5rdJX7WAOUxrze4Sxa9s9ysDwZR/0SuD8KUiKst/5rumpSxB8/EPUiMFM50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722265575; c=relaxed/simple;
-	bh=dty+BTPh9Wqu8ZsRUupJ1Mht41LlDdpIwBe9xI+zdGo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kPX1X+3/DoHsVsfYpRz0fVA1GNLdgQn4T8YWpCmKdPGMtY3H/nPRsvw7StURu7wvCHhKXzmRwrdWBgcCF0+7EzrWB7AIn1qay0lSM46P2KwIHb30+wMzqFMBW1cz9OuHHsdikOzYCtu1OKF6UD/2IBQsEK6admF1ZIe4c3xZqrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gzC56+RB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5A21C32786;
-	Mon, 29 Jul 2024 15:06:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722265575;
-	bh=dty+BTPh9Wqu8ZsRUupJ1Mht41LlDdpIwBe9xI+zdGo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gzC56+RBJ9BBUtP2m70LR+UevtVVjajVzJiSqIjd30SP8VM4bma8EnYxzOssPXolX
-	 o8W5+PJ0JwBBtkggKm9j8V9LvTtttzMbmd8+zaOWaXlCmuj0A0F/nZgcXVFhR8WMeM
-	 pR2Rso0jz6hRz1xd5twr4MCVPWvXJOMLi8SepQXAVps654GMPbmB82soUOnN+M47lN
-	 I6vcVMfDg1bAaMu783vb/pJBCaSzdW/6qon/sEY/moPzsWz9UX5eGeFnsFty0TKzNX
-	 T70JD4yQJIUzLYXGQzj0yZrwIOs56fjzLSErzaZE+PyIv6+8JKplAG25Ajo+ObMjLk
-	 jkGwjZ8D1L7uw==
-Message-ID: <bff687dc-5e21-4879-b771-762d0daceb44@kernel.org>
-Date: Mon, 29 Jul 2024 17:06:11 +0200
+	s=arc-20240116; t=1722265616; c=relaxed/simple;
+	bh=v+fA2sL8PT2aaem3wZ1F4FcLGMckWT4YxfNzqDv1uMY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UT1q7Cdifa5HnxNBKn7zkrazsg7PI+Iq3RYLoeYQ5y1bgAWeMcq/pJXr21y+Cjl8Nfm8+hHMspquFLiOa6y9fCfMOULog71YBT0YRA02SmmOd9Twko1X1BUVU8nHhzSedgzWB3pav1wZA7+LhnccpnTqrfdViWiSwjP60BlW1fU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=beeS/0AH; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4281abc65daso11049465e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:06:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722265612; x=1722870412; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=orECJ2OhLH097DTMjvI6rJNFg6vz3nlf5Yl6sqJTBIE=;
+        b=beeS/0AHgHWiuF54U2Rgz2lh8sjYO1folj+E8zHeDu0pSEwrLEh1dV2briXJ3Jve9h
+         zU+cDmJQzsTyaUJ28JKGde29vJ10WYuazMyuzCQbpaCNHCB/RH2w9fbjNEXgckj2atYI
+         zSjzNCrsTUahtB3ykUG9NezbMOUysodnoaWU6ISwCL58As50aiekRBteY0Ai1lZ9+FGv
+         hGA6JkofM9r/ChKva2+LjzylQfeto4DsWgdZj1Ek5fes6LWr6MNIoV6zzEXen3dquQOI
+         HiMA0NMS/nZJJLdtgcc/Tu+kw1qwBymg8pUpIRJan0qtnrVws5xebQ0YBLTxVy8YIV6D
+         5klQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722265612; x=1722870412;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=orECJ2OhLH097DTMjvI6rJNFg6vz3nlf5Yl6sqJTBIE=;
+        b=xVboA9Ctr45pRSqRBBSygpMsWY9fkD1ByALTOTzqZjik8DOR2L7n809ObHpQhJnYN+
+         n8X65ZNMmRXbUjKxdbj7fOjrd8rIYJc2yy/ColTPnp8IXV86zRoSTqowrc9v9wd/QMfM
+         Es27CPa0029owGrYPChTK1SHaDg6mXkZQ8hHCL9bQQSxFRw+Fh/CehQXQwo0//fhNOlt
+         7miWIzMCSPdJog6HtYIUm90CL1mBhSmMuuPnnHQkPfF3fEkq7S2QbQLTenvICB2qhtlF
+         Svp/Ruh/RHaXmCO0GI64/SBvUKF1mrdfQddEccGkcj1DJ6aLHeleELt44v8sELbMSrlG
+         p16A==
+X-Forwarded-Encrypted: i=1; AJvYcCWMOgSk6I0msLoEaAREfep2QjvlTIqJ/K9ixJU9K6i3LqVA2oEqKk4ouN1l2X/2ImZo8eOGw1G0PQNIbWzg/Rcr9MoBrKgLSHCeCByk
+X-Gm-Message-State: AOJu0Yy7yxBWGZozgUa4Ovfy2ww8PtkURLtCueHEYnKHXO5S/rAXct47
+	QXl9WDXmMfMVOZKPcM589ht/xQg3MprC3296R7TQ1Nm/19uPH6WirSmfKjOjmFA=
+X-Google-Smtp-Source: AGHT+IFOpQKJrPEBTB7GUU+M3eQUukpjNflQqjbfqksXjQSALpbGkhpQ80Fn1dUw9m4ErxOkFf+giQ==
+X-Received: by 2002:a05:600c:4706:b0:427:d8f7:b718 with SMTP id 5b1f17b1804b1-42811dd19f0mr51394475e9.24.1722265611970;
+        Mon, 29 Jul 2024 08:06:51 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:abd3:cdc8:2363:54ef])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367c067esm12408017f8f.20.2024.07.29.08.06.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 08:06:51 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Arseniy Krasnov <avkrasnov@salutedevices.com>,  Liam Girdwood
+ <lgirdwood@gmail.com>,  Jaroslav Kysela <perex@perex.cz>,  Takashi Iwai
+ <tiwai@suse.com>,  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin
+ Hilman <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  alsa-devel@alsa-project.org,
+  linux-sound@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-amlogic@lists.infradead.org,  linux-kernel@vger.kernel.org,
+  kernel@sberdevices.ru,  oxffffaa@gmail.com
+Subject: Re: [PATCH v1] ASoC: meson: axg-fifo: set option to use raw spinlock
+In-Reply-To: <2b16b95e-196e-4d8a-98c3-3be568cdd18a@sirena.org.uk> (Mark
+	Brown's message of "Mon, 29 Jul 2024 15:44:38 +0100")
+References: <20240729131652.3012327-1-avkrasnov@salutedevices.com>
+	<1ja5i0wags.fsf@starbuckisacylon.baylibre.com>
+	<2b16b95e-196e-4d8a-98c3-3be568cdd18a@sirena.org.uk>
+Date: Mon, 29 Jul 2024 17:06:50 +0200
+Message-ID: <1j5xsow839.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] ARM: dts: qcom: add generic compat string to RPM
- glink channels
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
- Stephan Gerhold <stephan@gerhold.net>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240729-fix-smd-rpm-v1-0-99a96133cc65@linaro.org>
- <20240729-fix-smd-rpm-v1-3-99a96133cc65@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240729-fix-smd-rpm-v1-3-99a96133cc65@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 29/07/2024 13:04, Dmitry Baryshkov wrote:
-> Add the generic qcom,smd-rpm compatible to RPM nodes to follow the
-> schema (and to allow automatic driver loading in a sane way).
-> 
-> Fixes: bcabe1e09135 ("soc: qcom: smd-rpm: Match rpmsg channel instead of compatible")
+On Mon 29 Jul 2024 at 15:44, Mark Brown <broonie@kernel.org> wrote:
 
-That's nowhere a fix or please share some details what is the bug being
-fixed here.
+> On Mon, Jul 29, 2024 at 04:15:31PM +0200, Jerome Brunet wrote:
+>
+>> Maybe mmio regmap should '.use_raw_spinlock = true' by default when
+>> '.fast_io' is set ?
+>
+>> Mark, what is your opinion on this ? I guess it is not the first time
+>> this occurs ?
+>
+> I don't recall this coming up much TBH.  It may be that people just set
+> raw spinlocks when they need it, or that there's not many people using
+> relevant devices with RT kernels.
 
-Best regards,
-Krzysztof
+I have not been playing much with RT TBH, but AFAIK, with RT irq
+handlers are threaded unless IRQF_NO_THREAD is set. In this case,
+something preemptible in the handler should not be a problem.
 
+The axg-fifo drivers do not have IRQF_NO_THREAD so something is a bit
+unclear here.
+
+-- 
+Jerome
 
