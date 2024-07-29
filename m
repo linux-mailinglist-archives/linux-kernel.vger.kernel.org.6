@@ -1,98 +1,134 @@
-Return-Path: <linux-kernel+bounces-265353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB5693EFEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:32:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A11E93EFF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7F901C21A90
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:32:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53CC12830EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE4B13B7A9;
-	Mon, 29 Jul 2024 08:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1D213BC05;
+	Mon, 29 Jul 2024 08:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Z0Rl5GUh"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OcLTRqR+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="24IDGz/2"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A146F2F1
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3576F2F1;
+	Mon, 29 Jul 2024 08:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722241939; cv=none; b=EV3s+6YK+Kx8kPYGGTM5/4AN7n9J09UeFdhVCp0zjvIPWBr5g3oYIwfRj7bYox/jiV6gbgkArb1WfFEVC3Ij9EIaqHI4n6rR8yCkmAT9MfRPfqWouEGZ90q74VkN89AfMBpg6j2gJtI1hY5CtDkSKSTDN2/Da/gZlghJnCtJtDM=
+	t=1722241947; cv=none; b=ksexcfj6vV//qYhG+OihosZFr3qPhCeDDE1A9s6oA/9nxtPqMK9ibokT4DTKBcZjfKc+MzD8MvsODYt/MVDD2xk1NhufL+xKFbwLkkmUJ7k+qiaW2RWNAVPkNX9G+0E66Hi148C0R24wc0/3PMfF27QjkyBge38hUpy1MXXqMgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722241939; c=relaxed/simple;
-	bh=RKu9KPP9FD54kybo0dRLPGyKHnBnvcdwR4F+6veHEvg=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=l566P2sfCJhvDkb+GUneyoKiHgNe159nRVhU51uPpR7ZBqW/7OvuNcNvdlWaOQ9NJAGNyqzzEtYZ2zK0aCzJwOfy3zCEkxgWuznHwS5ULK6nramiKx0QuAj0fE4RN6WyUKbMhreCqaSswQN0f7PO8lvU9Nr5hxrSkHVTJi4T2EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Z0Rl5GUh; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1722241947; c=relaxed/simple;
+	bh=gGOw6e1VWw4qQS8Sgi9jspCG1Yvhe69nV21FhD9edfY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=f0cdvZ0DciAFEa+T+YZxkH8dXOb1AfVuhh63VPE0fILDLJ0Jwbs10mG9d79r7dqpb6Yv2URYbgcoEhPu3U2SiGH3yMwEdlIiQJXys0FPYEFtS7Q+XfjJnX7nYNggWQDTfqvizCCJvKjtXMCaP76sgdNHcEowNJ59FlRwgWeC/ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OcLTRqR+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=24IDGz/2; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 29 Jul 2024 08:32:23 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722241944;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=igj8WnfXHEtBehnbMlyvLDVNd2VeWb3Xm0pqSjOt3HM=;
+	b=OcLTRqR++oDqVyBP3Uc1NdNZ1JAAXruEjlVmUn+qw/tms5h+kuYygm4SlglqqcQGwlIIuB
+	8e9D007vloTEiiScirxmyIKVuV0AK1YwwXjHaYrCzC8Av5PD90qtK2pR5IcSCJx+LLPZPj
+	TR/Lp9iqt2h/kaEZ6tsKo38Byv2U1XHUzbNNchGnHqXkeRf4mWmYInnCDN2+Twu0pPRJka
+	QriLM6GjgruvEiREPknCMLuPlOwGfGwX2BtXeeuRzTZUQ8XEjfv0XK56FAa49cbUNSba42
+	Zyxyq1MfUeq8ZOTSigc4lgrJxhYwOS6BOSTLTW+bhyuCF8oltXiCwVaVeEGzIw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722241944;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=igj8WnfXHEtBehnbMlyvLDVNd2VeWb3Xm0pqSjOt3HM=;
+	b=24IDGz/2XUnfsbEMQ9ATIZNyRkWQUATyYxWM5dudZAIbIbBX7cEA268l1T4vexBKtT7jYk
+	f+cntKrXQtWYRvCQ==
+From: "tip-bot2 for Luca Ceresoli" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] irqchip/irq-pic32-evic: Add missing 'static' to
+ internal function
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To:
+ <20240717-irq-pic32-evic-fix-build-static-v1-1-5129085589c6@bootlin.com>
+References:
+ <20240717-irq-pic32-evic-fix-build-static-v1-1-5129085589c6@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722241935;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RKu9KPP9FD54kybo0dRLPGyKHnBnvcdwR4F+6veHEvg=;
-	b=Z0Rl5GUheiAHWpBvSRXhn2yjWU6Xf1UXMa492QCi/ySK5aqmkdWKTAlSa7CsT7g1xV9n55
-	L4wRf/inDXFRdH7FF08Y1gCL/WyQEKXWAu0RQ5B5H0lr55I7FhDl+W85/nB2VVCT+L9kNu
-	Q+YfDdHgEwRjGngpqfgqS2KRbIyHdvE=
-Date: Mon, 29 Jul 2024 08:32:13 +0000
+Message-ID: <172224194392.2215.1753919882787406820.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: si.yanteng@linux.dev
-Message-ID: <ce5a146b8a1857fda90bce79934ae5f9ec2bfee9@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH v3] docs/zh_CN: Add dev-tools/kcsan Chinese translation
-To: "Haoyang Liu" <tttturtleruss@hust.edu.cn>, "Alex Shi" <alexs@kernel.org>,
- "Yanteng Si" <siyanteng@loongson.cn>, "Jonathan Corbet" <corbet@lwn.net>,
- "Nathan Chancellor" <nathan@kernel.org>, "Nick Desaulniers"
- <ndesaulniers@google.com>, "Bill Wendling" <morbo@google.com>, "Justin
- Stitt" <justinstitt@google.com>
-Cc: hust-os-kernel-patches@googlegroups.com, "Haoyang Liu"
- <tttturtleruss@hust.edu.cn>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-In-Reply-To: <20240727150844.6502-1-tttturtleruss@hust.edu.cn>
-References: <20240727150844.6502-1-tttturtleruss@hust.edu.cn>
-X-Migadu-Flow: FLOW_OUT
 
-2024=E5=B9=B47=E6=9C=8827=E6=97=A5 23:08, "Haoyang Liu" <tttturtleruss@hu=
-st.edu.cn> =E5=86=99=E5=88=B0:
+The following commit has been merged into the irq/urgent branch of tip:
 
+Commit-ID:     a4765eb49cd94a7653c1a643b03d4facc5d87aa5
+Gitweb:        https://git.kernel.org/tip/a4765eb49cd94a7653c1a643b03d4facc5d=
+87aa5
+Author:        Luca Ceresoli <luca.ceresoli@bootlin.com>
+AuthorDate:    Wed, 17 Jul 2024 14:25:20 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 29 Jul 2024 10:22:45 +02:00
 
-Hi Haoyang,
+irqchip/irq-pic32-evic: Add missing 'static' to internal function
 
->=20
->=20Translate dev-tools/kcsan commit 31f605a308e6
->=20
->=20("kcsan, compiler_types: Introduce __data_racy type qualifier")
->=20
->=20into Chinese and add it in dev-tools/zh_CN/index.rst
->=20
->=20Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
->=20
->=20---
->=20
->=20v2 -> v3: Revised some sentences based on reviewer's suggestions and =
-updated the KTSAN url.
-Our comments need a clear response, and I have noticed
-that Alex has already commented on v3, so before sending
-v4, you need to reply to each of his comments one by one.
+Fix build error reported by gcc 12:
 
-BTW:
-Because you have already sent v3, you don't need to reply to v2 anymore.
+  drivers/irqchip/irq-pic32-evic.c:164:5: error: no previous prototype for =
+=E2=80=98pic32_irq_domain_xlate=E2=80=99 [-Werror=3Dmissing-prototypes]
+    164 | int pic32_irq_domain_xlate(struct irq_domain *d, struct device_node=
+ *ctrlr,
+        |     ^~~~~~~~~~~~~~~~~~~~~~
 
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/r/20240717-irq-pic32-evic-fix-build-static-v1-1=
+-5129085589c6@bootlin.com
 
-Thanks,
-Yanteng
+---
+ drivers/irqchip/irq-pic32-evic.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/irqchip/irq-pic32-evic.c b/drivers/irqchip/irq-pic32-evi=
+c.c
+index 1d9bb28..2772403 100644
+--- a/drivers/irqchip/irq-pic32-evic.c
++++ b/drivers/irqchip/irq-pic32-evic.c
+@@ -161,9 +161,9 @@ static int pic32_irq_domain_map(struct irq_domain *d, uns=
+igned int virq,
+ 	return ret;
+ }
+=20
+-int pic32_irq_domain_xlate(struct irq_domain *d, struct device_node *ctrlr,
+-			   const u32 *intspec, unsigned int intsize,
+-			   irq_hw_number_t *out_hwirq, unsigned int *out_type)
++static int pic32_irq_domain_xlate(struct irq_domain *d, struct device_node *=
+ctrlr,
++				  const u32 *intspec, unsigned int intsize,
++				  irq_hw_number_t *out_hwirq, unsigned int *out_type)
+ {
+ 	struct evic_chip_data *priv =3D d->host_data;
+=20
 
