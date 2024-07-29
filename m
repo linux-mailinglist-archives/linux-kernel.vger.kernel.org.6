@@ -1,91 +1,120 @@
-Return-Path: <linux-kernel+bounces-266052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF3393F9DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:53:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA6593F93F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D0EB283135
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:52:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F8A71F22F95
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D249157A59;
-	Mon, 29 Jul 2024 15:52:54 +0000 (UTC)
-Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [5.144.164.167])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFD2156883;
+	Mon, 29 Jul 2024 15:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ni2TcSul"
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5272D8004F
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.167
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAA214EC71
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722268373; cv=none; b=hREx4kUdeeIs7fNuHGbN2Vx1zdY7uwGq0992fBmT3PL+54PbCsUHXXxL0rnbqOcf+VvKbLKbzDnlTIt0XNag8N8xBYVWnToTXbESKb5sxtvMhtJjc/ITnDgns6YAgWCBOu0Cuo+2PUI+AU2b758OkDN32I0aK4A/FC3a0ovC4Sc=
+	t=1722266275; cv=none; b=DwsEkvou+GWcAAGcMA3xWEUzEFvz2bWebnJKdN04x85BA1Hkxhk2WBlOPdhiAh9fNgWij7NefWm+kvnvD6AKjHP1vkEUJMfIiRY0qj0drwY9S+Kh2IVQKeaNj4Ag5fJyT7YMZMYGjbPy9iZZMuDwlu7dvSvy0tOqPPAWVh02QRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722268373; c=relaxed/simple;
-	bh=kMQInnFptcqrD/lZA3jkTqm/Dqot/cFxM4jIxAhvKxE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bQrPD4j5dUOqZzE+CWxyAYoq3lcqMJDRXEvj2l1WpOQbf9Oc5HWZAdIGSW8xK4dpH6XflCoM3z/4uhI8pDLJLNdAhFnYMIjqPNpaTBsPxLvV74twKPkf7Vqz/byPmtD5jnBMjNX2az+M/XNxmGkZ3UtC/ZRYO1gch111xI6YpYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl [78.88.45.245])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by m-r2.th.seeweb.it (Postfix) with ESMTPSA id E2A223EB9D;
-	Mon, 29 Jul 2024 17:17:26 +0200 (CEST)
-Message-ID: <52a60057-6fec-49d1-8ff6-71b6fa670f2c@somainline.org>
-Date: Mon, 29 Jul 2024 17:17:25 +0200
+	s=arc-20240116; t=1722266275; c=relaxed/simple;
+	bh=u9dyPTb0gAwiGa0yrudB3+QBXgE0RGfUvhqye/k4wVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DtuwjMC9W9LK/k4X02X9W+uyZjuT65tZtOkWZ/pkJ6tFm2PW2wO3z72MuHeJdm58Tv5H6o8Yq7eVs5Yo6OSG/pdMxf5B0WEqyt2cyE5QFNZT51u3fMO9uBWVyvr0e7lfAn7PITMIfcFy0Uovx+CBPm4DUt6uQHppsP4s4Pap0ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ni2TcSul; arc=none smtp.client-ip=185.125.25.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WXhn33Sh1zpJV;
+	Mon, 29 Jul 2024 17:17:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1722266263;
+	bh=cvrnRoLlrlL+1LRDelSkErAcEHLAE3yf5aqc5ui4+mM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ni2TcSulDdo7nMTkXpAcKyP1X/orPO/fEzxTzhp/hxHMtSUycKdl1lKABuWjNLegb
+	 AZ1O7CRMr9tCyMYiVrDaOj/GsVxtCDj+WM4tLFHRkbTwhyFnogIuf0soZFegTcC3OP
+	 MO3BI3Z/s7y1vmFCuo/03U8pkUvTi5MNdcycE72w=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WXhn300fXz9jM;
+	Mon, 29 Jul 2024 17:17:42 +0200 (CEST)
+Date: Mon, 29 Jul 2024 17:17:40 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jann Horn <jannh@google.com>
+Cc: David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	James Morris <jmorris@namei.org>, Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to
+ ptrace_may_access()
+Message-ID: <20240729.roSo6soogho8@digikod.net>
+References: <20240729125846.1043211-1-mic@digikod.net>
+ <CAG48ez3DzxGMWN9GDhSqpHrDJnZDg2k=VEMD_DFiET5yDr07rw@mail.gmail.com>
+ <20240729.cho6saegoHei@digikod.net>
+ <CAG48ez1=xbGd8az4+iNJ_v1z4McMN8dsvWff-PH=ozLYnbzPqg@mail.gmail.com>
+ <20240729.rayi3Chi9aef@digikod.net>
+ <CAG48ez2HdeKXwwiCck9cvcoS1ZhbGD8Qs2DzV7F6W_6=fSgK5Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] media: qcom: camss: Fix ordering of
- pm_runtime_enable
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
- <hansverk@cisco.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- Milen Mitkov <quic_mmitkov@quicinc.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
- Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org
-References: <20240729-linux-next-24-07-13-camss-fixes-v3-0-38235dc782c7@linaro.org>
- <20240729-linux-next-24-07-13-camss-fixes-v3-2-38235dc782c7@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@somainline.org>
-In-Reply-To: <20240729-linux-next-24-07-13-camss-fixes-v3-2-38235dc782c7@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez2HdeKXwwiCck9cvcoS1ZhbGD8Qs2DzV7F6W_6=fSgK5Q@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-
-
-On 29.07.2024 2:42 PM, Bryan O'Donoghue wrote:
-> pm_runtime_enable() should happen prior to vfe_get() since vfe_get() calls
-> pm_runtime_resume_and_get().
+On Mon, Jul 29, 2024 at 05:06:10PM +0200, Jann Horn wrote:
+> On Mon, Jul 29, 2024 at 5:02 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Mon, Jul 29, 2024 at 04:21:01PM +0200, Jann Horn wrote:
+> > > On Mon, Jul 29, 2024 at 4:09 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > On Mon, Jul 29, 2024 at 03:49:29PM +0200, Jann Horn wrote:
+> > > > > On Mon, Jul 29, 2024 at 2:59 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > > A process can modify its parent's credentials with
+> > > > > > KEYCTL_SESSION_TO_PARENT when their EUID and EGID are the same.  This
+> > > > > > doesn't take into account all possible access controls.
+> > > > > >
+> > > > > > Enforce the same access checks as for impersonating a process.
+> > > > > >
+> > > > > > The current credentials checks are untouch because they check against
+> > > > > > EUID and EGID, whereas ptrace_may_access() checks against UID and GID.
+> > > > >
+> > > > > FWIW, my understanding is that the intended usecase of
+> > > > > KEYCTL_SESSION_TO_PARENT is that command-line tools (like "keyctl
+> > > > > new_session" and "e4crypt new_session") want to be able to change the
+> > > > > keyring of the parent process that spawned them (which I think is
+> > > > > usually a shell?); and Yama LSM, which I think is fairly widely used
+> > > > > at this point, by default prevents a child process from using
+> > > > > PTRACE_MODE_ATTACH on its parent.
+> > > >
+> > > > About Yama, the patched keyctl_session_to_parent() function already
+> > > > check if the current's and the parent's credentials are the same before
+> > > > this new ptrace_may_access() check.
+> > >
+> > > prepare_exec_creds() in execve() always creates new credentials which
+> > > are stored in bprm->cred and then later committed in begin_new_exec().
+> > > Also, fork() always copies the credentials in copy_creds().
+> > > So the "mycred == pcred" condition in keyctl_session_to_parent()
+> > > basically never applies, I think.
+> > > Also: When that condition is true, the whole operation is a no-op,
+> > > since if the credentials are the same, then the session keyring that
+> > > the credentials point to must also be the same.
+> >
+> > Correct, it's not a content comparison.  We could compare the
+> > credential's data for this specific KEYCTL_SESSION_TO_PARENT call, I
+> > guess this should not be performance sensitive.
 > 
-> This is a basic race condition that doesn't show up for most users so is
-> not widely reported. If you blacklist qcom-camss in modules.d and then
-> subsequently modprobe the module post-boot it is possible to reliably show
-> this error up.
-> 
-> The kernel log for this error looks like this:
-> 
-> qcom-camss ac5a000.camss: Failed to power up pipeline: -13
-> 
-> Fixes: 02afa816dbbf ("media: camss: Add basic runtime PM support")
-> Reported-by: Johan Hovold <johan+linaro@kernel.org>
-> Closes: https://lore.kernel.org/lkml/ZoVNHOTI0PKMNt4_@hovoldconsulting.com/
-> Tested-by: Johan Hovold <johan+linaro@kernel.org>
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
+> Yeah, though I guess keyctl_session_to_parent() is already kind of
+> doing that for the UID information; and for LSMs that would mean
+> adding an extra LSM hook?
 
-Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
-
-Konrad
+I'm wondering why security_key_session_to_parent() was never used: see
+commit 3011a344cdcd ("security: remove dead hook key_session_to_parent")
 
