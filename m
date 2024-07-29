@@ -1,118 +1,121 @@
-Return-Path: <linux-kernel+bounces-265439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 313E193F13E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:36:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 545F693F148
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A431F2262B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:36:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6573B2267C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0307C13FD86;
-	Mon, 29 Jul 2024 09:35:53 +0000 (UTC)
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1832E13D255;
+	Mon, 29 Jul 2024 09:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fJtLZ6WE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B0F78B4E
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DC3770E1
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722245752; cv=none; b=CZGJ2p9+5mw9SdIrPt9DCx/yS9B6mp7iooTAlvpcgHL8FaUbrs+mKUBvrodILx+yTIe2OHOSv+2lvSCuYxMGI5tLHUTtvS+izq3/i5ooWIIEDiBQuEBMiT5a6vh9VYmQGDy/WJMLK4gJHc54xmGRXGcHSvObAUcuOZLgVlHz7V8=
+	t=1722245824; cv=none; b=TMbHdHKsyA/6vCX4FOH1Mdox96HSmWDCkKD4WVcHnguHMsr4igaSjgbFk6LEG+p0cOAI2Y6K5FzNJ1apioUTutvjZZTUjf4a2yhMDGIBivrm49uyDLAIg/Mff9QPCWYfmiHYSrP7tl45t7+F8VpvNNKdOJzmPyKG+Ynj7p+su2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722245752; c=relaxed/simple;
-	bh=u8fssbfHLReHgwFcYSSHWp/ORzdxoBuiW/cGlV/ryAs=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=cVUHFZRnv5lHVWGOf0k2AJIYb69EiaiaRbkMoOlowrLrpdfcTdDIXB1dLPHdfV+wngAvML1x/n9T++KOAZ8zcdFhgFh1GJHUikcxLKI/1DX8nz6bogDts8U8+O/7WvAG9CWMPKlcimEYrbfChp4zUx4W/+wDzXSfObEUp9rW0BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:4441:3808:f850:4280])
-	by andre.telenet-ops.be with bizsmtp
-	id tMbo2C0080ZURL201MboMp; Mon, 29 Jul 2024 11:35:49 +0200
-Received: from geert (helo=localhost)
-	by ramsan.of.borg with local-esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sYMnE-003sYs-9i;
-	Mon, 29 Jul 2024 11:35:48 +0200
-Date: Mon, 29 Jul 2024 11:35:48 +0200 (CEST)
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: linux-kernel@vger.kernel.org
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    linux-mips@vger.kernel.org, dm-devel@lists.linux.dev, 
-    linuxppc-dev@lists.ozlabs.org, linux-btrfs@vger.kernel.org, 
-    intel-xe@lists.freedesktop.org, Arnd Bergmann <arnd@arndb.de>, 
-    linux-sh@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: Re: Build regressions/improvements in v6.11-rc1
-In-Reply-To: <20240729092807.2235937-1-geert@linux-m68k.org>
-Message-ID: <bd4e9928-17b3-9257-8ba7-6b7f9bbb639a@linux-m68k.org>
-References: <CAHk-=wiyNokz0d3b=GRORij=mGvwoYHy=+bv6m2Hu_VqNdg66g@mail.gmail.com> <20240729092807.2235937-1-geert@linux-m68k.org>
+	s=arc-20240116; t=1722245824; c=relaxed/simple;
+	bh=HzA7AEw0WWQvtM2aMWSpL9Zx3KaolqvcZTtnjqIEIJk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pvt+aHPkeQFrOVYs9cZj3vovrsDOIelsgP3EXY9s6bddRsIYWm+W+cCL2ZhNk/uE1XbS3n0dvfoNKuw/jFrbxEncXuerjtdtB1GgNuAEJ1JQAk/WzTQsVZntUAYVPiiKpIUrA1qvJLzGwfuSuQmupYzoPtXJ3rx0CyFeLKN/lb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fJtLZ6WE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722245821;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=emFTwdbhfJ2ShCITolW8giMz/g85BaR1blQHMfaFnpM=;
+	b=fJtLZ6WEmQ0VKLALP4BILt4gaEofrkAZ//D5JySq1WOXJt75Qrmxb35zZYEj5Cp/O0rpzw
+	GyGD2ST/RjWlV/SvWCdPlFDdtrpQUyVjkHoqGylkpB5NJiVqeZZMzbTkVmpmKn7QtslLYF
+	qO364FvKDkR5qBKnxFENViUcpR+yPgE=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-394-_wR9vqtJMoKnW88JyhkuWw-1; Mon, 29 Jul 2024 05:36:54 -0400
+X-MC-Unique: _wR9vqtJMoKnW88JyhkuWw-1
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6b95c005dbcso6999926d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 02:36:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722245813; x=1722850613;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=emFTwdbhfJ2ShCITolW8giMz/g85BaR1blQHMfaFnpM=;
+        b=IcvDQh3q3xliz627Ltbf8qfq89dNk3p4zTZIemLCnUBpmn58QOzSr/ApNgIZVqlrm/
+         7Bwl+YvKiHCdv+9OPQuVRSKcdt9FixSH6lRmRevR0XbFkRtzoBAMHU0j5Gqw35QtxC8B
+         V5QrW5ZVhHWLrQ9pd/aYAzI/S/j9tu6oRCEaJb6h8e4gM77Iyy1Q99p6cTJ6q0EvH58y
+         4621lxD6geQWSyx1lnoLYYJOU5UHuQNtslFaCP14JItTJHN1LffrD3ilbzEcPfWC5Beu
+         qmyTKvBWLuOQjoNUv+6V9twnhmelbTWA/EGNHr6UHsSwz4LtzqmNX4oCH99ywqsuii60
+         bGVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOtN1+xIUg/+k3EZTQgt71BZwGBHvgWF4wSEpQyBubk0/iE24T/tR5g5JygC3/e9CfwhN4t2ju7uvoXFE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymFawh9iJkOULolNbugpPFnSRvdX6VxNS1K3/7t0wGn6PUDACG
+	GEPtq5uwzaJUGt9Jh4cWjltA3jfoakYekMJ3kM03iiiZ5fRsaso3fKMlBHjV9ejUJTVazzLBHvG
+	e9/h/kBJKsMHCcWMaCD6lISDd07ZzcC/c0oY8tjUQi3fyTMwct4w94tlFbLq17g==
+X-Received: by 2002:ad4:5ccd:0:b0:6b2:af3c:f710 with SMTP id 6a1803df08f44-6bb3e1a8f83mr85445056d6.2.1722245813574;
+        Mon, 29 Jul 2024 02:36:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE4gc3YQkLtpxEMrgaDxCfFPgN8uoswS+Zv8SfLImnsVcyFRGniiKYT5wxqKdMycWiPyBs5IQ==
+X-Received: by 2002:ad4:5ccd:0:b0:6b2:af3c:f710 with SMTP id 6a1803df08f44-6bb3e1a8f83mr85444936d6.2.1722245813183;
+        Mon, 29 Jul 2024 02:36:53 -0700 (PDT)
+Received: from dhcp-64-164.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3fa94a16sm50047086d6.86.2024.07.29.02.36.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 02:36:52 -0700 (PDT)
+From: Philipp Stanner <pstanner@redhat.com>
+To: Hans de Goede <hdegoede@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Philipp Stanner <pstanner@redhat.com>
+Subject: [PATCH 0/2] Use pcim_request_region() in vboxvideo
+Date: Mon, 29 Jul 2024 11:36:24 +0200
+Message-ID: <20240729093625.17561-2-pstanner@redhat.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 29 Jul 2024, Geert Uytterhoeven wrote:
-> Below is the list of build error/warning regressions/improvements in
-> v6.11-rc1[1] compared to v6.10[2].
->
-> Summarized:
->  - build errors: +7/-22
+Hi everyone,
 
-> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8400291e289ee6b2bf9779ff1c83a291501f017b/ (all 132 configs)
+Now that we've got the simplified PCI devres API available we can slowly
+start using it in drivers and step by step phase the more problematic
+API out.
 
-> 7 error regressions:
->  + /kisskb/src/arch/mips/sgi-ip22/ip22-gio.c: error: initialization of 'int (*)(struct device *, const struct device_driver *)' from incompatible pointer type 'int (*)(struct device *, struct device_driver *)' [-Werror=incompatible-pointer-types]:  => 384:14
+vboxvideo currently does not have a region request, so it is a suitable
+first user.
 
-mips-gcc8/ip22_defconfig
+P.
 
->  + /kisskb/src/drivers/md/dm-integrity.c: error: logical not is only applied to the left hand side of comparison [-Werror=logical-not-parentheses]:  => 4718:45
+Philipp Stanner (2):
+  PCI: Make pcim_request_region() a public function
+  drm/vboxvideo: Add PCI region request
 
-powerpc-gcc5/powerpc-all{mod,yes}config
-powerpc-gcc5/ppc64le_allmodconfig
+ drivers/gpu/drm/vboxvideo/vbox_main.c | 4 ++++
+ drivers/pci/devres.c                  | 1 +
+ drivers/pci/pci.h                     | 2 --
+ include/linux/pci.h                   | 1 +
+ 4 files changed, 6 insertions(+), 2 deletions(-)
 
->  + /kisskb/src/fs/btrfs/inode.c: error: 'location.objectid' may be used uninitialized in this function [-Werror=maybe-uninitialized]:  => 5603:9
->  + /kisskb/src/fs/btrfs/inode.c: error: 'location.type' may be used uninitialized in this function [-Werror=maybe-uninitialized]:  => 5674:5
+-- 
+2.45.2
 
-m68k-gcc8/m68k-allmodconfig
-mips-gcc8/mips-allmodconfig
-powerpc-gcc5/powerpc-all{mod,yes}config
-powerpc-gcc5/ppc64_defconfig
-
->  + /kisskb/src/include/linux/compiler_types.h: error: call to '__compiletime_assert_933' declared with attribute error: FIELD_GET: mask is not constant:  => 510:38
->  + /kisskb/src/include/linux/compiler_types.h: error: call to '__compiletime_assert_934' declared with attribute error: FIELD_GET: mask is not constant:  => 510:38
-
-     inlined from 'xe_oa_set_prop_oa_format' at /kisskb/src/drivers/gpu/drm/xe/xe_oa.c:1664:6:
-
-powerpc-gcc5/powerpc-all{yes,mod}config
-powerpc-gcc5/powerpc-allmodconfig
-powerpc-gcc5/ppc64le_allmodconfig
-
-(fix sent)
-
->  + /kisskb/src/kernel/fork.c: error: #warning clone3() entry point is missing, please fix [-Werror=cpp]:  => 3072:2
-
-sh4-gcc13/se{7619,7750}_defconfig
-sh4-gcc13/sh-all{mod,no,yes}config
-sh4-gcc13/sh-defconfig
-sparc64-gcc5/sparc-allnoconfig
-sparc64-gcc{5,13}/sparc32_defconfig
-sparc64-gcc{5,13}/sparc64-{allno,def}config
-sparc64-gcc13/sparc-all{mod,no}config
-sparc64-gcc13/sparc64-allmodconfig
-
-Gr{oetje,eeting}s,
-
- 						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
- 							    -- Linus Torvalds
 
