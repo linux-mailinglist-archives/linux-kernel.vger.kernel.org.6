@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-266483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13552940086
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:39:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AE0B940088
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37ACE1C221B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:39:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF1F41C2209F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B983518D4D3;
-	Mon, 29 Jul 2024 21:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4790018D4D7;
+	Mon, 29 Jul 2024 21:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EL0H54vN"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SqB+A25r"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2AB18A93C
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 21:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB962188CDA;
+	Mon, 29 Jul 2024 21:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722289149; cv=none; b=t1nYvsLRqTtmfao9jxBYnJD38ts0Va6R6KXPw+2GVYeA/5vw7mCqsb1PMxR6NZY+d7K7Y3nZ8yTlvfgp55NsfsYKGA9lva4pLxMCem6oJBUNRg+sk3kNBuOE2f8i6QQgfw27lo0ehSgI9O3uDsXk4lDUdfPpJegveqXN3oGl9PY=
+	t=1722289197; cv=none; b=dZQCf5m77IZ4yeRn2Iq8Of+EH4cuMP9v1p37JGYuK5qea/WbIiq66is1256Heqa8Zgi2IPnjwpIDpI7+sMGW9ZTtgZu1nq9uHKCt/w2Qgre0XE3V5Y16kxkJUE86H+zRFLNkCfDZZ7S79Hh51Umc3kupdBVRdhgtjqdD7cqWqWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722289149; c=relaxed/simple;
-	bh=ZKY4QE8q3VAnLTSURlWscP30jdf97HBeG7B0gjM2qT8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=itL+YR/fZ3F5YXSMZxQILb5ghxpOIGdta72L8IyV26qOIy4Sy5Yv86BnIOd9/uRPjKCwZ0rEGCrHGd/9nHPZvkJyuq2jXW9ZJ7c03RdSk0Ig9AbTfROCSahdkD5m9hGwc4c6sf8ieaIrsVvZPk4Ur8TgWz7biiHxagefMQUYcXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EL0H54vN; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1722289197; c=relaxed/simple;
+	bh=8NJS9WBX+e7dJ8GlELhlavHZj7up4ytOChrqdXvZ3wE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=BdeMI6C06sCUwPSO3Cx/L3JTtVfxWTLOb3xgH5rjdcs+Kyc4E29hdlRnqsJw5+Uy6K10BMVtPHFw2P5JZqslFEFw5fw/yiwLAuc3dAyYLywbRtg/+p9pPaSOiXPAO/0XyetO9T3bdzAV04fAsSQZZEkNcrUSIfBRrUX6HmakFkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SqB+A25r; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7aabb71bb2so555714566b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:39:07 -0700 (PDT)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70d150e8153so2324548b3a.0;
+        Mon, 29 Jul 2024 14:39:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722289146; x=1722893946; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xbu478JrkZGqTN2SecfNLUxeWNK8IU0WdYOsK9KhOXk=;
-        b=EL0H54vND2FoxEQFCs1hD24XoWsBHhqYDNoEJn4U5NZcu8WLEOS1cW3FluoIIE8srJ
-         3GPLVMGdS9FkO5CdgqeUnrUC35eeKx6nq/INfnLnBuInkN4LOrupT8kv8XsVSmAn4bi2
-         TQFYBj3ikeKn0Xt9qdOywF0yZ0M7l+mWOWf19PXllFKuWN63pvF+hYuk+DVCh+W9rqxT
-         hD/67jo10RpnwBrIrEPBT52dwAT6G/4C4I7Q3GxNL37fcyEMYNiaLIlDmVSNHjyqO/3O
-         K24ZdkAhKK1Ca0zrM754PnG32mN27kRq7kiXkXz/iylsuuBEREdj+bKY6sfbeZPDwv/D
-         7+Lg==
+        d=gmail.com; s=20230601; t=1722289195; x=1722893995; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=2K8xU1Yp4xIG9y9LhgxcxdPcCtx5Q+FyrYxql6OyC0o=;
+        b=SqB+A25rdf09oCpvtGRV1ezUkEcutCR4LGkzELyNvQ7yD/AdJx0wp7XMcBHmQChx3f
+         l3FzQBzI/iQJSY/qMxYW+b7ewK3Xx3jRQZNcqkbgXJSzE/L+K0x/ScSrMUdjjflOMgYM
+         SZTigZWyHRs+PiD0sWWTyFu2IBlOl8KjDnWrTuCHHnv2JccJSQt+VOnbosBSPKsJzc8w
+         V0B+WfgVFjI4cYKlQ+dh79k9nSYkKHUNcAYrHOWt8mX1xBBpmGqb7HEiwrUb5StEe7kq
+         nxvkgWhmDZzoad/s6GUas8nmlj/m6I9cMx8ChH2fSn8CwozqLcvO2/R/RnSFAKgdGFON
+         GEZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722289146; x=1722893946;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xbu478JrkZGqTN2SecfNLUxeWNK8IU0WdYOsK9KhOXk=;
-        b=LtVgBjCeWGE/jcUaWfcmDX2R1UCuYjAYDxHppQ1SWFFLAL/nfs/h/fkVZRDQGVJRUz
-         KJyWcIryAjWWYSJXwe7EOr2+HR8rTTuzsToJQck0TTNCyGj2ekXWgl6vcLQQNU60Bs1b
-         Ce9dSzrYwWYDeK4uV/JYxFFB9YVXqI61vrMV2kjCyRYlu+N5fpUt7yYXdBqsuL+DGoVo
-         GC+re5PLbwk8FkrC/xd0lpV8dpKkXteZsNHRRxIv2CT19QLaO5Yfs9Qot/adiwTmDr4f
-         l9hfWPVR1oTKW5pznUwWefawm9/iVEwZsXLhOEeQgLjaBCspOODKLPQGTNTopTx5h4AK
-         g0Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSC4FXtV38/i9SRz5VSZGG9mO62wWGxXEqmOE9VZaMXWrdqKP6wf4UdPtkAAYlGAYQoYa2l1jZZq9Kgd/g63MC23ImpP3//efGt0OD
-X-Gm-Message-State: AOJu0Yy9uc4+DfdO77/Nhr6C3RUjDl9/as1GoGOEEapxxBKnZFLv+9vu
-	uLTtNKQ7TOvYVfUeIdCMmYmH5AeJPsVk4TwjRiYSwL9HRiEznouU
-X-Google-Smtp-Source: AGHT+IEZFU76rsbjWXI+oaAFvgWT6s+1N+HIyBNRXxzXfgCzC4udfKj7bBkOXZCqGHkgVami9ZYrgw==
-X-Received: by 2002:a17:907:d8c:b0:a7a:b385:37cd with SMTP id a640c23a62f3a-a7d400a0393mr445509666b.30.1722289145503;
-        Mon, 29 Jul 2024 14:39:05 -0700 (PDT)
-Received: from [192.168.0.31] (84-115-213-37.cable.dynamic.surfer.at. [84.115.213.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad4148fsm562108766b.121.2024.07.29.14.39.04
+        d=1e100.net; s=20230601; t=1722289195; x=1722893995;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2K8xU1Yp4xIG9y9LhgxcxdPcCtx5Q+FyrYxql6OyC0o=;
+        b=oAPzIYPs8Ng1MNKWxzz18IsrCBcfU6f1DfyMzYu08ZhV4iLnt7EmM9QVwFG3fNgCIj
+         HEbv62nrTv0tjNRaP14sDMhjvID+EZe5YhFjpm/14U6JwON8X7ooUYRr+PeROaDsLCkS
+         aQQ7N/V4gnYpQ5JC2Vr4j54GjMWVBfXeSNTsO5PREU4QfMxiY+Ns0O2R/hdJylsT+dFZ
+         MuUg/xSA5uRyvmOXVTgq1fDZ8mOEdUdtvk8Nwhj8eaTQ2O1kfYBuEYFWohvDoCph4gTq
+         1AqvqNvZvMpHRcRumX7lW3glOKSElOvFgwSLI4O1+y7gRI2R9qZJSqRiJllQOxpTV78F
+         Fa2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVD9XaDT97zgTQeemuoo2/6ZOid3jwua3rvwUBKjHPrlf3sNX3VPbr7yweKPURJj098KkhN7nhE/wU2AgEIxFbv5A637HQ7z8NOMlRacb5Qwp7ujeCmw5ZgtZ7myIY7ehVBVoG6I1fb
+X-Gm-Message-State: AOJu0Yx413JZAMWPMeeis6wxMitNIxnJzWobJNpd1kL9An+Zax6/mcNS
+	vVBoP3xTma1k1N3jZqHg50MHRdfNFN140DsldiXEclna5VGl4Rka
+X-Google-Smtp-Source: AGHT+IH9oiRXKYj5KqgFDUxdxDDVDKqb6yfa1+CMpqVnswHTIk7B2oPpckfIoyX92jDxskZgCZhRYw==
+X-Received: by 2002:a05:6a00:91c7:b0:708:41c4:8849 with SMTP id d2e1a72fcca58-70efe45180bmr63274b3a.9.1722289195116;
+        Mon, 29 Jul 2024 14:39:55 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f9ec4241sm6568525a12.57.2024.07.29.14.39.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jul 2024 14:39:05 -0700 (PDT)
-Message-ID: <17e81b06-7778-44f4-94cd-6a2b1fe5c7e0@gmail.com>
-Date: Mon, 29 Jul 2024 23:39:02 +0200
+        Mon, 29 Jul 2024 14:39:54 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <d9eafaa6-64cd-4b38-9cec-9b2045817a48@roeck-us.net>
+Date: Mon, 29 Jul 2024 14:39:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,51 +77,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clang-format: Update with v6.11-rc1's `for_each` macro
- list
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-References: <20240729-clang-format-for-each-macro-update-v1-1-9c554ecfec3e@gmail.com>
- <CANiq72kFpS5BE7Ea8=Z6SUi_Y2RAt5wsssHyqL3ocgR1UOHJMg@mail.gmail.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <CANiq72kFpS5BE7Ea8=Z6SUi_Y2RAt5wsssHyqL3ocgR1UOHJMg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 2/2] i2c: smbus: Send alert notifications to all devices
+ if source not found
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Wolfram Sang <wsa@kernel.org>, Jean Delvare <khali@linux-fr.org>,
+ linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220110172857.2980523-1-linux@roeck-us.net>
+ <20220110172857.2980523-3-linux@roeck-us.net> <ZqakaAn3f9Kg6Lgy@shikoro>
+ <7ad68f35-2e90-41b7-a95d-efe5f7db8f3b@roeck-us.net>
+ <ZqdLVg6IVTjsTWb4@shikoro>
+ <3adf0b8f-2e12-413a-a76f-866e56bf096c@roeck-us.net>
+ <ZqfhPffOTu53bfwU@shikoro>
+ <c58ca576-2763-4f73-bc0e-c33677c5228b@roeck-us.net>
+ <ZqgA-Qo8bccaouUr@shikoro>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <ZqgA-Qo8bccaouUr@shikoro>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 29/07/2024 22:14, Miguel Ojeda wrote:
-> Hi Javier,
+On 7/29/24 13:52, Wolfram Sang wrote:
 > 
-> On Mon, Jul 29, 2024 at 9:56 PM Javier Carrasco
-> <javier.carrasco.cruz@gmail.com> wrote:
+>>> The code I am suggesting is bascially yours without the retries
+>>> variable:
+>>>
+>>> 	status = device_for_each_child(&ara->adapter->dev, &data,
+>>> 				       smbus_do_alert);
+>>> 	if (data.addr == prev_addr && status != -EBUSY) {
+>>> 		device_for_each_child(&ara->adapter->dev, &data,
+>>> 				      smbus_do_alert_force);
+>>> 		break;
+>>> 	}
+>>> 	prev_addr = data.addr;
+>>>
+>>> Makes sense or am I missing something?
+>>>
 >>
->> Note that commit 4792f9dd1293 ("clang-format: Update with the latest
->> for_each macro list") added the macro `displayid_iter_for_each`, which
->> is not part of include/ and tools/ (it is defined in
->> drivers/gpu/drm/drm_displayid_internal.h), and the shell fragment used
->> to update the list will drop it. In order to keep the macro on the list,
->> manual intervention will always be required.
+>> Yes, that should work and is indeed simpler. You are correct, the
+>> additional loop should not be necessary since smbus_do_alert_force()
+>> should already call all connected drivers and hopefully clear
+>> the alert condition on those.
 > 
-> Thanks for the patch!
+> Great that we are aligned now! Do you have time to rework and test the
+> patch?
 > 
-> That macro was inside `include/` back then, so now it should be
-> removed from the list.
-> 
-> Of course, if we want to include internal headers, that is also an
-> option to be discussed, but we should be consistent either way.
-> 
-> Cheers,
-> Miguel
 
+I'll give it a try.
 
-A quick test threw 326 extra macros that are defined in internal headers
-under drivers/ and arch/. Including internal headers would remove the
-need to update the list if a macro is moved from inlcude/ to an internal
-header, but the list will need to be updated much more often.
+Guenter
 
-Best regards,
-Javier Carrasco
 
