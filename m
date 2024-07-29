@@ -1,106 +1,90 @@
-Return-Path: <linux-kernel+bounces-265839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B20E393F6A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:27:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0066093F6AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:29:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D9901F224B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:27:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A97221F223E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F08149E09;
-	Mon, 29 Jul 2024 13:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D19B148FEC;
+	Mon, 29 Jul 2024 13:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GOg+Kqte";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mssZc+dW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WuU2gCVp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7ekSSZDj"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AXeeu1fb"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42B83C24;
-	Mon, 29 Jul 2024 13:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B283C24
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722259645; cv=none; b=GaiqhnQYHl/i8lYpUsdcOdQGvqEgWYRxDs+EqTZjEZjQDPWcY+MBCT6RXS7ZRWegxg7kV7HWvbDVSBW/VS6wAoLlx7AWntj7wzFoKNs/LBkyVCCSfWidc3LWCD+h7oRU9gj3JuAgAqdMV+TQlOIL6dG/hukyUKFpHD2x39U22PE=
+	t=1722259736; cv=none; b=Hb0AqBKMXVLm21JBFRlADTum8f7OY+KD+K7fGGH97boY87EKLYq17T9GkKXecRqaNRMcEodLmXy6CHC7BJbQWcCA2DPAzrjWqyB6PBAj7kbfaDGbFO6ftAtLvFlXXmnLTG6jUPp+EUlCQfii0HwN4haP3y73vGTBdrUqRfhoLHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722259645; c=relaxed/simple;
-	bh=Vd5C2W9GOGnPSed/7HofTczD7Y4FK7ENJ3bLnDQRJ0E=;
+	s=arc-20240116; t=1722259736; c=relaxed/simple;
+	bh=HI+x8GKy/scPD14KJfsxTgb0ZQpxymniFkm1g9+XLfg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=azFw2VOCx5XhQtyN6yHEDp4QtGyKZBPG9dA43XLhszumptP1vs52HN96ZgX49WaOkfhEZav1ULm1v1lqo7oZVs+lLEe6ROoB7J9KBmEmAzmGik7frpGk/yFu+65JRLk/6mtpIsOYufMu/xlFlo7y0qXpvCocKX2KP4HKImrWrDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GOg+Kqte; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mssZc+dW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WuU2gCVp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7ekSSZDj; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E067F21ABC;
-	Mon, 29 Jul 2024 13:27:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722259642; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cA0sKnmcbKHN+5poM2Gwzel0FDApKbV56UYCatcL7bE=;
-	b=GOg+KqteQTiABuMLkONHkkQqDi9CWNISiA42PWBd6tBN1LrzZHYSnJIOgfjuI/F4BrAnu4
-	PmOZ6aoddmjs4bM27zUbbRtFpHUHn5cMq9uhCSm65Dwsk0ZvsFi+Eev1dq/rmYXlIg9Dvo
-	dKrcoDP66XZMp72xHlxRJ5a2eCGTIyY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722259642;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cA0sKnmcbKHN+5poM2Gwzel0FDApKbV56UYCatcL7bE=;
-	b=mssZc+dWsaDWX6G1Z81Z9mVnCMeQIKDBeeN8GeMNSfkrtAVFPI+0ZsaokUtTgcYSe+PPlR
-	VfWK/UPBgxDAnyAQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722259641; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cA0sKnmcbKHN+5poM2Gwzel0FDApKbV56UYCatcL7bE=;
-	b=WuU2gCVpi0VpfhEjlPLAEf8P1ZNDFqSTQUD2Msx0Rz9cU/3rWE6Sm086IHeXzTyLdOi6Oi
-	ZxJkmkvR/KeysUT+IF5bJa7yRxNOWjnYwnoCxHI1mqdB8iSMRG5Pg6px732y/ihU0sv1Zl
-	kWBur90hgwyvMSgEdnPZ9j8AOa2iAUQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722259641;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cA0sKnmcbKHN+5poM2Gwzel0FDApKbV56UYCatcL7bE=;
-	b=7ekSSZDjkiW5NnN+2hwFDBVRJDLREXGvb8S7MhyadF1e1L/sESkskvzc/MxkGKv5ZEQoir
-	iJv7SHaOYS0o5mBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D453D1368A;
-	Mon, 29 Jul 2024 13:27:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QJPTM7mYp2aIVQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 29 Jul 2024 13:27:21 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 79BC1A099C; Mon, 29 Jul 2024 15:27:21 +0200 (CEST)
-Date: Mon, 29 Jul 2024 15:27:21 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
-	syzbot <syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com>,
-	Oleg Nesterov <oleg@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>,
-	paulmck@kernel.org, Hillf Danton <hdanton@sina.com>,
-	rcu@vger.kernel.org, frank.li@vivo.com, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-	Ted Tso <tytso@mit.edu>
-Subject: Re: [syzbot] [f2fs?] WARNING in rcu_sync_dtor
-Message-ID: <20240729132721.hxih6ehigadqf7wx@quack3>
-References: <0000000000004ff2dc061e281637@google.com>
- <20240729-himbeeren-funknetz-96e62f9c7aee@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uf5o1BgeQRfEy2mLkghs6iNkTl6+bHOUyetc0NcZksgkusgtsSF/YYCN1EW/kSen2EwIm1qlsv4vUWqs9tCJRxXfvbFRjqmqZj7geMV8Dfi2gpsdEXc/sz/2LdPOXpMc1JhDX63OelXm/sXC25QjdR1LlqohbgUV6b2PLFytaTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AXeeu1fb; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70eae5896bcso2740796b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:28:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722259734; x=1722864534; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1yL0QCQNpqeOCAknWlO99YLMk+NffPf4WTYM45aZYO8=;
+        b=AXeeu1fbLzIS12A5HD8KfBJgqVUqP10+J7R17/R9mGsaCMWk7h/rL1D6xCiuyANmoS
+         TBfiFEK/zDNsfLy6fCFB2q2J1XbCsce0J3ZOJHe4YhNV1zMY5PCoJlqt7UEYTOJdjwFA
+         QZhuOjqagzE3ijAwdxsug64iNCHMdW0VkC0V4PbLd6UAlcLxd/ZZYplxky4aBy256N8R
+         ErbT53RGTPYpXnujCCR2W3osOUOeLO2GQOo0aQM6nQ3QHJRKrzR2N5CPFsEIrKFOl5kF
+         03SPBgiWGtcqMfhOmWNB08jONxVEre+3o8zbMx+k5bBcMxXsYsN4+p6bfyH7BxQ8OJ0u
+         hMfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722259734; x=1722864534;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1yL0QCQNpqeOCAknWlO99YLMk+NffPf4WTYM45aZYO8=;
+        b=SgGB+mAKwKM3eyF1d1t/7t0osvtez0cWP/q+1M6K8GNorJxFvr5MwZKnf62EwaVTfx
+         8QlR8hwY5NCkaw4nzak5oDJzl7H0T86JnFW3DKpFs1hAEqy0Fl5lbQieHfMbtFI8ZbYY
+         rMj50tzOf0TgitW3w9FpV392ojU6sc2r6UGgdqUoXW/AzeVs7/UUSQqg/UMGPfLVUZiz
+         2di78ZDVNX3TdXx5gFMt4Cc+rOaO0j3BjwB60kXsolf3ITUOPniwmrtfDcfJrtwXY7TS
+         lPvpIwynH/5OPnd46MySHrBzyAqQKMQyhhKh0cB+bkFG/UHD74CBmZcqrHkSupaInC3e
+         mrUw==
+X-Forwarded-Encrypted: i=1; AJvYcCV408p1RjkxcuHhtAu/wdyBj2zqoukf1kK8sMgONALzgbODjI54YLN3T2lgCBhoYAvc05gxP4UVljxZI6+3vxg2NEpr0h+raTyRWhrR
+X-Gm-Message-State: AOJu0YxfVJ+DFViWoA563iaWFTeeuaCLjVVz6d+/qt4Ebe7ObALXS6MJ
+	YswNxfcDUEuTUUvRqzvo+33obRvoJOpcOnQ7fAZWDL88Ex7vb3XH
+X-Google-Smtp-Source: AGHT+IESX2PnLeI0EtJGrSeydGADF81jYh2s6zS5/LFhKulfASe7HsgEsqSl8L4xJCRK+QMMjg9fOQ==
+X-Received: by 2002:a05:6a21:78a9:b0:1c1:89f8:8609 with SMTP id adf61e73a8af0-1c4a0e15171mr10085097637.0.1722259734258;
+        Mon, 29 Jul 2024 06:28:54 -0700 (PDT)
+Received: from void.tail05c47.ts.net ([240c:c001:1:4300:752c:bb84:7d45:2db])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7edd91asm82647505ad.131.2024.07.29.06.28.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 06:28:53 -0700 (PDT)
+Date: Mon, 29 Jul 2024 21:28:48 +0800
+From: Yanjun Yang <yangyj.ee@gmail.com>
+To: Philippe CORNU <philippe.cornu@foss.st.com>
+Cc: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+	Yannick Fertre <yannick.fertre@foss.st.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [Linux-stm32] [PATCH RESEND v3 0/3] Update STM DSI PHY driver
+Message-ID: <ZqeZEB9peRSQkOLZ@void.tail05c47.ts.net>
+References: <20240129104106.43141-1-raphael.gallais-pou@foss.st.com>
+ <21f4d43d-4abd-4aca-7abb-7321bcfa0f1d@foss.st.com>
+ <CAE8JAfy9NtBa--DnUt2AEZPFnvjU6idj8DqUbaeLaH0DMFvuhw@mail.gmail.com>
+ <e059f157-ff9c-32cb-57a6-48f2331f2555@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,124 +93,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240729-himbeeren-funknetz-96e62f9c7aee@brauner>
-X-Spam-Level: *
-X-Spamd-Result: default: False [1.90 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=b698a1b2fcd7ef5f];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	REDIRECTOR_URL(0.00)[goo.gl];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TAGGED_RCPT(0.00)[20d7e439f76bbbd863a7];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,sina.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.com,kernel.org,lists.sourceforge.net,syzkaller.appspotmail.com,redhat.com,gmail.com,sina.com,vger.kernel.org,vivo.com,suse.cz,googlegroups.com,zeniv.linux.org.uk,mit.edu];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,imap1.dmz-prg2.suse.org:helo,syzkaller.appspot.com:url,suse.com:email];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: 1.90
+In-Reply-To: <e059f157-ff9c-32cb-57a6-48f2331f2555@foss.st.com>
 
-On Mon 29-07-24 11:10:09, Christian Brauner wrote:
-> On Fri, Jul 26, 2024 at 08:23:02AM GMT, syzbot wrote:
-> > syzbot has bisected this issue to:
-> > 
-> > commit b62e71be2110d8b52bf5faf3c3ed7ca1a0c113a5
-> > Author: Chao Yu <chao@kernel.org>
-> > Date:   Sun Apr 23 15:49:15 2023 +0000
-> > 
-> >     f2fs: support errors=remount-ro|continue|panic mountoption
-> > 
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=119745f1980000
-> > start commit:   1722389b0d86 Merge tag 'net-6.11-rc1' of git://git.kernel...
-> > git tree:       upstream
-> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=139745f1980000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=159745f1980000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=b698a1b2fcd7ef5f
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=20d7e439f76bbbd863a7
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1237a1f1980000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115edac9980000
-> > 
-> > Reported-by: syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com
-> > Fixes: b62e71be2110 ("f2fs: support errors=remount-ro|continue|panic mountoption")
-> > 
-> > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+On Fri, Jul 26, 2024 at 09:55:35AM +0200, Philippe CORNU wrote:
 > 
-> Thanks to Paul and Oleg for point me in the right direction and
-> explaining that rcu sync warning.
 > 
-> That patch here is remounting a superblock read-only directly by raising
-> SB_RDONLY without the involvement of the VFS at all. That's pretty
-> broken and is likely to cause trouble if done wrong. The rough order of
-> operations to transition rw->ro usualy include checking that the
-> filsystem is unfrozen, and marking all mounts read-only, then calling
-> into the filesystem so it can do whatever it wants to do.
-
-Yeah, this way of handling filesystem errors dates back to days when the
-world was much simpler :) It has been always a bit of a hack (but when you
-try to limit damage from corrupted on-disk data structures, a bit of
-hackiness is acceptable) but it is doubly so these days.
-
-> In any case, all of this requires holding sb->s_umount. Not holding
-> sb->s_umount will end up confusing freeze_super() (Thanks to Oleg for
-> noticing!). When freeze_super() is called on a non-ro filesystem it will
-> acquire
-> percpu_down_write(SB_FREEZE_WRITE+SB_FREEZE_PAGEFAULT+SB_FREEZE_FS) and
-> thaw_super() needs to call
-> sb_freeze_unlock(SB_FREEZE_FS+SB_FREEZE_PAGEFAULT+SB_FREEZE_WRITE) but
-> because you just raise SB_RDONLY you end up causing thaw_super() to skip
-> that step causing the bug in rcu_sync_dtor() to be noticed.
-
-Yeah, good spotting.
-
-> Btw, ext4 has similar logic where it raises SB_RDONLY without checking
-> whether the filesystem is frozen.
+> On 7/22/24 10:38, Yanjun Yang wrote:
+> > 
+> > This patch (commit id:185f99b614427360) seems to break the dsi of
+> > stm32f469 chip.
+> > I'm not familiar with the drm and the clock framework, maybe it's
+> > because there is no
+> >   "ck_dsi_phy" defined for stm32f469.
+> > PS:  Sorry for receiving multiple copies of this email, I forgot to
+> > use plain text mode last time.
+> > 
 > 
-> So I guess, this is technically ok as long as that emergency SB_RDONLY raising
-> in sb->s_flags is not done while the fs is already frozen. I think ext4 can
-> probably never do that. Jan?
+> Hi,
+> Thank you for letting us know that there was this error. We should have
+> detected this before merging, really sorry for the problems caused by this
+> patch. We will investigate the issue and get back to you as soon as
+> possible. In the meantime, I think you can revert this patch in your git
+> tree.
+> 
+> Philippe :-)
+> 
 
-You'd wish (or maybe I'd wish ;) No, ext4 can hit it in the same way f2fs
-can. All it takes is for ext4 to hit some metadata corruption on read from
-disk while the filesystem is frozen.
+Hi,
+After some testing, the reason behind my problem is the parent's name of
+'clk_dsi_phy' for stm32f4 is 'clk-hse' other than 'ck_hse'.  I don't
+know which is the better why to fix it:
+1. Change "ck_hse" to "clk-hse" in where "clk_dsi_phy" is defined.
+2. Use "pll_in_khz = clk_get_rate(dsi->pllref_clk) / 1000" instead of
+   "pll_in_khz = (unsigned int)(parent_rate / 1000)" when get the clock
+   rate.
 
-> My guess is that something in f2fs can end up raising SB_RDONLY after
-> the filesystem is frozen and so it causes this bug. I suspect this is coming
-> from the gc_thread() which might issue a f2fs_stop_checkpoint() while the fs is
-> already about to be frozen but before the gc thread is stopped as part of the
-> freeze.
-
-So in ext4 we have EXT4_FLAGS_SHUTDOWN flag which we now use internally
-instead of SB_RDONLY flag for checking whether the filesystem was shutdown
-(because otherwise races between remount and hitting fs error were really
-messy). However we still *also* set SB_RDONLY so that VFS bails early from
-some paths which generally results in less error noise in kernel logs and
-also out of caution of not breaking something in this path. That being said
-we also support EXT4_IOC_SHUTDOWN ioctl for several years and in that path
-we set EXT4_FLAGS_SHUTDOWN without setting SB_RDONLY and nothing seems to
-have blown up. So I'm inclined to belive we could remove setting of
-SB_RDONLY from ext4 error handling. Ted, what do you think?
-
-Also as the "filesystem shutdown" is spreading across multiple filesystems,
-I'm playing with the idea that maybe we could lift a flag like this to VFS
-so that we can check it in VFS paths and abort some operations early.  But
-so far I'm not convinced the gain is worth the need to iron out various
-subtle semantical differences of "shutdown" among filesystems.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Both method can fix my problem. The first one might break other
+platforms. Maybe I should change the clock name of 'clk-hse'. However,
+I can't find the defination of this clock name for stm32f4.
 
