@@ -1,156 +1,170 @@
-Return-Path: <linux-kernel+bounces-265865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0714193F6F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:47:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2EBC93F6FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84B9B1F22A1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:47:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 717291F224DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B5A148FF5;
-	Mon, 29 Jul 2024 13:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DB914A62A;
+	Mon, 29 Jul 2024 13:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="m/8rkA9j";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y0tWsoJ+"
-Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XDzds7zC"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3200615530C
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AE21E515;
+	Mon, 29 Jul 2024 13:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722260803; cv=none; b=J9Ze3qZcKJM1/onag5SA5hCRrQqEiLWNf1R9MkFL8xWr/YKG5bgKfD01+PmsFSi0xCDk/JK4YGfTACv24flU5JTyTEF5X2VsCcTNQ5N2dg799v+6o6b0TNOX949jlmU0QdP9z2GZ8D96MQpw99jYSW0IY2xwEw5xL++EJPURltE=
+	t=1722260945; cv=none; b=lAg6EQ263adDULRq9pfJESbNsjH2XnkH8gTd9awLYTY+2gsgpOjb7hEddlqgyOyz6kY5hzomg7ewM6zA3eFPuAsZsfqXxS9aL/Bd9Yom1WuiLdLYdgZWh5+EF8UJR+x+MUPVXBvGNZa+Ex5qfrKIooHiCMXxzc6xeR5VI42ky9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722260803; c=relaxed/simple;
-	bh=6u4YK7HIh8qzxvNwOc536bUNAr0nGICv+grHBPnyhYo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kaYll5x8RrOwUUgFoqi+omkF8AKl/9e/3Y+j13b09JDyCh5DqepOlg/rKjzE0KlyOsxdE9s9xkNesl88zgaF0a1VVGfNi4c9vOWkjvJzFGaPso//XMJe1pY82D+044WGfr7A/KD8af0D2gXKPfiGBNm3GFftUkQ8eSm+NDmdocU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=m/8rkA9j; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y0tWsoJ+; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 07F24114018D;
-	Mon, 29 Jul 2024 09:46:41 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 29 Jul 2024 09:46:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1722260801; x=
-	1722347201; bh=j6bWCSRv+RuSR+rObc2XVVpxBOoLwKSQSviTJPiNqUw=; b=m
-	/8rkA9jZLDzEL2K0EEWBwCNxpzLlA74zT47+ZDjErKcPgHLrN45zHs8QQ5oB5/zd
-	KTjlyzkReQPt1BIuFUWYvcSmfrlZ4ViFN7c5DfmrhXDYWEf/rBToqGIlsc0EaFRw
-	OgYSOwoSgXL9Rcd1uZ9tSJfQxhWxfElwzoGjFWPHhlVVkOIocbG+q7064HJpiwxN
-	KUsyfmfD0mt6taju7biOS+RglMpxh07cs0+NP/I/41OInCapyxZKckl5DPnNgoBe
-	A4xQHIzYohHqwjs6llKsfGXKNb6PMy6nU5uniqq5UUiEVFFrIfyiBn6ja85gqJPM
-	zc5exFH/yoJO9XOptaHew==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722260801; x=
-	1722347201; bh=j6bWCSRv+RuSR+rObc2XVVpxBOoLwKSQSviTJPiNqUw=; b=Y
-	0tWsoJ+6jO0E5mjTVUOsKm8IrIO0SBhe0njhLT9CvMHCyYrRiMZ8R7pUKDDZPmuW
-	6nCddeZxNi1Fa4c7of8zroREcTgIowzc8GF8r4vqbDiIMBYRuIvZ2xzaUWYLgEvx
-	cPe1FUhlZnX1hPmh2LpGHwwlMFxc4RvTP3/xKrI1F3TPs514gIUhwXVc82PpxuqU
-	vD/AQJVMAcFmy8VlQAVq3S/yEjZrzSUJkc3wjuolbqsR0cvlW2BUkuxI+/0huZkS
-	Ve/8fREsnUctghU7OOJz3lqYSUHpT3k71pUbifzfFNjepNFE/CrKjckMJXGItQaf
-	Q0o2S8zrbS7HwXgJfKN5g==
-X-ME-Sender: <xms:QJ2nZjb8OrDvqfLASShup9wL-ZqcHcISTHhRgcfzxb-ZisCjMhuAAA>
-    <xme:QJ2nZiYDdKUJPvfMdNQCEhJTEHHb0XWC89GbSAFWWDDDpHICqSQYuJ3VV7Pj23mn7
-    KS7ioPp0_nvffNOEqE>
-X-ME-Received: <xmr:QJ2nZl_ToX8hUmOGIGLK9VstK6K6ubsTnLAuyD9jj7CVKTSWagmi0f6tCvL5R452CqHZKwFsZ-csJ3z6Z_n9GgFBDH_tdDWGsnnYHBnnrzYbdAk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjedvgdeilecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekre
-    dtredttdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgr
-    shhhihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepvdejgfejue
-    dvgfduudekleevtefgtdevhfdtffefiefgveeuteffiedvffekvddtnecuvehluhhsthgv
-    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihessh
-    grkhgrmhhotggthhhirdhjphdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:QJ2nZprFRT4t_KJAYOz9fmER7sFt2s0D3tqIuGu_-5EeNKE9N9HYFw>
-    <xmx:QJ2nZupCeSXb8sCkbENTWB4ekxKqbvCG8Uuug6Lj_hkxmp8w43018w>
-    <xmx:QJ2nZvRVXgNcWEh2gyjwnF6nu5YbMoR8IVk9YfasNq0DsZmhYVhwbA>
-    <xmx:QJ2nZmpi8Xffndplh9_exiDJob9e5kuYQ3hvwVMZKMFmTKQlnnodig>
-    <xmx:QZ2nZl0DzuNnH3mfJLhm7kSX4hiD75Lk0VvMGRncncVKTzLawk2pG_Gz>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 29 Jul 2024 09:46:39 -0400 (EDT)
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] firewire: core: use common helper function to serialize phy configuration packet
-Date: Mon, 29 Jul 2024 22:46:31 +0900
-Message-ID: <20240729134631.127189-4-o-takashi@sakamocchi.jp>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240729134631.127189-1-o-takashi@sakamocchi.jp>
-References: <20240729134631.127189-1-o-takashi@sakamocchi.jp>
+	s=arc-20240116; t=1722260945; c=relaxed/simple;
+	bh=bsGnorrUtmsQ6vRodBQGMe1zqHBUrA+/z3pKz7sLq0g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=quAIKdgtuuzflcnvHx7AOjwJxZ9ylW0fRGTyW0tUmzbn36bdQ2IqoAFJhtxY8GeHtYMgMHW8azTLDZNmyevht+2y7FQnZzbyDRejPFLyWmhrcxi8w3EOaz2LPJ/h88d4Dfl9h37kQ+AQ6sXpq5me9Eumd2UA9BQRU1RyLacJbyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XDzds7zC; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fd66cddd4dso27577425ad.2;
+        Mon, 29 Jul 2024 06:49:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722260943; x=1722865743; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=jAGTJVuRsl0K1QbB7ALBNAGr3bL3APT3SD+BTeTctzg=;
+        b=XDzds7zCdboCOXrFmK7PS3XQWpdz2BrZTrVBJE2CziVDzj1dwX1fP0QlP7MW3xPEhd
+         wYOL3fCSrHkYp5h2dkm4gD13o/fZvdru4PqjrH8mj1gt9IDaUm07sipySKmpq8Yt7Vps
+         J0CyVL7iIZBW4c+gngO1VkPcG66Tjne0AKVlLrhT68yCOXs/+EUOfWuGUcX/XonA5nIC
+         t2UhVEnROy6ijoNnrD+SYNhsskbC1yHuZfcSwHTaqIPE8k2fP+h9r9LIx9UTpC4SyxDe
+         W+9syjz/qVwJ0C/Hu7je/KeOz2T4VQvs9raLQ/4dhZSfn1min2v8xWBfUMBSqaZBBf0p
+         9SXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722260943; x=1722865743;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jAGTJVuRsl0K1QbB7ALBNAGr3bL3APT3SD+BTeTctzg=;
+        b=WfnFw4tZry3sJzT9GVXJFWTAl9d2VpXAkr7VQVyUus8M/6s4ecbhF80GaLM0AdH8+/
+         qp/AHH1xhKbT6rFClu8uBsc4CRu71hdfgMko4r2Tg7DfnhQc8R9ABCFk3DzOqFA08m7Q
+         Wvoi2z7ylsXkfO/tKMEvQMs5qFeT8pGbswYJm6sneNrMYhrVc0fWwWK3hYQAnbGB/5Vg
+         OSQ8vEu+a1OHQ+DqethUTs4kK60wfrXKN/QU+7jHmQg/vir5ks3YWQ6Egez4TlMekzJ3
+         Vw8kFcm83Oe/HPxiEprgbeCFPeW4IcqJWNB3QxqhzkqiwK2p51KEDhuCUymxZOesTt8h
+         L6TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtRpg3fUmOVoCrlVKrixObu2lV4lKLznaQY4rHSV6GaG6bAci8mQFAtemXzC4VcMXjLgc7hkRLkSQDHXlFiDs7vfVoaI3qBQG2JmVaOAEJ6amMeGyXLWmyQNSoh2cj2XmZQPhfqHfc2ks=
+X-Gm-Message-State: AOJu0YyjqmoD1hXn73xkMNGZTrYmjBee5Erv+rNCL5I89NgxN8BV21+G
+	frQUVqLeQGyDPoT0Mff5CaFoXSg7S6Q6O0pjCiz2G+uQzO1oNRf/u7+pRA==
+X-Google-Smtp-Source: AGHT+IFWzcjuTcZkUTqt8OyX1l4tNtIyPmbfaaLf1HxeDMXfpsornZj84Jvyy1L3i7o4TQ56pPREkQ==
+X-Received: by 2002:a17:902:ced1:b0:1fd:6581:f69f with SMTP id d9443c01a7336-1ff0481882dmr91065065ad.22.1722260942642;
+        Mon, 29 Jul 2024 06:49:02 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7cde45csm82982875ad.77.2024.07.29.06.49.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jul 2024 06:49:01 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <6b0a00d8-6357-45d1-972c-0af438868991@roeck-us.net>
+Date: Mon, 29 Jul 2024 06:48:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] hwmon: (asus-ec-sensors) remove VRM temp X570-E
+ GAMING
+To: Eugene Shalygin <eugene.shalygin@gmail.com>
+Cc: RobotRoss <true.robot.ross@gmail.com>, Jean Delvare <jdelvare@suse.com>,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240727170604.9149-1-eugene.shalygin@gmail.com>
+ <20240727170604.9149-2-eugene.shalygin@gmail.com>
+ <8b2949b0-63e0-4250-a313-9664f714c4b5@roeck-us.net>
+ <CAB95QATwU=P6m1vub18PcuWty1eKGkM5aGMfuuWZPD9LyAcd2g@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <CAB95QATwU=P6m1vub18PcuWty1eKGkM5aGMfuuWZPD9LyAcd2g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-A common helper function is available to serialize the first quadlet of phy
-configuration packet.
+On 7/29/24 01:20, Eugene Shalygin wrote:
+> Hi Guenter,
+> 
+> On Sun, 28 Jul 2024 at 00:09, Guenter Roeck <linux@roeck-us.net> wrote:
+>> "X570-E GAMING does not support the VRM temperature sensor."
+>>
+>> would have been good enough.
+> 
+> I can easily change the commit message, of course,
+> 
+>>> Signed-off-by: RobotRoss <true.robot.ross@gmail.com>
+>>
+>> Hmm, that very much looks like an alias.
+> 
+> but what can I do about user email? I can ask them to provide their
+> real name, but they saw your email as well already...
+> 
 
-This commit is for the purpose.
+Process explicitly says
 
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
----
- drivers/firewire/core-cdev.c        | 4 +++-
- drivers/firewire/core-transaction.c | 2 +-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+then you just add a line saying::
 
-diff --git a/drivers/firewire/core-cdev.c b/drivers/firewire/core-cdev.c
-index 9a7dc90330a3..619048dcfd72 100644
---- a/drivers/firewire/core-cdev.c
-+++ b/drivers/firewire/core-cdev.c
-@@ -37,6 +37,8 @@
- #include "core.h"
- #include <trace/events/firewire.h>
- 
-+#include "packet-header-definitions.h"
-+
- /*
-  * ABI version history is documented in linux/firewire-cdev.h.
-  */
-@@ -1635,7 +1637,7 @@ static int ioctl_send_phy_packet(struct client *client, union ioctl_arg *arg)
- 	e->client		= client;
- 	e->p.speed		= SCODE_100;
- 	e->p.generation		= a->generation;
--	e->p.header[0]		= TCODE_LINK_INTERNAL << 4;
-+	async_header_set_tcode(e->p.header, TCODE_LINK_INTERNAL);
- 	e->p.header[1]		= a->data[0];
- 	e->p.header[2]		= a->data[1];
- 	e->p.header_length	= 12;
-diff --git a/drivers/firewire/core-transaction.c b/drivers/firewire/core-transaction.c
-index 4d2fc1f31fec..a89c841a7dbe 100644
---- a/drivers/firewire/core-transaction.c
-+++ b/drivers/firewire/core-transaction.c
-@@ -464,7 +464,6 @@ static void transmit_phy_packet_callback(struct fw_packet *packet,
- 
- static struct fw_packet phy_config_packet = {
- 	.header_length	= 12,
--	.header[0]	= TCODE_LINK_INTERNAL << 4,
- 	.payload_length	= 0,
- 	.speed		= SCODE_100,
- 	.callback	= transmit_phy_packet_callback,
-@@ -497,6 +496,7 @@ void fw_send_phy_config(struct fw_card *card,
- 
- 	mutex_lock(&phy_config_mutex);
- 
-+	async_header_set_tcode(phy_config_packet.header, TCODE_LINK_INTERNAL);
- 	phy_config_packet.header[1] = data;
- 	phy_config_packet.header[2] = ~data;
- 	phy_config_packet.generation = generation;
--- 
-2.43.0
+         Signed-off-by: Random J Developer <random@developer.example.org>
+
+using a known identity (sorry, no anonymous contributions.)
+
+where an alias is clearly an anonymous contribution. You could author
+yourself and add a comment along the line of "originally from github user
+RobotRoss".
+
+Guenter
 
 
