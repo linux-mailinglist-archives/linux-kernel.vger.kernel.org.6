@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-265476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4487493F1C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:53:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0A7393F1C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32183B22D6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:53:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78D8E284767
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC555146D75;
-	Mon, 29 Jul 2024 09:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDFD1474C0;
+	Mon, 29 Jul 2024 09:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JdqDJIgm";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5FB7r78E"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JwnV+Z3D";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="juibbRt9"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6851448E4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9F914535C;
 	Mon, 29 Jul 2024 09:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722246591; cv=none; b=bneg/G6F4C1pknZTmU4eLybwKwJ8B/UB4aMxMLpzuIFRwxLYm6na22fGk/g9R7R/ZmwDueZymqIZk7DG2b/y6GKXiDWdCwiNQ+9xxgecIwX4yvcMOJdrX7o8PqaRfRJGTdQPgFCfk+knMcl1bUN7KIIKzWzIv0zmQQuQKBITXK0=
+	t=1722246592; cv=none; b=Kxi7KJggEBnJX7Rix7WgbHScUL98ZMK+2rBH5nTmmSEiQHt9a50NEML1wtp9+Qx+D9rXpo2Gb9zakRX2TjPGDeEVFgTOG4IouqKi/ZnAvSjbdiAP3Pr7gPTg5auv8IMsREgAtsW84x4Y6tf3rQTBL7JZMuPDs6tw9i2xB1x7Ycc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722246591; c=relaxed/simple;
-	bh=8ztALsF+KiuGE5Ezbh7j+hd0U3F7+QrnAfHzekb6sC4=;
+	s=arc-20240116; t=1722246592; c=relaxed/simple;
+	bh=yKalEnWySj2IVdnPBTtJBnnFZpE8UV+hzjrCOdCgazg=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=oTeNNWJ0FFjDV909FXIPrRU4ftJyOYOzb6OcEiYYPijQ5RXxOVly6H84/IdfbBOJWJIJP56tVuw438Gg9umRBCNV6SLLBBe6o6MQgvpv1kd4R1IBS1bCoI28hZ6ZAa6CKv9+HihrX9w/nagA4/CYJb9Jqny2PwNoYatJB/FmGLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JdqDJIgm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5FB7r78E; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=DeSolySvgnlmaCvrp3sup9aiR2OkpCvwNg+Jrc4fdTyIJg4wh6Mr/GWk0eTEo64fGIhuTzCbXw3dQYEtlKVrPU9lkxZmgmX2F6j6HIfOCceORN87cB+8ZTNKhs6IFSAgAWtw+S4kjwYw6BHQ5Zgi40Wn+YUjUit7H81RgrKQtqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JwnV+Z3D; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=juibbRt9; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Mon, 29 Jul 2024 09:49:46 -0000
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=abMFNA7Sf+rH9sMYQoeeuNKExE5Xc4MhCKG1cLakKPY=;
-	b=JdqDJIgmo+ZrZxaBJbANaIl2Evr+p08XUd2SrmtaIK22zwgm/0BWTPrurCigxpE4nijKkD
-	ORMaHQbIPAhjNWwvnVt18zcf7OD5aA2QOhPyOeuLDm9bq6Z1hBq0X2diA6nTUX7GOTYhWP
-	E7+uxJfaSrwCoZLTo72fiNiK6OGV1yRISVLUsfmYT9f8ndaoX70SFYigSgoSx5+RKnW74l
-	GgJfddZEQVPU1bwCGL3Be7OgNLGUk9+RzdJ+Ic1sDz7hFIOWh48B4d7w0QXSbnl659Qd2q
-	8VwGkXeVTMgqVEeLUTf+SM/3B2lpDvKTCTfM5W7GCo6qnZd5kt0k2h9TT/GXFQ==
+	bh=jE15wW6ujJnTvbAfItlzMtNDGHQQXqOtyNP8CxI8zpk=;
+	b=JwnV+Z3D7p2YtyodXdUdl8MwSz+hzgDCZoexlhzws4iccjOwWIFBH6okizvG/oKzdVNQmI
+	ZBFkjrVINTKBlK/cAGXXeNdNV11IWDRGz1rm82wHZcO6E5GA+2wLdn15hhsaiBvg2RouBp
+	n9cHyxyYvDUD2z3ya0DDpd7kU1xK/ZUyb3q1uHWILP4klYhWKX8haR8JLUxRwQxmRbwhKW
+	cGjzvW7MW+iCf33n8CPvWs3WzEzUvVdH/LRVLIwTwv7b26p/INIyKyWra447bsCMXdJnwQ
+	vIVWjwEocr1UWWbFGm7Ib3HjgkeNI/vtHmYaTJq1UcswPxuWxlCje4q3YBB2JQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1722246586;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,26 +52,27 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=abMFNA7Sf+rH9sMYQoeeuNKExE5Xc4MhCKG1cLakKPY=;
-	b=5FB7r78E2vswqOyf4YCvSqbH87yQQDcT2OnOGBjj5JyyMBLkJXeW7u2jbuWz4lTFckrVKN
-	+vNmeJ8fZMr2XZDQ==
+	bh=jE15wW6ujJnTvbAfItlzMtNDGHQQXqOtyNP8CxI8zpk=;
+	b=juibbRt9QwaWbtGxePG6p7mYj2iwyNmscrr4sLAFtbcOEMblPu4noyPERXS+H9fvVEhuJN
+	Gl41MnfA5dxmgFAA==
 From: tip-bot2 for Marek =?utf-8?q?Beh=C3=BAn?= <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/armada-370-xp: Simplify is_percpu_irq() code
+Subject:
+ [tip: irq/core] irqchip/armada-370-xp: Use correct type for cpu variable
 Cc: kabel@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Andrew Lunn <andrew@lunn.ch>, ilpo.jarvinen@linux.intel.com, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240708151801.11592-9-kabel@kernel.org>
-References: <20240708151801.11592-9-kabel@kernel.org>
+ Andrew Lunn <andrew@lunn.ch>, x86@kernel.org, linux-kernel@vger.kernel.org,
+ maz@kernel.org
+In-Reply-To: <20240708151801.11592-8-kabel@kernel.org>
+References: <20240708151801.11592-8-kabel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172224658605.2215.12603304589653785703.tip-bot2@tip-bot2>
+Message-ID: <172224658628.2215.14563267430930585085.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,47 +82,49 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     4b75b6d09a258f9a0b3f0087e8848f8963e4a398
-Gitweb:        https://git.kernel.org/tip/4b75b6d09a258f9a0b3f0087e8848f8963e=
-4a398
+Commit-ID:     dc778d7994e9f64294afce8ab31dedf74560b6c7
+Gitweb:        https://git.kernel.org/tip/dc778d7994e9f64294afce8ab31dedf7456=
+0b6c7
 Author:        Marek Beh=C3=BAn <kabel@kernel.org>
-AuthorDate:    Mon, 08 Jul 2024 17:17:59 +02:00
+AuthorDate:    Mon, 08 Jul 2024 17:17:58 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Mon, 29 Jul 2024 10:57:22 +02:00
 
-irqchip/armada-370-xp: Simplify is_percpu_irq() code
+irqchip/armada-370-xp: Use correct type for cpu variable
 
-Simplify the code in the is_percpu_irq() function. Instead of
-  if (condition)
-    return true;
-  return false;
-simply return condition.
+Use unsigned int instead of int for variable storing the cpu number.
 
 Signed-off-by: Marek Beh=C3=BAn <kabel@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-Link: https://lore.kernel.org/all/20240708151801.11592-9-kabel@kernel.org
+Link: https://lore.kernel.org/all/20240708151801.11592-8-kabel@kernel.org
 
 ---
- drivers/irqchip/irq-armada-370-xp.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/irqchip/irq-armada-370-xp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada=
 -370-xp.c
-index b9631cc..cfd6dc8 100644
+index 8f52de6..b9631cc 100644
 --- a/drivers/irqchip/irq-armada-370-xp.c
 +++ b/drivers/irqchip/irq-armada-370-xp.c
-@@ -201,10 +201,7 @@ static inline unsigned int msi_doorbell_end(void)
-=20
- static inline bool is_percpu_irq(irq_hw_number_t irq)
+@@ -409,7 +409,7 @@ static void armada_370_xp_ipi_send_mask(struct irq_data *=
+d,
+ 					const struct cpumask *mask)
  {
--	if (irq <=3D MPIC_MAX_PER_CPU_IRQS)
--		return true;
--
--	return false;
-+	return irq <=3D MPIC_MAX_PER_CPU_IRQS;
- }
+ 	unsigned long map =3D 0;
+-	int cpu;
++	unsigned int cpu;
 =20
- /*
+ 	/* Convert our logical CPU mask into a physical one. */
+ 	for_each_cpu(cpu, mask)
+@@ -507,7 +507,7 @@ static int armada_xp_set_affinity(struct irq_data *d,
+ 				  const struct cpumask *mask_val, bool force)
+ {
+ 	irq_hw_number_t hwirq =3D irqd_to_hwirq(d);
+-	int cpu;
++	unsigned int cpu;
+=20
+ 	/* Select a single core from the affinity mask which is online */
+ 	cpu =3D cpumask_any_and(mask_val, cpu_online_mask);
 
