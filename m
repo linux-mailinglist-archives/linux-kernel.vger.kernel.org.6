@@ -1,221 +1,274 @@
-Return-Path: <linux-kernel+bounces-265688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC83B93F471
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:48:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50CCA93F476
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCCB31C21575
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:48:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 717D01C202E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02168146015;
-	Mon, 29 Jul 2024 11:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B795145B29;
+	Mon, 29 Jul 2024 11:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="CJV+M+DG"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68AE145330;
-	Mon, 29 Jul 2024 11:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="Tqa9kfjW"
+Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60A113AA26;
+	Mon, 29 Jul 2024 11:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722253685; cv=none; b=a72gCVCizCt0Q4HPrqPu3AR3Cm2e+u5f9PCy9Kca5+qe/HltiOCONCyfuRyt4tzs8IfsxOwG3ch0j5iUuAuZYIKW1OlXAfmNG3GJWKYsDHYJ/++ANT743CpNPQUXUMhkSjRBRmLckPUPNVhp8y9l5lM2/s6WK40MOLnX9tr7/ko=
+	t=1722253796; cv=none; b=iTYarpcoGVDTnclynr+dZaDXVKOp3iKNPVL9jyRIP98gkWNdYRDnZfCwlJYyyo7yNJr18dLEsUbIDzDVmyVCwykemKGU83RWN8hYkrErp3XZnfuRAOX5jbFbtWoqgb3QSGXPvPpMvPMXaVUyukHwXJ+qU3OXJut5uXVivrGNotM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722253685; c=relaxed/simple;
-	bh=s7SuT7s6DzAcQcWzZ2jfx/ybl6s6C2MUhjOmbc5bt5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YdOsSZfepR2CeFjdTsD2DqhFl/rwzpd71fYbYpEJd1KmqrqWJQgMS15vh0r8f8Uo0lISYXbzzSA5Om1QKrdswZ2FHGuUZQv5h5wzP6pXU7by2ho87R6ycC7730CArsTQ7Yh4vRhWL5DH8+5aJJU5EL7oXgPi4BT/h4GrbPb4x3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=CJV+M+DG; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WXc701lzQz9syL;
-	Mon, 29 Jul 2024 13:47:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1722253676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O/XfU/uEXx6KZJxVwg4BEJQGboc/tjpnfUQOZKK0FRM=;
-	b=CJV+M+DGwoMbn6eJPUn9AA1BCy1w5ZRvG8jRK+Y8uWgYOjkRjMoAveSklJQdYSWqib5edV
-	xrMvQl9PIK2Diyv4urDLCVX9jmW2uNZUNh72oGMp3qY5Zz3Ev6i0nLx9fKoMTfo/tzUJon
-	2EF2/Bm6KOaWWbrHe5TeIoP16HYADBtWUMxkU5sqageHNuJvHtEsoL/J1NGpea/je3CZw3
-	mVB6buXnYS3Wg/c/BXwBpKe057aUwd4xTkbzHv8/AVesQVlrYnAlLs0LD/BNzZz9vaNUAg
-	aTXIjojExYsXGQTWM27n0hUlNIaU95yUhpgjt/D+CsFWV6ciIeKUDYJ1qticaQ==
-Date: Mon, 29 Jul 2024 21:47:47 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Florian Weimer <fweimer@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, Dave Chinner <dchinner@redhat.com>, 
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: Testing if two open descriptors refer to the same inode
-Message-ID: <20240729.114221-bumpy.fronds.spare.forts-a2tVepJTDtVb@cyphar.com>
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
- <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
- <875xsoqy58.fsf@oldenburg.str.redhat.com>
- <vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
- <87sevspit1.fsf@oldenburg.str.redhat.com>
- <CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
+	s=arc-20240116; t=1722253796; c=relaxed/simple;
+	bh=0bRmeIZm2pIuKjjoxEJEf48Q46OIGeT+uvqjgcV6sp4=;
+	h=Content-Type:Message-ID:Date:MIME-Version:To:Cc:References:From:
+	 Subject:In-Reply-To; b=NZO4ZHdiMgbbVGjFhak2CXnBzN4ihGnCCx55KU+ZwcePBAB7QhSPUUeOSnjWXn9/OI1S8T0fWAxr3Z/wUsuJ/IGHbX3rRPyuEweRdtX2mrwSUM8btp1hW5QAL3spwoCZDEuGpmtJCD6OFr9xQYHBdF8PkTst7h+x6ToUnpEPWBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=Tqa9kfjW; arc=none smtp.client-ip=3.9.82.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
+Received: from [IPV6:2a02:8010:6359:1:e533:7058:72ab:8493] (unknown [IPv6:2a02:8010:6359:1:e533:7058:72ab:8493])
+	(Authenticated sender: james)
+	by mail.katalix.com (Postfix) with ESMTPSA id DA32E7D993;
+	Mon, 29 Jul 2024 12:49:43 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
+	t=1722253787; bh=0bRmeIZm2pIuKjjoxEJEf48Q46OIGeT+uvqjgcV6sp4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
+	 In-Reply-To:From;
+	z=Message-ID:=20<6b40e022-369c-8083-07d4-3036de1d3e65@katalix.com>|
+	 Date:=20Mon,=2029=20Jul=202024=2012:49:41=20+0100|MIME-Version:=20
+	 1.0|To:=20syzbot=20<syzbot+6acef9e0a4d1f46c83d4@syzkaller.appspotm
+	 ail.com>|Cc:=20Jakub=20Kicinski=20<kuba@kernel.org>,=20davem@davem
+	 loft.net,=0D=0A=20edumazet@google.com,=20linux-kernel@vger.kernel.
+	 org,=20netdev@vger.kernel.org,=0D=0A=20pabeni@redhat.com,=20syzkal
+	 ler-bugs@googlegroups.com|References:=20<000000000000f9eeec061e0ff
+	 a03@google.com>=0D=0A=20<20240726080205.33661f4e@kernel.org>|From:
+	 =20James=20Chapman=20<jchapman@katalix.com>|Subject:=20Re:=20[syzb
+	 ot]=20[net?]=20BUG:=20unable=20to=20handle=20kernel=20paging=20req
+	 uest=20in=0D=0A=20net_generic|In-Reply-To:=20<20240726080205.33661
+	 f4e@kernel.org>;
+	b=Tqa9kfjW+e2JOWHr48t8sntgtaStSABfcXKdp0pxdUkZXuy7ufLTUZFOzGEz4D1P8
+	 CwWZ6RTYbyIYUomXOZAGy6s/phrQx66fNM5BX6tt9yXVucVpmP/cs7/B2i6Y09FGWc
+	 Vyln1QXCOXd4qIwxFOdksxUel1tCAM2ZrR7hM21PSYmYxTCEvzWu3vcUGxaB5VFe+Z
+	 NqBcPO6wGly/ozDNgeBNC5nhyIqQ9RoUKsWAr7y/NU637ny7RLkuG+XMg0mBRVMAHc
+	 goy8TOvmE+VpPgT0eOPCBChO1eFvsb9ipTNkmfTvXyiSmT7RR2wljTXBbpHZ+zhP4j
+	 lw+x7opUHnm6A==
+Content-Type: multipart/mixed; boundary="------------a0gFETOsaGx0Vh41juSDYBQx"
+Message-ID: <6b40e022-369c-8083-07d4-3036de1d3e65@katalix.com>
+Date: Mon, 29 Jul 2024 12:49:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uqrjwa2ur5ehxsxd"
-Content-Disposition: inline
-In-Reply-To: <CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Content-Language: en-US
+To: syzbot <syzbot+6acef9e0a4d1f46c83d4@syzkaller.appspotmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net,
+ edumazet@google.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+References: <000000000000f9eeec061e0ffa03@google.com>
+ <20240726080205.33661f4e@kernel.org>
+From: James Chapman <jchapman@katalix.com>
+Organization: Katalix Systems Ltd
+Subject: Re: [syzbot] [net?] BUG: unable to handle kernel paging request in
+ net_generic
+In-Reply-To: <20240726080205.33661f4e@kernel.org>
 
+This is a multi-part message in MIME format.
+--------------a0gFETOsaGx0Vh41juSDYBQx
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---uqrjwa2ur5ehxsxd
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 26/07/2024 16:02, Jakub Kicinski wrote:
+> CC: James [L2TP]
+> 
+> On Thu, 25 Jul 2024 03:37:24 -0700 syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    c912bf709078 Merge remote-tracking branches 'origin/arm64-..
+>> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1625a15e980000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=79a49b0b9ffd6585
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=6acef9e0a4d1f46c83d4
+>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>> userspace arch: arm64
+>>
+>> Unfortunately, I don't have any reproducer for this issue yet.
+>>
+>> Downloadable assets:
+>> disk image: https://storage.googleapis.com/syzbot-assets/fea69a9d153c/disk-c912bf70.raw.xz
+>> vmlinux: https://storage.googleapis.com/syzbot-assets/be06762a72ef/vmlinux-c912bf70.xz
+>> kernel image: https://storage.googleapis.com/syzbot-assets/6c8e58b4215d/Image-c912bf70.gz.xz
+>>
+>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> Reported-by: syzbot+6acef9e0a4d1f46c83d4@syzkaller.appspotmail.com
+>>
+>> Unable to handle kernel paging request at virtual address dfff800000000257
+>> KASAN: probably user-memory-access in range [0x00000000000012b8-0x00000000000012bf]
+ >> ...
+>> Call trace:
+>>  net_generic+0xd0/0x250 include/net/netns/generic.h:46
+>>  l2tp_pernet net/l2tp/l2tp_core.c:125 [inline]
+>>  l2tp_tunnel_get+0x90/0x464 net/l2tp/l2tp_core.c:207
+>>  l2tp_udp_recv_core net/l2tp/l2tp_core.c:852 [inline]
+>>  l2tp_udp_encap_recv+0x314/0xb3c net/l2tp/l2tp_core.c:933
+>>  udpv6_queue_rcv_one_skb+0x1870/0x1ad4 net/ipv6/udp.c:727
+>>  udpv6_queue_rcv_skb+0x3bc/0x574 net/ipv6/udp.c:789
+>>  udp6_unicast_rcv_skb+0x1cc/0x320 net/ipv6/udp.c:929
+>>  __udp6_lib_rcv+0xbcc/0x1330 net/ipv6/udp.c:1018
+>>  udpv6_rcv+0x88/0x9c net/ipv6/udp.c:1133
+>>  ip6_protocol_deliver_rcu+0x988/0x12a4 net/ipv6/ip6_input.c:438
+>>  ip6_input_finish+0x164/0x298 net/ipv6/ip6_input.c:483
+>> ...
 
-On 2024-07-29, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> On Mon, Jul 29, 2024 at 12:57=E2=80=AFPM Florian Weimer <fweimer@redhat.c=
-om> wrote:
-> >
-> > * Mateusz Guzik:
-> >
-> > > On Mon, Jul 29, 2024 at 12:40:35PM +0200, Florian Weimer wrote:
-> > >> * Mateusz Guzik:
-> > >>
-> > >> > On Mon, Jul 29, 2024 at 08:55:46AM +0200, Florian Weimer wrote:
-> > >> >> It was pointed out to me that inode numbers on Linux are no longer
-> > >> >> expected to be unique per file system, even for local file system=
-s.
-> > >> >
-> > >> > I don't know if I'm parsing this correctly.
-> > >> >
-> > >> > Are you claiming on-disk inode numbers are not guaranteed unique p=
-er
-> > >> > filesystem? It sounds like utter breakage, with capital 'f'.
-> > >>
-> > >> Yes, POSIX semantics and traditional Linux semantics for POSIX-like
-> > >> local file systems are different.
-> > >
-> > > Can you link me some threads about this?
-> >
-> > Sorry, it was an internal thread.  It's supposed to be common knowledge
-> > among Linux file system developers.  Aleksa referenced LSF/MM
-> > discussions.
-> >
->=20
-> So much for open development :-P
->=20
-> > > I had this in mind (untested modulo compilation):
-> > >
-> > > diff --git a/fs/fcntl.c b/fs/fcntl.c
-> > > index 300e5d9ad913..5723c3e82eac 100644
-> > > --- a/fs/fcntl.c
-> > > +++ b/fs/fcntl.c
-> > > @@ -343,6 +343,13 @@ static long f_dupfd_query(int fd, struct file *f=
-ilp)
-> > >       return f.file =3D=3D filp;
-> > >  }
-> > >
-> > > +static long f_dupfd_query_inode(int fd, struct file *filp)
-> > > +{
-> > > +     CLASS(fd_raw, f)(fd);
-> > > +
-> > > +     return f.file->f_inode =3D=3D filp->f_inode;
-> > > +}
-> > > +
-> > >  static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
-> > >               struct file *filp)
-> > >  {
-> > > @@ -361,6 +368,9 @@ static long do_fcntl(int fd, unsigned int cmd, un=
-signed long arg,
-> > >       case F_DUPFD_QUERY:
-> > >               err =3D f_dupfd_query(argi, filp);
-> > >               break;
-> > > +     case F_DUPFD_QUERY_INODE:
-> > > +             err =3D f_dupfd_query_inode(argi, filp);
-> > > +             break;
-> > >       case F_GETFD:
-> > >               err =3D get_close_on_exec(fd) ? FD_CLOEXEC : 0;
-> > >               break;
-> > > diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> > > index c0bcc185fa48..2e93dbdd8fd2 100644
-> > > --- a/include/uapi/linux/fcntl.h
-> > > +++ b/include/uapi/linux/fcntl.h
-> > > @@ -16,6 +16,8 @@
-> > >
-> > >  #define F_DUPFD_QUERY        (F_LINUX_SPECIFIC_BASE + 3)
-> > >
-> > > +#define F_DUPFD_QUERY_INODE (F_LINUX_SPECIFIC_BASE + 4)
-> > > +
-> > >  /*
-> > >   * Cancel a blocking posix lock; internal use only until we expose an
-> > >   * asynchronous lock api to userspace:
-> >
-> > It's certainly much easier to use than name_to_handle_at, so it looks
-> > like a useful option to have.
-> >
-> > Could we return a three-way comparison result for sorting?  Or would
-> > that expose too much about kernel pointer values?
-> >
->=20
-> As is this would sort by inode *address* which I don't believe is of
-> any use -- the order has to be assumed arbitrary.
->=20
-> Perhaps there is something which is reliably the same and can be
-> combined with something else to be unique system-wide (the magic
-> handle thing?).
->=20
-> But even then you would need to justify trying to sort by fcntl calls,
-> which sounds pretty dodgey to me.
+This crash is the result of a call to net_generic() being unable to 
+dereference net when handling a received l2tpv2 packet.
 
-Programs need to key things by (dev, ino) currently, so you need to be
-able to get some kind of ordinal that you can sort with.
+The stack frame indicates that l2tp_udp_recv_core finds that the 
+packet's tunnel_id does not match the tunnel pointer derived from 
+sk_user_data of the receiving socket. This can happen when more than one 
+socket shares the same 5-tuple address. When a tunnel ID mismatch is 
+detected, l2tp looks up the tunnel using the ID from the packet. It is 
+this lookup which segfaults in net_generic() when l2tp tries to access 
+its per-net tunnel list.
 
-If we really want to make an interface to let you do this without
-exposing hashes in statx, then kcmp(2) makes more sense, but having to
-keep a file descriptor for each entry in a hashtable would obviously
-cause -EMFILE issues.
+The code implicated by the crash, which added support for aliased 
+sockets, is no longer in linux-net or net-next. l2tp no longer looks up 
+tunnels in the datapath; instead it looks up sessions without finding 
+the parent tunnel first. The commits are:
 
-> Given that thing I *suspect* statx() may want to get extended with
-> some guaranteed unique identifier. Then you can sort in userspace all
-> you want.
+  * support for aliased sockets was added in 628bc3e5a1be ("l2tp: 
+Support several sockets with same IP/port quadruple") May 2024.
 
-Yeah, this is what the hashed fhandle patch I have does.
+  * l2tp's receive path was refactored in ff6a2ac23cb0 ("l2tp: refactor 
+udp recv to lookup to not use sk_user_data") June 2024.
 
-> Based on your opening mail I assumed you only need to check 2 files,
-> for which the proposed fcntl does the trick.
->=20
-> Or to put it differently: there seems to be more to the picture than
-> in the opening mail, so perhaps you could outline what you are looking
-> for.
+Is 628bc3e5a1be in any LTS or stable kernel? I didn't find it in 
+linux-stable.git
 
-Hardlink detection requires creating a hashmap of (dev, ino) to find
-hardlinks. Pair-wise checking is not sufficient for that usecase (which
-AFAIK is the most common thing people use inode numbers for -- it's at
-least probably the most common thing people run in practice since
-archive tools do this.)
+A possible fix is attached.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git 
+for-kernelci
 
---uqrjwa2ur5ehxsxd
-Content-Type: application/pgp-signature; name="signature.asc"
+--------------a0gFETOsaGx0Vh41juSDYBQx
+Content-Type: text/x-patch; charset=UTF-8;
+ name="0001-l2tp-fix-tunnel-init-UDP-socket-receive-race.patch"
+Content-Disposition: attachment;
+ filename="0001-l2tp-fix-tunnel-init-UDP-socket-receive-race.patch"
+Content-Transfer-Encoding: base64
 
------BEGIN PGP SIGNATURE-----
+RnJvbSAzNjJiNjcyNTc3OGJkM2ViN2E3M2UzNmE3NWU5MmUyYjA5ZWM3NTQxIE1vbiBTZXAg
+MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBKYW1lcyBDaGFwbWFuIDxqY2hhcG1hbkBrYXRhbGl4
+LmNvbT4KRGF0ZTogTW9uLCAyOSBKdWwgMjAyNCAwOTo0OTowNyArMDEwMApTdWJqZWN0OiBb
+UEFUQ0hdIGwydHA6IGZpeCB0dW5uZWwgaW5pdCAvIFVEUCBzb2NrZXQgcmVjZWl2ZSByYWNl
+CgpzeXpib3QgZXhwb3NlcyBhIHJhY2UgZHVyaW5nIHR1bm5lbCBpbml0IHdoZW4gdGhlIHR1
+bm5lbCdzIFVEUCBzb2NrZXQKaXMgbWFkZSByZWFkeSB0byByZWNlaXZlIHRyYWZmaWMgYmVm
+b3JlIHRoZSB0dW5uZWwncyBsMnRwX25ldCBwb2ludGVyCmlzIHNldC4gVGhpcyBjYW4gcmVz
+dWx0IGluIGEgc2VnZmF1bHQgaW4gbmV0X2dlbmVyaWMoKSB3aGVuCmwydHBfdHVubmVsX2dl
+dCB0cmllcyB0byBhY2Nlc3MgaXRzIHBlci1uZXQgbGlzdC4KCiAgVW5hYmxlIHRvIGhhbmRs
+ZSBrZXJuZWwgcGFnaW5nIHJlcXVlc3QgYXQgdmlydHVhbCBhZGRyZXNzIGRmZmY4MDAwMDAw
+MDAyNTcKICBLQVNBTjogcHJvYmFibHkgdXNlci1tZW1vcnktYWNjZXNzIGluIHJhbmdlIFsw
+eDAwMDAwMDAwMDAwMDEyYjgtMHgwMDAwMDAwMDAwMDAxMmJmXQogIE1lbSBhYm9ydCBpbmZv
+OgogICAgRVNSID0gMHgwMDAwMDAwMDk2MDAwMDA1CiAgICBFQyA9IDB4MjU6IERBQlQgKGN1
+cnJlbnQgRUwpLCBJTCA9IDMyIGJpdHMKICAgIFNFVCA9IDAsIEZuViA9IDAKICAgIEVBID0g
+MCwgUzFQVFcgPSAwCiAgICBGU0MgPSAweDA1OiBsZXZlbCAxIHRyYW5zbGF0aW9uIGZhdWx0
+CiAgRGF0YSBhYm9ydCBpbmZvOgogICAgSVNWID0gMCwgSVNTID0gMHgwMDAwMDAwNSwgSVNT
+MiA9IDB4MDAwMDAwMDAKICAgIENNID0gMCwgV25SID0gMCwgVG5EID0gMCwgVGFnQWNjZXNz
+ID0gMAogICAgR0NTID0gMCwgT3ZlcmxheSA9IDAsIERpcnR5Qml0ID0gMCwgWHMgPSAwCiAg
+W2RmZmY4MDAwMDAwMDAyNTddIGFkZHJlc3MgYmV0d2VlbiB1c2VyIGFuZCBrZXJuZWwgYWRk
+cmVzcyByYW5nZXMKICBJbnRlcm5hbCBlcnJvcjogT29wczogMDAwMDAwMDA5NjAwMDAwNSBb
+IzFdIFBSRUVNUFQgU01QCiAgTW9kdWxlcyBsaW5rZWQgaW46CiAgQ1BVOiAxIFBJRDogNjk2
+OSBDb21tOiBzeXouMi4xMDUgTm90IHRhaW50ZWQgNi4xMC4wLXJjNy1zeXprYWxsZXItZ2M5
+MTJiZjcwOTA3OCAjMAogIEhhcmR3YXJlIG5hbWU6IEdvb2dsZSBHb29nbGUgQ29tcHV0ZSBF
+bmdpbmUvR29vZ2xlIENvbXB1dGUgRW5naW5lLCBCSU9TIEdvb2dsZSAwNi8wNy8yMDI0CiAg
+cHN0YXRlOiA4MDQwMDAwNSAoTnpjdiBkYWlmICtQQU4gLVVBTyAtVENPIC1ESVQgLVNTQlMg
+QlRZUEU9LS0pCiAgcGMgOiBuZXRfZ2VuZXJpYysweGQwLzB4MjUwIGluY2x1ZGUvbmV0L25l
+dG5zL2dlbmVyaWMuaDo0NgogIGxyIDogcmN1X3JlYWRfbG9jayBpbmNsdWRlL2xpbnV4L3Jj
+dXBkYXRlLmg6NzgyIFtpbmxpbmVdCiAgbHIgOiBuZXRfZ2VuZXJpYysweDU0LzB4MjUwIGlu
+Y2x1ZGUvbmV0L25ldG5zL2dlbmVyaWMuaDo0NQogIHNwIDogZmZmZjgwMDBhNmM4NmMxMAog
+IHgyOTogZmZmZjgwMDBhNmM4NmMxMCB4Mjg6IGRmZmY4MDAwMDAwMDAwMDAgeDI3OiAwMDAw
+MDAwMDAwMDAwODAyCiAgeDI2OiAwMDAwMDAwMDAwMDAwMDAyIHgyNTogMWZmZmYwMDAxNGQ5
+MGQ4OCB4MjQ6IGRmZmY4MDAwMDAwMDAwMDAKICB4MjM6IGZmZmYwMDAwY2EzZmJkNzAgeDIy
+OiBmZmZmODAwMGE2Yzg2YzQwIHgyMTogZGZmZjgwMDAwMDAwMDAwMAogIHgyMDogMDAwMDAw
+MDAwMDAwMTJiOCB4MTk6IDAwMDAwMDAwMDAwMDAwNGUgeDE4OiAxZmZmZjAwMDE0ZDkwY2Zl
+CiAgeDE3OiAwMDAwMDAwMDAwMDMwOTlhIHgxNjogZmZmZjgwMDA4MDU0YmRlOCB4MTU6IDAw
+MDAwMDAwMDAwMDAwMDEKICB4MTQ6IGZmZmY4MDAwOGYxMDA1NjggeDEzOiBkZmZmODAwMDAw
+MDAwMDAwIHgxMjogMDAwMDAwMDBhZjg2MjhjZAogIHgxMTogMDAwMDAwMDA2OGEwZTIyZCB4
+MTA6IDAwMDAwMDAwMDBmZjAxMDAgeDkgOiAwMDAwMDAwMDAwMDAwMDAwCiAgeDggOiAwMDAw
+MDAwMDAwMDAwMjU3IHg3IDogZmZmZjgwMDA4YTQzMjZhOCB4NiA6IDAwMDAwMDAwMDAwMDAw
+MDAKICB4NSA6IDAwMDAwMDAwMDAwMDAwMDAgeDQgOiAwMDAwMDAwMDAwMDAwMDAwIHgzIDog
+MDAwMDAwMDAwMDAwMDAwMgogIHgyIDogMDAwMDAwMDAwMDAwMDAwOCB4MSA6IGZmZmY4MDAw
+OGI2ODFmMjAgeDAgOiAwMDAwMDAwMDAwMDAwMDAxCiAgQ2FsbCB0cmFjZToKICAgbmV0X2dl
+bmVyaWMrMHhkMC8weDI1MCBpbmNsdWRlL25ldC9uZXRucy9nZW5lcmljLmg6NDYKICAgbDJ0
+cF9wZXJuZXQgbmV0L2wydHAvbDJ0cF9jb3JlLmM6MTI1IFtpbmxpbmVdCiAgIGwydHBfdHVu
+bmVsX2dldCsweDkwLzB4NDY0IG5ldC9sMnRwL2wydHBfY29yZS5jOjIwNwogICBsMnRwX3Vk
+cF9yZWN2X2NvcmUgbmV0L2wydHAvbDJ0cF9jb3JlLmM6ODUyIFtpbmxpbmVdCiAgIGwydHBf
+dWRwX2VuY2FwX3JlY3YrMHgzMTQvMHhiM2MgbmV0L2wydHAvbDJ0cF9jb3JlLmM6OTMzCiAg
+IHVkcHY2X3F1ZXVlX3Jjdl9vbmVfc2tiKzB4MTg3MC8weDFhZDQgbmV0L2lwdjYvdWRwLmM6
+NzI3CiAgIHVkcHY2X3F1ZXVlX3Jjdl9za2IrMHgzYmMvMHg1NzQgbmV0L2lwdjYvdWRwLmM6
+Nzg5CiAgIHVkcDZfdW5pY2FzdF9yY3Zfc2tiKzB4MWNjLzB4MzIwIG5ldC9pcHY2L3VkcC5j
+OjkyOQogICBfX3VkcDZfbGliX3JjdisweGJjYy8weDEzMzAgbmV0L2lwdjYvdWRwLmM6MTAx
+OAogICB1ZHB2Nl9yY3YrMHg4OC8weDljIG5ldC9pcHY2L3VkcC5jOjExMzMKICAgaXA2X3By
+b3RvY29sX2RlbGl2ZXJfcmN1KzB4OTg4LzB4MTJhNCBuZXQvaXB2Ni9pcDZfaW5wdXQuYzo0
+MzgKICAgaXA2X2lucHV0X2ZpbmlzaCsweDE2NC8weDI5OCBuZXQvaXB2Ni9pcDZfaW5wdXQu
+Yzo0ODMKICAgTkZfSE9PSysweDMyOC8weDNkNCBpbmNsdWRlL2xpbnV4L25ldGZpbHRlci5o
+OjMxNAogICBpcDZfaW5wdXQrMHg5MC8weGE4IG5ldC9pcHY2L2lwNl9pbnB1dC5jOjQ5Mgog
+ICBkc3RfaW5wdXQgaW5jbHVkZS9uZXQvZHN0Lmg6NDYwIFtpbmxpbmVdCiAgIGlwNl9yY3Zf
+ZmluaXNoKzB4MWYwLzB4MjFjIG5ldC9pcHY2L2lwNl9pbnB1dC5jOjc5CiAgIE5GX0hPT0sr
+MHgzMjgvMHgzZDQgaW5jbHVkZS9saW51eC9uZXRmaWx0ZXIuaDozMTQKICAgaXB2Nl9yY3Yr
+MHg5Yy8weGJjIG5ldC9pcHY2L2lwNl9pbnB1dC5jOjMxMAogICBfX25ldGlmX3JlY2VpdmVf
+c2tiX29uZV9jb3JlIG5ldC9jb3JlL2Rldi5jOjU2MjUgW2lubGluZV0KICAgX19uZXRpZl9y
+ZWNlaXZlX3NrYisweDE4Yy8weDNjOCBuZXQvY29yZS9kZXYuYzo1NzM5CiAgIG5ldGlmX3Jl
+Y2VpdmVfc2tiX2ludGVybmFsIG5ldC9jb3JlL2Rldi5jOjU4MjUgW2lubGluZV0KICAgbmV0
+aWZfcmVjZWl2ZV9za2IrMHgxZjAvMHg5M2MgbmV0L2NvcmUvZGV2LmM6NTg4NQogICB0dW5f
+cnhfYmF0Y2hlZCsweDU2OC8weDZlNAogICB0dW5fZ2V0X3VzZXIrMHgyNjBjLzB4Mzk3OCBk
+cml2ZXJzL25ldC90dW4uYzoyMDAyCiAgIHR1bl9jaHJfd3JpdGVfaXRlcisweGZjLzB4MjA0
+IGRyaXZlcnMvbmV0L3R1bi5jOjIwNDgKICAgbmV3X3N5bmNfd3JpdGUgZnMvcmVhZF93cml0
+ZS5jOjQ5NyBbaW5saW5lXQogICB2ZnNfd3JpdGUrMHg4ZjgvMHhjMzggZnMvcmVhZF93cml0
+ZS5jOjU5MAogICBrc3lzX3dyaXRlKzB4MTVjLzB4MjZjIGZzL3JlYWRfd3JpdGUuYzo2NDMK
+ICAgX19kb19zeXNfd3JpdGUgZnMvcmVhZF93cml0ZS5jOjY1NSBbaW5saW5lXQogICBfX3Nl
+X3N5c193cml0ZSBmcy9yZWFkX3dyaXRlLmM6NjUyIFtpbmxpbmVdCiAgIF9fYXJtNjRfc3lz
+X3dyaXRlKzB4N2MvMHg5MCBmcy9yZWFkX3dyaXRlLmM6NjUyCiAgIF9faW52b2tlX3N5c2Nh
+bGwgYXJjaC9hcm02NC9rZXJuZWwvc3lzY2FsbC5jOjM0IFtpbmxpbmVdCiAgIGludm9rZV9z
+eXNjYWxsKzB4OTgvMHgyYjggYXJjaC9hcm02NC9rZXJuZWwvc3lzY2FsbC5jOjQ4CiAgIGVs
+MF9zdmNfY29tbW9uKzB4MTMwLzB4MjNjIGFyY2gvYXJtNjQva2VybmVsL3N5c2NhbGwuYzox
+MzEKICAgZG9fZWwwX3N2YysweDQ4LzB4NTggYXJjaC9hcm02NC9rZXJuZWwvc3lzY2FsbC5j
+OjE1MAogICBlbDBfc3ZjKzB4NTQvMHgxNjggYXJjaC9hcm02NC9rZXJuZWwvZW50cnktY29t
+bW9uLmM6NzEyCiAgIGVsMHRfNjRfc3luY19oYW5kbGVyKzB4ODQvMHhmYyBhcmNoL2FybTY0
+L2tlcm5lbC9lbnRyeS1jb21tb24uYzo3MzAKICAgZWwwdF82NF9zeW5jKzB4MTkwLzB4MTk0
+IGFyY2gvYXJtNjQva2VybmVsL2VudHJ5LlM6NTk4CiAgQ29kZTogZDJkMDAwMTUgZjJmYmZm
+ZjUgOGIwODAyOTQgZDM0M2ZlODggKDM4NzU2OTA4KQogIC0tLVsgZW5kIHRyYWNlIDAwMDAw
+MDAwMDAwMDAwMDAgXS0tLQogIC0tLS0tLS0tLS0tLS0tLS0KICBDb2RlIGRpc2Fzc2VtYmx5
+IChiZXN0IGd1ZXNzKToKICAgICAwOglkMmQwMDAxNSAJbW92CXgyMSwgIzB4ODAwMDAwMDAw
+MDAwICAgICAgICAJLy8gIzE0MDczNzQ4ODM1NTMyOAogICAgIDQ6CWYyZmJmZmY1IAltb3Zr
+CXgyMSwgIzB4ZGZmZiwgbHNsICM0OAogICAgIDg6CThiMDgwMjk0IAlhZGQJeDIwLCB4MjAs
+IHg4CiAgICAgYzoJZDM0M2ZlODggCWxzcgl4OCwgeDIwLCAjMwogICogMTA6CTM4NzU2OTA4
+IAlsZHJiCXc4LCBbeDgsIHgyMV0gPC0tIHRyYXBwaW5nIGluc3RydWN0aW9uCgpSZXBvcnRl
+ZC1ieTogc3l6Ym90KzZhY2VmOWUwYTRkMWY0NmM4M2Q0QHN5emthbGxlci5hcHBzcG90bWFp
+bC5jb20KRml4ZXM6IDYyOGJjM2U1YTFiZSAoImwydHA6IFN1cHBvcnQgc2V2ZXJhbCBzb2Nr
+ZXRzIHdpdGggc2FtZSBJUC9wb3J0IHF1YWRydXBsZSIpClNpZ25lZC1vZmYtYnk6IEphbWVz
+IENoYXBtYW4gPGpjaGFwbWFuQGthdGFsaXguY29tPgotLS0KIG5ldC9sMnRwL2wydHBfY29y
+ZS5jIHwgMyArKy0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRp
+b24oLSkKCmRpZmYgLS1naXQgYS9uZXQvbDJ0cC9sMnRwX2NvcmUuYyBiL25ldC9sMnRwL2wy
+dHBfY29yZS5jCmluZGV4IDg4YTM0ZGIyNjVkOC4uYzVhNmNmY2YxYjNmIDEwMDY0NAotLS0g
+YS9uZXQvbDJ0cC9sMnRwX2NvcmUuYworKysgYi9uZXQvbDJ0cC9sMnRwX2NvcmUuYwpAQCAt
+MTUyMyw2ICsxNTIzLDggQEAgaW50IGwydHBfdHVubmVsX3JlZ2lzdGVyKHN0cnVjdCBsMnRw
+X3R1bm5lbCAqdHVubmVsLCBzdHJ1Y3QgbmV0ICpuZXQsCiAJCQlnb3RvIGVycjsKIAl9CiAK
+Kwl0dW5uZWwtPmwydHBfbmV0ID0gbmV0OworCiAJc2sgPSBzb2NrLT5zazsKIAlsb2NrX3Nv
+Y2soc2spOwogCXdyaXRlX2xvY2tfYmgoJnNrLT5za19jYWxsYmFja19sb2NrKTsKQEAgLTE1
+NTEsNyArMTU1Myw2IEBAIGludCBsMnRwX3R1bm5lbF9yZWdpc3RlcihzdHJ1Y3QgbDJ0cF90
+dW5uZWwgKnR1bm5lbCwgc3RydWN0IG5ldCAqbmV0LAogCiAJc29ja19ob2xkKHNrKTsKIAl0
+dW5uZWwtPnNvY2sgPSBzazsKLQl0dW5uZWwtPmwydHBfbmV0ID0gbmV0OwogCiAJc3Bpbl9s
+b2NrX2JoKCZwbi0+bDJ0cF90dW5uZWxfaWRyX2xvY2spOwogCWlkcl9yZXBsYWNlKCZwbi0+
+bDJ0cF90dW5uZWxfaWRyLCB0dW5uZWwsIHR1bm5lbC0+dHVubmVsX2lkKTsKLS0gCjIuMzQu
+MQoK
 
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZqeBYwAKCRAol/rSt+lE
-bwnJAP4oTv51+RcPvDPBQrvKsTtuwox2qkQOMIVO+sTn9UNaLwEA6OMkdDb4Ei1Y
-qLX2LagGezM1wrlKU42mk/RC13Bg/Q0=
-=MCMx
------END PGP SIGNATURE-----
-
---uqrjwa2ur5ehxsxd--
+--------------a0gFETOsaGx0Vh41juSDYBQx--
 
