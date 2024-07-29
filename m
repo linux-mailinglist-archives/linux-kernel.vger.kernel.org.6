@@ -1,54 +1,75 @@
-Return-Path: <linux-kernel+bounces-265162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC3F93ED74
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:28:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E899A93ED73
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B05D51C21BC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:28:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74BF31F2292F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2505B84E04;
-	Mon, 29 Jul 2024 06:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E227184D02;
+	Mon, 29 Jul 2024 06:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="tDoLvKKU"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hK+OpFEZ"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BC3328B6
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C6884052
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722234486; cv=none; b=a0Hux8X7QlTRbJOs6lWzt2sxiAtzoBTjjO2OGzteE/wPKTuO7g+BP5W26Hmb+SGg1Z+XBFK26ooxKf/dvCuoTrAM7bqlxymiMEdy4CsX1Zws4mw52Cxxo0W522CO6+E0XXUYDniKXi59szPIAMGuNr5bcNIu/3X3eDDoLzvW1ZA=
+	t=1722234484; cv=none; b=Igtss7Xwc8PcaNnWQW8yNzIYdw6jr0woJYrlZ7jE3/2+MaCo+xpy4IvUh0d5JXHo4FVmr8522pH70xSED63UfLSJiRO90bOY83O3QBu+m8MvkBfqOZlT/2CDbVWtclcuMeb03QPm2YP6ugoWnVo1z6lT1V/Lw5RKRr9I0zfEqpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722234486; c=relaxed/simple;
-	bh=c2Gb33yB6AGUPL7oB/bVbgijksIJQN8Vp6pPt6OQkXg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=UoXT94cSIOwVNsCWPEVu94SUdEkZbwZYUw4o/rMg9+fAdcEqCEEY+cWSZjeXhh8wOgT4fYzhVfAfcF6p2IGduy3A1ThOO/geCaaelTaiLv8R837bDHyUuivVs5HpLgBZv1tTrazZe0+ivXsAHEGMQGzTU/mXQJDPCOaPB44bUnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=tDoLvKKU; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722234477;
-	bh=c2Gb33yB6AGUPL7oB/bVbgijksIJQN8Vp6pPt6OQkXg=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=tDoLvKKUFH90Zfy4QS9BC3Q8oXlzM1iVsd4bWvx+NrYo5aa8ZvMRU2X2Dgo1TCwOl
-	 BrHmLD8BRYw0WHcQcvtoe7SXbJgoEM2gZDOsQMvKuE+mB3sZZsunKwZAsNrxb5oToT
-	 xp/gqCD456E+Fmlcab15zjZvWCR/uqFji4qV0cXAHOl+V/sCCyeth2nJFCBliEedPH
-	 NghPSHqqMnUCfBz8fN0tYaRTOtrQs0DC2iyAzuc/vYlHVifRpsbyapUvaFI8Qg0yLX
-	 iYBqqMx7MOF2v1kVu41W33xUHRkYViJbxDucAPR9b3K9TXQZ8mdwQGk8pv1vnhtDkv
-	 zRe6Pf/5xmm2Q==
-Received: from [100.66.96.193] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 51D4D37813E1;
-	Mon, 29 Jul 2024 06:27:54 +0000 (UTC)
-Message-ID: <c790e122-c656-4f2c-8f1d-6e405fc70233@collabora.com>
-Date: Mon, 29 Jul 2024 11:57:52 +0530
+	s=arc-20240116; t=1722234484; c=relaxed/simple;
+	bh=SlPClcvSxD8dEu4YYpKAROwYW0VOai9ZZyu6Q/EXhCA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qVtn8zpkwyy1jv2PM5XGSYgprGo8Q/v74fl2+zhyMTon182oV7BBvf0HKZzfc8uaFMiFY9a96n5Rh6AG18kdK6xwqeTZVdkQm8xrV0PvbrDyh9K/bfpLs6KbL0H5j6JSDhmhQnDzL+ZsEjh4GRJ9/vQoiJYBfOJ/Xz6wz5bEdcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hK+OpFEZ; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52f04c29588so5527386e87.3
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 23:28:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722234481; x=1722839281; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=1FDzoIgoiHz+tvGx2iimoq71D/g/PcvhBiYOgBxhdks=;
+        b=hK+OpFEZH/62Ps1YbSz8JM0AopIRzDFm22w7BtmKTtxCKhlKTubZH7YVJw1bJc8DoG
+         6thcwkOiccsG0ZEC9sDkExTKYzHRI0jnfnUCL8Vt6o9MCPb7bX6o6IJh9q57izWhXIR3
+         /h7xO/2s/LsAugjEE3KtNfirph0RTU72KKiYt7sFH+V99BL8LsDeeIaSNNvr+ejwXS9C
+         AIa9fotkfxdd6QyGWP+d+caSApPtw613Tyv9fJTGbSnid9dDKZbydrJTcLXhPmOA61WI
+         1ZybxT1vG4HQXKT7RJIdiynYarHOhPF2bYAxLXVE3o34GtItpgrhxTmJjWK76Ix/2M3V
+         UN2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722234481; x=1722839281;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1FDzoIgoiHz+tvGx2iimoq71D/g/PcvhBiYOgBxhdks=;
+        b=W1Fd+3VAD2V9nx2keuqiJO19ca8BRnFihRumkiHqbAzlj0nxcg08gyMNGalMKYHqcC
+         Tyc+XNa00VEKKQJKvjfOycF+S9AezdZKMBPY6ptgQ6E66LhzIiZzSGyquzltFk68zGBW
+         E3G+L6ielqnizPD6/z9jtes2caznDG/mJrFPksRYiEKLBwzB2UfJCFNYB4ioLEyEdtID
+         ioRQwx1n2UKGk0UfKOZKgcdlHoOsCcKkUNRBPvaB9576Q5dkNJHkROo0Oh3Dp3B0giZS
+         fvS0wHo/8oJDvvmZt1r7X12vXkd4/e0+TFVv2EHxlNqna8JNQik4vIabT2wgM7zQamdM
+         9XBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXssSK5xChY4eqVE4QIXxYKCdNSMRHbwqcser1oyHnN9k2vqVQJ/6uoSLdMYYh5Iu2er3o2PmjsxfY+gWELoGeFAXfx6YI21r0vPndF
+X-Gm-Message-State: AOJu0YzHWa8RCBwwiJcinZnbCC4FqxBlIK0nzeP/ynIbwNh2hDVN755q
+	pX53bh+FXJnw+XCplDH3q79YrLA6SwunPUw9IUTLzPMstP/01YpJ118JTl0UcPcZRVVztHVniui
+	8
+X-Google-Smtp-Source: AGHT+IEq2KI+IBO7LN/0LlKaHqVEx4UZik3u3BxC8IVLkNFW+3qKSj+DQDWQUreAWM4AJFeoEc0ZoA==
+X-Received: by 2002:a05:6512:e94:b0:52e:9c0a:3514 with SMTP id 2adb3069b0e04-5309b2c3627mr5567976e87.44.1722234480690;
+        Sun, 28 Jul 2024 23:28:00 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad41961sm467118866b.131.2024.07.28.23.27.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Jul 2024 23:28:00 -0700 (PDT)
+Message-ID: <d66e2153-d07d-40a9-98d5-742bc04ee2d8@linaro.org>
+Date: Mon, 29 Jul 2024 08:27:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,137 +77,150 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 5/5] drm/ci: rockchip: add tests for rockchip display
- driver
-From: Vignesh Raman <vignesh.raman@collabora.com>
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
- helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch,
- guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
- deborah.brouwer@collabora.com, robdclark@gmail.com,
- linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240724101015.523535-1-vignesh.raman@collabora.com>
- <20240724101015.523535-6-vignesh.raman@collabora.com>
- <CAPj87rMJUSRJ9G1uv-w5a_4qqS0R1dDaUEofoJf=ehbMszdfOw@mail.gmail.com>
- <27bd3884-51d8-454f-9ddc-6b5765fd744b@collabora.com>
+Subject: Re: [PATCH] MAINTAINERS: Add entry for Samsung Exynos850 SoC
+To: Alim Akhtar <alim.akhtar@samsung.com>,
+ 'Sam Protsenko' <semen.protsenko@linaro.org>
+Cc: 'Peter Griffin' <peter.griffin@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 'Chanwoo Choi' <cw00.choi@samsung.com>,
+ 'Marek Szyprowski' <m.szyprowski@samsung.com>,
+ 'Jaewon Kim' <jaewon02.kim@samsung.com>,
+ 'Mateusz Majewski' <m.majewski2@samsung.com>,
+ 'Henrik Grimler' <henrik@grimler.se>,
+ 'David Virag' <virag.david003@gmail.com>,
+ 'Artur Weber' <aweber.kernel@gmail.com>,
+ 'Raymond Hackley' <raymondhackley@protonmail.com>
+References: <20240129204717.9091-1-semen.protsenko@linaro.org>
+ <8659d79a-e18e-4591-be9e-817d0ab63b75@linaro.org>
+ <CGME20240726151721epcas5p10d25ffeae074e4be35471a4799cfbd65@epcas5p1.samsung.com>
+ <ae202942-fdc0-4913-bd37-c167440807af@linaro.org>
+ <00de01dadf76$0d25ffa0$2771fee0$@samsung.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-In-Reply-To: <27bd3884-51d8-454f-9ddc-6b5765fd744b@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <00de01dadf76$0d25ffa0$2771fee0$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Daniel,
+On 26/07/2024 18:08, Alim Akhtar wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Sent: Friday, July 26, 2024 8:47 PM
+>> To: Sam Protsenko <semen.protsenko@linaro.org>
+>> Cc: Alim Akhtar <alim.akhtar@samsung.com>; Peter Griffin
+>> <peter.griffin@linaro.org>; linux-arm-kernel@lists.infradead.org; linux-
+>> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org; Chanwoo Choi
+>> <cw00.choi@samsung.com>; Marek Szyprowski
+>> <m.szyprowski@samsung.com>; Peter Griffin <peter.griffin@linaro.org>;
+>> Jaewon Kim <jaewon02.kim@samsung.com>; Mateusz Majewski
+>> <m.majewski2@samsung.com>; Henrik Grimler <henrik@grimler.se>; David
+>> Virag <virag.david003@gmail.com>; Artur Weber <aweber.kernel@gmail.com>;
+>> Raymond Hackley <raymondhackley@protonmail.com>
+>> Subject: Re: [PATCH] MAINTAINERS: Add entry for Samsung Exynos850 SoC
+>>
+>> On 30/01/2024 08:29, Krzysztof Kozlowski wrote:
+>>> On 29/01/2024 21:47, Sam Protsenko wrote:
+>>>> Add maintainers entry for the Samsung Exynos850 SoC based platforms.
+>>>>
+>>>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+>>>> ---
+>>>>  MAINTAINERS | 10 ++++++++++
+>>>>  1 file changed, 10 insertions(+)
+>>>>
+>>>> diff --git a/MAINTAINERS b/MAINTAINERS index
+>>>> 939f6dd0ef6a..77c10cc669f8 100644
+>>>> --- a/MAINTAINERS
+>>>> +++ b/MAINTAINERS
+>>>> @@ -19281,6 +19281,16 @@ B:	mailto:linux-samsung-
+>> soc@vger.kernel.org
+>>>>  F:	Documentation/devicetree/bindings/sound/samsung*
+>>>>  F:	sound/soc/samsung/
+>>>>
+>>>> +SAMSUNG EXYNOS850 SoC SUPPORT
+>>>> +M:	Sam Protsenko <semen.protsenko@linaro.org>
+>>>> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>>>> +L:	linux-samsung-soc@vger.kernel.org
+>>>
+>>> Sorry, but I am still against individual SoC entries in maintainers,
+>>> like I replied multiple times and pointed to the updated
+>>> get_maintainers.pl script to fetch emails from boards.
+>>
+>> I retract my earlier statement.
+>>
+>> Some background: I was really hoping that scripts/get_maintainers.pl patch,
+>> which adds fetching emails from files (e.g. DTS), will be picked up, but it has
+>> been few years, few resends and there is no conclusion. I don't think it will be
+>> ever merged, thus this email.
+>>
+>> Since C files do not have in-file "maintainer" entry and particular drivers have
+>> MAINTAINERS-file entries, then why DTS should be different?
+>>
+> Not sure what was the discussion in past, do you think this need some discussion in LPC? 
+> 
+>> I'll take the patch after merge window.
+>>
+>> +Cc few other folks,
+>>
+>> I understand that with lei/lore filters one can easily track patches sent for
+>> particular boards or SoCs, but being listed in MAINTAINERS have a bit bigger
+>> meaning. Therefore if any of you consider / want to add themself to
+>> MAINTAINERS for particular DTS, then go ahead. By DTS I
+>> mean: particular boards (e.g. Galaxy Tab 3 family) or particular SoC (e.g.
+>> Exynos850 like here).
+>>
+> Actually it is being confusing. Completely agreed that  "MAINTAINERS have a bit bigger".
+> By adding each DTS/SoC/Board MAINTAINERS entry, are those members expected to send pull requests?
+> If so, that leads to more confusion and overhead. 
 
-On 26/07/24 15:37, Vignesh Raman wrote:
-> Hi Daniel,
-> 
-> On 26/07/24 13:06, Daniel Stone wrote:
->> Hi Vignesh,
->>
->> On Wed, 24 Jul 2024 at 11:12, Vignesh Raman 
->> <vignesh.raman@collabora.com> wrote:
->>> For rockchip rk3288 and rk3399, the display driver is rockchip
->>> and gpu driver is panfrost. Currently, in drm-ci for rockchip
->>> rk3288 and rk3399, only the gpu driver is tested. Refactor
->>> the existing rockchip jobs to test both display and gpu driver
->>> and update xfails.
->>
->> Could you also please add RK3588 in a new series (no need to hold this
->> one up), with Rockchip KMS and Panthor GPU? You can use the
->> rk3588-rock5-b device type in LAVA.
-> 
-> Sure. I Will add and send it in a new series.
-> 
->>
->>> diff --git a/drivers/gpu/drm/ci/xfails/mediatek-mt8183-fails.txt 
->>> b/drivers/gpu/drm/ci/xfails/mediatek-mt8183-fails.txt
->>> index cf3a747f7cec..826cca5efbff 100644
->>> --- a/drivers/gpu/drm/ci/xfails/mediatek-mt8183-fails.txt
->>> +++ b/drivers/gpu/drm/ci/xfails/mediatek-mt8183-fails.txt
->>
->> This is in the wrong patch?
-> 
-> Yes, this needs to be dropped. Thanks for pointing that out.
-> 
->>
->>> +++ b/drivers/gpu/drm/ci/xfails/panfrost-rk3288-skips.txt
->>> @@ -0,0 +1,71 @@
->>> +# Suspend to RAM seems to be broken on this machine
->>> +.*suspend.*
->>> +
->>> +# Too unstable, machine ends up hanging after lots of Oopses
->>> +kms_cursor_legacy.*
->>> +
->>> +# Started hanging the machine on Linux 5.19-rc2:
->>> +#
->>> +# [IGT] kms_plane_lowres: executing
->>> +# [IGT] kms_plane_lowres: starting subtest pipe-F-tiling-y
->>> +# [IGT] kms_plane_lowres: exiting, ret=77
->>
->> ret 77 is a pure skip here, as you'd expect from a pipe F test,
->> because Rockchip doesn't have six CRTCs.
->>
->>> +# Console: switching to colour frame buffer device 170x48
->>> +# rockchip-drm display-subsystem: [drm] *ERROR* flip_done timed out
->>> +# rockchip-drm display-subsystem: [drm] *ERROR* [CRTC:35:crtc-0] 
->>> commit wait timed out
->>> +# BUG: spinlock bad magic on CPU#3, kms_plane_lowre/482
->>> +# 8<--- cut here ---
->>> +# Unable to handle kernel paging request at virtual address 7812078e
->>> +# [7812078e] *pgd=00000000
->>> +# Internal error: Oops: 5 [#1] SMP ARM
->>> +# Modules linked in:
->>> +# CPU: 3 PID: 482 Comm: kms_plane_lowre Tainted: G        W         
->>> 5.19.0-rc2-323596-g00535de92171 #1
->>> +# Hardware name: Rockchip (Device Tree)
->>> +# Process kms_plane_lowre (pid: 482, stack limit = 0x1193ac2b)
->>> +#  spin_dump from do_raw_spin_lock+0xa4/0xe8
->>> +#  do_raw_spin_lock from wait_for_completion_timeout+0x2c/0x120
->>> +#  wait_for_completion_timeout from drm_crtc_commit_wait+0x18/0x7c
->>> +#  drm_crtc_commit_wait from 
->>> drm_atomic_helper_wait_for_dependencies+0x44/0x168
->>> +#  drm_atomic_helper_wait_for_dependencies from commit_tail+0x34/0x180
->>> +#  commit_tail from drm_atomic_helper_commit+0x164/0x18c
->>> +#  drm_atomic_helper_commit from drm_atomic_commit+0xac/0xe4
->>> +#  drm_atomic_commit from drm_client_modeset_commit_atomic+0x23c/0x284
->>> +#  drm_client_modeset_commit_atomic from 
->>> drm_client_modeset_commit_locked+0x60/0x1c8
->>> +#  drm_client_modeset_commit_locked from 
->>> drm_client_modeset_commit+0x24/0x40
->>> +#  drm_client_modeset_commit from drm_fbdev_client_restore+0x58/0x94
->>> +#  drm_fbdev_client_restore from drm_client_dev_restore+0x70/0xbc
->>> +#  drm_client_dev_restore from drm_release+0xf4/0x114
->>> +#  drm_release from __fput+0x74/0x240
->>> +#  __fput from task_work_run+0x84/0xb4
->>> +#  task_work_run from do_exit+0x34c/0xa20
->>> +#  do_exit from do_group_exit+0x34/0x98
->>
->> So this is pointing to the error being that, when a client exits, the
->> kernel attempts to restore fbdev and then it's broken. Pinning
->> pipe-F-tiling-y as specifically responsible for this seems quite odd
->> to me, given that it doesn't do anything but only skips. Is that maybe
->> just because it's the last test running in the kms_plane_lowres group
->> before it exits? Or does it occur more wildly on other test groups?
-> 
-> This was skipped for Linux 5.19-rc2. I will remove from skips and will 
-> check the behavior.
+No, just like maintainers of drivers do not send them. The way of
+handling patches won't change.
 
-This is for panfrost driver (rk3288). All kms tests are skipped for 
-gpu-only driver. Will remove the other kms tests in this file as we have
-separate skips file for rockchip driver now.
+Best regards,
+Krzysztof
 
->>
->>> +tools_test@tools_test,Fail
->>
->> I keep noticing this failing everywhere. What's up with that? Have you
->> reported these logs to the igt list?
-> 
-> I will check this issue and report to igt developers.
-
-tools_test is a wrapper for running tools/intel_reg and 
-tools/intel_l3_parity. So skip these tests on non-intel platforms.
-
-
-Regards,
-Vignesh
 
