@@ -1,109 +1,162 @@
-Return-Path: <linux-kernel+bounces-265533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E90B93F281
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:22:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E87593F287
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D50A1C21B10
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:22:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 855AC1C21C9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176E314389A;
-	Mon, 29 Jul 2024 10:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E42143C53;
+	Mon, 29 Jul 2024 10:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="G9rHyDzx"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Wud92s/i"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA74874055;
-	Mon, 29 Jul 2024 10:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705B174055;
+	Mon, 29 Jul 2024 10:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722248532; cv=none; b=r4hEdYbLJP2uBHkxY1K3zgtxqPzRClr4DfsNAggihWXGkC9NOZQuTJ7P2hs/ENpjZ8xgl4ZlsvrlrHFuD/lAKUulCUo6duURB7KvD7Veohbu4M9bw/LMbAF/nelmxvhxKUVHd9lG+QrR/fePADXhSBacSDYqHmhzmGt02BVWPzM=
+	t=1722248645; cv=none; b=EBwvicqhckNK6xPJMfDtm50ZittBZns/6fME1pR5iGTHqWL8F3yluqQnd3etre9tbxziBMx39jbOrpfzCIBXDlAmTQumKjCvfgiEim17Q8zrx0Hz+ZWmADWdPhzZUEW3hUVB2EbqDjpZBl6QJqvnxnKuEkMnaV4WXi/mT/Yxo2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722248532; c=relaxed/simple;
-	bh=T/+I5gioquNPAl2GPXRSBKGt8H1nP3eq4MMZh0WDOm0=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=De5Zm0yVhhsVzZ30NxodknmxSeMykYgC5tysadtJlDx+eDDNAEBKr+OMLPfU8Aey/chiEWwc/ehw2DB70vjld8olFQe8PKRlObTqa8CFqFfCkPnktPJGLM6z/Z+vd+KUpUSH2rStDn8uYCg3yD7RmFaFKDcWhOHLzd5R3z3aETk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=G9rHyDzx; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B013145A;
-	Mon, 29 Jul 2024 12:21:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1722248482;
-	bh=T/+I5gioquNPAl2GPXRSBKGt8H1nP3eq4MMZh0WDOm0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=G9rHyDzxEH4D8CEfFEDs7pLMHsxBnd2wjoSz0lcS/Vz4KONSObU3WZkeDgCnDlD/l
-	 XzYq1u44uw38W1rywRIIxHurHJlCsDUpWlICQOudPtqMR0B2YpXmNsxlwW/hAlPN1B
-	 7DdPtegNFGvkvlX0QqYSsDBgia9rxsFfSYsCGOqY=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1722248645; c=relaxed/simple;
+	bh=MBWUVvnqQuJw85YIVqNjuFsWDpP//lzX8e6jri2lLLU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=DZlpNhhV9XL9KTjWQ82IDqWxNOUriFw+T+rNLyfJg7x6sPkyXarzvEE8KrHu5FCn6usv7MmD083QDHLBWrUIvBUBuzr9406+A8uUyBRgndAIWpR08Q95VDRTX5gwYUeC6X3l24f1CQge6rfHSxujFl395NmJKqQEov3+QnrlUss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Wud92s/i; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46SMlA4g024373;
+	Mon, 29 Jul 2024 10:23:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YN1PGbGk4upJynx+2eC15wv8JF51Em/bJD4CIx8DzRk=; b=Wud92s/iB4RfDb7a
+	KXvT48iwsOkByDxhfhVy4UUSGtk7FHWSAJjL6S3MUbDBLeWImJV/uhlKyi1OuCfp
+	rTuDqJtSI8XX5X6EjzJwYwPeP+rsCEiXvMho9MEXjX01hk2j7LN32JNjHRlZi7Ha
+	H9ZRo38ScKSt0VCUFmU9axNYpg3k9LwKpBU3VIjGwtUBS5sNfPz9pdgaVscGKwo4
+	yHcqGiLEq0iqTbjAK/qnl5AWgAvFGwjQAaVnNwcgQEc0vjokz8M0l7ZGdu8/kP2C
+	1ZN1YKXCw1GiKF4R7/kEi59XBTOyMoX3OIhnXcRxlT0mrPc5e3vu82WARKZ5uy4h
+	XVvEJQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mt2kksk6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:23:54 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TANrEK018924
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:23:53 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
+ 2024 03:23:48 -0700
+Message-ID: <d2cba039-f85b-485c-8c3e-bffc047652fa@quicinc.com>
+Date: Mon, 29 Jul 2024 18:23:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZqdYqaMDWjHrNXPh@kekkonen.localdomain>
-References: <20240729060535.3227-1-umang.jain@ideasonboard.com> <ZqdHpx7k6gzf-jSb@kekkonen.localdomain> <2dc31ed8-ad83-4051-8de3-6efaf1538714@ideasonboard.com> <ZqdYqaMDWjHrNXPh@kekkonen.localdomain>
-Subject: Re: [PATCH] media: imx335: Fix reset-gpio handling
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, Tommaso Merciai <tomm.merciai@gmail.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, Umang Jain <umang.jain@ideasonboard.com>
-Date: Mon, 29 Jul 2024 11:22:06 +0100
-Message-ID: <172224852603.392292.14437094530843053506@ping.linuxembedded.co.uk>
-User-Agent: alot/0.10
-
-Quoting Sakari Ailus (2024-07-29 09:54:01)
-> Hi Umang,
->=20
-> On Mon, Jul 29, 2024 at 02:19:32PM +0530, Umang Jain wrote:
-> > Hi Sakari
-> >=20
-> > On 29/07/24 1:11 pm, Sakari Ailus wrote:
-> > > Hi Umang,
-> > >=20
-> > > Thanks for the patch.
-> > >=20
-> > > On Mon, Jul 29, 2024 at 11:35:35AM +0530, Umang Jain wrote:
-> > > > The imx335 reset-gpio is initialised with GPIO_OUT_LOW during probe.
-> > > Should it be initialised to high instead, to enable reset?
-> >=20
-> > This initialization matches the physical line status, which is low in t=
-his
-> > case.
->=20
-> Documentation/driver-api/gpio/consumer.rst:
->=20
->         * GPIOD_OUT_LOW to initialize the GPIO as output with a value of =
-0.
->=20
-> ...
->=20
->         Note that the initial value is *logical* and the physical line
->         level depends on whether the line is configured active high or
->         active low (see :ref:`active_low_semantics`).
->=20
-
-Yes, I think this patch should also update/fix the call in
-imx335_parse_hw_config()
-
-	/* Request optional reset pin */
-	imx335->reset_gpio =3D devm_gpiod_get_optional(imx335->dev, "reset",
--						     GPIOD_OUT_LOW);
-+						     GPIOD_OUT_HIGH);
-
-To make sure it starts off in reset until it's set accordingly in
-imx335_power_{on,off}()
-
---
-Kieran
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: arm-smmu: Document QCS9100 SMMU
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+To: Will Deacon <will@kernel.org>
+CC: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>, <kernel@quicinc.com>,
+        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240709-document_qcs9100_smmu_compatible-v2-1-599161b7d5c8@quicinc.com>
+ <20240711105450.GA15335@willie-the-truck>
+ <c7a7eb9d-b6fa-4145-b444-2f10ead48e62@quicinc.com>
+In-Reply-To: <c7a7eb9d-b6fa-4145-b444-2f10ead48e62@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 5OU3WqrF-JcMZjFXfCZYJ246s4XcLtZ_
+X-Proofpoint-GUID: 5OU3WqrF-JcMZjFXfCZYJ246s4XcLtZ_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-29_08,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ malwarescore=0 spamscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0
+ suspectscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407290070
 
 
-> --=20
-> Sakari Ailus
+
+On 7/15/2024 10:40 AM, Tengfei Fan wrote:
+> 
+> 
+> On 7/11/2024 6:54 PM, Will Deacon wrote:
+>> On Tue, Jul 09, 2024 at 09:39:29PM +0800, Tengfei Fan wrote:
+>>> Document the SMMU on the QCS9100 platform.
+>>> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+>>> platform use non-SCMI resource. In the future, the SA8775p platform will
+>>> move to use SCMI resources and it will have new sa8775p-related device
+>>> tree. Consequently, introduce "qcom,qcs9100-smmu-500" to describe
+>>> non-SCMI based SMMU.
+>>>
+>>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>>> ---
+>>> Introduce support for the QCS9100 SoC device tree (DTSI) and the
+>>> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+>>> While the QCS9100 platform is still in the early design stage, the
+>>> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+>>> mounts the QCS9100 SoC instead of the SA8775p SoC.
+>>>
+>>> The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+>>> all the compatible strings will be updated from "SA8775p" to "QCS9100".
+>>> The QCS9100 device tree patches will be pushed after all the device tree
+>>> bindings and device driver patches are reviewed.
+>>>
+>>> The final dtsi will like:
+>>> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
+>>>
+>>> The detailed cover letter reference:
+>>> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+>>> ---
+>>> Changes in v2:
+>>>    - Split huge patch series into different patch series according to
+>>>      subsytems
+>>>    - Update patch commit message
+>>>
+>>> prevous disscussion here:
+>>> [1] v1: 
+>>> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+>>> ---
+>>>   Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 3 +++
+>>>   1 file changed, 3 insertions(+)
+>>
+>> Sorry, but this doesn't apply against my bindings branch:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=for-joerg/arm-smmu/bindings
+>>
+>> Will
+> 
+> Sorry, I think there is something wrong with sending this patch through 
+> b4 tool. I will correct this issue in the next version patch series.
+> 
+
+After considering the feedback provided on the subject, We have decided
+to keep current SA8775p compatible and ABI compatibility in drivers.
+Let's close this session and ignore the current patche here.
+Thank you for your input.
+
+-- 
+Thx and BRs,
+Tengfei Fan
 
