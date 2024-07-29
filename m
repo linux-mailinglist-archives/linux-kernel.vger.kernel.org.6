@@ -1,86 +1,132 @@
-Return-Path: <linux-kernel+bounces-266244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E033393FD1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:04:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B5493FD21
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A40C283968
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:04:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51E991F21015
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6473158DC6;
-	Mon, 29 Jul 2024 18:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB5A1862B4;
+	Mon, 29 Jul 2024 18:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wyZDDfpe"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2055.outbound.protection.outlook.com [40.107.223.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l+s/Rhqa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3818F16F278;
-	Mon, 29 Jul 2024 18:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC8016F278;
+	Mon, 29 Jul 2024 18:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722276278; cv=fail; b=bGtTFbFddxLQWoXtPJTUm7v3VdnVa3gzmoK39wN4c8GARJ2ooduMtcKCzTP9nh6Cjq6F3SKfw7/X5pxI2RRmJ81cRz7D50L6e1F0KGdzS+FnNleoCc+vlq7VlixLMRGDN+oXsEvPY9vtMeagAvgqkRliH4zurfv5CKe723IpKQM=
+	t=1722276526; cv=fail; b=ocT/0QvisGxF0wXbHPRoHSNfF48wk/ttsK/H0c8jUzB3pnQNXbrnbAhXtlSV+U231sJVsCuwf1LTsxuYQmxRF9MLuSAu+m0Ib7eNCjvASgk0Z7vV9lV+1DYnbgV32AAmPoioK1taWbcojyWnevMuKFfDUlAmhJd5ybRHFS8yJpc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722276278; c=relaxed/simple;
-	bh=4BVvXvF/E1dGBoYqdCCGSx8hUEDy+Zs8ECNOmWz4EHQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Qiq5K4N0CsmUABu6tiTVcs0hJgU/s28re4Y4Qd+ZZjhKffIty5Gqqldldo9xbuR3Y+qBVCS3IazvKjAkgORYZ4/XYCjemxHS+KSFWCbrts9v3sOzCLBsk5tjeyTDQ7VetdBKrJ4ffe2isUD9hn+g2XI9TILAyAOwQierkfZAn/8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wyZDDfpe; arc=fail smtp.client-ip=40.107.223.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1722276526; c=relaxed/simple;
+	bh=8zLDlthDerpHuDt0YNjf7d79e9aRvopB5csUc9cIYmo=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=B5kKg7M4jkFcGG/wG8bTUY4CYJYKC/RK6ccgKApXLrK7eYfFEj8ch5CcqFXv1URFO1XumHSbrxdwYgp23uNeqkhCuyj02qgPYJGvTYOH/9OpTS9MxXIT5NSbuPz39o6xuBWl7lfLKlAcqMUsKqr38w3VWyTbNw5byCgYigam440=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l+s/Rhqa; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722276524; x=1753812524;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=8zLDlthDerpHuDt0YNjf7d79e9aRvopB5csUc9cIYmo=;
+  b=l+s/Rhqat+xbY3WM+s4WkmeboskVoVoEXiBAqB4eUFrwKirlTZUACVBN
+   qmqt8CLcZ5mfpWymyIrZTgGCzTVPPStO6V/rUSGFtEHcg7FzD0Qm0LhHE
+   iBHF7sXpOwcOrqq/wornaNruowtUjCsQgisrNLVhCkVWGdmI7kSAMbSCv
+   fAlT8iyKUntTSW7YdsmVMAqnwjuTQmijpaXCsNQyKhkZB5pg5QxymhFr7
+   bNAPDpvyVe+Tol2c/8AcnR7eX5TSHlXWTzoAgaA0MkkKwPP2zibDHnzit
+   /MFJ04h9aJNW9HlLlRHq8Ttj5fcXpnA9Srd7JqYjL80ZRs8V0dIlAEFZC
+   g==;
+X-CSE-ConnectionGUID: Wp6sv2JJR122JZNAiufQYg==
+X-CSE-MsgGUID: ymcIVS9vTs2iUK33Xh6dTw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="20199696"
+X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
+   d="scan'208";a="20199696"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 11:08:21 -0700
+X-CSE-ConnectionGUID: IEiVkzFlQQml+s3Nf8Fpxw==
+X-CSE-MsgGUID: M3iXe82MQbC4fiS/ZWCdLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
+   d="scan'208";a="59150755"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 Jul 2024 11:08:22 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 29 Jul 2024 11:08:21 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 29 Jul 2024 11:08:21 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.46) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 29 Jul 2024 11:08:20 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=e2befWEJ5ko/CffAsyWtiXadxi4/RzzBaI6c8u2OS2ZID+pzuMuJFne2TztqVCT4jj4w6Lth5jlp1KlFAhyEv9GBxxD2/GSNfzP4MDB/dGCjaBj6BF+wc6o3XmnIdFOdxE6Pi3/qBVw5QRsZBBbP5/Z9/DCXtW7rQz6UBqslmWZuSHqpAX8kcY7r24F9GyC16uAmls9C/Z4Rnm1G4qV1c5hNg/Pk0I/FUCIJ6DWVwjRieZENHjdAImDXhsl8TfizBdg42xma6tj3EZL++TJauYAXAwawThUUpPcx/HuECvOz4LtzPQirxCujQIGZXAp6Ff+YIZX4Dff0yAAhYMB1Pw==
+ b=EY8Nw5cuqqxs6By9uIcNkdE1cAXV99CfB8VlfbpyjH9oeE8uHHzk7BjCWfd9eWW16YwnzLZ8UBAKqb95LVD2lkp91+IpGEUGlG6m/tA1J0VVxPqOgOnSuc6QbkdTUp/rf4+llmWF+ojup6lwt/tZD3oOjKSgHE3esKrmuRCYKNW1Iz7Tn4eSymaZRfveB0zvBivkhwxsjWljL6cyFZSYdbUkfcuF07AVNfHbH7sj7WQE5dbt1pM9UBHemSOe1KemicIids5AEMB2TSUZt1d43Apm5hsMdSkGj2jPuEIu/KLjm/nbJrJs+urv4O1XscPpD319Pw71BfBLIwhwTxtETQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yZs0uz1CPe2pC38ogMqk5+T3ffdPffC7kOmk8uySleY=;
- b=LXIr6oYfRKZqJ/bt0E4lCS6nyw+AEpNsnSyyydRmUcsJzNSZNOYZsAtmnLV1zLeCIvsVTuLDHwBqu/50h5NwQcAkQHhEl38cZ+vvtfLo5Y6q4rYlY//QBDFjBZSYqdrqWPZN3e1YlUWcqsrTa0dPMj2IfL+lG90NI3jn6yEv43jJIzvA+3eWz4HK/RXArXX8G3LkM63TjPGGeNUfi54JSNY2FJ5NvDzJvPgx0oFbfG2Mxn2b1prmWnlTZc47nSHDjjh6T3chYKDlu0vQS4Rl108KvfFc3wwBAYbOdfi00PkxQNdWHQhWwmieoNuaXL9fI81LJMjrTTXc1uaPAEEdww==
+ bh=bE7WDPfz/hQ2lqGwgPbam7S6BgJL6qUpDJiVYwoHlCI=;
+ b=aNvWzMAjxVkfxxmAR8gPQhfwIPK3EE9vJphXSkd5bfbpQ9UtcYnczen2z6+YpTKzFyh9VKEFo3Le2LMlCkXXwPeX3IvX7shqHjFv8K3nP6In+MhXlR6uUoVg0PuisjVl/XzKr1xfwMwj4/kICv0aWfmSD9netLDFBhrtx1IFk2xAqImp3P4rYim4FMtbWiRh6j8Ui1xxJglPV7AlAALtGprcz3QaoCf/CqbuoFOohbAWZYmQD2lQ5cqcyEdPBUirIiGmAI67xsmVvf13mqjD9W9h94SlfHQ359LBaWBearakViuVmxmIIccaK3BOAn1tGAe8qT+BMjC3IByJxr1OPg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yZs0uz1CPe2pC38ogMqk5+T3ffdPffC7kOmk8uySleY=;
- b=wyZDDfpeUsw4vQflqgsLxcncykI6jjjTOl4UuOpfjUoNCRhvHfsAjb4/Qoldomf82kXoeFK7VbYi8NyDiY3F04RN/AhpyZ1w6ezrHBD3htB2HuAr1qR5eK+J25p9Eo0YbMj1hT8i62Em555X1KN/NB1xuzudkzGv+zh4pvmM+9o=
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by CH3PR12MB8754.namprd12.prod.outlook.com (2603:10b6:610:170::19) with
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by DS0PR11MB7384.namprd11.prod.outlook.com (2603:10b6:8:134::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Mon, 29 Jul
- 2024 18:04:33 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
- 18:04:33 +0000
-Message-ID: <1914cfcb-9700-4274-8120-9746e241cb54@amd.com>
-Date: Mon, 29 Jul 2024 20:04:26 +0200
+ 2024 18:08:18 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8%2]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
+ 18:08:17 +0000
+Message-ID: <e4de7c23-ffee-42f6-aba8-b10f3d44f22c@intel.com>
+Date: Mon, 29 Jul 2024 11:08:01 -0700
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/radeon/evergreen_cs: fix int overflow errors in cs
- track offsets
-To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
- Alex Deucher <alexdeucher@gmail.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan
- <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Jerome Glisse <jglisse@redhat.com>,
- Dave Airlie <airlied@redhat.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org, stable@vger.kernel.org
-References: <20240725180950.15820-1-n.zhandarovich@fintech.ru>
- <e5199bf0-0861-4b79-8f32-d14a784b116f@amd.com>
- <CADnq5_PuzU12x=M09HaGkG7Yqg8Lk1M1nWDAut7iP09TT33D6g@mail.gmail.com>
- <fb530f45-df88-402a-9dc0-99298b88754c@amd.com>
- <e497f5cb-a3cb-477b-8947-f96276e401b7@fintech.ru>
+Subject: Re: [PATCH net-next v17 04/14] net: Change the API of PHY default
+ timestamp to MAC
+To: Kory Maincent <kory.maincent@bootlin.com>
+CC: Florian Fainelli <florian.fainelli@broadcom.com>, "Broadcom internal
+ kernel review list" <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+	<andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+	<linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, Radu Pirea
+	<radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, "Andy
+ Gospodarek" <andy@greyhouse.net>, Nicolas Ferre
+	<nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
+	<corbet@lwn.net>, "Horatiu Vultur" <horatiu.vultur@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, "Simon Horman" <horms@kernel.org>, Vladimir
+ Oltean <vladimir.oltean@nxp.com>, <donald.hunter@gmail.com>,
+	<danieller@nvidia.com>, <ecree.xilinx@gmail.com>, Thomas Petazzoni
+	<thomas.petazzoni@bootlin.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>, Maxime Chevallier
+	<maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+	Willem de Bruijn <willemb@google.com>, Shannon Nelson
+	<shannon.nelson@amd.com>, Alexandra Winter <wintera@linux.ibm.com>
+References: <20240709-feature_ptp_netnext-v17-0-b5317f50df2a@bootlin.com>
+ <20240709-feature_ptp_netnext-v17-4-b5317f50df2a@bootlin.com>
+ <39c7fe45-fbee-4de5-ab43-bf042ed31504@intel.com>
+ <20240727154426.7ba30ed9@kmaincent-XPS-13-7390>
 Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <e497f5cb-a3cb-477b-8947-f96276e401b7@fintech.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0339.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ea::13) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+From: Jacob Keller <jacob.e.keller@intel.com>
+In-Reply-To: <20240727154426.7ba30ed9@kmaincent-XPS-13-7390>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR04CA0116.namprd04.prod.outlook.com
+ (2603:10b6:303:83::31) To CO1PR11MB5089.namprd11.prod.outlook.com
+ (2603:10b6:303:9b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,274 +134,170 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CH3PR12MB8754:EE_
-X-MS-Office365-Filtering-Correlation-Id: caf53b9a-0eae-43b6-920b-08dcaff8e65c
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|DS0PR11MB7384:EE_
+X-MS-Office365-Filtering-Correlation-Id: 84c63e5d-665c-48d9-a5c1-08dcaff96c34
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?THNIaVc2NWVYV25yYUZSNStOcm5vMXo1elFWdDYzTyttcWdhTGdrbGpudm1Q?=
- =?utf-8?B?QVBYeFZLbmd5RFh0OStDZVpDaHJMVDUvTjVJQ3BLc1JBMmo0T1FnN2pjcURU?=
- =?utf-8?B?STF4VGpwVFpxK1dYbzBkYnBkcTJkb3lFOWZiLzdrRmpJdWFocDloei9TbGd0?=
- =?utf-8?B?QTJZaUM5OUVPb25ockJrOVBtdmlERExhNnVITi9yM1F4K1pSaE5Wc3dRYzN3?=
- =?utf-8?B?bUFMVHNhN3NHdHEyS09ZWUR2eXkwLzc3M2RmeURHRzNIbTFRYmNuRHk4WnQx?=
- =?utf-8?B?ODlmeHdoUThVU1JjNjFNWkNrY0REekM3aEFXaG1LeGZrbW5KZnZyQkJiRlZ6?=
- =?utf-8?B?UmszQUVSU215TFc5cFIwNGNMSUVhYk4zSjJaQWZzLzVwQUpGNDkwczBtUk1n?=
- =?utf-8?B?YUdWQzk4OGNWbEwzQUtaK0tvUnhNYit5b3g1MC9nc1lGTXJVRDBQSXFpTVg3?=
- =?utf-8?B?TUhmc01LY0VkS05pMVZJT1l3RjZSK3N5a25qc2h6enFLdXlRMEd0ZHRHb2Uw?=
- =?utf-8?B?VXMxa2FNZGFaYXFETnpQR1hURStSTHZXbzRQbzQwWDJYSzl0REh0di9COGFq?=
- =?utf-8?B?UE0xc3NzVnplTldHbHU3cDZvMTloWDRwNEo0VlpuTk1KdGdGdXN0V0E2T2xi?=
- =?utf-8?B?d01MQVF3NUhScHVEbHJQVS9idU9ZTFV4VVQvbjN4YWlJeWdLQjk2djVRM096?=
- =?utf-8?B?a2RpMXIwSWZiWkJTcm1QWG9sak85a2p3WjZvZ0Q2a3JpRSt3ZUZ2TWVNTEli?=
- =?utf-8?B?dEpRa3JzekZhNEFuRm9CUHRtNEdwdUxETytOenAyaC80SnovcThjN2JGRnRL?=
- =?utf-8?B?aGdqSnY3WWkyS1ZmTWRiSlhnTUppbXRHYlNmalcrZXljRnhqU2VTVG9CWjh1?=
- =?utf-8?B?M0o4Wm1XSEZzRmVXbExHa2tqTU5oVDdJZHJkVU9FNzhUNW9rSUw1eUZqNVo0?=
- =?utf-8?B?VDQ5RzBtVXNkSjF6cVdjTzg4dHU2M3FCT2kvOW5nU2JYREQxVGROdytlUXdG?=
- =?utf-8?B?VGlQc1hyU1VQMzhVYWlJeHlhdjBlMHROeDVDQjJKRHNsWW1FSlJGTVJETndV?=
- =?utf-8?B?WlFCRGdUaHdRNEpwbzNaYnVyR2xUR3A3UUp2V3NqaFBsZmJ4cHFGcFM5dkdC?=
- =?utf-8?B?TzQxS2NDeVhwL3dpSFhQOGNYK1FIbDUzK1JZdW9OQmJRSERmZG5ISGRTOEUr?=
- =?utf-8?B?VklnYWVBOWRNMW91QThNY0UyVGZsRWpQdzd0R3FGN1BIVGxTUkd3b1J3R3NL?=
- =?utf-8?B?NDAyV1pkT0dkUU12OGFTcUlTSFREOVp1VU9pSFd6MFNvdGRhOVluWGNaUFNK?=
- =?utf-8?B?WnhVSVNCb1ZCZmJic0xtYjBJR1RHUWJHelhIYTROTGpQMTBBU1NvdGNCMnZL?=
- =?utf-8?B?NlROTUZSbUJBQmxhNHlIbWtqc3BzeTJyVVpIRkF3SEVrRVI2VHBxT3JMV0Jr?=
- =?utf-8?B?NUk0d3dVdUtpcmdJRTBFS2tXYmwxSUNnN0hvRUM1WENmVTd2OExmTDZJNGFO?=
- =?utf-8?B?MzlONGpVVXl1cXRaZXFjWTVtcVprR2tPeDNvWjJzT3Q4eFkvdmtZQml6dGYr?=
- =?utf-8?B?b2kzNFdFZjBLNG1tQkVjdG9JNTcwK1Z1aUtsSmsvMlQ2bmUrSEMxSTE3TmVl?=
- =?utf-8?B?TlY3KzhjRU1qOUx4T1RhWm53NWlVL1NkazNpVzVhTUR4WllVUHFnMmdsRTRO?=
- =?utf-8?B?ZWFhTTJrWXhLUFRHbCs1eUhwZEowQUdVSEptbWNpQ1I2NDl1ZkI4Y29DeHpY?=
- =?utf-8?B?dy9yM0xNdkFIYTJ2eTJmSmZrTlZsSTMrZ08xa1JPMXBxZzAvZmIvVjZXQTBN?=
- =?utf-8?B?ZC9sNWZUQVJHSnN6ZGVtUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?bUVlL3AySHJSWXZKdVY5RHk3YUFOUGM0emN6THFGdUlscWtCQjlHNXVDZkpm?=
+ =?utf-8?B?d3VlT05GRjI2R0VndkZZTlQ3Q3BzdDhIS1ZQblA4UmNZd1AvamVWekVGNGtq?=
+ =?utf-8?B?azRXeGswaTRTbDNFcXgwMFlSODV4emdDc2lLMXEyMy9jRVBnR0FGUmwxQnVU?=
+ =?utf-8?B?bzVLcnl0Uk1PK1NiK1BFc2VZWkN3OFo0OE5WMjhYQ3pINFVBajhyZ3FpcHBa?=
+ =?utf-8?B?M0JNVTR2UkptbWNVVUN5aXlENEd0NHYzc1VFSnZkb2FHTUNNbWFjRFpiendN?=
+ =?utf-8?B?TXk2ZVhjNklNVW5uckdiRXRiaHB5VDFTL3p0MFJycFp6eVB1clIvRnhBbFR1?=
+ =?utf-8?B?K25GdEI1ZmJzRVEzNXV4Z3pFenVyTFBzN3ZpajFhc0RhQzVqMTBaS0tZTjk2?=
+ =?utf-8?B?UWpZM3kxQnpXWFlLb0pIS1YzSHowaHRONnJ2UWZsdUxDYmxQcDBsQnNTSWNX?=
+ =?utf-8?B?SmZMT2JlSlV2emx0N085OU5XUnd6OEFqbm5ZeS9GcGxuL0RXZ0g1TC9pcUdH?=
+ =?utf-8?B?WVZHQThRYllydkpzUExWVEZHZHV2dTIrZVpWdnhCMFA4V1lOeHRZaVZrdmlT?=
+ =?utf-8?B?a0FvVVpzeWdxdFBwc1o4ZXZTb2lzNzJmLzBUc29wTitVSkVnQnh3akJZVTlY?=
+ =?utf-8?B?K3JSRDdNK3BLL2JYeW5LUUdFZUJpbFkxVlpTTmhMN2R4L0JHcyt5RHgrUVFs?=
+ =?utf-8?B?MDJQWmdRaGhiamJlWmFsb2RZcEZERWt3dEZSZ0pkRU9wb0R5SlBCN2hFbWYv?=
+ =?utf-8?B?SmRMZnB1b2ZNdnNFeGFXWEIyMGE2MEpWMU1oTzhDZFRqczBJMVpZelFZb2U2?=
+ =?utf-8?B?b0tFS2pDUkhOalJUY0dNSGo0Y2ZZZWVNM0NlcWsxSlo1RHJpK0gzeHdCWXhv?=
+ =?utf-8?B?bzlBbmxvYlpjSEU0SzFuek5GUFBOY0FkQVdQb2R0T0JtVWpXQUlYUFU5NUd6?=
+ =?utf-8?B?SkZCanYrM3pSRE9wNUhib1pPc2tvRkkrWEhUZlhWRGNWM25iSWkwRlZ2SzN6?=
+ =?utf-8?B?UTFzMEJEOG5UdVdadGNDMGtzVlFYU21xUHR5R1BuZ2tveWlEYmZPa2Q1Z1dp?=
+ =?utf-8?B?RXlDOVd0Q09xNHo0aHo3WHJ1RU42Z3pFN1g5RzF2cUJkT3MyeDhEMTNnbVl4?=
+ =?utf-8?B?N3pLQzJHTG1kaENPem1vblJqRU1NTlVDTUNPT0hqdGs2QUpZK3lIeGlQWnBX?=
+ =?utf-8?B?N3EyWUR4M3JrWWFTRlNhZThwaWZ6M2VlbEMvbzJOYktiTU81WXh4cUF2MTJo?=
+ =?utf-8?B?bnY1Yk1kTHdWYU5uRjJSbW1wUTRTMEpiUVRMZnFYSHV6U0YxcEF6MERFVjFx?=
+ =?utf-8?B?cjg2bUQ1RGRUazZGd3l1R0dBV2trcUlLOHFQQ05PbXJsM01XM0FpQ2MxY3Z1?=
+ =?utf-8?B?Qm5YSkFJSXFMN3BiTkpKK1p4YXN3akliQVVmUGxvS2ZIS2xYdWtkWG1DcVRO?=
+ =?utf-8?B?cGd3VE1FVzlreTUvT1l0WVRxV1BBM3JyZGJMY1QzQi9TV0N1MUxFWGxSUkpq?=
+ =?utf-8?B?SnJVN3p2UmJyalE1LzQyaWJ6ZHpRK0VQUmg2dnFRaUFHSWVYTmx3M1JTS00w?=
+ =?utf-8?B?OWZ4K0QxL3czZEdERjBUNktLdXJ6cmN6TWRtUWFvSlVuWW5Fa1F3SHZUQ3VB?=
+ =?utf-8?B?bEU0bWhyRjl0akxZTmlGMnR5Z0orbGhkS1VCKzdLRmFFaWV1U2hNTEVHMy9V?=
+ =?utf-8?B?OUdEQmhMRlcvTzdoKy9yUkVTQ094Z3hsOUp6dkMvZ3UrcWlZVnlFMmk1bFVN?=
+ =?utf-8?Q?E8MRM+eA8pkBS1+q6lZLDhdE0C9P6dF00HbECDV?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dHJzU3M5VzhUNnEvVS9jd3orRVFOS2dJeVUvdDRxZncrbnVhTVRDNkQ0RTZx?=
- =?utf-8?B?akJHTDFTaFh1QjZ3SWtiUEFEa3dpYjBRWlNhY2Z4Rys5T3EzNnJaQXArNTl0?=
- =?utf-8?B?UEtVWFBVckQ1WnJIKzJkZitHYnhuWXdCdU9CNEZVSVAvamxDS2dUa25lZmNO?=
- =?utf-8?B?SXZwZ2hZRU4vYkErMTFFR2thMXdnelIwYTZuNkVYZFhTOVIxSUNBVEV5V3Bx?=
- =?utf-8?B?Wnp2OENOV2oydlNoaUloa3Uzd2ZuQkh0RXdLbno4eVJ6TWNLMCs2Ukc3cE9k?=
- =?utf-8?B?K2cxbUJSRWdDdXhCb1ZxbUxNV29VMUtISDFkSTd4TVNOVHdlM3FCcEp5M3Iw?=
- =?utf-8?B?VVBDdHRoZVpJT0VucGRTLytMVEhiMFVRMG1VdnUzNDBRcjVJRmpWY09ZeHVX?=
- =?utf-8?B?RzRUcU12dDk3MVdzeHJJNTY3aFBkbUU3Smd0bUlVWDQrTVdQSmN0UmJ0Ym5K?=
- =?utf-8?B?VEdZUTJwbXJiRVNDM0VmSy9HRkUrMzNUT2JUSWx3TkE4QVRXY1V6eVBKMUxs?=
- =?utf-8?B?RW5PMUNQNmFvNUVBTm83NVdpaEhuRXhVVmRjZVBURmpjTXhNY2dDTHNzQlVP?=
- =?utf-8?B?NndseWVCNVowcmNQb2JvWHUwTjhzWlhLa1Y2SGZkb0J2NXpGZU8zRFFzNVdo?=
- =?utf-8?B?S0MyNTlYQnNqdFpsbkJPQ3JhR0p5VFRKdEUzVWtjQWFJT1lWY2FCN2hDdnh1?=
- =?utf-8?B?RzlrWUxrVmZ0WERiQ0JRc2VpYjRmR1p3VzIyTEgxbDFDd0JVOGhodlFjS1VF?=
- =?utf-8?B?Z2xHRStCeG93VWdpcmFBaEVuVWZsczZ1UzZjK0hDRko3WTE1RU9vNzhJK0c0?=
- =?utf-8?B?U0cyMC8rVkVPSnhkSHh2WWxSVDBCZUcwWUFhWFVLeWZLTy92UkY5Z0E1ajhL?=
- =?utf-8?B?QlF2bExyUm9kVkwwUkFKdWw3cTNYdlV2UEc4Vi9TdFBibnZ0MTZwNzVwN0Mv?=
- =?utf-8?B?akJ4bGhIRDBkTGxJS3Z4VE9LNVZRaE9tbEJydGl3T0xJckdxenVOcHlYcGVH?=
- =?utf-8?B?b3pob3pQV3F0SGh4a1dWWDBVYVlSZlVWdzdnMWhhS2ZTLzhBMGV4ZytMV1V5?=
- =?utf-8?B?ZExXVGo4cVVGTmNHcElFQ0RGQ2k4bVBZUEVJUEowRmswaUpTdEZCL0QvRUpI?=
- =?utf-8?B?d0JXRk1CVThWWUliVjRPMlZCL3B1cTJPb1l2OGE2SHlFWWNjUHJlL3pYUnFD?=
- =?utf-8?B?N05hUHdtOEFNV29wZ25LNVNSSjM5M2ZiN29BOEl4TGJGbUl4WC8zY1V3cklL?=
- =?utf-8?B?Z2pOMk5Uc3E0Rms4eDNxbC9JNC9hM3h0bWQ1SlZ3VEl0bmUrdldhSEJaN2Za?=
- =?utf-8?B?Y24zbVRxdlJKcWZrLzZ6RHJock5oUW4wcGtjdXRGTUhIQ3VWbnBCdmoyRm5y?=
- =?utf-8?B?YmxsQjV3Y0JFeEJjWExKR0U2aWlYSEQwQWNkUExHRGNXei9EU2d5b1NVaU56?=
- =?utf-8?B?TGZueUdCbjJ0WU5RZjhHeHFqUEdVZmZOSkpSR2x0VmlIQzZSNE5YTDc4VHkr?=
- =?utf-8?B?Q0Z4dWd3dC9JM25odEc0bU5vdlpuaWh3OTlnVWpEekJZSkJFc0dUYTJ2RnhJ?=
- =?utf-8?B?N1o2dzIwWUF5akFpYUJjOTlVZ3FqeHNya3g0SW9NQndIZEpCVWQ1WWVhUU0y?=
- =?utf-8?B?SGlkZWQxd0o3TGpOU0xrbUtEV2djenJnb1BtU1orWXNWWkVUd2lXOWRTbWtQ?=
- =?utf-8?B?WkxwaXRGNS9UYndSSVpKa25WNzNYdUhEditFSUxaTHFsLzcrYjdhNmVFbjlP?=
- =?utf-8?B?VnR2MnhKUWdueGpXTUwrVjhQTEZrZWVvdkJXaytsQWRjY0t3TGdhb2J2NDlR?=
- =?utf-8?B?VnVlTnA0Rmp0Nm5qK3ZRZnMyeDluRnFWUVVOUWJQb21SWVJIK3A4MjNDL01L?=
- =?utf-8?B?T0tWYnpscHB0cng0cEJ0RFUrcWN3YTBjRXZjOGNvdy9vaTBOUE1TdDVXc0tr?=
- =?utf-8?B?ZTVPbXJJalBJRWdUOGNDdmRvQ0J4d3NZRnoxczUyV2FOR2x1bnJyT1hDN0pM?=
- =?utf-8?B?MmtJdTYxUnh4RFZzWFhwNVdQSlVPM3ZDYld2QTA2RS9uR0dZWjdjeVNPa0w3?=
- =?utf-8?B?WFkxckNQcnlCbGFEMGNjMmpCOVRtVy9OVTdIQnFvc3pqTE1oNExTNW1nS1Jw?=
- =?utf-8?Q?UPsc=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: caf53b9a-0eae-43b6-920b-08dcaff8e65c
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TmdYQkxSS2luamVHVThKdmdHZytzVE4xcmlYczM4UmRvR2VxMUNLaXp5MGRU?=
+ =?utf-8?B?dkZFNkJRMzA4Rnl1T05QL2Q4NHlYTldmYnkrYmw3aGg1dW9DeEswY01RWGJS?=
+ =?utf-8?B?aXM4d1U2dUlRYTJmVEZ0eHVoSldrQlRrQXU5VGEwTjdrV1hzZ0x4b0RPVm5a?=
+ =?utf-8?B?WDBOWU9WVEVjWVljMWFsN0pBazAvVWZoZFpzNytmLzR1dnVQbFdsalAxelRq?=
+ =?utf-8?B?YU15RXk1S2pCQkZCclVxekwwdlRUSXNEYk5TQWRvL1JoZ0xZY1pqS21yS1BI?=
+ =?utf-8?B?MDFvcVRsSWI4RDFERjVnQjk2b3RYbVppK1VoWW9NMC9paG5pMCt3aUlIb21m?=
+ =?utf-8?B?RHo0YlZKVjJGNC8yVkFDUWt6aW5qSFdmWWJpV1orWCt5b205STlUa1Vka3Jr?=
+ =?utf-8?B?RGZkK0dGY21sQ25jREpmb0ZuQ3F0dFR1WDRSK0N2RHBEcW55NSt1dkx5dkdk?=
+ =?utf-8?B?bW8wcllPSW9jZGdpMU5hWjN2SVIrSi9nYXV2VzJzbzJoOGdBRlRrbXdicUpH?=
+ =?utf-8?B?WGRLSnBCT2piam9RSjhSUTlveFNlL0RRMnFhb1QvRTk2UnhrR1VOWURLRXhu?=
+ =?utf-8?B?L1BLZmRuTzVNZDZtWmkrK2dkdnpZcHZlY1JZclYxSEJtWnZMUGh0b3pXSitu?=
+ =?utf-8?B?TEoyRy9hZUQxSEVtdno3dk04VmlXbXNEcVhaZDUwVUExd0Z3bk82ckFMa3hq?=
+ =?utf-8?B?NSs1a25KNStNYmFVa0pxdWVXSmUzbzRnbWVEQUM2VVdHb2k5WktFVEg0MHRT?=
+ =?utf-8?B?WGVlZzZhMjJIZk9uL2hJUGx1Q2VHM2c0a2NvZ3E3cE81VHdMcGRFZHJ4UlJT?=
+ =?utf-8?B?Nkx1dG51SHVhOExNYjRmYTIrL2M2OXlERVZqUGx6RUwrdGczalFzZDgvNHhV?=
+ =?utf-8?B?c3U2Y1djOWpoTEc3clIyNjlBeFkwZml6TGF3dlZUdi9HVi9adXdFdC9ka1h3?=
+ =?utf-8?B?T1M4U1BEOXBaT1JwMmV5RmY5N0ZCN0RxUElTUVl1bUFaejNJajJLWU9uem5D?=
+ =?utf-8?B?cEYzRkVqeWppaFdEZWp3NkI4bk0yUVNvdFh1UGd2NHNrdkptQjRhcmxWQWVG?=
+ =?utf-8?B?OE9JajB0S200NlZUN1hQZWdIUmJ0eUpYZzFqMCtONE1Rdzcza29iRmFmZjlq?=
+ =?utf-8?B?S3M2QXAvdlFtam1QN3RPSEtsTTBMVEJWUzY4QWtwQk45UnNMbjF3WnkzMnQ0?=
+ =?utf-8?B?SWVzLzdpL3FNYWdubkFjZ09ocE9mTVNXbHk4UmswbklTRmlDSVJWRE1DdnNC?=
+ =?utf-8?B?Qm9rOEh6aVA3TS92OE9ESWtZU1U2UmdKWlZyUWFQRnE1UmdPQ0hNUVJRYmxZ?=
+ =?utf-8?B?S2YxbS9IQno1RUt5ZnpRdWpDMytxUFU1ZEl2QUorbVJFRFcwb2VvZWt6anE5?=
+ =?utf-8?B?TERkcjFwT1FpWXFVUksxekpwNTB5a3BBNUc2NXY2SU5rajBkQ04rVmFpd3pS?=
+ =?utf-8?B?YWt4Um4rQjIzejVwTm1mWkRrSWw3K3h4Y3dWOWR0Ykpxc2Z0c1AyZlVMN0NM?=
+ =?utf-8?B?RXlxOVhWczhFUzZ1M2JRN2F5MWF5UW5jdmo0TEpyTXRYbEpIZEFkMzMvM01Z?=
+ =?utf-8?B?cWZ1TGlhV1ZvUVRYcjhVa0xGWHlVaGN4RkIzczRZYzA2eXo3dURzT0tIYnhV?=
+ =?utf-8?B?TjR0V2Q0cTlLY3FDWk9XcFB2em5VOFVTR3Y3RGFPU0VIZ2EwRlFTNFRINUFs?=
+ =?utf-8?B?SXR5NzlOMTJzWTRIYy90bHBPWTE1MFQya3lPVmQwWmdGaSsxMEFLRUM3ZTVT?=
+ =?utf-8?B?RWJnZGFLdEVibVBLUWJ4b1pIRzNtTVpRaFpNMmZEcGhJdkNwQ1RHSVh5NG01?=
+ =?utf-8?B?V0RvOWtseFg4K1NCT1daNFF4dDVVenBGYStodVdQT2FIcGFKTVVGUGh2L2t2?=
+ =?utf-8?B?aXBYVDRqMFBmaFpQOStUSjBKcVg3Qm9zTDlPSWg2RFh3NktNckhEZ0h3SlA0?=
+ =?utf-8?B?aitmT1BVdlRnU1ZWSjV3MzBkbXFnOUtpNEtJS2Q0dVNTVFAwTE1qQ1Nna0kr?=
+ =?utf-8?B?WGZMRlpWaFhLbkRBNVpFa2lOZTBydlowci9pYWk1R3dDRzA4cTluZWZtb05a?=
+ =?utf-8?B?amNMeXgyMkx6TGFJOVRyWCt2N2xSZ1lKSnVNSE5ERkpIZCtPUlJvMFArTVFn?=
+ =?utf-8?Q?GO1s4F+/MjDBWjYwSLk9qcEU3?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84c63e5d-665c-48d9-a5c1-08dcaff96c34
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 18:04:33.4464
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 18:08:17.8823
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZmzKWCaZP61q9xcD6140vjLgXHkAUYdompi5fmH4VMytZZmGVaWHhLUyFGGalmmG
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8754
+X-MS-Exchange-CrossTenant-UserPrincipalName: wKAfxTlV9ryATrvtzxAI5voxBi0gICnPoCX3uGb5HB5258yM7Nfkk23d0rRZL+Huo+xNfI8RSxsvS5fPZO+385DwOA19043Q4rNf0DIGNyo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7384
+X-OriginatorOrg: intel.com
 
-Am 29.07.24 um 19:26 schrieb Nikita Zhandarovich:
-> Hi,
->
-> On 7/29/24 02:23, Christian König wrote:
->> Am 26.07.24 um 14:52 schrieb Alex Deucher:
->>> On Fri, Jul 26, 2024 at 3:05 AM Christian König
->>> <christian.koenig@amd.com> wrote:
->>>> Am 25.07.24 um 20:09 schrieb Nikita Zhandarovich:
->>>>> Several cs track offsets (such as 'track->db_s_read_offset')
->>>>> either are initialized with or plainly take big enough values that,
->>>>> once shifted 8 bits left, may be hit with integer overflow if the
->>>>> resulting values end up going over u32 limit.
->>>>>
->>>>> Some debug prints take this into account (see according dev_warn() in
->>>>> evergreen_cs_track_validate_stencil()), even if the actual
->>>>> calculated value assigned to local 'offset' variable is missing
->>>>> similar proper expansion.
->>>>>
->>>>> Mitigate the problem by casting the type of right operands to the
->>>>> wider type of corresponding left ones in all such cases.
->>>>>
->>>>> Found by Linux Verification Center (linuxtesting.org) with static
->>>>> analysis tool SVACE.
->>>>>
->>>>> Fixes: 285484e2d55e ("drm/radeon: add support for evergreen/ni
->>>>> tiling informations v11")
->>>>> Cc: stable@vger.kernel.org
->>>> Well first of all the long cast doesn't makes the value 64bit, it
->>>> depends on the architecture.
->>>>
->>>> Then IIRC the underlying hw can only handle a 32bit address space so
->>>> having the offset as long is incorrect to begin with.
->>> Evergreen chips support a 36 bit internal address space and NI and
->>> newer support a 40 bit one, so this is applicable.
->> In that case I strongly suggest that we replace the unsigned long with
->> u64 or otherwise we get different behavior on 32 and 64bit machines.
+
+
+On 7/27/2024 6:44 AM, Kory Maincent wrote:
+> On Mon, 15 Jul 2024 16:37:01 -0700
+> Jacob Keller <jacob.e.keller@intel.com> wrote:
+> 
+>> On 7/9/2024 6:53 AM, Kory Maincent wrote:
+>>> Change the API to select MAC default time stamping instead of the PHY.
+>>> Indeed the PHY is closer to the wire therefore theoretically it has less
+>>> delay than the MAC timestamping but the reality is different. Due to lower
+>>> time stamping clock frequency, latency in the MDIO bus and no PHC hardware
+>>> synchronization between different PHY, the PHY PTP is often less precise
+>>> than the MAC. The exception is for PHY designed specially for PTP case but
+>>> these devices are not very widespread. For not breaking the compatibility
+>>> default_timestamp flag has been introduced in phy_device that is set by
+>>> the phy driver to know we are using the old API behavior.
+>>>   
 >>
->> Regards,
->> Christian.
+>> This description feels like it is making a pretty broad generalization
+>> about devices. The specifics of whether MAC or PHY timestamping is
+>> better will be device dependent.
+> 
+> As explained, except for specific PTP specialized PHY, the MAC is better in
+> term of PTP precision.
+> This patch was a requisite from Russell, who wanted to add support for the PTP
+> in the marvell PHY. Doing so would select the PHY PTP by default which cause a
+> regression as the PHY hardware timestamp is less precise than the MAC.
+> https://lore.kernel.org/netdev/20200729105807.GZ1551@shell.armlinux.org.uk/
+> https://lore.kernel.org/netdev/Y%2F4DZIDm1d74MuFJ@shell.armlinux.org.uk/
+> There is also discussion on how to support it in older version of this series.
+>  
+
+
+Right. So it is a bit of a generalization, but in practice it matches up
+with the available hardware on the market.
+
+>> It looks like you introduce a default_timestamp flag to ensure existing
+>> devices default to PHY? I assume your goal here is to discourage this
+>> and not allow setting it for new devices? Or do we want to let device
+>> driver authors decide which is a better default?
+> 
+> Yes to not change the old behavior the current PHY with PTP support will still
+> behave as default PTP. The point is indeed to discourage future drivers to
+> select the PHY as default PTP.
+> 
+
+Ok great!
+
+>>> diff --git a/net/core/timestamping.c b/net/core/timestamping.c
+>>> index 04840697fe79..3717fb152ecc 100644
+>>> --- a/net/core/timestamping.c
+>>> +++ b/net/core/timestamping.c
+>>> @@ -25,7 +25,8 @@ void skb_clone_tx_timestamp(struct sk_buff *skb)
+>>>  	struct sk_buff *clone;
+>>>  	unsigned int type;
+>>>  
+>>> -	if (!skb->sk)
+>>> +	if (!skb->sk || !skb->dev ||
+>>> +	    !phy_is_default_hwtstamp(skb->dev->phydev))  
 >>
-> To be clear, I'll prepare v2 patch that changes 'offset' to u64 as well
-> as the cast of 'track->db_z_read_offset' (and the likes) to u64 too.
->
-> On the other note, should I also include casting to wider type of the
-> expression surf.layer_size * mslice (example down below) in
-> evergreen_cs_track_validate_cb() and other similar functions? I can't
-> properly gauge if the result will definitively fit into u32, maybe it
-> makes sense to expand it as well?
+>> I don't follow why this check is added and its not calling something
+>> like "phy_is_current_hwtstamp"? I guess because we don't yet have a way
+>> to select between MAC/PHY at this point in the series? Ok.
+> 
+> skb_clone_tx_timestamp is only used for PHY timestamping so we should do nothing
+> if the default PTP is the MAC.
+> 
 
-The integer overflows caused by shifts are irrelevant and doesn't need 
-any fixing in the first place.
+I guess my misunderstanding is what about the case where user selects
+PHY timestamping with the netlink command? Then it would still need to
+do the skb_clone_tx_timestamp even though its not the default? Or does
+phy_is_default_hwtstamp take that into account? In which case it would
+make more sense to name it phy_is_current_hwtstamp.
 
-The point is rather that we need to avoid multiplication overflows and 
-the security problems which come with those.
+Either way this is mostly bikeshedding and probably just some
+misunderstanding in my reading of the code.
 
->
-> 441         }
-> 442
-> 443         offset += surf.layer_size * mslice;
+Thanks,
+Jake
 
-In other words that here needs to be validated correctly.
-
-Regards,
-Christian.
-
-> 444         if (offset > radeon_bo_size(track->cb_color_bo[id])) {
-> 445                 /* old ddx are broken they allocate bo with w*h*bpp
->
 > Regards,
-> Nikita
->>> Alex
->>>
->>>> And finally that is absolutely not material for stable.
->>>>
->>>> Regards,
->>>> Christian.
->>>>
->>>>> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
->>>>> ---
->>>>> P.S. While I am not certain that track->cb_color_bo_offset[id]
->>>>> actually ends up taking values high enough to cause an overflow,
->>>>> nonetheless I thought it prudent to cast it to ulong as well.
->>>>>
->>>>>     drivers/gpu/drm/radeon/evergreen_cs.c | 18 +++++++++---------
->>>>>     1 file changed, 9 insertions(+), 9 deletions(-)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/radeon/evergreen_cs.c
->>>>> b/drivers/gpu/drm/radeon/evergreen_cs.c
->>>>> index 1fe6e0d883c7..d734d221e2da 100644
->>>>> --- a/drivers/gpu/drm/radeon/evergreen_cs.c
->>>>> +++ b/drivers/gpu/drm/radeon/evergreen_cs.c
->>>>> @@ -433,7 +433,7 @@ static int evergreen_cs_track_validate_cb(struct
->>>>> radeon_cs_parser *p, unsigned i
->>>>>                 return r;
->>>>>         }
->>>>>
->>>>> -     offset = track->cb_color_bo_offset[id] << 8;
->>>>> +     offset = (unsigned long)track->cb_color_bo_offset[id] << 8;
->>>>>         if (offset & (surf.base_align - 1)) {
->>>>>                 dev_warn(p->dev, "%s:%d cb[%d] bo base %ld not
->>>>> aligned with %ld\n",
->>>>>                          __func__, __LINE__, id, offset,
->>>>> surf.base_align);
->>>>> @@ -455,7 +455,7 @@ static int evergreen_cs_track_validate_cb(struct
->>>>> radeon_cs_parser *p, unsigned i
->>>>>                                 min = surf.nby - 8;
->>>>>                         }
->>>>>                         bsize = radeon_bo_size(track->cb_color_bo[id]);
->>>>> -                     tmp = track->cb_color_bo_offset[id] << 8;
->>>>> +                     tmp = (unsigned
->>>>> long)track->cb_color_bo_offset[id] << 8;
->>>>>                         for (nby = surf.nby; nby > min; nby--) {
->>>>>                                 size = nby * surf.nbx * surf.bpe *
->>>>> surf.nsamples;
->>>>>                                 if ((tmp + size * mslice) <= bsize) {
->>>>> @@ -476,10 +476,10 @@ static int
->>>>> evergreen_cs_track_validate_cb(struct radeon_cs_parser *p, unsigned i
->>>>>                         }
->>>>>                 }
->>>>>                 dev_warn(p->dev, "%s:%d cb[%d] bo too small (layer
->>>>> size %d, "
->>>>> -                      "offset %d, max layer %d, bo size %ld, slice
->>>>> %d)\n",
->>>>> +                      "offset %ld, max layer %d, bo size %ld, slice
->>>>> %d)\n",
->>>>>                          __func__, __LINE__, id, surf.layer_size,
->>>>> -                     track->cb_color_bo_offset[id] << 8, mslice,
->>>>> -                     radeon_bo_size(track->cb_color_bo[id]), slice);
->>>>> +                     (unsigned long)track->cb_color_bo_offset[id]
->>>>> << 8,
->>>>> +                     mslice,
->>>>> radeon_bo_size(track->cb_color_bo[id]), slice);
->>>>>                 dev_warn(p->dev, "%s:%d problematic surf: (%d %d) (%d
->>>>> %d %d %d %d %d %d)\n",
->>>>>                          __func__, __LINE__, surf.nbx, surf.nby,
->>>>>                         surf.mode, surf.bpe, surf.nsamples,
->>>>> @@ -608,7 +608,7 @@ static int
->>>>> evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
->>>>>                 return r;
->>>>>         }
->>>>>
->>>>> -     offset = track->db_s_read_offset << 8;
->>>>> +     offset = (unsigned long)track->db_s_read_offset << 8;
->>>>>         if (offset & (surf.base_align - 1)) {
->>>>>                 dev_warn(p->dev, "%s:%d stencil read bo base %ld not
->>>>> aligned with %ld\n",
->>>>>                          __func__, __LINE__, offset, surf.base_align);
->>>>> @@ -627,7 +627,7 @@ static int
->>>>> evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
->>>>>                 return -EINVAL;
->>>>>         }
->>>>>
->>>>> -     offset = track->db_s_write_offset << 8;
->>>>> +     offset = (unsigned long)track->db_s_write_offset << 8;
->>>>>         if (offset & (surf.base_align - 1)) {
->>>>>                 dev_warn(p->dev, "%s:%d stencil write bo base %ld not
->>>>> aligned with %ld\n",
->>>>>                          __func__, __LINE__, offset, surf.base_align);
->>>>> @@ -706,7 +706,7 @@ static int
->>>>> evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
->>>>>                 return r;
->>>>>         }
->>>>>
->>>>> -     offset = track->db_z_read_offset << 8;
->>>>> +     offset = (unsigned long)track->db_z_read_offset << 8;
->>>>>         if (offset & (surf.base_align - 1)) {
->>>>>                 dev_warn(p->dev, "%s:%d stencil read bo base %ld not
->>>>> aligned with %ld\n",
->>>>>                          __func__, __LINE__, offset, surf.base_align);
->>>>> @@ -722,7 +722,7 @@ static int
->>>>> evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
->>>>>                 return -EINVAL;
->>>>>         }
->>>>>
->>>>> -     offset = track->db_z_write_offset << 8;
->>>>> +     offset = (unsigned long)track->db_z_write_offset << 8;
->>>>>         if (offset & (surf.base_align - 1)) {
->>>>>                 dev_warn(p->dev, "%s:%d stencil write bo base %ld not
->>>>> aligned with %ld\n",
->>>>>                          __func__, __LINE__, offset, surf.base_align);
-
 
