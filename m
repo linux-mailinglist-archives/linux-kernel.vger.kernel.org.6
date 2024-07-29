@@ -1,259 +1,200 @@
-Return-Path: <linux-kernel+bounces-265978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2359B93F8A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:49:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB8093F8B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CABED283061
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:49:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C23061C21F7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620CF1586FE;
-	Mon, 29 Jul 2024 14:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C4F155A5D;
+	Mon, 29 Jul 2024 14:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="U/hOehe7"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4iGqQY8h"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC754155A5B
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44EC1514F8
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722264497; cv=none; b=SASlA1azPWzJIDsi64Kc5hebxn49vibv6zi+LfSjRVOMVVOF7hW+bLGMIC4T2R/a3ZFDGM1EWFK/cY/h7i5J0kiW9nhttc5YoVFytAXhT0ZWJe6Hziy98d7xpMfDvdjhGYT+gsP/KD+MITO5waUjXzwbQLuJhZ9bN5BqGJg2AEg=
+	t=1722264602; cv=none; b=nRGxJram6QY1OZ/AQqMw/R3N96TOQNj7hX4LLbZyY1gsfQdy6bZHDCn/ADi7J1+MVIRxzx+XD//SmEmKtCTCWcv/bFq7xAjzzNugMe1RYdWldLAdSe1GbnobuC5lgTy6kTkVaooB7GFlDEYJC8e8q6MOwDixaVMmJbW2maYcBXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722264497; c=relaxed/simple;
-	bh=NWQ/+FxNiWlPrriG/RCWg4yhrkTbbHsDm3/fAZGeotE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Lp9ubuM+IWsdLqeG28H01NNYA1lKKjlkqImgVdb8L2fDGHWwnDBUCZhG5tB4GTJRT81lMzjBHNkQlazT1llTMaL3uZrBjF9Gx28ddsIDBVFWCLVdFEcvaDavukMmy+UCyV1X2VY0Oo4Kvlp9fKtJcN8Dtp6t7SAh9MQtvqsl9SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=U/hOehe7; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428178fc07eso14882935e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:48:14 -0700 (PDT)
+	s=arc-20240116; t=1722264602; c=relaxed/simple;
+	bh=woLQBPacf7DTDxtXPvYGoMG7Uok2hCJqM57wPvFxsxc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YpN3tXW1j0/rVae1JKyBo27k9apJ9v3dY2No/9saxEJWqt+ZYbGF8AXIn1KP/L9zasGnIjCZOryc9YA7dQruJHVr3+ldMBDgLaV+PxutmQdJ0vXbPslSPGv5EgWbZbuiyMk6GbPwn7F30SK3Z+sRzm0UA2y/Sw6wmESjy/WGuOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4iGqQY8h; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-4f51981b1beso1184192e0c.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:50:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722264493; x=1722869293; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/0KWVZAazUejIoLcfyGV2EIZ0xgocIz1579DC73ilE8=;
-        b=U/hOehe7JKTmsYZgVtz9XTdzRz5IMsr0PBOK8yp1+dehEhTjPHmRiMeQAm76bMmMT5
-         2LBRC8KQSOEmn37I1gtv+b73h35r3QNZdooRNGJdwSDxNbThB9BEk8FExbqQRKjxmzW3
-         si6c5iPifX7xqxugo7MctAKqU+vz42klEaJI/BQZMxlk9lZ4sKu3j8Ue1Ux/PJu0UfGy
-         GLCQjPR8VKVahbi6b90ItzF3Nk2DIIYC85hdar6PNrbEbCBCgxLgtR70vppNwem4sBU3
-         HkBRK5IkSTz1zGcJq8BLb28djnB1TJfKdjT8tHYAVGmgdR2p6AaVXBrX04Hv6kz3iFY7
-         mFkQ==
+        d=google.com; s=20230601; t=1722264599; x=1722869399; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dc5OnpQkO4GI5cUSMqWm8aEGW3XO5gfb3sMJB+82c8A=;
+        b=4iGqQY8hcJFqrjfF6+a+YsZqO90WvprJ3hC0RKaUX9aeEGJNBUIOH50i8K/Y6WhhWL
+         7CkPvEv/CoADTm715FI3XRYOBAyUdWWOoTwoZoWxP29OV2Oyw+NLOeexykE8ZP6exC/a
+         +vLPYqwmAusLXHY5FaaRbE4T/MfY4dG0agp1NjD4EBt3d8wXITSV0yjh8ozTlQOvjocc
+         MQR++4sEQLzKFlpeoLHRf+EZ4fUIaDYSovkBs6WBSARyR/InsYIqFeec40hUyHcivpnI
+         KOVKKITW7I+/FqTFGlBugrDMNT+XmiC7B8d26Fj2nVpCwHi2eSqm5dDfjey7b64exs4e
+         0BBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722264493; x=1722869293;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/0KWVZAazUejIoLcfyGV2EIZ0xgocIz1579DC73ilE8=;
-        b=fLCsIh4I4cMh6YEXcAIjKnn5aXVHx0BIT2+U/fepdlax8E4i9j2MrHlHK3Fb5K2K0a
-         915O4W0ruJji5aLdY8BmAzhEPIERR5eVDgdvI0PhCUK6Y0Y0WNpxAw8sjSqnTD/kWGIR
-         gHRYiEW5+HEd2nZiVub+9y2+/XoBmiwuzBIilKT/fRbZvJNxYjnmlJjfEMAGLZNUdKNw
-         hDZTzReiBLES+axjcqnTJeW05JFKUDISlwwFa2+NoTaupoG737AB0jUI0U+ev2K92pLu
-         4DRlqwLliWf7FFjmvJvQSHii3WOBbVJaYoRzkytzx/YIMY/urPM/XHlWDYmlG45kl65P
-         VKKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4eiiOvesG7uhb2A1lrEoeopm+YHUEMnhjzUgMD8UCvFCxdpPieiXFliRqpsmWzpgT9uKG4csVpOjGXVXMlYeNqYOJwII5+93H/SQv
-X-Gm-Message-State: AOJu0YwEk7ntzigoM5aKyy7NV63GptN6Yx3meS1YaHdyz5dZEXmTS5yd
-	J7bQsnyRJsR3LTd+KxLuaOVvL7759lkmgSLRHFfck65F7kKXVI4ujS913hdT5b8=
-X-Google-Smtp-Source: AGHT+IES43dsB88pOWowCZDjQUgfhJCapGqHMmVWsAEmurz0DmUV9AN94vXTX24YzUWQSKDYVqd96g==
-X-Received: by 2002:a05:600c:4fcf:b0:426:62c6:4341 with SMTP id 5b1f17b1804b1-42811d9cb8emr51617445e9.20.1722264493259;
-        Mon, 29 Jul 2024 07:48:13 -0700 (PDT)
-Received: from [192.168.42.0] (2a02-842a-d52e-6101-6fd0-06c4-5d68-f0a5.rev.sfr.net. [2a02:842a:d52e:6101:6fd0:6c4:5d68:f0a5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428057b645dsm180091705e9.43.2024.07.29.07.48.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 07:48:13 -0700 (PDT)
-From: Julien Stephan <jstephan@baylibre.com>
-Date: Mon, 29 Jul 2024 16:48:04 +0200
-Subject: [PATCH v6 5/5] arm64: dts: mediatek: mt8365: Add support for
- camera
+        d=1e100.net; s=20230601; t=1722264599; x=1722869399;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Dc5OnpQkO4GI5cUSMqWm8aEGW3XO5gfb3sMJB+82c8A=;
+        b=t6M5dACFWb8EnI+LkPMBhAxZU0gI/5MC5u+fPVl1pBZTa+MUy/QicVYST4ST2GZ1Os
+         xh69pjn+2eJHIwXdU0LI/xt3GHLGs38oNae+llnrx16agP+VPqruv7APajH7xBMXEG+r
+         VDxp1yu8rw9YxjDcxQGDAasdPPiuSHfz36sfeLsdHofHXiDbUn/A7l7Ugp3uu6/9IGo7
+         kYFU4NQjmIZotIOnHM+oo0Iidhdr2KvxLWHc9LuYMeUbzNqfOHspUQVEzK0I9DOXLrC8
+         y/24aQdTS3yKr4QodV8jEDii0pAHYm240chH79ni8YcINNjtmhbpjlURKP/CJOJ6wESp
+         VLJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAMSlAc/eLLgAh5htqeXJXXME3V2flx5l71MLYiMxrBIxE/mEyeg4vu/U7An0ZnJUp7TY2rCFTj6Lq0Il7B7r2bHmHp+UrGlBbHZSX
+X-Gm-Message-State: AOJu0YycxdH6OJfkUri+Z+ZAivSWZdYhmm2HrbcE0C6K89WtfvE0NEmI
+	3aL2UnAcGmV8LBHxmDvfqG8nprXwzbgBwJerXRj+32elCF9C8BnbtVq/DxihuJt4UUO9F1jwEyK
+	cu7/iei8djkeEf/sXUvssOWPnk425lCve7yfW
+X-Google-Smtp-Source: AGHT+IHFMADPLpMiCf0PtUHwwXP9ydcCss5DHpj4/ujsEVhBsMJ/f20LMGXqV2SAf4576Qb9p5SV9/SHngSzxzrhnsQ=
+X-Received: by 2002:a05:6122:310a:b0:4f6:a5ed:eb11 with SMTP id
+ 71dfb90a1353d-4f6e68f714amr9340551e0c.8.1722264599389; Mon, 29 Jul 2024
+ 07:49:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240729-add-mtk-isp-3-0-support-v6-5-c374c9e0c672@baylibre.com>
-References: <20240729-add-mtk-isp-3-0-support-v6-0-c374c9e0c672@baylibre.com>
-In-Reply-To: <20240729-add-mtk-isp-3-0-support-v6-0-c374c9e0c672@baylibre.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Andy Hsieh <andy.hsieh@mediatek.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, Julien Stephan <jstephan@baylibre.com>
-X-Mailer: b4 0.13.0
+References: <20240729022158.92059-1-andrey.konovalov@linux.dev> <CANpmjNP6ouX1hSayoeOHu7On1DYtPtydFbEQtxoTbsnaE9j77w@mail.gmail.com>
+In-Reply-To: <CANpmjNP6ouX1hSayoeOHu7On1DYtPtydFbEQtxoTbsnaE9j77w@mail.gmail.com>
+From: Marco Elver <elver@google.com>
+Date: Mon, 29 Jul 2024 16:49:20 +0200
+Message-ID: <CANpmjNOTnYUZDNG0z64rY7fOd2f2ZPW9qV6Gaz1=n_NWmHjAZA@mail.gmail.com>
+Subject: Re: [PATCH] kcov: properly check for softirq context
+To: andrey.konovalov@linux.dev
+Cc: Dmitry Vyukov <dvyukov@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Aleksandr Nogikh <nogikh@google.com>, 
+	Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
+	Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Marcello Sylvester Bauer <sylv@sylv.io>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+2388cdaeb6b10f0c13ac@syzkaller.appspotmail.com, stable@vger.kernel.org, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-Add base support for cameras for mt8365 platforms. This requires nodes
-for the sensor interface, camsv, and CSI receivers.
+On Mon, 29 Jul 2024 at 11:42, Marco Elver <elver@google.com> wrote:
+>
+> On Mon, 29 Jul 2024 at 04:22, <andrey.konovalov@linux.dev> wrote:
+> >
+> > From: Andrey Konovalov <andreyknvl@gmail.com>
+> >
+> > When collecting coverage from softirqs, KCOV uses in_serving_softirq() to
+> > check whether the code is running in the softirq context. Unfortunately,
+> > in_serving_softirq() is > 0 even when the code is running in the hardirq
+> > or NMI context for hardirqs and NMIs that happened during a softirq.
+> >
+> > As a result, if a softirq handler contains a remote coverage collection
+> > section and a hardirq with another remote coverage collection section
+> > happens during handling the softirq, KCOV incorrectly detects a nested
+> > softirq coverate collection section and prints a WARNING, as reported
+> > by syzbot.
+> >
+> > This issue was exposed by commit a7f3813e589f ("usb: gadget: dummy_hcd:
+> > Switch to hrtimer transfer scheduler"), which switched dummy_hcd to using
+> > hrtimer and made the timer's callback be executed in the hardirq context.
+> >
+> > Change the related checks in KCOV to account for this behavior of
+> > in_serving_softirq() and make KCOV ignore remote coverage collection
+> > sections in the hardirq and NMI contexts.
+> >
+> > This prevents the WARNING printed by syzbot but does not fix the inability
+> > of KCOV to collect coverage from the __usb_hcd_giveback_urb when dummy_hcd
+> > is in use (caused by a7f3813e589f); a separate patch is required for that.
+> >
+> > Reported-by: syzbot+2388cdaeb6b10f0c13ac@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=2388cdaeb6b10f0c13ac
+> > Fixes: 5ff3b30ab57d ("kcov: collect coverage from interrupts")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
+> > ---
+> >  kernel/kcov.c | 15 ++++++++++++---
+> >  1 file changed, 12 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/kernel/kcov.c b/kernel/kcov.c
+> > index f0a69d402066e..274b6b7c718de 100644
+> > --- a/kernel/kcov.c
+> > +++ b/kernel/kcov.c
+> > @@ -161,6 +161,15 @@ static void kcov_remote_area_put(struct kcov_remote_area *area,
+> >         kmsan_unpoison_memory(&area->list, sizeof(area->list));
+> >  }
+> >
+> > +/*
+> > + * Unlike in_serving_softirq(), this function returns false when called during
+> > + * a hardirq or an NMI that happened in the softirq context.
+> > + */
+> > +static inline bool in_softirq_really(void)
+> > +{
+> > +       return in_serving_softirq() && !in_hardirq() && !in_nmi();
+> > +}
+>
+> Not sure you need this function. Check if just this will give you what you want:
+>
+>   interrupt_context_level() == 1
+>
+> I think the below condition could then also just become:
+>
+>   if (interrupt_context_level() == 1 && t->kcov_softirq)
+>
+> Although the softirq_count() helper has a special PREEMPT_RT variant,
+> and interrupt_context_level() doesn't, so it's not immediately obvious
+> to me if that's also ok on PREEMPT_RT kernels.
+>
+> Maybe some RT folks can help confirm that using
+> interrupt_context_level()==1 does what your above function does also
+> on RT kernels.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Julien Stephan <jstephan@baylibre.com>
----
- arch/arm64/boot/dts/mediatek/mt8365.dtsi | 125 +++++++++++++++++++++++++++++++
- 1 file changed, 125 insertions(+)
+Hmm, so Thomas just told me that softirqs always run in threaded
+context on RT and because there's no nesting,
+interrupt_context_level() won't work for what I had imagined here.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8365.dtsi b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-index 24581f7410aa..cabdb51f4041 100644
---- a/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-@@ -10,6 +10,7 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/phy/phy.h>
- #include <dt-bindings/power/mediatek,mt8365-power.h>
-+#include <dt-bindings/memory/mediatek,mt8365-larb-port.h>
- 
- / {
- 	compatible = "mediatek,mt8365";
-@@ -703,6 +704,23 @@ ethernet: ethernet@112a0000 {
- 			status = "disabled";
- 		};
- 
-+		mipi_csi0: mipi-csi0@11c10000 {
-+			compatible = "mediatek,mt8365-csi-rx";
-+			reg = <0 0x11c10000 0 0x2000>;
-+			status = "disabled";
-+			num-lanes = <4>;
-+			#phy-cells = <1>;
-+		};
-+
-+		mipi_csi1: mipi-csi1@11c12000 {
-+			compatible = "mediatek,mt8365-csi-rx";
-+			reg = <0 0x11c12000 0 0x2000>;
-+			phy-type = <PHY_TYPE_DPHY>;
-+			status = "disabled";
-+			num-lanes = <4>;
-+			#phy-cells = <0>;
-+		};
-+
- 		u3phy: t-phy@11cc0000 {
- 			compatible = "mediatek,mt8365-tphy", "mediatek,generic-tphy-v2";
- 			#address-cells = <1>;
-@@ -773,6 +791,113 @@ larb2: larb@15001000 {
- 			mediatek,larb-id = <2>;
- 		};
- 
-+		seninf: seninf@15040000 {
-+			compatible = "mediatek,mt8365-seninf";
-+			reg = <0 0x15040000 0 0x6000>;
-+			interrupts = <GIC_SPI 210 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&camsys CLK_CAM_SENIF>,
-+				 <&topckgen CLK_TOP_SENIF_SEL>;
-+			clock-names = "camsys", "top_mux";
-+
-+			power-domains = <&spm MT8365_POWER_DOMAIN_CAM>;
-+
-+			phys = <&mipi_csi0 PHY_TYPE_DPHY>, <&mipi_csi1>;
-+			phy-names = "csi0", "csi1";
-+
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+				};
-+
-+				port@3 {
-+					reg = <3>;
-+				};
-+
-+				port@4 {
-+					reg = <4>;
-+					seninf_camsv1_endpoint: endpoint {
-+						remote-endpoint =
-+							<&camsv1_endpoint>;
-+					};
-+				};
-+
-+				port@5 {
-+					reg = <5>;
-+					seninf_camsv2_endpoint: endpoint {
-+						remote-endpoint =
-+							<&camsv2_endpoint>;
-+					};
-+				};
-+			};
-+		};
-+
-+		camsv1: camsv@15050000 {
-+			compatible = "mediatek,mt8365-camsv";
-+			reg = <0 0x15050000 0 0x0040>,
-+			      <0 0x15050208 0 0x0020>,
-+			      <0 0x15050400 0 0x0100>;
-+			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&camsys CLK_CAM>,
-+				 <&camsys CLK_CAMTG>,
-+				 <&camsys CLK_CAMSV0>;
-+			clock-names = "cam", "camtg", "camsv";
-+			iommus = <&iommu M4U_PORT_CAM_IMGO>;
-+			mediatek,larb = <&larb2>;
-+			power-domains = <&spm MT8365_POWER_DOMAIN_CAM>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					camsv1_endpoint: endpoint {
-+						remote-endpoint = <&seninf_camsv1_endpoint>;
-+					};
-+				};
-+			};
-+		};
-+
-+		camsv2: camsv@15050800 {
-+			compatible = "mediatek,mt8365-camsv";
-+			reg = <0 0x15050800 0 0x0040>,
-+			      <0 0x15050228 0 0x0020>,
-+			      <0 0x15050c00 0 0x0100>;
-+			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&camsys CLK_CAM>,
-+				 <&camsys CLK_CAMTG>,
-+				 <&camsys CLK_CAMSV1>;
-+			clock-names = "cam", "camtg", "camsv";
-+			iommus = <&iommu M4U_PORT_CAM_IMGO>;
-+			mediatek,larb = <&larb2>;
-+			power-domains = <&spm MT8365_POWER_DOMAIN_CAM>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					camsv2_endpoint: endpoint {
-+						remote-endpoint = <&seninf_camsv2_endpoint>;
-+					};
-+				};
-+			};
-+		};
-+
- 		vdecsys: syscon@16000000 {
- 			compatible = "mediatek,mt8365-vdecsys", "syscon";
- 			reg = <0 0x16000000 0 0x1000>;
+So your current solution is fine.
 
--- 
-2.45.1
+Acked-by: Marco Elver <elver@google.com>
 
+> >  static notrace bool check_kcov_mode(enum kcov_mode needed_mode, struct task_struct *t)
+> >  {
+> >         unsigned int mode;
+> > @@ -170,7 +179,7 @@ static notrace bool check_kcov_mode(enum kcov_mode needed_mode, struct task_stru
+> >          * so we ignore code executed in interrupts, unless we are in a remote
+> >          * coverage collection section in a softirq.
+> >          */
+> > -       if (!in_task() && !(in_serving_softirq() && t->kcov_softirq))
+> > +       if (!in_task() && !(in_softirq_really() && t->kcov_softirq))
+> >                 return false;
+> >         mode = READ_ONCE(t->kcov_mode);
+> >         /*
+> > @@ -849,7 +858,7 @@ void kcov_remote_start(u64 handle)
+> >
+> >         if (WARN_ON(!kcov_check_handle(handle, true, true, true)))
+> >                 return;
+> > -       if (!in_task() && !in_serving_softirq())
+> > +       if (!in_task() && !in_softirq_really())
+> >                 return;
+> >
+> >         local_lock_irqsave(&kcov_percpu_data.lock, flags);
+> > @@ -991,7 +1000,7 @@ void kcov_remote_stop(void)
+> >         int sequence;
+> >         unsigned long flags;
+> >
+> > -       if (!in_task() && !in_serving_softirq())
+> > +       if (!in_task() && !in_softirq_really())
+> >                 return;
+> >
+> >         local_lock_irqsave(&kcov_percpu_data.lock, flags);
+> > --
+> > 2.25.1
+> >
 
