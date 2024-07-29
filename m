@@ -1,227 +1,142 @@
-Return-Path: <linux-kernel+bounces-265252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF53993EE79
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8738E93EF33
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51B06281D01
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:33:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 454A2283346
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D09C86AE3;
-	Mon, 29 Jul 2024 07:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A414412FF9C;
+	Mon, 29 Jul 2024 07:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LV3V2dJ+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=adomerle.xyz header.i=@adomerle.xyz header.b="fLcMfEtz";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=adomerle.xyz header.i=@adomerle.xyz header.b="R73XDV/r"
+Received: from fallback24.i.mail.ru (fallback24.i.mail.ru [79.137.243.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6726BB4B;
-	Mon, 29 Jul 2024 07:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BAE12EBC7;
+	Mon, 29 Jul 2024 07:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722238373; cv=none; b=O7Cpf7k0SxQnLRQ+81bquGiIb92OBI4GEWfjcbVlXrBw60QGy4wUhviUH2UzM2NLrS4tg9V0QVHelHzl1JI8WDXsMX2Q8s6dHW5ax5pqlCicZtpaRrU9BuaXKRcoc5rfJbNTsAxwVIzeHnGtAseCieDOTMeChSAn4KI+R2/2LcA=
+	t=1722239830; cv=none; b=G30+PWL8voitKyvuVhmBzHznv0TXj9whoWMgwCRHhJXjCrcx6bSzjvjy82LzLUqz8/P6ZYElQSn+hJ2+Mya5dFqTrEyZ09Lc3wBO0z8EUK5PEHfjNzTOc+RTEpdvBf3GjdLcWKldfakccWoMOLQuFag8Z0XCGFpkft5O8xiYvqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722238373; c=relaxed/simple;
-	bh=+S31FkW/FMZb/UwpEATwQCldYe2PdJyJz9xLy+f72vM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QDf/F2x5PEYu91COX6+JSDe3ofcLO1HLsOBTOhXXfmeT+cWRVvVi0oiXH1BTD5TUyNy2trrLlfliauaB//rhDEYqNybKrm8oRQ+cIVWE8+maJ3Rs6E/Qw6rYB4HaQxvHvHy0CrH+dfmSY8vaW5ZSplzifMXLGzLA0Cn2YE5JOZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LV3V2dJ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17FADC32786;
-	Mon, 29 Jul 2024 07:32:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722238372;
-	bh=+S31FkW/FMZb/UwpEATwQCldYe2PdJyJz9xLy+f72vM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LV3V2dJ+aySOEB5PYWvZ4b1V2nU1VSbSkkp1M9+BCKR1ScDda6G9YCHTUn9IY/mu6
-	 lPz8w7Lo8nN8xe6WSN5oJGtoZiefb3UT4xFd8PVYtVrcYvGLrwYWChwIapdFrul1yl
-	 AImZmX0lyfzWt+ippKmdd/1CQqJ2bTQc5mFrl4wWGf+NygFTHCMVah/dhDN8u3p8s6
-	 a60LIHYcyqHLz1jHXx6lYweYIZPock9W66CnuNsAKX3mLmzlefSQAoj1ok4sViabzP
-	 C1T5QMtvWSDY5GayQ85rXP7mYRlQoxxNFCkoyT9bRd9UzqS8ukFLBNS43aFZPnwM0i
-	 2n38jA1A7godA==
-Message-ID: <7ce7f373-c738-48c7-835e-6e7d10e8ae20@kernel.org>
-Date: Mon, 29 Jul 2024 09:32:45 +0200
+	s=arc-20240116; t=1722239830; c=relaxed/simple;
+	bh=mLZGhzCsLduvcX8oRnBAgsrExNxaF/jk9j27gHUDSho=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NkNBh+7HjjCAUPhh6cA4utepmHNO45jcusx8KSO+35DEn4bDGRoyLOoDHSDz8qvjmjL/xt1qhmzPHB/wXVSUXazXJ8tSk0Kw7fUVxOmhi7nPtl9kYAHvuqXUHG3wmGib3GLJa+mgWMfV28j/4HLIKXsed0+FATqsJd4pYcxNrDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=adomerle.xyz; spf=pass smtp.mailfrom=adomerle.xyz; dkim=pass (1024-bit key) header.d=adomerle.xyz header.i=@adomerle.xyz header.b=fLcMfEtz; dkim=pass (1024-bit key) header.d=adomerle.xyz header.i=@adomerle.xyz header.b=R73XDV/r; arc=none smtp.client-ip=79.137.243.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=adomerle.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=adomerle.xyz
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=adomerle.xyz; s=mailru;
+	h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=/TbXQBlgqQSjOPeeAx6Ru67Uzek8is2joDRzfe4Rs1c=;
+	t=1722239828;x=1722329828; 
+	b=fLcMfEtzkDDZNl4lyOIQSM8QQYj6sfgsBGHAt73ErrHW2gIQIGXtR7iGy/ChpcenvNsaRNw/oGACXDfiPfalXI7T2pUFCYWKWsMXJxfyHnN0e85X1JcL1OF4eHo5/xgXjS46EAnHWmNRi3FjYNCOYFtpz0luoA9U+45halUKLr0=;
+Received: from [10.12.4.20] (port=32832 helo=smtp44.i.mail.ru)
+	by fallback24.i.mail.ru with esmtp (envelope-from <me@adomerle.xyz>)
+	id 1sYKuK-00DtzL-TH; Mon, 29 Jul 2024 10:35:01 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=adomerle.xyz; s=mailru; h=Content-Transfer-Encoding:MIME-Version:Message-ID
+	:Date:Subject:Cc:To:From:From:Sender:Reply-To:To:Cc:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+	References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+	List-Owner:List-Archive:X-Cloud-Ids:Disposition-Notification-To;
+	bh=/TbXQBlgqQSjOPeeAx6Ru67Uzek8is2joDRzfe4Rs1c=; t=1722238500; x=1722328500; 
+	b=R73XDV/rM30hly0b8DLSweWZ2+lF2M6mUFV4XuSQkDxaORzRZn/ccKQkSBNRJ5dFq7YjgyrTBgg
+	yF27RDgFAMCSuj2cN/pkY/ik2fWYlcD5ZdaxCFVLQ/LnAYyz4eC/uJJn5bqDM7iz5gSyCJzMowx+5
+	ANymehvjy4Q0VGyDuBs=;
+Received: by exim-smtp-868bf69f6c-zg7fr with esmtpa (envelope-from <me@adomerle.xyz>)
+	id 1sYKu2-00000000275-19Zy; Mon, 29 Jul 2024 10:34:42 +0300
+From: Arseniy Velikanov <me@adomerle.xyz>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	sean.wang@kernel.org,
+	linus.walleij@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	frank.li@vivo.com,
+	jiasheng@iscas.ac.cn,
+	mars.cheng@mediatek.com,
+	owen.chen@mediatek.com,
+	macpaul.lin@mediatek.com,
+	zh.chen@mediatek.com,
+	argus.lin@mediatek.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Arseniy Velikanov <me@adomerle.xyz>
+Subject: [PATCH 0/5] Initial preparations for MT6765
+Date: Mon, 29 Jul 2024 11:34:23 +0400
+Message-ID: <20240729073428.28983-1-me@adomerle.xyz>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] phy: nuvoton: add new driver for the Nuvoton MA35 SoC
- USB 2.0 PHY
-To: hpchen0 <hpchen0nvt@gmail.com>, vkoul@kernel.org, kishon@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240729061509.83828-1-hpchen0nvt@gmail.com>
- <20240729061509.83828-3-hpchen0nvt@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240729061509.83828-3-hpchen0nvt@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Mailru-Src: smtp
+X-7564579A: 646B95376F6C166E
+X-77F55803: 4F1203BC0FB41BD9000B6812E77BE1C669BA6703360678607962ACE7A38F93F0182A05F5380850404A6EBD8EB87EDCD13DE06ABAFEAF6705D991A35C54BC5450303324A9B5BFDD32AE205DC559FE8AC1
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE71BDE6A359BD5B800EA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F79006372521E7C1CE72986C8638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D82A521D5026967AC283832EE758E1DF54C02766D67BBD0307CC7F00164DA146DAFE8445B8C89999728AA50765F7900637F3E38EE449E3E2AE389733CBF5DBD5E9C8A9BA7A39EFB766F5D81C698A659EA7CC7F00164DA146DA9985D098DBDEAEC85FF72824B19451C6F6B57BC7E6449061A352F6E88A58FB86F5D81C698A659EA73AA81AA40904B5D9A18204E546F3947C89DDFE3E282F3DD103F1AB874ED890284AD6D5ED66289B523666184CF4C3C14F6136E347CC761E07725E5C173C3A84C3318E5214BBCD6382BA3038C0950A5D36B5C8C57E37DE458B330BD67F2E7D9AF16D1867E19FE14079C09775C1D3CA48CF3D321E7403792E342EB15956EA79C166A417C69337E82CC275ECD9A6C639B01B78DA827A17800CE7A3CCBC2573AEBDE1C4224003CC83647689D4C264860C145E
+X-C1DE0DAB: 0D63561A33F958A53B5360BC74C387B05002B1117B3ED69692B8EDD8BD57A116715D9AB585B0EB04823CB91A9FED034534781492E4B8EEAD47A3109F1ACFD409C79554A2A72441328621D336A7BC284946AD531847A6065A535571D14F44ED41
+X-C8649E89: 1C3962B70DF3F0ADBF74143AD284FC7177DD89D51EBB7742DC8270968E61249B1004E42C50DC4CA955A7F0CF078B5EC49A30900B95165D34C5CF6F4B28551E3FCFCDB6F81F4ABBC6AFBE35CFF15CE9124750DE6FE30A1E071C782815521A7D1E1D7E09C32AA3244CF66988C60A0257E477DD89D51EBB7742CA0EC8289D0F426EEA455F16B58544A2F3B462F4D52ADD1F5DA084F8E80FEBD3FBC589A3B60A97D065BEEC70984F910843082AE146A756F3
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojX2k8aL79D6V7K7+CihZ7+g==
+X-Mailru-Sender: 5DE64BD8B4008F63F32F89B2E510BB54FBA398EA2A28809EB951B70A5BD4BD8EE2C593C39D5A9F6C0D95629463F16A6A3B9265ADAFE7D7E06F53C80213D1719CA6FC796F43705345A9EF9D9C6A90DD94D3D6663D5D4272A7B4A721A3011E896F
+X-Mras: Ok
+X-7564579A: 646B95376F6C166E
+X-77F55803: 6242723A09DB00B431B8944160407DD0558ADADE14CD5136C862D2A3006641E368F3CF0E9FE49B69BA651B92B2A570CD6964137520D2457C4F9C35499EA414ED6F2C1DBCDC9480F3
+X-7FA49CB5: 0D63561A33F958A514FEFC60D719171D5B13E86127B30E230DA7CF2ADB6A341B8941B15DA834481FA18204E546F3947C3E12B096E30173B4F6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F7900637B3E160BC32DA0ECB389733CBF5DBD5E9B5C8C57E37DE458BD96E472CDF7238E0725E5C173C3A84C30AE2CC35261D99CA75ECD9A6C639B01B4E70A05D1297E1BBCB5012B2E24CD356
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojX2k8aL79D6UEFcxGEd6A4Q==
+X-Mailru-MI: 8000000000000800
+X-Mras: Ok
 
-On 29/07/2024 08:15, hpchen0 wrote:
-> Nuvoton MA35 SoCs support DWC2 USB controller.
-> Add the driver to drive the USB 2.0 PHY transceivers.
-> 
-> Signed-off-by: hpchen0 <hpchen0nvt@gmail.com>
+Hi!
 
-> +
-> +	ret = clk_prepare_enable(p_phy->clk);
-> +	if (ret < 0) {
-> +		dev_err(p_phy->dev, "Failed to enable PHY clock: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	regmap_read(p_phy->sysreg, MA35_SYS_REG_USBPMISCR, &val);
-> +	if (val & PHY0SUSPEND) {
-> +		/*
-> +		 * USB PHY0 is in operation mode already
-> +		 * make sure USB PHY 60 MHz UTMI Interface Clock ready
-> +		 */
-> +		timeout = jiffies + msecs_to_jiffies(200);
-> +		while (time_before(jiffies, timeout)) {
-> +			regmap_read(p_phy->sysreg, MA35_SYS_REG_USBPMISCR, &val);
-> +			if (val & PHY0DEVCKSTB)
-> +				return 0;
-> +			usleep_range(1000, 1500);
-> +		}
+This is first series of patches that fixes MT6765 upstream drivers
+(mainly PWRAP), just a preparation for sending the rest
+of the patches (there were too many of them, so I splitted them
+into several series). More patches can be found here[1].
 
-You want some readl_poll_timeout version here.
+The pinctrl patch (virtual gpios) can be confusing.
+I did the same thing as on MT6735 (see[2]), these are
+EINT-only pins that are not linked to any, so "virtual"
+ones were added.
 
-> +	}
-> +
-> +	/*
-> +	 * reset USB PHY0.
-> +	 * wait until USB PHY0 60 MHz UTMI Interface Clock ready
-> +	 */
-> +	regmap_update_bits(p_phy->sysreg, MA35_SYS_REG_USBPMISCR, 0x7, (PHY0POR | PHY0SUSPEND));
-> +	timeout = jiffies + msecs_to_jiffies(200);
-> +	while (time_before(jiffies, timeout)) {
-> +		regmap_read(p_phy->sysreg, MA35_SYS_REG_USBPMISCR, &val);
-> +		if (val & PHY0DEVCKSTB)
-> +			break;
-> +		usleep_range(1000, 1500);
-> +	}
-> +
-> +	/* make USB PHY0 enter operation mode */
-> +	regmap_update_bits(p_phy->sysreg, MA35_SYS_REG_USBPMISCR, 0x7, PHY0SUSPEND);
-> +
-> +	/* make sure USB PHY 60 MHz UTMI Interface Clock ready */
-> +	timeout = jiffies + msecs_to_jiffies(200);
-> +	while (time_before(jiffies, timeout)) {
-> +		regmap_read(p_phy->sysreg, MA35_SYS_REG_USBPMISCR, &val);
-> +		if (val & PHY0DEVCKSTB)
-> +			return 0;
-> +		usleep_range(1000, 1500);
-> +	}
-> +
-> +	dev_err(p_phy->dev, "Timed out waiting for PHY to power on\n");
-> +	ret = -ETIMEDOUT;
-> +
-> +	clk_disable_unprepare(p_phy->clk);
-> +	return ret;
-> +}
-> +
-> +static int ma35_usb_phy_power_off(struct phy *phy)
-> +{
-> +	struct ma35_usb_phy *p_phy = phy_get_drvdata(phy);
-> +
-> +	clk_disable_unprepare(p_phy->clk);
-> +	return 0;
-> +}
-> +
-> +static const struct phy_ops ma35_usb_phy_ops = {
-> +	.power_on = ma35_usb_phy_power_on,
-> +	.power_off = ma35_usb_phy_power_off,
-> +	.owner = THIS_MODULE,
-> +};
-> +
-> +static int ma35_usb_phy_probe(struct platform_device *pdev)
-> +{
-> +	struct phy_provider *provider;
-> +	struct ma35_usb_phy *p_phy;
-> +	const char *clkgate;
-> +	struct phy *phy;
-> +
-> +	p_phy = devm_kzalloc(&pdev->dev, sizeof(*p_phy), GFP_KERNEL);
-> +	if (!p_phy)
-> +		return -ENOMEM;
-> +
-> +	p_phy->dev = &pdev->dev;
-> +	platform_set_drvdata(pdev, p_phy);
-> +
-> +	p_phy->sysreg = syscon_regmap_lookup_by_phandle(p_phy->dev->of_node, "nuvoton,sys");
-> +	if (IS_ERR(p_phy->sysreg))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(p_phy->sysreg),
-> +				     "Failed to get SYS registers\n");
-> +
-> +	/* enable clock */
-> +	of_property_read_string(p_phy->dev->of_node, "clock-enable", &clkgate);
+Also, there were no MT6765 pinctrl bindings in the upstream,
+so I decided to attach them to this series of patches too.
 
-There is no such property.
+Thanks, Arseniy.
 
-> +	p_phy->clk = devm_clk_get(p_phy->dev, clkgate);
+[1] https://github.com/adomerle/linux-mt6765/tree/mt6765-next
+[2] https://gitlab.com/mt6735-mainline/linux/-/commit/c4b988b2bea231e9175fd1d78f7602de1931e4d0
 
-Don't mix styles of variables: you were using pdev->dev but now entirely
-different. Stick to pdev->dev.
+Arseniy Velikanov (5):
+  dt-bindings: clock: mt6765: Add missing PMIC clock
+  clk: mediatek: mt6765: Add missing PMIC clock
+  pinctrl: mediatek: mt6765: Add virtual GPIOs
+  dt-bindings: pinctrl: mediatek: Add bindings for MT6765 pin controller
+  soc: mediatek: mtk-pmic-wrap: Drop CAP reset in MT6765
 
-> +	if (IS_ERR(p_phy->clk))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(p_phy->clk),
+ drivers/clk/mediatek/clk-mt6765.c             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt6765.h |   66 ++
+ drivers/soc/mediatek/mtk-pmic-wrap.c          |    2 +-
+ include/dt-bindings/clock/mt6765-clk.h        |  131 +--
+ .../pinctrl/mediatek,mt6765-pinfunc.h         | 1025 +++++++++++++++++
+ 5 files changed, 1159 insertions(+), 66 deletions(-)
+ create mode 100644 include/dt-bindings/pinctrl/mediatek,mt6765-pinfunc.h
 
-And here again pdev->dev... Bring some consistency, not random coding style.
-
-> +				     "Failed to get usb_phy clock\n");
-> +
-
-
-Best regards,
-Krzysztof
+-- 
+2.45.2
 
 
