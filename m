@@ -1,178 +1,190 @@
-Return-Path: <linux-kernel+bounces-266266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B7ED93FD55
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:29:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD3493FD5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EB9C1C21DE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:29:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BACAB2847E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3451862BD;
-	Mon, 29 Jul 2024 18:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0974183087;
+	Mon, 29 Jul 2024 18:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="B44W4GFB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UJgRsrN4"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09167406F;
-	Mon, 29 Jul 2024 18:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A197603A;
+	Mon, 29 Jul 2024 18:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722277763; cv=none; b=s91zr6EgBA/hKYzgVMq96xOVmRql8ioKRAn/Jl8KmElt0LAImZeX6tXh/ah5zrc4AerjvLlqI6ZTLKY8qC9pcpL8qA43/IVjljzwdJMKS1wMXObQaOpRGDBRYzqYuctB/nL8xJblGny9+4zVxIIPNK7WDi6Vu/WB0m5d5fT6MYY=
+	t=1722277867; cv=none; b=AWDGY66BnSGi2++4ntA7JSHm+NtER//6uAEDdYT1MZowDoPS8Fi8b+lU1A5D4xMv7RzLRFiHMJxZNXpsZhBkNEQCcR6rFOqTEFeSkPuxFKxyn06MjUFfVV/C/qJa9oQMtsgBvVqJJxIptVdK28p14qpEUhcQNa6eD4txrUQvdJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722277763; c=relaxed/simple;
-	bh=SowG40l8toZuzhrngWrnHhFH+211WOG77ibYlM4AxZY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hBXnKS8/yyt+eBpc0b3EO1FxfzPr52vndgl/JZpID+ku8xZjIdSQLYMT0r5FGTw8CaygWUGlDk3CJO4ix/YDvstFa27Cah5i7WR1ZYYHU6AdR/M8gUrOaPeIGo7OnPkXw48AGMv+GmGa1udp/IpSSYPBthQF27Be4Hvy/IAHDkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=B44W4GFB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TAGfaP021303;
-	Mon, 29 Jul 2024 18:28:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Q4xBxrNsmEAnm8o61Q0nTWB+09MMOMxU3VqKq1UCigc=; b=B44W4GFBRX1gQdt5
-	BXvw88OpcbG/fcoDDJ4UDJt4uDsCS+eSiOxOLJno8BegDEZMCse478Es322o5fkl
-	U8ud4B25NilYn9OofPk0cF7gkK00/d/B6ftiqEj8jBZDkU1Kr/UsrlIJCoICOsv5
-	wgiX/H7UOLcpZzlUFklhynEbP9eBUTeQl72fX7EOqFP+O7Q/Erxa1hQ3dWefBk/4
-	OeOXg/o/cTk+FP2/geLPYmRUK/8kUaR8xkNuAlHWq4cAvKUqexlACsf/4M0aDQ5M
-	0jcQrChlbSTnjsZGSDfVjcUPpeds2RZsV9fMKb2pr/i/qxViFd+DIIXEuav/XPrr
-	Oat90A==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mrfxn5gx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 18:28:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TISiOo006559
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 18:28:44 GMT
-Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
- 2024 11:28:44 -0700
-Message-ID: <8fa86c0c-183b-4787-9525-38dfe6bcecc6@quicinc.com>
-Date: Mon, 29 Jul 2024 11:28:35 -0700
+	s=arc-20240116; t=1722277867; c=relaxed/simple;
+	bh=fiEkvKXNIQd3n6B5sAlgqleRceqrBpU8/u2J3GfGbXM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gWzI46GuyRJE5dqhr6W16EV7Jo8aHCyydSbw8AUf1UO8wC6oKQaDhWSOiycwCl6s2lIIwlgDYcsOWXhpY4Cbfw+QFJHIC/hq8WyLO/6xPIhHy3o0lFl29VGQVDI/rdbn4/qLIAUg0sJ3bgjsJwC8OKvT4UDHb+kURx+057FzYjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UJgRsrN4; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3685b9c8998so1454671f8f.0;
+        Mon, 29 Jul 2024 11:31:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722277864; x=1722882664; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jssj0R5WbBD/D0bXekdzCX19Oz7kjShtw75YWSFqWPc=;
+        b=UJgRsrN44KHnsFMi2UjMa5thZ/RjHQVgHxONvs8znr0SgP/PbhkTtetBwY6wMVkFnY
+         fxThB5xJURyCDy2N37mYhsFclbduJMFa4oW2nbXZDhuIbV4uGa9Wx9/9xnUvOhbJbQy/
+         hwr7eZP2PKozbABR2XhqPndUsh5AuvOwwrKJZA5i5KPu7OY6dyiVLIeWW0NeiS88n4wg
+         gtiUsnEatsxnoRSP1WPQvzx5htLHXAHjmzMieO7ajBAt1qwkzFIbX5jTmQ3mNLuDguCx
+         3kbW0mzVJ9RdWmLxUjsTEBpOP9PX4fTmP88i9bEeOFU76JOYCZ8ds1e7f94LeviRmRjt
+         sYAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722277864; x=1722882664;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jssj0R5WbBD/D0bXekdzCX19Oz7kjShtw75YWSFqWPc=;
+        b=EQ1aVMk5WT40BxAj4iwq/iWXD7x1BmIgn1f7+a895xToVXVMqcLNc40kver/MnCUpY
+         HJ9UJncAvSy2uE0+QK43IyzIyXXB07Y+8YdV0h7lzKF5Og+VSRDds1gx2I+c9XHmAtfb
+         NA8kz7s9seIdbcVoVREdZbmafTLNyL8lBJ4lirlnpYJsRsSD8r+U9oRM3SNfdcwYTT1O
+         WJLn9HONZwIHJC3MMiFV5N7lSJk39h/z4IsaSeW8mIz+XsSk9NPJVoay5Iwd5wdCmXfE
+         eR+56AnK/lk/5xc/zQA6flPAPb3ijiMmXBgdE+tY7Xi0EyJmdSIH7F5HGlDiGpfB+UY/
+         LCWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUf4+LzZyeU+h/QWwfyYpaWmDE0leunCs6TdUkBoz0XwLOZAvFqujM7rGvBPw2vYuzDBqmxl0b6+O87lZtMXuwJ63pm9H3izkJAKLuA+0FzTibuf50iEoNN2Zpvl17nKWqsn8NR
+X-Gm-Message-State: AOJu0YyMh0TptMYSiunYHaatA2re7lqEEORiFb6F4Tw665VL5Q5/RUcO
+	Rd1w8ES4n/BxG7QPIXJOEcVZDF1ZFeYgy15l66/OdbEy9uuiezKt
+X-Google-Smtp-Source: AGHT+IGckqeV7E3QtAQI0Wo2goxFEwu/asovTfRvWoVzIEz3+nSxwluR1w5l8j0bg8XNacAX40nuXQ==
+X-Received: by 2002:a5d:62c4:0:b0:368:7f58:6550 with SMTP id ffacd0b85a97d-36b5ceef410mr5313692f8f.15.1722277863270;
+        Mon, 29 Jul 2024 11:31:03 -0700 (PDT)
+Received: from yifee.lan ([176.230.105.233])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367c0aa1sm12800165f8f.21.2024.07.29.11.31.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 11:31:02 -0700 (PDT)
+From: Elad Yifee <eladwf@gmail.com>
+To: Felix Fietkau <nbd@nbd.name>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: Elad Yifee <eladwf@gmail.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Joe Damato <jdamato@fastly.com>
+Subject: [PATCH net-next v2 0/2] net: ethernet: mtk_eth_soc: improve RX performance
+Date: Mon, 29 Jul 2024 21:29:53 +0300
+Message-ID: <20240729183038.1959-1-eladwf@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/dp: fix the max supported bpp logic
-To: Stephen Boyd <swboyd@chromium.org>, Daniel Vetter <daniel@ffwll.ch>,
-        "David Airlie" <airlied@gmail.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Marijn
- Suijten <marijn.suijten@somainline.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Tanmay Shah <tanmay@codeaurora.org>,
-        Vara Reddy
-	<quic_varar@quicinc.com>,
-        <freedreno@lists.freedesktop.org>
-CC: <dri-devel@lists.freedesktop.org>, <quic_jesszhan@quicinc.com>,
-        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
-        <quic_khsieh@quicinc.com>, Rob Clark <robdclark@chromium.org>,
-        "Chandan
- Uddaraju" <chandanu@codeaurora.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240725220320.130916-1-quic_abhinavk@quicinc.com>
- <CAE-0n50mBEX98HH+5BurM-uRyzrxcPXFJ7yLg__hFJHfYjm67Q@mail.gmail.com>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <CAE-0n50mBEX98HH+5BurM-uRyzrxcPXFJ7yLg__hFJHfYjm67Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dYymbe-59TNSP4-xzxgpWlPlCA8jceAr
-X-Proofpoint-ORIG-GUID: dYymbe-59TNSP4-xzxgpWlPlCA8jceAr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-29_16,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- lowpriorityscore=0 priorityscore=1501 mlxlogscore=999 malwarescore=0
- bulkscore=0 phishscore=0 clxscore=1015 mlxscore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407290124
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Stephen
+This small series includes two short and simple patches to improve RX performance
+on this driver.
 
-On 7/26/2024 5:24 PM, Stephen Boyd wrote:
-> Quoting Abhinav Kumar (2024-07-25 15:03:19)
->> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/dp_panel.c
->> index a916b5f3b317..56ce5e4008f8 100644
->> --- a/drivers/gpu/drm/msm/dp/dp_panel.c
->> +++ b/drivers/gpu/drm/msm/dp/dp_panel.c
->> @@ -423,8 +424,10 @@ int dp_panel_init_panel_info(struct dp_panel *dp_panel)
->>                                  drm_mode->clock);
->>          drm_dbg_dp(panel->drm_dev, "bpp = %d\n", dp_panel->dp_mode.bpp);
->>
->> -       dp_panel->dp_mode.bpp = max_t(u32, 18,
->> -                               min_t(u32, dp_panel->dp_mode.bpp, 30));
->> +       max_supported_bpp = dp_panel_get_mode_bpp(dp_panel, dp_panel->dp_mode.bpp,
->> +                                                 dp_panel->dp_mode.drm_mode.clock);
->> +       dp_panel->dp_mode.bpp = max_t(u32, 18, max_supported_bpp);
-> 
-> Is the max_t() usage still required once 'max_supported_bpp' is also a
-> u32? Also, what is 18? Shouldn't that be some sort of define so we know
-> what it represents?
-> 
-> Or maybe none of that is required? From what I can tell,
-> dp_panel_get_mode_bpp() calls dp_panel_get_supported_bpp() which will
-> essentially clamp the bpp range between 18 and 30, unless
-> dp_panel->dp_mode.bpp is between 30 and 18 but not divisible by 6, e.g.
-> 29. Perhaps this patch can be included and the max_t above dropped.
-> 
-> ---8<--
-> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c
-> b/drivers/gpu/drm/msm/dp/dp_panel.c
-> index 07db8f37cd06..5cd7c138afd3 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_panel.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_panel.c
-> @@ -90,22 +90,22 @@ static int dp_panel_read_dpcd(struct dp_panel *dp_panel)
->   static u32 dp_panel_get_supported_bpp(struct dp_panel *dp_panel,
->   		u32 mode_edid_bpp, u32 mode_pclk_khz)
->   {
-> -	struct dp_link_info *link_info;
-> +	const struct dp_link_info *link_info;
->   	const u32 max_supported_bpp = 30, min_supported_bpp = 18;
-> -	u32 bpp = 0, data_rate_khz = 0;
-> +	u32 bpp, data_rate_khz;
-> 
->   	bpp = min_t(u32, mode_edid_bpp, max_supported_bpp);
-> 
->   	link_info = &dp_panel->link_info;
->   	data_rate_khz = link_info->num_lanes * link_info->rate * 8;
-> 
-> -	while (bpp > min_supported_bpp) {
-> +	do {
->   		if (mode_pclk_khz * bpp <= data_rate_khz)
-> -			break;
-> +			return bpp;
->   		bpp -= 6;
-> -	}
-> +	} while (bpp > min_supported_bpp);
-> 
-> -	return bpp;
-> +	return min_supported_bpp;
->   }
-> 
+iperf3 result without these patches:
+	[ ID] Interval           Transfer     Bandwidth
+	[  4]   0.00-1.00   sec   563 MBytes  4.72 Gbits/sec
+	[  4]   1.00-2.00   sec   563 MBytes  4.73 Gbits/sec
+	[  4]   2.00-3.00   sec   552 MBytes  4.63 Gbits/sec
+	[  4]   3.00-4.00   sec   561 MBytes  4.70 Gbits/sec
+	[  4]   4.00-5.00   sec   562 MBytes  4.71 Gbits/sec
+	[  4]   5.00-6.00   sec   565 MBytes  4.74 Gbits/sec
+	[  4]   6.00-7.00   sec   563 MBytes  4.72 Gbits/sec
+	[  4]   7.00-8.00   sec   565 MBytes  4.74 Gbits/sec
+	[  4]   8.00-9.00   sec   562 MBytes  4.71 Gbits/sec
+	[  4]   9.00-10.00  sec   558 MBytes  4.68 Gbits/sec
+	- - - - - - - - - - - - - - - - - - - - - - - - -
+	[ ID] Interval           Transfer     Bandwidth
+	[  4]   0.00-10.00  sec  5.48 GBytes  4.71 Gbits/sec                  sender
+	[  4]   0.00-10.00  sec  5.48 GBytes  4.71 Gbits/sec                  receiver
 
-Thanks for the feedback.
+iperf3 result with "use prefetch methods" patch:
+	[ ID] Interval           Transfer     Bandwidth
+	[  4]   0.00-1.00   sec   598 MBytes  5.02 Gbits/sec
+	[  4]   1.00-2.00   sec   588 MBytes  4.94 Gbits/sec
+	[  4]   2.00-3.00   sec   592 MBytes  4.97 Gbits/sec
+	[  4]   3.00-4.00   sec   594 MBytes  4.98 Gbits/sec
+	[  4]   4.00-5.00   sec   590 MBytes  4.95 Gbits/sec
+	[  4]   5.00-6.00   sec   594 MBytes  4.98 Gbits/sec
+	[  4]   6.00-7.00   sec   594 MBytes  4.98 Gbits/sec
+	[  4]   7.00-8.00   sec   593 MBytes  4.98 Gbits/sec
+	[  4]   8.00-9.00   sec   593 MBytes  4.98 Gbits/sec
+	[  4]   9.00-10.00  sec   594 MBytes  4.98 Gbits/sec
+	- - - - - - - - - - - - - - - - - - - - - - - - -
+	[ ID] Interval           Transfer     Bandwidth
+	[  4]   0.00-10.00  sec  5.79 GBytes  4.98 Gbits/sec                  sender
+	[  4]   0.00-10.00  sec  5.79 GBytes  4.98 Gbits/sec                  receiver
 
-Your change looks valid. We can use this and drop the max_t usage.
+iperf3 result with "use PP exclusively for XDP programs" patch:
+	[ ID] Interval           Transfer     Bandwidth
+	[  4]   0.00-1.00   sec   635 MBytes  5.33 Gbits/sec
+	[  4]   1.00-2.00   sec   636 MBytes  5.33 Gbits/sec
+	[  4]   2.00-3.00   sec   637 MBytes  5.34 Gbits/sec
+	[  4]   3.00-4.00   sec   636 MBytes  5.34 Gbits/sec
+	[  4]   4.00-5.00   sec   637 MBytes  5.34 Gbits/sec
+	[  4]   5.00-6.00   sec   637 MBytes  5.35 Gbits/sec
+	[  4]   6.00-7.00   sec   637 MBytes  5.34 Gbits/sec
+	[  4]   7.00-8.00   sec   636 MBytes  5.33 Gbits/sec
+	[  4]   8.00-9.00   sec   634 MBytes  5.32 Gbits/sec
+	[  4]   9.00-10.00  sec   637 MBytes  5.34 Gbits/sec
+	- - - - - - - - - - - - - - - - - - - - - - - - -
+	[ ID] Interval           Transfer     Bandwidth
+	[  4]   0.00-10.00  sec  6.21 GBytes  5.34 Gbits/sec                  sender
+	[  4]   0.00-10.00  sec  6.21 GBytes  5.34 Gbits/sec                  receiver
 
-Let me push this with your Suggested-by credits.
+iperf3 result with both patches:
+	[ ID] Interval           Transfer     Bandwidth
+	[  4]   0.00-1.00   sec   652 MBytes  5.47 Gbits/sec
+	[  4]   1.00-2.00   sec   653 MBytes  5.47 Gbits/sec
+	[  4]   2.00-3.00   sec   654 MBytes  5.48 Gbits/sec
+	[  4]   3.00-4.00   sec   654 MBytes  5.49 Gbits/sec
+	[  4]   4.00-5.00   sec   653 MBytes  5.48 Gbits/sec
+	[  4]   5.00-6.00   sec   653 MBytes  5.48 Gbits/sec
+	[  4]   6.00-7.00   sec   653 MBytes  5.48 Gbits/sec
+	[  4]   7.00-8.00   sec   653 MBytes  5.48 Gbits/sec
+	[  4]   8.00-9.00   sec   653 MBytes  5.48 Gbits/sec
+	[  4]   9.00-10.00  sec   654 MBytes  5.48 Gbits/sec
+	- - - - - - - - - - - - - - - - - - - - - - - - -
+	[ ID] Interval           Transfer     Bandwidth
+	[  4]   0.00-10.00  sec  6.38 GBytes  5.48 Gbits/sec                  sender
+	[  4]   0.00-10.00  sec  6.38 GBytes  5.48 Gbits/sec                  receiver
 
->   static int dp_panel_update_modes(struct drm_connector *connector,
+About 16% more packets/sec without XDP program loaded,
+and about 5% more packets/sec when using PP.
+Tested on Banana Pi BPI-R4 (MT7988A)
+
+---
+Technically, this is version 2 of the “use prefetch methods” patch.
+Initially, I submitted it as a single patch for review (RFC),
+but later I decided to include a second patch, resulting in this series
+Changes in v2:
+	- Add "use PP exclusively for XDP programs" patch and create this series
+---
+Elad Yifee (2):
+  net: ethernet: mtk_eth_soc: use prefetch methods
+  net: ethernet: mtk_eth_soc: use PP exclusively for XDP programs
+
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+-- 
+2.45.2
+
 
