@@ -1,198 +1,155 @@
-Return-Path: <linux-kernel+bounces-265382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E4D93F064
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:57:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 576D493F01E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A466283A4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:57:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13FE328215F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BC013D890;
-	Mon, 29 Jul 2024 08:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0291613D258;
+	Mon, 29 Jul 2024 08:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JRxF2Ww1"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DjhHNEkJ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EEA13D258
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33482328B6;
+	Mon, 29 Jul 2024 08:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722243422; cv=none; b=K7+gng4r8ysU64ohr+8V9JgLcuquGXmV6yZEAeg813jjkN+FwlXlPWak2hcoNnuQYmQ/ud5DJczMs43S5X+bgmbafUqEJeGyT+sC4lS/e5857u7A+yO6Vmgil/85FCXgVujwJ1UN6BYqUa7naiQ7WyZUDI+quoiEbefsHHmgqe4=
+	t=1722242910; cv=none; b=MY4wAzXQlZ02ACJIkuE7H0POesjLr12uDoY+HC2/S+Kve1mMaLt/PQWneMwl83csf3HbeQ+I0zjiIBN52gL8r5J4wcGeovjFR48+t+EQ6yFzZ3gKiBJIOWVu3f38VYg3TV8iXY1UbwibS0CQMD8VFUc5QzAEyRG31L0m9KrdJH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722243422; c=relaxed/simple;
-	bh=KeM4c07VojYtCdZczysyYfuZpF3y8mYfOdd+YnFoDww=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=PHTbfVgI7hBOQGEkBC5MozVENaeHZkrZXXpc+puS3LgqxM7S38sYAHRHZ9EIItpqQuXXIWyZJcN+bgMoFP/v8qJ5443wc14to7WWo9KQIk3iRGsPVjgn/NQRzuDsiufKp/BqHpCXHqeSjBtk1RhwOApZNhk5m1DvpH0jt1nwOsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=JRxF2Ww1; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240729085657epoutp0343229f64294e24c937542eb7a6f0fa41~mo0NnpRtp3039830398epoutp03h
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:56:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240729085657epoutp0343229f64294e24c937542eb7a6f0fa41~mo0NnpRtp3039830398epoutp03h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1722243417;
-	bh=zwhFL/gFFCFxNmLG6KqLHIpMvmHthZPS+iq4mspQerE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=JRxF2Ww1ruIj0eDPVvkIIOWAFi2qunK+kkjnzw+SwywFQ7o64KahYjfG9nERI6y3v
-	 ahWMVV/wuckQ8owT1b3U9iXXhxCQxxJ14+XfH5VZAlonLSe9I95npTWWmeJWlUgu+X
-	 Zkv+XmuqEWrMScb/3TsfaBnmCJ2yS8QkB3bKU5rY=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240729085656epcas5p261330f99ada0d207dc2881afc16858ab~mo0M_C3m51791617916epcas5p2U;
-	Mon, 29 Jul 2024 08:56:56 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4WXXKf2cZ7z4x9Q1; Mon, 29 Jul
-	2024 08:56:54 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	19.DC.09640.65957A66; Mon, 29 Jul 2024 17:56:54 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240729084804epcas5p2c93a488d15753f398057711aedf40494~mosc4uBNA0809708097epcas5p2e;
-	Mon, 29 Jul 2024 08:48:04 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240729084804epsmtrp2436317382069a6653acd163ab60b2192~mosc2fhqL2719827198epsmtrp2I;
-	Mon, 29 Jul 2024 08:48:04 +0000 (GMT)
-X-AuditID: b6c32a49-a57ff700000025a8-f6-66a759564d7d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	65.97.07567.34757A66; Mon, 29 Jul 2024 17:48:03 +0900 (KST)
-Received: from FDSFTE596 (unknown [107.122.82.131]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240729084800epsmtip29b1ee1110bd8de8987e49c08d4a39727~mosaBiuzY2816328163epsmtip2i;
-	Mon, 29 Jul 2024 08:48:00 +0000 (GMT)
-From: "Swathi K S" <swathi.ks@samsung.com>
-To: "'Andrew Lunn'" <andrew@lunn.ch>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-	<richardcochran@gmail.com>, <alexandre.torgue@foss.st.com>,
-	<joabreu@synopsys.com>, <mcoquelin.stm32@gmail.com>,
-	<alim.akhtar@samsung.com>, <linux-fsd@tesla.com>,
-	<pankaj.dubey@samsung.com>, <ravi.patel@samsung.com>,
-	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <22eae086-0f77-4df7-9d70-e7249d67b106@lunn.ch>
-Subject: RE: [PATCH v3 1/4] dt-bindings: net: Add FSD EQoS device tree
- bindings
-Date: Mon, 29 Jul 2024 14:17:59 +0530
-Message-ID: <003001dae194$06218380$12648a80$@samsung.com>
+	s=arc-20240116; t=1722242910; c=relaxed/simple;
+	bh=MlEFOPmaJKPHejSEj4rZBeQgNBABJESsADXLRYP/rV0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rSt6i5e39atcEqSntSCLsCxpAXFsLcllho5CkRbaUpL0J7u0GAWX7WGJuNJVuoVn57TTBkyeX58X0UmShEDXt8w6QuVhhdcPX8phaK4M4xq63xUPkZQTTL9EGNuLyquVulkE9FIAf4oxdIPxHLj0e4Gp6fEebDHco51RN7QXHKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DjhHNEkJ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [IPV6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f] (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 66457596;
+	Mon, 29 Jul 2024 10:47:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1722242859;
+	bh=MlEFOPmaJKPHejSEj4rZBeQgNBABJESsADXLRYP/rV0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DjhHNEkJb/6nkjo8qdca/iB3zkzF2Zh5rRbKUQ+atoCkLShBE+Otbo+wbiJ3x4xrM
+	 qV0aOxPAFk6DyzUnuMmIfKkQEmSF8Y3N3wI4/JeHOHsulDN0UrWcfMm9mApWXfWV9K
+	 IGB+RSO7QAtKL1+gSyYIo7A9mt5jsizh0veLgxoo=
+Message-ID: <f521ed1b-17ce-4ccb-b14e-53fe5fbfee64@ideasonboard.com>
+Date: Mon, 29 Jul 2024 14:18:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: imx335: Fix reset-gpio handling
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: linux-media@vger.kernel.org,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ open list <linux-kernel@vger.kernel.org>,
+ Tommaso Merciai <tomm.merciai@gmail.com>
+References: <20240729060535.3227-1-umang.jain@ideasonboard.com>
+ <4me3tw572feft3x4dn3ritpr6avss6ebupixrg7qrlsy5z6kny@mqeoqhr7uh2x>
+Content-Language: en-US
+From: Umang Jain <umang.jain@ideasonboard.com>
+In-Reply-To: <4me3tw572feft3x4dn3ritpr6avss6ebupixrg7qrlsy5z6kny@mqeoqhr7uh2x>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQG0kE2cByMDcfrFjxkR49X5VWx9JAKGcKNgAXd78/0C+uayQwF2+vVQAedCxeOyB05I0A==
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTdxTHd3vb3sJSc4egP7roSDcmZeFRHvUWBF+M3G3GoUs084+VO3qh
-	DPpYbwvTxc0tIPKwSngMutIRIkMQBCpvLErL1AmBJhYygyWCMHlYcOBMGMOt7YWN/z7ne873
-	d3LOL4cD++QgPE66QkOqFUQmn+3N7LAKgkJOfFqXGt5yDcVW58oh7LGxg42NOCww1mgeZmCG
-	kRwm9tPAMAubuTOFYBM1iyxMNzsJY7YOHQszPRljYZPzJ7EHPQY2VjHSx8CM600s7E71Duzl
-	4DMIq2l/gWCTz28i2MDQLIzlmgeQA354W/1DBj5zqR3Bu/UOBK82aXFTQz4bfzR2k43fuPIt
-	3t21wsCX+kbZuK6tAcLbbq1A+KvvqxB8xbQ7iXsqY5+MJKSkOoBUpCil6Yq0OP5Hn0gOS6JF
-	4cIQoRjbyw9QEHIyjp9wJCkkMT3TNTA/IIvI1LqkJIKi+GHx+9RKrYYMkCkpTRyfVEkzVVGq
-	UIqQU1pFWqiC1MQIw8Mjol2FyRkyXUkZQ9XB/WrQucw8Bz3yLoA4HIBGgdp+cQHkzfFBeyFQ
-	v3wJKYC8XMEyBFYtyXTiJQTqRq8yNw3lpQdo3QwBs82J0MEsBDob/2S73Ww0GNTo+jwv+aLv
-	AGNVKcNdBKM9TDCUV8x0J7zQWNBS0e7h7egxYPy9wmNmooFAX74AuZmLioGjwcqk+Q3wa+W0
-	h2H0LdDpNMBuBmgAWJ35mUU3OwGeOg0sumYn+GW1CHY3BmivF3DaLRBtSACNNbYN3g7m77Yh
-	NPPAyqKZTbMEXNONMmmWAcdfxRv6fnDbbvCsAkYFoLknjJZ3gbL71xl0323g4to0g9a5oMu4
-	yW+D9YWxjSf9QUftEnIZ4uu3jKbfMpp+ywj6/7tVQ8wGyJ9UUfI0kopWCRVk9n//naKUmyDP
-	OQR/0AU5Hj8PtUAMDmSBAAfm+3Il9tpUH66UOH2GVCslam0mSVmgaNe+i2GeX4rSdU8KjUQY
-	JQ6PEolEUeJIkZC/k7uQWyX1QdMIDZlBkipSveljcLx45xjNewbTj74/0R32Y1ApqzhVULbr
-	lZwaj7w7Z7xwMnl/rBZnvm5qnU0saoomI7EH+f/kLNk+thcW6hopQdC7g3vYiP9929EB05mJ
-	w/eeVCfGnp8usTb734sfX9MHcr7cMVwo91tPePpDXfnnlVMp1+UR9VeOp0f0Zh06+E3810VD
-	aU19gcP2D79b/Kw/NV5BHtqdrcrONj/b+/Dvlj8iwbpPTHn8IpXMmOuxtqrycu1vGo9cTHGK
-	DmatCa+yMlpvVFsl0uNrt3jwBcyxkC/mcaZfIyoLl/tjfnvvi/GakpHTztvrgsUl8flteW3W
-	rmOtZ09NBRKyeZPvC7lBsGI72y7shPlMSkYIg2E1RfwLgDzTdZcEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDIsWRmVeSWpSXmKPExsWy7bCSvK5z+PI0g0e7zS1+vpzGaPFg3jY2
-	i/N3DzFbrNl7jslizvkWFov5R86xWjw99ojd4t6id6wWfS8eMltc2NbHarHp8TVWi4evwi0u
-	75rDZjHj/D4mi3l/17JaHFsgZvHt9BtGi0Vbv7BbPPywh93iyJkXzBate4+wO4h6bFl5k8nj
-	af9Wdo+ds+6yeyzYVOqxaVUnm8eda3vYPDYvqffYueMzk8f7fVfZPPq2rGL02LL/M6PHv6a5
-	7B6fN8kF8EZx2aSk5mSWpRbp2yVwZfRNnspUsI234vTbTywNjHe4uhg5OCQETCSmTXHoYuTi
-	EBLYzShxpKWJqYuREyguKfGpeSorhC0ssfLfc3aIomeMEs9aTzODJNgEtCQW9e1jB7FFBFQk
-	5s2dwgRSxCxwjkWi73gHI0THWSaJxyuWgI3lFLCW2DBjKwuILSzgL7Fux1Q2EJtFQFVi1rTX
-	jCA2r4ClxN1Vh1kgbEGJkzOfsICcyiygJ9G2EayEWUBeYvvbOcwQ1ylI/Hy6jBXiiDCJ52/n
-	sELUiEsc/dnDPIFReBaSSbMQJs1CMmkWko4FjCyrGCVTC4pz03OTDQsM81LL9YoTc4tL89L1
-	kvNzNzGCE4SWxg7Ge/P/6R1iZOJgPMQowcGsJMIbf2VpmhBvSmJlVWpRfnxRaU5q8SFGaQ4W
-	JXFewxmzU4QE0hNLUrNTUwtSi2CyTBycUg1M63IPzFuj8nni9ah70hGsEknb77BNMpx3Yvun
-	sAtO/y3K7/ZXh51e++KWjPCviXs3np9z74b4RlelgCMKdTuPB7s8PO5nw/QmV1xnVaX9Ucuz
-	/y/zBIdZSKdlXc384dHuuuvSf+8VmmLXfd+VF21UKOc8ork+oN/c8bOR+LFVxmG8bssLp32Y
-	yK08pYxpud8By5SFpSdaLjyTqVz03ivj4GPGBydfmXilWvz4NEWu8/EGsw/P1vXGrEwQf8dV
-	ed6tuy9hRq7Sn+r9bM8zeK08pxxTdlWfUd/MmVgoF6ompcL96ceNd1yntgpaXexbZxYclZEY
-	+Pdp7ePEttPLjrya2bZ3RWO1cvWZmJ3qUptilFiKMxINtZiLihMBQNjKBn8DAAA=
-X-CMS-MailID: 20240729084804epcas5p2c93a488d15753f398057711aedf40494
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230814112605epcas5p31aca7b23e70e8d93df11414291f7ce66
-References: <20230814112539.70453-1-sriranjani.p@samsung.com>
-	<CGME20230814112605epcas5p31aca7b23e70e8d93df11414291f7ce66@epcas5p3.samsung.com>
-	<20230814112539.70453-2-sriranjani.p@samsung.com>
-	<4e745c2a-57bd-45da-8bd2-ee1cb2bab84f@lunn.ch>
-	<000201dab7f2$1c8d4580$55a7d080$@samsung.com>
-	<22eae086-0f77-4df7-9d70-e7249d67b106@lunn.ch>
 
+Hi Jacopo
 
+On 29/07/24 1:42 pm, Jacopo Mondi wrote:
+> Hi Umang
+>
+> On Mon, Jul 29, 2024 at 11:35:35AM GMT, Umang Jain wrote:
+>> The imx335 reset-gpio is initialised with GPIO_OUT_LOW during probe.
+> How is this related to this change ? The value to which the GPIO is
+> initialized to in probe is the physical level.
+>
+> What matters is the gpio line active level, which should be described
+> in the sensor's datasheet. What's the active level of the reset gpio
+> line ?
 
-> -----Original Message-----
-> From: Andrew Lunn <andrew@lunn.ch>
-> Sent: 06 June 2024 18:56
-> To: Swathi K S <swathi.ks@samsung.com>
-> Cc: davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
-> pabeni@redhat.com; robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
-> conor+dt@kernel.org; richardcochran@gmail.com;
-> alexandre.torgue@foss.st.com; joabreu@synopsys.com;
-> mcoquelin.stm32@gmail.com; alim.akhtar@samsung.com; linux-
-> fsd@tesla.com; pankaj.dubey@samsung.com; ravi.patel@samsung.com;
-> netdev@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org
-> Subject: Re: [PATCH v3 1/4] dt-bindings: net: Add FSD EQoS device tree
-bindings
-> 
-> > > > +  fsd-rx-clock-skew:
-> > > > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > > > +    items:
-> > > > +      - items:
-> > > > +          - description: phandle to the syscon node
-> > > > +          - description: offset of the control register
-> > > > +    description:
-> > > > +      Should be phandle/offset pair. The phandle to the syscon
-node.
-> > >
-> > > What clock are you skew-ing here? And why?
-> >
-> > As per customer's requirement, we need 2ns delay in fsys block both in
-> > TX and RX path.
-> 
-> Lots of people get RGMII delays wrong. Please look back at the mailing
-list
-> where there is plenty of discussion about this. I don't want to have to
-repeat
-> myself yet again...
+The XCLR active level is "Low" at the init time. It is set to "high" 
+during power-on / normal operation
 
-Sorry for the delay.
-We took time to confirm with the board designer regarding this delay.
-This is not a mandatory one to have and hence we are dropping clock-skewing
-here.
+>
+>> However, the reset-gpio logical value is set to 1 in during power-on
+>> and to 0 on power-off. This is incorrect as the reset line
+>> cannot be high during power-on and low during power-off.
+> If the line is physically high or low only depends on how the active
+> level is specified in DTS, not by the logical value provided to
+> gpiod_set_value[_cansleep]()
 
-> 
->      Andrew
+True.
 
-Thanks,
-Swathi
+AS far as I can see, the DT binding schema specifies 'reset-gpios:' - 
+without the active level
+
+The active level is I suppose, intentionally left to the DT implementation ?
+
+>> Rectify the logical value of reset-gpio so that it is set to
+>> 0 during power-on and to 1 during power-off.
+> This is correct, the reset line should be set to logical 0 (inactive)
+> during power on and to logical 1 (active) when powering off. However
+> the GPIO active state should have been specified in bindings and as
+> this driver has been mainline quite some time, this change will break
+> .dtbo already used succesfully with previous kernel releases.
+>
+> Is this an issue ?
+
+Yes, if the patch is accepted, the Device-tree implementation for IMX335 
+will need to be adjusted accordingly. This can be an issue definitely - 
+but on the other hand, this attempts to rectify a mistake, no?
+
+>
+>> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+>> ---
+>>   drivers/media/i2c/imx335.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
+>> index cd150606a8a9..878d88b5f476 100644
+>> --- a/drivers/media/i2c/imx335.c
+>> +++ b/drivers/media/i2c/imx335.c
+>> @@ -1171,7 +1171,7 @@ static int imx335_power_on(struct device *dev)
+>>   	usleep_range(500, 550); /* Tlow */
+>>
+>>   	/* Set XCLR */
+>> -	gpiod_set_value_cansleep(imx335->reset_gpio, 1);
+>> +	gpiod_set_value_cansleep(imx335->reset_gpio, 0);
+>>
+>>   	ret = clk_prepare_enable(imx335->inclk);
+>>   	if (ret) {
+>> @@ -1184,7 +1184,7 @@ static int imx335_power_on(struct device *dev)
+>>   	return 0;
+>>
+>>   error_reset:
+>> -	gpiod_set_value_cansleep(imx335->reset_gpio, 0);
+>> +	gpiod_set_value_cansleep(imx335->reset_gpio, 1);
+>>   	regulator_bulk_disable(ARRAY_SIZE(imx335_supply_name), imx335->supplies);
+>>
+>>   	return ret;
+>> @@ -1201,7 +1201,7 @@ static int imx335_power_off(struct device *dev)
+>>   	struct v4l2_subdev *sd = dev_get_drvdata(dev);
+>>   	struct imx335 *imx335 = to_imx335(sd);
+>>
+>> -	gpiod_set_value_cansleep(imx335->reset_gpio, 0);
+>> +	gpiod_set_value_cansleep(imx335->reset_gpio, 1);
+>>   	clk_disable_unprepare(imx335->inclk);
+>>   	regulator_bulk_disable(ARRAY_SIZE(imx335_supply_name), imx335->supplies);
+>>
+>> --
+>> 2.45.0
+>>
+>>
 
 
