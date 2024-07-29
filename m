@@ -1,129 +1,122 @@
-Return-Path: <linux-kernel+bounces-265414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B83293F0C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:16:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C13A93F0CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 174EB288089
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:16:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 321381F22E9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA04013DBBF;
-	Mon, 29 Jul 2024 09:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6584A13DDAB;
+	Mon, 29 Jul 2024 09:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YHLRz/FZ"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GgiGG/n6"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED74B7F47F
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3643F12DD88;
+	Mon, 29 Jul 2024 09:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722244576; cv=none; b=EP4krJGEfUpcjIX8lvjJnyi18w5cGncY4RHV3JC8+Z9GBwEBIYZdhMoXKROycd1obxP2fO1dvNghC9Pu0cbtGDyDkDXbHVIKCuIcOiXQ63uvldyzK8y+CmIAZ8Wvv0Ihz7BqNEXWVvN4NNPr6cPLt2Yaldk3KUhSDwVdXYlhZKk=
+	t=1722244659; cv=none; b=jSti2pJMR/rHeC3kabPX1UGNmagBsqxw3BNlsBse4i0IFASdMTC1PnFaipWi5pQn0rz4Nr6tU9hvP0KDy9H8nDNflHTWrnFTJE1xtu6gBZDQsds+d45WTScPwdVxrELDt/BO7t5PWgurjnlxep3vwUFQESbzCh/0SCNZxrikqMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722244576; c=relaxed/simple;
-	bh=gbutE41D4l1tBCm8vtQ7p4LBr9tDpADqql74TXHZ5nE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TXMZKX8h1ERdTirXP4qxDNBBl+ScLFaSviQXy9oyGYYV64XUJqsNVXDW/8sxXjtBLQYXxu0vGmfRHZyBmlxkgMtoMRUWHOmha5icg2y/+IsibuhIjr6RiFUFQGQz4peSqtTvUFjB4AUTVnDUBdF/BDqS/Mc+/JPoCtC4hNZm+PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YHLRz/FZ; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a79df5af51so9101474a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 02:16:13 -0700 (PDT)
+	s=arc-20240116; t=1722244659; c=relaxed/simple;
+	bh=m4SWXhvAtez5my1PKqqejWoJipF/iRLRbaiuefksVe8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=BU8yzg13tr5I9bst9+TIwRPFmITrW9jCvPMcZHgnnJOCpxvKUCXm4U8HUOcIusZAPDmeoz2TDzPYQxTvVTTC9giEaFXuZBjFwgSB6Rgw8tVwkjRxQiuHTAHSr3SE4SJ2XHbzL/YGBiyYIysX2pH3bcW30w1MAkC7UJlv+AUGZ18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GgiGG/n6; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-428163f7635so12983725e9.2;
+        Mon, 29 Jul 2024 02:17:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1722244572; x=1722849372; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hYc1ZmJx2XVqtcsHWUqPHgPqOHsYUXN3rnFWYgqlyJE=;
-        b=YHLRz/FZdjfdrTmcEcS+5+JHfzDSJjUUPeoPges/uXa3KqXhyPu1goiOtaF9viTsQM
-         IKTwG6lESycYHxGjlGkTwsw3GDrcHF4RlKbdHJxOUp5FG5yiIUsaAf61VxFbkHQubn3Y
-         3m+mhAYSU9NibPZX1Kg5xqiX3Prq9c3upH9acI+VQBeY7Cvv4FtSdnAT4N8uiPNVQ5wW
-         OP9SvgAMA7zPCwnP3OwLB4B/eqxwyXGNgqV8rkkzWdzK9IlsA5uC0gJs0KvWuajstVIu
-         jPRx6wDqHsfWMIsf9aye6ZZujnAKF1mCR1ZaNrSDftj5m/ixccoEyZhcv76I1S860sLJ
-         /Lbg==
+        d=gmail.com; s=20230601; t=1722244656; x=1722849456; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4J4SYhEOa1gabPOMO05hjVOcl3yukqW8OZI/5xw8IwY=;
+        b=GgiGG/n6Ec6h7YgJ1EsqqMjaSVYyePus99N8To1ZqWpfkb9k8vuL2pZ3K5HPLs5e/k
+         Z+H0lrYv0MTYJfwUcIZ+w6dAFh/WpnsFNyR88+uDFGguNsm9pEKyDsjwaL1kibTQHF/k
+         iDrpBYwVyTwspXmHKi0z9W0JPuzdCECpmqrLtf/3oy4jMvMjRm0k7Xhft7+kiD+qk/BU
+         ZZAZMG4iTXHEQZ/jwGIUaopZFaPKRBn6xUO0tZeHTKvwQsJmeOlJCCSG7xsHV29rWnDY
+         AsaRJEv909ECCEnVxMF/rllAe3Ete6cBreZsevD7b3UcjmMY66irhdnTeYIDZ01N+aBe
+         PNOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722244572; x=1722849372;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hYc1ZmJx2XVqtcsHWUqPHgPqOHsYUXN3rnFWYgqlyJE=;
-        b=ifXNJ00NRlrDTdMkBVfm8KpGrTXCGZ1tOFGoKqYOlTCXT6CDtNss2KMj3ifQ9nGbu8
-         PZ8CO+guZbwPtkABY9Shmw+5m+1ab44PttI417HDlC8ZGTES652B6KQoCFDTGjGa+2B0
-         zqxnuZ0cFcvz+IpauEFaScDCyAYUa9u7GvhJIeNvm+/HUjahaoD5IrtqHfmAyccoqSL1
-         Yab0gz+hkiouh0+rJtcnH4SYXWJlpu4HtshIYONgK9ZliKpzU2eTSwqw+q7Cw7ev0vBh
-         M80DsqzfXlVdECz/RJOwkXNsOBSk8u3eUAU9BgQ6Ox6pWDVHUtkgUwn8SnwU4BHe80lE
-         09QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmDLnLe90Dt2iC2hFUxi6NUXgHk5MkveOyQdu45F4NtFKcbv8WjW2GBRaoxT9Kx+vLCljCfProj17YIjxIzgPYfHfHDXbKhV6tj4Vh
-X-Gm-Message-State: AOJu0Yw1x7X3qXZ4o2+NTFr3ihoBsLCKOboICy7wYAvw54o4hPW1jn9i
-	/MS5YpGblBWzI2GcnoHw5lqoHc7EX4SkYV3WsswdTIU7wTOs6hzM8A1kPACtklU=
-X-Google-Smtp-Source: AGHT+IHfPz/S4gRwLZOUpjeY/bmDb/vX8NBuPNNZeC5crnI63zQ6Uu6zXFZa9IsC6LicBp9V4HxVgQ==
-X-Received: by 2002:a17:906:bc11:b0:a72:7ede:4d12 with SMTP id a640c23a62f3a-a7d3f81dc4dmr681570166b.5.1722244572272;
-        Mon, 29 Jul 2024 02:16:12 -0700 (PDT)
-Received: from localhost (109-81-83-231.rct.o2.cz. [109.81.83.231])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab233aasm481728766b.8.2024.07.29.02.16.11
+        d=1e100.net; s=20230601; t=1722244656; x=1722849456;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4J4SYhEOa1gabPOMO05hjVOcl3yukqW8OZI/5xw8IwY=;
+        b=UrM7Bp9s6zwcU2OQ73ddbJ1zYd1gwbi5x/Rq9R0LiQeGD/J7fiQrLsfUSzU9GCMOfR
+         Olq8w1/xzFlOMy2iTYxDtWoR/aFJsOPp3Fr4kwDg+U7Ppxc0goiuwsXvUKRqkuuUnVfL
+         EqW90Logu2A+qRT8C3dyFtdP6CU6wcYPu+RaoK1aMbXNy73G1jrADRE8Ddd29vi9VE2k
+         Iqwgkm5YneSBWZ7qbgYRYiy88Ii5hoez0X8GNAxBKE7WnFoVt/rUJe4MDkI8Yh5eVC9o
+         QDALuX7SIImufO6OQLwzVe+8+cJC1KOrEtW6/QGdC85NTWzmxe/faefeWDRxGP79n8Mv
+         xbmg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3XthuYTyu8IIMkMs6+aWPICUbhO1olB24sywoK/1kdo1i+ZUI1XCjqZ6ZWUvFgguT+44piNcnOvWPDCM+oPttXS46LiqQ947j2hcFFlEmjUnq3FC4lG9KN8yVXsU/xQpRDJnXzUMzw0zn23Ip
+X-Gm-Message-State: AOJu0Yx5qwL028HtK2bu6aIeLWSR+ui+L4ZBOom9sj8CA9+yOL0hSXZt
+	hHwUFgZuB8NzSpkm8h6lGsIHme9Ix9hNqONb1iOMVZ+u+p/L/JFjNRxbjA==
+X-Google-Smtp-Source: AGHT+IF4VHDW9ojKBR3q4Jivc1+iyrtgdpimZ8JmgOjlc/xzRxT+ve0gc0P2I/uxp+rWVbQ0JWSdXQ==
+X-Received: by 2002:a05:600c:4ed4:b0:428:1ce0:4dfd with SMTP id 5b1f17b1804b1-4281ce04fafmr18629985e9.34.1722244656245;
+        Mon, 29 Jul 2024 02:17:36 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42805730e5dsm171836905e9.2.2024.07.29.02.17.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 02:16:12 -0700 (PDT)
-Date: Mon, 29 Jul 2024 11:16:11 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>
-Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Yasunori Gotou (Fujitsu)" <y-goto@fujitsu.com>
-Subject: Re: [PATCH RFC] mm: Avoid triggering oom-killer during memory
- hot-remove operations
-Message-ID: <Zqdd25XhcEDPEQIS@tiehlicka>
-References: <20240726084456.1309928-1-lizhijian@fujitsu.com>
- <ZqNpwz5UW44WOdHr@tiehlicka>
- <fd6e84d5-9dba-47fb-a39e-1f7f0995fdf5@fujitsu.com>
- <2ab277af-06ed-41a9-a2b4-91dd1ffce733@fujitsu.com>
- <ZqczDQ_qAjOGmBk0@tiehlicka>
- <264840d7-d770-29a0-7c36-6ede9063d06f@fujitsu.com>
- <ZqdHch4VZG9UC2yM@tiehlicka>
- <f2b49b7f-7622-4322-a34f-cd4b1756b791@fujitsu.com>
- <ZqdPmtDjwDUoKJA2@tiehlicka>
- <280af822-577f-468b-953f-b70190551b6f@fujitsu.com>
+        Mon, 29 Jul 2024 02:17:35 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Shuah Khan <shuah@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	=?UTF-8?q?Christoph=20M=C3=BCllner?= <christoph.muellner@vrull.eu>,
+	linux-kselftest@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] tools: selftests: riscv: Fix spelling mistake "regesters" -> "registers"
+Date: Mon, 29 Jul 2024 10:17:34 +0100
+Message-Id: <20240729091734.42259-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <280af822-577f-468b-953f-b70190551b6f@fujitsu.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon 29-07-24 08:53:11, Zhijian Li (Fujitsu) wrote:
-[...]
-> >>>> [13853.758192] pagefault_out_of_memory: 4055 callbacks suppressed
-> >>>> [13853.758243] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-> >>>
-> >>> This shouldn't really happen and it indicates that some memory
-> >>> allocation in the pagefault path has failed.
-> >>
-> >> May I know if this will cause side effect to other processes.
-> > 
-> > This eill mean that the #PF handler has failed to allocate memory and
-> > the VM_FAULT_OOM error has unwound all the way up to the exception
-> > handler and that will restart the instruction that has caused the #PF.
-> > > In essence, as long as the process triggering this is not killed or the
-> > allocation doesn't suceed it will be looping in the #PF path. This
-> > normally doesn't happen because our allocators do not fail for small
-> > allocation requests.
-> 
-> Thanks again for your detailed explanation.
-> 
-> I think this is acceptable for the process bound to the being removed node, isn't it?
+There are a couple of spelling mistakes in ksft_test_result_fail messages.
+Fix them.
 
-It shouldn't be happening really. This is a sign that something doesn't
-behave properly. E.g. some of the #PF returning VM_FAULT_OOM without
-calling into the allocator.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/riscv/vector/v_initval_nolibc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/tools/testing/selftests/riscv/vector/v_initval_nolibc.c b/tools/testing/selftests/riscv/vector/v_initval_nolibc.c
+index 1dd94197da30..6838c561e4c9 100644
+--- a/tools/testing/selftests/riscv/vector/v_initval_nolibc.c
++++ b/tools/testing/selftests/riscv/vector/v_initval_nolibc.c
+@@ -49,14 +49,14 @@ int main(void)
+ 	ksft_print_msg("vl = %lu\n", vl);
+ 
+ 	if (datap[0] != 0x00 && datap[0] != 0xff) {
+-		ksft_test_result_fail("v-regesters are not properly initialized\n");
++		ksft_test_result_fail("v-registers are not properly initialized\n");
+ 		dump(datap, vl * 4);
+ 		exit(-1);
+ 	}
+ 
+ 	for (i = 1; i < vl * 4; i++) {
+ 		if (datap[i] != datap[0]) {
+-			ksft_test_result_fail("detect stale values on v-regesters\n");
++			ksft_test_result_fail("detect stale values on v-registers\n");
+ 			dump(datap, vl * 4);
+ 			exit(-2);
+ 		}
 -- 
-Michal Hocko
-SUSE Labs
+2.39.2
+
 
