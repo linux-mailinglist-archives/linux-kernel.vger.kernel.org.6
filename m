@@ -1,93 +1,132 @@
-Return-Path: <linux-kernel+bounces-265027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF74E93EB86
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 04:45:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 886DF93EBA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 04:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7FC7282D47
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:45:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45D9A284075
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9C07F7CA;
-	Mon, 29 Jul 2024 02:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF9480614;
+	Mon, 29 Jul 2024 02:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="aeIDMdDG"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4AB1E49E;
-	Mon, 29 Jul 2024 02:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="df87FzB0"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6694180028
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 02:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722221103; cv=none; b=oqfLJedW+Ts9IKff0mTXOYKh+N0Ra00+nGOHUroMndheSLDpZ1hiaGIVNh0rwMnwsasYPvM3OgLFGKZk/kByT9sBSdiPMOUcuz61wPsntIrRFquSJKsUcG+zw8WRvY8iIjusOnqIuB6dtz3DyhKEmTdLUWfP2B1VerBLlcadYSk=
+	t=1722221290; cv=none; b=ZFKZQo/sepB4NYNjhlHou+Wgt4DmpdLbvCzNYGx1YyPcXVd07Vj1YVdtCuGrrNSjAZ2XVz+byffkElDDEbtfJ4Oti5gEX6DYQ7Jp2DiEE0UMGaceKucMOow1o59tnF/qX73qV7GLmpOX9csz0BrFz7L01/zPlKT+c5TVS1r9QRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722221103; c=relaxed/simple;
-	bh=/3T3nVZnNNLASnDz6+rykGbtHRDtkaHp0CYR19w3tzI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=I62Zi0ZzNnSvrfSdeCwBlUdfT9GT8bxJTY6xNLI1j5UT2J4hxnICoh45VM/cZuVLHwNMqIn6fl9gvjwT2OTudhNTaSEk64jNc3wX71Fxv0tKrnl2mdVZqetby4kC6HJ8GEuzjEZDs14IC7kKKsFMp1uyDJh6hOxy0QiWXL7oKMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=aeIDMdDG reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=gRgYzzpxI7K2DOYkmRJXnELCFTcBfJpMncVVeIaMHxQ=; b=a
-	eIDMdDG2y9kM20BuLdVns9ymTKesx4xSsropFA6QZJ/OXOqBZ9uMmxBXrxE+l6wy
-	/AJ9dn3xOi0uUbRrKSy/9Cg9UyuA7pHB00FkWpmNnDVMtWpbi/G/0D98HbcxZz+Y
-	O1UR93w06BLAhMmpWYKMKfNZpaXrUR4wGaIx+ocWAM=
-Received: from xavier_qy$163.com ( [59.82.45.102] ) by
- ajax-webmail-wmsvr-40-128 (Coremail) ; Mon, 29 Jul 2024 10:44:08 +0800
- (CST)
-Date: Mon, 29 Jul 2024 10:44:08 +0800 (CST)
-From: Xavier  <xavier_qy@163.com>
-To: "Tejun Heo" <tj@kernel.org>, "Waiman Long" <longman@redhat.com>
-Cc: akpm@linux-foundation.org, lizefan.x@bytedance.com, hannes@cmpxchg.org, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	torvalds@linux-foundation.org, mkoutny@suse.com
-Subject: Re:Re: [PATCH-cpuset v11 0/2] Add Union-Find and use it to optimize
- cpuset
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <ZowyKf3RlMI0q1P-@slm.duckdns.org>
-References: <f9e55eb8-82a8-45f2-a949-1db182e95fc8@redhat.com>
- <20240704062444.262211-1-xavier_qy@163.com>
- <e20fe0dc-a3ef-4f55-a991-6efe1a9ddecd@redhat.com>
- <ZowyKf3RlMI0q1P-@slm.duckdns.org>
-X-CM-CTRLMSGS: JVIT3nBsdXM9MTcyMjIyMTA0OTYwNV9lY2NlYzNiNGQzNWY4MmJlOWZiMDU2N
- 2IzNzYzMmUzNw==
-X-NTES-SC: AL_Qu2ZAP6Zvkgv7iKdbOkfmk4aj+k+XsG0vfUj34FWOp9wjA7p2y4sYHZ6EX/kyPyJMA2WuyGudB5tyP9mYbJecaUtoyGtxbu3R9B6iAKhZuRM2w==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1722221290; c=relaxed/simple;
+	bh=Kdt6tHey8gjeuF2bi0Ivsf014EmroNcC0suQ3NvwC/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qVt1gksnO6IyVBplCWIGBAP7lEm9bVbELkPgvqW7XXs16vWdDwDTQFGjV22p/rzNazKsb9Sqhnp9S2g8VJcWZiIaFsuR4NZVi7LbFtY6YVB+ZzF+OPn2OjvZ1KysL4HF5qVbaTKfquUcoA8X6fiqoal+MAmzLNJC6EPHG53fBAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=df87FzB0; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-113-198.bstnma.fios.verizon.net [173.48.113.198])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 46T2iCas021007
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 28 Jul 2024 22:44:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1722221058; bh=fZHb/SHRE/3ifgSnWXUU6RdFOsOVMjHd4oou3IInJ8M=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=df87FzB0ozVVH+CgTcwMEcs4I/QMupH1v5UaCu+eKWsYipPHqwNfq+xoU+AwbmFES
+	 XglYWyH2T0bqfGMKiqqb7f8BgPWc99J0X9tvy+FhESpTBF1L22xiC2FC1f446oODjt
+	 iBuqmBBV3DQqo6zCK0EzNk7/t2+XUDshY7jru35GK2K9PEOXLH3OMamaNseC0BCt/d
+	 /oC2H8CyBUQgK28PS9XyjbgX5JMrmtd4HLTu5K6dVVUmTuTMeWBJVJ3eXz5Hc47MNG
+	 WfInu203XLvfCVgBGrYGUutstQSXJjCLXUGwtKKoa113i/ylRKEI9glPd25dXhsd7G
+	 poAxlPts/cE+Q==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id D00BE15C02D3; Sun, 28 Jul 2024 22:44:12 -0400 (EDT)
+Date: Sun, 28 Jul 2024 22:44:12 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Youling Tang <youling.tang@linux.dev>
+Cc: Christoph Hellwig <hch@infradead.org>, David Sterba <dsterba@suse.cz>,
+        Arnd Bergmann <arnd@arndb.de>, kreijack@inwind.it,
+        Luis Chamberlain <mcgrof@kernel.org>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        linux-modules@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        Youling Tang <tangyouling@kylinos.cn>
+Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
+ module_subeixt helper macros
+Message-ID: <20240729024412.GD377174@mit.edu>
+References: <ZqJwa2-SsIf0aA_l@infradead.org>
+ <68584887-3dec-4ce5-8892-86af50651c41@libero.it>
+ <ZqKreStOD-eRkKZU@infradead.org>
+ <91bfea9b-ad7e-4f35-a2c1-8cd41499b0c0@linux.dev>
+ <ZqOs84hdYkSV_YWd@infradead.org>
+ <20240726152237.GH17473@twin.jikos.cz>
+ <20240726175800.GC131596@mit.edu>
+ <ZqPmPufwqbGOTyGI@infradead.org>
+ <20240727145232.GA377174@mit.edu>
+ <23862652-a702-4a5d-b804-db9ee9f6f539@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <5c90d42c.2c03.190fc5fb1c8.Coremail.xavier_qy@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3f5b4AadmnCJlAA--.48941W
-X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiwgQrEGWXv4LGOQAHsK
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <23862652-a702-4a5d-b804-db9ee9f6f539@linux.dev>
 
-CkhpIFRlanVuLAoKSSBzYXcgb24ga2VybmVsLm9yZyB0aGF0IHY2LjExLXJjMSBoYXMgYmVlbiBy
-ZWxlYXNlZC4gSXQgbWlnaHQgYmUgdGltZSB0byBzdGFydCBtZXJnaW5nCnRoaXMgcGF0Y2guIAoK
-QnkgdGhlIHdheSwgIEkgaGF2ZSBzdWJtaXR0ZWQgYW4gb3B0aW1pemF0aW9uIHBhdGNoIGZvciBS
-VCBncm91cCBzY2hlZHVsaW5nLCBidXQgYWZ0ZXIKdHdvIHJvdW5kcyBvZiBjb21tdW5pY2F0aW9u
-LCBJIGhhdmVuJ3QgcmVjZWl2ZWQgYW55IGZ1cnRoZXIgcmVzcG9uc2VzLiBDb3VsZCB5b3UKcHJv
-dmlkZSBtZSB3aXRoIHNvbWUgYWR2aWNlPwoKaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIw
-MjQwNjI3MTcyMTU2LjIzNTQyMS0xLXhhdmllcl9xeUAxNjMuY29tLwoKVGhhbmtzLgoKCkF0IDIw
-MjQtMDctMDkgMDI6Mzg6MzMsICJUZWp1biBIZW8iIDx0akBrZXJuZWwub3JnPiB3cm90ZToKPk9u
-IFN1biwgSnVsIDA3LCAyMDI0IGF0IDA5OjU5OjU1UE0gLTA0MDAsIFdhaW1hbiBMb25nIHdyb3Rl
-Ogo+PiBUaGUgcGF0Y2ggc2VyaWVzIGxvb2tzIGdvb2QgdG8gbWUuIEhvd2V2ZXIsIGl0IGlzIGEg
-c3RpbGwgbWFqb3IgY2hhbmdlIGluCj4+IHRoZSBkb21haW4gZ2VuZXJhdGlvbiBhbGdvcml0aG0g
-YW5kIGl0IGlzIHRvbyBsYXRlIGZvciB2Ni4xMS4gSSB3b3VsZCBhbHNvCj4+IGxpa2UgaXQgdG8g
-c3BlbmQgbW9yZSB0aW1lIGluIGxpbnV4LW5leHQgYXMgSSBkb24ndCBoYXZlIGEgZ29vZCBzZXQg
-b2YKPj4gY2dyb3VwIHYxIHRlc3QuIEkgd2lsbCBzdXBwb3J0IG1lcmdpbmcgdGhpcyBmb3IgdjYu
-MTIuCj4+IAo+PiBBY2tlZC1ieTogV2FpbWFuIExvbmcgPGxvbmdtYW5AcmVkaGF0LmNvbT4KPgo+
-WGF2aWVyLCBhcyB3ZSdyZSBwcmV0dHkgY2xvc2UgdG8gdGhlIG1lcmdlIHdpbmRvdywgSSB0aGlu
-ayBpdCdkIGJlIGJlc3QgdG8KPmRvIHRoaXMgaW4gdGhlIG5leHQgbWVyZ2Ugd2luZG93IGFzIFdh
-aW1hbiBzYWlkLiBDYW4geW91IHBsZWFzZSBwaW5nIG1lIG9uY2UKPnY2LjExLXJjMSBpcyBjdXQ/
-IEknbGwgYXBwbHkgdGhlIHR3byBwYXRjaGVzIG9uIGNncm91cC9mb3ItNi4xMi4KPgoKCgotLQpC
-ZXN0IFJlZ2FyZHMsClhhdmllcgo=
+On Mon, Jul 29, 2024 at 09:46:17AM +0800, Youling Tang wrote:
+> 1. Previous version implementation: array mode (see link 1) :
+>    Advantages:
+>    - Few changes, simple principle, easy to understand code.
+>    Disadvantages:
+>    - Each modified module needs to maintain an array, more code.
+> 
+> 2. Current implementation: explicit call subinit in initcall (see link 2) :
+>    Advantages:
+>    - Direct use of helpes macros, the subinit call sequence is
+>      intuitive, and the implementation is relatively simple.
+>    Disadvantages:
+>    - helper macros need to be implemented compared to array mode.
+> 
+> 3. Only one module_subinit per file (not implemented, see link 3) :
+>    Advantage:
+>    - No need to display to call subinit.
+>    Disadvantages:
+>    - Magic order based on Makefile makes code more fragile,
+>    - Make sure that each file has only one module_subinit,
+>    - It is not intuitive to know which subinits the module needs
+>      and in what order (grep and Makefile are required),
+>    - With multiple subinits per module, it would be difficult to
+>      define module_{subinit, subexit} by MODULE, and difficult to
+>      rollback when initialization fails (I haven't found a good way
+>      to do this yet).
+> 
+>
+> Personally, I prefer the implementation of method two.
+
+But there's also method zero --- keep things the way they are, and
+don't try to add a new astraction.
+
+Advantage:
+
+ -- Code has worked for decades, so it is very well tested
+ -- Very easy to understand and maintain
+
+Disadvantage
+
+ --- A few extra lines of C code.
+
+which we need to weigh against the other choices.
+
+      	      	       	       	   - Ted
 
