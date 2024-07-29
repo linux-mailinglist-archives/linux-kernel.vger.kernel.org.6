@@ -1,229 +1,101 @@
-Return-Path: <linux-kernel+bounces-266143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D3D93FB9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:44:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F23393FB9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3893F1C228E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:44:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B0E41C2291F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7E615F3EA;
-	Mon, 29 Jul 2024 16:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCBAE16C6AC;
+	Mon, 29 Jul 2024 16:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TU6eKuRi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R5tqtdLZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC87D15ECDB;
-	Mon, 29 Jul 2024 16:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F69015DBDD
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722271321; cv=none; b=Mn5MCLMPMtxVItJ7mjHl5gJpWOGI9PQ7mKbDQ0t/TI2HY1roGybm4iIetf4XMq3ePvglgQfGPA710GfzZH7oe5DqjmvenaSIkQ/Cnbwkzns3Wv7d0sVy4XYSAtReLY5eLjaGH0Fbs/QG0mK2CsMwvmH73DAilp6hHfmViVGqjcQ=
+	t=1722271341; cv=none; b=I0SmGK2YvL8h0uZaRASUuCw79iTG//yAZACEAe0ufBG6MPT/KcwE5E5FqJ0ctcWe+RrQltz9/z6SfTv7XeiJj3SSc5Cun+fwwsOzpi9SK8dgjo61U9rf5ttY4cFEJ/GBbADvm2m4xOm1purDqtfTLgLqptrawszsBOcQiUXnqcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722271321; c=relaxed/simple;
-	bh=STYJUioiL118Hlgwr4HXrqxbmA6PLG6V/dHdCUeL6U4=;
+	s=arc-20240116; t=1722271341; c=relaxed/simple;
+	bh=BgcRqKiDCihQph7GkqrD4JQhL/HY9twKibTZZYxxhjk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VPAv8UTfqxqFxj9o3aZOMSQ72bpKYIGtxWY5gtPbOlmY+Phgq/v86HaQUCFcS+zGYkyjv4NV94D+Xt0FfybHygtX04s9IL6/6FOKUOxf7mGyQCH3iEtAf4qXwvtuEAxceiDBOoIy1ZgfOKKuDuPazAgp+StKejEgUpXfsqPUTY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TU6eKuRi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 544D8C32786;
-	Mon, 29 Jul 2024 16:42:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PxBxBNSrr1WoH9oTi9HYIsCAbor2UoC3ShuxYoVhIBo6AexxRHli03/Z+8zox2Em/yS8f0mX9BWMu4GgH7K7sFUDeLSHBL9L3ki4L+CF/5X6hhKtcScqLBa1ubqzkVIb5/q0Xu7y8E7laZnKUGsIDNYLY5fUWl1dHlCNChOr34c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R5tqtdLZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 947B8C32786;
+	Mon, 29 Jul 2024 16:42:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722271320;
-	bh=STYJUioiL118Hlgwr4HXrqxbmA6PLG6V/dHdCUeL6U4=;
+	s=k20201202; t=1722271340;
+	bh=BgcRqKiDCihQph7GkqrD4JQhL/HY9twKibTZZYxxhjk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TU6eKuRicd3lcz+xcXI3oydUQnDeDfXJtlTH6WrdTIkHpdwcgLDqW+VSGdu4B3XAy
-	 +91WIAIwEsRg15HYw9/eSnBEn0e33DMneMzn3ey1eKWeUaDr5NprWTmV4ZFkHvjqTN
-	 xArt2eisQtQ3LQGXuXXdeY4rtfC5ZU8XcfdhOv0cwV0HCM/6EexXjEJl3Biuvt2yLH
-	 HSt7d/BXS+b2o08R/vqKhLamKYkk2nTei6HBE3PWSuElvD9q87KyDAwtRaiY7ZLbtR
-	 3ZxpP359LF0FoaOsM5BjKx8TEr8Buc/ZP5u1BlAm/toJ/b54e6qCOFItLoXgEQDC2+
-	 NUdQ3e9FKksgg==
-Date: Mon, 29 Jul 2024 09:41:59 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: david@fromorbit.com, willy@infradead.org, chandan.babu@oracle.com,
-	brauner@kernel.org, akpm@linux-foundation.org,
-	yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, ryan.roberts@arm.com, hch@lst.de,
-	Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v11 10/10] xfs: enable block size larger than page size
- support
-Message-ID: <20240729164159.GC6352@frogsfrogsfrogs>
-References: <20240726115956.643538-1-kernel@pankajraghav.com>
- <20240726115956.643538-11-kernel@pankajraghav.com>
+	b=R5tqtdLZgPI+wH5vT8AwzFSQuutBwUQXSMlOpoJVm43rIqpMCbDHcD6aCiysLb12n
+	 POGf1IPb0yXn78b312PT/Gu4MISy4OuGHTfQMCaOjO5J5WMlJWWWVFyHDrYXDoZsdO
+	 SKzUl2HV7kDh3R73dz1SayQQgSjXb8TK1Bt8OLuSro89QVHzC+I9MBhtZ4Rdvk3U1y
+	 6JY6szNEEemCjrl4BGJKmBEXlBSeD/Kf04B4FQttMTG1H9/Lebc/VtXTVGgDBVASPP
+	 2I34eM/S/O3eeMHR3Fklnoij1uCO7KQaRHX0VAtnDDa0b8XJs/UN4BMO0oOs3ZVQ9W
+	 H1G72iq/6w6DA==
+Date: Mon, 29 Jul 2024 17:42:10 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Shenghao Ding <shenghao-ding@ti.com>
+Cc: andriy.shevchenko@linux.intel.com, lgirdwood@gmail.com, perex@perex.cz,
+	pierre-louis.bossart@linux.intel.com, 13916275206@139.com,
+	zhourui@huaqin.com, alsa-devel@alsa-project.org, i-salazar@ti.com,
+	linux-kernel@vger.kernel.org, j-chadha@ti.com,
+	liam.r.girdwood@intel.com, jaden-yue@ti.com,
+	yung-chuan.liao@linux.intel.com, dipa@ti.com, yuhsuan@google.com,
+	henry.lo@ti.com, tiwai@suse.de, baojun.xu@ti.com, soyer@irl.hu,
+	Baojun.Xu@fpt.com, judyhsiao@google.com, navada@ti.com,
+	cujomalainey@google.com, aanya@ti.com, nayeem.mahmud@ti.com,
+	savyasanchi.shukla@netradyne.com, flaviopr@microsoft.com,
+	jesse-ji@ti.com, darren.ye@mediatek.com, antheas.dk@gmail.com
+Subject: Re: [PATCH v1] ASoc: tas2781: Move tas2563_dvc_table into a separate
+ Header file
+Message-ID: <1dc0518a-f0b3-4617-9c79-ac903ca9ee33@sirena.org.uk>
+References: <20240716061123.127-1-shenghao-ding@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Uj2v2I2plHuUzS/C"
+Content-Disposition: inline
+In-Reply-To: <20240716061123.127-1-shenghao-ding@ti.com>
+X-Cookie: Penalty for private use.
+
+
+--Uj2v2I2plHuUzS/C
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240726115956.643538-11-kernel@pankajraghav.com>
 
-On Fri, Jul 26, 2024 at 01:59:56PM +0200, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
-> 
-> Page cache now has the ability to have a minimum order when allocating
-> a folio which is a prerequisite to add support for block size > page
-> size.
-> 
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> ---
->  fs/xfs/libxfs/xfs_ialloc.c |  5 +++++
->  fs/xfs/libxfs/xfs_shared.h |  3 +++
->  fs/xfs/xfs_icache.c        |  6 ++++--
->  fs/xfs/xfs_mount.c         |  1 -
->  fs/xfs/xfs_super.c         | 28 ++++++++++++++++++++--------
->  include/linux/pagemap.h    | 13 +++++++++++++
->  6 files changed, 45 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_ialloc.c b/fs/xfs/libxfs/xfs_ialloc.c
-> index 0af5b7a33d055..1921b689888b8 100644
-> --- a/fs/xfs/libxfs/xfs_ialloc.c
-> +++ b/fs/xfs/libxfs/xfs_ialloc.c
-> @@ -3033,6 +3033,11 @@ xfs_ialloc_setup_geometry(
->  		igeo->ialloc_align = mp->m_dalign;
->  	else
->  		igeo->ialloc_align = 0;
-> +
-> +	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
-> +		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
-> +	else
-> +		igeo->min_folio_order = 0;
->  }
->  
->  /* Compute the location of the root directory inode that is laid out by mkfs. */
-> diff --git a/fs/xfs/libxfs/xfs_shared.h b/fs/xfs/libxfs/xfs_shared.h
-> index 2f7413afbf46c..33b84a3a83ff6 100644
-> --- a/fs/xfs/libxfs/xfs_shared.h
-> +++ b/fs/xfs/libxfs/xfs_shared.h
-> @@ -224,6 +224,9 @@ struct xfs_ino_geometry {
->  	/* precomputed value for di_flags2 */
->  	uint64_t	new_diflags2;
->  
-> +	/* minimum folio order of a page cache allocation */
-> +	unsigned int	min_folio_order;
-> +
->  };
->  
->  #endif /* __XFS_SHARED_H__ */
-> diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-> index cf629302d48e7..0fcf235e50235 100644
-> --- a/fs/xfs/xfs_icache.c
-> +++ b/fs/xfs/xfs_icache.c
-> @@ -88,7 +88,8 @@ xfs_inode_alloc(
->  
->  	/* VFS doesn't initialise i_mode! */
->  	VFS_I(ip)->i_mode = 0;
-> -	mapping_set_large_folios(VFS_I(ip)->i_mapping);
-> +	mapping_set_folio_min_order(VFS_I(ip)->i_mapping,
-> +				    M_IGEO(mp)->min_folio_order);
->  
->  	XFS_STATS_INC(mp, vn_active);
->  	ASSERT(atomic_read(&ip->i_pincount) == 0);
-> @@ -325,7 +326,8 @@ xfs_reinit_inode(
->  	inode->i_uid = uid;
->  	inode->i_gid = gid;
->  	inode->i_state = state;
-> -	mapping_set_large_folios(inode->i_mapping);
-> +	mapping_set_folio_min_order(inode->i_mapping,
-> +				    M_IGEO(mp)->min_folio_order);
->  	return error;
->  }
->  
-> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-> index 3949f720b5354..c6933440f8066 100644
-> --- a/fs/xfs/xfs_mount.c
-> +++ b/fs/xfs/xfs_mount.c
-> @@ -134,7 +134,6 @@ xfs_sb_validate_fsb_count(
->  {
->  	uint64_t		max_bytes;
->  
-> -	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
->  	ASSERT(sbp->sb_blocklog >= BBSHIFT);
->  
->  	if (check_shl_overflow(nblocks, sbp->sb_blocklog, &max_bytes))
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 27e9f749c4c7f..b2f5a1706c59d 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -1638,16 +1638,28 @@ xfs_fs_fill_super(
->  		goto out_free_sb;
->  	}
->  
-> -	/*
-> -	 * Until this is fixed only page-sized or smaller data blocks work.
-> -	 */
->  	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
-> -		xfs_warn(mp,
-> -		"File system with blocksize %d bytes. "
-> -		"Only pagesize (%ld) or less will currently work.",
-> +		size_t max_folio_size = mapping_max_folio_size_supported();
-> +
-> +		if (!xfs_has_crc(mp)) {
-> +			xfs_warn(mp,
-> +"V4 Filesystem with blocksize %d bytes. Only pagesize (%ld) or less is supported.",
->  				mp->m_sb.sb_blocksize, PAGE_SIZE);
-> -		error = -ENOSYS;
-> -		goto out_free_sb;
-> +			error = -ENOSYS;
-> +			goto out_free_sb;
-> +		}
-> +
-> +		if (mp->m_sb.sb_blocksize > max_folio_size) {
-> +			xfs_warn(mp,
-> +"block size (%u bytes) not supported; Only block size (%ld) or less is supported",
-> +			mp->m_sb.sb_blocksize, max_folio_size);
+On Tue, Jul 16, 2024 at 02:11:21PM +0800, Shenghao Ding wrote:
+> Move tas2563_dvc_table into a separate Header file, as only tas2781
+> codec driver use this table, and hda side codec driver won't use it.
 
-Dumb nit: Please indent ^^^ this second line so that it doesn't start on
-the same column as the separate statement below it.
+This doesn't apply against current code (or your other patch to this
+driver from the same day), please check and resend?
 
---D
+--Uj2v2I2plHuUzS/C
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +			error = -ENOSYS;
-> +			goto out_free_sb;
-> +		}
-> +
-> +		xfs_warn(mp,
-> +"EXPERIMENTAL: V5 Filesystem with Large Block Size (%d bytes) enabled.",
-> +			mp->m_sb.sb_blocksize);
->  	}
->  
->  	/* Ensure this filesystem fits in the page cache limits */
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 3a876d6801a90..61a7649d86e57 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -373,6 +373,19 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
->  #define MAX_XAS_ORDER		(XA_CHUNK_SHIFT * 2 - 1)
->  #define MAX_PAGECACHE_ORDER	min(MAX_XAS_ORDER, PREFERRED_MAX_PAGECACHE_ORDER)
->  
-> +/*
-> + * mapping_max_folio_size_supported() - Check the max folio size supported
-> + *
-> + * The filesystem should call this function at mount time if there is a
-> + * requirement on the folio mapping size in the page cache.
-> + */
-> +static inline size_t mapping_max_folio_size_supported(void)
-> +{
-> +	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-> +		return 1U << (PAGE_SHIFT + MAX_PAGECACHE_ORDER);
-> +	return PAGE_SIZE;
-> +}
-> +
->  /*
->   * mapping_set_folio_order_range() - Set the orders supported by a file.
->   * @mapping: The address space of the file.
-> -- 
-> 2.44.1
-> 
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmanxmEACgkQJNaLcl1U
+h9BzyAf8D0ct9/VEgNw15CMnmzG4y4KRg9EHMkwsoF+BaINwcHnkiwJNDpFxglMv
+I5yVs+R11sSTd1ANo3WEAkqVBmSuRax/wnxG0Ffdq/vFCkqdneSMsBYLqLu5A28M
+1uyy0XN6IG83iG9ctvMs7ArHhS3vXBYdLVBMbh5WnmjUV+B/+1GkcmTVSUFfgzYw
+6lBI2zyWCLZ5+1FuwYQAvVpPu7OJn8c7zbzRLPJqja87nWCEimxy7bURkovKRCCj
+J/+IDL2VNVmfKnsDg9NpN1gW+D/mFQBfFsBcjZ0r27dBJdqN/989mqqFDt+8otYt
+AI8a2Kqf7KnKe6DYJzk0M86mqoHh5g==
+=v+3f
+-----END PGP SIGNATURE-----
+
+--Uj2v2I2plHuUzS/C--
 
