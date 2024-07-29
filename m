@@ -1,107 +1,217 @@
-Return-Path: <linux-kernel+bounces-266280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3985993FD8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B95493FD92
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA2972826D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:40:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42F422826D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B1F188CD5;
-	Mon, 29 Jul 2024 18:39:21 +0000 (UTC)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D113E187340;
+	Mon, 29 Jul 2024 18:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="D1jM17KZ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5182B188CB6;
-	Mon, 29 Jul 2024 18:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2289C16B38D;
+	Mon, 29 Jul 2024 18:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722278360; cv=none; b=OcX1p3YU/uv2W9OUiJex60He3WbOLvpUyx0FsW6EsDTpecrbs7fuR7BXplvFBNM1sXnUttE2BCtBvpFeI6pl8i3cICXn/qQotCC3GZIOrG3N3DCgMaAoqfgIt6VYhTNvoL9KtGHr6BSsRazLwlwD073RM0AU4jYw/5fu8yVCkkA=
+	t=1722278417; cv=none; b=gJXpuzMl5RBCTYY8z9vQDGYh/Cj5wpV7tPzhBmdwDX2TpQKjazSESvO/0BazqpPoRtfyYRu8cEKDqR0jP1CVVOPRNfunqpAUSoPm17mOIC5b0IdILDPs4QRxzDuVqjn2Dut01zw+Hb3B7OZjwbR8uq5bamtvCZQYmKr4YDyTB+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722278360; c=relaxed/simple;
-	bh=hxCz66SL9VcGksGk7Jvi6bwAvcLd3m/v4tQixT+kSms=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hUftLxX/HNEiH0+q35oZaIDwj4TqP2sLQ1vjz4nGnYSpcJVy1NEG6NMzmx2iCMxjdTkBUu1f/pIw6R8m8UD/zjyEOnk8kPhgvb7ClewwMByMkabgZiwnBS1u+TtSDGsxCp8a7Bb/A1jbn3aHX4lvQX94qleGSExGLO+0ITtq2Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-654cf0a069eso21528607b3.1;
-        Mon, 29 Jul 2024 11:39:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722278356; x=1722883156;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QOI4yfbpADJqWSZhJu/9HLSO4bdHPa7Kukgm+hQ434A=;
-        b=AWzV0FT5EfTCQs+Ai8e2jbhmUx2QQoBDfCQOdAtTZhByQM6mrIG0L6RwWsCoFrqhKT
-         h+dw6R5vqdtwjRqQyU6r1UVQ+7iICakpDmm40rFGV7Ksg31FpbWUpa2EDLQVKPdwM5Ga
-         UJYn1ie8PPGcndSoZNnNETLhazL1mgSVRqXjOjhW9oAcgL073J1MK/cmSkEDL6oDNHB7
-         gm/ovGIpOkCsyEFYvdLGLS9NCVOHf/NLUnDM1azWANUhTss5rqX57GWrDXYK5WBSwB5K
-         CdXL6gHs5famPygIzRXrch9jFVAOwI4kPfX6XhZtG2wGguKR8VmOE0MDOgpavhskHyz2
-         hTlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWa6quLLGXucyG+DjJlBCtyBcg/svj6GeMMfnbgB8ZScbWOEL8IFXZVg68gs4v23SliYeTQT4m1GbHbylhCjSb1pv6BIMBTdxZ9kZ0Cd3dsAI07FnOJVgPkr9v/+6ZAJuZ2NQaYwg5SkKernb0hbg7Q5dkfHGR4dFLGgvoKED158tB6+w==
-X-Gm-Message-State: AOJu0YxenwFkFG67yv0Kr+qzTElERNeY7xp3DKel+uKu2O0OAaQuh1VY
-	OjKBB7QtIaXzAJSNndHg9SfuKtE0r3QIdMZtjVgmR3o8quolg0brRWgWg7cI
-X-Google-Smtp-Source: AGHT+IGRiM4RFoc2IQAzSRd6DiVm/pIQwD119Qcotql3xYCN8RRicX8T0Z9+K+C1+n1L2kyQ4PdXag==
-X-Received: by 2002:a81:9406:0:b0:617:c578:332c with SMTP id 00721157ae682-67a057b8318mr98703667b3.4.1722278355933;
-        Mon, 29 Jul 2024 11:39:15 -0700 (PDT)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-67566dd90fesm21505217b3.20.2024.07.29.11.39.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jul 2024 11:39:15 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-65fdfd7b3deso23431797b3.0;
-        Mon, 29 Jul 2024 11:39:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV1mz8yVfBlmyE2Nm5OiuoPyGWiQ33gT1gxFGLlD8FElWuw37xBJOr0K1Tucxc+0KQDv97zASqPOmWdaGqbbN+aC1i0EQA4W6+GfzA0Jbboq/EAyJfCliUbY+ko8DEwWYunz/6Ene+USjRbQs02bCurtVzNTiIkfoxaAaEO5BvFkp0w9Q==
-X-Received: by 2002:a0d:f4c7:0:b0:65f:c95f:e7c7 with SMTP id
- 00721157ae682-67a057b830dmr97041367b3.7.1722278354050; Mon, 29 Jul 2024
- 11:39:14 -0700 (PDT)
+	s=arc-20240116; t=1722278417; c=relaxed/simple;
+	bh=juRqjNJKyLdqApVch9xOVOcW8ildrqlNqRTk98mgPYc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TbjtfkOdvqTt8fwLw8dexU0b+7cFlVZGeift1bc1yB2fxpf7nCaU1Hokp0iucxSbQInYbpjFRQWVkYhWVy7mNLt9FPgHu6N5MDrFv69ZjZkk5oiHfIiGU7cQQkklBIV9hFF2lHNl933dWFHJjg+7dBTN7nVZidLQ2PMXlsC/eGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=D1jM17KZ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from localhost.localdomain (unknown [IPv6:2405:201:2015:f873:55f8:639e:8e9f:12ec])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 934BA45A;
+	Mon, 29 Jul 2024 20:39:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1722278366;
+	bh=juRqjNJKyLdqApVch9xOVOcW8ildrqlNqRTk98mgPYc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=D1jM17KZ04e+KLc8WXorYuCVPX5f6n/Aq89qaPaZbnDWn1bnONxg0VYBZhr7+seBS
+	 rqxU1jU1SOQCt4ygyGvpFMl9aonFMhVPvPnRXhVbkgqZlxF2XO8vOfeGDy0w+QJxbu
+	 Rd+9nGRfBefs1JIWrgVaeiYrefiVOnaAwcf9SvLA=
+From: Umang Jain <umang.jain@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Umang Jain <umang.jain@ideasonboard.com>
+Subject: [PATCH] media: imx283: Provide optical black mode
+Date: Tue, 30 Jul 2024 00:09:53 +0530
+Message-ID: <20240729183955.456957-1-umang.jain@ideasonboard.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725193803.14130-4-wsa+renesas@sang-engineering.com> <20240725193803.14130-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20240725193803.14130-5-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 29 Jul 2024 20:39:01 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUbHk3H+LgLrzB4zMCPhbN8EhV_EyF_Gwd4eDXY-MKC4A@mail.gmail.com>
-Message-ID: <CAMuHMdUbHk3H+LgLrzB4zMCPhbN8EhV_EyF_Gwd4eDXY-MKC4A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: pwm: renesas,pwm-rcar: Add r8a779h0 support
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-pwm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 25, 2024 at 9:38=E2=80=AFPM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Document support for the PWM timers in the Renesas R-Car V4M (R8A779H0)
-> SoC.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The IMX283 is capable of delivering optical black regions as part of
+the image capture. These regions support capture of the black levels
+for calibration and are added as extra pixels on top of the full
+resolution capture.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Supply an extra mode which accounts for this increased size that will
+produce black regions in the output image.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+---
+- YUYV capture sample with Pi5 ISP for side-by-side comparison of OB regions:
+https://gcdnb.pbrd.co/images/XQV29MedwXxg.png
+---
+ drivers/media/i2c/imx283.c | 68 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 58 insertions(+), 10 deletions(-)
 
-                        Geert
+diff --git a/drivers/media/i2c/imx283.c b/drivers/media/i2c/imx283.c
+index 8490618c5071..9a0fe2c34a41 100644
+--- a/drivers/media/i2c/imx283.c
++++ b/drivers/media/i2c/imx283.c
+@@ -66,6 +66,7 @@
+ #define IMX283_REG_HTRIMMING		CCI_REG8(0x300b)
+ #define   IMX283_MDVREV			BIT(0) /* VFLIP */
+ #define   IMX283_HTRIMMING_EN		BIT(4)
++#define   IMX283_HOB_EN			BIT(5)
+ 
+ #define IMX283_REG_VWINPOS		CCI_REG16_LE(0x300f)
+ #define IMX283_REG_VWIDCUT		CCI_REG16_LE(0x3011)
+@@ -306,6 +307,7 @@ static const struct imx283_input_frequency imx283_frequencies[] = {
+ 
+ enum imx283_modes {
+ 	IMX283_MODE_0,
++	IMX283_MODE_0_OB,
+ 	IMX283_MODE_1,
+ 	IMX283_MODE_1A,
+ 	IMX283_MODE_1S,
+@@ -327,6 +329,7 @@ struct imx283_readout_mode {
+ static const struct imx283_readout_mode imx283_readout_modes[] = {
+ 	/* All pixel scan modes */
+ 	[IMX283_MODE_0] = { 0x04, 0x03, 0x10, 0x00 }, /* 12 bit */
++	[IMX283_MODE_0_OB] = { 0x04, 0x03, 0x10, 0x00 }, /* 12 bit */
+ 	[IMX283_MODE_1] = { 0x04, 0x01, 0x00, 0x00 }, /* 10 bit */
+ 	[IMX283_MODE_1A] = { 0x04, 0x01, 0x20, 0x50 }, /* 10 bit */
+ 	[IMX283_MODE_1S] = { 0x04, 0x41, 0x20, 0x50 }, /* 10 bit */
+@@ -439,6 +442,36 @@ static const struct imx283_mode supported_modes_12bit[] = {
+ 			.height = 3648,
+ 		},
+ 	},
++	{
++		/* 20MPix 21.40 fps readout mode 0 with optical blacks enabled */
++		.mode = IMX283_MODE_0_OB,
++		.bpp = 12,
++		.width = 5472 + 96, /* width + Horizontal optical black */
++		.height = 3648 + 16, /* height + Vertical optical black */
++		.min_hmax = 5914, /* 887 @ 480MHz/72MHz */
++		.min_vmax = 3793, /* Lines */
++
++		.veff = 3694,
++		.vst = 0,
++		.vct = 0,
++
++		.hbin_ratio = 1,
++		.vbin_ratio = 1,
++
++		/* 20.00 FPS */
++		.default_hmax = 6000, /* 900 @ 480MHz/72MHz */
++		.default_vmax = 4000,
++
++		.min_shr = 11,
++		.horizontal_ob = 96,
++		.vertical_ob = 16,
++		.crop = {
++			.top = 40,
++			.left = 108,
++			.width = 5472 + 96,
++			.height = 3648 + 16,
++		},
++	},
+ 	{
+ 		/*
+ 		 * Readout mode 2 : 2/2 binned mode (2736x1824)
+@@ -793,17 +826,20 @@ static int imx283_set_ctrl(struct v4l2_ctrl *ctrl)
+ 		break;
+ 
+ 	case V4L2_CID_VFLIP:
++		u32 htrim = IMX283_HTRIMMING_EN;
++
+ 		/*
+ 		 * VFLIP is managed by BIT(0) of IMX283_REG_HTRIMMING address, hence
+ 		 * both need to be set simultaneously.
+ 		 */
+-		if (ctrl->val) {
+-			cci_write(imx283->cci, IMX283_REG_HTRIMMING,
+-				  IMX283_HTRIMMING_EN | IMX283_MDVREV, &ret);
+-		} else {
+-			cci_write(imx283->cci, IMX283_REG_HTRIMMING,
+-				  IMX283_HTRIMMING_EN, &ret);
+-		}
++		if (ctrl->val)
++			htrim = IMX283_HTRIMMING_EN | IMX283_MDVREV;
++
++		if (mode->mode == IMX283_MODE_0_OB)
++			htrim |= IMX283_HOB_EN;
++
++		cci_write(imx283->cci, IMX283_REG_HTRIMMING, htrim, &ret);
++
+ 		break;
+ 
+ 	case V4L2_CID_TEST_PATTERN:
+@@ -1010,6 +1046,8 @@ static int imx283_start_streaming(struct imx283 *imx283,
+ 	s32 v_pos;
+ 	u32 write_v_size;
+ 	u32 y_out_size;
++	u32 htrim_end;
++	u32 ob_size_v = 0;
+ 	int ret = 0;
+ 
+ 	fmt = v4l2_subdev_state_get_format(state, 0);
+@@ -1057,6 +1095,12 @@ static int imx283_start_streaming(struct imx283 *imx283,
+ 		mode->crop.height);
+ 
+ 	y_out_size = mode->crop.height / mode->vbin_ratio;
++
++	if (mode->mode == IMX283_MODE_0_OB) {
++		y_out_size -= mode->vertical_ob;
++		ob_size_v = mode->vertical_ob;
++	}
++
+ 	write_v_size = y_out_size + mode->vertical_ob;
+ 	/*
+ 	 * cropping start position = (VWINPOS – Vst) × 2
+@@ -1072,12 +1116,16 @@ static int imx283_start_streaming(struct imx283 *imx283,
+ 	cci_write(imx283->cci, IMX283_REG_VWIDCUT, v_widcut, &ret);
+ 	cci_write(imx283->cci, IMX283_REG_VWINPOS, v_pos, &ret);
+ 
+-	cci_write(imx283->cci, IMX283_REG_OB_SIZE_V, mode->vertical_ob, &ret);
++	cci_write(imx283->cci, IMX283_REG_OB_SIZE_V, ob_size_v, &ret);
++
++	htrim_end = mode->crop.left + mode->crop.width;
++
++	if (mode->mode == IMX283_MODE_0_OB)
++		htrim_end -= mode->horizontal_ob * mode->hbin_ratio;
+ 
+ 	/* TODO: Validate mode->crop is fully contained within imx283_native_area */
+ 	cci_write(imx283->cci, IMX283_REG_HTRIMMING_START, mode->crop.left, &ret);
+-	cci_write(imx283->cci, IMX283_REG_HTRIMMING_END,
+-		  mode->crop.left + mode->crop.width, &ret);
++	cci_write(imx283->cci, IMX283_REG_HTRIMMING_END, htrim_end, &ret);
+ 
+ 	/* Disable embedded data */
+ 	cci_write(imx283->cci, IMX283_REG_EBD_X_OUT_SIZE, 0, &ret);
+-- 
+2.45.0
 
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
