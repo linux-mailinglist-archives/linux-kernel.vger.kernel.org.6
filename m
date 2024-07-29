@@ -1,115 +1,133 @@
-Return-Path: <linux-kernel+bounces-266075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E4A393FA61
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:13:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91DCE93FA66
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F7BA1C22202
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:13:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38F0F1F22704
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4897615A86D;
-	Mon, 29 Jul 2024 16:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B0015B999;
+	Mon, 29 Jul 2024 16:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aQlc+/k1";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dxPfN5o0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CH7o+GN6"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2506A15A87C
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39ABC80038;
+	Mon, 29 Jul 2024 16:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722269618; cv=none; b=spolyHoE7GozUmP1ZdOBn54t2AkiEAeS62nEHAL191slaPMeOWgY7eZYeoSzosy4dOsRCk6WRA8M0rnbqP+cRAw1hArRuLAqoDNmwHDbGPXX5wrDsPAOtprxkP5WgQym4pfkj0H0LPVe5PsNX/v4ezieqLL3e8cBF5ZZGnSkydQ=
+	t=1722269684; cv=none; b=Jb2eS0cDxs/pU4i0axYW4j8P9n45g2U3QSF4mYaV/PRIqSILV4pwIbRJY84gBVH8eSDI6q1oVTlYNCEoVnayi9j79CHU/K6jSCIT32kRU+/EFUrE1Fh99hstzbcklcYg2nsSQTS44aCc+NmsAH9l0V7g3ZBV1O9rXItsJrsl6Bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722269618; c=relaxed/simple;
-	bh=tCTjUC5rhasvzq+Y8zZOFMdnMktPZA0m+vLnG8RMdio=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rfu/sbcXmBQOgoImpQhx5euxofHpCezgdpR87wXewVkQknCahOGr31/6ljIx1Fw2OVzLXLOEZzQzbn9muKzDgyNIqD1/25Wu93vv383oKW6MA57Sw+QRU2YMM20NPgf8OjaRhenpUi5moVYfMfQRbYfXP6/koJkUaMkZkjd0LvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aQlc+/k1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dxPfN5o0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722269614;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VQOzc4A/CKoY+z2y3ldZhRJ/TMUH+5YA9+WuZA16SqA=;
-	b=aQlc+/k1+6AkQ6RTyXnyjoPFdJPxcP2qhSD+EYHNEuiICxViyZ4jNba71xndgGah/KFJr3
-	w1hDdAtznb1Fx6MlEq3XXhHDVvp9KTajKvAasOIAIgW85jeL27+2W/3RdkDZ0wXk1Qf03I
-	eo+cSYy1Evftbc0Ii2Dia/nUuHqV9ngrqrWb9Zfjz8zy1FHXQbncNy3625c1nNYTTfT5Eq
-	22u5m1yQFjWLm0QWiOBPYx7M9dAQQT0e1gprgs4ZVapfE2OiWQlfHJVMH/ldA7LmlgU94b
-	tE3IQwQ1k3keq8F5q7ykZG+acmenhRN0KFdbo2DnbcEt8e9SXBmej1dJ9y1TGQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722269614;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VQOzc4A/CKoY+z2y3ldZhRJ/TMUH+5YA9+WuZA16SqA=;
-	b=dxPfN5o06ld5S5nWrf/AXQiWYGETq1VtMkhvZi4WKFfwYkkebU4O5g7m4XMatE02uq3XK6
-	IbLqIOhAnR8NFXAw==
-To: Breno Leitao <leitao@debian.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Cc: leit@meta.com, "Peter Zijlstra (Intel)" <peterz@infradead.org>, Wei Liu
- <wei.liu@kernel.org>, Marc Zyngier <maz@kernel.org>, Adrian Huang
- <ahuang12@lenovo.com>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/apic: Add retry mechanism to add_pin_to_irq_node()
-In-Reply-To: <20240729140604.2814597-1-leitao@debian.org>
-References: <20240729140604.2814597-1-leitao@debian.org>
-Date: Mon, 29 Jul 2024 18:13:34 +0200
-Message-ID: <874j8889ch.ffs@tglx>
+	s=arc-20240116; t=1722269684; c=relaxed/simple;
+	bh=NCb9Ld2V+tyLAS+OJSGqh04B0fBxFGet5NP9pLw4hEo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dWtqLJQU+fCwBQMKM6fOjEHqJ9VcQDguwWke0hZaRRuODsMbnBf2oRlwV39eJf53bJmU6saKoQMucSpFHF2tAEML6auUN00ItQ9bZmIeY36+AvhqhzyTi8abMsWB6USCJhmXjURSUNCdy3USoKhr3EAj8wqRjq9vrjkvbiL0Z/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CH7o+GN6; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3687f8fcab5so1438069f8f.3;
+        Mon, 29 Jul 2024 09:14:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722269681; x=1722874481; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NCb9Ld2V+tyLAS+OJSGqh04B0fBxFGet5NP9pLw4hEo=;
+        b=CH7o+GN6+nlfETXWUpRHJNUW8C2FCuq3tbWpnLiB2A/ImkDCgW52H49dxBZerzsL+l
+         0rRekJ+5rXtVs6EilwF1x42PdelB2tJwN0y6d3rh0cN8b5CVZO7JQhiSumOBsI+BcJfw
+         T9oyNkBzpPGpUS35tYJXHJK1MQyxeJDqqnQTynkg9Ac6GTmLH8VLnk9oPJpdsiAFT9Hk
+         HRSzVjafMzviQpN2Va/zpPOX4ORbFwVfY9ZW9vWTiJicE4+6qbGDVywTV3whomgEJ2QJ
+         v6p7K2frGLIepaWbd7I3ax5+BaRpxLNnb08aiBiDlxyLo4df+JDkHDxuCsaSsuz3FsgN
+         yb8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722269681; x=1722874481;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NCb9Ld2V+tyLAS+OJSGqh04B0fBxFGet5NP9pLw4hEo=;
+        b=i+Es2B1yUw/5gqy5LdU0tsEUTQqoRHQQvXc3xXvA3AzVk+K6mZYf3BStNOEvXglgdX
+         JKYH23jOY9RAZYR71b8DOPXxUlFlQdi9hEj0zfXcKQihFLawz3401gQ1kTaBSMf9BPBS
+         27/n0Lv6IRY3M5GcgH569AYqjDCHfIRMTjpFusE3dqRmAFhzwBJifl5R22/UTkIt13T6
+         ilINMVuOzpM6Fud+fonEHEB6I78JPAhyXCrEgNpE1bbYFc2jc1MC2grJbPeyQ6EdfgXa
+         0aRIQ/JR1Rtjw7ClBSMNa6ENqCnl4l18d28b7ff+cTKU+qgymqG6vpFPdz3kv4+1dbCB
+         xTqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ5u38FxI3NrE9nUTx9KxnpGxIfF9mAhQNHi0Wj/AoHnyGJmMpGJ+zKoZQ8igOvMLVu5XnaBtO9X1l9WpKOw3Ao1L0l/x+kjoTKkCOYLbyLmPk86RXzHWeWOkgCaO4+RQA/qUlhWSWClDFf1KYU4DXfZERb0rjc8uP7Vil6yP1
+X-Gm-Message-State: AOJu0YzCVJcXmbs2Gga3Kytve0LkqkzgXlbbEe19Z4ELJHmrYX1wjdWY
+	luIhVtFxbXti5+L1IrCI899q4gFAXDW6fZf7/cpFv++sHA/OLIGdnCkcaHnw9Q40nsVxF85AbT0
+	NiCN7P7lu95pDUGPGYaXgQCQ94SQ=
+X-Google-Smtp-Source: AGHT+IH0iUHS+mfnOnQclj0rSTTnv/QTU5hLTWKAlViB+oUnmnavFRQv/N6b7puMEHLT0xEpDzIQ2UGOCU3CC/vmOZM=
+X-Received: by 2002:a5d:64c5:0:b0:368:7f4f:9ead with SMTP id
+ ffacd0b85a97d-36b5cecf32amr6545711f8f.7.1722269681301; Mon, 29 Jul 2024
+ 09:14:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240729022316.92219-1-andrey.konovalov@linux.dev> <baae33f5602d8bcd38b48cd6ea4617c8e17d8650.camel@sylv.io>
+In-Reply-To: <baae33f5602d8bcd38b48cd6ea4617c8e17d8650.camel@sylv.io>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Mon, 29 Jul 2024 18:14:30 +0200
+Message-ID: <CA+fCnZcWvtnTrST3PrORdPwmo0m2rrE+S-hWD74ZU_4RD6mSPA@mail.gmail.com>
+Subject: Re: [PATCH] usb: gadget: dummy_hcd: execute hrtimer callback in
+ softirq context
+To: Marcello Sylvester Bauer <sylv@sylv.io>
+Cc: andrey.konovalov@linux.dev, Alan Stern <stern@rowland.harvard.edu>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Aleksandr Nogikh <nogikh@google.com>, Marco Elver <elver@google.com>, 
+	Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	syzbot+2388cdaeb6b10f0c13ac@syzkaller.appspotmail.com, 
+	syzbot+17ca2339e34a1d863aad@syzkaller.appspotmail.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29 2024 at 07:06, Breno Leitao wrote:
-> I've been running some experiments with failslab fault injector running
-> to detect a different problem, and the machine always crash with the
-> following stack:
+On Mon, Jul 29, 2024 at 10:26=E2=80=AFAM Marcello Sylvester Bauer <sylv@syl=
+v.io> wrote:
 >
-> 	can not alloc irq_pin_list (-1,0,20)
-> 	Kernel panic - not syncing: IO-APIC: failed to add irq-pin. Can not proceed
+> Hi Andrey,
+
+Hi Marcello,
+
+> Thanks for investigating and finding the cause of this problem. I have
+> already submitted an identical patch to change the hrtimer to softirq:
+> https://lkml.org/lkml/2024/6/26/969
+
+Ah, I missed that, that's great!
+
+> However, your commit messages contain more useful information about the
+> problem at hand. So I'm happy to drop my patch in favor of yours.
+
+That's very considerate, thank you. I'll leave this up to Greg - I
+don't mind using either patch.
+
+> Btw, the same problem has also been reported by the intel kernel test
+> robot. So we should add additional tags to mark this patch as the fix.
 >
-> 	Call Trace:
-> 	 panic
-> 	   _printk
-> 	   panic_smp_self_stop
-> 	   rcu_is_watching
-> 	   intel_irq_remapping_free
+>
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes:
+> https://lore.kernel.org/oe-lkp/202406141323.413a90d2-lkp@intel.com
+> Acked-by: Marcello Sylvester Bauer <sylv@sylv.io>
 
-This completely lacks context. When does this happen? What's the system
-state? What has intel_irq_remapping_free() to do with the allocation path?
+Let's also add the syzbot reports mentioned in your patch:
 
-> This happens because add_pin_to_irq_node() function would panic if
-> adding a pin to an IRQ failed due to -ENOMEM (which was injected by
-> failslab fault injector).  I've been running with this patch in my test
-> cases in order to be able to pick real bugs, and I thought it might be a
-> good idea to have it upstream also, so, other people trying to find real
-> bugs don't stumble upon this one. Also, this makes sense in a real
-> world(?), when retrying a few times might be better than just
-> panicking.
+Reported-by: syzbot+c793a7eca38803212c61@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3Dc793a7eca38803212c61
+Reported-by: syzbot+1e6e0b916b211bee1bd6@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3D1e6e0b916b211bee1bd6
 
-While it seems to make sense, the reality is that this is mostly early
-boot code. If there is a real world memory allocation failure during
-early boot then retries will not help at all.
+And I also found one more:
 
-> Introduce a retry mechanism that attempts to add the pin up to 3 times
-> before giving up and panicking. This should improve the robustness of
-> the IO-APIC code in the face of transient errors.
+Reported-by: syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3Dedd9fe0d3a65b14588d5
 
-I'm absolutely not convinced by this loop heuristic. That's just a bad
-hack.
-
-Thanks,
-
-        tglx
+Thank you!
 
