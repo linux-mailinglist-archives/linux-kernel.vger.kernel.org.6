@@ -1,262 +1,204 @@
-Return-Path: <linux-kernel+bounces-266170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16D893FBED
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:56:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 181BA93FBE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87D6A282AAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:56:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A5001C21CE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A13816F0E7;
-	Mon, 29 Jul 2024 16:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE7F15B542;
+	Mon, 29 Jul 2024 16:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="q/L/+Tor"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Uf6hQzWl"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2063.outbound.protection.outlook.com [40.107.243.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C047E78B50;
-	Mon, 29 Jul 2024 16:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722272162; cv=none; b=twFcIq/T+9NkHYe9VcS5ZhJvMhUTvNT7QmhLSg1GljSt1B71Wlyc+cEbmRp5u+Bo5Dn7jO9ZggRMxYkDZGdpmky6d6rwMljpwQI3UIl+bldNO+hmK+WuigE4WQ0yKHIsUQg4inEq0uEwerA8nOGr2xs/M2GDRymm/EQ4Me5ZuO0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722272162; c=relaxed/simple;
-	bh=LbYRipITzNz2cVnITep0A0Bc9eCQQGDIEuZlBYENEn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GymaXlRkh0FOS76y2mry0YJ3OBs3F0GFaeUHKrQYsnINI1aAOpGwDarQOX4VP3clA3QPTI1GfrNSzVFGSQ3G/Ld7ZwuOIo7xsBlTqxBpjALB5PZSL+x47fg+LFYVD+mN1jRlvMUhc1QdYdNDCrvrgwX/VGnBynaEAyj/tklwOXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=q/L/+Tor; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TGTfEt025061;
-	Mon, 29 Jul 2024 16:55:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:content-transfer-encoding:in-reply-to; s=pp1; bh=r
-	P7XGHo7glYOi1uyLM/8GrOjl/KJ3E+Se5g0xynW93M=; b=q/L/+Tor8gpPxGYCU
-	sx2wOiY9pezsvaCFFgrWpZ7Xb/w9iv/ibSvCKxizx2micTQmrdWYx2S1k+9V5koE
-	N7gO+ln3w9+mqZPnNfoDv1+AFKPov5rGDEvGO+Mfl24qZ/27C3E7sUR881Of0Nka
-	uXZ6fIYW1U775EhE3/5OyYEM8ZG0+LZrx4Lzo8mPWQESiIUkQ6iarvHm7ALZ8y4U
-	o3PsIh03FnYa7Yc314RIq+/qjYhUKch74uiK5pkupRLMqmu08vaLUnmb5smoPrHW
-	qPhN5phRn1glh5pA77tU2GLl6qcXkBUVwQgvFeFW493G90jCYoT/MA23B/dCQKsF
-	E6s0Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40pemu81g7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 16:55:43 +0000 (GMT)
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46TGtgkL003055;
-	Mon, 29 Jul 2024 16:55:42 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40pemu81g1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 16:55:42 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46TGUFWW007457;
-	Mon, 29 Jul 2024 16:55:41 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 40nb7tyyvm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 16:55:41 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46TGtabm7733654
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 29 Jul 2024 16:55:38 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E6AEC20043;
-	Mon, 29 Jul 2024 16:55:35 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EC6E720040;
-	Mon, 29 Jul 2024 16:55:32 +0000 (GMT)
-Received: from li-e7e2bd4c-2dae-11b2-a85c-bfd29497117c.ibm.com (unknown [9.195.41.40])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 29 Jul 2024 16:55:32 +0000 (GMT)
-Date: Mon, 29 Jul 2024 22:25:28 +0530
-From: Amit Machhiwal <amachhiw@linux.ibm.com>
-To: Lizhi Hou <lizhi.hou@amd.com>
-Cc: Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Saravana Kannan <saravanak@google.com>,
-        Kowshik Jois B S <kowsjois@linux.ibm.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        Vaidyanathan Srinivasan <svaidy@linux.ibm.com>,
-        Lukas Wunner <lukas@wunner.de>, Nicholas Piggin <npiggin@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Vaibhav Jain <vaibhav@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2] PCI: Fix crash during pci_dev hot-unplug on pseries
- KVM guest
-Message-ID: <vctizrpvsuy4ebrvmub756sxs2bridn6gkav55ehlz5gjlc44b@jyzymbydkut2>
-Mail-Followup-To: Lizhi Hou <lizhi.hou@amd.com>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	Saravana Kannan <saravanak@google.com>, Kowshik Jois B S <kowsjois@linux.ibm.com>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org, 
-	Vaidyanathan Srinivasan <svaidy@linux.ibm.com>, Lukas Wunner <lukas@wunner.de>, 
-	Nicholas Piggin <npiggin@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Vaibhav Jain <vaibhav@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
-References: <20240723162107.GA501469-robh@kernel.org>
- <a8d2e310-9446-6cfa-fe00-4ef83cdb6590@amd.com>
- <CAL_JsqJjhaLFm9jiswJTfi4yZFYGKJUdC+HV662RLWEkJjxACw@mail.gmail.com>
- <ac3aeec4-70fc-cd9e-498c-acab0b218d9b@amd.com>
- <p6cs4fxzistpyqkc5bv2sb76inrw7fterocdcu3snnyjpqydbr@thxna6v2umrl>
- <d20b78cd-ed34-3e5a-0176-c20ee5afd0db@amd.com>
- <CAL_JsqJAuVexFAz6gWWuTtX1Go-FnHe6vJapv0znHBERSCtv+Q@mail.gmail.com>
- <0b1be7b7-e65b-8d8e-0659-388dec303039@amd.com>
- <6mjt477ltxhr4sudizyzbspkqb7yspxvnoiblzeiwxw5kwwsmq@bchicp4bmtzq>
- <af45d85c-2145-cbce-b91b-2aa70a9dcd0f@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B98878B50;
+	Mon, 29 Jul 2024 16:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722272153; cv=fail; b=I8DO9tb9yzu3czdR0bgF5B0wcAeDpCbKQ93aMEnNEt+vUk7genl/TmxqScpaVbszc7V4vfElfSAni9m8M5xZHnk8Ajs2lW9ZOTJ41N17Rkkoyhaa8s0572NaRPyTLrrpBgiwdwckoR2uSefq+CQpxi4QXn1KYxu+K/UQTk1gmwg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722272153; c=relaxed/simple;
+	bh=22ezeCHomg0cGNQlL2T2udQ7QYlk/ookSXhuozfdays=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/qrqA92jZ9p/U5kX4+vpkFytpN5fmlu/sL3g+Lwk6A8vJmCnzJIxm4n7PgKqbxUcH34RjLOsntEFOzv+LS5NR+0UxFBS5WX83qDhDHA9g4CY7DGa7Lk9yuawrQldiO2zO1Nh0Z94leAkngo3S5DHNtdXTDLAz44BfxIN5Ohw6w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Uf6hQzWl; arc=fail smtp.client-ip=40.107.243.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OArMKu7J8tp9JqaTHmkFqi7TA9Fnns2cU05piiel+kdfgemsF8qej461bkXSeoKAcu1FtCfNTvPM/f1u2L3jMTxf2TgDfNvDA3nBQcPFFBVvAVB3mTfVDvuRaQ44kjvycxGpn/UpACLlP7c3WV0mF0DPpYqIqSlW7OQ4Q9Y39ruzfA9Lkfo8i96v9z/Mzvw39c3XeLlYnqWYAuXYrgpm5AC3IPyFRQYLPRqy3XfwOcehAcP/2TLH4kHY6146NVBbOiPf7hCuFMKjR5zkRGrrvv3kRLcqUbzSx5dA/bXCMQ6rsH3g+ZqvdJPdIbwZUWwghKOgwCQZuewWSJDTyvRpxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0SLFtvJTjFBZdpsSgVh9kRgRsUmwkGckey0TPBLL+2c=;
+ b=Dq7VFsdmxVMp7F1dlTy34MxxTrE/HloTAq73kgZoXxrOIPM4g68niqxwNohIP6axY0cjMUESJC4REztUNzxj9ivohlcvfP/rklu9BFG/8AaYUeIELkwQuBA68Vf8HHC7JIxaU5Od1lgjH+F+uClReRYSHL9AN2v3Q2m1nVSv874c03EVjucMKh56Ai/gtQsz0CWUxZvnYwpE0r0uUO7lr5MiSxfJJqRJBRgckZ6Rq/pVkmUWBAkQyoAI3OQulQUdLvc5hIjPhjSEpAV+lKee7vvOWqMWnAHgdefkTVV9UynNmoPvPtZZkAgyVVSrTm4BkYaD5VqlSel1SQtfcywyNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0SLFtvJTjFBZdpsSgVh9kRgRsUmwkGckey0TPBLL+2c=;
+ b=Uf6hQzWluc8uge8NkejzlhM5ra2QVZgL52pAxygEBon8iGM8kvWtaiH7VwETU4iLiUtNoBhN6ejaIHlI4xA5Ri82DmJG1VABJfjJbI96UJqKeNTz2ecEcXcVSFp1kw9/8YsL7aMkATZYVGW4Yg6/LjlDhzHqYILzQR2igK2NLLG36+kYnRBPx2NdBKIWd1RIwP9mvYpAbmYFHHKWwezuUdPAOkHmHCo+9JE3Kkp40fh1J01guzOBktpV0fT7DafWH47QvrwpvLo1Fv2I1ASle4vPk2JG1I3vjImtkU7SxtGcsFkEB1QckeoD59Fmc/bBw85VZKuuw/dfOCTIFcDiEQ==
+Received: from BL1P223CA0002.NAMP223.PROD.OUTLOOK.COM (2603:10b6:208:2c4::7)
+ by IA1PR12MB8189.namprd12.prod.outlook.com (2603:10b6:208:3f0::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.26; Mon, 29 Jul
+ 2024 16:55:49 +0000
+Received: from BL6PEPF0001AB78.namprd02.prod.outlook.com
+ (2603:10b6:208:2c4:cafe::15) by BL1P223CA0002.outlook.office365.com
+ (2603:10b6:208:2c4::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.34 via Frontend
+ Transport; Mon, 29 Jul 2024 16:55:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL6PEPF0001AB78.mail.protection.outlook.com (10.167.242.171) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7828.19 via Frontend Transport; Mon, 29 Jul 2024 16:55:49 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 29 Jul
+ 2024 09:55:35 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 29 Jul
+ 2024 09:55:34 -0700
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Mon, 29 Jul 2024 09:55:33 -0700
+Date: Mon, 29 Jul 2024 09:55:31 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: kernel test robot <lkp@intel.com>
+CC: <will@kernel.org>, <llvm@lists.linux.dev>,
+	<oe-kbuild-all@lists.linux.dev>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<jgg@nvidia.com>, <thierry.reding@gmail.com>, <vdumpa@nvidia.com>,
+	<jonathanh@nvidia.com>, <linux-kernel@vger.kernel.org>,
+	<iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v10 8/9] iommu/arm-smmu-v3: Add in-kernel support for
+ NVIDIA Tegra241 (Grace) CMDQV
+Message-ID: <ZqfJgxMt77WqqeNH@Asurada-Nvidia>
+References: <ca671f4d090546c21a0aba6fa4ddda8da26d4474.1722206275.git.nicolinc@nvidia.com>
+ <202407292157.BauV7TPf-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <af45d85c-2145-cbce-b91b-2aa70a9dcd0f@amd.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: zERw8w-BfFVdH2DDIJaNTMQ227-zUjP4
-X-Proofpoint-GUID: yHn67uTODD4v1Bvu00La6-lWVUPXglYb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-29_15,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 suspectscore=0 impostorscore=0 bulkscore=0 spamscore=0
- adultscore=0 mlxscore=0 phishscore=0 lowpriorityscore=0 mlxlogscore=999
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407290113
+In-Reply-To: <202407292157.BauV7TPf-lkp@intel.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB78:EE_|IA1PR12MB8189:EE_
+X-MS-Office365-Filtering-Correlation-Id: 856e779d-4827-4e7f-b87b-08dcafef4c5c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?pYaWIWS55FZ16FHabLToZ8oR9Kkw/JRqubnX1OTFjLKx6eOFRPJFzyG8YUU3?=
+ =?us-ascii?Q?lIdEtMEetZZCC4O2B5oaBBAkAGpSvN1FZzddxiOkGppES570vZnhQK29JbkM?=
+ =?us-ascii?Q?87VUTNQgUBfOHVd9qW7VR+ir8WfUnoMIroP6VGyiAIXIWWpsRqiJ7yDcjJ2o?=
+ =?us-ascii?Q?WRcPe+GQGeEel7roSoW9dcgqiPSXfpmQR9Cc1fYdmKEdbMjb0Jn/4E01UQ66?=
+ =?us-ascii?Q?C05KHzpl+ILPoCZcnM5p7BZ0oZGOTo43gDiI+RMVbt4OLbMbdBhI8qyZuDD+?=
+ =?us-ascii?Q?PPSyqpOTJpoxQGACNg2R6M4386Ioe3joj+nTA+7RnWR22BnXSzDLvMQh1AZQ?=
+ =?us-ascii?Q?GKTDTh+Y8+kcqfmlJsgCahaiF5t1JBlYmJLjzaSm0C7GULIeUQUqvxxWXHN5?=
+ =?us-ascii?Q?5v5K1zgBD7hyKznO8n0CrfY5SqL5Lxy6oXGpOPwberiq1yRHi0pSnRP27bgu?=
+ =?us-ascii?Q?px2IDFHEr0PrIMzkj7LJe3V61NzijGrBGKtbx7ukuB91uPzZZBRST2ImpxX8?=
+ =?us-ascii?Q?MlEtXA6q6hoR4fTmeSP8ztr/6v73vL6+CxVa4AzMLZtG1g2iQWp+2YCEjYPC?=
+ =?us-ascii?Q?8edz74OlmjtCusFgPxlQYoXqltxKFlv0avo0yDnD2x0tx46+vkvAFbKIeDAc?=
+ =?us-ascii?Q?m4vHxHGmXKDUV5njaa7oQ73syyae7a6ubdXLsyC6Oo6jCveKuUF7QQbbFrRT?=
+ =?us-ascii?Q?2LlI9xL7JWN9O4zS3ZeclIxOnKSW3c2C8OWifABX0zxPu79HRD3+DbQgwA0l?=
+ =?us-ascii?Q?vVekKItAN/SYxmvUiF60cH/eX0A9HyAe6234RGrZHtecTTzA8fBek37dwepQ?=
+ =?us-ascii?Q?BiYd4xnwfeSLqOFVMG1Qp4oCDUU3xA86gxec5Dua+IxhuauLYy83nB1pWSpt?=
+ =?us-ascii?Q?lpSSbvj4kkCtfnPoUMBmFv3rCpnkPUhwnmEY1xAW8VGY1AXkRDZlz1fMUwOe?=
+ =?us-ascii?Q?tf6u0XSVbeb1zcgvMqLVCVmcU1AKwvpFSPtnQlBfLeWIdNWGVcSjzKwBCaPN?=
+ =?us-ascii?Q?atBNqC7QAacHMDfbf+8rv35RFfYmb3yJszfEGpXI4mY9ogRHb3rz7icU1GOw?=
+ =?us-ascii?Q?C66jlw91RRUXpywPAH46bOpnSWrQJ5iLBBhZGzKZ+SFQ8p5xsXvUfepmJvfu?=
+ =?us-ascii?Q?Boecr7L+kGrA4bYzgeQyeZJZFPy5Eq2phFp2TvVd40J95ZtG3DRQIf6b9Jl4?=
+ =?us-ascii?Q?AxEXYn537CmhSTPrY6aW8lnv450V3hebN+LMFdMykc/3HiO+ZtVc5IyXlxA/?=
+ =?us-ascii?Q?WhS0Xx/4Crux2zWfsQnnsOM96BGup+hIAZQoAMqSaHwp0G6yP3qXPNvtUTI6?=
+ =?us-ascii?Q?wWBSQV+xsWCxhHMvIVg9lmVolUCibkEUzDG0oUy58ln5J7BHYjBKJ2Pc+d+p?=
+ =?us-ascii?Q?smMOUjl4JWImOBi9qfPvZKmEdoncoktw4y19M6FXNMmh6PQ3359QzpTQvFFd?=
+ =?us-ascii?Q?rrTUlIukxixZAvA1LOgp2LACZe9tKWHs?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 16:55:49.0926
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 856e779d-4827-4e7f-b87b-08dcafef4c5c
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB78.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8189
 
-Hi Lizhi,
+On Mon, Jul 29, 2024 at 10:01:10PM +0800, kernel test robot wrote:
+ 
+> All warnings (new ones prefixed by >>):
+> 
+> >> drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:186: warning: Function parameter or struct member 'vintfs' not described in 'tegra241_cmdqv'
+> >> drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:186: warning: Excess struct member 'vtinfs' description in 'tegra241_cmdqv'
+> 
+> 
+> vim +186 drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> 
+>    160
+>    161  /**
+>    162   * struct tegra241_cmdqv - CMDQ-V for SMMUv3
+>    163   * @smmu: SMMUv3 device
+>    164   * @base: MMIO base address
+>    165   * @irq: IRQ number
+>    166   * @num_vintfs: Total number of VINTFs
+>    167   * @num_vcmdqs: Total number of VCMDQs
+>    168   * @num_lvcmdqs_per_vintf: Number of logical VCMDQs per VINTF
+>    169   * @vintf_ids: VINTF id allocator
 
-On 2024/07/29 09:47 AM, Lizhi Hou wrote:
-> Hi Amit
-> 
-> On 7/29/24 04:13, Amit Machhiwal wrote:
-> > Hi Lizhi,
-> > 
-> > On 2024/07/26 11:45 AM, Lizhi Hou wrote:
-> > > On 7/26/24 10:52, Rob Herring wrote:
-> > > > On Thu, Jul 25, 2024 at 6:06 PM Lizhi Hou <lizhi.hou@amd.com> wrote:
-> > > > > Hi Amit,
-> > > > > 
-> > > > > 
-> > > > > I try to follow the option which add a OF flag. If Rob is ok with this,
-> > > > > I would suggest to use it instead of V1 patch
-> > > > > 
-> > > > > diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-> > > > > index dda6092e6d3a..a401ed0463d9 100644
-> > > > > --- a/drivers/of/dynamic.c
-> > > > > +++ b/drivers/of/dynamic.c
-> > > > > @@ -382,6 +382,11 @@ void of_node_release(struct kobject *kobj)
-> > > > >                                   __func__, node);
-> > > > >            }
-> > > > > 
-> > > > > +       if (of_node_check_flag(node, OF_CREATED_WITH_CSET)) {
-> > > > > +               of_changeset_revert(node->data);
-> > > > > +               of_changeset_destroy(node->data);
-> > > > > +       }
-> > > > What happens if multiple nodes are created in the changeset?
-> > > Ok. multiple nodes will not work.
-> > > > > +
-> > > > >            if (node->child)
-> > > > >                    pr_err("ERROR: %s() unexpected children for %pOF/%s\n",
-> > > > >                            __func__, node->parent, node->full_name);
-> > > > > @@ -507,6 +512,7 @@ struct device_node *of_changeset_create_node(struct
-> > > > > of_changeset *ocs,
-> > > > >            np = __of_node_dup(NULL, full_name);
-> > > > >            if (!np)
-> > > > >                    return NULL;
-> > > > > +       of_node_set_flag(np, OF_CREATED_WITH_CSET);
-> > > > This should be set where the data ptr is set.
-> > > Ok. It sounds the fix could be simplified to 3 lines change.
-> > Thanks for the patch. The hot-plug and hot-unplug of PCI device seem to work
-> > fine as expected. I see this patch would attempt to remove only the nodes which
-> > were created in `of_pci_make_dev_node()` with the help of the newly introduced
-> > flag, which looks good to me.
-> > 
-> > Also, since a call to `of_pci_make_dev_node()` from `pci_bus_add_device()`, that
-> > creates devices nodes only for bridge devices, is conditional on
-> > `pci_is_bridge()`, it only makes sense to retain the logical symmetry and call
-> > `of_pci_remove_node()` conditionally on `pci_is_bridge()` as well in
-> > `pci_stop_dev()`. Hence, I would like to propose the below change along with the
-> > above patch:
-> > 
-> > diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
-> > index 910387e5bdbf..c6394bf562cd 100644
-> > --- a/drivers/pci/remove.c
-> > +++ b/drivers/pci/remove.c
-> > @@ -23,7 +23,8 @@ static void pci_stop_dev(struct pci_dev *dev)
-> >                  device_release_driver(&dev->dev);
-> >                  pci_proc_detach_device(dev);
-> >                  pci_remove_sysfs_dev_files(dev);
-> > -               of_pci_remove_node(dev);
-> > +               if (pci_is_bridge(dev))
-> > +                       of_pci_remove_node(dev);
-> >                  pci_dev_assign_added(dev, false);
-> >          }
-> > 
-> > Please let me know of your thoughts on this and based on that I can spin the v3
-> > of this patch.
-> 
-> As I mentioned, there are endpoints in pci quirks (pci/quirks.c) will also
-> create nodes by of_pci_make_dev_node(). So please remove above two lines.
+>    170   * @vtinfs: List of VINTFs
 
-Sorry if I'm misinterpreting something here but as I mentioned,
-`of_pci_make_dev_node()` is called only for bridge devices with check performed
-via `pci_is_bridge()`, could you please elaborate more on why the same check
-can't be put while removing the node via `of_pci_remove_node()`?
+s/vtinfs/vintfs
 
-Thanks,
-Amit
+Will include the typo fix in next ver.
 
+Thanks
+Nicolin
+
+>    171   */
+>    172  struct tegra241_cmdqv {
+>    173          struct arm_smmu_device smmu;
+>    174
+>    175          void __iomem *base;
+>    176          int irq;
+>    177
+>    178          /* CMDQV Hardware Params */
+>    179          u16 num_vintfs;
+>    180          u16 num_vcmdqs;
+>    181          u16 num_lvcmdqs_per_vintf;
+>    182
+>    183          struct ida vintf_ids;
+>    184
+>    185          struct tegra241_vintf **vintfs;
+>  > 186  };
+>    187
 > 
-> Thanks,
-> 
-> Lizhi
-> 
-> > 
-> > In addition to this, can this patch be taken as part of 6.11 as a bug fix?
-> > 
-> > Thanks,
-> > Amit
-> > 
-> > > 
-> > > diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-> > > index 51e3dd0ea5ab..0b3ba1e1b18c 100644
-> > > --- a/drivers/pci/of.c
-> > > +++ b/drivers/pci/of.c
-> > > @@ -613,7 +613,7 @@ void of_pci_remove_node(struct pci_dev *pdev)
-> > >          struct device_node *np;
-> > > 
-> > >          np = pci_device_to_OF_node(pdev);
-> > > -       if (!np || !of_node_check_flag(np, OF_DYNAMIC))
-> > > +       if (!np || !of_node_check_flag(np, OF_CREATED_WITH_CSET))
-> > >                  return;
-> > >          pdev->dev.of_node = NULL;
-> > > 
-> > > @@ -672,6 +672,7 @@ void of_pci_make_dev_node(struct pci_dev *pdev)
-> > >          if (ret)
-> > >                  goto out_free_node;
-> > > 
-> > > +       of_node_set_flag(np, OF_CREATED_WITH_CSET);
-> > >          np->data = cset;
-> > >          pdev->dev.of_node = np;
-> > >          kfree(name);
-> > > diff --git a/include/linux/of.h b/include/linux/of.h
-> > > index a0bedd038a05..a46317f6626e 100644
-> > > --- a/include/linux/of.h
-> > > +++ b/include/linux/of.h
-> > > @@ -153,6 +153,7 @@ extern struct device_node *of_stdout;
-> > >   #define OF_POPULATED_BUS       4 /* platform bus created for children */
-> > >   #define OF_OVERLAY             5 /* allocated for an overlay */
-> > >   #define OF_OVERLAY_FREE_CSET   6 /* in overlay cset being freed */
-> > > +#define OF_CREATED_WITH_CSET    7 /* created by of_changeset_create_node */
-> > > 
-> > >   #define OF_BAD_ADDR    ((u64)-1)
-> > > 
-> > > 
-> > > Lizhi
-> > > 
-> > > > Rob
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
