@@ -1,224 +1,256 @@
-Return-Path: <linux-kernel+bounces-265144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A31F93ED4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:19:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9842993ED4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88D1AB20E4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:19:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AC9A281BB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B35824BF;
-	Mon, 29 Jul 2024 06:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A1983CDB;
+	Mon, 29 Jul 2024 06:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="JQj8X99I"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="WbdUPPFT"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26EF78C8E
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4EA78C8E;
+	Mon, 29 Jul 2024 06:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722233975; cv=none; b=BG11xpMhfUMnyAddjxTlK67bBMsFOI2gZHLuLeR0KHIil+XArTqX3vADTEDMwMF1mbKhPijb5PnLnTNbve7nzoLvqR5RJ2E8IoPYJeMZdTO2PiIdfIU8ugfBIxqeBP9VrfBd0MXmDrKqNFPrxA7qR3tycl1aK5PrZVlCKTMHQkg=
+	t=1722234122; cv=none; b=sN7anEwlaS9QMlAzzh+z5yH0fy3odpZLszWo1lRU96INGC4IV5VfcXxOYv+IizM8V+wgnxVE3wwhZkkvYhC4EKkLPl22hNTVwznhq751yfpmUSWtARuzK3DrPk7G491ChFkwTfClk4IHp8TzltycCqO+NDgoeGM1CSLw0jn6aKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722233975; c=relaxed/simple;
-	bh=+B5B7Ea8uxLMKalcjNUpDUZoTG98BLQID69O1P0xr6M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a/K3ClDCbVr/N5FkKCNelCJ8wQHHvk8hvYpJspmCcMED6T19T6/+c6zHLhZCsTbUF/JPLXua+biXv73t+NZC49WtELu+AQPebrx1xzJVSHwwJEZD8l5CWVwRkO2SGDuireEwEROBViw/8M8ZnlEQXgNjgGtopd43AWa5QAauBmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=JQj8X99I; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc4b03fca0so1583765ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 23:19:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1722233973; x=1722838773; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o+ej+mYre5gtHO05efMaQEUIHF+HSHHhoHKJ6E1Z3jg=;
-        b=JQj8X99IFkJz5V+BFFKJbONF26E1+fL8rxTGGPMPYf0EWAaWP9mJJn2hEPbwNmz1FH
-         2SVEilWu/OUoYbaU675rs48DlSm7CdgysaG0BFezt01B8BdnrvO5kWwMX888mkZxj/A1
-         Khta9440cR8oYvzZnVuCyVCW1/t2FC442JN0IgK39YSEOZn7uzUs3158DWP1Nla67Sns
-         AQVgbdQiIqHjpUuJ6YPxGCP+RRTd/CFZ10bYnyygHnR/oEgER6RW+50g6GZMjOX4ArTB
-         1Ipfj13gC21c/ejTtn+nVC7DqwuuXkKFWaHQGzPwzSOZlBY5W+npKXO6xQKmeBapvu+K
-         2UBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722233973; x=1722838773;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o+ej+mYre5gtHO05efMaQEUIHF+HSHHhoHKJ6E1Z3jg=;
-        b=P2kyos8gB29+iTX5ICUrqKak9lnQuGd22ETAT6uTg48daYdyHvGHtZj828aGSog/L0
-         jbua94+/86jvmIzvrzu2gOxqQyD0pzbiO3+Wjlnvx458uJJ1lh9Gq0RSGn+2P7f1/4u2
-         bQlR075Ql72oeko2cpLCai7gc+lDa0+tIqLm2i/UlP3PaTIKitneS8DIVWbrnFEy9JW5
-         HtmBRarb+qHcgPsxFkx5POochLNPnIE8+A+EEoJ4h3koDHdBXLP6PfHW05twA+ZTyJgF
-         lNG5uxwL0B+dKj0HzOOrT82x2wrrfTCqQOhhLF5axhV5eJMgfeOgnfGGRPqxlIgY8IRx
-         Ol1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUtbAtwe/mjAgHJOd4r6cB193SgkSJqhoCbIpdyQ+wTuiHOQOx8XpsRlDckbHYc+fv6+mN0uW0vnJdRC3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnwPsCIb8v9a2c12PDNoNNVf8jsWGTPjZGpwEeXY5SlFNh/VcX
-	J9xgQgCUyBqz0t9wH+L7FNK4a4ut8tXwQ8QZG4npHIOZ1lhdIRwioQPNTOruUw315JObrugs5vY
-	y
-X-Google-Smtp-Source: AGHT+IHP9yQ73+VVJMjlOmUNfggjrjH+6V00vvrQUWBo+pyJtk3PpYjxww3k2xmitRoahrST5LcUAQ==
-X-Received: by 2002:a17:902:bf04:b0:1fc:611a:bca with SMTP id d9443c01a7336-1fed6cc7ac1mr90923705ad.8.1722233972829;
-        Sun, 28 Jul 2024 23:19:32 -0700 (PDT)
-Received: from [10.255.168.175] ([139.177.225.232])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f3eb85sm74433105ad.214.2024.07.28.23.19.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Jul 2024 23:19:32 -0700 (PDT)
-Message-ID: <12bae4c3-5dda-4798-9f6a-3ac040111551@bytedance.com>
-Date: Mon, 29 Jul 2024 14:19:26 +0800
+	s=arc-20240116; t=1722234122; c=relaxed/simple;
+	bh=6QbiYWCZFVAtakocXmwDyiQO8TVaPkJXbIS55D0NJtU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X3MSkFrt1LuHDWf5XS9Nc7ipOIW3tb0qGEFMrxM4jFfqo8p1D9LCS7Jg4TxRzHhXI2VrLdLRbLzFeH91R5IwVplV9IeDr/Ki49tDBvPu4a7T/VKtNZ9ySLtpR3SyFcENTVL7E80i6h5SC2UtPT7eqLWimvjHpYksVtPNLrYrpNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=WbdUPPFT; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46T6LExwC3597602, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1722234074; bh=6QbiYWCZFVAtakocXmwDyiQO8TVaPkJXbIS55D0NJtU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=WbdUPPFTRMLPPLegzkxDVdeNMHzGyhnWYf7cbiQaWrX+RO+LI6MEfIAAvM1EQoilB
+	 O4FbptUAkRzGUQ5uemLNXtWYzCR2ywgTnFu3GbvUeGnKrIj5mV2/agWMvPe2Dl1f22
+	 6Q6/Af/ulQvg2wB1onFkAsonl8PR1r774cmbRSeaXO9hpxWqbLoigpSzqkVL06SzXw
+	 anX1kZOXWvyBhB/ijTO9+4gxE6CE1pO138mKdeUvDp6Y+vigImSupMwWDi5fwORptk
+	 QClmiT/N7bqyW5zJfJDe5CvZJF4ZH3RztnPkR9TmtDQmYu422tq6SD0tqjMmbCw10p
+	 Qxg1fpF17kY4w==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46T6LExwC3597602
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 29 Jul 2024 14:21:14 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 29 Jul 2024 14:21:14 +0800
+Received: from RTDOMAIN (172.21.210.74) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 29 Jul
+ 2024 14:21:14 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: <kuba@kernel.org>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <andrew@lunn.ch>, <jiri@resnulli.us>, <horms@kernel.org>,
+        <rkannoth@marvell.com>, <jdamato@fastly.com>, <pkshih@realtek.com>,
+        <larry.chiu@realtek.com>, "Justin
+ Lai" <justinlai0215@realtek.com>
+Subject: [PATCH net-next v25 00/13] Add Realtek automotive PCIe driver
+Date: Mon, 29 Jul 2024 14:21:08 +0800
+Message-ID: <20240729062121.335080-1-justinlai0215@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] mm: let pte_lockptr() consume a pte_t pointer
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>
-Cc: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>
-References: <20240725183955.2268884-1-david@redhat.com>
- <20240725183955.2268884-2-david@redhat.com> <ZqPCjd35OdNRrcfl@x1n>
- <bf2069ed-f2b8-49d4-baf0-dbd2189362f9@redhat.com> <ZqQVDwv4RM-wIW7S@x1n>
- <9e671388-a5c6-4de1-8c85-b7af8aee7f44@redhat.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <9e671388-a5c6-4de1-8c85-b7af8aee7f44@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-Hi David,
+This series includes adding realtek automotive ethernet driver
+and adding rtase ethernet driver entry in MAINTAINERS file.
 
-On 2024/7/27 05:48, David Hildenbrand wrote:
-> On 26.07.24 23:28, Peter Xu wrote:
->> On Fri, Jul 26, 2024 at 06:02:17PM +0200, David Hildenbrand wrote:
->>> On 26.07.24 17:36, Peter Xu wrote:
->>>> On Thu, Jul 25, 2024 at 08:39:54PM +0200, David Hildenbrand wrote:
->>>>> pte_lockptr() is the only *_lockptr() function that doesn't consume
->>>>> what would be expected: it consumes a pmd_t pointer instead of a pte_t
->>>>> pointer.
->>>>>
->>>>> Let's change that. The two callers in pgtable-generic.c are easily
->>>>> adjusted. Adjust khugepaged.c:retract_page_tables() to simply do a
->>>>> pte_offset_map_nolock() to obtain the lock, even though we won't 
->>>>> actually
->>>>> be traversing the page table.
->>>>>
->>>>> This makes the code more similar to the other variants and avoids 
->>>>> other
->>>>> hacks to make the new pte_lockptr() version happy. pte_lockptr() users
->>>>> reside now only in  pgtable-generic.c.
->>>>>
->>>>> Maybe, using pte_offset_map_nolock() is the right thing to do because
->>>>> the PTE table could have been removed in the meantime? At least it 
->>>>> sounds
->>>>> more future proof if we ever have other means of page table reclaim.
->>>>
->>>> I think it can't change, because anyone who wants to race against this
->>>> should try to take the pmd lock first (which was held already)?
->>>
->>> That doesn't explain why it is safe for us to assume that after we 
->>> took the
->>> PMD lock that the PMD actually still points at a completely empty page
->>> table. Likely it currently works by accident, because we only have a 
->>> single
->>> such user that makes this assumption. It might certainly be a 
->>> different once
->>> we asynchronously reclaim page tables.
->>
->> I think it's safe because find_pmd_or_thp_or_none() returned SUCCEED, and
->> we're holding i_mmap lock for read.  I don't see any way that this pmd 
->> can
->> become a non-pgtable-page.
->>
->> I meant, AFAIU tearing down pgtable in whatever sane way will need to at
->> least take both mmap write lock and i_mmap write lock (in this case, a 
->> file
->> mapping), no?
-> 
-> Skimming over [1] where I still owe a review I think we can now do it 
-> now purely under the read locks, with the PMD lock held.
+This ethernet device driver for the PCIe interface of
+Realtek Automotive Ethernet Switch,applicable to
+RTL9054, RTL9068, RTL9072, RTL9075, RTL9068, RTL9071.
 
-Yes.
+v1 -> v2:
+- Remove redundent debug message.
+- Modify coding rule.
+- Remove other function codes not related to netdev.
 
-> 
-> I think this is also what collapse_pte_mapped_thp() ends up doing: 
-> replace a PTE table that maps a folio by a PMD (present or none, 
-> depends) that maps a folio only while holding the mmap lock in read 
-> mode. Of course, here the table is not empty but we need similar ways of 
-> making PT walkers aware of concurrent page table retraction.
-> 
-> IIRC, that was the magic added to __pte_offset_map(), such that 
-> pte_offset_map_nolock/pte_offset_map_lock can fail on races.
-> 
-> 
-> But if we hold the PMD lock, nothing should actually change (so far my 
-> understanding) -- we cannot suddenly rip out a page table.
-> 
-> [1] 
-> https://lkml.kernel.org/r/cover.1719570849.git.zhengqi.arch@bytedance.com
-> 
->>
->>>
->>> But yes, the PMD cannot get modified while we hold the PMD lock, 
->>> otherwise
->>> we'd be in trouble
->>>
->>>>
->>>> I wonder an open coded "ptlock_ptr(page_ptdesc(pmd_page(*pmd)))" 
->>>> would be
->>>> nicer here, but only if my understanding is correct.
->>>
->>> I really don't like open-coding that. Fortunately we were able to 
->>> limit the
->>> use of ptlock_ptr to a single user outside of arch/x86/xen/mmu_pv.c 
->>> so far.
->>
->> I'm fine if you prefer like that; I don't see it a huge deal to me.
-> 
-> Let's keep it like that, unless we can come up with something neater. At 
-> least it makes the code also more consistent with similar code in that 
-> file and the overhead should be  minimal.
-> 
-> I was briefly thinking about actually testing if the PT is full of 
-> pte_none(), either as a debugging check or to also handle what is > currently handled via:
-> 
-> if (likely(!vma->anon_vma && !userfaultfd_wp(vma))) {
-> 
-> Seems wasteful just because some part of a VMA might have a private page 
-> mapped / uffd-wp active to let all other parts suffer.
-> 
-> Will think about if that is really worth it.
-> 
-> ... also because I still want to understand why the PTL of the PMD table 
-> is required at all. What if we lock it first and somebody else wants to 
-> lock it after us while we already ripped it out? Sure there must be some 
-> reason for the lock, I just don't understand it yet :/.
+v2 -> v3:
+- Remove SR-IOV function - We will add the SR-IOV function together when
+uploading the vf driver in the future.
+- Remove other unnecessary code and macro.
 
-For pmd lock, I think this is needed to clear the pmd entry
-(pmdp_collapse_flush()). For pte lock, there should be the following two
-reasons:
+v3 -> v4:
+- Remove function prototype - Our driver does not use recursion, so we
+have reordered the code and removed the function prototypes.
+- Define macro precisely - Improve macro code readability to make the
+source code cleaner.
 
-1. release it after clearing pmd entry, then we can capture the changed
-    pmd in pte_offset_map_lock() etc after holding this pte lock.
-    (This is also what I did in my patchset)
+v4 -> v5:
+- Modify ethtool function - Remove some unnecessary code.
+- Don't use inline function - Let the compiler decide.
 
-2. As mentioned in the comments, we may be concurrent with
-    userfaultfd_ioctl(), but we do not hold the read lock of mmap (or
-    read lock of vma), so the VM_UFFD_WP may be set. Therefore, we need
-    to hold the pte lock to check whether a new pte entry has been
-    inserted.
-    (See commit[1] for more details)
+v5 -> v6:
+- Some old macro definitions have been removed and replaced with the
+lastest usage.
+- Replace s32 with int to ensure consistency.
+- Clearly point out the objects of the service and remove unnecessary
+struct.
 
-[1]. 
-https://github.com/torvalds/linux/commit/a98460494b16db9c377e55bc13e5407a0eb79fe8
+v6 -> v7:
+- Split this driver into multiple patches.
+- Reorganize this driver code and remove redundant code to make this
+driver more concise.
 
-Thanks,
-Qi
+v7 -> v8:
+- Add the function to calculate time mitigation and the function to
+calculate packet number mitigation. Users can use these two functions
+to calculate the reg value that needs to be set for the mitigation value
+they want to set.
+- This device is usually used in automotive embedded systems. The page
+pool api will use more memory in receiving packets and requires more
+verification, so we currently do not plan to use it in this patch.
 
-> 
+v8 -> v9:
+- Declare functions that are not extern as static functions and increase
+the size of the character array named name in the rtase_int_vector struct
+to correct the build warning noticed by the kernel test robot.
+
+v9 -> v10:
+- Currently we change to use the page pool api. However, when we allocate
+more than one page to an rx buffer, it will cause system errors
+in some cases. Therefore, we set the rx buffer to fixed size with 3776
+(PAGE_SIZE - SKB_DATA_ALIGN(sizeof(skb_shared_info) )), and the maximum
+value of mtu is set to 3754(rx buffer size - VLAN_ETH_HLEN - ETH_FCS_LEN).
+- When ndo_tx_timeout is called, it will dump some device information,
+which can be used for debugging.
+- When the mtu is greater than 1500, the device supports checksums
+but not TSO.
+- Fix compiler warnning.
+
+v10 -> v11:
+- Added error handling of rtase_init_ring().
+- Modify the error related to asymmetric pause in rtase_get_settings.
+- Fix compiler error.
+
+v11 -> v12:
+- Use pm_sleep_ptr and related macros.
+- Remove multicast filter limit.
+- Remove VLAN support and CBS offload functions.
+- Remove redundent code.
+- Fix compiler warnning.
+
+v12 -> v13:
+- Fixed the compiler warning of unuse rtase_suspend() and rtase_resume()
+when there is no define CONFIG_PM_SLEEP.
+
+v13 -> v14:
+- Remove unuse include.
+- call eth_hw_addr_random() to generate random MAC and set device flag
+- use pci_enable_msix_exact() instead of pci_enable_msix_range()
+- If dev->dma_mask is non-NULL, dma_set_mask_and_coherent with a 64-bit
+mask will never fail, so remove the part that determines the 32-bit mask.
+- set dev->pcpu_stat_type before register_netdev() and core will allocate
+stats.
+- call NAPI instance at the right location
+
+v14 -> v15:
+- In rtase_open, when the request interrupt fails, all request interrupts
+are freed.
+- When calling netif_device_detach, there is no need to call
+netif_stop_queue.
+- Call netif_tx_disable() instead of stop_queue(), it takes the tx lock so
+there is no need to worry about the packets being transmitted.
+- In rtase_tx_handler, napi budget is no longer used, but a customized
+tx budget is used.
+- Use the start / stop macros from include/net/netdev_queues.h.
+- Remove redundent code.
+
+v15 -> v16:
+- Re-upload v15 patch set
+
+v16 -> v17:
+- Prefix the names of some rtase-specific macros, structs, and enums.
+- Fix the abnormal problem when returning page_pool resources.
+
+v17 -> v18:
+- Limit the width of each line to 80 colums.
+- Use reverse xmas tree order.
+- Modify the error handling of rtase_alloc_msix and rtase_alloc_interrupt.
+
+v18 -> v19:
+- Use dma_wmb() instead of wmb() to ensure the order of access
+instructions for a memory shared by DMA and CPU.
+- Add error message when allocate dma memory fails.
+- Add .get_eth_mac_stats function to report hardware information.
+- Remove .get_ethtool_stats function.
+- In rtase_tx_csum, when the packet is not ipv6 or ipv4, a warning will
+no longer be issued.
+
+v19 -> v20:
+- Modify the description of switch architecture.
+
+v20 -> v21:
+- Remove the 16b packet statistics and 32b byte statistics report.
+- Remove all parts that use struct net_device_stats stats, and instead
+store the necessary counter fields in struct rtase_private.
+- Modify the handling method of allocation failure in rtase_alloc_desc().
+- Remove redundant conditionals and parentheses.
+- Keep the message in the single line.
+- Assign the required feature to dev->feature and dev->hw_feature at once.
+- Single statement does not need to use braces.
+
+v21 -> v22:
+- Fix the warning when building the driver.
+
+v22 -> v23:
+- Remove the execute bit setting.
+
+v23 -> v24:
+- Remove netpoll handler.
+
+v24 -> v25:
+- Re-upload v24 patch set
+
+Justin Lai (13):
+  rtase: Add support for a pci table in this module
+  rtase: Implement the .ndo_open function
+  rtase: Implement the rtase_down function
+  rtase: Implement the interrupt routine and rtase_poll
+  rtase: Implement hardware configuration function
+  rtase: Implement .ndo_start_xmit function
+  rtase: Implement a function to receive packets
+  rtase: Implement net_device_ops
+  rtase: Implement pci_driver suspend and resume function
+  rtase: Implement ethtool function
+  rtase: Add a Makefile in the rtase folder
+  realtek: Update the Makefile and Kconfig in the realtek folder
+  MAINTAINERS: Add the rtase ethernet driver entry
+
+ MAINTAINERS                                   |    7 +
+ drivers/net/ethernet/realtek/Kconfig          |   19 +
+ drivers/net/ethernet/realtek/Makefile         |    1 +
+ drivers/net/ethernet/realtek/rtase/Makefile   |   10 +
+ drivers/net/ethernet/realtek/rtase/rtase.h    |  338 +++
+ .../net/ethernet/realtek/rtase/rtase_main.c   | 2321 +++++++++++++++++
+ 6 files changed, 2696 insertions(+)
+ create mode 100644 drivers/net/ethernet/realtek/rtase/Makefile
+ create mode 100644 drivers/net/ethernet/realtek/rtase/rtase.h
+ create mode 100644 drivers/net/ethernet/realtek/rtase/rtase_main.c
+
+-- 
+2.34.1
+
 
