@@ -1,190 +1,138 @@
-Return-Path: <linux-kernel+bounces-265670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3DE593F43B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:37:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933C993F436
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65D952835B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:37:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9401F2260E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44DA4145FED;
-	Mon, 29 Jul 2024 11:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D179D145330;
+	Mon, 29 Jul 2024 11:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E8WU0COI"
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M2XiL5R4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6944145336;
-	Mon, 29 Jul 2024 11:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B7A145FEE
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722253043; cv=none; b=IRBSs26AIN53L0XtLRcJfbX3cpg3yDt60MOg63xqUOEc7jTYZae/lU7UUr3XTiqR20YPkFSpDcd1y0omCgrSxYA6Gtk34ZXwwbE0+NNBY0tykMNoWH8VV5SrDuaiZ80Fr3bmi7OfTaQ8wNW6RAn9aWuZlb1uxKXRXf2tSSVs8BQ=
+	t=1722253031; cv=none; b=emIPTtT5VKroLTVAU0m3dWtB1PPTn5nPFW4DlYwPONDGFhJXHuk2ie1I6MCn5lalEjbwRiIg0D996qNw43tQWmhpR4drGHdxvzaat5bmOePKNfYj2x9wHfMvOg+Q7swfK2p5ti1ZlTsmTPSNl2SEE8stIV8kz0wgN/kAYxTtWe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722253043; c=relaxed/simple;
-	bh=P89aL6R8mu0me8UDB0Wewjx3swHpc2X5xUe/8XJCr/o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=REydfoYLQJvPaffBoCat99yZQe0RPS+NCxwXe50a7SBbvBSZ/v/Q9L2KSE8Npw5cv3tmsngMRhguwbOISyF6Acgg1s3lA7ACSjT3aY4reGxCyE3NOetvoe2m8jToFV80dtrGHOFX874CEA9+lus+s2eJeWdSSbMDQvsQh0L8j2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E8WU0COI; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-4f6d35d59ccso878402e0c.1;
-        Mon, 29 Jul 2024 04:37:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722253041; x=1722857841; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lK9i1PPaSmu8gqTMidbjNaGgzEkQSyDiTRgEI3mUKiY=;
-        b=E8WU0COIwJTXr4zr+A4oUD/HItOGI08HgZbEjarkdpVskcTWMd00Qd1R2pud5r/9we
-         tPVSvWGssixUHPbiltUkYc49mWl9vKE4nDG9QndhgrCx1+xKw2fKAU8m6BFn8paGdXNi
-         xn6Q9Ehdnwi+zYIy6zG+QN/9XcNzONC7TXHRX/VcDEw7UEsvfdBXTjMeHCooD81v7Tkq
-         892L4e6e37pg/AQ+efxji312YG8PElWrGgW+O6NSEWBZaf6ZfaBAGUP+gxJ+b5BZrlC6
-         sp7qMkmW6BHoIrdSYKPr0gbqMrDHjXpnZ2oGe/s3F/cphlRF0ml10bQuf8VGtkygfGni
-         /5Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722253041; x=1722857841;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lK9i1PPaSmu8gqTMidbjNaGgzEkQSyDiTRgEI3mUKiY=;
-        b=NHIyFKsRJ+V7kVPqPGNxWRftyTjRGg/lLyQGiKeCMZM73sujMmVipFmsfUA+BOaOyW
-         eyFSvBo9pjNtK6COU8VW/roYIN1ZhtQdCtWLWdE6b8BzFd5Awxh/lPnDrZeDfUTyitH5
-         u2rKuNkSM8oW2YZsQ77zJp7AnUSXUKVMy8Ne8Aui89MnQmm6P2GHesGvwbgf3ePTwwxF
-         g2dD30LOYaHW64CYbBTUTrgqeQO0fu+1ma2UTalTg/utuAw1jX8LHMEBmSoVSyds3DMu
-         2H+o/gZDEHB5gV39JD5BvS+7Detuqw0hxywRPvA4WqJVdlFpzXf8KAQyMtSNwysJ4Grn
-         l/Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxu8lFH06/7vZaBYBb6PC8XUXWEW3brIQH6c+KUu+s8cfUW+Uy1ToevyOVygu2aWA39sgPcDUgNzJ0UBsvVNXvXyrujY+sy5Nf7HdzpCzUxgCMeBSbNnT1S3Z60OVpf9drbBZPajpTOZJGmfOHhBtNtcHHGlLWj74FMXZ8LAAzj2x8tMpWaS0fDm62
-X-Gm-Message-State: AOJu0Yz5VTKuM/R8wz/CIXXL96bh4din/TVkN2OPBptHb3wvW93MD6wq
-	w6kQ9m+Aw6eSsCtW+F8ISjXWZUqvRw8Omygs6tDa6vVo1dVZG4jEZS2VnzXpA6hfEnyH1MoD0/6
-	63HkEU0eqKsuHzt1LCAVyfXmn8Vo=
-X-Google-Smtp-Source: AGHT+IHKYF432WX0EPcvAkL3Hj3W0DN9esPu52UJjo54ndxletRxuEb52xU+1JpXbb2fXjBa36nAVIrW8FHf/s3qmG4=
-X-Received: by 2002:a05:6122:311b:b0:4f5:199b:2a7f with SMTP id
- 71dfb90a1353d-4f6e68e211cmr3760998e0c.8.1722253040780; Mon, 29 Jul 2024
- 04:37:20 -0700 (PDT)
+	s=arc-20240116; t=1722253031; c=relaxed/simple;
+	bh=d1eQ4ssNsC40NFMV3AiIXdST+OmypBvaqEVrV3I+FdQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DtKUE4VCatIcy63/hKNrSfhd1fbmzpG8oCkE4OEvTFzCim0bdKTKcNEPUM7vvGzqNEGX4wgyRZSCg+NhZLCfMLanntuG1Gjguug8XYAjiJ+IEzA52VaMblADmmpH+oEeUKkvdZwTSnihl/524ZG6Wd5HDS6W0a5YcQ6r2IvegEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M2XiL5R4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722253028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2dgIjtdy9bxsyN5Iula/p7KGAXyxnKNn8eNDxdgyZ60=;
+	b=M2XiL5R4bN3+/PTmfL3uh4N1kmtTRzqfVcw6kFu/3BehIYDK3yQ/6Gsiz872fXQfdqf/R1
+	nj9sZQ4N3r8J9NDX40haW+8ma6fTHmr1iPEBELFFGU55iSokD/2NY5CuzeM2wbGKeonXhd
+	Pwh3fJdroTrbM6mNI2jm+ZWDNdnDl6c=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-191-pFefaXg6M7uA4WgyIrOz2g-1; Mon,
+ 29 Jul 2024 07:37:06 -0400
+X-MC-Unique: pFefaXg6M7uA4WgyIrOz2g-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9D23019560A1;
+	Mon, 29 Jul 2024 11:37:05 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.45.224.31])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 18DF71955D42;
+	Mon, 29 Jul 2024 11:37:02 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-api@vger.kernel.org,  Dave Chinner <dchinner@redhat.com>,
+  Christian Brauner <brauner@kernel.org>
+Subject: Re: Testing if two open descriptors refer to the same inode
+In-Reply-To: <CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
+	(Mateusz Guzik's message of "Mon, 29 Jul 2024 13:06:28 +0200")
+References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
+	<ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
+	<875xsoqy58.fsf@oldenburg.str.redhat.com>
+	<vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
+	<87sevspit1.fsf@oldenburg.str.redhat.com>
+	<CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
+Date: Mon, 29 Jul 2024 13:36:59 +0200
+Message-ID: <87cymwpgys.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725133932.739936-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240725133932.739936-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <TY3PR01MB11346857DC444410F5C0A0C9486B42@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB11346857DC444410F5C0A0C9486B42@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 29 Jul 2024 12:36:54 +0100
-Message-ID: <CA+V-a8v3=ykkRXSO-tqo20b_YT_iW_Z02oFSHkXhM68i8fgYcg@mail.gmail.com>
-Subject: Re: [PATCH 3/5] arm64: dts: renesas: r9a07g054(l1): Correct GICD and
- GICR sizes
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Marc Zyngier <maz@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hi Biju,
+* Mateusz Guzik:
 
-On Fri, Jul 26, 2024 at 6:19=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.co=
-m> wrote:
+> On Mon, Jul 29, 2024 at 12:57=E2=80=AFPM Florian Weimer <fweimer@redhat.c=
+om> wrote:
+>>
+>> * Mateusz Guzik:
+>>
+>> > On Mon, Jul 29, 2024 at 12:40:35PM +0200, Florian Weimer wrote:
+>> >> * Mateusz Guzik:
+>> >>
+>> >> > On Mon, Jul 29, 2024 at 08:55:46AM +0200, Florian Weimer wrote:
+>> >> >> It was pointed out to me that inode numbers on Linux are no longer
+>> >> >> expected to be unique per file system, even for local file systems.
+>> >> >
+>> >> > I don't know if I'm parsing this correctly.
+>> >> >
+>> >> > Are you claiming on-disk inode numbers are not guaranteed unique per
+>> >> > filesystem? It sounds like utter breakage, with capital 'f'.
+>> >>
+>> >> Yes, POSIX semantics and traditional Linux semantics for POSIX-like
+>> >> local file systems are different.
+>> >
+>> > Can you link me some threads about this?
+>>
+>> Sorry, it was an internal thread.  It's supposed to be common knowledge
+>> among Linux file system developers.  Aleksa referenced LSF/MM
+>> discussions.
+>>
 >
-> Hi Prabhakar,
->
-> Thanks for the patch.
->
-> > -----Original Message-----
-> > From: Prabhakar <prabhakar.csengg@gmail.com>
-> > Sent: Thursday, July 25, 2024 2:40 PM
-> > Subject: [PATCH 3/5] arm64: dts: renesas: r9a07g054(l1): Correct GICD a=
-nd GICR sizes
-> >
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > The RZ/V2L SoC is equipped with the GIC-600. The GICD + GICDA is 128kB,=
- and the GICR is 128kB per
-> > CPU.
-> >
-> > Fixes: 7c2b8198f4f32 ("arm64: dts: renesas: Add initial DTSI for RZ/V2L=
- SoC")
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >  arch/arm64/boot/dts/renesas/r9a07g054.dtsi   | 4 ++--
-> >  arch/arm64/boot/dts/renesas/r9a07g054l1.dtsi | 5 +++++
-> >  2 files changed, 7 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi b/arch/arm64/bo=
-ot/dts/renesas/r9a07g054.dtsi
-> > index 1de2e5f0917d..8a9b61bd759a 100644
-> > --- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
-> > @@ -1051,8 +1051,8 @@ gic: interrupt-controller@11900000 {
-> >                       #interrupt-cells =3D <3>;
-> >                       #address-cells =3D <0>;
-> >                       interrupt-controller;
-> > -                     reg =3D <0x0 0x11900000 0 0x40000>,
-> > -                           <0x0 0x11940000 0 0x60000>;
-> > +                     reg =3D <0x0 0x11900000 0 0x20000>,
->
-> Can we update GIC-600 in[1]  based on [2] to avoid ABI breakage
-> in future?
->
-Sure will do.
+> So much for open development :-P
 
-Cheers,
-Prabhakar
+I found this pretty quickly, so it does seem widely known:
 
-> IIC, As per [2], this patch series removes section GICT(GIC trace and deb=
-ug page)
-> and GICP(GIC PMU) and [1] does not mention first reg is for GICD + GICA.
-> However, it mentions, it is for GICD.
+  [LSF TOPIC] statx extensions for subvol/snapshot filesystems & more
+  <https://lore.kernel.org/linux-fsdevel/2uvhm6gweyl7iyyp2xpfryvcu2g3padaga=
+eqcbiavjyiis6prl@yjm725bizncq/>
+
+>> It's certainly much easier to use than name_to_handle_at, so it looks
+>> like a useful option to have.
+>>
+>> Could we return a three-way comparison result for sorting?  Or would
+>> that expose too much about kernel pointer values?
+>>
 >
-> reg:
->     description: |
->       Specifies base physical address(s) and size of the GIC
->       registers, in the following order:
->       - GIC Distributor interface (GICD)
->       - GIC Redistributors (GICR), one range per redistributor region
->       - GIC CPU interface (GICC)
->       - GIC Hypervisor interface (GICH)
->       - GIC Virtual CPU interface (GICV)
->
-> [1] https://elixir.bootlin.com/linux/v6.10.1/source/Documentation/devicet=
-ree/bindings/interrupt-controller/arm,gic-v3.yaml
->
-> [2] https://developer.arm.com/documentation/100336/0106/programmer-s-mode=
-l/the-gic-600-registers/register-map-pages?lang=3Den
->
->
-> Cheers,
-> Biju
->
->
-> > +                           <0x0 0x11940000 0 0x40000>;
-> >                       interrupts =3D <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
-> >               };
-> >
-> > diff --git a/arch/arm64/boot/dts/renesas/r9a07g054l1.dtsi
-> > b/arch/arm64/boot/dts/renesas/r9a07g054l1.dtsi
-> > index d85a6ac0f024..5c0f6c5d165e 100644
-> > --- a/arch/arm64/boot/dts/renesas/r9a07g054l1.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r9a07g054l1.dtsi
-> > @@ -16,3 +16,8 @@ cpus {
-> >               /delete-node/ cpu@100;
-> >       };
-> >  };
-> > +
-> > +&gic {
-> > +     reg =3D <0x0 0x11900000 0 0x20000>,
-> > +           <0x0 0x11940000 0 0x20000>;
-> > +};
-> > --
-> > 2.34.1
->
+> As is this would sort by inode *address* which I don't believe is of
+> any use -- the order has to be assumed arbitrary.
+
+Doesn't the order remain valid while the files remain open?  Anything
+else doesn't seem reasonable to expect anyway.
+
+Thanks,
+Florian
+
 
