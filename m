@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-265563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FCEE93F2E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:36:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C2C93F2E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3315F1C2184B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:36:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98F8E1F22737
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349FF146A66;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3508146D6C;
 	Mon, 29 Jul 2024 10:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XpUCydsj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BNOFY3zs"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m0JvV4bp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DA4Tf3Op"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B656B14533A;
-	Mon, 29 Jul 2024 10:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970531459F3;
+	Mon, 29 Jul 2024 10:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722249250; cv=none; b=aRylyRlcaYcBxF8qC6TaQbk7dU912K2tHVwcMVW4I5vXpTA86ailhgJRi1MYjRi3iICiuSGYRRxIC/RejfJxLPvkzGM+Up+GBteS8V4XROyDWGCTCfF7brTpWRGbgmkVAgOAsCMKtG0EIgCX4l88wlHxu7P0bsxkqgFy6iNxGxQ=
+	t=1722249251; cv=none; b=m923kL+a/Fy6n8XZQYKaoQmrFKJRMu62djP5etu6Z//iboVyCHtYpwvG0agGhmP4HCgC1eSHEGjTSylJLuFchvoSVQ0vgJyyAItnVqRwVz1APKZbZg8JidOkHA+jr8PJ425sZY+S5yQWhnImsm04w2fdAzs0neMgek40Uo63Q0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722249250; c=relaxed/simple;
-	bh=RFiWwLKQ/xtWAawWPyIahUKheU3vWP123YG2rhGxuiI=;
+	s=arc-20240116; t=1722249251; c=relaxed/simple;
+	bh=cMUEiSjNn6l5Af7Fnog8PicYqLYnlCfWaO7h0hErvVU=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=f8gBTQRnLWb1gnxeVtJPUycojS33s3IfFFKFul3P6plpoUAz+CCCNrShPLNE9QcFKcr9BdcvL5LtqZiGpUEaMuotW/03bOHHnpn680RA9Yv3elubpvoZ8+mSyM3XiOlsBMofg3qNxk9dT6f5y4oFJ9RN1Qmr8TBfeBErSJFhnM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XpUCydsj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BNOFY3zs; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=hV2iGwZMcPcKN2uCIQKnn7HYC1T1dMBzXZ7ah6GtBQqMq2IWirE8WNiIYUbqbrgeNxLc9ryUk6pmZuHsuLDv1d1GVrTYb9uWUAxcfY1QYt2zgP51a2T1MISZbnx708lF2fIIpwJ1VtQS0pjXOeYCQcayZGeH2mfjiDpnhDOoLMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m0JvV4bp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DA4Tf3Op; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 29 Jul 2024 10:34:06 -0000
+Date: Mon, 29 Jul 2024 10:34:07 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722249247;
+	s=2020; t=1722249248;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=elXpH8uytUzpeNCA5I/weBw510vIYg50tjMDGQsoswo=;
-	b=XpUCydsjO+Ergkc4ymCxt3hELiC2WSI6DiQwODAIAEY+L1IcGWOEI6Y8du89GuD/05Z0F6
-	/jo67iLfGYoniTimSfuXyqtzLgBe4ZocWyBJTFnbOXu1+ulIZhj4TycB1x8SjnjY36tvxZ
-	LTRuSNsaKdrKCF+e0Wc+s+4uHqUXuDF836LgiJetZZnlKlFkm6A2RJFO2uJVmx2aSfc+VS
-	/Yz2leC+U0zV3ZXOnlhOlvZWSgYhMxVKNGNa1Nq9Ld68+lazLkK2kF5v5E88AM3BebUibi
-	zzDPQFnFazCd2t1VQmhYF4WY4bqA5pnVQOqwQ8zHiLzxayeAd1XrcbALs2uXog==
+	bh=wRsAKExDwFKwJSvUJ6d3fQmIhLex317CCabSwhlM3pw=;
+	b=m0JvV4bps5yt7MZim5SFfWIRKsPds5hgfY11wCn8mNA3/lOnpaJsuhGYFFcz7WF4ow0mgh
+	W4LK/01dmgGoIuQQ5THPUYbFYaa/SL7wjhkqaW1ng92FMrlDK8JQTRXQ2dkkCxk8K41kVG
+	PH7KFHO98kjXcKyHJjpgP1xGBY/OC9EOflpBy/5T0LSQMv5xwc56iMs4AcbHHTOZw0akP1
+	quWE9SQwEDIUhN+/J5+2555vFBPLUaoqP6FVm7YrfauqAiVG3nFg+K/18GFISOT4vj5din
+	+j9bFN6NNyd0zb3U2gL6DSYjuuD1L/GtJB9oOjsM3nI3NiC849g4EMOfLHR0Rw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722249247;
+	s=2020e; t=1722249248;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=elXpH8uytUzpeNCA5I/weBw510vIYg50tjMDGQsoswo=;
-	b=BNOFY3zs4b6zQTnftcdbJsGmH8pzqDh4SBrmRrcPT7GwLb9xGYr+3P5LsqABJDSHjcue32
-	Ff+PC5mmy1h6zhDg==
-From: "tip-bot2 for Phil Auld" <tip-bot2@linutronix.de>
+	bh=wRsAKExDwFKwJSvUJ6d3fQmIhLex317CCabSwhlM3pw=;
+	b=DA4Tf3Op1KIDhS+8ZT2QRt12t7Nabz6IVOS+fsUgaCD49KBd6Asoc356DxUUZ3XZYzoPz/
+	PhuAngeFXthKyWCA==
+From: "tip-bot2 for Zhang Qiao" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched: remove HZ_BW feature hedge
-Cc: Phil Auld <pauld@redhat.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Valentin Schneider <vschneid@redhat.com>, x86@kernel.org,
+Subject: [tip: sched/core] sched: Initialize the vruntime of a new task when
+ it is first enqueued
+Cc: Zhang Qiao <zhangqiao22@huawei.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240515133705.3632915-1-pauld@redhat.com>
-References: <20240515133705.3632915-1-pauld@redhat.com>
+In-Reply-To: <20240627133359.1370598-1-zhangqiao22@huawei.com>
+References: <20240627133359.1370598-1-zhangqiao22@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172224924671.2215.17289809764508952569.tip-bot2@tip-bot2>
+Message-ID: <172224924797.2215.1886433124274814892.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,64 +82,88 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     a58501fb8320d6232507f722b4c9dcd4e03362ee
-Gitweb:        https://git.kernel.org/tip/a58501fb8320d6232507f722b4c9dcd4e03362ee
-Author:        Phil Auld <pauld@redhat.com>
-AuthorDate:    Wed, 15 May 2024 09:37:05 -04:00
+Commit-ID:     c40dd90ac045fa1fdf6acc5bf9109a2315e6c92c
+Gitweb:        https://git.kernel.org/tip/c40dd90ac045fa1fdf6acc5bf9109a2315e6c92c
+Author:        Zhang Qiao <zhangqiao22@huawei.com>
+AuthorDate:    Thu, 27 Jun 2024 21:33:59 +08:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Mon, 29 Jul 2024 12:22:34 +02:00
 
-sched: remove HZ_BW feature hedge
+sched: Initialize the vruntime of a new task when it is first enqueued
 
-As a hedge against unexpected user issues commit 88c56cfeaec4
-("sched/fair: Block nohz tick_stop when cfs bandwidth in use")
-included a scheduler feature to disable the new functionality.
-It's been a few releases (v6.6) and no screams, so remove it.
+When creating a new task, we initialize vruntime of the newly task at
+sched_cgroup_fork(). However, the timing of executing this action is too
+early and may not be accurate.
 
-Signed-off-by: Phil Auld <pauld@redhat.com>
+Because it uses current CPU to init the vruntime, but the new task
+actually runs on the cpu which be assigned at wake_up_new_task().
+
+To optimize this case, we pass ENQUEUE_INITIAL flag to activate_task()
+in wake_up_new_task(), in this way, when place_entity is called in
+enqueue_entity(), the vruntime of the new task will be initialized.
+
+In addition, place_entity() in task_fork_fair() was introduced for two
+reasons:
+1. Previously, the __enqueue_entity() was in task_new_fair(),
+in order to provide vruntime for enqueueing the newly task, the
+vruntime assignment equation "se->vruntime = cfs_rq->min_vruntime" was
+introduced by commit e9acbff6484d ("sched: introduce se->vruntime").
+This is the initial state of place_entity().
+
+2. commit 4d78e7b656aa ("sched: new task placement for vruntime") added
+child_runs_first task placement feature which based on vruntime, this
+also requires the new task's vruntime value.
+
+After removing the child_runs_first and enqueue_entity() from
+task_fork_fair(), this place_entity() no longer makes sense, so remove
+it also.
+
+Signed-off-by: Zhang Qiao <zhangqiao22@huawei.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Valentin Schneider <vschneid@redhat.com>
-Link: https://lore.kernel.org/r/20240515133705.3632915-1-pauld@redhat.com
+Link: https://lkml.kernel.org/r/20240627133359.1370598-1-zhangqiao22@huawei.com
 ---
- kernel/sched/core.c     | 2 +-
- kernel/sched/fair.c     | 2 +-
- kernel/sched/features.h | 2 --
- 3 files changed, 2 insertions(+), 4 deletions(-)
+ kernel/sched/core.c |  2 +-
+ kernel/sched/fair.c | 15 ---------------
+ 2 files changed, 1 insertion(+), 16 deletions(-)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index db5823f..0a71050 100644
+index f3951e4..2c61b4f 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -1269,7 +1269,7 @@ bool sched_can_stop_tick(struct rq *rq)
- 	 * dequeued by migrating while the constrained task continues to run.
- 	 * E.g. going from 2->1 without going through pick_next_task().
- 	 */
--	if (sched_feat(HZ_BW) && __need_bw_check(rq, rq->curr)) {
-+	if (__need_bw_check(rq, rq->curr)) {
- 		if (cfs_task_bw_constrained(rq->curr))
- 			return false;
- 	}
+@@ -4686,7 +4686,7 @@ void wake_up_new_task(struct task_struct *p)
+ 	update_rq_clock(rq);
+ 	post_init_entity_util_avg(p);
+ 
+-	activate_task(rq, p, ENQUEUE_NOCLOCK);
++	activate_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_INITIAL);
+ 	trace_sched_wakeup_new(p);
+ 	wakeup_preempt(rq, p, WF_FORK);
+ #ifdef CONFIG_SMP
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e8cdfeb..02694fc 100644
+index 9057584..e8cdfeb 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -6555,7 +6555,7 @@ static void sched_fair_update_stop_tick(struct rq *rq, struct task_struct *p)
+@@ -12702,22 +12702,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+  */
+ static void task_fork_fair(struct task_struct *p)
  {
- 	int cpu = cpu_of(rq);
- 
--	if (!sched_feat(HZ_BW) || !cfs_bandwidth_used())
-+	if (!cfs_bandwidth_used())
- 		return;
- 
- 	if (!tick_nohz_full_cpu(cpu))
-diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-index 143f55d..929021f 100644
---- a/kernel/sched/features.h
-+++ b/kernel/sched/features.h
-@@ -85,5 +85,3 @@ SCHED_FEAT(WA_BIAS, true)
- SCHED_FEAT(UTIL_EST, true)
- 
- SCHED_FEAT(LATENCY_WARN, false)
+-	struct sched_entity *se = &p->se, *curr;
+-	struct cfs_rq *cfs_rq;
+-	struct rq *rq = this_rq();
+-	struct rq_flags rf;
 -
--SCHED_FEAT(HZ_BW, true)
+-	rq_lock(rq, &rf);
+-	update_rq_clock(rq);
+-
+ 	set_task_max_allowed_capacity(p);
+-
+-	cfs_rq = task_cfs_rq(current);
+-	curr = cfs_rq->curr;
+-	if (curr)
+-		update_curr(cfs_rq);
+-	place_entity(cfs_rq, se, ENQUEUE_INITIAL);
+-	rq_unlock(rq, &rf);
+ }
+ 
+ /*
 
