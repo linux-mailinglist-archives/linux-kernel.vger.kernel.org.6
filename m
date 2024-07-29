@@ -1,171 +1,217 @@
-Return-Path: <linux-kernel+bounces-265974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC8B493F88D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:46:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6EA93F89E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:48:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47721B212E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:46:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C91F1F2228C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7541B153812;
-	Mon, 29 Jul 2024 14:46:27 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B990B155C9A;
+	Mon, 29 Jul 2024 14:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NliA7n3E"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA8C1DFFC
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CF814F115
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722264387; cv=none; b=ErjapaI2FlU+rHVld3YX95nQq3LdH5qUooaHNRrjD1lpYCu01yMC0aIRO/lEGYQF9pF+fqhyvxJcWFtKZKgiE5EETc4SIFVOt1SQr+YS6pbio1GYnU2yGW0pkVOg2gGk7x+6Gcrbp08t12tUbF77B6Qs7Sx15LU8QhSJR4ryyDg=
+	t=1722264494; cv=none; b=ocUzjqPypjNC5sAFh9sVNoF5J8aN7p/e7ww2FfvXQM4dCjIr09MH9WrJUwf7hTAoxRcnhwoaxrmDn59Pu/uIdeXZmgp0v/UQRviGZRjqVXFWj7zRzQ+6QZ0D751FsHjjI/cNbeOWJZqohDohTMBWCQXesfche56mEl11ECYa2w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722264387; c=relaxed/simple;
-	bh=oHcq7nl0d+/qsLBV8ODB4Tv02gHyy9C2ctfYNWXMdIM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sy7IS/r8rSnMXqtHZ6en0iNQGFUkdeHfepvzwVffYTtM3s+1OAG89Q2R/jTX+Q23YXsly3whRFTfAzmjYJnJqz5KcfYJSPxSaTo18+tsXZMiOEGJd6Lv5aCWkMEysGm/X+3ayswhHwJved/wfEH5RV6kkj9b3eq5UYnuCjMngU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4WXggP2lSrz9v7Hm
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 22:27:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id DD7D7140B31
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 22:46:12 +0800 (CST)
-Received: from [10.45.144.33] (unknown [10.45.144.33])
-	by APP2 (Coremail) with SMTP id GxC2BwCHpMEoq6dmpEAkAA--.5208S2;
-	Mon, 29 Jul 2024 15:46:12 +0100 (CET)
-Message-ID: <00f58d20-f92d-461e-beac-b307905cab3b@huaweicloud.com>
-Date: Mon, 29 Jul 2024 16:45:58 +0200
+	s=arc-20240116; t=1722264494; c=relaxed/simple;
+	bh=ySWwjbdflwz6rIYs8Vpx3Qn+TK/ceOwnExEmWEHZ3+Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=G8ghNSVVIMkX3UPX4/hcEY96RgnmuieA8gGtWEm82P+iDMSChQae3IS+ufCaFHa9cCJn8OqO1ga+M6zs7IPR91yxxQvzZxAxtpGajWqafTIJQXJdVWILGRUx/6jLZV1Mg5JiRsBMwirIMcIA/J3zqFCSOtFSIBxsUI8bY3Ecjjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NliA7n3E; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4280bbdad3dso17932725e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:48:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722264490; x=1722869290; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7VN27lnGUNsVwhKI93/YGx82K/xOtrW+XHUZkxMgX6Y=;
+        b=NliA7n3EfM3D48Oc1FnCm7sOf1ZvnK29KKf4XGPehPfyiedYvKJCDnNLm0yf9DVKwo
+         W2idXVoJdqRZVTlfES4U3r9+bDgcbnSP+sWeP8LtuMPJLi9tf6RacBjbBASDxjBATL8j
+         TNj+EEqKmCxPbqTR5B1xQtEqyXvsNhOkSCBLQVt6xsLPwQYinlWxiqyJBuXT6FLPcZwA
+         4XJqJzafy+o2wT3CCpi6KhXTvSFTXMUdqJ+0PYnscji4jpS2Bzlp+pHFBzHZV9evQsPQ
+         2pBc/my3OBPLD9eDfVv05bWgyndu78ROhS/dsP8vh2AEXoPm8aEz+CX2SyDbVX44j6Fp
+         yQVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722264490; x=1722869290;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7VN27lnGUNsVwhKI93/YGx82K/xOtrW+XHUZkxMgX6Y=;
+        b=ZrbaFatogGesvbYZpy1W1l9R9ksQd1hTkMzeVTpjILrNObBsNQjlqGjrISFElMGIuT
+         JOyYB4+mHxZOshoBxMMriNnTJey+96qWBVzI8L3TSvzKLFszlso7SB5XwCb17EXdOLAG
+         LkDsjpgBdhZ7uGZpmYWZdrjdikybJPPNSogKSpBs5bw+rRazxMRGF7bn20ZffvQZPNBc
+         yEjT9cz8RMMSwZeMDyrJG5b/q44rujw1KOkf+5bpRTuSbS4uWnzXnOUf2O0l8g/X98QA
+         +Zx8Wwcxz8QgXCF4XhFDvawPSX+eIf5QLkN0JCbVq7Cj47dr6I+LD5eZhKYfWJ1OLFVE
+         UE6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUOEDQLU6u82pgD3WbAnjtklMSn4ukFPoR/myAJB7M1cwYwWYaHnbiu8s/TI20XEca3Ei/43hzIj5JoOjN7n+tkxbElCybGDqSXwwt8
+X-Gm-Message-State: AOJu0YypaSyedcwxY9A7Us1b7qO6BOBn+wpcqmykecbLxadmxkLOhnx7
+	6/lIEEYNMvXp6/JlRF0GyXXuBCMSUgvW07ViU6+3s5TU612fy7SYmIBTpwvXdlo=
+X-Google-Smtp-Source: AGHT+IGRl6/MNLY2ZSmQMwTK/Pc+WFeT2/juGGW0MYOhUlv5eI7dtyXMyHhwMeLTTvCkHpcOzEmo7w==
+X-Received: by 2002:a05:600c:3511:b0:428:3b5:816b with SMTP id 5b1f17b1804b1-42811d6e2ddmr55999485e9.3.1722264489790;
+        Mon, 29 Jul 2024 07:48:09 -0700 (PDT)
+Received: from [192.168.42.0] (2a02-842a-d52e-6101-6fd0-06c4-5d68-f0a5.rev.sfr.net. [2a02:842a:d52e:6101:6fd0:6c4:5d68:f0a5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428057b645dsm180091705e9.43.2024.07.29.07.48.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 07:48:09 -0700 (PDT)
+From: Julien Stephan <jstephan@baylibre.com>
+Subject: [PATCH v6 0/5] Add Mediatek ISP3.0
+Date: Mon, 29 Jul 2024 16:47:59 +0200
+Message-Id: <20240729-add-mtk-isp-3-0-support-v6-0-c374c9e0c672@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 0/4] tools/memory-model: Define more of LKMM in
- tools/memory-model
-To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
- Alan Stern <stern@rowland.harvard.edu>
-Cc: paulmck@kernel.org, parri.andrea@gmail.com, will@kernel.org,
- peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
- dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
- urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
- linux-kernel@vger.kernel.org, lkmm@lists.linux.dev
-References: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
- <88c1ebc8-4805-4d1d-868a-889043899979@rowland.harvard.edu>
- <bbc3bd10-3bf5-4b1a-a275-dd328c42e307@huaweicloud.com>
- <f93f140b-13bc-4d00-adee-46cc1c016480@rowland.harvard.edu>
- <4792c9e7-2594-3600-5d82-4cb1443fe670@huaweicloud.com>
- <d6a76968-d10b-c60b-245a-f58116eca6af@huaweicloud.com>
- <eb9548de-e66e-3dcd-9136-8702a5bc2934@huaweicloud.com>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <eb9548de-e66e-3dcd-9136-8702a5bc2934@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwCHpMEoq6dmpEAkAA--.5208S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCr1DJr45XFWkJr1rJFWkZwb_yoW5ArW5pF
-	y5tFW3KFs7KF4ftr1Ikwnaqas2vF4xJF45XFn8trZrtr90vF9Ikr4Fyw1j9Fyq9rs3Wa1j
-	vFsxt3s7Z3WDZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF
-	7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026x
-	CaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_
-	JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIccxYrVCFb41lIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jjNtxUUUUU=
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKCrp2YC/4WNQQ6CMBBFr0Jm7ZhaKKAr72FYtGWQiUKbFomEc
+ HcLF/Dv3k/++ytECkwRbtkKgWaO7MYE5SkD2+vxSchtYpBCFqISBeq2xWF6IUePOQqMH+9dmFC
+ LWl+r2mqbl5DWPlDH38P8aBL3HCcXluNoVnv73zmrBKazexRZebkbvbzZBDpbN0CzbdsPq2hQX
+ 8EAAAA=
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Andy Hsieh <andy.hsieh@mediatek.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, Julien Stephan <jstephan@baylibre.com>, 
+ Louis Kuo <louis.kuo@mediatek.com>, Phi-Bang Nguyen <pnguyen@baylibre.com>, 
+ Florian Sylvestre <fsylvestre@baylibre.com>, 
+ Paul Elder <paul.elder@ideasonboard.com>
+X-Mailer: b4 0.13.0
 
+This series adds the support of the Mediatek ISP3.0 found on some
+Mediatek SoCs such as the mt8365. The driver is divided into 2 parts:
 
+* SENINF: the sensor interface
+* CAMSV: this driver provides a path to bypass the SoC ISP so that image
+  data coming from the SENINF can go directly into memory without any
+  image processing. This allows the use of an external ISP or camera
+  sensor directly.
 
-Am 7/29/2024 um 3:30 PM schrieb Hernan Ponce de Leon:
-> On 7/12/2024 10:06 AM, Hernan Ponce de Leon wrote:
->> On 6/10/2024 10:38 AM, Hernan Ponce de Leon wrote:
->>> On 6/8/2024 3:00 AM, Alan Stern wrote:
->>>> On Wed, Jun 05, 2024 at 09:58:42PM +0200, Jonas Oberhauser wrote:
->>>>>
->>>>>
->>>>> Am 6/4/2024 um 7:56 PM schrieb Alan Stern:
->>>>>> Just to clarify: Your first step encompasses patches 1 - 3, and the
->>>>>> second step is patch 4.  The first three patches can be applied 
->>>>>> now, but
->>>>>> the last one needs to wait until herd7 has been updated.  Is this all
->>>>>> correct?
->>>>>
->>>>> Exactly.
->>>>
->>>> With regard to patch 4, how much thought have you and Hernan given to
->>>> backward compatibility?  Once herd7 is changed, old memory model files
->>>> will no longer work correctly.
->>>>
->>>
->>> Honestly, I did not think much about this (at least until Akira 
->>> mentioned in my PR). My hope was that changes to the model could be 
->>> back-ported to previous kernel versions. However that would not work 
->>> for existing out-of-tree files.
->>>
->>> My question is: is compatibility with out-of-tree files really a 
->>> requirement? I would argue that if people are using outdated models, 
->>> they may get wrong results anyway. This is because some of the 
->>> changes done to lkmm during the last few years change the expected 
->>> result for some litmus tests.
->>>
->>> Hernan
->>
->> I pushed some new changes to the code for backward compatibility [1]. 
->> The series also needs the patch at the bottom to properly deal with 
->> the ordering of failing CAses and non-returning operations. With it, 
->> all litmus tests return the correct result (the script needs to pass 
->> option -lkmm-legacy false to herd).
-> 
-> I have been playing around with an alternative to this.
-> 
-> Rather than implementing this as an "option", I can implemented it as a 
-> "model variant (*)" and add this to the model
+The SENINF driver is based on previous work done by Louis Kuo available
+as an RFC here: https://lore.kernel.org/all/20200708104023.3225-1-louis.kuo@mediatek.com/
 
-How exactly do these model variants get selected?
+This series depends on the following series for the phy [1]
 
-I was thinking that another good approach could be to have a new generic 
-C model which doesn't know anything about LKMM. I believe this would be 
-specified in the header of the .litmus files?
+Changes in v6:
+- remove unneeded "link" tag from commits
 
+bindings:
+- remove labels from example node
+- remove complexity for phy and phy-name properties
 
-> flag ~empty (if "lkmmlatest" then 0 else _)
->    as new-lkmm-models-require-variant-lkmmlatest
-> 
-> If the user forgets to set the variant for the new model, herd7 will 
-> flag the executions showing that something is off.
-> 
-> To be fully backward compatible, we would need to backport this to old 
-> models
-> 
-> flag ~empty (if "lkmmlatest" then 1 else _)
->    as new-lkmm-models-require-variant-lkmmlatest
+driver:
+- fix some comments from CK :
+  - remove unneeded variables
+  - rename irqlock to buf_list_lock for clarity
+  - remove unneeded lock/unlock around hw_enable/hw_disable
 
-should this be then _ else 0  ? or what does the _ do here?
+- Link to v5: https://lore.kernel.org/r/20240704-add-mtk-isp-3-0-support-v5-0-bfccccc5ec21@baylibre.com
 
-I also don't think we can backport things to old models
+Changes on v5:
+drivers:
+- rebase on 6.10-rc1
+- fix various comments from all reviews (mostly style issues and minor
+  code refactor)
+- add a function to calculate the clock divider for the master sensor
+  clock: NOTE: setting this register seems to have no effect at all,
+  currently checking with mediatek apps engineer (OOO until 17/04)
 
-> If the user (wrongly) sets the variant for an old model, the the 
-> executions will be flagged.
-> 
-> Any thoughts?
-> 
-> Hernan
-> 
-> (*) This trick seems to be used for some arm models
-> 
-> https://github.com/herd/herdtools7/blob/master/herd/libdir/arm-models/mixed/ec.cat#L66C1-L67C67
+bindings:
+- camsv: update description
+- seninf: fix phy definition and example indentation
+- use generic name for node example
 
+dts:
+- sort nodes by addresses
+- use lower case for hexadecimal
+
+Changes in v4:
+- fix suspend/resume deadlock
+- fix various locking issues reported by Laurent Pinchart on v3
+- run LOCKDEP
+- add missing include reported by kernel-test-robot for non mediatek arch and COMPILE_TEST=y
+- use atomic poll inside mtk_camsv30_setup
+- drop second lane support as it was not used
+- remove useless members in structs
+- fix media entity initialization
+- initialize correct pad for camsv video device
+- add isp support in mt8365.dtsi
+- rebase on 6.7
+
+Changes in v3:
+- fix a lot of formatting issues/coding style issues found in camsv/seninf reported by Angelo on v2
+- fix camsv/seninf binding file error reported by Rob
+
+Changes in v2:
+- renamed clock `cam_seninf` to `camsys`
+- renamed clock `top_mux_seninf` to `top_mux`
+- moved phy properties from port nodes to top level
+- remove patternProperties
+- specify power management dependency in the cover letter description to fix
+  missing include in dt-binding example
+- change '$ref' properties on some endpoint nodes from
+  '$ref: video-interfaces.yaml#' to '$ref: /schemas/graph.yaml#/$defs/endpoint-base'
+ where applicable
+
+Best
+Julien Stephan
+
+Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+---
+Julien Stephan (1):
+      arm64: dts: mediatek: mt8365: Add support for camera
+
+Louis Kuo (2):
+      dt-bindings: media: add mediatek ISP3.0 sensor interface
+      media: platform: mediatek: isp_30: add mediatek ISP3.0 sensor interface
+
+Phi-bang Nguyen (2):
+      dt-bindings: media: add mediatek ISP3.0 camsv
+      media: platform: mediatek: isp_30: add mediatek ISP3.0 camsv
+
+ .../bindings/media/mediatek,mt8365-camsv.yaml      |  109 ++
+ .../bindings/media/mediatek,mt8365-seninf.yaml     |  259 ++++
+ MAINTAINERS                                        |   10 +
+ arch/arm64/boot/dts/mediatek/mt8365.dtsi           |  125 ++
+ drivers/media/platform/mediatek/Kconfig            |    1 +
+ drivers/media/platform/mediatek/Makefile           |    1 +
+ drivers/media/platform/mediatek/isp/Kconfig        |    2 +
+ drivers/media/platform/mediatek/isp/Makefile       |    3 +
+ drivers/media/platform/mediatek/isp/isp_30/Kconfig |   35 +
+ .../media/platform/mediatek/isp/isp_30/Makefile    |    4 +
+ .../platform/mediatek/isp/isp_30/camsv/Makefile    |    7 +
+ .../platform/mediatek/isp/isp_30/camsv/mtk_camsv.c |  327 ++++
+ .../platform/mediatek/isp/isp_30/camsv/mtk_camsv.h |  192 +++
+ .../mediatek/isp/isp_30/camsv/mtk_camsv30_hw.c     |  413 +++++
+ .../mediatek/isp/isp_30/camsv/mtk_camsv30_regs.h   |   60 +
+ .../mediatek/isp/isp_30/camsv/mtk_camsv_video.c    |  742 +++++++++
+ .../platform/mediatek/isp/isp_30/seninf/Makefile   |    5 +
+ .../mediatek/isp/isp_30/seninf/mtk_seninf.c        | 1576 ++++++++++++++++++++
+ .../mediatek/isp/isp_30/seninf/mtk_seninf_reg.h    |  117 ++
+ 19 files changed, 3988 insertions(+)
+---
+base-commit: 99b9aaac4abdf30968b2ce9c9848951290fbde92
+change-id: 20240704-add-mtk-isp-3-0-support-a08a978cac36
+
+Best regards,
+-- 
+Julien Stephan <jstephan@baylibre.com>
 
 
