@@ -1,201 +1,177 @@
-Return-Path: <linux-kernel+bounces-266287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC56193FDA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:44:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FCCF93FDAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CA8CB210EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:44:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19EEE283288
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCB4186E37;
-	Mon, 29 Jul 2024 18:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0610617CA1A;
+	Mon, 29 Jul 2024 18:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EggXI0G9"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DRzbzYYV"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202968061C;
-	Mon, 29 Jul 2024 18:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5456157E6C
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722278671; cv=none; b=OgNjcacqqmbsYGS7SN1wBouvWo+Vw0wCuW4SJopbPkT3gZWTrUkQoq9tvhr3XvGU0DDuUJsuVZYIEAGck3mcvmsrTUzMVsf/Wt1+HvnKTsnPUwAAj/1Bx9vgb0Zgkz7367olMJIDgHSlkd7bbMlsKJRkVCIuJdrbZInTB8IwO7E=
+	t=1722278746; cv=none; b=CIHQ1hx+6JNrPYnwd8BxEuW4hO5C3i76CtyMNhVJwd0mClnSH1XfKWH1+/UGtBzlsQalOR1un85rAsPlD3c5cWxS1qWLkwPdrsffFXEDEtRNASMfbGSMqOBJiAgfaWa+fIgI0JkAy/RiSUenp27xRes9EwVUIlIwR777pVma+RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722278671; c=relaxed/simple;
-	bh=Li9Qv0F3OtZT63D2Ttl4r8tsHmJ2LCjg1Y3aEAbr0YI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Tsj4VhU+L5kOWkgTRGGCvpT5Qw8VQlienCFYlbCDU39B020e4c5P2UgH4u2rqHXN8JOkLKba2t92qMavu2eUQWZiUvF4+1QVwRhwxYJs1HJH/OFKG1W+ASPfFOcWFBgwS6hgby/36y8gbFR7ZhqH/wrhi200Ha499Fvh4zbHcWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EggXI0G9; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-6c5bcb8e8edso2788774a12.2;
-        Mon, 29 Jul 2024 11:44:29 -0700 (PDT)
+	s=arc-20240116; t=1722278746; c=relaxed/simple;
+	bh=yhMZoKMpgSkhDcS0CFUJlLnkR/cq+2BQz16AEvGllsE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oWR5b1p/LH0ANzbHBfauEZFhXPJLlJoY6bL7cY1Rsfcab9UoNwusqmp2ECiUJ9jPXvSmTixpjRDyMZ0ZuL4J9WKFEZYhply3HSku/hEdxtxoMwb5AFFX4+tag23SmyeLShh0hDNZKJxAOOWjC50nuAXRESXOKruopm/qR3CTc7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DRzbzYYV; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fed726aefcso22115ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:45:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722278669; x=1722883469; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=UB0U60gxgWPGK6J/uwfeq1MccFvXaRCTKVbjL8V3OJo=;
-        b=EggXI0G9ODM2EsxJoSBfIJTjaLHgsFvFLjRtyVCvhaxvGo4lxZqQS6hlJSfU4We8+/
-         yP3mFC9vU51MYekl4plQgH3FCepqoPlltzXtZdIKmTqCmeA5RT7rXI2lLGiiLJNkGlgi
-         2L4DWhlvuK9TEcLpjBnbmYwi/tTv2StE10LXjJOehbtTUc+dvGUHNXO/STEklE+Z3/kt
-         LqYWKermoR04QpTyOGd1QDICms5Iw8bYVRoX4fcJ8nsM9BpqiX6FipeDwIHT/v22A1/Q
-         FAMU5lCZVxayl39Te4zbjc7RAIJUNQA1M04Dma+VvIVMUe7VAI+h2SF7rEuzVMXzFuyO
-         OtUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722278669; x=1722883469;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1722278744; x=1722883544; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UB0U60gxgWPGK6J/uwfeq1MccFvXaRCTKVbjL8V3OJo=;
-        b=bk6mjwrBplbWIuaFCdQaaRHywBqFu6J+IOJQzY9RnA7p83TAHN121LG2njrs8ZrOj2
-         e9ocWaIiWRid1I7er9ZNPnSITbx0gMU7n3LrGXAxie1pZi6DKc15mFmxQHRGsuoyLoH3
-         VxWTI8ZRPQ5ByYA4s/1rDjpZscjeFs/DLNWZqCGFGBtcTSsfGz6pM5kICc591DptPlJy
-         Q7LKkfzFkddBwSV/PFaEb+xwgAk85v9GCtPmz/4fTGdP2mu8C91FI+l01KjiCZPlMXdO
-         wOqI1OJIR+KCaWhMV0r1dALLWPOSKz/GSVJCvITXLLx5HS2b3uZn9JHt+aNLSc8+Q4lJ
-         gUxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5fP6vA0IwqmxhVeLqlZlgkkxLNKQyzd5KdKpqMGSxqDGBQrV0vQGtmzUgOl1pQIEoCL1Caynh4eka2FSxnNBvSqQhcUbFikGi/TCHux4MFaeflyy/GFKJxj5Jdz1u6woHPDbi/2ot
-X-Gm-Message-State: AOJu0YyHzqw4QZEsIiqc7XvegYQ6y9ZrNUyL72MUqUgfnl3pEROIm5dS
-	H77XA10aXDKnn76IlcWQ60ZHNgaeb4JvOsoKlW713YZnz+cngxXX
-X-Google-Smtp-Source: AGHT+IGx3mxZ7EVwiJH5mWg8pUKF+sISjIt4tEqbfBvC7JWBvnmueQgzwEfKFWJ/PUy9csOpCJEiUg==
-X-Received: by 2002:a05:6a21:3399:b0:1c2:8cc4:9084 with SMTP id adf61e73a8af0-1c4a13a3558mr11915795637.34.1722278669281;
-        Mon, 29 Jul 2024 11:44:29 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9fa49c20fsm6435237a12.79.2024.07.29.11.44.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jul 2024 11:44:28 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <c58ca576-2763-4f73-bc0e-c33677c5228b@roeck-us.net>
-Date: Mon, 29 Jul 2024 11:44:26 -0700
+        bh=KkKTflLVLlbpVg5QG3fQq0R+V1cEF+vDcwgomBzv0M4=;
+        b=DRzbzYYVIr9D91t9nldEIKj2v0XOQDQ11Y8BY4rPAZAuw0Lo8v8jhkHCZaolkk1jRw
+         WasBK2+NbP6LHLudYgRUm9spVDW9X/b1o5lWb24XCz1VarcIx6ghrd1BDqqgU3sWeZ35
+         xNDDAiLYIUM5ElugDDzLi5vD8spinhHichA7uZgGpfSeBzN9LMMOgQ7jNjnZ44uc9ut3
+         Wr+s77reD6CFVTgCHOuNJK5JokN3URrNki5deLT6Tlc+Rsbe0vAeU6Umc2l8hLlrw/Eo
+         OpXQ18xaYHjfolplRqRrC0QZ9i0fMlnEpFX9oxcdmVwZVDHIoEHFG9hyGAwwMQbesmgB
+         0AXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722278744; x=1722883544;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KkKTflLVLlbpVg5QG3fQq0R+V1cEF+vDcwgomBzv0M4=;
+        b=erzKDvXvl2fRgzsMfli9hFuc9b/N3wN50PzUdHmySkao4QiHZBFO9xjAOnw28PTMLs
+         EJnB8UligvrgmTCahUBCHNWNiaEiVIyt9pX/i03bBUnEzFPo9PVXUO363fb29HIofEus
+         jfDpOfkSvdfnZXyR9qJSkvny4QBtsF2NnRsB/B10u30YCYEw8uBG4/D2ktXyLxKF7p98
+         jY9u+g1/BnROCT00ubkDm/qHNxl4rY000Y7V+SQq24nlv013RlBjxf6fz6RYwlC9Me3c
+         OfvyzTJedVmv0sWMYkCbENannVz+a4bkvQXi/BgBN7EkNAE6qdEvqZFHn6tPIrRn59xM
+         h9XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPlVaBGhqB5ef1MOdy4x9/gRlXIJ//qijfe9phTTysUCs/i0HifILATl/HsegLj7xVfbFSUeZHwXjYgWsF1b44A8xdyUBAEpChhSB3
+X-Gm-Message-State: AOJu0YzngELzzpyIBBXkyMjbgWeQIBAfIEK6rTrOUC06XvSMMg5ddpZU
+	33OXtuHS8x7HVSIbEGL99iFp5/9N9VQPHuZtOoNDOsVK9wJPcRs6qvXSySHloFQxIDEPZDrDbDs
+	512VCEvzUNtnD2aG8EuT7IUoid3V9AWHyr8yu
+X-Google-Smtp-Source: AGHT+IHZEorhI2JheufYETqwCJCum+FQju6o8ub0bKteE/XOlJbrIxbdu7ZbQUbCI0NR5mjvwgK5UgS6B16hFju30qg=
+X-Received: by 2002:a17:902:f644:b0:1fb:1006:980f with SMTP id
+ d9443c01a7336-1ff34cea480mr980955ad.16.1722278744056; Mon, 29 Jul 2024
+ 11:45:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] i2c: smbus: Send alert notifications to all devices
- if source not found
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Wolfram Sang <wsa@kernel.org>, Jean Delvare <khali@linux-fr.org>,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220110172857.2980523-1-linux@roeck-us.net>
- <20220110172857.2980523-3-linux@roeck-us.net> <ZqakaAn3f9Kg6Lgy@shikoro>
- <7ad68f35-2e90-41b7-a95d-efe5f7db8f3b@roeck-us.net>
- <ZqdLVg6IVTjsTWb4@shikoro>
- <3adf0b8f-2e12-413a-a76f-866e56bf096c@roeck-us.net>
- <ZqfhPffOTu53bfwU@shikoro>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <ZqfhPffOTu53bfwU@shikoro>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240729004127.238611-1-namhyung@kernel.org>
+In-Reply-To: <20240729004127.238611-1-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 29 Jul 2024 11:45:32 -0700
+Message-ID: <CAP-5=fUj4FWUvV1xD0aCA=jycBj76RABdWRbH9=5DCZPFHOMwA@mail.gmail.com>
+Subject: Re: [PATCH 0/4] perf ftrace: Add 'profile' subcommand (v1)
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	Steven Rostedt <rostedt@goodmis.org>, Changbin Du <changbin.du@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/29/24 11:36, Wolfram Sang wrote:
-> 
->> I looked into the code again. The sequence is (or is supposed to be):
->>
->> 1st loop:
->> 	if (!alert_pending)
->> 		break;
->> 	smbus_do_alert()
->> 	if (failed at same address)
->> 		smbus_do_alert_force()
->>
->> 2nd loop:
->> 	if (!alert_pending)
->> 		break;
->> 	smbus_do_alert()
->> 	if (failed at same address)
->> 		break;
->>
->> I think what you are suggesting is
-> ...
-> 
-> What I am suggesting is more like this:
-> 
-> 1st loop:
-> 
->   	smbus_do_alert()
-> 	//impossible to have same address on first run, so go to 2nd loop
-> 
-> 2nd loop:
-> 
->   	smbus_do_alert()
->   	if (failed at same address)
->   		smbus_do_alert_force()
-> 		break;
-> 
-> As I understand it, your sequence is missing "my" 1st loop with the
-> invalid address, so you will end up having 3 loops altogether?
-> 
-> The code I am suggesting is bascially yours without the retries
-> variable:
-> 
-> 	status = device_for_each_child(&ara->adapter->dev, &data,
-> 				       smbus_do_alert);
-> 	if (data.addr == prev_addr && status != -EBUSY) {
-> 		device_for_each_child(&ara->adapter->dev, &data,
-> 				      smbus_do_alert_force);
-> 		break;
-> 	}
-> 	prev_addr = data.addr;
-> 
-> Makes sense or am I missing something?
-> 
+On Sun, Jul 28, 2024 at 5:41=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hello,
+>
+> This is an attempt to extend perf ftrace command to show a kernel functio=
+n
+> profile using the function_graph tracer.  This is useful to see detailed
+> info like total, average, max time (in usec) and number of calls for each
+> function.
+>
+>   $ sudo perf ftrace profile -- sync | head
+>   # Total (us)   Avg (us)   Max (us)      Count   Function
+>       7638.372   7638.372   7638.372          1   __do_sys_sync
+>       7638.059   7638.059   7638.059          1   ksys_sync
+>       5893.959   1964.653   3747.963          3   iterate_supers
+>       5214.181    579.353   1688.752          9   schedule
+>       3585.773     44.269   3537.329         81   sync_inodes_one_sb
+>       3566.179     44.027   3537.078         81   sync_inodes_sb
+>       1976.901    247.113   1968.070          8   filemap_fdatawait_keep_=
+errors
+>       1974.367    246.796   1967.895          8   __filemap_fdatawait_ran=
+ge
+>       1935.407     37.219   1157.627         52   folio_wait_writeback
+>
+> While the kernel also provides the similar functionality IIRC under
+> CONFIG_FUNCTION_PROFILER, it's often not enabled on disto kernels so I
+> implemented it in user space.
+>
+> Also it can support function filters like 'perf ftrace trace' so users
+> can focus on some target functions and change the buffer size if needed.
+>
+>   $ sudo perf ftrace profile -h
+>
+>    Usage: perf ftrace [<options>] [<command>]
+>       or: perf ftrace [<options>] -- [<command>] [<options>]
+>       or: perf ftrace {trace|latency|profile} [<options>] [<command>]
+>       or: perf ftrace {trace|latency|profile} [<options>] -- [<command>] =
+[<options>]
+>
+>       -a, --all-cpus        System-wide collection from all CPUs
+>       -C, --cpu <cpu>       List of cpus to monitor
+>       -G, --graph-funcs <func>
+>                             Trace given functions using function_graph tr=
+acer
+>       -g, --nograph-funcs <func>
+>                             Set nograph filter on given functions
+>       -m, --buffer-size <size>
+>                             Size of per cpu buffer, needs to use a B, K, =
+M or G suffix.
+>       -N, --notrace-funcs <func>
+>                             Do not trace given functions
+>       -p, --pid <pid>       Trace on existing process id
+>       -s, --sort <key>      Sort result by key: total (default), avg, max=
+, count, name.
+>       -T, --trace-funcs <func>
+>                             Trace given functions using function tracer
+>       -v, --verbose         Be more verbose
+>           --tid <tid>       Trace on existing thread id (exclusive to --p=
+id)
+>
+>
+> The code is also available in 'perf/ftrace-profile-v1' branch at
+> git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
+>
+> Thanks,
+> Namhyung
 
-Yes, that should work and is indeed simpler. You are correct, the
-additional loop should not be necessary since smbus_do_alert_force()
-should already call all connected drivers and hopefully clear
-the alert condition on those.
+Lgtm, need to think about (rebase, etc) wrt the libcap change I sent
+but otherwise:
+Reviewed-by: Ian Rogers <irogers@google.com>
 
 Thanks,
-Guenter
+Ian
 
+> Namhyung Kim (4):
+>   perf ftrace: Add 'tail' option to --graph-opts
+>   perf ftrace: Factor out check_ftrace_capable()
+>   perf ftrace: Add 'profile' command
+>   perf ftrace: Add -s/--sort option to profile sub-command
+>
+>  tools/perf/Documentation/perf-ftrace.txt |  48 ++-
+>  tools/perf/builtin-ftrace.c              | 439 +++++++++++++++++++++--
+>  tools/perf/util/ftrace.h                 |   3 +
+>  3 files changed, 463 insertions(+), 27 deletions(-)
+>
+> --
+> 2.46.0.rc1.232.g9752f9e123-goog
+>
 
