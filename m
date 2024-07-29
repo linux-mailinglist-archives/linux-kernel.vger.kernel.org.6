@@ -1,83 +1,73 @@
-Return-Path: <linux-kernel+bounces-266570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20DE99401C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:39:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 381D79401CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BC541F23202
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:39:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A68D1C22292
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCE118F2FC;
-	Mon, 29 Jul 2024 23:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9D918FC60;
+	Mon, 29 Jul 2024 23:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AtSV3pmO"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="vZoE0vtI"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054C018E778
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854CE7E1;
+	Mon, 29 Jul 2024 23:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722296356; cv=none; b=r8jeTuIzfgvdTl7A3qIsIv2tN6ebGN057srhY1/dDaElTNosC8d2XAiKesABGL8IFq5QBf9dxNk4KsHF4V7zRBfCXwQT+ZnG42uZAWmqarzL7VZb/kBlmiGiEuGLHDZrDeOjlMkza54tMFh6MbDMq04O11Rt4zVhLEsGL7UTBLk=
+	t=1722296373; cv=none; b=ZJO+PyxB8ZN0kbN+ZmP1ArajhKUW14ngsW6Lmh9CSNzeOhfGl6CIlBTiVJdqGUmt3JE0NezhW2pCujdw28UE2IHm3jgBfi7/ZqOworQfArcqKxf5g69WExovtSq0/T5u80hahwSXMULqNW9sdhIKm5xfwbd3+DT9t8QpFMvhnh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722296356; c=relaxed/simple;
-	bh=Z/qYg5geWHFYXWacWooahW94iKZ3GqH4MYLN4CRPPsA=;
+	s=arc-20240116; t=1722296373; c=relaxed/simple;
+	bh=oWZ3IYgzKT6CnlOSYJcLs3DHWI2QuVDBZuog8IoRvSk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bMSOSbo+ci0sejiA3bSh1fAocjGENylLq0dsPJblt8JjtUuhPe3GyU/Y0jcX5MC2dKgdKSKLWgPUP5trFMDN4BahOSCE/UXbTFVJNvcCcWNzjsDyUkB9TBCO9J8taACRDTxA3IcyzW3om2h1gzszSiG/jGEG18Nj1CvLVntHmZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AtSV3pmO; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef2ed59200so47732221fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:39:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722296352; x=1722901152; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tZ+5jJwz1GItlEJ4uF49j4Wqp0aV1o2OFMU19Rkln1A=;
-        b=AtSV3pmODf7M74D07mlx53SkYXoBkf5dLUbZVAFCiHeqpygmI64afHhan+7LL2uDFm
-         USjR3rTDSSXlxyJqpBvXrf4aP6c+DNURYEuDm9UKxKZ752ADgS+Cc4/r7onfQ/AU46iT
-         kAXdKsVJ9qNbAx9ulmEY52gkbxMk+ayzQbHPnn7IvSAyf9q4VnxjfX8J/YrM0sSRXp4g
-         4cm7biXTIYp7w03GVGzH/10YaptIsqbLF900KpjmyFKHWsA3FntSlNE7AZHIqbaZ6dNn
-         jSwgWsGP6biccRRralVtG02dl3ZwcGmKjRB3E2gSRYHrVbPE4Rr8xYPpypCGrIRFj8tz
-         RYfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722296352; x=1722901152;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tZ+5jJwz1GItlEJ4uF49j4Wqp0aV1o2OFMU19Rkln1A=;
-        b=H29AMPhIpUV0Kq1OVPy0/DJkn3C/4Tgm5S4O8X3mg0GZrR1P19/qLHCLJeXUllawUX
-         TwcQhgUe6YUlZ9+PE8dt4X81QBBLNzZYSM2NcR3FWyfaxfSJVc/g/lTCp91X9I7F6rcY
-         I9QX7HynfiGcq5AH5Nydkng/pMz905u6C6rkB2p6veqJ/GI37md9SUOAOAb6CorK0Yq/
-         b9+mCYFx+Qey6+pS6MhZ9ih+GCIcMhcXcKH/NYYnbm7sW39w8MIKGNwSxj7lFws3BId8
-         xpll7leiGBobwsh5SR6XKzG+gHToLUQjRDerPa4Mqwi5bB4Eobl+q+dr5GwxtNmxcLio
-         13YA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtSkdD+zW6d/39ueJwol/stQxne0qGIBgg4APKsjN0hW1A72tTcmUlV1eA3GJum1H8kA5gfkD0YoRSYPm/IjpCo5O/Zhnv61MmzOu0
-X-Gm-Message-State: AOJu0YyeBBjUCuqhz91rnavcOEcL42aGfLfrCeUUAExxCcF8QYKM/nzL
-	xdYOzxY74cGWCuhItqvwn/YNH+kRC9tXLBy9mhlDpgXYB46RQkrdVK0eAi76ayc=
-X-Google-Smtp-Source: AGHT+IHm6u2V0FI1Cdg05g8yw1b7p4C0R/76aPnJv1xQaVOoP6+9stttZj3CqYqpdVkh8/zOf575qQ==
-X-Received: by 2002:a2e:3a19:0:b0:2ee:4c2e:3d3b with SMTP id 38308e7fff4ca-2f12ee02fa2mr60204081fa.4.1722296351880;
-        Mon, 29 Jul 2024 16:39:11 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f03cf0f950sm14937121fa.23.2024.07.29.16.39.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 16:39:11 -0700 (PDT)
-Date: Tue, 30 Jul 2024 02:39:09 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Anjelique Melendez <quic_amelende@quicinc.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	amitk@kernel.org, thara.gopinath@gmail.com, andersson@kernel.org, 
-	quic_collinsd@quicinc.com, rafael@kernel.org, daniel.lezcano@linaro.org, 
-	rui.zhang@intel.com, lukasz.luba@arm.com, linux-arm-msm@vger.kernel.org, 
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] thermal: qcom-spmi-temp-alarm: add support for LITE
- PMIC peripherals
-Message-ID: <ttswrupepg5yvxyzai2w7muam2rbpv6nh3y4klv6kd7jiztm7y@n3775q6qtaqt>
-References: <20240729231259.2122976-1-quic_amelende@quicinc.com>
- <20240729231259.2122976-6-quic_amelende@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rKQec8xhXKL5owo0Po/qsWrh7YK7kKio2tn7M7C+1xYX+XIhh68H4xol0fBaGy4WiZN7Vku78UOLi+jXkRqE9B1C+FmvldEzI19fLhxmrib675aGBm8P1gxpEut9so24l8tcCBKLrULTIYJO1HfJCYOcSqE5NCLlf7v6T42QWb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=vZoE0vtI; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=LMjXLw4I49235k9Hi/bPaVIFeEwbQQwxpJC/Qsvb5RM=; b=vZoE0vtIZ8SERB9oJeOXQG8egc
+	LH5Zwd5UEAcgcRE3dQCoDuiC1Ibj3eiPsORN/wGhtWQVaoNH/kNtpkb5ULWuJnF48XyON1nyUopMp
+	9EABDD38l4GxZWwq/Xs9WletZO6og7dmJHA5PS/6VQOcxdgbLQHUiPRFkli4MjrJP9mGe2OfiezYk
+	f5oYeSU/Xm9uz6Vy5cbxumOuIij9nD65roF2aeT6gSDVfg0lWf7Dt5/qNGc7mM1U9UKP03YZ0dOgb
+	fNIt9J9+E1ImiMlReaIsDIEQ4h6kZsBPP/PbQSJu9QsWnZL/A19cnZtXqWl0+f7PBsu2KZXK4RLZc
+	wwZTTR9A==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55872)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sYZxY-0005c5-2d;
+	Tue, 30 Jul 2024 00:39:20 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sYZxc-0004jq-Bs; Tue, 30 Jul 2024 00:39:24 +0100
+Date: Tue, 30 Jul 2024 00:39:24 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Pawel Dembicki <paweldembicki@gmail.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 9/9] net: phy: vitesse: implement downshift in
+ vsc73xx phys
+Message-ID: <ZqgoLC77GeJ1yyYq@shell.armlinux.org.uk>
+References: <20240729210615.279952-1-paweldembicki@gmail.com>
+ <20240729210615.279952-10-paweldembicki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,364 +76,115 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240729231259.2122976-6-quic_amelende@quicinc.com>
+In-Reply-To: <20240729210615.279952-10-paweldembicki@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, Jul 29, 2024 at 04:12:59PM GMT, Anjelique Melendez wrote:
-> Add support for TEMP_ALARM LITE PMIC peripherals.  This subtype
-> utilizes a pair of registers to configure a warning interrupt
-> threshold temperature and an automatic hardware shutdown
-> threshold temperature.
-> 
-> Co-developed-by: David Collins <quic_collinsd@quicinc.com>
-> Signed-off-by: David Collins <quic_collinsd@quicinc.com>
-> Signed-off-by: Anjelique Melendez <quic_amelende@quicinc.com>
-> ---
->  drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 208 +++++++++++++++++++-
->  1 file changed, 202 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-> index 1f56acd8f637..e50ce66ec096 100644
-> --- a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-> +++ b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-> @@ -4,6 +4,7 @@
->   * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
->   */
->  
-> +#include <linux/bitfield.h>
->  #include <linux/bitops.h>
->  #include <linux/delay.h>
->  #include <linux/err.h>
-> @@ -22,21 +23,28 @@
->  #define QPNP_TM_REG_TYPE		0x04
->  #define QPNP_TM_REG_SUBTYPE		0x05
->  #define QPNP_TM_REG_STATUS		0x08
-> +#define QPNP_TM_REG_IRQ_STATUS		0x10
->  #define QPNP_TM_REG_SHUTDOWN_CTRL1	0x40
->  #define QPNP_TM_REG_ALARM_CTRL		0x46
->  /* TEMP_DAC_* registers are only present for TEMP_GEN2 v2.0 */
->  #define QPNP_TM_REG_TEMP_DAC_STG1	0x47
->  #define QPNP_TM_REG_TEMP_DAC_STG2	0x48
->  #define QPNP_TM_REG_TEMP_DAC_STG3	0x49
-> +#define QPNP_TM_REG_LITE_TEMP_CFG1	0x50
-> +#define QPNP_TM_REG_LITE_TEMP_CFG2	0x51
->  
->  #define QPNP_TM_TYPE			0x09
->  #define QPNP_TM_SUBTYPE_GEN1		0x08
->  #define QPNP_TM_SUBTYPE_GEN2		0x09
-> +#define QPNP_TM_SUBTYPE_LITE		0xC0
->  
->  #define STATUS_GEN1_STAGE_MASK		GENMASK(1, 0)
->  #define STATUS_GEN2_STATE_MASK		GENMASK(6, 4)
->  #define STATUS_GEN2_STATE_SHIFT		4
->  
-> +/* IRQ status only needed for TEMP_ALARM_LITE */
-> +#define IRQ_STATUS_MASK			BIT(0)
-> +
->  #define SHUTDOWN_CTRL1_OVERRIDE_S2	BIT(6)
->  #define SHUTDOWN_CTRL1_THRESHOLD_MASK	GENMASK(1, 0)
->  
-> @@ -44,6 +52,8 @@
->  
->  #define ALARM_CTRL_FORCE_ENABLE		BIT(7)
->  
-> +#define LITE_TEMP_CFG_THRESHOLD_MASK	GENMASK(3, 2)
-> +
->  #define THRESH_COUNT			4
->  #define STAGE_COUNT			3
->  
-> @@ -88,6 +98,19 @@ static const long temp_dac_max[STAGE_COUNT] = {
->  	119375, 159375, 159375
->  };
->  
-> +/*
-> + * TEMP_ALARM_LITE has two stages: warning and shutdown with independently
-> + * configured threshold temperatures.
-> + */
-> +
-> +static const long temp_map_lite_warning[THRESH_COUNT] = {
-> +	115000, 125000, 135000, 145000
-> +};
-> +
-> +static const long temp_map_lite_shutdown[THRESH_COUNT] = {
-> +	135000, 145000, 160000, 175000
-> +};
-> +
->  /* Temperature in Milli Celsius reported during stage 0 if no ADC is present */
->  #define DEFAULT_TEMP			37000
->  
-> @@ -171,19 +194,26 @@ static long qpnp_tm_decode_temp(struct qpnp_tm_chip *chip, unsigned int stage)
->   * qpnp_tm_get_temp_stage() - return over-temperature stage
->   * @chip:		Pointer to the qpnp_tm chip
->   *
-> - * Return: stage (GEN1) or state (GEN2) on success, or errno on failure.
-> + * Return: stage (GEN1), state (GEN2), or alarm interrupt state (LITE) on
-> + *	   success; or errno on failure.
->   */
->  static int qpnp_tm_get_temp_stage(struct qpnp_tm_chip *chip)
->  {
->  	int ret;
-> +	u16 addr = QPNP_TM_REG_STATUS;
->  	u8 reg = 0;
->  
-> -	ret = qpnp_tm_read(chip, QPNP_TM_REG_STATUS, &reg);
-> +	if (chip->subtype == QPNP_TM_SUBTYPE_LITE)
-> +		addr = QPNP_TM_REG_IRQ_STATUS;
-> +
-> +	ret = qpnp_tm_read(chip, addr, &reg);
->  	if (ret < 0)
->  		return ret;
->  
->  	if (chip->subtype == QPNP_TM_SUBTYPE_GEN1)
->  		ret = reg & STATUS_GEN1_STAGE_MASK;
-> +	else if (chip->subtype == QPNP_TM_SUBTYPE_LITE)
-> +		ret = reg & IRQ_STATUS_MASK;
->  	else
->  		ret = (reg & STATUS_GEN2_STATE_MASK) >> STATUS_GEN2_STATE_SHIFT;
->  
-> @@ -206,7 +236,8 @@ static int qpnp_tm_update_temp_no_adc(struct qpnp_tm_chip *chip)
->  		return ret;
->  	stage = ret;
->  
-> -	if (chip->subtype == QPNP_TM_SUBTYPE_GEN1) {
-> +	if (chip->subtype == QPNP_TM_SUBTYPE_GEN1
-> +	    || chip->subtype == QPNP_TM_SUBTYPE_LITE) {
->  		stage_new = stage;
->  		stage_old = chip->stage;
->  	} else {
-> @@ -289,6 +320,78 @@ static int qpnp_tm_gen2_rev2_set_temp_thresh(struct qpnp_tm_chip *chip, int trip
->  	return 0;
->  }
->  
-> +static int qpnp_tm_lite_set_temp_thresh(struct qpnp_tm_chip *chip, int trip,
-> +				       int temp)
+On Mon, Jul 29, 2024 at 11:06:15PM +0200, Pawel Dembicki wrote:
+> +static int vsc73xx_get_downshift(struct phy_device *phydev, u8 *data)
 > +{
-> +	int ret, temp_cfg, i;
-> +	const long *temp_map;
-> +	u16 addr;
-> +	u8 reg, thresh;
+> +	int page, val, cnt, enable;
 > +
-> +	if (trip < 0 || trip >= STAGE_COUNT) {
-> +		dev_err(chip->dev, "invalid TEMP_LITE trip = %d\n", trip);
-> +		return -EINVAL;
-> +	}
+> +	page = phy_select_page(phydev, MII_VSC73XX_EXT_PAGE_1E);
+> +	if (page < 0)
+> +		return page;
 > +
-> +	switch (trip) {
-> +	case 0:
-> +		temp_map = temp_map_lite_warning;
-> +		addr = QPNP_TM_REG_LITE_TEMP_CFG1;
-> +		break;
-> +	case 1:
-> +		/*
-> +		 * The second trip point is purely in software to facilitate
-> +		 * a controlled shutdown after the warning threshold is crossed
-> +		 * but before the automatic hardware shutdown threshold is
-> +		 * crossed.
-> +		 */
-> +		return 0;
-> +	case 2:
-> +		temp_map = temp_map_lite_shutdown;
-> +		addr = QPNP_TM_REG_LITE_TEMP_CFG2;
-> +		break;
-> +	default:
-> +		return 0;
-> +	}
+> +	val = __phy_read(phydev, MII_VSC73XX_PHY_CTRL_EXT3);
+> +	if (val < 0)
+> +		goto restore_page;
 > +
-> +	if (temp < temp_map[THRESH_MIN] || temp > temp_map[THRESH_MAX]) {
-> +		dev_err(chip->dev, "invalid TEMP_LITE temp = %d\n", temp);
-> +		return -EINVAL;
-> +	}
+> +	enable = FIELD_GET(MII_VSC73XX_PHY_CTRL_EXT3_DOWNSHIFT_EN, val);
+> +	cnt = FIELD_GET(MII_VSC73XX_PHY_CTRL_EXT3_DOWNSHIFT_CNT, val) + 2;
 > +
-> +	thresh = 0;
-> +	temp_cfg = temp_map[thresh];
-> +	for (i = THRESH_MAX; i >= THRESH_MIN; i--) {
-> +		if (temp >= temp_map[i]) {
-> +			thresh = i;
-> +			temp_cfg = temp_map[i];
-> +			break;
-> +		}
-> +	}
+> +	*data = enable ? cnt : DOWNSHIFT_DEV_DISABLE;
 > +
-> +	if (temp_cfg == chip->temp_dac_map[trip])
-> +		return 0;
-> +
-> +	ret = qpnp_tm_read(chip, addr, &reg);
-> +	if (ret < 0) {
-> +		dev_err(chip->dev, "LITE_TEMP_CFG read failed, ret=%d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	reg &= ~LITE_TEMP_CFG_THRESHOLD_MASK;
-> +	reg |= FIELD_PREP(LITE_TEMP_CFG_THRESHOLD_MASK, thresh);
-> +
-> +	ret = qpnp_tm_write(chip, addr, reg);
-> +	if (ret < 0) {
-> +		dev_err(chip->dev, "LITE_TEMP_CFG write failed, ret=%d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	chip->temp_dac_map[trip] = temp_cfg;
-> +
+> +restore_page:
+> +	phy_restore_page(phydev, page, val);
 > +	return 0;
+
+If you're going to use phy_select_page()..phy_restore_page(), please
+read the documentation. If the __phy_read() fails, then you're
+returning zero from this function, but leaving *data uninitialised.
+Surely not what you want.
+
+In any case, this complexity is unnecessary.
+
+static int vsc73xx_get_downshift(struct phy_device *phydev, u8 *data)
+{
+	int val, enable, cnt;
+
+	val = phy_read_paged(phydev, MII_VSC73XX_EXT_PAGE_1E,
+			     MII_VSC73XX_PHY_CTRL_EXT3);
+	if (val < 0)
+		return val;
+
+	enable = FIELD_GET(MII_VSC73XX_PHY_CTRL_EXT3_DOWNSHIFT_EN, val);
+	cnt = FIELD_GET(MII_VSC73XX_PHY_CTRL_EXT3_DOWNSHIFT_CNT, val) + 2;
+
+	*data = enable ? cnt : DOWNSHIFT_DEV_DISABLE;
+
+	return 0;
+}
+
+is all that it needs.
+
 > +}
 > +
->  static int qpnp_tm_update_critical_trip_temp(struct qpnp_tm_chip *chip,
->  					     int temp)
->  {
-> @@ -374,6 +477,24 @@ static const struct thermal_zone_device_ops qpnp_tm_gen2_rev2_sensor_ops = {
->  	.set_trip_temp = qpnp_tm_gen2_rev2_set_trip_temp,
->  };
->  
-> +static int qpnp_tm_lite_set_trip_temp(struct thermal_zone_device *tz,
-> +					   int trip, int temp)
+> +static int vsc73xx_set_downshift(struct phy_device *phydev, u8 cnt)
 > +{
-> +	struct qpnp_tm_chip *chip = tz->devdata;
-> +	int ret;
+> +	int page, ret, val;
 > +
-> +	mutex_lock(&chip->lock);
-> +	ret = qpnp_tm_lite_set_temp_thresh(chip, trip, temp);
-> +	mutex_unlock(&chip->lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct thermal_zone_device_ops qpnp_tm_lite_sensor_ops = {
-> +	.get_temp = qpnp_tm_get_temp,
-> +	.set_trip_temp = qpnp_tm_lite_set_trip_temp,
-> +};
-> +
->  static irqreturn_t qpnp_tm_isr(int irq, void *data)
->  {
->  	struct qpnp_tm_chip *chip = data;
-> @@ -452,6 +573,68 @@ static int qpnp_tm_gen2_rev2_init(struct qpnp_tm_chip *chip)
->  	return 0;
->  }
->  
-> +/* Configure TEMP_LITE registers based on DT thermal_zone trips */
-> +static int qpnp_tm_lite_update_trip_temps(struct qpnp_tm_chip *chip)
-> +{
-> +	struct thermal_trip trip = {0};
-> +	int ret, ntrips, i;
-> +
-> +	ntrips = thermal_zone_get_num_trips(chip->tz_dev);
-> +	/* Keep hardware defaults if no DT trips are defined. */
-> +	if (ntrips <= 0)
-> +		return 0;
-> +
-> +	for (i = 0; i < ntrips; i++) {
-> +		ret = thermal_zone_get_trip(chip->tz_dev, i, &trip);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		ret = qpnp_tm_lite_set_temp_thresh(chip, i, trip.temperature);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
-> +	/* Verify that trips are strictly increasing. */
-
-Again, this looks like artificial limitations.
-
-> +	if (chip->temp_dac_map[2] <= chip->temp_dac_map[0]) {
-> +		dev_err(chip->dev, "Threshold 2=%ld <= threshold 0=%ld\n",
-> +			chip->temp_dac_map[2], chip->temp_dac_map[0]);
+> +	if (cnt > MII_VSC73XX_DOWNSHIFT_MAX)
+> +		return -E2BIG;
+> +	else if (cnt == MII_VSC73XX_DOWNSHIFT_INVAL)
 > +		return -EINVAL;
+> +
+> +	page = phy_select_page(phydev, MII_VSC73XX_EXT_PAGE_1E);
+> +	if (page < 0)
+> +		return page;
+> +
+> +	if (!cnt) {
+> +		ret = __phy_clear_bits(phydev, MII_VSC73XX_PHY_CTRL_EXT3,
+> +				       MII_VSC73XX_PHY_CTRL_EXT3_DOWNSHIFT_EN);
+> +	} else {
+> +		val = MII_VSC73XX_PHY_CTRL_EXT3_DOWNSHIFT_EN |
+> +		      FIELD_PREP(MII_VSC73XX_PHY_CTRL_EXT3_DOWNSHIFT_CNT,
+> +				 cnt - 2);
+> +
+> +		ret = __phy_modify(phydev, MII_VSC73XX_PHY_CTRL_EXT3,
+> +				   MII_VSC73XX_PHY_CTRL_EXT3_DOWNSHIFT_EN |
+> +				   MII_VSC73XX_PHY_CTRL_EXT3_DOWNSHIFT_CNT,
+> +				   val);
 > +	}
 > +
-> +	return 0;
-> +}
-> +
-> +/* Read the hardware default TEMP_LITE stage threshold temperatures */
-> +static int qpnp_tm_lite_init(struct qpnp_tm_chip *chip)
-> +{
-> +	int ret, thresh;
-> +	u8 reg = 0;
-> +
-> +	/*
-> +	 * Store the warning trip temp in temp_dac_map[0] and the shutdown trip
-> +	 * temp in temp_dac_map[2].  The second trip point is purely in software
-> +	 * to facilitate a controlled shutdown after the warning threshold is
-> +	 * crossed but before the automatic hardware shutdown threshold is
-> +	 * crossed.  Thus, there is no register to read for the second trip
-> +	 * point.
-> +	 */
-
-What if the DT define 4 trip points? Or two?
-
-> +	ret = qpnp_tm_read(chip, QPNP_TM_REG_LITE_TEMP_CFG1, &reg);
+> +	ret = phy_restore_page(phydev, page, ret);
 > +	if (ret < 0)
 > +		return ret;
-> +
-> +	thresh = FIELD_GET(LITE_TEMP_CFG_THRESHOLD_MASK, reg);
-> +	chip->temp_dac_map[0] = temp_map_lite_warning[thresh];
-> +
-> +	ret = qpnp_tm_read(chip, QPNP_TM_REG_LITE_TEMP_CFG2, &reg);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	thresh = FIELD_GET(LITE_TEMP_CFG_THRESHOLD_MASK, reg);
-> +	chip->temp_dac_map[2] = temp_map_lite_shutdown[thresh];
-> +
-> +	return 0;
-> +}
-> +
->  static const struct spmi_temp_alarm_data spmi_temp_alarm_data = {
->  	.ops = &qpnp_tm_sensor_ops,
->  	.has_temp_dac = false,
-> @@ -466,6 +649,13 @@ static const struct spmi_temp_alarm_data spmi_temp_alarm_gen2_rev2_data = {
->  	.update_trip_temps = qpnp_tm_gen2_rev2_update_trip_temps,
->  };
->  
-> +static const struct spmi_temp_alarm_data spmi_temp_alarm_lite_data = {
-> +	.ops = &qpnp_tm_lite_sensor_ops,
-> +	.has_temp_dac = true,
-> +	.setup = qpnp_tm_lite_init,
-> +	.update_trip_temps = qpnp_tm_lite_update_trip_temps,
-> +};
-> +
->  /*
->   * This function initializes the internal temp value based on only the
->   * current thermal stage and threshold. Setup threshold control and
-> @@ -492,8 +682,9 @@ static int qpnp_tm_init(struct qpnp_tm_chip *chip)
->  		goto out;
->  	chip->stage = ret;
->  
-> -	stage = (chip->subtype == QPNP_TM_SUBTYPE_GEN1)
-> -		? chip->stage : alarm_state_map[chip->stage];
-> +	stage = (chip->subtype == QPNP_TM_SUBTYPE_GEN1
-> +		 || chip->subtype == QPNP_TM_SUBTYPE_LITE)
-> +			? chip->stage : alarm_state_map[chip->stage];
 
-Even more play with revisions. Please replace this with match data.
+This is also needlessly over-complex.
 
->  
->  	if (stage)
->  		chip->temp = qpnp_tm_decode_temp(chip, stage);
-> @@ -611,7 +802,8 @@ static int qpnp_tm_probe(struct platform_device *pdev)
->  	}
->  
->  	if (type != QPNP_TM_TYPE || (subtype != QPNP_TM_SUBTYPE_GEN1
-> -				     && subtype != QPNP_TM_SUBTYPE_GEN2)) {
-> +				     && subtype != QPNP_TM_SUBTYPE_GEN2
-> +				     && subtype != QPNP_TM_SUBTYPE_LITE)) {
->  		dev_err(&pdev->dev, "invalid type 0x%02x or subtype 0x%02x\n",
->  			type, subtype);
->  		return -ENODEV;
-> @@ -662,6 +854,10 @@ static const struct of_device_id qpnp_tm_match_table[] = {
->  		.compatible = "qcom,spmi-temp-alarm-gen2-rev2",
->  		.data = &spmi_temp_alarm_gen2_rev2_data,
->  	},
-> +	{
-> +		.compatible = "qcom,spmi-temp-alarm-lite",
-> +		.data = &spmi_temp_alarm_lite_data,
-> +	},
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, qpnp_tm_match_table);
-> -- 
-> 2.34.1
-> 
+	u16 mask, val;
+
+	...
+
+	mask = MII_VSC73XX_PHY_CTRL_EXT3_DOWNSHIFT_EN;
+
+	if (!cnt) {
+		val = 0;
+	} else {
+		mask |= MII_VSC73XX_PHY_CTRL_EXT3_DOWNSHIFT_CNT;
+		val = MII_VSC73XX_PHY_CTRL_EXT3_DOWNSHIFT_EN |
+		      FIELD_PREP(MII_VSC73XX_PHY_CTRL_EXT3_DOWNSHIFT_CNT,
+				 cnt - 2);
+	}
+
+	ret = phy_modify_paged(phydev, MII_VSC73XX_EXT_PAGE_1E,
+			       MII_VSC73XX_PHY_CTRL_EXT3, mask, val);
+	if (ret < 0)
+		return ret;
+
+Would be equivalent to your code above, only simpler.
 
 -- 
-With best wishes
-Dmitry
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
