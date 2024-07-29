@@ -1,128 +1,218 @@
-Return-Path: <linux-kernel+bounces-266062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3242893FA43
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:06:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D3F93FC1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F6971C21FD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:06:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D71E1C2219F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5800715531B;
-	Mon, 29 Jul 2024 16:06:03 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B5F186E24;
+	Mon, 29 Jul 2024 17:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="YZE4Z3Us"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72CC81AD2
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21CC15F402;
+	Mon, 29 Jul 2024 17:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722269162; cv=none; b=NUhGPxhxsygPNT4D3A433t5hDm+taIakU73TQzHj9cuEsguNIWDCXgJbsO9H/Qogs7FM+yXtJv0lA4uENLkOT8T4qDadxXhRhLazlcDCERufjuJer+tbjbNrLk5cyDqyInZpeU9wH7bN2lqoswYwhOr0xfGBDhOv4KRLwVe0r38=
+	t=1722273181; cv=none; b=ekL08bzYW2tn5S1P2e5Z6hraM0918ebWl4Asn0Egx1+kKx/YhthNA0XLt2OQV/gtPenRRj9ruBPy8thst6WqNQiC7YukyIX1isyFfljCAzaRb0ICuR+6nDSPrjYPN6SsqgOrslfqmi/wUhmnS1OpL4cG2xgfZxGfMEQs5tA7rxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722269162; c=relaxed/simple;
-	bh=ysBiCh8u5roVVY8+6S8TBy18tSYrcjfO0Lhp6vk058M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M5yU2X5/XUJJcY97ufPndbYDyysJDFyBTcpuFHtVzHlrHwOD+xb4xN8kLZxXalFaeyeY/e67Fvc1MHDo0L5C0CPy+juhHzhBDZrcOa1JsbLG6nAEXxYsVvZCUEMKypspzWgHOuuaMCI75aaHMGtU5+1GcPMD+xOMNFVL6rn45gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4WXjRF2H1Tz9v7Hq
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:47:21 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 262DD140CB7
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 00:05:53 +0800 (CST)
-Received: from [10.45.144.33] (unknown [10.45.144.33])
-	by APP2 (Coremail) with SMTP id GxC2BwAnRMHVvadmpTAlAA--.4340S2;
-	Mon, 29 Jul 2024 17:05:52 +0100 (CET)
-Message-ID: <76bc2c08-655c-4ca4-a573-16a98b7dd919@huaweicloud.com>
-Date: Mon, 29 Jul 2024 18:05:36 +0200
+	s=arc-20240116; t=1722273181; c=relaxed/simple;
+	bh=jnpvwlz1VqOkpUL/4qSfV5i5qCCsKtNNCaQfMDHRQsk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JknSPhu/sOFciHcVmPdMk6Ng51uX+p/k4cA3U4Nd21zEbKCqJcKT/h+zr4ePBIOjB/13JRMUKX7xe5tpHC3Bi/LUKykYkvFrHjnuqf5boTmXykr6q0QWwXK4JZnXilQUZj04vcacltaHtTtLGEnq0B2EmyBIjqWRtOnoTWPb5no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=YZE4Z3Us reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 0d16091fa96e4aa4; Mon, 29 Jul 2024 18:12:57 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 25D0777357F;
+	Mon, 29 Jul 2024 18:12:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1722269577;
+	bh=jnpvwlz1VqOkpUL/4qSfV5i5qCCsKtNNCaQfMDHRQsk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=YZE4Z3UseCvQKUV+LHaK8NmCIse0jXw4s4rn24Y7TDERoGDfYvvS7cs7ABpKv9aYk
+	 bjgr+XqT6cTXY6a7vty9fIjCG6oeDYn3lAro52jdmpG7FTLZVYwUFbPEE8UUhJNDlx
+	 iGLxo04zaaeJw9Mn7qcawu5fN2ny0Cvcwfg+wrq99R/hORWwrNUu3es4eBkIbDGpj6
+	 2mhP4/9OnbZd7eZQT/lLLYp8YtNdY9QfCc+vnRNyAiBuH8Pg2i1qLX0YW2tX8NsAIe
+	 VbbSEVqf2S3ymNjK7jZ9hFV7t0Rkjh2IQSmixVfN0pvdzY/hUalKEr1wH24jKUjmZ+
+	 dYxzdsZWzmd4w==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+Subject:
+ [RESEND][PATCH v1 5/8] thermal: tegra: Use thermal_zone_for_each_trip() for
+ walking trip points
+Date: Mon, 29 Jul 2024 18:05:39 +0200
+Message-ID: <1819430.VLH7GnMWUR@rjwysocki.net>
+In-Reply-To: <2211925.irdbgypaU6@rjwysocki.net>
+References: <2211925.irdbgypaU6@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 0/4] tools/memory-model: Define more of LKMM in
- tools/memory-model
-To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
- Alan Stern <stern@rowland.harvard.edu>
-Cc: paulmck@kernel.org, parri.andrea@gmail.com, will@kernel.org,
- peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
- dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
- urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
- linux-kernel@vger.kernel.org, lkmm@lists.linux.dev
-References: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
- <88c1ebc8-4805-4d1d-868a-889043899979@rowland.harvard.edu>
- <bbc3bd10-3bf5-4b1a-a275-dd328c42e307@huaweicloud.com>
- <f93f140b-13bc-4d00-adee-46cc1c016480@rowland.harvard.edu>
- <4792c9e7-2594-3600-5d82-4cb1443fe670@huaweicloud.com>
- <d6a76968-d10b-c60b-245a-f58116eca6af@huaweicloud.com>
- <eb9548de-e66e-3dcd-9136-8702a5bc2934@huaweicloud.com>
- <00f58d20-f92d-461e-beac-b307905cab3b@huaweicloud.com>
- <e45bd166-348a-95b6-c17c-dcd2525f263c@huaweicloud.com>
- <9ac4a586-ef37-4c48-8e66-df3d02b53b6a@huaweicloud.com>
- <cd5a269a-9c6a-a311-d796-ce65c935887b@huaweicloud.com>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <cd5a269a-9c6a-a311-d796-ce65c935887b@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwAnRMHVvadmpTAlAA--.4340S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZFy3CFyxZr13Gr48GF1fCrg_yoW8JFWfp3
-	4aqF43GrsYq34Iqr18J3WkXF9aya97JF45tr13tr47CFy5WrZ0qrySyw45Kr9FqFs5Jayj
-	9rWkX3Z3ZryvyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB014x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
-	WxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK
-	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRNJ5oDUUUU
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrjedvgdellecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepthhhihgv
+ rhhrhidrrhgvughinhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhonhgrthhhrghnhhesnhhvihguihgrrdgtohhmpdhrtghpthhtoheplhhinhhugidqthgvghhrrgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
+
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+It is generally inefficient to iterate over trip indices and call
+thermal_zone_get_trip() every time to get the struct thermal_trip
+corresponding to the given trip index, so modify the Tegra thermal
+drivers to use thermal_zone_for_each_trip() for walking trips.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+This patch does not depend on patches [1-3/8].
+
+---
+ drivers/thermal/tegra/soctherm.c        |   38 ++++++++++++++++----------------
+ drivers/thermal/tegra/tegra30-tsensor.c |   25 ++++++++++-----------
+ 2 files changed, 33 insertions(+), 30 deletions(-)
+
+Index: linux-pm/drivers/thermal/tegra/soctherm.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/tegra/soctherm.c
++++ linux-pm/drivers/thermal/tegra/soctherm.c
+@@ -682,24 +682,25 @@ static const struct thermal_zone_device_
+ 	.set_trips = tegra_thermctl_set_trips,
+ };
+ 
+-static int get_hot_temp(struct thermal_zone_device *tz, int *trip_id, int *temp)
++static int get_hot_trip_cb(struct thermal_trip *trip, void *arg)
+ {
+-	int i, ret;
+-	struct thermal_trip trip;
++	const struct thermal_trip **trip_ret = arg;
+ 
+-	for (i = 0; i < thermal_zone_get_num_trips(tz); i++) {
++	if (trip->type != THERMAL_TRIP_HOT)
++		return 0;
+ 
+-		ret = thermal_zone_get_trip(tz, i, &trip);
+-		if (ret)
+-			return -EINVAL;
+-
+-		if (trip.type == THERMAL_TRIP_HOT) {
+-			*trip_id = i;
+-			return 0;
+-		}
+-	}
++	*trip_ret = trip;
++	/* Return nonzero to terminate the search. */
++	return 1;
++}
+ 
+-	return -EINVAL;
++static const struct thermal_trip *get_hot_trip(struct thermal_zone_device *tz)
++{
++	const struct thermal_trip *trip = NULL;
++
++	thermal_zone_for_each_trip(tz, get_hot_trip_cb, &trip);
++
++	return trip;
+ }
+ 
+ /**
+@@ -731,8 +732,9 @@ static int tegra_soctherm_set_hwtrips(st
+ 				      struct thermal_zone_device *tz)
+ {
+ 	struct tegra_soctherm *ts = dev_get_drvdata(dev);
++	const struct thermal_trip *hot_trip;
+ 	struct soctherm_throt_cfg *stc;
+-	int i, trip, temperature, ret;
++	int i, temperature, ret;
+ 
+ 	/* Get thermtrips. If missing, try to get critical trips. */
+ 	temperature = tsensor_group_thermtrip_get(ts, sg->id);
+@@ -749,8 +751,8 @@ static int tegra_soctherm_set_hwtrips(st
+ 	dev_info(dev, "thermtrip: will shut down when %s reaches %d mC\n",
+ 		 sg->name, temperature);
+ 
+-	ret = get_hot_temp(tz, &trip, &temperature);
+-	if (ret) {
++	hot_trip = get_hot_trip(tz);
++	if (!hot_trip) {
+ 		dev_info(dev, "throttrip: %s: missing hot temperature\n",
+ 			 sg->name);
+ 		return 0;
+@@ -763,7 +765,7 @@ static int tegra_soctherm_set_hwtrips(st
+ 			continue;
+ 
+ 		cdev = ts->throt_cfgs[i].cdev;
+-		if (get_thermal_instance(tz, cdev, trip))
++		if (thermal_trip_is_bound_to_cdev(tz, hot_trip, cdev))
+ 			stc = find_throttle_cfg_by_name(ts, cdev->type);
+ 		else
+ 			continue;
+Index: linux-pm/drivers/thermal/tegra/tegra30-tsensor.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/tegra/tegra30-tsensor.c
++++ linux-pm/drivers/thermal/tegra/tegra30-tsensor.c
+@@ -308,6 +308,18 @@ struct trip_temps {
+ 	int crit_trip;
+ };
+ 
++static int tegra_tsensor_get_trips_cb(struct thermal_trip *trip, void *arg)
++{
++	struct trip_temps *temps = arg;
++
++	if (trip->type == THERMAL_TRIP_HOT)
++		temps->hot_trip = trip->temperature;
++	else if (trip->type == THERMAL_TRIP_CRITICAL)
++		temps->crit_trip = trip->temperature;
++
++	return 0;
++}
++
+ static void tegra_tsensor_get_hw_channel_trips(struct thermal_zone_device *tzd,
+ 					       struct trip_temps *temps)
+ {
+@@ -320,18 +332,7 @@ static void tegra_tsensor_get_hw_channel
+ 	temps->hot_trip  = 85000;
+ 	temps->crit_trip = 90000;
+ 
+-	for (i = 0; i < thermal_zone_get_num_trips(tzd); i++) {
+-
+-		struct thermal_trip trip;
+-
+-		thermal_zone_get_trip(tzd, i, &trip);
+-
+-		if (trip.type == THERMAL_TRIP_HOT)
+-			temps->hot_trip = trip.temperature;
+-
+-		if (trip.type == THERMAL_TRIP_CRITICAL)
+-			temps->crit_trip = trip.temperature;
+-	}
++	thermal_zone_for_each_trip(tzd, tegra_tsensor_get_trips_cb, temps);
+ 
+ 	/* clamp hardware trips to the calibration limits */
+ 	temps->hot_trip = clamp(temps->hot_trip, 25000, 90000);
 
 
-
-Am 7/29/2024 um 5:53 PM schrieb Hernan Ponce de Leon:
-> On 7/29/2024 5:44 PM, Jonas Oberhauser wrote:
->>
->>
->> I don't think this is a problem. If the old version is the default, 
->> and we define it in the .cfg file for the tree version of LKMM, then 
->> it will work correctly for both the old and new versions. People 
->> playing around with Memory Models should be careful enough not to 
->> intentionally break the model by passing bogus options.
-> 
-> The same was true for my implementation using the lkmm-legacy option
-
-Yeah, I'm fine with that one. (Although it may be better to have a 
-version number as value instead of just a boolean flag, like 
--model-version=x_y_z - just in case this is not the last time).
-
-> rather than the model variant, but this was still considered to break 
-> backward compatibility.
-> 
-> https://github.com/herd/herdtools7/pull/865#issuecomment-2229930493
-
-I think Akira is a bit overzealous here. What if a user accidentally 
-puts -lkmm-legacy false and accidentally also adds the version number 
-into the litmus test and/or model?
-
-The request can be fulfilled, by defining some relation in the bell file 
-that has a magic name like version_x_y_z and checks that the x_y_z 
-matches the -model-version=x_y_z provided as an argument.
-
-But I don't think we need to go that far.
-
-jonas
 
 
