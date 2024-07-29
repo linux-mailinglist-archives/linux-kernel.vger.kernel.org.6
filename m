@@ -1,85 +1,129 @@
-Return-Path: <linux-kernel+bounces-266070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53BF193FA56
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:11:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0193093FC16
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:13:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6F6E281229
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:11:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8BEA283744
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81CF415A86D;
-	Mon, 29 Jul 2024 16:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEEF1607A1;
+	Mon, 29 Jul 2024 17:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sTp9Xcl1"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="UGmdgrL7"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4488036B17
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E651DA24;
+	Mon, 29 Jul 2024 17:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722269508; cv=none; b=j68BrOk+Fh02Lt6N2K2ZDsQ9Z7LRmlmFlUVDj8xbuq1LRFvIMJqKUhtQbTSEvHTa7CiO2PKhhzOJiP5VxSO2dcrFURIXiIuaH92fVLzrYoLs/uGYkCbGArwcQo2dsSZ7a63d02sypApejdIoN3zEoWLQK36GEyAlHk9OTA3nz0g=
+	t=1722273178; cv=none; b=oJEhDEkxzrRfZTapWF069MLDgUJSPXVUUSlxL3vkSaWCI8NrWSJJyaSwh0oa2hHrxkggk/Gxdk8sfmye2FG57AmZLSplxJbJ+1zqe6FfmsZpRnBi6YyhmXMMBpPJJZOFByR7Ki7EVy3du+lkMizNJtR1jJWNdLmvpOYhm6AU21g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722269508; c=relaxed/simple;
-	bh=EG0Kx8RzpbW11x60N0Ym+oEpBgT9uFZkobcZibkeU2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oZ1l5s7TD6pd4X/9ynO1mXpCQ1QBThN517OHIpttv2KPwpcihUZcC/oiZ4X8iMkk+DbELJ6Z0Ca3dh74SQI+HoFdp3wOpqkPZVTNAh00xvC+qnCffh8jHA6bL/8hEi/bTjVOR/8PzW2Zrq2xG8PL6U9YBKkuydgjv1tOd9iCcxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sTp9Xcl1; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=biFznc2Qk3fSa0fTy3cAGb+McXgGU5nJpYsuEccoPOw=; b=sTp9Xcl1SMPRS5wM/FYYNInedS
-	IbVy1u1KWVzmQjuzthx57pEkmC1oj100Yo4vxoR1npEZiRbcEKomiR/rM/OeCHbrInkR6VZ72E0LI
-	e/bknNteJrrKjLPqgF8lhQOd38IoPpbey41fujnCT0IvWR9Qco9LZ/0NDH67n1qc9MourPUR6nLJq
-	wTBzglB3WO6IX3hYXbq+XU6VhzfJbndwep9MnyPPCZdATXTM5OicePRkioD6TYjdUa0DLo0PFxUlG
-	K4qlMyjX+RAfgzfneP87g2dAiHXd9I5AC1l7B1NJR1ejfTBtGxD+qh50vWdSSf8qPL+6xkSnP+zw4
-	l2OSL8mA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sYSyD-0000000BxWA-1zi7;
-	Mon, 29 Jul 2024 16:11:33 +0000
-Date: Mon, 29 Jul 2024 09:11:33 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
-	linux-mm@kvack.org, ying.huang@intel.com,
-	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com,
-	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com,
-	kasong@tencent.com, linux-kernel@vger.kernel.org, mhocko@suse.com,
-	minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com,
-	senozhatsky@chromium.org, shakeel.butt@linux.dev,
-	shy828301@gmail.com, surenb@google.com, v-songbaohua@oppo.com,
-	xiang@kernel.org, yosryahmed@google.com
-Subject: Re: [PATCH v5 4/4] mm: Introduce per-thpsize swapin control policy
-Message-ID: <Zqe_Nab-Df1CN7iW@infradead.org>
-References: <20240726094618.401593-1-21cnbao@gmail.com>
- <20240726094618.401593-5-21cnbao@gmail.com>
- <ZqcR_oZmVpi2TrHO@casper.infradead.org>
+	s=arc-20240116; t=1722273178; c=relaxed/simple;
+	bh=8CqqyTRjoVEA+VEaQqeZaA5XEW3Q0l4q+jOMCA9JOiE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eW2Bk4qLYfGb9bMnFgD/C7K1lc/5BamDwXeVEV2vI9FESE8d10Yu75YPNNdAVtC0NBj4LSu0OoOXHDcqK2X/9pbp6hMlKMx5buU/wWdaOWKzMQ3LpR74vsATBtVHlQoI70PpscxCelhFy3OCKfQE5njO1HXFkw4ECn16o+WE77E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=UGmdgrL7; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id c66946e02c725f7c; Mon, 29 Jul 2024 18:12:54 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id EA89277357F;
+	Mon, 29 Jul 2024 18:12:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1722269574;
+	bh=8CqqyTRjoVEA+VEaQqeZaA5XEW3Q0l4q+jOMCA9JOiE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=UGmdgrL7TtpZ7GfjSRx4B9forD1HD8xIpuMNeDFhUiFT+1XKdxwUqIDU6NkIoPZlg
+	 4qABb+KvO7sHCMSNNAg2Q+34ha0Wf6Cq8AJyq+ITxHq21f3XsAbK/Bubok+4SMzTJU
+	 tiBK/Gr0kZVhpgung9xnHSJB6A0VQPRUqI88F9pPXM0YR8a8at4j/f2Tr59IOT+PCY
+	 3Nhsg8wXJ2R/1OpLSZ12tKzKDycMvVHuO0iwpbnffcyUElO/Tr3eXkT1Y2DT6/tEf+
+	 9G0tUZT8PTHVfiqbmN/yvdhk16HernU0m7yMJX54f66DSMibPE7G0nF6zCiLG97ZgX
+	 JurshHrF59SLQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>
+Subject: [RESEND][PATCH v1 8/8] thermal: trip: Drop thermal_zone_get_trip()
+Date: Mon, 29 Jul 2024 18:12:45 +0200
+Message-ID: <2220301.Mh6RI2rZIc@rjwysocki.net>
+In-Reply-To: <2211925.irdbgypaU6@rjwysocki.net>
+References: <2211925.irdbgypaU6@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZqcR_oZmVpi2TrHO@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrjedvgdellecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeegpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
 
-On Mon, Jul 29, 2024 at 04:52:30AM +0100, Matthew Wilcox wrote:
-> I strongly disagree.  Use the same sysctl as the other anonymous memory
-> allocations.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I agree with Matthew here.
+There are no more callers of thermal_zone_get_trip() in the tree, so
+drop it.
 
-We also really need to stop optimizing for this weird zram case and move
-people to zswap instead after fixing the various issues.  A special
-block device that isn't really a block device and needs various special
-hooks isn't the right abstraction for different zwap strategies.
+No functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/thermal_trip.c |   14 --------------
+ include/linux/thermal.h        |    2 --
+ 2 files changed, 16 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_trip.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_trip.c
++++ linux-pm/drivers/thermal/thermal_trip.c
+@@ -108,20 +108,6 @@ void thermal_zone_set_trips(struct therm
+ 		dev_err(&tz->device, "Failed to set trips: %d\n", ret);
+ }
+ 
+-int thermal_zone_get_trip(struct thermal_zone_device *tz, int trip_id,
+-			  struct thermal_trip *trip)
+-{
+-	if (!tz || !trip || trip_id < 0 || trip_id >= tz->num_trips)
+-		return -EINVAL;
+-
+-	mutex_lock(&tz->lock);
+-	*trip = tz->trips[trip_id].trip;
+-	mutex_unlock(&tz->lock);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(thermal_zone_get_trip);
+-
+ int thermal_zone_trip_id(const struct thermal_zone_device *tz,
+ 			 const struct thermal_trip *trip)
+ {
+Index: linux-pm/include/linux/thermal.h
+===================================================================
+--- linux-pm.orig/include/linux/thermal.h
++++ linux-pm/include/linux/thermal.h
+@@ -202,8 +202,6 @@ static inline void devm_thermal_of_zone_
+ }
+ #endif
+ 
+-int thermal_zone_get_trip(struct thermal_zone_device *tz, int trip_id,
+-			  struct thermal_trip *trip);
+ int for_each_thermal_trip(struct thermal_zone_device *tz,
+ 			  int (*cb)(struct thermal_trip *, void *),
+ 			  void *data);
+
+
 
 
