@@ -1,119 +1,184 @@
-Return-Path: <linux-kernel+bounces-266367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C606A93FEDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:11:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E89893FEE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E387B21EA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:11:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 952D11F2262E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FCE1891D6;
-	Mon, 29 Jul 2024 20:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C57B189F30;
+	Mon, 29 Jul 2024 20:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hug8X5U8"
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8Iy2am9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E7643152
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D021315FA68;
+	Mon, 29 Jul 2024 20:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722283891; cv=none; b=qpiIoLONGyrKC8ROHgimcpxQxvZdOtjT2Q4BHy2q1kEeSgcPbsPYWYrtipTHZeyW6ET7DcmZLggRsog3cyTW1YMUEqbdDFq+70Z/SlzKCxl1mELvc5I3LkP2RgKJh66YagzvJlRbruAL/+qCjbYndzwcaBcOoJmHn6TSIBxGlGo=
+	t=1722284004; cv=none; b=LpB/Er8xmj0JG0SOM36LqSHZdJRb6Ocxo8mGiL4ilzomR/rxW3SUbnuP5nN6JcMedGO+WFUCw+1ZPJwdgHvLEaofDcs2ze+4HaqeoEqflsRVVur7R9qLUBs+wmOfiLrax9gf6r6dy8uTRMhttEYlXlGW9gjIf+y8i4a3mNeGM3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722283891; c=relaxed/simple;
-	bh=Us5cH4p1DCLdO3IJT0XAkOggiA7NrSukIU67HcECGrQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wmj/vJgVuTpwKTgS1Xu87brZ3Pbtwefa4M7jyboNBslYObQd5CmWQW2WperJ1kforxhuXLnaIYylB3oYkS6eOk4Te0o1VvraWmfwypHYMdRH0SC1nP8JFqmr98LK80EW0+eCa4wzbBLGI3l4MdUbL9HDLlatHoHiL7svWdnTjDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hug8X5U8; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4928d2f45e2so771450137.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:11:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722283888; x=1722888688; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qPLL7oK5NWSnf3Du8VFLvWdadYL/N547QaYJmd35X80=;
-        b=hug8X5U83/kCw3AjS02eBjw578isMPFslhR4LfyGXZgwp1uvXcHcaNotAqchdlo3nP
-         dus/wmbGrpDg9KBiFMLBc9wrC4u1MRnpRcgjVOOPIV+8VBjoR9Ns/xUgkh8xfGCIqvdm
-         SMViI4r9eMjxE6A4kEANw+2SXDbn6kthP6Zu05xwZ6el0ImBUTDgym4p5E5Tl8PUM6Kh
-         Ibv9FOs+G6GbNV1fFyPmWjWrFr5zapyIqFNoDc4hkospNcxaz5TXOkm10OGrdn8vDjsT
-         gi+qmfCJN6W2gNPmRmoM2tZIQ04AmYVioxNxxlvb7/aOdRuB6JrU+PgxgoON3b2lOq14
-         ZRHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722283888; x=1722888688;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qPLL7oK5NWSnf3Du8VFLvWdadYL/N547QaYJmd35X80=;
-        b=hovuHtsPSbEdjovq/8BsuNhw/i7i+GQXl7PFvj2wkRNB0dJ61mqo3RLcZElqsQ19t/
-         jAxxHFbVpO3bURPwiGxsOgu1tz+QlJUjEaWI3eXjGJz8TicrAraYJJLM1oabFN0S3hoV
-         bkJ6Tsbxkb+1OnCZFo3+HIursLadn0Vbo46zFoRaWXMybJPsH2GJ+zF0xQFsTLfL6pgV
-         RcD7UzUg+UHzKiMCQ1U9ZfHX4I2C8ka/8IbbJ/lH/JT4RIUm18eYKaJUwWALN8oFxHy1
-         PJWpBhBtbBQioFvyrFu3/EdsAeWK/CMiMz3iggQes+uvZA18OvjLDqQ6zXOPvzVyMzct
-         J5BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYVK6kaDD/INeVaKqCcihQybt97e0sPG0ZaxTuEC4Dwse6bYAh5mORyNCHUXesJp40cepm4E3wRprnBXKPh1zakVlxyCjxdObUD+QH
-X-Gm-Message-State: AOJu0Yz5mKs81YzFXk2HoxkBf1hYZ+6XO8hKrUmKhzh7xUdy2Cl6O+97
-	zM72sZ3I98cFJDrgkI6WFkA4LX4sy9Zr1sZ/HeJJ69Llyd1xSBOsFSXNmV5NNVcA2Oj/ptkVHDt
-	KxtUaHrvffORVbN0FZfWOsO7nfwk=
-X-Google-Smtp-Source: AGHT+IHd+nBXvg6pkdA+BF/xs2oc5XnZGbHOsQZcL7cT6AxlgOvYwlNzjIsDUCBcU0+re0Ax/kHIWKPT3WmZF97pqDE=
-X-Received: by 2002:a05:6102:944:b0:48f:2afe:88f1 with SMTP id
- ada2fe7eead31-493fa1e8642mr10606701137.16.1722283888443; Mon, 29 Jul 2024
- 13:11:28 -0700 (PDT)
+	s=arc-20240116; t=1722284004; c=relaxed/simple;
+	bh=gGPWhEtkSuI4gw/H/rrz1kWifg4thlzksAPcYyJnj/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tHs8XJPq92Bw6WStF9bju9KJ7qRMbIOmUJLqsW3qUCFXW0HNoCDglC0du/nCvzRw/uUhQfYNmSxOEEcXvmN4Dj+tglqa6K1W6yRzW60Wflm7pALdZKxLtiwgWfPLdc9k0Ig0LMJmk//ZWFeg77GV9E9rwIlTw3IXe81w10k6HFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8Iy2am9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8515C32786;
+	Mon, 29 Jul 2024 20:13:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722284004;
+	bh=gGPWhEtkSuI4gw/H/rrz1kWifg4thlzksAPcYyJnj/g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=m8Iy2am9pROePioztZsl33xXkSdkDesNp8mvififF+1Z+3OZ10zAMFWzEjv5Hs1KO
+	 l0LB4wsyWhhRZNtnmTgd4KYQS301Y9qqLCLjUZvRTxSqOIGhV+1+UQFp56yvijQX0T
+	 2bXD3YZ9+UOsSHjDKdwy051bYjHjCWVyAd1v/5RRL+mLnU5i+qps+czmQoWPJwJHRf
+	 NJJbMuG7E6mJ2XF8ympEDWi/ivx/ewqXawlzDUzKrKch3pSTjjeuSIjk6i0GmMEcJR
+	 JT7kn1W+208bp1deITY8xYaME4rMg6gyxTGU+7xsS60kK7rlvhdn6a6KsnNDjVqnQq
+	 Lm/RDm6FL1sDA==
+Date: Mon, 29 Jul 2024 21:13:16 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: "Esteban Blanc" <eblanc@baylibre.com>
+Cc: "Lars-Peter Clausen" <lars@metafoo.de>, "Michael Hennerich"
+ <Michael.Hennerich@analog.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Nuno Sa" <nuno.sa@analog.com>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David
+ Lechner" <dlechner@baylibre.com>
+Subject: Re: [PATCH RFC 2/5] iio: adc: ad4030: add driver for ad4030-24
+Message-ID: <20240729211316.3b0d3f8b@jic23-huawei>
+In-Reply-To: <D323OLK1T0CG.1OGNBVY1FDVJT@baylibre.com>
+References: <20240627-eblanc-ad4630_v1-v1-0-fdc0610c23b0@baylibre.com>
+	<20240627-eblanc-ad4630_v1-v1-2-fdc0610c23b0@baylibre.com>
+	<20240629173945.25b72bde@jic23-huawei>
+	<D323OLK1T0CG.1OGNBVY1FDVJT@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726094618.401593-1-21cnbao@gmail.com> <20240726094618.401593-5-21cnbao@gmail.com>
- <ZqcR_oZmVpi2TrHO@casper.infradead.org> <Zqe_Nab-Df1CN7iW@infradead.org>
-In-Reply-To: <Zqe_Nab-Df1CN7iW@infradead.org>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 30 Jul 2024 08:11:16 +1200
-Message-ID: <CAGsJ_4wfWYGZVouK4JTj9DBDNPKTX_zrfU45iivaUy-Nq-P1bA@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] mm: Introduce per-thpsize swapin control policy
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	ying.huang@intel.com, baolin.wang@linux.alibaba.com, chrisl@kernel.org, 
-	david@redhat.com, hannes@cmpxchg.org, hughd@google.com, 
-	kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
-	mhocko@suse.com, minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
-	senozhatsky@chromium.org, shakeel.butt@linux.dev, shy828301@gmail.com, 
-	surenb@google.com, v-songbaohua@oppo.com, xiang@kernel.org, 
-	yosryahmed@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 30, 2024 at 4:11=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
-g> wrote:
->
-> On Mon, Jul 29, 2024 at 04:52:30AM +0100, Matthew Wilcox wrote:
-> > I strongly disagree.  Use the same sysctl as the other anonymous memory
-> > allocations.
->
-> I agree with Matthew here.
+On Mon, 29 Jul 2024 16:42:16 +0200
+"Esteban Blanc" <eblanc@baylibre.com> wrote:
 
-The whole anonymous memory allocation control is still used here. this is
-just an addition: anonymous memory allocation control & swapin policy,
-primarily for addressing SSD concern not for zRAM in the original v4's
-comment.
+> On Sat Jun 29, 2024 at 6:39 PM CEST, Jonathan Cameron wrote:
+> > On Thu, 27 Jun 2024 13:59:13 +0200
+> > Esteban Blanc <eblanc@baylibre.com> wrote:
+> >  
+> > > This adds a new driver for the Analog Devices INC. AD4030-24 ADC.
+> > > 
+> > > The driver implements basic support for the AD4030-24 1 channel
+> > > differential ADC with hardware gain and offset control.
+> > > 
+> > > Signed-off-by: Esteban Blanc <eblanc@baylibre.com>  
+> 
+> ...
+> 
+> > > +static int ad4030_spi_read(void *context, const void *reg, size_t reg_size,
+> > > +			   void *val, size_t val_size)
+> > > +{
+> > > +	struct ad4030_state *st = context;
+> > > +
+> > > +	struct spi_transfer xfer = {
+> > > +		.tx_buf = st->tx_data,
+> > > +		.rx_buf = st->rx_data.raw,
+> > > +		.len = reg_size + val_size,
+> > > +	};
+> > > +	int ret;
+> > > +
+> > > +	memcpy(st->tx_data, reg, reg_size);
+> > > +
+> > > +	ret = spi_sync_transfer(st->spi, &xfer, 1);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	memcpy(val, &st->rx_data.raw[reg_size], val_size);  
+> >
+> > Can you just use spi_write_then_read() here?
+> >  
+> 
+> I was planning on doing that. But I'm getting a timeout issue when
+> using `spi_write_then_read`. I can see the tx_data going out, rx_data
+> is recived but CS is kept asserted. I need to investigate more but in
+> the meantime I'm using this as it is working. I will remove this
+> workaround if I can find a fix and add a comment for now.
+Fair enough. We've had a few drivers where the timing doesn't work
+recently. Definitely good to leave a comment to avoid a 'fix' :)
 
->
-> We also really need to stop optimizing for this weird zram case and move
-> people to zswap instead after fixing the various issues.  A special
-> block device that isn't really a block device and needs various special
-> hooks isn't the right abstraction for different zwap strategies.
+> 
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	if (st->chip->precision_bits == 16)
+> > > +		offset <<= 16;
+> > > +	else
+> > > +		offset <<= 8;  
+> >
+> > As below. This is hard tor read. Just use appropriate unaligned gets for the
+> > two cases to extract the write bytes directly.
+> >  
+> > > +	*val = be32_to_cpu(offset);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int ad4030_set_chan_gain(struct iio_dev *indio_dev, int ch, int gain_int,
+> > > +				int gain_frac)
+> > > +{
+> > > +	struct ad4030_state *st = iio_priv(indio_dev);
+> > > +	__be16 val;
+> > > +	u64 gain;
+> > > +
+> > > +	gain = mul_u32_u32(gain_int, MICRO) + gain_frac;
+> > > +
+> > > +	if (gain > AD4030_REG_GAIN_MAX_GAIN)
+> > > +		return -EINVAL;
+> > > +
+> > > +	val = cpu_to_be16(DIV_ROUND_CLOSEST_ULL(gain * 0x8000, MICRO));
+> > > +
+> > > +	return regmap_bulk_write(st->regmap, AD4030_REG_GAIN_CHAN(ch), &val,
+> > > +			  AD4030_REG_GAIN_BYTES_NB);
+> > > +}
+> > > +
+> > > +static int ad4030_set_chan_offset(struct iio_dev *indio_dev, int ch, int offset)
+> > > +{
+> > > +	struct ad4030_state *st = iio_priv(indio_dev);
+> > > +	__be32 val;
+> > > +
+> > > +	if (offset < st->min_offset || offset > st->max_offset)
+> > > +		return -EINVAL;
+> > > +
+> > > +	val = cpu_to_be32(offset);
+> > > +	if (st->chip->precision_bits == 16)
+> > > +		val >>= 16;
+> > > +	else
+> > > +		val >>= 8;  
+> >
+> > I 'think' I get what this is doing but not 100% sure as it's a bit too unusual
+> > and I'm not even sure what happens if we shift a __be32 value on a little endian
+> > system. I would instead split this into appropriate cpu_to_be24() and cpu_to_be16()
+> > to put the value directly in the right place rather than shifting in place.  
+> 
+> cpu_to_be24 does not exist yet. I will have a look on how to add them.
+Ah. Almost by definition be24 isn't aligned in some cases.
+So put_unaligned_be24() is what you are looking for.
+My mistake!
 
-My understanding is zRAM is much more popularly used in embedded
-systems than zswap. I seldomly(or never) hear who is using zswap
-in Android. it seems pointless to force people to move to zswap, in
-embedded systems we don't have a backend real block disk device
-after zswap.
+Jonathan
 
->
+> 
+> 
+> All the other comments will be addressed in V2.
+> 
+> Best regards,
+> 
+
 
