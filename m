@@ -1,79 +1,57 @@
-Return-Path: <linux-kernel+bounces-264922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10AA393EA33
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:00:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7BFD93EA36
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA6FE281919
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:00:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5E521C20490
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432ED77F1B;
-	Mon, 29 Jul 2024 00:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2021D8F72;
+	Mon, 29 Jul 2024 00:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZJlFSmaG"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="K0Vz2vMk"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47324522E;
-	Mon, 29 Jul 2024 00:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7332838B;
+	Mon, 29 Jul 2024 00:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722211228; cv=none; b=sQDdf5SvUqVMbfSaPX+3d/UR03a1UDyge3ghiKmT442l1NpNMh8mhaqMmOp9Al8NoaBftLfsL4/vYP9MqP4lMYNkr6qkIFXxM5Jx5WQGLpuq8n6V0EMrMA2OVXMO6xQiCtMTI2XuqyPr+aLG2zM4LfDFb7xacFGYZPhazCZGvSY=
+	t=1722211289; cv=none; b=BMsfeYbriFY1IWtBjnt5tuHqUpnFtVw759/s6GpxtLCFLfVDEgdxn4I3XhGmNUO3WOA0Fvey6SWDHofjecYRegRwoKgJVoWhZ6vtSIUT2YfrGl98wT1Yvop6A3k720WfhK9DJzs7l8EgpYyeYHik7Jizu3nDttopbu7ss3BBW7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722211228; c=relaxed/simple;
-	bh=jJ6HkjJ7h2i5lkNtHPdsfS2FxU8gIMul5gx5RcbmOG4=;
+	s=arc-20240116; t=1722211289; c=relaxed/simple;
+	bh=Y17ivoUEZqJMec1bdUlKse1yfK2OEne8uUS4d7z9pdY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hMKYvTkQb9QrsEd/wOZPI2GFAQHJtdC6t/O10Oz/NpyiY51MQMHCTKU4lOvf+U94toleXdqjhoVfFCZHzobs+7F0SdnIfvrQS9ukn1Ycih+OmNqjry0ZRkgR7dMN36YmPs/9h2LryFwnu6AwvV5pssIiZruqTnFf8jw8oUC1tWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZJlFSmaG; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2cd48ad7f0dso2147917a91.0;
-        Sun, 28 Jul 2024 17:00:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722211226; x=1722816026; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XPwiohtJWANAnFeqeGFhy00VPjkQNBT2pIiXQeTq6wc=;
-        b=ZJlFSmaGCuWJv3D1SN2TxhjhYe2pCU5QP2tfEtbBgp/9sgyERlAB61jQdEyayfNIwv
-         ydgo+I5V3+kyt9WctUrxtZ+eiS3od5HFFF4mMB3EWaF42ExziD9CvAW+luffL7ASwbpp
-         gczGSq6mRsZ8LY0AENXwtxOcixdrYwYG8049N5H3qfMWJ7P4HSkAISOIWixt+lzFpwvu
-         5NYISKS8SfTXpPRxB9gysL8BJCLrNnuEd5hJuV+X0WgK6prpyLNtYAl5N80Q1MdyCgBB
-         v7iTsxO5xWaiIBblRrRIvUZMK3OsYkT5wgky9fGVFlbeXURN2ql3zQZgMefx5zaOf4Vl
-         S3Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722211226; x=1722816026;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XPwiohtJWANAnFeqeGFhy00VPjkQNBT2pIiXQeTq6wc=;
-        b=J9/VNvgS66rhxxWt3LLmTc6xKxwzfyxRXeXAO8JMzV/VvDo4KaNIFZlpaltFyXDHN+
-         MPkuJRKuKgq52v2YI40CNLBm9Fb7uuADSTXu7AZNWLudBQZYiOORzz9x0y835js5l1tV
-         xTgEJO0yDThMJ61jkvCZGqSor3zR9qBNpWVhK4q/Kgj0lVawHMajvxcUYhbDiSz5JI9F
-         jy7QK0Puo9CiqsgU79JgUFyaTZFXdblAMLGsoYG9qlXpltFCQZI9ivHQqb1P8HhEA8x0
-         2E4Mi+FQhUCtpaDh948FzLyeYpI/9QzTZgv9XSpLNayxbq2OI5O7yWGHC3SqVpKRhmls
-         slqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbnouXkGIYl9vRQ0GY4eEUUwcYothN3CjJzxkddP1mn2Q3d//qzVFFzXWPVv+99rSmknAmiTYHuwCJ8jUuRhyTA8xS8UoVNG3LLB6s9LI6hSMYNbN7qJRHjQgf6NRaOUR/lfylPp7LrFbsMBM=
-X-Gm-Message-State: AOJu0YyjKl9qx60PBEtJrOl/bVWtVW5bC+siA2epHiFDRDNG7bDrhn3+
-	uJVFCsqHaGSub1YrcdfzdTDJ3OVpK+MMJPV7yK6BALxQVZpXvm6TEHrMKQ==
-X-Google-Smtp-Source: AGHT+IHw3r8n6Jtc/MdwhlvCA89enqBR70UYDF4j84TO6veBH+/NYaXrMKjh4/pbytVeLU1Ctl315w==
-X-Received: by 2002:a17:90a:a790:b0:2c9:1012:b323 with SMTP id 98e67ed59e1d1-2cf7e5f51d7mr7234899a91.27.1722211226321;
-        Sun, 28 Jul 2024 17:00:26 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:74de:62d6:bed2:4c63])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cd8f73bd52sm4543803a91.1.2024.07.28.17.00.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Jul 2024 17:00:25 -0700 (PDT)
-Date: Sun, 28 Jul 2024 17:00:22 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-input@vger.kernel.org
-Subject: Re: [PATCH v2] Input: spear-keyboard - Switch to
- devm_clk_get_prepared()
-Message-ID: <Zqbblj4rPjmAhvt7@google.com>
-References: <062986b0a5105cbc61330da0e55b22c00e2c1c4f.1722062145.git.christophe.jaillet@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W44pHBoaG/3Fn/CTm2QkqZHIkQk9PbKQubppobYVo9HOvF93vmhxi9drxApytwbhQ0vWPAtmt7u1MNTsvUVQhIpbSKiRBUdNwDwEyWrWX1wLiMl1kVyu3Oxt0g4cdFzmd6aH+5LSatZiffmNN8xo8hMEiBqt+T9y6exvRCGB6Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=K0Vz2vMk; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=1iJrhw/cvkglGTTLotlyOAN80Woc3csC6LR3rVH+UOA=; b=K0Vz2vMkgB3eYtKojYPQO3NJBf
+	J4CVTPwMpvqdjynwfIWVs8E1pchr11aQTyEZ0cFbrBZkweB0B4ISTeSjZemNXhDkyWAE0YPJZk9PA
+	cPpMRR9tMUXcfO693sQMh2kic2IkXvP7Zh2B5wvl58/r8wjlxjgn/rPap0gDNkv0oMgAOv83FNgF5
+	SAndXyO92NaKsYdhreZxIgk2zZF2REybzGLsUIxqu1HZ+c5rE8B7ONN+ONRligLdqbRsIo919bCxM
+	a6AHetFHrectBW3L6EmLTGPKLbwTpXm7cvtJ735iGP7bwI0ZTuaco2ja1ZjuRdcDbRtAilSIWlvGR
+	D/dFYMWg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sYDpM-00000002ZPg-24By;
+	Mon, 29 Jul 2024 00:01:24 +0000
+Date: Mon, 29 Jul 2024 01:01:24 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Steve French <smfrench@gmail.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	CIFS <linux-cifs@vger.kernel.org>
+Subject: Re: Why do very few filesystems have umount helpers
+Message-ID: <20240729000124.GH99483@ZenIV>
+References: <CAH2r5ms+vyNND3XPkBo+HYEj3-YMSwqZJup8BSt2B3LYOgPF+A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,20 +60,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <062986b0a5105cbc61330da0e55b22c00e2c1c4f.1722062145.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <CAH2r5ms+vyNND3XPkBo+HYEj3-YMSwqZJup8BSt2B3LYOgPF+A@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sat, Jul 27, 2024 at 08:36:49AM +0200, Christophe JAILLET wrote:
-> Use devm_clk_get_prepared() in order to remove a clk_unprepare() in an
-> error handling path of the probe and from the .remove() function.
-> 
-> This done, the whole .remove() function can also be axed because
-> 'input_dev' is a managed resource allocated with
-> devm_input_allocate_device() and we can fully rely on devm for cleaning up.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Sun, Jul 28, 2024 at 02:09:14PM -0500, Steve French wrote:
 
-Applied, thank you.
+> Since umount does not notify the filesystem on unmount until
+> references are closed (unless you do "umount --force") and therefore
+> the filesystem is only notified at kill_sb time, an easier approach to
+> fixing some of the problems where resources are kept around too long
+> (e.g. cached handles or directory entries etc. or references on the
+> mount are held) may be to add a mount helper which notifies the fs
+> (e.g. via fs specific ioctl) when umount has begun.   That may be an
+> easier solution that adding a VFS call to notify the fs when umount
+> begins.
 
--- 
-Dmitry
+Huh?
+
+"references on the mount being held" is not something any userland
+helpers have a chance to help with.
+
+What exactly gets leaked in your tests?  And what would that userland
+helper do when umount happens due to the last process in given namespace
+getting killed, for example?  Any unexpected "busy" at umount(2) time
+would translate into filesystem instances stuck around (already detached
+from any mount trees) for unspecified time; not a good thing, obviously,
+and not something a userland helper had a chance to help with...
+
+Details, please.
 
