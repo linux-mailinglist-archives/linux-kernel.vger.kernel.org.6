@@ -1,149 +1,111 @@
-Return-Path: <linux-kernel+bounces-266236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC5D93FCFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:01:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A59C93FD05
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFD4D1C2200C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:01:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4BBD1F22E72
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BAF9183098;
-	Mon, 29 Jul 2024 18:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4708C1850B6;
+	Mon, 29 Jul 2024 18:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="Gi8Xq6OP"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCRixNK1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552DB15F303
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7697283A09;
+	Mon, 29 Jul 2024 18:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722276089; cv=none; b=bWkaEjjYaxTktImlYUdoguha+a5vW6U2ZROm6i4rob0yphmw0QNcCF7agAujmUwXX6ZBk8iArrU1Ck65jAJmou5fGKCfDby4y0f8hBcPuvIofitad9TcXGMJLGDRbncSwHwtN7iEaCkeugeX5B6GP73v6Lavk67xVT+XpIJ6N0Y=
+	t=1722276147; cv=none; b=mECr9szAoEasQeFa05aZJ85lTY+g2zUh6IskN7WKsn2T8jRjjIUZQyZh9Y2MtNCKFstMA76MS3CbGckC+tqH86Y8C/DgTdbitmYvzNsjun7p8MapeWmItnmoORe6RJfgqqPKT5zwCo/WDOIt58DcCJnXbtRxsX7vHrUblwEKo1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722276089; c=relaxed/simple;
-	bh=NxPxTGwFiATU9I0paB9I5SPNOKKKTOqx+SBrETwxHTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tyClXoPHGTvuj7+zg/kkKeys/8Km9/nT8k1Xk4sveQ+7zbSJcYtf76yKILGAWFh1W7yd2V+88VPZX9pG4XH9TEvhLq0X3C8ylw+/SRL9V7diUzliIJ6I3jvhIgTzZUHdTBxMSSpMgwXcuLnT3BDgYgCxFJ/v/1FNqjYS9gQ1+MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=Gi8Xq6OP; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-44feaa08040so21676571cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:01:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1722276086; x=1722880886; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Nd1WXiUiTtwYxOMtFvVlG67gP5owuM6QDVES/bBhfKI=;
-        b=Gi8Xq6OPZ4Y3aMQLojrKDSxIDgSOe3RPI6xt4MjEYVDrVCyhOOoNFouAJLjg3YFO46
-         d4lnr1SQGaEbAIWHXtOegwYeJhL4OiWlqqSXBgoU1/AlUODDcR9poUDNNKVF47f8rdqX
-         vC0FDp/1JtrnO75hsBrhKp9ITGPIjZzMFx+nlVScvfnwl+OyEEiXsQk9z5dqP8xHPZal
-         D89XqyayNSW1Qdk0KPH5jxzjPe1EEjXWhC9RKbwyXG3Xn4VQaYHefeKmn2+L1YXgWaqH
-         pUS1BZyH/VIZ78eyd3SQy0e3VyVAoCj/SNG0+pub3v1RGPgyr3N+xazZ7ptk9R76X7vm
-         xYFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722276086; x=1722880886;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nd1WXiUiTtwYxOMtFvVlG67gP5owuM6QDVES/bBhfKI=;
-        b=E1sKmxmf4SeNOyfweS03t/N0zkGhBgrMSDngMitIr8OIZ/rFiy8HLpkP59nGulWCBm
-         wftSaoA9ev1WI04M9Ni14Cfpj0sygu0CZGd2Tblr9JhNPAWshA+5gE0kw7SDKoSa4sdj
-         9cpNGkm7bzLsDcNOBbBMZgq6na2d1HwP++tNUzoLVM/OQPwwKONuLP2Ff0uWTa14xySs
-         ehqI2UFV0aXvsSaAI/i0bin34uhs3kIRagbs7L4OVuytQSeS6Gf6yNQxMZiMO3MQGZ6N
-         6MHlb+kEPRwKimoI+g+p+Z6h9y3SzBnRwW9C92H4rbtzJwVn7H//7MyQSI04wLxQb5ae
-         dYKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLd8PKdPjZRt0mabx/67Ju5g+A6kMv0jiqJIkVPEH7M24occA3LSIIo044qovbawQtEzDZGaabgpRlO+EeaSVI6t8rPF2XHgeYz5LH
-X-Gm-Message-State: AOJu0Yy1Vadkzyrp6VHfSy8m1ZH+NYaWE2DfWiMJhM1yLI4Aocn3kron
-	tfggJNStxNF546YQFyWvEvve9utUChRBYhykOXjyhqqGhlaiVZQfBj4xeVLxhw==
-X-Google-Smtp-Source: AGHT+IGVjAt2ihyHs5zn4xEcJd29SKFy9xWmbX66Bk6IjnJc3rfCed+UL/M7vTEtzJwl7uv6mxhVxQ==
-X-Received: by 2002:a05:622a:1791:b0:43f:fc16:6b3f with SMTP id d75a77b69052e-45004f1378dmr135514091cf.34.1722276086083;
-        Mon, 29 Jul 2024 11:01:26 -0700 (PDT)
-Received: from rowland.harvard.edu (iolanthe.rowland.org. [192.131.102.54])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44fe8147635sm44235931cf.31.2024.07.29.11.01.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 11:01:25 -0700 (PDT)
-Date: Mon, 29 Jul 2024 14:01:22 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Marcello Sylvester Bauer <sylv@sylv.io>, andrey.konovalov@linux.dev,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Aleksandr Nogikh <nogikh@google.com>,
-	Marco Elver <elver@google.com>,
-	Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzbot+2388cdaeb6b10f0c13ac@syzkaller.appspotmail.com,
-	syzbot+17ca2339e34a1d863aad@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: dummy_hcd: execute hrtimer callback in
- softirq context
-Message-ID: <d4ed3fb2-0d59-4376-af12-de4cd2167b18@rowland.harvard.edu>
-References: <20240729022316.92219-1-andrey.konovalov@linux.dev>
- <baae33f5602d8bcd38b48cd6ea4617c8e17d8650.camel@sylv.io>
- <CA+fCnZcWvtnTrST3PrORdPwmo0m2rrE+S-hWD74ZU_4RD6mSPA@mail.gmail.com>
+	s=arc-20240116; t=1722276147; c=relaxed/simple;
+	bh=KoE42wYCFQAOjAZ4a4ADdh/ApdMibPMqpeElX/dPg2s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=WBtNsALp8n8fe2D8gDyRGo/vODuJUHSH4PUVjsbQkUAqShRJTFjF6yXrHwIFaCT2eskt+ri9fvmhxkEnsFIOUfDYi7H4IJaOXuqiVQWY2uXuBqifEUDDAkskMVZv3TNMUV1bUfpg1BGTR5+/YEMJ1J9XhMCvZwTrcVOBQN6yUFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCRixNK1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 049BBC32786;
+	Mon, 29 Jul 2024 18:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722276147;
+	bh=KoE42wYCFQAOjAZ4a4ADdh/ApdMibPMqpeElX/dPg2s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=iCRixNK1gsc2ea0kZsxL2LB87W4bxKWS+W19+OZ8bTsXbN+bXNVoBLWozfXiTNul8
+	 lPJXO/8TsKMxmYZ05ThORQgO3juMMh0g4h7GeNpG7Kv+K6k00HLsHmJvY2rNG2irHk
+	 hWaQOLUuylbiv5ZVWt35bdZ31Dy+RC7L28nwxPAYQ3q9ar6OXBi2SD1hi243S4tgSa
+	 IYrnbDyT/CJqlqtASof593xfgyEfv6ZBU8NmQDnwD7Qb1zeD0wuQ4VCuI1LOci9KT1
+	 dtZatEuBB9EJHimMRoutspFhZEXG+qFWlK7JnOQadOESk/xmAPLd+v+auxBJkzxgIA
+	 s4eHYH8XKb6GQ==
+From: Mark Brown <broonie@kernel.org>
+To: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+ nuno.sa@analog.com, dlechner@baylibre.com, corbet@lwn.net, 
+ marcelo.schmitt1@gmail.com, Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-spi@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <cover.1719686465.git.marcelo.schmitt@analog.com>
+References: <cover.1719686465.git.marcelo.schmitt@analog.com>
+Subject: Re: (subset) [PATCH v6 0/7] Add support for AD4000 series of ADCs
+Message-Id: <172227614374.120386.3055005856415965055.b4-ty@kernel.org>
+Date: Mon, 29 Jul 2024 19:02:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+fCnZcWvtnTrST3PrORdPwmo0m2rrE+S-hWD74ZU_4RD6mSPA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On Mon, Jul 29, 2024 at 06:14:30PM +0200, Andrey Konovalov wrote:
-> On Mon, Jul 29, 2024 at 10:26 AM Marcello Sylvester Bauer <sylv@sylv.io> wrote:
-> >
-> > Hi Andrey,
+On Sat, 29 Jun 2024 16:04:00 -0300, Marcelo Schmitt wrote:
+> This patch series extends the SPI bitbang, gpio, and spi-engine controllers to
+> support configurable MOSI line idle states.
+> It then introduces the ad4000 driver which uses the MOSI idle configuration to
+> provide improved support for the AD4000 series of ADCs.
+> Documentation is added describing the new extension to the SPI protocol.
+> The currently supported wiring modes for AD4000 devices were documented under
+> IIO documentation directory.
 > 
-> Hi Marcello,
-> 
-> > Thanks for investigating and finding the cause of this problem. I have
-> > already submitted an identical patch to change the hrtimer to softirq:
-> > https://lkml.org/lkml/2024/6/26/969
-> 
-> Ah, I missed that, that's great!
-> 
-> > However, your commit messages contain more useful information about the
-> > problem at hand. So I'm happy to drop my patch in favor of yours.
-> 
-> That's very considerate, thank you. I'll leave this up to Greg - I
-> don't mind using either patch.
-> 
-> > Btw, the same problem has also been reported by the intel kernel test
-> > robot. So we should add additional tags to mark this patch as the fix.
-> >
-> >
-> > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > Closes:
-> > https://lore.kernel.org/oe-lkp/202406141323.413a90d2-lkp@intel.com
-> > Acked-by: Marcello Sylvester Bauer <sylv@sylv.io>
-> 
-> Let's also add the syzbot reports mentioned in your patch:
-> 
-> Reported-by: syzbot+c793a7eca38803212c61@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=c793a7eca38803212c61
-> Reported-by: syzbot+1e6e0b916b211bee1bd6@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=1e6e0b916b211bee1bd6
-> 
-> And I also found one more:
-> 
-> Reported-by: syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=edd9fe0d3a65b14588d5
+> [...]
 
-You need to be careful about claiming that this patch will fix those bug 
-reports.  At least one of them (the last one above) still fails with the 
-patch applied.  See:
+Applied to
 
-https://lore.kernel.org/linux-usb/ade15714-6aa3-4988-8b45-719fc9d74727@rowland.harvard.edu/
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-and the following response.
+Thanks!
 
-Alan Stern
+[1/7] spi: Enable controllers to extend the SPI protocol with MOSI idle configuration
+      commit: f58872f45c36ded048bccc22701b0986019c24d8
+[2/7] spi: bitbang: Implement support for MOSI idle state configuration
+      commit: 320f6693097bf89d67f9cabad24a2b911e23073f
+[3/7] spi: spi-gpio: Add support for MOSI idle state configuration
+      commit: 927d382c7efbcc2206c31fa2f672fa264c0f1d5b
+[4/7] spi: spi-axi-spi-engine: Add support for MOSI idle configuration
+      commit: a62073f4b2164028fc7c5ae45ceba10c9326cd91
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
