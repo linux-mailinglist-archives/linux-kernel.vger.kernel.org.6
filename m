@@ -1,360 +1,129 @@
-Return-Path: <linux-kernel+bounces-266529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5CB894012F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 00:37:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28BCB940126
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 00:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 375791F23330
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:37:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9E532830A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A504818FC88;
-	Mon, 29 Jul 2024 22:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA4018EFDF;
+	Mon, 29 Jul 2024 22:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cU7zxDBU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jf9AJLCk"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE8A18FC67
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 22:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8628916F278;
+	Mon, 29 Jul 2024 22:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722292630; cv=none; b=WXjKPhI2xvRi79+NpBhq5ZuiV5IVtdjElej8l0381Ekx8ZnC0RwXvR/SX2gNXV/lZVnb0kf4ApF4tyvmzrcbEAFAV+6JpwYuTWDy5Jew1IsTToHbiRHFTuGQFiCepBX32ROKHWERf8SbImK0QG0OS0AmRl5k1XWDplE9VfHdBjw=
+	t=1722292618; cv=none; b=mnnDZJUXsY4+BqCc6oVejT9zA5SdJ/wBo2ty0dTwC7z7VmUzcbcCS0iNficSSvh9CorrNVwlsc9wKv5tb7dwg8fcOIz+h34/B74dG4cimThEywUD9281rLec6Cut785hcA4fUWh6/OsADkHmXwgKay4ZYzIvhFhOAssw9fLRpZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722292630; c=relaxed/simple;
-	bh=IXtp7HqcDIQj4kFmNqFhPVCKm3qy+JfE9YB4r53YkJ4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=A5zfquSZhviOzpaWCtwTr4ZN0VqYrZmPWUsnswRRVpJi1E+o/8dd9VbjRT1m/0HkjH2q7KYILz3ukJRUnuA+Lc9usQP8u7HD7PMsNJCm6GehpqjyOcbsVIXEelDMMQGpZXgxDfVgJ17WU9LlDEqihVPp5uSIialf5pmcwFbmG2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cU7zxDBU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44892C4AF09;
-	Mon, 29 Jul 2024 22:37:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722292630;
-	bh=IXtp7HqcDIQj4kFmNqFhPVCKm3qy+JfE9YB4r53YkJ4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=cU7zxDBUMqoGRm5uAIND0DvLyAbYj3s1CxqRxkIgmWd9WozNrj1w619qDlxJW1/l9
-	 Syfrwz9ScitiCZX5UsxNI10d7IHhE3ROojx/s7UBpwIEbAUDqLK+0pmo3PJm3pIk9X
-	 fp6QNboBN+HMltlLHpuKlfxiZgDRFMo0oC6uZOVbe84Difz8vJX85OYeoxBWFseL+c
-	 NyyEnYrMIgWzuHIi6CcnB1aSSjKlx1tlZBTC8yUjL1McD6kP1DTEVXiJFWgn5+KwIO
-	 ijVuF6n4wu6e/lDndEK+dGUhDyw9cvLChEDiWE+vuMYw61We14fHxC0X75AOExfRA/
-	 5aCEo0uHnEbGQ==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Date: Mon, 29 Jul 2024 16:36:44 -0600
-Subject: [PATCH 2/2] cxl: Use of_property_ accessor functions
+	s=arc-20240116; t=1722292618; c=relaxed/simple;
+	bh=SrQ+kHpUP2ACt9WyyeUgaX7R+oZ0qjLs87U991V0AQg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TW7zAo8I7L7Kuz0uRrU4SEEla289Lw3tQA5LXhn53ioDFNYlibt7uFWRh3PJ6PhZ9Wuxws3LIzCJZJ+6/xGXx39C6uS2OZCTV5QAgExnWlinqhW4zpU3u6GKnKC18iLlxfcJgJYERr1tCqr8/wnwXp3r3XvLehlISreWF223e3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jf9AJLCk; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-66ca5e8cc51so28503807b3.1;
+        Mon, 29 Jul 2024 15:36:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722292615; x=1722897415; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qykVGFoGPcAnIbrizUh5M0ZKMFEc/YBfKf7lW7RpEhI=;
+        b=Jf9AJLCkj6EFDlBaVK8b0Ju2sSY4S/HE6gUdcM8SQ0Ik6b+/2hxMrNIQ4UftkVxRHS
+         vJa9Ngpur8WE+k7Z8QNT8SuaoeWZ813DP7rWqwQUEJvEm3BGq7F2SvzrD/CrtOTEz+E/
+         6Do5OF/9b2ZdnZZLnHgPLMCM24Uy9mBsHgQejXzuFr+uCrT0cqlhe9I5OGQhSI1PCV6H
+         oPaqnfScMtHv/L/XlcMkj6e/hXx+ltk8N69SSYsfhwsW0LEZYGQPQnKd5Wfi30kFP208
+         6c5QM5AmzLF4lHXX5l/yXK/I7JlFQ9GmRNQhW+1ElGTy/sbRVmlmgYmFOZ1AYNnxdZav
+         dn2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722292615; x=1722897415;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qykVGFoGPcAnIbrizUh5M0ZKMFEc/YBfKf7lW7RpEhI=;
+        b=K1kW2Ri2dh7kOurmla7mqlU4Bmk5sSyv/EMKAtIYL/OuQW0ZXqvn4DtKza4I6dH2cG
+         136X26yhCiH8ikPL8fIk34K4O2+p9Ojohv7XPvUE+6EHzOfXWgNNj8ZTbCyvpkeCWptD
+         oiuWYpHdw6oU7W46sq8+bhkDaGHRfY2OSPbpPDMQ59mjeYIFGOoUVeW6fr3SSTvdLd/8
+         Pq0Rs5Q947KUYDy3RatE5demIxz8wASxrHYw/ldK84QuHkrTC9VOggJ9SHm4+Ot9Of5X
+         h9EaEdp8Zt/JSmm/FFNStWzP3ZmpNhzX8OPToNngLE+ufw9cqqvjcQQRWdE5dI8KhE2I
+         F1rg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1DkXosr1wuU+gOQnKve/T1QdodFiWYXT1YmJ4kxVEnYfEd4ciciriw6v3G0gjcPhV5HpGXQpnRm3ezY6RoV+tKqGKJSF9qfgPjG/S1p1H5Kdp4xtNxTWWfHAKqHDwHMHKYMTn2W+8UCwv9kjbapplBW9w/bfARF3kXHcVhB4Y0glFWEoVXDTdh0j8Ig==
+X-Gm-Message-State: AOJu0YyGnmfYLpFtjMUZ4HqeQMdPeu7YFCLte4oDfzjpi0xxpzQG3GJr
+	azAerUVLgQ6c2ovHtY9lE7SetN0pO6yfo6OFghtBEDljaH0ERZno
+X-Google-Smtp-Source: AGHT+IGt92RufeRBsEBYPFgHHPuL4Davoxqe1ZhzlrAzS/6JFKrpECT14BVY2VmjwmydjD+68IzJkw==
+X-Received: by 2002:a81:9485:0:b0:65f:8e2f:f7a6 with SMTP id 00721157ae682-67a072ba561mr110499807b3.24.1722292615485;
+        Mon, 29 Jul 2024 15:36:55 -0700 (PDT)
+Received: from x13.. (syn-035-145-047-162.res.spectrum.com. [35.145.47.162])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6756b024ab1sm22882937b3.91.2024.07.29.15.36.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 15:36:55 -0700 (PDT)
+From: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+To: W_Armin@gmx.de,
+	corbet@lwn.net
+Cc: Luis Felipe Hernandez <luis.hernandez093@gmail.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH] [PATCH v2] wmi: Fix spelling mistakes
+Date: Mon, 29 Jul 2024 18:36:44 -0400
+Message-ID: <20240729223649.135639-1-luis.hernandez093@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240729-dt-cxl-cleanup-v1-2-a75eea80d231@kernel.org>
-References: <20240729-dt-cxl-cleanup-v1-0-a75eea80d231@kernel.org>
-In-Reply-To: <20240729-dt-cxl-cleanup-v1-0-a75eea80d231@kernel.org>
-To: Frederic Barrat <fbarrat@linux.ibm.com>, 
- Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.15-dev
+Content-Transfer-Encoding: 8bit
 
-The CXL driver has its own custom implementations of typed DT property
-accessors. Replace the custom property accessor functions with the
-common DT property functions.
+There were a few instances of typos that could lead to confusion
+when reading. The following words have been corrected:
+Binay -> Binary
+singe -> single
+chaged -> changed
 
-This clean-up is part of a larger effort to remove of_get_property() and
-other DT functions which leak pointers to DT node and property data.
-
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
 ---
- drivers/misc/cxl/of.c  | 106 ++++++++++---------------------------------------
- drivers/misc/cxl/pci.c |  32 ++++++---------
- 2 files changed, 33 insertions(+), 105 deletions(-)
+ Documentation/wmi/devices/msi-wmi-platform.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/misc/cxl/of.c b/drivers/misc/cxl/of.c
-index 21ecce0f9403..03633cccd043 100644
---- a/drivers/misc/cxl/of.c
-+++ b/drivers/misc/cxl/of.c
-@@ -7,59 +7,12 @@
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-+#include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
+diff --git a/Documentation/wmi/devices/msi-wmi-platform.rst b/Documentation/wmi/devices/msi-wmi-platform.rst
+index 29b1b2e6d42c..31a136942892 100644
+--- a/Documentation/wmi/devices/msi-wmi-platform.rst
++++ b/Documentation/wmi/devices/msi-wmi-platform.rst
+@@ -130,12 +130,12 @@ data using the `bmfdec <https://github.com/pali/bmfdec>`_ utility:
  
- #include "cxl.h"
+ Due to a peculiarity in how Windows handles the ``CreateByteField()`` ACPI operator (errors only
+ happen when a invalid byte field is ultimately accessed), all methods require a 32 byte input
+-buffer, even if the Binay MOF says otherwise.
++buffer, even if the Binary MOF says otherwise.
  
--
--static const __be32 *read_prop_string(const struct device_node *np,
--				const char *prop_name)
--{
--	const __be32 *prop;
--
--	prop = of_get_property(np, prop_name, NULL);
--	return prop;
--}
--
--static const __be32 *read_prop_dword(const struct device_node *np,
--				const char *prop_name, u32 *val)
--{
--	const __be32 *prop;
--
--	prop = of_get_property(np, prop_name, NULL);
--	if (prop)
--		*val = be32_to_cpu(prop[0]);
--	return prop;
--}
--
--static const __be64 *read_prop64_dword(const struct device_node *np,
--				const char *prop_name, u64 *val)
--{
--	const __be64 *prop;
--
--	prop = of_get_property(np, prop_name, NULL);
--	if (prop)
--		*val = be64_to_cpu(prop[0]);
--	return prop;
--}
--
--
--static int read_handle(struct device_node *np, u64 *handle)
--{
--	const __be32 *prop;
--	u64 size;
--
--	/* Get address and size of the node */
--	prop = of_get_address(np, 0, &size, NULL);
--	if (size)
--		return -EINVAL;
--
--	/* Helper to read a big number; size is in cells (not bytes) */
--	*handle = of_read_number(prop, of_n_addr_cells(np));
--	return 0;
--}
--
- static int read_phys_addr(struct device_node *np, char *prop_name,
- 			struct cxl_afu *afu)
- {
-@@ -121,17 +74,12 @@ static int read_vpd(struct cxl *adapter, struct cxl_afu *afu)
+ The input buffer contains a single byte to select the subfeature to be accessed and 31 bytes of
+ input data, the meaning of which depends on the subfeature being accessed.
  
- int cxl_of_read_afu_handle(struct cxl_afu *afu, struct device_node *afu_np)
- {
--	if (read_handle(afu_np, &afu->guest->handle))
--		return -EINVAL;
--	pr_devel("AFU handle: 0x%.16llx\n", afu->guest->handle);
--
--	return 0;
-+	return of_property_read_reg(afu_np, 0, &afu->guest->handle, NULL);
- }
+-The output buffer contains a singe byte which signals success or failure (``0x00`` on failure)
++The output buffer contains a single byte which signals success or failure (``0x00`` on failure)
+ and 31 bytes of output data, the meaning if which depends on the subfeature being accessed.
  
- int cxl_of_read_afu_properties(struct cxl_afu *afu, struct device_node *np)
- {
- 	int i, rc;
--	const __be32 *prop;
- 	u16 device_id, vendor_id;
- 	u32 val = 0, class_code;
+ WMI method Get_EC()
+@@ -147,7 +147,7 @@ data contains a flag byte and a 28 byte controller firmware version string.
+ The first 4 bits of the flag byte contain the minor version of the embedded controller interface,
+ with the next 2 bits containing the major version of the embedded controller interface.
  
-@@ -150,16 +98,15 @@ int cxl_of_read_afu_properties(struct cxl_afu *afu, struct device_node *np)
- 	else
- 		afu->psa = true;
+-The 7th bit signals if the embedded controller page chaged (exact meaning is unknown), and the
++The 7th bit signals if the embedded controller page changed (exact meaning is unknown), and the
+ last bit signals if the platform is a Tigerlake platform.
  
--	read_prop_dword(np, "ibm,#processes", &afu->max_procs_virtualised);
-+	of_property_read_u32(np, "ibm,#processes", &afu->max_procs_virtualised);
- 
- 	if (cxl_verbose)
- 		read_vpd(NULL, afu);
- 
--	read_prop_dword(np, "ibm,max-ints-per-process", &afu->guest->max_ints);
-+	of_property_read_u32(np, "ibm,max-ints-per-process", &afu->guest->max_ints);
- 	afu->irqs_max = afu->guest->max_ints;
- 
--	prop = read_prop_dword(np, "ibm,min-ints-per-process", &afu->pp_irqs);
--	if (prop) {
-+	if (!of_property_read_u32(np, "ibm,min-ints-per-process", &afu->pp_irqs)) {
- 		/* One extra interrupt for the PSL interrupt is already
- 		 * included. Remove it now to keep only AFU interrupts and
- 		 * match the native case.
-@@ -167,13 +114,13 @@ int cxl_of_read_afu_properties(struct cxl_afu *afu, struct device_node *np)
- 		afu->pp_irqs--;
- 	}
- 
--	read_prop64_dword(np, "ibm,error-buffer-size", &afu->eb_len);
-+	of_property_read_u64(np, "ibm,error-buffer-size", &afu->eb_len);
- 	afu->eb_offset = 0;
- 
--	read_prop64_dword(np, "ibm,config-record-size", &afu->crs_len);
-+	of_property_read_u64(np, "ibm,config-record-size", &afu->crs_len);
- 	afu->crs_offset = 0;
- 
--	read_prop_dword(np, "ibm,#config-records", &afu->crs_num);
-+	of_property_read_u32(np, "ibm,#config-records", &afu->crs_num);
- 
- 	if (cxl_verbose) {
- 		for (i = 0; i < afu->crs_num; i++) {
-@@ -201,14 +148,12 @@ int cxl_of_read_afu_properties(struct cxl_afu *afu, struct device_node *np)
- 	 * not supported
- 	 */
- 	val = 0;
--	prop = read_prop_dword(np, "ibm,process-mmio", &val);
--	if (prop && val == 1)
-+	if (!of_property_read_u32(np, "ibm,process-mmio", &val) && val == 1)
- 		afu->pp_psa = true;
- 	else
- 		afu->pp_psa = false;
- 
--	prop = read_prop_dword(np, "ibm,function-error-interrupt", &val);
--	if (prop)
-+	if (!of_property_read_u32(np, "ibm,function-error-interrupt", &val))
- 		afu->serr_hwirq = val;
- 
- 	pr_devel("AFU handle: %#llx\n", afu->guest->handle);
-@@ -279,17 +224,13 @@ static int read_adapter_irq_config(struct cxl *adapter, struct device_node *np)
- 
- int cxl_of_read_adapter_handle(struct cxl *adapter, struct device_node *np)
- {
--	if (read_handle(np, &adapter->guest->handle))
--		return -EINVAL;
--	pr_devel("Adapter handle: 0x%.16llx\n", adapter->guest->handle);
--
--	return 0;
-+	return of_property_read_reg(np, 0, &adapter->guest->handle, NULL);
- }
- 
- int cxl_of_read_adapter_properties(struct cxl *adapter, struct device_node *np)
- {
- 	int rc;
--	const __be32 *prop;
-+	const char *p;
- 	u32 val = 0;
- 
- 	/* Properties are read in the same order as listed in PAPR */
-@@ -297,37 +238,30 @@ int cxl_of_read_adapter_properties(struct cxl *adapter, struct device_node *np)
- 	if ((rc = read_adapter_irq_config(adapter, np)))
- 		return rc;
- 
--	prop = read_prop_dword(np, "ibm,caia-version", &val);
--	if (prop) {
-+	if (!of_property_read_u32(np, "ibm,caia-version", &val)) {
- 		adapter->caia_major = (val & 0xFF00) >> 8;
- 		adapter->caia_minor = val & 0xFF;
- 	}
- 
--	prop = read_prop_dword(np, "ibm,psl-revision", &val);
--	if (prop)
-+	if (!of_property_read_u32(np, "ibm,psl-revision", &val))
- 		adapter->psl_rev = val;
- 
--	prop = read_prop_string(np, "status");
--	if (prop) {
--		adapter->guest->status = kasprintf(GFP_KERNEL, "%s", (char *) prop);
-+	if (!of_property_read_string(np, "status", &p)) {
-+		adapter->guest->status = kasprintf(GFP_KERNEL, "%s", p);
- 		if (adapter->guest->status == NULL)
- 			return -ENOMEM;
- 	}
- 
--	prop = read_prop_dword(np, "vendor-id", &val);
--	if (prop)
-+	if (!of_property_read_u32(np, "vendor-id", &val))
- 		adapter->guest->vendor = val;
- 
--	prop = read_prop_dword(np, "device-id", &val);
--	if (prop)
-+	if (!of_property_read_u32(np, "device-id", &val))
- 		adapter->guest->device = val;
- 
--	prop = read_prop_dword(np, "subsystem-vendor-id", &val);
--	if (prop)
-+	if (!of_property_read_u32(np, "subsystem-vendor-id", &val))
- 		adapter->guest->subsystem_vendor = val;
- 
--	prop = read_prop_dword(np, "subsystem-id", &val);
--	if (prop)
-+	if (!of_property_read_u32(np, "subsystem-id", &val))
- 		adapter->guest->subsystem = val;
- 
- 	if (cxl_verbose)
-diff --git a/drivers/misc/cxl/pci.c b/drivers/misc/cxl/pci.c
-index 4cf9e7c42a24..3d52f9b92d0d 100644
---- a/drivers/misc/cxl/pci.c
-+++ b/drivers/misc/cxl/pci.c
-@@ -363,17 +363,17 @@ int cxl_calc_capp_routing(struct pci_dev *dev, u64 *chipid,
- {
- 	int rc;
- 	struct device_node *np;
--	const __be32 *prop;
-+	u32 id;
- 
- 	if (!(np = pnv_pci_get_phb_node(dev)))
- 		return -ENODEV;
- 
--	while (np && !(prop = of_get_property(np, "ibm,chip-id", NULL)))
-+	while (np && of_property_read_u32(np, "ibm,chip-id", &id))
- 		np = of_get_next_parent(np);
- 	if (!np)
- 		return -ENODEV;
- 
--	*chipid = be32_to_cpup(prop);
-+	*chipid = id;
- 
- 	rc = get_phb_index(np, phb_index);
- 	if (rc) {
-@@ -398,32 +398,26 @@ static DEFINE_MUTEX(indications_mutex);
- static int get_phb_indications(struct pci_dev *dev, u64 *capiind, u64 *asnind,
- 			       u64 *nbwind)
- {
--	static u64 nbw, asn, capi = 0;
-+	static u32 val[3];
- 	struct device_node *np;
--	const __be32 *prop;
- 
- 	mutex_lock(&indications_mutex);
--	if (!capi) {
-+	if (!val[0]) {
- 		if (!(np = pnv_pci_get_phb_node(dev))) {
- 			mutex_unlock(&indications_mutex);
- 			return -ENODEV;
- 		}
- 
--		prop = of_get_property(np, "ibm,phb-indications", NULL);
--		if (!prop) {
--			nbw = 0x0300UL; /* legacy values */
--			asn = 0x0400UL;
--			capi = 0x0200UL;
--		} else {
--			nbw = (u64)be32_to_cpu(prop[2]);
--			asn = (u64)be32_to_cpu(prop[1]);
--			capi = (u64)be32_to_cpu(prop[0]);
-+		if (of_property_read_u32_array(np, "ibm,phb-indications", val, 3)) {
-+			val[2] = 0x0300UL; /* legacy values */
-+			val[1] = 0x0400UL;
-+			val[0] = 0x0200UL;
- 		}
- 		of_node_put(np);
- 	}
--	*capiind = capi;
--	*asnind = asn;
--	*nbwind = nbw;
-+	*capiind = val[0];
-+	*asnind = val[1];
-+	*nbwind = val[2];
- 	mutex_unlock(&indications_mutex);
- 	return 0;
- }
-@@ -605,7 +599,7 @@ static void cxl_setup_psl_timebase(struct cxl *adapter, struct pci_dev *dev)
- 
- 	/* Do not fail when CAPP timebase sync is not supported by OPAL */
- 	of_node_get(np);
--	if (! of_get_property(np, "ibm,capp-timebase-sync", NULL)) {
-+	if (!of_property_present(np, "ibm,capp-timebase-sync")) {
- 		of_node_put(np);
- 		dev_info(&dev->dev, "PSL timebase inactive: OPAL support missing\n");
- 		return;
-
+ The MSI software seems to only use this interface when the last bit is set.
 -- 
-2.43.0
+2.45.2
 
 
