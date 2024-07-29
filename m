@@ -1,116 +1,142 @@
-Return-Path: <linux-kernel+bounces-265123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80DBB93ED06
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:42:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3818293ED07
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5A828145C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 05:42:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA5172812D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 05:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BAE8289A;
-	Mon, 29 Jul 2024 05:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26008823A9;
+	Mon, 29 Jul 2024 05:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CSTGPJ5T"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=monstr-eu.20230601.gappssmtp.com header.i=@monstr-eu.20230601.gappssmtp.com header.b="cO7sfZZw"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D76964D;
-	Mon, 29 Jul 2024 05:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EAB64D
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 05:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722231722; cv=none; b=Z2rbP7V9AU/yV6jf11X+Q+GwgKG1tJ6aPm7c2i+0CytNX1C7eAYmSVgMH1E6rjuIuiQRqccgrAHbYMfqTlBxzQmGx3kb2Uasc984ZYpxc6WRHxi4uH2iO/r3sIuOvt8d3V75vSVsKVEimdAdsjKJhHf4xASSt1JZJ0xKqugZE2M=
+	t=1722231734; cv=none; b=fnTmLGHSPLK1dd7m9fGDq0xSrPZ1VRDK48oZpKUPM8KYQzHFeB6WNYrVGmCoGQQ5i3/6zF6Y/fIYwG+EBgssh3bKht7tQLcsJkZTOCIHcyYy2ajh8Hi7i47QFHV8Ke+/Q7FGsR0n6cK3rtoJx3tH9DNDfMWyGD+vfGDK0kGStjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722231722; c=relaxed/simple;
-	bh=eN97W4AJl8VwFzZID1IWU9r6D2Aa8cVQYiFEoHJTaGk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HCMArZn//sKaGfFf0aeJFM83GmCmXJ3XNObn3gRjL6YK6lzY5btyw0UJ7UYRDRteiT/LCpd3dMkWTX+a1a0Q+LNaMTNyBr9gAGEeivke8Rc96CHE7+P+GqplHhjCydrkA9Ur3TO8f1TMtmweOFi6G4DKrVhYqSFWpzjz1Szv4pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CSTGPJ5T; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46T5fbF3095616;
-	Mon, 29 Jul 2024 00:41:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722231697;
-	bh=HgdeL/6Y64GlvcJmJ4VTLd40a0vZOfkawLINOafE49Y=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=CSTGPJ5TLaElvSWopyvQ0Y/RwgIR5a7C8rsfEaMPs0LaHBGKFhCitNzB5kbjHYekR
-	 UK2jCCO8jtq+qCBg1o8MLiKeoucwXHcSKaceYcRcijTQYvQFMQSXgjLudQU+bU3vPY
-	 mXmOJ6LT1E9ui5ernXp0JCtWPhLP/4Q9yboT/I/w=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46T5fbkO014713
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 29 Jul 2024 00:41:37 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 29
- Jul 2024 00:41:37 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 29 Jul 2024 00:41:37 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46T5faUe046404;
-	Mon, 29 Jul 2024 00:41:36 -0500
-Date: Mon, 29 Jul 2024 11:11:35 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Lee Jones <lee@kernel.org>
-CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <lpieralisi@kernel.org>, <kw@linux.com>, <bhelgaas@google.com>,
-        <vigneshr@ti.com>, <kishon@kernel.org>,
-        Siddharth Vadapalli
-	<s-vadapalli@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>
-Subject: Re: (subset) [PATCH 1/3] dt-bindings: mfd: syscon: Add
- ti,j784s4-acspcie-proxy-ctrl compatible
-Message-ID: <a640435f-e840-48a8-9cf5-c796c7422070@ti.com>
-References: <20240715120936.1150314-1-s-vadapalli@ti.com>
- <20240715120936.1150314-2-s-vadapalli@ti.com>
- <172190301400.925833.12525656543896105526.b4-ty@kernel.org>
+	s=arc-20240116; t=1722231734; c=relaxed/simple;
+	bh=0TJmuJU4eKgARsq7eU7w4gR4BuXIj5QsqwFjlKXbZ4c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F7oHlkeFVFBdGsaBSoQwOZSESA4QljudGxzzn+N1HvBrL2Q7LHD7VDhduxhGXJaN2FL2/j+q/gU+ME5ArzA5IFQksUyxQCWfPqVqn1pqKOa0OMs4jXv953OvmSN59eYlSWTYRzoD6r1ZSljrBVaE+VASCDE9qip2eSBrwbOe+/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu; spf=none smtp.mailfrom=monstr.eu; dkim=pass (2048-bit key) header.d=monstr-eu.20230601.gappssmtp.com header.i=@monstr-eu.20230601.gappssmtp.com header.b=cO7sfZZw; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=monstr.eu
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e03caab48a2so1067282276.1
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 22:42:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20230601.gappssmtp.com; s=20230601; t=1722231730; x=1722836530; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mxFmntA/gfUvH86oYMSnyn42Q25EmQczHEO2HUWfKdY=;
+        b=cO7sfZZwcx23UnZwecBdbY7+Kiy8UmENwu0huLGut1B+ETqrDpU86tkkubYq+CZwq8
+         xj0/4sjWJtyGeEEaQcGC+SE5/kVJcK7U+DB40DaairdPXGYcrtLfuUWJyGmtpFPOCqXZ
+         xjAfML2KpekIbQ+W1zXAllosIoHt5q4g8nStrLoK9mdSjpuOqyg/4u2jmxCPJOJf+WlL
+         PgI3Z6GYvFLGAVdlxVAZeop+Wkh09C+J2WpqPcCCC8RKHFyIAHeBBRG2siGOfg9aHuX5
+         2QKGCUt897LJSlU1TXNPaOhQg3DRatwe2ooIQSbVE208DUxq9unjcl8PHQgBHcohdgxY
+         uvbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722231730; x=1722836530;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mxFmntA/gfUvH86oYMSnyn42Q25EmQczHEO2HUWfKdY=;
+        b=Y0Cu7EHz2GtaKRpWS/LkJlf+HUtnJrbRfAWAPfR2EYx4/UIjFN+zVPZ3BJfI7SVw1t
+         z0B/HdIlJgja6DgGM2VP1LLdKGAivxeDA1MNCfoqMa6i7DAimXbyWoPZrSjLFWMKe/qI
+         0OblQ4J4vTG7mXa2QrzTEDi+VAqPMwCGy+FQbsQkm5TeMs0x5Fm1EQICTqAWLnu/Zzqj
+         1x5L248VMknF/86eNT5LOlKAvZX5CfSnVZJ3NPaNueMWE+PScI27Kw1wpotdZCtxBuQu
+         KSDNPYjBozeRGY+/QwVmPT+2cZ2N6juqr1Bf3xQc8DSoUc+T70gT9h6TzDdQoCp6Bs0U
+         jFAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNN4Z2tMlyVRIHTzVFAdCRhJ9e/jjB+tLW/7vJ/CyZHa73LN8/xVTjWSfVKQY6T/ofH8+77ApenpCOgx+BAet/YXTEb0BtL3pRLorz
+X-Gm-Message-State: AOJu0Yz/hrxxVaHCie3lYbTI88rkcemKYioOCN+XelQMEE3RkIa/7yod
+	FJV9OuZWDrmlzUr4NeVJDpbTgW9uBPw3vWlte35TmDSf2VnciSGaUaB96SQ6ZMWh7TshraKe0RH
+	O4D7PXj23WKs4Fre5bMRfIm91vQtRZXmmy9jl
+X-Google-Smtp-Source: AGHT+IEfaBtyvPUHEqj/0+VfBK1q6xrlnS6dOIrWKgAfYyft57d3CSKTJjnzS/K5b7i3VJjkS2qYzJBv/bw4T/r8wfU=
+X-Received: by 2002:a05:6902:2402:b0:e0b:49e0:1422 with SMTP id
+ 3f1490d57ef6-e0b55989cdbmr5200213276.24.1722231730014; Sun, 28 Jul 2024
+ 22:42:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <172190301400.925833.12525656543896105526.b4-ty@kernel.org>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240729053327.4091459-1-rppt@kernel.org>
+In-Reply-To: <20240729053327.4091459-1-rppt@kernel.org>
+From: Michal Simek <monstr@monstr.eu>
+Date: Mon, 29 Jul 2024 07:42:01 +0200
+Message-ID: <CAHTX3dKZuWZVMeL8BfjVnExeKBLqn9zS-j8+aARDyiQ2UwSKgA@mail.gmail.com>
+Subject: Re: [PATCH] microblaze: don't treat zero reserved memory regions as error
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Wei Yang <richard.weiyang@gmail.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 11:23:34AM +0100, Lee Jones wrote:
+po 29. 7. 2024 v 7:33 odes=C3=ADlatel Mike Rapoport <rppt@kernel.org> napsa=
+l:
+>
+> Before commit 721f4a6526da ("mm/memblock: remove empty dummy entry") the
+> check for non-zero of memblock.reserved.cnt in mmu_init() would always
+> be true either because  memblock.reserved.cnt is initialized to 1 or
+> because there were memory reservations earlier.
+>
+> The removal of dummy empty entry in memblock caused this check to fail
+> because now memblock.reserved.cnt is initialized to 0.
+>
+> Remove the check for non-zero of memblock.reserved.cnt because it's
+> perfectly fine to have an empty memblock.reserved array that early in
+> boot.
+>
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Mike Rapoport <rppt@kernel.org>
+> Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+> Tested-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>
+> Looks like it fell between the cracks.
+>
+>  arch/microblaze/mm/init.c | 5 -----
+>  1 file changed, 5 deletions(-)
+>
+> diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
+> index 3827dc76edd8..4520c5741579 100644
+> --- a/arch/microblaze/mm/init.c
+> +++ b/arch/microblaze/mm/init.c
+> @@ -193,11 +193,6 @@ asmlinkage void __init mmu_init(void)
+>  {
+>         unsigned int kstart, ksize;
+>
+> -       if (!memblock.reserved.cnt) {
+> -               pr_emerg("Error memory count\n");
+> -               machine_restart(NULL);
+> -       }
+> -
+>         if ((u32) memblock.memory.regions[0].size < 0x400000) {
+>                 pr_emerg("Memory must be greater than 4MB\n");
+>                 machine_restart(NULL);
+>
+> base-commit: dc1c8034e31b14a2e5e212104ec508aec44ce1b9
+> --
+> 2.43.0
+>
 
-Hello Lee,
+Applied.
+M
 
-> On Mon, 15 Jul 2024 17:39:34 +0530, Siddharth Vadapalli wrote:
-> > The ACSPCIE_PROXY_CTRL registers within the CTRL_MMR space of TI's J784S4
-> > SoC are used to drive the reference clock to the PCIe Endpoint device via
-> > the PAD IO Buffers. Add the compatible for allowing the PCIe driver to
-> > obtain the regmap for the ACSPCIE_CTRL register within the System
-> > Controller device-tree node in order to enable the PAD IO Buffers.
-> > 
-> > The Technical Reference Manual for J784S4 SoC with details of the
-> > ASCPCIE_CTRL registers is available at:
-> > https://www.ti.com/lit/zip/spruj52
-> > 
-> > [...]
-> 
-> Applied, thanks!
-> 
-> [1/3] dt-bindings: mfd: syscon: Add ti,j784s4-acspcie-proxy-ctrl compatible
->       commit: d86ce301dcf715ea2d5147bb013a29f722bf5d0b
-
-I don't see the commit in the MFD tree [1] and Linux-Next. Therefore I
-am assuming that this patch was not committed and will be posting the v2
-series with this patch included.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/log/?h=for-mfd-next
-
-Regards,
-Siddharth.
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal SoCs
 
