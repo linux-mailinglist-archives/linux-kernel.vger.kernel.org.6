@@ -1,138 +1,121 @@
-Return-Path: <linux-kernel+bounces-265118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED86593ECF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:23:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4AF93ECEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28BA91C217FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 05:23:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD8EE1C21733
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 05:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF86A85628;
-	Mon, 29 Jul 2024 05:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770D1823DF;
+	Mon, 29 Jul 2024 05:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NG+QCVKm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cXRsqslY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB11884FA0
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 05:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A905E163;
+	Mon, 29 Jul 2024 05:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722230546; cv=none; b=urBAT5Ipq/nlkevOZWfsJAiBLLiNVKary4ID7VvUL/7ViLBYW/WuGb0m7Oss0OHaeEn0360CH0WOtQ0KgWopsKjV5ihWKiHLyjpE4ctKQN8kOuzCPtr0v6Sv/JxOEi1DXTkGBmUx3dhSsF2rqVoB5+SO2DQEzvNVBCTtcfzQvfA=
+	t=1722230504; cv=none; b=t2jJ61MtdtArIqTZa47faN9Ew/qM/b23YsDGd0SQoFhN+HZ/N/nDr1h/L221XkzVs8YCs2JNSb5RCprQWe9jTR2YWdxT8cufgS9tmweoaqzEL0RxnTD+xcJL/v5p5+kZMs5CQ8M7IWT11Ckn1kRb3jXdQ4Y67AGujHL0DkqucTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722230546; c=relaxed/simple;
-	bh=gtbtsPPrhBlsHf9S+0HR57Br4O4cC9TR/0wWshqIE2E=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VT3qXCzl9MbLjBzsUIBz/w14md4WLUcBIUVdDbZgCFossEDL6zQs9UUg5H3H58ho+9sEWi+d++pCZG0g7QaE8ap6zxbuRAmnCZGl+EqXjrJBw/jsrL0cVsPH8/97KA8nTBPx4l7orCmH/NEcAcvlLf9VNH0KNhaT3djMN3a7O9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NG+QCVKm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722230544;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PxloFJjHKztR9LybQruoy6tmYRAm4Ks4H6Vbpd2cuSQ=;
-	b=NG+QCVKmPkEzrRku6iW4TlkYufiz0jU3tP5t4mhMNRnOL5tu30/hNWNjAuI0SCdHgn1Y+m
-	mUHdDHIyVaqnJW9l+IqQBU75qdk3xaYXcKSmMylPz7cd3SAw4GtWZ9pRkUgxUqmtFH1BFI
-	P3CofwXu9ddwMZE2HcueA4lGq4B9EBg=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-42-s22FMNWmM3uPmfWY7IR2DQ-1; Mon,
- 29 Jul 2024 01:22:19 -0400
-X-MC-Unique: s22FMNWmM3uPmfWY7IR2DQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 28D7C1955D45;
-	Mon, 29 Jul 2024 05:22:18 +0000 (UTC)
-Received: from server.redhat.com (unknown [10.72.112.168])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 227DB1955D42;
-	Mon, 29 Jul 2024 05:22:12 +0000 (UTC)
-From: Cindy Lu <lulu@redhat.com>
-To: lulu@redhat.com,
-	dtatulea@nvidia.com,
-	mst@redhat.com,
-	jasowang@redhat.com,
-	parav@nvidia.com,
-	sgarzare@redhat.com,
-	netdev@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v7 3/3] vdpa/mlx5: Add the support of set mac address
-Date: Mon, 29 Jul 2024 13:20:47 +0800
-Message-ID: <20240729052146.621924-4-lulu@redhat.com>
-In-Reply-To: <20240729052146.621924-1-lulu@redhat.com>
-References: <20240729052146.621924-1-lulu@redhat.com>
+	s=arc-20240116; t=1722230504; c=relaxed/simple;
+	bh=KruHvoHH42zwDU1xGJ3PkJoXwnikfd0WtTHCdlVyxtM=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=MeHliD4O/Y0cawUHxSPzqo9VA5h/E/Vu9C6tkFZowZcbjBanLw3wQm6e8NNVBollcXEBVZ79xmhs5Ry5Kho/tepM1ryGSoDKmI4KjAHXztkw/yprwkSAuVu09fF2la+wY8x+r5C7j31s83Mwvqgw7YTkkTtufnz9Gp/1E3RlPk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cXRsqslY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07B1EC32786;
+	Mon, 29 Jul 2024 05:21:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722230504;
+	bh=KruHvoHH42zwDU1xGJ3PkJoXwnikfd0WtTHCdlVyxtM=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=cXRsqslYpi8b2/pM30oSUMlqF+vLezHFJPViUlcz/TYJ0YmJSAOoKWYGEKYOQ5/Te
+	 nzaZ1t9jRXAcaNTDI2ld0oDP/Jl5juLPDIvluplad0WCiL4Ajhxte63YLpMqx/lWoa
+	 tfOLUFfqs2+nEpPpGX5lF6cUpaMTC1DfuPu8bJC/pT4pkDhmjQ7KXhiCQ2MIQ606OS
+	 mSWy3n0jENFeJJrrn+mhagS7LNx+cuKonx0U+VR8vTFduO2dp7M26R12SMTq4ok2Fv
+	 mib9WriSAVJWyI+k/JpUNTTMhH+R5HHvXjA425eEa7TbTRJelZdjCxtnQLRZVo60oZ
+	 9Mzc+wWcxdRWw==
+Date: Mon, 29 Jul 2024 00:21:42 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Inochi Amaoto <inochiama@outlook.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org, 
+ Palmer Dabbelt <palmer@dabbelt.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ dmaengine@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Liu Gui <kenneth.liu@sophgo.com>, linux-riscv@lists.infradead.org, 
+ Chen Wang <unicorn_wang@outlook.com>, Vinod Koul <vkoul@kernel.org>
+In-Reply-To: 
+ <IA1PR20MB4953865775FA926B2BA4580CBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
+References: <IA1PR20MB49535EC188F8EE3F8FD0B68DBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB4953865775FA926B2BA4580CBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
+Message-Id: <172223050278.2763977.11180028101195359000.robh@kernel.org>
+Subject: Re: [PATCH v8 RESEND 1/3] dt-bindings: dmaengine: Add dma
+ multiplexer for CV18XX/SG200X series SoC
 
-Add the function to support setting the MAC address.
-For vdpa/mlx5, the function will use mlx5_mpfs_add_mac
-to set the mac address
 
-Tested in ConnectX-6 Dx device
+On Mon, 29 Jul 2024 12:36:51 +0800, Inochi Amaoto wrote:
+> The DMA IP of Sophgo CV18XX/SG200X is based on a DW AXI CORE, with
+> an additional channel remap register located in the top system control
+> area. The DMA channel is exclusive to each core.
+> 
+> In addition, the DMA multiplexer is a subdevice of system controller,
+> so this binding only contains necessary properties for the multiplexer
+> itself.
+> 
+> Add the dmamux binding for CV18XX/SG200X series SoC.
+> 
+> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../bindings/dma/sophgo,cv1800-dmamux.yaml    | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.yaml
+> 
 
-Signed-off-by: Cindy Lu <lulu@redhat.com>
----
- drivers/vdpa/mlx5/net/mlx5_vnet.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-index ecfc16151d61..dd19eec40297 100644
---- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-+++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-@@ -3786,9 +3786,37 @@ static void mlx5_vdpa_dev_del(struct vdpa_mgmt_dev *v_mdev, struct vdpa_device *
- 	mgtdev->ndev = NULL;
- }
- 
-+static int mlx5_vdpa_set_attr(struct vdpa_mgmt_dev *v_mdev, struct vdpa_device *dev,
-+			      const struct vdpa_dev_set_config *add_config)
-+{
-+	struct virtio_net_config *config;
-+	struct mlx5_core_dev *pfmdev;
-+	struct mlx5_vdpa_dev *mvdev;
-+	struct mlx5_vdpa_net *ndev;
-+	struct mlx5_core_dev *mdev;
-+	int err = -EINVAL;
-+
-+	mvdev = to_mvdev(dev);
-+	ndev = to_mlx5_vdpa_ndev(mvdev);
-+	mdev = mvdev->mdev;
-+	config = &ndev->config;
-+
-+	down_write(&ndev->reslock);
-+	if (add_config->mask & (1 << VDPA_ATTR_DEV_NET_CFG_MACADDR)) {
-+		pfmdev = pci_get_drvdata(pci_physfn(mdev->pdev));
-+		err = mlx5_mpfs_add_mac(pfmdev, config->mac);
-+		if (!err)
-+			ether_addr_copy(config->mac, add_config->net.mac);
-+	}
-+
-+	up_write(&ndev->reslock);
-+	return err;
-+}
-+
- static const struct vdpa_mgmtdev_ops mdev_ops = {
- 	.dev_add = mlx5_vdpa_dev_add,
- 	.dev_del = mlx5_vdpa_dev_del,
-+	.dev_set_attr = mlx5_vdpa_set_attr,
- };
- 
- static struct virtio_device_id id_table[] = {
--- 
-2.45.0
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
+	from schema $id: http://devicetree.org/schemas/dma/sophgo,cv1800-dmamux.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
+	from schema $id: http://devicetree.org/schemas/dma/sophgo,cv1800-dmamux.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
+	from schema $id: http://devicetree.org/schemas/dma/dma-router.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/sophgo,cv1800-dmamux.example.dtb: dma-router@154: dma-masters: 4294967295 is not of type 'array'
+	from schema $id: http://devicetree.org/schemas/dma/dma-router.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/IA1PR20MB4953865775FA926B2BA4580CBBB72@IA1PR20MB4953.namprd20.prod.outlook.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
