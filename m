@@ -1,212 +1,167 @@
-Return-Path: <linux-kernel+bounces-266316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B6F93FE10
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:08:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9558B93FE12
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B445AB21F00
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:08:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0F89B22A93
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9382B185606;
-	Mon, 29 Jul 2024 19:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vLNuCjmZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0B517C211;
+	Mon, 29 Jul 2024 19:09:44 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91928F6E;
-	Mon, 29 Jul 2024 19:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04688F6E;
+	Mon, 29 Jul 2024 19:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722280096; cv=none; b=Jdwaq1bXH6MCqzQKm+Wvc2H7k8VI7aqdvadnLx9pWuWb/+nFHS9iKgZua2s+pMie4yx5fX1ZmvSurjQ1h94SnWo9wJLAigydbn1b+uXHhjlChvQ/byDXn9aCbD4xML1sGGkBOXh3SnjZiI0dOEML/+DEBObXW50Xr7bQCT39tQ0=
+	t=1722280184; cv=none; b=i8TcbkzZybdTk040fk0zhaptg36igt76Ed2oxNikJxyFAjSAdR2y+vYyo0VrfZtG3sc/PFQ0LxeM9PLXbkCFO+DyU4sUfaMktRa7P366KnyTwRE5TCmXtJrRX1NFVu1y/sdfEDhtqpX8dhq+5ZlHggP5In5p9s3pXgBDQ05QVbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722280096; c=relaxed/simple;
-	bh=qDvC2tKPMuPdLTZF5Dg2OfAR2d+C5UOUdCHxbkrsbH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YvKKgI5Z+Iw47ZND6hWm8I7X6FWpMXRWtYB49oju+79gTn8mkya5rm7cHvJf3UxGfPuNnmXRIB02F+q/taaSKgLQjaTflbwyAk9zBUTK7AGOAJYmbTfNnxWObmp5TQgcfgJuButstEFrWTceQoNiUjO7ZVpH4S6pWcPPpqm0RCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vLNuCjmZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4295C32786;
-	Mon, 29 Jul 2024 19:08:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722280096;
-	bh=qDvC2tKPMuPdLTZF5Dg2OfAR2d+C5UOUdCHxbkrsbH4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vLNuCjmZIzJq/yhSL4ej3IRwlABhGjNQVhVFq9bEmVDBLnXAJSQoEFXwAHJLTWeD6
-	 owKDGYxGgq1Qmp4wfS6VChSn52IKfYbWlzrVBgoUtczTSVbfpuejosr17PLnXBuZb6
-	 4e7CzYkOqf7NjVTlZLtekjZ3ayoqqRApRkC+YM7UQ+Fs6Pr1dHe5yGXvLjxNjPzNIN
-	 wWlqrB7vbmKkdOcssGJDEC9iYT/9jyHjpQWJiBHSxKe1Uld7R7uirSW7lRLWDpgBvU
-	 qsaeEWnkYA5TfVkV7bTY++5H0ochHFV7yvqYQVmlURHjNAE5Vahsz64Gb0cxXHNntg
-	 aEEqAitgZpgSw==
-Date: Mon, 29 Jul 2024 21:08:08 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: cl@linux.com, penberg@kernel.org, rientjes@google.com,
-	iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
-	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, urezki@gmail.com,
-	hch@infradead.org, kees@kernel.org, ojeda@kernel.org,
-	wedsonaf@gmail.com, mhocko@kernel.org, mpe@ellerman.id.au,
-	chandan.babu@oracle.com, christian.koenig@amd.com, maz@kernel.org,
-	oliver.upton@linux.dev, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] mm: vmalloc: implement vrealloc()
-Message-ID: <ZqfomPVr7PadY8Et@cassiopeiae>
-References: <20240722163111.4766-1-dakr@kernel.org>
- <20240722163111.4766-2-dakr@kernel.org>
- <07491799-9753-4fc9-b642-6d7d7d9575aa@suse.cz>
- <ZqQBjjtPXeErPsva@cassiopeiae>
+	s=arc-20240116; t=1722280184; c=relaxed/simple;
+	bh=fvEG8IuZUXuSrOmwSWUOQopan86PdBzlFjFcPT7zo5k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c8qpcV1BCPyPAGaBVlqAdte7XQ4ThjnGlrfSk7MbzSGLnb2ZduUq0pW3O/MRHu4gPCt7wpl8O5nZNL0F1ofZPZv2nCv3Ntumgie5L6sPmNabcsyAe4MrXZxruy8L54zhhjZ9VJQSMAKiH+b+tv24I4hnxd5n6kpXu+zb/9W2J2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e86192c.versanet.de ([94.134.25.44] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sYVkP-00079A-SW; Mon, 29 Jul 2024 21:09:29 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Sam Edwards <cfsworks@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+ Jonathan Bennett <jbennett@incomsystems.biz>
+Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Daniel =?utf-8?B?S3VraWXFgmE=?= <daniel@kukiela.pl>,
+ Sven Rademakers <sven.rademakers@gmail.com>, Joshua Riek <jjriek@verizon.net>
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Add PCIe pinctrls to Turing RK1
+Date: Mon, 29 Jul 2024 21:09:28 +0200
+Message-ID: <2401016.9fHWaBTJ5E@diego>
+In-Reply-To: <659dfd80-5962-4265-836d-5761c3e41ca0@incomsystems.biz>
+References:
+ <20231208062510.893392-1-CFSworks@gmail.com>
+ <66f413d2-1a5b-b9e3-3c86-35a1d150f486@gmail.com>
+ <659dfd80-5962-4265-836d-5761c3e41ca0@incomsystems.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZqQBjjtPXeErPsva@cassiopeiae>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-On Fri, Jul 26, 2024 at 10:05:47PM +0200, Danilo Krummrich wrote:
-> On Fri, Jul 26, 2024 at 04:37:43PM +0200, Vlastimil Babka wrote:
-> > On 7/22/24 6:29 PM, Danilo Krummrich wrote:
-> > > Implement vrealloc() analogous to krealloc().
-> > > 
-> > > Currently, krealloc() requires the caller to pass the size of the
-> > > previous memory allocation, which, instead, should be self-contained.
-> > > 
-> > > We attempt to fix this in a subsequent patch which, in order to do so,
-> > > requires vrealloc().
-> > > 
-> > > Besides that, we need realloc() functions for kernel allocators in Rust
-> > > too. With `Vec` or `KVec` respectively, potentially growing (and
-> > > shrinking) data structures are rather common.
-> > > 
-> > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > 
-> > Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> > 
-> > > --- a/mm/vmalloc.c
-> > > +++ b/mm/vmalloc.c
-> > > @@ -4037,6 +4037,65 @@ void *vzalloc_node_noprof(unsigned long size, int node)
-> > >  }
-> > >  EXPORT_SYMBOL(vzalloc_node_noprof);
-> > >  
-> > > +/**
-> > > + * vrealloc - reallocate virtually contiguous memory; contents remain unchanged
-> > > + * @p: object to reallocate memory for
-> > > + * @size: the size to reallocate
-> > > + * @flags: the flags for the page level allocator
-> > > + *
-> > > + * The contents of the object pointed to are preserved up to the lesser of the
-> > > + * new and old size (__GFP_ZERO flag is effectively ignored).
-> > 
-> > Well, technically not correct as we don't shrink. Get 8 pages, kvrealloc to
-> > 4 pages, kvrealloc back to 8 and the last 4 are not zeroed. But it's not
-> > new, kvrealloc() did the same before patch 2/2.
-> 
-> Taking it (too) literal, it's not wrong. The contents of the object pointed to
-> are indeed preserved up to the lesser of the new and old size. It's just that
-> the rest may be "preserved" as well.
-> 
-> I work on implementing shrink and grow for vrealloc(). In the meantime I think
-> we could probably just memset() spare memory to zero.
+Hi Jonathan, Sam,
 
-Probably, this was a bad idea. Even with shrinking implemented we'd need to
-memset() potential spare memory of the last page to zero, when new_size <
-old_size.
+Am Mittwoch, 5. Juni 2024, 21:45:42 CEST schrieb Jonathan Bennett:
+> On 12/8/23 11:27 AM, Sam Edwards wrote:
+> > On 12/8/23 04:05, Heiko St=FCbner wrote:
+> >> Am Freitag, 8. Dezember 2023, 07:25:10 CET schrieb Sam Edwards:
+> >>> The RK3588 PCIe 3.0 controller seems to have unpredictable behavior=20
+> >>> when
+> >>> no CLKREQ/PERST/WAKE pins are configured in the pinmux. In=20
+> >>> particular, it
+> >>> will sometimes (varying between specific RK3588 chips, not over=20
+> >>> time) shut
+> >>> off the DBI block, and reads to this range will instead stall
+> >>> indefinitely.
+> >>>
+> >>> When this happens, it will prevent Linux from booting altogether. The
+> >>> PCIe driver will stall the CPU core once it attempts to read the=20
+> >>> version
+> >>> information from the DBI range.
+> >>>
+> >>> Fix this boot hang by adding the correct pinctrl configuration to the
+> >>> PCIe 3.0 device node, which is the proper thing to do anyway. While
+> >>> we're at it, also add the necessary configuration to the PCIe 2.0 nod=
+e,
+> >>> which may or may not fix the equivalent problem over there -- but is=
+=20
+> >>> the
+> >>> proper thing to do anyway. :)
+> >>>
+> >>> Fixes: 2806a69f3fef6 ("arm64: dts: rockchip: Add Turing RK1 SoM=20
+> >>> support")
+> >>> Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+> >>> ---
+> >>>
+> >>> Hi list,
+> >>>
+> >>> Compared to v1, v2 removes the `reset-gpios` properties as well --=20
+> >>> this should
+> >>> give control of the PCIe resets exclusively to the PCIe cores. (And=20
+> >>> even if the
+> >>> `reset-gpios` props had no effect in v1, it'd be confusing to have=20
+> >>> them there.)
+> >>
+> >> Hmm, I'd think this could result in differing behaviour.
+> >>
+> >> I.e. I tried the same on a different board with a nvme drive on the=20
+> >> pci30x4
+> >> controller. But moving the reset from the gpio-way to "just" setting t=
+he
+> >> perstn pinctrl, simply hung the controller when probing the device.
+> >
+> > Ah, I'm guessing it died in:
+> > ver =3D dw_pcie_readl_dbi(pci, PCIE_VERSION_NUMBER);
+> >
+> > If so, that's the same hang that this patch is aiming to solve. I'm=20
+> > starting to wonder if having muxed pins !=3D 1 for a given signal upset=
+s=20
+> > the RC(s). Is your board (in an earlier boot stage:=20
+> > reset/maskrom/bootloader) muxing a different perstn pin option to that=
+=20
+> > controller (and Linux doesn't know to clear it away)? Then when you=20
+> > add the perstn pinctrl the total number of perstns muxed to the=20
+> > controller comes to 2, and without a reset-gpios =3D <...>; to take it=
+=20
+> > away again, that number stays at 2 to cause the hang upon the DBI read?
+> >
+> > If so, that'd mean the change resolves the hang for me, because it=20
+> > brings the total up to 1 (from 0), but also causes the hang for you,=20
+> > because it brings the total up to 2 (away from 1).
+> >
+> >>
+> >> So I guess I'd think the best way would be to split the pinctrl up=20
+> >> into the
+> >> 3 separate functions (clkreqn, perstn, waken) so that boards can inclu=
+de
+> >> them individually.
+> >
+> > Mm, maybe. Though that might be more appropriate if a board comes=20
+> > along that doesn't connect all of those signals to the same group of=20
+> > pins. I worry that attempting to solve this hang by doing that will=20
+> > instead just mask the real problem.
+> >
+> >>
+> >> Nobody is using the controller pinctrl entries so far anyway :-) .
+> >
+> > Then it's interesting that this board requires them in order to avoid=20
+> > a hang on boot. I'll see if there's anything else that I can find out.
+>=20
+> I've just finished testing the latest iteration of this patch with=20
+> 6.10-rc2 on my RK1 on a Turing Pi 2 carrier board. I can confirm that=20
+> unpatched mainline fails to boot with the same hang described here, and=20
+> the patch does make the board boot again.
 
-Analogously, the same would be true for krealloc() buckets. That's probably not
-worth it.
+Can you possibly test if
 
-I think we should indeed just document that __GFP_ZERO doesn't work for
-re-allocating memory and start to warn about it. As already mentioned, I think
-we should at least gurantee that *realloc(NULL, size, flags | __GFP_ZERO) is
-valid, i.e. WARN_ON(p && flags & __GFP_ZERO).
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
+id=3D28b8d7793b8573563b3d45321376f36168d77b1e
 
-> 
-> nommu would still uses krealloc() though...
-> 
-> > 
-> > But it's also fundamentally not true for krealloc(), or kvrealloc()
-> > switching from a kmalloc to valloc. ksize() returns the size of the kmalloc
-> > bucket, we don't know what was the exact prior allocation size.
-> 
-> Probably a stupid question, but can't we just zero the full bucket initially and
-> make sure to memset() spare memory in the bucket to zero when krealloc() is
-> called with new_size < ksize()?
-> 
-> > Worse, we
-> > started poisoning the padding in debug configurations, so even a
-> > kmalloc(__GFP_ZERO) followed by krealloc(__GFP_ZERO) can give you unexpected
-> > poison now...
-> 
-> As in writing magics directly to the spare memory in the bucket? Which would
-> then also be copied over to a new buffer in __do_krealloc()?
-> 
-> > 
-> > I guess we should just document __GFP_ZERO is not honored at all for
-> > realloc, and maybe start even warning :/ Hopefully nobody relies on that.
-> 
-> I think it'd be great to make __GFP_ZERO work in all cases. However, if that's
-> really not possible, I'd prefer if we could at least gurantee that
-> *realloc(NULL, size, flags | __GFP_ZERO) is a valid call, i.e.
-> WARN_ON(p && flags & __GFP_ZERO).
-> 
-> > 
-> > > + *
-> > > + * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If @size is 0 and
-> > > + * @p is not a %NULL pointer, the object pointed to is freed.
-> > > + *
-> > > + * Return: pointer to the allocated memory; %NULL if @size is zero or in case of
-> > > + *         failure
-> > > + */
-> > > +void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
-> > > +{
-> > > +	size_t old_size = 0;
-> > > +	void *n;
-> > > +
-> > > +	if (!size) {
-> > > +		vfree(p);
-> > > +		return NULL;
-> > > +	}
-> > > +
-> > > +	if (p) {
-> > > +		struct vm_struct *vm;
-> > > +
-> > > +		vm = find_vm_area(p);
-> > > +		if (unlikely(!vm)) {
-> > > +			WARN(1, "Trying to vrealloc() nonexistent vm area (%p)\n", p);
-> > > +			return NULL;
-> > > +		}
-> > > +
-> > > +		old_size = get_vm_area_size(vm);
-> > > +	}
-> > > +
-> > > +	if (size <= old_size) {
-> > > +		/*
-> > > +		 * TODO: Shrink the vm_area, i.e. unmap and free unused pages.
-> > > +		 * What would be a good heuristic for when to shrink the
-> > > +		 * vm_area?
-> > > +		 */
-> > > +		return (void *)p;
-> > > +	}
-> > > +
-> > > +	/* TODO: Grow the vm_area, i.e. allocate and map additional pages. */
-> > > +	n = __vmalloc_noprof(size, flags);
-> > > +	if (!n)
-> > > +		return NULL;
-> > > +
-> > > +	if (p) {
-> > > +		memcpy(n, p, old_size);
-> > > +		vfree(p);
-> > > +	}
-> > > +
-> > > +	return n;
-> > > +}
-> > > +
-> > >  #if defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA32)
-> > >  #define GFP_VMALLOC32 (GFP_DMA32 | GFP_KERNEL)
-> > >  #elif defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA)
-> > 
+changes anything? In 6.11-rc1 now.
+
+The PERST# toggling happening before that patch could've caused
+issues with your PCIe device.
+
+
+Heiko
+
+
 
