@@ -1,147 +1,107 @@
-Return-Path: <linux-kernel+bounces-266282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0880793FD8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:40:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3985993FD8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6CDB282437
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:40:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA2972826D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA7C188CB8;
-	Mon, 29 Jul 2024 18:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IygY/Gtm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B1F188CD5;
+	Mon, 29 Jul 2024 18:39:21 +0000 (UTC)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A296E187324
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5182B188CB6;
+	Mon, 29 Jul 2024 18:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722278368; cv=none; b=Yu4tPfgqf1hxIju4DRiV2YXc7ov8/ZgyffcfA4hEWbIOkdDtikl+xyD2bYOrDbyQUaHHzereZrzzMZolM8uwKVBiCbcDiPH95Q7oPQ031+BE7EcYLJ8Txmhq46QhI/1ReRRou0M1o0TJAo72131y0u2gGLRByLcz8/bTz+pClHg=
+	t=1722278360; cv=none; b=OcX1p3YU/uv2W9OUiJex60He3WbOLvpUyx0FsW6EsDTpecrbs7fuR7BXplvFBNM1sXnUttE2BCtBvpFeI6pl8i3cICXn/qQotCC3GZIOrG3N3DCgMaAoqfgIt6VYhTNvoL9KtGHr6BSsRazLwlwD073RM0AU4jYw/5fu8yVCkkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722278368; c=relaxed/simple;
-	bh=xk3+KuScjITGXiDzDjfIu4gA/sRyc3tOmEiEhe4VNEY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=afbMeNOVb2dCM+JMylRG2GkBqqrc0OXDlLabuUtDCFcwn5fen+l6UqDoRbjhHMwvgRYJ3QTzWHtQ5svBBHlmqszGfw8I7kLcrk1WKqkybB+4FXfCMpDJpYpqfB62NZFj6ATCB/deHcE+zSlzu43IVEJx80V6rosVUUhZwGZhRug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IygY/Gtm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722278365;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9H38+PlxDPb0B2kVTxHGHrLppqPJ/7ePtq7mF29j+5Q=;
-	b=IygY/GtmzREHBpA/meZVg2ei5jRiXlWgEtRHV47efLqrSB5ytxtbzWw5q548yNwTiwtGta
-	RvUpovQnQzHJkr/Mb5zLpd4GSIB6r5jOiT2ENKmtuzn3qn1YtdAd7ordpfU16lKROxm6fI
-	HyNC7CDV1mNR2LdbhNi8vgvEm4lotr4=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-274-TyEAJ39yMBCJknv_CsRGMA-1; Mon,
- 29 Jul 2024 14:39:22 -0400
-X-MC-Unique: TyEAJ39yMBCJknv_CsRGMA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8C61E19560A1;
-	Mon, 29 Jul 2024 18:39:19 +0000 (UTC)
-Received: from t14s.fritz.box (unknown [10.39.192.25])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5EF6D1955D42;
-	Mon, 29 Jul 2024 18:39:13 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	linux-s390@vger.kernel.org,
-	kvm@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>
-Subject: [PATCH v1 3/3] s390/uv: drop arch_make_page_accessible()
-Date: Mon, 29 Jul 2024 20:38:44 +0200
-Message-ID: <20240729183844.388481-4-david@redhat.com>
-In-Reply-To: <20240729183844.388481-1-david@redhat.com>
-References: <20240729183844.388481-1-david@redhat.com>
+	s=arc-20240116; t=1722278360; c=relaxed/simple;
+	bh=hxCz66SL9VcGksGk7Jvi6bwAvcLd3m/v4tQixT+kSms=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hUftLxX/HNEiH0+q35oZaIDwj4TqP2sLQ1vjz4nGnYSpcJVy1NEG6NMzmx2iCMxjdTkBUu1f/pIw6R8m8UD/zjyEOnk8kPhgvb7ClewwMByMkabgZiwnBS1u+TtSDGsxCp8a7Bb/A1jbn3aHX4lvQX94qleGSExGLO+0ITtq2Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-654cf0a069eso21528607b3.1;
+        Mon, 29 Jul 2024 11:39:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722278356; x=1722883156;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QOI4yfbpADJqWSZhJu/9HLSO4bdHPa7Kukgm+hQ434A=;
+        b=AWzV0FT5EfTCQs+Ai8e2jbhmUx2QQoBDfCQOdAtTZhByQM6mrIG0L6RwWsCoFrqhKT
+         h+dw6R5vqdtwjRqQyU6r1UVQ+7iICakpDmm40rFGV7Ksg31FpbWUpa2EDLQVKPdwM5Ga
+         UJYn1ie8PPGcndSoZNnNETLhazL1mgSVRqXjOjhW9oAcgL073J1MK/cmSkEDL6oDNHB7
+         gm/ovGIpOkCsyEFYvdLGLS9NCVOHf/NLUnDM1azWANUhTss5rqX57GWrDXYK5WBSwB5K
+         CdXL6gHs5famPygIzRXrch9jFVAOwI4kPfX6XhZtG2wGguKR8VmOE0MDOgpavhskHyz2
+         hTlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWa6quLLGXucyG+DjJlBCtyBcg/svj6GeMMfnbgB8ZScbWOEL8IFXZVg68gs4v23SliYeTQT4m1GbHbylhCjSb1pv6BIMBTdxZ9kZ0Cd3dsAI07FnOJVgPkr9v/+6ZAJuZ2NQaYwg5SkKernb0hbg7Q5dkfHGR4dFLGgvoKED158tB6+w==
+X-Gm-Message-State: AOJu0YxenwFkFG67yv0Kr+qzTElERNeY7xp3DKel+uKu2O0OAaQuh1VY
+	OjKBB7QtIaXzAJSNndHg9SfuKtE0r3QIdMZtjVgmR3o8quolg0brRWgWg7cI
+X-Google-Smtp-Source: AGHT+IGRiM4RFoc2IQAzSRd6DiVm/pIQwD119Qcotql3xYCN8RRicX8T0Z9+K+C1+n1L2kyQ4PdXag==
+X-Received: by 2002:a81:9406:0:b0:617:c578:332c with SMTP id 00721157ae682-67a057b8318mr98703667b3.4.1722278355933;
+        Mon, 29 Jul 2024 11:39:15 -0700 (PDT)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-67566dd90fesm21505217b3.20.2024.07.29.11.39.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jul 2024 11:39:15 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-65fdfd7b3deso23431797b3.0;
+        Mon, 29 Jul 2024 11:39:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV1mz8yVfBlmyE2Nm5OiuoPyGWiQ33gT1gxFGLlD8FElWuw37xBJOr0K1Tucxc+0KQDv97zASqPOmWdaGqbbN+aC1i0EQA4W6+GfzA0Jbboq/EAyJfCliUbY+ko8DEwWYunz/6Ene+USjRbQs02bCurtVzNTiIkfoxaAaEO5BvFkp0w9Q==
+X-Received: by 2002:a0d:f4c7:0:b0:65f:c95f:e7c7 with SMTP id
+ 00721157ae682-67a057b830dmr97041367b3.7.1722278354050; Mon, 29 Jul 2024
+ 11:39:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <20240725193803.14130-4-wsa+renesas@sang-engineering.com> <20240725193803.14130-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20240725193803.14130-5-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 Jul 2024 20:39:01 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUbHk3H+LgLrzB4zMCPhbN8EhV_EyF_Gwd4eDXY-MKC4A@mail.gmail.com>
+Message-ID: <CAMuHMdUbHk3H+LgLrzB4zMCPhbN8EhV_EyF_Gwd4eDXY-MKC4A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pwm: renesas,pwm-rcar: Add r8a779h0 support
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-All code was converted to using arch_make_folio_accessible(), let's drop
-arch_make_page_accessible().
+On Thu, Jul 25, 2024 at 9:38=E2=80=AFPM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Document support for the PWM timers in the Renesas R-Car V4M (R8A779H0)
+> SoC.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- arch/s390/include/asm/page.h | 2 --
- arch/s390/kernel/uv.c        | 5 -----
- include/linux/mm.h           | 7 -------
- 3 files changed, 14 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/s390/include/asm/page.h b/arch/s390/include/asm/page.h
-index 06416b3f94f59..515db8241eb6b 100644
---- a/arch/s390/include/asm/page.h
-+++ b/arch/s390/include/asm/page.h
-@@ -176,8 +176,6 @@ static inline int devmem_is_allowed(unsigned long pfn)
- 
- int arch_make_folio_accessible(struct folio *folio);
- #define HAVE_ARCH_MAKE_FOLIO_ACCESSIBLE
--int arch_make_page_accessible(struct page *page);
--#define HAVE_ARCH_MAKE_PAGE_ACCESSIBLE
- 
- struct vm_layout {
- 	unsigned long kaslr_offset;
-diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
-index 36db065c7cf75..35ed2aea88918 100644
---- a/arch/s390/kernel/uv.c
-+++ b/arch/s390/kernel/uv.c
-@@ -548,11 +548,6 @@ int arch_make_folio_accessible(struct folio *folio)
- }
- EXPORT_SYMBOL_GPL(arch_make_folio_accessible);
- 
--int arch_make_page_accessible(struct page *page)
--{
--	return arch_make_folio_accessible(page_folio(page));
--}
--EXPORT_SYMBOL_GPL(arch_make_page_accessible);
- static ssize_t uv_query_facilities(struct kobject *kobj,
- 				   struct kobj_attribute *attr, char *buf)
- {
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index bab689ec77f94..07b478952bb02 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2205,13 +2205,6 @@ static inline bool folio_likely_mapped_shared(struct folio *folio)
- 	return atomic_read(&folio->_mapcount) > 0;
- }
- 
--#ifndef HAVE_ARCH_MAKE_PAGE_ACCESSIBLE
--static inline int arch_make_page_accessible(struct page *page)
--{
--	return 0;
--}
--#endif
--
- #ifndef HAVE_ARCH_MAKE_FOLIO_ACCESSIBLE
- static inline int arch_make_folio_accessible(struct folio *folio)
- {
--- 
-2.45.2
+Gr{oetje,eeting}s,
 
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
