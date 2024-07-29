@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-265914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 458C793F7A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:24:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C1E93F7A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBDCB1F2263B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:24:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E21C1F21AC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FB01850B6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C876A155A58;
 	Mon, 29 Jul 2024 14:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T87FFSHG"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oBQJem4o"
 Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656B615B980;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE73815E5AE;
 	Mon, 29 Jul 2024 14:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722262890; cv=none; b=YMOOSEsG2rniI1ZnnmluD7leGGjCCmx2laJvyeX+bWacGtnzKHEvnv2B4BebUZ61uSuSbpMSG3ZkTymHFw/GzEn1R1bwX97a1OOX3nHb2zqFUkQGG753VUmKStuCE1F/Gbq2mJ/Wuy+9enOwLDIv1wmIxIk3Wa8N9oSSf45qI54=
+	t=1722262891; cv=none; b=sNd/0QiyD7YGyLjbV/NDhPzd+BsVvi3z766bU6Y+vFxlaMyPbOrVeRbPMEO+V7nDlO6GdbABIVTkpFYHgMfuNZvlMWPF6Uroc7NJK0qWlLxZw5Jx29yY7QvIv7TqfxAd6ti6KAIfG2k2bvxieICCYJFtbSNDb/dK4Als9FOXLDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722262890; c=relaxed/simple;
-	bh=/isJqhX0wc1gBoR8hJcc/nq5Quca5I5XRhWcTftG2TQ=;
+	s=arc-20240116; t=1722262891; c=relaxed/simple;
+	bh=P+pmlVzFnK87hESczcZph1T5K4wJhP5XFmPR1rv2yNI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LEx2x3Y73axy8kUZbn6C2gcDxzR8h28ml5WLG5Xhj1f+3sdTnegx1iENYnhaqZEO96rLT0o2gytD10kFyQYXYr+vt3hnbDz0zTOpe8zzEO25N7UIYVOadpfnSQrE/dc7hyhYw4pHtrUxb7Z/HG7RygMn5XdGd5/VIEc7VxDpnHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T87FFSHG; arc=none smtp.client-ip=217.70.183.193
+	 MIME-Version; b=ItDMYG8sLv/vx9uEAnW/i2BTNzonIHELW9GZsgsmD8E+c6ywj+13UI1zAvZbFfF6OcdHsbpKV913qEJfi6TkYi6IAaDNCtp7TqpH4/SvuuSUesuU/vINn6b/EeJwrGsd6yeqWPbRa+C+e0um0RHNJyqSL1LQKLb3rkwhS5bgM40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oBQJem4o; arc=none smtp.client-ip=217.70.183.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 319E424000E;
+Received: by mail.gandi.net (Postfix) with ESMTPA id E13D7240006;
 	Mon, 29 Jul 2024 14:21:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1722262886;
+	t=1722262887;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vAf7s/eP3L8mn/lGwD5+87QN5e2WmIXtMVVg3YPEXOQ=;
-	b=T87FFSHGw01O03BzCFNWmLxnA04y+TUXnRmHIkC42hQyIPwfhOOVx/YtqivY7C3kFuipkY
-	ZlufrM/JuG7wHm+P4yaGyH1dtD0y5HQIIWZIBP7GCChJSIblMxN0w22geiysW23qqbNhie
-	pZQI7xeOQmHvXo4WJQpO7PeFPBtZYb652UOIHEHixSiplj3oSWL5nmMWVQAe1/HgVNlBh7
-	073TBU+3iiXul+d/jF5XyJHjbXACUATXJNPH72wZEjX66gKIFgpSCRMT8qTDg/BF5QdzRA
-	1Ntyxp8Wak6Ah83PdQCIt0zxGAWNXpszCC3qwLP9OZ93IduMsQd+Kl6dFxPjsQ==
+	bh=usDe5saxjtuJSjAyDJrinAqDsazax42/56S/Us4E84U=;
+	b=oBQJem4oR/YEugzkh8A/1zsWi6kLEdAfBmpi+W07UIBZg09wnteviVZQSQGfAHBVH5ur4X
+	E9VX7AVVtgv1jLu29qTw3t3I2cZK65CvKmxMoYXms3a0HwZrXojwNK+XYxqECodvhK1SEI
+	Faf43B/q74NxERmyykn57TXFKA++ZRV616bn3x8xOrnymfWp1K48BTIrZpUyvS2FkLpuvL
+	MUIVQACDXqT/inIx76s6qeDhsEC79xkKbHgTLvt4QDkU6q9Fx6IoWVyF058jEEsGjTrOSV
+	54taMjmlvjh/aEAMxfuxbY1qaYKqipcGCBIPExJeB44M4k1q6dVyChtuB8cq1A==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Herve Codina <herve.codina@bootlin.com>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
@@ -58,9 +58,9 @@ Cc: linuxppc-dev@lists.ozlabs.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v1 16/36] soc: fsl: cpm1: tsa: Introduce tsa_serial_get_num()
-Date: Mon, 29 Jul 2024 16:20:45 +0200
-Message-ID: <20240729142107.104574-17-herve.codina@bootlin.com>
+Subject: [PATCH v1 17/36] soc: fsl: cpm1: qmc: Rename QMC_TSA_MASK
+Date: Mon, 29 Jul 2024 16:20:46 +0200
+Message-ID: <20240729142107.104574-18-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240729142107.104574-1-herve.codina@bootlin.com>
 References: <20240729142107.104574-1-herve.codina@bootlin.com>
@@ -73,105 +73,57 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-TSA consumers in CPM1 implementation don't need to know about the serial
-device number used by the TSA component. In QUICC Engine implementation,
-this information is needed.
+QMC_TSA_MASK is a bitfield. The value defined is a specific value of
+this bitfield and correspond to the use of 8bit resolution for the
+routing entry.
 
-Improve the TSA API with tsa_serial_get_num() in order to provide this
-information.
+Be accurate and rename the defined constant to reflect this point.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- drivers/soc/fsl/qe/tsa.c | 56 ++++++++++++++++++++++++++--------------
- drivers/soc/fsl/qe/tsa.h |  3 +++
- 2 files changed, 39 insertions(+), 20 deletions(-)
+ drivers/soc/fsl/qe/qmc.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/tsa.c b/drivers/soc/fsl/qe/tsa.c
-index ffbca329a226..beaa0d3524be 100644
---- a/drivers/soc/fsl/qe/tsa.c
-+++ b/drivers/soc/fsl/qe/tsa.c
-@@ -231,6 +231,39 @@ static bool tsa_is_qe(const struct tsa *tsa)
- 	return IS_ENABLED(CONFIG_QUICC_ENGINE);
- }
+diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
+index 916395745850..721e0770510c 100644
+--- a/drivers/soc/fsl/qe/qmc.c
++++ b/drivers/soc/fsl/qe/qmc.c
+@@ -77,7 +77,7 @@
+ /* TSA entry (16bit entry in TSATRX and TSATTX) */
+ #define QMC_TSA_VALID		(1 << 15)
+ #define QMC_TSA_WRAP		(1 << 14)
+-#define QMC_TSA_MASK		(0x303F)
++#define QMC_TSA_MASK_8BIT	(0x303F)
+ #define QMC_TSA_CHANNEL(x)	((x) << 6)
  
-+static int tsa_qe_serial_get_num(struct tsa_serial *tsa_serial)
-+{
-+	struct tsa *tsa = tsa_serial_get_tsa(tsa_serial);
-+
-+	switch (tsa_serial->id) {
-+	case FSL_QE_TSA_UCC1: return 0;
-+	case FSL_QE_TSA_UCC2: return 1;
-+	case FSL_QE_TSA_UCC3: return 2;
-+	case FSL_QE_TSA_UCC4: return 3;
-+	case FSL_QE_TSA_UCC5: return 4;
-+	default:
-+		break;
-+	}
-+
-+	dev_err(tsa->dev, "Unsupported serial id %u\n", tsa_serial->id);
-+	return -EINVAL;
-+}
-+
-+int tsa_serial_get_num(struct tsa_serial *tsa_serial)
-+{
-+	struct tsa *tsa = tsa_serial_get_tsa(tsa_serial);
-+
-+	/*
-+	 * There is no need to get the serial num out of the TSA driver in the
-+	 * CPM case.
-+	 * Further more, in CPM, we can have 2 types of serial SCCs and FCCs.
-+	 * What kind of numbering to use that can be global to both SCCs and
-+	 * FCCs ?
-+	 */
-+	return tsa_is_qe(tsa) ? tsa_qe_serial_get_num(tsa_serial) : -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL(tsa_serial_get_num);
-+
- static int tsa_cpm1_serial_connect(struct tsa_serial *tsa_serial, bool connect)
- {
- 	struct tsa *tsa = tsa_serial_get_tsa(tsa_serial);
-@@ -271,26 +304,9 @@ static int tsa_qe_serial_connect(struct tsa_serial *tsa_serial, bool connect)
- 	int ucc_num;
- 	int ret;
+ /* Tx buffer descriptor base address (16 bits, offset from MCBASE) */
+@@ -641,7 +641,7 @@ static int qmc_chan_setup_tsa_64rxtx(struct qmc_chan *chan, const struct tsa_ser
+ 		return -EINVAL;
+ 	}
  
--	switch (tsa_serial->id) {
--	case FSL_QE_TSA_UCC1:
--		ucc_num = 0;
--		break;
--	case FSL_QE_TSA_UCC2:
--		ucc_num = 1;
--		break;
--	case FSL_QE_TSA_UCC3:
--		ucc_num = 2;
--		break;
--	case FSL_QE_TSA_UCC4:
--		ucc_num = 3;
--		break;
--	case FSL_QE_TSA_UCC5:
--		ucc_num = 4;
--		break;
--	default:
--		dev_err(tsa->dev, "Unsupported serial id %u\n", tsa_serial->id);
--		return -EINVAL;
--	}
-+	ucc_num = tsa_qe_serial_get_num(tsa_serial);
-+	if (ucc_num < 0)
-+		return ucc_num;
+-	val = QMC_TSA_VALID | QMC_TSA_MASK | QMC_TSA_CHANNEL(chan->id);
++	val = QMC_TSA_VALID | QMC_TSA_MASK_8BIT | QMC_TSA_CHANNEL(chan->id);
  
- 	spin_lock_irqsave(&tsa->lock, flags);
- 	ret = ucc_set_qe_mux_tsa(ucc_num, connect);
-diff --git a/drivers/soc/fsl/qe/tsa.h b/drivers/soc/fsl/qe/tsa.h
-index d9df89b6da3e..da137bc0f49b 100644
---- a/drivers/soc/fsl/qe/tsa.h
-+++ b/drivers/soc/fsl/qe/tsa.h
-@@ -39,4 +39,7 @@ struct tsa_serial_info {
- /* Get information */
- int tsa_serial_get_info(struct tsa_serial *tsa_serial, struct tsa_serial_info *info);
+ 	/* Check entries based on Rx stuff*/
+ 	for (i = 0; i < info->nb_rx_ts; i++) {
+@@ -677,7 +677,7 @@ static int qmc_chan_setup_tsa_32rx(struct qmc_chan *chan, const struct tsa_seria
  
-+/* Get serial number */
-+int tsa_serial_get_num(struct tsa_serial *tsa_serial);
-+
- #endif /* __SOC_FSL_TSA_H__ */
+ 	/* Use a Rx 32 entries table */
+ 
+-	val = QMC_TSA_VALID | QMC_TSA_MASK | QMC_TSA_CHANNEL(chan->id);
++	val = QMC_TSA_VALID | QMC_TSA_MASK_8BIT | QMC_TSA_CHANNEL(chan->id);
+ 
+ 	/* Check entries based on Rx stuff */
+ 	for (i = 0; i < info->nb_rx_ts; i++) {
+@@ -713,7 +713,7 @@ static int qmc_chan_setup_tsa_32tx(struct qmc_chan *chan, const struct tsa_seria
+ 
+ 	/* Use a Tx 32 entries table */
+ 
+-	val = QMC_TSA_VALID | QMC_TSA_MASK | QMC_TSA_CHANNEL(chan->id);
++	val = QMC_TSA_VALID | QMC_TSA_MASK_8BIT | QMC_TSA_CHANNEL(chan->id);
+ 
+ 	/* Check entries based on Tx stuff */
+ 	for (i = 0; i < info->nb_tx_ts; i++) {
 -- 
 2.45.0
 
