@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-266146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B9493FBAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:45:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B429093FBAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37EA61C22A30
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:45:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 358D7B22D8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DFC18C336;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6CD18C341;
 	Mon, 29 Jul 2024 16:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8O0SRMq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQESavfQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC5A139CEF
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC0180C0C;
+	Mon, 29 Jul 2024 16:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722271357; cv=none; b=PW60jhNCSbFipdFcDvAaa9EO9ti5t9bHkrPQrbmhQ15H0lmrxmT7D6dt0q9vd2fEzd+wfquSI1ReWIdZAXEeYXo0xOB9saOgKQtdHG8zSz6FLrryJkP+pUz8Hndw2hy9PMiiseipL+miHA1LJPO/933LCUtsE4lw3gcvPGZUjco=
+	t=1722271357; cv=none; b=mM8Or9hXNTt1Rh3KJt3GaGc5mz1w8PCGwljGHI0MXNMDcNX4QnMuPbvV4l2zUsCmP9ysEtvOCxFxekm5qrbbPr0CbaqKKmwTR9J0Cec/GOIo1tjRUHaZY8hxNifdRF61o6/kHqbuWlAeaiGkv2eufrKbWuMewWR+I9nlKz5aPAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722271357; c=relaxed/simple;
-	bh=nCnPffQC0wgQl4iUSLFuXT0GVZKZigWkCmO8K+HKrV0=;
+	bh=mA3Plo9rccbKR8tQpMvqb5/37K14bOyxIOzFzkCyo2w=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=DTmU4HHHNGwdlA9JwlpKkgBhW1gZYfDL/1I03I+oRB8mall2DzyYXDz2ZzvhX/pJek2FPGeiFhH/hUPVPPo9gcogoyiigkalKR3oj3z7yh+K337b+ETm1atcmnWld0xj+LeLpi24ACT5g7wEnbVjU6ArheW7lB0JBCcFlXeXc1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J8O0SRMq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 147D5C4AF0A;
+	 In-Reply-To:To:Cc; b=n2zBVYRb9rJXungcv0a5DZWpPzN7Gas+AuKrPp28DZYTupwNCShTaNkpqBJSVDo4aZsyw66Zi2vC9HqFCKBim2WwlEtncfwSdJsVLGkex9h18khp7Pd3DwjMIUObyh7tDEvEeAO1j00okG5v7Uq3Kceh5i6gRWDh3MxeZJx0Fgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQESavfQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 219B9C4AF09;
 	Mon, 29 Jul 2024 16:42:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722271357;
-	bh=nCnPffQC0wgQl4iUSLFuXT0GVZKZigWkCmO8K+HKrV0=;
+	bh=mA3Plo9rccbKR8tQpMvqb5/37K14bOyxIOzFzkCyo2w=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=J8O0SRMqSIldPgMelk9OHwXBycOQ4m+0kniUpxjRCPApfQlOmb/fQXwgyGTP+jEnx
-	 oCnb7I2czDYO5X8g6yRNj17vWWgg2HTfpmsWlANAWF1amgJsNc1i189PwwnoyXgq9z
-	 vfaE5e/SZ0b7i9bKXHmQ94bF4RulgtIO/G/8ErZr1Oh9g/vVZsBYnr2AUpEUnAlMuh
-	 bZcpLTeuKFPSo0x0zbTaagjkmK0hiwnKHDqfAv8oIRXI75YRa26gqC6zGhU1DxJV1K
-	 MGaTsQJDvWJKt2Tr53LdtC0Gzx3+08E1UTDzBlqNVsP1JNwFMlqEeafb0ELYqw07Bd
-	 E4iAx6hEGQW7A==
+	b=FQESavfQWIyHKftqPvTmy4wVhUA6HIJqwcdczB7gzKs7W9HP4VgXBcAvnS2OY1QPQ
+	 6v8azN0AnBdvEUaiuvvYn24UYpSAPhOt9Kc8PnA5pAQgRzOyjZDqBpRpAggC47L+YO
+	 3pDtCbTERg/BZjIP98WKxyLB+Jl8i0jRFbFjiovwHjjJOglSPdvIoPPigoU6llsN7p
+	 NnUKMTJeRMcEWdczEcxBDiNNs1O1d1p7FYZtvzItkwiDmtNqDhaPHf3wXrrW8U4yYI
+	 kgmuh8yjEhzjRpHcoAw7LVo1omVPzA9Do3we2wqTVe6+zyxFoijU6kc6a1Jy9HiSUh
+	 MFjtM1ssSTzFQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id F3C34C43338;
-	Mon, 29 Jul 2024 16:42:36 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0CA11C43445;
+	Mon, 29 Jul 2024 16:42:37 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,35 +51,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [GIT PULL] RISC-V Patches for the 6.11 Merge Window, Part 2
+Subject: Re: [GIT PULL] sysctl constification changes for v6.11-rc1
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172227135699.3603.496634508586968231.git-patchwork-notify@kernel.org>
-Date: Mon, 29 Jul 2024 16:42:36 +0000
-References: <mhng-d1533559-79a3-401a-8eee-a743b80b3bb2@palmer-ri-x1c9>
-In-Reply-To: <mhng-d1533559-79a3-401a-8eee-a743b80b3bb2@palmer-ri-x1c9>
-To: Palmer Dabbelt <palmer@rivosinc.com>
+ <172227135704.3603.7348565051958076479.git-patchwork-notify@kernel.org>
+Date: Mon, 29 Jul 2024 16:42:37 +0000
+References: <20240724210014.mc6nima6cekgiukx@joelS2.panther.com>
+In-Reply-To: <20240724210014.mc6nima6cekgiukx@joelS2.panther.com>
+To: Joel Granados <j.granados@samsung.com>
 Cc: linux-riscv@lists.infradead.org, torvalds@linux-foundation.org,
- linux-kernel@vger.kernel.org
+ linux@weissschuh.net, mcgrof@kernel.org, kees@kernel.org, kuba@kernel.org,
+ david@fromorbit.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linux-security-module@vger.kernel.org, netfilter-devel@vger.kernel.org,
+ coreteam@netfilter.org, bpf@vger.kernel.org, kexec@lists.infradead.org,
+ linux-hardening@vger.kernel.org, bridge@lists.linux.dev,
+ mptcp@lists.linux.dev, lvs-devel@vger.kernel.org, linux-rdma@vger.kernel.org,
+ rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org,
+ linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com
 
 Hello:
 
 This pull request was applied to riscv/linux.git (for-next)
 by Linus Torvalds <torvalds@linux-foundation.org>:
 
-On Sat, 27 Jul 2024 06:29:14 -0700 (PDT) you wrote:
-> merged tag 'riscv-for-linus-6.11-mw1'
-> The following changes since commit f557af081de6b45a25e27d633b4d8d2dbc2f428e:
+On Wed, 24 Jul 2024 23:00:14 +0200 you wrote:
+> Linus
 > 
->   Merge tag 'riscv-for-linus-6.11-mw1' of git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux (2024-07-20 09:11:27 -0700)
-> 
-> are available in the Git repository at:
+> Constifying ctl_table structs will prevent the modification of
+> proc_handler function pointers as they would reside in .rodata. To get
+> there, the proc_handler arguments must first be const qualified which
+> requires this (fairly large) treewide PR. Sending it in the tail end of
+> of the merge window after a suggestion from Kees to avoid unneeded merge
+> conflicts. It has been rebased on top of 7a3fad30fd8b4b5e370906b3c554f64026f56c2f.
+> I can send it later if it makes more sense on your side; please tell me
+> what you prefer.
 > 
 > [...]
 
 Here is the summary with links:
-  - [GIT,PULL] RISC-V Patches for the 6.11 Merge Window, Part 2
-    https://git.kernel.org/riscv/c/c9f33436d85b
+  - [GIT,PULL] sysctl constification changes for v6.11-rc1
+    https://git.kernel.org/riscv/c/b485625078ca
 
 You are awesome, thank you!
 -- 
