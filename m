@@ -1,137 +1,154 @@
-Return-Path: <linux-kernel+bounces-266275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FCA793FD73
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:36:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F002493FD76
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF43F1F22F29
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:36:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C202B2106B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A06186E2C;
-	Mon, 29 Jul 2024 18:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84961862BB;
+	Mon, 29 Jul 2024 18:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKOsipiW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="BWH1A0T/"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDFE1419B5;
-	Mon, 29 Jul 2024 18:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB89F16B735
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722278201; cv=none; b=pb6cLe/t1PNndtzWrXx8Vt9nLRA+h4Ox0afIHu0iOXWUXtGa9eyMlDFbP59GvNlCYy6P3l47ha158SYITYtyUB37UqlfMilsmk97LE9FoUeBnEShizKFTtvnbqfbu8FKVtAr21TQ5tBYpoM3axB6x4YULJ1eN4htExAXeEwR2N4=
+	t=1722278214; cv=none; b=P+5SSGhZ/BZshUGfnVrRfhasTEdzSgNPTLkBYoyuLbjJTjAj9mNKsii5+4dfgV28iDpcpg4XWkJ4U4rAUox9X3T5535lsKGq6E5pt+GwbfccyR6LB3lh9rAFSHZPtDPx7Zh/QjJVxkRxQJ148p58Ui3aWRrKKGD5A8BKw7Ytfa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722278201; c=relaxed/simple;
-	bh=dOxVPTqHWx0tgCDJzrCOgB2DzxZOygqH997rgNkim6c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tqcihrbdYD+OSrFyYPCjmja+m8AA565zQ9FJbUyn/XPhBhSKCRA5oFePSi9VmaWeVL72pu7+SVL+2WTWHCRtsW7OwdUDDjy9kj45Eq53yJG4LLXxtZ8SSedlxTAdAuPqDw6v8gtr8hzgPKkHyKIM6VX8XTglHYLdSzWrK8s5Rlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKOsipiW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92BCBC32786;
-	Mon, 29 Jul 2024 18:36:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722278200;
-	bh=dOxVPTqHWx0tgCDJzrCOgB2DzxZOygqH997rgNkim6c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qKOsipiW/R2Jzl3WHrSS6dsXQP0IomZlCZNtPlTQCmKXXzfTX4w/RRErRTzqB11AG
-	 YCHlHtkpFZCBebqwqQNPikvWrXS8mckFQod1aNZL72TRP50O0XCdG1iF9b2Q3nGyR5
-	 /pfjbVgjFys7ozrIBIyv0ehAvXn0B2NI4Db3Ou4pTyhXg9+JeSMy1lWXr7q1eB6yIl
-	 K717Gud9Tb0ECVKlKqKDKLHjY//sfFecyFR8XIbVfKKkyQpThf5tl7/wtsh1lmaPjs
-	 Crci3YMJ8E8V4l/POYPEl3w1/Td8+O9cFOb7Ewc6Ol9XhchTYAxWn+jkikFaDi+iuW
-	 akLVZLazQyhmw==
-Message-ID: <77a21001-09b1-48c3-8aa7-a32ed83e8893@kernel.org>
-Date: Mon, 29 Jul 2024 20:36:34 +0200
+	s=arc-20240116; t=1722278214; c=relaxed/simple;
+	bh=fr+JfuJm+bjiKMoLBud2oV/F/QCCmRiMLsIYsCUX72w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qQgwQ/y1fXvof8PQFKDZu7FK5G8IBCYNCiZQFUC5+Aq/enbToS15Za5o8pSf8FkyRHI4C7v7Ru5F8MgziJniHp/dBd6NiBketzR7XthcH17NZZ6lEm2J5yKJvhfInLWiYBVfw3/tGhdYYKB0far8q9QS4wWrtSZTDP0Ci6MOzNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=BWH1A0T/; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=WM7j
+	/Nz0IYoOo0rJpSmA6WecCCjMJ2XQqYM1ZPm+cZg=; b=BWH1A0T/X10Z15OpscZV
+	PoTDIbPbGyi9GLOQEdtnECkh4g6xwzs1WWj9FExVAKf3bf0SNoso/g12l7071vx0
+	nz2YlxMt5biXIGSPyfYU7ZYjMPoOQlUHU/nJl+27TDV1HGuW3IlU1bSHofVypDTL
+	chJQDC9l1qPar4p41MSJ0f8MZ1FE3qoyKQ4sOGj9YiqH+90f4hUgG63+yWNAm9G4
+	Ihtn4SeIpCKgabV8xjVLUC3wxfZsHXinnigDiFgAWafJGETtoWf1k7glPyAUr8oD
+	v1Nm9ve3UYaNX8maY5SFpw7heebwYZICMNIdTGkeQ3vo9sak1mfsZuOWNw7qx5e8
+	5w==
+Received: (qmail 4181966 invoked from network); 29 Jul 2024 20:36:46 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Jul 2024 20:36:46 +0200
+X-UD-Smtp-Session: l3s3148p1@FiKyJGceChBtKPLj
+Date: Mon, 29 Jul 2024 20:36:45 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Wolfram Sang <wsa@kernel.org>, Jean Delvare <khali@linux-fr.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] i2c: smbus: Send alert notifications to all devices
+ if source not found
+Message-ID: <ZqfhPffOTu53bfwU@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, Wolfram Sang <wsa@kernel.org>,
+	Jean Delvare <khali@linux-fr.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+References: <20220110172857.2980523-1-linux@roeck-us.net>
+ <20220110172857.2980523-3-linux@roeck-us.net>
+ <ZqakaAn3f9Kg6Lgy@shikoro>
+ <7ad68f35-2e90-41b7-a95d-efe5f7db8f3b@roeck-us.net>
+ <ZqdLVg6IVTjsTWb4@shikoro>
+ <3adf0b8f-2e12-413a-a76f-866e56bf096c@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] soc: qcom: smd-rpm: add qcom,smd-rpm compatible
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
- Stephan Gerhold <stephan@gerhold.net>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240729-fix-smd-rpm-v1-0-99a96133cc65@linaro.org>
- <20240729-fix-smd-rpm-v1-2-99a96133cc65@linaro.org>
- <6c5acb84-0d09-4a87-adb2-d0b10c67b98d@kernel.org>
- <CAA8EJppO_fohT_NWJ1P95YYejgAnZQdzrBpz7Ooceiu-t_MkQg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAA8EJppO_fohT_NWJ1P95YYejgAnZQdzrBpz7Ooceiu-t_MkQg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="SatQlZRllKaPm3CA"
+Content-Disposition: inline
+In-Reply-To: <3adf0b8f-2e12-413a-a76f-866e56bf096c@roeck-us.net>
 
-On 29/07/2024 19:49, Dmitry Baryshkov wrote:
-> On Mon, 29 Jul 2024 at 18:04, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 29/07/2024 13:04, Dmitry Baryshkov wrote:
->>> The device node has the compatible string, so the glink channel name
->>> isn't used for modprobing. Add the qcom,smd-rpm compatible to let the
->>> module be automatically loaded when required.
->>
->> So autoloading is not working? I don't understand whether you are fixing
->> real issue or just making something complete based on your feelings.
-> 
-> Yes, autoloading of smd-rpm is not working since bcabe1e09135, kernel
-> looks for qcom,rpm-FOO rather than the rpmsg:rpm_requests.
-> The obvious fix is to revert the commit, but I don't think that
-> listing all the chipsets there is a correct thing.
-> 
 
-OK, to me it wasn't so sure whether there is a real issue. Anyway, the
-reason behind adding common compatible is not to fix autoloading but be
-explicit that all of devices follow some sort of FW<->OS protocol.
+--SatQlZRllKaPm3CA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
 
+> I looked into the code again. The sequence is (or is supposed to be):
+>=20
+> 1st loop:
+> 	if (!alert_pending)
+> 		break;
+> 	smbus_do_alert()
+> 	if (failed at same address)
+> 		smbus_do_alert_force()
+>=20
+> 2nd loop:
+> 	if (!alert_pending)
+> 		break;
+> 	smbus_do_alert()
+> 	if (failed at same address)
+> 		break;
+>=20
+> I think what you are suggesting is
+=2E..
+
+What I am suggesting is more like this:
+
+1st loop:
+
+ 	smbus_do_alert()
+	//impossible to have same address on first run, so go to 2nd loop
+
+2nd loop:
+
+ 	smbus_do_alert()
+ 	if (failed at same address)
+ 		smbus_do_alert_force()
+		break;
+
+As I understand it, your sequence is missing "my" 1st loop with the
+invalid address, so you will end up having 3 loops altogether?
+
+The code I am suggesting is bascially yours without the retries
+variable:
+
+	status =3D device_for_each_child(&ara->adapter->dev, &data,
+				       smbus_do_alert);
+	if (data.addr =3D=3D prev_addr && status !=3D -EBUSY) {
+		device_for_each_child(&ara->adapter->dev, &data,
+				      smbus_do_alert_force);
+		break;
+	}
+	prev_addr =3D data.addr;
+
+Makes sense or am I missing something?
+
+
+--SatQlZRllKaPm3CA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAman4ToACgkQFA3kzBSg
+KbZQvw/9F5lbiww0Xfg7WZZfvQ7GcaO7jV4QqnCLnyqiE9gBqQyCvpOdTawdwvUi
+j4JuArRTYTwbQiwPW5eJvj6P8LvGdprqnT/8/y5fW8MX27UG1ARDVvgzKrvyCzWC
+lJ2RxHGgd/3wyoVBLDJIx1PzvYPGDd5dhmRHqD+rNnanDHiKeFxVq6yxVvSpv0bV
+zP3zDLXh/pDabo4/TakQdEe2kpM8GZw2MkKwcChkt3LCae6NTWJNicnXf20BNIZO
+Na3jr13V3VXONsDZMrGvfqK/c7x8+EC5Fg+lRxIwEty+5W6tGZkpKZZHrN87hNlH
+czh8z0I6xxsW5J/++WKM3ODb37SytmbNrS3VhftvHz76Gq8qitMmt5mwjKbxsiat
+cNtqGb8EB0YzThMRu8M2Hcyes3AkxHPOGaZwVl91JLrG4YO+rUYL/n10H2TcvIBz
+YGNCDl7yiwNvQBIs48LCdNIrLjYxzugEpWGoNH2f20PvGqhmgQRfyd8nNYXVcVQ2
+sxV+KAVnPL8cvtFALu4Ix2yN6EKkaKj1NJA9tx4cULuXR7EUREO/pbD4caF9Khp/
+5Z05Pr2v/hF3hRdYdf1hq6376LGk/A9TpZgbKYquCf41Z4QG5Ta7HYaz02NwSJkE
+tB/zv4vG2l/Y2RWHb9pxGA8a5We6zsOeQah+YtHK7+lxgdWoCIM=
+=LXkU
+-----END PGP SIGNATURE-----
+
+--SatQlZRllKaPm3CA--
 
