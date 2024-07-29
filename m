@@ -1,107 +1,420 @@
-Return-Path: <linux-kernel+bounces-266253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72EBB93FD37
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:16:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A7693FD38
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33A43283505
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:16:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B111283529
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F96181B83;
-	Mon, 29 Jul 2024 18:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82777183087;
+	Mon, 29 Jul 2024 18:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PtgIEXHr"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u3XSBnSQ"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6E87FBA8
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6DC78274
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722276983; cv=none; b=V/L9JIpHJaZvL171EyGQS0avUGdJSatnuSVJjt7Zqiyth+DQjTFPmroU4tiPoJ3xSytEx7jDZXLukmr/Goa2yQmbtNrADHwAOY1sV+RLnvFjhp4MNLtlNtkXA7onlnHh110my4DX77kdHSqxQ4ONgEhWARKXAA9dEE4r1QNHVIU=
+	t=1722276994; cv=none; b=Le2h5fWKVjNHfyzwoNC4UgyoLBQzp/RmRnOxluXQ6/NqFULGKlonLYG2a0hyMxwDcZMwSpMeJfmdnvDEiEzwn4GV5YjJbrpKSNMqgctJLW2bZd+f/qG7M/hqZ5METVRhRlipV1Iu1PUQc6b15M5kUmJmzT9jwFqMvtL77Y5Gf6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722276983; c=relaxed/simple;
-	bh=LIl46PKiTuHOChuDuKYcVHWM3SfkOTD1oJCyG3S2s8g=;
+	s=arc-20240116; t=1722276994; c=relaxed/simple;
+	bh=t6B1LA4zqZ8ueYk8CYBnXqH9l78JsoKEpJUtrVyMUcs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GWCbEX318KEH4Wbur4lBTUqUm1s9VGAHk5z8GCo6tOdJkIa506qlTBKvFgzRPGbxFLT9o5UT0/7OP4UKOWXFfcv+WW/WdET3zRA1z18KGEz0RskZ0vJN+STd5y7j+ku4htoiUJ6Y25Ox6X89EQ4/mFWBzIieyISK5PUhS5AdI1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PtgIEXHr; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-36868fcb919so1583844f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:16:21 -0700 (PDT)
+	 To:Content-Type; b=GpBbOWB5892ZigIsxiw85WbyIjVraOahDL3rQsIGKNQexyC3DHT31sthgggLEq0BeY4u9nKNf8sh/K8+/YIFPY5eD0QUsy9F6s08CbZ51iBa1eQt3vmEIYRVZQkNjZ+GrRpqAgZMlkmHYnoO33iwd9ceUOP9wbNcf0aNLNujIVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u3XSBnSQ; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-44fdc70e695so43631cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:16:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1722276980; x=1722881780; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jB5fkTKm2Ww7Qd11d11d2YKMGg7fRbgq/CgiCr/mNrM=;
-        b=PtgIEXHrsC/ambMOc4KlVO6WKzcp5n5TPO2WBAi2Yyafb+PNaMSij3d138Q3gU/EBU
-         PpXRZZYF52v6dkv0w65M2TLLbVzL6GvruyQusx0oR9Pz3zi8KGEfM75AAvNpK+/y7IKB
-         OEVTbfLeIta81i1ADMZ+gN+6ATpbFKGTweoA8=
+        d=google.com; s=20230601; t=1722276991; x=1722881791; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wWiPyvyu7ecXoQvNdyQ0e4PXq8L8deC2fhQOyAGRWdA=;
+        b=u3XSBnSQ/VvpiYDa877x1PKuP7ZQBf6DXrkxsZzCELqPd+cZREPNC6bWShl9DZT7Mw
+         bH06qvLthSLnsZMCOUwdfi5GFIWFWoUreoGXrPvBkUAdCPsbpiJ2KLnGMMuy9a250quw
+         qgw3tmADudf17GzknkySLig8ekrGLGDSciYfUP6PiKZfI5Wxd/t0V0FpW6A/JEX4SuNS
+         khJ0dJR4XHMplSqiExcHuLBTq0eWSPkSJgHGN6yNELnHdT6vfp+cC1/fD/uMS8vusVYo
+         8VJs+l32Uz91u5w2agSlRw3ndL4r6dCZdpzaepLhsrT2UazVq5vA2QtzE+Cd3mkTYtwl
+         gk+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722276980; x=1722881780;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jB5fkTKm2Ww7Qd11d11d2YKMGg7fRbgq/CgiCr/mNrM=;
-        b=vjc0vd/y5x/9QwwY7w244METzhDy2JR+Z6yfBtlMQMugRs4wyqMOS/bDQdhOMhF/rP
-         d3NBzZwgzl60ddVEmE14iPzi7sRjc+Zjp8K1A2hbcbRerCRDomr9Q9sajWA4gIgV63xN
-         SuFx/fSQcblBKSccADaWt7UU9Fpn9JQ+bh+guX0mKpeEPXyAGTZzwPRGiwqmJhtpdyIr
-         oSik/2RjVIJo1vD7nvugSllioQZOUfQp9G9CSO22A2OEB8/0bvOJ9oeZ5OoQ6ZAAWNru
-         7HSHoB+e60W3YP6zK9okL88E7KLYnJ8oh+EaSCEt5xL4mjMZPw2zGsAE1R8OAPvjgEbm
-         mhcA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmj0630wb1n3qUp9X2S47k3kX0ufHbSPdjJvTO9BD6SVky2V1bvjWv72THr4fKeDWBIgPpJfjkJYGtoQpWkyMECGFb1cTa9777K/o1
-X-Gm-Message-State: AOJu0YxQrwoSd1JniIPk8deq4TFvX91EQ7TU9pKHM6Dx0T7kC11N0+g9
-	o32a45GzkQbkJ0PqhW/0ZFr+qAbL9FR27wIPPvDe8VGFXv1198YDJW35JBOOO2xHg2kkk0DLgrc
-	gM8Dl8A==
-X-Google-Smtp-Source: AGHT+IGRiAVDzH4j8Xp/TFvq8Hn+AQXvu+/ovfHzd8KnZH/1oSSgDto65qtgFr1D2zHUptHArgAoTw==
-X-Received: by 2002:adf:cf12:0:b0:369:b838:9155 with SMTP id ffacd0b85a97d-36b5d353b7cmr5626126f8f.40.1722276979709;
-        Mon, 29 Jul 2024 11:16:19 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63b59c95sm6192407a12.50.2024.07.29.11.16.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jul 2024 11:16:19 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5ab2baf13d9so5678582a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:16:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUCDP78aYSnj0AqWH2tgCl398FEffZ02IHWgCYn+ZuxmMlPVoJBx8qX4Sh7LZw3vZ96ZyiubPqczBTzYpV+vBiDxO+Ljn3IKf1lyjMk
-X-Received: by 2002:a50:a695:0:b0:58e:4e62:429b with SMTP id
- 4fb4d7f45d1cf-5b0224ceb1cmr5305382a12.33.1722276978788; Mon, 29 Jul 2024
- 11:16:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722276991; x=1722881791;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wWiPyvyu7ecXoQvNdyQ0e4PXq8L8deC2fhQOyAGRWdA=;
+        b=TusC/MsQHFRvw+i0kBr0inBdDPPmM9aImP1gC2OFaYMBl6QRUwzPZu+78X+d5fcdIj
+         vLis9u8AOcAiospouBtfDjGOPxV6Xme8H0k95XOz8keFJMJ95jhoRYaism/2CorlA2am
+         GiJe/eJDtTWb9RwLuWmpsjrw87n/7khX7aPCT0cSkFj7r2uXdlKNZOUHNRKF8OugCq1W
+         3rTkS+ICWTudUMt7OcD8v+gEL1+W9TrSzXGye5uc5C7nIfHa0p2S11bY5kJPJ7El+0/s
+         OcjFJAUw+YOI2Nr947Nd3uzJKu4FLICLpuEtP7CzS4uIjJjpnV8OIxc5MS0WhHaYuYYI
+         kWSg==
+X-Forwarded-Encrypted: i=1; AJvYcCXG6yPt0UjKzmR2tD5Z41XXWW9ZN8XEolOmaZbVAIWDiBwiCRE0hQr5AORV1dMuiSUUcLD3Qe/lfAhD9vFCtLx1C4Z/pTg+2+aLRNnK
+X-Gm-Message-State: AOJu0YxysGcb2KcYFCQAIHwrkERubIrwDtpunqdwx9hzocykRIIc8lfS
+	OiFGB+hITv6wInmhgRblHK9znpREaYLJSpb3EAPi2I6IDVR67PfCxmSLuheIQgEcmWknwW/vo0R
+	19/6tTJNXgCQ5LDIYEkSsWJLWD9GEAaOYXVT9
+X-Google-Smtp-Source: AGHT+IGZ+WOUgJVVPyty8rkhJWaAzIkfT+8IeGbVFcGg+BX4EPxm6yPAXlhVQGUlQJrbAKDRWJzL6BrRIKSotArZ1Xc=
+X-Received: by 2002:a05:622a:1829:b0:447:e59b:54eb with SMTP id
+ d75a77b69052e-45032cdd446mr833191cf.26.1722276991339; Mon, 29 Jul 2024
+ 11:16:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a7eb34e0-28cf-4e18-b642-ea8d7959f0c7@I-love.SAKURA.ne.jp>
- <2024072944-appraisal-panning-a0b1@gregkh> <f9b4ff23-ee3e-418f-b65d-c40fe28fbba8@I-love.SAKURA.ne.jp>
- <2024072930-badge-trilogy-c041@gregkh> <Zqe76gATYUcDVLaG@google.com>
- <CAHk-=wgweFg4hOus9rhDEa437kpkdV88cvmOHeZWwhgSa5ia1g@mail.gmail.com> <ZqfYfIp3n7Qfo1-Q@google.com>
-In-Reply-To: <ZqfYfIp3n7Qfo1-Q@google.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 29 Jul 2024 11:16:02 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiT8RzFUVXe=r3S9dfCpV+FhARgtb5SxLDSOKCJKCLOZA@mail.gmail.com>
-Message-ID: <CAHk-=wiT8RzFUVXe=r3S9dfCpV+FhARgtb5SxLDSOKCJKCLOZA@mail.gmail.com>
-Subject: Re: [PATCH (resend)] Input: MT - limit max slots
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Henrik Rydberg <rydberg@bitmath.org>, 
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20240729181356.2866845-1-irogers@google.com>
+In-Reply-To: <20240729181356.2866845-1-irogers@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 29 Jul 2024 11:16:20 -0700
+Message-ID: <CAP-5=fXsOrpeLS1fE8git8FL1bjUZArE64F00OaBQPgYiKJFLg@mail.gmail.com>
+Subject: Re: [PATCH v1] perf cap: Tidy up and improve capability testing
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@arm.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, Leo Yan <leo.yan@linux.dev>, 
+	Changbin Du <changbin.du@huawei.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 29 Jul 2024 at 10:59, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+On Mon, Jul 29, 2024 at 11:14=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
+ote:
 >
-> Can I write a gigabyte of data to disk? Terabyte? Is petabyte too much?
-> What if I don't have enough physical disk. Do we "fix" write() not to
-> take size_t length?
+> Remove dependence on libcap. libcap is only used to query whether a
+> capability is supported, which is just 1 capget system call.
+>
+> If the capget system call fails, fall back on root permission
+> checking. Previously if libcap fails then the permission is assumed
+> not present which may be pessimistic/wrong.
+>
+> Add a used_root out argument to perf_cap__capable to say whether the
+> fall back root check was used. This allows the correct error message,
+> "root" vs "users with the CAP_PERFMON or CAP_SYS_ADMIN capability", to
+> be selected.
+>
+> Tidy uses of perf_cap__capable so that tests aren't repeated if capget
+> isn't supported, to reduce calls or refactor similar to:
+> https://lore.kernel.org/lkml/20240729004127.238611-3-namhyung@kernel.org/
+>
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/Makefile.config  | 11 -------
+>  tools/perf/builtin-ftrace.c | 44 ++++++++++++--------------
+>  tools/perf/util/Build       |  2 +-
+>  tools/perf/util/cap.c       | 63 ++++++++++++++++++++++++++-----------
+>  tools/perf/util/cap.h       | 23 ++------------
+>  tools/perf/util/symbol.c    |  8 ++---
+>  tools/perf/util/util.c      | 12 +++++--
+>  7 files changed, 81 insertions(+), 82 deletions(-)
+>
+> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> index a4829b6532d8..a9517272f80c 100644
+> --- a/tools/perf/Makefile.config
+> +++ b/tools/perf/Makefile.config
+> @@ -1018,17 +1018,6 @@ ifndef NO_LIBZSTD
+>    endif
+>  endif
+>
+> -ifndef NO_LIBCAP
+> -  ifeq ($(feature-libcap), 1)
+> -    CFLAGS +=3D -DHAVE_LIBCAP_SUPPORT
+> -    EXTLIBS +=3D -lcap
+> -    $(call detected,CONFIG_LIBCAP)
+> -  else
+> -    $(warning No libcap found, disables capability support, please insta=
+ll libcap-devel/libcap-dev)
+> -    NO_LIBCAP :=3D 1
+> -  endif
+> -endif
+> -
+>  ifndef NO_BACKTRACE
+>    ifeq ($(feature-backtrace), 1)
+>      CFLAGS +=3D -DHAVE_BACKTRACE_SUPPORT
+> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+> index eb30c8eca488..435208288d24 100644
+> --- a/tools/perf/builtin-ftrace.c
+> +++ b/tools/perf/builtin-ftrace.c
+> @@ -560,6 +560,23 @@ static void select_tracer(struct perf_ftrace *ftrace=
+)
+>         pr_debug("%s tracer is used\n", ftrace->tracer);
+>  }
+>
+> +static bool check_ftrace_capable(void)
+> +{
+> +       bool used_root;
+> +
+> +       if (perf_cap__capable(CAP_PERFMON, &used_root))
+> +               return true;
+> +
+> +       if (!used_root && perf_cap__capable(CAP_SYS_ADMIN, &used_root))
+> +               return true;
+> +
+> +       pr_err("ftrace only works for %s!\n",
+> +               used_root ? "root"
+> +                         : "users with the CAP_PERFMON or CAP_SYS_ADMIN =
+capability"
+> +               );
+> +       return -1;
+> +}
+> +
+>  static int __cmd_ftrace(struct perf_ftrace *ftrace)
+>  {
+>         char *trace_file;
+> @@ -569,18 +586,6 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace)
+>                 .events =3D POLLIN,
+>         };
+>
+> -       if (!(perf_cap__capable(CAP_PERFMON) ||
+> -             perf_cap__capable(CAP_SYS_ADMIN))) {
+> -               pr_err("ftrace only works for %s!\n",
+> -#ifdef HAVE_LIBCAP_SUPPORT
+> -               "users with the CAP_PERFMON or CAP_SYS_ADMIN capability"
+> -#else
+> -               "root"
+> -#endif
+> -               );
+> -               return -1;
+> -       }
+> -
+>         select_tracer(ftrace);
+>
+>         if (reset_tracing_files(ftrace) < 0) {
+> @@ -885,18 +890,6 @@ static int __cmd_latency(struct perf_ftrace *ftrace)
+>         };
+>         int buckets[NUM_BUCKET] =3D { };
+>
+> -       if (!(perf_cap__capable(CAP_PERFMON) ||
+> -             perf_cap__capable(CAP_SYS_ADMIN))) {
+> -               pr_err("ftrace only works for %s!\n",
+> -#ifdef HAVE_LIBCAP_SUPPORT
+> -               "users with the CAP_PERFMON or CAP_SYS_ADMIN capability"
+> -#else
+> -               "root"
+> -#endif
+> -               );
+> -               return -1;
+> -       }
+> -
+>         trace_fd =3D prepare_func_latency(ftrace);
+>         if (trace_fd < 0)
+>                 goto out;
+> @@ -1197,6 +1190,9 @@ int cmd_ftrace(int argc, const char **argv)
+>         INIT_LIST_HEAD(&ftrace.graph_funcs);
+>         INIT_LIST_HEAD(&ftrace.nograph_funcs);
+>
+> +       if (!check_ftrace_capable())
+> +               return -1;
+> +
+>         signal(SIGINT, sig_handler);
+>         signal(SIGUSR1, sig_handler);
+>         signal(SIGCHLD, sig_handler);
+> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+> index 0f18fe81ef0b..91ce0ab4defc 100644
+> --- a/tools/perf/util/Build
+> +++ b/tools/perf/util/Build
+> @@ -220,7 +220,7 @@ perf-util-$(CONFIG_ZLIB) +=3D zlib.o
+>  perf-util-$(CONFIG_LZMA) +=3D lzma.o
+>  perf-util-$(CONFIG_ZSTD) +=3D zstd.o
+>
+> -perf-util-$(CONFIG_LIBCAP) +=3D cap.o
+> +perf-util-y +=3D cap.o
+>
+>  perf-util-$(CONFIG_CXX_DEMANGLE) +=3D demangle-cxx.o
+>  perf-util-y +=3D demangle-ocaml.o
+> diff --git a/tools/perf/util/cap.c b/tools/perf/util/cap.c
+> index c3ba841bbf37..1ef8af0ccde9 100644
+> --- a/tools/perf/util/cap.c
+> +++ b/tools/perf/util/cap.c
+> @@ -3,27 +3,52 @@
+>   * Capability utilities
+>   */
+>
+> -#ifdef HAVE_LIBCAP_SUPPORT
+> -
+>  #include "cap.h"
+> -#include <stdbool.h>
+> -#include <sys/capability.h>
+> -
+> -bool perf_cap__capable(cap_value_t cap)
+> -{
+> -       cap_flag_value_t val;
+> -       cap_t caps =3D cap_get_proc();
+> +#include "debug.h"
+> +#include <errno.h>
+> +#include <string.h>
+> +#include <unistd.h>
+> +#include <linux/capability.h>
+> +#include <sys/syscall.h>
+>
+> -       if (!caps)
+> -               return false;
+> +#ifndef SYS_capget
+> +#define SYS_capget 265
+> +#endif
+>
+> -       if (cap_get_flag(caps, cap, CAP_EFFECTIVE, &val) !=3D 0)
+> -               val =3D CAP_CLEAR;
+> +#define MAX_LINUX_CAPABILITY_U32S _LINUX_CAPABILITY_U32S_3
+>
+> -       if (cap_free(caps) !=3D 0)
+> -               return false;
+> -
+> -       return val =3D=3D CAP_SET;
+> +bool perf_cap__capable(int cap, bool *used_root)
+> +{
+> +       struct __user_cap_header_struct header =3D {
+> +               .version =3D _LINUX_CAPABILITY_VERSION_3,
+> +               .pid =3D getpid(),
+> +       };
+> +       struct __user_cap_data_struct data[MAX_LINUX_CAPABILITY_U32S];
+> +       __u32 cap_val;
+> +
+> +       *used_root =3D false;
+> +       while (syscall(SYS_capget, &header, &data[0]) =3D=3D -1) {
+> +               /* Retry, first attempt has set the header.version correc=
+tly. */
+> +               if (errno =3D=3D EINVAL && header.version !=3D _LINUX_CAP=
+ABILITY_VERSION_3 &&
+> +                   header.version =3D=3D _LINUX_CAPABILITY_VERSION_1)
+> +                       continue;
+> +
+> +               pr_debug2("capget syscall failed (%s - %d) fall back on r=
+oot check\n",
+> +                         strerror(errno), errno);
+> +               *used_root =3D true;
+> +               return geteuid() =3D=3D 0;
+> +       }
+> +
+> +       /* Extract the relevant capability bit. */
+> +       if (cap > 32) {
 
-Dmitry, that's *EXACTLY* what we did decades ago.
+Should be >=3D, will fix in v2.
 
-Your argument is bogus garbage. We do various arbitrary limits exactly
-to head off problems early.
+Thanks,
+Ian
 
-            Linus
+> +               if (header.version =3D=3D _LINUX_CAPABILITY_VERSION_3) {
+> +                       cap_val =3D data[1].effective;
+> +               } else {
+> +                       /* Capability beyond 32 is requested but only 32 =
+are supported. */
+> +                       return false;
+> +               }
+> +       } else {
+> +               cap_val =3D data[0].effective;
+> +       }
+> +       return (cap_val & (1 << (cap & 0x1f))) !=3D 0;
+>  }
+> -
+> -#endif  /* HAVE_LIBCAP_SUPPORT */
+> diff --git a/tools/perf/util/cap.h b/tools/perf/util/cap.h
+> index ae52878c0b2e..0c6a1ff55f07 100644
+> --- a/tools/perf/util/cap.h
+> +++ b/tools/perf/util/cap.h
+> @@ -3,26 +3,6 @@
+>  #define __PERF_CAP_H
+>
+>  #include <stdbool.h>
+> -#include <linux/capability.h>
+> -#include <linux/compiler.h>
+> -
+> -#ifdef HAVE_LIBCAP_SUPPORT
+> -
+> -#include <sys/capability.h>
+> -
+> -bool perf_cap__capable(cap_value_t cap);
+> -
+> -#else
+> -
+> -#include <unistd.h>
+> -#include <sys/types.h>
+> -
+> -static inline bool perf_cap__capable(int cap __maybe_unused)
+> -{
+> -       return geteuid() =3D=3D 0;
+> -}
+> -
+> -#endif /* HAVE_LIBCAP_SUPPORT */
+>
+>  /* For older systems */
+>  #ifndef CAP_SYSLOG
+> @@ -33,4 +13,7 @@ static inline bool perf_cap__capable(int cap __maybe_un=
+used)
+>  #define CAP_PERFMON    38
+>  #endif
+>
+> +/* Query if a capability is supported, used_root is set if the fallback =
+root check was used. */
+> +bool perf_cap__capable(int cap, bool *used_root);
+> +
+>  #endif /* __PERF_CAP_H */
+> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+> index 19eb623e0826..a18927d792af 100644
+> --- a/tools/perf/util/symbol.c
+> +++ b/tools/perf/util/symbol.c
+> @@ -2425,14 +2425,14 @@ static bool symbol__read_kptr_restrict(void)
+>  {
+>         bool value =3D false;
+>         FILE *fp =3D fopen("/proc/sys/kernel/kptr_restrict", "r");
+> +       bool used_root;
+> +       bool cap_syslog =3D perf_cap__capable(CAP_SYSLOG, &used_root);
+>
+>         if (fp !=3D NULL) {
+>                 char line[8];
+>
+>                 if (fgets(line, sizeof(line), fp) !=3D NULL)
+> -                       value =3D perf_cap__capable(CAP_SYSLOG) ?
+> -                                       (atoi(line) >=3D 2) :
+> -                                       (atoi(line) !=3D 0);
+> +                       value =3D cap_syslog ? (atoi(line) >=3D 2) : (ato=
+i(line) !=3D 0);
+>
+>                 fclose(fp);
+>         }
+> @@ -2440,7 +2440,7 @@ static bool symbol__read_kptr_restrict(void)
+>         /* Per kernel/kallsyms.c:
+>          * we also restrict when perf_event_paranoid > 1 w/o CAP_SYSLOG
+>          */
+> -       if (perf_event_paranoid() > 1 && !perf_cap__capable(CAP_SYSLOG))
+> +       if (perf_event_paranoid() > 1 && !cap_syslog)
+>                 value =3D true;
+>
+>         return value;
+> diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
+> index 4f561e5e4162..9d55a13787ce 100644
+> --- a/tools/perf/util/util.c
+> +++ b/tools/perf/util/util.c
+> @@ -325,9 +325,15 @@ int perf_event_paranoid(void)
+>
+>  bool perf_event_paranoid_check(int max_level)
+>  {
+> -       return perf_cap__capable(CAP_SYS_ADMIN) ||
+> -                       perf_cap__capable(CAP_PERFMON) ||
+> -                       perf_event_paranoid() <=3D max_level;
+> +       bool used_root;
+> +
+> +       if (perf_cap__capable(CAP_SYS_ADMIN, &used_root))
+> +               return true;
+> +
+> +       if (!used_root && perf_cap__capable(CAP_PERFMON, &used_root))
+> +               return true;
+> +
+> +       return perf_event_paranoid() <=3D max_level;
+>  }
+>
+>  static int
+> --
+> 2.46.0.rc1.232.g9752f9e123-goog
+>
 
