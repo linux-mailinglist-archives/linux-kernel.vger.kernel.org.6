@@ -1,166 +1,192 @@
-Return-Path: <linux-kernel+bounces-265154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D05C93ED60
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:25:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC3F93ED74
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADA151F22411
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:25:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B05D51C21BC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6648884A5B;
-	Mon, 29 Jul 2024 06:25:26 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2505B84E04;
+	Mon, 29 Jul 2024 06:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="tDoLvKKU"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537CA83A07
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BC3328B6
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722234325; cv=none; b=UQdDmBT/W5qmxwKuoSZxaNoGAOeM2Yc1rAh1XISC1UErA2+a1jkzT/jBQwFkcoMyFs6HesyVa5dtb3efVnkD9Qlu4bNWJMdSqMFnPDwcHiG3UvOgLkvGGCfLsctqnwFGYjYSU7YP2dVojfFzm8quXL+yfElcclZhI2ChAbbekkc=
+	t=1722234486; cv=none; b=a0Hux8X7QlTRbJOs6lWzt2sxiAtzoBTjjO2OGzteE/wPKTuO7g+BP5W26Hmb+SGg1Z+XBFK26ooxKf/dvCuoTrAM7bqlxymiMEdy4CsX1Zws4mw52Cxxo0W522CO6+E0XXUYDniKXi59szPIAMGuNr5bcNIu/3X3eDDoLzvW1ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722234325; c=relaxed/simple;
-	bh=w0jJF3WTrhgW1Cdze0NpOz/DAT1DCo3vI3JC6dU1CZ0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Et5+clDdZ/6wZ2qCiPz0LqLJRRFdBXYrv6ph6uWWwvi/aCgA6XqzZ63LhZXJ83KWsTPRk6FI5z9C8lC3rju3E38WqEKmJ3BwhIbZP3gp8EDBzoAOng3bWa49HNiSlSJic0pVrNBomBhNp5Cpfkb+IyOcYtpuH40RrmeXI7/2gvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f99a9111fso271861039f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 23:25:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722234323; x=1722839123;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l9TJexnCfhAzTqLIsZlaoF0POVuvzO1ul1CoZ2gTpV8=;
-        b=aqj0sMBySpW0AUF5XSgDpv1VSyg4RHxH+y0uxXaD737p3l4doqJBzOoynICweQbkbH
-         vI9mW50Ehz2TxL4YxqvPQcATMSV3cLoM7p9YA6OzRK9BaL7mejLkaX9iz4NVB5w/nC6F
-         Hyx1QyKNPUz5oAQdCezFwbSOWZ0lfNDkGsvhXKv0JEz0PwA4iJCC3lNSoefNzi/CYUNJ
-         rGOOHMUrN3DE9yAoKYlF0kRqVv4w1wsYsMv3WKN0yxEGIJqTLxfncBkeFTkAkvttzkXE
-         t90u3tumMsrSExXbC2hcF13uXHTIPFVbSxZ0HylrGkRcY0TaSXRg+UhCLNPISenczOZ/
-         98QA==
-X-Forwarded-Encrypted: i=1; AJvYcCUR76cLZnVKr5JRMNRxH2BM/G0U4eO4qNUe523ktZHg7Wm2uwj/C/5yyklV6MqWGUP35+h5kjMVvBcT88uL74zxwn16DwvBjtEsEbms
-X-Gm-Message-State: AOJu0YwKjwLrBany4niyua6pStp2h3xk/BcOcWeaCWWaepDthp4wVZFv
-	6rEVm6WRyJKXvdiE4TCQ2WCR9xho0iEGT+Vxca3uGsvbwUokkmrN3NP4JpN8wS1jHSAiiulkEuP
-	o0Z88jcwwN6YV72twVzxArBfJX/KyPPbHRORmr8JMbIZJFFC3FC4rDm8=
-X-Google-Smtp-Source: AGHT+IGMBmVfcB5rvOBEfNdPlEQOkFrr2KFMFArS66cYwyZtvzXd6Yq8Z17/1Db/bi7cuGqsQPUCYnF4Pkhh9JbZQTMFGpl1MGeL
+	s=arc-20240116; t=1722234486; c=relaxed/simple;
+	bh=c2Gb33yB6AGUPL7oB/bVbgijksIJQN8Vp6pPt6OQkXg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UoXT94cSIOwVNsCWPEVu94SUdEkZbwZYUw4o/rMg9+fAdcEqCEEY+cWSZjeXhh8wOgT4fYzhVfAfcF6p2IGduy3A1ThOO/geCaaelTaiLv8R837bDHyUuivVs5HpLgBZv1tTrazZe0+ivXsAHEGMQGzTU/mXQJDPCOaPB44bUnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=tDoLvKKU; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722234477;
+	bh=c2Gb33yB6AGUPL7oB/bVbgijksIJQN8Vp6pPt6OQkXg=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=tDoLvKKUFH90Zfy4QS9BC3Q8oXlzM1iVsd4bWvx+NrYo5aa8ZvMRU2X2Dgo1TCwOl
+	 BrHmLD8BRYw0WHcQcvtoe7SXbJgoEM2gZDOsQMvKuE+mB3sZZsunKwZAsNrxb5oToT
+	 xp/gqCD456E+Fmlcab15zjZvWCR/uqFji4qV0cXAHOl+V/sCCyeth2nJFCBliEedPH
+	 NghPSHqqMnUCfBz8fN0tYaRTOtrQs0DC2iyAzuc/vYlHVifRpsbyapUvaFI8Qg0yLX
+	 iYBqqMx7MOF2v1kVu41W33xUHRkYViJbxDucAPR9b3K9TXQZ8mdwQGk8pv1vnhtDkv
+	 zRe6Pf/5xmm2Q==
+Received: from [100.66.96.193] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 51D4D37813E1;
+	Mon, 29 Jul 2024 06:27:54 +0000 (UTC)
+Message-ID: <c790e122-c656-4f2c-8f1d-6e405fc70233@collabora.com>
+Date: Mon, 29 Jul 2024 11:57:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d15:b0:398:b1d3:7c9d with SMTP id
- e9e14a558f8ab-39aec4104e8mr3847775ab.3.1722234323334; Sun, 28 Jul 2024
- 23:25:23 -0700 (PDT)
-Date: Sun, 28 Jul 2024 23:25:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000100920061e5ced31@google.com>
-Subject: [syzbot] [ntfs3?] WARNING: locking bug in evict (2)
-From: syzbot <syzbot+1b5e257b523f3e0be7d2@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 5/5] drm/ci: rockchip: add tests for rockchip display
+ driver
+From: Vignesh Raman <vignesh.raman@collabora.com>
+To: Daniel Stone <daniel@fooishbar.org>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
+ helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch,
+ guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
+ deborah.brouwer@collabora.com, robdclark@gmail.com,
+ linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240724101015.523535-1-vignesh.raman@collabora.com>
+ <20240724101015.523535-6-vignesh.raman@collabora.com>
+ <CAPj87rMJUSRJ9G1uv-w5a_4qqS0R1dDaUEofoJf=ehbMszdfOw@mail.gmail.com>
+ <27bd3884-51d8-454f-9ddc-6b5765fd744b@collabora.com>
+Content-Language: en-US
+In-Reply-To: <27bd3884-51d8-454f-9ddc-6b5765fd744b@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi Daniel,
 
-syzbot found the following issue on:
+On 26/07/24 15:37, Vignesh Raman wrote:
+> Hi Daniel,
+> 
+> On 26/07/24 13:06, Daniel Stone wrote:
+>> Hi Vignesh,
+>>
+>> On Wed, 24 Jul 2024 at 11:12, Vignesh Raman 
+>> <vignesh.raman@collabora.com> wrote:
+>>> For rockchip rk3288 and rk3399, the display driver is rockchip
+>>> and gpu driver is panfrost. Currently, in drm-ci for rockchip
+>>> rk3288 and rk3399, only the gpu driver is tested. Refactor
+>>> the existing rockchip jobs to test both display and gpu driver
+>>> and update xfails.
+>>
+>> Could you also please add RK3588 in a new series (no need to hold this
+>> one up), with Rockchip KMS and Panthor GPU? You can use the
+>> rk3588-rock5-b device type in LAVA.
+> 
+> Sure. I Will add and send it in a new series.
+> 
+>>
+>>> diff --git a/drivers/gpu/drm/ci/xfails/mediatek-mt8183-fails.txt 
+>>> b/drivers/gpu/drm/ci/xfails/mediatek-mt8183-fails.txt
+>>> index cf3a747f7cec..826cca5efbff 100644
+>>> --- a/drivers/gpu/drm/ci/xfails/mediatek-mt8183-fails.txt
+>>> +++ b/drivers/gpu/drm/ci/xfails/mediatek-mt8183-fails.txt
+>>
+>> This is in the wrong patch?
+> 
+> Yes, this needs to be dropped. Thanks for pointing that out.
+> 
+>>
+>>> +++ b/drivers/gpu/drm/ci/xfails/panfrost-rk3288-skips.txt
+>>> @@ -0,0 +1,71 @@
+>>> +# Suspend to RAM seems to be broken on this machine
+>>> +.*suspend.*
+>>> +
+>>> +# Too unstable, machine ends up hanging after lots of Oopses
+>>> +kms_cursor_legacy.*
+>>> +
+>>> +# Started hanging the machine on Linux 5.19-rc2:
+>>> +#
+>>> +# [IGT] kms_plane_lowres: executing
+>>> +# [IGT] kms_plane_lowres: starting subtest pipe-F-tiling-y
+>>> +# [IGT] kms_plane_lowres: exiting, ret=77
+>>
+>> ret 77 is a pure skip here, as you'd expect from a pipe F test,
+>> because Rockchip doesn't have six CRTCs.
+>>
+>>> +# Console: switching to colour frame buffer device 170x48
+>>> +# rockchip-drm display-subsystem: [drm] *ERROR* flip_done timed out
+>>> +# rockchip-drm display-subsystem: [drm] *ERROR* [CRTC:35:crtc-0] 
+>>> commit wait timed out
+>>> +# BUG: spinlock bad magic on CPU#3, kms_plane_lowre/482
+>>> +# 8<--- cut here ---
+>>> +# Unable to handle kernel paging request at virtual address 7812078e
+>>> +# [7812078e] *pgd=00000000
+>>> +# Internal error: Oops: 5 [#1] SMP ARM
+>>> +# Modules linked in:
+>>> +# CPU: 3 PID: 482 Comm: kms_plane_lowre Tainted: G        W         
+>>> 5.19.0-rc2-323596-g00535de92171 #1
+>>> +# Hardware name: Rockchip (Device Tree)
+>>> +# Process kms_plane_lowre (pid: 482, stack limit = 0x1193ac2b)
+>>> +#  spin_dump from do_raw_spin_lock+0xa4/0xe8
+>>> +#  do_raw_spin_lock from wait_for_completion_timeout+0x2c/0x120
+>>> +#  wait_for_completion_timeout from drm_crtc_commit_wait+0x18/0x7c
+>>> +#  drm_crtc_commit_wait from 
+>>> drm_atomic_helper_wait_for_dependencies+0x44/0x168
+>>> +#  drm_atomic_helper_wait_for_dependencies from commit_tail+0x34/0x180
+>>> +#  commit_tail from drm_atomic_helper_commit+0x164/0x18c
+>>> +#  drm_atomic_helper_commit from drm_atomic_commit+0xac/0xe4
+>>> +#  drm_atomic_commit from drm_client_modeset_commit_atomic+0x23c/0x284
+>>> +#  drm_client_modeset_commit_atomic from 
+>>> drm_client_modeset_commit_locked+0x60/0x1c8
+>>> +#  drm_client_modeset_commit_locked from 
+>>> drm_client_modeset_commit+0x24/0x40
+>>> +#  drm_client_modeset_commit from drm_fbdev_client_restore+0x58/0x94
+>>> +#  drm_fbdev_client_restore from drm_client_dev_restore+0x70/0xbc
+>>> +#  drm_client_dev_restore from drm_release+0xf4/0x114
+>>> +#  drm_release from __fput+0x74/0x240
+>>> +#  __fput from task_work_run+0x84/0xb4
+>>> +#  task_work_run from do_exit+0x34c/0xa20
+>>> +#  do_exit from do_group_exit+0x34/0x98
+>>
+>> So this is pointing to the error being that, when a client exits, the
+>> kernel attempts to restore fbdev and then it's broken. Pinning
+>> pipe-F-tiling-y as specifically responsible for this seems quite odd
+>> to me, given that it doesn't do anything but only skips. Is that maybe
+>> just because it's the last test running in the kms_plane_lowres group
+>> before it exits? Or does it occur more wildly on other test groups?
+> 
+> This was skipped for Linux 5.19-rc2. I will remove from skips and will 
+> check the behavior.
 
-HEAD commit:    d1e9a63dcd72 Merge tag 'vfs-6.11-rc1.fixes.2' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=165b609d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8e1cc76f0e8412d3
-dashboard link: https://syzkaller.appspot.com/bug?extid=1b5e257b523f3e0be7d2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=157d7145980000
+This is for panfrost driver (rk3288). All kms tests are skipped for 
+gpu-only driver. Will remove the other kms tests in this file as we have
+separate skips file for rockchip driver now.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8941969dc925/disk-d1e9a63d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0b29cfd6d8ee/vmlinux-d1e9a63d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/106b1d908823/bzImage-d1e9a63d.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/e3d201c6ed53/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/177c61e1ae2e/mount_7.gz
+>>
+>>> +tools_test@tools_test,Fail
+>>
+>> I keep noticing this failing everywhere. What's up with that? Have you
+>> reported these logs to the igt list?
+> 
+> I will check this issue and report to igt developers.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1b5e257b523f3e0be7d2@syzkaller.appspotmail.com
-
-loop1: detected capacity change from 0 to 4096
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 0 PID: 5593 at kernel/locking/lockdep.c:231 hlock_class kernel/locking/lockdep.c:231 [inline]
-WARNING: CPU: 0 PID: 5593 at kernel/locking/lockdep.c:231 check_wait_context kernel/locking/lockdep.c:4797 [inline]
-WARNING: CPU: 0 PID: 5593 at kernel/locking/lockdep.c:231 __lock_acquire+0x925/0x2040 kernel/locking/lockdep.c:5092
-Modules linked in:
-CPU: 0 UID: 0 PID: 5593 Comm: syz.1.106 Not tainted 6.10.0-syzkaller-12261-gd1e9a63dcd72 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-RIP: 0010:hlock_class kernel/locking/lockdep.c:231 [inline]
-RIP: 0010:check_wait_context kernel/locking/lockdep.c:4797 [inline]
-RIP: 0010:__lock_acquire+0x925/0x2040 kernel/locking/lockdep.c:5092
-Code: 00 00 83 3d 8c ab 3e 0e 00 75 23 90 48 c7 c7 40 d4 ca 8b 48 c7 c6 e0 d6 ca 8b e8 e6 d5 e5 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 8d ab c4 00 00 00 48 89 e8 48 c1 e8 03 0f
-RSP: 0018:ffffc900048d7650 EFLAGS: 00010046
-RAX: c75590ab2862fe00 RBX: 0000000000001b00 RCX: ffff888026c0bc00
-RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00000000ffffffff R08: ffffffff81559342 R09: 1ffff1101728519a
-R10: dffffc0000000000 R11: ffffed101728519b R12: 0000000000000000
-R13: ffff888026c0c6ff R14: 0000000000000000 R15: ffff888026c0c6ff
-FS:  00007f25674c56c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f2566759120 CR3: 000000005b364000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
- spin_lock include/linux/spinlock.h:351 [inline]
- inode_sb_list_del fs/inode.c:506 [inline]
- evict+0x161/0x630 fs/inode.c:658
- ntfs_fill_super+0x3e27/0x4730 fs/ntfs3/super.c:1467
- get_tree_bdev+0x3f7/0x570 fs/super.c:1624
- vfs_get_tree+0x90/0x2a0 fs/super.c:1789
- do_new_mount+0x2be/0xb40 fs/namespace.c:3472
- do_mount fs/namespace.c:3812 [inline]
- __do_sys_mount fs/namespace.c:4020 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f256677761a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 7e 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f25674c4e78 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f25674c4f00 RCX: 00007f256677761a
-RDX: 0000000020000080 RSI: 000000002001f740 RDI: 00007f25674c4ec0
-RBP: 0000000020000080 R08: 00007f25674c4f00 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000002001f740
-R13: 00007f25674c4ec0 R14: 000000000001f6fb R15: 00000000200000c0
- </TASK>
+tools_test is a wrapper for running tools/intel_reg and 
+tools/intel_l3_parity. So skip these tests on non-intel platforms.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Regards,
+Vignesh
 
