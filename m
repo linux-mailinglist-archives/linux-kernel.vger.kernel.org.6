@@ -1,335 +1,152 @@
-Return-Path: <linux-kernel+bounces-265959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2779393F829
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:35:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D40EE93F7E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8BBC1F2118B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:35:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 351832830C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F7F192B8A;
-	Mon, 29 Jul 2024 14:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38AC14A4F5;
+	Mon, 29 Jul 2024 14:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ZPjXjJ3d"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cXNIqzwI"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D18E192B7C
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6355F155C81
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722263073; cv=none; b=mWeNmN8TAAVfDf0jWfMpvQj6hH06ocEX5B3PiiJmrinqClMBnFU0ZXbG56DwciLqfqNpWCMtQ45XkrugwNAYQ5dTJcFXUUr4f4VG05kbD7NnNeqND06/U1krunm2yM5rVslM+zhieCyg/AY+kSVrpEuHRXlm39iCYPQ/4G94O94=
+	t=1722262977; cv=none; b=WV2Hk3/lTSuS8/GwJ5s1eCKZPLrpRFRf/bdDLJRscfuh+AmrDC/AyS53k/bKVaAATdpT9dIBqE1zgvI3pxU6iw78Ni4iI2YIvpNd1xP+yXEcbzAUTodrrkRuv95Bu0LNLVEB3AXeOWV/SFDgnUEw2gCeUFvIa++mAsuR6q3i0Hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722263073; c=relaxed/simple;
-	bh=2/ZdmE107x8GmnyshQvBoz8Rb8LNzY3O19gTIqskLDk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e1unE8/Buf6Jrq9WL6MvffoQ2JD9sga4hb94y3gyTRKRjiYo4J0WxVFUtsSsdxmMTmK5jL2UZcaj44bNgUUjT/tcFc59C0pyA4Oznq+nWABnEUtIXX6aE21edyx5eXbqEapbPkMOyEJ2d1iVZkvLw4fW1KQj5gp8Bf0hh5GOzRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ZPjXjJ3d; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fee6435a34so18394835ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:24:32 -0700 (PDT)
+	s=arc-20240116; t=1722262977; c=relaxed/simple;
+	bh=2yHObFkJeb9NEav9vRlfQtesacysurvHNX3D+BY5baw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=fQ21F3b/2HV6oH1cLLSNFuIaJoFhK3ApwpVYbYtWiECFZW9gz8Ay5uv3tvJrKg0VFfaxcidF+aDoaSsJvo3mz9gnSEOeTDhwnKNNc4NbGSZDW7UMcnfr2G4GOTVCIUR7gBuLjYcghFNkxVlb7CZuct8+wssbhUK+W4y+H8Ybgs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cXNIqzwI; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e02a4de4f4eso4467363276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:22:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1722263071; x=1722867871; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I0GXqbjRdlQgXLR20WsWn0Zb01kTXlGc4SKzlInZ9zY=;
-        b=ZPjXjJ3dQSmyk5tdrCYcYbzr/i1bLUNRaCeHOKUHqZH1Fbbg+OZ/KvtGJLXW1K767N
-         xy5mqACyWLJzOVDGojlVfERYfNnNt9phyUWkX7ELG3qGJ/2VMlU3A15FsF/xwt6hbpzY
-         GiPPKBM0XPCpOjzJ9x55fIeEGSbcz0LjQNwDLZFm1SUsGdWveWHRgqE2SRDC51GmFcsJ
-         L6nGvV05qIf8mCgHXMaJgGOQFQ4gVrmalPQH/odPi83WNBj9E4Nfkbs2e6DCNYEpS/0E
-         qMet0n9tGm7kVJbkd5NWoFrQP1EBVGGSnlL35hjdaDJOuGlZ0Uf0mkM5vcUwNkFQwRzl
-         0pXQ==
+        d=google.com; s=20230601; t=1722262975; x=1722867775; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9DpUuNFRf2+mlmUFGNhBkhPfCr6X6cUQBVac6+mnEhY=;
+        b=cXNIqzwIiwENKxHXS7CcAIwZp8Nm+rSA50HMYtg1GCSzx2YO/GkGWgXwcT69OFxUXF
+         4JT3aSXrOniV/puAyHAOsLXxA+QLP4d3TubUpGNbRrns2QoTOa/P5HmItJwOl9V9EpBc
+         U4/s8P79zZkf+rB4G5xFgN+j+XZjBmsQuqsrCDFijBqoKAp1Ih+gAd3rruQ08P26j0lH
+         nNAq1apOXKykUfwS3B2NajpJSQA6ttKtqGiaiKELhxTH9zVxCOYeFib2UBtzYdGMFuLY
+         RVCkOByACQ58dTMo9kngi3/RLu8j7Y3Tqu0FlZiFXZimPt/leDGk87WMFuugIUQ5PvZ7
+         e7DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722263071; x=1722867871;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I0GXqbjRdlQgXLR20WsWn0Zb01kTXlGc4SKzlInZ9zY=;
-        b=HJNm0JVTQSodpvVvNQxXuFknGt2iU0e7N1KSI1sSILyd+8pMlUIR3VaDYefrThULcr
-         7XhwKIdDmji2Ajj0vxZwMoaUMAhowytPOcpzfPys0s9eMKL5n05SHnmmugVcfcG5IBE8
-         0qplWTe5MWGa0a/6kNgkTcBwDCM+OCz4Pl3Ioj1MZuJY81U8+OAqjD58JgZ1cDgUogid
-         VmaYOUglDevSrVsVjSB4/AVwG1GSKo7BsDhY5h74RtqdV+BNOREPa1Ot7QHS+W0Uw6+Y
-         VUEXFgQ58SvpO6NBbfwJWYUA+mQQZxestMSbfEHG4H1mq47NlNP/PLTGr9GAMXM0LS72
-         y3wA==
-X-Gm-Message-State: AOJu0YwVQfTZEuacO8DUJ1+IgnOIDSUCcJAynmLLWxamj6wDtPhT43BO
-	2ShdCtRbJoTsxCotvQR8+BJgOpUgBgKMrvnuj7z8KcTwtXXg3GRJVQKiYU4UPdY7tkyxdombUrb
-	lNdK8sQ==
-X-Google-Smtp-Source: AGHT+IHN8Sao+YlrrwzuKpm8WQR4yfMRcvn309oxoZCX8m59egD+A5Fg/n7LZZJO/PhhxP1zIyPB4g==
-X-Received: by 2002:a17:902:fb08:b0:1fd:a72a:f44 with SMTP id d9443c01a7336-1ff0482b8acmr45391535ad.17.1722263071002;
-        Mon, 29 Jul 2024 07:24:31 -0700 (PDT)
-Received: from sunil-pc.tail07344b.ts.net ([106.51.198.16])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fa988dsm83512965ad.263.2024.07.29.07.24.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 07:24:30 -0700 (PDT)
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-pci@vger.kernel.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Anup Patel <anup@brainfault.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Robert Moore <robert.moore@intel.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Haibo Xu <haibo1.xu@intel.com>,
-	Atish Kumar Patra <atishp@rivosinc.com>,
-	Drew Fustini <dfustini@tenstorrent.com>,
-	Sunil V L <sunilvl@ventanamicro.com>
-Subject: [PATCH v7 17/17] irqchip/sifive-plic: Add ACPI support
-Date: Mon, 29 Jul 2024 19:52:39 +0530
-Message-ID: <20240729142241.733357-18-sunilvl@ventanamicro.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240729142241.733357-1-sunilvl@ventanamicro.com>
-References: <20240729142241.733357-1-sunilvl@ventanamicro.com>
+        d=1e100.net; s=20230601; t=1722262975; x=1722867775;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9DpUuNFRf2+mlmUFGNhBkhPfCr6X6cUQBVac6+mnEhY=;
+        b=oZG4s589fVkGsetPcY8WN3GGoRVXHGmH2qam4f+lDgcsv3o4HjbSt1ABQWcxTydg69
+         F9wDSGHdWfQiqPZR5v0DGixZJ82SPAksjYL8o/hR6OLHnlU94rFFT2BFPVbGlvgh8u09
+         ALqLxZ0o5Mlr/BS4aesJ/rbZJznfeCuEIhs5rOoFELrDcA6JyV3i1DpTRhY4x/dulFLm
+         14QvtJrY7diy9d+ghCE3ZP/Xk9t+kbqYOpcbIczVEbyOHoEb8z+6N757Bh711gXA9rdv
+         U+QNoV2shyRP8ii/fM+Jxyk3kM3OY5CoYVMpmmomq6zr8hdyS7ALn3IT/g8LlpnIS4AV
+         Ehow==
+X-Forwarded-Encrypted: i=1; AJvYcCV4RM7zKAyYoBgo5k920WedPb57ew+PSo5MVMw/wmdYNYJHSSRNo/ozv3R0DCYtpMIavy9mRpb8F3+ZrBN/Qh7Bpb+tPvPqKGW3/srU
+X-Gm-Message-State: AOJu0YypKU1agSx6BEIqlz8/Q85G+onksbiHxQNmkqjcU9z5kpcu4LmI
+	9H9jjJVWS+YlCxefv2VZqv0nBUatjgr74jZN6n8mD4cdHCpltHqjhPMy52C6xrrMtmTIbl/cxIL
+	DOFz2/mJoWvqiZQ==
+X-Google-Smtp-Source: AGHT+IHfm2z3cnxf5rBSU2H+Uri2dnZaiTSIEU2LtrOMYhl6ATkrl7+v9uMdvMFxQmpUJEdl57Dg5BT1CgybIUk=
+X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
+ (user=aliceryhl job=sendgmr) by 2002:a05:6902:c04:b0:e0b:6a6a:e82 with SMTP
+ id 3f1490d57ef6-e0b6a6a11c0mr10938276.2.1722262975188; Mon, 29 Jul 2024
+ 07:22:55 -0700 (PDT)
+Date: Mon, 29 Jul 2024 14:22:48 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIALilp2YC/33OzQ6CMAzA8VchO1uzLyB48j2Mh7IVWERmGEEN4
+ d0dXNRIPP6b9NdOLFDvKLBDMrGeRhec72LoXcJMg11N4GxsJrnUXHENoUHr72CwbSEMaC5QGFH
+ kqFUmbMHi3q2nyj1W83SO3bgw+P65nhjFMv2njQIEVDxNCSvNUZpj7X3d0t74K1u4UX4S6RYhI 2HyUqOqtM1E9kOoN5Fvf6GAgxXC5JhRSYp/EfM8vwB4HGVLOQEAAA==
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1592; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=2yHObFkJeb9NEav9vRlfQtesacysurvHNX3D+BY5baw=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmp6W6s4LF7RmNmh8S6tgM6zU7PrBFJ6NKJRNNB
+ raevcnq3BOJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZqelugAKCRAEWL7uWMY5
+ RjNyEACHO3fz7GpCUYlcQp0AFizoXymbKkd/k8ZmfkQ9lYve29IWgplrTHgvWCO6fCSpdZrVqwp
+ Syiw68Lpk0GYHZj8ijTXdmuC74aKI5mi7dBu5IaKNBN6psmHOJZ3VQMyAng2W1bbEFPc7iWB6Lo
+ 1l7ZjqkyR9zCLRFMufytLMz1+7W5DF5bgpfAhvCa5q1SoKYwnlPFPulGOyazvriUkX5x6V833Pw
+ VHRRBvhhBv+5eCh88pjV7mJqr6DOgMrFNKOjPyQtVc7PytmICMg8vrCNfR+d+tjB11BAYMLNTn+
+ qdyCGg/I6AY8SdAcWKLN8xJ7euXxOWpVNKYsNoltAphFMIEAaSuk4Da2UziFzocsFif/ZeXeewo
+ vqTCNFtYgW+rTA1H+KN1DkdpdHE4J10fVEZAEfbjb2/SCpgJPHQJLvd8v+N+dSpLEVMwvuaovtg
+ wOqvu6ab9W/wESJpscxJ1GtwP92wPUmp3w8obGUFonivqTdu8vvrI+HN+7/0jtYpgb1RvTZ1faE
+ RSGq84BdUekyGVwbNVawI3mVA+gQxc9aevQ+Oy2bFs3StiR6HCAdSXbEmEk1c31oXKlxUNW5+RC
+ 3OW3JgXuFHzzwBfrZ4EuXtZ2hZ4QiQ1qZ/cw+nFwMQBOi0iYgM2xIZf30Wg4piY08GOYDyvh5Ku zIl6rzmu8xMs5rA==
+X-Mailer: b4 0.13-dev-26615
+Message-ID: <20240729-shadow-call-stack-v4-0-2a664b082ea4@google.com>
+Subject: [PATCH v4 0/2] Rust and the shadow call stack sanitizer
+From: Alice Ryhl <aliceryhl@google.com>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Jamie Cunliffe <Jamie.Cunliffe@arm.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Conor Dooley <conor@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Mark Brown <broonie@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Valentin Obst <kernel@valentinobst.de>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, rust-for-linux@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>, Kees Cook <kees@kernel.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Add ACPI support in PLIC driver. Use the mapping created early during
-boot to get details about the PLIC.
+This patch series makes it possible to use Rust together with the shadow
+call stack sanitizer. The first patch is intended to be backported to
+ensure that people don't try to use SCS with Rust on older kernel
+versions. The second patch makes it possible to use Rust with the shadow
+call stack sanitizer.
 
-Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
-Co-developed-by: Haibo Xu <haibo1.xu@intel.com>
-Signed-off-by: Haibo Xu <haibo1.xu@intel.com>
+The second patch in this series depends on the next version of [1],
+which Miguel will send soon.
+
+Link: https://lore.kernel.org/rust-for-linux/20240709160615.998336-12-ojeda@kernel.org/ [1]
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- drivers/irqchip/irq-sifive-plic.c | 94 ++++++++++++++++++++++++-------
- 1 file changed, 73 insertions(+), 21 deletions(-)
+Changes in v4:
+- Move `depends on` to CONFIG_RUST.
+- Rewrite commit messages to include more context.
+- Link to v3: https://lore.kernel.org/r/20240704-shadow-call-stack-v3-0-d11c7a6ebe30@google.com
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index 9e22f7e378f5..12d60728329c 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2017 SiFive
-  * Copyright (C) 2018 Christoph Hellwig
-  */
-+#include <linux/acpi.h>
- #include <linux/cpu.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-@@ -70,6 +71,8 @@ struct plic_priv {
- 	unsigned long plic_quirks;
- 	unsigned int nr_irqs;
- 	unsigned long *prio_save;
-+	u32 gsi_base;
-+	int id;
- };
- 
- struct plic_handler {
-@@ -324,6 +327,10 @@ static int plic_irq_domain_translate(struct irq_domain *d,
- {
- 	struct plic_priv *priv = d->host_data;
- 
-+	/* For DT, gsi_base is always zero. */
-+	if (fwspec->param[0] >= priv->gsi_base)
-+		fwspec->param[0] = fwspec->param[0] - priv->gsi_base;
-+
- 	if (test_bit(PLIC_QUIRK_EDGE_INTERRUPT, &priv->plic_quirks))
- 		return irq_domain_translate_twocell(d, fwspec, hwirq, type);
- 
-@@ -424,18 +431,37 @@ static const struct of_device_id plic_match[] = {
- 	{}
- };
- 
-+#ifdef CONFIG_ACPI
-+
-+static const struct acpi_device_id plic_acpi_match[] = {
-+	{ "RSCV0001", 0 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(acpi, plic_acpi_match);
-+
-+#endif
- static int plic_parse_nr_irqs_and_contexts(struct platform_device *pdev,
--					   u32 *nr_irqs, u32 *nr_contexts)
-+					   u32 *nr_irqs, u32 *nr_contexts,
-+					   u32 *gsi_base, u32 *id)
- {
- 	struct device *dev = &pdev->dev;
- 	int rc;
- 
--	/*
--	 * Currently, only OF fwnode is supported so extend this
--	 * function for ACPI support.
--	 */
--	if (!is_of_node(dev->fwnode))
--		return -EINVAL;
-+	if (!is_of_node(dev->fwnode)) {
-+		rc = riscv_acpi_get_gsi_info(dev->fwnode, gsi_base, id, nr_irqs, NULL);
-+		if (rc) {
-+			dev_err(dev, "failed to find GSI mapping\n");
-+			return rc;
-+		}
-+
-+		*nr_contexts = acpi_get_plic_nr_contexts(*id);
-+		if (WARN_ON(!*nr_contexts)) {
-+			dev_err(dev, "no PLIC context available\n");
-+			return -EINVAL;
-+		}
-+
-+		return 0;
-+	}
- 
- 	rc = of_property_read_u32(to_of_node(dev->fwnode), "riscv,ndev", nr_irqs);
- 	if (rc) {
-@@ -449,23 +475,29 @@ static int plic_parse_nr_irqs_and_contexts(struct platform_device *pdev,
- 		return -EINVAL;
- 	}
- 
-+	*gsi_base = 0;
-+	*id = 0;
-+
- 	return 0;
- }
- 
- static int plic_parse_context_parent(struct platform_device *pdev, u32 context,
--				     u32 *parent_hwirq, int *parent_cpu)
-+				     u32 *parent_hwirq, int *parent_cpu, u32 id)
- {
- 	struct device *dev = &pdev->dev;
- 	struct of_phandle_args parent;
- 	unsigned long hartid;
- 	int rc;
- 
--	/*
--	 * Currently, only OF fwnode is supported so extend this
--	 * function for ACPI support.
--	 */
--	if (!is_of_node(dev->fwnode))
--		return -EINVAL;
-+	if (!is_of_node(dev->fwnode)) {
-+		hartid = acpi_get_ext_intc_parent_hartid(id, context);
-+		if (hartid == INVALID_HARTID)
-+			return -EINVAL;
-+
-+		*parent_cpu = riscv_hartid_to_cpuid(hartid);
-+		*parent_hwirq = RV_IRQ_EXT;
-+		return 0;
-+	}
- 
- 	rc = of_irq_parse_one(to_of_node(dev->fwnode), context, &parent);
- 	if (rc)
-@@ -489,6 +521,8 @@ static int plic_probe(struct platform_device *pdev)
- 	u32 nr_irqs, parent_hwirq;
- 	struct plic_priv *priv;
- 	irq_hw_number_t hwirq;
-+	int id, context_id;
-+	u32 gsi_base;
- 
- 	if (is_of_node(dev->fwnode)) {
- 		const struct of_device_id *id;
-@@ -498,7 +532,7 @@ static int plic_probe(struct platform_device *pdev)
- 			plic_quirks = (unsigned long)id->data;
- 	}
- 
--	error = plic_parse_nr_irqs_and_contexts(pdev, &nr_irqs, &nr_contexts);
-+	error = plic_parse_nr_irqs_and_contexts(pdev, &nr_irqs, &nr_contexts, &gsi_base, &id);
- 	if (error)
- 		return error;
- 
-@@ -509,6 +543,8 @@ static int plic_probe(struct platform_device *pdev)
- 	priv->dev = dev;
- 	priv->plic_quirks = plic_quirks;
- 	priv->nr_irqs = nr_irqs;
-+	priv->gsi_base = gsi_base;
-+	priv->id = id;
- 
- 	priv->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (WARN_ON(!priv->regs))
-@@ -519,12 +555,22 @@ static int plic_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	for (i = 0; i < nr_contexts; i++) {
--		error = plic_parse_context_parent(pdev, i, &parent_hwirq, &cpu);
-+		error = plic_parse_context_parent(pdev, i, &parent_hwirq, &cpu, priv->id);
- 		if (error) {
- 			dev_warn(dev, "hwirq for context%d not found\n", i);
- 			continue;
- 		}
- 
-+		if (is_of_node(dev->fwnode)) {
-+			context_id = i;
-+		} else {
-+			context_id = acpi_get_plic_context(priv->id, i);
-+			if (context_id == INVALID_CONTEXT) {
-+				dev_warn(dev, "invalid context id for context%d\n", i);
-+				continue;
-+			}
-+		}
-+
- 		/*
- 		 * Skip contexts other than external interrupts for our
- 		 * privilege level.
-@@ -562,10 +608,10 @@ static int plic_probe(struct platform_device *pdev)
- 		cpumask_set_cpu(cpu, &priv->lmask);
- 		handler->present = true;
- 		handler->hart_base = priv->regs + CONTEXT_BASE +
--			i * CONTEXT_SIZE;
-+			context_id * CONTEXT_SIZE;
- 		raw_spin_lock_init(&handler->enable_lock);
- 		handler->enable_base = priv->regs + CONTEXT_ENABLE_BASE +
--			i * CONTEXT_ENABLE_SIZE;
-+			context_id * CONTEXT_ENABLE_SIZE;
- 		handler->priv = priv;
- 
- 		handler->enable_save = devm_kcalloc(dev, DIV_ROUND_UP(nr_irqs, 32),
-@@ -581,8 +627,8 @@ static int plic_probe(struct platform_device *pdev)
- 		nr_handlers++;
- 	}
- 
--	priv->irqdomain = irq_domain_add_linear(to_of_node(dev->fwnode), nr_irqs + 1,
--						&plic_irqdomain_ops, priv);
-+	priv->irqdomain = irq_domain_create_linear(dev->fwnode, nr_irqs + 1,
-+						   &plic_irqdomain_ops, priv);
- 	if (WARN_ON(!priv->irqdomain))
- 		goto fail_cleanup_contexts;
- 
-@@ -619,13 +665,18 @@ static int plic_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+#ifdef CONFIG_ACPI
-+	if (!acpi_disabled)
-+		acpi_dev_clear_dependencies(ACPI_COMPANION(dev));
-+#endif
-+
- 	dev_info(dev, "mapped %d interrupts with %d handlers for %d contexts.\n",
- 		 nr_irqs, nr_handlers, nr_contexts);
- 	return 0;
- 
- fail_cleanup_contexts:
- 	for (i = 0; i < nr_contexts; i++) {
--		if (plic_parse_context_parent(pdev, i, &parent_hwirq, &cpu))
-+		if (plic_parse_context_parent(pdev, i, &parent_hwirq, &cpu, priv->id))
- 			continue;
- 		if (parent_hwirq != RV_IRQ_EXT || cpu < 0)
- 			continue;
-@@ -644,6 +695,7 @@ static struct platform_driver plic_driver = {
- 	.driver = {
- 		.name		= "riscv-plic",
- 		.of_match_table	= plic_match,
-+		.acpi_match_table = ACPI_PTR(plic_acpi_match),
- 	},
- 	.probe = plic_probe,
- };
+Changes in v3:
+- Use -Zfixed-x18.
+- Add logic to reject unsupported rustc versions.
+- Also include a fix to be backported.
+- Link to v2: https://lore.kernel.org/rust-for-linux/20240305-shadow-call-stack-v2-1-c7b4a3f4d616@google.com/
+
+Changes in v2:
+- Add -Cforce-unwind-tables flag.
+- Link to v1: https://lore.kernel.org/rust-for-linux/20240304-shadow-call-stack-v1-1-f055eaf40a2c@google.com/
+
+---
+Alice Ryhl (2):
+      rust: SHADOW_CALL_STACK is incompatible with Rust
+      rust: support for shadow call stack sanitizer
+
+ Makefile            | 1 +
+ arch/arm64/Makefile | 3 +++
+ init/Kconfig        | 1 +
+ 3 files changed, 5 insertions(+)
+---
+base-commit: 9cde54ad2f7ac3cf84f65df605570c5a00afc82f
+change-id: 20240304-shadow-call-stack-9c197a4361d9
+
+Best regards,
 -- 
-2.43.0
+Alice Ryhl <aliceryhl@google.com>
 
 
