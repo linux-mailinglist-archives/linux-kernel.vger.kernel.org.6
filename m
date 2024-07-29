@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-266296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 915A293FDD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:56:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E41A93FDD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A5581C20AD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:56:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17C9F1F22D5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86423187330;
-	Mon, 29 Jul 2024 18:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B1018754D;
+	Mon, 29 Jul 2024 18:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dvXNpnEG"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bou6gnNA"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E0C16DEDA
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DB1183084
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722279387; cv=none; b=J15rpEZqTR/g0YxxZtW+IjAvxGuAqn+377baUGRv3rmZnbuu9KmbSNaR4tD8aFOuSJJMBHSctnIlvZiX6QJsopqa9hX9eqWT18DKn1i3ZknAuAuZCkDTXBwdTcGmOtsa+G7lOuaA8PZNYur6zQj6zlndTQqm+D1os6lU2tnt7oI=
+	t=1722279388; cv=none; b=X6E1Glq4WJIAj7f3vQGTGCy2oCdoCRYMPE5Oe56CGCi/CFILIq9USXGip7zb4o8fOS2gzqB29XonNm1Ipv+5kybkQl0FOodOUflmcNPJXtZj56R+Jxl2Skksn++htl79Wtzrwc/Yeqdm7nd+2v/slB8t/jyCc6VljCrde1E37+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722279387; c=relaxed/simple;
-	bh=fKyI2N2r6erOfGytR8wMNRWgCgakHfq1+TmFgwhVR/8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=npk6qXHspmUj9fEdUedBmsqQwqkX1jj+TVftOeoz+YWIyUhn1KJYvxP1R1NXrqR1xJkXZxPFCGqVhjt259vTq/WcdETwQd1jckHW1pnv833Q6bwSpKYbddTd/R9cyfmUe46dIuM3CgCjjZnW47jcZXWUlKnKF79+5Xa9l1NVPo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dvXNpnEG; arc=none smtp.client-ip=209.85.208.43
+	s=arc-20240116; t=1722279388; c=relaxed/simple;
+	bh=fPjZyaurgq56PHHZ1zRrmXojK3qDrhQqrKucXS+Ocxc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=YO2w0WhDuNxDvZdVek7/pLZE+Q+Gtbbs5YC/M/YYjr1Ss7yRoQ4kD+X5NpydlSL3i6+jLGI/JR068r5BYB18/IOZ9muLhvoRiPX28lIIW7z/oNMnirYchx5QqOnUBSxrM0xZuwI1FJER0us1O+8kT8ohtBHFNnvgxkMRm2+botc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bou6gnNA; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a869e3e9dfso3085a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:56:24 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso3053a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:56:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722279383; x=1722884183; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OJFBXmp2nnWSyPQ0vZXV6CH2fcDg2DG8vfwkkfKQGv4=;
-        b=dvXNpnEGFcwFhXIGKXEuo+aVIBCQG+wfEX/Ko7vBFffEnpYPRd2WuvllsfpV2Ld9ec
-         DJYKG2Mnu55rzI30hfZlYJHR/AF5lpKcq0uxdFBvjzqNrJ7Aa5KVSfjJjGUVbdBC78/8
-         UBJbj3ewOqx7+6FAlBTNEBeS8YR7RY7tGHLSiBVqAs7+GBCwJtfnMmvJT9gJYaxF8yG1
-         Yu8ccma6hmqjG+HTFVjX3Hs5pozW/WX+XcPiEccCoTh0BwFj8fj6/PyoBxdJlEkWyqkE
-         iPSoS1KqFEGW+sVkYUf1EpbRwEyTvK0px6vbLV5C/w7htRkhIOfcgGitOjDeYdGquviw
-         b4Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722279383; x=1722884183;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=google.com; s=20230601; t=1722279384; x=1722884184; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OJFBXmp2nnWSyPQ0vZXV6CH2fcDg2DG8vfwkkfKQGv4=;
-        b=oLnr/yVoXTZTGSmKSy75wtXVcXQoWUnJAibXy/C5g7AgiLbtQGnbiPkIMQmKYlJQsf
-         WPDXCtOscxLYwAFG5P9AkpYCGFOWwSyD0a1Plf3UZpN8Plely+Pf1bWR51a3YNuOg3Ml
-         wcis5o54g/koij31e5SXK4O/D6ZvNRn7SaXJngNkIPrQp/lyjB2VzYOiFJmJOJkXlzVO
-         2OsPCLkOmIIetBeecg/y0I4k/tOb8rd17tJSUBVuplCwohAaAVO8NwD5MCFnq1pzZN59
-         H6ZfHtNY6ogem8hcjfe+PsAq/yWnQoU++lASbKQsKzTa7wOHgVmCXIVS5b6Zm6xbzQLs
-         CqRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgSXr8efuU0r6f80lud7aqibr1R8oP1887SQ3CrMns/hbMuLHcyj1EpsAiK5GuLrHdXLp2WsFmLID9gw1ypMYBRDge8NIHPnxlTLRr
-X-Gm-Message-State: AOJu0YyeKDjQFlNlJVP31Vmwb/BiSWlPxQXkwR7jZTcx9Ht9P6Uxpqed
-	R4zznZD5xCCI3zRhrrJ8G/bH1lutKSNattOaD3EA+dP1/xj83jWavqg+hn2WKA==
-X-Google-Smtp-Source: AGHT+IGHDAR6BfxXjOVdnoYWcpWOMI+YQdQQsZduiIDJgRJ/qHn3aYgnBzbWyENtpVxHf1LGg7bDNg==
-X-Received: by 2002:a05:6402:1d4e:b0:57c:c3a7:dab6 with SMTP id 4fb4d7f45d1cf-5b40cede1e6mr72548a12.3.1722279382616;
-        Mon, 29 Jul 2024 11:56:22 -0700 (PDT)
+        bh=VCoOCGeg30WnFijIytAVeEgtIkuQktWy1Oz+PoUgncg=;
+        b=bou6gnNABJQxsRRNcIsJvb1/Hy6Qo9bOPjRM+5BuDMNFPGERLlXeU3u1AwoB+sPv1I
+         NDxOTpWFldzLCRxKVzC98BBbPOXKEy6kk6q6VLrwQwTPSy0r1kk7in95yu4l3i/VKkL5
+         iJESxol62kOjQ/CTSv8rbHkskK8XI/5FnAJOKHJCaON7zjBXvHqgojaQuhO+BGUVsLP5
+         BRfegJOzPapnRursVyIKep5q3DdkiNUaK37Yt5Nb1mJ8bc50O6quwo8myHIQ3h3v+9ec
+         oQyih+AyiVBvZJz6ufW/SCWOYW391zJxweoUgolQjm3/Ua4u5ayXm6AxEvI4tpC8Z7Fn
+         xNcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722279384; x=1722884184;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VCoOCGeg30WnFijIytAVeEgtIkuQktWy1Oz+PoUgncg=;
+        b=k627jMCuwrg9KyNmE+xCQxVMLNjBCKVjrTmRBGfdC8mxkEaLIrObNgIXcGf2cJ9DiS
+         Ei1yyK6R56Vb/FM5vCK3RRiY5FwDvRmTf/EX8cc+dAqcK6fCg67dNGEfTuv034fOw0vw
+         TauRD0BX+8x9ZUlMfvya2fX6d5Y4H9hyD44fWTjAcGb3/VK3Wx+6LynR07O9cDq0vZUM
+         eqPyadY8F8Qtv/0x80DzGLoYNkL+QTaihAc9oSSX2ACmwH8eIvi2gddE5StCgq6fw1lG
+         VocnYfSIzDLvjxT0qtT5q62C4aXJv+T6sbCiMj3CmS0Nnt3cO0IVLpkurkBvlj1eQbeU
+         J2nw==
+X-Forwarded-Encrypted: i=1; AJvYcCWerlFCLcs9l7FGZW7qcK/WHKVpWexgjQYV6tYCyPfgn1q/34gduBZCDdwuUpAdqir+m0AWCRsbD/TKF9HjpaIftuN1NjeejKUVNIA4
+X-Gm-Message-State: AOJu0YzuO+zIQ8li+44Tvi7Cdk6Tv3V7w79jh5l98nwufTgqJZR2YG4v
+	ymsb8bPRtisXauhDa6TdcO8R8eh2Xa/tTQuxXwQTiMlBDoTmM5ctdoTwoTyFjg==
+X-Google-Smtp-Source: AGHT+IG+onbItmvIUtDfdEdb4uATJ1weCR4udl5xW61u6T9tSrynBlWJJKir22zMeH/EyVqa3RcnYQ==
+X-Received: by 2002:a05:6402:4314:b0:58b:93:b624 with SMTP id 4fb4d7f45d1cf-5b40b12a598mr84009a12.1.1722279383641;
+        Mon, 29 Jul 2024 11:56:23 -0700 (PDT)
 Received: from localhost ([2a00:79e0:9d:4:a1f4:32c9:4fcd:ec6c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36857fdesm13151543f8f.75.2024.07.29.11.56.21
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4281a936944sm60963535e9.31.2024.07.29.11.56.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 11:56:22 -0700 (PDT)
+        Mon, 29 Jul 2024 11:56:23 -0700 (PDT)
 From: Jann Horn <jannh@google.com>
-Subject: [PATCH v4 0/2] allow KASAN to detect UAF in SLAB_TYPESAFE_BY_RCU
- slabs
-Date: Mon, 29 Jul 2024 20:56:10 +0200
-Message-Id: <20240729-kasan-tsbrcu-v4-0-57ec85ef80c6@google.com>
+Date: Mon, 29 Jul 2024 20:56:11 +0200
+Subject: [PATCH v4 1/2] kasan: catch invalid free before SLUB reinitializes
+ the object
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,10 +78,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMrlp2YC/13M0QrCIBiG4VsZ/3GGOp2uo+4jOnCmm1QauqQYu
- /fcIGgdfh+8zwTJRGcSHKoJoskuueDLYLsK9KB8b5C7lA0UU4YFrdFVJeXRmLqon6gThKsWEyt
- EAyV5RGPda+VO57IHl8YQ36ue6fJ+IbaFMkUYMW5lK3HDWCOPfQj9zex1uMMi5fq35n91XWpOd
- EuttIRgsqnnef4AQdb6v+cAAAA=
+Message-Id: <20240729-kasan-tsbrcu-v4-1-57ec85ef80c6@google.com>
+References: <20240729-kasan-tsbrcu-v4-0-57ec85ef80c6@google.com>
+In-Reply-To: <20240729-kasan-tsbrcu-v4-0-57ec85ef80c6@google.com>
 To: Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
  Alexander Potapenko <glider@google.com>, 
  Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
@@ -95,159 +95,253 @@ Cc: Marco Elver <elver@google.com>, kasan-dev@googlegroups.com,
  Jann Horn <jannh@google.com>
 X-Mailer: b4 0.15-dev
 
-Hi!
+Currently, when KASAN is combined with init-on-free behavior, the
+initialization happens before KASAN's "invalid free" checks.
 
-The purpose of the series is to allow KASAN to detect use-after-free
-access in SLAB_TYPESAFE_BY_RCU slab caches, by essentially making them
-behave as if the cache was not SLAB_TYPESAFE_BY_RCU but instead every
-kfree() in the cache was a kfree_rcu().
-This is gated behind a config flag that is supposed to only be enabled
-in fuzzing/testing builds where the performance impact doesn't matter.
+More importantly, a subsequent commit will want to RCU-delay the actual
+SLUB freeing of an object, and we'd like KASAN to still validate
+synchronously that freeing the object is permitted. (Otherwise this
+change will make the existing testcase kmem_cache_invalid_free fail.)
 
-Output of the new kunit testcase I added to the KASAN test suite:
-==================================================================
-BUG: KASAN: slab-use-after-free in kmem_cache_rcu_uaf+0x3ae/0x4d0
-Read of size 1 at addr ffff888106224000 by task kunit_try_catch/224
+So add a new KASAN hook that allows KASAN to pre-validate a
+kmem_cache_free() operation before SLUB actually starts modifying the
+object or its metadata.
 
-CPU: 7 PID: 224 Comm: kunit_try_catch Tainted: G    B            N 6.10.0-00003-g065427d4b87f #430
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x53/0x70
- print_report+0xce/0x670
-[...]
- kasan_report+0xa5/0xe0
-[...]
- kmem_cache_rcu_uaf+0x3ae/0x4d0
-[...]
- kunit_try_run_case+0x1b3/0x490
-[...]
- kunit_generic_run_threadfn_adapter+0x80/0xe0
- kthread+0x2a5/0x370
-[...]
- ret_from_fork+0x34/0x70
-[...]
- ret_from_fork_asm+0x1a/0x30
- </TASK>
+Inside KASAN, this:
 
-Allocated by task 224:
- kasan_save_stack+0x33/0x60
- kasan_save_track+0x14/0x30
- __kasan_slab_alloc+0x6e/0x70
- kmem_cache_alloc_noprof+0xef/0x2b0
- kmem_cache_rcu_uaf+0x10d/0x4d0
- kunit_try_run_case+0x1b3/0x490
- kunit_generic_run_threadfn_adapter+0x80/0xe0
- kthread+0x2a5/0x370
- ret_from_fork+0x34/0x70
- ret_from_fork_asm+0x1a/0x30
+ - moves checks from poison_slab_object() into check_slab_free()
+ - moves kasan_arch_is_ready() up into callers of poison_slab_object()
+ - removes "ip" argument of poison_slab_object() and __kasan_slab_free()
+   (since those functions no longer do any reporting)
+ - renames check_slab_free() to check_slab_allocation()
 
-Freed by task 0:
- kasan_save_stack+0x33/0x60
- kasan_save_track+0x14/0x30
- kasan_save_free_info+0x3b/0x60
- __kasan_slab_free+0x57/0x80
- slab_free_after_rcu_debug+0xe3/0x220
- rcu_core+0x676/0x15b0
- handle_softirqs+0x22f/0x690
- irq_exit_rcu+0x84/0xb0
- sysvec_apic_timer_interrupt+0x6a/0x80
- asm_sysvec_apic_timer_interrupt+0x1a/0x20
-
-Last potentially related work creation:
- kasan_save_stack+0x33/0x60
- __kasan_record_aux_stack+0x8e/0xa0
- kmem_cache_free+0x10c/0x420
- kmem_cache_rcu_uaf+0x16e/0x4d0
- kunit_try_run_case+0x1b3/0x490
- kunit_generic_run_threadfn_adapter+0x80/0xe0
- kthread+0x2a5/0x370
- ret_from_fork+0x34/0x70
- ret_from_fork_asm+0x1a/0x30
-
-The buggy address belongs to the object at ffff888106224000
- which belongs to the cache test_cache of size 200
-The buggy address is located 0 bytes inside of
- freed 200-byte region [ffff888106224000, ffff8881062240c8)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x106224
-head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0x200000000000040(head|node=0|zone=2)
-page_type: 0xffffefff(slab)
-raw: 0200000000000040 ffff88810621c140 dead000000000122 0000000000000000
-raw: 0000000000000000 00000000801f001f 00000001ffffefff 0000000000000000
-head: 0200000000000040 ffff88810621c140 dead000000000122 0000000000000000
-head: 0000000000000000 00000000801f001f 00000001ffffefff 0000000000000000
-head: 0200000000000001 ffffea0004188901 ffffffffffffffff 0000000000000000
-head: 0000000000000002 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff888106223f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888106223f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff888106224000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                   ^
- ffff888106224080: fb fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc
- ffff888106224100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-    ok 38 kmem_cache_rcu_uaf
-
+Acked-by: Vlastimil Babka <vbabka@suse.cz> #slub
 Signed-off-by: Jann Horn <jannh@google.com>
 ---
-Changes in v4:
-- EDITME: describe what is new in this series revision.
-- EDITME: use bulletpoints and terse descriptions.
-- Link to v3: https://lore.kernel.org/r/20240725-kasan-tsbrcu-v3-0-51c92f8f1101@google.com
+ include/linux/kasan.h | 43 ++++++++++++++++++++++++++++++++++---
+ mm/kasan/common.c     | 59 +++++++++++++++++++++++++++++++--------------------
+ mm/slub.c             |  7 ++++++
+ 3 files changed, 83 insertions(+), 26 deletions(-)
 
-Changes in v2:
-Patch 1/2 is new; it's some necessary prep work for the main patch to
-work, though the KASAN integration maybe is a bit ugly.
-Patch 2/2 is a rebased version of the old patch, with some changes to
-how the config is wired up, with poison/unpoison logic added as
-suggested by dvyukov@ back then, with cache destruction fixed using
-rcu_barrier() as pointed out by dvyukov@ and the test robot, and a test
-added as suggested by elver@.
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index 70d6a8f6e25d..34cb7a25aacb 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -172,19 +172,50 @@ static __always_inline void * __must_check kasan_init_slab_obj(
+ {
+ 	if (kasan_enabled())
+ 		return __kasan_init_slab_obj(cache, object);
+ 	return (void *)object;
+ }
+ 
+-bool __kasan_slab_free(struct kmem_cache *s, void *object,
+-			unsigned long ip, bool init);
++bool __kasan_slab_pre_free(struct kmem_cache *s, void *object,
++			unsigned long ip);
++/**
++ * kasan_slab_pre_free - Validate a slab object freeing request.
++ * @object: Object to free.
++ *
++ * This function checks whether freeing the given object might be permitted; it
++ * checks things like whether the given object is properly aligned and not
++ * already freed.
++ *
++ * This function is only intended for use by the slab allocator.
++ *
++ * @Return true if freeing the object is known to be invalid; false otherwise.
++ */
++static __always_inline bool kasan_slab_pre_free(struct kmem_cache *s,
++						void *object)
++{
++	if (kasan_enabled())
++		return __kasan_slab_pre_free(s, object, _RET_IP_);
++	return false;
++}
++
++bool __kasan_slab_free(struct kmem_cache *s, void *object, bool init);
++/**
++ * kasan_slab_free - Possibly handle slab object freeing.
++ * @object: Object to free.
++ *
++ * This hook is called from the slab allocator to give KASAN a chance to take
++ * ownership of the object and handle its freeing.
++ * kasan_slab_pre_free() must have already been called on the same object.
++ *
++ * @Return true if KASAN took ownership of the object; false otherwise.
++ */
+ static __always_inline bool kasan_slab_free(struct kmem_cache *s,
+ 						void *object, bool init)
+ {
+ 	if (kasan_enabled())
+-		return __kasan_slab_free(s, object, _RET_IP_, init);
++		return __kasan_slab_free(s, object, init);
+ 	return false;
+ }
+ 
+ void __kasan_kfree_large(void *ptr, unsigned long ip);
+ static __always_inline void kasan_kfree_large(void *ptr)
+ {
+@@ -368,12 +399,18 @@ static inline void kasan_poison_new_object(struct kmem_cache *cache,
+ 					void *object) {}
+ static inline void *kasan_init_slab_obj(struct kmem_cache *cache,
+ 				const void *object)
+ {
+ 	return (void *)object;
+ }
++
++static inline bool kasan_slab_pre_free(struct kmem_cache *s, void *object)
++{
++	return false;
++}
++
+ static inline bool kasan_slab_free(struct kmem_cache *s, void *object, bool init)
+ {
+ 	return false;
+ }
+ static inline void kasan_kfree_large(void *ptr) {}
+ static inline void *kasan_slab_alloc(struct kmem_cache *s, void *object,
+diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+index 85e7c6b4575c..8cede1ce00e1 100644
+--- a/mm/kasan/common.c
++++ b/mm/kasan/common.c
+@@ -205,59 +205,65 @@ void * __must_check __kasan_init_slab_obj(struct kmem_cache *cache,
+ 	/* Tag is ignored in set_tag() without CONFIG_KASAN_SW/HW_TAGS */
+ 	object = set_tag(object, assign_tag(cache, object, true));
+ 
+ 	return (void *)object;
+ }
+ 
+-static inline bool poison_slab_object(struct kmem_cache *cache, void *object,
+-				      unsigned long ip, bool init)
++/* returns true for invalid request */
++static bool check_slab_allocation(struct kmem_cache *cache, void *object,
++				  unsigned long ip)
+ {
+-	void *tagged_object;
+-
+-	if (!kasan_arch_is_ready())
+-		return false;
++	void *tagged_object = object;
+ 
+-	tagged_object = object;
+ 	object = kasan_reset_tag(object);
+ 
+ 	if (unlikely(nearest_obj(cache, virt_to_slab(object), object) != object)) {
+ 		kasan_report_invalid_free(tagged_object, ip, KASAN_REPORT_INVALID_FREE);
+ 		return true;
+ 	}
+ 
+-	/* RCU slabs could be legally used after free within the RCU period. */
+-	if (unlikely(cache->flags & SLAB_TYPESAFE_BY_RCU))
+-		return false;
+-
+ 	if (!kasan_byte_accessible(tagged_object)) {
+ 		kasan_report_invalid_free(tagged_object, ip, KASAN_REPORT_DOUBLE_FREE);
+ 		return true;
+ 	}
+ 
++	return false;
++}
++
++static inline void poison_slab_object(struct kmem_cache *cache, void *object,
++				      bool init)
++{
++	void *tagged_object = object;
++
++	object = kasan_reset_tag(object);
++
++	/* RCU slabs could be legally used after free within the RCU period. */
++	if (unlikely(cache->flags & SLAB_TYPESAFE_BY_RCU))
++		return;
++
+ 	kasan_poison(object, round_up(cache->object_size, KASAN_GRANULE_SIZE),
+ 			KASAN_SLAB_FREE, init);
+ 
+ 	if (kasan_stack_collection_enabled())
+ 		kasan_save_free_info(cache, tagged_object);
++}
+ 
+-	return false;
++bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
++				unsigned long ip)
++{
++	if (!kasan_arch_is_ready() || is_kfence_address(object))
++		return false;
++	return check_slab_allocation(cache, object, ip);
+ }
+ 
+-bool __kasan_slab_free(struct kmem_cache *cache, void *object,
+-				unsigned long ip, bool init)
++bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init)
+ {
+-	if (is_kfence_address(object))
++	if (!kasan_arch_is_ready() || is_kfence_address(object))
+ 		return false;
+ 
+-	/*
+-	 * If the object is buggy, do not let slab put the object onto the
+-	 * freelist. The object will thus never be allocated again and its
+-	 * metadata will never get released.
+-	 */
+-	if (poison_slab_object(cache, object, ip, init))
+-		return true;
++	poison_slab_object(cache, object, init);
+ 
+ 	/*
+ 	 * If the object is put into quarantine, do not let slab put the object
+ 	 * onto the freelist for now. The object's metadata is kept until the
+ 	 * object gets evicted from quarantine.
+ 	 */
+@@ -503,15 +509,22 @@ bool __kasan_mempool_poison_object(void *ptr, unsigned long ip)
+ 		kasan_poison(ptr, folio_size(folio), KASAN_PAGE_FREE, false);
+ 		return true;
+ 	}
+ 
+ 	if (is_kfence_address(ptr))
+ 		return false;
++	if (!kasan_arch_is_ready())
++		return true;
+ 
+ 	slab = folio_slab(folio);
+-	return !poison_slab_object(slab->slab_cache, ptr, ip, false);
++
++	if (check_slab_allocation(slab->slab_cache, ptr, ip))
++		return false;
++
++	poison_slab_object(slab->slab_cache, ptr, false);
++	return true;
+ }
+ 
+ void __kasan_mempool_unpoison_object(void *ptr, size_t size, unsigned long ip)
+ {
+ 	struct slab *slab;
+ 	gfp_t flags = 0; /* Might be executing under a lock. */
+diff --git a/mm/slub.c b/mm/slub.c
+index 4927edec6a8c..34724704c52d 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -2167,12 +2167,19 @@ bool slab_free_hook(struct kmem_cache *s, void *x, bool init)
+ 		__kcsan_check_access(x, s->object_size,
+ 				     KCSAN_ACCESS_WRITE | KCSAN_ACCESS_ASSERT);
+ 
+ 	if (kfence_free(x))
+ 		return false;
+ 
++	/*
++	 * Give KASAN a chance to notice an invalid free operation before we
++	 * modify the object.
++	 */
++	if (kasan_slab_pre_free(s, x))
++		return false;
++
+ 	/*
+ 	 * As memory initialization might be integrated into KASAN,
+ 	 * kasan_slab_free and initialization memset's must be
+ 	 * kept together to avoid discrepancies in behavior.
+ 	 *
+ 	 * The initialization memset's clear the object and the metadata,
 
-Changes in v3:
-- in patch 1/2, integrate akpm's fix for !CONFIG_KASAN build failure
-- in patch 2/2, as suggested by vbabka, use dynamically allocated
-  rcu_head to avoid having to add slab metadata
-- in patch 2/2, add a warning in the kconfig help text that objects can
-  be recycled immediately under memory pressure
-- Link to v2: https://lore.kernel.org/r/20240724-kasan-tsbrcu-v2-0-45f898064468@google.com
-
-Changes in v4:
- - note I kept vbabka's ack for the SLUB changes in patch 1/2 since the
-   SLUB part didn't change, even though I refactored a bunch of the
-   KASAN parts
- - in patch 1/2 (major rework):
-   - fix commit message (Andrey)
-   - add doc comments in header (Andrey)
-   - remove "ip" argument from __kasan_slab_free()
-   - rework the whole check_slab_free() thing and move code around (Andrey)
- - in patch 2/2:
-   - kconfig description and dependency changes (Andrey)
-   - remove useless linebreak (Andrey)
-   - fix comment style (Andrey)
-   - fix do_slab_free() invocation (kernel test robot)
-
----
-Jann Horn (2):
-      kasan: catch invalid free before SLUB reinitializes the object
-      slub: Introduce CONFIG_SLUB_RCU_DEBUG
-
- include/linux/kasan.h | 50 +++++++++++++++++++++++++++----
- mm/Kconfig.debug      | 30 +++++++++++++++++++
- mm/kasan/common.c     | 60 +++++++++++++++++++++++--------------
- mm/kasan/kasan_test.c | 46 ++++++++++++++++++++++++++++
- mm/slab_common.c      | 12 ++++++++
- mm/slub.c             | 83 ++++++++++++++++++++++++++++++++++++++++++++++-----
- 6 files changed, 245 insertions(+), 36 deletions(-)
----
-base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
-change-id: 20240723-kasan-tsbrcu-b715a901f776
 -- 
-Jann Horn <jannh@google.com>
+2.46.0.rc1.232.g9752f9e123-goog
 
 
