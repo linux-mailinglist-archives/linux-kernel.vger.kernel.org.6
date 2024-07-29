@@ -1,167 +1,206 @@
-Return-Path: <linux-kernel+bounces-266317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9558B93FE12
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:09:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A17993FE14
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0F89B22A93
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:09:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FF081F232EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0B517C211;
-	Mon, 29 Jul 2024 19:09:44 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9240186E46;
+	Mon, 29 Jul 2024 19:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/evAa/d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04688F6E;
-	Mon, 29 Jul 2024 19:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF2B8F6E;
+	Mon, 29 Jul 2024 19:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722280184; cv=none; b=i8TcbkzZybdTk040fk0zhaptg36igt76Ed2oxNikJxyFAjSAdR2y+vYyo0VrfZtG3sc/PFQ0LxeM9PLXbkCFO+DyU4sUfaMktRa7P366KnyTwRE5TCmXtJrRX1NFVu1y/sdfEDhtqpX8dhq+5ZlHggP5In5p9s3pXgBDQ05QVbs=
+	t=1722280222; cv=none; b=oa7G/Mh8mtMWE/95Pp1i8i09cixkJyDB2VaoBoawmTlyi5l0nTBSQ3i2AoFAu+QX0UbcBmZutPzdQYFQE12uEccG2LfiaKzz73Rtc0M6LM8eDnX6/g6AuVeZZGAE495ep05DnE/PUWlmae1j3eNiU2fNW+ntVfD8fLxCkfjTv7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722280184; c=relaxed/simple;
-	bh=fvEG8IuZUXuSrOmwSWUOQopan86PdBzlFjFcPT7zo5k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c8qpcV1BCPyPAGaBVlqAdte7XQ4ThjnGlrfSk7MbzSGLnb2ZduUq0pW3O/MRHu4gPCt7wpl8O5nZNL0F1ofZPZv2nCv3Ntumgie5L6sPmNabcsyAe4MrXZxruy8L54zhhjZ9VJQSMAKiH+b+tv24I4hnxd5n6kpXu+zb/9W2J2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e86192c.versanet.de ([94.134.25.44] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sYVkP-00079A-SW; Mon, 29 Jul 2024 21:09:29 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Sam Edwards <cfsworks@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Jonathan Bennett <jbennett@incomsystems.biz>
-Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Daniel =?utf-8?B?S3VraWXFgmE=?= <daniel@kukiela.pl>,
- Sven Rademakers <sven.rademakers@gmail.com>, Joshua Riek <jjriek@verizon.net>
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Add PCIe pinctrls to Turing RK1
-Date: Mon, 29 Jul 2024 21:09:28 +0200
-Message-ID: <2401016.9fHWaBTJ5E@diego>
-In-Reply-To: <659dfd80-5962-4265-836d-5761c3e41ca0@incomsystems.biz>
-References:
- <20231208062510.893392-1-CFSworks@gmail.com>
- <66f413d2-1a5b-b9e3-3c86-35a1d150f486@gmail.com>
- <659dfd80-5962-4265-836d-5761c3e41ca0@incomsystems.biz>
+	s=arc-20240116; t=1722280222; c=relaxed/simple;
+	bh=GeKFbCeom+VCaHgl8+PZ2JYGr43jkE4VDnS0ZOHl118=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mV68HgUUYiccYjUhuFwohoTm7VRfuxfs+VfaNK7Pmd3CLM6fBtlQNJM6mNLebGE4tH61qcnYIagG5CJ79bqJIMFpm1QSLvNZkY6q0VTzqFYVjtJPl5V0kKM2PDV2MKzn8Vuv6n31jQC9NFjv68Y/bcK1k6CxiXjpUKqEHsq6JO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/evAa/d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30C00C32786;
+	Mon, 29 Jul 2024 19:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722280221;
+	bh=GeKFbCeom+VCaHgl8+PZ2JYGr43jkE4VDnS0ZOHl118=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V/evAa/d22sRjeBoHWUAG0XI3zAn5CgjCDbxrFakPLvhyGkH1ZiB8hNs7aqvTXMYZ
+	 5TUL6JW0aAKfa/B50hKl1p46kcghGQ2640KQImdQwmrGS4aHuFGrXF4egujzxnsdpN
+	 LzKd6PjDPDzIBHj+j7JOnB5ajN3S1W801Gtaizt3WwMJ26zaaH5ItyKZZV42PUBL6v
+	 FPj0Ad0YJVjfyr21oU3yEIf1MAkTrerMsKGoUzxq+g3+Jz0FEzADw4hYhlCsoVH0k9
+	 rloWD0aWdv3l+WkuVM3cDuUdsE3rnW9qhDZcvJpKFlCDa44lTH+mYhszjS+/Fkt0bo
+	 HgvskIRBbwgiA==
+Date: Mon, 29 Jul 2024 21:10:17 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Elad Yifee <eladwf@gmail.com>
+Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Daniel Golle <daniel@makrotopia.org>,
+	Joe Damato <jdamato@fastly.com>
+Subject: Re: [PATCH net-next v2 0/2] net: ethernet: mtk_eth_soc: improve RX
+ performance
+Message-ID: <ZqfpGVhBe3zt0x-K@lore-desk>
+References: <20240729183038.1959-1-eladwf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eeEMdISa/6n5flqb"
+Content-Disposition: inline
+In-Reply-To: <20240729183038.1959-1-eladwf@gmail.com>
+
+
+--eeEMdISa/6n5flqb
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
 
-Hi Jonathan, Sam,
+> This small series includes two short and simple patches to improve RX per=
+formance
+> on this driver.
 
-Am Mittwoch, 5. Juni 2024, 21:45:42 CEST schrieb Jonathan Bennett:
-> On 12/8/23 11:27 AM, Sam Edwards wrote:
-> > On 12/8/23 04:05, Heiko St=FCbner wrote:
-> >> Am Freitag, 8. Dezember 2023, 07:25:10 CET schrieb Sam Edwards:
-> >>> The RK3588 PCIe 3.0 controller seems to have unpredictable behavior=20
-> >>> when
-> >>> no CLKREQ/PERST/WAKE pins are configured in the pinmux. In=20
-> >>> particular, it
-> >>> will sometimes (varying between specific RK3588 chips, not over=20
-> >>> time) shut
-> >>> off the DBI block, and reads to this range will instead stall
-> >>> indefinitely.
-> >>>
-> >>> When this happens, it will prevent Linux from booting altogether. The
-> >>> PCIe driver will stall the CPU core once it attempts to read the=20
-> >>> version
-> >>> information from the DBI range.
-> >>>
-> >>> Fix this boot hang by adding the correct pinctrl configuration to the
-> >>> PCIe 3.0 device node, which is the proper thing to do anyway. While
-> >>> we're at it, also add the necessary configuration to the PCIe 2.0 nod=
-e,
-> >>> which may or may not fix the equivalent problem over there -- but is=
-=20
-> >>> the
-> >>> proper thing to do anyway. :)
-> >>>
-> >>> Fixes: 2806a69f3fef6 ("arm64: dts: rockchip: Add Turing RK1 SoM=20
-> >>> support")
-> >>> Signed-off-by: Sam Edwards <CFSworks@gmail.com>
-> >>> ---
-> >>>
-> >>> Hi list,
-> >>>
-> >>> Compared to v1, v2 removes the `reset-gpios` properties as well --=20
-> >>> this should
-> >>> give control of the PCIe resets exclusively to the PCIe cores. (And=20
-> >>> even if the
-> >>> `reset-gpios` props had no effect in v1, it'd be confusing to have=20
-> >>> them there.)
-> >>
-> >> Hmm, I'd think this could result in differing behaviour.
-> >>
-> >> I.e. I tried the same on a different board with a nvme drive on the=20
-> >> pci30x4
-> >> controller. But moving the reset from the gpio-way to "just" setting t=
-he
-> >> perstn pinctrl, simply hung the controller when probing the device.
-> >
-> > Ah, I'm guessing it died in:
-> > ver =3D dw_pcie_readl_dbi(pci, PCIE_VERSION_NUMBER);
-> >
-> > If so, that's the same hang that this patch is aiming to solve. I'm=20
-> > starting to wonder if having muxed pins !=3D 1 for a given signal upset=
-s=20
-> > the RC(s). Is your board (in an earlier boot stage:=20
-> > reset/maskrom/bootloader) muxing a different perstn pin option to that=
-=20
-> > controller (and Linux doesn't know to clear it away)? Then when you=20
-> > add the perstn pinctrl the total number of perstns muxed to the=20
-> > controller comes to 2, and without a reset-gpios =3D <...>; to take it=
-=20
-> > away again, that number stays at 2 to cause the hang upon the DBI read?
-> >
-> > If so, that'd mean the change resolves the hang for me, because it=20
-> > brings the total up to 1 (from 0), but also causes the hang for you,=20
-> > because it brings the total up to 2 (away from 1).
-> >
-> >>
-> >> So I guess I'd think the best way would be to split the pinctrl up=20
-> >> into the
-> >> 3 separate functions (clkreqn, perstn, waken) so that boards can inclu=
-de
-> >> them individually.
-> >
-> > Mm, maybe. Though that might be more appropriate if a board comes=20
-> > along that doesn't connect all of those signals to the same group of=20
-> > pins. I worry that attempting to solve this hang by doing that will=20
-> > instead just mask the real problem.
-> >
-> >>
-> >> Nobody is using the controller pinctrl entries so far anyway :-) .
-> >
-> > Then it's interesting that this board requires them in order to avoid=20
-> > a hang on boot. I'll see if there's anything else that I can find out.
+Hi Elad,
+
+What is the chip revision you are running?
+If you are using a device that does not support HW-LRO (e.g. MT7986 or
+MT7988), I guess we can try to use page_pool_dev_alloc_frag() APIs and
+request a 2048B buffer. Doing so, we can use use a single page for two
+rx buffers improving recycling with page_pool. What do you think?
+
+Regards,
+Lorenzo
+
 >=20
-> I've just finished testing the latest iteration of this patch with=20
-> 6.10-rc2 on my RK1 on a Turing Pi 2 carrier board. I can confirm that=20
-> unpatched mainline fails to boot with the same hang described here, and=20
-> the patch does make the board boot again.
+> iperf3 result without these patches:
+> 	[ ID] Interval           Transfer     Bandwidth
+> 	[  4]   0.00-1.00   sec   563 MBytes  4.72 Gbits/sec
+> 	[  4]   1.00-2.00   sec   563 MBytes  4.73 Gbits/sec
+> 	[  4]   2.00-3.00   sec   552 MBytes  4.63 Gbits/sec
+> 	[  4]   3.00-4.00   sec   561 MBytes  4.70 Gbits/sec
+> 	[  4]   4.00-5.00   sec   562 MBytes  4.71 Gbits/sec
+> 	[  4]   5.00-6.00   sec   565 MBytes  4.74 Gbits/sec
+> 	[  4]   6.00-7.00   sec   563 MBytes  4.72 Gbits/sec
+> 	[  4]   7.00-8.00   sec   565 MBytes  4.74 Gbits/sec
+> 	[  4]   8.00-9.00   sec   562 MBytes  4.71 Gbits/sec
+> 	[  4]   9.00-10.00  sec   558 MBytes  4.68 Gbits/sec
+> 	- - - - - - - - - - - - - - - - - - - - - - - - -
+> 	[ ID] Interval           Transfer     Bandwidth
+> 	[  4]   0.00-10.00  sec  5.48 GBytes  4.71 Gbits/sec                  se=
+nder
+> 	[  4]   0.00-10.00  sec  5.48 GBytes  4.71 Gbits/sec                  re=
+ceiver
+>=20
+> iperf3 result with "use prefetch methods" patch:
+> 	[ ID] Interval           Transfer     Bandwidth
+> 	[  4]   0.00-1.00   sec   598 MBytes  5.02 Gbits/sec
+> 	[  4]   1.00-2.00   sec   588 MBytes  4.94 Gbits/sec
+> 	[  4]   2.00-3.00   sec   592 MBytes  4.97 Gbits/sec
+> 	[  4]   3.00-4.00   sec   594 MBytes  4.98 Gbits/sec
+> 	[  4]   4.00-5.00   sec   590 MBytes  4.95 Gbits/sec
+> 	[  4]   5.00-6.00   sec   594 MBytes  4.98 Gbits/sec
+> 	[  4]   6.00-7.00   sec   594 MBytes  4.98 Gbits/sec
+> 	[  4]   7.00-8.00   sec   593 MBytes  4.98 Gbits/sec
+> 	[  4]   8.00-9.00   sec   593 MBytes  4.98 Gbits/sec
+> 	[  4]   9.00-10.00  sec   594 MBytes  4.98 Gbits/sec
+> 	- - - - - - - - - - - - - - - - - - - - - - - - -
+> 	[ ID] Interval           Transfer     Bandwidth
+> 	[  4]   0.00-10.00  sec  5.79 GBytes  4.98 Gbits/sec                  se=
+nder
+> 	[  4]   0.00-10.00  sec  5.79 GBytes  4.98 Gbits/sec                  re=
+ceiver
+>=20
+> iperf3 result with "use PP exclusively for XDP programs" patch:
+> 	[ ID] Interval           Transfer     Bandwidth
+> 	[  4]   0.00-1.00   sec   635 MBytes  5.33 Gbits/sec
+> 	[  4]   1.00-2.00   sec   636 MBytes  5.33 Gbits/sec
+> 	[  4]   2.00-3.00   sec   637 MBytes  5.34 Gbits/sec
+> 	[  4]   3.00-4.00   sec   636 MBytes  5.34 Gbits/sec
+> 	[  4]   4.00-5.00   sec   637 MBytes  5.34 Gbits/sec
+> 	[  4]   5.00-6.00   sec   637 MBytes  5.35 Gbits/sec
+> 	[  4]   6.00-7.00   sec   637 MBytes  5.34 Gbits/sec
+> 	[  4]   7.00-8.00   sec   636 MBytes  5.33 Gbits/sec
+> 	[  4]   8.00-9.00   sec   634 MBytes  5.32 Gbits/sec
+> 	[  4]   9.00-10.00  sec   637 MBytes  5.34 Gbits/sec
+> 	- - - - - - - - - - - - - - - - - - - - - - - - -
+> 	[ ID] Interval           Transfer     Bandwidth
+> 	[  4]   0.00-10.00  sec  6.21 GBytes  5.34 Gbits/sec                  se=
+nder
+> 	[  4]   0.00-10.00  sec  6.21 GBytes  5.34 Gbits/sec                  re=
+ceiver
+>=20
+> iperf3 result with both patches:
+> 	[ ID] Interval           Transfer     Bandwidth
+> 	[  4]   0.00-1.00   sec   652 MBytes  5.47 Gbits/sec
+> 	[  4]   1.00-2.00   sec   653 MBytes  5.47 Gbits/sec
+> 	[  4]   2.00-3.00   sec   654 MBytes  5.48 Gbits/sec
+> 	[  4]   3.00-4.00   sec   654 MBytes  5.49 Gbits/sec
+> 	[  4]   4.00-5.00   sec   653 MBytes  5.48 Gbits/sec
+> 	[  4]   5.00-6.00   sec   653 MBytes  5.48 Gbits/sec
+> 	[  4]   6.00-7.00   sec   653 MBytes  5.48 Gbits/sec
+> 	[  4]   7.00-8.00   sec   653 MBytes  5.48 Gbits/sec
+> 	[  4]   8.00-9.00   sec   653 MBytes  5.48 Gbits/sec
+> 	[  4]   9.00-10.00  sec   654 MBytes  5.48 Gbits/sec
+> 	- - - - - - - - - - - - - - - - - - - - - - - - -
+> 	[ ID] Interval           Transfer     Bandwidth
+> 	[  4]   0.00-10.00  sec  6.38 GBytes  5.48 Gbits/sec                  se=
+nder
+> 	[  4]   0.00-10.00  sec  6.38 GBytes  5.48 Gbits/sec                  re=
+ceiver
+>=20
+> About 16% more packets/sec without XDP program loaded,
+> and about 5% more packets/sec when using PP.
+> Tested on Banana Pi BPI-R4 (MT7988A)
+>=20
+> ---
+> Technically, this is version 2 of the =E2=80=9Cuse prefetch methods=E2=80=
+=9D patch.
+> Initially, I submitted it as a single patch for review (RFC),
+> but later I decided to include a second patch, resulting in this series
+> Changes in v2:
+> 	- Add "use PP exclusively for XDP programs" patch and create this series
+> ---
+> Elad Yifee (2):
+>   net: ethernet: mtk_eth_soc: use prefetch methods
+>   net: ethernet: mtk_eth_soc: use PP exclusively for XDP programs
+>=20
+>  drivers/net/ethernet/mediatek/mtk_eth_soc.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>=20
+> --=20
+> 2.45.2
+>=20
 
-Can you possibly test if
+--eeEMdISa/6n5flqb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3D28b8d7793b8573563b3d45321376f36168d77b1e
+-----BEGIN PGP SIGNATURE-----
 
-changes anything? In 6.11-rc1 now.
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZqfpGQAKCRA6cBh0uS2t
+rIUMAP4nuNOMAUEsFdsLjRwAyFNgf1vOCZYQoyFon6wysD5fSQEAlHKbTNTyt0u4
+EsoZUJ8VcK/cKEWZoQJOtnrr7BxBVw4=
+=l8GM
+-----END PGP SIGNATURE-----
 
-The PERST# toggling happening before that patch could've caused
-issues with your PCIe device.
-
-
-Heiko
-
-
+--eeEMdISa/6n5flqb--
 
