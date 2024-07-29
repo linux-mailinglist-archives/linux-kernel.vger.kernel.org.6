@@ -1,100 +1,61 @@
-Return-Path: <linux-kernel+bounces-266030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2800893F983
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:33:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC36193F98F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7FBA1C2227D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:33:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D54AB224D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC68158DA0;
-	Mon, 29 Jul 2024 15:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FEF15A876;
+	Mon, 29 Jul 2024 15:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cDbh7m7V"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFTE+tIv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8613B156665
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2492613C9A7;
+	Mon, 29 Jul 2024 15:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722267230; cv=none; b=rtjgeJtkavjGauqsBggaSoiwumAVIos9utpZN0U02sBzby1EXI/sawr7DySqg08MRi85euHHgPoOgSZyVHe1XV9BbdKusEYpJZ7J1rVsiCLnhlgSmg7YHOqi4fgah0fTYhEDzvUcHS5O/hViyXX+R5fdYOwdWfJAKLTwf5WaLqQ=
+	t=1722267251; cv=none; b=b9IF+gLFh2olhKddhd5QAS1GELdNB4pI2/ckqA5jPHCHTo8FyE2MkUTQk0MzFzaPV9ejRn5SA8cLk4DBE/PAYucCqDL5Pb/QIE8hQHsnQ5kgy69OVYy5FyokqBeytuphPXgg3Me1QHFPDumQGxf5GjpQlZf4VMXU+LMjCj0tFjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722267230; c=relaxed/simple;
-	bh=wqWUVlf7aP1OH80LKZ4ptLvsSw+/kbCzCArTFsf8Z2Y=;
+	s=arc-20240116; t=1722267251; c=relaxed/simple;
+	bh=mzYFMovn+k7oVAsF37f/0receWM06j5IkQ9VA/yeUSY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bgWF/9xzX/DM1kH8DBD1rmln8Nq6BLtVRj5qOz00awQqQtQLJA4JP9f1UpB3B7PQ3BewAF+4gMBxlhFBwyD+ijxCGj2kdzLM7BZ7R2WzHX58FoqwijiWZkf/XGzUPytbmrgn1C4rMuGnmvPYkgwEBeEyukYgqYC0iL1kXW9F9SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cDbh7m7V; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722267227;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gOdxuhlC0hKorSyQVfDMKmXgVB7ow0l5OK4sY+cYrK0=;
-	b=cDbh7m7VbzIKhMO5u5xWiUUGUsNSRVDF78yNY0FhwVVgq/k2poyVTpJOd9YOVAsb70wq+V
-	VsBq2Q76kSSi471Hoby4bJCd/FMQ9rcahPl2m1vdHCqMuZCqzL/ve7nMbkG90XvPAZQa5L
-	Ehos8NgSttWDrf/0Fs+LIosEiwOGi5I=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-512-tcS4V30gOiuVJGqeYkayGg-1; Mon, 29 Jul 2024 11:33:46 -0400
-X-MC-Unique: tcS4V30gOiuVJGqeYkayGg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-428072eb4c8so19975455e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:33:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722267225; x=1722872025;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gOdxuhlC0hKorSyQVfDMKmXgVB7ow0l5OK4sY+cYrK0=;
-        b=cW72aQ0sYg+MvOLTAAr7BMbqhHj3aEj4c2MXqkdiSiZ8SJJpvUMjeFRBGnlBP7q51M
-         vtzO/aZXq+4HEJPUI6/sp45r71JPzr7N8OkV8oQ2dOGdbNP85MzILtTmkPytANCnbkD9
-         2DLTrApGAvytH6uCUqT1SZryIKMEn0b/yOILtGJUdPWRQf3fu5DYUq4FHv6R+Wee/gKJ
-         zLpuQYMokgxYKkQ0B2UvLbEUqvqevKS+8I/Yi4U/YvOHzloHtkx+7UOgAmsgSG/je/R3
-         3Hkl2tVbbGbTWhOOXNprXvBLbVZmk0lRxKh70leogz/SOyW/Svfg0ZjpEbDkfntN+kJN
-         P2DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTAmOrekradTfXa3FswTccrbfq6u9uBbK8L3FH6XYKsiPtx0iT1n3EXYkREmbsRZ8ftLTz5FAcNgnMhe5zpnr4UDPwyB2tmi1Q9gYV
-X-Gm-Message-State: AOJu0YwMr93UMgeNZAiK/HcIKfpY3aPdPPl4KvjK00UKQcc69zz+LriC
-	WT1U2Hp0wluE7jaEYhAChGrdQwRaAHuj4dryEvBzhpSubBnCQ2NMMCAD42xzVVOSJ2ybxWPQNan
-	payU86+7NQZp4q0GDEZyprFqyarKIVm2MZEMAJhou7YEhKbTDEN9AALQXCmmxiQ==
-X-Received: by 2002:a05:600c:3b99:b0:426:5269:9827 with SMTP id 5b1f17b1804b1-42811a94590mr60054395e9.0.1722267224672;
-        Mon, 29 Jul 2024 08:33:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH11CwyPhlrH2xJ/R5zuEwuK8l7eeYYGyXEbvzQ/zeQzSr5tEaXptiR7TnM3lG3ZWRGuUwuXg==
-X-Received: by 2002:a05:600c:3b99:b0:426:5269:9827 with SMTP id 5b1f17b1804b1-42811a94590mr60053985e9.0.1722267223937;
-        Mon, 29 Jul 2024 08:33:43 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc7:55d:98c4:742e:26be:b52d:dd54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4281fd617desm21464125e9.35.2024.07.29.08.33.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 08:33:43 -0700 (PDT)
-Date: Mon, 29 Jul 2024 11:33:36 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Richard Cochran <richardcochran@gmail.com>,
-	Peter Hilber <peter.hilber@opensynergy.com>,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	"Ridoux, Julien" <ridouxj@amazon.com>, virtio-dev@lists.linux.dev,
-	"Luu, Ryan" <rluu@amazon.com>,
-	"Chashper, David" <chashper@amazon.com>,
-	"Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>,
-	"Christopher S . Hall" <christopher.s.hall@intel.com>,
-	Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
-	netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH v3] ptp: Add vDSO-style vmclock support
-Message-ID: <20240729113320-mutt-send-email-mst@kernel.org>
-References: <e3164fc80e21336cbf13e24f98c9e5706afb77ab.camel@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=k7Bz5ytA7EVxFKE6NO1nwNv/27NkJECuIluD8gn5MRPKI8Tn0Bq9ND99YZlpOqmOcgL0vuu/E+H2O1QcZguqQOaQ65ZcFmHQmaRDhxJf3kDYG24JRBlJbBmeD1q6Amr9Zx8ZGl4Qwc9xYrfM5NXY2ZfBzY07TBcMAkQKvcTwwWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFTE+tIv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E773C32786;
+	Mon, 29 Jul 2024 15:34:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722267249;
+	bh=mzYFMovn+k7oVAsF37f/0receWM06j5IkQ9VA/yeUSY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WFTE+tIvunFR1D9DNkIqF55hQDwc3o0SIrQXCY63uadpyNrUK9i9Ve8Mo6yEuVuIr
+	 7+ZnWNChbJYYU+5kVHH0FiCKcRj76aLrBfD2MCZKJErMj7ktvMfx6KIis+kAELmq2v
+	 uewS370vaUQgIHEFCHKKo/5u5weNvwx8ghVBcq9m4tT+9dX5xRl756+lmbYgjNqDjx
+	 L68QbFr6R6HKwzxAIDAkDUZqmaS5DPoFD6zk1XYcRKNDwz+eVHS/EyHm5Gs3J6NMxG
+	 E1aCpNVUpWSp9z/p0pGVfxpD5lNyaKICJAdkYEdQ/l8f8B88NyANpKVYIoCGXKYYTU
+	 I3zn9rriTNlEQ==
+Date: Mon, 29 Jul 2024 10:34:08 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+	Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-remoteproc@vger.kernel.org,
+	linux-pm@vger.kernel.org, iommu@lists.linux.dev,
+	Bjorn Andersson <andersson@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 3/3] dt-bindings: Batch-update Konrad Dybcio's email
+Message-ID: <172226724571.728425.2439563101739958891.robh@kernel.org>
+References: <20240726-topic-konrad_email-v1-0-f94665da2919@kernel.org>
+ <20240726-topic-konrad_email-v1-3-f94665da2919@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,137 +64,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e3164fc80e21336cbf13e24f98c9e5706afb77ab.camel@infradead.org>
+In-Reply-To: <20240726-topic-konrad_email-v1-3-f94665da2919@kernel.org>
 
-On Mon, Jul 29, 2024 at 11:42:22AM +0100, David Woodhouse wrote:
-> +struct vmclock_abi {
-> +	/* CONSTANT FIELDS */
-> +	uint32_t magic;
-> +#define VMCLOCK_MAGIC	0x4b4c4356 /* "VCLK" */
-> +	uint32_t size;		/* Size of region containing this structure */
-> +	uint16_t version;	/* 1 */
-> +	uint8_t counter_id; /* Matches VIRTIO_RTC_COUNTER_xxx except INVALID */
-> +#define VMCLOCK_COUNTER_ARM_VCNT	0
-> +#define VMCLOCK_COUNTER_X86_TSC		1
-> +#define VMCLOCK_COUNTER_INVALID		0xff
-> +	uint8_t time_type; /* Matches VIRTIO_RTC_TYPE_xxx */
-> +#define VMCLOCK_TIME_UTC			0	/* Since 1970-01-01 00:00:00z */
-> +#define VMCLOCK_TIME_TAI			1	/* Since 1970-01-01 00:00:00z */
-> +#define VMCLOCK_TIME_MONOTONIC			2	/* Since undefined epoch */
-> +#define VMCLOCK_TIME_INVALID_SMEARED		3	/* Not supported */
-> +#define VMCLOCK_TIME_INVALID_MAYBE_SMEARED	4	/* Not supported */
-> +
-> +	/* NON-CONSTANT FIELDS PROTECTED BY SEQCOUNT LOCK */
-> +	uint32_t seq_count;	/* Low bit means an update is in progress */
-> +	/*
-> +	 * This field changes to another non-repeating value when the CPU
-> +	 * counter is disrupted, for example on live migration. This lets
-> +	 * the guest know that it should discard any calibration it has
-> +	 * performed of the counter against external sources (NTP/PTP/etc.).
-> +	 */
-> +	uint64_t disruption_marker;
-> +	uint64_t flags;
-> +	/* Indicates that the tai_offset_sec field is valid */
-> +#define VMCLOCK_FLAG_TAI_OFFSET_VALID		(1 << 0)
-> +	/*
-> +	 * Optionally used to notify guests of pending maintenance events.
-> +	 * A guest which provides latency-sensitive services may wish to
-> +	 * remove itself from service if an event is coming up. Two flags
-> +	 * indicate the approximate imminence of the event.
-> +	 */
-> +#define VMCLOCK_FLAG_DISRUPTION_SOON		(1 << 1) /* About a day */
-> +#define VMCLOCK_FLAG_DISRUPTION_IMMINENT	(1 << 2) /* About an hour */
-> +#define VMCLOCK_FLAG_PERIOD_ESTERROR_VALID	(1 << 3)
-> +#define VMCLOCK_FLAG_PERIOD_MAXERROR_VALID	(1 << 4)
-> +#define VMCLOCK_FLAG_TIME_ESTERROR_VALID	(1 << 5)
-> +#define VMCLOCK_FLAG_TIME_MAXERROR_VALID	(1 << 6)
-> +	/*
-> +	 * If the MONOTONIC flag is set then (other than leap seconds) it is
-> +	 * guaranteed that the time calculated according this structure at
-> +	 * any given moment shall never appear to be later than the time
-> +	 * calculated via the structure at any *later* moment.
-> +	 *
-> +	 * In particular, a timestamp based on a counter reading taken
-> +	 * immediately after setting the low bit of seq_count (and the
-> +	 * associated memory barrier), using the previously-valid time and
-> +	 * period fields, shall never be later than a timestamp based on
-> +	 * a counter reading taken immediately before *clearing* the low
-> +	 * bit again after the update, using the about-to-be-valid fields.
-> +	 */
-> +#define VMCLOCK_FLAG_TIME_MONOTONIC		(1 << 7)
-> +
-> +	uint8_t pad[2];
-> +	uint8_t clock_status;
-> +#define VMCLOCK_STATUS_UNKNOWN		0
-> +#define VMCLOCK_STATUS_INITIALIZING	1
-> +#define VMCLOCK_STATUS_SYNCHRONIZED	2
-> +#define VMCLOCK_STATUS_FREERUNNING	3
-> +#define VMCLOCK_STATUS_UNRELIABLE	4
-> +
-> +	/*
-> +	 * The time exposed through this device is never smeared. This field
-> +	 * corresponds to the 'subtype' field in virtio-rtc, which indicates
-> +	 * the smearing method. However in this case it provides a *hint* to
-> +	 * the guest operating system, such that *if* the guest OS wants to
-> +	 * provide its users with an alternative clock which does not follow
-> +	 * UTC, it may do so in a fashion consistent with the other systems
-> +	 * in the nearby environment.
-> +	 */
-> +	uint8_t leap_second_smearing_hint; /* Matches VIRTIO_RTC_SUBTYPE_xxx */
-> +#define VMCLOCK_SMEARING_STRICT		0
-> +#define VMCLOCK_SMEARING_NOON_LINEAR	1
-> +#define VMCLOCK_SMEARING_UTC_SLS	2
-> +	int16_t tai_offset_sec;
-> +	uint8_t leap_indicator;
-> +	/*
-> +	 * This field is based on the the VIRTIO_RTC_LEAP_xxx values as
-> +	 * defined in the current draft of virtio-rtc, but since smearing
-> +	 * cannot be used with the shared memory device, some values are
-> +	 * not used.
-> +	 *
-> +	 * The _POST_POS and _POST_NEG values allow the guest to perform
-> +	 * its own smearing during the day or so after a leap second when
-> +	 * such smearing may need to continue being applied for a leap
-> +	 * second which is now theoretically "historical".
-> +	 */
-> +#define VMCLOCK_LEAP_NONE	0x00	/* No known nearby leap second */
-> +#define VMCLOCK_LEAP_PRE_POS	0x01	/* Positive leap second at EOM */
-> +#define VMCLOCK_LEAP_PRE_NEG	0x02	/* Negative leap second at EOM */
-> +#define VMCLOCK_LEAP_POS	0x03	/* Set during 23:59:60 second */
-> +#define VMCLOCK_LEAP_POST_POS	0x04
-> +#define VMCLOCK_LEAP_POST_NEG	0x05
-> +
-> +	/* Bit shift for counter_period_frac_sec and its error rate */
-> +	uint8_t counter_period_shift;
-> +	/*
-> +	 * Paired values of counter and UTC at a given point in time.
-> +	 */
-> +	uint64_t counter_value;
-> +	/*
-> +	 * Counter period, and error margin of same. The unit of these
-> +	 * fields is 1/2^(64 + counter_period_shift) of a second.
-> +	 */
-> +	uint64_t counter_period_frac_sec;
-> +	uint64_t counter_period_esterror_rate_frac_sec;
-> +	uint64_t counter_period_maxerror_rate_frac_sec;
-> +
-> +	/*
-> +	 * Time according to time_type field above.
-> +	 */
-> +	uint64_t time_sec;		/* Seconds since time_type epoch */
-> +	uint64_t time_frac_sec;		/* Units of 1/2^64 of a second */
-> +	uint64_t time_esterror_nanosec;
-> +	uint64_t time_maxerror_nanosec;
-> +};
-> +
-> +#endif /*  __VMCLOCK_ABI_H__ */
-> -- 
-> 2.44.0
+
+On Fri, 26 Jul 2024 13:18:25 +0200, Konrad Dybcio wrote:
+> Use my @kernel.org address everywhere.
 > 
+> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,dispcc-sm6350.yaml         | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml           | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,gcc-sm6125.yaml            | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,gcc-sm6350.yaml            | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,sm6115-gpucc.yaml          | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,sm6125-gpucc.yaml          | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,sm6350-camcc.yaml          | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,sm6375-dispcc.yaml         | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,sm6375-gcc.yaml            | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,sm6375-gpucc.yaml          | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,sm8350-videocc.yaml        | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml          | 2 +-
+>  Documentation/devicetree/bindings/display/msm/qcom,sm6375-mdss.yaml     | 2 +-
+>  .../devicetree/bindings/display/panel/asus,z00t-tm5p5-nt35596.yaml      | 2 +-
+>  Documentation/devicetree/bindings/display/panel/sony,td4353-jdi.yaml    | 2 +-
+>  Documentation/devicetree/bindings/interconnect/qcom,sc7280-rpmh.yaml    | 2 +-
+>  Documentation/devicetree/bindings/interconnect/qcom,sc8280xp-rpmh.yaml  | 2 +-
+>  Documentation/devicetree/bindings/interconnect/qcom,sm8450-rpmh.yaml    | 2 +-
+>  Documentation/devicetree/bindings/iommu/qcom,iommu.yaml                 | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,mdm9607-tlmm.yaml        | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,sm6350-tlmm.yaml         | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,sm6375-tlmm.yaml         | 2 +-
+>  Documentation/devicetree/bindings/remoteproc/qcom,rpm-proc.yaml         | 2 +-
+>  Documentation/devicetree/bindings/soc/qcom/qcom,rpm-master-stats.yaml   | 2 +-
+>  24 files changed, 24 insertions(+), 24 deletions(-)
 > 
 
-
-
-you said you will use __le here?
+Applied, thanks!
 
 
