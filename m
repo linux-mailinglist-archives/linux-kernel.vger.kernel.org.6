@@ -1,124 +1,110 @@
-Return-Path: <linux-kernel+bounces-266491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19DBB940099
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:50:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0164F94009E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BEC71C224AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:50:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 764A8B2220D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D5218E748;
-	Mon, 29 Jul 2024 21:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A03018EFC9;
+	Mon, 29 Jul 2024 21:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ax9zRqia"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="riS/w9Wk"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9058078C98;
-	Mon, 29 Jul 2024 21:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B7B18A93E;
+	Mon, 29 Jul 2024 21:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722289843; cv=none; b=gAMdbLb7iUfCFZQIDzvDT+70G+fXF8cRNXqqklJ+JRc0FgoNczBZXgXb3uhFuu0GMSLXOj7zRNr0YD49UXuMW2XmwYbDuLFXWPMAX8/nAqaAMcfLITPclSskeM9QiDTtPGAzumMzJnEuoTjLdLGOZXGzx8NFa/rAAmtdU+X9foU=
+	t=1722289856; cv=none; b=Vszw+LqTlqiFltpeUboSTGApWgmus1N+WIyt6mMpUFxlNJcgh+HonnlrysnT7cGVcy6SkGkb8RgiWy+GESi+nzfxz2Q+TWoep2hkuY3fOrVUcYD5hdzA0YwZr9W3nVChxxixxglFErw3+u0TStJwj/UArOlKjl/JR43kH3tBUsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722289843; c=relaxed/simple;
-	bh=JfbXA1oMsQYhnGX+C+o0fXVXJ9ONnD3UKhJ8D4SWc6M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BoM4XI76NlRqVvBwhVvnldfKAZCXrxC0GEJrt4xmTucbJjVZuphnrm+GEA8IZnQEsmXVJ8Eqs8xzryys3WS1jWF++BXqjHUcsm+EYqrlnUW4BqEarZEd6NBoqyYhiRRlWQrjY6jYa4RS5cq6iudBi9jXHOUAIBdLZrLB844IpsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ax9zRqia; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52fc14d6689so3985873e87.1;
-        Mon, 29 Jul 2024 14:50:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722289840; x=1722894640; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZHYdNsV38rSoCEORmGraPdwugk2S8z3fUI1g2ycAeTY=;
-        b=Ax9zRqiawYP3jPssJKSrNcxaZKOSrlRimUCA+nmeAdk8AxcrlnknnjnNXmspIGalaP
-         ti4dwgDdg94vZv3y26OslzML2+1K3xil3CICy02EIGnrSyyy5/4eP8JJze16GwsJjlC1
-         hlMBGVyn8CgQuxHyyCvw602HYqeEn4uz/cgV5HeJuICluaob/Ztx7hYcapYkjNI3wQ5J
-         FmNm+e11YKsQG5+HkMF0TFWJezq7/+n+TQ2/GOP9wgeXDRPcRxd15hMmKD2SuwR6pzc4
-         GKT7CMWcvOI8kw6/oSDPlpeDuFavJ23QmPEzg8Ua9eT1KdUTZVFQBD7bDn7I0kZBl5C7
-         rvBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722289840; x=1722894640;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZHYdNsV38rSoCEORmGraPdwugk2S8z3fUI1g2ycAeTY=;
-        b=aAQTvmMxu7iELBjmyNFb8X2ZLXDFqDLBmY7G0mejtsD7If3L1Nu4W77MYi3xpo0Cjy
-         8QkrLGmBtoEO45fUDM9RRxhq6n/aFNPENMtYZmYRpoziPfDxa+mStLTMqkqkdOA0o9D/
-         6JTyJn2vp/+7DEngyzDOiSjeHDqNc784r9FH7oV+YDW22CnYQ6Tj7OR8zIxTkBhpz+m7
-         HAbdXA6m44krTLxkTa6OS8Dg88RoBsdTINiXH6hoU4M49w4rR3C76zZQM+gnghPCgo67
-         IAZD28PoXMVCKhce8UQTlZejpC2o0JqE5b1DUn6k6BgDFZC4qbeDzh3Ob24LAjBWIfIT
-         K6Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCUs7AVROZ3LXsU6/1RqVZH09fkOkTe5m9sflXdSwwfkYdpjK+MxD2zWsv+QRuMBiB0YoJRLTg2rgb0WKgcJkyMhnjDyYGoDiANqtcc6b6qYINeH5fCszsRXmdgHQQRKvZOgKy+71ubxew==
-X-Gm-Message-State: AOJu0YyRZeDTZU/Tkja6eKUveTEJvpKA0m6xccJzFrFpUdJIUDie6Yp4
-	qDkhePiBEPAn9MsAu9iHOOT3bobhH/ZDJd6xOZomU+2hy6MHPCRuFr/UJjTQbvs80k4a+bUjnId
-	lHZxDkjmO1bW+aJBUy1jv4KpZiwQLpHoT
-X-Google-Smtp-Source: AGHT+IFWN9JXEn50JPPZa3TKU1Y9seI9IbGFnYcfbiZY/lYQvi1KAIPEO7LrMlmyjsO1cU7AThqUBLYhlAgQS6kwy8w=
-X-Received: by 2002:ac2:5b89:0:b0:52c:db0a:a550 with SMTP id
- 2adb3069b0e04-5309b2bcbe0mr6048181e87.42.1722289839142; Mon, 29 Jul 2024
- 14:50:39 -0700 (PDT)
+	s=arc-20240116; t=1722289856; c=relaxed/simple;
+	bh=x/FZoS9ZyTq5EvZkFb72FdN2neoz3nrPm5porRzrSVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SQqibjmuL28xeRt/UuqyC/fZQb1lkVDK1+SYuItRSYw2U3jV8uR6+H8duuq+LElEE6wwVr26s7Ml3NYLT/gcT7IIGFkHoNCQgXFyXM9a9A9Ku5+dXi93JNbHlJqiMlq8bo9NP9Pk+WIQTOrxChnRDLRLM28z2KrddxXgy7kXpvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=riS/w9Wk; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1722289849;
+	bh=mBehfmWKYN8yVcEXUpWuUZrPZL3ctRmUNHHR+cZal9U=;
+	h=Date:From:To:Cc:Subject:From;
+	b=riS/w9WkOotKHF6ycbcRrl/+6PsW9cOX9q461W433LE8vgZFuSHWShBJ4q7GTkal1
+	 4ra03s8aDFwvbx/dKbRpR/Vr73RGkp1yTkXDR3ayCLkHwGfwhg93G4w7wtlgSybEm9
+	 hVE9y+t78yS1T/n5QOWeoUGDQohuoqDKmybPv1RzlFqBkkhg1asqYFbnn6sgfBDOXb
+	 nY/0WGUVS3/MMUmzkEXYAbumKuFlULXgQ1ZfxW/OfNh//98rE0wwUnlROi0xPg5yPY
+	 02IT9pJMLEGFm9U3j549MvZav+Jqo6ve9Q5jDRnC10YXtGcpJsu5bnv7udsdRI869U
+	 Mw/C09+R1khEQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WXsVd3PrBz4x1V;
+	Tue, 30 Jul 2024 07:50:49 +1000 (AEST)
+Date: Tue, 30 Jul 2024 07:50:47 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
+ <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, bpf
+ <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the bpf-next tree
+Message-ID: <20240730075047.3247884c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAH2r5ms+vyNND3XPkBo+HYEj3-YMSwqZJup8BSt2B3LYOgPF+A@mail.gmail.com>
- <20240729-abwesend-absondern-e90f3209e666@brauner> <CAH2r5muRnhFevDR29k=DkmD_B44xQ5jOXd5RnRqkyH27pKzNDQ@mail.gmail.com>
-In-Reply-To: <CAH2r5muRnhFevDR29k=DkmD_B44xQ5jOXd5RnRqkyH27pKzNDQ@mail.gmail.com>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 29 Jul 2024 16:50:27 -0500
-Message-ID: <CAH2r5mvTFDShaGeygoykFzB59B7SckxM7u5QHzKOwioP_W6e3w@mail.gmail.com>
-Subject: Re: Why do very few filesystems have umount helpers
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/cbyiZ7nId9xt4S9EvneLdZz";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/cbyiZ7nId9xt4S9EvneLdZz
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 4:50=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
-On Mon, Jul 29, 2024 at 12:33=E2=80=AFPM Steve French <smfrench@gmail.com> =
-wrote:
-> > The first step should be to identify what exactly keeps your mount busy
-> > in generic/044 and generic/043.
->
-> That is a little tricky to debug (AFAIK no easy way to tell exactly which
-> reference is preventing the VFS from proceeding with the umount and
-> calling kill_sb).  My best guess is something related to deferred close
-> (cached network file handles) that had a brief refcount on
-> something being checked by umount, but when I experimented with
-> deferred close settings that did not seem to affect the problem so
-> looking for other possible causes.
->
-> I just did a quick experiment by adding a 1 second wait inside umount
-> and confirmed that that does fix it for those two tests when mounted to S=
-amba,
-> but not clear why the slight delay in umount helps as there is no pending
-> network traffic at that point.
+Hi all,
 
-I did some more experimentation and it looks like the umount problem
-with those two xfstests to Samba is related to IOC_SHUTDOWN.
-If I return EOPNOTSUPP on IOC_SHUTDOWN
-then the 1 second delay in umount is not necessary - so something that
-happens after IOC_SHUTDOWN races with umount (thus the 1 second delay
-that I tried as a quick experiment fixes it indirectly) in this
-testcase (although
-apparently this race between IOC_SHUTDOWN and umount is not an issue
-to some other servers but is reproducible to Samba and ksmbd (at least
-in some easy to setup configurations)
+In commit
 
+  76ea8f9e0003 ("selftests/bpf: Workaround strict bpf_lsm return value chec=
+k.")
 
+Fixes tag
+
+  Fixes: af980eb89f06 ("bpf, lsm: Add check for BPF LSM return value")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Maybe you meant
+
+Fixes: 5d99e198be27 ("bpf, lsm: Add check for BPF LSM return value")
 
 --=20
-Thanks,
+Cheers,
+Stephen Rothwell
 
-Steve
+--Sig_/cbyiZ7nId9xt4S9EvneLdZz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaoDrcACgkQAVBC80lX
+0GzNPgf+OkzudykqgTkIYY+xP/P6soKv4Sl+pOIubRr9tBMQgrz9y8SPsHeejgnK
+TUFaqrUgDoxqvGNlAtmx8JWnk/8BUhAeGsuvaV0U7HgzSZYlo6vh5oX3J4WX2GJE
+XjxfnScPJ71LA485js6VrCpbFN+9rC43EsSNr9wDk1Ee9uhvz7AbBNPjVmh3mUS1
+6eXTp9Nv7yHQe0hQ3CcH7eynm8SR5xI4OK1vl4gwt4Ji+asviM1IpSaWixMrparF
+Mt7FUSX73riy1nzt5hqyo2eir/91XtrGW8WBqczey+qcGd41qkmnxcktGeiHEpaa
+NI0rgmudGZWuIy0ZQM9zJL9JitzDDw==
+=dDSC
+-----END PGP SIGNATURE-----
+
+--Sig_/cbyiZ7nId9xt4S9EvneLdZz--
 
