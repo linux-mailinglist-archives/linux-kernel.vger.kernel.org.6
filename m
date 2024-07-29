@@ -1,146 +1,164 @@
-Return-Path: <linux-kernel+bounces-265802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4890A93F623
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:05:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B62DA93F62E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD2BD1C22217
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:05:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2A18282BD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB63148314;
-	Mon, 29 Jul 2024 13:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Wrv3EeBw"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A74154C15;
+	Mon, 29 Jul 2024 13:06:55 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109191420D0
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E26B1527BB
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722258337; cv=none; b=tXC5dsdVveQJxPe43C0M42rBWTWQS7wWnbxwmRYxTVNHG3QFagIwuQjG3Y7Th5TTaIGGHl92uLDNKVLNuhuburL9/mCut6tBomw6E9DrXzl1AEzuLMZC8vHqdEt4adKhPLnku+S9yvp2Kd6YpllLKSzr6J8n0NiIrsOM6GTgo+A=
+	t=1722258415; cv=none; b=E2wytd3rGc4R3hF6z8Wi/aT6sogcJE3S4oMCqATE9WQjCggeg+0SN9oJga5CwDgz/UkxCbiMWqGkjl6ZWiapBMO4c7ls9deLdJQYEdg3y6cnt3ReUyYv7eeCGxswAUrEoo0jPaL2lad+rQhvh9z/wRHp3yE9J+XskGBwsw1KF2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722258337; c=relaxed/simple;
-	bh=Cah9Ls8WTDTMm/sfnBeGjdlMY6StD0qfOF7XAI67hxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SFrUqxfMWCnsobqhh30xnm2yyLdTAYPZ9xHX3MH50YSYzaYrkx3AcqrMefvle4OmsEXf2ROvnqAl5hoNbnIv/EVKa9A/JVI2EeC4J6/I/uC1ap+R4IJI7AAlgN1hl7WStiJo6VVgpXADWc167b+pglYn6lWoKn9ZwzDpp7HBR2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Wrv3EeBw; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so5658704a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:05:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1722258334; x=1722863134; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oL6Ei2KYeBDeJNbLf68ofb+Lx3i9/7UrWfP1UrSTo+I=;
-        b=Wrv3EeBwtBCcBtvAIXpmLegvpxBnIx2F/i2+e77DVMWo98tLSPCuyh9kfVXSM1Ea4H
-         IyZq+yZrN/sPCzci31ZE6bxoJqAe6s/KiUXkTm6kMd4TttYUr3y9k4RuyM6l4jqMWJil
-         jns1gCiH5HOI92ohk8fc5jCoY3B77pv3GBh0gpNyCfoMFeh8HBwq29N9nGJw5MHWUq6o
-         u4JpCmlhCpH3O5Phs3ocQyu6xUXHWstVCeN0rs0CJlVLbHpDODozGVuJwUGdnwl/oAaO
-         quIkg/je7DiXWCs1ycFr6Oy9ek3glM81bXEf5AmBEF3ndHUB+NHQoI97mt0BnnuGkqLC
-         bv6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722258334; x=1722863134;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oL6Ei2KYeBDeJNbLf68ofb+Lx3i9/7UrWfP1UrSTo+I=;
-        b=xCmNgSwquZT5pOQ7dIzKSoc4/bF6LjI4SzscCDy+/Os8ZWA15QpY3l2rxBVuCq4E66
-         vwDIetQB0MRtQuli9tLFL3q/lXMa1K+vytfPgsVyuY7CAbLlDSIFOE5k/P0qsaKbWIMI
-         mV8SIb4qHmTGOoSjUFXg0Zku+c5KQOleidgKQ57HxXUtJImYIJmV8wHT4CrqEU4tCd9F
-         rAYXuSRueXaRAcH2tSQp4lfeNd1cxomJAxmKzTVbjDQUY2Uff5/R7cHgtQq346AQBKZz
-         WQ/keVK10thpYQ+TQcv6u71U2zei+hcaA321T3i+L3bAjNY/j8+LEjltzkp5cD12etoh
-         xE0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWrqt9VLTb+v/Kb1oBrN4MG/D/zEXoK605FNOkdQgzt2/LijPaLDeVbiAiiQTtMviMdcQDqNbOiCEd3FmkSt9cJDAblZYyctVxMjNWp
-X-Gm-Message-State: AOJu0YxoYxhl4XAabNL/NTBVi/qbQ55Yz//7PUpiqqdMs+vnthjG5YtQ
-	f+NuJGsUllLPxvLoCZLzZZJixND3Zc9xAcnZEe3tmKnNniRrocAiP0zdwydKjQw=
-X-Google-Smtp-Source: AGHT+IF0LI+nFBLvWwrjgKxa86+5pT2h9JjZMBwNTkHKWP7qRNiQQsN51SlBoLwcS80o17x5Hl5UHQ==
-X-Received: by 2002:a05:6402:13ce:b0:59f:9fc7:1e70 with SMTP id 4fb4d7f45d1cf-5b02000c21amr5865160a12.6.1722258334038;
-        Mon, 29 Jul 2024 06:05:34 -0700 (PDT)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63b5a7a0sm5773400a12.51.2024.07.29.06.05.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 06:05:33 -0700 (PDT)
-Date: Mon, 29 Jul 2024 15:05:32 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Haibo Xu <haibo1.xu@intel.com>
-Cc: sunilvl@ventanamicro.com, xiaobo55x@gmail.com, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Gavin Shan <gshan@redhat.com>, "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, 
-	James Morse <james.morse@arm.com>, Hanjun Guo <guohanjun@huawei.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] ACPI: NUMA: initialize all values of acpi_early_node_map
- to NUMA_NO_NODE
-Message-ID: <20240729-fdff8667bb22fcd63ea33ce3@orel>
-References: <20240729035958.1957185-1-haibo1.xu@intel.com>
+	s=arc-20240116; t=1722258415; c=relaxed/simple;
+	bh=Ylk4E8mWgyeoiA2HWwD3MJ44Qbh7odVXIQZNZkvaPAE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=sdDeus6sVXW29k7aJUUgrD6UkGssu7HrpAN8IsgVr+JR1OH83xGE8pOP+J3GjIWZUa4iX+EiTWdcMme6biO7K9Cvhwil3Xhvyx/iyfw8t3Wkq4qPqdPw8V/mfubKTfGvJLmP2pa82sGwUiMF7FHlt9ukSrzN6U8bnBd+dG+3Yu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sYQ5U-0008TP-0C
+	for linux-kernel@vger.kernel.org; Mon, 29 Jul 2024 15:06:52 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sYQ5T-0032wZ-IG
+	for linux-kernel@vger.kernel.org; Mon, 29 Jul 2024 15:06:51 +0200
+Received: from dspam.blackshift.org (localhost [127.0.0.1])
+	by bjornoya.blackshift.org (Postfix) with SMTP id 39FD2310D92
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:06:51 +0000 (UTC)
+Received: from hardanger.blackshift.org (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id 79070310D50;
+	Mon, 29 Jul 2024 13:06:41 +0000 (UTC)
+Received: from [172.20.34.65] (localhost [::1])
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id dabfbfe5;
+	Mon, 29 Jul 2024 13:06:31 +0000 (UTC)
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Mon, 29 Jul 2024 15:05:33 +0200
+Subject: [PATCH can-next 02/21] arm64: dts: rockchip: add CAN-FD controller
+ nodes to rk3568
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729035958.1957185-1-haibo1.xu@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240729-rockchip-canfd-v1-2-fa1250fd6be3@pengutronix.de>
+References: <20240729-rockchip-canfd-v1-0-fa1250fd6be3@pengutronix.de>
+In-Reply-To: <20240729-rockchip-canfd-v1-0-fa1250fd6be3@pengutronix.de>
+To: kernel@pengutronix.de, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Elaine Zhang <zhangqing@rock-chips.com>, 
+ David Jander <david.jander@protonic.nl>
+Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Marc Kleine-Budde <mkl@pengutronix.de>, David Jander <david@protonic.nl>
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2028; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=XWvrhlhwOQZD0wiXEfYS4fYeLnNF5MykEcA0bB9UIJM=;
+ b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBmp5O2g2OrIlmpRfYQY3bWUfPkaECgfR7gRcaXf
+ EoUSRuKKf6JATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZqeTtgAKCRAoOKI+ei28
+ bw0CB/wNMrNX+kyS6JMHtOlaMzU+PaGflZUOOSGIjl/MhkohflKCwUqyuvO6thjfDxY3V5Jvyp2
+ ViybOT09LIr5nfMj1nhUZ0qbXTozcWJ1n6sN/k20pugIrrUpqxmFdQOQirTifFYxDjraIWyT/ON
+ zBtNRy0VIyyy7/hZsgjzBcHXJN8mXIZ+0ZPMVVBsaNu0WzdH21G66wpUXRs0JpjFPk6XJhXUgPw
+ elUJCOXdVAoTai6/+0T5jB/oNR5Ak1ZVAi9n2HDUT3KaVRlkcho2NjlpIE+JEkR8R7aJAlQTJp/
+ 5pTHlBUr7Pgf5F78YD4rKAKOSOAA5sPJ/7rsCciZyBZTvuM9
+X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
+ fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2024 at 11:59:55AM GMT, Haibo Xu wrote:
-> Currently, only acpi_early_node_map[0] was initialized to NUMA_NO_NODE.
-> To ensure all the values were properly initialized, switch to initialize
-> all of them to NUMA_NO_NODE.
-> 
-> Suggested-by: Andrew Jones <ajones@ventanamicro.com>
+From: David Jander <david@protonic.nl>
 
-Thanks, but I think Reported-by, or both Reported-by and Suggested-by,
-is more appropriate. Also, I agree with Sunil that we probably need to
-split this patch for arm64 and riscv in order to add appropriate Fixes
-tags.
+Add nodes to the rk3568 devicetree to support the CAN-FD controllers.
 
-> Signed-off-by: Haibo Xu <haibo1.xu@intel.com>
-> ---
->  arch/arm64/kernel/acpi_numa.c | 2 +-
->  arch/riscv/kernel/acpi_numa.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/acpi_numa.c b/arch/arm64/kernel/acpi_numa.c
-> index 0c036a9a3c33..2465f291c7e1 100644
-> --- a/arch/arm64/kernel/acpi_numa.c
-> +++ b/arch/arm64/kernel/acpi_numa.c
-> @@ -27,7 +27,7 @@
->  
->  #include <asm/numa.h>
->  
-> -static int acpi_early_node_map[NR_CPUS] __initdata = { NUMA_NO_NODE };
-> +static int acpi_early_node_map[NR_CPUS] __initdata = { [0 ... NR_CPUS - 1] = NUMA_NO_NODE };
->  
->  int __init acpi_numa_get_nid(unsigned int cpu)
->  {
-> diff --git a/arch/riscv/kernel/acpi_numa.c b/arch/riscv/kernel/acpi_numa.c
-> index 0231482d6946..ff95aeebee3e 100644
-> --- a/arch/riscv/kernel/acpi_numa.c
-> +++ b/arch/riscv/kernel/acpi_numa.c
-> @@ -28,7 +28,7 @@
->  
->  #include <asm/numa.h>
->  
-> -static int acpi_early_node_map[NR_CPUS] __initdata = { NUMA_NO_NODE };
-> +static int acpi_early_node_map[NR_CPUS] __initdata = { [0 ... NR_CPUS - 1] = NUMA_NO_NODE };
->  
->  int __init acpi_numa_get_nid(unsigned int cpu)
->  {
-> -- 
-> 2.34.1
->
+Signed-off-by: David Jander <david@protonic.nl>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+---
+ arch/arm64/boot/dts/rockchip/rk3568.dtsi | 39 ++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-With the tags additions,
+diff --git a/arch/arm64/boot/dts/rockchip/rk3568.dtsi b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+index f1be76a54ceb..26764d04f6ef 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3568.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+@@ -213,6 +213,45 @@ gmac0_mtl_tx_setup: tx-queues-config {
+ 		};
+ 	};
+ 
++	can0: can@fe570000 {
++		compatible = "rockchip,rk3568-canfd";
++		reg = <0x0 0xfe570000 0x0 0x1000>;
++		interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru CLK_CAN0>, <&cru PCLK_CAN0>;
++		clock-names = "baudclk", "apb_pclk";
++		resets = <&cru SRST_CAN0>, <&cru SRST_P_CAN0>;
++		reset-names = "can", "can-apb";
++		pinctrl-names = "default";
++		pinctrl-0 = <&can0m0_pins>;
++		status = "disabled";
++	};
++
++	can1: can@fe580000 {
++		compatible = "rockchip,rk3568-canfd";
++		reg = <0x0 0xfe580000 0x0 0x1000>;
++		interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru CLK_CAN1>, <&cru PCLK_CAN1>;
++		clock-names = "baudclk", "apb_pclk";
++		resets = <&cru SRST_CAN1>, <&cru SRST_P_CAN1>;
++		reset-names = "can", "can-apb";
++		pinctrl-names = "default";
++		pinctrl-0 = <&can1m0_pins>;
++		status = "disabled";
++	};
++
++	can2: can@fe590000 {
++		compatible = "rockchip,rk3568-canfd";
++		reg = <0x0 0xfe590000 0x0 0x1000>;
++		interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru CLK_CAN2>, <&cru PCLK_CAN2>;
++		clock-names = "baudclk", "apb_pclk";
++		resets = <&cru SRST_CAN2>, <&cru SRST_P_CAN2>;
++		reset-names = "can", "can-apb";
++		pinctrl-names = "default";
++		pinctrl-0 = <&can2m0_pins>;
++		status = "disabled";
++	};
++
+ 	combphy0: phy@fe820000 {
+ 		compatible = "rockchip,rk3568-naneng-combphy";
+ 		reg = <0x0 0xfe820000 0x0 0x100>;
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+-- 
+2.43.0
 
-Thanks,
-drew
+
 
