@@ -1,177 +1,153 @@
-Return-Path: <linux-kernel+bounces-264948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DF0C93EA76
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:04:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A626493EA7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6B4DB21816
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 01:04:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F191281677
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 01:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A03F1C686;
-	Mon, 29 Jul 2024 01:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003E3179AB;
+	Mon, 29 Jul 2024 01:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="mn8bgA6Q"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02olkn2102.outbound.protection.outlook.com [40.92.44.102])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UozLDJoF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D848122F17;
-	Mon, 29 Jul 2024 01:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.44.102
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722215014; cv=fail; b=ddnW6o2p9PfozR1HgUxAXOs7nFMXrWVx4bhYE8G2Ypx5qakC3iwN7J8bD5xufRM6jeUtUL6kDTOgE2vtJsjGTU7W4D2RjevoIRmf9sKDG2bb69DKt2hy0O+PzqiW1LQs767Am2WQ9Ed5nlXa0azf0DLxogcn270v9zdcudJYreY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722215014; c=relaxed/simple;
-	bh=GKbHufVKfx+OO2asefdEgr1YzjHbI2wIaDB2jh73m68=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fdcf7R/dwLentREoR5ZSjjTAD7YRN/hS7zRoTykv76qj+90lL5EZr9b21gMt8+KqwJhFZuPUEyjnumpD86W19YHinoON4yXQe4XK8fKx25Kd+BuWzrE53OXxVz2NwX9DARxDgJfWyjLDhex26ZEk9Q0WUBqJteKlWPVHQf1QYzs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=mn8bgA6Q; arc=fail smtp.client-ip=40.92.44.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=elbszSeTr9A77u7iaxzvwsSt+8jFKOr2oOGubjpXesfFFQQOEJrmKsIAR7LvOOtouTY+SXNxzvQebDuKBxO/uliEJAqo768bcI6prNY6PHn6vMhH2YfoOz3sxKslOwEGtzynmlCSbO9axVfNnPgsen+o7hZOL227AsQK4/CaasbReHCZnGOiZYSGpbzUUOAKF+V9+LMEZvyGNqMQBD4gH9jJm2Un0FZLYgsY7wGUOO7IUePNzPZ3FJ8BhZYkEn1hPjzFlgSaePVanDByK/DneQU2T2JkyqtJwP4VPfXSt3gts1CJV32K/fkYn0WZPOtHx22tWSw+HYI8GNHWhuY9zQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Bno80+wEBfEuz/+UkWzzr/gZKqROScFNCXTxvQ5RnLc=;
- b=w7HhBqexvcaIIkPqWZoJRV9aCpa9tFmJbg9VCGOz2/3znfO88CmuNpcOKSZ751Fft42TPkxC4gGEy/7ytUStD0a8rVoYSY+z3MNYO/wroNAZW2YQ7eNlq9jZG9wniG02zJCrdMeO0UCm9FEEjnIvzOMwoEz0CAOnq/pG+OJKLgtqkZKApxmxGSixxrnY/4lP5VFow3xOQP9EzSX5E5B8y9veNm+mhbIzUkfOqW1wiTP5BR+5Yk2grLfYC2XC/9LiyVqHe2OF0DjfPg+Q7LQsQTGIFv4NKkxqHStmstZQVZwgP39AfXt5gTCvBPiVUJMgZJ3yi++vV4P4Sud32JDX9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Bno80+wEBfEuz/+UkWzzr/gZKqROScFNCXTxvQ5RnLc=;
- b=mn8bgA6QmI+QQnyjMIfXqsy5kYg6RtCf7pdhf6eUG5AS/Op4CyuFPg1jOfAwiUqN7MwRVDJPdcLstUqhRyPaQ8dE42WwJ+Sf3SI5rYGlLvIKFHen5j0cgo8+JPzXRi7eqjDw+rKbDgAiiwj13zpzlumxbFV0Iq1R6sfpG1sx4fr5rgy5nWwqhK1vl4+CdiiXtAzSzlo0g4D0qzp3LIcmJNLgwD9zMQxADUypRCdtVhIVN2pn7wgeFPNltnRZBLIMfoGh5GXce1iQFuAXI8x95otqzjI58vRKdxq8fm+MMcO3e9yMdPGrhzDtDC7OaOHY7ounSB3Lgg1RKR91/6TsDA==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by LV8PR20MB7300.namprd20.prod.outlook.com (2603:10b6:408:232::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.26; Mon, 29 Jul
- 2024 01:03:28 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149%5]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
- 01:03:28 +0000
-From: Inochi Amaoto <inochiama@outlook.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Haylen Chu <heylenay@outlook.com>
-Cc: Yixun Lan <dlan@gentoo.org>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v3 7/7] riscv: dts: sophgo: cv1812h: add pinctrl support
-Date: Mon, 29 Jul 2024 09:02:33 +0800
-Message-ID:
- <IA1PR20MB4953385123A52A5447332D3EBBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <IA1PR20MB4953B8B0014FA82A8E141CB0BBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
-References: <IA1PR20MB4953B8B0014FA82A8E141CB0BBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [BHhp99Ru5SxA5RwafqRxB2u9p68Mn+JIGwNxJHkaBaE=]
-X-ClientProxiedBy: TYCPR01CA0019.jpnprd01.prod.outlook.com (2603:1096:405::31)
- To IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <20240729010237.650411-7-inochiama@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A1514F7A
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 01:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722215522; cv=none; b=bV3Lf70ntd0qB3hUX8vM5hdk0FXzO0lND/anLAIfQ9ZdGejZmdcK9gVdmDVPsaQ0SG8c4rc03G7XfTpsNyAcnmVC3FxQp/PYh6R99Bl8BOEPNvtCNtSi9HASeHb9IuSANGH9z8kPQ15DhO8VUSqmASO3J1f7XNOmNiLDXfrLtUw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722215522; c=relaxed/simple;
+	bh=BnZP0WSDPhlTGSjXpTvyZEGM+Tf2TVJiglL2mtw++L0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l7mmMisf7mL0vpoJLHZdIK4ty5QxatG9AxyGRzdigfNY3Jo48zRiRYHUUApESdWqCEAVfFKouY4dSF32aC8OUgA+av6htiA3qLSpz7MM6t6ID/jh+r8t7jSSTeMz9+kC+lO73CJMyVeAUjJ71FrBsVLSiyRjs4LiUyKBRLGVAXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UozLDJoF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ED34C116B1;
+	Mon, 29 Jul 2024 01:12:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722215522;
+	bh=BnZP0WSDPhlTGSjXpTvyZEGM+Tf2TVJiglL2mtw++L0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UozLDJoFlpdji7cnN5R2T1ysGypIWktH8NQVfyu+Koj+Gnft7UNBu22/yO4iLfeBS
+	 vP45/WkhXUHvbJnZtybzeTtlwqrUPRtzDN/SOiH4StytQ2ZxiaqmJbquvwKARCUEYY
+	 oum3+BSqkba8pnZO1wfKUYdFiOnOHFk6DQRMBOIh5dmS4dgKi2OPiDyOKXtvSHWL/O
+	 GT0OkU13jKtnYuwDtlF/bjwxde3p3ZH9Nx6cldewVGoAxN4UW2Cl3JvpCDdwzb3jsS
+	 VdA2uZfX1GkwF1C5ySpdUvMJfnTiaMdcwk/WoCv87COYdAqj7ulT200dHWxWntIngh
+	 BqWJgi8iiO/Pw==
+Message-ID: <537aa35f-c3a7-41d0-aaa4-d000daf39fa2@kernel.org>
+Date: Mon, 29 Jul 2024 09:11:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|LV8PR20MB7300:EE_
-X-MS-Office365-Filtering-Correlation-Id: f13eae26-125e-4461-d825-08dcaf6a4193
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599006|8060799006|461199028|19110799003|3412199025|440099028|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	v1qzRHWhtEOzudRxV4VU8p+H+kFUrPeIYNNd7nId/3OLx4+CyJpdaZ5B0+qcmujxEsvzLDKFW788EmPGTCL96f+o/Drv5sxAQhwE6sxEm1YUtThy1jJ4uS1Z3tKMllQoxPfPbOnaSyOMJVj+ODy6X/szgn8KuOIn6BZGvcRZzjyZqIPyC+/uvITvRkgKBEs5T1QFnRU6lTPjgiqyEwJqKmeuPmh0twh89Vw4jo+VI3ai1P9Q3DW7C/VlpLoUElUuOdh1cJJqNfd+O3kK/eWXwJ7N7WZ6wivkaT7+9A5dQGd3jjmB0fWEYnlsh2dvL/fMvgr+Kh+IicoBfZBYmbLqf0JshpXMGYAAo8b7oORBGTEzf5ivdqZpZiki1SvhgsYcIn3zb3lbBa/SfKNBjxy6b9bA6k1c7zn2QgOerDHD981u0Rxie+imGwer9jiXJ78GdIz6OiuQIZ+h2dogW5RMWazFkJfp5VsvmXZhmmVz+8hH4l8CzIE15onCZSkcnHJzuyCieKwv+aPz21kr5VTzWS9intUQNMWkYOlpKD6y5024KEDhTU62mXDaqZQ/HXVQJ1/6SrI5Z9Y/5gkC84NVDdfFIzbFTL+AgiPSTgOY4vgrKpFjevMS/reqALxIH7RDMFgakLuYhksFHFXs12U7Ap+5QufAVXXA2bpu73LJMAJCzyCbLTCfYVSHkbQulqpWE3aKnzyHR1esH/w0lxZf9w==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?i5ZPG22kRhL3NLF1CGKm6Ns5ATwFpIOXoVx7DnbUL63NvuDP8Gh4oBbX99iR?=
- =?us-ascii?Q?pCyvhrNDmSQNY1FglfEe7TBEUYx1gxK7HmOdkp4o0k2Hh3dd8Of69lVVObCi?=
- =?us-ascii?Q?IBrlaEYawi1/rxkX99+QqaH3y6rClXoRTbWakqq8Qz/mCSqJ4IK0j5YPJ+Sg?=
- =?us-ascii?Q?J2gqUIrQn+Zi+S69lDAhwyAi/G6YEAIKiCwomLLgQVdfUwFV1COeYEAya1fh?=
- =?us-ascii?Q?So7Ia8mKBUr4ZYZKRJzdeKefmTDwuhwuAjQD9CxyAwMvihs/e1BZSHUd7YPZ?=
- =?us-ascii?Q?ttj0cL6Hss4DArrgPVeiUi7Qoii/li3sLL89rYJBNtjeYLU6dElp6UvmN2cy?=
- =?us-ascii?Q?CKSMAOG2OAdbWpNY6dE6teuq9yYunPF/r74kWf6TRSfWk3AtkwHbDBUANsKR?=
- =?us-ascii?Q?c55KAbncsmGMPbjxrtqdkcoIZSjlBqvGKz6zyxk5wykpS9aN+ijG3iUB182f?=
- =?us-ascii?Q?9Il4bM8Dnc1c7JouFceZMUWdS1jm8kx5SRe5GESLwcfu4hs1PaV1+yf48k5h?=
- =?us-ascii?Q?IH6rlDgKFk0tyW8xrnckF4rwvodk43Y0CcfdpnhVmsmKYU3zHw/94bLyM/bv?=
- =?us-ascii?Q?AJFqJ8KC3uWKGFr8+kaXy8sn7aOHGly+vON3H6Zb4d/7XeJhSn9Bypu/vLFh?=
- =?us-ascii?Q?juxdENkxaoySow7AXKyZ7RmC9ejtdX0pHjuVqS/RLqiKgStKriH/zkFbPqG1?=
- =?us-ascii?Q?ocpMZBuy8sCel930LytJagdu7sTsgrC+3zjrGBbFepsQM4LOGUhMcci5ge6B?=
- =?us-ascii?Q?Xjc2f6ctHZKpqyQ0V2+vX//3gL3QSO93s4s54zYAaZgZtqf1w3bbWoPOVAUM?=
- =?us-ascii?Q?dq+StM97bgPqTvNhB+PY8fEIQ/wpLTwzpnM9AL3Z7RefBcu+7pHRaJQYKcYW?=
- =?us-ascii?Q?uS7LHTeg/6I1jfdDo/eVWU/Ow2d6kg11x3hep2cA2vRtZY9FAn3lLehmbq4y?=
- =?us-ascii?Q?d0MDjQZUgZyCPOoWSeI5lviJkPQzRnRDlNhPdSxUAGi3mPwloruf1MSANbeR?=
- =?us-ascii?Q?oxYNKMdtMCKcg0P0ovnhYpbIfc3Q4ybMY6PSALPZXiRoZBotXLdGkctbfsqN?=
- =?us-ascii?Q?mJZ9skLSuGuyxhnncyNaAp2ZP5N+8QwjqdcCAFgmxNfavKNjw6jg96PbSVcd?=
- =?us-ascii?Q?RFgPWG2EbtyrBRV7ZSberMFippcFglAZBJySGCRHT2cdziIEPFqJMfEwRpzZ?=
- =?us-ascii?Q?+2QeUxjO/cJbf89ttf+wOZxXPG/DuXtqqqyXMyw+Sh7LV5AmRZ5l0xhNXGeL?=
- =?us-ascii?Q?a9Lv4SNvP+5Iw9U6vEVA?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f13eae26-125e-4461-d825-08dcaf6a4193
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 01:03:28.2662
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR20MB7300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] f2fs: fix to avoid use-after-free in
+ f2fs_stop_gc_thread()
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
+References: <20240725020841.894814-1-chao@kernel.org>
+ <ZqUOFzAPXE8plKU0@google.com> <ZqURxBYKHipWcz_U@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <ZqURxBYKHipWcz_U@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add pinctrl node for CV1812H SoC.
+On 2024/7/27 23:27, Jaegeuk Kim wrote:
+> On 07/27, Jaegeuk Kim wrote:
+>> On 07/25, Chao Yu wrote:
+>>> syzbot reports a f2fs bug as below:
+>>>
+>>>   __dump_stack lib/dump_stack.c:88 [inline]
+>>>   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+>>>   print_report+0xe8/0x550 mm/kasan/report.c:491
+>>>   kasan_report+0x143/0x180 mm/kasan/report.c:601
+>>>   kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+>>>   instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+>>>   atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
+>>>   __refcount_add include/linux/refcount.h:184 [inline]
+>>>   __refcount_inc include/linux/refcount.h:241 [inline]
+>>>   refcount_inc include/linux/refcount.h:258 [inline]
+>>>   get_task_struct include/linux/sched/task.h:118 [inline]
+>>>   kthread_stop+0xca/0x630 kernel/kthread.c:704
+>>>   f2fs_stop_gc_thread+0x65/0xb0 fs/f2fs/gc.c:210
+>>>   f2fs_do_shutdown+0x192/0x540 fs/f2fs/file.c:2283
+>>>   f2fs_ioc_shutdown fs/f2fs/file.c:2325 [inline]
+>>>   __f2fs_ioctl+0x443a/0xbe60 fs/f2fs/file.c:4325
+>>>   vfs_ioctl fs/ioctl.c:51 [inline]
+>>>   __do_sys_ioctl fs/ioctl.c:907 [inline]
+>>>   __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+>>>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>>>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>>
+>>> The root cause is below race condition, it may cause use-after-free
+>>> issue in sbi->gc_th pointer.
+>>>
+>>> - remount
+>>>   - f2fs_remount
+>>>    - f2fs_stop_gc_thread
+>>>     - kfree(gc_th)
+>>> 				- f2fs_ioc_shutdown
+>>> 				 - f2fs_do_shutdown
+>>> 				  - f2fs_stop_gc_thread
+>>> 				   - kthread_stop(gc_th->f2fs_gc_task)
+>>>
+>>> We will call f2fs_do_shutdown() in two paths:
+>>> - for f2fs_ioc_shutdown() path, we should grab sb->s_umount semaphore
+>>> for fixing.
+>>> - for f2fs_shutdown() path, it's safe since caller has already grabbed
+>>> sb->s_umount semaphore.
+>>>
+>>> Reported-by: syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
+>>> Closes: https://lore.kernel.org/linux-f2fs-devel/0000000000005c7ccb061e032b9b@google.com
+>>> Fixes: 7950e9ac638e ("f2fs: stop gc/discard thread after fs shutdown")
+>>> Signed-off-by: Chao Yu <chao@kernel.org>
+>>> ---
+>>>   fs/f2fs/file.c | 3 +++
+>>>   1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>> index 7a37f2b393b9..62d72da25754 100644
+>>> --- a/fs/f2fs/file.c
+>>> +++ b/fs/f2fs/file.c
+>>> @@ -2388,7 +2388,10 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
+>>>   		}
+>>>   	}
+>>>   
+>>> +	/* grab sb->s_umount to avoid racing w/ remount() */
+>>> +	down_read(&sbi->sb->s_umount);
+>>
+>> Is this safe for freeze_bdev()?
+> 
+> bdev_freeze
+>   -> fs_bdev_freeze
+>    -> get_bdev_super
+>     -> bdev_super_lock(bdev, true)
+>      -> super_lock(sb, true)
+>       -> __super_lock(sb, true)
+>        -> down_write(s_umount)
 
-Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
----
- arch/riscv/boot/dts/sophgo/cv1812h.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Oops, let me check this.
 
-diff --git a/arch/riscv/boot/dts/sophgo/cv1812h.dtsi b/arch/riscv/boot/dts/sophgo/cv1812h.dtsi
-index 8fcb400574ed..2dfa450f0d26 100644
---- a/arch/riscv/boot/dts/sophgo/cv1812h.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/cv1812h.dtsi
-@@ -4,6 +4,7 @@
-  */
+Thanks,
 
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/pinctrl/pinctrl-cv1812h.h>
- #include "cv18xx.dtsi"
- #include "cv181x.dtsi"
-
-@@ -14,6 +15,15 @@ memory@80000000 {
- 		device_type = "memory";
- 		reg = <0x80000000 0x10000000>;
- 	};
-+
-+	soc {
-+		pinctrl: pinctrl@3008000 {
-+			compatible = "sophgo,cv1812h-pinctrl";
-+			reg = <0x03001000 0x1000>,
-+			      <0x05027000 0x1000>;
-+			reg-names = "sys", "rtc";
-+		};
-+	};
- };
-
- &plic {
---
-2.45.2
-
+> 
+>>
+>>>   	ret = f2fs_do_shutdown(sbi, in, readonly);
+>>> +	up_read(&sbi->sb->s_umount);
+>>>   
+>>>   	if (need_drop)
+>>>   		mnt_drop_write_file(filp);
+>>> -- 
+>>> 2.40.1
 
