@@ -1,175 +1,189 @@
-Return-Path: <linux-kernel+bounces-264953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35D9693EA88
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:22:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1C393EA93
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C96222814BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 01:22:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D15A9281487
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 01:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6132475808;
-	Mon, 29 Jul 2024 01:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71236757F2;
+	Mon, 29 Jul 2024 01:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVq9ZAzc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="XQF80yXZ"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012063.outbound.protection.outlook.com [52.101.66.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9534A4F20E;
-	Mon, 29 Jul 2024 01:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722216118; cv=none; b=e7FeUz1E3H4WWz+y4iuUvkOcyuIXLBZIqhHmn5B77iMGm0QbKa4zdo1EW6mgyatXLTuWJ2PFRO24F+plhQLZdX+q6jcUtHIey84DtKO7kEFHI7tSU+NqkofZZBNiMd36LSMLmz48pnHIv4p9Jvan8X5tIkShEewP33h9NoT13kk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722216118; c=relaxed/simple;
-	bh=fcJW5gJLnuodeIWxC2Kn1Lk9LfB+ENVDoYCigF2EHbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AHgMhkZe9ZKMbf9OIeF5u4vcF4kkqeO+/OMo9ss/ZRJ9AAe904UDe/MHvPq4ZXjczC8ICtWK/TI0AriX1IxqOGwGMnJ/PFqOxJtDihlK2pE1k7TVuRSawvHJtbS4BgKvOyxh2rO4+bb/8ljYBSlAom1b5AOt1Ws177WyjSwNsEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVq9ZAzc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 918A7C116B1;
-	Mon, 29 Jul 2024 01:21:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722216118;
-	bh=fcJW5gJLnuodeIWxC2Kn1Lk9LfB+ENVDoYCigF2EHbc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iVq9ZAzclkJiCHb7miMCuGS8neNsccB40NVmVYAEgQCaDAuFKdFG4d6HVvPF2EX1O
-	 tqfyhE4QV2rMAfODaEaGA71oiY6IfJak8bFyYT/4PH63IrYxV0TE9rLplcodkEGSbe
-	 jxzv/ka+EW7D/0qrESyGE0ajyWI1boRsxocoPmnR+w2XjK3eCUjO7vYF56lmrx4n2U
-	 4V+K66dwqITY7fNtfH2gfB6b/FiV6h8L5XFrLDeezDy19Una14jnJ7CgwA991iYRNX
-	 BdnGGZnQ05vVqmUiGveXtXZWnkmY98rzFBslYR1Pirwqnbxl9tG6eJUeJbmwfME/TQ
-	 QaIPs2yk7X5iA==
-Date: Sun, 28 Jul 2024 18:21:56 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: irogers@google.com, acme@kernel.org, adrian.hunter@intel.com,
-	jolsa@kernel.org, kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] Dump off-cpu samples directly
-Message-ID: <ZqbutBvHOJ0SPd64@google.com>
-References: <20240726102826.787004-1-howardchu95@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773F2257B;
+	Mon, 29 Jul 2024 01:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722217281; cv=fail; b=Am5QyK4srdHCd/CONBbUUbbfNUD5jOZZD4Q9ngqYct8JhVgCxwAd/psjkWNP5HYZZZzREHJiO0NsVLaVSiQ1nkf09ftN7YJkn9d0ZsGi+Fx7Iw/3U98R2TCsCEf06cAa4X3k6ezG3HjLYa2aWCzP5BjLbx5EuZ2Tjf6YlctQMi8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722217281; c=relaxed/simple;
+	bh=WpdYgk1/SiEVC1xEao7qDa+ttQ8mL2p9aMXBX3NV3fk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=j4QQgPGjkISgKVWjjm8AdPHEbmNzwFIRzMFwIt9fDe7CLmyGTOFkot90BjsMun2J6t74lBe7dHI79YS1y+r0oos8kgEdMjzmigOmV7dJ1QCPF6ciYKa8h+S5bDZAdlaZqy1WRj8E94aZqYLlWtb3LDEL9zXaDj5UwJrE9lssJBw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=XQF80yXZ; arc=fail smtp.client-ip=52.101.66.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=A60XFOsWlxcW+y2vcfoIahwIFnyt0mCykqwnrVCzJjaj/RbyPIDyTGbOU4+kQc1C5GRprNv5alOin4PYCJkorVEM2mIwoOS4MMs3pGa3HvqT2nDYNNaSIMcjekkczdP6fO+r41HWvYp74PbdRtg/EzJXLQ4n4I89t/2QprSQYIwW1IAwbBwUdJpSD5J7GwgGt1Mc6ATBc4MIbnwavIc8Hj8lIg8aLeERcd3XYBMrByrwVJG9SJ+zAqKYaC0hHHYMiKhL3vzJAYbKzBFpfbj6I4rDRrkptaWoYe/USuzLLvMxx21XiaMKPM1LDRDZe58M4n6+tcNKudFU99IQnSdNkA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eULak/smtbcsdq6YV9bIQO1mZ2MAlWkoNwuWfKATXFY=;
+ b=orlFX+AYcVikxKnGZ40yu5CLTazMXOzkQUGdcwBmst5pkgSsiOTZTNsFT4djjc12bR6GiS2+ZXxrZcXT5WxRe3mPZ6Q6zQWCmANYTD2wWT22CfuiAcETm4KzNSCMnNmO8+Xn679SYt7nrROQ4DkZa1knzTavs4cwknc4HHbhRxwvaP7opvXhjqr0Sb/6/IkJ81OQuqOTJMizv3xuxUyc892jHP+8GqU9/mMQyeaAXIWC3W5copY7XYkz/FyBsAbQCSlsQI8YeKnqXEMG4HbP7Klu6hfj2c+76U6hESZpqDzV91e3gZ9gO/OPzevWkKAhp2HejKod8B7FoptWYNfpsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eULak/smtbcsdq6YV9bIQO1mZ2MAlWkoNwuWfKATXFY=;
+ b=XQF80yXZkxqQekORr9y3u/SKRLV5R2Kv4lmcDoniy8IrJ9f6ft6/SXF3z4dAwJ3S1Z2TVSWrig3hLCNdR385bKTefDfMEd0ZmK7siu25gvKiBOCQcIlJB/W0fZYIe98J51wYrYThuqlvD2QABUUobxXFpbkjxl/zkwNLPWmDz2cIH4XG85h3RDfkHTDI6gyQCmjp2EBxvbv4RzkbHWudERAM9LY7ur7scr3zI7jMIBQkfrR6BXuTdRAfmYohbAvkR1UOffhQvdk0acJaxxm1ulxOlPOFk0/1fpVmuE2q7LN4AtnPdJKC1bH/pdvc/r1ang3Q1+qF+7hOvduL4i9p9Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by DBBPR04MB7610.eurprd04.prod.outlook.com (2603:10a6:10:1f6::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Mon, 29 Jul
+ 2024 01:41:16 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%6]) with mapi id 15.20.7784.017; Mon, 29 Jul 2024
+ 01:41:16 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	festevam@gmail.com,
+	abelvesa@kernel.org,
+	peng.fan@nxp.com
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 RESEND 0/4] add NETCMIX block control support on i.MX95
+Date: Mon, 29 Jul 2024 09:27:52 +0800
+Message-Id: <20240729012756.3686758-1-wei.fang@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR02CA0034.apcprd02.prod.outlook.com
+ (2603:1096:4:195::9) To PAXPR04MB8510.eurprd04.prod.outlook.com
+ (2603:10a6:102:211::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240726102826.787004-1-howardchu95@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|DBBPR04MB7610:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7cf3e029-7225-480b-dbbb-08dcaf6f8960
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|7416014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?un87ujILtEaEXi4g42AhhPUVLSntXqg+Fibs4JJH4eaJQpBQBrF4P8R44+cA?=
+ =?us-ascii?Q?gEY/IhJZCoGXIqbxPx5bUgzm50dPd9R0WgGrw3ggFS2VKVuyBJcur8/PTkLG?=
+ =?us-ascii?Q?sz3oZAlEZeeBNffpI5tX65xyJJQ1ujLJQsaTXAnZ+SVsr025aGL94gNwF3Gn?=
+ =?us-ascii?Q?mEhFsI6h7IdYsRZGflP64ti22/xhiIvNVK6M2n4tDVMhioW6HRJkmJFLJjDW?=
+ =?us-ascii?Q?zakJWVBmMxPcZeggXsYMeaRl5wYRDZgIKjNJPa8CKKGB6Teo+MZt+BhPF85v?=
+ =?us-ascii?Q?L09iNQv6iulf2i/SatBpadjxj+upPWitwmVqJJ3b5s4W/JagkueGnOuipr0c?=
+ =?us-ascii?Q?kJdMbKnXuoqmUrxsR2rV3iszI86FBpS4xszpaXypVo+vQpN4d4/ESAgkQPzK?=
+ =?us-ascii?Q?dfnH9yx7MRcG26bxSADu/a1c5n4BDIX7pCPIEYjTJDFQNF/450lfltFbSFCz?=
+ =?us-ascii?Q?QOVhqiRXcH0xJ+S9PF2dZ2kC1cXZkUxwhL6oZNLM9Sepj4ecFHhUluyXPyTV?=
+ =?us-ascii?Q?QlxqKN6LBhtiizuDCGkNM554i7pgGpHzLFaSRx2l2F65xjufQY/wA9ZFV840?=
+ =?us-ascii?Q?ZDW5jGYEVhcHH+GSxzAHRdNyAYgVjveFLX/xKPBj7eoiAQxlIfj/dt4Qu9D/?=
+ =?us-ascii?Q?AOxFnRjJJVFqNae7zWHCkmSJaqURveS6gtFa87PDDPFnjnyBUVFj3MpaHoxN?=
+ =?us-ascii?Q?k3mQ/uDzJgJzeslQKDUizp+LloWlf4tNYn3MQN3HxCXninnguH9uyisoZg01?=
+ =?us-ascii?Q?qjlWXdP7Yh7a8G3hU73tWpx3nMXjGkArPSc/R+0jvcle2Ej/MI+ze12P+PL1?=
+ =?us-ascii?Q?vvXotrwM1DciTFWsG5JMYDcydf0rH50mhIqUAWo4bY8jmrFiCnTh9a+RIC1s?=
+ =?us-ascii?Q?0LPHTeNFM4ypMG2ScIOoHXvI+/qO2qXpyxy7ctfb5X5zevNB7M6EcFBMsp50?=
+ =?us-ascii?Q?bH0oVZSfau922extEGZ0vbLiBoK54ZUVxY0fjhwhstcrl8/em67uhJHDr2Av?=
+ =?us-ascii?Q?PZARAq9+dWs6X7DQbHGbL4KqbVQG0edlBUlLcxlJowZIKDeK9LIMKTjxuF3b?=
+ =?us-ascii?Q?0m95jukIj7LrrWGNfUP6kMU2K+p6BGXWQ8VQheYYtgBqOkb2DLymToRnNK5a?=
+ =?us-ascii?Q?Z2xGPliDeGChUMevBjyABAs1H5ds9He+BsMJBxwYz5xdQN3tpdbgXSb7W5FI?=
+ =?us-ascii?Q?REGy42PALJp6T2p5KWC/EZdIruDghAAypAOy/x6/WyqGo3KtQTFLUkgDBrlM?=
+ =?us-ascii?Q?xVPULU97WlDZQl3PhTasqBIrddyYOWpvF+vK3TyTwkbCnvMvPJAA8y/wZGgi?=
+ =?us-ascii?Q?91EMarQkud1O4QYiykTpxLccI/JStPs6AyXqCL6qkm14K+UpByuRev1YOOCS?=
+ =?us-ascii?Q?BvLoUw8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?B7IM1XnIpN2266lbOMhMjGSGhNjCcvS4iSNWd44Mrxrr9ATcspHuyY/ox5iD?=
+ =?us-ascii?Q?9iQtgWlFh0bQapCC/Ofx2Bz2cE8NOtPoWNhSVZuUcr1Nu6PizMW4M/PXpSSm?=
+ =?us-ascii?Q?mjXNBGWjEQBn2iIT0kXg+wdrgjx+65mxf56jXTpZIMA4k8XSxmgx3cNlDVlS?=
+ =?us-ascii?Q?1vFoRq3JvKTN1TnORSUQrXqqLPTc2j6d4PBU64OW1X4kJgOdtHQRjd4Fi4OT?=
+ =?us-ascii?Q?3O6hUQEu08E3jApZg14QE+WzPBZ6crwrAPKQWtfPLvNNEhI9xBicguP3prDx?=
+ =?us-ascii?Q?2iBwiMZDmVZalS8sUXyPl/RJBiVZ/fc93T8+fVojT831gjJPX+rht8hMAWio?=
+ =?us-ascii?Q?NHB/Bo93yCPUZ0NJaRVH4nTMqtTPWbVWQMcvIdIfXXg5Qmofuun6AaU+jg6D?=
+ =?us-ascii?Q?4il42MNUGLhLGE/3gM+4S657uJdeBQEFSZ7GN3jY7Cpw8dT/xlYKnYoMMYV8?=
+ =?us-ascii?Q?9Vcp3rgBfP/fjx1J46xADU1LlHImDXuzIthIL6ONecOIwiDHxj+BsWvY2bhA?=
+ =?us-ascii?Q?XZkyQ2AemFXBvRVfrtKpzIpOdkYP8rtKDxUPlxvucVLUg4EZaPPxa0X8k4Ec?=
+ =?us-ascii?Q?vAfGBSaFJIxsKO2a7ZVXlspwo0GTPVQOJonZV85LMC7iczhkjok0JCvtqZ15?=
+ =?us-ascii?Q?UHh8V+/bTtiiW9LT/ipTOvtSyWq9Wb9WrKfsau8a5s945cn3+evzQWbtIw8/?=
+ =?us-ascii?Q?347G4fgKA6sF+d2v1FE8yq3/fiXj/olhzigzYoe9KS3046JUYhOZcWmxTeBZ?=
+ =?us-ascii?Q?BgmYBle5ep8tkBlWFIQuE1cqfyN7en82pr25ey7Ar63ROT0Kwei79ZgFS5ue?=
+ =?us-ascii?Q?CMLLlXUhnUG8HnIN8bnim5SYbEkx8xTr+IPPpqCd6Ko529/0QZXngaDSLrLm?=
+ =?us-ascii?Q?6WUemq44Rgn1D9eobUQzGwNvHwmBqPuHHc2XuBkoNGALWzakd8C8uhB8asAe?=
+ =?us-ascii?Q?KVc8xTMFpsRflI0A1ZlcoxAEJNbi0fZOjsy6uuSUL97fvQ1iusjTBlAUn8O/?=
+ =?us-ascii?Q?qXa8mjKNiwnL7XjSSgksTL3MUBfuL0ItOtUI4KWVgRsTBaNt7l1LE+lx8hql?=
+ =?us-ascii?Q?myIcsTzdfiTTmmKt+iHwGL2J4pC2gtc74H0ZC3aGOQzOk4M7N8wkvS3LvH5m?=
+ =?us-ascii?Q?lKa5jA0gMtChCTN79W76p27QVYkUKLTP6Ag7flPq2AC3epb4BrKJlqC1gFJI?=
+ =?us-ascii?Q?DXBCv+TasPmdotvoqFCmtiGwokfTmgyoVwJQe2GF3z/xa3IpWFfqafEs8JId?=
+ =?us-ascii?Q?m/lyTKpziMuYQdJ+ILgnIVGfIeEngH4wPP8wrdTOCd+nbBkJuqCTudaYDYcF?=
+ =?us-ascii?Q?CrW6ysTLBScqKj68arTG2R1louIZrT0pX4sXLPIcwBEw6ey8KUKRzIf2O8x9?=
+ =?us-ascii?Q?92/bz0KxgEfgKtcYqjsIhpUkBCb0VY3AzXcRIPU3L8tZ8UO9MV8V54WYQ/s0?=
+ =?us-ascii?Q?3PAywRPsFY4EHYTS+TnsqTjeOcqCwPmtSCrarxyT0HCoAYRFbNyxdV1G/jKs?=
+ =?us-ascii?Q?k573d1/NIKwm8eqwRSo3tCWsmbuPGYv+/+lPpUwvtKETFDsOiA1P7uDiq5bZ?=
+ =?us-ascii?Q?d4g5wG03Cpe5ZfgwSbWUGg2AHaa+uIypBnA+NFXV?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7cf3e029-7225-480b-dbbb-08dcaf6f8960
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 01:41:16.3710
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TEKrlwpLw0kev56CdMcMQl46fR6JEjFzN9tsNsUuqRv2LbaqzsnNX05ZGedhflve26PUhKvUvL2Pgz4iooj43g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7610
 
-Hello Howard,
+The NETCMIX block control consists of registers for configuration of
+peripherals in the NETC domain, such as MQS, SAI and NETC. So add the
+NETCMIX block control support on i.MX95 platform.
 
-On Fri, Jul 26, 2024 at 06:28:21PM +0800, Howard Chu wrote:
-> As mentioned in: https://bugzilla.kernel.org/show_bug.cgi?id=207323
-> 
-> Currently, off-cpu samples are dumped when perf record is exiting. This
-> results in off-cpu samples being after the regular samples. This patch
-> series makes possible dumping off-cpu samples on-the-fly, directly into
-> perf ring buffer. And it dispatches those samples to the correct format
-> for perf.data consumers.
+---
+V2:
+1. Patch 2 is new patch.
+2. Add rmii reference clock mux for ENETC0 and ENETC1 in patch 3.
+Link to V1: https://lore.kernel.org/all/20240709073603.1967609-3-wei.fang@nxp.com/
+Link to V2: https://lore.kernel.org/all/20240710084345.2016687-1-wei.fang@nxp.com/
+---
 
-Thanks for your work!
+Wei Fang (4):
+  dt-bindings: clock: add i.MX95 NETCMIX block control
+  dt-bindings: clock: add RMII clock selection
+  clk: imx95: enable the clock of NETCMIX block control
+  arm64: dts: imx95: Add NETCMIX block control support
 
-But I'm not sure we need a separate event for offcpu-time-direct.  If we
-fix the format for the direct event, we can adjust the format of offcpu-
-time when it dumps at the end.
+ .../bindings/clock/nxp,imx95-blk-ctl.yaml     |  1 +
+ arch/arm64/boot/dts/freescale/imx95.dtsi      | 12 ++++++++
+ drivers/clk/imx/clk-imx95-blk-ctl.c           | 30 +++++++++++++++++++
+ include/dt-bindings/clock/nxp,imx95-clock.h   |  3 ++
+ 4 files changed, 46 insertions(+)
 
-Anyway, as far as I can see you don't need to fill the sample info in
-the offcpu-time-direct manually in your BPF program.  Because the
-bpf_perf_event_output() will call perf_event_output() which fills all
-the sample information according to the sample_type flags.
+-- 
+2.34.1
 
-Well.. it'll set IP to the schedule function, but it should be ok.
-(updating IP using CALLCHAIN like in off_cpu_write() is a kinda hack and
-not absoluately necessary, probably I can get rid of it..  Let's go with
-simple for now.)
-
-So I think what you need is to ensure it has the uncessary flags.  And
-the only info it needs to fill is the time between the previous schedule
-and this can be added to the raw data.
-
-Thanks,
-Namhyung
-
-> 
-> Changes in v3:
->  - Add off-cpu-thresh argument
->  - Process direct off-cpu samples in post
-> 
-> Changes in v2:
->  - Remove unnecessary comments.
->  - Rename function off_cpu_change_type to off_cpu_prepare_parse
-> 
-> Before:
-> ```
->      migration/0      21 [000] 27981.041319: 2944637851    cycles:P:  ffffffff90d2e8aa record_times+0xa ([kernel.kallsyms])
->             perf  770116 [001] 27981.041375:          1    cycles:P:  ffffffff90ee4960 event_function+0xf0 ([kernel.kallsyms])
->             perf  770116 [001] 27981.041377:          1    cycles:P:  ffffffff90c184b1 intel_bts_enable_local+0x31 ([kernel.kallsyms])
->             perf  770116 [001] 27981.041379:      51611    cycles:P:  ffffffff91a160b0 native_sched_clock+0x30 ([kernel.kallsyms])
->      migration/1      26 [001] 27981.041400: 4227682775    cycles:P:  ffffffff90d06a74 wakeup_preempt+0x44 ([kernel.kallsyms])
->      migration/2      32 [002] 27981.041477: 4159401534    cycles:P:  ffffffff90d11993 update_load_avg+0x63 ([kernel.kallsyms])
-> 
-> sshd  708098 [000] 18446744069.414584:     286392 offcpu-time: 
-> 	    79a864f1c8bb ppoll+0x4b (/usr/lib/libc.so.6)
-> 	    585690935cca [unknown] (/usr/bin/sshd)
-> ```
-> 
-> After:
-> ```
->             perf  774767 [003] 28178.033444:        497           cycles:P:  ffffffff91a160c3 native_sched_clock+0x43 ([kernel.kallsyms])
->             perf  774767 [003] 28178.033445:     399440           cycles:P:  ffffffff91c01f8d nmi_restore+0x25 ([kernel.kallsyms])
->          swapper       0 [001] 28178.036639:  376650973           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
->          swapper       0 [003] 28178.182921:  348779378           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
->     blueman-tray    1355 [000] 28178.627906:  100184571 offcpu-time-direct: 
-> 	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
-> 	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
-> 	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
-> 	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
-> 	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
-> 	    7fff24e862d8 [unknown] ([unknown])
-> 
-> 
->     blueman-tray    1355 [000] 28178.728137:  100187539 offcpu-time-direct: 
-> 	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
-> 	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
-> 	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
-> 	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
-> 	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
-> 	    7fff24e862d8 [unknown] ([unknown])
-> 
-> 
->          swapper       0 [000] 28178.463253:  195945410           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
->      dbus-broker     412 [002] 28178.464855:  376737008           cycles:P:  ffffffff91c000a0 entry_SYSCALL_64+0x20 ([kernel.kallsyms])
-> ```
-> 
-> Howard Chu (5):
->   perf record off-cpu: Add direct off-cpu event
->   perf record off-cpu: Dumping samples in BPF
->   perf record off-cpu: processing of embedded sample
->   perf record off-cpu: save embedded sample type
->   perf record off-cpu: Add direct off-cpu test
-> 
->  tools/perf/builtin-record.c             |   2 +
->  tools/perf/builtin-script.c             |   2 +-
->  tools/perf/tests/builtin-test.c         |   1 +
->  tools/perf/tests/shell/record_offcpu.sh |  29 +++++
->  tools/perf/tests/tests.h                |   1 +
->  tools/perf/tests/workloads/Build        |   1 +
->  tools/perf/tests/workloads/offcpu.c     |  16 +++
->  tools/perf/util/bpf_off_cpu.c           |  53 ++++++++-
->  tools/perf/util/bpf_skel/off_cpu.bpf.c  | 143 ++++++++++++++++++++++++
->  tools/perf/util/evsel.c                 |  16 ++-
->  tools/perf/util/evsel.h                 |  13 +++
->  tools/perf/util/header.c                |  12 ++
->  tools/perf/util/off_cpu.h               |   1 +
->  tools/perf/util/record.h                |   1 +
->  tools/perf/util/session.c               |  23 +++-
->  15 files changed, 309 insertions(+), 5 deletions(-)
->  create mode 100644 tools/perf/tests/workloads/offcpu.c
-> 
-> -- 
-> 2.45.2
-> 
 
