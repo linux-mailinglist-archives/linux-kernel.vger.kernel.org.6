@@ -1,234 +1,307 @@
-Return-Path: <linux-kernel+bounces-265729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D025C93F548
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:25:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1581A93F54B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4EB71C21D45
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:25:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25D002829CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099221482F3;
-	Mon, 29 Jul 2024 12:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4953D147C89;
+	Mon, 29 Jul 2024 12:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fNPUd89h"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="p2Tr3xUN"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59481474CF;
-	Mon, 29 Jul 2024 12:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722255904; cv=fail; b=f4ijTqf+uhwglkpmTqnJNfDtuilXGSgh9+cCgzgrZwJoH7WOMswKnFbbLEYUD8PWLMrqtZ2tncdn9maeWZxZr0UaXTSmMtUTYErZWUDfabL7V1EWYxE/31xcv3q7g6M7gfG80z0f4ZSW1Kt7XcFP8TCOB4Hoif776uz4y8KxxMY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722255904; c=relaxed/simple;
-	bh=63uhS99GLHjBsVaxf5rqBaK2pMdVMjpoww4YXzhmV9Q=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=E+TmHhwZn17LEvrvojopg0W0xuyQ+n3JUHQtL7HZLvtdcmyL1KTbLaya2uC8PnrX3znTnPwaOOIt7/lxqE/KimVsU1WOUPh2TGq3MqEEOmfJtjfMo2ciydzwuX11ZolOdfmpgSRPJGWZyfcmQ0sdUxD5rFAuoDb9BTo3gGUB3WY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fNPUd89h; arc=fail smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722255903; x=1753791903;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=63uhS99GLHjBsVaxf5rqBaK2pMdVMjpoww4YXzhmV9Q=;
-  b=fNPUd89hSYeaMOV0dDLw3+YLWgNgNEuIv+ceRok7tYAETQ8N4EI8zJ2z
-   iTY7jVBzpbcWUvBfoIXO6Sw0ULXkLKy/wIryEDJ+aoBqNw7NZbgshJeES
-   lqsgWtlHyz7MzCq3KYSNfuvFp7332xPRtoXRlwWwRGEaoaArDKxQgh0ey
-   u85303PQp7oRdyY5rBAr7PYkmtQMOU+mJN/stmyYV9lBThD0HjTbBt/sc
-   0eBpO+58oYK3aUxcPsuBHoi2ISQqKFj54LLav9mU8Jll0f2rCTs07WM8/
-   jtaamfPmjG+E8ZrdjbODN6wtO1NatYLZyXQFeWpnNAYyBNSNvilUEVTyT
-   w==;
-X-CSE-ConnectionGUID: /TxHmx+tQG2aiApSCVTzhg==
-X-CSE-MsgGUID: ii5QczRlQfu0CUvAhS2fuw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="20135378"
-X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
-   d="scan'208";a="20135378"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 05:24:36 -0700
-X-CSE-ConnectionGUID: 9tJqL3mZTee11F6DgofRag==
-X-CSE-MsgGUID: Q4wbITHoSoy5fbJ743MftQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
-   d="scan'208";a="58283282"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 Jul 2024 05:24:35 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 29 Jul 2024 05:24:35 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 29 Jul 2024 05:24:34 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 29 Jul 2024 05:24:34 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.169)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 29 Jul 2024 05:24:34 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FjwymTJce56AYqqG5/3pPdDxGHgXFAnT7d1fC4ydrmjq5yXFhIR9zU78qh5ppHjzkhr7uPgoAurKEL1KJ4X77vPNO8r2YPgBhpeWZfnsfcG19E80w8+IBIWzc0WQw5GVb2Qq9c044Pt2hTIOQ/op5kmamLhDF/0PAKDBVEbzNsarX8ur5gsKpPKgD2Tdkm/0qC3vtbU8MqeA24jj+mxQix6P17knU1VwKsIIscvsGuBtmuyOOUEmgaOhfi51rKYvqPLp2VVVKtiZTo/DttgyM6AsTDavZRAermte2OsQV/yK6IlE/Ok3dF2TT/4wkkgx3yhgofYtOb2X+ZizL1AA/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gLLHKvWxGgIKhph5omi3GeXG0H38Ia/ffV5WUjnWRyA=;
- b=DNDM7Nqo0AFVC1QVfGuIWtF3Sak1IaUJTNMS/f50UNRCwljOe/zA+ebT456hT/+6UCx1DY9nkIj1OeSbkfH6dxp39t7yba7XfNjFd7bZXHHJL+/ADsGwiu3N1obFKJQ4Wd+/lae8hfeLTqAipnf/Xg0yEZY/E1HcaBVHHlDtad5MYCmAjCz9wQ7hHHDRM+2MTU6vj9TLOrL6RGv/iL9ZqpxZWUkacn3GL7jpE5mMRWiZ4pcbJfyzJS2kyEEVPJ0BDVAEAzpc1gqXhBZwC95D7t36/i5TPpYq6jiofKXEJoZKFsJIjiwJx+E448CY67wsxX+p0xdhwm3DXYERFr8PzA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by DS0PR11MB7458.namprd11.prod.outlook.com (2603:10b6:8:145::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Mon, 29 Jul
- 2024 12:24:32 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%6]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
- 12:24:32 +0000
-Date: Mon, 29 Jul 2024 07:24:27 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Dave Jiang
-	<dave.jiang@intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-CC: Davidlohr Bueso <dave@stgolabs.net>, Alison Schofield
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Ira
- Weiny" <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
-	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<kernel-janitors@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2] cxl: add missing MODULE_DESCRIPTION() macros
-Message-ID: <66a789fbbdda7_2c6e48294a9@iweiny-mobl.notmuch>
-References: <20240607-md-drivers-cxl-v2-1-0c61d95ee7a7@quicinc.com>
- <20240607151046.00002ae2@Huawei.com>
- <aef7c12f-cefa-4823-b3a2-920c12990afa@quicinc.com>
- <73d13869-cb80-4226-b8fe-3e45fb7d2518@intel.com>
- <cafa6bbf-446b-4b4c-9b6e-f4db6a19ae55@quicinc.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <cafa6bbf-446b-4b4c-9b6e-f4db6a19ae55@quicinc.com>
-X-ClientProxiedBy: MW4P222CA0022.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:303:114::27) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D1813CFA5
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722255950; cv=none; b=mwMNcBj5cl1Pu3OKy13qmggxRq4/m/RhXsUEGyhZ4k/h8qyuTEdiasYOe7VH7VQhjChP887PXOEOA7KGzrFyEsiN+Qu0QzgSFbFjpOhH21ChmdU/xvQYxBNdWm1WIVvYie1xB6NaVwfH4wXxSKxP9Cd1uPv1edWgJGENOeDDZf8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722255950; c=relaxed/simple;
+	bh=Ss4a9Tumgb/hU3BQ8LLOz+BBWNeTNWFKWPUbY0WPOFg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rfWSjV2eGElc+N+oKvFmeLA4tofzymC0gFNxflaTx4M+MDXQPdlvBzXaKTgkQ2a4QdCfBQp9hzYzsp7nGC9/1laSHHko7Du3/9hrS2YekG6mqycCTNArRR9S+pWfM48gAeIIkeBk+d4GyOCU3Ay9y3moK403U2ldV4n3c1ff5tY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=p2Tr3xUN; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722255946;
+	bh=Ss4a9Tumgb/hU3BQ8LLOz+BBWNeTNWFKWPUbY0WPOFg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=p2Tr3xUNZFQfJ5q+LPjnVzvPgS7ha9IBqvC26q0HbPhQGhctFcC1wjmFsTcDQhFiT
+	 xX4KYi/vxR+qgmkrckiTy5AvFOioZpU0/iKYlxEFuWyBO80iio7qZdgWdNw3Ig8Nuk
+	 avVVlNVnx8tk/VA0u/DvtJO8ItzGEXWIa3SEgpOwbdC7AuMSgDA9XPH3YMKcJGkFHc
+	 bCqyQBUy0TmQ2xl/qIuP5IHB4fQ1haGrEjKOttzg6IDA5xwAqh7IjFV75f68EJhwbA
+	 1tihIpJgK+tzaaqs3l1dZarxflmRr9b1YORrSEASjh2Eotjjg3oQPYT+iHgBWOUpmE
+	 BboGw+qjVAaaw==
+Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0239437804D4;
+	Mon, 29 Jul 2024 12:25:45 +0000 (UTC)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: linux-mediatek@lists.infradead.org
+Cc: matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH] soc: mediatek: mtk-mutex: Reduce type size for mtk_mutex_data members
+Date: Mon, 29 Jul 2024 14:25:38 +0200
+Message-ID: <20240729122538.989855-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|DS0PR11MB7458:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4717bd35-b1bc-48ec-5943-08dcafc96660
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?U0fRPEU4gE+DtSQPXcHBy+s54G79Zgcx4x8hpEVkh5EK/IoX1+joukA6hzS0?=
- =?us-ascii?Q?7MYv+bMssCxsqKW0VXfxoWj4LXC6yBGuEk6MhyRFeS7q8khLkl1kFyViafk9?=
- =?us-ascii?Q?nsDnPDoTP0o8AkqSY0b4nUMZKI443FneoLn/7PJzJUxiyfI5qTBpEqhpFcgK?=
- =?us-ascii?Q?9fgRD7oYtbz27aTo765muSirrN7KqrXPKPZZAZMQS+wkleBryqndTY1EMYhM?=
- =?us-ascii?Q?GcJUqaS1qQSjZjY3xdMt7HCocx9THcUBv2at3MxjtSwAHtL8PS8UDRs5CDis?=
- =?us-ascii?Q?Q+q57kLnbK8auIFe74MPcQlcikWEXYkpKolRhnkJ6yfsH0leLO7vgGSNt5yR?=
- =?us-ascii?Q?xvIBsb6tMOAueAiIdHaQZx6UIO72Mfa+Cx1cf0jvScmv0bPcXFjMenW2logS?=
- =?us-ascii?Q?woHfP+UqGRLGMQmosDaPHYH5BjM+OpC1mgSZQUBJIhT1A6tNiV0wuxSj9Uu+?=
- =?us-ascii?Q?s/r8f0V2anfFoMV28/081Ge6BzbTsmdiLaX56mlv62KYdTlrEatptw5brdQz?=
- =?us-ascii?Q?dPZ54rXNj0bwvbdk8+MXVHk40gIDm5Ptw/f4lKYpCcyzUELeK3zTOGbKLSth?=
- =?us-ascii?Q?OhQDjXZpMFCf8AlK30e8BVeLO647LEk75JbpdFEZRNdNTuytRaq+3C4YJSpq?=
- =?us-ascii?Q?q9K8QemRHoAlN0i7LYa5EbrLGqxDuhr4yr14/XlNaq+PaU17wB6hvg0+wV4b?=
- =?us-ascii?Q?sf1HwCLpUFK46Q+NPSy3JffqHh/XJlAJlf7bB0F2RiemEYtYGUSNofC/gR1H?=
- =?us-ascii?Q?mvZugW7oO6Sj9bYEycB1jHhvDE7W0M7uqGPxLmBy7T8B6gxkTdtO9nNW/Q0W?=
- =?us-ascii?Q?oyExNhxRCTK+5tzZN128dIPnVryMH477fV6zJv/iVMfzrFuPDadDyoAWwCTF?=
- =?us-ascii?Q?M9tFYDmspqgD5Kv+U72q+xq9E4mPecgTFWXVdPtHy1JR+hVFkLz2RHMnVR3O?=
- =?us-ascii?Q?/H2uK313eaujz4xjzOPPz+NI8pjFcGvpN8VjgA46D5r7IFtiD0HyNOGfMga0?=
- =?us-ascii?Q?TNql4y3a29jsoROQdhAXzsGgG4+bSgtjUSrf0Lu7hZFdOfVDQ8ZFakgAQ/o/?=
- =?us-ascii?Q?TBai03s+OBw/GCihxtzqNgzdR/Rr3QZGF81VxGPe86FRGFCpskFr+3WYxKgY?=
- =?us-ascii?Q?PXGoA9tcpugfCHce1rcoGwlTeLFD7ZjeuFFnLVV1A1q2r+BjUVLiqBOt57Fp?=
- =?us-ascii?Q?oH9z4ufBaUvAkM3g0Hm80naIBmp2ZS9c5lKOlkUm9ZtJ8I76/KEn4D2DV2Zs?=
- =?us-ascii?Q?rYYLStGzFieFfTqhSQLcC3+hq1OlnWrHsgtX3+KXIT2BKWKn2swDSFl+s+ZC?=
- =?us-ascii?Q?uBr36Cpz6m9uBNATeufGwwnXL0X4ID2Q1DIydMZkeHxvkg=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?3/YDln1lFaQ4kkp2trEx1b98aWg/f4jy/VpD8MgmOHqtNY7fcuwt/4fy29yc?=
- =?us-ascii?Q?u2hhE1HSHkYW1saM0BCXAJ+cAwGOvmTSKfr7oldAlavQvJhUo7ApFuQvYy+l?=
- =?us-ascii?Q?1sXrVLKktu1bfG6MR45UAhboWD0yUvI8mNEjQpoGTPYq2kdCSLwNffRTOo27?=
- =?us-ascii?Q?uREzNM1suGMBXt7/cmjEi+Rz74c+vkuCxA9Viu35+B/X54hgK+W7VlvdDM6e?=
- =?us-ascii?Q?1l2ZX3njIsrJhwrte7fPDO84tysYMH62SzXTb8G8o3M+u+anryT4IEMD0qll?=
- =?us-ascii?Q?9lTa3+TF+ooCh7Dr5Oz7/9NqMpcL4KNc+H70Z12sFNYqYWhDDqymCuq6b1n0?=
- =?us-ascii?Q?OLR0MWp4i4Pf5/34W8pkvnMFMosdGB2QB3gfvukcxYn+CtoqZT/+JEIWEedn?=
- =?us-ascii?Q?d4GniZF6lDREyGZ7wsBGzwvMHZjSUlF9zF+oSfk1NQUlYY8QL9L+GE6nZc06?=
- =?us-ascii?Q?C37NABdjqF7O4osKqy1XIpGME10m6i+/j1ocXIdRVo95WFZlXX3m4xNhbkRh?=
- =?us-ascii?Q?DwHc09zr7iJPjrMvPGT4qnzxBtu0bIri24Zv4QU5FcbB2/l73RdyjzQ+akDN?=
- =?us-ascii?Q?fY2h+NXAafJZmAsp2rZuL4yvjfqrhJsF41EEzC4JXSZXqr9fHu6OVsvc9ZJk?=
- =?us-ascii?Q?bvJKk42zGqMa8X49/Lw3k4CqA/Ii4MGQ1AY3x0ctnRV8o4KlzGjj3hUtU2He?=
- =?us-ascii?Q?MyOlGiUGbX5RBbLoP/jRvGFv0VyaTRrLQ3JOOhxDzXDBd4OPRaRwLIjGQI0b?=
- =?us-ascii?Q?XLeNnLVtYMmAD6zIZZJHIIv+TskKMsL6z/WAMTD0PSeLSowFVyvawqlu9y3y?=
- =?us-ascii?Q?PXBMWabfJXpsOdkfyZTDjMJUeZFwiouR1+ZpZeJemUCrYoo6Bwiwq9lNaXTz?=
- =?us-ascii?Q?+l3QzTUQUo97hdt9k7MR1ehZ7ZMU8XhHom5y9+g6bspZr/60O3ccgOem9OFR?=
- =?us-ascii?Q?+MuCe0+XUdjNp0LrqlIRG8aLMRF/mso/Gf2bqG88MfuHyUlN+cCCmaoFCCjb?=
- =?us-ascii?Q?uMbiE+B9y5DyMvopxTr5RTPyi77jxkVANpZ1Mu3qlSCFOwJQqqHECsAUAxJa?=
- =?us-ascii?Q?Vm43i91stgNO8p81K4vkhDZ2v43yZokbBxPxY3Ghgj6PltLH4TBEW6G1UkoV?=
- =?us-ascii?Q?LN6RilZI6holWJ+76ggm6wIKNSv+koxmoBf2LJ2cOGlLOE/nZ2V+nR3QJJPA?=
- =?us-ascii?Q?lCAEgaCHJzKgDUGK929RS1O5PtewCRGzUxfQU+xhBdhXeGb48zDMlndRB+8W?=
- =?us-ascii?Q?7oX3jCDIvW+DkiYxaWR6aRW1PwKap1pucET+RL2/i7e4kk6viKOOmssUQugZ?=
- =?us-ascii?Q?IfDQAbj8hvQVA4UBp1/m3R2VzZHun37yekYawjp5NWqQfSrcPxhm/2SJ9AnM?=
- =?us-ascii?Q?teEcbQbMkt0B5vTpC0GOzts2xp6heKw4zXyfFo4FDXAY35RaGwacNIvN/ySW?=
- =?us-ascii?Q?ZTu87fWUfUDSSyKXwxSXnfU4gyx5XzbOlhbrjUehbPv2l242A++oVcSx/rad?=
- =?us-ascii?Q?M6G+Y85unmXw3S4lsWpbGOFv39jk7dCDUqZND7jsLxN7S0HixlQ7HQpqN5Ml?=
- =?us-ascii?Q?wZzsh3+jW/Bn+ZfXdgbLjvWGL82wRozepM1F8gcJ?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4717bd35-b1bc-48ec-5943-08dcafc96660
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 12:24:32.2590
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gJOfuDYPWgnqE0FuZnwGGL1Uv8X+3RXWNi9gJ6U+N+UX/U6t5GWSf1jVKSEau8aVupc/SSK4TmXGUyBWYVhnaQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7458
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-Jeff Johnson wrote:
-> On 6/26/2024 9:41 AM, Dave Jiang wrote:
-> > 
-> > 
-> > On 6/26/24 9:02 AM, Jeff Johnson wrote:
-> >> On 6/7/2024 7:10 AM, Jonathan Cameron wrote:
-> >>> On Fri, 7 Jun 2024 06:57:15 -0700
-> >>> Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
-> >>>
-> >>>> make allmodconfig && make W=1 C=1 reports:
-> >>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/core/cxl_core.o
-> >>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pci.o
-> >>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_mem.o
-> >>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_acpi.o
-> >>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pmem.o
-> >>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_port.o
-> >>>>
-> >>>> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> >>>>
-> >>>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> >>>
-> >>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> >>>
-> >>> Thanks,
-> >>
-> >> Following up to see if anything else is needed from me. Hoping to see this in
-> >> linux-next so I can remove it from my tracking spreadsheet :)
-> > 
-> > I have it locally queued, but will probably push to linux-next after rc6 drops. 
-> 
-> Hi Dave,
-> 
-> I see this landed in linux-next, but is not currently in Linus' tree for 6.11.
-> Will you be able to have this pulled during the merge window?
-> I'm trying to eradicate all of these warnings before 6.11 rc-final.
+All of mutex_mod and mutex_table_mod contain an array of bit
+numbers, which can go from 0 to 63, it is hence not needed to
+use an unsigned 32-bits integer to store that: change them to
+unsigned 8-bits instead.
 
-This landed yesterday.
-Ira
+As for the mutex_sof table since this directly contains the values
+to write to the DISP_MUTEXn_CTL register, which has only bits [13:0]
+(so this register is effectively 14 bits long), change that to use
+unsigned 16-bits.
+
+The type of mutex_{mod,sof}_reg was also changed to 16 bits, as
+the maximum value that those will ever have is 0x800, because it
+calculates as 0x30 + (0x20 * n) where n's maximum value is 63.
+
+This reduces module size and brings no functional changes.
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   9929	    512	      0	  10441	   28c9	mtk-mutex.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+   7425	    512	      0	   7937	   1f01	mtk-mutex.o
+
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ drivers/soc/mediatek/mtk-mutex.c | 52 ++++++++++++++++----------------
+ 1 file changed, 26 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/soc/mediatek/mtk-mutex.c b/drivers/soc/mediatek/mtk-mutex.c
+index 0ad8754e4361..09bf9e9f29bc 100644
+--- a/drivers/soc/mediatek/mtk-mutex.c
++++ b/drivers/soc/mediatek/mtk-mutex.c
+@@ -327,11 +327,11 @@ enum mtk_mutex_sof_id {
+ };
+ 
+ struct mtk_mutex_data {
+-	const unsigned int *mutex_mod;
+-	const unsigned int *mutex_sof;
+-	const unsigned int mutex_mod_reg;
+-	const unsigned int mutex_sof_reg;
+-	const unsigned int *mutex_table_mod;
++	const u8 *mutex_mod;
++	const u8 *mutex_table_mod;
++	const u16 *mutex_sof;
++	const u16 mutex_mod_reg;
++	const u16 mutex_sof_reg;
+ 	const bool no_clk;
+ };
+ 
+@@ -345,7 +345,7 @@ struct mtk_mutex_ctx {
+ 	struct cmdq_client_reg		cmdq_reg;
+ };
+ 
+-static const unsigned int mt2701_mutex_mod[DDP_COMPONENT_ID_MAX] = {
++static const u8 mt2701_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_BLS] = MT2701_MUTEX_MOD_DISP_BLS,
+ 	[DDP_COMPONENT_COLOR0] = MT2701_MUTEX_MOD_DISP_COLOR,
+ 	[DDP_COMPONENT_OVL0] = MT2701_MUTEX_MOD_DISP_OVL,
+@@ -354,7 +354,7 @@ static const unsigned int mt2701_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_WDMA0] = MT2701_MUTEX_MOD_DISP_WDMA,
+ };
+ 
+-static const unsigned int mt2712_mutex_mod[DDP_COMPONENT_ID_MAX] = {
++static const u8 mt2712_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_AAL0] = MT2712_MUTEX_MOD_DISP_AAL0,
+ 	[DDP_COMPONENT_AAL1] = MT2712_MUTEX_MOD2_DISP_AAL1,
+ 	[DDP_COMPONENT_COLOR0] = MT2712_MUTEX_MOD_DISP_COLOR0,
+@@ -374,7 +374,7 @@ static const unsigned int mt2712_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_WDMA1] = MT2712_MUTEX_MOD_DISP_WDMA1,
+ };
+ 
+-static const unsigned int mt8167_mutex_mod[DDP_COMPONENT_ID_MAX] = {
++static const u8 mt8167_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_AAL0] = MT8167_MUTEX_MOD_DISP_AAL,
+ 	[DDP_COMPONENT_CCORR] = MT8167_MUTEX_MOD_DISP_CCORR,
+ 	[DDP_COMPONENT_COLOR0] = MT8167_MUTEX_MOD_DISP_COLOR,
+@@ -389,7 +389,7 @@ static const unsigned int mt8167_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_WDMA0] = MT8167_MUTEX_MOD_DISP_WDMA0,
+ };
+ 
+-static const unsigned int mt8173_mutex_mod[DDP_COMPONENT_ID_MAX] = {
++static const u8 mt8173_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_AAL0] = MT8173_MUTEX_MOD_DISP_AAL,
+ 	[DDP_COMPONENT_COLOR0] = MT8173_MUTEX_MOD_DISP_COLOR0,
+ 	[DDP_COMPONENT_COLOR1] = MT8173_MUTEX_MOD_DISP_COLOR1,
+@@ -407,7 +407,7 @@ static const unsigned int mt8173_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_WDMA1] = MT8173_MUTEX_MOD_DISP_WDMA1,
+ };
+ 
+-static const unsigned int mt8183_mutex_mod[DDP_COMPONENT_ID_MAX] = {
++static const u8 mt8183_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_AAL0] = MT8183_MUTEX_MOD_DISP_AAL0,
+ 	[DDP_COMPONENT_CCORR] = MT8183_MUTEX_MOD_DISP_CCORR0,
+ 	[DDP_COMPONENT_COLOR0] = MT8183_MUTEX_MOD_DISP_COLOR0,
+@@ -421,7 +421,7 @@ static const unsigned int mt8183_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_WDMA0] = MT8183_MUTEX_MOD_DISP_WDMA0,
+ };
+ 
+-static const unsigned int mt8183_mutex_table_mod[MUTEX_MOD_IDX_MAX] = {
++static const u8 mt8183_mutex_table_mod[MUTEX_MOD_IDX_MAX] = {
+ 	[MUTEX_MOD_IDX_MDP_RDMA0] = MT8183_MUTEX_MOD_MDP_RDMA0,
+ 	[MUTEX_MOD_IDX_MDP_RSZ0] = MT8183_MUTEX_MOD_MDP_RSZ0,
+ 	[MUTEX_MOD_IDX_MDP_RSZ1] = MT8183_MUTEX_MOD_MDP_RSZ1,
+@@ -432,7 +432,7 @@ static const unsigned int mt8183_mutex_table_mod[MUTEX_MOD_IDX_MAX] = {
+ 	[MUTEX_MOD_IDX_MDP_CCORR0] = MT8183_MUTEX_MOD_MDP_CCORR0,
+ };
+ 
+-static const unsigned int mt8186_mutex_mod[DDP_COMPONENT_ID_MAX] = {
++static const u8 mt8186_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_AAL0] = MT8186_MUTEX_MOD_DISP_AAL0,
+ 	[DDP_COMPONENT_CCORR] = MT8186_MUTEX_MOD_DISP_CCORR0,
+ 	[DDP_COMPONENT_COLOR0] = MT8186_MUTEX_MOD_DISP_COLOR0,
+@@ -445,7 +445,7 @@ static const unsigned int mt8186_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_RDMA1] = MT8186_MUTEX_MOD_DISP_RDMA1,
+ };
+ 
+-static const unsigned int mt8186_mdp_mutex_table_mod[MUTEX_MOD_IDX_MAX] = {
++static const u8 mt8186_mdp_mutex_table_mod[MUTEX_MOD_IDX_MAX] = {
+ 	[MUTEX_MOD_IDX_MDP_RDMA0] = MT8186_MUTEX_MOD_MDP_RDMA0,
+ 	[MUTEX_MOD_IDX_MDP_RSZ0] = MT8186_MUTEX_MOD_MDP_RSZ0,
+ 	[MUTEX_MOD_IDX_MDP_RSZ1] = MT8186_MUTEX_MOD_MDP_RSZ1,
+@@ -456,7 +456,7 @@ static const unsigned int mt8186_mdp_mutex_table_mod[MUTEX_MOD_IDX_MAX] = {
+ 	[MUTEX_MOD_IDX_MDP_COLOR0] = MT8186_MUTEX_MOD_MDP_COLOR0,
+ };
+ 
+-static const unsigned int mt8188_mutex_mod[DDP_COMPONENT_ID_MAX] = {
++static const u8 mt8188_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_OVL0] = MT8188_MUTEX_MOD_DISP_OVL0,
+ 	[DDP_COMPONENT_WDMA0] = MT8188_MUTEX_MOD_DISP_WDMA0,
+ 	[DDP_COMPONENT_RDMA0] = MT8188_MUTEX_MOD_DISP_RDMA0,
+@@ -496,7 +496,7 @@ static const unsigned int mt8188_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_MERGE5] = MT8188_MUTEX_MOD_DISP1_VPP_MERGE4,
+ };
+ 
+-static const unsigned int mt8188_mdp_mutex_table_mod[MUTEX_MOD_IDX_MAX] = {
++static const u8 mt8188_mdp_mutex_table_mod[MUTEX_MOD_IDX_MAX] = {
+ 	[MUTEX_MOD_IDX_MDP_RDMA0] = MT8195_MUTEX_MOD_MDP_RDMA0,
+ 	[MUTEX_MOD_IDX_MDP_RDMA2] = MT8195_MUTEX_MOD_MDP_RDMA2,
+ 	[MUTEX_MOD_IDX_MDP_RDMA3] = MT8195_MUTEX_MOD_MDP_RDMA3,
+@@ -530,7 +530,7 @@ static const unsigned int mt8188_mdp_mutex_table_mod[MUTEX_MOD_IDX_MAX] = {
+ 	[MUTEX_MOD_IDX_MDP_WROT3] = MT8195_MUTEX_MOD_MDP_WROT3,
+ };
+ 
+-static const unsigned int mt8192_mutex_mod[DDP_COMPONENT_ID_MAX] = {
++static const u8 mt8192_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_AAL0] = MT8192_MUTEX_MOD_DISP_AAL0,
+ 	[DDP_COMPONENT_CCORR] = MT8192_MUTEX_MOD_DISP_CCORR0,
+ 	[DDP_COMPONENT_COLOR0] = MT8192_MUTEX_MOD_DISP_COLOR0,
+@@ -544,7 +544,7 @@ static const unsigned int mt8192_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_RDMA4] = MT8192_MUTEX_MOD_DISP_RDMA4,
+ };
+ 
+-static const unsigned int mt8195_mutex_mod[DDP_COMPONENT_ID_MAX] = {
++static const u8 mt8195_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_OVL0] = MT8195_MUTEX_MOD_DISP_OVL0,
+ 	[DDP_COMPONENT_WDMA0] = MT8195_MUTEX_MOD_DISP_WDMA0,
+ 	[DDP_COMPONENT_RDMA0] = MT8195_MUTEX_MOD_DISP_RDMA0,
+@@ -575,7 +575,7 @@ static const unsigned int mt8195_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_DP_INTF1] = MT8195_MUTEX_MOD_DISP1_DP_INTF0,
+ };
+ 
+-static const unsigned int mt8195_mutex_table_mod[MUTEX_MOD_IDX_MAX] = {
++static const u8 mt8195_mutex_table_mod[MUTEX_MOD_IDX_MAX] = {
+ 	[MUTEX_MOD_IDX_MDP_RDMA0] = MT8195_MUTEX_MOD_MDP_RDMA0,
+ 	[MUTEX_MOD_IDX_MDP_RDMA1] = MT8195_MUTEX_MOD_MDP_RDMA1,
+ 	[MUTEX_MOD_IDX_MDP_RDMA2] = MT8195_MUTEX_MOD_MDP_RDMA2,
+@@ -621,7 +621,7 @@ static const unsigned int mt8195_mutex_table_mod[MUTEX_MOD_IDX_MAX] = {
+ 	[MUTEX_MOD_IDX_MDP_WROT3] = MT8195_MUTEX_MOD_MDP_WROT3,
+ };
+ 
+-static const unsigned int mt8365_mutex_mod[DDP_COMPONENT_ID_MAX] = {
++static const u8 mt8365_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_AAL0] = MT8365_MUTEX_MOD_DISP_AAL,
+ 	[DDP_COMPONENT_CCORR] = MT8365_MUTEX_MOD_DISP_CCORR,
+ 	[DDP_COMPONENT_COLOR0] = MT8365_MUTEX_MOD_DISP_COLOR0,
+@@ -637,7 +637,7 @@ static const unsigned int mt8365_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_WDMA0] = MT8365_MUTEX_MOD_DISP_WDMA0,
+ };
+ 
+-static const unsigned int mt2712_mutex_sof[DDP_MUTEX_SOF_MAX] = {
++static const u16 mt2712_mutex_sof[DDP_MUTEX_SOF_MAX] = {
+ 	[MUTEX_SOF_SINGLE_MODE] = MUTEX_SOF_SINGLE_MODE,
+ 	[MUTEX_SOF_DSI0] = MUTEX_SOF_DSI0,
+ 	[MUTEX_SOF_DSI1] = MUTEX_SOF_DSI1,
+@@ -647,14 +647,14 @@ static const unsigned int mt2712_mutex_sof[DDP_MUTEX_SOF_MAX] = {
+ 	[MUTEX_SOF_DSI3] = MUTEX_SOF_DSI3,
+ };
+ 
+-static const unsigned int mt6795_mutex_sof[DDP_MUTEX_SOF_MAX] = {
++static const u16 mt6795_mutex_sof[DDP_MUTEX_SOF_MAX] = {
+ 	[MUTEX_SOF_SINGLE_MODE] = MUTEX_SOF_SINGLE_MODE,
+ 	[MUTEX_SOF_DSI0] = MUTEX_SOF_DSI0,
+ 	[MUTEX_SOF_DSI1] = MUTEX_SOF_DSI1,
+ 	[MUTEX_SOF_DPI0] = MUTEX_SOF_DPI0,
+ };
+ 
+-static const unsigned int mt8167_mutex_sof[DDP_MUTEX_SOF_MAX] = {
++static const u16 mt8167_mutex_sof[DDP_MUTEX_SOF_MAX] = {
+ 	[MUTEX_SOF_SINGLE_MODE] = MUTEX_SOF_SINGLE_MODE,
+ 	[MUTEX_SOF_DSI0] = MUTEX_SOF_DSI0,
+ 	[MUTEX_SOF_DPI0] = MT8167_MUTEX_SOF_DPI0,
+@@ -662,13 +662,13 @@ static const unsigned int mt8167_mutex_sof[DDP_MUTEX_SOF_MAX] = {
+ };
+ 
+ /* Add EOF setting so overlay hardware can receive frame done irq */
+-static const unsigned int mt8183_mutex_sof[DDP_MUTEX_SOF_MAX] = {
++static const u16 mt8183_mutex_sof[DDP_MUTEX_SOF_MAX] = {
+ 	[MUTEX_SOF_SINGLE_MODE] = MUTEX_SOF_SINGLE_MODE,
+ 	[MUTEX_SOF_DSI0] = MUTEX_SOF_DSI0 | MT8183_MUTEX_EOF_DSI0,
+ 	[MUTEX_SOF_DPI0] = MT8183_MUTEX_SOF_DPI0 | MT8183_MUTEX_EOF_DPI0,
+ };
+ 
+-static const unsigned int mt8186_mutex_sof[MUTEX_SOF_DSI3 + 1] = {
++static const u16 mt8186_mutex_sof[MUTEX_SOF_DSI3 + 1] = {
+ 	[MUTEX_SOF_SINGLE_MODE] = MUTEX_SOF_SINGLE_MODE,
+ 	[MUTEX_SOF_DSI0] = MT8186_MUTEX_SOF_DSI0 | MT8186_MUTEX_EOF_DSI0,
+ 	[MUTEX_SOF_DPI0] = MT8186_MUTEX_SOF_DPI0 | MT8186_MUTEX_EOF_DPI0,
+@@ -682,7 +682,7 @@ static const unsigned int mt8186_mutex_sof[MUTEX_SOF_DSI3 + 1] = {
+  * but also detect the error at end of frame(EAEOF) when EOF signal
+  * arrives.
+  */
+-static const unsigned int mt8188_mutex_sof[DDP_MUTEX_SOF_MAX] = {
++static const u16 mt8188_mutex_sof[DDP_MUTEX_SOF_MAX] = {
+ 	[MUTEX_SOF_SINGLE_MODE] = MUTEX_SOF_SINGLE_MODE,
+ 	[MUTEX_SOF_DSI0] =
+ 		MT8188_MUTEX_SOF_DSI0 | MT8188_MUTEX_EOF_DSI0,
+@@ -692,7 +692,7 @@ static const unsigned int mt8188_mutex_sof[DDP_MUTEX_SOF_MAX] = {
+ 		MT8188_MUTEX_SOF_DP_INTF1 | MT8188_MUTEX_EOF_DP_INTF1,
+ };
+ 
+-static const unsigned int mt8195_mutex_sof[DDP_MUTEX_SOF_MAX] = {
++static const u16 mt8195_mutex_sof[DDP_MUTEX_SOF_MAX] = {
+ 	[MUTEX_SOF_SINGLE_MODE] = MUTEX_SOF_SINGLE_MODE,
+ 	[MUTEX_SOF_DSI0] = MT8195_MUTEX_SOF_DSI0 | MT8195_MUTEX_EOF_DSI0,
+ 	[MUTEX_SOF_DSI1] = MT8195_MUTEX_SOF_DSI1 | MT8195_MUTEX_EOF_DSI1,
+-- 
+2.45.2
+
 
