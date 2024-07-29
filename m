@@ -1,185 +1,192 @@
-Return-Path: <linux-kernel+bounces-265300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 787ED93EF44
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:00:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5721693EF4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25EA5281173
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:00:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D72751F21DF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1509F13213C;
-	Mon, 29 Jul 2024 08:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4D5139568;
+	Mon, 29 Jul 2024 08:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OsM0jrxM"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dS3EWcBl"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E4685260
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4820B136664
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722240017; cv=none; b=JiuI3Gp2GnIdLydAME1AFn90uHuINX96JaXSTiKdgvU79oy/tPOcyWTcnshSM/z0SsEWnP+knzPimCpv1FHGOv41DnHvmZB3pyaB0dJNL4xUa6Jwy0NtEj0uP2dC9jOLgdnnKVwDHIvUiTtkdAWFnI6LomW4N6uApamlLbyOPwM=
+	t=1722240077; cv=none; b=roEV2Jejk6Gv43k+USrUm/bZBUzEpjy+qH/fPkH08bM0MYxM7rGgiNDfcc/Y2S79fKWk4Zn59MbQ4iVuHqMILOsu79lPVrRP7ZzAR3rdSt6oDjAqwTJ6k7LX9f5ENgOQrivDxJc6yzga+MbCGh7mJ9wgi0H+LHLe3/RYBl7bF+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722240017; c=relaxed/simple;
-	bh=gqig0ULABc5QTf6gdBxiwlVkiMz++/xWAu8P9nXm+Yg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u2ATgEVsMM0GVLk/dvg4EyXGOXpjeTjTy0YgYeV8GgTMw/ckU3Mn8A+HA9pdFmzEQUhrJTf4XAHzjEDiUwqA8m6Bwcs3AsTz3LsjwFWc1g0gj0Ai/q0dCVaogNhB5qDNE0qqj4LwtUj9awiPxBeKjrgkOcleGjDiWNYA2tK5dvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OsM0jrxM; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc569440e1so25048465ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 01:00:15 -0700 (PDT)
+	s=arc-20240116; t=1722240077; c=relaxed/simple;
+	bh=3tXeGXM2RduzxnTIgBYHqy2rVhLERb9KPD1y545fYr8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e3JWTrUOzHBoKue12EMHaY6HuKYtXmNU6V5bBtuPEaOg+Lnu20sluUiYL8q2Nb8yWjbqQkAilbHYUfQ/hFin+g7LKIB3JChVCtkTxsQ3T8GHyvn+YH/GzDPNLm6GOxg9IQTQD2aP0EOm2MNTQjQ8sszDZbCl+jHetCPFdchJlFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dS3EWcBl; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso14009855e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 01:01:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722240015; x=1722844815; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IZwZqPvJh4AbxW6ByMaS8C6OygwvpLTFq0TUS9PMs9s=;
-        b=OsM0jrxMcH1lzh5QcMOB8asjIQc+QjfBL6uJpRQY7BT2U8y97ZbvC0oFrfMsWmv1A1
-         KYKbk8lRImvcqG2z1pMAzSSSJRF6yjtgWNA4hwcMhpbLqOz2el+WBK1Pb2lRc62iaUO2
-         Afemw2GzVTUfO+gd9DDWp+vdTL+WoXfPjuPnVBtacl3XtiaRqi8lDgb9sLmLJgPDZLQV
-         UnmtWJlLN08QwnriLB2ZDWP6TK+bItfnt+Tz8EBuMDaVwflXPDnpwDdMmDoZqa6kSSIs
-         AlpUoplVANwRnNjSM4V/Fz/n7jSnik2MaG38d0IRaysUuEtmSQPZSX+llSncB5mxObto
-         DOlg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722240073; x=1722844873; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jLO+jXA3M7oEf5JfEDBMAtggCBs7km6BzLtZrlx73qM=;
+        b=dS3EWcBl/8K7gZ7xlumVHE3YfjluxafcMvRKkO2JlN0vTfT1WcvENLagwhfiQupV4+
+         cuWCKxP3bM4uRnFC0+G7jh4RoW0NgQBQO6sd5zSsnFY+52Dtnj6ugM6OTn70Emg6cair
+         BP/SSR5hoKHvoZvhgG+AQUr1Vu5A5Vb1ivBh8rFuhIvh2WJt0BzrmKTvzIbcSmlfSdxb
+         M5yaq8Jx2qu9YS3/d6CQTh6WZeou1uDR6d0a5N+2Qsr9OjOYJZNVtLdTclgy0KrUrjYq
+         YZgUpOkrAJ5p/ifUch+4QY1iiDxrCsrnpOHPaGmbwEb25ZNmCCqKTETeXuBqQSIOmCdR
+         E12w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722240015; x=1722844815;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IZwZqPvJh4AbxW6ByMaS8C6OygwvpLTFq0TUS9PMs9s=;
-        b=KlqKMjKR20n7jzgsAJXrZPJTa/ZvDVo0kt05ogcmr0eLwT81dIABr8Gh+Y2oTuXqPp
-         xd43lyvChrD4HlitPEzJCWSyHZU3CG+tBvDf0xjZ0m+NrvPgGYQHej2E5BBKOew+wr1F
-         9rd9H/viSJ5diezObvUPUen9oI0xx8Y453lJ7kPe5zA0VfPPXejEDsitB/BCC/rRg+XN
-         vqRGIb1LdbsQs4wHyJMskzMkAQx0UCZ1KTiEL6h88EqDHzvTY+zRyIy7NMSuz5Ll0Wdk
-         y0UqeOBmT9RfA+qdbBCmUZM6YVnET8oF5w3iXB6OLyrVnWuQV7Z2yl5TyCkESt8ou+aw
-         BFmA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6rAv2GfUay/WqxMafjRpdze7Q319lQ8norn/SMAHxkIAtqG85Ud3FNHLai+m3G7zFCS9zX4TbqMcroDHlwILYEJaYgICpyrLfylQP
-X-Gm-Message-State: AOJu0Yw9YqLa7/ntAnTiuh26fXlX3CobrDvHVfiLPuvKwZ/xFItM2Xyp
-	saiCRt1jI97UKDzCl1Q/agZ17uUWvfqNdOSiOJD2zNFA/O2I13jHl0x7n0J0YQ==
-X-Google-Smtp-Source: AGHT+IGw6ntMSIZXrn+M7V9oFM6znOqalhya3M3rym9hvcc6pLj47+SXg29jXV6DF+nKd83PCONWsA==
-X-Received: by 2002:a17:903:22c2:b0:1fb:6663:b647 with SMTP id d9443c01a7336-1ff047e4486mr112315185ad.3.1722240014693;
-        Mon, 29 Jul 2024 01:00:14 -0700 (PDT)
-Received: from thinkpad ([117.213.101.9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fbd8d4sm76322585ad.271.2024.07.29.01.00.10
+        d=1e100.net; s=20230601; t=1722240073; x=1722844873;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jLO+jXA3M7oEf5JfEDBMAtggCBs7km6BzLtZrlx73qM=;
+        b=idJXsBbX/BlAS5yboUvpBX++Q0TIuZTMN8bbfDdJzTY6xeXTaEJvJW/zvIV5jOIAx/
+         3v9p85KhdJW2bu9G7873cOi8/PCvzV6GfShPGg4z+BjVXsJk4i7mB6067hsnOI2bcogy
+         f3ZJwhJ72cDq4P4XupxmZpww13gO9UY+NMSmMMbGoE/EoFWOoD/TrLgt5dhFYGLHccD2
+         yK8g3cqWwaqjvGfbtz/u0jzVC1ABSOMfgNBxO+Zn7yCXAeTt3u04AUNuiPlO/E7OmfFl
+         +g5mnUNaxHDdu8r2tTwTmfUOhTo4SHM8Z+luvyMAXhnCrW6nZwwof0H9V/IB8bDQPdP6
+         W8gA==
+X-Forwarded-Encrypted: i=1; AJvYcCXn8mmbEvxMp2Ffhj1j3rRRGAdU/org+oAgYfcdyTdW+VmNea7I5MVPDNLwl574IZhLUObmRi3mjXicsH/qqKdqYlVTCRHp5B++MvOA
+X-Gm-Message-State: AOJu0YxFoYsR6Z+Lrw7PYz/3AZO4A9McJ2+cQeVgnJy+ViHjV9ooE5HL
+	Xm+MMvsTFBFSXoTik9waj+5l7JP9dmYNQ/NaJL208xQr1E4oVz6hxj097ZbibJwKLq5utl7xxld
+	h
+X-Google-Smtp-Source: AGHT+IGwDbx71v3X0g5AThC0OfXjuZ5crp6ajq9RjiMpyHii0qoF+GSo7T4l/t/6SWct2QxntireeA==
+X-Received: by 2002:a05:600c:4f0c:b0:426:629f:154e with SMTP id 5b1f17b1804b1-42811dd10d7mr38054595e9.30.1722240072500;
+        Mon, 29 Jul 2024 01:01:12 -0700 (PDT)
+Received: from blmsp.fritz.box ([2001:4091:a245:8609:c1c4:a4f8:94c8:31f2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42819d9a007sm45452635e9.1.2024.07.29.01.01.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 01:00:14 -0700 (PDT)
-Date: Mon, 29 Jul 2024 13:30:06 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>, robh@kernel.org
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	vigneshr@ti.com, kishon@kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	stable@vger.kernel.org, ahalaney@redhat.com, srk@ti.com
-Subject: Re: [PATCH v2] PCI: j721e: Disable INTx mapping and swizzling
-Message-ID: <20240729080006.GA8698@thinkpad>
-References: <20240726135903.1255825-1-s-vadapalli@ti.com>
+        Mon, 29 Jul 2024 01:01:12 -0700 (PDT)
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+To: Nishanth Menon <nm@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Vibhore Vardhan <vibhore@ti.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Dhruva Gole <d-gole@ti.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Markus Schneider-Pargmann <msp@baylibre.com>
+Subject: [PATCH v2 0/6] firmware: ti_sci: Partial-IO support
+Date: Mon, 29 Jul 2024 10:00:55 +0200
+Message-ID: <20240729080101.3859701-1-msp@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240726135903.1255825-1-s-vadapalli@ti.com>
 
-On Fri, Jul 26, 2024 at 07:29:03PM +0530, Siddharth Vadapalli wrote:
-> Since the configuration of INTx (Legacy Interrupt) is not supported, set
-> the .map_irq and .swizzle_irq callbacks to NULL. This fixes the error:
->   of_irq_parse_pci: failed with rc=-22
-> when the pcieport driver attempts to setup INTx for the Host Bridge via
-> "pci_assign_irq()". The device-tree node of the Host Bridge doesn't
-> contain Legacy Interrupts. As a result, Legacy Interrupts are searched for
-> in the MSI Interrupt Parent of the Host Bridge with the help of
-> "of_irq_parse_raw()". Since the MSI Interrupt Parent of the Host Bridge
-> uses 3 interrupt cells while Legacy Interrupts only use 1, the search
-> for Legacy Interrupts is terminated prematurely by the "of_irq_parse_raw()"
-> function with the -EINVAL error code (rc=-22).
-> 
-> Fixes: f3e25911a430 ("PCI: j721e: Add TI J721E PCIe driver")
-> Cc: stable@vger.kernel.org
-> Reported-by: Andrew Halaney <ahalaney@redhat.com>
-> Tested-by: Andrew Halaney <ahalaney@redhat.com>
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+Hi,
 
-TBH, I'm not comfortable with this change. Because, the INTx compatibility
-_should_ come from the platform description (in this case DT) and not the
-driver. The default map_irq() function is supposed to check the existence of
-INTx and correctly report it. In this case the issue is, the platform is not
-supporting INTx, but of_irq_parse_pci() reports a dubious error:
+v2
+--
+In v2 I fixed the comments on the first version of this series and
+rebased to v6.11-rc1. See below for a more detailed list.
 
-'of_irq_parse_pci: failed with rc=-22'
+I also dropped the omap serial series for Partial-IO as it can't be
+tested with Partial-IO at the moment. The code was tested with other low
+power modes but they will be upstreamed later on.
 
-instead of the actual error:
+Series
+------
+Partial-IO is a poweroff SoC state with a few pingroups active for
+wakeup. This state can be entered by sending a TI_SCI PREPARE_SLEEP
+message.
 
-`of_irq_parse_pci: no interrupt-map found, INTx interrupts not available'
+The message is sent on poweroff if one of the potential wakeup sources
+for this power state are wakeup enabled. A list of potential wakeup
+sources for the specific SoC is described in the devicetree. The wakeup
+sources can be individually enabled/disabled by the user in the running
+system.
 
-So I would say that the fix is in of_irq_parse_pci() implementation.
-of_irq_parse_pci() is supposed to find whether the PCIe controller is supporting
-INTx or not by parsing the 'interrupt-{map/extended}' properties till host
-bridge/controller node. But this API along with of_irq_parse_raw(), just walks
-up the tree till the top level interrupt controller and checks for INTx, which
-just feels wrong (that's why you are getting -EINVAL because of #interrupt-cells
-mismatch).
+The series is based on v6.11-rc1.
 
-I looked into the implementation over the weekend, but I'm not quite sure how to
-fix it though.
+Partial-IO
+----------
+This series is part of a bigger topic to support Partial-IO on am62,
+am62a and am62p. Partial-IO is a poweroff state in which some pins are
+able to wakeup the SoC. In detail MCU m_can and two serial port pins can
+trigger the wakeup.
+A documentation can also be found in section 6.2.4 in the TRM:
+  https://www.ti.com/lit/pdf/spruiv7
 
-Rob, perhaps you have any idea?
+This other series is relevant for the support of Partial-IO:
 
-- Mani
+ - can: m_can: Add am62 wakeup support
+   https://lore.kernel.org/lkml/20240729074135.3850634-1-msp@baylibre.com/
+   https://gitlab.baylibre.com/msp8/linux/-/tree/topic/mcan-wakeup-source/v6.11?ref_type=heads
 
-> ---
-> 
-> Hello,
-> 
-> This patch is based on commit
-> 1722389b0d86 Merge tag 'net-6.11-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
-> of Mainline Linux.
-> 
-> v1:
-> https://lore.kernel.org/r/20240724065048.285838-1-s-vadapalli@ti.com
-> Changes since v1:
-> - Added "Cc: stable@vger.kernel.org" in the commit message.
-> - Based on Bjorn's feedback at:
->   https://lore.kernel.org/r/20240724162304.GA802428@bhelgaas/
->   the $subject and commit message have been updated. Additionally, the
->   comment in the driver has also been updated to specify "INTx" instead of
->   "Legacy Interrupts".
-> - Collected Tested-by tag from Andrew Halaney <ahalaney@redhat.com>:
->   https://lore.kernel.org/r/vj6vtjphpmqv6hcblaalr2m4bwjujjwvom6ca4bjdzcmgazyaa@436unrb2lav7/
-> 
-> Patch has been tested on J721e-EVM and J784S4-EVM.
-> 
-> Regards,
-> Siddharth.
-> 
->  drivers/pci/controller/cadence/pci-j721e.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-> index 85718246016b..eaa6cfeb03c7 100644
-> --- a/drivers/pci/controller/cadence/pci-j721e.c
-> +++ b/drivers/pci/controller/cadence/pci-j721e.c
-> @@ -417,6 +417,10 @@ static int j721e_pcie_probe(struct platform_device *pdev)
->  		if (!bridge)
->  			return -ENOMEM;
->  
-> +		/* INTx is not supported */
-> +		bridge->map_irq = NULL;
-> +		bridge->swizzle_irq = NULL;
-> +
->  		if (!data->byte_access_allowed)
->  			bridge->ops = &cdns_ti_pcie_host_ops;
->  		rc = pci_host_bridge_priv(bridge);
-> -- 
-> 2.40.1
-> 
+Testing
+-------
+A test branch is available here that includes all patches required to
+test Partial-IO:
+
+https://gitlab.baylibre.com/msp8/linux/-/tree/integration/am62-lp-sk-partialio/v6.11?ref_type=heads
+
+After enabling Wake-on-LAN the system can be powered off and will enter
+the Partial-IO state in which it can be woken up by activity on the
+specific pins:
+    ethtool -s can0 wol p
+    ethtool -s can1 wol p
+    poweroff
+
+I tested these patches on am62-lp-sk.
+
+Best,
+Markus
+
+Previous versions:
+ v1: https://lore.kernel.org/lkml/20240523080225.1288617-1-msp@baylibre.com/
+
+Changes in v2:
+ - Rebase to v6.11-rc1
+ - dt-binding:
+    - Update commit message
+    - Add more verbose description of the new binding for a better
+      explanation.
+ - ti_sci driver:
+    - Combine ti_sci_do_send() into ti_sci_do_xfer and only wait on a
+      response if a flag is set.
+    - On failure to enter Partial-IO, do emergency_restart()
+    - Add comments
+    - Fix small things
+
+Markus Schneider-Pargmann (5):
+  dt-bindings: ti, sci: Add property for partial-io-wakeup-sources
+  firmware: ti_sci: Partial-IO support
+  arm64: dts: ti: k3-pinctrl: Add WKUP_EN flag
+  arm64: dts: ti: k3-am62: Add partial-io wakeup sources
+  arm64: dts: ti: k3-am62a: Add partial-io wakeup sources
+
+Vibhore Vardhan (1):
+  arm64: dts: ti: k3-am62p: Add partial-io wakeup sources
+
+ .../bindings/arm/keystone/ti,sci.yaml         |  13 ++
+ arch/arm64/boot/dts/ti/k3-am62.dtsi           |   4 +
+ arch/arm64/boot/dts/ti/k3-am62a.dtsi          |   4 +
+ arch/arm64/boot/dts/ti/k3-am62p.dtsi          |   4 +
+ arch/arm64/boot/dts/ti/k3-pinctrl.h           |   3 +
+ drivers/firmware/ti_sci.c                     | 160 +++++++++++++++---
+ drivers/firmware/ti_sci.h                     |  34 ++++
+ 7 files changed, 203 insertions(+), 19 deletions(-)
 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.45.2
+
 
