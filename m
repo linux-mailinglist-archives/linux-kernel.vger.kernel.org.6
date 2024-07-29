@@ -1,54 +1,56 @@
-Return-Path: <linux-kernel+bounces-266040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 608B793F9B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:40:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AFAE93F9B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2D3E2830FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:40:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D892A1F23141
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D181615F303;
-	Mon, 29 Jul 2024 15:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3075215ADB3;
+	Mon, 29 Jul 2024 15:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="amAp3hGJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dZ0MMTIm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2533E15EFA0
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A3E16B725;
+	Mon, 29 Jul 2024 15:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722267598; cv=none; b=JjV5GP3I4lLGawsF47UfXYiLr4PMGGi3BmpYOTkGgSMyYdeQUzmPqX5K6YYbsOdSc+6kqrwqcoLsZkR5bMx50bimZEFksrhB7HxjECpZ0jGTgVMEtMygM3HQUZMrVlHefD6N6OGw2l0r0FEW6PfH1Qdl9rSmcsNGCrFr2EUiYQ8=
+	t=1722267604; cv=none; b=NpHDPDCHA5VEzl1I9O5VZShy+4Bnvnir78WaDrxDc8gGMmuCCXNfKrveECeRIPC4o2ImQiEwjWzhoxYOQdl14fbKz00Hc3RFE0rIptPOFDj0BUmiXixVSRrmrq67kAxnfQsEvFCwpicD7WyqG/O24zuNj458v7qSshd+0dmlnr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722267598; c=relaxed/simple;
-	bh=znPs4v7LHA66SRhF/8XsrPtbtwrRzqodWkRhP/5vy/0=;
+	s=arc-20240116; t=1722267604; c=relaxed/simple;
+	bh=wKdj3CdUMZhq1FC2Rcs2NuHX4NE/37Pw0kuRGmZ5Acw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=DbbOruHFeEHqUv7PbRqR0yHctx1JlAUZzjhrc2vptwcQzw81RsayxADQszXd9OFkfVHWo1e/JEpSSeZFg/+pBs4+lvgtDkX0KVw/mq23moUyA95JLqBEuzq3FY7K7ReZj2rNFEM3P0pR+YhJqtCB4Ev+4Ipcft2e9jOYW7UFHe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=amAp3hGJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 594A8C4AF0A;
-	Mon, 29 Jul 2024 15:39:56 +0000 (UTC)
+	 MIME-Version:Content-Type; b=l+3tuT+doplAr0sVYvwHTOflyRyD7tVzShw2u12uU7LptNIzbxLcrWqTxQqGStgfM+MPCgUSUbcyVlm68fid2M0FU1tbsYkrkBo04We3IExI81YI0IzXybDMbnfCKBBYXuEftBg4wzIjQG0VJMpI1OFc9Nbu08/u23gaKMYgXhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dZ0MMTIm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D483BC32786;
+	Mon, 29 Jul 2024 15:40:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722267597;
-	bh=znPs4v7LHA66SRhF/8XsrPtbtwrRzqodWkRhP/5vy/0=;
+	s=k20201202; t=1722267604;
+	bh=wKdj3CdUMZhq1FC2Rcs2NuHX4NE/37Pw0kuRGmZ5Acw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=amAp3hGJbtZozQO0cZPd59+uLC4DobsVbO3toCbuGyAPv10oHXuG65bAxlZ2zDt2r
-	 40WjN5i88u8D5EyuCZ7F0ukmHOuzNustFCIQmvE0WD0gqE3YX/ruq5JG2XOjR3LmKV
-	 G78GYH8PRxUJXWvPyLTToxAydk8XMPXzNRIo4vU09qiQynbg4tmSmNknU4gIjLUJxG
-	 M49BKDN0UAb5Q6FvYp8GkyLKNcTpvylO2IF0KrEqUuwMsVIeEzu3QOabIjJ+fZVsyG
-	 TwNxWDS7QpEXHR33/4K7sIyf0ZDc1/Yr40mzRxGRxe+biW+d8GseBAJi4h8JYjLzv8
-	 c5Z5Y7tww2CLw==
+	b=dZ0MMTImS5D2SilE9nR8Y+aTcLd6ndmPnVpA24sgTvKpN1bXkrKTjAUrDspUlBNKS
+	 3csDMyVO/0589HMRccSu/UVf6GEGUEMwkgualwy7MhsqCeBFy8jxD2IcgnRoFV4X/L
+	 1bRDW5vMCUZd0fRyiGgvI1L22ER8dP6cskRRmVm6BHj6xPAiq8DvsOqBRKovyjD09g
+	 Fl15lgRCiOh2DaKGyn4XOipbQWzKsj3IGOIHsq7O+SpsMbKkCwDgQzgDTyNljeCnhr
+	 oBrFjrcxFh6+iZUVJugr+UWQ4nSFK6FkBXcr+51RfPhgvXcT5rlSIpoH9kxZen5ziu
+	 x16pheBIZwrgQ==
 From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, axel.lin@ingics.com, ckeepax@opensource.cirrus.com, 
- Chen Ni <nichen@iscas.ac.cn>
-Cc: patches@opensource.cirrus.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20240716085115.1252817-1-nichen@iscas.ac.cn>
-References: <20240716085115.1252817-1-nichen@iscas.ac.cn>
-Subject: Re: [PATCH] regulator: wm831x-isink: Convert comma to semicolon
-Message-Id: <172226759609.71083.2271751842186568292.b4-ty@kernel.org>
-Date: Mon, 29 Jul 2024 16:39:56 +0100
+To: neil.armstrong@linaro.org, khilman@baylibre.com, jbrunet@baylibre.com, 
+ martin.blumenstingl@googlemail.com, yixun.lan@amlogic.com, 
+ sunny.luo@amlogic.com, Chen Ni <nichen@iscas.ac.cn>
+Cc: linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240716091151.1434450-1-nichen@iscas.ac.cn>
+References: <20240716091151.1434450-1-nichen@iscas.ac.cn>
+Subject: Re: [PATCH] spi: meson-spicc: convert comma to semicolon
+Message-Id: <172226760159.71144.8527591939775545472.b4-ty@kernel.org>
+Date: Mon, 29 Jul 2024 16:40:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,19 +61,19 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
-On Tue, 16 Jul 2024 16:51:15 +0800, Chen Ni wrote:
+On Tue, 16 Jul 2024 17:11:51 +0800, Chen Ni wrote:
 > Replace a comma between expression statements by a semicolon.
 > 
 > 
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/1] regulator: wm831x-isink: Convert comma to semicolon
-      commit: 291f854ecadeb275e5e586001963950341d85e7a
+[1/1] spi: meson-spicc: convert comma to semicolon
+      commit: dc58d15ae7f247f642ea4751a276914eefa31865
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
