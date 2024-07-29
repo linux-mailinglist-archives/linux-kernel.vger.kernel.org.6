@@ -1,151 +1,259 @@
-Return-Path: <linux-kernel+bounces-266209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D32D193FC7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:34:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36A9D93FC81
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 807591F22A3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:34:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 899D0B214F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC9615EFB6;
-	Mon, 29 Jul 2024 17:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A2416D4C3;
+	Mon, 29 Jul 2024 17:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hijyr80F"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="jtg+bA2v"
+Received: from msa.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1511D5028C;
-	Mon, 29 Jul 2024 17:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BFC71474CE;
+	Mon, 29 Jul 2024 17:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722274443; cv=none; b=nW4H7r9Q/lEBuXFu0GFpjDPkrNm4Z5ZVgHf/pydAL+WIY39gCZ95t6r4rCE0Cy4ivPobk+mD4pJHRfbxq+CrsREjPeSExohlQdSsQ4LZt0PaY3j5EFSW4IJJYuRTwgVXI3u2ZAr6BrsW1SkA5hOK2CqHRjpQlJck6u2bRM67BHk=
+	t=1722274585; cv=none; b=P56zqH5DFBirCQ/Va+zes40QoAtNGfdXufXp1fxiIqVg+NSI8GILgcCb9/esoUK1ihbOt73wHBZ/v5c3oqPs9CGS1tEymI3Pa7R4Yw+uz2Y9wB3N9N2Q+c5rMjAt61isckwiuMKD9zNOyi401ZE9OgwRtyzjPBu2J7bhdXKJdZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722274443; c=relaxed/simple;
-	bh=xdfTm7LzMoD5u1SQggiotRToTxWzisl2JjvFX2swJnc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e+cnZ3dgRE+PeKRTD37UTSQpDBPT8YdSQC5w3MTFXpLoUV/ZfJ4o4Z4hXxgqZCJtHyogLfXaWN4FOlA0NRAMvX2JEae3zrzgQQLANcPfc3hGQRlNF/Qi/hH7w6PtFJ5WX3aMTP3nVq8AY9I3A1+3vDpaqO2NzE/bslw7st7iiBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hijyr80F; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f0407330a3so997921fa.3;
-        Mon, 29 Jul 2024 10:34:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722274440; x=1722879240; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s6kyVEe575aj2OTlvsr7/JLoxWoAePv21nuSGUR5NTQ=;
-        b=Hijyr80FhMH+VaekdJJVVfQsTyy3Jhmj7zD6Nt2fEFIWzJSSbSW7gzhygB/5WKlSRF
-         ZcjSeWv35ZTNk19fqRdMOa0DtIxbt6dB9Ck6edfmn1MqNKRzYn1dRibkBpCHE1WhcekE
-         T2UGpD0xjJqowCH5ij9PXbeNXJI0liFCHlCZhrh1qJZS04SVO3LNWNV/J83PbQ6zwE+d
-         wfSEGoLxDgB8yMKBhubrPuDNd9z56JzxnbLvHA0+pSlM350aetvaP2xz6TcSCUF0yaGX
-         TClatM9kmg5aDNj25is6YMyPh8cFpmxmJtz7YG98Ez1aupu9aI7gukAVbKC12ZKspqki
-         X0Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722274440; x=1722879240;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s6kyVEe575aj2OTlvsr7/JLoxWoAePv21nuSGUR5NTQ=;
-        b=OTRA5apmQUZ5TfT/3ZVE/alzBVhUcF3d17AiFbCTsYHCcHi/NFs9A26ja5sWjOIh7R
-         HZvRaaw0+qsu22sNaZgpR41lSN9bBwwMlDksP20XFmkuD8h5E9N+kzzM0XAWkq2G2cmQ
-         pLdTt20VLCn/E/qKXwxs10HpbIHoyMzb1KbXejqxXE3lVC3OAzh7MuPS9IoaMmvzU4hv
-         CQUuU7LA/+wwnd2kC/rPj9veo2MT0/BQ7HPeEyWtvXKoYzw5RgEazdnaLCr39cnsfFyI
-         tkW+gSEgOlcLhZeaQjLhdXS6bM3UZ3GhUHYrqH9NtrIZEMSCCcZG15KAPCwtK6yUDQsq
-         bfkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGQUq57tTF5dUBsdttuw1qgtmamcSCGjfefTjmqK3iz6QDXGUX5bsHx9T4QHwVC6/JgeU0z3lFgdi6oqFJkcJoSzBr36clbJ16/52DVfZhYRBF1N7231ogl0NuEKGDRXVv06y9y/OF1Q==
-X-Gm-Message-State: AOJu0YwjCu7YA9MIM43wl3hPjaCPPnskXDWUJymCWGWsyhaIwtV4YWa4
-	r3sxMLtA+mhiQHfAO2GCgOhny7om+ArRrvkDwcF3s9ODqiXsG37yLTYNjvhLHNYMZ7gsUsuHDTp
-	iI96ZjV9MaDuuxLbUbMovKT+PGbUKpVkP
-X-Google-Smtp-Source: AGHT+IEa7xJMSK3IqaxgrXEkRQVWf1835DL1FlkHMENIV7BFfCOu1wuo3ZcHBCenA1SDCXXKe04+6B4iP7o21eS5UvY=
-X-Received: by 2002:a2e:a41a:0:b0:2ef:251f:785 with SMTP id
- 38308e7fff4ca-2f12ebc9755mr59269911fa.1.1722274439914; Mon, 29 Jul 2024
- 10:33:59 -0700 (PDT)
+	s=arc-20240116; t=1722274585; c=relaxed/simple;
+	bh=8qXgcTEK1sB9juukqwPldLWJ+ngenIcIAxtBMYrrYQQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mGGjZ+RjJNFQ+wB38dLo+0fQleoucFhi2Jcdgg4mBgnkpxP0MX7Rz0jIRBbA8xSuJa28VBzsTPIh1lSuPiQC5U94cFllfiVFYlNgzgxZm+Wdn14RzD7GZUm6jEM4ciqyIrW4vVdzy3vZIoT+VWiKNdFhvLlyfkrOVg106WlieEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=jtg+bA2v; arc=none smtp.client-ip=80.12.242.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id YUI7soyZFhajuYUI8sQhbA; Mon, 29 Jul 2024 19:36:13 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722274573;
+	bh=OMMMxQpsZCVMR8l67H2YGQ2dCZFaG5DSz7db9edlKWs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=jtg+bA2vAlqfi+cTiS2Gf1imYLuSNwgshlLsieACR9yNef8s5TO5dFfcpBYV3EWd2
+	 eXWKd19sIWEbUTZFk/gueaYcPAV1FnnQ94kEU4RlOuML3YLh+cmQDuhjB9eYgNQkQL
+	 S5gKp8Ehpv5ptcdiO849BuW42lximhOiHb5rKYxZaQf9yOZA2fg0yB/2DrZvp2xQWQ
+	 11VORJBZMItKMepoAhxvMETKxQIY7esmqgS8CI9QJUDWfoLKUe9JlwE/iHsTcUQMyG
+	 LxUAtHDlaxiahSCm8ucJVOIEhEkVUIXe1L32c3ex0eFLirLchPk4qACcsd88/oasFk
+	 GyWD2O9b238dA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 29 Jul 2024 19:36:13 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: ckeepax@opensource.cirrus.com,
+	javier.carrasco.cruz@gmail.com,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	alsa-devel@alsa-project.org,
+	patches@opensource.cirrus.com,
+	linux-sound@vger.kernel.org
+Subject: [PATCH] ASoC: cs43130: Constify snd_soc_component_driver struct
+Date: Mon, 29 Jul 2024 19:36:05 +0200
+Message-ID: <1f04bb0366d9640d7ee361dae114ff79e4b381c1.1722274212.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAH2r5ms+vyNND3XPkBo+HYEj3-YMSwqZJup8BSt2B3LYOgPF+A@mail.gmail.com>
- <20240729-abwesend-absondern-e90f3209e666@brauner>
-In-Reply-To: <20240729-abwesend-absondern-e90f3209e666@brauner>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 29 Jul 2024 12:33:48 -0500
-Message-ID: <CAH2r5muRnhFevDR29k=DkmD_B44xQ5jOXd5RnRqkyH27pKzNDQ@mail.gmail.com>
-Subject: Re: Why do very few filesystems have umount helpers
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-> umount.udisks talks to the udisks daemon which keeps state
-> on the block devices it manages and it also cleans up things that were
-> created (directories etc.) at mount time
+In order to constify `snd_soc_component_driver` struct, duplicate
+`soc_component_dev_cs43130` into a `soc_component_dev_cs43130_digital` and
+`soc_component_dev_cs43130_analog`.
 
-That does sound similar to the problem that some network fs face.
-How to cleanup resources (e.g. cached metadata) better at umount time
-(since kill_sb can take a while to be invoked)
+These 2 new structures share the same .dapm_widgets and .dapm_routes
+arrays but differ for .num_dapm_widgets and .num_dapm_routes.
 
-> The first step should be to identify what exactly keeps your mount busy
-> in generic/044 and generic/043.
+In the digital case, the last entries are not taken into account.
 
-That is a little tricky to debug (AFAIK no easy way to tell exactly which
-reference is preventing the VFS from proceeding with the umount and
-calling kill_sb).  My best guess is something related to deferred close
-(cached network file handles) that had a brief refcount on
-something being checked by umount, but when I experimented with
-deferred close settings that did not seem to affect the problem so
-looking for other possible causes.
+Doing so has several advantages:
+  - `snd_soc_component_driver` can be declared as const to move their
+    declarations to read-only sections.
+  - code in the probe is simpler. There is no need to concatenate some
+    arrays to handle the "analog" case
+  - this saves some memory because all_hp_widgets and analog_hp_routes can
+    be removed.
 
-I just did a quick experiment by adding a 1 second wait inside umount
-and confirmed that that does fix it for those two tests when mounted to Sam=
-ba,
-but not clear why the slight delay in umount helps as there is no pending
-network traffic at that point.
+Before :
+======
+   text	   data	    bss	    dec	    hex	filename
+  53965	   8265	   4512	  66742	  104b6	sound/soc/codecs/cs43130.o
 
-On Mon, Jul 29, 2024 at 4:50=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Sun, Jul 28, 2024 at 02:09:14PM GMT, Steve French wrote:
-> > I noticed that nfs has a umount helper (/sbin/umount.nfs) as does hfs
-> > (as does /sbin/umount.udisks2).  Any ideas why those are the only
-> > three filesystems have them but other fs don't?
->
-> Helpers such as mount.* or umount.* are used by util-linux. They're not
-> supposed to be directly used (usually).
->
-> For example, umount.udisks talks to the udisks daemon which keeps state
-> on the block devices it manages and it also cleans up things that were
-> created (directories etc.) at mount time. Such mounts are usually marked
-> e.g., via helper=3Dudisks to instruct util-linux to call umount.udisks
->
-> Similar things probably apply to the others.
->
-> > Since umount does not notify the filesystem on unmount until
-> > references are closed (unless you do "umount --force") and therefore
-> > the filesystem is only notified at kill_sb time, an easier approach to
-> > fixing some of the problems where resources are kept around too long
-> > (e.g. cached handles or directory entries etc. or references on the
-> > mount are held) may be to add a mount helper which notifies the fs
-> > (e.g. via fs specific ioctl) when umount has begun.   That may be an
-> > easier solution that adding a VFS call to notify the fs when umount
-> > begins.   As you can see from fs/namespace.c there is no mount
-> > notification normally (only on "force" unmounts)
->
-> The first step should be to identify what exactly keeps your mount busy
-> in generic/044 and generic/043. If you don't know what the cause of this
-> is no notification from VFS will help you. My guess is that this ends up
-> being fixable in cifs.
+After :
+=====
+   text	   data	    bss	    dec	    hex	filename
+  54409	   7881	     64	  62354	   f392	sound/soc/codecs/cs43130.o
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
 
+See discussion at [1].
 
---=20
-Thanks,
+[1]: https://lore.kernel.org/all/ZqNawRmAqBRLIoQq@opensource.cirrus.com/
+---
+ sound/soc/codecs/cs43130.c | 73 +++++++++++++++++---------------------
+ 1 file changed, 32 insertions(+), 41 deletions(-)
 
-Steve
+diff --git a/sound/soc/codecs/cs43130.c b/sound/soc/codecs/cs43130.c
+index be4037890fdb..cb4ca80f36d2 100644
+--- a/sound/soc/codecs/cs43130.c
++++ b/sound/soc/codecs/cs43130.c
+@@ -1415,7 +1415,7 @@ static const char * const bypass_mux_text[] = {
+ static SOC_ENUM_SINGLE_DECL(bypass_enum, SND_SOC_NOPM, 0, bypass_mux_text);
+ static const struct snd_kcontrol_new bypass_ctrl = SOC_DAPM_ENUM("Switch", bypass_enum);
+ 
+-static const struct snd_soc_dapm_widget digital_hp_widgets[] = {
++static const struct snd_soc_dapm_widget hp_widgets[] = {
+ 	SND_SOC_DAPM_MUX("Bypass Switch", SND_SOC_NOPM, 0, 0, &bypass_ctrl),
+ 	SND_SOC_DAPM_OUTPUT("HPOUTA"),
+ 	SND_SOC_DAPM_OUTPUT("HPOUTB"),
+@@ -1447,19 +1447,16 @@ static const struct snd_soc_dapm_widget digital_hp_widgets[] = {
+ 			   CS43130_PDN_HP_SHIFT, 1, cs43130_dac_event,
+ 			   (SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU |
+ 			    SND_SOC_DAPM_POST_PMD)),
+-};
+ 
+-static const struct snd_soc_dapm_widget analog_hp_widgets[] = {
++/* Some devices have some extra analog widgets */
++#define NUM_ANALOG_WIDGETS	1
++
+ 	SND_SOC_DAPM_DAC_E("Analog Playback", NULL, CS43130_HP_OUT_CTL_1,
+ 			   CS43130_HP_IN_EN_SHIFT, 0, cs43130_hpin_event,
+ 			   (SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD)),
+ };
+ 
+-static struct snd_soc_dapm_widget all_hp_widgets[
+-			ARRAY_SIZE(digital_hp_widgets) +
+-			ARRAY_SIZE(analog_hp_widgets)];
+-
+-static const struct snd_soc_dapm_route digital_hp_routes[] = {
++static const struct snd_soc_dapm_route hp_routes[] = {
+ 	{"ASPIN PCM", NULL, "ASP PCM Playback"},
+ 	{"ASPIN DoP", NULL, "ASP DoP Playback"},
+ 	{"XSPIN DoP", NULL, "XSP DoP Playback"},
+@@ -1472,15 +1469,12 @@ static const struct snd_soc_dapm_route digital_hp_routes[] = {
+ 	{"Bypass Switch", "Internal", "HiFi DAC"},
+ 	{"HPOUTA", NULL, "Bypass Switch"},
+ 	{"HPOUTB", NULL, "Bypass Switch"},
+-};
+ 
+-static const struct snd_soc_dapm_route analog_hp_routes[] = {
++/* Some devices have some extra analog routes */
++#define NUM_ANALOG_ROUTES	1
+ 	{"Bypass Switch", "Alternative", "Analog Playback"},
+ };
+ 
+-static struct snd_soc_dapm_route all_hp_routes[
+-			ARRAY_SIZE(digital_hp_routes) +
+-			ARRAY_SIZE(analog_hp_routes)];
+ 
+ static const unsigned int cs43130_asp_src_rates[] = {
+ 	32000, 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000
+@@ -2398,7 +2392,23 @@ static int cs43130_probe(struct snd_soc_component *component)
+ 	return 0;
+ }
+ 
+-static struct snd_soc_component_driver soc_component_dev_cs43130 = {
++static const struct snd_soc_component_driver soc_component_dev_cs43130_digital = {
++	.probe			= cs43130_probe,
++	.controls		= cs43130_snd_controls,
++	.num_controls		= ARRAY_SIZE(cs43130_snd_controls),
++	.set_sysclk		= cs43130_component_set_sysclk,
++	.set_pll		= cs43130_set_pll,
++	.idle_bias_on		= 1,
++	.use_pmdown_time	= 1,
++	.endianness		= 1,
++	/* Don't take into account the ending analog widgets and routes */
++	.dapm_widgets		= hp_widgets,
++	.num_dapm_widgets	= ARRAY_SIZE(hp_widgets) - NUM_ANALOG_WIDGETS,
++	.dapm_routes		= hp_routes,
++	.num_dapm_routes	= ARRAY_SIZE(hp_routes) - NUM_ANALOG_ROUTES,
++};
++
++static const struct snd_soc_component_driver soc_component_dev_cs43130_analog = {
+ 	.probe			= cs43130_probe,
+ 	.controls		= cs43130_snd_controls,
+ 	.num_controls		= ARRAY_SIZE(cs43130_snd_controls),
+@@ -2407,6 +2417,10 @@ static struct snd_soc_component_driver soc_component_dev_cs43130 = {
+ 	.idle_bias_on		= 1,
+ 	.use_pmdown_time	= 1,
+ 	.endianness		= 1,
++	.dapm_widgets		= hp_widgets,
++	.num_dapm_widgets	= ARRAY_SIZE(hp_widgets),
++	.dapm_routes		= hp_routes,
++	.num_dapm_routes	= ARRAY_SIZE(hp_routes),
+ };
+ 
+ static const struct regmap_config cs43130_regmap = {
+@@ -2479,6 +2493,7 @@ static int cs43130_handle_device_data(struct cs43130_private *cs43130)
+ 
+ static int cs43130_i2c_probe(struct i2c_client *client)
+ {
++	const struct snd_soc_component_driver *component_driver;
+ 	struct cs43130_private *cs43130;
+ 	int ret;
+ 	unsigned int reg;
+@@ -2596,39 +2611,15 @@ static int cs43130_i2c_probe(struct i2c_client *client)
+ 	switch (cs43130->dev_id) {
+ 	case CS43130_CHIP_ID:
+ 	case CS43131_CHIP_ID:
+-		memcpy(all_hp_widgets, digital_hp_widgets,
+-		       sizeof(digital_hp_widgets));
+-		memcpy(all_hp_widgets + ARRAY_SIZE(digital_hp_widgets),
+-		       analog_hp_widgets, sizeof(analog_hp_widgets));
+-		memcpy(all_hp_routes, digital_hp_routes,
+-		       sizeof(digital_hp_routes));
+-		memcpy(all_hp_routes + ARRAY_SIZE(digital_hp_routes),
+-		       analog_hp_routes, sizeof(analog_hp_routes));
+-
+-		soc_component_dev_cs43130.dapm_widgets =
+-			all_hp_widgets;
+-		soc_component_dev_cs43130.num_dapm_widgets =
+-			ARRAY_SIZE(all_hp_widgets);
+-		soc_component_dev_cs43130.dapm_routes =
+-			all_hp_routes;
+-		soc_component_dev_cs43130.num_dapm_routes =
+-			ARRAY_SIZE(all_hp_routes);
++		component_driver = &soc_component_dev_cs43130_analog;
+ 		break;
+ 	case CS43198_CHIP_ID:
+ 	case CS4399_CHIP_ID:
+-		soc_component_dev_cs43130.dapm_widgets =
+-			digital_hp_widgets;
+-		soc_component_dev_cs43130.num_dapm_widgets =
+-			ARRAY_SIZE(digital_hp_widgets);
+-		soc_component_dev_cs43130.dapm_routes =
+-			digital_hp_routes;
+-		soc_component_dev_cs43130.num_dapm_routes =
+-			ARRAY_SIZE(digital_hp_routes);
++		component_driver = &soc_component_dev_cs43130_digital;
+ 		break;
+ 	}
+ 
+-	ret = devm_snd_soc_register_component(cs43130->dev,
+-				     &soc_component_dev_cs43130,
++	ret = devm_snd_soc_register_component(cs43130->dev, component_driver,
+ 				     cs43130_dai, ARRAY_SIZE(cs43130_dai));
+ 	if (ret < 0) {
+ 		dev_err(cs43130->dev,
+-- 
+2.45.2
+
 
