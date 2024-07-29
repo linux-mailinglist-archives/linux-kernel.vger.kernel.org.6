@@ -1,363 +1,166 @@
-Return-Path: <linux-kernel+bounces-265174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5F193ED96
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:41:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D05C93ED60
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E67C4281241
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:41:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADA151F22411
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4333784E11;
-	Mon, 29 Jul 2024 06:40:59 +0000 (UTC)
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6648884A5B;
+	Mon, 29 Jul 2024 06:25:26 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A236284052;
-	Mon, 29 Jul 2024 06:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.224.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537CA83A07
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722235258; cv=none; b=jM3b5ugUaReRyJnHcVUQ8avrFde9z8ByAX4JbG/xBCyr+mEgXVtT9RD0TsStXAxkOsm8bjPs0UkcACdwKv7wcVctSOJIfPPNEnr7hQU9X/LBC+brFBKVgn4nJzhSuZN83oDrFECnQUuyWyGN6Mi1LfgQiyuJ7UZQLFhtCoKAThY=
+	t=1722234325; cv=none; b=UQdDmBT/W5qmxwKuoSZxaNoGAOeM2Yc1rAh1XISC1UErA2+a1jkzT/jBQwFkcoMyFs6HesyVa5dtb3efVnkD9Qlu4bNWJMdSqMFnPDwcHiG3UvOgLkvGGCfLsctqnwFGYjYSU7YP2dVojfFzm8quXL+yfElcclZhI2ChAbbekkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722235258; c=relaxed/simple;
-	bh=x5FdFI8UNAApHvTVx7N8rwm526f3zkx/HepVYYmXwt4=;
-	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
-	 References:Message-ID; b=mWlReJoCk7bRRXTUs2rzifvhTnoSYDR4n3UJrnvowA8nP18FCouLpej1beVFk+EC4k72YLd2tZm7XfgY31iUDGAvcpXAcU18fKuozkr8PJOScsr63BbsBbKjvli6V+E5+pF2GNWjwaCpqc6lnJcklt9eH485eB7pclUtEIM54ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=91.198.224.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [127.0.0.1] (helo=localhost)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=1954343a27=fe@dev.tdt.de>)
-	id 1sYJo5-009RoD-Df; Mon, 29 Jul 2024 08:24:29 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <fe@dev.tdt.de>)
-	id 1sYJo4-00EKvn-Kw; Mon, 29 Jul 2024 08:24:28 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id 31333240041;
-	Mon, 29 Jul 2024 08:24:28 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id 04C26240036;
-	Mon, 29 Jul 2024 08:24:28 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-	by mail.dev.tdt.de (Postfix) with ESMTP id 1E66B20A38;
-	Mon, 29 Jul 2024 08:24:27 +0200 (CEST)
+	s=arc-20240116; t=1722234325; c=relaxed/simple;
+	bh=w0jJF3WTrhgW1Cdze0NpOz/DAT1DCo3vI3JC6dU1CZ0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Et5+clDdZ/6wZ2qCiPz0LqLJRRFdBXYrv6ph6uWWwvi/aCgA6XqzZ63LhZXJ83KWsTPRk6FI5z9C8lC3rju3E38WqEKmJ3BwhIbZP3gp8EDBzoAOng3bWa49HNiSlSJic0pVrNBomBhNp5Cpfkb+IyOcYtpuH40RrmeXI7/2gvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f99a9111fso271861039f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 23:25:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722234323; x=1722839123;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l9TJexnCfhAzTqLIsZlaoF0POVuvzO1ul1CoZ2gTpV8=;
+        b=aqj0sMBySpW0AUF5XSgDpv1VSyg4RHxH+y0uxXaD737p3l4doqJBzOoynICweQbkbH
+         vI9mW50Ehz2TxL4YxqvPQcATMSV3cLoM7p9YA6OzRK9BaL7mejLkaX9iz4NVB5w/nC6F
+         Hyx1QyKNPUz5oAQdCezFwbSOWZ0lfNDkGsvhXKv0JEz0PwA4iJCC3lNSoefNzi/CYUNJ
+         rGOOHMUrN3DE9yAoKYlF0kRqVv4w1wsYsMv3WKN0yxEGIJqTLxfncBkeFTkAkvttzkXE
+         t90u3tumMsrSExXbC2hcF13uXHTIPFVbSxZ0HylrGkRcY0TaSXRg+UhCLNPISenczOZ/
+         98QA==
+X-Forwarded-Encrypted: i=1; AJvYcCUR76cLZnVKr5JRMNRxH2BM/G0U4eO4qNUe523ktZHg7Wm2uwj/C/5yyklV6MqWGUP35+h5kjMVvBcT88uL74zxwn16DwvBjtEsEbms
+X-Gm-Message-State: AOJu0YwKjwLrBany4niyua6pStp2h3xk/BcOcWeaCWWaepDthp4wVZFv
+	6rEVm6WRyJKXvdiE4TCQ2WCR9xho0iEGT+Vxca3uGsvbwUokkmrN3NP4JpN8wS1jHSAiiulkEuP
+	o0Z88jcwwN6YV72twVzxArBfJX/KyPPbHRORmr8JMbIZJFFC3FC4rDm8=
+X-Google-Smtp-Source: AGHT+IGMBmVfcB5rvOBEfNdPlEQOkFrr2KFMFArS66cYwyZtvzXd6Yq8Z17/1Db/bi7cuGqsQPUCYnF4Pkhh9JbZQTMFGpl1MGeL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Mon, 29 Jul 2024 08:24:26 +0200
-From: Florian Eckert <fe@dev.tdt.de>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: lee@kernel.org, jdelvare@suse.com, linux@roeck-us.net,
- dmitry.torokhov@gmail.com, pavel@ucw.cz, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, ukleinek@debian.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
- linux-leds@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] leds: add driver for LEDs from qnap-mcu devices
-In-Reply-To: <20240728211751.2160123-4-heiko@sntech.de>
-References: <20240728211751.2160123-1-heiko@sntech.de>
- <20240728211751.2160123-4-heiko@sntech.de>
-Message-ID: <f7d10147a643f4d0d7cf2decbe490315@dev.tdt.de>
-X-Sender: fe@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-X-purgate-type: clean
-X-purgate-ID: 151534::1722234269-16C4CD11-DF4FFB49/0/0
-X-purgate: clean
+X-Received: by 2002:a05:6e02:1d15:b0:398:b1d3:7c9d with SMTP id
+ e9e14a558f8ab-39aec4104e8mr3847775ab.3.1722234323334; Sun, 28 Jul 2024
+ 23:25:23 -0700 (PDT)
+Date: Sun, 28 Jul 2024 23:25:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000100920061e5ced31@google.com>
+Subject: [syzbot] [ntfs3?] WARNING: locking bug in evict (2)
+From: syzbot <syzbot+1b5e257b523f3e0be7d2@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Heiko,
+Hello,
 
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index effdfc6f1e951..27eb6cd827610 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -77,6 +77,7 @@ obj-$(CONFIG_LEDS_PCA995X)		+= leds-pca995x.o
->  obj-$(CONFIG_LEDS_PM8058)		+= leds-pm8058.o
->  obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
->  obj-$(CONFIG_LEDS_PWM)			+= leds-pwm.o
-> +obj-$(CONFIG_LEDS_QNAP_MCU)		+= leds-qnap-mcu.o
->  obj-$(CONFIG_LEDS_REGULATOR)		+= leds-regulator.o
->  obj-$(CONFIG_LEDS_SC27XX_BLTC)		+= leds-sc27xx-bltc.o
->  obj-$(CONFIG_LEDS_SUN50I_A100)		+= leds-sun50i-a100.o
-> diff --git a/drivers/leds/leds-qnap-mcu.c 
-> b/drivers/leds/leds-qnap-mcu.c
-> new file mode 100644
-> index 0000000000000..e3244923759d2
-> --- /dev/null
-> +++ b/drivers/leds/leds-qnap-mcu.c
-> @@ -0,0 +1,247 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +/*
-> + * Driver for LEDs found on QNAP MCU devices
-> + *
-> + * Copyright (C) 2024 Heiko Stuebner <heiko@sntech.de>
-> + */
-> +
-> +#include <linux/leds.h>
-> +#include <linux/mfd/qnap-mcu.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +#include <uapi/linux/uleds.h>
-> +
-> +enum qnap_mcu_err_led_mode {
-> +	QNAP_MCU_ERR_LED_ON = 0,
-> +	QNAP_MCU_ERR_LED_OFF = 1,
-> +	QNAP_MCU_ERR_LED_BLINK_FAST = 2,
-> +	QNAP_MCU_ERR_LED_BLINK_SLOW = 3,
-> +};
-> +
-> +struct qnap_mcu_err_led {
-> +	struct qnap_mcu *mcu;
-> +	struct led_classdev cdev;
-> +	u8 num;
-> +	u8 mode;
-> +};
-> +
-> +static inline struct qnap_mcu_err_led *
-> +		cdev_to_qnap_mcu_err_led(struct led_classdev *led_cdev)
-> +{
-> +	return container_of(led_cdev, struct qnap_mcu_err_led, cdev);
-> +}
-> +
-> +static int qnap_mcu_err_led_set(struct led_classdev *led_cdev,
-> +				enum led_brightness value)
-> +{
-> +	struct qnap_mcu_err_led *err_led = 
-> cdev_to_qnap_mcu_err_led(led_cdev);
-> +	u8 cmd[] = {
-> +		[0] = 0x40,
-> +		[1] = 0x52,
-> +		[2] = 0x30 + err_led->num,
-> +		[3] = 0x30
-> +	};
-> +
-> +	/*
-> +	 * If the led is off, turn it on. Otherwise don't disturb
-> +	 * a possible set blink-mode.
-> +	 */
-> +	if (value == 0)
-> +		err_led->mode = QNAP_MCU_ERR_LED_OFF;
-> +	else if (err_led->mode == QNAP_MCU_ERR_LED_OFF)
-> +		err_led->mode = QNAP_MCU_ERR_LED_ON;
-> +
-> +	cmd[3] = 0x30 + err_led->mode;
-> +
-> +	return qnap_mcu_exec_with_ack(err_led->mcu, cmd, sizeof(cmd));
-> +}
-> +
-> +static int qnap_mcu_err_led_blink_set(struct led_classdev *led_cdev,
-> +				      unsigned long *delay_on,
-> +				      unsigned long *delay_off)
-> +{
-> +	struct qnap_mcu_err_led *err_led = 
-> cdev_to_qnap_mcu_err_led(led_cdev);
-> +	u8 cmd[] = {
-> +		[0] = 0x40,
-> +		[1] = 0x52,
-> +		[2] = 0x30 + err_led->num,
-> +		[3] = 0x30
-> +	};
-> +
-> +	/* LED is off, nothing to do */
-> +	if (err_led->mode == QNAP_MCU_ERR_LED_OFF)
-> +		return 0;
-> +
-> +	if (*delay_on < 500) {
-> +		*delay_on = 100;
-> +		*delay_off = 100;
-> +		err_led->mode = QNAP_MCU_ERR_LED_BLINK_FAST;
-> +	} else {
-> +		*delay_on = 500;
-> +		*delay_off = 500;
-> +		err_led->mode = QNAP_MCU_ERR_LED_BLINK_SLOW;
-> +	}
-> +
-> +	cmd[3] = 0x30 + err_led->mode;
-> +
-> +	return qnap_mcu_exec_with_ack(err_led->mcu, cmd, sizeof(cmd));
-> +}
-> +
-> +static int qnap_mcu_register_err_led(struct device *dev, struct
-> qnap_mcu *mcu, int num)
-> +{
-> +	struct qnap_mcu_err_led *err_led;
-> +	char tmp_buf[LED_MAX_NAME_SIZE];
-> +	int ret;
-> +
-> +	err_led = devm_kzalloc(dev, sizeof(*err_led), GFP_KERNEL);
-> +	if (!err_led)
-> +		return -ENOMEM;
-> +
-> +	err_led->mcu = mcu;
-> +	err_led->num = num;
-> +	err_led->mode = QNAP_MCU_ERR_LED_OFF;
-> +
-> +	snprintf(tmp_buf, LED_MAX_NAME_SIZE, "hdd%d:red:status", num + 1);
-> +	err_led->cdev.name = tmp_buf;
+syzbot found the following issue on:
 
-Should not the memory have to be allocated here via 'kzalloc' for 
-'err_led->cdev.name'?
-After leaving the function, tmp_buf is no longer on the stack?
+HEAD commit:    d1e9a63dcd72 Merge tag 'vfs-6.11-rc1.fixes.2' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=165b609d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8e1cc76f0e8412d3
+dashboard link: https://syzkaller.appspot.com/bug?extid=1b5e257b523f3e0be7d2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=157d7145980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8941969dc925/disk-d1e9a63d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0b29cfd6d8ee/vmlinux-d1e9a63d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/106b1d908823/bzImage-d1e9a63d.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/e3d201c6ed53/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/177c61e1ae2e/mount_7.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1b5e257b523f3e0be7d2@syzkaller.appspotmail.com
+
+loop1: detected capacity change from 0 to 4096
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(1)
+WARNING: CPU: 0 PID: 5593 at kernel/locking/lockdep.c:231 hlock_class kernel/locking/lockdep.c:231 [inline]
+WARNING: CPU: 0 PID: 5593 at kernel/locking/lockdep.c:231 check_wait_context kernel/locking/lockdep.c:4797 [inline]
+WARNING: CPU: 0 PID: 5593 at kernel/locking/lockdep.c:231 __lock_acquire+0x925/0x2040 kernel/locking/lockdep.c:5092
+Modules linked in:
+CPU: 0 UID: 0 PID: 5593 Comm: syz.1.106 Not tainted 6.10.0-syzkaller-12261-gd1e9a63dcd72 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:hlock_class kernel/locking/lockdep.c:231 [inline]
+RIP: 0010:check_wait_context kernel/locking/lockdep.c:4797 [inline]
+RIP: 0010:__lock_acquire+0x925/0x2040 kernel/locking/lockdep.c:5092
+Code: 00 00 83 3d 8c ab 3e 0e 00 75 23 90 48 c7 c7 40 d4 ca 8b 48 c7 c6 e0 d6 ca 8b e8 e6 d5 e5 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 8d ab c4 00 00 00 48 89 e8 48 c1 e8 03 0f
+RSP: 0018:ffffc900048d7650 EFLAGS: 00010046
+RAX: c75590ab2862fe00 RBX: 0000000000001b00 RCX: ffff888026c0bc00
+RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 00000000ffffffff R08: ffffffff81559342 R09: 1ffff1101728519a
+R10: dffffc0000000000 R11: ffffed101728519b R12: 0000000000000000
+R13: ffff888026c0c6ff R14: 0000000000000000 R15: ffff888026c0c6ff
+FS:  00007f25674c56c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2566759120 CR3: 000000005b364000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:351 [inline]
+ inode_sb_list_del fs/inode.c:506 [inline]
+ evict+0x161/0x630 fs/inode.c:658
+ ntfs_fill_super+0x3e27/0x4730 fs/ntfs3/super.c:1467
+ get_tree_bdev+0x3f7/0x570 fs/super.c:1624
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1789
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f256677761a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 7e 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f25674c4e78 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f25674c4f00 RCX: 00007f256677761a
+RDX: 0000000020000080 RSI: 000000002001f740 RDI: 00007f25674c4ec0
+RBP: 0000000020000080 R08: 00007f25674c4f00 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000002001f740
+R13: 00007f25674c4ec0 R14: 000000000001f6fb R15: 00000000200000c0
+ </TASK>
 
 
-> +
-> +	err_led->cdev.brightness_set_blocking = qnap_mcu_err_led_set;
-> +	err_led->cdev.blink_set = qnap_mcu_err_led_blink_set;
-> +	err_led->cdev.brightness = 0;
-> +	err_led->cdev.max_brightness = 1;
-> +
-> +	ret = devm_led_classdev_register(dev, &err_led->cdev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to register hdd led %d", 
-> num);
-> +
-> +	return qnap_mcu_err_led_set(&err_led->cdev, 0);
-> +}
-> +
-> +enum qnap_mcu_usb_led_mode {
-> +	QNAP_MCU_USB_LED_ON = 1,
-> +	QNAP_MCU_USB_LED_OFF = 3,
-> +	QNAP_MCU_USB_LED_BLINK = 2,
-> +};
-> +
-> +struct qnap_mcu_usb_led {
-> +	struct qnap_mcu *mcu;
-> +	struct led_classdev cdev;
-> +	u8 mode;
-> +};
-> +
-> +static inline struct qnap_mcu_usb_led *
-> +		cdev_to_qnap_mcu_usb_led(struct led_classdev *led_cdev)
-> +{
-> +	return container_of(led_cdev, struct qnap_mcu_usb_led, cdev);
-> +}
-> +
-> +static int qnap_mcu_usb_led_set(struct led_classdev *led_cdev,
-> +				enum led_brightness value)
-> +{
-> +	struct qnap_mcu_usb_led *usb_led = 
-> cdev_to_qnap_mcu_usb_led(led_cdev);
-> +	u8 cmd[] = {
-> +		[0] = 0x40,
-> +		[1] = 0x43,
-> +		[2] = 0
-> +	};
-> +
-> +	/*
-> +	 * If the led is off, turn it on. Otherwise don't disturb
-> +	 * a possible set blink-mode.
-> +	 */
-> +	if (value == 0)
-> +		usb_led->mode = QNAP_MCU_USB_LED_OFF;
-> +	else if (usb_led->mode == QNAP_MCU_USB_LED_OFF)
-> +		usb_led->mode = QNAP_MCU_USB_LED_ON;
-> +
-> +	/* byte 3 is shared between the usb led target and setting the mode 
-> */
-> +	cmd[2] = 0x44 | usb_led->mode;
-> +
-> +	return qnap_mcu_exec_with_ack(usb_led->mcu, cmd, sizeof(cmd));
-> +}
-> +
-> +static int qnap_mcu_usb_led_blink_set(struct led_classdev *led_cdev,
-> +				      unsigned long *delay_on,
-> +				      unsigned long *delay_off)
-> +{
-> +	struct qnap_mcu_usb_led *usb_led = 
-> cdev_to_qnap_mcu_usb_led(led_cdev);
-> +	u8 cmd[] = {
-> +		[0] = 0x40,
-> +		[1] = 0x43,
-> +		[2] = 0
-> +	};
-> +
-> +	/* LED is off, nothing to do */
-> +	if (usb_led->mode == QNAP_MCU_USB_LED_OFF)
-> +		return 0;
-> +
-> +	*delay_on = 250;
-> +	*delay_off = 250;
-> +	usb_led->mode = QNAP_MCU_USB_LED_BLINK;
-> +
-> +	/* byte 3 is shared between the usb led target and setting the mode 
-> */
-> +	cmd[2] = 0x44 | usb_led->mode;
-> +
-> +	return qnap_mcu_exec_with_ack(usb_led->mcu, cmd, sizeof(cmd));
-> +}
-> +
-> +static int qnap_mcu_register_usb_led(struct device *dev, struct 
-> qnap_mcu *mcu)
-> +{
-> +	struct qnap_mcu_usb_led *usb_led;
-> +	int ret;
-> +
-> +	usb_led = devm_kzalloc(dev, sizeof(*usb_led), GFP_KERNEL);
-> +	if (!usb_led)
-> +		return -ENOMEM;
-> +
-> +	usb_led->mcu = mcu;
-> +	usb_led->mode = QNAP_MCU_USB_LED_OFF;
-> +	usb_led->cdev.name = "usb:blue:disk";
-> +	usb_led->cdev.brightness_set_blocking = qnap_mcu_usb_led_set;
-> +	usb_led->cdev.blink_set = qnap_mcu_usb_led_blink_set;
-> +	usb_led->cdev.brightness = 0;
-> +	usb_led->cdev.max_brightness = 1;
-> +
-> +	ret = devm_led_classdev_register(dev, &usb_led->cdev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to register usb led");
-> +
-> +	return qnap_mcu_usb_led_set(&usb_led->cdev, 0);
-> +}
-> +
-> +static int qnap_mcu_leds_probe(struct platform_device *pdev)
-> +{
-> +	struct qnap_mcu *mcu = dev_get_drvdata(pdev->dev.parent);
-> +	const struct qnap_mcu_variant *variant = 
-> qnap_mcu_get_variant_data(mcu);
-> +	int ret, i;
-> +
-> +	for (i = 0; i < variant->num_drives; i++) {
-> +		ret = qnap_mcu_register_err_led(&pdev->dev, mcu, i);
-> +		if (ret)
-> +			return dev_err_probe(&pdev->dev, ret,
-> +					"failed to register error led %d\n", i);
-> +	}
-> +
-> +	if (variant->usb_led) {
-> +		ret = qnap_mcu_register_usb_led(&pdev->dev, mcu);
-> +		if (ret)
-> +			return dev_err_probe(&pdev->dev, ret,
-> +					"failed to register usb led %d\n", i);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver qnap_mcu_leds_driver = {
-> +	.probe = qnap_mcu_leds_probe,
-> +	.driver = {
-> +		.name = "qnap-mcu-leds",
-> +	},
-> +};
-> +module_platform_driver(qnap_mcu_leds_driver);
-> +
-> +MODULE_ALIAS("platform:qnap-mcu-leds");
-> +MODULE_AUTHOR("Heiko Stuebner <heiko@sntech.de>");
-> +MODULE_DESCRIPTION("QNAP MCU LEDs driver");
-> +MODULE_LICENSE("GPL");
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
