@@ -1,174 +1,682 @@
-Return-Path: <linux-kernel+bounces-265497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 875AD93F1F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:58:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A343193F1FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D77D286465
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:58:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DC89286A9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF2C14600F;
-	Mon, 29 Jul 2024 09:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29BB143892;
+	Mon, 29 Jul 2024 09:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Cw6SRvP/"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FVTxLPwG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D71145B13
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CB5143757;
+	Mon, 29 Jul 2024 09:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722246950; cv=none; b=j1Cwnp4Br+0ga9WcygRLjOWrFpvPiijnUipqbkKewS3oIrwEEtI2Xy0CtwZmy0WrJL8vNEOQGvjBKgLW+s4HJNPs5e9qZDX/pg2gSBrAmXVus7cFqSqGTopApg82fmDiWa/TVQpjKz+dpl7gEn7QdmCwkL59jZUh5ymZ9lFvxzs=
+	t=1722247034; cv=none; b=hAbu8fVKmuxUa1rhF+qLYpag21CvDcWa45bnaTALTDgghq0qVXhADNBjHZ6y74X8tO8Yon5xOL+dM4GLyYvyU9WcxD/4BC58zv45w2OuCOFX2skTVLxCGsdPIhV8IsdZlMSbC0hwJzSP4w2ux9hoG4lsU/GGOSpJhcj4vk8XVF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722246950; c=relaxed/simple;
-	bh=lh5vuGpCeu/X20PtAv7AXszc01P4eyUuKMuJLgW/ZMs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ttTDDnyMcwBNRiR/dcOOOkAuWvn1Kphi4UveVHxfDiqzM6a3ZVRVZGofjLjX2XugmqYr8CU452bLbHb0jFYdm5Q9Jbfed6eWNzjDU0kCgldV45LELIMme1b2wHHaIPJupncORRLdE3IEz2JMvtWgSbQEKmQ3ucigSLCEDATGjw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Cw6SRvP/; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-709339c91f9so1195570a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 02:55:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1722246947; x=1722851747; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=OKhJMM7FNWLEKxjLEZeLgWXuO555RaT5YZ8epEgnopU=;
-        b=Cw6SRvP/NgYXbEtCGKbTOb8W8Qc44NnkhH84ywYMIYHSUgcLsZP+AOk6WdIz8QV15X
-         61phCoG9BDZDOA2anIJkE/hYn4rU/YwQxBbDoDJDxAxYrBI3DRxYmJnd3zc/sBVLP/V/
-         ZGEU3m47NJOrBLG0URnUGGR5a79s9LsZlhnV8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722246947; x=1722851747;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OKhJMM7FNWLEKxjLEZeLgWXuO555RaT5YZ8epEgnopU=;
-        b=knY+J2dZ/bckNnxsvydWSf0/y3fCgb0WpgLvc+w+wyzYsqa6hqy56lwr+5427zFO7l
-         TDzzZYPl9Q8UwzMJjuJL7bl374pdXqtg4N4p1LLZAGnKbUaxC3lnQkhL4jLCOWvN2Ie3
-         xOfYPnJQ1Y+bZ2wjmTaCteuCKQDXSK7DvYz92gwGSvbN+2wVuoAeYkuM2noxvI4T2Ibg
-         nj6xzfvok4aSg1ZL2PjladbjE/N02qJ0E0nTHZYqaJhTCJibNbqlXvbfu+UXc4Jd75C0
-         xE7Fr7ExnpxMPGXr+kLH4cZE6Y3Zw0TwUepmAnYNQDGGeOhuduMrb0oM1UEG+DaN+S0F
-         bVyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvxnH5K9nLEtIWWbXfyhjuhOPzLqIQ4SJiDx2e5A9DUVFd3v/Fk8AK4U3ldFHb582S6dyMt9sSZR/KBXutpx+t1LIIc5QIxChVMvWa
-X-Gm-Message-State: AOJu0YzLW0xazDQSKq2JxHZJ+/Ae55WCNlwRiE8bjFfeBJ0jPA6kDGx9
-	2VCoitwAWa4sxN2BIBay5h4JzAEcYoC3g4Ce6f09Bs5l2VfeNMfY+SQl3TLM3g==
-X-Google-Smtp-Source: AGHT+IH2UMch3TByotNV8uYlvPnYAb0f4mHesS+wcxZXOZMlSBa7xaMy519lJoXqtij2Wzi5bYBp1Q==
-X-Received: by 2002:a05:6830:6205:b0:709:400a:5f88 with SMTP id 46e09a7af769-70940c0d2f2mr11662718a34.11.1722246947543;
-        Mon, 29 Jul 2024 02:55:47 -0700 (PDT)
-Received: from [10.176.68.61] ([192.19.176.250])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead715867sm6480567b3a.87.2024.07.29.02.55.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jul 2024 02:55:47 -0700 (PDT)
-Message-ID: <f21a111a-e4e1-45ee-b116-8e52c70777a8@broadcom.com>
-Date: Mon, 29 Jul 2024 11:55:39 +0200
+	s=arc-20240116; t=1722247034; c=relaxed/simple;
+	bh=49Ii3Da3Me0eZbs1n+nB2h0ORvxp03/nSNutD2z7xbA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HyISHe9mGWdvhWDex2Rz10kJ93Pz3062k7jcESGAivi0IsFDhIjQNFG4nNN7t8FuV1sHe7FF9hLXC34mRb96Sc2UWYpiM32INJ0yu7ckqbKY5roqnecAy18M4YWrbBot74Gj2KkTUkkt/pGTiJa71YoYUNeO2tGy1x4qMSLbu38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FVTxLPwG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 505A8C32786;
+	Mon, 29 Jul 2024 09:57:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722247033;
+	bh=49Ii3Da3Me0eZbs1n+nB2h0ORvxp03/nSNutD2z7xbA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FVTxLPwGwjT+j2nZAkG20aay4kgJzWvw9qXfP+NE49jg21PPcMYvGtZGnSQdcDw0q
+	 nBkEUL1OWqMcLkCEMP7HfXvr/gJwoeE9V+PYbOGmJ21FYdoJfawxFuPXj876Ni0iFS
+	 loO3rmz29ZEO8m26+omKgWoIMsvCDQpixXfEg/+HZDEako+q1WpZuf+yhNAVQ8svgx
+	 plNYUJa9KPvH9YAYYYMXMAYJwctd3SDWV6ILTrgSwdsaX7cAajaIy6up95jx8oZBgP
+	 lR08SBxZrEtwnzdfM7Kc8uW1wzc7RzmTXklbpwXgWSj39j6m8KbpsHUH4xCziOQoRY
+	 aLyucWNIYGuwg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1sYN80-000000005Vi-3ikV;
+	Mon, 29 Jul 2024 11:57:17 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Maximilian Luz <luzmaximilian@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Amirreza Zarrabi <quic_azarrabi@quicinc.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Elliot Berman <quic_eberman@quicinc.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>,
+	regressions@lists.linux.dev
+Subject: [PATCH] Revert "firmware: qcom: qseecom: convert to using the TZ allocator"
+Date: Mon, 29 Jul 2024 11:55:42 +0200
+Message-ID: <20240729095542.21097-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.44.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/5] wifi: brcmfmac: Add optional lpo clock enable
- support
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org,
- krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- conor+dt@kernel.org, efectn@protonmail.com, jagan@edgeble.ai,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- duoming@zju.edu.cn, bhelgaas@google.com, minipli@grsecurity.net,
- brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
- nick@khadas.com
-References: <20240729070102.3770318-1-jacobe.zang@wesion.com>
- <20240729070102.3770318-5-jacobe.zang@wesion.com>
- <d7068c96e102eaf6c35a77eb76cd067d@manjaro.org>
- <qetrwlvqekobedpwexeltaxqpnemenlfhky2t2razmcdtwlcv3@qdlesuiac2mr>
- <9f248b0e2645a29b83ee503701e04d57@manjaro.org>
-Content-Language: en-US
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
- 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
-In-Reply-To: <9f248b0e2645a29b83ee503701e04d57@manjaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 7/29/2024 11:12 AM, Dragan Simic wrote:
-> Hello Ondrej,
-> 
-> On 2024-07-29 10:44, Ondřej Jirman wrote:
->> On Mon, Jul 29, 2024 at 09:12:20AM GMT, Dragan Simic wrote:
->>> Hello Jacobe,
->>>
->>> [...]
->>>
->>> >
->>> > +    clk = devm_clk_get_optional_enabled(dev, "lpo");
->>> > +    if (IS_ERR(clk))
->>> > +    if (clk) {
->>>
->>> These two lines looks really confusing.  Shouldn't it be just a single
->>> "if (!IS_ERR(clk)) {" line instead?
->>
->> It should be `!IS_ERR(clk) && clk` otherwise the debug message will be
->> incorrect.
-> 
-> Ah, I see now, thanks.  There's also IS_ERR_OR_NULL, so the condition
-> can actually be "!IS_ERR_OR_NULL(clk)".
+This reverts commit 6612103ec35af6058bb85ab24dae28e119b3c055.
 
-++ best suggestion
+Using the "TZ allocator" for qcseecom breaks efivars on machines like
+the Lenovo ThinkPad X13s and x1e80100 CRD:
 
->>> > +        brcmf_dbg(INFO, "enabling 32kHz clock\n");
->>> > +        clk_set_rate(clk, 32768);
->>> > +    }
->>> > +
->>> >      if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
->>> >          return;
+	qcom_scm firmware:scm: qseecom: scm call failed with error -22
+
+Reverting to the 6.10 state makes qseecom work again.
+
+Fixes: 6612103ec35a ("firmware: qcom: qseecom: convert to using the TZ allocator")
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+---
+Cc: regressions@lists.linux.dev
+
+#regzbot introduced: 6612103ec35a
+
+
+It's a little frustrating to find that no-one tested this properly or
+even noticed the regression for the past month that this has been
+sitting in linux-next.
+
+Looks like Maximilian may have hit this with v9 too:
+
+	https://lore.kernel.org/lkml/CAMRc=Mf_pvrh2VMfTVE-ZTypyO010p=to-cd8Q745DzSDXLGFw@mail.gmail.com/
+
+even if there were further issues with that revision.
+
+Johan
+
+
+ .../firmware/qcom/qcom_qseecom_uefisecapp.c   | 256 +++++++++++-------
+ drivers/firmware/qcom/qcom_scm.c              |  17 +-
+ include/linux/firmware/qcom/qcom_qseecom.h    |   8 +-
+ include/linux/firmware/qcom/qcom_scm.h        |   8 +-
+ 4 files changed, 172 insertions(+), 117 deletions(-)
+
+diff --git a/drivers/firmware/qcom/qcom_qseecom_uefisecapp.c b/drivers/firmware/qcom/qcom_qseecom_uefisecapp.c
+index 6fefa4fe80e8..bc550ad0dbe0 100644
+--- a/drivers/firmware/qcom/qcom_qseecom_uefisecapp.c
++++ b/drivers/firmware/qcom/qcom_qseecom_uefisecapp.c
+@@ -13,14 +13,11 @@
+ #include <linux/mutex.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+-#include <linux/sizes.h>
+ #include <linux/slab.h>
+ #include <linux/types.h>
+ #include <linux/ucs2_string.h>
+ 
+ #include <linux/firmware/qcom/qcom_qseecom.h>
+-#include <linux/firmware/qcom/qcom_scm.h>
+-#include <linux/firmware/qcom/qcom_tzmem.h>
+ 
+ /* -- Qualcomm "uefisecapp" interface definitions. -------------------------- */
+ 
+@@ -275,7 +272,6 @@ struct qsee_rsp_uefi_query_variable_info {
+ struct qcuefi_client {
+ 	struct qseecom_client *client;
+ 	struct efivars efivars;
+-	struct qcom_tzmem_pool *mempool;
+ };
+ 
+ static struct device *qcuefi_dev(struct qcuefi_client *qcuefi)
+@@ -297,11 +293,12 @@ static efi_status_t qsee_uefi_get_variable(struct qcuefi_client *qcuefi, const e
+ {
+ 	struct qsee_req_uefi_get_variable *req_data;
+ 	struct qsee_rsp_uefi_get_variable *rsp_data;
+-	void *cmd_buf __free(qcom_tzmem) = NULL;
+ 	unsigned long buffer_size = *data_size;
++	efi_status_t efi_status = EFI_SUCCESS;
+ 	unsigned long name_length;
+-	efi_status_t efi_status;
++	dma_addr_t cmd_buf_dma;
+ 	size_t cmd_buf_size;
++	void *cmd_buf;
+ 	size_t guid_offs;
+ 	size_t name_offs;
+ 	size_t req_size;
+@@ -336,9 +333,11 @@ static efi_status_t qsee_uefi_get_variable(struct qcuefi_client *qcuefi, const e
+ 		__reqdata_offs(rsp_size, &rsp_offs)
+ 	);
+ 
+-	cmd_buf = qcom_tzmem_alloc(qcuefi->mempool, cmd_buf_size, GFP_KERNEL);
+-	if (!cmd_buf)
+-		return EFI_OUT_OF_RESOURCES;
++	cmd_buf = qseecom_dma_alloc(qcuefi->client, cmd_buf_size, &cmd_buf_dma, GFP_KERNEL);
++	if (!cmd_buf) {
++		efi_status = EFI_OUT_OF_RESOURCES;
++		goto out;
++	}
+ 
+ 	req_data = cmd_buf + req_offs;
+ 	rsp_data = cmd_buf + rsp_offs;
+@@ -352,22 +351,30 @@ static efi_status_t qsee_uefi_get_variable(struct qcuefi_client *qcuefi, const e
+ 	req_data->length = req_size;
+ 
+ 	status = ucs2_strscpy(((void *)req_data) + req_data->name_offset, name, name_length);
+-	if (status < 0)
+-		return EFI_INVALID_PARAMETER;
++	if (status < 0) {
++		efi_status = EFI_INVALID_PARAMETER;
++		goto out_free;
++	}
+ 
+ 	memcpy(((void *)req_data) + req_data->guid_offset, guid, req_data->guid_size);
+ 
+ 	status = qcom_qseecom_app_send(qcuefi->client,
+-				       cmd_buf + req_offs, req_size,
+-				       cmd_buf + rsp_offs, rsp_size);
+-	if (status)
+-		return EFI_DEVICE_ERROR;
++				       cmd_buf_dma + req_offs, req_size,
++				       cmd_buf_dma + rsp_offs, rsp_size);
++	if (status) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+-	if (rsp_data->command_id != QSEE_CMD_UEFI_GET_VARIABLE)
+-		return EFI_DEVICE_ERROR;
++	if (rsp_data->command_id != QSEE_CMD_UEFI_GET_VARIABLE) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+-	if (rsp_data->length < sizeof(*rsp_data))
+-		return EFI_DEVICE_ERROR;
++	if (rsp_data->length < sizeof(*rsp_data)) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+ 	if (rsp_data->status) {
+ 		dev_dbg(qcuefi_dev(qcuefi), "%s: uefisecapp error: 0x%x\n",
+@@ -381,14 +388,18 @@ static efi_status_t qsee_uefi_get_variable(struct qcuefi_client *qcuefi, const e
+ 				*attributes = rsp_data->attributes;
+ 		}
+ 
+-		return qsee_uefi_status_to_efi(rsp_data->status);
++		goto out_free;
+ 	}
+ 
+-	if (rsp_data->length > rsp_size)
+-		return EFI_DEVICE_ERROR;
++	if (rsp_data->length > rsp_size) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+-	if (rsp_data->data_offset + rsp_data->data_size > rsp_data->length)
+-		return EFI_DEVICE_ERROR;
++	if (rsp_data->data_offset + rsp_data->data_size > rsp_data->length) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+ 	/*
+ 	 * Note: We need to set attributes and data size even if the buffer is
+@@ -411,15 +422,22 @@ static efi_status_t qsee_uefi_get_variable(struct qcuefi_client *qcuefi, const e
+ 	if (attributes)
+ 		*attributes = rsp_data->attributes;
+ 
+-	if (buffer_size == 0 && !data)
+-		return EFI_SUCCESS;
++	if (buffer_size == 0 && !data) {
++		efi_status = EFI_SUCCESS;
++		goto out_free;
++	}
+ 
+-	if (buffer_size < rsp_data->data_size)
+-		return EFI_BUFFER_TOO_SMALL;
++	if (buffer_size < rsp_data->data_size) {
++		efi_status = EFI_BUFFER_TOO_SMALL;
++		goto out_free;
++	}
+ 
+ 	memcpy(data, ((void *)rsp_data) + rsp_data->data_offset, rsp_data->data_size);
+ 
+-	return EFI_SUCCESS;
++out_free:
++	qseecom_dma_free(qcuefi->client, cmd_buf_size, cmd_buf, cmd_buf_dma);
++out:
++	return efi_status;
+ }
+ 
+ static efi_status_t qsee_uefi_set_variable(struct qcuefi_client *qcuefi, const efi_char16_t *name,
+@@ -428,9 +446,11 @@ static efi_status_t qsee_uefi_set_variable(struct qcuefi_client *qcuefi, const e
+ {
+ 	struct qsee_req_uefi_set_variable *req_data;
+ 	struct qsee_rsp_uefi_set_variable *rsp_data;
+-	void *cmd_buf __free(qcom_tzmem) = NULL;
++	efi_status_t efi_status = EFI_SUCCESS;
+ 	unsigned long name_length;
++	dma_addr_t cmd_buf_dma;
+ 	size_t cmd_buf_size;
++	void *cmd_buf;
+ 	size_t name_offs;
+ 	size_t guid_offs;
+ 	size_t data_offs;
+@@ -466,9 +486,11 @@ static efi_status_t qsee_uefi_set_variable(struct qcuefi_client *qcuefi, const e
+ 		__reqdata_offs(sizeof(*rsp_data), &rsp_offs)
+ 	);
+ 
+-	cmd_buf = qcom_tzmem_alloc(qcuefi->mempool, cmd_buf_size, GFP_KERNEL);
+-	if (!cmd_buf)
+-		return EFI_OUT_OF_RESOURCES;
++	cmd_buf = qseecom_dma_alloc(qcuefi->client, cmd_buf_size, &cmd_buf_dma, GFP_KERNEL);
++	if (!cmd_buf) {
++		efi_status = EFI_OUT_OF_RESOURCES;
++		goto out;
++	}
+ 
+ 	req_data = cmd_buf + req_offs;
+ 	rsp_data = cmd_buf + rsp_offs;
+@@ -484,8 +506,10 @@ static efi_status_t qsee_uefi_set_variable(struct qcuefi_client *qcuefi, const e
+ 	req_data->length = req_size;
+ 
+ 	status = ucs2_strscpy(((void *)req_data) + req_data->name_offset, name, name_length);
+-	if (status < 0)
+-		return EFI_INVALID_PARAMETER;
++	if (status < 0) {
++		efi_status = EFI_INVALID_PARAMETER;
++		goto out_free;
++	}
+ 
+ 	memcpy(((void *)req_data) + req_data->guid_offset, guid, req_data->guid_size);
+ 
+@@ -493,24 +517,33 @@ static efi_status_t qsee_uefi_set_variable(struct qcuefi_client *qcuefi, const e
+ 		memcpy(((void *)req_data) + req_data->data_offset, data, req_data->data_size);
+ 
+ 	status = qcom_qseecom_app_send(qcuefi->client,
+-				       cmd_buf + req_offs, req_size,
+-				       cmd_buf + rsp_offs, sizeof(*rsp_data));
+-	if (status)
+-		return EFI_DEVICE_ERROR;
++				       cmd_buf_dma + req_offs, req_size,
++				       cmd_buf_dma + rsp_offs, sizeof(*rsp_data));
++	if (status) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+-	if (rsp_data->command_id != QSEE_CMD_UEFI_SET_VARIABLE)
+-		return EFI_DEVICE_ERROR;
++	if (rsp_data->command_id != QSEE_CMD_UEFI_SET_VARIABLE) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+-	if (rsp_data->length != sizeof(*rsp_data))
+-		return EFI_DEVICE_ERROR;
++	if (rsp_data->length != sizeof(*rsp_data)) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+ 	if (rsp_data->status) {
+ 		dev_dbg(qcuefi_dev(qcuefi), "%s: uefisecapp error: 0x%x\n",
+ 			__func__, rsp_data->status);
+-		return qsee_uefi_status_to_efi(rsp_data->status);
++		efi_status = qsee_uefi_status_to_efi(rsp_data->status);
+ 	}
+ 
+-	return EFI_SUCCESS;
++out_free:
++	qseecom_dma_free(qcuefi->client, cmd_buf_size, cmd_buf, cmd_buf_dma);
++out:
++	return efi_status;
+ }
+ 
+ static efi_status_t qsee_uefi_get_next_variable(struct qcuefi_client *qcuefi,
+@@ -519,9 +552,10 @@ static efi_status_t qsee_uefi_get_next_variable(struct qcuefi_client *qcuefi,
+ {
+ 	struct qsee_req_uefi_get_next_variable *req_data;
+ 	struct qsee_rsp_uefi_get_next_variable *rsp_data;
+-	void *cmd_buf __free(qcom_tzmem) = NULL;
+-	efi_status_t efi_status;
++	efi_status_t efi_status = EFI_SUCCESS;
++	dma_addr_t cmd_buf_dma;
+ 	size_t cmd_buf_size;
++	void *cmd_buf;
+ 	size_t guid_offs;
+ 	size_t name_offs;
+ 	size_t req_size;
+@@ -553,9 +587,11 @@ static efi_status_t qsee_uefi_get_next_variable(struct qcuefi_client *qcuefi,
+ 		__reqdata_offs(rsp_size, &rsp_offs)
+ 	);
+ 
+-	cmd_buf = qcom_tzmem_alloc(qcuefi->mempool, cmd_buf_size, GFP_KERNEL);
+-	if (!cmd_buf)
+-		return EFI_OUT_OF_RESOURCES;
++	cmd_buf = qseecom_dma_alloc(qcuefi->client, cmd_buf_size, &cmd_buf_dma, GFP_KERNEL);
++	if (!cmd_buf) {
++		efi_status = EFI_OUT_OF_RESOURCES;
++		goto out;
++	}
+ 
+ 	req_data = cmd_buf + req_offs;
+ 	rsp_data = cmd_buf + rsp_offs;
+@@ -570,20 +606,28 @@ static efi_status_t qsee_uefi_get_next_variable(struct qcuefi_client *qcuefi,
+ 	memcpy(((void *)req_data) + req_data->guid_offset, guid, req_data->guid_size);
+ 	status = ucs2_strscpy(((void *)req_data) + req_data->name_offset, name,
+ 			      *name_size / sizeof(*name));
+-	if (status < 0)
+-		return EFI_INVALID_PARAMETER;
++	if (status < 0) {
++		efi_status = EFI_INVALID_PARAMETER;
++		goto out_free;
++	}
+ 
+ 	status = qcom_qseecom_app_send(qcuefi->client,
+-				       cmd_buf + req_offs, req_size,
+-				       cmd_buf + rsp_offs, rsp_size);
+-	if (status)
+-		return EFI_DEVICE_ERROR;
++				       cmd_buf_dma + req_offs, req_size,
++				       cmd_buf_dma + rsp_offs, rsp_size);
++	if (status) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+-	if (rsp_data->command_id != QSEE_CMD_UEFI_GET_NEXT_VARIABLE)
+-		return EFI_DEVICE_ERROR;
++	if (rsp_data->command_id != QSEE_CMD_UEFI_GET_NEXT_VARIABLE) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+-	if (rsp_data->length < sizeof(*rsp_data))
+-		return EFI_DEVICE_ERROR;
++	if (rsp_data->length < sizeof(*rsp_data)) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+ 	if (rsp_data->status) {
+ 		dev_dbg(qcuefi_dev(qcuefi), "%s: uefisecapp error: 0x%x\n",
+@@ -598,40 +642,53 @@ static efi_status_t qsee_uefi_get_next_variable(struct qcuefi_client *qcuefi,
+ 		if (efi_status == EFI_BUFFER_TOO_SMALL)
+ 			*name_size = rsp_data->name_size;
+ 
+-		return efi_status;
++		goto out_free;
+ 	}
+ 
+-	if (rsp_data->length > rsp_size)
+-		return EFI_DEVICE_ERROR;
++	if (rsp_data->length > rsp_size) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+-	if (rsp_data->name_offset + rsp_data->name_size > rsp_data->length)
+-		return EFI_DEVICE_ERROR;
++	if (rsp_data->name_offset + rsp_data->name_size > rsp_data->length) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+-	if (rsp_data->guid_offset + rsp_data->guid_size > rsp_data->length)
+-		return EFI_DEVICE_ERROR;
++	if (rsp_data->guid_offset + rsp_data->guid_size > rsp_data->length) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+ 	if (rsp_data->name_size > *name_size) {
+ 		*name_size = rsp_data->name_size;
+-		return EFI_BUFFER_TOO_SMALL;
++		efi_status = EFI_BUFFER_TOO_SMALL;
++		goto out_free;
+ 	}
+ 
+-	if (rsp_data->guid_size != sizeof(*guid))
+-		return EFI_DEVICE_ERROR;
++	if (rsp_data->guid_size != sizeof(*guid)) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+ 	memcpy(guid, ((void *)rsp_data) + rsp_data->guid_offset, rsp_data->guid_size);
+ 	status = ucs2_strscpy(name, ((void *)rsp_data) + rsp_data->name_offset,
+ 			      rsp_data->name_size / sizeof(*name));
+ 	*name_size = rsp_data->name_size;
+ 
+-	if (status < 0)
++	if (status < 0) {
+ 		/*
+ 		 * Return EFI_DEVICE_ERROR here because the buffer size should
+ 		 * have already been validated above, causing this function to
+ 		 * bail with EFI_BUFFER_TOO_SMALL.
+ 		 */
+-		return EFI_DEVICE_ERROR;
++		efi_status = EFI_DEVICE_ERROR;
++	}
+ 
+-	return EFI_SUCCESS;
++out_free:
++	qseecom_dma_free(qcuefi->client, cmd_buf_size, cmd_buf, cmd_buf_dma);
++out:
++	return efi_status;
+ }
+ 
+ static efi_status_t qsee_uefi_query_variable_info(struct qcuefi_client *qcuefi, u32 attr,
+@@ -640,8 +697,10 @@ static efi_status_t qsee_uefi_query_variable_info(struct qcuefi_client *qcuefi,
+ {
+ 	struct qsee_req_uefi_query_variable_info *req_data;
+ 	struct qsee_rsp_uefi_query_variable_info *rsp_data;
+-	void *cmd_buf __free(qcom_tzmem) = NULL;
++	efi_status_t efi_status = EFI_SUCCESS;
++	dma_addr_t cmd_buf_dma;
+ 	size_t cmd_buf_size;
++	void *cmd_buf;
+ 	size_t req_offs;
+ 	size_t rsp_offs;
+ 	int status;
+@@ -651,9 +710,11 @@ static efi_status_t qsee_uefi_query_variable_info(struct qcuefi_client *qcuefi,
+ 		__reqdata_offs(sizeof(*rsp_data), &rsp_offs)
+ 	);
+ 
+-	cmd_buf = qcom_tzmem_alloc(qcuefi->mempool, cmd_buf_size, GFP_KERNEL);
+-	if (!cmd_buf)
+-		return EFI_OUT_OF_RESOURCES;
++	cmd_buf = qseecom_dma_alloc(qcuefi->client, cmd_buf_size, &cmd_buf_dma, GFP_KERNEL);
++	if (!cmd_buf) {
++		efi_status = EFI_OUT_OF_RESOURCES;
++		goto out;
++	}
+ 
+ 	req_data = cmd_buf + req_offs;
+ 	rsp_data = cmd_buf + rsp_offs;
+@@ -663,21 +724,28 @@ static efi_status_t qsee_uefi_query_variable_info(struct qcuefi_client *qcuefi,
+ 	req_data->length = sizeof(*req_data);
+ 
+ 	status = qcom_qseecom_app_send(qcuefi->client,
+-				       cmd_buf + req_offs, sizeof(*req_data),
+-				       cmd_buf + rsp_offs, sizeof(*rsp_data));
+-	if (status)
+-		return EFI_DEVICE_ERROR;
++				       cmd_buf_dma + req_offs, sizeof(*req_data),
++				       cmd_buf_dma + rsp_offs, sizeof(*rsp_data));
++	if (status) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+-	if (rsp_data->command_id != QSEE_CMD_UEFI_QUERY_VARIABLE_INFO)
+-		return EFI_DEVICE_ERROR;
++	if (rsp_data->command_id != QSEE_CMD_UEFI_QUERY_VARIABLE_INFO) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+-	if (rsp_data->length != sizeof(*rsp_data))
+-		return EFI_DEVICE_ERROR;
++	if (rsp_data->length != sizeof(*rsp_data)) {
++		efi_status = EFI_DEVICE_ERROR;
++		goto out_free;
++	}
+ 
+ 	if (rsp_data->status) {
+ 		dev_dbg(qcuefi_dev(qcuefi), "%s: uefisecapp error: 0x%x\n",
+ 			__func__, rsp_data->status);
+-		return qsee_uefi_status_to_efi(rsp_data->status);
++		efi_status = qsee_uefi_status_to_efi(rsp_data->status);
++		goto out_free;
+ 	}
+ 
+ 	if (storage_space)
+@@ -689,7 +757,10 @@ static efi_status_t qsee_uefi_query_variable_info(struct qcuefi_client *qcuefi,
+ 	if (max_variable_size)
+ 		*max_variable_size = rsp_data->max_variable_size;
+ 
+-	return EFI_SUCCESS;
++out_free:
++	qseecom_dma_free(qcuefi->client, cmd_buf_size, cmd_buf, cmd_buf_dma);
++out:
++	return efi_status;
+ }
+ 
+ /* -- Global efivar interface. ---------------------------------------------- */
+@@ -800,7 +871,6 @@ static const struct efivar_operations qcom_efivar_ops = {
+ static int qcom_uefisecapp_probe(struct auxiliary_device *aux_dev,
+ 				 const struct auxiliary_device_id *aux_dev_id)
+ {
+-	struct qcom_tzmem_pool_config pool_config;
+ 	struct qcuefi_client *qcuefi;
+ 	int status;
+ 
+@@ -819,16 +889,6 @@ static int qcom_uefisecapp_probe(struct auxiliary_device *aux_dev,
+ 	if (status)
+ 		qcuefi_set_reference(NULL);
+ 
+-	memset(&pool_config, 0, sizeof(pool_config));
+-	pool_config.initial_size = SZ_4K;
+-	pool_config.policy = QCOM_TZMEM_POLICY_MULTIPLIER;
+-	pool_config.increment = 2;
+-	pool_config.max_size = SZ_256K;
+-
+-	qcuefi->mempool = devm_qcom_tzmem_pool_new(&aux_dev->dev, &pool_config);
+-	if (IS_ERR(qcuefi->mempool))
+-		return PTR_ERR(qcuefi->mempool);
+-
+ 	return status;
+ }
+ 
+diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+index e60bef68401c..4d4ec000fe1e 100644
+--- a/drivers/firmware/qcom/qcom_scm.c
++++ b/drivers/firmware/qcom/qcom_scm.c
+@@ -1669,9 +1669,9 @@ EXPORT_SYMBOL_GPL(qcom_scm_qseecom_app_get_id);
+ /**
+  * qcom_scm_qseecom_app_send() - Send to and receive data from a given QSEE app.
+  * @app_id:   The ID of the target app.
+- * @req:      Request buffer sent to the app (must be TZ memory)
++ * @req:      DMA address of the request buffer sent to the app.
+  * @req_size: Size of the request buffer.
+- * @rsp:      Response buffer, written to by the app (must be TZ memory)
++ * @rsp:      DMA address of the response buffer, written to by the app.
+  * @rsp_size: Size of the response buffer.
+  *
+  * Sends a request to the QSEE app associated with the given ID and read back
+@@ -1682,18 +1682,13 @@ EXPORT_SYMBOL_GPL(qcom_scm_qseecom_app_get_id);
+  *
+  * Return: Zero on success, nonzero on failure.
+  */
+-int qcom_scm_qseecom_app_send(u32 app_id, void *req, size_t req_size,
+-			      void *rsp, size_t rsp_size)
++int qcom_scm_qseecom_app_send(u32 app_id, dma_addr_t req, size_t req_size,
++			      dma_addr_t rsp, size_t rsp_size)
+ {
+ 	struct qcom_scm_qseecom_resp res = {};
+ 	struct qcom_scm_desc desc = {};
+-	phys_addr_t req_phys;
+-	phys_addr_t rsp_phys;
+ 	int status;
+ 
+-	req_phys = qcom_tzmem_to_phys(req);
+-	rsp_phys = qcom_tzmem_to_phys(rsp);
+-
+ 	desc.owner = QSEECOM_TZ_OWNER_TZ_APPS;
+ 	desc.svc = QSEECOM_TZ_SVC_APP_ID_PLACEHOLDER;
+ 	desc.cmd = QSEECOM_TZ_CMD_APP_SEND;
+@@ -1701,9 +1696,9 @@ int qcom_scm_qseecom_app_send(u32 app_id, void *req, size_t req_size,
+ 				     QCOM_SCM_RW, QCOM_SCM_VAL,
+ 				     QCOM_SCM_RW, QCOM_SCM_VAL);
+ 	desc.args[0] = app_id;
+-	desc.args[1] = req_phys;
++	desc.args[1] = req;
+ 	desc.args[2] = req_size;
+-	desc.args[3] = rsp_phys;
++	desc.args[3] = rsp;
+ 	desc.args[4] = rsp_size;
+ 
+ 	status = qcom_scm_qseecom_call(&desc, &res);
+diff --git a/include/linux/firmware/qcom/qcom_qseecom.h b/include/linux/firmware/qcom/qcom_qseecom.h
+index 1dc5b3b50aa9..366243ee9609 100644
+--- a/include/linux/firmware/qcom/qcom_qseecom.h
++++ b/include/linux/firmware/qcom/qcom_qseecom.h
+@@ -73,9 +73,9 @@ static inline void qseecom_dma_free(struct qseecom_client *client, size_t size,
+ /**
+  * qcom_qseecom_app_send() - Send to and receive data from a given QSEE app.
+  * @client:   The QSEECOM client associated with the target app.
+- * @req:      Request buffer sent to the app (must be TZ memory).
++ * @req:      DMA address of the request buffer sent to the app.
+  * @req_size: Size of the request buffer.
+- * @rsp:      Response buffer, written to by the app (must be TZ memory).
++ * @rsp:      DMA address of the response buffer, written to by the app.
+  * @rsp_size: Size of the response buffer.
+  *
+  * Sends a request to the QSEE app associated with the given client and read
+@@ -90,8 +90,8 @@ static inline void qseecom_dma_free(struct qseecom_client *client, size_t size,
+  * Return: Zero on success, nonzero on failure.
+  */
+ static inline int qcom_qseecom_app_send(struct qseecom_client *client,
+-					void *req, size_t req_size,
+-					void *rsp, size_t rsp_size)
++					dma_addr_t req, size_t req_size,
++					dma_addr_t rsp, size_t rsp_size)
+ {
+ 	return qcom_scm_qseecom_app_send(client->app_id, req, req_size, rsp, rsp_size);
+ }
+diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
+index 9f14976399ab..39354b5b71e2 100644
+--- a/include/linux/firmware/qcom/qcom_scm.h
++++ b/include/linux/firmware/qcom/qcom_scm.h
+@@ -147,8 +147,8 @@ int qcom_scm_shm_bridge_delete(struct device *dev, u64 handle);
+ #ifdef CONFIG_QCOM_QSEECOM
+ 
+ int qcom_scm_qseecom_app_get_id(const char *app_name, u32 *app_id);
+-int qcom_scm_qseecom_app_send(u32 app_id, void *req, size_t req_size,
+-			      void *rsp, size_t rsp_size);
++int qcom_scm_qseecom_app_send(u32 app_id, dma_addr_t req, size_t req_size,
++			      dma_addr_t rsp, size_t rsp_size);
+ 
+ #else /* CONFIG_QCOM_QSEECOM */
+ 
+@@ -158,8 +158,8 @@ static inline int qcom_scm_qseecom_app_get_id(const char *app_name, u32 *app_id)
+ }
+ 
+ static inline int qcom_scm_qseecom_app_send(u32 app_id,
+-					    void *req, size_t req_size,
+-					    void *rsp, size_t rsp_size)
++					    dma_addr_t req, size_t req_size,
++					    dma_addr_t rsp, size_t rsp_size)
+ {
+ 	return -EINVAL;
+ }
+-- 
+2.44.2
+
 
