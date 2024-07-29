@@ -1,131 +1,104 @@
-Return-Path: <linux-kernel+bounces-265788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1AE893F5F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:56:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E245693F5F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27647B230FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:56:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB3D9282308
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1588C148FF8;
-	Mon, 29 Jul 2024 12:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA8A14A4FB;
+	Mon, 29 Jul 2024 12:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cH/nuxBN"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SEWM6sUU"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE01148FE1;
-	Mon, 29 Jul 2024 12:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C269A146D6D;
+	Mon, 29 Jul 2024 12:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722257764; cv=none; b=op1USOD/K/02nUjtCAyLeHnuR/CJEKDWVKj6IeMgmUbDmtFkJGdXoQNi4ZgL+5oeOvdz7WDrUwuaVfWMwtxnPNL/AkMnD67he3RS2ot4PJI+jcvdBUZYrBUKBFs4HezvjClfdQCe/uyOrPze9zEPRk9gSJAQhW/LtKZWNedwtj4=
+	t=1722257749; cv=none; b=c/U69MhNzxvrXDG5dO2OXdkGu2MPL4PztwU2uw1wAwBSMN/HhT0MSFRx4T1RBuGo0iwggySGzE+pCflIq6NbC/bgapCsq5m8YnTly2MtxHhE9B8eBThVBUwnzbS+gHwSBMSskILq4PJvKR7S/TuRZhf4T5kLO4MFOqvJ8NwU260=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722257764; c=relaxed/simple;
-	bh=yp8Y9Dip8DSGCmHHwje5HV5mtF25REE/X+2S8lF6exw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EPLmOPBrevrjGBvPn2zlw3Y/uLDv6n2kUTNkSnL7g9HB4FSyRs6W1tK5IT8sUTKpZtsfDS5Wn5CEmSa9xbbXEsT/VJNUe03CanojYan+mxHLBAdXrc28HGX9mdsDbZWGD7MzU5k/OzqB0/2MtoA1TPZL6KIGyDLci7jfR8NVDas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cH/nuxBN; arc=none smtp.client-ip=209.85.208.175
+	s=arc-20240116; t=1722257749; c=relaxed/simple;
+	bh=U1webEH2RCY9liuGqqqp7vkAF6n3Hx9x4RWxqUrciE0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YwNMHws8hQkSoHVAeKWYwTqjFn8+T3A9G/HHWtwbs2WpKBcFNLvOYVTPgG9uWyGigYGWHch2qihT43UZUwW8dAcBt8vda4+SW2a+iJTz+JVChp1GfQrIAo5cAn5hwATYjoE61OVI3urU7fSUxbdEem2xSmlQAbrZWutEnU6y/lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SEWM6sUU; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f0dfdc9e16so39987351fa.2;
-        Mon, 29 Jul 2024 05:56:02 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7aada2358fso632250766b.0;
+        Mon, 29 Jul 2024 05:55:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722257761; x=1722862561; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k+SHx7NLarzUQJttZx/UL50p3XbT43LUQzIyvyMh5qc=;
-        b=cH/nuxBNmwpm1f7b9NNuTT4BAZ9LOotD18TI/zGU8S49oiAAQdLyIyzFuFLTCfovuD
-         /NWmrbGI5VAFt3Z/aUdKpWyeEFuJSHDsbzW7sDSU3wx5Ad2mINIQBmVC5zAt4TrT2GaC
-         6rCGfLIRNzIe5c1Wzvng4LVKOco7tvrFMQMhFEA4YIXKTcHKK05fUVKM++OjeZktgA8d
-         Yr48y1LADcDK1y6e2+1WZs+JTK1oXwq1/MJCWWq8xlGBf4qD4UJJs49hGM9o4GUNqMgN
-         spG8lDpA7XIQjO5o16Xt5qpf2pL6Wmg/RDqzBG7OtX4txArSaQ+DkEVy8NvsDTaqB6kz
-         9DbA==
+        d=gmail.com; s=20230601; t=1722257746; x=1722862546; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qR/vBojdZFsa2xaAseqMvWWZxAcLC6Y8RjNWdERSqmU=;
+        b=SEWM6sUUy7ICGHq7FEiFjuJq8kAx9JZ06gH9P7Lw/vaeK/6SlhfSb3+nEaloUWAT3Y
+         5hbg5VeSYlwy+ZHxK5/l87ahFCOHuQ3KwJa4ATwLebbPL1SwzZGV+RxMjcvIlzCczElQ
+         HU5va73iL3mgbbk3gvKCF9EbuFbjbqjYmhPTQBDIOnO2UsYfyPTV0yfiLQj1uO2S5Xid
+         rzJl5bdDy9JZJCI0Bm36us2AhQtWqUrQ3psvJabYMPmlaBBEaRKItZijNz+QqxNUgQTB
+         AOd10iB5imBiQsWwIsoEMLtcdTsqhJe3ViydLW6NcgDR6wAxQPCF5iRZznZ8J8J0KDMM
+         yuMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722257761; x=1722862561;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k+SHx7NLarzUQJttZx/UL50p3XbT43LUQzIyvyMh5qc=;
-        b=FED+VIQ33xtoThO2zTHT6NuPv6YGqD/1nz3pYR8pYwBXrKpnx/IQEGARBadUuwHUla
-         Ukq+Q2Nd8vRygCK2pv+WGS9bZc4qI4WOBzVHlJ+FVliUbAsBIgdG20TFEFtfKnyECvBC
-         NtZVhoC0EB/LinNLNU19sWxHD7l+fAGEmVx+9iSX+fndx9ALD4gjCztCz0qJNDAlvqrH
-         oSokljRWPNVWjzKPMRqxjPIf3ulOTbMapRjPPji9dVZ08pANCnbBiRAtaqp26kuYKUFK
-         oJX0yIkkFB27HVPLFkDzCemJAfhRoqJ4Y1zHs53tNN/unj7rsfGnK1/83gfBCQ2nHAbr
-         ie0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXkp0YCRRrbcchXl3dJmSmv+LhqY53UyOrzXNWSyNiyGDMXJTUEmP9rxSyLImCyyXKaOx1gy4hIFP4aDSrl9z6m7i+PUbXSLjFOuKDfgFL8FlYWWtWzDCAJflfmGf25I2U1SuHa0fPAFmO5hQR/hc/KmnwSboXEkNYrMW4YM/bkx3roqCg=
-X-Gm-Message-State: AOJu0YzD9gfrlvwChP8mwrrCgx8i6r6dg5aJpNPugiLfwviqK6PL36QO
-	NwUTM+qO3xDrgl4XG69P7uAwr15yfwysdIyRClN3HHPwuivwk/bKnoj7TnPJ85m6vULcQ2y66Ur
-	lApbDKKqkdQ790A20SS98qYv3Ia4=
-X-Google-Smtp-Source: AGHT+IFx/JAJN6hMd2OA7VlWKt2ZMfRpaXKwoXE5AXkNHXjAt/8Vn3UBgg+/SdvA9YVDCyRXZkJUyfyKstWkcGE9bGE=
-X-Received: by 2002:a2e:a314:0:b0:2ef:20ae:d113 with SMTP id
- 38308e7fff4ca-2f12ee5abf3mr46470491fa.40.1722257760588; Mon, 29 Jul 2024
- 05:56:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722257746; x=1722862546;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qR/vBojdZFsa2xaAseqMvWWZxAcLC6Y8RjNWdERSqmU=;
+        b=THizywimR+DLruUcRdn3BHG3aqPZ37ces+zNdMHWrmMuQMsInKLfhaLl3OxyMFIDnf
+         NmY4nLl6UNTlFSfHN5Cxj8zw8WzjEwUId4hiQjkH4eeRfS/mwfXmq40LiEKoA2GpH5DG
+         UO1iBIuUi0rNRGI38vtpJ8siLtpx3qQdYIwyywwaWlS/NWtGIcxJn7yba14fsht56xSL
+         VEADujDfOvxG94RWdxPdqRI6vvsQsAr1bCZ7Be4KcVV6iAH6CIQZscME0FsyzLL3k2+M
+         oc13dtxGUm5eDh2NwmRIVRZFRmgswkxco05874Hk0Nu25mSSLE0u/RzWLQ6tUBbfZL6U
+         6d7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVcm1kgobEh/NVUJ+tpwAvbGTZKh54DV8W1zS++V+DZX/0/xE83ZKvnana0kOxCjsdy1gpLVxS7gXxFq7zWn9jgNkicWEXJsLGaDiRwewB2GEc+XUvYAjF6XQycrB+O1H6LZfRUI4V9TgUaUMYHZ60POKy8vkf9fro6qIvpUiO/yEOcY6iW
+X-Gm-Message-State: AOJu0Yz5Nfu+YAGfwqHwyltCjnQram9GwdYY0tnUaNFVXKfxBlYa3E7a
+	cfBQgC2xeL2SgB5lDLt5iPSClCS5Qglr5t9YwPbystlrdSzjSruN
+X-Google-Smtp-Source: AGHT+IFYLxLa5C1lxPvmKsruDwbb3MC0Hd7b22TT+Vxz0bhSckaKQDDQduUgdElX8FsESFUOAIKHkg==
+X-Received: by 2002:a17:907:60cf:b0:a73:9037:fdf5 with SMTP id a640c23a62f3a-a7d3f81dccdmr851992166b.6.1722257745634;
+        Mon, 29 Jul 2024 05:55:45 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad4117asm506350166b.133.2024.07.29.05.55.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jul 2024 05:55:45 -0700 (PDT)
+Message-ID: <a1ff72a2-7992-4ebd-b48b-2bb85335edaf@gmail.com>
+Date: Mon, 29 Jul 2024 14:55:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726-loongson1-dma-v10-2-31bf095a6fa6@gmail.com> <624be618-1a1a-422c-85e9-be3e1d182adf@web.de>
-In-Reply-To: <624be618-1a1a-422c-85e9-be3e1d182adf@web.de>
-From: Keguang Zhang <keguang.zhang@gmail.com>
-Date: Mon, 29 Jul 2024 20:55:24 +0800
-Message-ID: <CAJhJPsUb4KibbFtPJ3-byrsB2Yv82eGczkcysNrJjJ7WiYYhxQ@mail.gmail.com>
-Subject: Re: [PATCH v10 2/2] dmaengine: Loongson1: Add Loongson-1 APB DMA driver
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-mips@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Vinod Koul <vkoul@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Jul 28, 2024 at 5:40=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> > This patch adds =E2=80=A6
->
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/process/submitting-patches.rst?h=3Dv6.10#n94
->
-Will drop "This patch".
->
-> =E2=80=A6
-> > +++ b/drivers/dma/loongson1-apb-dma.c
-> > @@ -0,0 +1,675 @@
-> =E2=80=A6
-> > +static int ls1x_dma_resume(struct dma_chan *dchan)
-> > +{
-> =E2=80=A6
-> > +     spin_lock_irqsave(&chan->vchan.lock, flags);
-> > +     ret =3D ls1x_dma_start(chan, &chan->curr_lli->phys);
-> > +     spin_unlock_irqrestore(&chan->vchan.lock, flags);
-> > +
-> > +     return ret;
-> > +}
-> =E2=80=A6
->
-> Under which circumstances would you become interested to apply a statemen=
-t
-> like =E2=80=9Cguard(spinlock_irqsave)(&chan->vchan.lock);=E2=80=9D?
-> https://elixir.bootlin.com/linux/v6.10.2/source/include/linux/spinlock.h#=
-L574
->
-Will switch to guard() and scoped_guard().
-Thanks!
-
-> Regards,
-> Markus
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: update email for Konrad Dybcio
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ linux-kernel@vger.kernel.org
+Cc: Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ linux-pm@vger.kernel.org
+References: <20240729125225.2090-2-wsa+renesas@sang-engineering.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@gmail.com>
+In-Reply-To: <20240729125225.2090-2-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
---=20
-Best regards,
+On 29.07.2024 2:51 PM, Wolfram Sang wrote:
+> The old email address bounced. I found the newer one in MAINTAINERS,
+> so update entries accordingly.
+> 
+> Cc: Konrad Dybcio <konradybcio@kernel.org>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
 
-Keguang Zhang
+Already sent a series of fixups, but thanks for keeping track
+
+https://lore.kernel.org/linux-arm-msm/39a2303c-c89c-4fa3-a2e3-87589d242f4e@kernel.org/T/#me914f204e70ab34dd8bc3e6cbb51747490a81817
 
