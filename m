@@ -1,407 +1,188 @@
-Return-Path: <linux-kernel+bounces-265860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B3693F6EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:46:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1546F93F6F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAB9BB21699
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:46:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2A061C21CD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD2B155321;
-	Mon, 29 Jul 2024 13:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB76D152166;
+	Mon, 29 Jul 2024 13:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M1u88upd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDpaYfrH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075A3155336
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8F4147C86;
+	Mon, 29 Jul 2024 13:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722260746; cv=none; b=WBgkulu9UqsKtDT35NQJ9Db3I2xcqsqGoKP0F62XMd4RBEM+uwTjwBXngVOPnWmQQCH4oaxJSdqWb2iJA6EHo160I9qNp+d2MJcKuZUeJTGXhM4NROGUod8nsAe2ud0WelrKjHZkIWxq+17kU4RWW+h+BJbZY11UXP1swjGJW10=
+	t=1722260780; cv=none; b=Sl6o0UKzr8OoBEfZwaefjFBZvd4SArjbUMiuTXzVYbkZLg4xmH83afeiNwD/XdsHdINxmqZZdNB1T1hHSGbaFFJhl8yGlrTs6F1GPjqaRh2KTrV7C5g4EPnjYGE9NQ0Z42MpIrrdCiP5uGzQ7z0cM9Wvb6xPYu16GoX7i1JVF2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722260746; c=relaxed/simple;
-	bh=g+s5zWQ+1bjLhV5trF8N1eSvfylYTcdt0aXRUvyr3B0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=GM8gM6hzUyAZJb50oc9DziKytUviE30xgM327di5acfiNTX8rPRCdVaImj2hiKiMat6D7BaipAYk/VtSNpFd2+ap4qrm7/uRvz+yDpJYye8j/gv2JBcFMFqBc/Ne5yapLINH8sPnQMeACpduHmYgRcSbawTfss7c06zS1cqvUhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M1u88upd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722260744;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=doSH2GJ4WKzw7yVJQbebYQerdG+8934K9oPj26npbuU=;
-	b=M1u88updFriU2VK++qzNLCUwFpPdi851MmcJsPRK2i58wf45ISGzcfmyhKoMUAz+rG4+H0
-	goq36NFGBWvumeAEofgSBoueyDxkaIuNQLecGrPNjOujyVZqZM0PPFn3llzWudLIxI2Fqy
-	qEMrZlrDtLaLOaGfw3TyPvtiZIBAnR4=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-176-S4zvsVJjOqKQOqNNjQG5bA-1; Mon,
- 29 Jul 2024 09:45:40 -0400
-X-MC-Unique: S4zvsVJjOqKQOqNNjQG5bA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A296B1955D4A;
-	Mon, 29 Jul 2024 13:45:38 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.232])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E5D3019560AE;
-	Mon, 29 Jul 2024 13:45:35 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 29 Jul 2024 15:45:39 +0200 (CEST)
-Date: Mon, 29 Jul 2024 15:45:35 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org
-Cc: jolsa@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] uprobes: make uprobe_register() return struct uprobe *
-Message-ID: <20240729134535.GA12332@redhat.com>
+	s=arc-20240116; t=1722260780; c=relaxed/simple;
+	bh=O3MU1F+c8ywd1xSZMUCNs8kMjtY9ytEAMnzRHa8ilj4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c+IgT5Z6wd0MarjiOhPbjj2wWhWHdPTCTuQIZvxwU6+ZeVYlgJAyPxQxRrPrUcJz+xICUAfgCaDW3F/uqOD6t3P5/o3dqW50P6VTwes7OCAw4OYXM+9TIs+g+m5ETQA328nrKzI4nuz5dT2/f8N7cvNXPH5gPX2TrJ00hhyBVaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDpaYfrH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5366C32786;
+	Mon, 29 Jul 2024 13:46:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722260779;
+	bh=O3MU1F+c8ywd1xSZMUCNs8kMjtY9ytEAMnzRHa8ilj4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WDpaYfrHVrMbDf5qh9q5I3HDuYGxJoKS14RrlGHfCv3BfWbNTZbcgiBE5dsWTnolB
+	 rINh7jqMVBb/Vw1/pGcnbuP0QOXWuzrVxh/7n7f8Ntgyi3jKRib1zLKO8rOEWXXlUZ
+	 3Kd1L3yo/GDb6QehxssSFXf6RLmhZTcFFkUD7HR4zY9p4AZ2oSjWNW3r8a+wZEE6zF
+	 TL45jq6z5MGmT68Zb13ha2TamUw1RAU425cSn8WQFgp8AFSXTUePqesgdHO+XicRN8
+	 rr0OB9Yy0vTHPAbA7rfwwtWtNnJKWXky1pzdFui4zGnLrAFkWzdNKE6x56MNziBOjz
+	 lmhUdyoJ+HRHg==
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <songliubraving@meta.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Song Liu <song@kernel.org>,
+	bpf <bpf@vger.kernel.org>,
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Kernel Team <kernel-team@meta.com>,
+	"andrii@kernel.org" <andrii@kernel.org>,
+	"eddyz87@gmail.com" <eddyz87@gmail.com>,
+	"ast@kernel.org" <ast@kernel.org>,
+	"daniel@iogearbox.net" <daniel@iogearbox.net>,
+	"martin.lau@linux.dev" <martin.lau@linux.dev>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"jack@suse.cz" <jack@suse.cz>,
+	"kpsingh@kernel.org" <kpsingh@kernel.org>,
+	"mattbobrowski@google.com" <mattbobrowski@google.com>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add tests for bpf_get_dentry_xattr
+Date: Mon, 29 Jul 2024 15:46:06 +0200
+Message-ID: <20240729-zollfrei-verteidigen-cf359eb36601@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CDDCB34B-4B01-40CA-B512-33023529D104@fb.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729134444.GA12293@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3699; i=brauner@kernel.org; h=from:subject:message-id; bh=O3MU1F+c8ywd1xSZMUCNs8kMjtY9ytEAMnzRHa8ilj4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQtn6sY/nTdvc/6HNs2h2x7rVZY4FEio+x0bXJV0QUfk /0vTrx27ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiI7QtGhgNbDj3/e2RXhvU8 69UBa0P/NPk/rnqavH7WyX75NDaz5w4M/zSuL//OJbJ958aD0Vzruj/ua8s1/yKwiCHe4mer79I lKxgA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-This way uprobe_unregister() and uprobe_apply() can use "struct uprobe *"
-rather than inode + offset. This simplifies the code and allows to avoid
-the unnecessary find_uprobe() + put_uprobe() in these functions.
+On Fri, Jul 26, 2024 at 07:43:28PM GMT, Song Liu wrote:
+> Hi Christian, 
+> 
+> Thanks a lot for your comments.
+> 
+> > On Jul 26, 2024, at 4:51 AM, Christian Brauner <brauner@kernel.org> wrote:
+> > 
+> > On Fri, Jul 26, 2024 at 09:19:54AM GMT, Song Liu wrote:
+> >> Hi Christian, 
+> >> 
+> >>> On Jul 26, 2024, at 12:06 AM, Christian Brauner <brauner@kernel.org> wrote:
+> >> 
+> >> [...]
+> >> 
+> >>>> +
+> >>>> + for (i = 0; i < 10; i++) {
+> >>>> + ret = bpf_get_dentry_xattr(dentry, "user.kfunc", &value_ptr);
+> >>>> + if (ret == sizeof(expected_value) &&
+> >>>> +    !bpf_strncmp(value, ret, expected_value))
+> >>>> + matches++;
+> >>>> +
+> >>>> + prev_dentry = dentry;
+> >>>> + dentry = bpf_dget_parent(prev_dentry);
+> >>> 
+> >>> Why do you need to walk upwards and instead of reading the xattr values
+> >>> during security_inode_permission()?
+> >> 
+> >> In this use case, we would like to add xattr to the directory to cover
+> >> all files under it. For example, assume we have the following xattrs:
+> >> 
+> >>  /bin  xattr: user.policy_A = value_A
+> >>  /bin/gcc-6.9/ xattr: user.policy_A = value_B
+> >>  /bin/gcc-6.9/gcc xattr: user.policy_A = value_C
+> >> 
+> >> /bin/gcc-6.9/gcc will use value_C;
+> >> /bin/gcc-6.9/<other_files> will use value_B;
+> >> /bin/<other_folder_or_file> will use value_A;
+> >> 
+> >> By walking upwards from security_file_open(), we can finish the logic 
+> >> in a single LSM hook:
+> >> 
+> >>    repeat:
+> >>        if (dentry have user.policy_A) {
+> >>            /* make decision based on value */;
+> >>        } else {
+> >>            dentry = bpf_dget_parent();
+> >>            goto repeat;
+> >>        }
+> >> 
+> >> Does this make sense? Or maybe I misunderstood the suggestion?
+> > 
+> > Imho, what you're doing belongs into inode_permission() not into
+> > security_file_open(). That's already too late and it's somewhat clear
+> > from the example you're using that you're essentially doing permission
+> > checking during path lookup.
+> 
+> I am not sure I follow the suggestion to implement this with 
+> security_inode_permission()? Could you please share more details about
+> this idea?
 
-TODO: uprobe_unregister() still needs get_uprobe/put_uprobe to ensure that
-this uprobe can't be freed before up_write(&uprobe->register_rwsem).
+Given a path like /bin/gcc-6.9/gcc what that code currently does is:
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
----
- include/linux/uprobes.h     | 15 +++++-----
- kernel/events/uprobes.c     | 56 +++++++++++++++----------------------
- kernel/trace/bpf_trace.c    | 25 ++++++++---------
- kernel/trace/trace_uprobe.c | 26 ++++++++---------
- 4 files changed, 55 insertions(+), 67 deletions(-)
+* walk down to /bin/gcc-6.9/gcc
+* walk up from /bin/gcc-6.9/gcc and then checking xattr labels for:
+  gcc
+  gcc-6.9/
+  bin/
+  /
 
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index 440316fbf3c6..137ddfc0b2f8 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -16,6 +16,7 @@
- #include <linux/types.h>
- #include <linux/wait.h>
- 
-+struct uprobe;
- struct vm_area_struct;
- struct mm_struct;
- struct inode;
-@@ -110,9 +111,9 @@ extern bool is_trap_insn(uprobe_opcode_t *insn);
- extern unsigned long uprobe_get_swbp_addr(struct pt_regs *regs);
- extern unsigned long uprobe_get_trap_addr(struct pt_regs *regs);
- extern int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long vaddr, uprobe_opcode_t);
--extern int uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
--extern int uprobe_apply(struct inode *inode, loff_t offset, struct uprobe_consumer *uc, bool);
--extern void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
-+extern struct uprobe *uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
-+extern int uprobe_apply(struct uprobe *uprobe, struct uprobe_consumer *uc, bool);
-+extern void uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc);
- extern int uprobe_mmap(struct vm_area_struct *vma);
- extern void uprobe_munmap(struct vm_area_struct *vma, unsigned long start, unsigned long end);
- extern void uprobe_start_dup_mmap(void);
-@@ -150,18 +151,18 @@ static inline void uprobes_init(void)
- 
- #define uprobe_get_trap_addr(regs)	instruction_pointer(regs)
- 
--static inline int
-+static inline struct uprobe *
- uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc)
- {
--	return -ENOSYS;
-+	return ERR_PTR(-ENOSYS);
- }
- static inline int
--uprobe_apply(struct inode *inode, loff_t offset, struct uprobe_consumer *uc, bool add)
-+uprobe_apply(struct uprobe* uprobe, struct uprobe_consumer *uc, bool add)
- {
- 	return -ENOSYS;
- }
- static inline void
--uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
-+uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
- {
- }
- static inline int uprobe_mmap(struct vm_area_struct *vma)
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index b7f40bad8abc..974474680820 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -1099,20 +1099,14 @@ __uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
- 		delete_uprobe(uprobe);
- }
- 
--/*
-+/**
-  * uprobe_unregister - unregister an already registered probe.
-- * @inode: the file in which the probe has to be removed.
-- * @offset: offset from the start of the file.
-+ * @uprobe: uprobe to remove
-  * @uc: identify which probe if multiple probes are colocated.
-  */
--void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
-+void uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
- {
--	struct uprobe *uprobe;
--
--	uprobe = find_uprobe(inode, offset);
--	if (WARN_ON(!uprobe))
--		return;
--
-+	get_uprobe(uprobe);
- 	down_write(&uprobe->register_rwsem);
- 	__uprobe_unregister(uprobe, uc);
- 	up_write(&uprobe->register_rwsem);
-@@ -1120,7 +1114,7 @@ void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consume
- }
- EXPORT_SYMBOL_GPL(uprobe_unregister);
- 
--/*
-+/**
-  * uprobe_register - register a probe
-  * @inode: the file in which the probe has to be placed.
-  * @offset: offset from the start of the file.
-@@ -1136,40 +1130,40 @@ EXPORT_SYMBOL_GPL(uprobe_unregister);
-  * unregisters. Caller of uprobe_register() is required to keep @inode
-  * (and the containing mount) referenced.
-  *
-- * Return errno if it cannot successully install probes
-- * else return 0 (success)
-+ * Return: pointer to the new uprobe on success or an ERR_PTR on failure.
-  */
--int uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset,
--		    struct uprobe_consumer *uc)
-+struct uprobe *uprobe_register(struct inode *inode,
-+				loff_t offset, loff_t ref_ctr_offset,
-+				struct uprobe_consumer *uc)
- {
- 	struct uprobe *uprobe;
- 	int ret;
- 
- 	/* Uprobe must have at least one set consumer */
- 	if (!uc->handler && !uc->ret_handler)
--		return -EINVAL;
-+		return ERR_PTR(-EINVAL);
- 
- 	/* copy_insn() uses read_mapping_page() or shmem_read_mapping_page() */
- 	if (!inode->i_mapping->a_ops->read_folio &&
- 	    !shmem_mapping(inode->i_mapping))
--		return -EIO;
-+		return ERR_PTR(-EIO);
- 	/* Racy, just to catch the obvious mistakes */
- 	if (offset > i_size_read(inode))
--		return -EINVAL;
-+		return ERR_PTR(-EINVAL);
- 
- 	/*
- 	 * This ensures that copy_from_page(), copy_to_page() and
- 	 * __update_ref_ctr() can't cross page boundary.
- 	 */
- 	if (!IS_ALIGNED(offset, UPROBE_SWBP_INSN_SIZE))
--		return -EINVAL;
-+		return ERR_PTR(-EINVAL);
- 	if (!IS_ALIGNED(ref_ctr_offset, sizeof(short)))
--		return -EINVAL;
-+		return ERR_PTR(-EINVAL);
- 
-  retry:
- 	uprobe = alloc_uprobe(inode, offset, ref_ctr_offset);
- 	if (IS_ERR(uprobe))
--		return PTR_ERR(uprobe);
-+		return uprobe;
- 
- 	/*
- 	 * We can race with uprobe_unregister()->delete_uprobe().
-@@ -1188,35 +1182,29 @@ int uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset,
- 
- 	if (unlikely(ret == -EAGAIN))
- 		goto retry;
--	return ret;
-+
-+	return ret ? ERR_PTR(ret) : uprobe;
- }
- EXPORT_SYMBOL_GPL(uprobe_register);
- 
--/*
-- * uprobe_apply - unregister an already registered probe.
-- * @inode: the file in which the probe has to be removed.
-- * @offset: offset from the start of the file.
-+/**
-+ * uprobe_apply - add or remove the breakpoints according to @uc->filter
-+ * @uprobe: uprobe which "owns" the breakpoint
-  * @uc: consumer which wants to add more or remove some breakpoints
-  * @add: add or remove the breakpoints
-+ * Return: 0 on success or negative error code.
-  */
--int uprobe_apply(struct inode *inode, loff_t offset,
--			struct uprobe_consumer *uc, bool add)
-+int uprobe_apply(struct uprobe *uprobe, struct uprobe_consumer *uc, bool add)
- {
--	struct uprobe *uprobe;
- 	struct uprobe_consumer *con;
- 	int ret = -ENOENT;
- 
--	uprobe = find_uprobe(inode, offset);
--	if (WARN_ON(!uprobe))
--		return ret;
--
- 	down_write(&uprobe->register_rwsem);
- 	for (con = uprobe->consumers; con && con != uc ; con = con->next)
- 		;
- 	if (con)
- 		ret = register_for_each_vma(uprobe, add ? uc : NULL);
- 	up_write(&uprobe->register_rwsem);
--	put_uprobe(uprobe);
- 
- 	return ret;
- }
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index afa909e17824..4e391daafa64 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -3160,6 +3160,7 @@ struct bpf_uprobe {
- 	loff_t offset;
- 	unsigned long ref_ctr_offset;
- 	u64 cookie;
-+	struct uprobe *uprobe;
- 	struct uprobe_consumer consumer;
- };
- 
-@@ -3178,15 +3179,12 @@ struct bpf_uprobe_multi_run_ctx {
- 	struct bpf_uprobe *uprobe;
- };
- 
--static void bpf_uprobe_unregister(struct path *path, struct bpf_uprobe *uprobes,
--				  u32 cnt)
-+static void bpf_uprobe_unregister(struct bpf_uprobe *uprobes, u32 cnt)
- {
- 	u32 i;
- 
--	for (i = 0; i < cnt; i++) {
--		uprobe_unregister(d_real_inode(path->dentry), uprobes[i].offset,
--				  &uprobes[i].consumer);
--	}
-+	for (i = 0; i < cnt; i++)
-+		uprobe_unregister(uprobes[i].uprobe, &uprobes[i].consumer);
- }
- 
- static void bpf_uprobe_multi_link_release(struct bpf_link *link)
-@@ -3194,7 +3192,7 @@ static void bpf_uprobe_multi_link_release(struct bpf_link *link)
- 	struct bpf_uprobe_multi_link *umulti_link;
- 
- 	umulti_link = container_of(link, struct bpf_uprobe_multi_link, link);
--	bpf_uprobe_unregister(&umulti_link->path, umulti_link->uprobes, umulti_link->cnt);
-+	bpf_uprobe_unregister(umulti_link->uprobes, umulti_link->cnt);
- 	if (umulti_link->task)
- 		put_task_struct(umulti_link->task);
- 	path_put(&umulti_link->path);
-@@ -3480,12 +3478,13 @@ int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
- 		      &bpf_uprobe_multi_link_lops, prog);
- 
- 	for (i = 0; i < cnt; i++) {
--		err = uprobe_register(d_real_inode(link->path.dentry),
--				      uprobes[i].offset,
--				      uprobes[i].ref_ctr_offset,
--				      &uprobes[i].consumer);
--		if (err) {
--			bpf_uprobe_unregister(&path, uprobes, i);
-+		uprobes[i].uprobe = uprobe_register(d_real_inode(link->path.dentry),
-+						    uprobes[i].offset,
-+						    uprobes[i].ref_ctr_offset,
-+						    &uprobes[i].consumer);
-+		if (IS_ERR(uprobes[i].uprobe)) {
-+			err = PTR_ERR(uprobes[i].uprobe);
-+			bpf_uprobe_unregister(uprobes, i);
- 			goto error_free;
- 		}
- 	}
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 1f590f989c1e..52e76a73fa7c 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -58,8 +58,8 @@ struct trace_uprobe {
- 	struct dyn_event		devent;
- 	struct uprobe_consumer		consumer;
- 	struct path			path;
--	struct inode			*inode;
- 	char				*filename;
-+	struct uprobe			*uprobe;
- 	unsigned long			offset;
- 	unsigned long			ref_ctr_offset;
- 	unsigned long			nhit;
-@@ -1084,16 +1084,16 @@ typedef bool (*filter_func_t)(struct uprobe_consumer *self,
- 
- static int trace_uprobe_enable(struct trace_uprobe *tu, filter_func_t filter)
- {
--	int ret;
-+	struct inode *inode = d_real_inode(tu->path.dentry);
-+	struct uprobe *uprobe;
- 
- 	tu->consumer.filter = filter;
--	tu->inode = d_real_inode(tu->path.dentry);
--
--	ret = uprobe_register(tu->inode, tu->offset, tu->ref_ctr_offset, &tu->consumer);
--	if (ret)
--		tu->inode = NULL;
-+	uprobe = uprobe_register(inode, tu->offset, tu->ref_ctr_offset, &tu->consumer);
-+	if (IS_ERR(uprobe))
-+		return PTR_ERR(uprobe);
- 
--	return ret;
-+	tu->uprobe = uprobe;
-+	return 0;
- }
- 
- static void __probe_event_disable(struct trace_probe *tp)
-@@ -1104,11 +1104,11 @@ static void __probe_event_disable(struct trace_probe *tp)
- 	WARN_ON(!uprobe_filter_is_empty(tu->tp.event->filter));
- 
- 	list_for_each_entry(tu, trace_probe_probe_list(tp), tp.list) {
--		if (!tu->inode)
-+		if (!tu->uprobe)
- 			continue;
- 
--		uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
--		tu->inode = NULL;
-+		uprobe_unregister(tu->uprobe, &tu->consumer);
-+		tu->uprobe = NULL;
- 	}
- }
- 
-@@ -1305,7 +1305,7 @@ static int uprobe_perf_close(struct trace_event_call *call,
- 		return 0;
- 
- 	list_for_each_entry(tu, trace_probe_probe_list(tp), tp.list) {
--		ret = uprobe_apply(tu->inode, tu->offset, &tu->consumer, false);
-+		ret = uprobe_apply(tu->uprobe, &tu->consumer, false);
- 		if (ret)
- 			break;
- 	}
-@@ -1329,7 +1329,7 @@ static int uprobe_perf_open(struct trace_event_call *call,
- 		return 0;
- 
- 	list_for_each_entry(tu, trace_probe_probe_list(tp), tp.list) {
--		err = uprobe_apply(tu->inode, tu->offset, &tu->consumer, true);
-+		err = uprobe_apply(tu->uprobe, &tu->consumer, true);
- 		if (err) {
- 			uprobe_perf_close(call, event);
- 			break;
--- 
-2.25.1.362.g51ebf55
+That's broken because someone could've done
+mv /bin/gcc-6.9/gcc /attack/ and when this walks back and it checks xattrs on
+/attack even though the path lookup was for /bin/gcc-6.9. IOW, the
+security_file_open() checks have nothing to do with the permission checks that
+were done during path lookup.
 
+Why isn't that logic:
+
+* walk down to /bin/gcc-6.9/gcc and check for each component:
+
+  security_inode_permission(/)
+  security_inode_permission(gcc-6.9/)
+  security_inode_permission(bin/)
+  security_inode_permission(gcc)
+  security_file_open(gcc)
+
+I think that dget_parent() logic also wouldn't make sense for relative path
+lookups:
+
+	dfd = open("/bin/gcc-6.9", O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+
+This walks down to /bin/gcc-6.9 and then walks back up (subject to the
+same problem mentioned earlier) and check xattrs for:
+
+  gcc-6.9
+  bin/
+  /
+
+then that dfd is passed to openat() to open "gcc":
+
+fd = openat(dfd, "gcc", O_RDONLY);
+
+which again walks up to /bin/gcc-6.9 and checks xattrs for:
+  gcc
+  gcc-6.9
+  bin/
+  /
+
+Which means this code ends up charging relative lookups twice. Even if one
+irons that out in the program this encourages really bad patterns.
+Path lookup is iterative top down. One can't just randomly walk back up and
+assume that's equivalent.
 
