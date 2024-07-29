@@ -1,158 +1,150 @@
-Return-Path: <linux-kernel+bounces-265583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A32393F329
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:51:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A1CF93F32C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9FBEB21629
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:51:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F5BD1C21C38
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF757144D03;
-	Mon, 29 Jul 2024 10:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A384F144D03;
+	Mon, 29 Jul 2024 10:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AbOYQZVK"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Zal9Q2EK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5F613A258;
-	Mon, 29 Jul 2024 10:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85AF413FD86;
+	Mon, 29 Jul 2024 10:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722250260; cv=none; b=RXuKEcZAWsFgH25RshyLvfzZwqJlencQXpFNMlIimQ6QKbVyk/30zzY8M7Et53cVfWFqBTnZHo9eaEomAXFHKwqdWHT8diF+0jphdM4xaRN3tTHqXdAbvwXtWOBNrxG045Jw32eEPXF0XCurLZPT6l16an39a8Gl3hSqB+dRejU=
+	t=1722250275; cv=none; b=Ji8VcTwbNvrOmZKlADC0y8cRGVaHdeVujAY77a2ISIbqLfbGXJNhDsoZ1qopxnuJbTOy1KIB16dLzvmmUjAQlZ7MWKxzbLgTA8SvYhjGqBxsQE37tQk9TguyNBjvkr5QeLkYaPTA3+e/YsFT09co0RMKREQ12geLFhWgOALV6pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722250260; c=relaxed/simple;
-	bh=E1WNOV1A24hRQB3PV9kfV1aAXYy/c25OZZYctZbaaKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YpmTTOKzQcARfccsssPew79ztaWlSJYE1+eoltCIbNtj6zMCl0hNyTMU11yYdYGkgAeCtnKhuQtqOtYw3jEUGbVad1cs0+6fmwT5VgqMhmFFM1bUgkdWa6gI2UYvHwLhR1+4cuoxeSwwOyBYS2hqT0346tCdhZ/lhoEOr+OE12Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AbOYQZVK; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3685b9c8998so1146810f8f.0;
-        Mon, 29 Jul 2024 03:50:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722250257; x=1722855057; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IW5wOKHblGmDToKRtpXTAMfWK+BkA1IqVz0LHIW/pGw=;
-        b=AbOYQZVK+STyP0sOi26U5uaUSrFT3exe3q6uM22mmUA2QsYGq0j7VHkc39277OBU57
-         Wotmkc+aF0TPOKuNXH8L0Ne44yZtRV3ggvmCbRG2VdkXvUQOnR3h/7LXg4ngfaiadRSo
-         wpYLlJU6Y+xIV5zS8ho14EnPpKCmyIQ2g5OdvgbOBDZ3nMQq8yYKnf6rJzlA/I8/bRZ2
-         fTkRRmbIYrASfnNs2YAOyGDTreSiyaG9+IKaCteNngq4vrB82AiPCCVMFG8Js5oJlsSB
-         K5j3KKaUkxHG1AeGEF1UuUZa6OHiWNt01navyAf8ZHuwxyxIh54waDmkxFrhDSlHWgOH
-         jm6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722250257; x=1722855057;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IW5wOKHblGmDToKRtpXTAMfWK+BkA1IqVz0LHIW/pGw=;
-        b=ND5JlSZiMnrL0Chxts3e0M3QEr0haCPcRj9HRnPZYCB3l9fHwzT2sg8enNFFm8OJV8
-         2JK9H0hJ8RB2SEZ8ZdFh112ChKte59eYmbhrKfGnrOTtsPbuXM9BkZWR5GsbuAxEIG53
-         b4BdcKXEKQENgaKtf2xy6BudFBgZ1QrzOStw+o6SvaMiM5agGAxwfDN6qIuvJS57QSs7
-         kzIxNmzGvMNaAAcKBzW36JVP8PpqO+zd293q2LC6CES7BNA7NWBrqI9bvyEIutUkXEDs
-         1A8nJ1JIY+8b89MTZ/7e6MfD18AR7lu4lLulM5XqetVKKpYsXRokTIIobqqkHyrY7dsf
-         LxJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWO9QS9mFOJcevGuLLEjpzlE5hj4zTxdUdibwpTyUPaC5+92uN/TvgYlJN8TIBmCxRriiTW1DaL3IRoZ23MI3Vwm05GES5wQrsSLE6IasLwmXWW/bmfeIeg34YHW3Z+ELajiRkfjabp
-X-Gm-Message-State: AOJu0Yy6nBFxCO5mub7odKLfJroHIPGiVPAOpB6imqc+ZxyxcsnJiVOz
-	BbCcUty232lMRiT38juDjy1USfyF9yt8oEafJ+gfaeQoVAhTA7pB
-X-Google-Smtp-Source: AGHT+IFEKvYL6l+kHjAH91T5CPYfIGssFHEHwro3WTELISWS0FkcH0HSsjaWH+DSOIIWR29oWt01gw==
-X-Received: by 2002:a05:6000:104a:b0:367:923b:656b with SMTP id ffacd0b85a97d-36b5d0b79d9mr4817366f8f.54.1722250256581;
-        Mon, 29 Jul 2024 03:50:56 -0700 (PDT)
-Received: from f (cst-prg-68-42.cust.vodafone.cz. [46.135.68.42])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367f0e26sm11906515f8f.47.2024.07.29.03.50.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 03:50:56 -0700 (PDT)
-Date: Mon, 29 Jul 2024 12:50:47 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-api@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-Subject: Re: Testing if two open descriptors refer to the same inode
-Message-ID: <vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
- <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
- <875xsoqy58.fsf@oldenburg.str.redhat.com>
+	s=arc-20240116; t=1722250275; c=relaxed/simple;
+	bh=TXqbYLWNavBhio6QJtDaBL3LRySSdcZhgC+Ki8PQPps=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VrE9gtbGcrb60w+5Ht+SQo/HSAnsW7WRBadT/JYWlWOj922Kgv6U38QBXjXQOwsQdcvC9rF39R5fCUoOqQdBehiRohR3uu4JrsC7FPVZzkJTPzzybInmYiF1CxwAtbM0U5/N2U6ID/mUx4v+qxTFd3qQPrh+9UPDV6t4K1g1xzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Zal9Q2EK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TAKjVP000633;
+	Mon, 29 Jul 2024 10:51:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	iflcpP1kqonyTgoKqWDBjTj20vn/CqguM7cHmTJC/wQ=; b=Zal9Q2EK4BUcnLFK
+	dCHTxTgjU/ie4GEGOE6F5RRY7nlUknKM0ZtpynnsKUWC+IMpiFnZUomhMaDFpREv
+	zNpL7CmjE0lXOlTKkDoSr1FnCWegeSH5xBatCAY95yk0TZ+Uqo0Aaz38n/NNbzgb
+	pNDaFVl9Nx04sv7p5nlcxe1NrPexsJ+BhKQQ63TGzGBfABiKziS9CUh5Dy/3N0HW
+	OnkihK3X+BTaQDd6rkfnF4EuUuDgcdqBwdJp0wqp2gDIVTT7L8moybCFv8qYvRYL
+	4sEXMJ4RoBr8WYwdSIk+FayfVVwGdIjs2rtan2iGgkwL6vFDuRJifeLCk05oP4yO
+	dBFpZg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mt2kkuh3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:51:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TAp8X0015980
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:51:08 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
+ 2024 03:51:03 -0700
+Message-ID: <a9cfb48f-7dcc-4582-a677-3abac0295630@quicinc.com>
+Date: Mon, 29 Jul 2024 18:50:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <875xsoqy58.fsf@oldenburg.str.redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: sa8775p: Add TCSR halt register
+ space
+To: Mukesh Ojha <quic_mojha@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>
+CC: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>
+References: <20240705153252.1571814-1-quic_mojha@quicinc.com>
+ <20240705153252.1571814-2-quic_mojha@quicinc.com>
+ <50d0bdd6-2262-4404-9a26-29b1f2e6fe92@kernel.org>
+ <ZowPCeNFh/Mw8ev0@hu-mojha-hyd.qualcomm.com>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <ZowPCeNFh/Mw8ev0@hu-mojha-hyd.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: vbtk-eI_m1LVSJ-Q0GPfQWCB84N7la4s
+X-Proofpoint-GUID: vbtk-eI_m1LVSJ-Q0GPfQWCB84N7la4s
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-29_09,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ malwarescore=0 spamscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0
+ suspectscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407290073
 
-On Mon, Jul 29, 2024 at 12:40:35PM +0200, Florian Weimer wrote:
-> * Mateusz Guzik:
-> 
-> > On Mon, Jul 29, 2024 at 08:55:46AM +0200, Florian Weimer wrote:
-> >> It was pointed out to me that inode numbers on Linux are no longer
-> >> expected to be unique per file system, even for local file systems.
-> >
-> > I don't know if I'm parsing this correctly.
-> >
-> > Are you claiming on-disk inode numbers are not guaranteed unique per
-> > filesystem? It sounds like utter breakage, with capital 'f'.
-> 
-> Yes, POSIX semantics and traditional Linux semantics for POSIX-like
-> local file systems are different.
-> 
 
-Can you link me some threads about this?
 
-> > While the above is not what's needed here, I guess it sets a precedent
-> > for F_DUPINODE_QUERY (or whatever other name) to be added to handily
-> > compare inode pointers. It may be worthwhile regardless of the above.
-> > (or maybe kcmp could be extended?)
+On 7/9/2024 12:08 AM, Mukesh Ojha wrote:
+> On Sun, Jul 07, 2024 at 02:46:59PM +0200, Krzysztof Kozlowski wrote:
+>> On 05/07/2024 17:32, Mukesh Ojha wrote:
+>>> Enable download mode for sa8775p which can help collect
+>>> ramdump for this SoC.
+>>>
+>>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/sa8775p.dtsi | 6 ++++++
+>>>   1 file changed, 6 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>>> index 23f1b2e5e624..a46d00b1ddda 100644
+>>> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>>> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>>> @@ -221,6 +221,7 @@ eud_in: endpoint {
+>>>   	firmware {
+>>>   		scm {
+>>>   			compatible = "qcom,scm-sa8775p", "qcom,scm";
+>>> +			qcom,dload-mode = <&tcsr 0x13000>;
+>>>   			memory-region = <&tz_ffi_mem>;
+>>>   		};
+>>>   	};
+>>> @@ -2824,6 +2825,11 @@ tcsr_mutex: hwlock@1f40000 {
+>>>   			#hwlock-cells = <1>;
+>>>   		};
+>>>   
+>>> +		tcsr: syscon@1fc0000 {
+>>> +			compatible = "qcom,sa8775p-tcsr", "syscon";
+>>
+>> The file is going away. This change is very confusing.
+>>
+>> Please align first with your colleagues instead of sending conflicting
+>> work without any explanation.
 > 
-> I looked at kcmp as well, but I think it's dependent on
-> checkpoint/restore.  File sameness checks are much more basic than that.
+> Sure, let me check with Tengfei if this can be sent along with his patches.
 > 
+> -Mukesh
 
-I had this in mind (untested modulo compilation):
+After considering the feedback provided on the subject, We have decided
+to keep current SA8775p compatible and ABI compatibility in drivers.
+Therefore, this patch is still needed, please continue to review this
+patch.
+Thank you for your input.
 
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 300e5d9ad913..5723c3e82eac 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -343,6 +343,13 @@ static long f_dupfd_query(int fd, struct file *filp)
- 	return f.file == filp;
- }
- 
-+static long f_dupfd_query_inode(int fd, struct file *filp)
-+{
-+	CLASS(fd_raw, f)(fd);
-+
-+	return f.file->f_inode == filp->f_inode;
-+}
-+
- static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
- 		struct file *filp)
- {
-@@ -361,6 +368,9 @@ static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
- 	case F_DUPFD_QUERY:
- 		err = f_dupfd_query(argi, filp);
- 		break;
-+	case F_DUPFD_QUERY_INODE:
-+		err = f_dupfd_query_inode(argi, filp);
-+		break;
- 	case F_GETFD:
- 		err = get_close_on_exec(fd) ? FD_CLOEXEC : 0;
- 		break;
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index c0bcc185fa48..2e93dbdd8fd2 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -16,6 +16,8 @@
- 
- #define F_DUPFD_QUERY	(F_LINUX_SPECIFIC_BASE + 3)
- 
-+#define F_DUPFD_QUERY_INODE (F_LINUX_SPECIFIC_BASE + 4)
-+
- /*
-  * Cancel a blocking posix lock; internal use only until we expose an
-  * asynchronous lock api to userspace:
+-- 
+Thx and BRs,
+Tengfei Fan
 
