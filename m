@@ -1,71 +1,75 @@
-Return-Path: <linux-kernel+bounces-266546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B95994017C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:01:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 061A794017D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AE131F23019
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:01:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3BD91F22D02
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E954818C33B;
-	Mon, 29 Jul 2024 23:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQe0VNE5"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CF818D4AA;
+	Mon, 29 Jul 2024 23:02:43 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329433D9E;
-	Mon, 29 Jul 2024 23:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE083D9E;
+	Mon, 29 Jul 2024 23:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722294098; cv=none; b=o6VC5+rBP8O/+x58aQGTcWirvmKy1ThwklEGT5DpWdQPcj+rXCpRPkiDodh3WAYtCg7LijeN2IAYLrd6YuMqr8vRRWljQ0YiMInNuPOvmgrv2JX8zO8QKo1kYUIUul2sGL76Doe+jXYaiJb8Ck1/Xpk++tbUC2/ojTG3xlirEVI=
+	t=1722294163; cv=none; b=JUPAW58LcRxllMKnUSPYk5gXHgHjoxlrnVJywXaw2iGUEh3qgbWY1oTJn+Rh3m76Bc+Wl7QineATwzZJXT5cLNeFhfhrpp4tvGDdf59mXHFcMr2O5Jhz1ZlbMokQ6D4l8RFSKXGQ46PIp4KBI8qxqUeEitJz6SfSbVwAVQ5RVKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722294098; c=relaxed/simple;
-	bh=yzCurV82av03unBcoGcG74J4yRdeDooIgc+oa3Rp/6E=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=uM0cLa0p4LHR8RUvtVjk2dOpaaIhbOV9W1AmgGckh80UqKz4x/X6kf+WXGC1NyrQw5ZgVQ+NEorjmX3Hdfr95lmDE486O9z+No1KK3Q965HMIod1MumLZ6o21iLl+HYOYBUi8fb9TMmmmfJ1whv1afIqPx+aMiwi5ettQqEbSoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQe0VNE5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F9D5C32786;
-	Mon, 29 Jul 2024 23:01:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722294097;
-	bh=yzCurV82av03unBcoGcG74J4yRdeDooIgc+oa3Rp/6E=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=GQe0VNE5g9ObKIB9IOMY41A6xtRZj967Ka7jdBOBClsfNIetnnHsndBKrgnqNvWKD
-	 CgcfPxKm8VJ5WZMopnKqYQQNKL0Lky+yqRDTWekQkHU7ln47ANz/GxuWtBdLab4ugZ
-	 w1EE/pNvN80QOdXeAgnV5Kk7M54s6ScmkgQfB/Y/iHX5aJ8oazglvkixXiGvN7Li3i
-	 cRcD3/SCArnkpl9A5qMIXUJI7e6WFAzSueH3WJ+YZlvrHsI82vGIxxzo8USqmtZI5C
-	 IuX3L4AnN58jh3X/bPJ6LlUcsDECdQQrFnpsWudlDvA6UXyrHub83VoMWnEryJOPRe
-	 yqYmhFkB85Lpg==
-Message-ID: <54decfcc0a311d4447122bb5f49bd491.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1722294163; c=relaxed/simple;
+	bh=dL8VBL1zodt6nAtXY2V+cc/hJ85kn3KVrZDLkCEX0W8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=spZ5xU7cuxy4/LkazpUkAajLpJhDe1KQLHbwkO0zLZiOao0ABRvHFPYOZm9Q0G1Mqp+phzLSuCXw4NzBpY2Hi14kMcRlZYTZMjUHWZPm6hhUP5BZBgSVZ6jZxopvI0q//IBXOscOtEXiCZ9FcG6DoSc5py9nv4wgfowJj+q/mxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 866D8C32786;
+	Mon, 29 Jul 2024 23:02:42 +0000 (UTC)
+Date: Mon, 29 Jul 2024 19:02:41 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] tracing: Use refcount for trace_event_file reference
+ counter
+Message-ID: <20240729190241.47e52c05@rorschach.local.home>
+In-Reply-To: <20240729234924.6accc2e6216e3b7be1a97e61@kernel.org>
+References: <20240726144208.687cce24@rorschach.local.home>
+	<20240729234924.6accc2e6216e3b7be1a97e61@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240717115919.975474-1-fshao@chromium.org>
-References: <20240717115919.975474-1-fshao@chromium.org>
-Subject: Re: [PATCH] clk: mediatek: reset: Return regmap's error code
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Fei Shao <fshao@chromium.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Fei Shao <fshao@chromium.org>
-Date: Mon, 29 Jul 2024 16:01:35 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Quoting Fei Shao (2024-07-17 04:58:52)
-> device_node_to_regmap() can return different errors, and it's better
-> practice to pass them to callers.
->=20
-> Clean up the hardcoded -EINVAL and use PTR_ERR(regmap) instead.
->=20
-> Signed-off-by: Fei Shao <fshao@chromium.org>
-> ---
+On Mon, 29 Jul 2024 23:49:24 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-Applied to clk-next
+> On Fri, 26 Jul 2024 14:42:08 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > From: Steven Rostedt <rostedt@goodmis.org>
+> > 
+> > Instead of using an atomic counter for the trace_event_file reference
+> > counter, use the refcount interface. It has various checks to make sure
+> > the reference counting is correct, and will warn if it detects an error
+> > (like refcount_inc() on '0').
+> > 
+> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>  
+> 
+> Looks good to me.
+> 
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Is that an ack or a review? ;-)
+
+-- Steve
 
