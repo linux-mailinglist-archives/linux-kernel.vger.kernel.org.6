@@ -1,116 +1,144 @@
-Return-Path: <linux-kernel+bounces-265741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC2E093F572
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:31:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CE4F93F576
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9B2C282F3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:31:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 117B91F22C32
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8294A148829;
-	Mon, 29 Jul 2024 12:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABED1487E7;
+	Mon, 29 Jul 2024 12:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RA1Vd/YF"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EYKlgrDD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AE5144D10
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA43145B19
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722256276; cv=none; b=FVCZskR9BLwPi1jGK1urVqAXQQUq8MH9ZMLFYxrTEAn+/bIY2W798bzf5nwvJvK3fe16Z8ANITndG/wiEH39Cyi27QIpEqgUUNijsYPyCRXVybDV8TYDiXfHQpmJ550vJapEc0jEaXzhpL0a5hW9qA37N8nQ7+zflaVxtAqvvg4=
+	t=1722256382; cv=none; b=fq7pALypSOKK3aD9xFydlekNsXg7zFqOsZqAuTC4o+t4QX/HoXCqPhCwwliDtimdMcNZG/miKR7DMA8K70C2lScdRRkzb9Bvx9ZapQ9EC91P95r3jzXiwQLMI39eaNG8WqYwymeeEyVT/sjLL1K1ixNCFGh6xQXM4GWs9dA6ruI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722256276; c=relaxed/simple;
-	bh=1MJdqvR4l66CFymtTigURAQi+Ak55GLMbQ2E/5ReGDM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=M72PMt9IITMXMFlDSlp9JOnF3zjakDDB49fFGg7gqJYfjRZzGjivTeUhfxOwRHcS+11lOgVij9OvzgaH0NP9y4KWcq0I2yM+RV2WoB4m4lNZMNxhMOmXZB7ZhJSXxuevWKpQhi6XGFhUPeIy7y5UfOY3uvX8ePrm3asJdsd4fqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RA1Vd/YF; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7a94478a4eso701302366b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 05:31:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722256274; x=1722861074; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aXEWCd7FqpXeUoPV5fLPpv01DhdKsxKfAinrkombeok=;
-        b=RA1Vd/YFLsDhjZBh4ET3F2CyuWwWNz+nVsbtGY9VzzsPOqGIxYFBE4yg9ekUGV10OS
-         DHALFcbESjfOHJTwAfyn3qiM3HSLbe1/Hyzzel3YmaZY403Zdee9aVruysamQx3DMC1l
-         ta0cgLR3minX/JIB7JyKhcgIu0rfWcrW5wvMW8bkdyHMqI4GOTf5N5Eo5z0acMLAP6W8
-         4p9DhWrCNfRrcVt/5O/4UtSGBxUEz/p1xnm9kUZOF6Df26uuLGEulyodywkpU40QH5Y6
-         e1l/9cr5WgJkiDgG8IRGq0tl6Khxzn5yLT5pPh5i5w3N+qyYlx56LTqEHD4YcxWotjdK
-         uZ/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722256274; x=1722861074;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aXEWCd7FqpXeUoPV5fLPpv01DhdKsxKfAinrkombeok=;
-        b=g9HYaQOt1Hl8cky2mpGLzkR9fhODBiHloZzNd35WSWPTpqjjxRBBYFdj1OPtHtPLO5
-         wxe6EZ7A//NxuZMhjLgYyhooUIUiX0+tWdEJe3JH+p93d+NJ1JRzYulRPIS0OJLblcYx
-         aj2CQePpLC/5s9cskvLQEf8It2iyWMYA6Gi2y+2vb40eOVQ1TiTwAkICWX3wmCPwcHol
-         rC8jroC631nPSidSSVT5F5zDtIloDXNhvSXHaHxFYf47lbx0nFywrl5tl8HeH206hGx1
-         ECreDd/iHLrt2Bec8Ll9m84bWnhUow2gS5zBnnH4d3u8ecJiLAuRp4fhpvw1AMt4DS07
-         DRfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVL4T+15pvEOWHVox1EfSziHLcDp+uheEgqsqT86xNmvIxVUmPNW5x8FDZhiFmubAdlHe5LtO6vc6n654pVyqPSDg8PxoevspVgZWMz
-X-Gm-Message-State: AOJu0YxDN8ql1xu/9KJO5Jtx2skpjlh/bKc/QqhbXVWWkpB69+vGp7e5
-	7oRMrxROMW28Jm40+1eVXBw0lpx8Aigv9GJ4coIVBSn7a/qNmCTQ3jTEdlbMxiM=
-X-Google-Smtp-Source: AGHT+IEcCCNjVqMjw+SlV2NGC1JBsZBQwl83wS/81hnJwhDhzkYKop8654LkJwHocVtqfIz4Gw4IXg==
-X-Received: by 2002:a17:907:1c19:b0:a6f:e03a:99d with SMTP id a640c23a62f3a-a7d3f514a03mr869934766b.0.1722256273697;
-        Mon, 29 Jul 2024 05:31:13 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab22ff1sm501973966b.35.2024.07.29.05.31.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 05:31:13 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- alim.akhtar@samsung.com, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
- mturquette@baylibre.com, sboyd@kernel.org, 
- Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org, 
- andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-In-Reply-To: <20240628223506.1237523-3-peter.griffin@linaro.org>
-References: <20240628223506.1237523-1-peter.griffin@linaro.org>
- <20240628223506.1237523-3-peter.griffin@linaro.org>
-Subject: Re: (subset) [PATCH v2 1/3] arm64: dts: exynos: gs101: add
- syscon-poweroff and syscon-reboot nodes
-Message-Id: <172225627208.280610.7893124858038384866.b4-ty@linaro.org>
-Date: Mon, 29 Jul 2024 14:31:12 +0200
+	s=arc-20240116; t=1722256382; c=relaxed/simple;
+	bh=OZ5jXVlwnFT9jWJUdVRr5iRq5783wksRo2iASegfAXs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mT4ubFEOG0gOGVt6XWnQGspvlsK8Y5FUpy7KUi1JfQuqkGflTVBX/IVZan2Lr2sKcSUW3pQgZvlOgOfOMQW2VKIzgcTEXvzGo7XALW0k8MnKGUSVwJzihosqwIBSaSBiXLX9X6kTGN0fVETSWutVfK8EX5f1rvZMnzZ6FmsZQdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EYKlgrDD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722256379;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w0xks81TdKZTJ22FJnbrdp5glJu0PgYtd3j9EKuYo38=;
+	b=EYKlgrDDCBXXU9SAqObC9jPSnhbfHcfKkYCYdTgu7WWv1UaeGjtOVtICI2HIB91quy9HdB
+	ZleG8h+bwvKdCkW6jB6AiTuWZT0cWLOuUdGCIosz2zaAowY4UjfUeOhWPn2yq2oX51UNLm
+	2IUa5yd42ECB3ik/h1ZV/qAylbiIYMk=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-49-86vu1Qi1ODmH9Ngj9XTfXw-1; Mon,
+ 29 Jul 2024 08:32:56 -0400
+X-MC-Unique: 86vu1Qi1ODmH9Ngj9XTfXw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8202919560AA;
+	Mon, 29 Jul 2024 12:32:53 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.39.192.136])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 45AAA1955D47;
+	Mon, 29 Jul 2024 12:32:46 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: dsimic@manjaro.org
+Cc: UNGLinuxDriver@microchip.com,
+	andrew@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	f.fainelli@gmail.com,
+	gregkh@linuxfoundation.org,
+	jtornosm@redhat.com,
+	kuba@kernel.org,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	lucas.demarchi@intel.com,
+	masahiroy@kernel.org,
+	mcgrof@kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	woojung.huh@microchip.com
+Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy module
+Date: Mon, 29 Jul 2024 14:32:43 +0200
+Message-ID: <20240729123244.18780-1-jtornosm@redhat.com>
+In-Reply-To: <4db38805936d28fe1578c525a18f7849@manjaro.org>
+References: <4db38805936d28fe1578c525a18f7849@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
+Hello Dragan and others,
 
-On Fri, 28 Jun 2024 23:35:04 +0100, Peter Griffin wrote:
-> Reboot of gs101 SoC can be handled by setting the
-> bit(SWRESET_SYSTEM[1]) of SYSTEM_CONFIGURATION register(PMU + 0x3a00).
-> 
-> Poweroff of gs101 SoC can be handled by setting bit(DATA[8]) of
-> PAD_CTRL_PWR_HOLD register (PMU + 0x3e9c).
-> 
-> Tested using "reboot" and "poweroff -p" commands.
-> 
-> [...]
+> I see and agree, but please note that other people highly disagree about
+> that being an issue at all.  Thus, I'd suggest that you provide a 
+> detailed
+> explanation of why and how that presents an issue that weakdeps solve.
+I think that the problem that I am trying to fix related to initramfs
+generation is understood. At least what I tried to explain at the beginning
+of this thread with my messages and the help of Lucas. But maybe you are  
+right, so let me provide a more specific explanation.
 
-Applied, thanks!
+The only thing that I could repeat and/remark is that I am not modifying
+anything in the current kernel behavior, and specifically for this case 
+(lan78xx) with a network driver and related phy modules: I am just trying
+to add a flag (and nothing else) to complete the information of the
+necessary modules to be collected by the tools that build the initramfs.
 
-[1/3] arm64: dts: exynos: gs101: add syscon-poweroff and syscon-reboot nodes
-      https://git.kernel.org/krzk/linux/c/2d0c7ae784b487343b4813db9cb133ca51c674c3
+And if this information about the necessary modules is not correctly
+collected, the kernel is not going to work from initramfs, Especially if
+the network drivers are not working (because the phy module is not found),
+some initial and necessary resources could not be available before and
+after initramfs stage, because unless the network driver is unloaded and
+loaded again after initramfs stage (then the phy modules would be available
+from rootfs), it is going to be in the same situation, that is, not
+correctly initialized and not working.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Including in the initramfs all the phy modules is an option but I think it
+would be better to include only the necessary stuff (this is the default
+behavior for the tools that are used to build the initramfs). This is valid
+for embedded and not-embedded systems.
+
+If this patch, to only add the related flag of the network driver to inform
+about the possible phy modules, is rejected because a more general solution
+is preferred, I would like to dig into it, at least to know if it is possible
+to do better.
+Maybe Andrew in other part of the thread, after the interesting comments
+from Jakub, can help and provide some new (for me) inputs.
+
+> Regarding Lima and Panfrost, I agree that weakdeps are a better solution
+> than softdeps, but please see also harddeps. [1]  I'd appreciate if 
+> you'd provide your opinion about the proposed harddeps.
+> [1] 
+> https://lore.kernel.org/linux-modules/04e0676b0e77c5eb69df6972f41d77cdf061265a.1721906745.git.dsimic@manjaro.org/T/#u
+Ok, I will think more about it.
+After a quick first look I agree with Lucas, but let's go little by little
+(at least I don't have a lot of time before my holidays). 
+
+Thanks
+
+Best regards
+José Ignacio
 
 
