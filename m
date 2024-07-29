@@ -1,112 +1,170 @@
-Return-Path: <linux-kernel+bounces-266461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1413940032
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:11:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D7B940033
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57F5DB21860
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:11:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0EDC283091
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B64118D4AA;
-	Mon, 29 Jul 2024 21:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F56918D4AA;
+	Mon, 29 Jul 2024 21:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="PHRi+uoZ"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gWSBo/Lr"
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA38713A88D;
-	Mon, 29 Jul 2024 21:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CED18757E;
+	Mon, 29 Jul 2024 21:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722287468; cv=none; b=tJhIQ2jY8qJus0T2B7ofsHY7pyFAxzq/0xtANtPptA7qmaVVQmF6nhbW1raJrAvWIDhhw9ebWfxtWeSJ1/TvIS2Lcoy9uEIxlVBmpjB1eVTktgmPLgSGxeSXGueJ3YZZiMj1tnMx7MaVBJoYgnABSirSxA3OQfAEXarJCykIsV4=
+	t=1722287546; cv=none; b=GGbBJyFrSe5GFJRiPJme/NuoowzEWCb86yjM2+GyDyYiw6ZoUoj2PuP2A9T7xjzCfI1PGbhODePHqZOrK7eTi9GdzcJacOFprRqMnC0jxDA4kkQOcGCICpFE/yKWJz9nHwNzhl2XqMER3er7nuXNLDyaBjugj8ftl4q7dMuRy/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722287468; c=relaxed/simple;
-	bh=7N8zGWZbkIrI+9GXsmFJK5ZBSTWzlDH21ZdcerrJyBo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sYrbANE9Hdpm0+NvNy3mbkeHRHS9gxhY/6S0uqT7h+QbGF9d2kqzEheV3c5oVjZ/XCzWIHkLxkvnHvaa/j82Kpa7cMh5E2WAflZxxD7LqxkE5LQglaFdgpQ306vXMowMaQMlnbXXpMu8ypu1mNYF9AJETisHQUQeW1dWy5B91c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=PHRi+uoZ; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net C40E141A2D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1722287461; bh=03NG19DlTxsjflgEUiClMvPn5IFMTSm0+ZrurIHM9gE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=PHRi+uoZNMfc2CQxvrYzIAKPfxG1FOoXBLLICZ2V6u6dfsR/nN1xpmFP1kSzyD4P1
-	 dYryOOYF4be0Z3ydD0cF4q+WYP3fx3cmmKmeBUmtKXWckrQw59kZ7g4DAbmYLLtYb4
-	 9bc6/07JZwKnipBp5+5dK4vx0sFqvX8PqkUKU2irjPJXh+5lG2C8yhZYF3kTMhR/+0
-	 pDGvf3o6iVJyP/6Wx5FOIH9/0RQabRa6HDmdvLudXmG9362Tbv+mwUtEq3ODlxmV2x
-	 Jvi1PcZJA0rp4AffIGyL2pnajpS0DrS+yPySxiLCgBaeGRkCVNFPOy3QG3bfW0k677
-	 S1hodehu8qkcA==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id C40E141A2D;
-	Mon, 29 Jul 2024 21:11:01 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Dave Martin <Dave.Martin@arm.com>, linux-kernel@vger.kernel.org
-Cc: linux-doc@vger.kernel.org, Matthew Wilcox <willy@infradead.org>, Mike
- Rapoport <rppt@kernel.org>
-Subject: Re: [PATCH] docs/core-api: memory-allocation: GFP_NOWAIT doesn't
- need __GFP_NOWARN
-In-Reply-To: <20240729140127.244606-1-Dave.Martin@arm.com>
-References: <20240729140127.244606-1-Dave.Martin@arm.com>
-Date: Mon, 29 Jul 2024 15:11:01 -0600
-Message-ID: <877cd3aopm.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1722287546; c=relaxed/simple;
+	bh=qlcx5W/hA/5ds8eayzREuqxkMSTiTYrLEf7wdSsA3b8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qowt9EWSdzifWvFbkmmi9u5tThYYebICX1AC58Z8MkvjBqPthiUijHH1HBqT5Fx9fNM7WJe6KCMhkZ9CARPvJwrr0daQCXJyXZysRLxE9ARy0xrnePcsN5EODnJEca6YKkn4qr76jmSuinMHkEa2GK1tsmOcjm3PVuTqrIWHFpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gWSBo/Lr; arc=none smtp.client-ip=80.12.242.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id YXfBsaOw3HEYLYXfBsmtfD; Mon, 29 Jul 2024 23:12:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722287535;
+	bh=2c3r0TGUUeWE1cSnwvw2dWtfrpEhdSnXNu8hNYYGVVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=gWSBo/LrvBODA1zB8pA0yfgOhrJ8pPtlV6rQUvfYnXuKwmwKXSOFAxlRkGAcDiAnZ
+	 Z33mciV9iOcNzQ3e+xBjMu4UxYKkIccuQlrNf15e7Hd7J8PHLAxKev1bciftqoUM0D
+	 ZvS3VxzoDXRqKVvRk85Kynh0V9AD3AYUSVKsrCW/hXMQTf7GkU92wi9ytT8rCt7NZp
+	 whVzBPMMd1d4tgcBjohcwf0PUXBbWVyxVAMstPs/vjgPW+jAG0Xj2DcDYxiMRCf1U1
+	 wF1Zk83ec2Q6d7va8CWLm1sc1JcBwCZ6UGLRQmYSWDQvqQP4CoIj+sYragualFDOeF
+	 Ryy1/3fTV40tw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 29 Jul 2024 23:12:15 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <716b9d31-f978-4384-b605-64896f8b2643@wanadoo.fr>
+Date: Mon, 29 Jul 2024 23:12:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/1] watchdog: imx7ulp_wdt: move post_rcs_wait into
+ struct imx_wdt_hw_feature
+To: Frank Li <Frank.Li@nxp.com>
+Cc: alice.guo@nxp.com, festevam@gmail.com, imx@lists.linux.dev,
+ kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux@roeck-us.net, s.hauer@pengutronix.de, shawnguo@kernel.org,
+ wim@linux-watchdog.org, ye.li@nxp.com
+References: <20240729200601.1995387-1-Frank.Li@nxp.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240729200601.1995387-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Dave Martin <Dave.Martin@arm.com> writes:
-
-> Since v6.8 the definition of GFP_NOWAIT has implied __GFP_NOWARN,
-> so it is now redundant to add this flag explicitly.
->
-> Update the docs to match, and emphasise the need for a fallback
-> when using GFP_NOWAIT.
->
-> Fixes: 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT")
-> Signed-off-by: Dave Martin <Dave.Martin@arm.com>
->
+Le 29/07/2024 à 22:06, Frank Li a écrit :
+> Move post_rcs_wait into struct imx_wdt_hw_feature to simple code logic for
+> difference compatible string.
+> 
+> i.MX93 watchdog needn't wait 2.5 clocks after RCS is done. So needn't set
+> post_rcs_wait.
+> 
+> Reviewed-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+> Signed-off-by: Alice Guo <alice.guo-3arQi8VN3Tc@public.gmane.org>
+> Reviewed-by: Ye Li <ye.li-3arQi8VN3Tc@public.gmane.org>
+> Signed-off-by: Frank Li <Frank.Li-3arQi8VN3Tc@public.gmane.org>
 > ---
->
-> Based on: v6.11-rc1
->
-> This change also evaporates the apparent typo of __GFP_NOWARN without
-> the underscores in the documentation, but that doesn't really feel like
-> it merits a dedicated patch.
->
-> Not sure if this really merits a Fixes tag, but the docmuentation
-> update might as well be picked into trees that have the corresponding
-> code change.
->
+> Chagne from v3 to v4:
+> - Go back to v2 according to Guenter's feedback
+> Change from v2 to v3:
+> - Set post_rcs_wait to false explicitly to maintain code consistency
+> - Add Guenter review tag.
+> Change from v1 to v2:
+> - Combine to one patch
 > ---
->  Documentation/core-api/memory-allocation.rst | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/core-api/memory-allocation.rst b/Documentation/core-api/memory-allocation.rst
-> index 8b84eb4bdae7..0f19dd524323 100644
-> --- a/Documentation/core-api/memory-allocation.rst
-> +++ b/Documentation/core-api/memory-allocation.rst
-> @@ -45,8 +45,9 @@ here we briefly outline their recommended usage:
->    * If the allocation is performed from an atomic context, e.g interrupt
->      handler, use ``GFP_NOWAIT``. This flag prevents direct reclaim and
->      IO or filesystem operations. Consequently, under memory pressure
-> -    ``GFP_NOWAIT`` allocation is likely to fail. Allocations which
-> -    have a reasonable fallback should be using ``GFP_NOWARN``.
-> +    ``GFP_NOWAIT`` allocation is likely to fail. Users of this flag need
-> +    to provide a suitable fallback to cope with such failures where
-> +    appropriate.
->    * If you think that accessing memory reserves is justified and the kernel
+>   drivers/watchdog/imx7ulp_wdt.c | 21 +++++++++------------
+>   1 file changed, 9 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/watchdog/imx7ulp_wdt.c b/drivers/watchdog/imx7ulp_wdt.c
+> index 94914a22daff7..3a75a6f98f8f0 100644
+> --- a/drivers/watchdog/imx7ulp_wdt.c
+> +++ b/drivers/watchdog/imx7ulp_wdt.c
+> @@ -55,6 +55,7 @@ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+>   
+>   struct imx_wdt_hw_feature {
+>   	bool prescaler_enable;
+> +	bool post_rcs_wait;
+>   	u32 wdog_clock_rate;
+>   };
+>   
+> @@ -62,7 +63,6 @@ struct imx7ulp_wdt_device {
+>   	struct watchdog_device wdd;
+>   	void __iomem *base;
+>   	struct clk *clk;
+> -	bool post_rcs_wait;
+>   	bool ext_reset;
+>   	const struct imx_wdt_hw_feature *hw;
+>   };
+> @@ -95,7 +95,7 @@ static int imx7ulp_wdt_wait_rcs(struct imx7ulp_wdt_device *wdt)
+>   		ret = -ETIMEDOUT;
+>   
+>   	/* Wait 2.5 clocks after RCS done */
+> -	if (wdt->post_rcs_wait)
+> +	if (wdt->hw->post_rcs_wait)
+>   		usleep_range(wait_min, wait_min + 2000);
+>   
+>   	return ret;
+> @@ -334,15 +334,6 @@ static int imx7ulp_wdt_probe(struct platform_device *pdev)
+>   	/* The WDOG may need to do external reset through dedicated pin */
+>   	imx7ulp_wdt->ext_reset = of_property_read_bool(dev->of_node, "fsl,ext-reset-output");
+>   
+> -	imx7ulp_wdt->post_rcs_wait = true;
+> -	if (of_device_is_compatible(dev->of_node,
+> -				    "fsl,imx8ulp-wdt")) {
+> -		dev_info(dev, "imx8ulp wdt probe\n");
+> -		imx7ulp_wdt->post_rcs_wait = false;
+> -	} else {
+> -		dev_info(dev, "imx7ulp wdt probe\n");
+> -	}
+> -
+>   	wdog = &imx7ulp_wdt->wdd;
+>   	wdog->info = &imx7ulp_wdt_info;
+>   	wdog->ops = &imx7ulp_wdt_ops;
+> @@ -403,6 +394,12 @@ static const struct dev_pm_ops imx7ulp_wdt_pm_ops = {
+>   static const struct imx_wdt_hw_feature imx7ulp_wdt_hw = {
+>   	.prescaler_enable = false,
+>   	.wdog_clock_rate = 1000,
+> +	.post_rcs_wait = true,
+> +};
+> +
+> +static const struct imx_wdt_hw_feature imx8ulp_wdt_hw = {
+> +	.prescaler_enable = false,
+> +	.wdog_clock_rate = 1000,
+>   };
+>   
+>   static const struct imx_wdt_hw_feature imx93_wdt_hw = {
+> @@ -411,7 +408,7 @@ static const struct imx_wdt_hw_feature imx93_wdt_hw = {
+>   };
+>   
+>   static const struct of_device_id imx7ulp_wdt_dt_ids[] = {
+> -	{ .compatible = "fsl,imx8ulp-wdt", .data = &imx7ulp_wdt_hw, },
+> +	{ .compatible = "fsl,imx8ulp-wdt", .data = &imx8ulp_wdt_hw, },
 
-Applied, thanks.
+Nitpick: while touching something here, should imx8ulp be after imx7ulp?
 
-jon
+CJ
+
+>   	{ .compatible = "fsl,imx7ulp-wdt", .data = &imx7ulp_wdt_hw, },
+>   	{ .compatible = "fsl,imx93-wdt", .data = &imx93_wdt_hw, },
+>   	{ /* sentinel */ }
+
 
