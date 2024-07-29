@@ -1,123 +1,71 @@
-Return-Path: <linux-kernel+bounces-266545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD9094017A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:01:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B95994017C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AD86283687
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:01:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AE131F23019
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1604718D4AA;
-	Mon, 29 Jul 2024 23:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E954818C33B;
+	Mon, 29 Jul 2024 23:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Xj731GaX"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQe0VNE5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8613D9E;
-	Mon, 29 Jul 2024 23:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329433D9E;
+	Mon, 29 Jul 2024 23:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722294068; cv=none; b=V6+2oSc5SxB/Z5feFgQ69bLHwRjtJSQ/xpd64gDIdOJxqajwv7z4sCFxjwCXgJd9L5kiIs3hlISqyN3+FGS7niJdY7aCaDynakuiY/oHFxFW9hTk/h8g7iP5D26vEMnFI3Ipa+AbKdV5Z4mt3b1lrfKeyo/NlpwUI/cyyc+2/x4=
+	t=1722294098; cv=none; b=o6VC5+rBP8O/+x58aQGTcWirvmKy1ThwklEGT5DpWdQPcj+rXCpRPkiDodh3WAYtCg7LijeN2IAYLrd6YuMqr8vRRWljQ0YiMInNuPOvmgrv2JX8zO8QKo1kYUIUul2sGL76Doe+jXYaiJb8Ck1/Xpk++tbUC2/ojTG3xlirEVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722294068; c=relaxed/simple;
-	bh=sVc9oNwqCsXx2rmRDVNxqf/CZuaiLa4l8NaPPinvq38=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eURGWIt8Tb39TXbeF6ZTTLjhTBVMAT2iNxnN62xhtO85XpRuVR6yRY5TO4PfrAVo8f4zOAWkg9vzSURvWvxV7ZZQwl0sRTtxdkTCzxvsGZ85jiCzSuosfFYh5mIOy/8jw7AzJK39VHgd2SgjY94NKFpZe1hR6AgwDPX4/ywk+mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Xj731GaX; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722294060;
-	bh=KsCYJJQihm3eoy9V9x+lN6vEZWKhHmoygszLZjvovAg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Xj731GaXacy92qmoMd3qpUISKzHU+Q/1OBBqDDZbX6HTTrTDO2+VgACWmPJq1U7lH
-	 a9B9RyqF95JLDKFE5ylDZ06M+2ffaVecEdcyWhNO20Ygag+bYbD1h09AJsYoavp571
-	 sQ6ulNG7HMYmEat/QtIcQvxXciXVR8qLebm3vKFiDWtGJqsmacJMgVZBoayjNwI/kZ
-	 cfuVDcozmpnTXqG4mOvkKbZ8hEP0/t1aDaZfQG/ZIeqtOwW6Aye3BpaU13EFX1fsU5
-	 E1G3PG6Cb0BAdGVE/hgV3Q8qZoysVYqBhmP5fB1tNCtu6DZ4zwhtHP+y1dFsfdsFcK
-	 swJcdrGArpN/w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WXv3c35vnz4x3d;
-	Tue, 30 Jul 2024 09:01:00 +1000 (AEST)
-Date: Tue, 30 Jul 2024 09:00:59 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <20240730090059.721de7cf@canb.auug.org.au>
-In-Reply-To: <20240726100041.142b6e35@canb.auug.org.au>
-References: <20240726100041.142b6e35@canb.auug.org.au>
+	s=arc-20240116; t=1722294098; c=relaxed/simple;
+	bh=yzCurV82av03unBcoGcG74J4yRdeDooIgc+oa3Rp/6E=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=uM0cLa0p4LHR8RUvtVjk2dOpaaIhbOV9W1AmgGckh80UqKz4x/X6kf+WXGC1NyrQw5ZgVQ+NEorjmX3Hdfr95lmDE486O9z+No1KK3Q965HMIod1MumLZ6o21iLl+HYOYBUi8fb9TMmmmfJ1whv1afIqPx+aMiwi5ettQqEbSoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQe0VNE5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F9D5C32786;
+	Mon, 29 Jul 2024 23:01:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722294097;
+	bh=yzCurV82av03unBcoGcG74J4yRdeDooIgc+oa3Rp/6E=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=GQe0VNE5g9ObKIB9IOMY41A6xtRZj967Ka7jdBOBClsfNIetnnHsndBKrgnqNvWKD
+	 CgcfPxKm8VJ5WZMopnKqYQQNKL0Lky+yqRDTWekQkHU7ln47ANz/GxuWtBdLab4ugZ
+	 w1EE/pNvN80QOdXeAgnV5Kk7M54s6ScmkgQfB/Y/iHX5aJ8oazglvkixXiGvN7Li3i
+	 cRcD3/SCArnkpl9A5qMIXUJI7e6WFAzSueH3WJ+YZlvrHsI82vGIxxzo8USqmtZI5C
+	 IuX3L4AnN58jh3X/bPJ6LlUcsDECdQQrFnpsWudlDvA6UXyrHub83VoMWnEryJOPRe
+	 yqYmhFkB85Lpg==
+Message-ID: <54decfcc0a311d4447122bb5f49bd491.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/X=vdSS4TR6IfNbo=xg2PegG";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/X=vdSS4TR6IfNbo=xg2PegG
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240717115919.975474-1-fshao@chromium.org>
+References: <20240717115919.975474-1-fshao@chromium.org>
+Subject: Re: [PATCH] clk: mediatek: reset: Return regmap's error code
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Fei Shao <fshao@chromium.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Fei Shao <fshao@chromium.org>
+Date: Mon, 29 Jul 2024 16:01:35 -0700
+User-Agent: alot/0.10
 
-Hi all,
-
-On Fri, 26 Jul 2024 10:00:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the vfs-brauner tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+Quoting Fei Shao (2024-07-17 04:58:52)
+> device_node_to_regmap() can return different errors, and it's better
+> practice to pass them to callers.
 >=20
-> In file included from fs/smb/server/unicode.c:14:
-> fs/smb/server/smb_common.h:46: error: "F_CREATED" redefined [-Werror]
->    46 | #define F_CREATED       2
->       |=20
-> In file included from include/linux/fcntl.h:6,
->                  from include/linux/fs.h:26,
->                  from fs/smb/server/unicode.c:9:
-> include/uapi/linux/fcntl.h:20: note: this is the location of the previous=
- definition
->    20 | #define F_CREATED       (F_LINUX_SPECIFIC_BASE + 4)
->       |=20
-> cc1: all warnings being treated as errors
+> Clean up the hardcoded -EINVAL and use PTR_ERR(regmap) instead.
 >=20
-> Caused by commit
->=20
->   a621ce4eed14 ("fcntl: add F_CREATED")
->=20
-> Is that commit really intended for this merge window?
->=20
-> I have used the vfs-brauner tree from next-20240725 for today.
+> Signed-off-by: Fei Shao <fshao@chromium.org>
+> ---
 
-I am still getting this build failure.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/X=vdSS4TR6IfNbo=xg2PegG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaoHysACgkQAVBC80lX
-0GyBjwgAmY01w4swNykcajMmtQxkLPfMVYPJqe7bp1HlkHhFqX9xTdcx4A+8WWpJ
-YsBIW2YmPuX5PJzAUQtPBLhZpoirs+yv5kYVov4HkbwRjy3hvd03tfNa+XgDp+kD
-Re4uowX0ahf09OVvaNd5MVFTQbJ1PNHGX0Tr/GDaR5fZmFaycy3O9qx4r0I9gTrP
-+S3FITFG3RV5Lu7tF9C+b6gQwmYvLsLkSKgySE708EnkrjUqhll/C/g089E28Knt
-3OxvITR8wPccd/0kOmt6eG+UgiDZ6IIfIyD/EnQ18MuFoYkWIMfGYXtF+6DCL/yZ
-ljPHRWjWpZgLWMgmqoN8qHfOd+nE9A==
-=mlTo
------END PGP SIGNATURE-----
-
---Sig_/X=vdSS4TR6IfNbo=xg2PegG--
+Applied to clk-next
 
