@@ -1,54 +1,39 @@
-Return-Path: <linux-kernel+bounces-265290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C4893EF27
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:56:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083EC93EF2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E33EB21F0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:56:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4A0F280DF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C4312CD96;
-	Mon, 29 Jul 2024 07:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nrFoZ15u"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25761EB2C;
-	Mon, 29 Jul 2024 07:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5623212CD96;
+	Mon, 29 Jul 2024 07:56:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897621EB2C
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722239759; cv=none; b=CVbrZSpePhFxQ978BcvXkYBQaOJf7f8D3bjmPXBPKuRpG1etP4BZd6w5y8v/Cn8PXyK45U4l0tfZnYg3NZRYxiJzc3ecxiEnJtDBjuZdeY2jz5vgGRt0bftnvOoZ6lxL7cLMs4sZi20NhnO9hLYEdr8gbNFoeMg4ldFbdlNPGH0=
+	t=1722239812; cv=none; b=juzk23QYq6ERQRMwK8hosIeyDK4Nff6/abfvKq/Ic/OSvsecDSi3AVi2tO+OTbEYgu7E9AA0FCEmC7M0l5kGlfiiZUTIXrrE2CSAiTP3jQwJjJQhTbeU2bQYktZgI+sQE0m0ZkP8+RFZZOwBHIFrIBa3tiXGGKJzQ0x9KNLQwkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722239759; c=relaxed/simple;
-	bh=8GFkxSadx10rFZuzZEfW0t56ehKdFZhS465NJerFFgQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QU52aJprBSzPVBvLluz79vI7szYJ/TA/ndzzmVq8v/NrMRjZjz9fJoEblLqbVTafOyaXVSzbJcwy1sZwzs8VN7jjOWi27Rv8F+Fj+0C+PqfA/vQx8lqRx9w874eiyplng/fXuS628T1exoqjYDrKccs1LCz5iKbp+srLEKmCc+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nrFoZ15u; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722239756;
-	bh=8GFkxSadx10rFZuzZEfW0t56ehKdFZhS465NJerFFgQ=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=nrFoZ15uEUpOcs8OtdCV0HndWpeUdk79EDpiwP1MdJ7+YpEPZAbXM9Bwi4Bld2Ewv
-	 YTFgGmZ98OUv7ug98hpexOnBVBNC7J7R5fuWeFau6Ck4JjJhOsbVBEXP4nKkdZLu/5
-	 cDgtf64t2If9OCwl8Hm7yText0TydPXoAO6UOCEAVnW7uqy3t93mdoXg4qXY683Heu
-	 Pj1ncV9/rIUs/CxBk5L5XoDjXp58aRvCccF0mZw+ocnNo7BRr99oIeV8+sPe7CVCRE
-	 pCCLua65hZetARCVaBG11CpkoCX4Di9+vJQsibXYk1aBvY8yQv3YioH5/xyZKRUb/i
-	 RmvNocRDaTW7w==
-Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B5F5437809CE;
-	Mon, 29 Jul 2024 07:55:53 +0000 (UTC)
-Message-ID: <a3083ad4-e9dc-40da-bf57-8391bcd96a6c@collabora.com>
-Date: Mon, 29 Jul 2024 12:55:50 +0500
+	s=arc-20240116; t=1722239812; c=relaxed/simple;
+	bh=3JThnzm685zpTEN4L6VpfSY8iCQhnE85eI6Cas1v7tE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B8xv+Hl6EeNyoK5zcOr9qyheU+Ro6kdooVTEbTcWn+09vlDRLR0+/PZyvacWGLVFnVihAJBoL5Qb0CHyaZFag7j6OXZo+huGO777670wCPe8OZfex8XfaOH49AEMmqGbEgK8wc4u74R4CVurrgN4O71Y1mXoOo3jWQmjINy5MAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 54951FEC;
+	Mon, 29 Jul 2024 00:57:15 -0700 (PDT)
+Received: from [192.168.34.184] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8481C3F766;
+	Mon, 29 Jul 2024 00:56:45 -0700 (PDT)
+Message-ID: <01e68be1-dc49-448c-9338-70ececd0bec7@arm.com>
+Date: Mon, 29 Jul 2024 09:56:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,82 +41,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- "open list : KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>, kunit-dev@googlegroups.com,
- "kernel@collabora.com" <kernel@collabora.com>, Shuah Khan <shuah@kernel.org>
-Subject: Re: Converting kselftest test modules to kunit
-To: Shuah Khan <skhan@linuxfoundation.org>, Kees Cook
- <keescook@chromium.org>, davidgow@google.com
-References: <327831fb-47ab-4555-8f0b-19a8dbcaacd7@collabora.com>
- <533826b3-8bc4-40f8-a491-5bb5614469c3@linuxfoundation.org>
+Subject: Re: [PATCH v3] sched/fair: Sync se's load_avg with cfs_rq in
+ reweight_task
+To: Chuyi Zhou <zhouchuyi@bytedance.com>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com
+Cc: chengming.zhou@linux.dev, linux-kernel@vger.kernel.org
+References: <20240723114247.104848-1-zhouchuyi@bytedance.com>
 Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <533826b3-8bc4-40f8-a491-5bb5614469c3@linuxfoundation.org>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+In-Reply-To: <20240723114247.104848-1-zhouchuyi@bytedance.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 7/27/24 12:35 AM, Shuah Khan wrote:
-> On 7/15/24 04:09, Muhammad Usama Anjum wrote:
->> Hi Kees and All,
->>
->> There are several tests in kselftest subsystem which load modules to tests
->> the internals of the kernel. Most of these test modules are just loaded by
->> the kselftest, their status isn't read and reported to the user logs. Hence
->> they don't provide benefit of executing those tests.
->>
->> I've found patches from Kees where he has been converting such kselftests
->> to kunit tests [1]. The probable motivation is to move tests output of
->> kselftest subsystem which only triggers tests without correctly reporting
->> the results. On the other hand, kunit is there to test the kernel's
->> internal functions which can't be done by userspace.
->>
->> Kselftest:    Test user facing APIs from userspace
->> Kunit:        Test kernel's internal functions from kernelspace
->>
->> This brings me to conclusion that kselftest which are loading modules to
->> test kernelspace should be converted to kunit tests. I've noted several
->> such kselftests.
->>
->> This is just my understanding. Please mention if I'm correct above or more
->> reasons to support kselftest test modules transformation into kunit test.
->>
->> [1] https://lore.kernel.org/all/20221018082824.never.845-kees@kernel.org/
->>
+On 23/07/2024 13:42, Chuyi Zhou wrote:
+> In reweight_task(), there are two situations:
 > 
-> Please make sure you aren't taking away the ability to run these tests during
-> boot. 
-The kunit tests are usually run at boot time. They can be run later as
-well. So I'm not trying to remove any functionality. Rather adding a way
-where failures would actually be detected.
+> 1. The task was on_rq, then the task's load_avg is accurate because we
+> synchronized it with cfs_rq through update_load_avg() in dequeue_task().
 
-> It doesn't make sense to convert every single test especially when it
-> is intended to be run during boot without dependencies - not as a kunit test
-> but a regression test during boot.
-I started investigating when these lib kselftests were just loading the
-test module without checking if test actually passed/failed (which proves
-that this type of kselftests can never detect regression as it doesn't
-process the results). It was strange. Hence I found out the conversion of
-such kselftests to kunit tests done by Kees and started this thread for
-discussion before doing actual work and sending patches.
+Just asking: That's the dequeue_task() in __sched_setscheduler() or
+set_user_nice()? Maybe this is worth mentioning here?
 
-> 
-> bitmap is one example - pay attention to the config help test - bitmap
-> one clearly states it runs regression testing during boot. Any test that
-> says that isn't a candidate for conversion.
-Please can you explain what do you mean by bitmap testing during boot? As
-far as I understand, the kselftests are usespace tests and are run after
-kernel has booted completely and userspace has started. It cannot be
-regarded as testing during boot.
+[...]
 
-> 
-> I am going to nack any such conversions.
-> 
-> thanks,
-> -- Shuah
-> 
+> @@ -3795,7 +3816,9 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
+>  		if (!curr)
+>  			__dequeue_entity(cfs_rq, se);
+>  		update_load_sub(&cfs_rq->load, se->load.weight);
+> -	}
+> +	} else if (entity_is_task(se))
+> +		sync_entity_load_avg(se);
+> +
 
--- 
-BR,
-Muhammad Usama Anjum
+IMHO, the 'if else' path needs braces. See
+Documentation/process/coding-style.rst '3) Placing Braces and Spaces'.
+
+>  	dequeue_load_avg(cfs_rq, se);
+>  
+>  	if (se->on_rq) {
+
+[...]
+
+Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 
