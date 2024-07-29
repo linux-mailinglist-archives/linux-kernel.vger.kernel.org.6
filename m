@@ -1,91 +1,91 @@
-Return-Path: <linux-kernel+bounces-265863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B793093F6F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:47:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96DE393F6F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 379511F228E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:47:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B228D1C21B5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BF21552F5;
-	Mon, 29 Jul 2024 13:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA3815534D;
+	Mon, 29 Jul 2024 13:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="y99smwt9";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ACKdFaWw"
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="rNoMVBIV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KRfRQM55"
 Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2A3147C86
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0161514F8
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722260800; cv=none; b=D/bAeaNwrLWni0879QPgwoIrpOhBDf4q6m+eNGlxBYaIkreZWW5HMmF16VqGqbE/BO2FZsTdsYkA/nRDrk/1UYCxRpTb2rAUM3JNaASrlcZRzqYDsm3YUV3ZykqRbGfsITswuTq+emnUPhiI0zHOaJr9c1zv9Hg1e/qz+WrL9fo=
+	t=1722260802; cv=none; b=Fmz0hABqwy7Gatp4NbbwJUGJL204ujjf6cEWFU3UFoYI855tHyxr5GsK9ecuwH9Z4/UFc9EBjvbaoTRp35C0G/9wtYUxjgQvNFDcHCNTeh+uCUGfZCEL7hKPGA/SkjzlzNxUznCCuOiFRy99fTMIE36fRvEpU9Bhf5CL+uo8LAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722260800; c=relaxed/simple;
-	bh=cS5Sym8Z9j+OJ0ThHcA+a8pykzx1OoGFIjcQvngS5NQ=;
+	s=arc-20240116; t=1722260802; c=relaxed/simple;
+	bh=CypZyBAmur8jk1dMIRMI/JD+8QpCn7AnNr+0wvRzl8Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rI8xOA2gDB8iTGhloFTJIn0/EbsjQyHrdASntgLaG+mj/iGV6YKYq96xQzIpm7g/ybmq0UG7teD417v0oh30MFa2kHkp2/5vVp5uIhX0FDK+PDq1rJHF/uvThJ8cYprhC5Plu1S2KJCkEMWtior8ycBw/KQYybet7QyxbBBLqHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=y99smwt9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ACKdFaWw; arc=none smtp.client-ip=103.168.172.145
+	 MIME-Version; b=e4dob6xstZO04j4/+iq5o5iA1qZotFmZSpOfutcWWuzzHHreLTKJ9NtAUkUT8afGM2JCoCuPEtSk9E87v85MkCJzy0z1yLAuBfwKrRRrSkl/mP6N6BOT+89VkaV3fUdccRQecPpOmYV1vWDBX1eKrriDeCKy2l/SLbTd5warwuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=rNoMVBIV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KRfRQM55; arc=none smtp.client-ip=103.168.172.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id BE7F4138024B;
-	Mon, 29 Jul 2024 09:46:37 -0400 (EDT)
+	by mailfout.nyi.internal (Postfix) with ESMTP id 9635F13801DC;
+	Mon, 29 Jul 2024 09:46:39 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Mon, 29 Jul 2024 09:46:37 -0400
+  by compute5.internal (MEProxy); Mon, 29 Jul 2024 09:46:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1722260797; x=
-	1722347197; bh=0tCtpGDits0Hy6LBmFMD6VZ1iHyJ5l1QnaLH/UD29/k=; b=y
-	99smwt9JmjhgMnlVL0mX3UavIs0EqLsO8Ir4I8v6HMWqSVidXnumw0ElbvxU9uDy
-	OmY+8Y2dLf9GUQtK4hczBlcz/9cKAVKQl/+d3nYs+B3emXtMxLSUjIfIDzRbh0J7
-	aof9Bgh3kTvf6iR2H2aWb1HTqVEgq+vg2x5nTpooxC6X9aHtP4v+XTksobe45Qps
-	4IET+D25FfPmzbQQRkBAd0XE/JW11kK1zxngIB/OJwGuc6fV37wjA8b+c9jMS1s7
-	ERqYScB58KPoyGqSg2JLP1M8qNu74RqOhzw6oPBEBtx3WYj3nF6eLGfoyPkp+DBj
-	r4ARu2tF5ECgDjII0Z/pQ==
+	:reply-to:subject:subject:to:to; s=fm3; t=1722260799; x=
+	1722347199; bh=U5rod4RFqqD1jbS5LRRa2T3sPIulvkc5tgqY5IiVoIQ=; b=r
+	NoMVBIVIN9jiii48x1LG/QTqho54xKGnlT2/NCByyNPQLNm+hXllHuHW1pgniabU
+	3ST42kxzKnp3jDdwRhZOdUHgUuzAGiQI7J201XV5+lQQo/d3K40PAmlLlS71wuMO
+	H8JMuY0ZfTFL7YCIYwThKuNKbdnzVTryYcQ0BDB/LG6u9Jcib6Sr9xb/Uw4To5pj
+	QOcVPltJScrvAG48w63NGAX9Lny+C0n29DAOf2zRsmNoeyCH7jFrg77QevwkkndP
+	s9kbNs7zUn7YtOHN4epkcjrzNPap0OJLcmSAvPWel/KUb2YylijCe2uZcEIezrXT
+	F35QA2n7MUziAvi1DUtog==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722260797; x=
-	1722347197; bh=0tCtpGDits0Hy6LBmFMD6VZ1iHyJ5l1QnaLH/UD29/k=; b=A
-	CKdFaWwi9mt+gPufPW0fj9/kIF+HwjSTqqFvhT7NnlQxlFt8wSJAy39b11QzWcno
-	W8D9vZHz+qtJkZs1E76KjqEOgxEuZAl4AcePtY9ivzMy6kugPWnR9EfgIh/xxmTJ
-	wEjrVVzDBM47rIPqc4zm8l8tXrOE0zzXeQkF0QlufvX5tqM6UVKeZFDBcYvzSWi2
-	C74dHwXI07a9ZobttKa65w6ooHrHLB+QeYu0fICDCv3HdIlWcrGJAV5suREOZrhQ
-	Ry0+7/eaTVAmrKHnrpbuEu+yNTe2KI+Dcj+aAm+hDCvK7kLeI5uG20o0d8RBMUZp
-	dLxItVWlIvGsvVSQEjBQQ==
-X-ME-Sender: <xms:PZ2nZk-i5moP1RPA8OdFPtJ3qNbRZ8-VrZeNb398fhD6QP4V5Puj7Q>
-    <xme:PZ2nZssx0CRE9WsuTS7Kq5VPaY2u6gqaw75yHvgOVqr2q29Wii90TIiQ4FsB-59uH
-    nKrhicGy_o1u357Gaw>
-X-ME-Received: <xmr:PZ2nZqDt5aHRgxA3SkBPAO3kl54Jv0VKwDOQDb9pm1zK__nsID_RJ0IZsr50TFmeIAKf_gjw8SfKGxvw56ElprLrhO6KkDssngfwGUGrRpR2iVQ>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722260799; x=
+	1722347199; bh=U5rod4RFqqD1jbS5LRRa2T3sPIulvkc5tgqY5IiVoIQ=; b=K
+	RfRQM55xCLgw5MYHyDzB9vbRQx9qUi2z1+P6/md8EBK1AEA4A6y8tHzVT5ikgU6/
+	LXtnSoUKycysmI/E+pQec/I8cgGEEhEKrwENPbZ+e9x953L0T8t+rZBF4ZH9jTyh
+	02uLsVv6xfn3+gC3ABT0wfYI9B7/GzANqA0M6/y3u4yLz9u2bnfgvOcql7s8j8e7
+	tPcanwizvT5wzwhtMFDhfdf1QXgBKynLGCm1U/Mj81nGqvto8X2txmOkIVyhUxyt
+	K9OjMF5zpwrEjnLArCaLH2/JR3h7OwWvTudc3MV+FlrK7N8NZahRm5Q4KsIe1WtJ
+	79SsuefXKEnUNzRLDiUuQ==
+X-ME-Sender: <xms:P52nZuaWVWt3LzaTcuKi9lWce78zuQwk1s6gyMmG2YBqZ4m6ddZFxw>
+    <xme:P52nZhYAAnHRxTfCsLvwGhzsM4xh1IR4_el-CgkqrBUqK_7H_rdXJ3a2iXHS6DmV3
+    DRKGhBfG9jFMUWBVY8>
+X-ME-Received: <xmr:P52nZo8llgk6eirBR1sifIZ007IJgg-RnJjbg2Q7OwYBe3OpK8H4tTWlzlCbM7BU_AJTBzJYjow-lsgNwFGHoM94oNHXlfJ-mkE9jNAIsBbZZuU>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjedvgdeilecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekre
     dtredttdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgr
     shhhihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepvdejgfejue
     dvgfduudekleevtefgtdevhfdtffefiefgveeuteffiedvffekvddtnecuvehluhhsthgv
-    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihessh
+    rhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihessh
     grkhgrmhhotggthhhirdhjphdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:PZ2nZkdZx5bPoipxvtnP0Gs8tG3awXQZgRMFZpIdHG6WpX0tT6I8xw>
-    <xmx:PZ2nZpORzmjkKZZ-CsSy1SferDZRwG7OQWmJeFyeA2dC65I-Rq1P8Q>
-    <xmx:PZ2nZumpKGXVmZ24NZn-1b2cqL0Sz80fRwB84fhqxCpsBPdNhSNvnA>
-    <xmx:PZ2nZrs_Yb52jh7gg4GeVR75CDQXR2_JQ4O6SizkWndUcU1NAr-h0g>
-    <xmx:PZ2nZiYeFeMK1f429uSTtjoPZne4N27cUOfqGiiEXCM-59FrawgEJAy8>
+X-ME-Proxy: <xmx:P52nZgrkY-HryAyZE8Fn6aFVBBLqHQMMNl4cpIIKHoBIc6X97NDImw>
+    <xmx:P52nZprY5Nfp4yc_WoPX1TU9UP64kD1wAq1kSBnwUBETD_IUgTaTcw>
+    <xmx:P52nZuQx6UGwTpiueD3VXDN4QZBfDXzCd7QdbnTW0d6A9-4-PqIBrQ>
+    <xmx:P52nZpqn6rsdvZYMlWU3eu7i-JEo1gTOWaV_BZqaz5We_mPHDtC9_w>
+    <xmx:P52nZg2fFKgW-ls48ZQp-msFato5uLNag07d0MzKgoox38Mu8_vXwzG_>
 Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 29 Jul 2024 09:46:36 -0400 (EDT)
+ 29 Jul 2024 09:46:37 -0400 (EDT)
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: linux1394-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] firewire: ohci: use TCODE_LINK_INTERNAL consistently
-Date: Mon, 29 Jul 2024 22:46:29 +0900
-Message-ID: <20240729134631.127189-2-o-takashi@sakamocchi.jp>
+Subject: [PATCH 2/3] firewire: ohci: minor code refactoring to localize text table
+Date: Mon, 29 Jul 2024 22:46:30 +0900
+Message-ID: <20240729134631.127189-3-o-takashi@sakamocchi.jp>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240729134631.127189-1-o-takashi@sakamocchi.jp>
 References: <20240729134631.127189-1-o-takashi@sakamocchi.jp>
@@ -97,80 +97,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In IEEE 1394 specification, 0x0e in tcode field is reserved for internal
-purpose depending on link layer. In 1394 OHCI specification, it is used to
-express phy packet in AT/AR contexts.
+The string table for tcode is just used by log_ar_at_event(). In the case,
+it is suitable to move the table inner the function definition.
 
-Current implementation of 1394 OHCI driver has several macros for the code.
-They can be simply replaced with a macro in core code.
-
-This commit obsoletes the macros.
+This commit is for the purpose. Additionally, the hard-coded value for
+tcode is replaced with defined macros as many as possible.
 
 Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 ---
- drivers/firewire/ohci.c | 9 ++++-----
- drivers/firewire/ohci.h | 1 -
- 2 files changed, 4 insertions(+), 6 deletions(-)
+ drivers/firewire/ohci.c | 28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/firewire/ohci.c b/drivers/firewire/ohci.c
-index 314a29c0fd3e..c3fff94b13e5 100644
+index c3fff94b13e5..a0bb0e87e18a 100644
 --- a/drivers/firewire/ohci.c
 +++ b/drivers/firewire/ohci.c
-@@ -264,7 +264,6 @@ static inline struct fw_ohci *fw_ohci(struct fw_card *card)
- #define OHCI1394_REGISTER_SIZE		0x800
- #define OHCI1394_PCI_HCI_Control	0x40
- #define SELF_ID_BUF_SIZE		0x800
--#define OHCI_TCODE_PHY_PACKET		0x0e
- #define OHCI_VERSION_1_1		0x010010
+@@ -531,20 +531,28 @@ static const char *evts[] = {
+ 	[0x1e] = "ack_type_error",	[0x1f] = "-reserved-",
+ 	[0x20] = "pending/cancelled",
+ };
+-static const char *tcodes[] = {
+-	[0x0] = "QW req",		[0x1] = "BW req",
+-	[0x2] = "W resp",		[0x3] = "-reserved-",
+-	[0x4] = "QR req",		[0x5] = "BR req",
+-	[0x6] = "QR resp",		[0x7] = "BR resp",
+-	[0x8] = "cycle start",		[0x9] = "Lk req",
+-	[0xa] = "async stream packet",	[0xb] = "Lk resp",
+-	[0xc] = "-reserved-",		[0xd] = "-reserved-",
+-	[0xe] = "link internal",	[0xf] = "-reserved-",
+-};
  
- static char ohci_driver_name[] = KBUILD_MODNAME;
-@@ -586,7 +585,7 @@ static void log_ar_at_event(struct fw_ohci *ohci,
- 		ohci_notice(ohci, "A%c %s, %s\n",
- 			    dir, evts[evt], tcodes[tcode]);
- 		break;
--	case 0xe:
-+	case TCODE_LINK_INTERNAL:
- 		ohci_notice(ohci, "A%c %s, PHY %08x %08x\n",
- 			    dir, evts[evt], header[1], header[2]);
- 		break;
-@@ -939,7 +938,7 @@ static __le32 *handle_ar_packet(struct ar_context *ctx, __le32 *buffer)
- 
- 	case TCODE_WRITE_RESPONSE:
- 	case TCODE_READ_QUADLET_REQUEST:
--	case OHCI_TCODE_PHY_PACKET:
-+	case TCODE_LINK_INTERNAL:
- 		p.header_length = 12;
- 		p.payload_length = 0;
- 		break;
-@@ -967,7 +966,7 @@ static __le32 *handle_ar_packet(struct ar_context *ctx, __le32 *buffer)
- 	 * Several controllers, notably from NEC and VIA, forget to
- 	 * write ack_complete status at PHY packet reception.
- 	 */
--	if (evt == OHCI1394_evt_no_status && tcode == OHCI1394_phy_tcode)
-+	if (evt == OHCI1394_evt_no_status && tcode == TCODE_LINK_INTERNAL)
- 		p.ack = ACK_COMPLETE;
- 
- 	/*
-@@ -1435,7 +1434,7 @@ static int at_context_queue_packet(struct context *ctx,
- 		break;
- 
- 	case TCODE_LINK_INTERNAL:
--		header[0] = cpu_to_le32((OHCI1394_phy_tcode << 4) |
-+		header[0] = cpu_to_le32((TCODE_LINK_INTERNAL << 4) |
- 					(packet->speed << 16));
- 		header[1] = cpu_to_le32(packet->header[1]);
- 		header[2] = cpu_to_le32(packet->header[2]);
-diff --git a/drivers/firewire/ohci.h b/drivers/firewire/ohci.h
-index 71c2ed84cafb..9ed36cfc6cae 100644
---- a/drivers/firewire/ohci.h
-+++ b/drivers/firewire/ohci.h
-@@ -153,7 +153,6 @@
- #define OHCI1394_evt_unknown		0xe
- #define OHCI1394_evt_flushed		0xf
- 
--#define OHCI1394_phy_tcode		0xe
- 
- // Self-ID DMA.
+ static void log_ar_at_event(struct fw_ohci *ohci,
+ 			    char dir, int speed, u32 *header, int evt)
+ {
++	static const char *const tcodes[] = {
++		[TCODE_WRITE_QUADLET_REQUEST]	= "QW req",
++		[TCODE_WRITE_BLOCK_REQUEST]	= "BW req",
++		[TCODE_WRITE_RESPONSE]		= "W resp",
++		[0x3]				= "-reserved-",
++		[TCODE_READ_QUADLET_REQUEST]	= "QR req",
++		[TCODE_READ_BLOCK_REQUEST]	= "BR req",
++		[TCODE_READ_QUADLET_RESPONSE]	= "QR resp",
++		[TCODE_READ_BLOCK_RESPONSE]	= "BR resp",
++		[TCODE_CYCLE_START]		= "cycle start",
++		[TCODE_LOCK_REQUEST]		= "Lk req",
++		[TCODE_STREAM_DATA]		= "async stream packet",
++		[TCODE_LOCK_RESPONSE]		= "Lk resp",
++		[0xc]				= "-reserved-",
++		[0xd]				= "-reserved-",
++		[TCODE_LINK_INTERNAL]		= "link internal",
++		[0xf]				= "-reserved-",
++	};
+ 	int tcode = async_header_get_tcode(header);
+ 	char specific[12];
  
 -- 
 2.43.0
