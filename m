@@ -1,59 +1,61 @@
-Return-Path: <linux-kernel+bounces-266194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0BD093FC35
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:18:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC0A993FC3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:18:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 393FAB23122
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:18:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 296531C219A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5AC16C6AC;
-	Mon, 29 Jul 2024 17:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DFE187850;
+	Mon, 29 Jul 2024 17:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E93kPSWi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EYS0dRUW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED2215F32E;
-	Mon, 29 Jul 2024 17:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B132F16F0C5;
+	Mon, 29 Jul 2024 17:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722273442; cv=none; b=bUAYshlSIrNvk6uudx2oBTl5SubdojgXvuowxhizPx11R+UqyE7W5T+WZDXZYlNU6EGyHlmwj0Fz4OEThg8yVxPe2ZBPKFnqKVkhaXxNEeZREDK2Kd57aixtzWLou/kMQKTZ4ing17P/GZW7WVN76Ugg7Mt0ZGljlF12p2GZSWw=
+	t=1722273448; cv=none; b=ZNcIUc8CWVBgiB+/9nFYHVYX5JVpTqUPnme23uHsVxvM8Tr+cGcLh1kcjRx6ZPNcGSiirrfJLFVbICbjbz6DvBxne8jLG6+8oHUORoVIRTbOyKdkWuItu3/U1sXaibtdjv6K8i1roGMzmnCSLB+3VwgarhpOW7tOvK6Xk/tYTYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722273442; c=relaxed/simple;
-	bh=PEY4N1SeOldJfpmYebIWBl67BwD9EmlTasjdOhxv4W8=;
+	s=arc-20240116; t=1722273448; c=relaxed/simple;
+	bh=WEp7MKcDizDCCmWrtrmzawwxKIgA8pq0VK4KYR7wRv8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rov0ZZLXV4f9Pjhz2wM7Jvaxau944GFnzesIh1GNoUFzfOgM2YlIk06rrORj0rYSytIDp6HaOOJ/pB3ypSD0fXgQurSNX/Imm3qyb4QQph5sDfaAt3TskJ4tpI9uO7fE/djYnzb3ki7QcqywAmh8D7tHMTC+H++bj8kHcRuT8i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E93kPSWi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE20EC4AF09;
-	Mon, 29 Jul 2024 17:17:19 +0000 (UTC)
+	 MIME-Version:Content-Type; b=aldHcXRyEZVrF5rH2O0YqfiL5j3tYu/oe7mmfiOc5erHSNtisvwWxzNd5HD6L6FbbfFMu5z4SmxtXEw1Yz8YBjgmbAEYAL2G9JyY+1wZutGe/dEJKJUimV6zsKPy7WQfLK/f8/pMMZN6Ut97UypZnn6t4f7uIqGHCgle/1fjSZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EYS0dRUW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9012DC4AF09;
+	Mon, 29 Jul 2024 17:17:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722273442;
-	bh=PEY4N1SeOldJfpmYebIWBl67BwD9EmlTasjdOhxv4W8=;
+	s=k20201202; t=1722273448;
+	bh=WEp7MKcDizDCCmWrtrmzawwxKIgA8pq0VK4KYR7wRv8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=E93kPSWixEDFqZLHZ8Xl2LZjTukyIwS7TrnNXwsJ6o4KG7chXU5Q1yZywA2xFzqX9
-	 XtTEU2SA4kKPDeel0t9hX88+m3TOesea2fWk7glZKU3cAOswKTrB/te98vDv8H3T1b
-	 qjX/son+O3HfadXwNS2TLpehXU/A9idvJAGs41D35MpkZbaYDMUg8eeAa6bjCD87do
-	 fKJWjEL8TGHV/Q25697Dkl/Fr5jxQRxqlgfpXzxOxHCQBHLquYxA0EKaQvoGz7t1AV
-	 xTp34zxmrGd0awXvLCfqRvhkBg/B4gfywT19g7AoOXOYL/erDQYhFvi+CLthLdtOEQ
-	 D2u1tLBBjuybg==
+	b=EYS0dRUWWI54YiZjUGYaFWirms4lFG4IfgpKnfBF2LMiggAKMgGD/zVDhcqSo8/+8
+	 4Se4G83nFa+yz6UmhKS0kNzh1xhhtxVNNLdRkwy/O4YEHssomQqZ0FlxWyu/sWp/Lj
+	 pxBa719WjOCD1iLZHb3nCOSb/tNPx210XsVCpehqoPBfgw60s1Oscfmi7of1u0LBfB
+	 ircXZ2C7hryyk4IijVwlXXAVAsXNbZquATXjuJcA9MP7S8eK07lawacEbNZQ3Tmx3q
+	 N/fsmqz7oq9o0G1YPfRTAoBgf9F7O2wPE0QaTAiqPXOVEO3ta5eHDAvNwJTEmFmLrk
+	 zXQL7ual5KcvQ==
 From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
- amergnat@baylibre.com, kuninori.morimoto.gx@renesas.com, 
- jernej.skrabec@gmail.com, nfraprado@collabora.com, robh@kernel.org, 
- Chen Ni <nichen@iscas.ac.cn>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-In-Reply-To: <20240709085131.1436128-1-nichen@iscas.ac.cn>
-References: <20240709085131.1436128-1-nichen@iscas.ac.cn>
-Subject: Re: [PATCH] ASoC: mediatek: mt8192: remove redundant null pointer
- check before of_node_put
-Message-Id: <172227343957.109775.6108322650659499357.b4-ty@kernel.org>
-Date: Mon, 29 Jul 2024 18:17:19 +0100
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
+ alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Adam Skladowski <a39.skl@gmail.com>
+In-Reply-To: <20240723083300.35605-1-krzysztof.kozlowski@linaro.org>
+References: <20240723083300.35605-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] ASoC: dt-bindings: qcom,apq8016-sbc-sndcard: move to
+ separate binding
+Message-Id: <172227344531.109775.3516537789525186479.b4-ty@kernel.org>
+Date: Mon, 29 Jul 2024 18:17:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,11 +66,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
-On Tue, 09 Jul 2024 16:51:31 +0800, Chen Ni wrote:
-> of_node_put() has taken the null pointer check into account. So it is safe
-> to remove the duplicated check before of_node_put().
+On Tue, 23 Jul 2024 10:33:00 +0200, Krzysztof Kozlowski wrote:
+> The APQ8016 SBC and MSM8916 QDSP6 sound cards are a bit different from
+> others: they have additional IO muxing address space and pin control.
+> Move them to separate schema, so the original qcom,sm8250.yaml will be
+> easier to manage.  New schema is going to grow for other platforms
+> having more of IO muxing address spaces.
 > 
 > 
+> [...]
 
 Applied to
 
@@ -76,8 +82,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: mediatek: mt8192: remove redundant null pointer check before of_node_put
-      commit: 42eb47310f89eca3226e8e427bc9d571149dc866
+[1/1] ASoC: dt-bindings: qcom,apq8016-sbc-sndcard: move to separate binding
+      commit: 8716bd241fa120aacce5e0136125b7ecc74fe3b2
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
