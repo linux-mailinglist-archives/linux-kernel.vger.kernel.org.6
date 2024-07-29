@@ -1,143 +1,189 @@
-Return-Path: <linux-kernel+bounces-265548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 225AB93F2AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:29:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4BCB93F2AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A356E1F22842
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:29:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DFA82825D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA65144306;
-	Mon, 29 Jul 2024 10:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9973A1448D7;
+	Mon, 29 Jul 2024 10:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ghUwKQlW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="XwFVssKS"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471C778C63
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 10:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F241442FB
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 10:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722248940; cv=none; b=M65AISD5xPMhLVy6x+7ur8PlPuPyqYgdpLvfkqVBrlm/PgGf+1OcttMrTJTLXMfAi2uCCH+HEilWWFJQkcJX1Pe1kFqKqMIrNdGe4fxJ2NE28/ZAk4tH6yh3ZuIuWB65xloMe5PVuJpfWrBbWqfgPjKFcI1JxPnJh3MXq1YIqa0=
+	t=1722248967; cv=none; b=PxkGTZH7mtD+ldPSfV/JsaA2i6PoPy3kDRnqRoifnunkuzuoSH6LwAIrSzjLWd9LguJoyEE8IcNNGzM2MijwtGvUwo3zTpd+ulZ9ii/34EX4Uf4O51ky6dfy7KEnTYG/t+z9HKiijB1v3Spw5qbidGUcWxhV6CB6EI34g3rUw2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722248940; c=relaxed/simple;
-	bh=94HpCqIwg6BpBMPLVy8Gp//1JlmALRCUA0aVAoB9dK0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BB7zNg4QkMU5uicsXpWl8TZBBJV71677CStmpaObXPNIIUM3R5RfB96F1crSfeaxcQ0/Fm8CHcBQT7BUgjTTvMaNXdzMlNpQUXTrfIbolFpqP+bWa3WR6x0EvLJLZheFuIgc5RIMA/sie3Ehxla7gWF40G16UhESTYxbKKrR5nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ghUwKQlW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722248938;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=94HpCqIwg6BpBMPLVy8Gp//1JlmALRCUA0aVAoB9dK0=;
-	b=ghUwKQlW8pOOtS2zcJdcj8c37BeppOgF1LnPOr/pt7a9yKngG5hjLj0grkRHcvxUUK7yqf
-	2Ntg0rrDe7HAFzJoUhdIleGYK1VRVZyKCugMwMG2xU6fjKzikS/oired3P1Mt+dGVdtnGS
-	8yJ095OHe0Dv0Je/yrlg0CwBDPpde6E=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-125-LDkD-ClgNZey4wATfRlGyQ-1; Mon, 29 Jul 2024 06:28:56 -0400
-X-MC-Unique: LDkD-ClgNZey4wATfRlGyQ-1
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2cb639aa911so3122668a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 03:28:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722248936; x=1722853736;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+	s=arc-20240116; t=1722248967; c=relaxed/simple;
+	bh=O6otxQZDC1k5aNFt0JF4c6gkWn1tE2tulJLiFxwOJd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fj1Z5Qo+YvkPyKvyx7nOisuIr6gsRUOh4uPvEEejeqad3NGyfFaLbcp9x/8u5UVvQ+1U/5ZAuD2y4obH+EBk/OPy8Oe5rcvRxKnTRJtUJYCjxFwVCyaUeljPlGYQid1lSDTr0TbE0SnqpuEgdSct86ptVXl+gqLI96XAxFVnkKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=XwFVssKS; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3685a5e7d3cso1448697f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 03:29:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1722248964; x=1722853764; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=94HpCqIwg6BpBMPLVy8Gp//1JlmALRCUA0aVAoB9dK0=;
-        b=AdpetGNS6wL0JavpO1ylUj1ILleH34OdQC9O2LPerlf32IaO98idbF0EYIkQI6U8Rl
-         ve+ChrHpnXBTaU852CW3WVQ3HQAXJTuHdwH3boqSYNXFYyXZw8Bu7FKjbTxFIqxaC1HN
-         SQw5F4GLr0Q2SajOjArIueAxwI3B1sLsJjtQ3cKgQyEJzRxyk3OgDS44Zhk4xF3r9OOT
-         LPmXBD0VWVNp9hj5/6agWvHPDxXdPY1yCmLZB8NbitngJDQo5TCbrXF4ee2W/zrC8T7A
-         jeN5ogbmUA9IZ5biyfcDT4whVEh4rJ2w6wMS1ramUsngcZPjeaMOrzSo28Mkun2poeu7
-         ZtDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUinhtBXSZrjkTyViLSGQGid2P8BeNxhLzMG23IvJuXR7LebQJK8flAzU/Lj0I1oEwALUP8bweUEFYlES6/u72TccsVyK5edZQUJRXU
-X-Gm-Message-State: AOJu0Yytw+nehxzkLS/tFn21HNcbwyJRi6SeVok+Q1JSqa71OSmuuIa7
-	DgknB1YxcyNiQ9WslmgnRY3/ifCniK52fXCKHSVIfpfOwukqwJ7AOsdZpcDJCV/AjcowqSjmjmO
-	hYTlzNZ/4xr5fj7kE3X3BaejxggD6yttnnta5HPNqxwbPoOlqRJ1QzOPdJ6oWWSdMTdsFXtiz5x
-	u1Heg3yJhTLk8OFWxwaUCZ24JdGwSa/Big8TNQ
-X-Received: by 2002:a17:90b:4c10:b0:2c9:7e98:a4b8 with SMTP id 98e67ed59e1d1-2cf7e207326mr5246208a91.24.1722248935722;
-        Mon, 29 Jul 2024 03:28:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGNC/iS70v48zrdpZXE+dD099lMsj3bVzyfkaPrvoNB79eNxNaWVl5ejuzlLHrFBwBSRnBoCL40IKptXEr4wkw=
-X-Received: by 2002:a17:90b:4c10:b0:2c9:7e98:a4b8 with SMTP id
- 98e67ed59e1d1-2cf7e207326mr5246190a91.24.1722248935365; Mon, 29 Jul 2024
- 03:28:55 -0700 (PDT)
+        bh=XZGIHdfwruuw8a2HZZzQzYeFhndOAkcBR+nn4eBl6c8=;
+        b=XwFVssKSxMP1PSKFzmTFjgxO6XuLuccRGlkVZbvlID/I90CDNYEWNr7RoQ5/1eGIb6
+         vFKYVpoiJEB6Jem/DU7aojuci31aYIfvm5aPrNe3FPOrj9bU1G1CevgoQ5kMPkEilmMx
+         MwsO9CYqOixd9IXFJkw/yxtO8gH7WPeR9Fu7w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722248964; x=1722853764;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XZGIHdfwruuw8a2HZZzQzYeFhndOAkcBR+nn4eBl6c8=;
+        b=nKiNKdf/1lIuW8ST5qEJhHVkcO/cVjMbY8wtFAqDL8IiAi3pt7Nwj+iRfB/JmNj1lF
+         4uhfEV2nX1tFPRMRtrK49NgMROFmudyenSWvetzXTcdDODdAkHmZvoHIWEGzT9a3t+wM
+         u8zo9EcoQZ9p+H5Nkkb5DXLuYAI6Tey7DVq7oRzZ8d+mmUB7TSrjm6c9nIO0ykYjp1fC
+         eIhPFAcvnL4TBFzKu+LHRdroc02pYVU2t9Y5vn5iV3oq/dK2Gg0WGn2xkSwZt6NezMDj
+         aUVy/A5IYIs4Ocqe1vwl5i0b/MMe/2WLagzpL1cHaQ0hgDT5jpt8zWndZXyV+BOsafWZ
+         JifQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMpzb4jgpEQyV5j+tde1q6FjnPqKVhl9SJkFmKkADTHbRbhYrTY+HYPViYYr9tD5efDk+eu23Bqv+Oh+2VzTrzpkDaQ9IeqXPTsQjH
+X-Gm-Message-State: AOJu0Yz6fBkbxoOCDavJuX+gHicdLEfPcVohyVUUdzMTxLULWg1Pc7q7
+	X732+MQMaWrGmXS1IuhCWmF3gyGHfcNpIiU8U/lnt2N8VQ2N9WLF/Tse7HSbqYo=
+X-Google-Smtp-Source: AGHT+IH4R5QJ6J278MwWKDODDM8daysZcJnYsL7HDJR6U6jL6gBsYBeGTAAWFt/xysy8mm7bLkFzwQ==
+X-Received: by 2002:a05:6000:2c4:b0:367:9522:5e6d with SMTP id ffacd0b85a97d-36b5d3694e1mr5786168f8f.52.1722248964322;
+        Mon, 29 Jul 2024 03:29:24 -0700 (PDT)
+Received: from LQ3V64L9R2 ([80.208.222.2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4281fb6369esm12873365e9.48.2024.07.29.03.29.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 03:29:24 -0700 (PDT)
+Date: Mon, 29 Jul 2024 11:29:22 +0100
+From: Joe Damato <jdamato@fastly.com>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, andrew@lunn.ch, jiri@resnulli.us,
+	horms@kernel.org, rkannoth@marvell.com, pkshih@realtek.com,
+	larry.chiu@realtek.com
+Subject: Re: [PATCH net-next v25 08/13] rtase: Implement net_device_ops
+Message-ID: <ZqdvAmRc3sBzDFYI@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Justin Lai <justinlai0215@realtek.com>, kuba@kernel.org,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	andrew@lunn.ch, jiri@resnulli.us, horms@kernel.org,
+	rkannoth@marvell.com, pkshih@realtek.com, larry.chiu@realtek.com
+References: <20240729062121.335080-1-justinlai0215@realtek.com>
+ <20240729062121.335080-9-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702095401.16278-1-gongruiqi1@huawei.com> <9473d6eb-3f56-4c73-8e61-69111837c07b@huawei.com>
- <CAHC9VhR+tk4mwmaQ6u8SEnzg6zMF2krFHKVwxKx91GX1K=4A=g@mail.gmail.com>
- <0729db54-98cf-4006-91d0-0ebda4dbc251@huawei.com> <CAFqZXNsN9M__Mo018L8m0txi60vm3Ui5HgHvJYQK__0hhhMULQ@mail.gmail.com>
- <55390a1e-5994-465a-a5c5-94f3370259c3@huawei.com>
-In-Reply-To: <55390a1e-5994-465a-a5c5-94f3370259c3@huawei.com>
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Mon, 29 Jul 2024 12:28:44 +0200
-Message-ID: <CAFqZXNu_cLLH811Z8CxDb07Adf+E_z+1nH=7nkO9H83CY9RETw@mail.gmail.com>
-Subject: Re: [PATCH testsuite] tests/task_setscheduler: add cgroup v2 case for
- moving proc to root cgroup
-To: Gong Ruiqi <gongruiqi1@huawei.com>
-Cc: Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	selinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Wang Weiyang <wangweiyang2@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729062121.335080-9-justinlai0215@realtek.com>
 
-On Sat, Jul 27, 2024 at 4:55=E2=80=AFAM Gong Ruiqi <gongruiqi1@huawei.com> =
-wrote:
->
->
-> On 2024/07/26 21:43, Ondrej Mosnacek wrote:
-> > On Thu, Jul 18, 2024 at 2:34=E2=80=AFPM Gong Ruiqi <gongruiqi1@huawei.c=
-om> wrote:
-> >>
-> >>
-> >> On 2024/07/18 0:17, Paul Moore wrote:
-> >>> ...
-> >>>
-> >>> Where (what distribution, version, etc.) did you see this problem?
-> >>
-> >> The problem occurred when I ran the testsuite on Fedora 40 with v6.6
-> >> kernel, and it was the only failed testcase.
-> >
-> > Sorry for the delay... For some reason the test passes for me even
-> > with cgroup v2 only and without the patch (also when run from a
-> > regular user account with sudo). Do you happen to know what
-> > circumstances are needed for it to fail when the cgroup is not
-> > switched?
-> >
->
-> As the comment in the script says, a process need to be in the root
-> cgroup in order to switch its scheduler policy to SCHED_{RR,FIFO}. So
-> maybe in your case the shell process is already in the root cgroup?
->
-> In my case I need to ssh to a Fedora VM, and that makes my shell process
-> to be in a sub cgroup called /user.slice/.../XXX.scope (looks like some
-> systemd stuff). And since /sys/fs/cgroup/cpu/tasks doesn't exit in the
-> system with cgroup v2 only, the script skips moving the target process
-> to the root cgroup, and therefore the subsequent test fails.
+On Mon, Jul 29, 2024 at 02:21:16PM +0800, Justin Lai wrote:
+> 1. Implement .ndo_set_rx_mode so that the device can change address
+> list filtering.
+> 2. Implement .ndo_set_mac_address so that mac address can be changed.
+> 3. Implement .ndo_change_mtu so that mtu can be changed.
+> 4. Implement .ndo_tx_timeout to perform related processing when the
+> transmitter does not make any progress.
+> 5. Implement .ndo_get_stats64 to provide statistics that are called
+> when the user wants to get network device usage.
+> 6. Implement .ndo_vlan_rx_add_vid to register VLAN ID when the device
+> supports VLAN filtering.
+> 7. Implement .ndo_vlan_rx_kill_vid to unregister VLAN ID when the device
+> supports VLAN filtering.
+> 8. Implement the .ndo_setup_tc to enable setting any "tc" scheduler,
+> classifier or action on dev.
+> 9. Implement .ndo_fix_features enables adjusting requested feature flags
+> based on device-specific constraints.
+> 10. Implement .ndo_set_features enables updating device configuration to
+> new features.
+> 
+> Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+> ---
+>  .../net/ethernet/realtek/rtase/rtase_main.c   | 235 ++++++++++++++++++
+>  1 file changed, 235 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> index 8fd69d96219f..80673fa1e9a3 100644
 
-In my case I ssh as root and end up in
-/user.slice/user-0.slice/session-1.scope cgroup,
-/sys/fs/cgroup/cpu/tasks also doesn't exist, and yet the test passes.
-The same also happens when I ssh as a regular user (with cgroup
-/user.slice/user-1000.slice/session-3.scope) and run the testsuite
-with sudo. So there must be something more to it... maybe some kernel
-config or sysctl setting?
+[...]
 
---=20
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+> +static void rtase_dump_state(const struct net_device *dev)
+> +{
 
+[...]
+
+> +
+> +	netdev_err(dev, "tx_packets %lld\n",
+> +		   le64_to_cpu(counters->tx_packets));
+> +	netdev_err(dev, "rx_packets %lld\n",
+> +		   le64_to_cpu(counters->rx_packets));
+> +	netdev_err(dev, "tx_errors %lld\n",
+> +		   le64_to_cpu(counters->tx_errors));
+> +	netdev_err(dev, "rx_errors %d\n",
+> +		   le32_to_cpu(counters->rx_errors));
+> +	netdev_err(dev, "rx_missed %d\n",
+> +		   le16_to_cpu(counters->rx_missed));
+> +	netdev_err(dev, "align_errors %d\n",
+> +		   le16_to_cpu(counters->align_errors));
+> +	netdev_err(dev, "tx_one_collision %d\n",
+> +		   le32_to_cpu(counters->tx_one_collision));
+> +	netdev_err(dev, "tx_multi_collision %d\n",
+> +		   le32_to_cpu(counters->tx_multi_collision));
+> +	netdev_err(dev, "rx_unicast %lld\n",
+> +		   le64_to_cpu(counters->rx_unicast));
+> +	netdev_err(dev, "rx_broadcast %lld\n",
+> +		   le64_to_cpu(counters->rx_broadcast));
+> +	netdev_err(dev, "rx_multicast %d\n",
+> +		   le32_to_cpu(counters->rx_multicast));
+> +	netdev_err(dev, "tx_aborted %d\n",
+> +		   le16_to_cpu(counters->tx_aborted));
+> +	netdev_err(dev, "tx_underun %d\n",
+> +		   le16_to_cpu(counters->tx_underun));
+
+You use le64/32/16_to_cpu here for all stats, but below in rtase_get_stats64, it
+is only used for tx_errors.
+
+The code should probably be consistent? Either you do or don't need
+to use them?
+
+> +}
+> +
+[...]
+> +
+> +static void rtase_get_stats64(struct net_device *dev,
+> +			      struct rtnl_link_stats64 *stats)
+> +{
+> +	const struct rtase_private *tp = netdev_priv(dev);
+> +	const struct rtase_counters *counters;
+> +
+> +	counters = tp->tally_vaddr;
+> +
+> +	dev_fetch_sw_netstats(stats, dev->tstats);
+> +
+> +	/* fetch additional counter values missing in stats collected by driver
+> +	 * from tally counter
+> +	 */
+> +	rtase_dump_tally_counter(tp);
+> +	stats->rx_errors = tp->stats.rx_errors;
+> +	stats->tx_errors = le64_to_cpu(counters->tx_errors);
+> +	stats->rx_dropped = tp->stats.rx_dropped;
+> +	stats->tx_dropped = tp->stats.tx_dropped;
+> +	stats->multicast = tp->stats.multicast;
+> +	stats->rx_length_errors = tp->stats.rx_length_errors;
+
+See above; le64_to_cpu for tx_errors, but not the rest of the stats. Why?
 
