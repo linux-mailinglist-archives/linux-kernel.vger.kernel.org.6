@@ -1,118 +1,117 @@
-Return-Path: <linux-kernel+bounces-266328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C26F93FE36
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:26:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 623A793FE3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2F21282D60
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:26:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93DD11C22264
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D93187858;
-	Mon, 29 Jul 2024 19:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29FE188CA5;
+	Mon, 29 Jul 2024 19:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iY76AxuA"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QRQXKTf9"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2921187850
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 19:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4924E187322;
+	Mon, 29 Jul 2024 19:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722281190; cv=none; b=iEmGhB7iTpscGu8RQRMBsQC+hpcW7+VHXt6zD7gO9Mlv0wDvh44y+LzSRRgCaOhPwrBq3mnGH8FV/DRaVemipfhdqFahlz7OY6VIFl0BX6YlNGy0zMSaQAb0V4iqwlQv6m8Qk4O7kI4kTHKVzQy/03Hz3Vl/+SnNVa6f/brPJLg=
+	t=1722281247; cv=none; b=VRYElihG7IVraTJ+R6JU3DC/8UT9kNy1KC/Kg/4bqA16bXgGIP6o+u0dQeRA+StAgxm+M8Fo51WWD9aoBMfNvAOi0TFP4sK37UT0RNjEXZLtUAQD+xSG2JOS4bVt3zyP4pVRps3iPYe18mgKSiZQn3MSjFkT7SR33c92z4yT2/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722281190; c=relaxed/simple;
-	bh=12r+qoVgIwNMujUj1Lw9nLCpW580cxRA8WuCewWiy8U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oaQQLzKTgfLTjxvsbjs0uO9dmOTaq99cx8ydF+1iGD+AcxxOqzu4TX1TtyEx27uf1/VtzXKReQNdP2V3ETs+DGvHKGApNzIrbjI5arL5wzLNEo+23NKpbyvL+Sc0kSqZT0zPWYF/JTC1Q7k2hoiawsbwYiuWVnwrZUwvqV5UiLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iY76AxuA; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-81f7faff04dso23529639f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:26:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722281187; x=1722885987; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+kwWLpKJa8JQmE+XMPSbBE95rM7lCL8UnHLXXsddUg0=;
-        b=iY76AxuASfYwPjBb4cu2hEubkGwrSTBudFXsE55AviLcihah8C3TRs4syeBz2t/BCV
-         NfoXZjeQbljOmTqi6Vn5RLbIVLMCebe52xJ3S13s9uVRx/axWRnTwqMLEMbnd0SMXhp2
-         W8GQqpFVnwK4iYtaMMDXerM1xbWCvxp1gCQOo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722281187; x=1722885987;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+kwWLpKJa8JQmE+XMPSbBE95rM7lCL8UnHLXXsddUg0=;
-        b=GOtL0IvYIFY1D0p9kPyu3NcRXxyRubWivy1Wczq9MkBOksMm5CttJTEYbeES14aU7c
-         PMD1w+YuhfQezdrJiDajPqAN35ZVxZQJKcp/LXSfOv8foGn1HrFQwhhWfS/Z+HfejZsz
-         7GsVpS4be0yBIkZ0NlnP9OxR2Zw/lFZjsN5Eld5HHGtQo3Z+rNg6tQ3MxYvXq7EtRYuV
-         nQDT2QGPanB1kKuJgAUyrZw/iMtBYlUbMYPTN5ZFbA8BYUfriBgY19Orq9oaVVA9kws1
-         WQIscnIiT9zwq+du5/BgT5DaSMbsPW0muAhcNAPpxQS56XuYU3XoJXqyrbKblgYcFQ2C
-         45YQ==
-X-Gm-Message-State: AOJu0Yys+3CpJiTAvvbRYZ9AurTxcw0OMc0jg922pOK4q2zZwOgoTkND
-	Cbm/wENAlzjccIkz1D79bcYFTuDWaNnevTDpC28GmlebbvZa+66UkP8R2PqW1TI=
-X-Google-Smtp-Source: AGHT+IH5qDpmLWMY5mYooQOyIzYHn29X3m+a786VYmBRROEY+94JBvmh76Ky2yQETad5sL8Ac8mbfQ==
-X-Received: by 2002:a5e:c91a:0:b0:81f:922a:efdb with SMTP id ca18e2360f4ac-81f922af876mr527827439f.1.1722281187035;
-        Mon, 29 Jul 2024 12:26:27 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-81f7d6cbfedsm308183539f.10.2024.07.29.12.26.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jul 2024 12:26:26 -0700 (PDT)
-Message-ID: <120ddb22-34c4-4d18-8238-306485680c5a@linuxfoundation.org>
-Date: Mon, 29 Jul 2024 13:26:25 -0600
+	s=arc-20240116; t=1722281247; c=relaxed/simple;
+	bh=Sx5GnLyFD86DhvvRIf0ymkAYo91m0ZR+VpQ3SCr3aCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QnMZokLokaNgeBFj+kQEfZay1OGA5UJLd4lLOuCiib25ptZ6QpG4PoP5S3LE26kx/sUHogiB4wLF64s3NY4u1+8z2p6FKbyooycoMTCcUoGQPnBtZS3+5Vo8hFQus3173LO7xozIH2K/9dy3+duPwlq6ANhQ03g4UnK/CAZDizY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QRQXKTf9; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=SPWJtm427QjfDF7wPVvtx41fVv4rQ2hu/R2QSwgK83Y=; b=QRQXKTf95sTqQZ3pCXczu3HPxh
+	RrNU7+s7H8s6ve3l50tTqcU2rL5khfEfGL/AvOQr9S5GNDw/42DnM04lR5C4UJFTcLPb1jM/EQ+eC
+	HRdmjLpnAzt0R665oqXCIV+SMX3K7uAa3oPeQ2PCmRDlTGhovX7RsNC2Pw6ES6NVxYoQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sYW1Q-003Uzh-5d; Mon, 29 Jul 2024 21:27:04 +0200
+Date: Mon, 29 Jul 2024 21:27:04 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Martin =?iso-8859-1?Q?Hundeb=F8ll?= <martin@geanix.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Michal Kubiak <michal.kubiak@intel.com>,
+	Vibhore Vardhan <vibhore@ti.com>,
+	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
+	Conor Dooley <conor@kernel.org>, linux-can@vger.kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/7] can: m_can: Map WoL to device_set_wakeup_enable
+Message-ID: <15424d0f-9538-402f-bc5d-cdd630c7c5e9@lunn.ch>
+References: <20240729074135.3850634-1-msp@baylibre.com>
+ <20240729074135.3850634-3-msp@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/12] tools/nolibc: improve LLVM/clang support
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240728-nolibc-llvm-v1-0-bc384269bc35@weissschuh.net>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240728-nolibc-llvm-v1-0-bc384269bc35@weissschuh.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729074135.3850634-3-msp@baylibre.com>
 
-On 7/28/24 04:09, Thomas Weißschuh wrote:
-> The current support for LLVM and clang in nolibc and its testsuite is
-> very limited.
+On Mon, Jul 29, 2024 at 09:41:30AM +0200, Markus Schneider-Pargmann wrote:
+> In some devices the pins of the m_can module can act as a wakeup source.
+> This patch helps do that by connecting the PHY_WAKE WoL option to
+> device_set_wakeup_enable. By marking this device as being wakeup
+> enabled, this setting can be used by platform code to decide which
+> sleep or poweroff mode to use.
 > 
-> * Various architectures plain do not compile
-> * The user *has* to specify "-Os" otherwise the program crashes
-> * Cross-compilation of the tests does not work
-> * Using clang is not wired up in run-tests.sh
+> Also this prepares the driver for the next patch in which the pinctrl
+> settings are changed depending on the desired wakeup source.
 > 
-> This series extends this support.
-> 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
 > ---
-> Thomas Weißschuh (12):
->        tools/nolibc: use clang-compatible asm syntax in arch-arm.h
->        tools/nolibc: limit powerpc stack-protector workaround to GCC
->        tools/nolibc: move entrypoint specifics to compiler.h
->        tools/nolibc: use attribute((naked)) if available
->        selftests/nolibc: report failure if no testcase passed
->        selftests/nolibc: avoid passing NULL to printf("%s")
->        selftests/nolibc: determine $(srctree) first
->        selftests/nolibc: setup objtree without Makefile.include
->        selftests/nolibc: add support for LLVM= parameter
->        selftests/nolibc: add cc-option compatible with clang cross builds
->        selftests/nolibc: run-tests.sh: avoid overwriting CFLAGS_EXTRA
->        selftests/nolibc: run-tests.sh: allow building through LLVM
+>  drivers/net/can/m_can/m_can.c | 37 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
 > 
+> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+> index 81e05746d7d4..2e4ccf05e162 100644
+> --- a/drivers/net/can/m_can/m_can.c
+> +++ b/drivers/net/can/m_can/m_can.c
+> @@ -2182,6 +2182,36 @@ static int m_can_set_coalesce(struct net_device *dev,
+>  	return 0;
+>  }
+>  
+> +static void m_can_get_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
+> +{
+> +	struct m_can_classdev *cdev = netdev_priv(dev);
+> +
+> +	wol->supported = device_can_wakeup(cdev->dev) ? WAKE_PHY : 0;
+> +	wol->wolopts = device_may_wakeup(cdev->dev) ? WAKE_PHY : 0;
+> +}
 
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+It is nice to see Ethernet WoL mapped to CAN :-)
 
-thanks,
--- Shuah
+So will any activity on the CAN BUS wake the device? Or does it need
+to be addresses to this device?
+
+	Andrew
 
