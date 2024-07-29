@@ -1,123 +1,122 @@
-Return-Path: <linux-kernel+bounces-266172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F47693FBF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:00:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4F893FBFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDF82282B3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:00:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDDD71C22558
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7920615921B;
-	Mon, 29 Jul 2024 17:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F2215EFC0;
+	Mon, 29 Jul 2024 17:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VWBK5J/1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TdogiUql"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AE215622E;
-	Mon, 29 Jul 2024 17:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E25364A0;
+	Mon, 29 Jul 2024 17:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722272443; cv=none; b=LVz9yvg2It6yzB2pqo9aGGmlDU2VWLV2C+G/jQGmS+UkQxRQgCG0GzItriGb7CaI5HK9LANYdB7DhAwRXDaIgLtUHRerDkZKn941+rbg0fF738OslNMvuz14XTubhkSIESvnf9pJrKGveq+jXCGwp8I5hNMt1Uq0nx1LO0QHM7M=
+	t=1722272479; cv=none; b=hrDr+oF4jRaMd35OuICAZYUiPcdfIL8Xwl+83B9VIe/TOGzBof1QE0/Wer/tZrwhQhpmmIX1y7pOT+H+oWyBwwzggCrEyw/OTAv/1wJEgzGSCZus5Suem2mXemJ8AfkEZGNHRilXWCEsGXs51bxdwU4565Wt6XMWYwnyVRzHDKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722272443; c=relaxed/simple;
-	bh=IFkGlrBeSobkW77QizdeJQdd6iLBy/wzKY7LKGO4qt0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SLiEeAIeV0p7ndjO7928jef3r16KjfbRRPsNom81lPf5veoomjZ12byA5vm/F5U6+12oEOJGxa0BtTy7ZY11LqibmzQuwrpL1m3i2/jQh1oF7W+6GhdQmztXnkSmBqmGwSHtuEgxZJrSdwGYQ2yw8ifcY3LPtL7UZV8VQzVE89I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VWBK5J/1; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722272442; x=1753808442;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=IFkGlrBeSobkW77QizdeJQdd6iLBy/wzKY7LKGO4qt0=;
-  b=VWBK5J/1lPSoY1lYTwZyN77uI5Uu50jJhECd4TLQ1EE9fAzMiEZoM2J5
-   FjBqgD7+z1IeeDvsDLIu5C7m4o93ADvtBxXWzOB2aoROvLQLFAiwrsLqx
-   QjiySeE57bY5ZNqbai9fn+SlQwSxAY/WvLM7KfVLCevtbL4iympbLtpt3
-   C9sTqYhNNK/XE66BBAfwT8MDL/nDvomixzg4SfNS4Az5jHNoWrlfHjxGS
-   lEHUL0IocgUd6eyQPWPpKcOLNQ+3tu2BGyQUdN4WILISYTSv+CSm3z8OH
-   INPnfRDZBdwLN6SZVajvne2swyr4rwpjzvWle2R9A0Zvfmt2nz60rDVvN
-   g==;
-X-CSE-ConnectionGUID: sFXFJlZ/TpeoChsI36RSGg==
-X-CSE-MsgGUID: 8oV9xI59RSiCtg74WmS7sw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="30634420"
-X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
-   d="scan'208";a="30634420"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 10:00:41 -0700
-X-CSE-ConnectionGUID: oMkXgV2xQoWbjW6vrWpmSA==
-X-CSE-MsgGUID: 1J557ww0SsihsETU/nwh8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
-   d="scan'208";a="58625745"
-Received: from fpallare-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.214])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 10:00:38 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 29 Jul 2024 20:00:34 +0300 (EEST)
-To: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
-cc: W_Armin@gmx.de, corbet@lwn.net, platform-driver-x86@vger.kernel.org, 
-    linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] wmi: Fix spelling
-In-Reply-To: <20240729164721.125708-1-luis.hernandez093@gmail.com>
-Message-ID: <ec63657f-93d1-919b-f87f-eebb13c8938e@linux.intel.com>
-References: <20240729164721.125708-1-luis.hernandez093@gmail.com>
+	s=arc-20240116; t=1722272479; c=relaxed/simple;
+	bh=qDSKFsisGTo2TcreSFK6urZot9t+rg6BkL5ojzwAhaE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JEVSBGaOQoHH7AOLwPspgwe+pwyArGF25hA5gAur5iHD2vUpQyuTwW1AYD7IenLT7xqSFDgPg8v5gogR4Xcdr0AhbOmqgHQVlmuxMXvqZvLuLU9gDbj+2GuPZRZ7rBI5x/qP+G1mdCV6zaYOwmUFxxvynmxXUzZXE+aCdnSURsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TdogiUql; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-75cda3719efso2043400a12.3;
+        Mon, 29 Jul 2024 10:01:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722272478; x=1722877278; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ulwg8EYmfwLnMsG1oGOeX5RHdM/9qljFwXwWi6Iyz7s=;
+        b=TdogiUqlG/H+dXaW3qh+kg/mwtSMT/atXJSGdIJkCH9f9esv1lapvx4JZAsvLWWBqD
+         zMsSf4ik6DFRf0A/qGd3b7RvKnQgRPMWnvSEO/YzN7LY7s7g/0X3w1tVFnaGAioggNzq
+         8OvB5nFrQsWj1XV5Sa69gBeV1ads1D/ij4TrV1EyUw4vZhCuK896pEUlE1khCHinyGLW
+         lQV/wdy01VXYCFvCuSRLUeh5jdIni0xlwDENMKL3mDku19W4+PpQQFVzh80qkRA5FqIh
+         5+5c1PKiyN+63AA7JkcuWebbPwK3SFC0Ye5R5SViru0d5E6DWEaiYwV6qm0Xuz3hxyPg
+         uPqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722272478; x=1722877278;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ulwg8EYmfwLnMsG1oGOeX5RHdM/9qljFwXwWi6Iyz7s=;
+        b=unTdSV2xkHWNqcfX6a2XbBVrN8unw/h09uZLfpF0gK8CuBkRqBX8UHiZx9E/tl1GYG
+         QiTwGLMoR5mtm1MLlyQABCTrEPm1oRFW+YxxqbApeawDRHeTVNl+SfhFNEy4auMxI3bi
+         SnbPLtYSpC6TQdQWX4XzDkUSyrxAmCJPZav91xDGQ4PgzNY72w3dT+OH6YEAEuDm58F3
+         0BDjDZsBt/CfMMZW5PLkT4pGIevj+FeonIYKaNgi15SN8prcaTwYqxyxTyAUde3eoGaH
+         U07KORbu8u78d15gfJYjEj4o2IFrG6LehTJVpsBGgGXEp6nBL2tIjUmJQqEpWc9pUtfp
+         ynRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX50TUxrX4NzgCoZ+Vm4dqKnwI5ZLo2+MYXse9W2SZ04rpEpBPsvjP98AQz9BE1WzWvH2sRHOeMzbRweDtPRHiIfn3zdWhLU5216q2+R6E0xGI2yycooi7TfyC78GQJ/jDMk0OBi9sd/OofTrywdUxuRoDZnYUpSm519NZhhC2ZTmVmMA==
+X-Gm-Message-State: AOJu0YyPlXcYYjEa7c4t/ry+zyjGFINEwT8yLF0Ls9MINjnFzbxLTLBL
+	6Dq2sldrJxw+PCITIhCB3BKPaCurhmzJVWLQtfBzPpJgDlSyQFO0V6a1FDEwuVOmqL5Q0m122ie
+	j1huIpCQ8znW3DhWphJFIipBcU38=
+X-Google-Smtp-Source: AGHT+IFTqEjDKZA+9G7QWRlUcQeCE5GeWrGYeRAQ8VWWBfJmrsxarmH2VdDAKOIuNe0W1o1bgIPLEdYbsZgB1Wn6iQg=
+X-Received: by 2002:a17:90a:930f:b0:2c9:9f06:bb2f with SMTP id
+ 98e67ed59e1d1-2cf7e1a1d9amr6259304a91.6.1722272477624; Mon, 29 Jul 2024
+ 10:01:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20240726-overflow_check_libperf-v2-0-7d154dcf6bea@rivosinc.com> <20240726-overflow_check_libperf-v2-2-7d154dcf6bea@rivosinc.com>
+In-Reply-To: <20240726-overflow_check_libperf-v2-2-7d154dcf6bea@rivosinc.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 29 Jul 2024 10:01:05 -0700
+Message-ID: <CAEf4BzZ8MGa8Ywp_9ztJh6naywqtfrbeGWs4=izw-e-p4GGxcA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/8] libbpf: Move opts code into dedicated header
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 29 Jul 2024, Luis Felipe Hernandez wrote:
-
-Thanks for this change but please don't leave the commit message empty, 
-it's not enough to provide just the shortlog (in subject) even if the 
-change is obvious/simple. Please resubmit this with the commit message
-included.
-
--- 
- i.
-
-
-> Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+On Mon, Jul 29, 2024 at 9:46=E2=80=AFAM Charlie Jenkins <charlie@rivosinc.c=
+om> wrote:
+>
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 > ---
->  Documentation/wmi/devices/msi-wmi-platform.rst | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/wmi/devices/msi-wmi-platform.rst b/Documentation/wmi/devices/msi-wmi-platform.rst
-> index 29b1b2e6d42c..31a136942892 100644
-> --- a/Documentation/wmi/devices/msi-wmi-platform.rst
-> +++ b/Documentation/wmi/devices/msi-wmi-platform.rst
-> @@ -130,12 +130,12 @@ data using the `bmfdec <https://github.com/pali/bmfdec>`_ utility:
->  
->  Due to a peculiarity in how Windows handles the ``CreateByteField()`` ACPI operator (errors only
->  happen when a invalid byte field is ultimately accessed), all methods require a 32 byte input
-> -buffer, even if the Binay MOF says otherwise.
-> +buffer, even if the Binary MOF says otherwise.
->  
->  The input buffer contains a single byte to select the subfeature to be accessed and 31 bytes of
->  input data, the meaning of which depends on the subfeature being accessed.
->  
-> -The output buffer contains a singe byte which signals success or failure (``0x00`` on failure)
-> +The output buffer contains a single byte which signals success or failure (``0x00`` on failure)
->  and 31 bytes of output data, the meaning if which depends on the subfeature being accessed.
->  
->  WMI method Get_EC()
-> @@ -147,7 +147,7 @@ data contains a flag byte and a 28 byte controller firmware version string.
->  The first 4 bits of the flag byte contain the minor version of the embedded controller interface,
->  with the next 2 bits containing the major version of the embedded controller interface.
->  
-> -The 7th bit signals if the embedded controller page chaged (exact meaning is unknown), and the
-> +The 7th bit signals if the embedded controller page changed (exact meaning is unknown), and the
->  last bit signals if the platform is a Tigerlake platform.
->  
->  The MSI software seems to only use this interface when the last bit is set.
-> 
+>  tools/include/tools/opts.h      | 68 +++++++++++++++++++++++++++++++++++=
+++++++
+>  tools/lib/bpf/bpf.c             |  1 +
+>  tools/lib/bpf/btf.c             |  1 +
+>  tools/lib/bpf/btf_dump.c        |  1 +
+>  tools/lib/bpf/libbpf.c          |  3 +-
+>  tools/lib/bpf/libbpf_internal.h | 48 -----------------------------
+>  tools/lib/bpf/linker.c          |  1 +
+>  tools/lib/bpf/netlink.c         |  1 +
+>  tools/lib/bpf/ringbuf.c         |  1 +
+>  9 files changed, 76 insertions(+), 49 deletions(-)
+>
+
+Nope, sorry, I don't think I want to do this for libbpf. This will
+just make Github synchronization trickier, and I don't really see a
+point.
+
+I'm totally fine with libperf making a copy of these helpers, though
+(this is not complicated or tricky code). I also don't think it will
+change much, so there is little risk of any sort of divergence.
+
+[...]
 
