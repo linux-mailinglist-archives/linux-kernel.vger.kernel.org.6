@@ -1,411 +1,104 @@
-Return-Path: <linux-kernel+bounces-266569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC75A9401C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:37:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 622BB9401C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0CBC1C2214F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:37:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94D751C22246
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9778018F2FF;
-	Mon, 29 Jul 2024 23:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8B718FC94;
+	Mon, 29 Jul 2024 23:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jFd2Oddu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dJhWFbY5"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8488718D4CA
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418E618FC64
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722296257; cv=none; b=Wp7C1vSQar7PL+zKjMb2Ip5nrV51Dpfsk725W6rnk1Elo+ruOwEbonDRkvTTLJdcLA0s/tI14/94pWZt89hn8u5R8LAgRZrfL8EeTdyVlWH3ilsK5ep5Kaoj+DqUlrJBL490AFJyABUbou6lWtkj9Z3B7bNAuXHTJCrKulBe5VY=
+	t=1722296360; cv=none; b=OJ9YJAQoMYMOc+SyX88ZgukCfeCcm0mLyKBU9GrMcYvyUBZM4PArjVX3D9r8j9feLYvtP4fs+lZ8jnrGhak3+CmEazX9jCa2UZrqSmxeTwFv7pEZUrn8UgihFNKF6FCMcHKSOup2ckee050Vgisp+35IRcj8izxA2euBeaDj6Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722296257; c=relaxed/simple;
-	bh=6/Xeogy1vRIFeiQoVc/PqoB3FLIDLiX+0Nry6YB4b2A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DFSa9vQC0cUi73Jv9TD6w4fk2BObcv0KZPZgsAW/Be269B6vkjVEDGR0sP32Rfi65dotdbpkDy82UavVlVKp8Vj7Zhu9lCxqszGxE6ctJaANBNXWbXRkNB5+IhyqHtdICI3Ryd5FgrZ5nK9tHBtQRvuQJbbMLfN+GMDr2NM+SEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jFd2Oddu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722296254;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rYmAAB0qlkdPhNU6H9rrHKoah3EbC4V9mtuIUUVAOEw=;
-	b=jFd2Oddu1Fu/gj5SyNDNaU6/hr+WoPLuQfn0vsHG8kARmCAMHBX/ur7OwpPY05OJUqm2PR
-	tNiTJAGewIhTbXcSPlF27Kr8vNVs5oKmi02Xw9bNL89Kqx4iXYBBxh34GUQhpzRNB8bdk5
-	M0Q0ErBudyhARk7IZtfZdPSDTuSOPuM=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-596-x8ff-iQ_Mv6ehjU9rDfdQQ-1; Mon, 29 Jul 2024 19:37:33 -0400
-X-MC-Unique: x8ff-iQ_Mv6ehjU9rDfdQQ-1
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3db2b8a3ed6so2621105b6e.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:37:32 -0700 (PDT)
+	s=arc-20240116; t=1722296360; c=relaxed/simple;
+	bh=GrYTdr/Lfiqp/j7QTBHta1asRCW10VHT87ZR2/J9QpA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KKLkXf3E7cqL2lUcSxnComRfdhwNX8aV0oCIYXrvJCgeEAppVBLSffJjR4zNZthCKrxE6fyUyY6WyxQkQNhJjGq6Rf2PqmBA0x0ChJgf7MXl9mL00Im8izqWNo3t2b3FkO66P9+2VBvh8yt554XMuPjTiQUhKfvWDwheTmd/lBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=dJhWFbY5; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3683178b226so1590152f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:39:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1722296356; x=1722901156; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QI6LketRcSHxADi+8iYULTPVBmFAZZrmM/uumYTfQCg=;
+        b=dJhWFbY5iNMRTwDGv4td93A6EQHvrWt9Y1rrT94YARifaRz/w6/sXUGnUNnpgaez7m
+         PXIQOlhxrLp2fET1aitnpwmlFbE4ka7sonA6iLlHMpKTbDi3qErHsdRg+F+y9Ai20zEd
+         D5xozPFVmhn+Rc4TcvfmYdD9zil9GkEZ7fM1Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722296251; x=1722901051;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rYmAAB0qlkdPhNU6H9rrHKoah3EbC4V9mtuIUUVAOEw=;
-        b=HzkHOkKNIX4xmDxmV2MhqMW+VWkiZnMtnVI7mi9sZbExQ80nCtBt+uoXpFN3KQzV/F
-         rkx2d40n+Rfg9wL5o5hvljEAW72d1sbZp4Sf4ojykNtIXyJcQGjQqNIkgNYJWATMc/KV
-         KXh/EY/WKzpfyS4ZFlGmXr9xwSGgiPgd14/mBAu0ZKbsX26cSiPd9rN2e5fEiqi4yJSd
-         fzTOfirATS18LMWxD1xusLFov/RycG3jNEdS5lXLSGNRMuKJRCmxosnLhcJqJTNaIpyT
-         rH8rhObczeLx/ioxn/csoY3FJiDIEv5Dv+/sSzBvNyZbxQoTWX7zp3FknXSnGU7Uber7
-         RrpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVF7F1DYTtXjB6zXlidzB0K9Rwg5oUcTcehlu8AyahCDCy6C8/WZOIpA8DP1SI2qi49/kDdGwaGhDu5R7VJWraBo+11JWdNkbdJE0Zp
-X-Gm-Message-State: AOJu0YynDlo616b2hYgQOFEGJT6XXIiDsOaGp3eJYrrOXE19Q3Ue9OhR
-	AmYPb2jLS4CxHB9EAmPiLDUctJkx8bqlGYwvYVfkLjeMoA3WHcg4l+e8rC5oY+tJ/U9/yQS8nHT
-	r5Bv4aYjp6yhZcYmMAAXEs4pvjlz9bE9xJdU9OPlKPDpCsGfQBM0bjNOm+oEnJ4bSpNZJDw==
-X-Received: by 2002:a05:6808:bd5:b0:3d9:22a4:d5f3 with SMTP id 5614622812f47-3db239d09a4mr13603408b6e.21.1722296250655;
-        Mon, 29 Jul 2024 16:37:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IETOHCPOcvWc5jhOBqkV2140PExLjmylzs4Ybfkt9mudPgH3Q9MtP9S9MSCOGtMrFMDNMPzbg==
-X-Received: by 2002:a05:6808:bd5:b0:3d9:22a4:d5f3 with SMTP id 5614622812f47-3db239d09a4mr13603373b6e.21.1722296250208;
-        Mon, 29 Jul 2024 16:37:30 -0700 (PDT)
-Received: from [192.168.68.54] ([43.252.112.134])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9fa5a3760sm7618434a12.94.2024.07.29.16.37.22
+        d=1e100.net; s=20230601; t=1722296356; x=1722901156;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QI6LketRcSHxADi+8iYULTPVBmFAZZrmM/uumYTfQCg=;
+        b=UNDhVlcin8IcsYn6/Ei9IcvH+5TdYT2hGTJyudvYDZ2/SCAY6ddoXubDq3LKNKxUmE
+         oBJmsNDb00Y9/AFWT24RHbmqbxk+c9SuKgeJdWYLejMLG+gYLFHu6hF+mAtorAxiNCJV
+         UxAOu/owfBOYK0mhkGL+n6jRiruQZN3uzTT6D+NVA4F43GcIS5LWvdVOdtRgdzUrRbR8
+         SPFMlrvj3JI8qQjiIlofWCflJh5LjFosQU/McbQpTZ03DCh0eYxGdcrviNGzjob3//Fp
+         1X1XkPQ4WpcNA3b9nuqI0OHdj/+9ESp9lOmnJZEmmjGlYbRm1NzXm41PtMe+v3DWFbtE
+         05dA==
+X-Gm-Message-State: AOJu0YypIdtX7ut/1lJOQMVVoUVnYF+BdysM22RmZgXt2lJJhmbJYVTU
+	pBa96WKeOS/PFjz54Riwm/W18T7dYWgRjkmB2hyD3EfSvmFSkNr0lNClgqeQHVusnpVs6r3e7Qk
+	J3NHP8w==
+X-Google-Smtp-Source: AGHT+IEbaLAPphZQUAZ+hxzE2uFPdPZO4g2LIb7O/Oj18UPMeRzINj5zefHYQc4zF7tBob6UKuk2Fw==
+X-Received: by 2002:adf:ee4f:0:b0:368:3f04:d5b with SMTP id ffacd0b85a97d-36b5cefdc26mr6008732f8f.25.1722296356299;
+        Mon, 29 Jul 2024 16:39:16 -0700 (PDT)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab2365fsm565630966b.21.2024.07.29.16.39.15
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jul 2024 16:37:29 -0700 (PDT)
-Message-ID: <2b4f0496-99f4-4bc6-af6c-a8be8fca69a8@redhat.com>
-Date: Tue, 30 Jul 2024 09:37:19 +1000
+        Mon, 29 Jul 2024 16:39:15 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5af6a1afa7bso3745107a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:39:15 -0700 (PDT)
+X-Received: by 2002:a50:d696:0:b0:5a2:2ecc:2f0 with SMTP id
+ 4fb4d7f45d1cf-5b02000bde0mr6124611a12.1.1722296355229; Mon, 29 Jul 2024
+ 16:39:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/15] arm64: Detect if in a realm and set RIPAS RAM
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240701095505.165383-1-steven.price@arm.com>
- <20240701095505.165383-4-steven.price@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20240701095505.165383-4-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240730082204.57c64765@canb.auug.org.au>
+In-Reply-To: <20240730082204.57c64765@canb.auug.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 29 Jul 2024 16:38:59 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgEipN1BoDCG02m1XqvACCFLxj2SoEG8O4BZMAFXKifqg@mail.gmail.com>
+Message-ID: <CAHk-=wgEipN1BoDCG02m1XqvACCFLxj2SoEG8O4BZMAFXKifqg@mail.gmail.com>
+Subject: Re: linux-next: build warnings after merge of the origin tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/1/24 7:54 PM, Steven Price wrote:
-> From: Suzuki K Poulose <suzuki.poulose@arm.com>
-> 
-> Detect that the VM is a realm guest by the presence of the RSI
-> interface.
-> 
-> If in a realm then all memory needs to be marked as RIPAS RAM initially,
-> the loader may or may not have done this for us. To be sure iterate over
-> all RAM and mark it as such. Any failure is fatal as that implies the
-> RAM regions passed to Linux are incorrect - which would mean failing
-> later when attempting to access non-existent RAM.
-> 
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Co-developed-by: Steven Price <steven.price@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v3:
->   * Provide safe/unsafe versions for converting memory to protected,
->     using the safer version only for the early boot.
->   * Use the new psci_early_test_conduit() function to avoid calling an
->     SMC if EL3 is not present (or not configured to handle an SMC).
-> Changes since v2:
->   * Use DECLARE_STATIC_KEY_FALSE rather than "extern struct
->     static_key_false".
->   * Rename set_memory_range() to rsi_set_memory_range().
->   * Downgrade some BUG()s to WARN()s and handle the condition by
->     propagating up the stack. Comment the remaining case that ends in a
->     BUG() to explain why.
->   * Rely on the return from rsi_request_version() rather than checking
->     the version the RMM claims to support.
->   * Rename the generic sounding arm64_setup_memory() to
->     arm64_rsi_setup_memory() and move the call site to setup_arch().
-> ---
->   arch/arm64/include/asm/rsi.h      | 64 +++++++++++++++++++++++++
->   arch/arm64/include/asm/rsi_cmds.h | 22 +++++++++
->   arch/arm64/kernel/Makefile        |  3 +-
->   arch/arm64/kernel/rsi.c           | 77 +++++++++++++++++++++++++++++++
->   arch/arm64/kernel/setup.c         |  8 ++++
->   5 files changed, 173 insertions(+), 1 deletion(-)
->   create mode 100644 arch/arm64/include/asm/rsi.h
->   create mode 100644 arch/arm64/kernel/rsi.c
-> 
-> diff --git a/arch/arm64/include/asm/rsi.h b/arch/arm64/include/asm/rsi.h
-> new file mode 100644
-> index 000000000000..29fdc194d27b
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/rsi.h
-> @@ -0,0 +1,64 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (C) 2024 ARM Ltd.
-> + */
-> +
-> +#ifndef __ASM_RSI_H_
-> +#define __ASM_RSI_H_
-> +
-> +#include <linux/jump_label.h>
-> +#include <asm/rsi_cmds.h>
-> +
-> +DECLARE_STATIC_KEY_FALSE(rsi_present);
-> +
-> +void __init arm64_rsi_init(void);
-> +void __init arm64_rsi_setup_memory(void);
-> +static inline bool is_realm_world(void)
-> +{
-> +	return static_branch_unlikely(&rsi_present);
-> +}
-> +
-> +static inline int rsi_set_memory_range(phys_addr_t start, phys_addr_t end,
-> +				       enum ripas state, unsigned long flags)
-> +{
-> +	unsigned long ret;
-> +	phys_addr_t top;
-> +
-> +	while (start != end) {
-> +		ret = rsi_set_addr_range_state(start, end, state, flags, &top);
-> +		if (WARN_ON(ret || top < start || top > end))
-> +			return -EINVAL;
-> +		start = top;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
+On Mon, 29 Jul 2024 at 15:22, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> After merging the origin tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced these warnings:
 
-@flags has been defined as int instead of unsigned long, which is inconsistent
-to TF-RMM's definitions since it has type of 'unsigned long'.
+My bad.
 
-> +/*
-> + * Convert the specified range to RAM. Do not use this if you rely on the
-> + * contents of a page that may already be in RAM state.
-> + */
-> +static inline int rsi_set_memory_range_protected(phys_addr_t start,
-> +						 phys_addr_t end)
-> +{
-> +	return rsi_set_memory_range(start, end, RSI_RIPAS_RAM,
-> +				    RSI_CHANGE_DESTROYED);
-> +}
-> +
-> +/*
-> + * Convert the specified range to RAM. Do not convert any pages that may have
-> + * been DESTROYED, without our permission.
-> + */
-> +static inline int rsi_set_memory_range_protected_safe(phys_addr_t start,
-> +						      phys_addr_t end)
-> +{
-> +	return rsi_set_memory_range(start, end, RSI_RIPAS_RAM,
-> +				    RSI_NO_CHANGE_DESTROYED);
-> +}
-> +
-> +static inline int rsi_set_memory_range_shared(phys_addr_t start,
-> +					      phys_addr_t end)
-> +{
-> +	return rsi_set_memory_range(start, end, RSI_RIPAS_EMPTY, 0);
-> +}
-> +#endif
+I wonder how I don't see them. I very much tested a config with both
+SMP and PROC_FS, and those obviously correct warnings do not show up
+for me on either arm64 or x86-64.
 
-s/0/RSI_NO_CHANGE_DESTROYED
-s/#endif/#endif /* __ASM_RSI_H_ */
+Does anybody have a clue-bat: what makes only the powerpc build show
+this valid warning?
 
-> diff --git a/arch/arm64/include/asm/rsi_cmds.h b/arch/arm64/include/asm/rsi_cmds.h
-> index 89e907f3af0c..acb557dd4b88 100644
-> --- a/arch/arm64/include/asm/rsi_cmds.h
-> +++ b/arch/arm64/include/asm/rsi_cmds.h
-> @@ -10,6 +10,11 @@
->   
->   #include <asm/rsi_smc.h>
->   
-> +enum ripas {
-> +	RSI_RIPAS_EMPTY,
-> +	RSI_RIPAS_RAM,
-> +};
-> +
->   static inline unsigned long rsi_request_version(unsigned long req,
->   						unsigned long *out_lower,
->   						unsigned long *out_higher)
-> @@ -35,4 +40,21 @@ static inline unsigned long rsi_get_realm_config(struct realm_config *cfg)
->   	return res.a0;
->   }
->   
-> +static inline unsigned long rsi_set_addr_range_state(phys_addr_t start,
-> +						     phys_addr_t end,
-> +						     enum ripas state,
-> +						     unsigned long flags,
-> +						     phys_addr_t *top)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_smc(SMC_RSI_IPA_STATE_SET, start, end, state,
-> +		      flags, 0, 0, 0, &res);
-> +
-> +	if (top)
-> +		*top = res.a1;
-> +
-> +	return res.a0;
-> +}
-> +
->   #endif
-> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-> index 763824963ed1..a483b916ed11 100644
-> --- a/arch/arm64/kernel/Makefile
-> +++ b/arch/arm64/kernel/Makefile
-> @@ -33,7 +33,8 @@ obj-y			:= debug-monitors.o entry.o irq.o fpsimd.o		\
->   			   return_address.o cpuinfo.o cpu_errata.o		\
->   			   cpufeature.o alternative.o cacheinfo.o		\
->   			   smp.o smp_spin_table.o topology.o smccc-call.o	\
-> -			   syscall.o proton-pack.o idle.o patching.o pi/
-> +			   syscall.o proton-pack.o idle.o patching.o pi/	\
-> +			   rsi.o
->   
->   obj-$(CONFIG_COMPAT)			+= sys32.o signal32.o			\
->   					   sys_compat.o
-> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
-> new file mode 100644
-> index 000000000000..f01bff9dab04
-> --- /dev/null
-> +++ b/arch/arm64/kernel/rsi.c
-> @@ -0,0 +1,77 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2023 ARM Ltd.
-> + */
-> +
-> +#include <linux/jump_label.h>
-> +#include <linux/memblock.h>
-> +#include <linux/psci.h>
-> +#include <asm/rsi.h>
-> +
-> +DEFINE_STATIC_KEY_FALSE_RO(rsi_present);
-> +EXPORT_SYMBOL(rsi_present);
-> +
-> +static bool rsi_version_matches(void)
-> +{
-> +	unsigned long ver_lower, ver_higher;
-> +	unsigned long ret = rsi_request_version(RSI_ABI_VERSION,
-> +						&ver_lower,
-> +						&ver_higher);
-> +
-> +	if (ret == SMCCC_RET_NOT_SUPPORTED)
-> +		return false;
-> +
-> +	if (ret != RSI_SUCCESS) {
-> +		pr_err("RME: RMM doesn't support RSI version %u.%u. Supported range: %lu.%lu-%lu.%lu\n",
-> +		       RSI_ABI_VERSION_MAJOR, RSI_ABI_VERSION_MINOR,
-> +		       RSI_ABI_VERSION_GET_MAJOR(ver_lower),
-> +		       RSI_ABI_VERSION_GET_MINOR(ver_lower),
-> +		       RSI_ABI_VERSION_GET_MAJOR(ver_higher),
-> +		       RSI_ABI_VERSION_GET_MINOR(ver_higher));
-> +		return false;
-> +	}
-> +
-> +	pr_info("RME: Using RSI version %lu.%lu\n",
-> +		RSI_ABI_VERSION_GET_MAJOR(ver_lower),
-> +		RSI_ABI_VERSION_GET_MINOR(ver_lower));
-> +
-> +	return true;
-> +}
-> +
-> +void __init arm64_rsi_setup_memory(void)
-> +{
-> +	u64 i;
-> +	phys_addr_t start, end;
-> +
-> +	if (!is_realm_world())
-> +		return;
-> +
-> +	/*
-> +	 * Iterate over the available memory ranges and convert the state to
-                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                                              blocks and convert them to
-
-> +	 * protected memory. We should take extra care to ensure that we DO NOT
-> +	 * permit any "DESTROYED" pages to be converted to "RAM".
-> +	 *
-> +	 * BUG_ON is used because if the attempt to switch the memory to
-> +	 * protected has failed here, then future accesses to the memory are
-> +	 * simply going to be reflected as a fault which we can't handle.
-> +	 * Bailing out early prevents the guest limping on and dieing later.
-> +	 */
-> +	for_each_mem_range(i, &start, &end) {
-> +		BUG_ON(rsi_set_memory_range_protected_safe(start, end));
-> +	}
-> +}
-> +
-
-If I'm understanding the code completely, this changes the memory state from
-RIPAS_EMPTY to RIPAS_RAM so that the following page faults can be routed to
-host properly. Otherwise, a SEA is injected to the realm according to
-tf-rmm/runtime/core/exit.c::handle_data_abort(). The comments can be more
-explicit to replace "fault" with "SEA (Synchronous External Abort)".
-
-Besides, this forces a guest exit with reason RMI_EXIT_RIPAS_CHANGE which is
-handled by the host, where RMI_RTT_SET_RIPAS is triggered to convert the memory
-state from RIPAS_EMPTY to RIPAS_RAM. The question is why the conversion can't
-be done by VMM (QEMU)?
-
-> +void __init arm64_rsi_init(void)
-> +{
-> +	/*
-> +	 * If PSCI isn't using SMC, RMM isn't present. Don't try to execute an
-> +	 * SMC as it could be UNDEFINED.
-> +	 */
-> +	if (!psci_early_test_conduit(SMCCC_CONDUIT_SMC))
-> +		return;
-> +	if (!rsi_version_matches())
-> +		return;
-> +
-> +	static_branch_enable(&rsi_present);
-> +}
-> +
-> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
-> index a096e2451044..143f87615af0 100644
-> --- a/arch/arm64/kernel/setup.c
-> +++ b/arch/arm64/kernel/setup.c
-> @@ -43,6 +43,7 @@
->   #include <asm/cpu_ops.h>
->   #include <asm/kasan.h>
->   #include <asm/numa.h>
-> +#include <asm/rsi.h>
->   #include <asm/scs.h>
->   #include <asm/sections.h>
->   #include <asm/setup.h>
-> @@ -293,6 +294,11 @@ void __init __no_sanitize_address setup_arch(char **cmdline_p)
->   	 * cpufeature code and early parameters.
->   	 */
->   	jump_label_init();
-> +	/*
-> +	 * Init RSI before early param so that "earlycon" console uses the
-> +	 * shared alias when in a realm
-> +	 */
-> +	arm64_rsi_init();
->   	parse_early_param();
->   
->   	dynamic_scs_init();
-> @@ -328,6 +334,8 @@ void __init __no_sanitize_address setup_arch(char **cmdline_p)
->   
->   	arm64_memblock_init();
->   
-> +	arm64_rsi_setup_memory();
-> +
->   	paging_init();
->   
->   	acpi_table_upgrade();
-
-Thanks,
-Gavin
-
+            Linus
 
