@@ -1,234 +1,168 @@
-Return-Path: <linux-kernel+bounces-265893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80FED93F761
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1A293F762
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:15:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32B441C216B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:15:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45AC31C21953
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CAD1154BE0;
-	Mon, 29 Jul 2024 14:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E4B14EC60;
+	Mon, 29 Jul 2024 14:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Nw+PdMEm"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zjoTEaaq"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB14F1E4A2;
-	Mon, 29 Jul 2024 14:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B3F20E3
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722262523; cv=none; b=Ex2FtK/ydadpyyhP5uDjRP0IgvVxGqc4/eziAWLJ0VMeFwB23r2GYz3feZYrQfWPniZ7tGRrivzqZswi4zhAG0xazusG58Jp7uHZqnd/R/OOj05FNRQVejZSZSeJmTx+RNh4nSWp0m4oKBKzprlRsQclewLtBT2uZLE43pNqoj4=
+	t=1722262538; cv=none; b=BVq6qjtQUR+ugY5XG96WV3K1GWXRE24pqihp+sqxZmN1IR9UWnxlEN3ZY97F4DoRe7Uhl6X2EcbPtMgjKLnf0RLQ3ZZDtxrv4vkseuYuMwkvcq8GsKqmt7Ts2SWHS0rGSWYeL3vO1b4X2RKdces4G7k5PcKBmv4Ga0WhClnJK6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722262523; c=relaxed/simple;
-	bh=Dsx+wQDpQZBV6jgYIBuibYg69MaOvR6sl7gc+MNvXCA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rvehD2U+v/yKe34cn4iU3i1uZRmJcWBE60f+txflCF9V2TNKhzB66CwXT/PssJx9aSJIoFBPAqDZ7quNQpEA4UlSfQvaUA9roO9RaX3+e/lvR+eW5K+p9NFWC0wPNAl3xVhcrpJONiuCzgWS8WGVtYj1yAqlBNTZvl1LBa4MED8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Nw+PdMEm; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 088FF229;
-	Mon, 29 Jul 2024 16:14:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1722262473;
-	bh=Dsx+wQDpQZBV6jgYIBuibYg69MaOvR6sl7gc+MNvXCA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nw+PdMEmiHulb82E2wbq5gWTzJuGJYuutZwFznRuA0KH9TXb3ypLpqvFIkPYK/TFm
-	 tporQ5xcUF8vJwIlRSJ6wv6Q7qa8ewt4X6NyrP8Bgoy4B++zUBpuHxFtGENdAQLAVr
-	 QALTeiCNdekNbpIJ76Szr/qKm4fVmDuFjd/Cmqmg=
-Date: Mon, 29 Jul 2024 17:14:59 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: CK Hu =?utf-8?B?KOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
-	"mchehab@kernel.org" <mchehab@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	Andy Hsieh =?utf-8?B?KOisneaZuueakyk=?= <Andy.Hsieh@mediatek.com>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"paul.elder@ideasonboard.com" <paul.elder@ideasonboard.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"fsylvestre@baylibre.com" <fsylvestre@baylibre.com>,
-	"pnguyen@baylibre.com" <pnguyen@baylibre.com>
-Subject: Re: [PATCH v5 4/5] media: platform: mediatek: isp_30: add mediatek
- ISP3.0 camsv
-Message-ID: <20240729141459.GA1552@pendragon.ideasonboard.com>
-References: <20240704-add-mtk-isp-3-0-support-v5-0-bfccccc5ec21@baylibre.com>
- <20240704-add-mtk-isp-3-0-support-v5-4-bfccccc5ec21@baylibre.com>
- <85c54f0b1b8bb5d9026c67109a3526fd95cc013b.camel@mediatek.com>
- <CAEHHSvZ2etjPKq0MqHYD=hjs19Yy+DJLwXGGorJK7q2tW2dfRQ@mail.gmail.com>
+	s=arc-20240116; t=1722262538; c=relaxed/simple;
+	bh=D1ZYFHP/38LgdR0JBD7XaxbjYHhm3ApdP7ZKB5nxgew=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WCjzAV02lzc9DHrFHKbbX+gUk8d8laT1UYHpWs6ryQxhURB6Sl7/hbsN4jXNlpNG0lZlyF3af9aMVXLJvCRRB71KxKo6il/TFffApDyytZ7OahuZACiYWFa56Q/6Ep6Ikklzcxk5dIkn+cZFJU38eHS06gxm0XUlW7IhhJUp/Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zjoTEaaq; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-369f68f63b1so1325779f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:15:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722262533; x=1722867333; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PEE5YCygicDy/XBXKqh7m+z9CwXQT4fXt6CN+8nkicI=;
+        b=zjoTEaaqG+7tw4I2DOhoKPqvRb12zzNlEUKq0sirs/2YZlUuL4h+skY94MCmA902lU
+         cET8bJ6hGFw5e8xVQYmqK1WUo0tdY3FmYC3y7uRC8GAdmdV12z5eNAzVybUiEz7PY/8j
+         Fw7WnaOTLGsSF+RLeeBJfL4I6v2bdvw/IP61Db74HTGlegNwBncxTvDPJbwdt6yDqc8W
+         VbAf+V/5I0ImMl3AiPNZ9o/8w+08uKooM3eDKlcyOklSVOrFhNsJr9mEk1a3OZlJ/lvF
+         MES99aRN20rUQhXFqiAVlLG75X4HMMk7A9qLTk7VRRq58aaYEdlaoWS7s/IdxHbL/cbb
+         M1hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722262533; x=1722867333;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PEE5YCygicDy/XBXKqh7m+z9CwXQT4fXt6CN+8nkicI=;
+        b=fxtAWedWhc060p+60z4Xhic64Tn5socTynU3D7dWluNLrThAI7Vrx9tZoHAeOi1+Ps
+         fJKIg/YTRHGHzXpIfSvLXwfHf0vDVPn4dqhemDSsx/4OlqYn80RFIt4sD1K3eojouQdY
+         N0UvElsJfN/Oba7eDlOO42K0EVk3ExYBkg2oLY9Fb8UpIHzg236fexDVhEooeCU1crWS
+         kYEb84EGo13LKgj8wOdUKhkYhfrk/qBtNkZl1mjFOVrlgeiu6ftgIUVOT01SiX7C+J7R
+         k/RfZAdteIldgCMJMMqAO4VZts0qaazw/Cid+wN23FYf3rZwy2T3XSOvwJusjGxG7WWz
+         Gpkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKqqfcbRHdSqGxLnAE6sMLebPYAO1GgLBfyEV4SZbOSA9GXiDugMt4xcYGy3wrgifaMEDjU6sXbDpI6Fo0du1F/lLL4eUYsGaGQQRw
+X-Gm-Message-State: AOJu0YxckXjIvCW+VjZVhbDmCEBd4ffUcF8qXlpwhHwdY0160mnHNcX0
+	jLX8M9YNR7GbckEpqrb8wlfII6p8xyQdkgcXSUCEhjUWP2BTYo06QIshGNjgBz9bAunyoc74no7
+	SlDI=
+X-Google-Smtp-Source: AGHT+IGvhW6W5lhj8wCPR9kGfAvnftNlZn/nJWbDUFlhvd5DqspfoHe3v4BYeRLrWpFDIhKz3FbMyw==
+X-Received: by 2002:a5d:5184:0:b0:368:6596:c60c with SMTP id ffacd0b85a97d-36b5cefdef5mr5201083f8f.30.1722262532993;
+        Mon, 29 Jul 2024 07:15:32 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:abd3:cdc8:2363:54ef])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367fc8a7sm12284340f8f.59.2024.07.29.07.15.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 07:15:32 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Arseniy Krasnov <avkrasnov@salutedevices.com>, Mark Brown
+ <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,  Jaroslav Kysela <perex@perex.cz>,
+  Takashi Iwai <tiwai@suse.com>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,
+  <alsa-devel@alsa-project.org>,  <linux-sound@vger.kernel.org>,
+  <linux-arm-kernel@lists.infradead.org>,
+  <linux-amlogic@lists.infradead.org>,  <linux-kernel@vger.kernel.org>,
+  <kernel@sberdevices.ru>,  <oxffffaa@gmail.com>
+Subject: Re: [PATCH v1] ASoC: meson: axg-fifo: set option to use raw spinlock
+In-Reply-To: <20240729131652.3012327-1-avkrasnov@salutedevices.com> (Arseniy
+	Krasnov's message of "Mon, 29 Jul 2024 16:16:52 +0300")
+References: <20240729131652.3012327-1-avkrasnov@salutedevices.com>
+Date: Mon, 29 Jul 2024 16:15:31 +0200
+Message-ID: <1ja5i0wags.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEHHSvZ2etjPKq0MqHYD=hjs19Yy+DJLwXGGorJK7q2tW2dfRQ@mail.gmail.com>
+Content-Type: text/plain
 
-On Mon, Jul 29, 2024 at 03:40:09PM +0200, Julien Stephan wrote:
-> Le jeu. 18 juil. 2024 à 04:54, CK Hu (胡俊光) <ck.hu@mediatek.com> a écrit :
-> >
-> > Hi, Julien:
-> >
-> > On Thu, 2024-07-04 at 15:36 +0200, Julien Stephan wrote:
-> > >
-> > > External email : Please do not click links or open attachments until you have verified the sender or the content.
-> > >  From: Phi-bang Nguyen <pnguyen@baylibre.com>
-> > >
-> > > This driver provides a path to bypass the SoC ISP so that image data
-> > > coming from the SENINF can go directly into memory without any image
-> > > processing. This allows the use of an external ISP.
-> > >
-> > > Signed-off-by: Phi-bang Nguyen <pnguyen@baylibre.com>
-> > > Signed-off-by: Florian Sylvestre <fsylvestre@baylibre.com>
-> > > [Paul Elder fix irq locking]
-> > > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
-> > > Co-developed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > Co-developed-by: Julien Stephan <jstephan@baylibre.com>
-> > > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> > > ---
-> >
-> > [snip]
-> >
-> > > +static int mtk_cam_vb2_start_streaming(struct vb2_queue *vq,
-> > > +       unsigned int count)
-> > > +{
-> > > +struct mtk_cam_dev *cam = vb2_get_drv_priv(vq);
-> > > +struct mtk_cam_dev_buffer *buf;
-> > > +struct mtk_cam_video_device *vdev =
-> > > +vb2_queue_to_mtk_cam_video_device(vq);
-> > > +struct device *dev = cam->dev;
-> > > +const struct v4l2_pix_format_mplane *fmt = &vdev->format;
-> > > +int ret;
-> > > +unsigned long flags;
-> > > +
-> > > +if (pm_runtime_get_sync(dev) < 0) {
-> > > +dev_err(dev, "failed to get pm_runtime\n");
-> > > +pm_runtime_put_autosuspend(dev);
-> > > +return -1;
-> > > +}
-> > > +
-> > > +(*cam->hw_functions->mtk_cam_setup)(cam, fmt->width, fmt->height,
-> > > +fmt->plane_fmt[0].bytesperline, vdev->fmtinfo->code);
-> > > +
-> > > +
-> > > +/* Enable CMOS and VF */
-> > > +mtk_cam_cmos_vf_enable(cam, true, true);
-> > > +
-> > > +mutex_lock(&cam->op_lock);
-> > > +
-> > > +ret = mtk_cam_verify_format(cam);
-> > > +if (ret < 0)
-> > > +goto fail_unlock;
-> > > +
-> > > +/* Start streaming of the whole pipeline now*/
-> > > +if (!cam->pipeline.start_count) {
-> > > +ret = media_pipeline_start(vdev->vdev.entity.pads,
-> > > +   &cam->pipeline);
-> > > +if (ret) {
-> > > +dev_err(dev, "failed to start pipeline:%d\n", ret);
-> > > +goto fail_unlock;
-> > > +}
-> > > +}
-> > > +
-> > > +/* Media links are fixed after media_pipeline_start */
-> > > +cam->stream_count++;
-> > > +
-> > > +cam->sequence = (unsigned int)-1;
-> > > +
-> > > +/* Stream on the sub-device */
-> > > +ret = v4l2_subdev_call(&cam->subdev, video, s_stream, 1);
-> > > +if (ret)
-> > > +goto fail_no_stream;
-> > > +
-> > > +mutex_unlock(&cam->op_lock);
-> > > +
-> > > +/* Create dummy buffer */
-> > > +cam->dummy_size = fmt->plane_fmt[0].sizeimage;
-> > > +
-> > > +cam->dummy.vaddr = dma_alloc_coherent(cam->dev, cam->dummy_size,
-> > > +      &cam->dummy.daddr, GFP_KERNEL);
-> >
-> > Dummy buffer cost much in DRAM footprint. I think we can get rid of
-> > this dummy buffer. If no buffer is queued from user space, call
-> > mtk_camsv30_cmos_vf_hw_disable() to stop write data into DRAM. After
-> > buffer is queued from user space, call mtk_camsv30_cmos_vf_hw_enable()
-> > to start write data into DRAM.
-> 
-> Hi CK,
-> 
-> IMHO it does not cost that much. A long time ago, we tried to remove
-> it, but we faced an issue (can't remember what :/).
-> Moreover, some other driver already uses the dummy buffer
-> implementation, if I am not wrong.
+On Mon 29 Jul 2024 at 16:16, Arseniy Krasnov <avkrasnov@salutedevices.com> wrote:
 
-The hardware have a CAMSV_IMGO_SV_STRIDE register. What happens if you
-set the stride to 0 instead of bytesperline ? Will the hardware write
-repeatedly over the same line ? If so you can allocate a scratch buffer
-of a single line.
+> Raw spinlock is needed here, because with enabled PREEMPT_RT,
+> spinlock_t become preemptible, but this regmap lock could be
+> acquired in IRQ handler. Found by lockdep:
 
-You will need to ensure that, whenever you reconfigure the device, the
-stride and buffer address will always be programmed atomically. If you
-switch to the line buffer and the image starts before the stride is
-reconfigure, bad things will happen.
+Assuming I understand the problem correctly, any driver with an IRQ and
+using mmio regmaps would be subject to this problem, isn't it ?
 
-Stopping the DMA is another solution that would I think be even better
-if that can be done quickly (without waiting synchronously for the end
-of the next frame), and if restarting is equally quick.
+That does not seems particularily specific to this driver, so changing
+just this one like that does not make a lot of sense to me.
 
-> > > +if (!cam->dummy.vaddr) {
-> > > +ret = -ENOMEM;
-> > > +goto fail_no_buffer;
-> > > +}
-> > > +
-> > > +/* update first buffer address */
-> > > +
-> > > +/* added the buffer into the tracking list */
-> > > +spin_lock_irqsave(&cam->irqlock, flags);
-> > > +if (list_empty(&cam->buf_list)) {
-> > > +(*cam->hw_functions->mtk_cam_update_buffers_add)(cam, &cam->dummy);
-> > > +cam->is_dummy_used = true;
-> > > +} else {
-> > > +buf = list_first_entry_or_null(&cam->buf_list,
-> > > +       struct mtk_cam_dev_buffer,
-> > > +       list);
-> > > +(*cam->hw_functions->mtk_cam_update_buffers_add)(cam, buf);
-> > > +cam->is_dummy_used = false;
-> > > +}
-> > > +spin_unlock_irqrestore(&cam->irqlock, flags);
-> > > +
-> > > +return 0;
-> > > +
-> > > +fail_no_buffer:
-> > > +mutex_lock(&cam->op_lock);
-> > > +v4l2_subdev_call(&cam->subdev, video, s_stream, 0);
-> > > +fail_no_stream:
-> > > +cam->stream_count--;
-> > > +if (cam->stream_count == 0)
-> > > +media_pipeline_stop(vdev->vdev.entity.pads);
-> > > +fail_unlock:
-> > > +mutex_unlock(&cam->op_lock);
-> > > +mtk_cam_vb2_return_all_buffers(cam, VB2_BUF_STATE_QUEUED);
-> > > +
-> > > +return ret;
-> > > +}
-> > > +
+Maybe mmio regmap should '.use_raw_spinlock = true' by default when
+'.fast_io' is set ?
+
+Mark, what is your opinion on this ? I guess it is not the first time
+this occurs ?
+
+>
+> [ ] =============================
+> [ ] [ BUG: Invalid wait context ]
+> [ ] 6.9.9-sdkernel #1 Tainted: G O
+> [ ] -----------------------------
+> [ ] aplay/413 is trying to lock:
+> [ ] ffff000003930018 (axg_fifo:356:(&axg_fifo_regmap_cfg)->lock){....}-{3:3},c
+> [ ] other info that might help us debug this:
+> [ ] context-{2:2}
+> [ ] no locks held by aplay/413.
+> [ ] stack backtrace:
+> [ ] CPU: 0 PID: 413 Comm: aplay Tainted: G           O       6.9.9-kernel #1
+> [ ] Hardware name: SberDevices SberBoom Mini (DT)
+> [ ] Call trace:
+> [ ]  dump_backtrace+0x98/0xf0
+> [ ]  show_stack+0x18/0x24
+> [ ]  dump_stack_lvl+0x90/0xd0
+> [ ]  dump_stack+0x18/0x24
+> [ ]  __lock_acquire+0x9dc/0x1f10
+> [ ]  lock_acquire.part.0+0xe8/0x228
+> [ ]  lock_acquire+0x68/0x84
+> [ ]  _raw_spin_lock_irqsave+0x60/0x88
+> [ ]  regmap_lock_spinlock+0x18/0x2c
+> [ ]  regmap_read+0x3c/0x78
+> [ ]  axg_fifo_pcm_irq_block+0x4c/0xc8
+> [ ]  __handle_irq_event_percpu+0xa4/0x2f8
+> [ ]  handle_irq_event+0x4c/0xbc
+> [ ]  handle_fasteoi_irq+0xa4/0x23c
+> [ ]  generic_handle_domain_irq+0x2c/0x44
+> [ ]  gic_handle_irq+0x40/0xc4
+> [ ]  call_on_irq_stack+0x24/0x4c
+> [ ]  do_interrupt_handler+0x80/0x84
+> [ ]  el0_interrupt+0x5c/0x124
+> [ ]  __el0_irq_handler_common+0x18/0x24
+> [ ]  el0t_32_irq_handler+0x10/0x1c
+> [ ]  el0t_32_irq+0x194/0x198
+>
+> Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
+> ---
+>  sound/soc/meson/axg-fifo.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/sound/soc/meson/axg-fifo.c b/sound/soc/meson/axg-fifo.c
+> index ecb3eb7a9723d..a22298f74b35a 100644
+> --- a/sound/soc/meson/axg-fifo.c
+> +++ b/sound/soc/meson/axg-fifo.c
+> @@ -328,6 +328,7 @@ static const struct regmap_config axg_fifo_regmap_cfg = {
+>  	.val_bits	= 32,
+>  	.reg_stride	= 4,
+>  	.max_register	= FIFO_CTRL2,
+> +	.use_raw_spinlock = true,
+>  };
+>  
+>  int axg_fifo_probe(struct platform_device *pdev)
 
 -- 
-Regards,
-
-Laurent Pinchart
+Jerome
 
