@@ -1,237 +1,139 @@
-Return-Path: <linux-kernel+bounces-265706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31C4C93F49F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:55:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA2E93F4A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 540741C21F52
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:55:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA1D01C21914
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A9E146D7C;
-	Mon, 29 Jul 2024 11:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D6314601E;
+	Mon, 29 Jul 2024 11:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2g3LkMPn";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qQ4M86Hl";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2g3LkMPn";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qQ4M86Hl"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmp5EQbG"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4691465BF;
-	Mon, 29 Jul 2024 11:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDAF1D69E;
+	Mon, 29 Jul 2024 11:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722254066; cv=none; b=WHYLlyJNlZ8TZSRNN3NFrUCIS8VTWtZEnSVxKp02LmrtqhK1XBMrRp4UMr27nTlLt604DliaNFd2tCWDHZ0C7FzqKtUuWdJ0Cm9ijRM0/In0ZoNcbJi3KgxNf47Fl2BzX9098Oqm6FzPDSCwBvJu3GaOenO+trIiWlYWfdvXA90=
+	t=1722254146; cv=none; b=HIPqas6qJjpPbSNmEnqoVuAdocXAU2kn62CzqIngMTvvFOQmixPHtjOlmoG1ldaCRdjevVkmm7qrM8TR9a9mIJRrL7H8EuXocLoFQdjEc0x0L+oIa1xaJPShnG0SxEuAXW9Ao3dugYWdbVDCsMmvvoRxKMy3udKvaWIPHMhbU2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722254066; c=relaxed/simple;
-	bh=UrngsJxAjbcM3AqLgJFjWlmGMAo8MzvPgh7YUPnf/gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LU5fHdrZGe+XvWAoNx+42iNFUk+eUhrequ5MQM3YJeYY8nlM441a8bJCz/WaSkb5OOTpjAX7MTxGHP25x8gkvLknEugFjD2DAGscU2aT7mIRiVo9uaTCiY4eMHpa/bvrDJSsCHV7pfpYla0agXwBPXP/esM+qRqmFdAnvLtWTB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2g3LkMPn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qQ4M86Hl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2g3LkMPn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qQ4M86Hl; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5F3941F790;
-	Mon, 29 Jul 2024 11:54:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722254063; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uX7eQ/l/4mqf+N2I4GzExoJxI/EcAEkLiNq+ZdMk+XE=;
-	b=2g3LkMPnPq6lrL+t2tOVYsxhaLYtJlMi12ywxUDpQuAAAIB8Z8Fnrj0/Nq/BMRHLVvonrs
-	XH+UAUS/NfqjI2ZV2z7Te5gBjhmq9nhyr6X3ERydbarvf+U1f+t67p8P9q0NCuoesghf4g
-	sr5j8I3YmMaR3oKAEi92aoxR2ISpiMw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722254063;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uX7eQ/l/4mqf+N2I4GzExoJxI/EcAEkLiNq+ZdMk+XE=;
-	b=qQ4M86HlpJAvtYTKqfJxGRnzR3u7nQ533lmgZHpuMwPE0FQOfU8JfUDaAKtvEBJaEfNp+g
-	vTD5EqhAUppeoSDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=2g3LkMPn;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qQ4M86Hl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722254063; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uX7eQ/l/4mqf+N2I4GzExoJxI/EcAEkLiNq+ZdMk+XE=;
-	b=2g3LkMPnPq6lrL+t2tOVYsxhaLYtJlMi12ywxUDpQuAAAIB8Z8Fnrj0/Nq/BMRHLVvonrs
-	XH+UAUS/NfqjI2ZV2z7Te5gBjhmq9nhyr6X3ERydbarvf+U1f+t67p8P9q0NCuoesghf4g
-	sr5j8I3YmMaR3oKAEi92aoxR2ISpiMw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722254063;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uX7eQ/l/4mqf+N2I4GzExoJxI/EcAEkLiNq+ZdMk+XE=;
-	b=qQ4M86HlpJAvtYTKqfJxGRnzR3u7nQ533lmgZHpuMwPE0FQOfU8JfUDaAKtvEBJaEfNp+g
-	vTD5EqhAUppeoSDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 41618138A7;
-	Mon, 29 Jul 2024 11:54:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RdDrD++Cp2bOOAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 29 Jul 2024 11:54:23 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id CFDB4A099C; Mon, 29 Jul 2024 13:54:18 +0200 (CEST)
-Date: Mon, 29 Jul 2024 13:54:18 +0200
-From: Jan Kara <jack@suse.cz>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Justin Stitt <justinstitt@google.com>,
-	linux-hardening@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-	Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk, nathan@kernel.org,
-	linux-fsdevel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH AUTOSEL 6.10 02/16] fs: remove accidental overflow during
- wraparound check
-Message-ID: <20240729115418.xzfmanyqtipkuttx@quack3>
-References: <20240728004739.1698541-1-sashal@kernel.org>
- <20240728004739.1698541-2-sashal@kernel.org>
+	s=arc-20240116; t=1722254146; c=relaxed/simple;
+	bh=lVvDNEFpX03SJnSG5bu3Bem0pmuhRNncFVjJuRFD9Fw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZvfXeTmuGopC0TBGnRj0HOJlSXSnNTgm7t/9JF/6ddAbdWutwmZOoOEQQ4rVbjClSZ/hcZ1XHykA03dARLpEdTndNK6UfGhgIqUB//zZd3REGPsV5/A6EoFwhSAI3jpTSsOW1ayrUh3w9DHp8r9cJwNl4O9FtawZ2Vlyy9kBbYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lmp5EQbG; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2cb4b7fef4aso2439183a91.0;
+        Mon, 29 Jul 2024 04:55:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722254145; x=1722858945; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lVvDNEFpX03SJnSG5bu3Bem0pmuhRNncFVjJuRFD9Fw=;
+        b=lmp5EQbGtDUnxB8172jWKBXsxKn1IbeXr/CeXg5gDGr4YaIT+VpOqL96QIX8Z2MV5B
+         SzIN8eKXuq8+bWfrLxD4gvEthxdb/4RECQ6mj4RwM1qBLLCEHGq1VaVEldApythCh7vp
+         +YZGyNHJJeNzo3F7RB7auYQTsmKzqtsqFPPpjKWEPefSrjqpUFi6Qw4Sui6oJ9If32XT
+         Q5ra9qNh4ANi5UQGx5rcP7rrR25cGU1R04gnkXXId4RiSbkoVGUfEocRvnFJCyl+Mm1w
+         bqwNES7gvF5yhOd97iAkMPlvmOAC/ltgb+XzVvJsg8yWM6x9bg6e10AM13LRMlWnQZv1
+         4PNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722254145; x=1722858945;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lVvDNEFpX03SJnSG5bu3Bem0pmuhRNncFVjJuRFD9Fw=;
+        b=Box6O0G0wnDjTQPAvQzZHx946bQB2MpF4RA2UAeVWHqkoKn4B0bWNXrpHb5qa7PzP3
+         J7oj6Kd65jr/MgR7cjZO7d+PAko5S7mIAx6NEpqBt7rf/Kd77lMwqfCVbq5mfc/x+YkF
+         whlU6fYp4+qUV/nNtBd2Bn5SnQnJYdI28Tlk17ewLSE7lo4snfTO1x+fL1epCg5Xjtj/
+         +KviYLuzMW7LatzYnjQCdj3baDhkiOJaK52dXAxTuewtAnKPcTVz49gnkWpZuZYt+gog
+         ZiRu6NxC0SE2suKYQ0Ie7ThxEuvtOGkBA76X4t+PXpd+5NWQAp774HhKz0ITJjjZWhIV
+         ZYKA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9rhy7O1BkQddTmvvxA2Y/5lMqSLngnKoJA8lpFKJEtR/xtZ0K3XU01Bp618ehvltQro2OMWgI1MuNwePqDp65wJSWam2dbNpnlgkT3M1bSn/H4C02HT7lvyKQmGxKeLc9+f0o+g==
+X-Gm-Message-State: AOJu0YwHiXwdA/pLXDG2cIlr/Nlj7Q0WFINKK5lfGBk62O+KlnyfO4pZ
+	mlun9apaw+ZwpPexTy0CpbUrDAUmIuVHC3jFA/yYkqx9ZbylSF6i7yuNtE7gl+gJ47M5xgOuNES
+	UGCIxhYoFSmyjG5E86S+Sb2XDZ0URTg==
+X-Google-Smtp-Source: AGHT+IG/aZbWDtxoNnOzHkj+SliJsGoJineAi6iWzJaWWf/ludzKYrS9udSITPblKA+nrtnaJ5YGjO2nTJoYPWtfbQQ=
+X-Received: by 2002:a17:90a:e7c2:b0:2cd:7d6f:31b0 with SMTP id
+ 98e67ed59e1d1-2cf7e866982mr7892114a91.43.1722254144749; Mon, 29 Jul 2024
+ 04:55:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240728004739.1698541-2-sashal@kernel.org>
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 5F3941F790
-X-Spam-Score: -3.81
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.81 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,chromium.org:email,suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+]
+References: <20240702095401.16278-1-gongruiqi1@huawei.com> <9473d6eb-3f56-4c73-8e61-69111837c07b@huawei.com>
+ <CAHC9VhR+tk4mwmaQ6u8SEnzg6zMF2krFHKVwxKx91GX1K=4A=g@mail.gmail.com>
+ <0729db54-98cf-4006-91d0-0ebda4dbc251@huawei.com> <CAFqZXNsN9M__Mo018L8m0txi60vm3Ui5HgHvJYQK__0hhhMULQ@mail.gmail.com>
+ <55390a1e-5994-465a-a5c5-94f3370259c3@huawei.com> <CAFqZXNu_cLLH811Z8CxDb07Adf+E_z+1nH=7nkO9H83CY9RETw@mail.gmail.com>
+In-Reply-To: <CAFqZXNu_cLLH811Z8CxDb07Adf+E_z+1nH=7nkO9H83CY9RETw@mail.gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Mon, 29 Jul 2024 07:55:33 -0400
+Message-ID: <CAEjxPJ4H_MVWd5iaP5eE_q0tbebSFRE=KMS80-dE3EdRpmv84A@mail.gmail.com>
+Subject: Re: [PATCH testsuite] tests/task_setscheduler: add cgroup v2 case for
+ moving proc to root cgroup
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: Gong Ruiqi <gongruiqi1@huawei.com>, Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Wang Weiyang <wangweiyang2@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat 27-07-24 20:47:19, Sasha Levin wrote:
-> From: Justin Stitt <justinstitt@google.com>
-> 
-> [ Upstream commit 23cc6ef6fd453b13502caae23130844e7d6ed0fe ]
+On Mon, Jul 29, 2024 at 6:29=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.co=
+m> wrote:
+>
+> On Sat, Jul 27, 2024 at 4:55=E2=80=AFAM Gong Ruiqi <gongruiqi1@huawei.com=
+> wrote:
+> >
+> >
+> > On 2024/07/26 21:43, Ondrej Mosnacek wrote:
+> > > On Thu, Jul 18, 2024 at 2:34=E2=80=AFPM Gong Ruiqi <gongruiqi1@huawei=
+.com> wrote:
+> > >>
+> > >>
+> > >> On 2024/07/18 0:17, Paul Moore wrote:
+> > >>> ...
+> > >>>
+> > >>> Where (what distribution, version, etc.) did you see this problem?
+> > >>
+> > >> The problem occurred when I ran the testsuite on Fedora 40 with v6.6
+> > >> kernel, and it was the only failed testcase.
+> > >
+> > > Sorry for the delay... For some reason the test passes for me even
+> > > with cgroup v2 only and without the patch (also when run from a
+> > > regular user account with sudo). Do you happen to know what
+> > > circumstances are needed for it to fail when the cgroup is not
+> > > switched?
+> > >
+> >
+> > As the comment in the script says, a process need to be in the root
+> > cgroup in order to switch its scheduler policy to SCHED_{RR,FIFO}. So
+> > maybe in your case the shell process is already in the root cgroup?
+> >
+> > In my case I need to ssh to a Fedora VM, and that makes my shell proces=
+s
+> > to be in a sub cgroup called /user.slice/.../XXX.scope (looks like some
+> > systemd stuff). And since /sys/fs/cgroup/cpu/tasks doesn't exit in the
+> > system with cgroup v2 only, the script skips moving the target process
+> > to the root cgroup, and therefore the subsequent test fails.
+>
+> In my case I ssh as root and end up in
+> /user.slice/user-0.slice/session-1.scope cgroup,
+> /sys/fs/cgroup/cpu/tasks also doesn't exist, and yet the test passes.
+> The same also happens when I ssh as a regular user (with cgroup
+> /user.slice/user-1000.slice/session-3.scope) and run the testsuite
+> with sudo. So there must be something more to it... maybe some kernel
+> config or sysctl setting?
 
-Sasha, this commit is only about silencing false-positive UBSAN warning.
-Not sure if it is really a stable material...
-
-								Honza
-
-> 
-> Running syzkaller with the newly enabled signed integer overflow
-> sanitizer produces this report:
-> 
-> [  195.401651] ------------[ cut here ]------------
-> [  195.404808] UBSAN: signed-integer-overflow in ../fs/open.c:321:15
-> [  195.408739] 9223372036854775807 + 562984447377399 cannot be represented in type 'loff_t' (aka 'long long')
-> [  195.414683] CPU: 1 PID: 703 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00039-g14de58dbe653-dirty #11
-> [  195.420138] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [  195.425804] Call Trace:
-> [  195.427360]  <TASK>
-> [  195.428791]  dump_stack_lvl+0x93/0xd0
-> [  195.431150]  handle_overflow+0x171/0x1b0
-> [  195.433640]  vfs_fallocate+0x459/0x4f0
-> ...
-> [  195.490053] ------------[ cut here ]------------
-> [  195.493146] UBSAN: signed-integer-overflow in ../fs/open.c:321:61
-> [  195.497030] 9223372036854775807 + 562984447377399 cannot be represented in type 'loff_t' (aka 'long long)
-> [  195.502940] CPU: 1 PID: 703 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00039-g14de58dbe653-dirty #11
-> [  195.508395] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [  195.514075] Call Trace:
-> [  195.515636]  <TASK>
-> [  195.517000]  dump_stack_lvl+0x93/0xd0
-> [  195.519255]  handle_overflow+0x171/0x1b0
-> [  195.521677]  vfs_fallocate+0x4cb/0x4f0
-> [  195.524033]  __x64_sys_fallocate+0xb2/0xf0
-> 
-> Historically, the signed integer overflow sanitizer did not work in the
-> kernel due to its interaction with `-fwrapv` but this has since been
-> changed [1] in the newest version of Clang. It was re-enabled in the
-> kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
-> sanitizer").
-> 
-> Let's use the check_add_overflow helper to first verify the addition
-> stays within the bounds of its type (long long); then we can use that
-> sum for the following check.
-> 
-> Link: https://github.com/llvm/llvm-project/pull/82432 [1]
-> Closes: https://github.com/KSPP/linux/issues/356
-> Cc: linux-hardening@vger.kernel.org
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Justin Stitt <justinstitt@google.com>
-> Link: https://lore.kernel.org/r/20240513-b4-sio-vfs_fallocate-v2-1-db415872fb16@google.com
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  fs/open.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/open.c b/fs/open.c
-> index 278b3edcda444..1dd123ba34ee9 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -247,6 +247,7 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
->  {
->  	struct inode *inode = file_inode(file);
->  	long ret;
-> +	loff_t sum;
->  
->  	if (offset < 0 || len <= 0)
->  		return -EINVAL;
-> @@ -319,8 +320,11 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
->  	if (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))
->  		return -ENODEV;
->  
-> -	/* Check for wrap through zero too */
-> -	if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len) < 0))
-> +	/* Check for wraparound */
-> +	if (check_add_overflow(offset, len, &sum))
-> +		return -EFBIG;
-> +
-> +	if (sum > inode->i_sb->s_maxbytes)
->  		return -EFBIG;
->  
->  	if (!file->f_op->fallocate)
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+As a further data point, I also have been unable to reproduce the
+reported behavior.
+That said, since tasks doesn't exist, isn't the passing test a false
+negative (i.e. it isn't truly testing as intended)?
 
