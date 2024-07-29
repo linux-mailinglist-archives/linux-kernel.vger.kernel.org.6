@@ -1,134 +1,126 @@
-Return-Path: <linux-kernel+bounces-265354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A11E93EFF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:32:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3F7F93EFF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53CC12830EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:32:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDE801C21D69
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1D213BC05;
-	Mon, 29 Jul 2024 08:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EB513C904;
+	Mon, 29 Jul 2024 08:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OcLTRqR+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="24IDGz/2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a3/nMvdy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3576F2F1;
-	Mon, 29 Jul 2024 08:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A7613C687
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722241947; cv=none; b=ksexcfj6vV//qYhG+OihosZFr3qPhCeDDE1A9s6oA/9nxtPqMK9ibokT4DTKBcZjfKc+MzD8MvsODYt/MVDD2xk1NhufL+xKFbwLkkmUJ7k+qiaW2RWNAVPkNX9G+0E66Hi148C0R24wc0/3PMfF27QjkyBge38hUpy1MXXqMgo=
+	t=1722242083; cv=none; b=jRBINWX37XsgKBDTzS9umA/yTNauRsxwyI6MYchECuOQeynu9nWQeLGXp+Jlppowh9EUvqK69yL30VQ1Ifi77gc3mhqBynpNDB2y4yLFV4QtKaA/r4qsU+l/amVJN3fmn8eW5Bd7ecVOZUw4BGgM/G1bmlRtskVV9aoDYKboedA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722241947; c=relaxed/simple;
-	bh=gGOw6e1VWw4qQS8Sgi9jspCG1Yvhe69nV21FhD9edfY=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=f0cdvZ0DciAFEa+T+YZxkH8dXOb1AfVuhh63VPE0fILDLJ0Jwbs10mG9d79r7dqpb6Yv2URYbgcoEhPu3U2SiGH3yMwEdlIiQJXys0FPYEFtS7Q+XfjJnX7nYNggWQDTfqvizCCJvKjtXMCaP76sgdNHcEowNJ59FlRwgWeC/ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OcLTRqR+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=24IDGz/2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 29 Jul 2024 08:32:23 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722241944;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=arc-20240116; t=1722242083; c=relaxed/simple;
+	bh=nuG/4vNf+Xo0PuptBC7376G+xBvvSdFJWnxk+gys6MQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uWP8X3qzwgYNJz4CdCCHmaTBnsl0v+gjvBmfht73zoyqjNzhy7+Tc2HogbZahQyBXwuBIIHWZJRS94CJN6M3EvxH+JKpmqVtvKZW0pYYYrgt2ctAcqw5VPRIy/2eReS41GVDpC/tSG00tY4SvRlhw/q//kxvhmh9TVgDgpbdInI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a3/nMvdy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722242080;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=igj8WnfXHEtBehnbMlyvLDVNd2VeWb3Xm0pqSjOt3HM=;
-	b=OcLTRqR++oDqVyBP3Uc1NdNZ1JAAXruEjlVmUn+qw/tms5h+kuYygm4SlglqqcQGwlIIuB
-	8e9D007vloTEiiScirxmyIKVuV0AK1YwwXjHaYrCzC8Av5PD90qtK2pR5IcSCJx+LLPZPj
-	TR/Lp9iqt2h/kaEZ6tsKo38Byv2U1XHUzbNNchGnHqXkeRf4mWmYInnCDN2+Twu0pPRJka
-	QriLM6GjgruvEiREPknCMLuPlOwGfGwX2BtXeeuRzTZUQ8XEjfv0XK56FAa49cbUNSba42
-	Zyxyq1MfUeq8ZOTSigc4lgrJxhYwOS6BOSTLTW+bhyuCF8oltXiCwVaVeEGzIw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722241944;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=igj8WnfXHEtBehnbMlyvLDVNd2VeWb3Xm0pqSjOt3HM=;
-	b=24IDGz/2XUnfsbEMQ9ATIZNyRkWQUATyYxWM5dudZAIbIbBX7cEA268l1T4vexBKtT7jYk
-	f+cntKrXQtWYRvCQ==
-From: "tip-bot2 for Luca Ceresoli" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] irqchip/irq-pic32-evic: Add missing 'static' to
- internal function
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To:
- <20240717-irq-pic32-evic-fix-build-static-v1-1-5129085589c6@bootlin.com>
-References:
- <20240717-irq-pic32-evic-fix-build-static-v1-1-5129085589c6@bootlin.com>
+	bh=iQiICJ5lL4LLRuRe82xJT7UDszv9VsNI9xZ/zp+jqc8=;
+	b=a3/nMvdy+BJU4r23TuAVf2XAfW/pd7Wp8LCNVtEuiWR5pR9SYHSV/Egu8at779DZogHf5D
+	1WF7UEfGdnAnuHv6Gx7Cmq+HSf0ZfryDueOV6IKXk8ISNTpU9ZFmvAoGQPgeYwXiZoFri4
+	uKp+0eBVW333FB1J66D+Ww19AwlaSUU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-317-fp6fsfEAMraFMdT2FWJpgA-1; Mon,
+ 29 Jul 2024 04:34:33 -0400
+X-MC-Unique: fp6fsfEAMraFMdT2FWJpgA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 46EC61955BED;
+	Mon, 29 Jul 2024 08:34:30 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.39.192.136])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 599B71955D48;
+	Mon, 29 Jul 2024 08:34:22 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: dsimic@manjaro.org
+Cc: UNGLinuxDriver@microchip.com,
+	andrew@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	f.fainelli@gmail.com,
+	gregkh@linuxfoundation.org,
+	jtornosm@redhat.com,
+	kuba@kernel.org,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	lucas.demarchi@intel.com,
+	masahiroy@kernel.org,
+	mcgrof@kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	woojung.huh@microchip.com
+Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy module
+Date: Mon, 29 Jul 2024 10:34:19 +0200
+Message-ID: <20240729083421.11203-1-jtornosm@redhat.com>
+In-Reply-To: <b8a2831c4f2d49469d5af04c03bb1a5b@manjaro.org>
+References: <b8a2831c4f2d49469d5af04c03bb1a5b@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172224194392.2215.1753919882787406820.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-The following commit has been merged into the irq/urgent branch of tip:
+Hello Dragan,
 
-Commit-ID:     a4765eb49cd94a7653c1a643b03d4facc5d87aa5
-Gitweb:        https://git.kernel.org/tip/a4765eb49cd94a7653c1a643b03d4facc5d=
-87aa5
-Author:        Luca Ceresoli <luca.ceresoli@bootlin.com>
-AuthorDate:    Wed, 17 Jul 2024 14:25:20 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 29 Jul 2024 10:22:45 +02:00
+> Quite frankly, all this makes me wonder why weakdeps were merged into
+> the mainline kernel [1] with no real consumers?  Perhaps this is good
+> time for Jose and Luis to chime in.
+Well, I requested this commenting as an example the case of lan78xx and
+the possible phy modules,  becasue it is clearly failing when initramfs
+is generated due to the dynamic phy module loading process.
+In my opinion this example was enough good because I found it difficult get
+an automatic way to get this information in advance for all the cases and
+becasue I need to fix this initramfs issue.
 
-irqchip/irq-pic32-evic: Add missing 'static' to internal function
+But with a first glance, I also found several examples (not phy related),
+in which it seems the suitable softdep was added to solve the initramfs
+missing module issue:
+80f4e62730a9 drm/panfrost: Mark simple_ondemand governor as softdep
+0c94f58cef31 drm/lima: Mark simple_ondemand governor as softdep
+2ebe16155dc8 scsi: ufs: core: Add soft dependency on governor_simpleondemand
+dfe085d8dcd0 crypto: xts - Add softdep on ecb
+...
 
-Fix build error reported by gcc 12:
+Therefore, I requested to provide this  kind of new dependency (weakdep)
+first in general, becasue I thought it could be useful for a lot of cases
+not only for the unkown (for initramfs) phy modules (i.e. lan78xx).
+That is, in spite of the initial usage has been rejected, I think it can
+still be considered by the other commented examples (or new ones).
+I would like to confirm some example(s) to have some usage, but this will
+need to be from September after my holidays.
 
-  drivers/irqchip/irq-pic32-evic.c:164:5: error: no previous prototype for =
-=E2=80=98pic32_irq_domain_xlate=E2=80=99 [-Werror=3Dmissing-prototypes]
-    164 | int pic32_irq_domain_xlate(struct irq_domain *d, struct device_node=
- *ctrlr,
-        |     ^~~~~~~~~~~~~~~~~~~~~~
+Thanks
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20240717-irq-pic32-evic-fix-build-static-v1-1=
--5129085589c6@bootlin.com
+Best regards
+José Ignacio
 
----
- drivers/irqchip/irq-pic32-evic.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/irqchip/irq-pic32-evic.c b/drivers/irqchip/irq-pic32-evi=
-c.c
-index 1d9bb28..2772403 100644
---- a/drivers/irqchip/irq-pic32-evic.c
-+++ b/drivers/irqchip/irq-pic32-evic.c
-@@ -161,9 +161,9 @@ static int pic32_irq_domain_map(struct irq_domain *d, uns=
-igned int virq,
- 	return ret;
- }
-=20
--int pic32_irq_domain_xlate(struct irq_domain *d, struct device_node *ctrlr,
--			   const u32 *intspec, unsigned int intsize,
--			   irq_hw_number_t *out_hwirq, unsigned int *out_type)
-+static int pic32_irq_domain_xlate(struct irq_domain *d, struct device_node *=
-ctrlr,
-+				  const u32 *intspec, unsigned int intsize,
-+				  irq_hw_number_t *out_hwirq, unsigned int *out_type)
- {
- 	struct evic_chip_data *priv =3D d->host_data;
-=20
 
