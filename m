@@ -1,232 +1,165 @@
-Return-Path: <linux-kernel+bounces-265953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C787F93F819
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:33:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C7AE93F82D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52B4C1F22A75
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:33:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE5811C220EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1D016EC1E;
-	Mon, 29 Jul 2024 14:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2911607A1;
+	Mon, 29 Jul 2024 14:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HmNz/Y1m"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SfpCyP88"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C1E16C874;
-	Mon, 29 Jul 2024 14:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0897515531B
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722263042; cv=none; b=QDMVKL3aGXeJjwaR/MZkPr50pI+fphcrmaquVfOWgLD01qY18roSAXvCOlHIziaA6sOQiHPvK7wr/09Nbja+sAmfyDjbKHAelzwNCbVckjPwTSaTRYJwOAHG42sgPkn/i+AiKDa+kJcfOUyDwKSb1XS0NLABYoD8ZIU2vAbUgzE=
+	t=1722263115; cv=none; b=R3mnN9AvGOHBlGnboE3yESSRoFTCMi7GYJoHm6MOOmUp6BpIWQ02rAskExW/Fz1uVWoIGsseO0GaKwZG4wq7u9AQgBuG+hLGZEXp4wTtJ6T7kXWKWa+DMXW1RVtq0un8AaztvDSBhRA6Hn1EZF52f1OE/PraOwxjGZP1Qlh0vZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722263042; c=relaxed/simple;
-	bh=/Wpe/5rYqdImbyCUVd1c11TTq1BqOeje/XYJfj5w1Ng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cyZluvLon7QE4AOD0W7dsasoiCNR72pzcBt6++AWW839dP0pS0zW1/JCA9vdfej5C1WBeOlsLwPi67riN+RYcpkM50Cm68WScKphpKUnx0513zY8qen/dYCAaI+85HRq2Cjts8E88OPNniFEg2nhjaHjgGlVTn0r6n24GZzxlGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HmNz/Y1m; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fc49c0aaffso18638075ad.3;
-        Mon, 29 Jul 2024 07:24:00 -0700 (PDT)
+	s=arc-20240116; t=1722263115; c=relaxed/simple;
+	bh=clEI/5DjTKK8Gr0xUcSiofFZ4Zx8J4sj7ss/BKmPTRs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qmp3bx0ee03Ve//dxQ4QVTL1/aF1ASmZ3eCcwdiojvrUVOmBp/iX7VIRrhwDMV8qQ4AdXUR9I6yUVjsseRa4LuccKPLE/XnqVgLXbxaa7+/xrZChgR8j0yW3wAT/j5qM/rJ7xjtA5rCiDB91gB2QqPnmIagI8lqH0PF50CJhdK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SfpCyP88; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4280bbdad3dso17662105e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:25:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722263040; x=1722867840; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=p2ysJlNSRu0e/YbS024LG515JBsWr7m6Be9HrhDOPo4=;
-        b=HmNz/Y1m1fzvN9inaK566Zl0ln93C/mZ1xltCCMrxBKHko9XIJhIslCcv5c4HX4C82
-         01pPnkR2n/+4+ve6fACI0Tc7Pq30NRvCgS0O95j19dRAAzjfli0rKRmELF3EwYrdCGD7
-         YNMC0flbP/kgXs6o5FAHxJCQw39uYSZPKvHGd9UcEZU9mHWH6o8nOeCeiFiHodQjn9n2
-         wnIcNxqyOTIebE20lDun0VMEMspxSD5zJVQNOrbpip+VqOdmfARlZXY7mTNXUoyJD3DM
-         rjCKXPl8/orbcZTJzDyd8WxIQiaH+IsBqkLVmMzPDsNBxhXwvPPxe2JC+ZMQabkVBoV9
-         oF1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722263040; x=1722867840;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1722263112; x=1722867912; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=p2ysJlNSRu0e/YbS024LG515JBsWr7m6Be9HrhDOPo4=;
-        b=Q+LrwMjxW3A1rJMD/d7pc4dIZL6bbnomVi7nipdD9j03oZNisD45J2uLICqH9vo5lj
-         KwbbySRF3m0ppMfpDnuVZyzDGjp7zLvEtCNyG7OHObg5n2ty0bGSzdV693sdpv3/R736
-         zDvarP/z21TEw3s+Eslrg1fkonaoo4RCr4QU6lYHPECP8HRviMlTZ0PbdhKT3zxlUoKg
-         95eDVnVS1KX/S+FxOBx63gQz2/d8qjJVEXyL4UKhrBObJXCHTvCyL6c2FRCscGCOhHRr
-         4zFiM42jldVRsgwC8tjSZrVTh2/2UwfmmjQDyMJCyKwy9uThHGJc6daVcs52ftZUnQ3l
-         w5NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXkJYJZSeLoB88cxPNdLq++HIWA76i1jyiClrs9HRGwUkIKP0v8lBkRl8ISEsQn+/FFqVsR1bH5z60loyzwNohl9jn7Z0r9243mgmmhUeFOP0ZWVOoXH/8/c5rlgRxCTHJWZ9oQcGqh
-X-Gm-Message-State: AOJu0Yx94Aekmz5b71BTDlk8HZCcUHm7d7z3DrooGtD6CGs865DhRc8k
-	YX+5FPsUA6mLasCNIXm46QH4Fgj4q5us/jK85DtusAKLeKAkpT9Q7LgclQ==
-X-Google-Smtp-Source: AGHT+IGM6FDVc1wL1cuIExdAjGhf3jvIBjOASAys1FEYBUj3AEU7eGT5WRJKXeC4mknY5mrBUUp6rw==
-X-Received: by 2002:a17:902:f54d:b0:1fd:9044:13d8 with SMTP id d9443c01a7336-1ff047e43d5mr62893765ad.9.1722263039842;
-        Mon, 29 Jul 2024 07:23:59 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ee15a9sm83575985ad.151.2024.07.29.07.23.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jul 2024 07:23:58 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <3adf0b8f-2e12-413a-a76f-866e56bf096c@roeck-us.net>
-Date: Mon, 29 Jul 2024 07:23:57 -0700
+        bh=SVM829+EhcVia4VVprQ2SYbpXevJjHoUSFXsuwUogXI=;
+        b=SfpCyP88BCiwTZ8eCGNkO+f06i2D0kVWax47fvS+o4zo4tnjwQ66sYBIZW+B9nL/pU
+         d3/qCO9UNlYBYGeEdB9+LHSYIlLdIqpTl1OzViz9an5sHyo9C6S1kRuZjS9gT6uALv2H
+         Kl9T5ABkIMDbeaDdkbwTVjttKnZXJYYTodkxwVCFreA2TZ5esTt1gbqlNDEalez2pns6
+         /BXpiRCvJubCvkHumn3ZuRlcn0utuTFPIlT5IgjaVzLjuhQpFMK+XR64IqqenTR+yUil
+         zPbfNm79sHCCEu01E+vj7cC1s5mV2bqL102zW3xvM/NiWvtOQ43HPrsY2CDEsNJmFmTA
+         LpmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722263112; x=1722867912;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SVM829+EhcVia4VVprQ2SYbpXevJjHoUSFXsuwUogXI=;
+        b=VjGNAxVnqf9RZeuN7lotp3UdYs15hVVkkoEBCn26bY4yc7hCpS2dAgq7PXVOcWsPL8
+         gOtuKgzWM79osXz6LpdoOACO594uKpaOHm5vv+W8lX2DSD+1MHyKlZKPnBLA91hhC8KG
+         SRIOsWAyOc1E29sNqoYf0zGaApzzwSHumXZeJ4Y0Ua42/1xUNqf7Bb5qJaz6BFhx0Lm5
+         sCZOBnZPW5Em51Umfh0EgKLo209umiCHRcUvwyJIp8ebDs8l/QBBNk8BpJSOaeGSDWAO
+         anBYEl8phR8OFKGhO4iCOG/De1iyorgv3CFg/pcWhXCJN9/m+CHYjhDS4lc4BSEA7/XH
+         29Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNsK8O6OQP+gMQT8ofoGg0JR5ZksS1ps3kk3Ico4oyLBTLH5vgz1BhXEb9kjh9KlUKwyiPagKY3uNqwAVZbnu3yKHyXJ0j+ZpmszXR
+X-Gm-Message-State: AOJu0YxoDyQMVwkgSJXKbZBhvBohRdHS3wl2V8teghXUoSfG0pHHKocV
+	2DQvZQNx4hDdJL1uYmybL9ZMCP48IwM3eEQoSxw0N5PCHElrKubVILXMtIYlvPW1Urq16h1SXuQ
+	bfx8QNrso+gZod6CcL1seR80iuBW2BqfPaq4w
+X-Google-Smtp-Source: AGHT+IFQYU16YlEglKzW3eVXPMw2hulSYWVP3EJV0ND4LobHlD1MaRThQeUtYygtvMTEPmYpkrM4DSmQ7vHTTIR+RAE=
+X-Received: by 2002:a05:600c:510d:b0:426:5ef5:bcb1 with SMTP id
+ 5b1f17b1804b1-42811d6dc50mr56509235e9.6.1722263112076; Mon, 29 Jul 2024
+ 07:25:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] i2c: smbus: Send alert notifications to all devices
- if source not found
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Wolfram Sang <wsa@kernel.org>, Jean Delvare <khali@linux-fr.org>,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220110172857.2980523-1-linux@roeck-us.net>
- <20220110172857.2980523-3-linux@roeck-us.net> <ZqakaAn3f9Kg6Lgy@shikoro>
- <7ad68f35-2e90-41b7-a95d-efe5f7db8f3b@roeck-us.net>
- <ZqdLVg6IVTjsTWb4@shikoro>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
- nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
- hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
- c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
- 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
- GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
- sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
- Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
- HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
- BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
- l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
- J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
- cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
- wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
- hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
- nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
- QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
- trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
- WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
- HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <ZqdLVg6IVTjsTWb4@shikoro>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240704-shadow-call-stack-v3-0-d11c7a6ebe30@google.com>
+ <20240704-shadow-call-stack-v3-1-d11c7a6ebe30@google.com> <20240704164548.GB1394865@thelio-3990X>
+In-Reply-To: <20240704164548.GB1394865@thelio-3990X>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 29 Jul 2024 16:25:00 +0200
+Message-ID: <CAH5fLgi-4FMeXQf2DjFYX85fPrfs8PeBarOFTbUtwf-+bPNz0A@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] rust: SHADOW_CALL_STACK is incompatible with Rust
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Jamie Cunliffe <Jamie.Cunliffe@arm.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Mark Brown <broonie@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Kees Cook <keescook@chromium.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/29/24 00:57, Wolfram Sang wrote:
-> Hi Guenter,
-> 
-> thanks for the feedback!
-> 
->>> High level question: why the retry? Did you experience address
->>> collisions going away on the second try? My guess is that they would be
->>> mostly persistent, so we could call smbus_do_alert_force() right away?
->>>
->>
->> I honestly don't recall. I had some brute force code to trigger alerts
->> on connected chips. Maybe the idea was to catch situations where another
->> alert was raised after or during the first cycle.
-> 
-> Hmm, I'd think that SMBAlert then stays asserted and the whole alert
-> handling will be started right away a second time? Given that all
-> hardware works correctly, of course. Your setup showed that arbitration
-> does not work well with actual hardware. Props for finding this out!
-> 
->> As for "call smbus_do_alert_force() right away", I am not sure I understand.
->> Isn't that what the code is doing twice ?
-> 
-> It calls smbus_do_alert() twice (without '_force'). If that fails, it
-> calls the _force version. I am wondering now if we can't call the _force
-> version right after smbus_do_alert() fails once. Meaning we could remove
-> all the "retries" code from your patch. If there is no clear reason for
-> the code, not having it is easier to maintain. That's why I ask.
-> 
-> I hope the question is understandable now.
-> 
+On Thu, Jul 4, 2024 at 6:45=E2=80=AFPM Nathan Chancellor <nathan@kernel.org=
+> wrote:
+>
+> On Thu, Jul 04, 2024 at 03:07:57PM +0000, Alice Ryhl wrote:
+> > When using the shadow call stack sanitizer, all code must be compiled
+> > with the -ffixed-x18 flag, but this flag is not currently being passed
+> > to Rust. This results in crashes that are extremely difficult to debug.
+> >
+> > To ensure that nobody else has to go through the same debugging session
+> > that I had to, prevent configurations that enable both SHADOW_CALL_STAC=
+K
+> > and RUST.
+> >
+> > It is rather common for people to backport 724a75ac9542 ("arm64: rust:
+> > Enable Rust support for AArch64"), so I recommend applying this fix all
+> > the way back to 6.1.
+> >
+> > Cc: <stable@vger.kernel.org> # 6.1 and later
+> > Fixes: 724a75ac9542 ("arm64: rust: Enable Rust support for AArch64")
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>
+> Would it be better to move this to arch/arm64/Kconfig?
+>
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 167e51067508..080907776db9 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -90,7 +90,7 @@ config ARM64
+>         select ARCH_SUPPORTS_DEBUG_PAGEALLOC
+>         select ARCH_SUPPORTS_HUGETLBFS
+>         select ARCH_SUPPORTS_MEMORY_FAILURE
+> -       select ARCH_SUPPORTS_SHADOW_CALL_STACK if CC_HAVE_SHADOW_CALL_STA=
+CK
+> +       select ARCH_SUPPORTS_SHADOW_CALL_STACK if CC_HAVE_SHADOW_CALL_STA=
+CK && !RUST
+>         select ARCH_SUPPORTS_LTO_CLANG if CPU_LITTLE_ENDIAN
+>         select ARCH_SUPPORTS_LTO_CLANG_THIN
+>         select ARCH_SUPPORTS_CFI_CLANG
+>
+> RISC-V probably needs the same change, which further leads me to believe
+> that this workaround should be architecture specific, as they may be
+> fixed and enabled at different rates.
+>
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 6b4d71aa9bed..4d89afdd385d 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -213,6 +213,7 @@ config HAVE_SHADOW_CALL_STACK
+>         def_bool $(cc-option,-fsanitize=3Dshadow-call-stack)
+>         # https://github.com/riscv-non-isa/riscv-elf-psabi-doc/commit/a48=
+4e843e6eeb51f0cb7b8819e50da6d2444d769
+>         depends on $(ld-option,--no-relax-gp)
+> +       depends on !RUST
+>
+>  config RISCV_USE_LINKER_RELAXATION
+>         def_bool y
 
-I looked into the code again. The sequence is (or is supposed to be):
+Thanks for taking a look. For now, I went with placing the `depends
+on` in CONFIG_RUST as suggested by the others. This avoids cases where
+enabling Rust results in changes to how mitigations are configured.
 
-1st loop:
-	if (!alert_pending)
-		break;
-	smbus_do_alert()
-	if (failed at same address)
-		smbus_do_alert_force()
+As for riscv, it doesn't need any special flags. Please see the commit
+message for more details on riscv support.
 
-2nd loop:
-	if (!alert_pending)
-		break;
-	smbus_do_alert()
-	if (failed at same address)
-		break;
+https://lore.kernel.org/all/20240729-shadow-call-stack-v4-0-2a664b082ea4@go=
+ogle.com/
 
-I think what you are suggesting is
-
-1st loop:
-	if (!alert_pending)
-		break;
-	smbus_do_alert()
-	if (failed at same address)
-		retries++;
-2nd loop:
-	if (!alert_pending)
-		break;
-	smbus_do_alert_force()
-	if (failed at same address && retries)
-		break;
-
-But in reality that would not be much different because the alert status
-is checked prior to calling smbus_do_alert() again.
-
-With your suggestion (if I understand it correctly), the code would be
-something like
-
-                 /* Notify driver for the device which issued the alert */
-                 status = device_for_each_child(&ara->adapter->dev, &data,
-                                                retries ? smbus_do_alert_force : smbus_do_alert);
-                 /*
-                  * If we read the same address more than once, and the alert
-                  * was not handled by a driver, it won't do any good to repeat
-                  * the loop because it will never terminate.
-                  * Bail out in this case.
-                  * Note: This assumes that a driver with alert handler handles
-                  * the alert properly and clears it if necessary.
-                  */
-                 if (data.addr == prev_addr && status != -EBUSY) {
-                         /* retry once */
-                         if (retries++)
-                                 break;
-                 } else {
-                         retries = 0;
-                 }
-
-I don't know, I prefer my code. It keeps the exception /retry handling in one
-place. Personal preference, maybe. Either case, retries could probably be made
-a boolean.
-
-Thanks,
-Guenter
-
+Alice
 
