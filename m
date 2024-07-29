@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-265481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC88D93F1C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:53:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C19893F1CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:54:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6870628477F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:53:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8BCD282515
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502591474CB;
-	Mon, 29 Jul 2024 09:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6327E1487ED;
+	Mon, 29 Jul 2024 09:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="g0X9UmNs";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iCSUWEfA"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PGP1cen2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v8uua7t1"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1041459E6;
-	Mon, 29 Jul 2024 09:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82761145A00;
+	Mon, 29 Jul 2024 09:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722246592; cv=none; b=RA+7W+VCqlTx2m81NTOxmVl3J+O/PKnYow8EqbC/omu0X3I1TjZXTF5Bf5V+UQ8jzBNgk0uVRRKzQJ4hMEti1ydcKEI5RiQZz9M9OxqRj2Q6D6JB3bkotxdLwfd6qlD2HX6i3EzrKtBr0Kcq/g/YDHiSKuYqmBrWozHhZrBy7Ro=
+	t=1722246593; cv=none; b=KQkg6i3cmAL41T3Yc6vEO8mSi/OW6z0k5KUprv+Pzr97OdrMYSKOOfTxonrkjR3DHE0TUfjX+bJ7XAHrucL/xH1z3Xt1lK0A1fC4ZXxKnTzBv3zCDXPVXVBB/RZoh/v+PUp2RTkcNbf+mYgcKrFNZZdFdfOkIj43p0mqPG4FwfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722246592; c=relaxed/simple;
-	bh=3RBv6eo9vU6SO+QXTRYMO5sGZTtItxzF3qnOG96UJjc=;
+	s=arc-20240116; t=1722246593; c=relaxed/simple;
+	bh=8N9u9+joIVuoU1zoWlroPV5t5LAMG7a91C8peolP/aU=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=PAr74WETed9qdiZBp8SOQRXFE8Who5SnAOWk74q5TYeDtMCUEdJ+0K8vWRZWW4DFmPodcJ19dNG8EJxKGOlN9ZJDNZXIxMaY4sQ/7BZy5gsXa+wOU1UqVWqegEBWb9jOh3u1+cjFXmepdzqkncAAMka7Wd/5yIvHsvmZogkfyi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=g0X9UmNs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iCSUWEfA; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=rrfDDvRaXh3CqHHfOZ7g5sUpT1gX23A4kBqIcgGh5gAPYvksfwmB0SSsORcwedEaUvdoPqf6tZ3sr5qHsrGAiaVzWw3FGcveTSTaaYTedyv3Jpwo24GB2cUmdkd9Vg/mxqFSERGKrl9oj2mdOj6Vzt1fjB8sBEiqZ5vecAPhG7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PGP1cen2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v8uua7t1; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Mon, 29 Jul 2024 09:49:47 -0000
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9xgX3XxwvBwDJXLU/W4MKGVPheKWELcCk37kTukOcvA=;
-	b=g0X9UmNspFvPQVTck59y1ZFKtOXwIBH/Zw3maXndnwcvqSHGMLGu2mziv/CP5cthMfykjh
-	g/WFv530n3PwbpOj9y94M1W1MRGXY8IqQ0K6X6LKS2H9vBta7F6/TAYKnpguNZMLSEWxux
-	mH00ONkngv8SklpN8AIFGw/zgGc82rX8smvk8jhGNhG8UaTAnG3VkuSEc2xcqr38mB8tma
-	Hnk9WbFYMtx0JeMs1SV3G8qD86Ip6u1narpFntjpNNhZw208kuBfhGC5M/drUBdHU9TES2
-	0KpsOyIMzbmyO2TKJH1fcd0iJ1WweEH9Sqe0OYF53SS0BuIkwdSZnnvO0PtWCg==
+	bh=uDbKhuygMY3pKYh+8yNLe/xbAaZQlYGRt5l9/82HhfQ=;
+	b=PGP1cen2p/jyjZCEIQABV+SFQhHViYry50rqWMpM/aaj1KsFh1TUN5g1pA7b16W/KwxIbr
+	WKOQsbPJU1xVvyyR8JHUVb2OI9ELhNGgL5ZjwurborBXVy4mGzckg0zNzYfX8CykPBk0ww
+	d5s9CJp1PsIpKwCTv2AmbpYfzyLphbL+BfhIpYlWqTIxH427bpdODzr1rZ44xHFQD42Rj7
+	sz8jgOs2psEYLpLnDvY8gB247K+kU23Dcj2S94GoYoKtc+uMwRQ0BlPFcl+oWnFl2Rkj37
+	uQWiXJoTzQdMw88bYHPtbw+lmsG8ac02i96x1TMDFL3EyN7qh+y8MGepQ2wY+w==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1722246587;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,26 +52,27 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9xgX3XxwvBwDJXLU/W4MKGVPheKWELcCk37kTukOcvA=;
-	b=iCSUWEfA+zuzQjd2Y2odOB6xGQdGKM79CFgJc5JvWV9/kLRWnoi+/HCwWRMn80qHIMjwlW
-	PxXiULEDsyCeuXAw==
+	bh=uDbKhuygMY3pKYh+8yNLe/xbAaZQlYGRt5l9/82HhfQ=;
+	b=v8uua7t1Whm6mvv9HNN+HUjLlS9pz7Cbj2dcjyYaABClU3IXD8K/Yarqlfd0hnxud2sVbz
+	pbn/XMT4IqyZbaDQ==
 From: tip-bot2 for Marek =?utf-8?q?Beh=C3=BAn?= <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/armada-370-xp: Use BIT() and GENMASK() macros
+Subject: [tip: irq/core] irqchip/armada-370-xp: Change register constant
+ suffix from _MSK to _MASK
 Cc: kabel@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Andrew Lunn <andrew@lunn.ch>, x86@kernel.org, linux-kernel@vger.kernel.org,
- maz@kernel.org
-In-Reply-To: <20240708151801.11592-5-kabel@kernel.org>
-References: <20240708151801.11592-5-kabel@kernel.org>
+ Andrew Lunn <andrew@lunn.ch>, ilpo.jarvinen@linux.intel.com, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20240708151801.11592-3-kabel@kernel.org>
+References: <20240708151801.11592-3-kabel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172224658704.2215.13748374301568914524.tip-bot2@tip-bot2>
+Message-ID: <172224658754.2215.14635140072686491770.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,71 +82,102 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     3587a763f2faf0fe4004d5103e573f0700f89e50
-Gitweb:        https://git.kernel.org/tip/3587a763f2faf0fe4004d5103e573f0700f=
-89e50
+Commit-ID:     fff29b2c21e9a4e64527ad598445512459dcf74f
+Gitweb:        https://git.kernel.org/tip/fff29b2c21e9a4e64527ad598445512459d=
+cf74f
 Author:        Marek Beh=C3=BAn <kabel@kernel.org>
-AuthorDate:    Mon, 08 Jul 2024 17:17:55 +02:00
+AuthorDate:    Mon, 08 Jul 2024 17:17:53 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Mon, 29 Jul 2024 10:57:21 +02:00
 
-irqchip/armada-370-xp: Use BIT() and GENMASK() macros
+irqchip/armada-370-xp: Change register constant suffix from _MSK to _MASK
 
-Use the BIT() and GENMASK() macros where appropriate.
+There is one occurrence of suffix _MSK in register constants, others
+have _MASK instead. Change the one to _MASK for consistency.
 
 Signed-off-by: Marek Beh=C3=BAn <kabel@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Link: https://lore.kernel.org/all/20240708151801.11592-5-kabel@kernel.org
+Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+Link: https://lore.kernel.org/all/20240708151801.11592-3-kabel@kernel.org
 
 ---
- drivers/irqchip/irq-armada-370-xp.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/irqchip/irq-armada-370-xp.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada=
 -370-xp.c
-index 427ba5f..18aca9b 100644
+index 66d6a2e..588a9e2 100644
 --- a/drivers/irqchip/irq-armada-370-xp.c
 +++ b/drivers/irqchip/irq-armada-370-xp.c
-@@ -121,7 +121,7 @@
- #define ARMADA_370_XP_INT_SET_ENABLE		(0x30)
- #define ARMADA_370_XP_INT_CLEAR_ENABLE		(0x34)
- #define ARMADA_370_XP_INT_SOURCE_CTL(irq)	(0x100 + irq*4)
--#define ARMADA_370_XP_INT_SOURCE_CPU_MASK	0xF
-+#define ARMADA_370_XP_INT_SOURCE_CPU_MASK	GENMASK(3, 0)
- #define ARMADA_370_XP_INT_IRQ_FIQ_MASK(cpuid)	((BIT(0) | BIT(8)) << cpuid)
+@@ -126,7 +126,7 @@
 =20
  /* Registers relative to per_cpu_int_base */
-@@ -132,18 +132,18 @@
+ #define ARMADA_370_XP_IN_DRBEL_CAUSE		(0x08)
+-#define ARMADA_370_XP_IN_DRBEL_MSK		(0x0c)
++#define ARMADA_370_XP_IN_DRBEL_MASK		(0x0c)
+ #define ARMADA_375_PPI_CAUSE			(0x10)
+ #define ARMADA_370_XP_CPU_INTACK		(0x44)
  #define ARMADA_370_XP_INT_SET_MASK		(0x48)
- #define ARMADA_370_XP_INT_CLEAR_MASK		(0x4C)
- #define ARMADA_370_XP_INT_FABRIC_MASK		(0x54)
--#define ARMADA_370_XP_INT_CAUSE_PERF(cpu)	(1 << cpu)
-+#define ARMADA_370_XP_INT_CAUSE_PERF(cpu)	BIT(cpu)
+@@ -324,9 +324,9 @@ static void armada_370_xp_msi_reenable_percpu(void)
+ 	u32 reg;
 =20
- #define ARMADA_370_XP_MAX_PER_CPU_IRQS		(28)
+ 	/* Enable MSI doorbell mask and combined cpu local interrupt */
+-	reg =3D readl(per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MSK);
++	reg =3D readl(per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MASK);
+ 	reg |=3D msi_doorbell_mask();
+-	writel(reg, per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MSK);
++	writel(reg, per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MASK);
 =20
- /* IPI and MSI interrupt definitions for IPI platforms */
- #define IPI_DOORBELL_START			(0)
- #define IPI_DOORBELL_END			(8)
--#define IPI_DOORBELL_MASK			0xFF
-+#define IPI_DOORBELL_MASK			GENMASK(7, 0)
- #define PCI_MSI_DOORBELL_START			(16)
- #define PCI_MSI_DOORBELL_NR			(16)
- #define PCI_MSI_DOORBELL_END			(32)
--#define PCI_MSI_DOORBELL_MASK			0xFFFF0000
-+#define PCI_MSI_DOORBELL_MASK			GENMASK(31, 16)
+ 	/* Unmask local doorbell interrupt */
+ 	writel(1, per_cpu_int_base + ARMADA_370_XP_INT_CLEAR_MASK);
+@@ -394,17 +394,17 @@ static struct irq_domain *ipi_domain;
+ static void armada_370_xp_ipi_mask(struct irq_data *d)
+ {
+ 	u32 reg;
+-	reg =3D readl(per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MSK);
++	reg =3D readl(per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MASK);
+ 	reg &=3D ~BIT(d->hwirq);
+-	writel(reg, per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MSK);
++	writel(reg, per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MASK);
+ }
 =20
- /* MSI interrupt definitions for non-IPI platforms */
- #define PCI_MSI_FULL_DOORBELL_START		0
-@@ -415,7 +415,7 @@ static void armada_370_xp_ipi_send_mask(struct irq_data *=
-d,
+ static void armada_370_xp_ipi_unmask(struct irq_data *d)
+ {
+ 	u32 reg;
+-	reg =3D readl(per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MSK);
++	reg =3D readl(per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MASK);
+ 	reg |=3D BIT(d->hwirq);
+-	writel(reg, per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MSK);
++	writel(reg, per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MASK);
+ }
 =20
- 	/* Convert our logical CPU mask into a physical one. */
- 	for_each_cpu(cpu, mask)
--		map |=3D 1 << cpu_logical_map(cpu);
-+		map |=3D BIT(cpu_logical_map(cpu));
+ static void armada_370_xp_ipi_send_mask(struct irq_data *d,
+@@ -539,7 +539,7 @@ static void armada_xp_mpic_smp_cpu_init(void)
+ 		return;
 =20
- 	/*
- 	 * Ensure that stores to Normal memory are visible to the
+ 	/* Disable all IPIs */
+-	writel(0, per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MSK);
++	writel(0, per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MASK);
+=20
+ 	/* Clear pending IPIs */
+ 	writel(0, per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_CAUSE);
+@@ -740,7 +740,7 @@ armada_370_xp_handle_irq(struct pt_regs *regs)
+=20
+ static int armada_370_xp_mpic_suspend(void)
+ {
+-	doorbell_mask_reg =3D readl(per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MSK);
++	doorbell_mask_reg =3D readl(per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MASK);
+ 	return 0;
+ }
+=20
+@@ -785,7 +785,7 @@ static void armada_370_xp_mpic_resume(void)
+=20
+ 	/* Reconfigure doorbells for IPIs and MSIs */
+ 	writel(doorbell_mask_reg,
+-	       per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MSK);
++	       per_cpu_int_base + ARMADA_370_XP_IN_DRBEL_MASK);
+=20
+ 	if (is_ipi_available()) {
+ 		src0 =3D doorbell_mask_reg & IPI_DOORBELL_MASK;
 
