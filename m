@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-265917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61DED93F7AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:25:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2624093F7B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 183BC1F22488
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:25:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05851F20FC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645E818754F;
-	Mon, 29 Jul 2024 14:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFA7188CAF;
+	Mon, 29 Jul 2024 14:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GmfMwSrm"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="blT9bINO"
 Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6446B16E895;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABF0186E2E;
 	Mon, 29 Jul 2024 14:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722262892; cv=none; b=DOnG5JrOwZpHsPjeWFGPNnS6zhx3i5B5LxJtp0ioSNkoDZVXF6DFY75qnaXahOHrrf/NqhxwguO6lWJoYl7SoR+wbjob9j2iAeZfCAoOWKkHp6efiL5MRJ6WGPuPqGlsPxRaBcYdQ7A1K0SeHH30KGlEOSXs/i5jtxJc3smkcLI=
+	t=1722262894; cv=none; b=IC1ZdKW/br53l7pRdeRa4oXPuLnPmokogo96QR0jE7MZL1AtF/q6R6LDiSkKZY1cVDJXURu+iLOEdsiCZv7owkWZsN9wONSdMaw4464rPvXC02TsjfweNp31VzK7uHrm58iBkIAi62QohVbd4YSMNdpGCpZObzbmIak5MDlWgP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722262892; c=relaxed/simple;
-	bh=GKkfyc4hjyRdwPY0DtvO6HF/PkMY18v3bIsnth4Ixy8=;
+	s=arc-20240116; t=1722262894; c=relaxed/simple;
+	bh=RuyLvw/h+OQQyELNwgwUqFWsLnM0a4DzBBIRdu/rvnQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m1bQnKyqtRLqt3iFIoIzxCpDMp4orueQv01YbSsXwN9LeQgw0m4qg/Unp4u8yC5EEdnpAS+54lPWs6VQNLiT0MJbKRMKDEr4suRQUZf1yB/wDzis/buj7em+Ch4pBNzyWs1NY7QO7J86mJRTvjhV+RvPvxlqxEw+VaQfH7bS/bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GmfMwSrm; arc=none smtp.client-ip=217.70.183.193
+	 MIME-Version; b=ntEplR8gcMQv4DCCarEBfMHqW4aihi1RfTCbhVBZ3lPp/PR3M3ETUas0PlxJ7l62M7w8s0ULXl/9vE2i6S6B/ACVaWU9JK4cs1+e1YpVMN27pgzO9y3CPL1zodb8RZyd4hvrY4Ksf7GKtacGK/LmAYUAqrJLy4gZCyzpFOUO+Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=blT9bINO; arc=none smtp.client-ip=217.70.183.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 56E5D240012;
-	Mon, 29 Jul 2024 14:21:28 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 20A06240009;
+	Mon, 29 Jul 2024 14:21:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
 	t=1722262889;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PujWEEqVrHtZSSAKi2FwKGenicKUYocXZABNhblP/pE=;
-	b=GmfMwSrmUzjKDB2KO2si9H0exlkk+DtbTzD1Bxm7JRKX55Qp5GnuJ0Y8h1DfD+jFFNyI3I
-	LbLDBM6PFs+xN1aplU80g07MQzZPazP1t7aQxFxYqv2qGxNBFq31PmsNdpq+Rl9/VsB3Sb
-	5n9DNkIi6aenRrUL1wdbxgopjCdeoxr88b5j/d/S2sLuJUO1HWdqIc3bcHFI8yqA9mkbE9
-	HfNSy6f4VCbi7K6kKVLOznyjBycD86WJml27Wfyd+inO4Ixtebw7JRRdW+Mzw/f7xOuIuo
-	U37UDoxwk+byK8kgBBIOeAk1HTcW8kY/Jxjn/ILLS77g76o6uvcSgk1aLCn74Q==
+	bh=FjqvInV++CElrxkmHy5Fprr8fbtF8RDwM+F8J2U6FCo=;
+	b=blT9bINO0h9Sj/5UKq8Mw6GMNM9k7Gk1dFojZrr8xeE79IMXP6NDEbdpw6a6Re4iCy1Mtp
+	Um6oDqA7/qXTFnZy3OlcTjuumS1fMxU9KTcBWZo8oVRvAv8TQ/OlsFiP/1lvYePxRqVUC3
+	kfaQTNLa/DFfOQFXaq5ZNSPfTFqyP1e93iKGWeLjgfbikqGApjsT3CNXtCRa9R66v40Djx
+	Nl/fLi2KEimx3o4QG0gwy4ZO/noFQ6DFOdkviKDVNRgQCBurUKk86e3278ZjcikK8EWz5H
+	IrlCFyfumX3GDAmFe/34iTOhcqMvIykiIVm5ttnmJmunHqd41lMNFuRpKXT+yA==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Herve Codina <herve.codina@bootlin.com>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
@@ -58,9 +58,9 @@ Cc: linuxppc-dev@lists.ozlabs.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v1 19/36] soc: fsl: cpm1: qmc: Fix blank line and spaces
-Date: Mon, 29 Jul 2024 16:20:48 +0200
-Message-ID: <20240729142107.104574-20-herve.codina@bootlin.com>
+Subject: [PATCH v1 20/36] soc: fsl: cpm1: qmc: Remove unneeded parenthesis
+Date: Mon, 29 Jul 2024 16:20:49 +0200
+Message-ID: <20240729142107.104574-21-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240729142107.104574-1-herve.codina@bootlin.com>
 References: <20240729142107.104574-1-herve.codina@bootlin.com>
@@ -73,73 +73,49 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-checkpatch.pl raises the following issues
-  CHECK: Please don't use multiple blank lines
-  CHECK: Alignment should match open parenthesis
+checkpatch.pl raises the following issue in several places
+  CHECK: Unnecessary parenthesis around ...
 
-Fix them.
+Remove them.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- drivers/soc/fsl/qe/qmc.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/soc/fsl/qe/qmc.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index e2ac3e59bb79..44bd9b949770 100644
+index 44bd9b949770..04466e735302 100644
 --- a/drivers/soc/fsl/qe/qmc.c
 +++ b/drivers/soc/fsl/qe/qmc.c
-@@ -274,7 +274,6 @@ static void qmc_setbits32(void __iomem *addr, u32 set)
- 	qmc_write32(addr, qmc_read32(addr) | set);
- }
+@@ -359,8 +359,8 @@ int qmc_chan_set_param(struct qmc_chan *chan, const struct qmc_chan_param *param
  
--
- int qmc_chan_get_info(struct qmc_chan *chan, struct qmc_chan_info *info)
- {
- 	struct tsa_serial_info tsa_info;
-@@ -1411,7 +1410,7 @@ static int qmc_setup_chan(struct qmc *qmc, struct qmc_chan *chan)
- 		qmc_write32(chan->s_param + QMC_SPE_ZDSTATE, 0x00000080);
- 		qmc_write16(chan->s_param + QMC_SPE_MFLR, 60);
- 		qmc_write16(chan->s_param + QMC_SPE_CHAMR,
--			QMC_SPE_CHAMR_MODE_HDLC | QMC_SPE_CHAMR_HDLC_IDLM);
-+			    QMC_SPE_CHAMR_MODE_HDLC | QMC_SPE_CHAMR_HDLC_IDLM);
- 	}
+ 	switch (param->mode) {
+ 	case QMC_HDLC:
+-		if ((param->hdlc.max_rx_buf_size % 4) ||
+-		    (param->hdlc.max_rx_buf_size < 8))
++		if (param->hdlc.max_rx_buf_size % 4 ||
++		    param->hdlc.max_rx_buf_size < 8)
+ 			return -EINVAL;
  
- 	/* Do not enable interrupts now. They will be enabled later */
-@@ -1604,7 +1603,6 @@ static int qmc_probe(struct platform_device *pdev)
- 	if (IS_ERR(qmc->scc_regs))
- 		return PTR_ERR(qmc->scc_regs);
+ 		qmc_write16(chan->qmc->scc_pram + QMC_GBL_MRBLR,
+@@ -1152,7 +1152,7 @@ static int qmc_check_chans(struct qmc *qmc)
+ 	if (ret)
+ 		return ret;
  
--
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "scc_pram");
- 	if (!res)
+-	if ((info.nb_tx_ts > 64) || (info.nb_rx_ts > 64)) {
++	if (info.nb_tx_ts > 64 || info.nb_rx_ts > 64) {
+ 		dev_err(qmc->dev, "Number of TSA Tx/Rx TS assigned not supported\n");
  		return -EINVAL;
-@@ -1650,7 +1648,7 @@ static int qmc_probe(struct platform_device *pdev)
+ 	}
+@@ -1161,7 +1161,7 @@ static int qmc_check_chans(struct qmc *qmc)
+ 	 * If more than 32 TS are assigned to this serial, one common table is
+ 	 * used for Tx and Rx and so masks must be equal for all channels.
  	 */
- 	qmc->bd_size = (nb_chans * (QMC_NB_TXBDS + QMC_NB_RXBDS)) * sizeof(cbd_t);
- 	qmc->bd_table = dmam_alloc_coherent(qmc->dev, qmc->bd_size,
--		&qmc->bd_dma_addr, GFP_KERNEL);
-+					    &qmc->bd_dma_addr, GFP_KERNEL);
- 	if (!qmc->bd_table) {
- 		dev_err(qmc->dev, "Failed to allocate bd table\n");
- 		ret = -ENOMEM;
-@@ -1663,7 +1661,7 @@ static int qmc_probe(struct platform_device *pdev)
- 	/* Allocate the interrupt table */
- 	qmc->int_size = QMC_NB_INTS * sizeof(u16);
- 	qmc->int_table = dmam_alloc_coherent(qmc->dev, qmc->int_size,
--		&qmc->int_dma_addr, GFP_KERNEL);
-+					     &qmc->int_dma_addr, GFP_KERNEL);
- 	if (!qmc->int_table) {
- 		dev_err(qmc->dev, "Failed to allocate interrupt table\n");
- 		ret = -ENOMEM;
-@@ -1711,7 +1709,7 @@ static int qmc_probe(struct platform_device *pdev)
- 
- 	/* Enable interrupts */
- 	qmc_write16(qmc->scc_regs + SCC_SCCM,
--		SCC_SCCE_IQOV | SCC_SCCE_GINT | SCC_SCCE_GUN | SCC_SCCE_GOV);
-+		    SCC_SCCE_IQOV | SCC_SCCE_GINT | SCC_SCCE_GUN | SCC_SCCE_GOV);
- 
- 	ret = qmc_finalize_chans(qmc);
- 	if (ret < 0)
+-	if ((info.nb_tx_ts > 32) || (info.nb_rx_ts > 32)) {
++	if (info.nb_tx_ts > 32 || info.nb_rx_ts > 32) {
+ 		if (info.nb_tx_ts != info.nb_rx_ts) {
+ 			dev_err(qmc->dev, "Number of TSA Tx/Rx TS assigned are not equal\n");
+ 			return -EINVAL;
 -- 
 2.45.0
 
