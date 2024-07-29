@@ -1,244 +1,199 @@
-Return-Path: <linux-kernel+bounces-265988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDF2393F8CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:56:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4DB693F8D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3011F228F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:56:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD7391C21CB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0EF155C94;
-	Mon, 29 Jul 2024 14:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C1D155751;
+	Mon, 29 Jul 2024 14:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vzOH7zWh"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2060.outbound.protection.outlook.com [40.107.237.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="v1s6ceId"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B2414601E;
-	Mon, 29 Jul 2024 14:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722264986; cv=fail; b=CWeFCpPV8plcHW2QyFHF4QT09NmmP7h9FCQeB5HFFjXrJVvIpY3VlN1sXwjxZN8kEwNv5uYNqNrbDEfE5x5fRzTl8+O56K1QUxtjxHhCWViPPf2gQs+PgUVvXtHLSAgnftzIYxp/fy7b3WWY+kQo0SYVpHQlmX2GezZb8KE2gsI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722264986; c=relaxed/simple;
-	bh=1lx0zeKt85HAfLuBZhwEMF9oJCZ71w3BFP3F5Cq1jfs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=M2uCOb7Tm24PrV+omF88CdWvkIjppJsWoYshQNM4ViVzPF9sgOqqaummpJpLTqnlIHFelz4h2PNvvw8IJtKW5oEvF3XqWANQDfOT2rHMjGrD9sAPWIsMgQGz1BPe8HmOLFdU41h5QYxBmlkWpOjG5bnXFbR+48q2eBkHDTNkuX8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vzOH7zWh; arc=fail smtp.client-ip=40.107.237.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RFDFo4HdhAOyHQ50uSz//D4Lchs3lafmZSBuofmA9reVpua++Ey3LDsW3z+iMLTH2Ro2FGQkwZkh/zJ9TlNtvjUy0PNRR73oSRo3p1MSOggjLfhIvW56128La9SjHMs5M/IkDP3QjfR4n2OMlHlYIsguBX2Tmq/A5daCYVIZoF+lDGYxeoEFK2v36xpuQwhi+UjeQlBSeZnL5xPFRxDFUilWeWRGHG4qmg6IvwsKGdbavN/mPetNCVnspYI+BCUl5KbgB7GHRTMZ5m42Z4x/kGDEb0AeQODgbmyZwxJj7qQuc4ynj+C35Fpc9MUfp8V5wjkJX79hIcPlvsmMzesG2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+kFGOySOmrdvYRmqtjsjsDoBoX4Jgt5kgaQJuL0OfdU=;
- b=Giw/UTqBHZXBidpHZApX+uvw+T+DvitW4H3i4aosPRxnmP/WkU8gkNlL4GGOmEePfOu7y20fWcpTvNi65uvYNEoF0+3is2yxkDkbyLRCCgLqoPQGAQkBGRB5BGxFFqGJXCUs53Q6CrR/u2nlwFDZNW4G5EXStZ965ioSNj7KM0Z7/ihACdis5C3wFFCgGBeDTpDLZNA77OVeIp+lyYmPosgYxCsVzg3cDULLzyFWQctn7iPS5HwGa6WA/O9XrGlejwCwR9tvOwXv/G78+PdF+DKGRh+Hw8MFD++fdxd8Hqjq6lqOXod5pp1ZRb9k/+AOyoOUghuF24c9v4P7eYupVw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+kFGOySOmrdvYRmqtjsjsDoBoX4Jgt5kgaQJuL0OfdU=;
- b=vzOH7zWhzFcIB+SSn0Kfwk0P4jQkl+fZhJOp2/bZMUidyUy3PhHuQOjVxKW6nYmTbxJzBznFda2Yns0pAIwUxg8Mhas82HbvIa03OqllaU2R61SAbw4dM2H54tXDwyUoaZNz7nR15M05BONPZ7ndq6+OIw7p5u8rIn0V89l7cpA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM6PR12MB4877.namprd12.prod.outlook.com (2603:10b6:5:1bb::24)
- by SN7PR12MB7450.namprd12.prod.outlook.com (2603:10b6:806:29a::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.29; Mon, 29 Jul
- 2024 14:56:21 +0000
-Received: from DM6PR12MB4877.namprd12.prod.outlook.com
- ([fe80::92ad:22ff:bff2:d475]) by DM6PR12MB4877.namprd12.prod.outlook.com
- ([fe80::92ad:22ff:bff2:d475%4]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
- 14:56:21 +0000
-Message-ID: <c60a0d22-5002-49a4-8dc9-a7b689ed685f@amd.com>
-Date: Mon, 29 Jul 2024 09:56:18 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 03/10] PCI/TPH: Add pci=notph to prevent use of TPH
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, netdev@vger.kernel.org,
- Jonathan.Cameron@huawei.com, corbet@lwn.net, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- alex.williamson@redhat.com, gospo@broadcom.com, michael.chan@broadcom.com,
- ajit.khaparde@broadcom.com, somnath.kotur@broadcom.com,
- andrew.gospodarek@broadcom.com, manoj.panicker2@amd.com,
- Eric.VanTassell@amd.com, vadim.fedorenko@linux.dev, horms@kernel.org,
- bagasdotme@gmail.com, bhelgaas@google.com
-References: <20240725212915.GA860294@bhelgaas>
-Content-Language: en-US
-From: Wei Huang <wei.huang2@amd.com>
-In-Reply-To: <20240725212915.GA860294@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1P222CA0094.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:35e::14) To DM6PR12MB4877.namprd12.prod.outlook.com
- (2603:10b6:5:1bb::24)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC90153812
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722265027; cv=none; b=EruDi5TB+Zd/pyjoYRazpzHL7wkj+/fs+TLEeTbmXJzOwX4WFkHj7xc4TwfSfGXN6U7Px+YOyqJjpycDlL48dOKmi1zLTeInItn8jmn/5P/2wZV265yGmoh81jfnc5bNCInCMiFbvSFVTU63Tn8u47Y43Op8ZrCAFg5f9lMDSjw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722265027; c=relaxed/simple;
+	bh=a/th7pWI5bQUIwTB0KfEs6HOAE2XK39+zDpgBE4iri8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=kIIaVrfLw8LTMMvzDj4RT9vNCUsPm4tVudezLgIRI2JtcXj3HAg8jr566QD/fJFRwnXylQv5xPWoCa5YW1kL33kGKvNXDW5jKKYu4pjRzjjenL0aOcW5Dc9i8+pbSpEQNrjem0Ck18VJA4aODC2YEcTkpN4bbiBSmvCDzW+Dvaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=v1s6ceId; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4281c164408so9994845e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:57:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722265022; x=1722869822; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+vd7eRTzF1aK+6J2h/+Ep32kwr+phgKio71VO1W2qNY=;
+        b=v1s6ceIdh2+lEJWAtoBqV9S0FSNy4lnMJPudLdCFm/OrHX6cpVfNakhYFU3r4+I+NC
+         Yt1Rgq9j+aYS6aNEXfviXjnsnRJvWTOdvskIuo1JLtQN/0KcXyYaHnKh07jn/04rBj45
+         KKMexO31PqMuUh91kohKMyjhhLQIZrPdE3bvraTw6FVFrRE1Zkwu73JdQeXvS+Q+3xYI
+         XVMPawVCGgzgUAlIwEpBZzLDOdpulDBMzFmSHEjdzreU17ucN5VjFvULevtvIbOftP/Y
+         E6AcOX4NsAPfeUrkVbpEUrrp7R7ypBtDYq3Jz3PeQVwdnKkEI4eOb4/5Cwi5MW7voNji
+         zkVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722265022; x=1722869822;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+vd7eRTzF1aK+6J2h/+Ep32kwr+phgKio71VO1W2qNY=;
+        b=ahteRQTvXpGBKsbhr+cWaCefzDEsZUrJ2sQF4AUhy5BRXaaFm43MB4nnCblVbWIWyF
+         Lh6wcT7CvRUFqDyB7TJfiAPVduQ4L7EwxGfDniduRxv3CG1DqtLdrKFoABFENpR+UyIg
+         XNEl1H3LB8AY2RvOW89tA8x5kSjVgbQtf7D6pxMgutdXUAZPdcfmdFoughctAljrhfrz
+         ETXb7t8/ZzbQw5cr/5EG31dvu1LfyhOZl0kIg+Wf3nMmvY8aCru4y/ZxGrI/kq65aTYI
+         xTCV7gA6MQZGOtqOE4DRbwblh4JzrRPvgr5T/T/eexP+lWYMH7w6J+b/iodjGCQA0DoN
+         WbPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqVY/0E4P5JDPRVDjdojJR6ERhhKZsHzaY+Tip/XEE6nEQgFNCK2UX9qgOz3vaWH+2e/lHuWuoDO2oJorFqakvceEToSdMxJTX8oHj
+X-Gm-Message-State: AOJu0Yx/ZJC9V8T+tmJhwADyWRWrujcHAdMBD2/b528AN7dDQEQGOheV
+	r/v2xn3pABEWQtm2R1fxSS5jUfSItfzelEEawCIN5LjZ6JB8OPOB5V1bFy3UX2c=
+X-Google-Smtp-Source: AGHT+IFzLv4lcwHL+T71gA0LxoHfgjz/e+PpybnhNURIIz0UPjwNYnK5aq6g/n0SJEUL/vtiLg5uHA==
+X-Received: by 2002:a05:600c:4e8f:b0:428:1fa1:7b92 with SMTP id 5b1f17b1804b1-4281fa17d79mr13520815e9.19.1722265022309;
+        Mon, 29 Jul 2024 07:57:02 -0700 (PDT)
+Received: from localhost (amontpellier-556-1-151-252.w109-210.abo.wanadoo.fr. [109.210.7.252])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280573f935sm182618065e9.14.2024.07.29.07.57.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jul 2024 07:57:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4877:EE_|SN7PR12MB7450:EE_
-X-MS-Office365-Filtering-Correlation-Id: 409a3310-5891-416e-15c9-08dcafde9bc1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VHRiSWVZY3hjNW9Ja1FIQUYrSVovOXhXZHI5T1VSRUxZS3lWOUxjOHAxRG1M?=
- =?utf-8?B?eGxTYjJyNEJHeTlGTEZpTUlLSkhLYXRVb3llOHlEU0U2b0tpWnR4TitYVkMr?=
- =?utf-8?B?RDVoRlhnd0lGZWZGZHEwdkRFTkdXODRWa0ZVMWFqRkRpU3NHQUVtY01GbXE4?=
- =?utf-8?B?K29RL2E4THh1YlFqNXZmNDBWUndqU0Y1TVY3b1lmTDJ3ZzlYcWxmMzhCZCtT?=
- =?utf-8?B?cVV4L3RtUy9MTGpEaVg1aHNtNXlvekVQT2sxcGEwemxZcnYxSmZlLytEQUor?=
- =?utf-8?B?R1BoM3Z3cmtQUGZMN0luYWdCcGJ0dzNIYzcrNTFiSSt6Wjl0TmNEYmkxOXN1?=
- =?utf-8?B?K1JIRXNXdjFmUFFzMUhmZDFGL1VTRS80RURQZHBvN2xVa2lMcldjdC9pQ0pB?=
- =?utf-8?B?QmlpLzZwTCtJM0F0N0MvZGg0ZVBLMVNJdmZCS0Q5NVduYlZpK0todE9UVEdE?=
- =?utf-8?B?cDhMNS9SN2QrL0dsZmQ4M0Z5Yzd0bm5acVFsNUo4b1NHaDBaem5odjFxdVNX?=
- =?utf-8?B?UE5TOGVWeGlSbEwrSmsyejF2UEtOdlNYK1N3WkQwcnB5NDcrcllobDRKUFRE?=
- =?utf-8?B?a0lJQXp1ZUFIME5NdEVWaFo4eVpRd292RGdZN3pNYkMvQTYyTTh3WFhNR2JI?=
- =?utf-8?B?N2QyNEtSeFBjVTlqN1JMQ2RXamI4V1FEdTdYR1hEdzQxYmlkQ1hWdWtqcnlo?=
- =?utf-8?B?dkZPU1UwOGxPVmJSUkxzMTVMNURUbWpFZGtIeTQvZTlpWExmdHV3K1NlYWh3?=
- =?utf-8?B?bndoTW9tSUlPbE8za0IrMTl6cVhqaWFienFpRVErRU01TmRhd2hUNFpXUkJ1?=
- =?utf-8?B?eTZneWZTWCtNUy9sY0hJWkxkdU5nc25FSHBxRjRDcWE1Z3JVaSt1SzFLZ1U1?=
- =?utf-8?B?RmIzUmdtOHFZQnQ0aEhiWk9DeG9iMFpNUU5wQnNjUnRYekxYL3VPczZ5M05h?=
- =?utf-8?B?T0ZCdEwwOHhHK0luczNMMGJhVEJUVUMvOVMvRFlRcFdXWm5jQ0YyYklSSTQx?=
- =?utf-8?B?MGxOWnBRMGdaa1V0OEh6b1AyejR1a2pGLzNBbXdTWGJ3b3NqSjdOazMrazUw?=
- =?utf-8?B?L21hQXJzblBWMmhUM05GQXpHTWZNUjNKb0laWWJmaHhpL3p4M0xEdmtJL1ZE?=
- =?utf-8?B?SjhTaHY5cHJISGtNN2hMYkRMT1R6V1dNQndkMEhlb0tvZm55em5ZTFZ3dU90?=
- =?utf-8?B?a3ZQWWlodlVYbEFZS1Q1NWxxNmp2aUZOMVNiUi92R1h3dEVmd3gzQUpkWUo3?=
- =?utf-8?B?dkZRMEppZWxUNDFQWGhWZUdZNS90d2tTUmZkcmMvQThBNXdqcWx5V1pKdkw2?=
- =?utf-8?B?NHkybGZVT3RiTEZEd2JQai9GdkVPNnFqbk1sY2hqR0RUQWZQbHRVSy9ZYjd0?=
- =?utf-8?B?cE43ZUFlQlBIWjE0dlM4QXhKcWtjbERxdDVacStaeHZZdmxIRnc5OWdZOFNG?=
- =?utf-8?B?WGNtOXVia0FCcm1vNHpZMkcvZVptNGlkT0hTZ1NBd2lRaituMlZEY0RRWTdm?=
- =?utf-8?B?RExLYzFmeVBqMEtKVWJyMU5uaWd2aks5UXJ3dkkwNFVRd00yVG1tUkZFbExJ?=
- =?utf-8?B?V1YwelFWblhKcjZ5c3I1eWVaUU1jQTF3N2tXWXhlanRtYkQxTytJZDliT1pY?=
- =?utf-8?B?Wmt6K2wyVkozNStyN3hhNU9JTmRNaWo2N1huUFBLWlNBNS9XcXpYa0dGYW1K?=
- =?utf-8?B?NTdqbEpFM0c3SkYvNWN3cWxOaml0aC9qcGhNM25OcmEwWFh1a2IvL2NpWlJV?=
- =?utf-8?B?WlNRYWZ0MDc3RXZyUzRZTGI3a3k1YTB6WjlTM3FPN2djVWNHaEtEMm5pc2ZH?=
- =?utf-8?B?bG5RVGlSWXl0aC8rN2NRQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4877.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MnJaUm9qSklKRHhBTjZodFhubkdReFlJUE9hSkdtL3p6b3ptbW1iZWpWWGxK?=
- =?utf-8?B?MzhsN2JONk02OFBtVFIyaTBPRmpPRENZenVjc0ZFTlp1bUVjWVZHdzBFaUFD?=
- =?utf-8?B?bENLM3RDdU9FWUR2dUxJU1VUYy8rR2UreHR5c3pMU0IydjFteUhmSmcyQ1dr?=
- =?utf-8?B?dWRXNms0NTU5U1pFN2R0S2RpbGRLQm5GWjlsQitYSEowcnVGZkFxSjQySndV?=
- =?utf-8?B?dW5tWFM2OGN2Yndabm5sUDlJblA2aWhiMFJuN2gzOVBiSEdwZDVhc25PUm5t?=
- =?utf-8?B?QXBHMExsTW43TW9ZK0EyVXAxN0hxc1FRc1FCK1lQRW9CVjVRMElSSitYeWhB?=
- =?utf-8?B?OW9HYmUybSt3Zm1lOGducGhNTjNaMGE0c0xBS1ZHOHFMdTd1a0RUYkRKVXFu?=
- =?utf-8?B?Ykgyckg3MnZZVjlpQk5TdUllQ0RnTklnVkxvQ2U4RWh3MmdFV1hNT0JRbmll?=
- =?utf-8?B?TU93SUVlVVV2dm9QcHlrWkhPSXRQQlBoRFJaWkJFdDNCNzVNQnFrY3Zla0pB?=
- =?utf-8?B?K00wOGJ0VlpiVDlhRTZxNXBLZTRXa0RBQVErdkhhMXNCTDlET0NIQy9lN0x0?=
- =?utf-8?B?U0ZLclN1dXN1Z1pBTEh3ZFU4Wjl4ZU0yL0U4VTZLbjg2cDJyalg4eHhvTHdw?=
- =?utf-8?B?ZXdiWVpLNi9FWGRiM2dXYndYcmQrU0Q3QXVMR2RzUDlRWXBKaDRnK3dXUW12?=
- =?utf-8?B?QlMzNjgzZ1JjQjdSQmJKY0cvTWVBMnJaZEtENGFMc3FFUzhSdTNSRzdCeTQ1?=
- =?utf-8?B?am13RFdWSXB3MzRrbS9RMEU4Q2J2RWlCd1AwNFppOVpTdmoxV0NMUkZpUFVa?=
- =?utf-8?B?K3NvdnlsV3NyRk1UTzN2N1VpVTh2TGl3cG5yYVFicGl0cHNuUXp4QXpwZTA4?=
- =?utf-8?B?S09pSFhVSVZONHgzeG8yR1YrdWtVMkJwZUhTN2tkejdiUXVwS0Zkbys0VUxj?=
- =?utf-8?B?K0k2NGVadXYzT2VPREhPVld3cUFiTi9JMWdDckU3ejI5anFLT1FBc3BYSGhw?=
- =?utf-8?B?ZmkyeUtOQm5tR2x0LzBvU2YxN1lVWGwzcFRtUVZFemRhUlpZMnRTeDRrVldG?=
- =?utf-8?B?bFNwR0NjaTNvZDZoQTJaT2wrMWZOekVHY29EbTN0YlZFK3pQWHdjVjF6RGdU?=
- =?utf-8?B?bEI4R1BPKzRuL000Z3VXbmduNVE3Y0c2bXZ1ZjhPbE16ZzlldERwUDlQQVdB?=
- =?utf-8?B?eVJZbUN1cFd4U2tWaVVrYnZPcnRCNFVKQnFxMVdBaFFIUVRkSEtQMzd3Wjc4?=
- =?utf-8?B?czc1dm0vT3orWW1McEI4aXFyZzk4R3plUUtIRkloYUF0WGJXZWdnWG1oRE1H?=
- =?utf-8?B?UmV6em5qTks3cWEyQ1hFVTNaTXJ3TkZyVWhNcXBreFNobFFoSWdNRHp2cTBR?=
- =?utf-8?B?VVd2TytERHZyZk0rZUw4WXlidGg3eTJwOS9NcW0rUUFWK3dsTFZFOVlQTHN4?=
- =?utf-8?B?ZEt6eUp0V3VLaWQwQm5McFFrSXkvbWVEZ1FGcjVEWUdETk1TMkYxcXdJcGdF?=
- =?utf-8?B?ZFBUTHRXdVYzMjVLZVNrUUxPREZCWldrZk5VU2pXTjJCUnEzZUNPUlIvRTlY?=
- =?utf-8?B?WjZuY2x2YVg5TDFMOXcvY0tYSG9LWS9PNTdaN2tnQXZDb3ROZm4vbHdneUZv?=
- =?utf-8?B?dFhMQ21jZlJnMjUreCtNY29RZlhjZWFISUJaczN0anhQd1hEUlRUTUp3MWRL?=
- =?utf-8?B?THE1V0RTMDk1SnpiZHlCMlFYRThwRE1UTDRQNHNyMlFOTVlBdHoySTA1MUM0?=
- =?utf-8?B?YjI4Y3B1T2dKcUFWcnJ4NzRKekVuRWhkMHFUSUYwYzFUSyszQk85RXdqUWc5?=
- =?utf-8?B?SXF1ckM0MVZ4RUpMZUtjem1VVjBZTmJsNVdGOUtqMTN3NitIdnZ2TTlEcXRD?=
- =?utf-8?B?UU1rSjJIWDFBSTJzZEh4dzBuYXQ3NEx1RENUaGRNQ256WnF3L2oyQkx3cERI?=
- =?utf-8?B?NFpGZVBaQWxENFZtSGZBVktmWi91Y3ZWUEc5UUYwSHo1cHoySHFia2Z6ZUdF?=
- =?utf-8?B?N1RMSjFSZ0dqM0tXRHRZZjJWeDQxN3ljamJRSmZEeXN4ZE9MUFQ2VXNWMHdR?=
- =?utf-8?B?blJMS3ZHL0I2M1ptU3dVVkZ5TXJsTGQ1MUxjSTVaL0tHR2VMWUVSTWx1TWZY?=
- =?utf-8?Q?PO5HlfWHl78ryR0N+2L3bmWVB?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 409a3310-5891-416e-15c9-08dcafde9bc1
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4877.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 14:56:21.2132
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 45KqJ/tUgD86FIvdst9dZwuKUfZdFvIXVMmbvj0EUxY7SFWJF/JX5AF+aWyqXkfn
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7450
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 29 Jul 2024 16:57:01 +0200
+Message-Id: <D323ZW5IUH31.3JOFSGMRNKO1@baylibre.com>
+Subject: Re: [PATCH RFC 4/5] iio: adc: ad4030: add support for ad4630-24 and
+ ad4630-16
+From: "Esteban Blanc" <eblanc@baylibre.com>
+To: "Jonathan Cameron" <jic23@kernel.org>
+Cc: "Lars-Peter Clausen" <lars@metafoo.de>, "Michael Hennerich"
+ <Michael.Hennerich@analog.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Nuno Sa" <nuno.sa@analog.com>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David
+ Lechner" <dlechner@baylibre.com>
+X-Mailer: aerc 0.17.0
+References: <20240627-eblanc-ad4630_v1-v1-0-fdc0610c23b0@baylibre.com>
+ <20240627-eblanc-ad4630_v1-v1-4-fdc0610c23b0@baylibre.com>
+ <20240629175558.031e07c1@jic23-huawei>
+In-Reply-To: <20240629175558.031e07c1@jic23-huawei>
 
+On Sat Jun 29, 2024 at 6:55 PM CEST, Jonathan Cameron wrote:
+> On Thu, 27 Jun 2024 13:59:15 +0200
+> Esteban Blanc <eblanc@baylibre.com> wrote:
+>
+> > AD4630-24 and AD4630-16 are 2 channels ADCs. Both channels are
+> > interleaved bit per bit on SDO line.
+> >=20
+> > Signed-off-by: Esteban Blanc <eblanc@baylibre.com>
+> > ---
+> >  drivers/iio/adc/ad4030.c | 130 +++++++++++++++++++++++++++++++++++++++=
+++++++--
+> >  1 file changed, 126 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/adc/ad4030.c b/drivers/iio/adc/ad4030.c
+> > index 1bcbcbd40a45..09d2f6d8cfe6 100644
+> > --- a/drivers/iio/adc/ad4030.c
+> > +++ b/drivers/iio/adc/ad4030.c
+> > @@ -32,6 +32,8 @@
+> >  #define AD4030_REG_PRODUCT_ID_H					0x05
+> >  #define AD4030_REG_CHIP_GRADE					0x06
+> >  #define     AD4030_REG_CHIP_GRADE_AD4030_24_GRADE		0x10
+> > +#define     AD4030_REG_CHIP_GRADE_AD4630_16_GRADE		0x03
+> > +#define     AD4030_REG_CHIP_GRADE_AD4630_24_GRADE		0x00
+> >  #define     AD4030_REG_CHIP_GRADE_MASK_CHIP_GRADE		GENMASK(7, 3)
+> >  #define AD4030_REG_SCRATCH_PAD					0x0A
+> >  #define AD4030_REG_SPI_REVISION					0x0B
+> > @@ -391,7 +393,10 @@ static int ad4030_set_avg_frame_len(struct iio_dev=
+ *dev, unsigned int avg_len)
+> >  static bool ad4030_is_common_byte_asked(struct ad4030_state *st,
+> >  					unsigned int mask)
+> >  {
+> > -	return mask & BIT(st->chip->num_channels);
+> > +	if (st->chip->num_channels =3D=3D 1)
+> > +		return mask & BIT(st->chip->num_channels);
+> > +
+> > +	return mask & GENMASK(st->chip->num_channels + 1, st->chip->num_chann=
+els);
+> >  }
+> > =20
+> >  static int ad4030_set_mode(struct iio_dev *indio_dev, unsigned long ma=
+sk)
+> > @@ -412,6 +417,45 @@ static int ad4030_set_mode(struct iio_dev *indio_d=
+ev, unsigned long mask)
+> >  				st->mode);
+> >  }
+> > =20
+> > +/*
+> > + * @brief Descramble 2 32bits numbers out of a 64bits. The bits are in=
+terleaved: 1 bit for first
+> line wrap at 80 chars unless good reason to be longer.
+Sure.
+> > + * number, 1 bit for the second, and so on...
+>
+> Do you have a reference for the alg used?=20
+> Google fed me a bunch of options for a perfect unshuffle=20
+> though it is probably microarch dependent.
 
+I used this IIRC: https://stackoverflow.com/a/3233173
+I adjusted the masks and shifts to get both the high and low parts of a
+byte. I'm also doing both number at the same time.
 
-On 7/25/24 16:29, Bjorn Helgaas wrote:
-> On Wed, Jul 24, 2024 at 03:05:59PM -0500, Wei Huang wrote:
->>
->>
->> On 7/23/24 17:41, Bjorn Helgaas wrote:
->>> On Wed, Jul 17, 2024 at 03:55:04PM -0500, Wei Huang wrote:
->>>> TLP headers with incorrect steering tags (e.g. caused by buggy driver)
->>>> can potentially cause issues when the system hardware consumes the tags.
->>>
->>> Hmm.  What kind of issues?  Crash?  Data corruption?  Poor
->>> performance?
->>
->> Not crash or functionality errors. Usually it is QoS related because of
->> resource competition. AMD has
-> 
-> Looks like you had more to say here?
+> > + */
+> > +static void ad4030_extract_interleaved(u8 *src, u32 *out)
+> > +{
+> > +	u8 h0, h1, l0, l1;
+> > +	u32 out0, out1;
+> > +	u8 *out0_raw =3D (u8 *)&out0;
+> > +	u8 *out1_raw =3D (u8 *)&out1;
+> > +
+> > +	for (int i =3D 0; i < 4; i++) {
+> > +		h0 =3D src[i * 2];
+> > +		l1 =3D src[i * 2 + 1];
+> > +		h1 =3D h0 << 1;
+> > +		l0 =3D l1 >> 1;
+> > +
+> > +		h0 &=3D 0xAA;
+> > +		l0 &=3D 0x55;
+> > +		h1 &=3D 0xAA;
+> > +		l1 &=3D 0x55;
+> > +
+> > +		h0 =3D (h0 | h0 << 001) & 0xCC;
+> > +		h1 =3D (h1 | h1 << 001) & 0xCC;
+> > +		l0 =3D (l0 | l0 >> 001) & 0x33;
+> > +		l1 =3D (l1 | l1 >> 001) & 0x33;
+> > +		h0 =3D (h0 | h0 << 002) & 0xF0;
+> > +		h1 =3D (h1 | h1 << 002) & 0xF0;
+> > +		l0 =3D (l0 | l0 >> 002) & 0x0F;
+> > +		l1 =3D (l1 | l1 >> 002) & 0x0F;
+> > +
+> > +		out0_raw[i] =3D h0 | l0;
+> > +		out1_raw[i] =3D h1 | l1;
+> > +	}
+> > +
+> > +	out[0] =3D out0;
+> > +	out[1] =3D out1;
+> > +}
 
-I hit the send button too fast. What I wanted to say was there will be
-AMD QoS patches to control TPH. Note that they will be hooked up under
-x86/resctrl. Since they are AMD specific, it will be independent from
-PCIe subsystem code.
+All the other comments will be fixed for V2.
 
-> 
-> I *assume* that both the PH hint and the Steering Tags are only
-> *hints* and there's no excuse for hardware to corrupt anything (e.g.,
-> by omitting cache maintenance) even if the hint turns out to be wrong.
-> If that's the case, I assume "can potentially cause issues" really
-> just means "might lead to lower performance".  That's what I want to
-> clarify and confirm.
+Best regards,
 
-Corrrect, only QoS-related concerns. There won't be any correctness
-concerns.
-
-> 
->>>> Provide a kernel option, with related helper functions, to completely
->>>> prevent TPH from being enabled.
->>>
->>> Also would be nice to have a hint about the difference between "notph"
->>> and "nostmode".  Maybe that goes in the "nostmode" patch?  I'm not
->>> super clear on all the differences here.
->>
->> I can combine them. Here is the combination and it meaning based on TPH
->> Control Register values:
->>
->> Requestor Enable | ST Mode | Meaning
->> ---------------------------------------------------------------
->> 00               | xx      | TPH disabled (i.e. notph)
->> 01               | 00      | TPH enabled, NO ST Mode (i.e. nostmode)
->> 01 or 11         | 01      | Interrupt Vector mode
->> 01 or 11         | 10      | Device specific mode
->>
->> If you have any other thoughts on how to approach these modes, please
->> let me know.
-> 
-> IIRC, there's no interface in this series that reall does anything
-> with TPH per se; drivers would only use the ST-related things.
-> 
-> If that's the case, maybe "pci=notph" isn't needed yet.
-
-I can go with it. There will be a BIOS option to turn it off on AMD
-platform. I would expect similar options on other vendors' platforms. So
-I am not overly concerned about dropping pci=notph.
-
-> 
-> Bjorn
+--=20
+Esteban "Skallwar" Blanc
+BayLibre
 
