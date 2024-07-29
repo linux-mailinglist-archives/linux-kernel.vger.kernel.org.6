@@ -1,145 +1,136 @@
-Return-Path: <linux-kernel+bounces-266086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E01093FAAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:23:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5965D93FAF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF74FB22D2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:23:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B0361C224D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB954187862;
-	Mon, 29 Jul 2024 16:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFC818FDB2;
+	Mon, 29 Jul 2024 16:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RvEaVZVK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="iEcr13/B"
+Received: from mr85p00im-zteg06021901.me.com (mr85p00im-zteg06021901.me.com [17.58.23.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D1E187853
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8C618FC89
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722270064; cv=none; b=bWr4+JVg/yC7jyX2wRy0B3LMsu5trhGKKcnqWnhRTwvzGsD6MEZFfCI/5oW2HdrdeyBxl3wxpjFnbvJKLhwwm4HA98Xy6BJgwLtTA6oPS03uZMNp/v4q6ejmUDLp4obhGyFV+Oli2308zFsMfmV5Aa0n2YULrYjVFQPz3R8Sisg=
+	t=1722270141; cv=none; b=V/OMmVZahJAAWSc+T4q7DK5frb7Znc6S9Y5utWTYxziwaH2/qNaop1fvWuIf8VqMeJPJ9sV/s8bm/yt4p3uqN6uZG1cZBEDpBCUvSwjLgTXNRaTv09Db2frsVmHUbPw/3+dn2YEwF4NsFJiKNbqKgy8W+aTjYPmwX2EmTNhQqiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722270064; c=relaxed/simple;
-	bh=L6jcEa8CfEldUuj1WusbJIcpD6rrcXH0GVGphBmFRwg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lZyhxMZ6KU55qbogidPJgmUW71/xPFFhMAEI1v9Uu1T96V+aLK89JScy2y4hZNgn9cXxnqTYiIkRBFuRRPhO7ToW0kmzY8trrGPXEnbfORLNWCSeVKcI4bgkFkzO0jvAIDcQAW0uH2kBQAS0W6HK3MPGVvSTd8mMDE5l4wfAlYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RvEaVZVK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68BEBC4AF19;
-	Mon, 29 Jul 2024 16:21:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722270063;
-	bh=L6jcEa8CfEldUuj1WusbJIcpD6rrcXH0GVGphBmFRwg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RvEaVZVKOp986/b3JSq7HO+zqtJTxfVCLOEH5WROoYKTVhKIsEXEvTEaDoSlwVtrf
-	 g4sJ9q1hNLetbliwaOap3O9yPw2vmOY1Cz0jcl7W2N9EadlfEcEqS3hCOkXEhhMAkU
-	 LGo+H1Q/+rD3gocQ4okL7fERC1XVxxe7hLfKzX1PXnqBpTbsZtzv/LLmB8kPE4+8A5
-	 PRgvhDJjlk129VH4MXAfIPBVPkvuOHwQA1CO5u9rNECztOvKzH8U8ux/oyG+blRQEa
-	 qgt7nPx1cOm01PoA/8fmoEtz1FeqVMW2up1ovkd2Sw0HNe7foQYdg52U+8eQMP1lCV
-	 juwf9kz7BwZ0Q==
-Date: Mon, 29 Jul 2024 16:21:01 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] f2fs: don't traverse directory blocks after EOF
-Message-ID: <ZqfBbQGxwpAvCO2m@google.com>
-References: <20240712073415.227226-1-chao@kernel.org>
- <ZqKDnpzwX85RyGaa@google.com>
- <c2b7d0cd-ea10-4e25-829c-53967927bd03@kernel.org>
- <ZqRpHOJyWU3Sn8Ma@google.com>
- <74dbb5f1-1565-4971-ae5c-c176d62cfa8f@kernel.org>
+	s=arc-20240116; t=1722270141; c=relaxed/simple;
+	bh=GXSyX5h32pZlR3NWWUJpZoFglo7EuA94+siR4uBo28o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=blK/24wF/oe11uAiwm4GJfdhdbqUKGGgWBPaFBJhDkHx7SBteuARd2UDAVepwG4pcUJuNNOJCsYnymg+yAMkB1KDduLC+L7Xym8pwZF6OIj32zl8AbSZZGZlicHeNXi/qYufUaJDkr8enHaGvmatkCI9Gg+DhwblTdclQ9hhYFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=iEcr13/B; arc=none smtp.client-ip=17.58.23.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1722270138;
+	bh=KOrRGY8mn8r2Bejzz65Ymd7dY4GRF4aIcYISeRSMx4Y=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
+	b=iEcr13/BeUVz8XKb3bSPrCekzh+UC4+4Zi8qB+yUXhsXrDe+uli72cwMcndPwKPjd
+	 pgMIQG9TueCiUxzlGMUJsGUyV2EIOtqXiMXyf7dHA5JwpLxeSX4GB4V4Obapt86IL9
+	 4AbbmTuy+2S6nA63PuVaF/V21cQPrew4U+XuOjbFifMUgDXybxSSOzgnp9XRK9dy/i
+	 bJd28cccdTA/u7H+u22edj/Luv6oQu+N1RiqCNDfFs1tKrLN7yDWmD/l9RJBm0116t
+	 dtvWmCHl7eBjOXwjiKumwbZl/vsiouG2oLr50j0JesAHbah90iO39DQ/WkaXMb/5kX
+	 3cwF2tfCJj2rQ==
+Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
+	by mr85p00im-zteg06021901.me.com (Postfix) with ESMTPSA id 4CC657402EF;
+	Mon, 29 Jul 2024 16:22:17 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Tue, 30 Jul 2024 00:22:02 +0800
+Subject: [PATCH] Bluetooth: hci_qca: [Don't Merge] For QCA6390 regression
+ debugging.
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <74dbb5f1-1565-4971-ae5c-c176d62cfa8f@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240730-qca6390_fix-v1-1-e0340a511756@icloud.com>
+X-B4-Tracking: v=1; b=H4sIAKnBp2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDcyNL3cLkRDNjS4P4tMwK3ZQ0izSzNINEUwNzAyWgjoKiVKAw2LTo2Np
+ aAB57uKpdAAAA
+To: Marcel Holtmann <marcel@holtmann.org>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Zijun Hu <zijun_hu@icloud.com>
+X-Mailer: b4 0.14.1
+X-Proofpoint-ORIG-GUID: g0MgE40dmEhtsC5Y8eiwxiJILOY6KgUU
+X-Proofpoint-GUID: g0MgE40dmEhtsC5Y8eiwxiJILOY6KgUU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-29_14,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 mlxscore=0
+ mlxlogscore=999 clxscore=1011 spamscore=0 suspectscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2407290110
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-On 07/29, Chao Yu wrote:
-> On 2024/7/27 11:27, Jaegeuk Kim wrote:
-> > On 07/26, Chao Yu wrote:
-> > > On 2024/7/26 0:55, Jaegeuk Kim wrote:
-> > > > On 07/12, Chao Yu wrote:
-> > > > > All directory blocks are within the scope of i_size, so let's limit
-> > > > > the end_block to just check valid dirent blocks.
-> > > > 
-> > > > Do we really need this?
-> > > 
-> > > f2fs_readdir() and f2fs_empty_dir() uses dir_blocks() for upper boundary,
-> > > this patch aligns find_in_level() w/ them.
-> > > 
-> > > Also, it can avoid grabbing never used page cache across EOF.
-> > > 
-> > > So, we can consider taking this patch?
-> > 
-> > I'm wondering whether the current code has a bug or not.
-> 
-> I think it's not a bug, but, in corner case it may waste memory and
-> cause a bit performance reduction.
+For QCA6390 regression debugging.
 
-Well, I don't think it's really a problem.
+Signed-off-by: Zijun Hu <zijun_hu@icloud.com>
+---
+ drivers/bluetooth/hci_qca.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-> 
-> Thanks,
-> 
-> > 
-> > > 
-> > > Thanks,
-> > > 
-> > > > 
-> > > > > 
-> > > > > Meanwhile, it uses dir_blocks() instead of variable for cleanup in
-> > > > > __f2fs_find_entry().
-> > > > > 
-> > > > > Signed-off-by: Chao Yu <chao@kernel.org>
-> > > > > ---
-> > > > >    fs/f2fs/dir.c | 6 ++++--
-> > > > >    1 file changed, 4 insertions(+), 2 deletions(-)
-> > > > > 
-> > > > > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> > > > > index 02c9355176d3..d4591c215f07 100644
-> > > > > --- a/fs/f2fs/dir.c
-> > > > > +++ b/fs/f2fs/dir.c
-> > > > > @@ -305,18 +305,21 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
-> > > > >    	int s = GET_DENTRY_SLOTS(fname->disk_name.len);
-> > > > >    	unsigned int nbucket, nblock;
-> > > > >    	unsigned int bidx, end_block;
-> > > > > +	unsigned long last_block;
-> > > > >    	struct page *dentry_page;
-> > > > >    	struct f2fs_dir_entry *de = NULL;
-> > > > >    	pgoff_t next_pgofs;
-> > > > >    	bool room = false;
-> > > > >    	int max_slots;
-> > > > > +	last_block = dir_blocks(dir);
-> > > > >    	nbucket = dir_buckets(level, F2FS_I(dir)->i_dir_level);
-> > > > >    	nblock = bucket_blocks(level);
-> > > > >    	bidx = dir_block_index(level, F2FS_I(dir)->i_dir_level,
-> > > > >    			       le32_to_cpu(fname->hash) % nbucket);
-> > > > >    	end_block = bidx + nblock;
-> > > > > +	end_block = min_t(unsigned int, end_block, last_block);
-> > > > >    	while (bidx < end_block) {
-> > > > >    		/* no need to allocate new dentry pages to all the indices */
-> > > > > @@ -361,7 +364,6 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
-> > > > >    					 const struct f2fs_filename *fname,
-> > > > >    					 struct page **res_page)
-> > > > >    {
-> > > > > -	unsigned long npages = dir_blocks(dir);
-> > > > >    	struct f2fs_dir_entry *de = NULL;
-> > > > >    	unsigned int max_depth;
-> > > > >    	unsigned int level;
-> > > > > @@ -373,7 +375,7 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
-> > > > >    		goto out;
-> > > > >    	}
-> > > > > -	if (npages == 0)
-> > > > > +	if (dir_blocks(dir) == 0)
-> > > > >    		goto out;
-> > > > >    	max_depth = F2FS_I(dir)->i_current_depth;
-> > > > > -- 
-> > > > > 2.40.1
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index ca6466676902..3ae014af7f1f 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -2187,9 +2187,12 @@ static void qca_power_shutdown(struct hci_uart *hu)
+ 		}
+ 		break;
+ 
++		/* what to do ? */
++#if 0
+ 	case QCA_QCA6390:
+ 		pwrseq_power_off(qcadev->bt_power->pwrseq);
+ 		break;
++#endif
+ 
+ 	default:
+ 		gpiod_set_value_cansleep(qcadev->bt_en, 0);
+@@ -2418,11 +2421,25 @@ static int qca_serdev_probe(struct serdev_device *serdev)
+ 	case QCA_QCA6390:
+ 		qcadev->bt_power->pwrseq = devm_pwrseq_get(&serdev->dev,
+ 							   "bluetooth");
++
++		{
++			long x_err = 0;
++			if (IS_ERR(qcadev->bt_power->pwrseq))
++				x_err = PTR_ERR(qcadev->bt_power->pwrseq);
++			dev_info(&serdev->dev, "x_err(%lu)\n", x_err);
++			if (x_err == -ENOSYS ||
++			    (x_err == -ENODEV || x_err == -ENOENT)) {
++				qcadev->bt_power->pwrseq = NULL;
++				goto do_default;
++			}
++		}
++
+ 		if (IS_ERR(qcadev->bt_power->pwrseq))
+ 			return PTR_ERR(qcadev->bt_power->pwrseq);
+ 		break;
+ 
+ 	default:
++do_default:
+ 		qcadev->bt_en = devm_gpiod_get_optional(&serdev->dev, "enable",
+ 					       GPIOD_OUT_LOW);
+ 		if (IS_ERR(qcadev->bt_en)) {
+
+---
+base-commit: 7a27b0ac58abccdf46e89bea9ed9f81a496132ab
+change-id: 20240729-qca6390_fix-df8f6f0a5070
+
+Best regards,
+-- 
+Zijun Hu <zijun_hu@icloud.com>
+
 
