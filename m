@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-265939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0160D93F7E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:30:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943F293F7F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F9B51C22075
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:30:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C7052829EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7311815697B;
-	Mon, 29 Jul 2024 14:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A256E15A87C;
+	Mon, 29 Jul 2024 14:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UFQG6SaD"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R4BN3y01"
 Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376E5156676
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1702E158DA7
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722262980; cv=none; b=UIyfLuK7o1iFmx4BXLQEsj7v15pWhziibha/JgQ/gHvh5QcAfzNZ5c8h1pRBGK8CC/MDBHT/4NberGiahxVX8tUMbPpNeu4XIPf0erWzzogj3hNrjUnZSJCIC6bW8yGbfs5ncOIkldBQEWJ7xXDjvEjl8dsXxLK2tb7AMvN/4PI=
+	t=1722262983; cv=none; b=tX38Mfndp/bE5HhlyA1DpQWPSs7sux5zuyx/p3Zts50VIPPCukBndaotOP9M7HjNghVIjMOIknnnZ70z0lVpHmHJV6vxvF4F1bd3V0eRJ8o1TD/wKt8naYtOSdZTd9TMkvWQZrPY7edMS2TNXEeEvzwqNWNv9nExG+MtvJ6XUNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722262980; c=relaxed/simple;
-	bh=lzT2BdaEVnJIsuBgTyZNaaAeirv9EKd/rwlbRbDIHew=;
+	s=arc-20240116; t=1722262983; c=relaxed/simple;
+	bh=RX0RqNRyzzyoW/MQJOHkbfIcM2eu3kixAI50jtAtAag=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=f2JbWsnnQAk2KG8zerRP3v2Ve3/l62rKHTxPa+fyVJ2qOe1asFzIhZ5bLVYDQn6y6WUPt31ocsGhtK7IXuFvjKNKTE5Gq8i0e/qkm0DC1lAo6AUobermPpm0ssbWEKgADFGsgFca7WnYodiUdzNq2JW+DnCV/Sfrn3Q149HzpCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UFQG6SaD; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=ZvRKwWFtJPDbJO0lDyTT0270q/BxZY56ceo8o6PZ8olhMZOscT9HOTCO32ci6f3vJiV1IyOLBq29Bbi98nVP4bEH/7Qy3Vl7Jsmyg88FWVcBa2wrI/zvi/AWdsiyq9oechlB4lkygeRN0yLhwMhYihSkaGx7fKOWtTP+P2hQa/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R4BN3y01; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-654d96c2bb5so50751537b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:22:59 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6506bfeaf64so58966507b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:23:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722262978; x=1722867778; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1722262981; x=1722867781; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FKAVwhluDEm83CnDhzk3R+pdR/lsoORRqAVOgXJ4jh4=;
-        b=UFQG6SaDekdFnJL/AxTKqVEUqoUepDDTihXEGiXvLCbsVj6+7QHs8IA+1+U5/EWoD0
-         PMZq3TBa4TYRM5G1MZ+X8ynf6iRQoOgxGCkar8eG10NVxi50+/Jq4xtdVLYUOTaZurJN
-         aNnYI+xuNwB/ZN97BI0nKCz8ZqjAWihC6rLOWWm/lfJlZMUHXMZPwZw0n503x8Ez2lq+
-         trD4UV9oVlmutU8tsRJPzUWiyqnGHJaKomhk9mMp/DA5aAVSWYsNZ4OtQVrkEsfFSqLO
-         Gyw7OJ42/IOrGGubfPlvvOphMrzgyLlDV05YRPs9TWyoOM9sACK/W2mK10fi+PWNOZvf
-         s0vQ==
+        bh=vfulPrfSicc+WNyOjayW5unzLu2GM9o7n+2trJ/3FuM=;
+        b=R4BN3y01xyviaKYeAozT1p5Sqw70ZlC1CAGtJjkGJFFvYUpvL7+4FRa66frWqnNx3Y
+         ppSRqhV0gHWI+6xirfEZC/hwSTrYo304bnMYxput6ExvKw+c1QkUn1u3x6h/K8wiUYsq
+         6mD/crPAosYYakOChrpDv5VHlY9TRuHelZ+Bs2vKrNuM2CHq6aApejf6uVIPvA0zgVui
+         JJzdhNOc9z13pGpEqLLWUo2esZ6XkK37jA7EVUCLZMR8ILaybBgrvPUFxzb++Imbgqcr
+         XTYG/ojB4qh8WmvfyQIVjWlds02ZEOKieMoAspZcIUu/cyprLIxkxQvwsojcyKZ73SmQ
+         iuKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722262978; x=1722867778;
+        d=1e100.net; s=20230601; t=1722262981; x=1722867781;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FKAVwhluDEm83CnDhzk3R+pdR/lsoORRqAVOgXJ4jh4=;
-        b=nr4KiT0dNhCa7eD4PXU57bzXBA+fT/m8aJKUg/820VZh8UOhTq7E4iEoiG95xWxkIT
-         syTCE+pquDajAk6rajXg09BqoqBbidizk7k18WeTSfGPziSJVt6kSMRBdJF8R4cyHZeD
-         eTmmuUyTKvXbxSR2PC+a+CuA19WILd2fTv3e8PNN3ICWuQ4d4ZyRgmV9CaKK3Fy6lFYi
-         zKjhYhxh4lwycvj/Nvzba/C7PMu1rV8ri/2gJlQ9uC8I6yfjQgsPwRtWiqHri0Pu763s
-         H+o2bxnG63OpbWTtNtl0Ht4jzJpMnuguJuqYgbeEaV2Mz/qEWckvdqGEAT2swBcAaaIJ
-         ffEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzyzapeP4laB6y1nFj96EWPO8Ri+710hfXAGVtiJrJEuU+yuxfpooMooUXRTxJWOVg136ykEuaiNhILNDz8t6tQazIKGzJVm2riPCy
-X-Gm-Message-State: AOJu0YwGa1WsKraTo0Jjr0XWSNIPOHxJZgNAYgYVlZTwb1RkQNSG4+ey
-	c+Yq3oS7nmYkx+zFnZ8RPsOcu6MLPbLvHVPj6PyunK+ruuOOSwH8p8zhoERw06y0qajnkEON5EZ
-	0owyn8Pv3jg+6ug==
-X-Google-Smtp-Source: AGHT+IES8X6bJl34RB7/iH9nf005G+uCe4wkhWz68+bWS+v9+Z5RHQiBNeaLAB9MUHbBbeqJZvyE/AaYzy1ExB0=
+        bh=vfulPrfSicc+WNyOjayW5unzLu2GM9o7n+2trJ/3FuM=;
+        b=lnwoYIuraKmoWcw3dH8gzkcvEpbJF1vIlkKrmNBjKMVFt64muorblvllXTv5IbVztg
+         eQpnSnK0iouwj3pIk3GSO8kUu4H/rBrJSlTQiMHeJ6dbOYs0EujXbJ3tFshkLcHBMxi+
+         +r8p3iC/zvjyfBlEvSz2Rm9FOniYIJQMqpxsOng8DD1/JmM1CBq6312KWWz/7Pv+DFcd
+         GnFFhwSftauuUijtKibjKeRyT66TxeGOuoHllr4vQZmu/6Sys6KO/XmQ0t/dODE99Gsf
+         z6J2FYMUvFD15+AoYBjdNK/Qx13Krv5iHZB8AGdef8AzBGwLZgpp2LQYs24gPyorXhcG
+         tjrw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9uLcO5hKDt9Zn8TO9ZMww6dPEiyhp0DFR0nnFNcAmMyIYwbvfVsCKqT+YvhG2f+W3tvZehcmrlElHCO9W3kfmpTUbeHprh7UIgF5U
+X-Gm-Message-State: AOJu0YzPQhNAkC7BR93f6WJh6A/X4VK2IGV6pCLfYZF2WDYPAN+vUVGX
+	Ayqpp5OoYLYPwsv3vV/8vVbaGravI1ahzhQL5Br2wAC/bdV4wT1I92efQwBMZjiTnWnoCTgDLPQ
+	qk7Gd3hh/sspAIw==
+X-Google-Smtp-Source: AGHT+IG1bISzjta4IGanTLnwN52d5QDMD5IDSQZWzKIOirqZWoAEkezelFYmM4/kNamX3YXHmq9SDd5H7LEll/E=
 X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
- (user=aliceryhl job=sendgmr) by 2002:a05:690c:f92:b0:627:a961:caee with SMTP
- id 00721157ae682-67a09d60c54mr199477b3.4.1722262978117; Mon, 29 Jul 2024
- 07:22:58 -0700 (PDT)
-Date: Mon, 29 Jul 2024 14:22:49 +0000
+ (user=aliceryhl job=sendgmr) by 2002:a81:b049:0:b0:669:f244:2ae5 with SMTP id
+ 00721157ae682-67a0625130amr1706417b3.3.1722262981080; Mon, 29 Jul 2024
+ 07:23:01 -0700 (PDT)
+Date: Mon, 29 Jul 2024 14:22:50 +0000
 In-Reply-To: <20240729-shadow-call-stack-v4-0-2a664b082ea4@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,22 +73,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240729-shadow-call-stack-v4-0-2a664b082ea4@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1191; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=lzT2BdaEVnJIsuBgTyZNaaAeirv9EKd/rwlbRbDIHew=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmp6W7eiaZvCQ+157eE1D82eHE/On4FxAJi9TFh
- 2gSPdxHnaOJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZqeluwAKCRAEWL7uWMY5
- RvNGD/9piCtWh6KnJP50UfDUlhig5/folfeGSnk9rzankoYjvKtyl0HhguuVvUw4QT9UszFFu1Q
- 2M2lyfik1kJ+DzHxopKFnQsIdYOezvQTD5qkAJ4irtNLyQifk5UNzE7kFmXIa7j5OxxzZ/bnoVN
- WtWowt9kC2yLhoQ2ngDP1Q0pqjSOe9yZq+JU00vftaYuLBmCktu2lK9gbe9Wzg0DqVEI3ckIVoP
- PTrY81o8h1U8Op9QkNBRlBmpYT7alkzPOuSu0f3LEeH/UdctAZTu2OsJ/rktV6GbPEEXioIwxS1
- SO+NpdC0UxWgnYRee7bl8fOJR638kikf7jt0xXuJljniqcc+EwnT+fJdXhmOMt0/Pw3NpeeL8I2
- 5o8QUYqxmFP295BxKYXZ+5OzEBQn4DxQtS6uEqMvfHN17JvPfB5Dp2mQFrsQibZefgNRRuTZEqA
- qS6bJqymXak1+F8JDKe4oBB+FG2nddilV23LAuvfap3inFqv9TBgLrPOwVz8OFeYubTdY9blD/j
- o0yxn1DW04FUnofOMJU/q1ngTnU2f+YPbfJ5HwxOJJA++7qMe9pfvgk5hpQTSODwqxTu3u2PcDx
- JKHu+O1sMRW2Og5zjy83aRyemBkOdk0wnOpJyoejJNqSjY2bvEwnLBSbIycvdYtqpxRZ0xv0qXg 9QsENNi+fHInv8g==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3399; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=RX0RqNRyzzyoW/MQJOHkbfIcM2eu3kixAI50jtAtAag=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmp6W7wE19VEoXfd9d7Bo4mIIcb77rX+tm389IC
+ TcKknj6Ye+JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZqeluwAKCRAEWL7uWMY5
+ RlJJD/4zoQUSAdVgq/uz58fBHA6iQGG/4ockLdhyAueNkNmadzLCyF3t5un1s4DMvdqLDICjJ47
+ GYg45pLRUiYN0OWG9rrx2S/a+EYStltg9aOvqtLgesvSUUQk2SHs7fpKMn2+61Yo56qFPSl26ju
+ cIeGWunfkKTkqLjZ2Xv4szXNPTRlkGbBRWIXnzKWgRxypvl+cyir6qeDXivzfzrJkt9/gYrvCnR
+ UzFjwXgAyzjZCxA9elABsZJ5N1Xnzmr7lJ7DhZtFqlaYbYPGm7mDTMa0LqM7wJvdkLGZ6kveNMD
+ FAqqcMmk1T2+R04mdloAaRlKgHNJmSBJNtCxwPEnsVDKAJxFVlWJ3yZeIN0vB+h5uSoqWRaL1y6
+ GywKJabv0aPZxJw6uN+BDNUtJuEFp9+XLwOYGbVwSLyOYTuWQIJCFFSyTcLh65ky69IDa2tWUDX
+ XJtQVnrXJ8wZDPkU3fhRnVM7r/qUmGI34eMdb/wo4oVyvnYELUf8URPR/xkjfgWUXamVrK8ETSH
+ 2cH+V2Q966dMhrfSS3repxrr0I9rlb5A/Cl1EoLJTwSVzkmVOZLSsrZoHnsscBvvHY30W54QgsX
+ E/91A1f6yI4iAfciIB4xrpegIOF7hZKp8xbyCBpewqmR0Np4K+GMNryX14r29XQA/rvwQEqcg5X NNBGNzVRCXiJ+Zg==
 X-Mailer: b4 0.13-dev-26615
-Message-ID: <20240729-shadow-call-stack-v4-1-2a664b082ea4@google.com>
-Subject: [PATCH v4 1/2] rust: SHADOW_CALL_STACK is incompatible with Rust
+Message-ID: <20240729-shadow-call-stack-v4-2-2a664b082ea4@google.com>
+Subject: [PATCH v4 2/2] rust: support for shadow call stack sanitizer
 From: Alice Ryhl <aliceryhl@google.com>
 To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
 	Jamie Cunliffe <Jamie.Cunliffe@arm.com>, Sami Tolvanen <samitolvanen@google.com>, 
@@ -102,37 +102,93 @@ Cc: Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
 	Andreas Hindborg <a.hindborg@samsung.com>, Valentin Obst <kernel@valentinobst.de>, 
 	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, rust-for-linux@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>, Kees Cook <kees@kernel.org>, stable@vger.kernel.org
+	Alice Ryhl <aliceryhl@google.com>, Kees Cook <kees@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 
-When using the shadow call stack sanitizer, all code must be compiled
-with the -ffixed-x18 flag, but this flag is not currently being passed
-to Rust. This results in crashes that are extremely difficult to debug.
+To use the shadow call stack sanitizer, you must pass special flags:
 
-To ensure that nobody else has to go through the same debugging session
-that I had to, prevent configurations that enable both SHADOW_CALL_STACK
-and RUST.
+* On arm64, you must pass -ffixed-x18 to your compiler.
+* On riscv, you must pass --no-relax-gp to your linker.
 
-It is rather common for people to backport 724a75ac9542 ("arm64: rust:
-Enable Rust support for AArch64"), so I recommend applying this fix all
-the way back to 6.1.
+These requirements also apply to Rust code. When using Rust on arm64,
+you must pass the -Zfixed-x18 flag to rustc, which has the same effect
+as the -ffixed-x18 flag does for C code. The -Zfixed-x18 flag requires
+rustc version 1.80.0 or greater.
 
-Cc: <stable@vger.kernel.org> # 6.1 and later
-Fixes: 724a75ac9542 ("arm64: rust: Enable Rust support for AArch64")
+There is no need to pass any flags to rustc on riscv as only the linker
+requires additional flags on this platform.
+
+On older versions of Rust, it is still possible to use shadow call stack
+by passing -Ctarget-feature=+reserve-x18 instead of -Zfixed-x18.
+However, this flag emits a warning during the build, so this patch does
+not add support for using it.
+
+Currently, the compiler thinks that the aarch64-unknown-none target
+doesn't support -Zsanitizer=shadow-call-stack, so the build will fail if
+you enable shadow call stack in non-dynamic mode. See [1] for the
+relevant feature request. To avoid this compilation failure, Kconfig is
+set up to reject such configurations.
+
+The `depends on` clause is placed on `config RUST` to avoid a situation
+where enabling Rust silently turns off the sanitizer. Instead, turning
+on the sanitizer results in Rust being disabled. We generally do not
+want changes to CONFIG_RUST to result in any mitigations being changed
+or turned off.
+
+Link: https://github.com/rust-lang/rust/issues/121972 [1]
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- init/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ Makefile            | 1 +
+ arch/arm64/Makefile | 3 +++
+ init/Kconfig        | 2 +-
+ 3 files changed, 5 insertions(+), 1 deletion(-)
 
+diff --git a/Makefile b/Makefile
+index 2b5f9f098b6f..66daca7a9b57 100644
+--- a/Makefile
++++ b/Makefile
+@@ -928,6 +928,7 @@ ifdef CONFIG_SHADOW_CALL_STACK
+ ifndef CONFIG_DYNAMIC_SCS
+ CC_FLAGS_SCS	:= -fsanitize=shadow-call-stack
+ KBUILD_CFLAGS	+= $(CC_FLAGS_SCS)
++KBUILD_RUSTFLAGS += -Zsanitizer=shadow-call-stack
+ endif
+ export CC_FLAGS_SCS
+ endif
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index f6bc3da1ef11..b058c4803efb 100644
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -57,9 +57,11 @@ KBUILD_AFLAGS	+= $(call cc-option,-mabi=lp64)
+ ifneq ($(CONFIG_UNWIND_TABLES),y)
+ KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables -fno-unwind-tables
+ KBUILD_AFLAGS	+= -fno-asynchronous-unwind-tables -fno-unwind-tables
++KBUILD_RUSTFLAGS += -Cforce-unwind-tables=n
+ else
+ KBUILD_CFLAGS	+= -fasynchronous-unwind-tables
+ KBUILD_AFLAGS	+= -fasynchronous-unwind-tables
++KBUILD_RUSTFLAGS += -Cforce-unwind-tables=y -Zuse-sync-unwind=n
+ endif
+ 
+ ifeq ($(CONFIG_STACKPROTECTOR_PER_TASK),y)
+@@ -114,6 +116,7 @@ endif
+ 
+ ifeq ($(CONFIG_SHADOW_CALL_STACK), y)
+ KBUILD_CFLAGS	+= -ffixed-x18
++KBUILD_RUSTFLAGS += -Zfixed-x18
+ endif
+ 
+ ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
 diff --git a/init/Kconfig b/init/Kconfig
-index b0238c4b6e79..914edf51b068 100644
+index 914edf51b068..103957466cee 100644
 --- a/init/Kconfig
 +++ b/init/Kconfig
-@@ -1909,6 +1909,7 @@ config RUST
+@@ -1909,7 +1909,7 @@ config RUST
  	depends on !MODVERSIONS
  	depends on !GCC_PLUGINS
  	depends on !RANDSTRUCT
-+	depends on !SHADOW_CALL_STACK
+-	depends on !SHADOW_CALL_STACK
++	depends on !SHADOW_CALL_STACK || RUSTC_VERSION >= 108000 && UNWIND_PATCH_PAC_INTO_SCS
  	depends on !DEBUG_INFO_BTF || PAHOLE_HAS_LANG_EXCLUDE
  	help
  	  Enables Rust support in the kernel.
