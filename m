@@ -1,171 +1,135 @@
-Return-Path: <linux-kernel+bounces-265679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E03393F453
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:42:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4209093F459
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCA961F225D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:42:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0DF7B210B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D215F145FED;
-	Mon, 29 Jul 2024 11:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BAD145B25;
+	Mon, 29 Jul 2024 11:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="LWjeg9qb"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n22WLO2L"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AFB145330;
-	Mon, 29 Jul 2024 11:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C457679B8E;
+	Mon, 29 Jul 2024 11:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722253308; cv=none; b=VuqUeqxLY3LjU15d6xo2q/yKHGs4IYkSgRGOT8WqYPW4mAehg2RKv0ZegzhCeGsz2SmAUU7abv/MJ5Bk3hr8yZsLqTPgmXnRpI9TMKIApeQz4PMYgXhgoo+8EVEbxtTAKjbvpkiqpYPFU8BszFXSZ5Xtcbsxx2zy/izHwLO6AMI=
+	t=1722253468; cv=none; b=V4J1G9X9bKfKaOt/pa7iM1eNXUZTfV3gONYvfu4FUHbl1JjGbtip6hSddaon53Qh7Hz1xMS/ueVfuJWSBI9AZyWTVj0EDNd8UBPh6kGIrDKCxbT0zv9rSN2ogfEZjOUBbJbjYFfdIOhiu4/Vl9fMPU3vPnUO5/a5cGGXkXU96es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722253308; c=relaxed/simple;
-	bh=JRrHbiKlytnHj6P/j86pANIOFLHYhVfQU9hbiPuPzM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XwP/A3o9u9LPdiJrBjohZ9L/9aqq0v/Dwh3JXhAj/qjUbojE06Vm6tcP6zv5QEwJFa2GoNGl36qxKFZxrcHdwlpYV4VHsHijtod44dXNqDEAFFCm1CJvoAWlmeTC4YbMe6xq9klgvl8+gpDYUhVhR3AJJ5poAVvtgd5GiXpdHh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=LWjeg9qb; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=MIEWQH2EbsC6quDfk/x97k807fOjv5v98y+H4O3aEqc=; b=LWjeg9qbZoz8Yy5ZZwr/a+sh7A
-	njMK0Rr8wOmMpILkmPLL8ptcF+wpWIY6m2BuPN97PZ/traVbLxVqcEVK/LSHIIQW/e3IzqfsS/Dg4
-	8oF/L7QuB2gdnH1jWT2sYV3Uz26gDxxpcgl56wazNzhEu9dt2RL0q1ejXUCnpcmfdG4D9sBGRdBwz
-	GRhG3hKiKhMTWzpoCeas1cu8yRgT0gPcrz6NsIDv8rumRHm/5bF1Q/vgDZPuqWCiyyTrzWjttmkjQ
-	CuZ/cqOGprt9q+RiHwML+vE0tX549zIVu+udwZcz7rw3PORr4GP9FyjhnVN/a9GfQ59VGDsE56eo2
-	ItNP/S/Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47642)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sYOkp-00049A-2P;
-	Mon, 29 Jul 2024 12:41:27 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sYOks-0004IU-KC; Mon, 29 Jul 2024 12:41:30 +0100
-Date: Mon, 29 Jul 2024 12:41:30 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Frank.Sae" <Frank.Sae@motor-comm.com>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yuanlai.cui@motor-comm.com,
-	hua.sun@motor-comm.com, xiaoyong.li@motor-comm.com,
-	suting.hu@motor-comm.com, jie.han@motor-comm.com
-Subject: Re: [PATCH 2/2] net: phy: Add driver for Motorcomm yt8821 2.5G
- ethernet phy
-Message-ID: <Zqd/6u5b7z1bCFaT@shell.armlinux.org.uk>
-References: <20240727092031.1108690-1-Frank.Sae@motor-comm.com>
+	s=arc-20240116; t=1722253468; c=relaxed/simple;
+	bh=f/z97bYp+EMwQiuCzp5i4xhQ//NcC+Qmw5S7TSllxug=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=DZsj+5bKuw95dXYmF5oTURdvc9lW9IW4WbFONrF6WNmHiO+TowYexy6WvKuNzi2Vni9snlYhqOg64Ai29YfTLcNCkXijYuy1GH+p47IWTGyGzp+NMx8T2gheIraToRTKX8p1z51mC/46utuZaB+R3NAaM64SFtUFmWN6b2Pp3/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n22WLO2L; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722253467; x=1753789467;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=f/z97bYp+EMwQiuCzp5i4xhQ//NcC+Qmw5S7TSllxug=;
+  b=n22WLO2LCzq/EBWgvFpZbuBVqwAhpznEOdyitWjKsjY8F/vdBBcyRbhU
+   zDFTJciM0NGJr9qQvXBWRK7HtUGHwx5LElFa1LrzqRf0YYkVBX3ZAhFT2
+   iHXgA/3HTXwglvj9paiF6Kvc+9WtLj0FOL8xZU5oim7PFKAYX1ZETEhUO
+   wwN15qsXukwZB0CCPrpldv0V3nOS4jJ3XjRIIphhQRAjv+paS7AyJnJhl
+   uOoEWNL4zey51ZD5r6OrYB6KAc8ZxXXGsv0HBTx5BQCHPOX+ym24Ys/Sk
+   v34f6p7mgC9MS6z32TRQiyDJi1acUQhiCOb8uYmEbB8SxedIvVsvCucuL
+   w==;
+X-CSE-ConnectionGUID: 6xF9m0jySxaIzp/zXJjcWw==
+X-CSE-MsgGUID: Gv+yv1BLQ7O4nRFu8oIQtw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="12767550"
+X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
+   d="scan'208";a="12767550"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 04:44:25 -0700
+X-CSE-ConnectionGUID: dzU/h+CNRd2ko/XJdg40RQ==
+X-CSE-MsgGUID: yRv5a/V0QUG1ElkQdtzyjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
+   d="scan'208";a="77186600"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.151])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 04:44:23 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 29 Jul 2024 14:44:20 +0300 (EEST)
+To: "Luke D. Jones" <luke@ljones.dev>
+cc: platform-driver-x86@vger.kernel.org, corentin.chary@gmail.com, 
+    Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: asus-wmi: Add quirk for ROG Ally X
+In-Reply-To: <20240724222852.44378-1-luke@ljones.dev>
+Message-ID: <056b599c-4d29-a743-ad7b-055e951e9e39@linux.intel.com>
+References: <20240724222852.44378-1-luke@ljones.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240727092031.1108690-1-Frank.Sae@motor-comm.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
 
-On Sat, Jul 27, 2024 at 02:20:31AM -0700, Frank.Sae wrote:
-> +/**
-> + * yt8821_config_init() - phy initializatioin
-> + * @phydev: a pointer to a &struct phy_device
-> + *
-> + * returns 0 or negative errno code
-> + */
-> +static int yt8821_config_init(struct phy_device *phydev)
-> +{
-> +	struct yt8821_priv *priv = phydev->priv;
-> +	int ret, val;
-> +
-> +	phydev->irq = PHY_POLL;
-> +
-> +	val = ytphy_read_ext_with_lock(phydev, YT8521_CHIP_CONFIG_REG);
-> +	if (priv->chip_mode == YT8821_CHIP_MODE_AUTO_BX2500_SGMII) {
-> +		ret = ytphy_modify_ext_with_lock(phydev,
-> +						 YT8521_CHIP_CONFIG_REG,
-> +						 YT8521_CCR_MODE_SEL_MASK,
-> +						 FIELD_PREP(YT8521_CCR_MODE_SEL_MASK, 0));
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		__assign_bit(PHY_INTERFACE_MODE_2500BASEX,
-> +			     phydev->possible_interfaces,
-> +			     true);
-> +		__assign_bit(PHY_INTERFACE_MODE_SGMII,
-> +			     phydev->possible_interfaces,
-> +			     true);
+On Thu, 25 Jul 2024, Luke D. Jones wrote:
 
-Before each and every call to .config_init, phydev->possible_interfaces
-will be cleared. So, please use __set_bit() here.
+> The new ROG Ally X functions the same as the previus model so we can use
+> the same method to ensure the MCU USB devices wake and reconnect
+> correctly.
+> 
+> Given that two devices marks the start of a trend, this patch also adds
+> a quirk table to make future additions easier if the MCU is the same.
+> 
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> ---
+>  drivers/platform/x86/asus-wmi.c            |  2 +-
+>  include/linux/platform_data/x86/asus-wmi.h | 15 +++++++++++++++
+>  2 files changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index 2b968003cb9b..bac2945b0e48 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -4694,7 +4694,7 @@ static int asus_wmi_add(struct platform_device *pdev)
+>  	asus->dgpu_disable_available = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_DGPU);
+>  	asus->kbd_rgb_state_available = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_TUF_RGB_STATE);
+>  	asus->ally_mcu_usb_switch = acpi_has_method(NULL, ASUS_USB0_PWR_EC0_CSEE)
+> -						&& dmi_match(DMI_BOARD_NAME, "RC71L");
+> +						&& dmi_check_system(asus_ally_mcu_quirk);
+>  
+>  	if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_MINI_LED_MODE))
+>  		asus->mini_led_dev_id = ASUS_WMI_DEVID_MINI_LED_MODE;
+> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> index 74b32e1d6735..fba9751cda5b 100644
+> --- a/include/linux/platform_data/x86/asus-wmi.h
+> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> @@ -196,4 +196,19 @@ static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
+>  	{ },
+>  };
+>  
+> +/* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
+> +static const struct dmi_system_id asus_ally_mcu_quirk[] = {
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "RC72L"),
+> +		},
+> +	},
+> +	{ },
+> +};
 
-> +static int yt8821_read_status(struct phy_device *phydev)
-> +{
-> +	struct yt8821_priv *priv = phydev->priv;
-> +	int old_page;
-> +	int ret = 0;
-> +	int link;
-> +	int val;
-> +
-> +	if (phydev->autoneg == AUTONEG_ENABLE) {
-> +		int lpadv = phy_read_mmd(phydev,
-> +					 MDIO_MMD_AN, MDIO_AN_10GBT_STAT);
-> +
-> +		if (lpadv < 0)
-> +			return lpadv;
-> +
-> +		mii_10gbt_stat_mod_linkmode_lpa_t(phydev->lp_advertising,
-> +						  lpadv);
-> +	}
-> +
-> +	ret = ytphy_write_ext_with_lock(phydev,
-> +					YT8521_REG_SPACE_SELECT_REG,
-> +					YT8521_RSSR_UTP_SPACE);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = genphy_read_status(phydev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	old_page = phy_select_page(phydev, YT8521_RSSR_UTP_SPACE);
-> +	if (old_page < 0)
-> +		goto err_restore_page;
-> +
-> +	val = __phy_read(phydev, YTPHY_SPECIFIC_STATUS_REG);
-> +	if (val < 0) {
-> +		ret = val;
-> +		goto err_restore_page;
-> +	}
-> +
-> +	link = val & YTPHY_SSR_LINK;
+Why is this in the header? I see your comment but this means every file 
+which includes asus-wmi.h will have a duplicate copy of this array.
 
-What link status is this reporting? For interface switching to work,
-phydev->link must _only_ indicate whether the _media_ side interface
-is up or down. It must _not_ include the status of the MAC facing
-interface from the PHY.
-
-Why? The interface configuration of the MAC is only performed when
-the _media_ link comes up, denoted by phydev->link becoming true.
-If the MAC interface configuration mismatches the PHY interface
-configuration, then the MAC facing interface of the PHY will
-remain down, and if phydev->link is forced to false, then the link
-will never come up.
-
-So, I hope that this isn't testing the MAC facing interface status
-of the PHY!
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+ i.
+
 
