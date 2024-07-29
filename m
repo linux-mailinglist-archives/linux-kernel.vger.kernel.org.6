@@ -1,335 +1,306 @@
-Return-Path: <linux-kernel+bounces-266251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 511E693FD32
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:15:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D161293FD35
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1671F28326A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:15:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01AE21C21FFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713A3185E53;
-	Mon, 29 Jul 2024 18:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D7518629C;
+	Mon, 29 Jul 2024 18:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HoenVa2a"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GblYVGEw";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="xR196eTX"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54725139CEF;
-	Mon, 29 Jul 2024 18:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722276895; cv=none; b=XpK3uTQ0ZwniqXUSp2xFvyE92mRVfy3+zSQGCSzkKqRQGRFdUoD0fK5A1BCJnAhCgCl2O546o+4gva2a6VRmMnFZtT1tO34OGW8NtsmpmRGFlZd8aZI30p41lNf7sE6Ue9bZEpGd79cPEnrtarGZSlRLhYBFe0uG0oz29YG3Yyk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722276895; c=relaxed/simple;
-	bh=djaTlLzJZiwIoHIAUK06gLBHF121FEXCHmWWxhGEpxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d3gz2tXRgNWErCy6b8K789IppggVoqnnRzwY7V0Za4l0m0AY9jnH+oWu372RCrtUbj8oAJPh4fkkeQFTtqaniTFMhc3OOUSZfOQsnnsTfbuf3OVgU6OqXM4A/8DWulb3IQmy+dI0EOyjiMJcwstol97+WrrCojPVzuMfigskLYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HoenVa2a; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722276891;
-	bh=djaTlLzJZiwIoHIAUK06gLBHF121FEXCHmWWxhGEpxU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HoenVa2aAzyEskLGMIowXSuNzCLgGwukdrFdJSX9d8AOmJ98mpRKe1MOYvbMGlIi9
-	 pU/yexFKa4fdRVKXGN8GYYfxpW8uLXFKTz6sqibOnCd938lf9/Sm84MX1rm7ktzBy5
-	 vWSMiqfTY4AHKwZDCb0YMnfj8Ck5YIQ4t3Lj5XI+AkpJC8j5lsB008UXD5b8ht06K6
-	 VNIwCx0bZ8vtUylZI1Elnez268ylEHdoJ3GQRtb2Ox55mpmzxb8ONggdcVinJZEqB7
-	 Bkhi4j0fLO8AZtpcjV3iZAsrMJnykHTxUHR9uUki/xDjT5B52omquTucIPbKXaxtKK
-	 JytPkcckwG5cA==
-Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 363AB37820BE;
-	Mon, 29 Jul 2024 18:14:49 +0000 (UTC)
-Date: Mon, 29 Jul 2024 14:14:47 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, kernel@collabora.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] arm64: dts: mediatek: mt8195: Add missing clock for
- xhci1 controller
-Message-ID: <be8a0047-3a37-4e25-b4aa-ab34adff4418@notapiano>
-References: <20240722-usb-1129-probe-pci-clk-fix-v1-1-99ea804228b6@collabora.com>
- <CAGXv+5H_pxR18sHeqdWPy9_FARrnLwyyOHV4VXCn9p5OExseiQ@mail.gmail.com>
- <f12ba385-090b-4772-8c52-e515e25b00ac@collabora.com>
- <CAGXv+5G92=-k5MDH4BPcM8tgPwcGTJ60trJwr7BwTGHD=wpnDw@mail.gmail.com>
- <51f0f4f3-11a5-4d74-981e-3f24f8475c7f@collabora.com>
- <CAGXv+5F-U6O3dQdU2L8bR5V+D=PLreACZYCh5sxBY3PFrex1zg@mail.gmail.com>
- <de0b0daa-2a35-4286-b4db-4f646073a04c@collabora.com>
- <CAGXv+5EvzRr8h5vnuV2h=zkVwkVp3fShDP_45BpaO0HkivuDtQ@mail.gmail.com>
- <c3e38dae-646f-471a-ae40-150b8f86cac0@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9023C158D63;
+	Mon, 29 Jul 2024 18:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722276944; cv=fail; b=Yz8MAozUtxlQX4Ah+rm030OEkcgGI12E2xdvR0TCoJWmAxH8ZgAP49rJS7931FGfTlwx0jDsX1IhbtV0f+xYtihJqrcDquN2opNmuXt+b221Gc0iH1XbRaLu08imV6ROHUW12NTTRklBHZA8etWzAeL0iOZJDPHt0rX0Hl0H9ZQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722276944; c=relaxed/simple;
+	bh=LM6ThTtEvszqrlAzWosjDaQ9+UKWNxHlzsyx7basjRY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=QUdoooBiel1QS+vZRaq12k3pe5UJQRVnPfEH8OF4zLKDyKh+Dh82pi+81z6BJaI54NFAzo/rNctEQauQNSP4zWDWcKPC0zXFUQzROy9GkSfgUAv5GNdpc71E/j1wWrxUc4RXeY6Serjv06WaCdyDG3m9lyJAwF6Tw5bguvtEyI8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=GblYVGEw; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=xR196eTX; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TFMYpL011614;
+	Mon, 29 Jul 2024 18:15:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=/kpJ5AoioEEOZ/Ft1/YjDgF9L91V5zf6IHtB7goQv+k=; b=
+	GblYVGEwDGq/E+IUzdu2yyuUHITRJ19Rv8uHKb/irCT0HIOl0Tx+Q2GmjH1HU1kQ
+	9AWwiGB1j/FkJVU5cyjhsOKMuHVujaZAhYx/Wg+ErToPIUiLeLSC/hFy79IAf5cb
+	vI59IKgAFw6Al31YotCxXdW+VPe4ciNx/SaQ6Gp16yFcg/6Bt7CnfM19869eV+4y
+	Ypl+QKQ/tZ8f6mbbdqBvANI2/P80P1p03kfoqRIQRxQyghdO7oJuY9guBLwZMVFU
+	VEtOfCNV85NUsRDX20cw0e7TEYP+eGywhCtYMgw8zVOQMQj3YB+tkm6w9qleCCRV
+	akCXzG4GXTwGnasQ6JEebA==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40msesk9kk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 29 Jul 2024 18:15:16 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46TH3G7U009220;
+	Mon, 29 Jul 2024 18:15:15 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2169.outbound.protection.outlook.com [104.47.58.169])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40nrn666v3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 29 Jul 2024 18:15:14 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qLw9MqRkfaMH77ktabYvYxUdGIhHdcYhl+jDQ65urpIb//ZoNkH+rwsGT7HrQaS970D7+/whJdaJkqVyzBvGMo64vtr3AY1hsBswyeo9JjOmOdnPcViN5p2vbZKxW/+wEHkZdb9pQJmoBPjcw6yau2zzvsfQ1ws2LZrtTeuMnY7rlkBxUJpjWZaefdgufwAfy5M84NJFMW7zt4hq311WH+eBbirK2t3caI0k/TQYku6X+tYPGo/uSx9MTRfPZ0lhrsVuufvsgzttbIAZiRJEQ0vMWe3tBtHRQYGGQR/qa9+Y1YJeSBRmFdAj/lyrYnr1jmMCz05lA4ZWRwuy/mu2Lw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/kpJ5AoioEEOZ/Ft1/YjDgF9L91V5zf6IHtB7goQv+k=;
+ b=qjl2qEKT6EUycAdNNaBJnOlMqHACQ9yp3a09XJId+xXl733Xsga4/2SmLHLjOpiHW6gcUtxHvaF8chp1Hwk+2M+8ZKQ5xQSwp4M91wPnZUZiEM1mSe2mQZYn1epAFYEjd9dgg3DFbX3hyq1sdqhZOzNlVvCZyxoHTWjaf6BAJ/541WrmTTcaFcKy54DChxQysPtITpWLv0Hum+Y0cVtZR26LbuKM53L0AyvGaP0gS0cF4F2xaK0vTIR3UagtzhIZDnYlxkdYMwz78bunMGksDtidwQwG6obMql/XVkYfQPM4179C9Hd7e+XYLC8EpzMzGJvJQxq0WddR+XKAsEym2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/kpJ5AoioEEOZ/Ft1/YjDgF9L91V5zf6IHtB7goQv+k=;
+ b=xR196eTXTA2u2I6tGc+MA3DZfVVqH3JC61HwBawAQppfenYRVapG64s+nE9PsojNeAMDgIvLnkKRKDw7ZfcdF3S2ZwNfi4uA/8dRVnWJ1JJ8iYOFCx3DI6lQreCiwXF5aNgAsjJKSYbcq+q8ab+ScuKDIvqe1pCizjPsnbGYCy8=
+Received: from BLAPR10MB5267.namprd10.prod.outlook.com (2603:10b6:208:30e::22)
+ by BN0PR10MB4902.namprd10.prod.outlook.com (2603:10b6:408:12a::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Mon, 29 Jul
+ 2024 18:15:12 +0000
+Received: from BLAPR10MB5267.namprd10.prod.outlook.com
+ ([fe80::682b:c879:9f97:a34f]) by BLAPR10MB5267.namprd10.prod.outlook.com
+ ([fe80::682b:c879:9f97:a34f%7]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
+ 18:15:12 +0000
+Message-ID: <178ff26a-7068-41f1-a0db-dbd0749aa82f@oracle.com>
+Date: Mon, 29 Jul 2024 19:15:04 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v2 2/3] selftests/bpf: convert test_dev_cgroup to
+ test_progs
+To: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau
+ <martin.lau@linux.dev>,
+        Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
+Cc: ebpf@linuxfoundation.org, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>,
+        bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20240729-convert_dev_cgroup-v2-0-4c1fc0520545@bootlin.com>
+ <20240729-convert_dev_cgroup-v2-2-4c1fc0520545@bootlin.com>
+ <30ef4e63-02be-4691-b85b-e98c18d59e57@oracle.com>
+ <87d70267-0305-4f4d-a7e2-7d1f8855e14c@bootlin.com>
+Content-Language: en-GB
+From: Alan Maguire <alan.maguire@oracle.com>
+In-Reply-To: <87d70267-0305-4f4d-a7e2-7d1f8855e14c@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P123CA0647.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:296::22) To BLAPR10MB5267.namprd10.prod.outlook.com
+ (2603:10b6:208:30e::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c3e38dae-646f-471a-ae40-150b8f86cac0@collabora.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BLAPR10MB5267:EE_|BN0PR10MB4902:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0140a2db-7af1-478f-97b5-08dcaffa6343
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S2t3SmY2WkM4Z3plYSt2eDdYV3BPSDFyNFgrbTNUZms3Zm0wUW52dmxnOWZG?=
+ =?utf-8?B?WGo3WEV1V21aajM3aEtpazlDdHR0UVVhbXVuUFhadlUyNGdCVlhoUklDa25Q?=
+ =?utf-8?B?VnpPclllc1lRSjd0SXhNSXpRdldRaFluYWNuQzB0NC91VFZuWDhDNmpJR1F1?=
+ =?utf-8?B?Tld4WENjRzd2VnRodFpob1dqUnk4c3hmYjN3em1oazFMWXNYeTlYZGFkNmhQ?=
+ =?utf-8?B?WEcvSnEwekVMZ3ZRd0E1RHJUYTlEQjNOdWJnUytJc2RTS2kwQmFhaHdEOGhu?=
+ =?utf-8?B?S0VCVVFLejEydlg2R1owZTV4dWRhSzJyZEVKbWFqUzRKSHcrT2Npd2kyaWkz?=
+ =?utf-8?B?K0dCZ3NSMjhJRTRaSnNhRkI4UWROWXU1d1VBWGV0bzFjVmdDcGdsUXgrNDFi?=
+ =?utf-8?B?TS9YaUluWk51YlJTT3ZvRG1GTW5sbm5tTWx2UUFvNGtBNGVLRU5lUThsZ09j?=
+ =?utf-8?B?RjBmSEtwSnZXUlBVZjVtSStleExXVkMyYmw3YVhNalVyVm5zL3VveWY5czNN?=
+ =?utf-8?B?Z1M1dzdmQXVlVGx1RHB1YUJrcFpoVngwUW05SlhHUlRlVWRIQXdncmdvbVll?=
+ =?utf-8?B?NFp4V2xxN1oxdU4ySDRSSHNYUXFGZUNuaXlnUWdtNlFqZ1FwNXloZE4vNHdu?=
+ =?utf-8?B?VFdYYlJLWXpzb0JTYlpBcUoxT3Bnc0J1ZlN3dDBETm1OSnlYb1UzMmVNRHAw?=
+ =?utf-8?B?TUxnOUpUaWVSNElnbGUrdmF2bnBHeE9GN3lOVVZ4c0kzdU9Qb2VFb0RzNG9E?=
+ =?utf-8?B?eXppa1pyNUIrWExMUDdTeEFXQXBmZUVMaE5yQk51bzhPam5SSU14SzNndHFu?=
+ =?utf-8?B?NmdvdEpTYkN5b25QTmxWL002dmZIcWtTalR3cW9FdDVTV2NUdHMyWlpnZ2hF?=
+ =?utf-8?B?M2ZBUHFvUzVFQVkyYWtkSzYvTnNMbHhIdWVjRmdlbGIwN0Z1MlN1R1dveFNa?=
+ =?utf-8?B?ZFhSUzFnd05xWTJ3MnJHZG1jdGRtQkxtTWUwcEIzWEx6OGcvc0U0Mnd1bHox?=
+ =?utf-8?B?NkRVNk1sTG9Ob0ZINFp2VTdsQmR2Nmc1WFlpbVl6a1RCemNLVkgzbEpNK0Uv?=
+ =?utf-8?B?TG1STlVVMnNVajFaazZCYzg1dHRwc240amRSRi95RE4rVlo4SGdxb2xMeDJ3?=
+ =?utf-8?B?TjVySysyenUzNGcrOXlVbDN3S2xDdVVyQk1NcGUrdVFLcWZ3dGJZSkNOMmxx?=
+ =?utf-8?B?c0p3NzZpbzNFd0VzZCtnVndhOGJMNm92OXg2cDRwektOZkd0b1gwRzhpSm9U?=
+ =?utf-8?B?TnNxb3JmUmtweFgwNndPN0JuQ2hOYThRY01WZVZlRnFIMWgzdXB1bHhPR0dk?=
+ =?utf-8?B?S2pnaXMwUVdid05kRzhMMVNVWXdqaXdNU3hkT090RFUyNFAvWlk3eC9EcjNI?=
+ =?utf-8?B?U2kzSlpEUG41cjhZWDNjalVGRWxmZWU3ZTJ2Nis2NnJCa3ZQc2VlWlBNckR2?=
+ =?utf-8?B?YUFEVis0N3g0cVZSaVAxTjdsWkpzcUdkVVJTdDdCeHR5RVJqY21oNE9nYUE3?=
+ =?utf-8?B?cjNONVd2THNDSDljNW5jWEdURlZXY2VZQ2VhWnptaXZBZHJsdE1uQzBDMGJB?=
+ =?utf-8?B?bUNscjMvRUpjZVNWRTlxZ1lCcUk2UVppTnhCOVBRckJvZXVEall2L1FtRmZS?=
+ =?utf-8?B?SEZFRkcwSzBUUUxNci92bXd0MmlmZnNHbVVvMXp6bkVDTUsyNEFaSUR4WXJV?=
+ =?utf-8?B?NjhSVGNVMHY0RVdZKzQrbkNoWXN1L0RGc1VyaGF1bjRibDhWa0RwY0ppQzZ1?=
+ =?utf-8?B?cVhjV0RvdG1nZTcvd20yTWhmM2tFU0Z1Y3NZTTArdXovUFM5citKeDMyNC9q?=
+ =?utf-8?B?WE9kbkhXeExDKzZEeTFGNEo2UUdCcFRTc3dnYXM4NVlDMjUxMkFvaXNHME54?=
+ =?utf-8?Q?0kEPoW0LhfXnJ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BLAPR10MB5267.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cXFDcDVRbERoNlBNS1duSk1SYWtZSWhGcEZqSW1kTWx5cGxyeHF6WDJqRVFW?=
+ =?utf-8?B?SXBRdUdCdXBZaUtUeTVsck1ySFdlT2M5WW9RUW9UTkZXY2p5VDNNWFovR1dj?=
+ =?utf-8?B?RXViY2VyRXk2Z1g2T3hlbDlESTBJL2tEciswQ2YwYmZlSnRSZHNqOERpU0Qy?=
+ =?utf-8?B?aFNaczVFT1BIU0FIb2wza2MwZGdWUE9DTE1OdW40U1RKZFYxbUY3dkYvRklz?=
+ =?utf-8?B?eWJ0RTdsUjRreCtVTVNwTnpRMXdQY1dyRXU5VEhCMDU2S1NpcDhzMlRqVWND?=
+ =?utf-8?B?ZU0zZTNIZ2ZiT3BSMmZvNWhScndwaVN4YW1VZkNVNWRpSVlmU2Y1Ty9DU0c1?=
+ =?utf-8?B?dFl6amVMdzY5MWV6aFhNSlYrMjhFa2U0UDBueDJHQTd3alZXSkxRUm1SZjk0?=
+ =?utf-8?B?VkVaZzArOG4yWTBHcXgwVDI4bkQrQlNySnV5L0NpbmJnTTVPK294K1lqREZI?=
+ =?utf-8?B?NjhMVG53Nnh5R1FXYy9BK2xGR3RzMkFFbTZOQU0xSHN5YzA4NHFDVHdjamNp?=
+ =?utf-8?B?RWNpYlpDMlhQOUszQkZKUUNBandQUHRBYWU5UUxXbExINVJtUmlmTjdRLzh5?=
+ =?utf-8?B?clo3U1NXRjhBS1h1Tks2N2owK2xFejduZW1NeW9TTkFhc2Vvdlo2LzdadzA4?=
+ =?utf-8?B?akVzYldzcGpLVmxaYU1sZ2t2NmRKbWhZVVJlemg2aGhvdEZ3RVVvNEs0bjh2?=
+ =?utf-8?B?SUFSdlBrR3ZadXA2R2lUZ2MzWk13cWxvOCtMd0REQkFjU0pnYktyN2lxdW1O?=
+ =?utf-8?B?RytqN1ExV2ttcXpLeGZEVjAyKzFqTnVFREFMU1RlNHpNYnpRVC9hQ1VTNmY3?=
+ =?utf-8?B?R24wd0laL0dnTkh2bVV2T2VkOEFDK2h3d21Ma2RGV3pHYmRhdzV1UmNWcEx0?=
+ =?utf-8?B?NklHVWJueXNxV0hJS0FpTGFjWVdjVWRUbG9mNUNxejFPYmxhT2R5RUkvcHNG?=
+ =?utf-8?B?UGE5alNOTzVONER1aVpLbWdBdkVhZDlabThDdk9HQzNURkV5V1Nvckw4ZTdL?=
+ =?utf-8?B?NVF5WFBBMmxhbFVHTi9kYWE1bzMxOW5YQm5QS21TanY3VGwyZXZRdnJjakhj?=
+ =?utf-8?B?SWZrQ25PL01XNnNlTzFNaWV6Z01WWmVZUkZhNW1iODBWTUVLSkNEMWkyaVdh?=
+ =?utf-8?B?N05vRW5hVWdMcnQ4RmRhZTZwZHFqNWRGWmJlNTRuUWZ6dW9sL2E3YS9xcTc0?=
+ =?utf-8?B?R3RvNGcxa1k0Y2ZSem5UY0FkUXdYSmN6UGhnNEZPWThtUzh5SkhzL0dUeTBs?=
+ =?utf-8?B?M2o0aUltZHk3eWdMcjJiQzFTdkpDSTQyMEx5cHR6SXU4RjFSUUszTEZXMDZL?=
+ =?utf-8?B?S004RzZTMmlYOVBicG1BdUZ5SzViNkFvR0NWV3E0ZVQwbGp3WDY5b2JjZk15?=
+ =?utf-8?B?RHlacUZ5ZHVteFRrUHUrbW1YZ0NWbHRoQWt5OXFPNUZrMVliRXhESU1Mc0hk?=
+ =?utf-8?B?SVZFV3ljeGFVcTkwcWtLejRxTUVMU0pMY25iRkYrblltVEhiVVB3akU3b0JN?=
+ =?utf-8?B?QzExamY5YUwvcDlTaUl0aTljREh2ck43M1BCbVplVzVYSDIvV3JSOExhL0NB?=
+ =?utf-8?B?dmRiNmxUV2JqTWY3NGRxbXVMbzQ4Z2JubUIzaXdoT0VuU0t3ckJXYWVoOXpu?=
+ =?utf-8?B?S0dCWVhxWXQzc2UvemdKNVZyZU1OM0hkSjVwVjlmeUI2cG9EKzNwMkxBV1FH?=
+ =?utf-8?B?SHNyQ2ZmakVVM3RNT2VodHE4MFNJR3o2bmVra0F2dlZtd0F0eU1MR0VScDdY?=
+ =?utf-8?B?VFhiTXR4Z2I2S0plY2VvZnIxa2EyM1JkOUsxOWRzR2hVUnovTjQySjJwbVVz?=
+ =?utf-8?B?Ny8yUlFwWnArblExam1aZWhYeFBTQm51WFRRTjFKc1E5ZzUxOC9NQXpVMWpB?=
+ =?utf-8?B?QVJqZDNrZTJacU16bEpMZGg5bWhsdVlzM21jZU1Hd3BQQjNXdFgwOEpqeDg0?=
+ =?utf-8?B?WjBEU0F1enpYNjB2VS9JWDFjeDdOUEMzUUtjbXBROUl4ZE8xbnF4UUs3QWto?=
+ =?utf-8?B?SVpPRFdIb1NxbWR6Wnlvd3BCMlk2VFBzd1Q3VHFacnR2eWRuYmliUUlWcGxh?=
+ =?utf-8?B?RzAvZlBCcGxpNW9iaUc5a0F5MTNCaTg2V2luZUpJMEtSTnpJMVFSMy9rMHFu?=
+ =?utf-8?B?S0EzNTJlMzJFT0dDamt4SjNBZkxoNzd2cE4yWDlIUkFLbmpGT1ZyUUIvWjND?=
+ =?utf-8?Q?2uwRBMYpx4yky4ku0QUA0eE=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	qNL6QRbrhS6Nw0I3kumyMRxpI5HIcqhs6J5YWnbw24jx9KocOcbzNiOcJ2IlAvwy8rQXOymStOPkgQk2GSDfe7cAUEYfPgx/b0mumG8UE3ty2RgBOBwEdK3N+gh7WQjBWWjiUzA7FUP6OGOFlwwORb0BI070Kv5cgE/hll0r5Zc2zQxwMzzuA3y3h9HyHvXSAHp1mM/WTCuFUdU+MEuRCsHtAdVtxd0q34/fUAgWoK9CTliQ+XGeqgBGGCqKvG/NflwnYBuWP7DZ/0DgHigdVNcLFCmuaWmAlaAjOqt9/MJJvTqoQ+zdJlwIBl0HkSXzsUpiuMo9jmpcYK4lK1/hhG0Vk/2JBkvf44fgBCAIvTrCWx+Kw2oAhwLy8VFEAIDTSKA0ytUvfcIUk5mfZR7qYCdlAEB4wGKuG+rB2a8gI+oYzJIiPC9dhsqU8Tel0w4/a+u6VYchGsF/sijgZ8eNn1Mycgt8q2kTZ+LehomSNr44Rr5L8mDtjqmAv8ngiUUXT4SFJAVK/gE8GFtT2CZwiApPgPry/otof07E0E7h9x1LxPB8l1tHD3E26MeZBUFFnjvqOJWL5dkic22+Rw4YygFnKKa32+Oz8cLdWgdP+tg=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0140a2db-7af1-478f-97b5-08dcaffa6343
+X-MS-Exchange-CrossTenant-AuthSource: BLAPR10MB5267.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 18:15:12.3841
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: K7TrXanJcrfVbLaV5cEcxR7P47pNFOjkWHQ5milpF/OeoRFcVbu/7skUPYH6CZLKjsz2zMDVNUPEd9s0Rb5u8A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB4902
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-29_16,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
+ suspectscore=0 bulkscore=0 phishscore=0 adultscore=0 malwarescore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2407110000 definitions=main-2407290123
+X-Proofpoint-ORIG-GUID: 77SmT7QPkDBf2q-GCtcEDY6K9uXvtHYz
+X-Proofpoint-GUID: 77SmT7QPkDBf2q-GCtcEDY6K9uXvtHYz
 
-On Mon, Jul 29, 2024 at 02:34:27PM +0200, AngeloGioacchino Del Regno wrote:
-> Il 29/07/24 12:48, Chen-Yu Tsai ha scritto:
-> > On Mon, Jul 29, 2024 at 4:54 PM AngeloGioacchino Del Regno
-> > <angelogioacchino.delregno@collabora.com> wrote:
-> > > 
-> > > Il 29/07/24 10:07, Chen-Yu Tsai ha scritto:
-> > > > On Mon, Jul 29, 2024 at 3:59 PM AngeloGioacchino Del Regno
-> > > > <angelogioacchino.delregno@collabora.com> wrote:
-> > > > > 
-> > > > > Il 26/07/24 17:11, Chen-Yu Tsai ha scritto:
-> > > > > > On Fri, Jul 26, 2024 at 8:11 PM AngeloGioacchino Del Regno
-> > > > > > <angelogioacchino.delregno@collabora.com> wrote:
-> > > > > > > 
-> > > > > > > Il 25/07/24 12:34, Chen-Yu Tsai ha scritto:
-> > > > > > > > Hi,
-> > > > > > > > 
-> > > > > > > > On Mon, Jul 22, 2024 at 11:27 PM Nícolas F. R. A. Prado
-> > > > > > > > <nfraprado@collabora.com> wrote:
-> > > > > > > > > 
-> > > > > > > > > Currently if the xhci1 controller happens to probe before the pcie1
-> > > > > > > > > controller then it fails with the following errors:
-> > > > > > > > > 
-> > > > > > > > > xhci-mtk 11290000.usb: clocks are not stable (0x1003d0f)
-> > > > > > > > > xhci-mtk 11290000.usb: can't setup: -110
-> > > > > > > > > xhci-mtk: probe of 11290000.usb failed with error -110
-> > > > > > > > > 
-> > > > > > > > > The issue has been tracked down to the CLK_INFRA_AO_PCIE_P1_TL_96M
-> > > > > > > > > clock, although exactly why this pcie clock is needed for the usb
-> > > > > > > > > controller is still unknown. Add the clock to the xhci1 controller so it
-> > > > > > > > > always probes successfully and use a placeholder clock name for it.
-> > > > > > > > > 
-> > > > > > > > > Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
-> > > > > > > > > Closes: https://lore.kernel.org/all/9fce9838-ef87-4d1b-b3df-63e1ddb0ec51@notapiano/
-> > > > > > > > > Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> > > > > > > > 
-> > > > > > > > So I asked MediaTek about this, and it seems the correct thing to do is
-> > > > > > > > disable USB 3 on this host controller using the following snippet. The
-> > > > > > > > snippet is copy-pasted from our issue tracker and won't apply directly.
-> > > > > > > > 
-> > > > > > > > This is also seen in mt8395-kontron-3-5-sbc-i1200.dts, on which xhci1
-> > > > > > > > is used only for USB 2.0 on an M.2 slot.
-> > > > > > > > 
-> > > > > > > 
-> > > > > > > Uhm, okay, but why should USB3 be disabled on a controller that supports USB3?
-> > > > > > > 
-> > > > > > > I agree about disabling it on specific boards that use only the USB 2.0 lines of
-> > > > > > > this controller, but doing that globally looks wrong... and looks like being a
-> > > > > > > workaround for an error that gets solved with adding a clock as well.
-> > > > > > > 
-> > > > > > > In short, the question is: why would that be the correct thing to do?
-> > > > > > 
-> > > > > > We can disable it in mt8195-cherry.dtsi then?
-> > > > > 
-> > > > > That device does not use this controller, so yes we can disable it, but that still
-> > > > > doesn't resolve the issue pointed out by Nicolas...!
-> > > > 
-> > > > No. I mean disable USB3 on this port. Also see the next paragraph.
-> > > > 
-> > > 
-> > > Yes, sorry I was meaning the same - but I effectively wrote "disable controller"
-> > > instead, my bad.
-> > > 
-> > > > > Please note that the issue that he sees doesn't happen only on Tomato, but also on
-> > > > > other MediaTek MT8195/MT8395 boards - and applying this commit makes disabling the
-> > > > > controller, or disabling the USB 3 lines on the controller, kinda redundant, as
-> > > > > this will effectively fix probing it... but again, fixing the actual issue with
-> > > > > this controller is something that must be done.
-> > > > 
-> > > > If those other boards use the XHCI1 USB3 lines for ... USB3, then the USB3
-> > > > PHY should also be tied to XHCI1, right now due to the Cherry Chromebook
-> > > > design, only the USB2 PHY is tied to it.
-> > > > 
-> > > 
-> > > Yes, I am aware of that.
-> > > 
-> > > > > Disabling the controller on Tomato is a different topic - here we are discussing
-> > > > > about fixing the issue, and that will happen, again, on any board that has this
-> > > > > controller enabled with USB3 lines. :-)
-> > > > > 
-> > > > > So, unless there is any specific reason for which applying this commit is a bad
-> > > > > idea, or any alternative fix to this that is better than the proposed one, and
-> > > > > not a workaround... I'm applying this one.
-> > > > 
-> > > > Didn't I just relay what MediaTek says is the correct fix? Disable USB3
-> > > > for this port on devices where the serial pairs are used for PCIe instead
-> > > > of USB3.
-> > > > 
-> > > 
-> > > I think there must've been some misunderstanding here.
-> > > 
-> > > Yes you did relay what MediaTek is the correct fix, and I agree that the USB3 must
-> > > be disabled on devices where those serial pairs are used for PCIe instead of USB,
-> > > or on devices where those are completely unused.
-> > 
-> > OK. I will send a patch for Tomato as you asked.
-> > 
-> > > This, though, will fix the issue only on those devices (because we are disabling
-> > > those lines entirely, so depending on how we see it, this might not be a fix but
-> > > rather a workaround).
-> > 
-> > I would say that is a more accurate description of the hardware, so a fix.
-> > 
+On 29/07/2024 18:47, Alexis Lothoré wrote:
+> Hello Alan, thanks for the review
 > 
-> I can accept a patch for Tomato with a Fixes tag. Yes.
+> On 7/29/24 19:29, Alan Maguire wrote:
+>> On 29/07/2024 09:20, Alexis Lothoré (eBPF Foundation) wrote:
+>>> test_dev_cgroup is defined as a standalone test program, and so is not
+>>> executed in CI.
+>>>
+>>> Convert it to test_progs framework so it is tested automatically in CI, and
+>>> remove the old test. In order to be able to run it in test_progs, /dev/null
+>>> must remain usable, so change the new test to test operations on devices
+>>> 1:3 as valid, and operations on devices 1:5 (/dev/zero) as invalid.
+>>>
+>>> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+>>
+>> A few small suggestions but looks great!
+>>
+>> Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
 > 
-> > > If we don't apply this fix, any board that uses those pairs for USB 3 instead will
-> > > still show the same "clocks are not stable" error, leaving them with a broken port.
-> > > 
-> > > And I believe that because the clocks are not routed externally but rather are
-> > > internal to the SoC, so, if INFRA_AO_PCIE_P1_TL_96M is necessary for that USB 3
-> > > port to work, a board that intends to use those pairs for USB3 would still need
-> > > this exact clock to actually get that port to work.
-> > 
-> > I couldn't reproduce the issue by disabling pcie1 as Nicolas mentioned.
-> > I don't have any more to add to this though. Sorry for the noise.
+> [...]
+> 
+>>> +	unlink(path);
+>>> +	ret = mknod(path, mode, makedev(dev_major, dev_minor));
+>>> +	ASSERT_EQ(ret, expected_ret, "mknod");
+>> no need to unlink unless "if (!ret)"
+> 
+> Indeed, you are right.
+> 
+> [...]
+> 
+>>> +	skel = dev_cgroup__open_and_load();
+>>> +	if (!ASSERT_OK_PTR(skel, "load program"))
+>>> +		goto cleanup_cgroup;
+>>> +
+>>> +	if (!ASSERT_OK(bpf_prog_attach(bpf_program__fd(skel->progs.bpf_prog1),
+>>> +				       cgroup_fd, BPF_CGROUP_DEVICE, 0),
+>>> +		       "attach_program"))
+>>
+>> I'd suggest using bpf_program__attach_cgroup() here as you can assign
+>> the link in the skeleton; see prog_tests/cgroup_v1v2.c.
+> 
+> Ah yes, thanks for the hint !
+> 
+> 
+>>> +		goto cleanup_progs;
+>>> +
+>>> +	if (test__start_subtest("deny-mknod"))
+>>> +		test_mknod("/dev/test_dev_cgroup_zero", S_IFCHR, 1, 5, -EPERM);
+>>> +
+>>
+>> nit: group with other deny subtests.
+> 
+> ACK
+> 
+>>> +	if (test__start_subtest("allow-mknod"))
+>>> +		test_mknod("/dev/test_dev_cgroup_null", S_IFCHR, 1, 3, 0);
+>>> +
+>>> +	if (test__start_subtest("allow-read"))
+>>> +		test_read("/dev/urandom", buf, TEST_BUFFER_SIZE, TEST_BUFFER_SIZE);
+>>> +
+>>
+>> Nit: should we have a separate garbage buffer for the successful
+>> /dev/urandom read? We're not validating buffer contents anywhere but we
+>> will overwrite our test string I think and it'll end up non-null terminated.
+> 
+> True, but since the tests aren't performing any string operation on it, is it
+> really a big deal ? I can even switch the string to a byte array, if it can
+> prevent any mistake.
+>
 
-Huh, that's surprising. FWIW I just reproduced with kernel next-20240729,
-upstream defconfig (besides a CONFIG_USB_ONBOARD_DEV=n to be able to boot from
-my USB drive), and the pcie1 node in mt8195-cherry.dtsi disabled. Hardware is
-mt8195-cherry-tomato-r2.
+There's no need, don't worry. As long as the size limits ensure we don't
+overrun the buffer, we're good.
 
-Also, I just tested adding
+> If that's ok for you, I can bring all the suggestions discussed here in a new
+> revision and keep your review tag.
+> 
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
-index fe5400e17b0f..a60c4d1419df 100644
---- a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
-@@ -1401,6 +1401,7 @@ &xhci0 {
- &xhci1 {
-        status = "okay";
+Sounds great, thanks!
 
-+       mediatek,u3p-dis-msk = <0x1>;
-        rx-fifo-depth = <3072>;
-        vusb33-supply = <&mt6359_vusb_ldo_reg>;
-        vbus-supply = <&usb_vbus>;
-
-And that fixed the issue as well. So as far as fixing the error on Tomato, this
-patch works too, and makes more sense.
-
-However I agree with Angelo that a board that does use USB3 on this controller
-would still need the original patch adding the PCIE clock to work. But such a
-board doesn't currently exist, does it? And we don't actually know if USB3
-really works in that case. Or why this clock is needed. So there are a few
-unknowns...
-
-Anyway, I really don't know what option would be better. Just let me know if I
-should resend a patch or CC me in any alternative patch.
-
-Thanks,
-Nícolas
-
-> > 
-> 
-> Sometimes the noise actually opens some eyes around (be it mine or whoever else's),
-> so as long as it is constructive, I don't see it as noise.
-> 
-> In short: no worries! :-)
-> 
-> > > As for Tomato itself - I agree that we must add the u3p-dis-msk=0x1 flag, yes,
-> > > and we will, but I'm purely talking about - again - an eventual board that would
-> > > not have that property because USB3 is exposed/used for real.
-> > 
-> > I think it would make more sense to fix the `phys = ` statement in mt8195.dtsi
-> > to list both the USB2 and USB3 PHYs. At the board level, for boards only
-> > using USB2, we would have the overriding `phys = ` statement alongside the
-> > `mediatek,u3p-dis-mask` property. Does that make sense to you?
-> > 
-> 
-> Yeah, that'd make sense, though I'm not sure if the driver can cope with that: in
-> that case, we'd obviously need "two" patches and not one :-)
-> 
-> Cheers!
-> 
-> > 
-> > Thanks
-> > ChenYu
-> > 
-> > > Cheers,
-> > > Angelo
-> > > 
-> > > > 
-> > > > Regards
-> > > > ChenYu
-> > > > 
-> > > > > Cheers,
-> > > > > Angelo
-> > > > > 
-> > > > > > 
-> > > > > > ChenYu
-> > > > > > 
-> > > > > > > Cheers,
-> > > > > > > Angelo
-> > > > > > > 
-> > > > > > > > 
-> > > > > > > > ChenYu
-> > > > > > > > 
-> > > > > > > > index 8b7307cdefc6..2dac9f706a58
-> > > > > > > > --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> > > > > > > > +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> > > > > > > > @@ -1447,6 +1447,7 @@
-> > > > > > > >                                           "xhci_ck";
-> > > > > > > >                             mediatek,syscon-wakeup = <&pericfg 0x400 104>;
-> > > > > > > >                             wakeup-source;
-> > > > > > > > +                       mediatek,u3p-dis-msk = <0x1>;
-> > > > > > > >                             status = "disabled";
-> > > > > > > >                     };
-> > > > > > > > 
-> > > > > > > > > ---
-> > > > > > > > >      arch/arm64/boot/dts/mediatek/mt8195.dtsi | 10 ++++++++--
-> > > > > > > > >      1 file changed, 8 insertions(+), 2 deletions(-)
-> > > > > > > > > 
-> > > > > > > > > diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> > > > > > > > > index 2ee45752583c..cc5169871f1c 100644
-> > > > > > > > > --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> > > > > > > > > +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> > > > > > > > > @@ -1453,9 +1453,15 @@ xhci1: usb@11290000 {
-> > > > > > > > >                                      <&topckgen CLK_TOP_SSUSB_P1_REF>,
-> > > > > > > > >                                      <&apmixedsys CLK_APMIXED_USB1PLL>,
-> > > > > > > > >                                      <&clk26m>,
-> > > > > > > > > -                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>;
-> > > > > > > > > +                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>,
-> > > > > > > > > +                                /*
-> > > > > > > > > +                                 * This clock is required due to a hardware
-> > > > > > > > > +                                 * bug. The 'frmcnt_ck' clock name is used as a
-> > > > > > > > > +                                 * placeholder.
-> > > > > > > > > +                                 */
-> > > > > > > > > +                                <&infracfg_ao CLK_INFRA_AO_PCIE_P1_TL_96M>;
-> > > > > > > > >                             clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck",
-> > > > > > > > > -                                     "xhci_ck";
-> > > > > > > > > +                                     "xhci_ck", "frmcnt_ck";
-> > > > > > > > >                             mediatek,syscon-wakeup = <&pericfg 0x400 104>;
-> > > > > > > > >                             wakeup-source;
-> > > > > > > > >                             status = "disabled";
-> > > > > > > > > 
-> > > > > > > > > ---
-> > > > > > > > > base-commit: dee7f101b64219f512bb2f842227bd04c14efe30
-> > > > > > > > > change-id: 20240722-usb-1129-probe-pci-clk-fix-ef8646f46aac
-> > > > > > > > > 
-> > > > > > > > > Best regards,
-> > > > > > > > > --
-> > > > > > > > > Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> > > > > > > > > 
-> > > > > > > > > 
-> > > > > > > 
-> > > > > > > 
-> > > > > > > 
-> > > > > 
-> > > 
-> 
-> 
-> 
+Alan
 
