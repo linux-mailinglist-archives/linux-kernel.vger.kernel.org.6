@@ -1,148 +1,148 @@
-Return-Path: <linux-kernel+bounces-266413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D0E93FF8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:31:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F6A193FF87
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22C371C22840
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:31:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 199E01F238AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559641862B7;
-	Mon, 29 Jul 2024 20:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C081891D2;
+	Mon, 29 Jul 2024 20:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KQngmwtR"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VOXTlI3C"
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E035188CA7
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585F2770F6;
+	Mon, 29 Jul 2024 20:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722285072; cv=none; b=trzNIDtuWrx9JV+1VU4tanqYu8As1LbRFX+p4rQZhP1pGCMxrplXpwy6COJzC98jIfuPm9/s30dc20itku5OvaEQVQuCcvGGn1cb9sgMJl6FpnOp69H7gYBCEuCTJOS+l5qWdDJlgQ4eTEMSoT7/tYn6by9qK1DrHADjM7g1FB4=
+	t=1722285045; cv=none; b=llZOfbARxCiFDuxGRZlfVevODh3OzcoRU5d1MZxsmUbcwAPnjm0ufkK8XgV89uP1EGmO2G0d4ucZL1jf2iKBoARfDDoKcDIijQWXV1PLh7rmwPP2yB0nTkpE5pm5c3BS7Aw14FMZ/PSZlS82vUyM1EEFcbmfR3Tgo40s+I9/sjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722285072; c=relaxed/simple;
-	bh=v1aS1lQVKXhrl5osmvtQvkwGB3PQXy+5n+7ZkC2IU7k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UpsbnBjUoalWRAfwA0OOfBPUX5r5YEgrXMr6uBUzATZIYaD83LDEX0ZcXzFRlrdI/flVWkpLlTUT343DntGdbUDxg1l4gvE5oCGSmwpfkb0lVCtMNgFfrDkao90BNZTgDGPdmZ9rjnFI67bM2snv8CrfMCsyaanMaScbs7NNkfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KQngmwtR; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e02c4983bfaso2529049276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:31:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722285068; x=1722889868; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=v1aS1lQVKXhrl5osmvtQvkwGB3PQXy+5n+7ZkC2IU7k=;
-        b=KQngmwtRP5cPVG0MyedAHOP6kErCF9qnqQXLqr0rhQR4m72Sc4+f3Fa0g/AzKqqqFN
-         5wlO2pgjZjFdrEUTls+fT8doj63YCLamJPcVK3t5IIhdSlYP4zgBilApoCj3eAuxdYwh
-         hykS4C/9NCIRFmTg8hXUvM0LvYECA3k5rAkDBRZe+4hhslzNyY+u+xGagzbrcCxNIxmu
-         Npmw0WmgIa/yBuzm87mpqvULt4Gje1ZuqkW1zqvnWVT9hc4yVt8jr/4DTZh+oTAf0PPN
-         UMJFUkhza3ntX3rgNGu8BdKa3JgkazK+gThFhVOQoMJgra4FuA0lD8oOOqtsZtisX6oT
-         1NjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722285068; x=1722889868;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v1aS1lQVKXhrl5osmvtQvkwGB3PQXy+5n+7ZkC2IU7k=;
-        b=qyPE7KS1ULnXxfV7INqXCQ2KaJgzfVQ4XRJx2ir1V8tjtCDjrDaHYunmI5D0uHOQst
-         8oK0AhO0T6y/3k+kZSrVYZTY5S+8m0AVIDX6rtxUSbfEJ4yRtnhih/orCT4O2II37iH6
-         wd8tEB6LTTWyx6WIZoj3FbdE4Sl1e4BvFQ8/U+Dbis/Fd7uep+lLQpjXG9WiirbKF8ty
-         uAitc/wNUQzsNPvkh+D0+mQz/1P3ytjpr5NG7nBU78qzq2BAiF60h9bV1BDv09mkeNG+
-         06RDB1oP+DzKBkVDuVBhqEZYPiCLovVG4yQ6o7AP3YlA2c1vf60s6VtM4MKzyiTuNJyZ
-         PEkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeb13exDm68I3bBnjVkqzjX8l07C+Zp3H66S6H6FnCJwyhJ1yfezLag2/itL17irlrLWjzcWNJHt/SH7V2TcGaO9N2ZvtODfi9HF/S
-X-Gm-Message-State: AOJu0YwrSmt93PLY/KE0mdbpaZl8sB7Z68Om/EWu7HS6NQz1ot6jW8x1
-	QIrPji/qdNngige5vJca7dXuHJJiEccNb0UEemDA8NCm8P1PE5zCYQPEkOlOD1qW4yDyAPe9R0v
-	SSU6kuqwaR/Hdag6THecXCuIuQsFTBuCEmmlXxA==
-X-Google-Smtp-Source: AGHT+IE6PA+41Auz36YFIeCSe3gwULhATNq0ZrmnNpIMKRjzsevvjklMTd8qJRePRRiUM6vSVA+XVdVmqlOtJX4UP9w=
-X-Received: by 2002:a05:6902:c09:b0:e0b:3c55:747d with SMTP id
- 3f1490d57ef6-e0b545af5f2mr9330015276.37.1722285068532; Mon, 29 Jul 2024
- 13:31:08 -0700 (PDT)
+	s=arc-20240116; t=1722285045; c=relaxed/simple;
+	bh=3iBi276QMKrstE80w/QQ4LQjbIoVMq1d8UN3s3vHzck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o/2ShsjPbJp1rio0Ztxq2PBgLCw0m2nkqZz3KLVGcPWFUAEzf3Q3CwPNsAKHGRhxCx1Tuze5YuxTV4LpoTdJEspyyPYwM9gMXrPtZCCfbKtWc/Cup0yDm/yqOxaqIhl2hT0Qi7VX1KKcKfVV4ujS8F7Spn7NrVnf1IZpL9rymy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VOXTlI3C; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id YX0rsofdW6NRTYX0rsbYtL; Mon, 29 Jul 2024 22:30:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722285035;
+	bh=KGacKLXgEMga9PvcN1pKMM3xGXU2O6qYmPh2vo3fje4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=VOXTlI3C1yxm634ADdu8Ct0o6s57EC3ZmzkKkHi4UEEyUM5Ff3xYey7pjbXDkEGXP
+	 b2veknTxzzFBd+nyXJMGozbIRfnGS0nG8PDwHepOnvAgHBa1RgvXmdN7kbuoJSFWwT
+	 mYaPI3lYB1mflwqU1VVP7CAgiHEMfLTu9C+y+87iC5OuOMbjGiu31ZAwIElJPS9ebz
+	 hm3mpi6JRREhYGPuYBRs0RCz61lKYc7lpDQCda3nFbylvaTMyliq50lDXj1Kk5aM22
+	 tVr1ExmHPmYAXUDOAIPcElpfSMGm689kiNJDkzs0KY+yDcOWvGfVTkYCyLk1r/9HiW
+	 yaKvq2NxhadjQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 29 Jul 2024 22:30:35 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <aa9fd67e-3498-4152-abbd-3f2f40b0e294@wanadoo.fr>
+Date: Mon, 29 Jul 2024 22:30:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
- <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
- <20240711131637.opzrayksfadimgq4@vireshk-i7> <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
- <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7> <CAPDyKFqCqDqSz2AGrNvkoWzn8-oYnS2fT1dyiMC8ZP1yqYvLKg@mail.gmail.com>
- <20240725060211.e5pnfk46c6lxedpg@vireshk-i7> <CAPDyKFpSmZgxtmCtiTrFOwgj7ZpNpkDMhxsK0KnuGsWi1a9U5g@mail.gmail.com>
- <20240725112519.d6ec7obtclsf3ace@vireshk-i7> <CAPDyKFqTtqYEFfaHq-jbxnp5gD7qm9TbLrah=k=VD2TRArvU8A@mail.gmail.com>
- <20240729060550.crgrmbnlv66645w2@vireshk-i7>
-In-Reply-To: <20240729060550.crgrmbnlv66645w2@vireshk-i7>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 29 Jul 2024 22:30:31 +0200
-Message-ID: <CAPDyKFosi4dhf36iNaNgGN6RHLDunL1nEwD+A_aW2khxER59nQ@mail.gmail.com>
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev/hpfb: Fix an error handling path in
+ hpfb_dio_probe()
+To: Helge Deller <deller@gmx.de>, Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <dc4fe3d857849ac63131c5620f1bacf1a3d7172e.1722191367.git.christophe.jaillet@wanadoo.fr>
+ <698958fb-4fc8-4288-b067-5843c651b093@gmx.de>
+ <ac4c6712-c47b-4414-9640-3018bf09e8fa@suswa.mountain>
+ <9dbb2b52-4fc9-4bbf-a6a2-ab6ec32adb8f@gmx.de>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <9dbb2b52-4fc9-4bbf-a6a2-ab6ec32adb8f@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 29 Jul 2024 at 08:05, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 28-07-24, 22:05, Ulf Hansson wrote:
-> > > > > I think that design is rather correct, just like other frameworks. Just that we
-> > > > > need to do only set-level for genpds and nothing else. That will have exactly
-> > > > > the same behavior that you want.
-> > > >
-> > > > I don't quite understand what you are proposing. Do you want to add a
-> > > > separate path for opp-levels?
-> > >
-> > > Not separate paths, but ignore clk/regulator changes if the table belongs to a
-> > > genpd.
-> > >
-> > > > The problem with that would be that platforms (Tegra at least) are
-> > > > already using a combination of opp-level and clocks.
-> > >
-> > > If they are using both for a genpd's OPP table (and changes are made for both
-> > > opp-level and clock by the OPP core), then it should already be wrong, isn't it?
-> >
-> > They are changing the clock through the device's OPP table and the
-> > level (performance-state) via genpd's table (using required OPPs).
-> > This works fine as of today.
->
-> There is a problem here I guess then. Lets say there are two devices A and B,
-> that depend on a genpd.
->
-> A requests required OPP 5 (level 5, clk 1.4 GHz), followed by
-> B requests required OPP 3 (level 3, clk 1 GHz).
->
-> After this level will be configured to 5 and clk to 1 GHz I think.
+Le 29/07/2024 à 22:09, Helge Deller a écrit :
+> On 7/29/24 17:59, Dan Carpenter wrote:
+>> On Mon, Jul 29, 2024 at 10:13:17AM +0200, Helge Deller wrote:
+>>> On 7/28/24 20:29, Christophe JAILLET wrote:
+>>>> If an error occurs after request_mem_region(), a corresponding
+>>>> release_mem_region() should be called, as already done in the remove
+>>>> function.
+>>>
+>>> True.
+>>>
+>>>> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+>>>
+>>> I think we can drop this "Fixes" tag, as it gives no real info.
+>>
+>> If we're backporting patches then these tags really are useful.  As
+>> I've been doing more and more backporting, I've come to believe this
+>> more firmly.
+> 
+> Sure, "Fixes" tags are useful, but only if they really refer
+> to another patch which introduced the specific issue.
+> 
+> But the tag 1da177e4c3f4 ("Linux-2.6.12-rc2") isn't useful, as it's
+> just the initial git commit. It has no relation to why release_mem_region()
+> might have been initially missed. See:
 
-The level would be 5, as the aggregated votes in genpd would be
-correct in this case.
+I agree that the description of this specific tag is not useful by itself.
 
-In regards to the clocks, I assume this is handled correctly too, as
-the clocks are per device clocks that don't belong to the genpd.
+But at least it means: should it be backported, it can be done up to 
+there. (and sometimes LWN gives some statistics on how long it took to 
+fix an "issue", should it be considered as such)
 
->
-> > It's working today for *opp-level* only, because of the commit above.
-> > That's correct.
->
-> Good.
->
-> > My point is that calling dev_pm_opp_set_opp() recursively from
-> > _set_required_opps() doesn't make sense for the single PM domain case,
-> > as we can't assign a required-dev for it. This leads to an
-> > inconsistent behaviour when managing the required-OPPs.
->
-> We won't be calling that because of the above patch. In case of a single dev,
-> the required device isn't set and so we will never end up calling
-> dev_pm_opp_set_opp() for a single genpd case.
+Without it, it is not easy to guess in which branch the patch is meaningful.
 
-That's right, but why do we want to call dev_pm_opp_set_opp() for the
-multiple PM domain case then? It makes the behaviour inconsistent.
+I'll sent a v2 with your suggested minimal change, but I'll keep the 
+Fixes tag.
 
-Kind regards
-Uffe
+
+Up to you to remove it or not, and to add a <stable@kernel.org> or a 
+<stable+noautosel@kernel.org> or none of them.
+
+Any solution is fine with me.
+
+
+> 
+>   commit 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 (tag: v2.6.12-rc2)
+> Author: Linus Torvalds <torvalds@ppc970.osdl.org>
+> Date:   Sat Apr 16 15:20:36 2005 -0700
+> 
+>      Linux-2.6.12-rc2
+> 
+>      Initial git repository build. I'm not bothering with the full history,
+>      even though we have it. We can create a separate "historical" git
+>      archive of that later if we want to, and in the meantime it's about
+>      3.2GB when imported into git - space that would just make the early
+>      git days unnecessarily complicated, when we don't have a lot of good
+>      infrastructure for it.
+> 
+> Helge
+> 
+> 
+
+On:
+
+ > HP300 are old HP machines with an m68k CPU.
+ > Not sure if someone still has such a machine 🙂
+
+so it really was the one I found on wikipedia, LoL!
+
+So, another way to "fix" the issue is maybe to deprecate the driver or 
+everything related to this old architecture?
+
+No strong opinion about it.
+
+CJ
 
