@@ -1,361 +1,256 @@
-Return-Path: <linux-kernel+bounces-265334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A5193EFA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:16:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D455293EFAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 142391F22204
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:16:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F01ED1C21AE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B56013AD07;
-	Mon, 29 Jul 2024 08:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D5B13B2A4;
+	Mon, 29 Jul 2024 08:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cWGb7UnC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CApQENIu"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2054.outbound.protection.outlook.com [40.107.96.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E030A54BD8;
-	Mon, 29 Jul 2024 08:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722240983; cv=none; b=RjRzH+pQY2UWbDsbOS5FIb2NBvgKC8jbnU9LSGq9K+D2o5anTsJd/vxMgShfVHTYY1KlhVNi+TwjdrTXZma+h9O+OZiWYi/zS4SCR1ASpRyT08peZWUcsLH/oxHRl5o1lfxmhtJw0ImJyiRKt0OFijHWLvh1fEm1Z1JL4BFvQeo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722240983; c=relaxed/simple;
-	bh=ypBvY5QHCkj8QTxrc5ooWAWfb1n69myi7nhapRC2n9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aIpONivzZMbohRv0M70h+4MVThuKMbNT60MiJs/gqw5IflzAcRbMDOZy8/vso89VWE34Cv+x/wX1vilnYwFKl2sKNSPq3Fvx9R33YZUE5m7k+w7D42SLaK3sg5seIPrLlQWcKOWAbppOfOWUNbKIIkBQSPK/UJWUXe4XUmoJyj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cWGb7UnC; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722240981; x=1753776981;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ypBvY5QHCkj8QTxrc5ooWAWfb1n69myi7nhapRC2n9k=;
-  b=cWGb7UnCjQOi+r57A/y7AxWgI7fFBvyjtFHBoB/avoxg7CJ8Zfb5+A8H
-   UicPMgfxJyUxx8+kXGBGlLWt5NzpcLdZw8Me46W8qJY1kjF7PaqgFqrHs
-   /cr/V8NSOaUIrOKTr0r2GytQAQicLnU3KIlfhtaolVjXurtTldLyhWhB8
-   +aW0uYpuQi3ge/zlEpuKAzZvVsXUoIl8EAtpLDNLAECSECDpeLIU5e4ZY
-   TAPlUcm01e+f8LIgoOYh4DmRoHqDfU0Dw/xauOtAuF+iQW+OUeFe7f/c8
-   5TzK6Sii/dhp5hvz4wGKZjV4W+dN4gM1T05a7hSvLgi1AGAUrN+meWzXP
-   A==;
-X-CSE-ConnectionGUID: ke9S/IqoSfCquX/w2Nx3/A==
-X-CSE-MsgGUID: tV7PcuRhQiS+ahvq/lpI9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="23842154"
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="23842154"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 01:16:20 -0700
-X-CSE-ConnectionGUID: GU0BhnNgTAiMK+NdY4/h0A==
-X-CSE-MsgGUID: asZSqmFFSxiN7EVlcFBsKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="77144782"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa002.fm.intel.com with ESMTP; 29 Jul 2024 01:16:18 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 1104719E; Mon, 29 Jul 2024 11:16:16 +0300 (EEST)
-Date: Mon, 29 Jul 2024 11:16:16 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Esther Shimanovich <eshimanovich@chromium.org>
-Cc: Lukas Wunner <lukas@wunner.de>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Rajat Jain <rajatja@google.com>
-Subject: Re: [PATCH v4] PCI: Relabel JHL6540 on Lenovo X1 Carbon 7,8
-Message-ID: <20240729081616.GH1532424@black.fi.intel.com>
-References: <CA+Y6NJF2Ex6Rwxw0a5V1aMY2OH4=MP5KTtat9x9Ge7y-JBdapw@mail.gmail.com>
- <20240511043832.GD4162345@black.fi.intel.com>
- <20240511054323.GE4162345@black.fi.intel.com>
- <CA+Y6NJF+sJs_zQEF7se5QVMBAhoXJR3Y7x0PHfnBQZyCBbbrQg@mail.gmail.com>
- <ZkUcihZR_ZUUEsZp@wunner.de>
- <20240516083017.GA1421138@black.fi.intel.com>
- <20240516100315.GC1421138@black.fi.intel.com>
- <CA+Y6NJH8vEHVtpVd7QB0UHZd=OSgX1F-QAwoHByLDjjJqpj7MA@mail.gmail.com>
- <20240626080517.GZ1532424@black.fi.intel.com>
- <CA+Y6NJEg-1uGCS0eJ2QP4p6EEh2S+6-yTAUKpPvvqDpyb6_DMQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0D913BC30;
+	Mon, 29 Jul 2024 08:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722240990; cv=fail; b=cNKjgDUBz8EtbVgnj6AxFtWSf+IivUuBj08mK2N/5FLIu4onS4oHiuoERkqb9XAVkopetG8YxdL0HKY2Za1ICbYXMId4faXkTuadiWm3dprGM7h1iPdBjXuQtpmPCeyDslNUwJl66qInuEnDgZX6Zfn3sDno3+tZF9l1crEz/Pw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722240990; c=relaxed/simple;
+	bh=pGICi4aIESKpMvOANF2f6mpQPu9HUe0TZsLhZv0skrM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=u4SbDwkl2hZTkvZgtMVKSdhGlbND02E4qJ+98aSTe+7m7s2JQo+KnWbRZ9qdTwle1joCuxTufIY/gdwjX1SodBS5lwUvV3/kMDGaNQmfeeQnLB5TIgUG8qBFECi4qoUBxjbnmsMFWfrroNPGJwG+aRv3f88x/alLMOesKW5JHJU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CApQENIu; arc=fail smtp.client-ip=40.107.96.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OefREA4BBJ+Cbmh2HtDjTSyl8cENS7bVlUU7BMTHuK57ybj9Qe+gDVuzvqtE+x4/WuwklVo167S3avf/+ODEgzw1RBbJ1scz4MITup6zyd7OxAqWyyidPtLlLtvRNrpHdTYVloz9uvk+LDiCv3KsngmCC0mimxOQANFTJIpUxG7muJzHooNJGfNkTB2NEigZrf6F2xb9PX6tP9ZqA/kgnO1FKhmXf68v4WBG6qvlYIYAyNpZzPteUNMcqPRbVEXgUyITL0oIvZxYSREATubTC54WiX4ngUD2t1xM9+J0qVSuSrV9R4EqgXKvgb5NEUB/J/Q5KS3JGuIUJXboLuvWdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pGICi4aIESKpMvOANF2f6mpQPu9HUe0TZsLhZv0skrM=;
+ b=GZ4zeDkGQFkJh3P74b/guVc5As0Jh6R2dtqaAn6JAZGG2UsWnAYAuDFWe7ZgxUfn/ZRv6mR6yrKzP3R06dMg1V5HiCUZcD4Gtru773zjBR2hfpgklIT6TIDTTYFmix2U0pFFjH+BKOtTkoqJaT6fyv4N9SCAa+2hFFdt3eY3N5YegRVwGce1vjCK1E4rcAWPOvkH3P7/ba/5Zz0mHyYdpOSTSo27z7t7Z4RsQIfAXc5sM+685+0lJB1JEIFDncIvZ2uUf/9vwQU8dSomeWObRxJr6EKLkPk3ZwufztJ4gnPFRcPfFF3JLnINJWETB1SQEaLjagU3eyzTOamqzVR9WA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pGICi4aIESKpMvOANF2f6mpQPu9HUe0TZsLhZv0skrM=;
+ b=CApQENIuIQXdZoxAJRlqggsdAKCaiht07TKFxzQBEsmJfnSppfKWHCVL/XqnI8u336Cij5qBfVkDs2PM3/Id99tsfFgRC8AA2FzlMlr/yOVLPZPhJJ9G7zNqcjLz2Hg3mH1igBObkegyYUBv3kRgnmAi43M9Ac0QyPgdONb1kaQ=
+Received: from CO6PR12MB5489.namprd12.prod.outlook.com (2603:10b6:303:139::18)
+ by IA0PR12MB7650.namprd12.prod.outlook.com (2603:10b6:208:436::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Mon, 29 Jul
+ 2024 08:16:24 +0000
+Received: from CO6PR12MB5489.namprd12.prod.outlook.com
+ ([fe80::5f4:a2a9:3d28:3282]) by CO6PR12MB5489.namprd12.prod.outlook.com
+ ([fe80::5f4:a2a9:3d28:3282%4]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
+ 08:16:24 +0000
+From: "Lin, Wayne" <Wayne.Lin@amd.com>
+To: "kevin@holm.dev" <kevin@holm.dev>, Linux regressions mailing list
+	<regressions@lists.linux.dev>, "Deucher, Alexander"
+	<Alexander.Deucher@amd.com>, "Wu, Hersen" <hersenxs.wu@amd.com>
+CC: "regressions@lists.linux.dev" <regressions@lists.linux.dev>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, ML dri-devel
+	<dri-devel@lists.freedesktop.org>, "amd-gfx@lists.freedesktop.org"
+	<amd-gfx@lists.freedesktop.org>
+Subject: RE: [REGRESSION] No image on 4k display port displays connected
+ through usb-c dock in kernel 6.10
+Thread-Topic: [REGRESSION] No image on 4k display port displays connected
+ through usb-c dock in kernel 6.10
+Thread-Index: AQHa4EIHlXNw8ZbqLEehA7MTA0aCA7IKx3CAgAKT1cA=
+Date: Mon, 29 Jul 2024 08:16:23 +0000
+Message-ID:
+ <CO6PR12MB54897CE472F9271B25883DF6FCB72@CO6PR12MB5489.namprd12.prod.outlook.com>
+References: <d74a7768e957e6ce88c27a5bece0c64dff132e24@holm.dev>
+ <9ca719e4-2790-4804-b2cb-4812899adfe8@leemhuis.info>
+ <fd8ece71459cd79f669efcfd25e4ce38b80d4164@holm.dev>
+In-Reply-To: <fd8ece71459cd79f669efcfd25e4ce38b80d4164@holm.dev>
+Accept-Language: en-US, zh-TW
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_ActionId=093394d7-c65c-42c8-a2e4-9a20ccfb951c;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_ContentBits=0;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Enabled=true;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Method=Privileged;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Name=Open
+ Source;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SetDate=2024-07-29T08:04:24Z;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CO6PR12MB5489:EE_|IA0PR12MB7650:EE_
+x-ms-office365-filtering-correlation-id: d2dba14a-b85d-446d-2d3e-08dcafa6bc8d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?NGQ4YlYwcTVXTDNWZFBzQ3NBRTFaVVlxQkRERWQ1SlF3M2g4d1hhcmxleTlo?=
+ =?utf-8?B?Z2d6Z0xPelpCUWVpUUl6cnhIK1c1cytJUlU5M09GSy95cCtDRklULzdsdmZT?=
+ =?utf-8?B?MFpiS1h1czFYeU1LYlBHV0I4T1M3N0xnTXUwTnRHWTlHUXArSmdIakl2QU1B?=
+ =?utf-8?B?Y0F3ZVNpaHpxc29CeXFpUXVyQ3ZZQ2NSMlZ3M0ZWSSs2cW5UbGM0ZjRZTmN4?=
+ =?utf-8?B?Njl6QnlOUDYvUlBkQVA0WTRpbHUvWS95aUttRHJLNjVoRW44WE1mWWNkK3Iv?=
+ =?utf-8?B?cFhJdm5xbUg2TXVFeEhYU0JZZVR5RVF4VWNIcUVGZEMzZ0tnQU9XUEVkMnJS?=
+ =?utf-8?B?dmU5L2NPRUlmcGJ4UENqTzMyRlFKcXIxMzgyeEE2N25kOGtIdjBjemliNS9N?=
+ =?utf-8?B?VE83OVZDaytjeVZBclZCT0V6dHdPSnozSDNCSk1BbU9sUmRsVENKOE1UQ2t0?=
+ =?utf-8?B?aG9yb1I5Z2RVUzNYR3JncEliVEdXRml0NmNodStFUytwZHgwSEEzaHphZnF6?=
+ =?utf-8?B?Y3djWjVpQnVZWWdpMWQwUFpRRHNNNGwzYzNOdG02Qzh5NVBXbVJibW9ENkNy?=
+ =?utf-8?B?K3JrOXZWRkpPSDBtMklTb05vRi93SDlndG9iVERYQUdrb05KTlIxNURiTGhH?=
+ =?utf-8?B?c0krS1dmMWcyeGdGUnduN0FRMlRua1c4Zm9BaHNpTlpPSEFwa1BGSExDSUs2?=
+ =?utf-8?B?L3BvaVUzeXhtd29SZEpYTGpmQkF3clZaNjdEUWZFak8rdktNaUt2TmVsOUxy?=
+ =?utf-8?B?MmNibWFlZ1BNdDRHZTI4RTc0ajdHT0ZQdXNCanV3SytER1JJYUF1c3Z4dS9k?=
+ =?utf-8?B?eFhYd3dldnJxeHI2VHRIeTJrK0Q4TVJibXFQeDYwT1FzMkh5c0gxY0pqOWNB?=
+ =?utf-8?B?NUlxSXpacFY2WWZXNXdzNnV4ampXTk83YVZkVzdCYzZROFhHc0RYZWJvRXgr?=
+ =?utf-8?B?RlBoTFYvVjJoMFc3WkJrOEFENmpsRExaVW56bWdCS1krY0pkeUNtMG10dkQr?=
+ =?utf-8?B?NUlsUndTeUx4aGQzd0VTdEdFa1ArVWlqZmJYR01MYXMxdDBUMzVUeEkxd2FG?=
+ =?utf-8?B?MjN5WEpxejIxbkRYd0NMRTZCNGMxQnBMc0lDMjZzMTF5dUFydG9BdjY0a0ZO?=
+ =?utf-8?B?dkF6OXpFY0Vjc3JOcnhqMGNJeFlxY3V6R3owNzJWM3JJSTNDbWg3VlZjU2xL?=
+ =?utf-8?B?c2xUdjdIS0xLZFVqU2U5WkRUUzRsOXNFSkNSTVhjZ1JCVDVoSzQ5N1BrZXht?=
+ =?utf-8?B?N2xoMFc2eFJKU1lubUZvNWQ4MU0vU2ZQVnRPYUtxMzhiNThnaUIyNVcvaWFm?=
+ =?utf-8?B?SXcxaEJiaGxodndzejZBZkxMaFRIbUVKTGhtSi90R3RDcjhUUEpMUHExT01o?=
+ =?utf-8?B?Tlp5YzliTjJFbkR2MGZXWkFqb2U1eFhKZGtzMFpMSmRIWWllRjkwTE9rMmxn?=
+ =?utf-8?B?ZGZUU1RiaG5COEVBeTMxVVQybC8vVGlpaGlGTldJQUhuOXFBYnljSFB2UE53?=
+ =?utf-8?B?WTJOWm91QXhCSiswUE1CYU9tZjAyYUpqTTNzQTdJcnFDTDUwZDg4U1E5bE5q?=
+ =?utf-8?B?RFlwaFEvRFpSSGdaOHBYZkNRYmpxOG9JNDJLMmVoeFlYSHJyc0h2Z0UwM0p5?=
+ =?utf-8?B?NXRzOUtpV1IrWkxxMmkxbDYvQTJmc0pZcFVMM2dxYkNVQ21ZaWg4SUNnUkZn?=
+ =?utf-8?B?L2RaMFhEcUp2dDRQYSs2WS9ZT3B4U2hjN3pKZ2dTOU9kTmh4MTVZalJrWFJF?=
+ =?utf-8?B?NFd0d1JYcVdKOG11K1c0Ym9yUkVQTlBXTThVcXJ5K1BncDVKVUdDcTdhbEwx?=
+ =?utf-8?Q?hWZPMPehO8RoMbLW8FTuNPXey+wDEa4P7pcps=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5489.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?WEErMnJBM3dTbFNxcS9ha2g2MVdwSDQzZ1djeWlGWnQwZ0dlTU83M0pUODFS?=
+ =?utf-8?B?YVdod2xRRDBaVSs0V1Y4STc4aFBsK1Foa1h4NnpqSFk1bEYwVUN2NjBIbmli?=
+ =?utf-8?B?bDVtekc4aEtWZm1xL05YcTZ0YVFzbk9reGM4bDYvWjh0L1RxTjJSNnIzVDAx?=
+ =?utf-8?B?TkpXeTVnQTV2YnZQbGJEbWFRVytUOS9TRkhCdFpCdVRKanNUWlRmdWxPYXcw?=
+ =?utf-8?B?OGVacG02eWpIc2FhMmwyajJNWXVvZFNYaHB2SzdNWW1oTFBiOEtZSTNyTUVk?=
+ =?utf-8?B?ZEFpTFMxaWhEZURyY0hCdTBacnNTUis4WnN5QWdCaWZ3aGszZk94RmRjSkZT?=
+ =?utf-8?B?MUhOUkJSYlZzazJLbzRqM2tXSTdJb0ZRa2toWi8wUm13N2lSbVN3V3ZYdEEx?=
+ =?utf-8?B?UTVNUnFka08xU2VLeGJjN0lJMElQWlBna3o0VzlEZzhoMXRCRHdOSm1nV2k3?=
+ =?utf-8?B?U0RDb2VtcFdmdEwrQ3JXOVZXS0U2ZmVYcjJ5Mm1qT2sxY3FlZXBDSktDUlNL?=
+ =?utf-8?B?N0lKbi9PelEycy9oYlRLOXY4RkRHSmFvdTJvQ09JQ1hpYk1RT0VBakljM05x?=
+ =?utf-8?B?dFhTQ0VxQWliVmJQOTdSTEFOdFRaZkZJRUdKK3ZXMFlPYmhvQlNZQzJSQTJC?=
+ =?utf-8?B?VzFpVEprdjgycFplTndacVVxQnZrU09DR1Zja1UyK0wvaGY3cFdyRlkzZVBw?=
+ =?utf-8?B?NjhSKzVmOUFGdjdaSHpyUEhXVVVMUHdxUngvbXEwNmo3ZXBkN2hOREFxT3dG?=
+ =?utf-8?B?dUJweG5SNmFNamFab0t3OFdPY2JLU2tUZUhocnNRZ3VKRkRZdkQvekxMaTVK?=
+ =?utf-8?B?RWlid1FCYzZRUndPcVFWWks1REpod2trazg2K04xQm1OWGJRZElTRkVsMGVv?=
+ =?utf-8?B?a0dSZFZNb2lEcWlFdTVHZHE2azhOTXpMa0pyY2hqWUg4M0hqcEhTaStJL0h3?=
+ =?utf-8?B?ZTlRQkR6ZHhSRExnYWxJUUVLcW9OQXgrcUNFMDRRQ1h1Y2g5dXh3RXhHdS9C?=
+ =?utf-8?B?SlhYVFZrcHR1eVBjc1llYVVLUHovOU5nRTQ3ZVZScklQMDZpb2hRbXBUWDhO?=
+ =?utf-8?B?dVcxYlNIMlVJaEE3ZFFyZ3Jodlp6MzhTWkxWS1dkeDROQ1FGOGFnTWwwTEYv?=
+ =?utf-8?B?RS96bkI2T0xSWi8zVlE3RUhEYTltdmlUWi9QSi9QQ0ZDZE1NdDd5T3BQckh3?=
+ =?utf-8?B?Y24veXBkUi9KNksyR0o5NFZjMExWSWJveS9XN0pZM0hXd1ZDOUtRRm5lN292?=
+ =?utf-8?B?MnJoQ3paTTE4ZGJtY3JKN3FwTGlMc0lnNysxZ1RHYlVXeE9sempCUEI2Y2hQ?=
+ =?utf-8?B?eWc2R2FnYklWdGxsTUNZQUJVeFZad25xNFgwVnIyMUtWbUpMNDdQTWMzM0Zx?=
+ =?utf-8?B?VUI5RExUTXhOREt3M2E0VEVGQUdIOGY5NjA4aGpGSDVjTklOa3pUUnRpVDhH?=
+ =?utf-8?B?bHVNcDFuK083SDBRSlcwQXRXRHErak80cCtHczcwajgvTmwvSFRLUGZHV1Ru?=
+ =?utf-8?B?RUZScVlqWUhGWGEwQ09pbm14c0E1eEd0Z3I5Um04TzNER0hOS2Ixbkd0U1VU?=
+ =?utf-8?B?MnFPNW40bXA4cjRQYm9mUWhEQllVREZCSkhnMUY4eGxPdzA2bEFCdzhLbllQ?=
+ =?utf-8?B?RC9IcktRdmZveXlJQ0s5UTFpV0lWUGhKZG0rZElidXVzTHhHYnM3Tkk2Uldj?=
+ =?utf-8?B?ZHdMU0RuYjk5bHcveUFTUHh6MWExMVl1ZkpxVnRHZEJsWkk4T2F5cDlXbkpV?=
+ =?utf-8?B?RFlmejcyWmdEdDVNeWhxR0thNnoxOWI1MlFtMWxyOEdCOGtOK25lVEV6SFpG?=
+ =?utf-8?B?U0RXMlR3V09MQndoLzVlZGZQcVRJNlRtT1Fna0hYZEhLRHBnZ05veVlFVk1J?=
+ =?utf-8?B?QXRvU3N6THZXUnBmdXdHS2dDZDhjcUp3T2tGOGNSUVBZaFNVK2VEWXVuME04?=
+ =?utf-8?B?eGlSRFdNdEdkelQwTnJUZ0IzVk92dnhWeTY3SHYxVjJFSkVwdGsycldMWlhk?=
+ =?utf-8?B?cHViZE0wRHl2SC9yUDhCUnFyT3VBL0cwSEN1Q1ZWeDQ1NXNhZGRLZGY4dm9P?=
+ =?utf-8?B?VlB3L01wRDVzQzliZ09UVHdpbXpqYnFaVE14M2t3Qm5HbEZoWnJYc0RDVlpq?=
+ =?utf-8?Q?VODU=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+Y6NJEg-1uGCS0eJ2QP4p6EEh2S+6-yTAUKpPvvqDpyb6_DMQ@mail.gmail.com>
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5489.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2dba14a-b85d-446d-2d3e-08dcafa6bc8d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2024 08:16:24.1937
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Bsa2mgT+decQlO2/jah94kJIQyJBB4t9RqsMbchzMK31eKrR1W37Y7ROxgctshtOzcZh7T81qTkPTl22ARGrMQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7650
 
-Hi,
-
-On Fri, Jul 26, 2024 at 02:17:46PM -0400, Esther Shimanovich wrote:
-> On Wed, Jun 26, 2024 at 4:05 AM Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> > I will be on vacation starting next week for the whole July. The patch
-> > is kind of "pseudo-code" in that sense that it probably needs some
-> > additional work, cleanup, maybe drop the serial number checks and so on.
-> > You are free to use it as you see fit, or submit upstream as proper
-> > patch if nobody objects.
-> 
-> I cleaned it up, but I think I'd like to run it by you before
-> submitting it, as you are the author and also some of my cleanups
-> ended up being a bit more involved than I anticipated.
-> 
-> For cleanup, I did the following:
-> 
-> 1) I ended up moving the changes from pcie_set_pcie_untrusted to
-> pci_set_removable for multiple reasons:
-> 
-> - The downstream bug I ran into happened because of the "removable" attribute.
-> 
-> - There seems to be a reason why both removable and untrusted exist
-> despite both having the same logic. pci_fixup_early is run after
-> pcie_set_pcie_untrusted, but before pci_set_removable. It seems like
-> this was done on purpose so that downstream security policies can use
-> quirks to set specific internal, fixed devices as untrusted.
-> 
-> - The way you wrote it makes the attributes removable = untrusted,
-> which wasn't the case before, and undos the pci_fixup_early quirks
-> logic.
-> 
-> - If you want to make sure that these non-tunneled discrete
-> thunderbolt chips are labeled as trusted, we may have to duplicate
-> this logic in both functions (which seems to be already the case
-> anyways in their current state).
-> I just don't fully know what the "untrusted" attribute entails, so I
-> am erring on the more conservative side of only making changes I fully
-> understand.
-
-The "untrusted" means the device is something that is not "soldered
-down" or equivalent. E.g something you can hot-plug through a port on the
-laptop system such as USB4/TB. It is used to enable full IOMMU mappings
-for these devices to avoid malicious devices from accessing memory that
-does not belong to it.
-
-So it is pretty much same as "removable".
-
-Why we do want to have the USB4 host controller + xHCI not "untrusted"
-is because they don't need to go through the full IOMMU mappings and
-therefore we get for one more throughput for things like networking over
-USB4.
-
-> 2) I changed this comment into code:
-> 
-> > +/* root->external_facing is true, parent != NULL */
-> 
-> 3) I edited legacy comments to reflect what the code does now. I also
-> changed your comments to reflect how I changed the code, but for the
-> most part I kept your words in as they were really clear.
-> 
-> 4) I removed the serial checks as you suggested
-> 
-> > If nothing has happened when I come back, I can pick up the work if I
-> > still remember this ;-)
-> 
-> I did my best to clean up! I'm unsure if you will want me to duplicate
-> this logic to pcie_set_pcie_untrusted, so just let me know if I should
-> fix that, and I'll send it to the kernel! (I'm assuming with the
-> Co-developed-by, and the Signed-off-by lines, to properly attribute
-> you?)
-
-I think they should be the "same".
-
-You can add something like "Suggested-by" or so if you like but up to
-you. No need to add other tags from me.
-
-Please Cc IOMMU folks too so that they can take a look just in case.
-
-The patch is line-wrapped but otherwise looks good except the above.
-Thanks for cleaning it up.
-
-> I hope you had a nice vacation! Both you and Lukas Wurner have been so
-> helpful and attentive.
-> 
-> The cleaned up patch is below:
-> 
-> 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 43159965e09e9..fc3ef2cf66d58 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -1613,24 +1613,161 @@ static void set_pcie_untrusted(struct pci_dev *dev)
->                 dev->untrusted = true;
->  }
-> 
-> +/*
-> + * Checks if the PCIe switch that contains pdev is directly under
-> + * the specified bridge.
-> + */
-> +static bool pcie_switch_directly_under(struct pci_dev *bridge,
-> +                                      struct pci_dev *parent,
-> +                                      struct pci_dev *pdev)
-> +{
-> +       /*
-> +        * If the device has a PCIe type, that means it is part of a PCIe
-> +        * switch.
-> +        */
-> +       switch (pci_pcie_type(pdev)) {
-> +       case PCI_EXP_TYPE_UPSTREAM:
-> +               if (parent == bridge)
-> +                       return true;
-> +               break;
-> +
-> +       case PCI_EXP_TYPE_DOWNSTREAM:
-> +               if (pci_pcie_type(parent) == PCI_EXP_TYPE_UPSTREAM) {
-> +                       parent = pci_upstream_bridge(parent);
-> +                       if (parent == bridge)
-> +                               return true;
-> +               }
-> +               break;
-> +
-> +       case PCI_EXP_TYPE_ENDPOINT:
-> +               if (pci_pcie_type(parent) == PCI_EXP_TYPE_DOWNSTREAM) {
-> +                       parent = pci_upstream_bridge(parent);
-> +                       if (parent && pci_pcie_type(parent) ==
-> PCI_EXP_TYPE_UPSTREAM) {
-> +                               parent = pci_upstream_bridge(parent);
-> +                               if (parent == bridge)
-> +                                       return true;
-> +                       }
-> +               }
-> +               break;
-> +       }
-> +
-> +       return false;
-> +}
-> +
-> +static bool pcie_has_usb4_host_interface(struct pci_dev *pdev)
-> +{
-> +       struct fwnode_handle *fwnode;
-> +
-> +       /*
-> +        * For USB4 the tunneled PCIe root or downstream ports are marked with
-> +        * the "usb4-host-interface" property so we look for that first. This
-> +        * should cover the most cases.
-> +        */
-> +       fwnode = fwnode_find_reference(dev_fwnode(&pdev->dev),
-> +                                      "usb4-host-interface", 0);
-> +       if (!IS_ERR(fwnode)) {
-> +               fwnode_handle_put(fwnode);
-> +               return true;
-> +       }
-> +
-> +       /*
-> +        * Any integrated Thunderbolt 3/4 PCIe root ports from Intel
-> +        * before Alder Lake do not have the above device property so we
-> +        * use their PCI IDs instead. All these are tunneled. This list
-> +        * is not expected to grow.
-> +        */
-> +       if (pdev->vendor == PCI_VENDOR_ID_INTEL) {
-> +               switch (pdev->device) {
-> +               /* Ice Lake Thunderbolt 3 PCIe Root Ports */
-> +               case 0x8a1d:
-> +               case 0x8a1f:
-> +               case 0x8a21:
-> +               case 0x8a23:
-> +               /* Tiger Lake-LP Thunderbolt 4 PCIe Root Ports */
-> +               case 0x9a23:
-> +               case 0x9a25:
-> +               case 0x9a27:
-> +               case 0x9a29:
-> +               /* Tiger Lake-H Thunderbolt 4 PCIe Root Ports */
-> +               case 0x9a2b:
-> +               case 0x9a2d:
-> +               case 0x9a2f:
-> +               case 0x9a31:
-> +                       return true;
-> +               }
-> +       }
-> +
-> +       return false;
-> +}
-> +
-> +static bool pcie_is_tunneled(struct pci_dev *root, struct pci_dev *parent,
-> +                            struct pci_dev *pdev)
-> +{
-> +       /* Return least trusted outcome if params are invalid */
-> +       if (!(root && root->external_facing && parent))
-> +               return true;
-> +
-> +       /* Anything directly behind a "usb4-host-interface" is tunneled */
-> +       if (pcie_has_usb4_host_interface(parent))
-> +               return true;
-> +
-> +       /*
-> +        * Check if this is a discrete Thunderbolt/USB4 controller that is
-> +        * directly behind a PCIe Root Port marked as "ExternalFacingPort".
-> +        * These are not behind a PCIe tunnel.
-> +        */
-> +       if (pcie_switch_directly_under(root, parent, pdev))
-> +               return false;
-> +
-> +       return true;
-> +}
-> +
->  static void pci_set_removable(struct pci_dev *dev)
->  {
-> -       struct pci_dev *parent = pci_upstream_bridge(dev);
-> +       struct pci_dev *parent, *root;
-> +
-> +       parent = pci_upstream_bridge(dev);
-> 
->         /*
-> -        * We (only) consider everything downstream from an external_facing
-> -        * device to be removable by the user. We're mainly concerned with
-> -        * consumer platforms with user accessible thunderbolt ports that are
-> -        * vulnerable to DMA attacks, and we expect those ports to be marked by
-> -        * the firmware as external_facing. Devices in traditional hotplug
-> -        * slots can technically be removed, but the expectation is that unless
-> -        * the port is marked with external_facing, such devices are less
-> -        * accessible to user / may not be removed by end user, and thus not
-> -        * exposed as "removable" to userspace.
-> +        * We're mainly concerned with consumer platforms with user accessible
-> +        * thunderbolt ports that are vulnerable to DMA attacks.
-> +        * We expect those ports to be marked by the firmware as
-> external_facing.
-> +        * Devices outside external_facing ports are labeled as removable, with
-> +        * the exception of discrete thunderbolt chips within the chassis.
-> +        *
-> +        * Devices in traditional hotplug slots can technically be removed,
-> +        * but the expectation is that unless the port is marked with
-> +        * external_facing, such devices are less accessible to user / may not
-> +        * be removed by end user, and thus not exposed as "removable" to
-> +        * userspace.
->          */
-> -       if (parent &&
-> -           (parent->external_facing || dev_is_removable(&parent->dev)))
-> +       if (!parent)
-> +               return;
-> +
-> +       if (dev_is_removable(&parent->dev))
->                 dev_set_removable(&dev->dev, DEVICE_REMOVABLE);
-> +
-> +       root = pcie_find_root_port(dev);
-> +
-> +       if (root && root->external_facing) {
-> +               /*
-> +                * All devices behind a PCIe root port labeled as
-> +                * "ExternalFacingPort" are tunneled by definition,
-> +                * with the exception of discrete Thunderbolt/USB4
-> +                * controllers that add Thunderbolt capabilities
-> +                * to CPUs that lack integrated Thunderbolt.
-> +                * They are identified because by definition, they
-> +                * aren't tunneled.
-> +                *
-> +                * Those discrete Thunderbolt/USB4 controllers are
-> +                * not removable. Only their downstream facing ports
-> +                * are actually something that are exposed to the
-> +                * wild so we only mark devices tunneled behind those
-> +                * as removable.
-> +                */
-> +               if (pcie_is_tunneled(root, parent, dev))
-> +                       dev_set_removable(&dev->dev, DEVICE_REMOVABLE);
-> +       }
->  }
-> 
->  /**
+W1B1YmxpY10NCg0KSGksDQpUaGFua3MgZm9yIHRoZSByZXBvcnQuDQoNClBhdGNoIGZhNTc5MjRj
+NzZkOTk1ICgiZHJtL2FtZC9kaXNwbGF5OiBSZWZhY3RvciBmdW5jdGlvbiBkbV9kcF9tc3RfaXNf
+cG9ydF9zdXBwb3J0X21vZGUoKSIpDQppcyBraW5kIG9mIGNvcnJlY3RpbmcgcHJvYmxlbXMgY2F1
+c2luZyBieSBjb21taXQ6DQo0ZGY5NmJhNjY3NjAzNCAoImRybS9hbWQvZGlzcGxheTogQWRkIHRp
+bWluZyBwaXhlbCBlbmNvZGluZyBmb3IgbXN0IG1vZGUgdmFsaWRhdGlvbiIpDQoNClNvcnJ5IGlm
+IGl0IG1pc3NlcyBmaXhlcyB0YWcgYW5kIHdvdWxkIHN1Z2dlc3QgdG8gYmFja3BvcnQgdG8gZml4
+IGl0LiBUaGFua3MhDQoNClJlZ2FyZHMsDQpXYXluZSBMaW4NCj4gLS0tLS1PcmlnaW5hbCBNZXNz
+YWdlLS0tLS0NCj4gRnJvbToga2V2aW5AaG9sbS5kZXYgPGtldmluQGhvbG0uZGV2Pg0KPiBTZW50
+OiBTdW5kYXksIEp1bHkgMjgsIDIwMjQgMTI6NDMgQU0NCj4gVG86IExpbnV4IHJlZ3Jlc3Npb25z
+IG1haWxpbmcgbGlzdCA8cmVncmVzc2lvbnNAbGlzdHMubGludXguZGV2PjsgRGV1Y2hlciwNCj4g
+QWxleGFuZGVyIDxBbGV4YW5kZXIuRGV1Y2hlckBhbWQuY29tPjsgV3UsIEhlcnNlbg0KPiA8aGVy
+c2VueHMud3VAYW1kLmNvbT47IExpbiwgV2F5bmUgPFdheW5lLkxpbkBhbWQuY29tPg0KPiBDYzog
+cmVncmVzc2lvbnNAbGlzdHMubGludXguZGV2OyBzdGFibGVAdmdlci5rZXJuZWwub3JnOyBMS01M
+IDxsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZz47IE1MIGRyaS1kZXZlbCA8ZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZz47DQo+IGFtZC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnDQo+IFN1YmplY3Q6IFJlOiBbUkVHUkVTU0lPTl0gTm8gaW1hZ2Ugb24gNGsgZGlzcGxheSBw
+b3J0IGRpc3BsYXlzIGNvbm5lY3RlZA0KPiB0aHJvdWdoIHVzYi1jIGRvY2sgaW4ga2VybmVsIDYu
+MTANCj4NCj4gPiBbYWRkaW5nIGEgZmV3IHBlb3BsZSBhbmQgbGlzdHMgdG8gdGhlIHJlY2lwaWVu
+dHNdDQo+ID4NCj4gPiBIaSEgVGh4IGZvciB5b3VyIHJwZW9ydC4NCj4gPg0KPiA+IE9uIDI3LjA3
+LjI0IDE4OjA3LCBrZXZpbkBob2xtLmRldiB3cm90ZToNCj4gPg0KPiA+ID4NCj4gPiA+IENvbm5l
+Y3RpbmcgdHdvIDRrIGRpc3BsYXlzIHdpdGggZGlzcGxheSBwb3J0IHRocm91Z2ggYSBsZW5vdm8g
+dXNiLWMNCj4gPiA+DQo+ID4gPiAgZG9jayAodHlwZSA0MEFTKSB0byBhIExlbm92byBQMTRzIEdl
+biAyICh0eXBlIDIxQTApIHJlc3VsdHMgaW4gbm8NCj4gPiA+DQo+ID4gPiAgaW1hZ2Ugb24gdGhl
+IGNvbm5lY3RlZCBkaXNwbGF5cy4NCj4gPiA+DQo+ID4gPg0KPiA+ID4NCj4gPiA+ICBUaGUgQ1BV
+IGluIHRoZSBMZW5vdm8gUDE0cyBpcyBhICdBTUQgUnl6ZW4gNyBQUk8gNTg1MFUgd2l0aCBSYWRl
+b24NCj4gPiA+DQo+ID4gPiAgR3JhcGhpY3MnIGFuZCBpdCBoYXMgbm8gZGlzY3JldGUgR1BVLg0K
+PiA+ID4NCj4gPiA+DQo+ID4gPg0KPiA+ID4gIEkgZmlyc3Qgbm90aWNlZCB0aGUgaXNzdWUgd2l0
+aCBrZXJuZWwgdmVyc2lvbiAnNi4xMC4wLWFyY2gxLTInDQo+ID4gPg0KPiA+ID4gIHByb3ZpZGVk
+IGJ5IGFyY2ggbGludXguIFdpdGggdGhlIHByZXZpb3VzIGtlcm5lbCB2ZXJzaW9uDQo+ID4gPg0K
+PiA+ID4gICc2LjkuMTAuYXJjaDEtMScgYm90aCBjb25uZWN0ZWQgZGlzcGxheXMgd29ya2VkIG5v
+cm1hbGx5LiBJIHJlcG9ydGVkDQo+ID4gPg0KPiA+ID4gIHRoZSBpc3N1ZSBpbiB0aGUgYXJjaCBm
+b3J1bXMgYXQNCj4gPiA+DQo+ID4gPiAgaHR0cHM6Ly9iYnMuYXJjaGxpbnV4Lm9yZy92aWV3dG9w
+aWMucGhwP2lkPTI5Nzk5OSBhbmQgd2FzIGd1aWRlZCB0bw0KPiA+ID4NCj4gPiA+ICBkbyBhIGJp
+c2VjdGlvbiB0byBmaW5kIHRoZSBjb21taXQgdGhhdCBjYXVzZWQgdGhlIHByb2JsZW0uIFRocm91
+Z2gNCj4gPiA+DQo+ID4gPiAgdGVzdGluZyBJIGlkZW50aWZpZWQgdGhhdCB0aGUgaXNzdWUgaXMg
+bm90IHByZXNlbnQgaW4gdGhlIGxhdGVzdA0KPiA+ID4NCj4gPiA+ICBrZXJuZWwgZGlyZWN0bHkg
+Y29tcGlsZWQgZnJvbSB0aGUgdHJvdmFsZHMvbGludXggZ2l0IHJlcG9zaXRvcnkuDQo+ID4gPg0K
+PiA+ID4NCj4gPiA+DQo+ID4gPiAgV2l0aCBnaXQgYmlzZWN0IEkgaWRlbnRpZmllZA0KPiA0ZGY5
+NmJhNjY3NjAzNDU0NzFhODVlZjdiYjI5ZTFjZDRlOTU2MDU3DQo+ID4gPg0KPiA+DQo+ID4gVGhh
+dCdzIDRkZjk2YmE2Njc2MDM0ICgiZHJtL2FtZC9kaXNwbGF5OiBBZGQgdGltaW5nIHBpeGVsIGVu
+Y29kaW5nIGZvcg0KPiA+DQo+ID4gbXN0IG1vZGUgdmFsaWRhdGlvbiIpIFt2Ni4xMC1yYzFdIGZy
+b20gSGVyc2VuIFd1Lg0KPiA+DQo+ID4gRGlkIHlvdSB0cnkgaWYgcmV2ZXJ0aW5nIHRoYXQgY29t
+bWl0IGlzIHBvc3NpYmxlIGFuZCBtaWdodCBmaXggdGhlIHByb2JsZW0/DQo+DQo+IFJldmVydGlu
+ZyBpcyBub3QgZWFzaWx5IHBvc3NpYmxlOg0KPg0KPiAkIGdpdCBjaGVja291dCB2Ni4xMA0KPiBb
+Li4uXQ0KPiBIRUFEIGlzIG5vdyBhdCAwYzM4MzY0ODI0ODEgTGludXggNi4xMA0KPg0KPiAkIGdp
+dCByZXZlcnQgNGRmOTZiYTY2NzYwMzQ1NDcxYTg1ZWY3YmIyOWUxY2Q0ZTk1NjA1Nw0KPiBBdXRv
+LW1lcmdpbmcNCj4gZHJpdmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5L2FtZGdwdV9kbS9hbWRncHVf
+ZG1fbXN0X3R5cGVzLmMNCj4gQ09ORkxJQ1QgKGNvbnRlbnQpOiBNZXJnZSBjb25mbGljdCBpbg0K
+PiBkcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvYW1kZ3B1X2RtL2FtZGdwdV9kbV9tc3RfdHlw
+ZXMuYw0KPiBlcnJvcjogY291bGQgbm90IHJldmVydCA0ZGY5NmJhNjY3NjAuLi4gZHJtL2FtZC9k
+aXNwbGF5OiBBZGQgdGltaW5nIHBpeGVsDQo+IGVuY29kaW5nIGZvciBtc3QgbW9kZSB2YWxpZGF0
+aW9uDQo+DQo+IEkgZG8gbm90IGtub3cgZW5vdWdoIHRvIHRyeSBhbmQgc29sdmUgdGhlIGNvbmZs
+aWN0IG15c2VsZiB3aXRob3V0IGJyZWFraW5nDQo+IG1vcmUgdGhpbmdzLg0KPg0KPiA+DQo+ID4g
+Pg0KPiA+ID4gYXMgdGhlIGZpcnN0IGJhZCBjb21taXQgYW5kDQo+IGZhNTc5MjRjNzZkOTk1ZTg3
+Y2EzNTMzZWM2MGQxZDVlNTU3NjlhMjcNCj4gPiA+DQo+ID4NCj4gPiBUaGF0J3MgZmE1NzkyNGM3
+NmQ5OTUgKCJkcm0vYW1kL2Rpc3BsYXk6IFJlZmFjdG9yIGZ1bmN0aW9uDQo+ID4NCj4gPiBkbV9k
+cF9tc3RfaXNfcG9ydF9zdXBwb3J0X21vZGUoKSIpIFt2Ni4xMC1wb3N0XSBmcm9tIFdheW5lIExp
+bi4NCj4gPg0KPiA+ID4NCj4gPiA+IGFzIHRoZSBmaXJzdCBjb21taXQgdGhhdCBmaXhlZCB0aGUg
+cHJvYmxlbSBhZ2Fpbi4NCj4gPiA+DQo+ID4NCj4gPiBIbW0sIHRoZSBsYXR0ZXIgY29tbWl0IGRv
+ZXMgbm90IGhhdmUgYSBmaXhlcyB0YWcgYW5kIG1pZ2h0IG9yIG1pZ2h0IG5vdA0KPiA+DQo+ID4g
+YmUgdG8gaW52YXNpdmUgdG8gYmFja3BvcnQgdG8gNi4xMC4gTGV0J3Mgc2VlIHdoYXQgdGhlIEFN
+RCBkZXZlbG9wZXJzIHNheS4NCj4gPg0KPiA+ID4NCj4gPiA+IFRoZSBpbml0aWFsIGNvbW1pdCBv
+bmx5IHN0aWxsIHNob3dzIGFuIGltYWdlIG9uIG9uZSBvZiB0aGUgY29ubmVjdGVkDQo+ID4gPg0K
+PiA+ID4gIDRrIHNjcmVlbnMuIEkgaGF2ZSBub3QgaW52ZXN0aWdhdGVkIGZ1cnRoZXIgdG8gZmlu
+ZCBvdXQgYXQgd2hhdCBwb2ludA0KPiA+ID4NCj4gPiA+ICBib3RoIGRpc3BsYXlzIHN0b3BwZWQg
+c2hvd2luZyBhbiBpbWFnZS4NCj4gPiA+DQo+ID4NCj4gPiBDaWFvLCBUaG9yc3RlbiAod2Vhcmlu
+ZyBoaXMgJ3RoZSBMaW51eCBrZXJuZWwncyByZWdyZXNzaW9uIHRyYWNrZXInIGhhdCkNCj4gPg0K
+PiA+IC0tDQo+ID4NCj4gPiBFdmVyeXRoaW5nIHlvdSB3YW5uYSBrbm93IGFib3V0IExpbnV4IGtl
+cm5lbCByZWdyZXNzaW9uIHRyYWNraW5nOg0KPiA+DQo+ID4gaHR0cHM6Ly9saW51eC1yZWd0cmFj
+a2luZy5sZWVtaHVpcy5pbmZvL2Fib3V0LyN0bGRyDQo+ID4NCj4gPiBJZiBJIGRpZCBzb21ldGhp
+bmcgc3R1cGlkLCBwbGVhc2UgdGVsbCBtZSwgYXMgZXhwbGFpbmVkIG9uIHRoYXQgcGFnZS4NCj4g
+Pg0K
 
