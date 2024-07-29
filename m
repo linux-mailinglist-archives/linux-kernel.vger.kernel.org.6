@@ -1,162 +1,116 @@
-Return-Path: <linux-kernel+bounces-265551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEEA393F2C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:32:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B842C93F2A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B90EB219C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:32:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36BA7B24473
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0266144D10;
-	Mon, 29 Jul 2024 10:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868DC1448C0;
+	Mon, 29 Jul 2024 10:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="adhOhIdb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m5rgXWsM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D0328399;
-	Mon, 29 Jul 2024 10:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA212143873;
+	Mon, 29 Jul 2024 10:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722249146; cv=none; b=VRP2e6tyScxsEyvp7YJkrpOnINxPfrjXOIJULK5SG4NB5HQL5YyGahipbYE3KYcbTL1mGs8vixUIdmiLYRdALRkG40tShJlAeNOWx2ShGQ74M0iZMz7eVka4Cq3dcs5XB9c0XwWyX8NdP3oX84vFJEbs1Ey6dcsTO8Ddel+ODHM=
+	t=1722248879; cv=none; b=kCeKt2ItW4qD1/hlodcbVjBYiW2GeU7NMlsb6JO5i40XbUG3V4FiCJ10cBaOHQ/zX6PjaxiI/7EdOZoMYNGp9YDAIdvCLWYB84QrZsuYseweT70x7ZtbKwgorrOphtieWBXHhfne16sqHxGt5DZ5V2Gh462unG06yNUsr1Wqfw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722249146; c=relaxed/simple;
-	bh=0JiOCSxkf9iCYCBuIA/pCfo25zjRRSDbvdu02TKFtS4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=VBLhg5zKcwGj5CstleFH2WRYx7lEySSUxFWurzm7Py+yyyx1bXoYKKeijKhTo3vvlwnNRXxzNOrmaJrqzqSte5VhGavoT74BOlA2DsWoVaEKmGFFkTEbkOou+na7BtX3cMgTQnkZ2MUZiWqvOwUvsJcGd+h8sh3Gf/2li++hllw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=adhOhIdb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TADSs1014190;
-	Mon, 29 Jul 2024 10:27:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+LleWXTjGmWz/0Od+eQsmQiVYH4kwxgfQd2AFTRfKe8=; b=adhOhIdbJzvKRv3s
-	3A4SPm2oIHuFzA9/NGHWajo9LUqMe/XiB8d+EM79mUOHQR78HoWAOdWNApYJvftA
-	CmMNLzNdnixqv45janduu7BhOkSFPt3j1ULOrGi215KFuRLNH9K36aiqsMwi6aIR
-	MBaIAjFwb64kFPuLG6SWYFkFp9JJX9WW3pxqe4fYbtG3J/SHpJ6aouHC1bUw+Uhd
-	8UoEqGQuClfsAsYa9sypbpg3x5rN3B7grt1ddX9Vjbo2aPgNqSdR4Om6jgiDNp9s
-	jHpLzA4m7L7GXLec/hJk3TPM3kg+We9H/doMEXmNUDReSmV40WTc13PP6V3zFdgi
-	tSNIlw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mr7gm0na-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 10:27:08 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TAR7R1025532
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 10:27:07 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
- 2024 03:27:02 -0700
-Message-ID: <f7be1d1d-3b6f-4a75-b5f6-429b25f84e63@quicinc.com>
-Date: Mon, 29 Jul 2024 18:26:55 +0800
+	s=arc-20240116; t=1722248879; c=relaxed/simple;
+	bh=Bt99ge3UUZGPkVxOwjK0CeLHXnSXdbcs1gevqufOntg=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ewr2AD7j6paN+I8bqNEoQmyZMdU7LvqZjImdhhpJWEJ7F5Oj+TkdmmvlBNnk10Ua3CrPd+Q2CU8SiMd+yj17urmISGPAeIeti7pEd87ArKXBRtn3B/KSlhEo0K7HbVmBZQuOHp/Y4wxU5herIlrzJ81zq6zurc0HzsY6sPNAAD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m5rgXWsM; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722248878; x=1753784878;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Bt99ge3UUZGPkVxOwjK0CeLHXnSXdbcs1gevqufOntg=;
+  b=m5rgXWsMaVGy12/4ilQY1djYu9Q37+mvkuxorQppjNccBnxkRHF69VSv
+   KiGdSSeAEX/hU5SpG3MOEduL9QUY1Z1EgXjoww8z3uk/1C5i//BbHdJJd
+   t2oCR7v6M8qgemiJyhWAaBBPQ0j8w2IfubWtIkOPvM1ytK1iEt5pHv+9a
+   fXp1Y3qljI8FV3X2CnMh/7cEf8AUzJLzAwAzdVlGduFBSyrl4iICI0xW+
+   u4Haa/T6xRwBjOXYkfKSn4Jl6x/qcm5AIjrTDB8FG+6V018IVCAnTxiB1
+   WhoAZcl/Kb4OBf6+PjVAvrleACduwARVe+WwKJy8veHt/Ka6WNKcZdXJQ
+   A==;
+X-CSE-ConnectionGUID: TGJvmAnvS4aKhXpdVNx+lw==
+X-CSE-MsgGUID: cwTsFYcJSZW1RrFCwrXejg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="37502565"
+X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
+   d="scan'208";a="37502565"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 03:27:57 -0700
+X-CSE-ConnectionGUID: Ynsp7EQmRje2W4uZXxa9yQ==
+X-CSE-MsgGUID: ZV+fiUwNQXmPYSqHZqNgKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
+   d="scan'208";a="77171478"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.151])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 03:27:48 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 29 Jul 2024 13:27:44 +0300 (EEST)
+To: Matthew W Carlis <mattc@purestorage.com>
+cc: macro@orcam.me.uk, alex.williamson@redhat.com, bhelgaas@google.com, 
+    christophe.leroy@csgroup.eu, davem@davemloft.net, 
+    david.abdurachmanov@gmail.com, edumazet@google.com, kuba@kernel.org, 
+    leon@kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, 
+    linuxppc-dev@lists.ozlabs.org, Lukas Wunner <lukas@wunner.de>, 
+    mahesh@linux.ibm.com, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+    mpe@ellerman.id.au, Netdev <netdev@vger.kernel.org>, npiggin@gmail.com, 
+    oohall@gmail.com, pabeni@redhat.com, pali@kernel.org, saeedm@nvidia.com, 
+    sr@denx.de, wilson@tuliptree.org
+Subject: Re: PCI: Work around PCIe link training failures
+In-Reply-To: <20240726080446.12375-1-mattc@purestorage.com>
+Message-ID: <914b7d34-9ed5-cd99-cb76-f6f8eccb842e@linux.intel.com>
+References: <20240724191830.4807-1-mattc@purestorage.com> <20240726080446.12375-1-mattc@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: crypto: ice: Document QCS9100 inline
- crypto engine
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Herbert Xu
-	<herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>, Maria Yu <quic_aiquny@quicinc.com>
-References: <20240709-documnet_qcs9100_crypto_engine_compatible-v2-1-59bd16b1a99c@quicinc.com>
- <46239515-badb-4ad7-8280-91074eae47bf@kernel.org>
- <21a5ab8b-ed33-41d5-a478-1f38ce8226c1@quicinc.com>
-In-Reply-To: <21a5ab8b-ed33-41d5-a478-1f38ce8226c1@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ORsYOYPhJjGgILjE8uXnPy51mx6GvlxI
-X-Proofpoint-GUID: ORsYOYPhJjGgILjE8uXnPy51mx6GvlxI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-29_08,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- impostorscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
- spamscore=0 clxscore=1015 priorityscore=1501 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2407290070
+Content-Type: text/plain; charset=US-ASCII
 
+On Fri, 26 Jul 2024, Matthew W Carlis wrote:
 
+> On Mon, 22 Jul 2024, Maciej W. Rozycki wrote:
+> 
+> > The main reason is it is believed that it is the downstream device
+> > causing the issue, and obviously you can't fetch its ID if you can't
+> > negotiate link so as to talk to it in the first place.
+> 
+> Have had some more time to look into this issue. So, I think the problem
+> with this change is that it is quite strict in its assumptions about what
+> it means when a device fails to train, but in an environment where hot-plug
+> is exercised frequently you are essentially bound have something interrupt
+> the link training. In the first case where we caught this problem our test
+> automation was doing some power cycle tortures on our endpoints. If you catch
+> the right timing the link will be forced down to Gen1 forever without some other
+> automation to recover you unless your device is the one single device in the
+> allowlist which had the hardware bug in the first place.
+> 
+> I wonder if we can come up with some kind of alternative.
 
-On 7/10/2024 6:23 PM, Tengfei Fan wrote:
-> 
-> 
-> On 7/10/2024 6:16 PM, Krzysztof Kozlowski wrote:
->> On 09/07/2024 15:08, Tengfei Fan wrote:
->>> Document the compatible used for the inline crypto engine found on
->>> QCS9100.
->>>
->>> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
->>> platform use non-SCMI resource. In the future, the SA8775p platform will
->>> move to use SCMI resources and it will have new sa8775p-related device
->>> tree. Consequently, introduce "qcom,qcs9100-inline-crypto-engine" to
->>> describe non-SCMI based crypto engine.
->>>
->>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
->>> ---
->>> Introduce support for the QCS9100 SoC device tree (DTSI) and the
->>> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
->>> While the QCS9100 platform is still in the early design stage, the
->>> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
->>> mounts the QCS9100 SoC instead of the SA8775p SoC.
->>>
->>> The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
->>> all the compatible strings will be updated from "SA8775p" to "QCS9100".
->>> The QCS9100 device tree patches will be pushed after all the device tree
->>> bindings and device driver patches are reviewed.
->>>
->>> The final dtsi will like:
->>> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
->>> The detailed cover letter reference:
->>> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
->>>
->>> Co-developed-by: Maria Yu <quic_aiquny@quicinc.com>
->>> Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
->>
->> This looks messy - wrongly placed, not in correct DCO order. Some tools
->> will just ignore it, some might produce wrong result.
->>
->> Best regards,
->> Krzysztof
->>
-> 
-> Thanks Krzysztof!
-> 
-> I will fix the messy information in all the QCS9100 related patch series 
-> in the next.
-> 
-
-After considering the feedback provided on the subject, We have decided
-to keep current SA8775p compatible and ABI compatibility in drivers.
-Let's close this session and ignore the current patche here.
-Thank you for your input.
+The most obvious solution is to not leave the speed at Gen1 on failure in 
+Target Speed quirk but to restore the original Target Speed value. The 
+downside with that is if the current retraining interface (function) is 
+used, it adds delay. But the retraining functions could be reworked such 
+that the retraining is only triggered in case the Target Speed quirk 
+fails but we don't wait for its result (which will very likely fail 
+anyway).
 
 -- 
-Thx and BRs,
-Tengfei Fan
+ i.
+
 
