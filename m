@@ -1,61 +1,79 @@
-Return-Path: <linux-kernel+bounces-265053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE6793EBF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 05:43:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C983393EBF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 05:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB5041C21597
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:43:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53A71B213E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7B182488;
-	Mon, 29 Jul 2024 03:43:29 +0000 (UTC)
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C439180BF8;
+	Mon, 29 Jul 2024 03:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="hTfn86/P"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAA780BF8;
-	Mon, 29 Jul 2024 03:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2990382499
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 03:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722224609; cv=none; b=JdyZf35Lq8m3b+ViGsD8t20gB0UIv+qfecg4WG1lLDQU0GrY52Op5hOzAP5ZlXyNHH3aaw3jQtcLYcd5TY68GfNGQPpGm+ufsACnA6Y6M69Wk/+GIOwxKV8bZDKW8Jp9YN/54AmmrdgPoWuLU6QVmg9Onutz8AH3VEKpcjMy1mE=
+	t=1722224613; cv=none; b=ABseTOk1k0v9C7VJLp1f7YKvGuRer3iEiYJyV43svChNii3v8Cl/uq/Zrd2XCN+tEgzcPSBxKYKjH49UFIh6b3fsW7oByFK7Fy+as8q4Q5Ln99LNfQS4MHO7A1xWGcznOgvr781TgDwu1JWUpjX2kgNwNkIbpGB57OwtS1R3iKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722224609; c=relaxed/simple;
-	bh=RXPlwJZl+nCyMllCobTmV2+YGLR89GoqmZFpo0e/zEU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tIf+obJ4Ean9BTC8hjSvBaLxfbrOWe+Vpm+IGHuVvaQULhoE28pBmyOgN3/Hez1M/AHitJNr4ZtGvzbgCFTqk9leaOEbkTJzHkcVYBAzfVDQv8sbNl+SCntKElSXUbV5YuSeC+yU5nEDLKEaozn7LxZQS+PxMPsccf/hN6IpNGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-X-QQ-mid: bizesmtpsz8t1722224594thbasmy
-X-QQ-Originating-IP: vgOweZQh8sHOBjxpC4aUM1GK3fVvNbLRexjPd8Fr/xw=
-Received: from uniontech.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 29 Jul 2024 11:43:03 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 10032769481913755634
-From: Erpeng Xu <xuerpeng@uniontech.com>
-To: stable@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	sashal@kernel.org,
-	hildawu@realtek.com,
-	wangyuli@uniontech.com,
-	jagan@edgeble.ai
-Cc: marcel@holtmann.org,
-	luiz.dentz@gmail.com,
-	linux-bluetooth@vger.kernel.org,
+	s=arc-20240116; t=1722224613; c=relaxed/simple;
+	bh=pEkbjZbID4Zq2j7DtzyhYW9aOgsLz5p9bS111yh9LLc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qv88ae38/YlVWTUOKtdOZ0xS0PMdDmbhhoSaT6zom/vPm7aZfVecRbcgNQu8h/2cIekmQ0GIss0sk69xzfy2anUQTlDsndasiqSu9XNVKYWX2y5YWN+GepIihh7MCTLQnv8c2Qt6d7sOHUew8Tc/A48xFdtUqCIrfwECoBu9bGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=hTfn86/P; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-76cb5b6b3e4so1557191a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 20:43:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shopee.com; s=shopee.com; t=1722224609; x=1722829409; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=piHZCWX7KlSFhT01GfvCJrIPEKqLIYqxVjk4iuVXV5U=;
+        b=hTfn86/PA0QWaTkiRxFUSsaeszf+W2+7W9PeLTA4ygzmdq7QlGSg6ry4zn1Ag9+gJP
+         wLCKFFYNzdJ6W9+q/+jaSEnnRQogz3fCaBXssQvmvo2/gDn9KTJOwu+TDfJpieaiGlqP
+         BcFyISfUgCtlgnAG9rYRjdd4/GJDMyRZ75zIcZRXrJGxMpqumsjKsVKYZpEHIay+H0Pa
+         PxSzDRWLL2FlZ0a18+faHVR0ivaStRYKweju3F5LJWUgRWMVSx8GUgh4mxOpiS90Kzv6
+         QFMAUpGy8r0iwEeEqfDRXIA/6jB397SUI7n6Fqb0mATk4grcw14SgMJZVhLOi/kPBq50
+         LBOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722224609; x=1722829409;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=piHZCWX7KlSFhT01GfvCJrIPEKqLIYqxVjk4iuVXV5U=;
+        b=uL7y8Om5TYiy+BN+h/2iPbJOY9P6VIwXZohBJWp4Gq8cpUncFT2vvXMtZI9YWPlawF
+         draf3ACZdqdxQSoRo8msJlJReCgCskNz2Tc60Eyk3XqhinGbq4FNeNwRuZa1mUjP1c6e
+         a6S4ZzujcpNgqxa2BrSLMsNGAGhGsF4K98UE8lt6JgJOHqa9PzLiCFdSGGzkfQp4pcbC
+         U+gALc8jJRv/cAaBDNaBCOWTZ3LqQDI8VQn1Avu5TjpW3868o1B1iAz9tKJdZrC1bggI
+         Sckq/4tviYMKbB6Voj58lYggxOITtOvnexEcBkMSAgiIpD54MzYJUi0We+P5/2ROL2Hi
+         vMcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjdZDdo8CbVRE1drJUQHgAaZAvSDwli8YXDR59UNGzbG6FRggLo7KRuCC7Q96OCrYnSPlzHunU3bQLeiZIt3sTxzYr2e4H5+9+9+Dm
+X-Gm-Message-State: AOJu0YzT98dh4uBzMoN3YPZOU+92iIow4Fsi0diWZXevjFgXky57BIgk
+	/SmJpZAO7eX3mI2uk7SpCLrzLM9t2r2JCPwNi1RRWTXd9vKI6Y9k64d6IT6Q1hg=
+X-Google-Smtp-Source: AGHT+IF2b1afqpkK6mLINTP2M8mfrCg5KFRVnTaJ9z97pZ/8UZWwnShZFRvCTESYMiewL0mt65dCww==
+X-Received: by 2002:a17:902:e5d0:b0:1fd:9590:6550 with SMTP id d9443c01a7336-1ff0494bc45mr44139635ad.64.1722224609418;
+        Sun, 28 Jul 2024 20:43:29 -0700 (PDT)
+Received: from localhost.localdomain ([143.92.64.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f1ac12sm71553295ad.186.2024.07.28.20.43.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Jul 2024 20:43:28 -0700 (PDT)
+From: Haifeng Xu <haifeng.xu@shopee.com>
+To: miklos@szeredi.hu,
+	amir73il@gmail.com
+Cc: linux-unionfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	guanwentao@uniontech.com,
-	luiz.von.dentz@intel.com,
-	Erpeng Xu <xuerpeng@uniontech.com>
-Subject: [PATCH 6.1 3/3] Bluetooth: btusb: Add Realtek RTL8852BE support ID 0x13d3:0x3591
-Date: Mon, 29 Jul 2024 11:42:32 +0800
-Message-ID: <283C6F6C7E72DF06+20240729034247.16448-3-xuerpeng@uniontech.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240729034247.16448-1-xuerpeng@uniontech.com>
-References: <20240729034247.16448-1-xuerpeng@uniontech.com>
+	Haifeng Xu <haifeng.xu@shopee.com>
+Subject: [PATCH] ovl: don't set the superblock's errseq_t manually
+Date: Mon, 29 Jul 2024 11:43:24 +0800
+Message-Id: <20240729034324.366148-1-haifeng.xu@shopee.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,71 +81,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
 
-From: WangYuli <wangyuli@uniontech.com>
+Since commit 5679897eb104 ("vfs: make sync_filesystem return errors from
+->sync_fs"), the return value from sync_fs callback can be seen in
+sync_filesystem(). Thus the errseq_set opreation can be removed here.
 
-commit 601b68544c21333cfcf1db15075cc17e0329b843 upstrem
-
-Add the support ID(0x13d3, 0x3591) to usb_device_id table for
-Realtek RTL8852BE.
-
-The device table is as follows:
-
-T:  Bus=01 Lev=02 Prnt=03 Port=00 Cnt=01 Dev#=  5 Spd=12   MxCh= 0
-D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=13d3 ProdID=3591 Rev= 0.00
-S:  Manufacturer=Realtek
-S:  Product=Bluetooth Radio
-S:  SerialNumber=00e04c000001
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
-Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Signed-off-by: Erpeng Xu <xuerpeng@uniontech.com>
+Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
 ---
- drivers/bluetooth/btusb.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/overlayfs/super.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 9d21b7dd3e83..e18ebbc5aa8e 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -547,6 +547,8 @@ static const struct usb_device_id blacklist_table[] = {
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x13d3, 0x3572), .driver_info = BTUSB_REALTEK |
- 						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x13d3, 0x3591), .driver_info = BTUSB_REALTEK |
-+						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x0489, 0xe125), .driver_info = BTUSB_REALTEK |
- 						     BTUSB_WIDEBAND_SPEECH },
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 06a231970cb5..fe511192f83c 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -202,15 +202,9 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
+ 	int ret;
  
+ 	ret = ovl_sync_status(ofs);
+-	/*
+-	 * We have to always set the err, because the return value isn't
+-	 * checked in syncfs, and instead indirectly return an error via
+-	 * the sb's writeback errseq, which VFS inspects after this call.
+-	 */
+-	if (ret < 0) {
+-		errseq_set(&sb->s_wb_err, -EIO);
++
++	if (ret < 0)
+ 		return -EIO;
+-	}
+ 
+ 	if (!ret)
+ 		return ret;
 -- 
-2.45.2
+2.25.1
 
 
