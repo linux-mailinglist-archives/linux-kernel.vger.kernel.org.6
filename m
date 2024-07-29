@@ -1,71 +1,69 @@
-Return-Path: <linux-kernel+bounces-266448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 757AD940007
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:03:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C48A994000B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 000282836A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:03:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44D20B20C60
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E495018D4B0;
-	Mon, 29 Jul 2024 21:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C933218D4AD;
+	Mon, 29 Jul 2024 21:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b4Fph79m"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KyfsF44b"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C0415FA68;
-	Mon, 29 Jul 2024 21:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2023018A950;
+	Mon, 29 Jul 2024 21:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722286962; cv=none; b=F+LiuEtXzH7Pl1an56LoK3ePq5/7p8F/RdsXVCQ2JMrYkBATw7XPFrvmgs89o/OGLUxhyCm4FC1/kWrC6jbvkc/W8EV9XGPmtD5DF9h1Bt46z3AjkifJXtnq04ENK7mn7lxSee9Ld+fQUdsnLXGdI70sWBpRl9sNQpnrAQDiGnY=
+	t=1722287188; cv=none; b=IXTiSfbi4hFO5q85N1Dv/9o6qSOH96MarDW38SBcp6RElJ2txD4uyVsohYHJ4k2K43h0iYNtBxi+BjvX5quzXbb5VI5CZgDjfOfUOun0D+nijkI1yHEY/hTQ4wqzTpy1e5sNDAi9/oalfbHiea/dyIA+Q5dNRKNwvx9RXHX7Mes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722286962; c=relaxed/simple;
-	bh=GxLJg+Yc+0+/EWxjIyqzooDSQcv6ZWuyjdexitDnoik=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=c3OPVdis5bwROygiih1qfHjvmYqMtjws6B3IkTRoQQNOZQYbBNN6JOwXw78v8lSPzUHQGr6NVBAgVBtd7efLBZwmC66veERzKUF1jfkXIWbIpRlRkM9U9ram1qRKHx+sqB4NRy60wqc5ZIm7BC1taIoYifaPoVW3n/mhPC+nWU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b4Fph79m; arc=none smtp.client-ip=209.85.167.47
+	s=arc-20240116; t=1722287188; c=relaxed/simple;
+	bh=/wKP+tHo5yk9kUC1/hoZvpSqEYz7xahYoDJjaop0s7A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t/qOUMCJ65MIfLLf1ibLESiz2mzBMKNI43Py4UqO+CiyB+jMPO7m7qN9IuNJjEZNT4dGPEpc/47sBxcsgjgX4LRcXiui3xWxCcPQZRZnHJ8aiWplBr9Q7iuolNGbJUcff0oiC7rLpnhuLTAWQPRGU0Jz5kYz0OphyIeUvmhbGqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KyfsF44b; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52efbc57456so4158849e87.1;
-        Mon, 29 Jul 2024 14:02:40 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52ed741fe46so4212900e87.0;
+        Mon, 29 Jul 2024 14:06:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722286958; x=1722891758; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uAvDYGFq8sK5v/DNNa7E+G0VDjJRRJ2uN34Qkw1oST4=;
-        b=b4Fph79mEA2/PZ+qI/ETOtOMPtWmzmMHnWL/VqEAwYMjTgmVobimB/yjmEYW1/eq5i
-         h+MyPX1GKKpiMYemQc7/vGzmGR/8FB+dBBNWxU0L6zpAZhBerOTcYoV0wveFUCQUvJsu
-         keWfP8Pk6DZ2T6ktqln+2hzplt3pRcnH0lT4rh5aSsVgp8sX96PT5uRAJoOM8al51Zxn
-         /vMybwC6F6HPIU5913tysMEoT5nw7JAnVKjH4HIe6c1GlQhQUsPjNPz3/qjlSoIob3iL
-         TdDr/Pw5s352XIUrfFw09wONp6zAFT211c3vfVmeFwTEjh6SFsxook8mhWch2Alq/3pm
-         4X5g==
+        d=gmail.com; s=20230601; t=1722287184; x=1722891984; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4rC9pcB+6KabVDJ8Y72Ehr24uUZGIAYb7dVvyrR5rvo=;
+        b=KyfsF44bCpDSBCnSC/MIPjktJFlITE1uLmyuYwQ4VZuxmQjAD7wQ0seVbw0lxu8zj/
+         4sx+/4AgntEhaB3DYpxArNWyMd9eyBn6GUfmAL5lJbpajjrcd01MDycGKVGS9fO9XOV+
+         sQZzoshWH5zX8rH9dR6YG7HROxz9t3TP47pPFOzGA0VFPr5I3pjnN31cFNmdtfTu6hOU
+         +WHKFTSN3yOGHpox2wOyJOvvpTJtszZHkrpFIVr9RDypF0iLeFIuivLuAXbqN+uR/7uo
+         YlmCYh15eH0K3jEu6uMWSMK7Cmm2mbYDOCQhEIFfBtxkycb3lXYCyJG+HHa6lCWSB8GO
+         91HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722286958; x=1722891758;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uAvDYGFq8sK5v/DNNa7E+G0VDjJRRJ2uN34Qkw1oST4=;
-        b=MtyqpLKx7YRT+qpLYyewqNU0KDumHMf/qz3A9ly2WFzxx4bcDfMKZSPCnWMp7GqbOL
-         /Ewiek/pz0FUF6b5c6yTaXwFeYWoeNLanM83i4jdbMTB9hXhifrfdeHBjtoBhNAOVln1
-         1qwHIDjKvKwn0iyjUyeoMdYYlUTtdWA4EQj60hzIi0UY1KQRsoH1ll5skdKH872PcXUk
-         1vO0vvBmff2HI3TozWEoHyG57v3PJGw1ewKz6K/JrKzASD1aGPMyIGpXXoMArWVm1Spf
-         dya6Hso0PwLJnE3cGWSDR4noaMZx0iXct/zRre587QQQmUDAX00lrU6HaImi5wRD7oyK
-         d8rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3mmVTzZXBMzuckpcbZr+1oDSLWEdYnD6RGqHGC+kz1gZLwooIkLYyh4RbFwsGOab5LZ9Cz1ToxEfIu71940nRE99n2TEDJw9JsW7R0Rl3nt5NIF3I2P3l1Sm/q8+e8vaQx7SG1B1J4Q==
-X-Gm-Message-State: AOJu0YwLjvWAAee11w2JFFMU4geG2iEn2xXvRu2HtS+xlLM5Gl8T2g2K
-	bCdMR6jLLlvu36E4XiJIBk++KVPfuoJAJoLKbZsN2AmvJYmjDyErC76DD5I/
-X-Google-Smtp-Source: AGHT+IEaz7PEByH4RpmeBa4w7jMT/ZSgdsjh/YB2LeKDcFrDiGfhuLAmhMTaQ+QWT2oKVia3tzUXFw==
-X-Received: by 2002:a05:6512:36cd:b0:52e:9a91:bba3 with SMTP id 2adb3069b0e04-5309b2707bbmr5171993e87.15.1722286957873;
-        Mon, 29 Jul 2024 14:02:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722287184; x=1722891984;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4rC9pcB+6KabVDJ8Y72Ehr24uUZGIAYb7dVvyrR5rvo=;
+        b=o6I4jQAdTzl7RG850rOSvqJ0revJNmuAs20GlRV3s7iHx9redmFup5tleFYvN105iR
+         /cRglx/wS9m5bx+WDfZ/GlnPyHWNYA17RA7WIDGgIn2qndyot0cQW3of7K2kyI8V0i38
+         MLVA01ZsBljmaX7+9LOX48xeXYYFp24H/06u0uI7ZTu59RAcKF8Hc85zaKvOjs5RSIMH
+         ScGbPK/uCWbgY4Om7DZD1gNIxZK2Y9fWBBsgBj9rZb3GBlyZuGtUg1KFOaioGd6lYMXl
+         iRfJroAuq/4yV7Tbo6Ci+8ZPc3iWadD98juKCwAeHZHvTqBWyMIfe8iApVfTo3UzuZpu
+         5Sfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJB/KVK+t+QYU/YB6L84+Ry8cez7GNLH8Erm3pIBURDaRBKvSITD5DjKvxvl3XinEtQiNsnB/4+5MLpJj+BeQpIiG3sxnswFDLnUVq
+X-Gm-Message-State: AOJu0Yx3LdbEjFBhmxoH1tYN3kH8ZjfgqSfoXtLyDqBpfXDUd6SW2WLQ
+	XEC4vGrBANLKJhRH2nhJ5RZf9v+TlUNV2LI/+EKtvNRrgHgMgznfC9m0SpGk
+X-Google-Smtp-Source: AGHT+IGAGbGD+TExlWy6tfZlz1qUC1gfb3xBvFrBUw5AiTDcBmr3IeF0aGDSpXAHzV81xatOtZGYtg==
+X-Received: by 2002:a05:6512:3504:b0:52c:dc0b:42cf with SMTP id 2adb3069b0e04-5309b269a8amr6366799e87.9.1722287183620;
+        Mon, 29 Jul 2024 14:06:23 -0700 (PDT)
 Received: from WBEC325.dom.lan ([185.188.71.122])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c0831fsm1621050e87.174.2024.07.29.14.02.36
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c2becesm1624210e87.258.2024.07.29.14.06.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 14:02:37 -0700 (PDT)
+        Mon, 29 Jul 2024 14:06:23 -0700 (PDT)
 From: Pawel Dembicki <paweldembicki@gmail.com>
 To: netdev@vger.kernel.org
 Cc: Pawel Dembicki <paweldembicki@gmail.com>,
@@ -76,18 +74,15 @@ Cc: Pawel Dembicki <paweldembicki@gmail.com>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
 	Linus Walleij <linus.walleij@linaro.org>,
-	devicetree@vger.kernel.org,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v3 2/2] dt-bindings: net: dsa: vsc73xx: add {rx,tx}-internal-delay-ps
-Date: Mon, 29 Jul 2024 23:02:01 +0200
-Message-Id: <20240729210200.279798-2-paweldembicki@gmail.com>
+Subject: [PATCH net-next 0/9] net: dsa: vsc73xx: fix MDIO bus access and PHY operations
+Date: Mon, 29 Jul 2024 23:06:06 +0200
+Message-Id: <20240729210615.279952-1-paweldembicki@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240729210200.279798-1-paweldembicki@gmail.com>
-References: <20240729210200.279798-1-paweldembicki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,87 +91,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a schema validator to vitesse,vsc73xx.yaml for MAC-level RGMII delays
-in the CPU port. Additionally, valid values for VSC73XX were defined,
-and a common definition for the RX and TX valid range was created.
+The VSC73xx driver has issues with PHY configuration. This patch series
+fixes most of them.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+The first patch fixes the phylink capabilities, because the MAC in the
+vsc73xx family doesn't handle 1000BASE HD mode.
 
----
-v3:
-  - use 'default:' instead text in description
-v2:
-  - added info about default value when the rx/tx delay property
-    is missing
----
- .../bindings/net/dsa/vitesse,vsc73xx.yaml     | 32 +++++++++++++++++++
- 1 file changed, 32 insertions(+)
+The second patch synchronizes the register configuration routine with the
+datasheet recommendations.
 
-diff --git a/Documentation/devicetree/bindings/net/dsa/vitesse,vsc73xx.yaml b/Documentation/devicetree/bindings/net/dsa/vitesse,vsc73xx.yaml
-index b99d7a694b70..51cf574249be 100644
---- a/Documentation/devicetree/bindings/net/dsa/vitesse,vsc73xx.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/vitesse,vsc73xx.yaml
-@@ -52,6 +52,25 @@ properties:
- allOf:
-   - $ref: dsa.yaml#/$defs/ethernet-ports
- 
-+patternProperties:
-+  "^(ethernet-)?ports$":
-+    additionalProperties: true
-+    patternProperties:
-+      "^(ethernet-)?port@6$":
-+        allOf:
-+          - if:
-+              properties:
-+                phy-mode:
-+                  contains:
-+                    enum:
-+                      - rgmii
-+            then:
-+              properties:
-+                rx-internal-delay-ps:
-+                  $ref: "#/$defs/internal-delay-ps"
-+                tx-internal-delay-ps:
-+                  $ref: "#/$defs/internal-delay-ps"
-+
- # This checks if reg is a chipselect so the device is on an SPI
- # bus, the if-clause will fail if reg is a tuple such as for a
- # platform device.
-@@ -67,6 +86,15 @@ required:
-   - compatible
-   - reg
- 
-+$defs:
-+  internal-delay-ps:
-+    description:
-+      Disable tunable delay lines using 0 ps, or enable them and select
-+      the phase between 1400 ps and 2000 ps in increments of 300 ps.
-+    default: 2000
-+    enum:
-+      [0, 1400, 1700, 2000]
-+
- unevaluatedProperties: false
- 
- examples:
-@@ -108,6 +136,8 @@ examples:
-             reg = <6>;
-             ethernet = <&gmac1>;
-             phy-mode = "rgmii";
-+            rx-internal-delay-ps = <0>;
-+            tx-internal-delay-ps = <0>;
-             fixed-link {
-               speed = <1000>;
-               full-duplex;
-@@ -150,6 +180,8 @@ examples:
-           ethernet-port@6 {
-             reg = <6>;
-             ethernet = <&enet0>;
-+            rx-internal-delay-ps = <0>;
-+            tx-internal-delay-ps = <0>;
-             phy-mode = "rgmii";
-             fixed-link {
-               speed = <1000>;
+Patches 3-5 restore proper communication on the MDIO bus. Currently,
+the write value isn't sent to the MDIO register, and without a mutex,
+communication with the PHY can be interrupted. This causes the PHY to
+receive improper configuration and autonegotiation could fail.
+
+The sixth patch speeds up the internal MDIO bus to the maximum value
+allowed by the datasheet.
+
+The seventh patch removes the PHY reset blockade, as it is no longer
+required.
+
+After fixing the MDIO operations, autonegotiation became possible.
+The eighth patch removes the blockade, which became unnecessary after
+the MDIO operations fix. It also enables the MDI-X feature, which is
+disabled by default in forced 100BASE-TX mode like other Vitesse PHYs.
+
+The last patch implements the downshift feature and enables it by default.
+
+Pawel Dembicki (9):
+  net: dsa: vsc73xx: fix phylink capabilities
+  net: dsa: vsc73xx: fix port MAC configuration in full duplex mode
+  net: dsa: vsc73xx: pass value in phy_write operation
+  net: dsa: vsc73xx: use defined values in phy operations
+  net: dsa: vsc73xx: use mutex to mdio operations
+  net: dsa: vsc73xx: speed up mdio bus to max allowed value
+  net: dsa: vsc73xx: allow phy resetting
+  net: phy: vitesse: repair vsc73xx autonegotiation
+  net: phy: vitesse: implement downshift in vsc73xx phys
+
+ drivers/net/dsa/vitesse-vsc73xx-core.c | 132 ++++++++++++++++++-------
+ drivers/net/dsa/vitesse-vsc73xx.h      |   2 +
+ drivers/net/phy/vitesse.c              | 125 +++++++++++++++++++++--
+ 3 files changed, 219 insertions(+), 40 deletions(-)
+
 -- 
 2.34.1
 
