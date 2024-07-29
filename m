@@ -1,116 +1,133 @@
-Return-Path: <linux-kernel+bounces-266004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C1793F914
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:07:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D9A93F919
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BAEA28351F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:07:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 014C91F22EC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45C4157E6C;
-	Mon, 29 Jul 2024 15:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6241586DB;
+	Mon, 29 Jul 2024 15:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="beeS/0AH"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="QVWPrILY"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1443156250
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B0E15573D;
+	Mon, 29 Jul 2024 15:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722265616; cv=none; b=tDuDU+MsHnOg2UuN9avBcofq/tp4UzrJ1BSJCA30IYifEe9hWLVJi86fXTRBn6hxEMAK4kIVz2moxAfaCQ3W9IK5HRSUHrXk7uGGAQYvD4kVTv3G5rdJX7WAOUxrze4Sxa9s9ysDwZR/0SuD8KUiKst/5rumpSxB8/EPUiMFM50=
+	t=1722265659; cv=none; b=YIO4ETJ3HDGoL+NsQbeY/3cAyHwy78vPWLCYPt/pzZVAd0xC87XZg/gzNmITugdAaM9sLy0hm02tfby15HNb5l3wFU+xpDRi5h+kHqBkZ+hbm6SGVkz+21KEvw0woDcTHkOvHIVgz1lLa5a4KJhHTcgtVvXMm6rWf79n0C6qb4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722265616; c=relaxed/simple;
-	bh=v+fA2sL8PT2aaem3wZ1F4FcLGMckWT4YxfNzqDv1uMY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UT1q7Cdifa5HnxNBKn7zkrazsg7PI+Iq3RYLoeYQ5y1bgAWeMcq/pJXr21y+Cjl8Nfm8+hHMspquFLiOa6y9fCfMOULog71YBT0YRA02SmmOd9Twko1X1BUVU8nHhzSedgzWB3pav1wZA7+LhnccpnTqrfdViWiSwjP60BlW1fU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=beeS/0AH; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4281abc65daso11049465e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:06:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722265612; x=1722870412; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=orECJ2OhLH097DTMjvI6rJNFg6vz3nlf5Yl6sqJTBIE=;
-        b=beeS/0AHgHWiuF54U2Rgz2lh8sjYO1folj+E8zHeDu0pSEwrLEh1dV2briXJ3Jve9h
-         zU+cDmJQzsTyaUJ28JKGde29vJ10WYuazMyuzCQbpaCNHCB/RH2w9fbjNEXgckj2atYI
-         zSjzNCrsTUahtB3ykUG9NezbMOUysodnoaWU6ISwCL58As50aiekRBteY0Ai1lZ9+FGv
-         hGA6JkofM9r/ChKva2+LjzylQfeto4DsWgdZj1Ek5fes6LWr6MNIoV6zzEXen3dquQOI
-         HiMA0NMS/nZJJLdtgcc/Tu+kw1qwBymg8pUpIRJan0qtnrVws5xebQ0YBLTxVy8YIV6D
-         5klQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722265612; x=1722870412;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=orECJ2OhLH097DTMjvI6rJNFg6vz3nlf5Yl6sqJTBIE=;
-        b=xVboA9Ctr45pRSqRBBSygpMsWY9fkD1ByALTOTzqZjik8DOR2L7n809ObHpQhJnYN+
-         n8X65ZNMmRXbUjKxdbj7fOjrd8rIYJc2yy/ColTPnp8IXV86zRoSTqowrc9v9wd/QMfM
-         Es27CPa0029owGrYPChTK1SHaDg6mXkZQ8hHCL9bQQSxFRw+Fh/CehQXQwo0//fhNOlt
-         7miWIzMCSPdJog6HtYIUm90CL1mBhSmMuuPnnHQkPfF3fEkq7S2QbQLTenvICB2qhtlF
-         Svp/Ruh/RHaXmCO0GI64/SBvUKF1mrdfQddEccGkcj1DJ6aLHeleELt44v8sELbMSrlG
-         p16A==
-X-Forwarded-Encrypted: i=1; AJvYcCWMOgSk6I0msLoEaAREfep2QjvlTIqJ/K9ixJU9K6i3LqVA2oEqKk4ouN1l2X/2ImZo8eOGw1G0PQNIbWzg/Rcr9MoBrKgLSHCeCByk
-X-Gm-Message-State: AOJu0Yy7yxBWGZozgUa4Ovfy2ww8PtkURLtCueHEYnKHXO5S/rAXct47
-	QXl9WDXmMfMVOZKPcM589ht/xQg3MprC3296R7TQ1Nm/19uPH6WirSmfKjOjmFA=
-X-Google-Smtp-Source: AGHT+IFOpQKJrPEBTB7GUU+M3eQUukpjNflQqjbfqksXjQSALpbGkhpQ80Fn1dUw9m4ErxOkFf+giQ==
-X-Received: by 2002:a05:600c:4706:b0:427:d8f7:b718 with SMTP id 5b1f17b1804b1-42811dd19f0mr51394475e9.24.1722265611970;
-        Mon, 29 Jul 2024 08:06:51 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:abd3:cdc8:2363:54ef])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367c067esm12408017f8f.20.2024.07.29.08.06.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 08:06:51 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Arseniy Krasnov <avkrasnov@salutedevices.com>,  Liam Girdwood
- <lgirdwood@gmail.com>,  Jaroslav Kysela <perex@perex.cz>,  Takashi Iwai
- <tiwai@suse.com>,  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin
- Hilman <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  alsa-devel@alsa-project.org,
-  linux-sound@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-amlogic@lists.infradead.org,  linux-kernel@vger.kernel.org,
-  kernel@sberdevices.ru,  oxffffaa@gmail.com
-Subject: Re: [PATCH v1] ASoC: meson: axg-fifo: set option to use raw spinlock
-In-Reply-To: <2b16b95e-196e-4d8a-98c3-3be568cdd18a@sirena.org.uk> (Mark
-	Brown's message of "Mon, 29 Jul 2024 15:44:38 +0100")
-References: <20240729131652.3012327-1-avkrasnov@salutedevices.com>
-	<1ja5i0wags.fsf@starbuckisacylon.baylibre.com>
-	<2b16b95e-196e-4d8a-98c3-3be568cdd18a@sirena.org.uk>
-Date: Mon, 29 Jul 2024 17:06:50 +0200
-Message-ID: <1j5xsow839.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1722265659; c=relaxed/simple;
+	bh=FHHChsesQGBUPjVTh2pJlQerrm07FKZEvYFh8m/v+ME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lnfBekGz8Lrq8Y2fS7H3U++hPQhTQPtcBqKnPf6kIBEYRojqNcNdTuTJqKrCmVit7xTo3qapBftzr4cnexW75H8c1Xh2h9blxJtqUxi1Z706UtSUIzPjEXlFpsuDvaSqnaL4yyTJbTwjkl7QZpvWDem0rVwLlMZE5Bre1DaXwhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=QVWPrILY; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=z4wToOxGTVLxBXyaC8U3DGnuV27Hlpn0H+I99oKbK0U=; b=QVWPrILYqMUWJxsf
+	h6qZp3eLnWMfwcCvDtdYLNdU4lT50LBesRqQh1RD0xk862XgSrwcrY7QrOX+2P2LdRUUO7iOJGvy8
+	Nf31oxsU2u1ZmphCdK+PO+JQFOeRivS3z5n/bJgPSJvqjos2WOZud8hTkneC0okPWG5M/43fXLU6C
+	aXagcou1WC1Iek/xqfjqYgfRpiC638ORVzFu9cEr99jBd/SglIZKU+sH4pBsNFghZD3dvJXHiuAZ1
+	IZ1OluA3naPoO+JfJpneIDI9fB0SY+agQQttyHEA4vUK4dwg3kvk51yX7Nv9yf9rmVt9JsDT3pjcg
+	gSlGB7pievjp/G2PZA==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sYRy3-00DoQa-2B;
+	Mon, 29 Jul 2024 15:07:19 +0000
+Date: Mon, 29 Jul 2024 15:07:19 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Ian Rogers <irogers@google.com>
+Cc: kan.liang@linux.intel.com, acme@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf test pmu: Remove unused test_pmus
+Message-ID: <ZqewJ6oIprdRY8C5@gallifrey>
+References: <20240727175919.1041468-1-linux@treblig.org>
+ <CAP-5=fW+VbDaFV+YQCMMKYzrraMLLuVqb=BChL0o=-D5Y=4N_w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fW+VbDaFV+YQCMMKYzrraMLLuVqb=BChL0o=-D5Y=4N_w@mail.gmail.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 15:01:45 up 82 days,  2:15,  1 user,  load average: 0.15, 0.05, 0.01
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Mon 29 Jul 2024 at 15:44, Mark Brown <broonie@kernel.org> wrote:
+* Ian Rogers (irogers@google.com) wrote:
+> On Sat, Jul 27, 2024 at 10:59 AM <linux@treblig.org> wrote:
+> >
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> >
+> > Commit aa1551f299ba ("perf test pmu: Refactor format test and exposed
+> > test APIs") added the 'test_pmus' list, but didn't use it.
+> > (It seems to put them on the other_pmus list?)
+> >
+> > Remove it.
+> >
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> 
+> Strange that the compiler doesn't warn about unused stuff like this,
+> we get unused variables within a function and unused static
+> functions...
 
-> On Mon, Jul 29, 2024 at 04:15:31PM +0200, Jerome Brunet wrote:
->
->> Maybe mmio regmap should '.use_raw_spinlock = true' by default when
->> '.fast_io' is set ?
->
->> Mark, what is your opinion on this ? I guess it is not the first time
->> this occurs ?
->
-> I don't recall this coming up much TBH.  It may be that people just set
-> raw spinlocks when they need it, or that there's not many people using
-> relevant devices with RT kernels.
+The problem is that LIST_HEAD initialises the list to point to itself;
+so it *is* used - but only in it's own initialiser.
+I did file:
+   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=115027
 
-I have not been playing much with RT TBH, but AFAIK, with RT irq
-handlers are threaded unless IRQF_NO_THREAD is set. In this case,
-something preemptible in the handler should not be a problem.
+> Reviewed-by: Ian Rogers <irogers@google.com>
 
-The axg-fifo drivers do not have IRQF_NO_THREAD so something is a bit
-unclear here.
+Thanks,
 
+> Possibly:
+> Fixes: aa1551f299ba ("perf test pmu: Refactor format test and exposed
+> test APIs")
+
+Given it's got no actual effect other than a few bytes
+saved, I'm not sure it's worth the Fixes.
+
+Dave
+
+> Thanks,
+> Ian
+> 
+> > ---
+> >  tools/perf/tests/pmu.c | 3 ---
+> >  1 file changed, 3 deletions(-)
+> >
+> > diff --git a/tools/perf/tests/pmu.c b/tools/perf/tests/pmu.c
+> > index 40132655ccd1..0b2f04a55d7b 100644
+> > --- a/tools/perf/tests/pmu.c
+> > +++ b/tools/perf/tests/pmu.c
+> > @@ -18,9 +18,6 @@
+> >  #include <sys/stat.h>
+> >  #include <sys/types.h>
+> >
+> > -/* Fake PMUs created in temp directory. */
+> > -static LIST_HEAD(test_pmus);
+> > -
+> >  /* Cleanup test PMU directory. */
+> >  static int test_pmu_put(const char *dir, struct perf_pmu *pmu)
+> >  {
+> > --
+> > 2.45.2
+> >
 -- 
-Jerome
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
