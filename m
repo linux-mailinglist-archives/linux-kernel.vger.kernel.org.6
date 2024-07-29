@@ -1,145 +1,104 @@
-Return-Path: <linux-kernel+bounces-266111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39B3A93FB40
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:33:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE2793FB41
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA0311F2114B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:33:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5601A1F21E41
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F94A186E24;
-	Mon, 29 Jul 2024 16:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="CeCR6EuO"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8187A188CCF;
+	Mon, 29 Jul 2024 16:27:17 +0000 (UTC)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B2815EFC8;
-	Mon, 29 Jul 2024 16:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6305E15CD77
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722270435; cv=none; b=QB6lgtdniwj8oqF/qIJcWAajj0m3SWe0tF6BjetLtynhCj9maHIXNaVdTxOpysDBPod1yXao+q9Z4P7+4qbjrKTFAjYAPFm+5TLhg1368kOknZtQVZtMZ6x+c6MzBAjzqvJcd0qdi5LEBtxeYmNZZkaYqEW1cJhfnYMMzMNR28Y=
+	t=1722270437; cv=none; b=VtHv0grf2d0agXFuJReCKF6/5cLiWQ7mQu/hpXmfxEMMRZFgmnkEsIzX0UCW2bIYrrowLWy6rERXbSvAjL6jNtJ8jqhN1yi3kL+CrhYnVtvjQFZXEHEefYtDW++rFgyENOZPHrbXSuP68qC2PGTYUF2T/i2uPc+BbSn6kb/kqE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722270435; c=relaxed/simple;
-	bh=cBp/RizqX+dGUL9k7pxYf0+07L/ZUOrdrCuMDPx33IU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P0/eR6RhuPBAiKG9kugilr+tYVgVxr9LrHr6mkC4LajCEihfZsTjAh7iJxUenb+CgwwIIkyAbZm2c4178eQyqlN2n+tP8crCR6LUWZY4WnpNRrhBPeRSMIf0vklX8iVC6o2usIOD2ihd5U3yXP34M1+8DwPiOS7qYWUGSWUNA5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=CeCR6EuO; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1722270429; x=1722875229; i=wahrenst@gmx.net;
-	bh=CPdnaIAoXXo1X/Vj+jyI1YPMnpPkxnZy+xibg2I7caY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=CeCR6EuOJSqiLBnXbvlAoVBZnOpuU5t81NR1D21484AIo+gVenqTp+ga3ejT3AJN
-	 joAEYi0zTYmoxlr1Lp2IlI81iioBBy3UeXzEVt4HIx03KvYeZL+gv0tRlbynvRY9f
-	 Tr9/S3Dp20wBprAWJGYXSz3jq7qoKu6Zt1yMYmXHvfniJ4v4gsdUUu8tBSgFdOwqa
-	 OVYZo3S3HYzqoyd/1Q1NpN07DOTueXJcYvtGAHKJ9PkQ6lynJOlPgVFhAv2nWWSNe
-	 3nMqpxg8Mgy+GL1ngud5CnBB9xFYFYodfv3SSe4ihD7BTMHq9XOQDv5iYpV2pBy9b
-	 0FF6OIqfcWcKveXqZw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mf078-1s5Cvn02Is-00kGRc; Mon, 29
- Jul 2024 18:27:09 +0200
-Message-ID: <0c8fe963-50c3-44be-b2ba-10a9f99a28ff@gmx.net>
-Date: Mon, 29 Jul 2024 18:27:08 +0200
+	s=arc-20240116; t=1722270437; c=relaxed/simple;
+	bh=XyxfFeP5fO+sBfnPBCeVxwj+AqqvbJt3nXJoI8+pVjw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hqY7KorkGbwMZ7QpyzKhBRpvuclQy2u79IfwxslmiLesEefhiu2UT/OfaSuIUZR2WA2BA64Fe++PQztMLApQLjpQmCioGs4o5CqPHw+6FNWOyeNQzpRyE0/NDd+VYlJAwfRG9T38zu5TdfeYnXAmdof+DJKtyAaUFXn7V7KUzhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5af6a1afa7bso3321925a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:27:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722270434; x=1722875234;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gbCJuyqdHkjYO3agTQ/GQTTLIxGsDUT83KqTY72Y3tc=;
+        b=bx66LdgBOPcCfuZPVi5WffeoDBcntMvLWNTwvGYDPkVwQDJQoQWXTEwh1MBuoGjStV
+         Y3MszXgwkJ8i+lfmKReGriZO90AKe63FEVqbWLSZi8I30go31abqlx+hvJ2oTzsMz6Li
+         lCBNoHl4tlopz1JXrvZAdaIKtql9JNFL54t/Xtclgxhy18W7zI9uOUzXrw6PhsY6FZig
+         skd2ai3tPd37hA4fDbryNUmZfoFB8KqTPoAHp/tp6zUo0C2y2/UpkN6JS9fR/m+2FPgJ
+         svCzMekXYzlBrHn7LXG9CWrVmhnXEkvqfFDVRIJpQvizFMdsXBb+6FHjIC9A44sX5ZhN
+         srtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZx6kITVnImfXW4DeABB2g8QzwfG+omuuobs1jkUlLZyfzRkcGxxgNLqb/ueyiXUaYurZIIsjE8j4/GYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRITaxnslkLAjHKls20NzOOA8VXZN1Lw8HEXPpzcHcemlVrgrf
+	V0QYRt1vDIj7jQa6UIcf8Kno5Zy3ZwbxeUbbUAEU4DeS9NHT0FJ3
+X-Google-Smtp-Source: AGHT+IFXSX8L1dgH10M41AmyAELmchc9pARJkJLkZ6W/vXjHZOGzSM9Bi8qyOQH/NkhatuVzkrtRPw==
+X-Received: by 2002:a17:906:fe42:b0:a7a:cc10:667c with SMTP id a640c23a62f3a-a7d3ff9f305mr476837966b.16.1722270433325;
+        Mon, 29 Jul 2024 09:27:13 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-001.fbsv.net. [2a03:2880:30ff:1::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab4d27csm530090666b.46.2024.07.29.09.27.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 09:27:13 -0700 (PDT)
+Date: Mon, 29 Jul 2024 09:27:10 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: jpoimboe@kernel.org, mingo@redhat.com, x86@kernel.org,
+	tglx@linutronix.de, linux-kernel@vger.kernel.org,
+	pawan.kumar.gupta@linux.intel.com
+Subject: Re: [PATCH v3 00/10] x86/bugs: Separate config for mitigations
+Message-ID: <ZqfC3me0aC3N1iUQ@gmail.com>
+References: <20240422165830.2142904-1-leitao@debian.org>
+ <20240729092102.GAZqde_tdP_Ca-chhl@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gpio: vf610: add get_direction() support
-To: Bough Chen <haibo.chen@nxp.com>,
- "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
- "brgl@bgdev.pl" <brgl@bgdev.pl>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>
-References: <20240722062809.915867-1-haibo.chen@nxp.com>
- <8ebb5430-93fa-4239-b09a-59f35b0dd94d@gmx.net>
- <DU0PR04MB9496B93A0336D50B8545660890A92@DU0PR04MB9496.eurprd04.prod.outlook.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <DU0PR04MB9496B93A0336D50B8545660890A92@DU0PR04MB9496.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:F0ufmCEc+UMGh5e+pNUvZ8X2viYuJSe7FN5DtHRSPbDvnpB3isW
- otJbnknmnvUKgwYSzNsx3DdAo6zXeMbCWYMSwv95pYXQkwdo0xzFwIgyGT5mrpemYbOX6dt
- VTY27E3ZLavqFFsxyl0xyaQxoiyLuwfhWifawfIStzgMyB0hUj02zCn4pqzDOcX22dZSXM8
- 8N2wPa5d3xVq9i1rkeT5A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:XmhZ0AzoILg=;9SyJuRkxX+16V41ezd2ymvFlGUc
- k696rhNeLosWip7ZwrKaogY18p+zKa1f8Y7T7UL9uQs+Oaba6w/SZFSVneDpswF79GXKUSZdA
- 5HnAacfSI/a0t+FARZDVUTkK2UFYstBCpwS5DBvvzVCtFlHOhYF3CHLMA1lVkl3W9pIt0hKVr
- SM0RJI2iCzWaZrIaXD1I5qa2t50DjaOFSYROGSQRgX6PuO+O1sWCnTbTvHqVGLRV8HjrpuV1g
- ooIy+pjJxG+vTPqUZnX2Acm26HoMCr+mF6wbGBTWb3B1xZCeLDTjjsXcvzlsGdTHcY6sx50mw
- XaMh14jU668l9SSALL1WlKLJbaxHGn81CoIXmGIUtuYSYVnUiZ8SFFONua/ipoNKZe+y/OrOw
- ULiBe22zSMJYmJpCRxRcFKH358tzETyMVwmEY2Cq1HMlnieXsRI8xVFK0/l+WSZG7S8cgqLCX
- NvvrKAJC4lpyGltLhWfiWTuec+KE1LhlqwrUZnKRczO0ckTQMpeXyhwAuYHeyTR+mZH4eFCF0
- R+nxtb/qFb+6QxzPj1FU7scVok4FcL4NL7rYw6pnya4f6WXZzqoc+6/KEQyQQzrT/b7HRrE+c
- 90YheJbCFTEtUivGWgjI52zLwnY9lHP0iuuVm5cLvwAwCBDTu7iLK/tJDLfkXPBTheVzrSxiN
- JEzhF2QpmjpHBhQLdyZqwEeS4KlOhBapho7P1viPGe/De+nvyh56E0TxBYWFbCvFLJoJJG+0v
- GAJJjzKEX7gUcLucV5oPKBGypCCUFQlCto9bUa09dC5nsj+tzwDm4mEOKD4TWetGjWoDiPj2q
- gl1SVVCA6w7KuJiYhWnARXLw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729092102.GAZqde_tdP_Ca-chhl@fat_crate.local>
 
+Hello Borislav,
 
-Am 23.07.24 um 04:45 schrieb Bough Chen:
->> -----Original Message-----
->> From: Stefan Wahren <wahrenst@gmx.net>
->> Sent: 2024=E5=B9=B47=E6=9C=8822=E6=97=A5 18:32
->> To: Bough Chen <haibo.chen@nxp.com>; linus.walleij@linaro.org;
->> brgl@bgdev.pl
->> Cc: linux-gpio@vger.kernel.org; linux-kernel@vger.kernel.org;
->> imx@lists.linux.dev
->> Subject: Re: [PATCH] gpio: vf610: add get_direction() support
->>
->> Hi Haibo,
->>
->> Am 22.07.24 um 08:28 schrieb haibo.chen@nxp.com:
->>> From: Haibo Chen <haibo.chen@nxp.com>
->>>
->>> For IP which do not contain PDDR, currently use the pinmux API
->>> pinctrl_gpio_direction_input() to config the output/input, pinmux
->>> currently do not support get_direction(). So here add the GPIO
->>> get_direction() support only for the IP which has Port Data Direction
->>> Register (PDDR).
->>>
->>> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
->>> ---
->>>    drivers/gpio/gpio-vf610.c | 19 +++++++++++++++++++
->>>    1 file changed, 19 insertions(+)
->>>
->>> diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
->>> index 07e5e6323e86..08ca8377b19c 100644
->>> --- a/drivers/gpio/gpio-vf610.c
->>> +++ b/drivers/gpio/gpio-vf610.c
->>> @@ -151,6 +151,19 @@ static int vf610_gpio_direction_output(struct
->> gpio_chip *chip, unsigned gpio,
->>>    	return pinctrl_gpio_direction_output(chip, gpio);
->>>    }
->>>
->>> +static int vf610_gpio_get_direction(struct gpio_chip *gc, unsigned
->>> +int gpio) {
->>> +	struct vf610_gpio_port *port =3D gpiochip_get_data(gc);
->>> +	unsigned long mask =3D BIT(gpio);
->> thanks for sending this patch. I'm fine with this patch, but could we u=
-se u32 to
->> make it clear about the range of the mask?
-> Yes, u32 seems more clear here, but I notice all other place use unsigne=
-d long, so I keep the same code style.
-> I go through the history of this driver, seems no specific explanation a=
-bout the unsigned long.
-I understand, but i don't think there is a reason for using unsigned
-long. So maybe this is a good opportunity to clean this up.
+On Mon, Jul 29, 2024 at 11:21:02AM +0200, Borislav Petkov wrote:
+> On Mon, Apr 22, 2024 at 09:58:14AM -0700, Breno Leitao wrote:
+> > Breno Leitao (10):
+> >   x86/bugs: Add a separate config for GDS
+> >   x86/bugs: Add a separate config for MDS
+> >   x86/bugs: Add a separate config for TAA
+> >   x86/bugs: Add a separate config for MMIO Stable Data
+> >   x86/bugs: Add a separate config for L1TF
+> >   x86/bugs: Add a separate config for RETBLEED
+> >   x86/bugs: Add a separate config for Spectre v1
+> >   x86/bugs: Add a separate config for SRBDS
+> >   x86/bugs: Add a separate config for Spectre V2
+> >   x86/bugs: Add a separate config for SSB
+> > 
+> >  arch/x86/Kconfig           | 117 +++++++++++++++++++++++++++++++++++--
+> >  arch/x86/kernel/cpu/bugs.c |  46 +++++++++------
+> >  2 files changed, 140 insertions(+), 23 deletions(-)
+> 
+> Ok, rest looks ok. You can send a new version with all feedback addressed.
 
-Regards
+Thanks for reviewing it.
+
+I will send a v4, where I will drop MITIGATION_GDS_FORCE, and keep only
+MITIGATION_GDS Kconfig config entry.
+
+Thanks,
+--breno
 
