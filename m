@@ -1,280 +1,131 @@
-Return-Path: <linux-kernel+bounces-265843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549D293F6B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:29:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B3893F6B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00F4B286462
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:29:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C39FF1C21E5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CCEF14E2E6;
-	Mon, 29 Jul 2024 13:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D68A14B06A;
+	Mon, 29 Jul 2024 13:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1ONsvWh"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UZlMKw37"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24ED9148FEC;
-	Mon, 29 Jul 2024 13:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93631494A6;
+	Mon, 29 Jul 2024 13:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722259780; cv=none; b=VipvBR6iDizzx/8CeT/ZZFszpPcCZrLraAgXK6AH62CqMftSLKx+lwiUF53MFzJSunpJyEzukatF+CXI4YHbx1wEvJgc2mFRgbWkzsuwIFtxruKIfty/JwaktgPP3WawP3yQBdnba/OdyZdtRUsEuJdcgv5jCdOvcj8IR0RJLFA=
+	t=1722259798; cv=none; b=FkEBMjx4NJdMpT+1MTgOEuzIkmvWnP86BjLgWVGOAZ8Hb5F5+3R4+LojHTtSfGS5TZX+9LNW/a+5cdWe5OzzdQA9B27Pyo2B49EV/l9bFrZuYtkui5VISG5jMzA/lgB1sosd+7RFs2fC+TgHqJJ3vWw2pN63rpgG7zWP8dBcT3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722259780; c=relaxed/simple;
-	bh=FTROBxRRAkk3tPwT0yLeA9Qd/Y9mYEvCDTDLWetDzgs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N7t7LRianUVXWVJtLYOUIjsIRplefHMN2LH2A9Qmqu+NtzLzpl4cxD7z5fhdWfsnhA5ke7c6RbA0ITfVbx76+o2tOCDPIMvhYiMvHTwqcy/sH6K2HcxOtx1RvePcrvWHcnX0TUjoursp4fjn/s/O5/p2j4RCDzWS3lIDzGdRjXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V1ONsvWh; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e08724b2a08so2065359276.1;
-        Mon, 29 Jul 2024 06:29:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722259778; x=1722864578; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A1UFgN3Qz29rVihW4ffo2kFZjFPhl/pKrSqSLGvFCu8=;
-        b=V1ONsvWhbG7+D96N57ygMB5BDmvHIpA/SSKtWp+DnibN8fXJ9MdZTa9prkXvfIBbFy
-         y/NWfuhLe9IxSzjesWOFQrPru5AwDeHcjC0ssa62Vcm2VHyrkRr8c/cT4ZAdXrkJDD2T
-         6C3QKuiEK8YyjRFrAqHRDmFCH+Ot5wBfEhaBohMwWS+mnHeD1hakqTeqmKYXxwpRPq+g
-         aN5fTBX6cNOGyxzyS6hPN55i59zzTV8A8z7daf1JGyEzlikSd2pl4AbAXjPr3afKuj54
-         fteXebvSvL4TGL5t30nQcQ1TQwxrrXej66c3/lxFk3BNQjlqSN4j5n0qMv6xGmX1T9cj
-         GOog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722259778; x=1722864578;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A1UFgN3Qz29rVihW4ffo2kFZjFPhl/pKrSqSLGvFCu8=;
-        b=GtdZWB9c+Tk0GeT+tppewwOQDvEyAm7dpJqfPC5fS/D0+JPrI6Rc+oOGTGmntqOo+2
-         T6fanGJjBWKV+x5iwETWCI3RSlIahU7SKC/T1oy3lk6uurErpe1c2MvrOjq6ThjM6+X4
-         1QMJACRljkc/mmjrI5KvavvKQNHehTxWRKQ9RyJIijj2o2HVbuatCwBNkK3EBaTqil8J
-         JNwG2V6PhM1g22qZd7pnugpEuSoNuLdewm8v/03+E7tX7tFql1nZdcdpxeCcsZanbhmD
-         6SCYtzMUeg0YQWaT9HuVw3qJUJfg4xSIgDTASZcrNcas8vvVtlR9G+4Ot8tH9ysck++M
-         Qf1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWio05lOeTDn0tGrCCnx3T63Yv6T8g4pCFlK14jngyfKst76vEuN90fGt90EYHTZTFXEddUcnacC9gM9xxNn0GunzXiERVUM3OBqegCYD7vTBXReIsrJL8hvVrfGMg0o1ZJ9GePTKVMllyWqA722Q==
-X-Gm-Message-State: AOJu0Yz+EA5i9+9WEmPrc843eEHWz/oWEU4SguOttUavxBFqqnaQoaqY
-	GK56eoNMB04PvQck2awb4f23rINzm2ztQnmhB8GTnVBvYJAnNync4rRIu6nO7RbR7ZlaOswJNqt
-	PsgF7eI3YQvGyjdBlPczRC9tbhIk=
-X-Google-Smtp-Source: AGHT+IF9kntbFnkxVPI+THOLsDdUuZKcY2e0GCm6BCWjCKB0QjVjtmobWtrsmo7Cl9C2bmJxOPLBQRTNIhAMSwr8xKI=
-X-Received: by 2002:a05:6902:2b88:b0:e03:5da3:905a with SMTP id
- 3f1490d57ef6-e0b544403f3mr9445073276.13.1722259778090; Mon, 29 Jul 2024
- 06:29:38 -0700 (PDT)
+	s=arc-20240116; t=1722259798; c=relaxed/simple;
+	bh=APoUsuhYnLUDwtPUCx7/PYVeFex1ATI0uym46kYFOKo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L9eNhoH3Jo7XiGduSxXpRwQRzaVAlHzCKlKiDQ6w2QOtTVKUfzK6ohMj07X5C0VYa2klXT05edRhkBV0WECW9qow6K+TmfV3W3PGBAGE78LUr06Aw8UJhiNQReGdmYmPQO/wUpyfwX896iyb3x0ZY3wI2/K5i3/rbzkbp+gNf0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UZlMKw37; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TAPIf4007086;
+	Mon, 29 Jul 2024 13:29:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=eB6A9MrJh03YG6Qvz7znj4iY3W
+	40u7jTthKBXdGxDA0=; b=UZlMKw37sIjJ7e2ackZCJs0HMNd4xtoR8nlArIBJtn
+	Nb3FIwgsD2EmLh/GTbfWNv/1RSRMN4NdnA6O4U3jK00t8cD7dQ8pAwKSKPjrn6sR
+	aFIhu8h8hSwf+zf5bp5CNkXfr/j+GAldcnFLqDItyJGzcQeFIYf6VnahDrdIW/HJ
+	5VLsw28qoD/y3/2T48mvFYzjp+ogqzqLFCnmV1EkuN+nXClA35IBf8YGKvpJ5Lcm
+	BudBgAvF3Cu3zE3/pvwjZ+ifN/7LqswzqFsWnGLlSGhAsTTgHr2g794Zf7jctelL
+	4GaftpPzJhWwzvpWz/PvRifUgEL4NoUJgXoS0CxLeOeQ==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40mtbemt64-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 13:29:45 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46TDNZAn029128;
+	Mon, 29 Jul 2024 13:29:43 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40nbm0f0at-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 13:29:43 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46TDTevW41288180
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 29 Jul 2024 13:29:42 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4DF1D5804B;
+	Mon, 29 Jul 2024 13:29:40 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8B3FF58066;
+	Mon, 29 Jul 2024 13:29:39 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 29 Jul 2024 13:29:39 +0000 (GMT)
+From: Stefan Berger <stefanb@linux.ibm.com>
+To: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        jarkko@kernel.org
+Cc: linux-kernel@vger.kernel.org, mpe@ellerman.id.au,
+        naveen.n.rao@linux.ibm.com, zohar@linux.ibm.com,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v2] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize session support
+Date: Mon, 29 Jul 2024 09:29:34 -0400
+Message-ID: <20240729132934.311136-1-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726102826.787004-1-howardchu95@gmail.com>
- <20240726102826.787004-6-howardchu95@gmail.com> <CAP-5=fUztDHbZcwpT4VrXaGahH3k=B=uU-otv4tniJr=fazkFg@mail.gmail.com>
-In-Reply-To: <CAP-5=fUztDHbZcwpT4VrXaGahH3k=B=uU-otv4tniJr=fazkFg@mail.gmail.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Mon, 29 Jul 2024 21:29:27 +0800
-Message-ID: <CAH0uvogWu+tQ37o2-OGHCVDL8wp7LuB+Sm1k4CWWfpHZ-6nCvg@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] perf record off-cpu: Add direct off-cpu test
-To: Ian Rogers <irogers@google.com>
-Cc: namhyung@kernel.org, acme@kernel.org, adrian.hunter@intel.com, 
-	jolsa@kernel.org, kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: J_OEySM1r_qOd12P0g-88e86lwWUiQKw
+X-Proofpoint-GUID: J_OEySM1r_qOd12P0g-88e86lwWUiQKw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-29_11,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ clxscore=1011 adultscore=0 lowpriorityscore=0 mlxlogscore=999
+ malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407290090
 
-Hello Ian,
+Commit d2add27cf2b8 ("tpm: Add NULL primary creation") introduced
+CONFIG_TCG_TPM2_HMAC. When this option is enabled on ppc64 then the
+following message appears in the kernel log due to a missing call to
+tpm2_sessions_init().
 
-Thanks for reviewing this patch.
+[    2.654549] tpm tpm0: auth session is not active
 
-On Sat, Jul 27, 2024 at 8:54=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
-te:
->
-> On Fri, Jul 26, 2024 at 3:28=E2=80=AFAM Howard Chu <howardchu95@gmail.com=
-> wrote:
-> >
-> > Add a simple workload(offcpu.c) to create the scenario for direct
-> > off-cpu dumping.
-> >
-> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> > Suggested-by: Ian Rogers <irogers@google.com>
->
-> I tried with and without --off-cpu-thresh=3D1 but I only see 1
-> offcpu-time sample and no offcpu-time-direct.
+Add the missing call to tpm2_session_init() to the ibmvtpm driver to
+resolve this issue.
 
-TL;DR:
+Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ drivers/char/tpm/tpm_ibmvtpm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Please use 'perf record -F 1 -D 999 --off-cpu --off-cpu-thresh 1999
-perf test -w offcpu' :)
+diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+index d3989b257f42..1e5b107d1f3b 100644
+--- a/drivers/char/tpm/tpm_ibmvtpm.c
++++ b/drivers/char/tpm/tpm_ibmvtpm.c
+@@ -698,6 +698,10 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
+ 		rc = tpm2_get_cc_attrs_tbl(chip);
+ 		if (rc)
+ 			goto init_irq_cleanup;
++
++		rc = tpm2_sessions_init(chip);
++		if (rc)
++			goto init_irq_cleanup;
+ 	}
+ 
+ 	return tpm_chip_register(chip);
+-- 
+2.45.2
 
-We need to give it an initial delay, using '-D 999'.
-
-That's because when using "perf record <workload>", evlist is not
-enabled if you don't give it an initial delay or specify cpu. There
-are two occurrences of evlist__enable() in builtin-record.c:
-
-if (!target__none(&opts->target) && !opts->target.initial_delay)
-    evlist__enable(rec->evlist);
-
-Here, if you perf record a workload, say "perf record --off-cpu
---off-cpu-thresh=3D1 perf test -w offcpu", the
-"!target__none(&opts->target)" will always be 0, so no enabling.
-
-if (opts->target.initial_delay) {
-    pr_info(EVLIST_DISABLED_MSG);
-    if (opts->target.initial_delay > 0) {
-        usleep(opts->target.initial_delay * USEC_PER_MSEC);
-        evlist__enable(rec->evlist);
-        pr_info(EVLIST_ENABLED_MSG);
-    }
-}
-
-But we can do '-D 999' to give it an initial delay, so the evlist does
-get enabled, now BPF can perf_event_output() a direct off-cpu sample
-to the evlist. This is also the approach I used in the
-'tests/shell/record_offcpu.sh'.
-```
-  if ! perf record -F 1 -D 999 --off-cpu --off-cpu-thresh 1999 -o
-${perfdata} ${TEST_PROGRAM} 2> /dev/null
-```
-
-Thanks,
-Howard
->
-> Thanks,
-> Ian
->
-> > ---
-> >  tools/perf/tests/builtin-test.c         |  1 +
-> >  tools/perf/tests/shell/record_offcpu.sh | 29 +++++++++++++++++++++++++
-> >  tools/perf/tests/tests.h                |  1 +
-> >  tools/perf/tests/workloads/Build        |  1 +
-> >  tools/perf/tests/workloads/offcpu.c     | 16 ++++++++++++++
-> >  5 files changed, 48 insertions(+)
-> >  create mode 100644 tools/perf/tests/workloads/offcpu.c
-> >
-> > diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin=
--test.c
-> > index c3d84b67ca8e..5062058ad17d 100644
-> > --- a/tools/perf/tests/builtin-test.c
-> > +++ b/tools/perf/tests/builtin-test.c
-> > @@ -152,6 +152,7 @@ static struct test_workload *workloads[] =3D {
-> >         &workload__sqrtloop,
-> >         &workload__brstack,
-> >         &workload__datasym,
-> > +       &workload__offcpu,
-> >  };
-> >
-> >  static int num_subtests(const struct test_suite *t)
-> > diff --git a/tools/perf/tests/shell/record_offcpu.sh b/tools/perf/tests=
-/shell/record_offcpu.sh
-> > index 67c925f3a15a..1ea0a44336e2 100755
-> > --- a/tools/perf/tests/shell/record_offcpu.sh
-> > +++ b/tools/perf/tests/shell/record_offcpu.sh
-> > @@ -6,6 +6,7 @@ set -e
-> >
-> >  err=3D0
-> >  perfdata=3D$(mktemp /tmp/__perf_test.perf.data.XXXXX)
-> > +TEST_PROGRAM=3D"perf test -w offcpu"
-> >
-> >  cleanup() {
-> >    rm -f ${perfdata}
-> > @@ -88,6 +89,30 @@ test_offcpu_child() {
-> >    echo "Child task off-cpu test [Success]"
-> >  }
-> >
-> > +test_offcpu_direct() {
-> > +  echo "Direct off-cpu test"
-> > +  # dump off-cpu samples for tasks blocked for more than 1999ms (1.9s)
-> > +  # -D for initial delay, which is necessary if we want to enable evli=
-st
-> > +  if ! perf record -F 1 -D 999 --off-cpu --off-cpu-thresh 1999 -o ${pe=
-rfdata} ${TEST_PROGRAM} 2> /dev/null
-> > +  then
-> > +    echo "Direct off-cpu test [Failed record]"
-> > +    err=3D1
-> > +    return
-> > +  fi
-> > +  if ! perf evlist -i ${perfdata} | grep -q "offcpu-time-direct"
-> > +  then
-> > +    echo "Direct off-cpu test [Failed no event]"
-> > +    err=3D1
-> > +    return
-> > +  fi
-> > +  if ! perf script -i ${perfdata} | grep -q -E ".*2[0-9]{9}[ ]*offcpu-=
-time-direct" # 2 seconds (2,000,000,000)
-> > +  then
-> > +    echo "Direct off-cpu test [Failed missing output]"
-> > +    err=3D1
-> > +    return
-> > +  fi
-> > +  echo "Direct off-cpu test [Success]"
-> > +}
-> >
-> >  test_offcpu_priv
-> >
-> > @@ -99,5 +124,9 @@ if [ $err =3D 0 ]; then
-> >    test_offcpu_child
-> >  fi
-> >
-> > +if [ $err =3D 0 ]; then
-> > +  test_offcpu_direct
-> > +fi
-> > +
-> >  cleanup
-> >  exit $err
-> > diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-> > index 3aa7701ee0e9..84ab15683269 100644
-> > --- a/tools/perf/tests/tests.h
-> > +++ b/tools/perf/tests/tests.h
-> > @@ -205,6 +205,7 @@ DECLARE_WORKLOAD(leafloop);
-> >  DECLARE_WORKLOAD(sqrtloop);
-> >  DECLARE_WORKLOAD(brstack);
-> >  DECLARE_WORKLOAD(datasym);
-> > +DECLARE_WORKLOAD(offcpu);
-> >
-> >  extern const char *dso_to_test;
-> >  extern const char *test_objdump_path;
-> > diff --git a/tools/perf/tests/workloads/Build b/tools/perf/tests/worklo=
-ads/Build
-> > index 48bf0d3b0f3d..f37e9be8b142 100644
-> > --- a/tools/perf/tests/workloads/Build
-> > +++ b/tools/perf/tests/workloads/Build
-> > @@ -6,6 +6,7 @@ perf-test-y +=3D leafloop.o
-> >  perf-test-y +=3D sqrtloop.o
-> >  perf-test-y +=3D brstack.o
-> >  perf-test-y +=3D datasym.o
-> > +perf-test-y +=3D offcpu.o
-> >
-> >  CFLAGS_sqrtloop.o         =3D -g -O0 -fno-inline -U_FORTIFY_SOURCE
-> >  CFLAGS_leafloop.o         =3D -g -O0 -fno-inline -fno-omit-frame-point=
-er -U_FORTIFY_SOURCE
-> > diff --git a/tools/perf/tests/workloads/offcpu.c b/tools/perf/tests/wor=
-kloads/offcpu.c
-> > new file mode 100644
-> > index 000000000000..02be3d05b06d
-> > --- /dev/null
-> > +++ b/tools/perf/tests/workloads/offcpu.c
-> > @@ -0,0 +1,16 @@
-> > +#include <linux/compiler.h>
-> > +#include <unistd.h>
-> > +#include "../tests.h"
-> > +
-> > +static int offcpu(int argc __maybe_unused, const char **argv __maybe_u=
-nused)
-> > +{
-> > +       /* get pass initial delay */
-> > +       sleep(1);
-> > +
-> > +       /* what we want to collect as a direct sample */
-> > +       sleep(2);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +DEFINE_WORKLOAD(offcpu);
-> > --
-> > 2.45.2
-> >
 
