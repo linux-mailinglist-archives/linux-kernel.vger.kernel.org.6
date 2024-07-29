@@ -1,184 +1,108 @@
-Return-Path: <linux-kernel+bounces-266369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E89893FEE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:13:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BDFC93FEE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 952D11F2262E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:13:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B342F2841C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C57B189F30;
-	Mon, 29 Jul 2024 20:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5251891C4;
+	Mon, 29 Jul 2024 20:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8Iy2am9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hw/f1Xc7"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D021315FA68;
-	Mon, 29 Jul 2024 20:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7365743152
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722284004; cv=none; b=LpB/Er8xmj0JG0SOM36LqSHZdJRb6Ocxo8mGiL4ilzomR/rxW3SUbnuP5nN6JcMedGO+WFUCw+1ZPJwdgHvLEaofDcs2ze+4HaqeoEqflsRVVur7R9qLUBs+wmOfiLrax9gf6r6dy8uTRMhttEYlXlGW9gjIf+y8i4a3mNeGM3c=
+	t=1722284057; cv=none; b=fEexjKWgKSdEIQKIRsLgC1U0fUlgJW0o+JpIJisl/XK+ITqHkq33oS20ZtQUQiT4kSBuV4bdG+DpFADULs7dTJJZB5/vWzz+wsl2byUK2PN9xPrbxvpJQE8NVsCA9aixp3fjqVAHDtQKAH/IwKF3Wk21FDJypABFf81oWHYjRWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722284004; c=relaxed/simple;
-	bh=gGPWhEtkSuI4gw/H/rrz1kWifg4thlzksAPcYyJnj/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tHs8XJPq92Bw6WStF9bju9KJ7qRMbIOmUJLqsW3qUCFXW0HNoCDglC0du/nCvzRw/uUhQfYNmSxOEEcXvmN4Dj+tglqa6K1W6yRzW60Wflm7pALdZKxLtiwgWfPLdc9k0Ig0LMJmk//ZWFeg77GV9E9rwIlTw3IXe81w10k6HFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8Iy2am9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8515C32786;
-	Mon, 29 Jul 2024 20:13:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722284004;
-	bh=gGPWhEtkSuI4gw/H/rrz1kWifg4thlzksAPcYyJnj/g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=m8Iy2am9pROePioztZsl33xXkSdkDesNp8mvififF+1Z+3OZ10zAMFWzEjv5Hs1KO
-	 l0LB4wsyWhhRZNtnmTgd4KYQS301Y9qqLCLjUZvRTxSqOIGhV+1+UQFp56yvijQX0T
-	 2bXD3YZ9+UOsSHjDKdwy051bYjHjCWVyAd1v/5RRL+mLnU5i+qps+czmQoWPJwJHRf
-	 NJJbMuG7E6mJ2XF8ympEDWi/ivx/ewqXawlzDUzKrKch3pSTjjeuSIjk6i0GmMEcJR
-	 JT7kn1W+208bp1deITY8xYaME4rMg6gyxTGU+7xsS60kK7rlvhdn6a6KsnNDjVqnQq
-	 Lm/RDm6FL1sDA==
-Date: Mon, 29 Jul 2024 21:13:16 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Esteban Blanc" <eblanc@baylibre.com>
-Cc: "Lars-Peter Clausen" <lars@metafoo.de>, "Michael Hennerich"
- <Michael.Hennerich@analog.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Nuno Sa" <nuno.sa@analog.com>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David
- Lechner" <dlechner@baylibre.com>
-Subject: Re: [PATCH RFC 2/5] iio: adc: ad4030: add driver for ad4030-24
-Message-ID: <20240729211316.3b0d3f8b@jic23-huawei>
-In-Reply-To: <D323OLK1T0CG.1OGNBVY1FDVJT@baylibre.com>
-References: <20240627-eblanc-ad4630_v1-v1-0-fdc0610c23b0@baylibre.com>
-	<20240627-eblanc-ad4630_v1-v1-2-fdc0610c23b0@baylibre.com>
-	<20240629173945.25b72bde@jic23-huawei>
-	<D323OLK1T0CG.1OGNBVY1FDVJT@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722284057; c=relaxed/simple;
+	bh=6qk7HpHLYEwpFQisMPINM615aHGawWFZGy/k2uka1U8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KsgXGPyFyoVtTWyal/FQGI7ZMkI1Ed2fudLV3qv9KoZxkNUC5HKGw6T5EZyHUGtWHLVdU+v/ZO6Ir8LA+rXm/uDk4oKlroKQhm3XB9cQGJWpsZwQh3M6JMH3tAUXM1IJz1jOeFAN7pJv70e1YXDfnSCyEjnKnAb+1I3I2tSsjus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hw/f1Xc7; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d199fb3dfso3145618b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:14:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722284056; x=1722888856; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6qk7HpHLYEwpFQisMPINM615aHGawWFZGy/k2uka1U8=;
+        b=Hw/f1Xc70CDcZ3KcoQz9EW+wjE4jdtyCz9cooTk/TQV05GvuTA367YJgu7ZJYxL0Cj
+         bgxAigf2Y1dnKicQDkNfZ7b40n6NpmxDm3V8U3mIQXDpaH9Jiop5MmcT6QxGZJaljtYB
+         DivSdV+PXyFyA1TKOfKgKb/J5gjyUAv5HY32N/TiPxNKssEVxbww+OuGEJMBqsQdiIZv
+         BjcKOMqupqEfVwrRFVowmyhCE/Mf+++ih7n9y2dVzKqCHWU88Js31gDqLlbx5oG6lTDp
+         mfbRwpC3+0YP0bsgvGdZsZBlEpo1uivszMjolhGwFeP85SNYkUlqwG1pTj4I8GflGf4k
+         wr+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722284056; x=1722888856;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6qk7HpHLYEwpFQisMPINM615aHGawWFZGy/k2uka1U8=;
+        b=nONZg8IIdjXk7X4fdMutG8N4DVvDx0AHiC8qJUNbRSWuQJOklra3sOCZNso3ObfIR8
+         PtiGbcRJq+ObpExY9VTg4TbD0F/9hiQwYfSi+AObuRfe+jnPtSDHMugtgkwuh0gHvE32
+         Eb2Eoz6VsEHTlxraeK0xXVYs1hSl/+RyG0US3ME6NhKuMkqefcseIFjOb5gbE9i1xKSZ
+         at9+97hIHTS/iuBZij94zxzCPXdbgRgOIpGMuBC3C55dEs2GFXCJuNgmOmQVAd1K93na
+         m/MyDA94ip3zIOus5K9HB6UKH02rbdNmEeGcFwSqhqrcP7KlXphcSC7gi5m1zUgD3Eu7
+         evpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSxmQyKHtbQPUjCcqljB7c+0zerjqV2cRwx0mX56tpuOFsWGH5E9gaH+4GdC0GrR93Zbll+obbppMF7rpcA3qKONsjHt6U+FemQoFm
+X-Gm-Message-State: AOJu0YwUOShvDJhfyjh/HUC9Tyv1s00Ug6iFcdRg8TRFgxqwmPjXHdvv
+	YO1D1MpU294rt4StHEZj2881jKzBQpwVV4PmWnS5i/XjXK/O5rBup/BV4JXUn9/n9A22fVdzOmd
+	WG0/mAiT6XWFlCqwpVa+7GXlX2Ks=
+X-Google-Smtp-Source: AGHT+IF1NSOQXcTtDLn17s4oBxIGTzFnq3W2Jf9YK/PPitYbhT2D0ah5RqbVUMt/rquJYM17X6DDvmsmxqf4MKKxwKM=
+X-Received: by 2002:a05:6a21:9986:b0:1c4:244c:ebc2 with SMTP id
+ adf61e73a8af0-1c4a1324e22mr10250575637.30.1722284055679; Mon, 29 Jul 2024
+ 13:14:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240729-clang-format-for-each-macro-update-v1-1-9c554ecfec3e@gmail.com>
+In-Reply-To: <20240729-clang-format-for-each-macro-update-v1-1-9c554ecfec3e@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 29 Jul 2024 22:14:02 +0200
+Message-ID: <CANiq72kFpS5BE7Ea8=Z6SUi_Y2RAt5wsssHyqL3ocgR1UOHJMg@mail.gmail.com>
+Subject: Re: [PATCH] clang-format: Update with v6.11-rc1's `for_each` macro list
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 29 Jul 2024 16:42:16 +0200
-"Esteban Blanc" <eblanc@baylibre.com> wrote:
+Hi Javier,
 
-> On Sat Jun 29, 2024 at 6:39 PM CEST, Jonathan Cameron wrote:
-> > On Thu, 27 Jun 2024 13:59:13 +0200
-> > Esteban Blanc <eblanc@baylibre.com> wrote:
-> >  
-> > > This adds a new driver for the Analog Devices INC. AD4030-24 ADC.
-> > > 
-> > > The driver implements basic support for the AD4030-24 1 channel
-> > > differential ADC with hardware gain and offset control.
-> > > 
-> > > Signed-off-by: Esteban Blanc <eblanc@baylibre.com>  
-> 
-> ...
-> 
-> > > +static int ad4030_spi_read(void *context, const void *reg, size_t reg_size,
-> > > +			   void *val, size_t val_size)
-> > > +{
-> > > +	struct ad4030_state *st = context;
-> > > +
-> > > +	struct spi_transfer xfer = {
-> > > +		.tx_buf = st->tx_data,
-> > > +		.rx_buf = st->rx_data.raw,
-> > > +		.len = reg_size + val_size,
-> > > +	};
-> > > +	int ret;
-> > > +
-> > > +	memcpy(st->tx_data, reg, reg_size);
-> > > +
-> > > +	ret = spi_sync_transfer(st->spi, &xfer, 1);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	memcpy(val, &st->rx_data.raw[reg_size], val_size);  
-> >
-> > Can you just use spi_write_then_read() here?
-> >  
-> 
-> I was planning on doing that. But I'm getting a timeout issue when
-> using `spi_write_then_read`. I can see the tx_data going out, rx_data
-> is recived but CS is kept asserted. I need to investigate more but in
-> the meantime I'm using this as it is working. I will remove this
-> workaround if I can find a fix and add a comment for now.
-Fair enough. We've had a few drivers where the timing doesn't work
-recently. Definitely good to leave a comment to avoid a 'fix' :)
+On Mon, Jul 29, 2024 at 9:56=E2=80=AFPM Javier Carrasco
+<javier.carrasco.cruz@gmail.com> wrote:
+>
+> Note that commit 4792f9dd1293 ("clang-format: Update with the latest
+> for_each macro list") added the macro `displayid_iter_for_each`, which
+> is not part of include/ and tools/ (it is defined in
+> drivers/gpu/drm/drm_displayid_internal.h), and the shell fragment used
+> to update the list will drop it. In order to keep the macro on the list,
+> manual intervention will always be required.
 
-> 
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	if (st->chip->precision_bits == 16)
-> > > +		offset <<= 16;
-> > > +	else
-> > > +		offset <<= 8;  
-> >
-> > As below. This is hard tor read. Just use appropriate unaligned gets for the
-> > two cases to extract the write bytes directly.
-> >  
-> > > +	*val = be32_to_cpu(offset);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int ad4030_set_chan_gain(struct iio_dev *indio_dev, int ch, int gain_int,
-> > > +				int gain_frac)
-> > > +{
-> > > +	struct ad4030_state *st = iio_priv(indio_dev);
-> > > +	__be16 val;
-> > > +	u64 gain;
-> > > +
-> > > +	gain = mul_u32_u32(gain_int, MICRO) + gain_frac;
-> > > +
-> > > +	if (gain > AD4030_REG_GAIN_MAX_GAIN)
-> > > +		return -EINVAL;
-> > > +
-> > > +	val = cpu_to_be16(DIV_ROUND_CLOSEST_ULL(gain * 0x8000, MICRO));
-> > > +
-> > > +	return regmap_bulk_write(st->regmap, AD4030_REG_GAIN_CHAN(ch), &val,
-> > > +			  AD4030_REG_GAIN_BYTES_NB);
-> > > +}
-> > > +
-> > > +static int ad4030_set_chan_offset(struct iio_dev *indio_dev, int ch, int offset)
-> > > +{
-> > > +	struct ad4030_state *st = iio_priv(indio_dev);
-> > > +	__be32 val;
-> > > +
-> > > +	if (offset < st->min_offset || offset > st->max_offset)
-> > > +		return -EINVAL;
-> > > +
-> > > +	val = cpu_to_be32(offset);
-> > > +	if (st->chip->precision_bits == 16)
-> > > +		val >>= 16;
-> > > +	else
-> > > +		val >>= 8;  
-> >
-> > I 'think' I get what this is doing but not 100% sure as it's a bit too unusual
-> > and I'm not even sure what happens if we shift a __be32 value on a little endian
-> > system. I would instead split this into appropriate cpu_to_be24() and cpu_to_be16()
-> > to put the value directly in the right place rather than shifting in place.  
-> 
-> cpu_to_be24 does not exist yet. I will have a look on how to add them.
-Ah. Almost by definition be24 isn't aligned in some cases.
-So put_unaligned_be24() is what you are looking for.
-My mistake!
+Thanks for the patch!
 
-Jonathan
+That macro was inside `include/` back then, so now it should be
+removed from the list.
 
-> 
-> 
-> All the other comments will be addressed in V2.
-> 
-> Best regards,
-> 
+Of course, if we want to include internal headers, that is also an
+option to be discussed, but we should be consistent either way.
 
+Cheers,
+Miguel
 
