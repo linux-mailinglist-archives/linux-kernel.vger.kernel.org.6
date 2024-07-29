@@ -1,137 +1,125 @@
-Return-Path: <linux-kernel+bounces-266482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C82D6940083
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:35:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13552940086
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8813E2839E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:35:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37ACE1C221B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1E218E74C;
-	Mon, 29 Jul 2024 21:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B983518D4D3;
+	Mon, 29 Jul 2024 21:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sZqvj1Ze"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EL0H54vN"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C0B18C321
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 21:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2AB18A93C
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 21:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722288941; cv=none; b=AeDvWnuL2Xx0qdbrzgoIpzMwO8i9X6DLv2JMpT6BM5GMeAhXWRGaG62mL4MASBvWSU8DMkeDO3vLb0eUKcz2IyQvohv6t8NWJL+ruccHwv4ORfdPcA0qfU3ScwafJtmA1cEed0mtHGOMh9rqWI3c6CWFSbL5fObIcLnBgRG2MIk=
+	t=1722289149; cv=none; b=t1nYvsLRqTtmfao9jxBYnJD38ts0Va6R6KXPw+2GVYeA/5vw7mCqsb1PMxR6NZY+d7K7Y3nZ8yTlvfgp55NsfsYKGA9lva4pLxMCem6oJBUNRg+sk3kNBuOE2f8i6QQgfw27lo0ehSgI9O3uDsXk4lDUdfPpJegveqXN3oGl9PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722288941; c=relaxed/simple;
-	bh=DhOLdiM9YWhv6ZcKyKdrGJbx+EvMKRcY5IZ/2bt8Y9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HEO9ECUuMQHe2xk2ldmDdcca5tETTJSStQ8PTQk5Z76kRMUOaHqFdz2ffulKK9F9xKWn6JhHgpOhkuDOAkQ9D1ARYMl5HYAScA0AnUjw6mnS4z577mi8WkgpmYBaxSPdJB8lsvHry+YIn/KVBGQsB86xgldKDWt7rjZdW52wK0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sZqvj1Ze; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3db1d4dab7fso2396453b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:35:39 -0700 (PDT)
+	s=arc-20240116; t=1722289149; c=relaxed/simple;
+	bh=ZKY4QE8q3VAnLTSURlWscP30jdf97HBeG7B0gjM2qT8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=itL+YR/fZ3F5YXSMZxQILb5ghxpOIGdta72L8IyV26qOIy4Sy5Yv86BnIOd9/uRPjKCwZ0rEGCrHGd/9nHPZvkJyuq2jXW9ZJ7c03RdSk0Ig9AbTfROCSahdkD5m9hGwc4c6sf8ieaIrsVvZPk4Ur8TgWz7biiHxagefMQUYcXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EL0H54vN; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7aabb71bb2so555714566b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:39:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722288939; x=1722893739; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8jCZ4dJacok9yS/sGhPIVw4hVTsTqbKuUreZrjjqP2I=;
-        b=sZqvj1ZefP41wGT5cKfvYjUgsSEWnLED+8SZ8UWuiFkEQaapBicrOvzh7j0fFw14S7
-         GrvoOwAYGzJfSbiy2404qrobEOzOoAd1OR5i832vT9n4ZsuKr5CC274YKICZSXaK5O1h
-         9AgWyC73iWi3TOPioWrZ1z8Pq4SF6UWbxGJoJf77wwptsMwN0brgKJvJaKSEp4P/78Ht
-         7Uix2+d1Kex2S6/yxxXWHzIkjek4/X5oxppNKArEhXCcOdi64JEcvJqc1lM+zzRgZaH2
-         G75ExpGW0uXR2uPCy3DLXefqM1cx7DlPi2dzCyLtIVMwB/raea7lxNlIKC0ahGgJwRR3
-         lhCw==
+        d=gmail.com; s=20230601; t=1722289146; x=1722893946; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Xbu478JrkZGqTN2SecfNLUxeWNK8IU0WdYOsK9KhOXk=;
+        b=EL0H54vND2FoxEQFCs1hD24XoWsBHhqYDNoEJn4U5NZcu8WLEOS1cW3FluoIIE8srJ
+         3GPLVMGdS9FkO5CdgqeUnrUC35eeKx6nq/INfnLnBuInkN4LOrupT8kv8XsVSmAn4bi2
+         TQFYBj3ikeKn0Xt9qdOywF0yZ0M7l+mWOWf19PXllFKuWN63pvF+hYuk+DVCh+W9rqxT
+         hD/67jo10RpnwBrIrEPBT52dwAT6G/4C4I7Q3GxNL37fcyEMYNiaLIlDmVSNHjyqO/3O
+         K24ZdkAhKK1Ca0zrM754PnG32mN27kRq7kiXkXz/iylsuuBEREdj+bKY6sfbeZPDwv/D
+         7+Lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722288939; x=1722893739;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8jCZ4dJacok9yS/sGhPIVw4hVTsTqbKuUreZrjjqP2I=;
-        b=eUscEGdULIGPTpzWKPI6M5pIyrpwWXGBkUOAJ7BfnAbmjZBKhglN7bMdpdWxz3mXAt
-         phZ/WCflv7+xuI3eeP0GsJbydan5VvWyyZfrpMpIFVGLH/rKD1gA0gCT0c49BhAuEotU
-         aj0vUV6i9s0TsljtSZV2JO9P2STXtw5VGcA6Iv+1+NYMa65KWY0xgQwk4+TPQuE875dZ
-         G2vDLJAzQQHzumtHVmtE3/eMtitETGBwuf3VfwRnmvOqGMq5ZH6D1oS4i7YCQA4Reu5K
-         md/B17YRzxbKIXUYl7WwTNUyZSthBAasjgCqndK1sffmg65HpC4BzuOYoF+ZOaBpGcwR
-         zjgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQjRgKVwTexWGo8piWD65cQQSyv35WCst2Tje+ROpc8TFXHkADHoXKc9okQnT1s411l2BIVlOxjt5WRRVNbykbQW2LEB0uWROKLS3Q
-X-Gm-Message-State: AOJu0YxeFkR5X0gbxxUmMBJTGQRUepeQ1NujZ5rvVkLGQkzSqgwnD0Lc
-	PP9fP4iXcAjWonWPKRQs1bsDh01/iwxCZy2GEg3iNNnnR8nj0ZSNPa2JXot5/PE=
-X-Google-Smtp-Source: AGHT+IHDvjNGEn3OlMcAR6Il1gwE9cH+Q82mJfYpkkx7Ley40Dv5Z1neEY9qJN9BU+smiLkpIMX/Og==
-X-Received: by 2002:a05:6870:46a9:b0:254:8afa:6914 with SMTP id 586e51a60fabf-267d4eedec3mr10816825fac.34.1722288939167;
-        Mon, 29 Jul 2024 14:35:39 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700::17c0])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7095aeb0acdsm61008a34.64.2024.07.29.14.35.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 14:35:38 -0700 (PDT)
-Date: Mon, 29 Jul 2024 16:35:36 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Helge Deller <deller@gmx.de>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] fbdev/hpfb: Fix an error handling path in
- hpfb_dio_probe()
-Message-ID: <9cc6ac18-3804-486a-8549-fd13b6ae121e@suswa.mountain>
-References: <dc4fe3d857849ac63131c5620f1bacf1a3d7172e.1722191367.git.christophe.jaillet@wanadoo.fr>
- <698958fb-4fc8-4288-b067-5843c651b093@gmx.de>
- <ac4c6712-c47b-4414-9640-3018bf09e8fa@suswa.mountain>
- <9dbb2b52-4fc9-4bbf-a6a2-ab6ec32adb8f@gmx.de>
+        d=1e100.net; s=20230601; t=1722289146; x=1722893946;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xbu478JrkZGqTN2SecfNLUxeWNK8IU0WdYOsK9KhOXk=;
+        b=LtVgBjCeWGE/jcUaWfcmDX2R1UCuYjAYDxHppQ1SWFFLAL/nfs/h/fkVZRDQGVJRUz
+         KJyWcIryAjWWYSJXwe7EOr2+HR8rTTuzsToJQck0TTNCyGj2ekXWgl6vcLQQNU60Bs1b
+         Ce9dSzrYwWYDeK4uV/JYxFFB9YVXqI61vrMV2kjCyRYlu+N5fpUt7yYXdBqsuL+DGoVo
+         GC+re5PLbwk8FkrC/xd0lpV8dpKkXteZsNHRRxIv2CT19QLaO5Yfs9Qot/adiwTmDr4f
+         l9hfWPVR1oTKW5pznUwWefawm9/iVEwZsXLhOEeQgLjaBCspOODKLPQGTNTopTx5h4AK
+         g0Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSC4FXtV38/i9SRz5VSZGG9mO62wWGxXEqmOE9VZaMXWrdqKP6wf4UdPtkAAYlGAYQoYa2l1jZZq9Kgd/g63MC23ImpP3//efGt0OD
+X-Gm-Message-State: AOJu0Yy9uc4+DfdO77/Nhr6C3RUjDl9/as1GoGOEEapxxBKnZFLv+9vu
+	uLTtNKQ7TOvYVfUeIdCMmYmH5AeJPsVk4TwjRiYSwL9HRiEznouU
+X-Google-Smtp-Source: AGHT+IEZFU76rsbjWXI+oaAFvgWT6s+1N+HIyBNRXxzXfgCzC4udfKj7bBkOXZCqGHkgVami9ZYrgw==
+X-Received: by 2002:a17:907:d8c:b0:a7a:b385:37cd with SMTP id a640c23a62f3a-a7d400a0393mr445509666b.30.1722289145503;
+        Mon, 29 Jul 2024 14:39:05 -0700 (PDT)
+Received: from [192.168.0.31] (84-115-213-37.cable.dynamic.surfer.at. [84.115.213.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad4148fsm562108766b.121.2024.07.29.14.39.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jul 2024 14:39:05 -0700 (PDT)
+Message-ID: <17e81b06-7778-44f4-94cd-6a2b1fe5c7e0@gmail.com>
+Date: Mon, 29 Jul 2024 23:39:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9dbb2b52-4fc9-4bbf-a6a2-ab6ec32adb8f@gmx.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clang-format: Update with v6.11-rc1's `for_each` macro
+ list
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <20240729-clang-format-for-each-macro-update-v1-1-9c554ecfec3e@gmail.com>
+ <CANiq72kFpS5BE7Ea8=Z6SUi_Y2RAt5wsssHyqL3ocgR1UOHJMg@mail.gmail.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <CANiq72kFpS5BE7Ea8=Z6SUi_Y2RAt5wsssHyqL3ocgR1UOHJMg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 29, 2024 at 10:09:39PM +0200, Helge Deller wrote:
-> On 7/29/24 17:59, Dan Carpenter wrote:
-> > On Mon, Jul 29, 2024 at 10:13:17AM +0200, Helge Deller wrote:
-> > > On 7/28/24 20:29, Christophe JAILLET wrote:
-> > > > If an error occurs after request_mem_region(), a corresponding
-> > > > release_mem_region() should be called, as already done in the remove
-> > > > function.
-> > > 
-> > > True.
-> > > 
-> > > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > > 
-> > > I think we can drop this "Fixes" tag, as it gives no real info.
-> > 
-> > If we're backporting patches then these tags really are useful.  As
-> > I've been doing more and more backporting, I've come to believe this
-> > more firmly.
+On 29/07/2024 22:14, Miguel Ojeda wrote:
+> Hi Javier,
 > 
-> Sure, "Fixes" tags are useful, but only if they really refer
-> to another patch which introduced the specific issue.
+> On Mon, Jul 29, 2024 at 9:56 PM Javier Carrasco
+> <javier.carrasco.cruz@gmail.com> wrote:
+>>
+>> Note that commit 4792f9dd1293 ("clang-format: Update with the latest
+>> for_each macro list") added the macro `displayid_iter_for_each`, which
+>> is not part of include/ and tools/ (it is defined in
+>> drivers/gpu/drm/drm_displayid_internal.h), and the shell fragment used
+>> to update the list will drop it. In order to keep the macro on the list,
+>> manual intervention will always be required.
 > 
-> But the tag 1da177e4c3f4 ("Linux-2.6.12-rc2") isn't useful, as it's
-> just the initial git commit. It has no relation to why release_mem_region()
-> might have been initially missed. See:
+> Thanks for the patch!
+> 
+> That macro was inside `include/` back then, so now it should be
+> removed from the list.
+> 
+> Of course, if we want to include internal headers, that is also an
+> option to be discussed, but we should be consistent either way.
+> 
+> Cheers,
+> Miguel
 
-In the last couple stable kernels we've backported some pretty serious
-networking commits that have Linux-2.6.12-rc2 for the Fixes tag.  So if
-it's security related that's really important information.
 
-For minor stuff like this, the commit will be backported as far back as
-possible and until it ends up in a list of failed commits.
+A quick test threw 326 extra macros that are defined in internal headers
+under drivers/ and arch/. Including internal headers would remove the
+need to update the list if a macro is moved from inlcude/ to an internal
+header, but the list will need to be updated much more often.
 
-When I'm reviewing the list of failed patches and there is no Fixes tag
-I think maybe it was backported to all the affected kernels?  In that
-case, I could have skipped the manual review if the patch was just
-tagged correctly.  Then I wonder, why wasn't it tagged?  I just assume
-it was sloppiness honestly.  I'm probably not going to spend that much
-time on it, but it's annoying.
-
-When a commit lists Linux-2.6.12-rc2 as the Fixes then it still ends up
-in the failed list.  But it can't affect too many users if we're only
-getting around to fixing it now.  It's easier to ignore.
-
-regards,
-dan carpenter
-
+Best regards,
+Javier Carrasco
 
