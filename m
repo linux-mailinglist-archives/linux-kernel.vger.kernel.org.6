@@ -1,108 +1,95 @@
-Return-Path: <linux-kernel+bounces-265665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC5193F42F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:35:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F1A693F431
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F328B207E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:35:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5A5928623C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435FF145B29;
-	Mon, 29 Jul 2024 11:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38814145B25;
+	Mon, 29 Jul 2024 11:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="mKmAhjZN"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="e6NJG+AU"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B612266A7;
-	Mon, 29 Jul 2024 11:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0191448FA
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722252808; cv=none; b=UPIzYs9JCpxjeGUKjWjCE5GK4e+zeDzT9+hBGo5nRBN9TLcvBN6kr3eXxOigleEozM7fcsSEpMupYCxcumpyRoMHpSTn0FmBoXlRxD1SDrcqIePbeylKyKNxkvYT1qYdiHYldJQRU3F/jPrsIFc1GA9+sI/6l+eIemWbjzq8rvk=
+	t=1722252981; cv=none; b=OlZeHTcG/yXJ3/HTqM70/ab5fSel1lSG2/SNZfU0vCx3nLXUfEqpvxO6ccL6NrM6EYog+fvBeMQQt9Uta1YeGkPRe1gRhvdIDJzKNh5cAD/54CK5QeA9UQQRimr4YTOQjU4h+PupxLB57Fj17aoVdGBE2iSHFeT6jqL9ceExQKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722252808; c=relaxed/simple;
-	bh=acN/ezs8iAPLyp3BzBJmwqAy15+20pYOD5fBlU3G2g8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h+YTk2RJharMLcVGD3CssYFJK5w9kkuc6qQcr0FqEIALqGWHaDToCK1218hmZHABlnU0lOu8S60nD7Sajwhg5h6RmHLAFI/sCvfAWgzGxeWJZCb5RMQes4AvvhP3JhanL3otI8oqPEGfs/2FFO0pT/PFEuWnLO6zczMSSyt+v88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=mKmAhjZN; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wW9pxkDzQg+yBW1oIEL/KaRBqPYRvqr8l7NCyzI1vz8=; b=mKmAhjZND32uINvoMlw8aAwV45
-	JM8gYQ5yvZxJN9wwL5vOmaP9p9S4woOwnZ0QHbHYGf806WmsaApv6dRXJmvZmK443XlFau4HOK7ty
-	PS1EOh+d95auyIjLW3cnUBc2m95ln+UEU39BI7kAt9oAgI8LjL4HzS341sX85VNHppwtBuwtTxWE0
-	Ulrebm3qogVzFVpthb9yxcTPLXeTs8KauIprCix8nuCPkm3DJlNpNDU65BaNzE8zXehNuISKUkpUy
-	4LOdrFf8xxRKGrTz914qlqIxvyGdrpytWDdz3IW1aet706cA2r7tYL6tXWhsvmN5J1VABBJOwP5gD
-	9btd+zpg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55110)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sYOcq-00045I-1a;
-	Mon, 29 Jul 2024 12:33:12 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sYOcp-0004HW-NT; Mon, 29 Jul 2024 12:33:11 +0100
-Date: Mon, 29 Jul 2024 12:33:11 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	linuxppc-dev@lists.ozlabs.org, xen-devel@lists.xenproject.org,
-	linux-fsdevel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v1 1/3] mm: turn USE_SPLIT_PTE_PTLOCKS /
- USE_SPLIT_PTE_PTLOCKS into Kconfig options
-Message-ID: <Zqd998jx8NJK+BNX@shell.armlinux.org.uk>
-References: <20240726150728.3159964-1-david@redhat.com>
- <20240726150728.3159964-2-david@redhat.com>
+	s=arc-20240116; t=1722252981; c=relaxed/simple;
+	bh=9d/TuvIi2gaVki/61lDkSdIbeGequPDx+pBjCZNjcnk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rpjOTqIQc8VPmvQGSTAnzFAUI+rYLjZGQ6fXOMDq+SljJy63YAhhPT4jENmGtDgVtNiq6JDR4NxLDgDSQzubzMObpBHz1zujN+dxv8vQo0/g8drNKxx6/KK2cgEx8jcKsgU+F8dvQmKMBFY3TcBCQJ6AObYQmU4ykOPdgZZqHYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=e6NJG+AU; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7ac449a0e6so242149166b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 04:36:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1722252978; x=1722857778; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9KF3mlZEDxsHIPxRij6eufhwBQK9CK0HzJYTYEnEj7k=;
+        b=e6NJG+AU7bvhMyO7XK7VFDXFLBSLx+wSJlNE5GeqDoKWmFcx93lSZqNzOnEcfZBsm1
+         +KexIa7bISvCIVHTwIkeyPqv/qdqC+hfcJr6V/rlLZcK7SircOPysAgxaoZ4OcLjJcqv
+         qjbOO6E96Cq2+JGydEodAZt54+gdbLTs7bdXhXRmlo4+4JPkEXmaBEe8mNfqsGMFQlZL
+         wfJAqBrij6i63xeJnZ1x7qiloaDhWFaRYppzUTcKukS98nh7rm9cu24nqzdWq3mFJEBf
+         6nV7YGcvmaWIQaN7Pf3yjLc7cejOFJcxjPcet4sx6TDMvoee2p6gAjQ/5HyP1qJUVEmz
+         AvCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722252978; x=1722857778;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9KF3mlZEDxsHIPxRij6eufhwBQK9CK0HzJYTYEnEj7k=;
+        b=O8L3Y1Kwmqa1dj6026O11G01iD6Q7IZ0DaeKEDW1TR99pjWEITDZSYA+s2O3sxgJH5
+         FPThw1Hexwcj2OOfiyIPS9o8xL13+/5Udk1K1mY3Jw2q671/4kQn+KCC4YYG5YkfcBRg
+         tlFY5lIgN7xCgMOwamoz7tECIwDCZI+t1qPEzQy0EZ1qzj07It0Kkfseaj3oEZyZmrmQ
+         d9A/wTsrR2UsJ9JV2L8rs7RjDOkcjeiDtN3yKZ0omEm8HcFbfOTut1QWpV1espK7zeNu
+         qUvO9uyZJrLWtnF2jGcbBUGVmf8ZiI0tbldGvmM9S2HBcs/QmFzDvAhAPlGmcTUSMdT8
+         tYWg==
+X-Forwarded-Encrypted: i=1; AJvYcCULlFJJb8IQv+o2JcUu40UMNmRqp8+RG1RwK2MPnY8PyHA5e81Me/XhYb0gCeC59rFI6d6GwkAxke8xSsHkvYuHdJh5N8N7UIwSk/bS
+X-Gm-Message-State: AOJu0Yyql6RvYlp+vw5XADV4hC9ZYxoLDsAtWRo7BaMXxs6T3IBINh2m
+	C82/52lZGPp5rOeRj7rBJsu2075TFhYudwvTympmKSLilgKPzFixBLrRUSLvs+CjfpI9DrcNV7d
+	zalGZRHrvudp6uGxJKNDLSO2qE4qBCcmJUtE4Iw==
+X-Google-Smtp-Source: AGHT+IGKpUG8GjQyZSSGXOjOMOggSW6ZJ6EszzZi7IF1MSWLkKJ/Q8dWEZAXvw9LMoCLxfRh6TQumDR0DdnGLtVJdlI=
+X-Received: by 2002:a17:907:160a:b0:a7a:8cb9:7490 with SMTP id
+ a640c23a62f3a-a7d4013523dmr456527566b.47.1722252977589; Mon, 29 Jul 2024
+ 04:36:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240726150728.3159964-2-david@redhat.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <CAKPOu+_DA8XiMAA2ApMj7Pyshve_YWknw8Hdt1=zCy9Y87R1qw@mail.gmail.com>
+ <CAKPOu+8s3f8WdhyEPqfXMBrbE+j4OqzGXCUv=rTTmWzbWvr-Tg@mail.gmail.com> <CAKPOu+9xQXpYndbeCdx-sDZb1ZF3q5R-KC-ZYv_Z1nRezTn2fQ@mail.gmail.com>
+In-Reply-To: <CAKPOu+9xQXpYndbeCdx-sDZb1ZF3q5R-KC-ZYv_Z1nRezTn2fQ@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 29 Jul 2024 13:36:05 +0200
+Message-ID: <CAKPOu+8q_1rCnQndOj3KAitNY2scPQFuSS-AxeGru02nP9ZO0w@mail.gmail.com>
+Subject: Re: RCU stalls and GPFs in ceph/netfs
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 26, 2024 at 05:07:26PM +0200, David Hildenbrand wrote:
-> Let's clean that up a bit and prepare for depending on
-> CONFIG_SPLIT_PMD_PTLOCKS in other Kconfig options.
-> 
-> More cleanups would be reasonable (like the arch-specific "depends on"
-> for CONFIG_SPLIT_PTE_PTLOCKS), but we'll leave that for another day.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+On Mon, Jul 29, 2024 at 12:17=E2=80=AFPM Max Kellermann
+<max.kellermann@ionos.com> wrote:
+>  BUG: kernel NULL pointer dereference, address: 0000000000000356
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-
-Thanks!
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+This is obviously NETFS_FOLIO_COPY_TO_CACHE; this looks like it was
+caused by 2ff1e97587f4 ("netfs: Replace PG_fscache by setting
+folio->private and marking dirty"). That commit uses
+folio_attach_private(), but fs/ceph already used
+folio_attach_private() for something else.
 
