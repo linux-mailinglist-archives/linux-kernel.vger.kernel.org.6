@@ -1,169 +1,152 @@
-Return-Path: <linux-kernel+bounces-265845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F090D93F6B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:31:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42ACA93F6BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CB2C1F22374
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:31:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6400C1C2161D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB56149DFA;
-	Mon, 29 Jul 2024 13:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B496E1487CC;
+	Mon, 29 Jul 2024 13:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X0hkDigB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MRdk4mvF"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F45514534C
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8705B8C06
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722259868; cv=none; b=p4znALx7cHFlL/DseikzboppdxlAvPJ0yyxTSUFQJ8i2PC8GhLycFAInTq6b9AXRqHfMZEfcxW1ViIjNLi4uFJDf9yIYq7CAXkyJhCDGEfJ9q1Ce4xJchwL7NMw6mpIf20Btf2urSiLfYE9+dhZdzUvREbwcDRMBeCSSOBSFN2U=
+	t=1722259956; cv=none; b=cMOOBqEpm0xY7UKCZAf4YzozgCgkEbSb/0saIQSQTziBdOnTBjOVc+3zQdsqC8tN+sLDPJixwXsmyIUpwVb5q8axx+6iPugkQiLzUQ+kk7Ff2ZUHRzYdF0wL52zDDvPgRg9xdpLk8RDE2qtZh5HQGyb1gr6/G6Y4cAGmW2Obbf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722259868; c=relaxed/simple;
-	bh=XsHOodkGVugeYBKiy3NN35QUunVskHzFOlmmNRL11kM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AeFI7FuOdZxN6yekBgw4IJm4+jemwgnGPbHlDvAPC2lj3NJaZPzNcUgO+bsm2PPm1E72xJEKe3/MhGnYW7jnj62MweeWPml8PwrbehGJ3FfCcbQS070mMZJt9FqDZZRQJ5ncN/7Fp+eKFO1CrBT9njHtMOEZNvvGG8Kgsa07zck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X0hkDigB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722259866;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BlLuGikkUGKCvXsXriKTsyTsgVOTK7WyWyEUec7ttEo=;
-	b=X0hkDigB4aMS00aS8tmZYH2LISya30UOR6AahRZgJvmK2sUxxgvgXgg7YuNqgE1Xz3/UAr
-	lcoQ/Bjjgj2Hh0wPqp4AKj9vfJvlcuwkmIVC0/mUvRJRMe4g40OhrmhFaNmqPr/gVX05i5
-	cyWlp8jOKxloqm9lRbWh3GAFQ1BKdCY=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-616-XRtzAszOMwObE630tr-Zfw-1; Mon, 29 Jul 2024 09:31:03 -0400
-X-MC-Unique: XRtzAszOMwObE630tr-Zfw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4280291f739so17868295e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:31:03 -0700 (PDT)
+	s=arc-20240116; t=1722259956; c=relaxed/simple;
+	bh=FORGH31FVY36dwbf1bsEa9eg79lwKPk1j59XV5rC67A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gf+6f6ZsKTqH1LiECcJCv/0eOulyyuk+tuznbNyAWROgGlygpf60QT7LVPpbGZvLSyrw6QCfP4A+vs7tFUlpHshmVQHqCal/7gnbmwisLrkdXZdzevZOuvxPawsVLPqhKooVy3Jr8LVHeGfuxlGLTQSWmNUlUIpihqZ4YYfXZHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MRdk4mvF; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52efdf02d13so5369341e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:32:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722259953; x=1722864753; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YbRjAHQtUB3Dfr8gxrGGpoQyBA89PQB8SKva9HnXgRk=;
+        b=MRdk4mvF5d3UaIeKXnzkZTMlol3JKuOlEk5TaAWga9MqpX44IQx4cZN4NLcj+HzbD6
+         Uj/FQ9RxPScW/Q5npUJJdpqEI4x6nSsLIyL7JSgSBFr6d9z86ZGd7Vpg246VmtEUT1Z+
+         B85TUCLxg2JRTqt/UqLJPGwqLIQQG/kv3HqV3whIsQEJsOPLRTbGLst5DHocfjOzxU20
+         zI+PHIDSNzgVe80aL6k7QS15N7NtCUUozFrhAwn1yPMjis41x5mRojfuEZK4RB7/8MIb
+         Rlkfu5HCdmF65itqIFn2/NWDETwPCCIDG1TXJnsjv+UgKvmMXKLjSPROnxx/Utu+X1/U
+         g93Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722259862; x=1722864662;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BlLuGikkUGKCvXsXriKTsyTsgVOTK7WyWyEUec7ttEo=;
-        b=jvc9EGbdeEOv3r/M9BUz1mN7ZasQG9BtQMtHiRHkSXQRl8DJPL4MMo0gjuKsDdBoT2
-         KSyrvKEnyJE1pLumjjjt/LafWfFP/o90kO5wb+d87Z2BUD9b3wUa34NjOu8MV6SnmRTo
-         jVLpFBegHdvmBiXHQxH6TZdPSZuANBYe18gIV4kJ0LW5SINDOO9jP2bup9/r6Zayw1u1
-         oV4W5zciMATV6ZoGp3LNtisPJpAbSnfuA24xxqzYCyrG5oS9ijMggBz4CZaHoQYowLtc
-         wMq7OaMnJVqojzO5jDWFNngSy+uWNnfMusTGUcBKnpF/qN8SaJiyGBMMtBMzHQlrTMNw
-         r1IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUT8VskJb37+Nm38PDej8R/k6SAqyy55JVwNZiT2NunkzPKqFGwZ+Qwiw7D22kFP2s2ytlgZZO/W8I0/k2M6cvheREXLsdC59F8atn
-X-Gm-Message-State: AOJu0Yw15LO9dWetgneKvNTulRWzZW8GTtaEyrE37ylKxivnxBQrN3Xo
-	1wfDnU0P8+EKmjwkIylnUar5rlrV+OboiJ4jJJh8n7OvYzfOzYVOGFvn81IE49LDzTLZ4Pu8xaV
-	PnKZ7lzYyYjMoiGvv0if8EdRvHKK4kzwM9N3HPtKqd3uXuMPK4MEMDUF2+ENmUE1+mGSJ1Hhs5H
-	4Op0HvMFGsdmCEMpyBRGnP3mBDStN/2LLZGdQ7l0sz4y0fvg==
-X-Received: by 2002:a05:600c:4b1a:b0:426:64f4:7793 with SMTP id 5b1f17b1804b1-42811da7dd3mr53752865e9.22.1722259862471;
-        Mon, 29 Jul 2024 06:31:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHMndcFYOEWtmUpK603jitEUzAiFadBmIa0FTnXJv33+nbkyn2Th00kSMWmDtDaf3Zoy7ZjjQ==
-X-Received: by 2002:a05:600c:4b1a:b0:426:64f4:7793 with SMTP id 5b1f17b1804b1-42811da7dd3mr53752525e9.22.1722259861832;
-        Mon, 29 Jul 2024 06:31:01 -0700 (PDT)
-Received: from fedora (g2.ign.cz. [91.219.240.8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36858148sm12306885f8f.72.2024.07.29.06.31.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 06:31:01 -0700 (PDT)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Mirsad Todorovac <mtodorovac69@gmail.com>, Sean Christopherson
- <seanjc@google.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [BUG] arch/x86/kvm/vmx/vmx_onhyperv.h:109:36: error:
- dereference of NULL =?utf-8?B?4oCYMOKAmQ==?=
-In-Reply-To: <207a5c75-b6ad-4bfb-b436-07d4a3353003@gmail.com>
-References: <b44227c5-5af6-4243-8ed9-2b8cdc0e5325@gmail.com>
- <Zpq2Lqd5nFnA0VO-@google.com>
- <207a5c75-b6ad-4bfb-b436-07d4a3353003@gmail.com>
-Date: Mon, 29 Jul 2024 15:31:00 +0200
-Message-ID: <87a5i05nqj.fsf@redhat.com>
+        d=1e100.net; s=20230601; t=1722259953; x=1722864753;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YbRjAHQtUB3Dfr8gxrGGpoQyBA89PQB8SKva9HnXgRk=;
+        b=nBmnNKb5trz37AXwmrGg8oNk2o9cmarwbTQNFxTR1UzplzXf/CcKhhU3tH0HZ1c3qY
+         mH4uJvKqLlPgR/UH91QqndY+7BDWZ4mYJ4N2+GKzXiQLdIxTedOSyn1nJSqLAG+cX8uZ
+         5n7vsiLai/ETcm1vd6KlKaSURAt9s35fGS4IfokKgf7QDffgfYjONId8vZp0VrscVDjE
+         a7gbj1fIJInYZnCxdNDc4Ofz4A84VjTyk/+EX9+oNNysBKnM4Bs2LeLA+xs9jyzWBiLG
+         2EluZpg2GpmtwdJdye7AA5yHFfGIpJzmOBewqgtED/tyDB98m76Op6EYv6WbSsFCeI9K
+         9tEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVffjhFH0FCkjzVqLbA4BssqO/EJGR9lfhhoeej0BDCwCegRifxuBxvGnXE/UAYECn/ccvdqtQdHFIo9UnLVxQeSBexoJm3n54YSoFp
+X-Gm-Message-State: AOJu0YxgeGEiYIUg7y9bdpSXx0EiKNtm4jSJqFW4sjLpPS1ot4RoU2l/
+	RQVCprioy6gh/5GhTeIuKQD02Xm08itzZOfFFJ2t7coOWuT5cvLHAH/D3AUmQEWt/WO43ZSnlgr
+	HaXeZV2vWqCuikWd0ubmz6OYeY/A=
+X-Google-Smtp-Source: AGHT+IE71KUp2UUw2nzU+qFo3xxkx15j6FcheRdalU9a6Wo0DAliW7C/B2RxOZOo+MHMdZNXOuTl+qDdqcspqNW0Q7Q=
+X-Received: by 2002:ac2:4bc7:0:b0:52c:84ac:8fa2 with SMTP id
+ 2adb3069b0e04-5309b269275mr7252892e87.7.1722259952209; Mon, 29 Jul 2024
+ 06:32:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240726094618.401593-1-21cnbao@gmail.com> <20240726094618.401593-4-21cnbao@gmail.com>
+ <ZqcRqxGaJsAwZD3C@casper.infradead.org> <CANzGp4J3et+yo8v8iDngvAb3nrn-gSDh0_j0=65OEiw9jKJbPQ@mail.gmail.com>
+ <ZqeRO9gedIPcbm3E@casper.infradead.org>
+In-Reply-To: <ZqeRO9gedIPcbm3E@casper.infradead.org>
+From: Chuanhua Han <chuanhuahan@gmail.com>
+Date: Mon, 29 Jul 2024 21:32:20 +0800
+Message-ID: <CANzGp4JobgUNCUXrv-kXw_NFBCNp7pO9bGwUBJxMDjca8P7G-w@mail.gmail.com>
+Subject: Re: [PATCH v5 3/4] mm: support large folios swapin as a whole for
+ zRAM-like swapfile
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	ying.huang@intel.com, baolin.wang@linux.alibaba.com, chrisl@kernel.org, 
+	david@redhat.com, hannes@cmpxchg.org, hughd@google.com, 
+	kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
+	mhocko@suse.com, minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
+	senozhatsky@chromium.org, shakeel.butt@linux.dev, shy828301@gmail.com, 
+	surenb@google.com, v-songbaohua@oppo.com, xiang@kernel.org, 
+	yosryahmed@google.com, Chuanhua Han <hanchuanhua@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Mirsad Todorovac <mtodorovac69@gmail.com> writes:
-
-> On 7/19/24 20:53, Sean Christopherson wrote:
->> On Fri, Jul 19, 2024, Mirsad Todorovac wrote:
->>> Hi, all!
->>>
->>> Here is another potential NULL pointer dereference in kvm subsystem of linux
->>> stable vanilla 6.10, as GCC 12.3.0 complains.
->>>
->>> (Please don't throw stuff at me, I think this is the last one for today :-)
->>>
->>> arch/x86/include/asm/mshyperv.h
->>> -------------------------------
->>>   242 static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
->>>   243 {
->>>   244         if (!hv_vp_assist_page)
->>>   245                 return NULL;
->>>   246 
->>>   247         return hv_vp_assist_page[cpu];
->>>   248 }
->>>
->>> arch/x86/kvm/vmx/vmx_onhyperv.h
->>> -------------------------------
->>>   102 static inline void evmcs_load(u64 phys_addr)
->>>   103 {
->>>   104         struct hv_vp_assist_page *vp_ap =
->>>   105                 hv_get_vp_assist_page(smp_processor_id());
->>>   106 
->>>   107         if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
->>>   108                 vp_ap->nested_control.features.directhypercall = 1;
->>>   109         vp_ap->current_nested_vmcs = phys_addr;
->>>   110         vp_ap->enlighten_vmentry = 1;
->>>   111 }
->>>
-
-...
-
+Matthew Wilcox <willy@infradead.org> =E4=BA=8E2024=E5=B9=B47=E6=9C=8829=E6=
+=97=A5=E5=91=A8=E4=B8=80 20:55=E5=86=99=E9=81=93=EF=BC=9A
 >
-> GCC 12.3.0 appears unaware of this fact that evmcs_load() cannot be called with hv_vp_assist_page() == NULL.
+> On Mon, Jul 29, 2024 at 02:36:38PM +0800, Chuanhua Han wrote:
+> > Matthew Wilcox <willy@infradead.org> =E4=BA=8E2024=E5=B9=B47=E6=9C=8829=
+=E6=97=A5=E5=91=A8=E4=B8=80 11:51=E5=86=99=E9=81=93=EF=BC=9A
+> > >
+> > > On Fri, Jul 26, 2024 at 09:46:17PM +1200, Barry Song wrote:
+> > > > -                     folio =3D vma_alloc_folio(GFP_HIGHUSER_MOVABL=
+E, 0,
+> > > > -                                             vma, vmf->address, fa=
+lse);
+> > > > +                     folio =3D alloc_swap_folio(vmf);
+> > > >                       page =3D &folio->page;
+> > >
+> > > This is no longer correct.  You need to set 'page' to the precise pag=
+e
+> > > that is being faulted rather than the first page of the folio.  It wa=
+s
+> > > fine before because it always allocated a single-page folio, but now =
+it
+> > > must use folio_page() or folio_file_page() (whichever has the correct
+> > > semantics for you).
+> > >
+> > > Also you need to fix your test suite to notice this bug.  I suggest
+> > > doing that first so that you know whether you've got the calculation
+> > > correct.
+> >
+> > >
+> > >
+> > This is no problem now, we support large folios swapin as a whole, so
+> > the head page is used here instead of the page that is being faulted.
+> > You can also refer to the current code context, now support large
+> > folios swapin as a whole, and previously only support small page
+> > swapin is not the same.
 >
-> This, for example, silences the warning and also hardens the code against the "impossible" situations:
+> You have completely failed to understand the problem.  Let's try it this
+> way:
 >
-> -------------------><------------------------------------------------------------------
-> diff --git a/arch/x86/kvm/vmx/vmx_onhyperv.h b/arch/x86/kvm/vmx/vmx_onhyperv.h
-> index eb48153bfd73..8b0e3ffa7fc1 100644
-> --- a/arch/x86/kvm/vmx/vmx_onhyperv.h
-> +++ b/arch/x86/kvm/vmx/vmx_onhyperv.h
-> @@ -104,6 +104,11 @@ static inline void evmcs_load(u64 phys_addr)
->         struct hv_vp_assist_page *vp_ap =
->                 hv_get_vp_assist_page(smp_processor_id());
->  
-> +       if (!vp_ap) {
-> +               pr_warn("BUG: hy_get_vp_assist_page(%d) returned NULL.\n", smp_processor_id());
-> +               return;
-> +       }
-> +
->         if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
->                 vp_ap->nested_control.features.directhypercall = 1;
->         vp_ap->current_nested_vmcs = phys_addr;
+> We take a page fault at address 0x123456789000.
+> If part of a 16KiB folio, that's page 1 of the folio at 0x123456788000.
+> If you now map page 0 of the folio at 0x123456789000, you've
+> given the user the wrong page!  That looks like data corruption.
+The user does not get the wrong data because we are mapping the whole,
+and for 16KiB folio, we map 16KiB through the page table.
+>
+> The code in
+>         if (folio_test_large(folio) && folio_test_swapcache(folio)) {
+> as Barry pointed out will save you -- but what if those conditions fail?
+> What if the mmap has been mremap()ed and the folio now crosses a PMD
+> boundary?  mk_pte() will now be called on the wrong page.
+These special cases have been dealt with in our patch. For mthp's
+large folio, mk_pte uses head page to construct pte.
 
-As Sean said, this does not seem to be possible today but I uderstand
-why the compiler is not able to infer this. If we were to fix this, I'd
-suggest we do something like "BUG_ON(!vp_ap)" (with a comment why)
-instead of the suggested patch:
-- pr_warn() is not ratelimited
-- 'return' from evmcs_load does not propagate the error so the VM is
-going to misbehave somewhere else.
 
--- 
-Vitaly
-
+--=20
+Thanks,
+Chuanhua
 
