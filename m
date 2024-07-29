@@ -1,106 +1,145 @@
-Return-Path: <linux-kernel+bounces-265528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926D193F271
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:18:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357BC93F274
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C35531C21A14
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:18:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B518FB2396E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D91175808;
-	Mon, 29 Jul 2024 10:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BB0143C6D;
+	Mon, 29 Jul 2024 10:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SWEOwGUu"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Msy6SQms"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96625F873;
-	Mon, 29 Jul 2024 10:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42BB5F873;
+	Mon, 29 Jul 2024 10:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722248307; cv=none; b=PHKAL9Ez4eT8MJbB5sIKjVnrkRnN4sozXmXs2UEO/9DIbp9zchGyDR0EvP42nUPVkdQ5llL6dPdVD/UieYge+nE5C8RYJgtF3imzW6g9awQEOhW1TwGcthnHyBUyEy2UdyDiAcmlvG/ihQrcTfqnFmxo5NkM+AI9aIfYI5y/jYM=
+	t=1722248312; cv=none; b=KuAIb9MRTvQQGGUzLeMBvZtfSVSUTzvgGPb7qyzf+jsnSdGNMjwxfYI2rMYa41MvGsOkLB+0kogsxGomIqoaGln7HR0TE3+mt6aGI3Nqocvnybpe0S96GLTysIM6qj3CaGOC0ZTcG580OmHGCS3Cuj0N3VoM+4OHtXIxBqfje94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722248307; c=relaxed/simple;
-	bh=Z6i/dw05jrVzJC72UKVz7DRgDDdCVqz4Gjyw/0WlU+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ui6TrtsvGIZ/fu1nyeWJfbgPAzpy95od7Oplzi0Tn5WxB0tcfbQxDWJU2+YKGVy++9RZm1Pen2rpD2iZn0vmz+VIwyIEkC1TxhM1BHNIjlQ+bGKiuqrIN2RhrOcjDilmrlrBe2jYEDdsO0CBEVoUVQhih8h7Hhn3B7C+2ZxgumA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SWEOwGUu; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1722248312; c=relaxed/simple;
+	bh=Fm9RTXSGnH0y/BmAEzolz2nfAJS55MrZOWKzYJnwnK8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EC8LXbo1OitsbKHTZL4VZYCnTZPTvHPpyrpkYocL3718VSsLQu42EO+qhfKcT1BTyyjw/9jJDh43aMjcVDCK6eVC6t+RYCVcN+i56FV4BYIR2TreE2nIFeAEJebq9CflOmMU3xtSaOm7NbgSrySXxahDZSwrLwpiXUYUGDCH8Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Msy6SQms; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so14541895e9.2;
-        Mon, 29 Jul 2024 03:18:25 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-368584f9e36so1181635f8f.2;
+        Mon, 29 Jul 2024 03:18:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722248304; x=1722853104; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z6i/dw05jrVzJC72UKVz7DRgDDdCVqz4Gjyw/0WlU+A=;
-        b=SWEOwGUurjcGK4Y5bBgpCo/RSjSvq22HC3S6rnrD3Tlwyq2X1M77Ru8G7jQqPiDrb6
-         KTxARP0HIxp4uMpv8MMQqCIknmiZNl9OQ7Zu1a1hJxK7F0ACPtGhyyg7KATfjf80Cy35
-         6aESajfpwvrDqt+4iZg3jRuD/E7cO9tgRYkF7Q1WjyuJAZ7akHIdXKyX1qs5WOdOmRMF
-         BO2Svh3rCZN6v+7c04Xoozf0eN/FpTswck8+Adc87to1UPyXuNSMdD5TraXehreNclGd
-         S5zkjQCB3r8MhSmmKsn3ljcYenC4mPQ6W3X6IrM1IksakyESY9jkHH9p3iZjKql2eYVk
-         IuVQ==
+        d=gmail.com; s=20230601; t=1722248309; x=1722853109; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4070wEPuCK+XBMXivSVC69hgE/A0jjc0lrf2/fMWbNo=;
+        b=Msy6SQmsgqk76/2DpQayZhgLu7myCtYG86XPQf+Xd2+xBrUA/idgW2X8vCv9DJ+xBD
+         01hlSkRyf35mxIZ1wTwSjI4mKJMZAe7/w+B0JAK26cQ1rJMSQweCeCKKW6aJkbouSaw2
+         lvAWRymJg2mTTUuK49lRa7mw6o5OMeezq+1LK8Us2dNDwqrQO4Hz/do9v+ZJElaH1ix3
+         0iNJ/F7GZUXB5w7TgiVm8kF0xaKmC/NZhGcRZPIe6MzS7RfCimyzPg1jOOR9GyI0RgXT
+         x6XJW+U15k8FKoCi3UJhUZp5jbs5o7dZ4gco35qKVvV/CrJSeDnXHEWNADGVHBosftUs
+         E+AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722248304; x=1722853104;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z6i/dw05jrVzJC72UKVz7DRgDDdCVqz4Gjyw/0WlU+A=;
-        b=qUWdWXtALjcp2445FHYsLjvEd+j48dt8Iy2HnkfE7Q349qk26a6mE68afhPL1w6oqU
-         ezZFiQhLyXUDdOYCISaEv1ZKqnif8n6HkSpbv0ojpBIvDYWNzcBIg900jo9QI45JycHG
-         LzyiBEOShRYBHWik1jckn8RIJ9ESNthL9y12euBCAep4iyEcChzUc1VXBJ+tCcNVOZ1G
-         1l8S+vnBiCzuqxbhThpoWNkV77kH2u7ZHFBHIJFnk2zJNUHD0+d4rBd0kppvoESI8U+3
-         JAhTPNx6U7PBdONSDM3QgoijeF3/xZj8oDSqU2cglXuotgBBgPi9ZrzyPAy5O/1bJyL3
-         Kxiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPfTnq/H/xNuEFYeQX7FKGtNPMLMLY7XBRvfcpduLAiCrZl29tNUQzQqdKp15558H5hfKkFJ1zwRLgyl8SEASy5GCUQ68V1X7DhOf/A/Q0Omj3R480xJzOStr/QNCF1koCjY1GQgNM
-X-Gm-Message-State: AOJu0YxQyCrTcnbGOUhAPaBaxJfOifDslxlJdOPvuCEMkzFSEPD4xHJG
-	s+DI1zmToikUEfRbH2DKw/qEhmQRUt4MDZNKFvw4cCF9p9JtjAXj
-X-Google-Smtp-Source: AGHT+IG18514HKOtzbkzR3RJchNZQb9L6S2W9H0FE6f4Po2yJ5snbzks/hMJqXWbFpwjG108dfDbMw==
-X-Received: by 2002:a05:600c:1c83:b0:426:622d:9e6b with SMTP id 5b1f17b1804b1-42811dd79fbmr46403635e9.23.1722248303867;
-        Mon, 29 Jul 2024 03:18:23 -0700 (PDT)
-Received: from f (cst-prg-68-42.cust.vodafone.cz. [46.135.68.42])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367f0e26sm11838333f8f.47.2024.07.29.03.18.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 03:18:23 -0700 (PDT)
-Date: Mon, 29 Jul 2024 12:18:15 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-api@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-Subject: Re: Testing if two open descriptors refer to the same inode
-Message-ID: <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
+        d=1e100.net; s=20230601; t=1722248309; x=1722853109;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4070wEPuCK+XBMXivSVC69hgE/A0jjc0lrf2/fMWbNo=;
+        b=UKnP70yeBJF3E0Jl7zTtZO2QRsH3V1e5o4YdYfQXaDMD+OjZNndLdkIMOsaGyiEych
+         2+v93O6egztghjI0SXwAh/+ET9OytuueqEc8W9NVYSb/XtkOx3XFuC2RMiUL0h7Fa/ex
+         azkosUf3a2p2xgwZ8sdlPDxPNCdZvc7YP2NlohNAN6/eEXSp82XKktjq+Oe2eBW0bXkO
+         T4tTm8ifxxJBZG41fCIf3wvVSugbK9+/kOzn12zgme2BJSOFk8k0K6oqx9vM0kvSR3is
+         3tvreIOUtK119Jyp4gE7TR6APW8JgEoMJWrqpliz24QUBhv5hUNxRYMSQ93oIudfcitO
+         5gUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWybDxnTPeyI4Czbn4FCHyYbDZd5xSQe9jLehzVe0kQ7pObuPUtxnOMa98A74UsOFBiiLZbrrTydMStNLrNlyPKaVu2i2x7QyB7NpCQojDT1uUleufZCpfdwJ/mlqphXfNh3HcK
+X-Gm-Message-State: AOJu0Yyr7yC4602RUKp3ylBN/o1nIONpjbIub3BsHQBLUlM16vxJYyxT
+	DG+WNcXo/JNmDD7kM63KcabMA3uFh2uVY48YvWQQ6Ddu5fl5GVg8
+X-Google-Smtp-Source: AGHT+IH7A1lqUuwH5k0M8ObbYrSicUxsMy3T+JnKuD/B22l4fGLT5uoDvyU5FVapfs8Pb+B9+abbkQ==
+X-Received: by 2002:a5d:5f51:0:b0:35f:1f8a:e69a with SMTP id ffacd0b85a97d-36b5d073f43mr7723052f8f.49.1722248308956;
+        Mon, 29 Jul 2024 03:18:28 -0700 (PDT)
+Received: from [192.168.1.17] (net-2-44-141-41.cust.vodafonedsl.it. [2.44.141.41])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367d9b30sm11889527f8f.40.2024.07.29.03.18.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jul 2024 03:18:28 -0700 (PDT)
+Message-ID: <0b96911d-a6f3-44d9-a273-0e9c71da2e9b@gmail.com>
+Date: Mon, 29 Jul 2024 12:18:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <874j88sn4d.fsf@oldenburg.str.redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] arm: devtree: fix missing device_node cleanup
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux@armlinux.org.uk,
+ robh@kernel.org, rmk+kernel@armlinux.org.uk
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org, stable@vger.kernel.org
+References: <20240712094448.159784-1-vincenzo.mezzela@gmail.com>
+ <2917e82b-eaf7-4db2-9c16-d164568df1bc@gmail.com>
+Content-Language: en-US
+From: vincenzo mezzela <vincenzo.mezzela@gmail.com>
+In-Reply-To: <2917e82b-eaf7-4db2-9c16-d164568df1bc@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 29, 2024 at 08:55:46AM +0200, Florian Weimer wrote:
-> It was pointed out to me that inode numbers on Linux are no longer
-> expected to be unique per file system, even for local file systems.
+On 7/12/24 11:47, Javier Carrasco wrote:
+> On 12/07/2024 11:44, Vincenzo Mezzela wrote:
+>> Device node `cpus` is allocated but never released using `of_node_put`.
+>>
+>> This patch introduces the __free attribute for `cpus` device_node that
+>> automatically handle the cleanup of the resource by adding a call to
+>> `of_node_put` at the end of the current scope. This enhancement aims to
+>> mitigate memory management issues associated with forgetting to release
+>> the resources.
+>>
+>> Signed-off-by: Vincenzo Mezzela <vincenzo.mezzela@gmail.com>
+>> ---
+>>   arch/arm/kernel/devtree.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm/kernel/devtree.c b/arch/arm/kernel/devtree.c
+>> index fdb74e64206a..223d66a5fff3 100644
+>> --- a/arch/arm/kernel/devtree.c
+>> +++ b/arch/arm/kernel/devtree.c
+>> @@ -70,14 +70,14 @@ void __init arm_dt_init_cpu_maps(void)
+>>   	 * contain a list of MPIDR[23:0] values where MPIDR[31:24] must
+>>   	 * read as 0.
+>>   	 */
+>> -	struct device_node *cpu, *cpus;
+>>   	int found_method = 0;
+>>   	u32 i, j, cpuidx = 1;
+>>   	u32 mpidr = is_smp() ? read_cpuid_mpidr() & MPIDR_HWID_BITMASK : 0;
+>>   
+>>   	u32 tmp_map[NR_CPUS] = { [0 ... NR_CPUS-1] = MPIDR_INVALID };
+>>   	bool bootcpu_valid = false;
+>> -	cpus = of_find_node_by_path("/cpus");
+>> +	struct device_node *cpu;
+>> +	struct device_node *cpus __free(device_node) = of_find_node_by_path("/cpus");
+>>   
+>>   	if (!cpus)
+>>   		return;
+> Hello Vincenzo,
+>
+> If this is a fix, please provide the Fixes: tag as well as Cc: for
+> stable if it applies.
+>
+> Best regards, Javier Carrasco
 
-I don't know if I'm parsing this correctly.
+Sure, will do. :)
 
-Are you claiming on-disk inode numbers are not guaranteed unique per
-filesystem? It sounds like utter breakage, with capital 'f'.
 
-I know the 32-bit inode allocation code can result in unintentional
-duplicates after wrap around (see get_next_ino), but that's for
-in-memory stuff only(?) like pipes, so perhaps tolerable.
+Best regards,
 
-Anyhow, the kernel recently got F_DUPFD_QUERY which tests if the *file*
-object is the same.
+Vincenzo
 
-While the above is not what's needed here, I guess it sets a precedent
-for F_DUPINODE_QUERY (or whatever other name) to be added to handily
-compare inode pointers. It may be worthwhile regardless of the above.
-(or maybe kcmp could be extended?)
+
+Fixes: a0ae02405076a ("ARM: kernel: add device tree init map function")
+Cc: stable@vger.kernel.org
+
 
