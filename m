@@ -1,117 +1,98 @@
-Return-Path: <linux-kernel+bounces-266037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8807393F9AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:40:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BFD993F9B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D15B1F22F8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:40:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05DDB1F2311C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D60715B11F;
-	Mon, 29 Jul 2024 15:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1FD15B13C;
+	Mon, 29 Jul 2024 15:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qo6MIVNZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJe4xVli"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E66A146019
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7A213BC3F;
+	Mon, 29 Jul 2024 15:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722267581; cv=none; b=QhHamcf+TJTmkHvEyt9Wgqa6HfOk53be0nlHFGWAiqauAowQFti5LI3Qn+2xkof8+iXeEnrDkRs/d2/MlthXJfsqWC3UIE1KtFnVDjV+CPh3UU0r5BFRiWqiOKhsxmP9DlY06iRlH80SfbxLrMUCDZCuAgUJ9tVAQN68npcqWuA=
+	t=1722267595; cv=none; b=cPykrTah94pFZ1YOssWm20jpc9/CzxbVK1ZbxNdEUlPd+63YIoTw2KVkjdaSY0sPTtkpH5hISoSiTkPHtz+q5DAqojflcUUvYm0oB4l4M3cR9NZX2U07enH0uCTRo80iA98rJMdQlUO40lyGO2D568gv+VMn148aLpSAYmmgkjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722267581; c=relaxed/simple;
-	bh=Km4f0/3Vzz+8Qh1fHaeNKmN2Y2DZ97pJ0lZw8d2Z8gY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=f7fEGQOpubyqcWNcOR5Oz3rqraNqupT7Y0vvKBv6QObi00/Z9vngFQoiH0AVFjOjDAVVDhdRaVI6474+GKwIo1PUTWmpUY7ikaJCGgvilwVC5Mdi20XOkVMoFeMY+PBgNZJXmqci9CXI4SfbSFb7uCp71pPojsCatxFymoZPilY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qo6MIVNZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722267579;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bTv5CfW4HXbVM7xQU93V1CPvEqo/zJ6yCu/2thM1qdY=;
-	b=Qo6MIVNZF+bHrJYdy6nvO5gXpDzaf2uqm78420Hzpv2/fGaWTfXbCCQzeuDTazkkfOHMcC
-	tSge/Et2WvUWcMbsIwT/QTHp0EWFc0JgHVgFak+JrR0pi61XO949lztWWivzPMgj9YZLbv
-	S0tL7bPjytsXh+NCk2/yWNb/IXWAShk=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-185-kAsn5MPIMMm01t7Y-2XajQ-1; Mon,
- 29 Jul 2024 11:39:34 -0400
-X-MC-Unique: kAsn5MPIMMm01t7Y-2XajQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9617D1955D5F;
-	Mon, 29 Jul 2024 15:39:33 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.31])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 88EEB1955F40;
-	Mon, 29 Jul 2024 15:39:31 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-api@vger.kernel.org,  Dave Chinner <dchinner@redhat.com>
-Subject: Re: Testing if two open descriptors refer to the same inode
-In-Reply-To: <a13bff5812cb36adf3fed80093cbe1de601ec506.camel@kernel.org> (Jeff
-	Layton's message of "Mon, 29 Jul 2024 11:24:41 -0400")
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
-	<a13bff5812cb36adf3fed80093cbe1de601ec506.camel@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Date: Mon, 29 Jul 2024 17:39:28 +0200
-Message-ID: <87frrsmclr.fsf@oldenburg.str.redhat.com>
+	s=arc-20240116; t=1722267595; c=relaxed/simple;
+	bh=K+U+ukLLGofE8RKAubw7jEBjbXKbiovuoprK5fuPjMo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=vCsLllO8o/yGiVE8dThZ7YmXmDDrqETQHJglAFjV2d5gVs+Bi/Ufto1ztco+Bp4iX4NxfOuY0BJy01JxF3i2J2odhdrVT+1aYP2hvMveclvRp6jaUoGQfnaMzDEywLgO6Zy8uyNRtUpzoFP+7e0a3rqTXTTHblBdxjeCdYmGOsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MJe4xVli; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7397DC32786;
+	Mon, 29 Jul 2024 15:39:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722267594;
+	bh=K+U+ukLLGofE8RKAubw7jEBjbXKbiovuoprK5fuPjMo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=MJe4xVliQcg1OMzLaP2iV6BNXgnVcSTowb7fPEHbxDwyUChVxhKh//ZtO7NWXs6BH
+	 ROCn6LvRSgXAplmj9kuFjowLIbMG3UOs/NFcvTtqaqEPVhr3roYQ9G7czJk4z7xm4Y
+	 ja6ULKNElT3rSM8w6NJvpHOcrZoBylt0MGqwZQOeO0AqXouAEJNyVbEEskDjEiJrWM
+	 3N9URy9zSYDxwvS+i08WlGjXGnzFRM06rRcO1Ve+EJleyRuA6xzsMLGf53yia4kSIE
+	 exxewgAjM58d9GZS6UtO6QfgJyL9/FGlxzMMCJqEpfE6iVVOnUG81d7JCs8O0sO8DM
+	 ZRFe10cny87oQ==
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <01cd578f-127b-4c8b-a8c6-5e11a0a2555c@stanley.mountain>
+References: <01cd578f-127b-4c8b-a8c6-5e11a0a2555c@stanley.mountain>
+Subject: Re: [PATCH] regulator: bd96801: Delete unnecessary check in
+ probe()
+Message-Id: <172226759317.71083.8993251392928777169.b4-ty@kernel.org>
+Date: Mon, 29 Jul 2024 16:39:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-* Jeff Layton:
+On Fri, 12 Jul 2024 09:05:39 -0500, Dan Carpenter wrote:
+> The "idesc" pointer points to the middle of rdesc[] array so it can't be
+> NULL.  Also rdesc isn't NULL.  Delete the check.
+> 
+> 
 
-> On Mon, 2024-07-29 at 08:55 +0200, Florian Weimer wrote:
->> It was pointed out to me that inode numbers on Linux are no longer
->> expected to be unique per file system, even for local file systems.
->> Applications sometimes need to check if two (open) files are the
->> same.
->> For example, a program may want to use a temporary file if is invoked
->> with input and output files referring to the same file.
->>=20
->> How can we check for this?=C2=A0 The POSIX way is to compare st_ino and
->> st_dev in stat output, but if inode numbers are not unique, that will
->> result in files falsely being reported as identical.=C2=A0 It's harmless
->> in
->> the temporary file case, but it in other scenarios, it may result in
->> data loss.
->>=20
->
-> I believe this is the problem that STATX_SUBVOL was intended to solve.
->
-> Both bcachefs and btrfs will provide this attribute if requested. So,
-> basically to uniquely ID an inode using statx, you need a tuple of:
->
-> stx_dev_major/minor
-> stx_subvol
-> stx_ino
->
-> If the filesystem doesn't provide STATX_SUBVOL, then one can (likely)
-> conclude that stx_dev_* and stx_ino are enough.
+Applied to
 
-Does this really work for the virtiofs case, though?  It has to pass
-through all three *and* make things unique relative to the host, I
-think.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[1/1] regulator: bd96801: Delete unnecessary check in probe()
+      commit: f0aaae1a5827c916f2d66e4392726c0c43d0479c
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Florian
+Mark
 
 
