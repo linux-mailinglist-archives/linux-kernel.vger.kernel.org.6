@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-265482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CFAE93F1C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:53:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC88D93F1C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 359DC1F220A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:53:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6870628477F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9493C147C89;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502591474CB;
 	Mon, 29 Jul 2024 09:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1LS2nsDM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nI/hbpzc"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="g0X9UmNs";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iCSUWEfA"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C997C1459E5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1041459E6;
 	Mon, 29 Jul 2024 09:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722246592; cv=none; b=J1Wr2Fa0Kj5dLVtnZRjawXGva44hLSxdraNnx+erXBVW1950uq7o73rSxThAArnbR/Zsscde1ALiQpR15bel2RcT7L/1c8JpWN0unOkPHhN1fxoO09ljd/F3+CCNs7Fgth/ZCmHNJTORm5b9SdnPjdqgBamop4ehmuKw3pGFsWA=
+	t=1722246592; cv=none; b=RA+7W+VCqlTx2m81NTOxmVl3J+O/PKnYow8EqbC/omu0X3I1TjZXTF5Bf5V+UQ8jzBNgk0uVRRKzQJ4hMEti1ydcKEI5RiQZz9M9OxqRj2Q6D6JB3bkotxdLwfd6qlD2HX6i3EzrKtBr0Kcq/g/YDHiSKuYqmBrWozHhZrBy7Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722246592; c=relaxed/simple;
-	bh=P3h+k1Ig4OEKh5SC0g9zFAa9ArJwazTDWn3sj/UlzWc=;
+	bh=3RBv6eo9vU6SO+QXTRYMO5sGZTtItxzF3qnOG96UJjc=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=dA8CSAvEK7i5bPVQzcnyumTG1oq+QqO3T6hSWayxqCo33wCkxf5/UGBX5OqZGgXIoMWW3SwdImnVCtBwXKQjK2WiVhlkxkTOMaXoAn7CmxYqXki7FaPEAN0R9XiG0dBV1rx2lBkyp+O9U7dul0j6F3RWKol1Es2z2phMmqOOX2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1LS2nsDM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nI/hbpzc; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=PAr74WETed9qdiZBp8SOQRXFE8Who5SnAOWk74q5TYeDtMCUEdJ+0K8vWRZWW4DFmPodcJ19dNG8EJxKGOlN9ZJDNZXIxMaY4sQ/7BZy5gsXa+wOU1UqVWqegEBWb9jOh3u1+cjFXmepdzqkncAAMka7Wd/5yIvHsvmZogkfyi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=g0X9UmNs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iCSUWEfA; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Mon, 29 Jul 2024 09:49:47 -0000
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dYeZi1VI6aILPQpoagOAZwtNQq+j3lW5fj1LGTmH6+E=;
-	b=1LS2nsDMZcqK6n1NqeS5lCkKI37XXZEdsKQaGpAe2PSnNiOiDPwl8QR6oBEDoxRi92tYhv
-	AOxNG2Wn9x/XKjF8bPWZjIrqsj7jh5KpWlBLV7MGyN3wycfiok7dGCX4Iu/jF8/UoWPSN8
-	ywhNRCEQuyrk2Tgvx8KOqa5oX32++3jqxfjjhOYqtEB71n3oMudk7NpsEISqd/FSLz1VJf
-	r6MCbRb34B/WN0fLU8KGceXjmpTLDzYcSolL+EBudLAwG+JqSkiFJSYg+dNOJdaDnYil56
-	qnwMMKuFkUEGniDMi8dIhFR7B/Yu48nHxheBtapQwuzBS2u54QT7+Us1d5I/QA==
+	bh=9xgX3XxwvBwDJXLU/W4MKGVPheKWELcCk37kTukOcvA=;
+	b=g0X9UmNspFvPQVTck59y1ZFKtOXwIBH/Zw3maXndnwcvqSHGMLGu2mziv/CP5cthMfykjh
+	g/WFv530n3PwbpOj9y94M1W1MRGXY8IqQ0K6X6LKS2H9vBta7F6/TAYKnpguNZMLSEWxux
+	mH00ONkngv8SklpN8AIFGw/zgGc82rX8smvk8jhGNhG8UaTAnG3VkuSEc2xcqr38mB8tma
+	Hnk9WbFYMtx0JeMs1SV3G8qD86Ip6u1narpFntjpNNhZw208kuBfhGC5M/drUBdHU9TES2
+	0KpsOyIMzbmyO2TKJH1fcd0iJ1WweEH9Sqe0OYF53SS0BuIkwdSZnnvO0PtWCg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1722246587;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,26 +52,26 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dYeZi1VI6aILPQpoagOAZwtNQq+j3lW5fj1LGTmH6+E=;
-	b=nI/hbpzcEYl4ZVgADNQQ1YdXjzRj3FylVcgtzAmvTgjvhDXRvrq5WW2oClE4NC8TnOdtY2
-	or8VLSAXtRA1EUAg==
+	bh=9xgX3XxwvBwDJXLU/W4MKGVPheKWELcCk37kTukOcvA=;
+	b=iCSUWEfA+zuzQjd2Y2odOB6xGQdGKM79CFgJc5JvWV9/kLRWnoi+/HCwWRMn80qHIMjwlW
+	PxXiULEDsyCeuXAw==
 From: tip-bot2 for Marek =?utf-8?q?Beh=C3=BAn?= <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/armada-370-xp: Change spaces to tabs
+Subject: [tip: irq/core] irqchip/armada-370-xp: Use BIT() and GENMASK() macros
 Cc: kabel@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Andrew Lunn <andrew@lunn.ch>, ilpo.jarvinen@linux.intel.com, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240708151801.11592-4-kabel@kernel.org>
-References: <20240708151801.11592-4-kabel@kernel.org>
+ Andrew Lunn <andrew@lunn.ch>, x86@kernel.org, linux-kernel@vger.kernel.org,
+ maz@kernel.org
+In-Reply-To: <20240708151801.11592-5-kabel@kernel.org>
+References: <20240708151801.11592-5-kabel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172224658727.2215.1844728144923362757.tip-bot2@tip-bot2>
+Message-ID: <172224658704.2215.13748374301568914524.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,52 +81,71 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     b3420176dc4ae4182e33c35526d2e281d0d63b65
-Gitweb:        https://git.kernel.org/tip/b3420176dc4ae4182e33c35526d2e281d0d=
-63b65
+Commit-ID:     3587a763f2faf0fe4004d5103e573f0700f89e50
+Gitweb:        https://git.kernel.org/tip/3587a763f2faf0fe4004d5103e573f0700f=
+89e50
 Author:        Marek Beh=C3=BAn <kabel@kernel.org>
-AuthorDate:    Mon, 08 Jul 2024 17:17:54 +02:00
+AuthorDate:    Mon, 08 Jul 2024 17:17:55 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Mon, 29 Jul 2024 10:57:21 +02:00
 
-irqchip/armada-370-xp: Change spaces to tabs
+irqchip/armada-370-xp: Use BIT() and GENMASK() macros
 
-Change spaces to tabs in register constants definitions.
+Use the BIT() and GENMASK() macros where appropriate.
 
 Signed-off-by: Marek Beh=C3=BAn <kabel@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-Link: https://lore.kernel.org/all/20240708151801.11592-4-kabel@kernel.org
+Link: https://lore.kernel.org/all/20240708151801.11592-5-kabel@kernel.org
 
 ---
- drivers/irqchip/irq-armada-370-xp.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/irqchip/irq-armada-370-xp.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada=
 -370-xp.c
-index 588a9e2..427ba5f 100644
+index 427ba5f..18aca9b 100644
 --- a/drivers/irqchip/irq-armada-370-xp.c
 +++ b/drivers/irqchip/irq-armada-370-xp.c
-@@ -137,13 +137,13 @@
+@@ -121,7 +121,7 @@
+ #define ARMADA_370_XP_INT_SET_ENABLE		(0x30)
+ #define ARMADA_370_XP_INT_CLEAR_ENABLE		(0x34)
+ #define ARMADA_370_XP_INT_SOURCE_CTL(irq)	(0x100 + irq*4)
+-#define ARMADA_370_XP_INT_SOURCE_CPU_MASK	0xF
++#define ARMADA_370_XP_INT_SOURCE_CPU_MASK	GENMASK(3, 0)
+ #define ARMADA_370_XP_INT_IRQ_FIQ_MASK(cpuid)	((BIT(0) | BIT(8)) << cpuid)
+=20
+ /* Registers relative to per_cpu_int_base */
+@@ -132,18 +132,18 @@
+ #define ARMADA_370_XP_INT_SET_MASK		(0x48)
+ #define ARMADA_370_XP_INT_CLEAR_MASK		(0x4C)
+ #define ARMADA_370_XP_INT_FABRIC_MASK		(0x54)
+-#define ARMADA_370_XP_INT_CAUSE_PERF(cpu)	(1 << cpu)
++#define ARMADA_370_XP_INT_CAUSE_PERF(cpu)	BIT(cpu)
+=20
  #define ARMADA_370_XP_MAX_PER_CPU_IRQS		(28)
 =20
  /* IPI and MSI interrupt definitions for IPI platforms */
--#define IPI_DOORBELL_START                      (0)
--#define IPI_DOORBELL_END                        (8)
--#define IPI_DOORBELL_MASK                       0xFF
--#define PCI_MSI_DOORBELL_START                  (16)
--#define PCI_MSI_DOORBELL_NR                     (16)
--#define PCI_MSI_DOORBELL_END                    (32)
--#define PCI_MSI_DOORBELL_MASK                   0xFFFF0000
-+#define IPI_DOORBELL_START			(0)
-+#define IPI_DOORBELL_END			(8)
-+#define IPI_DOORBELL_MASK			0xFF
-+#define PCI_MSI_DOORBELL_START			(16)
-+#define PCI_MSI_DOORBELL_NR			(16)
-+#define PCI_MSI_DOORBELL_END			(32)
-+#define PCI_MSI_DOORBELL_MASK			0xFFFF0000
+ #define IPI_DOORBELL_START			(0)
+ #define IPI_DOORBELL_END			(8)
+-#define IPI_DOORBELL_MASK			0xFF
++#define IPI_DOORBELL_MASK			GENMASK(7, 0)
+ #define PCI_MSI_DOORBELL_START			(16)
+ #define PCI_MSI_DOORBELL_NR			(16)
+ #define PCI_MSI_DOORBELL_END			(32)
+-#define PCI_MSI_DOORBELL_MASK			0xFFFF0000
++#define PCI_MSI_DOORBELL_MASK			GENMASK(31, 16)
 =20
  /* MSI interrupt definitions for non-IPI platforms */
  #define PCI_MSI_FULL_DOORBELL_START		0
+@@ -415,7 +415,7 @@ static void armada_370_xp_ipi_send_mask(struct irq_data *=
+d,
+=20
+ 	/* Convert our logical CPU mask into a physical one. */
+ 	for_each_cpu(cpu, mask)
+-		map |=3D 1 << cpu_logical_map(cpu);
++		map |=3D BIT(cpu_logical_map(cpu));
+=20
+ 	/*
+ 	 * Ensure that stores to Normal memory are visible to the
 
