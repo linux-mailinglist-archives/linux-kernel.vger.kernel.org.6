@@ -1,192 +1,187 @@
-Return-Path: <linux-kernel+bounces-266509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F109400E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 00:09:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E82569400E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 00:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 484A3283A55
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:09:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 843E71F233B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3770418F2C7;
-	Mon, 29 Jul 2024 22:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD55B18F2C8;
+	Mon, 29 Jul 2024 22:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bU4hgrff"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=stwcx.xyz header.i=@stwcx.xyz header.b="pZmJYnAr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Zi0Iu2Cf"
+Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8621618E776
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 22:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD83818EFF3;
+	Mon, 29 Jul 2024 22:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722290949; cv=none; b=B+8jjp0ak8ZYldbJf/HEwVr/tFOLAShuVS+SMcl4SEg0+2M3EY7Q/dZ6bz7dFud674ljQofAlseUlS5QOIPc7e5P1qX9GngaZBU+L0GTi8zv1zQ6MvmT0iHyEqGuGAjxqTtH+XYO0jMGx8lQuMQEQUj1i5PWRxfYidDWulRJI+U=
+	t=1722290972; cv=none; b=WPs+RnMYBqXDm8ignZ5/Kb9TZ9oHbMVxD8J0M9OUrkMtXh67RVIBNsu3yNz+KDJTVc8kKR/lz2c3LesbRv25FU8MxptgrWX5FDnF2BD0/gIebNOaZSsFbOwfDpvTuJ1I70yhUsYUqDVvuFKbnPcthykccaRIxQZAX9laQGazweQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722290949; c=relaxed/simple;
-	bh=/R/gLSYAJ25dSaQ8oF89ox+wvwjc4z2AyAcZjWIZIEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Fu6KAEej9TCP57h3TxEd0ZH4tGM2jwzd3NrIY1eYQD0EiNZfoDrhSi/4SQKmE0/J6E82z2TQLun6Gkr8Nkg+SAsZsOEZVAcQxHwP7ElvXNMslLaH6xyNx8yjWJlSGTX5gXOTE8QwxkBqnfjMVVCLO3FH3c8sW0OP3ZURdUaMPhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bU4hgrff; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722290947; x=1753826947;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=/R/gLSYAJ25dSaQ8oF89ox+wvwjc4z2AyAcZjWIZIEY=;
-  b=bU4hgrff22C2jmrULJyPiDhL3TjPyoviPmHth/KJHkhOK8Mk7bWbbc6r
-   0clPjdEbZg5KhbmPIi399N5ZZZjd57gWkW+P8UnhHKuNhWyxMXOJTB1Hg
-   sjHkYMFG4q5ca/m1pNxLkh6LpSzlGyVSPwWo3MflYW9RyZLt26dlqwqke
-   NQs6hVe+8T4K7w4UiwL6thJgx4+k2fbuhPR6EdME972CBZ/KuGq1RIK2g
-   GQdSAyXRdgFeSAh1vUVeydD0Hnjd8aY1H+4hbZlaN0ojR70pxrUbUYY9b
-   uyF6OHmELWTvg3sCQknPGUkzGdwHt3o+0HG5no+UDl3gyHXXhWjqOHN23
-   w==;
-X-CSE-ConnectionGUID: swtMUSfDSy6mltJ+tHhAmA==
-X-CSE-MsgGUID: FhUrxkftQhGX4AL590zOqg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="42604878"
-X-IronPort-AV: E=Sophos;i="6.09,247,1716274800"; 
-   d="scan'208";a="42604878"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 15:09:06 -0700
-X-CSE-ConnectionGUID: 1p482hqFTMSBIYLLxfFnOg==
-X-CSE-MsgGUID: owAy2lN+TzaRRNM4tWMKOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,247,1716274800"; 
-   d="scan'208";a="53766358"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 29 Jul 2024 15:09:04 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sYYYA-000s7S-1I;
-	Mon, 29 Jul 2024 22:09:02 +0000
-Date: Tue, 30 Jul 2024 06:08:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: drivers/usb/dwc3/core.c:1499:47: warning: '%u' directive output may
- be truncated writing between 1 and 10 bytes into a region of size 4
-Message-ID: <202407300647.A8UggFiR-lkp@intel.com>
+	s=arc-20240116; t=1722290972; c=relaxed/simple;
+	bh=EftCZMjEefsCA1L+DOsKUuVILfFtibMPXx8kWgfDyvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iFlt/DhQlDv4TqNK4TV4pFJCNjHryt3onv83iIAZbH5AiXINz39pV6Y43tSzmG9iSk7YR9m2jfW5dBmm4WGkefW4UgCdZYKI9TMm5tEB7BMuy2a/dP+OkH/ltE5c3U7Qu7Z/nPB5yfkpej0vOlwgk4r0VsibsVYpTPhN2rK6yTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stwcx.xyz; spf=pass smtp.mailfrom=stwcx.xyz; dkim=pass (2048-bit key) header.d=stwcx.xyz header.i=@stwcx.xyz header.b=pZmJYnAr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Zi0Iu2Cf; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stwcx.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stwcx.xyz
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id ED91C1380161;
+	Mon, 29 Jul 2024 18:09:29 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 29 Jul 2024 18:09:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stwcx.xyz; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1722290969; x=1722377369; bh=OD+/qBJDKb
+	S3ABPU0JbMD+Hs/uz67NSCTS1YeEEaLZ8=; b=pZmJYnArafsAJRF8DOerpedrkh
+	GL/AfYXbcBMqGmIenj0xQfZAPa+AIq4dS07F20FL4QX1eBpHQfrMzPIeAcvvRMb0
+	+TVnLfOEBa4O2tTBKBFPp2T9urbpL7FKbn9Z7lzK+/zSNsABIhR+HAgHyfsYaEQF
+	JFW95lSLxG6x96bo+hO3V3CceDxpDtXEeuNCfmXJuqnWdsSUbOm2ad4f7T0lSi33
+	yAicsIBozrbRFnF+hRJIHHvLCzSrOaIO2jcR+JW77Sf2YtRv/0ugK5sDsIV/MoaQ
+	u2zreUVHGFbFguyOha/2gnXxWmaNymiDExlPGJDTPJ2XHa7z7doyXJA8cYWg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1722290969; x=1722377369; bh=OD+/qBJDKbS3ABPU0JbMD+Hs/uz6
+	7NSCTS1YeEEaLZ8=; b=Zi0Iu2CfwtJnnRIJ3cMu9/ABgpjJkIfa13w61dgQGdNF
+	SHF855rqpZL8HoMM7Lf7f3ndD82RVCVfWX7T8eAaant0igJgHstlYfuyh1FJ/d/u
+	GWM7cu+cNex+sjzHdowKB74IIMEfkJ2S/0+XqaE54eXRX3/2jA84Eot9yYqawYmY
+	6xyX8lrWOl87WB74mkF74z83WF2vq5i4QAw3YpcMbH++XuWGLjMw0XFLhRZQFVDc
+	xOAkHdG/yqJK7CxzeAfi1R5vieXlDRDbpPjhEK9BFCQJlBLtxMAZlQOpRc6gaMGG
+	N7BR0sd+PbM9AvFwv4uhTy6zlCSHreQgj0GDwhlvVw==
+X-ME-Sender: <xms:GROoZhmUmsH0TEP3UQa2a2sFl95hyBKCJFVOhN4qNuzEPEZpBvjzAw>
+    <xme:GROoZs2g4cxKnByNgQ11Y5Yau1l_Ov8ufZMfcI24Xrgl-Gr9maKX9nEvNk6BaLkiI
+    Yru3EALUy7yLLzXMTE>
+X-ME-Received: <xmr:GROoZnr95eyLQSfMYPx_ofHSYbNqz7ymZzqPf_hhAQAV5TsJ4E6dgoeEMTbsEth_f-4AV4puHkXqy30pLB5S9vHJNAsJ9Yfrw2o>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjeefgddtkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenfg
+    hrlhcuvffnffculddujedmnecujfgurhepfffhvfevuffkfhggtggujgesghdtreertddt
+    vdenucfhrhhomheprfgrthhrihgtkhcuhghilhhlihgrmhhsuceophgrthhrihgtkhessh
+    htfigtgidrgiihiieqnecuggftrfgrthhtvghrnhepjefgtdelledvfedtgeegffefueef
+    veegjeekleegueejveevueefiefgiedvjeejnecuffhomhgrihhnpehkvghrnhgvlhdroh
+    hrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehp
+    rghtrhhitghksehsthiftgigrdighiiipdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:GROoZhn1Az1DItK_TsU7PvJq-sjLyjxQLuzRDq0U4B-mIETPDHNsLQ>
+    <xmx:GROoZv2VM2Zp9T5y4cHyJeNJOm9Z1JoYdABdveoZGuQ29idNrRsTdg>
+    <xmx:GROoZgvH2gi-6ox4PszCJEOhLXAmIwwEj7c4249n--1MCP9LApGQRg>
+    <xmx:GROoZjUzvM7kWHXsTQ0Uas5AEnfZL6Pbky3PtqcxK0rHsoTF9d5Jsg>
+    <xmx:GROoZouhT8GjqblB3mIihgQJY3gqGrOqnW0X4lnZXNilAF0818hd7ZbZ>
+Feedback-ID: i68a1478a:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 29 Jul 2024 18:09:29 -0400 (EDT)
+Date: Mon, 29 Jul 2024 17:09:28 -0500
+From: Patrick Williams <patrick@stwcx.xyz>
+To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 22/27] ARM: dts: aspeed: yosemite4: Revise i2c
+ duty-cycle
+Message-ID: <ZqgTGJ40wuaCJVe3@heinlein.vulture-banana.ts.net>
+References: <20240723092310.3565410-1-Delphine_CC_Chiu@wiwynn.com>
+ <20240723092310.3565410-23-Delphine_CC_Chiu@wiwynn.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Yea2wkXUphGPWaXv"
+Content-Disposition: inline
+In-Reply-To: <20240723092310.3565410-23-Delphine_CC_Chiu@wiwynn.com>
+
+
+--Yea2wkXUphGPWaXv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   6b5faec9f564ea627c66064a4a6a5904fe5a07dd
-commit: 3f12222a4bebeb13ce06ddecc1610ad32fa835dd usb: dwc3: core: Fix compile warning on s390 gcc in dwc3_get_phy call
-date:   3 months ago
-config: x86_64-randconfig-071-20240730 (https://download.01.org/0day-ci/archive/20240730/202407300647.A8UggFiR-lkp@intel.com/config)
-compiler: gcc-8 (Ubuntu 8.4.0-3ubuntu2) 8.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240730/202407300647.A8UggFiR-lkp@intel.com/reproduce)
+On Tue, Jul 23, 2024 at 05:23:03PM +0800, Delphine CC Chiu wrote:
+> Revise duty cycle SMB11 and SMB16 to high: 40%, low: 60%,
+> to meet 400kHz-i2c clock low time spec (> 1.3 us) from EE request
+>=20
+> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+> ---
+>  arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b=
+/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+> index c2994651e747..c940d23c8a4b 100644
+> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+> @@ -761,6 +761,7 @@ eeprom@54 {
+>  &i2c10 {
+>  	status =3D "okay";
+>  	bus-frequency =3D <400000>;
+> +	i2c-clk-high-min-percent =3D <40>;
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407300647.A8UggFiR-lkp@intel.com/
+I don't see upstream code referencing this property.
 
-All warnings (new ones prefixed by >>):
+It looks like this problem has been reported by Rob's bot multiple times
+before when you've submitted this:
 
-   drivers/usb/dwc3/core.c: In function 'dwc3_core_init':
->> drivers/usb/dwc3/core.c:1499:47: warning: '%u' directive output may be truncated writing between 1 and 10 bytes into a region of size 4 [-Wformat-truncation=]
-       snprintf(phy_name, sizeof(phy_name), "usb3-%u", i);
-                                                  ^~
-   drivers/usb/dwc3/core.c:1499:41: note: directive argument in the range [0, 2147483647]
-       snprintf(phy_name, sizeof(phy_name), "usb3-%u", i);
-                                            ^~~~~~~~~
-   drivers/usb/dwc3/core.c:1499:4: note: 'snprintf' output between 7 and 16 bytes into a destination of size 9
-       snprintf(phy_name, sizeof(phy_name), "usb3-%u", i);
-       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/usb/dwc3/core.c:1482:48: warning: '%u' directive output may be truncated writing between 1 and 10 bytes into a region of size 4 [-Wformat-truncation=]
-       snprintf(phy_name, sizeof(phy_name),  "usb2-%u", i);
-                                                   ^~
-   drivers/usb/dwc3/core.c:1482:42: note: directive argument in the range [0, 2147483647]
-       snprintf(phy_name, sizeof(phy_name),  "usb2-%u", i);
-                                             ^~~~~~~~~
-   drivers/usb/dwc3/core.c:1482:4: note: 'snprintf' output between 7 and 16 bytes into a destination of size 9
-       snprintf(phy_name, sizeof(phy_name),  "usb2-%u", i);
-       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://lore.kernel.org/lkml/171198916336.1093653.5612835610479588096.robh@=
+kernel.org/
+
+Is there a reason we aren't fixing this?
+
+Maybe we are depending on this commit?  I think we need to reference it
+somehow here.
+
+https://lore.kernel.org/lkml/47e7eb15-e38d-ead3-de84-b7454e2c6eb8@gmail.com/
 
 
-vim +1499 drivers/usb/dwc3/core.c
+>  	i2c-mux@74 {
+>  		compatible =3D "nxp,pca9544";
+>  		i2c-mux-idle-disconnect;
+> @@ -1314,6 +1315,7 @@ &i2c15 {
+>  	mctp-controller;
+>  	multi-master;
+>  	bus-frequency =3D <400000>;
+> +	i2c-clk-high-min-percent =3D <40>;
+> =20
+>  	mctp@10 {
+>  		compatible =3D "mctp-i2c-controller";
+> --=20
+> 2.25.1
+>=20
 
-  1445	
-  1446	static int dwc3_core_get_phy(struct dwc3 *dwc)
-  1447	{
-  1448		struct device		*dev = dwc->dev;
-  1449		struct device_node	*node = dev->of_node;
-  1450		char phy_name[9];
-  1451		int ret;
-  1452		u8 i;
-  1453	
-  1454		if (node) {
-  1455			dwc->usb2_phy = devm_usb_get_phy_by_phandle(dev, "usb-phy", 0);
-  1456			dwc->usb3_phy = devm_usb_get_phy_by_phandle(dev, "usb-phy", 1);
-  1457		} else {
-  1458			dwc->usb2_phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
-  1459			dwc->usb3_phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB3);
-  1460		}
-  1461	
-  1462		if (IS_ERR(dwc->usb2_phy)) {
-  1463			ret = PTR_ERR(dwc->usb2_phy);
-  1464			if (ret == -ENXIO || ret == -ENODEV)
-  1465				dwc->usb2_phy = NULL;
-  1466			else
-  1467				return dev_err_probe(dev, ret, "no usb2 phy configured\n");
-  1468		}
-  1469	
-  1470		if (IS_ERR(dwc->usb3_phy)) {
-  1471			ret = PTR_ERR(dwc->usb3_phy);
-  1472			if (ret == -ENXIO || ret == -ENODEV)
-  1473				dwc->usb3_phy = NULL;
-  1474			else
-  1475				return dev_err_probe(dev, ret, "no usb3 phy configured\n");
-  1476		}
-  1477	
-  1478		for (i = 0; i < dwc->num_usb2_ports; i++) {
-  1479			if (dwc->num_usb2_ports == 1)
-  1480				snprintf(phy_name, sizeof(phy_name), "usb2-phy");
-  1481			else
-  1482				snprintf(phy_name, sizeof(phy_name),  "usb2-%u", i);
-  1483	
-  1484			dwc->usb2_generic_phy[i] = devm_phy_get(dev, phy_name);
-  1485			if (IS_ERR(dwc->usb2_generic_phy[i])) {
-  1486				ret = PTR_ERR(dwc->usb2_generic_phy[i]);
-  1487				if (ret == -ENOSYS || ret == -ENODEV)
-  1488					dwc->usb2_generic_phy[i] = NULL;
-  1489				else
-  1490					return dev_err_probe(dev, ret, "failed to lookup phy %s\n",
-  1491								phy_name);
-  1492			}
-  1493		}
-  1494	
-  1495		for (i = 0; i < dwc->num_usb3_ports; i++) {
-  1496			if (dwc->num_usb3_ports == 1)
-  1497				snprintf(phy_name, sizeof(phy_name), "usb3-phy");
-  1498			else
-> 1499				snprintf(phy_name, sizeof(phy_name), "usb3-%u", i);
-  1500	
-  1501			dwc->usb3_generic_phy[i] = devm_phy_get(dev, phy_name);
-  1502			if (IS_ERR(dwc->usb3_generic_phy[i])) {
-  1503				ret = PTR_ERR(dwc->usb3_generic_phy[i]);
-  1504				if (ret == -ENOSYS || ret == -ENODEV)
-  1505					dwc->usb3_generic_phy[i] = NULL;
-  1506				else
-  1507					return dev_err_probe(dev, ret, "failed to lookup phy %s\n",
-  1508								phy_name);
-  1509			}
-  1510		}
-  1511	
-  1512		return 0;
-  1513	}
-  1514	
+--=20
+Patrick Williams
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--Yea2wkXUphGPWaXv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEBGD9ii4LE9cNbqJBqwNHzC0AwRkFAmaoExgACgkQqwNHzC0A
+wRnEEA//YKsI3SqDkEHLvlXgFnmbBJieaBhRlT0uVK6neAVOqhZ+Ny3CtXwzHOt+
+XG/9erO/lquF7PV4KBYdoVRYPeJbWrpp3tCScUEpq7y81NuBEy6BGMGw0nmAD6TA
+DOmsI4DiG5iTbxvrez4fsplAU9Oe32cYL9kq3jAhFA6NDNCe7bY+2BnONSUyNsVu
+eU1FRIbOIouW1BZVRt/3H2HqSAOwd3XMHFpqxLrqtzcvAPBLr43lh2R4dCfRtXZ7
+mdySsQmMYem0XZN1uZpqvu3WFEQmofuPAoYTvntfFMH12n5YmQGdZJdgUz+XxdpR
+zVf0ZXt5NkwyfbpTDBZfTgD55Tva8gYNKIA1mIje3sTFoLT5/FqHbIOSMBAHfRXG
+PzDAE3EI2W0qZhbc6MD5cgFhhfC498i8ye12WkJa8v2MFWQfiyAXysZ+PskR+mHj
+uBNRwc2i+k9q3UPrcmxm2scEHUOVSxa3OobJOVKm7KDZPfeQx74iWf9dNEBAZ7lK
+jMlF46Uj/QIj+Yuc0hGwX0qaR6q7FQQdSIpil2vwApw1W7gW1W0nW2F4uzvlqcek
+l5O+8UACVwyFXXhrNEwF1lZ2Bqj9FmeSdkE0ECPW3hFtzgdk1nG5MwYxvwhmgXb6
+NixyGkwLzJxYiWjR/P+lGS+y2hc5x3z7Jfv8AEKzlQ6z/LxmWK0=
+=jpXX
+-----END PGP SIGNATURE-----
+
+--Yea2wkXUphGPWaXv--
 
