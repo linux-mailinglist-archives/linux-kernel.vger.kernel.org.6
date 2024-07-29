@@ -1,108 +1,184 @@
-Return-Path: <linux-kernel+bounces-265437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD4DE93F134
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:34:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E60E93F139
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D39921C209C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:34:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D71E1F211F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8D713D291;
-	Mon, 29 Jul 2024 09:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615CD13E8AE;
+	Mon, 29 Jul 2024 09:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dgz5M7nY"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vRnJ603h"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF452F5A;
-	Mon, 29 Jul 2024 09:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E879E770E1;
+	Mon, 29 Jul 2024 09:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722245639; cv=none; b=Y9fJafHoaYr1uEmgq99zmVf8uxFhkeK2dY5ux4NzqsGq2l5uMjWKYwGztpYwauSjW4AT/hnYgtUnImb5a6ZUHXHEbJmxN8Lpi0fPBRo1IBdnqVVJO2w6CjTQHAU2PLZeJmJF4x0TDuOoMvVX2xIbnEAdGcFrkPQ+X8lCcnrAveE=
+	t=1722245663; cv=none; b=mHJuU3BPchROOrWu+G1NAtXANO7E5YIYdjki8MEa6ctWZ9CZHD9b6Z1tP1b7xAlJrvEI9HdEN0NHdmovS6+2I8Dny+tu1aq/SzA+Xi57J2l/4wuNcke1Ki6398A5mge3uoXCW2I/I5wfN6UemcOV1cd1y9Jo7vAF7VUvBMztW+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722245639; c=relaxed/simple;
-	bh=LtwMctIoW35Cjmp4m333CqztOaLR5iM9IC6IWGkwdG0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=SbI25W40xZJfxu1Cu+UIeWGHNQGt1aGz9VKtS55QB5E/qcsSN22KDauTJSDicoVMf9Z9KF9mNxpx5UhfzbUrDh+a9iAQeIwVpzuIW0iP7zOht5+ahh2eOb/pK0k5vMYAuFh+SaGOow5uXpQBLvbpKdzPdCWkRnGtkuxRBOSRcQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dgz5M7nY; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1722245607; x=1722850407; i=markus.elfring@web.de;
-	bh=LtwMctIoW35Cjmp4m333CqztOaLR5iM9IC6IWGkwdG0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=dgz5M7nYkdUgDwK9phzTsFPm82VqCRTScEFyXZ0xCLqYRMM495yzwB56/yhyJQzJ
-	 utDkk5YveJBb48QPLlxsKqUAEM2KzRvdVSij0hZBOS6eu01sz04R1o2uISiZVPdt7
-	 2Ck1DFvaPaVkLFMSwux0P69orXfcfr7Q1dOp+YMGZzxNBG/DHhwlRy6Po+3O8jkAx
-	 GbD8rHu/h1wsukr0fFfCwQ3TbaI/Sw3TAQXGnIRwWNUMxbV/++JKhJSx1zzg2Ga6Y
-	 Z3J1Y8YSH5YzIDNBs9ABAvicf5ZT0CKwJnOc4aWa+3JOstiys+ba8O+RFmA8koS/7
-	 lHAbaQZZeH3SXYP2dw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Melaj-1rxvwQ2dnR-00ex4k; Mon, 29
- Jul 2024 11:33:27 +0200
-Message-ID: <446be4e4-ea7e-47ec-9eba-9130ed662e2c@web.de>
-Date: Mon, 29 Jul 2024 11:33:22 +0200
+	s=arc-20240116; t=1722245663; c=relaxed/simple;
+	bh=3jPwdF87VODfvLYMSLQ6a8U5V6bwkM9aoC2LVJskl4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JEreezV5t9lnUxTuIBdJa3YFmVyFHMeZ+n7QNbh7ZIwpX6QeAt3bF8Mtnpx/g13V16i+NrbC+c1ZkeSVMLz9Gkv7Ns8w4ma5q0ROW6JV5kpIANkUoQsRpCphC4G/oRry1ZSxfKiW/GRlyVMvkXx7MlEH6iI/iwK/uwabXbv0in8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vRnJ603h; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=8JC9Mk7PKGPRsFj1tUJdTnT65oycReDEnXbNeaPrch8=; b=vRnJ603hG2qrYgjH37cZsIaTty
+	kbnnWa7CjLIqvatukxS67LykRqrQgJkaCNBwfmtKqR4SlBruRVepVz5alu67HS0JQAWmWFRDO/N7A
+	od/rHvVXsl6oM7N955Rb5sa+a8xJ97rYORUGm4fgJ0xmlyJRcR61xnGllcfSu8IugcJKiLpqzkKKL
+	HNYmPh4hrfJvQaXquK4Ni9lzRMMLs3Q9e6TGSXZ66gAPNwb34qKpVNmOJaPXE5x4r/pDx9bKMuD0C
+	1mbVBy9VfyT+tWOqSqsD/HTRS0rn5NIr7IuXjdIvHSXxuBOWoKqZIdmq+4NYePiNAVqodzmMhz/UQ
+	9oYkfk/Q==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sYMla-0000000DQiR-1KUO;
+	Mon, 29 Jul 2024 09:34:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id EAFEC300439; Mon, 29 Jul 2024 11:34:05 +0200 (CEST)
+Date: Mon, 29 Jul 2024 11:34:05 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Rong Xu <xur@google.com>
+Cc: Han Shen <shenhan@google.com>, Sriraman Tallam <tmsriram@google.com>,
+	David Li <davidxl@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	John Moon <john@jmoon.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Rafael Aquini <aquini@redhat.com>, Petr Pavlu <petr.pavlu@suse.com>,
+	Eric DeVolder <eric.devolder@oracle.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Benjamin Segall <bsegall@google.com>,
+	Breno Leitao <leitao@debian.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Brian Gerst <brgerst@gmail.com>, Juergen Gross <jgross@suse.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Kees Cook <kees@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Xiao Wang <xiao.w.wang@intel.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org,
+	llvm@lists.linux.dev, Krzysztof Pszeniczny <kpszeniczny@google.com>
+Subject: Re: [PATCH 3/6] Change the symbols order when --ffuntion-sections is
+ enabled
+Message-ID: <20240729093405.GC37996@noisy.programming.kicks-ass.net>
+References: <20240728203001.2551083-1-xur@google.com>
+ <20240728203001.2551083-4-xur@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Justin Lai <justinlai0215@realtek.com>, netdev@vger.kernel.org,
- Jakub Kicinski <kuba@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jiri Pirko <jiri@resnulli.us>, Joe Damato <jdamato@fastly.com>,
- Larry Chiu <larry.chiu@realtek.com>, Paolo Abeni <pabeni@redhat.com>,
- Ping-Ke Shih <pkshih@realtek.com>, Ratheesh Kannoth <rkannoth@marvell.com>,
- Simon Horman <horms@kernel.org>
-References: <20240729062121.335080-2-justinlai0215@realtek.com>
-Subject: Re: [PATCH net-next v25 01/13] rtase: Add support for a pci table in
- this module
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240729062121.335080-2-justinlai0215@realtek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:tB92qHy0RNzSNawe8kxkUW5GhwESMFSlcQ1cESk5ZZ4Of7efVBs
- MpxT3NuHDgREIG7J+UhvBS9QgANRTn6hYnkylxliG8vbz2lNiVszASzScSwLaH8JjceTUAS
- zTjCZjach2O33wF1WM6e0gZthuNAqgF7fdyL0pS+Sh3NfcAtUHG544SIQWApFYIvCM4qk5+
- f2Jq3Kyu4swk9QplPzXVQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:R2nTMJm2YdQ=;luShWSeSJNHJqAC+E4H/cuxFJB7
- 9p6+upHxXudW8NPBviaqQ536/urKnv6CccruDWpL1nP5dLq6xq4BlPjiimr/KdBXlLZY0yO3V
- aANQA2HuhydGJJ9S1K/JfW08my5ftIIuhMMZxQrsEhcXEbAU8Ua0fDm+p7KVddnIpg5gvtbcx
- Jqmp/btNBKE0x47xEVXxtS4Qdz3mVtOTQCz7WPcOjToVmA2gRd5kyl7BW9hMdBLbX6Tr2nzQS
- 4aFTqB+r3hGOimtyfPEYVDygBJqjf4bl5cL5pYdtVfNt8ENRUnI9D88oodAiKB30b8hpuAqkR
- HEm1Y1Y9j356iUMAPOz6I16zWbVmuvAslzd8ZgDsxDcV8vmO5SG8is9B1ASgqn41TABwsYcEu
- 6xt1pDgg9RU/HXuK7lqpHhZowT9eeSQmEGjqULPfKmXJ2QEuj/gHAUAiyp1z5x9G60aRrG2R2
- T1Caee/NRA+m5mujxlQv3dTnMNNp6Amuwc1J24n1qOtlUM4YgfrFzkjn83JzA/UUh5d21xP2a
- sgltc7Hf0RAdze0dNStaZHPVVn56eZPw68PBDOhOUTdyQHllEgaZfnIixqsF1JsyK4rbb1X0t
- iV9vrBPITtmWF1VsqIFodQVCdxqA9moLApd1pTwBAb+IVGVWbnDxI7pRdMCQGBtLfe7tLk7yw
- D/U3NmDFpjN1n9kje5PyR9R2bJAmO0CtvqZKaZoFFUJz6MXk/T+1Lbgr3aGVmGPjbfJZGmtmn
- kRhvBxpJMMvbUB+JZ/Is6A9x8XV75RPw3j9ncY/O5O+Df0JzI3hS6Fh2RgwXCJ74ZWrL+AU2K
- 2Ska7KTpkoNsZqFvkQ5QECWQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240728203001.2551083-4-xur@google.com>
 
-=E2=80=A6
-> +++ b/drivers/net/ethernet/realtek/rtase/rtase.h
-> @@ -0,0 +1,338 @@
-=E2=80=A6
-> +#ifndef _RTASE_H_
-> +#define _RTASE_H_
-=E2=80=A6
+On Sun, Jul 28, 2024 at 01:29:56PM -0700, Rong Xu wrote:
+> When the -ffunction-sections compiler option is enabled, each function
+> is placed in a separate section named .text.function_name rather than
+> putting all functions in a single .text section.
+> 
+> However, using -function-sections can cause problems with the
+> linker script. The comments included in include/asm-generic/vmlinux.lds.h
+> note these issues.:
+>   “TEXT_MAIN here will match .text.fixup and .text.unlikely if dead
+>    code elimination is enabled, so these sections should be converted
+>    to use ".." first.”
+> 
+> It is unclear whether there is a straightforward method for converting
+> a suffix to "..". This patch modifies the order of subsections within the
+> text output section when the -ffunction-sections flag is enabled.
+> Specifically, it repositions sections with certain fixed patterns (for
+> example .text.unlikely) before TEXT_MAIN, ensuring that they are grouped
+> and matched together.
+> 
+> Note that the limitation arises because the linker script employs glob
+> patterns instead of regular expressions for string matching. While there
+> is a method to maintain the current order using complex patterns, this
+> significantly complicates the pattern and increases the likelihood of
+> errors.
+> 
+> Co-developed-by: Han Shen <shenhan@google.com>
+> Signed-off-by: Han Shen <shenhan@google.com>
+> Signed-off-by: Rong Xu <xur@google.com>
+> Suggested-by: Sriraman Tallam <tmsriram@google.com>
+> Suggested-by: Krzysztof Pszeniczny <kpszeniczny@google.com>
+> ---
+>  include/asm-generic/vmlinux.lds.h | 19 ++++++++++++++++---
+>  1 file changed, 16 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+> index 5703526d6ebf..f3de66bda293 100644
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@ -582,9 +582,21 @@
+>   * during second ld run in second ld pass when generating System.map
+>   *
+>   * TEXT_MAIN here will match .text.fixup and .text.unlikely if dead
+> - * code elimination is enabled, so these sections should be converted
+> - * to use ".." first.
+> + * code elimination or function-section is enabled. Match these symbols
+> + * first when in these builds.
+>   */
+> +#if defined(CONFIG_LD_DEAD_CODE_DATA_ELIMINATION) || defined(CONFIG_LTO_CLANG)
+> +#define TEXT_TEXT							\
+> +		*(.text.asan.* .text.tsan.*)				\
+> +		*(.text.unknown .text.unknown.*)			\
+> +		*(.text.unlikely .text.unlikely.*)			\
+> +		ALIGN_FUNCTION();					\
 
-I suggest to omit leading underscores from such identifiers.
-https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
-efine+a+reserved+identifier
+Why leave the above text sections unaligned?
 
-Regards,
-Markus
+> +		*(.text.hot .text.hot.*)				\
+> +		*(TEXT_MAIN .text.fixup)				\
+> +		NOINSTR_TEXT						\
+> +		*(.ref.text)						\
+> +	MEM_KEEP(init.text*)
+> +#else
+>  #define TEXT_TEXT							\
+>  		ALIGN_FUNCTION();					\
+>  		*(.text.hot .text.hot.*)				\
+> @@ -594,7 +606,8 @@
+>  		NOINSTR_TEXT						\
+>  		*(.ref.text)						\
+>  		*(.text.asan.* .text.tsan.*)				\
+> -	MEM_KEEP(init.text*)						\
+> +	MEM_KEEP(init.text*)
+> +#endif
+>  
+>  
+>  /* sched.text is aling to function alignment to secure we have same
+> -- 
+> 2.46.0.rc1.232.g9752f9e123-goog
+> 
 
