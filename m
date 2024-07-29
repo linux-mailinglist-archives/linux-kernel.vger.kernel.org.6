@@ -1,165 +1,156 @@
-Return-Path: <linux-kernel+bounces-265131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC2EB93ED25
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:06:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 058F993ED27
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29D081F21E76
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:06:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE1591F21F41
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD5952F62;
-	Mon, 29 Jul 2024 06:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FDD82D7F;
+	Mon, 29 Jul 2024 06:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MPoxj+E0"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2054.outbound.protection.outlook.com [40.107.236.54])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SLMqeTDB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3FB82899;
-	Mon, 29 Jul 2024 06:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722233196; cv=fail; b=KsqywV360ifCQVBHkdbbuGD6MAw0WJ2Q6t+0rm8Kd9xrCPEfoC6jyzYUcMAvlGdTgNMipx4g95lQkwNZXJH/uu2nnDG1gNyK4bufMBNss6H/aEPQ8WS7YvEirPHz+yHNciXq7Ki4w5zIyCk8HBFAfML6/j04xkN2tRd4rchUulY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722233196; c=relaxed/simple;
-	bh=SbJZxQ4Y3cJERHUYEfo0QPsuHYZvgF59AKg3pCA1f5A=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rp7TGb97Mhmiij6TeZWDND+vGxMtP4yTUjUNOBSQoxw27O+9h/RFanxm3lx2EbVqE8OzHd1GzFp4odLsP4pAv7wWpNtiimBTQchsIN1XA2ugDOeHZuOvjw5zNWYbsT3bzOCSdOCLcDyDDZjJuerTe6cJlx8TfJEIN0IuTFj0AxA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MPoxj+E0; arc=fail smtp.client-ip=40.107.236.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=goCuIqCF6ZEhOfldzvtZx7Aja0znLIy3LlibMUFEyozdHvLiZdtpeHvYpIbCFBihbzw7nkTb5DfN6zzfp1/lZ8KMBNRl8YnrKAN1CYZ2uFw8ioZ+K0S/D4dFA+9DSp8NtxJMlCRhx4B+EmkcCDInihng2SNu28IlTUjSEUfvz3wCpzsJFdpqGoSmjrNAeyWdLHEkm7omVecH5l0ST4ZOfR8D5+ofQnbRO8G2P/TIcTtI/KdoTyuZ2AvbKLn5YMQpgE4Jc3yVbmzlpGDUQw6lDzrdSJlEnXYtjDae4E0hBvY+40JvvEQHgc8WrgX3mm3jfT3zzJ4uycdVmEByU3Xutw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TN5mCyWrnAyAq29W7/DG9gGxVvym80ArkZsjDTrzS9M=;
- b=SX1y+nYxAd1voWEUFNrtcZW+/gm/J4SqCa0se+V3qBA1tEOChDaKu99kyeAiJuKVTEBoZle3lf1LLCD3HjkbSyf9gWlEZJqvONXbpCk5aiH6sQOymxzGuAnWlAsEl980CoaJ+X56NgqUHFddOV2e0b2GyBgvKgdMFU0zsbdDp41OL8SSC7pSAhH8kJjpPjAfCykZBmbswI4lqERfIRoQVhOXUdji5v9Y4T7WvCjfpFABAJphvAsAUmFzXNjqqKVXDilRNZ11HjjMsG7hi/KJ592e8fhgofsJlWfem8g4JD5MgTBFjnvW8eWr/t+/pSHUrLeBkY8ZKLu8LcbkqW1Dkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TN5mCyWrnAyAq29W7/DG9gGxVvym80ArkZsjDTrzS9M=;
- b=MPoxj+E0ljRdSiQ6F+riVFhcOcOw9508XrLQJrchSx0eL4ww9M3AtE+G33xbxS7LFVhAmt+eomu4SwvXhi5E3p0mNXXInYxAk5tsHr1/XjI7P1cutGEERVpwritx5klesd5IYwaSC7EICMvzuKp7nStvbJ0rMlowaTMH2CFHY0o=
-Received: from SA9PR13CA0019.namprd13.prod.outlook.com (2603:10b6:806:21::24)
- by CY8PR12MB7242.namprd12.prod.outlook.com (2603:10b6:930:59::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Mon, 29 Jul
- 2024 06:06:32 +0000
-Received: from SA2PEPF00003AE4.namprd02.prod.outlook.com
- (2603:10b6:806:21:cafe::1f) by SA9PR13CA0019.outlook.office365.com
- (2603:10b6:806:21::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.14 via Frontend
- Transport; Mon, 29 Jul 2024 06:06:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00003AE4.mail.protection.outlook.com (10.167.248.4) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7784.11 via Frontend Transport; Mon, 29 Jul 2024 06:06:32 +0000
-Received: from BLRRASHENOY1 (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 29 Jul
- 2024 01:06:29 -0500
-From: Gautham R.Shenoy <gautham.shenoy@amd.com>
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, <rafael@kernel.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Dhananjay
- Ugwekar" <Dhananjay.Ugwekar@amd.com>
-Subject: Re: [PATCH] powercap/intel_rapl: Add support for AMD family 1Ah
-In-Reply-To: <20240719101234.50827-1-Dhananjay.Ugwekar@amd.com>
-References: <20240719101234.50827-1-Dhananjay.Ugwekar@amd.com>
-Date: Mon, 29 Jul 2024 11:36:15 +0530
-Message-ID: <877cd4vijs.fsf@BLR-5CG11610CF.amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D1210E4;
+	Mon, 29 Jul 2024 06:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722233227; cv=none; b=azt2TZ43NMm8Ml/QJjXWxGVt2/GVxfVZ49XuD2O2v9hsmLw9+aLfACm5tRHCDb/PU7utBqDtoTzSw74rmDvx9vYoMAbf2NQAvohgvukjI+jmMqeZLdJHNGf8nUNuf1P8iMSjXIh9dEBmgBm1wKEETX/6errjfd7GNdH2MqzPsBM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722233227; c=relaxed/simple;
+	bh=mdXaX/I7zsamo8g6v05bVQ+OjFV8uJNOfkizzRlWC1Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oU0TKALZhhUvxB0BmtyZWmsaEmvBBaS2TqTDf+sq1acaMn5hD0NIMT0nkfPFUcHTkpEF/PY+aH5LfWP9GkxJ4VVz78TyRGXXict70EUVkXGF4VdeAq2OET3nnIvoJLC2NpWzHLn112u0uWpN6XTnvGREqf7N4weVJlbKe5Maazk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SLMqeTDB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F132FC32786;
+	Mon, 29 Jul 2024 06:07:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722233227;
+	bh=mdXaX/I7zsamo8g6v05bVQ+OjFV8uJNOfkizzRlWC1Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SLMqeTDB5gxiMEF3SIwrn5MTMNE9118DvsK/knoKn8/KJLiKZfQWhS3tHBQ4+V5GZ
+	 7ZpxQN1jFQO7pVSZL+PRbY2peWX6HtONV93nZ7e8GD7hzqOoF3vrJpOfrPFDWG32hw
+	 ++jn24ZUClMw+xX/zWsKFXOz6OPEPux7OV1hkKMvKOtecezKwL+aquJ9YLIR/TXAIS
+	 xe7NMZ7bu/oDOg5gSUaTBLBi/g5uDrL7yQMj+Q1r3DHrx4Kp6du41UmSpE7pt7rfmf
+	 qkQkF/2MO+Nsqj8r3nm+wA8jDUO3AHTC1jl2+NWWL/nOFyzA9cbrKnuzc0sO+eme5V
+	 9AuZdawXbWGXA==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52f04b4abdcso4868803e87.2;
+        Sun, 28 Jul 2024 23:07:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWRJcm0qjiZntZFEzFLOzWi9QlnH5Y2oIELoaXDkqfeZIc98rm6Lew6rTcDsCnH//bGRplJA1O/O/RYCLs0ivTcptRNXspHq7dLxdpK
+X-Gm-Message-State: AOJu0YyTckDv8KBx/USyLZazkuaogvBnI2SE3/uPgor9ZowvTOcu+iYd
+	2cvRGaT1OlSfPkq2XD4MKOT2qGf/AGXhO4/Jvhgq1TmDDTFr+cGCUPKKCfMVX25kwFK88Q4Yplu
+	MYfFqAKgogoW29Fvp9ZgYSx6jbdQ=
+X-Google-Smtp-Source: AGHT+IEaUUPAFEIfx+aS3dP+tnOlmjGmVlPdnXmPHa0w+1pwDJCKqdX9Y4kC5wXE8VDyCJO8HgBfFV6GLpqTc8+y9+Y=
+X-Received: by 2002:a19:7404:0:b0:52c:d80e:55a5 with SMTP id
+ 2adb3069b0e04-5309b2c3071mr3725189e87.41.1722233225661; Sun, 28 Jul 2024
+ 23:07:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE4:EE_|CY8PR12MB7242:EE_
-X-MS-Office365-Filtering-Correlation-Id: bb7ba0e0-ddb7-4297-e670-08dcaf94980f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WT2IVRFvp8+lndARIXIiaaW7df3/xnMqgx9xnS/tjtQrlExiIy9UAjYv3tt6?=
- =?us-ascii?Q?q9oVddbc4HA/1U30HE7ngCEAD1S8F4vy/8whZaLDs238cJqG2Zkw84sGIskN?=
- =?us-ascii?Q?3kW3gha53musf0olLhDisSqLIblPB7HT3c+NYqhP6TuLo6wPZv3gky0VGADg?=
- =?us-ascii?Q?waezYCMO0Cq6XcOsuV+ihKTaDjh4TqJ+BF8tk9v/HASLLNdruBX03Cz/W0QN?=
- =?us-ascii?Q?FuPy2Vy+JqOGOF8wXl/zWpfS5i5lwHVk1gzii6/RCO8Qwc89tTqmVDckmm48?=
- =?us-ascii?Q?Bu2qkARvyePz4HERZpB0ziwlR3xFce9EQN1Jzt8rmkTstTF6w0hwEMP9m/Po?=
- =?us-ascii?Q?E9dyhkaCUVIz7npe9ubi3Q9LtDDW+pspbbRApN7iAJ4TvClIYkGcApbP6BVW?=
- =?us-ascii?Q?AiyrojusY2BS3VJBTKj/rZVdMXqy4ueLRtcg2I+NVDnT4ifn5AF7evmiKyyJ?=
- =?us-ascii?Q?okI621zl6kymQKeAU1zmYM9J9dCUDez4EogD7wX84Zztum1fmbWiGjlB3jqC?=
- =?us-ascii?Q?Msk5B3wZPb8wBTsoSXfxZCMOAxtrljYON6OjEJDfk2dB49ZnwXEwetH0quv6?=
- =?us-ascii?Q?xZJYm5kCVbZWHAVPJSoDgUl5XxhuiFEwIS+22Wta6v8pXbxXaCOoAie86WZT?=
- =?us-ascii?Q?3YR39Qk/jBqH9jdy5Lr08MLDy9Y5mA9tG8zajQ8AKjaFEvRQh2xTMG6mX9+i?=
- =?us-ascii?Q?sd2VVvELSDqFGWjqYHbNkRL5iELxCWsIehJWgcmx+lFlmBiUO1mv3ikePkO2?=
- =?us-ascii?Q?PSqyhsbBHNnCpIeV5PLbdE4SXiQSefSm3uv05ddKW0+MWHYA1v665keAwcH8?=
- =?us-ascii?Q?13kNDZVQVPGmwHCIDZzIpgJ1xOK25D+3tqWUl6Zd1IreptzNL/6vieQJD448?=
- =?us-ascii?Q?sJdVBeEgA05Qm/2FamFIBDSdKSPGqiJ/baKh9pOyD9XxteyyK6GzWADQle7z?=
- =?us-ascii?Q?Ucec6m2s56W2JKkrxPIxt405a81EO0evvdfdlKlVmxnuCp/LZIVKnSWzj4Nl?=
- =?us-ascii?Q?B1Ie8fMlb3xkbldeALPz5Wegh9L1kauqFmR5Ynhsnu7rIiKJhCvU+fsfIfk/?=
- =?us-ascii?Q?hndk6lE1NcTnlgRXQ3UG/QibBeIPurci1GPGtx0Lnqu/36/9xSiEgpKM7l+L?=
- =?us-ascii?Q?qYrGojpYXkdT/OiKimRL8d9WTaU8tawkVWjhNqOVJ9xIOT9IWhRtVQxJH3Mk?=
- =?us-ascii?Q?+sIjgxSEYQXVzFNojXZdnshjdxjd3/ta+3L/7DreuD3RWnOw66HQ7OG++yTA?=
- =?us-ascii?Q?IpsunTYBwekFQysTdrc0lmuainUtv5k3zXHZujUcbDU+T0X0m0yQTChaKuYd?=
- =?us-ascii?Q?iJdNNhEcs0QWhoKjEjP63+ACaPTYXpxgrnqFXQBDqen1hXhEw81EyYe2sJlS?=
- =?us-ascii?Q?ygo/z3Fl5BluVhMpuFH1n+T4Ng4cdzjMWp+k1Ry5jsDHuEcdq+2kF8L6ZJXa?=
- =?us-ascii?Q?4tHq7l8mxhRQtmCZmcIrWtmj1W3jMtdF?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 06:06:32.0185
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb7ba0e0-ddb7-4297-e670-08dcaf94980f
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003AE4.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7242
+References: <20240606133615.986035-1-masahiroy@kernel.org>
+In-Reply-To: <20240606133615.986035-1-masahiroy@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 29 Jul 2024 15:06:29 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARnBDXm0fsVaeHdvst_XqH35K5+LeBdBAZa15brOKEyfw@mail.gmail.com>
+Message-ID: <CAK7LNARnBDXm0fsVaeHdvst_XqH35K5+LeBdBAZa15brOKEyfw@mail.gmail.com>
+Subject: Re: [PATCH] slimbus: generate MODULE_ALIAS() from MODULE_DEVICE_TABLE()
+To: alsa-devel@alsa-project.org, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com> writes:
+Hi Srinivas,
 
-> AMD Family 1Ah's RAPL MSRs are identical to Family 19h's,
-> extend Family 19h's support to Family 1Ah.
+
+Any comments?
+
+
+
+On Thu, Jun 6, 2024 at 10:36=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
 >
-> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-
-Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-
+> Commit 9e663f4811c6 ("slimbus: core: add support to uevent") added the
+> MODALIAS=3Dslim:* uevent variable, but modpost does not generate the
+> corresponding MODULE_ALIAS().
+>
+> To support automatic module loading, slimbus drivers still need to
+> manually add MODULE_ALIAS("slim:<manf_id>:<prod_code>:*"), as seen in
+> sound/soc/codecs/wcd9335.c.
+>
+> To automate this, make modpost generate the proper MODULE_ALIAS() from
+> MODULE_DEVICE_TABLE(slim, ).
+>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 > ---
->  drivers/powercap/intel_rapl_common.c | 1 +
->  1 file changed, 1 insertion(+)
 >
-> diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/intel_rapl_common.c
-> index 2f24ca764408..1622f1d6aed0 100644
-> --- a/drivers/powercap/intel_rapl_common.c
-> +++ b/drivers/powercap/intel_rapl_common.c
-> @@ -1285,6 +1285,7 @@ static const struct x86_cpu_id rapl_ids[] __initconst = {
->  
->  	X86_MATCH_VENDOR_FAM(AMD, 0x17, &rapl_defaults_amd),
->  	X86_MATCH_VENDOR_FAM(AMD, 0x19, &rapl_defaults_amd),
-> +	X86_MATCH_VENDOR_FAM(AMD, 0x1A, &rapl_defaults_amd),
->  	X86_MATCH_VENDOR_FAM(HYGON, 0x18, &rapl_defaults_amd),
->  	{}
->  };
-> -- 
-> 2.34.1
+>  scripts/mod/devicetable-offsets.c |  4 ++++
+>  scripts/mod/file2alias.c          | 11 +++++++++++
+>  2 files changed, 15 insertions(+)
+>
+> diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-=
+offsets.c
+> index 518200813d4e..9c7b404defbd 100644
+> --- a/scripts/mod/devicetable-offsets.c
+> +++ b/scripts/mod/devicetable-offsets.c
+> @@ -153,6 +153,10 @@ int main(void)
+>         DEVID_FIELD(i3c_device_id, part_id);
+>         DEVID_FIELD(i3c_device_id, extra_info);
+>
+> +       DEVID(slim_device_id);
+> +       DEVID_FIELD(slim_device_id, manf_id);
+> +       DEVID_FIELD(slim_device_id, prod_code);
+> +
+>         DEVID(spi_device_id);
+>         DEVID_FIELD(spi_device_id, name);
+>
+> diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
+> index 5d1c61fa5a55..99dce93a4188 100644
+> --- a/scripts/mod/file2alias.c
+> +++ b/scripts/mod/file2alias.c
+> @@ -960,6 +960,16 @@ static int do_i3c_entry(const char *filename, void *=
+symval,
+>         return 1;
+>  }
+>
+> +static int do_slim_entry(const char *filename, void *symval, char *alias=
+)
+> +{
+> +       DEF_FIELD(symval, slim_device_id, manf_id);
+> +       DEF_FIELD(symval, slim_device_id, prod_code);
+> +
+> +       sprintf(alias, "slim:%x:%x:*", manf_id, prod_code);
+> +
+> +       return 1;
+> +}
+> +
+>  /* Looks like: spi:S */
+>  static int do_spi_entry(const char *filename, void *symval,
+>                         char *alias)
+> @@ -1555,6 +1565,7 @@ static const struct devtable devtable[] =3D {
+>         {"rpmsg", SIZE_rpmsg_device_id, do_rpmsg_entry},
+>         {"i2c", SIZE_i2c_device_id, do_i2c_entry},
+>         {"i3c", SIZE_i3c_device_id, do_i3c_entry},
+> +       {"slim", SIZE_slim_device_id, do_slim_entry},
+>         {"spi", SIZE_spi_device_id, do_spi_entry},
+>         {"dmi", SIZE_dmi_system_id, do_dmi_entry},
+>         {"platform", SIZE_platform_device_id, do_platform_entry},
+> --
+> 2.43.0
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
