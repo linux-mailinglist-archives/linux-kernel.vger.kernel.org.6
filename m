@@ -1,65 +1,92 @@
-Return-Path: <linux-kernel+bounces-266562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56239401AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:19:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073EB9401B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 142651C2120A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:19:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3826AB21B61
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5053818EFFB;
-	Mon, 29 Jul 2024 23:19:11 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DF718F2CF;
+	Mon, 29 Jul 2024 23:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="guOnPFPZ"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303EE288BD;
-	Mon, 29 Jul 2024 23:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE0218D4D3
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722295150; cv=none; b=QXZCxD/2qW7ATs+qcmPXpZxs9qWXxVvgwSZYCojanGCq81MeRDHUagWK+TnwXGm2UGoptXwUMJJLX6Lg8MX97DU3LOvWHQ7iq/AtFy/rQ+oiKZddtKlQQdtecW0LjH8AD5ScAFMRm9wdhK3X73wPMG/8flYh4CglYe62hF2YAXM=
+	t=1722295171; cv=none; b=B5wK5+MUEqmTZnKh1ihO/5eF/ThQ4UXEiOz5mq66e9nGg3QBm1USIxqpO2DiVHqi7LCuCAI0z+6CSlfhAHlj8Wo8BpXKvXlyAjn/piJ350PyeOPa2NdGZSFJB0Z8/7wDL724ev6fyGDmwMFn560+4A+/7Iqx1dmyI44M4cN3SKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722295150; c=relaxed/simple;
-	bh=C9Q/uxyrf74fdHhdxm1fLdf6cHFhS/lUKhNgg1ajdhY=;
+	s=arc-20240116; t=1722295171; c=relaxed/simple;
+	bh=OHOVO4dxB3APauYeyYI+8Ic96yRsKCBkvy6zgnD8xWA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CRAGkjqcQFSGOOpjZYLhDbK8UZLI/lSmAE1Z/NNghFpaVSxWLQzj2+WaAaXyyE3FMKyvB10aBz8DTZpJ1hf7lGkXa4QfBUQlKqQLmupmgd2iLM4PnqSi6BGJY+DFs0/eEzbGXNKUatzPHVQFfMYc7lN/EqVwX9PXBtjh4Mz0yeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sYZdZ-000000006Q5-0COe;
-	Mon, 29 Jul 2024 23:18:41 +0000
-Date: Tue, 30 Jul 2024 00:18:37 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Diederik de Haas <didi.debian@cknow.org>,
-	Chen-Yu Tsai <wens@kernel.org>, linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Martin Kaiser <martin@kaiser.cx>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@debian.org>,
-	devicetree@vger.kernel.org, linux-crypto@vger.kernel.org,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Olivia Mackall <olivia@selenic.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
-Message-ID: <ZqgjTQMgWZO2FjaC@makrotopia.org>
-References: <cover.1720969799.git.daniel@makrotopia.org>
- <3190961.CRkYR5qTbq@bagend>
- <CAGb2v64Dx7XaJOu0HHzFxYYY2ddUZao5Tar8-s1R_miVZqWcXA@mail.gmail.com>
- <4406786.zLnsZ2vfAB@bagend>
- <faa0baebabd3c31adf1afa7efbbdf608@manjaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qZJpz/Ro5dpkFv7jIh3CkB56nhfXWxre+D4rkg4zlrKTIh7mEdYsbZjLxGgtWZ475ayMW5ccPld+I8OxPHQ5pqii5YYwPN+mKzRDchqiWJiNeDJppjvjSIr1puhZv5VrzB8ZPhGVinGbbYV55dA5JlB/8RpR6dA2FLMTkEPGoU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=guOnPFPZ; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc5549788eso28536945ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:19:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1722295169; x=1722899969; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kihfTujYbv2E1XGq+VQixBC4l+TTMCr6DBpIWmnfqrM=;
+        b=guOnPFPZRNdRSHj5O9pLnp2KPEUVd2YPSfY1gFfIwhA6TLAlFHzTE1EpKetRp7T7v0
+         bIVmQswq73PISeOxMqD7SLl6mPRTLcuzZgM4wn8cvyHlaLyfXeo6Evxn9/CV5kVbKlft
+         pHryclYSUX/l3cF2a4DNg+SNAF23TXCpSaerdAUtonsdgLvjcr1Bj2fseQN3WTgYtrkU
+         TcE4WcULwNlTyTONN9+426q2I756YuntohtWigtnn84q2F6qvM/+BE8ng/uW9e8AMsjM
+         0YRO9ZhDwaHHo5CUR9vy6bCJajO/xn8PXb4pnDTZus7dE87UwWBW6MsxtlAfqpHCly0c
+         bpPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722295169; x=1722899969;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kihfTujYbv2E1XGq+VQixBC4l+TTMCr6DBpIWmnfqrM=;
+        b=c+QvUpqljx+303JNS4m8wAj5n2vB5PnhIl2JlOisV8sEtw5Htxl8TOz05R/A9/RXB7
+         jdlsCNy0gWGi59HiYudq9Qnk7yTewsvHsb6kUBMGWzN/xbBV5WYkkCLYyk2Ygzn0kc1O
+         3qDKV+XPbgXfEbm5EtyscNqpfWZ2QY9QhoqV+vwAUyaqfCTwYrYsvA5U97+GCyVeF3cn
+         ytoM5cJ39qrnBDIh9z53H7ocCZw4lGW4n9qE0wETlUErDnhrXS3TZz/R8DnfxTWofxf3
+         M87I2RcbUlb6Wbn5D35EEOnH3HmJePfr9EG1+pIZqgCzoaxNvMztTqj/PDrK/nbC+1mO
+         6Avg==
+X-Forwarded-Encrypted: i=1; AJvYcCWKMsdzzsI17ihucHH1m3A3CTo6YB3klp3042tbOWYXbCeI8UC8sL8XkgXOP95awpWJiGq9cB9mtxFuc4bnc4xD2hZqAIXQqPjwWJxp
+X-Gm-Message-State: AOJu0YzJnpE8I8Hf6hg5Oq6u+XXk2j7nfP5wSoYIeMD/uucl2Gl2d5B5
+	vSsCJcYcrRzYlGUVaQCBChTcjlXlTJYQRbUlsN8IHs1xkqjhGt1gH+JbSbEx0sYR8/7PtH5DIxJ
+	8
+X-Google-Smtp-Source: AGHT+IFVnVpiGMv4QE3tIHnY31CZIyj8nSZogBjINNMpgFa1/B5ceMrCZ21SvgHhoE64ol7erQYeRA==
+X-Received: by 2002:a17:903:22cd:b0:1fc:2ee3:d46f with SMTP id d9443c01a7336-1ff047dd5e0mr145558165ad.11.1722295169539;
+        Mon, 29 Jul 2024 16:19:29 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ffcb9dsm88690665ad.306.2024.07.29.16.19.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 16:19:29 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sYZeI-00G4Uf-29;
+	Tue, 30 Jul 2024 09:19:26 +1000
+Date: Tue, 30 Jul 2024 09:19:26 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Aleksa Sarai <cyphar@cyphar.com>, Florian Weimer <fweimer@redhat.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: Testing if two open descriptors refer to the same inode
+Message-ID: <Zqgjftq6H3cDO8D0@dread.disaster.area>
+References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
+ <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
+ <875xsoqy58.fsf@oldenburg.str.redhat.com>
+ <vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
+ <87sevspit1.fsf@oldenburg.str.redhat.com>
+ <CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
+ <20240729.114221-bumpy.fronds.spare.forts-a2tVepJTDtVb@cyphar.com>
+ <CAGudoHFQ9TtG-5__38-ND4KTxYCpEKVv_X9HhZixcdnVMUBEwQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,19 +95,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <faa0baebabd3c31adf1afa7efbbdf608@manjaro.org>
+In-Reply-To: <CAGudoHFQ9TtG-5__38-ND4KTxYCpEKVv_X9HhZixcdnVMUBEwQ@mail.gmail.com>
 
-On Wed, Jul 24, 2024 at 08:07:51AM +0200, Dragan Simic wrote:
-> Thanks a lot for the testing.  Though, such wildly different test results
-> can, regrettably, lead to only one conclusion:  the HWRNG found in RK3566
-> is unusable. :/
+On Mon, Jul 29, 2024 at 02:12:15PM +0200, Mateusz Guzik wrote:
+> There needs to be a dev + ino replacement which retains the property
+> of being reliable between reboots and so on.
 
-The results on RK3568 look much better and the series right now also
-only enabled the RNG on RK3568 systems. However, we have only seen few
-boards with RK3568 up to now, and I only got a couple of NanoPi R5C
-here to test, all with good hwrng results.
+Yes, that's exactly what filehandles provide.
 
-Do you think it would be agreeable to only enable the HWRNG for RK3568
-as suggested in this series? Or are we expecting quality to also vary
-as much as it (sadly) does for RK3566?
+OTOH, dev + ino by itself does not provide this guarantee, as st_dev
+is not guaranteed to be constant across reboots because of things
+like async device discovery and enumeration. i.e. userspace has to
+do a bunch of work to determine the "st_dev" for a given filesystem
+actually refers to the same filesystem it did before the system
+restarted (e.g. via FS uuid checks).
+
+Filehandles already contain persistent filesystem identifiers, and
+so userspace doesn't have to do anything special to ensure that
+comparisons across reboots are valid.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
