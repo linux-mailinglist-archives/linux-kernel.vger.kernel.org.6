@@ -1,167 +1,130 @@
-Return-Path: <linux-kernel+bounces-266166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73BB993FBDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:52:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1182A93FBDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9793C1C224E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:52:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 426B61C22172
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED4315ECC3;
-	Mon, 29 Jul 2024 16:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A72E158D7F;
+	Mon, 29 Jul 2024 16:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yk7y/4lI"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V61BRB7P"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2E978B50;
-	Mon, 29 Jul 2024 16:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A1E78B50
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722271953; cv=none; b=S2DqAngKmZj7OG927lpvDYdhuoi98mzTdpAOsbBtHUvus+Z6sCFrqjQbzyxNRhJ1et+E2jhm4zSGjHfpRye0Eu9jP6YqgX8wlk6lYYh0olPZPRIslIO4zDPTAmswzg0L4VyYWu9maUwv9BQPZZO8pcfGj9gkSYCspMtOIDraBns=
+	t=1722272023; cv=none; b=bV9z3+Zf/c4IAyM9RpWnmH4vBQ2rTmxgSEMM/vDq7dINK1ubBlnYUzfJv1moqRW0LV1AC//qeeUj/wNy/S88Rdt16wAoMbA9B4rHB6es5M6aP2RuusSnpD6Od1itzRUlSHF7oKx+XVY04iq5yFuiLAPqTZUyQlTV/vqD/spo71c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722271953; c=relaxed/simple;
-	bh=RQT5WWRujTcAqltR+0zVcm58GG+9YxEIRL8PNIgQUSs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iJaOzyOxdY+uFi42mwsQslwiCzW55Z89oD4tRrAJ50NCKOz7o1OBu2lQHY2KmN3bUzsJnj0rnRf1myl4k83vwc97Eb2ZPiZzN48aXKZXgkmtTArYyUfxdLIr9Q60nxRg7BXHvB++kAVGcFz9TYLBVAvLxrhCN52bJEDWNUNck/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yk7y/4lI; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2cd5e3c27c5so2160766a91.3;
-        Mon, 29 Jul 2024 09:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722271951; x=1722876751; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F1ho5QoGVALlGvO1PPceVK1Uz2j6z5FfEI7hQnwqjGw=;
-        b=Yk7y/4lIQb129jBbiRi89A2K1OUUPd10w3Gm8IJ6dT+p89zMxbHq4e24XXunAQy99i
-         bFPVu8KVNpL214+0VKMGw1PtCNzsJxnV25FLZs6O7klimZcJVCwcofyBUapcK0sNYAWi
-         nSlE9Du9ejhW7XghxBgSsgxRtYaQukPMWsGzIslkFCp0z5O+Ls6+/HCh+/uITs3RMy1S
-         Kv9ypddp4/fEQBw9bhpUi7g1M/tH/kzEwU8giEfQ3lk5V6aNYrfMSP/wx/1E+NQpXVAC
-         rnabWkKfQJF0NtM82R3vpPltZ0e+DpJNmVEnhc6kurJZO31id+Kc/C4zQ99lgL6O9Y5r
-         60ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722271951; x=1722876751;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F1ho5QoGVALlGvO1PPceVK1Uz2j6z5FfEI7hQnwqjGw=;
-        b=Ai4gMIflVGDrm4SPlwl1tZO7oesCSKleBa87T+DaCTj+IP/z3v2Hj1uJs59d78MBQZ
-         iZdyyBVw9KKp2yUByUGayG2w9thYdM2t4MgO5NOFFNbo7MKfyHqD5vxQLws5PwWcu1ci
-         X5hUlZZEyTylD3lGK/ibJbYTv/+75nIezdeSPaOGtIaSEBIfq2lSg9eSh3+rXMFdgskk
-         dGfsWmjdfBiBSEHSnsizK5GSzJIzSnIDXWWaMARpE8+fcoTI3iwwjd6gDPYGn28Yl4Yu
-         s1jVeWDcXm6F01hhmlktXF9WFydK55Y9SsWdCZN8hYcXz75gJUYdSQgw9Q5GkutGzXcR
-         K11g==
-X-Forwarded-Encrypted: i=1; AJvYcCUZvfB2NByVTA/KW/7CJldB7W0yE95JJn2IgLOkbdi6V8qHtfUl00ROe3vSc4nQIHvvVYl1S3zsrofo1ea4OP3oK4KAZLzCAV1iToI2Qf3aUhyWytemY1DzK7rcjgseONi7nydeEr8pKsmKReP/oGjdWa97hqZOsNca0KtnForirg==
-X-Gm-Message-State: AOJu0Yzt5YvGrhSA90dpoZr71GPePqQr36P9UbM0rpXN9mYXJamHUw9o
-	UgX3pnmyYzoGjYIvIidBh7QBOXvSgOkYg5iz2BGIl/zJcJVvW8CXtbc/FHY6aHWJ3mSvoEWXGsj
-	kIDOrRJAm2tNo8lL+xRf+2+Kzsi8=
-X-Google-Smtp-Source: AGHT+IFOQKm1kOOY1enndLUmrwVyPkPWD9zlOkNYF4MshasZERBRGWashb+a1LdHxEgXCuM3q9OHW2D9HSs6IbtHY2s=
-X-Received: by 2002:a17:90a:a018:b0:2c9:359c:b0c with SMTP id
- 98e67ed59e1d1-2cf7e82fdf9mr5911155a91.28.1722271951367; Mon, 29 Jul 2024
- 09:52:31 -0700 (PDT)
+	s=arc-20240116; t=1722272023; c=relaxed/simple;
+	bh=p+N8Ve5P1Ip05fYcKq9Z0+kWjejsON2Cg4gjMupfgNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ETYmVHIp/4ckoom9HgTgRhndWf2Mb1AG6IfUi2S8wtC+ruZWOuG3FJZopgHks3vK1V6DO9VivbeIOSQWPP3SMgNLBE+O0oF666CPUcFzmjNSdQk2AMhCoDYh6pVNLyIncIbTN3mbtHd6Ci8Hhk4MbE/D+t4OL7JKGQXkdrmPvuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V61BRB7P; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722272020;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1B0+0v9UoO752ShDZ+sUoeYQDHn6i5gDwvgX32wEnDQ=;
+	b=V61BRB7POaK0qEiQNmMIurZTAu4H4DpCAEQauPwREk0YSwdO9CldwNeCRM5+uvqMXGlnGT
+	nkpPF5fKgWwSzrDu8KuAzTPfg7afgYnFsuXP/u0XvUFiMi98AID9sjppzMkr5ILaNoi0R9
+	lzxmZ6pEhS4Q3afIqqMOG8U/mGQisAA=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-671-1qvuAJt7OVW_3YsQIYnIDw-1; Mon,
+ 29 Jul 2024 12:53:37 -0400
+X-MC-Unique: 1qvuAJt7OVW_3YsQIYnIDw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 03D111955D50;
+	Mon, 29 Jul 2024 16:53:36 +0000 (UTC)
+Received: from localhost (unknown [10.22.34.81])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CBEE71955D42;
+	Mon, 29 Jul 2024 16:53:34 +0000 (UTC)
+Date: Mon, 29 Jul 2024 13:53:33 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lockdep: suggest the fix for "lockdep bfs error:-1" on
+ print_bfs_bug
+Message-ID: <ZqfJDTn9rCQ1eVnz@uudg.org>
+References: <ZqKdZZp7TI69DWRE@uudg.org>
+ <ZqQUDI3Ai9GP9hUO@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627170900.1672542-1-andrii@kernel.org> <20240627170900.1672542-4-andrii@kernel.org>
- <CAG48ez3VuVQbbCCPRudOGq8jTVkhH17qe6vv7opuCghHAAd3Zw@mail.gmail.com>
-In-Reply-To: <CAG48ez3VuVQbbCCPRudOGq8jTVkhH17qe6vv7opuCghHAAd3Zw@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 29 Jul 2024 09:52:19 -0700
-Message-ID: <CAEf4Bza761YA=io2p_E8qSxuOxkkKFF7=RXnK2vDUE4eUdUmBw@mail.gmail.com>
-Subject: Re: [PATCH v6 3/6] fs/procfs: add build ID fetching to PROCMAP_QUERY API
-To: Jann Horn <jannh@google.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
-	linux-mm@kvack.org, liam.howlett@oracle.com, surenb@google.com, 
-	rppt@kernel.org, adobriyan@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqQUDI3Ai9GP9hUO@boqun-archlinux>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Mon, Jul 29, 2024 at 8:48=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
->
-> On Thu, Jun 27, 2024 at 7:08=E2=80=AFPM Andrii Nakryiko <andrii@kernel.or=
-g> wrote:
-> > The need to get ELF build ID reliably is an important aspect when
-> > dealing with profiling and stack trace symbolization, and
-> > /proc/<pid>/maps textual representation doesn't help with this.
-> [...]
-> > @@ -539,6 +543,21 @@ static int do_procmap_query(struct proc_maps_priva=
-te *priv, void __user *uarg)
-> >                 }
-> >         }
-> >
-> > +       if (karg.build_id_size) {
-> > +               __u32 build_id_sz;
+On Fri, Jul 26, 2024 at 02:24:28PM -0700, Boqun Feng wrote:
+> On Thu, Jul 25, 2024 at 03:45:57PM -0300, Luis Claudio R. Goncalves wrote:
+> > When lockdep fails while performing the Breadth-first-search operation
+> > due to lack of memory, hint that increasing the value of the configuration
+> > switch LOCKDEP_CIRCULAR_QUEUE_BITS should fix the warning.
+> > 
+> > Preface the scary bactrace with the suggestion:
+> > 
+> >     [  163.849242] Increase LOCKDEP_CIRCULAR_QUEUE_BITS to avoid this warning:
+> >     [  163.849248] ------------[ cut here ]------------
+> >     [  163.849250] lockdep bfs error:-1
+> >     [  163.849263] WARNING: CPU: 24 PID: 2454 at kernel/locking/lockdep.c:2091 print_bfs_bug+0x27/0x40
+> >     ...
+> > 
+> > Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+> > ---
+> >  kernel/locking/lockdep.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> > index 58c88220a478a..1cf6d9fdddc9c 100644
+> > --- a/kernel/locking/lockdep.c
+> > +++ b/kernel/locking/lockdep.c
+> > @@ -2067,6 +2067,9 @@ static noinline void print_bfs_bug(int ret)
+> >  	/*
+> >  	 * Breadth-first-search failed, graph got corrupted?
+> >  	 */
+> > +	if (ret  == BFS_EQUEUEFULL)
+> 
+> This line has an extra space after "ret", but otherwise it looks fine.
+
+Should I send a v2 of the patch with the extra whitespace removed?
+
+Luis
+
+> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> 
+> Regards,
+> Boqun
+> 
+> > +		pr_warn("Increase LOCKDEP_CIRCULAR_QUEUE_BITS to avoid this warning:\n");
 > > +
-> > +               err =3D build_id_parse(vma, build_id_buf, &build_id_sz)=
-;
-> > +               if (err) {
-> > +                       karg.build_id_size =3D 0;
-> > +               } else {
-> > +                       if (karg.build_id_size < build_id_sz) {
-> > +                               err =3D -ENAMETOOLONG;
-> > +                               goto out;
-> > +                       }
-> > +                       karg.build_id_size =3D build_id_sz;
-> > +               }
-> > +       }
->
-> The diff doesn't have enough context lines to see it here, but the two
-> closing curly braces above are another copy of exactly the same code
-> block from the preceding patch. The current state in mainline looks
-> like this, with two repetitions of exactly the same block:
+> >  	WARN(1, "lockdep bfs error:%d\n", ret);
+> >  }
+> >  
+> > -- 
+> > 2.45.2
+> > 
+> 
+---end quoted text---
 
-Yeah, you are right, thanks for the heads up! Seems like a rebase
-screw up which duplicated build_id logic. It doesn't have any negative
-effects besides doing the same work twice (if build ID parsing is
-requested), but I'll definitely will send a fix to drop the
-duplication.
-
->
-> [...]
->                 karg.dev_minor =3D 0;
->                 karg.inode =3D 0;
->         }
->
->         if (karg.build_id_size) {
->                 __u32 build_id_sz;
->
->                 err =3D build_id_parse(vma, build_id_buf, &build_id_sz);
->                 if (err) {
->                         karg.build_id_size =3D 0;
->                 } else {
->                         if (karg.build_id_size < build_id_sz) {
->                                 err =3D -ENAMETOOLONG;
->                                 goto out;
->                         }
->                         karg.build_id_size =3D build_id_sz;
->                 }
->         }
->
->         if (karg.build_id_size) {
->                 __u32 build_id_sz;
->
->                 err =3D build_id_parse(vma, build_id_buf, &build_id_sz);
->                 if (err) {
->                         karg.build_id_size =3D 0;
->                 } else {
->                         if (karg.build_id_size < build_id_sz) {
->                                 err =3D -ENAMETOOLONG;
->                                 goto out;
->                         }
->                         karg.build_id_size =3D build_id_sz;
->                 }
->         }
->
->         if (karg.vma_name_size) {
-> [...]
 
