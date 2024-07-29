@@ -1,139 +1,225 @@
-Return-Path: <linux-kernel+bounces-265707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA2E93F4A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:55:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E4D793F4AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA1D01C21914
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:55:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F4042281E6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D6314601E;
-	Mon, 29 Jul 2024 11:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C3414659A;
+	Mon, 29 Jul 2024 11:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmp5EQbG"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="VlRVDaIi"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDAF1D69E;
-	Mon, 29 Jul 2024 11:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999A114600F
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722254146; cv=none; b=HIPqas6qJjpPbSNmEnqoVuAdocXAU2kn62CzqIngMTvvFOQmixPHtjOlmoG1ldaCRdjevVkmm7qrM8TR9a9mIJRrL7H8EuXocLoFQdjEc0x0L+oIa1xaJPShnG0SxEuAXW9Ao3dugYWdbVDCsMmvvoRxKMy3udKvaWIPHMhbU2Q=
+	t=1722254172; cv=none; b=b0D/IXwRSTPT4h5TvkRNsp8SapsJSnrMZ7Jh+mHgjnxX6fRgBSAj6elhtdyx567Y402cWBgPJej5kqwQwnp3Lw+Nr3/DBjZhdLQ5hykJWWou4AL7j0RBnPGO0JlrVpbOXcgkAOf3/r9YBUxowEiVrC24GH+Vhdj4U50uYujz7Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722254146; c=relaxed/simple;
-	bh=lVvDNEFpX03SJnSG5bu3Bem0pmuhRNncFVjJuRFD9Fw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZvfXeTmuGopC0TBGnRj0HOJlSXSnNTgm7t/9JF/6ddAbdWutwmZOoOEQQ4rVbjClSZ/hcZ1XHykA03dARLpEdTndNK6UfGhgIqUB//zZd3REGPsV5/A6EoFwhSAI3jpTSsOW1ayrUh3w9DHp8r9cJwNl4O9FtawZ2Vlyy9kBbYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lmp5EQbG; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2cb4b7fef4aso2439183a91.0;
-        Mon, 29 Jul 2024 04:55:45 -0700 (PDT)
+	s=arc-20240116; t=1722254172; c=relaxed/simple;
+	bh=i9I3/N05FbGwbs91KpB69t9soACd1NmRqKErtbYjxfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IoJexm9wn79p8eaH4eOd9S6NiwnWFUUUgQgsj/7NVGZMR8UKg2hY9ldQrXwdwp+alnXOAgOyPxjO/2couBi7DUqaVvB1MXpHpWoLhPMD8fWw524HhdcqbDAHiz+LHdXnvYB7F/TKWBom+7LW284pwQw3RYxXUoVVDNBayR8bGbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=VlRVDaIi; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ef32fea28dso39936081fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 04:56:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722254145; x=1722858945; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lVvDNEFpX03SJnSG5bu3Bem0pmuhRNncFVjJuRFD9Fw=;
-        b=lmp5EQbGtDUnxB8172jWKBXsxKn1IbeXr/CeXg5gDGr4YaIT+VpOqL96QIX8Z2MV5B
-         SzIN8eKXuq8+bWfrLxD4gvEthxdb/4RECQ6mj4RwM1qBLLCEHGq1VaVEldApythCh7vp
-         +YZGyNHJJeNzo3F7RB7auYQTsmKzqtsqFPPpjKWEPefSrjqpUFi6Qw4Sui6oJ9If32XT
-         Q5ra9qNh4ANi5UQGx5rcP7rrR25cGU1R04gnkXXId4RiSbkoVGUfEocRvnFJCyl+Mm1w
-         bqwNES7gvF5yhOd97iAkMPlvmOAC/ltgb+XzVvJsg8yWM6x9bg6e10AM13LRMlWnQZv1
-         4PNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722254145; x=1722858945;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=fastly.com; s=google; t=1722254169; x=1722858969; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lVvDNEFpX03SJnSG5bu3Bem0pmuhRNncFVjJuRFD9Fw=;
-        b=Box6O0G0wnDjTQPAvQzZHx946bQB2MpF4RA2UAeVWHqkoKn4B0bWNXrpHb5qa7PzP3
-         J7oj6Kd65jr/MgR7cjZO7d+PAko5S7mIAx6NEpqBt7rf/Kd77lMwqfCVbq5mfc/x+YkF
-         whlU6fYp4+qUV/nNtBd2Bn5SnQnJYdI28Tlk17ewLSE7lo4snfTO1x+fL1epCg5Xjtj/
-         +KviYLuzMW7LatzYnjQCdj3baDhkiOJaK52dXAxTuewtAnKPcTVz49gnkWpZuZYt+gog
-         ZiRu6NxC0SE2suKYQ0Ie7ThxEuvtOGkBA76X4t+PXpd+5NWQAp774HhKz0ITJjjZWhIV
-         ZYKA==
-X-Forwarded-Encrypted: i=1; AJvYcCX9rhy7O1BkQddTmvvxA2Y/5lMqSLngnKoJA8lpFKJEtR/xtZ0K3XU01Bp618ehvltQro2OMWgI1MuNwePqDp65wJSWam2dbNpnlgkT3M1bSn/H4C02HT7lvyKQmGxKeLc9+f0o+g==
-X-Gm-Message-State: AOJu0YwHiXwdA/pLXDG2cIlr/Nlj7Q0WFINKK5lfGBk62O+KlnyfO4pZ
-	mlun9apaw+ZwpPexTy0CpbUrDAUmIuVHC3jFA/yYkqx9ZbylSF6i7yuNtE7gl+gJ47M5xgOuNES
-	UGCIxhYoFSmyjG5E86S+Sb2XDZ0URTg==
-X-Google-Smtp-Source: AGHT+IG/aZbWDtxoNnOzHkj+SliJsGoJineAi6iWzJaWWf/ludzKYrS9udSITPblKA+nrtnaJ5YGjO2nTJoYPWtfbQQ=
-X-Received: by 2002:a17:90a:e7c2:b0:2cd:7d6f:31b0 with SMTP id
- 98e67ed59e1d1-2cf7e866982mr7892114a91.43.1722254144749; Mon, 29 Jul 2024
- 04:55:44 -0700 (PDT)
+        bh=6lqilmYMNLKW9grtztpOwsuGdNvh+NjmMFJBCfbrWzM=;
+        b=VlRVDaIidmvG9OURb/KvjjAUO1JQpyAogP87mz5A39PExXtoJLaS80MFW87AudAGDh
+         82HtdsxbcFvU1qamlNyf02qOXYtI5ccc6x2bfSMOvcp0h/w1p/EVgz59iQxvF/c9x59P
+         hcyAt7YpLrvckKtjHIzktQG6VxFbsOCl/VwVE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722254169; x=1722858969;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6lqilmYMNLKW9grtztpOwsuGdNvh+NjmMFJBCfbrWzM=;
+        b=GS3BXGfIL05nlvsPYRLCk6tcg05oWU6eqQwFCMCvkzK/tEy4MFIWJgSLsSEPX+chCg
+         cSprOdfBDmJ8+d/zFeXWtQAunLD2u94DNgWbml41d6SE/isbskbNquxSAXVl7kqWnsvD
+         49zrqomtJwH9klrIFU8AV7KwiIHgvKwVpI8eK6yxBCuFUImZ4tTXIZYRNOKrWuia7A5T
+         ztjsg4ilC8Do+dJXbEnC1uu0UiAjs/nklZjstP+9uXKxl+lf+d77m9mUBMq97STuz5IT
+         XifEdnlxTVKmHXvBS+ezut4dmTU18/erwwYUtNZdGrzG4JtISfPBugNSZ6/afzU6Xu67
+         E0kw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjurJNFW1UwXdCNyiuU9jEB5Yn71JaI5zLzE3fsfKPjNP3FylxEjPe9dXdeU+HK3IkhSZAEWGX7deys7WEjb92Ct3rWfKchkL3hOpm
+X-Gm-Message-State: AOJu0Yw3SXwxaqUkLDH0xJp1L8TcaEiYt+Y25/OSIG8DWPrJigAha9Zu
+	9AOTruOOh//AzvXBUZHH8/zULRmDhPTeZTwufOS7zT7x85XPaDH9h1xgqiftC5U=
+X-Google-Smtp-Source: AGHT+IEJSwMOihyNplXaU0oXw+JPkRM618PqXZc6xYxwDAEuy3NmLkQA4X67+R5kP5xzh5UzltTrZw==
+X-Received: by 2002:a2e:a78d:0:b0:2ef:2dfe:f058 with SMTP id 38308e7fff4ca-2f12ee2eac5mr44883831fa.42.1722254168694;
+        Mon, 29 Jul 2024 04:56:08 -0700 (PDT)
+Received: from LQ3V64L9R2 ([80.208.222.2])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f03cf30aacsm12885391fa.48.2024.07.29.04.56.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 04:56:08 -0700 (PDT)
+Date: Mon, 29 Jul 2024 12:56:06 +0100
+From: Joe Damato <jdamato@fastly.com>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: "kuba@kernel.org" <kuba@kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"andrew@lunn.ch" <andrew@lunn.ch>,
+	"jiri@resnulli.us" <jiri@resnulli.us>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"rkannoth@marvell.com" <rkannoth@marvell.com>,
+	Ping-Ke Shih <pkshih@realtek.com>,
+	Larry Chiu <larry.chiu@realtek.com>
+Subject: Re: [PATCH net-next v25 08/13] rtase: Implement net_device_ops
+Message-ID: <ZqeDVl5rGXfEjv4m@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Justin Lai <justinlai0215@realtek.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"andrew@lunn.ch" <andrew@lunn.ch>,
+	"jiri@resnulli.us" <jiri@resnulli.us>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"rkannoth@marvell.com" <rkannoth@marvell.com>,
+	Ping-Ke Shih <pkshih@realtek.com>,
+	Larry Chiu <larry.chiu@realtek.com>
+References: <20240729062121.335080-1-justinlai0215@realtek.com>
+ <20240729062121.335080-9-justinlai0215@realtek.com>
+ <ZqdvAmRc3sBzDFYI@LQ3V64L9R2>
+ <f55076d3231f40dead386fe6d7de58c9@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702095401.16278-1-gongruiqi1@huawei.com> <9473d6eb-3f56-4c73-8e61-69111837c07b@huawei.com>
- <CAHC9VhR+tk4mwmaQ6u8SEnzg6zMF2krFHKVwxKx91GX1K=4A=g@mail.gmail.com>
- <0729db54-98cf-4006-91d0-0ebda4dbc251@huawei.com> <CAFqZXNsN9M__Mo018L8m0txi60vm3Ui5HgHvJYQK__0hhhMULQ@mail.gmail.com>
- <55390a1e-5994-465a-a5c5-94f3370259c3@huawei.com> <CAFqZXNu_cLLH811Z8CxDb07Adf+E_z+1nH=7nkO9H83CY9RETw@mail.gmail.com>
-In-Reply-To: <CAFqZXNu_cLLH811Z8CxDb07Adf+E_z+1nH=7nkO9H83CY9RETw@mail.gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Mon, 29 Jul 2024 07:55:33 -0400
-Message-ID: <CAEjxPJ4H_MVWd5iaP5eE_q0tbebSFRE=KMS80-dE3EdRpmv84A@mail.gmail.com>
-Subject: Re: [PATCH testsuite] tests/task_setscheduler: add cgroup v2 case for
- moving proc to root cgroup
-To: Ondrej Mosnacek <omosnace@redhat.com>
-Cc: Gong Ruiqi <gongruiqi1@huawei.com>, Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Wang Weiyang <wangweiyang2@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f55076d3231f40dead386fe6d7de58c9@realtek.com>
 
-On Mon, Jul 29, 2024 at 6:29=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.co=
-m> wrote:
->
-> On Sat, Jul 27, 2024 at 4:55=E2=80=AFAM Gong Ruiqi <gongruiqi1@huawei.com=
-> wrote:
-> >
-> >
-> > On 2024/07/26 21:43, Ondrej Mosnacek wrote:
-> > > On Thu, Jul 18, 2024 at 2:34=E2=80=AFPM Gong Ruiqi <gongruiqi1@huawei=
-.com> wrote:
-> > >>
-> > >>
-> > >> On 2024/07/18 0:17, Paul Moore wrote:
-> > >>> ...
-> > >>>
-> > >>> Where (what distribution, version, etc.) did you see this problem?
-> > >>
-> > >> The problem occurred when I ran the testsuite on Fedora 40 with v6.6
-> > >> kernel, and it was the only failed testcase.
+On Mon, Jul 29, 2024 at 11:39:03AM +0000, Justin Lai wrote:
+> > On Mon, Jul 29, 2024 at 02:21:16PM +0800, Justin Lai wrote:
+> > > 1. Implement .ndo_set_rx_mode so that the device can change address
+> > > list filtering.
+> > > 2. Implement .ndo_set_mac_address so that mac address can be changed.
+> > > 3. Implement .ndo_change_mtu so that mtu can be changed.
+> > > 4. Implement .ndo_tx_timeout to perform related processing when the
+> > > transmitter does not make any progress.
+> > > 5. Implement .ndo_get_stats64 to provide statistics that are called
+> > > when the user wants to get network device usage.
+> > > 6. Implement .ndo_vlan_rx_add_vid to register VLAN ID when the device
+> > > supports VLAN filtering.
+> > > 7. Implement .ndo_vlan_rx_kill_vid to unregister VLAN ID when the
+> > > device supports VLAN filtering.
+> > > 8. Implement the .ndo_setup_tc to enable setting any "tc" scheduler,
+> > > classifier or action on dev.
+> > > 9. Implement .ndo_fix_features enables adjusting requested feature
+> > > flags based on device-specific constraints.
+> > > 10. Implement .ndo_set_features enables updating device configuration
+> > > to new features.
 > > >
-> > > Sorry for the delay... For some reason the test passes for me even
-> > > with cgroup v2 only and without the patch (also when run from a
-> > > regular user account with sudo). Do you happen to know what
-> > > circumstances are needed for it to fail when the cgroup is not
-> > > switched?
+> > > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+> > > ---
+> > >  .../net/ethernet/realtek/rtase/rtase_main.c   | 235 ++++++++++++++++++
+> > >  1 file changed, 235 insertions(+)
 > > >
-> >
-> > As the comment in the script says, a process need to be in the root
-> > cgroup in order to switch its scheduler policy to SCHED_{RR,FIFO}. So
-> > maybe in your case the shell process is already in the root cgroup?
-> >
-> > In my case I need to ssh to a Fedora VM, and that makes my shell proces=
-s
-> > to be in a sub cgroup called /user.slice/.../XXX.scope (looks like some
-> > systemd stuff). And since /sys/fs/cgroup/cpu/tasks doesn't exit in the
-> > system with cgroup v2 only, the script skips moving the target process
-> > to the root cgroup, and therefore the subsequent test fails.
->
-> In my case I ssh as root and end up in
-> /user.slice/user-0.slice/session-1.scope cgroup,
-> /sys/fs/cgroup/cpu/tasks also doesn't exist, and yet the test passes.
-> The same also happens when I ssh as a regular user (with cgroup
-> /user.slice/user-1000.slice/session-3.scope) and run the testsuite
-> with sudo. So there must be something more to it... maybe some kernel
-> config or sysctl setting?
+> > > diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > > b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > > index 8fd69d96219f..80673fa1e9a3 100644
+> > 
+> > [...]
+> > 
+> > > +static void rtase_dump_state(const struct net_device *dev) {
+> > 
+> > [...]
+> > 
+> > > +
+> > > +     netdev_err(dev, "tx_packets %lld\n",
+> > > +                le64_to_cpu(counters->tx_packets));
+> > > +     netdev_err(dev, "rx_packets %lld\n",
+> > > +                le64_to_cpu(counters->rx_packets));
+> > > +     netdev_err(dev, "tx_errors %lld\n",
+> > > +                le64_to_cpu(counters->tx_errors));
+> > > +     netdev_err(dev, "rx_errors %d\n",
+> > > +                le32_to_cpu(counters->rx_errors));
+> > > +     netdev_err(dev, "rx_missed %d\n",
+> > > +                le16_to_cpu(counters->rx_missed));
+> > > +     netdev_err(dev, "align_errors %d\n",
+> > > +                le16_to_cpu(counters->align_errors));
+> > > +     netdev_err(dev, "tx_one_collision %d\n",
+> > > +                le32_to_cpu(counters->tx_one_collision));
+> > > +     netdev_err(dev, "tx_multi_collision %d\n",
+> > > +                le32_to_cpu(counters->tx_multi_collision));
+> > > +     netdev_err(dev, "rx_unicast %lld\n",
+> > > +                le64_to_cpu(counters->rx_unicast));
+> > > +     netdev_err(dev, "rx_broadcast %lld\n",
+> > > +                le64_to_cpu(counters->rx_broadcast));
+> > > +     netdev_err(dev, "rx_multicast %d\n",
+> > > +                le32_to_cpu(counters->rx_multicast));
+> > > +     netdev_err(dev, "tx_aborted %d\n",
+> > > +                le16_to_cpu(counters->tx_aborted));
+> > > +     netdev_err(dev, "tx_underun %d\n",
+> > > +                le16_to_cpu(counters->tx_underun));
+> > 
+> > You use le64/32/16_to_cpu here for all stats, but below in rtase_get_stats64, it
+> > is only used for tx_errors.
+> > 
+> > The code should probably be consistent? Either you do or don't need to use
+> > them?
+> > 
+> > > +}
+> > > +
+> > [...]
+> > > +
+> > > +static void rtase_get_stats64(struct net_device *dev,
+> > > +                           struct rtnl_link_stats64 *stats) {
+> > > +     const struct rtase_private *tp = netdev_priv(dev);
+> > > +     const struct rtase_counters *counters;
+> > > +
+> > > +     counters = tp->tally_vaddr;
+> > > +
+> > > +     dev_fetch_sw_netstats(stats, dev->tstats);
+> > > +
+> > > +     /* fetch additional counter values missing in stats collected by driver
+> > > +      * from tally counter
+> > > +      */
+> > > +     rtase_dump_tally_counter(tp);
+> > > +     stats->rx_errors = tp->stats.rx_errors;
+> > > +     stats->tx_errors = le64_to_cpu(counters->tx_errors);
+> > > +     stats->rx_dropped = tp->stats.rx_dropped;
+> > > +     stats->tx_dropped = tp->stats.tx_dropped;
+> > > +     stats->multicast = tp->stats.multicast;
+> > > +     stats->rx_length_errors = tp->stats.rx_length_errors;
+> > 
+> > See above; le64_to_cpu for tx_errors, but not the rest of the stats. Why?
+> 
+> The rtase_dump_state() function is primarily used to dump certain hardware
+> information. Following discussions with Jakub, it was suggested that we
+> should design functions to accumulate the 16-bit and 32-bit counter values
+> to prevent potential overflow issues due to the limited size of the
+> counters. However, the final decision was to temporarily refrain from
+> reporting 16-bit and 32-bit counter information. Additionally, since
+> tx_packet and rx_packet data are already provided through tstat, we
+> ultimately opted to modify it to the current rtase_get_stats64() function.
 
-As a further data point, I also have been unable to reproduce the
-reported behavior.
-That said, since tasks doesn't exist, isn't the passing test a false
-negative (i.e. it isn't truly testing as intended)?
+Your response was a bit confusing, but after re-reading the code I
+think I understand now that I misread the code above.
+
+The answer seems to be that tx_errors is accumulated in
+rtase_counters (which needs le*_to_cpu), but the other counters are
+accumulated in tp->stats which do not need le*_to_cpu because they
+are already being accounted in whatever endianness the CPU uses.
+
+OK.
 
