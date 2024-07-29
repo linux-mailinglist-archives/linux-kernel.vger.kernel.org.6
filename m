@@ -1,140 +1,319 @@
-Return-Path: <linux-kernel+bounces-264925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCA1893EA3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:12:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3236493EA3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08F891C2156B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:12:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 528251C2156B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E932A137E;
-	Mon, 29 Jul 2024 00:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8F91C27;
+	Mon, 29 Jul 2024 00:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PmaEHYLB"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OLpIkGby"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB15E38B;
-	Mon, 29 Jul 2024 00:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2D9372;
+	Mon, 29 Jul 2024 00:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722211961; cv=none; b=pKf0PUvvde/UBOcHdr1LpE5+6OjppAHyZQaBCyoMoPnSlpJ+cToPacWvDEUdq4K5n3bXvh+/rcUtNdntY61EodisX+iY2wxTmAg1JVk0p9znkSuURhlhS9bdh1pOn2iv6WVkS5ZtsssUEPgVvjG3jogfJ9n9v3nXmhlH3uAw3hM=
+	t=1722211941; cv=none; b=ohpOmeveLzliHehq4VOEdLNgNdqX4MXFKf+xYPEsWpzrd40u9Q1NgxQmriefi7CeP602teP34yt6pQWb9zSjJ3dcY93U5jk6cTiFhckO+5EAq3Ao7qbc8+JGv0uKWYxISzhHwLDLYaZCpR+NuEw/i36E/7z8v2Qk4Ae80/KzeRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722211961; c=relaxed/simple;
-	bh=Xai3wjFM5baFFtysPa1Zqx7AxUbTkRehOK/vCsm1ISY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JoShIDHm7ndl1g/vS/8gzYMXu+9+CIzps+Ta0MlTi6dYGVwkWlwDzGRJdacKLP8c46ikzX0SsgoqQooMxvfNAR35ZkZeuotxyB5XZeHYj1/kH6UnB/Hvb0hyU358UEOP3SLlomb/Lfd9k/7eIwMVoHEQHn9Yc3j/BW/kZwqfnEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PmaEHYLB; arc=none smtp.client-ip=209.85.215.177
+	s=arc-20240116; t=1722211941; c=relaxed/simple;
+	bh=/TwQ0FiiJh0E8/J2SSTHCENCIdB/WpQhzyIACSbtXLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dvn3tMzifQVzvPfcOtYethsNLuFajwrzMClAmK7s7ERIFdJK6vkqtn648PDVCqxZvizEzIHSshtLzXpopsw0fgBLQSvOK6hDSm3XG2L3+I89mKhll6hvN++zMkI+e3wi0HU/cta+S2QHFotz3McZKg3c+hj1mXS4Y8/o7uSsCVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OLpIkGby; arc=none smtp.client-ip=209.85.210.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7a1d48e0a5fso1401838a12.3;
-        Sun, 28 Jul 2024 17:12:39 -0700 (PDT)
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-709465248b7so841131a34.3;
+        Sun, 28 Jul 2024 17:12:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722211959; x=1722816759; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FMdVU8mEwzXRv8+EeAgVWtBrBMCb5y6Ue9pFbF+sbk8=;
-        b=PmaEHYLBH1V3v0wwcY87Lzh46lbT/KtsWvD+ltOyKumnOzhqXzVXK6Eq7ApmpdQ4z+
-         vH+y2GepkmMdRGfa0F7+d2a8JeIWznn299bOR0IkJc8kkPWUDwSxH+K1C+r4/YSfvfuX
-         5ZAoHH1X4uXzTDQZjPiS23XIVIhsMgjeHjljXarcAAr+7dzwFyZcmjA0FjFq0Mqk3X6q
-         2wBIT0fvVV7rU0Lskc8Sj9C7RR00bdvisNxCdgE7UeBNkix3wYc3T5nGox7zK0t3DW/D
-         fWN76r7MnUm9b6Fij+gEfpAObXjJME3BGJmbRGXZVlk6xBVUEFWL4RmStf+Dw2QnPIPt
-         9HZw==
+        d=gmail.com; s=20230601; t=1722211939; x=1722816739; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wq6LCH29AVIUOnczbAjX+lNk/5KihGhzsCJtp4bWP14=;
+        b=OLpIkGbyBKeXYYWuW6odWPdtdzdQn/UfG9oI3rvmVRk3U4fDTKwyv5plhcH7flFLcw
+         VmbDfiJwi3kRiR2SsVtPUlwNcxzDnDWRHH0LMJ1xetHJ25/Rk9wbEeTcYtsKDCIexc8q
+         2+120/sZP8YMGZOT/UT2laA5LboSJlloD3AyMMQgimVstjCFhkb0Urp1EN3U2DpQ6j0o
+         irs3pU1+gQs5vDNuotSWezcdU2na35+MU5UzLsRReyjiVd6FFB1xP8uQ3N54QiA8gdIK
+         brkdoTawdqxY5p0PSPt2fVtlwCinZmcWjOB0Pb83m3aQ5q9NabawctD/gGh82VIxRyNj
+         ZPsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722211959; x=1722816759;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FMdVU8mEwzXRv8+EeAgVWtBrBMCb5y6Ue9pFbF+sbk8=;
-        b=YfMQvvSJCRscK/y8GHr6xLBsppTuHhGm0y+YRvz6jgZngGjLNNXMKzhjV4ySjZLwbq
-         4DfUvJsyuPgvjjtV5+E1EVI8op5Dd4YJc1mr8/xSXebayhN0X6s9s/RuEuAmCGIMKkB7
-         s2Okza+0NR3RxuwPE+wzC7URucMCiISM/4cPbOypo/+si40ssKJtuI26UXZ/vwq8Uc3L
-         EcGvj5Qr2olQcOsF+svdWCsuIuS8RlvgTmGOrz9Z5e5LJ4UHRxbmkKvW6ScdrqP7fW+T
-         HhLo5unqNesdshvQo8ueCt0nszmD+Wd4N9HZBqPuDf1rwqdzKLUqRAf8wo61RcGwCZ4o
-         hdhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEFMswUy2qrv9QzI4+qZZKs3xDB0uHHlB7tyNjcPeExiE8clTh89wSYLWVF3N83cdo104DL4nKi61iJ5sfNVA7Kd6Rsb5N9Ehq8cv5Mkkj0kbebTvTVTxW78jw2/nca6Ftc6br
-X-Gm-Message-State: AOJu0Yyz3y/goWfnlZopgt/GcJ+c9A4n0JtUfbL0n5dMxG6aXQC0nL1A
-	2rB2m5KtEZOzzbtBdzhLiXk1y+RaHaRWfqldcyNVGrqYVf/AGb3n
-X-Google-Smtp-Source: AGHT+IFV/ggEHzpg5AUBnzWv+n4rr/MoLUf4IiuyPH3eHcNfHoEr8lYFiTBt/m1Sxp3m4sxlRYXemw==
-X-Received: by 2002:a05:6a20:3948:b0:1c3:fc87:374e with SMTP id adf61e73a8af0-1c4a13afd3cmr4696361637.41.1722211958931;
-        Sun, 28 Jul 2024 17:12:38 -0700 (PDT)
-Received: from localhost.localdomain ([159.196.197.79])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f677a0sm70106035ad.234.2024.07.28.17.12.35
+        d=1e100.net; s=20230601; t=1722211939; x=1722816739;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wq6LCH29AVIUOnczbAjX+lNk/5KihGhzsCJtp4bWP14=;
+        b=WIwuTn0MqI7N3X7JfKO78MlHlB5TmzJhtti4rwBdFBqUeVb/R6GwuOo7Dqyw0Dogji
+         Drp5oUC7Fxv9DuEYRxeHqg/RCan84DrpIpS7lN40BEMEckl/eShQXyyjPBY7rkN0iVr8
+         fzaga/6CiUtysRjVJ/DtAqmUl6FYKRJBUhT/hUsoIf5Y6EocunigGJdQdHXT2kW3SMDV
+         MjV/UC6HuwpLOgG42EXnVyZjmM+IfJBYE/B1aFBlx35Rptt2qh37XmjaqGisKbDfuP12
+         OW64LcTmQ+lXeKEYpv7UM+YpIUn2AAopJL8w3DbIwdhrmYEdZs1HT2+vDkdLy/q3krvB
+         0MIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTAj6YFmNjc4uDEjvSMfwivb5iq28ncL8tKbLTw7rjj+Qa0XlLoEle3OD906WMXQ+v8cxBQYQ67+yHfHKv6ecRiUZr9mRAIVkuhJek/ItKmvg6Qt8f0dLu6tAmGjJXDVC+I8d2VSSBycF1sYEol5y3BAFC4vZgKkylJW4Ado/db89xlmY6uasAaY/xrA8vFBxIMkqSHQpwlk9jNVCbxkKwYaN/VPSRjVpkGKDt2lwRD/OvRmw8F/jez2az7DwG
+X-Gm-Message-State: AOJu0YwGk08zsu331O3CIygLIdjsTkedqzrM+wse04Sc91S6DPH0jda9
+	6jj0L3iPd1IWggmxjuZW1ToisueHBmqYTQhNZ1aIdh5JRfLAn5U+
+X-Google-Smtp-Source: AGHT+IGVyP6gbXtVMP8ZYuvJnPbXecyEUUCdfpDFZwJFJscmplOk9XdMFLdqjqofeRs+8ynqhon/yw==
+X-Received: by 2002:a05:6830:2714:b0:709:3b82:7680 with SMTP id 46e09a7af769-70940c1aa9fmr9821703a34.19.1722211938803;
+        Sun, 28 Jul 2024 17:12:18 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:74de:62d6:bed2:4c63])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb73eb9b1sm9153999a91.28.2024.07.28.17.12.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Jul 2024 17:12:38 -0700 (PDT)
-From: Jamie Bainbridge <jamie.bainbridge@gmail.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	David Decotigny <decot@google.com>
-Cc: Jamie Bainbridge <jamie.bainbridge@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net v2] net-sysfs: check device is present when showing duplex
-Date: Mon, 29 Jul 2024 10:12:10 +1000
-Message-Id: <85228e43f4771609b290964a8983e8c567e22509.1722211917.git.jamie.bainbridge@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Sun, 28 Jul 2024 17:12:18 -0700 (PDT)
+Date: Sun, 28 Jul 2024 17:12:15 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: lee@kernel.org, jdelvare@suse.com, linux@roeck-us.net, pavel@ucw.cz,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	ukleinek@debian.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-hwmon@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 4/7] Input: add driver for the input part of qnap-mcu
+ devices
+Message-ID: <ZqbeX923IR3tp5Ns@google.com>
+References: <20240728211751.2160123-1-heiko@sntech.de>
+ <20240728211751.2160123-5-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240728211751.2160123-5-heiko@sntech.de>
 
-A sysfs reader can race with a device reset or removal, attempting to
-read device state when the device is not actuall present.
+Hi Heiko,
 
-This is the same sort of panic as observed in commit 4224cfd7fb65
-("net-sysfs: add check for netdevice being present to speed_show"):
+On Sun, Jul 28, 2024 at 11:17:48PM +0200, Heiko Stuebner wrote:
+> The MCU controls the power-button and beeper, so expose them as input
+> device. There is of course no interrupt line, so the status of the
+> power-button needs to be polled. To generate an event the power-button
+> also needs to be held for 1-2 seconds, so the polling interval does
+> not need to be overly fast.
+> 
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  MAINTAINERS                         |   1 +
+>  drivers/input/misc/Kconfig          |  12 +++
+>  drivers/input/misc/Makefile         |   1 +
+>  drivers/input/misc/qnap-mcu-input.c | 156 ++++++++++++++++++++++++++++
+>  4 files changed, 170 insertions(+)
+>  create mode 100644 drivers/input/misc/qnap-mcu-input.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f690b55730111..58574f278bfed 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18345,6 +18345,7 @@ F:	drivers/media/tuners/qm1d1c0042*
+>  QNAP MCU DRIVER
+>  M:	Heiko Stuebner <heiko@sntech.de>
+>  S:	Maintained
+> +F:	drivers/input/misc/qnap-mcu-input.c
+>  F:	drivers/leds/leds-qnap-mcu.c
+>  F:	drivers/mfd/qnap-mcu.c
+>  F:	include/linux/qnap-mcu.h
+> diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
+> index 6ba984d7f0b18..4ab8fe8301635 100644
+> --- a/drivers/input/misc/Kconfig
+> +++ b/drivers/input/misc/Kconfig
+> @@ -900,6 +900,18 @@ config INPUT_HISI_POWERKEY
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called hisi_powerkey.
+>  
+> +config INPUT_QNAP_MCU
+> +	tristate "Input Support for QNAP MCU controllers"
+> +	depends on MFD_QNAP_MCU
+> +	help
+> +	  This option enables support for input elements available on
+> +	  embedded controllers used in QNAP NAS devices.
+> +
+> +	  This includes a polled power-button as well as a beeper.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called qnap-mcu-input.
+> +
+>  config INPUT_RAVE_SP_PWRBUTTON
+>  	tristate "RAVE SP Power button Driver"
+>  	depends on RAVE_SP_CORE
+> diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
+> index 04296a4abe8e8..05f5d0072b08f 100644
+> --- a/drivers/input/misc/Makefile
+> +++ b/drivers/input/misc/Makefile
+> @@ -66,6 +66,7 @@ obj-$(CONFIG_INPUT_PMIC8XXX_PWRKEY)	+= pmic8xxx-pwrkey.o
+>  obj-$(CONFIG_INPUT_POWERMATE)		+= powermate.o
+>  obj-$(CONFIG_INPUT_PWM_BEEPER)		+= pwm-beeper.o
+>  obj-$(CONFIG_INPUT_PWM_VIBRA)		+= pwm-vibra.o
+> +obj-$(CONFIG_INPUT_QNAP_MCU)		+= qnap-mcu-input.o
+>  obj-$(CONFIG_INPUT_RAVE_SP_PWRBUTTON)	+= rave-sp-pwrbutton.o
+>  obj-$(CONFIG_INPUT_RB532_BUTTON)	+= rb532_button.o
+>  obj-$(CONFIG_INPUT_REGULATOR_HAPTIC)	+= regulator-haptic.o
+> diff --git a/drivers/input/misc/qnap-mcu-input.c b/drivers/input/misc/qnap-mcu-input.c
+> new file mode 100644
+> index 0000000000000..9bac7ea2c6b80
+> --- /dev/null
+> +++ b/drivers/input/misc/qnap-mcu-input.c
+> @@ -0,0 +1,156 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +
+> +/*
+> + * Driver for input events on QNAP-MCUs
+> + *
+> + * Copyright (C) 2024 Heiko Stuebner <heiko@sntech.de>
+> + */
+> +
+> +#include <linux/input.h>
+> +#include <linux/mfd/qnap-mcu.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +#include <uapi/linux/input-event-codes.h>
+> +
+> +/*
+> + * The power-key needs to be pressed for a while to create an event,
+> + * so there is no use for overly frequent polling.
+> + */
+> +#define POLL_INTERVAL		500
+> +
+> +struct qnap_mcu_input_dev {
+> +	struct input_dev *input;
+> +	struct qnap_mcu *mcu;
+> +	struct device *dev;
+> +
+> +	struct work_struct beep_work;
+> +	int beep_type;
+> +};
+> +
+> +static void qnap_mcu_input_poll(struct input_dev *input)
+> +{
+> +	struct qnap_mcu_input_dev *idev = input_get_drvdata(input);
+> +	u8 cmd[] = {
+> +		[0] = 0x40, /* @ */
+> +		[1] = 0x43, /* C */
+> +		[2] = 0x56  /* V */
+> +	};
+> +	u8 reply[4];
+> +	int state, ret;
+> +
+> +	/* poll the power button */
+> +	ret = qnap_mcu_exec(idev->mcu, cmd, sizeof(cmd), reply, sizeof(reply));
+> +	if (ret)
+> +		return;
+> +
+> +	/* First bytes must mirror the sent command */
+> +	if (memcmp(cmd, reply, sizeof(cmd))) {
+> +		dev_err(idev->dev, "malformed data received\n");
+> +		return;
+> +	}
+> +
+> +	state = reply[3] - 0x30;
+> +	input_event(input, EV_KEY, KEY_POWER, state);
+> +	input_sync(input);
+> +}
+> +
+> +static void qnap_mcu_input_beeper_work(struct work_struct *work)
+> +{
+> +	struct qnap_mcu_input_dev *idev =
+> +		container_of(work, struct qnap_mcu_input_dev, beep_work);
+> +	u8 cmd[] = {
 
-     [exception RIP: qed_get_current_link+17]
-  #8 [ffffb9e4f2907c48] qede_get_link_ksettings at ffffffffc07a994a [qede]
-  #9 [ffffb9e4f2907cd8] __rh_call_get_link_ksettings at ffffffff992b01a3
- #10 [ffffb9e4f2907d38] __ethtool_get_link_ksettings at ffffffff992b04e4
- #11 [ffffb9e4f2907d90] duplex_show at ffffffff99260300
- #12 [ffffb9e4f2907e38] dev_attr_show at ffffffff9905a01c
- #13 [ffffb9e4f2907e50] sysfs_kf_seq_show at ffffffff98e0145b
- #14 [ffffb9e4f2907e68] seq_read at ffffffff98d902e3
- #15 [ffffb9e4f2907ec8] vfs_read at ffffffff98d657d1
- #16 [ffffb9e4f2907f00] ksys_read at ffffffff98d65c3f
- #17 [ffffb9e4f2907f38] do_syscall_64 at ffffffff98a052fb
+Can this be const?
 
- crash> struct net_device.state ffff9a9d21336000
-   state = 5,
+> +		[0] = 0x40, /* @ */
+> +		[1] = 0x43, /* C */
+> +		[2] = (idev->beep_type == SND_TONE) ? 0x33 : 0x32
+> +	};
+> +
+> +	qnap_mcu_exec_with_ack(idev->mcu, cmd, sizeof(cmd));
+> +}
+> +
+> +static int qnap_mcu_input_event(struct input_dev *input, unsigned int type,
+> +				unsigned int code, int value)
+> +{
+> +	struct qnap_mcu_input_dev *idev = input_get_drvdata(input);
+> +
+> +	if (type != EV_SND || (code != SND_BELL && code != SND_TONE))
+> +		return -EOPNOTSUPP;
+> +
+> +	if (value < 0)
+> +		return -EINVAL;
+> +
+> +	/* beep runtime is determined by the MCU */
+> +	if (value == 0)
+> +		return 0;
+> +
+> +	/* Schedule work to actually turn the beeper on */
+> +	idev->beep_type = code;
+> +	schedule_work(&idev->beep_work);
 
-state 5 is __LINK_STATE_START (0b1) and __LINK_STATE_NOCARRIER (0b100).
-The device is not present, note lack of __LINK_STATE_PRESENT (0b10).
+I do not see this being canceled anywhere. You should define ->close()
+method for the input device and cancel the work there.
 
-Resolve by adding the same netif_device_present() check to duplex_show.
+> +
+> +	return 0;
+> +}
+> +
+> +static int qnap_mcu_input_probe(struct platform_device *pdev)
+> +{
+> +	struct qnap_mcu *mcu = dev_get_drvdata(pdev->dev.parent);
+> +	struct qnap_mcu_input_dev *idev;
+> +	struct device *dev = &pdev->dev;
+> +	struct input_dev *input;
+> +	int ret;
+> +
+> +	idev = devm_kzalloc(dev, sizeof(*idev), GFP_KERNEL);
+> +	if (!idev)
+> +		return -ENOMEM;
+> +
+> +	input = devm_input_allocate_device(dev);
+> +	if (!input)
+> +		return dev_err_probe(dev, -ENOMEM, "no memory for input device\n");
+> +
+> +	idev->input = input;
+> +	idev->dev = dev;
+> +	idev->mcu = mcu;
+> +
+> +	input_set_drvdata(input, idev);
+> +
+> +	input->name		= "qnap-mcu";
+> +	input->phys		= "qnap-mcu-input/input0";
+> +	input->id.bustype	= BUS_HOST;
+> +	input->id.vendor	= 0x0001;
+> +	input->id.product	= 0x0001;
+> +	input->id.version	= 0x0100;
+> +	input->event		= qnap_mcu_input_event;
+> +
+> +	input_set_capability(input, EV_KEY, KEY_POWER);
+> +	input_set_capability(input, EV_SND, SND_BELL);
+> +	input_set_capability(input, EV_SND, SND_TONE);
+> +
+> +	INIT_WORK(&idev->beep_work, qnap_mcu_input_beeper_work);
+> +
+> +	ret = input_setup_polling(input, qnap_mcu_input_poll);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "unable to set up polling\n");
+> +
+> +	input_set_poll_interval(input, POLL_INTERVAL);
+> +
+> +	ret = input_register_device(input);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "unable to register input device\n");
+> +
+> +	qnap_mcu_input_poll(input);
+> +	input_sync(input);
 
-Fixes: 8ae6daca85c8 ("ethtool: Call ethtool's get/set_settings callbacks with cleaned data")
-Signed-off-by: Jamie Bainbridge <jamie.bainbridge@gmail.com>
----
-v2: Restrict patch to just required path and describe problem in more
-    detail as suggested by Johannes Berg. Improve commit message format
-    as suggested by Shigeru Yoshida.
----
- net/core/net-sysfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Why do you need this here? Either the device will be opened by now (and
+will be polled) or there are no listeners and events will be dropped on
+the floor...
 
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index 0e2084ce7b7572bff458ed7e02358d9258c74628..22801d165d852a6578ca625b9674090519937be5 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -261,7 +261,7 @@ static ssize_t duplex_show(struct device *dev,
- 	if (!rtnl_trylock())
- 		return restart_syscall();
- 
--	if (netif_running(netdev)) {
-+	if (netif_running(netdev) && netif_device_present(netdev)) {
- 		struct ethtool_link_ksettings cmd;
- 
- 		if (!__ethtool_get_link_ksettings(netdev, &cmd)) {
+Thanks.
+
 -- 
-2.39.2
-
+Dmitry
 
