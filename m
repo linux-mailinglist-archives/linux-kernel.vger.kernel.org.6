@@ -1,142 +1,99 @@
-Return-Path: <linux-kernel+bounces-266334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A99793FE46
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:31:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1599893FE4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 398791C22746
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:31:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8D4D1F22B7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599DD187562;
-	Mon, 29 Jul 2024 19:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A766188CA7;
+	Mon, 29 Jul 2024 19:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="wmWryF3F"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MoPsf5UA"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F98374CC
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 19:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379777FBD1;
+	Mon, 29 Jul 2024 19:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722281505; cv=none; b=KYKcNHede2QCQIOUBjqLdkS6bl+CqTnMeTHM4mbHtucqmaP3RNJbIQqqSo3VU346s3s9TjSk1e4sQ3kzqqbajAqhhw3V6uqSIpsZEi6DUxwtETlPwBqCWkD1koFK+tuzf/LOrZWF4OLKqIJ/1Q57cRJzNkfYJvZq7LaMr4hlc5U=
+	t=1722281556; cv=none; b=GlKlkJRL6grXRy8vlQ0nmW3FCCgi8FL1WtziZ+S02NSvmrCq7EMG38aW9IxqlB3lpIuwrxVa+JvN3FB2FApjnk2LbQWtgjdK84vLWl9H0koqGTAk9i0SnSOj0jlcqhQz/kMrkhriwBF60YchV3m0jmZVXyRmpEtZxUZbeBoBbw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722281505; c=relaxed/simple;
-	bh=8DvLD3KNC0DqFNTImhzjq0hN3fSBpCJ1567YwRbCNeQ=;
+	s=arc-20240116; t=1722281556; c=relaxed/simple;
+	bh=y0O1daR7qBYuYSvgyYV2W6kDaRxXVMRUBY8MeJsT/Wc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tpDiR7JtUFw1WynQjvR7iWa+Mv8daWKCk2AZJblnLfYeoJvahexUhFKwVkaktBqcjwNppnvQ+ixEosUMHELF5coJVVoCImSI5CZPH+NXquV2mK+6QUp6jpkYJzwi1Eb3qea+iXtSBnIZb+2LHQoQP4HD+tozCoxZX940QwcLd84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=wmWryF3F; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7a1d5f6c56fso242475385a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:31:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1722281502; x=1722886302; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WKpZ7eoB/ekqBlUQuyzYfj8JL7Mxd5CfjCI/+gU/Xwo=;
-        b=wmWryF3FxXLf1MAQ08DJwT7XZ6yCoLrgxmX70kxKWV/wrLRAloq5LYc/NNZ2ONCSFc
-         zm66mlxSMj3YAmhINK014JFAfcEIaGoo0kKDGnn5r4yNngi055iMI+xShcbWwhOOuwDK
-         YfYeg+2B5ErOE616uZ761NKLCsi4yQBkU6o5i5O5ezrbM7WfldBTQNv220iYidFxK7Cb
-         kk883Mc/R2/JPZrwaSbl2g9GkMQm/wk8zjrod5coCP23kUc5vc0GvR4vcuIklx/Ojio7
-         2D/MkD7MXB9JE2uii4cfaoi1uFgbdc8r0GyyBKFBwRDuJCMIydrFL3iswqMN5DhLyFIR
-         kEYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722281502; x=1722886302;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WKpZ7eoB/ekqBlUQuyzYfj8JL7Mxd5CfjCI/+gU/Xwo=;
-        b=PRRCIJkZAmN+oMBDRMy4fAsUviQ9906LpUp/HL/FvwQAlQvgBWQIbk3/kj6Aldd5mB
-         PUkmqwO14uqDfsJanaz8uAWIJf8kLOVX60HkKuzJo8clKh2x5XzUoCzwAKIyIG9aighM
-         98Bb7xaNOlugTVbBNRDTvVXjleq62fMSh8gwF1VaB96quTgElxWXq60o5IoQoQ82rLhc
-         nGudw3P/fu9DvwBjoque5kHD1asUYLiVujRa9OweSPS8tI1XGd17DU4dnuasXs8RxN5x
-         tSIMdfP86Ilw3xQCcrbq/HlY+Qot8ljvU5TqlrNb8PXr55UMDbO4eLzsNGZXzaRelcbq
-         ZyVw==
-X-Gm-Message-State: AOJu0YyN8rtuEcZDF42tOeaXzHnWzkQoE7khyHoBLAccK6UwdDR7JFs8
-	yuMBRStKQQKMMK/vtGYlwj2da1crZ0L6VDH43Eb5fAhrOSzJ+3Idz+lG8faS2w==
-X-Google-Smtp-Source: AGHT+IHKj69NMiL8iPsxcayl/FDa6E4pMMW32p3BOf6R+t+eMdwk5/XWNxzareH4deutnHZuOldRng==
-X-Received: by 2002:a05:620a:394e:b0:7a1:e93c:ccee with SMTP id af79cd13be357-7a1e93cd124mr973596885a.11.1722281501916;
-        Mon, 29 Jul 2024 12:31:41 -0700 (PDT)
-Received: from rowland.harvard.edu (iolanthe.rowland.org. [192.131.102.54])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73b5003sm564386985a.43.2024.07.29.12.31.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 12:31:41 -0700 (PDT)
-Date: Mon, 29 Jul 2024 15:31:38 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-usb@vger.kernel.org, mchehab@kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [media?] [usb?] WARNING in
- smsusb_init_device/usb_submit_urb
-Message-ID: <4442a354-87f1-4f7c-a2b0-96fbb29191d1@rowland.harvard.edu>
-References: <000000000000e45551061e558c37@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QgtfEOqX0dxknfolrQ5iH0HKLsKqO/1rDvemEpL3kMIA61n3qAkma8MspRD7gXSMSIgG6QBAne3/6NKSyCKB79EPK9K3+wmyf/prDhkDnGqdtPC5jyUmiLP0qinvl6BlR3KRFsNQMgPTwtzvywtg1XNSyI5s+CJ+OvtBhV2mx4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MoPsf5UA; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D763240E01A8;
+	Mon, 29 Jul 2024 19:32:29 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id b4ka6JfeQqnD; Mon, 29 Jul 2024 19:32:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1722281546; bh=I8ev7rn1xiUUV283jkm1+3brjVagAOAzfnWXmP+Wtkg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MoPsf5UA2DMfmtDuigMQfOIuQBYnfd1BSoyd2ow10fAoNDBOLHXKtqdqHDqpCFYyT
+	 Wi+fDcyGPRBBvLoenZvkQc0IaUc/xf0+Rug//zccsrKVi+ubuHnDRhDkd0+8iaUVEz
+	 3+nrZo7K94m5OkEopz5TSwnAmrPePwJH2uAC26NBkRSdFJvCHtPC2O59yOzxsVwKyH
+	 Zt3E3fQ9UwQ0WvpbVpdceRAHh83j66UAyULADZdrQLcquyOqPEa33dNBNzZfdrwLj3
+	 l9wPYEP72VB2eshV4TaBCEgmv/L8Z/BbJoSSvBZsFNB7AoCaTJEUZ9SRVT6gDeOfRY
+	 Yi4EYp52m2Xu4uUXn8qWhJh2AwJCmPCkS5STwRTfEXq+ytscfWn0yE2YZV+Z4ZMUNT
+	 nnioRBADUJKsu4tzX0o4gRVip62Negf7WnBN21wuO7UZ8mkiKAaLmB4fltK5tFRRxy
+	 4BV9WciZafT8rPptIf0Z9/0g9J9tx6uz2bQKwevhQT1V6eL8UwplX6IU4irrr6qHTs
+	 VIoCJsT9UCcB0M4Lb1cL3ex2ZbGkh/yThm1y44DFO40Hyku1GHlRfIBIy1SLzrk1L8
+	 BEsOrBf7PFOCSGOBBbXE1+mKC3UEBlIbOOx1ytQ+TOcADF1IhFL48OzrVtjsb+vWyf
+	 NcH6p43zH4YAS9uedlEeaTEU=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6C7A140E0169;
+	Mon, 29 Jul 2024 19:32:17 +0000 (UTC)
+Date: Mon, 29 Jul 2024 21:32:10 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Pavan Kumar Paluri <papaluri@amd.com>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>,
+	Michael Roth <michael.roth@amd.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] x86/sev: Fix __reserved field in sev_config
+Message-ID: <20240729193210.GHZqfuOs-t9HuYPF_Y@fat_crate.local>
+References: <20240729180808.366587-1-papaluri@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <000000000000e45551061e558c37@google.com>
+In-Reply-To: <20240729180808.366587-1-papaluri@amd.com>
 
-On Sun, Jul 28, 2024 at 02:37:25PM -0700, syzbot wrote:
-> Hello,
+On Mon, Jul 29, 2024 at 01:08:08PM -0500, Pavan Kumar Paluri wrote:
+> sev_config currently has debug, ghcbs_initialized, and use_cas fields.
+> However, __reserved count has not been updated. Fix this.
 > 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    933069701c1b Merge tag '6.11-rc-smb3-server-fixes' of git:..
-> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10eb7dad980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8cdd6022e793d4ad
-> dashboard link: https://syzkaller.appspot.com/bug?extid=85e3ddbf0ddbfbc85f1e
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10893645980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10885779980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/504e81a2120c/disk-93306970.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/320d2f3e66b3/vmlinux-93306970.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/65b8e1c28010/bzImage-93306970.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com
-> 
-> smsusb:smsusb_probe: board id=15, interface number 6
-> smsusb:siano_media_device_register: media controller created
-> ------------[ cut here ]------------
-> usb 1-1: BOGUS urb xfer, pipe 3 != type 1
-> WARNING: CPU: 0 PID: 42 at drivers/usb/core/urb.c:503 usb_submit_urb+0xe4b/0x1730 drivers/usb/core/urb.c:503
+> Fixes: 34ff65901735 ("x86/sev: Use kernel provided SVSM Calling Areas")
+> Cc: stable@vger.kernel.org
 
-> Call Trace:
->  <TASK>
->  smsusb_submit_urb+0x288/0x410 drivers/media/usb/siano/smsusb.c:173
->  smsusb_start_streaming drivers/media/usb/siano/smsusb.c:197 [inline]
->  smsusb_init_device+0x856/0xe10 drivers/media/usb/siano/smsusb.c:477
->  smsusb_probe+0x5e2/0x10b0 drivers/media/usb/siano/smsusb.c:575
+stable because?
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git 933069701c1b
 
-Index: usb-devel/drivers/media/usb/siano/smsusb.c
-===================================================================
---- usb-devel.orig/drivers/media/usb/siano/smsusb.c
-+++ usb-devel/drivers/media/usb/siano/smsusb.c
-@@ -410,10 +410,10 @@ static int smsusb_init_device(struct usb
- 		struct usb_endpoint_descriptor *desc =
- 				&intf->cur_altsetting->endpoint[i].desc;
- 
--		if (desc->bEndpointAddress & USB_DIR_IN) {
-+		if (usb_endpoint_is_bulk_in(desc)) {
- 			dev->in_ep = desc->bEndpointAddress;
- 			align = usb_endpoint_maxp(desc) - sizeof(struct sms_msg_hdr);
--		} else {
-+		} else if (usb_endpoint_is_bulk_out(desc)) {
- 			dev->out_ep = desc->bEndpointAddress;
- 		}
- 	}
+-- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
