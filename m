@@ -1,133 +1,129 @@
-Return-Path: <linux-kernel+bounces-266006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59D9A93F919
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:07:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D6893F918
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 014C91F22EC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:07:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2925282205
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6241586DB;
-	Mon, 29 Jul 2024 15:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D72015665D;
+	Mon, 29 Jul 2024 15:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="QVWPrILY"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jyTEgguz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B0E15573D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E28155CBA;
 	Mon, 29 Jul 2024 15:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722265659; cv=none; b=YIO4ETJ3HDGoL+NsQbeY/3cAyHwy78vPWLCYPt/pzZVAd0xC87XZg/gzNmITugdAaM9sLy0hm02tfby15HNb5l3wFU+xpDRi5h+kHqBkZ+hbm6SGVkz+21KEvw0woDcTHkOvHIVgz1lLa5a4KJhHTcgtVvXMm6rWf79n0C6qb4A=
+	t=1722265657; cv=none; b=EsmcZ8rhHp5bvdtAAYxspwzhz+QPzWtb9Sgxud/r77PnPGqTux38vZ2t2z4lEnKAOnQeerbyT0k0XlXk/oh88/S38FYDeLdjyxtSb6x6j4yFOxBYU1xhpt5+4KBlYK8MkyfOmbG039aF+xjDl8f4pILX3zuK7/YoU0TfTPImZhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722265659; c=relaxed/simple;
-	bh=FHHChsesQGBUPjVTh2pJlQerrm07FKZEvYFh8m/v+ME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lnfBekGz8Lrq8Y2fS7H3U++hPQhTQPtcBqKnPf6kIBEYRojqNcNdTuTJqKrCmVit7xTo3qapBftzr4cnexW75H8c1Xh2h9blxJtqUxi1Z706UtSUIzPjEXlFpsuDvaSqnaL4yyTJbTwjkl7QZpvWDem0rVwLlMZE5Bre1DaXwhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=QVWPrILY; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=z4wToOxGTVLxBXyaC8U3DGnuV27Hlpn0H+I99oKbK0U=; b=QVWPrILYqMUWJxsf
-	h6qZp3eLnWMfwcCvDtdYLNdU4lT50LBesRqQh1RD0xk862XgSrwcrY7QrOX+2P2LdRUUO7iOJGvy8
-	Nf31oxsU2u1ZmphCdK+PO+JQFOeRivS3z5n/bJgPSJvqjos2WOZud8hTkneC0okPWG5M/43fXLU6C
-	aXagcou1WC1Iek/xqfjqYgfRpiC638ORVzFu9cEr99jBd/SglIZKU+sH4pBsNFghZD3dvJXHiuAZ1
-	IZ1OluA3naPoO+JfJpneIDI9fB0SY+agQQttyHEA4vUK4dwg3kvk51yX7Nv9yf9rmVt9JsDT3pjcg
-	gSlGB7pievjp/G2PZA==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sYRy3-00DoQa-2B;
-	Mon, 29 Jul 2024 15:07:19 +0000
-Date: Mon, 29 Jul 2024 15:07:19 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Ian Rogers <irogers@google.com>
-Cc: kan.liang@linux.intel.com, acme@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf test pmu: Remove unused test_pmus
-Message-ID: <ZqewJ6oIprdRY8C5@gallifrey>
-References: <20240727175919.1041468-1-linux@treblig.org>
- <CAP-5=fW+VbDaFV+YQCMMKYzrraMLLuVqb=BChL0o=-D5Y=4N_w@mail.gmail.com>
+	s=arc-20240116; t=1722265657; c=relaxed/simple;
+	bh=OwAUwVLJ7+eVQc6vfbdzjd3PzOUWGzQjMCm8iSIEeik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PNWXlYLCzc1WTEwBeenUHeRTy5KweAV2Cwao0ysda6iPmpY+Njtw5tL8Kp+12ZQCCL77v3tkjOO97vRMmSomPMDZW8UQ52uF/ryNe5dOJzzuejRVv9t9sxZPyC7fnFcZmFrWnXpBhJymeHR5Y2D5544co7xUa3PVIIzm6+3a2A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jyTEgguz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF1F0C32786;
+	Mon, 29 Jul 2024 15:07:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722265657;
+	bh=OwAUwVLJ7+eVQc6vfbdzjd3PzOUWGzQjMCm8iSIEeik=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jyTEgguzCTVdoWSLiwtmoQrXfIoDfde227P7yBp/bgLMaQJVI77NWiDQGV6aStq2A
+	 7B8lySoIkr9ZyG0PbjUqpNQ2EWMJlj0+cVShvLoyQGcwty9G++pOtcOxqlalkHGFNg
+	 rlVn2A0115LWsMKhdCtff1fJMXnsTMZmxihekfUxkueizPgOnIEu9OpC4WL8qQpACi
+	 qU+TuJm09syxX3OUcRGaoBypvNAwWB4xyhXDwZ2781+5Kr4iCQrMpRS6qUJbUzQCjO
+	 vXChfChfj7cQdF54OpnSD+qPCFTfvKhdNdBUCxF8LC9uAgaudAgLRl/1Z9bNZb/heT
+	 JLsUcXBPgXE+Q==
+Message-ID: <91004ef6-7904-412c-bc3b-28a50b704579@kernel.org>
+Date: Mon, 29 Jul 2024 17:07:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fW+VbDaFV+YQCMMKYzrraMLLuVqb=BChL0o=-D5Y=4N_w@mail.gmail.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 15:01:45 up 82 days,  2:15,  1 user,  load average: 0.15, 0.05, 0.01
-User-Agent: Mutt/2.2.12 (2023-09-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/11] arm64: dts: qcom: sm6115-pro1x: Add Hall Switch
+ and Camera Button
+To: Dang Huynh <danct12@riseup.net>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240725-qx1050-feature-expansion-v2-0-5fac4bbd946f@riseup.net>
+ <20240725-qx1050-feature-expansion-v2-1-5fac4bbd946f@riseup.net>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240725-qx1050-feature-expansion-v2-1-5fac4bbd946f@riseup.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-* Ian Rogers (irogers@google.com) wrote:
-> On Sat, Jul 27, 2024 at 10:59 AM <linux@treblig.org> wrote:
-> >
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> >
-> > Commit aa1551f299ba ("perf test pmu: Refactor format test and exposed
-> > test APIs") added the 'test_pmus' list, but didn't use it.
-> > (It seems to put them on the other_pmus list?)
-> >
-> > Remove it.
-> >
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+On 25/07/2024 03:42, Dang Huynh wrote:
+> The Pro1X has a flip keyboard and a single-state camera button.
 > 
-> Strange that the compiler doesn't warn about unused stuff like this,
-> we get unused variables within a function and unused static
-> functions...
-
-The problem is that LIST_HEAD initialises the list to point to itself;
-so it *is* used - but only in it's own initialiser.
-I did file:
-   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=115027
-
-> Reviewed-by: Ian Rogers <irogers@google.com>
-
-Thanks,
-
-> Possibly:
-> Fixes: aa1551f299ba ("perf test pmu: Refactor format test and exposed
-> test APIs")
-
-Given it's got no actual effect other than a few bytes
-saved, I'm not sure it's worth the Fixes.
-
-Dave
-
-> Thanks,
-> Ian
+> Signed-off-by: Dang Huynh <danct12@riseup.net>
+> ---
+>  arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts | 34 +++++++++++++++++++++++--
+>  1 file changed, 32 insertions(+), 2 deletions(-)
 > 
-> > ---
-> >  tools/perf/tests/pmu.c | 3 ---
-> >  1 file changed, 3 deletions(-)
-> >
-> > diff --git a/tools/perf/tests/pmu.c b/tools/perf/tests/pmu.c
-> > index 40132655ccd1..0b2f04a55d7b 100644
-> > --- a/tools/perf/tests/pmu.c
-> > +++ b/tools/perf/tests/pmu.c
-> > @@ -18,9 +18,6 @@
-> >  #include <sys/stat.h>
-> >  #include <sys/types.h>
-> >
-> > -/* Fake PMUs created in temp directory. */
-> > -static LIST_HEAD(test_pmus);
-> > -
-> >  /* Cleanup test PMU directory. */
-> >  static int test_pmu_put(const char *dir, struct perf_pmu *pmu)
-> >  {
-> > --
-> > 2.45.2
-> >
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
+
+Best regards,
+Krzysztof
+
 
