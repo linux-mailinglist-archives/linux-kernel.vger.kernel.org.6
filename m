@@ -1,140 +1,207 @@
-Return-Path: <linux-kernel+bounces-265201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 997A393EDF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:05:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 832CB93EDAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37DE51F22D3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:05:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99DCF1C219DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC05212FB13;
-	Mon, 29 Jul 2024 07:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23BE84D2C;
+	Mon, 29 Jul 2024 06:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NfYuodPH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="m/UWzSW5"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011023.outbound.protection.outlook.com [52.101.70.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB7782D9A;
-	Mon, 29 Jul 2024 07:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722236605; cv=none; b=o2lJlUULVVe8HQHj2Ou73uQXdAYJe0spWswwh27v+vryOYlg/YBb1wg2OSNydcoHdSumtsLVNgEOimExGejyHRoDUuUAvufHhwXufwTM6LCguw8lfBnNfFmv+yP54DsBbaFIhOHpfI9LU2KcAEf8aXH5vHi7d7/0TFOu1/BL7w8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722236605; c=relaxed/simple;
-	bh=oq1A0MF+2MxWNbcXuYQlOhYTI9d0mzUcvFOBVMotSks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fdm2g347QHltMT6AEZAm7o1tuOlOfAVCScRAdCiXLGCSJ1PAKttnG4uDrrqQreHPcrmZzLfVRow9J2+P9eBqUYQpDEKGGaYtN4P85/gngckB/sMlKIXvWwOS4fLOjNF4xF6R7WPgbsKFhL6aPvtvwXpKiCtfAijYZXiDLHAYtpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NfYuodPH; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722236603; x=1753772603;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oq1A0MF+2MxWNbcXuYQlOhYTI9d0mzUcvFOBVMotSks=;
-  b=NfYuodPHjL+27zRejEa/hDveSwnWIkrdAYsI0dA3UI/i4QPpCjLsDGLX
-   l6q2GUDakZDcTJtR6T+msk46079WZrkD9svToqsUQx17g2aXLunh8DKwI
-   BAC9T4ei7Fa4FaYtRuRa02zEtlgxVQl02YgCtpOHonl4y7zIvSnOuxFdB
-   TS8KfUo2xdCSBXLsGwUlv/4Cx+/cboBzlEcIRB7D4EhMH4bL+yrmG447/
-   VAxcpk9Gn7CJSzeZtXnXNuQ+sLoayF+kYtutY5b3hyAJK7T4M4DJsY4P5
-   99oOlN8eMOhzR2vwdL6MVSuw2wRqqdCyxTgLW74ZeIngBFwaygeu6yeO9
-   Q==;
-X-CSE-ConnectionGUID: EU6oDituSEu8vTPzFHhuag==
-X-CSE-MsgGUID: TQoMdWkdQdOZgiY4Ka+7Tw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="20151703"
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="20151703"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 00:03:22 -0700
-X-CSE-ConnectionGUID: AimuV77fSfqpLootLhfPKw==
-X-CSE-MsgGUID: nV4vFffYSCO9vJWBQaxiGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="53837611"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 00:03:20 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 2E14311F8A8;
-	Mon, 29 Jul 2024 10:03:17 +0300 (EEST)
-Date: Mon, 29 Jul 2024 07:03:17 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Bingbu Cao <bingbu.cao@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Andreas Helbech Kleist <andreaskleist@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Tianshu Qiu <tian.shu.qiu@intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: ipu-bridge: fix ipu6 Kconfig dependencies
-Message-ID: <Zqc-tY7LPLdEbZ-9@kekkonen.localdomain>
-References: <20240719095403.3607027-1-arnd@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DBF2119;
+	Mon, 29 Jul 2024 06:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.23
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722236077; cv=fail; b=g71Gmje7DntBrOtWwlT2nwX5gIBBAGXtrxUCrLQbOHQ7hgNw6kiCuUYFqz59YPwcX6Aqb2m3Pg8WzGRZtY1syp2agrt/aGjlkBltO8+bSwbjzkP9ZzM6P+AXQ7SeirfcnZD+Q4wW58+MIcpdB8N+ozwTf3xT025T7JWn1r/42rY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722236077; c=relaxed/simple;
+	bh=W7qTSm+LuDCD04MpGMu3e78fJua1zSpKjs+SIq/ISpA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=qf6MzEUqGQ2gHDD21DLHNcqLw1nid0yoDiYvp8sJxSSuY0OyY0KeEI1SwMMAujsEwOyzjRXM4SqddGAT1dzrnO6svqcL6xZkQaCaC8MAOqBxZ57R/ezdfu3MR4gywrIb5VwZ48VGsaaein0pOJy9VoY2WJC7KCpI7WZnjig3AQE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=m/UWzSW5; arc=fail smtp.client-ip=52.101.70.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QZUPTN+023oyd8uBzRp+ALCSfHfaGeUbajcnb4lSgy63YuEFaKRpR/anff8ecWxxLS86G7OC1i0UseRH+GtCtjyNkgepV2kN34gJhUcpgs8Xx+wAmAXxx5XffAB+UE1yNpKjivf/INzwIhL+/17JEqEYaUlcFM4zB1xuvr9PqSl/Hpn1TMay5jSPzFSWFLIzpHFStI8PV5tKIppMuX0yKSM93fIvcc0yIKE4EjfbQP+hdcsNdnBo/MGnAD1uWdaUf5xeZznnfD5D/MeVQy3NDDFOUMVnhxivIP1RktC2WcCy33IHuvKgeiKS02E0penYs+HM/XwO2+F3IhtGm9ra0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lnUfI7l7G+dWmuKWcK0OFsh68QfLnYE/LBrRY1hamL0=;
+ b=AzhPtfc6Lt3Zyfz/wj0pUwdGrJpHYrC3tQZxWKNWhRws+7XX+1UPlgaeqTG2VYo3C5GwKkxO9/c348vEApnOCyl2YJdTDzyumU7gZ6n47cvFyaRT7VzCJpQVy4JKmqAY8hEJIgXqrqnr5k7hE1x1nq8YY17TiRgK/EXVwpNRUdOmo+5XHD0B3xA8MAI66/gV1jhfLmzoZ5W5tTdLL7cIhN2ypI0pSgpjdH7yrq4yKuIsj07CEVyOwGkKvvFPhdfWZ2j78IDO+Fxz4/MRBZn60tLK4dc7ADC6/VpUrFZT6jb7N+fRpD/3ShploiI5+gn3a0refRrKDmvj9rh4WJ6b4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lnUfI7l7G+dWmuKWcK0OFsh68QfLnYE/LBrRY1hamL0=;
+ b=m/UWzSW5az0n51BkzzNOhkCoAs6G/rc12zpf0ISHInV978Nlx3k1CMNUp7XMtVxp9nqj+txef5jIPwa6WtasrCLJXZbHNhVMVKB4nwKB1sdycjYUKwCFBdgSQ9tuD8+DHyBADm/9PPdVbhhxq8IxGTMzHW/TAvjZEHPPUunGfzys3C2QC8eZ6Yn11lkCJg6+a8dk8ljxrsxJYtAVioIrZ9lHBBhhMyH+VQPs8qKognCI6uk2J4yhqRINNigrnWngq+ynZkZEYuYGbDdCYp8iuocLj0Vbkn0MwNIqy5AuKiGWsoPArTHtI5XbMGA1m5GwXuOU49yvOYyfF7o158D8NQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by VI2PR04MB10858.eurprd04.prod.outlook.com (2603:10a6:800:27a::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Mon, 29 Jul
+ 2024 06:54:31 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.7784.020; Mon, 29 Jul 2024
+ 06:54:31 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To: sudeep.holla@arm.com,
+	cristian.marussi@arm.com,
+	saravanak@google.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V2] firmware: arm_scmi: bus: bypass set fwnode for scmi cpufreq
+Date: Mon, 29 Jul 2024 15:03:25 +0800
+Message-Id: <20240729070325.2065286-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG3P274CA0014.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::26)
+ To PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240719095403.3607027-1-arnd@kernel.org>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|VI2PR04MB10858:EE_
+X-MS-Office365-Filtering-Correlation-Id: c99cceb6-e84c-46ca-cac0-08dcaf9b4c73
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?SSonQv2j60LcY7ol0bgaPt2tKXKEuJu1lnNdCkdiz/rgDpmzCkDwqHDJ5Isz?=
+ =?us-ascii?Q?beEPE8woXH+hc+K3NZG3sPTd1M4MSyLX7hKv9ppsOFzvQJwoHyEXc1vmEUiG?=
+ =?us-ascii?Q?Fun/PS1cuPtwsGBhLMY0Y3ggaoJdWc0irZHUjO//hQiMpK/U+AbyhnTh4sG3?=
+ =?us-ascii?Q?QBJH9qk3s6be3T+007vqlXrJIFueT1CN5nWkNfRosSIuMH8E40HX03GvBYjJ?=
+ =?us-ascii?Q?VtdfrX+RmJkA4FW0Jml9ZRbe3YkhQTRGea/+VrSyYV3RWcR59ppMFhw6TnwF?=
+ =?us-ascii?Q?244MwcYqHgiXRBdOTUbz+tDtkrfe43huw1qcSM7NC0FrHnKbHHU9omluXqw+?=
+ =?us-ascii?Q?/UTSsQaZ5QqNjIw+Qjz++kflbAApO1nl6V+H35JDO2mBjb7S+Q5WnVynJ5EO?=
+ =?us-ascii?Q?tKVqqWaw3O4sa0+ALUS3Y1+bpYOvuxYqvO012Cp1EQAGR4XG618Xw5AaqkOz?=
+ =?us-ascii?Q?UQFDaByDhHWpnH5cY3KlyjPt+d14HLdqA7NPUTB0p5F+dsrtDZjruc0ksBNY?=
+ =?us-ascii?Q?oIABcSzHIyrXISHI748vv4V4OhbruqaSJNW0tSVsIvqL1GkapzqhEu9QmUiw?=
+ =?us-ascii?Q?6USMAAeaaFBfLgNWb8SQmnNmE6FvNpPqfG7G4Vya8uBXPixU71avH+aZhYyq?=
+ =?us-ascii?Q?n3YX1YfYGkLUbI2cZKzBkPTgMCJ+u3W4TOhry4v3JzqpcJzHZYAfT3BVORD1?=
+ =?us-ascii?Q?mDVwtNby1N1nlZqEaIDRb3f0oi8C7UbaIfmoHUD2fe5S6Wgxl81IO2pzgNdE?=
+ =?us-ascii?Q?C060b/HmtiPFGmDox2AOFxmqimWOm5BPdYYOgF3k8NflPPicuIhwzoLOizhH?=
+ =?us-ascii?Q?MRw8gf5gkQ2kXuiDodbkeC5sg8YCUpzyUxWY7BLVzFi0SGoComg/g9lGBWaT?=
+ =?us-ascii?Q?C3G2cBW9uJLWRL2x3fdRenHPUqLV8teU4GZ0UFCBIh3GSVadLm6j18vyH055?=
+ =?us-ascii?Q?LEW1cIF9n8ms1pu91jkTPB6IYVfhJmsaUFqCDP987E14lzPyHYtO/0d7hdTJ?=
+ =?us-ascii?Q?NYnmHoOZnAuhdS7mzHDKGYy8mmPahh8ZyZBEdrwvw8DQSh57P4BNAeSiBn1O?=
+ =?us-ascii?Q?eDFvHvBO6B8KzRRyi+wBVXW3FyHMOAIvxeyzfvPeCPOTIygP8STXBjQUEVhr?=
+ =?us-ascii?Q?GhPAh9VvSEqye/4BcuIS1DpNEk700aZlIOyd/xdDQUvSPiUgSWVsrphO8w91?=
+ =?us-ascii?Q?wqCaX0rreS0cJpSXxMCnoe1XCo5YPKf8FK9qhdJSKp47ypVp2fR40lGG7sRC?=
+ =?us-ascii?Q?icC9SkcKtKrrupVfTDy3Zf6EeUFw2u5TLa7kVoNXdd0y+sWhZiJ+OGCL38hV?=
+ =?us-ascii?Q?Lu7QHsylfZaZJKrbudTgUUkD8s1CCPou6WJO7XQdd856fGwhuGoxa+PIYDfu?=
+ =?us-ascii?Q?u2Hxi4g=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8hwbPJUOyRIuWxAbhRPrn/8GrXKImtZjZSpBEbx9umQI2TO4XUddVh1zk4ug?=
+ =?us-ascii?Q?EuVw5X768LvRHves/dviNpUvflYVFqHsSetban8X2Tb4zK7/zzxZACCTQ930?=
+ =?us-ascii?Q?n2x4pO2ak8UzjYOWtUyxe7FthE5vP8D57NiqUuslohBFpiw77eP4ayWehut6?=
+ =?us-ascii?Q?yIB1jsqoLhi6BVxUMNqvuDXXSFolC61SDKRHnLjBixylIgH6ygjvGox1pQ3o?=
+ =?us-ascii?Q?d2GuTrvTBIrrYpNbO6zDazUhSVdsK2eK7YYORBD1L5WS7uBJXfHcP8TKHrSA?=
+ =?us-ascii?Q?236BpOr6Y9kP9j3xhE/OAQmCvEaj70Mz1qwdD6o9gOeVLC77zJhSH8COebNH?=
+ =?us-ascii?Q?8epvb+c4RWgP0JXwnh18OxmhWXJttQHe6PvFOFZOspvaNKkZ3dMggph+oMV3?=
+ =?us-ascii?Q?XHUcEAPciI8aahFvlH1Ji0She4+H5TgV0RhvaV0K6sSjn2s4J9dIbmco7VTj?=
+ =?us-ascii?Q?JbnGfI/EcoJLcfvEFalCla86O9r0+CGnYhV3ME9cmMYeYbYCld5EBdDgiH9G?=
+ =?us-ascii?Q?UyOpRSjSBre/J+NHkmEHSicjspAO2+L0ubyenXzIHf/FAwCKGkgAaVhCv1QU?=
+ =?us-ascii?Q?kx2OY1d9prRlxyFMn3yinxM8pl+aegJyyMgnaa14bh7s3Cocp/EgDs8EDcgU?=
+ =?us-ascii?Q?OoTe6J5RBp7JZQ4Ah2DHN8lsEAJLOXiTrrlm+uXL4FQ6/4Q3YLNXu+dpPvEu?=
+ =?us-ascii?Q?Q36zlMp63z+nt8SWhUnGvfnL7ffBvvFBAIFKykGIS0R0k0/lVRgmU+Fh6Uat?=
+ =?us-ascii?Q?2yUGSpG7uzFvxJEMsVRUs4/XoaWW7396abohQQx+pB0jgao9OykkJK5xTHGK?=
+ =?us-ascii?Q?zVIXeJRGpjBzAdM1p/1Sq1O4l8NcDNC5W50oseDgfYiaA3vb4e9HVYU68/lK?=
+ =?us-ascii?Q?Q7WprSWhemY9sI8hOqySdd3HYZ042yZH9aJR+9oKhs8KHKCWI6sv3Ugvk1WF?=
+ =?us-ascii?Q?vKfDLVTM6wBAaEMXYiqN74+odULnuFqFtiOO5eijK+6glthic2JR3RqWiVmI?=
+ =?us-ascii?Q?SHIGo1wyTWx/P5aOcGgI4Gc8JMzFbm5/VXHXHenfA/cZPnEmFUEfPqU/MADQ?=
+ =?us-ascii?Q?aOu3yYl2tzlsU10iYx0+Rn4TMQxMrN3lmrPT4jMU/Hz4ksrzuTpkU6r+TOM3?=
+ =?us-ascii?Q?9DrPSB8siWAKMN2jj574Dk3nKbrCFs+RwjZdhjC17QtnAbVQbnGJCx1i3nYF?=
+ =?us-ascii?Q?+hmewR6r6NLqzrRM2Q9pYznrXX1leYl9JQlgBMFQygTAy4FcKkFZi1Fo/kRR?=
+ =?us-ascii?Q?slyC8EU/3RRWvt00MbEX4pzmFbX9/DkRnh4WJTQQ+cBxMziCHyG9mYFajqak?=
+ =?us-ascii?Q?D+UAgCAHCMoOOlXYyIR+ko6lHMV6XI4v6LHD4UXkyxmkT0Pbp74RV6aRx5qE?=
+ =?us-ascii?Q?BTA72bSpUxhbd/IdGKlU/wG2CpE/GJWOTbzlMeZV/GAhItpAArAVPePnH8As?=
+ =?us-ascii?Q?iXJwb7VJCwg9xAUGb/AUnKhrjC0KaQTIBTW/lWUsQlER5R2jj928tJE64hPA?=
+ =?us-ascii?Q?LbOjzSKYoNJJQz4x+T8dawh1z54MqN8+fibZVE3V6KE/kiVplCgn5I00l5KD?=
+ =?us-ascii?Q?1RUsTC136My2FGj2eN+nMS37ZMa0eXfvxE3H9z0x?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c99cceb6-e84c-46ca-cac0-08dcaf9b4c73
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 06:54:31.9043
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8JliauFhiWG6DnAplMbHg+n07+vk4GCP/7hTQXDQxz121tMeg9SOpKIbBAi7BGrCPtisk+fB2KwqBPFzi1u9GA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10858
 
-Hi Arnd,
+From: Peng Fan <peng.fan@nxp.com>
 
-On Fri, Jul 19, 2024 at 11:53:50AM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Commit 4670c8c3fb04 ("media: ipu-bridge: Fix Kconfig dependencies") changed
-> how IPU_BRIDGE dependencies are handled for all drivers, but the IPU6 variant
-> was added the old way, which causes build time warnings when I2C is turned
-> off:
-> 
-> WARNING: unmet direct dependencies detected for IPU_BRIDGE
->   Depends on [n]: MEDIA_SUPPORT [=m] && PCI [=y] && MEDIA_PCI_SUPPORT [=y] && (ACPI [=y] || COMPILE_TEST [=y]) && I2C [=n]
->   Selected by [m]:
->   - VIDEO_INTEL_IPU6 [=m] && MEDIA_SUPPORT [=m] && PCI [=y] && MEDIA_PCI_SUPPORT [=y] && (ACPI [=y] || COMPILE_TEST [=y]) && VIDEO_DEV [=m] && X86 [=y] && X86_64 [=y] && HAS_DMA [=y]
-> 
-> To make it consistent with the other IPU drivers as well as avoid this warning,
-> change the 'select' into 'depends on'.
+Two drivers scmi_cpufreq.c and scmi_perf_domain.c both use
+SCMI_PROTCOL_PERF protocol, but with different name, so two scmi devices
+will be created. But the fwnode->dev could only point to one device.
 
-Thanks for the patch. I'm not sure how I managed to miss the IPU6 driver...
+If scmi cpufreq device created earlier, the fwnode->dev will point to
+the scmi cpufreq device. Then the fw_devlink will link performance
+domain user device(consumer) to the scmi cpufreq device(supplier).
+But actually the performance domain user device, such as GPU, should use
+the scmi perf device as supplier. Also if 'cpufreq.off=1' in bootargs,
+the GPU driver will defer probe always, because of the scmi cpufreq
+device not ready.
 
-I think we also need, besides IPU_BRIDGE, || !IPU_BRIDGE, as the IPU_BRIDGE
-has additional dependencies (I2C) compared to VIDEO_INTEL_IPU6. I'll add
-that while applying. Please let me know if you have concerns.
+Because for cpufreq, no need use fw_devlink. So bypass setting fwnode
+for scmi cpufreq device.
 
-> 
-> Fixes: c70281cc83d6 ("media: intel/ipu6: add Kconfig and Makefile")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/media/pci/intel/ipu6/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/pci/intel/ipu6/Kconfig b/drivers/media/pci/intel/ipu6/Kconfig
-> index 154343080c82..ffadf03478a8 100644
-> --- a/drivers/media/pci/intel/ipu6/Kconfig
-> +++ b/drivers/media/pci/intel/ipu6/Kconfig
-> @@ -3,13 +3,13 @@ config VIDEO_INTEL_IPU6
->  	depends on ACPI || COMPILE_TEST
->  	depends on VIDEO_DEV
->  	depends on X86 && X86_64 && HAS_DMA
-> +	depends on IPU_BRIDGE
->  	select DMA_OPS
->  	select IOMMU_IOVA
->  	select VIDEO_V4L2_SUBDEV_API
->  	select MEDIA_CONTROLLER
->  	select VIDEOBUF2_DMA_CONTIG
->  	select V4L2_FWNODE
-> -	select IPU_BRIDGE
->  	help
->  	  This is the 6th Gen Intel Image Processing Unit, found in Intel SoCs
->  	  and used for capturing images and video from camera sensors.
+Fixes: 96da4a99ce50 ("firmware: arm_scmi: Set fwnode for the scmi_device")
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
 
+V2:
+ Use A!=B to replace !(A == B)
+ Add fixes tag
+ This might be a workaround, but since this is a fix, it is simple for
+ backporting.
+
+V1:
+ https://lore.kernel.org/all/20240717093515.327647-1-peng.fan@oss.nxp.com/
+
+ drivers/firmware/arm_scmi/bus.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/arm_scmi/bus.c b/drivers/firmware/arm_scmi/bus.c
+index 96b2e5f9a8ef..be91a82e0cda 100644
+--- a/drivers/firmware/arm_scmi/bus.c
++++ b/drivers/firmware/arm_scmi/bus.c
+@@ -395,7 +395,8 @@ __scmi_device_create(struct device_node *np, struct device *parent,
+ 	scmi_dev->id = id;
+ 	scmi_dev->protocol_id = protocol;
+ 	scmi_dev->dev.parent = parent;
+-	device_set_node(&scmi_dev->dev, of_fwnode_handle(np));
++	if ((protocol != SCMI_PROTOCOL_PERF) || strcmp(name, "cpufreq"))
++		device_set_node(&scmi_dev->dev, of_fwnode_handle(np));
+ 	scmi_dev->dev.bus = &scmi_bus_type;
+ 	scmi_dev->dev.release = scmi_device_release;
+ 	dev_set_name(&scmi_dev->dev, "scmi_dev.%d", id);
 -- 
-Kind regards,
+2.37.1
 
-Sakari Ailus
 
