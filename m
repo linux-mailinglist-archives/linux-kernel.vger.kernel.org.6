@@ -1,170 +1,99 @@
-Return-Path: <linux-kernel+bounces-265854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D3093F6E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:43:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE26B93F6E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A989281F2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:43:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 589DA1F21EA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C6914D282;
-	Mon, 29 Jul 2024 13:43:16 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996DA14D29B;
+	Mon, 29 Jul 2024 13:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M/qqc0mW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D090823A9;
-	Mon, 29 Jul 2024 13:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765271487CC
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722260596; cv=none; b=JqYN4cOcRvvlvH92uNX0K2Fx/PHIhyWTfHZif/zY9BWZD2UsxWBQGuCnt4REbeqsul8oz5S8N6/qgqXE0wp4T/ik73RC8yucxMZgsnK4AxS7GBp4JbY8wpedUqnesY2ZNKzHPmu/i+50a+RlRsl6+kLaU1+kyiPVP1dR7B24u2M=
+	t=1722260699; cv=none; b=BewJZYtOYiUBdU9yvhTqFbnamocqWPzr4/bOHnvUpBQNyPtt6Z8DLicCN5j5b2nosTLclQJFp7ZrG3SyB8cvjDVKukF6FCsme8lBQ6cgPe/H5NaYPrTwSd3U+VNmjL6re6mT0rgJrv4U8AR5sxv8WoMJ4abGMdA+RlDHdeABkWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722260596; c=relaxed/simple;
-	bh=4mQO8KGnT7sHHoH3xV44eI7Vk6adn1X7xSiPoFyNPWg=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=BTUoXJv6V2h3x/6FcvgqqljyU2ZW/4PpS8VPNWxYgXn++3OHkscvLQJm+Ivv8fg2IIYyUFAd3N8X5wVkeoQURSOsi86UkFX+YciZZicnD5BE8LjwNPi+xeAFT59/iiazeIsvaRGd+PyL1UjsGLd6Tt7o8xnZ/7l5b/UswIIZg3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WXffs2Tl9znd34;
-	Mon, 29 Jul 2024 21:42:13 +0800 (CST)
-Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
-	by mail.maildlp.com (Postfix) with ESMTPS id E659F1800D0;
-	Mon, 29 Jul 2024 21:43:09 +0800 (CST)
-Received: from [10.67.110.237] (10.67.110.237) by
- kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 29 Jul 2024 21:43:08 +0800
-Subject: Re: [PATCH] perf/x86: Fix smp_processor_id()-in-preemptible warnings
-To: K Prateek Nayak <kprateek.nayak@amd.com>, <peterz@infradead.org>,
-	<mingo@redhat.com>, <kan.liang@linux.intel.com>
-CC: <acme@kernel.org>, <namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<irogers@google.com>, <adrian.hunter@intel.com>, <tglx@linutronix.de>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-	<hpa@zytor.com>, <ak@linux.intel.com>, <linux-perf-users@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240729114541.3517574-1-lihuafei1@huawei.com>
- <132ddbbd-5afc-8436-9db6-0f1add4bcec1@amd.com>
-From: Li Huafei <lihuafei1@huawei.com>
-Message-ID: <9f6d6697-9de9-6934-257c-d8724f0db4c6@huawei.com>
-Date: Mon, 29 Jul 2024 21:43:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+	s=arc-20240116; t=1722260699; c=relaxed/simple;
+	bh=sqmtbWJWJbnnO58kBXQ7yJLJv2Q4yJ6rGCz08DsyGcU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AYWcgEi/226DSaJ8Mvm6kX1Z7Zxi/FRRTsCtBkyyybZN1UwLZPKkKMZrfj80AQtx3aRPhwSQI+3ttP/F6YLpDTg80RCAKbUeJbIzq+nRAXo6aUp66zgNnRUlQQ1e3x/Hao0kkABo24VB8mJuPDFMUoAp8W8khpkauZNlmbxyNjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M/qqc0mW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722260696;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=icUyqWhOytyMRjqqDwKpqJ1F6QKpS6EQcFlYPjhlVZM=;
+	b=M/qqc0mW1N2A5moq/NQDcBaug6PQQQ6tbeb0RM4TsPltV0LxaaxAuxwKgnILofSK3dCWrl
+	cL8B3jDEVUGUPCIO+X0ulRBakDW3xiaoLYYIM9A4vKV5S9t/M0eibD3BKBlyx05AM3dLFl
+	x7M4dGMNJDs/F52cmviL1bKrd4FwYp4=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-435-dtyyHPEuNaOH9_GHEnd9YA-1; Mon,
+ 29 Jul 2024 09:44:51 -0400
+X-MC-Unique: dtyyHPEuNaOH9_GHEnd9YA-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8A6FF1977339;
+	Mon, 29 Jul 2024 13:44:48 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.232])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 91B401955F68;
+	Mon, 29 Jul 2024 13:44:45 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 29 Jul 2024 15:44:48 +0200 (CEST)
+Date: Mon, 29 Jul 2024 15:44:44 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org
+Cc: jolsa@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] uprobes: misc cleanups/simplifications
+Message-ID: <20240729134444.GA12293@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <132ddbbd-5afc-8436-9db6-0f1add4bcec1@amd.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemf500004.china.huawei.com (7.202.181.242)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
+Peter, I don't think these changes can really complicate your ongoing work.
+But again, if you are going to send the next version "soon" I can rebase
+these cleanups on top of it.
 
+Andrii, I dared to preserve your acks, all the changes are simple.
 
-On 2024/7/29 17:13, K Prateek Nayak wrote:
-> Hello Huafei,
-> 
-> On 7/29/2024 5:15 PM, Li Huafei wrote:
->> The following bug was triggered on a system built with
->> CONFIG_DEBUG_PREEMPT=y:
->>
->>   # echo p > /proc/sysrq-trigger
->>
->>   BUG: using smp_processor_id() in preemptible [00000000] code: sh/117
->>   caller is perf_event_print_debug+0x1a/0x4c0
->>   CPU: 3 UID: 0 PID: 117 Comm: sh Not tainted 6.11.0-rc1 #109
->>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
->> 1.13.0-1ubuntu1.1 04/01/2014
->>   Call Trace:
->>    <TASK>
->>    dump_stack_lvl+0x4f/0x60
->>    check_preemption_disabled+0xc8/0xd0
->>    perf_event_print_debug+0x1a/0x4c0
->>    __handle_sysrq+0x140/0x180
->>    write_sysrq_trigger+0x61/0x70
->>    proc_reg_write+0x4e/0x70
->>    vfs_write+0xd0/0x430
->>    ? handle_mm_fault+0xc8/0x240
->>    ksys_write+0x9c/0xd0
->>    do_syscall_64+0x96/0x190
->>    entry_SYSCALL_64_after_hwframe+0x4b/0x53
->>
->> This is because the commit d4b294bf84db ("perf/x86: Hybrid PMU support
->> for counters") took smp_processor_id() outside the irq critical section.
->> If a preemption occurs in perf_event_print_debug() and the task is
->> migrated to another cpu, we may get incorrect pmu debug information.
->> Move smp_processor_id() back inside the irq critical section to fix this
->> issue.
->>
->> Fixes: d4b294bf84db ("perf/x86: Hybrid PMU support for counters")
->> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
->> ---
->>   arch/x86/events/core.c | 19 ++++++++++++-------
->>   1 file changed, 12 insertions(+), 7 deletions(-)
->>
->> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
->> index 12f2a0c14d33..c0157a5d8296 100644
->> --- a/arch/x86/events/core.c
->> +++ b/arch/x86/events/core.c
->> @@ -1521,19 +1521,24 @@ void perf_event_print_debug(void)
->>   {
->>       u64 ctrl, status, overflow, pmc_ctrl, pmc_count, prev_left, fixed;
->>       u64 pebs, debugctl;
->> -    int cpu = smp_processor_id();
->> -    struct cpu_hw_events *cpuc = &per_cpu(cpu_hw_events, cpu);
->> -    unsigned long *cntr_mask = hybrid(cpuc->pmu, cntr_mask);
->> -    unsigned long *fixed_cntr_mask = hybrid(cpuc->pmu, fixed_cntr_mask);
->> -    struct event_constraint *pebs_constraints = hybrid(cpuc->pmu,
->> pebs_constraints);
->> +    int cpu;
->> +    struct cpu_hw_events *cpuc;好的，我会在v2中修改。
->> +    unsigned long *cntr_mask, *fixed_cntr_mask;
->> +    struct event_constraint *pebs_constraints;
->>       unsigned long flags;
->>       int idx;
-> 
-> nit. "cpu" and "idx" can be defined together and this can be converted
-> to use revere xmas tree order.
-> 
+Changes since v1:
 
-Ok, I'll change it in v2.
+	- update the comment in register_for_each_vma()
+	- remove the now unused "struct path *" arg from bpf_uprobe_unregister()
+	- forward-declare struct uprobe in include/linux/uprobes.h
+	- kernel-doc fixes/updates
+	- fix use-after free in uprobe_unregister(). See "TODO:" in 5/5.
 
->>   +    local_irq_save(flags);
-> 
-> Perhaps use "guard(irqsave)();" here since ...
-> 
->> +
->> +    cpu = smp_processor_id();
->> +    cpuc = &per_cpu(cpu_hw_events, cpu);
->> +    cntr_mask = hybrid(cpuc->pmu, cntr_mask);
->> +    fixed_cntr_mask = hybrid(cpuc->pmu, fixed_cntr_mask);
->> +    pebs_constraints = hybrid(cpuc->pmu, pebs_constraints);
->> +
->>       if (!*(u64 *)cntr_mask)
-> 
-> ... a "local_irq_restore(flags)" is required here now before returning
-> and using the guard can avoid that. Even the flags variable will no
-> longer be necessary.
-> 
+Oleg.
+---
 
-It's really bad, I forgot to restore irq before returning. Using lock
-guard can indeed avoid such errors, and I will fix it in v2. Thanks!
+ include/linux/uprobes.h     | 22 +++++------
+ kernel/events/uprobes.c     | 96 +++++++++++++++++----------------------------
+ kernel/trace/bpf_trace.c    | 25 ++++++------
+ kernel/trace/trace_uprobe.c | 31 ++++++---------
+ 4 files changed, 69 insertions(+), 105 deletions(-)
 
-> Thoughts?
-> 
->>           return;
->>   -    local_irq_save(flags);
->> -
->>       if (x86_pmu.version >= 2) {
->>           rdmsrl(MSR_CORE_PERF_GLOBAL_CTRL, ctrl);
->>           rdmsrl(MSR_CORE_PERF_GLOBAL_STATUS, status);
-> 
 
