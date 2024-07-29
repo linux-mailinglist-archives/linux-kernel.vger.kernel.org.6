@@ -1,307 +1,230 @@
-Return-Path: <linux-kernel+bounces-266256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F185393FD3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:19:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4244093FD40
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CFED28341B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:19:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C12FD1F22EA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC941862B7;
-	Mon, 29 Jul 2024 18:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723C418629C;
+	Mon, 29 Jul 2024 18:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TiQ55A4X"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2044.outbound.protection.outlook.com [40.107.243.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="d895n1VQ"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78A078274;
-	Mon, 29 Jul 2024 18:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722277152; cv=fail; b=k7+ZZoMneYJkodHgWfskFHJYRkdnQ6mzESnUYAmXXhXZZu1qPKiDocMXBuYIYyRc+3s5JtZIHPFS/eVlY4iFj9bVg6aIwchzWH4v5j9NC5h3mRGk/TTWBe/13fTozXAQk3wH4fvL8ynzWjO1SvxWWl8yckzA+mwsXRd90YOvoMQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722277152; c=relaxed/simple;
-	bh=YC9CYDNIyz5ZxdmeUbCnc/UXc493pFg71jmgThtO6no=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JhC3dDJvlZx03Lll5jAye+FQBwsTdOspnDdi90iU7K6r6mbgqxvdTUGuTMmQC/+MmzTQeSK5Uq0UMxcrmGV055sFSTnGTz2zh/GBBUM9O/Lg5v6mQiiCZ/25igm/BKADj0kYFgBiqWTvgyDMs8NEv9ORgnWx7WS2uXK0Lkm2AQ0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TiQ55A4X; arc=fail smtp.client-ip=40.107.243.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=x92+ig9NnRi6+CSVlL0IN7iyOhtUcpDi1u0YeH2uP6anUT8cwwHWnOHZfWmbYxRmMT3ufB6xWyoC0lk6a4iTzq5InXHC42iVsmgh+H6VrOeXDmzxCJk35M3ITBWeHajvcgJj/jX5aXpdANZrifQDXtI2K25JhYnK7NDwHe/E1DioPyOe73Chmie49z3fkhGeVDLxcuIgSpol4rEg/AxyBLFxwYi//MGiyiBKq7atszEswrA8vSc0ZbLFpbJObbwkLWfaAyq8ZEzR1VQXGtdV3wlT+v577+B8OyPIn4scx+eQSI29Pq01Km+OYAdcYjDiH+eU7zUUEhG+CBVCuJa1uw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tDlIfwE8BsVW0wZ55q3xbfl/zAmQ8BQQHHEhA6iSgZg=;
- b=HaFNkAZ3ixPJS/Mk2mKZJWZN8Gn1Sv/2xYZJfijACRKtRSvrjdpQKTQNBOg5w3naZesYClsHWPAbHn1e/mjtFjAR6J8rKLsAvM+4HsUEdP773fyBw9z1nsfpI6QtJc0s66qS4A27q5jnNUbn27eYRgwMvqnKhh43AHSG8l4JiNYy6yrLiUCz8tvwsvTBJNGuwh4zutP9cs1JHhSFRkzOg8z5eYAf01EgWpmEs6q0j/ri2oXBW6hcrAS/MSK6ug+kvO1DABCSsMQeVXlYswYAjZqkt3ca5rtBcu82wVBzCjWzgh6/5CtnYWw/5YtUQ61ZMhKPfVAKR7B7QsrIl2dj7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tDlIfwE8BsVW0wZ55q3xbfl/zAmQ8BQQHHEhA6iSgZg=;
- b=TiQ55A4X1Z6GMYi+1rEDM/QoVfjYaQlRJs8Ork7O8gAjfcw9i1R9/sCwMxnYP+uYq8yey2viMe5HsiTbFMzhdPd4hYX1VMSgToWKHgIvnvKbPIC6pimgqqylrxfixH83T/Fc1Bepeu/yk2MPwIEQiuNwhXGlXLAtgr1zlaH4yVA=
-Received: from SJ0PR03CA0019.namprd03.prod.outlook.com (2603:10b6:a03:33a::24)
- by CY5PR12MB6083.namprd12.prod.outlook.com (2603:10b6:930:29::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Mon, 29 Jul
- 2024 18:19:06 +0000
-Received: from SJ1PEPF00002310.namprd03.prod.outlook.com
- (2603:10b6:a03:33a:cafe::91) by SJ0PR03CA0019.outlook.office365.com
- (2603:10b6:a03:33a::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.34 via Frontend
- Transport; Mon, 29 Jul 2024 18:19:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00002310.mail.protection.outlook.com (10.167.242.164) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7828.19 via Frontend Transport; Mon, 29 Jul 2024 18:19:06 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 29 Jul
- 2024 13:19:05 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 29 Jul
- 2024 13:19:05 -0500
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 29 Jul 2024 13:19:04 -0500
-Message-ID: <8dade04c-609b-f69d-0809-4aa8fecd9b87@amd.com>
-Date: Mon, 29 Jul 2024 11:19:03 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B275F15ECC3
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722277190; cv=none; b=P8nftzXdtZPGwbp/0Pwf5lsD2oLgF+n+s9pZdNZGtjmeuv+DivJKwxCcQD+ISVA2N6cMG3Db6VpXl36SL/PHRB2mFQWuLa/5lPfCJfSBYnh+gP43gOCGwQKditHYNbEXTz+htIPeO7nBe950a6bPXDh11aU6WM9jVKkGQL21mx8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722277190; c=relaxed/simple;
+	bh=mCX7ZespUD3P/oxNqGTSO8756McUqLba+pIo/Bcv0iY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fwbHsCFWKt1GcsQl+ez3aUoT73hagYXTyd+DJvE0fuEa2I9PDM60p5Q4MhKpU0eeiamykKOPfa2GuvsYRWH03N/49CQweu68U3XD5+5bXlMOzygDL3TuNnJHkviHWm1WQgSE5RRIldIGpNgbwI1caB0faMXwUH/0EvZF4c8dCg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=d895n1VQ; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-39ae90034bdso15075905ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:19:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722277188; x=1722881988; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NLZornX8WAGKa8yt077Nm/8QnebdQj4sROMMiTvI2j4=;
+        b=d895n1VQs0tTW0Aum/je/et4tYtaB7fH21Nx7p+8TRmOJKxiPUWC1doVtQMfEoLXY2
+         3ydJghHTyEzKNz4TITuvQrilJAD6uNbPbob/qlbuaxL2Rg8fXwRmusPzxn1kIYo+Lxe/
+         beR/87B/NcGkmjiWJunzGRlv+WuSyd82w94wdAhHrBM0pqveY3FkJd+k8ZqiAIc7nv6A
+         k693bG1SdX1XSAV9DBimLMt358vSPO4Zl5lVxQbqA0B9oui/+XAAi/zUIK4Fw4husyPQ
+         ldBtGYyfhbV3Vkm/D6H2gm+6HtUUN1QITFOVh9Lp3GVK7cZXfxMJEmNQLF8HbP24UfEM
+         y40g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722277188; x=1722881988;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NLZornX8WAGKa8yt077Nm/8QnebdQj4sROMMiTvI2j4=;
+        b=K6EHzkZmF3nu9NzKMy9qdMzgwwhANDnGZ1eJhfbex+3Il1MOL2auVLdJfqHM/UnyCB
+         Da8Hu8+aAYoQLz3GnctZvyNftx5lKtjvFBO2aDBxMreScXmTJksamZDexEiI7mrR8FXa
+         jp30y4Q8cr0X9zn6D98ac8azoMFJfL0m/S+enyfErqqGqIOKheXvyKBxIjC/O01eBiiz
+         rCAWhSxK4B/k87bTCe/6qF9++EN48Z+scwls/iY8sZHo2PG8Vmk0OG9d7CW2G5DBRxS2
+         gm+RY1wrBbHSbtQHmv1BzPKkCzkgKRR37fKHNvnmY+U8fFzYfNFXazdh4QSvCYWr56BI
+         OZsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6/RYMLrz2M2ACmoR/ug3gp7mtoRjHgGQVnfEVRYDiy84cGbyNH7Ls/n4dQogUGOPIm7jBbu/Ek5C2Dp/RUBLX9dPuNBtTrqYGV7qa
+X-Gm-Message-State: AOJu0YygUkQM55f66gcN/IEQoJXMv+HZvse1/42R+7IPbcxQ7fV1SOou
+	+ZmL64eVjrbno9fFTlplB3FuU96u9cPo7Ch23u4V4RHsIjwvMs45Rm8AJ1TdFRM=
+X-Google-Smtp-Source: AGHT+IF4BTnbGjnQsdqxs/SVCkJGOF3dKX/SjJGZrcZt0TOaKi/Hz3g0YG9awyZqFcTslL1Na/jssQ==
+X-Received: by 2002:a05:6e02:1546:b0:374:983b:6ff2 with SMTP id e9e14a558f8ab-39aec410470mr103773605ab.20.1722277187784;
+        Mon, 29 Jul 2024 11:19:47 -0700 (PDT)
+Received: from atishp.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9fa5a3760sm7377373a12.94.2024.07.29.11.19.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 11:19:47 -0700 (PDT)
+From: Atish Patra <atishp@rivosinc.com>
+To: eric.lin@sifive.com
+Cc: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	peterlin@andestech.com,
+	dminus@andestech.com,
+	locus84@andestech.com,
+	jisheng.teoh@starfivetech.com,
+	inochiama@outlook.com,
+	n.shubin@yadro.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Atish Patra <atishp@rivosinc.com>
+Subject: Re: [v2] perf arch events: Fix duplicate RISC-V SBI firmware event name
+Date: Mon, 29 Jul 2024 11:19:27 -0700
+Message-Id: <20240729181927.1712841-1-atishp@rivosinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240719115018.27356-1-eric.lin@sifive.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v2] PCI: Fix crash during pci_dev hot-unplug on pseries
- KVM guest
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>, "Saravana
- Kannan" <saravanak@google.com>, Kowshik Jois B S <kowsjois@linux.ibm.com>,
-	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<kvm-ppc@vger.kernel.org>, Vaidyanathan Srinivasan <svaidy@linux.ibm.com>,
-	Lukas Wunner <lukas@wunner.de>, Nicholas Piggin <npiggin@gmail.com>, "Bjorn
- Helgaas" <bhelgaas@google.com>, Vaibhav Jain <vaibhav@linux.ibm.com>,
-	<linuxppc-dev@lists.ozlabs.org>
-References: <20240723162107.GA501469-robh@kernel.org>
- <a8d2e310-9446-6cfa-fe00-4ef83cdb6590@amd.com>
- <CAL_JsqJjhaLFm9jiswJTfi4yZFYGKJUdC+HV662RLWEkJjxACw@mail.gmail.com>
- <ac3aeec4-70fc-cd9e-498c-acab0b218d9b@amd.com>
- <p6cs4fxzistpyqkc5bv2sb76inrw7fterocdcu3snnyjpqydbr@thxna6v2umrl>
- <d20b78cd-ed34-3e5a-0176-c20ee5afd0db@amd.com>
- <CAL_JsqJAuVexFAz6gWWuTtX1Go-FnHe6vJapv0znHBERSCtv+Q@mail.gmail.com>
- <0b1be7b7-e65b-8d8e-0659-388dec303039@amd.com>
- <6mjt477ltxhr4sudizyzbspkqb7yspxvnoiblzeiwxw5kwwsmq@bchicp4bmtzq>
- <af45d85c-2145-cbce-b91b-2aa70a9dcd0f@amd.com>
- <vctizrpvsuy4ebrvmub756sxs2bridn6gkav55ehlz5gjlc44b@jyzymbydkut2>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <vctizrpvsuy4ebrvmub756sxs2bridn6gkav55ehlz5gjlc44b@jyzymbydkut2>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002310:EE_|CY5PR12MB6083:EE_
-X-MS-Office365-Filtering-Correlation-Id: b7e81fcc-8500-48e5-06a3-08dcaffaeebc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?S05hRXkycEhmT0haR0MxeUtqR0Z4TkpRdnNXZ1VzTVpNemJ5Y3k4dnZFdktB?=
- =?utf-8?B?K0M0dFBSVjdOaktQZWk1Q1BvWXplc0hEQUdLZ1FRa2NUOTgwT1hJNXZmdTdK?=
- =?utf-8?B?K0NTZDBXcUZyak12cHZpK0NwRlR1MGM0RGIxczdhSXdMRE5KRENNS2hrWnhT?=
- =?utf-8?B?bERvN3hyNmZDa0RrYnFXdFl6OG9EK3dua2JOeWtRZDQ4MTRWN0pTU0t4ZHVm?=
- =?utf-8?B?Z0w2eTdESGJVS09NOE9KNnUvU1JkbC9jQjZpMU9wK1l1NzV4SWhvMlBaNDBl?=
- =?utf-8?B?Zld1dGwxaU0zUXIwSVYwQWZnaFlsMXFBWTJNemhMNlMyTGdqZnJxQzQrMmxa?=
- =?utf-8?B?VGlmSnFjK09uYWhrbE9CaXRkOGpKaWhmTDdneG9BNkhYM2VneTdpZ0xXamQ3?=
- =?utf-8?B?U1ZxUHRoSmtiUVVseWNSb3F1K2ZNYmk4Wm9xdmNnNHdRR0xDOXBGbmFKc0l3?=
- =?utf-8?B?MExQVTJHZ05HTTBTdGNOM0hXcjN3cVhRRnlZWlpTdnM0NTZQZzlwR3VnL1JL?=
- =?utf-8?B?WWI5cTVva3kyOUpkc2Q1MTJQZ0ZzUmE3WUlWY0JFV1IyeHR3ZEdBQ0ltL1Iy?=
- =?utf-8?B?ekVVQUhSOHFaRjNlRFo0ZndZOWFuT2tTMVhtVzNPOTZjTEVpUjhiYWFqU1Ar?=
- =?utf-8?B?Vm56NFhUODAzQzAzQSsyQ04wbWtiVzNiUUN0UnhiU1FYNnBKMkFmVGYxNWti?=
- =?utf-8?B?NTYxWmR3MVhmRXNqOGFqUHJZYzlNMVFkTXZ5OXU2UUFuOVFGUHJ0TXpFTStD?=
- =?utf-8?B?NFY2OXFTbFVFTmtNdnFwRHptY0hyMm5jME1BUEwyd3g2UlR6SmNab0pKTnRz?=
- =?utf-8?B?enE1YURGeG84ckFDOUhXWjVqSjVKU0FISlNvSENZVmZrNnUxbXVWNllxU29u?=
- =?utf-8?B?bzNCeTRMZlZIeXcvNE4vT2V4WkNTcGZ6S1EybUxKMTVsWHFwdW44bE1Ycllw?=
- =?utf-8?B?cWVWNjdLU0lVSU1oNHYwejN5YjZqRHFGZWVnZVN0U2NwaG5NZHZ0ajVVZVhl?=
- =?utf-8?B?T3hTZWpteTFNQXQyeEo2R0dYVURxaVh5U3BidDA1NEJ0RmQyQkxTRkNXcXgv?=
- =?utf-8?B?VXFxaFJUS0N4VnpmeVZOU0daU0xicTg5Z09Yd1oxeHR0VDRYZERHdHNPN1RM?=
- =?utf-8?B?aDV2UE1YRk5pQzRtWFg3cDQvZzFUTlNwMUxZN1VNeDdHbG5Nbm5EOGo1c2ty?=
- =?utf-8?B?RWJLNzNtYkxzZDVQL1lTcFQ4MFNrR3VEaHdOalhlVFRuUCswdEY3aCtjMjFz?=
- =?utf-8?B?Nnl5S3ZjY1dxVmljT0g2VHdOR2VOQTNUa3BXcHRpUjBrcUlZK1JiSnkrQUF5?=
- =?utf-8?B?OFpHWHN6N283UXAyYURUU3B1N2JCSkZoUGt5MVJrd21wTkF6L3hJSG9tY1RU?=
- =?utf-8?B?UXNJSE95L3BPZ3FZaysxWlE4U1U2MnZQMTU5U05OL0UxVEFJR21FbWtBakRI?=
- =?utf-8?B?eG5HMmdGbWEyY0FxZy9JaXFnSktHMnhqTmhoWTR3MjBaL1ZBNmRTZnVGTWZD?=
- =?utf-8?B?bzU4Q2h1Rmh4cDFPZ1ZPaTN4ZGJZcVArUElnR1B2Q3NoQVJqelg0ZUpDNzNp?=
- =?utf-8?B?dU92UGNvcDVVUTVxTE1pZGFwNTVwanFzV1JtM25UYURBUlR0akQweUZBYlRT?=
- =?utf-8?B?d2ovWmJQMmtST0NOWVlOYitCV1dmYWpOMnM2MVVYeW1Ic3JpTmlZN2dpVFA0?=
- =?utf-8?B?R2lsOE14MGtWYjI1WGdHOFJNTzhMVHJWS01FQytrTm90OE50YTBYTFpMU2xF?=
- =?utf-8?B?eGdhMmhLeWdjbDg3WlB3WEVibEx3MXYwY1VDdlR1SnVhK1E0SkVaM2x1Vng0?=
- =?utf-8?B?a1FIdk9FOUF2eWtPblU0OGFDTUZrZWQ0L01rR2lFNnQ5NkEvM2xNZzJBaDRv?=
- =?utf-8?B?dkJXeTJnamNQWnFsd2Q2Wnl2Sm9jVVNLWGIvS2J6a1RhVGt5Umtxbkk3L0ky?=
- =?utf-8?B?bmE2blFweTVlVVpNWXJPL3R1bFVUSTc1VTI5M3BoN0htczZremVtTDk3SmJr?=
- =?utf-8?B?eTdXYUlyZGZBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 18:19:06.0346
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7e81fcc-8500-48e5-06a3-08dcaffaeebc
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002310.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6083
 
+> Currently, the RISC-V firmware JSON file has duplicate event name
+> "FW_SFENCE_VMA_RECEIVED". According to the RISC-V SBI PMU extension[1],
+> the event name should be "FW_SFENCE_VMA_ASID_SENT".
+> 
+> Before this patch:
+> $ perf list
+> 
+> firmware:
+>   fw_access_load
+>        [Load access trap event. Unit: cpu]
+>   fw_access_store
+>        [Store access trap event. Unit: cpu]
+> ....
+>  fw_set_timer
+>        [Set timer event. Unit: cpu]
+>   fw_sfence_vma_asid_received
+>        [Received SFENCE.VMA with ASID request from other HART event. Unit: cpu]
+>   fw_sfence_vma_received
+>        [Sent SFENCE.VMA with ASID request to other HART event. Unit: cpu]
+> 
+> After this patch:
+> $ perf list
+> 
+> firmware:
+>   fw_access_load
+>        [Load access trap event. Unit: cpu]
+>   fw_access_store
+>        [Store access trap event. Unit: cpu]
+> .....
+>   fw_set_timer
+>        [Set timer event. Unit: cpu]
+>   fw_sfence_vma_asid_received
+>        [Received SFENCE.VMA with ASID request from other HART event. Unit: cpu]
+>   fw_sfence_vma_asid_sent
+>        [Sent SFENCE.VMA with ASID request to other HART event. Unit: cpu]
+>   fw_sfence_vma_received
+>        [Received SFENCE.VMA request from other HART event. Unit: cpu]
+> 
+> Link: https://github.com/riscv-non-isa/riscv-sbi-doc/blob/master/src/ext-pmu.adoc#event-firmware-events-type-15 [1]
+> Fixes: 8f0dcb4e7364 ("perf arch events: riscv sbi firmware std event files")
+> Fixes: c4f769d4093d ("perf vendor events riscv: add Sifive U74 JSON file")
+> Fixes: acbf6de674ef ("perf vendor events riscv: Add StarFive Dubhe-80 JSON file")
+> Fixes: 7340c6df49df ("perf vendor events riscv: add T-HEAD C9xx JSON file")
+> Fixes: f5102e31c209 ("riscv: andes: Support specifying symbolic firmware and hardware raw event")
+> Signed-off-by: Eric Lin <eric.lin@sifive.com>
+> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+> Reviewed-by: Nikita Shubin <n.shubin@yadro.com>
+> ---
+> Changes since V1:
+>  - Add "Fixes:" tag for every patch that copied firmware.json
+> ---
+>  tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json       | 2 +-
+>  tools/perf/pmu-events/arch/riscv/riscv-sbi-firmware.json        | 2 +-
+>  tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json       | 2 +-
+>  .../perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json  | 2 +-
+>  .../perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json  | 2 +-
+>  5 files changed, 5 insertions(+), 5 deletions(-)
+> diff --git a/tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json b/tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json
+> index 9b4a032186a7..7149caec4f80 100644
+> --- a/tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json
+> +++ b/tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json
+> @@ -36,7 +36,7 @@
+>      "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+>    },
+>    {
+> -    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+> +    "ArchStdEvent": "FW_SFENCE_VMA_ASID_SENT"
+>    },
+>    {
+>      "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
+> diff --git a/tools/perf/pmu-events/arch/riscv/riscv-sbi-firmware.json b/tools/perf/pmu-events/arch/riscv/riscv-sbi-firmware.json
+> index a9939823b14b..0c9b9a2d2958 100644
+> --- a/tools/perf/pmu-events/arch/riscv/riscv-sbi-firmware.json
+> +++ b/tools/perf/pmu-events/arch/riscv/riscv-sbi-firmware.json
+> @@ -74,7 +74,7 @@
+>    {
+>      "PublicDescription": "Sent SFENCE.VMA with ASID request to other HART event",
+>      "ConfigCode": "0x800000000000000c",
+> -    "EventName": "FW_SFENCE_VMA_RECEIVED",
+> +    "EventName": "FW_SFENCE_VMA_ASID_SENT",
+>      "BriefDescription": "Sent SFENCE.VMA with ASID request to other HART event"
+>    },
+>    {
+> diff --git a/tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json b/tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json
+> index 9b4a032186a7..7149caec4f80 100644
+> --- a/tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json
+> +++ b/tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json
+> @@ -36,7 +36,7 @@
+>      "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+>    },
+>    {
+> -    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+> +    "ArchStdEvent": "FW_SFENCE_VMA_ASID_SENT"
+>    },
+>    {
+>      "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
+> diff --git a/tools/perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json b/tools/perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json
+> index 9b4a032186a7..7149caec4f80 100644
+> --- a/tools/perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json
+> +++ b/tools/perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json
+> @@ -36,7 +36,7 @@
+>      "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+>    },
+>    {
+> -    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+> +    "ArchStdEvent": "FW_SFENCE_VMA_ASID_SENT"
+>    },
+>    {
+>      "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
+> diff --git a/tools/perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json b/tools/perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json
+> index 9b4a032186a7..7149caec4f80 100644
+> --- a/tools/perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json
+> +++ b/tools/perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json
+> @@ -36,7 +36,7 @@
+>      "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+>    },
+>    {
+> -    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+> +    "ArchStdEvent": "FW_SFENCE_VMA_ASID_SENT"
+>    },
+>    {
+>      "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
+> 
 
-On 7/29/24 09:55, Amit Machhiwal wrote:
-> Hi Lizhi,
->
-> On 2024/07/29 09:47 AM, Lizhi Hou wrote:
->> Hi Amit
->>
->> On 7/29/24 04:13, Amit Machhiwal wrote:
->>> Hi Lizhi,
->>>
->>> On 2024/07/26 11:45 AM, Lizhi Hou wrote:
->>>> On 7/26/24 10:52, Rob Herring wrote:
->>>>> On Thu, Jul 25, 2024 at 6:06 PM Lizhi Hou <lizhi.hou@amd.com> wrote:
->>>>>> Hi Amit,
->>>>>>
->>>>>>
->>>>>> I try to follow the option which add a OF flag. If Rob is ok with this,
->>>>>> I would suggest to use it instead of V1 patch
->>>>>>
->>>>>> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
->>>>>> index dda6092e6d3a..a401ed0463d9 100644
->>>>>> --- a/drivers/of/dynamic.c
->>>>>> +++ b/drivers/of/dynamic.c
->>>>>> @@ -382,6 +382,11 @@ void of_node_release(struct kobject *kobj)
->>>>>>                                    __func__, node);
->>>>>>             }
->>>>>>
->>>>>> +       if (of_node_check_flag(node, OF_CREATED_WITH_CSET)) {
->>>>>> +               of_changeset_revert(node->data);
->>>>>> +               of_changeset_destroy(node->data);
->>>>>> +       }
->>>>> What happens if multiple nodes are created in the changeset?
->>>> Ok. multiple nodes will not work.
->>>>>> +
->>>>>>             if (node->child)
->>>>>>                     pr_err("ERROR: %s() unexpected children for %pOF/%s\n",
->>>>>>                             __func__, node->parent, node->full_name);
->>>>>> @@ -507,6 +512,7 @@ struct device_node *of_changeset_create_node(struct
->>>>>> of_changeset *ocs,
->>>>>>             np = __of_node_dup(NULL, full_name);
->>>>>>             if (!np)
->>>>>>                     return NULL;
->>>>>> +       of_node_set_flag(np, OF_CREATED_WITH_CSET);
->>>>> This should be set where the data ptr is set.
->>>> Ok. It sounds the fix could be simplified to 3 lines change.
->>> Thanks for the patch. The hot-plug and hot-unplug of PCI device seem to work
->>> fine as expected. I see this patch would attempt to remove only the nodes which
->>> were created in `of_pci_make_dev_node()` with the help of the newly introduced
->>> flag, which looks good to me.
->>>
->>> Also, since a call to `of_pci_make_dev_node()` from `pci_bus_add_device()`, that
->>> creates devices nodes only for bridge devices, is conditional on
->>> `pci_is_bridge()`, it only makes sense to retain the logical symmetry and call
->>> `of_pci_remove_node()` conditionally on `pci_is_bridge()` as well in
->>> `pci_stop_dev()`. Hence, I would like to propose the below change along with the
->>> above patch:
->>>
->>> diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
->>> index 910387e5bdbf..c6394bf562cd 100644
->>> --- a/drivers/pci/remove.c
->>> +++ b/drivers/pci/remove.c
->>> @@ -23,7 +23,8 @@ static void pci_stop_dev(struct pci_dev *dev)
->>>                   device_release_driver(&dev->dev);
->>>                   pci_proc_detach_device(dev);
->>>                   pci_remove_sysfs_dev_files(dev);
->>> -               of_pci_remove_node(dev);
->>> +               if (pci_is_bridge(dev))
->>> +                       of_pci_remove_node(dev);
->>>                   pci_dev_assign_added(dev, false);
->>>           }
->>>
->>> Please let me know of your thoughts on this and based on that I can spin the v3
->>> of this patch.
->> As I mentioned, there are endpoints in pci quirks (pci/quirks.c) will also
->> create nodes by of_pci_make_dev_node(). So please remove above two lines.
-> Sorry if I'm misinterpreting something here but as I mentioned,
-> `of_pci_make_dev_node()` is called only for bridge devices with check performed
-> via `pci_is_bridge()`, could you please elaborate more on why the same check
-> can't be put while removing the node via `of_pci_remove_node()`?
-
-For devices added in quirks, of_pci_make_dev_node() will be called 
-through pci_fixup_device().
-
-
-Lizhi
-
->
-> Thanks,
-> Amit
->
->> Thanks,
->>
->> Lizhi
->>
->>> In addition to this, can this patch be taken as part of 6.11 as a bug fix?
->>>
->>> Thanks,
->>> Amit
->>>
->>>> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
->>>> index 51e3dd0ea5ab..0b3ba1e1b18c 100644
->>>> --- a/drivers/pci/of.c
->>>> +++ b/drivers/pci/of.c
->>>> @@ -613,7 +613,7 @@ void of_pci_remove_node(struct pci_dev *pdev)
->>>>           struct device_node *np;
->>>>
->>>>           np = pci_device_to_OF_node(pdev);
->>>> -       if (!np || !of_node_check_flag(np, OF_DYNAMIC))
->>>> +       if (!np || !of_node_check_flag(np, OF_CREATED_WITH_CSET))
->>>>                   return;
->>>>           pdev->dev.of_node = NULL;
->>>>
->>>> @@ -672,6 +672,7 @@ void of_pci_make_dev_node(struct pci_dev *pdev)
->>>>           if (ret)
->>>>                   goto out_free_node;
->>>>
->>>> +       of_node_set_flag(np, OF_CREATED_WITH_CSET);
->>>>           np->data = cset;
->>>>           pdev->dev.of_node = np;
->>>>           kfree(name);
->>>> diff --git a/include/linux/of.h b/include/linux/of.h
->>>> index a0bedd038a05..a46317f6626e 100644
->>>> --- a/include/linux/of.h
->>>> +++ b/include/linux/of.h
->>>> @@ -153,6 +153,7 @@ extern struct device_node *of_stdout;
->>>>    #define OF_POPULATED_BUS       4 /* platform bus created for children */
->>>>    #define OF_OVERLAY             5 /* allocated for an overlay */
->>>>    #define OF_OVERLAY_FREE_CSET   6 /* in overlay cset being freed */
->>>> +#define OF_CREATED_WITH_CSET    7 /* created by of_changeset_create_node */
->>>>
->>>>    #define OF_BAD_ADDR    ((u64)-1)
->>>>
->>>>
->>>> Lizhi
->>>>
->>>>> Rob
+Reviewed-by: Atish Patra <atishp@rivosinc.com>
 
