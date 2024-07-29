@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-266140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E26093FB95
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:44:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE3593FB96
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 907A91C226A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:44:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF0491C2278D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A553189F25;
-	Mon, 29 Jul 2024 16:41:38 +0000 (UTC)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9509189F47;
+	Mon, 29 Jul 2024 16:41:40 +0000 (UTC)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CB21891A3
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572221891DE
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722271298; cv=none; b=YqQEV/f30j4tNKUE3+1XbJSLK+uRYs4zA35j79WNSRtMtsjbW43NoBOtC7zLiIUW7oYlrwjiQ01tG7H36A7NyEIq2X4AN+HF0lv8lAVCHVzRSpk7Vg+41dBmZT3YrGJIb+AYMW162djCkz3wwu6MGWN9IMhTwDDeWlfgDqlh6E4=
+	t=1722271300; cv=none; b=Ocsp/t1lxd/GBMCr/9MG4DNfRKw+4XuAnYzAvVGtW1ND7/Y64/So4i4c4OCbpS9fgGPNm7G42+OYY384U2JAK6uznDB6+TNwsU6h4ZxzpH0yUTZ9CKjbAQpFR2BAq8mZlqaRuITCFoFb57EYYg9wyJ5lUi6Zttz7qWElLpA+S3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722271298; c=relaxed/simple;
-	bh=kFzFCKyGM+BaZMlUF3x0UOzVewG83smIsNmXLjD0swM=;
+	s=arc-20240116; t=1722271300; c=relaxed/simple;
+	bh=FEndCg0Pz2OslQ6B28mh6KzzTV1y5Kgcyrx69GxcCO8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZkjYNt6EMm8v38x7D5LQgRSlPARj1WXHtF1kMtdIgyUgh4EfmQFbs3trDKhlU0qLxQph18fA5xW3oaOOBIuiKIJw1CjhnEiasMOD18+T9UdIoAq3EdqpysuyjGCpetr1LMVKJAAAduWis76R4khX0tEt65VWomZ7wTEZBC+0TxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
+	 MIME-Version; b=fKyX8jnkDywfZywsyssu34+K6fHRu/lS9t0A/A80x985OlrH+g9HVL1tH+NUg/D7OunxIkMc9+pQQtOLgQ7/URzpZzyomolhphP1paD99W6xmc/S5BBXjwpbZK39mVImeTiTzbWCGq3IB8LZy4jP8t4o4PjGKvSI5eMhZkQVgWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7aabb71bb2so517320466b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:41:35 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef23d04541so46171251fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:41:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722271294; x=1722876094;
+        d=1e100.net; s=20230601; t=1722271297; x=1722876097;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fOG+72i1mjqHjwsg119pJufGs0ekMU3qUubpOUe+L4w=;
-        b=CkOtu1xraO6JR5HZSJ1DF/efF7MdapGJlYDxdZV4NGaX4CLvtmjmBXFXM0dk7hOeGP
-         ogFq7xv/3QHe9TIXOxJDc0EbU6Z0HjqF2eLQe+dDUnwBC7VHQf5aHgCYor5mkh2fq92b
-         zqlfYajRYZLrzex70hGXh1IFN+ds/7tB+tzGyANSRSvZEYb2we3sdcORrfU2TeiNBf2k
-         8WbSP9h7HnYHa83UifWFbSqmiQagca3xXeL2sPcgXCexJMwrMvDPkAVySrEXOdXMEZK0
-         bPQPzUrb/oDeu+Pims4orF6Ho024dP9mru62AO9q6MNEDbSNT7B9TWY6NheTRYc17cMi
-         sZaw==
-X-Gm-Message-State: AOJu0YwHzZYfFk97eUDLpfDFlAkPIci0+XdX7ZFC6PzEOdppq13vsf72
-	MZrKcd/XDmN6ajm/5yAwZrbF4qTRLmMGJPJ8Dg6eM3O1sCgidLVF
-X-Google-Smtp-Source: AGHT+IHepKMtVy7riosdATsBkDyPfEftLGY09TfsO6YnGbL9NxtbeRNe5EnEyv+PRAS5wnlOBULuwA==
-X-Received: by 2002:a17:907:3f1e:b0:a7a:bb54:c852 with SMTP id a640c23a62f3a-a7d401863e0mr583144366b.61.1722271294464;
-        Mon, 29 Jul 2024 09:41:34 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acadb8356sm526604066b.206.2024.07.29.09.41.33
+        bh=5kKL7LLYKP1+RwU7glg50RHgGSPpM+rBExCNZBvYFfc=;
+        b=lWkzMUmyEd2QvOjPS7zZ+/5wB13HYjQFktp4MfdeluUi2on3btWazzoaYJP+WaElRb
+         g7zguRCGPL/xAoUWXOoeMPblj03mIbxXcZrmR//B6NgiFFqwIxezk8GW2LsvREnpC0t9
+         /RJavRkIAE8Lkm1nDMtMdjZYJ2BoH++K36uGoWZZz3Uv0jKyb8khdEKo6+T+4yYeJIlp
+         QLmbHdMkrmj8xZQm3ex6puNj5Je5F6RG37kXrH7bvkcbiTzepKJyrY4tcBY479ubo96g
+         nelnbNxA7tEhPTnN69to7KZEiNym+5EQVDAhU7fQsspegAeHWfKQzGu8b7ZOqCVqb0FQ
+         JAdA==
+X-Gm-Message-State: AOJu0Yw9ZyENGsM67ss/0X1fZ5X2Z3mTl/1V7lcIXBv0n8uJC8s3cRbf
+	I+8GbA2bbeTPOUmxszmTQUJcub5P9hHQt/o3AkCzA8AM+u7f9AGL
+X-Google-Smtp-Source: AGHT+IH3MBqUB2it74cRDky3yr8m+XT64X75i9nRQ7dR1peopRTkd536ei1f4S5H9id9j3Ao4V6IAQ==
+X-Received: by 2002:a2e:920c:0:b0:2ef:22a5:9472 with SMTP id 38308e7fff4ca-2f12ee42154mr57392231fa.38.1722271296400;
+        Mon, 29 Jul 2024 09:41:36 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-007.fbsv.net. [2a03:2880:30ff:7::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63b59ca1sm6065190a12.52.2024.07.29.09.41.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 09:41:34 -0700 (PDT)
+        Mon, 29 Jul 2024 09:41:36 -0700 (PDT)
 From: Breno Leitao <leitao@debian.org>
 To: bp@alien8.de,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -61,10 +61,11 @@ To: bp@alien8.de,
 	Peter Zijlstra <peterz@infradead.org>,
 	Josh Poimboeuf <jpoimboe@kernel.org>,
 	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v4 09/11] x86/bugs: Add a separate config for SSB
-Date: Mon, 29 Jul 2024 09:40:57 -0700
-Message-ID: <20240729164105.554296-10-leitao@debian.org>
+Cc: linux-kernel@vger.kernel.org,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>
+Subject: [PATCH v4 10/11] x86/bugs: Remove GDS Force Kconfig option
+Date: Mon, 29 Jul 2024 09:40:58 -0700
+Message-ID: <20240729164105.554296-11-leitao@debian.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240729164105.554296-1-leitao@debian.org>
 References: <20240729164105.554296-1-leitao@debian.org>
@@ -76,81 +77,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, the CONFIG_SPECULATION_MITIGATIONS is halfway populated,
-where some mitigations have entries in Kconfig, and they could be
-modified, while others mitigations do not have Kconfig entries, and
-could not be controlled at build time.
+Remove the MITIGATION_GDS_FORCE Kconfig option, which aggressively disables
+AVX as a mitigation for Gather Data Sampling (GDS) vulnerabilities. This
+option is not widely used by distros.
 
-Create an entry for the SSB CPU mitigation under
-CONFIG_SPECULATION_MITIGATIONS. This allow users to enable or disable
-it at compilation time.
+While removing the Kconfig option, retain the runtime configuration
+ability through the `gather_data_sampling=force` kernel parameter. This
+allows users to still enable this aggressive mitigation if needed,
+without baking it into the kernel configuration.
 
-Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
+This change simplifies the kernel configuration while maintaining
+flexibility for runtime mitigation choices.
+
+Cc: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+Suggested-by: Borislav Petkov <bp@alien8.de>
 Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
- arch/x86/Kconfig           | 10 ++++++++++
- arch/x86/kernel/cpu/bugs.c | 10 ++++++----
- 2 files changed, 16 insertions(+), 4 deletions(-)
+ arch/x86/Kconfig           | 19 -------------------
+ arch/x86/kernel/cpu/bugs.c |  4 ----
+ 2 files changed, 23 deletions(-)
 
 diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 33e125a28f79..2e72a07981b2 100644
+index 2e72a07981b2..ab5b210c8315 100644
 --- a/arch/x86/Kconfig
 +++ b/arch/x86/Kconfig
-@@ -2741,6 +2741,16 @@ config MITIGATION_SRBDS
- 	  using MDS techniques.
- 	  See also
- 	  <file:Documentation/admin-guide/hw-vuln/special-register-buffer-data-sampling.rst>
-+
-+config MITIGATION_SSB
-+	bool "Mitigate Speculative Store Bypass (SSB) hardware bug"
-+	default y
-+	help
-+	  Enable mitigation for Speculative Store Bypass (SSB). SSB is a
-+	  hardware security vulnerability and its exploitation takes advantage
-+	  of speculative execution in a similar way to the Meltdown and Spectre
-+	  security vulnerabilities.
-+
- endif
+@@ -2610,25 +2610,6 @@ config MITIGATION_SLS
+ 	  against straight line speculation. The kernel image might be slightly
+ 	  larger.
  
- config ARCH_HAS_ADD_PAGES
+-config MITIGATION_GDS_FORCE
+-	bool "Force GDS Mitigation"
+-	depends on CPU_SUP_INTEL
+-	default n
+-	help
+-	  Gather Data Sampling (GDS) is a hardware vulnerability which allows
+-	  unprivileged speculative access to data which was previously stored in
+-	  vector registers.
+-
+-	  This option is equivalent to setting gather_data_sampling=force on the
+-	  command line. The microcode mitigation is used if present, otherwise
+-	  AVX is disabled as a mitigation. On affected systems that are missing
+-	  the microcode any userspace code that unconditionally uses AVX will
+-	  break with this option set.
+-
+-	  Setting this option on systems not vulnerable to GDS has no effect.
+-
+-	  If in doubt, say N.
+-
+ config MITIGATION_RFDS
+ 	bool "RFDS Mitigation"
+ 	depends on CPU_SUP_INTEL
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 45cbc6f994ca..a7f20ae2fcf4 100644
+index a7f20ae2fcf4..b2e752eeb098 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -2027,10 +2027,12 @@ static const struct {
+@@ -735,11 +735,7 @@ enum gds_mitigations {
+ 	GDS_MITIGATION_HYPERVISOR,
+ };
  
- static enum ssb_mitigation_cmd __init ssb_parse_cmdline(void)
- {
--	enum ssb_mitigation_cmd cmd = SPEC_STORE_BYPASS_CMD_AUTO;
-+	enum ssb_mitigation_cmd cmd;
- 	char arg[20];
- 	int ret, i;
+-#if IS_ENABLED(CONFIG_MITIGATION_GDS_FORCE)
+-static enum gds_mitigations gds_mitigation __ro_after_init = GDS_MITIGATION_FORCE;
+-#else
+ static enum gds_mitigations gds_mitigation __ro_after_init = GDS_MITIGATION_FULL;
+-#endif
  
-+	cmd = IS_ENABLED(CONFIG_MITIGATION_SSB) ?
-+		SPEC_STORE_BYPASS_CMD_AUTO : SPEC_STORE_BYPASS_CMD_NONE;
- 	if (cmdline_find_option_bool(boot_command_line, "nospec_store_bypass_disable") ||
- 	    cpu_mitigations_off()) {
- 		return SPEC_STORE_BYPASS_CMD_NONE;
-@@ -2038,7 +2040,7 @@ static enum ssb_mitigation_cmd __init ssb_parse_cmdline(void)
- 		ret = cmdline_find_option(boot_command_line, "spec_store_bypass_disable",
- 					  arg, sizeof(arg));
- 		if (ret < 0)
--			return SPEC_STORE_BYPASS_CMD_AUTO;
-+			return cmd;
- 
- 		for (i = 0; i < ARRAY_SIZE(ssb_mitigation_options); i++) {
- 			if (!match_option(arg, ret, ssb_mitigation_options[i].option))
-@@ -2049,8 +2051,8 @@ static enum ssb_mitigation_cmd __init ssb_parse_cmdline(void)
- 		}
- 
- 		if (i >= ARRAY_SIZE(ssb_mitigation_options)) {
--			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
--			return SPEC_STORE_BYPASS_CMD_AUTO;
-+			pr_err("unknown option (%s). Switching to default mode\n", arg);
-+			return cmd;
- 		}
- 	}
- 
+ static const char * const gds_strings[] = {
+ 	[GDS_MITIGATION_OFF]		= "Vulnerable",
 -- 
 2.43.0
 
