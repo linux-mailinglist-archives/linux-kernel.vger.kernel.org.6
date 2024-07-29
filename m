@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-265901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C388293F780
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:22:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC8593F785
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1698DB20A53
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:21:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31A6E1F226A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2297D155CB0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3C415665D;
 	Mon, 29 Jul 2024 14:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EpEdhZVT"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HFG/IGQG"
 Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26CB14AD19;
-	Mon, 29 Jul 2024 14:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADE4155301;
+	Mon, 29 Jul 2024 14:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722262884; cv=none; b=PS3nwiTIsbMKyjEFOfhZKyjR+v3gl4A3KTUv006NiLKhwhPjSfpiyqBU/+ZUuzNhoTUlfDhUfr2SSWlvLCaoiCCmoywO7guo5cWEAQ977Ej7nTVGK0tURFUZjQfKyfHk72vvHMZ+sboLVK440ptoJ4xowC6qR2bJsK0vs7tKyf0=
+	t=1722262884; cv=none; b=tol9y+C29suuko28bx94ezXGoLikdQPKoo7j7P4GRDWmwOxVMETjHdDnuao8gvxjiWuMkO+ootzNPw10FiuQQMF0Eui7VdhN4CPmzXUEW6drSVF5KBYMr5qhHxLCZBH7t9XX7nn7Qg9hUaPVkqpbD+/fuzPqz0wEDSGac2MeUow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722262884; c=relaxed/simple;
-	bh=a9rH8NUN0eHCnotRPFfomXhsuxnXOfTT+esz9r2/k5E=;
+	bh=FJ9hj+e+qEbkIqB01VGfZPsX6YMerc+yFmPAs6dhD2c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qzJaDJzc+9Yc4/30OL5qxAsA2DWbR3zVsgxmZcrQP044r33GiDyH4F7n6wofBEREYW9c13EfUWgf8YijPMTUTSzXx/YqSxx+Kw7s3dGQHI4ibVmD+c+73Wa+MBUIlD2pb7Xw+MEfkBYd6J4+/IaEiDMS/YHMfRqdEof/1rLBLRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EpEdhZVT; arc=none smtp.client-ip=217.70.183.193
+	 MIME-Version; b=fxG/I3uVXXXGEH50B7eVuwcCp/+b+qLvWLoU+jGxjNAfD5QT4FbGx3u+C9JPX9hhf9hShAt6TjPelXS5Ok30hNtbl3hDnKrQhn4EJ3XaA+BPXMH9kedeQzDZARvjhUxAnyS9RpvDQwxip/2c2CYzBa/VZLyaS6O//4WhMUK9zOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HFG/IGQG; arc=none smtp.client-ip=217.70.183.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id DD0E0240010;
-	Mon, 29 Jul 2024 14:21:19 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 8D29924000B;
+	Mon, 29 Jul 2024 14:21:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1722262880;
+	t=1722262881;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LYkL3tyhQ8/4UceC/MQqKSowrmrxOwpuEoReXRzSR1k=;
-	b=EpEdhZVTnEmhPnKZGzCdzyxgjxgwpx+oqJiF7jBNmRJOrAfyxm0P+/5ZFM0MDitilwOg3d
-	x4oM6ux24W94WGdgp9NKtK+0am7azIUEuszlQVeZDp7IS1e03Db0gBni8A2PzF3zbn1qpO
-	4JllsA1y75FoEJv4Q5e4iDEzNzyNRNlVVuBA3Uvar9N7knDecqOvZxBR38fYbUz5lUWTgG
-	Pp/nUz1jrcQgRyTKkRSK/o0ASfhlcUx6FULrGLnpNYX5CNr9U0IyYEi1pn8YgD8csv+FeX
-	vYT3w9Z7CX+F+RLBbIKQYQVAG8KNVnsq+WeXAowOlV7pIc8J/8Xs6ssRaz5PQA==
+	bh=G8PJVZbpZeHvhUUqQp4BvbX25vcoHX3SZ5FqCu0M2s8=;
+	b=HFG/IGQG9+9470K1tbqF3g1O2Ds8KvcaXAFZETTbHZJrlMXT9G0jJy67cmsaIJEgr2doA5
+	9tCpTaOQYJLv4l4pIWjnL9jlniU/7ORtcsPikVlGK+dwl962vUIAgbzewsqQd5ZWDK5xj5
+	NMpSEeWk+IA9UI1QwOIISHQkND42dtPOQyhe+Bt9r5+uLF95e5HMoGQuZJEVCHQ360qp6J
+	/oq79rIwH+3Nw/znhzW4o5rzLeSljaeb3/k94oZS0u43NEBztpSrFNFAmHJV0h6Amz20Ht
+	IMG1RhJg0cVuHiUdX7x1TiVFCgIaRk9/B2LIry7raoygBr42Ne9xDzWufjizbA==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Herve Codina <herve.codina@bootlin.com>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
@@ -58,9 +58,9 @@ Cc: linuxppc-dev@lists.ozlabs.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v1 07/36] dt-bindings: soc: fsl: cpm_qe: Add QUICC Engine (QE) TSA controller
-Date: Mon, 29 Jul 2024 16:20:36 +0200
-Message-ID: <20240729142107.104574-8-herve.codina@bootlin.com>
+Subject: [PATCH v1 08/36] soc: fsl: cpm1: tsa: Remove unused registers offset definition
+Date: Mon, 29 Jul 2024 16:20:37 +0200
+Message-ID: <20240729142107.104574-9-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240729142107.104574-1-herve.codina@bootlin.com>
 References: <20240729142107.104574-1-herve.codina@bootlin.com>
@@ -73,260 +73,42 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-Add support for the time slot assigner (TSA) available in some
-PowerQUICC SoC that uses a QUICC Engine (QE) block such as MPC8321.
+SISTR, SICMR and SIRP registers offset definitions are not used.
 
-This QE TSA is similar to the CPM TSA except that it uses UCCs (Unified
-Communication Controllers) instead of SCCs (Serial Communication
-Controllers). Also, compared against the CPM TSA, this QE TSA can handle
-up to 4 TDMs instead of 2 and allows to configure the logic level of
-sync signals.
+In order to avoid unneeded code, remove them.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- .../bindings/soc/fsl/cpm_qe/fsl,qe-tsa.yaml   | 212 ++++++++++++++++++
- include/dt-bindings/soc/qe-fsl,tsa.h          |  13 ++
- 2 files changed, 225 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-tsa.yaml
- create mode 100644 include/dt-bindings/soc/qe-fsl,tsa.h
+ drivers/soc/fsl/qe/tsa.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-tsa.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-tsa.yaml
-new file mode 100644
-index 000000000000..569a4d2e0cab
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-tsa.yaml
-@@ -0,0 +1,212 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe-tsa.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: PowerQUICC QE Time-slot assigner (TSA) controller
-+
-+maintainers:
-+  - Herve Codina <herve.codina@bootlin.com>
-+
-+description:
-+  The TSA is the time-slot assigner that can be found on some PowerQUICC SoC.
-+  Its purpose is to route some TDM time-slots to other internal serial
-+  controllers.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - fsl,mpc8321-tsa
-+      - const: fsl,qe-tsa
-+
-+  reg:
-+    items:
-+      - description: SI (Serial Interface) register base
-+      - description: SI RAM base
-+
-+  reg-names:
-+    items:
-+      - const: si_regs
-+      - const: si_ram
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
-+patternProperties:
-+  '^tdm@[0-3]$':
-+    description:
-+      The TDM managed by this controller
-+    type: object
-+
-+    additionalProperties: false
-+
-+    properties:
-+      reg:
-+        minimum: 0
-+        maximum: 3
-+        description:
-+          The TDM number for this TDM, 0 for TDMa, 1 for TDMb, 2 for TDMc and 3
-+          for TDMd.
-+
-+      fsl,common-rxtx-pins:
-+        $ref: /schemas/types.yaml#/definitions/flag
-+        description:
-+          The hardware can use four dedicated pins for Tx clock, Tx sync, Rx
-+          clock and Rx sync or use only two pins, Tx/Rx clock and Tx/Rx sync.
-+          Without the 'fsl,common-rxtx-pins' property, the four pins are used.
-+          With the 'fsl,common-rxtx-pins' property, two pins are used.
-+
-+      clocks:
-+        minItems: 2
-+        items:
-+          - description: Receive sync clock
-+          - description: Receive data clock
-+          - description: Transmit sync clock
-+          - description: Transmit data clock
-+
-+      clock-names:
-+        minItems: 2
-+        items:
-+          - const: rsync
-+          - const: rclk
-+          - const: tsync
-+          - const: tclk
-+
-+      fsl,rx-frame-sync-delay-bits:
-+        enum: [0, 1, 2, 3]
-+        default: 0
-+        description: |
-+          Receive frame sync delay in number of bits.
-+          Indicates the delay between the Rx sync and the first bit of the Rx
-+          frame. 0 for no bit delay. 1, 2 or 3 for 1, 2 or 3 bits delay.
-+
-+      fsl,tx-frame-sync-delay-bits:
-+        enum: [0, 1, 2, 3]
-+        default: 0
-+        description: |
-+          Transmit frame sync delay in number of bits.
-+          Indicates the delay between the Tx sync and the first bit of the Tx
-+          frame. 0 for no bit delay. 1, 2 or 3 for 1, 2 or 3 bits delay.
-+
-+      fsl,clock-falling-edge:
-+        $ref: /schemas/types.yaml#/definitions/flag
-+        description:
-+          Data is sent on falling edge of the clock (and received on the rising
-+          edge). If 'clock-falling-edge' is not present, data is sent on the
-+          rising edge (and received on the falling edge).
-+
-+      fsl,fsync-rising-edge:
-+        $ref: /schemas/types.yaml#/definitions/flag
-+        description:
-+          Frame sync pulses are sampled with the rising edge of the channel
-+          clock. If 'fsync-rising-edge' is not present, pulses are sampled with
-+          the falling edge.
-+
-+      fsl,fsync-active-low:
-+        $ref: /schemas/types.yaml#/definitions/flag
-+        description:
-+          Frame sync signals are active on low logic level.
-+          If 'fsync-active-low' is not present, sync signals are active on high
-+          level.
-+
-+      fsl,double-speed-clock:
-+        $ref: /schemas/types.yaml#/definitions/flag
-+        description:
-+          The channel clock is twice the data rate.
-+
-+    patternProperties:
-+      '^fsl,[rt]x-ts-routes$':
-+        $ref: /schemas/types.yaml#/definitions/uint32-matrix
-+        description: |
-+          A list of tuple that indicates the Tx or Rx time-slots routes.
-+        items:
-+          items:
-+            - description:
-+                The number of time-slots
-+              minimum: 1
-+              maximum: 64
-+            - description: |
-+                The source (Tx) or destination (Rx) serial interface
-+                (dt-bindings/soc/qe-fsl,tsa.h defines these values)
-+                 - 0: No destination
-+                 - 1: UCC1
-+                 - 2: UCC2
-+                 - 3: UCC3
-+                 - 4: UCC4
-+                 - 5: UCC5
-+              enum: [0, 1, 2, 3, 4, 5]
-+        minItems: 1
-+        maxItems: 64
-+
-+    allOf:
-+      # If fsl,common-rxtx-pins is present, only 2 clocks are needed.
-+      # Else, the 4 clocks must be present.
-+      - if:
-+          required:
-+            - fsl,common-rxtx-pins
-+        then:
-+          properties:
-+            clocks:
-+              maxItems: 2
-+            clock-names:
-+              maxItems: 2
-+        else:
-+          properties:
-+            clocks:
-+              minItems: 4
-+            clock-names:
-+              minItems: 4
-+
-+    required:
-+      - reg
-+      - clocks
-+      - clock-names
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - '#address-cells'
-+  - '#size-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/soc/qe-fsl,tsa.h>
-+
-+    tsa@ae0 {
-+        compatible = "fsl,mpc8321-tsa", "fsl,qe-tsa";
-+        reg = <0xae0 0x10>,
-+              <0xc00 0x200>;
-+        reg-names = "si_regs", "si_ram";
-+
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        tdm@0 {
-+            /* TDMa */
-+            reg = <0>;
-+
-+            clocks = <&clk_l1rsynca>, <&clk_l1rclka>;
-+            clock-names = "rsync", "rclk";
-+
-+            fsl,common-rxtx-pins;
-+            fsl,fsync-rising-edge;
-+
-+            fsl,tx-ts-routes = <2 0>,             /* TS 0..1 */
-+                           <24 FSL_QE_TSA_UCC4>, /* TS 2..25 */
-+                           <1 0>,                 /* TS 26 */
-+                           <5 FSL_QE_TSA_UCC3>;  /* TS 27..31 */
-+
-+            fsl,rx-ts-routes = <2 0>,             /* TS 0..1 */
-+                           <24 FSL_QE_TSA_UCC4>, /* 2..25 */
-+                           <1 0>,                 /* TS 26 */
-+                           <5 FSL_QE_TSA_UCC3>;  /* TS 27..31 */
-+        };
-+    };
-diff --git a/include/dt-bindings/soc/qe-fsl,tsa.h b/include/dt-bindings/soc/qe-fsl,tsa.h
-new file mode 100644
-index 000000000000..3cf3df9c0968
---- /dev/null
-+++ b/include/dt-bindings/soc/qe-fsl,tsa.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-+
-+#ifndef __DT_BINDINGS_SOC_FSL_QE_TSA_H
-+#define __DT_BINDINGS_SOC_FSL_QE_TSA_H
-+
-+#define FSL_QE_TSA_NU		0
-+#define FSL_QE_TSA_UCC1		1
-+#define FSL_QE_TSA_UCC2		2
-+#define FSL_QE_TSA_UCC3		3
-+#define FSL_QE_TSA_UCC4		4
-+#define FSL_QE_TSA_UCC5		5
-+
-+#endif
+diff --git a/drivers/soc/fsl/qe/tsa.c b/drivers/soc/fsl/qe/tsa.c
+index a9d35b44489d..244d521d8780 100644
+--- a/drivers/soc/fsl/qe/tsa.c
++++ b/drivers/soc/fsl/qe/tsa.c
+@@ -66,12 +66,6 @@
+ #define   TSA_SIGMR_RDM_STATIC_TDMAB	FIELD_PREP_CONST(TSA_SIGMR_RDM_MASK, 0x2)
+ #define   TSA_SIGMR_RDM_DYN_TDMAB	FIELD_PREP_CONST(TSA_SIGMR_RDM_MASK, 0x3)
+ 
+-/* SI status register (8 bits) */
+-#define TSA_SISTR	0x06
+-
+-/* SI command register (8 bits) */
+-#define TSA_SICMR	0x07
+-
+ /* SI clock route register (32 bits) */
+ #define TSA_SICR	0x0C
+ #define   TSA_SICR_SCC2_MASK		GENMASK(15, 8)
+@@ -102,9 +96,6 @@
+ #define       TSA_SICR_SCC_TXCS_CLK37	FIELD_PREP_CONST(TSA_SICR_SCC_TXCS_MASK, 0x6)
+ #define       TSA_SICR_SCC_TXCS_CLK48	FIELD_PREP_CONST(TSA_SICR_SCC_TXCS_MASK, 0x7)
+ 
+-/* Serial interface RAM pointer register (32 bits) */
+-#define TSA_SIRP	0x10
+-
+ struct tsa_entries_area {
+ 	void __iomem *entries_start;
+ 	void __iomem *entries_next;
 -- 
 2.45.0
 
