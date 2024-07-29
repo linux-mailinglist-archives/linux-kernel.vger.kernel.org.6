@@ -1,89 +1,145 @@
-Return-Path: <linux-kernel+bounces-266110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B00A893FB3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:33:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39B3A93FB40
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 663CB1F22958
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:33:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA0311F2114B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DFD17CA1A;
-	Mon, 29 Jul 2024 16:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F94A186E24;
+	Mon, 29 Jul 2024 16:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b33yKb7/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="CeCR6EuO"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD32150981
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B2815EFC8;
+	Mon, 29 Jul 2024 16:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722270402; cv=none; b=TXVkHxzcz9GP8X22lEs2BvSEsr9qEhQxyyYjTHk4NqgEaADzWRupKDjQBJG5cesgeT8+TkpJWAmo1ARl52aTUkgeqodW4kNitgUGdqlzdFrw6SWwRyxjJx/xncyme2BW9Bz6TLzMaWmub+dTvW8Zf5RBy82Pa+n0uEWLxPKsF0Q=
+	t=1722270435; cv=none; b=QB6lgtdniwj8oqF/qIJcWAajj0m3SWe0tF6BjetLtynhCj9maHIXNaVdTxOpysDBPod1yXao+q9Z4P7+4qbjrKTFAjYAPFm+5TLhg1368kOknZtQVZtMZ6x+c6MzBAjzqvJcd0qdi5LEBtxeYmNZZkaYqEW1cJhfnYMMzMNR28Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722270402; c=relaxed/simple;
-	bh=5DJAmjjO5CX30yVxzqsOVYfxU3wFszmuKdtYvT0Qc30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rjbuzGZ9Sp6rN4WmbAaKMRZ6A9sN/Yi8uFJAY78y6ZE29FHrF8g0KZ5yWCEE+MDlzhKreZqUctzXvvX2+zcS+rxbMKbkYDYp3b96Pd6snrmPFU7KTDLKawq3MmgKFGZSn1Dzmx2Lv1ViqrGq9fz0DvrpG+xNKJRKoxibw9eUQP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b33yKb7/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F781C32786;
-	Mon, 29 Jul 2024 16:26:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722270402;
-	bh=5DJAmjjO5CX30yVxzqsOVYfxU3wFszmuKdtYvT0Qc30=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b33yKb7/aN0jAQSJGC/gG5idmAse7XkoN74GQYfcYO4Q+RdnKCeI1zwhrNE/FBFn5
-	 ksjKCofXvc5hbk2s6HzwDTNV7WiEiWmI+HxrgnV82ab4pI5M+GU9oWWFbESeZwMmhv
-	 TttP8AqQS5L9LN28zruVhhTQIOsn6EarOtZjg/nz34XmCqTTyUWKz3BjWI2N2em4jZ
-	 HLVSaCDR2UXKjzm80nytePkIzcwIUQMozzXYhwzWmVF5lRdUNjrjY+Oiz6lTB/xeDs
-	 IYTccFPuvpsRe6b9D8Z1HJttamvUXJW+vtJ0cn0OTXBdrD0WxKUrVdsx025baU5Ka+
-	 wAMieBRXfx7vQ==
-Date: Mon, 29 Jul 2024 16:26:40 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] f2fs: atomic: fix to truncate pagecache before
- on-disk metadata truncation
-Message-ID: <ZqfCwDcg7nvJPenf@google.com>
-References: <20240726012204.1306174-1-chao@kernel.org>
+	s=arc-20240116; t=1722270435; c=relaxed/simple;
+	bh=cBp/RizqX+dGUL9k7pxYf0+07L/ZUOrdrCuMDPx33IU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P0/eR6RhuPBAiKG9kugilr+tYVgVxr9LrHr6mkC4LajCEihfZsTjAh7iJxUenb+CgwwIIkyAbZm2c4178eQyqlN2n+tP8crCR6LUWZY4WnpNRrhBPeRSMIf0vklX8iVC6o2usIOD2ihd5U3yXP34M1+8DwPiOS7qYWUGSWUNA5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=CeCR6EuO; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1722270429; x=1722875229; i=wahrenst@gmx.net;
+	bh=CPdnaIAoXXo1X/Vj+jyI1YPMnpPkxnZy+xibg2I7caY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=CeCR6EuOJSqiLBnXbvlAoVBZnOpuU5t81NR1D21484AIo+gVenqTp+ga3ejT3AJN
+	 joAEYi0zTYmoxlr1Lp2IlI81iioBBy3UeXzEVt4HIx03KvYeZL+gv0tRlbynvRY9f
+	 Tr9/S3Dp20wBprAWJGYXSz3jq7qoKu6Zt1yMYmXHvfniJ4v4gsdUUu8tBSgFdOwqa
+	 OVYZo3S3HYzqoyd/1Q1NpN07DOTueXJcYvtGAHKJ9PkQ6lynJOlPgVFhAv2nWWSNe
+	 3nMqpxg8Mgy+GL1ngud5CnBB9xFYFYodfv3SSe4ihD7BTMHq9XOQDv5iYpV2pBy9b
+	 0FF6OIqfcWcKveXqZw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mf078-1s5Cvn02Is-00kGRc; Mon, 29
+ Jul 2024 18:27:09 +0200
+Message-ID: <0c8fe963-50c3-44be-b2ba-10a9f99a28ff@gmx.net>
+Date: Mon, 29 Jul 2024 18:27:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240726012204.1306174-1-chao@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: vf610: add get_direction() support
+To: Bough Chen <haibo.chen@nxp.com>,
+ "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+ "brgl@bgdev.pl" <brgl@bgdev.pl>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>
+References: <20240722062809.915867-1-haibo.chen@nxp.com>
+ <8ebb5430-93fa-4239-b09a-59f35b0dd94d@gmx.net>
+ <DU0PR04MB9496B93A0336D50B8545660890A92@DU0PR04MB9496.eurprd04.prod.outlook.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <DU0PR04MB9496B93A0336D50B8545660890A92@DU0PR04MB9496.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:F0ufmCEc+UMGh5e+pNUvZ8X2viYuJSe7FN5DtHRSPbDvnpB3isW
+ otJbnknmnvUKgwYSzNsx3DdAo6zXeMbCWYMSwv95pYXQkwdo0xzFwIgyGT5mrpemYbOX6dt
+ VTY27E3ZLavqFFsxyl0xyaQxoiyLuwfhWifawfIStzgMyB0hUj02zCn4pqzDOcX22dZSXM8
+ 8N2wPa5d3xVq9i1rkeT5A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:XmhZ0AzoILg=;9SyJuRkxX+16V41ezd2ymvFlGUc
+ k696rhNeLosWip7ZwrKaogY18p+zKa1f8Y7T7UL9uQs+Oaba6w/SZFSVneDpswF79GXKUSZdA
+ 5HnAacfSI/a0t+FARZDVUTkK2UFYstBCpwS5DBvvzVCtFlHOhYF3CHLMA1lVkl3W9pIt0hKVr
+ SM0RJI2iCzWaZrIaXD1I5qa2t50DjaOFSYROGSQRgX6PuO+O1sWCnTbTvHqVGLRV8HjrpuV1g
+ ooIy+pjJxG+vTPqUZnX2Acm26HoMCr+mF6wbGBTWb3B1xZCeLDTjjsXcvzlsGdTHcY6sx50mw
+ XaMh14jU668l9SSALL1WlKLJbaxHGn81CoIXmGIUtuYSYVnUiZ8SFFONua/ipoNKZe+y/OrOw
+ ULiBe22zSMJYmJpCRxRcFKH358tzETyMVwmEY2Cq1HMlnieXsRI8xVFK0/l+WSZG7S8cgqLCX
+ NvvrKAJC4lpyGltLhWfiWTuec+KE1LhlqwrUZnKRczO0ckTQMpeXyhwAuYHeyTR+mZH4eFCF0
+ R+nxtb/qFb+6QxzPj1FU7scVok4FcL4NL7rYw6pnya4f6WXZzqoc+6/KEQyQQzrT/b7HRrE+c
+ 90YheJbCFTEtUivGWgjI52zLwnY9lHP0iuuVm5cLvwAwCBDTu7iLK/tJDLfkXPBTheVzrSxiN
+ JEzhF2QpmjpHBhQLdyZqwEeS4KlOhBapho7P1viPGe/De+nvyh56E0TxBYWFbCvFLJoJJG+0v
+ GAJJjzKEX7gUcLucV5oPKBGypCCUFQlCto9bUa09dC5nsj+tzwDm4mEOKD4TWetGjWoDiPj2q
+ gl1SVVCA6w7KuJiYhWnARXLw==
 
-On 07/26, Chao Yu wrote:
-> We should always truncate pagecache while truncating on-disk data.
-> 
-> Fixes: a46bebd502fe ("f2fs: synchronize atomic write aborts")
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
-> v2:
-> - fix to use cow_inode instead of inode
->  fs/f2fs/file.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 6c62f76474d1..54886ddcb8ab 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -2202,6 +2202,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
->  		F2FS_I(fi->cow_inode)->atomic_inode = inode;
->  	} else {
->  		/* Reuse the already created COW inode */
-> +		truncate_setsize(fi->cow_inode, 0);
 
-What if the below truncation failed?
+Am 23.07.24 um 04:45 schrieb Bough Chen:
+>> -----Original Message-----
+>> From: Stefan Wahren <wahrenst@gmx.net>
+>> Sent: 2024=E5=B9=B47=E6=9C=8822=E6=97=A5 18:32
+>> To: Bough Chen <haibo.chen@nxp.com>; linus.walleij@linaro.org;
+>> brgl@bgdev.pl
+>> Cc: linux-gpio@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> imx@lists.linux.dev
+>> Subject: Re: [PATCH] gpio: vf610: add get_direction() support
+>>
+>> Hi Haibo,
+>>
+>> Am 22.07.24 um 08:28 schrieb haibo.chen@nxp.com:
+>>> From: Haibo Chen <haibo.chen@nxp.com>
+>>>
+>>> For IP which do not contain PDDR, currently use the pinmux API
+>>> pinctrl_gpio_direction_input() to config the output/input, pinmux
+>>> currently do not support get_direction(). So here add the GPIO
+>>> get_direction() support only for the IP which has Port Data Direction
+>>> Register (PDDR).
+>>>
+>>> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+>>> ---
+>>>    drivers/gpio/gpio-vf610.c | 19 +++++++++++++++++++
+>>>    1 file changed, 19 insertions(+)
+>>>
+>>> diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+>>> index 07e5e6323e86..08ca8377b19c 100644
+>>> --- a/drivers/gpio/gpio-vf610.c
+>>> +++ b/drivers/gpio/gpio-vf610.c
+>>> @@ -151,6 +151,19 @@ static int vf610_gpio_direction_output(struct
+>> gpio_chip *chip, unsigned gpio,
+>>>    	return pinctrl_gpio_direction_output(chip, gpio);
+>>>    }
+>>>
+>>> +static int vf610_gpio_get_direction(struct gpio_chip *gc, unsigned
+>>> +int gpio) {
+>>> +	struct vf610_gpio_port *port =3D gpiochip_get_data(gc);
+>>> +	unsigned long mask =3D BIT(gpio);
+>> thanks for sending this patch. I'm fine with this patch, but could we u=
+se u32 to
+>> make it clear about the range of the mask?
+> Yes, u32 seems more clear here, but I notice all other place use unsigne=
+d long, so I keep the same code style.
+> I go through the history of this driver, seems no specific explanation a=
+bout the unsigned long.
+I understand, but i don't think there is a reason for using unsigned
+long. So maybe this is a good opportunity to clean this up.
 
->  		ret = f2fs_do_truncate_blocks(fi->cow_inode, 0, true);
->  		if (ret) {
->  			f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
-> -- 
-> 2.40.1
+Regards
 
