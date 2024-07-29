@@ -1,317 +1,378 @@
-Return-Path: <linux-kernel+bounces-266473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BFC894005E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:28:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C8C940061
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 118F52837E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:28:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E89871C22165
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9624618D4C2;
-	Mon, 29 Jul 2024 21:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752A918D4D2;
+	Mon, 29 Jul 2024 21:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QZ3vdAfR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="T52My0+7"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05665186E29
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 21:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30097186E29
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 21:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722288487; cv=none; b=pmPgYzadWIVxW4hXo3UcL28R3BhJg4MVazHzZoaEQpBAqpJtK4wjgf8vqLuJiyg7RO/0bWVwNnRb3hAapctfMBC0eocUUul54prBxcG0S3OisICs85xsmPRU845NecQFV8VR7j+IE4mVhcLoKMHHXrinY8OYpBCW5m/n7qQVr8A=
+	t=1722288545; cv=none; b=MYu7SlOgVYsc+Zi3mZ7OVz879udjnQ72d8kprLeajHqYr3e5oPHrCPU9BtoIiUqHNIWCdcDIeq/PffGCbvI+cy+WtU8AipZ2W+RMmN+zshoTBQLMZOGgM2KI5Ko088DZWceppEneQ/BVMgq5poQHOwSfSz51eWp51QTnVJ0n/CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722288487; c=relaxed/simple;
-	bh=9HaANiUDvi/hnJacVsrl48ih/jw43RRvJVLgI6XB5Jc=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=fyAG41Lfq8N+oc0USRILhOGwysS+QxNmVq24AA6iktTozwTMejtV7VmGT7tqsJRpEM74wGKBQTP/Rz7ROfS21gmZGSg1EhqHTR8IcKaqN8RFOVcaaThBYY9HjhVdOZfMdbz9FlF1WGpA5FKF2Ja6jneKtxAYpvhNpldtig6D6Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QZ3vdAfR; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722288485; x=1753824485;
-  h=date:from:to:cc:subject:message-id;
-  bh=9HaANiUDvi/hnJacVsrl48ih/jw43RRvJVLgI6XB5Jc=;
-  b=QZ3vdAfRt79b+NL3V66uQCF3Z1EkmkD/GE36YLdCzQN6h52znSCw2ZuO
-   C0cevGdK8noA2I8p2BosKRwMk8i+NbPRXuYCZnOMFGKD75fHW3uY1oeKt
-   H2OPR/6U5WbQFvNDy9wHCg5gClYctHJdYrS4i59mlaj28is003Ket/GMa
-   SKC/3hyRkrj+D/H0OvT3EE/cDYG3er8kDpKUeaw9bTfRMzJeqmdi+CxPl
-   Nk9AXUnvUlV2VP6ZtYemimcP/JSk2BV/Ii5q6+QB1ntu7FDh4rRrkxIBu
-   TlmlObyScLyvpP8zQ8pNf+ohTSMBj5hsH/lVNbpf4FHsWOKSyk99cIAhO
-   A==;
-X-CSE-ConnectionGUID: 0oP93ne/SLmDh5sx+38HWw==
-X-CSE-MsgGUID: zgfgR3ZZR4mYWzqGRWBKLg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="23827410"
-X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
-   d="scan'208";a="23827410"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 14:28:04 -0700
-X-CSE-ConnectionGUID: Mby+ZjS9R3OmCmDftRMymQ==
-X-CSE-MsgGUID: Wuwq9EdoQnaR2bNX2tdehg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
-   d="scan'208";a="53756173"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 29 Jul 2024 14:28:03 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sYXuT-000s5g-0x;
-	Mon, 29 Jul 2024 21:28:01 +0000
-Date: Tue, 30 Jul 2024 05:27:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/microcode] BUILD SUCCESS WITH WARNING
- 94838d230a6c835ced1bad06b8759e0a5f19c1d3
-Message-ID: <202407300526.uyAxSSD5-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1722288545; c=relaxed/simple;
+	bh=QFV2qmQz26sFTRFMCHxGRzSOy7flmRvNfoiw+6kBYCA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HUEVCQ2kvYK+Vpz976hDhrsF1JtQkpF2bRNGchl0C+EzibJnSA0stBdZ7LbEdN3APngE4+fFZP3I66THN+YSMKFdL5XVZR18uI5MzA+N43ezIvJqKQYVbYv6t1i8W/zXGo8xxxxaOtBDcp34hkbofKXoaIyuExwh47ng61AALXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=T52My0+7; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-369cb9f086aso1865969f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:29:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722288540; x=1722893340; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4cErnTb1l8yhpg9Tg8ypbE+BCEieRlUIej+QcI2FRX0=;
+        b=T52My0+7Gmtx4NAtVrSFaMTg2gEeWoG5jDAxJzsV0I5N07330b1OWIJJ7fKllqvbG/
+         l4UvSYqxifywEl1IWOc1GR6W+uI+ivmaKf5Gqfki6G9Dlk2blYwokOneI9kKPsfvOTJy
+         E8S4Di/jYkLloKLlvH9p+capbmL8vLWp1O8X7mZNN4jCbb1mhmGufiQC0xQGkhiBcxA2
+         +CUlPz8bvJs7pdJiqkRSPx1F4dF/dFDg235UZ8VcJ/tJc4ENFHTIb7YolxVq2knGuOb/
+         YPmOh5caE0PM4Gw8PA6b1CboU0QRc3N8uU2HPrweaejKd6IYbUgY16KwLK4CYHzoFBWs
+         wbNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722288540; x=1722893340;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4cErnTb1l8yhpg9Tg8ypbE+BCEieRlUIej+QcI2FRX0=;
+        b=Ma+hsDgBFGvRy6nD0ipgnUNKeDWVR7PJB0ND0gnv3XEW3Td8PnCHkbPf1PAmhLMZUT
+         FTFjxKmxt0zYQ33Eh/inn1J3Tpi2vs2K4Bmp8VnHaydKqYrjwUXbK3VvyGPySPorWCLE
+         eJL6oTWfZJDC+b3eUP3WEckuJqawWGlQ/3jqP2EY7kNpbhP/1w5kNeQuZ5WP/hQHKlCP
+         nJ/DJOqiOp1jhK8X5xW0Hav7cVFjFDRVaVRji5RPusxeA/bjQjwcnfcv4X9YOBtBKdHG
+         Z5xCmMYkL+6d+TRM+/uXIkvZA3aQSX1p/MF1eL4JUsHZUnSv6hliZM7iq6EE6BD4slju
+         E+kw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlEpS2eJDKyHZu4itdoPhTZ/7xvMFyh9T9so+8DvVO97CZvX4qW4gNKnhEWk0SLifRwV3hw+8LlCw4FqsJ++RRATqukMbJnJDimBr9
+X-Gm-Message-State: AOJu0Ywkn0FoJWQs942/ZJrYp8FTksyccyXjA1oGTEhgUxa3HEI5BoYl
+	Vy/qCcvC/KAUoembcaqCtQ6qPUhX413ts72pBwjGenbpCzDVJ7HPCxbZp4AD8H0=
+X-Google-Smtp-Source: AGHT+IGhSm3nq8nMhPLKmqoYbbfdLfGUwTrnX7GQ11Xjp/jK9udRNVktuEPxWgIWLY3VJ3gPERx9CA==
+X-Received: by 2002:adf:e263:0:b0:367:4ddf:385c with SMTP id ffacd0b85a97d-36b5d0b033cmr6147968f8f.6.1722288539773;
+        Mon, 29 Jul 2024 14:28:59 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:9281:2426:cfd1:cea])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367e51f0sm13093207f8f.46.2024.07.29.14.28.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 14:28:59 -0700 (PDT)
+Date: Mon, 29 Jul 2024 23:28:56 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] pwm: add support for NXPs high-side switch
+ MC33XS2410
+Message-ID: <aczpsiqyh4qsbvnqhqdnvkj2j3fihkltafop5ajkxm57sehbx5@mn4vp7avpeac>
+References: <20240515112034.298116-1-dima.fedrau@gmail.com>
+ <20240515112034.298116-3-dima.fedrau@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bbbjns3pyudpuy4n"
+Content-Disposition: inline
+In-Reply-To: <20240515112034.298116-3-dima.fedrau@gmail.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/microcode
-branch HEAD: 94838d230a6c835ced1bad06b8759e0a5f19c1d3  x86/microcode/AMD: Use the family,model,stepping encoded in the patch ID
 
-Warning reports:
+--bbbjns3pyudpuy4n
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-https://lore.kernel.org/oe-kbuild-all/202407291815.gJBST0P3-lkp@intel.com
+Hello,
 
-Warning: (recently discovered and may have been fixed)
+On Wed, May 15, 2024 at 01:20:34PM +0200, Dimitri Fedrau wrote:
+> diff --git a/drivers/pwm/pwm-mc33xs2410.c b/drivers/pwm/pwm-mc33xs2410.c
+> new file mode 100644
+> index 000000000000..1904d1ee0652
+> --- /dev/null
+> +++ b/drivers/pwm/pwm-mc33xs2410.c
+> @@ -0,0 +1,410 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2024 Liebherr-Electronics and Drives GmbH
+> + *
+> + * Limitations:
+> + * - Supports frequencies between 0.5Hz and 2048Hz with following steps:
+> + *   - 0.5 Hz steps from 0.5 Hz to 32 Hz
+> + *   - 2 Hz steps from 2 Hz to 128 Hz
+> + *   - 8 Hz steps from 8 Hz to 512 Hz
+> + *   - 32 Hz steps from 32 Hz to 2048 Hz
+> + * - Cannot generate a 0 % duty cycle.
+> + * - Always produces low output if disabled.
+> + * - Configuration isn't atomic. When changing polarity, duty cycle or period
+> + *   the data is taken immediately, counters not being affected, resulting in a
+> + *   behavior of the output pin that is neither the old nor the new state,
+> + *   rather something in between.
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/math.h>
+> +#include <linux/math64.h>
+> +#include <linux/minmax.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/pwm.h>
+> +
+> +#include <asm/unaligned.h>
+> +
+> +#include <linux/spi/spi.h>
+> +
+> +#define MC33XS2410_GLB_CTRL		0x00
+> +#define MC33XS2410_GLB_CTRL_MODE_MASK	GENMASK(7, 6)
+> +#define MC33XS2410_GLB_CTRL_NORMAL_MODE	BIT(6)
+> +#define MC33XS2410_PWM_CTRL1		0x05
+> +#define MC33XS2410_PWM_CTRL1_POL_INV(x)	BIT(x)
+> +#define MC33XS2410_PWM_CTRL3		0x07
+> +/* x in { 0 ... 3 } */
+> +#define MC33XS2410_PWM_CTRL3_EN(x)	BIT(4 + (x))
+> +#define MC33XS2410_PWM_FREQ1		0x08
+> +/* x in { 1 ... 4 } */
+> +#define MC33XS2410_PWM_FREQ(x)		(MC33XS2410_PWM_FREQ1 + (x - 1))
+> +#define MC33XS2410_PWM_FREQ_STEP_MASK	GENMASK(7, 6)
+> +#define MC33XS2410_PWM_FREQ_COUNT_MASK	GENMASK(5, 0)
+> +#define MC33XS2410_PWM_DC1		0x0c
+> +/* x in { 1 ... 4 } */
+> +#define MC33XS2410_PWM_DC(x)		(MC33XS2410_PWM_DC1 + (x - 1))
+> +#define MC33XS2410_WDT			0x14
+> +
+> +#define MC33XS2410_WR			BIT(7)
+> +#define MC33XS2410_RD_CTRL		BIT(7)
+> +#define MC33XS2410_RD_DATA_MASK		GENMASK(13, 0)
+> +
+> +#define MC33XS2410_MIN_PERIOD_STEP0	31250000
+> +#define MC33XS2410_MAX_PERIOD_STEP0	2000000000
+> +/* x in { 0 ... 3 } */
+> +#define MC33XS2410_MIN_PERIOD_STEP(x)	(MC33XS2410_MIN_PERIOD_STEP0 >> (2 * x))
+> +/* x in { 0 ... 3 } */
+> +#define MC33XS2410_MAX_PERIOD_STEP(x)	(MC33XS2410_MAX_PERIOD_STEP0 >> (2 * x))
+> +
+> +#define MC33XS2410_MAX_TRANSFERS	5
+> +#define MC33XS2410_WORD_LEN		2
+> +
+> +struct mc33xs2410_pwm {
+> +	struct spi_device *spi;
+> +};
+> +
+> +static
+> +inline struct mc33xs2410_pwm *to_pwm_mc33xs2410_chip(struct pwm_chip *chip)
+> +{
+> +	return pwmchip_get_drvdata(chip);
+> +}
+> +
+> +static int mc33xs2410_xfer_regs(struct spi_device *spi, bool read, u8 *reg,
+> +				u16 *val, bool *ctrl, int len)
+> +{
+> +	struct spi_transfer t[MC33XS2410_MAX_TRANSFERS] = { { 0 } };
+> +	u8 tx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
+> +	u8 rx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
+> +	int i, ret, reg_i, val_i;
+> +
+> +	if (!len)
+> +		return 0;
+> +
+> +	if (read)
+> +		len++;
+> +
+> +	if (len > MC33XS2410_MAX_TRANSFERS)
+> +		return -EINVAL;
+> +
+> +	for (i = 0; i < len; i++) {
+> +		reg_i = i * MC33XS2410_WORD_LEN;
+> +		val_i = reg_i + 1;
+> +		if (read) {
+> +			if (i < len - 1) {
+> +				tx[reg_i] = reg[i];
+> +				tx[val_i] = ctrl[i] ? MC33XS2410_RD_CTRL : 0;
+> +				t[i].tx_buf = &tx[reg_i];
+> +			}
+> +
+> +			if (i > 0)
+> +				t[i].rx_buf = &rx[reg_i - MC33XS2410_WORD_LEN];
+> +		} else {
+> +			tx[reg_i] = reg[i] | MC33XS2410_WR;
+> +			tx[val_i] = val[i];
+> +			t[i].tx_buf = &tx[reg_i];
+> +		}
+> +
+> +		t[i].len = MC33XS2410_WORD_LEN;
+> +		t[i].cs_change = 1;
+> +	}
+> +
+> +	t[len - 1].cs_change = 0;
+> +
+> +	ret = spi_sync_transfer(spi, &t[0], len);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (read) {
+> +		for (i = 0; i < len - 1; i++) {
+> +			reg_i = i * MC33XS2410_WORD_LEN;
+> +			val[i] = FIELD_GET(MC33XS2410_RD_DATA_MASK,
+> +					   get_unaligned_be16(&rx[reg_i]));
+> +		}
+> +	}
+> +
+> +	return 0;
 
-arch/x86/kernel/cpu/microcode/amd.c:714:6: warning: variable 'equiv_id' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+Huh, this is complicated. Isn't that covered by regmap somehow?
 
-Warning ids grouped by kconfigs:
+> +}
+> +
+> [...]
+> +
+> +static u8 mc33xs2410_pwm_get_freq(u64 period)
+> +{
+> +	u8 step, count;
+> +
+> +	/*
+> +	 * Check if period is within the limits of each of the four frequency
+> +	 * ranges, starting with the highest frequency(lowest period). Higher
+> +	 * frequencies are represented with better resolution by the device.
+> +	 * Therefore favor frequency range with the better resolution to
+> +	 * minimize error introduced by the frequency steps.
 
-recent_errors
-|-- i386-buildonly-randconfig-001-20240729
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- i386-buildonly-randconfig-003-20240729
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- i386-buildonly-randconfig-003-20240730
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- i386-buildonly-randconfig-004-20240730
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- i386-buildonly-randconfig-005-20240729
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- i386-buildonly-randconfig-006-20240730
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- i386-defconfig
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- i386-randconfig-002-20240729
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- i386-randconfig-012-20240729
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- i386-randconfig-014-20240729
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- i386-randconfig-016-20240729
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- i386-randconfig-141-20240729
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- x86_64-allmodconfig
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- x86_64-allnoconfig
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- x86_64-allyesconfig
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- x86_64-buildonly-randconfig-001-20240729
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- x86_64-buildonly-randconfig-001-20240730
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- x86_64-buildonly-randconfig-003-20240730
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- x86_64-buildonly-randconfig-006-20240730
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- x86_64-randconfig-001-20240730
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- x86_64-randconfig-003-20240729
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- x86_64-randconfig-004-20240729
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- x86_64-randconfig-005-20240729
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- x86_64-randconfig-006-20240729
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- x86_64-randconfig-014-20240729
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- x86_64-randconfig-016-20240729
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-|-- x86_64-randconfig-161-20240729
-|   `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
-`-- x86_64-rhel-8.3-rust
-    `-- arch-x86-kernel-cpu-microcode-amd.c:warning:variable-equiv_id-is-used-uninitialized-whenever-if-condition-is-false
+I'm not a native English speaker, but I find that misleading. That
+period is in the "possible" range is already asserted by the caller. So
+the switch is about "Check which step is appropriate for the given
+period", right?
 
-elapsed time: 737m
+> +	 */
+> +
+> +	switch (period) {
+> +	case MC33XS2410_MIN_PERIOD_STEP(3) + 1 ... MC33XS2410_MAX_PERIOD_STEP(3):
+> +		step = 3;
+> +		break;
+> +	case MC33XS2410_MAX_PERIOD_STEP(3) + 1 ... MC33XS2410_MAX_PERIOD_STEP(2):
+> +		step = 2;
+> +		break;
+> +	case MC33XS2410_MAX_PERIOD_STEP(2) + 1 ... MC33XS2410_MAX_PERIOD_STEP(1):
+> +		step = 1;
+> +		break;
+> +	case MC33XS2410_MAX_PERIOD_STEP(1) + 1 ... MC33XS2410_MAX_PERIOD_STEP(0):
+> +		step = 0;
+> +		break;
+> +	}
+> +
+> +	count = DIV_ROUND_UP(MC33XS2410_MAX_PERIOD_STEP(step), period) - 1;
+> +
+> +	return FIELD_PREP(MC33XS2410_PWM_FREQ_STEP_MASK, step) |
+> +	       FIELD_PREP(MC33XS2410_PWM_FREQ_COUNT_MASK, count);
+> +}
+> +
+> [...]
+> +
+> +static int mc33xs2410_pwm_get_relative_duty_cycle(u64 period, u64 duty_cycle)
+> +{
+> +	if (!period)
+> +		return 0;
+> +
+> +	duty_cycle *= 256;
 
-configs tested: 160
-configs skipped: 131
+This might overflow.
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                     nsimosci_hs_defconfig   gcc-13.2.0
-arc                   randconfig-001-20240729   gcc-13.2.0
-arc                   randconfig-002-20240729   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                      footbridge_defconfig   gcc-13.2.0
-arm                       imx_v4_v5_defconfig   gcc-13.2.0
-arm                          ixp4xx_defconfig   gcc-13.2.0
-arm                   randconfig-001-20240729   gcc-13.2.0
-arm                   randconfig-002-20240729   gcc-13.2.0
-arm                   randconfig-003-20240729   gcc-13.2.0
-arm                   randconfig-004-20240729   gcc-13.2.0
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                 randconfig-001-20240729   gcc-13.2.0
-arm64                 randconfig-002-20240729   gcc-13.2.0
-arm64                 randconfig-003-20240729   gcc-13.2.0
-arm64                 randconfig-004-20240729   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                  randconfig-001-20240729   gcc-13.2.0
-csky                  randconfig-002-20240729   gcc-13.2.0
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-13
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-13
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-13
-i386         buildonly-randconfig-001-20240729   clang-18
-i386         buildonly-randconfig-002-20240729   clang-18
-i386         buildonly-randconfig-002-20240729   gcc-13
-i386         buildonly-randconfig-003-20240729   clang-18
-i386         buildonly-randconfig-004-20240729   clang-18
-i386         buildonly-randconfig-004-20240729   gcc-10
-i386         buildonly-randconfig-005-20240729   clang-18
-i386         buildonly-randconfig-006-20240729   clang-18
-i386         buildonly-randconfig-006-20240729   gcc-8
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240729   clang-18
-i386                  randconfig-001-20240729   gcc-12
-i386                  randconfig-002-20240729   clang-18
-i386                  randconfig-003-20240729   clang-18
-i386                  randconfig-003-20240729   gcc-10
-i386                  randconfig-004-20240729   clang-18
-i386                  randconfig-004-20240729   gcc-13
-i386                  randconfig-005-20240729   clang-18
-i386                  randconfig-005-20240729   gcc-8
-i386                  randconfig-006-20240729   clang-18
-i386                  randconfig-006-20240729   gcc-13
-i386                  randconfig-011-20240729   clang-18
-i386                  randconfig-011-20240729   gcc-13
-i386                  randconfig-012-20240729   clang-18
-i386                  randconfig-013-20240729   clang-18
-i386                  randconfig-013-20240729   gcc-9
-i386                  randconfig-014-20240729   clang-18
-i386                  randconfig-015-20240729   clang-18
-i386                  randconfig-015-20240729   gcc-13
-i386                  randconfig-016-20240729   clang-18
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch             randconfig-001-20240729   gcc-13.2.0
-loongarch             randconfig-002-20240729   gcc-13.2.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                       m5475evb_defconfig   gcc-13.2.0
-m68k                            mac_defconfig   gcc-13.2.0
-m68k                        mvme147_defconfig   gcc-13.2.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                       allyesconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-13.2.0
-mips                      malta_kvm_defconfig   gcc-13.2.0
-mips                           xway_defconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                 randconfig-001-20240729   gcc-13.2.0
-nios2                 randconfig-002-20240729   gcc-13.2.0
-openrisc                          allnoconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                randconfig-001-20240729   gcc-13.2.0
-parisc                randconfig-002-20240729   gcc-13.2.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                      katmai_defconfig   gcc-13.2.0
-powerpc                 mpc8313_rdb_defconfig   gcc-13.2.0
-powerpc                 mpc8315_rdb_defconfig   gcc-13.2.0
-powerpc                     ppa8548_defconfig   gcc-13.2.0
-powerpc                     tqm8548_defconfig   gcc-13.2.0
-powerpc64             randconfig-001-20240729   gcc-13.2.0
-powerpc64             randconfig-002-20240729   gcc-13.2.0
-powerpc64             randconfig-003-20240729   gcc-13.2.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                 randconfig-001-20240729   gcc-13.2.0
-riscv                 randconfig-002-20240729   gcc-13.2.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-20
-s390                  randconfig-001-20240729   gcc-13.2.0
-s390                  randconfig-002-20240729   gcc-13.2.0
-sh                                allnoconfig   gcc-13.2.0
-sh                               j2_defconfig   gcc-13.2.0
-sh                    randconfig-001-20240729   gcc-13.2.0
-sh                    randconfig-002-20240729   gcc-13.2.0
-sh                          sdk7786_defconfig   gcc-13.2.0
-sh                           se7206_defconfig   gcc-13.2.0
-sparc64               randconfig-001-20240729   gcc-13.2.0
-sparc64               randconfig-002-20240729   gcc-13.2.0
-um                                allnoconfig   gcc-14.1.0
-um                    randconfig-001-20240729   gcc-13.2.0
-um                    randconfig-002-20240729   gcc-13.2.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240729   clang-18
-x86_64       buildonly-randconfig-002-20240729   clang-18
-x86_64       buildonly-randconfig-002-20240729   gcc-13
-x86_64       buildonly-randconfig-003-20240729   clang-18
-x86_64       buildonly-randconfig-003-20240729   gcc-10
-x86_64       buildonly-randconfig-004-20240729   clang-18
-x86_64       buildonly-randconfig-004-20240729   gcc-10
-x86_64       buildonly-randconfig-005-20240729   clang-18
-x86_64       buildonly-randconfig-005-20240729   gcc-10
-x86_64       buildonly-randconfig-006-20240729   clang-18
-x86_64       buildonly-randconfig-006-20240729   gcc-10
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-13
-x86_64                randconfig-001-20240729   clang-18
-x86_64                randconfig-001-20240729   gcc-13
-x86_64                randconfig-002-20240729   clang-18
-x86_64                randconfig-003-20240729   clang-18
-x86_64                randconfig-004-20240729   clang-18
-x86_64                randconfig-005-20240729   clang-18
-x86_64                randconfig-006-20240729   clang-18
-x86_64                randconfig-011-20240729   clang-18
-x86_64                randconfig-011-20240729   gcc-8
-x86_64                randconfig-012-20240729   clang-18
-x86_64                randconfig-012-20240729   gcc-8
-x86_64                randconfig-013-20240729   clang-18
-x86_64                randconfig-013-20240729   gcc-13
-x86_64                randconfig-014-20240729   clang-18
-x86_64                randconfig-015-20240729   clang-18
-x86_64                randconfig-015-20240729   gcc-13
-x86_64                randconfig-016-20240729   clang-18
-x86_64                randconfig-071-20240729   clang-18
-x86_64                randconfig-071-20240729   gcc-13
-x86_64                randconfig-072-20240729   clang-18
-x86_64                randconfig-072-20240729   gcc-13
-x86_64                randconfig-073-20240729   clang-18
-x86_64                randconfig-074-20240729   clang-18
-x86_64                randconfig-074-20240729   gcc-8
-x86_64                randconfig-075-20240729   clang-18
-x86_64                randconfig-075-20240729   gcc-12
-x86_64                randconfig-076-20240729   clang-18
-x86_64                randconfig-076-20240729   gcc-13
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                randconfig-001-20240729   gcc-13.2.0
-xtensa                randconfig-002-20240729   gcc-13.2.0
+> +	duty_cycle = DIV_ROUND_CLOSEST_ULL(duty_cycle, period);
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+round-closest is most probably wrong. Please test your driver with
+PWM_DEBUG enabled and increasing and decreasing series of duty_cycle and
+period.
+
+> +
+> +	/* Device is not able to generate 0% duty cycle */
+> +	if (!duty_cycle)
+> +		return -ERANGE;
+
+Given that the hardware emits a low level when disabled, please disable
+if duty_cycle = 0 is requested.
+
+> +	return duty_cycle - 1;
+> +}
+> +
+> [...]
+> +static int mc33xs2410_pwm_get_state(struct pwm_chip *chip,
+> +				    struct pwm_device *pwm,
+> +				    struct pwm_state *state)
+> +{
+> +	struct mc33xs2410_pwm *mc33xs2410 = to_pwm_mc33xs2410_chip(chip);
+> +	struct spi_device *spi = mc33xs2410->spi;
+> +	u8 reg[4] = {
+> +			MC33XS2410_PWM_FREQ(pwm->hwpwm + 1),
+> +			MC33XS2410_PWM_DC(pwm->hwpwm + 1),
+> +			MC33XS2410_PWM_CTRL1,
+> +			MC33XS2410_PWM_CTRL3,
+> +		    };
+> +	bool ctrl[4] = { true, true, true, true };
+> +	u16 val[4];
+> +	int ret;
+> +
+> +	ret = mc33xs2410_read_regs(spi, reg, ctrl, val, 4);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	state->period = mc33xs2410_pwm_get_period(val[0]);
+> +	pwm_set_relative_duty_cycle(state, val[1] + 1, 256);
+
+pwm_set_relative_duty_cycle doesn't use the right rounding for
+.get_state().
+
+> +	state->polarity = (val[2] & MC33XS2410_PWM_CTRL1_POL_INV(pwm->hwpwm)) ?
+> +			  PWM_POLARITY_INVERSED : PWM_POLARITY_NORMAL;
+> +
+> +	state->enabled = !!(val[3] & MC33XS2410_PWM_CTRL3_EN(pwm->hwpwm));
+> +
+> +	return 0;
+> +}
+> +
+> [...]
+> +static int mc33xs2410_probe(struct spi_device *spi)
+> +{
+> [...]
+> +	/* Disable watchdog */
+> +	ret = mc33xs2410_write_reg(spi, MC33XS2410_WDT, 0x0);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "Failed to disable watchdog\n");
+
+Wouldn't the watchdog functionality better be handled by a dedicated
+watchdog driver? Disabling it here unconditionally looks wrong.
+
+> +	/* Transition to normal mode */
+> +	ret = mc33xs2410_modify_reg(spi, MC33XS2410_GLB_CTRL,
+> +				    MC33XS2410_GLB_CTRL_MODE_MASK,
+> +				    MC33XS2410_GLB_CTRL_NORMAL_MODE);
+> [...]
+
+Best regards
+Uwe
+
+--bbbjns3pyudpuy4n
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaoCZUACgkQj4D7WH0S
+/k5krwgAnusykD9o65Uxr7SGCwAZy4+TP1jawyHLjKBmdQMxzqoyzrg1ZHhxvK0G
+uBIHVOHYBoJe03YpjUfjPFkXHD3nzbWNrN4UQ/wMVquDuZp/mEv+ku/kVSS4/C4z
+asELbHeMdjY7M5cpYNGopoSbVDsUMPXEbN69FLEluWVi32qh/dJofShf/XdWF1x3
+Z8DF7rBU4m1+LHDWl2cz6TcDwc/TcgK9usmlNYoED/Zi56JenK1JzoBLiQ4iJ3VB
+pZYvhKvJEMhDselSe8xp52PFnhbdoguCoQ02+WS22gPjVTo6YJzr84GImkt5eLzE
+LgP+rlJwZbl+Ja4guJF4kxk5tl5twg==
+=Yv+K
+-----END PGP SIGNATURE-----
+
+--bbbjns3pyudpuy4n--
 
