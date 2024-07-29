@@ -1,247 +1,106 @@
-Return-Path: <linux-kernel+bounces-265238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14FB293EE3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:15:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF0293EE49
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93E411F23890
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:15:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87711B22E4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B417A12C498;
-	Mon, 29 Jul 2024 07:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4426585931;
+	Mon, 29 Jul 2024 07:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IwUJuHBx"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ka4UEiRb"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C59D823DD;
-	Mon, 29 Jul 2024 07:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FA26F2F8
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722237295; cv=none; b=AZ9JVWRWtjP4hSikDj2py7FzhPSFb2zPFq5u0WpPE2C3OFMcI59dY5O3W9vkkWaVfMhgktZzds/xTErzmPUz+fOxRA9r9aihcehyM+j+qKfQ7KiE149/fipwakUolvBbBvrOZqtllAgGjMG4Ln0n2qvWSxNABXftAHwoA5sRVX4=
+	t=1722237359; cv=none; b=BZgB4S+ADjT1/uKBlWuhrfRcCzQ6+/l6wN+XlfES7NiYMjNN/riR91JUfanwjxwiT9m8mHZm8VLkdDULQxPHpZotZoTnt1W25DvX1Cx3bykJ0i7fNcI69torzmdx8LYiZYS5kknbbvSJ4pBnQNdqwEmh5o9GleYDDDoH0M9LCno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722237295; c=relaxed/simple;
-	bh=RdfTI2KZiM+vkRQIifXgBsd8PwGWSic2FxFTsUrP5CY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YBselkFCDx/cIy3CzVxQzxqHqORJjyhbQ+lYtkPLuhYj+XgzwK4Xlr/orQyuLL6shyyt5XjGmMfWLozpezXbwNkYAcue01DU1JBvMptYKPOmEamTokLoEC8BTgKWALN5Cs5XiMusE8exdQ0HIv9b+lH+opTxqxE4LyuyG0aMp+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IwUJuHBx; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46T0Dav7008728;
-	Mon, 29 Jul 2024 07:14:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yuE6lHQaiymgzezeg/JMUuNCBfhrSeNRdvstmcxrGy8=; b=IwUJuHBxdSi3SgR0
-	b6nJaHkJmB3rTFuthmr2Q/6TfmO84d0GRO/6wuDrw2sBypgr8VtdEDi2ZFgwipr+
-	g90KbrhtfFGnmfSuRFyxemBWCuuE0ftd4HbioLy1c/W2UsBACIet+h7ZjQkXzQOt
-	Qkl1tLZUAiVgFV2TjdTS00YjWJ/fHM0f5XfBx67EXwrjnDNHjcbq3zztj3ZfvTcY
-	pJROsEBiOCTBz6HWUNIrxEP5dQaFO3iAzXaN6r8Un8v3pJ3ozzHd+5DxxFBU1ZLQ
-	cp2x721B9lRkBK/3N5oGRG/r1CbuY4ljyCZ2x86fizGcoe7E7674dCm3lpsziMw3
-	ROW7IQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mqw73buf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 07:14:27 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46T7EQUX008085
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 07:14:26 GMT
-Received: from hu-jinlmao-lv.qualcomm.com (10.49.16.6) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 29 Jul 2024 00:14:26 -0700
-From: Mao Jinlong <quic_jinlmao@quicinc.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Mao Jinlong <quic_jinlmao@quicinc.com>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>
-CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-Subject: [PATCH v4 3/3] coresight: dummy: Add static trace id support for dummy source
-Date: Mon, 29 Jul 2024 00:14:11 -0700
-Message-ID: <20240729071414.5410-4-quic_jinlmao@quicinc.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20240729071414.5410-1-quic_jinlmao@quicinc.com>
-References: <20240729071414.5410-1-quic_jinlmao@quicinc.com>
+	s=arc-20240116; t=1722237359; c=relaxed/simple;
+	bh=yQ8u9i62JQjoC7Fsck57aZDny1kjksb5yvyx2ZNAfeQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QxLbto8MpzMOEfwP/doNv3wTfmoQ+En62poM8Zoey868mPKIU7OevhH04zlnamLus4KtKitYiKmhqDM7A3eKjMnoKenHAHvvcTkxj91I4iE3yom+1C8uK5mujyZ2QUReYa5d/bF81XMtZ9upwo4u44Frywpn63mA9L9adaqwKLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ka4UEiRb; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1722237328; x=1722842128; i=markus.elfring@web.de;
+	bh=duZpOgGavgIfcJxJxGDjjsBaYUoNsCLxi9ySKX3D78w=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ka4UEiRbjSKQLNop9RMXU5Kce4LrTG4VppUU9xvJnlswYP7OJiMGCPrXFUF8La7Y
+	 k7MTT0ZOwaOG4qDmrTyqhqLB87/i0dcXYx/iJBvuLvrczHFKWDADjKtc4sS2J/fbZ
+	 e/tgLVzkt59YLyEi7jYDz0IsoeS2C+7nWGmN1Vz42jPdF1HUn5oz9ImAYjRURq6yX
+	 00aOXhrh3YXO920fCihqqM6KBQtZhp5Q5QnqZg+QO0ackwob/AJ5+occC9JKeu++V
+	 szZ3VVYeNJ4W/NVH2WUgs4RFM1TnDrPWyi/oeUSMexXCLwD9wZOaz/lpGr80EHa8k
+	 meiTPI0dlUXb6ZgF4Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M28SB-1saGPh2mgj-0022Gv; Mon, 29
+ Jul 2024 09:15:28 +0200
+Message-ID: <139afaab-343e-4cb4-83b7-2695129d27b1@web.de>
+Date: Mon, 29 Jul 2024 09:15:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Oy02sxsnzyeXip9V_D0R0NmyAwzVHNN8
-X-Proofpoint-GUID: Oy02sxsnzyeXip9V_D0R0NmyAwzVHNN8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-29_05,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 spamscore=0 impostorscore=0 lowpriorityscore=0
- clxscore=1015 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
- phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407290048
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] drm/loongson: Add dummy gpu driver as a
+ subcomponent
+To: Sui Jingfeng <sui.jingfeng@linux.dev>, dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+References: <20240728152858.346211-1-sui.jingfeng@linux.dev>
+ <20240728152858.346211-3-sui.jingfeng@linux.dev>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240728152858.346211-3-sui.jingfeng@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:l0i/D/twx0/4yQ+jxA/4dRn8I7iyk9vkP4mvHIOx1amytFbIiqs
+ NQ8/BQNnqTivPoQBDdBQjrSTwj8wX1BeiYYOyHZbCeRXMFh+f8BLs2vT5A3Bg64L8egyFL9
+ WnFiOYF7rTWYsGrLfuJBVu+4tebW1KNfwyOzldQ7l6r5EWa1i8GcQ3XtglaN8Y8fRyn8miS
+ vMSGeJXs+oRBWLAcmbmZQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:kq7j6WJqdN0=;Kr1+OCJOzj6C8z5RW2OxVuo57M0
+ HYQQaYI2tUE4hxBCgwltXreqLPepPkY6jGJTcISe386X+gBoApzNOm/JTuqc+9vrIRtx1Wlum
+ Nhp1ibF6OTRpWwE/PwBwR60hcHH2wF9QWMoJkBI0vJAvHLm6WOgRC034W8j92143ZIQy5g2+E
+ 0N9qY25O7/P5JIfY/yUetuGYHGM//mIsOVhhlgitu+FMEq9r7NBd7RHjlS/55xi6QJLmR+jUU
+ Afiv8oBcu8FBOkoD3GwkCx5IFU2A/nP5zBvOReOnLqaxve+xMe3nLu3NakpHzdrxkNTtKWj7S
+ WlLnhgrFXP0NGbh1cpSASm2N6Mf7VDLQfaQOcAMNmFPTehYUT5dh3rHRIQmux4TmRlwmo2B16
+ YcoZ2ub9GIdG+fMYfKIWSTrhVdf9E7tCCqs3bEvJM5wAcn7I1B7JaoF237j27EeJk5uKhOmcB
+ F/bKblgtBdNmaekzqO6PDpI+bGBjWm4icaAUKH2y7waKr7cXGoWbsdaJ5v+0cgimPbO/q3tNB
+ 8RdY+Ng5mcs7ck5vn6NynxkdHBp+MfsiQYXE/ohLMaetis6BayjyHGfS3AqcMx3rtCdo7+aJB
+ Sqr9job+SMviRGN+vTZBN5MR/RokWkrwrjgPgqC8HHl0zgJH3oHWXNUKm3q7Y73rSPz0J0fCT
+ B8EEbk0M9K2pgF4S3VIbfWnEpEXWHtcA68+rCOhjoaRmyu9lo3GDauVnwBy98zdTbuwvQ5MPK
+ 96KUUQLdfk5JEaYG3wkgCvtgyzTSW2yopXabiiFDBO48mR3FiyMWTN24I2zDP/rzWwb7J1ReG
+ cbRAsiEuKfrKIoen1LoiCbig==
 
-Some dummy source has static trace id configured in HW and it cannot
-be changed via software programming. Configure the trace id in device
-tree and reserve the id when device probe.
+=E2=80=A6
+> the driver is loaded, drm/loongson driver still need to wait all of
 
-Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
----
- .../sysfs-bus-coresight-devices-dummy-source  | 15 +++++
- drivers/hwtracing/coresight/coresight-dummy.c | 59 +++++++++++++++++--
- 2 files changed, 70 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
+                                                  needs to wait on =E2=80=
+=A6?
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source b/Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
-new file mode 100644
-index 000000000000..db770bc972d9
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
-@@ -0,0 +1,15 @@
-+What:		/sys/bus/coresight/devices/dummy_source<N>/enable_source
-+Date:		July 2024
-+KernelVersion:	6.9
-+Contact:	Mao Jinlong <quic_jinlmao@quicinc.com>
-+Description:	(RW) Enable/disable tracing of dummy source. A sink should be activated
-+		before enabling the source. The path of coresight components linking
-+		the source to the sink is configured and managed automatically by the
-+		coresight framework.
-+
-+What:		/sys/bus/coresight/devices/dummy_source<N>/traceid
-+Date:		July 2024
-+KernelVersion:	6.9
-+Contact:	Mao Jinlong <quic_jinlmao@quicinc.com>
-+Description:	(R) Show the trace ID that will appear in the trace stream
-+		coming from this trace entity.
-diff --git a/drivers/hwtracing/coresight/coresight-dummy.c b/drivers/hwtracing/coresight/coresight-dummy.c
-index ac70c0b491be..3bf5437cbfb1 100644
---- a/drivers/hwtracing/coresight/coresight-dummy.c
-+++ b/drivers/hwtracing/coresight/coresight-dummy.c
-@@ -11,10 +11,12 @@
- #include <linux/pm_runtime.h>
- 
- #include "coresight-priv.h"
-+#include "coresight-trace-id.h"
- 
- struct dummy_drvdata {
- 	struct device			*dev;
- 	struct coresight_device		*csdev;
-+	u8				traceid;
- };
- 
- DEFINE_CORESIGHT_DEVLIST(source_devs, "dummy_source");
-@@ -67,6 +69,32 @@ static const struct coresight_ops dummy_sink_cs_ops = {
- 	.sink_ops = &dummy_sink_ops,
- };
- 
-+/* User can get the trace id of dummy source from this node. */
-+static ssize_t traceid_show(struct device *dev,
-+			    struct device_attribute *attr, char *buf)
-+{
-+	unsigned long val;
-+	struct dummy_drvdata *drvdata = dev_get_drvdata(dev->parent);
-+
-+	val = drvdata->traceid;
-+	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
-+}
-+static DEVICE_ATTR_RO(traceid);
-+
-+static struct attribute *coresight_dummy_attrs[] = {
-+	&dev_attr_traceid.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group coresight_dummy_group = {
-+	.attrs = coresight_dummy_attrs,
-+};
-+
-+static const struct attribute_group *coresight_dummy_groups[] = {
-+	&coresight_dummy_group,
-+	NULL,
-+};
-+
- static int dummy_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -74,6 +102,11 @@ static int dummy_probe(struct platform_device *pdev)
- 	struct coresight_platform_data *pdata;
- 	struct dummy_drvdata *drvdata;
- 	struct coresight_desc desc = { 0 };
-+	int ret, trace_id;
-+
-+	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-+	if (!drvdata)
-+		return -ENOMEM;
- 
- 	if (of_device_is_compatible(node, "arm,coresight-dummy-source")) {
- 
-@@ -85,6 +118,25 @@ static int dummy_probe(struct platform_device *pdev)
- 		desc.subtype.source_subtype =
- 					CORESIGHT_DEV_SUBTYPE_SOURCE_OTHERS;
- 		desc.ops = &dummy_source_cs_ops;
-+		desc.groups = coresight_dummy_groups;
-+
-+		ret = coresight_get_static_trace_id(dev, &trace_id);
-+		if (!ret) {
-+			/* Get the static id if id is set in device tree. */
-+			ret = coresight_trace_id_get_static_system_id(trace_id);
-+			if (ret < 0)
-+				return ret;
-+
-+		} else {
-+			/* Get next available id if id is not set in device tree. */
-+			trace_id = coresight_trace_id_get_system_id();
-+			if (trace_id < 0) {
-+				ret = trace_id;
-+				return ret;
-+			}
-+		}
-+		drvdata->traceid = (u8)trace_id;
-+
- 	} else if (of_device_is_compatible(node, "arm,coresight-dummy-sink")) {
- 		desc.name = coresight_alloc_device_name(&sink_devs, dev);
- 		if (!desc.name)
-@@ -103,10 +155,6 @@ static int dummy_probe(struct platform_device *pdev)
- 		return PTR_ERR(pdata);
- 	pdev->dev.platform_data = pdata;
- 
--	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!drvdata)
--		return -ENOMEM;
--
- 	drvdata->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, drvdata);
- 
-@@ -126,7 +174,10 @@ static void dummy_remove(struct platform_device *pdev)
- {
- 	struct dummy_drvdata *drvdata = platform_get_drvdata(pdev);
- 	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->of_node;
- 
-+	if (of_device_is_compatible(node, "arm,coresight-dummy-source"))
-+		coresight_trace_id_put_system_id(drvdata->traceid);
- 	pm_runtime_disable(dev);
- 	coresight_unregister(drvdata->csdev);
- }
--- 
-2.41.0
 
+=E2=80=A6
+> design. Therefore, add a dummy driver for the GPU, =E2=80=A6
+Is there a need to reconsider the categorisation and usability description=
+s
+another bit for such a software component?
+
+Regards,
+Markus
 
