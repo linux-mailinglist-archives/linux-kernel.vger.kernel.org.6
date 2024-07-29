@@ -1,103 +1,146 @@
-Return-Path: <linux-kernel+bounces-265573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F09B593F2F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:40:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0227A93F301
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A24C02815FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:40:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 327541C21B55
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6C614430E;
-	Mon, 29 Jul 2024 10:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF69144D16;
+	Mon, 29 Jul 2024 10:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dZdHUJPG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PoHh8lMY"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECE628399
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 10:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C645C7603A;
+	Mon, 29 Jul 2024 10:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722249647; cv=none; b=iR54goowwFZaDCBfUu4zzvkTk4nHaHw5xHYmgJN89m9uU181YyVsgwuXUYOpVYC6BVwfkQIP+SeOrllwsGYzZ6nRzkNsBybsvu1QkbCd8hbmYnTkZc2cGaI21EKHFF4FtOrClFAalobhXd4m7whLzw2nfvyTJIeSYoU1qBWUpwI=
+	t=1722249689; cv=none; b=KZb+FU30JqKiMeymC3IwWfTN+Z8VfSuzZyaYEEEO61IO2wku+xl4FajDM23qmCMlRnYFRM9VE6doU32LvvnRmGhAEhBCIrYExKFfhEMG1dPH+KlOSVlfCRBfj+JinxKRpmCLPtx71galSstMAtc/0Owx8ntx/iRVt4dK3p2BqI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722249647; c=relaxed/simple;
-	bh=6bfTWEmY7adZFRzBLuYfHsgyhzfx/9hvBN57Q13Jyn8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fdansH/gLiHAEj6Ywkuzh2k8VYexDHjO2lD8uKXglHWBzQqaKf8FBAHR/djMu1hAAjf+VjWOD08Uumn1Rs0ETdZPeoYY6is6YtyvUAK1BAYQ1SSf/h5zgD4WNaySOyzbFJTT/JT6+i+IkrdSVLvRazIGKrmfsJvsuc1O4d+1Pg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dZdHUJPG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722249643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dm2wu96gLk/Degb19SGPk73QQMk/RdMvun2wsoe8bRE=;
-	b=dZdHUJPGltOROajz6o32mMH1MFrw6oR1ZrRwSr494ZPD8bVaOQPclJyWsrAAw4UJ4QoAMr
-	9L5Wt3vKy7d5h2Qt6x9RdSLIhgE6m9QtTWqTh33d+gZ5LPRJmT/xbhZGT6a8H4cGPmqzZc
-	xCNXmy1oCqIvDoyWnftrx61TRRR+PN8=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-541-grURU8TnPH-VlooMwkPHSg-1; Mon,
- 29 Jul 2024 06:40:41 -0400
-X-MC-Unique: grURU8TnPH-VlooMwkPHSg-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D6D431955D42;
-	Mon, 29 Jul 2024 10:40:40 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.31])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9011F1955D42;
-	Mon, 29 Jul 2024 10:40:38 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-api@vger.kernel.org,  Dave Chinner <dchinner@redhat.com>
-Subject: Re: Testing if two open descriptors refer to the same inode
-In-Reply-To: <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
-	(Mateusz Guzik's message of "Mon, 29 Jul 2024 12:18:15 +0200")
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
-	<ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
-Date: Mon, 29 Jul 2024 12:40:35 +0200
-Message-ID: <875xsoqy58.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1722249689; c=relaxed/simple;
+	bh=rJE1/vjmouDYJI41uPkpl27EKBFxDh3CuEPBYVK25Cc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AlYcSV4lYMlVxKbSXbKtVFJa50k8mZWc8GDejv4qQ5EdCLYsCw04OrT0G9svUK5pyXCpzJIOBXFqGautsPrjoM3JQBmgciAhU8WEkxAMFwehLljogFkjlaaUJeosRKNek3FfzpPRYRn1X7mPBRgauHioqpHx12pBgQx9wyv9wXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PoHh8lMY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TAawWY019111;
+	Mon, 29 Jul 2024 10:41:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nJPr/ixXWKZCHke7eyBM18zYg1YmKo/2fpECqx7r7Ts=; b=PoHh8lMYGLNez0Ap
+	gzGhnb9Eg6vWCJ6XZ5J5plGnfEmibqKZOpO4tf11i+9laoss6HoGRaYwrdpqNo6x
+	2i0V8R7VX4iDtvkdw8TKuNYqgqFezDT0AiKFFltM53ATNpFt3gT5AeSwIMMNG7X7
+	iiHmWn2vrvwbTrYn2WtmE78oiDV+NnnQ4NKxbMTv32aBmy1G+LjcMZIpEQqFXcO7
+	le65y+nfNu1FCslAkS4ZY1NsbIAxbPe+LeHbOSng/T7fh5qAU5suxjPqoOMMZZYh
+	YE/7UHnIcqy1DXNuD5TTP0/+oasgdxSnRjwU0ijQmTSA5abCF6iy7CM/+Jt/4vkw
+	p+24Jw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40msne3vcm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:41:22 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TAfMUU015623
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:41:22 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
+ 2024 03:41:17 -0700
+Message-ID: <78c07cb4-c630-487d-b437-0aa775d2450c@quicinc.com>
+Date: Mon, 29 Jul 2024 18:41:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/8] dt-bindings: clock: qcom: Add SA8775P video clock
+ controller
+To: Krzysztof Kozlowski <krzk@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Bartosz
+ Golaszewski" <bartosz.golaszewski@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_imrashai@quicinc.com>, <quic_jkona@quicinc.com>,
+        Tingwei
+	<quic_tingweiz@quicinc.com>,
+        "Aiqun(Maria) Yu" <quic_aiquny@quicinc.com>
+References: <20240715-sa8775p-mm-v3-v1-0-badaf35ed670@quicinc.com>
+ <20240715-sa8775p-mm-v3-v1-1-badaf35ed670@quicinc.com>
+ <01f041b5-8ae9-4f04-b5cd-22ad39f12da3@kernel.org>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <01f041b5-8ae9-4f04-b5cd-22ad39f12da3@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: c8C3ubY3AKiPatrlxOZDB8NtxPLQPrUR
+X-Proofpoint-ORIG-GUID: c8C3ubY3AKiPatrlxOZDB8NtxPLQPrUR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-29_09,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1015
+ spamscore=0 mlxscore=0 bulkscore=0 suspectscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407290072
 
-* Mateusz Guzik:
 
-> On Mon, Jul 29, 2024 at 08:55:46AM +0200, Florian Weimer wrote:
->> It was pointed out to me that inode numbers on Linux are no longer
->> expected to be unique per file system, even for local file systems.
->
-> I don't know if I'm parsing this correctly.
->
-> Are you claiming on-disk inode numbers are not guaranteed unique per
-> filesystem? It sounds like utter breakage, with capital 'f'.
 
-Yes, POSIX semantics and traditional Linux semantics for POSIX-like
-local file systems are different.
+On 7/16/2024 3:44 PM, Krzysztof Kozlowski wrote:
+> On 15/07/2024 10:23, Taniya Das wrote:
+>> Add device tree bindings for the video clock controller on Qualcomm
+>> SA8775P platform.
+>>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> ---
+>>   .../bindings/clock/qcom,sa8775p-videocc.yaml       | 62 ++++++++++++++++++++++
+>>   include/dt-bindings/clock/qcom,sa8775p-videocc.h   | 47 ++++++++++++++++
+>>   2 files changed, 109 insertions(+)
+> 
+> 
+> AFAIK, the sa8775p is being dropped and later re-introduced as quite
+> different device.
+> 
+> What will be the use of these bindings after we remove sa8775p? Or
+> rename it? Or after whatever Qualcomm is planning?
+> 
+> I am sorry, but at this moment I am reluctant to ack anything related to
+> sa8775p.
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
-> While the above is not what's needed here, I guess it sets a precedent
-> for F_DUPINODE_QUERY (or whatever other name) to be added to handily
-> compare inode pointers. It may be worthwhile regardless of the above.
-> (or maybe kcmp could be extended?)
+After considering the feedback provided on the subject, We have decided
+to keep current SA8775p compatible and ABI compatibility in drivers.
+Therefore, this patch is still needed, please continue to review this
+patch.
+Thank you for your input.
 
-I looked at kcmp as well, but I think it's dependent on
-checkpoint/restore.  File sameness checks are much more basic than that.
-
-Thanks,
-Florian
-
+-- 
+Thx and BRs,
+Tengfei Fan
 
