@@ -1,141 +1,212 @@
-Return-Path: <linux-kernel+bounces-266315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0F593FE0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:04:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B6F93FE10
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11BD9B21295
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:04:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B445AB21F00
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C182186E3B;
-	Mon, 29 Jul 2024 19:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9382B185606;
+	Mon, 29 Jul 2024 19:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WsEzOYWC"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vLNuCjmZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842E0450FA
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 19:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91928F6E;
+	Mon, 29 Jul 2024 19:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722279877; cv=none; b=X7Y7cku5rB0C/MsMKFcaZwFOWK76yuC79pUubpwRbQPt5BYENBetg7xzkTPYj+m2qoe9125ebW3lJGWek5cFMlX7ABTBbQCl3Z5sjpBu9eHkIJREf+UdQ3ZaYV9i6RnqtkLodEtxh85Iz6kQSFoyS/xPYSQrLaCsmaHkqhvYOgs=
+	t=1722280096; cv=none; b=Jdwaq1bXH6MCqzQKm+Wvc2H7k8VI7aqdvadnLx9pWuWb/+nFHS9iKgZua2s+pMie4yx5fX1ZmvSurjQ1h94SnWo9wJLAigydbn1b+uXHhjlChvQ/byDXn9aCbD4xML1sGGkBOXh3SnjZiI0dOEML/+DEBObXW50Xr7bQCT39tQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722279877; c=relaxed/simple;
-	bh=L1orX8W8t+4D+yt5PRsHAL14sp158IQXG7CxaXNBJgg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uBvJwAdUNX9R2wgpnTItI/djpHZzR/7j8pW4K/t1aXeLCLQY0keYsh+wOnW3abhMmyzATMkPFoN78uRFQ/nukQ3tesoHphUrXxHO7Z6AJ7/Lh3yy+vJN6tgyIOmw9R6skw6Bl+n6RQTtGTxFtG+LjaBP0rK0efr/D+hQq7JM6BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WsEzOYWC; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fd7509397bso29935ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:04:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722279875; x=1722884675; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L1orX8W8t+4D+yt5PRsHAL14sp158IQXG7CxaXNBJgg=;
-        b=WsEzOYWCPNOVpvgpcmK2uy/h3GIaz95mpurto+XKLxQvowt6bYPpTMKsxrRqe8pChy
-         g8SjKvIXflhrW/VmoOpKpTewSouN3A78+bVe3jtduMXwW+YiqWtrTkMxmyaPOLLXbuOZ
-         YnqvWy8bb1XKkEGlFkhsPp2mqb3mJq0liq3XNPMMaEuUhT1U9cpT18TGiphxljiGqcVY
-         ZTBoLrM9efdAGFtr0E/Am+IEl2x/tFao3ClwO6lBrhfMH+dtKLK/qjqVoyHwrC2sp6Ny
-         OzoYlRbT2JDSERFRVocD5FJxoMiyTbY6Fj9rvn8S+kBgpQdafuyMpv0pY5pys9dlHgyl
-         P9sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722279875; x=1722884675;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L1orX8W8t+4D+yt5PRsHAL14sp158IQXG7CxaXNBJgg=;
-        b=UtzTIx4WEVrhMGaPMCpxZFzIIqVaWZjcDJtFcNE5ljZCC+aiYScoxOR5R0dc7ddyM3
-         Vonkr7+roKygaKaknUCb15P6WiJVa4NByBmlel1/L3mDfSfvA8VpfG0bLDXTWldVpwVJ
-         R+iSeo9FSVHHvvkE4mOzYGGss5w6MyDzXaUlpgcX4v/ueOyLjB3w5l9m6TnhRbpfBdRi
-         bJPXEMoV1LUtckqglBa9T6paRCzYUpDcmte47+jTLbf4c1+VgbOq4x0CiG4oIFk3RWBB
-         dGPQt/XQ4afZiOuuD/dkEMnYRdB7EiC31r7V6lLxXDOEobo3kZjRlbs0nTJ4kAxXX4J+
-         BjbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXv/7HUz6wssQ3LFXg9ayJqiZvKb1WENKsvq9etEVX8r95v2u07CkIXYoJA8vKZZjRVFt5aaERUgSNpfVwOI83g3plsxjFt3OnejaSv
-X-Gm-Message-State: AOJu0YxIln+jtLWHpm0rar4CkasQ8sOLCZbacXYoSOCB5JIsDnCBFWgV
-	TydIaXQAfwRzvf1lRiHQ4EJiSAcD6Trycxoyoyyd83m2onRGxHbG7JOIEaVH2Rdeejl5qIYCrFH
-	/zOVXNimx4fJ58cP82CQsXxUuy68iaV+zbROw
-X-Google-Smtp-Source: AGHT+IGSiS6jqlSnj0RLELgjkwPLpiMKuNfOR/nYn5PJXuvkrmGGQlP2HpSPhdzULqqv4EphdM6bCtuCrTQNFk/JI1U=
-X-Received: by 2002:a17:903:2350:b0:1f7:3764:1e19 with SMTP id
- d9443c01a7336-1ff34d590eemr1029195ad.20.1722279874404; Mon, 29 Jul 2024
- 12:04:34 -0700 (PDT)
+	s=arc-20240116; t=1722280096; c=relaxed/simple;
+	bh=qDvC2tKPMuPdLTZF5Dg2OfAR2d+C5UOUdCHxbkrsbH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YvKKgI5Z+Iw47ZND6hWm8I7X6FWpMXRWtYB49oju+79gTn8mkya5rm7cHvJf3UxGfPuNnmXRIB02F+q/taaSKgLQjaTflbwyAk9zBUTK7AGOAJYmbTfNnxWObmp5TQgcfgJuButstEFrWTceQoNiUjO7ZVpH4S6pWcPPpqm0RCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vLNuCjmZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4295C32786;
+	Mon, 29 Jul 2024 19:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722280096;
+	bh=qDvC2tKPMuPdLTZF5Dg2OfAR2d+C5UOUdCHxbkrsbH4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vLNuCjmZIzJq/yhSL4ej3IRwlABhGjNQVhVFq9bEmVDBLnXAJSQoEFXwAHJLTWeD6
+	 owKDGYxGgq1Qmp4wfS6VChSn52IKfYbWlzrVBgoUtczTSVbfpuejosr17PLnXBuZb6
+	 4e7CzYkOqf7NjVTlZLtekjZ3ayoqqRApRkC+YM7UQ+Fs6Pr1dHe5yGXvLjxNjPzNIN
+	 wWlqrB7vbmKkdOcssGJDEC9iYT/9jyHjpQWJiBHSxKe1Uld7R7uirSW7lRLWDpgBvU
+	 qsaeEWnkYA5TfVkV7bTY++5H0ochHFV7yvqYQVmlURHjNAE5Vahsz64Gb0cxXHNntg
+	 aEEqAitgZpgSw==
+Date: Mon, 29 Jul 2024 21:08:08 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: cl@linux.com, penberg@kernel.org, rientjes@google.com,
+	iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
+	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, urezki@gmail.com,
+	hch@infradead.org, kees@kernel.org, ojeda@kernel.org,
+	wedsonaf@gmail.com, mhocko@kernel.org, mpe@ellerman.id.au,
+	chandan.babu@oracle.com, christian.koenig@amd.com, maz@kernel.org,
+	oliver.upton@linux.dev, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] mm: vmalloc: implement vrealloc()
+Message-ID: <ZqfomPVr7PadY8Et@cassiopeiae>
+References: <20240722163111.4766-1-dakr@kernel.org>
+ <20240722163111.4766-2-dakr@kernel.org>
+ <07491799-9753-4fc9-b642-6d7d7d9575aa@suse.cz>
+ <ZqQBjjtPXeErPsva@cassiopeiae>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240728203001.2551083-1-xur@google.com> <20240728203001.2551083-7-xur@google.com>
- <20240729095303.GD37996@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240729095303.GD37996@noisy.programming.kicks-ass.net>
-From: Rong Xu <xur@google.com>
-Date: Mon, 29 Jul 2024 12:04:22 -0700
-Message-ID: <CAF1bQ=Ts1yoStfvsG-Q2BQmuRttTw03Yd4PnAU5MGQMCRRtbvw@mail.gmail.com>
-Subject: Re: [PATCH 6/6] Add Propeller configuration for kernel build.
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Han Shen <shenhan@google.com>, Sriraman Tallam <tmsriram@google.com>, 
-	David Li <davidxl@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, John Moon <john@jmoon.dev>, 
-	Andrew Morton <akpm@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, 
-	Mike Rapoport <rppt@kernel.org>, "Paul E . McKenney" <paulmck@kernel.org>, Rafael Aquini <aquini@redhat.com>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Eric DeVolder <eric.devolder@oracle.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Randy Dunlap <rdunlap@infradead.org>, 
-	Benjamin Segall <bsegall@google.com>, Breno Leitao <leitao@debian.org>, 
-	Wei Yang <richard.weiyang@gmail.com>, Brian Gerst <brgerst@gmail.com>, 
-	Juergen Gross <jgross@suse.com>, Palmer Dabbelt <palmer@rivosinc.com>, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, Kees Cook <kees@kernel.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Xiao Wang <xiao.w.wang@intel.com>, 
-	Jan Kiszka <jan.kiszka@siemens.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev, 
-	Krzysztof Pszeniczny <kpszeniczny@google.com>, Stephane Eranian <eranian@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqQBjjtPXeErPsva@cassiopeiae>
 
-On Mon, Jul 29, 2024 at 2:53=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Sun, Jul 28, 2024 at 01:29:59PM -0700, Rong Xu wrote:
-> > Add the build support for using Clang's Propeller optimizer. Like
-> > AutoFDO, Propeller uses hardware sampling to gather information
-> > about the frequency of execution of different code paths within a
-> > binary. This information is then used to guide the compiler's
-> > optimization decisions, resulting in a more efficient binary.
-> >
-> > The support requires a Clang compiler LLVM 19 or later, and the
-> > create_llvm_prof tool
-> > (https://github.com/google/autofdo/releases/tag/v0.30.1). This
->
-> What's the relation between this and llvm-profgen? Is the above simply
-> a google 'internal' proof of concept thing that will eventually make its
-> way into llvm-profgen?
->
-> It seems a bit weird LLVM landed propeller without the required profile
-> generation tool.
+On Fri, Jul 26, 2024 at 10:05:47PM +0200, Danilo Krummrich wrote:
+> On Fri, Jul 26, 2024 at 04:37:43PM +0200, Vlastimil Babka wrote:
+> > On 7/22/24 6:29 PM, Danilo Krummrich wrote:
+> > > Implement vrealloc() analogous to krealloc().
+> > > 
+> > > Currently, krealloc() requires the caller to pass the size of the
+> > > previous memory allocation, which, instead, should be self-contained.
+> > > 
+> > > We attempt to fix this in a subsequent patch which, in order to do so,
+> > > requires vrealloc().
+> > > 
+> > > Besides that, we need realloc() functions for kernel allocators in Rust
+> > > too. With `Vec` or `KVec` respectively, potentially growing (and
+> > > shrinking) data structures are rather common.
+> > > 
+> > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > 
+> > Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> > 
+> > > --- a/mm/vmalloc.c
+> > > +++ b/mm/vmalloc.c
+> > > @@ -4037,6 +4037,65 @@ void *vzalloc_node_noprof(unsigned long size, int node)
+> > >  }
+> > >  EXPORT_SYMBOL(vzalloc_node_noprof);
+> > >  
+> > > +/**
+> > > + * vrealloc - reallocate virtually contiguous memory; contents remain unchanged
+> > > + * @p: object to reallocate memory for
+> > > + * @size: the size to reallocate
+> > > + * @flags: the flags for the page level allocator
+> > > + *
+> > > + * The contents of the object pointed to are preserved up to the lesser of the
+> > > + * new and old size (__GFP_ZERO flag is effectively ignored).
+> > 
+> > Well, technically not correct as we don't shrink. Get 8 pages, kvrealloc to
+> > 4 pages, kvrealloc back to 8 and the last 4 are not zeroed. But it's not
+> > new, kvrealloc() did the same before patch 2/2.
+> 
+> Taking it (too) literal, it's not wrong. The contents of the object pointed to
+> are indeed preserved up to the lesser of the new and old size. It's just that
+> the rest may be "preserved" as well.
+> 
+> I work on implementing shrink and grow for vrealloc(). In the meantime I think
+> we could probably just memset() spare memory to zero.
 
-AutoFDO historically required a third-party tool
-(create_llvm_prof, mentioned above) in Clang.
-AutoFDO in GCC also requires this tool (same source, different name).
+Probably, this was a bad idea. Even with shrinking implemented we'd need to
+memset() potential spare memory of the last page to zero, when new_size <
+old_size.
 
-llvm-profgen is a relatively new tool that was integrated directly into LLV=
-M
-(similar purpose, but different implementation).
+Analogously, the same would be true for krealloc() buckets. That's probably not
+worth it.
 
-AutoFDO and create_llvm_prof are not "proof of concept". They have been wid=
-ely
-used in Google for many years. Propeller currently uses create_llvm_prof as=
- the
-profile converting tool. But there is an effort to move to LLVM.
+I think we should indeed just document that __GFP_ZERO doesn't work for
+re-allocating memory and start to warn about it. As already mentioned, I think
+we should at least gurantee that *realloc(NULL, size, flags | __GFP_ZERO) is
+valid, i.e. WARN_ON(p && flags & __GFP_ZERO).
+
+> 
+> nommu would still uses krealloc() though...
+> 
+> > 
+> > But it's also fundamentally not true for krealloc(), or kvrealloc()
+> > switching from a kmalloc to valloc. ksize() returns the size of the kmalloc
+> > bucket, we don't know what was the exact prior allocation size.
+> 
+> Probably a stupid question, but can't we just zero the full bucket initially and
+> make sure to memset() spare memory in the bucket to zero when krealloc() is
+> called with new_size < ksize()?
+> 
+> > Worse, we
+> > started poisoning the padding in debug configurations, so even a
+> > kmalloc(__GFP_ZERO) followed by krealloc(__GFP_ZERO) can give you unexpected
+> > poison now...
+> 
+> As in writing magics directly to the spare memory in the bucket? Which would
+> then also be copied over to a new buffer in __do_krealloc()?
+> 
+> > 
+> > I guess we should just document __GFP_ZERO is not honored at all for
+> > realloc, and maybe start even warning :/ Hopefully nobody relies on that.
+> 
+> I think it'd be great to make __GFP_ZERO work in all cases. However, if that's
+> really not possible, I'd prefer if we could at least gurantee that
+> *realloc(NULL, size, flags | __GFP_ZERO) is a valid call, i.e.
+> WARN_ON(p && flags & __GFP_ZERO).
+> 
+> > 
+> > > + *
+> > > + * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If @size is 0 and
+> > > + * @p is not a %NULL pointer, the object pointed to is freed.
+> > > + *
+> > > + * Return: pointer to the allocated memory; %NULL if @size is zero or in case of
+> > > + *         failure
+> > > + */
+> > > +void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+> > > +{
+> > > +	size_t old_size = 0;
+> > > +	void *n;
+> > > +
+> > > +	if (!size) {
+> > > +		vfree(p);
+> > > +		return NULL;
+> > > +	}
+> > > +
+> > > +	if (p) {
+> > > +		struct vm_struct *vm;
+> > > +
+> > > +		vm = find_vm_area(p);
+> > > +		if (unlikely(!vm)) {
+> > > +			WARN(1, "Trying to vrealloc() nonexistent vm area (%p)\n", p);
+> > > +			return NULL;
+> > > +		}
+> > > +
+> > > +		old_size = get_vm_area_size(vm);
+> > > +	}
+> > > +
+> > > +	if (size <= old_size) {
+> > > +		/*
+> > > +		 * TODO: Shrink the vm_area, i.e. unmap and free unused pages.
+> > > +		 * What would be a good heuristic for when to shrink the
+> > > +		 * vm_area?
+> > > +		 */
+> > > +		return (void *)p;
+> > > +	}
+> > > +
+> > > +	/* TODO: Grow the vm_area, i.e. allocate and map additional pages. */
+> > > +	n = __vmalloc_noprof(size, flags);
+> > > +	if (!n)
+> > > +		return NULL;
+> > > +
+> > > +	if (p) {
+> > > +		memcpy(n, p, old_size);
+> > > +		vfree(p);
+> > > +	}
+> > > +
+> > > +	return n;
+> > > +}
+> > > +
+> > >  #if defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA32)
+> > >  #define GFP_VMALLOC32 (GFP_DMA32 | GFP_KERNEL)
+> > >  #elif defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA)
+> > 
 
