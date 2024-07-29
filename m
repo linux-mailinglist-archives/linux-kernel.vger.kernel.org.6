@@ -1,222 +1,159 @@
-Return-Path: <linux-kernel+bounces-265580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7932C93F318
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:48:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0379093F312
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03B391F22B58
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:48:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0D83282A99
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F24142E90;
-	Mon, 29 Jul 2024 10:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677341448DE;
+	Mon, 29 Jul 2024 10:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="W4jhO3Ma"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DbtcPf63"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62B028399
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 10:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6489A163;
+	Mon, 29 Jul 2024 10:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722250078; cv=none; b=klMGDdeiQYyAN0MTf7Vlvvu5TNWSzEdfogcXEuzqlR0dY0bCJc420GUZ+qJNOuuWIIn1Unarqw+dEvkXnhCFTD8wLR9D9ElDVhPjMM8z0yaZNyg/IEc8csthS9PfKiQsZQpj92H8P/SH9dLOw2+mG5jkOxliwPzpqybwnNcfzz4=
+	t=1722250034; cv=none; b=LYjgf9EiFXB2shg7zom+deuzwedXsKZaCK+OKghpQW2fNdX+ex+RkXwqkEUHkTJL2mrMiGfUm6tHDzXk2dpHKV7leJDlV13WYdDo14ppvQQUdOYtQrp6e/2ZQMOGTQYbIssTKn29BEQv1UGQe6+yCVYQh0S5wyp0tVWpO5R6tFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722250078; c=relaxed/simple;
-	bh=CElFUaSt39LD07nbyYkOmf88j/tneKOnXESPEgQ8wfE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Eztd9TOUJFA+oCrO5A5puV/vKhoGc9zvIrq5PMDVb5RBIn/dr1wRsMYPBQvX408rUCmRDWXM4XZcyqLcnXtqHh8x+FaNvp24peevLuK6Hfwzd1u/YAuCpSBaBhGpogoNF1NgUAGtrD8fW13Mfcazc7+rmTuV7oiXt9MttNBsAtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=W4jhO3Ma; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7093d565310so2455136a34.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 03:47:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1722250076; x=1722854876; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/M7x9+yc9rI0RELQUIFv0/9PMIjTrB2uN0mlMn1j5L4=;
-        b=W4jhO3Maq/lXSvwQVGpAlFlQcLrEMv0hDzT/9XXGAEe5mIt5QIj/WyHZhKqQScbJnQ
-         +rVH6331oYBGIZxJFSXBUiTiu8GkO+VYO2LNDyS3W8pDzOXRNOlEVrWGSM5IIVXMyeZq
-         bxCb1q8sYC1qPIx9MR/7HLAcJz8QdeIZWVBE+504eSK4vsUz1VoKutVeMA01K0rg86nI
-         gl5ZCufkF5mdLyZf6gqGJWwg3wEDa0hoQOu62E66mIRz3m485M6NEn6MAhM4PsbPvQ/O
-         OZtJqYkoeTrG23jQc6MIrjHyRx+jg4COJ6AIhWhI7CYdOfc7i8gkGIh1Bqak5zzuYISI
-         3A2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722250076; x=1722854876;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/M7x9+yc9rI0RELQUIFv0/9PMIjTrB2uN0mlMn1j5L4=;
-        b=eESJFUp+dEWE5ESZreLXrP2I8tpZ3WKQdiYQn4LgbgRluwbJH5sTPXQldPB4ZJB9y/
-         hx+PavayC11/LC/O445QHn3dTRrh33fcXCAtAGg7UMlNzlnFl9BzBhfKa9Uoa6CGfiTQ
-         E54H5A1qYMsjI2ZQ8jX+StH6d7ytfni4NngOS9dAaR2evqufhYjZ5EpC0u36sOLbXlBF
-         4FPreU/kDxwXpP0GRHvWO+VotiltnooaOAzcDdOdpQWeMsc2EeiDCyt9ehe4EiRYaOTL
-         pUGw53hKx3UQuJEPDYrHygmm/5hmUjaSRtccmi9N3ofyXGx+Hrk7hdcJQWB7Trpcp4Ps
-         o1Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvO27uVsCv5ZYQXqUCpBmVl9PkHwHTrgh5lTv4rP/exb8np+tai3WKSDXtFoS+gvlmq5s/sWcsAfZm050MlTc1jN9B2sjW0VTYFvRG
-X-Gm-Message-State: AOJu0YzrGDzlJSswjFGDIwFdXaZy2F70DRa5KZ1mE9+EvR0E6wVktgxc
-	FO65+oUxVJLrtJoa8JW1LVjlusGu4ZYvWdPsgwIF0TOTvClATTMDPwyqt9cNxow=
-X-Google-Smtp-Source: AGHT+IE0RZbfCFmLjEYQdVAsWMQTCJuFf2+W1V4sAYyWVS9S9C+XrlKh0aSfsTE/AUIqiddhNRAa6w==
-X-Received: by 2002:a05:6830:2587:b0:703:6e7e:3e18 with SMTP id 46e09a7af769-70940c5df12mr9508060a34.26.1722250075721;
-        Mon, 29 Jul 2024 03:47:55 -0700 (PDT)
-Received: from n37-019-243.byted.org ([180.184.84.173])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f836ace5sm6978594a12.34.2024.07.29.03.47.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 03:47:55 -0700 (PDT)
-From: Chuyi Zhou <zhouchuyi@bytedance.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com
-Cc: chengming.zhou@linux.dev,
-	linux-kernel@vger.kernel.org,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Vishal Chourasia <vishalc@linux.ibm.com>
-Subject: [PATCH v4] sched/fair: Sync se's load_avg with cfs_rq in reweight_task
-Date: Mon, 29 Jul 2024 18:46:16 +0800
-Message-Id: <20240729104616.180445-1-zhouchuyi@bytedance.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1722250034; c=relaxed/simple;
+	bh=b9bI8wUZikmqwq2909k7MKHP6UiqrDlVYbCzcp6ouho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=f9K9oFtthqI3xbLc+zq7lFEy8X3hQTGSkn+hOqHa96UQLnFA9CP85e5O0jITqsndpLDNsflHOqfyatXEJ//4CFu1tmktnNlPV3u9kRgv58Dtnlm7JeYSwhQk82BtrTcyrdUs7QtuDuBmbi7gO0qMsIoECazJjLEXWWSGTRh8dpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DbtcPf63; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TAJJ3n021468;
+	Mon, 29 Jul 2024 10:47:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QDmS9fIU1t0UqW3++dlX2LtdqKUcOSk5P6upLOLTP+0=; b=DbtcPf635ombhF8d
+	DDOsMl50lUulJ3Ph4g5Y4+OCLGvB0Yx1ovj2+0lEWzSRTpicfz5FF5pP7lAC6WB5
+	edo6voCOQEFsxvvghiaMnCh+4Oyi1h7+S42hk7EmM/ocXmao+LIuiAzrViUUTfHr
+	xVcFKpTbOj0fXKzhJNraghUxeIrRGSsdb6b3ftCKmD2JnDyNUBSRHYAt9nURUrbL
+	jxfOYljNWAlaOAAwA0Kw6DnVJBVawWltvVYwCGhsYe/soDbnMw2As6uysnItbhe5
+	iYzWqSU7V9iGG+2iNarYAwwcN3j22CReg/nHfPf5eFB/C/J2+dyp5jUOINt+0aB4
+	IU0Brw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40ms433xku-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:47:10 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TAl98n026553
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:47:09 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
+ 2024 03:47:06 -0700
+Message-ID: <f1d987d3-d1fc-4c3c-af4e-b23833c936d0@quicinc.com>
+Date: Mon, 29 Jul 2024 18:47:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm64: dts: qcom: sa8775p: Add UART node
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>,
+        Viken Dadhaniya <quic_vdadhani@quicinc.com>, <andersson@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <quic_msavaliy@quicinc.com>, <quic_anupkulk@quicinc.com>,
+        Tingwei
+	<quic_tingweiz@quicinc.com>,
+        "Aiqun(Maria) Yu" <quic_aiquny@quicinc.com>
+References: <20240710094149.13299-1-quic_vdadhani@quicinc.com>
+ <2e309d52-8180-4922-9a5a-022fc8bf8ef5@kernel.org>
+ <f5ed3285-82da-4ba8-9b4d-a0cc7323fde4@linaro.org>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <f5ed3285-82da-4ba8-9b4d-a0cc7323fde4@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: zzi39QicOOrkfOXe103u-luHm4fcb9V4
+X-Proofpoint-ORIG-GUID: zzi39QicOOrkfOXe103u-luHm4fcb9V4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-29_09,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
+ mlxlogscore=999 suspectscore=0 phishscore=0 priorityscore=1501
+ clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407290073
 
-In reweight_task(), there are two situations:
 
-1. The task was on_rq, then the task's load_avg is accurate because in
-__sched_setscheduler()/set_user_nice(), we would dequeue the on_rq tasks
-before doing reweight. The task's load_avg would be synchronized with
-cfs_rq through update_load_avg() in dequeue_task().
 
-2. The task is sleeping, its load_avg might not have been updated for some
-time, which can result in inaccurate dequeue_load_avg() in
-reweight_entity().
+On 7/10/2024 6:39 PM, Konrad Dybcio wrote:
+> On 10.07.2024 11:47 AM, Krzysztof Kozlowski wrote:
+>> On 10/07/2024 11:41, Viken Dadhaniya wrote:
+>>> Add missing UART configuration for sa8775.
+>>>
+>>> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/sa8775p.dtsi | 231 ++++++++++++++++++++++++++
+>>>   1 file changed, 231 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>>> index 23f1b2e5e624..c107ee40341d 100644
+>>> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>>> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>>> @@ -1,6 +1,7 @@
+>>>   // SPDX-License-Identifier: BSD-3-Clause
+>>>   /*
+>>>    * Copyright (c) 2023, Linaro Limited
+>>> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>>>    */
+>>>   
+>>>   #include <dt-bindings/interconnect/qcom,icc.h>
+>>> @@ -657,6 +658,21 @@
+>>>   				status = "disabled";
+>>>   			};
+>>>   
+>>> +			uart14: serial@880000 {
+>>> +				compatible = "qcom,geni-uart";
+>>> +				reg = <0x0 0x00880000 0x0 0x4000>;
+>>> +				interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
+>>> +				clocks = <&gcc GCC_QUPV3_WRAP2_S0_CLK>;
+>>> +				clock-names = "se";
+>>> +				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
+>>> +						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
+>>> +						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+>>> +						 &config_noc SLAVE_QUP_2 QCOM_ICC_TAG_ALWAYS>;
+>>> +				interconnect-names = "qup-core", "qup-config";
+>>> +				power-domains = <&rpmhpd SA8775P_CX>;
+>>
+>> All the clocks, interconenct and power domains look to me questionable.
+>> AFAIK, most of it (if not all) is going to be removed.
+> 
+> Yeah.. I'm lukewarm on accepting any sa8775p changes until that qcs9100(?)
+> situation is squared out first
+> 
+> Konrad
 
-This patch solves this by using sync_entity_load_avg() to synchronize the
-load_avg of se with cfs_rq before dequeue_load_avg() in reweight_entity().
-For tasks were on_rq, since we already update load_avg to accurate values
-in dequeue_task(), this change will not have other effects due to the short
-time interval between the two updates.
+After considering the feedback provided on the subject, We have decided
+to keep current SA8775p compatible and ABI compatibility in drivers.
+Therefore, this patch is still needed, please continue to review this
+patch.
+Thank you for your input.
 
-Suggested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
-Reviewed-by: Vishal Chourasia <vishalc@linux.ibm.com>
-Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-
----
-Changes in v4:
-- Fix the 'if else' code style issue.(Dietmar)
-- Add a description of __sched_setscheduler()/set_user_nice() in the commit
-  log.(Dietmar)
-- Add comment before calling sync_entity_load_avg().(Qais)
-Changes in v3:
-- use sync_entity_load_avg() rather than update_load_avg() to sync the
-sleeping task with its cfs_rq suggested by Dietmar.
-- Link t0 v2: https://lore.kernel.org/lkml/20240720051248.59608-1-zhouchuyi@bytedance.com/
-Changes in v2:
-- change the description in commit log.
-- use update_load_avg() in reweight_task() rather than in reweight_entity
-suggested by chengming.
-- Link to v1: https://lore.kernel.org/lkml/20240716150840.23061-1-zhouchuyi@bytedance.com/
----
- kernel/sched/fair.c | 46 +++++++++++++++++++++++++++------------------
- 1 file changed, 28 insertions(+), 18 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 9057584ec06d..1e3c7c582541 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3669,11 +3669,32 @@ dequeue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
- 	cfs_rq->avg.load_sum = max_t(u32, cfs_rq->avg.load_sum,
- 					  cfs_rq->avg.load_avg * PELT_MIN_DIVIDER);
- }
-+
-+static inline u64 cfs_rq_last_update_time(struct cfs_rq *cfs_rq)
-+{
-+	return u64_u32_load_copy(cfs_rq->avg.last_update_time,
-+				 cfs_rq->last_update_time_copy);
-+}
-+
-+/*
-+ * Synchronize entity load avg of dequeued entity without locking
-+ * the previous rq.
-+ */
-+static void sync_entity_load_avg(struct sched_entity *se)
-+{
-+	struct cfs_rq *cfs_rq = cfs_rq_of(se);
-+	u64 last_update_time;
-+
-+	last_update_time = cfs_rq_last_update_time(cfs_rq);
-+	__update_load_avg_blocked_se(last_update_time, se);
-+}
-+
- #else
- static inline void
- enqueue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se) { }
- static inline void
- dequeue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se) { }
-+static void sync_entity_load_avg(struct sched_entity *se) { }
- #endif
- 
- static void reweight_eevdf(struct sched_entity *se, u64 avruntime,
-@@ -3795,7 +3816,14 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
- 		if (!curr)
- 			__dequeue_entity(cfs_rq, se);
- 		update_load_sub(&cfs_rq->load, se->load.weight);
-+	} else if (entity_is_task(se)) {
-+		/*
-+		 * If the task is sleeping, we need to synchronize entity load avg
-+		 * before dequeue_load_avg().
-+		 */
-+		sync_entity_load_avg(se);
- 	}
-+
- 	dequeue_load_avg(cfs_rq, se);
- 
- 	if (se->on_rq) {
-@@ -4034,11 +4062,6 @@ static inline bool load_avg_is_decayed(struct sched_avg *sa)
- 	return true;
- }
- 
--static inline u64 cfs_rq_last_update_time(struct cfs_rq *cfs_rq)
--{
--	return u64_u32_load_copy(cfs_rq->avg.last_update_time,
--				 cfs_rq->last_update_time_copy);
--}
- #ifdef CONFIG_FAIR_GROUP_SCHED
- /*
-  * Because list_add_leaf_cfs_rq always places a child cfs_rq on the list
-@@ -4773,19 +4796,6 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
- 	}
- }
- 
--/*
-- * Synchronize entity load avg of dequeued entity without locking
-- * the previous rq.
-- */
--static void sync_entity_load_avg(struct sched_entity *se)
--{
--	struct cfs_rq *cfs_rq = cfs_rq_of(se);
--	u64 last_update_time;
--
--	last_update_time = cfs_rq_last_update_time(cfs_rq);
--	__update_load_avg_blocked_se(last_update_time, se);
--}
--
- /*
-  * Task first catches up with cfs_rq, and then subtract
-  * itself from the cfs_rq (task must be off the queue now).
 -- 
-2.20.1
-
+Thx and BRs,
+Tengfei Fan
 
