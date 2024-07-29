@@ -1,254 +1,160 @@
-Return-Path: <linux-kernel+bounces-265648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEABA93F404
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:29:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 312FE93F407
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B5011C21F05
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:29:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A671A1F221CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7825145B39;
-	Mon, 29 Jul 2024 11:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA79145FF4;
+	Mon, 29 Jul 2024 11:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Yu+S92ns"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CnOEfumS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6656613DDAA;
-	Mon, 29 Jul 2024 11:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9BD145B27
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722252531; cv=none; b=fDMoSa0uw78IskGCOscK6wim0UgaN/MbTEWUpmaFBDPU6xUalXJnaxaaUuaPWKvJfOhxAvt4WyEAJK7SCZ5FJKpNwOgizCcRufM8wlBMcTPL7WceW1OSl9o5CYUKlGhytVja/xDMszGeGQ1ev0Mnf2RtFEjfxo55fsPbw4ZIcME=
+	t=1722252547; cv=none; b=MpMjmj8VjKC1pXYcj0B2QsRgjI5zhzGS4vS6eg/ojHeiRcqys1gfT7on7OAd58ckRdwNTvqFHsDSHK3wCsPSraWRIM87FwcFruWaAk+oh36ipMBTHYY6w4m5LLXts9yU35eLjElDHurYsa1mBjGTXnNAiy3o8vOi0HcxHnZjhDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722252531; c=relaxed/simple;
-	bh=iQzz6hBr6rcaCUZ7xkErMmYRcca5NKRJdp4+ze/FMEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hISM3kmLr6Dz4vuml2gVVfnQaD+KWtd2FoTlmavV+VWtNBXq0ma9cSl5kEAY+HJhEcqn4fnqfMz7qy1+lmH/gAK8bswDd2WHZCWHSSECn6UyV1hzvN09Qag8iuOHKiH5mYr1CvXcXxHoO2UnFRVzBIiORFqPtXR6SyounmiawtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Yu+S92ns; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=DNmwto5kp0C+1NJjEB8Kib+Ypx/Zw6110DGbri4A/Wg=; b=Yu+S92nsi+Wpg2nq8cZAfUAc37
-	NR810DTPvmTREKPDXgz1BQyVUn9e4etO9LX0L/AT3DJ+bmQU/dKfKlHj0pyw/T5DsXz6lzmbtRlto
-	xX/tmCiBWA4uW7vioAMz5gK4drsD6d8z7slfwiA7hhrf6tGbuqaU6laPzD35Yof+dqgcI2LBkU7Xd
-	gpBch9cpFg9Pv1PGky3sSsV8MpSs8iLTWG/kLn3L7p1duVHjzoRtbQ/upnjnnT241hRf4kqVv5Ri5
-	zXOGJK2dzL6IfXdWcvz+TLI3sO4Z1trqOheN90s3C3tZ5TupuMF/++eXj7ZsR1ik4nweQbsTAaOJq
-	HGFSVWGg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42180)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sYOY4-00043K-03;
-	Mon, 29 Jul 2024 12:28:16 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sYOY3-0004HJ-Vp; Mon, 29 Jul 2024 12:28:16 +0100
-Date: Mon, 29 Jul 2024 12:28:15 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	John Crispin <john@phrozen.org>, Felix Fietkau <nbd@nbd.name>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Mark Lee <Mark-MC.Lee@mediatek.com>,
-	Bc-bocun Chen <bc-bocun.chen@mediatek.com>,
-	Sam Shih <Sam.Shih@mediatek.com>,
-	Weijie Gao <Weijie.Gao@mediatek.com>,
-	Steven Liu <steven.liu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH RFC net-next] net: pcs: add helper module for standalone
- drivers
-Message-ID: <Zqd8z+/TL22OJ1iu@shell.armlinux.org.uk>
-References: <ba4e359584a6b3bc4b3470822c42186d5b0856f9.1721910728.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1722252547; c=relaxed/simple;
+	bh=StCXvZflCF6jjibzVOUmevg903F9llVCMo7Ecvzo9Vc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DGvL4iyxj+fl92hOQd8oGWx3q0fPhsziw1/N/I3yNCTkdNHy5PIDiZogjw+I1dJw9gmTxcVwT9FcTF2APaVHI2DUgRKyu2SUalSuE5T+rkPTAJl3klFAsCOVRCrY3cCukhVMdV4c65ZlmiOWvMqws7N5pqu8IwWNQ+CgR3QZM0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CnOEfumS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722252544;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=StCXvZflCF6jjibzVOUmevg903F9llVCMo7Ecvzo9Vc=;
+	b=CnOEfumSbnlWNBZPgi3yNEkXHzWlha9tXXSMpKsTEdeRrSWX1Z+2qZDNurOYfjbrufy+T9
+	AWgtuD+8NXJstOSsk9Qf+a/haRnmeDX92zTxhcb7trzjzmW657f8daddiX1Gzcle2C6nOX
+	grT7EJHosd90Ep4fFTP4GrBVK9NnqhE=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-180-1amMgLFdPqefN2k0AB88xQ-1; Mon, 29 Jul 2024 07:29:01 -0400
+X-MC-Unique: 1amMgLFdPqefN2k0AB88xQ-1
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4501f17051eso17960131cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 04:29:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722252540; x=1722857340;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=StCXvZflCF6jjibzVOUmevg903F9llVCMo7Ecvzo9Vc=;
+        b=xFzN1gi2PmHFj9WBjP0XuncHJx0Kui+js8dQtOVBRi2arek1meUsnAEidvTadHya3Y
+         oFcU88PhqX64DdoZCgd5qgSvPIB7hCIrLBS3SkSRJKg5uD6MiaK4R481na2KPmUTzCjE
+         cLZWL7ChQCWqoJMEZA7W97TsCmySERzXHOBzE/vOD74uyTv4anIoomIvHT4o3TaQOOcx
+         sbB+CSv5NVmYGM3xI8n5Ger6p3JxCy1Zy4XCkuKQE0n48bEM+/FQBxEJoBin1DJJBhDU
+         gU6L+qVoW/C9OSYzG732Mc6EnnY1iB9hBEX+WZq/V9bQ9CmYtqu4D4GmwsOWE14e3GEq
+         REKA==
+X-Forwarded-Encrypted: i=1; AJvYcCV81UaqU5jeYd3F6FK7OHQfXMTNKWv6kWEbsOW87rg0GJh/h/vV+6mjkCvvznyqQ5P4qV0RrJ8S9UMBTYHWXQPZpb1b339Nod9UPgxo
+X-Gm-Message-State: AOJu0Ywik71y/5RAt+flqrg/wLtrYnk+yPAJ8WtRK6Nfw/AGRgrd8rZm
+	xq1+v70HUoRoAv/7S+nyiuRyL1XBJtRLUmpuWrvjXYU65QutqntS3Qc1pmxJBNfYidklNY3V7e+
+	clExoNJU3iqB4X2O8RmuUSpmVZ84tQBJf76tl5yTQI4TcuVhJrqjC4FiaOEmpG0KK0R7Nkw6NvU
+	TWkFtQpp4ipZmNyH78omzO2SInU1YuZIM6dxJNmltGlqAN
+X-Received: by 2002:a05:622a:1350:b0:447:e079:af12 with SMTP id d75a77b69052e-45004da2ff3mr100665311cf.19.1722252540289;
+        Mon, 29 Jul 2024 04:29:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGbx/ZrP95YyKrIrfA7D8LaXMTVzKviYgVxeZyKZ+tvxVxMuiUN3x2ObkaxCERoSK6l8Y2nlO7weNdkSFwvIc8=
+X-Received: by 2002:a05:622a:1350:b0:447:e079:af12 with SMTP id
+ d75a77b69052e-45004da2ff3mr100665121cf.19.1722252539996; Mon, 29 Jul 2024
+ 04:28:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ba4e359584a6b3bc4b3470822c42186d5b0856f9.1721910728.git.daniel@makrotopia.org>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <CAJ6HWG7pgMu7sAUPykFPtsDfq5Kfh1WecRcgN5wpKQj_EyrbJA@mail.gmail.com>
+ <68c39823-6b1d-4368-bd1e-a521ade8889b@paulmck-laptop> <ZkQ97QcEw34aYOB1@LeoBras>
+ <17ebd54d-a058-4bc8-bd65-a175d73b6d1a@paulmck-laptop> <ZnPUTGSdF7t0DCwR@LeoBras>
+ <ec8088fa-0312-4e98-9e0e-ba9a60106d58@paulmck-laptop> <ZnosF0tqZF72XARQ@LeoBras>
+ <ZnosnIHh3b2vbXgX@LeoBras> <Zo8WuwOBSeAcHMp9@LeoBras> <f06ef91d-7f8c-4f69-8535-fee372766a7f@redhat.com>
+ <ZpGL1rEHNild9CG5@LeoBras>
+In-Reply-To: <ZpGL1rEHNild9CG5@LeoBras>
+From: Leonardo Bras Soares Passos <leobras@redhat.com>
+Date: Mon, 29 Jul 2024 08:28:47 -0300
+Message-ID: <CAJ6HWG75LYS6UtWebznZ-9wXZCJep_pj3rf-gt-W=PfR-D9b9Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, Leonardo Bras <leobras.c@gmail.com>, 
+	Sean Christopherson <seanjc@google.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Marcelo Tosatti <mtosatti@redhat.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 01:44:49PM +0100, Daniel Golle wrote:
-> Implement helper module for standalone PCS drivers which allows
-> standaline PCS drivers to register and users to get instances of
-> 'struct phylink_pcs' using device tree nodes.
-> 
-> At this point only a single instance for each device tree node is
-> supported, once we got devices providing more than one PCS we can
-> extend it and introduce an xlate function as well as '#pcs-cells',
-> similar to how this is done by the PHY framework.
-> 
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> ---
-> This is meant to provide the infrastructure suggested by
-> Russell King in an earlier review. It just took me a long while to
-> find the time to implement this.
-> Users are going to be the standalone PCS drivers for 8/10 LynxI as
-> well as 64/66 USXGMII PCS found on MediaTek MT7988 SoC.
-> See also https://patchwork.kernel.org/comment/25636726/
-> 
-> The full tree where this is being used can be found at
-> 
-> https://github.com/dangowrt/linux/commits/mt7988-for-next/
-> 
->  drivers/net/pcs/Kconfig            |  4 ++
->  drivers/net/pcs/Makefile           |  1 +
->  drivers/net/pcs/pcs-standalone.c   | 95 +++++++++++++++++++++++++++++
->  include/linux/pcs/pcs-standalone.h | 25 ++++++++
->  4 files changed, 129 insertions(+)
->  create mode 100644 drivers/net/pcs/pcs-standalone.c
->  create mode 100644 include/linux/pcs/pcs-standalone.h
-> 
-> diff --git a/drivers/net/pcs/Kconfig b/drivers/net/pcs/Kconfig
-> index f6aa437473de..2b02b9351fa4 100644
-> --- a/drivers/net/pcs/Kconfig
-> +++ b/drivers/net/pcs/Kconfig
-> @@ -5,6 +5,10 @@
->  
->  menu "PCS device drivers"
->  
-> +config PCS_STANDALONE
-> +	tristate
-> +	select PHYLINK
-> +
->  config PCS_XPCS
->  	tristate "Synopsys DesignWare Ethernet XPCS"
->  	select PHYLINK
-> diff --git a/drivers/net/pcs/Makefile b/drivers/net/pcs/Makefile
-> index 4f7920618b90..0cb0057f2b8e 100644
-> --- a/drivers/net/pcs/Makefile
-> +++ b/drivers/net/pcs/Makefile
-> @@ -4,6 +4,7 @@
->  pcs_xpcs-$(CONFIG_PCS_XPCS)	:= pcs-xpcs.o pcs-xpcs-plat.o \
->  				   pcs-xpcs-nxp.o pcs-xpcs-wx.o
->  
-> +obj-$(CONFIG_PCS_STANDALONE)	+= pcs-standalone.o
->  obj-$(CONFIG_PCS_XPCS)		+= pcs_xpcs.o
->  obj-$(CONFIG_PCS_LYNX)		+= pcs-lynx.o
->  obj-$(CONFIG_PCS_MTK_LYNXI)	+= pcs-mtk-lynxi.o
-> diff --git a/drivers/net/pcs/pcs-standalone.c b/drivers/net/pcs/pcs-standalone.c
-> new file mode 100644
-> index 000000000000..1569793328a1
-> --- /dev/null
-> +++ b/drivers/net/pcs/pcs-standalone.c
-> @@ -0,0 +1,95 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Helpers for standalone PCS drivers
-> + *
-> + * Copyright (C) 2024 Daniel Golle <daniel@makrotopia.org>
-> + */
-> +
-> +#include <linux/pcs/pcs-standalone.h>
-> +#include <linux/phylink.h>
-> +
-> +static LIST_HEAD(pcs_list);
-> +static DEFINE_MUTEX(pcs_mutex);
-> +
-> +struct pcs_standalone {
-> +	struct device *dev;
-> +	struct phylink_pcs *pcs;
-> +	struct list_head list;
-> +};
-> +
-> +static void devm_pcs_provider_release(struct device *dev, void *res)
-> +{
-> +	struct pcs_standalone *pcssa = (struct pcs_standalone *)res;
-> +
-> +	mutex_lock(&pcs_mutex);
-> +	list_del(&pcssa->list);
-> +	mutex_unlock(&pcs_mutex);
+On Fri, Jul 12, 2024 at 5:02=E2=80=AFPM Leonardo Bras <leobras@redhat.com> =
+wrote:
+>
+> On Fri, Jul 12, 2024 at 05:57:10PM +0200, Paolo Bonzini wrote:
+> > On 7/11/24 01:18, Leonardo Bras wrote:
+> > > What are your thoughts on above results?
+> > > Anything you would suggest changing?
+> >
+>
+> Hello Paolo, thanks for the feedback!
+>
+> > Can you run the test with a conditional on "!tick_nohz_full_cpu(vcpu->c=
+pu)"?
+> >
+> > If your hunch is correct that nohz-full CPUs already avoid invoke_rcu_c=
+ore()
+> > you might get the best of both worlds.
+> >
+> > tick_nohz_full_cpu() is very fast when there is no nohz-full CPU, becau=
+se
+> > then it shortcuts on context_tracking_enabled() (which is just a static
+> > key).
+>
+> But that would mean not noting an RCU quiescent state in guest_exit of
+> nohz_full cpus, right?
+>
+> The original issue we were dealing was having invoke_rcu_core() running o=
+n
+> nohz_full cpus, and messing up the latency of RT workloads inside the VM.
+>
+> While most of the invoke_rcu_core() get ignored by the nohz_full rule,
+> there are some scenarios in which it the vcpu thread may take more than 1=
+s
+> between a guest_entry and the next one (VM busy), and those which did
+> not get ignored have caused latency peaks in our tests.
+>
+> The main idea of this patch is to note RCU quiescent states on guest_exit
+> at nohz_full cpus (and use rcu.patience) to avoid running invoke_rcu_core=
+()
+> between a guest_exit and the next guest_entry if it takes less than
+> rcu.patience miliseconds between exit and entry, and thus avoiding the
+> latency increase.
+>
+> What I tried to prove above is that it also improves non-Isolated cores a=
+s
+> well, since rcu_core will not be running as often, saving cpu cycles that
+> can be used by the VM.
+>
+>
+> What are your thoughts on that?
 
-This needs to do notify phylink if the PCS has gone away, but the
-locking for this would be somewhat difficult (because pcs->phylink
-could change if the PCS changes.) That would need to be solved
-somehow.
+Hello Paolo, Sean,
+Thanks for the feedback so far!
 
-> +}
-> +
-> +int devm_pcs_register(struct device *dev, struct phylink_pcs *pcs)
-> +{
-> +	struct pcs_standalone *pcssa;
-> +
-> +	pcssa = devres_alloc(devm_pcs_provider_release, sizeof(*pcssa),
-> +			     GFP_KERNEL);
-> +	if (!pcssa)
-> +		return -ENOMEM;
-> +
-> +	devres_add(dev, pcssa);
-> +	pcssa->pcs = pcs;
-> +	pcssa->dev = dev;
-> +
-> +	mutex_lock(&pcs_mutex);
-> +	list_add_tail(&pcssa->list, &pcs_list);
-> +	mutex_unlock(&pcs_mutex);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(devm_pcs_register);
-> +
-> +static struct pcs_standalone *of_pcs_locate(const struct device_node *_np, u32 index)
-> +{
-> +	struct device_node *np;
-> +	struct pcs_standalone *iter, *pcssa = NULL;
-> +
-> +	if (!_np)
-> +		return NULL;
-> +
-> +	np = of_parse_phandle(_np, "pcs-handle", index);
-> +	if (!np)
-> +		return NULL;
-> +
-> +	mutex_lock(&pcs_mutex);
-> +	list_for_each_entry(iter, &pcs_list, list) {
-> +		if (iter->dev->of_node != np)
-> +			continue;
-> +
-> +		pcssa = iter;
-> +		break;
-> +	}
-> +	mutex_unlock(&pcs_mutex);
-> +
-> +	of_node_put(np);
-> +
-> +	return pcssa ?: ERR_PTR(-ENODEV);
-> +}
-> +
-> +struct phylink_pcs *devm_of_pcs_get(struct device *dev,
-> +				    const struct device_node *np,
-> +				    unsigned int index)
-> +{
-> +	struct pcs_standalone *pcssa;
-> +
-> +	pcssa = of_pcs_locate(np ?: dev->of_node, index);
-> +	if (IS_ERR_OR_NULL(pcssa))
-> +		return ERR_PTR(PTR_ERR(pcssa));
-> +
-> +	device_link_add(dev, pcssa->dev, DL_FLAG_AUTOREMOVE_CONSUMER);
+Do you have any thoughts or suggestions for this patch?
 
-This is really not a nice solution when one has a network device that
-has multiple interfaces. This will cause all interfaces on that device
-to be purged from the system when a PCS for one of the interfaces
-goes away. If the system is using NFS-root, that could result in the
-rootfs being lost. We should handle this more gracefully.
+Thanks!
+Leo
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+>
+> Thanks!
+> Leo
+
 
