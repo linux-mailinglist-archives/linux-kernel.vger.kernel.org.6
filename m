@@ -1,144 +1,111 @@
-Return-Path: <linux-kernel+bounces-265277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA57C93EED7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:46:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD5093EEDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C863281A39
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:46:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 158E5280CC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B4912C470;
-	Mon, 29 Jul 2024 07:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CDB412C552;
+	Mon, 29 Jul 2024 07:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="daH510wY"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2027.outbound.protection.outlook.com [40.92.103.27])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PZkJq/eB"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A676F30E;
-	Mon, 29 Jul 2024 07:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722239187; cv=fail; b=tAVdv/Et+Fo3BCTX6NxIHB4FEPFAqwvi2WtJD5aEcYiuf1S4ceU4fXt+3T/7U6DTJHTV7k55feN8p65NYAkd+loN1f0EH56CSjxVP2ocp2vuZakybcPUkxTQZvcrZOTGVVf1bB2LgRtRxxCPVXbtqEg/vAtw+8NSZtA+2EYLdnE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722239187; c=relaxed/simple;
-	bh=6iGgBH7hQ3YpCiL/wiE3zaMzQH2a7MAFmPZ5a5oeWU4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dm5/fyAmnwSDuluzBc0lD5mi7Prx068n7F+9zkxZ0Asv8qy8aFEUivM9oaF3ia7ailggh5yWtuljvZhgHVvfyky27gt4+dDAdQWbbJ8hhNLWPe5rQ1EsLDH6EScKG6BOaP2myuc7z85VOJyyHA2Qm/x4Utz3xOemuPV29xDjmb4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=daH510wY; arc=fail smtp.client-ip=40.92.103.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f5kQrWGvEwcvwryOx6e2Ip4TfbfxIBjkR+x/Qvzv/6Kqe0fgs6evwt2pc8vx+Obsf/XWC5ivQ1sr9w4XoKGI/Tsj7ZDUjZE9lTXRLKqcfeaGV0avAsmPv8af8JWpjZL6GivpC10ojS7MDdmEd7x8MDqLfmf9RU2KIyque+Qbb3lXdQFZNnfM0jFqJQvMDKZKjY2hvVID5ZVPrhwngpKc+y3XwE9t48gu/vi8OBYk5+ycGkJefQ4wtIEFStCW9QE9ZccF7OsutYlAC10ygv9AGExhBEjD3VgPjbdFFalhW5fEL01W5wKnWAR+RsNLMqwCXXj0ftezpLqHQDef+yzZ7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6iGgBH7hQ3YpCiL/wiE3zaMzQH2a7MAFmPZ5a5oeWU4=;
- b=JGZ7ZBdhkyYcZ0HSfyW9syUPMp/K9fNPvXKAkrDTwrqsrZcf/JAhlK9uQ/W2fEjIIXZAJUPvPoljMRruFdXRaW3yqfuwO8mV5ylsJBM6XU6NfOW6PKZOj1sNJRsK8/gQXbU4aoyBe00mLTYMAmxlFVUyVN9G7LhUd1tB6U9qQ7MfWYciDTmaXktf42/vau1KodpxG7c76uVyXXrR4/wT2UjCF7SnryLT82Q9aSvol9tfJxlvmB1UOj42mj0jFF1zOIfBce1bkHhZVqWBsqJQUhsIE2LJVK1pcoqdL79It0dUXEnbkQ7Nw/Zahx+fC0eAMULaFytXvc/UFIoiZAtarA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6iGgBH7hQ3YpCiL/wiE3zaMzQH2a7MAFmPZ5a5oeWU4=;
- b=daH510wYgfjK+osZMr8fKMvAM7Bax3LYs7sBg/GGUo2fUX1rWq9tspJTI5guTeetuBH9bdd3ofyUlZ5rd5jSK9uz+Wc+9z72z7rNhZJf3E/6LX2jPDlPe4gdM4Dnza/tqNHP4EhHbQQj0w4K48UZPemv5rIZlWooIeYxDLqxuo3lVDML8lvVmx+5pv9RgZE8wBkv83cIsiiFA2WsC5CFRkeYpJnHnSt9QH4HkpP8eX6OT6KYmb+b9DvsNTq8oIhczMmxPoF789YMyi8cK+OMMsIx3TUnuBIF7BpXdQQfPN+zUgnBrDlsustgTWuxxPkouxGWMoFwj5WLHkbqCvHcUg==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- PN3P287MB1349.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:193::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7807.27; Mon, 29 Jul 2024 07:46:20 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%4]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
- 07:46:20 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-CC: Orlando Chamberlain <orlandoch.dev@gmail.com>, "lukas@wunner.de"
-	<lukas@wunner.de>, "hdegoede@redhat.com" <hdegoede@redhat.com>,
-	"kekrby@gmail.com" <kekrby@gmail.com>, "linux-efi@vger.kernel.org"
-	<linux-efi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "sharpenedblade@proton.me"
-	<sharpenedblade@proton.me>
-Subject: Re: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
-Thread-Topic: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
-Thread-Index:
- AQHay8BxbD/3780MxUWT4The9rzhebHiRiV0gBjw9fOAACgFAIAJQwrwgAGLugCABgb+gIABRUAAgAAFK9s=
-Date: Mon, 29 Jul 2024 07:46:20 +0000
-Message-ID:
- <MA0P287MB02176046C8D80AF7CB47ED9DB8B72@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-References: <ZqElRH38f_XV3fKK@wunner.de>
- <20240728220343.40fc64f7@redecorated-mbp>
- <CAMj1kXHw0_MicBifz0FdLCOcjjD73AJcM-dyG1J6Ah=BjuQNcw@mail.gmail.com>
-In-Reply-To:
- <CAMj1kXHw0_MicBifz0FdLCOcjjD73AJcM-dyG1J6Ah=BjuQNcw@mail.gmail.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-IN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn: [r/0WrwKYxPs+5oAY3LpICFK5JaNpSOqC]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN3P287MB1349:EE_
-x-ms-office365-filtering-correlation-id: e59f8ee0-f3b3-49ff-1ff1-08dcafa28950
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|19110799003|8060799006|440099028|3412199025|102099032;
-x-microsoft-antispam-message-info:
- 8H0YxpT82o8B1lmuk3VxhUB6/Skk7sV6bLG6HT93OTR+/kKJIPwcn1JzHhlj/Iz7cau1iwH6uVwo9jHzZqES0vhxua66PLPGT98ls2SVHLYnJHU92resNRFjr1dnOku6dGtPnY1uHeAgMf3ivcqs53cqqBrahRF3tDo9sA34gxio6IS5GR2b82idPn1fxas20MvyS7F8gPQkF3+7WdwGwrcEbeITKJbFBdjI9TK8wa03Y3u7KtVGTxsp6Gx4AxbEqnVEuMj1Xvf6FZyWBfeYa6fh/da952ZRTHlMpg1vwUyTZgrbbRPfGslo3d94fH+4fhZj72NE43xnKKAKMxTO9LszD5RrTlC7kKihe5Xmq1kJbjL1nL84A6GDmfGbRvcRNjdPItBMhuNNHb9kvGz65x5cwLrguIZWEtyh7yg1dx3uKMBw0YdJqd4E8myyBzbMwKLj0zwqowMlL33mPw9i4+m2KXew274Kco3LgAJEAjE7qEJzApaR8O61r88/31EaReY3wNqey/xSuu2dj2pHB3h86a+5uZJ8dvsxlG0P/CsPo8FqUr441HhxL1x5tWd1unFSbxEJHVVDMOIhKvMYsLQsRhw+oJJZOXcMif8Jgbi1/piE3LKQBphdFnrdFX5JBV87HTYkPFqizI47VTCcXg==
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?oEPE3OuQvMuFNwsfrtKzcwJQKlq5maYZqdIm3kJO+laZXsl+Pdinj3a+ZHlq?=
- =?us-ascii?Q?0gs3JWzbpmfnL7xZAP+PAWRH2lq7wEvbURjsf3vTow7wDpG2zwTlMjXP/B9s?=
- =?us-ascii?Q?lVfvBqOMD/zeD1L7soK2V7Jx7RGxpcX/v0xE+CmvzkVCk7SF8g2UbrS+BfcR?=
- =?us-ascii?Q?A4IN9IppG2RTadREXT/hoL++pnQVux0aoaiV5N56BlwBbgVyFOUAVaNLwn/9?=
- =?us-ascii?Q?LBX5uGX67Nzj8NXTLEC9o4s5W0oFV5pb7QKQOUJE+GBcqDd5X9P6qa1l2FvG?=
- =?us-ascii?Q?+eo9EyxjLCZjwUjOi+5N89tC1cnffs+mzXHsM7J9OW3Yf+A8D8h3kzl0oiYn?=
- =?us-ascii?Q?r6MN/LJFnOgQqTkj1JbAVmeuxesEqI6xZjAtTZsWIua79r+y+EPHiPR/mLdl?=
- =?us-ascii?Q?nIeJszPYFrVO8P2BKWGc+UAHLKx1kXyS8jUyCFopO5Sz2fM6f4MXsMO3rytL?=
- =?us-ascii?Q?yoMq1nlQVM7VtdFog9knW+R1jC1AjME78amxamO0k8bf/MzpIzvMz0W7ihjf?=
- =?us-ascii?Q?0Qu8mDIYlAxZ83QFQ6w+mKSxaXwIKABHb+VWgp2esKMzZDpLpM8amh0iDquQ?=
- =?us-ascii?Q?aGgVU6xkmUIvdGqJHtia3FieN9ggSrlTrrncfPfRkOeDH6K/8Sx24x40u0ln?=
- =?us-ascii?Q?7aW2D5vV+cPCf6+MJmV2+OM4cwAZnak1SgmWWTF3azx7ul8gTGvJAg+e+iIb?=
- =?us-ascii?Q?81viBxw8+b38kgwtu6WPgYHAeUUNNCDYi12D4IWhaeHXjhGKMUVxFP5LNtmf?=
- =?us-ascii?Q?vWCrOUzxQIza0RvvqbdTvEM4lAGRewWaN46zAa58/ZDB1waH4rfuZZe++VCf?=
- =?us-ascii?Q?P/ITTASBX44VAfa3iMa9VZroU8QvGukhW6WDQnQgGvSBrcDtlU1wAcepTPP8?=
- =?us-ascii?Q?KT2cyVU0XQ0v/I1K/60+rBF6rt1nFIxKrH63znv1em6PokB6Xo2xgCoM1S/0?=
- =?us-ascii?Q?V/kTm2gGU/kulOBpQJ72wvLOdC5oXbgJ5MM5ZXCOL63zp5hygiuONA7RtGTr?=
- =?us-ascii?Q?QvBfzufomBJKWDqvcD+TLs9L0TFiDWReXeELKSMAZ9+cYxrxGUlaZeAHrB/6?=
- =?us-ascii?Q?oeaNgqRfUIE99ltG+NIk8l7gDseicoGYDYuF6infER3UinpDZ9ayvFxrVY9P?=
- =?us-ascii?Q?k6WlAwBV7tk/JHiSUEhZYOX8V9BCex3KFpzzHsPs8fTfmLt8Gl2K9+dd4U1A?=
- =?us-ascii?Q?v3ElbQHwCV+Z8pmq2HjnRP6r+sJ1aUGXyO07aKNF5XVc499+n7eCOoE9lcM?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37656F30E;
+	Mon, 29 Jul 2024 07:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722239207; cv=none; b=uaR9CscRC1m2q/1+uZZ7qP0pDZrysimYwKjJBO6wMjuj+Cf7G7i8oshdQ06DiUlnmtNlET1h4QE6L67tskwHJrb2wIxJPrWUw4CSBMYLnK/lfDWydENqaR1TqRDgOxRCqIibv8NvL6/25Qirb4js4gteIEZvti5OsqZpQEAF9CY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722239207; c=relaxed/simple;
+	bh=OIF5E7D7uDH2UugAidNpKFODIsp2ZY00VQ0wHKRRsD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ChrQMhuSBmL+rqZjLoNssIQpx61urq0ghbdH1gUn4kp7zFhn1etGbRvJZ7l7Xy4FjH4arcV/mXxJYx5u8chwuqmVxHdm3SScWuUa7wN8KYfjKoA3mNyBsTWrYzqi/bUCtfJUTbbTlmXCc8eb7kQvoxNyxAgCVJjvWh77isuTFhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PZkJq/eB; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722239203;
+	bh=OIF5E7D7uDH2UugAidNpKFODIsp2ZY00VQ0wHKRRsD4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PZkJq/eBERYtYY90vFW0bOwn3qwqrQuScw7QeFpwiZsv9ASvHNRalE+cYJguuJDWE
+	 HPLRxR8986pyiYG84OY82zCPnIYRMBkRaHonxhHaNBMfLktsrLgf5FKv/RNUG6w7FY
+	 z2VUlCsQQHClLX7SP2Ny0E+Z08b4EG9n9ymPC4bVZO/Gi6/QzR8rfjSLtG4+C/fqNe
+	 GRqdQXI/Apl337FuA93Yz2LrCumdY2EfqqCDvWNzgMCGl9Uf4LYJLW2QT909/XnxDk
+	 DZaayWUd46eWGGMcH+QOCZeqHYN9p0sj/FvqCae7TpwKclK9Gys0JjiUUsblrSo23W
+	 McJ9gGWGT1IyQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5615A378148F;
+	Mon, 29 Jul 2024 07:46:42 +0000 (UTC)
+Message-ID: <9f3e5fa4-0973-45de-98aa-806af8981414@collabora.com>
+Date: Mon, 29 Jul 2024 09:46:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: e59f8ee0-f3b3-49ff-1ff1-08dcafa28950
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2024 07:46:20.2523
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB1349
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] clk: mediatek: mt6765: Add missing PMIC clock
+To: Arseniy Velikanov <me@adomerle.xyz>, mturquette@baylibre.com,
+ sboyd@kernel.org, matthias.bgg@gmail.com, sean.wang@kernel.org,
+ linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, frank.li@vivo.com, jiasheng@iscas.ac.cn,
+ mars.cheng@mediatek.com, owen.chen@mediatek.com, macpaul.lin@mediatek.com,
+ zh.chen@mediatek.com, argus.lin@mediatek.com
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240729073428.28983-1-me@adomerle.xyz>
+ <20240729073428.28983-3-me@adomerle.xyz>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240729073428.28983-3-me@adomerle.xyz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Il 29/07/24 09:34, Arseniy Velikanov ha scritto:
+> Add PWRAP gate
+> 
+> Fixes: 1aca9939bf72 ("clk: mediatek: Add MT6765 clock support")
+> Signed-off-by: Arseniy Velikanov <me@adomerle.xyz>
+
+Agreed, but please remove the fixes tag and add a better commit description.
+Something like...
+
+Add the missing PWRAP gate clock, used for communicating with the PMIC through
+the PMIC Wrapper hardware.
+
+Cheers,
+Angelo
+
+> ---
+>   drivers/clk/mediatek/clk-mt6765.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/mediatek/clk-mt6765.c b/drivers/clk/mediatek/clk-mt6765.c
+> index d53731e7933f..4f03a0df4ff0 100644
+> --- a/drivers/clk/mediatek/clk-mt6765.c
+> +++ b/drivers/clk/mediatek/clk-mt6765.c
+> @@ -559,6 +559,7 @@ static const struct mtk_gate ifr_clks[] = {
+>   	/* INFRA_TOPAXI */
+>   	/* INFRA PERI */
+>   	/* INFRA mode 0 */
+> +	GATE_IFR2(CLK_IFR_PMIC_AP, "ifr_pmic_ap", "axi_ck", 1),
+>   	GATE_IFR2(CLK_IFR_ICUSB, "ifr_icusb", "axi_ck", 8),
+>   	GATE_IFR2(CLK_IFR_GCE, "ifr_gce", "axi_ck", 9),
+>   	GATE_IFR2(CLK_IFR_THERM, "ifr_therm", "axi_ck", 10),
 
 
-> Thanks, this seems useful.
->=20
-> Does this mean we can drop the type1 product name list, and just look
-> for 'iBridge' in the type0 version string? Or does that list contain
-> non-T2 hardware as well?
 
-MacBookPro11,3
-MacBookPro11,5
-MacBookPro13,3
-MacBookPro14,3
-
-These are non T2 Macs that were in the previous list
 
