@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-265014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 688E893EB3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 04:26:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D46B593EB43
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 04:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0AFBB210A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:26:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57CDE1F22031
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15AF7D07F;
-	Mon, 29 Jul 2024 02:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EE17E799;
+	Mon, 29 Jul 2024 02:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="CoQ9hB2U"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12olkn2049.outbound.protection.outlook.com [40.92.21.49])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="fbW5rHK6"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2091.outbound.protection.outlook.com [40.92.42.91])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C42878C8E;
-	Mon, 29 Jul 2024 02:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.21.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6604A77F1B;
+	Mon, 29 Jul 2024 02:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.91
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722219969; cv=fail; b=CN+3LsWR3SU53UbHO2JhDqP2Ikx+AtUZAeV3/VdjE02zo8xtDxENCxWkDL27W+VUcVBLnbbPPvYUdrwGQEAfyiqYljKjxKktjWhIl9tb0KuWr+n4I0A5GLZOZTkqQyexhhzARgaxGP5VYe6Vs4PwO85CGaD9awqvu2oCYBAEHUc=
+	t=1722219974; cv=fail; b=P8RlRf7v55EhwjSj8Al6ij1GXovOc+IS7MtwVkl+6AEIj1SJntM1p6RyKtPddDySvcSfArpojsqltbVBGBOKjGSVw2rs6r7POHr2H5taZ3KD+mGVhcAem731PxuQGZSvcIQLqMAugrzZzIGagYXCj1iqFhaa0mANajNwzd/M2LM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722219969; c=relaxed/simple;
-	bh=c3JafCMLA4E+cdwqf42EWVUUBqkvd4XhDo5D+4+jOzQ=;
+	s=arc-20240116; t=1722219974; c=relaxed/simple;
+	bh=4N1iAkDpHCFbF8MvS36PvOlEaxLbh9TgSbtPmN9vAYI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jeoGGFby+Da3fFMJ1Z0mIrBf0Q1rLCj6aJFcF7Bhzduim8P36rqMwvc48M9YPREYxTxnU8xJ1HnIUbBMg8xDNcCtYY08SSAtJlQYcmPWS6iS8l9+qwtKzw9Ae0P5PY1Qbq4A4ayjuxaWZAmWVCNsWHkwN9j5naYX7CxgIuixY7E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=CoQ9hB2U; arc=fail smtp.client-ip=40.92.21.49
+	 Content-Type:MIME-Version; b=hdzaR+U9qZ4VLBe1x75A3AbEw5VOJJwtNsbWXkpI2XsfnARwruIhq8m/44SFm8ehvuF39CZ76zOJK6XcNx+urixY1HbBWlS1Z6lBFZ6RMkMF+pLMsfolP5TzY5l1G3rBqnWzRgUi9HhXGF7utrUBV0ppuI8zlqNTDpP++JXZPRc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=fbW5rHK6; arc=fail smtp.client-ip=40.92.42.91
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PCaR6bsUuwB3T8Sx3wM9+Ddh9YG6fdFucrP3H6vf8fuU/TPDBCCpZMUTUBsi7XXBebdLEMEmaniJhXV+60u/ovcB2hgMXQARwdgRAXQ2eJkPai+5OusQLRPHqYvVorwYuLWc+Gwd8ZQXR2Q9ExakGiqYV13zOHq+ddL84QmLFSAZG1vf17IWZu6HLzT2C57fdW/PnosHBGZRJ0z8uhh64MlZFFh1HIUg+grH/THcpgqSCnKuRgM62cp0kBFXIJEdONC/kb+rULDiDQr6fZ9BZ4rrl0PKfx5Wl5Zh7p7E5LLHKjFJVFxBPxkCk3vCi9C7A7EmKVNsOosbAQRrg0REEw==
+ b=lNa8oXG0Ny/+y/sWev54ItUM11ylg5andKUnADA94VyOD1PbHAX3EYX1I9dsgZ69OOe5vEXH6vvjTAWu2p8sHIM8TvbfpgOxndHBXb722FrJ1QLHkcGsDPaI+3eG1mnTcndSFbboWVrP/fnkQdL04J40aAQYxvXFYldwF0eH0QzC8GSHj3bfNLYaDmAxMII9k5ohFtt6UgQMqQu/dr3HtO00GzBKMcE065+5xyP71gerT11LddCOYz2Fi2h1gErzo+jM7v+PYc0rZMPkJ9I/pedh5XJ5UC+N0wTS5oIY3QZbXhgLvp34EIRxUe/w8fF6yfcONYO6v+vjfDQmUjVU0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tbSqnIXZl0uiN6hfXuXKPbGDXmA19Y7IbvQAybjbSeE=;
- b=s6ptYz3J2jFQ5B1kPy4yhCpNi1Kpjn/Sz3yuwqG7EPL1ipbscZtdi2oWs+wb31iW5aFu71P6apPUxmvNFIzApR88GyLSp0qxm53WGt6ooCSFj8T8C6LDoq215MyU6/b96yd3FndSDhSGfmCZrnuygHF3FPJsnZFCTtb51QjL/dPFT49Et/RI3VtbHgdi1+PfJV6dZwajeRCmTLZfVkuaLu1ae4qOglml/vW5F4DOL/CCGyPmsmJoPIRnMHpgWv12CCKlKjM5UUhkxDFDXpOKQkZc4x8SpQx4LyMOrrZia9Y3JtLpgF8zGTnMfbERJiRsprsfwo/Njz7A+ckjhH42OA==
+ bh=T+Tfw1dxS0oeqMmzxgma1iDLTRKCmGYFX8bp+GsGX64=;
+ b=RvXW/6VXpkg6VmBxIScknGpfnppRysap6vLJzHkTrR+7YTO07brKSrUsSLtkmdLa04J1OFH/aCO57MEoTm2hwdY0PRy/coOC64RITYVdmyrhRQ0jMs/kA7dYdECAvde5D2AcDuv+3iZYB2vzxNDsqDJfWIA+/tcyPXPYLXQXloLVLMwxklVeDCdYG9iqy+b81eBIfnewk1AsHeWYi575DUZfToGO21sgIwFLfM0yUvcLKzthO9ZCh575A7MUSqkXdUxac1ylgOI1ZiLEWSdO0yvl2R4i00vQaHgb88ScOON21fLn0HEucczaxaZ4iCcG6ljOscz7qsHUIk3PsrWrfg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tbSqnIXZl0uiN6hfXuXKPbGDXmA19Y7IbvQAybjbSeE=;
- b=CoQ9hB2US1bVkC8E8fUyTg+8lHayU9aRFtgHQbMlhnGHgi1fmtM+lucjZ3NeXLdpJ8SbCQsTLUiTzmnHAHGPFf7tBUsYBB3SoJyyQkQCh6GmDtSPkospG1H0hxjeNtXKIlt4fWGplsKWYkMlxs80Sq8G8oKELsZyw4cJOXjvscz3HwNAXIo83LCSOmKDXNNcmTjn3vScIwPgdneYCed3IGBwV808UOcRyetxnaCLtDud8Jy8lMLz2HFDbsvEKaY2a2tUM/NNejnh+Vp07F6AvyjPCiSO+G1DcSE4Qpz+5WrDid2DoEqWcKw7WMSTBzVQtsy/xk0lp23MAY8+ArdQfg==
+ bh=T+Tfw1dxS0oeqMmzxgma1iDLTRKCmGYFX8bp+GsGX64=;
+ b=fbW5rHK6TED+vcs6upbJHPZO9Gzs3jGXg1eao57NqgX/VeOGcoQ1RFQZmZeYq6+D79ndJyReAwWoanoumunQEGsSRBHwRbjkS7W987h26fvhvnmBm/FFduKg5NBReCUXkAxcmClS/Z641lE8BUSuGqHboDV4+TFfRA/UOsJv7V1/2McWu/kQtQR6Nbzd7BLQXr+xVxVZvFeUu2C4BD8tFrBynObpmlxdIsdDBBhORgSoiOhk88iX8o2qt2zUXf1FnP9HLsOroT0w6Q/SwXtfZcLI2ch69858T1sywi1zF2cLhJx/3eQL+ENzoloBrjz8P7Qu/sC5YkH0LTb8kOwgdQ==
 Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
  by PH8PR20MB5413.namprd20.prod.outlook.com (2603:10b6:510:22b::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Mon, 29 Jul
- 2024 02:26:04 +0000
+ 2024 02:26:09 +0000
 Received: from IA1PR20MB4953.namprd20.prod.outlook.com
  ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
  ([fe80::ab0b:c0d3:1f91:d149%5]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
- 02:26:04 +0000
+ 02:26:09 +0000
 From: Inochi Amaoto <inochiama@outlook.com>
 To: Jean Delvare <jdelvare@suse.com>,
 	Guenter Roeck <linux@roeck-us.net>,
@@ -77,21 +77,21 @@ Cc: linux-hwmon@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-riscv@lists.infradead.org
-Subject: [PATCH v7 2/4] drivers: hwmon: sophgo: Add SG2042 external hardware monitor support
-Date: Mon, 29 Jul 2024 10:25:31 +0800
+Subject: [PATCH v7 3/4] riscv: dts: sophgo: Add mcu device for Milk-V Pioneer
+Date: Mon, 29 Jul 2024 10:25:32 +0800
 Message-ID:
- <IA1PR20MB4953E47D7718F607342B6149BBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB495364EE2CB1A649559761FABBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <IA1PR20MB49534B9F7A3B4A1585467C87BBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
 References: <IA1PR20MB49534B9F7A3B4A1585467C87BBB72@IA1PR20MB4953.namprd20.prod.outlook.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-TMN: [8yZzUcWUecMjBHEZd8W4HfLTW3tKp8rmaE/9ax2+LIQ=]
-X-ClientProxiedBy: TYCP286CA0129.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b6::17) To IA1PR20MB4953.namprd20.prod.outlook.com
+X-TMN: [ENuIffTGGSPrQwvsilyPBA6BhmmSMZneyteFbCwSIv4=]
+X-ClientProxiedBy: TYCP286CA0077.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b3::9) To IA1PR20MB4953.namprd20.prod.outlook.com
  (2603:10b6:208:3af::19)
 X-Microsoft-Original-Message-ID:
- <20240729022534.842326-2-inochiama@outlook.com>
+ <20240729022534.842326-3-inochiama@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,40 +101,40 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|PH8PR20MB5413:EE_
-X-MS-Office365-Filtering-Correlation-Id: 45146d06-ffb6-46d1-a085-08dcaf75cbc7
+X-MS-Office365-Filtering-Correlation-Id: 236b072e-f723-49d1-7d26-08dcaf75ce7f
 X-Microsoft-Antispam:
 	BCL:0;ARA:14566002|461199028|19110799003|5072599006|8060799006|3412199025|440099028|1710799026;
 X-Microsoft-Antispam-Message-Info:
-	ppHA4tNfObmvjpGyeaDdNq9AZPI9f8fYXoTkLpgKbnM5fobppG9Lstne/K5bdh9f4Fc1dT21EywJrGmyPAVDXd4ZnBaOX+hZMSA0Kxs4TXOBGxN5keU566X2LorDI991+OGmwSsZj8fc/TGvcdMYHHeYmnkW5hBBABV+fNDYryr+QA8qgs+M6PGdAcy3p4V0IsnsWwEZKztBomO+/ANBs7GcBu31JWy3TcpYQqifv7/M3uvo2x++QcQYXppzRUsXhCytVMWtEgQ1ah+PBYm3yUvq88sYYul+p689w18IF5pyaYdwPjaFDZsUvfvk1LSQ0UpQrXcjjr6JEfsf/wF3+X52VvzWUtElJrzlEGrH6OtZc+9yKP57Yv+BEJpOBhjRGmDq+lGH0vX89y4iEmhbW4B6MZm/fBoWBuInj5zzrCsPXqIG6k3hpe+BPS8B/2Oq2R5CWaU5RsKSIqh1w3C463RF+qrFRx/E7o8ehvLVp5ZUB+QYqFPT/7No0KqfY7OenUBpq2nrHcJ92fW5Aeg+wZatI3Ez8ouHXBOm1i2PXb83OtqvSbGXkm1ehWunqQYheq4LQ6Oe6FgJ/Ow+2kYbkXjaL81+KVVaV3VUKeuZgwnhzV0Zdnz6NABTmWIm9ybpMZuWI/F28XdijgW3RN9LwFXflC57VZF0/GabPhNpv3qt+xgsiapdZo45gCdioKcwe39J85giTZj2g/KL5wLoyA==
+	sumvLJbkEYWUxwLOu2oTbAVwhL3TiXbhm6vL8fG8bMge8sEcTy/epKD+3K9Vkc8zQNqnWrjfkjRkPXij/imsb7YczQrVd4utVsablw6hm7c3q095oCJ4vrpF1QyHCf9997DD30D5+Pf/cdDqVTs3Xmar1ubykcAFPc2z1UvVUVZmfXNV3eouHhoriC6DS7cCFslPXRttk/qUpXXEayiYveYP2zaxtbqp7NuwsGS6tkIiGCVlkQ9mjbqplEhmoU0oeyxfgc4ANRQnzYP9Xr3XIHO9OLmf3rfV+x3WKDZWA2d81l1AaiNiE5RtV+15tefrf83QVpqJeSxnfM1aLiDO+urCR7tMztS8pB9SYGgnSjBKC7Gsl7aEwkHJmrCBoJ44qjPMT0Z99r5H1dn9ORVgcbVq1nfxvDypFSS2Ys0FEL25fEn7I7fw4BWPr/bPWKVZkzoHouxuEBrv1QuWhjhP7jNBEgy8HLcvKU4DLRSoGi8m/u15VXC4jx18DZPdkmaFYSJPQ8YEBuPX8XZygGeZ+y0xzyhf3jXJw3nU6PIJes+qmlmNVHJcWmo6TRVjXaVnAftaumLEVUQKbqNvU2QZJuRXXZbHWbEvWY1X7oQ59ZH4sJXqUW3TyB4nQyJI6zW8f6HLN7/U8vhpWcnEeZln7WXMynd1eoxKyvo1xCoHNYwOYF7bb6mMLMg0FBCi/tZJdVwPCwCKU4amtKEKGEsHEg==
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AuqW0OiviQ5Gn9GWmVAlnbdq2RXM9tInH2polvubWEPZgBSpoP6wVVzfSf+a?=
- =?us-ascii?Q?fCUiREb++u88AZmfLl3RvXR+SFbRRbOIWQEqI6Mb81F4tsGhBiXsID1KlG3I?=
- =?us-ascii?Q?2O9wIAlHVbuiCC5UBQskzhtJgB/UznrHYFcdeCQrnZRFhhMTvWDFVnrZ0ZtU?=
- =?us-ascii?Q?3NVvVZg5ATx+5xI4A+k8DMiboIF9ZQbRzqyu1fx0kEo0QJIZ4TaNxrDOuiJY?=
- =?us-ascii?Q?x14jZqf+qxfoH+LCOlU6CCcGWlCIz59fiQEuXTBk+hcwfIwVyfjaPH8cqKtA?=
- =?us-ascii?Q?ewCp4NZm+X+rFymgH5BAnx+bQZEuJaHPT2vBzOJxsiPlgl0oF5UJf9TO2/ww?=
- =?us-ascii?Q?LjkF4cQquXzpoKrYPQw5Pu+NNPgACwQr044ZNbwx4I9q/Z5dG+Ovb+XOFPWl?=
- =?us-ascii?Q?ia+1KV4J3XhFPcP8YpuGTHX58e5kuJeegw/XK22Yf04GN+k2m0h7LKWY57/t?=
- =?us-ascii?Q?qoPd8HzLYX5g2HViI009am2jS1LGyrLMLN2cnJDSHGU1aGOntkvk5WHjpuPF?=
- =?us-ascii?Q?4KyeceRsCdT2ZrNCcaIFRFXMk7qIMn7t7ZGIf8Apwg0ot+dgLYy8f+Mr/cTT?=
- =?us-ascii?Q?atY7ZRXMHaJ0tcLW5JfvpjjyU5R/1+Qg9AaE3KUZfxpOSi4sserWJPaLFeqK?=
- =?us-ascii?Q?A8vHuMUgZnpSjjuWQZ0AaMdj8GLzj/KQSIPn+EL/t0x8nDiQDZypjjYvUl9D?=
- =?us-ascii?Q?LpafWCgal4m4cusOLziWtyw7Q9yH06nKjq8Rf5RmSOW57fT7WKPT3Bt9CHvL?=
- =?us-ascii?Q?WTdX3N2w6Iqe+aepKBWR5acJGT0PHYpjF9i3/oO7vVxiMvgoXiyWWo05IhGk?=
- =?us-ascii?Q?+B34eqsinDjeYPsmTPvukndXEbJkygg3SFvUmwieHV8zmQ3yO7Xg5I552/ud?=
- =?us-ascii?Q?62DRIt05q/lH8s9z7c2UBzEiueIwFSE1tEvrPg8NDTtEGeTZ9vYRNLfOQAPp?=
- =?us-ascii?Q?0ijYf5/L81ZZZffXkbXSfyg9+8qOst4EeffkFOOiOPnIuykDYRqa7lp7+4gL?=
- =?us-ascii?Q?3OPj2++foNhJVcYH0ANjzcOFcrvkz1WvstH/Dbe93GIxdaw4iQ/yM2KsOzDF?=
- =?us-ascii?Q?aL6mbiKijJbSagMPPlWbdMQAp8CGhp/uKY8rBccWv8+b3ODi9uYBih33z2TA?=
- =?us-ascii?Q?FegXLQ4kfY61IYApRjBoFVltmF+o2jMCjTwF8rkbZXBhAZRnsxiAl/27DEb2?=
- =?us-ascii?Q?MLAW39k+66AiXSacqZ1FwmW14VG4Ul1SPwGzoNxgVeB2nc12l3XV/pc3x1xk?=
- =?us-ascii?Q?aI949KetXCd+nO+l/k76?=
+	=?us-ascii?Q?zUW0rIQVWVvhNhmmo6WVYu0t16tP7RjEBaUDbsW9rQX4EuBy+2bPhZdJ54nH?=
+ =?us-ascii?Q?b5tQ/55iajZCO1l9kBjkptYMr8Yu7nMKp3Ghl10vOHFiCN5Zp5AVtqsp8RUJ?=
+ =?us-ascii?Q?AT28W3ZTSBW9u3BfMROZ5cQUkrRE7DNaTCgQo4W5NcilDmUU6sCnQ2kUnRCy?=
+ =?us-ascii?Q?Rj8rELK5TW41JaUGTlqyWHR6QPxMb82bkIzcqzmJia3XChRBDnNnXYCVAOR9?=
+ =?us-ascii?Q?fHDoTyMWyPfPnUDkQ7j5ohPBmKsxjfAxZHPYfnNwykXuXGufb7gqVpQteqtw?=
+ =?us-ascii?Q?SwQMyKfzNJkaH6ngylackcp3Z56O4UV3ENYaiLCRDf6pys3Y1kfBmiN6UAo+?=
+ =?us-ascii?Q?uM6LHhHr5gXlx+NuTp+Z1ymo5m4usuWTFuGp7DYIkSnmUyYrCTuMw/5QO1uH?=
+ =?us-ascii?Q?x1h2EIq9IezssBNIb9Xp3w+4BWXm5QX72yRUJh1fGoTHKW2k0x+vq4eI9MpF?=
+ =?us-ascii?Q?tjylnn6Z1vpt93AxHc8kGple+S42AT1u4MmlpyRlPP7CSyBqh+ZQj6IfKKkc?=
+ =?us-ascii?Q?jPWY8mJj9nW3Yo6O0JRgWqgukreNfAh28TkBhWd7Z5R/73MGBiOoSN7jndqA?=
+ =?us-ascii?Q?wPtVjnzWb3ewqWnSrF9GHm9PfoP3p6H96Wgm2mba0rBt9dPd1uePvjuLMKms?=
+ =?us-ascii?Q?CHPjG1/jUW3nwqLKdIdxex1K8CFAs2zoEqbrlDfzoJaGv20byPfl+p8nO1NX?=
+ =?us-ascii?Q?7ZGMOGd/xdEZI7/IH0BH6GzLCtcd6ryGt5YtXy6tiGJRxq/VVL8Cg0WIN6UK?=
+ =?us-ascii?Q?b6Sq0wAyqoVMvHHmWnu+wiiqxseNPL5TG2orFC1vsdoMrehAgBzSRfPOwmAj?=
+ =?us-ascii?Q?iBmjqvezxgQkoBPdldX9Df68rmJx70AZ/ZApsIHGvCq1ZDZZ9crJC6uZlowg?=
+ =?us-ascii?Q?Y8HtvLYSDUmC5yHdkigyLyqPeKHfqgiGeJsEngO9RGgQwotoSiUZvscjq8LX?=
+ =?us-ascii?Q?4xVSUFEoxw+D4Gig92GDSOBm29RNsPBIquArGL+8GfwX4iPTDe0R04QvuHWB?=
+ =?us-ascii?Q?jLgpHIDSJBEubQSaeSHJnW9Y/SyUmWJimWVUI46mIp3ePg6+7W5YAh6NWucu?=
+ =?us-ascii?Q?4kY8rRR7grplfzvIUPAGVuk1fzqJYCSRKGkucXy4XSmNLYduPVIiPFb8Qh7L?=
+ =?us-ascii?Q?6Pu7f6jeLqFY/bjXq7Jx44Z7eKU+sVXZ/fVWSAq0wILkouKiIGTizqGe/RY6?=
+ =?us-ascii?Q?T09rOU9QHZhx18lL3lgoQNu2+w1En3z1dKG/f7dX9/EQ203yAUvUX9u865p3?=
+ =?us-ascii?Q?viUYkdK+ejupOWKekCAn?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 45146d06-ffb6-46d1-a085-08dcaf75cbc7
+X-MS-Exchange-CrossTenant-Network-Message-Id: 236b072e-f723-49d1-7d26-08dcaf75ce7f
 X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 02:26:04.6885
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 02:26:09.1678
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -142,518 +142,84 @@ X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
 	00000000-0000-0000-0000-000000000000
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR20MB5413
 
-SG2042 use an external MCU to provide basic hardware information
-and thermal sensors.
-
-Add driver support for the onboard MCU of SG2042.
+Add mcu device and thermal zones node for Milk-V Pioneer.
 
 Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
 ---
- Documentation/hwmon/index.rst      |   1 +
- Documentation/hwmon/sg2042-mcu.rst |  39 +++
- drivers/hwmon/Kconfig              |  11 +
- drivers/hwmon/Makefile             |   1 +
- drivers/hwmon/sg2042-mcu.c         | 399 +++++++++++++++++++++++++++++
- 5 files changed, 451 insertions(+)
- create mode 100644 Documentation/hwmon/sg2042-mcu.rst
- create mode 100644 drivers/hwmon/sg2042-mcu.c
+ .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  | 60 +++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-index 913c11390a45..ea3b5be8fe4f 100644
---- a/Documentation/hwmon/index.rst
-+++ b/Documentation/hwmon/index.rst
-@@ -206,6 +206,7 @@ Hardware Monitoring Kernel Drivers
-    sch5636
-    scpi-hwmon
-    sfctemp
-+   sg2042-mcu
-    sht15
-    sht21
-    sht3x
-diff --git a/Documentation/hwmon/sg2042-mcu.rst b/Documentation/hwmon/sg2042-mcu.rst
-new file mode 100644
-index 000000000000..250016b47dd1
---- /dev/null
-+++ b/Documentation/hwmon/sg2042-mcu.rst
-@@ -0,0 +1,39 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+Kernel driver sg2042-mcu
-+=====================
-+
-+Supported chips:
-+
-+  * Onboard MCU for sg2042
-+
-+    Addresses scanned: -
-+
-+    Prefix: 'sg2042-mcu'
-+
-+Authors:
-+
-+  - Inochi Amaoto <inochiama@outlook.com>
-+
-+Description
-+-----------
-+
-+This driver supprts hardware monitoring for onboard MCU with
-+i2c interface.
-+
-+Usage Notes
-+-----------
-+
-+This driver does not auto-detect devices. You will have to instantiate
-+the devices explicitly.
-+Please see Documentation/i2c/instantiating-devices.rst for details.
-+
-+Sysfs Attributes
-+----------------
-+
-+================= =============================================
-+temp1_input       Measured temperature of SoC
-+temp1_crit        Critical high temperature
-+temp1_crit_hyst   hysteresis temperature restore from Critical
-+temp2_input       Measured temperature of the base board
-+================= =============================================
-diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-index b60fe2e58ad6..7aa6c3f322e5 100644
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -2066,6 +2066,17 @@ config SENSORS_SFCTEMP
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called sfctemp.
+diff --git a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
+index 80cb017974d8..8b8fdf6243d4 100644
+--- a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
++++ b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
+@@ -26,6 +26,66 @@ &cgi_dpll1 {
+ 	clock-frequency = <25000000>;
+ };
 
-+config SENSORS_SG2042_MCU
-+	tristate "Sophgo onboard MCU support"
-+	depends on I2C
-+	depends on ARCH_SOPHGO || COMPILE_TEST
-+	help
-+	  Support for onboard MCU of Sophgo SG2042 SoCs. This mcu provides
-+	  power control and some basic information.
++&i2c1 {
++	status = "okay";
 +
-+	  This driver can be built as a module. If so, the module
-+	  will be called sg2042-mcu.
-+
- config SENSORS_SURFACE_FAN
- 	tristate "Surface Fan Driver"
- 	depends on SURFACE_AGGREGATOR
-diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
-index b1c7056c37db..0bbe812a67ae 100644
---- a/drivers/hwmon/Makefile
-+++ b/drivers/hwmon/Makefile
-@@ -194,6 +194,7 @@ obj-$(CONFIG_SENSORS_SCH56XX_COMMON)+= sch56xx-common.o
- obj-$(CONFIG_SENSORS_SCH5627)	+= sch5627.o
- obj-$(CONFIG_SENSORS_SCH5636)	+= sch5636.o
- obj-$(CONFIG_SENSORS_SFCTEMP)	+= sfctemp.o
-+obj-$(CONFIG_SENSORS_SG2042_MCU) += sg2042-mcu.o
- obj-$(CONFIG_SENSORS_SL28CPLD)	+= sl28cpld-hwmon.o
- obj-$(CONFIG_SENSORS_SHT15)	+= sht15.o
- obj-$(CONFIG_SENSORS_SHT21)	+= sht21.o
-diff --git a/drivers/hwmon/sg2042-mcu.c b/drivers/hwmon/sg2042-mcu.c
-new file mode 100644
-index 000000000000..c8ecf5de1be3
---- /dev/null
-+++ b/drivers/hwmon/sg2042-mcu.c
-@@ -0,0 +1,399 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2024 Inochi Amaoto <inochiama@outlook.com>
-+ *
-+ * Sophgo power control mcu for SG2042
-+ */
-+
-+#include <linux/debugfs.h>
-+#include <linux/err.h>
-+#include <linux/hwmon.h>
-+#include <linux/i2c.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+
-+/* fixed MCU registers */
-+#define REG_BOARD_TYPE				0x00
-+#define REG_MCU_FIRMWARE_VERSION		0x01
-+#define REG_PCB_VERSION				0x02
-+#define REG_PWR_CTRL				0x03
-+#define REG_SOC_TEMP				0x04
-+#define REG_BOARD_TEMP				0x05
-+#define REG_RST_COUNT				0x0a
-+#define REG_UPTIME				0x0b
-+#define REG_RESET_REASON			0x0d
-+#define REG_MCU_TYPE				0x18
-+#define REG_CRITICAL_ACTIONS			0x65
-+#define REG_CRITICAL_TEMP			0x66
-+#define REG_REPOWER_TEMP			0x67
-+
-+#define CRITICAL_ACTION_REBOOT			1
-+#define CRITICAL_ACTION_POWEROFF		2
-+
-+#define MCU_POWER_MAX				0xff
-+
-+#define DEFINE_MCU_DEBUG_ATTR(_name, _reg, _format)			\
-+	static int _name##_show(struct seq_file *seqf,			\
-+				    void *unused)			\
-+	{								\
-+		struct sg2042_mcu_data *mcu = seqf->private;		\
-+		int ret;						\
-+		ret = i2c_smbus_read_byte_data(mcu->client, (_reg));	\
-+		if (ret < 0)						\
-+			return ret;					\
-+		seq_printf(seqf, _format "\n", ret);			\
-+		return 0;						\
-+	}								\
-+	DEFINE_SHOW_ATTRIBUTE(_name)					\
-+
-+struct sg2042_mcu_data {
-+	struct i2c_client	*client;
-+	struct dentry		*debugfs;
-+	struct mutex		mutex;
++	mcu: syscon@17 {
++		compatible = "sophgo,sg2042-hwmon-mcu";
++		reg = <0x17>;
++		#thermal-sensor-cells = <1>;
++	};
 +};
 +
-+static struct dentry *sgmcu_debugfs;
+ &uart0 {
+ 	status = "okay";
+ };
 +
-+static ssize_t reset_count_show(struct device *dev,
-+				struct device_attribute *attr,
-+				char *buf)
-+{
-+	struct sg2042_mcu_data *mcu = dev_get_drvdata(dev);
-+	int ret;
++/ {
++	thermal-zones {
++		soc-thermal {
++			polling-delay-passive = <1000>;
++			polling-delay = <1000>;
++			thermal-sensors = <&mcu 0>;
 +
-+	ret = i2c_smbus_read_byte_data(mcu->client, REG_RST_COUNT);
-+	if (ret < 0)
-+		return ret;
++			trips {
++				soc_active1: soc-active1 {
++					temperature = <30000>;
++					hysteresis = <8000>;
++					type = "active";
++				};
 +
-+	return sprintf(buf, "%d\n", ret);
-+}
++				soc_active2: soc-active2 {
++					temperature = <58000>;
++					hysteresis = <12000>;
++					type = "active";
++				};
 +
-+static ssize_t uptime_show(struct device *dev,
-+			   struct device_attribute *attr,
-+			   char *buf)
-+{
-+	struct sg2042_mcu_data *mcu = dev_get_drvdata(dev);
-+	u8 time_val[2];
-+	int ret;
++				soc_active3: soc-active3 {
++					temperature = <70000>;
++					hysteresis = <10000>;
++					type = "active";
++				};
 +
-+	ret = i2c_smbus_read_i2c_block_data(mcu->client, REG_UPTIME,
-+					    sizeof(time_val), time_val);
-+	if (ret < 0)
-+		return ret;
++				soc_hot: soc-hot {
++					temperature = <85000>;
++					hysteresis = <5000>;
++					type = "hot";
++				};
++			};
++		};
 +
-+	return sprintf(buf, "%d\n",
-+		       (int)(time_val[0]) + (int)(time_val[1] << 8));
-+}
++		board-thermal {
++			polling-delay-passive = <1000>;
++			polling-delay = <1000>;
++			thermal-sensors = <&mcu 1>;
 +
-+static ssize_t reset_reason_show(struct device *dev,
-+				 struct device_attribute *attr,
-+				 char *buf)
-+{
-+	struct sg2042_mcu_data *mcu = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = i2c_smbus_read_byte_data(mcu->client, REG_RESET_REASON);
-+	if (ret < 0)
-+		return ret;
-+
-+	return sprintf(buf, "0x%02x\n", ret);
-+}
-+
-+static ssize_t critical_action_show(struct device *dev,
-+				    struct device_attribute *attr,
-+				    char *buf)
-+{
-+	struct sg2042_mcu_data *mcu = dev_get_drvdata(dev);
-+	int ret;
-+	const char *action;
-+
-+	ret = i2c_smbus_read_byte_data(mcu->client, REG_CRITICAL_ACTIONS);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (ret == CRITICAL_ACTION_REBOOT)
-+		action = "reboot";
-+	else if (ret == CRITICAL_ACTION_POWEROFF)
-+		action = "poweroff";
-+	else
-+		action = "unknown";
-+
-+	return sprintf(buf, "%s\n", action);
-+}
-+
-+static ssize_t critical_action_store(struct device *dev,
-+				     struct device_attribute *attr,
-+				     const char *buf, size_t count)
-+{
-+	struct sg2042_mcu_data *mcu = dev_get_drvdata(dev);
-+	int value;
-+
-+	if (sysfs_streq("reboot", buf))
-+		value = CRITICAL_ACTION_REBOOT;
-+	else if (sysfs_streq("poweroff", buf))
-+		value = CRITICAL_ACTION_POWEROFF;
-+	else
-+		return -EINVAL;
-+
-+	return i2c_smbus_write_byte_data(mcu->client,
-+					 REG_CRITICAL_ACTIONS, value);
-+}
-+
-+static DEVICE_ATTR_RO(reset_count);
-+static DEVICE_ATTR_RO(uptime);
-+static DEVICE_ATTR_RO(reset_reason);
-+static DEVICE_ATTR_RW(critical_action);
-+
-+DEFINE_MCU_DEBUG_ATTR(firmware_version, REG_MCU_FIRMWARE_VERSION, "0x%02x");
-+DEFINE_MCU_DEBUG_ATTR(pcb_version, REG_PCB_VERSION, "0x%02x");
-+DEFINE_MCU_DEBUG_ATTR(board_type, REG_BOARD_TYPE, "0x%02x");
-+DEFINE_MCU_DEBUG_ATTR(mcu_type, REG_MCU_TYPE, "%d");
-+
-+static struct attribute *sg2042_mcu_attrs[] = {
-+	&dev_attr_reset_count.attr,
-+	&dev_attr_uptime.attr,
-+	&dev_attr_reset_reason.attr,
-+	&dev_attr_critical_action.attr,
-+	NULL
++			trips {
++				board_active: board-active {
++					temperature = <75000>;
++					hysteresis = <8000>;
++					type = "active";
++				};
++			};
++		};
++	};
 +};
-+
-+static const struct attribute_group sg2042_mcu_attr_group = {
-+	.attrs	= sg2042_mcu_attrs,
-+};
-+
-+static const struct attribute_group *sg2042_mcu_groups[] = {
-+	&sg2042_mcu_attr_group,
-+	NULL
-+};
-+
-+static const struct hwmon_channel_info * const sg2042_mcu_info[] = {
-+	HWMON_CHANNEL_INFO(chip, HWMON_C_REGISTER_TZ),
-+	HWMON_CHANNEL_INFO(temp, HWMON_T_INPUT | HWMON_T_CRIT |
-+					HWMON_T_CRIT_HYST,
-+				 HWMON_T_INPUT),
-+	NULL
-+};
-+
-+static int sg2042_mcu_read_temp(struct device *dev,
-+				u32 attr, int channel,
-+				long *val)
-+{
-+	struct sg2042_mcu_data *mcu = dev_get_drvdata(dev);
-+	int tmp;
-+	u8 reg;
-+
-+	switch (attr) {
-+	case hwmon_temp_input:
-+		reg = channel ? REG_BOARD_TEMP : REG_SOC_TEMP;
-+		break;
-+	case hwmon_temp_crit:
-+		reg = REG_CRITICAL_TEMP;
-+		break;
-+	case hwmon_temp_crit_hyst:
-+		reg = REG_REPOWER_TEMP;
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	tmp = i2c_smbus_read_byte_data(mcu->client, reg);
-+	if (tmp < 0)
-+		return tmp;
-+	*val = tmp * 1000;
-+
-+	return 0;
-+}
-+
-+static int sg2042_mcu_read(struct device *dev,
-+			   enum hwmon_sensor_types type,
-+			   u32 attr, int channel, long *val)
-+{
-+	return sg2042_mcu_read_temp(dev, attr, channel, val);
-+}
-+
-+static int sg2042_mcu_write(struct device *dev,
-+			    enum hwmon_sensor_types type,
-+			    u32 attr, int channel, long val)
-+{
-+	struct sg2042_mcu_data *mcu = dev_get_drvdata(dev);
-+	int temp = val / 1000;
-+	int hyst_temp, crit_temp;
-+	int ret;
-+	u8 reg;
-+
-+	if (temp > MCU_POWER_MAX)
-+		temp = MCU_POWER_MAX;
-+
-+	mutex_lock(&mcu->mutex);
-+
-+	switch (attr) {
-+	case hwmon_temp_crit:
-+		hyst_temp = i2c_smbus_read_byte_data(mcu->client,
-+						     REG_REPOWER_TEMP);
-+		if (hyst_temp < 0) {
-+			ret = -ENODEV;
-+			goto failed;
-+		}
-+
-+		crit_temp = temp;
-+		reg = REG_CRITICAL_TEMP;
-+		break;
-+	case hwmon_temp_crit_hyst:
-+		crit_temp = i2c_smbus_read_byte_data(mcu->client,
-+						     REG_CRITICAL_TEMP);
-+		if (crit_temp < 0) {
-+			ret = -ENODEV;
-+			goto failed;
-+		}
-+
-+		hyst_temp = temp;
-+		reg = REG_REPOWER_TEMP;
-+		break;
-+	default:
-+		mutex_unlock(&mcu->mutex);
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (crit_temp < hyst_temp) {
-+		ret = -EINVAL;
-+		goto failed;
-+	}
-+
-+	ret = i2c_smbus_write_byte_data(mcu->client, reg, temp);
-+
-+failed:
-+	mutex_unlock(&mcu->mutex);
-+	return ret;
-+}
-+
-+static umode_t sg2042_mcu_is_visible(const void *_data,
-+				     enum hwmon_sensor_types type,
-+				     u32 attr, int channel)
-+{
-+	switch (type) {
-+	case hwmon_temp:
-+		switch (attr) {
-+		case hwmon_temp_input:
-+			return 0444;
-+		case hwmon_temp_crit:
-+		case hwmon_temp_crit_hyst:
-+			if (channel == 0)
-+				return 0664;
-+			break;
-+		default:
-+			return 0;
-+		}
-+		break;
-+	default:
-+		return 0;
-+	}
-+	return 0;
-+}
-+
-+static const struct hwmon_ops sg2042_mcu_ops = {
-+	.is_visible = sg2042_mcu_is_visible,
-+	.read = sg2042_mcu_read,
-+	.write = sg2042_mcu_write,
-+};
-+
-+static const struct hwmon_chip_info sg2042_mcu_chip_info = {
-+	.ops = &sg2042_mcu_ops,
-+	.info = sg2042_mcu_info,
-+};
-+
-+static void sg2042_mcu_debugfs_init(struct sg2042_mcu_data *mcu,
-+				    struct device *dev)
-+{
-+	mcu->debugfs = debugfs_create_dir(dev_name(dev), sgmcu_debugfs);
-+	if (mcu->debugfs) {
-+		debugfs_create_file("firmware_version", 0444, mcu->debugfs,
-+				    mcu, &firmware_version_fops);
-+		debugfs_create_file("pcb_version", 0444, mcu->debugfs, mcu,
-+				    &pcb_version_fops);
-+		debugfs_create_file("mcu_type", 0444, mcu->debugfs, mcu,
-+				    &mcu_type_fops);
-+		debugfs_create_file("board_type", 0444, mcu->debugfs, mcu,
-+				    &board_type_fops);
-+	}
-+}
-+
-+static int sg2042_mcu_i2c_probe(struct i2c_client *client)
-+{
-+	struct device *dev = &client->dev;
-+	struct sg2042_mcu_data *mcu;
-+	struct device *hwmon_dev;
-+
-+	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE_DATA |
-+						I2C_FUNC_SMBUS_BLOCK_DATA))
-+		return -EIO;
-+
-+	mcu = devm_kmalloc(dev, sizeof(*mcu), GFP_KERNEL);
-+	if (!mcu)
-+		return -ENOMEM;
-+
-+	mutex_init(&mcu->mutex);
-+	mcu->client = client;
-+
-+	i2c_set_clientdata(client, mcu);
-+
-+	hwmon_dev = devm_hwmon_device_register_with_info(dev, "sg2042_mcu",
-+							 mcu,
-+							 &sg2042_mcu_chip_info,
-+							 NULL);
-+	if (IS_ERR_OR_NULL(hwmon_dev))
-+		return -EFAULT;
-+
-+	sg2042_mcu_debugfs_init(mcu, dev);
-+
-+	return 0;
-+}
-+
-+static void sg2042_mcu_i2c_remove(struct i2c_client *client)
-+{
-+	struct sg2042_mcu_data *mcu = i2c_get_clientdata(client);
-+
-+	debugfs_remove_recursive(mcu->debugfs);
-+}
-+
-+static const struct i2c_device_id sg2042_mcu_id[] = {
-+	{ "sg2042-hwmon-mcu", 0 },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(i2c, sg2042_mcu_id);
-+
-+static const struct of_device_id sg2042_mcu_of_id[] = {
-+	{ .compatible = "sophgo,sg2042-hwmon-mcu" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, sg2042_mcu_of_id);
-+
-+static struct i2c_driver sg2042_mcu_driver = {
-+	.driver = {
-+		.name = "sg2042-mcu",
-+		.of_match_table = sg2042_mcu_of_id,
-+		.dev_groups = sg2042_mcu_groups,
-+	},
-+	.probe = sg2042_mcu_i2c_probe,
-+	.remove = sg2042_mcu_i2c_remove,
-+	.id_table = sg2042_mcu_id,
-+};
-+
-+static int __init sg2042_mcu_init(void)
-+{
-+	sgmcu_debugfs = debugfs_create_dir("sg2042-mcu", NULL);
-+	return i2c_add_driver(&sg2042_mcu_driver);
-+}
-+
-+static void __exit sg2042_mcu_exit(void)
-+{
-+	debugfs_remove_recursive(sgmcu_debugfs);
-+	i2c_del_driver(&sg2042_mcu_driver);
-+}
-+
-+module_init(sg2042_mcu_init);
-+module_exit(sg2042_mcu_exit);
-+
-+MODULE_AUTHOR("Inochi Amaoto <inochiama@outlook.com>");
-+MODULE_DESCRIPTION("MCU I2C driver for SG2042 soc platform");
-+MODULE_LICENSE("GPL");
 --
 2.45.2
 
