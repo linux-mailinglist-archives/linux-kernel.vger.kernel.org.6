@@ -1,206 +1,254 @@
-Return-Path: <linux-kernel+bounces-265647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E13193F402
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:28:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEABA93F404
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67364B20953
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:28:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B5011C21F05
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707AA145B27;
-	Mon, 29 Jul 2024 11:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7825145B39;
+	Mon, 29 Jul 2024 11:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="w3fPnfNX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k9E/dqw2";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="w3fPnfNX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k9E/dqw2"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Yu+S92ns"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82BE1DA24;
-	Mon, 29 Jul 2024 11:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6656613DDAA;
+	Mon, 29 Jul 2024 11:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722252486; cv=none; b=n3QVSF9bUq9ysI8weWdyH/FIXMSY8qhnT/IgEs1RW0ebeHeEYJOQkxm9hozVCV5/rXwNHhFfEnsSTi6r9FD6nwuqPQgfAU5TKQFSwcPIQR5sjiYtyrv3fdKzm782GiDmJ7sVQtioVXeoY0CCneQ4+v5S42b8qazSI2nqIEO11ho=
+	t=1722252531; cv=none; b=fDMoSa0uw78IskGCOscK6wim0UgaN/MbTEWUpmaFBDPU6xUalXJnaxaaUuaPWKvJfOhxAvt4WyEAJK7SCZ5FJKpNwOgizCcRufM8wlBMcTPL7WceW1OSl9o5CYUKlGhytVja/xDMszGeGQ1ev0Mnf2RtFEjfxo55fsPbw4ZIcME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722252486; c=relaxed/simple;
-	bh=64wCMHSRx+3w86acTbFol7vjqbpkywyn79By4+qP8vI=;
+	s=arc-20240116; t=1722252531; c=relaxed/simple;
+	bh=iQzz6hBr6rcaCUZ7xkErMmYRcca5NKRJdp4+ze/FMEQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gchDuK7ZoSjc4gDVgnrUtBGted3g46+bcrrEoeGCoqRt/x0pto78ElNeBC5fph4MQmylJb+2lSJRUYQ0yihvo50XhJDOm8V/a1ONGR0oTLBsnhNAW8lDADIhZnZg3beH8Z1s20xl6qnsTR1wHbh8dkli/smT2Fr2iDdPsZr+aHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=w3fPnfNX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k9E/dqw2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=w3fPnfNX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k9E/dqw2; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C9C3C1F78D;
-	Mon, 29 Jul 2024 11:28:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722252482; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zHUy40S81Hi4I9W9Ak/AUgKQ+mpmORJOALnG2nRnuZM=;
-	b=w3fPnfNXR7uSSln120H+4F0BucM5UqvqvxvUAQ4OQduS4RA5+TwUjEHWI5i6oCBJEH9FtN
-	LesNzcVoghICMVYj0tqTu2X9hzFlGlRU1W50Ws092evHeJU5nA32m5y8AQQn9JXJcm8C7q
-	hmXV6o2fBXjIl4iIiHiAmO6RLBtpRFg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722252482;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zHUy40S81Hi4I9W9Ak/AUgKQ+mpmORJOALnG2nRnuZM=;
-	b=k9E/dqw2MvhFlDgqEBRwJ38Ig/L5V33Nz87eZTwStImN3ZRmR+Vv+po62CMaLMCUbLMtVx
-	OAodIzr8smLBsLAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722252482; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zHUy40S81Hi4I9W9Ak/AUgKQ+mpmORJOALnG2nRnuZM=;
-	b=w3fPnfNXR7uSSln120H+4F0BucM5UqvqvxvUAQ4OQduS4RA5+TwUjEHWI5i6oCBJEH9FtN
-	LesNzcVoghICMVYj0tqTu2X9hzFlGlRU1W50Ws092evHeJU5nA32m5y8AQQn9JXJcm8C7q
-	hmXV6o2fBXjIl4iIiHiAmO6RLBtpRFg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722252482;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zHUy40S81Hi4I9W9Ak/AUgKQ+mpmORJOALnG2nRnuZM=;
-	b=k9E/dqw2MvhFlDgqEBRwJ38Ig/L5V33Nz87eZTwStImN3ZRmR+Vv+po62CMaLMCUbLMtVx
-	OAodIzr8smLBsLAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BD3FF1368A;
-	Mon, 29 Jul 2024 11:28:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DsgtLsJ8p2YjMQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 29 Jul 2024 11:28:02 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 6F770A099C; Mon, 29 Jul 2024 13:28:02 +0200 (CEST)
-Date: Mon, 29 Jul 2024 13:28:02 +0200
-From: Jan Kara <jack@suse.cz>
-To: Baokun Li <libaokun@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, ritesh.list@gmail.com,
-	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
-	yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH 08/20] ext4: get rid of ppath in ext4_find_extent()
-Message-ID: <20240729112802.eqkmgf66ebnc22u5@quack3>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-9-libaokun@huaweicloud.com>
- <20240725103823.fvvinixcctacf4fx@quack3>
- <0046d3b3-24ce-4cdb-a40a-4022b79a5a7b@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hISM3kmLr6Dz4vuml2gVVfnQaD+KWtd2FoTlmavV+VWtNBXq0ma9cSl5kEAY+HJhEcqn4fnqfMz7qy1+lmH/gAK8bswDd2WHZCWHSSECn6UyV1hzvN09Qag8iuOHKiH5mYr1CvXcXxHoO2UnFRVzBIiORFqPtXR6SyounmiawtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Yu+S92ns; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=DNmwto5kp0C+1NJjEB8Kib+Ypx/Zw6110DGbri4A/Wg=; b=Yu+S92nsi+Wpg2nq8cZAfUAc37
+	NR810DTPvmTREKPDXgz1BQyVUn9e4etO9LX0L/AT3DJ+bmQU/dKfKlHj0pyw/T5DsXz6lzmbtRlto
+	xX/tmCiBWA4uW7vioAMz5gK4drsD6d8z7slfwiA7hhrf6tGbuqaU6laPzD35Yof+dqgcI2LBkU7Xd
+	gpBch9cpFg9Pv1PGky3sSsV8MpSs8iLTWG/kLn3L7p1duVHjzoRtbQ/upnjnnT241hRf4kqVv5Ri5
+	zXOGJK2dzL6IfXdWcvz+TLI3sO4Z1trqOheN90s3C3tZ5TupuMF/++eXj7ZsR1ik4nweQbsTAaOJq
+	HGFSVWGg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42180)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sYOY4-00043K-03;
+	Mon, 29 Jul 2024 12:28:16 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sYOY3-0004HJ-Vp; Mon, 29 Jul 2024 12:28:16 +0100
+Date: Mon, 29 Jul 2024 12:28:15 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	John Crispin <john@phrozen.org>, Felix Fietkau <nbd@nbd.name>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Bc-bocun Chen <bc-bocun.chen@mediatek.com>,
+	Sam Shih <Sam.Shih@mediatek.com>,
+	Weijie Gao <Weijie.Gao@mediatek.com>,
+	Steven Liu <steven.liu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH RFC net-next] net: pcs: add helper module for standalone
+ drivers
+Message-ID: <Zqd8z+/TL22OJ1iu@shell.armlinux.org.uk>
+References: <ba4e359584a6b3bc4b3470822c42186d5b0856f9.1721910728.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0046d3b3-24ce-4cdb-a40a-4022b79a5a7b@huaweicloud.com>
-X-Spamd-Result: default: False [-2.10 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_LAST(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,mit.edu,dilger.ca,gmail.com,huawei.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,huawei.com:email,suse.cz:email,suse.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -2.10
+In-Reply-To: <ba4e359584a6b3bc4b3470822c42186d5b0856f9.1721910728.git.daniel@makrotopia.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Sat 27-07-24 14:18:33, Baokun Li wrote:
-> On 2024/7/25 18:38, Jan Kara wrote:
-> > On Wed 10-07-24 12:06:42, libaokun@huaweicloud.com wrote:
-> > > From: Baokun Li <libaokun1@huawei.com>
-> > > 
-> > > The use of path and ppath is now very confusing, so to make the code more
-> > > readable, pass path between functions uniformly, and get rid of ppath.
-> > > 
-> > > Getting rid of ppath in ext4_find_extent() requires its caller to update
-> > > ppath. These ppaths will also be dropped later. No functional changes.
-> > > 
-> > > Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> > One nit below, otherwise feel free to add:
-> > 
-> > Reviewed-by: Jan Kara <jack@suse.cz>
-> > 
-> > > @@ -3260,11 +3257,12 @@ static int ext4_split_extent_at(handle_t *handle,
-> > >   	 * WARN_ON may be triggered in ext4_da_update_reserve_space() due to
-> > >   	 * an incorrect ee_len causing the i_reserved_data_blocks exception.
-> > >   	 */
-> > > -	path = ext4_find_extent(inode, ee_block, ppath,
-> > > +	path = ext4_find_extent(inode, ee_block, *ppath,
-> > >   				flags | EXT4_EX_NOFAIL);
-> > >   	if (IS_ERR(path)) {
-> > >   		EXT4_ERROR_INODE(inode, "Failed split extent on %u, err %ld",
-> > >   				 split, PTR_ERR(path));
-> > > +		*ppath = NULL;
-> > >   		return PTR_ERR(path);
-> > >   	}
-> > I think here you forgot to update ppath on success case. It will go away by
-> > the end of the series but still it's good to keep thing consistent...
-> > 
-> > 								Honza
+On Thu, Jul 25, 2024 at 01:44:49PM +0100, Daniel Golle wrote:
+> Implement helper module for standalone PCS drivers which allows
+> standaline PCS drivers to register and users to get instances of
+> 'struct phylink_pcs' using device tree nodes.
 > 
-> Hi Honza,
+> At this point only a single instance for each device tree node is
+> supported, once we got devices providing more than one PCS we can
+> extend it and introduce an xlate function as well as '#pcs-cells',
+> similar to how this is done by the PHY framework.
 > 
-> Thank you for your review！
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
+> This is meant to provide the infrastructure suggested by
+> Russell King in an earlier review. It just took me a long while to
+> find the time to implement this.
+> Users are going to be the standalone PCS drivers for 8/10 LynxI as
+> well as 64/66 USXGMII PCS found on MediaTek MT7988 SoC.
+> See also https://patchwork.kernel.org/comment/25636726/
 > 
-> In patch 5, the ppath is already updated in case of success, so there
-> is no need to add it here. This update was not shown when the patch
-> was made and it looks like this：
+> The full tree where this is being used can be found at
 > 
-> -       path = ext4_find_extent(inode, ee_block, ppath,
-> +       path = ext4_find_extent(inode, ee_block, *ppath,
->                                 flags | EXT4_EX_NOFAIL);
->         if (IS_ERR(path)) {
->                 EXT4_ERROR_INODE(inode, "Failed split extent on %u, err
-> %ld",
->                                  split, PTR_ERR(path));
-> +               *ppath = NULL;
->                 return PTR_ERR(path);
->         }
->         depth = ext_depth(inode);
->         ex = path[depth].p_ext;
->         *ppath = path;
+> https://github.com/dangowrt/linux/commits/mt7988-for-next/
+> 
+>  drivers/net/pcs/Kconfig            |  4 ++
+>  drivers/net/pcs/Makefile           |  1 +
+>  drivers/net/pcs/pcs-standalone.c   | 95 +++++++++++++++++++++++++++++
+>  include/linux/pcs/pcs-standalone.h | 25 ++++++++
+>  4 files changed, 129 insertions(+)
+>  create mode 100644 drivers/net/pcs/pcs-standalone.c
+>  create mode 100644 include/linux/pcs/pcs-standalone.h
+> 
+> diff --git a/drivers/net/pcs/Kconfig b/drivers/net/pcs/Kconfig
+> index f6aa437473de..2b02b9351fa4 100644
+> --- a/drivers/net/pcs/Kconfig
+> +++ b/drivers/net/pcs/Kconfig
+> @@ -5,6 +5,10 @@
+>  
+>  menu "PCS device drivers"
+>  
+> +config PCS_STANDALONE
+> +	tristate
+> +	select PHYLINK
+> +
+>  config PCS_XPCS
+>  	tristate "Synopsys DesignWare Ethernet XPCS"
+>  	select PHYLINK
+> diff --git a/drivers/net/pcs/Makefile b/drivers/net/pcs/Makefile
+> index 4f7920618b90..0cb0057f2b8e 100644
+> --- a/drivers/net/pcs/Makefile
+> +++ b/drivers/net/pcs/Makefile
+> @@ -4,6 +4,7 @@
+>  pcs_xpcs-$(CONFIG_PCS_XPCS)	:= pcs-xpcs.o pcs-xpcs-plat.o \
+>  				   pcs-xpcs-nxp.o pcs-xpcs-wx.o
+>  
+> +obj-$(CONFIG_PCS_STANDALONE)	+= pcs-standalone.o
+>  obj-$(CONFIG_PCS_XPCS)		+= pcs_xpcs.o
+>  obj-$(CONFIG_PCS_LYNX)		+= pcs-lynx.o
+>  obj-$(CONFIG_PCS_MTK_LYNXI)	+= pcs-mtk-lynxi.o
+> diff --git a/drivers/net/pcs/pcs-standalone.c b/drivers/net/pcs/pcs-standalone.c
+> new file mode 100644
+> index 000000000000..1569793328a1
+> --- /dev/null
+> +++ b/drivers/net/pcs/pcs-standalone.c
+> @@ -0,0 +1,95 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Helpers for standalone PCS drivers
+> + *
+> + * Copyright (C) 2024 Daniel Golle <daniel@makrotopia.org>
+> + */
+> +
+> +#include <linux/pcs/pcs-standalone.h>
+> +#include <linux/phylink.h>
+> +
+> +static LIST_HEAD(pcs_list);
+> +static DEFINE_MUTEX(pcs_mutex);
+> +
+> +struct pcs_standalone {
+> +	struct device *dev;
+> +	struct phylink_pcs *pcs;
+> +	struct list_head list;
+> +};
+> +
+> +static void devm_pcs_provider_release(struct device *dev, void *res)
+> +{
+> +	struct pcs_standalone *pcssa = (struct pcs_standalone *)res;
+> +
+> +	mutex_lock(&pcs_mutex);
+> +	list_del(&pcssa->list);
+> +	mutex_unlock(&pcs_mutex);
 
-Yes, you are right. I didn't realize the update was already there. So I
-withdraw my comment :)
+This needs to do notify phylink if the PCS has gone away, but the
+locking for this would be somewhat difficult (because pcs->phylink
+could change if the PCS changes.) That would need to be solved
+somehow.
 
-								Honza
+> +}
+> +
+> +int devm_pcs_register(struct device *dev, struct phylink_pcs *pcs)
+> +{
+> +	struct pcs_standalone *pcssa;
+> +
+> +	pcssa = devres_alloc(devm_pcs_provider_release, sizeof(*pcssa),
+> +			     GFP_KERNEL);
+> +	if (!pcssa)
+> +		return -ENOMEM;
+> +
+> +	devres_add(dev, pcssa);
+> +	pcssa->pcs = pcs;
+> +	pcssa->dev = dev;
+> +
+> +	mutex_lock(&pcs_mutex);
+> +	list_add_tail(&pcssa->list, &pcs_list);
+> +	mutex_unlock(&pcs_mutex);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_pcs_register);
+> +
+> +static struct pcs_standalone *of_pcs_locate(const struct device_node *_np, u32 index)
+> +{
+> +	struct device_node *np;
+> +	struct pcs_standalone *iter, *pcssa = NULL;
+> +
+> +	if (!_np)
+> +		return NULL;
+> +
+> +	np = of_parse_phandle(_np, "pcs-handle", index);
+> +	if (!np)
+> +		return NULL;
+> +
+> +	mutex_lock(&pcs_mutex);
+> +	list_for_each_entry(iter, &pcs_list, list) {
+> +		if (iter->dev->of_node != np)
+> +			continue;
+> +
+> +		pcssa = iter;
+> +		break;
+> +	}
+> +	mutex_unlock(&pcs_mutex);
+> +
+> +	of_node_put(np);
+> +
+> +	return pcssa ?: ERR_PTR(-ENODEV);
+> +}
+> +
+> +struct phylink_pcs *devm_of_pcs_get(struct device *dev,
+> +				    const struct device_node *np,
+> +				    unsigned int index)
+> +{
+> +	struct pcs_standalone *pcssa;
+> +
+> +	pcssa = of_pcs_locate(np ?: dev->of_node, index);
+> +	if (IS_ERR_OR_NULL(pcssa))
+> +		return ERR_PTR(PTR_ERR(pcssa));
+> +
+> +	device_link_add(dev, pcssa->dev, DL_FLAG_AUTOREMOVE_CONSUMER);
+
+This is really not a nice solution when one has a network device that
+has multiple interfaces. This will cause all interfaces on that device
+to be purged from the system when a PCS for one of the interfaces
+goes away. If the system is using NFS-root, that could result in the
+rootfs being lost. We should handle this more gracefully.
 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
