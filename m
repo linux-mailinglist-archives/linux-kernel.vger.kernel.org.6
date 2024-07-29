@@ -1,230 +1,164 @@
-Return-Path: <linux-kernel+bounces-265714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CE893F4C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:01:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DBB993F4C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 537F1B2245E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:01:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE318282D7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79731487EB;
-	Mon, 29 Jul 2024 12:00:18 +0000 (UTC)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F708146A90;
+	Mon, 29 Jul 2024 12:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cTUFeiBz"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C711474D9;
-	Mon, 29 Jul 2024 12:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B9D148FEE;
+	Mon, 29 Jul 2024 12:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722254418; cv=none; b=t6ViAYozRL+RyZkcO3jrtxAFOp2EP0WqyiOTcjzoq4g1s8v6tEYsW+dIly18h6PX85Tsh7LQHd9Mr+wHP0ydVUFTOm1zFtvNXUjH3K0JMSdE8yroQNTMB5L0MYbkDtYVXVCct46b0qJh4PeejF2/pGzDTTLvOrd9QODSU3XXBDQ=
+	t=1722254441; cv=none; b=hvrozbuqfPSySyMbJP2Bj03QxKozgwZztTo7Bvv44xH99Z4qbmvtXCiZ3sOuXT3kukW9YO42lJVuzfz9BmRdrbWsS77M3duaee1ZHQZ+RlGCz1NmLm26L1NWoWQDgNrwnxu7VPRvdqTXQJG3QgyEMNuuPX5rp8S7JoGxT4gQyJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722254418; c=relaxed/simple;
-	bh=inXac3o0DMNwtWuz/S+UQ8nNGZTrTw9eBeIrM2lygBw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rEsBubLnYfSTMYcNlP4Ah+/3rhjVvoNZm5VqaVRdVydampNnRtCZ/P4djVFmnBPeYSf+BcYiP4MqAr7FEArSBoAsljWn6r6bqgEMxY6OGV/XtUaoO3IfJcn4SrhYyIqPnEgpn3StQUK6/aSQbJJ/nVkNkFmNRc4k1mNB6QIdDvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1722254441; c=relaxed/simple;
+	bh=ibQXUDIffd3oax0fuZ/yWOPgVC0MfAU8xE5n0zefA04=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L+y1jGt1adunqpE5lnVgXtJEsWf9EO33C709e1rIna3hkw07B+cqJHrOt7Nm9HBJhUjS4U4OtSD3xViqIlm2U5ljQiBLmzBx6D7n10K4NZFhx3ExrNb9tOYNZVvtF709DXW+EyjZPI77UOYF4aumavGwp35zlvFUV107NzoPNfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cTUFeiBz; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52efbc57456so3515086e87.1;
-        Mon, 29 Jul 2024 05:00:16 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7d50edd130so171345366b.3;
+        Mon, 29 Jul 2024 05:00:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722254438; x=1722859238; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FRlgb0pbBLQr/o0951YHvjNQKapVUDDOn8VLFV+A3D4=;
+        b=cTUFeiBz39D8oSIDxvYGud1DlE/zxTnZzP8iUy+k7shDZst1zGteRu51Qn4UMgqxCR
+         lxHIx1rtWycKrQUPv3s9OqXA3VET8a7LUL84agBQGez0GKTuFHAJ3uG58sV+b5ioZPKi
+         9Q4JI3R3YtSsfT+TjI1VUtBgjw+P6yKgk3yJlG8DIDHQWxDzmbmJbfXxbQosN4SIIQOb
+         xTW7+QS0gPGuNWitT/56Q3A8fEGJHNjqsLkqqYqHRTnknCcJZYeaUu1Vaios/WjLNCIh
+         FztdyFBETzrSIUeJQMtWSrNusZ31L9M6D3mjjLtHzYxMX5Vwmv8koskiAHxbnBBaWdHc
+         SGfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722254414; x=1722859214;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722254438; x=1722859238;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/JXRICrVSgwEXzupbqfI6N6cbUtwrkjonRVE0qX8bW0=;
-        b=dTs9S5ZipmfLpIchfyovdLcoI1Zj3cIWdXx9TA6e/HT19JDtqxo9YBKEMW6b35tyr/
-         esm/bsBNS3kngTnDngM8T/rasW7SUURDnMrmcPfvvS05jwjeokQUSL3IOdfb88CVVI5F
-         A5Wu1Afcf0pJBexaDf/FFcOjKAYAQyEJBobkmBFFMaoPN/wvQ35uj66ymvMjRXyXi3wx
-         mj0BsIB7r0Us5bLRRIanV1rnrisoBZ3aw2H/9SPRxbnaCHEqvFSwB+zEuUKquDFM/rTj
-         V0+QMxB8BKooGik46u8RcSPts7tPgvKuauDSEYZHzxKtTUyf8MZX5zqaOVjXRrUI6Uz0
-         2rMA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZKGraBC3CoM12lga1f/KIA5IfWum40wkOXQCXUgdaYRILJy5ClMm1z6Wvi36IAUtAYnJacqFNdysBDy8SksykRHgR73xcUocs03uY
-X-Gm-Message-State: AOJu0Yz3qG9p990qISzrCM+5kxUKNg9hXH9JX7urQWu6XZ8DUsHxrNW8
-	0vH3jiyvI9aYQaLCxEn/GLx/NJdVrdSkzMHB+4O/Kv/CPy5IBEPFsUirLQ==
-X-Google-Smtp-Source: AGHT+IFYlL2IQFhyuBafJblUyBmfmGapaaK+5VmhiLUrObv8+5c9f1lSgoPrQmYmRLyvetwDiwXlRQ==
-X-Received: by 2002:a05:6512:1043:b0:52e:987f:cfc6 with SMTP id 2adb3069b0e04-5309b2ce440mr5150158e87.51.1722254414462;
-        Mon, 29 Jul 2024 05:00:14 -0700 (PDT)
-Received: from [127.0.0.1] (p200300f6f732f200fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f732:f200:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab2311asm508136266b.18.2024.07.29.05.00.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 05:00:14 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-Date: Mon, 29 Jul 2024 14:00:05 +0200
-Subject: [PATCH 4/4] btrfs: don't readahead the relocation inode on RST
+        bh=FRlgb0pbBLQr/o0951YHvjNQKapVUDDOn8VLFV+A3D4=;
+        b=PLaOwUAeDYA3VoyFcVu64o1rlhimYmkNGV5QvfzAKEs0jcMe4Tf180grCjiyfgzYE2
+         s8Vk/UQE2HGNUvlweayk9SPp2f+Hye1ggJnKuhSQPmPvsVpU1qVZ02Tlx5DP2IQEEj6K
+         eYmp0f4+NCVGCxsZheE+J8xby7obSqvzNMXBWELX3eE8EQzbXfYj6cmj85Nqv0Syr9YN
+         RtbzdmgECBS+WgJZ1rvcj9komb/J7cEc6EVgnM4e4bwaecpvPJSVHsXIKl8irpOzg9EX
+         Sm9mrjst1qL1CambXPBLq73V5b1ImxtTtmTjHZOflIaI6QLe2AIMz7l78fEqdWpxjR2l
+         H2gg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmXnAE5ZYa/iBDv2ZETor2q+qZwbXJQZCHd1T4T4ANBsJA612AsJNUdC/osMgsSrIDWujtxm1svi3QDqNaKTDvldJ5dbs/2uiX1Bx+XTt6X0aO1w67J/U8GaczKgN6eP72g5j40xPv
+X-Gm-Message-State: AOJu0YyvVAuABv25dJSkvvzE66MA4VxYDgnhh2gXx7gPpnGj2QQfPSXg
+	jYpg1pEfNB+hVKhSIqPlZ3BCwaD+frTsQMB0yQHK73h9Ct3j+8ZwTwC+aa2mOCbGDSIbx22W0cC
+	gZsPp77IrnrO/7ZzqpiuLPbxif+U=
+X-Google-Smtp-Source: AGHT+IE4X+E9pS3yBhIg44yhiX0fEbUxFduAm9eUrb+W5DV053afWSiONWSrLC5n2TOAj7siJ1P3PG4wZ7H86bbhM/0=
+X-Received: by 2002:a17:907:94cb:b0:a77:cacf:58b5 with SMTP id
+ a640c23a62f3a-a7d3ffc0597mr579287666b.1.1722254438054; Mon, 29 Jul 2024
+ 05:00:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240729-debug-v1-4-f0b3d78d9438@kernel.org>
-References: <20240729-debug-v1-0-f0b3d78d9438@kernel.org>
-In-Reply-To: <20240729-debug-v1-0-f0b3d78d9438@kernel.org>
-To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
- David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Johannes Thumshirn <jthumshirn@wdc.com>, 
- Johannes Thumshirn <johannes.thumshirn@wdc.com>, 
- Filipe Manana <fdmanana@suse.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5703; i=jth@kernel.org;
- h=from:subject:message-id; bh=8m/cLckIEbQtJPusx/1iIS9tmFdurtQoeVckBLSN0yo=;
- b=owGbwMvMwCV2ad4npfVdsu8YT6slMaQtb/EMW5KS/oHFtUYr/OOiRXm7ErbrXb4qpdC03y135
- my32XXmHaUsDGJcDLJiiizHQ233S5geYZ9y6LUZzBxWJpAhDFycAjCRN0kM/93ECq6qG9b0FpcJ
- Z72t+FfSEvC4dYv8t3e+tzib7exUDjEyPLjw2vLN0qR/7lGm67ja1rGVyP2tto67qBMSZdz4YaU
- EFwA=
-X-Developer-Key: i=jth@kernel.org; a=openpgp;
- fpr=EC389CABC2C4F25D8600D0D00393969D2D760850
+References: <874j88sn4d.fsf@oldenburg.str.redhat.com> <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
+ <875xsoqy58.fsf@oldenburg.str.redhat.com> <vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
+ <87sevspit1.fsf@oldenburg.str.redhat.com> <CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
+ <87cymwpgys.fsf@oldenburg.str.redhat.com>
+In-Reply-To: <87cymwpgys.fsf@oldenburg.str.redhat.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 29 Jul 2024 14:00:26 +0200
+Message-ID: <CAGudoHHwaRuJH1dGQpwF4fhcAYHzbqr+oEKsEnwcY0_1p-CdSA@mail.gmail.com>
+Subject: Re: Testing if two open descriptors refer to the same inode
+To: Florian Weimer <fweimer@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-api@vger.kernel.org, Dave Chinner <dchinner@redhat.com>, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Johannes Thumshirn <jthumshirn@wdc.com>
+On Mon, Jul 29, 2024 at 1:37=E2=80=AFPM Florian Weimer <fweimer@redhat.com>=
+ wrote:
+>
+> * Mateusz Guzik:
+>
+> > On Mon, Jul 29, 2024 at 12:57=E2=80=AFPM Florian Weimer <fweimer@redhat=
+.com> wrote:
+> >>
+> >> * Mateusz Guzik:
+> >>
+> >> > On Mon, Jul 29, 2024 at 12:40:35PM +0200, Florian Weimer wrote:
+> >> >> * Mateusz Guzik:
+> >> >>
+> >> >> > On Mon, Jul 29, 2024 at 08:55:46AM +0200, Florian Weimer wrote:
+> >> >> >> It was pointed out to me that inode numbers on Linux are no long=
+er
+> >> >> >> expected to be unique per file system, even for local file syste=
+ms.
+> >> >> >
+> >> >> > I don't know if I'm parsing this correctly.
+> >> >> >
+> >> >> > Are you claiming on-disk inode numbers are not guaranteed unique =
+per
+> >> >> > filesystem? It sounds like utter breakage, with capital 'f'.
+> >> >>
+> >> >> Yes, POSIX semantics and traditional Linux semantics for POSIX-like
+> >> >> local file systems are different.
+> >> >
+> >> > Can you link me some threads about this?
+> >>
+> >> Sorry, it was an internal thread.  It's supposed to be common knowledg=
+e
+> >> among Linux file system developers.  Aleksa referenced LSF/MM
+> >> discussions.
+> >>
+> >
+> > So much for open development :-P
+>
+> I found this pretty quickly, so it does seem widely known:
+>
+>   [LSF TOPIC] statx extensions for subvol/snapshot filesystems & more
+>   <https://lore.kernel.org/linux-fsdevel/2uvhm6gweyl7iyyp2xpfryvcu2g3pada=
+gaeqcbiavjyiis6prl@yjm725bizncq/>
+>
 
-On relocation we're doing readahead on the relocation inode, but if the
-filesystem is backed by a RAID stripe tree we can get ENOENT from the
-lookup.
+Huh, thanks.
 
-But readahead doesn't handle the error and submits invalid reads to the
-device, causing an assertion in the scatter-gather list code:
+> >> It's certainly much easier to use than name_to_handle_at, so it looks
+> >> like a useful option to have.
+> >>
+> >> Could we return a three-way comparison result for sorting?  Or would
+> >> that expose too much about kernel pointer values?
+> >>
+> >
+> > As is this would sort by inode *address* which I don't believe is of
+> > any use -- the order has to be assumed arbitrary.
+>
+> Doesn't the order remain valid while the files remain open?  Anything
+> else doesn't seem reasonable to expect anyway.
+>
 
-  BTRFS info (device nvme1n1): balance: start -d -m -s
-  BTRFS info (device nvme1n1): relocating block group 6480920576 flags data|raid0
-  BTRFS error (device nvme1n1): cannot find raid-stripe for logical [6481928192, 6481969152] devid 2, profile raid0
-  ------------[ cut here ]------------
-  kernel BUG at include/linux/scatterlist.h:115!
-  Oops: invalid opcode: 0000 [#1] PREEMPT SMP PTI
-  CPU: 0 PID: 1012 Comm: btrfs Not tainted 6.10.0-rc7+ #567
-  RIP: 0010:__blk_rq_map_sg+0x339/0x4a0
-  RSP: 0018:ffffc90001a43820 EFLAGS: 00010202
-  RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffea00045d4802
-  RDX: 0000000117520000 RSI: 0000000000000000 RDI: ffff8881027d1000
-  RBP: 0000000000003000 R08: ffffea00045d4902 R09: 0000000000000000
-  R10: 0000000000000000 R11: 0000000000001000 R12: ffff8881003d10b8
-  R13: ffffc90001a438f0 R14: 0000000000000000 R15: 0000000000003000
-  FS:  00007fcc048a6900(0000) GS:ffff88813bc00000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 000000002cd11000 CR3: 00000001109ea001 CR4: 0000000000370eb0
-  Call Trace:
-   <TASK>
-   ? __die_body.cold+0x14/0x25
-   ? die+0x2e/0x50
-   ? do_trap+0xca/0x110
-   ? do_error_trap+0x65/0x80
-   ? __blk_rq_map_sg+0x339/0x4a0
-   ? exc_invalid_op+0x50/0x70
-   ? __blk_rq_map_sg+0x339/0x4a0
-   ? asm_exc_invalid_op+0x1a/0x20
-   ? __blk_rq_map_sg+0x339/0x4a0
-   nvme_prep_rq.part.0+0x9d/0x770
-   nvme_queue_rq+0x7d/0x1e0
-   __blk_mq_issue_directly+0x2a/0x90
-   ? blk_mq_get_budget_and_tag+0x61/0x90
-   blk_mq_try_issue_list_directly+0x56/0xf0
-   blk_mq_flush_plug_list.part.0+0x52b/0x5d0
-   __blk_flush_plug+0xc6/0x110
-   blk_finish_plug+0x28/0x40
-   read_pages+0x160/0x1c0
-   page_cache_ra_unbounded+0x109/0x180
-   relocate_file_extent_cluster+0x611/0x6a0
-   ? btrfs_search_slot+0xba4/0xd20
-   ? balance_dirty_pages_ratelimited_flags+0x26/0xb00
-   relocate_data_extent.constprop.0+0x134/0x160
-   relocate_block_group+0x3f2/0x500
-   btrfs_relocate_block_group+0x250/0x430
-   btrfs_relocate_chunk+0x3f/0x130
-   btrfs_balance+0x71b/0xef0
-   ? kmalloc_trace_noprof+0x13b/0x280
-   btrfs_ioctl+0x2c2e/0x3030
-   ? kvfree_call_rcu+0x1e6/0x340
-   ? list_lru_add_obj+0x66/0x80
-   ? mntput_no_expire+0x3a/0x220
-   __x64_sys_ioctl+0x96/0xc0
-   do_syscall_64+0x54/0x110
-   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-  RIP: 0033:0x7fcc04514f9b
-  Code: Unable to access opcode bytes at 0x7fcc04514f71.
-  RSP: 002b:00007ffeba923370 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-  RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fcc04514f9b
-  RDX: 00007ffeba923460 RSI: 00000000c4009420 RDI: 0000000000000003
-  RBP: 0000000000000000 R08: 0000000000000013 R09: 0000000000000001
-  R10: 00007fcc043fbba8 R11: 0000000000000246 R12: 00007ffeba924fc5
-  R13: 00007ffeba923460 R14: 0000000000000002 R15: 00000000004d4bb0
-   </TASK>
-  Modules linked in:
-  ---[ end trace 0000000000000000 ]---
-  RIP: 0010:__blk_rq_map_sg+0x339/0x4a0
-  RSP: 0018:ffffc90001a43820 EFLAGS: 00010202
-  RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffea00045d4802
-  RDX: 0000000117520000 RSI: 0000000000000000 RDI: ffff8881027d1000
-  RBP: 0000000000003000 R08: ffffea00045d4902 R09: 0000000000000000
-  R10: 0000000000000000 R11: 0000000000001000 R12: ffff8881003d10b8
-  R13: ffffc90001a438f0 R14: 0000000000000000 R15: 0000000000003000
-  FS:  00007fcc048a6900(0000) GS:ffff88813bc00000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 00007fcc04514f71 CR3: 00000001109ea001 CR4: 0000000000370eb0
-  Kernel panic - not syncing: Fatal exception
-  Kernel Offset: disabled
-  ---[ end Kernel panic - not syncing: Fatal exception ]---
+They will indeed remain stable in that setting, I am saying ordering
+may be different after a reboot or if there was some memory
+reclamation going on between restarts of the program.
 
-So in case of a relocation on a RAID stripe-tree based file system, skip
-the readahead.
+This is quite a difference from dev + ino combo not suffering these problem=
+s.
 
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Cc: Josef Bacik <josef@toxicpanda.com>
-Cc: Filipe Manana <fdmanana@suse.com>
----
- fs/btrfs/relocation.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+That is to say I don't see what is the benefit of having the kernel
+provide a way to sort inodes in a way which can give different
+results.
 
-diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
-index b592fc8cf368..5a6066f6db42 100644
---- a/fs/btrfs/relocation.c
-+++ b/fs/btrfs/relocation.c
-@@ -36,6 +36,7 @@
- #include "relocation.h"
- #include "super.h"
- #include "tree-checker.h"
-+#include "raid-stripe-tree.h"
- 
- /*
-  * Relocation overview
-@@ -2965,21 +2966,26 @@ static int relocate_one_folio(struct reloc_control *rc,
- 	u64 folio_end;
- 	u64 cur;
- 	int ret;
-+	bool use_rst =
-+		btrfs_need_stripe_tree_update(fs_info, rc->block_group->flags);
- 
- 	ASSERT(index <= last_index);
- 	folio = filemap_lock_folio(inode->i_mapping, index);
- 	if (IS_ERR(folio)) {
--		page_cache_sync_readahead(inode->i_mapping, ra, NULL,
--					  index, last_index + 1 - index);
-+		if (!use_rst)
-+			page_cache_sync_readahead(inode->i_mapping, ra, NULL,
-+						  index,
-+						  last_index + 1 - index);
- 		folio = __filemap_get_folio(inode->i_mapping, index,
--					    FGP_LOCK | FGP_ACCESSED | FGP_CREAT, mask);
-+					    FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
-+					    mask);
- 		if (IS_ERR(folio))
- 			return PTR_ERR(folio);
- 	}
- 
- 	WARN_ON(folio_order(folio));
- 
--	if (folio_test_readahead(folio))
-+	if (folio_test_readahead(folio) && !use_rst)
- 		page_cache_async_readahead(inode->i_mapping, ra, NULL,
- 					   folio, index,
- 					   last_index + 1 - index);
 
--- 
-2.43.0
-
+--
+Mateusz Guzik <mjguzik gmail.com>
 
