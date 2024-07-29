@@ -1,104 +1,167 @@
-Return-Path: <linux-kernel+bounces-265409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F9A93F0B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:13:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0EAB93EF7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28B731F231F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:13:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7996C282DD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C941420D5;
-	Mon, 29 Jul 2024 09:12:57 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918A613D63D
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADA013A24B;
+	Mon, 29 Jul 2024 08:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="w7/Ma9e2"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7E2328B6;
+	Mon, 29 Jul 2024 08:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722244377; cv=none; b=SQYnXTOSesn6X6lyUMV1tATq/Us7twq9gAjZtVG8IC23BDjAsuy0c+pqCBmTiWZGX/NI3wSmKCuuaMl6RYUSUAajP6UH0dyAUfB0ydy2q9eUvlejSmwFsYkskbzyCmFUstltfHtixefR6MCakHeEF3zAiS9KcVO/hKB+NT/Dgak=
+	t=1722240656; cv=none; b=qRgcwX9Dpf2XJF5P2oxFY0mt1MROJEMQa5lX+t2EHwx2Wq3gckbimElo+cwjxcJQoTnjPlK/3+Rk6fZ7RM1489s7qeH8bVaF8hg0hYkN84fndqiIRTHLr6AnH8E75FjITnV0kDzXHcp5C1iUTa5ocP77vuit0HgPsapnzsOq91Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722244377; c=relaxed/simple;
-	bh=x5i/OhGn/UUNPKSCcSmMPZnHMORxPTdVIGi7FRie25U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=utZDPXTyWsB3TNygNvYnO+WIgpwcPIypBb0KMrVOw6lo1Q3MkDL7RJVcBlwRgZRC1fESkhamO4rX3FYM5pxO2/TYe/hyasaJ9O0+fr8zfEW8/xg/t1M91M/38y1gNzNlsTsTtfLY7WAbaXT3+ekqDGVjC11Nutv215WCubZKvtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee166a75d05509-8de03;
-	Mon, 29 Jul 2024 17:12:38 +0800 (CST)
-X-RM-TRANSID:2ee166a75d05509-8de03
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.100])
-	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea66a75d06807-a4faf;
-	Mon, 29 Jul 2024 17:12:38 +0800 (CST)
-X-RM-TRANSID:2eea66a75d06807-a4faf
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: arnd@arndb.de
-Cc: gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	trivial@kernel.org,
-	Zhang Jiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH] char: misc: add missing #ifdef CONFIG_PROC_FS and error checking
-Date: Mon, 29 Jul 2024 15:35:11 +0800
-Message-Id: <20240729073511.61935-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1722240656; c=relaxed/simple;
+	bh=R63FGz1kBtLadER7X9II9B6WGjgDISpSFFA71Gvujao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nsKSe1xXcIRicimDShKJSyuf39rbE4TIhZvlGOCMUjFyvAl9D5etbDivWdO7v8kXbOMhAouKiPLQWzv9vRtik0jxZ/kdbg4uYlzcSa8z6zW5gjGSNPAxdXMcTC9V0u8v5YCozET4ihTXA521IhYFqDa+8raJtkj688nM9xbWwX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=w7/Ma9e2; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=gCxzdAMkj/8OkdO71mENFkZ1HghwlMtrsU5cRTlyXeY=; b=w7/Ma9e2mk8elAHKm9HZzrgVwj
+	QyZh7GBLYgZbPrkgCz8n6m4zW4ZGrE2b49n6GlkZ/W3EE+mAhU252WQ+EbsdeqY9IRizI1Tp/DAv6
+	uvWo+lgDSTQUSqcTSvqG3RaIBpHLG0l5rmSuaNTVTM2olOQi1fd7Kfa8196/KlRqgTitKY12pMPDy
+	uQspEGu4TDqlfqURhPHbwioucuWGOiXQSS+PtEVOMcoXlODdzxl0XK417YE2ZcNCZ/d8ChsyQ9gB5
+	d8awxUyADD+9bonDTOLhohZ3Z/WgcFhBkEWODR9n8700gyfBSY6xFanCT9d8gtZzcsxdHfwPJXCJH
+	I+ww4JGw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:51930)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sYLLx-0003MA-1C;
+	Mon, 29 Jul 2024 09:03:33 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sYLLy-00049D-Fy; Mon, 29 Jul 2024 09:03:34 +0100
+Date: Mon, 29 Jul 2024 09:03:34 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Youwan Wang <youwan@nfschina.com>
+Cc: andrew@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	hkallweit1@gmail.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com
+Subject: Re: [net-next,v2] net: phy: phy_device: fix PHY WOL enabled, PM
+ failed to suspend
+Message-ID: <ZqdM1rwbmIED/0WC@shell.armlinux.org.uk>
+References: <b61cae2b-6b94-465e-b4e4-6c220c6c66d9@lunn.ch>
+ <20240709113735.630583-1-youwan@nfschina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709113735.630583-1-youwan@nfschina.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-From: Zhang Jiao <zhangjiao2@cmss.chinamobile.com>
+On Tue, Jul 09, 2024 at 07:37:35PM +0800, Youwan Wang wrote:
+> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+> index 2ce74593d6e4..0564decf701f 100644
+> --- a/drivers/net/phy/phy_device.c
+> +++ b/drivers/net/phy/phy_device.c
+> @@ -270,6 +270,7 @@ static DEFINE_MUTEX(phy_fixup_lock);
+>  
+>  static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
+>  {
+> +	struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
+>  	struct device_driver *drv = phydev->mdio.dev.driver;
+>  	struct phy_driver *phydrv = to_phy_driver(drv);
+>  	struct net_device *netdev = phydev->attached_dev;
+> @@ -277,6 +278,15 @@ static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
+>  	if (!drv || !phydrv->suspend)
+>  		return false;
+>  
+> +	/* If the PHY on the mido bus is not attached but has WOL enabled
+> +	 * we cannot suspend the PHY.
+> +	 */
+> +	phy_ethtool_get_wol(phydev, &wol);
+> +	phydev->wol_enabled = !!(wol.wolopts);
+> +	if (!netdev && phydev->wol_enabled &&
+> +	    !(phydrv->flags & PHY_ALWAYS_CALL_SUSPEND))
+> +		return false;
+> +
 
-Add "#ifdef CONFIG_PROC_FS" to control misc proc create 
-and give some error checking.
+We now end up with two places that do this phy_ethtool_get_wol()
+dance. Rather than duplicating code, we should use a function to
+avoid the duplication:
 
-Signed-off-by: Zhang Jiao <zhangjiao2@cmss.chinamobile.com>
+8<===
+
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH net-next] net: phy: add phy_drv_wol_enabled()
+
+Add a function that phylib can inquire of the driver whether WoL has
+been enabled at the PHY.
+
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 ---
- drivers/char/misc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/phy/phy_device.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/char/misc.c b/drivers/char/misc.c
-index 541edc26ec89..0370d53f368a 100644
---- a/drivers/char/misc.c
-+++ b/drivers/char/misc.c
-@@ -286,9 +286,15 @@ EXPORT_SYMBOL(misc_deregister);
- static int __init misc_init(void)
- {
- 	int err;
-+#ifdef CONFIG_PROC_FS
- 	struct proc_dir_entry *ret;
- 
- 	ret = proc_create_seq("misc", 0, NULL, &misc_seq_ops);
-+	if (!ret) {
-+		pr_err("Cannot create /proc/misc\n");
-+		return -ENOMEM;
-+	}
-+#endif
- 	err = class_register(&misc_class);
- 	if (err)
- 		goto fail_remove;
-@@ -302,8 +308,10 @@ static int __init misc_init(void)
- 	pr_err("unable to get major %d for misc devices\n", MISC_MAJOR);
- 	class_unregister(&misc_class);
- fail_remove:
-+#ifdef CONFIG_PROC_FS
- 	if (ret)
- 		remove_proc_entry("misc", NULL);
-+#endif
- 	return err;
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 19f8ae113dd3..09f57181b8a6 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -1433,6 +1433,15 @@ static bool phy_drv_supports_irq(const struct phy_driver *phydrv)
+ 	return phydrv->config_intr && phydrv->handle_interrupt;
  }
- subsys_initcall(misc_init);
+ 
++static bool phy_drv_wol_enabled(struct phy_device *phydev)
++{
++	struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
++
++	phy_ethtool_get_wol(phydev, &wol);
++
++	return wol.wolopts != 0;
++}
++
+ /**
+  * phy_attach_direct - attach a network device to a given PHY device pointer
+  * @dev: network device to attach
+@@ -1975,7 +1984,6 @@ EXPORT_SYMBOL(phy_detach);
+ 
+ int phy_suspend(struct phy_device *phydev)
+ {
+-	struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
+ 	struct net_device *netdev = phydev->attached_dev;
+ 	const struct phy_driver *phydrv = phydev->drv;
+ 	int ret;
+@@ -1983,8 +1991,9 @@ int phy_suspend(struct phy_device *phydev)
+ 	if (phydev->suspended || !phydrv)
+ 		return 0;
+ 
+-	phy_ethtool_get_wol(phydev, &wol);
+-	phydev->wol_enabled = wol.wolopts || (netdev && netdev->wol_enabled);
++	phydev->wol_enabled = phy_drv_wol_enabled(phydev) ||
++			      (netdev && netdev->wol_enabled);
++
+ 	/* If the device has WOL enabled, we cannot suspend the PHY */
+ 	if (phydev->wol_enabled && !(phydrv->flags & PHY_ALWAYS_CALL_SUSPEND))
+ 		return -EBUSY;
 -- 
-2.33.0
+2.30.2
 
 
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
