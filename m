@@ -1,98 +1,120 @@
-Return-Path: <linux-kernel+bounces-268162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C867F942108
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:49:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32FB942109
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E6EB1F24626
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:49:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FBEA1F23C76
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB1918CBE2;
-	Tue, 30 Jul 2024 19:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D56618CC01;
+	Tue, 30 Jul 2024 19:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X64ADXox"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNTypCIY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845C4189904;
-	Tue, 30 Jul 2024 19:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBBF18CBE8;
+	Tue, 30 Jul 2024 19:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722368955; cv=none; b=cWkXzgTf6ni6eLLmSKexJtO9D0Wg836Rhm1SVNktW7GZVMOCa2XjB0Z9ziAXX/PhnYdvbAGxJ40MO31j9utA3yDaAvos1zh2ld5NEk5JpMObpwpNNqrY94qf4aF8XY4Am8kHK0xN2HoKuQsH2hpmO3l8m0hRAmCWYThIxVD+j/w=
+	t=1722368956; cv=none; b=tUzRzAtmso1Eyf+81574UzwVg2X95wACVtZ+K0n4/M9dyLvsDgALcd0XBIfJd7Appv7FxLY69+lrTz9+UhuBghJdJJarfoiFHr11rUAylXJtP8TyzBTmc6628Hm2IJxGvx0WkuI60IIip8HOrb9qtG4EJs7SQyz0eYjFuuJ45es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722368955; c=relaxed/simple;
-	bh=ZRU/ils+M3BtFnjH9dt3Gff4powKMpDinTqwXofED/o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MuTZAXZekdBKWzuHn+DxYJhia4jEryiknUw92XXm6TU/dJPczuRSj+wUzGG4nP8O1LHd2AhrZfsqtk1WAUHd20xB/BE/PKWJpd354+nyw8MH7BU+JB8G2hmJ/jzvjVL4eE8cDX7H6+CVUq9v+wsVs73v5PplMGmpaBHOhByv44M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X64ADXox; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56E8CC32782;
-	Tue, 30 Jul 2024 19:49:13 +0000 (UTC)
+	s=arc-20240116; t=1722368956; c=relaxed/simple;
+	bh=DNXKAdlGH90CNj2wbQ3t+yLzha/KVLlByir3qqXKas0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DuHbdPZuM5td6hxTipzbUPoz4i2AcedOJj2BWvLRgfJCwEQ/qrYh5gmonqBOR+tb2LzRCJZgAIFYI8e0KYwh8ATDA4RHQYUuqNGGjVBNBL2Y66wKlkT7QlG4CU6DPMlt7Xhc4Xs43nGAW0lYjF8OBvD1cai5paR+1DLWvX8I+HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNTypCIY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5272C4AF10;
+	Tue, 30 Jul 2024 19:49:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722368955;
-	bh=ZRU/ils+M3BtFnjH9dt3Gff4powKMpDinTqwXofED/o=;
-	h=From:To:Cc:Subject:Date:From;
-	b=X64ADXox43umdsDRtMUpRKW31HQ1ZHNTX4onNoU0QNchkN4AhaVjUWfA07xu2aLC4
-	 b9rEySAXMLu/tBW3zYfvpShp6p4Nx9QMdz6CcsoTWNZeNXIKVbExJ+nEdRyd/MAHTJ
-	 gtU2z5iBWHnU/F9XU3nKc78GBxyyDRRoOXgp57GwQsWnL0e+sQTT21mm5MetY0pk6D
-	 OonsdH0B0qzyonZ9PpZwRVp3ZPDELzoxXhOocWCk9VagG77Vy80usKCpGRVj/GjYA3
-	 dt8I7zbc30I/IOyQ/0nd3FPce4fuPKvnP7B1r70YdQWd9q70iG7AkequpgsUIMAJlx
-	 brMr/Et78jltg==
-From: Michael Walle <mwalle@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Michael Walle <mwalle@kernel.org>
-Subject: [PATCH] rtc: sun6i: disable automatic clock input switching
-Date: Tue, 30 Jul 2024 21:49:05 +0200
-Message-Id: <20240730194905.2587202-1-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=k20201202; t=1722368956;
+	bh=DNXKAdlGH90CNj2wbQ3t+yLzha/KVLlByir3qqXKas0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oNTypCIYpTdw+n/WyUUA8YY0oSVZkev1DteSYiM4mTn7PQBi/4g0xeMY/9pj5OanO
+	 bu7sX5RYFr6tr8+PPcsyb96kJ/h6IKYtRcE0wZ//OlcKpQE7rPGao+OU7bB6hiqBi1
+	 hyEvXXaB/arI1f5imud1DUjV5Z+pV19ktQdTOUF1eswtupoZo7v6lxYQg0Jr1NM5oS
+	 rITaXUI3I7KtGvxsmC/9Jb5Q4e8wsj0otWtKGZ9cQR79NBEKvQKjy1rvG34DY9nVf8
+	 3A5W4wBxPrtDdbOAqUUElCpZcp9zoQ9VEsJwIrrnMHLY7M5gH7cjiWHXnZHQDZ8VMU
+	 d+2GYKm5UCOxg==
+Date: Tue, 30 Jul 2024 16:49:12 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Steinar H. Gunderson" <sesse@google.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	irogers@google.com, Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH v9 1/3] perf report: Support LLVM for addr2line()
+Message-ID: <ZqlDuIj_nMVXhYou@x1>
+References: <20240719150051.520317-1-sesse@google.com>
+ <ZqlCIJ4khe2_xyp9@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqlCIJ4khe2_xyp9@x1>
 
-The V3(s) will detect a valid external low frequency clock and if it is
-not present will automatically switch to the internal one. This might
-hide bugs and (hardware) configuration errors. It's even worse because
-the internal RTC runs significantly slower (32.000Hz vs 32.768Hz).
-Fortunately for us, the V3(s) has an (undocumented) bypass of this
-switching and the driver already supports it by setting the
-.has_auto_swt flag.
+On Tue, Jul 30, 2024 at 04:42:28PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Fri, Jul 19, 2024 at 05:00:49PM +0200, Steinar H. Gunderson wrote:
+> > In addition to the existing support for libbfd and calling out to
+> > an external addr2line command, add support for using libllvm directly.
+> > This is both faster than libbfd, and can be enabled in distro builds
+> > (the LLVM license has an explicit provision for GPLv2 compatibility).
+> > Thus, it is set as the primary choice if available.
+> > 
+> > As an example, running perf report on a medium-size profile with
+> > DWARF-based backtraces took 58 seconds with LLVM, 78 seconds with
+> > libbfd, 153 seconds with external llvm-addr2line, and I got tired
+> > and aborted the test after waiting for 55 minutes with external
+> > bfd addr2line (which is the default for perf as compiled by distributions
+> > today). Evidently, for this case, the bfd addr2line process needs
+> > 18 seconds (on a 5.2 GHz Zen 3) to load the .debug ELF in question,
+> > hits the 1-second timeout and gets killed during initialization,
+> > getting restarted anew every time. Having an in-process addr2line
+> > makes this much more robust.
+> > 
+> > As future extensions, libllvm can be used in many other places where
+> > we currently use libbfd or other libraries:
+> > 
+> >  - Symbol enumeration (in particular, for PE binaries).
+> >  - Demangling (including non-Itanium demangling, e.g. Microsoft
+> >    or Rust).
+> >  - Disassembling (perf annotate).
+> > 
+> > However, these are much less pressing; most people don't profile
+> > PE binaries, and perf has non-bfd paths for ELF. The same with
+> > demangling; the default _cxa_demangle path works fine for most
+> > users, and while bfd objdump can be slow on large binaries,
+> > it is possible to use --objdump=llvm-objdump to get the speed benefits.
+> > (It appears LLVM-based demangling is very simple, should we want
+> > that.)
+> > 
+> > Tested with LLVM 14, 15, 16, 18 and 19. For some reason, LLVM 12 was not
+> > correctly detected using feature_check, and thus was not tested.
+> > 
+> > Signed-off-by: Steinar H. Gunderson <sesse@google.com>
+> > Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> I'm testing this again, I thought Ian or Namhyung had made comments on
+> previous versions of this patchset, no?
 
-Signed-off-by: Michael Walle <mwalle@kernel.org>
----
-This is not tagged as a Fixes commit, because it might break boards with
-an incorrect device tree. That is, if the device tree lists the external
-crystal but the board doesn't have it the RTC will stop running. I don't
-think this is likely though, because the user manual requires the
-external clock.
----
- drivers/rtc/rtc-sun6i.c | 1 +
- 1 file changed, 1 insertion(+)
+Unfortunately it clashed with recent patches in the capstone related
+codebase, IIRC Athira's for powerpc data-type profiling.
 
-diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
-index 8e0c66906103..e681c1745866 100644
---- a/drivers/rtc/rtc-sun6i.c
-+++ b/drivers/rtc/rtc-sun6i.c
-@@ -402,6 +402,7 @@ CLK_OF_DECLARE_DRIVER(sun8i_r40_rtc_clk, "allwinner,sun8i-r40-rtc",
- static const struct sun6i_rtc_clk_data sun8i_v3_rtc_data = {
- 	.rc_osc_rate = 32000,
- 	.has_out_clk = 1,
-+	.has_auto_swt = 1,
- };
- 
- static void __init sun8i_v3_rtc_clk_init(struct device_node *node)
--- 
-2.39.2
+Please take a look at what is in tmp.perf-tools-next at:
 
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git
+
+I'll continue processing other patched and eventually try to fix this if
+you're busy,
+
+Thanks again for your continued work on this!
+
+- Arnaldo
 
