@@ -1,166 +1,104 @@
-Return-Path: <linux-kernel+bounces-268003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4BBB941F40
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:11:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E66941F43
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98530284B70
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:11:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A48661F24885
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A5F18B46D;
-	Tue, 30 Jul 2024 18:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062A418A6D7;
+	Tue, 30 Jul 2024 18:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NexlgKzE"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GazYpZul"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28989189902
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 18:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3FD189902;
+	Tue, 30 Jul 2024 18:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722363053; cv=none; b=UY37+0sfBAW/S+HDlq4zHbhYUhguYt5nKLmQAeGyFfjGuVr674E3p3j+2TadyCBgeZOy/ka4B0GUwYdn6jr8StGLTgm1NfW4R1VQv9sGOQn5Wk0JKpmObR7UZNmGnxyxWTAqqB2QEJOtwgB/tRgpRnji8vnEkJNAeNpKj63sDgk=
+	t=1722363081; cv=none; b=oeGse4E98rIsXemt6XztURp8ROKgC7oQvZrBw7a/zqNmWh9O3yC8WKS0j7d+xH3l/toW9GhNmEerLQvB8IL5dBMj88sOQFaVLkxl5kLwEEdzQ4vthiHjize8RtSjzNMeNyJwAtRulm3wGMohWR1E6cApWY5lfKtQpC18G+xBbCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722363053; c=relaxed/simple;
-	bh=0lQBP4rNXainoXcVHBwi0kr7juVCuFLU2P22XfYpVXQ=;
+	s=arc-20240116; t=1722363081; c=relaxed/simple;
+	bh=A2wNrw8Y+kVgeuqUhxJzhLBK1f1VJnJJRpFt64QEsOQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M2wiQFRsyDCEAtqiy5pp4Q0mKkcSM6WxWTaUoAM60mY+vliSVf6PDLjPTTXx0ymxisb6p5Hlzuix4a8zxtaHjA+dGJU6p9TUuonq4CZNUikhFqUruL/hnOR76O2jqk/fCs0bbtO61AHcSMtOgnWzBJsT5eiBfY3iArmL3f45ZUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NexlgKzE; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4280bbdad3dso30350305e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:10:51 -0700 (PDT)
+	 To:Cc:Content-Type; b=Z2b9NmrYQPG1uFkVXWdKfE3M6B0zHnW9/dHeG51KmGHliGWfFGDWeKF71Z1JyYXIVNK3QEfPA46TiHV2HZwJiUlMYkb0xWYyhpLB84T/d0dpU8Knoj9DM6dUr6BMY5Em1VzRHX/CEE3Hx9x8TRzAyRo6+i/dDo3cbBF5UC3obrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GazYpZul; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-71871d5e087so3670179a12.1;
+        Tue, 30 Jul 2024 11:11:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722363050; x=1722967850; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722363079; x=1722967879; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bGhH0uDu93FhhsJCvkGO3qe3hVA/MLfA5YSAYjGjOxo=;
-        b=NexlgKzEeaB1GfnYP99TTke1OA2/qt89esPeNPwYqAOV8MaYFO7U9yaXrqRlbBRhJl
-         +ruaaVpwRWEZfJZwGYZ85sTaSHS8mQDkTmEKSqhFpAPFBs5ra5jqk2rOx2+4f2LfJ/du
-         8VQuBpysPpjJ1Ssw0SU3yeDw1kPqpaPWHYX4jJ2Nch1JbSjjpEzMnouk/uC69gT5M93P
-         I85CHMDWpllu98UWe4KLBxDeA6XBtsHvcOyh975AaWzmbVfwN174HeD3vfTDTpuy/0ab
-         cj7vvQOeazh7j771ckSDlyRCB3LvDsYpISSNiK6qiMu0y0lYJUobrkAt7Wrowda0fbOE
-         cceA==
+        bh=A2wNrw8Y+kVgeuqUhxJzhLBK1f1VJnJJRpFt64QEsOQ=;
+        b=GazYpZulkpdBvccNJhgnJ5wbLRePQtP1B9wqivzr/Hxj0GVgyuVZtHxKC610fIIeL9
+         +/2vO1yGoom8XL3xtUBibmoEqTWi7Z1GrxkWnOc1iDzZ9XEYFRrPmq7BJOd0OZePlCMm
+         t8cggCdk8oqFuoleQgH8fqbZoRA1043bir5prdMio6VYXh2YbEx07kZ/yrRB++SBRRxy
+         j8OsW0eZBhyLMlHyn7R+RiyhOKllbGpNwO5dUZQrJIV2N0nyIGc6NuZBzSUODKJlV3hO
+         +Lwof355pv8ppn+2S1tUpUw62suMqFKwEWAOgglQ4CRcaiikLlKCgOyxWqEmfRSRtrUN
+         VppQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722363050; x=1722967850;
+        d=1e100.net; s=20230601; t=1722363079; x=1722967879;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bGhH0uDu93FhhsJCvkGO3qe3hVA/MLfA5YSAYjGjOxo=;
-        b=sUCj5jvJlI4eUSQOUdmBPsDp/Y3OFbpFNGXoavAR14qOl2cw8Is3bz6mE6mke7Ds1T
-         GF0e7IMGbbxl6V3nWhIEao1ydZnS0uwbXBxjLjHDb7WMzulE3ktE+RFYv72X6v/s7p2i
-         KOV5m1qcJNugrCdytb0RMVTar67mzJQZrvIylQDbnS7VxTetZu+duXWAtBIZPEeBWLkf
-         Jgw3rZ4/IeL8T1HN4i3eyulMTERYOuexVzEwcGChedNsFI9q/WuNeEHX3W25+6d2hZgc
-         ui1zEdkd/3+eKrA/BqXPxE4Bppi1jmg4r/BfyFmDX2E1oCXcL1rwM9y65BxyHGNkiAuq
-         2o4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW7faSI0oBwcVUwc4c5SRZOb8TMQRsSnU/p7xUNTkc1Kk3Is+mwJlP3ZIJ9bEYHyn5TQzmKnVh2rNuSqUT+R1Pl2lrrgwDzIUwkSYbr
-X-Gm-Message-State: AOJu0Yzm7wQzliJu9Tdml+VJlvKNoygukfCMOoXVxC8wcBVYQ3cVcfbb
-	13YXgruhYzz/vCqznq0iZy+u5x93+4l7uCS8XtV8HxzcA59rsbPH3pkErMbEzxzYva8ZO45+P6F
-	Fk12XQI5RlAmfLTaXteCTfUjyRufz1IvzKiUt
-X-Google-Smtp-Source: AGHT+IG+L+Znba43C1ffV6KA4A7+WOi+BlM2lo3Auff1W58sTDTBioUK+SAO84Ba+RWhR3G1Sa+lkO/IbAs3/uCgDps=
-X-Received: by 2002:a5d:670f:0:b0:367:f104:d9e8 with SMTP id
- ffacd0b85a97d-36b5d08b9c4mr6609846f8f.47.1722363050078; Tue, 30 Jul 2024
- 11:10:50 -0700 (PDT)
+        bh=A2wNrw8Y+kVgeuqUhxJzhLBK1f1VJnJJRpFt64QEsOQ=;
+        b=ZZsV+GIjkaNS6bYYSaW/Kt/m/TO6Ic/t6dKz4fYajiSjEb9hsax0LJRsE+jMEvAih4
+         sWsIvf8tzEKywGSIQmdwxAZMmU7dFX5tqhTXJzEk6bF/TAAIVBIRYEIYBdhdAjM37Wwl
+         Q3qf8ZooO4QZp2zBQSLU6XKOVw/nKhj81bFSR8dnQNUlTuTWiNzLvxt/8Gff1ZsuLAD0
+         3dL1jpqCXp7+Rua+IqIRF3fe/K7JMf4IXBRH9MZNTOWPigEqlcUG86YrE9V/zxiWeEFx
+         pJP9qKz6r3jEefW/ypa0/o/URhhOVx34Mn/dnXzoWpCyAQ+hSqd13i9iYUsKNP1fQ5FV
+         30IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVq5k7EiMM0zOdZDdNoHAB3FJilDZUc2SkVaAZ3Di/Kxs6CHUTDCBHVjDObbwmk7h+w3fem4SDNumHXZuSYgP6NTgQGmj11Cf7EZ2xI6mM=
+X-Gm-Message-State: AOJu0Yx3npSAGIYfKEyxnf65I0Fd8M2zUHQzPUbvQktfkHWa/xxkxmef
+	JwhG7dl2t85Bmu3CL1pI/3nzsCRb8mbd0n0EyKBcZ10x2ZPUmoGRW2aD5rMBzqDBjTxyUHFZfdO
+	ARUWQf5TNlemWkX0yNFV4DSnzPdq/8FRf
+X-Google-Smtp-Source: AGHT+IFwd250tTkl0bTPif3xPmWM66kiLTPARQdwt5NnueFukV66C5KTa0simy3aXenh0GwQBXTrHqiAPBxugA9JXb4=
+X-Received: by 2002:a17:90b:388a:b0:2cd:ba3e:38a5 with SMTP id
+ 98e67ed59e1d1-2cf7e1facafmr12575997a91.21.1722363079377; Tue, 30 Jul 2024
+ 11:11:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709090153.GF27299@noisy.programming.kicks-ass.net>
- <91d37ad3-137b-4feb-8154-4deaa4b11dc3@paulmck-laptop> <20240709142943.GL27299@noisy.programming.kicks-ass.net>
- <Zo1hBFS7c_J-Yx-7@casper.infradead.org> <20240710091631.GT27299@noisy.programming.kicks-ass.net>
- <20240710094013.GF28838@noisy.programming.kicks-ass.net> <CAJuCfpF3eSwW_Z48e0bykCh=8eohAuACxjXBbUV_sjrVwezxdw@mail.gmail.com>
- <CAEf4BzZPGG9_P9EWosREOw8owT6+qawmzYr0EJhOZn8khNn9NQ@mail.gmail.com>
- <CAJuCfpELNoDrVyyNV+fuB7ju77pqyj0rD0gOkLVX+RHKTxXGCA@mail.gmail.com>
- <ZqRtcZHWFfUf6dfi@casper.infradead.org> <20240730131058.GN33588@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240730131058.GN33588@noisy.programming.kicks-ass.net>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 30 Jul 2024 11:10:33 -0700
-Message-ID: <CAJuCfpFUQFfgx0BWdkNTAiOhBpqmd02zarC0y38gyB5OPc0wRA@mail.gmail.com>
-Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org, 
-	andrii@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org, 
-	oleg@redhat.com, jolsa@kernel.org, clm@meta.com, bpf <bpf@vger.kernel.org>
+References: <2dbd1491-149d-443c-9802-75786a6a3b73@gmail.com>
+ <fc3e956c-4f0d-4705-8429-2b7c50e335ce@gmail.com> <CANiq72=kAdq4TsCPvMWBwdzngeOst8g2cGzkk1DxM2yW=V4emQ@mail.gmail.com>
+ <d85d50d4-3f52-4440-a57a-260d7943179e@gmail.com>
+In-Reply-To: <d85d50d4-3f52-4440-a57a-260d7943179e@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 30 Jul 2024 20:11:07 +0200
+Message-ID: <CANiq72kGx=v3Q4Jpu204ZDQ4_RFuWL-myn_FvC7uAYYMf5uJ6A@mail.gmail.com>
+Subject: Re: [PATCH v2] arm: rust: Enable Rust support for ARMv7
+To: Christian Schrefl <chrisi.schrefl@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Jamie Cunliffe <Jamie.Cunliffe@arm.com>, Sven Van Asbroeck <thesven73@gmail.com>, 
+	Geert Stappers <stappers@stappers.nl>, Andrew Lunn <andrew@lunn.ch>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30, 2024 at 6:11=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
+On Tue, Jul 30, 2024 at 6:35=E2=80=AFPM Christian Schrefl
+<chrisi.schrefl@gmail.com> wrote:
 >
-> On Sat, Jul 27, 2024 at 04:45:53AM +0100, Matthew Wilcox wrote:
->
-> > Hum.  What if we added SLAB_TYPESAFE_BY_RCU to files_cachep?  That way
-> > we could do:
-> >
-> >       inode =3D NULL;
-> >       rcu_read_lock();
-> >       vma =3D find_vma(mm, address);
-> >       if (!vma)
-> >               goto unlock;
-> >       file =3D READ_ONCE(vma->vm_file);
-> >       if (!file)
-> >               goto unlock;
-> >       inode =3D file->f_inode;
-> >       if (file !=3D READ_ONCE(vma->vm_file))
-> >               inode =3D NULL;
->
-> remove_vma() does not clear vm_file, nor do I think we ever re-assign
-> this field after it is set on creation.
+> Did you apply it on 6.11-rc1?
 
-Quite correct and even if we clear vm_file in remove_vma() and/or
-reset it on creation I don't think that would be enough. IIUC the
-warning about SLAB_TYPESAFE_BY_RCU here:
-https://elixir.bootlin.com/linux/v6.10.2/source/include/linux/slab.h#L98
-means that the vma object can be reused in the same RCU grace period.
+Yeah.
 
->
-> That is, I'm struggling to see what this would do. AFAICT this can still
-> happen:
->
->         rcu_read_lock();
->         vma =3D find_vma();
->                                         remove_vma()
->                                           fput(vma->vm_file);
->                                                                 dup_fd)
->                                                                   newf =
-=3D kmem_cache_alloc(...)
->                                                                   newf->f=
-_inode =3D blah
->
+> I think that I ran clippy, maybe that changed between 6.10 and 6.11.
 
-Imagine that the vma got freed and reused at this point. Then
-vma->vm_file might be pointing to a valid but a completely different
-file.
+It also triggers on top of v6.10-rc1 from a quick test (we had also
+this lint or similar even before we were in mainline, I think), but no
+worries, it is not a big deal :)
 
->         file =3D READ_ONCE(vma->vm_file);
->         inode =3D file->f_inode; // blah
->         if (file !=3D READ_ONCE(vma->vm_file)) // still match
-
-I think we should also check that the VMA represents the same area
-after we obtained the inode.
-
->
->
-> > unlock:
-> >       rcu_read_unlock();
-> >
-> >       if (inode)
-> >               return inode;
-> >       mmap_read_lock();
-> >       vma =3D find_vma(mm, address);
-> >       ...
-> >
-> > I think this would be safe because 'vma' will not be reused while we
-> > hold the read lock, and while 'file' might be reused, whatever f_inode
-> > points to won't be used if vm_file is no longer what it once was.
->
->
-> Also, we need vaddr_to_offset() which needs additional serialization
-> against vma_lock.
+Cheers,
+Miguel
 
