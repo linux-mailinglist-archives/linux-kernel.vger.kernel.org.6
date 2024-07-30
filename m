@@ -1,80 +1,44 @@
-Return-Path: <linux-kernel+bounces-267083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C828940C27
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:47:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A525D940C2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD801C2426F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:47:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2704D1F28B4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31C619409A;
-	Tue, 30 Jul 2024 08:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GLiM+lz3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3446192B9B;
+	Tue, 30 Jul 2024 08:48:10 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17189193092
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350C515622E;
+	Tue, 30 Jul 2024 08:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722329245; cv=none; b=FJuUxQhO2CNRuM9stZccuXfnZh9EF61g/I/v3kUwBJb+pStFuvQJq9NJ35oFDwit5i9uYqnq9M/3vA2ftOoJZfhz7hJqBScyrzNXz048rKUlKWZrfwfTGZ0+IBb/nYf54fGjM3q44lcDmiekC7rzFO8sYuh0EUtxhEnMKCQ2vVA=
+	t=1722329290; cv=none; b=C8WATWK2dPaGCQXXDLfsVc0YXUAbdGnClDJp1D6/ph2YOj2V3S8XNREzAMDPF+MRU9WcIOgYsDoJiwCBuOTWbgOjN/kga9wHpKFZg3mBUOn/SVTVx3nFnI0L9fIHQoWBSmSWoqR3aES2gcqinq34ksXU2rJ9aIANDfCckxsZK0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722329245; c=relaxed/simple;
-	bh=S5DAsQ9ph9ormZyq+s22JdGzO1HyrgtPXPLHlYNPLXU=;
+	s=arc-20240116; t=1722329290; c=relaxed/simple;
+	bh=lq1KcLg7657jrT1q/4bPk4dtfAmTaV99K1JJQT+YGd8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NGL6Fju2bzUMQ3N3hNFAXIoMnT0uEW/+DdlZ6qL5Xs3O1Zx7jHKQ0ZqKSaprLAu8QvU2nyoSK4JRMuxgb6dW12jBEkh2s8/AXss9LDpmZMHLOqYsmXJa6JqDHzN1MIZzYKm5qZyWIrccjHZgWC4FkK0RTM8tzmpn0lzf8FZyM8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GLiM+lz3; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722329242;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=BoagRk+gSe5xue+rd2621fYhA6FVlq9e/Frmy4c0XII=;
-	b=GLiM+lz3WVc6tteww53HqIC+adzuodHp3gqz9/GAjOFoBR02WgzBZZsCMmYCVoReoJh2d5
-	zV1AN2AY4Tg+CsazDYKUV925ooHXjWdeOtXY2v1F7BTp3mkUeg1+ftwVHgFEMcbqb1pnFk
-	zBAFkySaYkXvWjEQf/Tn7fEKfymsAiw=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-635-RH2XNbPyMnuGvg_YswdLjg-1; Tue, 30 Jul 2024 04:47:21 -0400
-X-MC-Unique: RH2XNbPyMnuGvg_YswdLjg-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2ef1ba2a5e6so45320061fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 01:47:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722329240; x=1722934040;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BoagRk+gSe5xue+rd2621fYhA6FVlq9e/Frmy4c0XII=;
-        b=eOd1IAx9fTxcCmSPAsGcEufqiOVysxCLIgmBXxqQcuHHyALQcWPBjlZAJRs+1xILRt
-         l++yNe1Uectc3gcYf10FYD/NpJ0a7LAulkLlJIDUWKDLYT5G9F4Z27hzMZerOS4o8nWQ
-         F8uON79Q5Mq7gGBLFP4S7ghlOtn5UgdpppmmO4U7r9HTrTqiB3B+tuJbuWLm2Z8sVtz1
-         XhaVMz4Yg+pF9tDNsbtcq5HtNeNu+X/4sxrZPnGXroQ/I5ngQkn+/plyvcLu9mryl+94
-         d7EIe4CWsCRvdrPZULqeY5HeMPSGcheFVFbckBtI1eW9qqRTiegmNhNt8W/qZoPvL5WO
-         38VA==
-X-Forwarded-Encrypted: i=1; AJvYcCWr8tbdu5Dq9eswa0jeC7E/nAs2C1WNZreS9aQZ2p/YjeG7vtxEhn0Knsw4TXkIkGGnaNexNLjUIUJy/VpA3D+ii9Lsdn1s61kueKmS
-X-Gm-Message-State: AOJu0YzVSvzT+1dpZypqv9MUDspK/CLiHjxKz6vMI7tys6KB1CHdo1B9
-	C4+dZ6u8ulgp3uI1Y3kqJXiwUUkCv72aCqsh4eFmBCBW3VQJezGDzqaQpaTCnRIUT8d8qRqlnI+
-	YFDN0x2qAE41TIM0G1phjF1yBv51fzyTHPaR0WySC84/Phpdwo/2VQ7fD+g1rig==
-X-Received: by 2002:a2e:a4ac:0:b0:2ef:392e:e4f with SMTP id 38308e7fff4ca-2f12ee2f0e1mr52206321fa.47.1722329239643;
-        Tue, 30 Jul 2024 01:47:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHp78HIdgJdyE0H3uqbbJxnRLg6C1y31kOyGCMPQ69rbANTg7A1Z8vi9tPcoxyWbTF4SzUYjQ==
-X-Received: by 2002:a2e:a4ac:0:b0:2ef:392e:e4f with SMTP id 38308e7fff4ca-2f12ee2f0e1mr52206131fa.47.1722329239002;
-        Tue, 30 Jul 2024 01:47:19 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c706:4e00:31ad:5274:e21c:b59? (p200300cbc7064e0031ad5274e21c0b59.dip0.t-ipconnect.de. [2003:cb:c706:4e00:31ad:5274:e21c:b59])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42808f684d0sm183470695e9.6.2024.07.30.01.47.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 01:47:18 -0700 (PDT)
-Message-ID: <f61235d6-5d33-4853-a498-72db2fb13b10@redhat.com>
-Date: Tue, 30 Jul 2024 10:47:17 +0200
+	 In-Reply-To:Content-Type; b=HtrtZXDr8BBz7TbudG4za0znys66gBsyC7GbykgDz7/ZUc5TUEhFBJKvgrAZRRD63f1kNf87AVNWq/00HLnFkRqr5Q20xodJwmSBv7mWgQeB6VJ1IgZlGTizx6Ry9uN/6SOnXWzvqz/zMBVpPQr9u8JiVVWKHu1Hc4Or/n7h1CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WY84g3mxjz4f3jsD;
+	Tue, 30 Jul 2024 16:47:47 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 5D91C1A162F;
+	Tue, 30 Jul 2024 16:48:00 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP4 (Coremail) with SMTP id gCh0CgBnj4W8qKhmpa8TAQ--.10295S3;
+	Tue, 30 Jul 2024 16:48:00 +0800 (CST)
+Message-ID: <4147a862-df2c-457c-8ebd-4c04f121b93e@huaweicloud.com>
+Date: Tue, 30 Jul 2024 16:47:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,132 +46,208 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/4] mm: Introduce per-thpsize swapin control policy
-To: Ryan Roberts <ryan.roberts@arm.com>, Matthew Wilcox
- <willy@infradead.org>, Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, ying.huang@intel.com,
- baolin.wang@linux.alibaba.com, chrisl@kernel.org, hannes@cmpxchg.org,
- hughd@google.com, kaleshsingh@google.com, kasong@tencent.com,
- linux-kernel@vger.kernel.org, mhocko@suse.com, minchan@kernel.org,
- nphamcs@gmail.com, senozhatsky@chromium.org, shakeel.butt@linux.dev,
- shy828301@gmail.com, surenb@google.com, v-songbaohua@oppo.com,
- xiang@kernel.org, yosryahmed@google.com
-References: <20240726094618.401593-1-21cnbao@gmail.com>
- <20240726094618.401593-5-21cnbao@gmail.com>
- <ZqcR_oZmVpi2TrHO@casper.infradead.org>
- <f0c7f061-6284-4fe5-8cbf-93281070895b@arm.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 03/20] ext4: fix double brelse() the buffer of the extents
+ path
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ stable@kernel.org, Baokun Li <libaokun@huaweicloud.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-4-libaokun@huaweicloud.com>
+ <ZqOMQ6cIHd0hZqhY@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <f0c7f061-6284-4fe5-8cbf-93281070895b@arm.com>
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <ZqOMQ6cIHd0hZqhY@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBnj4W8qKhmpa8TAQ--.10295S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3WF1ruw15JrW8Ww47Kw4fuFg_yoWxJrWkpr
+	sakFyxGryDt3y8KrWUJr4UJry0vw45Gw47JrWrG3WjyFyjyr4YqFyIg3W09FyUWrW8uF1Y
+	qrW8try5uF1UGa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAABWaoo-wCIwAAs0
 
-On 30.07.24 10:36, Ryan Roberts wrote:
-> On 29/07/2024 04:52, Matthew Wilcox wrote:
->> On Fri, Jul 26, 2024 at 09:46:18PM +1200, Barry Song wrote:
->>> A user space interface can be implemented to select different swap-in
->>> order policies, similar to the mTHP allocation order policy. We need
->>> a distinct policy because the performance characteristics of memory
->>> allocation differ significantly from those of swap-in. For example,
->>> SSD read speeds can be much slower than memory allocation. With
->>> policy selection, I believe we can implement mTHP swap-in for
->>> non-SWAP_SYNCHRONOUS scenarios as well. However, users need to understand
->>> the implications of their choices. I think that it's better to start
->>> with at least always never. I believe that we will add auto in the
->>> future to tune automatically, which can be used as default finally.
+On 2024/7/26 19:45, Ojaswin Mujoo wrote:
+> On Wed, Jul 10, 2024 at 12:06:37PM +0800, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
 >>
->> I strongly disagree.  Use the same sysctl as the other anonymous memory
->> allocations.
-> 
-> I vaguely recall arguing in the past that just because the user has requested 2M
-> THP that doesn't mean its the right thing to do for performance to swap-in the
-> whole 2M in one go. That's potentially a pretty huge latency, depending on where
-> the backend is, and it could be a waste of IO if the application never touches
-> most of the 2M. Although the fact that the application hinted for a 2M THP in
-> the first place hopefully means that they are storing objects that need to be
-> accessed at similar times. Today it will be swapped in page-by-page then
-> eventually collapsed by khugepaged.
-> 
-> But I think those arguments become weaker as the THP size gets smaller. 16K/64K
-> swap-in will likely yield significant performance improvements, and I think
-> Barry has numbers for this?
-> 
-> So I guess we have a few options:
-> 
->   - Just use the same sysfs interface as for anon allocation, And see if anyone
-> reports performance regressions. Investigate one of the options below if an
-> issue is raised. That's the simplest and cleanest approach, I think.
-> 
->   - New sysfs interface as Barry has implemented; nobody really wants more
-> controls if it can be helped.
-> 
->   - Hardcode a size limit (e.g. 64K); I've tried this in a few different contexts
-> and never got any traction.
-> 
->   - Secret option 4: Can we allocate a full-size folio but only choose to swap-in
-> to it bit-by-bit? You would need a way to mark which pages of the folio are
-> valid (e.g. per-page flag) but guess that's a non-starter given the strategy to
-> remove per-page flags?
+>> In ext4_ext_try_to_merge_up(), set path[1].p_bh to NULL after it has been
+>> released, otherwise it may be released twice.
+>>
+>> An example of what triggers this is as follows:
+>>
+>>    split2    map    split1
+>> |--------|-------|--------|
+>>
+>> ext4_ext_map_blocks
+>>   ext4_ext_handle_unwritten_extents
+>>    ext4_split_convert_extents
+>>     // path->p_depth == 0
+>>     ext4_split_extent
+>>       // 1. do split1
+>>       ext4_split_extent_at
+>>         ext4_ext_insert_extent
+>>           ext4_ext_create_new_leaf
+>>             ext4_ext_grow_indepth
+>>               le16_add_cpu(&neh->eh_depth, 1)
+>>             ext4_find_extent
+>>               path->p_depth = 1
+>>           ext4_ext_try_to_merge
+>>             ext4_ext_try_to_merge_up
+>>               path->p_depth = 0
+>>               brelse(path[1].p_bh)  ---> not set to NULL here
+>>       // 2. update path
+>>       ext4_find_extent
+>>       // 3. do split2
+>>       ext4_split_extent_at
+>>         ext4_ext_insert_extent
+>>           ext4_ext_create_new_leaf
+>>             ext4_ext_grow_indepth
+>>               le16_add_cpu(&neh->eh_depth, 1)
+>>             ext4_find_extent
+>>               path[0].p_bh = NULL;
+>>               path->p_depth = 1
+>>               read_extent_tree_block  ---> return err
+>>               // path[1].p_bh is still the old value
+>>   ext4_free_ext_path
+>>    ext4_ext_drop_refs
+>>     // path->p_depth == 1
+>>     brelse(path[1].p_bh)  ---> brelse a buffer twice
+> Hi Baokun,
+>
+> If i'm not wrong, in this trace, we'll enter ext4_ext_insert_extent() with
+> gb_flags having EXT4_GET_BLOCKS_PRE_IO so we won't actually go for a
+> merge_up.
+>
+> That being said, there seems to be a few places where we follow the
+> split-insert pattern and it might be possible that one of those call
+> sites might not be passing EXT4_GET_BLOCKS_PRE_IO and we'll the double
+> free issue you mentioned. I'll check and update if I see anything.
+Hi Ojaswin,
 
-Maybe we could allocate for folios in the swapcache a bitmap to store 
-that information (folio->private).
+You're right. I am very sorry for the confusion.
 
-But I am not convinced that is the right thing to do.
+The trace here is wrong, this patch should actually be placed after the two
+UAF patches. Here ext4_ext_try_to_merge() is called when trying zeroout in
+ext4_split_extent_at(). It is called when trying zeroout with or without
+EXT4_GET_BLOCKS_PRE_IO.The correct trace is as follows:
 
-If we know some basic properties of the backend, can't we automatically 
-make a pretty good decision regarding the folio size to use? E.g., slow 
-disk, avoid 2M ...
+   split2    map    split1
+|--------|-------|--------|
 
-Avoiding sysctls if possible here would really be preferable...
+ext4_ext_map_blocks
+  ext4_ext_handle_unwritten_extents
+   ext4_split_convert_extents
+    // path->p_depth == 0
+    ext4_split_extent
+      // 1. do split1
+      ext4_split_extent_at
+        |ext4_ext_insert_extent
+        |  ext4_ext_create_new_leaf
+        |    ext4_ext_grow_indepth
+        |      le16_add_cpu(&neh->eh_depth, 1)
+        |    ext4_find_extent
+        |      // return -ENOMEM
+        |// get error and try zeroout
+        |path = ext4_find_extent
+        |  path->p_depth = 1
+        |ext4_ext_try_to_merge
+        |  ext4_ext_try_to_merge_up
+        |    path->p_depth = 0
+        |    brelse(path[1].p_bh)  ---> not set to NULL here
+        |// zeroout success
+      // 2. update path
+      ext4_find_extent
+      // 3. do split2
+      ext4_split_extent_at
+        ext4_ext_insert_extent
+          ext4_ext_create_new_leaf
+            ext4_ext_grow_indepth
+              le16_add_cpu(&neh->eh_depth, 1)
+            ext4_find_extent
+              path[0].p_bh = NULL;
+              path->p_depth = 1
+              read_extent_tree_block  ---> return err
+              // path[1].p_bh is still the old value
+  ext4_free_ext_path
+   ext4_ext_drop_refs
+    // path->p_depth == 1
+    brelse(path[1].p_bh)  ---> brelse a buffer twice
 
+I'll adjust the order of the patches and correct the trace in the next 
+version.
+> On a separate note, isn't it a bit weird that we grow the tree indepth
+> (which includes allocation, marking buffer dirty etc) only to later
+> merge it up again and throwing all the changes we did while growing the
+> tree. Surely we could optimize this particular case somehow right?
+Sorry that my trace misled you. It seems reasonable to try to merge extent
+in error handling.
+>> Finally got the following WARRNING when removing the buffer from lru:
+>>
+>> ============================================
+>> VFS: brelse: Trying to free free buffer
+>> WARNING: CPU: 2 PID: 72 at fs/buffer.c:1241 __brelse+0x58/0x90
+>> CPU: 2 PID: 72 Comm: kworker/u19:1 Not tainted 6.9.0-dirty #716
+>> RIP: 0010:__brelse+0x58/0x90
+>> Call Trace:
+>>   <TASK>
+>>   __find_get_block+0x6e7/0x810
+>>   bdev_getblk+0x2b/0x480
+>>   __ext4_get_inode_loc+0x48a/0x1240
+>>   ext4_get_inode_loc+0xb2/0x150
+>>   ext4_reserve_inode_write+0xb7/0x230
+>>   __ext4_mark_inode_dirty+0x144/0x6a0
+>>   ext4_ext_insert_extent+0x9c8/0x3230
+>>   ext4_ext_map_blocks+0xf45/0x2dc0
+>>   ext4_map_blocks+0x724/0x1700
+>>   ext4_do_writepages+0x12d6/0x2a70
+>> [...]
+>> ============================================
+>>
+>> Fixes: ecb94f5fdf4b ("ext4: collapse a single extent tree block into the inode if possible")
+>> Cc: stable@kernel.org
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> ---
+>>   fs/ext4/extents.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+>> index 4d589d34b30e..657baf3991c1 100644
+>> --- a/fs/ext4/extents.c
+>> +++ b/fs/ext4/extents.c
+>> @@ -1888,6 +1888,7 @@ static void ext4_ext_try_to_merge_up(handle_t *handle,
+>>   	path[0].p_hdr->eh_max = cpu_to_le16(max_root);
+>>   
+>>   	brelse(path[1].p_bh);
+>> +	path[1].p_bh = NULL;
+> Anyways, I agree that adding this here is the right thing to do:
+>
+> Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+>
+> Thanks,
+> Ojaswin
+Thanks for the review!
+>>   	ext4_free_blocks(handle, inode, NULL, blk, 1,
+>>   			 EXT4_FREE_BLOCKS_METADATA | EXT4_FREE_BLOCKS_FORGET);
+>>   }
+>> -- 
+>> 2.39.2
+>>
 -- 
-Cheers,
-
-David / dhildenb
+With Best Regards,
+Baokun Li
 
 
