@@ -1,118 +1,126 @@
-Return-Path: <linux-kernel+bounces-267188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C97940E20
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:44:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30343940E23
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BF031F2452B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:44:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54F6D1C24779
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0B0195980;
-	Tue, 30 Jul 2024 09:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82656195F28;
+	Tue, 30 Jul 2024 09:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSwSII30"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DowYfad9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E265118EFE0;
-	Tue, 30 Jul 2024 09:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37A1195B33;
+	Tue, 30 Jul 2024 09:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722332636; cv=none; b=ZJkEU6CPuJ2dHGZtnfikfgbinigpl8nHNo6zYOCupbBSRaFRgO5LeHFzZZwk1u5aVQsRkYTEYlkeJg0zmYF8r0A3EH6t2f/8BauMnH6eXpX0hAivETzG7/2mJMrhiFt4xBoaHX8chEvaR+dTGoE9So8Tnc+BNfcXy+XzSkBhXmw=
+	t=1722332640; cv=none; b=O0wIbPRunYOs6hzuOBvTiy8jBFFDQtjrWBShg1as8cVGoyVdhRCBtsO73w9LgBXNfrlgaGo5ETK0tVUMGiJZozZ4F34e9SUN2ZFNlEskHWZBcAh4PiUvtgJr7IFNPIumTKdNHCjhiZrh04vgCv6EHIwK+kB89gJCOkqR9u1Q3ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722332636; c=relaxed/simple;
-	bh=A80x/1Ink67gXVDYHGhR3sHS5VmUIEr38y+FolF9DsY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Yi0qj00SQJHxMqkwvyjnWpeb01D31qVdAMyrVXa9wvHEA936BT5gk2m51Anwx+fTQnj5z5IqEORMHQhlkvB1BaKh63E3pzmwA5sZsX6rcq/YzQps4WWvH3+V96fhbdTSpmlBrzHD/It79m6QSaFtoNieuRV5Y680bhViOkx51no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MSwSII30; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42803bbf842so32122895e9.1;
-        Tue, 30 Jul 2024 02:43:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722332633; x=1722937433; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rif0ScxfI9sioiI9vQsnAaTOQ7QRRDfLNRlXIX8/URA=;
-        b=MSwSII30ATwK8xRLpcS/d/CHRBays6ajEhdiCJ09zC/l7VWGZNfCq3a7V4asf/c7ZW
-         qceOiOs2pBFe9Du9juet3iP3pKCtbBREoEbRAKIb+tdR9ToGoVL7duVHMeVBRDPxaQY9
-         cnv2jQI6U+awZeMuC2m/bjgtWXAJEj3JJbc65MSG9FI5fFcIqlfO9cBTGEiiYitHiZpH
-         g+dAYacgIlmexizk1aSWHNoUHTLKw1csVffxY2Ze9xOSqZhNavqPpbBJdQFgxLdeTcbp
-         AVYjDwvxWnItyJhD/YIjOStNb+5jkpJF45tfN89B9T3assm24KZcFkHFa4h4gIBh+HTX
-         weuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722332633; x=1722937433;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rif0ScxfI9sioiI9vQsnAaTOQ7QRRDfLNRlXIX8/URA=;
-        b=NoCDv7rX5FCiu53zH8PxjnVUPqfcHcgBLPOT9evWHgWYUTnfuihgkiTUS+J+AJ+IXq
-         nsPNffLqCW2cbH1x1Z3OpeluJFLavwexXb9PuGTEVuL+QKtVMdeV8kvrQH/1Bx6to9fd
-         RvYzPr9L8nDy3TlSG2do9mOkYJE1JkYK3E3a01ncB2s7T8y85b+Gr1yjHqArBIEvkxIu
-         vtTzUGAVbhDuoNfSUd4Ph22WnXjVPTKNEhm5EdQ0qE6soLMkLMPxFMBWufvjRBrjb9Gc
-         sSSZhNB7WL66crHDD2tFOxkHpAp+kahrcnEDNz37HinXiR+thaWFHKAVfAekLL099jW4
-         jvtw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWJTuG5AmXTls41eUyzTcSYJT83eZUJIJzsmcb8SN+ToGmt3z1MkOggm+fmrGseIEmjdW/VhhNIMqkzfzL1eCwarZYAE2TTy55q1mJ
-X-Gm-Message-State: AOJu0Yw0Ord5iiYmw1Keax3ioRf8HWp2r5BM4MjzhopwjC6YjQ2dC1Ws
-	jzjO0vQ4EtQycv8JecS2A9RHn7JnUDZk5ZCLQs6ZaqwoTEE+OkqC4SvJBszu
-X-Google-Smtp-Source: AGHT+IGOIgO15lMgF8zOuvqsyofiyO2xLW7TS7Y645+UHjFfUedcjXtR8fPTjl6qNS8G/P79ptqWuw==
-X-Received: by 2002:a05:600c:3c9d:b0:426:6ee7:d594 with SMTP id 5b1f17b1804b1-42811d77889mr82727835e9.7.1722332632929;
-        Tue, 30 Jul 2024 02:43:52 -0700 (PDT)
-Received: from localhost (host-82-58-19-206.retail.telecomitalia.it. [82.58.19.206])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282113ddbcsm35992715e9.19.2024.07.30.02.43.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 02:43:52 -0700 (PDT)
-From: Matteo Martelli <matteomartelli3@gmail.com>
-Date: Tue, 30 Jul 2024 11:43:49 +0200
-Subject: [PATCH] iio: remove unneeded assignment in __iio_format_value
+	s=arc-20240116; t=1722332640; c=relaxed/simple;
+	bh=n+bDskUWnn1bpt3i1mkDbx3XQvcnjEMr1Kdl+ZZWL1E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QX3fufNFhPkVXCiw6vRFf7Bo8iaWhPWskYF1V0Z0qMwZOKBHR8wsr8L0EEE2glUOUwz/B2cVR1YZ9X/DubcPcD0lCo9rWEHjwZ65uW1l2tBeevvNsRTV2LvdFYRnP02cbc2Q/9Ddiqb1g0o59awFPzhi83e4w//he5MWLX9c4uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DowYfad9; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722332639; x=1753868639;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=n+bDskUWnn1bpt3i1mkDbx3XQvcnjEMr1Kdl+ZZWL1E=;
+  b=DowYfad9xMZ7nNn6MrC18K1qJAvGCQwuZcGEbtxqEtUJq3eKOAf89ehu
+   Wrq6q8D0DhwMUKxk+1t007nWwSvgYVVMS1xy2s9SJYrxLs+7+l3xchsMA
+   LcPBkKin2SNt99JJ05sCTLRElrd0MYSDcDCPdkamZjMObqz0JlePa8zj8
+   iaDnOTgi4AxBklEjtj9n9SEKLgvMkE7RuV0HOsPy9LhHbcfCMO72y5LtV
+   LWoAkzU4Eg4ROMVHHHaW+4mFfB7qgQeetDB5qdOtfL6iP6Z21A0ahqr4u
+   J6SZJAyS8zL5zi/4DGmZpYgxlt4bpYuhXTgAAgvmFnu776K+63IAxpzOC
+   g==;
+X-CSE-ConnectionGUID: cT2PX+ZcQuK7/JE2bI/gpw==
+X-CSE-MsgGUID: wguzLZpJTQ6L83GENO+ntw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="31545732"
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="31545732"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 02:43:58 -0700
+X-CSE-ConnectionGUID: pew9M1btT9Ce452/apMdbw==
+X-CSE-MsgGUID: ShtEv/XbR2+cJhrDgLtQlw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="54191390"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO [10.245.246.40]) ([10.245.246.40])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 02:43:55 -0700
+Message-ID: <d3d4e197-285a-49d9-8c1b-f718cd1f30d7@linux.intel.com>
+Date: Tue, 30 Jul 2024 11:43:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soundwire: stream: fix programming slave ports for
+ non-continous port maps
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Vinod Koul <vkoul@kernel.org>, Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Sanyog Kale <sanyog.r.kale@intel.com>, Shreyas NC <shreyas.nc@intel.com>,
+ alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20240729140157.326450-1-krzysztof.kozlowski@linaro.org>
+ <095d7119-8221-450a-9616-2df6a0df4c77@linux.intel.com>
+ <22b20ad7-8a25-4cb2-a24e-d6841b219977@linaro.org>
+ <dc66cd0d-6807-4613-89a8-296ce5dd2daf@linaro.org>
+ <62280458-3e74-43b0-b9a1-84df09abd30e@linux.intel.com>
+ <7171817f-e8c6-4828-8423-0929644ff2df@linaro.org>
+ <048122b2-f4cc-4cfa-a766-6fcfb05f840a@linux.intel.com>
+ <9b916fb9-84ac-4574-8f3d-aad2f539fcd0@linaro.org>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <9b916fb9-84ac-4574-8f3d-aad2f539fcd0@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240730-iio-clean-fmt-value-v1-1-3e1c3deafc33@gmail.com>
-X-B4-Tracking: v=1; b=H4sIANS1qGYC/x3MQQqAIBBA0avErBswM6KuEi0GG2ugLLQkiO6et
- HyL/x+IHIQj9MUDgZNE2X1GVRZgF/Izo0zZoJU2qq0ViuxoVyaPbjsx0XoxdrYhoyfjSBvI5RH
- Yyf1fh/F9Pwg7PvhlAAAA
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Matteo Martelli <matteomartelli3@gmail.com>
-X-Mailer: b4 0.14.0
 
-Trivial cleanup in __iio_format_value() for the IIO_VAL_FRACTIONAL case
-where tmp1 = vals[1] assignment is unneeded and irrelevant since tmp1 is
-immediately overwritten by the subsequent div_s64_rem() call.
 
-Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
----
- drivers/iio/industrialio-core.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-index 0f6cda7ffe45..9e364f9879ef 100644
---- a/drivers/iio/industrialio-core.c
-+++ b/drivers/iio/industrialio-core.c
-@@ -667,7 +667,6 @@ static ssize_t __iio_format_value(char *buf, size_t offset, unsigned int type,
- 					     vals[1]);
- 	case IIO_VAL_FRACTIONAL:
- 		tmp2 = div_s64((s64)vals[0] * 1000000000LL, vals[1]);
--		tmp1 = vals[1];
- 		tmp0 = (int)div_s64_rem(tmp2, 1000000000, &tmp1);
- 		if ((tmp2 < 0) && (tmp0 == 0))
- 			return sysfs_emit_at(buf, offset, "-0.%09u", abs(tmp1));
+On 7/30/24 11:29, Krzysztof Kozlowski wrote:
+> On 30/07/2024 11:28, Pierre-Louis Bossart wrote:
+>>>
+>>>>
+>>>> So if ports can be either source or sink, I am not sure how the
+>>>> properties could be shared with a single array?
+>>>
+>>> Because I could, just easier to code. :) Are you saying the code is not
+>>> correct? If I understand the concept of source/sink dpn port mask, it
+>>> should be correct. I have some array with source and sink ports. I pass
+>>> it to Soundwire with a mask saying which ports are source and which are
+>>> sink.
+>>>
+>>>>
+>>>> Those two lines aren't clear to me at all:
+>>>>
+>>>> 	pdev->prop.sink_dpn_prop = wsa884x_sink_dpn_prop;
+>>>> 	pdev->prop.src_dpn_prop = wsa884x_sink_dpn_prop;
+>>>
+>>> I could do: s/wsa884x_sink_dpn_prop/wsa884x_dpn_prop/ and expect the
+>>> code to be correct.
+>>
+>> Ah I think I see what you are trying to do, you have a single dpn_prop
+>> array but each entry is valid for either sink or source depending on the
+>> sink / source_mask which don't overlap.
+>>
+>> Did I get this right?
+> 
+> Yes, correct.
 
----
-base-commit: 1ebab783647a9e3bf357002d5c4ff060c8474a0a
-change-id: 20240730-iio-clean-fmt-value-9c5a42d4fa24
+Sounds good, thanks for the explanations.
 
-Best regards,
--- 
-Matteo Martelli <matteomartelli3@gmail.com>
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
 
