@@ -1,125 +1,114 @@
-Return-Path: <linux-kernel+bounces-268303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2DDC9422FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:35:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C77B49422FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 999541F24886
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:35:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5503B1F23DD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0281917D2;
-	Tue, 30 Jul 2024 22:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971D71917CA;
+	Tue, 30 Jul 2024 22:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VFm794Cu"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UzlsCUme"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B0818E051
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A14C18DF9D
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722378922; cv=none; b=TusfzM6Wjl5iMP3ACtnIlALmGstbxY+eh56J8q56tnln0mv5o7U2f8ISxnmHq53zIQZgEqPNkPA+vb1/ffxREDJd/XMh8QqtXnZQzfz3W0ihXsn4BArX/LxtLDxJ42ygIG6qJWcHqFREfVhpwElNjeyrv6VrTbqcBtZSnkfRxfw=
+	t=1722378975; cv=none; b=MmVOuvXkOYKTt9i7Gg1YGb4RJmZJXumIgvlEdcF41AdFLDs9hFLNFdVg0HfCmP6pLW1z7zl7OTipkYMQ7SuMq9lKpE3o6b91hoxC90tQlXXzycFItkWS8RT8kpUdD4/5Gx4kSwq37wtyIrHAyqM91GKOdiBSpyARPUTe6TKS5cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722378922; c=relaxed/simple;
-	bh=YFDCChsqaB4UhHP0/2HzjxvaMXC55WBTMkh7IBQDDtE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hLnruuqXmgcT+lCthwUoJzN6RDzvDpBZwGDcRExiovUOWhNEEnsFppUNOy5wlPjKwvk1CJlh7z7bN+hfPss/NUhOEaNgfngfmaptaRsLcrKkPay1TdocOuWy/Umfwc7KLL0+NzgZwe8c8txAhd8RNooYtYzHRerflY2mGA7JXJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VFm794Cu; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-70d188c9cabso4144934b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:35:21 -0700 (PDT)
+	s=arc-20240116; t=1722378975; c=relaxed/simple;
+	bh=cc8vLvsFZ3snkQtVLxmq6IYaFp9srndCvo2xz44J+ro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g/AcgqaI4YRr1m26dEeSo+6kcP89qjfXkX1TKEIMlRCz1S3tih0xap/MzM+3eRmNYwy3CNq2DYWko3CVXSA/BpPerjhVnQGp4+T6hYHqAzgrg4JQ9PzMt/DpKBjM/p79M72usZAi1GP/P/fis6duo1KJhuANSbF0eT2U5FTecVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UzlsCUme; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-81f902e94e6so19917739f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:36:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722378920; x=1722983720; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eSOwPlC4K/K4c1NtKrHXJlP1TgjanOwgNCfxP6XzMYQ=;
-        b=VFm794Cu4g1xmSVj5xxDIQ3U2TkQNpI93y1UzVMBC3NyvQsKPLGhWR09RVNvcrpKMI
-         7SfUtm1/gqTJdPNvQdpFoP+kCkxKTgzwDl8unhOtxGXqfuahoOf0OYFETQfk1KGrOTqG
-         cLRcUG3zkCf1rlPwowVhnQyGW5ht2n0SJrRjwBth6TnlTryrtiF4FCm+fGANTaEb5Heq
-         MkwQ1oSW4ZQgmdML+HtzubjukNUDV0bWjVyL7fYwM9HQNmU7w9vdYTyUL6sZFNDErOyx
-         fjKFurPNjJBPJCcVOLCIPMvVqZW6t+ylOnSPBHfe0qRhUU8lzY3iPYaJ8w3DxMes9Orl
-         6zZA==
+        d=linuxfoundation.org; s=google; t=1722378973; x=1722983773; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hfufdps93lvhHBZU/7yGC32I/ET/zYnuXNh/RR8RkPU=;
+        b=UzlsCUmeb1GWG3pXVAnKntEUYU+OB3FGr7Wd7D6hi5FvqANWKdLnghfvNrjEdSdft3
+         1qifpwU4bWQeb3yr60VSezyW6q2nv3VY/igj5FbcprAtvnrB9OHui4q4hQ5vRMtK83vQ
+         VhVlZ2Kwgti8cFniKyaZkv/9Bs767VRlFPY8o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722378920; x=1722983720;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eSOwPlC4K/K4c1NtKrHXJlP1TgjanOwgNCfxP6XzMYQ=;
-        b=hI6plGd5xxDm9qkJPNyfR/dQxajesl/RecVz43MkNq5fu0ikQueYD84QLqtSgkrqda
-         pWnI3Y37ub8KVFwh+1xipOAXQp6Hhg0xqSj1pyCg22CCp/m6zUcwqyyLHp2T/2X2VMTr
-         W3KO9hIbuNR1S4QkJ7SaXgfyxyHX1M/ssarZBfkN4juM+1AbDmnc1uwb4AoD2RkBRELD
-         e/qkFJuA9PlcOGbnSFBm5LgM2zzlchB1X0O3HprkBrJEyioemEzwhZtenXeCeNASet3U
-         S1qQVTInlAwFlkO6jKD7E49NhqqRX/5WbaDvyYSni9xVEeVGfRDtOcQtKcSFkagvEg82
-         Ke3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUw1yJ6osSviYOGQkIT0vx7WYaVjki2r6lImogv+JujyRkKmsmC0ArX5diniBCQBm5pd7azW4132+EY9nhKJfPO2M6xl+jH+sbacfMT
-X-Gm-Message-State: AOJu0YyEqeC/JRU3rcqyXCRH480fVwYijRcfkEq7JHx2oqyyoxpfUJvG
-	vOYEDE1hpdBFfwlzD3bX/AUSgCkkgRywi6YixbnviikVJORlGh3YKxko08vxTkVZasNxq27n+ZE
-	WKg==
-X-Google-Smtp-Source: AGHT+IFhvXMAoVFBOUzUOOlo2Rzlu+lOmmXT/AMKduASO9OrwvfaDw5U6qKsr5Vo6lwrA4+Cjt72+QiZt8Y=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:91c7:b0:710:4d08:e41f with SMTP id
- d2e1a72fcca58-7104d08e48amr716b3a.4.1722378920090; Tue, 30 Jul 2024 15:35:20
- -0700 (PDT)
-Date: Tue, 30 Jul 2024 15:35:18 -0700
-In-Reply-To: <419ea6ce-83ca-413e-936c-1935e2c51497@redhat.com>
+        d=1e100.net; s=20230601; t=1722378973; x=1722983773;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hfufdps93lvhHBZU/7yGC32I/ET/zYnuXNh/RR8RkPU=;
+        b=S4vD604hSfHAWB5SWB2yW1Sw1wGo/Jz7VlVLel2+xjXsHpfreQzoteeZasgOKzBt2v
+         jULMrTEu8vdL9Pw2xWlDa05stY+5o6wjPvtTa4PKwiUlumoJ6Lw/zuaDVCEQ+ogmKZ/A
+         y2gJucMg5JaHJG23yklyjSO7MtTZocRVnHFPoyAiax8FcE/kqQFhRzZAqPV4nePRYh9n
+         O7OrZ0cSF7S7bSBcV6bfc7t3dbUXhUVmF8dABsZhyw9LWO6dSGa4oCDtuJQvIr0PzowD
+         NvJldFaOF0d7Rs7Mkr0flf1g0qi7ijrh1o0HXF2oTUiiIVlLZ6SWsunBqbuNGpWv8QhA
+         6t/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUo3shdqoDzmPFkKkjzHZ6BRYdjU4odz528soyLNZd2npHTDvZom4XvmKMi4fwoqOQUaojL6Ac3ZNvkt7Hrbt/mNNUpO7lTgGskCG5B
+X-Gm-Message-State: AOJu0YxEWqtcVzGfmkGjlwkatn9ZKC3klWMbpn6tmNmLmrQq8CqIY6uH
+	uu5HxgjsqKdnGRMO2NsfXsRcZgbNloKhvpblriv66aYFElhglApok9qQd5H6YSI=
+X-Google-Smtp-Source: AGHT+IGbHwtVL0eUe7UecSlj4yXroIjkL5fDWuqr1JOjoz63uTFv+YGrH76ZeX+kX7TEvLqN/LgsMw==
+X-Received: by 2002:a6b:d303:0:b0:81f:9748:7376 with SMTP id ca18e2360f4ac-81f974874fcmr670378339f.0.1722378973431;
+        Tue, 30 Jul 2024 15:36:13 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c29fbdbf2fsm2986709173.104.2024.07.30.15.36.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 15:36:12 -0700 (PDT)
+Message-ID: <16f14d1a-56f2-4c2c-8180-74ad9bee0182@linuxfoundation.org>
+Date: Tue, 30 Jul 2024 16:36:11 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240726235234.228822-1-seanjc@google.com> <419ea6ce-83ca-413e-936c-1935e2c51497@redhat.com>
-Message-ID: <ZqlqpjO0TiWnOEqx@google.com>
-Subject: Re: [PATCH v12 00/84] KVM: Stop grabbing references to PFNMAP'd pages
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: user: remove user suite
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Shuah Khan <shuah@kernel.org>, Kees Cook <kees@kernel.org>,
+ David Gow <davidgow@google.com>, Vitor Massaru Iha <vitor@massaru.org>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240725110817.659099-1-usama.anjum@collabora.com>
+ <23d0926f-293d-4a8c-b503-bd8b2253b7a8@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <23d0926f-293d-4a8c-b503-bd8b2253b7a8@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 30, 2024, Paolo Bonzini wrote:
-> An interesting evolution of the API could be to pass a struct kvm_follow_pfn
-> pointer to {,__}kvm_faultin_pfn() and __gfn_to_page() (the "constructors");
-> and on the other side to kvm_release_faultin_page() and
-> kvm_release_page_*().  The struct kvm_follow_pfn could be embedded in the
-> (x86) kvm_page_fault and (generic) kvm_host_map structs.  But certainly not
-> as part of this already huge work.
+On 7/25/24 08:44, Shuah Khan wrote:
+> On 7/25/24 05:08, Muhammad Usama Anjum wrote:
+>> The user test suite has only one test, test_user_copy which loads
+>> test_user_copy module for testing. But test_user_copy module has already
+>> been converted to kunit (see fixes). Hence remove the entire suite.
+>>
+>> Fixes: cf6219ee889f ("usercopy: Convert test_user_copy to KUnit test")
+> 
+> Remove fixes tag - this isn't a fix and we don't want this propagating
+> to stable releases without kunit test for this.
+> 
+>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>> ---
+> 
+> Thanks,
+> -- Shuah
+> 
 
-For kvm_faultin_pfn(), my hope/dream is to make kvm_page_fault a common struct,
-with an arch member (a la kvm_vcpu), and get to something like:
+As mentioned in other threads on this conversion to kunit and removal
+of kselfttest - NACK on this patch.
 
-  static int arch_page_fault_handler(...)
-  {
-	struct kvm_page_fault fault = {
-		<const common stuff>,
+Please don't send me any more of these conversion and removal patches.
 
-		.arch.xxx = <arch stuff>,
-	};
-
-	<arch code>
-
-
-	r = kvm_faultin_pfn();
-	
-	...
-  }
-
-In theory, that would allow moving the kvm->mmu_invalidate_seq handling, memslot
-lookup, etc. into kvm_faultin_pfn(), or maybe another helper that is invoked to
-setup the fault structure.  I.e. it would give us a way to drive convergence for
-at least some of the fault handling logic, without having to tackle gory arch
-details, at least not right away.
+thanks,
+-- Shuah
 
