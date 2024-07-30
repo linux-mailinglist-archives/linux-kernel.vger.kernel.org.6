@@ -1,336 +1,142 @@
-Return-Path: <linux-kernel+bounces-267754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B6F2941518
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:06:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA2E94151C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A22B1F24188
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:06:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE983285350
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20D51A2C34;
-	Tue, 30 Jul 2024 15:06:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3E71A2C21;
+	Tue, 30 Jul 2024 15:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jsUNR+aA"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1809219E7D1;
-	Tue, 30 Jul 2024 15:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A451A2C1F;
+	Tue, 30 Jul 2024 15:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722351988; cv=none; b=q91YG6+t5zB5cK+TlH9eg5YiCwV1Oygm5aIHLrIwKlkUx/vK8oJBxaWmn5KJ9ArN6Ceiag6JSJesP+vEbT5FqVdvjIdNJPlSaWmsFDzGAafeZB/xyEcJYB3G/eZlgQseupn09+QiC4vPvYh/0CaKvZOL9PW+6XFc1FYCDs+W4MQ=
+	t=1722352051; cv=none; b=V35+gQ40PndaQNEwSb5WuCtZIn+UkMiE0YfhpsdnP3An3UsRviuB1oV2Pm68Q1OLhYnRj+n2GlwYnZe8hl0W9C++bLEqNWULZtU0VT4oxpG8fUir8cu5WHQkMeZdH37A3JSaZdAUhlqCBrN5w/qZKRvKg522IJkLka80WZWKoDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722351988; c=relaxed/simple;
-	bh=RN7PLKyOec9Ie9QnazVGvkDHyZY3E6LKutJuncjDfyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Ff2omGe4i1bA3SDua/IzObWerBiBK2Ec85Da9tRVPUWcJYBdTAbAG9ziSpaqmbOZ7edyb67QGBK9uTL6mI1/VNt3OPzKJM5bkcTeIQVeQv3xIG91MZwtHwYgbimUbdM5vSGCi+YHDOIlX65mHVccT4uhsvXFRPt64SCEb6b1+SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C83B3C4AF0A;
-	Tue, 30 Jul 2024 15:06:25 +0000 (UTC)
-Date: Tue, 30 Jul 2024 11:06:57 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers  
- <mathieu.desnoyers@efficios.com>, Ajay Kaher <ajay.kaher@broadcom.com>,
- Mathias Krause <minipli@grsecurity.net>, Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?=
-   <digirigawa@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>,
- Al   Viro <viro@zeniv.linux.org.uk>, regressions@leemhuis.info, Dan
- Carpenter   <dan.carpenter@linaro.org>, Beau Belgrave
- <beaub@linux.microsoft.com>, Florian Fainelli 
- <florian.fainelli@broadcom.com>, Alexey Makhalov   
- <alexey.makhalov@broadcom.com>, Vasavi Sirnapalli   
- <vasavi.sirnapalli@broadcom.com>
-Subject: [PATCH v3] tracing: Have format file honor EVENT_FILE_FL_FREED
-Message-ID: <20240730110657.3b69d3c1@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722352051; c=relaxed/simple;
+	bh=Xk9Qgd1nc/VFJGyVzkDKyYiDQdgbuSQ/ZFpxiVvTA44=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SL7w6SkLbEW9ZeYtAed0ZBZ/8ZyuPLMgGyaCKNhnr6xScU07ywwdKp5KvYEg1Q7nNfrxrtbp3S92a1z1ONxhsIBKSJbSOOo0lt/Xa+lQz7SlogPOFOO3wlrN3717d6WRGXco87u7xCgdSVKxhmMqj6rCG3qf3MuoCkpzbmmID04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jsUNR+aA; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46UF7N97079068;
+	Tue, 30 Jul 2024 10:07:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1722352043;
+	bh=r3KnbH5N6/qZ5lerZkWzlpj9PgXBhac2810ctACOVts=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=jsUNR+aAXwlmv2dkSjcj7qAA9O3mNkUuEHUJJdcVKRw+oyru3lepq+xzMpbcZWR5w
+	 Fi+Er9hdVD4l7VL+gtnvnsMT40hLUSiP02Q9HSDquzgxUD57kHLPsuO7PFa7WXvme7
+	 MBTDKNrLM5oUjYNEbhB1WtO1258444XNt2YKqadU=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46UF7NSO003416
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 30 Jul 2024 10:07:23 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 30
+ Jul 2024 10:07:22 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 30 Jul 2024 10:07:22 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46UF7Mke032437;
+	Tue, 30 Jul 2024 10:07:22 -0500
+Date: Tue, 30 Jul 2024 10:07:22 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+CC: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Vibhore Vardhan <vibhore@ti.com>, Kevin Hilman <khilman@baylibre.com>,
+        Dhruva
+ Gole <d-gole@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/6] firmware: ti_sci: Partial-IO support
+Message-ID: <20240730150722.bzls2qrfqwlmh6mn@clergyman>
+References: <20240729080101.3859701-1-msp@baylibre.com>
+ <20240729080101.3859701-3-msp@baylibre.com>
+ <20240730122801.jzo5ahkurxaexwcm@ambiance>
+ <x4y44ajcdi2y2dieaa6oohrptpzyiono3fruvwcdelmtzsh4ne@cgqxsz45ohcy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <x4y44ajcdi2y2dieaa6oohrptpzyiono3fruvwcdelmtzsh4ne@cgqxsz45ohcy>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On 15:01-20240730, Markus Schneider-Pargmann wrote:
+> > > +
+> > > +	return NOTIFY_DONE;
+> > > +}
+> > > +
+> > >  /* Description for K2G */
+> > >  static const struct ti_sci_desc ti_sci_pmmc_k2g_desc = {
+> > >  	.default_host_id = 2,
+> > > @@ -3398,6 +3485,35 @@ static int ti_sci_probe(struct platform_device *pdev)
+> > >  		goto out;
+> > >  	}
+> > >  
+> > > +	if (of_property_read_bool(dev->of_node, "ti,partial-io-wakeup-sources")) {
+> > 
+> > You should probably check on TISCI_MSG_QUERY_FW_CAPS[1] if
+> > Partial IO on low power mode is supported as well? if there is a
+> > mismatch, report so?
+> 
+> I actually have another series in my queue that introduces this check. I
+> just implemented this check for Partial-IO yesterday in the patch that
+> introduces fw capabilities. If you like I can switch these series
+> around.
 
-When eventfs was introduced, special care had to be done to coordinate the
-freeing of the file meta data with the files that are exposed to user
-space. The file meta data would have a ref count that is set when the file
-is created and would be decremented and freed after the last user that
-opened the file closed it. When the file meta data was to be freed, it
-would set a flag (EVENT_FILE_FL_FREED) to denote that the file is freed,
-and any new references made (like new opens or reads) would fail as it is
-marked freed. This allowed other meta data to be freed after this flag was
-set (under the event_mutex).
+Yes, please introduce it part of the series.
 
-All the files that were dynamically created in the events directory had a
-pointer to the file meta data and would call event_release() when the last
-reference to the user space file was closed. This would be the time that it
-is safe to free the file meta data.
+> 
+> > 
+> > > +		info->nr_wakeup_sources =
+> > > +			of_count_phandle_with_args(dev->of_node,
+> > > +						   "ti,partial-io-wakeup-sources",
+> > > +						   NULL);
+> > > +		info->wakeup_source_nodes =
+> > > +			devm_kzalloc(dev, sizeof(*info->wakeup_source_nodes),
+> > > +				     GFP_KERNEL);
+> > > +
+> > > +		for (i = 0; i != info->nr_wakeup_sources; ++i) {
+> > > +			struct device_node *devnode =
+> > > +				of_parse_phandle(dev->of_node,
+> > > +						 "ti,partial-io-wakeup-sources",
+> > > +						 i);
+> > > +			info->wakeup_source_nodes[i] = devnode;
+> > 
+> > Curious: Don't we need to maintain reference counting for the devnode
+> > if CONFIG_OF_DYNAMIC?
+> 
+> In case you mean I missed of_node_put(), yes, I did, thank you. I added
+> it in a ti_sci_remove().
 
-A shortcut was made for the "format" file. It's i_private would point to
-the "call" entry directly and not point to the file's meta data. This is
-because all format files are the same for the same "call", so it was
-thought there was no reason to differentiate them.  The other files
-maintain state (like the "enable", "trigger", etc). But this meant if the
-file were to disappear, the "format" file would be unaware of it.
+And unless I am mistaken, of_node_get as required as you are
+retaining the reference of the node till shutdown / remove is invoked.
 
-This caused a race that could be trigger via the user_events test (that
-would create dynamic events and free them), and running a loop that would
-read the user_events format files:
-
-In one console run:
-
- # cd tools/testing/selftests/user_events
- # while true; do ./ftrace_test; done
-
-And in another console run:
-
- # cd /sys/kernel/tracing/
- # while true; do cat events/user_events/__test_event/format; done 2>/dev/null
-
-With KASAN memory checking, it would trigger a use-after-free bug report
-(which was a real bug). This was because the format file was not checking
-the file's meta data flag "EVENT_FILE_FL_FREED", so it would access the
-event that the file meta data pointed to after the event was freed.
-
-After inspection, there are other locations that were found to not check
-the EVENT_FILE_FL_FREED flag when accessing the trace_event_file. Add a
-new helper function: event_file_file() that will make sure that the
-event_mutex is held, and will return NULL if the trace_event_file has the
-EVENT_FILE_FL_FREED flag set. Have the first reference of the struct file
-pointer use event_file_file() and check for NULL. Later uses can still use
-the event_file_data() helper function if the event_mutex is still held and
-was not released since the event_file_file() call.
-
-Link: https://lore.kernel.org/all/20240719204701.1605950-1-minipli@grsecurity.net/
-
-Cc: stable@vger.kernel.org
-Fixes: b63db58e2fa5d ("eventfs/tracing: Add callback for release of an eventfs_inode")
-Reported-by: Mathias Krause <minipli@grsecurity.net>
-Tested-by: Mathias Krause <minipli@grsecurity.net>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
-Changes since v3: https://lore.kernel.org/20240726132811.306a449e@rorschach.local.home
-
-- After inspecting the code, there's several users of event_file_data()
-  that return the trace_event_file descriptor when it could be set to be
-  freed. Add a new helper function: event_file_file() that will make sure
-  the event_mutex is held and check the flag and return NULL if the file is
-  freed.
-
- kernel/trace/trace.h                | 23 ++++++++++++++++++++
- kernel/trace/trace_events.c         | 33 +++++++++++++++++------------
- kernel/trace/trace_events_hist.c    |  4 ++--
- kernel/trace/trace_events_inject.c  |  2 +-
- kernel/trace/trace_events_trigger.c |  6 +++---
- 5 files changed, 49 insertions(+), 19 deletions(-)
-
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 749a182dab48..8edab43580d5 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1573,6 +1573,29 @@ static inline void *event_file_data(struct file *filp)
- extern struct mutex event_mutex;
- extern struct list_head ftrace_events;
- 
-+/*
-+ * When the trace_event_file is the filp->i_private pointer,
-+ * it must be taken under the event_mutex lock, and then checked
-+ * if the EVENT_FILE_FL_FREED flag is set. If it is, then the
-+ * data pointed to by the trace_event_file can not be trusted.
-+ *
-+ * Use the event_file_file() to access the trace_event_file from
-+ * the filp the first time under the event_mutex and check for
-+ * NULL. If it is needed to be retrieved again and the event_mutex
-+ * is still held, then the event_file_data() can be used and it
-+ * is guaranteed to be valid.
-+ */
-+static inline struct trace_event_file *event_file_file(struct file *filp)
-+{
-+	struct trace_event_file *file;
-+
-+	lockdep_assert_held(&event_mutex);
-+	file = READ_ONCE(file_inode(filp)->i_private);
-+	if (!file || file->flags & EVENT_FILE_FL_FREED)
-+		return NULL;
-+	return file;
-+}
-+
- extern const struct file_operations event_trigger_fops;
- extern const struct file_operations event_hist_fops;
- extern const struct file_operations event_hist_debug_fops;
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 6ef29eba90ce..f08fbaf8cad6 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -1386,12 +1386,12 @@ event_enable_read(struct file *filp, char __user *ubuf, size_t cnt,
- 	char buf[4] = "0";
- 
- 	mutex_lock(&event_mutex);
--	file = event_file_data(filp);
-+	file = event_file_file(filp);
- 	if (likely(file))
- 		flags = file->flags;
- 	mutex_unlock(&event_mutex);
- 
--	if (!file || flags & EVENT_FILE_FL_FREED)
-+	if (!file)
- 		return -ENODEV;
- 
- 	if (flags & EVENT_FILE_FL_ENABLED &&
-@@ -1424,8 +1424,8 @@ event_enable_write(struct file *filp, const char __user *ubuf, size_t cnt,
- 	case 1:
- 		ret = -ENODEV;
- 		mutex_lock(&event_mutex);
--		file = event_file_data(filp);
--		if (likely(file && !(file->flags & EVENT_FILE_FL_FREED))) {
-+		file = event_file_file(filp);
-+		if (likely(file)) {
- 			ret = tracing_update_buffers(file->tr);
- 			if (ret < 0) {
- 				mutex_unlock(&event_mutex);
-@@ -1540,7 +1540,8 @@ enum {
- 
- static void *f_next(struct seq_file *m, void *v, loff_t *pos)
- {
--	struct trace_event_call *call = event_file_data(m->private);
-+	struct trace_event_file *file = event_file_data(m->private);
-+	struct trace_event_call *call = file->event_call;
- 	struct list_head *common_head = &ftrace_common_fields;
- 	struct list_head *head = trace_get_fields(call);
- 	struct list_head *node = v;
-@@ -1572,7 +1573,8 @@ static void *f_next(struct seq_file *m, void *v, loff_t *pos)
- 
- static int f_show(struct seq_file *m, void *v)
- {
--	struct trace_event_call *call = event_file_data(m->private);
-+	struct trace_event_file *file = event_file_data(m->private);
-+	struct trace_event_call *call = file->event_call;
- 	struct ftrace_event_field *field;
- 	const char *array_descriptor;
- 
-@@ -1627,12 +1629,14 @@ static int f_show(struct seq_file *m, void *v)
- 
- static void *f_start(struct seq_file *m, loff_t *pos)
- {
-+	struct trace_event_file *file;
- 	void *p = (void *)FORMAT_HEADER;
- 	loff_t l = 0;
- 
- 	/* ->stop() is called even if ->start() fails */
- 	mutex_lock(&event_mutex);
--	if (!event_file_data(m->private))
-+	file = event_file_file(m->private);
-+	if (!file)
- 		return ERR_PTR(-ENODEV);
- 
- 	while (l < *pos && p)
-@@ -1706,8 +1710,8 @@ event_filter_read(struct file *filp, char __user *ubuf, size_t cnt,
- 	trace_seq_init(s);
- 
- 	mutex_lock(&event_mutex);
--	file = event_file_data(filp);
--	if (file && !(file->flags & EVENT_FILE_FL_FREED))
-+	file = event_file_file(filp);
-+	if (file)
- 		print_event_filter(file, s);
- 	mutex_unlock(&event_mutex);
- 
-@@ -1736,9 +1740,13 @@ event_filter_write(struct file *filp, const char __user *ubuf, size_t cnt,
- 		return PTR_ERR(buf);
- 
- 	mutex_lock(&event_mutex);
--	file = event_file_data(filp);
--	if (file)
--		err = apply_event_filter(file, buf);
-+	file = event_file_file(filp);
-+	if (file) {
-+		if (file->flags & EVENT_FILE_FL_FREED)
-+			err = -ENODEV;
-+		else
-+			err = apply_event_filter(file, buf);
-+	}
- 	mutex_unlock(&event_mutex);
- 
- 	kfree(buf);
-@@ -2485,7 +2493,6 @@ static int event_callback(const char *name, umode_t *mode, void **data,
- 	if (strcmp(name, "format") == 0) {
- 		*mode = TRACE_MODE_READ;
- 		*fops = &ftrace_event_format_fops;
--		*data = call;
- 		return 1;
- 	}
- 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 6ece1308d36a..5f9119eb7c67 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -5601,7 +5601,7 @@ static int hist_show(struct seq_file *m, void *v)
- 
- 	mutex_lock(&event_mutex);
- 
--	event_file = event_file_data(m->private);
-+	event_file = event_file_file(m->private);
- 	if (unlikely(!event_file)) {
- 		ret = -ENODEV;
- 		goto out_unlock;
-@@ -5880,7 +5880,7 @@ static int hist_debug_show(struct seq_file *m, void *v)
- 
- 	mutex_lock(&event_mutex);
- 
--	event_file = event_file_data(m->private);
-+	event_file = event_file_file(m->private);
- 	if (unlikely(!event_file)) {
- 		ret = -ENODEV;
- 		goto out_unlock;
-diff --git a/kernel/trace/trace_events_inject.c b/kernel/trace/trace_events_inject.c
-index 8650562bdaa9..a8f076809db4 100644
---- a/kernel/trace/trace_events_inject.c
-+++ b/kernel/trace/trace_events_inject.c
-@@ -299,7 +299,7 @@ event_inject_write(struct file *filp, const char __user *ubuf, size_t cnt,
- 	strim(buf);
- 
- 	mutex_lock(&event_mutex);
--	file = event_file_data(filp);
-+	file = event_file_file(filp);
- 	if (file) {
- 		call = file->event_call;
- 		size = parse_entry(buf, call, &entry);
-diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
-index 4bec043c8690..a5e3d6acf1e1 100644
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -159,7 +159,7 @@ static void *trigger_start(struct seq_file *m, loff_t *pos)
- 
- 	/* ->stop() is called even if ->start() fails */
- 	mutex_lock(&event_mutex);
--	event_file = event_file_data(m->private);
-+	event_file = event_file_file(m->private);
- 	if (unlikely(!event_file))
- 		return ERR_PTR(-ENODEV);
- 
-@@ -213,7 +213,7 @@ static int event_trigger_regex_open(struct inode *inode, struct file *file)
- 
- 	mutex_lock(&event_mutex);
- 
--	if (unlikely(!event_file_data(file))) {
-+	if (unlikely(!event_file_file(file))) {
- 		mutex_unlock(&event_mutex);
- 		return -ENODEV;
- 	}
-@@ -293,7 +293,7 @@ static ssize_t event_trigger_regex_write(struct file *file,
- 	strim(buf);
- 
- 	mutex_lock(&event_mutex);
--	event_file = event_file_data(file);
-+	event_file = event_file_file(file);
- 	if (unlikely(!event_file)) {
- 		mutex_unlock(&event_mutex);
- 		kfree(buf);
 -- 
-2.43.0
-
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
