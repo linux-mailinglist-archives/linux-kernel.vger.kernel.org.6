@@ -1,177 +1,155 @@
-Return-Path: <linux-kernel+bounces-268241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39B0F942219
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:18:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2688B94221A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8771BB227CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:18:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D12211F251FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CBD18E022;
-	Tue, 30 Jul 2024 21:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IWKzbrlg"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A7118DF89;
+	Tue, 30 Jul 2024 21:19:05 +0000 (UTC)
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA7E18C914
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 21:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681F01AA3FF
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 21:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722374283; cv=none; b=tR/OEFcVvemAsaV9Pahew2xG8XybBmpK+2hYbKLvPH8iMN164m8gaLKS6xgjfizyDE1dnoaUGkIa/B3hPQfdZiy0BXinbhdMdkqp8E5u3PSViVQ78m/Zg9pQGqvBN59BXYxLciQmMhQTyno8NZhZP6Of3Qu27zbZpnl6PAmtgpI=
+	t=1722374344; cv=none; b=hg50Oa5wuJDym9GydLbgLt5gcRFASmKpbB9NSudWHsioOcryyL/a03xj7brSMie0pO0GHs9Gp/izpbM6/XBv5amRUrMMAtTArHpgKJkEGbJmKGogk/vExVi/oagrWLHeP7eA+WdJzUbQnq2cKuyy1I4vLiHjByuD/8mArTo80qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722374283; c=relaxed/simple;
-	bh=AuZvuV9QI0ZXSU2eRATLyGutCm4zrCTj2B6X4fSl41Y=;
+	s=arc-20240116; t=1722374344; c=relaxed/simple;
+	bh=1eS0nVnAphZGVyYJ9yEFyfKYqDFUsb5W5dSAbq3UOmQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pSRwdLAJQVRN0ukZH3LA6itNt7WIyOH92qsczOnwE8Mh6DmG0CmQVecwh/eHQpYgiNTn32php/hDZaKrG+rScqqWo0Xdw0Isxid0W8BqUzSO6wBFmE8CYjlA3gTA4ytAqVYiyaN2ch5ZNwcY0IYXzKNtUDAO4TUSjGL/GGmKUGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IWKzbrlg; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-44fee2bfd28so98261cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:18:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722374279; x=1722979079; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GQzlvmVa30s7/0Cvf/ONz0CiTkA5Kxf3WVqHHnXgoEc=;
-        b=IWKzbrlgzZyPMStBaFuOhc3A8xT15IoZNvs2pUzmt13mRhbN2m7pXXqs3LNmUPIeBM
-         swfve9YDp0oTbZk4khwlbBjsck8JyYbywv23BGE9K0bn/UgeKFm3VoX11CDBxd4Fxa2r
-         3Q/xHXEpZEAtaqmtZ77kHYB2XQpp0iqu/xTA/8IJfakpvGErHKAH6f7T52MFgbJTKd27
-         rAU2recj3eMV3dglt2tlY/AxdyxojSiznipRD2aq69OkAHU58TMHGepeuDyNsyy7U7HE
-         emEXdRudERB6CmlkmQus3LfLOJGY3YfOZaT6XHXCUF2yRa3lDu0o9+igReYdrS6/AisY
-         cvaA==
+	 To:Cc:Content-Type; b=cWIcMKBvDARBr9IA2WYjA8P281XP53ycgD4jwYdYzES2X5IpKW/z1SzdP3TUZQfnl0xy1mcsdf/HBjuedTVegYoFHUxTP6OYEsgddAO4n3fEnG3guKeFsnFap10sY/xDPuc1aWQbGsS2Igo0OEzwD9SW4JWu4kII2dG4/9NOkX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2cb53da06a9so243691a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:19:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722374279; x=1722979079;
+        d=1e100.net; s=20230601; t=1722374343; x=1722979143;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GQzlvmVa30s7/0Cvf/ONz0CiTkA5Kxf3WVqHHnXgoEc=;
-        b=haZ0vPe//YIbqTpzjv0d83eElRETUinTQLRavCrPZXespps2Auln8S0ihGNgN+giGk
-         GIXapaICEdcp3/j1DJBN9810QksNpBNCPK0VkHlnKuJTGgSnFqipkidKF/vW8AkGoMRz
-         V7PRz0TbDUd5qQNY8V9rFNGo28eR4h+wLVFxg5Ajw+UbpnI8vkRrFur33sGcydmvz+/B
-         jKVhU+fR/4ZfoXgAm+FXljfxgn+kmlj2X2HE+WjoUfnuvZMUpVSlOipGYwuo5h5CERrB
-         5fH1IacaDjCoFUp6OpQxfiD75GdWHIcyeUmGJniGMfP3UjtQq2239UI0/2dHLKU0iljw
-         uaeg==
-X-Gm-Message-State: AOJu0Yw8QP7w+22M8RnxPaGuHv3vTKjtOAOFg9Yf8t5d6hYg0xmlKh4b
-	Fk2T9NRt9kuiYsgjCUjFbzRdWSI4xPLwDESA1nyjWL1KCjdpxBbHHLhxwJIgAIz+18ujxWPMSwK
-	r37eR0C8lZ6dE32DxQAODiSzasmY5FnvvDIYQ
-X-Google-Smtp-Source: AGHT+IGeKl2MOsrgbgEMzNO2zod+Gnz547WZLav1AuvB9pAYXBjlGRyP+IPA8eSDlgyvuFGiez+ewEJrRBnpTpkL6V4=
-X-Received: by 2002:a05:622a:410:b0:447:d555:7035 with SMTP id
- d75a77b69052e-4504314cf01mr166851cf.13.1722374279116; Tue, 30 Jul 2024
- 14:17:59 -0700 (PDT)
+        bh=1h4oOckaQbpA4RFdmyjjlpZlH3nTQfnD8xd/9tAjIvQ=;
+        b=fIwaGVsBTdgaS7EdtP5FQNL5SA1J/Jsp508t3+qht3eond+EgtoRaElkeKDVYX5Cte
+         X+S4EmnTSciHrniLJ6GgTeN4JElqCqkj6QfiAuSIh1qdXfLXCmMek71y8OekdfoCcF2a
+         FaueFOTgyDRH9I/cHzS8WYQkkknYUxIPumogOkKKejNLTtChIw0uqYqShIjzT30BP8mH
+         B2wdG2fvuly8cfgr5G2BepP56Hl8rUhm56gNqSiDCJPeGlT4ydfiXo+6xBEyl6QmFxXp
+         9GKFowsF7nFUwHG34DEYA0FPYz3LAU9FTBJ5jlPrSJAajHB78595JCJ94jqfEy7pH4dU
+         DfoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKm7zo2bU2NFctB8kq3chJJ9opPlB8D0shcZx2QuXkE9CGngjT+/XKnMFu0h/S7fRkWKw4EFhCHj3asss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD3iouzFW2aCfMgYC3ba/sATLOzi2nRGU8QgRO4xcg0Th7DIec
+	olthD2v+Lj0wAazw6ECh4JstFK/wAJMtLyXXCiijq7zZxfGD4qKMl44BCm1ztW0DAtjQ6L+Wixh
+	e6R9QtBwiMucBCjxP7e9/r9CrUFI=
+X-Google-Smtp-Source: AGHT+IErcSvKFyg3AabhoO9DQmd0hyvZCOMCWSCfwit25Mj/KdG2P2nysBwKjcZoXo9A1akq/IustkqEO7gY7M3xr0k=
+X-Received: by 2002:a17:90a:c38a:b0:2c9:6188:f3e with SMTP id
+ 98e67ed59e1d1-2cfcab88b66mr5228240a91.16.1722374342405; Tue, 30 Jul 2024
+ 14:19:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730200341.1642904-1-david@redhat.com> <CADrL8HXRCNFzmg67p=j0_0Y_NAFo5rUDmvnr40F5HGAsQMvbnw@mail.gmail.com>
- <3f6c97b5-ccd8-4226-a9ac-78d555b0d048@redhat.com> <b74fcedb-60c5-4fd3-bcc7-74959e12c38d@redhat.com>
-In-Reply-To: <b74fcedb-60c5-4fd3-bcc7-74959e12c38d@redhat.com>
-From: James Houghton <jthoughton@google.com>
-Date: Tue, 30 Jul 2024 14:17:22 -0700
-Message-ID: <CADrL8HUvxp8TX31SsVaQg_HBgTWMDUKWxOJqCp-G_c9Lqz9n+g@mail.gmail.com>
-Subject: Re: [PATCH v2] mm/hugetlb: fix hugetlb vs. core-mm PT locking
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, stable@vger.kernel.org, 
-	Peter Xu <peterx@redhat.com>, Oscar Salvador <osalvador@suse.de>, 
-	Muchun Song <muchun.song@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>
+References: <20240730191925.469649-1-namhyung@kernel.org> <20240730204048.GU33588@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240730204048.GU33588@noisy.programming.kicks-ass.net>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Tue, 30 Jul 2024 14:18:51 -0700
+Message-ID: <CAM9d7cg9KA8MnS4HFrXmL=OkVm6JfrxSvFyquOSxxoH8P5Lhhw@mail.gmail.com>
+Subject: Re: [PATCH] perf/core: Optimize event reschedule for a PMU
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Stephane Eranian <eranian@google.com>, Ian Rogers <irogers@google.com>, 
+	Mingwei Zhang <mizhang@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30, 2024 at 2:07=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 30.07.24 23:00, David Hildenbrand wrote:
-> > On 30.07.24 22:43, James Houghton wrote:
-> >> On Tue, Jul 30, 2024 at 1:03=E2=80=AFPM David Hildenbrand <david@redha=
-t.com> wrote:
-> >>> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> >>> index b100df8cb5857..1b1f40ff00b7d 100644
-> >>> --- a/include/linux/mm.h
-> >>> +++ b/include/linux/mm.h
-> >>> @@ -2926,6 +2926,12 @@ static inline spinlock_t *pte_lockptr(struct m=
-m_struct *mm, pmd_t *pmd)
-> >>>           return ptlock_ptr(page_ptdesc(pmd_page(*pmd)));
-> >>>    }
-> >>>
-> >>> +static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *=
-pte)
-> >>> +{
-> >>> +       BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
-> >>> +       return ptlock_ptr(virt_to_ptdesc(pte));
-> >>
-> >> Hi David,
-> >>
-> >
-> > Hi!
-> >
-> >> Small question: ptep_lockptr() does not handle the case where the size
-> >> of the PTE table is larger than PAGE_SIZE, but pmd_lockptr() does.
-> >
-> > I thought I convinced myself that leaf page tables are always single
-> > pages and had a comment in v1.
-> >
-> > But now I have to double-check again, and staring at
-> > pagetable_pte_ctor() callers I am left confused.
-> >
-> > It certainly sounds more future proof to just align the pointer down to
-> > the start of the PTE table like pmd_lockptr() would.
-> >
-> >> IIUC, for pte_lockptr() and ptep_lockptr() to return the same result
-> >> in this case, ptep_lockptr() should be doing the masking that
-> >> pmd_lockptr() is doing. Are you sure that you don't need to be doing
-> >> it? (Or maybe I am misunderstanding something.)
-> >
-> > It's a valid concern even if it would not be required. But I'm afraid I
-> > won't dig into the details and simply do the alignment in a v3.
->
-> To be precise, the following on top:
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 1b1f40ff00b7d..f6c7fe8f5746f 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2926,10 +2926,22 @@ static inline spinlock_t *pte_lockptr(struct mm_s=
-truct *mm, pmd_t *pmd)
->          return ptlock_ptr(page_ptdesc(pmd_page(*pmd)));
->   }
->
-> -static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
-> +static inline struct page *ptep_pgtable_page(pte_t *pte)
->   {
-> +       unsigned long mask =3D ~(PTRS_PER_PTE * sizeof(pte_t) - 1);
-> +
->          BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
-> -       return ptlock_ptr(virt_to_ptdesc(pte));
-> +       return virt_to_page((void *)((unsigned long)pte & mask));
-> +}
-> +
-> +static inline struct ptdesc *ptep_ptdesc(pte_t *pte)
-> +{
-> +       return page_ptdesc(ptep_pgtable_page(pte));
-> +}
-> +
-> +static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
-> +{
-> +       return ptlock_ptr(ptep_ptdesc(pte));
->   }
+Hi Peter,
 
-Thanks! That looks right to me. Feel free to add
+On Tue, Jul 30, 2024 at 1:40=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Tue, Jul 30, 2024 at 12:19:25PM -0700, Namhyung Kim wrote:
+> > @@ -2728,13 +2727,62 @@ static void ctx_resched(struct perf_cpu_context=
+ *cpuctx,
+> >               perf_ctx_enable(task_ctx, false);
+> >  }
+> >
+> > +static void __perf_pmu_resched(struct pmu *pmu,
+> > +                            struct perf_event_context *task_ctx,
+> > +                            enum event_type_t event_type)
+> > +{
+> > +     bool cpu_event =3D !!(event_type & EVENT_CPU);
+> > +     struct perf_event_pmu_context *epc =3D NULL;
+> > +     struct perf_cpu_pmu_context *cpc =3D this_cpu_ptr(pmu->cpu_pmu_co=
+ntext);
+> > +
+> > +     /*
+> > +      * If pinned groups are involved, flexible groups also need to be
+> > +      * scheduled out.
+> > +      */
+> > +     if (event_type & EVENT_PINNED)
+> > +             event_type |=3D EVENT_FLEXIBLE;
+> > +
+> > +     event_type &=3D EVENT_ALL;
+> > +
+> > +     perf_pmu_disable(pmu);
+> > +     if (task_ctx) {
+> > +             if (WARN_ON_ONCE(!cpc->task_epc || cpc->task_epc->ctx !=
+=3D task_ctx))
+> > +                     goto out;
+> > +
+> > +             epc =3D cpc->task_epc;
+> > +             __pmu_ctx_sched_out(epc, event_type);
+> > +     }
+> > +
+> > +     /*
+> > +      * Decide which cpu ctx groups to schedule out based on the types
+> > +      * of events that caused rescheduling:
+> > +      *  - EVENT_CPU: schedule out corresponding groups;
+> > +      *  - EVENT_PINNED task events: schedule out EVENT_FLEXIBLE group=
+s;
+> > +      *  - otherwise, do nothing more.
+> > +      */
+> > +     if (cpu_event)
+> > +             __pmu_ctx_sched_out(&cpc->epc, event_type);
+> > +     else if (event_type & EVENT_PINNED)
+> > +             __pmu_ctx_sched_out(&cpc->epc, EVENT_FLEXIBLE);
+> > +
+> > +     __pmu_ctx_sched_in(&cpc->epc, EVENT_PINNED);
+> > +     if (task_ctx)
+> > +              __pmu_ctx_sched_in(epc, EVENT_PINNED);
+> > +     __pmu_ctx_sched_in(&cpc->epc, EVENT_FLEXIBLE);
+> > +     if (task_ctx)
+> > +              __pmu_ctx_sched_in(epc, EVENT_FLEXIBLE);
+> > +
+> > +out:
+> > +     perf_pmu_enable(pmu);
+> > +}
+>
+> I so dislike duplication...
+>
+> So lets see, ctx_resched() has pmu_ctx iterations in:
+>
+>   perf_ctx_{en,dis}able()
+>   ctx_sched_{in,out}()
+>
+> Can't we punch a 'struct pmu *pmu' argument through those callchains and
+> short-circuit the iteration when !NULL?
 
-Reviewed-by: James Houghton <jthoughton@google.com>
+Sure, will do that in v2.
+
+Thanks,
+Namhyung
 
 >
->
-> virt_to_ptdesc() really is of limited use in core-mm code as it seems ...
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+> The alternative would be to lift the iteration I suppose.
 
