@@ -1,107 +1,139 @@
-Return-Path: <linux-kernel+bounces-267585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC8F4941319
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:26:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA4A594131F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E81F2848E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:26:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB53A1C23118
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4202819FA8D;
-	Tue, 30 Jul 2024 13:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607EC199230;
+	Tue, 30 Jul 2024 13:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UilyB9X3"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="brxI5y5+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4146555769;
-	Tue, 30 Jul 2024 13:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05E863D;
+	Tue, 30 Jul 2024 13:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722345991; cv=none; b=O4co3dQVyCckU6FMpONYGQUf1RIDLIyuxFNrcjTRWjLmaOvkQNdaaNoEWXP7iEtogsZTDwmXCER4qnKxa4rLhcYJsvy5cPiPCd5G1N7S5Zl7LOXuOioAVAAn7Jp7Gwyuku2rPw3KhZRx/akCejzZD3J55p+xnmYmCoYtWK4vhMA=
+	t=1722346260; cv=none; b=gQsmdTjiakF6JsM8H5hzELACefCTfLxU/TGX5JNp3uMwaAbU9WLfvsQp5ZfTnGgOQdIJwfN3gmDy9SpPUvBDDURQt58iJQHCIe3iZGqd0LFBghESUyl6lGRgaIHmuFZQEG9LmFFrenzAzmiQo5fmmm29OTyRRjP8HmUSsjVX6N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722345991; c=relaxed/simple;
-	bh=HISM98Ay0WWuaHogvlPHXl5HPQkpYwN2KJ1ekwInS4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GVhKrKfz+urO7piX7/XmBoqmO9JagCQnXA0EvGqZl+9pgVlJQQFtknbVRQ9BbTBXDOfy0BmHwByCjgNRnbPJQO9682viVzG30beLjK2FQ0XjoTmltGD2e5rE7S1JgO44JwMJDE8/6fWjQPWg/NSutvlXscFiogpJNI6/ueLanLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UilyB9X3; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jDlk0/3hMO7Vd0hLRG4kBbSvr6LqrzTNupwmh7CFwFY=; b=UilyB9X3mn/Ehep0vjEwe0KCo3
-	VmnqZ/RsEq2OBza3MIW0xB1GDIaDT3YY5j51wp2cydwSeNljEVQ9/tVZ9nMWVoiLSk4P5NUJs+Rje
-	C4ju+6rfO8Z5ms6rOLiRSTlvzxVJn0/8Kmee/KSO+hRaWVlxISO45O9MPfYrKZZksqbIQjmH70rgJ
-	3E3aSHaXlEtrbRnf7+JPr8S5SOeiGLt2LnKTvbkahOCknBnA+/diDboTpMrrnwo9FXwIN4Y9FEoOR
-	tYd+9tHVgjbGgqjquJ4DEKTKbFruox78tanhNvj/z09d3nerbuKg2PccvonGoPmdVdMkEq5hkTXKa
-	0gu/SQag==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sYmrz-0000000EjCS-2rvP;
-	Tue, 30 Jul 2024 13:26:28 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 034513003EA; Tue, 30 Jul 2024 15:26:27 +0200 (CEST)
-Date: Tue, 30 Jul 2024 15:26:26 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Chandan Babu R <chandanbabu@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	xfs <linux-xfs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org,
-	tglx@linutronix.de
-Subject: Re: Are jump labels broken on 6.11-rc1?
-Message-ID: <20240730132626.GV26599@noisy.programming.kicks-ass.net>
-References: <20240730033849.GH6352@frogsfrogsfrogs>
- <87o76f9vpj.fsf@debian-BULLSEYE-live-builder-AMD64>
+	s=arc-20240116; t=1722346260; c=relaxed/simple;
+	bh=yy7+5mJanhSnLny9/z+l3tsyVx0RSv5rtYylirglrzA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Xl0qr8Sm9LXhqF7hxu6ywQFRxKzTY3U4tb3/dKxVfMivbYqq/bOm+PRRRJ8RBDOoPfIGTrQ0+eADBt4uf+PDhF9Ugifso+7CGzRNUM76u0QuIIqjsUl+ljBqKGL3lHCq+t4Ewf+Gtl8hpY/FhTAag9BTKhGohaE5vmnXxdIxSpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=brxI5y5+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C0DFC32782;
+	Tue, 30 Jul 2024 13:30:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722346260;
+	bh=yy7+5mJanhSnLny9/z+l3tsyVx0RSv5rtYylirglrzA=;
+	h=From:Subject:Date:To:Cc:From;
+	b=brxI5y5+ueGJkOCI3yHtZTXCSXMZnPdO4pOcQxjAzZY3MTMHq1ARACPHMXzKcaVxm
+	 snAP/VyJVG0NFBLMnvZRQUXfsNvTWl4GxVcyiJJ3Pve+qH4wyxQtsc9M7zmvcx4OJP
+	 wuE1ZlhmIb9GH4S+A8OxR384km5s+ZusCcNI915Pof2JnyeMRINijWyA3PviY4Qfyx
+	 st2sIrjrtAlvG8JIsc1/H5DO4+TO6AAKqHz7GUpmEn+qf/Ovv0p9Xrl2/3FRkJg9SB
+	 g+AihyWv1gOpwZ9oiJVM1wlALxc954F7Hh+W/V6mzj0qAuA06UHXfxHi2UjDXNV+7E
+	 fVAMCTgq2YYKA==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v6 0/4] KVM: arm64: Fix underallocation of storage for SVE
+ state
+Date: Tue, 30 Jul 2024 14:29:12 +0100
+Message-Id: <20240730-kvm-arm64-fix-pkvm-sve-vl-v6-0-cae8a2e0bd66@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o76f9vpj.fsf@debian-BULLSEYE-live-builder-AMD64>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKjqqGYC/33QTWrDMBAF4KsErauin9FIyar3CF1Y1jgRSewgF
+ ZESfPfKgVIXg5ZvmPkG3pNlSpEyO+yeLFGJOU5jDfi2Y/25G0/EY6iZKaFAoAB+KTfepRsCH+K
+ D35eYC/Fy5VL3wcoh2OAFq/f3RHXlZR8/az7H/DWl79eropbpr4oNtSgueO/cAOTBS/AfF0ojX
+ d+ndGILW+SaMi1KVgqdCOhBe+jlhtJryrYoXSmzJ+ukFRjQbCj4o2yztgKV8uj2rvNKhx42lFl
+ TrkWZSgUlrbHagcH/Xc3z/AOeMHbx7wEAAA==
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+ Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Fuad Tabba <tabba@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kvmarm@lists.linux.dev, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2551; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=yy7+5mJanhSnLny9/z+l3tsyVx0RSv5rtYylirglrzA=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmqOsNqaeRRdie8SdDAQ1lneq5D6pOxAZk+JOkgK1T
+ u5d7SHSJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZqjrDQAKCRAk1otyXVSH0KxZB/
+ 49KowH0dC5AqjvGa56kImJwH54qJ+8xxn8+/i4xsXTkGObox6ZvOgGSo0TraoMKT9Qll/hDZ03IWmP
+ SFD94uuj5FauK0rAoGn6Vj62Zd86banU5TfpapC7jWyMQ99+Kvdihv/dm951YlTwNk6AolPrqCwNgx
+ QnPb7tuHeWkWfmFT5fvJAz40N3XZ+VtLuB+BypWWGc2e6gVzM/IfP5cZHazTCB1DALVHB3ruJVXLpA
+ qWuiFwlt8HNOyo+UY172RIFVg9Xad1pSknK3F8eBIrH/C23FngcxSgXSG+sFCwjdPRekw4vv8CveD9
+ Nwpt3j9rwcWmVm0LxFM4BcZXmE0mMU
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Tue, Jul 30, 2024 at 01:00:02PM +0530, Chandan Babu R wrote:
-> On Mon, Jul 29, 2024 at 08:38:49 PM -0700, Darrick J. Wong wrote:
-> > Hi everyone,
-> >
-> > I got the following splat on 6.11-rc1 when I tried to QA xfs online
-> > fsck.  Does this ring a bell for anyone?  I'll try bisecting in the
-> > morning to see if I can find the culprit.
-> 
-> xfs/566 on v6.11-rc1 would consistently cause the oops mentioned below.
-> However, I was able to get xfs/566 to successfully execute for five times on a
-> v6.11-rc1 kernel with the following commits reverted,
-> 
-> 83ab38ef0a0b2407d43af9575bb32333fdd74fb2
-> 695ef796467ed228b60f1915995e390aea3d85c6
-> 9bc2ff871f00437ad2f10c1eceff51aaa72b478f
-> 
-> Reinstating commit 83ab38ef0a0b2407d43af9575bb32333fdd74fb2 causes the kernel
-> to oops once again.
+As observed during review the pKVM support for saving host SVE state is
+broken if an asymmetric system has VLs larger than the maximum shared
+VL, fix this by discovering then using the maximum VL for allocations
+and using RDVL during the save/restore process.
 
-Durr, does this help?
+Fuad posted[1] another attempt to address this issues but as indicated
+in review I have maintanability concerns since the VL configuration does
+not follow best practices and the enumeration is not well integrated
+with the rest of the enumeration code.
 
+[1] https://lore.kernel.org/r/20240606092623.2236172-1-tabba@google.com
 
-diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-index 4ad5ed8adf96..57f70dfa1f3d 100644
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -236,7 +236,7 @@ void static_key_disable_cpuslocked(struct static_key *key)
- 	}
- 
- 	jump_label_lock();
--	if (atomic_cmpxchg(&key->enabled, 1, 0))
-+	if (atomic_cmpxchg(&key->enabled, 1, 0) == 1)
- 		jump_label_update(key);
- 	jump_label_unlock();
- }
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v6:
+- Rebase onto v6.11-rc1.
+- Link to v5: https://lore.kernel.org/r/20240708-kvm-arm64-fix-pkvm-sve-vl-v5-0-d2175738456b@kernel.org
+
+Changes in v5:
+- Clarify commit message on patch 3.
+- Link to v4: https://lore.kernel.org/r/20240704-kvm-arm64-fix-pkvm-sve-vl-v4-0-b6898ab23dc4@kernel.org
+
+Changes in v4:
+- Roll in Catalin's acks.
+- Link to v3: https://lore.kernel.org/r/20240607-kvm-arm64-fix-pkvm-sve-vl-v3-0-59e781706d65@kernel.org
+
+Changes in v3:
+- Replace %u with %lu in late CPU error message.
+Changes in v2:
+- Downgrade check for a late CPU increasing maximum VL to a warning only
+  but do it unconditionally since pKVM prevents late CPUs anyway.
+- Commit log tweaks.
+- Link to v1: https://lore.kernel.org/r/20240605-kvm-arm64-fix-pkvm-sve-vl-v1-0-680d6b43b4c1@kernel.org
+
+---
+Mark Brown (4):
+      arm64/fpsimd: Introduce __bit_to_vl() helper
+      arm64/fpsimd: Discover maximum vector length implemented by any CPU
+      KVM: arm64: Fix FFR offset calculation for pKVM host state save and restore
+      KVM: arm64: Avoid underallocating storage for host SVE state
+
+ arch/arm64/include/asm/fpsimd.h         | 17 +++++++++++++++
+ arch/arm64/include/asm/kvm_host.h       |  2 +-
+ arch/arm64/include/asm/kvm_hyp.h        |  3 ++-
+ arch/arm64/include/asm/kvm_pkvm.h       |  2 +-
+ arch/arm64/kernel/fpsimd.c              | 38 +++++++++++++++++++++++++++------
+ arch/arm64/kvm/hyp/fpsimd.S             |  5 +++++
+ arch/arm64/kvm/hyp/include/hyp/switch.h |  2 +-
+ arch/arm64/kvm/hyp/nvhe/hyp-main.c      |  6 +++---
+ arch/arm64/kvm/hyp/nvhe/pkvm.c          |  2 +-
+ arch/arm64/kvm/reset.c                  |  6 +++---
+ 10 files changed, 65 insertions(+), 18 deletions(-)
+---
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+change-id: 20240604-kvm-arm64-fix-pkvm-sve-vl-13cd71fd7db0
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
