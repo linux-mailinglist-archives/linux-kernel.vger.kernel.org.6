@@ -1,124 +1,99 @@
-Return-Path: <linux-kernel+bounces-267555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A6E9412C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:04:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82E099412C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF7C5284C8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:04:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C09E1F247D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C80C1993BD;
-	Tue, 30 Jul 2024 13:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4480319DFBF;
+	Tue, 30 Jul 2024 13:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfHN9phs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SLzi73Ls"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5857F623;
-	Tue, 30 Jul 2024 13:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091891E49B;
+	Tue, 30 Jul 2024 13:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722344665; cv=none; b=KadhSg9JOSSQlgPTTtag6XYl0eQz+YdqDKZR+5i20RBWdUAzwP5vM3RQjHAE4NKKXisVu6XDLq2p9MqhRkGAWXaY+tl28aUuaGv6EEkUehj1Oj6gctH79wAQ6UhLjBdqmLVGp302+oM6nmVXkQ+mNX67/GgNJ1pymdpElt/yNSI=
+	t=1722344741; cv=none; b=rif74Cy+wuBejLkN6Ejzjwvu5MNW2LdrHnVtg5VRKAc9mBRwCLuKylpCsmm/6Bk3Z8bze/UqI4fw+3XgxlmHtkz1v5ccU8H45WIj3MSGhNbJKpQN6nIY7KF3NR4I59u2ijSIytfykFc2MwBVRupU8Uta+3x4Eog2WoEpJVYsF8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722344665; c=relaxed/simple;
-	bh=Vds91/wtGjgWmouaxLlCIsUy+law5p/u5wFwIQDfHaU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=EW9oSL/IFAS/VnrES/0WsOqGzLWhrRln/sQZXBLQXSiv4dKJUVF4U2fG1y5aMnDR9lASEkvWJ+IgjhzbO3k2teU3sDq9UK/dA6XebfT+auN+uHlf/o+S5FaIA2mAWnwujbREnYz+5TXFdChZDq0DP6Zg2+ocAbEiPNI0qlcj+ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfHN9phs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 210EFC32782;
-	Tue, 30 Jul 2024 13:04:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722344664;
-	bh=Vds91/wtGjgWmouaxLlCIsUy+law5p/u5wFwIQDfHaU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kfHN9phsPk9frydWNCHlfkOLGu1hsD7bZCcTVbqpHQnGCM41VuzFJjkYE2djFG/uU
-	 2uQNIzZEO4uRvgdwdthH5H8IGcbtGoX+ECVQ7fnSmod/4yUb+NuLhkvM5n34ZEzfAH
-	 3hmavpi+iGBFebQcExbEO1JQAuTUVuJgVuQId4WL+Bx6QxwllIXLF6S73YIb/h9OFN
-	 X8WN8M8qvMoZNG4Fxy0d5lpg6G3GUvkFch1inmJZhaWgfPsUgQHnX/uBIhEx8+Boew
-	 L0NAa7sO5Ufy370etXsv1fB27rAPYtcQLMAv8SU1XjK1QMAutFY5nt8cwOOhv71z42
-	 bhpJniyvcYe8Q==
-Date: Tue, 30 Jul 2024 22:04:17 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, jpoimboe@kernel.org, jikos@kernel.org,
- mbenes@suse.cz, pmladek@suse.com, joe.lawrence@redhat.com,
- nathan@kernel.org, morbo@google.com, justinstitt@google.com,
- mcgrof@kernel.org, thunder.leizhen@huawei.com, kees@kernel.org,
- kernel-team@meta.com, mmaurer@google.com, samitolvanen@google.com,
- mhiramat@kernel.org, rostedt@goodmis.org
-Subject: Re: [PATCH 3/3] tracing/kprobes: Use APIs that matches symbols with
- .llvm.<hash> suffix
-Message-Id: <20240730220417.33bd5f0d75c3742c413136d1@kernel.org>
-In-Reply-To: <20240730005433.3559731-4-song@kernel.org>
-References: <20240730005433.3559731-1-song@kernel.org>
-	<20240730005433.3559731-4-song@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722344741; c=relaxed/simple;
+	bh=VqjFCD8e+UIbv/2b5/w2G2WUEBnqVMy7Fz6yfwZqW2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=s8g27NsaU8qHr8M3/Z7YMWffHvaFEMztSs0KxJTO4xnOF/gvle8OjcU8lGP+C1mBKTzKHnstYl8fGtBiNTfoIyP+kFy/yI2yjGgx/7sQzA+SN2qF9EGnSzahWtzVxa6wYFW1j7kQY5q6P4Yf0iRXYid2qLiOcHYaCWM86CobIoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=SLzi73Ls; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1722344735;
+	bh=BzBgqqtmENruNKpE4HET9aSE1+/c/QOTTv7yxYdVrng=;
+	h=Date:From:To:Cc:Subject:From;
+	b=SLzi73LsgslRKYfGvZqYyHIgbDS9M5M/V/WTerm0xrPsWtDFhT7iOiEyTB5iA/PpT
+	 003ztDtMXau8bLB2y93oaR6W7EUmiQqaPU2GZEQikJLOiyCLhTXCK5Dwo5vdS5UWIr
+	 stFMDBORFkNbbsptEKwd6TUqiYAFtLCQDmSYT6e5Dkq2necQ5uw0+27jtlWBEAxOnU
+	 jXeSL0sRiIO3D/5MiUoKXlw35pZC765otfjnG4TSUpdIqjkiQBWwh8gPOPpH7txKsw
+	 E3BkJ5BiZbtJQQTDAQ4QH6ppYx14JUrQkWZ8vJQnh/InxWnvacRmQqIu7nHEK9a4/C
+	 UbHRciWZIrxhQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WYFp760Cyz4wcK;
+	Tue, 30 Jul 2024 23:05:35 +1000 (AEST)
+Date: Tue, 30 Jul 2024 23:05:35 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>
+Cc: David Howells <dhowells@redhat.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the vfs-brauner
+ tree
+Message-ID: <20240730230535.593a97fd@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/PL6KSzpgWH5ybFhbbKCXxxJ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/PL6KSzpgWH5ybFhbbKCXxxJ
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 29 Jul 2024 17:54:33 -0700
-Song Liu <song@kernel.org> wrote:
+Hi all,
 
-> Use the new kallsyms APIs that matches symbols name with .llvm.<hash>
-> suffix. This allows userspace tools to get kprobes on the expected
-> function name, while the actual symbol has a .llvm.<hash> suffix.
-> 
+Commit
 
-_kprobe_addr@kernel/kprobes.c may also fail with this change.
+  70c3cb72ef93 ("netfs: Provide an iterator-reset function")
 
-Thanks,
+is missing a Signed-off-by from its author.
 
-> This only effects kernel compared with CONFIG_LTO_CLANG.
-> 
-> Signed-off-by: Song Liu <song@kernel.org>
-> ---
->  kernel/trace/trace_kprobe.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-> index 61a6da808203..c319382c1a09 100644
-> --- a/kernel/trace/trace_kprobe.c
-> +++ b/kernel/trace/trace_kprobe.c
-> @@ -202,7 +202,8 @@ unsigned long trace_kprobe_address(struct trace_kprobe *tk)
->  
->  	if (tk->symbol) {
->  		addr = (unsigned long)
-> -			kallsyms_lookup_name(trace_kprobe_symbol(tk));
-> +			kallsyms_lookup_name_or_prefix(trace_kprobe_symbol(tk));
-> +
->  		if (addr)
->  			addr += tk->rp.kp.offset;
->  	} else {
-> @@ -766,8 +767,13 @@ static unsigned int number_of_same_symbols(const char *mod, const char *func_nam
->  {
->  	struct sym_count_ctx ctx = { .count = 0, .name = func_name };
->  
-> -	if (!mod)
-> +	if (!mod) {
->  		kallsyms_on_each_match_symbol(count_symbols, func_name, &ctx.count);
-> +		if (IS_ENABLED(CONFIG_LTO_CLANG) && !ctx.count) {
-> +			kallsyms_on_each_match_symbol_or_prefix(
-> +				count_symbols, func_name, &ctx.count);
-> +		}
-> +	}
->  
->  	module_kallsyms_on_each_symbol(mod, count_mod_symbols, &ctx);
->  
-> -- 
-> 2.43.0
-> 
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/PL6KSzpgWH5ybFhbbKCXxxJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmao5R8ACgkQAVBC80lX
+0GxhkAf+PR7/ihY0Yp2AAwlC4xZvsY5XbiMx1eN8QEi0h14jgeo5sRqlF8VsLmtc
+/IfeM+gJ4eXEH1ZwjjfrQq71MpJHgFQLj0fqVhoRvpUPzzYsSS3T4e3K5Yq7Hrtp
+eGnsdneLLpHh2Dwk04SSaRfWG0P4rhhwXlwYRABfKkXvDssW/rQXKkTQ2/uCxIUJ
+AWjwSKuDunG2SLyZYA6rJCttv69N7lquDmCvvyMGFNBbFWWkXN+SMyDsMVEk4sb5
+6mW/Vg2+eDgM64YAseond4wd/Pm7NZ/iUc4mtdiVRswqlH12U5ViCkITVmi1uFqD
+TP951CgIbDw1Mc5zDrrW1jlZVLp7kQ==
+=itjX
+-----END PGP SIGNATURE-----
+
+--Sig_/PL6KSzpgWH5ybFhbbKCXxxJ--
 
