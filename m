@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-267371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D4CE9410C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:40:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 719109410D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2F2F1F24665
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:40:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ABE01F23E91
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4F419E82C;
-	Tue, 30 Jul 2024 11:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE6D1A01CF;
+	Tue, 30 Jul 2024 11:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Dv1VHK35";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mJXMXoqG"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1fCNpRkX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0/JKd5qH"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE8D1993B0;
-	Tue, 30 Jul 2024 11:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F0A19EEB1;
+	Tue, 30 Jul 2024 11:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722339601; cv=none; b=V5IKUZw93haFLlIRyCoubwOp1JGqeobuM7rCH0yEUGLibchEpS0QRj9hJrhzCrkzyXofGb8pPvbf6rTuhI8g+YsCscE0A3zdiyIv7+1nrpuBy69jdYghz167azMXEIiPGNZmZXf0daPCHrs8YtBnUTalCJj9TkJvszT32Fq8/0I=
+	t=1722339604; cv=none; b=qqr2YxSBF+HCpcemQPzKCurk++4w31n5Q4GHvt9QyqYenSy08LSuoV3R8NwdH6REHIsT44MvDgZyPp0XAlkSl5pIS5BRivnZ08G0cmn//ik4a7zWS5pa6UoWCN/zbRMyid2qb72kRtS9JYDm6H6sDSlSpqX/WqiuVn0z1sZE37k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722339601; c=relaxed/simple;
-	bh=yMYjkXY1upHFVdKKiGzDGqXAqvbtHdvSkwWnTh9x5ME=;
+	s=arc-20240116; t=1722339604; c=relaxed/simple;
+	bh=4oA+OXgpfMvYSYZoivM04aHyK7HrVH3TPoOyDNMOSA8=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=JeKEpAE75EN/3BjhmgE2PTV7LiC+v+qlLOgLVcRp8x4/fPjsVHcKy0xaCKGwMGxTia//3RuXCUyR6UlxVrlKK6XwM5vcF5fUZ6j9yTmmDU+SS4h++nvi6CHJl7CnSDBFyl/gDPtOgyLf7GK3v/JeraN4PUNhKw2laB0MY3FiGXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Dv1VHK35; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mJXMXoqG; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=RLwowrvdU5ESh6Qm4XFl0Z83wKL/xI5UXxsS1J6RIwSMGfa5S9Anu3cHZXrpbcyb3fqYZrwaHVm0c6ujG417oE50qnUM/V60XYfi6zBVwAo6kW5Wc7PqI56KgsaeVuY6nhzHlNZVqyxSDurcwtW740DI/dmV3DIZJd2z/AKNqZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1fCNpRkX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0/JKd5qH; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Tue, 30 Jul 2024 11:39:58 -0000
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=U+A6XY9TpvR9hgkxe11+yvufRsLP/70qyNG7fVyTOuc=;
-	b=Dv1VHK35X6v/paX64dEhLfgWMMDPFvcIKOqatQ80Nq+zPKl6yn3A6jPQsIzDf0dQifrIb6
-	UGSJOjQSt53NTxA88GUI3onwz8bzCx0QxoJ0xPSp8Lj+Rtec9nwh1PFGX+KuOnV7u5tLLd
-	fbR8fVeeKBZWsIgtQM64ltM0OYbT0bZmumx8E/2wWiUCpnS5axy97IMinLc33x4ncEcAx1
-	8+uXjg9CEu9NaPnY3Ion6qPF6wOMIk76po4temjk+IPMcFYGEGiQQRRfQzDQf5fBIsvJWL
-	hjqpoJNj49C3BQZ9xSJJu8DVk4j6OGNukJ5+W5vedyqfDEArv3hLErvm/85fTw==
+	bh=2Pf9PM0UMAHVFn5Fj86o0uWjrffI0oz5zp/IzhemiCw=;
+	b=1fCNpRkX1R640IY50T32c3B0FvinhqQI9ziBi5xrSFDXMgp3OmSTlhdmRD0GuRzP0VdELH
+	a8I3tABJ29E7uyFoBKWxS3XhaZ/gt7/XrsleyFU3BQpoNSBCaFZKjCTS+m5KZMDj4v85VR
+	SB/UgtMfrRblDucWo6EZULZMhVLb+o8v2KFzA0z9OGgUy+AZnG7mQvd/GmD+VG1LRgbzwj
+	R3fCJc5X8eQY2Zl7RhM+KJVskxkmS29rP8xE/O1/q8NrCDdrM5F3qv85doaxC/POMTbRgs
+	YWDGjpUP8WxH6qLkJxv3k9F2nax2sC0tWXuFO0uLie3CUgbndUkFVCi9ZRWeGQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1722339598;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,26 +52,25 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=U+A6XY9TpvR9hgkxe11+yvufRsLP/70qyNG7fVyTOuc=;
-	b=mJXMXoqGjwjiHGTtZIfVrPSPsmbfRbZ8u2fI2QBbizS9EE7h3AZbiap522PmbLpeIJRNWB
-	hsrXkV0t6zNe4xAQ==
+	bh=2Pf9PM0UMAHVFn5Fj86o0uWjrffI0oz5zp/IzhemiCw=;
+	b=0/JKd5qHzHJfdHl2zrBxd/RFVabj5DU6WDVEXwFrJONJ2VnmTH9oX4HznVanUQf+8oM7N0
+	JGon2zi5N9/mdTAw==
 From: tip-bot2 for Marek =?utf-8?q?Beh=C3=BAn?= <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/core] irqchip/armada-370-xp: Rename variable for consistency
+Subject: [tip: irq/core] irqchip/armada-370-xp: Drop redundant continue
 Cc: kabel@kernel.org, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
  linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240711160907.31012-8-kabel@kernel.org>
-References: <20240711160907.31012-8-kabel@kernel.org>
+In-Reply-To: <20240711160907.31012-7-kabel@kernel.org>
+References: <20240711160907.31012-7-kabel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172233959829.2215.9483841948118069553.tip-bot2@tip-bot2>
+Message-ID: <172233959854.2215.15275371788182500742.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,50 +80,43 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     ac0ae59db6f521223b477677d2ff51e26815b114
-Gitweb:        https://git.kernel.org/tip/ac0ae59db6f521223b477677d2ff51e2681=
-5b114
+Commit-ID:     081b64cc872707f80a23e41f0ab12852716551b2
+Gitweb:        https://git.kernel.org/tip/081b64cc872707f80a23e41f0ab12852716=
+551b2
 Author:        Marek Beh=C3=BAn <kabel@kernel.org>
-AuthorDate:    Thu, 11 Jul 2024 18:09:04 +02:00
+AuthorDate:    Thu, 11 Jul 2024 18:09:03 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Tue, 30 Jul 2024 13:35:48 +02:00
 
-irqchip/armada-370-xp: Rename variable for consistency
+irqchip/armada-370-xp: Drop redundant continue
 
-Rename the variable holding the cause register to "cause" in
-mpic_handle_cascade_irq().
+Drop redundant continue from mpic_handle_irq().
 
 Signed-off-by: Marek Beh=C3=BAn <kabel@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240711160907.31012-8-kabel@kernel.org
+Link: https://lore.kernel.org/all/20240711160907.31012-7-kabel@kernel.org
 
 
 ---
- drivers/irqchip/irq-armada-370-xp.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/irqchip/irq-armada-370-xp.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada=
 -370-xp.c
-index 4abe0ea..5cde229 100644
+index 66e14f1..4abe0ea 100644
 --- a/drivers/irqchip/irq-armada-370-xp.c
 +++ b/drivers/irqchip/irq-armada-370-xp.c
-@@ -633,15 +633,15 @@ static inline void mpic_handle_ipi_irq(void) {}
- static void mpic_handle_cascade_irq(struct irq_desc *desc)
- {
- 	struct irq_chip *chip =3D irq_desc_get_chip(desc);
--	unsigned long irqmap, irqsrc, cpuid;
-+	unsigned long cause, irqsrc, cpuid;
- 	irq_hw_number_t i;
+@@ -673,10 +673,8 @@ static void __exception_irq_entry mpic_handle_irq(struct=
+ pt_regs *regs)
+ 		if (i > 1022)
+ 			break;
 =20
- 	chained_irq_enter(chip, desc);
+-		if (i > 1) {
++		if (i > 1)
+ 			generic_handle_domain_irq(mpic_domain, i);
+-			continue;
+-		}
 =20
--	irqmap =3D readl_relaxed(per_cpu_int_base + MPIC_PPI_CAUSE);
-+	cause =3D readl_relaxed(per_cpu_int_base + MPIC_PPI_CAUSE);
- 	cpuid =3D cpu_logical_map(smp_processor_id());
-=20
--	for_each_set_bit(i, &irqmap, BITS_PER_LONG) {
-+	for_each_set_bit(i, &cause, BITS_PER_LONG) {
- 		irqsrc =3D readl_relaxed(main_int_base + MPIC_INT_SOURCE_CTL(i));
-=20
- 		/* Check if the interrupt is not masked on current CPU.
+ 		/* MSI handling */
+ 		if (i =3D=3D 1)
 
