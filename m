@@ -1,61 +1,60 @@
-Return-Path: <linux-kernel+bounces-267928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A559941C7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:07:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A62BE941C7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BB4C1C213DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:07:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58E2B282BD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5EB18E05F;
-	Tue, 30 Jul 2024 17:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AD41917C8;
+	Tue, 30 Jul 2024 17:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gTkM6WH5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PKe30KCs"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iJ4jcxGm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9seK1xdv"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7123218C902;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9824D18C907;
 	Tue, 30 Jul 2024 17:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722359194; cv=none; b=pNWNXox4t7eiZF/7QYX45Ijakam5gay2k89feZOKRuco/fUf5H00CX01Y9F+g5mt5X51d83jcAnp4Fd3rL9KYMOml5Ji4HHpTMJTkTDsnidMtffj3iXezgoBUHWRON+eVjMvEAFDlmdSscJ3UOt5bEjWnPHjtoopKgoOJJbEvFA=
+	t=1722359194; cv=none; b=kdxKkO9UwaMpWlO5GEni37wEp0AmNbGFd6GynFO8PIc4GGT+omJqNjDZDKKybLdGP3e+r8lh7C2iXC2Gpf50t+OodDn7f/4zHC7gLgN6WRUtEyJVo5zSOk2wbCp/QXlhVgSMuPjOOEJRvPxLEGJlt/rwF0ilU2gZrZAzDACggL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722359194; c=relaxed/simple;
-	bh=0wvArvbtmDcZgrOWXIWq4bLtzXffkU2h8BWLMAchJTA=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=tOjoOMkPVR1+R/brJkTafLvd5i+kDDfIy8UFZx+BNbNEMo9J/Qlp3vJt91EvH7Q3zZh1geTWqu6LqAOFaM01eYaDgB9OsgU3jxreshuHH66XRgzyMi/pvrH5zFLAcGvR7PusTVQuO9wJLK1cgS/VdFi8BjCxWKnp8CsB0i0Ss8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gTkM6WH5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PKe30KCs; arc=none smtp.client-ip=193.142.43.55
+	bh=GMQxXL3AVxG2Oph3kHIzPn3gyMUQaekb4MWBGoXx5pI=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=PdbvLfXzazf6h6I5S/prEbDzKUmwf+zN/XEqWzCAHM7zQni84gSQblzAneYsnhixCy2rGPNgLFCmQdK4vW/fpY3RgsHifNwzEvt0KX8K3w3DyNOAFeJ/uWkJTYNtxcsOr6xprviXtq13wdrEn4P1+4vFW5VPNK2f6rE40HUJpco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iJ4jcxGm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9seK1xdv; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 30 Jul 2024 17:06:29 -0000
+Date: Tue, 30 Jul 2024 17:06:30 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1722359190;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=CRK8eI6uJD1N++bpaKwXRf3DW91bIs4V7MAPyhQZxac=;
-	b=gTkM6WH5BagZJGYdneVACtWz/ieBUDSCw1dOa2LS2Olt+iW7X6ega+i9tDYmVhzlwz8scd
-	T97KVHcOa+EgA2yJks1UipgiCJHrHz4giBJSxH3EitShc0sYGnLYKoPF2NqNY5qvGEp8Hh
-	DARGFiiKxfTDQuxVCZzPwKdMRESPbojZXnZYFUUBWSpVRLXn16BU0m8SdiTdH1NlPcfB/2
-	pv/i0MAuOJKxBpB9a7s7dCogumFw3Jgd8LVDjXl/nvLNX0WSppGuMmn9JpcLGAKWefdJ9s
-	fpA/RUwcuiKHsQ3ZTHMAxNtoAcX23QClkgy++LONgCemfHDdJD5ITkzA7gyNEw==
+	bh=L/vjPqj/Dmed/+7rD/kONQ1U+Dw/FEAQLsDtLq9X0qM=;
+	b=iJ4jcxGm2cLP15vYRVlC7FSOSc/dxpcbpe6VcQ8z5zAU9bFQu5FGMsC1uSk8+5wEBsrz9z
+	Vbx1yCv4Jr/5z/HSKApJRyJW5GUg1MvCogQip9UQxZJx2kRBMUe4SUHOtkJz9VHZ+tJMWM
+	5UScFQtvtcTEXlQlupvUS3SFHBh6UUeE7o1sOCgbD3xNTYwNESdqAJ/MFFM18PArjQHxf5
+	Lk7lwuz6oLjZ0p667/hv/BbD0JY5GK5x1oeq1lpHig+TrgocIQgndgHiqy2V1DfQtSBSZd
+	nXt9Mhq1wSOuxYlGI35XUm5gPEYAzw9Pf0xNzwGw+/+9CFXlJtxhWHiLPRt2Rw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1722359190;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=CRK8eI6uJD1N++bpaKwXRf3DW91bIs4V7MAPyhQZxac=;
-	b=PKe30KCsuTeAKdB2mk0rRQs1JEaq+nS8THJkjKoe3O3Wo/g/CytKZORSlaKm3kZJlfu1zp
-	hwAaVIJJKvkp+NCg==
+	bh=L/vjPqj/Dmed/+7rD/kONQ1U+Dw/FEAQLsDtLq9X0qM=;
+	b=9seK1xdvI+ecDlIERgWKMZi4IGzrLW7yFQdF7vkojEwcUFg0o+/n8FeeXOXEnpXLZy1n1T
+	2n0cCwlBjAwerRAA==
 From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] posix-timers: Retrieve interval in common
- timer_settime() code
+Subject: [tip: timers/core] posix-cpu-timers: Simplify posix_cpu_timer_set()
 Cc: Thomas Gleixner <tglx@linutronix.de>,
  Frederic Weisbecker <frederic@kernel.org>,
  "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
@@ -67,7 +66,7 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172235918977.2215.15763526336696027464.tip-bot2@tip-bot2>
+Message-ID: <172235919023.2215.13850125037879458535.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -77,83 +76,91 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     bfa408f03fc74bcfe8f275a434294bde06eabb00
-Gitweb:        https://git.kernel.org/tip/bfa408f03fc74bcfe8f275a434294bde06eabb00
+Commit-ID:     c20b99e3243f9e72b6fa0e260766adcba115f25b
+Gitweb:        https://git.kernel.org/tip/c20b99e3243f9e72b6fa0e260766adcba115f25b
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 10 Jun 2024 18:42:26 +02:00
+AuthorDate:    Mon, 10 Jun 2024 18:42:25 +02:00
 Committer:     Frederic Weisbecker <frederic@kernel.org>
-CommitterDate: Mon, 29 Jul 2024 21:57:35 +02:00
+CommitterDate: Mon, 29 Jul 2024 21:57:34 +02:00
 
-posix-timers: Retrieve interval in common timer_settime() code
+posix-cpu-timers: Simplify posix_cpu_timer_set()
 
-No point in doing this all over the place.
+Avoid the late sighand lock/unlock dance when a timer is not armed to
+enforce reevaluation of the timer base so that the process wide CPU timer
+sampling can be disabled.
+
+Do it right at the point where the arming decision is made which already
+has sighand locked.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Reviewed-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/time/posix-cpu-timers.c | 10 ++--------
- kernel/time/posix-timers.c     |  5 ++++-
- 2 files changed, 6 insertions(+), 9 deletions(-)
+ kernel/time/posix-cpu-timers.c | 44 ++++++++++++---------------------
+ 1 file changed, 17 insertions(+), 27 deletions(-)
 
 diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
-index c6fe017..4107977 100644
+index eb28150..c6fe017 100644
 --- a/kernel/time/posix-cpu-timers.c
 +++ b/kernel/time/posix-cpu-timers.c
-@@ -622,8 +622,8 @@ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
- {
- 	bool sigev_none = timer->it_sigev_notify == SIGEV_NONE;
- 	clockid_t clkid = CPUCLOCK_WHICH(timer->it_clock);
--	u64 old_expires, new_expires, old_incr, now;
- 	struct cpu_timer *ctmr = &timer->it.cpu;
-+	u64 old_expires, new_expires, now;
- 	struct sighand_struct *sighand;
- 	struct task_struct *p;
- 	unsigned long flags;
-@@ -660,10 +660,7 @@ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
- 		return -ESRCH;
- 	}
+@@ -705,10 +705,16 @@ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
+ 	/*
+ 	 * Arm the timer if it is not disabled, the new expiry value has
+ 	 * not yet expired and the timer requires signal delivery.
+-	 * SIGEV_NONE timers are never armed.
++	 * SIGEV_NONE timers are never armed. In case the timer is not
++	 * armed, enforce the reevaluation of the timer base so that the
++	 * process wide cputime counter can be disabled eventually.
+ 	 */
+-	if (!sigev_none && new_expires && now < new_expires)
+-		arm_timer(timer, p);
++	if (likely(!sigev_none)) {
++		if (new_expires && now < new_expires)
++			arm_timer(timer, p);
++		else
++			trigger_base_recalc_expires(timer, p);
++	}
  
--	/*
--	 * Disarm any old timer after extracting its expiry time.
--	 */
--	old_incr = timer->it_interval;
-+	/* Retrieve the current expiry time before disarming the timer */
- 	old_expires = cpu_timer_getexpires(ctmr);
+ 	unlock_task_sighand(p, &flags);
+ 	/*
+@@ -727,30 +733,14 @@ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
+ 	timer->it_overrun_last = 0;
+ 	timer->it_overrun = -1;
  
- 	if (unlikely(timer->it.cpu.firing)) {
-@@ -742,9 +739,6 @@ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
- 		cpu_timer_fire(timer);
- out:
- 	rcu_read_unlock();
--	if (old)
--		old->it_interval = ns_to_timespec64(old_incr);
+-	if (!sigev_none && now >= new_expires) {
+-		if (new_expires != 0) {
+-			/*
+-			 * The designated time already passed, so we notify
+-			 * immediately, even if the thread never runs to
+-			 * accumulate more time on this clock.
+-			 */
+-			cpu_timer_fire(timer);
+-		}
 -
- 	return ret;
- }
- 
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index b924f0f..056966b 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -904,7 +904,7 @@ static int do_timer_settime(timer_t timer_id, int tmr_flags,
- 	const struct k_clock *kc;
- 	struct k_itimer *timr;
- 	unsigned long flags;
--	int error = 0;
-+	int error;
- 
- 	if (!timespec64_valid(&new_spec64->it_interval) ||
- 	    !timespec64_valid(&new_spec64->it_value))
-@@ -918,6 +918,9 @@ retry:
- 	if (!timr)
- 		return -EINVAL;
- 
-+	if (old_spec64)
-+		old_spec64->it_interval = ktime_to_timespec64(timr->it_interval);
-+
- 	kc = timr->kclock;
- 	if (WARN_ON_ONCE(!kc || !kc->timer_set))
- 		error = -EINVAL;
+-		/*
+-		 * Make sure we don't keep around the process wide cputime
+-		 * counter or the tick dependency if they are not necessary.
+-		 */
+-		sighand = lock_task_sighand(p, &flags);
+-		if (!sighand)
+-			goto out;
+-
+-		if (!cpu_timer_queued(ctmr))
+-			trigger_base_recalc_expires(timer, p);
+-
+-		unlock_task_sighand(p, &flags);
+-	}
+- out:
++	/*
++	 * If the new expiry time was already in the past the timer was not
++	 * queued. Fire it immediately even if the thread never runs to
++	 * accumulate more time on this clock.
++	 */
++	if (!sigev_none && new_expires && now >= new_expires)
++		cpu_timer_fire(timer);
++out:
+ 	rcu_read_unlock();
+ 	if (old)
+ 		old->it_interval = ns_to_timespec64(old_incr);
 
