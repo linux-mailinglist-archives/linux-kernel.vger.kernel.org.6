@@ -1,91 +1,165 @@
-Return-Path: <linux-kernel+bounces-267604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C25D941343
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:36:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE3B6941348
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FA60286175
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:36:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9691F25359
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0F41A072E;
-	Tue, 30 Jul 2024 13:35:58 +0000 (UTC)
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E651A00E7;
+	Tue, 30 Jul 2024 13:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PmlKvsKZ"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5A61A01AE
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 13:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAA01EA90;
+	Tue, 30 Jul 2024 13:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722346558; cv=none; b=OXZ09j5a8Fx+oQOnMqgdVjGq9APOsVIbjC7V2jZflpXN+RtpKC54X1mkRec3ctWFs/+hu7zFpesgzAKOVCH6FzDOeVraGidePre9N/h02LgZJ7jqanK9jUraxf6jUyS16S+VqCArEuF1Uv5PV9FB4McS/kLPkr5/0QAekQwvdfo=
+	t=1722346621; cv=none; b=QNxDhN5xNqU0/WgMOsr/KH9mlI3XNFMKU9ZqZ2f5ijATWC5rRXHmvyPD19y1XFB7UAJRllyZTeocY7G0ZVAAloFQ4mdszhbBrIGJOdJgEA4s/GyGSnv8z7faA6/KbNog6TGuw0q9YsUyJpI7wzb89UmHRkCNRsAkLOnzVtSOZnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722346558; c=relaxed/simple;
-	bh=8ZKVgUkDg1H9qoLmR9WGjhmiqAIJWR6xufVkeSIkI6s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e48NHiPFVC9hLmOXDZIVVNnLZhjLaAgGVchBW8laShT0NQ89eOQ2JPCGMY5+l6f++mq5Kep4Gu73vuAsV1BcFK9TEQU4TpzrTKzCJROMengUy7l0g6f0sMa4Gmh1HQs4VcDs6OSIFfX134jFq4LkzO7xZSLhJUj8M7nKIuTBhdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:520d:93ad:ff6d:335e])
-	by michel.telenet-ops.be with bizsmtp
-	id tpbo2C00330Ayot06pbooH; Tue, 30 Jul 2024 15:35:48 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sYn0f-004Akz-4Y;
-	Tue, 30 Jul 2024 15:35:48 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sYn12-00DzGt-5X;
-	Tue, 30 Jul 2024 15:35:48 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>
-Cc: linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] spi: spidev: Add missing spi_device_id for bh2228fv
-Date: Tue, 30 Jul 2024 15:35:47 +0200
-Message-Id: <cb571d4128f41175f31319cd9febc829417ea167.1722346539.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722346621; c=relaxed/simple;
+	bh=ua+G5d37uwwyS39oprVNhzO7VDHeERuJds3F6946j5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=arUlTF9VqLUEy+kITyoaizJoVo9hpqGULgav1pWcjcJcS8sxSnOtukVpwK9tclVoe7QjDaq3V+Gri2T/6yRrvejUnPJpGuMfWR0NEQtBYl7Bx/AsH5nqrNmyxdUJNUfQ2Udto4mY3+3nKmCUElSZMQ9hKb7/olQDM/DSkw3h914=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PmlKvsKZ; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1722346615;
+	bh=PLa6/dSPTqUd40ji8hY6ASbBV5wUY8onxJlxww0sZyA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PmlKvsKZGAXTtT+2kPbGfwN5j4T1zuwCz8cKpsB/dpE3bLFcYyJyzwKs6+S/rE5o9
+	 JXK83prXTjmBP5KTZ8nxJ47bKhckRuR6+zbxIXAb5wWvWnQKaXrdOCXrlJyfUtjx3N
+	 N+kKyXG2ZZZVSYI/t0oIWXfs8hQRYV8tMMzJzBuZIzwDYvOa45Km3+Axe311nQOd2x
+	 Hw27JEXoARTSYu9t1onPrgfAcfJ9QThNK67xrTB5CUnX5OmxL3/QVdJzSxVbq2IRoL
+	 dUCzy0Ms/q40Q+r9H2h531FovndysjuC3rJeKJojI25zEqeF/NZhCUgkpZWt2hI0Ov
+	 39jNga8xD6i7Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WYGVH6FGQz4wcK;
+	Tue, 30 Jul 2024 23:36:55 +1000 (AEST)
+Date: Tue, 30 Jul 2024 23:36:55 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the device-mapper tree
+Message-ID: <20240730233655.25f77daa@canb.auug.org.au>
+In-Reply-To: <aa4b337-e1dd-4091-ab2-6b41de205fd1@redhat.com>
+References: <20240709185733.4aac356a@canb.auug.org.au>
+	<49ab648e-3c89-d4d-f2f7-3c1e2aa2cab@redhat.com>
+	<20240710082824.30c8161d@canb.auug.org.au>
+	<622b892-d792-382c-46f8-fe5cfdba4df1@redhat.com>
+	<20240730200737.67bb4d4f@canb.auug.org.au>
+	<aa4b337-e1dd-4091-ab2-6b41de205fd1@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/bVjLCT6W2gGl0D=OboQWUF_";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-When the of_device_id entry for "rohm,bh2228fv" was added, the
-corresponding spi_device_id was forgotten, causing a warning message
-during boot-up:
+--Sig_/bVjLCT6W2gGl0D=OboQWUF_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-    SPI driver spidev has no spi_device_id for rohm,bh2228fv
+Hi Mikulas,
 
-Fix module autoloading and shut up the warning by adding the missing
-entry.
+On Tue, 30 Jul 2024 13:54:13 +0200 (CEST) Mikulas Patocka <mpatocka@redhat.=
+com> wrote:
+>
+> On Tue, 30 Jul 2024, Stephen Rothwell wrote:
+>=20
+> > On Wed, 10 Jul 2024 17:48:39 +0200 (CEST) Mikulas Patocka <mpatocka@red=
+hat.com> wrote: =20
+> > >
+> > > On Wed, 10 Jul 2024, Stephen Rothwell wrote:
+> > >  =20
+> > > > On Tue, 9 Jul 2024 11:56:27 +0200 (CEST) Mikulas Patocka <mpatocka@=
+redhat.com> wrote:   =20
+> > > > >
+> > > > > On Tue, 9 Jul 2024, Stephen Rothwell wrote:
+> > > > >    =20
+> > > > > > After merging the device-mapper tree, today's linux-next build =
+(htmldocs)
+> > > > > > produced this warning:
+> > > > > >=20
+> > > > > > Documentation/admin-guide/device-mapper/dm-crypt.rst:168: ERROR=
+: Unexpected indentation.
+> > > > > >=20
+> > > > > > Introduced by commit
+> > > > > >=20
+> > > > > >   04a1020ad350 ("dm-crypt: limit the size of encryption request=
+s")   =20
+> > > > >=20
+> > > > > How should it be fixed? Delete the '-' character? Or some other c=
+hange?   =20
+> > > >=20
+> > > > Looking a few lines above shows indented paragraphs without the '-'
+> > > > which seems to work.   =20
+> > >=20
+> > > I hopefully fixed that. =20
+> >=20
+> > I am sill seeing this warning. =20
+>=20
+> So, send a patch for it.
+>=20
+> I don't know whats wrong with that documentation file.
 
-Fixes: fc28d1c1fe3b3e2f ("spi: spidev: add correct compatible for Rohm BH2228FV")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/spi/spidev.c | 1 +
- 1 file changed, 1 insertion(+)
+I am not sure either, but the following fixes it for me (but I don't
+know if this produces the current output, sorry):
 
-diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
-index 05e6d007f9a7f617..5304728c68c20d3a 100644
---- a/drivers/spi/spidev.c
-+++ b/drivers/spi/spidev.c
-@@ -700,6 +700,7 @@ static const struct class spidev_class = {
- };
- 
- static const struct spi_device_id spidev_spi_ids[] = {
-+	{ .name = "bh2228fv" },
- 	{ .name = "dh2228fv" },
- 	{ .name = "ltc2488" },
- 	{ .name = "sx1301" },
--- 
-2.34.1
+diff --git a/Documentation/admin-guide/device-mapper/dm-crypt.rst b/Documen=
+tation/admin-guide/device-mapper/dm-crypt.rst
+index e625830d335e..08ff2df77be7 100644
+--- a/Documentation/admin-guide/device-mapper/dm-crypt.rst
++++ b/Documentation/admin-guide/device-mapper/dm-crypt.rst
+@@ -161,9 +161,9 @@ iv_large_sectors
+    if this flag is specified.
+=20
+=20
+-Module parameters::
+-max_read_size
+-max_write_size
++Module parameters:
++
++max_read_size max_write_size
+    Maximum size of read or write requests. When a request larger than this=
+ size
+    is received, dm-crypt will split the request. The splitting improves
+    concurrency (the split requests could be encrypted in parallel by multi=
+ple
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/bVjLCT6W2gGl0D=OboQWUF_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmao7HcACgkQAVBC80lX
+0Gz6XAf+JnSTQz6bneZH05T8Qre/BDQTTnTMbej0RFrfWdKf07BUGYIG8mRjZnH4
+0blCxo8bejekLH9xuonH0tXXzzjdzN8W2f1qYnu4FFANJ/k1PTezH+f01cNSoEBs
+kfCghcG54Uq40tCrtQGQtCRs+dp2AGTeHpu2dhG0x/UwSxEGZwLT5OicwSaCCaSM
+HU6i5Z6laPI9j3RcSBHpKQrkmpbWAfIzY5/3X+mmsHB44G+SgZTb1e9tUQMljlN5
+DftlBzG1GgRXEc9cCf9QqFh2hnQ1GqxTx/0el+Pc74nathWF0UKbPnslk8hu7949
+//U60AmW7OWowhglL6rk3Kctb8zrrA==
+=qmYx
+-----END PGP SIGNATURE-----
+
+--Sig_/bVjLCT6W2gGl0D=OboQWUF_--
 
