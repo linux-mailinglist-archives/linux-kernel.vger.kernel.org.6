@@ -1,90 +1,148 @@
-Return-Path: <linux-kernel+bounces-268218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330939421D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:45:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C69199421D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6F32B2532D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:45:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F08631C2413B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A73718E031;
-	Tue, 30 Jul 2024 20:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C15F16C86F;
+	Tue, 30 Jul 2024 20:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="RI1hyjfs"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VLlBVjiu"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8061AA3C3;
-	Tue, 30 Jul 2024 20:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7878915FCED
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 20:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722372334; cv=none; b=hRKAUU5Bl7EreC0CTjDxWxS/MGwxAqqE90Uh2XRLa87IZ/FR8lvG7uSow8EV5BidVx5QTAng0HQh3UKM5U/jlSKV4bAkBxf8pm4jdLgy1GT8Rp63FcBxJU1qV5KIgzJl/Q/rud4dq2GyEwE1fqZ1j2530N5I5rDGqgpuOjVWzTk=
+	t=1722372526; cv=none; b=HxC72jRQXg0LFO7HaEP72ATha5ee0d5mCMPsACkOIu+zJMwtMGzntWixl2ImfW/QKPcK954ZBP5J0+SFqSJ9DwmPJHuAC/LIB7Ne/T3WfQThD/HkSRWq2w+sawkwc4AFPrmOun7VZiuACbbQPmw/0DyWzMmSOhnZB4VlXLRhQ0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722372334; c=relaxed/simple;
-	bh=+A/hpdb6LBOE0meQJxsIvfB8c5Y+1SN89gYerEinlqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zb/WxahAtHU35lycBll0RB3ps2rpJvzaTaEplt5Sm/AWo/7i6Fq0Fc5mazpEveBVhn8j59moYW9XtRYvly+tnlvdOd/fZPrgKASGNvFLd4CCvZoFiNzLq5KucM9BgfYvqdnkVX7LXVjJm3LLZDXmsFNqh1IFizGMSusw3KcgwE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=RI1hyjfs; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=AyIQVJdtiLHxHgkghaVH0Zo2zjyBVZ/zxH2vgQmbZIo=; b=RI1hyjfsEZvD4r7wraHhHkfsYL
-	Y50Ck9fa9Li/bReskTkw140s/bHzgRi6YCEUHeKVDGgjrRWvil7956itUqoh1DviZVOVOG35ynmB6
-	XOqVe6tPCK0AiInjvfN6RJ9m1zSsYLyzs7amZUBGi+fl2H+srjn9DDSs/R+XZ+uI352jTJPauMOUA
-	fwTUV+zOg2tBdryR0XW60jONWCGze0KyA+zYuv+Xhw5srT6uj0dNlncSlXcU5chjJFHUWAU3wN4yJ
-	//KM+ng3aAA6uHrQ5YRl8ztSxKpDlkTqIpI9DFZ296kJdLFE/eCGNSKE3XLVgDWeIFJonRIfKjIbY
-	dVVQhd6w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sYtir-00000000Jwx-3beI;
-	Tue, 30 Jul 2024 20:45:29 +0000
-Date: Tue, 30 Jul 2024 21:45:29 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Olaf Hering <olaf@aepfle.de>
-Cc: Deepa Dinamani <deepa.kernel@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v1] mount: handle OOM on mnt_warn_timestamp_expiry
-Message-ID: <20240730204529.GG5334@ZenIV>
-References: <20240730085856.32385-1-olaf@aepfle.de>
- <20240730154924.GF5334@ZenIV>
- <20240730215827.77b90c8a.olaf@aepfle.de>
+	s=arc-20240116; t=1722372526; c=relaxed/simple;
+	bh=zlmxKJVeWA3oHd9G7AnfjtuKBtDzkCg3f81KvxTWXM8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o4/4vJcWq6eN/oIWihhVJnd92GDdaf4hrX0r1LNb90w4YKSelFWAJZTlsY+hHS/EQ9yDjnSD1E8mTXXa5opiSoDp55N3KBEPv5er0FbCk4LaMNiaXpTVBZzXOf4yMxbxBgiPVxRho30RAS5MHOMnTaSG5SCnTi0NBpUDcyf4JNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VLlBVjiu; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-81d05359badso31598139f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 13:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1722372523; x=1722977323; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mLu6RgQ5Eh+YjjtGbbOi90zX8eXSiNWKUGxZbqoGkS4=;
+        b=VLlBVjiucD+L2UWgKXXmdUeLj8eoh6cUXu2W5N3ZoYrzktQFb9v6tCe1n9nUehG2/g
+         ib7zoWFkVzqp/4akte8Y2ZkNyZC1UOpHv3YiM3586SfnwUITXIostNR4krNC3nK1lA/Y
+         DrbSllRJmiO1J6rgUOEfBCooNwhV3YZAiEmAY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722372523; x=1722977323;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mLu6RgQ5Eh+YjjtGbbOi90zX8eXSiNWKUGxZbqoGkS4=;
+        b=SNAUEqBJtZTlXqxja6HxGyMuHQlYOlbVDWPn/QhFdc4/ssTkF/BSRg0e9MlMl1sxqI
+         Skm6JTa25yYSh1TDDQeoNKKK4GAsEnfzepsDkSjkY/oVKOkmErmuO5z4DdIzEm0+eHdW
+         ReDZrypjGH93BIJuhG17EBy01KPbV37bbRk1V5MBtb5x7eqEqVPejFFIZoxoRJJLmMEC
+         sTtu8in2cCwjSCOz8PkOjypPrihJqP49+nnTzmZaRW3D4zrl7MxcNeGP10MuPeEzLs1o
+         7s9T+tbazcY+n5qgkTu4KuhA83hn3vZCpYOopyCIk2aY6R56rsjIf5SjCF7yiJo8Fb0d
+         288w==
+X-Gm-Message-State: AOJu0YyxuLh/43/+pBcVnEH9QrpksQOSxkEwI8WrUa8C8mqJAAB6GO9u
+	ddnKew8UW47Dy+3akoKeSHbDNVWSqUd2aaYIfZmEq1WZTu/iZu4wQqalRBgA7rc=
+X-Google-Smtp-Source: AGHT+IEwRQpKNrZno5wLNmW5oJckAxM93vvPkIbQfERqJ8kyjoJu4rJzPojTUWuKwzjcRO3CGCilfg==
+X-Received: by 2002:a05:6602:1ccb:b0:81f:bf02:fd0a with SMTP id ca18e2360f4ac-81fbf0301ccmr155854639f.3.1722372523500;
+        Tue, 30 Jul 2024 13:48:43 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c29fa995f0sm2874197173.56.2024.07.30.13.48.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 13:48:42 -0700 (PDT)
+Message-ID: <1f5c24b6-f3ee-4863-8b7a-49344a550206@linuxfoundation.org>
+Date: Tue, 30 Jul 2024 14:48:41 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730215827.77b90c8a.olaf@aepfle.de>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2][RFC] Add SWIG Bindings to libcpupower
+To: "John B. Wyatt IV" <jwyatt@redhat.com>, linux-pm@vger.kernel.org,
+ Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, John Kacur <jkacur@redhat.com>,
+ Tomas Glozar <tglozar@redhat.com>, "John B. Wyatt IV"
+ <sageofredondo@gmail.com>, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240724221122.54601-1-jwyatt@redhat.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240724221122.54601-1-jwyatt@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 30, 2024 at 09:58:27PM +0200, Olaf Hering wrote:
-> Tue, 30 Jul 2024 16:49:24 +0100 Al Viro <viro@zeniv.linux.org.uk>:
+Hi,
+
+On 7/24/24 16:11, John B. Wyatt IV wrote:
+> SWIG is a tool packaged in Fedora and other distros that can generate
+> bindings from C and C++ code for several languages including Python,
+> Perl, and Go. We at Red Hat are interested in adding binding support to
+> libcpupower so Python tools like rteval or tuned can make easy use of it.
 > 
-> > d_path() is *NOT* going to return NULL.
+
+Can you elaborate on the use-case and what rteval currently does and
+how it could benefit from using libcpupower with the bindings?
+
+> This RFC provides a limited subset of bindings as a demonstration. The second
+> commit provides a Python test script to verify the bindings. I wanted to get
+> feedback on this before implementing (and possibly testing) the entire library.
 > 
-> The existing documentation does not state that fact.
+> The name raw_pylibcpupower is used because this is a demonstration example that
+> only provides direct bindings for a few functions. A wrapper `pylibcpupower`
+> may be needed to make the bindings more 'pythonic'. The bindings folder is used
+> because Go bindings may be useful for Kubernetes or OpenShift in the future.
+> 
+> How should the bindings be built? The current example requires the makefile
+> in cpupower directory be run first to generate the .o files needed before
+> running the makefile in the python directory in a seperate step. Would the
+> maintainers prefer the two makefiles integrated?
 
-Needs to be fixed, but as a general rule - mixing NULL and ERR_PTR()
-for error reporting is a Very Bad Idea(tm).  There are cases when
-there's a legitimate reason for a function to return both, but they
-are rare and NULL should not be an error case.  Example: d_splice_alias();
-ERR_PTR(-E...) => error; NULL => success, passed candidate had been
-accepted and attached to inode; pointer to struct dentry instance
-=> success, preexisting alias returned and should be used instead
-of the candidate.
+I can't answer this question until I understand the licensing.
+However, I would lean towards keeping them separate.
 
-Using IS_ERR_OR_NULL for "future-proofing" is obfuscating the things
-for no good reason - it confuses the readers, and it tends to spread
-when people are copying the code around.
+> 
+> Another question is do you want more test files like the .py example? Would
+> this be used as part of a greater test suite?
 
-Please, don't do it.
+I would like to see document outlining the dependencies and examples of how
+this would be used. I see the README which says that
+
+"Next you will need to install SWIG. Using Fedora:"
+
+The document will have to include more than Fedora instructions. Instead
+of a README I would like to see a document.
+
+Before we go any further - we have the licensing implications to figure out.
+
+> 
+> Note that while SWIG itself is GPL v3+ licensed; the resulting output, the
+> bindings code, is permissively licensed. Please see
+> https://swig.org/legal.html for more details.
+
+Adding Linus and Greg for their feedback and input on this proposal.
+
+What does it mean by "the resulting output, the bindings code is
+permissively licensed."
+
+I would like to get a better understanding of the licensing angle
+since this code adds dependency on SWIG which is GPL v3+ to build
+the proposed python bindings.
+
+thanks,
+-- Shuah
 
