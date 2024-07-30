@@ -1,124 +1,90 @@
-Return-Path: <linux-kernel+bounces-267886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7979941A73
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:43:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC6294193B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC545B2D309
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:30:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15C7E281D80
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B759B183CC3;
-	Tue, 30 Jul 2024 16:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B766189907;
+	Tue, 30 Jul 2024 16:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="URAzUQcM"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1/ysDqu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D70F1A616E
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BF98BE8;
+	Tue, 30 Jul 2024 16:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722356982; cv=none; b=OKn618+DfZj82Vo4ScDpTTHfIRqVsjoBhvg4zxA45CkfbTPPg5N5sSeMbV+kpE/TL+KsrKoq+RS0WY2XSYLksZq9jU8CKLGfUCYvP6yvAl1Iy8VJ2DKDKJxDwXd95pOlam8A+PFDt7P9gyZu06ickwEyXW2AtDCVYLM73OLIGY8=
+	t=1722357020; cv=none; b=CYN/q8ZHlpL+5h5JcZ1zCY7bhQtZBaqeIZBl2mR4QriByJ48v9/45VHZcs0N2Gz21SXME/42uO4tkm+jzkr2UrZZ2ZQGwBt+EFL+SW7Ee2i9Lu57nrQgJe8ciZAB/vKIvRMiBDmbIRsFlsFnVj49A8qMqfuqHKS4HHgp9JFwpCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722356982; c=relaxed/simple;
-	bh=OWoGdwhwYZW5tY59QsQSyPvrPY75gV1c7fzfG1/iMv8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=sas6AHK8BRzsXY/tYJWSLRwXZ0e5fTOIvc7DUvVcvzsv1yI8AYgfhtJX1/BeF4cYiil6ylefUe4HkeRIwVMRaHXdg35vcDsJ3j1KrnvkL3q2DULh4anaKVUTrg7vBqoMJwNyc7+RtCNY7hFN1mw/kdM0R1CW/JARSPx5HIvtTDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=URAzUQcM; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-39b04f0b486so3900375ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:29:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1722356978; x=1722961778; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VqTqk5AYvzMGB0HtIG2FuLVHpIAW43yrLDffT8nbEjA=;
-        b=URAzUQcMBZE7eu1MvvHc6EsvbX1Iv1oGpeJ2v8tpVYMANc0Mip4PqOswWctQMcpL48
-         vcTPL/6z33qM6tJoM+AHcOU2Vqdk7Z5R7992lrYtR46UxFRgcJGUJaba71kpdAwo+sKc
-         1nYAd2LZ0Ep+KOljJKsPChVEVtpHsndvKAmKI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722356978; x=1722961778;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VqTqk5AYvzMGB0HtIG2FuLVHpIAW43yrLDffT8nbEjA=;
-        b=t2Zn4a/5lm6ZZywQt8g7VsShfICQS8XKhCy+bZt0FHtpPO/VxGOTYB1guUsSTjmhW7
-         zx6pXQ2I4s3y3wdawzU5GwPMkYUFroryyHrQoR4q5/aR7zSK9jExj5CJ3NFTZc53t3vi
-         YA336+Spm5eb3VHnZhANZhzMmpYL5ZliLiy2cpRGtMdUQVOwRhFanfxAQNo/0U37P6zq
-         IiinjT684GbrPjfI0xjEKs1Lo2/10M2HYVK3TqLnJtV8AuuyHGwAvn3xtvTruXC7pwO8
-         GcBT0n1uKTnWh1rZ2yWLM/pERqVDGm90KWIQpKP+4dur6h8v37Ubpp5eblO+dMt1Ui9N
-         exHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKYPU3o3YQDfVthMq4gLrWmqccsKR+0GLXwbLCsNsVjMjNMWbSBB/OkgwB5zBEH0ncghD7uqnOJCdIWTa5kiB9RHlq9GTJvjUvJEbo
-X-Gm-Message-State: AOJu0YwYaudmkTbRgUBu0smL4NTAyOeAAX8cm1hYZ8O4Q8gwkK8mWizJ
-	I6JSICEhA2qIl0N3n2zUwrjCVImL+Jq5Nz3SA97rjRJNQm61AIg5Hc1EDlJFsw==
-X-Google-Smtp-Source: AGHT+IFlSlLAVsqGKByHNiTQAtcMhfy7nQe5qrcqVBYZdOj+zvzXelBObOYgl7N2haohCixMcpBCNQ==
-X-Received: by 2002:a92:cdac:0:b0:375:8b0e:4434 with SMTP id e9e14a558f8ab-39aec2eda9cmr117641025ab.16.1722356978241;
-        Tue, 30 Jul 2024 09:29:38 -0700 (PDT)
-Received: from [10.211.55.3] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.googlemail.com with ESMTPSA id e9e14a558f8ab-39af2425345sm27113615ab.75.2024.07.30.09.29.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 09:29:37 -0700 (PDT)
-Message-ID: <31f49da0-403c-40af-b61b-8e05f5b343e8@ieee.org>
-Date: Tue, 30 Jul 2024 11:29:36 -0500
+	s=arc-20240116; t=1722357020; c=relaxed/simple;
+	bh=lhNcZ8ZEN5axq+CHqFJ7t45r9e7XQ0fIr4cY5Y/XNZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nApnmZvjujNQCR/i8doJC0pIWwSEeTY9khIJ9SVTLWdV9srFAsYlnwJwtQLIzuUKCa/mlejBBT/jNxWeH/zxn36VQgLF1QHKbjAjCvvdSVX7NAQIcuCPlE6Felxi+05EyTOiZlT3SvLhkwvArJhh5YP2m+2uklqSvg6brtLOPYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L1/ysDqu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D675CC4AF0A;
+	Tue, 30 Jul 2024 16:30:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722357020;
+	bh=lhNcZ8ZEN5axq+CHqFJ7t45r9e7XQ0fIr4cY5Y/XNZI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L1/ysDqurtwedhyL2BI5lr4jACXoOR7RkG3q1LQ0Mt8chwVcNtO3dpKsOTH3YNYY3
+	 q9M8YFUT6zqNswbQgxugD9D9IDziuZNP4nKZD2V2nhsrkNDP0D8Z1c1ZnAVKg2xBuo
+	 yuIhLuhquJGC/eSxVqxJYKQvrp1baRY/n66TGzb97Ei7Y+NZArkn3t8Ma9jIPuQPsp
+	 JXypy/Uf5ZHtmPNIoNC59tfmA25QgasPj/tWs4BHOtWTptZsPa1lSzehYQ5ngw4vsZ
+	 JeVlu0uR1SyUu69PG78cGazGnYYNdK3ZGVQDzMt+4h5v2OoE84NyCag8LcmdGJOKH5
+	 /CyLOjWq5LKhw==
+Date: Tue, 30 Jul 2024 17:30:14 +0100
+From: Simon Horman <horms@kernel.org>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: kernel@pengutronix.de, Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	David Jander <david.jander@protonic.nl>, linux-can@vger.kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH can-next 19/21] can: rockchip_canfd: add hardware
+ timestamping support
+Message-ID: <20240730163014.GC1781874@kernel.org>
+References: <20240729-rockchip-canfd-v1-0-fa1250fd6be3@pengutronix.de>
+ <20240729-rockchip-canfd-v1-19-fa1250fd6be3@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: MAINTAINERS: Demote Qualcomm IPA to
- "maintained"
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Alex Elder <elder@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240730104016.22103-1-krzysztof.kozlowski@linaro.org>
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <20240730104016.22103-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729-rockchip-canfd-v1-19-fa1250fd6be3@pengutronix.de>
 
-On 7/30/24 5:40 AM, Krzysztof Kozlowski wrote:
-> To the best of my knowledge, Alex Elder is not being paid to support
-> Qualcomm IPA networking drivers, so drop the status from "supported" to
-> "maintained".
+On Mon, Jul 29, 2024 at 03:05:50PM +0200, Marc Kleine-Budde wrote:
+> Add support for hardware based timestamping.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 
-I hadn't thought much about the distinction, and it might not
-make a lot of difference right now.  But it's true I'm not
-being *paid* to maintain the IPA driver (but will continue).
+Hi Marc,
 
-Acked-by: Alex Elder <elder@kernel.org>
+This patch seems to break allmodconfig builds on (at least) x86_64
+when applied to net-next.
 
+In file included from drivers/net/can/rockchip/rockchip_canfd-ethtool.c:9:
+drivers/net/can/rockchip/rockchip_canfd.h:471:29: error: field 'cc' has incomplete type
+  471 |         struct cyclecounter cc;
 
-> ---
-> 
-> ... or maybe this should be Odd Fixes?
-> ---
->   MAINTAINERS | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 43e7668aacb0..f1c80c9fc213 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18452,7 +18452,7 @@ F:	drivers/usb/misc/qcom_eud.c
->   QCOM IPA DRIVER
->   M:	Alex Elder <elder@kernel.org>
->   L:	netdev@vger.kernel.org
-> -S:	Supported
-> +S:	Maintained
->   F:	drivers/net/ipa/
->   
->   QEMU MACHINE EMULATOR AND VIRTUALIZER SUPPORT
-
+...
 
