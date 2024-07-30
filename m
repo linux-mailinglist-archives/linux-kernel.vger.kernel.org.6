@@ -1,114 +1,101 @@
-Return-Path: <linux-kernel+bounces-267247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62722940EF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:24:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D086940F03
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:25:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92FC91C22924
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:24:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 004DD1F23B67
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9592B19884A;
-	Tue, 30 Jul 2024 10:24:14 +0000 (UTC)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDC0196DA1;
-	Tue, 30 Jul 2024 10:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B9B197A91;
+	Tue, 30 Jul 2024 10:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="qQvYMIdO"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBF1192B65;
+	Tue, 30 Jul 2024 10:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722335054; cv=none; b=a7YIlClUjbJqUMQl2Dhp1Wa/8KAoig9QWDmqukRrmV3ZThGpV8wu6/uhw5UyqsRf0YIo5hrp26MW2cJ5Z4TnJiVk61n5cKZb5btkTbf3x/51Ca5NmdwUFy0WRBFM2IfsDmL3m8nSJjOx9ZXfPCB1LMGx3owE8MI5aAD5K3yFqu4=
+	t=1722335147; cv=none; b=WX+xJ7CW9WsPE80iDg3n4Fzg6rleAowg2jjXP2nidDF2VgABWwldLrlglk3uw0qilvkw0ZOrZ+Iq9uzW2G2jqAIACfq2Yugw/SrcdmsvEaW20pe+gm6b4uUpxFFssvfFG/CT1adSjtUBH30KFw9wyaU2w6iJAXNJUc4mv0V1YYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722335054; c=relaxed/simple;
-	bh=01+ZIHMMRxtvZeJgKqLcbttvt1/2M9rdui/cBlDT4fs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qwwgafEOns6LZCOE2R90ZvfwvR1sX9hVAJzZaFmbssHB1tA+Xdhr58pnmjGN7D8STC0R3VS2rvz1mM8IMQrQsZgK4UwEBw2jKwO5RpmFOC+Z3zQ0fxCRuykZ2KEUMlzyq0Mq3mMVS7AtBSpDb7ta10F+6ZTT0IwJ9cw3C+vt77w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7a9185e1c0so416557366b.1;
-        Tue, 30 Jul 2024 03:24:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722335051; x=1722939851;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Oi88lXchJSc4G46YbZ5TzeeR41rMBBTQGzJDjHyoh/M=;
-        b=PRUSEEfCXMdNYI+bxQtbmc+CNBBFYzfEjxN4hDROfuz6hgqwcD7ChvlYfkqp6kpXKr
-         QOfrELry+ZsuKRw4tXk7gkNEpeCvgR4s3fNXzGcI1PyU0zX1U3AFPk/cxPathBhLeqgD
-         Rz9iadMiMz2vqavQu+RBb5Dv0vwFD+vUffMXVejGCR9dlrrPlfMzvW/mPz6zxcGuJ13J
-         SdWt1+t8fmIWVFcDSmdGTiu3IXeu9EbLElGgvVQogDyyHgtFvFzAYQiE2x1ixgu72HV8
-         X6g9STD30/ZG6UpSywRYB6RmigiAUWa68CY6oUN6y/AaywPCCJ4O8+q6mDDduTPC3Ank
-         zEjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmXFLtnuQ9VCGF/p1UyNq1TPx0O6n0pA48CO8pEqhIee8dk59WvVL1TZ6rEIyM6g66gnidAgHo9eQV/sXCb+kscGxHx171VN3JswJohXyJs9U0nIZdyF+DU/9Sqtu1ivu3H4QL
-X-Gm-Message-State: AOJu0YyzkMOkUIdVrQqnqQQSzjE3IdeLilkyf76FT64c9GxTzs1yBTEv
-	c0kqkthLXpd86Oq5RIFvH1gC1VtpjZowV2E24ulbidHReYzmRIOl
-X-Google-Smtp-Source: AGHT+IEFyRuo7CXOwDK1c0OaUIC0ZtIYN4M6PIvvPtfyaqJOBmjajz+6luwF95swsst5NbTFu+uG2A==
-X-Received: by 2002:a17:907:3e1a:b0:a77:b052:877e with SMTP id a640c23a62f3a-a7d3fffeae5mr805941266b.19.1722335050546;
-        Tue, 30 Jul 2024 03:24:10 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-115.fbsv.net. [2a03:2880:30ff:73::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab535d9sm621889766b.75.2024.07.30.03.24.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 03:24:10 -0700 (PDT)
-Date: Tue, 30 Jul 2024 03:24:08 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, leit@meta.com,
-	Chris Mason <clm@fb.com>,
-	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: skbuff: Skip early return in skb_unref
- when debugging
-Message-ID: <Zqi/SL/icYA9IwjH@gmail.com>
-References: <20240729104741.370327-1-leitao@debian.org>
- <e6b1f967-aaf4-47f4-be33-c981a7abc120@redhat.com>
+	s=arc-20240116; t=1722335147; c=relaxed/simple;
+	bh=ccIJuTFvMC3/YgOBlsEaSCFAd34n+Wa7NEpjb2xGeoM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qFkXKw1CPDhvbvTiM2fAJwhH5ANfDIuOROwdBUvbcWUBJwAI4nyJH50BVqsRkbmEAWQGnYaGnJtafSwc6bFUlzfi+nSc2wB/E8/ABwY4/cJDrFm9JcY+ShONihmwMB57bQWC30OzE6ZzfDRVuqHbopbw2qDCHJQ92LARg1iyk/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=qQvYMIdO; arc=none smtp.client-ip=45.254.50.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=xINS1
+	sxEhEb8/wio/243RoKaWhtQ2h9F9g0D3EW4nVA=; b=qQvYMIdOffngeLzvxQWTh
+	HRbyD9HmOypMh9085jEiT2eqSQfxu8d+DtUmjhhFvStapHPTRP661nTprohqz3F1
+	mKO8a2uvjj+cTmDEm1jawZQVg4BFTfHCmvo8m8XrDRVv3YuKs54MdxPgcOdsnVXO
+	DJkfaPWxHg7v6ri9kWVn2A=
+Received: from ProDesk.. (unknown [58.22.7.114])
+	by gzga-smtp-mta-g0-3 (Coremail) with SMTP id _____wD3f_div6hmxPMCFA--.50877S2;
+	Tue, 30 Jul 2024 18:24:38 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: dsimic@manjaro.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Andy Yan <andyshrk@163.com>
+Subject: [PATCH v3 0/2] Add support for Cool Pi GenBook
+Date: Tue, 30 Jul 2024 18:24:31 +0800
+Message-Id: <20240730102433.540260-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e6b1f967-aaf4-47f4-be33-c981a7abc120@redhat.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3f_div6hmxPMCFA--.50877S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7GF1kKFy8Xw13XF1ktryftFb_yoWkuFb_Ka
+	17ZrZrJa1FqFnIvas3tayUJry3G39rCrnxGFWrZFs8ZF9xJ3y8G3WfJ3Wvv3W5Aay29r13
+	Aa1FqF1rXrnxCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sR_4So3UUUUU==
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMwksXmXAm11sygAAsN
 
-Hello Paolo,
+Cool Pi GenBook is a rk3588 based laptop, it is designed to consist of a
+carrier board conntected with a CM5 SoM.
 
-On Tue, Jul 30, 2024 at 11:38:38AM +0200, Paolo Abeni wrote:
-> On 7/29/24 12:47, Breno Leitao wrote:
+This series add support of eMMC/USB HOST/WiFi/Battery/TouchPad/Keyboard,
+with a mainline based u-boot[0], it can boot a third-party distribution
+such as Armbian on u-disk.
 
-> > --- a/include/linux/skbuff.h
-> > +++ b/include/linux/skbuff.h
-> > @@ -1225,7 +1225,7 @@ static inline bool skb_unref(struct sk_buff *skb)
-> >   {
-> >   	if (unlikely(!skb))
-> >   		return false;
-> > -	if (likely(refcount_read(&skb->users) == 1))
-> > +	if (!IS_ENABLED(CONFIG_DEBUG_NET) && likely(refcount_read(&skb->users) == 1))
-> >   		smp_rmb();
-> >   	else if (likely(!refcount_dec_and_test(&skb->users)))
-> >   		return false;
- 
-> I think one assumption behind CONFIG_DEBUG_NET is that enabling such config
-> should not have any measurable impact on performances.
-> 
-> I suspect the above could indeed cause some measurable impact, e.g. under
-> UDP flood, when the user-space receiver and the BH runs on different cores,
-> as this will increase pressure on the CPU cache. Could you please benchmark
-> such scenario before and after this patch?
+[0]https://github.com/andyshrk/u-boot/commit/8eedc6700367166bfa63b861d8e7aca486d315fe
 
-Sure, I am more than happy to do so. I will be back with it soon.
+Changes in v3:
+- Wrap commit message by a maximum 75 chars per line
+- Remove the superfluous blank line
+- Use "coolpi,pi-cm5-genbook" instead of "coolpi,genbook"
 
-Assuming there is some performance overhead, isn't it a worthwhile
-trade-off for those who are debugging the network? In other words,
-wouldn't it be better to prioritize correctness over optimization in
-this the CONFIG_DEBUG_NET case, even if it means sacrificing some
-performance?
+Changes in v2:
+- Descripte it as Cool Pi CM5 GenBook
+- rename dts to rk3588-coolpi-cm5-genbook
+- enable touchpad
+- enable battery
+- descripte it as CoolPi CM5 GenBook
 
-Thanks for reviewing,
---breno
+Andy Yan (2):
+  dt-bindings: arm: rockchip: Add Cool Pi CM5 GenBook
+  arm64: dts: rockchip: Add support for rk3588 based Cool Pi CM5 GenBook
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   7 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../rockchip/rk3588-coolpi-cm5-genbook.dts    | 349 ++++++++++++++++++
+ 3 files changed, 357 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-genbook.dts
+
+-- 
+2.34.1
+
 
