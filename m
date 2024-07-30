@@ -1,93 +1,194 @@
-Return-Path: <linux-kernel+bounces-267142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7066940D44
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:21:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43B9940D50
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A24F41F2442A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:21:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13B5D1C240D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048C2194C6D;
-	Tue, 30 Jul 2024 09:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903B5194C73;
+	Tue, 30 Jul 2024 09:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ap9kGuPr"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LTmawn1V"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8AC418EFD5;
-	Tue, 30 Jul 2024 09:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3483194AF2
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722331280; cv=none; b=rojHbbW3pchppJyam/j1egC22Jun0Re+jWBKEk6qKB7IB5KAjmuxUixRv3OecOn5pT5vrsbFwxzFBmuedtOGE6A9Ys1JPz5F4P/1I8dATLpr3uoprE/8Pc+vonEeLYSasKASx+YlLWH0Kwa79z5EDkfMXU+jYRPvSA5cA6KEbsc=
+	t=1722331471; cv=none; b=VehcamKO/GN4pHHu6kI9+0v0CWgeE7Pe3CHrNN/jA/QKSYpK6CRf6Rh2SHnJ2aKrKxgRreEAlmrqM5dscbvDnxJbuCPaABEOZFeukRYNDtp7odz06a/1wk2P6LngF5ZHEe+6LHPuUSOZQp+oMo+9FIFweNefjD7eR/EOohmM7mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722331280; c=relaxed/simple;
-	bh=FA/UiuJmaG/0m1HKe1f4r8URUvynzRUD987l4lNhaGI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=m7Y1IPZxq0J4tYRJT8c3UPsWqw1ebkdu0T4y50Q4iDhpjkahcDunJJgDcifan4KUL/Xelhdcm940NqLb6g0Wye++J1SAbBlpMefJ+9w5egV7+ic1S3wrgnPBq+2ZWB9Djyj6KSq4dDEYPPRq3SYGUJ1vmqWue0FygSDrRts76gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ap9kGuPr; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722331277;
-	bh=FA/UiuJmaG/0m1HKe1f4r8URUvynzRUD987l4lNhaGI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ap9kGuPraYlNzIGlcqUovaMUjtN8M5j8QrbITHjdVKvG4VsXgVP9xeruhmyuflNkx
-	 Tq8dNkCqWWeI/eVCVAAcP7Eue5e6xQiIC5gDb18a6hFiEDSU/c8tAYdZjFQuKLe6Rw
-	 M0BtUXGQB2VSI6CI7TIbrhI624bTA3bY4Pat5q/GYq347IYesG9Uqxcer9k2zP7tMk
-	 P6bFjGW9uumighprO8neBoVe6BWT9KK4V50TFaGWyVjQf12r+KS1y6n0bOLh9VlTJv
-	 yOif8LPZsqxPTs0n2/MdhXLJsQm5DVuGAm9sWpYFViBw8RK8YG8vXZHBsydQKTLr4W
-	 Ip+NT1wszSV4A==
-Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 573D83782190;
-	Tue, 30 Jul 2024 09:21:16 +0000 (UTC)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- Tzung-Bi Shih <tzungbi@kernel.org>, kernel@collabora.com, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Chen-Yu Tsai <wenst@chromium.org>
-In-Reply-To: <20240722-cros-backlight-dt-probe-v2-1-d77cdf7018ec@collabora.com>
-References: <20240722-cros-backlight-dt-probe-v2-1-d77cdf7018ec@collabora.com>
-Subject: Re: [PATCH v2] arm64: dts: mediatek: mt8195-cherry: Remove
- keyboard-backlight node
-Message-Id: <172233127627.66997.14875341590066505765.b4-ty@collabora.com>
-Date: Tue, 30 Jul 2024 11:21:16 +0200
+	s=arc-20240116; t=1722331471; c=relaxed/simple;
+	bh=p+Rupz8ih6HoQ30POvMKQ88xsNK9ieDKWPeXE+KG2p4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G8IEYp/mGMkJq54gA7Hm4DWDSoGz0P5Ie9kNVid+dPBVt0ag8YfRBOymr1cjh5OF7fbyNmTj1zD4t5Kdox15XBfF6LMD3rEiH8/+r+7haVYk/gX/DRfx92KxFAQhaZPSO6w/dTYXimnqUOUmp630C2wP7vNyva8TAREAowDgtN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LTmawn1V; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa69dso4858687a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 02:24:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1722331468; x=1722936268; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eB6kbl2tZQNRGFRJR3GT3kM50/k+xk/5o7y8D32eYvc=;
+        b=LTmawn1VZrvx19GZKu9+C9UP+MJmGTGcW6TdPtM1bvFjaaerd/nFTugvOWVZM0HVsX
+         7LKBWSCHZ3lKalJC1k1MW4IrNdB58D8tikBV4qXWMoL+RrhfzkQ6+vTqTKZhkt/iPQ8T
+         V6H6R3RPbx1WeOhTI6NICt0IEu4WPdCxxodDd2/bkLLEjyuKkjvRhKPgLAznQ6eBpcFe
+         BsVLwe1oPg6p5J01cvLb2DwSYFqOmUZxNXvTyAvkzePjuMZnZvD8VdR/LvKNS97irbHl
+         By9oTyHDeYJBYnYPjtTXqurvZNMELhjB0G8huZuuaINB5hk2UnYRK/48dd9jzmHkoYqh
+         KTmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722331468; x=1722936268;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eB6kbl2tZQNRGFRJR3GT3kM50/k+xk/5o7y8D32eYvc=;
+        b=cFNLCWs6J26z9rwNh9d+fdnxONT+ws8SFPc348zfyLYJf+qxAHsitMjVsaTViRYWrI
+         ZkFdmtuv/BRRym/88U8oCmBQIda60yq1yy9+oPzknhOdchwLjP/MV4m97DcQOnB1OFrB
+         cjQU7DRZJ9alSOPpwj8mMB10BhXU5YcHL2Rz+QLYqIKYbH2aATyQBf8Km1iN6ZWWD+Sn
+         bz0fy9dihqISO3U0dR22pluMXGeqhAECxgAeN+ey/hZc08kcKGgKsHqBosd6ttuwfFmT
+         v8vHxB9Z5/heNU6vwKXh3d/MH3PfRF5gHOlA/JM6iMdxmyeyxjlM9wBYmT5/39Egbocf
+         W4sw==
+X-Forwarded-Encrypted: i=1; AJvYcCU86u6Qe7Vmbwhomm9ZOnFjK41nOQ5OKsa2DAlCuGFPoM1hiZFUDReT7iwdL0G2LJCcvytamIzKEjitM5H/o/0QR8tGjpL5/tJUcC7t
+X-Gm-Message-State: AOJu0YwjyiaWLTH6fusKYUjYwTOongyvlkXYab8fTT1IEHUSd2ArvQ2/
+	wHy2Pu6chabIL0jW2rbO459mHcDVGY18EYQxKnOqScnBeSTAazf1OKrn53Ze9gk=
+X-Google-Smtp-Source: AGHT+IEhoUqt/OqWWGd+w3jOFu3peS1Nh2koRiIuVWBA1oQGDLJKafXMFMwXZEVZKA0gv0ABjcteMg==
+X-Received: by 2002:a05:6402:278e:b0:59e:b95d:e744 with SMTP id 4fb4d7f45d1cf-5b021f0e042mr7862721a12.29.1722331468027;
+        Tue, 30 Jul 2024 02:24:28 -0700 (PDT)
+Received: from pathway.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b10e20dbb8sm4138434a12.49.2024.07.30.02.24.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 02:24:27 -0700 (PDT)
+Date: Tue, 30 Jul 2024 11:24:25 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v3 03/19] printk: nbcon: Add function for printers
+ to reacquire ownership
+Message-ID: <ZqixOLkuo0IW2qql@pathway.suse.cz>
+References: <20240722171939.3349410-1-john.ogness@linutronix.de>
+ <20240722171939.3349410-4-john.ogness@linutronix.de>
+ <ZqOVsZ1KGh3rkxE6@pathway.suse.cz>
+ <87cymwfvd7.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87cymwfvd7.fsf@jogness.linutronix.de>
 
-On Mon, 22 Jul 2024 11:34:25 -0400, Nícolas F. R. A. Prado wrote:
-> Commit 970c3a6b7aa3 ("mfd: cros_ec: Register keyboard backlight
-> subdevice") introduced support for detecting keyboard backlight
-> fuctionality through communication with the ChromeOS EC. This means that
-> the DT node is no longer used. Remove the unneeded node.
+On Mon 2024-07-29 10:42:04, John Ogness wrote:
+> On 2024-07-26, Petr Mladek <pmladek@suse.com> wrote:
+> > On Mon 2024-07-22 19:25:23, John Ogness wrote:
+> >> Since ownership can be lost at any time due to handover or
+> >> takeover, a printing context _must_ be prepared to back out
+> >> immediately and carefully. However, there are scenarios where
+> >> the printing context must reacquire ownership in order to
+> >> finalize or revert hardware changes.
+> >> 
+> >> One such example is when interrupts are disabled during
+> >> printing. No other context will automagically re-enable the
+> >> interrupts. For this case, the disabling context _must_
+> >> reacquire nbcon ownership so that it can re-enable the
+> >> interrupts.
+> >
+> > I am still not sure how this is going to be used. It is suspicious.
+> > If the context lost the ownership than another started flushing
+> > higher priority messages.
+> >
+> > Is it really safe to manipulate the HW at this point?
+> > Won't it break the higher priority context?
 > 
+> Why would it break anything? It spins until it normally and safely
+> acquires ownership again. The commit message provides a simple example
+> of why it is necessary. With a threaded printer, this situation happens
+> almost every time a warning occurs.
+
+I see. It makes sense now.
+
+> >> --- a/kernel/printk/nbcon.c
+> >> +++ b/kernel/printk/nbcon.c
+> >> @@ -911,6 +948,15 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt)
+> >>  		return false;
+> >>  	}
+> >>  
+> >> +	if (!wctxt->outbuf) {
+> >
+> > This check works only when con->write_atomic() called
+> > nbcon_reacquire_nobuf().
 > 
+> Exactly. That is what it is for.
+> 
+> > At least, we should clear the buffer also in nbcon_enter_unsafe() and
+> > nbcon_exit_unsafe() when they realize that they do own the context.
+> 
+> OK.
+> 
+> > Even better would be to add a check whether we still own the context.
+> > Something like:
+> >
+> > bool nbcon_can_proceed(struct nbcon_write_context *wctxt)
+> > {
+> > 	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
+> > 	struct nbcon_state cur;
+> >
+> > 	nbcon_state_read(con, &cur);
+> >
+> > 	return nbcon_context_can_proceed(ctxt, &cur);
+> > }
+> 
+> nbcon_can_proceed() is meant to check ownership. And it only makes sense
+> to use it within an unsafe section. Otherwise it is racy.
 
-Applied to v6.11-next/dts64, thanks!
+My idea was: "If we still own the context that we have owned it all
+	      the time and con-write_atomic() succeeded."
 
-[1/1] arm64: dts: mediatek: mt8195-cherry: Remove keyboard-backlight node
-      commit: 4c03a44e266887190bdaacc7010970ae2b26b852
+The race is is not important. If we lose the ownership before updating
+nbcon_seq then the line will get written again anyway.
 
-Cheers,
-Angelo
+> Once a reacquire has occurred, the driver is allowed to proceed. It just
+> is not allowed to print (because its buffer is gone).
 
+I see. My idea does not work because the driver is going to reacquire
+the ownership. It means that nbcon_can_proceed() would return true
+even when con->atomic_write() failed.
 
+But it is not documented anywhere. And what if the driver has a bug
+and does not call reacquire. Or what if the driver does not need
+to restore anything.
+
+IMHO, nbcon_emit_next_record() should check both:
+
+	if (use_atomic)
+		con->write_atomic(con, wctxt);
+	else
+		con->write_thread(con, wctxt);
+
+	/* Still owns the console? */
+	if (!nbcon_can_proceed(wctxt)
+		return false;
+
+	if (!wctxt->outbuf) {
+		/*
+		 * Ownership was lost and reacquired by the driver.
+		 * Handle it as if ownership was lost.
+		 */
+		nbcon_context_release(ctxt);
+		return false;
+	}
+
+Best Regards,
+Petr
 
