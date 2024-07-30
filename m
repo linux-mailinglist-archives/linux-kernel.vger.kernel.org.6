@@ -1,231 +1,119 @@
-Return-Path: <linux-kernel+bounces-268180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2EE942145
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:04:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB35942150
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D62C7B251DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:04:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D6A61C23C7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96AB718CC0F;
-	Tue, 30 Jul 2024 20:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FD418CC18;
+	Tue, 30 Jul 2024 20:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MBAl1aZw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IUilL7LF"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DC418A6AD
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 20:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6574E18B479;
+	Tue, 30 Jul 2024 20:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722369834; cv=none; b=skVuS8D+D9idzqZxgQOUh1o72FUw7VuIU/N/eFHe1+5/accCjpv1RNquJQoYXld+hun7U3Q6NpLNUi12ingNrGqhWTJh59l8fp+tSpJkV6uRKZFPR0+51hg/DLuwPzO9+UcW4aC0dBZY/HOgGSkPVAY7jpEQO3iLWAGAIPlODDM=
+	t=1722370122; cv=none; b=QbQ9Y1cJqgBAhuZZ8bFVS/SNBkvsp1UqbLRzv9Npsiwnc8mDz4Av8xe0g6n8l+KYSVo54CNEla4n2PisGrYLoU/wNSxOyji3dFiE+hrSDXdE3q690ggwsRjzZAXSKCoXT4g1ED/5T5yrsU4PIDiHgwD13MA3UzZwOnbluZz+GB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722369834; c=relaxed/simple;
-	bh=Yi6MtglJfFTX0vys+U6z6d8VAtHQmCP2PVigIZRM9oI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D6vJW3l2NrKiby4adF913CocI0U6DoYdEkXryttDvT1ROE84TNJG6imoA6kmN5+i5u2ZfsoUUGDwUF5vJ39x9cDXir2cx4RzcYRa2AkbrTbRHDoZ6H1qt+MZ6X+7X3yVYLN3Qp4FGevWX43m68BSAweo8oc9FnZzXeBdQifAY1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MBAl1aZw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722369832;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/gxfuKJD8hnhbSrwyVXjwcDnAiiLt3on755V01mHK1c=;
-	b=MBAl1aZwLsDUbQO8U09jq7sfE3zKf4wIuF0rJaxfoS3LbHZ4FTLIUrQZpvDoUtJB4v/aki
-	Sy/uZlZ0+6DPjqrB+fpSpfWBikA7pXmMrVoi/8RBBs2/RBxsIZDKCEemIVQin0hBg0MtqJ
-	+L8bsBmQnTdbDwDxub2WKTvQgrg2wjI=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-301-FOQSop7AOc-pGjbXLkFAxw-1; Tue,
- 30 Jul 2024 16:03:48 -0400
-X-MC-Unique: FOQSop7AOc-pGjbXLkFAxw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0DB0C1955D4A;
-	Tue, 30 Jul 2024 20:03:47 +0000 (UTC)
-Received: from t14s.redhat.com (unknown [10.39.192.21])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 87FF41955F3B;
-	Tue, 30 Jul 2024 20:03:43 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	David Hildenbrand <david@redhat.com>,
-	stable@vger.kernel.org,
-	Peter Xu <peterx@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Muchun Song <muchun.song@linux.dev>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>
-Subject: [PATCH v2] mm/hugetlb: fix hugetlb vs. core-mm PT locking
-Date: Tue, 30 Jul 2024 22:03:41 +0200
-Message-ID: <20240730200341.1642904-1-david@redhat.com>
+	s=arc-20240116; t=1722370122; c=relaxed/simple;
+	bh=h0NV6t5QXTqcZqsM+OT8qbKeJU6QTMxqsY11ZyrJlks=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hQ9J/lhuUeR0JvFAyYP4pYXSUIsspwWaxA3cbZ/B6svk1mIbQ1QsMF+GHpK76t6Lhjn3bAjXjZtD2Zk/XwTWpwHY5Cfhd5sp9eBoGyohfWEtuwL80ONgfFTICQwCVcgd3SE+ajDUaUuwRTic1SsiLNM6SeDsN20yRBILQ4FIdrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IUilL7LF; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso466410666b.0;
+        Tue, 30 Jul 2024 13:08:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722370119; x=1722974919; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ObcydJx+vB/NhNmYBIqRcu/qYc3jNCZPZ3qG/kjECDA=;
+        b=IUilL7LFJs/TKOky4KWoAfU2Gax2a53FR3IawppD9U/q9H4v2IHRL8lWsOpdaA3WGI
+         IY8CQL8li3b69JvhyqG+bVdqPuzlEomifhILDkpPAJYx+g1U9Yvs6TGIQV21hNumd5ex
+         6Btt7EDSaAoL8QIJTPOpzEz72OHGOwb+kNGVXaHhelmYmv1u+y4GCDuK/CH61TB1owLS
+         fyq7UWJddO8pCP4f88ZdUKwpUFzmnn4FQl3v28EEN90Yuyr06TxTVS0XbzrcXR4LlPyc
+         3X6ZnrwvpAmjSNj7KaN+KfuXqy+rGvqQP4AZbVK0GFU+CfEdQ1fcd23MDTpyOsU6zqym
+         uFMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722370119; x=1722974919;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ObcydJx+vB/NhNmYBIqRcu/qYc3jNCZPZ3qG/kjECDA=;
+        b=YAcSMMDXXvkoIiZHGiVWev1ndfU+YLD/l/6fm94HF7Cqn5JUpL2zj4y9fIQM/dSQZk
+         KvqMx4fOjgqL45LCPPdznYc2v7aUGjv1QUCvyPkR7Ih0Ug6gnmYZ1XxqtGYrC20V7pyY
+         FuqDa49H6EW1UnTZlW8dZgofQkUneJzGKxKKEmoo+YtN3TY+PyICCHD7xTH4w405hqkz
+         oqR4r/4HfsaPS4VJGY6vO7vkmtU5zjTgrTN0DaRhRJXIL4/o3eS4RYTxhUXgrCImwNxB
+         Xry4c1hII9rQOCtMo+hwNihXOOda4ZECpQDdI0/t/gadZG1avMoF+0bmoGTbWfXjc20R
+         9fHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWNJc0fJ4UuIllQJ44xtm5flqjnigRqxLdhXWzgyXViIzO83rG8ALCoq1w6GsviEdwDu00eo3UpqDdEOwAMM0qjaFHY+VrD1qmkDscaKv3H4BeCjXIF53CBghcxeS9Dl79EewqGrbRvA==
+X-Gm-Message-State: AOJu0YywgeOF33/VkcAYxoLXbb9UMZwIBfpXZ53DE4jhCGIgP0LbJL5M
+	LcOhBDs9c+NYP0rsSEwS77KP68qsBpfeM7QBhNjktidQXTV7yx6TlVcIeRttRKworraj5OihgXB
+	ugnRu5g8m9+QrPIW1FOklQRFomdc=
+X-Google-Smtp-Source: AGHT+IFywArELRtrFVEn+pIHnoIWf3LnPPCOKj7ciEMd+clptmEM5/FTsVq7yhJ8E9hVnneNXrTP0olyCHFqLkbVViU=
+X-Received: by 2002:a17:907:7286:b0:a7c:4095:ccb6 with SMTP id
+ a640c23a62f3a-a7d3fff71eemr964807066b.16.1722370118393; Tue, 30 Jul 2024
+ 13:08:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20240705113434.17249-1-amishin@t-argos.ru>
+In-Reply-To: <20240705113434.17249-1-amishin@t-argos.ru>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 30 Jul 2024 21:38:35 +0200
+Message-ID: <CAHp75Vefw5FB1mK8v-FJ5MBeSo_N9fgiAFPdYw2w_OCX5UxrAA@mail.gmail.com>
+Subject: Re: [PATCH] ACPI / PMIC: Remove unneeded check in tps68470_pmic_opregion_probe()
+To: Aleksandr Mishin <amishin@t-argos.ru>
+Cc: Rajmohan Mani <rajmohan.mani@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Len Brown <lenb@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-We recently made GUP's common page table walking code to also walk hugetlb
-VMAs without most hugetlb special-casing, preparing for the future of
-having less hugetlb-specific page table walking code in the codebase.
-Turns out that we missed one page table locking detail: page table locking
-for hugetlb folios that are not mapped using a single PMD/PUD.
+On Fri, Jul 5, 2024 at 1:36=E2=80=AFPM Aleksandr Mishin <amishin@t-argos.ru=
+> wrote:
+>
+> In tps68470_pmic_opregion_probe() pointer 'dev' is compared to NULL which
+> is useless.
+>
+> Fix this issue by removing unneeded check.
+>
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Assume we have hugetlb folio that spans multiple PTEs (e.g., 64 KiB
-hugetlb folios on arm64 with 4 KiB base page size). GUP, as it walks the
-page tables, will perform a pte_offset_map_lock() to grab the PTE table
-lock.
+...
 
-However, hugetlb that concurrently modifies these page tables would
-actually grab the mm->page_table_lock: with USE_SPLIT_PTE_PTLOCKS, the
-locks would differ. Something similar can happen right now with hugetlb
-folios that span multiple PMDs when USE_SPLIT_PMD_PTLOCKS.
+> -       if (!dev || !tps68470_regmap) {
+> +       if (!tps68470_regmap) {
+>                 dev_warn(dev, "dev or regmap is NULL\n");
 
-This issue can be reproduced [1], for example triggering:
+Now this message is misleading.
 
-[ 3105.936100] ------------[ cut here ]------------
-[ 3105.939323] WARNING: CPU: 31 PID: 2732 at mm/gup.c:142 try_grab_folio+0x11c/0x188
-[ 3105.944634] Modules linked in: [...]
-[ 3105.974841] CPU: 31 PID: 2732 Comm: reproducer Not tainted 6.10.0-64.eln141.aarch64 #1
-[ 3105.980406] Hardware name: QEMU KVM Virtual Machine, BIOS edk2-20240524-4.fc40 05/24/2024
-[ 3105.986185] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[ 3105.991108] pc : try_grab_folio+0x11c/0x188
-[ 3105.994013] lr : follow_page_pte+0xd8/0x430
-[ 3105.996986] sp : ffff80008eafb8f0
-[ 3105.999346] x29: ffff80008eafb900 x28: ffffffe8d481f380 x27: 00f80001207cff43
-[ 3106.004414] x26: 0000000000000001 x25: 0000000000000000 x24: ffff80008eafba48
-[ 3106.009520] x23: 0000ffff9372f000 x22: ffff7a54459e2000 x21: ffff7a546c1aa978
-[ 3106.014529] x20: ffffffe8d481f3c0 x19: 0000000000610041 x18: 0000000000000001
-[ 3106.019506] x17: 0000000000000001 x16: ffffffffffffffff x15: 0000000000000000
-[ 3106.024494] x14: ffffb85477fdfe08 x13: 0000ffff9372ffff x12: 0000000000000000
-[ 3106.029469] x11: 1fffef4a88a96be1 x10: ffff7a54454b5f0c x9 : ffffb854771b12f0
-[ 3106.034324] x8 : 0008000000000000 x7 : ffff7a546c1aa980 x6 : 0008000000000080
-[ 3106.038902] x5 : 00000000001207cf x4 : 0000ffff9372f000 x3 : ffffffe8d481f000
-[ 3106.043420] x2 : 0000000000610041 x1 : 0000000000000001 x0 : 0000000000000000
-[ 3106.047957] Call trace:
-[ 3106.049522]  try_grab_folio+0x11c/0x188
-[ 3106.051996]  follow_pmd_mask.constprop.0.isra.0+0x150/0x2e0
-[ 3106.055527]  follow_page_mask+0x1a0/0x2b8
-[ 3106.058118]  __get_user_pages+0xf0/0x348
-[ 3106.060647]  faultin_page_range+0xb0/0x360
-[ 3106.063651]  do_madvise+0x340/0x598
+>                 return -EINVAL;
+>         }
 
-Let's make huge_pte_lockptr() effectively uses the same PT locks as any
-core-mm page table walker would. Add ptep_lockptr() to obtain the PTE
-page table lock using a pte pointer -- unfortunately we cannot convert
-pte_lockptr() because virt_to_page() doesn't work with kmap'ed page
-tables we can have with CONFIG_HIGHPTE.
+And I dunno why it's a warning and not an error level.
 
-There is one ugly case: powerpc 8xx, whereby we have an 8 MiB hugetlb
-folio being mapped using two PTE page tables.  While hugetlb wants to take
-the PMD table lock, core-mm would grab the PTE table lock of one of both
-PTE page tables.  In such corner cases, we have to make sure that both
-locks match, which is (fortunately!) currently guaranteed for 8xx as it
-does not support SMP and consequently doesn't use split PT locks.
+With all above being said, I would recommend to update to
 
-[1] https://lore.kernel.org/all/1bbfcc7f-f222-45a5-ac44-c5a1381c596d@redhat.com/
+  if (!tps68470_regmap)
+    return dev_err_probe(dev, -EINVAL, "regmap is missing\n");
 
-Fixes: 9cb28da54643 ("mm/gup: handle hugetlb in the generic follow_page_mask code")
-Cc: <stable@vger.kernel.org>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Muchun Song <muchun.song@linux.dev>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
-
-Still busy runtime-testing of this version -- have to set up my ARM
-environment again. Dropped the RB's/ACKs because there was significant
-change in the pte_lockptr() handling.
-
-v1 -> 2:
-* Extend patch description
-* Drop "mm: let pte_lockptr() consume a pte_t pointer"
-* Introduce ptep_lockptr() in this patch
-
-I wish there was a nicer way to avoid messing with CONFIG_HIGHPTE ...
-
----
- include/linux/hugetlb.h | 26 +++++++++++++++++++++++---
- include/linux/mm.h      | 10 ++++++++++
- 2 files changed, 33 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index c9bf68c239a01..dd6d4ee5ee59c 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -944,10 +944,30 @@ static inline bool htlb_allow_alloc_fallback(int reason)
- static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
- 					   struct mm_struct *mm, pte_t *pte)
- {
--	if (huge_page_size(h) == PMD_SIZE)
-+	VM_WARN_ON(huge_page_size(h) == PAGE_SIZE);
-+	VM_WARN_ON(huge_page_size(h) >= P4D_SIZE);
-+
-+	/*
-+	 * hugetlb must use the exact same PT locks as core-mm page table
-+	 * walkers would. When modifying a PTE table, hugetlb must take the
-+	 * PTE PT lock, when modifying a PMD table, hugetlb must take the PMD
-+	 * PT lock etc.
-+	 *
-+	 * The expectation is that any hugetlb folio smaller than a PMD is
-+	 * always mapped into a single PTE table and that any hugetlb folio
-+	 * smaller than a PUD (but at least as big as a PMD) is always mapped
-+	 * into a single PMD table.
-+	 *
-+	 * If that does not hold for an architecture, then that architecture
-+	 * must disable split PT locks such that all *_lockptr() functions
-+	 * will give us the same result: the per-MM PT lock.
-+	 */
-+	if (huge_page_size(h) < PMD_SIZE && !IS_ENABLED(CONFIG_HIGHPTE))
-+		/* pte_alloc_huge() only applies with !CONFIG_HIGHPTE */
-+		return ptep_lockptr(mm, pte);
-+	else if (huge_page_size(h) < PUD_SIZE)
- 		return pmd_lockptr(mm, (pmd_t *) pte);
--	VM_BUG_ON(huge_page_size(h) == PAGE_SIZE);
--	return &mm->page_table_lock;
-+	return pud_lockptr(mm, (pud_t *) pte);
- }
- 
- #ifndef hugepages_supported
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index b100df8cb5857..1b1f40ff00b7d 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2926,6 +2926,12 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
- 	return ptlock_ptr(page_ptdesc(pmd_page(*pmd)));
- }
- 
-+static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
-+{
-+	BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
-+	return ptlock_ptr(virt_to_ptdesc(pte));
-+}
-+
- static inline bool ptlock_init(struct ptdesc *ptdesc)
- {
- 	/*
-@@ -2950,6 +2956,10 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
- {
- 	return &mm->page_table_lock;
- }
-+static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
-+{
-+	return &mm->page_table_lock;
-+}
- static inline void ptlock_cache_init(void) {}
- static inline bool ptlock_init(struct ptdesc *ptdesc) { return true; }
- static inline void ptlock_free(struct ptdesc *ptdesc) {}
--- 
-2.45.2
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
