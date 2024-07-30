@@ -1,159 +1,115 @@
-Return-Path: <linux-kernel+bounces-267061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47020940BE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:41:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D01E9940BEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 646D01C23FDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:41:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79E151F2573E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470C91922F3;
-	Tue, 30 Jul 2024 08:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD75C192B99;
+	Tue, 30 Jul 2024 08:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YKxZKtve"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aPVRmtEL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B8315ECDB
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFF4156C4B;
+	Tue, 30 Jul 2024 08:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722328836; cv=none; b=UcFyuY5iglcpwFP1mdGdvXI0dHj/NlXoB8RETQYtSdKK/AHvplbbUTXmESeIUouLxnhRrmLEYEbJgoLd/ieMDHFTH52RHJZIXN1oaEq5I31fEKypOUIQUfGRaIG7K6TekmE4tfkRuY+EgYkI7xQ2EYJ+83dAfaRG2/xtOjnFFIM=
+	t=1722328892; cv=none; b=nhyRuP+OJ0RnMeg9+5RQBW4Iqrij13n/rcnNSy81LHqKcrxrUDoKD36yta+wvszJ6gzxcC6DTYywG+F8zWBNqo1V7aErRQ2yCPwa3gjZj2fHiy0WBfhmZEHRHf1ws0OXLhB88jjvV2niby4mh5zQvPT2lk0kArhHgXdUXz8l5YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722328836; c=relaxed/simple;
-	bh=KeKIjr56GWZ3TmbKjhjuPrfxdwxCI4PdedCJAWyDQYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nz8MV6n7r2T2QlN4WuYzqkvjByEnafsTXRp6XFrvocRNIw8gqn0kBmIi5qZg9ksMziBiHmuzpc3d288Uan8sNHveYPu9YoAuavBvsqJaoxe04wHu9NE5SuodNqjaACFTRNuYF2YVf9TANrdVE9kpnWwYdHO67bFGtTegaal5eKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YKxZKtve; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722328833;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bx38A0XpDP06oxe3bl+pZoWbefbgYUyRCc/BaKj6xL4=;
-	b=YKxZKtveXy+8Q7U1C2InZJJ7tZLf2BiBGdgfdL3CZdOg8DZ0gBdZAbilfDIIIbimgC3uTj
-	5n/XQkHw1EnOnky5eLfOvmYGlQ/HFwAcT20JBdMUiXLT3Ze++aOmUBjNgmfX5ah2aPEncD
-	4YGdygG8C420jros6LcsD9TpEBh5phs=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-569-gfpRqIOuOTeoSwhJTi8vKg-1; Tue, 30 Jul 2024 04:40:30 -0400
-X-MC-Unique: gfpRqIOuOTeoSwhJTi8vKg-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-427b7a2052bso34754385e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 01:40:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722328829; x=1722933629;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bx38A0XpDP06oxe3bl+pZoWbefbgYUyRCc/BaKj6xL4=;
-        b=Q1LX/pHlWFDA1m8Tl4H4UUSJ1OhmSJ6FRfWCdRdPD74mecXq7P46XVzNhKktmiKe9T
-         tZ7205yO1ku/ULQTlDRPLuSNVXjLQk5+0rwt7Ph4vkNTttNsQ1mLf5U51DzjM2W5YCQj
-         R3GDOfAfzKmxA4PgdCqa+pKpC6mTHrHXkUMT+gitURGt8kDTeXL0nLYbFlJJmEwKgfTJ
-         nMX9/VRIZQM7JWt0NzBOZhym9e2I2lD47GTnJ2MRc3yIttbHDWLwXa/OuDKRdrQquver
-         wo6WmwiO5HkqtWfwr2rn17t6Tk/N2/3LXAx50L/ZP675tF8l2XNuj2ZZuU9nshMq5s4y
-         Y37A==
-X-Forwarded-Encrypted: i=1; AJvYcCUgiNp/pMcNaAUOrXY+/yGa5k6zd6tNdOq3GewZL5fP8uTKJAgv+pq2BawhVVvYvTjoC4m36vus4qsJemf0MwqPq6hn5LFZdrUQI+IB
-X-Gm-Message-State: AOJu0Yzw+01y6zHBdzvacKw4KkjnEidTpnuFrJBkAKAnyExN/taAstqs
-	ysMlhPEUfkbRiQnHUkQS3K9hz2ro6Cirau6bfaCsF8Su5266VJfR51FVZlXv7jVNGq7uMG5Pfzw
-	ZZVcpOcWhh/Lknl95xz7XFNBrk7PHWGokF/CHtqtQxwdJXCEWosdkWzE5MHf+3A==
-X-Received: by 2002:a05:600c:310e:b0:428:15b0:c8dd with SMTP id 5b1f17b1804b1-42815b0cb56mr77206205e9.20.1722328829632;
-        Tue, 30 Jul 2024 01:40:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGA7F8Wl0Pk7pPlBS7mRllgrGC08PD3OtHUYft3GlhhdnBwSt1qfBBkpUl1DTL1TfpmO5NU+Q==
-X-Received: by 2002:a05:600c:310e:b0:428:15b0:c8dd with SMTP id 5b1f17b1804b1-42815b0cb56mr77205935e9.20.1722328829115;
-        Tue, 30 Jul 2024 01:40:29 -0700 (PDT)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280fa9a30csm136438785e9.30.2024.07.30.01.40.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 01:40:28 -0700 (PDT)
-Date: Tue, 30 Jul 2024 10:40:28 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v3 3/7] acpi/ghes: Support GPIO error source.
-Message-ID: <20240730104028.4f503d91@imammedo.users.ipa.redhat.com>
-In-Reply-To: <64a31a09fe6b11bebad1c592ad20071a9d93fee5.1721630625.git.mchehab+huawei@kernel.org>
-References: <cover.1721630625.git.mchehab+huawei@kernel.org>
-	<64a31a09fe6b11bebad1c592ad20071a9d93fee5.1721630625.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1722328892; c=relaxed/simple;
+	bh=EZwgfB+SpCkB8yyda/21W0llO92QMrqgQrAHgsYlxs0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KxS4p0cP7WxokzLKT1ZM4vuO4evU0PDoFlpqjaeXEpT9qFjyAzmaLfjQQBZegAIO/2QR2jbjL4XZHHN6+4ZLHYfejOhVTdwCqJ5KRHExmB4K+WNlg+JtKwJwk7ucNx0fe6xH45TqX4Yke1WEXc4Sujh5HHcRK6kYN/DF8YQjVlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aPVRmtEL; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722328891; x=1753864891;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EZwgfB+SpCkB8yyda/21W0llO92QMrqgQrAHgsYlxs0=;
+  b=aPVRmtELCqIU2W5cXZT8cmKLTWEP8WfpiCBFsohbCmev72zofAlTlz0v
+   5AGA7LyxB/AOkYJmKD/Y4v88YFQXL+ZgkagqYKfgvADC014irp1+kJSjo
+   8ekDcXIj2c2PGiLMGHOTl1PZ1iEXBdVnD7voIVyf9PiZ0QTy4yni4gAr9
+   ozzNEzto4JTVFWdHTaXZiZ3GD9zMxvBbw6nReeKn/Iz6qIjB4iJk4y8ML
+   qtEUx51Z111PBMiCGa+VjLkEpbNm5K4R59j7lpEV4ZQ2cnnZmmlroQ4Nk
+   7qvC6+dTQEIBUQ4fvQVkzEOPG1MIbG29VJVVtIRvBhcsvJ1wQ0TxevgeW
+   Q==;
+X-CSE-ConnectionGUID: a7+ZgAnGQEKYsZqhmu63Mg==
+X-CSE-MsgGUID: Ru+odA0bQCmdLUwGniZevw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="20281403"
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="20281403"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 01:41:30 -0700
+X-CSE-ConnectionGUID: h2tVqVDOR9iTiL029BFXEg==
+X-CSE-MsgGUID: ujmr2l5qSue4aV5FuoG2lQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="53932617"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by fmviesa006.fm.intel.com with SMTP; 30 Jul 2024 01:41:26 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 30 Jul 2024 11:41:25 +0300
+Date: Tue, 30 Jul 2024 11:41:25 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Marco Felsch <m.felsch@pengutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	RD Babiera <rdbabiera@google.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: tcpci: Fix error code in
+ tcpci_check_std_output_cap()
+Message-ID: <ZqinNYgseXFj3l7g@kuha.fi.intel.com>
+References: <b0880888-6719-4614-91fc-8ee63b71d304@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0880888-6719-4614-91fc-8ee63b71d304@stanley.mountain>
 
-On Mon, 22 Jul 2024 08:45:55 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+On Fri, Jul 12, 2024 at 09:05:50AM -0500, Dan Carpenter wrote:
+> The tcpci_check_std_output_cap() function is supposed to return negative
+> error codes but it's declared as type bool so the error handling doesn't
+> work.  Declare it as an int instead.
+> 
+> Fixes: 62ce9ef14797 ("usb: typec: tcpci: add support to set connector orientation")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-> From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> 
-> Add error notification to GHES v2 using the GPIO source.
-> 
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
 > ---
->  hw/acpi/ghes.c         | 8 ++++++--
->  include/hw/acpi/ghes.h | 1 +
->  2 files changed, 7 insertions(+), 2 deletions(-)
+>  drivers/usb/typec/tcpm/tcpci.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> index e9511d9b8f71..5b8bc6eeb437 100644
-> --- a/hw/acpi/ghes.c
-> +++ b/hw/acpi/ghes.c
-> @@ -34,8 +34,8 @@
->  /* The max size in bytes for one error block */
->  #define ACPI_GHES_MAX_RAW_DATA_LENGTH   (1 * KiB)
->  
-> -/* Now only support ARMv8 SEA notification type error source */
-> -#define ACPI_GHES_ERROR_SOURCE_COUNT        1
-> +/* Support ARMv8 SEA notification type error source and GPIO interrupt. */
-> +#define ACPI_GHES_ERROR_SOURCE_COUNT        2
->  
->  /* Generic Hardware Error Source version 2 */
->  #define ACPI_GHES_SOURCE_GENERIC_ERROR_V2   10
-> @@ -327,6 +327,9 @@ static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
->           */
->          build_ghes_hw_error_notification(table_data, ACPI_GHES_NOTIFY_SEA);
->          break;
-> +    case ACPI_HEST_SRC_ID_GPIO:
-> +        build_ghes_hw_error_notification(table_data, ACPI_GHES_NOTIFY_GPIO);
-> +        break;
->      default:
->          error_report("Not support this error source");
->          abort();
-> @@ -370,6 +373,7 @@ void acpi_build_hest(GArray *table_data, BIOSLinker *linker,
->      /* Error Source Count */
->      build_append_int_noprefix(table_data, ACPI_GHES_ERROR_SOURCE_COUNT, 4);
->      build_ghes_v2(table_data, ACPI_HEST_SRC_ID_SEA, linker);
-> +    build_ghes_v2(table_data, ACPI_HEST_SRC_ID_GPIO, linker);
->  
->      acpi_table_end(linker, &table);
+> diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
+> index 8a18d561b063..b5e49af48f43 100644
+> --- a/drivers/usb/typec/tcpm/tcpci.c
+> +++ b/drivers/usb/typec/tcpm/tcpci.c
+> @@ -67,7 +67,7 @@ static int tcpci_write16(struct tcpci *tcpci, unsigned int reg, u16 val)
+>  	return regmap_raw_write(tcpci->regmap, reg, &val, sizeof(u16));
 >  }
-> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-> index 674f6958e905..4f1ab1a73a06 100644
-> --- a/include/hw/acpi/ghes.h
-> +++ b/include/hw/acpi/ghes.h
-> @@ -58,6 +58,7 @@ enum AcpiGhesNotifyType {
 >  
->  enum {
->      ACPI_HEST_SRC_ID_SEA = 0,
-> +    ACPI_HEST_SRC_ID_GPIO = 1,
-is it defined by some spec, or just a made up number?
+> -static bool tcpci_check_std_output_cap(struct regmap *regmap, u8 mask)
+> +static int tcpci_check_std_output_cap(struct regmap *regmap, u8 mask)
+>  {
+>  	unsigned int reg;
+>  	int ret;
+> -- 
+> 2.43.0
 
->      /* future ids go here */
->      ACPI_HEST_SRC_ID_RESERVED,
->  };
-
+-- 
+heikki
 
