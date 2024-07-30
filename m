@@ -1,103 +1,132 @@
-Return-Path: <linux-kernel+bounces-267193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99C1940E3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:49:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E58940E3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5080A1F238AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:49:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A5D91F2326D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2B1196D9A;
-	Tue, 30 Jul 2024 09:49:19 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A6A196C7B
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91618197A82;
+	Tue, 30 Jul 2024 09:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLshH0bW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF070196C9B;
+	Tue, 30 Jul 2024 09:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722332959; cv=none; b=byephQR0JhwreasRAtSX/h4/V/xeKBxEBzr02jFMn4CEQGI4ChZKOfpQnrpamG6eb5sG2za3HEVIq6ueNpxm91/sMbfxth30WcMxUnTlHsAwkM6SnXyOHl64TqW75QETX/YijVlTStcKM80Jh0Zm1u/AeKumGyytG0+kDoPpbJU=
+	t=1722332982; cv=none; b=JaFW4n82vlbmqj8xCvB4/opWXnlz5GeTL3r+CU3bjiA/2yf/Ha3ldSe2tarohVqsVv3eACwnZDQn0j17F6Sah3KSuhiGz9L46oCzgc8M59C5fQ2kVcMQepP2kAvqwFTy8Vx4F6VcdQDjaq5vjFDkN/oTglaCjb5+jXyJuGhLQHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722332959; c=relaxed/simple;
-	bh=IhpWm4gfNHBkjcBIwsHm1lQ2cCRzEXfGacHjhRjPNFg=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=a1UaUnU9Tns/E04j4BnW7P/GVXU+dRA/hA9l3I/WLtPGynm/pxGlS4q2RHdPagD0pwH5g4E1YGrBnObJJCN0BAUnmIaPSFrETdGLp42Sf3zmFvOKuJ34+fDOWK99daFX2ABnf9bZmIjpzN5Cqk0m66OABZpMdGLu7NBU/3hdEHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8Cxrusbt6hm1GMEAA--.15289S3;
-	Tue, 30 Jul 2024 17:49:15 +0800 (CST)
-Received: from [10.130.0.149] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMCxf8cat6hmnV0GAA--.31800S3;
-	Tue, 30 Jul 2024 17:49:15 +0800 (CST)
-Subject: Re: [PATCH 1/2] objtool/LoongArch: Restrict stack operation
- instruction
-To: Jinyang He <hejinyang@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Huacai Chen <chenhuacai@kernel.org>
-References: <20240730061901.21485-1-yangtiezhu@loongson.cn>
- <20240730061901.21485-2-yangtiezhu@loongson.cn>
- <4ac60afc-de6b-acf6-c9e6-1f45c0680dbe@loongson.cn>
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <6ee45e77-eb22-c4ac-ee47-6a329236eeb7@loongson.cn>
-Date: Tue, 30 Jul 2024 17:49:14 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+	s=arc-20240116; t=1722332982; c=relaxed/simple;
+	bh=K+iZkNmIViomAg24z3v6dg2ldSKrDHEShkDzsj4OSPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q0INoybVzJdXKSQJEsiBHTwci1aAgZLeZ2BiJi1SZqeLaCXlCXs9Ude2pyENPFvzNGD23svTrj30pONNbXPAf8OqyHlupA7FfhMA3bvNnIk012hn6M/nhzBn4EjBFzR+E0h4xTJ5lJDJbvjn0hHnLv2p8XZqXvMK9HspBZRmMbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLshH0bW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4623AC4AF0B;
+	Tue, 30 Jul 2024 09:49:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722332982;
+	bh=K+iZkNmIViomAg24z3v6dg2ldSKrDHEShkDzsj4OSPE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bLshH0bWGveXFScmbfagrf+5Rlbb6V9sI7oEJXqwXvDLnZ64gldWOq9MCDl5qZ0nD
+	 b3YCQno4d3bZ1xQKYB+GUWMVDyxYbzToI5nARvkR+EkUIWmVaPkcIkajDaUPEkA9QM
+	 ekBJ9xmTs3ARKeU7vkqfcKaGn3rR5UqqcgZbL1MB3qeTpbn+5IaIRKAssgJ9GByJc+
+	 vT5yNfXH8/9uIGwNZLxw+ko9BY6+TvvvOBGQQDYReUQdsetQbRp34l0r7pxS+B1qF1
+	 20UbWaCsOE0k3fClSdoiPblC9KDd41WYRMjNKLmohp4T3j/KG8UG7mi3Hu0fhjtR+6
+	 yDQbbDzhCeN/Q==
+Date: Tue, 30 Jul 2024 11:49:37 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Olaf Hering <olaf@aepfle.de>
+Cc: Deepa Dinamani <deepa.kernel@gmail.com>, 
+	Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v1] mount: handle OOM on mnt_warn_timestamp_expiry
+Message-ID: <20240730-humpelt-deklamieren-eeefe1d623a9@brauner>
+References: <20240730085856.32385-1-olaf@aepfle.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <4ac60afc-de6b-acf6-c9e6-1f45c0680dbe@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qMiowMCxf8cat6hmnV0GAA--.31800S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj9xXoWrZr48uFy5GryrAF1xKw13WrX_yoWfCrcEvF
-	Wjyry8Cw1IyF97Zwn0yFyrAr92ga17Xrn8XasFkr9rXa43tFWrWF1SkF1xArZ5JFWvqFnr
-	WFW3Xa4UZw1FkosvyTuYvTs0mTUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbaAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
-	14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E
-	14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
-	CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1x
-	MIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsG
-	vfC2KfnxnUUI43ZEXa7IU8vApUUUUUU==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240730085856.32385-1-olaf@aepfle.de>
 
-On 07/30/2024 05:28 PM, Jinyang He wrote:
-> On 2024-07-30 14:19, Tiezhu Yang wrote:
->
->> After commit a0f7085f6a63 ("LoongArch: Add RANDOMIZE_KSTACK_OFFSET
->> support"), the code flow of do_syscall() was changed when compiled
->> with GCC due to the secondary stack of add_random_kstack_offset(),
->> something like this:
->>
->>    addi.d          $sp, $sp, -32
->>    st.d            $fp, $sp, 16
->>    st.d            $ra, $sp, 24
->>    addi.d          $fp, $sp, 32
->>    ...
->>    sub.d           $sp, $sp, $t1
-> Have you checked the ORC info whether is right or tried backtrace which
-> passed do_syscall? The "sub.d $sp, $sp, $t1" has modified the $sp so the
-> $sp cannot express CFA here. This patch just clear the warning but ignore
-> the validity of ORC info. The wrong ORC info may cause illegally access
-> memory when backtrace.
+On Tue, Jul 30, 2024 at 10:58:13AM GMT, Olaf Hering wrote:
+> If no page could be allocated, an error pointer was used as format
+> string in pr_warn.
+> 
+> Rearrange the code to return early in case of OOM. Also add a check
+> for the return value of d_path. The API of that function is not
+> documented. It currently returns only ERR_PTR values, but may return
+> also NULL in the future. Use PTR_ERR_OR_ZERO to cover both cases.
+> 
+> Fixes: f8b92ba67c5d ("mount: Add mount warning for impending timestamp expiry")
+> 
+> Signed-off-by: Olaf Hering <olaf@aepfle.de>
+> ---
+>  fs/namespace.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 328087a4df8a..539d4f203a20 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -2922,7 +2922,14 @@ static void mnt_warn_timestamp_expiry(struct path *mountpoint, struct vfsmount *
+>  	   (!(sb->s_iflags & SB_I_TS_EXPIRY_WARNED)) &&
+>  	   (ktime_get_real_seconds() + TIME_UPTIME_SEC_MAX > sb->s_time_max)) {
+>  		char *buf = (char *)__get_free_page(GFP_KERNEL);
+> -		char *mntpath = buf ? d_path(mountpoint, buf, PAGE_SIZE) : ERR_PTR(-ENOMEM);
+> +		char *mntpath;
+> +		
+> +		if (!buf)
+> +			return;
+> +
+> +		mntpath = d_path(mountpoint, buf, PAGE_SIZE);
+> +		if (PTR_ERR_OR_ZERO(mntpath))
 
-I did testing many times before submitting, the call trace is
-expected when testing "echo l > /proc/sysrq-trigger".
+This needs to be IS_ERR_OR_NULL().
 
-Thanks,
-Tiezhu
+> +			goto err;
 
+We should still warn when decoding the mountpoint fails. I'll just amend
+your patch to something like:
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 328087a4df8a..0f2f140aaf05 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2921,16 +2921,21 @@ static void mnt_warn_timestamp_expiry(struct path *mountpoint, struct vfsmount *
+        if (!__mnt_is_readonly(mnt) &&
+           (!(sb->s_iflags & SB_I_TS_EXPIRY_WARNED)) &&
+           (ktime_get_real_seconds() + TIME_UPTIME_SEC_MAX > sb->s_time_max)) {
+-               char *buf = (char *)__get_free_page(GFP_KERNEL);
+-               char *mntpath = buf ? d_path(mountpoint, buf, PAGE_SIZE) : ERR_PTR(-ENOMEM);
++               char *buf, *mntpath = NULL;
++
++               buf = (char *)__get_free_page(GFP_KERNEL);
++               if (buf)
++                       mntpath = d_path(mountpoint, buf, PAGE_SIZE);
++               if (IS_ERR_OR_NULL(mntpath))
++                       mntpath = "(unknown)";
+
+                pr_warn("%s filesystem being %s at %s supports timestamps until %ptTd (0x%llx)\n",
+                        sb->s_type->name,
+                        is_mounted(mnt) ? "remounted" : "mounted",
+                        mntpath, &sb->s_time_max,
+                        (unsigned long long)sb->s_time_max);
+-
+-               free_page((unsigned long)buf);
++               if (buf)
++                       free_page((unsigned long)buf);
+                sb->s_iflags |= SB_I_TS_EXPIRY_WARNED;
+        }
+ }
 
