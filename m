@@ -1,196 +1,158 @@
-Return-Path: <linux-kernel+bounces-267823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0999194163D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:58:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6CD8941642
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B816E2832A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:58:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8753B284DF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298911BBBC9;
-	Tue, 30 Jul 2024 15:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D31B1BC088;
+	Tue, 30 Jul 2024 15:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yk0D11Qb"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f9/wurqa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51ECD1BB6A9;
-	Tue, 30 Jul 2024 15:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2351BA883;
+	Tue, 30 Jul 2024 15:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722355067; cv=none; b=ipM2horrfACU052MdJoGl8g5WNOOo7ymNMD+YqJ71GOvH3qjroMKaFbqJ0nt5o39bkSwaMbVxnGqubl3NDiYNMERYcktT28yfiw7adRUdZ6oh6Wv/dbYxAySUCC9Y5+rx/d5ex2dsBpiB50LcJ2LI405+Gtaa7p7oSrKGj6nXCU=
+	t=1722355073; cv=none; b=Ljo3cLXCzyZtJENALLlejPgv/kIgQ9yDOhxeYahllsAYbF0j6Wf01OEVXVpUhrjveh2nzyN0paedkKa9ufNmKipSkRLpQjEq9F5xUknCDiNSDfEgiCf6rZ/Ds1VQyRXK5ZaD32TeILINzCrhCuyNlr2tvGtapnRiBumwPB16/x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722355067; c=relaxed/simple;
-	bh=tn400rVvllJNXhu3yHGfVTbwd98gV9dFnEHtKt4lEKk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tzx7gCJRkFFyprlX/3VVD9j61/gfK3NPrr7dhf//tP2y2YfRureYA2tn6qI+vCEgVuXuK8HQhkXYRT7A4Gehy0KicwRkUJvF0gUCqhihkowkkeJMK1NK99Q2Yc5N62qUpclSl4JowIOc8G0YGCvDcUNafipiR0zHJ4cbXRdsnqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yk0D11Qb; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ef2fccca2cso58631521fa.1;
-        Tue, 30 Jul 2024 08:57:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722355062; x=1722959862; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=27/gAqx5lgeC8Os2LV97u4YOEZtWJlnLTdD+mQUAxaU=;
-        b=Yk0D11Qb6gfOVsWatJuC46gues9TwNkqkGRqmCW/0apKrzlVfUdpccxUgeByGvUGYi
-         LBxNGwP6rlr+leJ/gs+LIhMp96PyP95RT5c+X/GzITBQcqpDy9fBrA4M02hMsST4+vMM
-         yqLBb5HAwAf+DYzClwSOdnu5Z98p8jockiWg7I+WdMwpi0pzFRhpqshVXhJ1BDtmQxLI
-         g0PKlOVa1JcuEv37Iy3Vjhy2PJ8vU054qeHddqDUh+iSjnY/1MfheQn0KRh9OH3LH1rk
-         blElQ0ASF9/LNuIHjojUlDhigPA64yLkHcfYGEIIY79KI11EkOMn//c1u4t87oLDCHFC
-         +WUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722355062; x=1722959862;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=27/gAqx5lgeC8Os2LV97u4YOEZtWJlnLTdD+mQUAxaU=;
-        b=McK3hk05S7MtYwDqPhYTm1vVDt6z+6/OlqGzgZplYwE0WpkbvLACl2gE0Yo1ToMQhl
-         n/26b52sd2sc9znFYXzk3YqOUaX5daFDWtjfEQh5rAxpJpuIriTfkkJYe9/yZHP98Hq9
-         NdxD1aPtN8oVW9N/PaMMeNtRnb4yQKuRyxgl6KN2unFjoazFpU6DeD3nALPhuOGGh4Ld
-         rHYJh/zYIKWvLA1xLrjnWLOiDISQ5eiRQuUYwy0zfUTFFFtnn5Wys+fqgNuLBb19LlKO
-         ne+GeZI7R33LXpp3ZoPuPelEvw80WUuyB5vlkaLK8PE8ilZqSmZSnjMtsLgjPOAmkL06
-         F8Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCXK/bEr1NEwTByfXV+fjlPaO8UwUBS7clAaid3nsedGZbo9tHdrQ62vFQuoi++ysBElvw6JjQVSTDRdhsfo6azyTWaouYOhGSsBMTosmlD4+aELPjdgnB7cNqteeIxSWWaatdji428UKfsXXg==
-X-Gm-Message-State: AOJu0Yy7eQuyMI+G2rc9ul5mRa/6jQbahiuyAG22JfLlIfTD5A/C/oAC
-	7PcS4OOnffB97rTD2J/STZbafupS+FKPRrr0zb6TigOAFAaYWO0BT4S5+myoOgVxQdp2N3iMf3i
-	RnOrNhwGVqxPMAkchFkvLIUxMClM=
-X-Google-Smtp-Source: AGHT+IF9SiJw/Eq3Ic3bT8iin39x3OBr3WmKzKTHYF3cEnCHRD8ZJpdkfSIHWO0NCT3VovNiOyKE81Rskxkmlexa+6M=
-X-Received: by 2002:a2e:7c07:0:b0:2ec:5c94:3d99 with SMTP id
- 38308e7fff4ca-2f12edf8009mr75537151fa.2.1722355061989; Tue, 30 Jul 2024
- 08:57:41 -0700 (PDT)
+	s=arc-20240116; t=1722355073; c=relaxed/simple;
+	bh=SQELyUfZGLCrV0rCnnFI6nALeOacjdEpR7+pAQn4+nE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uFostc1Q4GvLMjI5gJbl4zldmFDAOEr3LLrWEi48P2GWHAt6N6HM60L1PPsS83PYPjTPMefS5TDncJcXVqDAiGiZz7IpG5bgTdeBrFfjLoWi+m+BzRHJv4QZ3MQ5bRBJ2RTalb0XUfLf336O9LfMI4U7kIZM6ssK0SEtB8j0Ozc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f9/wurqa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0781EC4AF0C;
+	Tue, 30 Jul 2024 15:57:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722355073;
+	bh=SQELyUfZGLCrV0rCnnFI6nALeOacjdEpR7+pAQn4+nE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=f9/wurqa0yfYVsJuBkbK6J7tObzE+3vXMlykd4KnNdPkhEBpk905nhG8RxR8gyYn1
+	 O+tWxQvzVTSIF1Zd7PNUnYMIu62rZEvyhAlbcXvqMY0wHup+Gn8Ah/pnZAlkOv80ch
+	 ju4dj1iJqUEN+ATmo8Aart438cz7ritrj6EEqthhuRVWATKTkpJJndTC/4CZERhtuL
+	 mhnSfJA01ozuqE69UxjINvGprwgiOT43aqy9NbFe1A2gOk2ctgpgGJ4GkLtKqo7pHy
+	 OcGnwg/9o+/l7NZwcU6xGgnyDXeJ53VoRywkpnbD3lPpk60fqjojlelUFXbDhEjuKj
+	 cVvh2qz+pCHxQ==
+Message-ID: <159a9d77-5038-4691-8246-e10d3b49e26a@kernel.org>
+Date: Tue, 30 Jul 2024 17:57:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729-topic-845_gpu_smmu-v1-1-8e372abbde41@kernel.org>
- <osxynb352ubxgcb5tv3u7mskkon23nmm3gxkfiiiqss5zp67jf@fv5d6bob2rgp>
- <CAF6AEGuWULwrJDWW37nQhByTpc-2bBYVv3b_Ac6OCwaJ83Ed9w@mail.gmail.com>
- <CAA8EJpp9zaQSKbis7J9kYTudTt=RFhfbzeayz3b-VbGQENtqeA@mail.gmail.com>
- <3332c732-4555-46bf-af75-aa36ce2d58df@gmail.com> <CAA8EJppZsNTqh_KxD=BWXjmedA1ogeMa74cA=vVbCWAU7A-qgQ@mail.gmail.com>
- <691ee925-b214-4b68-8d7b-ecb54f865cfc@kernel.org>
-In-Reply-To: <691ee925-b214-4b68-8d7b-ecb54f865cfc@kernel.org>
-From: Rob Clark <robdclark@gmail.com>
-Date: Tue, 30 Jul 2024 08:57:29 -0700
-Message-ID: <CAF6AEGuPanMBmguk9GRKekPEkdzxb8fOsb0qEVsUVEeedtG3=Q@mail.gmail.com>
-Subject: Re: [PATCH] iommu/arm-smmu-qcom: Work around SDM845 Adreno SMMU w/
- 16K pages
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, iommu@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: clock: nxp,lpc3220-clk: Convert bindings to
+ DT schema
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240729193731.142069-1-animeshagarwal28@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240729193731.142069-1-animeshagarwal28@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 30, 2024 at 3:12=E2=80=AFAM Konrad Dybcio <konradybcio@kernel.o=
-rg> wrote:
->
-> On 30.07.2024 10:50 AM, Dmitry Baryshkov wrote:
-> > On Tue, 30 Jul 2024 at 11:08, Konrad Dybcio <konradybcio@gmail.com> wro=
-te:
-> >>
-> >> On 29.07.2024 11:21 PM, Dmitry Baryshkov wrote:
-> >>> On Tue, 30 Jul 2024 at 00:08, Rob Clark <robdclark@gmail.com> wrote:
-> >>>>
-> >>>> On Mon, Jul 29, 2024 at 1:14=E2=80=AFPM Dmitry Baryshkov
-> >>>> <dmitry.baryshkov@linaro.org> wrote:
-> >>>>>
-> >>>>> On Mon, Jul 29, 2024 at 10:37:48AM GMT, Konrad Dybcio wrote:
-> >>>>>> From: Konrad Dybcio <konrad.dybcio@linaro.org>
-> >>>>>>
-> >>>>>> SDM845's Adreno SMMU is unique in that it actually advertizes supp=
-ort
-> >>>>>> for 16K (and 32M) pages, which doesn't hold for newer SoCs.
-> >>>>>>
-> >>>>>> This however, seems either broken in the hardware implementation, =
-the
-> >>>>>> hypervisor middleware that abstracts the SMMU, or there's a bug in=
- the
-> >>>>>> Linux kernel somewhere down the line that nobody managed to track =
-down.
-> >>>>>>
-> >>>>>> Booting SDM845 with 16K page sizes and drm/msm results in:
-> >>>>>>
-> >>>>>> *** gpu fault: ttbr0=3D0000000000000000 iova=3D000100000000c000 di=
-r=3DREAD
-> >>>>>> type=3DTRANSLATION source=3DCP (0,0,0,0)
-> >>>>>>
-> >>>>>> right after loading the firmware. The GPU then starts spitting out
-> >>>>>> illegal intstruction errors, as it's quite obvious that it got a
-> >>>>>> bogus pointer.
-> >>>>>>
-> >>>>>> Hide 16K support on SDM845's Adreno SMMU to work around this.
-> >>>>>>
-> >>>>>> Reported-by: Sumit Semwal <sumit.semwal@linaro.org>
-> >>>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> >>>>>> ---
-> >>>>>> There's a mismatch in sender/committer addresses but that's "fine"=
-:
-> >>>>>> https://lore.kernel.org/linux-usb/2024072734-scenic-unwilling-71ea=
-@gregkh/
-> >>>>>> ---
-> >>>>>>  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 10 ++++++++++
-> >>>>>>  1 file changed, 10 insertions(+)
-> >>>>>>
-> >>>>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/=
-iommu/arm/arm-smmu/arm-smmu-qcom.c
-> >>>>>> index 36c6b36ad4ff..d25825c05817 100644
-> >>>>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> >>>>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> >>>>>> @@ -338,6 +338,15 @@ static int qcom_smmu_cfg_probe(struct arm_smm=
-u_device *smmu)
-> >>>>>>       return 0;
-> >>>>>>  }
-> >>>>>>
-> >>>>>> +static int qcom_adreno_smmuv2_cfg_probe(struct arm_smmu_device *s=
-mmu)
-> >>>>>> +{
-> >>>>>> +     /* SDM845 Adreno SMMU advertizes 16K pages support, but some=
-thing is broken */
-> >>>>>> +     if (of_device_is_compatible(smmu->dev->of_node, "qcom,sdm845=
--smmu-v2"))
-> >>>>>> +             smmu->features &=3D ~ARM_SMMU_FEAT_FMT_AARCH64_16K;
-> >>>>>
-> >>>>> Shouldn't we hide that uncoditionally as it's likely that none of v=
-2
-> >>>>> Adreno SMMUs support 16k pages?
-> >>>>
-> >>>> Hmm, that would be unfortunate to have the GPU not supporting the CP=
-U
-> >>>> page size.  I guess we could still map 16k pages as multiple 4k page=
-s,
-> >>>> but that is a bit sad..
-> >>>
-> >>> For now this might be limited to older platforms (v2 vs -500)
-> >>
-> >> In the commit message:
-> >>
-> >>>>>> SDM845's Adreno SMMU is unique in that it actually advertizes supp=
-ort
-> >>>>>> for 16K (and 32M) pages, which doesn't hold for newer SoCs.
-> >
-> > My question is about forbidding 16k pages for sdm845 only or for other
-> > chips too. I'd assume that it shouldn't also work for other smmu-v2
-> > platforms.
->
-> I'd say we shouldn't cause trouble unless we know it's an issue
+On 29/07/2024 21:37, Animesh Agarwal wrote:
+> Convert the NXP LPC32xx Clock Controller bindings to yaml format.
+> 
+> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 
-I guess the other direction (gpu only supporting _larger_ pgsize as
-cpu) would be more problematic
+> +
+> +properties:
+> +  compatible:
+> +    const: nxp,lpc3220-clk
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  clocks:
+> +    description: Phandles of external oscillators, the list must contain one
+> +      32768 Hz oscillator and may have one optional high frequency oscillator.
+> +    maxItems: 2
 
-What is the next larger pg size above 4k which is supported by both gpu and=
- cpu?
+That's not correct and does not match clock-names. List the items with
+description instead of above "phandles ...." and add minItems.
 
-BR,
--R
+
+> +
+> +  clock-names:
+> +    oneOf:
+
+Drop. It's:
+
+minItems: 1
+items:
+ - const: ...
+ - const:
+
+> +      - items:
+> +          - const: xtal_32k
+> +          - const: xtal
+> +      - const: xtal_32k
+> +
+
+
+Best regards,
+Krzysztof
+
 
