@@ -1,376 +1,158 @@
-Return-Path: <linux-kernel+bounces-266643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E8D940409
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 04:03:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43CAB94035F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A32581C20F5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 02:03:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1CC91F23EE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49198C8D1;
-	Tue, 30 Jul 2024 02:02:58 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639548C0B;
+	Tue, 30 Jul 2024 01:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="V6h3Ovto"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC922D530
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 02:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BBE6FD3
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 01:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722304977; cv=none; b=LCddepWewdK/6TM6CDbWX8V8wRiSyBTwaw1bREeU08o4ZAl0qQ2H0KiQ6JL2VsJZUwSC1A9ubayQEZbPMoa+rWDhvNnHdEJS4pyxGZ/QnOCExyx5S0vYnbfFRW+M+v5dqlAxCteJQs/XBerFCOxyHDsuTsPcc0+kOEIoKMWbhsc=
+	t=1722302438; cv=none; b=rcC8lMzWXeKM2aCflusTpV30yFChYRfs7iOnGxW9lEcPHaMxPAPtelI0PXqm0G2nym66wx2QFWS9YQXXkJn38y/o5rYa0CscEtD1Xe3X/QssDvmOp/AUskwpas5SdDJYR26X6LqKUH+BKS+IWs0Jnv+GXKs0hb4IurO0b45k9Rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722304977; c=relaxed/simple;
-	bh=/8bV1g5Vi7FH2Da0YoSQgzQcN54WrB6s1+lpEBvbpmg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dm/5tk9Arsx7uNKbf6J3siyA2cgiU/M2rXBXth9yaMx6qlc/USGPFoODanLlEu2AgaTg/DOzRFJekjg6HJZlbvwtit22FaIRAE7nYHZl/SQdTfjIbjCYJNo9B5Oe7ReCd9MSLT/DafhhCW52heqCePUzOmKoHCuycV0GAC2WL7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: d9f08bd64e1111efaef563ec20b7f6c9-20240730
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:64204390-4039-4071-af99-967be4d9393b,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:2f4db1f023c5b71e1a5549170f379908,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,URL:0
-	,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:
-	NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: d9f08bd64e1111efaef563ec20b7f6c9-20240730
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <oushixiong@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 2020259093; Tue, 30 Jul 2024 09:20:04 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id BE5CAB8075B2;
-	Tue, 30 Jul 2024 09:20:04 +0800 (CST)
-X-ns-mid: postfix-66A83FC4-671480104
-Received: from [10.42.20.83] (unknown [10.42.20.83])
-	by node2.com.cn (NSMail) with ESMTPA id C6FCCB80758A;
-	Tue, 30 Jul 2024 01:20:02 +0000 (UTC)
-Message-ID: <9f10d7cf-7173-e524-5e1e-c07ecc356159@kylinos.cn>
-Date: Tue, 30 Jul 2024 09:20:02 +0800
+	s=arc-20240116; t=1722302438; c=relaxed/simple;
+	bh=7sFpW7FaITWJsV3JL8gPx+PMEupv+MzEs6hdIq87RFI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=gHMVLEdjPzENPJ6axDzahmuub01MRfSJvlI9PMxNOaMUjqS4OvzmPFOotx0fCQvVlmy/mKYIBRBDrmPSU+AqhguDqcDlb+pKO6+KSpwqnFWy7Bk3JtKhtPZVuhEAWTyXIQjJ/ALVo0kfs8YaPI7P7Bo1xWY/Q0+MxYw45VO10jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=V6h3Ovto; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240730012029euoutp01de046d94e5f45830c7187d4a4a536cbf~m2O8jjfXD3154331543euoutp01B
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 01:20:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240730012029euoutp01de046d94e5f45830c7187d4a4a536cbf~m2O8jjfXD3154331543euoutp01B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1722302429;
+	bh=2l/Tm+GJl5Bpguh8RXXKnXyxWbBEPbxWdMDeWf66q1M=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=V6h3OvtoYZJdcTQCuXsYxastm/0qIHRn6ROjN+mnORb/0IcBA9FRDDJWQvBb4PePB
+	 tP/dRBEpEpziJKURJKGFVpVJwj7pj5e/oWNfN4kl4BZHK4kaDgcyG0aUI5eiZqurdp
+	 f6GrJHIXlIlGQWUZ8ZFM4/BYbtSyGlaYsP3tnDJE=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240730012028eucas1p1c7788a9c69a8a91c64a2cf55e9d00fcc~m2O7yh1ly0853308533eucas1p1D;
+	Tue, 30 Jul 2024 01:20:28 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 73.BD.09620.CDF38A66; Tue, 30
+	Jul 2024 02:20:28 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240730012027eucas1p2882c9c45e4d2203916af28ad86493a9a~m2O7SrMaF1785217852eucas1p2H;
+	Tue, 30 Jul 2024 01:20:27 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240730012027eusmtrp114fd7575832f1901d6807488e14d08ad~m2O7RBonx0370503705eusmtrp1a;
+	Tue, 30 Jul 2024 01:20:27 +0000 (GMT)
+X-AuditID: cbfec7f5-d1bff70000002594-44-66a83fdc538f
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 06.8B.09010.BDF38A66; Tue, 30
+	Jul 2024 02:20:27 +0100 (BST)
+Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
+	[106.120.51.28]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240730012026eusmtip251c63c014f4962008b1526e5f2a733b9~m2O6Ue2Qc3180331803eusmtip2G;
+	Tue, 30 Jul 2024 01:20:26 +0000 (GMT)
+From: Mateusz Majewski <m.majewski2@samsung.com>
+To: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Cc: Mateusz Majewski <m.majewski2@samsung.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, "Rafael
+ J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob
+	Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, ALIM AKHTAR
+	<alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, Anand
+	Moon <linux.amoon@gmail.com>
+Subject: [PATCH] MAINTAINERS: thermal: samsung: add myself as maintainer of
+ the driver
+Date: Tue, 30 Jul 2024 03:20:18 +0200
+Message-ID: <20240730012019.1680121-1-m.majewski2@samsung.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] drm/ast: add multiple connectors support
-To: Thomas Zimmermann <tzimmermann@suse.de>, oushixiong1025@163.com,
- Dave Airlie <airlied@redhat.com>
-Cc: Jocelyn Falempe <jfalempe@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240711090102.352213-1-oushixiong1025@163.com>
- <18d7ea0a-64d7-4432-bd86-0d3b6e699175@suse.de>
-Content-Language: en-US
-From: oushixiong <oushixiong@kylinos.cn>
-In-Reply-To: <18d7ea0a-64d7-4432-bd86-0d3b6e699175@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPKsWRmVeSWpSXmKPExsWy7djPc7p37FekGezdyWHxYN42NovvW64z
+	WazZe47JYt5nWYv5R86xWpw/v4HdYtPja6wWl3fNYbP43HuE0WLG+X1MFus23mK3WNjUwm4x
+	8dhkZou5X6YyW/zfs4Pd4snDPjaL5337mBwEPdbMW8PosXPWXXaPxXteMnlsWtXJ5nHn2h42
+	j81L6j36tqxi9Pi8SS6AI4rLJiU1J7MstUjfLoEro+vDVraC2awVT2bdZ25g3MfSxcjJISFg
+	InH2TytbFyMXh5DACkaJ5Sd7oZwvjBIv1y9mhnA+M0qcuvyXDablRs9FJojEckaJtrOLoZxW
+	Jonns1+ADWYTMJB48GYZO0hCROAqk8Szp5/AHGaBJ8wSm59MA5slLBAhseX0VXYQm0VAVWL/
+	kxlA3RwcvAJ2Es8vVUCsk5fo3d/HBGLzCghKnJz5BGwBM1C8eetssPskBP5zSJzp+8cE0eAi
+	Mb9vFpQtLPHq+BZ2CFtG4vTkHqi38yVmbH4PtktCoELi7kEvCNNa4uMZZhCTWUBTYv0ufYhi
+	R4nfn28xQlTwSdx4KwhxAJ/EpG3TmSHCvBIdbUIQ1aoSx/dMYoawpSWetNyGOsVD4sS7G2Bv
+	CwnESpy7foFtAqPCLCRvzULy1iyEGxYwMq9iFE8tLc5NTy02zkst1ytOzC0uzUvXS87P3cQI
+	THOn/x3/uoNxxauPeocYmTgYDzFKcDArifDGX1maJsSbklhZlVqUH19UmpNafIhRmoNFSZxX
+	NUU+VUggPbEkNTs1tSC1CCbLxMEp1cCUN91Y2p8l4dTlS2G/YwwDJzd4GF+81d6e+ebHgRdr
+	N7XM5f24L0j57+13HGf00oqDbvJOW7Tt4NHII/PFt0+w3CoV1XthEq/T7QbG6A/5UzTXLlik
+	FHL9EtdK4VMPv1rUxH3mdfj0g7P0VByX2HW9iz93fC7Juub0jLtK+HhxubfXOqUJ+lGnBd5p
+	GF7xjTGJeafROGVLOPuz6dkfbqc/X7G7lJvTa+1Hmb07lkSsExSMlrxmYLfhCd+5zHeTkg/b
+	NHPXTUw9p+mnkv5X/5/ZdgOnTUtevwg6YiKe3rQyt/Zco8UkA4EDTwRuaFZec+v/L578nK2s
+	rOo3x2P/z9MfGKm93vPpq9n7l7ujzffuUmIpzkg01GIuKk4EAKnXCvjiAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOIsWRmVeSWpSXmKPExsVy+t/xe7q37VekGaxboGzxYN42NovvW64z
+	WazZe47JYt5nWYv5R86xWpw/v4HdYtPja6wWl3fNYbP43HuE0WLG+X1MFus23mK3WNjUwm4x
+	8dhkZou5X6YyW/zfs4Pd4snDPjaL5337mBwEPdbMW8PosXPWXXaPxXteMnlsWtXJ5nHn2h42
+	j81L6j36tqxi9Pi8SS6AI0rPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/O
+	JiU1J7MstUjfLkEvo+vDVraC2awVT2bdZ25g3MfSxcjJISFgInGj5yJTFyMXh5DAUkaJhe8X
+	MkMkpCUOf5nCDmELS/y51sUGUdTMJHH50xmwBJuAgcSDN8vAbBGBy0wSO2ergBQxC7xjlujq
+	aQBLCAuEScx4380EYrMIqErsfzIDaDUHB6+AncTzSxUQC+Qlevf3gZXwCghKnJz5BOw6ZqB4
+	89bZzBMY+WYhSc1CklrAyLSKUSS1tDg3PbfYSK84Mbe4NC9dLzk/dxMjMMa2Hfu5ZQfjylcf
+	9Q4xMnEwHmKU4GBWEuGNv7I0TYg3JbGyKrUoP76oNCe1+BCjKdB5E5mlRJPzgVGeVxJvaGZg
+	amhiZmlgamlmrCTO61nQkSgkkJ5YkpqdmlqQWgTTx8TBKdXAlKv6+MWjuzskPjGELdmWbBR3
+	XfAee3vnqpOPvYTUboi/PrRoVapKyIUXt9cJ72+ur/P5p7pD8I1nutYDtwudF9f1Ji4rOFE+
+	Q9jqU55NoPqVH50nr/v0PGO+xnO0+fmU3ltnbOSn93Rq8TgL1ki+lNgt1fn27MFuu7w/BxJY
+	3u7jiOVdmTD1wqXoowqva6Pn/p70+HYaW8+Rz0o/ZDgveIfIpz7z3mGu13Nlorau/dU8I5fj
+	ulO9dM62L5JYn5HV4Cmp4GweGBLD1Hrjb0dsmlTv0qmXD+zwYcvYYXz/z+eqN8eN2t4lTD14
+	4lGYsdvKvOKb3bkr1Ba8CXrvKMMlEb1xzffnq0wuBvV+TW9QUWIpzkg01GIuKk4EAIKcqf06
+	AwAA
+X-CMS-MailID: 20240730012027eucas1p2882c9c45e4d2203916af28ad86493a9a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240730012027eucas1p2882c9c45e4d2203916af28ad86493a9a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240730012027eucas1p2882c9c45e4d2203916af28ad86493a9a
+References: <CGME20240730012027eucas1p2882c9c45e4d2203916af28ad86493a9a@eucas1p2.samsung.com>
 
-Just a VGA connector on the board.
+As discussed in
+https://lore.kernel.org/lkml/e73e1a14-dfa0-4a36-bc6e-5d6421553788@kernel.org
 
-Best regards
-Shixiong
+Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-=E5=9C=A8 2024/7/29 20:29, Thomas Zimmermann =E5=86=99=E9=81=93:
-> Hi
->
-> Am 11.07.24 um 11:01 schrieb oushixiong1025@163.com:
->> From: Shixiong Ou <oushixiong@kylinos.cn>
->>
->> [WHY]
->> The AST2600 tx_chip_types will be detected as AST_TX_DP, but some BMC
->> boards that use AST2600 use the VGA interface instead of the DP=20
->> interface.
->> In this case, it will use Virtual connector as the DP is disconnected.
->>
->> [HOW]
->> Allows multiple physical connectors to exist at the same time.
->
-> I have another question about this patch. Is there a physical=20
-> connector for each type (VGA, DP) on your board? Or just one of them?
->
-> Best regards
-> Thomas
->
->>
->> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
->> ---
->> =C2=A0 drivers/gpu/drm/ast/ast_drv.h=C2=A0 |=C2=A0 6 ++++-
->> =C2=A0 drivers/gpu/drm/ast/ast_main.c |=C2=A0 8 +++----
->> =C2=A0 drivers/gpu/drm/ast/ast_mode.c | 40 ++++++++++++++++++++-------=
--------
->> =C2=A0 3 files changed, 33 insertions(+), 21 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/ast/ast_drv.h=20
->> b/drivers/gpu/drm/ast/ast_drv.h
->> index ba3d86973995..e326124b3fec 100644
->> --- a/drivers/gpu/drm/ast/ast_drv.h
->> +++ b/drivers/gpu/drm/ast/ast_drv.h
->> @@ -150,9 +150,13 @@ static inline struct ast_plane=20
->> *to_ast_plane(struct drm_plane *plane)
->> =C2=A0=C2=A0 * BMC
->> =C2=A0=C2=A0 */
->> =C2=A0 +#define MAX_CONNECTORS 2
->> +
->> =C2=A0 struct ast_bmc_connector {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_connector base;
->> -=C2=A0=C2=A0=C2=A0 struct drm_connector *physical_connector;
->> +
->> +=C2=A0=C2=A0=C2=A0 struct drm_connector *physical_connectors[MAX_CONN=
-ECTORS];
->> +=C2=A0=C2=A0=C2=A0 int count;
->> =C2=A0 };
->> =C2=A0 =C2=A0 static inline struct ast_bmc_connector *
->> diff --git a/drivers/gpu/drm/ast/ast_main.c=20
->> b/drivers/gpu/drm/ast/ast_main.c
->> index 0637abb70361..428529749ae6 100644
->> --- a/drivers/gpu/drm/ast/ast_main.c
->> +++ b/drivers/gpu/drm/ast/ast_main.c
->> @@ -85,7 +85,7 @@ static void ast_detect_tx_chip(struct ast_device=20
->> *ast, bool need_post)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!need_post) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 jreg =3D ast_ge=
-t_index_reg_mask(ast, AST_IO_VGACRI, 0xa3, 0xff);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (jreg & 0x80=
-)
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 as=
-t->tx_chip_types =3D AST_TX_SIL164_BIT;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 as=
-t->tx_chip_types |=3D AST_TX_SIL164_BIT;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_AST_GEN4(ast) || IS_AST_G=
-EN5(ast) || IS_AST_GEN6(ast)) {
->> @@ -97,7 +97,7 @@ static void ast_detect_tx_chip(struct ast_device=20
->> *ast, bool need_post)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 jreg =3D ast_ge=
-t_index_reg_mask(ast, AST_IO_VGACRI, 0xd1, 0xff);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 switch (jreg) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 case 0x04:
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 as=
-t->tx_chip_types =3D AST_TX_SIL164_BIT;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 as=
-t->tx_chip_types |=3D AST_TX_SIL164_BIT;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 break;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 case 0x08:
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 ast->dp501_fw_addr =3D drmm_kzalloc(dev, 32*1024,=20
->> GFP_KERNEL);
->> @@ -110,12 +110,12 @@ static void ast_detect_tx_chip(struct=20
->> ast_device *ast, bool need_post)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 }
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 fallthrough;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 case 0x0c:
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 as=
-t->tx_chip_types =3D AST_TX_DP501_BIT;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 as=
-t->tx_chip_types |=3D AST_TX_DP501_BIT;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else if (IS_AST_GEN7(ast)) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ast_get_ind=
-ex_reg_mask(ast, AST_IO_VGACRI, 0xD1,=20
->> TX_TYPE_MASK) =3D=3D
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 ASTDP_DPMCU_TX) {
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 as=
-t->tx_chip_types =3D AST_TX_ASTDP_BIT;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 as=
-t->tx_chip_types |=3D AST_TX_ASTDP_BIT;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 ast_dp_launch(&ast->base);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> diff --git a/drivers/gpu/drm/ast/ast_mode.c=20
->> b/drivers/gpu/drm/ast/ast_mode.c
->> index 6695af70768f..31a49d32e506 100644
->> --- a/drivers/gpu/drm/ast/ast_mode.c
->> +++ b/drivers/gpu/drm/ast/ast_mode.c
->> @@ -1717,7 +1717,8 @@ static int=20
->> ast_bmc_connector_helper_detect_ctx(struct drm_connector *connector,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 bool force)
->> =C2=A0 {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct ast_bmc_connector *bmc_connector=
- =3D=20
->> to_ast_bmc_connector(connector);
->> -=C2=A0=C2=A0=C2=A0 struct drm_connector *physical_connector =3D=20
->> bmc_connector->physical_connector;
->> +=C2=A0=C2=A0=C2=A0 struct drm_connector *physical_connector;
->> +=C2=A0=C2=A0=C2=A0 int i, count =3D bmc_connector->count;
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Most user-space compositors can=
-not handle more than one=20
->> connected
->> @@ -1730,10 +1731,13 @@ static int=20
->> ast_bmc_connector_helper_detect_ctx(struct drm_connector *connector,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 than one connector per CRTC. The BMC should always be=20
->> connected.
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->> =C2=A0 -=C2=A0=C2=A0=C2=A0 if (physical_connector && physical_connecto=
-r->status =3D=3D=20
->> connector_status_disconnected)
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return connector_status_co=
-nnected;
->> +=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < count; i++) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 physical_connector =3D bmc=
-_connector->physical_connectors[i];
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (physical_connector && =
-physical_connector->status =3D=3D=20
->> connector_status_connected)
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
-turn connector_status_disconnected;
->> +=C2=A0=C2=A0=C2=A0 }
->> =C2=A0 -=C2=A0=C2=A0=C2=A0 return connector_status_disconnected;
->> +=C2=A0=C2=A0=C2=A0 return connector_status_connected;
->> =C2=A0 }
->> =C2=A0 =C2=A0 static int ast_bmc_connector_helper_get_modes(struct=20
->> drm_connector *connector)
->> @@ -1756,10 +1760,11 @@ static const struct drm_connector_funcs=20
->> ast_bmc_connector_funcs =3D {
->> =C2=A0 =C2=A0 static int ast_bmc_connector_init(struct drm_device *dev=
-,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct ast_bmc_connector *bmc_=
-connector,
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_connector *physical_connecto=
-r)
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_connector **physical_connect=
-or,
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int count)
->> =C2=A0 {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_connector *connector =3D &bm=
-c_connector->base;
->> -=C2=A0=C2=A0=C2=A0 int ret;
->> +=C2=A0=C2=A0=C2=A0 int i, ret;
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D drm_connector_init(dev, =
-connector,=20
->> &ast_bmc_connector_funcs,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 DRM_MODE_CONNECTOR_VIRTUAL);
->> @@ -1768,13 +1773,16 @@ static int ast_bmc_connector_init(struct=20
->> drm_device *dev,
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm_connector_helper_add(connect=
-or,=20
->> &ast_bmc_connector_helper_funcs);
->> =C2=A0 -=C2=A0=C2=A0=C2=A0 bmc_connector->physical_connector =3D physi=
-cal_connector;
->> +=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < count; i++)
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bmc_connector->physical_co=
-nnectors[i] =3D physical_connector[i];
->> +=C2=A0=C2=A0=C2=A0 bmc_connector->count =3D count;
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->> =C2=A0 }
->> =C2=A0 =C2=A0 static int ast_bmc_output_init(struct ast_device *ast,
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_connector *physical_co=
-nnector)
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_connector **physical_c=
-onnector,
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int count)
->> =C2=A0 {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_device *dev =3D &ast->base;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_crtc *crtc =3D &ast->crtc;
->> @@ -1790,7 +1798,7 @@ static int ast_bmc_output_init(struct=20
->> ast_device *ast,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 encoder->possible_crtcs =3D drm_crtc_ma=
-sk(crtc);
->> =C2=A0 -=C2=A0=C2=A0=C2=A0 ret =3D ast_bmc_connector_init(dev, bmc_con=
-nector,=20
->> physical_connector);
->> +=C2=A0=C2=A0=C2=A0 ret =3D ast_bmc_connector_init(dev, bmc_connector,=
-=20
->> physical_connector, count);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
->> =C2=A0 @@ -1852,8 +1860,8 @@ static const struct drm_mode_config_funcs=
-=20
->> ast_mode_config_funcs =3D {
->> =C2=A0 int ast_mode_config_init(struct ast_device *ast)
->> =C2=A0 {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_device *dev =3D &ast->base;
->> -=C2=A0=C2=A0=C2=A0 struct drm_connector *physical_connector =3D NULL;
->> -=C2=A0=C2=A0=C2=A0 int ret;
->> +=C2=A0=C2=A0=C2=A0 struct drm_connector *physical_connector[MAX_CONNE=
-CTORS] =3D {NULL};
->> +=C2=A0=C2=A0=C2=A0 int count, ret;
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D drmm_mutex_init(dev, &as=
-t->modeset_lock);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
->> @@ -1897,27 +1905,27 @@ int ast_mode_config_init(struct ast_device *as=
-t)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D ast_vga=
-_output_init(ast);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 return ret;
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 physical_connector =3D &as=
-t->output.vga.connector;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 physical_connector[count++=
-] =3D &ast->output.vga.connector;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ast->tx_chip_types & AST_TX_SIL164_=
-BIT) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D ast_sil=
-164_output_init(ast);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 return ret;
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 physical_connector =3D &as=
-t->output.sil164.connector;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 physical_connector[count++=
-] =3D &ast->output.sil164.connector;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ast->tx_chip_types & AST_TX_DP501_B=
-IT) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D ast_dp5=
-01_output_init(ast);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 return ret;
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 physical_connector =3D &as=
-t->output.dp501.connector;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 physical_connector[count++=
-] =3D &ast->output.dp501.connector;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ast->tx_chip_types & AST_TX_ASTDP_B=
-IT) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D ast_ast=
-dp_output_init(ast);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 return ret;
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 physical_connector =3D &as=
-t->output.astdp.connector;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 physical_connector[count++=
-] =3D &ast->output.astdp.connector;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> -=C2=A0=C2=A0=C2=A0 ret =3D ast_bmc_output_init(ast, physical_connecto=
-r);
->> +=C2=A0=C2=A0=C2=A0 ret =3D ast_bmc_output_init(ast, physical_connecto=
-r, count);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
->
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 12b870712da4..9133257a8509 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20247,6 +20247,7 @@ F:	drivers/net/ethernet/samsung/sxgbe/
+ SAMSUNG THERMAL DRIVER
+ M:	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
++M:	Mateusz Majewski <m.majewski2@samsung.com>
+ L:	linux-pm@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+-- 
+2.45.1
+
 
