@@ -1,82 +1,55 @@
-Return-Path: <linux-kernel+bounces-268309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 658C794230F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:41:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66C6942310
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC1DF287DAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:41:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 858911F2497E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034901917DF;
-	Tue, 30 Jul 2024 22:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F671917D6;
+	Tue, 30 Jul 2024 22:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GCKBVcUL"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lnboNwLx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F117D1917CA;
-	Tue, 30 Jul 2024 22:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2671018DF9D
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722379279; cv=none; b=Nc008FySARUdNATfCy5nuqvmVJ2d1P/k6JEErpzMnVTJmXtZcbf4W/jumh+05QkYPUgnPZIMObxk0a5pAQ+5e+xNig7pb69xVtlJyBXRe0uIrBDURA06qVsXQ1a200kczXX/eEteDqaZDwuG9QSf2U4TyE15wGmV9GEd9+mIDzQ=
+	t=1722379387; cv=none; b=ml2AW/BnEOotaprsnUk7kAgSkWDJSPFkMcD3CTOwgynR2sQBUrDws36iCcOEwnHbn0kuRsTWsupBrmtuu4pcq6cGe07ArF6alKkYG2kIhAIJgyHVWll0hxS3bYUbitmqMI8bDVMC+2g7VON8Yz4MMfrYoJW+1FWOPbbWK3P9Y8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722379279; c=relaxed/simple;
-	bh=nyYoWTikdd5F3g5lkwaV5k57vFl0h4BL0ApfjjdP9II=;
+	s=arc-20240116; t=1722379387; c=relaxed/simple;
+	bh=C3lXJgJCovoa1FrP2K9NxLwNt79kRXHdx71rpFLCEkM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I7JJtFt30BD60LSdMZxgqx7R3y79LkR8kanpnpsY6WkNlT1eGu242ST3LK9oRBH7fzHvhkietEL9olG7bQ5POc5LQwcxTtoULd1hK74Qyc6ZOzJMDJOGp37N9L1dwYR4gxDf5/Np4/dPGjncOxYDd7Z9HcwdcUOmvhf8oIjuLrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GCKBVcUL; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70d1fb6c108so3668873b3a.3;
-        Tue, 30 Jul 2024 15:41:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722379277; x=1722984077; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7eEOay+uYGNiTgF/SzR522X66zTTOyCCNers18hIO1E=;
-        b=GCKBVcULKD9RHlDbUGiFQGOnCuKQINiXnSL7+sr98Hp038LZOWtkrhkI7KeqeLmddc
-         5j+LP2xxIV8jSHuAWZG2Y5zWs/XgZH+4Ep6UUsN1P99ADot5jVCZaPp1wY9+sdCUvQnJ
-         nNEGV1399L3hJ66F4UStgsYVFVOYm9+c5aCFSS1gGkPOHdKJxmZZGVOsItGEYcEcAHjD
-         nzPRFYG+lE89571FkRxOEJtTOUKVRLk7SVRt1SN96YDOACuU799gD3hRl4dDy8q1J6jO
-         VsRpiv0zleXvIs1BfBk7x6sTpBqEr1OLWuC+ZWAbzaSMBvRnWSxlsVKw2Fp7Fv6cqwYR
-         /fFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722379277; x=1722984077;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7eEOay+uYGNiTgF/SzR522X66zTTOyCCNers18hIO1E=;
-        b=WJa3H+/OAk39bLO8dFaqXyUxj3mJLbG71ujU9aP6ruqaGSQo1+RmN7PSM4PXgsnzqm
-         8q+LW/B+koRhSa85fvuXWPGg00mRfEMfLiXYu9miKz2iI8BgyvQFAVLq7TD1VAvhA5uu
-         f3siOOPOax2qBXIECc/GgCfL77CuiWuDLABmlW/7NGcuDJ2xGzM6dfXO58NLm3WsDChJ
-         CAK09M4U9jBjukDznZUH7QCy29uDWr3hP9Xhe2IZMH+ci38fOE7GTOLyVXe/600Z4qHZ
-         wskbTSm/OefkSMP3R6DRyNB8QsRu8tzNW2RGCKnlOUmE3aegpODmrPrvfzw3KkYOy+Wu
-         99kg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFev7SKDgTzCVtKsWCfCJL6QXBPZ7rli5VCgnkveGlyYv9Qul8vxUBm2Vpu+WEsDI7f1bowdgYJdyB4Mggx+WCHh34QNsnt/u75JLncWi1SOGoJhKBzrQDjGO7K9sUKxtYyWZ34A==
-X-Gm-Message-State: AOJu0YzmZYqO6vu3TTL4QTKqHTxwXzQY2flIDOMnz5KBJV9TV7GhGAja
-	LQ8aPOS8B/R8ic120ZpW+VRJUljCSwQAnY2zpdqv9IX+6ke8KnIt
-X-Google-Smtp-Source: AGHT+IHNffvz/50Z32gzIQZQ1LwYdUxpB2Ll4Qhb+j+tqvNcj5mWrxP7g+I04GXcMQ7Iwmd1cm7EAw==
-X-Received: by 2002:a05:6a20:bb1f:b0:1c0:f216:7f20 with SMTP id adf61e73a8af0-1c4a14e0186mr9281795637.49.1722379277075;
-        Tue, 30 Jul 2024 15:41:17 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead6e1078sm9218478b3a.16.2024.07.30.15.41.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 15:41:16 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 30 Jul 2024 12:41:15 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Chen Ridong <chenridong@huawei.com>
-Cc: lizefan.x@bytedance.com, hannes@cmpxchg.org, longman@redhat.com,
-	adityakali@google.com, sergeh@kernel.org, mkoutny@suse.com,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 -next] cgroup/cpuset: add decrease attach_in_progress
- helpers
-Message-ID: <ZqlsCzyUh1PbuQgp@slm.duckdns.org>
-References: <20240726010502.2226806-1-chenridong@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WZTnnCMPL8f290nacL2q04pWco4MCKcs1Kb8WUacQnQJWM3Chcoob76R+vsjZuBwWJWvgqNttqU6gaNA9atyxFNMUoWyEkcaAAeBynS1wtYzzmyg4qNQ4TUXPOc7I8WC0mO9QvPpme0tfeNOC9iw0COBBF0QfGDT0nCeUaNafXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lnboNwLx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A8A0C32782;
+	Tue, 30 Jul 2024 22:43:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722379386;
+	bh=C3lXJgJCovoa1FrP2K9NxLwNt79kRXHdx71rpFLCEkM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lnboNwLxJyFxKtEaiWymk9Q/n8Xy6nev/WHULsWLoGXfvLKMZzR7y2YlrIeBvjlxU
+	 eMF2cmvQliHYtglKf4G4fh3NFOoMZo0NBDXFtXeFC4oWc38RtPpoqFtTZBXkmoLiVM
+	 RaRWYejEfeAjQuGneuuNZ+HzVf6qxnrmdaYS3oBWzfqKyh3fwA3njHUT/AUCN50kWN
+	 wE0LROsis7tkzP6Qmroke4mn2IJg/R1L6XdiRq2s9BkGYGg9123JvIIyCxot3kf623
+	 dQyMiRWLwtj0Fta+STtU1GplxxzJ8OBkyESgXw6fc0hlFO6YNn9tY1R2EqfjTE0Fpb
+	 rn6T5vmno+9qg==
+Date: Wed, 31 Jul 2024 00:43:02 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: urezki@gmail.com, hch@infradead.org, vbabka@suse.cz, mhocko@suse.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 3/4] mm: vrealloc: properly document __GFP_ZERO behavior
+Message-ID: <ZqlsdtTWhRahFWmy@pollux.localdomain>
+References: <20240730185049.6244-1-dakr@kernel.org>
+ <20240730185049.6244-4-dakr@kernel.org>
+ <20240730141953.a30fa50c0ba060fe0a765730@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,19 +58,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240726010502.2226806-1-chenridong@huawei.com>
+In-Reply-To: <20240730141953.a30fa50c0ba060fe0a765730@linux-foundation.org>
 
-On Fri, Jul 26, 2024 at 01:05:02AM +0000, Chen Ridong wrote:
-> There are several functions to decrease attach_in_progress, and they
-> will wake up cpuset_attach_wq when attach_in_progress is zero. So,
-> add a helper to make it concise.
+On Tue, Jul 30, 2024 at 02:19:53PM -0700, Andrew Morton wrote:
+> On Tue, 30 Jul 2024 20:49:43 +0200 Danilo Krummrich <dakr@kernel.org> wrote:
 > 
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> > Properly document that if __GFP_ZERO logic is requested, callers must
+> > ensure that, starting with the initial memory allocation, every
+> > subsequent call to this API for the same memory allocation is flagged
+> > with __GFP_ZERO. Otherwise, it is possible that __GFP_ZERO is not fully
+> > honored by this API.
+> 
+> I appear to have just seen this, in a separate mailing.
 
-Applied to cgroup/for-6.12.
+What you have seen in a separate mail is a similar patch for krealloc() [1].
+This one is a fixup for vrealloc() from a previous submission you've applied to
+mm-unstable.
 
-Thanks.
+> 
+> Please, slow down.  We have two months.  Await reviewer feedback, spend
+> time over those changelogs, value clarity and accuracy and completeness
+> over hastiness.  The only reason for rushing things is if a patch is
+> disrupting ongoing testing of the linux-next tree.
 
--- 
-tejun
+There was a discussion in [2], which lead to this fixup series.
+
+In terms of changelogs this series is indeed a bit "lax", since I have
+recognized that you queue up fixup patches for changes that did already land in
+mm-unstable to be squashed into the original commits later on.
+
+[1] https://lore.kernel.org/linux-mm/20240730194214.31483-1-dakr@kernel.org/
+[2] https://lore.kernel.org/linux-mm/20240722163111.4766-1-dakr@kernel.org/T/#m065a7f875b44dc945dd535c2b7168c3d77a98993
 
