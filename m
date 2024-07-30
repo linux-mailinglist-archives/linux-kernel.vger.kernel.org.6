@@ -1,192 +1,126 @@
-Return-Path: <linux-kernel+bounces-266907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40FCE94094B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:16:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D80940955
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70EDC1C22C31
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:16:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2650DB21E27
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B15190061;
-	Tue, 30 Jul 2024 07:15:26 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9722219007D;
+	Tue, 30 Jul 2024 07:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CJD5/bmW"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACA6150981;
-	Tue, 30 Jul 2024 07:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512BC186289;
+	Tue, 30 Jul 2024 07:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722323726; cv=none; b=F/jGVGwuN20/4JSoGRfVPbQf6Mizoo0KySMSxRA48Umb1Hu/atI4d5H5QrYikBTqen7r8pcNz9tvhsqxjXJOl2sFxFaN2IIOd/Kh3pV33W61bSGd5eDv6gOV78SEHONTSC8uYu3bLk8JAl6C3dl50A66R/aNXbN0Ytb3uT9wP2c=
+	t=1722323814; cv=none; b=ST4Xqby1HF1EAwK5awUchHpapbSzf+SBX/pIpTyh0LrrnRQn2863AGzmp+3dYXNxNVg1BH74NmzvDrtK4huBBrBnQK2pt5dJYFzLqdgJQ8Us00aokCbD6aEtUnwJv1mwpb/Ij0/FxnCwwB0TV2P6FfO/y3Vo1vrx5uFvRj6EOA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722323726; c=relaxed/simple;
-	bh=HrSVNUHI9I60c8rU6phSmrY+tfaYXF76LWq6R2eqVyY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pI6QzCVIp8AXKLSXUbtnlh+O+C97kjpC5SoZHxSOTSsPc69z/4d0EmTw/xLjZakXlSFDcRDjiQadXpXaTlfwrDSQrcktfZsHNTr0J4I407jLr9m1IdsMS6Reb+vSELtZ9IOswSxKPP5kjtZWg2sdwyspBh0dBXwT56p2WxcVilc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E32DC32782;
-	Tue, 30 Jul 2024 07:15:24 +0000 (UTC)
-Message-ID: <590e52a2-d7ea-4b86-b1f2-a6875118653c@xs4all.nl>
-Date: Tue, 30 Jul 2024 09:15:22 +0200
+	s=arc-20240116; t=1722323814; c=relaxed/simple;
+	bh=Moxl/HbHI0vpJBQSipP350r5n3fD0CG6czKc+K4Ok+o=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=QOHc5B5EjPJbsO4Lmev8cSRJ4adxTzdYYMwm+CSLBK9InKULSRvZDCulXbFl31TPfgh9GBBEHr4Ocx8w9K7/FG0BwFIlW2yQrl7f5ZUyqfoAHZyeI3WSiOW2t9Lv7icYB9H/d9PRr54aqZCp5OMBiRdGuLju6864ZkgZfJjDVjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CJD5/bmW; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46U29Jru029906;
+	Tue, 30 Jul 2024 07:16:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+go+ZapqjXwrG2CVDBiJv6
+	5Yi7Au5w3umy2e/WFQZRQ=; b=CJD5/bmWwxCNAG7u963HN0yNtHdCyRv9ScCIml
+	KTuSFqNotY8i0vcZyRlQVUCpBTxDWZJOUY20D4KLz+80BFB9EHncuMa0que2bYvL
+	rj9X6fgDdNR70t9MdNKFRPBVfeqViG0giQqzs5zMYN2ntXOIJ3VcK+GEbUIVdzst
+	HFjgoJO//Dxd+mEk/7YqMZs5zTqoMGsO7810bkBIfkXjgf5iWVVlWNQCVMpvy+0+
+	A7uvb/Xfe3Fjwllzg29m1d3euIAA/2qmN945wy1TF4+Z+BLN/k/0KZjPaOnSneOZ
+	W8v3+1J3omQGhMpxpZ0E8yntr8MZHoRnTW0KD1Z7dFWoWrcA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40pq520kfv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 07:16:49 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46U7GmHR005057
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 07:16:48 GMT
+Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 30 Jul 2024 00:16:42 -0700
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+Subject: [PATCH 0/2] arm64: qcom: Add BWMON support for SA8775p
+Date: Tue, 30 Jul 2024 15:16:09 +0800
+Message-ID: <20240730-add_sa8775p_bwmon-v1-0-f4f878da29ae@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] media: test-drivers: Use V4L2_FMT_FLAG_ENUM_ALL
- flag
-To: Sebastian Fricke <sebastian.fricke@collabora.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Cc: mchehab@kernel.org, ezequiel@vanguardiasur.com.ar,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-References: <20240722150523.149667-1-benjamin.gaignard@collabora.com>
- <20240722150523.149667-3-benjamin.gaignard@collabora.com>
- <20240723094913.4zuywzqsthvkowlv@basti-XPS-13-9310>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20240723094913.4zuywzqsthvkowlv@basti-XPS-13-9310>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADmTqGYC/x3MTQ5AMBBA4avIrDUZqimuIiL9GcxCSZsgEXfXW
+ H6L9x5IFJkS9MUDkU5OvIeMqizArSYsJNhnQ411g1qiMN5PybRaq2Oy17YHYTtDFpWz0iPk7og
+ 08/0/h/F9P0/uunljAAAA
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Georgi Djakov
+	<djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Tengfei Fan <quic_tengfan@quicinc.com>
+X-Mailer: b4 0.15-dev-a66ce
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722323802; l=654;
+ i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
+ bh=Moxl/HbHI0vpJBQSipP350r5n3fD0CG6czKc+K4Ok+o=;
+ b=hsMZJXqceR+fRMpnGTnR/4oDA+lC+NkOcbuzbQSLboik5tjHAp9VzpW0krhCixHdqXfxmv7Iq
+ zcVg5cXvvskB63MGALcZxU8pjJ8nG0gTVUS4PaRXAjm/aiStzRoELlX
+X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
+ pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 78pUfiMlaXy74lULXuK-kdaZITcCxi9X
+X-Proofpoint-ORIG-GUID: 78pUfiMlaXy74lULXuK-kdaZITcCxi9X
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-30_07,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=802
+ adultscore=0 priorityscore=1501 spamscore=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 clxscore=1011 malwarescore=0 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407300053
 
-On 23/07/2024 11:49, Sebastian Fricke wrote:
-> Hey Benjamin,
-> 
-> On 22.07.2024 17:05, Benjamin Gaignard wrote:
->> Since V4L2_FMT_FLAG_ENUM_ALL flag mostly targeting stateless
-> 
-> s/Since/Since the/
-> s/targeting/targets/
-> 
->> decoder pixel formats enumeration, update vicodec visl test
-> 
-> s/pixel formats/pixel-format/
-> 
->> drivers to use it.
-> 
-> s/drivers/driver/
-> 
-> The rest below basically just strips the flag from every use-case of the
-> index, before using it.
-> 
-> I wonder couldn't we implement a macro for this, as I believe this will
-> have to be done in a lot of places, something like:
-> 
-> /*
->  * Drivers can support an enumeration of all formats, by ORing the
->  * V4L2_FMT_FLAG_ENUM_ALL flag into the index field.
->  * In order to use the index field, strip the flag first.
->  *
->  * See vidioc-enum-fmt.rst documentation for more details.
->  */
-> #define STRIP_ENUM_ALL_FLAG(index) \
->   index & ~V4L2_FMT_FLAG_ENUM_ALL
-> 
-> And then use it like this:
-> 
-> u32 index = STRIP_ENUM_ALL_FLAG(f->index);
+Add CPU and LLCC BWMON nodes and their corresponding OPP tables for
+SA8775p SoC.
 
-There is really no advantage to that. It is much better to be explicit
-about it rather than hiding it in a define.
+Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+---
+Tengfei Fan (2):
+      dt-bindings: interconnect: qcom-bwmon: Document SA8775p bwmon compatibles
+      arm64: dts: qcom: sa8775p: Add CPU and LLCC BWMON
 
-Regards,
+ .../bindings/interconnect/qcom,msm8998-bwmon.yaml  |  2 +
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi              | 95 ++++++++++++++++++++++
+ 2 files changed, 97 insertions(+)
+---
+base-commit: 931a3b3bccc96e7708c82b30b2b5fa82dfd04890
+change-id: 20240730-add_sa8775p_bwmon-b9aeb05cb3d0
 
-	Hans
-
-> 
-> If we define this in a common header, then every driver can easily
-> utilize it and you have built-in documentation.
-> 
-> What do you think?
-> 
-> Regards,
-> Sebastian
-> 
->>
->> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
->> ---
->> drivers/media/test-drivers/vicodec/vicodec-core.c |  7 ++++---
->> drivers/media/test-drivers/visl/visl-video.c      | 11 +++++++----
->> 2 files changed, 11 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/media/test-drivers/vicodec/vicodec-core.c b/drivers/media/test-drivers/vicodec/vicodec-core.c
->> index 3e011fe62ae1..1b4cd8ddd7c2 100644
->> --- a/drivers/media/test-drivers/vicodec/vicodec-core.c
->> +++ b/drivers/media/test-drivers/vicodec/vicodec-core.c
->> @@ -706,6 +706,7 @@ static int enum_fmt(struct v4l2_fmtdesc *f, struct vicodec_ctx *ctx,
->>             bool is_out)
->> {
->>     bool is_uncomp = (ctx->is_enc && is_out) || (!ctx->is_enc && !is_out);
->> +    u32 index = f->index & ~V4L2_FMT_FLAG_ENUM_ALL;
->>
->>     if (V4L2_TYPE_IS_MULTIPLANAR(f->type) && !multiplanar)
->>         return -EINVAL;
->> @@ -718,18 +719,18 @@ static int enum_fmt(struct v4l2_fmtdesc *f, struct vicodec_ctx *ctx,
->>
->>         if (ctx->is_enc ||
->>             !vb2_is_streaming(&ctx->fh.m2m_ctx->cap_q_ctx.q))
->> -            info = v4l2_fwht_get_pixfmt(f->index);
->> +            info = v4l2_fwht_get_pixfmt(index);
->>         else
->>             info = v4l2_fwht_find_nth_fmt(info->width_div,
->>                              info->height_div,
->>                              info->components_num,
->>                              info->pixenc,
->> -                             f->index);
->> +                             index);
->>         if (!info)
->>             return -EINVAL;
->>         f->pixelformat = info->id;
->>     } else {
->> -        if (f->index)
->> +        if (index)
->>             return -EINVAL;
->>         f->pixelformat = ctx->is_stateless ?
->>             V4L2_PIX_FMT_FWHT_STATELESS : V4L2_PIX_FMT_FWHT;
->> diff --git a/drivers/media/test-drivers/visl/visl-video.c b/drivers/media/test-drivers/visl/visl-video.c
->> index f8d970319764..c5f3e13b4198 100644
->> --- a/drivers/media/test-drivers/visl/visl-video.c
->> +++ b/drivers/media/test-drivers/visl/visl-video.c
->> @@ -341,21 +341,24 @@ static int visl_enum_fmt_vid_cap(struct file *file, void *priv,
->>                  struct v4l2_fmtdesc *f)
->> {
->>     struct visl_ctx *ctx = visl_file_to_ctx(file);
->> +    u32 index = f->index & ~V4L2_FMT_FLAG_ENUM_ALL;
->>
->> -    if (f->index >= ctx->coded_format_desc->num_decoded_fmts)
->> +    if (index >= ctx->coded_format_desc->num_decoded_fmts)
->>         return -EINVAL;
->>
->> -    f->pixelformat = ctx->coded_format_desc->decoded_fmts[f->index];
->> +    f->pixelformat = ctx->coded_format_desc->decoded_fmts[index];
->>     return 0;
->> }
->>
->> static int visl_enum_fmt_vid_out(struct file *file, void *priv,
->>                  struct v4l2_fmtdesc *f)
->> {
->> -    if (f->index >= ARRAY_SIZE(visl_coded_fmts))
->> +    u32 index = f->index & ~V4L2_FMT_FLAG_ENUM_ALL;
->> +
->> +    if (index >= ARRAY_SIZE(visl_coded_fmts))
->>         return -EINVAL;
->>
->> -    f->pixelformat = visl_coded_fmts[f->index].pixelformat;
->> +    f->pixelformat = visl_coded_fmts[index].pixelformat;
->>     return 0;
->> }
->>
->> -- 
->> 2.43.0
->>
->> _______________________________________________
->> Kernel mailing list -- kernel@mailman.collabora.com
->> To unsubscribe send an email to kernel-leave@mailman.collabora.com
->> This list is managed by https://mailman.collabora.com
-> 
+Best regards,
+-- 
+Tengfei Fan <quic_tengfan@quicinc.com>
 
 
