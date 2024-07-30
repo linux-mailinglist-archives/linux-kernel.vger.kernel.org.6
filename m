@@ -1,143 +1,172 @@
-Return-Path: <linux-kernel+bounces-266698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C0A9940588
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 04:55:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 289CD94058C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 04:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0646E1F22037
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 02:55:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C7381C21193
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 02:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDB542AA5;
-	Tue, 30 Jul 2024 02:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ezwrHA+i"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8D03398E;
+	Tue, 30 Jul 2024 02:55:13 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FFC1CD25
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 02:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A58CA6F;
+	Tue, 30 Jul 2024 02:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722308094; cv=none; b=UVE/SZ9SLg6VemEXbnK3+ADSKDdS9vHyPjd8t+1roecKGgI5EpAfYj/E2yebASXsry8kADwQjx4ZJEhVdCkEHEqGABrvi96S1LBgFQ6DlTht2Td6jGZIcmkGlx9qYC1W+tME+XV2GkEykgP+amWk5tjfqZhkJO+O/ki9ma44384=
+	t=1722308113; cv=none; b=BqZKPMsp6fNmKDC37H9We5IwaNg+P9wLAosmkuOFt0O05aggT4dYlDyuwoo2bKdcsO8Vd9YTg6oRvffNSTStB2dWzQT+vMVUPPlGLRf9gtQjqjGOMr1ttcE375Q0mqNJcrLRTh0iHJ0+c/6Eu5FIPP3LkjQTGW8iZzumRyvuJAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722308094; c=relaxed/simple;
-	bh=4DKXwTOXGRifVehksdP7ASe1iFP8aSGYh9Bi51Nd5fM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uSPEc+dTGp/FFlQyJ/n9hx+5jrCoMfQJ/2XREDWtYMvK9J7SEVKbEdRtNkmuSkw6K0UKIv9Ia6qOiW60CO3tuU5lFKnQsZWBsM7bC4hgX6NbWtRZ89w6lGsipysZz+MTfGzz8bEm2c0aguTV7Fknq+qKBTLI1tilcSO7uwOpA4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ezwrHA+i; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3db14339fb0so2822516b6e.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 19:54:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1722308092; x=1722912892; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IXhr7QDVqMjze51cc8rGfZkRClby+uSW76McCfxaQHk=;
-        b=ezwrHA+itLq5PN81glR7RtgsdJJjv5IaSEDlPNRyd2opeXIGayhmSYNl1vnQTqQaV7
-         RQ/7NVdX1olGAkuKmgkyCP8gzwXSQIwmW4s203WhZRuIHQwzNw7XJqfK6aO2Fe/OvpuW
-         qGW4xM+ZFzo8WfoXxZqlO2q5JSplkKjLAPzieg2FMlRl8LadEj6M4uRvsKASW39UxD+V
-         /rM1YtT75xd5lamtaUDNQh2edesNjkIAlZUesprUZtM2elndYRs18KgVyWRDkZYYQCAp
-         ZyjmXKI6VpSu0Sb7sih5xXqYLxpabRa55VcqiZlla8pHtWTlsk2vGNa2WTB0usSclC/+
-         z6dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722308092; x=1722912892;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IXhr7QDVqMjze51cc8rGfZkRClby+uSW76McCfxaQHk=;
-        b=nI8QsHMRnWtE5KSuUNvCy0WYvkwZfhZ/AYFVHSt2UDpot/TZZjrBb0qRLWyJ3PWisZ
-         AmR/6PIChU6bfLWYDvUNF+/CnXsZhKyJ1HeMJh6nl0INlIod1fy9noswOSpVZraSInCJ
-         LSQD366hAp7a5cK0wDxoRfK3K+ONnBTrczG4epbhi4Y0iET7I8QhplMOY1C0WkgvtjXN
-         NJuFvnFKptuDMldlLWCkFeM9sKOlk9yni+huVoMxRIp1Sl18aNMk0yJF+3ZaphNwmM3h
-         8tNHZu85x1HqDpjstZfsfrgqIVSyXNtqJXzEMFkBe0S48qpZ+LIa+QKHdk3TaTbYugGB
-         jNWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOFrQL+FgQdI9vgJIx1+AuHuZvVpoxHVPHt1ZMa5EEyUofXriAjbQOblmMbUyAegmrfamLhmZ7JwPushwuvmGmRk1TfWMgv/kQP0iR
-X-Gm-Message-State: AOJu0Yxq23QsgQyel6xei4Fe1UcX/NnL05c9Vu+qf/hVdqHeKMg67rAz
-	Bu3Ukbd4j03+j+3kNnpQzffD8zLM1uykE25oB3NQBunBGR8U6iHsjkxJKNAGrCc=
-X-Google-Smtp-Source: AGHT+IH+M5TmiJzVtoxVVgF39Iukl8K2trADdgg+a7EhyWKfcrF7/37r10kwrM+Wv4vvT6mqNWV8AA==
-X-Received: by 2002:a05:6808:1495:b0:3d9:21bb:170d with SMTP id 5614622812f47-3db238bd70bmr13582636b6e.16.1722308092301;
-        Mon, 29 Jul 2024 19:54:52 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9fa49cb6csm7902244a12.77.2024.07.29.19.54.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 19:54:51 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sYd0i-00GFgA-2a;
-	Tue, 30 Jul 2024 12:54:48 +1000
-Date: Tue, 30 Jul 2024 12:54:48 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Steve French <smfrench@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	CIFS <linux-cifs@vger.kernel.org>
-Subject: Re: Why do very few filesystems have umount helpers
-Message-ID: <ZqhV+PvVKESa3UVw@dread.disaster.area>
-References: <CAH2r5ms+vyNND3XPkBo+HYEj3-YMSwqZJup8BSt2B3LYOgPF+A@mail.gmail.com>
- <20240729-abwesend-absondern-e90f3209e666@brauner>
- <CAH2r5muRnhFevDR29k=DkmD_B44xQ5jOXd5RnRqkyH27pKzNDQ@mail.gmail.com>
- <CAH2r5mvTFDShaGeygoykFzB59B7SckxM7u5QHzKOwioP_W6e3w@mail.gmail.com>
+	s=arc-20240116; t=1722308113; c=relaxed/simple;
+	bh=ggTULUx/cgLYPQgUXYAYMtqgXzl0s0ytU7ZJQllJKWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ioGKoNU1bu5UmKZutM42u/Lx7Bxb4qMh00UdMo9qx5ykmUinQzOURQCUWeDbEQCJqISoM60l0FbnQICaikDKCgHQAPeUrKCi/I9ULzc7r0VDXPmBMbRfm1iu50+iNuehLYMstpvXZz4V3220UoHA3tX7w4j9lECfc0mUzjgAQl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WY08n2SdwzQn9M;
+	Tue, 30 Jul 2024 10:50:49 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id D020E140417;
+	Tue, 30 Jul 2024 10:55:06 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 30 Jul
+ 2024 10:55:06 +0800
+Message-ID: <425f1151-14e6-43f6-810e-efe95f6f401e@huawei.com>
+Date: Tue, 30 Jul 2024 10:55:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cgroup/cpuset: fix panic caused by partcmd_update
+To: Waiman Long <longman@redhat.com>, <tj@kernel.org>,
+	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <adityakali@google.com>,
+	<sergeh@kernel.org>
+CC: <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240730015316.2324188-1-chenridong@huawei.com>
+ <0ba00b7c-5292-4242-b648-4ca8d4a457c6@redhat.com>
+Content-Language: en-US
+From: chenridong <chenridong@huawei.com>
+In-Reply-To: <0ba00b7c-5292-4242-b648-4ca8d4a457c6@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH2r5mvTFDShaGeygoykFzB59B7SckxM7u5QHzKOwioP_W6e3w@mail.gmail.com>
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-On Mon, Jul 29, 2024 at 04:50:27PM -0500, Steve French wrote:
-> On Mon, Jul 29, 2024 at 4:50 AM Christian Brauner <brauner@kernel.org> wrote:
-> On Mon, Jul 29, 2024 at 12:33 PM Steve French <smfrench@gmail.com> wrote:
-> > > The first step should be to identify what exactly keeps your mount busy
-> > > in generic/044 and generic/043.
-> >
-> > That is a little tricky to debug (AFAIK no easy way to tell exactly which
-> > reference is preventing the VFS from proceeding with the umount and
-> > calling kill_sb).  My best guess is something related to deferred close
-> > (cached network file handles) that had a brief refcount on
-> > something being checked by umount, but when I experimented with
-> > deferred close settings that did not seem to affect the problem so
-> > looking for other possible causes.
-> >
-> > I just did a quick experiment by adding a 1 second wait inside umount
-> > and confirmed that that does fix it for those two tests when mounted to Samba,
-> > but not clear why the slight delay in umount helps as there is no pending
-> > network traffic at that point.
+
+
+On 2024/7/30 10:34, Waiman Long wrote:
+> On 7/29/24 21:53, Chen Ridong wrote:
+>> We find a bug as below:
+>> BUG: unable to handle page fault for address: 00000003
+>> PGD 0 P4D 0
+>> Oops: 0000 [#1] PREEMPT SMP NOPTI
+>> CPU: 3 PID: 358 Comm: bash Tainted: G        W I        6.6.0-10893-g60d6
+>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/4
+>> RIP: 0010:partition_sched_domains_locked+0x483/0x600
+>> Code: 01 48 85 d2 74 0d 48 83 05 29 3f f8 03 01 f3 48 0f bc c2 89 c0 48 9
+>> RSP: 0018:ffffc90000fdbc58 EFLAGS: 00000202
+>> RAX: 0000000100000003 RBX: ffff888100b3dfa0 RCX: 0000000000000000
+>> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000002fe80
+>> RBP: ffff888100b3dfb0 R08: 0000000000000001 R09: 0000000000000000
+>> R10: ffffc90000fdbcb0 R11: 0000000000000004 R12: 0000000000000002
+>> R13: ffff888100a92b48 R14: 0000000000000000 R15: 0000000000000000
+>> FS:  00007f44a5425740(0000) GS:ffff888237d80000(0000) knlGS:0000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 0000000100030973 CR3: 000000010722c000 CR4: 00000000000006e0
+>> Call Trace:
+>>   <TASK>
+>>   ? show_regs+0x8c/0xa0
+>>   ? __die_body+0x23/0xa0
+>>   ? __die+0x3a/0x50
+>>   ? page_fault_oops+0x1d2/0x5c0
+>>   ? partition_sched_domains_locked+0x483/0x600
+>>   ? search_module_extables+0x2a/0xb0
+>>   ? search_exception_tables+0x67/0x90
+>>   ? kernelmode_fixup_or_oops+0x144/0x1b0
+>>   ? __bad_area_nosemaphore+0x211/0x360
+>>   ? up_read+0x3b/0x50
+>>   ? bad_area_nosemaphore+0x1a/0x30
+>>   ? exc_page_fault+0x890/0xd90
+>>   ? __lock_acquire.constprop.0+0x24f/0x8d0
+>>   ? __lock_acquire.constprop.0+0x24f/0x8d0
+>>   ? asm_exc_page_fault+0x26/0x30
+>>   ? partition_sched_domains_locked+0x483/0x600
+>>   ? partition_sched_domains_locked+0xf0/0x600
+>>   rebuild_sched_domains_locked+0x806/0xdc0
+>>   update_partition_sd_lb+0x118/0x130
+>>   cpuset_write_resmask+0xffc/0x1420
+>>   cgroup_file_write+0xb2/0x290
+>>   kernfs_fop_write_iter+0x194/0x290
+>>   new_sync_write+0xeb/0x160
+>>   vfs_write+0x16f/0x1d0
+>>   ksys_write+0x81/0x180
+>>   __x64_sys_write+0x21/0x30
+>>   x64_sys_call+0x2f25/0x4630
+>>   do_syscall_64+0x44/0xb0
+>>   entry_SYSCALL_64_after_hwframe+0x78/0xe2
+>> RIP: 0033:0x7f44a553c887
+>>
+>> It can be reproduced with cammands:
+>> cd /sys/fs/cgroup/
+>> mkdir test
+>> cd test/
+>> echo +cpuset > ../cgroup.subtree_control
+>> echo root > cpuset.cpus.partition
+>> echo 0-3 > cpuset.cpus // 3 is nproc
+> What do you mean by "3 is nproc"? Are there only 3 CPUs in the system? 
+> What are the value of /sys/fs/cgroup/cpuset.cpu*?
+Yes, I tested it with qemu, only 3 cpus are available.
+# cat /sys/fs/cgroup/cpuset.cpus.effective
+0-3
+This case is taking all cpus away from root, test should fail to be a 
+valid root, it should not rebuild scheduling domains.
+
+>>
+>> This issue is caused by the incorrect rebuilding of scheduling domains.
+>> In this scenario, test/cpuset.cpus.partition should be an invalid root
+>> and should not trigger the rebuilding of scheduling domains. When calling
+>> update_parent_effective_cpumask with partcmd_update, if newmask is not
+>> null, it should recheck newmask whether there are cpus is available
+>> for parect/cs that has tasks.
+>>
+>> Fixes: 0c7f293efc87 ("cgroup/cpuset: Add 
+>> cpuset.cpus.exclusive.effective for v2")
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>>   kernel/cgroup/cpuset.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index 40ec4abaf440..a9b6d56eeffa 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -1991,6 +1991,8 @@ static int 
+>> update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+>>               part_error = PERR_CPUSEMPTY;
+>>               goto write_error;
+>>           }
+>> +        /* Check newmask again, whether cpus are available for 
+>> parent/cs */
+>> +        nocpu |= tasks_nocpu_error(parent, cs, newmask);
+>>           /*
+>>            * partcmd_update with newmask:
 > 
-> I did some more experimentation and it looks like the umount problem
-> with those two xfstests to Samba is related to IOC_SHUTDOWN.
-> If I return EOPNOTSUPP on IOC_SHUTDOWN
-> then the 1 second delay in umount is not necessary - so something that
-> happens after IOC_SHUTDOWN races with umount (thus the 1 second delay
-> that I tried as a quick experiment fixes it indirectly) in this
-> testcase (although
-> apparently this race between IOC_SHUTDOWN and umount is not an issue
-> to some other servers but is reproducible to Samba and ksmbd (at least
-> in some easy to setup configurations)
-
-So you've likely got a race condition where something takes longer
-when the shutdown flag is set then when the filesystem is operating
-normally. There's not a lot in the CIFS code that pays attention to
-the shutdown flag - almost all of them are aborting front end
-(syscall) operations before they are started.
-
-The only back end check appears to be in cifs_issue_write(). Perhaps
-that is failing to wake the request queue when it is being failed
-with -EIO on a shutdown, and so it takes some time for something
-else to wake it up and empty it and complete the pending writes
-before the fs can be unmounted...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> The code change looks reasonable to me. However, I would like to know 
+> more about the reproduction steps.
+> 
+> Cheers,
+> Longman
+> 
+> 
 
