@@ -1,160 +1,97 @@
-Return-Path: <linux-kernel+bounces-267574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6220B941302
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0061941304
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:21:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90F28B26483
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:21:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 174AFB26557
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154301A00EC;
-	Tue, 30 Jul 2024 13:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DC519F49B;
+	Tue, 30 Jul 2024 13:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AkpWXms0"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oyIKrgLR"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB03B19F49E;
-	Tue, 30 Jul 2024 13:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD8F19EED5;
+	Tue, 30 Jul 2024 13:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722345646; cv=none; b=K+nlKtfOzYRGWcSfwJ7tBzFqJU83LwwGL6+t03RsaOxAZrw0x/Qz1mmtMDI8v/b3IvPMgB1vz351/jCj+rrW9/4Sig3d65dsWE2EgUq8RtxUYcH8B+5pUCHVRs8v1vurvkPN7Zm6xb1X1nutUXrDATZFJV7TEXn7KQO7yNJe8xs=
+	t=1722345654; cv=none; b=KBDS+ZUH6+uphPqOgrlsINSX1Zb2Ev68HjZnSp8LCzM8de1fKWELIFcDZ+XMjuU+QLF+avNOTUkcN6R2lRDyl2zbXvlVlcb1of9yFPkv/4qg4/E0QG6xQ1F5HJtBenV7VVU7W4Di57q3vdLf4qoa/db31ObMCskZnicXqDdmzvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722345646; c=relaxed/simple;
-	bh=7YHKVOjP/Z1K/T47wIq6wzUpO43GPmAqr90tsG8/ka8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NiKr1yp9FGEKXj9ksZhIIdVLlYC9V/94JeNw2svhKgMq3b7hTW7FX6eQixA28wflbyeKKvGJVI223Won+VjQkVL0ELP0qut44sfRy1TBL39Lz0U7vjkgvSHDxo8xOyb0ugEHTiballeqf7ZJSNL9ZoM19z0CjRjh7zYLrDbnk9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AkpWXms0; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5d5bd1b79cfso2746923eaf.2;
-        Tue, 30 Jul 2024 06:20:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722345644; x=1722950444; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NKT9AID6l51Sh/jmyI/WVIz5V2pk45kYF2J8tQNV23A=;
-        b=AkpWXms05zACtFvNUrm0ssvMH2Epizun2aM5Y3hZqLmFXuvA6uLOl/AGdIbbCwky3h
-         ry09wu9Xwa3/bYLCTLmpSoAamhqzlwGPovOTljvGUMebbrZvGaUiqa/tVU2X3QeGbxW7
-         xV0m5DSyOjBeUhD3LEKaNcqoZ4+H3svh2T5VF+pSjOaaE+CJ8RmcBLjgtZvTCWXdazIU
-         eWF2S8hdhILz5+Rp4dLCEJsLt1b137Sgfe9IAHebDMX9TgfjAv19htTziBhhOTjekwiW
-         zd6oQmGkkbbHco6VPj9LSiSW2s0+Ow8XXSCb38IieA6iZ3g4u/W/BoPF5gtPJsROHEWP
-         +Znw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722345644; x=1722950444;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NKT9AID6l51Sh/jmyI/WVIz5V2pk45kYF2J8tQNV23A=;
-        b=VK3oexRwh4ngMMdfmGs3gbNYMh2YYTc7LM265Rj7ioXiX3fona7lDKvApQkH0IZ5vF
-         G6mHJZkxCx6yucSf2UydBx8MNgWWhhqJ+TuzpmLGA8RT1rVi6bKxcfCPbruATpkLmHc0
-         RTSn7P1BkRfRZMXYNgsAthZ6g8mDwr02VOKrQzwv8DJz3eR+LqFpTVJJ6mvYnsNjEwBA
-         huSHlYxjCRbz6WqBO7ovpYuqAeGFtozUFU9UcOE+Ay4hI0ti3v/rJ4JllNg0HR/XUDEb
-         blRUb6ijVdErP6JEje5FmWfs3o6MeahM6RLdkMBj3lHlLrRZP73qFPEfmsc7wuAICe0f
-         yfmA==
-X-Forwarded-Encrypted: i=1; AJvYcCW064RIVyqqYbctYbcb7S/LUDevJC2916S4wg0P+ylFjQ9mBLx1O6NKiPVAxIdSMq6MRJ0q8+SUAtw9RC7pPH+ueiIMcMywtDx9ETv8pMNe+ZpQizqXfQUeBKKUUgFC0/M6Bkr4tfIg5ePOf3FdeXM14XnqIPJlE0vbS1SefYGa6kBNE1UmwJY1ep4q
-X-Gm-Message-State: AOJu0YzRn7bJNGiyJ9Pnr+guuTVPcOyHNH4kySph3PZhH3UqGrOxqOzS
-	Kxm77fsTiankVOb/oGCnbUPrzQQX2DWJJuDJ94orDYGRCj4S5A+yjSyLvm/6YuZct326FJMzV41
-	00duOuxOXJpn1cY2yyXi0CN79AFxxAtrC
-X-Google-Smtp-Source: AGHT+IF61epFbQKBhsYcl9kBeuOFb6PPIETo3cXxQSv34FfmL3+uJSH86maWs6AsnTgGhnD74p6CHw3xRk24AflBK4Y=
-X-Received: by 2002:a05:6820:1c8b:b0:5ce:e851:7356 with SMTP id
- 006d021491bc7-5d5d0d8fc7dmr11677855eaf.1.1722345643985; Tue, 30 Jul 2024
- 06:20:43 -0700 (PDT)
+	s=arc-20240116; t=1722345654; c=relaxed/simple;
+	bh=eXaI/4FwsIpMMOSXo9miQuvnjamSIypwnH2R9aE0zu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A9RFwveTDtruOv4+/07HDzk5Dza1r6lLc7Rwm7/vgmOODTba6876XkrXJLvwvEZStsvMP0Jp5UNYLFCIEm590UCt3k3jPUbpZWsY4z/TPLdSmytdAfCcyhrwW4PIOqxqxeiD4rU879rPojd7od1xqz5J7Jk6vkcI1fR1WoI73nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oyIKrgLR; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722345650;
+	bh=eXaI/4FwsIpMMOSXo9miQuvnjamSIypwnH2R9aE0zu0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oyIKrgLR1b61z1jp1U8LKQ+bZZe3UCz2uWQm94URXzu4zoq+R9wvNZP5BRiXWXwVw
+	 Efsgz/NSbmMmINLLF8Bk3bBM2tA4AlfCLgXudpsrGd4sUrnJxWybYUAqq4gWHWf1sN
+	 u+Ov361y5CTxk8f3zV57dG7TUhdABz23Gtb4O+POaikg22Q36674DQClbLbuiqk5Va
+	 lV7simRNIRhppRx6kXW8b4SLdOge9q9fYTn3AtNRgbSgz7yZjshLRB1kEX1v6NuSF2
+	 AreCuWMCZ30/+Wav1R4erGt2sWgHpKS11zYxMIILl9lEHihD45MaGGyi9s6gfrchgm
+	 4fnlYZpk9tINg==
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 478E43781188;
+	Tue, 30 Jul 2024 13:20:48 +0000 (UTC)
+Date: Tue, 30 Jul 2024 09:20:46 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Moudy Ho <moudy.ho@mediatek.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2] arm64: dts: mediatek: mt8195: Add SCP phandle to MDP3
+ DMA controller
+Message-ID: <9820b8cb-2443-4085-a18a-264da51e0a08@notapiano>
+References: <20240606-mt8195-dma-scp-node-err-v2-1-e14702e9d3f2@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730091322.5741-1-linux.amoon@gmail.com> <CGME20240730091412eucas1p18feced3968a5f87dc8fe05f78d5c7659@eucas1p1.samsung.com>
- <20240730091322.5741-2-linux.amoon@gmail.com> <09e9cf0b-27fd-46b8-8631-87d798afd19e@samsung.com>
- <CANAwSgT_TOFwP80+H8-CdXDLLu+u2XZMr2dnxcsSDe8S5yeYCw@mail.gmail.com> <a41a6143-ef2e-4d86-b102-eaf442985173@kernel.org>
-In-Reply-To: <a41a6143-ef2e-4d86-b102-eaf442985173@kernel.org>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Tue, 30 Jul 2024 18:50:27 +0530
-Message-ID: <CANAwSgSbSgXwOQLrVrHD7jpDe0=Bq7r2K8p0JjvZJMPpVNq4XQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] ARM: dts: samsung: Add cache information to the
- Exynos542x SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240606-mt8195-dma-scp-node-err-v2-1-e14702e9d3f2@collabora.com>
 
-Hi Krzysztof,
+On Thu, Jun 06, 2024 at 05:12:04PM -0400, Nícolas F. R. A. Prado wrote:
+> While the MDP3 DMA controller can look for the SCP node based on
+> compatible, it's best practice to supply the MDP3 node with a phandle to
+> the SCP since that allows supporting dual core SCP as well. Besides,
+> relying on the compatible search causes an error to be printed, since
+> the phandle is tried first:
+> 
+>   mtk-mdp3 14001000.dma-controller: can't get SCP node
+> 
+> Add the missing phandle to follow the best practice and get rid of the
+> error.
+> 
+> Fixes: 5710462a116c ("arm64: dts: mediatek: mt8195: add MDP3 nodes")
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-On Tue, 30 Jul 2024 at 17:57, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 30/07/2024 14:06, Anand Moon wrote:
-> > Hi Marek,
-> >
-> > On Tue, 30 Jul 2024 at 17:14, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> >>
-> >>
-> >> On 30.07.2024 11:13, Anand Moon wrote:
-> >>> As per Exynos 5422 user manual add missing cache information to
-> >>> the Exynos542x SoC.
-> >>>
-> >>> - Each Cortex-A7 core has 32 KB of instruction cache and
-> >>>       32 KB of L1 data cache available.
-> >>> - Each Cortex-A15 core has 32 KB of L1 instruction cache and
-> >>>       32 KB of L1 data cache available.
-> >>> - The little (A7) cluster has 512 KB of unified L2 cache available.
-> >>> - The big (A15) cluster has 2 MB of unified L2 cache available.
-> >>>
-> >>> Features:
-> >>> - Exynos 5422 support cache coherency interconnect (CCI) bus with
-> >>>    L2 cache snooping capability. This hardware automatic L2 cache
-> >>>    snooping removes the efforts of synchronizing the contents of the
-> >>>    two L2 caches in core switching event.
-> >>>
-> >>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> >>
-> >>
-> >> The provided values are not correct. Please refer to commit 5f41f9198f29
-> >> ("ARM: 8864/1: Add workaround for I-Cache line size mismatch between CPU
-> >> cores"), which adds workaround for different l1 icache line size between
-> >> big and little CPUs. This workaround gets enabled on all Exynos542x/5800
-> >> boards.
-> >>
-> > Ok, I have just referred to the Exynos 5422 user manual for this patch,
-> > This patch is just updating the cache size for CPU for big.litle architecture..
-> >
->
-> Let me get it right. Marek's comment was that you used wrong values.
-> Marek also provided rationale for this. Now your reply is that you
-> update cache size? Sorry, I fail how you address Marek's comment.
->
-> Do not repeat what the patch is doing. We all can see it. Instead
-> respond to the comment with some sort of arguments.
->
+Hi Angelo,
 
-Ok, If I am not wrong  icache_size is hard-coded in the above commit.
+I already asked in another patch, but in case that was missed: It seems this
+patch was missed. Do you want me to resend it?
 
-+#ifdef CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND
-+.globl icache_size
-+       .data
-+       .align  2
-+icache_size:
-+       .long   64
-+       .text
-+#endif
-
-In the check_cpu_icache_size function, we read the control reg
-and recalculate the icache_size.
-if there mismatch we re-apply the Icache_size,
-
-So dts passed values do not apply over here,
-
-> Best regards,
-> Krzysztof
->
-
-Thanks
--Anand
+Thanks,
+Nícolas
 
