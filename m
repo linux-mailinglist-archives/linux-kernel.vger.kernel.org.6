@@ -1,126 +1,88 @@
-Return-Path: <linux-kernel+bounces-267235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CAB8940EBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:13:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5A6940EBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:14:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BC50B264C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:12:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 593521F244EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1592F198821;
-	Tue, 30 Jul 2024 10:12:38 +0000 (UTC)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66589197A82;
+	Tue, 30 Jul 2024 10:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HPldjl6M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7BB194AD7;
-	Tue, 30 Jul 2024 10:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FDF192B93;
+	Tue, 30 Jul 2024 10:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722334357; cv=none; b=RoLUnVJkDxcf5fPpmgw8B5y/KasFgy2Pmypdp0n8HarsRm8qYuge6hBaq6ZMxP+N11oktUabdtM6yioxqn1Pmmnxmph9/2/6TFXLey1hFtEG3c8qI+c7fjzE2KXK7VR+TOcye1vCJ979xZFjAmt4vmjUfWvHraSEcpAc0Z3oC6I=
+	t=1722334463; cv=none; b=PzOzsWHFFDAiTwHWA6nWNNwK/PLfKHzzw/dbnYPK3c72RkrUSGMmQEWzGHeyLoUysmZQN/1/KQS2pGOPOsuLZBScS//ktqCQUFgKdYvUmj1eKr5Rxq7LwuQ3zwNuUgijHmR2uEZzt1wRoY2Q1ySzHgmzr/RzGhXiy+PhaI3Mhto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722334357; c=relaxed/simple;
-	bh=iZXnJnntrAc9WavZB2/AHlbamGg2kaYx6GLjBAsUAp4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qdVjmx19ommBKIty/9nDPpxBzWrWmFSWgp6vreNuxvFJh9Wmc32QLvmCFeSYK7hyy5dT/Mm7L7Nt5zmpRAoBMXW3oDaxy7BtGR0qvFGiQE1hICq7kD+xAd2/dzLucMVWFlJ7ZcxeHTAe6QXD7JErZzlhok3CJfIdj7UmbC10Ucw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e0b286b922eso2775141276.1;
-        Tue, 30 Jul 2024 03:12:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722334353; x=1722939153;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gMFk/2VRq2rm8iMk5HQVpTAxXpKF9aMv9v1fRZs/yuY=;
-        b=iv9jZeWVmtvYd5W9LrJJCI/2omIG/Ua0xMOpWPv89x5VxEpOhT1+AQl1BZziQgF3ka
-         VpqSDHM/K3DZZgeiT5+ACpeuhI6DEhDJGNGzy5warta0gS3jhuHLNeuPCNkCnbCJ6HNo
-         xTwZU6lPvLWd+y56HuuYicofaT7YCbk+1qKOErPKAM9zS3lBM3O8L1/77pJCsTbpWhcP
-         l8vlecsmAVfW0ACrKHpCe2+E0KWAuRhQC0EZFcZnovh8uxFOb278OB/WYhn3qoUiSobC
-         dajPz49UE1N/YkF3+p3UTzUpHHjOMtatkwlhlxLeNBm0CXzRnBuRVnjtmEo3pJzXVwxB
-         No3A==
-X-Forwarded-Encrypted: i=1; AJvYcCURh9Wy9+tkB2cAbfczFcRNq9ZBit7bryjvLUEbm8TKKgByC7Twq4+W6YKBOgIQQx53mQEZKv8cMqnfQX1j5AdmTcaOw8xedVaLc1occQVpnX00lbgfPQ7MbvSZ9q6ajfPkyjtgKg==
-X-Gm-Message-State: AOJu0YwyQytbCJEp7AUfEYW12xoCbcTtO0be1ypSWY95e/T1dHiJk2US
-	v8HZ3dYzLLlmDXaTDghioqst4YM4+LFt6A+/YVA4iKZvqIXYC3qyEqSXG9kU
-X-Google-Smtp-Source: AGHT+IEATwAX61DtN0XSsERqE5u5Is9BRj+d+Tp8b/PDKy/+kfhR7Ero/ex3/f59gHLOsuI25+OnDQ==
-X-Received: by 2002:a05:6902:1506:b0:e08:6732:1145 with SMTP id 3f1490d57ef6-e0b5447a106mr13965212276.21.1722334353206;
-        Tue, 30 Jul 2024 03:12:33 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0b2a93f6dfsm2335234276.58.2024.07.30.03.12.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 03:12:32 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-65f9708c50dso32935167b3.2;
-        Tue, 30 Jul 2024 03:12:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWwmGSGTOOt2GIiUgq4SM+42d8JP9bAkpu2IVcwvfEzClvg7Ccy74OL7Z6ysIbwb8czRkmKR8Xq6va4dF1GhrPoxWq6waM2wb4BLirmKTDxWRVRDsgJ4ue6FY4AuQKdKg4sUKOQkw==
-X-Received: by 2002:a0d:cd05:0:b0:665:7184:fcd0 with SMTP id
- 00721157ae682-67a07b751acmr117597127b3.23.1722334352127; Tue, 30 Jul 2024
- 03:12:32 -0700 (PDT)
+	s=arc-20240116; t=1722334463; c=relaxed/simple;
+	bh=ef3mNoWpD3GxYoxgxOSr4kEuGojZFLPO82xFzGB1hmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JL6pcm//77ux4sVsXa9ibxhSJJmw0pA3JEqUwlc2wMjhu6+NiJ+D71F9FiwZgD9Zm3BmlhtdXyTttaB7rwTLc+BzzG4HemeZdo/stctd2LGyF9RR3RzmBOhtCnqlHWePRvUZuGdsEx9j1tzjGjf8oHT79VO9dj6ddoGOoXL7NII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HPldjl6M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DE9EC4AF0B;
+	Tue, 30 Jul 2024 10:14:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722334463;
+	bh=ef3mNoWpD3GxYoxgxOSr4kEuGojZFLPO82xFzGB1hmA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HPldjl6Muz51/HfYaxRLnylC1vetaJN+vKU5SeBe0rQVYL4xrI98Cq0W/DA7hbT+l
+	 L9jC7eE2kVtsyCv9KSycebe7vRDQD0gB6SFXKWK0oHpoETs9Q2hZilL0kDp4v3yLXK
+	 tC8zqw5adT68Ge2aIAOnflovjXe90oOiZ5cdcCdsk74kpdW9BeCBZliw4aG08/Y99B
+	 lKUQvUengn3eYVsDXrzNguNWwNmLwDG+6YLsXwWius9H40v1m4+Q/ssWLjE0JuW6Ko
+	 wkB6Cn8uYPWnhVimH6KuK+EbTwBpLzE8gND0dUpIu1GH2n/LRav2ftvOFcNWhP8Pgv
+	 YknVhafds4Nxg==
+Date: Tue, 30 Jul 2024 10:14:20 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Patryk Duda <patrykd@google.com>
+Cc: Guenter Roeck <groeck@chromium.org>, Benson Leung <bleung@chromium.org>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] platform/chrome: cros_ec_proto: Lock device when
+ updating MKBP version
+Message-ID: <Zqi8_JeZJU0rGfEE@google.com>
+References: <20240725175714.1769080-1-patrykd@google.com>
+ <ZqcQ3rjY6Wu4lU6t@google.com>
+ <CAMxeMi3864MhJvaH16mw5hHKzYnoRWpZWnxJJuWm9bSKiTojWQ@mail.gmail.com>
+ <ZqiCV_EXnJONOdyV@google.com>
+ <CAMxeMi3VFN91FpGb3dgobz9aXt+Ok8rEqGkidwrGxNNk43O=6g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724154739.582367-1-wsadowski@marvell.com>
- <20240724154739.582367-5-wsadowski@marvell.com> <CAMuHMdWnd8BOLVXpAy8CoFqKzYhp+vj6un=w7Umpo6OQ=Nxqng@mail.gmail.com>
- <CO6PR18MB4098B578E6DED1FF39C3ECF1B0B02@CO6PR18MB4098.namprd18.prod.outlook.com>
-In-Reply-To: <CO6PR18MB4098B578E6DED1FF39C3ECF1B0B02@CO6PR18MB4098.namprd18.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 30 Jul 2024 12:12:19 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUbTm++Vcf8f-wAnHgXF4wgJydE3dAn2hO0oAiTtMkouQ@mail.gmail.com>
-Message-ID: <CAMuHMdUbTm++Vcf8f-wAnHgXF4wgJydE3dAn2hO0oAiTtMkouQ@mail.gmail.com>
-Subject: Re: [EXTERNAL] Re: [PATCH v11 4/9] spi: cadence: Add Marvell SDMA operations
-To: Witold Sadowski <wsadowski@marvell.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "broonie@kernel.org" <broonie@kernel.org>, 
-	"robh@kernel.org" <robh@kernel.org>, 
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "pthombar@cadence.com" <pthombar@cadence.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMxeMi3VFN91FpGb3dgobz9aXt+Ok8rEqGkidwrGxNNk43O=6g@mail.gmail.com>
 
-Hi Witold,
-
-On Tue, Jul 30, 2024 at 12:06=E2=80=AFPM Witold Sadowski <wsadowski@marvell=
-.com> wrote:
-> > drivers/spi/spi-cadence-xspi.c:612:33: error: implicit declaration of
-> > function 'readq'; did you mean 'readb'?
-> > [-Werror=3Dimplicit-function-declaration]
-> > drivers/spi/spi-cadence-xspi.c:638:25: error: implicit declaration of
-> > function 'writeq'; did you mean 'writel'?
-> > [-Werror=3Dimplicit-function-declaration]
+On Tue, Jul 30, 2024 at 10:05:16AM +0200, Patryk Duda wrote:
+> On Tue, Jul 30, 2024 at 8:04 AM Tzung-Bi Shih <tzungbi@kernel.org> wrote:
+> > On Mon, Jul 29, 2024 at 01:57:09PM +0200, Patryk Duda wrote:
+> > > On Mon, Jul 29, 2024 at 5:47 AM Tzung-Bi Shih <tzungbi@kernel.org> wrote:
+> > > > Also, the patch also needs an unlock at [1].
+> > > >
+> > > > [1]: https://elixir.bootlin.com/linux/v6.10/source/drivers/platform/chrome/cros_ec_proto.c#L819
+> > >
+> > > Yeah. I'll fix it in v2
 > >
+> > I'm wondering if it's simpler to just lock and unlock around calling
+> > cros_ec_get_host_command_version_mask().  What do you think?
 > >
-> > readq() and writeq() are not available on 32-bit platforms, so this
-> > driver has to
-> > depend on 64BIT (for compile-testing).
-> >
-> > > +                       *buffer++ =3D b;
-> > > +               } while (--full_ops);
-> > > +       }
->
-> How can I limit that driver for 64bit test only?
+> Initially, I thought it would be good to keep ec_dev->mkbp_event_supported
+> update under the mutex (similar to cros_ec_query_all() which is called with
+> locked mutex), but mkbp_event_supported is also used without locked mutex.
+> 
+> I don't see any obvious risks with updating the MKBP version outside mutex.
+> Do you want me to change it?
 
-drivers/spi/Kconfig, config SPI_CADENCE_XSPI:
-
-  -depends on OF && HAS_IOMEM
-  +depends on OF && HAS_IOMEM && 64BIT
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Yes.
 
