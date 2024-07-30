@@ -1,35 +1,73 @@
-Return-Path: <linux-kernel+bounces-266889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED47940910
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:08:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031BA940913
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D20951C22605
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:08:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A094A1F2167C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8A118F2F6;
-	Tue, 30 Jul 2024 07:08:23 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0F218EFD5;
+	Tue, 30 Jul 2024 07:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Q+oyKM7U"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F09054774;
-	Tue, 30 Jul 2024 07:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6083C54774
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722323303; cv=none; b=WVwTkqvCryhUe6V5jRvHuYYFoDSJSjlpH18gp0RRUIrWJJyYOamQ9qOi+J39rDtCg2mMzmYcC6RDkgMwgRAsM1esblfDcIziPSIh+Djo+LCN7IQj7/n55pi4SSckDfYUmeoKElY3Z+MlYrnhf01Ca/RDhS66kunx5JdQ7XJ8ftU=
+	t=1722323352; cv=none; b=iJ3jxpr1Qm14F09wjAxHD2ez0rjxPXEAMIVtLYTytz1XMacQhXmEOHP5sHfVfatg66d4v2XPpIrZQ7w9dZZEbFRZoeFyqWK54CLqGl30XT0C/TNwyivdQ/Crjr7d2EWGnnNBZ58YUjy+uMt7Pu665ekqGPpIYP+C+Yy2+2NIWXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722323303; c=relaxed/simple;
-	bh=0dDu7bl/LFbIRHGBz+C54Ptv7QOkHoxyUDIhes5f9fQ=;
+	s=arc-20240116; t=1722323352; c=relaxed/simple;
+	bh=aUXBVwEuXvr8ZvqtozeYi9Lu0ovEhgcBBeJw/0xKvnE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uKpoEbsxGzaUzJWIbHsLXRpqsJKu/WTo2WvlIbFMjSKYf2kAkd+GgWrhiqH0z0bXhel17nUoZz2qbk5W6lultgJks1fXlgLvxcK2BFxppyjrx6ZHL59pfaIaeppaf+CVqnFGI/q8ak39zj8mlJOCclxd/5SygPqnjTMZ1OwGriE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41CB5C32782;
-	Tue, 30 Jul 2024 07:08:21 +0000 (UTC)
-Message-ID: <0b4e2f13-8d79-4931-b868-6100f8b8893f@xs4all.nl>
-Date: Tue, 30 Jul 2024 09:08:19 +0200
+	 In-Reply-To:Content-Type; b=aazTixN+zL9CgLjP6LLMo1Vp1Vl4HwfIe1wBnP8pFtB5I3V7fVzcDXsWQPC1/ZbxW8Aym+8+IRQ1rk4kU4itOM6PoyT2yDojvhM6OrnO8J7UaXCOsQurx9c1aoImoHK56LfEOUTgePE6E9RmVjtPhKPhmgzdhI+IfHuOCjtjZ60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Q+oyKM7U; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f0407330a3so7580871fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 00:09:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1722323347; x=1722928147; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lVMhYxj4qNnzwO4iqD+18Ai3QfZ1Axvw0kbd5FN9fVs=;
+        b=Q+oyKM7U4B/GrfxqheftuquRC7eUPVm9NHH3PdgulVBGsCmyzMDGKbT27jSVQ0yQwx
+         7SsQ5YNwu2sgkJhD/POc8jWqcgX5GvexiYukMMS9hCLMRHMOo5inb1UqOgId2Z/AA0UZ
+         tek+LTDQ6IRYmYlxe37SwAKVpBXuPrbaaz+mK5hS1eyel5ppDkCuxuNoyhEg7q43gGnm
+         N1jVRipxXr6z2nQlueOh6B6ZDU2mCZojCCz+UnHBs05UC4rfl2c3Z6c6G7dxtXzr93Cn
+         by2XzwjtJPyt0LnRhZkowzZbmyP9X0TEQo5zIAJokHVmDrDXvMIMRzr3m1YMPGRQvprj
+         Ocxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722323347; x=1722928147;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lVMhYxj4qNnzwO4iqD+18Ai3QfZ1Axvw0kbd5FN9fVs=;
+        b=unt/hTfZRmYIZtOmitCWOyKA5EWjYq15km1ifITOsCQx+LYzdlKbCdp2Dfxf52JGAM
+         uAu+CONypSBX7bp5P4Rsd1i953Cfh0C38AtEbxlAEoQFjr1tJoSNhSZC7oS5hZh1qevk
+         SliGEXtyofNeBkBCuK4clMD6GbpjIvFM3xdte6rdJchicY7bBA0ixQBFtb7Prk4Tc3Yz
+         tqoJj9/jJ1mLki+/zhZLBsugU5OptIFgyjoAt+Q2TsbNA2A+a0D1gv1RlellZuqOofnO
+         uuoPH9DDQ2WDACiaAf8Edn6rzRgmCWUq/xLPR/RskHaEBVhBPn2QZdfaDiSgdypPM3jv
+         1HoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVm4xWoshYryx7WYegFB3sGIfv62jJetNRj6IwQ2SxnHOXuwaSuojEovhW/uWVfWuD3ndK2kvZLFwcxXCE2pq/4/mWNYrC9ZLfzjyYD
+X-Gm-Message-State: AOJu0YyAVbzp+Yt4UT1bfXpOAAtbjZxOsS/RUAQmPqy1Wm/JmBfJA9n8
+	D/GudfTS0/wCfleoy1/VxeRWmAjgE4+tXw0DKU0aP6HzHNbZQuUlWcath3VAKIs=
+X-Google-Smtp-Source: AGHT+IFeNNsOEIsAWFdV4yWL2SghnTx8Z1eLwgdOiT5AgajQW3bsdyzMbPjzTwMNqrHkz03C42ZeVg==
+X-Received: by 2002:a2e:7c02:0:b0:2ef:2e8f:73e9 with SMTP id 38308e7fff4ca-2f12ee1bd2dmr64461041fa.37.1722323346904;
+        Tue, 30 Jul 2024 00:09:06 -0700 (PDT)
+Received: from ?IPV6:2001:a61:137b:5001:be5a:c750:b487:ff1b? ([2001:a61:137b:5001:be5a:c750:b487:ff1b])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5afb9422c41sm5153828a12.82.2024.07.30.00.09.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 00:09:06 -0700 (PDT)
+Message-ID: <e72cc56a-3066-4cb8-848d-bfe27a48c095@suse.com>
+Date: Tue, 30 Jul 2024 09:09:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -37,112 +75,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] media: videodev2: Add flag to unconditionnaly
- enumerate pixels formats
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, mchehab@kernel.org,
- ezequiel@vanguardiasur.com.ar
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-References: <20240722150523.149667-1-benjamin.gaignard@collabora.com>
- <20240722150523.149667-2-benjamin.gaignard@collabora.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20240722150523.149667-2-benjamin.gaignard@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] usb: storage: ene_ub6250: Fix right shift warnings
+To: Abhishek Tamboli <abhishektamboli9@gmail.com>, stern@rowland.harvard.edu
+Cc: gregkh@linuxfoundation.org, usb-storage@lists.one-eyed-alien.net,
+ linux-usb@vger.kernel.org, skhan@linuxfoundation.org,
+ dan.carpenter@linaro.org, rbmarliere@gmail.com,
+ linux-kernel-mentees@lists.linuxfoundation.org, linux-kernel@vger.kernel.org
+References: <20240729182348.451436-1-abhishektamboli9@gmail.com>
+Content-Language: en-US
+From: Oliver Neukum <oneukum@suse.com>
+In-Reply-To: <20240729182348.451436-1-abhishektamboli9@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 22/07/2024 17:05, Benjamin Gaignard wrote:
-> When the index field is ORed with V4L2_FMT_FLAG_ENUM_ALL the driver
-> will ignore any configuration and enumerate all the possible formats.
-> Drivers which do not support this flag yet always return an EINVAL
-> error code.
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-> ---
-> changes in version 5:
-> - Reset the proposal to follow Hans's advices
-> - Add new flag to be used with index field.
-> 
->  .../userspace-api/media/v4l/vidioc-enum-fmt.rst      | 12 +++++++++++-
->  .../userspace-api/media/videodev2.h.rst.exceptions   |  1 +
->  include/uapi/linux/videodev2.h                       |  3 +++
->  3 files changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
-> index 3adb3d205531..12e1e65e6a71 100644
-> --- a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
-> +++ b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
-> @@ -85,7 +85,11 @@ the ``mbus_code`` field is handled differently:
->      * - __u32
->        - ``index``
->        - Number of the format in the enumeration, set by the application.
-> -	This is in no way related to the ``pixelformat`` field.
-> +        This is in no way related to the ``pixelformat`` field. When the
 
-You need to start a new paragraph before 'When'. Otherwise you might read
-that the 'When' sentence is somehow related to the previous sentence.
 
-> +        index is ORed with V4L2_FMT_FLAG_ENUM_ALL the driver will ignore
-> +        any configuration and enumerate all the possible formats. Drivers
+On 29.07.24 20:23, Abhishek Tamboli wrote:
+> Change bl_len from u16 to u32 to accommodate the necessary bit shifts.
 
-I'd rephrase this a little bit:
+Hi,
 
-the driver will enumerate all the possible formats, ignoring any limitations
-from the current configuration.
+while this patch is technically correct, it papers over the issue.
+Could you please
 
-And after that I would like to see an example of a use-case.
+1. use a constant, where a constant is used
+2. use the macros for converting endianness
 
-> +        which do not support this flag yet always return an ``EINVAL``
-> +        error code.
->      * - __u32
->        - ``type``
->        - Type of the data stream, set by the application. Only these types
-> @@ -234,6 +238,12 @@ the ``mbus_code`` field is handled differently:
->  	valid. The buffer consists of ``height`` lines, each having ``width``
->  	Data Units of data and the offset (in bytes) between the beginning of
->  	each two consecutive lines is ``bytesperline``.
-> +    * - ``V4L2_FMT_FLAG_ENUM_ALL``
+	Regards
+		Oliver
 
-I am not really happy with this name since the prefix is identical to that
-of other V4L2_FMT_FLAG_ defines. How about: V4L2_FMTDESC_FLAG_ENUM_ALL?
-Or V4L2_FMT_IDX_ENUM_ALL?
-
-> +      - 0x80000000
-> +      - When the applications ORs ``index`` with ``V4L2_FMT_FLAG_ENUM_ALL`` flag
-> +        the driver enumerates all the possible pixel formats without taking care
-> +        of any already set configuration. Drivers which do not support this flag
-> +        yet always return ``EINVAL``.
->  
->  Return Value
->  ============
-> diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> index bdc628e8c1d6..8dc10a500fc6 100644
-> --- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> +++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> @@ -216,6 +216,7 @@ replace define V4L2_FMT_FLAG_CSC_YCBCR_ENC fmtdesc-flags
->  replace define V4L2_FMT_FLAG_CSC_HSV_ENC fmtdesc-flags
->  replace define V4L2_FMT_FLAG_CSC_QUANTIZATION fmtdesc-flags
->  replace define V4L2_FMT_FLAG_META_LINE_BASED fmtdesc-flags
-> +replace define V4L2_FMT_FLAG_ENUM_ALL fmtdesc-flags
->  
->  # V4L2 timecode types
->  replace define V4L2_TC_TYPE_24FPS timecode-type
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 4e91362da6da..3d11f91273a1 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -904,6 +904,9 @@ struct v4l2_fmtdesc {
->  #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
->  #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
->  
-> +/*  Format description flag, to be ORed with the index */
-> +#define V4L2_FMT_FLAG_ENUM_ALL			0x80000000
-> +
->  	/* Frame Size and frame rate enumeration */
->  /*
->   *	F R A M E   S I Z E   E N U M E R A T I O N
-
-Regards,
-
-	Hans
 
