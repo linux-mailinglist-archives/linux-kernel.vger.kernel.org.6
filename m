@@ -1,118 +1,103 @@
-Return-Path: <linux-kernel+bounces-266577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04C4C9401D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:58:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134809401DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 02:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 860BBB21A3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 23:58:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 290B11C21EC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 00:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4377818F2DC;
-	Mon, 29 Jul 2024 23:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D548BE5;
+	Tue, 30 Jul 2024 00:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CNICOkRf"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I8g5j7lX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8571E49E
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B7328EB;
+	Tue, 30 Jul 2024 00:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722297484; cv=none; b=ETgakrzfwaYg3ilNnYlvxXCAHXr+le/FvFvaAZeEfLy4MMizwxk/eIS6fcfQ8ORuUW4+dqN3ZQg9wPkOUWlnhB5ob23ymhxzRow17PimFWzFnbqFwC0ZffyFetIweqzNgC83idYKJHY8aL5HSWSJJ720He8vBs8xPbWPmfGPxws=
+	t=1722297745; cv=none; b=SYtVH92b7BRUcvUNZZxaMYsCIJDmKMOT0pwFyX6Y1q2xA5dQmXfvlTqUy0BwipUTIXV1oNZrjaCncXVPOnAOQi94MVRp431TKT9paqkDvmGmGP6ZXpAHmNn85KL2B5NvdKCxh5khPAuW445T4TF6uq0Ju/xm4ZK6IUUsQILiJJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722297484; c=relaxed/simple;
-	bh=HsTkYaQvLHEv35+aLag0xljxwQgmY5E7o11ogohLXTg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YpYWtf7NwmJ+eyzs57HiKxT1kJ4dW0BXAET5SC2xmqbBWLms695ss5Xmlr4UczcE9iF7fZ9xfwDXqe9yAERvPFOowRaS0eEvkb+CJmwOE4tkVKMDnSunFFWSY8WqupovZfaFSpj5tFlWeGNgujPCpet6F4r8smy6nxWdqOj4JCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=CNICOkRf; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52f04b4abdcso6400062e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:58:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1722297480; x=1722902280; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=M5OeD/TjdLdg6TWmjDcFFR5g1FHvQF1TaQWWZJWDtZI=;
-        b=CNICOkRfwdZZsg8ZAdDwtqHxqAceZy1gATtyrc4LehVVaubq+tmn6pJckU6yk4r/t6
-         MnA9DFERdzQhLsmNqJZ9J/YS8nsjbtZe2JvzynnqeWzopWVkTcopOnjhXEqkc+v3pACD
-         jjDAvP1ByqJLajfFlBW9nRwntJLQZ0SiaAaCI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722297480; x=1722902280;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M5OeD/TjdLdg6TWmjDcFFR5g1FHvQF1TaQWWZJWDtZI=;
-        b=SBOR1w6f/72oN9UBuCc6lp7V7bt4OxDf+M0iEHsXmXfq4fqtNl9TQraThg+i/muUIH
-         lnKPg9p3a5jO/THrJOUZh7Xl9Ceq4vsf9XJs7B7LDib3EsQiFPSZctY50Ya5BmkwZBMk
-         EWPzNbGfrcfeZc2HzAA587mZPhpgLTpS1ScWIqxQMppDaMitQ6Qp/q+FuSp5VKrFDjcU
-         9dsPq6kIPFS6ICWuo+SMiFRh31OG3bYTYERBZfzbzp4J05V8r3/9BirwjL1r3ESUI/Hx
-         65yKz/dKeH5U6eX1J/V8O+qyEg01E9QwnzSFn51HyyCWgqW6Cd6jyC3HOq1Qekr8V6az
-         ngWQ==
-X-Gm-Message-State: AOJu0YztEggGIWrR+hCYbXPF+Xv9deqkubHabif6Z8C2hdDZC0iY5n0n
-	XcCjb3O8mljDhS/DIrQMDKpSNASEeoe8yrV3Uh+omP2TDv8PrtDVo3efEKmiPTV9mAYDmFqb8zO
-	LoMZXqw==
-X-Google-Smtp-Source: AGHT+IG0QQIP3O64n82OYezkIWKf71kmdYgiS1mqjhAAjoIut4FGC0wYWkbs9drXl0OWW4y0nfbJQA==
-X-Received: by 2002:a05:6512:36cd:b0:52e:9a91:bba3 with SMTP id 2adb3069b0e04-5309b2707bbmr5304249e87.15.1722297480267;
-        Mon, 29 Jul 2024 16:58:00 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5bc42d6sm1677172e87.45.2024.07.29.16.57.59
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jul 2024 16:57:59 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eeb1ba0468so62587591fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:57:59 -0700 (PDT)
-X-Received: by 2002:a2e:9ac5:0:b0:2ef:23ec:9356 with SMTP id
- 38308e7fff4ca-2f12edef762mr60373271fa.8.1722297479131; Mon, 29 Jul 2024
- 16:57:59 -0700 (PDT)
+	s=arc-20240116; t=1722297745; c=relaxed/simple;
+	bh=66w/099e5tHE8mUELUbU71wiwXB947RM/RzP19wVSpM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=RcxQQlZJ7PV8PIAz3Z+N1/bQbTReBKcV0CrKi+K6vVVCc5l2BL3iKTljqVJI3mEeNXX+9oiQ3aSrSbs2mMGMlbtYgvnUvBWW/Nn2tqI1dhWYhds6HMRLJevBGH6EmvVfyhzKfsihvGsxSdP3GI8515skXs7Rnf4xDffjr8tKCxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I8g5j7lX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64E3AC4AF07;
+	Tue, 30 Jul 2024 00:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722297744;
+	bh=66w/099e5tHE8mUELUbU71wiwXB947RM/RzP19wVSpM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=I8g5j7lXjnbkRHn1prjviT2kFlagmdY5ItmVVolyVnh6nC91/QMROD5yfC2lf5bzb
+	 fnfz3HqW6L6E4P0rGCAtHMJL5D440a0IXYLIhLdRNy5ir16+UcTpgRFb8SoYcHLp1P
+	 I5xGTJij5fO0kv4AWhDxOUuV8ZAUCxapNuMt2ZPOUQGAN8DbLV9z3FOaBtgPhavKG9
+	 995iKq45fM4dGdLAr0lVv7WShJDKCEvtrpQRfwjH57CoKV7Ak2YvwLQ0a3d9ek3QA6
+	 RcNMT9rGMXnJVoog/zVejEdu/uMM78+heafl3o/1vi5pEEACyKA0tRJOsi57t8wKCX
+	 yZJbMuDAx51cw==
+Date: Tue, 30 Jul 2024 09:02:21 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] tracing: Use refcount for trace_event_file reference
+ counter
+Message-Id: <20240730090221.7fea5eaedddce5de4e43914a@kernel.org>
+In-Reply-To: <20240729190241.47e52c05@rorschach.local.home>
+References: <20240726144208.687cce24@rorschach.local.home>
+	<20240729234924.6accc2e6216e3b7be1a97e61@kernel.org>
+	<20240729190241.47e52c05@rorschach.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240730082204.57c64765@canb.auug.org.au> <CAHk-=wgEipN1BoDCG02m1XqvACCFLxj2SoEG8O4BZMAFXKifqg@mail.gmail.com>
-In-Reply-To: <CAHk-=wgEipN1BoDCG02m1XqvACCFLxj2SoEG8O4BZMAFXKifqg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 29 Jul 2024 16:57:42 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi3+tK5ndB0P3Yi2HOYFm6YMc-k-wBJjTEo__opsp51jg@mail.gmail.com>
-Message-ID: <CAHk-=wi3+tK5ndB0P3Yi2HOYFm6YMc-k-wBJjTEo__opsp51jg@mail.gmail.com>
-Subject: Re: linux-next: build warnings after merge of the origin tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, 29 Jul 2024 at 16:38, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Does anybody have a clue-bat: what makes only the powerpc build show
-> this valid warning?
+On Mon, 29 Jul 2024 19:02:41 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-The obvious fix to just remove the stale static variables has been pushed out.
+> On Mon, 29 Jul 2024 23:49:24 +0900
+> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> 
+> > On Fri, 26 Jul 2024 14:42:08 -0400
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > 
+> > > From: Steven Rostedt <rostedt@goodmis.org>
+> > > 
+> > > Instead of using an atomic counter for the trace_event_file reference
+> > > counter, use the refcount interface. It has various checks to make sure
+> > > the reference counting is correct, and will warn if it detects an error
+> > > (like refcount_inc() on '0').
+> > > 
+> > > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>  
+> > 
+> > Looks good to me.
+> > 
+> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Is that an ack or a review? ;-)
 
-And it turns out I see the failure too, if I use clang.
+It was Ack,
 
-Interestingly, clang did *not* complain about the
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-  static DEFINE_MUTEX(profile_flip_mutex);
+Sorry about that. I might be too sleep.
 
-only about the static DEFINE_PER_CPU() cases.
+> 
+> -- Steve
+> 
 
-So it looks like having an initializer ends up suppressing the
-message, probably due to various historical usage patterns (eg things
-like
 
-   static char *rcsid="$Id...";
-
-which is a common traditional pattern).
-
-I have the same gcc version on both arm64 and x86-64, so I guess it
-could also be some gcc version dependency that caused me to not see
-it.
-
-           Linus
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
