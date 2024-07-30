@@ -1,107 +1,103 @@
-Return-Path: <linux-kernel+bounces-268096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F675942051
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:08:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58069942053
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24E3B1F24713
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:08:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FF19284492
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A2418C91E;
-	Tue, 30 Jul 2024 19:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5993218B47F;
+	Tue, 30 Jul 2024 19:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OPhkCUOf"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFGn7CRr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9205D1AA3C3;
-	Tue, 30 Jul 2024 19:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992461482F3;
+	Tue, 30 Jul 2024 19:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722366490; cv=none; b=hTaZ6QftlwnV0AukdfjmLsFMm19wqtu66ffXnyO8ZNooTFpsReEcF7w6V82ogDZZuqJuiLF8/tiI8RLEULWKQdvoJ0rQwjtsen777xdAj7v/CrkJM6Ep17RBShfwWzx38gySgtLKa1z2Hs9XyEvIhf+8ggECEi+SoPY1JOUbpfI=
+	t=1722366519; cv=none; b=ZLoEvw3HoDgF7fgySnjGIdMyVB0yNZtbtLk3+1p0jSKz3oxIYZAMvUh2W5Egy/2j+O3yUji+HnfoQGxzYWvtfLe5uZMQBZTk958IucjGevrLFsVDFh0xmXVrXWCEEElJXE+lZRj/zyCVQtpvR7GPRW94kuEGhchFMaCNPxKZ3mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722366490; c=relaxed/simple;
-	bh=xWVqs2258UHmA+CoMjBHPne4eFNjGXP4z5/g3OSO1M0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KXZbOXMwbFetxiiSi1n0ATN8YXrf739nw0HRUV4hQKoefQZwWjDrVSuFDE1QCnSrZvn8CjJZkAPs5CrV/jS0vocbCphsYXHQyhxUWe/Clg9XiQTC5Fx5flFUWpIw4Kc1Sw+QMkwElnFPD61Bknkhe+GTJ3cCk3VE+mPMVYrYF3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OPhkCUOf; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2cf213128a1so3053562a91.2;
-        Tue, 30 Jul 2024 12:08:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722366489; x=1722971289; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3dTVDxAQZ2aQnOrMxigVSHmZFXtubAHIkEkuQJGMu5g=;
-        b=OPhkCUOfSBc7MEomf7HSM1CDP0AI0df5F/03vFSCLTKD07oX4DN9XEWWrMzXXcBV7U
-         BCva7wA/jUCJ3o2FmXG6osx9kGcc7Zz/objFpjOx0xv5kp5PJYS+pSAYo7CO3EH/wrf5
-         EXA+SueEVcE6fAwbliMxXPl1XprpQUiuE+9dNFqxamT7E+0sCfgHObt8Q+uavbq4ec9c
-         s1rJluPaSBdfNFxUp2kDn4S9OVQjPCPa3Yg3+vvnVjp5mCMss9Dn466UUPk3kfF9NzA4
-         hGqC62q85yOyf4TWC7euocuQeY1y8lm06r6VD3rvwqaNb/6THPs77gCavBG6vrNswSJu
-         C/1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722366489; x=1722971289;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3dTVDxAQZ2aQnOrMxigVSHmZFXtubAHIkEkuQJGMu5g=;
-        b=oqgZPOY3AQBg+LBzoZ0v18wgUZiVdcwRXvVJ8R6NEU0/HDThT3U56gfPB97sNpAxbS
-         2eEsnyXdsJ7Z9FFXs+2MJlcHQtrU7QOA3gzWlst6VJow7Z2DM7JEvrttm5f9woPrK+Ls
-         bh2YduLMLl7uAEvrUbRmA4C0PMXmG6HKrKP8GMKFmWSOU025Le7nB7SvQH44uTL/ZQHC
-         gXNFYwiGhc4/IQ+ExxgqU+5Vtrp+2ZHRIa8evcXi5KZs0WyS4mGdg8GsxKrug9LROixo
-         Gt9Fp1Nigo9ET/2Uo/dwZi44om96GO6zcmkWFbVxfFVLnCleyjTijSADesLxKrcuM00F
-         KxOA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+zpURbRKdUUC2jwPB/TchM5NwDsLLlwLXDnzFa+iaFe1J/iMTIhGcRKzMAup+TxGFowHa1L99X33O93xafNAWUHoVrsTdc/Q8aIkE2l3XVV8nNY7Kkg9VGc8fTuwbgLIyZt58/yGKiHdWBn2iYt4HMmOeXY9hGC6G20KqpVFX/270seT2
-X-Gm-Message-State: AOJu0YxuMJ+3ehnSSYHFVaie8kFR99OvyNFUpCgrQqUYe0ga0kFX+Erp
-	INbgljDlX+3RP4A7FpK7duhwHEExAoCvPNyGk4jl8Ah9HTlROEvAPx9YHv/jM+GN4YyY8vKcsSJ
-	j86DkVjGQekQDZxK48Em3R/uglNo=
-X-Google-Smtp-Source: AGHT+IGNJYK/Ium/WCNQzS+rP7PQrChYbiOyOCwmjvXXunxfEbdjCBMO21zU0d51BgrfNl6NbgST69vFnsNcR/rjtX4=
-X-Received: by 2002:a17:90a:fc98:b0:2cd:2f63:a429 with SMTP id
- 98e67ed59e1d1-2cf7e726968mr10165297a91.35.1722366488760; Tue, 30 Jul 2024
- 12:08:08 -0700 (PDT)
+	s=arc-20240116; t=1722366519; c=relaxed/simple;
+	bh=ftZxzUR/vz0LHAJzG445pNqWrW9qdUOSvIIBI8lKJHo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=AdNMI6fb6Q0qVdSd4OQFfO1Uy7O7GXYiWfCSHnsHqhgWy0kbiRQ9Pf9qZGzcvVqyOx2pEcVI8VTfUCMr2L5xZrNn+GeD2StUKwIEwiQCM5J+mDEfsg1kYY8Dhr6QdW3QurkhRT+OH8NNUmup3MVgLwhie6mKbQDLU/CfW7mFbxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFGn7CRr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2523CC32782;
+	Tue, 30 Jul 2024 19:08:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722366519;
+	bh=ftZxzUR/vz0LHAJzG445pNqWrW9qdUOSvIIBI8lKJHo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=OFGn7CRraHlTTJ1hzovG+pk3kow44MYhL4ZeQNK8GQzozVyXRgmdMhospZa/pMeDL
+	 7bQ6V9B86d1Dk4j6O2wniXMK9XFLddBkaVf8NDi3LNp/LqSIHkw5DtvZ53sR+b2wgO
+	 c8dfbIYOblWK1jVjZcO/EOxycuYa7khlk0UmahMclYmzpPy+mAyLnXdoqKnBSziH8x
+	 qzxb0xvmaKLuLq7CnDGdWhkuAbenMs91qnew4TuCo4tDE6wX3lcjhohr/VqvcKB35Z
+	 0QaR4eMd2nn2I4e/Glb5xvt7M/V0lEHOPonu5vb268GMOwrrDVaXKVEMkWKjYWh9Zx
+	 kkXs+yw5luzeQ==
+From: Mark Brown <broonie@kernel.org>
+To: Maxime Ripard <mripard@kernel.org>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <cb571d4128f41175f31319cd9febc829417ea167.1722346539.git.geert+renesas@glider.be>
+References: <cb571d4128f41175f31319cd9febc829417ea167.1722346539.git.geert+renesas@glider.be>
+Subject: Re: [PATCH] spi: spidev: Add missing spi_device_id for bh2228fv
+Message-Id: <172236651785.95648.14253636888913221016.b4-ty@kernel.org>
+Date: Tue, 30 Jul 2024 20:08:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730-tcp-ao-selftests-upd-6-12-v1-0-ffd4bf15d638@gmail.com> <8c2835ed-9066-4adb-8f8b-f38416d97849@redhat.com>
-In-Reply-To: <8c2835ed-9066-4adb-8f8b-f38416d97849@redhat.com>
-From: Dmitry Safonov <0x7f454c46@gmail.com>
-Date: Tue, 30 Jul 2024 20:07:57 +0100
-Message-ID: <CAJwJo6bzq9qo6i0UjqO9Ma0jdTedFS2GQNtQQbPzLUCg1a49Bg@mail.gmail.com>
-Subject: Re: [PATCH net-next 0/7] net/selftests: TCP-AO selftests updates
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	Mohammad Nassiri <mnassiri@ciena.com>, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On Tue, 30 Jul 2024 at 11:51, Paolo Abeni <pabeni@redhat.com> wrote:
-[..]
-> It looks like this is not well digested by the CI, e.g.:
->
-> https://netdev.bots.linux.dev/flakes.html?tn-needle=tcp-ao
->
-> https://netdev-3.bots.linux.dev/vmksft-tcp-ao-dbg/results/705502/8-restore-ipv4/stdout
+On Tue, 30 Jul 2024 15:35:47 +0200, Geert Uytterhoeven wrote:
+> When the of_device_id entry for "rohm,bh2228fv" was added, the
+> corresponding spi_device_id was forgotten, causing a warning message
+> during boot-up:
+> 
+>     SPI driver spidev has no spi_device_id for rohm,bh2228fv
+> 
+> Fix module autoloading and shut up the warning by adding the missing
+> entry.
+> 
+> [...]
 
-Thanks Paolo!
-I see the 2 issues there, going to fix them up and resend v2.
-I guess, I'll wait a day or two to be polite and less disruptive to
-netdev testing.
+Applied to
 
-> BTW wearing for a moment Cato the censor's shoes, I note that patch 1 &&
-> 2 commit messages are quite more informal and less informative than the
-> average;)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Yeah, fair enough. They are pretty trivial, but I should improve the
-messages there.
+Thanks!
+
+[1/1] spi: spidev: Add missing spi_device_id for bh2228fv
+      commit: e4c4638b6a10427d30e29d22351c375886025f47
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-             Dmitry
+Mark
+
 
