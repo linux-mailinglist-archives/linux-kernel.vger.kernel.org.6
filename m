@@ -1,117 +1,151 @@
-Return-Path: <linux-kernel+bounces-266733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BAE1940605
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:40:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC9F7940609
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF816B22214
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:40:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E15BB21B2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4DD14B06A;
-	Tue, 30 Jul 2024 03:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9235B14F9FF;
+	Tue, 30 Jul 2024 03:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DXRtoH4O"
-Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YWcOfx6z"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C83D22315;
-	Tue, 30 Jul 2024 03:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE781487D8;
+	Tue, 30 Jul 2024 03:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722310837; cv=none; b=mr8ughudO0VwKZrHUQ9phujFpgvBZN1byqw1+KcT/RhvdG+oo6dI70WgOF8s3y1MKf90lvvlm83rhqRzmIzAb2VTCGv++Ij5asKcyzSbdCVUxkC0Qpn/H+8IDqzQVOuhGzRSKKZgsvLukfus0JDtVhrmem6Qect4j9K1wsuD27Q=
+	t=1722311039; cv=none; b=q+IngZ/gv/RWNfLsu4FjQQYaM4DXmRl0r9kEcVnQ6Jrs3GCuRqj6xnpe0ARVc9hbpXEgMjbhuGissNoaKCnr/GtnOZM/tothWWwqUV5XA3yn7iTEU7ajAcwlVGLya118je1yRl7s32FPrVQGWj+5IVo3T+0b/cbZ+QtefjVpkng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722310837; c=relaxed/simple;
-	bh=YIVJK7qavlVu/lpvL1z7Y0qhDDDzATFp5dl2mGa9m7U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CNZr9IXpgQK12k1XVllOiuJvgVEEHSGQm2gDGHkv2Ba/WlgNMbHACyglbUlrHltHgBBRFcANDxB0PVLQiVOPIOH6fKt02PAnOQQzO6n/WE/8C6LLqwYNDNV9RUtYZQ/nE8/vz4OW2wij+DOHXbKJGpPXnfQ8oWZTdID2mgxBVio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DXRtoH4O; arc=none smtp.client-ip=209.85.215.194
+	s=arc-20240116; t=1722311039; c=relaxed/simple;
+	bh=47oS6MdN1hRTkoPWB3nS98Zx5hlaXi7nZdTSHAgoyGs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZV9py5AS1biKA2jt6GaxKOytk/Iw5GMp5VoF09XxUu5+oOaHZiqFAutFNtcUXUth+d412h6bn1z/Jc1wC2foZKgfmPCPH0DKYjYPXIhZ4mTmulkep+p4UELCCzm4r0p2MVIULM39bU8ScueMhvtF2d8bJSgPY8mcv2ReqMkSl4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YWcOfx6z; arc=none smtp.client-ip=209.85.161.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-7b396521ff6so17253a12.1;
-        Mon, 29 Jul 2024 20:40:36 -0700 (PDT)
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5c661e75ff6so2910880eaf.2;
+        Mon, 29 Jul 2024 20:43:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722310836; x=1722915636; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wJtNZjx9etI7bcF/1fKvF0Zp9I41hOiDShU7BUYb0wY=;
-        b=DXRtoH4OsSNiSR8t67HraRXdVjv3swX1JbzSw0NmfIYTa5OTcvt+P4IYZq/WmAIj4N
-         6vc994tLsKid5eg0CEwV+rm/TPqiFCEY2/aGgB5UoWIm+lRxx+osci+WJ4AcLOvO6YAb
-         G1uQ4d4IhF+HAo5mvxU47D9DgTrSs9bF/tgjp4c+F62mH0wW3mrjOK9jyCmxU6ddGIqi
-         djlhbbriWBEBidXh+92A1mLq7kWJHLjvBiRNKTTiWsJynbk1tLkNDWdglPNQi3NHDDeQ
-         8VrNo2FbkE36g5IG0ti1/zohr3EWRyQf2VPdJUPpkM6wIUaQdtkPUwg/DJv/K2v0gAfZ
-         z3KQ==
+        d=gmail.com; s=20230601; t=1722311037; x=1722915837; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UFVzFJaWTT6rGSUz8cSHkWG338V0aMzObcR7mTsL7Jw=;
+        b=YWcOfx6zVQb9ZV2aWrXTh6mQbgO/ytKbjhqO3m9yXl+bQ0fqTuzv6xSvVt8GVMYzXV
+         Z2whuh5mV+7TRawg67oo2X2R/HVTVytlf1qBicpmzD8KQio/eYMxKftPMEWdmaSZbYkp
+         9Px7bp+YFjIKscLq9oBr0nSpV/a98A5tqeoLxsZ9gAJWTrh7qrqlpGKOcioU/PBsi58U
+         qmTmbPsKR2fwG/PL50P6+pjIXbi0drGvqJjXi0/PIzUscg6FLYo3rQc42EYU61yjP6ZM
+         YRo5gQpqY/nN+UrPJ+qbdefz12UqRR9hOlsp3I6AdQx3oJKpQy/CqMMnBY/bkQrJow1K
+         5f1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722310836; x=1722915636;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wJtNZjx9etI7bcF/1fKvF0Zp9I41hOiDShU7BUYb0wY=;
-        b=OtVR6ej+Z+7eT3mJ0PMUW/eGm5UaN2D+NYYwC1SfbkIdZkXRsPZ7dmdWz99pTVTtbv
-         KGBBU9/z+zWytQTmv7+wYDimFHybGbrCNd5tDWe567INiIefyyDH5BK3RoO3Hpb6yNNk
-         aUYhIo9TIjPGEIoAc4WlOO/GPypnNxK8Hdo+QsXa6GLhLNTjIRcgz1RijiDb5CIhLV3H
-         tgeJ2+yWdLBXPRr1F8PFiZ7n5PthH55HO4LY4hYqSf7QLhuiVCRZ+Vloe2LRhRhBBYXx
-         +V97p+Yh2t3EbkeaTPPFoIKA+xq+NAuJnMygkmhZX1PBupBaKnk4WN182ouOlvU/5O8X
-         AlPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQk7gA/VGAENsziFLhX0zZ7TMgXL/AiblZ0mpEHMtUeXdy+HG6sHCbqneHOnFK4a1GgMh8pCtMVRu9iFNiz0PLtq/abpGddfyjZxRF
-X-Gm-Message-State: AOJu0Yw6SDU/DG8jqDh82GhXVBT5CQe3QRvW6lEfEFhrIHBRepGQ9iA8
-	cooIaDG3n6CfnhDUahqRdmcxqruZilfcdedRbIaCyvU//iMv2M6BO+qbBkEqkECZyw==
-X-Google-Smtp-Source: AGHT+IEGS87IyT+labjUGMdjw2ZzjPMOQqC0653x45y64ZRQiTK/H/AX89AkmIBqqIS+88CphDWs1A==
-X-Received: by 2002:a17:90a:8c07:b0:2cd:4593:2a8e with SMTP id 98e67ed59e1d1-2cf7e1df145mr10575470a91.15.1722310835144;
-        Mon, 29 Jul 2024 20:40:35 -0700 (PDT)
-Received: from localhost (66.112.216.249.16clouds.com. [66.112.216.249])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb76013b9sm11364797a91.53.2024.07.29.20.40.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 20:40:34 -0700 (PDT)
-From: John Wang <wangzq.jn@gmail.com>
-X-Google-Original-From: John Wang <wangzhiqiang02@ieisystem.com>
-To: Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] net: mctp: Consistent peer address handling in ioctl tag allocation
-Date: Tue, 30 Jul 2024 11:40:31 +0800
-Message-Id: <20240730034031.87151-1-wangzhiqiang02@ieisystem.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1722311037; x=1722915837;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UFVzFJaWTT6rGSUz8cSHkWG338V0aMzObcR7mTsL7Jw=;
+        b=nuoECpLU0NlqFPSdITDC0/pWBswnrVXgWNh2++z2j7htaFgKP8why6VjuIbShUS3G+
+         msZY2HqBr5nD06CQe3HKchJzJWDTn1NqGhMAkjXuRrxejq5M6TuTzQMO74MPMGqH6Xnn
+         zYd+PaCRxolZku5ZxduJQvuhT3HacRTfYrVAb3uxIZJDH3yJLpDL5ifJTTZtg7OvAQxB
+         kV7Ozj0WCPbFRBIFlR5JVvzM/knK1WIDcJzXj/pFC3zJ6GqP64HuKbIpYFMcrIbYXW1X
+         t0zhbhYEjse3K3qkgiHL+75oAfIf6upnarTc5vbjE/YTGM+Iy2pxQcq1+9PpYe1bYrSF
+         cMhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRBL55YtxnT8x+UpEG+8+XoybaXeaB/ZoaJ9INcawkaHzEeFAXR4AEkrhGWhK6Y9Ryw+EhoQzMzqIZdtvf8DR3yV/bxPnYSoUWQSd9jEcV46FFUQRVa2WoDCuIqHS1iIfS2YLQ/EHY
+X-Gm-Message-State: AOJu0Yy3z38wj4FQbk8ACUy0++4LPJoTLXhZiA7B0YV81QEubvFvdpaP
+	vFTpz8enUrfEo2r4za2s3aslOKYQDFSeEtIaYrQm1Giw6zi3r+dA3DdzqIctl7QXGO6gkJlR7vO
+	qmgjbwRgzVzJ1fRfSnZv9DhL8uOg=
+X-Google-Smtp-Source: AGHT+IHedkgYLg5L4/4Stt/4dTaPBSD8/b1plQKQGdpMSt9apgVXe1n2CWtfq6pwfo7wyZ0Wwv+6VNTURv7vtSyeT8g=
+X-Received: by 2002:a05:6820:2292:b0:5c4:27f0:ae with SMTP id
+ 006d021491bc7-5d5d0d9ad9fmr11055250eaf.1.1722311037620; Mon, 29 Jul 2024
+ 20:43:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240719041400.3909775-1-dzm91@hust.edu.cn> <20240719041400.3909775-3-dzm91@hust.edu.cn>
+ <87o76f98lr.fsf@trenco.lwn.net>
+In-Reply-To: <87o76f98lr.fsf@trenco.lwn.net>
+From: Dongliang Mu <mudongliangabcd@gmail.com>
+Date: Tue, 30 Jul 2024 11:43:31 +0800
+Message-ID: <CAD-N9QUi58tO61usRakxJUY063+=51FPSeXPvTaRXgMnOUR_2Q@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] doc-guide: add help documentation checktransupdate.rst
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Dongliang Mu <dzm91@hust.edu.cn>, chengziqiu@hust.edu.cn, Alex Shi <alexs@kernel.org>, 
+	Yanteng Si <siyanteng@loongson.cn>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When executing ioctl to allocate tags, if the peer address is 0,
-mctp_alloc_local_tag now replaces it with 0xff. However, during tag
-dropping, this replacement is not performed, potentially causing the key
-not to be dropped as expected.
+On Tue, Jul 30, 2024 at 5:44=E2=80=AFAM Jonathan Corbet <corbet@lwn.net> wr=
+ote:
+>
+> For future reference, a sequence like this:
+>
+> > +Then the output is something like:
+> > +
+> > +::
+> > +
+> > +    Documentation/dev-tools/kfence.rst
+>
+> Can be more concisely and legibly expressed as:
+>
+> > Then the output is something like::
+> >
+> >    (literal text here)
+>
+> More importantly, though, this file:
+>
+> > diff --git a/Documentation/doc-guide/checktransupdate.rst b/Documentati=
+on/doc-guide/checktransupdate.rst
+> > new file mode 100644
+> > index 000000000000..dabbf9ecd187
+> > --- /dev/null
+> > +++ b/Documentation/doc-guide/checktransupdate.rst
+> > @@ -0,0 +1,53 @@
+> > +.. SPDX-License-Identifier: GPL-2.0
+> > +
+> > +Check translation update
+> > +
+> > +This script helps track the translation status of the documentation in
+> > +different locales, i.e., whether the documentation is up-to-date with
+> > +the English counterpart.
+>
+> ...lacks a title, so it renders strangely and inserts inscrutable stuff
+> into the doc-guide index.  I have fixed this, but I am not entirely
+> happy about that; this is a problem you should have seen immediately by
+> looking at the rendered version of your new document.  *Please* be a bit
+> more careful in the future.
 
-Signed-off-by: John Wang <wangzhiqiang02@ieisystem.com>
-Change-Id: I9c75aa8aff4bc048dd3be563f7f50a6fb14dc028
----
- net/mctp/af_mctp.c | 3 +++
- 1 file changed, 3 insertions(+)
+Hi jon,
 
-diff --git a/net/mctp/af_mctp.c b/net/mctp/af_mctp.c
-index de52a9191da0..43288b408fde 100644
---- a/net/mctp/af_mctp.c
-+++ b/net/mctp/af_mctp.c
-@@ -486,6 +486,9 @@ static int mctp_ioctl_droptag(struct mctp_sock *msk, bool tagv2,
- 	tag = ctl.tag & MCTP_TAG_MASK;
- 	rc = -EINVAL;
- 
-+	if (ctl.peer_addr == MCTP_ADDR_NULL)
-+		ctl.peer_addr = MCTP_ADDR_ANY;
-+
- 	spin_lock_irqsave(&net->mctp.keys_lock, flags);
- 	hlist_for_each_entry_safe(key, tmp, &msk->keys, sklist) {
- 		/* we do an irqsave here, even though we know the irq state,
--- 
-2.34.1
+If I understand correctly, you mean there should be "=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D" under
+the sentence "Check translate update". This would generate a title,
+right?
 
+Unfortunately, the "=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D" is asked to be deleted =
+in the v2
+patch. I doubted it, but did not make it back.
+
+BTW, the merged commit version has the title - "How it works", other
+than "Check translate update".
+
+Please correct me if I make any misunderstanding.
+
+
+
+
+>
+> Both patches applied, anyway.
+>
+> jon
+>
 
