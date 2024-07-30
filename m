@@ -1,311 +1,280 @@
-Return-Path: <linux-kernel+bounces-266820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71AE5940819
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:07:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD6694081B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F32EE1F23D91
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:07:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24E4E2831BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D74C18E769;
-	Tue, 30 Jul 2024 06:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bEulmHf2"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D54167DB9;
+	Tue, 30 Jul 2024 06:09:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C694618D4B3
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 06:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C59624
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 06:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722319651; cv=none; b=dPDQ2xQ4emc2/uDnS9hM5mj2i6AJimcinfzQ/XKh7ZmkXrt6GIhjvj/FMhVmOxSvuwPYp1EEACh3aQ1fN/thmFRW7bYhiGr7fLDd2IUFbTU5Cb+DnPetbfjV6a0mXUiIhItqdZqUA5uv4N+x63MAReR/GnBcdTWvOgtDX8yCXoY=
+	t=1722319744; cv=none; b=DXczzHAvkDZwr6ra00Gok2Kz3TDoAsQtsOzNigyrqyZVUzCFXxAyHis4+IPJ4oroBcIqtKNK57KTXR6D1/UGhuUIL/5ykELSPvf71MXvxc/Ztgoh9MAkBl+QI9f2IA/qDcN87F1N1RUlQrZYFyGQynh0eKONeaVhPk4cHHx1KQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722319651; c=relaxed/simple;
-	bh=ZXI/JZSqWXhXkKTOEa/XOyUoMkMdq3Kiw1EydseD9g4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MDCnxaYhbxm2oGr0qEeVs82kK9pQ4QQvtBTiC5F9FynIQa5rYAHqKZ7FtetVs6FpEkN9kCU4S1OpVTXe+gHHkzq1nIlUNBTGiFmDHS+Sv0JyBuHwuxAJU0SxuL06/TbxQ243z4Vs3u83tnrEtGUN1xn7BqFMXYBNa+Yckq2JUfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bEulmHf2; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fd6ed7688cso27949715ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:07:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722319649; x=1722924449; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2nUjLNuPhA0ZemM5E+a6+HXIf2vTrBCrMNImUmEpou0=;
-        b=bEulmHf2D0GAchm6wzB5AhuWyEct0f/NJ6N+ypzmuN0n52hsKOWvYO1WMfzQZt1FQx
-         uMWoYXYj+1iZYgqtx/awp23i1bibcBdHAR+jgKdNHS4drVF90o2aZTp9DjZMyCTVCzy6
-         oDtk2fbhwqUkeqw50Od4a1aA7CrHSQgfdar5cAIihokcZpki12u4Rd2NH/6LkkqHS/AP
-         bRWtq+WvlKJk+EuSkJLMna/wnwRPfIRbkwCkAlkKuIioREJLH4v0NTehyvI0eSa5690n
-         uLfZkAP59U0VLrsyVHP2YeH8FlLNYohGAaIavAJuGBoXiWH9JoEDZWZey7HT8Vq+N8EK
-         THDg==
+	s=arc-20240116; t=1722319744; c=relaxed/simple;
+	bh=E4eOzSiK4plCX0GIU2sdJ0Wzf4yAogxHfSBNWnbvYjo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=IISp1cyg1j4pKN6RC9A1E3IQQmvBEAnvnf20PjT5ibMzXWTVsOG7JaevU8Gazy5GqTdJ/tBrsKMgisoQBNYk7WdqGmRVHvv145VYKJQYiXhIGM0xy7j/Wd/8pdy2R7oqyANbeynabZTwku62KdknUqNwVjwB6KXAuNYnyiwhzAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81fb21a0e41so153568839f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:09:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722319649; x=1722924449;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2nUjLNuPhA0ZemM5E+a6+HXIf2vTrBCrMNImUmEpou0=;
-        b=u3mbDLYWXsOgZEpsJIFUYPlg1P8qk8qK1pPeqGLQtSOaqL6hf3uKFqagL3ikgxjptY
-         nIrlG/tfkIe2Eaa9yoU8BrP5BWVgjGeVOX0eMJpk9Evb7yHFPfGu7saCkYOSzCyFd0CV
-         6ev1cutDzK/AQQqdTVOFiHp7z7MBrs2HyTkQzzRj0Sh0d7gd9yNz6tIQZhsYq3W3iiHB
-         whAUQd70nDN00urQkme1HptXTvBREzbBnoCZovP+xbkEPn41goHxxqz7xf9mZd6jhTeH
-         qFSFA+xf/V30jfz0lT5ZtqwPYWjpPCAXLWYGdEEL5isF/ndPPL36rxcq+sC8Ld6egGgl
-         EHSg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8c6zK59a3K8l387hhuQHki8fztVQbNS0Jd8w3X6ibe1i/7fR6y/toReg6bRyLe6f3g2JvqK4kSv3Vsoy4Nz8dHejS3F8gSUWZsZKz
-X-Gm-Message-State: AOJu0Yx/q0DGtrdX5c0mp75PevUlLJpYTsweNjHA3T75fhwT/x3Jm96/
-	7IWeiKWW68CUDOKuNgcUbI6Qjp05Q3Ur55/pyZdEK7dQ5lv7LABy
-X-Google-Smtp-Source: AGHT+IFCAk8xtEo9IOGEMHT4pM4XLaFJu1tAipcjmvjw2BFrQGf8AKqe85DxNjL12FVVm0m2oMcE2g==
-X-Received: by 2002:a17:903:2289:b0:1fb:37fa:fedb with SMTP id d9443c01a7336-1ff04805bb5mr83419115ad.10.1722319649042;
-        Mon, 29 Jul 2024 23:07:29 -0700 (PDT)
-Received: from distilledx.localdomain ([2401:4900:6320:5c5f:a09c:1e46:e58e:e6c6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7eef4f0sm93589375ad.178.2024.07.29.23.07.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 23:07:28 -0700 (PDT)
-From: Tejas Vipin <tejasvipin76@gmail.com>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	neil.armstrong@linaro.org,
-	quic_jesszhan@quicinc.com
-Cc: dianders@chromium.org,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Tejas Vipin <tejasvipin76@gmail.com>
-Subject: [PATCH v2 2/2] drm/panel: startek-kd070fhfid015: transition to mipi_dsi wrapped functions
-Date: Tue, 30 Jul 2024 11:36:59 +0530
-Message-ID: <20240730060659.455953-3-tejasvipin76@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240730060659.455953-1-tejasvipin76@gmail.com>
-References: <20240730060659.455953-1-tejasvipin76@gmail.com>
+        d=1e100.net; s=20230601; t=1722319742; x=1722924542;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/zdtroyni7nc8ql8tkXavVpPTvMhRQ4YRis8yLIEg2w=;
+        b=Jv7Vvl3uJL13G6K8SKRsligUyfLkAwjaesMs3fsvYjo6NEO9ApHgEEqDUqGrIKKOpR
+         eM0WnmXUqT1U/JbmfFIdIo6nY3m1RzOPLuRffplp0ucPl6wkcLfaTWm6CtPXcY3QOdLf
+         kZFbxft6EdJ8IiefKPbu/ZBGGqB1tR5FDeLb++ydCRZa2an7+ScSpNAqHYdLhTsqywMT
+         FIkQGoCaoB47V94qJIKcEdU5TlSc1LfLr8fpyueLXi1/+rDTK7kiL+2VprtpfGU6VaPe
+         sxUWzb0KD3hRXe1LnzM0wUeaRKPS7QdKTU2tpabAml6PNKn/YePRpVruXBeQqyAyfGTt
+         OTfw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+rpis2hXNtrj3dxiBOrO95DO0b4Fz+Zlp/yzUnlCk477enf2qlBRNFtMPQd1Y+xOgRA4kQs6tkL5SK5RoibyQtoElE8ik4tRQroej
+X-Gm-Message-State: AOJu0YycZtM01V3OqOkkPjqCfhzfaU+z2EWuCQFfJ2EcVGPPlW8yMEP4
+	UqFQC3TTMnytsMClUJMoZMzkNoJf8Blt3w5tgCPXSioAJJ7RCJPOxi4PVTOPt2piVB4pMWA6ckZ
+	SSnkTEWl20eurYItBHq4xx/NP58fdc+DTXbOJ0mRrXvTgYkkdgwWClgM=
+X-Google-Smtp-Source: AGHT+IE/PnEMPDSb7r+sd649m16falOp216mH1QsR+lrQHq4aCs0jv9vptuyzbMGGZAlCbR70TgHFtd6OZZj5OK+cpMPudRcvo+U
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:8708:b0:4b9:b122:d07d with SMTP id
+ 8926c6da1cb9f-4c645146649mr231350173.4.1722319741875; Mon, 29 Jul 2024
+ 23:09:01 -0700 (PDT)
+Date: Mon, 29 Jul 2024 23:09:01 -0700
+In-Reply-To: <tencent_A2209684364A4BE47431769567DA3DC33709@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006789bc061e70d00a@google.com>
+Subject: Re: [syzbot] [usb?] KASAN: slab-use-after-free Read in hdm_disconnect
+From: syzbot <syzbot+916742d5d24f6c254761@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Use multi style wrapped functions for mipi_dsi in the
-startek-kd070fhfid015 panel.
+Hello,
 
-Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
----
- .../drm/panel/panel-startek-kd070fhfid015.c   | 123 ++++++------------
- 1 file changed, 39 insertions(+), 84 deletions(-)
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-use-after-free Read in put_device
 
-diff --git a/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c b/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
-index 0156689f41cd..f1df727b9183 100644
---- a/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
-+++ b/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
-@@ -24,10 +24,10 @@
- #include <drm/drm_modes.h>
- #include <drm/drm_panel.h>
- 
--#define DSI_REG_MCAP	0xB0
--#define DSI_REG_IS	0xB3 /* Interface Setting */
--#define DSI_REG_IIS	0xB4 /* Interface ID Setting */
--#define DSI_REG_CTRL	0xB6
-+#define DSI_REG_MCAP	0xb0
-+#define DSI_REG_IS	0xb3 /* Interface Setting */
-+#define DSI_REG_IIS	0xb4 /* Interface ID Setting */
-+#define DSI_REG_CTRL	0xb6
- 
- enum {
- 	IOVCC = 0,
-@@ -52,92 +52,55 @@ static inline struct stk_panel *to_stk_panel(struct drm_panel *panel)
- static int stk_panel_init(struct stk_panel *stk)
- {
- 	struct mipi_dsi_device *dsi = stk->dsi;
--	struct device *dev = &stk->dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
- 
--	ret = mipi_dsi_dcs_soft_reset(dsi);
--	if (ret < 0) {
--		dev_err(dev, "failed to mipi_dsi_dcs_soft_reset: %d\n", ret);
--		return ret;
--	}
--	mdelay(5);
-+	mipi_dsi_dcs_soft_reset_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 5);
-+	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 120);
- 
--	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
--	if (ret < 0) {
--		dev_err(dev, "failed to set exit sleep mode: %d\n", ret);
--		return ret;
--	}
--	msleep(120);
--
--	mipi_dsi_generic_write_seq(dsi, DSI_REG_MCAP, 0x04);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_MCAP, 0x04);
- 
- 	/* Interface setting, video mode */
--	mipi_dsi_generic_write_seq(dsi, DSI_REG_IS, 0x14, 0x08, 0x00, 0x22, 0x00);
--	mipi_dsi_generic_write_seq(dsi, DSI_REG_IIS, 0x0C, 0x00);
--	mipi_dsi_generic_write_seq(dsi, DSI_REG_CTRL, 0x3A, 0xD3);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_IS, 0x14, 0x08, 0x00, 0x22, 0x00);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_IIS, 0x0c, 0x00);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_CTRL, 0x3a, 0xd3);
- 
--	ret = mipi_dsi_dcs_set_display_brightness(dsi, 0x77);
--	if (ret < 0) {
--		dev_err(dev, "failed to write display brightness: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, 0x77);
- 
--	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY,
--			       MIPI_DCS_WRITE_MEMORY_START);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_CONTROL_DISPLAY,
-+				     MIPI_DCS_WRITE_MEMORY_START);
- 
--	ret = mipi_dsi_dcs_set_pixel_format(dsi, 0x77);
--	if (ret < 0) {
--		dev_err(dev, "failed to set pixel format: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_set_pixel_format_multi(&dsi_ctx, 0x77);
-+	mipi_dsi_dcs_set_column_address_multi(&dsi_ctx, 0, stk->mode->hdisplay - 1);
-+	mipi_dsi_dcs_set_page_address_multi(&dsi_ctx, 0, stk->mode->vdisplay - 1);
- 
--	ret = mipi_dsi_dcs_set_column_address(dsi, 0, stk->mode->hdisplay - 1);
--	if (ret < 0) {
--		dev_err(dev, "failed to set column address: %d\n", ret);
--		return ret;
--	}
--
--	ret = mipi_dsi_dcs_set_page_address(dsi, 0, stk->mode->vdisplay - 1);
--	if (ret < 0) {
--		dev_err(dev, "failed to set page address: %d\n", ret);
--		return ret;
--	}
--
--	return 0;
-+	return dsi_ctx.accum_err;
- }
- 
- static int stk_panel_on(struct stk_panel *stk)
- {
- 	struct mipi_dsi_device *dsi = stk->dsi;
--	struct device *dev = &stk->dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
- 
--	ret = mipi_dsi_dcs_set_display_on(dsi);
--	if (ret < 0)
--		dev_err(dev, "failed to set display on: %d\n", ret);
-+	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
- 
--	mdelay(20);
-+	mipi_dsi_msleep(&dsi_ctx, 20);
- 
--	return ret;
-+	return dsi_ctx.accum_err;
- }
- 
- static void stk_panel_off(struct stk_panel *stk)
- {
- 	struct mipi_dsi_device *dsi = stk->dsi;
--	struct device *dev = &stk->dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
- 
- 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
- 
--	ret = mipi_dsi_dcs_set_display_off(dsi);
--	if (ret < 0)
--		dev_err(dev, "failed to set display off: %d\n", ret);
--
--	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
--	if (ret < 0)
--		dev_err(dev, "failed to enter sleep mode: %d\n", ret);
-+	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-+	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
- 
--	msleep(100);
-+	mipi_dsi_msleep(&dsi_ctx, 100);
- }
- 
- static int stk_panel_unprepare(struct drm_panel *panel)
-@@ -155,7 +118,6 @@ static int stk_panel_unprepare(struct drm_panel *panel)
- static int stk_panel_prepare(struct drm_panel *panel)
- {
- 	struct stk_panel *stk = to_stk_panel(panel);
--	struct device *dev = &stk->dsi->dev;
- 	int ret;
- 
- 	gpiod_set_value(stk->reset_gpio, 0);
-@@ -175,16 +137,12 @@ static int stk_panel_prepare(struct drm_panel *panel)
- 	gpiod_set_value(stk->reset_gpio, 1);
- 	mdelay(10);
- 	ret = stk_panel_init(stk);
--	if (ret < 0) {
--		dev_err(dev, "failed to init panel: %d\n", ret);
-+	if (ret < 0)
- 		goto poweroff;
--	}
- 
- 	ret = stk_panel_on(stk);
--	if (ret < 0) {
--		dev_err(dev, "failed to set panel on: %d\n", ret);
-+	if (ret < 0)
- 		goto poweroff;
--	}
- 
- 	return 0;
- 
-@@ -235,13 +193,13 @@ static int stk_panel_get_modes(struct drm_panel *panel,
- static int dsi_dcs_bl_get_brightness(struct backlight_device *bl)
- {
- 	struct mipi_dsi_device *dsi = bl_get_data(bl);
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
- 	u16 brightness;
- 
- 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
--	ret = mipi_dsi_dcs_get_display_brightness(dsi, &brightness);
--	if (ret < 0)
--		return ret;
-+	mipi_dsi_dcs_get_display_brightness_multi(&dsi_ctx, &brightness);
-+	if (dsi_ctx.accum_err)
-+		return dsi_ctx.accum_err;
- 
- 	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
- 	return brightness & 0xff;
-@@ -250,18 +208,15 @@ static int dsi_dcs_bl_get_brightness(struct backlight_device *bl)
- static int dsi_dcs_bl_update_status(struct backlight_device *bl)
- {
- 	struct mipi_dsi_device *dsi = bl_get_data(bl);
--	struct device *dev = &dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
- 
- 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
--	ret = mipi_dsi_dcs_set_display_brightness(dsi, bl->props.brightness);
--	if (ret < 0) {
--		dev_err(dev, "failed to set DSI control: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, bl->props.brightness);
-+	if (dsi_ctx.accum_err)
-+		return dsi_ctx.accum_err;
- 
- 	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
--	return 0;
-+	return dsi_ctx.accum_err;
- }
- 
- static const struct backlight_ops dsi_bl_ops = {
--- 
-2.45.2
+usb 1-1: USB disconnect, device number 2
+==================================================================
+BUG: KASAN: slab-use-after-free in kobject_put+0x503/0x5b0 lib/kobject.c:733
+Read of size 1 at addr ffff88811374003c by task kworker/0:2/43
+
+CPU: 0 UID: 0 PID: 43 Comm: kworker/0:2 Not tainted 6.10.0-syzkaller-11840-g933069701c1b-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ kobject_put+0x503/0x5b0 lib/kobject.c:733
+ put_device+0x1f/0x30 drivers/base/core.c:3787
+ usb_unbind_interface+0x1e8/0x970 drivers/usb/core/driver.c:461
+ device_remove drivers/base/dd.c:568 [inline]
+ device_remove+0x122/0x170 drivers/base/dd.c:560
+ __device_release_driver drivers/base/dd.c:1270 [inline]
+ device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1293
+ bus_remove_device+0x22f/0x420 drivers/base/bus.c:574
+ device_del+0x396/0x9f0 drivers/base/core.c:3868
+ usb_disable_device+0x36c/0x7f0 drivers/usb/core/message.c:1418
+ usb_disconnect+0x2e1/0x920 drivers/usb/core/hub.c:2304
+ hub_port_connect drivers/usb/core/hub.c:5361 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x1be4/0x4f50 drivers/usb/core/hub.c:5903
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Allocated by task 41:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+ __kasan_kmalloc+0x8f/0xa0 mm/kasan/common.c:387
+ kmalloc_noprof include/linux/slab.h:681 [inline]
+ kzalloc_noprof include/linux/slab.h:807 [inline]
+ hdm_probe+0xb3/0x1880 drivers/most/most_usb.c:959
+ usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
+ call_driver_probe drivers/base/dd.c:578 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:656
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:798
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:828
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:956
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:457
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1028
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:532
+ device_add+0x114b/0x1a70 drivers/base/core.c:3679
+ usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:254
+ usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:294
+ call_driver_probe drivers/base/dd.c:578 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:656
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:798
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:828
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:956
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:457
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1028
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:532
+ device_add+0x114b/0x1a70 drivers/base/core.c:3679
+ usb_new_device+0xd90/0x1a10 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x2e66/0x4f50 drivers/usb/core/hub.c:5903
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Freed by task 43:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
+ poison_slab_object+0xf7/0x160 mm/kasan/common.c:240
+ __kasan_slab_free+0x14/0x30 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2252 [inline]
+ slab_free mm/slub.c:4473 [inline]
+ kfree+0x10b/0x380 mm/slub.c:4594
+ device_release+0xa1/0x240 drivers/base/core.c:2581
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x1fa/0x5b0 lib/kobject.c:737
+ put_device drivers/base/core.c:3787 [inline]
+ device_unregister+0x2f/0xc0 drivers/base/core.c:3910
+ hdm_disconnect+0x1bb/0x220 drivers/most/most_usb.c:1127
+ usb_unbind_interface+0x1e8/0x970 drivers/usb/core/driver.c:461
+ device_remove drivers/base/dd.c:568 [inline]
+ device_remove+0x122/0x170 drivers/base/dd.c:560
+ __device_release_driver drivers/base/dd.c:1270 [inline]
+ device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1293
+ bus_remove_device+0x22f/0x420 drivers/base/bus.c:574
+ device_del+0x396/0x9f0 drivers/base/core.c:3868
+ usb_disable_device+0x36c/0x7f0 drivers/usb/core/message.c:1418
+ usb_disconnect+0x2e1/0x920 drivers/usb/core/hub.c:2304
+ hub_port_connect drivers/usb/core/hub.c:5361 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x1be4/0x4f50 drivers/usb/core/hub.c:5903
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+The buggy address belongs to the object at ffff888113740000
+ which belongs to the cache kmalloc-8k of size 8192
+The buggy address is located 60 bytes inside of
+ freed 8192-byte region [ffff888113740000, ffff888113742000)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x113740
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+anon flags: 0x200000000000040(head|node=0|zone=2)
+page_type: 0xfdffffff(slab)
+raw: 0200000000000040 ffff888100042280 ffffea000425be00 dead000000000003
+raw: 0000000000000000 0000000000020002 00000001fdffffff 0000000000000000
+head: 0200000000000040 ffff888100042280 ffffea000425be00 dead000000000003
+head: 0000000000000000 0000000000020002 00000001fdffffff 0000000000000000
+head: 0200000000000003 ffffea00044dd001 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 2651, tgid 2651 (syz-executor), ts 42037680054, free_ts 41938721681
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1493
+ prep_new_page mm/page_alloc.c:1501 [inline]
+ get_page_from_freelist+0x1311/0x25f0 mm/page_alloc.c:3438
+ __alloc_pages_noprof+0x21e/0x2290 mm/page_alloc.c:4696
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x4e/0xf0 mm/slub.c:2321
+ allocate_slab mm/slub.c:2484 [inline]
+ new_slab+0x84/0x260 mm/slub.c:2537
+ ___slab_alloc+0xdac/0x1870 mm/slub.c:3723
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3813
+ __slab_alloc_node mm/slub.c:3866 [inline]
+ slab_alloc_node mm/slub.c:4025 [inline]
+ __kmalloc_cache_noprof+0x27a/0x2c0 mm/slub.c:4184
+ kmalloc_noprof include/linux/slab.h:681 [inline]
+ kzalloc_noprof include/linux/slab.h:807 [inline]
+ cgroup1_root_to_use kernel/cgroup/cgroup-v1.c:1217 [inline]
+ cgroup1_get_tree+0x936/0xed0 kernel/cgroup/cgroup-v1.c:1244
+ vfs_get_tree+0x8f/0x380 fs/super.c:1789
+ do_new_mount fs/namespace.c:3472 [inline]
+ path_mount+0x14e6/0x1f20 fs/namespace.c:3799
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount fs/namespace.c:3997 [inline]
+ __x64_sys_mount+0x294/0x320 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 2651 tgid 2651 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1094 [inline]
+ free_unref_page+0x698/0xce0 mm/page_alloc.c:2608
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x4e/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x192/0x1e0 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x4e/0x70 mm/kasan/common.c:322
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3988 [inline]
+ slab_alloc_node mm/slub.c:4037 [inline]
+ kmem_cache_alloc_noprof+0x11c/0x2b0 mm/slub.c:4044
+ getname_flags.part.0+0x4c/0x550 fs/namei.c:139
+ getname_flags+0x93/0xf0 include/linux/audit.h:322
+ vfs_fstatat+0x86/0x160 fs/stat.c:340
+ __do_sys_newfstatat+0xa2/0x130 fs/stat.c:505
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88811373ff00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88811373ff80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888113740000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                        ^
+ ffff888113740080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888113740100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+Tested on:
+
+commit:         93306970 Merge tag '6.11-rc-smb3-server-fixes' of git:..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=14d2e79d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f828342678294017
+dashboard link: https://syzkaller.appspot.com/bug?extid=916742d5d24f6c254761
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=160b42f9980000
 
 
