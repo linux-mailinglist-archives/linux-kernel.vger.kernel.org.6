@@ -1,125 +1,107 @@
-Return-Path: <linux-kernel+bounces-267282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE390940FB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:42:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 554D5940F8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92751B28927
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:36:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF4BC1F27BED
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDCF19E81D;
-	Tue, 30 Jul 2024 10:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B251A19FA90;
+	Tue, 30 Jul 2024 10:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cu7YWSAM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLhHxEVH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1FB19DF70;
-	Tue, 30 Jul 2024 10:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF59C19F478;
+	Tue, 30 Jul 2024 10:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722335482; cv=none; b=XsGQhw9kAITzlCyiyTddSvvfoAAmAW2ouASyOnQsw2isBse2hryHRewO/F2tyU6YjqeU5wLJLSu7DP9xaiQwwIPvoMUXuneJqzvOw7ACWZLatv+0+5V0Dmj077cUWVQvOWooxAzJy4+qbUQ4E1hhb1WDzzeqsO5oRYVkDWoeT08=
+	t=1722335550; cv=none; b=RZTyHwPmfJ+4Owg/c4pEH+Uge5dTm/brK4klXnMhbg9JAioI2wyEYsv4a2I97vy7E8LQe5eut8SpL98+6Wv7EpQeIqf2Go6IqUBwKTO06w85acJ+TsW8DKzqbLU1Di7lNyRZyOTKtrqqCLr2BqbZI5KIbSWiWsRYrFUnccY6irM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722335482; c=relaxed/simple;
-	bh=iJFVbRYOc1jzsjpJ08jTc7C7wyjX0vVNNK+tZsJP1m4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cDfjp//1I5Ini1zscY7BKFAdgmxuEMytL6eqIPxqLuJt6Ob12LuXgNSHMmtOLWVRgGgq4zf3CRe1WjxeWE2aIiEt9lBF0QDMSyKDYnNozF7JuLI7qlM9+SD730dXuBAJromgfr2iOT6xjib9ualWn1UnIqTf05ECvrCZt87+nyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cu7YWSAM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46U0r8HB026407;
-	Tue, 30 Jul 2024 10:30:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=wI3Q4nVFdXrvJugbyJuL+mmiWCTxUxemt3HF/N24QaU=; b=cu
-	7YWSAM2wnb6m0/51y1xg0JULxz/Cz1tjR3Xaf/HVy9ieWKmdxleWSG4OW44m/3g4
-	TmNjkNVuzFaTeIZ7UZOjZLbbkFCLUd68VUtVMcZ3df2ZJc+ys9lRaIPoCxLMjniw
-	UWaF9NDZh3RZTljKmFww/KLV8mosseMPbbg1gFgu5J6LF78NeB20gBJNUdliUJve
-	ar3BtaRnCjXoAbSIuv88aLj7SAp+Z3p+pjArDFVLgLOcYtiP5oPNdfgPFzI/gqWy
-	KN/Y8E/k50xfvfLzj5rJYXPuHrKvxLkgTiHGyScM/pmCf1OVhlkxk5lTteoMSqVP
-	23sYAYlhdKrP1RgHZsWA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mpkey4jy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 10:30:57 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46UAUv2J017631
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 10:30:57 GMT
-Received: from zhenhuah-gv.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 30 Jul 2024 03:30:54 -0700
-From: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-To: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
-        <joro@8bytes.org>
-CC: <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <quic_c_gdjako@quicinc.com>, <dmitry.baryshkov@linaro.org>,
-        Zhenhua Huang
-	<quic_zhenhuah@quicinc.com>
-Subject: [PATCH 1/1] iommu/arm-smmu-qcom: remove runtime pm enabling for TBU driver
-Date: Tue, 30 Jul 2024 18:30:43 +0800
-Message-ID: <1722335443-30080-1-git-send-email-quic_zhenhuah@quicinc.com>
-X-Mailer: git-send-email 2.7.4
+	s=arc-20240116; t=1722335550; c=relaxed/simple;
+	bh=txn1s3bgzVIuXJu0cYM+vvtxHF7FjobSOmpL3UqHN+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ig87jiTJaNFEnkm5YI0b39wYgmt+jCahgbeZrpJi+MkIeVPm2k5LWVcNFAAHN0Q5r55RawYah3FaXn24PTxpn1Hb9ErYrcud6zKl7eoCeF715xGGw6NtMxZ3ZhRZ8tQ8vkjAny/X0GsFkWbgeFC2S0ey3LNOohiVMJYVPcvME6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jLhHxEVH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E5DCC4AF09;
+	Tue, 30 Jul 2024 10:32:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722335549;
+	bh=txn1s3bgzVIuXJu0cYM+vvtxHF7FjobSOmpL3UqHN+I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jLhHxEVHYtrrei05iTxVuu9BeWNwTGiWIpOXmZ1nfGP4uE03r0LdqgzkXn4gkMJHO
+	 88QJCGaNW4TeCSGkQmjL9S0n3Gh/3daOCj9YeAurYxHlCfKI5RvndcPpbJGDvf6wSU
+	 ccOUwjJMjSbbm/9Fzz34a0wteycBHTLBlMMH2JNDyqofcwL4bD3v3nTrIT0cBKKMX2
+	 rBEYTrzRIiFBv58NdOfsuo1BthUU9WWVd7EDGDHzD+UolsuqwH+zie2fHnkPpe+8y4
+	 sF/xxRN4ChiiGQhR9cf/VEBlqQZfkBFq8FAheSw8n2fJR7tGpuZPmHJiT+o7OuS5zB
+	 VvYH4Z8l8A/NQ==
+Date: Tue, 30 Jul 2024 11:32:24 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Witold Sadowski <wsadowski@marvell.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"pthombar@cadence.com" <pthombar@cadence.com>
+Subject: Re: [EXTERNAL] Re: [PATCH v11 4/9] spi: cadence: Add Marvell SDMA
+ operations
+Message-ID: <7d8151b9-ab9b-4a9b-9503-e2be89ac6dff@sirena.org.uk>
+References: <20240724154739.582367-1-wsadowski@marvell.com>
+ <20240724154739.582367-5-wsadowski@marvell.com>
+ <CAMuHMdWnd8BOLVXpAy8CoFqKzYhp+vj6un=w7Umpo6OQ=Nxqng@mail.gmail.com>
+ <CO6PR18MB4098B578E6DED1FF39C3ECF1B0B02@CO6PR18MB4098.namprd18.prod.outlook.com>
+ <CAMuHMdUbTm++Vcf8f-wAnHgXF4wgJydE3dAn2hO0oAiTtMkouQ@mail.gmail.com>
+ <CO6PR18MB409801B2DCFEAD204F784711B0B02@CO6PR18MB4098.namprd18.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: XjEMwOAqJCLO1XM-tP_-gvA0hscz3qUh
-X-Proofpoint-GUID: XjEMwOAqJCLO1XM-tP_-gvA0hscz3qUh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_11,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- mlxlogscore=919 priorityscore=1501 impostorscore=0 malwarescore=0
- lowpriorityscore=0 spamscore=0 phishscore=0 adultscore=0 mlxscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407300075
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="EZuf7eho9kDeFV8O"
+Content-Disposition: inline
+In-Reply-To: <CO6PR18MB409801B2DCFEAD204F784711B0B02@CO6PR18MB4098.namprd18.prod.outlook.com>
+X-Cookie: Don't SANFORIZE me!!
 
-TBU driver has no runtime pm support now, adding pm_runtime_enable()
-seems to be useless. Remove it.
 
-Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
----
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 6 ------
- 1 file changed, 6 deletions(-)
+--EZuf7eho9kDeFV8O
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-index 36c6b36ad4ff..aff2fe1fda13 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-@@ -566,7 +566,6 @@ static struct acpi_platform_list qcom_acpi_platlist[] = {
- 
- static int qcom_smmu_tbu_probe(struct platform_device *pdev)
- {
--	struct device *dev = &pdev->dev;
- 	int ret;
- 
- 	if (IS_ENABLED(CONFIG_ARM_SMMU_QCOM_DEBUG)) {
-@@ -575,11 +574,6 @@ static int qcom_smmu_tbu_probe(struct platform_device *pdev)
- 			return ret;
- 	}
- 
--	if (dev->pm_domain) {
--		pm_runtime_set_active(dev);
--		pm_runtime_enable(dev);
--	}
--
- 	return 0;
- }
- 
--- 
-2.7.4
+On Tue, Jul 30, 2024 at 10:17:43AM +0000, Witold Sadowski wrote:
 
+> > drivers/spi/Kconfig, config SPI_CADENCE_XSPI:
+
+> >   -depends on OF && HAS_IOMEM
+> >   +depends on OF && HAS_IOMEM && 64BIT
+
+> Can that be send as separate patch, or whole patch series should be updated?
+
+Please respin the series.
+
+--EZuf7eho9kDeFV8O
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaowTcACgkQJNaLcl1U
+h9CXpgf/YYlbnEym1msKwwvSsTAWiDTG3hj6LrCulsGBQjB5H73wHBJQMHdsG1Yn
+k9G1Px0CP7LNlXe1DKrbv9xrGBLOBoX6+ItJ5z5anm4IgWgOjnfkf+7knyOBknqn
+4DGgRdeWlv6n0It4oSLTDt3aTSIYZWukDKRfa6gPI1crOnRBX0H7Yh0LrbhNO9Js
+DoqhKGZdZUdikeVZNITQjoqHRWydviokfoZoQ+dYthX97HdpQVoHAt8CpSmhq/KK
+YKi5agSAVjFxdVwIC1ajhRXiGHda24qAhC+YfGAqcPRcwuVNDSdWjh/9GB7HL+0g
+RxkG5h6iZmdwlqaDtbZL/8g/x11KKQ==
+=nRWV
+-----END PGP SIGNATURE-----
+
+--EZuf7eho9kDeFV8O--
 
