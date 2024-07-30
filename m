@@ -1,104 +1,98 @@
-Return-Path: <linux-kernel+bounces-268161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4514B942105
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:48:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C867F942108
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F155C2817FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:48:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E6EB1F24626
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2D618CBE0;
-	Tue, 30 Jul 2024 19:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB1918CBE2;
+	Tue, 30 Jul 2024 19:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aa7lTzFP"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X64ADXox"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5513FE4;
-	Tue, 30 Jul 2024 19:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845C4189904;
+	Tue, 30 Jul 2024 19:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722368895; cv=none; b=err9MNP8iIsD7IyfMopjVVifGrDsDMNFGYaAcpetVHNG2RBy3/XuMb21heE9/m6SVo2CQ84UfAqfSdILf+m39Q3IqverTe56qmmRu5sK4x8u0FWxSEl6/rBlxenHMyutu48n2ADn/F+3lwIhQs96udPZ1/ibcJd4JFNVR3I/jH8=
+	t=1722368955; cv=none; b=cWkXzgTf6ni6eLLmSKexJtO9D0Wg836Rhm1SVNktW7GZVMOCa2XjB0Z9ziAXX/PhnYdvbAGxJ40MO31j9utA3yDaAvos1zh2ld5NEk5JpMObpwpNNqrY94qf4aF8XY4Am8kHK0xN2HoKuQsH2hpmO3l8m0hRAmCWYThIxVD+j/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722368895; c=relaxed/simple;
-	bh=ZAmZIWIEhCIhmGzzpDJ5vhuwis2cxS/mWyQQzibV4UI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lhoX6reUQF+BWMpoOap9IWnNLTuihwPgtzH8In++zqrtwttWIiXNNqzj2/kbaPOLkzgKD4deByHVN9LacZ4zJUKLR2GcW/ixFxggGvVoF3s73RFF9WKp5IN5s45Lus417MwSVUOcn+J2+jcwZwpf1FBYr/Dw4gzuVAGnhBBzQXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aa7lTzFP; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70d153fec2fso3859757b3a.1;
-        Tue, 30 Jul 2024 12:48:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722368893; x=1722973693; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=diWdjRqXEGFSY/WPji21hwYK/rR5ogxIGLkpnjqpNBg=;
-        b=aa7lTzFPV1igyrlXeutNAnfvjcQR378cx/vSK6IbrOUBFynBwAu03MKY7KcjWmp/gm
-         3izFvsayDd1RAcJDlsTW9XJrRu8px/sQZg3CRArA7z/XsND9W+fOdP+yTaLtwKMv+tv3
-         IHFquX33nAd1T+/mopkXhH7T8sBjQHervkTLfJoU+8rqgH5gmO3Ofq3emOQyluyp8iZO
-         N5ZsqucTglkhQXhT2EWhK9azx5rkk4SgJnokjT2hUxunxKyStsgXvvJ7g6ulnRgmtWcf
-         9CR9tknlsr2uQhZOJyb3kTTDG4CD3pMBFyYFEqhBJEyuJ/F+w45CvrZ9TWnUTIBjKFQR
-         qAlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722368893; x=1722973693;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=diWdjRqXEGFSY/WPji21hwYK/rR5ogxIGLkpnjqpNBg=;
-        b=byfzhoppI4OJk7iVai+l3ZOmaQ3sErTQ0ae7HNCyGWaKErj/60kNodxD1hah0a7TtW
-         TcLHAQD+bfUJFiFgN1MhTOm8yev9mBaX/ix+dzT5jlvUHOkOUfccB8T3t+xdxPMaIUEd
-         svvJ1qQPxnUF/HMYrWiY3bLCLW0kAi2jUXmUhrU5LUbA0b/ua86pr+dWJdSkKFFH0BhR
-         r5BzvLkk41LuReSPT6S44i5ZkjBxm9ip3DrRmYvFg64uhVio4wbPWQRpge3hE3eaotmX
-         cFg4Ov8UrEkcPYVPn9si+4DPeQfyH0/d3gflduiWj0RgJBDel9C090AqzmSbQaYRhp8g
-         3uqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVgAUgtxzVRu4OB7WUEBA0MFBq1pJLdb7/uiN4ttLVEzxG4ZtIv7g70sWko8sytMdVZwlm2ihHeRdEYxXnxumu5bujI6Pkwlb60L8qAcJpfZ+XoqKpJG3qRNc5PkAyxpaCRDWPF+ks
-X-Gm-Message-State: AOJu0YwGz0Ox6chUfntsMp9/TSfrq9F+uBRQbp6Tcr61kCln8gYMBQhx
-	ifHAkEGFjbODbI0jpLEYT0QgH5SDwccQxbe53KL7PrfhDtImbOBxPRfTvQ==
-X-Google-Smtp-Source: AGHT+IEuE+v1RAf30TWvn5kOSVZiuxBfX4ApHVK6pNXfnWWbJxVLRZLZzL5xRYgjUKFaiVkdCfELJA==
-X-Received: by 2002:aa7:8888:0:b0:70d:21d9:e2ae with SMTP id d2e1a72fcca58-70ece9f42f0mr16181456b3a.6.1722368892855;
-        Tue, 30 Jul 2024 12:48:12 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8a39d8sm8823308b3a.213.2024.07.30.12.48.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 12:48:12 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 30 Jul 2024 09:48:11 -1000
-From: Tejun Heo <tj@kernel.org>
-To: n.shubin@yadro.com
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, nikita.shubin@maquefel.me,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux@yadro.com
-Subject: Re: [PATCH v2] workqueue: doc: Fix function name, remove markers
-Message-ID: <ZqlDexrLVIU8pQU_@slm.duckdns.org>
-References: <20240719-fix_doc-v2-1-a5cbeb46e0cc@yadro.com>
+	s=arc-20240116; t=1722368955; c=relaxed/simple;
+	bh=ZRU/ils+M3BtFnjH9dt3Gff4powKMpDinTqwXofED/o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MuTZAXZekdBKWzuHn+DxYJhia4jEryiknUw92XXm6TU/dJPczuRSj+wUzGG4nP8O1LHd2AhrZfsqtk1WAUHd20xB/BE/PKWJpd354+nyw8MH7BU+JB8G2hmJ/jzvjVL4eE8cDX7H6+CVUq9v+wsVs73v5PplMGmpaBHOhByv44M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X64ADXox; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56E8CC32782;
+	Tue, 30 Jul 2024 19:49:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722368955;
+	bh=ZRU/ils+M3BtFnjH9dt3Gff4powKMpDinTqwXofED/o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=X64ADXox43umdsDRtMUpRKW31HQ1ZHNTX4onNoU0QNchkN4AhaVjUWfA07xu2aLC4
+	 b9rEySAXMLu/tBW3zYfvpShp6p4Nx9QMdz6CcsoTWNZeNXIKVbExJ+nEdRyd/MAHTJ
+	 gtU2z5iBWHnU/F9XU3nKc78GBxyyDRRoOXgp57GwQsWnL0e+sQTT21mm5MetY0pk6D
+	 OonsdH0B0qzyonZ9PpZwRVp3ZPDELzoxXhOocWCk9VagG77Vy80usKCpGRVj/GjYA3
+	 dt8I7zbc30I/IOyQ/0nd3FPce4fuPKvnP7B1r70YdQWd9q70iG7AkequpgsUIMAJlx
+	 brMr/Et78jltg==
+From: Michael Walle <mwalle@kernel.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: linux-rtc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Michael Walle <mwalle@kernel.org>
+Subject: [PATCH] rtc: sun6i: disable automatic clock input switching
+Date: Tue, 30 Jul 2024 21:49:05 +0200
+Message-Id: <20240730194905.2587202-1-mwalle@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240719-fix_doc-v2-1-a5cbeb46e0cc@yadro.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 19, 2024 at 05:30:16PM +0300, Nikita Shubin via B4 Relay wrote:
-> From: Nikita Shubin <n.shubin@yadro.com>
-> 
-> - s/alloc_ordered_queue()/alloc_ordered_workqueue()/
-> - remove markers to convert it into a link.
-> 
-> Signed-off-by: Nikita Shubin <n.shubin@yadro.com>
+The V3(s) will detect a valid external low frequency clock and if it is
+not present will automatically switch to the internal one. This might
+hide bugs and (hardware) configuration errors. It's even worse because
+the internal RTC runs significantly slower (32.000Hz vs 32.768Hz).
+Fortunately for us, the V3(s) has an (undocumented) bypass of this
+switching and the driver already supports it by setting the
+.has_auto_swt flag.
 
-Applied to wq/for-6.11-fixes.
+Signed-off-by: Michael Walle <mwalle@kernel.org>
+---
+This is not tagged as a Fixes commit, because it might break boards with
+an incorrect device tree. That is, if the device tree lists the external
+crystal but the board doesn't have it the RTC will stop running. I don't
+think this is likely though, because the user manual requires the
+external clock.
+---
+ drivers/rtc/rtc-sun6i.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks.
-
+diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
+index 8e0c66906103..e681c1745866 100644
+--- a/drivers/rtc/rtc-sun6i.c
++++ b/drivers/rtc/rtc-sun6i.c
+@@ -402,6 +402,7 @@ CLK_OF_DECLARE_DRIVER(sun8i_r40_rtc_clk, "allwinner,sun8i-r40-rtc",
+ static const struct sun6i_rtc_clk_data sun8i_v3_rtc_data = {
+ 	.rc_osc_rate = 32000,
+ 	.has_out_clk = 1,
++	.has_auto_swt = 1,
+ };
+ 
+ static void __init sun8i_v3_rtc_clk_init(struct device_node *node)
 -- 
-tejun
+2.39.2
+
 
