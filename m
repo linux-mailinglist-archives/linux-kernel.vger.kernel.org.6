@@ -1,70 +1,102 @@
-Return-Path: <linux-kernel+bounces-267759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AEF4941529
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:11:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E419094152A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:11:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 202C92837AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:11:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 128EA1C22F00
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645611A2C26;
-	Tue, 30 Jul 2024 15:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8E41A2C29;
+	Tue, 30 Jul 2024 15:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="A+mrM7MV"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Rn4a+YM3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jtNOBqSf";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Rn4a+YM3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jtNOBqSf"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE751A2553;
-	Tue, 30 Jul 2024 15:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B041A2540;
+	Tue, 30 Jul 2024 15:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722352278; cv=none; b=ExbvHKgV16ploJYZh0ZpEdtnhVep4U1UY/XKGFpHywH0seQ9PXAeX34sq/QPjUKtQzXvudPhXjg9MQUNr4Ks3HpxCvUx0kz03LOq1bpkuZw6fsOeC6Ajgg9qUcMcFouNlxxaboeu8aEkuEge+AtR0AhRteNs0lXg1miP2VlA0Is=
+	t=1722352304; cv=none; b=hxxlhSYRCRzZ2NN96n6axiL83SWfOUJYW8K+N4qgT67fZ1281dTNPiLf0immoQZ5YXaBikm4kTLiBn3Xs6gPs1mrwea0D8G7VVRsW7v5i/uYkPWQKW1GnQ0/OS85FiEpw/Jtx1gQThNWu1w6fg0gHiUYJcpAxTQYCIAlyJ1jcg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722352278; c=relaxed/simple;
-	bh=7drJBd4vPAXeOYN4Bu2gVS5O0LnnsSk7ZDISvuwDoQQ=;
+	s=arc-20240116; t=1722352304; c=relaxed/simple;
+	bh=beL0yRdbjCogihbzdODxmTHRoDZSyhbgaIw1k7n5/AU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eJjlWWYZPTO2o0Cauc0gVqmezB2NulXfjAq2MLQKqhSebhfI71bhQw9uK/9S68y2HiX7tBNprp1eOKjW3Q42uIqbXKbU7b3jPP7x0jUvLsvBndz9RsmVMhEbt4bnXPvQ/C1z9UfIIts2A89duG8tesU39URys0wkLJy3VLxkqBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=A+mrM7MV; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=443IySO6h1genY6Yw2BSH0jKpFakov/7cWHx1qwPkTk=; b=A+mrM7MVeYF57oDlHFJE4uIsfn
-	A2CZV/hJVhLXT/t92lJ6UwfQujQswwTEcS0ztAJhloKPx+wmt41URcHLbcsM3Bsw1WnC9WaznP1pI
-	JB8JiYTXObUXmVBwxDfnmK7rXalmzbNlDnrakVh+U79h4M1vXQQ4rbfPLY1cBBS6E9/ksmjziCjtw
-	Y0SJbkSZkl8T37XBt8uektg6oBh/1ILtoyn3C155fzwCzVoz3ch2Ygab8/xlUmf7xcCDfsXjGWLTX
-	rpV1wpz3sM1REbebZCQI4AP96Egi5TVaQ70iG17ECXvawehMm3yU4eW9A1hvWJBSCYyqXrtZpMtj4
-	8Bq6EmZQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57572)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sYoVH-0007CP-0s;
-	Tue, 30 Jul 2024 16:11:07 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sYoVL-0005M3-9k; Tue, 30 Jul 2024 16:11:11 +0100
-Date: Tue, 30 Jul 2024 16:11:11 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
-	andrew@lunn.ch, horms@kernel.org, hkallweit1@gmail.com,
-	richardcochran@gmail.com, rdunlap@infradead.org,
-	Bryan.Whitehead@microchip.com, edumazet@google.com,
-	pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH net-next V3 4/4] net: lan743x: Add support to ethtool
- phylink get and set settings
-Message-ID: <ZqkCj9gENW5ILWED@shell.armlinux.org.uk>
-References: <20240730140619.80650-1-Raju.Lakkaraju@microchip.com>
- <20240730140619.80650-5-Raju.Lakkaraju@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cDg3TRA4J4g8KPy+2AkCl4ui1HIlfk5/BfEXvHfc/ZtbCCHXs0cG+LkiwGtILuYjCsL1Bk1y6gnlVEqwMOpVeUgcI5Pf3Denhvrf6Pwu2xk2IUnj0+8QfWdlNJrVqpB+ARHHpFOTj4Xcnvo2/aOcXP1vAhLfyt1Uv/ojLGEIkK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Rn4a+YM3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jtNOBqSf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Rn4a+YM3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jtNOBqSf; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9CCB721B70;
+	Tue, 30 Jul 2024 15:11:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722352300;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x7kxMJXM9K4LjqCKWji6D34DkXKqKBCVhdQE5CYexK8=;
+	b=Rn4a+YM3gjkZNfH2KlXm0Vwnxo64lwMDDjaPIMfPPxGL6hLwxE83s4krZZAnainpVzpC5C
+	lxVEHFBmGyxzgxEH8UjqIqGwhIt19/HQieQ4rNGvHs7bl2g9W18uWBovIhrjP7aYLyTJ8o
+	vJICo+h/btwnPyIicKKngzhB60nUhA0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722352300;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x7kxMJXM9K4LjqCKWji6D34DkXKqKBCVhdQE5CYexK8=;
+	b=jtNOBqSf/ytfCMVP1pC3nALOp7aWXVTOunQqxSVXOXKd1587HXBMgCbba5y+OM71ALmdbp
+	PKAiG7Zz7q+Zz1BA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Rn4a+YM3;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=jtNOBqSf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722352300;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x7kxMJXM9K4LjqCKWji6D34DkXKqKBCVhdQE5CYexK8=;
+	b=Rn4a+YM3gjkZNfH2KlXm0Vwnxo64lwMDDjaPIMfPPxGL6hLwxE83s4krZZAnainpVzpC5C
+	lxVEHFBmGyxzgxEH8UjqIqGwhIt19/HQieQ4rNGvHs7bl2g9W18uWBovIhrjP7aYLyTJ8o
+	vJICo+h/btwnPyIicKKngzhB60nUhA0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722352300;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x7kxMJXM9K4LjqCKWji6D34DkXKqKBCVhdQE5CYexK8=;
+	b=jtNOBqSf/ytfCMVP1pC3nALOp7aWXVTOunQqxSVXOXKd1587HXBMgCbba5y+OM71ALmdbp
+	PKAiG7Zz7q+Zz1BA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6DEDC13983;
+	Tue, 30 Jul 2024 15:11:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0xqZGqwCqWYcegAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 30 Jul 2024 15:11:40 +0000
+Date: Tue, 30 Jul 2024 17:11:39 +0200
+From: David Sterba <dsterba@suse.cz>
+To: syzbot <syzbot+9bf5c83263a4d4387899@syzkaller.appspotmail.com>
+Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] BUG: spinlock bad magic in
+ btrfs_stop_all_workers
+Message-ID: <20240730151139.GN17473@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <00000000000077990d061b30f83c@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,156 +105,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240730140619.80650-5-Raju.Lakkaraju@microchip.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <00000000000077990d061b30f83c@google.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [1.49 / 50.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=81c0d76ceef02b39];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	TAGGED_RCPT(0.00)[9bf5c83263a4d4387899];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Spamd-Bar: +
+X-Rspamd-Queue-Id: 9CCB721B70
+X-Spam-Level: *
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: 1.49
 
-On Tue, Jul 30, 2024 at 07:36:19PM +0530, Raju Lakkaraju wrote:
-> diff --git a/drivers/net/ethernet/microchip/lan743x_ethtool.c b/drivers/net/ethernet/microchip/lan743x_ethtool.c
-> index 3a63ec091413..a649ea7442a4 100644
-> --- a/drivers/net/ethernet/microchip/lan743x_ethtool.c
-> +++ b/drivers/net/ethernet/microchip/lan743x_ethtool.c
-> @@ -1058,61 +1058,48 @@ static int lan743x_ethtool_get_eee(struct net_device *netdev,
->  				   struct ethtool_keee *eee)
->  {
->  	struct lan743x_adapter *adapter = netdev_priv(netdev);
-> -	struct phy_device *phydev = netdev->phydev;
-> -	u32 buf;
-> -	int ret;
-> -
-> -	if (!phydev)
-> -		return -EIO;
-> -	if (!phydev->drv) {
-> -		netif_err(adapter, drv, adapter->netdev,
-> -			  "Missing PHY Driver\n");
-> -		return -EIO;
-> -	}
->  
-> -	ret = phy_ethtool_get_eee(phydev, eee);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	buf = lan743x_csr_read(adapter, MAC_CR);
-> -	if (buf & MAC_CR_EEE_EN_) {
-> -		/* EEE_TX_LPI_REQ_DLY & tx_lpi_timer are same uSec unit */
-> -		buf = lan743x_csr_read(adapter, MAC_EEE_TX_LPI_REQ_DLY_CNT);
-> -		eee->tx_lpi_timer = buf;
-> -	} else {
-> -		eee->tx_lpi_timer = 0;
-> -	}
-> +	eee->tx_lpi_timer = lan743x_csr_read(adapter,
-> +					     MAC_EEE_TX_LPI_REQ_DLY_CNT);
-> +	eee->eee_enabled = adapter->eee_enabled;
-> +	eee->eee_active = adapter->eee_active;
-> +	eee->tx_lpi_enabled = adapter->tx_lpi_enabled;
+On Tue, Jun 18, 2024 at 02:43:21PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10bf1a61980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=81c0d76ceef02b39
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9bf5c83263a4d4387899
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: i386
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2ccbdf43.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/13cdb5bfbafa/vmlinux-2ccbdf43.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/7a14f5d07f81/bzImage-2ccbdf43.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+9bf5c83263a4d4387899@syzkaller.appspotmail.com
+> 
+> BTRFS info (device loop3): last unmount of filesystem 3a492a15-ac49-4ce6-945e-cef7a687c6c9
+> BUG: spinlock bad magic on CPU#0, syz-executor.3/7928
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in task_pid_nr include/linux/pid.h:232 [inline]
+> BUG: KASAN: slab-out-of-bounds in spin_dump kernel/locking/spinlock_debug.c:64 [inline]
+> BUG: KASAN: slab-out-of-bounds in spin_bug+0x17d/0x1d0 kernel/locking/spinlock_debug.c:78
+> Read of size 4 at addr ffff888028b23dd8 by task syz-executor.3/7928
 
-You really need to start paying attention to the commits other people
-make as a result of development to other parts of the kernel.
+Most likely this was a side effect of bug fixed by commit f3a5367c679d
+("btrfs: protect folio::private when attaching extent buffer folios").
+The timeframe corresponds with increased number of bogus errors caused by
+use-after-free of a page.
 
-First, see:
+The fix is best guess.
 
-commit ef460a8986fa0dae1cdcb158a06127f7af27c92d
-Author: Andrew Lunn <andrew@lunn.ch>
-Date:   Sat Apr 6 15:16:00 2024 -0500
-
-    net: lan743x: Fixup EEE
-
-and note that the assignment of eee->eee_enabled, eee->eee_active, and
-eee->tx_lpi_enabled were all removed.
-
-Next...
-
->  
-> -	return 0;
-> +	return phylink_ethtool_get_eee(adapter->phylink, eee);
-
-phylink_ethtool_get_eee() will call phy_ethtool_get_eee(), which
-in turn calls genphy_c45_ethtool_get_eee() and eeecfg_to_eee().
-
-genphy_c45_ethtool_get_eee() will do this:
-
-        data->eee_enabled = is_enabled;
-        data->eee_active = ret;
-
-thus overwriting your assignment to eee->eee_enabled and
-eee->eee_active.
-
-eeecfg_to_eee() will overwrite eee->tx_lpi_enabled and
-eee->eee_enabled.
-
-Thus, writing to these fields and then calling
-phylink_ethtool_get_eee() results in these fields being overwritten.
-
->  static int lan743x_ethtool_set_eee(struct net_device *netdev,
->  				   struct ethtool_keee *eee)
->  {
-> -	struct lan743x_adapter *adapter;
-> -	struct phy_device *phydev;
-> -	u32 buf = 0;
-> +	struct lan743x_adapter *adapter = netdev_priv(netdev);
->  
-> -	if (!netdev)
-> -		return -EINVAL;
-> -	adapter = netdev_priv(netdev);
-> -	if (!adapter)
-> -		return -EINVAL;
-> -	phydev = netdev->phydev;
-> -	if (!phydev)
-> -		return -EIO;
-> -	if (!phydev->drv) {
-> -		netif_err(adapter, drv, adapter->netdev,
-> -			  "Missing PHY Driver\n");
-> -		return -EIO;
-> -	}
-> +	if (eee->tx_lpi_enabled)
-> +		lan743x_csr_write(adapter, MAC_EEE_TX_LPI_REQ_DLY_CNT,
-> +				  eee->tx_lpi_timer);
-> +	else
-> +		lan743x_csr_write(adapter, MAC_EEE_TX_LPI_REQ_DLY_CNT, 0);
->  
-> -	if (eee->eee_enabled) {
-> -		buf = (u32)eee->tx_lpi_timer;
-> -		lan743x_csr_write(adapter, MAC_EEE_TX_LPI_REQ_DLY_CNT, buf);
-> -	}
-> +	adapter->eee_enabled = eee->eee_enabled;
-> +	adapter->tx_lpi_enabled = eee->tx_lpi_enabled;
-
-Given that phylib stores these and overwrites your copies in the get_eee
-method above, do you need to store these?
-
-> @@ -3013,7 +3025,12 @@ static void lan743x_phylink_mac_link_down(struct phylink_config *config,
->  					  unsigned int link_an_mode,
->  					  phy_interface_t interface)
->  {
-> +	struct net_device *netdev = to_net_dev(config->dev);
-> +	struct lan743x_adapter *adapter = netdev_priv(netdev);
-> +
->  	netif_tx_stop_all_queues(to_net_dev(config->dev));
-> +	adapter->eee_active = false;
-
-phylib tracks this for you.
-
-> +	lan743x_set_eee(adapter, false);
->  }
->  
->  static void lan743x_phylink_mac_link_up(struct phylink_config *config,
-> @@ -3055,6 +3072,14 @@ static void lan743x_phylink_mac_link_up(struct phylink_config *config,
->  					  cap & FLOW_CTRL_TX,
->  					  cap & FLOW_CTRL_RX);
->  
-> +	if (phydev && adapter->eee_enabled) {
-> +		bool enable;
-> +
-> +		adapter->eee_active = phy_init_eee(phydev, false) >= 0;
-> +		enable = adapter->eee_active && adapter->tx_lpi_enabled;
-
-No need. Your enable should be conditional on phydev->enable_tx_lpi
-here. See Andrew's commit and understand his changes, rather than
-just ignoring Andrew's work and continuing with your old pattern of
-EEE support. Things have moved forward.
-
-Thanks.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+#syz fix: btrfs: protect folio::private when attaching extent buffer folios
 
