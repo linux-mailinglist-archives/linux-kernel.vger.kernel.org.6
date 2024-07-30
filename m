@@ -1,246 +1,153 @@
-Return-Path: <linux-kernel+bounces-267426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB945941160
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:01:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE95E94117F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96C1E285238
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:01:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E565B26F3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0331A0706;
-	Tue, 30 Jul 2024 11:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A592B1A08D1;
+	Tue, 30 Jul 2024 11:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bHWvaI8g"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PLHJWka/"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4D41A00DF;
-	Tue, 30 Jul 2024 11:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7871991D2;
+	Tue, 30 Jul 2024 11:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722340755; cv=none; b=qyfG9c2U2G7QVPf8XWHryl+xToLebPyNjSJpFAo9V6NUSkRJ7qou7XHxlbKdyldGSa8HbAzo1rqLWXB0X1w+KG/0GVyCRo9Uz0hL15WIok3LkRoJ5qSdDQRoGMBVrP682iXZzn8eYzReMGuEXCE2vloK0HCNiTgtLL99WrNwY3w=
+	t=1722340776; cv=none; b=Lk492fqt5eqiHkkBGpI6opnPnT5TpHFLvFvSdQma8x2X/IFB2qdY9ZKw10IvH5CXoA6tgq/gplwwA736sSTxfsXZ2/b58d1lQNumeFaHseY6V/G/+YcoUTjNXjhenJd2DXe8mbmi0lgJc/FvyOBmDYCuRkoEAo5nXX3imgasEgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722340755; c=relaxed/simple;
-	bh=Br5iul1IKL3n9WzMsepXe4wCxuWuLJrejZMwQltHxc8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Kt6ogvFcCIWg0HxCPyjlORhrftUbNSgSws+ACEGy5Ii90YYuHtRU9LvwY7KJ3dCEh1QLG1scEDfVdhONRF8E4c0MiX+cV0HNCMrWE5raLkC9d/kP+lqcELeLkXoZEzPRGobgjA4N0IIQtpC4lmAeOtB/3S9JKB4VqGEd6BLf6WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bHWvaI8g; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UA3P6M016748;
-	Tue, 30 Jul 2024 11:58:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=5iafdj6H+Dw
-	nHZy21LrrA4/vHtwtOgC9r8TCOiDQlGg=; b=bHWvaI8gwx16R8/CcQgx5wRhPv4
-	heTCWmfP1WmTpAhC4P5VCD6vGthgGUGvNc2nf/6Wg4NC0YdyWPPgKGtoappgbM0I
-	V4SZjLiyZY1b8HqhPGeJ8UV5dh8KU6gk8HVg/t8TdG43FJZ/+b6pscU5IiBTlKT2
-	gdmWANfjKWOq7uz2CZcIzCo9oWeBC7suB/NPK9dXoDzkZmomN/U63Lu9PaszimDA
-	wG65QK2WFXdBTgncHPKkjAlvarEqtlh54cuPuoqlscwgW0B0UO987fngR5vNcM/h
-	4c21BGjXjnUFwetm0/GTrHw/O4IVIOaOuh6eIocVbZhVC3NldIuXgvana6w==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40ms4375bn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 11:58:46 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTP id 46UBwf73001365;
-	Tue, 30 Jul 2024 11:58:42 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 40msykdx6r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 11:58:42 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 46UBwfdv001324;
-	Tue, 30 Jul 2024 11:58:42 GMT
-Received: from hu-devc-blr-u22-a.qualcomm.com (hu-mdalam-blr.qualcomm.com [10.131.36.157])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 46UBwgJK001392
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 11:58:42 +0000
-Received: by hu-devc-blr-u22-a.qualcomm.com (Postfix, from userid 466583)
-	id C9DC0413B5; Tue, 30 Jul 2024 17:28:40 +0530 (+0530)
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-To: axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
-        adrian.hunter@intel.com, quic_asutoshd@quicinc.com,
-        ritesh.list@gmail.com, ulf.hansson@linaro.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
-        linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        quic_viswanat@quicinc.com, quic_srichara@quicinc.com,
-        quic_varada@quicinc.com
-Cc: quic_mdalam@quicinc.com
-Subject: [PATCH 6/6] mmc: sdhci-msm: Add additional algo mode for inline encryption
-Date: Tue, 30 Jul 2024 17:28:38 +0530
-Message-Id: <20240730115838.3507302-7-quic_mdalam@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240730115838.3507302-1-quic_mdalam@quicinc.com>
-References: <20240730115838.3507302-1-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1722340776; c=relaxed/simple;
+	bh=ImsVvn95a7wmI+VgxyjxxMmcJ46XUfj/a4OGo0FVYUs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HSh2kkkM/5OOxnV4oLlUyk7aN0hDRVORV7r3fKMk6A6wRQQh3fZ0p9kzxlu9FBpRV78WJyjxr20MET1gAw1kJkeCCIKTNRYz2l8FPdk3yBSEyk12bKbKJ6CAcD2ohYoypcKi4D5GF4jzJMQCirxYwNtrSeEWs7rmSFsrycm79dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PLHJWka/; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E9B7E60007;
+	Tue, 30 Jul 2024 11:59:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1722340765;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NCa5IvwCZ/R5PxPuaVMF6j6v8F/8/2nc8Pm1hBqQc/Q=;
+	b=PLHJWka/Jkyt4G7EsbQ3YCBQblxovDTzPPfv0XjWHksTeXPxKI7vCI+SATa0/xIbYjthj7
+	+yW4NBdPJWcKLYMhOKWnRWmQt+Wg+51AsmGcbnFSSbYujauJstUSSQCpO9SY9vNqH/yroG
+	wX5EHly3M28/O8iwkLcLFRwHNcMU3bxNalLPpEP8sQMGymt+aeZs/3AdfYl2pJKI7w9JrS
+	j2muesjzFWY6PKC5+RtBLLdwdRuG0xKM+Ujy18VxuDdtKWezqaw5cPUUXYy5m7mbOt7zwt
+	x+O3yPq/vcw+Ft98NbfcMWjwAUZva0+VvdXfr7Q2M6zQ+ar3724xIzkkDYqtQA==
+From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+Subject: [PATCH bpf-next v3 0/3] selftests/bpf: convert test_dev_cgroup to
+ test_progs
+Date: Tue, 30 Jul 2024 13:59:10 +0200
+Message-Id: <20240730-convert_dev_cgroup-v3-0-93e573b74357@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Wgzb38TwClZThWRfIODRej4zHS0zg-oL
-X-Proofpoint-ORIG-GUID: Wgzb38TwClZThWRfIODRej4zHS0zg-oL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_11,2024-07-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
- mlxlogscore=999 suspectscore=0 phishscore=0 priorityscore=1501
- clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407300084
+X-B4-Tracking: v=1; b=H4sIAI7VqGYC/23N0QrCIBgF4FcJrzOc02111XtEjPmrm1A61GQx9
+ u6JdFGwy8PhfGdFQXmjArocVuRVMsE4m0N9PCCYBjsqbGTOiBLKSEtrDM4m5WMvVeph9O4144Y
+ 1TBBZt7oaUB7OXmmzFPSGxKyxVUtE99xMJkTn3+UtVaX/wnwPThUmmEIHQrKuBcauwrn4MPYE7
+ lnARH+R8y5CM8Kg0kA4JZzxf2Tbtg+0uTovBQEAAA==
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: ebpf@linuxfoundation.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Alan Maguire <alan.maguire@oracle.com>, bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+X-Mailer: b4 0.14.1
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-Add support for AES-XTS-128, AES-CBC-128 and AES-CBS-256 modes for
-inline encryption. Since ICE (Inline Crypto Engine) supports these
-all modes
+Hello,
+this small series aims to integrate test_dev_cgroup in test_progs so it
+could be run automatically in CI. The new version brings a few differences
+with the current one:
+- test now uses directly syscalls instead of wrapping commandline tools
+  into system() calls
+- test_progs manipulates /dev/null (eg: redirecting test logs into it), so
+  disabling access to it in the bpf program confuses the tests. To fix this,
+  the first commit modifies the bpf program to allow access to char devices
+  1:3 (/dev/null), and disable access to char devices 1:5 (/dev/zero)
+- once test is converted, add a small subtest to also check for device type
+  interpretation (char or block)
+- paths used in mknod tests are now in /dev instead of /tmp: due to the CI
+  runner organisation and mountpoints manipulations, trying to create nodes
+  in /tmp leads to errors unrelated to the test (ie, mknod calls refused by
+  kernel, not the bpf program). I don't understand exactly the root cause
+  at the deepest point (all I see in CI is an -ENXIO error on mknod when trying to
+  create the node in tmp, and I can not make sense out of it neither
+  replicate it locally), so I would gladly take inputs from anyone more
+  educated than me about this.
 
-Co-developed-by: Vignesh Viswanathan <quic_viswanat@quicinc.com>
-Signed-off-by: Vignesh Viswanathan <quic_viswanat@quicinc.com>
-Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+The new test_progs part has been tested in a local qemu environment as well
+as in upstream CI:
+
+  ./test_progs -a cgroup_dev
+  47/1    cgroup_dev/allow-mknod:OK
+  47/2    cgroup_dev/allow-read:OK
+  47/3    cgroup_dev/allow-write:OK
+  47/4    cgroup_dev/deny-mknod:OK
+  47/5    cgroup_dev/deny-read:OK
+  47/6    cgroup_dev/deny-write:OK
+  47/7    cgroup_dev/deny-mknod-wrong-type:OK
+  47      cgroup_dev:OK
+  Summary: 1/7 PASSED, 0 SKIPPED, 0 FAILED
+
 ---
- drivers/mmc/host/sdhci-msm.c | 10 ++----
- drivers/soc/qcom/ice.c       | 65 +++++++++++++++++++++++++++++++-----
- 2 files changed, 58 insertions(+), 17 deletions(-)
+Changes in v3:
+- delete mknod file only if it has been created
+- use bpf_program__attach_cgroup() instead of bpf_prog_attach
+- reorganize subtests order
+- collect review/ack tags from Alan and Stanislas
+- Link to v2: https://lore.kernel.org/r/20240729-convert_dev_cgroup-v2-0-4c1fc0520545@bootlin.com
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index e113b99a3eab..fc1db58373ce 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -1867,17 +1867,11 @@ static int sdhci_msm_program_key(struct cqhci_host *cq_host,
- 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
- 	union cqhci_crypto_cap_entry cap;
- 
--	/* Only AES-256-XTS has been tested so far. */
- 	cap = cq_host->crypto_cap_array[cfg->crypto_cap_idx];
--	if (cap.algorithm_id != CQHCI_CRYPTO_ALG_AES_XTS ||
--		cap.key_size != CQHCI_CRYPTO_KEY_SIZE_256)
--		return -EINVAL;
- 
- 	if (cfg->config_enable & CQHCI_CRYPTO_CONFIGURATION_ENABLE)
--		return qcom_ice_program_key(msm_host->ice,
--					    QCOM_ICE_CRYPTO_ALG_AES_XTS,
--					    QCOM_ICE_CRYPTO_KEY_SIZE_256,
--					    cfg->crypto_key,
-+		return qcom_ice_program_key(msm_host->ice, cap.algorithm_id,
-+					    cap.key_size, cfg->crypto_key,
- 					    cfg->data_unit_size, slot);
- 	else
- 		return qcom_ice_evict_key(msm_host->ice, slot);
-diff --git a/drivers/soc/qcom/ice.c b/drivers/soc/qcom/ice.c
-index fbab7fe5c652..f387b884c516 100644
---- a/drivers/soc/qcom/ice.c
-+++ b/drivers/soc/qcom/ice.c
-@@ -19,6 +19,9 @@
- 
- #include <soc/qcom/ice.h>
- 
-+#define AES_128_CBC_KEY_SIZE			16
-+#define AES_256_CBC_KEY_SIZE			32
-+#define AES_128_XTS_KEY_SIZE			32
- #define AES_256_XTS_KEY_SIZE			64
- 
- /* QCOM ICE registers */
-@@ -161,36 +164,80 @@ int qcom_ice_suspend(struct qcom_ice *ice)
- }
- EXPORT_SYMBOL_GPL(qcom_ice_suspend);
- 
-+static int qcom_ice_get_algo_mode(struct qcom_ice *ice, u8 algorithm_id,
-+				  u8 key_size, enum qcom_scm_ice_cipher *cipher,
-+				  u32 *key_len)
-+{
-+	struct device *dev = ice->dev;
-+
-+	switch (key_size) {
-+	case QCOM_ICE_CRYPTO_KEY_SIZE_128:
-+		fallthrough;
-+	case QCOM_ICE_CRYPTO_KEY_SIZE_256:
-+		break;
-+	default:
-+		dev_err(dev, "Unhandled crypto key size %d\n", key_size);
-+		return -EINVAL;
-+	}
-+
-+	switch (algorithm_id) {
-+	case QCOM_ICE_CRYPTO_ALG_AES_XTS:
-+		if (key_size == QCOM_ICE_CRYPTO_KEY_SIZE_256) {
-+			*cipher = QCOM_SCM_ICE_CIPHER_AES_256_XTS;
-+			*key_len = AES_256_XTS_KEY_SIZE;
-+		} else {
-+			*cipher = QCOM_SCM_ICE_CIPHER_AES_128_XTS;
-+			*key_len = AES_128_XTS_KEY_SIZE;
-+		}
-+		break;
-+	case QCOM_ICE_CRYPTO_ALG_BITLOCKER_AES_CBC:
-+		if (key_size == QCOM_ICE_CRYPTO_KEY_SIZE_256) {
-+			*cipher = QCOM_SCM_ICE_CIPHER_AES_256_CBC;
-+			*key_len = AES_256_CBC_KEY_SIZE;
-+		} else {
-+			*cipher = QCOM_SCM_ICE_CIPHER_AES_128_CBC;
-+			*key_len = AES_128_CBC_KEY_SIZE;
-+		}
-+		break;
-+	default:
-+		dev_err_ratelimited(dev, "Unhandled crypto capability; algorithm_id=%d, key_size=%d\n",
-+				    algorithm_id, key_size);
-+		return -EINVAL;
-+	}
-+
-+	dev_info(dev, "cipher: %d key_size: %d", *cipher, *key_len);
-+
-+	return 0;
-+}
-+
- int qcom_ice_program_key(struct qcom_ice *ice,
- 			 u8 algorithm_id, u8 key_size,
- 			 const u8 crypto_key[], u8 data_unit_size,
- 			 int slot)
- {
- 	struct device *dev = ice->dev;
-+	enum qcom_scm_ice_cipher cipher;
- 	union {
- 		u8 bytes[AES_256_XTS_KEY_SIZE];
- 		u32 words[AES_256_XTS_KEY_SIZE / sizeof(u32)];
- 	} key;
- 	int i;
- 	int err;
-+	u32 key_len;
- 
--	/* Only AES-256-XTS has been tested so far. */
--	if (algorithm_id != QCOM_ICE_CRYPTO_ALG_AES_XTS ||
--	    key_size != QCOM_ICE_CRYPTO_KEY_SIZE_256) {
--		dev_err_ratelimited(dev,
--				    "Unhandled crypto capability; algorithm_id=%d, key_size=%d\n",
--				    algorithm_id, key_size);
-+	if (qcom_ice_get_algo_mode(ice, algorithm_id, key_size, &cipher, &key_len)) {
-+		dev_err(dev, "Unhandled crypto capability; algorithm_id=%d, key_size=%d\n",
-+			algorithm_id, key_size);
- 		return -EINVAL;
- 	}
- 
--	memcpy(key.bytes, crypto_key, AES_256_XTS_KEY_SIZE);
-+	memcpy(key.bytes, crypto_key, key_len);
- 
- 	/* The SCM call requires that the key words are encoded in big endian */
- 	for (i = 0; i < ARRAY_SIZE(key.words); i++)
- 		__cpu_to_be32s(&key.words[i]);
- 
--	err = qcom_scm_ice_set_key(slot, key.bytes, AES_256_XTS_KEY_SIZE,
--				   QCOM_SCM_ICE_CIPHER_AES_256_XTS,
-+	err = qcom_scm_ice_set_key(slot, key.bytes, key_len, cipher,
- 				   data_unit_size);
- 
- 	memzero_explicit(&key, sizeof(key));
+Changes in v2:
+- directly pass expected ret code to subtests instead of boolean pass/not
+  pass
+- fix faulty fd check in subtest expected to fail on open
+- fix wrong subtest name
+- pass test buffer and corresponding size to read/write subtests
+- use correct series prefix
+- Link to v1: https://lore.kernel.org/r/20240725-convert_dev_cgroup-v1-0-2c8cbd487c44@bootlin.com
+
+---
+Alexis Lothoré (eBPF Foundation) (3):
+      selftests/bpf: do not disable /dev/null device access in cgroup dev test
+      selftests/bpf: convert test_dev_cgroup to test_progs
+      selftests/bpf: add wrong type test to cgroup dev
+
+ tools/testing/selftests/bpf/.gitignore             |   1 -
+ tools/testing/selftests/bpf/Makefile               |   2 -
+ .../testing/selftests/bpf/prog_tests/cgroup_dev.c  | 118 +++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/dev_cgroup.c     |   4 +-
+ tools/testing/selftests/bpf/test_dev_cgroup.c      |  85 ---------------
+ 5 files changed, 120 insertions(+), 90 deletions(-)
+---
+base-commit: 2107cb4bff1c21110ebf7a17458a918282c1a8c9
+change-id: 20240723-convert_dev_cgroup-6464b0d37f1a
+
+Best regards,
 -- 
-2.34.1
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
