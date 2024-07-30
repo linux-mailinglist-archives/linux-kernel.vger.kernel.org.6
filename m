@@ -1,90 +1,112 @@
-Return-Path: <linux-kernel+bounces-267767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB28941539
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:14:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0114594153E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:15:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1D571C232AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:14:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0127284F56
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFCC1A2C29;
-	Tue, 30 Jul 2024 15:14:38 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3825E1A2C1D;
+	Tue, 30 Jul 2024 15:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="u2BG2S5f"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7F11A2C0F;
-	Tue, 30 Jul 2024 15:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFCF29A2;
+	Tue, 30 Jul 2024 15:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722352478; cv=none; b=W0vVdUMFat9XAVjbcBPCDKnCLv+KbFwZ9P+kWnMrZ4GhemLhETTxadxu6/hYWcG11Q7X2Tur053Lir/oTaiv3flEJ1JTABD0XlllhhB9a8XxQ9WSS1M7lyer7jARy2L5H7AZYUGz0C8K7g4h2L0mcIRu/DFqbdpah3/+SU86yNo=
+	t=1722352545; cv=none; b=Q1sUMkJfQ7M93HBOd+qYDu2CWssJGnue8LILQZo4XMS0j2AZ0wyhczvNEL6BmoJ/2WIJgBUc+SbTgRfzxCfFcYtZ6Mf099sktBeDTd+pA61b/e82iDQWcRN7gYMVNxQGIf8gmz2oqdMaIJj8/mBcan27SJzXv72+7yMtyalDWgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722352478; c=relaxed/simple;
-	bh=8Jbg6LHk1KAJjYZSOJbfES+Zl/Rn4Egzg5VItgVW1lg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fMt44veBwSlUd9ahcfwl4kWJRn6CGiaSD8UzAXKnqnH7SGsWujlvgxbg6GVYsiPHlmBwk8PpRig2zk/4xIcQktG0DR2fzEf3m3T3qX7fa+V5TWYG75/ZE6LdM5G+c1M+2tcn23zNmPyj7s8IDJJyPuvkg0JTjGsm6hhCDSSho1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CCFFC32782;
-	Tue, 30 Jul 2024 15:14:36 +0000 (UTC)
-Date: Tue, 30 Jul 2024 11:15:08 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers  
- <mathieu.desnoyers@efficios.com>, Ajay Kaher <ajay.kaher@broadcom.com>,
- Mathias Krause <minipli@grsecurity.net>, Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?=
-   <digirigawa@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>,
- Al   Viro <viro@zeniv.linux.org.uk>, regressions@leemhuis.info, Dan
- Carpenter   <dan.carpenter@linaro.org>, Beau Belgrave
- <beaub@linux.microsoft.com>, Florian Fainelli 
- <florian.fainelli@broadcom.com>, Alexey Makhalov   
- <alexey.makhalov@broadcom.com>, Vasavi Sirnapalli   
- <vasavi.sirnapalli@broadcom.com>
-Subject: Re: [PATCH v3] tracing: Have format file honor EVENT_FILE_FL_FREED
-Message-ID: <20240730111508.75448556@gandalf.local.home>
-In-Reply-To: <20240730110657.3b69d3c1@gandalf.local.home>
-References: <20240730110657.3b69d3c1@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722352545; c=relaxed/simple;
+	bh=D5LVzzB7kowWJcR0ltmplTWIAFHKASYh/zNFa6qeTwk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ZEZqrE8nCJbWu7oaT4M+ilQsn8UqCxZzrGT7v2gLwsoZ7jORk7iLA7dkAtuPa9O0/JyqmXptVczilOq9zzoFEh14hRHvk6rFsLZCOgx0guhX7VCIPOQTYB16P3f4P88VdVdxvLj7LtiV2QaGFoOyk4j/i0lZVjKfOhqHvLuTxM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=u2BG2S5f; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1722352525; x=1722957325; i=markus.elfring@web.de;
+	bh=D5LVzzB7kowWJcR0ltmplTWIAFHKASYh/zNFa6qeTwk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=u2BG2S5fShfrTz2KSbLCvSFXFwItKYCMdoIxmASSv9b8s2xQCV235GafUv6vUldP
+	 3KHlmW6FNFT6YUNaPHKPaxLr9pwBnhk/9NwB3Yyqu4olL0143qZmOXk28Li4/fDd6
+	 gamQN79EM94ih2w0faDWdRAwZ2gfaoHz48snPD2sgdIGvZqKk8lgWgLg5Oppm1YXD
+	 vx7pDt3kro8kM21sk1WEICxNBmoF8w7CnOTMP0w7xFNRcA0LOe+z0yz1tUClO/AHH
+	 RbzL//hjSFEJjmqDuctnUF+AXecMR2o5b5LFILpK2dggCo8OOyEJP5/lC3/yXvJVg
+	 RevWNc1SOmNAEMNN2A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MsrdM-1sFELl2X1M-00yGFk; Tue, 30
+ Jul 2024 17:15:25 +0200
+Message-ID: <51bbc95c-00e7-41fd-a3eb-65a4eba5ebd0@web.de>
+Date: Tue, 30 Jul 2024 17:15:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+To: Florian Sylvestre <fsylvestre@baylibre.com>,
+ Julien Stephan <jstephan@baylibre.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Louis Kuo <louis.kuo@mediatek.com>, Paul Elder
+ <paul.elder@ideasonboard.com>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, Andy Hsieh <andy.hsieh@mediatek.com>,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240729-add-mtk-isp-3-0-support-v6-3-c374c9e0c672@baylibre.com>
+Subject: Re: [PATCH v6 3/5] media: platform: mediatek: isp_30: add mediatek
+ ISP3.0 sensor interface
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240729-add-mtk-isp-3-0-support-v6-3-c374c9e0c672@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:21Jmp9I0A53wGyh/tH2upxHfxiNe9xt5HKxVrv5eI5sABo4Y9ZX
+ SFCQ8eDdb7WPzamqdlBCwf/uRhdkRTfE8F3gdhpI65/dJxQuSeG4hnd3dzheZ8R9AJXdjcy
+ FYxBBRSOy57Oa6UHLvPoXwbHiTIBDmWjbiJ4EEd5rqS2CBHOK3HjPzThNvGQ241L8CrxfE+
+ bBfb/BENESk4mfJSyeGDg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:bInlfz3A99s=;5rCP1cLLs+hEWLWLOFuvYTh2W3B
+ H+RWSvGjnEOgHOGsQbuqVGOODQ8+cVXrLJdZ5tRZGYeFH2sANVGAZjDHzrszwRFgc1CNw+j3G
+ jR1WEZ9png0gtiMAsecQBAcSlRti51RZN61xEdR0l+qciQbrOsE/rEGSHAaTo/KhX5iw6UHAf
+ CsFRXZo/7o9jtyuS3OaGrUs4eGJp0XZYkzJa8HFwk2xws7VjoFI6WZcAZb7XiM1MqJ3PvH3f1
+ XrPnFONOT/6SFXuK8pjYA/+9bIE5/N2sXok8h+ORRH2ztoHz0DJ5P/DpkLOkW0rp8FrG/S0pE
+ TibRD5Agx5CEeqQL6mjgnwpdY2kjUpusSUg9rqE0U8R982Z10VBBScv2955a0qpwH+0BmIN8f
+ REui6T2VdWAFfkFih5O5C94STBlDdX9e+udkojjjZDlywOs1wn+EYr0ahdkRHW4R6M7WO0csU
+ EXN2wD2qGH56+ItmH+EvtQvGeBY02Z1TIv2Euj12tUhLyi4j2/VBtTJEwJNtPDba9rfIlQUSs
+ deJPpkkOXPDXZTh7BYjf/jEqpvxY/gl/YEN9Tsv/r1Rl0eiJuSK10c8E3y3wFW10FUCG6N3rl
+ XhpY9+YrSWj8iqtBp/YU8Cr3ya/M+Q9iN7sNHAzpornNYui6dWwVndj9Sh8VU5gruCtBJtdW+
+ 8HhmDgd6R/VilktpnM4LVJE8Dm6Bx4ZAhajd/xYLF2+izVgYQmbmcY+NpTyF7OtcDmEkfLgjD
+ ddoxLNAefhIZpivlWOpWasTQr+e2pwtRPGbwNB8hEiE5i9Y2FymtLozy0XV8S3vDKJHqvOOyP
+ Uqh2/xmGPlcv+rNzflaNt6Kg==
 
-On Tue, 30 Jul 2024 11:06:57 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+=E2=80=A6
+> +++ b/drivers/media/platform/mediatek/isp/isp_30/seninf/mtk_seninf_reg.h
+> @@ -0,0 +1,117 @@
+=E2=80=A6
+> +#ifndef __SENINF_REG_H__
+> +#define __SENINF_REG_H__
+=E2=80=A6
 
-> Link: https://lore.kernel.org/all/20240719204701.1605950-1-minipli@grsecurity.net/
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: b63db58e2fa5d ("eventfs/tracing: Add callback for release of an eventfs_inode")
-> Reported-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
+How do you think about to omit leading underscores from such identifiers?
+https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
+efine+a+reserved+identifier
 
-Hi Mathias,
-
-I kept your "Tested-by" tag because you did test the part that fixes the
-bug you reported. I just added on top of that one to handle other possibly
-cases. Let me know if you want me to drop that tag, or if you tested this
-version as well.
-
-Thanks,
-
--- Steve
-
-
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
-> Changes since v3: https://lore.kernel.org/20240726132811.306a449e@rorschach.local.home
-> 
-> - After inspecting the code, there's several users of event_file_data()
->   that return the trace_event_file descriptor when it could be set to be
->   freed. Add a new helper function: event_file_file() that will make sure
->   the event_mutex is held and check the flag and return NULL if the file is
->   freed.
+Regards,
+Markus
 
