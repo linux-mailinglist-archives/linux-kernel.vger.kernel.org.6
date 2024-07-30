@@ -1,118 +1,115 @@
-Return-Path: <linux-kernel+bounces-267487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DECF94120A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:39:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2CE94120E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:41:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43CD71F23FA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:39:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96354B25757
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5221619EED5;
-	Tue, 30 Jul 2024 12:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BB30WSnH"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F02419EEC8;
+	Tue, 30 Jul 2024 12:41:38 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59EE6757FC;
-	Tue, 30 Jul 2024 12:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58386757FC
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 12:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722343130; cv=none; b=Sn5g8lGmaELwZBeAuxMsTW6NRH57KIJ35Er+JtsEhOT62l4eFnZ4IyEOfXORFY06H28VFE6YMuY5DR13Iue7vex0Qth09E5e0OiFHH+CRaxqSi1m4BVomqZ2yem4HT4ksh2GHeCaK+zSg2MP+G/URZkvuyAYmRJh12U11jASDNc=
+	t=1722343297; cv=none; b=Za7kBgQ9GMo3SOfTCAb9q3kJWcHKNy0942s0oYnKBO+/k7OFk9gYr10pdo05/txAHpzWTOJPrgg9fwD7wO3uiFK240Yn7R7ugWKKCXh7e6o2Px8I3A0Xne8hrZFWWO/wORqy0g2XYRQ7ZkIDDt8bfhR/uGdUr3TDVkbis675ing=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722343130; c=relaxed/simple;
-	bh=scfzS0K0VaYL1XByFe1MCrgJqGcJUkxVr2FuHOjIQh8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Psi/iVbOwPoaGrSOFlUJDn34us2+Y2yHdTms+4G/UJk5IfQj6uutNsYM849Gf346kcNSZ+XdqdTTzwpUZ8R6jVlW7PRyRoml+2C7getkx8iNvLwNJ1Ie4JZOSrgo8QvUCV/zMlhv217zSbNJ6SKzcwJqYhVcvyxZPuFZQKBe2lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BB30WSnH; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc6ee64512so28936085ad.0;
-        Tue, 30 Jul 2024 05:38:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722343129; x=1722947929; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OXzR6gxYVqwUfoPPIjjw4WoNbj2GDAwK/nIZ01IJrvI=;
-        b=BB30WSnHJ4cPJhcgONUg3LnWtCuzTnChnrULMkMaxUpcPHgNdsmSPMgQW7opvBOVnE
-         g7/+mL5zlDmCqeFuuw/HzCGk8GIxlh86itZs1Spx+a9oIQKYwi5G3c3y4qobeo/CAmNa
-         6Rj2xPsOawP0MsIyAg5k/yytsTzalbeoR/subV+SOG2DTefk+qHRZ1UOQJ5b2LbYZWhJ
-         j1wDQCkyZlJUduVAP3wwP2fZqxw91LRxCrDyfR4uzuxiyEgw72F30Xy/a8wojHB2EoMZ
-         v7U/ho0lJy/z8BBZNcP8rjdy4VwCEBEX5E1m365Td31H8Xsl2k0/rZBVY/EUkeejHNNA
-         zFyA==
+	s=arc-20240116; t=1722343297; c=relaxed/simple;
+	bh=Sa4pUeLQ+vlZbd2pzjfIpSqx5Zwhcsm4o129UDbEoLI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rluhcZg3Ti0nitJS5D6XFx3VJfuIXAMzAUWobamOJUPXeBhBCrb2E6NVY5d16dkDRXDXfA0VIO/bPnUCpMyE+SjFnnZvX8CBi9nb9VD4j5IUk/5YH1x8Kfutaw8HX3oxpeVfwbRJCCglEmNhjk1/YeiyhIVsaEMWWrhzHr8ZPpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-37642e69d7eso63382795ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 05:41:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722343129; x=1722947929;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OXzR6gxYVqwUfoPPIjjw4WoNbj2GDAwK/nIZ01IJrvI=;
-        b=FUgqQyXNsI5ekUk3bwCjWt/R7Rpx5Ok9KkhXsXIgPgsvt/bP9criFplF0YJV9ESV8h
-         YTvdc1EVuz886wNyPviXBjJwaBXmXhh/dg6z8S4lXObAwHyXIhjiQ0XpmsBbQWssUB9J
-         pHZdLPPKM0LGDOvG9cNg342/I10a+SGvUjZuPriB0VYFEuj1nGIDrk9heQ7WWBl7d64o
-         yITXkcc76o8Z62tsJt6Vf1v0JDzk0/n6ctNGPb6aFUfr9znD2uYzSfZYsmaI2aPB/eZL
-         uO9WnB+hWZuIAJugh0D6SN/t7aSonRPm54v9Os0wYNPzddZhO9Iol2F+/2HX2/2FrmL4
-         Cbzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnbo0o63f2XA/EHgaJdJrTjb1X0wWdnktzqPV0c7mwGCfiOsFwp1/+5Y9Potfnp6xzMk2+yLDGbmGIqeN36ZrNfx0c8s+EfRlhsCW8eyXyIIfeoiKyQwg/y3mZhP3zGhar5++3cKNVSDU=
-X-Gm-Message-State: AOJu0YyseTRI7tLYjpUjbxRjXumYDoN+xAZsFq2VCnbriYX5SbtPsdeq
-	BKWz9KYaoVP2tJZoPjL8RpCwmyf2kaKZuNej/CYo0JsiV2bKoSkB
-X-Google-Smtp-Source: AGHT+IGpg4llAy6pM/N8Vx3JTRndVzPaI10cX2cZwlz6kJDnN+2KRVmAKdhoAZ4FK5shGeCXTTduew==
-X-Received: by 2002:a17:902:e80d:b0:1fd:a412:5dff with SMTP id d9443c01a7336-1ff048e4db4mr109497115ad.43.1722343128495;
-        Tue, 30 Jul 2024 05:38:48 -0700 (PDT)
-Received: from localhost.localdomain ([211.171.34.11])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ce7e4asm101081865ad.83.2024.07.30.05.38.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 05:38:48 -0700 (PDT)
-From: Kartik Kulkarni <kartik.koolks@gmail.com>
-To: hdegoede@redhat.com,
-	mchehab@kernel.org,
-	akari.ailus@linux.intel.com,
-	gregkh@linuxfoundation.org,
-	linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: ~lkcamp/patches@lists.sr.ht,
-	helen.koike@collabora.com,
-	kartik.koolks@gmail.com
-Subject: [PATCH] staging: atomisp: bnr: fix trailing statement
-Date: Tue, 30 Jul 2024 12:38:42 +0000
-Message-Id: <20240730123842.37487-1-kartik.koolks@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        d=1e100.net; s=20230601; t=1722343295; x=1722948095;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DsuWEAwFesBmVmB4583XOMo/wby9g3RmZDSGzW/7gaU=;
+        b=t8IzLK3xUYht1vDoNK5kodAiXdttLCVXLftYRWFnT/fr2LxCXnwJFkg22YxZjp/oCW
+         0mQDXZtDXwZI0PlW84XUrKAA2x4bE57Euo9fLaZaYqouCWQ95cHj9XIn1c5WTTXB3ltL
+         O1BPBKzALQbMtqD1DMxG71HMs0Ko8inu3uA/MXFtk9huyQmG0m61/itAhd5Z9cenqpfk
+         nUmQw+dR8x6IE3qtftJwuuMaSuyKtI8iusEt6fNKJssH90UDKOrVdi1q8+b/ltj5lrxB
+         isB7bCiXH3xt6khvsri97w09iNFVBn37VBW07PaVxMfb6NxXFSAWY72iw1RY8h1nchgy
+         Z4nQ==
+X-Gm-Message-State: AOJu0YzouNty/ZUv8B5LopeLW6ILBVGJ8juIPjedsZ2wdVv6iNu9R6Ga
+	Vg3jigAVU0rmZjBLcIs6XaT1x1KHTUxMALulJEEKac4/kLxTVhNam99vhrijMrzMwpN0hezt6t2
+	+9SaWaJu9xwoc+wuiQGyaiy+P+bYkYxlgN8KVajyqXxEUzEbwPS9U7Gc=
+X-Google-Smtp-Source: AGHT+IFBzWxqeUmj57QaeX34OfdH2pTxYjwbnBxvjvZYzQvFDKa4hz+JwKxknwE9hwD8TyiJLP/wMUpLMOm/Bq8xq8gCgouD0n8f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:b2e:b0:39a:ea7d:2a9a with SMTP id
+ e9e14a558f8ab-39aec438d4cmr7824925ab.6.1722343295473; Tue, 30 Jul 2024
+ 05:41:35 -0700 (PDT)
+Date: Tue, 30 Jul 2024 05:41:35 -0700
+In-Reply-To: <0000000000004da3b0061808451e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004eea70061e764caf@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] possible deadlock in
+ team_device_event (3)
+From: syzbot <syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Fix checkpatch error trailing statements should be on next line in
-ia_css_bnr.host.c:48.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
+
+***
+
+Subject: Re: [syzbot] [net?] possible deadlock in team_device_event (3)
+Author: aha310510@gmail.com
+
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
 ---
-Newbie to contributing to kernel code
----
+ net/core/rtnetlink.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Signed-off-by: Kartik Kulkarni <kartik.koolks@gmail.com>
----
- .../atomisp/pci/isp/kernels/bnr/bnr_1.0/ia_css_bnr.host.c      | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/bnr/bnr_1.0/ia_css_bnr.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/bnr/bnr_1.0/ia_css_bnr.host.c
-index 457a004e1..b75cfd309 100644
---- a/drivers/staging/media/atomisp/pci/isp/kernels/bnr/bnr_1.0/ia_css_bnr.host.c
-+++ b/drivers/staging/media/atomisp/pci/isp/kernels/bnr/bnr_1.0/ia_css_bnr.host.c
-@@ -45,7 +45,8 @@ ia_css_bnr_dump(
-     const struct sh_css_isp_bnr_params *bnr,
-     unsigned int level)
- {
--	if (!bnr) return;
-+	if (!bnr)
-+		return;
- 	ia_css_debug_dtrace(level, "Bayer Noise Reduction:\n");
- 	ia_css_debug_dtrace(level, "\t%-32s = %d\n",
- 			    "bnr_gain_all", bnr->gain_all);
--- 
-2.20.1
-
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index 87e67194f240..178f5b85fd87 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -2896,13 +2896,6 @@ static int do_setlink(const struct sk_buff *skb,
+ 		call_netdevice_notifiers(NETDEV_CHANGEADDR, dev);
+ 	}
+ 
+-	if (ifm->ifi_flags || ifm->ifi_change) {
+-		err = dev_change_flags(dev, rtnl_dev_combine_flags(dev, ifm),
+-				       extack);
+-		if (err < 0)
+-			goto errout;
+-	}
+-
+ 	if (tb[IFLA_MASTER]) {
+ 		err = do_set_master(dev, nla_get_u32(tb[IFLA_MASTER]), extack);
+ 		if (err)
+@@ -2910,6 +2903,13 @@ static int do_setlink(const struct sk_buff *skb,
+ 		status |= DO_SETLINK_MODIFIED;
+ 	}
+ 
++	if (ifm->ifi_flags || ifm->ifi_change) {
++		err = dev_change_flags(dev, rtnl_dev_combine_flags(dev, ifm),
++				       extack);
++		if (err < 0)
++			goto errout;
++	}
++
+ 	if (tb[IFLA_CARRIER]) {
+ 		err = dev_change_carrier(dev, nla_get_u8(tb[IFLA_CARRIER]));
+ 		if (err)
+--
 
