@@ -1,122 +1,121 @@
-Return-Path: <linux-kernel+bounces-268276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D818942296
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:14:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48AAD9422A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B801286A63
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:14:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E01191F25107
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3F918E05A;
-	Tue, 30 Jul 2024 22:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38DBA18E03A;
+	Tue, 30 Jul 2024 22:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iSZI4ZLV"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cIThiYea"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33B31AA3C3;
-	Tue, 30 Jul 2024 22:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DD3157466
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722377690; cv=none; b=EYcqOzUVTxU1nYAWaJLlbrwUdVzTgNVx3o7dcFhjTUcti15gWIewiEfZyVdb3PxWepjC0ch3jPQ3AZBz4ysnRC91dCNxkoVAyvGMz2uSIi7K0cTXwenPWg0d3dXVMOyQDWQ22NC74BdHdJoo7jaVzZMdy2Pwvhsxb3iSZ9/e+Ks=
+	t=1722377817; cv=none; b=PK6cZWEmtlvH5/avdQOFwZH0gMo9C/pyXvxf5A+5NslThB7DyZEr4cViAl0x+o5UUB8QMKMXxxM9QR272L7C4DrMdT3xjZU0tweCDRT700e0nw+s6FyZfIw/YQePwg46XE0jQMVtyYDYKGPnoMpAHfkSsSeAj7KUEnU7TdwKbFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722377690; c=relaxed/simple;
-	bh=E+b8ujX7bguvXqf7N/m1AXx3cZLbyhJGYmSw/0+EpMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=naS3zzKGAXhJ+wvWWroZ/6Q8hVgWZFWsBrGPi3sNiQ+eTtN+sxe5rJ0DYOUeCbHbG6gtVcwOTSdS4IoAW4vwpBBOhNh6VlhIWsi2xQJCIkgx8yjjb7jXi3w0YUIHIEcLmClVzUCuBAOJ6BRvqTrxuiMSCDak2cWqMPuMA4lgxZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iSZI4ZLV; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7a211a272c2so243797a12.1;
-        Tue, 30 Jul 2024 15:14:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722377688; x=1722982488; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B16lMJLjZ5QFXnHsYRnPAdBRJBP0j3bpJT50otO42ys=;
-        b=iSZI4ZLVsfxarWb3VuPw0Fo9oDRF1AcZKZv6l9KhfofKOV6jRtQB64NTx06JE1hTYk
-         mi5jU3r2vLrII/jZG2eDiWbYg0JtOyJGck+LJ1tIC06wQNv8wKXxib8ziNPkOfjkfGCU
-         I995oHtvNVtuczjnUGkwb0fXI1HdTkBQmACHsgBiyIHzFvYvzHCPkEW8AfZfZsMaHjRG
-         wkplHLD49IlfN2aNBAd1dsoials17BL9Ju46PobOkcpuQnJnwyWlNHZ0GVRpEBk2+ZcR
-         5YaGz+kDEThO9UZdBIdeIiWvE3VuiJtt8ovBB950k9TExme3o/Uk6jr0Zsf1ibQcM/P/
-         cHNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722377688; x=1722982488;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B16lMJLjZ5QFXnHsYRnPAdBRJBP0j3bpJT50otO42ys=;
-        b=vmw5JaXRAfNKe+H8Oj8eh1gcT3jxLq4LvmWCVaSWvkDZIY3evr3iSxCsGOQFpLCY7u
-         58WodlOxl+9D2jp+hXivX+fC1+llDbyqAK8HUjGU8NmouZqEBsI91vBvM3cYk2VZPgB1
-         io3N2pEWKiFp4UngLSZ2eR0+hBKdrrevR6BJhIr0MT/zCwQF688yIKP6Av8++A4w74pq
-         NPyEVqqpTOw29FG2fqyD4+DlXmKIpvLlKDAhBpBkRzEwDUEgY/b1x8gWugXLt0aDoLQY
-         PK6fExHYM2S14Sgz/AvFKTutqaO5hk3/4oIBbkFk9EvMuNtTD6Kuk1JgQ9mMQohv2edc
-         ph9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXjH/T2GzRwzrLr0Fh1VDOpsmawE0JocgaNK/2AIn672YtZinqhcxYYdPOJcUYGxyuaHIv0ptBr2zzin4+OJO9tyi6RHmaww62nty2kybDxnC+tl9a4BaXaxMEEtNg34VwEZb7a4g==
-X-Gm-Message-State: AOJu0YzMKy/csivqTC88jD1gE9YyslUvjyQFIehmoiUjFeCLa6+rsTHb
-	nWOyDDySTXBsjMPvn1ZEwwc51RyEoVrdNgtRMa4EFb2MYegi/mD3aGO6NQ==
-X-Google-Smtp-Source: AGHT+IG4IyJ2Elz3UMtMYa6q3gbGa5OSCP0Rj+jQeEKoAxYQnM2nJVEy9jsdUMTA5CeuWMSYLsXk+Q==
-X-Received: by 2002:a17:90b:17c6:b0:2c8:5055:e24f with SMTP id 98e67ed59e1d1-2cfcaab41dfmr5408192a91.2.1722377687948;
-        Tue, 30 Jul 2024 15:14:47 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cf28e376ecsm11088302a91.47.2024.07.30.15.14.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 15:14:47 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 30 Jul 2024 12:14:46 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Xiu Jianfeng <xiujianfeng@huaweicloud.com>
-Cc: lizefan.x@bytedance.com, hannes@cmpxchg.org, mkoutny@suse.com,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	xiujianfeng@huawei.com
-Subject: Re: [PATCH v2 -next] cgroup/pids: Avoid spurious event notification
-Message-ID: <Zqll1sNJB4qQc0s2@slm.duckdns.org>
-References: <20240730032920.3690263-1-xiujianfeng@huaweicloud.com>
+	s=arc-20240116; t=1722377817; c=relaxed/simple;
+	bh=gEPb57BREpeXHaJKVZXrhup82u31NcDS3AdggQZJUoM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=MYxWlqzUapI1z0kH5deu6NeZoJDyxvYr4qKGte9JtNxYhyrCa+izWbt6KiRjxl7CvKvwEgQAt9LX8CKdZGBa4Vk9lIXSHXahJC2Re+zP1Sw6CBY3tb4W6Cf1lv5mg029KrY1s2eDiQXO+I+g9SYYrULP6JENnlAnbHNLV0ZF6yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cIThiYea; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722377815; x=1753913815;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=gEPb57BREpeXHaJKVZXrhup82u31NcDS3AdggQZJUoM=;
+  b=cIThiYeaaUg5cIurG1MooSX/9np1aa+X4ETn/FT/YhvueP4NVijahjJQ
+   WG9dv0fBsjzpxMWtDt4nQduF2wgknSh+0L57h6E2Fojr3YOqv+Zr0ZZI6
+   CPYG5O7wEnLXlFrIgyjO3r6H6oLglZhCiM98TylNN5kWjTYxaUoPnxz7O
+   aI2PKUSq9RdogkiZcwNTx+mtpRlYHc5IaHsqqBSkq8YgPKOEPhXgJUBfG
+   TGzNESMhTn4LVVqf8m34NuB0+//V7AQ83kUu6rS0ZAmVPfyYXb2qX5i03
+   dqRd8ewTNaFze2FmU1VUJU1eAyErFfTFM9tjw7UvjvBGzLxj7PmkTXXSw
+   A==;
+X-CSE-ConnectionGUID: +Uki89YATi6CmmmodKGvcw==
+X-CSE-MsgGUID: 2mxF0hkPSZSxbb1C5j/akw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="24094118"
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="24094118"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 15:16:54 -0700
+X-CSE-ConnectionGUID: TOVCBaCnSMKa+N946Z7rCg==
+X-CSE-MsgGUID: i7g48lOkSq2E/tN3BkAgOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="58613340"
+Received: from lstrano-desk.jf.intel.com ([10.54.39.91])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 15:16:55 -0700
+From: Matthew Brost <matthew.brost@intel.com>
+To: intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: tj@kernel.org,
+	jiangshanlai@gmail.com,
+	christian.koenig@amd.com,
+	ltuikov89@gmail.com,
+	daniel@ffwll.ch
+Subject: [RFC PATCH 0/3] Use user-defined workqueue lockdep map for drm sched
+Date: Tue, 30 Jul 2024 15:17:39 -0700
+Message-Id: <20240730221742.2248527-1-matthew.brost@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730032920.3690263-1-xiujianfeng@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 30, 2024 at 03:29:20AM +0000, Xiu Jianfeng wrote:
-> From: Xiu Jianfeng <xiujianfeng@huawei.com>
-> 
-> Currently when a process in a group forks and fails due to it's
-> parent's max restriction, all the cgroups from 'pids_forking' to root
-> will generate event notifications but only the cgroups from
-> 'pids_over_limit' to root will increase the counter of PIDCG_MAX.
-> 
-> Consider this scenario: there are 4 groups A, B, C,and D, the
-> relationships are as follows, and user is watching on C.pids.events.
-> 
-> root->A->B->C->D
-> 
-> When a process in D forks and fails due to B.max restriction, the
-> user will get a spurious event notification because when he wakes up
-> and reads C.pids.events, he will find that the content has not changed.
-> 
-> To address this issue, only the cgroups from 'pids_over_limit' to root
-> will have their PIDCG_MAX counters increased and event notifications
-> generated.
-> 
-> Fixes: 385a635cacfe ("cgroup/pids: Make event counters hierarchical")
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+By default, each DRM scheduler instance creates an ordered workqueue for
+submission, and each workqueue creation allocates a new lockdep map.
+This becomes problematic when a DRM scheduler is created for every user
+queue (e.g., in DRM drivers with firmware schedulers like Xe) due to the
+limited number of available lockdep maps. With numerous user queues
+being created and destroyed, lockdep may run out of maps, leading to
+lockdep being disabled. Xe mitigated this by creating a pool of
+workqueues for DRM scheduler use. However, this approach also encounters
+issues if the driver is unloaded and reloaded multiple times or if many
+VFs are probed.
 
-Applied to cgroup/for-6.12.
+To address this, we propose creating a single lockdep map for all DRM
+scheduler workqueues, which will also resolve issues for other DRM
+drivers that create a DRM scheduler per user queue.
 
-Note that spurious events are explicitly allowed. Anyone watching an events
-file should keep track of the reported values to detect actual events.
+This solution has been tested by unloading and reloading the Xe driver.
+Before this series, around 30 driver reloads would result in lockdep
+being turned off. After implementing the series, the driver can be
+unloaded and reloaded hundreds of times without issues.
 
-Thanks.
+This is being sent as an RFC to gather feedback from workqueue
+maintainers on the viability of this solution.
+
+Matt
+
+Matthew Brost (3):
+  workqueue: Add interface for user-defined workqueue lockdep map
+  drm/sched: Use drm sched lockdep map for submit_wq
+  drm/xe: Drop GuC submit_wq pool
+
+ drivers/gpu/drm/scheduler/sched_main.c | 12 +++++-
+ drivers/gpu/drm/xe/xe_guc_submit.c     | 60 +-------------------------
+ drivers/gpu/drm/xe/xe_guc_types.h      |  7 ---
+ include/linux/workqueue.h              |  3 ++
+ kernel/workqueue.c                     | 44 ++++++++++++++++---
+ 5 files changed, 52 insertions(+), 74 deletions(-)
 
 -- 
-tejun
+2.34.1
+
 
