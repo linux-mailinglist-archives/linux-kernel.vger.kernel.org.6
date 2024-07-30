@@ -1,145 +1,112 @@
-Return-Path: <linux-kernel+bounces-267683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5E83941447
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:25:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C80B894144F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70D1EB24B85
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:25:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D46FB262CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5021A254F;
-	Tue, 30 Jul 2024 14:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83211A255A;
+	Tue, 30 Jul 2024 14:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d3FjUfHE"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A56A1A2542
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Inq/kNh+"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E300D529;
+	Tue, 30 Jul 2024 14:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722349529; cv=none; b=XMqEIBc3fm0eOTMpj0K/VReV3AsUsHE7OVXot5QzkoK/Pm3IyVBo/vAgbXxfufB1Bg6th9bBu3X+9KNVNJAmFNCyPInb97dvqqXh/eqTFtmdCzbzTyTfmZq5XFZR1UBXCqEuU/Txnlp7FYQqkg3fsMsIdq+QLB5iItGTAMzW2fk=
+	t=1722349601; cv=none; b=DoNZ2QCcKh9ok7VmLy5yPX33e47Lxz3o9GVNdSJ71SCa14C5eTDCNIgZ8pbrhcuUl7uR03WDegKSW9THBJSkGxy1GVCoXgNinBqPmA2LYz2OCjVGfY/Ush0ZqnGtVvSnbFMT02eJbQZ1PtBOgqfLPJhua+zBZ8FmULtQNGmw6K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722349529; c=relaxed/simple;
-	bh=LKBgNmvMBmaSWBO8oyVt1qd2hjc2mHIWU3Qo7jCMNYI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lETA2c5xhrhQ34sJOEUpF3EWBmf3m2CfSossqu5fzOeTJr/pHD2cUib0La37EofeN3q+4YNMgskiXbaKVnNX1dZfJcI8dnC2FN2JeuPC/KiT9smlSHpgGZ97C8lhCIZq896tTY/NL20d8QOUZ/gdVhy5Cum6m1TcOsEM2SPqhis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d3FjUfHE; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f04c29588so8386009e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:25:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722349526; x=1722954326; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5VQEznJg84i5ZK7eGARok4l5wc3m0IWj/uMPsa8F98w=;
-        b=d3FjUfHETMM4Qf3eHSNUYvTfGY/6W7jpEbTYKFXgnjJwt7HAbwRxb5AEELbZGSv2gr
-         LljKO4ZYj/pL/Dryy63Mpi7VsnsfwVbd5ZEenZrxhyKHQlWPDoaMlH9VWfKvFUQhLbaK
-         Lz9bapxs0F03a8vnfn2fK0bH84OGCn9TG/SKdAE+jawp77OYTsBzp93tDiXk8Z/x9LuC
-         gAp7KinrYpI7BBvMiCW/bhmapKdyG9XUyc2Hva7ktlepwuFsyBXBv7D0svPINGWKuemW
-         mYiHG0zpvqTRoB7PSSnbQ1DyhlKGIFsRncKVRvKR2k0iILjPfTFeNxBM5/BgzzBNbfgl
-         p2Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722349526; x=1722954326;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5VQEznJg84i5ZK7eGARok4l5wc3m0IWj/uMPsa8F98w=;
-        b=Ii8Se7LXTs7F3sl70a/jX9hasJvmeMh3R507vr33E5e8U86fiBZESx5Qs4X7wyzfzL
-         mUstD7B702DAA/6wswIwGa1OFckDKk3V/Sj7g+4kDa72WXtZPh6tXY1IY9p1NwNOqjFq
-         2e0tZ8CYwFGM/O+ZXExf2XhTGiq/TiTj+A0d71NiRDB3W5SkjhgnwSeoJlM9gc9lECsv
-         DOaDnS8qi3lnodm5dSuAf2YpS0yVbo7iB8D5tBjR994/dKQGLYszCTyV4lRDe5z4jZ4e
-         MlMqkU9LX57eWIONZloecD3c+OcTKf1nIjQWideAaF+7bd7ASIrfh4LrqvRV2TXQ/Sc5
-         B3Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhavQ1GUJf8WgWrAAOc7m/0Tcn5v1/LCp/LlNE2mkBt1ITIGcClfwSz0aGCvw0qMv4zHBUooNVJGEKQELP23cjdWwWylVr5xVmZFJ0
-X-Gm-Message-State: AOJu0YzotA4+SQszgXAwTUrOF3W4V+pSuM+pMXzxKlPZrailQRo/sW8A
-	BZ+7WUd5jwvALqVcrs4Lsmigm+A8VXf87W4izsmYfjDksfYRcgBQ
-X-Google-Smtp-Source: AGHT+IFLzRCIQWexgX1O+QPShiRIrQ7VfY/StVijR9lRPcUIwz14qenunSfvdTmdWPtO571hiS57iQ==
-X-Received: by 2002:a05:6512:480a:b0:52e:be1f:bf7f with SMTP id 2adb3069b0e04-5309b27b283mr6293800e87.27.1722349526121;
-        Tue, 30 Jul 2024 07:25:26 -0700 (PDT)
-Received: from pc638.lan (84-217-131-213.customers.ownit.se. [84.217.131.213])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5bd15d2sm1868898e87.112.2024.07.30.07.25.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 07:25:25 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc638.lan>
-Date: Tue, 30 Jul 2024 16:25:24 +0200
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: syzbot <syzbot+ff2407cef5068e202465@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	syzkaller-bugs@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>, kasan-dev@googlegroups.com,
-	Aleksandr Nogikh <nogikh@google.com>,
-	"Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Subject: Re: [syzbot] [mm?] INFO: rcu detected stall in kcov_ioctl (2)
-Message-ID: <Zqj31Kf9_Nb01GYR@pc638.lan>
-References: <0000000000000f67c9061e649949@google.com>
- <20240729143112.3d713abe2bde51d718c7db93@linux-foundation.org>
+	s=arc-20240116; t=1722349601; c=relaxed/simple;
+	bh=Y/BTsUGgKf7Mhqj9uRQJvsNaHTykMcJX4jhdObr4Jqs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eD7+ZrOJEjnZTCZ34M7BzCbnUxGlFuCp/mLZDj2FRjzRJCr1SN1V2gCEpCu1M6sxgX3LToCdiiMyJLeMQsWCl9UrL4PyBU2bVlvUDbUEdsIp+8Y5xLNo6bFQx8qsBre4hpP0UvtP/nQdsqZ2KTFSDZ1qdro67XAwnPeXA3ftc+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Inq/kNh+; arc=none smtp.client-ip=45.254.50.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=+r1GO
+	9lXpfV8NuodAhuijwCksvgX5ChGFsu9hFSC2ao=; b=Inq/kNh+gvNjevg3x9EMA
+	asfE24h/oSPcIjJG5ayH0+9j8czKKvaTZ7gvoxohVULdPME87rjGDf/6WPmSmELi
+	fkRkrk1XIkXxPcBr1fqFDdLD9xFE80OS5xisVSXCb4Rea/rEKu4XMRZYf5m+O10H
+	q+3eh0GdktEULtg0nEVXPw=
+Received: from localhost.localdomain (unknown [111.35.189.52])
+	by gzga-smtp-mta-g0-3 (Coremail) with SMTP id _____wDnN_j196hmrfcYFA--.59262S4;
+	Tue, 30 Jul 2024 22:26:05 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: liaoyu15@huawei.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-tip-commits@vger.kernel.org,
+	stable@vger.kernel.org,
+	tglx@linutronix.de,
+	x86@kernel.org
+Subject: [Regression] 6.11.0-rc1: BUG: using smp_processor_id() in preemptible when suspend the system
+Date: Tue, 30 Jul 2024 22:25:57 +0800
+Message-Id: <20240730142557.4619-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729143112.3d713abe2bde51d718c7db93@linux-foundation.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnN_j196hmrfcYFA--.59262S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCr1fZF4DKF4DCF4UGFy7Awb_yoW5WrW3pF
+	n5tF1UCF4kJ34jy3WxJ3yjkryUCasrAF15WF97GrySgayUC3W8Xrs3Zr17Wrn5K340gw47
+	ZrWqyw4qvw4UtaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jrGYLUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqQ4sqmVOB3V2uAAAs2
 
-On Mon, Jul 29, 2024 at 02:31:12PM -0700, Andrew Morton wrote:
-> On Mon, 29 Jul 2024 08:34:33 -0700 syzbot <syzbot+ff2407cef5068e202465@syzkaller.appspotmail.com> wrote:
-> 
-> > Hello,
-> > 
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    3a7e02c040b1 minmax: avoid overly complicated constant exp..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=132e32bd980000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=381b8eb3d35e3ad9
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=ff2407cef5068e202465
-> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> > 
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> > 
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/198814da854c/disk-3a7e02c0.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/868e99275bc0/vmlinux-3a7e02c0.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/ce63033f3708/bzImage-3a7e02c0.xz
-> > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+ff2407cef5068e202465@syzkaller.appspotmail.com
-> 
-> Thanks.  Possibly kcov_ioctl(KCOV_INIT_TRACE) was passed a crazily huge
-> size.  Perhaps some more realistic checking should be applied there?
-> 
-> Also, vmalloc() shouldn't be doing this even if asked to allocate a
-> crazily huge size.
-> 
-<snip>
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index bc21d821d506..450c6b10a357 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -3783,7 +3783,7 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
- 	if (WARN_ON_ONCE(!size))
- 		return NULL;
- 
--	if ((size >> PAGE_SHIFT) > totalram_pages()) {
-+	if ((size >> PAGE_SHIFT) > totalram_pages() || size > INT32_MAX) {
- 		warn_alloc(gfp_mask, NULL,
- 			"vmalloc error: size %lu, exceeds total pages",
- 			real_size);
-<snip>
+Hi,
 
-We can limit it to ~2GB or add a special threshold which will control
-the maximum allocation size.
+When I suspend my system, via `systemctl suspend`, kernel BUG shows up in log:
 
-Any thoughts?
+ kernel: [ 1734.412974] smpboot: CPU 2 is now offline
+ kernel: [ 1734.414952] BUG: using smp_processor_id() in preemptible [00000000] code: systemd-sleep/4619
+ kernel: [ 1734.414957] caller is hotplug_cpu__broadcast_tick_pull+0x1c/0xc0
+ kernel: [ 1734.414964] CPU: 0 UID: 0 PID: 4619 Comm: systemd-sleep Tainted: P           OE      6.11.0-rc1-linan-4 #292
+ kernel: [ 1734.414968] Tainted: [P]=PROPRIETARY_MODULE, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+ kernel: [ 1734.414969] Hardware name: Micro-Star International Co., Ltd. MS-7B89/B450M MORTAR MAX (MS-7B89), BIOS 2.80 06/10/2020
+ kernel: [ 1734.414970] Call Trace:
+ kernel: [ 1734.414974]  <TASK>
+ kernel: [ 1734.414978]  dump_stack_lvl+0x60/0x80
+ kernel: [ 1734.414982]  check_preemption_disabled+0xce/0xe0
+ kernel: [ 1734.414987]  hotplug_cpu__broadcast_tick_pull+0x1c/0xc0
+ kernel: [ 1734.414992]  ? __pfx_takedown_cpu+0x10/0x10
+ kernel: [ 1734.414996]  takedown_cpu+0x97/0x130
+ kernel: [ 1734.414999]  cpuhp_invoke_callback+0xf8/0x450
+ kernel: [ 1734.415004]  __cpuhp_invoke_callback_range+0x78/0xe0
+ kernel: [ 1734.415008]  _cpu_down+0xf4/0x360
+ kernel: [ 1734.415012]  freeze_secondary_cpus+0xae/0x290
+ kernel: [ 1734.415016]  suspend_devices_and_enter+0x1da/0x920
+ kernel: [ 1734.415022]  pm_suspend+0x1fa/0x500
+ kernel: [ 1734.415025]  state_store+0x68/0xd0
+ kernel: [ 1734.415028]  kernfs_fop_write_iter+0x169/0x1f0
+ kernel: [ 1734.415034]  vfs_write+0x269/0x440
+ kernel: [ 1734.415041]  ksys_write+0x63/0xe0
+ kernel: [ 1734.415044]  do_syscall_64+0x4b/0x110
+ kernel: [ 1734.415048]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ kernel: [ 1734.415052] RIP: 0033:0x7fe885cee240
+ kernel: [ 1734.415055] Code: 40 00 48 8b 15 c1 9b 0d 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 80 3d a1 23 0e 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+ kernel: [ 1734.415057] RSP: 002b:00007ffc53ccec58 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+ kernel: [ 1734.415060] RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007fe885cee240
+ kernel: [ 1734.415062] RDX: 0000000000000004 RSI: 00007ffc53cced40 RDI: 0000000000000004
+ kernel: [ 1734.415063] RBP: 00007ffc53cced40 R08: 0000000000000007 R09: 000055f34dde8210
+ kernel: [ 1734.415064] R10: 6bccc22257390b18 R11: 0000000000000202 R12: 0000000000000004
+ kernel: [ 1734.415066] R13: 000055f34dde42d0 R14: 0000000000000004 R15: 00007fe885dc49e0
+ kernel: [ 1734.415071]  </TASK>
 
---
-Uladzislau Rezki
+
+I confirmed that this was introduced by commit:
+ f7d43dd206e7e18c182f200e67a8db8c209907fa tick/broadcast: Make takeover of broadcast hrtimer reliable
+, and revert this commit can fix it.
+
+
+Thanks
+David
+
 
