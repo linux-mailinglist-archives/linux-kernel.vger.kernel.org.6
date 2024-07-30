@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-267533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C76394128D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:53:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B7F94128E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B8341F24BD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:53:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3338A1C20A03
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92A21A01BF;
-	Tue, 30 Jul 2024 12:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3921A0702;
+	Tue, 30 Jul 2024 12:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="TtmWtFyl"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0YQUy07G"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1C118E77B
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 12:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1BC19F467
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 12:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722343840; cv=none; b=LsJpfZ+f0T2Ad1AkrBWUZmiV+eATHf3LsaGY+ull0griXuP6BonpWzZgk2O2n44djJrtemOjO3kN2UbaRkiklwcB1OW6rNg9OpHl0tHXtQ2o7JcdyF7lUV6MXhdJvy5vkP+GtpSUI61dPnzIogB98fuEffnuGjmDVo7JQCSz8OM=
+	t=1722343841; cv=none; b=fjCg8+TszA2EpVISBUVqFAOL7tTuB+6wiVaCUoDrn9tcdPMS1VCi0vguDC16k7YbPMLkf4mSxesQmvRznOWOTlJEuXScHuTj2bb/IaCdHeth7F1gYUxCe+phpyR6sg2TTnDJFML3yfMgAVBFI6LUdgzjnh9SUVw+mdWgg4bde2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722343840; c=relaxed/simple;
-	bh=qRmlXTh0lJZ9LAW465AGOONHnfyWzyrOMHm/2OYPDrs=;
+	s=arc-20240116; t=1722343841; c=relaxed/simple;
+	bh=ND1Z2QSEc8ze0NZoRpWgZwD08lwNK0gF0FUUxf0STs8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fpmgzxxD7WeA1+Sq1aHppY89oyPJTOJ/w8kUIoepXgjPcLm+bmE6N8qegaH4DC3GVghGuiEO82SGlsnleQIdxH+AlRMI1kXJqblh+/uEqE/bvl3LPO3a2FEYU3GcS1DBPRGGXBAghS6Uk65nrCTEeVJzz1RpZH9udPdnqjF66t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=TtmWtFyl; arc=none smtp.client-ip=209.85.128.48
+	 MIME-Version; b=lSKsHPM845hGqV3gmZyq6iT+g75UFSzgHCDTHkHaqseqKEGlTHaD9ZZaQEH7Mhn5Bah5BeaMI85HO5zbt0EpusDt0WC2Ov0vP5jaOrG/I5SjFnYZcjvSpwypHDIbekS0ga1zbum2mWUM9WUbRIksYZXKwCd3FwVrKbLyOsAYBH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0YQUy07G; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso27071395e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 05:50:38 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-36858357bb7so2107511f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 05:50:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722343837; x=1722948637; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722343838; x=1722948638; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kFGOubNsNVn1OpgYJCvY0DMJojSWylMPMeeJsgWseOI=;
-        b=TtmWtFyl7HqnY/4yXeAs9bekGhovlwXkkpPJ91LZog/THUEPfg5ipuPxXCorEogBkT
-         /JNu2SZeAJPHsf9atVd0jGq4LVjAWzhfsjTb1SWGA8c3Pxc/4iqtJ1Dg+32r7IUodSdH
-         YsxPsvlxDjsoSub6wC5mWvQftNwhfAnOxuJCgM9LHJkl0HEX/OEu0gPMgKJuoyLAXwmC
-         rnYNudWjSWAmOW1bielBvmDjv3wucbiykbasR0h50CEaa2w1mIiSBsvsM9Bo2dUK5P1M
-         iI+54SJihO84D2NAroiK9KPE3MW5pt4ZAjLzr6VhZmz7Oxt1hOsJB1OQ8OTOpLtCu8E7
-         YDiA==
+        bh=8FpQIo3/nECT6BJG3YrzIm131E/DRxLPrAjjYNTEWJA=;
+        b=0YQUy07G9qEIjZ503mj3yKWW+kP7EmVd1PnO8cex/Epa/S2hvHwrtgSlVHBJ6h5yJ5
+         rfEEezCKKBV+fZ5p0wsoGpiFNzhCQ69evl5F9dFEGpPp9UvW8He7wuAiU4IXa/Ir5M8y
+         RzZrTC0z7SBbFr7c6QoFbgNAgKuwv66VzsAzp0FPkgvhkn0Ei214Ami7Csv0Nw/DIetU
+         Wx2WtVWZ9OEjLuCEGJJgjlS4WvtWX7iQYnkV7dbfEu2ab3HL7H2ZO7e57muAqURjzAyh
+         i4Rb2ZRNVYhxFcqdVp6WvH/4iqnyjpP5kZJ0WhemRcicG6Hv5nhSPtTscrT52BtVQK22
+         OXqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722343837; x=1722948637;
+        d=1e100.net; s=20230601; t=1722343838; x=1722948638;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kFGOubNsNVn1OpgYJCvY0DMJojSWylMPMeeJsgWseOI=;
-        b=wepDPIX8XXWzY0ku48OyMwtMmECDlnK0KsbE3w8Xn9No3qTy8r9P7saQ5M39rQ2b6m
-         JUOZSk/jRzjFys9BvKOYJ5iDA0SngZDm7R9zRJdWCN60ls4QgOX6FWwJS4DxVbcU7c/B
-         XpALI7O9/J+x/cJwRfNSaao28rrGtzHrTSRxy5wrGlMwMaB7Xzl8pLhNwHST7SHuHTjw
-         ysXoKm1VqJ/BOTreIdnhRVlO7qEr/ZsqAcmtpeX33griV50RufEECjnOpqucbOILbWBT
-         s8LagE511mkiDqZkIP5OpTkiJ1IL42tn3MBw6wYrUS5ct8Jl0x6HMvgDx9eaEmoOfkz2
-         4/rg==
-X-Forwarded-Encrypted: i=1; AJvYcCXP/OtmPH3B7jo0jwbuU49XwQ8Udcko170We9yoDHYaAmySyO0kH1wANH+3CkWI+AcHUsXJ0nAI7N9fEQlx1OHY6riq54suleFT1/o6
-X-Gm-Message-State: AOJu0YzDog0hbzaDSDeOO3h35Y617+aXRpD1qRh3c429TEK+GwJQ4EA9
-	H5QgaTf1HpTG4E779vb6b2FuDe0aEFBWOkN8Hykn65wIu2OyMugHA0jq3GrAG6E=
-X-Google-Smtp-Source: AGHT+IFYy4B/g5w5Y3B19jbk4N8IBnPQwvEBCaNr6l0tavtJI1kbi8Yq6wQAsMTGuLdyiEwuv2pLaA==
-X-Received: by 2002:a05:600c:3b07:b0:426:4978:65f0 with SMTP id 5b1f17b1804b1-42811d9e0dcmr82301025e9.18.1722343837035;
+        bh=8FpQIo3/nECT6BJG3YrzIm131E/DRxLPrAjjYNTEWJA=;
+        b=TZyyVJ0iuWSOMeiY6tap5C3IyiHBkfgFQPEPAATMxLpmfFupNCGkYZwuoLJLmzr2N2
+         /R51gTvmexFiWIvEXm7dWQ+UTi2XwkyMbnDRntXeP1LjgwGN6z1sdmf3Qg4KvdwD/d1l
+         VrZlGRfofCpySuxOYvUeKFcm7F27ItGYkeRcljh8+PwbFYVNqXah01S1DH+MsodSOOTm
+         bEY8D2XDSQgf9aHtE9HFdC/1hnrmpr26qILtOEkzn1DIhT9E4Z5+IByXVyORiu+V0L9B
+         b3JrnVbmz8ZSXnGj89dN/3VihR6X/tlb0aSBsdH4+4wp+50bFKv8p2+174RpknqZnns+
+         h9yg==
+X-Forwarded-Encrypted: i=1; AJvYcCXwNZkYaYAd9o3cGNod516Nob5FIVmMZFGv0mvzkS4puJge5H2Wbcujo1IQGpklUaH6Y516TBF/+vMux8mgH6idtrVz+8AGRCywZva2
+X-Gm-Message-State: AOJu0YyWuHyfIrUurlpdZEPWmlzXggbO7wc9KlG5Uzw/mABMLTVxWL9W
+	/8MkUhpKOnYSh1BrP8L4uzw6ojW1Q21/BADsAS5QnBJ5nrS9WPYgSfufZxIScUk=
+X-Google-Smtp-Source: AGHT+IFYKETa1maYsbR/lXJacP4Dulbw5t+LnfR9HzWYE5KbSp8mR/aHH1IRgvWxRpjGsQ/h6Ss4mQ==
+X-Received: by 2002:a05:6000:4029:b0:36b:63b5:ed64 with SMTP id ffacd0b85a97d-36b63b5f8e9mr8234742f8f.40.1722343837924;
         Tue, 30 Jul 2024 05:50:37 -0700 (PDT)
 Received: from toaster.lan ([2a01:e0a:3c5:5fb1:291e:4a48:358e:6f49])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42805730e68sm216521405e9.9.2024.07.30.05.50.36
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42805730e68sm216521405e9.9.2024.07.30.05.50.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 05:50:36 -0700 (PDT)
+        Tue, 30 Jul 2024 05:50:37 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -79,9 +79,9 @@ Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-amlogic@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/9] drm/meson: dw-hdmi: use generic clock helpers
-Date: Tue, 30 Jul 2024 14:50:13 +0200
-Message-ID: <20240730125023.710237-4-jbrunet@baylibre.com>
+Subject: [PATCH 4/9] drm/meson: dw-hdmi: fix incorrect comment in suspend
+Date: Tue, 30 Jul 2024 14:50:14 +0200
+Message-ID: <20240730125023.710237-5-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240730125023.710237-1-jbrunet@baylibre.com>
 References: <20240730125023.710237-1-jbrunet@baylibre.com>
@@ -94,79 +94,32 @@ MIME-Version: 1.0
 X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 
-The Amlogic HDMI phy driver is not doing anything with the clocks
-besides enabling on probe. CCF provides generic helpers to do that.
+Comment in suspend says TOP is put in suspend, but the register
+poke following is actually de-asserting the reset, like in init.
 
-Use the generic clock helpers rather than using a custom one to get and
-enable clocks.
+It is doing the opposite of what the comment says.
+
+Align the comment with what the code is doing for now and add
+a FIXME note to sort this out later
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/gpu/drm/meson/meson_dw_hdmi.c | 36 +++------------------------
- 1 file changed, 3 insertions(+), 33 deletions(-)
+ drivers/gpu/drm/meson/meson_dw_hdmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-index bcf4f83582f2..2890796f9d49 100644
+index 2890796f9d49..5cd3264ab874 100644
 --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
 +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-@@ -619,29 +619,6 @@ static void meson_dw_hdmi_init(struct meson_dw_hdmi *meson_dw_hdmi)
+@@ -751,7 +751,7 @@ static int __maybe_unused meson_dw_hdmi_pm_suspend(struct device *dev)
+ 	if (!meson_dw_hdmi)
+ 		return 0;
  
- }
+-	/* Reset TOP */
++	/* FIXME: This actually bring top out reset on suspend, why ? */
+ 	meson_dw_hdmi->data->top_write(meson_dw_hdmi,
+ 				       HDMITX_TOP_SW_RESET, 0);
  
--static void meson_disable_clk(void *data)
--{
--	clk_disable_unprepare(data);
--}
--
--static int meson_enable_clk(struct device *dev, char *name)
--{
--	struct clk *clk;
--	int ret;
--
--	clk = devm_clk_get(dev, name);
--	if (IS_ERR(clk)) {
--		dev_err(dev, "Unable to get %s pclk\n", name);
--		return PTR_ERR(clk);
--	}
--
--	ret = clk_prepare_enable(clk);
--	if (!ret)
--		ret = devm_add_action_or_reset(dev, meson_disable_clk, clk);
--
--	return ret;
--}
--
- static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
- 				void *data)
- {
-@@ -651,6 +628,7 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
- 	struct drm_device *drm = data;
- 	struct meson_drm *priv = drm->dev_private;
- 	struct dw_hdmi_plat_data *dw_plat_data;
-+	struct clk_bulk_data *clks;
- 	int irq;
- 	int ret;
- 
-@@ -701,17 +679,9 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
- 	if (IS_ERR(meson_dw_hdmi->hdmitx))
- 		return PTR_ERR(meson_dw_hdmi->hdmitx);
- 
--	ret = meson_enable_clk(dev, "isfr");
--	if (ret)
--		return ret;
--
--	ret = meson_enable_clk(dev, "iahb");
-+	ret = devm_clk_bulk_get_all_enable(dev, &clks);
- 	if (ret)
--		return ret;
--
--	ret = meson_enable_clk(dev, "venci");
--	if (ret)
--		return ret;
-+		return dev_err_probe(dev, ret, "Failed to enable all clocks\n");
- 
- 	dw_plat_data->regm = devm_regmap_init(dev, NULL, meson_dw_hdmi,
- 					      &meson_dw_hdmi_regmap_config);
 -- 
 2.43.0
 
