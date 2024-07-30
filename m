@@ -1,247 +1,201 @@
-Return-Path: <linux-kernel+bounces-267207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A00940E65
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:56:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A04EF940E6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74D131F23187
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:56:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 900F8B258D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3978B19D8BA;
-	Tue, 30 Jul 2024 09:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843FE197A90;
+	Tue, 30 Jul 2024 09:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="laAYV2YG"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2052.outbound.protection.outlook.com [40.107.103.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YiSj6o7y"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CB019599C;
-	Tue, 30 Jul 2024 09:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722333285; cv=fail; b=cXW/JopvLjPZbDmgWIjkeSgysug8LDRcESXPZn78xTmBW8owMfn3nrHtT3ge6Ca/ExLYH61kfhCRN1tLEmOb/o5JsH3ofeIV//SeOZQysmn44juljs7CoU+e1dH9KaptTJ6AucWeFF/FVUI/ZaaJyrebN2GP8MjgNMi0Oa42LKI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722333285; c=relaxed/simple;
-	bh=/Yx13Y7TSs05VJKZi69JX0OqlXAqv8nvgptjoN844AU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nPnmGZFoCjBMj/EZcK8NOyFYPLWhwUDr0D89uxGt41CvzMJ8GlynI0XxKRZyruHoXK5zLNpavEYvxpOA64u/luH8JwQ/1WfSjdtZPy39Ek/QOuuUctHBsJTMMgodG9y7aADDcosDueDBGn46rfLlKyomOUAjntdgyDfcQpWYQJ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=laAYV2YG; arc=fail smtp.client-ip=40.107.103.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rZV5Jmo3q+3qB5u70iJdb8vtKjSCwhBjoStnkVnJQlXz5vpg0ztX9JtG4bT6PoHX568W6pTnrDEfoNGwUd+Cx4EkpArc+kMr46LwprM47ZMiXWWKwn11/oSf4QowqcXnehhWI+5ruutBzMZeE9HJyTCFIEZ/REx6p3e59R+vIh862rw0c0aWgL5pvmMP2wChH/YU4u87tQi0/Xu0pu08KwdJMLDTd6GWQGIL60XJQ2fYTOMAs1aJ46daNIrImym8EdDIvvCoZJIPGj7njCxg+N4912DsBdlC0fJgwNkCyZcnX5jQSDcxejct74DQYohPr1ItNG63kUZHfs4uLhuVlg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WkoX6eAnZaQAU/5TOwdVi8tlzn1Z2jN2WJfGy/iPDQA=;
- b=RC2VxdoSh5/QdbCb76UzZB+XJRBljseraV6TSInqEszEq2ojuwneVOJ0H2G2MVONUhkCiOoSH04hxfgKZnHHGx6YCIZG54T6sOepqFaNDv5+D45d2wUTSOmBJdOwT5CXI9X3F99wCq5lJ6OlGeR5NzZslb5oICjBkrtbllh6oyRSTHC3XC1pOHVhWgSxoyq+PN/6jT/+CimmGzudivxziSryK94tQKrCj7QSdiC4likT1QOhfELqnnlP9nQnxFX0l15/ie+4XmCFDMQpuV6Zu8/ZAhJfPVI3/hPja/j9xQoUb1nPq/iXgJSiI1Jkg0LUSAXQJn+GIFH8VPO+M2S2HQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=de.bosch.com; dmarc=pass action=none header.from=de.bosch.com;
- dkim=pass header.d=de.bosch.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WkoX6eAnZaQAU/5TOwdVi8tlzn1Z2jN2WJfGy/iPDQA=;
- b=laAYV2YGtMzN68sH2a7ECR994oubjpoqmfdBpmB38HsbPvRM6oE4aAQ+tlEWNkG1R8q1vUXehDFftqmlZ1L6ySvNDHGfprE1ekbTOD8e7pquoYsgfAwpRW28sFw2U7mrSHuHjPyaIQUxyhqQERjMtU+Z1ouc5I/IfbE0DoqJ8JiRZIyaMbsdVIKh9W7i/WWFHY6haFqEZal8l9qEpfOVDOXPY2bnRV5RBCaLIqlFjBp4n0/UzSTvajhPrKI0wWZxKtxAGQamxx6rWCY+Ktl0feyJ3jsJEkwWH2e0UBBE2ZXdIPzXdsr3ixjcHqPbaYv2DGkUxqjjvXQdPY/AEy+zQg==
-Received: from AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:315::22)
- by AM7PR10MB3528.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:13a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Tue, 30 Jul
- 2024 09:54:38 +0000
-Received: from AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::6748:a0c9:d73d:db74]) by AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::6748:a0c9:d73d:db74%4]) with mapi id 15.20.7807.026; Tue, 30 Jul 2024
- 09:54:38 +0000
-From: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
-To: Jonathan Cameron <jic23@kernel.org>, Conor Dooley <conor@kernel.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, "lars@metafoo.de"
-	<lars@metafoo.de>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"dima.fedrau@gmail.com" <dima.fedrau@gmail.com>, "marcelo.schmitt1@gmail.com"
-	<marcelo.schmitt1@gmail.com>, "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Lorenz Christian (ME-SE/EAD2)"
-	<Christian.Lorenz3@de.bosch.com>, "Frauendorf Ulrike (ME/PJ-SW3)"
-	<Ulrike.Frauendorf@de.bosch.com>, "Dolde Kai (ME-SE/PAE-A3)"
-	<Kai.Dolde@de.bosch.com>
-Subject: RE: [PATCH] dt-bindings: iio: imu: SMI240: add bosch,smi240.yaml
-Thread-Topic: [PATCH] dt-bindings: iio: imu: SMI240: add bosch,smi240.yaml
-Thread-Index: AQHa3chB8xxiR7i0TkqCxVScMqlaI7IF2/MAgAAOijCAABVsgIAEnx6AgARxWBA=
-Date: Tue, 30 Jul 2024 09:54:37 +0000
-Message-ID:
- <AM8PR10MB472120A0BF7377F4D800E165CDB02@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-References: <20240724125115.10110-1-Jianping.Shen@de.bosch.com>
-	<20a8ad37-f6ce-4342-a2f7-bf3495dfeb69@kernel.org>
-	<AM8PR10MB47219903C83BA4F0AFE2DAA3CDAA2@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-	<20240724-ogle-equal-d14de4318080@spud>
- <20240727150011.019344c6@jic23-huawei>
-In-Reply-To: <20240727150011.019344c6@jic23-huawei>
-Accept-Language: en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=de.bosch.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM8PR10MB4721:EE_|AM7PR10MB3528:EE_
-x-ms-office365-filtering-correlation-id: 2917c69a-a1d2-4e73-161d-08dcb07d9fe8
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|366016|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?JSNfREDAaDxfjoL7EfBCtl0N+63/5yArh5hTdUIam0/qEpoSZ7TigFnECU?=
- =?iso-8859-1?Q?5ffQn8Fs0ld/mpBfPWXt2/2XViQcKZ6N/2sA934XO7QNiBV1CcqMCCerzq?=
- =?iso-8859-1?Q?EEEnNMLlsnUq6UI30RL6yiJNdhCTfTHL6L+CMZW2oQfqyCH3ZURhzrGscv?=
- =?iso-8859-1?Q?WpfjUT03GF4mIeX5Rky1Ync5EIHE845Y/VHBGH3+mPKyY1tYThHTJpzxiu?=
- =?iso-8859-1?Q?sHKqo6MAXK/0ETgX8qrlKszeVwKJNI8MLCyDdLf8aue85LOYLs7V4zQslc?=
- =?iso-8859-1?Q?Dv351noBvsfIO25o1x3IeshIbKrbYG7MefOhJHgUgHMXUFu7MQ3SsLfwA9?=
- =?iso-8859-1?Q?zWyUflsE5C+cvTgrMvliwIfISs2es2LLKw+q2ah8YLXxuyZo+I2NnkyuUr?=
- =?iso-8859-1?Q?clxEjWTpmyVZFNFJ2CHUiQkGOOaS1FmlJpJ5bCAuE4s5x01BWDYYq2OuIM?=
- =?iso-8859-1?Q?fQ7BLSW1abbmOd+/2EUxM3SWQ5A0p9kkHR8q8PtoT2zUZX1XoI5MQHaElZ?=
- =?iso-8859-1?Q?1jRzSij6y1ZndRT/DR2EG8EzB1ecm0vVbwUWt49muxzzNYg3qGHA0gUYGc?=
- =?iso-8859-1?Q?vUYaeeXNGtLS2MXdi6vhYui2To2lkakP2tUAR1c26+S+6YmdF5OIFzXIYY?=
- =?iso-8859-1?Q?4+KwvQR9q6eu0+ZNeSm6i+CVP+NIvvYvGGuMjr5jCT/15x59XU6HyAFU7i?=
- =?iso-8859-1?Q?EZTlOJ/CUnnOTF8BGCZXqjEq+hXv5p056uc3tvSplUXPdo8GemzkL3cq1e?=
- =?iso-8859-1?Q?umyYfuCN5LgKrBe5ZZ9fQRhd3IcW/jfpqZkZBWIF3LqmxnfUcjq9utJfyB?=
- =?iso-8859-1?Q?C+LPOCdRvl3gvwWFh4zgUCsp9UaOKYFckqzRtGTYsVA0gw6YOr7bG6c7SU?=
- =?iso-8859-1?Q?Wp9voUdm32MK5RJJ9wvd/jujKqEXzSfzvHobTfezWcSCqI3AfDLs6t8Mqq?=
- =?iso-8859-1?Q?RVD8hR6XyjB5tH99q2p7OUf6uZqT5lbKGRveADDrISjd92kAvbUsiwjtaA?=
- =?iso-8859-1?Q?WeZ668XCyP7dndF9iVFZM9SoDPOCRNQX3NmOVH4eORPj6lfbkg9UEFCtfv?=
- =?iso-8859-1?Q?ARx6QzSE3nrEhZTY8BeW2FK6Oec7SG6T87ou/lCa5LTdNh4/x27Lmh9ySw?=
- =?iso-8859-1?Q?iuntd9h4z72m7Xli+AM5yyNeW5m7Jtr4kMMzK8BR7YQVcTEgF4hJOyJmeB?=
- =?iso-8859-1?Q?LiCJ7ucUwaPH7mHURtowQ0pDH4p/W4oA4Atu80xtTIngLlN9xDxb+n5Ft3?=
- =?iso-8859-1?Q?YKiMldavDAKUC3g8zBcu89zVr/iXv/3eVUtXS1jfUDElmDWUowUOgGAWkf?=
- =?iso-8859-1?Q?J7LEh5ANchultUY4iQ8G2S16mzk1tzH3v2ch9wgsIfyvYsA+yjccG1kkMn?=
- =?iso-8859-1?Q?0reW7F51ZkJZo4CbwhTq9vRe0x8PHiSRnwAhIrYbh2tqHQsIGOn2M=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?flATRYw9LoMN/ZpyNhaCVxUOlTexL/fOgycH19gQfqLhkIgpkbM7DL/+kU?=
- =?iso-8859-1?Q?f2zqpxNWklWUVFBJA5KAcn2sMHpCOkDHXWgK+DEF8CK9qLxhDKiFAYy5V9?=
- =?iso-8859-1?Q?O2V0EuJkGUKlWSCvKYdu9l0MGcXqYYLe6BZ6UNNJvq3hKTfoEB+fdB/EzD?=
- =?iso-8859-1?Q?wIwvx8wUUGPOzNCOArihrso7LiYt3yT9YeZ3KsZ4NZPjbzzJYcPVj5grJM?=
- =?iso-8859-1?Q?Pc9xB6X6dYfnK321JiAFfOrbI7Pwh5L1aEnwi6THL8uGAUDJdOgmm6Z2Mg?=
- =?iso-8859-1?Q?NRWrKYlYhcr4BEqcweCgZAZB38VYEd9+zfJgkdcObYMxATz5iltUV3i4wh?=
- =?iso-8859-1?Q?xhITtMGeotEAI3Zgy4+xzF3I23x4yslDYdWold8jiRllz65dqI20/IABSR?=
- =?iso-8859-1?Q?KaNbWkvQKFbUXVtMqao3LRcjEZrWkxQpnTl5CNgKTEMftIbOAJ9q4aA7qc?=
- =?iso-8859-1?Q?o9P5QdCLSaAK8pXDxN6YTBEndTkReICsefIKTyOdcf8w7zKv5ZDpKmOHeQ?=
- =?iso-8859-1?Q?XHPLXDZeUsoN5xPvT7xUEHlAFAGbtSE/n4GAYuY4rscTgnlil22sBh/TXG?=
- =?iso-8859-1?Q?1lLNSphVc87rcnWTYHogOsYvudJVieQu0xWuEeG2vuU6cM8E/uagUsKT+M?=
- =?iso-8859-1?Q?ZxjsQCIf/1XFkazRYdI0oriSkJ31tBkMI7bbo9zNRn8Rm/W1AX6qv/jDmd?=
- =?iso-8859-1?Q?PNnjgSV0XZ0lhWXdV88ic+eP11byMzyTdhBkKj+mtWbx8rkE+u0bKiRFDB?=
- =?iso-8859-1?Q?KvViG79/yxFk60V14AwevHvMJuZsg6AgCEwEPzB6ZIuJ2E+k/rVvqtT2/c?=
- =?iso-8859-1?Q?U3dx/j7cBehbk2HS50axPl+LYZwa74Uh1E8AhpOg8tCT/U+aSYsE3QOxxG?=
- =?iso-8859-1?Q?TGC7dkCO8SpViBxa+eDmqNLkESMluonUYWN+tMn6mc6vPs3JPoXrSNVUhA?=
- =?iso-8859-1?Q?u/4Twc9iriDrbvlZphAk9+sw6cFbe0fgDuawOtXkW2BXB18lRE/TbrtOaU?=
- =?iso-8859-1?Q?VvhrZg8DBxwjbYLat6JYDpR5il06hgq+ymHsX3/rXdgjLZEAUowqL3VscD?=
- =?iso-8859-1?Q?fTuIH0Z+KzFRN2W0hzC8sYF+HN2gyMT861oo+j8d1DwkllMmUBjRlB6XM3?=
- =?iso-8859-1?Q?E4aPdxBeHBMhnF69YsbOTOsePJgCjfxG0JRSkAR+4QZf2bbMmFw+CvkFB0?=
- =?iso-8859-1?Q?Sx4OVP/FHO7BI85+UIzVA/GbDyZUHsRVf7U4jsPblU0IXZpKb8zIhKCvJi?=
- =?iso-8859-1?Q?iF3nZnTXUEU7KBOQ5UeptdPXef/PaOLHbH/TVHNMSfk7HUYiqWac6/A2dr?=
- =?iso-8859-1?Q?1AqP8lDitZiAZUWPEKmnQK8FBFDKP1IlIYPCvcHgMUsueCQJU7KNGKowW6?=
- =?iso-8859-1?Q?DFLSsacdYlznyV9HQWS8lpC5RLHt5Wky1ipDkz7CiYbR8MWiyZLbwj743F?=
- =?iso-8859-1?Q?Ydy8joFoz+/r5zORsCyhHxS0RxnckYCn2bzCkfXWC7JH8CAVlK8HGAqdoh?=
- =?iso-8859-1?Q?bXjPImuzyyJDVg6KTxReagOgWYES+Pd4iWkuZTbVBdpvQ+PXACBIia3p+2?=
- =?iso-8859-1?Q?nwJwwVHaQdB+diNfOUO2BU8pXq66eXLJJgzcjNDg7Q7ScMiuFMj3bX5UU5?=
- =?iso-8859-1?Q?YeI6lLbmgf9Ss=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB99197A83
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722333379; cv=none; b=U/H32mqFLDNwRTNt4IXl/T5S3wkzsHrZ2npeqnngCco/DnePGCy9dR10DO/F87/ubM36/E7TEwktt8d7iBwD+ViVkxrJnAqNXeEmG2igDLs6ZZmesjCPz/pVzYE4ETRNP04wr0MbEz9/CjB49X6WOYp2jT8141a88wFC8+KkzeI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722333379; c=relaxed/simple;
+	bh=vpWFmdMi1rTEd8dRgWsGaNMK7DPKF1g4mk5pxgxhAPs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dzVUSmNdPHBVnjF/pwubIyw/9WMIyfQKIgP/mNTuzIEGpglOnk5BogHd6vuL7n763LMf2rMt5H9xR+FeOifuH+Ho4SxQNsCCSH2UfqZkmtNj9PhxMk00JFGH0JHi2fOx/zTcqOdGA9s4NTH30MEA1Kc/5R9PQn+mJsXIob/+/Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YiSj6o7y; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-79b530ba612so2656948a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 02:56:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722333377; x=1722938177; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IKiAizELl0ICWCMoQVGz7EzMrJ1ih8tZCdVCsAkXERc=;
+        b=YiSj6o7yO/wATkYgFhfkZ4PGDGLNq9lkOaSWjkCa4Lmt4zjl7JKm9LKNpr1Notv1il
+         fUW9nuu0Xnotcp+DYA9Fas1iFrBFsFYtG7mOeAcbbQPGWt1ISsPf1BCk8ydE59uvjUcE
+         rKTIdZoIHBk/SyXXucztZgy+n7et7yos96GzBkNx1vWNvSWHiNdigpZwN+V62uWRvpC4
+         ZNIunvz3Atl4TRqCRqhFhcXbjxEuT7EAp6JVqu3JlXiuslyYul+xQCK4e41MK3WFiya1
+         cuOF4aApTnMwiOEVQBlYV8J+BL+wWzW/FAxCAXirl6qSBmyXDEmq+JzPIM1LzeykMMn+
+         BvPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722333377; x=1722938177;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IKiAizELl0ICWCMoQVGz7EzMrJ1ih8tZCdVCsAkXERc=;
+        b=vUVDLppyE0Uutv7NArSvAQZedBfkjBuJSmb1bhrTrTU+KrJdQ6795aXJHoRqb8QkPx
+         JseTz3oXYA2IPllvu4pI4ou/ddwT4N9k4MP8JgnIJRX28+haVit+ru35QN7EE3v9ck2E
+         SeK3hnEgCYeZJapW5W8GR+SjcVTbynSG0+JBBvO+0SioN45Md3UsyDdkHE8Dc7WaE4Dp
+         bRBo1cP1BUNMekeSloFCnpobN1VU5O77bOHFV94MDJoPxXBwr+jS8XwKzPGptyaiC2y1
+         NMquZQje608j5cwBggWnrGelP5n1tPJZTycKIbwKP3rT+SnumIh0oNQRD5uSRas1ZOb4
+         XPiA==
+X-Gm-Message-State: AOJu0YyB1mJOwF77FmNWv9ZhM/Ko04+I96q6LQQpsFULuPqP8SL844n0
+	WdE/44vf7Th48FzSaEGKQwlWY1Bro9YmsOCLmpBsSGzG9WxYhhdt
+X-Google-Smtp-Source: AGHT+IFS9UzfPzzV+AOiKqLRCQijYFtGRkC1yC2Ak/y8WU2q7BwQZUMoXLOrmV7prR3d/pJc6Gs9hg==
+X-Received: by 2002:a05:6a20:8417:b0:1c3:b2da:7e27 with SMTP id adf61e73a8af0-1c4a129fe67mr7837330637.14.1722333377562;
+        Tue, 30 Jul 2024 02:56:17 -0700 (PDT)
+Received: from localhost.localdomain ([61.16.102.77])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead81272esm8336346b3a.97.2024.07.30.02.56.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 02:56:16 -0700 (PDT)
+From: Zou Cao <zoucaox@gmail.com>
+X-Google-Original-From: Zou Cao <zoucao@kuaishou.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	will@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	zoucaox@gmail.com,
+	Zou Cao <zoucao@kuaishou.com>,
+	fuwenxin <fuwenxin@kuaishou.com>
+Subject: [PATCH] locking/rwsem: optimistic spin failed when handoff bit set
+Date: Tue, 30 Jul 2024 17:56:06 +0800
+Message-Id: <20240730095606.54621-1-zoucao@kuaishou.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: de.bosch.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2917c69a-a1d2-4e73-161d-08dcb07d9fe8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2024 09:54:37.9336
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +1rAJbo2gMCWf6fx17mlGw5lxCXXquqkrhsWy5AH98nHHhuEYTd+TXxclg7Ucj9esIlBp5gtq9ff49CEM6DbYA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3528
+Content-Transfer-Encoding: 8bit
 
-Hello Jonathan,
+It should not optimistic spin when handoff bit set, it will never
+get the rwsem lock until first waiter be wake up. otherwise it
+exacerbate the latency of osq_lock, this patch improve performance
+about 5% when runing UnixBench.
 
-Thank you for the explanation !   We will construct the patch-set as you su=
-ggested.=20
+it is easy to reproduce when run unixbech shell8 in xfs filesystem
+with AMD EPYC 9654 96-Core Processor
+    ./Run shell8 -C 56 -i 1
 
-Since the rework of the driver still takes some time, we will send the new =
-version once we finish it.
+the totale machine load reach the 92% with 90% sys and 1.7% user.
+all the cpu is busy in osq_lock with running perf top:
 
-Mit freundlichen Gr=FC=DFen / Best regards
+  90.07%  [kernel]                      [k] osq_lock
+   0.66%  [kernel]                      [k] unmap_page_range
+   0.52%  [kernel]                      [k] page_add_file_rmap
+   0.51%  [kernel]                      [k] release_pages
+   0.30%  [kernel]                      [k] rwsem_spin_on_owner
+   0.23%  [kernel]                      [k] native_queued_spin_lock_slowpat
 
-Jianping Shen
+after this patch:
 
-Mobility Electronics - Sensors, Engineering Advanced Development - MEMS Sol=
-utions Software (ME-SE/EAD2)
-Robert Bosch GmbH | Postfach 13 42 | 72703 Reutlingen | GERMANY | www.bosch=
-.com
-Tel. +49 7121 35-37749 | Telefax +49 711 811-509378 | Jianping.Shen@de.bosc=
-h.com
+perf top:
+  25.59%  [kernel]                      [k] osq_lock
+   4.69%  [kernel]                      [k] unmap_page_range
+   3.61%  [kernel]                      [k] native_queued_spin_lock_slowpath
+   3.05%  [kernel]                      [k] release_pages
+   2.55%  [kernel]                      [k] filemap_map_pages
 
-Sitz: Stuttgart, Registergericht: Amtsgericht Stuttgart, HRB 14000;
-Aufsichtsratsvorsitzender: Prof. Dr. Stefan Asenkerschbaumer;=20
-Gesch=E4ftsf=FChrung: Dr. Stefan Hartung, Dr. Christian Fischer, Dr. Markus=
- Forschner,=20
-Stefan Grosch, Dr. Markus Heyn, Dr. Frank Meyer, Dr. Tanja R=FCckert
+the totale mache load reduce to 10% with 9.4% sys and 1.4 user
 
------Original Message-----
-From: Jonathan Cameron <jic23@kernel.org>=20
-Sent: Saturday, July 27, 2024 4:00 PM
-To: Conor Dooley <conor@kernel.org>
-Cc: Shen Jianping (ME-SE/EAD2) <Jianping.Shen@de.bosch.com>; Krzysztof Kozl=
-owski <krzk@kernel.org>; lars@metafoo.de; robh@kernel.org; krzk+dt@kernel.o=
-rg; conor+dt@kernel.org; dima.fedrau@gmail.com; marcelo.schmitt1@gmail.com;=
- linux-iio@vger.kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.k=
-ernel.org; Lorenz Christian (ME-SE/EAD2) <Christian.Lorenz3@de.bosch.com>; =
-Frauendorf Ulrike (ME/PJ-SW3) <Ulrike.Frauendorf@de.bosch.com>; Dolde Kai (=
-ME-SE/PAE-A3) <Kai.Dolde@de.bosch.com>
-Subject: Re: [PATCH] dt-bindings: iio: imu: SMI240: add bosch,smi240.yaml
+Signed-off-by: Zou Cao <zoucao@kuaishou.com>
+Signed-off-by: fuwenxin <fuwenxin@kuaishou.com>
+---
+ kernel/locking/rwsem.c | 31 ++++++++++++++++++++++++-------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
 
-On Wed, 24 Jul 2024 16:25:39 +0100
-Conor Dooley <conor@kernel.org> wrote:
+diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+index 33cac79..7f345bb 100644
+--- a/kernel/locking/rwsem.c
++++ b/kernel/locking/rwsem.c
+@@ -684,10 +684,23 @@ enum owner_state {
+ };
 
-> On Wed, Jul 24, 2024 at 02:19:25PM +0000, Shen Jianping (ME-SE/EAD2) wrot=
-e:
-> > Anyway, please send bindings with driver in the same patchset.
-> >  =20
-> > -> It's fine for us. Nevertheless according to the Devicetree (DT)=20
-> > -> binding submitting rules 1.1
-> >=20
-> > " The Documentation/ and include/dt-bindings/ portion of the patch=20
-> > should be a separate patch." See ->=20
-> > https://eur03.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fww
-> > w.kernel.org%2Fdoc%2Fhtml%2Flatest%2Fdevicetree%2Fbindings%2Fsubmitt
-> > ing-patches.html%23i-for-patch-submitters&data=3D05%7C02%7CJianping.Sh
-> > en%40de.bosch.com%7C3d03781ae4564e7e3f7708dcae447463%7C0ae51e1907c84
-> > e4bbb6d648ee58410f4%7C0%7C0%7C638576856248420833%7CUnknown%7CTWFpbGZ
-> > sb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0
-> > %3D%7C0%7C%7C%7C&sdata=3DOEaFoGpb%2F7CVAN2gEpNwG9I1zGBlUNYdLUy%2F7w5Dh
-> > b0%3D&reserved=3D0
-> >=20
-> > Shall we still put the binding and driver in the same patch ? =20
->=20
-> No, different patches please. Also, please fix your mail client so=20
-> that it quotes emails properly.
-To add a little more detail.
-We are looking for a cover letter and a pair of patches.
-1st adds the dt-binding docs.
-2nd provides the driver.
+ #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
++
++/*
++ * OPTIMISTIC_FAILED  : optimistic spin lock failed
++ * OPTIMISTIC_SUCCESS : optimistic spin lock success
++ * OPTIMISTIC_HANDOFF : optimistic spin lock failed by HANDOFF bit set
++ */
++
++enum optimistic_stat {
++	OPTIMISTIC_FAILED,
++	OPTIMISTIC_SUCCESS,
++	OPTIMISTIC_HANDOFF,
++};
++
+ /*
+  * Try to acquire write lock before the writer has been put on wait queue.
+  */
+-static inline bool rwsem_try_write_lock_unqueued(struct rw_semaphore *sem)
++static inline int rwsem_try_write_lock_unqueued(struct rw_semaphore *sem)
+ {
+ 	long count = atomic_long_read(&sem->count);
 
-The cover letter provides a brief summary of the whole series and provides =
-a convenient name for tracking it as a whole.
+@@ -696,10 +709,14 @@ static inline bool rwsem_try_write_lock_unqueued(struct rw_semaphore *sem)
+ 					count | RWSEM_WRITER_LOCKED)) {
+ 			rwsem_set_owner(sem);
+ 			lockevent_inc(rwsem_opt_lock);
+-			return true;
++			return OPTIMISTIC_SUCCESS;
+ 		}
+ 	}
+-	return false;
++
++	if (count & RWSEM_FLAG_HANDOFF)
++		return OPTIMISTIC_HANDOFF;
++
++	return OPTIMISTIC_FAILED;
+ }
 
-Take a look at how other recent driver addition patch series have been brok=
-en up.
+ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
+@@ -818,7 +835,7 @@ static inline u64 rwsem_rspin_threshold(struct rw_semaphore *sem)
 
-Jonathan
+ static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
+ {
+-	bool taken = false;
++	enum optimistic_stat taken = OPTIMISTIC_FAILED;
+ 	int prev_owner_state = OWNER_NULL;
+ 	int loop = 0;
+ 	u64 rspin_threshold = 0;
+@@ -845,7 +862,7 @@ static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
+ 		 */
+ 		taken = rwsem_try_write_lock_unqueued(sem);
+
+-		if (taken)
++		if (taken == OPTIMISTIC_SUCCESS || taken == OPTIMISTIC_HANDOFF)
+ 			break;
+
+ 		/*
+@@ -930,8 +947,8 @@ static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
+ 	}
+ 	osq_unlock(&sem->osq);
+ done:
+-	lockevent_cond_inc(rwsem_opt_fail, !taken);
+-	return taken;
++	lockevent_cond_inc(rwsem_opt_fail, !(taken == OPTIMISTIC_SUCCESS));
++	return taken == OPTIMISTIC_SUCCESS ? true : false;
+ }
+
+ /*
+--
+1.8.3.1
+
 
