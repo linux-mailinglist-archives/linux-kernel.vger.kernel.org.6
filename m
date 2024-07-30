@@ -1,373 +1,232 @@
-Return-Path: <linux-kernel+bounces-266596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D6294025B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 02:32:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8217F940266
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 02:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBEEC1F239A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 00:32:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1B74B226F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 00:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1158E184E;
-	Tue, 30 Jul 2024 00:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09B31FBA;
+	Tue, 30 Jul 2024 00:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jzYjyxNh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4PQXFor"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28766FD3
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 00:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDA74A11;
+	Tue, 30 Jul 2024 00:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722299474; cv=none; b=V2iEiIYA7lXL9/5V1OofZuwjDxHTwfL+UtmHkD2CfZYMjl6vczRotKCCGnQ4zfTcIdqQCeuOhGLpNwjNfOOI8ESLR4avwLUPN7X8cQ9SII+MthDMqVrmDht6HdMkw3dyQZzNy5gRFm1wWYhOBvO4JWTdmBbvPCjvhzfBC6F6rO4=
+	t=1722299610; cv=none; b=liVgiXJEgoNIZARHbrXmmjaDq8JCVTNYDaiAalDJNPjkACG6+Td1rWOlshkDL3WePVt1xiZY4ZEl0WPF3qCzV0d+3q25NaK/ZWz2uqqG9mzVZVykv5CeyiknOldU7dxD8jaFtt/VJdcXDfQX+H47/we3LmaWWz3yUDAc+hE5d8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722299474; c=relaxed/simple;
-	bh=9nsNAjSfE1z5IGT+MSMnwpIdmB8TXeRwtZ2/MuMlyIg=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=bAuMxtToUM+Lipf2iUWkau4eg8atIY8EoPF3nepyzeymtD86Uw7o2RbIc0YfwGIe/sBQ3rkG6JD6k0E9tQ6Dbz4+x3L7fJde32Xx1iCStknAM7Rz4d/Fk6BVy78/yQRIO536BtOjjp5zdkTReHV9VLAqUIHB+yetVCJEa2jMVoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jzYjyxNh; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722299472; x=1753835472;
-  h=date:from:to:cc:subject:message-id;
-  bh=9nsNAjSfE1z5IGT+MSMnwpIdmB8TXeRwtZ2/MuMlyIg=;
-  b=jzYjyxNhesQmsRHQUsEcp0SwKoQIuZKciM5aFJkmmGfJTUnMA2akTe51
-   qpcS2DuFpsP+dPYqRJbR4cXN8K9uWJb2CfPMeFstIJ0/SdZChWeYcxJ5k
-   R74d4cfBjC0aYG6e9hkh64DECUlxu3MjEANoqVHpRU/gcNrugE+BddXFJ
-   fHJKAZL5JAkcR0c1ZqRDfHy59oTyLm7co+oEZ2iZ6JhfPLiaYczQrjAzI
-   CfVHXhQkPFlOAcvzXTMhrUMmue4DeNb6U8Be4HTMo0LbwXGPV7z+EcMCM
-   B8r0KcxISWUugRPHg6sV5PCVF9DiQjKVpkMVSc4Usb1uvLeH0aR6k5D9Z
-   A==;
-X-CSE-ConnectionGUID: gWVWNF/3REOLYeEXkpEliA==
-X-CSE-MsgGUID: 3hn1fbYOSqOKjf8URb9r7Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="20238852"
-X-IronPort-AV: E=Sophos;i="6.09,247,1716274800"; 
-   d="scan'208";a="20238852"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 17:31:12 -0700
-X-CSE-ConnectionGUID: B1g/pU6uSTer9V/yfCNR3w==
-X-CSE-MsgGUID: 0KFOaj3RS1uY46HTQRvquw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,247,1716274800"; 
-   d="scan'208";a="54116187"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 29 Jul 2024 17:31:10 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sYalg-000sEk-21;
-	Tue, 30 Jul 2024 00:31:08 +0000
-Date: Tue, 30 Jul 2024 08:30:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/fpu] BUILD SUCCESS
- ba386777a30b38dabcc7fb8a89ec2869a09915f7
-Message-ID: <202407300849.OBnzximr-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1722299610; c=relaxed/simple;
+	bh=aD7Uq7q7bWaYENFe1iH39MROg+GilYsXWOeCN19O8mk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TsFFFYZU0EeLIutmCTjt9KbXHOwda1Qgo0l8PYhPH2aAfIRO0vCL2xbZJO4zJpqu/qJUK6qcUCO0qZkEhtJiSoRU3TH82Kchi2vSOeX97zgwfcHl6Diq7DunDMSJ7BdSzaaWpt3TiCMUD0K0peQS6ym+6joU8y2yotcUnavmeo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c4PQXFor; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D7EC2C32786;
+	Tue, 30 Jul 2024 00:33:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722299609;
+	bh=aD7Uq7q7bWaYENFe1iH39MROg+GilYsXWOeCN19O8mk=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=c4PQXForUMo3i9nsecRw4N8SYM98v5cv29b19+siMnFGsSLGfLQvEA8rx2s6PplHm
+	 2DZKOSDqFIddthE/gnSx00v8N5iMok0285Mh390hKBwFzE5qstpVoJWQRX4ZQM5GCt
+	 25+LcnPgDDqmsxv++gr4vywveXuIWuJ8g1YX7ndU/1YUlnaX9U7iI2GcZtDSa1+3B0
+	 J/wVI8rSi12hAcCPhpIQ6lO5Z00dt5WJ2S7DxtVq8tkkVaXYgksyU2g3v+ngRoZKQB
+	 WSGAnbI470MQwF3DMG27eZmHjpgd4xyW6LBmujrw2vEa/Jn8aL+/ME6N4b3mnbub41
+	 4DANkqq5qCLtg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD83AC3DA4A;
+	Tue, 30 Jul 2024 00:33:29 +0000 (UTC)
+From: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>
+Date: Tue, 30 Jul 2024 01:33:17 +0100
+Subject: [PATCH net v2] net/tcp: Disable TCP-AO static key after RCU grace
+ period
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240730-tcp-ao-static-branch-rcu-v2-1-33dc2b7adac8@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAMw0qGYC/4WOwQ6CMBBEf4Xs2TVtlaCe/A/DYVsW2EQKaSvRE
+ P7dQrx7nMm8mVkgchCOcCsWCDxLlNFnYQ4FuJ58xyhN1mCUOavKlJjchDRiTJTEoQ3kXY/BvfB
+ ScsOVPZGmEjI+BW7lvVc/wHOCOpuWIv+grXWgmDhs6V5iGsNn/zHrnfk/OWvUqIxulLpaZtveu
+ 4HkeXTjAPW6rl8eHCpc3gAAAA==
+To: Eric Dumazet <edumazet@google.com>, 
+ "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@kernel.org, 
+ Dmitry Safonov <0x7f454c46@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722299603; l=5565;
+ i=0x7f454c46@gmail.com; s=20240410; h=from:subject:message-id;
+ bh=T/xIiJiV3VMWg9y5cdhZNse5ZjCE54Taq6FnVqtPOCo=;
+ b=5XiHFfyrrmNlSprb0oUjxV75ZsnoBO+IKc18+QLpUHvyf4Zt9vS5qGvk3IvVSIs4bIQWDG5St
+ AcjRFRr5oFcCJgTOHWLW7DAJ98ZSEhTRrx25t+jVvO22xi+8XRQP6wD
+X-Developer-Key: i=0x7f454c46@gmail.com; a=ed25519;
+ pk=cFSWovqtkx0HrT5O9jFCEC/Cef4DY8a2FPeqP4THeZQ=
+X-Endpoint-Received: by B4 Relay for 0x7f454c46@gmail.com/20240410 with
+ auth_id=152
+X-Original-From: Dmitry Safonov <0x7f454c46@gmail.com>
+Reply-To: 0x7f454c46@gmail.com
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/fpu
-branch HEAD: ba386777a30b38dabcc7fb8a89ec2869a09915f7  x86/elf: Add a new FPU buffer layout info to x86 core files
+From: Dmitry Safonov <0x7f454c46@gmail.com>
 
-elapsed time: 921m
+The lifetime of TCP-AO static_key is the same as the last
+tcp_ao_info. On the socket destruction tcp_ao_info ceases to be
+with RCU grace period, while tcp-ao static branch is currently deferred
+destructed. The static key definition is
+: DEFINE_STATIC_KEY_DEFERRED_FALSE(tcp_ao_needed, HZ);
 
-configs tested: 281
-configs skipped: 11
+which means that if RCU grace period is delayed by more than a second
+and tcp_ao_needed is in the process of disablement, other CPUs may
+yet see tcp_ao_info which atent dead, but soon-to-be.
+And that breaks the assumption of static_key_fast_inc_not_disabled().
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+See the comment near the definition:
+> * The caller must make sure that the static key can't get disabled while
+> * in this function. It doesn't patch jump labels, only adds a user to
+> * an already enabled static key.
 
-tested configs:
-alpha                            alldefconfig   gcc-13.3.0
-alpha                             allnoconfig   gcc-13.2.0
-alpha                             allnoconfig   gcc-13.3.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                     nsimosci_hs_defconfig   gcc-13.2.0
-arc                   randconfig-001-20240729   gcc-13.2.0
-arc                   randconfig-002-20240729   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                              allmodconfig   gcc-14.1.0
-arm                               allnoconfig   clang-20
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-14.1.0
-arm                                 defconfig   gcc-13.2.0
-arm                            dove_defconfig   gcc-13.3.0
-arm                      footbridge_defconfig   gcc-13.2.0
-arm                       imx_v4_v5_defconfig   gcc-13.2.0
-arm                      integrator_defconfig   gcc-13.3.0
-arm                          ixp4xx_defconfig   gcc-13.2.0
-arm                         nhk8815_defconfig   gcc-13.3.0
-arm                   randconfig-001-20240729   gcc-13.2.0
-arm                   randconfig-001-20240729   gcc-14.1.0
-arm                   randconfig-002-20240729   gcc-13.2.0
-arm                   randconfig-002-20240729   gcc-14.1.0
-arm                   randconfig-003-20240729   gcc-13.2.0
-arm                   randconfig-003-20240729   gcc-14.1.0
-arm                   randconfig-004-20240729   clang-20
-arm                   randconfig-004-20240729   gcc-13.2.0
-arm                        shmobile_defconfig   gcc-13.3.0
-arm                       spear13xx_defconfig   gcc-13.3.0
-arm64                            allmodconfig   clang-20
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240729   clang-17
-arm64                 randconfig-001-20240729   gcc-13.2.0
-arm64                 randconfig-002-20240729   clang-20
-arm64                 randconfig-002-20240729   gcc-13.2.0
-arm64                 randconfig-003-20240729   gcc-13.2.0
-arm64                 randconfig-003-20240729   gcc-14.1.0
-arm64                 randconfig-004-20240729   clang-20
-arm64                 randconfig-004-20240729   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240729   gcc-13.2.0
-csky                  randconfig-001-20240729   gcc-14.1.0
-csky                  randconfig-002-20240729   gcc-13.2.0
-csky                  randconfig-002-20240729   gcc-14.1.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   clang-20
-hexagon                          allyesconfig   clang-20
-hexagon               randconfig-001-20240729   clang-20
-hexagon               randconfig-002-20240729   clang-20
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-13
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-13
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-13
-i386         buildonly-randconfig-001-20240729   clang-18
-i386         buildonly-randconfig-001-20240730   gcc-13
-i386         buildonly-randconfig-002-20240729   clang-18
-i386         buildonly-randconfig-002-20240729   gcc-13
-i386         buildonly-randconfig-002-20240730   gcc-13
-i386         buildonly-randconfig-003-20240729   clang-18
-i386         buildonly-randconfig-003-20240730   gcc-13
-i386         buildonly-randconfig-004-20240729   clang-18
-i386         buildonly-randconfig-004-20240729   gcc-10
-i386         buildonly-randconfig-004-20240730   gcc-13
-i386         buildonly-randconfig-005-20240729   clang-18
-i386         buildonly-randconfig-005-20240730   gcc-13
-i386         buildonly-randconfig-006-20240729   clang-18
-i386         buildonly-randconfig-006-20240729   gcc-8
-i386         buildonly-randconfig-006-20240730   gcc-13
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240729   clang-18
-i386                  randconfig-001-20240729   gcc-12
-i386                  randconfig-001-20240730   gcc-13
-i386                  randconfig-002-20240729   clang-18
-i386                  randconfig-002-20240730   gcc-13
-i386                  randconfig-003-20240729   clang-18
-i386                  randconfig-003-20240729   gcc-10
-i386                  randconfig-003-20240730   gcc-13
-i386                  randconfig-004-20240729   clang-18
-i386                  randconfig-004-20240729   gcc-13
-i386                  randconfig-004-20240730   gcc-13
-i386                  randconfig-005-20240729   clang-18
-i386                  randconfig-005-20240729   gcc-8
-i386                  randconfig-005-20240730   gcc-13
-i386                  randconfig-006-20240729   clang-18
-i386                  randconfig-006-20240729   gcc-13
-i386                  randconfig-006-20240730   gcc-13
-i386                  randconfig-011-20240729   clang-18
-i386                  randconfig-011-20240729   gcc-13
-i386                  randconfig-011-20240730   gcc-13
-i386                  randconfig-012-20240729   clang-18
-i386                  randconfig-012-20240730   gcc-13
-i386                  randconfig-013-20240729   clang-18
-i386                  randconfig-013-20240729   gcc-9
-i386                  randconfig-013-20240730   gcc-13
-i386                  randconfig-014-20240729   clang-18
-i386                  randconfig-014-20240730   gcc-13
-i386                  randconfig-015-20240729   clang-18
-i386                  randconfig-015-20240729   gcc-13
-i386                  randconfig-015-20240730   gcc-13
-i386                  randconfig-016-20240729   clang-18
-i386                  randconfig-016-20240730   gcc-13
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240729   gcc-13.2.0
-loongarch             randconfig-001-20240729   gcc-14.1.0
-loongarch             randconfig-002-20240729   gcc-13.2.0
-loongarch             randconfig-002-20240729   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-13.2.0
-m68k                       m5475evb_defconfig   gcc-13.2.0
-m68k                            mac_defconfig   gcc-13.2.0
-m68k                        mvme147_defconfig   gcc-13.2.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-14.1.0
-mips                      malta_kvm_defconfig   gcc-13.2.0
-mips                        qi_lb60_defconfig   gcc-13.3.0
-mips                           xway_defconfig   gcc-13.2.0
-nios2                         10m50_defconfig   gcc-13.3.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240729   gcc-13.2.0
-nios2                 randconfig-001-20240729   gcc-14.1.0
-nios2                 randconfig-002-20240729   gcc-13.2.0
-nios2                 randconfig-002-20240729   gcc-14.1.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                generic-64bit_defconfig   gcc-13.3.0
-parisc                randconfig-001-20240729   gcc-13.2.0
-parisc                randconfig-001-20240729   gcc-14.1.0
-parisc                randconfig-002-20240729   gcc-13.2.0
-parisc                randconfig-002-20240729   gcc-14.1.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   clang-20
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                       eiger_defconfig   gcc-13.3.0
-powerpc                      katmai_defconfig   gcc-13.2.0
-powerpc                 mpc8313_rdb_defconfig   gcc-13.2.0
-powerpc                 mpc8315_rdb_defconfig   gcc-13.2.0
-powerpc                 mpc834x_itx_defconfig   gcc-13.3.0
-powerpc                     ppa8548_defconfig   gcc-13.2.0
-powerpc                     rainier_defconfig   gcc-13.3.0
-powerpc                     tqm5200_defconfig   gcc-13.3.0
-powerpc                     tqm8541_defconfig   gcc-13.3.0
-powerpc                     tqm8548_defconfig   gcc-13.2.0
-powerpc64             randconfig-001-20240729   gcc-13.2.0
-powerpc64             randconfig-001-20240729   gcc-14.1.0
-powerpc64             randconfig-002-20240729   gcc-13.2.0
-powerpc64             randconfig-002-20240729   gcc-14.1.0
-powerpc64             randconfig-003-20240729   gcc-13.2.0
-powerpc64             randconfig-003-20240729   gcc-14.1.0
-riscv                            allmodconfig   clang-20
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   clang-20
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-riscv                 randconfig-001-20240729   clang-16
-riscv                 randconfig-001-20240729   gcc-13.2.0
-riscv                 randconfig-002-20240729   clang-20
-riscv                 randconfig-002-20240729   gcc-13.2.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-14.1.0
-s390                  randconfig-001-20240729   clang-20
-s390                  randconfig-001-20240729   gcc-13.2.0
-s390                  randconfig-002-20240729   gcc-13.2.0
-s390                  randconfig-002-20240729   gcc-14.1.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                               j2_defconfig   gcc-13.2.0
-sh                    randconfig-001-20240729   gcc-13.2.0
-sh                    randconfig-001-20240729   gcc-14.1.0
-sh                    randconfig-002-20240729   gcc-13.2.0
-sh                    randconfig-002-20240729   gcc-14.1.0
-sh                          rsk7269_defconfig   gcc-13.3.0
-sh                          sdk7786_defconfig   gcc-13.2.0
-sh                           se7206_defconfig   gcc-13.2.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240729   gcc-13.2.0
-sparc64               randconfig-001-20240729   gcc-14.1.0
-sparc64               randconfig-002-20240729   gcc-13.2.0
-sparc64               randconfig-002-20240729   gcc-14.1.0
-um                               allmodconfig   clang-20
-um                                allnoconfig   clang-17
-um                                allnoconfig   gcc-14.1.0
-um                               allyesconfig   gcc-13
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                    randconfig-001-20240729   clang-14
-um                    randconfig-001-20240729   gcc-13.2.0
-um                    randconfig-002-20240729   gcc-13.2.0
-um                    randconfig-002-20240729   gcc-8
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240729   clang-18
-x86_64       buildonly-randconfig-002-20240729   clang-18
-x86_64       buildonly-randconfig-002-20240729   gcc-13
-x86_64       buildonly-randconfig-003-20240729   clang-18
-x86_64       buildonly-randconfig-003-20240729   gcc-10
-x86_64       buildonly-randconfig-004-20240729   clang-18
-x86_64       buildonly-randconfig-004-20240729   gcc-10
-x86_64       buildonly-randconfig-005-20240729   clang-18
-x86_64       buildonly-randconfig-005-20240729   gcc-10
-x86_64       buildonly-randconfig-006-20240729   clang-18
-x86_64       buildonly-randconfig-006-20240729   gcc-10
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-13
-x86_64                randconfig-001-20240729   clang-18
-x86_64                randconfig-001-20240729   gcc-13
-x86_64                randconfig-002-20240729   clang-18
-x86_64                randconfig-003-20240729   clang-18
-x86_64                randconfig-004-20240729   clang-18
-x86_64                randconfig-005-20240729   clang-18
-x86_64                randconfig-006-20240729   clang-18
-x86_64                randconfig-011-20240729   clang-18
-x86_64                randconfig-011-20240729   gcc-8
-x86_64                randconfig-012-20240729   clang-18
-x86_64                randconfig-012-20240729   gcc-8
-x86_64                randconfig-013-20240729   clang-18
-x86_64                randconfig-013-20240729   gcc-13
-x86_64                randconfig-014-20240729   clang-18
-x86_64                randconfig-015-20240729   clang-18
-x86_64                randconfig-015-20240729   gcc-13
-x86_64                randconfig-016-20240729   clang-18
-x86_64                randconfig-071-20240729   clang-18
-x86_64                randconfig-071-20240729   gcc-13
-x86_64                randconfig-072-20240729   clang-18
-x86_64                randconfig-072-20240729   gcc-13
-x86_64                randconfig-073-20240729   clang-18
-x86_64                randconfig-074-20240729   clang-18
-x86_64                randconfig-074-20240729   gcc-8
-x86_64                randconfig-075-20240729   clang-18
-x86_64                randconfig-075-20240729   gcc-12
-x86_64                randconfig-076-20240729   clang-18
-x86_64                randconfig-076-20240729   gcc-13
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                            allnoconfig   gcc-14.1.0
-xtensa                randconfig-001-20240729   gcc-13.2.0
-xtensa                randconfig-001-20240729   gcc-14.1.0
-xtensa                randconfig-002-20240729   gcc-13.2.0
-xtensa                randconfig-002-20240729   gcc-14.1.0
+Originally it was introduced in commit eb8c507296f6 ("jump_label:
+Prevent key->enabled int overflow"), which is needed for the atomic
+contexts, one of which would be the creation of a full socket from a
+request socket. In that atomic context, it's known by the presence
+of the key (md5/ao) that the static branch is already enabled.
+So, the ref counter for that static branch is just incremented
+instead of holding the proper mutex.
+static_key_fast_inc_not_disabled() is just a helper for such usage
+case. But it must not be used if the static branch could get disabled
+in parallel as it's not protected by jump_label_mutex and as a result,
+races with jump_label_update() implementation details.
 
+Happened on netdev test-bot[1], so not a theoretical issue:
+
+[] jump_label: Fatal kernel bug, unexpected op at tcp_inbound_hash+0x1a7/0x870 [ffffffffa8c4e9b7] (eb 50 0f 1f 44 != 66 90 0f 1f 00)) size:2 type:1
+[] ------------[ cut here ]------------
+[] kernel BUG at arch/x86/kernel/jump_label.c:73!
+[] Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+[] CPU: 3 PID: 243 Comm: kworker/3:3 Not tainted 6.10.0-virtme #1
+[] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+[] Workqueue: events jump_label_update_timeout
+[] RIP: 0010:__jump_label_patch+0x2f6/0x350
+...
+[] Call Trace:
+[]  <TASK>
+[]  arch_jump_label_transform_queue+0x6c/0x110
+[]  __jump_label_update+0xef/0x350
+[]  __static_key_slow_dec_cpuslocked.part.0+0x3c/0x60
+[]  jump_label_update_timeout+0x2c/0x40
+[]  process_one_work+0xe3b/0x1670
+[]  worker_thread+0x587/0xce0
+[]  kthread+0x28a/0x350
+[]  ret_from_fork+0x31/0x70
+[]  ret_from_fork_asm+0x1a/0x30
+[]  </TASK>
+[] Modules linked in: veth
+[] ---[ end trace 0000000000000000 ]---
+[] RIP: 0010:__jump_label_patch+0x2f6/0x350
+
+[1]: https://netdev-3.bots.linux.dev/vmksft-tcp-ao-dbg/results/696681/5-connect-deny-ipv6/stderr
+
+Cc: stable@kernel.org
+Fixes: 67fa83f7c86a ("net/tcp: Add static_key for TCP-AO")
+Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
+---
+Changes in v2:
+- Use rcu_assign_pointer() in tcp_ao_destroy_sock()
+- Combined both ao_info and keys destruction in one RCU callback,
+  tcp_ao_info_free_rcu() (suggested-by Jakub)
+- Hopefully improved a bit the commit message
+- Link to v1: https://lore.kernel.org/r/20240725-tcp-ao-static-branch-rcu-v1-1-021d009beebf@gmail.com
+---
+ net/ipv4/tcp_ao.c | 45 ++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 32 insertions(+), 13 deletions(-)
+
+diff --git a/net/ipv4/tcp_ao.c b/net/ipv4/tcp_ao.c
+index 85531437890c..e2ea6b3570e2 100644
+--- a/net/ipv4/tcp_ao.c
++++ b/net/ipv4/tcp_ao.c
+@@ -267,32 +267,51 @@ static void tcp_ao_key_free_rcu(struct rcu_head *head)
+ 	kfree_sensitive(key);
+ }
+ 
+-void tcp_ao_destroy_sock(struct sock *sk, bool twsk)
++static void tcp_ao_info_free_rcu(struct rcu_head *head)
+ {
+-	struct tcp_ao_info *ao;
++	struct tcp_ao_info *ao = container_of(head, struct tcp_ao_info, rcu);
+ 	struct tcp_ao_key *key;
+ 	struct hlist_node *n;
+ 
++	hlist_for_each_entry_safe(key, n, &ao->head, node) {
++		hlist_del_rcu(&key->node);
++		tcp_sigpool_release(key->tcp_sigpool_id);
++		kfree_sensitive(key);
++	}
++	kfree(ao);
++	static_branch_slow_dec_deferred(&tcp_ao_needed);
++}
++
++static void tcp_ao_sk_omem_free(struct sock *sk, struct tcp_ao_info *ao)
++{
++	size_t total_ao_sk_mem = 0;
++	struct tcp_ao_key *key;
++	struct hlist_node *n;
++
++	hlist_for_each_entry_safe(key, n, &ao->head, node)
++		total_ao_sk_mem += tcp_ao_sizeof_key(key);
++
++	atomic_sub(total_ao_sk_mem, &sk->sk_omem_alloc);
++}
++
++void tcp_ao_destroy_sock(struct sock *sk, bool twsk)
++{
++	struct tcp_ao_info *ao;
++
+ 	if (twsk) {
+ 		ao = rcu_dereference_protected(tcp_twsk(sk)->ao_info, 1);
+-		tcp_twsk(sk)->ao_info = NULL;
++		rcu_assign_pointer(tcp_twsk(sk)->ao_info, NULL);
+ 	} else {
+ 		ao = rcu_dereference_protected(tcp_sk(sk)->ao_info, 1);
+-		tcp_sk(sk)->ao_info = NULL;
++		rcu_assign_pointer(tcp_sk(sk)->ao_info, NULL);
+ 	}
+ 
+ 	if (!ao || !refcount_dec_and_test(&ao->refcnt))
+ 		return;
+ 
+-	hlist_for_each_entry_safe(key, n, &ao->head, node) {
+-		hlist_del_rcu(&key->node);
+-		if (!twsk)
+-			atomic_sub(tcp_ao_sizeof_key(key), &sk->sk_omem_alloc);
+-		call_rcu(&key->rcu, tcp_ao_key_free_rcu);
+-	}
+-
+-	kfree_rcu(ao, rcu);
+-	static_branch_slow_dec_deferred(&tcp_ao_needed);
++	if (!twsk)
++		tcp_ao_sk_omem_free(sk, ao);
++	call_rcu(&ao->rcu, tcp_ao_info_free_rcu);
+ }
+ 
+ void tcp_ao_time_wait(struct tcp_timewait_sock *tcptw, struct tcp_sock *tp)
+
+---
+base-commit: 2accfdb7eff65f390c4308b0e9cb7c3fe48ad63c
+change-id: 20240725-tcp-ao-static-branch-rcu-85ede7b3a1a5
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Dmitry Safonov <0x7f454c46@gmail.com>
+
+
 
