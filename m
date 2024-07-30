@@ -1,201 +1,178 @@
-Return-Path: <linux-kernel+bounces-267208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A04EF940E6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:58:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8B9940E68
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 900F8B258D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:56:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 842A7283795
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843FE197A90;
-	Tue, 30 Jul 2024 09:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4155197A76;
+	Tue, 30 Jul 2024 09:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YiSj6o7y"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="Taw5MXYX"
+Received: from LO3P265CU004.outbound.protection.outlook.com (mail-uksouthazon11020118.outbound.protection.outlook.com [52.101.196.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB99197A83
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722333379; cv=none; b=U/H32mqFLDNwRTNt4IXl/T5S3wkzsHrZ2npeqnngCco/DnePGCy9dR10DO/F87/ubM36/E7TEwktt8d7iBwD+ViVkxrJnAqNXeEmG2igDLs6ZZmesjCPz/pVzYE4ETRNP04wr0MbEz9/CjB49X6WOYp2jT8141a88wFC8+KkzeI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722333379; c=relaxed/simple;
-	bh=vpWFmdMi1rTEd8dRgWsGaNMK7DPKF1g4mk5pxgxhAPs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dzVUSmNdPHBVnjF/pwubIyw/9WMIyfQKIgP/mNTuzIEGpglOnk5BogHd6vuL7n763LMf2rMt5H9xR+FeOifuH+Ho4SxQNsCCSH2UfqZkmtNj9PhxMk00JFGH0JHi2fOx/zTcqOdGA9s4NTH30MEA1Kc/5R9PQn+mJsXIob/+/Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YiSj6o7y; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-79b530ba612so2656948a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 02:56:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722333377; x=1722938177; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IKiAizELl0ICWCMoQVGz7EzMrJ1ih8tZCdVCsAkXERc=;
-        b=YiSj6o7yO/wATkYgFhfkZ4PGDGLNq9lkOaSWjkCa4Lmt4zjl7JKm9LKNpr1Notv1il
-         fUW9nuu0Xnotcp+DYA9Fas1iFrBFsFYtG7mOeAcbbQPGWt1ISsPf1BCk8ydE59uvjUcE
-         rKTIdZoIHBk/SyXXucztZgy+n7et7yos96GzBkNx1vWNvSWHiNdigpZwN+V62uWRvpC4
-         ZNIunvz3Atl4TRqCRqhFhcXbjxEuT7EAp6JVqu3JlXiuslyYul+xQCK4e41MK3WFiya1
-         cuOF4aApTnMwiOEVQBlYV8J+BL+wWzW/FAxCAXirl6qSBmyXDEmq+JzPIM1LzeykMMn+
-         BvPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722333377; x=1722938177;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IKiAizELl0ICWCMoQVGz7EzMrJ1ih8tZCdVCsAkXERc=;
-        b=vUVDLppyE0Uutv7NArSvAQZedBfkjBuJSmb1bhrTrTU+KrJdQ6795aXJHoRqb8QkPx
-         JseTz3oXYA2IPllvu4pI4ou/ddwT4N9k4MP8JgnIJRX28+haVit+ru35QN7EE3v9ck2E
-         SeK3hnEgCYeZJapW5W8GR+SjcVTbynSG0+JBBvO+0SioN45Md3UsyDdkHE8Dc7WaE4Dp
-         bRBo1cP1BUNMekeSloFCnpobN1VU5O77bOHFV94MDJoPxXBwr+jS8XwKzPGptyaiC2y1
-         NMquZQje608j5cwBggWnrGelP5n1tPJZTycKIbwKP3rT+SnumIh0oNQRD5uSRas1ZOb4
-         XPiA==
-X-Gm-Message-State: AOJu0YyB1mJOwF77FmNWv9ZhM/Ko04+I96q6LQQpsFULuPqP8SL844n0
-	WdE/44vf7Th48FzSaEGKQwlWY1Bro9YmsOCLmpBsSGzG9WxYhhdt
-X-Google-Smtp-Source: AGHT+IFS9UzfPzzV+AOiKqLRCQijYFtGRkC1yC2Ak/y8WU2q7BwQZUMoXLOrmV7prR3d/pJc6Gs9hg==
-X-Received: by 2002:a05:6a20:8417:b0:1c3:b2da:7e27 with SMTP id adf61e73a8af0-1c4a129fe67mr7837330637.14.1722333377562;
-        Tue, 30 Jul 2024 02:56:17 -0700 (PDT)
-Received: from localhost.localdomain ([61.16.102.77])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead81272esm8336346b3a.97.2024.07.30.02.56.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 02:56:16 -0700 (PDT)
-From: Zou Cao <zoucaox@gmail.com>
-X-Google-Original-From: Zou Cao <zoucao@kuaishou.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	will@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	zoucaox@gmail.com,
-	Zou Cao <zoucao@kuaishou.com>,
-	fuwenxin <fuwenxin@kuaishou.com>
-Subject: [PATCH] locking/rwsem: optimistic spin failed when handoff bit set
-Date: Tue, 30 Jul 2024 17:56:06 +0800
-Message-Id: <20240730095606.54621-1-zoucao@kuaishou.com>
-X-Mailer: git-send-email 2.38.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E999191F91;
+	Tue, 30 Jul 2024 09:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.196.118
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722333413; cv=fail; b=UnRjjcytecv+L+5DlPU9/6fAtBAORlIkZWkg/l/DED/Isti0zH4OdEUkD+B6kRQ9aU0IdfU0yPFcVMQVCFWHhNIYnCbeB6q+md/CZSDacq8ddTks7vOz9U6odsAO9Xz6onKWxN381UIAJQXDCOnIX9LC7SKUj9Ix4vV+nEAiCIo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722333413; c=relaxed/simple;
+	bh=7NvaNNzYZrsyKCfMspQ3ZfSxmh6ajpqE/yXByC46LiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MOEu2UATxlAikhddosrLo+T/4hegDBO6lPs/8WwJlmKdPmJlAjXyogOvioIoneH8r0tgCdwZB8o9lwt7JG3l9+e6T9cl0rR/XiAUhZghIWJeHRiFe104MUqDaCc7DscuuTWMCmQqZJigH5aWh8vLIPlPEcB0mQDbC4ttYGSnp3U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=Taw5MXYX; arc=fail smtp.client-ip=52.101.196.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MaICdJkxIphcsYNYNNuWKL4R6OzrK0Yc2WlhnktBT6ZOf0rsOQ7x/Jx/UYt01CM+E3bfrRyKZ/ck6tU8NUAOBH9RULyCDK6oj4KsBJx1DKb16LUVosw7SxHG5g9jgiKGdtlA6MX9aWZWMKbvR3e46hR0UdXgrvuYO9FnC2P6aRafVpG+u9DuOEgexdFNTVxzIof7G3yfAIUJtJnFMwrDTtOzoG9r/3EiMyGQeHThWDyBWnCSEQ94erzFDezMUT7Rsu6jPD7ujrHRRf9WiSNv00oQI8bdzFQZjgt8cVBdUu6UHdUvM0Yj3bvqhLOJ/Khcz3b3oswkUNGnS4pVzx6ncg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RX9iqQKJM2drDnBZUubQRzSldL+AlX860qybB7G2lEg=;
+ b=Sf72axLeKsB8Tv+uenVfnejCo5gyv/6ZLALpSAfTDqvBfKuZZosemrQ3GVNynUZ0JzL3mrfoZoVhUV/Bp7f1GD+5fOBAgiCG8JFTTztZtu+l9XmmXxgpT/dK68EqIUar6PWMNQUL9FV6gMV9QOG9NLZD9n6fwQs3MKUvxVygEA3mFVSTbUsMnKH1KU9EOMAmgXQryzPk0O4Of7VMDoPSunjBuoPl6++YuHsKp7Qsk4+BRtlMzbR3fWhsxA325qkoN1E/J75IesyDdo9I7uHZe9s4pq/o7vd6uHZ4tJnCu0G8tYqFIp2igP/Hbxtfds1V36qDYiC50+yWpMZ2q6O3CQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RX9iqQKJM2drDnBZUubQRzSldL+AlX860qybB7G2lEg=;
+ b=Taw5MXYXh3PR2uxYx56CffnZsex7kRsqEeqyV9e0/V3oqaD8+Dyl2g58Dy36koSkjJNu3iFxQ+Ef2l9sU4+4NHzUt64Pzg+YLgtzdInncesk9pTQ/rIP9vp2ElpgPwIh9zr1YT8PDujoryy9TyVF2hHwWjUQUleg1X6VyzCG7cI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by CWLP265MB3508.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:f0::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Tue, 30 Jul
+ 2024 09:56:48 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%7]) with mapi id 15.20.7807.026; Tue, 30 Jul 2024
+ 09:56:48 +0000
+Date: Tue, 30 Jul 2024 10:56:46 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
+ <boqun.feng@gmail.com>, "=?UTF-8?B?QmrDtnJu?= Roy Baron"
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
+ Hindborg <a.hindborg@samsung.com>, Matthew Maurer <mmaurer@google.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: support arrays in target JSON
+Message-ID: <20240730105646.1aa7ac07@eugeo>
+In-Reply-To: <20240730-target-json-arrays-v1-1-2b376fd0ecf4@google.com>
+References: <20240730-target-json-arrays-v1-1-2b376fd0ecf4@google.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0470.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a2::26) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|CWLP265MB3508:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5a304a12-3ee5-4f82-69a4-08dcb07ded51
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?im8c3lAKXkQLhLOoES1Ns83UtboVwh0nRFqJ4izyEvDvivjGkFM3PHY3LMeL?=
+ =?us-ascii?Q?fG8KW0/xMCEnUj5P2nKQC1TDry93+aida/gG/zFDfyxzelF8NrgfqOH8xdMh?=
+ =?us-ascii?Q?1Ao/jOajFHlkU6hQE+0AdTVT5Su4AnhcUVrSgvETSLOnY2e8Hkh/KqVNWMC9?=
+ =?us-ascii?Q?4KA3Bj0FMuzufBWpby/LMb8S161LVLuF85KgRoSNFojkq4PuT9q13ZR+MKwo?=
+ =?us-ascii?Q?QoxWJegIaiF1UA3gKfsQe8+JaMXQIMICDehVigyAJzf0dwLhI3Vv05Y2pc4f?=
+ =?us-ascii?Q?VuHLcPRMjB3yrXiQ1GPdZ+W+c3MZ+R/6YRFq4iCQL92I8khcyjM+2WibT3n4?=
+ =?us-ascii?Q?XoSlN3LKDBfpVUt2IkRVxa2Cw25fQh75GvnTV2Y/Qdk5HqVaLiVyD+LvQYj0?=
+ =?us-ascii?Q?+1v0V+Z06gT8UxqfaZqfR5WlccR+d7tLGzM4YRjmZ1zvYGoFa/uxM7UdUVGl?=
+ =?us-ascii?Q?Pb405IYIWfwAw49QW7kMFHWpfvuCcHj1XW+JfTrr4PSxgoTB8/BSgd/s6zPs?=
+ =?us-ascii?Q?EDWjBXCkvQQYTPOeX9X6AhHpTERBVBKundTYAAXFF35MFHQmyo0NqfrEH6Dm?=
+ =?us-ascii?Q?EC2pDLbs05fCbRlkRdGHm3aDAZ/nXX20m8smP1gqCz8f3gbxIIOTNr4V7wWo?=
+ =?us-ascii?Q?CLAHOhbSlSOFHY4gfyf19eLlGROt3t2tKrAOm+Mss5UegjsjFJoSg+005dPs?=
+ =?us-ascii?Q?mAcC4IObLPWLLZq7pavnTbXFqr8pdKotRp1vXLTImP8ZHEqfzQkAB7zsekSh?=
+ =?us-ascii?Q?qIS7dzQ7cVDNW2cqvip6Er6UKdDASzexjWZevRpAYAFl+LE1ET0O+y+o/v55?=
+ =?us-ascii?Q?e+DdfP8OP2tW0/mu5P1qMPpC4BxB1KcXEoZ0U6YxyNZksWNb6rpzmDHK759v?=
+ =?us-ascii?Q?dkV5Be7opFK2lZj9hTY9e+aRa1mWs9S+zlOphf11FzD0p83G7QAzuHP3muLE?=
+ =?us-ascii?Q?LLoBXntg9hFpDVj2+vZZNF/zYhkXPTUQFv5ASa4PTG8MFWBD8l47uZ5xECYw?=
+ =?us-ascii?Q?l0iLRuuFzpE9Bfq5pAYHRem412wtDWySl9L+21am/g9d3wyaivAGVxZg94yz?=
+ =?us-ascii?Q?IGl3+EfvURTgl8KeS/NCOXsI/7n7m1zHhh+7tjWmS9MC7F9HbshcZ/oMFG/A?=
+ =?us-ascii?Q?lldjQOTRWX2NDVDR3z+4Q9w4msULQpUGtPzNhu5OmB1RoILrJRH9KedLRVEe?=
+ =?us-ascii?Q?xu6C4i4a09Td1GhmBgt//CGplg3NPsZCq2S9BtpvOCL9dM7LZs55m8XGeR9D?=
+ =?us-ascii?Q?oDUOS7fMZvlzAfZaIPHnmUmaqzHb/Du4L/nWIQC+ImqvViWtiJ7nr+vppw/A?=
+ =?us-ascii?Q?jh9G+jDOq2cByBYB9bBrji6z8SjD0DWrbmcsXA7LC/rqhA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?lKPbHOtTt1WlUMGmkKKrYnHl4zQvihxP3idseEnfROpZ3TBmTvfSd5FVmRyC?=
+ =?us-ascii?Q?VOuGIKNy1bJbl7vASUaStebBOixFI/npOCAybI42b+eKpJrS0vF62vSA/1Np?=
+ =?us-ascii?Q?aflXVYIxePXCGaREGH6FClkWT8fwF7YArTWEkooeicApc71mhiAzVJkRCeW5?=
+ =?us-ascii?Q?QXkvSNh1bCi4sPp0IuPCwMbamgdHvS+LdBfDzHEboMpeUUWkYrWk65mOkrR9?=
+ =?us-ascii?Q?UYovx69ktUGh1v5GByNwxSVFCIQhGTLcKbFPZoZvqqHrXEKpo0N0cwk8Q22+?=
+ =?us-ascii?Q?oFBVPUyi2haE5iTQzjtpVbR5xxngUdC4So9UFsr36yvgJdbkXNfxhlkJiSCj?=
+ =?us-ascii?Q?Kuug9n7G/SNdpB8QjztURDHkGlm43ftz62ote5D143IIiQCWVBLApH7kOiq+?=
+ =?us-ascii?Q?85GRqws9250JY3UCEiiuLg/o/rbM3scz8IjATRIxYVkk7fBHQFuIrfLwaIKB?=
+ =?us-ascii?Q?LWAn4UWJ/MWddPQKQuVuq8+dDdfSzRQVOEnMdSJD0ts4UJLiJK0/ikyYtcTA?=
+ =?us-ascii?Q?qaIqdjPLQt2QoRFkMVBpJGt6QlxF+X3M5zVR4r8g2ZURVrpBdKuAJoHkVHJm?=
+ =?us-ascii?Q?fECxl1BEkIC/3ClwlBOgJWwrrBKF0JMF4GPG6d2tNpIOUbV55cPaNuDZZ32R?=
+ =?us-ascii?Q?vgATJXJLhaLec15jsuf5lNqdfnor948MgJqhbcPkjlik2umhnAFRtwXoeNeu?=
+ =?us-ascii?Q?OsXG6EdEs54NCNSxYRlkG9iyeSxcxqQqiyOQVb4cBGwVS5BPSmuNMKwjPUeK?=
+ =?us-ascii?Q?xV2b50eBYCDNFb203AiR0cphXh1Kk5mQ51ov1ggJ82JF+6Xd7Hl1+fZPD/U9?=
+ =?us-ascii?Q?D8r2VyUkSy3F5wk7m3l8vLZaDDJPCq6fbW20dCDcktH3tD9UjjMJa03nR4Nh?=
+ =?us-ascii?Q?Q00snJqzkU4IHc2t3N2PTZlAiYt5v8opoXGJJSvme3Bogh3H5i1D9OBcVPxE?=
+ =?us-ascii?Q?3dFiFSoom8Suwz1wGcWOo4N1YTx6F2oPKsh6j6b9WlIAVVSTCR84jSSIxTH0?=
+ =?us-ascii?Q?J7vRQg+GRu0QYoIqxKg9NtJlAxGwY0ylCemsHdLL4Z0I3v3JYZKOeiTztaP3?=
+ =?us-ascii?Q?EWNBHOuBvSusC6XVLb8OWdh80z7KJbMbSQtggz1a39mPuN06erJ9n4iS/6bF?=
+ =?us-ascii?Q?NkuhuiDbr92zPcI70VQ9Jw9Ad1FgIYlMu1a3o90vKSrpzAnIPqsVgZqZEl/e?=
+ =?us-ascii?Q?VPyMTf1mhVpX0nYQ5zCyKeT2tjLTJoKfEzGG53vuEBdajsfgS+8xfIvdoS3T?=
+ =?us-ascii?Q?AQGaPeNSmL/3E0gmmoGsPG1W5fdhqDJrwEWsJ0gijTWTgfmledREDYZDMfhX?=
+ =?us-ascii?Q?W/KLHuPZ7aVgTIVyJIR6ZNy1KEx66c8K1QoQ3qMyGGRhtMNncUFz5oBZWLYd?=
+ =?us-ascii?Q?9C6LYbPqgH/BlwtSoqOc734o174crV+JfTFtmuigu9zbrNedc7m6Of6I0DFe?=
+ =?us-ascii?Q?PWLY6yD7wW9kxVDRIKRhPvM7WuEzlxeDCv0qgsbh5M73RVaWK3rCIUxORxDZ?=
+ =?us-ascii?Q?9Mn+pZDSHuxEMkQUBjXgRcW8qeCHvbb0Ak+fMHOKeNYABOHjvcEob+6u3NEB?=
+ =?us-ascii?Q?AtZLAYHdHqVhPppf8f+no2wJEbOjCDA0kU5obfsd?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a304a12-3ee5-4f82-69a4-08dcb07ded51
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 09:56:48.1265
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tz+pCFZ/IuJZIlhd+RV2//Rs4hDxE6ICAmadchZfU52k3NMcXV5Gz4y3zXVFdPFDUzPcXwbT/1NmHcojlIGklA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB3508
 
-It should not optimistic spin when handoff bit set, it will never
-get the rwsem lock until first waiter be wake up. otherwise it
-exacerbate the latency of osq_lock, this patch improve performance
-about 5% when runing UnixBench.
+On Tue, 30 Jul 2024 09:26:24 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-it is easy to reproduce when run unixbech shell8 in xfs filesystem
-with AMD EPYC 9654 96-Core Processor
-    ./Run shell8 -C 56 -i 1
+> From: Matthew Maurer <mmaurer@google.com>
+> 
+> Some configuration options such as the supported sanitizer list are
+> arrays. To support using Rust with sanitizers on x86, we must update the
+> target.json generator to support this case.
+> 
+> The Push trait is removed in favor of the From trait because the Push
+> trait doesn't work well in the nested case where you are not really
+> pushing values to a TargetSpec.
+> 
+> Signed-off-by: Matthew Maurer <mmaurer@google.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-the totale machine load reach the 92% with 90% sys and 1.7% user.
-all the cpu is busy in osq_lock with running perf top:
+Reviewed-by: Gary Guo <gary@garyguo.net>
 
-  90.07%  [kernel]                      [k] osq_lock
-   0.66%  [kernel]                      [k] unmap_page_range
-   0.52%  [kernel]                      [k] page_add_file_rmap
-   0.51%  [kernel]                      [k] release_pages
-   0.30%  [kernel]                      [k] rwsem_spin_on_owner
-   0.23%  [kernel]                      [k] native_queued_spin_lock_slowpat
-
-after this patch:
-
-perf top:
-  25.59%  [kernel]                      [k] osq_lock
-   4.69%  [kernel]                      [k] unmap_page_range
-   3.61%  [kernel]                      [k] native_queued_spin_lock_slowpath
-   3.05%  [kernel]                      [k] release_pages
-   2.55%  [kernel]                      [k] filemap_map_pages
-
-the totale mache load reduce to 10% with 9.4% sys and 1.4 user
-
-Signed-off-by: Zou Cao <zoucao@kuaishou.com>
-Signed-off-by: fuwenxin <fuwenxin@kuaishou.com>
----
- kernel/locking/rwsem.c | 31 ++++++++++++++++++++++++-------
- 1 file changed, 24 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index 33cac79..7f345bb 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -684,10 +684,23 @@ enum owner_state {
- };
-
- #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
-+
-+/*
-+ * OPTIMISTIC_FAILED  : optimistic spin lock failed
-+ * OPTIMISTIC_SUCCESS : optimistic spin lock success
-+ * OPTIMISTIC_HANDOFF : optimistic spin lock failed by HANDOFF bit set
-+ */
-+
-+enum optimistic_stat {
-+	OPTIMISTIC_FAILED,
-+	OPTIMISTIC_SUCCESS,
-+	OPTIMISTIC_HANDOFF,
-+};
-+
- /*
-  * Try to acquire write lock before the writer has been put on wait queue.
-  */
--static inline bool rwsem_try_write_lock_unqueued(struct rw_semaphore *sem)
-+static inline int rwsem_try_write_lock_unqueued(struct rw_semaphore *sem)
- {
- 	long count = atomic_long_read(&sem->count);
-
-@@ -696,10 +709,14 @@ static inline bool rwsem_try_write_lock_unqueued(struct rw_semaphore *sem)
- 					count | RWSEM_WRITER_LOCKED)) {
- 			rwsem_set_owner(sem);
- 			lockevent_inc(rwsem_opt_lock);
--			return true;
-+			return OPTIMISTIC_SUCCESS;
- 		}
- 	}
--	return false;
-+
-+	if (count & RWSEM_FLAG_HANDOFF)
-+		return OPTIMISTIC_HANDOFF;
-+
-+	return OPTIMISTIC_FAILED;
- }
-
- static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
-@@ -818,7 +835,7 @@ static inline u64 rwsem_rspin_threshold(struct rw_semaphore *sem)
-
- static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
- {
--	bool taken = false;
-+	enum optimistic_stat taken = OPTIMISTIC_FAILED;
- 	int prev_owner_state = OWNER_NULL;
- 	int loop = 0;
- 	u64 rspin_threshold = 0;
-@@ -845,7 +862,7 @@ static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
- 		 */
- 		taken = rwsem_try_write_lock_unqueued(sem);
-
--		if (taken)
-+		if (taken == OPTIMISTIC_SUCCESS || taken == OPTIMISTIC_HANDOFF)
- 			break;
-
- 		/*
-@@ -930,8 +947,8 @@ static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
- 	}
- 	osq_unlock(&sem->osq);
- done:
--	lockevent_cond_inc(rwsem_opt_fail, !taken);
--	return taken;
-+	lockevent_cond_inc(rwsem_opt_fail, !(taken == OPTIMISTIC_SUCCESS));
-+	return taken == OPTIMISTIC_SUCCESS ? true : false;
- }
-
- /*
---
-1.8.3.1
-
+> ---
+>  scripts/generate_rust_target.rs | 82 +++++++++++++++++++++------------
+>  1 file changed, 53 insertions(+), 29 deletions(-)
 
