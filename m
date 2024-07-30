@@ -1,546 +1,160 @@
-Return-Path: <linux-kernel+bounces-267953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22CE6941DAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:20:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1C5941DBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 462731C23D65
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:19:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AB161F27A9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A61D1A76BF;
-	Tue, 30 Jul 2024 17:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1881A76C2;
+	Tue, 30 Jul 2024 17:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RrcKkw3M"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UYFCHii2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B781A76A4
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304521A76AE
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722359990; cv=none; b=gT227rgLeJEN61zuqGH7y1S/p2cigT4qiZSA7FDJuYqmTYb/crknj93ne7nSAF6rA55RHRZk8o4BcUimEFGJA9V/7vT24vaYDXnHWK4pGtK8rUYzlwOoBGDkPUDerCVRlVKhsSYro6TYhvxPDJ1jC10rBzOC0smkFT92Ul/CIAg=
+	t=1722360045; cv=none; b=ktpKwCNLYYjeOWVfe/0lVl419Nbms+8GZA5MNNzN009n9PlZ8LNDEdf1pIlHznMwtZwmUUX5TC6TjaNRKiBSqUHWFb/9xcPygBsKdf+VrwbJLhu+Fur4nJCiFJSVgeLA8P0s7BGr32rLHBF5AEo730OVJmGzWpHGUp63AWkwt+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722359990; c=relaxed/simple;
-	bh=IT+D71vF8PYTp3omfUJk+0lh5B2ukltsSlHiLKJaens=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=usm9tY5ggK54cyPn1a5rwbkaTNKjnxWCpQo6OILyr6CqskA6lqxI9LPT6X2UDtN3cycBwzTXotm/WJt+dlx+/jxopRTk2q7oFlkFfcf0udsXMjTW0RZQEQiBpdvIV+KWYDch/uhfDhGTXxpyiUfG0niefWqA/QqLYRRGn1rrBpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RrcKkw3M; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e0878971aa9so82212276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:19:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722359987; x=1722964787; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=50ihWq+OMt1qmXo9FIMuhD6DpSzfA1Idh4Ob7/5a+qo=;
-        b=RrcKkw3MsPaxatdgU5GADWoLKfrkvcEz6UpmyPFbxeXrjRcDtqtA6vtBONq4VMxml/
-         cXr9d3LhTmDINy8ZPQCwbYgIPMf6XquGKCAIJsDyl1NN+j28OjfxKYlf8j5QeKzK3oyr
-         mhVqSaoHEb7WIlxStIVHZnQlGDhMUrisvSJjiBsQqgghIu6C5HcYe9/2cMRoii1lijDX
-         jA5oK1A7faD5bRc2VhJzi9WPsK/mbGtn4KJQ8zG/yMkJZkRlVLkqU1KUyZROJ1S1Bw1Z
-         SXn6nDcTy912w0vEYKuNKh0pbbDBPLTVAK398PLe5QcH7CWykoaHZ9c1/0MBbGLEl+hL
-         q15Q==
+	s=arc-20240116; t=1722360045; c=relaxed/simple;
+	bh=vllOU64qgOZSEQ9z1np2KefJc9ch4rCTf2JyxG1ZzB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dx/Jd4vyJpT3wXWs1U0McWwGda5sB2E4zDrBxA8aFTd4H/dS2HqYoi/V6QHZHjf/8BABgAwyyhawb1G3ZxlwlBzB7YCQ8X+YDVSm1/uerKV3EVf7Kdymx6CQVRaLKaqUTXHDvHkefCs0XkFDD6RkAiO4yHDTCp2+Fwfe1tzOb8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UYFCHii2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722360043;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VnWrZUr3XTGc9rWoojma5OUUSoy6Blh+X8bHgZMhN+8=;
+	b=UYFCHii2Px7bqeCMmbQGHvaTKWJS16O6gcS7o1KXAuueRjxTeFbJ5MPxowoD4ESxA3hhQ6
+	dHximz+VhZ3OYh04nhhbqQWZVy9uP9UZ+gGs++GOIxTym9Ak1rWkL6v+H/8iGy6qvOlnsB
+	GgxOd9FXdL1Uzm6/kA1XOWq8ajvAo1E=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-631-y8D50j4bP7GYZYkAMuoeeg-1; Tue, 30 Jul 2024 13:20:41 -0400
+X-MC-Unique: y8D50j4bP7GYZYkAMuoeeg-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6b5de421bc6so63015726d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:20:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722359987; x=1722964787;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=50ihWq+OMt1qmXo9FIMuhD6DpSzfA1Idh4Ob7/5a+qo=;
-        b=PW5OCqjvt/uRTLMTHUQ6QKrP9wpjkNDwjf07sRDGdulaTBO8oScGh9ujnR0iQlU3gH
-         4qhVMiwl43/FAENRgs6Gmtq0QzDbuuePZ0cqm7qjA6InwaEbrDfbJzkLGvoFtVBVCmLh
-         SzC/T5n1M7qevzc8wlXYcmRkrMFPzbDcG3xVapwTzB3jI50k1j9mhY0u/47J35MfXzvm
-         QLxChZVWykuH64QVCV2Y1UsOEjitf/lcHPcmSLOWNhFqJhD5xuHiURTzQzIiKSqk+1TR
-         xjUIu+BLVTJkcixKDaJaF++eWPEUMWtTnJ5cBmitkXc2MHh/6MT073hDzWUoO8sLg9Hx
-         0uAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJUqOcwQLSH8DsQKOy3ofNLriNMRyCJfnC0mWNk+JVTjo/Nii54lkzNOuO/GcPMsCTjX4Yv8X27RO0Y4SPuy1L6el+Vc+WW85kNbFE
-X-Gm-Message-State: AOJu0YxEYiSQQn0n17DiCOJNQP7PJmpiFuQ1ln4QS2Hh2UKWOSEdyewD
-	M6+WKaLkXFLh3jFvcoTtXJjOJEYJ6xS1BBOksHvFgFs0h97krmfVyfKQQofMj1eT1SkHQlW9Nar
-	WIs05dD0MlQ5zcQ49PLpOjt88HyOmVQ0TVXS/
-X-Google-Smtp-Source: AGHT+IH4+GXSuMhyss48q+/b1wf32mVuSBC5miJhiV2nELU4EVTyprl1zzdaeYnXSTwMk9T/tXbSFNWGCO3iYK3XPzY=
-X-Received: by 2002:a25:d3ca:0:b0:e0b:a699:bc9a with SMTP id
- 3f1490d57ef6-e0ba699be3fmr2148560276.16.1722359987226; Tue, 30 Jul 2024
- 10:19:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722360041; x=1722964841;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VnWrZUr3XTGc9rWoojma5OUUSoy6Blh+X8bHgZMhN+8=;
+        b=Fp1jtGEo94S2c2r38pkh+Q/kfbgIj599kCmiC3vmP5KMT27PeIOKoPpqvzmuC1mjcO
+         ZldzjTbyo5PZCKN34D0YmIsE5DtF1cMu0sZjXRp9dqvVgXBeJeGa7/8ZXCx/9wDWS+oA
+         WS+BxkOg4FNq0+QtTq1baomhF6A2Wi2w5d3l3kTw7zSZXj1zyEl+en3ZNKOKCdVexwKP
+         8liEzndJ4u0X3zvQg2z5u1PlZVMbrtAArziViHMk0W70OAeqI2EsZuy9ZSk9YS/p6E5D
+         h/7DBkvG+DgjgxTKGWcFbtWQ732EeO+6GkdHqnTfWgjsw2l2fimJLXZzFDxGvv8Mqt9k
+         bTdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVuNVt+kY0Q2x3rjJ0qJyrjvk5wE4F6Zd6ZQoQXflQ8K7zy5IfcB9/6XCul4SHfimGFh7yvnoYfsafu30BoapLNa7DF4sXy/f0PoCwS
+X-Gm-Message-State: AOJu0YyLFaKSXwOcO/MyQCMvx4gA1zbqrMfOpK076fp2BrUQboOf9xrU
+	/BNDkxirLo6LZL8Dr7lmZKtn6z4i7o5fnN3ovU6Sg5s+QYZxgstuZIbPLUkgMMKwpSgItvrezyw
+	KJ4pm1fA5MXwfy/wbUGpCNEdpyUoQ6WVD3fb71nO/N1Gdv5AnrDHJDIQ1a8m4cQ==
+X-Received: by 2002:ad4:5bcc:0:b0:6b5:17a2:887c with SMTP id 6a1803df08f44-6bb5597d0eemr164177796d6.10.1722360041313;
+        Tue, 30 Jul 2024 10:20:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGqeyGsJFBHbEzj2FboEWy6B8OLfQrlTw3ZAzMmST64ENrLhEMusvdb5Ms/LCX/k50gGq0BAw==
+X-Received: by 2002:ad4:5bcc:0:b0:6b5:17a2:887c with SMTP id 6a1803df08f44-6bb5597d0eemr164177336d6.10.1722360040806;
+        Tue, 30 Jul 2024 10:20:40 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::33])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3faef212sm65362896d6.122.2024.07.30.10.20.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 10:20:40 -0700 (PDT)
+Date: Tue, 30 Jul 2024 12:20:38 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Elliot Berman <quic_eberman@quicinc.com>, 
+	Amirreza Zarrabi <quic_azarrabi@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Johan Hovold <johan+linaro@kernel.org>, 
+	Maximilian Luz <luzmaximilian@gmail.com>
+Subject: Re: [PATCH 1/2] firmware: qcom: tzmem: fix virtual-to-physical
+ address conversion
+Message-ID: <p4wbqdmytbzjmxsdovnboetjxbyvuhkwunieuwoh6rui72v7pb@huxwyphj63yv>
+References: <20240730-tzmem-efivars-fix-v1-0-bb78884810b5@linaro.org>
+ <20240730-tzmem-efivars-fix-v1-1-bb78884810b5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730075755.10941-1-link@vivo.com> <d2f56198-a3c2-4f7b-9d10-616deb348351@amd.com>
- <966651c0-42fc-4827-bf3e-2170dcf4688c@vivo.com>
-In-Reply-To: <966651c0-42fc-4827-bf3e-2170dcf4688c@vivo.com>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Tue, 30 Jul 2024 10:19:35 -0700
-Message-ID: <CABdmKX3xoUwVbj1-G1Q7gyi-7r9J8PeW8Y92Od5epRKumYL-qA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] Introduce DMA_HEAP_ALLOC_AND_READ_FILE heap flag
-To: Huan Yang <link@vivo.com>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730-tzmem-efivars-fix-v1-1-bb78884810b5@linaro.org>
 
-On Tue, Jul 30, 2024 at 1:14=E2=80=AFAM Huan Yang <link@vivo.com> wrote:
->
->
-> =E5=9C=A8 2024/7/30 16:03, Christian K=C3=B6nig =E5=86=99=E9=81=93:
-> > Am 30.07.24 um 09:57 schrieb Huan Yang:
-> >> Background
-> >> =3D=3D=3D=3D
-> >> Some user may need load file into dma-buf, current way is:
-> >>    1. allocate a dma-buf, get dma-buf fd
-> >>    2. mmap dma-buf fd into user vaddr
-> >>    3. read(file_fd, vaddr, fsz)
-> >> Due to dma-buf user map can't support direct I/O[1], the file read
-> >> must be buffer I/O.
-> >>
-> >> This means that during the process of reading the file into dma-buf,
-> >> page cache needs to be generated, and the corresponding content needs =
-to
-> >> be first copied to the page cache before being copied to the dma-buf.
-> >>
-> >> This way worked well when reading relatively small files before, as
-> >> the page cache can cache the file content, thus improving performance.
-> >>
-> >> However, there are new challenges currently, especially as AI models a=
-re
-> >> becoming larger and need to be shared between DMA devices and the CPU
-> >> via dma-buf.
-> >>
-> >> For example, our 7B model file size is around 3.4GB. Using the
-> >> previous would mean generating a total of 3.4GB of page cache
-> >> (even if it will be reclaimed), and also requiring the copying of 3.4G=
-B
-> >> of content between page cache and dma-buf.
-> >>
-> >> Due to the limited resources of system memory, files in the gigabyte
-> >> range
-> >> cannot persist in memory indefinitely, so this portion of page cache m=
-ay
-> >> not provide much assistance for subsequent reads. Additionally, the
-> >> existence of page cache will consume additional system resources due t=
-o
-> >> the extra copying required by the CPU.
-> >>
-> >> Therefore, I think it is necessary for dma-buf to support direct I/O.
-> >>
-> >> However, direct I/O file reads cannot be performed using the buffer
-> >> mmaped by the user space for the dma-buf.[1]
-> >>
-> >> Here are some discussions on implementing direct I/O using dma-buf:
-> >>
-> >> mmap[1]
-> >> ---
-> >> dma-buf never support user map vaddr use of direct I/O.
-> >>
-> >> udmabuf[2]
-> >> ---
-> >> Currently, udmabuf can use the memfd method to read files into
-> >> dma-buf in direct I/O mode.
-> >>
-> >> However, if the size is large, the current udmabuf needs to adjust the
-> >> corresponding size_limit(default 64MB).
-> >> But using udmabuf for files at the 3GB level is not a very good
-> >> approach.
-> >> It needs to make some adjustments internally to handle this.[3] Or els=
-e,
-> >> fail create.
-> >>
-> >> But, it is indeed a viable way to enable dma-buf to support direct I/O=
-.
-> >> However, it is necessary to initiate the file read after the memory
-> >> allocation
-> >> is completed, and handle race conditions carefully.
-> >>
-> >> sendfile/splice[4]
-> >> ---
-> >> Another way to enable dma-buf to support direct I/O is by implementing
-> >> splice_write/write_iter in the dma-buf file operations (fops) to adapt
-> >> to the sendfile method.
-> >> However, the current sendfile/splice calls are based on pipe. When usi=
-ng
-> >> direct I/O to read a file, the content needs to be copied to the buffe=
-r
-> >> allocated by the pipe (default 64KB), and then the dma-buf fops'
-> >> splice_write needs to be called to write the content into the dma-buf.
-> >> This approach requires serially reading the content of file pipe size
-> >> into the pipe buffer and then waiting for the dma-buf to be written
-> >> before reading the next one.(The I/O performance is relatively weak
-> >> under direct I/O.)
-> >> Moreover, due to the existence of the pipe buffer, even when using
-> >> direct I/O and not needing to generate additional page cache,
-> >> there still needs to be a CPU copy.
-> >>
-> >> copy_file_range[5]
-> >> ---
-> >> Consider of copy_file_range, It only supports copying files within the
-> >> same file system. Similarly, it is not very practical.
-> >>
-> >>
-> >> So, currently, there is no particularly suitable solution on VFS to
-> >> allow dma-buf to support direct I/O for large file reads.
-> >>
-> >> This patchset provides an idea to complete file reads when requesting =
-a
-> >> dma-buf.
-> >>
-> >> Introduce DMA_HEAP_ALLOC_AND_READ_FILE heap flag
-> >> =3D=3D=3D
-> >> This patch provides a method to immediately read the file content afte=
-r
-> >> the dma-buf is allocated, and only returns the dma-buf file descriptor
-> >> after the file is fully read.
-> >>
-> >> Since the dma-buf file descriptor is not returned, no other thread can
-> >> access it except for the current thread, so we don't need to worry abo=
-ut
-> >> race conditions.
-> >
-> > That is a completely false assumption.
-> Can you provide a detailed explanation as to why this assumption is
-> incorrect? thanks.
-> >
-> >>
-> >> Map the dma-buf to the vmalloc area and initiate file reads in kernel
-> >> space, supporting both buffer I/O and direct I/O.
-> >>
-> >> This patch adds the DMA_HEAP_ALLOC_AND_READ heap_flag for user.
-> >> When a user needs to allocate a dma-buf and read a file, they should
-> >> pass this heap flag. As the size of the file being read is fixed,
-> >> there is no
-> >> need to pass the 'len' parameter. Instead, The file_fd needs to be
-> >> passed to
-> >> indicate to the kernel the file that needs to be read.
-> >>
-> >> The file open flag determines the mode of file reading.
-> >> But, please note that if direct I/O(O_DIRECT) is needed to read the
-> >> file,
-> >> the file size must be page aligned. (with patch 2-5, no need)
-> >>
-> >> Therefore, for the user, len and file_fd are mutually exclusive,
-> >> and they are combined using a union.
-> >>
-> >> Once the user obtains the dma-buf fd, the dma-buf directly contains th=
-e
-> >> file content.
-> >
-> > And I'm repeating myself, but this is a complete NAK from my side to
-> > this approach.
-> >
-> > We pointed out multiple ways of how to implement this cleanly and not
-> > by hacking functionality into the kernel which absolutely doesn't
-> > belong there.
-> In this patchset, I have provided performance comparisons of each of
-> these methods.  Can you please provide more opinions?
-> >
-> > Regards,
-> > Christian.
-> >
-> >>
-> >> Patch 1 implement it.
-> >>
-> >> Patch 2-5 provides an approach for performance improvement.
-> >>
-> >> The DMA_HEAP_ALLOC_AND_READ_FILE heap flag patch enables us to
-> >> synchronously read files using direct I/O.
-> >>
-> >> This approach helps to save CPU copying and avoid a certain degree of
-> >> memory thrashing (page cache generation and reclamation)
-> >>
-> >> When dealing with large file sizes, the benefits of this approach beco=
-me
-> >> particularly significant.
-> >>
-> >> However, there are currently some methods that can improve performance=
-,
-> >> not just save system resources:
-> >>
-> >> Due to the large file size, for example, a AI 7B model of around
-> >> 3.4GB, the
-> >> time taken to allocate DMA-BUF memory will be relatively long. Waiting
-> >> for the allocation to complete before reading the file will add to the
-> >> overall time consumption. Therefore, the total time for DMA-BUF
-> >> allocation and file read can be calculated using the formula
-> >>     T(total) =3D T(alloc) + T(I/O)
-> >>
-> >> However, if we change our approach, we don't necessarily need to wait
-> >> for the DMA-BUF allocation to complete before initiating I/O. In fact,
-> >> during the allocation process, we already hold a portion of the page,
-> >> which means that waiting for subsequent page allocations to complete
-> >> before carrying out file reads is actually unfair to the pages that ha=
-ve
-> >> already been allocated.
-> >>
-> >> The allocation of pages is sequential, and the reading of the file is
-> >> also sequential, with the content and size corresponding to the file.
-> >> This means that the memory location for each page, which holds the
-> >> content of a specific position in the file, can be determined at the
-> >> time of allocation.
-> >>
-> >> However, to fully leverage I/O performance, it is best to wait and
-> >> gather a certain number of pages before initiating batch processing.
-> >>
-> >> The default gather size is 128MB. So, ever gathered can see as a file
-> >> read
-> >> work, it maps the gather page to the vmalloc area to obtain a continuo=
-us
-> >> virtual address, which is used as a buffer to store the contents of th=
-e
-> >> corresponding file. So, if using direct I/O to read a file, the file
-> >> content will be written directly to the corresponding dma-buf buffer
-> >> memory
-> >> without any additional copying.(compare to pipe buffer.)
-> >>
-> >> Consider other ways to read into dma-buf. If we assume reading after
-> >> mmap
-> >> dma-buf, we need to map the pages of the dma-buf to the user virtual
-> >> address space. Also, udmabuf memfd need do this operations too.
-> >> Even if we support sendfile, the file copy also need buffer, you must
-> >> setup it.
-> >> So, mapping pages to the vmalloc area does not incur any additional
-> >> performance overhead compared to other methods.[6]
-> >>
-> >> Certainly, the administrator can also modify the gather size through
-> >> patch5.
-> >>
-> >> The formula for the time taken for system_heap buffer allocation and
-> >> file reading through async_read is as follows:
-> >>
-> >>    T(total) =3D T(first gather page) + Max(T(remain alloc), T(I/O))
-> >>
-> >> Compared to the synchronous read:
-> >>    T(total) =3D T(alloc) + T(I/O)
-> >>
-> >> If the allocation time or I/O time is long, the time difference will b=
-e
-> >> covered by the maximum value between the allocation and I/O. The other
-> >> party will be concealed.
-> >>
-> >> Therefore, the larger the size of the file that needs to be read, the
-> >> greater the corresponding benefits will be.
-> >>
-> >> How to use
-> >> =3D=3D=3D
-> >> Consider the current pathway for loading model files into DMA-BUF:
-> >>    1. open dma-heap, get heap fd
-> >>    2. open file, get file_fd(can't use O_DIRECT)
-> >>    3. use file len to allocate dma-buf, get dma-buf fd
-> >>    4. mmap dma-buf fd, get vaddr
-> >>    5. read(file_fd, vaddr, file_size) into dma-buf pages
-> >>    6. share, attach, whatever you want
-> >>
-> >> Use DMA_HEAP_ALLOC_AND_READ_FILE JUST a little change:
-> >>    1. open dma-heap, get heap fd
-> >>    2. open file, get file_fd(buffer/direct)
-> >>    3. allocate dma-buf with DMA_HEAP_ALLOC_AND_READ_FILE heap flag,
-> >> set file_fd
-> >>       instead of len. get dma-buf fd(contains file content)
-> >>    4. share, attach, whatever you want
-> >>
-> >> So, test it is easy.
-> >>
-> >> How to test
-> >> =3D=3D=3D
-> >> The performance comparison will be conducted for the following
-> >> scenarios:
-> >>    1. normal
-> >>    2. udmabuf with [3] patch
-> >>    3. sendfile
-> >>    4. only patch 1
-> >>    5. patch1 - patch4.
-> >>
-> >> normal:
-> >>    1. open dma-heap, get heap fd
-> >>    2. open file, get file_fd(can't use O_DIRECT)
-> >>    3. use file len to allocate dma-buf, get dma-buf fd
-> >>    4. mmap dma-buf fd, get vaddr
-> >>    5. read(file_fd, vaddr, file_size) into dma-buf pages
-> >>    6. share, attach, whatever you want
-> >>
-> >> UDMA-BUF step:
-> >>    1. memfd_create
-> >>    2. open file(buffer/direct)
-> >>    3. udmabuf create
-> >>    4. mmap memfd
-> >>    5. read file into memfd vaddr
-> >>
-> >> Sendfile step(need suit splice_write/write_iter, just use to compare):
-> >>    1. open dma-heap, get heap fd
-> >>    2. open file, get file_fd(buffer/direct)
-> >>    3. use file len to allocate dma-buf, get dma-buf fd
-> >>    4. sendfile file_fd to dma-buf fd
-> >>    6. share, attach, whatever you want
-> >>
-> >> patch1/patch1-4:
-> >>    1. open dma-heap, get heap fd
-> >>    2. open file, get file_fd(buffer/direct)
-> >>    3. allocate dma-buf with DMA_HEAP_ALLOC_AND_READ_FILE heap flag,
-> >> set file_fd
-> >>       instead of len. get dma-buf fd(contains file content)
-> >>    4. share, attach, whatever you want
-> >>
-> >> You can create a file to test it. Compare the performance gap between
-> >> the two.
-> >> It is best to compare the differences in file size from KB to MB to GB=
-.
-> >>
-> >> The following test data will compare the performance differences
-> >> between 512KB,
-> >> 8MB, 1GB, and 3GB under various scenarios.
-> >>
-> >> Performance Test
-> >> =3D=3D=3D
-> >>    12G RAM phone
-> >>    UFS4.0(the maximum speed is 4GB/s. ),
-> >>    f2fs
-> >>    kernel 6.1 with patch[7] (or else, can't support kvec direct I/O
-> >> read.)
-> >>    no memory pressure.
-> >>    drop_cache is used for each test.
-> >>
-> >> The average of 5 test results:
-> >> | scheme-size         | 512KB(ns)  | 8MB(ns)    | 1GB(ns) |
-> >> 3GB(ns)       |
-> >> | ------------------- | ---------- | ---------- | ------------- |
-> >> ------------- |
-> >> | normal              | 2,790,861  | 14,535,784 | 1,520,790,492 |
-> >> 3,332,438,754 |
-> >> | udmabuf buffer I/O  | 1,704,046  | 11,313,476 | 821,348,000 |
-> >> 2,108,419,923 |
-> >> | sendfile buffer I/O | 3,261,261  | 12,112,292 | 1,565,939,938 |
-> >> 3,062,052,984 |
-> >> | patch1-4 buffer I/O | 2,064,538  | 10,771,474 | 986,338,800 |
-> >> 2,187,570,861 |
-> >> | sendfile direct I/O | 12,844,231 | 37,883,938 | 5,110,299,184 |
-> >> 9,777,661,077 |
-> >> | patch1 direct I/O   | 813,215    | 6,962,092  | 2,364,211,877 |
-> >> 5,648,897,554 |
-> >> | udmabuf direct I/O  | 1,289,554  | 8,968,138  | 921,480,784 |
-> >> 2,158,305,738 |
-> >> | patch1-4 direct I/O | 1,957,661  | 6,581,999  | 520,003,538 |
-> >> 1,400,006,107 |
->
-> With this test, sendfile can't give a good help base on pipe buffer.
->
-> udmabuf is good, but I think our oem driver can't suit it. (And, AOSP do
-> not open this feature)
+On Tue, Jul 30, 2024 at 05:38:48PM GMT, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> We currently only correctly convert the virtual address passed by the
+> caller to qcom_tzmem_to_phys() if it corresponds to the base address of
+> the chunk. If the user wants to convert some pointer at an offset
+> relative to that base address, we'll return 0. Let's change the
+> implementation of qcom_tzmem_to_phys(): iterate over the chunks and try
+> to call gen_pool_virt_to_phys() just-in-time instead of trying to call
+> it only once when creating the chunk.
+> 
+> Fixes: 84f5a7b67b61 ("firmware: qcom: add a dedicated TrustZone buffer allocator")
+> Reported-by: Johan Hovold <johan+linaro@kernel.org>
+> Closes: https://lore.kernel.org/lkml/20240729095542.21097-1-johan+linaro@kernel.org/
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/firmware/qcom/qcom_tzmem.c | 21 +++++++++++++++------
+>  1 file changed, 15 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
+> index 17948cfc82e7..1294233a4785 100644
+> --- a/drivers/firmware/qcom/qcom_tzmem.c
+> +++ b/drivers/firmware/qcom/qcom_tzmem.c
+> @@ -40,7 +40,6 @@ struct qcom_tzmem_pool {
+>  };
+>  
+>  struct qcom_tzmem_chunk {
+> -	phys_addr_t paddr;
+>  	size_t size;
+>  	struct qcom_tzmem_pool *owner;
+>  };
+> @@ -385,7 +384,6 @@ void *qcom_tzmem_alloc(struct qcom_tzmem_pool *pool, size_t size, gfp_t gfp)
+>  		return NULL;
+>  	}
+>  
+> -	chunk->paddr = gen_pool_virt_to_phys(pool->genpool, vaddr);
+>  	chunk->size = size;
+>  	chunk->owner = pool;
+>  
+> @@ -442,14 +440,25 @@ EXPORT_SYMBOL_GPL(qcom_tzmem_free);
+>  phys_addr_t qcom_tzmem_to_phys(void *vaddr)
 
-Hi Huan,
+We should update the kerneldoc here, it currently says:
 
-We should be able to turn on udmabuf for the Android kernels. We don't
-have CONFIG_UDMABUF because nobody has wanted it so far. It's
-encouraging to see your latest results!
+    /**
+     * qcom_tzmem_to_phys() - Map the virtual address of a TZ buffer to physical.
+     * @vaddr: Virtual address of the buffer allocated from a TZ memory pool.
+     *
+     * Can be used in any context. The address must have been returned by a call
+     * to qcom_tzmem_alloc().
+     *
+     * Returns: Physical address of the buffer.
+     */
+    phys_addr_t qcom_tzmem_to_phys(void *vaddr)
 
--T.J.
+"The address must have been returned by a call to qcom_tzmem_alloc()" is
+no longer a strict requirement, it can be within the buffer now.
 
+Otherwise, I believe this should fix the problem you and Johan
+highlighted and looks ok to me, thanks for the fix.
 
->
-> Anyway, I am sending this patchset in the hope of further discussion.
->
-> Thanks.
->
-> >>
-> >> So, based on the test results:
-> >>
-> >> When the file is large, the patchset has the highest performance.
-> >> Compared to normal, patchset is a 50% improvement;
-> >> Compared to normal, patch1 only showed a degradation of 41%.
-> >> patch1 typical performance breakdown is as follows:
-> >>    1. alloc cost 188,802,693 ns
-> >>    2. vmap cost 42,491,385 ns
-> >>    3. file read cost 4,180,876,702 ns
-> >> Therefore, directly performing a single direct I/O read on a large fil=
-e
-> >> may not be the most optimal way for performance.
-> >>
-> >> The performance of direct I/O implemented by the sendfile method is
-> >> the worst.
-> >>
-> >> When file size is small, The difference in performance is not
-> >> significant. This is consistent with expectations.
-> >>
-> >>
-> >>
-> >> Suggested use cases
-> >> =3D=3D=3D
-> >>    1. When there is a need to read large files and system resources
-> >> are scarce,
-> >>       especially when the size of memory is limited.(GB level) In this
-> >>       scenario, using direct I/O for file reading can even bring
-> >> performance
-> >>       improvements.(may need patch2-3)
-> >>    2. For embedded devices with limited RAM, using direct I/O can
-> >> save system
-> >>       resources and avoid unnecessary data copying. Therefore, even
-> >> if the
-> >>       performance is lower when read small file, it can still be used
-> >>       effectively.
-> >>    3. If there is sufficient memory, pinning the page cache of the
-> >> model files
-> >>       in memory and placing file in the EROFS file system for
-> >> read-only access
-> >>       maybe better.(EROFS do not support direct I/O)
-> >>
-> >>
-> >> Changlog
-> >> =3D=3D=3D
-> >>   v1 [8]
-> >>   v1->v2:
-> >>     Uses the heap flag method for alloc and read instead of adding a n=
-ew
-> >>     DMA-buf ioctl command. [9]
-> >>     Split the patchset to facilitate review and test.
-> >>       patch 1 implement alloc and read, offer heap flag into it.
-> >>       patch 2-4 offer async read
-> >>       patch 5 can change gather limit.
-> >>
-> >> Reference
-> >> =3D=3D=3D
-> >> [1]
-> >> https://lore.kernel.org/all/0393cf47-3fa2-4e32-8b3d-d5d5bdece298@amd.c=
-om/
-> >> [2]
-> >> https://lore.kernel.org/all/ZpTnzkdolpEwFbtu@phenom.ffwll.local/
-> >> [3]
-> >> https://lore.kernel.org/all/20240725021349.580574-1-link@vivo.com/
-> >> [4]
-> >> https://lore.kernel.org/all/Zpf5R7fRZZmEwVuR@infradead.org/
-> >> [5]
-> >> https://lore.kernel.org/all/ZpiHKY2pGiBuEq4z@infradead.org/
-> >> [6]
-> >> https://lore.kernel.org/all/9b70db2e-e562-4771-be6b-1fa8df19e356@amd.c=
-om/
-> >> [7]
-> >> https://patchew.org/linux/20230209102954.528942-1-dhowells@redhat.com/=
-20230209102954.528942-7-dhowells@redhat.com/
-> >> [8]
-> >> https://lore.kernel.org/all/20240711074221.459589-1-link@vivo.com/
-> >> [9]
-> >> https://lore.kernel.org/all/5ccbe705-883c-4651-9e66-6b452c414c74@amd.c=
-om/
-> >>
-> >> Huan Yang (5):
-> >>    dma-buf: heaps: Introduce DMA_HEAP_ALLOC_AND_READ_FILE heap flag
-> >>    dma-buf: heaps: Introduce async alloc read ops
-> >>    dma-buf: heaps: support alloc async read file
-> >>    dma-buf: heaps: system_heap alloc support async read
-> >>    dma-buf: heaps: configurable async read gather limit
-> >>
-> >>   drivers/dma-buf/dma-heap.c          | 552 ++++++++++++++++++++++++++=
-+-
-> >>   drivers/dma-buf/heaps/system_heap.c |  70 +++-
-> >>   include/linux/dma-heap.h            |  53 ++-
-> >>   include/uapi/linux/dma-heap.h       |  11 +-
-> >>   4 files changed, 673 insertions(+), 13 deletions(-)
-> >>
-> >>
-> >> base-commit: 931a3b3bccc96e7708c82b30b2b5fa82dfd04890
-> >
+Acked-by: Andrew Halaney <ahalaney@redhat.com>
+
 
