@@ -1,164 +1,189 @@
-Return-Path: <linux-kernel+bounces-267715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F10A9414AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:46:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23A159414B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB2E2B23833
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:46:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDE8F2838B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E561A3BDD;
-	Tue, 30 Jul 2024 14:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890F519EED3;
+	Tue, 30 Jul 2024 14:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tIsbXp81";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NZKj9YTw";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tIsbXp81";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NZKj9YTw"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WjGPAUvI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149541A257E;
-	Tue, 30 Jul 2024 14:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB06F79E1
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722350699; cv=none; b=LpNmr7AzmYA0918FeFquyd/gJnlk3/938BGYf6cpzL/Z01gAwGLFFCQjLEoRWM/bGbuUVi+TOxLL8kTuUzADT0ien6cZuxXpLDwE/5mR05prdpV+nprdiz/7DnRxn2fqpUSBylvHuk0F84x14gq1vcKXh7YQpEblvNza461VWHY=
+	t=1722350811; cv=none; b=WhJ0wm1zn3uXwp2ALQLpwgYdlenk6N930sm7MAFrPgTfdx2Is1JxFwo4cnpcLqNvUvXWJIktPm8VFrmuDNPvGTk98bDLnXF/FvXoJQJDqavMMiPoh3U18rL3P5SqEycOYkdm39YhkLUJzcyeiT6k2qCgwyWozS7g4+ihJyRpbVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722350699; c=relaxed/simple;
-	bh=gSx/7lHE/PMLy5Y8F0EJAp52+7h2a/VarY4YUcAPLDo=;
+	s=arc-20240116; t=1722350811; c=relaxed/simple;
+	bh=oC98K+/uP2ulEhiSFvaa7r8hmIQrO+uQqJU63EJxnk8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l5QIRpTOp4le0AyJSXaTLkdo9GnsszSvkTBxEfw8f2kgT5W63xxlV9ubvj/mtzHNXN0gcC6i/HGWGLSOWaFSOQLs1K7GXfktFdHQUJZNo7mVurOhWaqud8JLahm+y+4Y1f62wXfG4XNKbhZdAI02BabI9/TWY1ymm/4Kpf9DNpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tIsbXp81; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NZKj9YTw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tIsbXp81; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NZKj9YTw; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 25DF421A5B;
-	Tue, 30 Jul 2024 14:44:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722350696;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OZpjEavWQeMROoSXKyesTUtyPtD3UKhFHMHylKAxga4pTS2709hkQskaGBrvb7Z7T4haTrE/XKrYxcVj0VmHAeOJQRdW4uVyObVTUT5HLDydlpvXwSNXBNbUNLWcGs6z2bVgH9ks5W3ti5HXV9Cjox3ajxL2P6UEdDUtuh7vxAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WjGPAUvI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722350808;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=QUsMKtPBcMux5juoA7RFd6oW5fn/anZ8vNoPsKM4bYU=;
-	b=tIsbXp81Nj+S2JtqAAh01D45atHp728i+MLSd6e9DYJbw5p1adBclSdBXmHMQksAubJWVA
-	kOWPjJJzm4lGoPkRR/QUVhaXfCQJcO8nJTxrdbtIRl8HCu+9Dsbgcrj8mIOiqGiYYsbjbr
-	SBCjyY46n7z8bf1OmxmxN93DfKg/0sQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722350696;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QUsMKtPBcMux5juoA7RFd6oW5fn/anZ8vNoPsKM4bYU=;
-	b=NZKj9YTw5gKqZksOrMEIEkrFyZEfPhgcLw3GxwhjX5TRzquOxMOCpsmUiFXNeZ30qdVx7P
-	KxD9VW0RhHMBTlAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=tIsbXp81;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=NZKj9YTw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722350696;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QUsMKtPBcMux5juoA7RFd6oW5fn/anZ8vNoPsKM4bYU=;
-	b=tIsbXp81Nj+S2JtqAAh01D45atHp728i+MLSd6e9DYJbw5p1adBclSdBXmHMQksAubJWVA
-	kOWPjJJzm4lGoPkRR/QUVhaXfCQJcO8nJTxrdbtIRl8HCu+9Dsbgcrj8mIOiqGiYYsbjbr
-	SBCjyY46n7z8bf1OmxmxN93DfKg/0sQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722350696;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QUsMKtPBcMux5juoA7RFd6oW5fn/anZ8vNoPsKM4bYU=;
-	b=NZKj9YTw5gKqZksOrMEIEkrFyZEfPhgcLw3GxwhjX5TRzquOxMOCpsmUiFXNeZ30qdVx7P
-	KxD9VW0RhHMBTlAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0AEC913297;
-	Tue, 30 Jul 2024 14:44:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Cr55Amj8qGbncQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 30 Jul 2024 14:44:56 +0000
-Date: Tue, 30 Jul 2024 16:44:54 +0200
-From: David Sterba <dsterba@suse.cz>
-To: syzbot <syzbot+ca895d3f00092ebf1408@syzkaller.appspotmail.com>
-Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [btrfs?] KMSAN: uninit-value in btrfs_compress_heuristic
-Message-ID: <20240730144454.GI17473@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <0000000000005c792d0619962ca1@google.com>
+	bh=5DFPl+J7YPtviyTYpbOxx/IbGbVaKmw1fqnbalrTj8A=;
+	b=WjGPAUvIk1Fj6vtsGCC6dxBHLv623TGDD++tI/P9RF3unkrXxVwYO1nL2Ct6FkbxSL6Il7
+	tua8v3m0n6a1w6e9OodHkI1O5ADJi3wJuJ3hgCpv/bD6FR5sOVtwhMclajsX9kviXODbx7
+	Dd9i9d22iexQE+7/u7+Jo169NIUBCLs=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-625-S2LxN0q4OvuUlIt2GOLMgA-1; Tue, 30 Jul 2024 10:46:45 -0400
+X-MC-Unique: S2LxN0q4OvuUlIt2GOLMgA-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4280b4a34c8so28365875e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:46:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722350804; x=1722955604;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5DFPl+J7YPtviyTYpbOxx/IbGbVaKmw1fqnbalrTj8A=;
+        b=av1YLJdE3oovgSbDc9CssORMi08OV03h65EPf/zDSRPpEGthKOzvG00GkQih7uGkvG
+         vD8UGEGDn0qFPqmzzBoir6HXpM4QGMR1ckJnZUK0n2yAeVXr2wNAvbLw0VVN6g4YwkFL
+         ZbMBkEC40euQSKKWMMlNgUVJ5tl6XNI2WiQDRtaY9bDaHRHXe5H+4oLrhPCANqcM8WzX
+         nr+6vdtCkJDzYspoeQhS0PNTNbRvo7Us09uY2yutuChCPNmICI8KWlkqkhWzR+ayHih7
+         VIHu0HKaRzENGkn31LPmSjllq3TJcjozU45BnpgLmwttkVskA7TltMlS7nlaIKR1qZ0Z
+         m7pw==
+X-Gm-Message-State: AOJu0YwAjheR5UsTasVISdhGD8ibPj42tXu4w9EiDvMPthym5qkKO+2A
+	uDYovZQkG7gxGSmfgtnxEpg7bT3o2Vp+QbddQ8rseSOIhRbCuuyrG0lmkELY7R8nLY+koLf9kxF
+	DHx0tEhpHiENpq7gpxhGsuc//A3WMcBOUhld14KMKHeXsoy9zU+BcBuPbGPm9SA==
+X-Received: by 2002:a5d:59aa:0:b0:367:a49e:746d with SMTP id ffacd0b85a97d-36b5d08f6aemr7903470f8f.39.1722350804148;
+        Tue, 30 Jul 2024 07:46:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF8SPI5zsjxorLVsr/CkA3sQCWgYktzA4uJcyZ5TlKQS7ItawnJwBcjYn8M51gSBWlR72fkBA==
+X-Received: by 2002:a5d:59aa:0:b0:367:a49e:746d with SMTP id ffacd0b85a97d-36b5d08f6aemr7903444f8f.39.1722350803623;
+        Tue, 30 Jul 2024 07:46:43 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([2a02:b125:8013:d373:a79:ad9d:7a67:3bd9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367d95c7sm14776744f8f.37.2024.07.30.07.46.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 07:46:43 -0700 (PDT)
+Date: Tue, 30 Jul 2024 16:46:37 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>,
+	Youssef Esmat <youssefesmat@google.com>,
+	Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com,
+	Luca Abeni <luca.abeni@santannapisa.it>
+Subject: Re: [PATCH v11 0/7] Preparatory changes for Proxy Execution v11
+Message-ID: <Zqj8zRdEIt4D_fOK@jlelli-thinkpadt14gen4.remote.csb>
+References: <20240709203213.799070-1-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0000000000005c792d0619962ca1@google.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 25DF421A5B
-X-Spam-Score: -1.51
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-1.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TAGGED_RCPT(0.00)[ca895d3f00092ebf1408];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:dkim,syzkaller.appspot.com:url,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240709203213.799070-1-jstultz@google.com>
 
-On Wed, May 29, 2024 at 04:37:20AM -0700, syzbot wrote:
-> Hello,
+Hi John,
+
+On 09/07/24 13:31, John Stultz wrote:
+> Hey All,
 > 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14573014980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
-> dashboard link: https://syzkaller.appspot.com/bug?extid=ca895d3f00092ebf1408
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
+> I wanted to send out v11 of the preparatory patches for Proxy
+> Execution - an approach for a generalized form of priority
+> inheritance. Here again, I’m only submitting the early /
+> preparatory changes for review, in the hope that we can move
+> these more straightforward patches along and then iteratively
+> move through the more interesting patches in the Proxy Execution
+> series. That said, I’ve not gotten a ton of feedback with this
+> approach, so I’m open to other suggestions.
 
-Most likely this was a side effect of bug fixed by commit f3a5367c679d
-("btrfs: protect folio::private when attaching extent buffer folios").
-The timeframe corresponds with increased number of bogus errors caused
-by use-after-free of a page.
+I'd actually have some additional thoughts on what we discussed at
+OSPM24. Hope it's OK if I use this cover letter as a starting point to
+possibly discuss that further. Please don't hesitate to tell if you
+would rather prefer we have that discussion separately after we agreed
+on this first split of the series (I don't think - or I just hope -
+whatever we decide about the migration logic will need changes in this
+set).
 
-The fix is best guess.
+...
 
-#syz fix: btrfs: protect folio::private when attaching extent buffer folios
+> Issues still to address with the full series:
+
+...
+
+> * The chain migration functionality needs further iterations and
+>   better validation to ensure it truly maintains the RT/DL load
+>   balancing invariants (despite this being broken in vanilla
+>   upstream with RT_PUSH_IPI currently)
+> * At OSPM, Juri Lelli and the (very very sadly) late Daniel
+>   Bristot de Oliveira raised the point that Proxy Exec may not
+>   actually be generalizable for SCHED_DEADLINE tasks, as one
+>   cannot always correctly donate the resources of the waiter to
+>   an owner on a different cpu. If one was to reverse the
+>   proxy-migration direction, migrating the owner to the waiter
+>   cpu, this would preserve the SCHED_DEADLINE bandwidth
+>   calculations, but would break down if the owner's cpu affinity
+>   disallowed it. To my understanding this constraint seems to
+>   make most forms of priority inheritance infeasible with
+>   SCHED_DEADLINE, but I’ll have to leave that to the
+>   folks/academics who know it well. After talking with Juri, my
+>   current plan is just to special case find_proxy_task() to not
+>   proxy with SCHED_DEADLINE (falling back to the current behavior
+>   where we deactivate the waiting task). But SCHED_NORMAL waiter
+>   tasks would still be able to benefit from Proxy Exec.
+
+So, I've been discussing this a bit with Luca (now cc-ed), Tommaso and
+Enrico (which I think you met at OSPM24 and/or at some previous
+editions). Please consider that I am essentially thinking out loud, so
+I'm pretty sure I'm missing details and possibly be just wrong, but
+tl;dr it looks like we could somewhat reconcile the current
+implementation (i.e. donors move to owners CPU) to what SCHED_DEADLINE
+proxy execution theory (M-BWI [1]) wants if we maybe try to only migrate
+the top-waiter (donor, one task) to the owner's CPU, possibly swapping
+that with the next highest priority task enqueued on the owner's CPU so
+that global invariants are respected. In this case we would leave other
+potential donors on their CPUs and either ignore them when picking tasks
+for execution or do slightly more fancy things for DEADLINE (can do that
+at a later stage, but we would need to consume runtime of DEADLINE
+entities even if the owner is running some place else, let's try to
+ignore this detail for now I suggest).
+
+Not sure if it makes any sense at all to you/others, but here it is. :)
+Hope we can consider the alternative and discuss about it. I actually
+wonder if it wouldn't also simplify blocking chains management a bit (no
+need to migrate chains around anymore), but I'd guess it might
+complicate local scheduling "a bit".
+
+Please let me know what you think and/or if you would like to leave this
+for a later stage.
+
+Best,
+Juri
+
+1 - https://retis.santannapisa.it/~tommaso/publications/ECRTS-2010.pdf
+
 
