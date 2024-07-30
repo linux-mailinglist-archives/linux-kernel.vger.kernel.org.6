@@ -1,125 +1,151 @@
-Return-Path: <linux-kernel+bounces-268168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9250C942116
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:53:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED232942118
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0B49B25C4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:53:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74B55B2605A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0432F18CBE6;
-	Tue, 30 Jul 2024 19:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A8718CBF2;
+	Tue, 30 Jul 2024 19:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iH1h78YH"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="c712wpgT"
+Received: from mail-4027.protonmail.ch (mail-4027.protonmail.ch [185.70.40.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1430218991F
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 19:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2179F18C93D
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 19:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722369197; cv=none; b=YfTKDp2cwjpq1ILM6nlgS3X/E55hHNzVuMoHTTYFc9p1uMN4mXk0kCWRwzJBwtgCyFx0J/YvBzp9Y+6dvBtm+Qxv1zJjHVpedbjwyT3IzESZwHZipcVbjio6I0xncklApWUkLzu4ibi5Gx/8UI/OXqv2nYqConrX8M/C2oM/DkA=
+	t=1722369211; cv=none; b=pkEyEpTKG/k5YIKPJf1OUPvOrNjbJoC8CcgmipbU247SWCwjgqEBAaFMfjsIvY3rrB/YYB5Ys562lDClfmaN5zUiaGCe2meNRN445lRcSEr3mO+p39bneTHExKUKDGc6JqZPcc8kTCPvcjYhUk1sKcH00YFlr7DiOVDyldN0/lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722369197; c=relaxed/simple;
-	bh=oevsQwDj6XVBeWlMUH50bEE/9aNZuedibV28ZLPiWPw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LbhV33uzK/QGcKEEWnzSjT91R1ngqQfU6qWWq7PBzg6S7m67xXs0iTwo33ElzS4ShPz/1RBhXPR3an75yNjnbdJpcjYIs2kPvuxe6OxnbDkWmER48jifsA53DSi7MTl+FHifA1BCocZfwQfROIbrIFPYoeWdB/15JD7cfQ4G1ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iH1h78YH; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ef2d582e31so60778201fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 12:53:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722369193; x=1722973993; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yFu4HTcE9bWeCuqJQEUkt2GhygASU11Sz6kOZ+oYCII=;
-        b=iH1h78YH3u9KRoy6KhQ7ucsmoqa6Sut4RTUtFwW7iD0y8fE/y10+UeTnA5AvvqQj3s
-         dQ8OHsNiUYdskWzdjgd2CPKOYG1ZllUfpcdR0nNN08/K+QPet3cNHSN8lYd7/8j72fNq
-         MFAVDbPGe9WdJkp3SWPS8nXHVUPZ8vwNnQMCM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722369193; x=1722973993;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yFu4HTcE9bWeCuqJQEUkt2GhygASU11Sz6kOZ+oYCII=;
-        b=ThqWVWYc3vTaGCx2AT3p+QFUsMNubwapSrgALxEJ/ZsF+W4x8ZX/BpSQty76HIDCwD
-         dPD0ZLbbCsemeRRa7Ad/IFNHTsFiOI8ijLi6QXWVNWFpC9G0/L4vWq6yp/9Sxf+4BExr
-         VPA8zKUOGkqJVpdTIbnxdn6aa/V0izaUwpSdqFeysHMK7OmApESZYfV2cAfuJVZF2IQl
-         Id6p5VD9IdQUOx2W8ENvYmzvknEnakwSsfKBCSsNMykbnoiqRu4rQp/Xih88xCBPy/id
-         M/tgIL3D+00q59Qn4LJo7y84f10Yuk0mX7rkbXRI4hLsK0VendOBqmKu/nLmvaRFWeU7
-         JGTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhhrIr7kKRe8xEoAz9+fgyYdYtMPnz6L8nkb+XwsTGKBlN+txfP6c/el9wulrYD5E0YH7z3jFe272Y2S/PmbYZPHHinRdlMQSDny7S
-X-Gm-Message-State: AOJu0YzaP80xniNThtEmQNORxb/L5sLzbYGuOC1MTr5P3xEj4ynaLzs0
-	yiXfBH1rVh+DkW0IE7V3VZusXRf29XZRuzANq745+0F12n2Bc63CfuyZ5RyC2RBYcD8i4RFgrMC
-	SUQxd+Q==
-X-Google-Smtp-Source: AGHT+IEMz8r9bQixI46rLakha0AhHgG+Jxotje5q9o6UgMG+Jr7DDOy+m4qvO+Br9smikNjDeB+qsA==
-X-Received: by 2002:a2e:b52a:0:b0:2ef:243b:6dce with SMTP id 38308e7fff4ca-2f12edfb5aemr72094911fa.10.1722369192901;
-        Tue, 30 Jul 2024 12:53:12 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f03cf326ecsm17516061fa.54.2024.07.30.12.53.11
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 12:53:11 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52f008aa351so7473907e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 12:53:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVLmdh4uWxY+pGiAR3s2C4lW0E9YQMRVAw4RenbPAB23riM6VW18aoOWL95WXYb5HgOR7D/gMeanybn9JA3AWi7X8SytumXf8fn30jl
-X-Received: by 2002:a19:ca48:0:b0:52c:e030:144e with SMTP id
- 2adb3069b0e04-5309b2bb5c0mr6180087e87.47.1722369191053; Tue, 30 Jul 2024
- 12:53:11 -0700 (PDT)
+	s=arc-20240116; t=1722369211; c=relaxed/simple;
+	bh=cfL8K8oOZTus+Z0CZyjYAFSnbMx9FZoKUDm75n+8bXs=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ElIOYguPEFMcsTmAdmtaUr8cbMl6dFoKTIPhVIezhfdCuat+mvm5QnFF2CEUhkYRT49DJx3Eqe5HMeTedXrzlXJzlY5jMpjRt0qsETxy7tNL5uA0fRVVtB6KWaGxEP7KYHn3RifW6I1ZaD02LW+2cXSisHbQGn2r97+DK3iDyeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=c712wpgT; arc=none smtp.client-ip=185.70.40.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1722369207; x=1722628407;
+	bh=JZsQJ3qPV9zRVIItVT1nb+wNyCmtfkYU71yuifettk0=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=c712wpgTuLcKOnZ6Ilthadkwkt1KO3vAANuOiLHoMICjcLnj326Cgt5d8FS+DENWl
+	 85TcTm0KPeR03brt0p191vqPATGzJNu7BL5hiMHv4EOEpxeSnIi0yjmZHk2TiEYmvw
+	 p4VVzQPnmbHrenJ604XI19Vk+IOzXkZ6trOntpG0k9/oCOFBp1TmGpe8uKgnr4zYbT
+	 /yzgstI8zHntFFbO0JiSIY1O7Ig7IKxoi3t6gCkk5KNQoWXZMQHmmpCC9p5lP/3ehP
+	 B2NFdh1cHJffWZ3iP64Ltz0p6A2UriBU7cZI+mssmCF46rEDPBSrD7kSy25jPEeoAR
+	 G9PkSbp8Vhk/A==
+Date: Tue, 30 Jul 2024 19:53:23 +0000
+To: o-takashi@sakamocchi.jp, clemens@ladisch.de
+From: Edmund Raile <edmund.raile@protonmail.com>
+Cc: tiwai@suse.com, alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCH v4 0/2] ALSA: firewire-lib: restore process context workqueue to prevent deadlock
+Message-ID: <20240730195318.869840-1-edmund.raile@protonmail.com>
+Feedback-ID: 43016623:user:proton
+X-Pm-Message-ID: 10fe8f538ef80dff132c856927b6dd56a60806b0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
- <5cd3e11780df40b0b771da5548966ebd@AcuMS.aculab.com> <CAHk-=wj=Zv+mMuqJQJptH9zGFhPXqku9YKyR7Vo4f0O0HEcbxw@mail.gmail.com>
- <b47fad1d0cf8449886ad148f8c013dae@AcuMS.aculab.com> <CAHk-=wgH0oETG1eY9WS79aKrPqYZZzfOYxjtgmyr7jH52c8vsg@mail.gmail.com>
- <e718056c1999497ebf8726af49475701@AcuMS.aculab.com> <CAHk-=wj900Q3FtEWJFGADQ0EbmYwBHW8cWzB0p0nvFck=0+y6A@mail.gmail.com>
- <e946e002-8ca8-4a09-a800-d117c89b39d3@app.fastmail.com> <CAHk-=whCvSUpbOawsbj4A6EUT7jO8562FG+vqiLQvW0CBBZZzA@mail.gmail.com>
- <CAHk-=wgRDupSBzUX_N_Qo_eaYyDfOH=VTihhikN36cGxCc+jvg@mail.gmail.com>
- <f88a19d1-c374-43d1-a905-1e973fb6ce5a@app.fastmail.com> <8111159a-c571-4c71-b731-184af56b5cb1@app.fastmail.com>
- <CAHk-=wgLsFdNert_OfCmRon7Y9+ETnjxkz_UA5mv0=1RB71kww@mail.gmail.com>
-In-Reply-To: <CAHk-=wgLsFdNert_OfCmRon7Y9+ETnjxkz_UA5mv0=1RB71kww@mail.gmail.com>
-From: Linus Torvalds <torvalds@linuxfoundation.org>
-Date: Tue, 30 Jul 2024 12:52:53 -0700
-X-Gmail-Original-Message-ID: <CAHk-=widciTZs3CCoi7X2+4SnVWrKu1Jv2uOV9+oewXGen7Q9A@mail.gmail.com>
-Message-ID: <CAHk-=widciTZs3CCoi7X2+4SnVWrKu1Jv2uOV9+oewXGen7Q9A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: David Laight <David.Laight@aculab.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Matthew Wilcox <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>, 
-	"pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 30 Jul 2024 at 11:02, Linus Torvalds
-<torvalds@linuxfoundation.org> wrote:
->
-> On Tue, 30 Jul 2024 at 07:15, Arnd Bergmann <arnd@kernel.org> wrote:
-> >
-> > There is another one that I see with gcc-8 randconfigs (arm64):
->
-> So I ended up undoing that part of my patch, so it's a non-issue [..]
+This patchset serves to prevent an AB/BA deadlock:
 
-I pushed out my current one.
+thread 0:
+    * (lock A) acquire substream lock by
+=09snd_pcm_stream_lock_irq() in
+=09snd_pcm_status64()
+    * (lock B) wait for tasklet to finish by calling
+    =09tasklet_unlock_spin_wait() in
+=09tasklet_disable_in_atomic() in
+=09ohci_flush_iso_completions() of ohci.c
 
-It keeps the old semantics wrt the clamp() static_assert, and it
-obviously has the "allow small unsigned types to promote to 'int'"
-that I already did earlier.
+thread 1:
+    * (lock B) enter tasklet
+    * (lock A) attempt to acquire substream lock,
+    =09waiting for it to be released:
+=09snd_pcm_stream_lock_irqsave() in
+    =09snd_pcm_period_elapsed() in
+=09update_pcm_pointers() in
+=09process_ctx_payloads() in
+=09process_rx_packets() of amdtp-stream.c
 
-I still suspect we shouldn't do that relaxed integer promotion rule,
-but it's what we used to do, and it's easy to get rid of if we decide
-to, and it's a separate issue from the whole "make minmax expansion
-more reasonable".
+? tasklet_unlock_spin_wait
+ </NMI>
+ <TASK>
+ohci_flush_iso_completions firewire_ohci
+amdtp_domain_stream_pcm_pointer snd_firewire_lib
+snd_pcm_update_hw_ptr0 snd_pcm
+snd_pcm_status64 snd_pcm
 
-              Linus
+? native_queued_spin_lock_slowpath
+ </NMI>
+ <IRQ>
+_raw_spin_lock_irqsave
+snd_pcm_period_elapsed snd_pcm
+process_rx_packets snd_firewire_lib
+irq_target_callback snd_firewire_lib
+handle_it_packet firewire_ohci
+context_tasklet firewire_ohci
+
+The issue has been reported as a regression of kernel 5.14:
+Link: https://lore.kernel.org/regressions/kwryofzdmjvzkuw6j3clftsxmoolynljz=
+txqwg76hzeo4simnl@jn3eo7pe642q/T/#u
+("[REGRESSION] ALSA: firewire-lib: snd_pcm_period_elapsed deadlock
+with Fireface 800")
+
+Commit 7ba5ca32fe6e ("ALSA: firewire-lib: operate for period elapse event
+in process context") removed the process context workqueue from
+amdtp_domain_stream_pcm_pointer() and update_pcm_pointers() to remove
+its overhead.
+Commit b5b519965c4c ("ALSA: firewire-lib: obsolete workqueue for period
+update") belongs to the same patch series and removed
+the now-unused workqueue entirely.
+
+Though being observed on RME Fireface 800, this issue would affect all
+Firewire audio interfaces using ohci amdtp + pcm streaming.
+
+ALSA streaming, especially under intensive CPU load will reveal this issue
+the soonest due to issuing more hardIRQs, with time to occurrence ranging
+from 2 secons to 30 minutes after starting playback.
+
+to reproduce the issue:
+direct ALSA playback to the device:
+  mpv --audio-device=3Dalsa/sysdefault:CARD=3DFireface800 Spor-Ignition.fla=
+c
+Time to occurrence: 2s to 30m
+Likelihood increased by:
+  - high CPU load
+    stress --cpu $(nproc)
+  - switching between applications via workspaces
+    tested with i915 in Xfce
+PulsaAudio / PipeWire conceal the issue as they run PCM substream
+without period wakeup mode, issuing less hardIRQs.
+
+Cc: stable@vger.kernel.org
+Backport note:
+Also applies to and fixes on (tested):
+6.10.2, 6.9.12, 6.6.43, 6.1.102, 5.15.164
+
+Edmund Raile (2):
+  Revert "ALSA: firewire-lib: obsolete workqueue for period update"
+  Revert "ALSA: firewire-lib: operate for period elapse event in process
+    context"
+
+ sound/firewire/amdtp-stream.c | 38 ++++++++++++++++++++++-------------
+ sound/firewire/amdtp-stream.h |  1 +
+ 2 files changed, 25 insertions(+), 14 deletions(-)
+
+--=20
+2.45.2
+
+
 
