@@ -1,168 +1,177 @@
-Return-Path: <linux-kernel+bounces-267857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD7F94176B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:11:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B6C7941774
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5183B1F235F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:11:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346DE281778
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3F41A4B5A;
-	Tue, 30 Jul 2024 16:08:36 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377301A3039;
+	Tue, 30 Jul 2024 16:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="clDeDsJF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rs9nfx7V"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B71D1A4B44;
-	Tue, 30 Jul 2024 16:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1BC1A3031;
+	Tue, 30 Jul 2024 16:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722355716; cv=none; b=KX3Hk6XHzCTCV9jwx9o4tzXMzeyTHghFqRVUwlWB/nQKZGu/b+5R/8ZQOWQK8Lk1N7Oa48zNo4/7mVNQyp0Bh+cW3/WLVffY0edF16YpYJaTTQTvHP0RTjLeSYCgQltnDF6imUZdkyIn4PoP02HlxRPQHwh1q7YItsB7PpDf0d0=
+	t=1722355737; cv=none; b=Kr2iEmvh8mQgMkbR9gm1CENHWkeEGcg/JqDcRF8WF/f8u0YiTbFnzkwwolbL6l+UuWc3w6v61fqcDoisG7bGZnsTy6lt4jWebDn5G6Tk6QNWFmtkWqPF/U4gAYEHViarTgoESYqe/0z0kBxNIju3pnjA7JFdBrL2UBeE00OMvBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722355716; c=relaxed/simple;
-	bh=SbcfHMDD7F2lgNB1acsCs6fg8GG51YngRe59u4jN2I4=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R3sOL0IgKWirah4cXrmnP99Rnx4Ymf/Azw3ABizU7rfrgKusgG7PeRDdN98aVmWB7FJXs7jEfr/ywO2uO56v5ThcQsUB9qncpJ2EMhQYYsuCQVON2+WwZLvNgEsSyHQhsfnR0bcHIhTzmKzzzkxqZfaEz7XHRSRF3cyvXDOAv6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sYpOg-000000002Lj-3eAX;
-	Tue, 30 Jul 2024 16:08:22 +0000
-Date: Tue, 30 Jul 2024 17:08:19 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Daniel Golle <daniel@makrotopia.org>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@debian.org>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v9 1/3] dt-bindings: rng: Add Rockchip RK3568 TRNG
-Message-ID: <686aae7633f14528c983b8072d79a660cc56528e.1722355365.git.daniel@makrotopia.org>
-References: <cover.1722355365.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1722355737; c=relaxed/simple;
+	bh=AUOl71qABrzeaKwaAc3dEOJLIGaxiLw7FmxehLQCeWM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ammqlf+2X3Wu3KZ6KF667FRZyv2VQfVz+9ipHdC0V5qURW1bkz8tLRVAoxLk3ZDH6+hjDj5YyPUZliVclySuQ7BSXbboBuzvMK+WhPEGe+FbqNKY3vVxYFtNl/sr333pi9Oxw52P9s6N5IJ964C29fyMdYI2wJsb+3SuK4J+3Xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=clDeDsJF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rs9nfx7V; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722355733;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mf5ncwMTYgRBzu9F9xJhXESy8cHEXAFkcaiy7PaCMeM=;
+	b=clDeDsJFEAMvnzvntn4kVt77+y/2o3CF1WUBWB4vXyTALtcwltwNWn6y9IlsJ2/ukfyaNv
+	5QeNFaGYIbtE48Q7uXL0xcF5Axzt9r32hGmnKHz5sdaKnD/ICQeBGj7OlmiGz93zSkaQjy
+	LeP/0ayTEmKJF1ItN/hPq26YuoXaRtqCpEosbIBhltncWS2a66+ecNnYqcmXKNkF2ZV7E7
+	4N1NS3XwEEt4gMIX67yn2W/D46pP9LHTfUG94Yzm+X1AEpGyUpsKT5t8+ggJjlCK2wholP
+	OsBlCyVsxmaq6Ew3GjW62bVHIgtwdGfYHQ8dS3pmiRku3CKXuY+30JPgkAP14w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722355733;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mf5ncwMTYgRBzu9F9xJhXESy8cHEXAFkcaiy7PaCMeM=;
+	b=rs9nfx7VcbhhCaJnAEYG3iGOgnWaXyxwpsWRMp8Tsrs5eCPkqfABEOCTlo/Xs4JTyUSmTp
+	f0ISQMlk0pGlc/DA==
+To: Marek Maslanka <mmaslanka@google.com>, LKML <linux-kernel@vger.kernel.org>
+Cc: Marek Maslanka <mmaslanka@google.com>, Rajneesh Bhardwaj
+ <irenic.rajneesh@gmail.com>, David E Box <david.e.box@intel.com>, Hans de
+ Goede <hdegoede@redhat.com>, Ilpo =?utf-8?Q?J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, John Stultz <jstultz@google.com>, Stephen
+ Boyd <sboyd@kernel.org>, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v3] platform/x86:intel/pmc: Enable the ACPI PM Timer to
+ be turned off when suspended
+In-Reply-To: <20240730120546.1042515-1-mmaslanka@google.com>
+References: <CAGcaFA2sQNRo9UThN-C1NOLtGUJ3sKzc=pEC9wdDWMi501iLsA@mail.gmail.com>
+ <20240730120546.1042515-1-mmaslanka@google.com>
+Date: Tue, 30 Jul 2024 18:08:53 +0200
+Message-ID: <87cymu7tgq.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1722355365.git.daniel@makrotopia.org>
+Content-Type: text/plain
 
-From: Aurelien Jarno <aurelien@aurel32.net>
+Marek!
 
-Add the True Random Number Generator on the Rockchip RK3568 SoC.
+On Tue, Jul 30 2024 at 12:05, Marek Maslanka wrote:
+> Allow to disable ACPI PM Timer on suspend and enable on resume. A
+> disabled timer helps optimise power consumption when the system is
+> suspended. On resume the timer is only reactivated if it was activated
+> prior to suspend, so unless the ACPI PM timer is enabled in the BIOS,
+> this won't change anything.
+>
+>  include/linux/clocksource.h           |  2 ++
+>  kernel/time/clocksource.c             | 22 +++++++++++++
 
-Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The changelog is completely silent about the core code change. That's
+not how it works.
+
+Add the core code change as a separate patch with a proper justification
+and not hide it in the pile of the PMC changes without cc'ing the
+relevant maintainers. It's documented how this works, no?
+
+> +/*
+> + * Enable or disable APCI PM Timer
+> + *
+> + * @return: Previous APCI PM Timer enabled state
+> + */
+> +static bool pmc_core_enable_apci_pm_timer(struct pmc_dev *pmcdev, bool enable)
+> +{
+> +	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
+> +	const struct pmc_reg_map *map = pmc->map;
+> +	char cs_name[32];
+> +	bool state;
+> +	u32 reg;
+> +
+> +	if (!map->acpi_pm_tmr_ctl_offset)
+> +		return false;
+> +
+> +	clocksource_current_cs_name(cs_name, sizeof(cs_name));
+> +	if (strncmp(cs_name, "acpi_pm", sizeof(cs_name)) == 0)
+> +		return false;
+> +
+> +	clocksource_suspend_cs_name(cs_name, sizeof(cs_name));
+> +	if (strncmp(cs_name, "acpi_pm", sizeof(cs_name)) == 0)
+> +		return false;
+
+How would ACPI/PM ever be selected as a suspend clocksource? It's not
+marked CLOCK_SOURCE_SUSPEND_NONSTOP.
+
+There is a reason why clocksources have suspend/resume and
+enable/disable callbacks. The latter allow you to turn it completely off
+when it is not in use.
+
+Something like the below should work. It's uncompiled, but you get the
+idea.
+
+Thanks,
+
+        tglx
 ---
- .../bindings/rng/rockchip,rk3568-rng.yaml     | 61 +++++++++++++++++++
- MAINTAINERS                                   |  6 ++
- 2 files changed, 67 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/rng/rockchip,rk3568-rng.yaml
-
-diff --git a/Documentation/devicetree/bindings/rng/rockchip,rk3568-rng.yaml b/Documentation/devicetree/bindings/rng/rockchip,rk3568-rng.yaml
-new file mode 100644
-index 0000000000000..e0595814a6d98
---- /dev/null
-+++ b/Documentation/devicetree/bindings/rng/rockchip,rk3568-rng.yaml
-@@ -0,0 +1,61 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Rockchip RK3568 TRNG
-+
-+description: True Random Number Generator on Rockchip RK3568 SoC
-+
-+maintainers:
-+  - Aurelien Jarno <aurelien@aurel32.net>
-+  - Daniel Golle <daniel@makrotopia.org>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - rockchip,rk3568-rng
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: TRNG clock
-+      - description: TRNG AHB clock
-+
-+  clock-names:
-+    items:
-+      - const: core
-+      - const: ahb
-+
-+  resets:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - resets
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/rk3568-cru.h>
-+    bus {
-+      #address-cells = <2>;
-+      #size-cells = <2>;
-+
-+      rng@fe388000 {
-+        compatible = "rockchip,rk3568-rng";
-+        reg = <0x0 0xfe388000 0x0 0x4000>;
-+        clocks = <&cru CLK_TRNG_NS>, <&cru HCLK_TRNG_NS>;
-+        clock-names = "core", "ahb";
-+        resets = <&cru SRST_TRNG_NS>;
-+      };
-+    };
-+
-+...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 12b870712da4a..9b75626b54e16 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19722,6 +19722,12 @@ F:	Documentation/userspace-api/media/v4l/metafmt-rkisp1.rst
- F:	drivers/media/platform/rockchip/rkisp1
- F:	include/uapi/linux/rkisp1-config.h
+--- a/drivers/clocksource/acpi_pm.c
++++ b/drivers/clocksource/acpi_pm.c
+@@ -63,12 +63,40 @@ static u64 acpi_pm_read(struct clocksour
+ 	return (u64)read_pmtmr();
+ }
  
-+ROCKCHIP RK3568 RANDOM NUMBER GENERATOR SUPPORT
-+M:	Daniel Golle <daniel@makrotopia.org>
-+M:	Aurelien Jarno <aurelien@aurel32.net>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/rng/rockchip,rk3568-rng.yaml
++static bool acpi_pm_enabled;
 +
- ROCKCHIP RASTER 2D GRAPHIC ACCELERATION UNIT DRIVER
- M:	Jacob Chen <jacob-chen@iotwrt.com>
- M:	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
--- 
-2.45.2
++static void (*enable_callback)(bool enable);
++
++bool acpi_pm_register_enable_callback(void (*cb)(bool enable))
++{
++	enable_callback = cb;
++	if (cb)
++		cb(acpi_pm_enabled);
++}
++
++static int acpi_pm_enable(struct clocksource *cs)
++{
++	acpi_pm_enabled = true;
++	if (enable_callback)
++		enable_callback(true);
++	return 0;
++}
++
++static void acpi_pm_disable(struct clocksource *cs)
++{
++	acpi_pm_enabled = false;
++	if (enable_callback)
++		enable_callback(false);
++}
++
+ static struct clocksource clocksource_acpi_pm = {
+ 	.name		= "acpi_pm",
+ 	.rating		= 200,
+ 	.read		= acpi_pm_read,
+ 	.mask		= (u64)ACPI_PM_MASK,
+ 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
++	.enable		= acpi_pm_enable,
++	.disable	= acpi_pm_disable,
+ };
+ 
+ 
+
+
 
