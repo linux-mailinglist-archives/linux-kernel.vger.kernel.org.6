@@ -1,112 +1,110 @@
-Return-Path: <linux-kernel+bounces-267905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9183941A7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:44:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E858B941AA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 261771C23505
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:44:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAA6CB23DF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D3A14831F;
-	Tue, 30 Jul 2024 16:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99335189503;
+	Tue, 30 Jul 2024 16:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLM52lno"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dRa1PddM"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A2818801C;
-	Tue, 30 Jul 2024 16:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5D6187FF6
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722357847; cv=none; b=EYIaTw88s4RP3iCAsUca0f3r/jBoAYRvW+nS5qr8jCgi6Z5sYlkGdMusBCuIrAzW+xccXsYM1b8zCHrL9QNKZSO0vcHMdz2JBDKX2bdZEINnOm2vmd4k7Y0gzHJHhDm+AxyA1dZ2GWs3kdbSnMxkIg+NSAv+WAv88mRppihnuNM=
+	t=1722357856; cv=none; b=o1k8zkjVUBfYEaYcGTixP5XJeEXyaUAaW81UXN/969pQs0dJYz5JoZk/pR8ctzbe0mZ/AIDO4xxCQrA5aFnGDUwh4tk0wUYn09ogrxwL9SxNZfb9JLuTDV2IVVAmzA/bqCmuCs1E46McrYzFSTHdhw22B+hWQdvM3wA0ftDu5xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722357847; c=relaxed/simple;
-	bh=Rftd5SMFzgvkrqtKYeOg6P+2kJ52Nckqpi9+qfZgqvc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=efK/WS3/FmIEFOPH7RQNCuXEWF0mpnL+tHHX+AcLjnXJ06nTTM/LFltUklAqI/pA9GCd7qKzFGirN1zeWiH6dlNWd/oEaATVb565fK4jCpYLFOPxIbj2po9nvWHfI64TtoFteN55+LosaRA9Hqr3dZls7qEx6Ya56GJBT0QAIo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CLM52lno; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEF2EC32782;
-	Tue, 30 Jul 2024 16:44:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722357847;
-	bh=Rftd5SMFzgvkrqtKYeOg6P+2kJ52Nckqpi9+qfZgqvc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CLM52lnozQsI4sXRr0KOts2j9HhXwa/TsStKURYBcCScyOTqEwo8mdBIAXfH6uP+A
-	 5lOv8LY9BPSu+BifTimHjr6LBDCDVtkMaSFDT3qDbk26yxtgvb5aadvp191B7qTRxX
-	 Bi6CW+eHp0OcxJHeKIvmL7ck2PaX3oefXgD3+1Z5QwscC4HXd/3LyH/3rhGLIZeka5
-	 5YB0ISkkCiSPR3WjApCOJ5GqCgPlphKBiYx/cwjwTfxoXAeiyNH12chjCkWylQCn0T
-	 8qMm1KxBlF9LN+RqaGbRfYibpVLWf5iPPnfh8G/JuHMPtJXb4fGzOg78zlVh9vugS8
-	 go6EvMm6NPVQQ==
-Date: Tue, 30 Jul 2024 17:44:01 +0100
-From: Simon Horman <horms@kernel.org>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: kernel@pengutronix.de, Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	David Jander <david.jander@protonic.nl>, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH can-next 12/21] can: rockchip_canfd: add TX PATH
-Message-ID: <20240730164401.GD1967603@kernel.org>
-References: <20240729-rockchip-canfd-v1-0-fa1250fd6be3@pengutronix.de>
- <20240729-rockchip-canfd-v1-12-fa1250fd6be3@pengutronix.de>
+	s=arc-20240116; t=1722357856; c=relaxed/simple;
+	bh=/9OG9y6hP+6SfnI18c2tJ5kPmALXdgpYpAlvKpnHS3s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VQuRVsnZhPMLDwXnq2yKmOTDKIsWELis8YIbbqJeub7HpzL5eh9DSYAusMWp5Hiab/auqAaqnZGu2MHm0ZqsgQd3WVon+cNkEvtP0NkVi/2Z0yxkQNg/j4auYsjpKVoVt6l4At1qkokLbTToM0POnp1UKZXGa+lOyotK0OlWMj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dRa1PddM; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-368440b073bso35349f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:44:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722357854; x=1722962654; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5021+fwAvRxGdu5GI9N27lF6o38chWudSfjBKY3WxUk=;
+        b=dRa1PddMw6EVRFsTvLXVGEzKHoWryOAOCmYhbIKcCR+pHLxDvetRxcnQ/sCB6UCt7R
+         W4L5giBcM64RnTiW2sAph+NOZafJ9VCOnsHLLO1rAgkt07UimtUfsPbu+B9OIXWoLQf1
+         bavzFiXOOEUCsQ8kyCCMUl7brQGz1dqaw56/3hTV0t4UxPeDh6U0qVJgYuByM563JZth
+         kQBbbfkB4d9IbbBj5Vbre5o7P67sZooSESHxFtVDAiFYbsPY3O59VTryg0Yy6BYmB3lW
+         cUxPHu32xbWRbbMTE6khzLuONxqUQEHVYYh49d06cksHtxyDOTzZQ8bstMxhB2ZkNQtX
+         IX8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722357854; x=1722962654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5021+fwAvRxGdu5GI9N27lF6o38chWudSfjBKY3WxUk=;
+        b=Ya1r9GQxqy+00C4CqhJF3vhnQp0NvDHEOMPtqebpF6KNJ7HzsoTqN6hzSofsTalc9y
+         O2nMqV3ZmI+t2aGVdU7Vw5/znxkFqtJ0eBb6ROFpajAEBhy0WZsGcAcQYJ9AGtu3U/4V
+         tnWkO4/lWJKsmLrC/OsjnwkoDs69XYVQHVLH26S0t0x2nu5+GX9DuuYxfSnlsEci/dS5
+         kW7YRVK4CIx9SpbUItOIs5aXvA6aCEYUVCv1/C+4NNJ88MbuLq0aNLNKfVYTfv7i0weu
+         AOcoYuuMNvgLgJrd8j0P55pxQn+n9YXHf6cyLjYfH4kqOYteGuiH75VObYgFk63tEYGf
+         AYWw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPcepc/FNAV1wjg4phVRE86UhZhUdGKdnnNGgpNcA1wqgdjA8a0fZT3XlojdaMdMX5TPkpGHnwv32XZItYk9vH3UUDERK71I5XTZuE
+X-Gm-Message-State: AOJu0YwfyAipOq32L4HCf4sm1CP9JT9hKY/FnWiu478L3HjTQ1nWCc6E
+	wyHrP3aSbf5Eiq4o2hPrpgQjkIWVo3MoF1WA4wyVfvTG5qohZfGTqPuh2Z7dWEOh+5AtIggUhUz
+	vePrp6371w9jC+pkydFvUu+duX1nDZBbMRBu5
+X-Google-Smtp-Source: AGHT+IFyPEWVu13a/JXKYRwNhAY0ulJH7mLayPlDw+oEoMsOSEDWr2v4wLogU1iA2qYMBVhWygDzrgUTv0poXAGRpBA=
+X-Received: by 2002:adf:e2c5:0:b0:367:8e63:4da4 with SMTP id
+ ffacd0b85a97d-36b8c8e9959mr1768784f8f.14.1722357853484; Tue, 30 Jul 2024
+ 09:44:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729-rockchip-canfd-v1-12-fa1250fd6be3@pengutronix.de>
+References: <20240730-kcfi-v1-0-bbb948752a30@google.com> <20240730-kcfi-v1-2-bbb948752a30@google.com>
+ <CANiq72mshrgXJLw+AZ+ovfhZXjYYfgQLdyYdW_v0FmdWdEjvbg@mail.gmail.com>
+In-Reply-To: <CANiq72mshrgXJLw+AZ+ovfhZXjYYfgQLdyYdW_v0FmdWdEjvbg@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 30 Jul 2024 18:44:01 +0200
+Message-ID: <CAH5fLghu8Gy8copyBgcBknMN7GaikhYZb57M0Ye2_xANW6YzoQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] rust: cfi: add support for CFI_CLANG with Rust
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Sami Tolvanen <samitolvanen@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 03:05:43PM +0200, Marc Kleine-Budde wrote:
-> The IP core has a TX event FIFO. In other IP cores, this type of FIFO
-> normally contains the event that a CAN frame has been successfully
-> sent. However, the IP core on the rk3568v2 the FIFO also holds events
-> of unsuccessful transmission attempts.
-> 
-> It turned out that the best way to work around this problem is to set
-> the IP core to self-receive mode (RXSTX), filter out the self-received
-> frames and insert them into the complete TX path.
-> 
-> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+On Tue, Jul 30, 2024 at 1:51=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Tue, Jul 30, 2024 at 11:40=E2=80=AFAM Alice Ryhl <aliceryhl@google.com=
+> wrote:
+> >
+> > +       RS_FLAGS_CFI   :=3D -Zsanitizer=3Dkcfi -Zsanitizer-cfi-normaliz=
+e-integers
+>
+> Before I forget: this should probably be `RUSTC_...` for consistency
+> with the rest (and, in this case, these are flags, so it makes sense
+> they target the particular compiler).
 
-...
+Hmm. It seems like the existing variables containing rustc flags just
+use RUST not RUSTC in the name?
 
-> diff --git a/drivers/net/can/rockchip/rockchip_canfd-tx.c b/drivers/net/can/rockchip/rockchip_canfd-tx.c
-
-...
-
-> +void rkcanfd_handle_tx_done_one(struct rkcanfd_priv *priv, const u32 ts,
-> +				unsigned int *frame_len_p)
-> +{
-> +	struct net_device_stats *stats = &priv->ndev->stats;
-> +	unsigned int tx_tail;
-> +	struct sk_buff *skb;
-> +
-> +	tx_tail = rkcanfd_get_tx_tail(priv);
-> +	skb = priv->can.echo_skb[tx_tail];
-
-nit: skb is set but otherwise unused in this function.
-
-> +	stats->tx_bytes +=
-> +		can_rx_offload_get_echo_skb_queue_timestamp(&priv->offload,
-> +							    tx_tail, ts,
-> +							    frame_len_p);
-> +	stats->tx_packets++;
-> +}
-
-...
+Alice
 
