@@ -1,253 +1,198 @@
-Return-Path: <linux-kernel+bounces-268152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E469420E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:44:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 656B29420E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED40BB25672
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:44:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15D36282B1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEEE18DF93;
-	Tue, 30 Jul 2024 19:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AF51917EB;
+	Tue, 30 Jul 2024 19:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NdbqZI7j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h16IfaV0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D1F18C93F;
-	Tue, 30 Jul 2024 19:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2029118C938;
+	Tue, 30 Jul 2024 19:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722368604; cv=none; b=P3IIBSBx1xoVMEeopTPjOetG8kpAyDKSMGkJzdaHRc1XZ2OnC8/EYveWgVXjC9hbz16NwmvfOg3Y0QrRz15PpvE5NeGvdP+5QfsnAsj/l/F24Nx3XlDf4d5rBqoVxhBFQspSMWTvefat4ZntYjMvvXIVFGBp4myjaHqeZ8NBeJ0=
+	t=1722368614; cv=none; b=QNGINuuJL7OWe9Eh2K16+gvWGfbWpj0QNCJvjp+A4J9HiNwvQ/GYP7rIqBhWB2kYbj3huvYdLu0o0/qkDQa4bTTz9e9lF/VHmFLMomgIVIFr4q2DeJ4HSmTFOFsXIWLclxxr9hDuEQd2OuUpPTq9ATgeuwzCD1x4Qn5RKS9Zuhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722368604; c=relaxed/simple;
-	bh=j/fo2OFH999A9qSU4xh304Mv47Te5RJL6dmqOmXHt78=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AyMdo9BrRutevkGZZ6tQ7g9Wj7FeMzCySJUTYOE5QISDK7r6m+Sw7BA64XLJ+0/JP3LAbvmPFsJWiF4sJCq9Op3EhqpU1XD1nKDZftdFyOT2YR8pj8PdZWqNnE2tOOarimaajtKFbPs6cV9fNQJU+xA3YC9HFc066wek4nAJniI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NdbqZI7j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 173AAC4AF10;
-	Tue, 30 Jul 2024 19:43:24 +0000 (UTC)
+	s=arc-20240116; t=1722368614; c=relaxed/simple;
+	bh=7ZWS8u9aPiBFISBPRpifvY/WoT4OE1+Bi2YojbT+WFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MuqWHs+m38mYa5SKnIoOweiimzUaJapsJZD/qMnqkZwODtCwJIGeBI2XHlhR9IVGbwYmX5aeieCKdZmtuWUMpKhEkjtUG87gvj04miwVdJI2h3xCUc9vQohpgyGUc7LDFOs9wnGhfeNbf/uk3AX+Y+1f5iWGy1G3FmLSsYNSlkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h16IfaV0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ED71C32782;
+	Tue, 30 Jul 2024 19:43:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722368604;
-	bh=j/fo2OFH999A9qSU4xh304Mv47Te5RJL6dmqOmXHt78=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=NdbqZI7j1mwKpVlKIHiv4WHnHCpVfeKAcqqRkQgQHqfl1eudE6Bjh5MjkrdJGIUY/
-	 S8axWZDy5X3t7qBgUgCdl2rdVhSEu1vpuxW2gu7PgDYPYCrtiUOSE4XRdTiQCPtdXo
-	 f+R5K9qE9hUpB47alAOecHwfAPcFvhYmRLj8GAfEsYOVRReD9rCYjbn6pm+Dg5Y7ZC
-	 hCTECxJaLEALk8GTDgCv+pb3AkGoGTqIf+1UZBuu4Ef9b0IWm8ElKkjqzeVe4OgAm0
-	 H1GGI4h84Rss/s7dsPSGqyTlFQR8WWnbZuOyyZ4qPst1pxHg/dTQEdNp5mSERBz//2
-	 EXYrRa/12JKeQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2A5C52D1F;
-	Tue, 30 Jul 2024 19:43:24 +0000 (UTC)
-From: Luigi Leonardi via B4 Relay <devnull+luigi.leonardi.outlook.com@kernel.org>
-Date: Tue, 30 Jul 2024 21:43:08 +0200
-Subject: [PATCH net-next v4 3/3] test/vsock: add ioctl unsent bytes test
+	s=k20201202; t=1722368613;
+	bh=7ZWS8u9aPiBFISBPRpifvY/WoT4OE1+Bi2YojbT+WFI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h16IfaV09C1EP1HeYxv9Lfjjb2QZyn6y/AGl00vvL51gux3ZdTtCtkgu1PIeevz3U
+	 YrtJ9cB2kTu+C92kK9ODdHm62FWdQ9kRPww0iYG2WF2JZNknNKf7OJ4pBS+3Ra3ZUm
+	 TLrcthVrzu2tpe2tHmCZayfZLHjFltdbNsnyxOaO4LmqVyj1w+bYWGy8ONNaxa3MT3
+	 BqEVfWi00ONraIbPRf+advZiGJIkjyui2jnFDq/0hSCCWxMoRgmjqyHGJfDjvgL0dF
+	 78gLkeyOjG83pes5QNqVGE+uugTbXEdwA/Ewsoz0mC6xJ4W6104pzswLOYoh/YY9Q2
+	 rBxV0kM3qlooA==
+Date: Tue, 30 Jul 2024 13:43:32 -0600
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:FREESCALE SOC DRIVERS" <linuxppc-dev@lists.ozlabs.org>,
+	"moderated list:FREESCALE SOC DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+	imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: soc: fsl: Convert rcpm to yaml format
+Message-ID: <20240730194332.GA2029820-robh@kernel.org>
+References: <20240729191143.1826125-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240730-ioctl-v4-3-16d89286a8f0@outlook.com>
-References: <20240730-ioctl-v4-0-16d89286a8f0@outlook.com>
-In-Reply-To: <20240730-ioctl-v4-0-16d89286a8f0@outlook.com>
-To: Stefano Garzarella <sgarzare@redhat.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Stefan Hajnoczi <stefanha@redhat.com>, 
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
- Luigi Leonardi <luigi.leonardi@outlook.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722368602; l=5479;
- i=luigi.leonardi@outlook.com; s=20240730; h=from:subject:message-id;
- bh=APW6nchLTElCgi+y0wB3e/LaM6SJ5yQdNDfK3On80wM=;
- b=97r8rgp6DZOr8aqfPUPmSUoJA44xtHMwxUN0Qd1Fq+lBE3fV89JC0Hdhe3Vr/alBrGB3UwUTv
- gP1THUkXLHgDaGhyqwvFNLlIbMJHyqjYztEWQQVPTRTHmhhsnGz8eu3
-X-Developer-Key: i=luigi.leonardi@outlook.com; a=ed25519;
- pk=rejHGgcyJQFeByIJsRIz/gA6pOPZJ1I2fpxoFD/jris=
-X-Endpoint-Received: by B4 Relay for luigi.leonardi@outlook.com/20240730
- with auth_id=192
-X-Original-From: Luigi Leonardi <luigi.leonardi@outlook.com>
-Reply-To: luigi.leonardi@outlook.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729191143.1826125-1-Frank.Li@nxp.com>
 
-From: Luigi Leonardi <luigi.leonardi@outlook.com>
+On Mon, Jul 29, 2024 at 03:11:42PM -0400, Frank Li wrote:
+> Convert dt-binding rcpm from txt to yaml format.
+> Add fsl,ls1028a-rcpm compatible string.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../bindings/rtc/fsl,ls-ftm-alarm.yaml        |  2 +-
+>  .../devicetree/bindings/soc/fsl/fsl,rcpm.yaml | 91 +++++++++++++++++++
+>  .../devicetree/bindings/soc/fsl/rcpm.txt      | 69 --------------
+>  3 files changed, 92 insertions(+), 70 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml b/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
+> index 388102ae30cd8..3ec111f2fdc40 100644
+> --- a/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
+> +++ b/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
+> @@ -42,7 +42,7 @@ properties:
+>          minItems: 1
+>      description:
+>        phandle to rcpm node, Please refer
+> -      Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+> +      Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+>  
+>    big-endian:
+>      $ref: /schemas/types.yaml#/definitions/flag
+> diff --git a/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml b/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+> new file mode 100644
+> index 0000000000000..6c6cda7f2b220
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+> @@ -0,0 +1,91 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/fsl/fsl,rcpm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Run Control and Power Management
+> +
+> +description:
+> +  The RCPM performs all device-level tasks associated with device run control
+> +  and power management.
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - fsl,ls1012a-rcpm
+> +          - fsl,ls1021a-rcpm
+> +          - fsl,ls1028a-rcpm
+> +          - fsl,ls1043a-rcpm
+> +          - fsl,ls1045a-rcpm
+> +          - fsl,p2041-rcpm
+> +          - fsl,p5020-rcpm
+> +          - fsl,t4240-rcpm
+> +      - enum:
+> +          - fsl,qoriq-rcpm-1.0
+> +          - fsl,qoriq-rcpm-2.0
+> +          - fsl,qoriq-rcpm-2.1
+> +          - fsl,qoriq-rcpm-2.1+
 
-Introduce two tests, one for SOCK_STREAM and one for SOCK_SEQPACKET,
-which use SIOCOUTQ ioctl to check that the number of unsent bytes is
-zero after delivering a packet.
+You can't just allow any combination.
 
-vsock_connect and vsock_accept are no longer static: this is to
-create more generic tests, allowing code to be reused for SEQPACKET
-and STREAM.
+> +    minItems: 1
+> +    description: |
+> +      All references to "1.0" and "2.0" refer to the QorIQ chassis version to
+> +      which the chip complies.
+> +      Chassis Version         Example Chips
+> +      ---------------         -------------------------------
+> +      1.0                     p4080, p5020, p5040, p2041, p3041
+> +      2.0                     t4240, b4860, b4420
+> +      2.1                     t1040,
+> +      2.1+                    ls1021a, ls1012a, ls1043a, ls1046a
 
-Signed-off-by: Luigi Leonardi <luigi.leonardi@outlook.com>
----
- tools/testing/vsock/util.c       |  6 +--
- tools/testing/vsock/util.h       |  3 ++
- tools/testing/vsock/vsock_test.c | 85 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 91 insertions(+), 3 deletions(-)
+The compatible lists above needs to match this.
 
-diff --git a/tools/testing/vsock/util.c b/tools/testing/vsock/util.c
-index 554b290fefdc..a3d448a075e3 100644
---- a/tools/testing/vsock/util.c
-+++ b/tools/testing/vsock/util.c
-@@ -139,7 +139,7 @@ int vsock_bind_connect(unsigned int cid, unsigned int port, unsigned int bind_po
- }
- 
- /* Connect to <cid, port> and return the file descriptor. */
--static int vsock_connect(unsigned int cid, unsigned int port, int type)
-+int vsock_connect(unsigned int cid, unsigned int port, int type)
- {
- 	union {
- 		struct sockaddr sa;
-@@ -226,8 +226,8 @@ static int vsock_listen(unsigned int cid, unsigned int port, int type)
- /* Listen on <cid, port> and return the first incoming connection.  The remote
-  * address is stored to clientaddrp.  clientaddrp may be NULL.
-  */
--static int vsock_accept(unsigned int cid, unsigned int port,
--			struct sockaddr_vm *clientaddrp, int type)
-+int vsock_accept(unsigned int cid, unsigned int port,
-+		 struct sockaddr_vm *clientaddrp, int type)
- {
- 	union {
- 		struct sockaddr sa;
-diff --git a/tools/testing/vsock/util.h b/tools/testing/vsock/util.h
-index e95e62485959..fff22d4a14c0 100644
---- a/tools/testing/vsock/util.h
-+++ b/tools/testing/vsock/util.h
-@@ -39,6 +39,9 @@ struct test_case {
- void init_signals(void);
- unsigned int parse_cid(const char *str);
- unsigned int parse_port(const char *str);
-+int vsock_connect(unsigned int cid, unsigned int port, int type);
-+int vsock_accept(unsigned int cid, unsigned int port,
-+		 struct sockaddr_vm *clientaddrp, int type);
- int vsock_stream_connect(unsigned int cid, unsigned int port);
- int vsock_bind_connect(unsigned int cid, unsigned int port,
- 		       unsigned int bind_port, int type);
-diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
-index f851f8961247..8d38dbf8f41f 100644
---- a/tools/testing/vsock/vsock_test.c
-+++ b/tools/testing/vsock/vsock_test.c
-@@ -20,6 +20,8 @@
- #include <sys/mman.h>
- #include <poll.h>
- #include <signal.h>
-+#include <sys/ioctl.h>
-+#include <linux/sockios.h>
- 
- #include "vsock_test_zerocopy.h"
- #include "timeout.h"
-@@ -1238,6 +1240,79 @@ static void test_double_bind_connect_client(const struct test_opts *opts)
- 	}
- }
- 
-+#define MSG_BUF_IOCTL_LEN 64
-+static void test_unsent_bytes_server(const struct test_opts *opts, int type)
-+{
-+	unsigned char buf[MSG_BUF_IOCTL_LEN];
-+	int client_fd;
-+
-+	client_fd = vsock_accept(VMADDR_CID_ANY, opts->peer_port, NULL, type);
-+	if (client_fd < 0) {
-+		perror("accept");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	recv_buf(client_fd, buf, sizeof(buf), 0, sizeof(buf));
-+	control_writeln("RECEIVED");
-+
-+	close(client_fd);
-+}
-+
-+static void test_unsent_bytes_client(const struct test_opts *opts, int type)
-+{
-+	unsigned char buf[MSG_BUF_IOCTL_LEN];
-+	int ret, fd, sock_bytes_unsent;
-+
-+	fd = vsock_connect(opts->peer_cid, opts->peer_port, type);
-+	if (fd < 0) {
-+		perror("connect");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	for (int i = 0; i < sizeof(buf); i++)
-+		buf[i] = rand() & 0xFF;
-+
-+	send_buf(fd, buf, sizeof(buf), 0, sizeof(buf));
-+	control_expectln("RECEIVED");
-+
-+	ret = ioctl(fd, SIOCOUTQ, &sock_bytes_unsent);
-+	if (ret < 0) {
-+		if (errno == EOPNOTSUPP) {
-+			fprintf(stderr, "Test skipped, SIOCOUTQ not supported.\n");
-+		} else {
-+			perror("ioctl");
-+			exit(EXIT_FAILURE);
-+		}
-+	} else if (ret == 0 && sock_bytes_unsent != 0) {
-+		fprintf(stderr,
-+			"Unexpected 'SIOCOUTQ' value, expected 0, got %i\n",
-+			sock_bytes_unsent);
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	close(fd);
-+}
-+
-+static void test_stream_unsent_bytes_client(const struct test_opts *opts)
-+{
-+	test_unsent_bytes_client(opts, SOCK_STREAM);
-+}
-+
-+static void test_stream_unsent_bytes_server(const struct test_opts *opts)
-+{
-+	test_unsent_bytes_server(opts, SOCK_STREAM);
-+}
-+
-+static void test_seqpacket_unsent_bytes_client(const struct test_opts *opts)
-+{
-+	test_unsent_bytes_client(opts, SOCK_SEQPACKET);
-+}
-+
-+static void test_seqpacket_unsent_bytes_server(const struct test_opts *opts)
-+{
-+	test_unsent_bytes_server(opts, SOCK_SEQPACKET);
-+}
-+
- #define RCVLOWAT_CREDIT_UPD_BUF_SIZE	(1024 * 128)
- /* This define is the same as in 'include/linux/virtio_vsock.h':
-  * it is used to decide when to send credit update message during
-@@ -1523,6 +1598,16 @@ static struct test_case test_cases[] = {
- 		.run_client = test_stream_rcvlowat_def_cred_upd_client,
- 		.run_server = test_stream_cred_upd_on_low_rx_bytes,
- 	},
-+	{
-+		.name = "SOCK_STREAM ioctl(SIOCOUTQ) 0 unsent bytes",
-+		.run_client = test_stream_unsent_bytes_client,
-+		.run_server = test_stream_unsent_bytes_server,
-+	},
-+	{
-+		.name = "SOCK_SEQPACKET ioctl(SIOCOUTQ) 0 unsent bytes",
-+		.run_client = test_seqpacket_unsent_bytes_client,
-+		.run_server = test_seqpacket_unsent_bytes_server,
-+	},
- 	{},
- };
- 
-
--- 
-2.45.2
-
-
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#fsl,rcpm-wakeup-cells":
+> +    description: |
+> +      The number of IPPDEXPCR register cells in the
+> +      fsl,rcpm-wakeup property.
+> +
+> +      Freescale RCPM Wakeup Source Device Tree Bindings
+> +
+> +      Required fsl,rcpm-wakeup property should be added to a device node if
+> +      the device can be used as a wakeup source.
+> +
+> +      fsl,rcpm-wakeup: Consists of a phandle to the rcpm node and the IPPDEXPCR
+> +      register cells. The number of IPPDEXPCR register cells is defined in
+> +      "#fsl,rcpm-wakeup-cells" in the rcpm node. The first register cell is
+> +      the bit mask that should be set in IPPDEXPCR0, and the second register
+> +      cell is for IPPDEXPCR1, and so on.
+> +
+> +      Note: IPPDEXPCR(IP Powerdown Exception Control Register) provides a
+> +      mechanism for keeping certain blocks awake during STANDBY and MEM, in
+> +      order to use them as wake-up sources.
+> +
+> +  little-endian:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      RCPM register block is Little Endian. Without it RCPM
+> +      will be Big Endian (default case).
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    rcpm: global-utilities@e2000 {
+> +          compatible = "fsl,t4240-rcpm", "fsl,qoriq-rcpm-2.0";
+> +          reg = <0xe2000 0x1000>;
+> +          #fsl,rcpm-wakeup-cells = <2>;
+> +    };
+> +
+> +    serial@2950000 {
+> +         compatible = "fsl,ls1021a-lpuart";
+> +         reg = <0x2950000 0x1000>;
+> +         interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+> +         clocks = <&sysclk>;
+> +         clock-names = "ipg";
+> +         fsl,rcpm-wakeup = <&rcpm 0x0 0x40000000>;
+> +    };
 
