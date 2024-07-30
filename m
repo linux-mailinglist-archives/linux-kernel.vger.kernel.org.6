@@ -1,56 +1,65 @@
-Return-Path: <linux-kernel+bounces-267821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 370D2941628
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:57:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69AB5941638
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCD771F24F1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:57:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 063F0B22DE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B481BA87F;
-	Tue, 30 Jul 2024 15:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047391BA875;
+	Tue, 30 Jul 2024 15:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KloSbefG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIpFsmvy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692E429A2;
-	Tue, 30 Jul 2024 15:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B221A2C20;
+	Tue, 30 Jul 2024 15:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722355011; cv=none; b=FGNm0FTe28COMfAT4M3EryZY2gDJNy3/+05PWTF0CGy6iH4OvZfJtrY3S6iPm21wUcrdzX7TbN2JfYfmDqsENLaPczcuFxuk0tpySzljL8IUc8FOe4EXmCiwf/J1z1RE7AHtCLBb6lmx/i3DoF22BpC9YYR0L7BAWIWm/C2wO8I=
+	t=1722355054; cv=none; b=OAly4eNiJqlWqEqy368KYAqiTRSpEjDKw++B2bUDn56tcQW5856UhgysD/OG/QP8YZVTX0WUu+ln3neXLIPJ9qbd0E2Gv1k18cnMcPTp9dQtQzi1ntavcditY/P94nBt43NJnNzJYvGMQnqBVyKQmVAcr/vKfNTEIVkLG0IbelE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722355011; c=relaxed/simple;
-	bh=NwxPPUduOd4UYeuGxtrrawyvduj3Rfr54xa8BTINUL8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KdZu2N3BgYmixQtHF/7qnECrtkaCMgTRVRO2lN4BlyH8biai/hSwaWlJT14PB8xi4/fErXCYoGBioRDxJpj6LOk/lgiaSMfjUlkOhShMvNphSrx7qILPLUryhXqec1HTk0nJfoCgg20ST6qZy1A1GIfdf2UolIsG/i3EhCRz9II=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KloSbefG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E25D3C32782;
-	Tue, 30 Jul 2024 15:56:49 +0000 (UTC)
+	s=arc-20240116; t=1722355054; c=relaxed/simple;
+	bh=49nCfpBcPYDlmJkZCymASY+VJ8tTSgBlWvAgS2mBsYg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ltq6Ysvx2/QVJUZoJSxMGCDfwKf9viKHVaYokfzAoMIFucsgRwzS8mvTwpe6JGZoFt1hAg8i9lqTMLFQE02OCPp+Vr8JOy6+RutLLYoyXmK2EKPoujiXKOLoEZWBja8NH9kF8OwCT4CjwGDbn5/7TN92NqJVOBP3q5cWLoGRGMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIpFsmvy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD443C4AF0A;
+	Tue, 30 Jul 2024 15:57:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722355011;
-	bh=NwxPPUduOd4UYeuGxtrrawyvduj3Rfr54xa8BTINUL8=;
+	s=k20201202; t=1722355053;
+	bh=49nCfpBcPYDlmJkZCymASY+VJ8tTSgBlWvAgS2mBsYg=;
 	h=From:To:Cc:Subject:Date:From;
-	b=KloSbefGq6eTp3plC8iMf2GcsuBesky1HKZAXzQJpzWzh0ILWsIqoC0/SKjTkgj+1
-	 qepI5/xPYFNYxwXHKA5ijBeFBGy2UE7lspnkIindMibnIym5kVGDtdEdb7T2I31l+6
-	 wHXdajr+7W96WzOahcKWjVCnmCyLf/DDyDSnpIhG5A8Ksp44PifBvcs38y7bXllDwV
-	 Ooehd4BmRoUm2H3KizjmFoYhsCqZcPZfCP3k+FCuY9EfplADnbyck9kWYa3gL0+BFd
-	 HGEsFp1tq2Ik2pMt7yoQdtGL8Ubn6W6/mdcCF0iYxG2koW15Z669qCI/7RxMbGQSgz
-	 sI5hIrBrXeJFw==
-From: Will Deacon <will@kernel.org>
-To: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Will Deacon <will@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Michal Luczaj <mhal@rbox.co>,
-	Alexander Potapenko <glider@google.com>,
-	Marc Zyngier <maz@kernel.org>
-Subject: [PATCH] KVM: Fix error path in kvm_vm_ioctl_create_vcpu() on xa_store() failure
-Date: Tue, 30 Jul 2024 16:56:46 +0100
-Message-Id: <20240730155646.1687-1-will@kernel.org>
-X-Mailer: git-send-email 2.20.1
+	b=eIpFsmvy4dtDIE8UwA7Tw4X3Nj9Ytd60ybQYhMYgSFNV5Wf6TOnnPJ2fAh0TZmgut
+	 Hy9cgmuEObvgo+eoCz/dsDBfn3XSvbu2QD9ZmwxsXe5plqO8TlDC05dwE+7uhTnbNb
+	 Tb42RDSpGOBEtivwJlpP4m/lHaYY15pUIhuoGxwxGHRNuLVFQowR3WZBp14hSs6Fva
+	 +4PTtVxoTWo7irjknDbvpwY/xBsm8/MByXLAWVoAKrzZZe4KdKB69BXRCqMI6/OIgw
+	 VChMGvchkBTwGRbJSRWoPEjKsckhG2a21lcJYz66SlcG7ypDw3C9xYZALGmV7M1jHn
+	 mojn9YMS7N9Eg==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Russell King <linux@armlinux.org.uk>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Christian Schrefl <chrisi.schrefl@gmail.com>,
+	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
+	Sven Van Asbroeck <thesven73@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] rust: error: allow `useless_conversion` for 32-bit builds
+Date: Tue, 30 Jul 2024 17:57:02 +0200
+Message-ID: <20240730155702.1110144-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,65 +68,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If the xa_store() fails in kvm_vm_ioctl_create_vcpu() then we shouldn't
-drop the reference to the 'struct kvm' because the vCPU fd has been
-installed and will take care of the refcounting.
+For the new Rust support for 32-bit arm [1], Clippy warns:
 
-This was found by inspection, but forcing the xa_store() to fail
-confirms the problem:
+    error: useless conversion to the same type: `i32`
+       --> rust/kernel/error.rs:139:36
+        |
+    139 |         unsafe { bindings::ERR_PTR(self.0.into()) as *mut _ }
+        |                                    ^^^^^^^^^^^^^ help: consider removing `.into()`: `self.0`
+        |
+        = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#useless_conversion
+        = note: `-D clippy::useless-conversion` implied by `-D warnings`
+        = help: to override `-D warnings` add `#[allow(clippy::useless_conversion)]`
 
- | Unable to handle kernel paging request at virtual address ffff800080ecd960
- | Call trace:
- |  _raw_spin_lock_irq+0x2c/0x70
- |  kvm_irqfd_release+0x24/0xa0
- |  kvm_vm_release+0x1c/0x38
- |  __fput+0x88/0x2ec
- |  ____fput+0x10/0x1c
- |  task_work_run+0xb0/0xd4
- |  do_exit+0x210/0x854
- |  do_group_exit+0x70/0x98
- |  get_signal+0x6b0/0x73c
- |  do_signal+0xa4/0x11e8
- |  do_notify_resume+0x60/0x12c
- |  el0_svc+0x64/0x68
- |  el0t_64_sync_handler+0x84/0xfc
- |  el0t_64_sync+0x190/0x194
- | Code: b9000909 d503201f 2a1f03e1 52800028 (88e17c08)
+The `self.0.into()` converts an `c_int` into `ERR_PTR`'s parameter
+which is a `c_long`. Thus, both types are `i32` in 32-bit. Therefore,
+allow it for those architectures.
 
-Add a new label to the error path so that we can branch directly to the
-xa_release() if the xa_store() fails.
-
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Michal Luczaj <mhal@rbox.co>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Will Deacon <will@kernel.org>
+Link: https://lore.kernel.org/rust-for-linux/2dbd1491-149d-443c-9802-75786a6a3b73@gmail.com/ [1]
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 ---
- virt/kvm/kvm_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ rust/kernel/error.rs | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index d0788d0a72cc..b80dd8cead8c 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -4293,7 +4293,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
+index 145f5c397009..6f1587a2524e 100644
+--- a/rust/kernel/error.rs
++++ b/rust/kernel/error.rs
+@@ -135,8 +135,11 @@ pub(crate) fn to_blk_status(self) -> bindings::blk_status_t {
+     /// Returns the error encoded as a pointer.
+     #[allow(dead_code)]
+     pub(crate) fn to_ptr<T>(self) -> *mut T {
++        #[cfg_attr(target_pointer_width = "32", allow(clippy::useless_conversion))]
+         // SAFETY: `self.0` is a valid error due to its invariant.
+-        unsafe { bindings::ERR_PTR(self.0.into()) as *mut _ }
++        unsafe {
++            bindings::ERR_PTR(self.0.into()) as *mut _
++        }
+     }
  
- 	if (KVM_BUG_ON(xa_store(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, 0), kvm)) {
- 		r = -EINVAL;
--		goto kvm_put_xa_release;
-+		goto err_xa_release;
- 	}
- 
- 	/*
-@@ -4310,6 +4310,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
- 
- kvm_put_xa_release:
- 	kvm_put_kvm_no_destroy(kvm);
-+err_xa_release:
- 	xa_release(&kvm->vcpu_array, vcpu->vcpu_idx);
- unlock_vcpu_destroy:
- 	mutex_unlock(&kvm->lock);
+     /// Returns a string representing the error, if one exists.
+
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
 -- 
-2.46.0.rc1.232.g9752f9e123-goog
+2.46.0
 
 
