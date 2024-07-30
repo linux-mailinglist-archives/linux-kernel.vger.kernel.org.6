@@ -1,271 +1,301 @@
-Return-Path: <linux-kernel+bounces-267011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE3D9940B34
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:23:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A44D5940B96
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 930A1285144
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:23:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25FB21F23E93
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10933192B6B;
-	Tue, 30 Jul 2024 08:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3DC19E800;
+	Tue, 30 Jul 2024 08:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="leElblsG"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="j0sVL1jC"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BFC187844;
-	Tue, 30 Jul 2024 08:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.135.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722327814; cv=fail; b=WWpLvAtSmMl/gu+2HEeYGEmFW1bduCN3CeVhjTwvXSfTDTtXGFIymf8Yljj8XX7DckgW/oZh5qWH7Arn3DgcS0n9rMCj6TbLbSxbFmg8WGfbq6odOeByxK+wUnGYbWZm1JgKM3vHfTFvSaktFy/YYr+hr8a4/K/ZxsyAYDjkwFw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722327814; c=relaxed/simple;
-	bh=IB8rZ88X1EB/H4eyYzGAaaatVHbSNPuLKYLiolyJaj0=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fU31XMZa2FK7Z34MBXj8ctsRGBVmqwWonQyb3xjSXex/bPD52uAtegWSe4ferhlm8oCAvcsgEvDz9FGEvZQ1hEGUjCIOdRFCBdnPBH4tQKmNkxSw3K7uR3BZ7XVAqRXEA9RDYFzPTE4rmilTp7kQlH+KHGwuDAhSSantzIHyeOU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=leElblsG; arc=fail smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46U48eOL019808;
-	Tue, 30 Jul 2024 04:23:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=IB8rZ
-	88X1EB/H4eyYzGAaaatVHbSNPuLKYLiolyJaj0=; b=leElblsGPg4k6GOGtByDy
-	qxAVN+1w/lj3WTgomdS9806XGum5hB+nyMBWO6ZkRpaMNKGcod7aIhJNYxX0PlFW
-	oHFXBUoalef5SP90G/Co8A9Nals14ZI3FjNB1WHgzB+Dknr8H6NDXl6tAfkLkQog
-	g0bDNCPk2IuKLEqMop3udkP0PaYBvI/FsYyeWvspjWR3V6NMPFCD6g2TjIvV+nbA
-	RKIXIwdj5zAmGS6e1kZHH1AFrZvdUYzOVDSzA1Uq4GSPYi2zNP1Fi3oujBYokkza
-	1aUjxaTIS4/Ns5mNo1IzPfeahR6gINBgVrdb+FVq16BtXGjYyoM/hVHAHcL/YmVl
-	g==
-Received: from bl2pr02cu003.outbound.protection.outlook.com (mail-eastusazlp17010004.outbound.protection.outlook.com [40.93.11.4])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 40prvq0sp8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 04:23:17 -0400 (EDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iel+hTKZaYZFTVS+JglxoMcmX7WeRlxJDxeeNfv7MR405+5WYSU/4rE1EcxihGzedMaWQ7+06E4b2OhS+HPm7dMECt/E3tJ3Sq8mpVXRU8ZTlUWJdsDotcoIaFBXiTrbzmTcBBcUdbTc31MMPMLFaYf6EFanIUjtDYTP25Mh6tkj9+g3jiYZKD+nH0sn0x7z+83tsnTMnlSU5lyXaAPdfFUE5G+8H8s7rqm5yoKts4s+Sv9B+XJATQNvHzoa3LP4qs0uB/qTyFOPh3OPJkGc2anGmkHFNAJTJT2ItADWjgS1VBSrZN5jQldEixUntCYUuh/Gnzm+xTa75gGC319A6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IB8rZ88X1EB/H4eyYzGAaaatVHbSNPuLKYLiolyJaj0=;
- b=XUkyKIzsZ9IeWb687+Xt4eeC2vjf445AnCWzVCSZL1X7RoRjRS31ZrJKmnQ64NJIsOla5+29O8jP1WwQBMSWxXMSTZdqZMpyUvUkQcMaplOF2OWsigSYEPED8OhKyKkVMhoS6tfQp+r0G3gvXuSx2GKv3yPjOKVdqMz/CTZW3PdIrhioJUQkOXobvdwQ/sHuo3IGkDaTF2bIll2u0SUkiAuNd2kvK+rAvvq3HInuqX9dFB5iUzGuCAzP4G0Y56U821kxolMOMQIVmnlD5E/yO21h+Ei8s9aif8kgzddlivXLTYdOduwxK3jgwTmc0AHYVNc6dWUAa/3ydeo70bhJrg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
- dkim=pass header.d=analog.com; arc=none
-Received: from CY4PR03MB3399.namprd03.prod.outlook.com (2603:10b6:910:57::13)
- by BL1PR03MB6007.namprd03.prod.outlook.com (2603:10b6:208:31a::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Tue, 30 Jul
- 2024 08:23:14 +0000
-Received: from CY4PR03MB3399.namprd03.prod.outlook.com
- ([fe80::6504:9615:dbab:cc17]) by CY4PR03MB3399.namprd03.prod.outlook.com
- ([fe80::6504:9615:dbab:cc17%6]) with mapi id 15.20.7784.017; Tue, 30 Jul 2024
- 08:23:14 +0000
-From: "Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Lars-Peter Clausen
-	<lars@metafoo.de>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Bogdan,
- Dragos" <Dragos.Bogdan@analog.com>,
-        "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 0/2] *** Add ADF4378 Support ***
-Thread-Topic: [PATCH v3 0/2] *** Add ADF4378 Support ***
-Thread-Index: AQHa4ZzWPc7j/x2ZSkmIDLJEPfDsybINzFGAgAEi4MA=
-Date: Tue, 30 Jul 2024 08:23:14 +0000
-Message-ID:
- <CY4PR03MB339984EFB38E801AEEE1368D9BB02@CY4PR03MB3399.namprd03.prod.outlook.com>
-References: <20240729095047.25040-1-antoniu.miclaus@analog.com>
- <c93a6bf3-7360-4696-833d-82726d10f604@kernel.org>
-In-Reply-To: <c93a6bf3-7360-4696-833d-82726d10f604@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-dg-ref:
- =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
- =?utf-8?B?bk5jWVcxcFkyeGhkWE5jWVhCd1pHRjBZVnh5YjJGdGFXNW5YREE1WkRnME9X?=
- =?utf-8?B?STJMVE15WkRNdE5HRTBNQzA0TldWbExUWmlPRFJpWVRJNVpUTTFZbHh0YzJk?=
- =?utf-8?B?elhHMXpaeTFtTkdVME4yUTJOQzAwWlRSakxURXhaV1l0WVdZM01pMWtORGd4?=
- =?utf-8?B?WkRjMU1EWmtaR1ZjWVcxbExYUmxjM1JjWmpSbE5EZGtOall0TkdVMFl5MHhN?=
- =?utf-8?B?V1ZtTFdGbU56SXRaRFE0TVdRM05UQTJaR1JsWW05a2VTNTBlSFFpSUhONlBT?=
- =?utf-8?B?SXhOVFF4SWlCMFBTSXhNek0yTmpnd01UTTVNVFV5TkRnMU5UY2lJR2c5SWxN?=
- =?utf-8?B?MU4yNXNXV2xaTlUxUWMxQnVSV3hTV2pOWmVFVlZZa2RQTUQwaUlHbGtQU0lp?=
- =?utf-8?B?SUdKc1BTSXdJaUJpYnowaU1TSWdZMms5SW1OQlFVRkJSVkpJVlRGU1UxSlZS?=
- =?utf-8?B?azVEWjFWQlFVVnZRMEZCUTNSR01FTXpWMlZNWVVGbVYwcDJWRGhzYWxKemJq?=
- =?utf-8?B?bFpiVGxRZVZkT1IzbGpSRUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRklRVUZCUVVSaFFWRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGRlFVRlJRVUpCUVVGQldWQlVTVEpSUVVGQlFVRkJRVUZCUVVGQlFVRkJT?=
- =?utf-8?B?alJCUVVGQ2FFRkhVVUZoVVVKbVFVaE5RVnBSUW1wQlNGVkJZMmRDYkVGR09F?=
- =?utf-8?B?RmpRVUo1UVVjNFFXRm5RbXhCUjAxQlpFRkNla0ZHT0VGYVowSm9RVWQzUVdO?=
- =?utf-8?B?M1FteEJSamhCV21kQ2RrRklUVUZoVVVJd1FVZHJRV1JuUW14QlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVWQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlowRkJRVUZCUVc1blFVRkJSMFZCV2tGQ2NFRkdPRUZqZDBKc1FVZE5RV1JS?=
- =?utf-8?B?UW5sQlIxVkJXSGRDZDBGSVNVRmlkMEp4UVVkVlFWbDNRakJCU0UxQldIZENN?=
- =?utf-8?B?RUZIYTBGYVVVSjVRVVJGUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRlJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRMEZCUVVGQlFVTmxRVUZCUVZsUlFtdEJSMnRCV0hkQ2Vr?=
- =?utf-8?B?RkhWVUZaZDBJeFFVaEpRVnBSUW1aQlNFRkJZMmRDZGtGSGIwRmFVVUpxUVVo?=
- =?utf-8?B?UlFXTjNRbVpCU0ZGQllWRkNiRUZJU1VGTlowRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZDUVVGQlFVRkJRVUZCUVVsQlFVRkJRVUZCUFQwaUx6NDhMMjFs?=
- =?utf-8?Q?dGE+?=
-x-dg-rorf:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY4PR03MB3399:EE_|BL1PR03MB6007:EE_
-x-ms-office365-filtering-correlation-id: c3eaa327-e53c-48e8-73b0-08dcb070db7a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?utf-8?B?ZndPd1BKREpxMnFrVzRxMjRvRFkzVWFmYkJXTm5tRVNMUEFpaFV0RFZ6SWVo?=
- =?utf-8?B?NDRUVEZ4WSthR1pHSU9sdmtaT0dwRW8zcW5kNmlnVjdCWFk2aWdFSFRpVzIz?=
- =?utf-8?B?YjNBRkFSaUNIaXlNYU1hL1JzVDRDTnhSSy9ZZUtjRFAzdWJkTTBhY3lHQXh3?=
- =?utf-8?B?RGFDRmZSWGl0bUM3WHR0MTFMV21oQy9yWEx2RTUzOWJtSkpqdERCaTdqTzk4?=
- =?utf-8?B?UjdqRVk0U3FwaERlVFhFMEVIYTJtVjBqcVJUZDhPSmFEdkVZNy9Oc2xqbWFD?=
- =?utf-8?B?SW1EZW91WTN2UnJzWHZUUWxWQWxYbFV4WUl0ZzRhMkhaODNTTzNDc2dRaWlJ?=
- =?utf-8?B?QUlNNnZIU0V2azNrRzBuSlQzMmNwK1lVVFl6RkpNVWN0emxncFpzTUxVQW93?=
- =?utf-8?B?M2I1ZTlJbEJNRkwzUDhmaU12U1BLaGRyQWdNa05ZUWUxRXlUVzJDbTRSK1hO?=
- =?utf-8?B?RWh3QW82QTNzRHJtWVBaRXA2N3Y4UkMxRm9ndEpvdXhWZ1hwd1Fpd0lIZVlx?=
- =?utf-8?B?OWVBdjFJR2NPbCs5NUxTVXZxSXpUeitkUVNpTXNzbzhzMWhZUFpkU1lRWU02?=
- =?utf-8?B?QnMzelpaRHF6VzQrZUZMb3BIWHZNb1dpR3lrU1MzQ1d5WWl2L3lVYVZrUW9w?=
- =?utf-8?B?TW56TE1YS3ZSN1lpS2FWSjI2MTlvM240aFVjbmQ4TVAyT1ZxRlBGMXpsSVph?=
- =?utf-8?B?RkVldmhxZ1U5VENZbTVOREd6SHZPL2tmUllsT3JDSFg1RVJVZjBkTHRwYkFZ?=
- =?utf-8?B?UXlyZlN4cDVtSy9EdklmcUFnSEN1NStiakxSaWhvSWxHVm56c0RNTUgvZTRF?=
- =?utf-8?B?bk1zbVFWcnQ4R1J1b1JFTEI1S2xxKy9OaHpqYXcrMHk4dkpFbENiR3diQkZR?=
- =?utf-8?B?L29kRlQxNFFwSDIxMDRXWWlwK1BXZS9FdW5YdlM4RzFlM0hWUXRDZUVIM2Ur?=
- =?utf-8?B?cWtaSFkyMXlidmRtMmJBN1VURnNSV1kra0k0ZE9va3E3WTBxWm5aRC9iSXBK?=
- =?utf-8?B?WUljbVdqckRucHpJSDVBRE96ZUNxc2FTUVFqbzhaZDMrQWV5NFdDSTRUM0pC?=
- =?utf-8?B?NFdPN3pqMzdaWGtDbzBqdzVUWDJRTjMwam9iWjRYY3dWT054aFUwYm1SckNN?=
- =?utf-8?B?VW5HNDlpdjYzS0U4NlByMkx0VzZzTThUUVRzSGd5YTRhMVh5SGc2RFZCdXhG?=
- =?utf-8?B?cHF3bmNKUEp4UTUva0owbkZzTU1zVnhQWEdhd0VwM2xaSnowTTk5OS8vZVVu?=
- =?utf-8?B?V3NxZXNkNi9icEZYMThLQzBNTEV1RFN0dTNwcnpmYXcrN1EvYytNWUdQaHh5?=
- =?utf-8?B?UU9wejgyT3ZmQ2VsREwrZmJ4WjdUbUI2SWRWbGpOeS9YRUhzMUdwUlc3emMy?=
- =?utf-8?B?TExIcU8rR0tnOGZpM2tSK3dDRGg1SFVpOWJHRDVTZHZ0TVE1M1pYaThxRlgr?=
- =?utf-8?B?UkJEU1NsNXdjWENOWDFUODh1dlFZMmdxamNDaEZhamcwbzJCVjEydjRDRThj?=
- =?utf-8?B?Q0xGOUtMY1RnL1VKQUhpaWlhbDVXYm5iWmI0ZE0reFZMRmh2K1R1cWxzWENP?=
- =?utf-8?B?bmpTMnNzU2hBY3JnQStwQmVlall2Z0trZitSK3lyZVk1Q1IvbVpzRnhjakxQ?=
- =?utf-8?B?QklxZGQraVFUZGJYWUVXR25wdjgyaEtBM2NYS2FmYTZPOVRMQzJsS2o3K0hQ?=
- =?utf-8?B?ZW1hT2UyYTdxamFtS1BDVWk5OG1Yak5wK3VuV0UvS2Z3bXB3RGRWdWxpaDY1?=
- =?utf-8?B?NEJYNSs4NWhKQ3ljT2JMUlZURTl6YWtKTkUrQVVRblNVMytvK2RPOEs0Mkh2?=
- =?utf-8?B?Vk9mWDhYQ1QyaWJKczVTeUpseTdCa2ZwZnl3b3hFbThQYis5L2txZFFyU0lu?=
- =?utf-8?B?c3ptdG5nbndwL2VGekdvdEp0UStMTFM5L0pHclVjNlhXMDMrOWtwY1hIUXUv?=
- =?utf-8?Q?kIFqgIcZxcw=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR03MB3399.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?anF2dzVPU00vS2VaclNKZndhRHJucDFZMnEzSjE0ZFlrelBBY3Qvd00rUnQ3?=
- =?utf-8?B?ajdJdldUTTAzZzlXQndEYkltd2JVUzNSb2xwQWtLQXJ4V3JlaW4zZXdhTE5h?=
- =?utf-8?B?QzMyeVpnNDZGMVVXbVdnTVdsMWVZbytFWjRkR1FJSUN2bUNEY0MzYVFiOTMw?=
- =?utf-8?B?dWtjQ2VNTHROOXJJaWpZcEhpVWlkNitGU2RSalRIaS9IL2JTRVpJWmJ6ZVFx?=
- =?utf-8?B?dnpCYyt2aVdDVDJjUmpCS1BwUVBFQWh6aVNNQ3ZMeGY0V25DVTZBRkZtN0h5?=
- =?utf-8?B?K3pmWUY0Vlo1MVRmMnFHSVY4cXBXbHBNQ2lpZ1BpMnd6T0oyY3o1SWs5YkNB?=
- =?utf-8?B?REJtNVJuYjh2YkRPdDJVRi9GdUJuajBBMUo4VGdQWVhsT05yeXYvK0Jmdmsx?=
- =?utf-8?B?V2x3a0o3eFF3MDZ5Tnk5SGlUSWdNWjF1cmZ1NDRVZm91bldrbUQ5ejBaTThu?=
- =?utf-8?B?WnZyNEFBYU5BZGVlVlJUcngvR2psMkhENGxYOGhlQ3pVaHp6WkZPSCtta1FG?=
- =?utf-8?B?QVJndmNaQ0tNMXRVSVYxaDVZeFlCVzRxemwyZ0RXUm95enhvcm1oNlc3bE1M?=
- =?utf-8?B?d21tempOT0tDQTkzV2g5b1E1alZkWjIzUk10NW9Hb2dPL0YyMEFtZDkvQVAv?=
- =?utf-8?B?M1B3ZG5aaFNTWjNvZWFyTnJTWmRjamZqMEJYaXZtd29uTzZpNWhGenBxMDFX?=
- =?utf-8?B?TGhuYWpPaUNSNGJRL1hLVGRTQ3N5cTlvQjVhQVFzWW1FZFB5ZkhiaTdWVmMw?=
- =?utf-8?B?VzNzZUxYYWJLWVN6citMOWNaZlEwcElSWktyK2dvRFBYcXgzMmMva2lROWk0?=
- =?utf-8?B?bGpsVHczeFB5WThib0pPekQ2WVZra3JqTXJkb3NJZzg2TXB2aU1kNkIzRnF4?=
- =?utf-8?B?WERJRWkvTG50b0tQM0hFTjVuc3hSUlZSSjJlNUNFeW1MREhqZWtSUkw3cjVU?=
- =?utf-8?B?YTBsNnIyTVJBakFxc1JCdGw3LzE0N0JXWXRrMm1FWXpSUlY0Y2JJbUJrUnI2?=
- =?utf-8?B?dDhnL0RsME9SSm9mQWJXQ242NG1BNGl5N3Bwc2ljTUpLMCtDOWgxWE5xM05a?=
- =?utf-8?B?THFFU2p1N1hud1AremxYWjIzRUs1OEhMYm85QTUyUytNeUFmMlE1eFVSWDB6?=
- =?utf-8?B?Y1V2QTlueGFvY1JHWGwyeU9sQlhsNEFrQUJsSHJ6RXgwWklSNlBhOENVaDVa?=
- =?utf-8?B?V25ZbTBhdnd6V2ZDRmVPZncrVUdPY2dESmI3T0FRN2NmTG5iSkRtZXVOMzcx?=
- =?utf-8?B?b1ZnVE5xNW8xOWs1NUtkK2RKdi90OXFBQlp3TmRQaWFVTDNwVU1Zb29tUTJm?=
- =?utf-8?B?MHJOcG1kdjE0dkJ2TTZNOVBhUU5LOGZVayswdFBMZ3JhcFBOd2JsUzNhSFlX?=
- =?utf-8?B?QU43V0F2UUtjd3VBblJrV2ZvdHlYR1lsR2F5KzBxdHQvbDhGNmYyaUc5U0xV?=
- =?utf-8?B?ME04THFaRzJMZjlVZ1Y4QkRtVG5EUVcrOStvMVhhL3hCQnRXYVRRU3d2Y0k2?=
- =?utf-8?B?Rm9aNHZyc1AwamZGeWF4QkV6UlJ1VGtqRk9BN0xVZ3p0ckZQSEU3VWVXV3E3?=
- =?utf-8?B?WTZBZk5Cc0t5RjQ5TUQ1RGx1NzJzVUw5UVNCVHpIVitrQ2VwUUw3djA3bHpF?=
- =?utf-8?B?YXhJUmg0ZjAvL3UwMjg0WVBmUWVxRjgwK2c3dTA3SHNRdmVleS82bjBKM3Bx?=
- =?utf-8?B?ZXZwVUhrd1ptOXYwbTVueTZBL0pCNnFDNHJyekRTZG45OGtxQjlHYXZVM1c4?=
- =?utf-8?B?aWw5Yy9BL3RReXgvNFQxK1NCSU9iSEhJUEtuTW43LzBKcDRJMzNIRkQ5NWZw?=
- =?utf-8?B?M3hCV0k4YkJHZXdjVVdNZEpLb3h6QnBCWVFtbmlIbGtpaTNXV2RUZUJSUWh3?=
- =?utf-8?B?czVJMTFwV0dZTkZXYUpodm1pdnNNTys1MWZxV1JqM0NhWW1WdmdlMWNnWG14?=
- =?utf-8?B?czlzTlcxWVlDVkIxeGhYTi9QeFlIRHpyb2MxQTFQOWwya0xaMVJNbW5tVUxu?=
- =?utf-8?B?N2psdDFrRldNTm4xOHdXVnk5WnNoWlFEL3hHd015QngvRzhENXo0WEpkVDBv?=
- =?utf-8?B?cTdkYmU0aFJFWlRiVitNVzU0Q29KTDJJMDFWWW51ZFViSUJ6TjlWaW1tQmVW?=
- =?utf-8?Q?U+znsJxeceb/IVRJ4DwZ6YS56?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF9D192B66;
+	Tue, 30 Jul 2024 08:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722327899; cv=none; b=FfShFhIVFbFK2X8rhZa2agae2rTyww9MkG5kNlrRQtZhgqxatbpUZbfk3iRV/+icEOg2yk2YNSCtneDgpw7zAfqSWOONQQliOdmT43wNjo9Fg1suFIPAQrpp6L/oLKOca+j2LzLuK2Suvg+mYxdKPDsaNZBULWzj3gtLN6QhrIQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722327899; c=relaxed/simple;
+	bh=T9TYD+nIBzMWl0sE8jhxkBf952ycrTnmqYpaA8cm1xU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sTGLH8Q1LywilolYSXSLFDzAFa5qripcaFWDqdvRzRY0nyXp3bMp+265uOUurYFoCGQYkYwHp62c5k94W7kRXxC8QzIBqqLh+6lx7K71UAovrLLB/1stfY3FQt8KWu5BZrcX+tq5lNq//r1/MslHLKkGV9xSBrxNFZNw7Z5eaD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=j0sVL1jC; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 27eb78424e4d11efb5b96b43b535fdb4-20240730
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=A6mn92rUV5LDImegfXO663Es17xIGXd9r6oLaBOe1S4=;
+	b=j0sVL1jCLSQ3GwzhPdm+lyZR+mZqlYoCVunhCKSDEyOFOwz7Hhbnr5JaS84dZD0R+Nk+8ZanedqF87/UGrj+KPTNFVFiqPE0zHSWIAc/IwV/bmSAWkfbj+2SiBf1qon09xK+LGpcf/YKhV7h/tCl033Pj89yS8/isGPjpeRKzG4=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:cc35094d-5258-4f75-95a5-b7541ee68bc5,IP:0,U
+	RL:0,TC:0,Content:-25,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACT
+	ION:release,TS:-55
+X-CID-META: VersionHash:6dc6a47,CLOUDID:941c11d2-436f-4604-ad9d-558fa44a3bbe,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:2,IP:nil,UR
+	L:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 27eb78424e4d11efb5b96b43b535fdb4-20240730
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+	(envelope-from <liju-clr.chen@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 981228636; Tue, 30 Jul 2024 16:24:36 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 30 Jul 2024 16:24:36 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Tue, 30 Jul 2024 16:24:36 +0800
+From: Liju-clr Chen <liju-clr.chen@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Catalin
+ Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Richard Cochran
+	<richardcochran@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Liju-clr Chen <Liju-clr.Chen@mediatek.com>, Yingshiuan Pan
+	<Yingshiuan.Pan@mediatek.com>, Ze-yu Wang <Ze-yu.Wang@mediatek.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-trace-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, Shawn Hsiao <shawn.hsiao@mediatek.com>,
+	PeiLun Suei <PeiLun.Suei@mediatek.com>, Chi-shen Yeh
+	<Chi-shen.Yeh@mediatek.com>, Kevenny Hsieh <Kevenny.Hsieh@mediatek.com>
+Subject: [PATCH v12 00/24] GenieZone hypervisor drivers
+Date: Tue, 30 Jul 2024 16:24:12 +0800
+Message-ID: <20240730082436.9151-1-liju-clr.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY4PR03MB3399.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c3eaa327-e53c-48e8-73b0-08dcb070db7a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2024 08:23:14.4311
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mzu2yMsmheixFhWR9dckatn3qJKVRVThvtXJyNgDvE/3ZmMLlM87dXvhppwgJyQmReFk+9qatRM5DJviCw379CTMcwVEFmS41dUI9q2bzvo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR03MB6007
-X-Proofpoint-ORIG-GUID: vaTZvGbuJMISLTwba5OoYULZaJHZ92e0
-X-Proofpoint-GUID: vaTZvGbuJMISLTwba5OoYULZaJHZ92e0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_08,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 adultscore=0 mlxlogscore=999 spamscore=0 phishscore=0
- clxscore=1011 mlxscore=0 lowpriorityscore=0 impostorscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407300061
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-MTK: N
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBLcnp5c3p0b2YgS296bG93c2tp
-IDxrcnprQGtlcm5lbC5vcmc+DQo+IFNlbnQ6IE1vbmRheSwgSnVseSAyOSwgMjAyNCA1OjU4IFBN
-DQo+IFRvOiBNaWNsYXVzLCBBbnRvbml1IDxBbnRvbml1Lk1pY2xhdXNAYW5hbG9nLmNvbT47IExh
-cnMtUGV0ZXIgQ2xhdXNlbg0KPiA8bGFyc0BtZXRhZm9vLmRlPjsgSGVubmVyaWNoLCBNaWNoYWVs
-IDxNaWNoYWVsLkhlbm5lcmljaEBhbmFsb2cuY29tPjsNCj4gSm9uYXRoYW4gQ2FtZXJvbiA8amlj
-MjNAa2VybmVsLm9yZz47IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+Ow0KPiBLcnp5c3p0
-b2YgS296bG93c2tpIDxrcnprK2R0QGtlcm5lbC5vcmc+OyBDb25vciBEb29sZXkNCj4gPGNvbm9y
-K2R0QGtlcm5lbC5vcmc+OyBCb2dkYW4sIERyYWdvcyA8RHJhZ29zLkJvZ2RhbkBhbmFsb2cuY29t
-PjsNCj4gbGludXgtaWlvQHZnZXIua2VybmVsLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5v
-cmc7IGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFU
-Q0ggdjMgMC8yXSAqKiogQWRkIEFERjQzNzggU3VwcG9ydCAqKioNCj4gDQo+IFtFeHRlcm5hbF0N
-Cj4gDQo+IE9uIDI5LzA3LzIwMjQgMTE6NTAsIEFudG9uaXUgTWljbGF1cyB3cm90ZToNCj4gPiBB
-ZGQgc3VwcG9ydCBmb3IgQURGNDM3OCBoaWdoIHBlcmZvcm1hbmNlLCB1bHRyYS1sb3cgaml0dGVy
-LCBpbnRlZ2VyLU4NCj4gPiBwaGFzZWQgbG9ja2VkIGxvb3AgKFBMTCkgd2l0aCBhbiBpbnRlZ3Jh
-dGVkIHZvbHRhZ2UgY29udHJvbGxlZA0KPiA+IG9zY2lsbGF0b3IgKFZDTykgYW5kIHN5c3RlbSBy
-ZWZlcmVuY2UgKFNZU1JFRikgcmV0aW1lciBpZGVhbGx5DQo+ID4gc3VpdGVkIGZvciBkYXRhIGNv
-bnZlcnRlciBhbmQgbWl4ZWQgc2lnbmFsIGZyb250IGVuZCAoTXhGRSkgY2xvY2sNCj4gPiBhcHBs
-aWNhdGlvbnMuDQo+ID4NCj4gPiBUaGUgbWFpbiBkaWZmZXJlbmNlIGJldHdlZW4gQURGNDM3NyBh
-bmQgQURGNDM3OCBpcyB0aGF0IHRoZSBzZWNvbmQgb25lDQo+ID4gcHJvdmlkZXMgb25seSBvbmUg
-b3V0cHV0IGZyZXF1ZW5jeSBjaGFubmVsIHdoaWNoIGlzIGVuYWJsZS9kaXNhYmxlZCB2aWENCj4g
-PiBvbmUgR1BJTy4NCj4gPg0KPiA+IEJvdGggdGhlIGRyaXZlciBhbmQgdGhlIGJpbmRpbmdzIGFy
-ZSB1cGRhdGVkIHRvIHJlZmxlY3QgdGhhdCBkaWZmZXJlbmNlLg0KPiANCj4gVGhhdCdzIGEgdjMs
-IGJ1dCB3aGVyZSBpcyB0aGUgY2hhbmdlbG9nPw0KDQpFYWNoIG9mIHRoZSB0d28gcGF0Y2hlcyBo
-YXMgdGhlaXIgb3duIGNoYW5nZWxvZy4NCkZvciB0aGUgY292ZXIgbGV0dGVyIHRoZXJlJ3Mgbm8g
-Y2hhbmdlbG9nIHNpbmNlIGl0IHdhcyBhZGRlZCB3aXRoIHYzLiANCg0KUmVnYXJkcywNCkFudG9u
-aXUNCj4gDQo+IEJlc3QgcmVnYXJkcywNCj4gS3J6eXN6dG9mDQoNCg==
+From: Liju-Clr Chen <liju-clr.chen@mediatek.com>
+
+This series is based on linux-next, tag: next-20240730.
+
+GenieZone hypervisor(gzvm) is a type-1 hypervisor that supports various
+virtual machine types and provides security features such as TEE-like
+scenarios and secure boot. It can create guest VMs for security use cases
+and has virtualization capabilities for both platform and interrupt.
+Although the hypervisor can be booted independently, it requires the
+assistance of GenieZone hypervisor kernel driver(gzvm-ko) to leverage the
+ability of Linux kernel for vCPU scheduling, memory management, inter-VM
+communication and virtio backend support.
+
+Changes in v12:
+- Introduce a mechanism to migrate the ARM64 virtual timer from the
+  guest VM to the host Linux system when the execution context switches
+  from the guest VM to the host.
+- Implement CPU idle functionality for guest VMs to reduce CPU usage
+  and achieve power savings.
+- Emulate Inter-Processor Interrupts (IPI) handling for guest VMs.
+- Add Co-developed-by tags, adjust the order of Signed-off-by lines, and
+  remove "From:" lines.
+- Fix coding style from viewer suggestion.
+
+Changes in v11:
+https://lore.kernel.org/all/20240529084239.11478-1-liju-clr.chen@mediatek.com/
+- Resolve low memory issue by using only one api to get pages for guest VM.
+- The GenieZone hypervisor acts as a vendor firmware to enable platform
+  virtualization, offering an implementation that is independent of
+  Linux-specific implementations. So, relocate dt-binding yaml file to
+  the firmware path, as the dts node is used to confirm the presence of
+  the geniezone hypervisor firmware.
+- Fix coding style from viewer suggestion and checking tools.
+
+Changes in v10:
+https://lore.kernel.org/all/20240412065718.29105-1-yi-de.wu@mediatek.com/
+- Optimize memory allocation: query hypervisor demand paging capability
+  before VM memory population.
+- Fix goto syntax according to ACK reviewer in `gzvm_vcpu.c`.
+- Fix coding style from viewer suggestion and checking tools.
+
+Changes in v9:
+https://lore.kernel.org/all/20240129083302.26044-1-yi-de.wu@mediatek.com/
+- Add gzvm_vm_allocate_guest_page function for demand paging support and
+  protected VM memory performance optimization.
+- Fix coding style from viewer suggestion and checking tools.
+
+Changes in v8:
+https://lore.kernel.org/all/20231228105147.13752-1-yi-de.wu@mediatek.com/
+- Add reasons for using dt solution in dt-bindings.
+- Add locks for memory pin/unpin and relinquish operations.
+- Add VM memory stats in debugfs.
+- Add tracing support for hypercall and vcpu exit reasons.
+- Enable PTP for timing synchronization between host and guests.
+- Optimize memory performance for protected VMs.
+- Refactor wording and titles in documentation.
+
+Changes in v7:
+https://lore.kernel.org/all/20231116152756.4250-1-yi-de.wu@mediatek.com/
+- Rebase these patches to the Linux 6.7-rc1 release.
+- Refactor patches 1 to 15 to improve coding style while ensuring they do
+  not violate the majority of the changes made in v6
+- Provide individual VM memory statistics within debugfs in patch 16.
+- Add tracing support for hyper call and vcpu exit_reason.
+
+Changes in v6:
+https://lore.kernel.org/all/20230919111210.19615-1-yi-de.wu@mediatek.com/
+- Rebase based on kernel 6.6-rc1
+- Keep dt solution and leave the reasons in the commit message
+- Remove arch/arm64/include/uapi/asm/gzvm_arch.h due to simplicity
+- Remove resampler in drivers/virt/geniezone/gzvm_irqfd.c due to defeature
+  for now
+- Remove PPI in arch/arm64/geniezone/vgic.c
+- Refactor vm related components into 3 smaller patches, namely adding vm
+  support, setting user memory region and checking vm capability
+- Refactor vcpu and vm component to remove unnecessary ARM prefix
+- Add demand paging to fix crash on destroying memory page, acclerate on
+  booting and support ballooning deflate
+- Add memory pin/unpin memory mechanism to support protected VM
+- Add block-based demand paging for performance concern
+- Response to reviewers and fix coding style accordingly
+
+Changes in v5:
+https://lore.kernel.org/all/20230727080005.14474-1-yi-de.wu@mediatek.com/
+- Add dt solution back for device initialization
+- Add GZVM_EXIT_GZ reason for gzvm_vcpu_run()
+- Add patch for guest page fault handler
+- Add patch for supporitng pin/unpin memory
+- Remove unused enum members, namely GZVM_FUNC_GET_REGS and
+  GZVM_FUNC_SET_REGS
+- Use dev_debug() for debugging when platform device is available, and use
+  pr_debug() otherwise
+- Response to reviewers and fix bugs accordingly
+
+Changes in v4:
+https://lore.kernel.org/all/20230609085214.31071-1-yi-de.wu@mediatek.com/
+- Add macro to set VM as protected without triggering pvmfw in AVF.
+- Add support to pass dtb config to hypervisor.
+- Add support for virtual timer.
+- Add UAPI to pass memory region metadata to hypervisor.
+- Define our own macros for ARM's interrupt number
+- Elaborate more on GenieZone hyperivsor in documentation
+- Fix coding style.
+- Implement our own module for coverting ipa to pa
+- Modify the way of initializing device from dt to a more discoverable way
+- Move refactoring changes into indepedent patches.
+
+Changes in v3:
+https://lore.kernel.org/all/20230512080405.12043-1-yi-de.wu@mediatek.com/
+- Refactor: separate arch/arm64/geniezone/gzvm_arch.c into
+  vm.c/vcpu.c/vgic.c
+- Remove redundant functions
+- Fix reviewer's comments
+
+Changes in v2:
+https://lore.kernel.org/all/20230428103622.18291-1-yi-de.wu@mediatek.com/
+- Refactor: move to drivers/virt/geniezone
+- Refactor: decouple arch-dependent and arch-independent
+- Check pending signal before entering guest context
+- Fix reviewer's comments
+
+Initial Commit in v1:
+https://lore.kernel.org/all/20230413090735.4182-1-yi-de.wu@mediatek.com/
+
+Jerry Wang (5):
+  virt: geniezone: Add memory region purpose for hypervisor
+  virt: geniezone: Add dtb config support
+  virt: geniezone: Add memory pin/unpin support
+  virt: geniezone: Add memory relinquish support
+  virt: geniezone: Provide individual VM memory statistics within
+    debugfs
+
+Kevenny Hsieh (3):
+  virt: geniezone: Enable PTP for synchronizing time between host and
+    guest VMs
+  virt: geniezone: Add support for guest VM CPU idle
+  virt: geniezone: Emulate IPI for guest VM
+
+Liju Chen (1):
+  virt: geniezone: Add tracing support for hyp call and vcpu exit_reason
+
+Willix Yeh (1):
+  virt: geniezone: Add support for virtual timer migration
+
+Yingshiuan Pan (14):
+  virt: geniezone: enable gzvm-ko in defconfig
+  docs: geniezone: Introduce GenieZone hypervisor
+  dt-bindings: hypervisor: Add MediaTek GenieZone hypervisor
+  virt: geniezone: Add GenieZone hypervisor driver
+  virt: geniezone: Add vm support
+  virt: geniezone: Add set_user_memory_region for vm
+  virt: geniezone: Add vm capability check
+  virt: geniezone: Add vcpu support
+  virt: geniezone: Add irqchip support for virtual interrupt injection
+  virt: geniezone: Add irqfd support
+  virt: geniezone: Add ioeventfd support
+  virt: geniezone: Optimize performance of protected VM memory
+  virt: geniezone: Add demand paging support
+  virt: geniezone: Add block-based demand paging support
+
+ .../bindings/firmware/mediatek,geniezone.yaml |  34 +
+ Documentation/virt/geniezone/introduction.rst |  87 +++
+ Documentation/virt/index.rst                  |   1 +
+ MAINTAINERS                                   |  11 +
+ arch/arm64/Kbuild                             |   1 +
+ arch/arm64/configs/defconfig                  |   2 +
+ arch/arm64/geniezone/Makefile                 |   9 +
+ arch/arm64/geniezone/gzvm_arch_common.h       | 120 ++++
+ arch/arm64/geniezone/hvc.c                    |  73 ++
+ arch/arm64/geniezone/vcpu.c                   |  96 +++
+ arch/arm64/geniezone/vgic.c                   |  50 ++
+ arch/arm64/geniezone/vm.c                     | 452 ++++++++++++
+ drivers/virt/Kconfig                          |   2 +
+ drivers/virt/geniezone/Kconfig                |  16 +
+ drivers/virt/geniezone/Makefile               |  12 +
+ drivers/virt/geniezone/gzvm_common.h          |  12 +
+ drivers/virt/geniezone/gzvm_exception.c       | 112 +++
+ drivers/virt/geniezone/gzvm_ioeventfd.c       | 281 ++++++++
+ drivers/virt/geniezone/gzvm_irqfd.c           | 382 ++++++++++
+ drivers/virt/geniezone/gzvm_main.c            | 151 ++++
+ drivers/virt/geniezone/gzvm_mmu.c             | 243 +++++++
+ drivers/virt/geniezone/gzvm_vcpu.c            | 332 +++++++++
+ drivers/virt/geniezone/gzvm_vm.c              | 672 ++++++++++++++++++
+ include/linux/soc/mediatek/gzvm_drv.h         | 271 +++++++
+ include/trace/events/geniezone.h              |  84 +++
+ include/uapi/linux/gzvm.h                     | 405 +++++++++++
+ 26 files changed, 3911 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/mediatek,geniezone.yaml
+ create mode 100644 Documentation/virt/geniezone/introduction.rst
+ create mode 100644 arch/arm64/geniezone/Makefile
+ create mode 100644 arch/arm64/geniezone/gzvm_arch_common.h
+ create mode 100644 arch/arm64/geniezone/hvc.c
+ create mode 100644 arch/arm64/geniezone/vcpu.c
+ create mode 100644 arch/arm64/geniezone/vgic.c
+ create mode 100644 arch/arm64/geniezone/vm.c
+ create mode 100644 drivers/virt/geniezone/Kconfig
+ create mode 100644 drivers/virt/geniezone/Makefile
+ create mode 100644 drivers/virt/geniezone/gzvm_common.h
+ create mode 100644 drivers/virt/geniezone/gzvm_exception.c
+ create mode 100644 drivers/virt/geniezone/gzvm_ioeventfd.c
+ create mode 100644 drivers/virt/geniezone/gzvm_irqfd.c
+ create mode 100644 drivers/virt/geniezone/gzvm_main.c
+ create mode 100644 drivers/virt/geniezone/gzvm_mmu.c
+ create mode 100644 drivers/virt/geniezone/gzvm_vcpu.c
+ create mode 100644 drivers/virt/geniezone/gzvm_vm.c
+ create mode 100644 include/linux/soc/mediatek/gzvm_drv.h
+ create mode 100644 include/trace/events/geniezone.h
+ create mode 100644 include/uapi/linux/gzvm.h
+
+-- 
+2.18.0
+
 
