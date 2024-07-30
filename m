@@ -1,125 +1,197 @@
-Return-Path: <linux-kernel+bounces-267706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A50E941491
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:43:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38FFF9414AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CE8328439E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:43:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC9F01F211AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38571A256C;
-	Tue, 30 Jul 2024 14:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B4D1A38E4;
+	Tue, 30 Jul 2024 14:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sE8Z1CiU"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p6s9VYHn"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A0D1A2540
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA491A3BC8;
+	Tue, 30 Jul 2024 14:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722350597; cv=none; b=CO35BOmEW2P+bZuk21ohE2+gTUij9txCJD1SRivYIbJZBfyDcdcHVSsryd+H1zL9pKZSX+CWpIF0xJEDTwygmPRpHGJhx0FM6AtbfFa8/58TcF8+IooxL1e90kL9MkrRkKDtuOzlV3mRAbxcO1ra/CEycKv0F38Knh9CGo81t1I=
+	t=1722350697; cv=none; b=oH3tazKeelBwrSQ+8RXchB3sImzK9MO3XudDzerYjmELDnA3WlZ1biuNbQ9w1y2uaD1XS7n21HQpNdvCjqcR4iClktWUzBnYp+pTeLqmb+atMXnocmBDrfMS7onCOWz3DFioQeGAWT9dbw3d68LkV9qIjaYkP6Esk/K6+mzQEnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722350597; c=relaxed/simple;
-	bh=Om4ERC7VqqlNP0k+2cruuobLicBrUelIiNGiFuwCyTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JE1NeUSSFZyQXwhE6NfUBAZCGGjzaB8OcCvWvMQ9aJ1BkLQntvcKWv4B4plTRLvNwxFGOgPKdOeBaYPrxD06Efh/yQtC9bamrsK4EGzZ4er5Be1W9DL+bySbiSf9WkSra4SrGhCnH6rPb+jJVYNnZ+8c8yqawdXo/sllbGbte4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sE8Z1CiU; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3db14339fb0so3171375b6e.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:43:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722350595; x=1722955395; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NYaUiMVR737+a9vHy0nK52dupPoGOgPRjQey1WHJB1Q=;
-        b=sE8Z1CiUHRLgAk7Z7ZsQAm5++lc8vBaUdfHZGTogWiW9031y/c0Awdt4vrI+O4tXul
-         dSSamMU5HVUwGplA99IPnfEMotceRj2QfHOS8LwTf2gzW/fwwj5kSY0mXQ8A0qezNDq9
-         qaPnoF6546ypFzkEY8eQ7u10pxZR7cUKC+ceZXQy+l4RxyYOC4/jDwZU0j1tLZL/CA/A
-         rEuwIKDAvq28pkzjpUmhOpHghMDTADyezOhQgq8w8boz5vzWcegTBOKLBS/0fsaaehBj
-         t5xJ3kl+goLGdALsv603wEDVbfwjw7sz1rZ1/OLqXDorPHTVDWvHzCJ6y87/xqq0TI09
-         o+xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722350595; x=1722955395;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NYaUiMVR737+a9vHy0nK52dupPoGOgPRjQey1WHJB1Q=;
-        b=G73kydGzIk1Nl2xdi1tBS4UTCoMfwtz06ufhngYaoabouO+h7k+jWC5gVXtC4imNYM
-         Qk1KOtb1dCffvxI6ZXwqoylPtCamJL5oLwGbfA8Tsr1p373vESptSDKMr8blxeHNoIKJ
-         qRd+d6tc5N5gjKmuPkDClC+tAfwUd/zw+jZTMbOAiN0eKs9pqS3R34pBMDvrkm68mRmF
-         7IJZvpg9VHUc/7cL9GaPwmYwTwgUGTofbAymyJ0SPqkJVFdNSsoVDMYnnCm5q3djvcqB
-         NAmtbTcZEm8+lfVX5frjB3K+WcaLap1Z2o5GwgvAxz10CY63iGno27O/DjzdKqXuPN4h
-         JT6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXXSHnobAq2bFGfzIwTfVP2+oXDMEEDVOjGjAfzF7Gc8MD0xKj4auG8lwyjnHyf47ZKhfSMdyjCBFYvnRBgPdmsG/98qz1eeqJhR3Db
-X-Gm-Message-State: AOJu0Yxr+/ENBYm1TTq4FikpzEYx8Knc76avyu1Q/ycS1Cm/B9BGvQAK
-	U00yhzOr5Q8vGJCwXrS9NSuMWMDy3rC3JTBtsoNnunVJITJ/sHjoMuQKDdyQFOM=
-X-Google-Smtp-Source: AGHT+IGuXBra4zsWnYNWnRqLnedt26KvTmSvT/pDGfaLXeIuq/5uIHAg5xLd8VXHkdc4QWOhhHUs2Q==
-X-Received: by 2002:a05:6808:1289:b0:3d5:4256:26d4 with SMTP id 5614622812f47-3db2389c6ffmr17162599b6e.7.1722350594816;
-        Tue, 30 Jul 2024 07:43:14 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700::17c0])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3db417ed7e2sm303408b6e.8.2024.07.30.07.43.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 07:43:14 -0700 (PDT)
-Date: Tue, 30 Jul 2024 09:43:12 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sean Whitton <spwhitton@spwhitton.name>
-Cc: ~lkcamp/patches@lists.sr.ht, helen.koike@collabora.com,
-	Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: media: atomisp: Add parentheses around macro
- definitions
-Message-ID: <f702d0b7-e316-4190-876c-1398f0ddcd6a@suswa.mountain>
-References: <20240730062348.46205-2-spwhitton@spwhitton.name>
+	s=arc-20240116; t=1722350697; c=relaxed/simple;
+	bh=c/tggndUuSD9zitgKxnvLZRAX2AqqvbSEatRcpWPHb8=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=AdHwnnsvL0hgHUe1wRMIU6PTQqlZoS+yOilci6OY0Bc9doV0GDXfdUmR0KwfUZRr5s2EV1j0ksvNXLIbu/C2ScpP1hyI+TIcvGJeqtZN7UhPFrA2T2NBLuB3cUy3oN8rLU27y3WWtKnMo3DARFuQBmk9BX3XW9t0eeQt+m1nb7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p6s9VYHn; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46U8oTu8030643;
+	Tue, 30 Jul 2024 14:43:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=VTmK3GjGI/TBE6OcQTcx58
+	PFaZ9r/Rx2aijf6ZEGqEI=; b=p6s9VYHn9TETG5axfmxtd5gqA2n5j1jQPNwlGx
+	8Zua/2vQqxHiQpf68K7BoczHsZ8MFWoLOVbWeqKxvGnLFGcP9pE40T2vxhFGNo2k
+	StZ2wTlDUtLzh8JzUA0l+ZJgZg4gmNDcgtNehGXyErG4x1zthlAcQZwUB/MqN44j
+	hDFINNM9FfM0XjkI9L5WqF/wbuyZGtHQT1H6ox+mujEAmVu/1cvQkzxKiqVDbbRj
+	Qff8U8WSJMn8nRbY1/ShLdVI+5b5/Njh/mw5/gR7R/zg7KuRRXqTgNozC7LCm6s5
+	OyPagNcZJWN+vAmKg4034J0TvDndsF1CTgsItM9TQT8UUlog==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40ms96qw3b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 14:43:24 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46UEhMXS024190
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 14:43:22 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 30 Jul
+ 2024 07:43:22 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Subject: [PATCH 0/5] treewide: add missing MODULE_DESCRIPTION() macros
+Date: Tue, 30 Jul 2024 07:43:17 -0700
+Message-ID: <20240730-module_description_orphans-v1-0-7094088076c8@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730062348.46205-2-spwhitton@spwhitton.name>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAX8qGYC/x3M3QqDMAxA4VeRXK9Q3epgrzKG9CfOgLYl0SGI7
+ 75slx8czgGCTCjwaA5g/JBQyYr20kCcfH6joaSGznY3e79as5S0zTgklMhUV82HwlVTMTE47Ny
+ Ibe960EFlHGn/z58vdfCCJrDPcfotZ8rbbhYvKzKc5xewh/gziwAAAA==
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton
+	<akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Russell King
+	<linux@armlinux.org.uk>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Masami
+ Hiramatsu" <mhiramat@kernel.org>,
+        Karol Herbst <karolherbst@gmail.com>,
+        "Pekka Paalanen" <ppaalanen@gmail.com>,
+        Dave Hansen
+	<dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter
+ Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        "Alexandre Torgue"
+	<alexandre.torgue@foss.st.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Michael Ellerman
+	<mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy
+	<christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>, Jeremy Kerr
+	<jk@ozlabs.org>,
+        Joel Stanley <joel@jms.id.au>, Alistar Popple
+	<alistair@popple.id.au>,
+        Eddie James <eajames@linux.ibm.com>,
+        Andrew Jeffery
+	<andrew@codeconstruct.com.au>,
+        Will Deacon <will@kernel.org>, Waiman Long
+	<longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <nouveau@lists.freedesktop.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>, <linux-pm@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-fsi@lists.ozlabs.org>,
+        <linux-aspeed@lists.ozlabs.org>,
+        Jeff Johnson
+	<quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: KtDrELCmddYI6T-uWPbmkiTEYMVdwz7x
+X-Proofpoint-GUID: KtDrELCmddYI6T-uWPbmkiTEYMVdwz7x
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-30_12,2024-07-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 mlxlogscore=738 bulkscore=0 malwarescore=0 phishscore=0
+ priorityscore=1501 clxscore=1011 lowpriorityscore=0 spamscore=0
+ adultscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407300100
 
-On Tue, Jul 30, 2024 at 03:23:45PM +0900, Sean Whitton wrote:
-> Fix checkpatch error
-> "ERROR: Macros with complex values should be enclosed in parentheses"
-> at hive_isp_css_include/sp.h:41, hive_isp_css_include/sp.h:42.
-> 
-> Signed-off-by: Sean Whitton <spwhitton@spwhitton.name>
-> ---
->  drivers/staging/media/atomisp/pci/hive_isp_css_include/sp.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> This is my first Linux kernel patch, from Helen Koike's DebConf24 workshop.
-> Thanks!
-> 
-> diff --git a/drivers/staging/media/atomisp/pci/hive_isp_css_include/sp.h b/drivers/staging/media/atomisp/pci/hive_isp_css_include/sp.h
-> index a7d00c7bb8bc..128109afe842 100644
-> --- a/drivers/staging/media/atomisp/pci/hive_isp_css_include/sp.h
-> +++ b/drivers/staging/media/atomisp/pci/hive_isp_css_include/sp.h
-> @@ -38,8 +38,8 @@
->  #define STORAGE_CLASS_SP_C
->  #include "sp_public.h"
->  #else  /* __INLINE_SP__ */
-> -#define STORAGE_CLASS_SP_H static inline
-> -#define STORAGE_CLASS_SP_C static inline
-> +#define STORAGE_CLASS_SP_H (static inline)
-> +#define STORAGE_CLASS_SP_C (static inline)
+Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+description is missing"), a module without a MODULE_DESCRIPTION() will
+result in a warning when built with make W=1.
 
-This must be dead code, otherwise it would break the build.  I'm not
-sure what's going on with this header file.  Anyway this patch isn't
-correct.
+Recently, multiple developers have been eradicating these warnings
+treewide, and I personally submitted almost 300 patches over the past
+few months. Almost all of my patches landed by 6.11-rc1, either by
+being merged in a 6.10-rc or by being merged in the 6.11 merge
+window. However, a few of my patches did not land.
 
-regards,
-dan carpenter
+In some cases I see them in linux-next, but they did not land during
+the merge window. I'm still monitoring those.
+
+In a few cases I have not had any feedback that the patches have been
+accepted into a maintainer's tree. At the advice of Greg KH I've
+consolidated those patches into this single series with the hope these
+can still land before 6.11-final.
+https://lore.kernel.org/all/2024071518-ridden-election-8118@gregkh/
+
+Links to the original individual patches:
+
+crypto: arm/xor - add missing MODULE_DESCRIPTION() macro
+https://lore.kernel.org/all/20240711-md-arm-arch-arm-lib-v2-1-ab08653dc106@quicinc.com/
+
+x86/mm: add testmmiotrace MODULE_DESCRIPTION()
+https://lore.kernel.org/all/20240515-testmmiotrace-md-v1-1-10919a8b2842@quicinc.com/
+
+cpufreq: powerpc: add missing MODULE_DESCRIPTION() macros
+https://lore.kernel.org/all/20240722-md-powerpc-drivers-cpufreq-v2-1-bb84d715eb3d@quicinc.com/
+
+fsi: add missing MODULE_DESCRIPTION() macros
+https://lore.kernel.org/all/20240605-md-drivers-fsi-v1-1-fefc82d81b12@quicinc.com/
+
+locking/ww_mutex/test: add MODULE_DESCRIPTION()
+https://lore.kernel.org/all/20240528-md-test-ww_mutex-v2-1-a2a19e920b12@quicinc.com/
+
+---
+Jeff Johnson (5):
+      crypto: arm/xor - add missing MODULE_DESCRIPTION() macro
+      x86/mm: add testmmiotrace MODULE_DESCRIPTION()
+      cpufreq: powerpc: add missing MODULE_DESCRIPTION() macros
+      fsi: add missing MODULE_DESCRIPTION() macros
+      locking/ww_mutex/test: add MODULE_DESCRIPTION()
+
+ arch/arm/lib/xor-neon.c           | 1 +
+ arch/x86/mm/testmmiotrace.c       | 1 +
+ drivers/cpufreq/maple-cpufreq.c   | 1 +
+ drivers/cpufreq/pasemi-cpufreq.c  | 1 +
+ drivers/cpufreq/pmac64-cpufreq.c  | 1 +
+ drivers/cpufreq/powernv-cpufreq.c | 1 +
+ drivers/cpufreq/ppc_cbe_cpufreq.c | 1 +
+ drivers/fsi/fsi-core.c            | 1 +
+ drivers/fsi/fsi-master-aspeed.c   | 1 +
+ drivers/fsi/fsi-master-ast-cf.c   | 3 ++-
+ drivers/fsi/fsi-master-gpio.c     | 1 +
+ drivers/fsi/fsi-master-hub.c      | 1 +
+ drivers/fsi/fsi-scom.c            | 1 +
+ kernel/locking/test-ww_mutex.c    | 1 +
+ 14 files changed, 15 insertions(+), 1 deletion(-)
+---
+base-commit: 94ede2a3e9135764736221c080ac7c0ad993dc2d
+change-id: 20240730-module_description_orphans-cb5e25fe1656
 
 
