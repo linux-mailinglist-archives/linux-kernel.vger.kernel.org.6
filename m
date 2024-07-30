@@ -1,58 +1,73 @@
-Return-Path: <linux-kernel+bounces-268209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B93D9421A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:37:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D89C9421B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3056B20E06
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:37:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB5AD28312B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BF318DF70;
-	Tue, 30 Jul 2024 20:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6AB18E02E;
+	Tue, 30 Jul 2024 20:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S8BOh21u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1aVXMr/f"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555AC1684BE;
-	Tue, 30 Jul 2024 20:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3581518DF7F;
+	Tue, 30 Jul 2024 20:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722371856; cv=none; b=Jaq2Vf7f6dG1dLr/Q68czUaKoX/aW68ZEu+TvikVU+NlJvvpO7ZTM+UMp29ig3S9kkHLGUVstLiJnbn2ttBFR2H5RSNn5ZCcHjMfYJPAI8vNRMeFTk88BMQ4IIxcTpXk6rq+sKplAcx9Zo8Y0wY/fjFKOpV9yzjHsD1s99xF3/A=
+	t=1722372027; cv=none; b=e83QhlgpS1gTkMt2v7cwIX0zDnqMfTZy8HnBm7rkJQNFyt4GU9UZJWbI4FTlMN58HlBXLPphwPKSHpW2QpZSQRcVF4x95Ro0mFMBN7HtEdgyoCUwUWIQUJ3yLWM3GRt2v0NJKuKxeG6ylIYLoD/t4W5v++sBU4T5QOdpZIF+en4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722371856; c=relaxed/simple;
-	bh=ar0oF94oQZfUJEc0XX0JRA1TrW1LUKKl0LTDHv+jmwo=;
+	s=arc-20240116; t=1722372027; c=relaxed/simple;
+	bh=XkgU6el8ueQeo/jYOQv1LuN3ZcuhNV3n6un0doX6CSc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZMuJK8NljaUZ0DPKspFpgt+Or4GJrURUKLqqcaiJaYM8vos/NMXyiAopca2vpnygiCj4fJ87s3qPQ7sxJcCXP9EWVkztCHhQZp4SwVYW0Ye32829uwVQGnRGEnpE4sRob8o6krjBB2RlTLfjcrmemZhfQ92y7l+YVDvMpFqTQL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S8BOh21u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB3B5C32782;
-	Tue, 30 Jul 2024 20:37:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722371855;
-	bh=ar0oF94oQZfUJEc0XX0JRA1TrW1LUKKl0LTDHv+jmwo=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=S8BOh21uGZgXbsiYQqISZYQyahx7bLDQGclKsDLOBCtf39ZjVuLb9phtLPbjE2RAJ
-	 pg1no6fM2J6lXvCzVW9KrgYsbXb/W2j+nfvqzoS7efU7T01qcS+2mqoNXmFm3e5KsU
-	 f/+uqseNOQWgNLeFx5/xhzujVokbGhlgGWei/s+Mr3pQS0EghytJqAfmBH1TuzH46R
-	 /JoFJkEmSKMOoNrBZhqM/h/BqW+jQ9v+XM8S+xqwmNTWH7ZCJo9aPv5u/aDrDbXSPA
-	 FA4fnbhRt9YUA9kwvA/FGyr5yrYZ/r+CAhjlZYr6dtUTsJXzfthW1WamT8kYA6u4U/
-	 02HuDKX38Ik1g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 7C753CE0A63; Tue, 30 Jul 2024 13:37:35 -0700 (PDT)
-Date: Tue, 30 Jul 2024 13:37:35 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [paulmck-rcu:dev.2024.07.25a 15/43]
- kernel/rcu/rcuscale.c:1021:2: error: use of undeclared identifier
- 'writer_done'
-Message-ID: <00a039f5-ef33-44d3-904b-5257be898b45@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <202407300009.05X7YXZC-lkp@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iI6JYS6qDgFJjSiEmdMTv1KamJtuoJWmvjfb/xsG3hsqOIYBqlBe/14pz8ldXVFfZWKMKz1LzYOEyF7H64cggy9EvWNLA0ycg4YMpFmOmphoFWE+vcazVKhUW/yL3RRxkhHuDAAYiI2Z0+1OVJZdmcf0fSbPbkbYi7a+yQ15uJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1aVXMr/f; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=J5Jaq1YOsTim2xFo3Amv8mSEh00+XINRE2fskB3Zh6I=; b=1aVXMr/f1qTLOIYWMa922qgOKv
+	oHNKldmDu+yXpPyvy+1VZ/clwvNkHlO1QdUhdW3fUO/FozqcyGU0vBXqpX/8sNSpSaWsKVjegx5KI
+	sq5iPf3WGPrGjf814N8GtODItRm0pg8UZTupK35HAV5UtGDX1HHggJ2YD4drmwr+TrcM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sYtdP-003c1f-VS; Tue, 30 Jul 2024 22:39:51 +0200
+Date: Tue, 30 Jul 2024 22:39:51 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Allen Pais <allen.lkml@gmail.com>
+Cc: kuba@kernel.org, Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Mirko Lindner <mlindner@marvell.com>,
+	Stephen Hemminger <stephen@networkplumber.org>,
+	jes@trained-monkey.org, kda@linux-powerpc.org,
+	cai.huoqing@linux.dev, dougmill@linux.ibm.com, npiggin@gmail.com,
+	christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org,
+	naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com,
+	tlfalcon@linux.ibm.com, cooldavid@cooldavid.org, nbd@nbd.name,
+	sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com,
+	lorenzo@kernel.org, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, borisp@nvidia.com,
+	bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com,
+	louis.peens@corigine.com, richardcochran@gmail.com,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-acenic@sunsite.dk, linux-net-drivers@amd.com,
+	netdev@vger.kernel.org
+Subject: Re: [net-next v3 14/15] net: marvell: Convert tasklet API to new
+ bottom half workqueue mechanism
+Message-ID: <fbb19744-cc77-4541-90b5-0760e0eeae22@lunn.ch>
+References: <20240730183403.4176544-1-allen.lkml@gmail.com>
+ <20240730183403.4176544-15-allen.lkml@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,156 +76,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202407300009.05X7YXZC-lkp@intel.com>
+In-Reply-To: <20240730183403.4176544-15-allen.lkml@gmail.com>
 
-On Tue, Jul 30, 2024 at 12:43:00AM +0800, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2024.07.25a
-> head:   24e3bccdf4bc0ae57b0e89e0313fd4450fde12af
-> commit: 54ff7b22b9062495092737217877be2bdd3dabd4 [15/43] rcuscale: Save a few lines with whitespace-only change
-> config: x86_64-randconfig-071-20240728 (https://download.01.org/0day-ci/archive/20240730/202407300009.05X7YXZC-lkp@intel.com/config)
-> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240730/202407300009.05X7YXZC-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202407300009.05X7YXZC-lkp@intel.com/
-> 
-> Note: the paulmck-rcu/dev.2024.07.25a HEAD 24e3bccdf4bc0ae57b0e89e0313fd4450fde12af builds fine.
->       It only hurts bisectability.
-> 
-> All errors (new ones prefixed by >>):
-> 
-> >> kernel/rcu/rcuscale.c:1021:2: error: use of undeclared identifier 'writer_done'
->     1021 |         writer_done = kcalloc(nrealwriters, sizeof(writer_done[0]), GFP_KERNEL);
->          |         ^
->    kernel/rcu/rcuscale.c:1021:45: error: use of undeclared identifier 'writer_done'
->     1021 |         writer_done = kcalloc(nrealwriters, sizeof(writer_done[0]), GFP_KERNEL);
->          |                                                    ^
->    kernel/rcu/rcuscale.c:1021:45: error: use of undeclared identifier 'writer_done'
->    kernel/rcu/rcuscale.c:1022:68: error: use of undeclared identifier 'writer_done'
->     1022 |         if (!writer_tasks || !writer_durations || !writer_n_durations || !writer_done) {
->          |                                                                           ^
->    4 errors generated.
+> - * Called only from mvpp2_txq_done(), called from mvpp2_tx()
+> - * (migration disabled) and from the TX completion tasklet (migration
+> - * disabled) so using smp_processor_id() is OK.
+> + * Called only from mvpp2_txq_done().
+> + *
+> + * Historically, this function was invoked directly from mvpp2_tx()
+> + * (with migration disabled) and from the bottom half workqueue.
+> + * Verify that the use of smp_processor_id() is still appropriate
+> + * considering the current bottom half workqueue implementation.
 
-Good catch!!!
+What does this mean? You want somebody else to verify this? You are
+potentially breaking this driver?
 
-This should be fixed by 2b65b350efe5 ("rcuscale: Save a few lines with
-whitespace-only change").  Please let me know if issues remain.
-
-							Thanx, Paul
-
-> vim +/writer_done +1021 kernel/rcu/rcuscale.c
-> 
->    946	
->    947	static int __init
->    948	rcu_scale_init(void)
->    949	{
->    950		long i;
->    951		int firsterr = 0;
->    952		static struct rcu_scale_ops *scale_ops[] = {
->    953			&rcu_ops, &srcu_ops, &srcud_ops, TASKS_OPS TASKS_RUDE_OPS TASKS_TRACING_OPS
->    954		};
->    955	
->    956		if (!torture_init_begin(scale_type, verbose))
->    957			return -EBUSY;
->    958	
->    959		/* Process args and announce that the scalability'er is on the job. */
->    960		for (i = 0; i < ARRAY_SIZE(scale_ops); i++) {
->    961			cur_ops = scale_ops[i];
->    962			if (strcmp(scale_type, cur_ops->name) == 0)
->    963				break;
->    964		}
->    965		if (i == ARRAY_SIZE(scale_ops)) {
->    966			pr_alert("rcu-scale: invalid scale type: \"%s\"\n", scale_type);
->    967			pr_alert("rcu-scale types:");
->    968			for (i = 0; i < ARRAY_SIZE(scale_ops); i++)
->    969				pr_cont(" %s", scale_ops[i]->name);
->    970			pr_cont("\n");
->    971			firsterr = -EINVAL;
->    972			cur_ops = NULL;
->    973			goto unwind;
->    974		}
->    975		if (cur_ops->init)
->    976			cur_ops->init();
->    977	
->    978		if (cur_ops->rso_gp_kthread) {
->    979			kthread_tp = cur_ops->rso_gp_kthread();
->    980			if (kthread_tp)
->    981				kthread_stime = kthread_tp->stime;
->    982		}
->    983		if (kfree_rcu_test)
->    984			return kfree_scale_init();
->    985	
->    986		nrealwriters = compute_real(nwriters);
->    987		nrealreaders = compute_real(nreaders);
->    988		atomic_set(&n_rcu_scale_reader_started, 0);
->    989		atomic_set(&n_rcu_scale_writer_started, 0);
->    990		atomic_set(&n_rcu_scale_writer_finished, 0);
->    991		rcu_scale_print_module_parms(cur_ops, "Start of test");
->    992	
->    993		/* Start up the kthreads. */
->    994	
->    995		if (shutdown) {
->    996			init_waitqueue_head(&shutdown_wq);
->    997			firsterr = torture_create_kthread(rcu_scale_shutdown, NULL,
->    998							  shutdown_task);
->    999			if (torture_init_error(firsterr))
->   1000				goto unwind;
->   1001			schedule_timeout_uninterruptible(1);
->   1002		}
->   1003		reader_tasks = kcalloc(nrealreaders, sizeof(reader_tasks[0]),
->   1004				       GFP_KERNEL);
->   1005		if (reader_tasks == NULL) {
->   1006			SCALEOUT_ERRSTRING("out of memory");
->   1007			firsterr = -ENOMEM;
->   1008			goto unwind;
->   1009		}
->   1010		for (i = 0; i < nrealreaders; i++) {
->   1011			firsterr = torture_create_kthread(rcu_scale_reader, (void *)i,
->   1012							  reader_tasks[i]);
->   1013			if (torture_init_error(firsterr))
->   1014				goto unwind;
->   1015		}
->   1016		while (atomic_read(&n_rcu_scale_reader_started) < nrealreaders)
->   1017			schedule_timeout_uninterruptible(1);
->   1018		writer_tasks = kcalloc(nrealwriters, sizeof(writer_tasks[0]), GFP_KERNEL);
->   1019		writer_durations = kcalloc(nrealwriters, sizeof(*writer_durations), GFP_KERNEL);
->   1020		writer_n_durations = kcalloc(nrealwriters, sizeof(*writer_n_durations), GFP_KERNEL);
-> > 1021		writer_done = kcalloc(nrealwriters, sizeof(writer_done[0]), GFP_KERNEL);
->   1022		if (!writer_tasks || !writer_durations || !writer_n_durations || !writer_done) {
->   1023			SCALEOUT_ERRSTRING("out of memory");
->   1024			firsterr = -ENOMEM;
->   1025			goto unwind;
->   1026		}
->   1027		for (i = 0; i < nrealwriters; i++) {
->   1028			writer_durations[i] =
->   1029				kcalloc(MAX_MEAS, sizeof(*writer_durations[i]),
->   1030					GFP_KERNEL);
->   1031			if (!writer_durations[i]) {
->   1032				firsterr = -ENOMEM;
->   1033				goto unwind;
->   1034			}
->   1035			firsterr = torture_create_kthread(rcu_scale_writer, (void *)i,
->   1036							  writer_tasks[i]);
->   1037			if (torture_init_error(firsterr))
->   1038				goto unwind;
->   1039		}
->   1040		torture_init_end();
->   1041		return 0;
->   1042	
->   1043	unwind:
->   1044		torture_init_end();
->   1045		rcu_scale_cleanup();
->   1046		if (shutdown) {
->   1047			WARN_ON(!IS_MODULE(CONFIG_RCU_SCALE_TEST));
->   1048			kernel_power_off();
->   1049		}
->   1050		return firsterr;
->   1051	}
->   1052	
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+	Andrew
 
