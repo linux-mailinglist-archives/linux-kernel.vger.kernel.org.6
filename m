@@ -1,119 +1,118 @@
-Return-Path: <linux-kernel+bounces-268016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED14B941F6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:19:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B1EB941F6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298741C229DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:19:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47E321C22204
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E367418B463;
-	Tue, 30 Jul 2024 18:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC45718B463;
+	Tue, 30 Jul 2024 18:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTUqP+sO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="chpwwF+z"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A9018A6D1;
-	Tue, 30 Jul 2024 18:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FBF188011;
+	Tue, 30 Jul 2024 18:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722363573; cv=none; b=RWGMtRqgSHSfqaUrZoXF/u1U2c4tsFCvGZIIl3+jdlGeUx+Bw8Q+qCE2chdtiAOFoPzxC52mFkHl/gJppDYJ5kXPWuiNqHBuxvQqtc/Py1oE4q3o83JPyY5+CMPvuijQhcezC69y9WZzWcJmbXA77ARelezM1Mk/24vZNa8W+XM=
+	t=1722363602; cv=none; b=iUUXc1FMjZmVDGkZgU7ugE+HMhjLLYLX0SWOZts7cFvJp++zQnrpc/DE8F476luGGOBrGie/aSCudWru1T3Am17mTZyvqGW67nr6eIIyOYWH+5DdSFNYHfEIjX3WhQZlxrMBszWkAP/wkZ0r3pK9DkgjNY8AVmtdwyoGqgJhgAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722363573; c=relaxed/simple;
-	bh=RxSnMRhu64wq5qQ8HmvF7KxdiaI0InhhbVSiBN9Xnfo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PJzSRM1CWaxiRgjDFlLXG63hbFyEmRj/qaqmePvRkH8BKdjn4FkRzdFvyzAs/2a8STslEHiWwtHYZ0q1uu2yGYFANhpVAf4cgA//YMJdeaAknqrlWbzlxH3KTk+9XQdJ3SkCZPXkHbi5sY1G7cXuOp+1jYhPj6v+GIv/czt69dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTUqP+sO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A3A9C32782;
-	Tue, 30 Jul 2024 18:19:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722363572;
-	bh=RxSnMRhu64wq5qQ8HmvF7KxdiaI0InhhbVSiBN9Xnfo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OTUqP+sOp7QOtjw6saoR1RZk04qvW2elmg1Mn0i7f7Avb9A/Oe+CCIrirogkRUhiA
-	 gvsdvm3SxoX7OGrxzIwB/ZB1wpnQ5QfOIVXOyHHrpxmwcqw3LixqQX5TIYbKzpK5l4
-	 +FMpGs6JanFz9brHTiquhDZjsEcZ0qufTaVqqXn4FRJ71Op74hR4yRTgv6LgOUnBVh
-	 a9PYti3+e4jIBc/542LUREFSb2e4gdSIbOgYBVg80cA7p0Q6jamQ8ZMgrtgRIFenlf
-	 MhRH9I9lnFI5Sbsvn/WtA4HEVu6wQyVf2ZhX2XCZGBGapC1/Yb3QowtDzpvlFflpYX
-	 EQDucApEt142w==
-Date: Tue, 30 Jul 2024 19:19:23 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>, Lars-Peter Clausen
- <lars@metafoo.de>, "Hennerich, Michael" <Michael.Hennerich@analog.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, "Bogdan, Dragos" <Dragos.Bogdan@analog.com>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 0/2] *** Add ADF4378 Support ***
-Message-ID: <20240730191923.0ad01e2f@jic23-huawei>
-In-Reply-To: <fc357a23-0d4d-47e8-95fd-6abb4a33e301@kernel.org>
-References: <20240729095047.25040-1-antoniu.miclaus@analog.com>
-	<c93a6bf3-7360-4696-833d-82726d10f604@kernel.org>
-	<CY4PR03MB339984EFB38E801AEEE1368D9BB02@CY4PR03MB3399.namprd03.prod.outlook.com>
-	<fc357a23-0d4d-47e8-95fd-6abb4a33e301@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722363602; c=relaxed/simple;
+	bh=f88TzPbRw2gIsi8JN5MNpQBkskOmgv38ZIOH4vl4RkU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J/iTWLnsLtYfEnH8qtJH/lxXeiwtckPf6OVZYsu5JdPiB/Y5AM8azSlLGKj07/SAeMCZdPAxc+UdTdn5hrj/4AkRhKXCq/NiyDGsZzfq7EYq37z1Rl82VTumUDOsAExyToyZqY58U3TvF+R/flWOISftxhT9J47tBnEQbdwfehI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=chpwwF+z reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id ed704e31ff840a14; Tue, 30 Jul 2024 20:19:57 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 67C51956ED0;
+	Tue, 30 Jul 2024 20:19:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1722363597;
+	bh=f88TzPbRw2gIsi8JN5MNpQBkskOmgv38ZIOH4vl4RkU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=chpwwF+zXvLRKekLDac9QZtw6cFhdtOgvqMGwSudQ1A57nDTbHoJbqjLOL5i+5gnT
+	 HMgcZ2W1LqpFeGAhQdpr1ekAHoOS4iIxjnCssClPR8r0YmGzTEJ7UzvBWLFTTrHafT
+	 Rdiq61Wac13iEnVLOzvJpQi4q9PKDVnrBUSLJvCvBe/DSwFz9ZZmZoNmqQCHO5xqTs
+	 Z1+XqzmTw09TCHwWzG1DNh1Hdt5UHFX+c+InNq2nYQczFzWvw8CGo46MITFqFkg65l
+	 +V6MhPhylEo7vhs/aPKFmglrZALZy08YerHvPyWTOI7/ECIeeoZ8zjsx9nuLUkArsj
+	 T5eTmXMhuL0wA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux ACPI <linux-acpi@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
+Subject:
+ [PATCH v1 03/17] thermal: core: Drop redundant thermal instance checks
+Date: Tue, 30 Jul 2024 20:19:57 +0200
+Message-ID: <1852186.3VsfAaAtOV@rjwysocki.net>
+In-Reply-To: <1922131.tdWV9SEqCh@rjwysocki.net>
+References: <1922131.tdWV9SEqCh@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeggdduvdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgepieenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
+ rhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=18 Fuz1=18 Fuz2=18
 
-On Tue, 30 Jul 2024 10:42:51 +0200
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> On 30/07/2024 10:23, Miclaus, Antoniu wrote:
-> >> -----Original Message-----
-> >> From: Krzysztof Kozlowski <krzk@kernel.org>
-> >> Sent: Monday, July 29, 2024 5:58 PM
-> >> To: Miclaus, Antoniu <Antoniu.Miclaus@analog.com>; Lars-Peter Clausen
-> >> <lars@metafoo.de>; Hennerich, Michael <Michael.Hennerich@analog.com>;
-> >> Jonathan Cameron <jic23@kernel.org>; Rob Herring <robh@kernel.org>;
-> >> Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
-> >> <conor+dt@kernel.org>; Bogdan, Dragos <Dragos.Bogdan@analog.com>;
-> >> linux-iio@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> >> kernel@vger.kernel.org
-> >> Subject: Re: [PATCH v3 0/2] *** Add ADF4378 Support ***
-> >>
-> >> [External]
-> >>
-> >> On 29/07/2024 11:50, Antoniu Miclaus wrote:  
-> >>> Add support for ADF4378 high performance, ultra-low jitter, integer-N
-> >>> phased locked loop (PLL) with an integrated voltage controlled
-> >>> oscillator (VCO) and system reference (SYSREF) retimer ideally
-> >>> suited for data converter and mixed signal front end (MxFE) clock
-> >>> applications.
-> >>>
-> >>> The main difference between ADF4377 and ADF4378 is that the second one
-> >>> provides only one output frequency channel which is enable/disabled via
-> >>> one GPIO.
-> >>>
-> >>> Both the driver and the bindings are updated to reflect that difference.  
-> >>
-> >> That's a v3, but where is the changelog?  
-> > 
-> > Each of the two patches has their own changelog.
-> > For the cover letter there's no changelog since it was added with v3.   
-> 
-> Ah, ok, it was not that easy to find, without any spacing from the diffstat.
-> 
-> Best regards,
-> Krzysztof
-> 
-Applied to the togreg branch of iio.git and pushed out as testing initially
-for 0-day to take a first look at it.
+Because the trip and cdev pointers are sufficient to idendify a thermal
+instance holding them unambiguously, drop the additional thermal zone
+checks from two loops walking the list of thermal instances in a
+thermal zone.
 
-Thanks,
+No intentional functional impact.
 
-Jonathan
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/thermal_core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -850,7 +850,7 @@ int thermal_bind_cdev_to_trip(struct the
+ 	mutex_lock(&tz->lock);
+ 	mutex_lock(&cdev->lock);
+ 	list_for_each_entry(pos, &tz->thermal_instances, tz_node)
+-		if (pos->tz == tz && pos->trip == trip && pos->cdev == cdev) {
++		if (pos->trip == trip && pos->cdev == cdev) {
+ 			result = -EEXIST;
+ 			break;
+ 		}
+@@ -915,7 +915,7 @@ int thermal_unbind_cdev_from_trip(struct
+ 	mutex_lock(&tz->lock);
+ 	mutex_lock(&cdev->lock);
+ 	list_for_each_entry_safe(pos, next, &tz->thermal_instances, tz_node) {
+-		if (pos->tz == tz && pos->trip == trip && pos->cdev == cdev) {
++		if (pos->trip == trip && pos->cdev == cdev) {
+ 			list_del(&pos->tz_node);
+ 			list_del(&pos->cdev_node);
+ 
+
 
 
 
