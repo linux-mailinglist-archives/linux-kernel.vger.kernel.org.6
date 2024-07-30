@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-267541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72506941299
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:54:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00D1794129E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CE501F237B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:54:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31C491C211CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC3E19F49B;
-	Tue, 30 Jul 2024 12:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BFD19FA99;
+	Tue, 30 Jul 2024 12:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4O04Ubr"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NsHVScy9"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEAF1991A7;
-	Tue, 30 Jul 2024 12:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC9919E80F;
+	Tue, 30 Jul 2024 12:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722344053; cv=none; b=p0IDr4kjAIOcryxH7ORzrNHr8nPZJ8A/wMriD1DlKH4gslMLuJlkX0PYlnn8SkXNuNhXDdr6PjJOeIc+xlTh6uSvRCY2zZR7SqWuJ5p/45QoYBCEjdLyv/qslJyMpm1DJWwlFOke9YRhtrjkkyMCNDATpeXMSJXEdnvKOM8VfwU=
+	t=1722344054; cv=none; b=BuDd3q4KPkJiIS752roTNmAFI3svphMxwRVt4Ej7LW/g1A5nIHiMXUT5eEIYpE157BdB/ZqVOqTuR90H+mv8j5i9xdKg0JfCclQ3baVrThiA7URBv9t6P6acogCXX2THB5esvKeRQCWZJN3hhUu5VcqoB192aqYyFbRd5TWwOtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722344053; c=relaxed/simple;
-	bh=hMifvmNy6jSvPiHEg2g5JNijSpLu2sbjQPsrq9O1zvU=;
+	s=arc-20240116; t=1722344054; c=relaxed/simple;
+	bh=xqdoAcWmVUYMrD+FVNRpmeoojd2kYweY5GdVkMg2yo0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MxO1cPcBqAQz/oVmwBlSqe7cM59rt/U2Uo9WRMQ1sw9HYv1hRpdBQ3DcIvrM6VfIW6WYPhjVMdGFyGT/DbDVtOgkPASrTgJTiGYvJ2MnS8SplafNsCyRFBAGyNbDlcD9zuZGzRYUAE2NhOt6Ko9TIOzMPH2DGBs9zfx8OHuZ2uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4O04Ubr; arc=none smtp.client-ip=209.85.222.169
+	 MIME-Version; b=oZf3XEQZ2xPt9NMf3VLmmAq6wBONX8J46nmGMVQCs6QM+FnU0hLwnun/eDImkzE/wbyoy5M0SVvDqdPq+0ByP2TAKuAkR3lzd6SvtuRNeAhXGtrBcdHOkMk0Ug317RFms13icz0g6mz8XBTRLsujR3DaGlwJj06UCL2i1f7vzN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NsHVScy9; arc=none smtp.client-ip=209.85.222.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7a1e0ff6871so266746085a.2;
-        Tue, 30 Jul 2024 05:54:11 -0700 (PDT)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a1e1f6a924so263811085a.1;
+        Tue, 30 Jul 2024 05:54:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722344050; x=1722948850; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722344052; x=1722948852; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KP/Cz3QVNU5uyUnKyaSLbXt0q/kOvLrAG+hU9UnZ/BE=;
-        b=H4O04UbrYXXl9To4EKPfYL55GxQrD2MI2z1hACXcwe+bv0nl0i7i8AioP+8dSCy8dk
-         5/LWp8jqCMuQLHTdxxAFZ2kWwRZHycQ5jhyjZYmo3XdJ3COtQjDlR64gibKiVdzWE8Z+
-         e7wRVXFRTJToeCeTEbD53nrn0KZCc3zIU5nZXzKLakEehY1NCaIxlmd26Gb0Cmm6P+WM
-         rGgV3GQiaPrYBpIAokLZpKswaQJ6NlNc3gKWLngwBozdBURsVhHoqEK2rXxtjpIMHSwR
-         Pyrjotu1++uyymZU/wJLbJEdYsc9FA/HotzHKZF/FTH2+daHr3523AxVF05gBO4b9Ie+
-         0yDA==
+        bh=xejBMxasF4z7vTbtt633OZCxjB3/TpD8KsbFAqhPXuY=;
+        b=NsHVScy9BmTHGBMRJKxpYBzdcbpg6cZzWzhIOC/A7n60hNuQ6zTGPWpLjYzZWHq3Ru
+         i+YEyKR4lpCaPfxa2ODcgPOrqKIPxO/vbn93TkrwCDtwHoU4mj4yDj4t9r7vuqgAf+KO
+         +MBoZdHuDV3t3TBVXFHK5dQT5lsVMF1KkQSHGod3xA3xhR3RwQF+VxLEATU5WCrl04p+
+         EAjuIfgUWxzUVmazK7ySG/6upPGLg3diafsSPXHsfs+ndyk49ze828/nKbFnCwuP5ycW
+         uFvlv84oBjlY/c79P8zQGmgZGMoXGIHk/mzWUTzh0E1ovwaPcM817xjITCgmuPi6nDjM
+         y6mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722344050; x=1722948850;
+        d=1e100.net; s=20230601; t=1722344052; x=1722948852;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KP/Cz3QVNU5uyUnKyaSLbXt0q/kOvLrAG+hU9UnZ/BE=;
-        b=bPxDoyFZ06Occh9X4rMqohSxWoYlPy2xkV2hO09dTGEksWlvhzoUBrfb8lGdejc9eX
-         8fhejPFGozL2zB/jT7QBCM+4B13m3lDkp55dD8uC+k4qnQfVhrBv0lWyvJMQIVGYBaoL
-         zhszPaGRfQ2eY4ZR1ItWV8MDChUZHVD6uBd8b3UThSqanZwmFoET6TUed5YIlhZ2qJia
-         kMx/Mz6shbJZriq6DiueM4P0LVippDtGRu5mwJ9vxl+7QMLbx/8f/QN+lQwyAO1/gHwV
-         VQlRKNsa2q1J2/RFB3DNG6WScCiK3XvSp8Mm33+Vu71BPGUM59J6x7SDx0yh+A+PdmU3
-         rZNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEZr0yDNq67fKmKEIwMOg0+3ukVvHAzZNl6SGt3WIYZ0+OQyN8Jr1S6E0wf/K+t0Z9CpY40idn5AyoKPDjD3akGt2Z8pf/A0X8ws6vPJLXia7U+QCtxE7PRSjsE4cU5N84AxCv4n+8
-X-Gm-Message-State: AOJu0Yy2PyQgF3zEnIoQeXMZvW2W9enJBzoLTlpMzBfs3LoSvW2kTcfZ
-	ycJ+IxwYVKaaWrB6Xb0M8lJJBVvXQ3kWdOXPjyhp1LPZa4iEDrjE
-X-Google-Smtp-Source: AGHT+IGKfomzFh7hnhpcESd3MD/dzvcJlg6cDEKXingUGcZg56zluFUVdo6AMVlaIlW4lTWHXPgxoA==
-X-Received: by 2002:a05:620a:24c3:b0:79e:fcb8:815c with SMTP id af79cd13be357-7a1e52cdbf2mr1496430585a.54.1722344050589;
-        Tue, 30 Jul 2024 05:54:10 -0700 (PDT)
-Received: from localhost (fwdproxy-ash-009.fbsv.net. [2a03:2880:20ff:9::face:b00c])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73ea990sm626878885a.55.2024.07.30.05.54.09
+        bh=xejBMxasF4z7vTbtt633OZCxjB3/TpD8KsbFAqhPXuY=;
+        b=R0Ww9fB6hPlIbpsfYwJn6QEheQJC9QMB6H7+cGn7DPunRG3J9dGqD36stsoZ4KkBmQ
+         3CDrff8zK3uDRLLLeH08zcVUnw+zMwtDyjWrhpHVYY3qg3ne21Jx2A2TYxz9BfKQL9PU
+         qwjjej31X0ivnc/8NqVGvq62TFANaP9DDpSU7mKOuPTuvat42AopxRsCytuHZGB8ozpz
+         hPRTeEMicrNy9PjrnDRNolaoq2ChILvHL7K0+bDhKogcyERWPnEzfbOqoExT1X+jQlFu
+         oywIrhlqsIk4LqMPqgIxol9OjZGkpN2vLoLA/ztmpXXP5FgsYF6utt8zupsI829JGPH1
+         N/hg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHg5a5Gey3apcvVeAmZZfg8lSI5c91FutB6XxCoMGaDNpUlBww1shkU3+hpu08m4juZ4srl4ud6k6g8mFeobvt8i1zzty8/WFd4ESPEkP/ZL7HsDifHlut+o5Efsr5ejv+CQvRHREo
+X-Gm-Message-State: AOJu0Yzbrdc1cXZEK1Camr27n8KDlLlI8sY5ru6Bsne4+N1VWu9JHPak
+	QblddOIcQOo2Dz7U8cRk6H5EU3qHIB3ttMC7F0ES0A/UwL8cq+XV
+X-Google-Smtp-Source: AGHT+IH1TaNMaT1owhjXGb3Te5E+aSoMQp8eh+KW6WOTF5nBI+raPcLbOMS88vx6Ilwbsv6KRamZCA==
+X-Received: by 2002:a05:6214:4019:b0:6b9:299b:94ba with SMTP id 6a1803df08f44-6bb55ad89a7mr115074966d6.46.1722344051931;
+        Tue, 30 Jul 2024 05:54:11 -0700 (PDT)
+Received: from localhost (fwdproxy-ash-112.fbsv.net. [2a03:2880:20ff:70::face:b00c])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44fe8123516sm50426311cf.1.2024.07.30.05.54.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 05:54:09 -0700 (PDT)
+        Tue, 30 Jul 2024 05:54:11 -0700 (PDT)
 From: Usama Arif <usamaarif642@gmail.com>
 To: akpm@linux-foundation.org,
 	linux-mm@kvack.org
@@ -85,9 +85,9 @@ Cc: hannes@cmpxchg.org,
 	linux-doc@vger.kernel.org,
 	kernel-team@meta.com,
 	Usama Arif <usamaarif642@gmail.com>
-Subject: [PATCH 1/6] Revert "memcg: remove mem_cgroup_uncharge_list()"
-Date: Tue, 30 Jul 2024 13:45:58 +0100
-Message-ID: <20240730125346.1580150-2-usamaarif642@gmail.com>
+Subject: [PATCH 2/6] Revert "mm: remove free_unref_page_list()"
+Date: Tue, 30 Jul 2024 13:45:59 +0100
+Message-ID: <20240730125346.1580150-3-usamaarif642@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240730125346.1580150-1-usamaarif642@gmail.com>
 References: <20240730125346.1580150-1-usamaarif642@gmail.com>
@@ -99,75 +99,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-mem_cgroup_uncharge_list will be needed in a later patch for an
+free_unref_page_list will be needed in a later patch for an
 optimization to free zapped tail pages when splitting isolated thp.
 
 Signed-off-by: Usama Arif <usamaarif642@gmail.com>
 ---
- include/linux/memcontrol.h | 12 ++++++++++++
- mm/memcontrol.c            | 19 +++++++++++++++++++
- 2 files changed, 31 insertions(+)
+ mm/internal.h   |  1 +
+ mm/page_alloc.c | 18 ++++++++++++++++++
+ 2 files changed, 19 insertions(+)
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 07eadf7ecbba..cbaf0ea1b217 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -713,6 +713,14 @@ static inline void mem_cgroup_uncharge(struct folio *folio)
- 	__mem_cgroup_uncharge(folio);
+diff --git a/mm/internal.h b/mm/internal.h
+index 7a3bcc6d95e7..259afe44dc88 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -680,6 +680,7 @@ extern int user_min_free_kbytes;
+ 
+ void free_unref_page(struct page *page, unsigned int order);
+ void free_unref_folios(struct folio_batch *fbatch);
++void free_unref_page_list(struct list_head *list);
+ 
+ extern void zone_pcp_reset(struct zone *zone);
+ extern void zone_pcp_disable(struct zone *zone);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index aae00ba3b3bd..38832e6b1e6c 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2774,6 +2774,24 @@ void free_unref_folios(struct folio_batch *folios)
+ 	folio_batch_reinit(folios);
  }
  
-+void __mem_cgroup_uncharge_list(struct list_head *page_list);
-+static inline void mem_cgroup_uncharge_list(struct list_head *page_list)
++void free_unref_page_list(struct list_head *list)
 +{
-+	if (mem_cgroup_disabled())
-+		return;
-+	__mem_cgroup_uncharge_list(page_list);
++	struct folio_batch fbatch;
++
++	folio_batch_init(&fbatch);
++	while (!list_empty(list)) {
++		struct folio *folio = list_first_entry(list, struct folio, lru);
++
++		list_del(&folio->lru);
++		if (folio_batch_add(&fbatch, folio) > 0)
++			continue;
++		free_unref_folios(&fbatch);
++	}
++
++	if (fbatch.nr)
++		free_unref_folios(&fbatch);
 +}
 +
- void __mem_cgroup_uncharge_folios(struct folio_batch *folios);
- static inline void mem_cgroup_uncharge_folios(struct folio_batch *folios)
- {
-@@ -1203,6 +1211,10 @@ static inline void mem_cgroup_uncharge(struct folio *folio)
- {
- }
- 
-+static inline void mem_cgroup_uncharge_list(struct list_head *page_list)
-+{
-+}
-+
- static inline void mem_cgroup_uncharge_folios(struct folio_batch *folios)
- {
- }
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 9b3ef3a70833..f568b9594c2b 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4717,6 +4717,25 @@ void __mem_cgroup_uncharge(struct folio *folio)
- 	uncharge_batch(&ug);
- }
- 
-+/**
-+ * __mem_cgroup_uncharge_list - uncharge a list of page
-+ * @page_list: list of pages to uncharge
-+ *
-+ * Uncharge a list of pages previously charged with
-+ * __mem_cgroup_charge().
-+ */
-+void __mem_cgroup_uncharge_list(struct list_head *page_list)
-+{
-+	struct uncharge_gather ug;
-+	struct folio *folio;
-+
-+	uncharge_gather_clear(&ug);
-+	list_for_each_entry(folio, page_list, lru)
-+		uncharge_folio(folio, &ug);
-+	if (ug.memcg)
-+		uncharge_batch(&ug);
-+}
-+
- void __mem_cgroup_uncharge_folios(struct folio_batch *folios)
- {
- 	struct uncharge_gather ug;
+ /*
+  * split_page takes a non-compound higher-order page, and splits it into
+  * n (1<<order) sub-pages: page[0..n]
 -- 
 2.43.0
 
