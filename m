@@ -1,611 +1,228 @@
-Return-Path: <linux-kernel+bounces-267326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9770E941038
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:07:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7ADE94103C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7191F24277
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:07:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73CFC1F23F06
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCB919E7C8;
-	Tue, 30 Jul 2024 11:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451A619B5AC;
+	Tue, 30 Jul 2024 11:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ew6HPhZC"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dglSTqf0"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06946198A10
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579B0198A10
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722337599; cv=none; b=YO+7tHgbJlWa+o+m2aAphSCBZLz1+jFzC89dZXRuPb0Nk4MGEPvqRbRTib0/GXZ0ddlMYeJ/wBwpYsuf9kVHGa3jieAlHyM3c3cx2Nb1y5O+NSb6XRYEeBXIKXZHCfEiOnJIK9AMrzUFiKAfG9CPk9xlJXi8q8sRLO2RN8KbNQ0=
+	t=1722337622; cv=none; b=gGD1Eey7WFRVtcZ/nIGk+VQ50azNI2X8zgETedIHkXUIzrgGzzNLoBa+oWsc2wp2eTk5d9R8v3xRRazFNh8IwIacCuf+AwHKoGaxL5sWHWK1lcDCPinIDvbwl0DETZnUHqbyApNrWVAqP9UWzUT1mBU08xrDMdO/TwS3g5EvIHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722337599; c=relaxed/simple;
-	bh=LQTGy/g3dP7tRYJ0dAPOqNr8jXxxS9RQbjp9C4iWZ4E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LRqyQenHCMP6pyXOOPLqWvB8376zdg2Mc1ibpxE4gIONCD+qxjTNJ2sQhvJQWOR2AwilGJVm0j7dKuh/Ue2fC8rFazmvbu6hbemE1byyUKrB2l1t3kbLVOC9eQBfCGBbKJqnZBo7kM8+yIekz9gYBpQyDjAk3gPgl2MV7GbODWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ew6HPhZC; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so9378a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 04:06:36 -0700 (PDT)
+	s=arc-20240116; t=1722337622; c=relaxed/simple;
+	bh=2Grj/S8/RG5JqrSh9njmsBVAx1651oPQ5Xj4ZSDRX+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U6iLqmC3LkfVBMdE3sWeYFRGpQsY0BWaQf+VAYrRO7REaWQbqHfSqbSZPqCqi2dW8KSSTSCoDruAfO/TvLsnRNmwaGUXdL1plP4uSFsd4ytgWespXFvgkcDSYi1+0P35g3W8iA0sM0kCmGBxZ/V1UYiIgGwmH0ONft0EfNPSJGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dglSTqf0; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52efc89dbedso5552424e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 04:07:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722337595; x=1722942395; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vmYnUldkyV8zW3ad+ul844E0nMNraotF/7viCO1++yg=;
-        b=Ew6HPhZCME0E7vPtv/qrlAE+rD/4oUAusl0IoJYC93KNAFII8NaA1B96aRaD9m8qzP
-         RlTnORtP/Bw2HRWFOBkrRIoWuNwcrDKNpZjRQXjKY6dFRqid3RYPxgsPkCgJ/m4oVXs9
-         /pnEdPmhXRzGS26atrXemENjtN4d4gODYxQM5VJp5qQGvtyMuw8M6lM1fpRG1qztta1p
-         16gSFz1dBOGd+6nufZ13wU5K76xWyhWPKVZwbUiy7Sh+hXGyP1iVK/vPsKL8SEBQPqe5
-         1siZcR+wnZt+L7pyfMiMROzh4+TdzSSGUn9AciXSFwB6QAmbv8H2kT2B1iMlWA+iczpO
-         WL6w==
+        d=linaro.org; s=google; t=1722337618; x=1722942418; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=D68RC+r466T2esKoHPuiJruZnsFlpmUERjB2bBB3TUQ=;
+        b=dglSTqf0m9K7rGaeSrqXFrmZq+DjIfeNcpVtsNK0FdERTOk+4KyBa9RmQxnvFM2S5f
+         26vLa/6y8BTdLBNQd6ThftUlHd19sCzQe0ru55BpNDYU+wsry7ICVJLlTYEzt5xyA939
+         bv6A+HaT9E2VB6kmTUn5VNDIlY7RSGcCExx31+IrIkGlW/QmzxwdHtb0se7yxtZ4UzeB
+         AcZX9yRxu0J71pYbRfZHRz8o1dnPuKGg4ZBEqGA306a3XxpY5ldFy70HpS4jXOCtsjcn
+         FzaZffVurVnuxJoGwtSv/yDp45i//XDXQLGbGuLcQsc+yCEnDMJUuluJMq5kdJ5lbQ7Z
+         Drvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722337595; x=1722942395;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vmYnUldkyV8zW3ad+ul844E0nMNraotF/7viCO1++yg=;
-        b=ehpbgHh2UCXjvGFPuy1ivs/rZp4P/JGYfc9988enXXpPHp07XkROFTopEP6FjWyy50
-         A8lPmNRHf7BFJsKl80NpEuiYKflUM458CTNZi1iN3LkZurMxGm2/+gcBRE8hEBPNGtEe
-         anGrLdWxfsi26aSC9dCm1jif6amYl0X/LLqNw4y00qIrRNVuwiReeFg0C9t1kPGuaExr
-         fvABjR71LwKjZ6SShilgfih7hia2elp+VMepsJYUmjLXxXszuETgbXjj9h892QKbeoZf
-         xV4SCA/B3Cx65PkBzH/DlrfpG+StWjOCaXppk6F13895UcUFKEBqn2jkvjD1r/GPEk7A
-         7c8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXuaK62/NaKQT/Cu/EG9dF9WxP4hltpok8OwG/y9cdVBviQi83BZHHho2hs1bZCPa5ZTTVQ2drhFoA5vQvMByF7B3VpaZ1QMzSqjHVO
-X-Gm-Message-State: AOJu0YwJlVMAK2XmuwDxILDWM0SU5tyDN99yaKmF9lFj5vFbumoQFXwE
-	LqabXmTkOt6zLZvGhP1jPbau7/UhMhZv9mioFy2kWQrlzK0MajOgHq9Ne6KtEqyQBaHyOJOuJB+
-	+TMaZtF/hiA==
-X-Google-Smtp-Source: AGHT+IEIz9RSy+2tIL5/brXO58UFXPrTTNPC2fHHOu0KPQOZbB6QNupj2RVvAQsD7Sk0+ZnQs1qBCg==
-X-Received: by 2002:a05:6402:35c3:b0:5a0:d4ce:59a6 with SMTP id 4fb4d7f45d1cf-5b45f835dbbmr103010a12.2.1722337594577;
-        Tue, 30 Jul 2024 04:06:34 -0700 (PDT)
-Received: from localhost ([2a00:79e0:9d:4:be6a:cd70:bdf:6a62])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36801828sm14371147f8f.65.2024.07.30.04.06.33
+        d=1e100.net; s=20230601; t=1722337618; x=1722942418;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D68RC+r466T2esKoHPuiJruZnsFlpmUERjB2bBB3TUQ=;
+        b=WI1WZmlSKz4dvE95DyJBeXw3SX70mfkeljCk1MvxYLkAELagbJmzgSll52qOBxtjdt
+         KVb1S5W7gbxxuOkjwZwbuxH7lDUS8veJFH80UF7SUgT4+K9xaKt+Rej1JBBZlv7ZtUEW
+         4abZ4mwki1bDY+HZLMIe2Hve0AxhVPEKAf1srYXtGihuWkIeYFUmqMWAFNkNmf++8L5q
+         gjZQmDSc1JJ0eLcuJhFIeZ3+bK0Sv2CB4KC2dnFwcrxSW20tthLCkjzIyrx36VQD6fiw
+         wOUI0t/JLtRfW2JQOaXKmUokIzdjy2IEOcPxxA0yjXcZMe6C2EfpkEmoesDojWB4gmbK
+         H2XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkJyGBqnMX31bX6WCBJSEZTXn+4U3zcKhUwI+PN6eZ7ulPK4abi3CliKY4ww4FeFaG+IiprDuec2EdUOao0tqtd5qB/pQiBTSCD0ke
+X-Gm-Message-State: AOJu0YwWQ9L28FEwSY2UBXiXzj4NscT6svKtTjgWuu3LKovBdIegtRfw
+	ZU/KNzPmNREFI57VYNJ38qZ8IuF28+YNFLRadiY3klaXoJZa6aqFCSFb+wUUq7U=
+X-Google-Smtp-Source: AGHT+IFJqKVo+cNClj8RH2mi9ni9USH94XPhAXUNmwMiIkt7i3Ll1O1OFwgMc88EfxjG6JP54wyNjg==
+X-Received: by 2002:ac2:518e:0:b0:52f:2ea:499f with SMTP id 2adb3069b0e04-5309b2803efmr6959473e87.24.1722337618416;
+        Tue, 30 Jul 2024 04:06:58 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c08cdfsm1862872e87.123.2024.07.30.04.06.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 04:06:34 -0700 (PDT)
-From: Jann Horn <jannh@google.com>
-Date: Tue, 30 Jul 2024 13:06:04 +0200
-Subject: [PATCH v5 2/2] slub: Introduce CONFIG_SLUB_RCU_DEBUG
+        Tue, 30 Jul 2024 04:06:57 -0700 (PDT)
+Date: Tue, 30 Jul 2024 14:06:56 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Stephan Gerhold <stephan.gerhold@linaro.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+Subject: Re: [PATCH 1/2] soc: qcom: pd_mapper: Add X1E80100
+Message-ID: <oj4qv5wdxymsgpuy4col2w5gabn6k5blybf2fmrckydjo6sftd@eppcqaqwjn5b>
+References: <20240708-x1e80100-pd-mapper-v1-0-854386af4cf5@linaro.org>
+ <20240708-x1e80100-pd-mapper-v1-1-854386af4cf5@linaro.org>
+ <Zqet8iInnDhnxkT9@hovoldconsulting.com>
+ <ZqiyLvP0gkBnuekL@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240730-kasan-tsbrcu-v5-2-48d3cbdfccc5@google.com>
-References: <20240730-kasan-tsbrcu-v5-0-48d3cbdfccc5@google.com>
-In-Reply-To: <20240730-kasan-tsbrcu-v5-0-48d3cbdfccc5@google.com>
-To: Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
- Alexander Potapenko <glider@google.com>, 
- Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>, 
- Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
- Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
- Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
- Roman Gushchin <roman.gushchin@linux.dev>, 
- Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Cc: Marco Elver <elver@google.com>, kasan-dev@googlegroups.com, 
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
- Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqiyLvP0gkBnuekL@hovoldconsulting.com>
 
-Currently, KASAN is unable to catch use-after-free in SLAB_TYPESAFE_BY_RCU
-slabs because use-after-free is allowed within the RCU grace period by
-design.
+On Tue, Jul 30, 2024 at 11:28:14AM GMT, Johan Hovold wrote:
+> On Mon, Jul 29, 2024 at 04:57:54PM +0200, Johan Hovold wrote:
+> > On Mon, Jul 08, 2024 at 06:22:09PM +0200, Stephan Gerhold wrote:
+> > > X1E80100 has the same protection domains as SM8550, except that MPSS is
+> > > missing. Add it to the in-kernel pd-mapper to avoid having to run the
+> > > daemon in userspace for charging and audio functionality.
+> > 
+> > I'm seeing a bunch of new errors when running with this patch applied on
+> > top of 6.11-rc1. I'm assuming it is due to changes in timing that are
+> > either exposing existing bugs or there is a general problem with the
+> > in-kernel pd-mapper implementation.
+> > 
+> > In any case, this does does not seem to be specific to x1e80100 even if
+> > I'm not seeing as many issues on sc8280xp (there is one new error there
+> > too however).
+> > 
+> > It doesn't happen on every boot, but with the in-kernel pd-mapper I
+> > often (every 3-4 boots) see the following errors on the x1e80100 CRD
+> > during boot:
+> > 
+> > 	[    9.799719] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to send altmode request: 0x10 (-125)
+> >         [    9.812446] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to request altmode notifications: -125
+> >         [    9.831796] ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: failed to send UCSI read request: -125
+> > 
+> > 	[    9.269230] qcom_battmgr.pmic_glink_power_supply pmic_glink.power-supply.0: failed to request power notifications
+> > 
+> > I've also seen the following, which may also be related:
+> > 
+> > 	[   14.565059] PDR: avs/audio get domain list txn wait failed: -110
+> >         [   14.571943] PDR: service lookup for avs/audio failed: -110
+> > 
+> > I haven't seen the -ECANCELED (-125) errors in 30 reboots with the patch
+> > reverted again.
+> 
+> Here's another bug, a NULL deref in the battery driver, that is
+> apparently exposed by the in-kernel pd-mapper. This is also on the
+> x1e80100 CRD with a couple of added printks to indicate when the
+> pd-mapper probes and when the pmic glink services are up:
 
-Add a SLUB debugging feature which RCU-delays every individual
-kmem_cache_free() before either actually freeing the object or handing it
-off to KASAN, and change KASAN to poison freed objects as normal when this
-option is enabled.
+The backtrace looks like an issue in the battmgr / pmic_glink core. Yes,
+maybe pd-mapper exposes that. But most likely nobody have seen those
+because userspace pd-mapper usually starts much later (thanks udevadm
+trigger for triggering all the drivers).
 
-For now I've configured Kconfig.debug to default-enable this feature in the
-KASAN GENERIC and SW_TAGS modes; I'm not enabling it by default in HW_TAGS
-mode because I'm not sure if it might have unwanted performance degradation
-effects there.
+The pd-mapper server is fine to be started early. Even the userspace
+one.  I think we went over these discussions during reviews of earlier
+series. The net result was that it is fine, provided that the response
+don't change later on (e.g.  some of the firmware might save the state
+and won't re-query it later on if servreg restarts).
 
-Note that this is mostly useful with KASAN in the quarantine-based GENERIC
-mode; SLAB_TYPESAFE_BY_RCU slabs are basically always also slabs with a
-->ctor, and KASAN's assign_tag() currently has to assign fixed tags for
-those, reducing the effectiveness of SW_TAGS/HW_TAGS mode.
-(A possible future extension of this work would be to also let SLUB call
-the ->ctor() on every allocation instead of only when the slab page is
-allocated; then tag-based modes would be able to assign new tags on every
-reallocation.)
+> [    8.933775] remoteproc remoteproc1: powering up 32300000.remoteproc
+> [    8.934623] qcom_pmic_glink pmic-glink: Failed to create device link (0x180) with fd5000.phy
+> [    8.945244] remoteproc remoteproc1: Booting fw image qcom/x1e80100/cdsp.mbn, size 3027368
+> [    8.965537] remoteproc remoteproc0: powering up 30000000.remoteproc
+> [    8.971075] qcom_pmic_glink pmic-glink: Failed to create device link (0x180) with fda000.phy
+> [    8.974299] remoteproc remoteproc0: Booting fw image qcom/x1e80100/adsp.mbn, size 21424472
+> [    8.999726] msm-mdss ae00000.display-subsystem: Adding to iommu group 4
+> [    9.007697] qcom_pmic_glink pmic-glink: Failed to create device link (0x180) with fdf000.phy
+> [    9.101196] remoteproc remoteproc1: remote processor 32300000.remoteproc is now up
+> [    9.103860] qcom_pd_mapper.qcom-pdm-mapper qcom_common.pd-mapper.1: qcom_pdm_probe
+> [    9.105989] qcom_pd_mapper.qcom-pdm-mapper qcom_common.pd-mapper.0: qcom_pdm_probe
+> 
+>  - pd-mapper probing
+> 
+> [    9.112983] qcom-snps-eusb2-hsphy fd3000.phy: Registered Qcom-eUSB2 phy
+> [    9.296879] remoteproc remoteproc0: remote processor 30000000.remoteproc is now up
+> 
+>  - adsp is up
+> 
+> [    9.300086] qcom_pmic_glink pmic-glink: pmic_glink_pdr_callback - state = 7fffffff
+> 
+>  - SERVREG_SERVICE_STATE_UNINIT
+> 
+> [    9.301878] qcom-snps-eusb2-hsphy fd9000.phy: Registered Qcom-eUSB2 phy
+> [    9.306985] qcom,fastrpc 30000000.remoteproc:glink-edge.fastrpcglink-apps-dsp.-1.-1: no reserved DMA memory for FAST
+> RPC
+> [    9.309924] qcom,fastrpc-cb 30000000.remoteproc:glink-edge:fastrpc:compute-cb@3: Adding to iommu group 5
+> [    9.311367] qcom,fastrpc-cb 30000000.remoteproc:glink-edge:fastrpc:compute-cb@4: Adding to iommu group 6
+> [    9.318330] PDR: Indication received from msm/adsp/charger_pd, state: 0x1fffffff, trans-id: 1
+> 
+>  - This looks suspicious
+> 
+> [    9.323924] qcom-snps-eusb2-hsphy fde000.phy: Registered Qcom-eUSB2 phy
+> [    9.325275] qcom,fastrpc-cb 30000000.remoteproc:glink-edge:fastrpc:compute-cb@5: Adding to iommu group 7
+> [    9.326008] qcom,fastrpc-cb 30000000.remoteproc:glink-edge:fastrpc:compute-cb@6: Adding to iommu group 8
+> [    9.326733] qcom,fastrpc-cb 30000000.remoteproc:glink-edge:fastrpc:compute-cb@7: Adding to iommu group 9
+> [    9.336582] qcom_pmic_glink pmic-glink: pmic_glink_pdr_callback - state = 1fffffff
+> 
+>  - SERVREG_SERVICE_STATE_UP
+> 
+> [    9.345544] dwc3 a000000.usb: Adding to iommu group 10
+> [    9.361410] qcom,apr 30000000.remoteproc:glink-edge.adsp_apps.-1.-1: Adding APR/GPR dev: gprsvc:service:2:1
+> [    9.362803] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to send altmode request: 0x10 (-125)
+> [    9.362882] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to request altmode notifications: -125
+> 
+>  - -ECANCELED errors I reported earlier
 
-Signed-off-by: Jann Horn <jannh@google.com>
----
- include/linux/kasan.h | 11 +++++---
- mm/Kconfig.debug      | 30 ++++++++++++++++++++
- mm/kasan/common.c     | 11 ++++----
- mm/kasan/kasan_test.c | 46 +++++++++++++++++++++++++++++++
- mm/slab_common.c      | 12 ++++++++
- mm/slub.c             | 76 +++++++++++++++++++++++++++++++++++++++++++++------
- 6 files changed, 169 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-index 34cb7a25aacb..0b952e11c7a0 100644
---- a/include/linux/kasan.h
-+++ b/include/linux/kasan.h
-@@ -194,28 +194,30 @@ static __always_inline bool kasan_slab_pre_free(struct kmem_cache *s,
- {
- 	if (kasan_enabled())
- 		return __kasan_slab_pre_free(s, object, _RET_IP_);
- 	return false;
- }
- 
--bool __kasan_slab_free(struct kmem_cache *s, void *object, bool init);
-+bool __kasan_slab_free(struct kmem_cache *s, void *object, bool init,
-+		       bool after_rcu_delay);
- /**
-  * kasan_slab_free - Possibly handle slab object freeing.
-  * @object: Object to free.
-  *
-  * This hook is called from the slab allocator to give KASAN a chance to take
-  * ownership of the object and handle its freeing.
-  * kasan_slab_pre_free() must have already been called on the same object.
-  *
-  * @Return true if KASAN took ownership of the object; false otherwise.
-  */
- static __always_inline bool kasan_slab_free(struct kmem_cache *s,
--						void *object, bool init)
-+						void *object, bool init,
-+						bool after_rcu_delay)
- {
- 	if (kasan_enabled())
--		return __kasan_slab_free(s, object, init);
-+		return __kasan_slab_free(s, object, init, after_rcu_delay);
- 	return false;
- }
- 
- void __kasan_kfree_large(void *ptr, unsigned long ip);
- static __always_inline void kasan_kfree_large(void *ptr)
- {
-@@ -405,13 +407,14 @@ static inline void *kasan_init_slab_obj(struct kmem_cache *cache,
- 
- static inline bool kasan_slab_pre_free(struct kmem_cache *s, void *object)
- {
- 	return false;
- }
- 
--static inline bool kasan_slab_free(struct kmem_cache *s, void *object, bool init)
-+static inline bool kasan_slab_free(struct kmem_cache *s, void *object,
-+				   bool init, bool after_rcu_delay)
- {
- 	return false;
- }
- static inline void kasan_kfree_large(void *ptr) {}
- static inline void *kasan_slab_alloc(struct kmem_cache *s, void *object,
- 				   gfp_t flags, bool init)
-diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
-index afc72fde0f03..8e440214aac8 100644
---- a/mm/Kconfig.debug
-+++ b/mm/Kconfig.debug
-@@ -67,12 +67,42 @@ config SLUB_DEBUG_ON
- 	  equivalent to specifying the "slab_debug" parameter on boot.
- 	  There is no support for more fine grained debug control like
- 	  possible with slab_debug=xxx. SLUB debugging may be switched
- 	  off in a kernel built with CONFIG_SLUB_DEBUG_ON by specifying
- 	  "slab_debug=-".
- 
-+config SLUB_RCU_DEBUG
-+	bool "Enable UAF detection in TYPESAFE_BY_RCU caches (for KASAN)"
-+	depends on SLUB_DEBUG
-+	depends on KASAN # not a real dependency; currently useless without KASAN
-+	default KASAN_GENERIC || KASAN_SW_TAGS
-+	help
-+	  Make SLAB_TYPESAFE_BY_RCU caches behave approximately as if the cache
-+	  was not marked as SLAB_TYPESAFE_BY_RCU and every caller used
-+	  kfree_rcu() instead.
-+
-+	  This is intended for use in combination with KASAN, to enable KASAN to
-+	  detect use-after-free accesses in such caches.
-+	  (KFENCE is able to do that independent of this flag.)
-+
-+	  This might degrade performance.
-+	  Unfortunately this also prevents a very specific bug pattern from
-+	  triggering (insufficient checks against an object being recycled
-+	  within the RCU grace period); so this option can be turned off even on
-+	  KASAN builds, in case you want to test for such a bug.
-+
-+	  If you're using this for testing bugs / fuzzing and care about
-+	  catching all the bugs WAY more than performance, you might want to
-+	  also turn on CONFIG_RCU_STRICT_GRACE_PERIOD.
-+
-+	  WARNING:
-+	  This is designed as a debugging feature, not a security feature.
-+	  Objects are sometimes recycled without RCU delay under memory pressure.
-+
-+	  If unsure, say N.
-+
- config PAGE_OWNER
- 	bool "Track page owner"
- 	depends on DEBUG_KERNEL && STACKTRACE_SUPPORT
- 	select DEBUG_FS
- 	select STACKTRACE
- 	select STACKDEPOT
-diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-index 8cede1ce00e1..0769b23a9d5f 100644
---- a/mm/kasan/common.c
-+++ b/mm/kasan/common.c
-@@ -227,43 +227,44 @@ static bool check_slab_allocation(struct kmem_cache *cache, void *object,
- 	}
- 
- 	return false;
- }
- 
- static inline void poison_slab_object(struct kmem_cache *cache, void *object,
--				      bool init)
-+				      bool init, bool after_rcu_delay)
- {
- 	void *tagged_object = object;
- 
- 	object = kasan_reset_tag(object);
- 
- 	/* RCU slabs could be legally used after free within the RCU period. */
--	if (unlikely(cache->flags & SLAB_TYPESAFE_BY_RCU))
-+	if (unlikely(cache->flags & SLAB_TYPESAFE_BY_RCU) && !after_rcu_delay)
- 		return;
- 
- 	kasan_poison(object, round_up(cache->object_size, KASAN_GRANULE_SIZE),
- 			KASAN_SLAB_FREE, init);
- 
- 	if (kasan_stack_collection_enabled())
- 		kasan_save_free_info(cache, tagged_object);
- }
- 
- bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
- 				unsigned long ip)
- {
- 	if (!kasan_arch_is_ready() || is_kfence_address(object))
- 		return false;
- 	return check_slab_allocation(cache, object, ip);
- }
- 
--bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init)
-+bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init,
-+		       bool after_rcu_delay)
- {
- 	if (!kasan_arch_is_ready() || is_kfence_address(object))
- 		return false;
- 
--	poison_slab_object(cache, object, init);
-+	poison_slab_object(cache, object, init, after_rcu_delay);
- 
- 	/*
- 	 * If the object is put into quarantine, do not let slab put the object
- 	 * onto the freelist for now. The object's metadata is kept until the
- 	 * object gets evicted from quarantine.
- 	 */
-@@ -517,13 +518,13 @@ bool __kasan_mempool_poison_object(void *ptr, unsigned long ip)
- 
- 	slab = folio_slab(folio);
- 
- 	if (check_slab_allocation(slab->slab_cache, ptr, ip))
- 		return false;
- 
--	poison_slab_object(slab->slab_cache, ptr, false);
-+	poison_slab_object(slab->slab_cache, ptr, false, false);
- 	return true;
- }
- 
- void __kasan_mempool_unpoison_object(void *ptr, size_t size, unsigned long ip)
- {
- 	struct slab *slab;
-diff --git a/mm/kasan/kasan_test.c b/mm/kasan/kasan_test.c
-index 7b32be2a3cf0..567d33b493e2 100644
---- a/mm/kasan/kasan_test.c
-+++ b/mm/kasan/kasan_test.c
-@@ -993,12 +993,57 @@ static void kmem_cache_invalid_free(struct kunit *test)
- 	 */
- 	kmem_cache_free(cache, p);
- 
- 	kmem_cache_destroy(cache);
- }
- 
-+static void kmem_cache_rcu_uaf(struct kunit *test)
-+{
-+	char *p;
-+	size_t size = 200;
-+	struct kmem_cache *cache;
-+
-+	KASAN_TEST_NEEDS_CONFIG_ON(test, CONFIG_SLUB_RCU_DEBUG);
-+
-+	cache = kmem_cache_create("test_cache", size, 0, SLAB_TYPESAFE_BY_RCU,
-+				  NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, cache);
-+
-+	p = kmem_cache_alloc(cache, GFP_KERNEL);
-+	if (!p) {
-+		kunit_err(test, "Allocation failed: %s\n", __func__);
-+		kmem_cache_destroy(cache);
-+		return;
-+	}
-+	*p = 1;
-+
-+	rcu_read_lock();
-+
-+	/* Free the object - this will internally schedule an RCU callback. */
-+	kmem_cache_free(cache, p);
-+
-+	/*
-+	 * We should still be allowed to access the object at this point because
-+	 * the cache is SLAB_TYPESAFE_BY_RCU and we've been in an RCU read-side
-+	 * critical section since before the kmem_cache_free().
-+	 */
-+	READ_ONCE(*p);
-+
-+	rcu_read_unlock();
-+
-+	/*
-+	 * Wait for the RCU callback to execute; after this, the object should
-+	 * have actually been freed from KASAN's perspective.
-+	 */
-+	rcu_barrier();
-+
-+	KUNIT_EXPECT_KASAN_FAIL(test, READ_ONCE(*p));
-+
-+	kmem_cache_destroy(cache);
-+}
-+
- static void empty_cache_ctor(void *object) { }
- 
- static void kmem_cache_double_destroy(struct kunit *test)
- {
- 	struct kmem_cache *cache;
- 
-@@ -1934,12 +1979,13 @@ static struct kunit_case kasan_kunit_test_cases[] = {
- 	KUNIT_CASE(workqueue_uaf),
- 	KUNIT_CASE(kfree_via_page),
- 	KUNIT_CASE(kfree_via_phys),
- 	KUNIT_CASE(kmem_cache_oob),
- 	KUNIT_CASE(kmem_cache_double_free),
- 	KUNIT_CASE(kmem_cache_invalid_free),
-+	KUNIT_CASE(kmem_cache_rcu_uaf),
- 	KUNIT_CASE(kmem_cache_double_destroy),
- 	KUNIT_CASE(kmem_cache_accounted),
- 	KUNIT_CASE(kmem_cache_bulk),
- 	KUNIT_CASE(mempool_kmalloc_oob_right),
- 	KUNIT_CASE(mempool_kmalloc_large_oob_right),
- 	KUNIT_CASE(mempool_slab_oob_right),
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 40b582a014b8..df09066d56fe 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -539,12 +539,24 @@ static void slab_caches_to_rcu_destroy_workfn(struct work_struct *work)
- 		kmem_cache_release(s);
- 	}
- }
- 
- static int shutdown_cache(struct kmem_cache *s)
- {
-+	if (IS_ENABLED(CONFIG_SLUB_RCU_DEBUG) &&
-+	    (s->flags & SLAB_TYPESAFE_BY_RCU)) {
-+		/*
-+		 * Under CONFIG_SLUB_RCU_DEBUG, when objects in a
-+		 * SLAB_TYPESAFE_BY_RCU slab are freed, SLUB will internally
-+		 * defer their freeing with call_rcu().
-+		 * Wait for such call_rcu() invocations here before actually
-+		 * destroying the cache.
-+		 */
-+		rcu_barrier();
-+	}
-+
- 	/* free asan quarantined objects */
- 	kasan_cache_shutdown(s);
- 
- 	if (__kmem_cache_shutdown(s) != 0)
- 		return -EBUSY;
- 
-diff --git a/mm/slub.c b/mm/slub.c
-index 0c98b6a2124f..f0d0e3c30837 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2197,45 +2197,78 @@ static inline bool memcg_slab_post_alloc_hook(struct kmem_cache *s,
- static inline void memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab,
- 					void **p, int objects)
- {
- }
- #endif /* CONFIG_MEMCG */
- 
-+#ifdef CONFIG_SLUB_RCU_DEBUG
-+static void slab_free_after_rcu_debug(struct rcu_head *rcu_head);
-+
-+struct rcu_delayed_free {
-+	struct rcu_head head;
-+	void *object;
-+};
-+#endif
-+
- /*
-  * Hooks for other subsystems that check memory allocations. In a typical
-  * production configuration these hooks all should produce no code at all.
-  *
-  * Returns true if freeing of the object can proceed, false if its reuse
-- * was delayed by KASAN quarantine, or it was returned to KFENCE.
-+ * was delayed by CONFIG_SLUB_RCU_DEBUG or KASAN quarantine, or it was returned
-+ * to KFENCE.
-  */
- static __always_inline
--bool slab_free_hook(struct kmem_cache *s, void *x, bool init)
-+bool slab_free_hook(struct kmem_cache *s, void *x, bool init,
-+		    bool after_rcu_delay)
- {
- 	kmemleak_free_recursive(x, s->flags);
- 	kmsan_slab_free(s, x);
- 
- 	debug_check_no_locks_freed(x, s->object_size);
- 
- 	if (!(s->flags & SLAB_DEBUG_OBJECTS))
- 		debug_check_no_obj_freed(x, s->object_size);
- 
- 	/* Use KCSAN to help debug racy use-after-free. */
--	if (!(s->flags & SLAB_TYPESAFE_BY_RCU))
-+	if (!(s->flags & SLAB_TYPESAFE_BY_RCU) || after_rcu_delay)
- 		__kcsan_check_access(x, s->object_size,
- 				     KCSAN_ACCESS_WRITE | KCSAN_ACCESS_ASSERT);
- 
- 	if (kfence_free(x))
- 		return false;
- 
- 	/*
- 	 * Give KASAN a chance to notice an invalid free operation before we
- 	 * modify the object.
- 	 */
- 	if (kasan_slab_pre_free(s, x))
- 		return false;
- 
-+#ifdef CONFIG_SLUB_RCU_DEBUG
-+	if ((s->flags & SLAB_TYPESAFE_BY_RCU) && !after_rcu_delay) {
-+		struct rcu_delayed_free *delayed_free;
-+
-+		delayed_free = kmalloc(sizeof(*delayed_free), GFP_NOWAIT);
-+		if (delayed_free) {
-+			/*
-+			 * Let KASAN track our call stack as a "related work
-+			 * creation", just like if the object had been freed
-+			 * normally via kfree_rcu().
-+			 * We have to do this manually because the rcu_head is
-+			 * not located inside the object.
-+			 */
-+			kasan_record_aux_stack_noalloc(x);
-+
-+			delayed_free->object = x;
-+			call_rcu(&delayed_free->head, slab_free_after_rcu_debug);
-+			return false;
-+		}
-+	}
-+#endif /* CONFIG_SLUB_RCU_DEBUG */
-+
- 	/*
- 	 * As memory initialization might be integrated into KASAN,
- 	 * kasan_slab_free and initialization memset's must be
- 	 * kept together to avoid discrepancies in behavior.
- 	 *
- 	 * The initialization memset's clear the object and the metadata,
-@@ -2253,42 +2286,42 @@ bool slab_free_hook(struct kmem_cache *s, void *x, bool init)
- 			memset(kasan_reset_tag(x), 0, s->object_size);
- 		rsize = (s->flags & SLAB_RED_ZONE) ? s->red_left_pad : 0;
- 		memset((char *)kasan_reset_tag(x) + inuse, 0,
- 		       s->size - inuse - rsize);
- 	}
- 	/* KASAN might put x into memory quarantine, delaying its reuse. */
--	return !kasan_slab_free(s, x, init);
-+	return !kasan_slab_free(s, x, init, after_rcu_delay);
- }
- 
- static __fastpath_inline
- bool slab_free_freelist_hook(struct kmem_cache *s, void **head, void **tail,
- 			     int *cnt)
- {
- 
- 	void *object;
- 	void *next = *head;
- 	void *old_tail = *tail;
- 	bool init;
- 
- 	if (is_kfence_address(next)) {
--		slab_free_hook(s, next, false);
-+		slab_free_hook(s, next, false, false);
- 		return false;
- 	}
- 
- 	/* Head and tail of the reconstructed freelist */
- 	*head = NULL;
- 	*tail = NULL;
- 
- 	init = slab_want_init_on_free(s);
- 
- 	do {
- 		object = next;
- 		next = get_freepointer(s, object);
- 
- 		/* If object's reuse doesn't have to be delayed */
--		if (likely(slab_free_hook(s, object, init))) {
-+		if (likely(slab_free_hook(s, object, init, false))) {
- 			/* Move object to the new freelist */
- 			set_freepointer(s, object, *head);
- 			*head = object;
- 			if (!*tail)
- 				*tail = object;
- 		} else {
-@@ -4474,40 +4507,67 @@ static __fastpath_inline
- void slab_free(struct kmem_cache *s, struct slab *slab, void *object,
- 	       unsigned long addr)
- {
- 	memcg_slab_free_hook(s, slab, &object, 1);
- 	alloc_tagging_slab_free_hook(s, slab, &object, 1);
- 
--	if (likely(slab_free_hook(s, object, slab_want_init_on_free(s))))
-+	if (likely(slab_free_hook(s, object, slab_want_init_on_free(s), false)))
- 		do_slab_free(s, slab, object, object, 1, addr);
- }
- 
- #ifdef CONFIG_MEMCG
- /* Do not inline the rare memcg charging failed path into the allocation path */
- static noinline
- void memcg_alloc_abort_single(struct kmem_cache *s, void *object)
- {
--	if (likely(slab_free_hook(s, object, slab_want_init_on_free(s))))
-+	if (likely(slab_free_hook(s, object, slab_want_init_on_free(s), false)))
- 		do_slab_free(s, virt_to_slab(object), object, object, 1, _RET_IP_);
- }
- #endif
- 
- static __fastpath_inline
- void slab_free_bulk(struct kmem_cache *s, struct slab *slab, void *head,
- 		    void *tail, void **p, int cnt, unsigned long addr)
- {
- 	memcg_slab_free_hook(s, slab, p, cnt);
- 	alloc_tagging_slab_free_hook(s, slab, p, cnt);
- 	/*
- 	 * With KASAN enabled slab_free_freelist_hook modifies the freelist
- 	 * to remove objects, whose reuse must be delayed.
- 	 */
- 	if (likely(slab_free_freelist_hook(s, &head, &tail, &cnt)))
- 		do_slab_free(s, slab, head, tail, cnt, addr);
- }
- 
-+#ifdef CONFIG_SLUB_RCU_DEBUG
-+static void slab_free_after_rcu_debug(struct rcu_head *rcu_head)
-+{
-+	struct rcu_delayed_free *delayed_free =
-+			container_of(rcu_head, struct rcu_delayed_free, head);
-+	void *object = delayed_free->object;
-+	struct slab *slab = virt_to_slab(object);
-+	struct kmem_cache *s;
-+
-+	if (WARN_ON(is_kfence_address(rcu_head)))
-+		return;
-+
-+	/* find the object and the cache again */
-+	if (WARN_ON(!slab))
-+		return;
-+	s = slab->slab_cache;
-+	if (WARN_ON(!(s->flags & SLAB_TYPESAFE_BY_RCU)))
-+		return;
-+
-+	/* resume freeing */
-+	if (!slab_free_hook(s, object, slab_want_init_on_free(s), true))
-+		return;
-+	do_slab_free(s, slab, object, object, 1, _THIS_IP_);
-+	kfree(delayed_free);
-+}
-+#endif /* CONFIG_SLUB_RCU_DEBUG */
-+
- #ifdef CONFIG_KASAN_GENERIC
- void ___cache_free(struct kmem_cache *cache, void *x, unsigned long addr)
- {
- 	do_slab_free(cache, virt_to_slab(x), x, x, 1, addr);
- }
- #endif
+The qcom_glink_request_intent() looks like the only place which can
+return ECANCELED here. Not sure why GLINK_CMD_RX_INTENT_REQ_ACK() would
+return failure here.
+
+It might be that the ADSP has been running the preliminary firmware,
+then it is shut down and then restarted with the proper firmware (and
+Linux fails to track that). But in this case the same error can happen
+if the pd-mapper has been running before starting the ADSP.
+
+> 
+> [    9.364298] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000010
+> ...
+> [    9.364339] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+> [    9.364395] CPU: 6 UID: 0 PID: 111 Comm: kworker/6:4 Not tainted 6.11.0-rc1 #70
+> [    9.364397] Hardware name: Qualcomm CRD, BIOS 6.0.231221.BOOT.MXF.2.4-00348.1-HAMOA-1 12/21/2023
+> [    9.364398] Workqueue: events qcom_battmgr_enable_worker [qcom_battmgr]
+> [    9.364401] pstate: 01400005 (nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+> [    9.364403] pc : pmic_glink_send+0xc/0x24 [pmic_glink]
+> [    9.364405] lr : qcom_battmgr_enable_worker+0x60/0xbc [qcom_battmgr]
+> ...
+> [    9.364427] Call trace:
+> [    9.364428]  pmic_glink_send+0xc/0x24 [pmic_glink]
+
+It looks like pmic_glink_send might need to hold pg->state_lock.
+
+> [    9.364429]  qcom_battmgr_enable_worker+0x60/0xbc [qcom_battmgr]
+> [    9.364430]  process_one_work+0x210/0x614
+> [    9.364435]  worker_thread+0x244/0x388
+> [    9.364436]  kthread+0x124/0x128
+> [    9.364437]  ret_from_fork+0x10/0x20
+> [    9.364439] Code: 17fffff7 d503233f a9bf7bfd 910003fd (f9400800)
+> [    9.364441] ---[ end trace 0000000000000000 ]---
+> 
+> [    9.365205] ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: failed to send UCSI read request: -125
+> 
+> Johan
 
 -- 
-2.46.0.rc1.232.g9752f9e123-goog
-
+With best wishes
+Dmitry
 
