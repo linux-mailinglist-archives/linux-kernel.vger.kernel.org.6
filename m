@@ -1,103 +1,117 @@
-Return-Path: <linux-kernel+bounces-268188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75541942163
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:14:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8784942165
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 107041F2427E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:14:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA7431C23FED
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC90118DF6E;
-	Tue, 30 Jul 2024 20:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D2018DF8B;
+	Tue, 30 Jul 2024 20:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="C2H3gKII"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d6MXcOz1"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DED1667F1;
-	Tue, 30 Jul 2024 20:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3422318DF7E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 20:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722370481; cv=none; b=OeMECoDDO2O5IyJgvqaG8RSFiDM3+lhNOeMfNI04WCEzUS8PHFxwymNU7jCjClxulxbZg8gY/hQJuQwgTGwh9Ocwvp43mNIt17aoYWxHtfEiotuwFImcNyBb2e5nq5RWLEoyNY8Fbr+Hp7v56/9r2sxxqs2lIL4xYY92FPHejHc=
+	t=1722370504; cv=none; b=QW9grq13ZhymuLmY6qhppxnnHKwo/RdERD4vduEhCNNy74rnR09ReuNY5dNT284l313dpZ3NRDfqw766Hm1I2CehVW6wUEuEQwZfzuiH7WkSHzFHdGubbOdNcuEBlqgiCFgzQA4tUoimoNq1copPbpq+baCk/ybl3FcQ4vqQDAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722370481; c=relaxed/simple;
-	bh=9FSQ4rRw0IzGDwl2vOi2QSzdr2u/VER9L8rUJuaSq5Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=alq39LWaWdWfbOs3DM0eubBtgYcbAIBphhnEuXcGfrcXRA5GFbhK5jnQkEGCwNBnNGVdCiAJk0ZyeD2mr3g56y/QJ0LKNrsv4EiLiaY+VPFRIiqu8xrDIy5V4jEz4PIOugVSYX241wAX8Qq9VFsqIO8Jt7emCzp9/e5i/6TbkSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=C2H3gKII; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=v4CFd2TasPmU5GDteTVVRLuZB39ec134+LR0uaf3ydU=; b=C2H3gKIIUm+tU5C1HxkyyXLETb
-	PlZtDj4JkLFTu4kywGSODjI4ivgbmrIhmZvC1pSmlDF3UAWR0fxQ21aOZ/zSTXvmirEW9gg3bcvOm
-	IWoixsdzzX5pVPIZWZxFnXl8cXx+o+WAJWXWa4kfOHVB2oR9hNjQrTn+3VmGOGgw8bzU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sYtEk-003brc-7n; Tue, 30 Jul 2024 22:14:22 +0200
-Date: Tue, 30 Jul 2024 22:14:22 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Swathi K S <swathi.ks@samsung.com>
-Cc: krzk@kernel.org, robh@kernel.org, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	conor+dt@kernel.org, richardcochran@gmail.com,
-	mcoquelin.stm32@gmail.com, alim.akhtar@samsung.com,
-	linux-fsd@tesla.com, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, alexandre.torgue@foss.st.com,
-	peppe.cavallaro@st.com, joabreu@synopsys.com, rcsekar@samsung.com,
-	ssiddha@tesla.com, jayati.sahu@samsung.com,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com,
-	gost.dev@samsung.com
-Subject: Re: [PATCH v4 2/4] net: stmmac: dwc-qos: Add FSD EQoS support
-Message-ID: <18b83c34-c0e4-466c-aaa1-fff38c507e9a@lunn.ch>
-References: <20240730091648.72322-1-swathi.ks@samsung.com>
- <CGME20240730092902epcas5p1520f9cac624dad29f74a92ed4c559b25@epcas5p1.samsung.com>
- <20240730091648.72322-3-swathi.ks@samsung.com>
+	s=arc-20240116; t=1722370504; c=relaxed/simple;
+	bh=Xb56Rjm9GNT0X5C07vjpbr8J+7v+LjPM+oZnEZ2ZEvY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=tQ0bho7Q3qCFhs8vTqAEeU44veu++koYBh+RLtzPQYZL/yWwyyEUOxsvzL614BSitQ7fiHZdApUUcgmZSAy+ObWYFdUJDibEK6O5DuKkI41aU6wELowEeDngv6qVZFsaegN9AutbtWiRfJgWUUE/AyRrAbGHwhhccSxy6GXfG70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d6MXcOz1; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1fc4e03a885so38638105ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 13:15:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722370502; x=1722975302; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C8yo2cbMxRjf1SYFGiWaoP3WEwWP/CuFq0W0aGvMAlc=;
+        b=d6MXcOz1tgDeHF4TniUA4DKimIFjESe8uaXgwGfUWPmDejTN65ZaUJs15ckwEIqmam
+         5ExxSlY1Xt0GJb+Yd2GSTYHf0oR/7dOIhNyLabAPi2DQVr9KPSlp1JnxpaYXGlzudCe+
+         EphQ8jwINw5aDFShNUbhB4FBaK36i+1UYPNxCv8nnw3nBqY+qNYvLKS6j3BzDpjhIDTs
+         wSyMtqdtwQaMWi91fghNT24kl7DbwbxXvZkplCELrcd9GkrWoDbE4uBh7KBE4h1D8BKx
+         /JkA2iMAIZTagcoiSUv+mjduquruEunjebx77hZGipXKKq4X6mf+xNCs9PMUw1D6OvVH
+         qXIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722370502; x=1722975302;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C8yo2cbMxRjf1SYFGiWaoP3WEwWP/CuFq0W0aGvMAlc=;
+        b=fLZhSKr6aIheqbGBIAC6zW4d/jHhTIRt8dyLeXGsYGmHOl1GT8PfjT3ZreuA2tndom
+         DHeAmdyzZ26UuCeqsm2ZCY2ruJBwVkUJBAgF2Ip0g+uWjsUgTsUy5UbWWYpsO4FQeGws
+         R+74bNK0QJbgdcvOZcs+RSqdZhC8g4ON/uHbGPGYdUFJgv6yH5i5kDdfiLzRzys9VVZT
+         RFNrEKbgeMz/Sq9Pj7/sSN4aOFMBqnYkF9YHWwO0oPtKOyKgaorrgz6iGzPafBXyx2h9
+         nOiTF3IPQ1P4qD5prIIL0Rzmt4KvlgTG90OtVUz8d68pmRQW8XOrMy47Ba9Q2aUMQlO3
+         Wrmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGQRQ/TY2OWqvqDt8tdrEySwdBEsJuMtAbB3S9Bu5//xTDjFjsfhiqXalHeGHGatt5C9YE+zCHqPRVQg/yODDrUjyJh+cwVOmFGfBs
+X-Gm-Message-State: AOJu0YwPavA9qZvthwgFddpmXPzCYf2Y/2zRjTaRzJuIlw0TGYIs9bXo
+	3NQ9ClEbzyTJDBtCX3khXR4rmhx9/k5MD3llHPnMXwjji2nRBPweB3ogGQLEwDDfd6gd6S0vOIG
+	J0Q==
+X-Google-Smtp-Source: AGHT+IH9iITYoLB/ZN9Oi4VKGOQu9lhx7HYkDR9WKhrc/jsriwfmp+7ZOuZAysZ686xisdvdjIEEvamlnSs=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:ea01:b0:1fb:54d9:ebb3 with SMTP id
+ d9443c01a7336-1ff04828eb3mr5974125ad.6.1722370502109; Tue, 30 Jul 2024
+ 13:15:02 -0700 (PDT)
+Date: Tue, 30 Jul 2024 13:15:00 -0700
+In-Reply-To: <63c41e25-2523-4397-96b4-557394281443@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730091648.72322-3-swathi.ks@samsung.com>
+Mime-Version: 1.0
+References: <20240726235234.228822-1-seanjc@google.com> <20240726235234.228822-35-seanjc@google.com>
+ <63c41e25-2523-4397-96b4-557394281443@redhat.com>
+Message-ID: <ZqlJxJyOdsR206Zc@google.com>
+Subject: Re: [PATCH v12 34/84] KVM: Add a helper to lookup a pfn without
+ grabbing a reference
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
+Content-Type: text/plain; charset="us-ascii"
 
-> +static int dwc_eqos_rxmux_setup(void *priv, bool external)
-> +{
-> +	int i = 0;
-> +	struct fsd_eqos_plat_data *plat = priv;
-> +	struct clk *rx1 = NULL;
-> +	struct clk *rx2 = NULL;
-> +	struct clk *rx3 = NULL;
+On Tue, Jul 30, 2024, Paolo Bonzini wrote:
+> On 7/27/24 01:51, Sean Christopherson wrote:
+> > Add a kvm_follow_pfn() wrapper, kvm_lookup_pfn(), to allow looking up a
+> > gfn=>pfn mapping without the caller getting a reference to any underlying
+> > page.  The API will be used in flows that want to know if a gfn points at
+> > a valid pfn, but don't actually need to do anything with the pfn.
+> 
+> Can you rename the function kvm_gfn_has_pfn(), or kvm_gfn_can_be_mapped(),
+> and make it return a bool?
 
-Reverse Christmas tree please.
+Heh, sure.  I initially planned on having it return a bool, but I couldn't figure
+out a name, mainly because the kernel's pfn_valid() makes things like
+kvm_gfn_has_valid_pfn() confusing/misleading :-(
 
-> @@ -264,6 +264,7 @@ struct plat_stmmacenet_data {
->  	void (*ptp_clk_freq_config)(struct stmmac_priv *priv);
->  	int (*init)(struct platform_device *pdev, void *priv);
->  	void (*exit)(struct platform_device *pdev, void *priv);
-> +	int (*rxmux_setup)(void *priv, bool external);
->  	struct mac_device_info *(*setup)(void *priv);
->  	int (*clks_config)(void *priv, bool enabled);
->  	int (*crosststamp)(ktime_t *device, struct system_counterval_t *system,
+> (As an aside, I wonder if reexecute_instruction() could just use
+> kvm_is_error_hva(kvm_vcpu_gfn_to_hva(vcpu, gpa_to_gfn(gpa)) instead of going
+> all the way to a pfn.  But it's ok to be more restrictive).
 
-It would be good if one of the stmmas Maintainers looked at
-this. There are already a lot of function pointers here, we should not
-be added another one if one of the exiting ones could be used.
-
-    Andrew
-
----
-pw-bot: cr
-
+Heh #2, I wondered the same thing.  I think it would work?  Verifying that there's
+a usable pfn also protects against retrying an access that hit -EHWPOISON, but I'm
+prety sure that would require a rare race, and I don't think it could result in
+the guest being put into an infinite loop.
 
