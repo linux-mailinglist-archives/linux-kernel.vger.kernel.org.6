@@ -1,145 +1,215 @@
-Return-Path: <linux-kernel+bounces-266730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C804940601
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:39:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 273F9940602
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20C6E283B4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:39:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A825D1F23918
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35AB15FA73;
-	Tue, 30 Jul 2024 03:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44E914831F;
+	Tue, 30 Jul 2024 03:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q55tKe8i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="NNFOrEik"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D2522315;
-	Tue, 30 Jul 2024 03:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F61C22315
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 03:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722310731; cv=none; b=cZbfQeQjtkdSE6138vhpb4UVuXRLXrFL9FlXM1doOScwLOPFaZIZzQXmn4lYy1uvehVClDUNa94jSErBhx9GLYF4jyhSgQ/jANyjIw5hx7/w3fGiKqSTyiXZNXVMCwahkNN+Omr6bNubFJz5Kqa/DDNmD10kHF6ilcQZKkjkBGE=
+	t=1722310779; cv=none; b=UMiw1keFc8o2TGxepDQVLHPRlw5gdTUcX+BX2UMPZZUWJ4GmQVGEs3mkt9FjOOsxmHkbwaSzgm7s36yA8EYc0U4V6L5S1FGo8eR1x5hhvj/TH7tCYgYgw2WElngArsAQgL6eo9hnMW2zYxVHpkVVMJIID/mMTPCvHxC8GIdPkqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722310731; c=relaxed/simple;
-	bh=xaqn4sGUdk+TsI/y3bAzUKAIt4xe/v6UKM+nkBEyJyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=CWgw4fDxD0FNxalKrz9axzVWtc2Yi07vTtusaY+juIIL2wC3DjMJ8wj3GeRDLA+OtwxD1ko1F2SQNwf292bh4MB85tWzCl6NjyrrAom2uimlk9FFbPXXfD5cvktXZHonKEKT3k/hzo6n7LY1DIedM2h4Atv6K0ZBJsJ0CDyp7OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q55tKe8i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67243C32782;
-	Tue, 30 Jul 2024 03:38:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722310730;
-	bh=xaqn4sGUdk+TsI/y3bAzUKAIt4xe/v6UKM+nkBEyJyA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=q55tKe8imzpS5XGCMmyetnOnKVMozwfJZDGgeOzacNS9C1KA6nFs0tS716x2Iks9+
-	 O4bfuHx47Pzg4sgqwqyFoNVflXmnF7pQboTR1GdBCrUHyg2ZAaEFjfYxej4iLESQXJ
-	 r2Fply/7OQN9OsBW3Cb1SfiACqJmR9CX0F0h2LKWJ7k5NABGguckEkTgCQCe8CgbLa
-	 YYP8onyy24oHBck9QrwgAijDx6HZ9+dyH7pDQ/TDyu9G1Sn5mz+itF3yPgtEDh5vr7
-	 +OD+wcaFmb+hxQRxm+fmBd/Ew99NyDqKtAuAIAnl2UMF8cJSAZh5Fe5yjdfsOAehgI
-	 4Dm2kph801meA==
-Date: Mon, 29 Jul 2024 20:38:49 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>,
-	Chandan Babu R <chandanbabu@kernel.org>
-Cc: xfs <linux-xfs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org
-Subject: Are jump labels broken on 6.11-rc1?
-Message-ID: <20240730033849.GH6352@frogsfrogsfrogs>
+	s=arc-20240116; t=1722310779; c=relaxed/simple;
+	bh=7aOycTC2Sm16z6l9xat6JtE1zwINkNKHiPO+gWwNdSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=faP9ZSLSL2u1llY8gdMARuvY6p6ueIj4Pb9rO76iDuLi9ITKf0mC95cN3EszDx6ant4k4hKjj2CFwdjo6y5fPGSjuI3QxFsOOppWSpxXk4U5wtwO/5AItJyc/hrdbvf+BWxK8U9KwC+mcCJvSmGiylCFzF7RedZnOhHD1/iCHhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=NNFOrEik; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b7a0ef0dfcso22592716d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:39:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1722310775; x=1722915575; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fmUkdyMiuUGo/jhP6zW85emotRS/41cjiPX/2udCqHg=;
+        b=NNFOrEikB4wcHnTW/nz4+Hw6Yi/OYb6uJo2W8N44YuZC2rs8/7GtPzWew2rTAkdgtl
+         2fvhu9DcdZFNcN/Iwog1bWwISXR9AhHi1qPu+/JIYtrVmCLB1aY/RfqIw1elBfquMTCA
+         AKsbA52oOY8lNNblJJJJ5zfVtYlI5dO9OFOwytmyPps7rQvb2AtERLQ9NxKf9EMxwB5A
+         coArraETtqvvB6mPICB+L0j2yE8WO+32FFELS8zDsg6Vfgy59V0AlKay/R+Eeluc5KVg
+         L72rrVY0YWpI/WQ2ykcJfzQ7ONzYzXKbTOjUVZ+ekZPimkjxm8rmngDgNXFo57e3rHF3
+         vaJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722310775; x=1722915575;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fmUkdyMiuUGo/jhP6zW85emotRS/41cjiPX/2udCqHg=;
+        b=FvmHDuDmJDvDQIu0QDCDwOLfaRpyV4EaoxHUtoqBPisQFnkLerFYxwa3dSq3ToePHV
+         YFa5N0/PhuIqOBN1PpL4rqkpGvZM/2dOWk7GpJfGYqWUex3YNITbshWSQoy/xlvWZptH
+         MGzDmQb9cCLxO2O9UI8+/9H4XTvUe6y0U1NgHYiwpGxMqAy9caX/3MYG/+eqpwch+ol5
+         vS6pvFCdYhfTom5ZpVS9V7jIf8vwIl1QqRNtLdlE9RLLHQS3joWQEQ0Y8zsawAeJEL22
+         8C5PyN6KROdpCyu+By9HhFNRxVDIhq9tDi5BOlSaKVuCJNIY9X/lcxvWkMte3Ta6GzQr
+         9Amg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/nmfDknW8bOF0bqWqkFlR759cqcZLeB5tgqrpI55sM4gIAxnfOLemLogkE9YTznhViNb+KycPw2MOVvOQuLWB44D88fiVp0neRJ4v
+X-Gm-Message-State: AOJu0YwBkBIKs7pj4JwQK9TnLAHpCIXQmCrzmL8UTh29mLOjWLZ2FV8E
+	CCIqS2oe2+pJpEHomiBQ2StV7cvHjTlz/NQctsc5bZpu2GZCFW774GTzZl5Nrpc=
+X-Google-Smtp-Source: AGHT+IFuzlTSw7d9MNyYAga3U32REepEaANOkKDahwecQ2OxWx4SqDhJ3yJ/ZuuKFSJZoYn+mZq2NA==
+X-Received: by 2002:a05:6214:2527:b0:6b5:6a1:f89a with SMTP id 6a1803df08f44-6bb55977e17mr105020936d6.2.1722310774757;
+        Mon, 29 Jul 2024 20:39:34 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3f8d81d7sm59017836d6.1.2024.07.29.20.39.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 20:39:34 -0700 (PDT)
+Date: Mon, 29 Jul 2024 23:39:29 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Nhat Pham <nphamcs@gmail.com>, akpm@linux-foundation.org,
+	shakeelb@google.com, linux-mm@kvack.org, kernel-team@meta.com,
+	linux-kernel@vger.kernel.org, flintglass@gmail.com
+Subject: Re: [PATCH 1/2] zswap: implement a second chance algorithm for
+ dynamic zswap shrinker
+Message-ID: <20240730033929.GB2866591@cmpxchg.org>
+References: <20240725232813.2260665-1-nphamcs@gmail.com>
+ <20240725232813.2260665-2-nphamcs@gmail.com>
+ <CAJD7tkY4Jt_OXDEsUN9jzQkrF4mEeLA0BxyNKppSK8k9xL-xKw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJD7tkY4Jt_OXDEsUN9jzQkrF4mEeLA0BxyNKppSK8k9xL-xKw@mail.gmail.com>
 
-Hi everyone,
+On Fri, Jul 26, 2024 at 02:58:14PM -0700, Yosry Ahmed wrote:
+> On Thu, Jul 25, 2024 at 4:28 PM Nhat Pham <nphamcs@gmail.com> wrote:
+> >
+> > Current zswap shrinker's heursitics to prevent overshrinking is brittle
+> > and inaccurate, specifically in the way we decay the protection size
+> > (i.e making pages in the zswap LRU eligible for reclaim).
+> 
+> Thanks for working on this and experimenting with different
+> heuristics. I was not a huge fan of these, so I am glad we are trying
+> to replace them with something more intuitive.
+> 
+> >
+> > We currently decay protection aggressively in zswap_lru_add() calls.
+> > This leads to the following unfortunate effect: when a new batch of
+> > pages enter zswap, the protection size rapidly decays to below 25% of
+> > the zswap LRU size, which is way too low.
+> >
+> > We have observed this effect in production, when experimenting with the
+> > zswap shrinker: the rate of shrinking shoots up massively right after a
+> > new batch of zswap stores. This is somewhat the opposite of what we want
+> > originally - when new pages enter zswap, we want to protect both these
+> > new pages AND the pages that are already protected in the zswap LRU.
+> >
+> > Replace existing heuristics with a second chance algorithm
+> >
+> > 1. When a new zswap entry is stored in the zswap pool, its reference bit
+> >    is set.
+> > 2. When the zswap shrinker encounters a zswap entry with the reference
+> >    bit set, give it a second chance - only flips the reference bit and
+> >    rotate it in the LRU.
+> > 3. If the shrinker encounters the entry again, this time with its
+> >    reference bit unset, then it can reclaim the entry.
+> 
+> At the first look, this is similar to the reclaim algorithm. A
+> fundamental difference here is that the reference bit is only set
+> once, when the entry is created. It is different from the conventional
+> second chance page reclaim/replacement algorithm.
+> 
+> What this really does, is that it slows down writeback by enforcing
+> that we need to iterate entries exactly twice before we write them
+> back. This sounds a little arbitrary and not very intuitive to me.
 
-I got the following splat on 6.11-rc1 when I tried to QA xfs online
-fsck.  Does this ring a bell for anyone?  I'll try bisecting in the
-morning to see if I can find the culprit.
+This isn't different than other second chance algorithms. Those
+usually set the reference bit again to buy the entry another round. In
+our case, another reference causes a zswapin, which removes the entry
+from the list - buying it another round. Entries will get reclaimed
+once the scan rate catches up with the longest reuse distance.
 
-[  110.854792] run fstests xfs/286 at 2024-07-29 17:39:44
-[  113.323388] XFS (sda4): EXPERIMENTAL exchange-range feature enabled. Use at your own risk!
-[  113.326183] XFS (sda4): EXPERIMENTAL parent pointer feature enabled. Use at your own risk!
-[  113.330249] XFS (sda4): Mounting V5 Filesystem 6ae91845-a649-4f4b-a05c-211c6570beb9
-[  113.366071] XFS (sda4): Ending clean mount
-[  113.378055] XFS (sda4): EXPERIMENTAL online scrub feature in use. Use at your own risk!
-[  117.051754] jump_label: Fatal kernel bug, unexpected op at xfs_dir_update_hook+0x14/0x60 [xfs] [ffffffffa05b8bd4] (eb 15 48 8b 44 != 66 90 0f 1f 00)) size:2 type:1
-[  117.063445] ------------[ cut here ]------------
-[  117.065515] kernel BUG at arch/x86/kernel/jump_label.c:73!
-[  117.068132] Oops: invalid opcode: 0000 [#1] PREEMPT SMP
-[  117.070593] CPU: 1 UID: 0 PID: 7088 Comm: xfs_scrub Not tainted 6.11.0-rc1-djwx #rc1 6a5cf31730abd495745b329a08aeb665e92a9b62
-[  117.074096] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20171121_152543-x86-ol7-builder-01.us.oracle.com-4.el7.1 04/01/2014
-[  117.077176] RIP: 0010:__jump_label_patch+0x10a/0x110
-[  117.078427] Code: eb a0 0f 0b 0f 0b 48 c7 c3 a4 8a 7b 82 41 56 45 89 e1 49 89 d8 4c 89 e9 4c 89 ea 4c 89 ee 48 c7 c7 48 8a e7 81 e8 d6 db 0d 00 <0f> 0b 0f 1f 40 00 0f 1f 44 00 00 e9 56 66 93 00 66 0f 1f 44 00 00
-[  117.082916] RSP: 0018:ffffc90006873bc8 EFLAGS: 00010246
-[  117.084129] RAX: 0000000000000097 RBX: ffffffff81c08901 RCX: 0000000000000000
-[  117.085841] RDX: 0000000000000000 RSI: ffffffff81eacf51 RDI: 00000000ffffffff
-[  117.087517] RBP: ffffc90006873bf8 R08: 0000000000000000 R09: 205d343537313530
-[  117.089177] R10: 61746146203a6c65 R11: 62616c5f706d756a R12: 0000000000000002
-[  117.090976] R13: ffffffffa05b8bd4 R14: 0000000000000001 R15: 0000001b3f9aa79f
-[  117.101135] FS:  00007ff50d200680(0000) GS:ffff88842d080000(0000) knlGS:0000000000000000
-[  117.111084] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  117.112730] CR2: 0000563357158958 CR3: 000000010440c000 CR4: 00000000003506f0
-[  117.114567] Call Trace:
-[  117.115153]  <TASK>
-[  117.115674]  ? die+0x32/0x80
-[  117.116462]  ? do_trap+0xd4/0x100
-[  117.117281]  ? do_error_trap+0x65/0x80
-[  117.118387]  ? __jump_label_patch+0x10a/0x110
-[  117.119483]  ? exc_invalid_op+0x4c/0x60
-[  117.120497]  ? __jump_label_patch+0x10a/0x110
-[  117.121563]  ? asm_exc_invalid_op+0x16/0x20
-[  117.122535]  ? xfs_dir_update_hook+0x14/0x60 [xfs 0af47fdcb6d4e3620a66423ae12a83496a207bf6]
-[  117.124669]  ? __jump_label_patch+0x10a/0x110
-[  117.125696]  ? __jump_label_patch+0x10a/0x110
-[  117.126713]  arch_jump_label_transform_queue+0x33/0x70
-[  117.128028]  __jump_label_update+0x6e/0x130
-[  117.129034]  __static_key_slow_dec_cpuslocked.part.0+0x2c/0x50
-[  117.130411]  static_key_slow_dec+0x3e/0x60
-[  117.131398]  xchk_teardown+0x1a2/0x1d0 [xfs 0af47fdcb6d4e3620a66423ae12a83496a207bf6]
-[  117.133649]  xfs_scrub_metadata+0x448/0x5c0 [xfs 0af47fdcb6d4e3620a66423ae12a83496a207bf6]
-[  117.135869]  xfs_ioc_scrubv_metadata+0x389/0x550 [xfs 0af47fdcb6d4e3620a66423ae12a83496a207bf6]
-[  117.138220]  xfs_file_ioctl+0x8f0/0xe80 [xfs 0af47fdcb6d4e3620a66423ae12a83496a207bf6]
-[  117.140398]  ? inode_needs_update_time+0x4b/0xc0
-[  117.141438]  ? preempt_count_add+0x4a/0xa0
-[  117.142381]  ? up_write+0x64/0x180
-[  117.143233]  ? shmem_file_write_iter+0x5a/0x90
-[  117.144239]  ? preempt_count_add+0x4a/0xa0
-[  117.145252]  ? vfs_write+0x3a2/0x4a0
-[  117.146107]  __x64_sys_ioctl+0x8a/0xb0
-[  117.146974]  do_syscall_64+0x47/0x100
-[  117.147835]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
-[  117.148796] RIP: 0033:0x7ff50f71ec5b
-[  117.149753] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
-[  117.154106] RSP: 002b:00007ff50d1ff4c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-[  117.155900] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007ff50f71ec5b
-[  117.157576] RDX: 00007ff50d1ff610 RSI: 00000000c0285840 RDI: 0000000000000004
-[  117.159316] RBP: 00007ff50d1ff610 R08: 0000000000000000 R09: 0000000000000064
-[  117.161058] R10: 00007ff50d1ff235 R11: 0000000000000246 R12: 00007ffc370a5ea0
-[  117.162767] R13: 000000000000001d R14: 00007ffc370a6048 R15: 00007ff4fc005470
-[  117.164490]  </TASK>
-[  117.165083] Modules linked in: xfs rpcsec_gss_krb5 auth_rpcgss nft_chain_nat xt_REDIRECT nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_tcpudp ip_set_hash_ip ip_set_hash_net xt_set nft_compat ip_set_hash_mac ip_set nf_tables libcrc32c nfnetlink bfq sha512_ssse3 pvpanic_mmio sha512_generic pvpanic sha256_ssse3 sch_fq_codel fuse configfs ip_tables x_tables overlay nfsv4 af_packet
-[  117.174091] Dumping ftrace buffer:
-[  117.174888]    (ftrace buffer empty)
-[  117.175904] ---[ end trace 0000000000000000 ]---
-[  117.177523] RIP: 0010:__jump_label_patch+0x10a/0x110
-[  117.178763] Code: eb a0 0f 0b 0f 0b 48 c7 c3 a4 8a 7b 82 41 56 45 89 e1 49 89 d8 4c 89 e9 4c 89 ea 4c 89 ee 48 c7 c7 48 8a e7 81 e8 d6 db 0d 00 <0f> 0b 0f 1f 40 00 0f 1f 44 00 00 e9 56 66 93 00 66 0f 1f 44 00 00
-[  117.183181] RSP: 0018:ffffc90006873bc8 EFLAGS: 00010246
-[  117.184298] RAX: 0000000000000097 RBX: ffffffff81c08901 RCX: 0000000000000000
-[  117.185948] RDX: 0000000000000000 RSI: ffffffff81eacf51 RDI: 00000000ffffffff
-[  117.187865] RBP: ffffc90006873bf8 R08: 0000000000000000 R09: 205d343537313530
-[  117.195190] R10: 61746146203a6c65 R11: 62616c5f706d756a R12: 0000000000000002
-[  117.201641] R13: ffffffffa05b8bd4 R14: 0000000000000001 R15: 0000001b3f9aa79f
-[  117.205179] FS:  00007ff50d200680(0000) GS:ffff88842d000000(0000) knlGS:0000000000000000
-[  117.216723] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  117.220417] CR2: 00007f7d9bb54010 CR3: 000000010440c000 CR4: 00000000003506f0
+The main goal, which was also the goal of the protection math, is to
+slow down writebacks in proportion to new entries showing up. This
+gives zswap a chance to solve memory pressure through compression. If
+memory pressure persists, writeback should pick up.
 
---Darrick
+If no new entries were to show up, then sure, this would be busy
+work. In practice, new entries do show up at a varying rate. This all
+happens in parallel to anon reclaim, after all. The key here is that
+new entries will be interleaved with rotated entries, and they consume
+scan work! This is what results in the proportional slowdown.
+
+> Taking a step back, what we really want is to writeback zswap entries
+> in order, and avoid writing back more entries than needed. I think the
+> key here is "when needed", which is defined by how much memory
+> pressure we have. The shrinker framework should already be taking this
+> into account.
+> 
+> Looking at do_shrink_slab(), in the case of zswap (seek = 2),
+> total_scan should boil down to:
+> 
+> total_scan = (zswap_shrinker_count() * 2 + nr_deferred) >> priority
+> 
+> , and this is bounded by zswap_shrinker_count() * 2.
+> 
+> Ignoring nr_deferred, we start by scanning 1/2048th of
+> zswap_shrinker_count() at DEF_PRIORITY, then we work our way to 2 *
+> zswap_shrinker_count() at zero priority (before OOMs). At
+> NODE_RECLAIM_PRIORITY, we start at 1/8th of zswap_shrinker_count().
+> 
+> Keep in mind that zswap_shrinker_count() does not return the number of
+> all zswap entries, it subtracts the protected part (or recent swapins)
+> and scales by the compression ratio. So this looks reasonable at first
+> sight, perhaps we want to tune the seek to slow down writeback if we
+> think it's too much, but that doesn't explain the scenario you are
+> describing.
+> 
+> Now let's factor in nr_deferred, which looks to me like it could be
+> the culprit here. I am assuming the intention is that if we counted
+> freeable slab objects before but didn't get to free them, we should do
+> it the next time around. This feels like it assumes that the objects
+> will remain there unless reclaimed by the shrinker. This does not
+> apply for zswap, because the objects can be swapped in.
+
+Hm.
+
+_count() returns (objects - protected) * compression_rate, then the
+shrinker does the >> priority dance. So to_scan is expected to be a
+small portion of unprotected objects.
+
+_scan() bails if to_scan > (objects - protected).
+
+How often does this actually abort in practice?
+
+> Also, in the beginning, before we encounter too many swapins, the
+> protection will be very low, so zswap_shrinker_count() will return a
+> relatively high value. Even if we don't scan and writeback this
+> amount, we will keep carrying this value forward in next reclaim
+> operations, even if the number of existing zswap entries have
+> decreased due to swapins.
+> 
+> Could this be the problem? The number of deferred objects to be
+> scanned just keeps going forward as a high value, essentially
+> rendering the heuristics in zswap_shrinker_count() useless?
+> 
+> If we just need to slow down writeback by making sure we scan entries
+> twice, could something similar be achieved just by tuning the seek
+> without needing any heuristics to begin with?
+
+Seek is a fixed coefficient for the scan rate.
+
+We want to slow writeback when recent zswapouts dominate the zswap
+pool (expanding or thrashing), and speed it up when recent entries
+make up a small share of the pool (stagnating).
+
+This is what the second chance accomplishes.
 
