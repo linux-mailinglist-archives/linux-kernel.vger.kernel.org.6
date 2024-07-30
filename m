@@ -1,135 +1,107 @@
-Return-Path: <linux-kernel+bounces-268172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2465B942122
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:54:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A82B942125
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56455286695
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:54:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20C5B1F24103
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF2118CBEF;
-	Tue, 30 Jul 2024 19:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F69718CBFC;
+	Tue, 30 Jul 2024 19:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ti+L7wJB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C+mNxKIs"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E339E18991F;
-	Tue, 30 Jul 2024 19:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811FD18991F;
+	Tue, 30 Jul 2024 19:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722369281; cv=none; b=ModNVWJV4Vp75FnKSO69FERVH51d4F9PrFkOiTKUZ9dSUw8tlgWOSqjUG8ndc6vrvrRFZinmLxU9sf7K7BzIXBarLroar/yL63M99FNJAQUl0zbeVUS+MCypJ721L5M+uz0oUtluZfWWABVoC/cqpqJAtkBkaYwRe7OUJZOudZU=
+	t=1722369352; cv=none; b=sVmZVsoPZfLylGSsizHtaDfGX5IAd5Ba9INbCRUE3BPRz9FJp4F3SRYGLu6E2X6LOeGyPJplWw+L4rE6ae0kBvyq/mT0AuGC2py/Smca8Gq0tHblU8vXsfg+c/yeEJq+KHqf4resDw8bRqB3UQn6H5Tzcb68WVwRfGxpRI2iDW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722369281; c=relaxed/simple;
-	bh=iH1j+2jCHrxbFctY5vujHJeElFrOfAw60mcVqv5JczE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MFGZAfo14tAPeRiGZ51+HsEhNz022Izv9TRljU0DKvXbaNB1kGciwysJtwBRM9Z6K2nBof8wEIJy6mxLwlg3pYZvPlSKywvqn8h65WDmWeJH+S6nSjlGSFHWFb9z9tiWcwfQFNv2SK2d/kkCcYRGFHTs/Eix+Cd3CbszaiBuDPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ti+L7wJB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UFbjMG030394;
-	Tue, 30 Jul 2024 19:54:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+ELkOigseQEngOATb2U9ltK82gUkK4Gww+K4FCsaDfY=; b=Ti+L7wJBF6ihbn46
-	8KYrsYVCKiEa6HzLM8BJVfaVxmGCYLa9QXzYZ9Y+AjXq4RjEE/H+/tJd/z26Y5zM
-	8yjCjPjYTnF215PS+WE8CDMNj48NbISNYIcSmtny13R4ta8WZukzVBkhDE+ZFlc9
-	Y3J9zMrmuADvGugcVvxzXhwjb0DOCmwnNzcfRNE5Rip25MtMbX1XPuM3Axxd73s3
-	lwvKiJ4QZf2Euah3JJvQvVYtiRFhbeOVRHfzU/+R8oc0VJwDe2jrFYj5f4tXzTZk
-	kZEX1lsxqCPYIhPjYRtE20rmAll1RKDrHhmanhOFnZuYRxZqQdb/QIwOBFgae01h
-	8Mjrwg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40pw4422r9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 19:54:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46UJsTHV002333
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 19:54:29 GMT
-Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 30 Jul
- 2024 12:54:28 -0700
-Message-ID: <872449ad-987a-4e15-bfb0-bf5572cf9302@quicinc.com>
-Date: Tue, 30 Jul 2024 12:54:28 -0700
+	s=arc-20240116; t=1722369352; c=relaxed/simple;
+	bh=klFMNX1xsq1LBJZrZ1M9SzxlV+qwwz8Pg1eqq5jDIF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s4czwZ9Rhd6eJEOoDPs90vVz2V70fl8Rz3pKGgMfx0uGDT++jD7mw/d4sO4YDbkFqBVpFeWUt/5ZAxSmQiOGdbBfU7XR065uIc+1x/lZ2jvLu+ZsblszA6Jw3M1AeD1zbErU+UKFPDnB4CvLonRuNeUwxkDWO4GeS7qOplfuUhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C+mNxKIs; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d2b921cd1so4350192b3a.1;
+        Tue, 30 Jul 2024 12:55:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722369351; x=1722974151; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KE4/z63NukpwZv55tRsNWCKauGei4gQs0/R3qZRePOc=;
+        b=C+mNxKIsFiewpcgdad6Ih+M6YrNgMrEfwTAT6Yo30P/tKbx5YfYU7pQ0MIyZh5fcGn
+         2ZFuNM+6q4rTJvyPUxcAgzH7166r27sG4Iv1c7pmuVoMgXgaQc/C9bjj536N2OM45DWF
+         jkuHtuhW9m0+p/+jmfG8ui2ZcB84TTY3jLeMU8Y1Zo71PN/4mi9SkFJn8lKzoP6d5xuj
+         aaByqSAIS89GoYjsFxnfCd8g0qpMRYQAu3hrN2eRZgNGwyhlHv0dzUNmiJKi3iGQNYu3
+         a+pazcD8Sjj6Jj2tBV0VVAHBohzsTni/mJ9JLbDi+JRWMP4GrgVqxcy1BFMo1IW6etOB
+         OqRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722369351; x=1722974151;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KE4/z63NukpwZv55tRsNWCKauGei4gQs0/R3qZRePOc=;
+        b=Rlg9yQyvF1apsjBujRmrd+hERPsYpaMGJq1UN3dighYR0Fbpl67mxPQrEeCzV/MaiE
+         aJzXdr1K9ycD0VmuYphJ7Chg+UsM/hZzvh+eTxPK7r6znS37W7mYNV6cBQfM4kDfA5jK
+         1Sc2LjHJ0sZPSEBR3kz1DnGGkEl1voVjgGA8Li06AK3pBVxkwHcE9WHWCXwsqPBqh5xj
+         rvZqSKDjmLEEQIz96qlldmwbfW4axJjx9ch1V6YCLhIdmCruEq1bDv6iWkJ4SJJdf71Y
+         kxEbz81S5WnSqGRxnYJ8nnVKC30+/zYvhgf5lMOxyhRO1QfADZstx9hL/4fUQmS2YlyU
+         +ICA==
+X-Forwarded-Encrypted: i=1; AJvYcCUfZeHwIjkYzil25SWWPOsPEk4jqT4sM7FsG51Kk3pCcTHIpVVciBatX1SgmbL8R2w3dQXvTYNrukpiTwLQ+RZbygBJmCZPH/8DzoTr/VGGnL5PeZpj+mY4RG+Nd6MFQtzxJbmD1QgMQcDPXysO4LNdKWtzppnGfF2Y6A==
+X-Gm-Message-State: AOJu0YylBQcr6PkvH9Uw0tUQu9gKBl4biEC5SS7oVHL4lK/KgU5dt1gB
+	qNltQQrghzjmyFuFZfrrL86n3yDuO9ELq8UhcDqGFK89i7+mwFGZbSitKA==
+X-Google-Smtp-Source: AGHT+IHjlwh7/K6G1J9Qt8L1k2MCqMqomhjRCsSdVSVbZ2l2EgjEjJ563Idkh7IIK1RNtBsV6tIm6A==
+X-Received: by 2002:aa7:88c5:0:b0:70e:8d38:2845 with SMTP id d2e1a72fcca58-70ece9fad5cmr17057812b3a.1.1722369350657;
+        Tue, 30 Jul 2024 12:55:50 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70efcbeec52sm1736014b3a.62.2024.07.30.12.55.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 12:55:50 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 30 Jul 2024 09:55:49 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Chen Ridong <chenridong@huawei.com>
+Cc: lizefan.x@bytedance.com, hannes@cmpxchg.org, longman@redhat.com,
+	adityakali@google.com, sergeh@kernel.org, bpf@vger.kernel.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] cgroup/cpuset: fix panic caused by partcmd_update
+Message-ID: <ZqlFRaDp3dPrCp2z@slm.duckdns.org>
+References: <20240730095126.2328303-1-chenridong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/dp: enable widebus on all relevant chipsets
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@gmail.com>,
-        "Sean
- Paul" <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "David Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <quic_jesszhan@quicinc.com>,
-        <swboyd@chromium.org>, <dianders@chromium.org>,
-        <neil.armstrong@linaro.org>, <andersson@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240711224850.1672662-1-quic_abhinavk@quicinc.com>
- <xmkcy7xjoaodxnyzbskjb7y5xne444qx4jdrtcgoqwh45aqjn2@4rnbkhr5uuby>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <xmkcy7xjoaodxnyzbskjb7y5xne444qx4jdrtcgoqwh45aqjn2@4rnbkhr5uuby>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jgj4PaGdt0hKLr8Iux_JKqeOYeqrUfRR
-X-Proofpoint-ORIG-GUID: jgj4PaGdt0hKLr8Iux_JKqeOYeqrUfRR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_15,2024-07-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- priorityscore=1501 adultscore=0 mlxlogscore=999 clxscore=1015
- impostorscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407300136
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730095126.2328303-1-chenridong@huawei.com>
 
-
-
-On 7/13/2024 3:55 PM, Dmitry Baryshkov wrote:
-> On Thu, Jul 11, 2024 at 03:48:50PM GMT, Abhinav Kumar wrote:
->> Hardware document indicates that widebus is recommended on DP on all
->> MDSS chipsets starting version 5.x.x and above.
->>
->> Follow the guideline and mark widebus support on all relevant
->> chipsets for DP.
->>
->> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
->> ---
->>   drivers/gpu/drm/msm/dp/dp_display.c | 10 +++++-----
->>   1 file changed, 5 insertions(+), 5 deletions(-)
->>
+On Tue, Jul 30, 2024 at 09:51:26AM +0000, Chen Ridong wrote:
+...
+> This issue is caused by the incorrect rebuilding of scheduling domains.
+> In this scenario, test/cpuset.cpus.partition should be an invalid root
+> and should not trigger the rebuilding of scheduling domains. When calling
+> update_parent_effective_cpumask with partcmd_update, if newmask is not
+> null, it should recheck newmask whether there are cpus is available
+> for parect/cs that has tasks.
 > 
-> Although it doesn't seem to fix the 4k screen corruption, I think it's
-> still a proper patch (and we should be following hardware
-> documentation).
-> 
-> With the Fixes tags in place:
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
+> Fixes: 0c7f293efc87 ("cgroup/cpuset: Add cpuset.cpus.exclusive.effective for v2")
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
 
-Thanks, I have added the Fixes tags and re-pushed.
+Applied to cgroup/for-6.11-fixes w/ stable tag added.
 
-I have added only sm8650's tag and another change which re-used sc7180's 
-dp_descs without retaining the widebus_supported bit.
+Thanks.
 
-The reason I didnt add others is because widebus support itself was 
-added only later to DP driver compared to the other ones.
-
-If I am missing any Fixes tag, pls let me know and I can fix it while 
-applying.
+-- 
+tejun
 
