@@ -1,477 +1,150 @@
-Return-Path: <linux-kernel+bounces-268148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 797899420D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:43:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DBF69420DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03EA31F252BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:43:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EA301C22469
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEA318DF69;
-	Tue, 30 Jul 2024 19:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC1C18DF86;
+	Tue, 30 Jul 2024 19:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJCLye2O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UBQamUAb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C01A18CC15;
-	Tue, 30 Jul 2024 19:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585731AA3C1;
+	Tue, 30 Jul 2024 19:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722368548; cv=none; b=DvebVsqiRp21YlRgtV+PeiYhiOP6oS/UC72OZV5Vbl8Ir2nr+j5/Y/uRAr2rGtc78QlLI0ZnnN28dxGPynA6pLYcassfOwoOboG3qtKFqgsE5+OeaDfk86Z4H6UWzQk7vxp/Ji0mZpDk1Z09qXjFUG4gNSK12PiiPQNK/8v+ctY=
+	t=1722368604; cv=none; b=XRo8pQbi3GhI6WW7vrXkeZn5nuWpBQilua+HJ4MbsEpR8wUUrl6HohML6kdTXzpCQbCC4FwvwTZQBFv6NwVZsmF65fu6BpeVNGxVQ6Prt1tzOojE1KAJuvLVSCCG8FWkf0ZuLKhDUlC6ZXQMhIkE4LJPltFOH/150dLJ5vfOJWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722368548; c=relaxed/simple;
-	bh=sap5viQfm2xcarxlpg58zLdQICTFtPhZ+rmg6FkyB+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RSbzprt3EqXqKlZLO0NPWo4qF4WVkdlIvkP0lg0hasUnby6yDBBzqoJsQnx9iCJbsPq02m48QNjjK5maz2vFc+ChmBaE0arl/p3Og0GEtF4Ax/1XnBgg2UOydica7iTaaxjieR1WZ1xSEKWNLV8ePv1zSv4aVQmyCkGWyzhbbcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJCLye2O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE566C32782;
-	Tue, 30 Jul 2024 19:42:27 +0000 (UTC)
+	s=arc-20240116; t=1722368604; c=relaxed/simple;
+	bh=jStHrVvNAMto3VMCwoFU19s4xerZyWvjOXpxzysnaOY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=i0ymdk4MVKGiasuu3dvkbsIcJyMLcsvxk6GCPy9Baz7MZmFJnoUXmHX0A7+X49OXMFcITBYg0wQApODJS3d/3jWGa2aQoUz8SMnGDgaPIJHF22sdYhiYqZh1B7DUVT3xGpSaeZ8ku6q0OW9azPqzTb6OuqsBbxCkQQsBxI7eBxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UBQamUAb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DB8BEC32782;
+	Tue, 30 Jul 2024 19:43:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722368548;
-	bh=sap5viQfm2xcarxlpg58zLdQICTFtPhZ+rmg6FkyB+U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WJCLye2O+z+P7R/chOkxzS6AHI1h3B38727xqr9LYnD8gVlzfXlE/8z0+F45sve/l
-	 SmqGguCZ4G8up6BkbKCL0rjwgbV3E0UiJ3KXN/asIwWRw9PSos8xb1X9AdwXaODMub
-	 m4dSAMM5iXk7/3GgQ65j8oxm/HgSbS52n8YMSbTmOK842QAQHxWdlUgUKKnDnllNog
-	 F05En32VsM3w8TvWgf0z/cvAyIMFPRKGrcqDQ8m679rXnWg8yuxxPpCrBBiyK5nDin
-	 Nt6MmPYsBDdBQQkTafZ2n15V7HqwLoL5TPN0BXbJDrWxW9bwdH68MH1T9nQULT7o0x
-	 qCInGY1htKrUQ==
-Date: Tue, 30 Jul 2024 16:42:24 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: "Steinar H. Gunderson" <sesse@google.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	irogers@google.com, Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH v9 1/3] perf report: Support LLVM for addr2line()
-Message-ID: <ZqlCIJ4khe2_xyp9@x1>
-References: <20240719150051.520317-1-sesse@google.com>
+	s=k20201202; t=1722368603;
+	bh=jStHrVvNAMto3VMCwoFU19s4xerZyWvjOXpxzysnaOY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=UBQamUAbjkVbje/654hbxXutOTWGhQ9pIzDhQpgNGZYbFVJxo+9AFn7loTeFZfHDN
+	 Qa8R/rcJVL2rhRdJF7IC56fFtRBHUv1l4frjfDfqvLgNW2NhmF27rwqbanIRHzVA6/
+	 zyVMofk03ANG4UEwbY54eeYUb/XBBOza7qyCKXkph/7P0S3TSDT5vEf/0riXSbXV0f
+	 m+/DxEdsSsF/4Na3IuCneEgf9W5cXPOhNyf66Lkyr5pz10Q9kdrr0zMIZ6q2sKnKZw
+	 KSkhLxmKU5ifrun4C4c79uDxqaqMf4ODWWjYTfpEDbmqNh+6WCUqMR9yYWZUHFtoGK
+	 jWAfa9oWfervQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4EC3C3DA70;
+	Tue, 30 Jul 2024 19:43:23 +0000 (UTC)
+From: Luigi Leonardi via B4 Relay <devnull+luigi.leonardi.outlook.com@kernel.org>
+Subject: [PATCH net-next v4 0/3] ioctl support for AF_VSOCK and
+ virtio-based transports
+Date: Tue, 30 Jul 2024 21:43:05 +0200
+Message-Id: <20240730-ioctl-v4-0-16d89286a8f0@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240719150051.520317-1-sesse@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAElCqWYC/x3MQQqAIBRF0a3IHyeYGUJbiQaVr/oQGiohRHtPG
+ h643IcSIiPRIB6KuDlx8BWmEbQes98h2VWTVtoo2ynJYc2nVG62DmgXq3uq7RWxcfk/I3lk6VE
+ yTe/7AVk6YbthAAAA
+To: Stefano Garzarella <sgarzare@redhat.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Stefan Hajnoczi <stefanha@redhat.com>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+ Luigi Leonardi <luigi.leonardi@outlook.com>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722368602; l=2445;
+ i=luigi.leonardi@outlook.com; s=20240730; h=from:subject:message-id;
+ bh=jStHrVvNAMto3VMCwoFU19s4xerZyWvjOXpxzysnaOY=;
+ b=eqym0Ppsx5dpCzMQoiM/1cKMD/+ebz8mGeFylVwkxwL8mGlRCHqBIg/k3R70eCQDn2G/A9Yti
+ R9Ku7AXyrOjDW5U1DxugU3XXRsqwD8EB/UJ6+9Z++WCr/FQh6ESD5LA
+X-Developer-Key: i=luigi.leonardi@outlook.com; a=ed25519;
+ pk=rejHGgcyJQFeByIJsRIz/gA6pOPZJ1I2fpxoFD/jris=
+X-Endpoint-Received: by B4 Relay for luigi.leonardi@outlook.com/20240730
+ with auth_id=192
+X-Original-From: Luigi Leonardi <luigi.leonardi@outlook.com>
+Reply-To: luigi.leonardi@outlook.com
 
-On Fri, Jul 19, 2024 at 05:00:49PM +0200, Steinar H. Gunderson wrote:
-> In addition to the existing support for libbfd and calling out to
-> an external addr2line command, add support for using libllvm directly.
-> This is both faster than libbfd, and can be enabled in distro builds
-> (the LLVM license has an explicit provision for GPLv2 compatibility).
-> Thus, it is set as the primary choice if available.
-> 
-> As an example, running perf report on a medium-size profile with
-> DWARF-based backtraces took 58 seconds with LLVM, 78 seconds with
-> libbfd, 153 seconds with external llvm-addr2line, and I got tired
-> and aborted the test after waiting for 55 minutes with external
-> bfd addr2line (which is the default for perf as compiled by distributions
-> today). Evidently, for this case, the bfd addr2line process needs
-> 18 seconds (on a 5.2 GHz Zen 3) to load the .debug ELF in question,
-> hits the 1-second timeout and gets killed during initialization,
-> getting restarted anew every time. Having an in-process addr2line
-> makes this much more robust.
-> 
-> As future extensions, libllvm can be used in many other places where
-> we currently use libbfd or other libraries:
-> 
->  - Symbol enumeration (in particular, for PE binaries).
->  - Demangling (including non-Itanium demangling, e.g. Microsoft
->    or Rust).
->  - Disassembling (perf annotate).
-> 
-> However, these are much less pressing; most people don't profile
-> PE binaries, and perf has non-bfd paths for ELF. The same with
-> demangling; the default _cxa_demangle path works fine for most
-> users, and while bfd objdump can be slow on large binaries,
-> it is possible to use --objdump=llvm-objdump to get the speed benefits.
-> (It appears LLVM-based demangling is very simple, should we want
-> that.)
-> 
-> Tested with LLVM 14, 15, 16, 18 and 19. For some reason, LLVM 12 was not
-> correctly detected using feature_check, and thus was not tested.
-> 
-> Signed-off-by: Steinar H. Gunderson <sesse@google.com>
-> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+This patch series introduce the support for ioctl(s) in AF_VSOCK.
+The only ioctl currently available is SIOCOUTQ, which returns
+the number of unsent or unacked packets. It is available for
+SOCK_STREAM, SOCK_SEQPACKET and SOCK_DGRAM.
 
-I'm testing this again, I thought Ian or Namhyung had made comments on
-previous versions of this patchset, no?
+As this information is transport-dependent, a new optional callback
+is introduced: unsent_bytes.
 
-- Arnaldo
+The first patch add ioctl support in AF_VSOCK, while the second
+patch introduce support for SOCK_STREAM and SOCK_SEQPACKET
+in all virtio-based transports: virtio_transport (G2H),
+vhost-vsock (H2G) and vsock-loopback.
 
-> ---
->  tools/build/Makefile.feature       |   1 +
->  tools/perf/Makefile.config         |  17 ++++
->  tools/perf/builtin-version.c       |   1 +
->  tools/perf/tests/make              |   2 +
->  tools/perf/util/Build              |   1 +
->  tools/perf/util/llvm-c-helpers.cpp | 134 +++++++++++++++++++++++++++++
->  tools/perf/util/llvm-c-helpers.h   |  49 +++++++++++
->  tools/perf/util/srcline.c          |  58 ++++++++++++-
->  8 files changed, 262 insertions(+), 1 deletion(-)
->  create mode 100644 tools/perf/util/llvm-c-helpers.cpp
->  create mode 100644 tools/perf/util/llvm-c-helpers.h
-> 
-> diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-> index 1e2ab148d5db..278b26216254 100644
-> --- a/tools/build/Makefile.feature
-> +++ b/tools/build/Makefile.feature
-> @@ -136,6 +136,7 @@ FEATURE_DISPLAY ?=              \
->           libunwind              \
->           libdw-dwarf-unwind     \
->           libcapstone            \
-> +         llvm                   \
->           zlib                   \
->           lzma                   \
->           get_cpuid              \
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index a4829b6532d8..7825832737f1 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -972,6 +972,23 @@ ifdef BUILD_NONDISTRO
->    endif
->  endif
->  
-> +ifndef NO_LIBLLVM
-> +  $(call feature_check,llvm)
-> +  ifeq ($(feature-llvm), 1)
-> +    CFLAGS += -DHAVE_LIBLLVM_SUPPORT
-> +    CFLAGS += $(shell $(LLVM_CONFIG) --cflags)
-> +    CXXFLAGS += -DHAVE_LIBLLVM_SUPPORT
-> +    CXXFLAGS += $(shell $(LLVM_CONFIG) --cxxflags)
-> +    LIBLLVM = $(shell $(LLVM_CONFIG) --libs all) $(shell $(LLVM_CONFIG) --system-libs)
-> +    EXTLIBS += -L$(shell $(LLVM_CONFIG) --libdir) $(LIBLLVM)
-> +    EXTLIBS += -lstdc++
-> +    $(call detected,CONFIG_LIBLLVM)
-> +  else
-> +    $(warning No libllvm found, slower source file resolution, please install llvm-devel/llvm-dev)
-> +    NO_LIBLLVM := 1
-> +  endif
-> +endif
-> +
->  ifndef NO_DEMANGLE
->    $(call feature_check,cxa-demangle)
->    ifeq ($(feature-cxa-demangle), 1)
-> diff --git a/tools/perf/builtin-version.c b/tools/perf/builtin-version.c
-> index 398aa53e9e2e..4b252196de12 100644
-> --- a/tools/perf/builtin-version.c
-> +++ b/tools/perf/builtin-version.c
-> @@ -65,6 +65,7 @@ static void library_status(void)
->  	STATUS(HAVE_LIBBFD_SUPPORT, libbfd);
->  	STATUS(HAVE_DEBUGINFOD_SUPPORT, debuginfod);
->  	STATUS(HAVE_LIBELF_SUPPORT, libelf);
-> +	STATUS(HAVE_LIBLLVM_SUPPORT, libllvm);
->  	STATUS(HAVE_LIBNUMA_SUPPORT, libnuma);
->  	STATUS(HAVE_LIBNUMA_SUPPORT, numa_num_possible_cpus);
->  	STATUS(HAVE_LIBPERL_SUPPORT, libperl);
-> diff --git a/tools/perf/tests/make b/tools/perf/tests/make
-> index a1f8adf85367..3df8b030eaa3 100644
-> --- a/tools/perf/tests/make
-> +++ b/tools/perf/tests/make
-> @@ -92,6 +92,7 @@ make_no_libbpf	    := NO_LIBBPF=1
->  make_libbpf_dynamic := LIBBPF_DYNAMIC=1
->  make_no_libbpf_DEBUG := NO_LIBBPF=1 DEBUG=1
->  make_no_libcrypto   := NO_LIBCRYPTO=1
-> +make_no_libllvm     := NO_LIBLLVM=1
->  make_with_babeltrace:= LIBBABELTRACE=1
->  make_with_coresight := CORESIGHT=1
->  make_no_sdt	    := NO_SDT=1
-> @@ -161,6 +162,7 @@ run += make_no_auxtrace
->  run += make_no_libbpf
->  run += make_no_libbpf_DEBUG
->  run += make_no_libcrypto
-> +run += make_no_libllvm
->  run += make_no_sdt
->  run += make_no_syscall_tbl
->  run += make_with_babeltrace
-> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-> index 0f18fe81ef0b..cfb64706ffe7 100644
-> --- a/tools/perf/util/Build
-> +++ b/tools/perf/util/Build
-> @@ -226,6 +226,7 @@ perf-util-$(CONFIG_CXX_DEMANGLE) += demangle-cxx.o
->  perf-util-y += demangle-ocaml.o
->  perf-util-y += demangle-java.o
->  perf-util-y += demangle-rust.o
-> +perf-util-$(CONFIG_LIBLLVM) += llvm-c-helpers.o
->  
->  ifdef CONFIG_JITDUMP
->  perf-util-$(CONFIG_LIBELF) += jitdump.o
-> diff --git a/tools/perf/util/llvm-c-helpers.cpp b/tools/perf/util/llvm-c-helpers.cpp
-> new file mode 100644
-> index 000000000000..3cc967ec6f28
-> --- /dev/null
-> +++ b/tools/perf/util/llvm-c-helpers.cpp
-> @@ -0,0 +1,134 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/*
-> + * Must come before the linux/compiler.h include, which defines several
-> + * macros (e.g. noinline) that conflict with compiler builtins used
-> + * by LLVM.
-> + */
-> +#pragma GCC diagnostic push
-> +#pragma GCC diagnostic ignored "-Wunused-parameter"  /* Needed for LLVM <= 15 */
-> +#include <llvm/DebugInfo/Symbolize/Symbolize.h>
-> +#pragma GCC diagnostic pop
-> +
-> +#include <stdio.h>
-> +#include <sys/types.h>
-> +#include <linux/compiler.h>
-> +extern "C" {
-> +#include <linux/zalloc.h>
-> +}
-> +#include "symbol_conf.h"
-> +#include "llvm-c-helpers.h"
-> +
-> +using namespace llvm;
-> +using llvm::symbolize::LLVMSymbolizer;
-> +
-> +/*
-> + * Allocate a static LLVMSymbolizer, which will live to the end of the program.
-> + * Unlike the bfd paths, LLVMSymbolizer has its own cache, so we do not need
-> + * to store anything in the dso struct.
-> + */
-> +static LLVMSymbolizer *get_symbolizer()
-> +{
-> +	static LLVMSymbolizer *instance = nullptr;
-> +	if (instance == nullptr) {
-> +		LLVMSymbolizer::Options opts;
-> +		/*
-> +		 * LLVM sometimes demangles slightly different from the rest
-> +		 * of the code, and this mismatch can cause new_inline_sym()
-> +		 * to get confused and mark non-inline symbol as inlined
-> +		 * (since the name does not properly match up with base_sym).
-> +		 * Thus, disable the demangling and let the rest of the code
-> +		 * handle it.
-> +		 */
-> +		opts.Demangle = false;
-> +		instance = new LLVMSymbolizer(opts);
-> +	}
-> +	return instance;
-> +}
-> +
-> +/* Returns 0 on error, 1 on success. */
-> +static int extract_file_and_line(const DILineInfo &line_info, char **file,
-> +				 unsigned int *line)
-> +{
-> +	if (file) {
-> +		if (line_info.FileName == "<invalid>") {
-> +			/* Match the convention of libbfd. */
-> +			*file = nullptr;
-> +		} else {
-> +			/* The caller expects to get something it can free(). */
-> +			*file = strdup(line_info.FileName.c_str());
-> +			if (*file == nullptr)
-> +				return 0;
-> +		}
-> +	}
-> +	if (line)
-> +		*line = line_info.Line;
-> +	return 1;
-> +}
-> +
-> +extern "C"
-> +int llvm_addr2line(const char *dso_name, u64 addr,
-> +		   char **file, unsigned int *line,
-> +		   bool unwind_inlines,
-> +		   llvm_a2l_frame **inline_frames)
-> +{
-> +	LLVMSymbolizer *symbolizer = get_symbolizer();
-> +	object::SectionedAddress sectioned_addr = {
-> +		addr,
-> +		object::SectionedAddress::UndefSection
-> +	};
-> +
-> +	if (unwind_inlines) {
-> +		Expected<DIInliningInfo> res_or_err =
-> +			symbolizer->symbolizeInlinedCode(dso_name,
-> +							 sectioned_addr);
-> +		if (!res_or_err)
-> +			return 0;
-> +		unsigned num_frames = res_or_err->getNumberOfFrames();
-> +		if (num_frames == 0)
-> +			return 0;
-> +
-> +		if (extract_file_and_line(res_or_err->getFrame(0),
-> +					  file, line) == 0)
-> +			return 0;
-> +
-> +		*inline_frames = (llvm_a2l_frame *)calloc(
-> +			num_frames, sizeof(**inline_frames));
-> +		if (*inline_frames == nullptr)
-> +			return 0;
-> +
-> +		for (unsigned i = 0; i < num_frames; ++i) {
-> +			const DILineInfo &src = res_or_err->getFrame(i);
-> +
-> +			llvm_a2l_frame &dst = (*inline_frames)[i];
-> +			if (src.FileName == "<invalid>")
-> +				/* Match the convention of libbfd. */
-> +				dst.filename = nullptr;
-> +			else
-> +				dst.filename = strdup(src.FileName.c_str());
-> +			dst.funcname = strdup(src.FunctionName.c_str());
-> +			dst.line = src.Line;
-> +
-> +			if (dst.filename == nullptr ||
-> +			    dst.funcname == nullptr) {
-> +				for (unsigned j = 0; j <= i; ++j) {
-> +					zfree(&(*inline_frames)[j].filename);
-> +					zfree(&(*inline_frames)[j].funcname);
-> +				}
-> +				zfree(inline_frames);
-> +				return 0;
-> +			}
-> +		}
-> +
-> +		return num_frames;
-> +	} else {
-> +		if (inline_frames)
-> +			*inline_frames = nullptr;
-> +
-> +		Expected<DILineInfo> res_or_err =
-> +			symbolizer->symbolizeCode(dso_name, sectioned_addr);
-> +		if (!res_or_err)
-> +			return 0;
-> +		return extract_file_and_line(*res_or_err, file, line);
-> +	}
-> +}
-> diff --git a/tools/perf/util/llvm-c-helpers.h b/tools/perf/util/llvm-c-helpers.h
-> new file mode 100644
-> index 000000000000..19332dd98e14
-> --- /dev/null
-> +++ b/tools/perf/util/llvm-c-helpers.h
-> @@ -0,0 +1,49 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __PERF_LLVM_C_HELPERS
-> +#define __PERF_LLVM_C_HELPERS 1
-> +
-> +/*
-> + * Helpers to call into LLVM C++ code from C, for the parts that do not have
-> + * C APIs.
-> + */
-> +
-> +#include <linux/compiler.h>
-> +
-> +#ifdef __cplusplus
-> +extern "C" {
-> +#endif
-> +
-> +struct llvm_a2l_frame {
-> +  char* filename;
-> +  char* funcname;
-> +  unsigned int line;
-> +};
-> +
-> +/*
-> + * Implement addr2line() using libLLVM. LLVM is a C++ API, and
-> + * many of the linux/ headers cannot be included in a C++ compile unit,
-> + * so we need to make a little bridge code here. llvm_addr2line() will
-> + * convert the inline frame information from LLVM's internal structures
-> + * and put them into a flat array given in inline_frames. The caller
-> + * is then responsible for taking that array and convert it into perf's
-> + * regular inline frame structures (which depend on e.g. struct list_head).
-> + *
-> + * If the address could not be resolved, or an error occurred (e.g. OOM),
-> + * returns 0. Otherwise, returns the number of inline frames (which means 1
-> + * if the address was not part of an inlined function). If unwind_inlines
-> + * is set and the return code is nonzero, inline_frames will be set to
-> + * a newly allocated array with that length. The caller is then responsible
-> + * for freeing both the strings and the array itself.
-> + */
-> +int llvm_addr2line(const char* dso_name,
-> +                   u64 addr,
-> +                   char** file,
-> +                   unsigned int* line,
-> +                   bool unwind_inlines,
-> +                   struct llvm_a2l_frame** inline_frames);
-> +
-> +#ifdef __cplusplus
-> +}
-> +#endif
-> +
-> +#endif /* __PERF_LLVM_C_HELPERS */
-> diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
-> index 760742fd4a7d..2e3845ac07ee 100644
-> --- a/tools/perf/util/srcline.c
-> +++ b/tools/perf/util/srcline.c
-> @@ -16,6 +16,9 @@
->  #include "util/debug.h"
->  #include "util/callchain.h"
->  #include "util/symbol_conf.h"
-> +#ifdef HAVE_LIBLLVM_SUPPORT
-> +#include "util/llvm-c-helpers.h"
-> +#endif
->  #include "srcline.h"
->  #include "string2.h"
->  #include "symbol.h"
-> @@ -130,7 +133,60 @@ static struct symbol *new_inline_sym(struct dso *dso,
->  
->  #define MAX_INLINE_NEST 1024
->  
-> -#ifdef HAVE_LIBBFD_SUPPORT
-> +#ifdef HAVE_LIBLLVM_SUPPORT
-> +
-> +static void free_llvm_inline_frames(struct llvm_a2l_frame *inline_frames,
-> +				    int num_frames)
-> +{
-> +	if (inline_frames != NULL) {
-> +		for (int i = 0; i < num_frames; ++i) {
-> +			zfree(&inline_frames[i].filename);
-> +			zfree(&inline_frames[i].funcname);
-> +		}
-> +		zfree(&inline_frames);
-> +	}
-> +}
-> +
-> +static int addr2line(const char *dso_name, u64 addr,
-> +		     char **file, unsigned int *line, struct dso *dso,
-> +		     bool unwind_inlines, struct inline_node *node,
-> +		     struct symbol *sym)
-> +{
-> +	struct llvm_a2l_frame *inline_frames = NULL;
-> +	int num_frames = llvm_addr2line(dso_name, addr, file, line,
-> +					node && unwind_inlines, &inline_frames);
-> +
-> +	if (num_frames == 0 || !inline_frames) {
-> +		/* Error, or we didn't want inlines. */
-> +		return num_frames;
-> +	}
-> +
-> +	for (int i = 0; i < num_frames; ++i) {
-> +		struct symbol *inline_sym =
-> +			new_inline_sym(dso, sym, inline_frames[i].funcname);
-> +		char *srcline = NULL;
-> +
-> +		if (inline_frames[i].filename) {
-> +			srcline =
-> +				srcline_from_fileline(inline_frames[i].filename,
-> +						      inline_frames[i].line);
-> +		}
-> +		if (inline_list__append(inline_sym, srcline, node) != 0) {
-> +			free_llvm_inline_frames(inline_frames, num_frames);
-> +			return 0;
-> +		}
-> +	}
-> +	free_llvm_inline_frames(inline_frames, num_frames);
-> +
-> +	return num_frames;
-> +}
-> +
-> +void dso__free_a2l(struct dso *)
-> +{
-> +	/* Nothing to free. */
-> +}
-> +
-> +#elif defined(HAVE_LIBBFD_SUPPORT)
->  
->  /*
->   * Implement addr2line using libbfd.
-> -- 
-> 2.45.2
+The latest patch introduce two tests for this new feature.
+More details can be found in each patch changelog.
+
+v3->v4
+- Fixed warnings produced by kernel test robots
+- Functions are now *_unsent_bytes
+- Minor style changes pointed out by Stefano
+- Using opts->peer_port in tests
+- Rebased to latest net-next
+- Link to v3: https://lore.kernel.org/r/20240626-ioctl_next-v3-0-63be5bf19a40@outlook.com
+
+v2->v3
+Applied all reviewers' suggetions:
+    - Minor style and code changes
+    - atomic_int replaced with an existing spin_lock.
+Introduced lock_sock on ioctl call.
+Rebased to latest net-next
+
+v1->v2
+Applied all Stefano's suggestions:
+    - vsock_do_ioctl has been rewritten
+    - ioctl(SIOCOUTQ) test is skipped when it is not supported
+    - Minor variable/function name changes
+    - rebased to latest net-next
+
+Signed-off-by: Luigi Leonardi <luigi.leonardi@outlook.com>
+---
+Luigi Leonardi (3):
+      vsock: add support for SIOCOUTQ ioctl
+      vsock/virtio: add SIOCOUTQ support for all virtio based transports
+      test/vsock: add ioctl unsent bytes test
+
+ drivers/vhost/vsock.c                   |  4 +-
+ include/linux/virtio_vsock.h            |  6 +++
+ include/net/af_vsock.h                  |  3 ++
+ net/vmw_vsock/af_vsock.c                | 58 ++++++++++++++++++++--
+ net/vmw_vsock/virtio_transport.c        |  4 +-
+ net/vmw_vsock/virtio_transport_common.c | 35 ++++++++++++++
+ net/vmw_vsock/vsock_loopback.c          |  6 +++
+ tools/testing/vsock/util.c              |  6 +--
+ tools/testing/vsock/util.h              |  3 ++
+ tools/testing/vsock/vsock_test.c        | 85 +++++++++++++++++++++++++++++++++
+ 10 files changed, 202 insertions(+), 8 deletions(-)
+---
+base-commit: 1722389b0d863056d78287a120a1d6cadb8d4f7b
+change-id: 20240730-ioctl-0da7dee1b725
+
+Best regards,
+-- 
+Luigi Leonardi <luigi.leonardi@outlook.com>
+
+
 
