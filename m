@@ -1,83 +1,76 @@
-Return-Path: <linux-kernel+bounces-267081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B958940C25
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:47:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29014940C50
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB5E21F2878D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:47:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCD8B288951
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B49187337;
-	Tue, 30 Jul 2024 08:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDC91946BE;
+	Tue, 30 Jul 2024 08:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KUEn6ha8"
-Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="zDnKHrY3"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9340193099;
-	Tue, 30 Jul 2024 08:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7383419307F;
+	Tue, 30 Jul 2024 08:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722329202; cv=none; b=cfHACwksYN8vGEqA6WKH2DmC1k5gYG92k9O0bWyu8gayYBr34gTi80Pq8Bza6GMelAXoOoJXFYKRvbg9bW1qnfV6vQTUPmIcdNuKah/NLLbW+iHpL4kLw7GbuUIty2duFECtCcFchoVtUJXrq8IOu1tiJ2vy1QX62T8Y2jflM9o=
+	t=1722329421; cv=none; b=gEoMM947Abgv2vFKa4RLzU5bqaIE7pDB35CMX59Lcs1ISeQg564Mf52fLVqvkzuh3PyS7bUtQUde6tCEU1pl2ZeaVDgeEC+3hGjLj/Kt9eiwIQhVDC6dBpkd+tRg2ZkN0ekJOZWusDVVZ/UCUATPXxUfemTEWJgnwoWBZ7Ou12Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722329202; c=relaxed/simple;
-	bh=b4LKj5n8JEGCAFCr0XTCE2Vt4PRZBGKVYg2iWYChsqc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f1tolCUxeBebT99Hc4Wux799uOTxvX1D2eHTwNWfpYs92mhuZW90FkSOynQ1QbVdLFOzQyK5KVO8FJlH4vnfQlKC6dNYSil98uqR/W8qbQRtOLL7knZTdKGTRpL/eS8iAw6RSDeTjHwlFiPlNnjYbj7NSJ8Qq1k1a2vAkFt7wO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KUEn6ha8; arc=none smtp.client-ip=209.85.210.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-70d1c8d7d95so2606217b3a.2;
-        Tue, 30 Jul 2024 01:46:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722329200; x=1722934000; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+JfbO8SiiD7QjLOWye4GDcjfYdtq1pCx+OMdv4xqVP0=;
-        b=KUEn6ha8B/sz2xzW7SaJb3eC3ESgVk4ghaTiruM79QoWG2nXLGohAQUt3OukNpJtlC
-         PVbhyuiqVQVBxw2qnPzeA/CqXnd5N9PgjLHiMgccEwUjepo6lgOjjdIsoOg5nko+7/0s
-         DC5J0ZiCsR12HQOSSaYJvOcueimuwnmRZ038ryMqpkpXRUvWPpVXlzySpIZ6/18hAP3R
-         Wjk0yadSxbIkclATf5lIXRuF0bsJDu5nAFCrKr9tdgCejK2BjnKVki0I4nReYv8abSKR
-         kMhlSa4Gjt3MHH/YlXCrgXOQcHgXFkPItlbafKdNK7Q+/Vb01PbccPLXNYfKmGT7toI/
-         ZaWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722329200; x=1722934000;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+JfbO8SiiD7QjLOWye4GDcjfYdtq1pCx+OMdv4xqVP0=;
-        b=KZ4cOBFSUuW1BZ1YZaMSCw9XC6xVYZMyFBX6KVmVfnBIO0ZhYwrpk3aLW6bykx6qVo
-         FT9fi5RBwx9xF35EIid/HSOurZO++G0zLg2fFz1ULU35I+1NoFPUp5vrVWf4gwnubKik
-         bHY+UfbzBz79m+S9H4T8kQVM910Fhdnu5Y1nfRsynbO0+hkvFakOyqAUD7WMFP3pw2WS
-         nSrBa5gTpbqDkXiLNNX6qhdBVaFf4pPFrBCCW5mLmCOtr3mKBoqufZ2IgGN4/y3+OzEF
-         WdHXBZhinWWHNBjoVgcK7ZEnoOc5h4Ke3tYZRJJVPvRGNmS+9Uyb77zPKa9NN1UItfVc
-         LxdA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6tkcBHfpgtCj4Sfk4SxIm+WnKBheqyYcIvihfhwkjVoFWJjnKiwH3PwiL8V6ijvj9D7x+OkZedWVyhpG4/mcxcQgr/e4BarE5weAL
-X-Gm-Message-State: AOJu0YysDnrqkMnFQnOZagpQHU+UktLv2r6dkVZz4eIZ4Bi3EMFFtlSp
-	IkatsOzRhlmeOnhZsb/m7ne1CfE49ewhk1AGOPWg0i0YtDlmiE9/
-X-Google-Smtp-Source: AGHT+IFQuHjLUgaNkWjNiK7mJEi9/3hLzHn67EugJva8Qbb2ioG5mLhyCfZDiRuQR7NHgrAG7lHKwg==
-X-Received: by 2002:a05:6a20:9e4b:b0:1bd:1df4:bd43 with SMTP id adf61e73a8af0-1c4a14fdcd6mr8385337637.54.1722329199545;
-        Tue, 30 Jul 2024 01:46:39 -0700 (PDT)
-Received: from localhost (66.112.216.249.16clouds.com. [66.112.216.249])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb73efdf2sm11967837a91.29.2024.07.30.01.46.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 01:46:39 -0700 (PDT)
-From: John Wang <wangzq.jn@gmail.com>
-X-Google-Original-From: John Wang <wangzhiqiang02@ieisystem.com>
-To: Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2] net: mctp: Consistent peer address handling in ioctl tag allocation
-Date: Tue, 30 Jul 2024 16:46:35 +0800
-Message-Id: <20240730084636.184140-1-wangzhiqiang02@ieisystem.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722329421; c=relaxed/simple;
+	bh=TT6n1Bp04HEB8H1kcNVG29zae9hkvgT9KFgoJk/nSzI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NInFiG/uUekCeGV3fy93gaFfP6/oX0SrTKoW/2ZXjQYm0apCl+Z71uY0WENupAV90Fb/9VJWhlkIwxhQ9hYdvGKKZuLX2i4IinTtvXRvvgncaqGsrGH/VDBDtoCNENRg1f1UFL7nQPqzBrckTZhdleFA3Bpfv8P6FQIG2iQ1ueY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=zDnKHrY3; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46U7t3it012259;
+	Tue, 30 Jul 2024 10:50:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	I0Zk3W8fI6BDHrh+oPXqCLcodJSbvz4vjqIf/DKXxPI=; b=zDnKHrY3lwZJ/lVA
+	zQlclsBEk93jgi57kjXa3tlw+Kv2I0HQVU8KNG4PpwgLyH5js2byE89IP2wuQ8+w
+	ApTeJKq9kSgSv6SUAHCXxYsyj9xp+AJobtziQ9llL+tNgb2BsEu4d6NrdqmllRec
+	TU/Lku+OjZo0gKjV1NGQV39fFFgvFYpz1cKb5L3WSyaVZKYzhh+oC8Tl38Sk04VY
+	orRsZcdezFOvJTIlajKnsaWxj6OGYV2jUqa84D5/9QbrUDl8sBDVw6XjWnGTUDwS
+	uJXvUEzmuEIIAxxx81Po1VKqQIis6HZB4Dg7tVzXBejuR2ObYB1fF+xAAmzPg9g4
+	/spQDQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 40mr7wusb3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 10:50:04 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id EF68940049;
+	Tue, 30 Jul 2024 10:49:53 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9C82B21B503;
+	Tue, 30 Jul 2024 10:49:21 +0200 (CEST)
+Received: from localhost (10.252.3.32) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 30 Jul
+ 2024 10:49:21 +0200
+From: Olivier Moysan <olivier.moysan@foss.st.com>
+To: <fabrice.gasnier@foss.st.com>, Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+CC: Olivier Moysan <olivier.moysan@foss.st.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 6/9] dt-bindings: iio: add vref support to sd modulator
+Date: Tue, 30 Jul 2024 10:46:36 +0200
+Message-ID: <20240730084640.1307938-7-olivier.moysan@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240730084640.1307938-1-olivier.moysan@foss.st.com>
+References: <20240730084640.1307938-1-olivier.moysan@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,37 +78,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-30_09,2024-07-26_01,2024-05-17_01
 
-When executing ioctl to allocate tags, if the peer address is 0,
-mctp_alloc_local_tag now replaces it with 0xff. However, during tag
-dropping, this replacement is not performed, potentially causing the key
-not to be dropped as expected.
+Allow to specify the reference voltage used by the SD modulator.
+When the SD modulator is defined as an IIO backend, the reference
+voltage can be used to evaluate scaling information of the IIO device.
+The reference voltage is not used otherwise.
 
-Signed-off-by: John Wang <wangzhiqiang02@ieisystem.com>
-
+Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
 ---
-v2:
-  - Change the subject from 'net' to 'net-next'
-  - remove the Change-Id tag
----
- net/mctp/af_mctp.c | 3 +++
- 1 file changed, 3 insertions(+)
+ .../devicetree/bindings/iio/adc/sigma-delta-modulator.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/net/mctp/af_mctp.c b/net/mctp/af_mctp.c
-index de52a9191da0..43288b408fde 100644
---- a/net/mctp/af_mctp.c
-+++ b/net/mctp/af_mctp.c
-@@ -486,6 +486,9 @@ static int mctp_ioctl_droptag(struct mctp_sock *msk, bool tagv2,
- 	tag = ctl.tag & MCTP_TAG_MASK;
- 	rc = -EINVAL;
+diff --git a/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml b/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
+index 7d33c4e09905..c3a116427dc3 100644
+--- a/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
+@@ -24,6 +24,12 @@ properties:
+   '#io-channel-cells':
+     const: 0
  
-+	if (ctl.peer_addr == MCTP_ADDR_NULL)
-+		ctl.peer_addr = MCTP_ADDR_ANY;
++  vref-supply:
++    description: Phandle to the vref input analog reference voltage.
 +
- 	spin_lock_irqsave(&net->mctp.keys_lock, flags);
- 	hlist_for_each_entry_safe(key, tmp, &msk->keys, sklist) {
- 		/* we do an irqsave here, even though we know the irq state,
++dependencies:
++  vref-supply: [ '#io-backend-cells' ]
++
+ required:
+   - compatible
+ 
+@@ -38,6 +44,7 @@ examples:
+     // Backend binding example. SD modulator configured as an IIO backend device
+     ads1201_0: adc {
+       compatible = "sd-modulator";
++      vref-supply = <&vdd_adc>;
+       #io-backend-cells = <0>;
+     };
+ 
 -- 
-2.34.1
+2.25.1
 
 
