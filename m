@@ -1,174 +1,251 @@
-Return-Path: <linux-kernel+bounces-267660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6470E941411
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:14:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F317894140E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:14:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 958511C23265
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:14:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 229BD1C23074
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901621A0B1A;
-	Tue, 30 Jul 2024 14:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A5A1A2551;
+	Tue, 30 Jul 2024 14:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GNmGpiH7"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wQSUZ8J4"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3CF193080;
-	Tue, 30 Jul 2024 14:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4FB1A08D0;
+	Tue, 30 Jul 2024 14:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722348856; cv=none; b=WvJmSFsGbtBeLxhWBMGb6QJjK2oDynAo7Gv+MrgGqA+BWHSmp1U4k3lx1+PcAAWkVnZ+WZhb/tWjy1sCEIJFnEFJ0HbjL7gnkkjF7P2OEwIvjH3Qyb0tbG6eH7I456qZVNr+3binP4y6nWjif94M98UqAAgxtOgcWBr3nPurlJg=
+	t=1722348842; cv=none; b=OmA1NWfjkAVxqaYwwpMhHZ60KGDKWDZQL25+P57rRyX6Skb2b9ZQFApiEBR4iHw/cZwb49bxTnvMy43W+y0uTqMVembM5EsPl48X3jY6C7WrCz3W+zD6T65GTjl0oksJTFIVaOYwZ4SHg37YVLMKyx3K4BXLoO7y4UPDevvLiwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722348856; c=relaxed/simple;
-	bh=2B9faLX+S8lBby/cfiK8W+KbIKMy4XeN7GFqrp09SGs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B0iAEXdJz4aDxgPgIMi71xan94hBIgfIvkbuIP7gJQVSYXNs86HlWSD+Rxb5w0s2J1dCH2Cg3jLtQ3xgvQg2NDGWDg40z4NUqQmH/aZt3La7QRLMXofjW4nCOw+k6IUlQYcLdJpDKzTWv9B2/uM/S/HbTzEocCGzF/SSfpC6iCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GNmGpiH7; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc52394c92so37916135ad.1;
-        Tue, 30 Jul 2024 07:14:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722348854; x=1722953654; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SJ1W777DTxzVK3kLsp7gjF2RIvle9V5zMG9vfW7qFnU=;
-        b=GNmGpiH7khf5BRgPK4prvE5FvM6rTLCsCV3ZK2mCvspOFI4dm+HY8j4bSgyjRPT6OQ
-         Eb3yN+Iv98NG16wnZWTK8v9XzJ34ni47PCrhJq2M6B//8CrhaY6bAAFlzeVd5QoOfgKS
-         3QXMMq4hoOi0o6styiQIrKZiNJphMxxqCnXV9qeeEieSw9ZZ4pJHLLNcran11CwxosiR
-         XqCh6SO1yVcO+QdE8dqvcSvDuJEt4++vdsGnr2nadPRaT3+h7s1cJmwm9kJftt8Ru4sY
-         GkpnxMmqY6RGAmYo54qew+NtVzDsZopsreDPZNhaPlMgiSKnzqwg8DQD43+Fm4TgqrGG
-         wwQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722348854; x=1722953654;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SJ1W777DTxzVK3kLsp7gjF2RIvle9V5zMG9vfW7qFnU=;
-        b=MuCLEFZVcqWreZsg681v6EjX71k8pAueEtyyvwAr53Zc79nvZo4hgKp55rbz2Tm+Ex
-         Si8S7s24wdixLfCjO1o69Nucc4Ol19P66Av71NRuQ45MTLxSNUye88bP75JLn2wPz220
-         LznVSMue72UC9wHpSL2RKyRDNGh8ILPkJr11D9n0zqzpDM3Lvl6ole/uEU6TO6IyFHlP
-         v4aoKJoKvqXoo/TQzQA0Q6ck3RWAG/zv6YjemKz9qUKSqj6q45qbgLaaCOckOYb80dE3
-         uXgQmut0P2mVBszRTA/8a2cHS+dQmCN7PEPukMYpHDV0JpgrZJhuaN4jPGuOZIY1G08R
-         NHVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkye/jFvPS445naimDNPNKQREPQtTKPT/ggtKMdqCMU8t69nxhk9TySw96A1F0lPh7IX9kteiwhL7CcJDXH7UH4ZhfF5Pq748MTQrz4EH8eEd7J0hUwHz6nHUvG47ZtGnG5IA5Q3qbMtBNJNl9TfFO4wNlJdB0jmKDlSvh0xH5f6EJ/w==
-X-Gm-Message-State: AOJu0YzrVzR0ao5UDDTAyG/PZXwL1zYhTlXMi6mwysZBIfFyZNrKawk/
-	Cnj/sWrEhWmmfNLMbeViJPfi1jnqCxDe1QPuM+kLlXTpbOwlfCE/
-X-Google-Smtp-Source: AGHT+IFO7/zddJrxhL05A/FDyPSP/TsGQ24jQ/BI1iOoCpZYq54PTgQgTkxVf5nzfrf4I5W1708yHQ==
-X-Received: by 2002:a17:902:d2c2:b0:1fd:74ac:e6b6 with SMTP id d9443c01a7336-1ff0482adc3mr135215625ad.24.1722348854263;
-        Tue, 30 Jul 2024 07:14:14 -0700 (PDT)
-Received: from localhost.localdomain ([115.240.194.54])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f9f43csm102176275ad.257.2024.07.30.07.14.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 07:14:13 -0700 (PDT)
-From: Animesh Agarwal <animeshagarwal28@gmail.com>
-To: 
-Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: clock: nxp,lpc3220-usb-clk: Convert bindings to dtschema
-Date: Tue, 30 Jul 2024 19:43:34 +0530
-Message-ID: <20240730141338.46234-1-animeshagarwal28@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722348842; c=relaxed/simple;
+	bh=hzJPZk4RgEaN97TJAdr+IGFo947mjdk1g2URqIQg9CA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b/tqBpEU/2YWGh7KBmUJaNfkn14QqSSW0QFkYeFrv+CJ1wEQ/1c4K+rIz/tPu0Rw1uQXp4xzcFW446SEz+HQpnRos61n8aH9+WeerHI2tIBLbY/wHufkcJmJXLIYn49cq3fj5CCFZPPI/E3thJvgm+Rt6lAxJ/9nHCadaLhzETM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wQSUZ8J4; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=Wyglv7opTBeCJkn4W8ORKK2LcvPN5HM2lHPGpHhGR4U=; b=wQSUZ8J4kUX9rNh8zaejaJonbI
+	SdyT6hKLbdAZxBWuRdz2WeDpamiNxnRe4xp1BsKtBJQOYZx7aqI6sBpoBYJsFD2rbROmKsLzL8ZPK
+	eDm7ZHOGE66gLYI+ZV0d39CCzoD2FSoO8S2DAZNJymcRboUWyX6cmkS8GdEsTnj52whLxiSq89a09
+	Smf13ylEnDjKw2lYw4ITW0HBFdMzMO2ayKKxpKEhpcoL7cPgIbfpzNXzSU6cqfNQJ7GIWl1bED/S2
+	I9H8usp7FX66jERzpZsyANE1M8fr2Br5odHfMqP6breXaneFEbEbm2FBfQ/RPmQjyblJzXs12OjvB
+	tVVCDIcA==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sYnbv-0000000FPEs-3nsb;
+	Tue, 30 Jul 2024 14:13:55 +0000
+Message-ID: <190e49bb-88d2-49fe-a228-c379c33503c1@infradead.org>
+Date: Tue, 30 Jul 2024 07:13:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 02/24] docs: geniezone: Introduce GenieZone hypervisor
+To: Liju-clr Chen <liju-clr.chen@mediatek.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Yingshiuan Pan <Yingshiuan.Pan@mediatek.com>,
+ Ze-yu Wang <Ze-yu.Wang@mediatek.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, Shawn Hsiao <shawn.hsiao@mediatek.com>,
+ PeiLun Suei <PeiLun.Suei@mediatek.com>,
+ Chi-shen Yeh <Chi-shen.Yeh@mediatek.com>,
+ Kevenny Hsieh <Kevenny.Hsieh@mediatek.com>
+References: <20240730082436.9151-1-liju-clr.chen@mediatek.com>
+ <20240730082436.9151-3-liju-clr.chen@mediatek.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240730082436.9151-3-liju-clr.chen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Convert the NXP LPC32xx USB Clock Controller bindings to yaml format.
+Hi--
 
-Cc: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
----
- .../bindings/clock/nxp,lpc3220-usb-clk.txt    | 22 ------------
- .../bindings/clock/nxp,lpc3220-usb-clk.yaml   | 35 +++++++++++++++++++
- 2 files changed, 35 insertions(+), 22 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
- create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.yaml
+On 7/30/24 1:24 AM, Liju-clr Chen wrote:
+> From: Yingshiuan Pan <yingshiuan.pan@mediatek.com>
+> 
+> GenieZone is MediaTek proprietary hypervisor solution, and it is running
+> in EL2 stand alone as a type-I hypervisor. It is a pure EL2
+> implementation which implies it does not rely any specific host VM, and
+> this behavior improves GenieZone's security as it limits its interface.
+> 
+> Signed-off-by: Yingshiuan Pan <yingshiuan.pan@mediatek.com>
+> Co-developed-by: Yi-De Wu <yi-de.wu@mediatek.com>
+> Signed-off-by: Yi-De Wu <yi-de.wu@mediatek.com>
+> Signed-off-by: Liju Chen <liju-clr.chen@mediatek.com>
+> ---
+>  Documentation/virt/geniezone/introduction.rst | 87 +++++++++++++++++++
+>  Documentation/virt/index.rst                  |  1 +
+>  MAINTAINERS                                   |  6 ++
+>  3 files changed, 94 insertions(+)
+>  create mode 100644 Documentation/virt/geniezone/introduction.rst
+> 
+> diff --git a/Documentation/virt/geniezone/introduction.rst b/Documentation/virt/geniezone/introduction.rst
+> new file mode 100644
+> index 000000000000..f280476228b3
+> --- /dev/null
+> +++ b/Documentation/virt/geniezone/introduction.rst
+> @@ -0,0 +1,87 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +======================
+> +GenieZone Introduction
+> +======================
+> +
+> +Overview
+> +========
+> +GenieZone hypervisor (gzvm) is a type-1 hypervisor that supports various virtual
+> +machine types and provides security features such as TEE-like scenarios and
+> +secure boot. It can create guest VMs for security use cases and has
+> +virtualization capabilities for both platform and interrupt. Although the
+> +hypervisor can be booted independently, it requires the assistance of GenieZone
+> +hypervisor kernel driver(also named gzvm) to leverage the ability of Linux
 
-diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
-deleted file mode 100644
-index 0aa249409b51..000000000000
---- a/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
-+++ /dev/null
-@@ -1,22 +0,0 @@
--NXP LPC32xx USB Clock Controller
--
--Required properties:
--- compatible: should be "nxp,lpc3220-usb-clk"
--- reg:  should contain clock controller registers location and length
--- #clock-cells: must be 1, the cell holds id of a clock provided by the
--  USB clock controller
--
--Examples:
--
--	usb {
--		#address-cells = <1>;
--		#size-cells = <1>;
--		compatible = "simple-bus";
--		ranges = <0x0 0x31020000 0x00001000>;
--
--		usbclk: clock-controller@f00 {
--			compatible = "nxp,lpc3220-usb-clk";
--			reg = <0xf00 0x100>;
--			#clock-cells = <1>;
--		};
--	};
-diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.yaml b/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.yaml
-new file mode 100644
-index 000000000000..10361d2292fb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.yaml
-@@ -0,0 +1,35 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/nxp,lpc3220-usb-clk.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NXP LPC32xx USB Clock Controller
-+
-+maintainers:
-+  - Animesh Agarwal <animeshagarwal28@gmail.com>
-+
-+properties:
-+  compatible:
-+    const: nxp,lpc3220-usb-clk
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@f00 {
-+        compatible = "nxp,lpc3220-usb-clk";
-+        reg = <0xf00 0x100>;
-+        #clock-cells = <1>;
-+    };
+                     driver (also
+
+> +kernel for vCPU scheduling, memory management, inter-VM communication and virtio
+> +backend support.
+> +
+> +Supported Architecture
+> +======================
+> +GenieZone now only supports MediaTek ARM64 SoC.
+> +
+> +Features
+> +========
+> +
+> +- vCPU Management
+> +
+> +  VM manager aims to provide vCPUs on the basis of time sharing on physical
+> +  CPUs. It requires Linux kernel in host VM for vCPU scheduling and VM power
+> +  management.
+> +
+> +- Memory Management
+> +
+> +  Direct use of physical memory from VMs is forbidden and designed to be
+> +  dictated to the privilege models managed by GenieZone hypervisor for security
+> +  reason. With the help of gzvm module, the hypervisor would be able to manipulate
+
+Is this change acceptable?:
+
+             With the help of the gzvm module, the hypervisor is able to manipulate
+
+> +  memory as objects.
+> +
+> +- Virtual Platform
+> +
+> +  We manage to emulate a virtual mobile platform for guest OS running on guest
+
+     s/We manage to emulate/The gzvm hypervisor emulates/
+
+or something like that...
+
+> +  VM. The platform supports various architecture-defined devices, such as
+> +  virtual arch timer, GIC, MMIO, PSCI, and exception watching...etc.
+> +
+> +- Inter-VM Communication
+> +
+> +  Communication among guest VMs was provided mainly on RPC. More communication
+
+                                   is provided
+
+> +  mechanisms were to be provided in the future based on VirtIO-vsock.
+
+                are to be provided
+or
+                will be provided
+
+> +
+> +- Device Virtualization
+> +
+> +  The solution is provided using the well-known VirtIO. The gzvm module would
+
+                                                           The gzvm module
+
+> +  redirect MMIO traps back to VMM where the virtual devices are mostly emulated.
+
+     redirects
+
+> +  Ioeventfd is implemented using eventfd for signaling host VM that some IO
+> +  events in guest VMs need to be processed.
+> +
+> +- Interrupt virtualization
+> +
+> +  All Interrupts during some guest VMs running would be handled by GenieZone
+
+         interrupts                               are handled
+
+> +  hypervisor with the help of gzvm module, both virtual and physical ones.
+> +  In case there's no guest VM running out there, physical interrupts would be
+
+                     no guest VM running, physical interrupts are
+
+> +  handled by host VM directly for performance reason. Irqfd is also implemented
+> +  using eventfd for accepting vIRQ requests in gzvm module.
+> +
+> +Platform architecture component
+> +===============================
+> +
+> +- vm
+> +
+> +  The vm component is responsible for setting up the capability and memory
+> +  management for the protected VMs. The capability is mainly about the lifecycle
+> +  control and boot context initialization. And the memory management is highly
+> +  integrated with ARM 2-stage translation tables to convert VA to IPA to PA
+> +  under proper security measures required by protected VMs.
+> +
+> +- vcpu
+> +
+> +  The vcpu component is the core of virtualizing aarch64 physical CPU runnable,
+
+The ending "runnable" doesn't seem to fit here - or I just can't parse that.
+
+> +  and it controls the vCPU lifecycle including creating, running and destroying.
+> +  With self-defined exit handler, the vm component would be able to act
+
+                                     the vm component is able to act
+
+> +  accordingly before terminated.
+
+                 before termination.
+or
+                 before being terminated.
+or
+                 before exit.
+
+> +
+> +- vgic
+> +
+> +  The vgic component exposes control interfaces to Linux kernel via irqchip, and
+> +  we intend to support all SPI, PPI, and SGI. When it comes to virtual
+> +  interrupts, the GenieZone hypervisor would write to list registers and trigger
+
+                               hypervisor writes to list registers and triggers
+
+> +  vIRQ injection in guest VMs via GIC.
+
+
+HTH.
 -- 
-2.45.2
-
+~Randy
 
