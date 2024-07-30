@@ -1,137 +1,160 @@
-Return-Path: <linux-kernel+bounces-268351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3763494238D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:46:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18015942392
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68FF71C22662
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:46:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DB99B24575
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFEE192B79;
-	Tue, 30 Jul 2024 23:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369F6192B98;
+	Tue, 30 Jul 2024 23:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="JfoWytVU"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fMRpGrHC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2266E18CC1E
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 23:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD90518C90C;
+	Tue, 30 Jul 2024 23:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722383165; cv=none; b=ggYebcJgzpkH7MwLdgNbIK5SZxMGDIym1wUhDo6YOIPr13dUULLPgmqYumw3e13LN2zkQpn1nUcte0KkHtJNn24ySavMcgCrDJa2cQjieqQSx0IpA+OhKJ1UHEhuMs4GOzT8KkcPc2fTjgiONS4UBJYrGhV8GTti4sjF2wHn5Bo=
+	t=1722383417; cv=none; b=ky5IH5ZqdtARc8YP51zIU1ryD6K6vKENdCzsv2sdT3wTTuT1/s0uNNidpX8ttuI9ayl+sK9FIweEfuCxHGTIf9ywy4fl1v2HxvQVDE4Q1mCDus2Oo5X9Brps8wAqlCflQgdtSHltKIRIcAxOrpgL1Mb8dlJeRT+RgIilCC2zemE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722383165; c=relaxed/simple;
-	bh=/F2IkqN6onhi8bqBg+Ffra8tWyO9XNvT/nQhWcfnN24=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ANB1MtNDVlTJLtFkmeq6S6kqf39R2NmOzVgtS91gQTLKOcw5yNSmD3EmnWsRuNaxyiqup7layXtc12tJDg8psvunpF0Xi3Kl6HPYPx4Co096sR+EHf1kQQUH/9ooy7kFKAYeKO2tNjTTwwQpQ1ObgK9oqBj0bz7X7nN2uRRHPRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=JfoWytVU; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa69dso5603508a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:46:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1722383161; x=1722987961; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1I1Xf39ndiqFsWjFiF87exVBTjo0QTgARXHDppQr8z0=;
-        b=JfoWytVU1KVqd5RFWpCaRBkF/BqIZCiQ9OopqdfzDgvA+DNEBWXNsiKJdPZ4qPT0Vd
-         H7lbG9OgymYa6BZm/eBWVcXDnU1hV/YMW0rsdWECMm/oQUr+OJelc+H3PRnjOPUnVkRn
-         HcAD/Z5tIbZDBEO+Jsc8nmm6o6Q5X9hEmQxiwZ626jb46J50dHta/IkkGBX9BNRCE2nR
-         Z8uTpvvU5bZFkHzeW9oFUz9yEfjzKtajH5FjlmOJLYJ8E3ma9Nv525CQuxHgYNGbKmxC
-         u9E/NY3+nEOcDlf4pkdhPlyZlOYt6zWvMVTKi25yjVR5jf/6xUdmCRUkETES/OIV7uzq
-         Kytw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722383161; x=1722987961;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1I1Xf39ndiqFsWjFiF87exVBTjo0QTgARXHDppQr8z0=;
-        b=LPVUL3zOYaEfEy57DBRn/PvVHVynCe+dAVU8fKY36f7uT12xageE7L0568wnh7CUBp
-         72rPAUpgzxU7PPSJeqqznuvvoU2FlIy6fka2tR5h3e2ke1HHVLCokGnYR3yHxwlXNDBx
-         WhdssyWdtXUJHP+KlXT9ajZ5MvFB5D/Q2cJ1XnWy7cXOe/vv7LuD4VcRl3o9NIGyWSzF
-         ZXLgTl18v0S0NvmqVc0RpalZHB5dmQUfen3aE46/7R4KrY1nSxK+2989ngvrIF204Ncj
-         20m4Hp1wUSlBCHdpVb1w/oYpXsTr/nBs+ERefhoHvbAhbkANLu9fyAJ6wU0Av7nnJ8Q2
-         KpxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVlifNkgz/FJRQW2uZr5hPa/q/hW8k3N5/dL5GU1o9HrRhDt7VDTsgK9fjhRCrInwukMJGob/etrkB8DnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrQz085FMFIici1sF/EOfVK2pOrvVaPul1wR/wGN0VimIA9gDj
-	6o+kcKk81078wuHgyU5p7nPSH7r9aWf5x7RWuuab5x7pAQ+4vc4JXlxpRrCKfj1qm90OAWfW3tw
-	CE/0=
-X-Google-Smtp-Source: AGHT+IFAqKafX8aRVJKcPGIDXAPBt1l3roBbIwncVQu/DpqAKoun9DJpA1Bn0XY2A7WL+ctL0IkviA==
-X-Received: by 2002:a05:6402:35d6:b0:5a2:2fa5:f146 with SMTP id 4fb4d7f45d1cf-5b021f0dcfbmr8913623a12.28.1722383161200;
-        Tue, 30 Jul 2024 16:46:01 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-82-135-80-26.dynamic.mnet-online.de. [82.135.80.26])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63c50fdesm7861299a12.56.2024.07.30.16.46.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 16:46:00 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: geert@linux-m68k.org
-Cc: linux-m68k@lists.linux-m68k.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [RESEND PATCH] m68k: cmpxchg: Use swap() to improve code
-Date: Wed, 31 Jul 2024 01:45:07 +0200
-Message-ID: <20240730234506.492743-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722383417; c=relaxed/simple;
+	bh=MgRxM1SKKlxCG2u54C5M3jFTbZc5jMzpLNR2WjvcUgA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=f5BS+buhD8fRERxa5ZqsAY0shE6LNpgbbF4Xa/YGpY5NCW28tnNLFRSNU0XVqX63oAYgIN1PkV6ujLQP0+bbOkH2uU+JvhRrDawWDzOV5eaiZ1KjpMquZooMGGes+leTnKzZ01eKm/zjdCfj9z9pYYecG2hVzdhPXGVWf2qDzTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fMRpGrHC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UGNjuq029474;
+	Tue, 30 Jul 2024 23:50:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qV7QIGHtPL1hsBOzNi7uYRV9NgXMuu+jrx0+CDor++Q=; b=fMRpGrHCp2Nu1TX1
+	JTL55Eiiu9JDPbfwP3lclDHrOTezurSPB01FaPbPGlOeDtCZJP7y47USXNiT1Y6m
+	6qlp8OWtDKVuypDtmeG3L+SyfLkTVw8+hbNXIA2duA+1UyHjl/N40G2nEQf+Q22L
+	1Rlgd1Dq3Q6Zbbkl35tyDfSXuN6uBqBk78dHVxm242FHzE3n/8PMR7CSvhFe203G
+	08sISKNTvFMCYkl+tAMAoMANl0ARRW/SR3zQZmn86Y07EatLaT7/cAgh7HxZZO5a
+	QK13vlyrcQsV2HnzcUlL6Q8nJzXydNj2PAY8MlRUt6l39A2kHAjQXSaR9aV9F0kP
+	Y7+Guw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40pw442kqy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 23:50:04 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46UNo39n011755
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 23:50:03 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 30 Jul
+ 2024 16:50:02 -0700
+Message-ID: <7466dc92-15e9-40c9-a6ca-40fed44865ac@quicinc.com>
+Date: Tue, 30 Jul 2024 16:50:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/msm/dp: enable widebus on all relevant chipsets
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson
+	<quic_bjorande@quicinc.com>
+CC: <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@gmail.com>,
+        "Sean
+ Paul" <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Abel
+ Vesa <abel.vesa@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        <dri-devel@lists.freedesktop.org>, <quic_jesszhan@quicinc.com>,
+        <swboyd@chromium.org>, <dianders@chromium.org>, <andersson@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240730195012.2595980-1-quic_abhinavk@quicinc.com>
+ <CAA8EJpp0pQ9j6qQbQajUj=qHdYWeiB2nedT0oQhxsGjs3t53CA@mail.gmail.com>
+ <Zqlor3Ug70d65rLT@hu-bjorande-lv.qualcomm.com>
+ <CAA8EJpok+M3xYqtKDM=N=+fc778ipUdYcnNBLLEXMkpNjjy5rQ@mail.gmail.com>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <CAA8EJpok+M3xYqtKDM=N=+fc778ipUdYcnNBLLEXMkpNjjy5rQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: yM_g8dNUskRlrt_AU97ATZQKGAZ7Z5k4
+X-Proofpoint-ORIG-GUID: yM_g8dNUskRlrt_AU97ATZQKGAZ7Z5k4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-30_19,2024-07-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ priorityscore=1501 adultscore=0 mlxlogscore=999 clxscore=1015
+ impostorscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407300165
 
-Remove the local variable tmp and use the swap() macro instead.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- arch/m68k/include/asm/cmpxchg.h | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/arch/m68k/include/asm/cmpxchg.h b/arch/m68k/include/asm/cmpxchg.h
-index 4ba14f3535fc..71fbe5c5c564 100644
---- a/arch/m68k/include/asm/cmpxchg.h
-+++ b/arch/m68k/include/asm/cmpxchg.h
-@@ -3,6 +3,7 @@
- #define __ARCH_M68K_CMPXCHG__
- 
- #include <linux/irqflags.h>
-+#include <linux/minmax.h>
- 
- #define __xg(type, x) ((volatile type *)(x))
- 
-@@ -11,25 +12,19 @@ extern unsigned long __invalid_xchg_size(unsigned long, volatile void *, int);
- #ifndef CONFIG_RMW_INSNS
- static inline unsigned long __arch_xchg(unsigned long x, volatile void * ptr, int size)
- {
--	unsigned long flags, tmp;
-+	unsigned long flags;
- 
- 	local_irq_save(flags);
- 
- 	switch (size) {
- 	case 1:
--		tmp = *(u8 *)ptr;
--		*(u8 *)ptr = x;
--		x = tmp;
-+		swap(*(u8 *)ptr, x);
- 		break;
- 	case 2:
--		tmp = *(u16 *)ptr;
--		*(u16 *)ptr = x;
--		x = tmp;
-+		swap(*(u16 *)ptr, x);
- 		break;
- 	case 4:
--		tmp = *(u32 *)ptr;
--		*(u32 *)ptr = x;
--		x = tmp;
-+		swap(*(u32 *)ptr, x);
- 		break;
- 	default:
- 		x = __invalid_xchg_size(x, ptr, size);
--- 
-2.45.2
+On 7/30/2024 4:34 PM, Dmitry Baryshkov wrote:
+> On Wed, 31 Jul 2024 at 01:27, Bjorn Andersson <quic_bjorande@quicinc.com> wrote:
+>>
+>> On Tue, Jul 30, 2024 at 11:58:19PM +0300, Dmitry Baryshkov wrote:
+>>> Hi Abhinav,
+>>>
+>>> On Tue, 30 Jul 2024 at 22:50, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>>>>
+>>>> Hardware document indicates that widebus is recommended on DP on all
+>>>> MDSS chipsets starting version 5.x.x and above.
+>>>>
+>>>> Follow the guideline and mark widebus support on all relevant
+>>>> chipsets for DP.
+>>>>
+>>>> Fixes: 766f705204a0 ("drm/msm/dp: Remove now unused connector_type from desc")
+>>>> Fixes: 1b2d98bdd7b7 ("drm/msm/dp: Add DisplayPort controller for SM8650")
+>>>
+>>> The issues are present in the following commits. Please consider using
+>>> them instead:
+>>>
+>>> Fixes: 757a2f36ab09 ("drm/msm/dp: enable widebus feature for display port")
+>>> Fixes: 1b2d98bdd7b7 ("drm/msm/dp: Add DisplayPort controller for SM8650")
+>>>
+>>
+>> But are we really fixing any bugs/issues here? While the docs do
+>> recommend widebus, we're effectively enabling more harware/features.
+>>
+>> Unless there's a strong reason (which I'm not confident that the commit
+>> message entails), I think we should drop the fixes-tags and just bring
+>> this to 6.12...
+> 
+> I'm fine either way. I'll check tomorrow if this is required to fix
+> https://gitlab.freedesktop.org/drm/msm/-/issues/43.
+> 
 
+In v1, I also did not have the Fixes tag and I admit, originally even 
+though I made the change in an attempt to fix another issue, it was not 
+resolving the issue completely so there is no functional issue getting 
+fixed due to the change.
+
+I have confirmed that on my setup this patch is not needed to fix that bug.
+
+I decided to add the Fixes tag in v2 because not following the hw doc 
+recommendation is also a bug as it can lead to unexplained issues. Thats 
+why I am still divided on this.
+
+If the consensus is not to take it as a fix, I am fine with it and will 
+not include it and while we are compiling the changes for 6.12 this can 
+be included without the Fixes tags.
+
+> 
+> 
 
