@@ -1,116 +1,92 @@
-Return-Path: <linux-kernel+bounces-266870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF9E9408E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:53:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A249408EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7718B240D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:53:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C55F28518D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D28B16B3A3;
-	Tue, 30 Jul 2024 06:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fs6jAsJs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D82818FDA4;
+	Tue, 30 Jul 2024 06:55:04 +0000 (UTC)
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E34914A095;
-	Tue, 30 Jul 2024 06:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCC518FC60;
+	Tue, 30 Jul 2024 06:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722322414; cv=none; b=ihhtWagP+KMNjYYVQFPtapsLamSwzLiV5K63ZNX7dzb7bOLV8p084j9SyBJuT1woMuajAxsTzmTwkt1jSAUSXSI2xUWORHr8rEQsltk2dHlQG2luN5EczvdTPoJ68qQFM9u2HW9jvANlU7+rU9oHjqrxGGBMhU0Ni2AHy9XbUIA=
+	t=1722322503; cv=none; b=lkSNfsz14yZWoBzBp85eOEoXfyF6H0Jj2U87kbO11bovbCzwLefM/Z8LOUesun7lDeGziWucCiqiBCNK4YV62LdwWHeqFMMPo5tRzPSXCn1QrZmtcAjG7VQqU72HhsjGMYQ27f58cqaEeEt6YQ6HJ95QSBBFhawPcp/LBZvBTIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722322414; c=relaxed/simple;
-	bh=OMSeiT5CWRwogJLVFcMQhXyFBPaGZpMCxgSrN3QGXzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WKWSWHLkged4cI2VK4cytBgptzM4Q3/s0ai93ZU/NUs4X/oVTsDFByC9qKkAwdbnL5VunA8ajuvD6gdCP+UFC+ETzXpcIIcxFt5OkD5tl4u4IawyB3Wh8ZCaLhZ/M84rc5z4JqeBvjxCqYuDX0zIAARBqmnECpvT0GWmBE1GTxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fs6jAsJs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7ED5C32782;
-	Tue, 30 Jul 2024 06:53:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1722322414;
-	bh=OMSeiT5CWRwogJLVFcMQhXyFBPaGZpMCxgSrN3QGXzg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fs6jAsJstEgqF0/NtSG/HuOeNhN9gvHMdj27mjCiO3JPXL6IUwzT5HLfvt3CkJHZ7
-	 /pr6mXlE0B3wLXzX3uE2Q/wq58vfWWRJOtn5LKsNQKHYc8cWZi5J16vCfVJ1EMAJqr
-	 8ZGm55AAw0j5ASlW57zyBvNtT8KbJZwP6HToOR88=
-Date: Tue, 30 Jul 2024 08:53:31 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Sai Sree Kartheek Adivi <sskartheekadivi@gmail.com>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	~lkcamp/patches@lists.sr.ht, helen.koike@collabora.com
-Subject: Re: [PATCH v2] staging: rtl8723bs: style fix open brace on new line
-Message-ID: <2024073021-unluckily-failing-1f60@gregkh>
-References: <20240730064828.35207-1-sskartheekadivi@gmail.com>
+	s=arc-20240116; t=1722322503; c=relaxed/simple;
+	bh=btrwPo1bTnX+OtgF2jF7AKgCHzwPRTVZrxoIXJOQ4/w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F01k0IjBdaqtl1Az35vGsR6dZ8tbAqPFfniThuchfOzohIk1KCSSy6hsV7PK7jwEYZIc05qzLeHTV3pZb5j+1jP/V+qJPFmIVteNqQ2OOt31EziivYsLOSIXxvw/GrMv3rIGupF7W7d+4UNTJ5une+T0p9xEwtQGrBB4pKs4VkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-1fc65329979so32549525ad.0;
+        Mon, 29 Jul 2024 23:55:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722322501; x=1722927301;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OYSBXwvruaHh7b0PdTKGrHZXGYlAm+6EuZ78Vav1MPc=;
+        b=xKy6zuMMwyZnWGtvIs0irf1JpZy2Nwqi6+ot8pWyq1zbwUgESybYwcOAbVz1BzECTG
+         /0xZf0JEJ268mUvlijTgbYh5rddi5S0GABRYSa0t8XbTMvuZ1l2Q84BU6HJO/GEYKeUg
+         6RyJcMbfl3kLcQaMnNOPDorxCJeJHauleTjTxzmu5qu5azFzjVuIVDaGuYPTwliUWKkQ
+         c5+cm70vCFrfZzYT7PJlfw5vfoK87Z76gc3QebA44v7F0gj2Ai260v9CwLiQVf5LVKXa
+         TgEteaxbQSbArAGis+/Cgh/TZomR8J+DOo3qtzU+eyZC0/r376aqblsOl3uuHCgS5X2P
+         HWTA==
+X-Forwarded-Encrypted: i=1; AJvYcCWywagYkZDBndMV5SJ7SM+xhaCIyA2Iq+RPhEju4rzWKYkuSCaY68B06kyKxwptNgw08sTuxusvy6pbSuaujQP9+Xe7/aRvu2umPaRa
+X-Gm-Message-State: AOJu0YzAPBr2dua1yDnO8lpXxqH9qyrPQlsHW4xyreIcfiqaiC6riz5S
+	eFeVbk9qYnQ7AH9Clr/XXPhpCfhz/I0iq8ZndTOE842Bd5bW0wBp
+X-Google-Smtp-Source: AGHT+IHeJ0V9N6b0Y10vxMofQJnDQLGVUEl03wQPW2MTczewmos1VHaJhY+jlamEOQP15l2mfBmSzw==
+X-Received: by 2002:a17:903:1245:b0:1fd:93d2:fb76 with SMTP id d9443c01a7336-1ff04852a8emr135213545ad.31.1722322500942;
+        Mon, 29 Jul 2024 23:55:00 -0700 (PDT)
+Received: from localhost.localdomain ([111.48.58.10])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f1aa18sm94392875ad.190.2024.07.29.23.54.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 23:55:00 -0700 (PDT)
+From: Xueqin Luo <luoxueqin@kylinos.cn>
+To: rafael@kernel.org,
+	pavel@ucw.cz,
+	len.brown@intel.com
+Cc: linux-pm@vger.kernel.org,
+	xiongxin@kylinos.cn,
+	linux-kernel@vger.kernel.org,
+	Xueqin Luo <luoxueqin@kylinos.cn>
+Subject: [RESEND PATCH 0/2] Use sysfs_emit() and sysfs_emit_at() in "show" functions
+Date: Tue, 30 Jul 2024 14:54:52 +0800
+Message-Id: <20240730065454.2096296-1-luoxueqin@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730064828.35207-1-sskartheekadivi@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 30, 2024 at 06:48:28AM +0000, Sai Sree Kartheek Adivi wrote:
-> It fixes the following checkpatch.pl error
-> "ERROR: that open brace { should be on the previous line" and avoids the
-> warning "WARNING: braces {} are not necessary for single statement blocks".
-> 
-> Signed-off-by: Sai Sree Kartheek Adivi <sskartheekadivi@gmail.com>
-> ---
-> This is my first contribution. Hope I did everything right!
-> 
->  drivers/staging/rtl8723bs/include/osdep_service.h | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/include/osdep_service.h b/drivers/staging/rtl8723bs/include/osdep_service.h
-> index cf96b5f7a..5629123cd 100644
-> --- a/drivers/staging/rtl8723bs/include/osdep_service.h
-> +++ b/drivers/staging/rtl8723bs/include/osdep_service.h
-> @@ -81,9 +81,7 @@ static inline void thread_enter(char *name)
->  static inline void flush_signals_thread(void)
->  {
->  	if (signal_pending(current))
-> -	{
->  		flush_signals(current);
-> -	}
->  }
->  
->  #define rtw_warn_on(condition) WARN_ON(condition)
-> -- 
-> 2.20.1
-> 
-> 
+As Documentation/filesystems/sysfs.rst suggested,
+show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+the value to be returned to user space.
 
-Hi,
+No functional change intended.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+Xueqin Luo (2):
+  PM: hibernate: Use sysfs_emit() and sysfs_emit_at() in "show"
+    functions
+  PM: Use sysfs_emit() and sysfs_emit_at() in "show" functions
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+ kernel/power/hibernate.c | 20 ++++++------
+ kernel/power/main.c      | 70 ++++++++++++++++++++--------------------
+ 2 files changed, 45 insertions(+), 45 deletions(-)
 
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
+-- 
+2.25.1
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 
