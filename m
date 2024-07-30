@@ -1,73 +1,70 @@
-Return-Path: <linux-kernel+bounces-268318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 209C4942324
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:54:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F82942328
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3998284978
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:54:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3E8B1F234E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAAC191F72;
-	Tue, 30 Jul 2024 22:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23003191F85;
+	Tue, 30 Jul 2024 22:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hdr9Zwjl"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fGPdAVwv"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD3618CC1E;
-	Tue, 30 Jul 2024 22:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCE6190074
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722380075; cv=none; b=NftgLhGixRvk2rSFoEdX95OMtKn+oVqnPOHZbPEBdkwp5kDq6NTGLmIb+fZgMVtfClb4WpTQH+a9l3pcnIWyD1YqbEuw7VpJA6C0dFZV7l5WOTmn16Mz7GSv775ACW3dPEc1RCOZjU9VmtP8QpmmVZe7wI9ebRorat0Qi7KZ0nE=
+	t=1722380104; cv=none; b=jOuNC4rBZvlm4Z4/rUgLihaZHCbVe0c+mSiTJlaMSI2y3EkypDAEyyAo3vDBKpIPtZ3XQOuwM6fzqplYvadaBZ566GGWyex6qISXcys6+bKeo1F2gkpGnGoHDjfq363FCPDUvUb32+44ytSa0OVqnfasB9lixUTk9r1cSHlEsEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722380075; c=relaxed/simple;
-	bh=dwwEUbUzgWL5vS5biiRn9oO1+11MCQQo5aKWpvA6bqE=;
+	s=arc-20240116; t=1722380104; c=relaxed/simple;
+	bh=WZ3/rWEXG8g86e90yrwydrXqWQuW6onnuGzyWKbn2Cc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ge20kKwYmAKWV7m5cMBJqaJU738i/Q8U2nl9qBoe4SAML3ST2vAvFIO9CR9/Wf5wCIIJK1Mto+E767IsUkACUXBnAM8Jgqevqsds5IBasYK+Oc2wC3jydk9XHBxZJCvV13ZtnKmhNBAr+tk4/zoNG0MW2p1ftxyVplUbw8517gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hdr9Zwjl; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b5f46191b5so27499356d6.3;
-        Tue, 30 Jul 2024 15:54:33 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=NadkZXbqTto6ccmKWqoXD0ZZ2zXcizJCaln3d16sfEx0/cvIsHfx/WfmHjCnBp8xG7NkHWErPiPc65Y2g/DNAOKxkKVa33Jf9eckb2GqFMX80e+7ro0Lj6kOAcB8xQqu/TffgNZSJWJCvP0TYmFl7crMff88oSv7C9SGRWzIVZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fGPdAVwv; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3748ec0cae2so1453585ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:55:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722380072; x=1722984872; darn=vger.kernel.org;
+        d=linuxfoundation.org; s=google; t=1722380102; x=1722984902; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9tG4ibj1e6Js89Q0K69BYaWj3uwGB1GC2b5DG+Nb0V8=;
-        b=Hdr9ZwjliSL6cJ2hErZwTtS0u7HzD4uhahUX0CXL4av1IAiNrZSwT376bjJ/oNqH8z
-         J3Ufq8pP2jM9Tve+Sf+lUlNRFN0k+Bz+loUPw3A9p4xjq9kOVqbD3vas0KX0taz7GgJQ
-         L/Y9ca8hGgG0JqYGUcdvUyyhK59/i1vZrZ8UYd11rNN8Mp2khS4o9lqVLSX+dSVRSHp/
-         Y0mJYSivt9hCXj4YAC3hiZVnZ5HgZcOuuS7EgakqwzApJhRXuu+TaGzLjpJvbgRhN9zB
-         PrUi/4BFC0zvJP5ySzXz2lyXq6rJ7tVeN4vq+IO3zfzwPCUgsrcxzMQmr33EH7zU05P6
-         Rfcw==
+        bh=qoyRtMzVDOTOSVMcNBNPwWShL7yqzSfNXIrJBWdDdno=;
+        b=fGPdAVwvg8Te6xkdzyuFDRlTbtmI5s01ZjNmo5X02i2TP34fY9zgVSDaXxRP9jvIWV
+         rrJX31cpLOO7UyimW1qaD/BLiEsJqpKpby1QUQaVBjW5XP8Npwx7UoHnof3xNmHldkIa
+         xp0HGB0g6zjysS5vENlwPPxa7Oz8T4ERSXQuo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722380072; x=1722984872;
+        d=1e100.net; s=20230601; t=1722380102; x=1722984902;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9tG4ibj1e6Js89Q0K69BYaWj3uwGB1GC2b5DG+Nb0V8=;
-        b=xQ+MfL4Lyn1sNRq36rkGoFNs0HGCFZYn+F60s8GXZXpD81PTs/dDFupFlLgFVvQhtt
-         DiijyCJd7vKD6hOWHi9BaXYANjdWgvw3CaqGUEj8UD4xsgph3xYZq0O4cyxNI7nQik+I
-         j3H9JUcxOltqmn7AhbrYazZ7bDjbIurT27+9nMnt7M5yvmpCu7M3xyNmkLa/l60S8l8l
-         eqEJ0vBqpYq5Z56PwEkHMVNl9bNmB2FXv1yaA47KqBN7QF4XNazJP9y11keH6e+IMQis
-         pkZnRRio8f7oFyy2ZvQYE/Dx6MQGKOtdOjFYkQtz19zFy58n3XDpZiA5TOlH3VSx/zWT
-         KmFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGiClL6yejmTQTBafj8ax2KXRpIe9c+MXBvNbz+0QI87f3QkeCqtYKIKJ92TjmcMmBMpYuryZ0B5TR3s8aA0dV7fMx0DJrm0tGr7cpOIuU2ABhKPPDl6JpL3T+ddlIkZQJeI/n
-X-Gm-Message-State: AOJu0YzHRt4C5cbVTTDfAUh7G8SfAKCIPhRTtC30yZ+cthZabIGHpSXJ
-	M8rqFC4c3Ucyne1x80XHNOBnlHmpVCcLDJmcCH0zWD76inFPknP5
-X-Google-Smtp-Source: AGHT+IFGRAi4mVeDyJj/FKJYt1axQZPWTQGevsa8iIP75abxnaROHuKfpSs+p+ytCVHUtGmDutX88g==
-X-Received: by 2002:a05:6214:1307:b0:6b0:789f:9ce2 with SMTP id 6a1803df08f44-6bb5599f07fmr176892356d6.2.1722380072396;
-        Tue, 30 Jul 2024 15:54:32 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6bb3fa94e70sm67155976d6.83.2024.07.30.15.54.27
+        bh=qoyRtMzVDOTOSVMcNBNPwWShL7yqzSfNXIrJBWdDdno=;
+        b=basIUMqXuMtBksCxKa5eQGnR5lAhraJigoHGWCd7YDDADl4Kr4z3rjfz0GquPZz/JI
+         v4ihGXTqYAJJrKyVSQxgBc3MevMcSzW91lId5eWVqY/qSAJlstwXb8q7CCOpUh2EeRvu
+         Rm+Dweea4cQLn9XnSHY7d1wGiAAU7wSLTYRUCb+rG+yOm/sCeDtGMc4oJYyHaMw0L65B
+         o45geodeY3D4P7DDlPdZI+G9fxirKbmnsMcnmX5W1c/+W8vbArDVHBB60TT1m5jjSzbu
+         6iMnmr8S0jD+FZ0fSmOCLTWzDTGzjZgN2sgbTIQVHbzeqmWRRszmnuA+XJMrp/7TqVXG
+         extA==
+X-Forwarded-Encrypted: i=1; AJvYcCXY5qlbE2TT4n/UCPQLxgIkMZTz/4iOXdzBnlBAqJiRymoGcUxHOXFE0MVCygeT8gaQnd4UZvANX5m+sjQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl1bVWAflzOabSJXOUwo2j3AoVuplGXfobeDT2HRwjX04SbWrf
+	QywfXqUD+8jHkGufYjXoOJpNIOyULccgB/QB2Kva2JHpkFZFf59VI9g9u1N+qDQ=
+X-Google-Smtp-Source: AGHT+IE0J88IPs6PTLB5D2s6BzsB0tgWoXin9ud9y3oLV0lml4OOF8/cS9mwwDY/V0gR4AHkSVf9iw==
+X-Received: by 2002:a05:6e02:1fcf:b0:381:c5f0:20d5 with SMTP id e9e14a558f8ab-39a22c4add5mr127399165ab.0.1722380101694;
+        Tue, 30 Jul 2024 15:55:01 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39af7929ba2sm25175015ab.3.2024.07.30.15.55.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 15:54:31 -0700 (PDT)
-Message-ID: <10b0a584-e07d-4fb9-99a4-6359563c1e47@gmail.com>
-Date: Tue, 30 Jul 2024 15:54:26 -0700
+        Tue, 30 Jul 2024 15:55:01 -0700 (PDT)
+Message-ID: <f1a6d13b-a5b8-45c2-bd45-b44b5b70a25d@linuxfoundation.org>
+Date: Tue, 30 Jul 2024 16:55:00 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,45 +72,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/568] 6.6.44-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240730151639.792277039@linuxfoundation.org>
+Subject: Re: Converting kselftest test modules to kunit
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Kees Cook <keescook@chromium.org>, davidgow@google.com
+Cc: "open list : KERNEL SELFTEST FRAMEWORK"
+ <linux-kselftest@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ kunit-dev@googlegroups.com, "kernel@collabora.com" <kernel@collabora.com>,
+ Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>
+References: <327831fb-47ab-4555-8f0b-19a8dbcaacd7@collabora.com>
+ <533826b3-8bc4-40f8-a491-5bb5614469c3@linuxfoundation.org>
+ <a3083ad4-e9dc-40da-bf57-8391bcd96a6c@collabora.com>
 Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240730151639.792277039@linuxfoundation.org>
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <a3083ad4-e9dc-40da-bf57-8391bcd96a6c@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/30/24 08:41, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.44 release.
-> There are 568 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 7/29/24 01:55, Muhammad Usama Anjum wrote:
+> On 7/27/24 12:35 AM, Shuah Khan wrote:
+>> On 7/15/24 04:09, Muhammad Usama Anjum wrote:
+>>> Hi Kees and All,
+>>>
+>>> There are several tests in kselftest subsystem which load modules to tests
+>>> the internals of the kernel. Most of these test modules are just loaded by
+>>> the kselftest, their status isn't read and reported to the user logs. Hence
+>>> they don't provide benefit of executing those tests.
+>>>
+>>> I've found patches from Kees where he has been converting such kselftests
+>>> to kunit tests [1]. The probable motivation is to move tests output of
+>>> kselftest subsystem which only triggers tests without correctly reporting
+>>> the results. On the other hand, kunit is there to test the kernel's
+>>> internal functions which can't be done by userspace.
+>>>
+>>> Kselftest:    Test user facing APIs from userspace
+>>> Kunit:        Test kernel's internal functions from kernelspace
+>>>
+>>> This brings me to conclusion that kselftest which are loading modules to
+>>> test kernelspace should be converted to kunit tests. I've noted several
+>>> such kselftests.
+>>>
+>>> This is just my understanding. Please mention if I'm correct above or more
+>>> reasons to support kselftest test modules transformation into kunit test.
+>>>
+>>> [1] https://lore.kernel.org/all/20221018082824.never.845-kees@kernel.org/
+>>>
+>>
+>> Please make sure you aren't taking away the ability to run these tests during
+>> boot.
+> The kunit tests are usually run at boot time. They can be run later as
+> well. So I'm not trying to remove any functionality. Rather adding a way
+> where failures would actually be detected.
 > 
-> Responses should be made by Thu, 01 Aug 2024 15:14:54 +0000.
-> Anything received after that time might be too late.
+>> It doesn't make sense to convert every single test especially when it
+>> is intended to be run during boot without dependencies - not as a kunit test
+>> but a regression test during boot.
+> I started investigating when these lib kselftests were just loading the
+> test module without checking if test actually passed/failed (which proves
+> that this type of kselftests can never detect regression as it doesn't
+> process the results). It was strange. Hence I found out the conversion of
+> such kselftests to kunit tests done by Kees and started this thread for
+> discussion before doing actual work and sending patches.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.44-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+>>
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+I explained this on two other threads. If you don't know how this test
+is used why are you making this change?
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+>> bitmap is one example - pay attention to the config help test - bitmap
+>> one clearly states it runs regression testing during boot. Any test that
+>> says that isn't a candidate for conversion.
+> Please can you explain what do you mean by bitmap testing during boot? As
+> far as I understand, the kselftests are usespace tests and are run after
+> kernel has booted completely and userspace has started. It cannot be
+> regarded as testing during boot.
+> 
+
+I responded to David - let me know you would like me to repeat it.
+
+thanks,
+-- Shuah
 
 
