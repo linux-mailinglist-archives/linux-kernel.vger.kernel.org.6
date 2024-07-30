@@ -1,58 +1,73 @@
-Return-Path: <linux-kernel+bounces-268086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED2B94202B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:57:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 385A394202A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC4D61F243BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:57:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7F4528552B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBA518C920;
-	Tue, 30 Jul 2024 18:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECF018E022;
+	Tue, 30 Jul 2024 18:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="mYkrWsuQ"
-Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFC1TpI6"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4069918A6CB;
-	Tue, 30 Jul 2024 18:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164B418DF9A
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 18:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722365747; cv=none; b=ujo/c00swakgFdA2+Ia+SwYlXE7JCYgX+oDOWPW0nxIsol6CCK7c1QDrS8BPkav8oK2ClgAMiUTeHwUzXP/SdwwRYa1nhY2dR02406iCTwCDJpM+GOXEjf3rGyb+5S6IZ3FKRpaDSMnf1Xwf+yB+MzICCqyU0REfiryjStAFZ3c=
+	t=1722365728; cv=none; b=SF4Bg5+vkswl4b+90elB37I/aeDARWvYd1hgb6yh/mF9CYj3Z0Z3xRes10zQuOSmcDQ2SqnvYpQ2+H689lHlSF0mZS3bVp3tVFZETovpcUR6CJxw5T66yH0PMQDYzGh/A5Kr07YjwX/WtGjpx1PmYtKxyqyeiARd7WCWL03whqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722365747; c=relaxed/simple;
-	bh=Deu814CCLVwaucA6XBvJViX6k/ku4mshypf1ZnH3w+s=;
+	s=arc-20240116; t=1722365728; c=relaxed/simple;
+	bh=ytLFwU5W9RoxWln8v2ZX/zIXkeL6cGK2uuWkaCil1VI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SHZ2CM0/n8wJ3jYOEask1wCo4Prw1y6dyx44YaljzxlRlz/1rNzhyeQZlv6P8sfhqL6ESH5CrQEh5aK7XCJeSkT/5LJoklW3u1DYimhDXWb173k8sBqLhlvQsyAnsKe4WRA0jOUO7mmfB+tEtyPYdztxf2fpizZb/ydXci1pkaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=mYkrWsuQ; arc=none smtp.client-ip=185.226.149.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
-	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1sYs0T-005ZTB-91; Tue, 30 Jul 2024 20:55:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
-	bh=reBcGaqh1Qs+RsA6vlYhvOzZeocEG4QDGc75R4XnN6I=; b=mYkrWsuQWmTapcM9HgDwRx1Ze6
-	azR9QetEQud03iHpktzIPivM14spdbIpJ8I8BeNXuMyuisqIUGSug/b80F93CibzrI4953Os77d/G
-	EqC72wIqbbWwe0/9zZUcLIJLcaV9Iezy6X3mn//LZtWtSMTrEAYAMy5ssrPKsXIgTP1g544WyFk0/
-	uSEcCLw0M/ED2KgJzxyQpjVyz4g7+lZKtrmfHs2ep/pMVDLs/kLnhzDc1bcw+k6T+rdyANu5V0yiY
-	2r3WLHrz3AUHbNDcE2q/33TiioKiEwHhBzCLHuQBMwVQHf5joW+LiQS+N6CMbA8iT4/JEKCuyNYT/
-	IMyuKaCQ==;
-Received: from [10.9.9.74] (helo=submission03.runbox)
-	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1sYs0S-0005aB-0C; Tue, 30 Jul 2024 20:55:32 +0200
-Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1sYs0I-001BsR-QL; Tue, 30 Jul 2024 20:55:22 +0200
-Message-ID: <ccd40ae1-14aa-454e-9620-b34154f03e53@rbox.co>
-Date: Tue, 30 Jul 2024 20:55:21 +0200
+	 In-Reply-To:Content-Type; b=WO/p7s3QAMSDvr82IyYKfBoumrfzvOI7wcVcnnfC9Z+7/WTrJjNdOhfVhU9MVAI80Q/85LD/idU0pFm4Q/V2u56GNDukZK9qcacy7w5n0PfXPh8JOTHxrdLhdnhbRkuiF5i95U+z+L5E7PkvmwiXOxDuGZkc5qjVjnBknhlQwYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LFC1TpI6; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5b19f9a9d91so352739a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:55:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722365724; x=1722970524; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WXefQtP22X5XOJj1KBluJ3kHyMBxuAX9s4JgXdRwuF4=;
+        b=LFC1TpI6MoYxwrK/g/iXFk4jutLAvToxeE/Hf4CFLCA+PZkw8pjanvsgpPw9A3DTKN
+         njTZGNESJqPSS6CVSxax3jrsX9NQn8mCPqKS5PaXlErGGfDjv/nUeB2i+nMyVp2yu29i
+         Ywn1BmHGwtH399xbZvSPukm1izpeeroHgCplevGmMvMPhTm6Q1nXUh+YpKOaEnNK+SEx
+         yk+G3THEnRPJ6TcAuB1tH6PIwvfoUM/ym8CmRR2kwSukZMyEq0UrN2E950E4U1Waewz6
+         CUW9EaDKZ6N9V5B27QOKqsY3oyG1Dftz8iH2D/fUeZb3JdSETuS9rn0rWDRbPXdIL73U
+         Ubyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722365724; x=1722970524;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WXefQtP22X5XOJj1KBluJ3kHyMBxuAX9s4JgXdRwuF4=;
+        b=CPDmjiRTKYjC638ZEgQbgw27M2mcogTBlE2oPeSWOgdapxnxB82LOmFEE0QR6j4lRf
+         WC7amL2N4jxBnkvim+3LV70LVP6mQz5koe3N1jyvlqY2aW5mpnEsCdAOTEb3opHyligf
+         VUFcYjha7c2OVxWpRaNT4Rt2madoNoWNtVFv3GvjHszoWdNYHZ5Y32Mx+8RZ2422NOe0
+         tbkr98ZNF4ZHxlBvivUv86Y+K7XaBLo2Og/b2qK8SiuUf8MsZ1sgEFCwMeulgG3EOgrS
+         tudY6AawrspBYifHIW+jfpaGM1jU9n9/xS0iBZKEGuSpUTYpa5meAyxiZViJTc+nYlG+
+         +0wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9KqS1uBJC8ijRMFkRsNIUi30ajhU7lBB7QuE9ghCwiIOxwN0/u9e9AF5DqEe4H6uhYlUQjxVVBM9bcdk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyehKx+aXf7jEimzKGNyX9tEQjPithlIUMWTx19KIKq4Q+75T57
+	xVNiDJL/rflSP7Y6QE0xN+kPUimNJPebSK+HhrdSqJFN83ZH0AiQ
+X-Google-Smtp-Source: AGHT+IHHqeJ2PT13d4BRk5orAhekOZklxnTzS4pVLy2itB3AyI24Xcdas+iLqsgimifwTN0sQP+Kbg==
+X-Received: by 2002:a17:907:970a:b0:a7a:ab8a:38d with SMTP id a640c23a62f3a-a7ac58c4a2amr863457966b.4.1722365724008;
+        Tue, 30 Jul 2024 11:55:24 -0700 (PDT)
+Received: from ?IPV6:2003:c7:8f2a:8552:f0f5:c00a:214:55c4? (p200300c78f2a8552f0f5c00a021455c4.dip0.t-ipconnect.de. [2003:c7:8f2a:8552:f0f5:c00a:214:55c4])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab231fdsm673446066b.41.2024.07.30.11.55.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 11:55:23 -0700 (PDT)
+Message-ID: <0812112f-a06d-4ef1-8ca2-468973191ca7@gmail.com>
+Date: Tue, 30 Jul 2024 20:55:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,82 +75,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM: Fix error path in kvm_vm_ioctl_create_vcpu() on
- xa_store() failure
-To: Will Deacon <will@kernel.org>, kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Alexander Potapenko <glider@google.com>, Marc Zyngier <maz@kernel.org>
-References: <20240730155646.1687-1-will@kernel.org>
-Content-Language: pl-PL, en-GB
-From: Michal Luczaj <mhal@rbox.co>
-In-Reply-To: <20240730155646.1687-1-will@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] Improve MAR register definition and usage for rtl8723
+To: Manjae Cho <manjae.cho@samsung.com>, gregkh@linuxfoundation.org
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <CGME20240730155255epcas1p4ab3b5e88d400e2221aa1cf5cf234ea19@epcas1p4.samsung.com>
+ <20240730155054.411059-1-manjae.cho@samsung.com>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <20240730155054.411059-1-manjae.cho@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 7/30/24 17:56, Will Deacon wrote:
-> If the xa_store() fails in kvm_vm_ioctl_create_vcpu() then we shouldn't
-> drop the reference to the 'struct kvm' because the vCPU fd has been
-> installed and will take care of the refcounting.
+On 7/30/24 17:50, Manjae Cho wrote:
+> This patch improves the usage of the MAR register by updating the
+> relevant
+> macro definitions and ensuring consistent usage across the codebase.
 > 
-> This was found by inspection, but forcing the xa_store() to fail
-> confirms the problem:
+> Signed-off-by: Manjae Cho <manjae.cho@samsung.com>
 > 
->  | Unable to handle kernel paging request at virtual address ffff800080ecd960
->  | Call trace:
->  |  _raw_spin_lock_irq+0x2c/0x70
->  |  kvm_irqfd_release+0x24/0xa0
->  |  kvm_vm_release+0x1c/0x38
->  |  __fput+0x88/0x2ec
->  |  ____fput+0x10/0x1c
->  |  task_work_run+0xb0/0xd4
->  |  do_exit+0x210/0x854
->  |  do_group_exit+0x70/0x98
->  |  get_signal+0x6b0/0x73c
->  |  do_signal+0xa4/0x11e8
->  |  do_notify_resume+0x60/0x12c
->  |  el0_svc+0x64/0x68
->  |  el0t_64_sync_handler+0x84/0xfc
->  |  el0t_64_sync+0x190/0x194
->  | Code: b9000909 d503201f 2a1f03e1 52800028 (88e17c08)
-> 
-> Add a new label to the error path so that we can branch directly to the
-> xa_release() if the xa_store() fails.
-> 
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Michal Luczaj <mhal@rbox.co>
-> Cc: Alexander Potapenko <glider@google.com>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Signed-off-by: Will Deacon <will@kernel.org>
 > ---
->  virt/kvm/kvm_main.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>   drivers/staging/rtl8723bs/hal/sdio_halinit.c    | 4 ++--
+>   drivers/staging/rtl8723bs/include/hal_com_reg.h | 3 +++
+>   2 files changed, 5 insertions(+), 2 deletions(-)
 > 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index d0788d0a72cc..b80dd8cead8c 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -4293,7 +4293,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
->  
->  	if (KVM_BUG_ON(xa_store(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, 0), kvm)) {
->  		r = -EINVAL;
-> -		goto kvm_put_xa_release;
-> +		goto err_xa_release;
->  	}
->  
->  	/*
-> @@ -4310,6 +4310,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
->  
->  kvm_put_xa_release:
->  	kvm_put_kvm_no_destroy(kvm);
-> +err_xa_release:
->  	xa_release(&kvm->vcpu_array, vcpu->vcpu_idx);
->  unlock_vcpu_destroy:
->  	mutex_unlock(&kvm->lock);
+> diff --git a/drivers/staging/rtl8723bs/hal/sdio_halinit.c b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
+> index c9cd6578f7f8..9493562c1619 100644
+> --- a/drivers/staging/rtl8723bs/hal/sdio_halinit.c
+> +++ b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
+> @@ -380,8 +380,8 @@ static void _InitWMACSetting(struct adapter *padapter)
+>   	rtw_write32(padapter, REG_RCR, pHalData->ReceiveConfig);
+>   
+>   	/*  Accept all multicast address */
+> -	rtw_write32(padapter, REG_MAR, 0xFFFFFFFF);
+> -	rtw_write32(padapter, REG_MAR + 4, 0xFFFFFFFF);
+> +	rtw_write32(padapter, MAR0, 0xFFFFFFFF);
+> +	rtw_write32(padapter, MAR4, 0xFFFFFFFF);
+>   
+>   	/*  Accept all data frames */
+>   	value16 = 0xFFFF;
+> diff --git a/drivers/staging/rtl8723bs/include/hal_com_reg.h b/drivers/staging/rtl8723bs/include/hal_com_reg.h
+> index 9a02ae69d7a4..baf326d53a46 100644
+> --- a/drivers/staging/rtl8723bs/include/hal_com_reg.h
+> +++ b/drivers/staging/rtl8723bs/include/hal_com_reg.h
+> @@ -151,6 +151,9 @@
+>   #define REG_BSSID						0x0618
+>   #define REG_MAR							0x0620
+>   
+> +#define MAR0						REG_MAR		/* Multicast Address Register, Offset 0x0620-0x0623 */
+> +#define MAR4						(REG_MAR + 4)	/* Multicast Address Register, Offset 0x0624-0x0627 */
+> +
+>   #define REG_MAC_SPEC_SIFS				0x063A
+>   /*  20100719 Joseph: Hardware register definition change. (HW datasheet v54) */
+>   #define REG_RESP_SIFS_CCK				0x063C	/*  [15:8]SIFS_R2T_OFDM, [7:0]SIFS_R2T_CCK */
 
-My bad for neglecting the "impossible" path. Thanks for the fix.
 
-I wonder if it's complete. If we really want to consider the possibility of
-this xa_store() failing, then keeping vCPU fd installed and calling
-kmem_cache_free(kvm_vcpu_cache, vcpu) on the error path looks wrong.
+Hi Manjae,
 
+please start your Subject according to the expected standard:
+staging: rtl8723bs:
+
+The description seems to have a line break that should not be there.
+
+please use checkpatch for your patches:
+File Nr: 0    Patch: ../../../Downloads/20240730-[PATCH] Improve MAR 
+register definition and usage -17243.txt
+WARNING: line length of 126 exceeds 100 columns
+#41: FILE: drivers/staging/rtl8723bs/include/hal_com_reg.h:154:
++#define MAR0						REG_MAR		/* Multicast Address Register, Offset 
+0x0620-0x0623 */
+
+WARNING: line length of 126 exceeds 100 columns
+#42: FILE: drivers/staging/rtl8723bs/include/hal_com_reg.h:155:
++#define MAR4						(REG_MAR + 4)	/* Multicast Address Register, Offset 
+0x0624-0x0627 */
+
+
+If you send in a second version of this patch please use a change 
+history. Description from Dan under:
+https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+
+In case of questions feel free to contact me directly.
+
+Thanks for your support.
+
+Bye Philipp
 
