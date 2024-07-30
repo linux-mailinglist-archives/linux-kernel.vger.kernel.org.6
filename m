@@ -1,112 +1,148 @@
-Return-Path: <linux-kernel+bounces-267233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94B3940EB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:12:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F695940EB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAD431C22908
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:12:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 504F2284663
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377AD197A9F;
-	Tue, 30 Jul 2024 10:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC20199225;
+	Tue, 30 Jul 2024 10:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZhX3ZqAf"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TzAkECY4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6542E18A92A;
-	Tue, 30 Jul 2024 10:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD55918A92A;
+	Tue, 30 Jul 2024 10:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722334315; cv=none; b=ZQ6qhQ6yPNHUgZ4MsDwfuvWAzxMu5qqM7pp/B/kOVg2MPcnTORxW5wntNB33jEMnGrBpJMw5qXFRPo/AB8lFr1MhqQjpbpohmwSZ+L1OqwYn+nRc1EGQT1p0UVG+L4qUtXWNG4qWKU3kX4jpAjgTaGU9I2bxVV8J4By7l6SxFZE=
+	t=1722334328; cv=none; b=afGiXtaftWZBdzZtQABkVaCaogMaIVoxHty7fQqegEsr/fH5yZMVUkbdUSPQywdDh8GCXW2Pt5m4aahdu3kR80UkNROAWwbdENLGdKC8iRQQww+HtHHgSC1xW37ffOujH7uy6khrWFx5kGqclfp42pLtnYh3SmBJWdUTIHltHI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722334315; c=relaxed/simple;
-	bh=TLCYMGmwxlm77A6hkqIfOvum7+f6XT0qmB2Gb20v754=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UuxvkdSzOUOEOrGObvYmODlSeFuXLTt9h0PWXfoLBYNxAbIIL9f/oVsDI/1noonHRcVLchmJLlKyk7tvRba0lj8gZG6N11PuR+uVDcJ0VzByYlLq5NwTR3lcmRoInJEJJkxtEojyF83pEruifkVts2kkFdG2PIpzcEGL1fBZtDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ZhX3ZqAf; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722334311;
-	bh=+Nr7Lad5gRaYdovqaCtrI45f0nfllUhBeYqWiY25QUM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZhX3ZqAfd8OI1ErtC/ySu0Q7ZbVzcQJoXI8jMRflMQW1vRC+w1hJHO0LFSKo8eogI
-	 50LnjFV0jDWa8b4SD8Bb86JQ8SxcTXBJhWfaWFcz12cy+IQehx979KBoPbDo69aUFm
-	 qaCPNyqXPfJzBSilX2d1HmCshe6loGi+AY8xAgwksoX4HdBTxP2Zy/k6/o1S2xOaL/
-	 lKw8amzNf+rgtN8xi5fYg8TLhOGN2BuzKymJ4l42332I9aBkDTG0irihVrSgERaogk
-	 dyihEOylGLYnOcVCWplgOj/HW7ieHCaDpVKvg9F/stUT4iqGIXhP57UYBKHBRBRyG5
-	 2Au8H2SABteIA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WY9xg3gWHz4x3d;
-	Tue, 30 Jul 2024 20:11:51 +1000 (AEST)
-Date: Tue, 30 Jul 2024 20:11:50 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Isaku Yamahata <isaku.yamahata@intel.com>, KVM <kvm@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the kvm tree
-Message-ID: <20240730201150.3090e64d@canb.auug.org.au>
-In-Reply-To: <20240717155930.788976bc@canb.auug.org.au>
-References: <20240717155930.788976bc@canb.auug.org.au>
+	s=arc-20240116; t=1722334328; c=relaxed/simple;
+	bh=ZvLJ7/SCtIJfceG7grSTidcofEdpC9aUrnISK46Oynk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VCqXqXylAQAsbvsL3w7iaVZGwzV2H3X6J+C7O0wgFNhFiTA10LuC0yU5Olj7p2FLB97aRiVSxRYIas+ooUjJziZUHMrZTXglur4kmuFdFyrG13UPNG099H1IySxeAoUOJ+Smol39z3gV7ViVdvwvuodptnC+NPPByl1uHU07t24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TzAkECY4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A35EC4AF0B;
+	Tue, 30 Jul 2024 10:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722334328;
+	bh=ZvLJ7/SCtIJfceG7grSTidcofEdpC9aUrnISK46Oynk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TzAkECY4JNH4TLHCFfcsFDcb5DKrTkXbLmxGBDeyy9sggTlAlbXVWZxCEQOF5LaHk
+	 OYMT2h/VZy297tSeX2CHiotuYPJQAxVUrKil0NKFe/ElEDSzIfWiZKa32gWNDOpgNU
+	 DzEWtU5nQ8rvJSxMrAiRio1DmnVSzAFS1Mn2B0BJbVZ9UcI2zwRRt8MlOnYdJclLrW
+	 8VyEDJIZO49Kldu0UVtR9ERik+1hQLn0NqYXva40Wg5M2q+2ZOVJVPcajAFTHF2wJs
+	 1hKdOQQM7zvUPdykgB/UhRddR/3NgWkRA162NSnsujO5BhAraLFigbbLGboDC4JBTj
+	 I/u8oC/78F/iQ==
+Message-ID: <691ee925-b214-4b68-8d7b-ecb54f865cfc@kernel.org>
+Date: Tue, 30 Jul 2024 12:12:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/mveM+ILdJ8gIOasG1GFKSR_";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommu/arm-smmu-qcom: Work around SDM845 Adreno SMMU w/
+ 16K pages
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>, iommu@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>
+References: <20240729-topic-845_gpu_smmu-v1-1-8e372abbde41@kernel.org>
+ <osxynb352ubxgcb5tv3u7mskkon23nmm3gxkfiiiqss5zp67jf@fv5d6bob2rgp>
+ <CAF6AEGuWULwrJDWW37nQhByTpc-2bBYVv3b_Ac6OCwaJ83Ed9w@mail.gmail.com>
+ <CAA8EJpp9zaQSKbis7J9kYTudTt=RFhfbzeayz3b-VbGQENtqeA@mail.gmail.com>
+ <3332c732-4555-46bf-af75-aa36ce2d58df@gmail.com>
+ <CAA8EJppZsNTqh_KxD=BWXjmedA1ogeMa74cA=vVbCWAU7A-qgQ@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <CAA8EJppZsNTqh_KxD=BWXjmedA1ogeMa74cA=vVbCWAU7A-qgQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/mveM+ILdJ8gIOasG1GFKSR_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 30.07.2024 10:50 AM, Dmitry Baryshkov wrote:
+> On Tue, 30 Jul 2024 at 11:08, Konrad Dybcio <konradybcio@gmail.com> wrote:
+>>
+>> On 29.07.2024 11:21 PM, Dmitry Baryshkov wrote:
+>>> On Tue, 30 Jul 2024 at 00:08, Rob Clark <robdclark@gmail.com> wrote:
+>>>>
+>>>> On Mon, Jul 29, 2024 at 1:14 PM Dmitry Baryshkov
+>>>> <dmitry.baryshkov@linaro.org> wrote:
+>>>>>
+>>>>> On Mon, Jul 29, 2024 at 10:37:48AM GMT, Konrad Dybcio wrote:
+>>>>>> From: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>>>>>
+>>>>>> SDM845's Adreno SMMU is unique in that it actually advertizes support
+>>>>>> for 16K (and 32M) pages, which doesn't hold for newer SoCs.
+>>>>>>
+>>>>>> This however, seems either broken in the hardware implementation, the
+>>>>>> hypervisor middleware that abstracts the SMMU, or there's a bug in the
+>>>>>> Linux kernel somewhere down the line that nobody managed to track down.
+>>>>>>
+>>>>>> Booting SDM845 with 16K page sizes and drm/msm results in:
+>>>>>>
+>>>>>> *** gpu fault: ttbr0=0000000000000000 iova=000100000000c000 dir=READ
+>>>>>> type=TRANSLATION source=CP (0,0,0,0)
+>>>>>>
+>>>>>> right after loading the firmware. The GPU then starts spitting out
+>>>>>> illegal intstruction errors, as it's quite obvious that it got a
+>>>>>> bogus pointer.
+>>>>>>
+>>>>>> Hide 16K support on SDM845's Adreno SMMU to work around this.
+>>>>>>
+>>>>>> Reported-by: Sumit Semwal <sumit.semwal@linaro.org>
+>>>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>>>>> ---
+>>>>>> There's a mismatch in sender/committer addresses but that's "fine":
+>>>>>> https://lore.kernel.org/linux-usb/2024072734-scenic-unwilling-71ea@gregkh/
+>>>>>> ---
+>>>>>>  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 10 ++++++++++
+>>>>>>  1 file changed, 10 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>>>> index 36c6b36ad4ff..d25825c05817 100644
+>>>>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>>>> @@ -338,6 +338,15 @@ static int qcom_smmu_cfg_probe(struct arm_smmu_device *smmu)
+>>>>>>       return 0;
+>>>>>>  }
+>>>>>>
+>>>>>> +static int qcom_adreno_smmuv2_cfg_probe(struct arm_smmu_device *smmu)
+>>>>>> +{
+>>>>>> +     /* SDM845 Adreno SMMU advertizes 16K pages support, but something is broken */
+>>>>>> +     if (of_device_is_compatible(smmu->dev->of_node, "qcom,sdm845-smmu-v2"))
+>>>>>> +             smmu->features &= ~ARM_SMMU_FEAT_FMT_AARCH64_16K;
+>>>>>
+>>>>> Shouldn't we hide that uncoditionally as it's likely that none of v2
+>>>>> Adreno SMMUs support 16k pages?
+>>>>
+>>>> Hmm, that would be unfortunate to have the GPU not supporting the CPU
+>>>> page size.  I guess we could still map 16k pages as multiple 4k pages,
+>>>> but that is a bit sad..
+>>>
+>>> For now this might be limited to older platforms (v2 vs -500)
+>>
+>> In the commit message:
+>>
+>>>>>> SDM845's Adreno SMMU is unique in that it actually advertizes support
+>>>>>> for 16K (and 32M) pages, which doesn't hold for newer SoCs.
+> 
+> My question is about forbidding 16k pages for sdm845 only or for other
+> chips too. I'd assume that it shouldn't also work for other smmu-v2
+> platforms.
 
-Hi all,
+I'd say we shouldn't cause trouble unless we know it's an issue
 
-On Wed, 17 Jul 2024 15:59:30 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-\> After merging the kvm tree, today's linux-next build (htmldocs) produced
-> this warning:
->=20
-> Documentation/virt/kvm/api.rst:6371: WARNING: Title underline too short.
->=20
-> 4.143 KVM_PRE_FAULT_MEMORY
-> ------------------------
->=20
-> Introduced by commit
->=20
->   9aed7a6c0b59 ("KVM: Document KVM_PRE_FAULT_MEMORY ioctl")
-
-I am still seeing this warning.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/mveM+ILdJ8gIOasG1GFKSR_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaovGYACgkQAVBC80lX
-0Gw4Vwf/Q97nkllGFADGA3Xzbd8OKEpLl2I3ZrI9Os9trtJNjGbwW364pCoKa8ZA
-3QofMFP0j8ZJOdu/wv++ItFx0Z4Duyj1omkDn6iSZlFY1m0nTEzGGRo6RgzoNNRI
-N49eb+rpb1JEhL878cVBLHTrZraizGQReXlWXlqwBemFMJrgVcdDGL3FXwKKMvNC
-NU61AKrziUPmEiiNy+VpA4gRhVc8gDzkAu5SnmytSAfBANK+EeE3C3PE9vrkKUM1
-Zflk+TK8N3y5qOFs6ga/1mnOealQju5rtFBWOB5TWDB07MVWGXYXw0pAt/LyiHmr
-Jo+KJDwdkPN6W3JK2VPkPrpX8F4upQ==
-=DpNs
------END PGP SIGNATURE-----
-
---Sig_/mveM+ILdJ8gIOasG1GFKSR_--
+Konrad
 
