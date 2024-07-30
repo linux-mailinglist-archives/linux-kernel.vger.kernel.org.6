@@ -1,151 +1,212 @@
-Return-Path: <linux-kernel+bounces-266734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9F7940609
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:44:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4202494060D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E15BB21B2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:44:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF4D01F23619
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9235B14F9FF;
-	Tue, 30 Jul 2024 03:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF19150980;
+	Tue, 30 Jul 2024 03:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YWcOfx6z"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DaFNcVUH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE781487D8;
-	Tue, 30 Jul 2024 03:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA671BE5D;
+	Tue, 30 Jul 2024 03:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722311039; cv=none; b=q+IngZ/gv/RWNfLsu4FjQQYaM4DXmRl0r9kEcVnQ6Jrs3GCuRqj6xnpe0ARVc9hbpXEgMjbhuGissNoaKCnr/GtnOZM/tothWWwqUV5XA3yn7iTEU7ajAcwlVGLya118je1yRl7s32FPrVQGWj+5IVo3T+0b/cbZ+QtefjVpkng=
+	t=1722311193; cv=none; b=BdOj4cpbEU+VR5GE0rnPJvx9ecpg7aZr05K3iMl/ht1KEdBp90qYELuISEcLimL3m+HQ+z4RVXZcCfeQq8NHBoib2NbZmZkOkoMbiYFuAgjDK+7SQ8xmLdP/2oIyyS3+zWUOMm61ZxGj9znhm2bwqAqFZZogrk0KaRvdhG7yDBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722311039; c=relaxed/simple;
-	bh=47oS6MdN1hRTkoPWB3nS98Zx5hlaXi7nZdTSHAgoyGs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZV9py5AS1biKA2jt6GaxKOytk/Iw5GMp5VoF09XxUu5+oOaHZiqFAutFNtcUXUth+d412h6bn1z/Jc1wC2foZKgfmPCPH0DKYjYPXIhZ4mTmulkep+p4UELCCzm4r0p2MVIULM39bU8ScueMhvtF2d8bJSgPY8mcv2ReqMkSl4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YWcOfx6z; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5c661e75ff6so2910880eaf.2;
-        Mon, 29 Jul 2024 20:43:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722311037; x=1722915837; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UFVzFJaWTT6rGSUz8cSHkWG338V0aMzObcR7mTsL7Jw=;
-        b=YWcOfx6zVQb9ZV2aWrXTh6mQbgO/ytKbjhqO3m9yXl+bQ0fqTuzv6xSvVt8GVMYzXV
-         Z2whuh5mV+7TRawg67oo2X2R/HVTVytlf1qBicpmzD8KQio/eYMxKftPMEWdmaSZbYkp
-         9Px7bp+YFjIKscLq9oBr0nSpV/a98A5tqeoLxsZ9gAJWTrh7qrqlpGKOcioU/PBsi58U
-         qmTmbPsKR2fwG/PL50P6+pjIXbi0drGvqJjXi0/PIzUscg6FLYo3rQc42EYU61yjP6ZM
-         YRo5gQpqY/nN+UrPJ+qbdefz12UqRR9hOlsp3I6AdQx3oJKpQy/CqMMnBY/bkQrJow1K
-         5f1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722311037; x=1722915837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UFVzFJaWTT6rGSUz8cSHkWG338V0aMzObcR7mTsL7Jw=;
-        b=nuoECpLU0NlqFPSdITDC0/pWBswnrVXgWNh2++z2j7htaFgKP8why6VjuIbShUS3G+
-         msZY2HqBr5nD06CQe3HKchJzJWDTn1NqGhMAkjXuRrxejq5M6TuTzQMO74MPMGqH6Xnn
-         zYd+PaCRxolZku5ZxduJQvuhT3HacRTfYrVAb3uxIZJDH3yJLpDL5ifJTTZtg7OvAQxB
-         kV7Ozj0WCPbFRBIFlR5JVvzM/knK1WIDcJzXj/pFC3zJ6GqP64HuKbIpYFMcrIbYXW1X
-         t0zhbhYEjse3K3qkgiHL+75oAfIf6upnarTc5vbjE/YTGM+Iy2pxQcq1+9PpYe1bYrSF
-         cMhg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRBL55YtxnT8x+UpEG+8+XoybaXeaB/ZoaJ9INcawkaHzEeFAXR4AEkrhGWhK6Y9Ryw+EhoQzMzqIZdtvf8DR3yV/bxPnYSoUWQSd9jEcV46FFUQRVa2WoDCuIqHS1iIfS2YLQ/EHY
-X-Gm-Message-State: AOJu0Yy3z38wj4FQbk8ACUy0++4LPJoTLXhZiA7B0YV81QEubvFvdpaP
-	vFTpz8enUrfEo2r4za2s3aslOKYQDFSeEtIaYrQm1Giw6zi3r+dA3DdzqIctl7QXGO6gkJlR7vO
-	qmgjbwRgzVzJ1fRfSnZv9DhL8uOg=
-X-Google-Smtp-Source: AGHT+IHedkgYLg5L4/4Stt/4dTaPBSD8/b1plQKQGdpMSt9apgVXe1n2CWtfq6pwfo7wyZ0Wwv+6VNTURv7vtSyeT8g=
-X-Received: by 2002:a05:6820:2292:b0:5c4:27f0:ae with SMTP id
- 006d021491bc7-5d5d0d9ad9fmr11055250eaf.1.1722311037620; Mon, 29 Jul 2024
- 20:43:57 -0700 (PDT)
+	s=arc-20240116; t=1722311193; c=relaxed/simple;
+	bh=A75fw6f+nIprBzqKB4p3N6PXQxqepgrg6HYNGrPLWz0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gPxt8y5HkFM1Gaz1mJWa3zpZpxtMGDmPBBlr6KYG0lPA+Ik7OTNw67xmdtyQdv4KL9n/MHP2oIzEIgUuVwqgOC2ivmKRQQ30HNlRQgUWovxhJ0AecEo2ne9ZzwNvvM5yy7of++k+Qr9zo9GJbsRtntdjjoaq5EsQbXaDC/A5P20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DaFNcVUH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46U0FX7q007429;
+	Tue, 30 Jul 2024 03:46:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=CsxwxBF4R7vSIxeod3/nje
+	Og8ZQ4XZzw13+ijnWmlA8=; b=DaFNcVUHnOZeIYxCTKWVBXcIZTEYBbwcPiImvR
+	gu8i9x7KQTQvCgiBrBsz9G0Xzv52U/3GAQpSTtDfNldKhB8TPm0E5cgNXFBnqbha
+	8lRiTQzHTTO6VVbwNn3TUyS07NDbN1cfxtjsTSNLKT0y++FK4ASyh3r+leXKpLi6
+	s55kjzwMcMAr6d5Jt8v26Qc8hfdzqmkJJd8eupiW5AYFg8oB1PjjoC6+gnao6kCe
+	RjsxtYyadQTtqw7jtVegFybpwr7D8hseI9BvZ4a4cZIupv7qt4pbHMKT73a1hvHu
+	QushGFBejJP0kzbWqC3k9/hWTv2jci1kRvRo2SF1MMw/3jVg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mr7gp43r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 03:46:16 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46U3kFY4004851
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 03:46:15 GMT
+Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 29 Jul 2024 20:46:09 -0700
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        "Satya
+ Priya Kakitapalli" <quic_skakitap@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        "kernel
+ test robot" <lkp@intel.com>
+Subject: [PATCH V3] dt-bindings: clock: qcom: Remove required-opps from required list on SM8650
+Date: Tue, 30 Jul 2024 09:15:52 +0530
+Message-ID: <20240730034552.31271-1-quic_jkona@quicinc.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719041400.3909775-1-dzm91@hust.edu.cn> <20240719041400.3909775-3-dzm91@hust.edu.cn>
- <87o76f98lr.fsf@trenco.lwn.net>
-In-Reply-To: <87o76f98lr.fsf@trenco.lwn.net>
-From: Dongliang Mu <mudongliangabcd@gmail.com>
-Date: Tue, 30 Jul 2024 11:43:31 +0800
-Message-ID: <CAD-N9QUi58tO61usRakxJUY063+=51FPSeXPvTaRXgMnOUR_2Q@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] doc-guide: add help documentation checktransupdate.rst
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Dongliang Mu <dzm91@hust.edu.cn>, chengziqiu@hust.edu.cn, Alex Shi <alexs@kernel.org>, 
-	Yanteng Si <siyanteng@loongson.cn>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: gNFsSdnLlNZs-ki3WpgqCfNObBTJzsgV
+X-Proofpoint-GUID: gNFsSdnLlNZs-ki3WpgqCfNObBTJzsgV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-30_03,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ impostorscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ spamscore=0 clxscore=1011 priorityscore=1501 mlxlogscore=932 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2407300026
 
-On Tue, Jul 30, 2024 at 5:44=E2=80=AFAM Jonathan Corbet <corbet@lwn.net> wr=
-ote:
->
-> For future reference, a sequence like this:
->
-> > +Then the output is something like:
-> > +
-> > +::
-> > +
-> > +    Documentation/dev-tools/kfence.rst
->
-> Can be more concisely and legibly expressed as:
->
-> > Then the output is something like::
-> >
-> >    (literal text here)
->
-> More importantly, though, this file:
->
-> > diff --git a/Documentation/doc-guide/checktransupdate.rst b/Documentati=
-on/doc-guide/checktransupdate.rst
-> > new file mode 100644
-> > index 000000000000..dabbf9ecd187
-> > --- /dev/null
-> > +++ b/Documentation/doc-guide/checktransupdate.rst
-> > @@ -0,0 +1,53 @@
-> > +.. SPDX-License-Identifier: GPL-2.0
-> > +
-> > +Check translation update
-> > +
-> > +This script helps track the translation status of the documentation in
-> > +different locales, i.e., whether the documentation is up-to-date with
-> > +the English counterpart.
->
-> ...lacks a title, so it renders strangely and inserts inscrutable stuff
-> into the doc-guide index.  I have fixed this, but I am not entirely
-> happy about that; this is a problem you should have seen immediately by
-> looking at the rendered version of your new document.  *Please* be a bit
-> more careful in the future.
+On SM8650, the minimum voltage corner supported on MMCX from cmd-db is
+sufficient for clock controllers to operate and there is no need to specify
+the required-opps. Hence remove the required-opps property from the list of
+required properties for SM8650 camcc and videocc bindings.
 
-Hi jon,
+This fixes:
+arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@aaf0000:
+'required-opps' is a required property
 
-If I understand correctly, you mean there should be "=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D" under
-the sentence "Check translate update". This would generate a title,
-right?
+arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@ade0000:
+'required-opps' is a required property
 
-Unfortunately, the "=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D" is asked to be deleted =
-in the v2
-patch. I doubted it, but did not make it back.
+Fixes: a6a61b9701d1 ("dt-bindings: clock: qcom: Add SM8650 video clock controller")
+Fixes: 1ae3f0578e0e ("dt-bindings: clock: qcom: Add SM8650 camera clock controller")
+Reported-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Closes: https://lore.kernel.org/all/0f13ab6b-dff1-4b26-9707-704ae2e2b535@linaro.org/
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202407070147.C9c3oTqS-lkp@intel.com/
+Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+---
+Changes in V3:
+ - Made only required-opps property conditional and added it based on the variant
+ - Link to V2: https://lore.kernel.org/all/20240720052818.26441-1-quic_jkona@quicinc.com/
+Changes in V2:
+ - Made required: conditional and dropped required-opps from it only for SM8650 platform
+ - Dropped Krzysztof Acked-by tag due to above changes
+ - Link to V1: https://lore.kernel.org/all/20240708130836.19273-1-quic_jkona@quicinc.com/
 
-BTW, the merged commit version has the title - "How it works", other
-than "Check translate update".
+ .../bindings/clock/qcom,sm8450-camcc.yaml     | 22 +++++++++++++++----
+ .../bindings/clock/qcom,sm8450-videocc.yaml   | 14 +++++++++++-
+ 2 files changed, 31 insertions(+), 5 deletions(-)
 
-Please correct me if I make any misunderstanding.
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+index f58edfc10f4c..eb806ef6dbea 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+@@ -21,9 +21,6 @@ description: |
+     include/dt-bindings/clock/qcom,sm8650-camcc.h
+     include/dt-bindings/clock/qcom,x1e80100-camcc.h
+ 
+-allOf:
+-  - $ref: qcom,gcc.yaml#
+-
+ properties:
+   compatible:
+     enum:
+@@ -57,7 +54,24 @@ required:
+   - compatible
+   - clocks
+   - power-domains
+-  - required-opps
++
++allOf:
++  - $ref: qcom,gcc.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,sc8280xp-camcc
++              - qcom,sm8450-camcc
++              - qcom,sm8550-camcc
++              - qcom,x1e80100-camcc
++    then:
++      required:
++        - required-opps
++    else:
++      properties:
++        required-opps: false
+ 
+ unevaluatedProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+index b2792b4bb554..c5c3fe5091fb 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+@@ -44,11 +44,23 @@ required:
+   - compatible
+   - clocks
+   - power-domains
+-  - required-opps
+   - '#power-domain-cells'
+ 
+ allOf:
+   - $ref: qcom,gcc.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,sm8450-videocc
++              - qcom,sm8550-videocc
++    then:
++      required:
++        - required-opps
++    else:
++      properties:
++        required-opps: false
+ 
+ unevaluatedProperties: false
+ 
+-- 
+2.45.2
 
-
-
-
->
-> Both patches applied, anyway.
->
-> jon
->
 
