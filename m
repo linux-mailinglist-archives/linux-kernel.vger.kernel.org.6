@@ -1,123 +1,68 @@
-Return-Path: <linux-kernel+bounces-267623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DDC5941388
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:48:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 350F0941386
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECD851F25200
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:48:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEC691F246A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B45F1A08A9;
-	Tue, 30 Jul 2024 13:48:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D52319FA92;
-	Tue, 30 Jul 2024 13:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18021A08B0;
+	Tue, 30 Jul 2024 13:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CmYSzJ1J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7A61465A7;
+	Tue, 30 Jul 2024 13:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722347314; cv=none; b=XVCB5OrAbqAQFT2SZcZ7uREFTkePNMF9yiQcXIrsdTFv86MFEOS1BIZoWV0kIES9PX9tvMKSc6XofJySy8i2MC81IwZm4l8LMXGuTfnp6c9yXggZnm/7JJo46EHggWImdWjKRaMa2HGS7sEyVs5+ekK9cHyxE2ttImCMR78Dcms=
+	t=1722347306; cv=none; b=f6js/PXNcJOYejkPaVOWtgY09YmhoPmSm6zfTVDDfEXDbwcOjrPbeOtNK/fzJZNmlA1825eyN/xOQhKt/SsIAU2u45Y0lM2ZdNsxBb/TLks9Bx/rq3AN3g4dBdnFdUu4njVq95HenOf8p5R3R1EFlbrmXGvh0g9WTkRq6M5F+aY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722347314; c=relaxed/simple;
-	bh=U85CGb9iXVNpcxFNKqQSP4h3se4004m4qgotfyoFwbI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e5btOX4zNOVewQ8N17dTKmSXwhP+ahEJJt9FJ/4w9m/17rQeq1FLeYd5eeiLGa/lfaFjNo+o8JTPKhmZdRapA+UR8Sn5fJCl1xcd8Lw2QbVPOq9Tt0H9LyzlrkrMBI7jp+XcRCLpyPO7Y7E70WNWi1Ah4h3+FiekG389AIM1hiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 668071007;
-	Tue, 30 Jul 2024 06:48:56 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F13E83F5A1;
-	Tue, 30 Jul 2024 06:48:27 -0700 (PDT)
-Message-ID: <dc2a28b6-566c-4c17-9834-874513f1d4f1@arm.com>
-Date: Tue, 30 Jul 2024 14:48:21 +0100
+	s=arc-20240116; t=1722347306; c=relaxed/simple;
+	bh=he9J58vS8pkfcV4kvaKODB0LsCUqw+V9kr+mja/L7pY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jclfkmvG/5u54N03pJopx9aoJPnI4ZJ1CaEWp4c/k9Cik+dnBiT+UmMKW3N30WANtBXgEIH9O/Ktp+nzsgITDaP3WFUoX+0JJtObR1bx5/z846SO8+2JHJbCc75R/AnRBGXbF1PVhDtsPnipHPNBqko4AK+Cd+0haATEe4QDaRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CmYSzJ1J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F394FC32782;
+	Tue, 30 Jul 2024 13:48:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722347305;
+	bh=he9J58vS8pkfcV4kvaKODB0LsCUqw+V9kr+mja/L7pY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CmYSzJ1JX3hyU8vVXsCLiv7jplGEOlO7z+lwnGsnz89uC+dboHgCDi9JCgwyuad4k
+	 UKRtFYj6fxbpmC4/GrstdbMAcFcowyJ9zdAyo32nshvQZoypuK90yYsHBbSLeexTvz
+	 YcNVTQ43ULl8hjBi0d3/vmk+AgGTv4a0i7QeX2w4=
+Date: Tue, 30 Jul 2024 15:48:22 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Erpeng Xu <xuerpeng@uniontech.com>
+Cc: stable@vger.kernel.org, sashal@kernel.org, hildawu@realtek.com,
+	wangyuli@uniontech.com, jagan@edgeble.ai, marcel@holtmann.org,
+	luiz.dentz@gmail.com, linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org, guanwentao@uniontech.com,
+	luiz.von.dentz@intel.com
+Subject: Re: [PATCH 6.6 1/3] Bluetooth: Add device 13d3:3572 IMC Networks
+ Bluetooth Radio
+Message-ID: <2024073015-calibrate-badge-32dd@gregkh>
+References: <F2FCAA7252DFAEDC+20240729032444.15274-1-xuerpeng@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 24/37] kvx: Add memory management
-To: Christoph Hellwig <hch@infradead.org>, ysionneau@kalrayinc.com
-Cc: linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Nick Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
- <jvetter@kalrayinc.com>, Clement Leger <clement@clement-leger.fr>,
- Guillaume Thouvenin <thouveng@gmail.com>,
- Jean-Christophe Pince <jcpince@gmail.com>,
- Jules Maselbas <jmaselbas@zdiv.net>, Julien Hascoet
- <jhascoet@kalrayinc.com>, Louis Morhet <lmorhet@kalrayinc.com>,
- =?UTF-8?Q?Marc_Poulhi=C3=A8s?= <dkm@kataplop.net>,
- Marius Gligor <mgligor@kalrayinc.com>,
- Vincent Chardon <vincent.chardon@elsys-design.com>,
- linux-arch@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org
-References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
- <20240722094226.21602-25-ysionneau@kalrayinc.com>
- <Zp5zrkwyagnkoY7F@infradead.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <Zp5zrkwyagnkoY7F@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <F2FCAA7252DFAEDC+20240729032444.15274-1-xuerpeng@uniontech.com>
 
-On 22/07/2024 3:58 pm, Christoph Hellwig wrote:
->> +#include "../../../drivers/iommu/dma-iommu.h"
+On Mon, Jul 29, 2024 at 11:22:52AM +0800, Erpeng Xu wrote:
+> From: Jagan Teki <jagan@edgeble.ai>
 > 
-> This is not a public header as you can guess from the file path.
-> 
->> +	switch (dir) {
->> +	case DMA_TO_DEVICE:
->> +		break;
->> +	case DMA_FROM_DEVICE:
->> +		break;
->> +
->> +	case DMA_BIDIRECTIONAL:
->> +		inval_dcache_range(paddr, size);
-> 
-> Doing this just for bidirectional is weird unless your architecture
-> never does any speculative prefetching.  Other architectures
-> include DMA_FROM_DEVICE here.
-> 
->> +#ifdef CONFIG_IOMMU_DMA
->> +void arch_teardown_dma_ops(struct device *dev)
->> +{
->> +	dev->dma_ops = NULL;
->> +}
->> +#endif /* CONFIG_IOMMU_DMA*/
-> 
-> This should not be needed right now.
+> commit c3df5671c937a21b8e6cf4798bf6450f12cb3a98 upstream
 
-More than that, per 8b80549f1bc6, it's now actually a latent bug.
-
->  And will be completley
-> useless once we do the direct calls to dma-iommu which we plan
-> to do for Linux 6.12.
-> 
->> +void arch_setup_dma_ops(struct device *dev, bool coherent)
->> +{
->> +	dev->dma_coherent = coherent;
->> +	if (device_iommu_mapped(dev))
->> +		iommu_setup_dma_ops(dev);
->> +}
-> 
-> And this seems odd, as iommu_setup_dma_ops is called from the iommu
-> code and you shouldn't need it here.
-
-Yeah, this smells like it was based on the old arm64 code, but then 
-rebased without reference to the equivalent arm64 changes, hence the 
-#include hack. Enabling iommu-dma for an architecture should now be a 
-one-liner in drivers/iommu/Kconfig, however I don't see an IOMMU driver 
-being added in this series so it's not clear it's actually necessary (yet).
-
-Thanks,
-Robin.
+Not a valid git id :(
 
