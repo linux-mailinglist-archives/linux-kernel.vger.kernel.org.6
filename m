@@ -1,179 +1,182 @@
-Return-Path: <linux-kernel+bounces-267790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7005E941580
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:36:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC89941582
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:37:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 939B11C22991
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:36:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EFA41F24999
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD9C1A2C0C;
-	Tue, 30 Jul 2024 15:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="E9qHEYSF"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FDC1A2C18;
+	Tue, 30 Jul 2024 15:37:37 +0000 (UTC)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BCE18A92F
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D4418A92F
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722353762; cv=none; b=nQPFiRCWsO+Uy2UZDSOtoFigsEHSIyoHVBxdu4JED51dZWhWNcTwzluqA4ivOVdwfbkXdtum2cxOCH3raeeX8iu4KCmb6uCWormKiNpWq4MPkz2ik4xj5N6ShgyPaVgYDjjdzwGwmofEFs9e79LURVuz8kv8qzY2a+Ebt2Ft6xI=
+	t=1722353856; cv=none; b=XH0p2+crkaLSpyLaKjcty8wwdOYWV5v+Ab6WZaYPfkQDynvRi1wLgdUjy5vI0NwvbX6mHptOXviffXtCLi6UgVtTPFBxiAiIrC1ahsh7aKDx+BvnFc5boK+gdT1BguvTqxnkSce0mzqYrS48ziwl7en5H+V3W61s+unEolm3Quk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722353762; c=relaxed/simple;
-	bh=fMeGkm0jV5VbKOVTBkVGxLAkp0QX4Z44Tr8ZKwhjE0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rTj0auy89AY95Et/TjcnIP/ij8T9sPB+8xyTpIG0yyTbhWDQv7LwAKlvCcMsReczWaOJra4//AvlwfXPXTKylFaRitz00CQatXbruJj0WO9aeAi5k5sakj64KE0YaNCoNabn6OwhoOa6qYDHT1ojZjzYWOjyRFCECf1akGv26zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=E9qHEYSF; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52efabf5d7bso5686877e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:36:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1722353758; x=1722958558; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bgm4tMXjeK45j0cH4gjo52YvHllV/PKSl7WdTE3xniM=;
-        b=E9qHEYSF3kqCD+d4mC8mhN9F0k28SsDJCBknCEeT5QhavgdxgrRRQPsmms38dKnhch
-         IBzSbzpOqiWJhE5GjhnlO/ferXV57cP7V0BmrNCTRoRFu0s3vQGy9BY2jRuGtwrXIMvo
-         /FBAztpPQsB+4LhHVJHkfq228/0agZlmj2WGH+LaNTfO55lbYlYu92LMWukLiOQWPsXT
-         iT6V/IfSbz8qkKzOOJHHSQEJYR1EdC9iOIpheiUjtYC4hdvxILtJzVc5kbmyJmlg743+
-         vKeZgdU1g02eb7LYgyvYBklHakSgnHQlSUkfQjbqlEoEd2gxS3IJU5/a+Lly8/wdi6M/
-         apcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722353758; x=1722958558;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bgm4tMXjeK45j0cH4gjo52YvHllV/PKSl7WdTE3xniM=;
-        b=QGf9IkNY6uRVhwnr1QKf+bHeIep5Ckl/P1f4sADD9oYWKLiwo2RZw4YSFMC1ltrgWm
-         b06Qt9mlYDRzuFDE8LJE5vIQIPPqWrxxucd7J7D1iLoTLrCQIHQnsY+WchjZYLTgOUi6
-         JhPqvptquAGYtK3GhJrNOFR26taauot0iNxiDTmqfnnFkTcS5y9tgRc/ZeSqVBNzopom
-         aCEhgsbGtUNQqKtURsvTq/K4r5hUjirXMiHUQLoWKnpIfYH0aOCZwl6KLb/RLhVDS2iJ
-         rXOr67kvumCqwWjTe6IqSPTgL5RgB2y/37XTCIKhUPLANKAB+cB+mzKocV3vEaQAa2pY
-         9dbA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0TtKLTnIeUzIbrFkgdA9HAamSC/sPBQvpqLWYuVz6loDcmh3BsAPHdFN+z5vj6aow+6cLMCEHaucUXJ3bLmiooiP2Yg0qn8ETNgPR
-X-Gm-Message-State: AOJu0YxwvJJZLtKoLyv720zuEQXGaQQ6A4fTa5mPOlJM9o7U1jWBmQ4O
-	9H6t7ZBLw3x0NVz20lc0Ta98IcAnZY1hEat/RZcnllRKM5CtBPsWsarHdUsXUXw=
-X-Google-Smtp-Source: AGHT+IFwgR/FSUJr5vYWtEToIUcR4XvSH2t1D2BZwYpAQ7Db0hrW06isM4fSK90pVXlhlmt5rElwCA==
-X-Received: by 2002:a05:6512:3e1e:b0:52e:7444:162e with SMTP id 2adb3069b0e04-5309b2e0ae6mr9549185e87.55.1722353758305;
-        Tue, 30 Jul 2024 08:35:58 -0700 (PDT)
-Received: from pathway.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab23654sm662678366b.32.2024.07.30.08.35.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 08:35:58 -0700 (PDT)
-Date: Tue, 30 Jul 2024 17:35:56 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH printk v3 10/19] printk: nbcon: Use thread callback if in
- task context for legacy
-Message-ID: <ZqkIXP22C7ovP-dn@pathway.suse.cz>
-References: <20240722171939.3349410-1-john.ogness@linutronix.de>
- <20240722171939.3349410-11-john.ogness@linutronix.de>
+	s=arc-20240116; t=1722353856; c=relaxed/simple;
+	bh=Ih/LrLn1CbATo6o7T5d3kYazjKIlQX5sB9OWflmii/M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CmnIStHe+IOOdZ9rVaq8kHhBOWv53mM459ioVvdPKADCo26dKx9vUFqeKs8Y7N15swJDiwV6W8DwEe0JhTuXUYTFUOErP4mNgyqJTvHSNGLTg3wB10R8HuQAFUmrFugiOF3XUlNqselQI03mTC7Mab/SL5d1/2oBz+LThNJ8PXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:520d:93ad:ff6d:335e])
+	by baptiste.telenet-ops.be with bizsmtp
+	id trdV2C00H30Ayot01rdV72; Tue, 30 Jul 2024 17:37:31 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sYouQ-004BM5-AP;
+	Tue, 30 Jul 2024 17:37:29 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sYoun-00EZBM-BX;
+	Tue, 30 Jul 2024 17:37:29 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Cc: linux-riscv@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC] riscv: defconfig: Disable RZ/Five peripheral support
+Date: Tue, 30 Jul 2024 17:37:26 +0200
+Message-Id: <89ad70c7d6e8078208fecfd41dc03f6028531729.1722353710.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240722171939.3349410-11-john.ogness@linutronix.de>
+Content-Transfer-Encoding: 8bit
 
-On Mon 2024-07-22 19:25:30, John Ogness wrote:
-> When printing via console_lock, the write_atomic() callback is
-> used for nbcon consoles. However, if it is known that the
-> current context is a task context, the write_thread() callback
-> can be used instead.
-> 
-> Using write_thread() instead of write_atomic() helps to reduce
-> large disabled preemption regions when the device_lock does not
-> disable preemption.
-> 
-> This is mainly a preparatory change to allow avoiding
-> write_atomic() completely during normal operation if boot
-> consoles are registered.
-> 
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+There is not much point in keeping support for RZ/Five peripherals
+enabled, as the RZ/Five platform option (ARCH_R9A07G043) is gated behind
+NONPORTABLE.  Hence drop all config options that enable built-in or
+modular support for peripherals found on RZ/Five SoCs.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Disable USB_XHCI_RCAR explicitly, as its value defaults to the value of
+ARCH_RENESAS, which is still enabled.
 
-Well, I would update a comment, see below.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Questions:
+  1. Perhaps the intention is to keep all RZ/Five peripheral support
+     enabled, so RZ/Five users can start from the defconfig, and
+     "just"[1] enable NONPORTABLE and ARCH_R9A07G043?
 
-> ---
->  kernel/printk/internal.h |  4 +--
->  kernel/printk/nbcon.c    | 54 +++++++++++++++++++++++++++++-----------
->  kernel/printk/printk.c   |  5 ++--
->  3 files changed, 45 insertions(+), 18 deletions(-)
-> 
-> diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
-> index 12605e0aff11..bb02788acc7c 100644
-> --- a/kernel/printk/internal.h
-> +++ b/kernel/printk/internal.h
-> @@ -91,7 +91,7 @@ void nbcon_free(struct console *con);
->  enum nbcon_prio nbcon_get_default_prio(void);
->  void nbcon_atomic_flush_pending(void);
->  bool nbcon_legacy_emit_next_record(struct console *con, bool *handover,
-> -				   int cookie);
-> +				   int cookie, bool use_atomic);
->  bool nbcon_kthread_create(struct console *con);
->  void nbcon_kthread_stop(struct console *con);
->  void nbcon_wake_kthreads(void);
-> @@ -174,7 +174,7 @@ static inline void nbcon_free(struct console *con) { }
->  static inline enum nbcon_prio nbcon_get_default_prio(void) { return NBCON_PRIO_NONE; }
->  static inline void nbcon_atomic_flush_pending(void) { }
->  static inline bool nbcon_legacy_emit_next_record(struct console *con, bool *handover,
-> -						 int cookie) { return false; }
-> +						 int cookie, bool use_atomic) { return false; }
->  static inline void nbcon_kthread_wake(struct console *con) { }
->  
->  static inline bool console_is_usable(struct console *con, short flags,
-> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-> index 69cecf97bf24..233ab8f90fef 100644
-> --- a/kernel/printk/nbcon.c
-> +++ b/kernel/printk/nbcon.c
-> @@ -1294,9 +1294,10 @@ enum nbcon_prio nbcon_get_default_prio(void)
->  }
->  
->  /*
-> - * nbcon_atomic_emit_one - Print one record for an nbcon console using the
-> - *				write_atomic() callback
-> + * nbcon_emit_one - Print one record for an nbcon console using the
-> + *			specified callback
->   * @wctxt:	An initialized write context struct to use for this context
-> + * @use_atomic:	True if the write_atomic() callback is to be used
->   *
->   * Return:	True, when a record has been printed and there are still
->   *		pending records. The caller might want to continue flushing.
-> @@ -1309,7 +1310,7 @@ enum nbcon_prio nbcon_get_default_prio(void)
->   * This is an internal helper to handle the locking of the console before
->   * calling nbcon_emit_next_record().
+     [1] Nope, need to disable RISCV_ISA_ZICBOM and ERRATA_THEAD_CMO
+	 (and whatever else in the future?), too.
 
-This is not completely true when @use_atomic == false. The function
-takes only the nbcon context. But also con->device_lock()
-is needed for the non-atomic case.
+  2. Perhaps CONFIG_ARCH_RENESAS=y should be dropped, too?
+     In addition to USB_XHCI_RCAR, that would get rid of SOC_BUS,
+     PINCTRL_RENESAS, CLK_RENESAS, and SOC_RENESAS.
+---
+ arch/riscv/configs/defconfig | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-We should either update the commit message. Or it might make sense
-to move "con->device_lock()/unlock() stuff to nbcon_emit_one
-so that it actually does all the necessary locking.
+diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+index 0d678325444fccdc..b51ef6cd1e3986ed 100644
+--- a/arch/riscv/configs/defconfig
++++ b/arch/riscv/configs/defconfig
+@@ -137,12 +137,10 @@ CONFIG_VIRTIO_NET=y
+ CONFIG_MACB=y
+ CONFIG_E1000E=y
+ CONFIG_R8169=y
+-CONFIG_RAVB=y
+ CONFIG_STMMAC_ETH=m
+ CONFIG_MICREL_PHY=y
+ CONFIG_MICROSEMI_PHY=y
+ CONFIG_MOTORCOMM_PHY=y
+-CONFIG_CAN_RCAR_CANFD=m
+ CONFIG_INPUT_MOUSEDEV=y
+ CONFIG_KEYBOARD_SUN4I_LRADC=m
+ CONFIG_SERIAL_8250=y
+@@ -150,7 +148,6 @@ CONFIG_SERIAL_8250_CONSOLE=y
+ CONFIG_SERIAL_8250_DW=y
+ CONFIG_SERIAL_OF_PLATFORM=y
+ CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
+-CONFIG_SERIAL_SH_SCI=y
+ CONFIG_VIRTIO_CONSOLE=y
+ CONFIG_HW_RANDOM=y
+ CONFIG_HW_RANDOM_VIRTIO=y
+@@ -159,11 +156,9 @@ CONFIG_I2C=y
+ CONFIG_I2C_CHARDEV=m
+ CONFIG_I2C_DESIGNWARE_PLATFORM=y
+ CONFIG_I2C_MV64XXX=m
+-CONFIG_I2C_RIIC=y
+ CONFIG_SPI=y
+ CONFIG_SPI_CADENCE_QUADSPI=m
+ CONFIG_SPI_PL022=m
+-CONFIG_SPI_RSPI=m
+ CONFIG_SPI_SIFIVE=y
+ CONFIG_SPI_SUN6I=y
+ # CONFIG_PTP_1588_CLOCK is not set
+@@ -172,7 +167,6 @@ CONFIG_POWER_RESET_GPIO_RESTART=y
+ CONFIG_SENSORS_SFCTEMP=m
+ CONFIG_CPU_THERMAL=y
+ CONFIG_DEVFREQ_THERMAL=y
+-CONFIG_RZG2L_THERMAL=y
+ CONFIG_WATCHDOG=y
+ CONFIG_SUNXI_WATCHDOG=y
+ CONFIG_MFD_AXP20X_I2C=y
+@@ -201,11 +195,11 @@ CONFIG_USB=y
+ CONFIG_USB_OTG=y
+ CONFIG_USB_XHCI_HCD=y
+ CONFIG_USB_XHCI_PLATFORM=y
++# CONFIG_USB_XHCI_RCAR is not set
+ CONFIG_USB_EHCI_HCD=y
+ CONFIG_USB_EHCI_HCD_PLATFORM=y
+ CONFIG_USB_OHCI_HCD=y
+ CONFIG_USB_OHCI_HCD_PLATFORM=y
+-CONFIG_USB_RENESAS_USBHS=m
+ CONFIG_USB_STORAGE=y
+ CONFIG_USB_UAS=y
+ CONFIG_USB_CDNS_SUPPORT=m
+@@ -217,7 +211,6 @@ CONFIG_USB_MUSB_HDRC=m
+ CONFIG_USB_MUSB_SUNXI=m
+ CONFIG_NOP_USB_XCEIV=m
+ CONFIG_USB_GADGET=y
+-CONFIG_USB_RENESAS_USBHS_UDC=m
+ CONFIG_USB_CONFIGFS=m
+ CONFIG_USB_CONFIGFS_SERIAL=y
+ CONFIG_USB_CONFIGFS_ACM=y
+@@ -235,7 +228,6 @@ CONFIG_MMC_SDHCI_PLTFM=y
+ CONFIG_MMC_SDHCI_OF_DWCMSHC=y
+ CONFIG_MMC_SDHCI_CADENCE=y
+ CONFIG_MMC_SPI=y
+-CONFIG_MMC_SDHI=y
+ CONFIG_MMC_DW=y
+ CONFIG_MMC_DW_STARFIVE=y
+ CONFIG_MMC_SUNXI=y
+@@ -250,7 +242,6 @@ CONFIG_VIRTIO_INPUT=y
+ CONFIG_VIRTIO_MMIO=y
+ CONFIG_CLK_SOPHGO_CV1800=y
+ CONFIG_SUN8I_DE2_CCU=m
+-CONFIG_RENESAS_OSTM=y
+ CONFIG_SUN50I_IOMMU=y
+ CONFIG_RPMSG_CHAR=y
+ CONFIG_RPMSG_CTRL=y
+@@ -258,7 +249,6 @@ CONFIG_RPMSG_VIRTIO=y
+ CONFIG_PM_DEVFREQ=y
+ CONFIG_IIO=y
+ CONFIG_PHY_SUN4I_USB=m
+-CONFIG_PHY_RCAR_GEN3_USB2=y
+ CONFIG_PHY_STARFIVE_JH7110_DPHY_RX=m
+ CONFIG_PHY_STARFIVE_JH7110_PCIE=m
+ CONFIG_PHY_STARFIVE_JH7110_USB=m
+-- 
+2.34.1
 
-BTW: We could use this function in nbcon_kthread_func() then as well.
-
-    */
-> -static bool nbcon_atomic_emit_one(struct nbcon_write_context *wctxt)
-> +static bool nbcon_emit_one(struct nbcon_write_context *wctxt, bool use_atomic)
->  {
->  	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
->  
-
-Otherwise, it looks good.
-
-Best Regards,
-Petr
 
