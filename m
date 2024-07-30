@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-267748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E342B94150F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:02:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D3E941510
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 119BC1C23017
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:02:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A95D1C20C87
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1132A1C7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B3C1A2C21;
 	Tue, 30 Jul 2024 15:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="Nm11yIpS"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="notl7E3Z"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977051A0B1A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6451A2553
 	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722351755; cv=none; b=Kubig63Isp7JC7vHJ966F0B9wmn+QmiPcIaMZd3ekuZkJPOHTMXqngn/xmqg367nqyzKvVjHUa6tldrQ3Ic5TgcVXyWzmOY3Mb9KEA9bei8eQQZ0ntGVAVQrm3rfQsUcw8n5oV9IKD+EHKUEunlhW79i5sRXya5FKZsciYQyzR8=
+	t=1722351755; cv=none; b=ip6jW7YWSHaVLPvZ6/iZgKAHhcxnXpb0uBcLTq09YBJHQGUhoPHy15d2fAS+rXuYUVLEp7Iogft5PP7BuC+SSaQ+D63M9ESQI2EQeqU6ytVpSa0UqsKP0XDGaMjlJRUPUb1qirOYJswkc9ciHj83owzorLSfJ0rJ9asjuCtzpNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722351755; c=relaxed/simple;
-	bh=dHKZkmG/VXTGH5N/BUNRvkBMgEHtHZVj7W0wVsS460g=;
+	bh=1Ta+71ia1QNJpUQgeIqSkdMoJ9Fa4QUq8xj5TWpqvss=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cK9/48sTKfyoOUdZUEQNVpTBkmuBD2GAo2uElt1xt9dUFpDudDV8phvFtvRfwDRTcrz+suv54eSSIfrjda4pSJsSmUwPE+wS6LjH2nlv4e1cHaXdsCfmqDbvhozZJ8N0nN5EfX+KWTDbFkHJGWR+ChPEE9hOSvfj1V1gZwVm+Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=Nm11yIpS; arc=none smtp.client-ip=209.85.222.176
+	 MIME-Version; b=p9/ylJC6ndH/87CE9tnXGKPB6TJNXZ+jPoagc9EPVg3IDSZ85oooNoL+uDf48i2wOL/jBf2eYtP6SAVBLluoKB20VYJ5jelkKxG37zSvZ9SrRauo+ZSqMMc5HGQIXjty4ZIz3aHRDg9hwNuVg9aIiUUcP1ZIk6op04e6iVAvJKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=notl7E3Z; arc=none smtp.client-ip=209.85.222.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7a1e1237e9aso286541885a.3
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a1da7cafccso228478185a.3
         for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:02:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1722351752; x=1722956552; darn=vger.kernel.org;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1722351753; x=1722956553; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qK7WOu+hv7tl+cxtg7CXPtDPtjLG3K7kUlaYAaWdes0=;
-        b=Nm11yIpSZK/N/RD92e3yEqnL/nQwH0884Nl/K7g9kCJ27Pbm+1u2UwO1/nXmSI37s+
-         EOFDJKAdmpLq/7nQAJecEiGrtK5PTPnVstKK4xOXn+ofSZfs9c7wnq4VBecvhHolGXOh
-         qQEDyBL/hjw95gIc6luBUl8xfFVm+P2rFu+FLCEXd9ZIIcMTkAfW2SLMR2EVhBEX4VZt
-         80EPRu9QMZuRjCYTn63+M2AzFgEe5BPjIF4KgDHxgQwyzUWmjSp6Qb7KgygPhyvw0knx
-         CepLK4m/qeQdoRaYp1YgFfcGSVuh2JLLPPAJlcva5FtaNuSBVqJDNNujPkr6WjjcX6Us
-         GZiw==
+        bh=p8PfWoyQ/BZ4vL4BkdBJYX/P6ybvfxcH/D6ib7uXKjM=;
+        b=notl7E3ZMgW6zgk3VAIf4jfei1g9Ra+cCleooQtusBpjRY8ilVaX73t+UjR3tdVWq4
+         oYB3rd36ObO6C8xNBAqY7CRIwou33PlGvMVgqgrxK4xLZHuMYBHU17EETWr0eiwvx1bp
+         VCT1FM+qUlA05spyDOQ+Trkf0zm0NYjjGvI+Km3wTcbwo8+PO335qkJ/qPIsijZc8srN
+         v9cNQsjUYhVdMjnlPTCkhS7F6A4yrtgHxkQZUzZ7gCxHEZapksS1NORio34cuZNWUb4a
+         hEupC9LbtdRS/aCSntijjgpWyJ52A8dzhkFcWnGmMzUwmXUwrwgtWL1KxNh9gDqpX6or
+         s9sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722351752; x=1722956552;
+        d=1e100.net; s=20230601; t=1722351753; x=1722956553;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qK7WOu+hv7tl+cxtg7CXPtDPtjLG3K7kUlaYAaWdes0=;
-        b=kKL/p0cc6Bb2vc98EaFD2J+kaw30hMQkzCCwPSm89rdRBbDKlGRSLsmrKQiTbyvW8Z
-         GL3g1i8efv5Aa5D4gEj0z08brPGqebxtOee5bU+09ax7z9AfWxZSAYi+Gy/cnU8zdS/s
-         sWSFsf6WSEc9nvD+y4K+ecNyAYquo5Xwv7YIiaySlvNUsEg9a90aysLvAdyoNKEOUPuW
-         o3cg42e7YROHOJg5jrLCEXBnRaBJOxSpoTtDRnHQAYi8U+1zuEdGGTeAElYoFjnPztQW
-         ne1uPdTCRxnuk+aNDaeGbaIkKpRD7i2NLiODdy/XuVuPUbgX+eKtSIK1mR39r9gj25QV
-         SiIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4ojrmDMjl5l7P/7fUa334bdrIeG5CnuHcFvhDlMkZQ209c/reH+lpDhXAVIB8ZfZJHeIOUt40PwbYp54hugkfR3+5RxO/XUj9JqD7
-X-Gm-Message-State: AOJu0YzowI+5TWsOdtICj/OELMzuVqmDdvNOT8FCNoiIGcVcHpnbgVYu
-	BrxWe/RgGABhDtjTl8cydiz4b50Fgsn0LKvLMRzpo+QZtEpJxfbPEBcrb/nTG40=
-X-Google-Smtp-Source: AGHT+IGuBFGt6MK7hI5v2XIYYwSP41dPGObuYRlJA5D+J3MWpue7Ez/s4WblQus1adMdjSSsNHR4iQ==
-X-Received: by 2002:a05:620a:179f:b0:79c:e7d:22b6 with SMTP id af79cd13be357-7a1e525fafbmr1390496785a.39.1722351722274;
-        Tue, 30 Jul 2024 08:02:02 -0700 (PDT)
+        bh=p8PfWoyQ/BZ4vL4BkdBJYX/P6ybvfxcH/D6ib7uXKjM=;
+        b=WT+wOkIpJsPy/FWvauBbd9jiYO/Vsowz1kE/SbfAu0qrWqT0zdi0WOfOTHzoyyn4mP
+         LujC2En3njdi5DAbGAOWOriF8XeS2mGrfJpCpT4Bbx0hijAmvV9trXqGOAHBb0u4yJVC
+         YwNQInMf2jabaUMD1jSYmIrVA5UWv0Dw9LVG0lYMYEuQhqiwEQUmcS3DNw8jNB5ivaYQ
+         rr35EzNusZkCRDcQL3UhJHVhk4Zom7SytC4ZQiob/Uai/1A+64DGhJBOZZmf6/JRYfd0
+         M7Q/PkLU/iZKeQU/C2jHHJZuEgQWBlIiRX8SxBvVcAnCYUWafmU7BkLuRWHuwjo6UGJ6
+         mbOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUY3zMApuDGyZabQlFK2XlCfu/1/pxzgN0d/EdLUIr+PEguyA2ohpoHqqBRBhIeyfZ5YLv9QfstN14QiIQk7cuGcHBRSZS/lLEpMheM
+X-Gm-Message-State: AOJu0Yz34m6ue2NSHg3iKLqhAKOAxHP3++2ROm2QZgHPbo4UhxAkZoC2
+	vGiPEn8uo2hxlPUZuKr89AfpDb7z04R9/Y3tM9inidk7oTRPetGvxnDoUdFWIZs=
+X-Google-Smtp-Source: AGHT+IE62T9UYgoFVIkcGb7YcoXTufdF8VzWoHsKdhWNi0ZH/AY4EA/1XwSY1gXhI3Nz4aPyj1TOGA==
+X-Received: by 2002:a05:620a:1981:b0:7a1:dbf6:f762 with SMTP id af79cd13be357-7a1e524c6d3mr1039593585a.20.1722351752925;
+        Tue, 30 Jul 2024 08:02:32 -0700 (PDT)
 Received: from soleen.c.googlers.com.com (197.5.86.34.bc.googleusercontent.com. [34.86.5.197])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73efffdsm645934285a.69.2024.07.30.08.02.01
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73efffdsm645934285a.69.2024.07.30.08.02.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 08:02:01 -0700 (PDT)
+        Tue, 30 Jul 2024 08:02:32 -0700 (PDT)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: akpm@linux-foundation.org,
 	jpoimboe@kernel.org,
@@ -83,9 +83,9 @@ To: akpm@linux-foundation.org,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	yosryahmed@google.com
-Subject: [PATCH v6 1/3] memcg: increase the valid index range for memcg stats
-Date: Tue, 30 Jul 2024 15:01:56 +0000
-Message-ID: <20240730150158.832783-2-pasha.tatashin@soleen.com>
+Subject: [PATCH v6 2/3] vmstat: Kernel stack usage histogram
+Date: Tue, 30 Jul 2024 15:01:57 +0000
+Message-ID: <20240730150158.832783-3-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.46.0.rc1.232.g9752f9e123-goog
 In-Reply-To: <20240730150158.832783-1-pasha.tatashin@soleen.com>
 References: <20240730150158.832783-1-pasha.tatashin@soleen.com>
@@ -97,180 +97,184 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Shakeel Butt <shakeel.butt@linux.dev>
+As part of the dynamic kernel stack project, we need to know the amount
+of data that can be saved by reducing the default kernel stack size [1].
 
-At the moment the valid index for the indirection tables for memcg stats
-and events is < S8_MAX. These indirection tables are used in performance
-critical codepaths. With the latest addition to the vm_events, the
-NR_VM_EVENT_ITEMS has gone over S8_MAX. One way to resolve is to
-increase the entry size of the indirection table from int8_t to int16_t
-but this will increase the potential number of cachelines needed to
-access the indirection table.
+Provide a kernel stack usage histogram to aid in optimizing kernel stack
+sizes and minimizing memory waste in large-scale environments. The
+histogram divides stack usage into power-of-two buckets and reports the
+results in /proc/vmstat. This information is especially valuable in
+environments with millions of machines, where even small optimizations
+can have a significant impact.
 
-This patch took a different approach and make the valid index < U8_MAX.
-In this way the size of the indirection tables will remain same and we
-only need to invalid index check from less than 0 to equal to U8_MAX.
-In this approach we have also removed a subtraction from the performance
-critical codepaths.
+The histogram data is presented in /proc/vmstat with entries like
+"kstack_1k", "kstack_2k", and so on, indicating the number of threads
+that exited with stack usage falling within each respective bucket.
 
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-Co-developed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+Example outputs:
+Intel:
+$ grep kstack /proc/vmstat
+kstack_1k 3
+kstack_2k 188
+kstack_4k 11391
+kstack_8k 243
+kstack_16k 0
+
+ARM with 64K page_size:
+$ grep kstack /proc/vmstat
+kstack_1k 1
+kstack_2k 340
+kstack_4k 25212
+kstack_8k 1659
+kstack_16k 0
+kstack_32k 0
+kstack_64k 0
+
+Note: once the dynamic kernel stack is implemented it will depend on the
+implementation the usability of this feature: On hardware that supports
+faults on kernel stacks, we will have other metrics that show the total
+number of pages allocated for stacks. On hardware where faults are not
+supported, we will most likely have some optimization where only some
+threads are extended, and for those, these metrics will still be very
+useful.
+
+[1] https://lwn.net/Articles/974367
+
 Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 ---
- mm/memcontrol.c | 50 +++++++++++++++++++++++++++----------------------
- 1 file changed, 28 insertions(+), 22 deletions(-)
+ include/linux/vm_event_item.h | 24 ++++++++++++++++++++++
+ kernel/exit.c                 | 38 +++++++++++++++++++++++++++++++++++
+ mm/vmstat.c                   | 24 ++++++++++++++++++++++
+ 3 files changed, 86 insertions(+)
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 960371788687..84f383952d32 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -320,24 +320,27 @@ static const unsigned int memcg_stat_items[] = {
- #define NR_MEMCG_NODE_STAT_ITEMS ARRAY_SIZE(memcg_node_stat_items)
- #define MEMCG_VMSTAT_SIZE (NR_MEMCG_NODE_STAT_ITEMS + \
- 			   ARRAY_SIZE(memcg_stat_items))
--static int8_t mem_cgroup_stats_index[MEMCG_NR_STAT] __read_mostly;
-+#define BAD_STAT_IDX(index) ((u32)(index) >= U8_MAX)
-+static u8 mem_cgroup_stats_index[MEMCG_NR_STAT] __read_mostly;
- 
- static void init_memcg_stats(void)
- {
--	int8_t i, j = 0;
-+	u8 i, j = 0;
- 
--	BUILD_BUG_ON(MEMCG_NR_STAT >= S8_MAX);
-+	BUILD_BUG_ON(MEMCG_NR_STAT >= U8_MAX);
- 
--	for (i = 0; i < NR_MEMCG_NODE_STAT_ITEMS; ++i)
--		mem_cgroup_stats_index[memcg_node_stat_items[i]] = ++j;
-+	memset(mem_cgroup_stats_index, U8_MAX, sizeof(mem_cgroup_stats_index));
- 
--	for (i = 0; i < ARRAY_SIZE(memcg_stat_items); ++i)
--		mem_cgroup_stats_index[memcg_stat_items[i]] = ++j;
-+	for (i = 0; i < NR_MEMCG_NODE_STAT_ITEMS; ++i, ++j)
-+		mem_cgroup_stats_index[memcg_node_stat_items[i]] = j;
-+
-+	for (i = 0; i < ARRAY_SIZE(memcg_stat_items); ++i, ++j)
-+		mem_cgroup_stats_index[memcg_stat_items[i]] = j;
- }
- 
- static inline int memcg_stats_index(int idx)
- {
--	return mem_cgroup_stats_index[idx] - 1;
-+	return mem_cgroup_stats_index[idx];
- }
- 
- struct lruvec_stats_percpu {
-@@ -369,7 +372,7 @@ unsigned long lruvec_page_state(struct lruvec *lruvec, enum node_stat_item idx)
- 		return node_page_state(lruvec_pgdat(lruvec), idx);
- 
- 	i = memcg_stats_index(idx);
--	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, idx))
-+	if (WARN_ONCE(BAD_STAT_IDX(i), "%s: missing stat item %d\n", __func__, idx))
- 		return 0;
- 
- 	pn = container_of(lruvec, struct mem_cgroup_per_node, lruvec);
-@@ -392,7 +395,7 @@ unsigned long lruvec_page_state_local(struct lruvec *lruvec,
- 		return node_page_state(lruvec_pgdat(lruvec), idx);
- 
- 	i = memcg_stats_index(idx);
--	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, idx))
-+	if (WARN_ONCE(BAD_STAT_IDX(i), "%s: missing stat item %d\n", __func__, idx))
- 		return 0;
- 
- 	pn = container_of(lruvec, struct mem_cgroup_per_node, lruvec);
-@@ -435,21 +438,24 @@ static const unsigned int memcg_vm_event_stat[] = {
+diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
+index 747943bc8cc2..37ad1c16367a 100644
+--- a/include/linux/vm_event_item.h
++++ b/include/linux/vm_event_item.h
+@@ -154,6 +154,30 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
+ 		VMA_LOCK_RETRY,
+ 		VMA_LOCK_MISS,
+ #endif
++#ifdef CONFIG_DEBUG_STACK_USAGE
++		KSTACK_1K,
++#if THREAD_SIZE > 1024
++		KSTACK_2K,
++#endif
++#if THREAD_SIZE > 2048
++		KSTACK_4K,
++#endif
++#if THREAD_SIZE > 4096
++		KSTACK_8K,
++#endif
++#if THREAD_SIZE > 8192
++		KSTACK_16K,
++#endif
++#if THREAD_SIZE > 16384
++		KSTACK_32K,
++#endif
++#if THREAD_SIZE > 32768
++		KSTACK_64K,
++#endif
++#if THREAD_SIZE > 65536
++		KSTACK_REST,
++#endif
++#endif /* CONFIG_DEBUG_STACK_USAGE */
+ 		NR_VM_EVENT_ITEMS
  };
  
- #define NR_MEMCG_EVENTS ARRAY_SIZE(memcg_vm_event_stat)
--static int8_t mem_cgroup_events_index[NR_VM_EVENT_ITEMS] __read_mostly;
-+static u8 mem_cgroup_events_index[NR_VM_EVENT_ITEMS] __read_mostly;
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 7430852a8571..64bfc2bae55b 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -778,6 +778,43 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
+ }
  
- static void init_memcg_events(void)
- {
--	int8_t i;
-+	u8 i;
+ #ifdef CONFIG_DEBUG_STACK_USAGE
++/* Count the maximum pages reached in kernel stacks */
++static inline void kstack_histogram(unsigned long used_stack)
++{
++#ifdef CONFIG_VM_EVENT_COUNTERS
++	if (used_stack <= 1024)
++		count_vm_event(KSTACK_1K);
++#if THREAD_SIZE > 1024
++	else if (used_stack <= 2048)
++		count_vm_event(KSTACK_2K);
++#endif
++#if THREAD_SIZE > 2048
++	else if (used_stack <= 4096)
++		count_vm_event(KSTACK_4K);
++#endif
++#if THREAD_SIZE > 4096
++	else if (used_stack <= 8192)
++		count_vm_event(KSTACK_8K);
++#endif
++#if THREAD_SIZE > 8192
++	else if (used_stack <= 16384)
++		count_vm_event(KSTACK_16K);
++#endif
++#if THREAD_SIZE > 16384
++	else if (used_stack <= 32768)
++		count_vm_event(KSTACK_32K);
++#endif
++#if THREAD_SIZE > 32768
++	else if (used_stack <= 65536)
++		count_vm_event(KSTACK_64K);
++#endif
++#if THREAD_SIZE > 65536
++	else
++		count_vm_event(KSTACK_REST);
++#endif
++#endif /* CONFIG_VM_EVENT_COUNTERS */
++}
 +
-+	BUILD_BUG_ON(NR_VM_EVENT_ITEMS >= U8_MAX);
- 
--	BUILD_BUG_ON(NR_VM_EVENT_ITEMS >= S8_MAX);
-+	memset(mem_cgroup_events_index, U8_MAX,
-+	       sizeof(mem_cgroup_events_index));
- 
- 	for (i = 0; i < NR_MEMCG_EVENTS; ++i)
--		mem_cgroup_events_index[memcg_vm_event_stat[i]] = i + 1;
-+		mem_cgroup_events_index[memcg_vm_event_stat[i]] = i;
- }
- 
- static inline int memcg_events_index(enum vm_event_item idx)
+ static void check_stack_usage(void)
  {
--	return mem_cgroup_events_index[idx] - 1;
-+	return mem_cgroup_events_index[idx];
- }
+ 	static DEFINE_SPINLOCK(low_water_lock);
+@@ -785,6 +822,7 @@ static void check_stack_usage(void)
+ 	unsigned long free;
  
- struct memcg_vmstats_percpu {
-@@ -621,7 +627,7 @@ unsigned long memcg_page_state(struct mem_cgroup *memcg, int idx)
- 	long x;
- 	int i = memcg_stats_index(idx);
+ 	free = stack_not_used(current);
++	kstack_histogram(THREAD_SIZE - free);
  
--	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, idx))
-+	if (WARN_ONCE(BAD_STAT_IDX(i), "%s: missing stat item %d\n", __func__, idx))
- 		return 0;
- 
- 	x = READ_ONCE(memcg->vmstats->state[i]);
-@@ -662,7 +668,7 @@ void __mod_memcg_state(struct mem_cgroup *memcg, enum memcg_stat_item idx,
- 	if (mem_cgroup_disabled())
+ 	if (free >= lowest_to_date)
  		return;
- 
--	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, idx))
-+	if (WARN_ONCE(BAD_STAT_IDX(i), "%s: missing stat item %d\n", __func__, idx))
- 		return;
- 
- 	__this_cpu_add(memcg->vmstats_percpu->state[i], val);
-@@ -675,7 +681,7 @@ unsigned long memcg_page_state_local(struct mem_cgroup *memcg, int idx)
- 	long x;
- 	int i = memcg_stats_index(idx);
- 
--	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, idx))
-+	if (WARN_ONCE(BAD_STAT_IDX(i), "%s: missing stat item %d\n", __func__, idx))
- 		return 0;
- 
- 	x = READ_ONCE(memcg->vmstats->state_local[i]);
-@@ -694,7 +700,7 @@ static void __mod_memcg_lruvec_state(struct lruvec *lruvec,
- 	struct mem_cgroup *memcg;
- 	int i = memcg_stats_index(idx);
- 
--	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, idx))
-+	if (WARN_ONCE(BAD_STAT_IDX(i), "%s: missing stat item %d\n", __func__, idx))
- 		return;
- 
- 	pn = container_of(lruvec, struct mem_cgroup_per_node, lruvec);
-@@ -810,7 +816,7 @@ void __count_memcg_events(struct mem_cgroup *memcg, enum vm_event_item idx,
- 	if (mem_cgroup_disabled())
- 		return;
- 
--	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, idx))
-+	if (WARN_ONCE(BAD_STAT_IDX(i), "%s: missing stat item %d\n", __func__, idx))
- 		return;
- 
- 	memcg_stats_lock();
-@@ -823,7 +829,7 @@ unsigned long memcg_events(struct mem_cgroup *memcg, int event)
- {
- 	int i = memcg_events_index(event);
- 
--	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, event))
-+	if (WARN_ONCE(BAD_STAT_IDX(i), "%s: missing stat item %d\n", __func__, event))
- 		return 0;
- 
- 	return READ_ONCE(memcg->vmstats->events[i]);
-@@ -833,7 +839,7 @@ unsigned long memcg_events_local(struct mem_cgroup *memcg, int event)
- {
- 	int i = memcg_events_index(event);
- 
--	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, event))
-+	if (WARN_ONCE(BAD_STAT_IDX(i), "%s: missing stat item %d\n", __func__, event))
- 		return 0;
- 
- 	return READ_ONCE(memcg->vmstats->events_local[i]);
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index 04a1cb6cc636..c7d52a9660c3 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1417,6 +1417,30 @@ const char * const vmstat_text[] = {
+ 	"vma_lock_retry",
+ 	"vma_lock_miss",
+ #endif
++#ifdef CONFIG_DEBUG_STACK_USAGE
++	"kstack_1k",
++#if THREAD_SIZE > 1024
++	"kstack_2k",
++#endif
++#if THREAD_SIZE > 2048
++	"kstack_4k",
++#endif
++#if THREAD_SIZE > 4096
++	"kstack_8k",
++#endif
++#if THREAD_SIZE > 8192
++	"kstack_16k",
++#endif
++#if THREAD_SIZE > 16384
++	"kstack_32k",
++#endif
++#if THREAD_SIZE > 32768
++	"kstack_64k",
++#endif
++#if THREAD_SIZE > 65536
++	"kstack_rest",
++#endif
++#endif
+ #endif /* CONFIG_VM_EVENT_COUNTERS || CONFIG_MEMCG */
+ };
+ #endif /* CONFIG_PROC_FS || CONFIG_SYSFS || CONFIG_NUMA || CONFIG_MEMCG */
 -- 
 2.46.0.rc1.232.g9752f9e123-goog
 
