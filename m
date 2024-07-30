@@ -1,261 +1,165 @@
-Return-Path: <linux-kernel+bounces-267576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18942941306
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:21:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E7B941307
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C6031F24B1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:21:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFA491C2330F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9434A1A00F3;
-	Tue, 30 Jul 2024 13:21:00 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D40E19F49B;
+	Tue, 30 Jul 2024 13:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="votp6cOY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="L8b7jXPd";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="votp6cOY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="L8b7jXPd"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291E51A01BC;
-	Tue, 30 Jul 2024 13:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E9C18FC6E;
+	Tue, 30 Jul 2024 13:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722345660; cv=none; b=GAQLf9J3OS6kFkPT0ntxRXK+x4QKjJZHV6TapHxUud6DT6/+0L3MZ/PA2xQDzo2G4xC3uir7eaXCK2b3/xDkzDJ6+EB4QbPkQHIDG0kaFj1xje2HHWYFjtfu7X5LJUqsipHusicJPHqmpHHnQUGFQp0kFGZD7+Q3Onkwgm3XQhI=
+	t=1722345727; cv=none; b=KVqp7QcVgSD21mtUwHRtPbVvjSfM+TIBm3wh3jpGRCtF6GV+XIt/pskpTpNc9ifhyt3GjC9P5VnGbB2zT8nt33tyoNCRSb1yt4TGSVu7jHO4jZlB1d0vb9qNhc77+AQLE/See4RCFimJZk8ho7GhX5upwO75v9pcaayxUP47Qeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722345660; c=relaxed/simple;
-	bh=86jGSWIkrbKu/7gkAqtGQWZSRGbwqKx5WmmXkLl8Qkw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=NU4b4RvyQDrzjQjPzbEQJq1D0v67PR9L+FZl9+GTdjaK/1DYn2OOskan8fWCDI+ZmYQc3az9mXHWX4YyaI2L2g5k7lqhqX+m7cYOs70Bii6yWMJnXfq689/fmxQKFjo7M7zn6EFjNOxmyWLWUpjj2fSe8imUKGc3+GnuK74K+hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WYG6Y1HPNzncv0;
-	Tue, 30 Jul 2024 21:19:49 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 472C7140FAA;
-	Tue, 30 Jul 2024 21:20:47 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 30 Jul 2024 21:20:46 +0800
-Message-ID: <af06fc13-ae3f-41ca-9723-af1c8d9d051d@huawei.com>
-Date: Tue, 30 Jul 2024 21:20:46 +0800
+	s=arc-20240116; t=1722345727; c=relaxed/simple;
+	bh=YtU1TPryWvNIWmx42Vw3r+Efss/+g9rkHWZ0tyJAbTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bBr41h6PkUsvRkX0AZpb6Hadz1qitIaV2jifJl1giEbpkWtMsMxVigpKKnlvLW3J23GXEdgQAWBlqMXJEGM6RmJW6jyx3E6EC+W8loT8+pyP4JSYTWRemC5po/Mu75il6a/yoeyBViHeHFYVIp0GP3r6A0lo1HdfoTz1Z2zns8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=votp6cOY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=L8b7jXPd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=votp6cOY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=L8b7jXPd; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0F58E1F7F6;
+	Tue, 30 Jul 2024 13:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722345724; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pO9THBwWbYxMnnSpqWuhpohTcpKv7cgEmJdurnNricQ=;
+	b=votp6cOYDuZnmq0FXxdBNhPv7yDS1nEL8FYXME2txQcz7Y/eT/1FLIoeij10zIkPkZ3WiU
+	Go+SbS0VW0M5HI8ivtJdgtdrdgdJnMcEM2SQ1bjLslwZG15sIdfQCNsVm3VhLE1H6JwTFx
+	sCY6RxkJPskmnKgGsVllYpFdiMmNaIU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722345724;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pO9THBwWbYxMnnSpqWuhpohTcpKv7cgEmJdurnNricQ=;
+	b=L8b7jXPdtInwzxFQIKOA5ZwXF7flfqZBLGAtpbBPADRPJL5CER8FJ70PAxEeChM9LhqKCU
+	ZG6v1X1SCKNG4ZBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722345724; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pO9THBwWbYxMnnSpqWuhpohTcpKv7cgEmJdurnNricQ=;
+	b=votp6cOYDuZnmq0FXxdBNhPv7yDS1nEL8FYXME2txQcz7Y/eT/1FLIoeij10zIkPkZ3WiU
+	Go+SbS0VW0M5HI8ivtJdgtdrdgdJnMcEM2SQ1bjLslwZG15sIdfQCNsVm3VhLE1H6JwTFx
+	sCY6RxkJPskmnKgGsVllYpFdiMmNaIU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722345724;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pO9THBwWbYxMnnSpqWuhpohTcpKv7cgEmJdurnNricQ=;
+	b=L8b7jXPdtInwzxFQIKOA5ZwXF7flfqZBLGAtpbBPADRPJL5CER8FJ70PAxEeChM9LhqKCU
+	ZG6v1X1SCKNG4ZBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F1C1813983;
+	Tue, 30 Jul 2024 13:22:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Q8wCO/voqGZkWAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 30 Jul 2024 13:22:03 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id AFE6AA099C; Tue, 30 Jul 2024 15:21:59 +0200 (CEST)
+Date: Tue, 30 Jul 2024 15:21:59 +0200
+From: Jan Kara <jack@suse.cz>
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] jbd2: correctly compare tids with tid_geq function
+ in jbd2_fc_begin_commit
+Message-ID: <20240730132159.opjknn477owojkrq@quack3>
+References: <20240730113335.2365290-1-shikemeng@huaweicloud.com>
+ <20240730113335.2365290-2-shikemeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v11 08/14] mm: page_frag: some minor refactoring before
- adding new API
-From: Yunsheng Lin <linyunsheng@huawei.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>
-CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
-References: <20240719093338.55117-1-linyunsheng@huawei.com>
- <20240719093338.55117-9-linyunsheng@huawei.com>
- <dbf876b000158aed8380d6ac3a3f6e8dd40ace7b.camel@gmail.com>
- <fdc778be-907a-49bd-bf10-086f45716181@huawei.com>
- <CAKgT0UeQ9gwYo7qttak0UgXC9+kunO2gedm_yjtPiMk4VJp9yQ@mail.gmail.com>
- <5a0e12c1-0e98-426a-ab4d-50de2b09f36f@huawei.com>
-Content-Language: en-US
-In-Reply-To: <5a0e12c1-0e98-426a-ab4d-50de2b09f36f@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730113335.2365290-2-shikemeng@huaweicloud.com>
+X-Spamd-Result: default: False [-3.60 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -3.60
 
-On 2024/7/23 21:19, Yunsheng Lin wrote:
-
-...
-
->>>>>  static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->>>>>                                           gfp_t gfp_mask)
->>>>>  {
->>>>> @@ -26,6 +48,14 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->>>>>      struct page *page = NULL;
->>>>>      gfp_t gfp = gfp_mask;
->>>>>
->>>>> +    if (likely(nc->encoded_va)) {
->>>>> +            page = __page_frag_cache_recharge(nc);
->>>>> +            if (page) {
->>>>> +                    order = encoded_page_order(nc->encoded_va);
->>>>> +                    goto out;
->>>>> +            }
->>>>> +    }
->>>>> +
->>>>
->>>> This code has no business here. This is refill, you just dropped
->>>> recharge in here which will make a complete mess of the ordering and be
->>>> confusing to say the least.
->>>>
->>>> The expectation was that if we are calling this function it is going to
->>>> overwrite the virtual address to NULL on failure so we discard the old
->>>> page if there is one present. This changes that behaviour. What you
->>>> effectively did is made __page_frag_cache_refill into the recharge
->>>> function.
->>>
->>> The idea is to reuse the below for both __page_frag_cache_refill() and
->>> __page_frag_cache_recharge(), which seems to be about maintainability
->>> to not having duplicated code. If there is a better idea to avoid that
->>> duplicated code while keeping the old behaviour, I am happy to change
->>> it.
->>>
->>>         /* reset page count bias and remaining to start of new frag */
->>>         nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
->>>         nc->remaining = PAGE_SIZE << order;
->>>
->>
->> The only piece that is really reused here is the pagecnt_bias
->> assignment. What is obfuscated away is that the order is gotten
->> through one of two paths. Really order isn't order here it is size.
->> Which should have been fetched already. What you end up doing with
->> this change is duplicating a bunch of code throughout the function.
->> You end up having to fetch size multiple times multiple ways. here you
->> are generating it with order. Then you have to turn around and get it
->> again at the start of the function, and again after calling this
->> function in order to pull it back out.
+On Tue 30-07-24 19:33:29, Kemeng Shi wrote:
+> Use tid_geq to compare tids to work over sequence number wraps.
 > 
-> I am assuming you would like to reserve old behavior as below?
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> ---
+>  fs/jbd2/journal.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Indeed, Luis seems to have missed this when fixing these bugs recently.
+Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > 
-> 	if(!encoded_va) {
-> refill:
-> 		__page_frag_cache_refill()
-> 	}
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index 1ebf2393bfb7..da5a56d700f1 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -710,7 +710,7 @@ int jbd2_fc_begin_commit(journal_t *journal, tid_t tid)
+>  		return -EINVAL;
+>  
+>  	write_lock(&journal->j_state_lock);
+> -	if (tid <= journal->j_commit_sequence) {
+> +	if (tid_geq(journal->j_commit_sequence, tid)) {
+>  		write_unlock(&journal->j_state_lock);
+>  		return -EALREADY;
+>  	}
+> -- 
+> 2.30.0
 > 
-> 
-> 	if(remaining < fragsz) {
-> 		if(!__page_frag_cache_recharge())
-> 			goto refill;
-> 	}
-> 
-> As we are adding new APIs, are we expecting new APIs also duplicate
-> the above pattern?
-> 
->>
-
-How about something like below? __page_frag_cache_refill() and
-__page_frag_cache_reuse() does what their function name suggests
-as much as possible, __page_frag_cache_reload() is added to avoid
-new APIs duplicating similar pattern as much as possible, also
-avoid fetching size multiple times multiple ways as much as possible.
-
-static struct page *__page_frag_cache_reuse(unsigned long encoded_va,
-                                            unsigned int pagecnt_bias)
-{
-        struct page *page;
-
-        page = virt_to_page((void *)encoded_va);
-        if (!page_ref_sub_and_test(page, pagecnt_bias))
-                return NULL;
-
-        if (unlikely(encoded_page_pfmemalloc(encoded_va))) {
-                VM_BUG_ON(compound_order(page) !=
-                          encoded_page_order(encoded_va));
-                free_unref_page(page, encoded_page_order(encoded_va));
-                return NULL;
-        }
-
-        /* OK, page count is 0, we can safely set it */
-        set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
-        return page;
-}
-
-static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
-                                             gfp_t gfp_mask)
-{
-        unsigned long order = PAGE_FRAG_CACHE_MAX_ORDER;
-        struct page *page = NULL;
-        gfp_t gfp = gfp_mask;
-
-#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-        gfp_mask = (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
-                   __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
-        page = alloc_pages_node(NUMA_NO_NODE, gfp_mask,
-                                PAGE_FRAG_CACHE_MAX_ORDER);
-#endif
-        if (unlikely(!page)) {
-                page = alloc_pages_node(NUMA_NO_NODE, gfp, 0);
-                if (unlikely(!page)) {
-                        memset(nc, 0, sizeof(*nc));
-                        return NULL;
-                }
-
-                order = 0;
-        }
-
-        nc->encoded_va = encode_aligned_va(page_address(page), order,
-                                           page_is_pfmemalloc(page));
-
-        /* Even if we own the page, we do not use atomic_set().
-         * This would break get_page_unless_zero() users.
-         */
-        page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
-
-        return page;
-}
-
-static struct page *__page_frag_cache_reload(struct page_frag_cache *nc,
-                                             gfp_t gfp_mask)
-{
-        struct page *page;
-
-        if (likely(nc->encoded_va)) {
-                page = __page_frag_cache_reuse(nc->encoded_va, nc->pagecnt_bias);
-                if (page)
-                        goto out;
-        }
-
-        page = __page_frag_cache_refill(nc, gfp_mask);
-        if (unlikely(!page))
-                return NULL;
-
-out:
-        nc->remaining = page_frag_cache_page_size(nc->encoded_va);
-        nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
-        return page;
-}
-
-void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
-                                 unsigned int fragsz, gfp_t gfp_mask,
-                                 unsigned int align_mask)
-{
-        unsigned long encoded_va = nc->encoded_va;
-        unsigned int remaining;
-
-        remaining = nc->remaining & align_mask;
-        if (unlikely(remaining < fragsz)) {
-                if (unlikely(fragsz > PAGE_SIZE)) {
-                        /*
-                         * The caller is trying to allocate a fragment
-                         * with fragsz > PAGE_SIZE but the cache isn't big
-                         * enough to satisfy the request, this may
-                         * happen in low memory conditions.
-                         * We don't release the cache page because
-                         * it could make memory pressure worse
-                         * so we simply return NULL here.
-                         */
-                        return NULL;
-                }
-
-                if (unlikely(!__page_frag_cache_reload(nc, gfp_mask)))
-                        return NULL;
-
-                nc->pagecnt_bias--;
-                nc->remaining -= fragsz;
-
-                return encoded_page_address(nc->encoded_va);
-        }
-
-        nc->pagecnt_bias--;
-        nc->remaining = remaining - fragsz;
-
-        return encoded_page_address(encoded_va) +
-                (page_frag_cache_page_size(encoded_va) - remaining);
-}
-
-
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
