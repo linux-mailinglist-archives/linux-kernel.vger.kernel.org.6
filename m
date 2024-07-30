@@ -1,128 +1,229 @@
-Return-Path: <linux-kernel+bounces-267054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2952E940BCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:38:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6184940BDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8453286EF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:38:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 673F31F24366
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41BA18FDD7;
-	Tue, 30 Jul 2024 08:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="hhgbnNFZ"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B7719412E;
+	Tue, 30 Jul 2024 08:39:45 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604AC15ECDB
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8FD192B75
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722328726; cv=none; b=FqPCI1fY2OJ0HNrJIKOuMffHNCiemw1rLN+OprEynq5JcUdj6Wa+WYKjqcuX3uBFOA+CmHPiP770awnTY6NrLJg/wzUUc4RzHJEX5WDlFYDBrLMxVNkjmJDRkk8XIv4mTNmBnNd1XFshTQ4VBYohQM61UFqMIGnKCP7+jqws+nA=
+	t=1722328784; cv=none; b=thTBqtbgaEscuA//g3f1Dq5FW6yWPd5sXUwOcBWjMS2XKwajmZwnf7ViIpVC0J0I3HGh61Eiips1Mj2R0HoZUMKhMtApvVtq1iFd76fuYSTG51n4orOzO1JWKcnxRNWZfm7wTY50pf2ZLaoFVVNqjUvKA9b+OVAl/Xsvv1q9fY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722328726; c=relaxed/simple;
-	bh=A9nnbPdJv5+0MfMQ/SJaCGweUfaVlv/rna/HQUxQlwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Okq3OU8inoOM+yhcb8kabpvP5Ivkjj5J0wIlw+jsJkwaahEjZ2ip66d7A6a31MqWLC5isU6PszLLfE7pdSYlp8kZsmDfvyryd7NN77O9njxsA0LHfs/YuBh0u1vALNQiN3apgxudCXFt0FW8dYp0I2V/E1JJr/1rv+D4mea8r+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=hhgbnNFZ; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4280772333eso1518015e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 01:38:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1722328720; x=1722933520; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rLSHeAzxwq9Akqi4K9srtQYuVjFjLR4YzmJwGGEqqlE=;
-        b=hhgbnNFZgHnYRV3VyYQYwV1jeu+yLIbQu9uPvcyrAg66mqrvhjgY/HsSMImW1xkV6e
-         qrjJA2QdFmv25GNyBpyU7f5yYqZie6WOCF+HbCIa6oCS/rKSrr08qMdNjwbdCyRnuE+g
-         xrWNYCpNlWluhTSwVgXPkuw2XrEnnY1q1Zcac=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722328720; x=1722933520;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rLSHeAzxwq9Akqi4K9srtQYuVjFjLR4YzmJwGGEqqlE=;
-        b=ZUWsdFSqxjHYyVX5YxRilqCrL1DGYGWdc8PbTxwbk05tuf0o8SHeLwTABDItCPVHhl
-         DXN9HhzSodl/HHETGhHd9Je/oqAHhgoMb9cBGAmqSE4eST1a+bxZ8vR1LlbRe5JFg0+s
-         5TQ+lF3Vh7eg0XYeMvcxIHCpdiXCc7mLAnIiJCSKtPbh/tHG6WldQY2unb/yG8b/wINj
-         fDLxgvJpEhrOdR39AsAZhK6/FsZMkX9mKgtcaet2fDuEe1CVBCNl6+TnPABfJMKNtPCX
-         1H2MLysnYUvbmeQMyLcmAywMiE8zFM3BJfVhSkHAX+sH6URhSIy3U0sUM5P6UeLZNQCi
-         cKXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzjAjZL9doBqwnUe82fwNunFbvzLt3j0ioNskdfG37rUp4wTh3qx53bb985Uc9+Iro0dJ97BK31kNIcgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZZCO3jTuu6+5whKJMoADcUPBBJg9GQDNghZfSkE3L27rOHIcI
-	A5EJOrTXVoFXnyET1wCi0e1ygcKkPo+CviwCuv3EIRYiVBdDfz9+a3kMJC/70Ng=
-X-Google-Smtp-Source: AGHT+IEHxwvRRVdvTsna5pPYQlLBDyGEKWP6n2hUjZSj5fgD4PVWENljhOK87uALcOP5pl95OHCF7Q==
-X-Received: by 2002:a05:600c:1c99:b0:427:9f6c:e4bc with SMTP id 5b1f17b1804b1-4280570b81emr71159635e9.5.1722328719721;
-        Tue, 30 Jul 2024 01:38:39 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4281c701619sm72813255e9.36.2024.07.30.01.38.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 01:38:39 -0700 (PDT)
-Date: Tue, 30 Jul 2024 10:38:37 +0200
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: oushixiong1025@163.com
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Shixiong Ou <oushixiong@kylinos.cn>
-Subject: Re: [PATCH] drm: Add the missing symbol '.'
-Message-ID: <ZqimjZT2KAClX7tx@phenom.ffwll.local>
-Mail-Followup-To: oushixiong1025@163.com,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, Shixiong Ou <oushixiong@kylinos.cn>
-References: <20240729065756.123788-1-oushixiong1025@163.com>
+	s=arc-20240116; t=1722328784; c=relaxed/simple;
+	bh=a7khnMrdM5k51JUpNH1Hgjs1HgLaoAfx9+qa5Spz5aE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dgLs3pq0bKMUOv3a0SLTYmppFl8QNBqlmPJRsqF2sTb6mwerHvTOpTHP4nHE9suvV75X+kieoT6MWwT7iaEKZnTm5X/7YIx/5RwDfIlSBRBqjX5V40MfTzwZC0u7d5QiO8lM2hKRuWzwDAHY2KQ1pJsDi6xqvaaHZp92mcmMFCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WY7s41Bymz6K8xQ;
+	Tue, 30 Jul 2024 16:37:44 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id F3897140516;
+	Tue, 30 Jul 2024 16:39:38 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 30 Jul
+ 2024 09:39:38 +0100
+Date: Tue, 30 Jul 2024 09:39:37 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Shiju Jose <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+	Philippe =?ISO-8859-1?Q?Mathieu-Daud=E9?= <philmd@linaro.org>, Ani Sinha
+	<anisinha@redhat.com>, Eduardo Habkost <eduardo@habkost.net>, Igor Mammedov
+	<imammedo@redhat.com>, "Marcel Apfelbaum" <marcel.apfelbaum@gmail.com>, Peter
+ Maydell <peter.maydell@linaro.org>, Shannon Zhao <shannon.zhaosl@gmail.com>,
+	"Yanan Wang" <wangyanan55@huawei.com>, Zhao Liu <zhao1.liu@intel.com>,
+	<linux-kernel@vger.kernel.org>, <qemu-arm@nongnu.org>,
+	<qemu-devel@nongnu.org>
+Subject: Re: [PATCH v4 2/6] arm/virt: Wire up GPIO error source for ACPI /
+ GHES
+Message-ID: <20240730093937.00001baf@Huawei.com>
+In-Reply-To: <20240730071330.4835e943@foz.lan>
+References: <cover.1722259246.git.mchehab+huawei@kernel.org>
+	<e994c3944d31775d62bbd017dec3adff50ddf269.1722259246.git.mchehab+huawei@kernel.org>
+	<20240729170840.00004763@Huawei.com>
+	<20240730071330.4835e943@foz.lan>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729065756.123788-1-oushixiong1025@163.com>
-X-Operating-System: Linux phenom 6.9.7-amd64 
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Mon, Jul 29, 2024 at 02:57:56PM +0800, oushixiong1025@163.com wrote:
-> From: Shixiong Ou <oushixiong@kylinos.cn>
+On Tue, 30 Jul 2024 07:13:30 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+
+> Em Mon, 29 Jul 2024 17:08:40 +0100
+> Jonathan Cameron <Jonathan.Cameron@Huawei.com> escreveu:
 > 
-> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
-
-Applied to drm-misc-next, thanks for your patch.
--Sima
-
-> ---
->  drivers/gpu/drm/drm_probe_helper.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > On Mon, 29 Jul 2024 15:21:06 +0200
+> > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> >   
+> > > From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > > 
+> > > Creates a Generic Event Device (GED) as specified at    
+> > 
+> > I wrote this a while back and wasn't aware of the naming
+> > mess around GED in the ACPI spec.  This one is just
+> > referred to as 'error device' whereas there is also
+> > a Generic Event Device.
+> > 
+> > Linux solved this clash by going with Hardware Error Device
+> > I think we should do the same here.  
 > 
-> diff --git a/drivers/gpu/drm/drm_probe_helper.c b/drivers/gpu/drm/drm_probe_helper.c
-> index bb49d552e671..285290067056 100644
-> --- a/drivers/gpu/drm/drm_probe_helper.c
-> +++ b/drivers/gpu/drm/drm_probe_helper.c
-> @@ -888,7 +888,7 @@ EXPORT_SYMBOL(drm_kms_helper_is_poll_worker);
->   * disabled. Polling is re-enabled by calling drm_kms_helper_poll_enable().
->   *
->   * If however, the polling was never initialized, this call will trigger a
-> - * warning and return
-> + * warning and return.
->   *
->   * Note that calls to enable and disable polling must be strictly ordered, which
->   * is automatically the case when they're only call from suspend/resume
-> -- 
-> 2.25.1
+> I opted to do it a little bit different to stay closer to ACPI 6.5
+> 18.3.2.7.2. - Event Notification For Generic Error Sources.
 > 
+> There, it is actually talking about a General Purpose Event (GPE).
+> Current ACPI spec doesn't mention "GED", so maybe such term was fixed
+> on some previous ACPI spec revision.
+> 
+> Basically, it currently mentions:
+> 	- error device
+> 	- GPE / General Purpose Event
+> 	- Generic Hardware Error Source Structure 
+> 
+> I guess Linux crafted the term Hardware Error device by mixing
+> those.
+> 
+> As we don't need to really preserve such names here, as this appears
+> only at the patch description, I opted to rewrite the patch description
+> to:
+> 
+>     arm/virt: Wire up GPIO error source for ACPI / GHES
+>     
+>     Creates a hardware event device to support General Purpose
+>     Event (GPE) as specified at ACPI 6.5 specification at 18.3.2.7.2:
+>     https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#event-notification-for-generic-error-sources
+>     using HID PNP0C33.
+>     
+>     The PNP0C33 device is used to report hardware errors to
+>     the bios via ACPI APEI Generic Hardware Error Source (GHES).
+>     
+>     It is aligned with Linux Kernel patch:
+>     https://lore.kernel.org/lkml/1272350481-27951-8-git-send-email-ying.huang@intel.com/
+>     
+>     [mchehab: use a define for the generic event pin number and do some cleanups]
+>     Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>     Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> 
+> Clearly associating "hardware event device" with ACPI GPE. That sounds
+> good enough to be stored at the git description associated with such
+> change.
+All looks good to me.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Thanks,
+
+Jonathan
+
+> 
+> > > ACPI 6.5 specification at 18.3.2.7.2:
+> > > https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#event-notification-for-generic-error-sources
+> > > with HID PNP0C33.
+> > > 
+> > > The PNP0C33 device is used to report hardware errors to
+> > > the bios via ACPI APEI Generic Hardware Error Source (GHES).
+> > > 
+> > > It is aligned with Linux Kernel patch:
+> > > https://lore.kernel.org/lkml/1272350481-27951-8-git-send-email-ying.huang@intel.com/
+> > > 
+> > > [mchehab: use a define for the generic event pin number and do some cleanups]
+> > > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>    
+> >   
+> > > ---
+> > >  hw/arm/virt-acpi-build.c | 30 ++++++++++++++++++++++++++----
+> > >  hw/arm/virt.c            | 14 ++++++++++++--
+> > >  include/hw/arm/virt.h    |  1 +
+> > >  include/hw/boards.h      |  1 +
+> > >  4 files changed, 40 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
+> > > index f76fb117adff..c502ccf40909 100644
+> > > --- a/hw/arm/virt-acpi-build.c
+> > > +++ b/hw/arm/virt-acpi-build.c
+> > > @@ -63,6 +63,7 @@
+> > >  
+> > >  #define ARM_SPI_BASE 32
+> > >  
+> > > +#define ACPI_GENERIC_EVENT_DEVICE "GEDD"    
+> > 
+> > Ah. My mistake. This is the confusing named GENERIC_ERROR_DEVICE
+> > or HARDWARE_ERROR_DEVICE (which is what Linux called it because
+> > in the ACPI Spec it is just (all lower case) error device).  
+> 
+> I opted to use a different name there, using just error device,
+> together with the name of the PNP device. So:
+> 
+> 	#define PNP0C33_ERROR_DEVICE "GEDD"
+> 
+> This is clear enough for people just looking at the driver, and
+> even clearer for people familiar with session 18.3.2.7.2 of the
+> ACPI spec.
+> 
+> >   
+> > >  #define ACPI_BUILD_TABLE_SIZE             0x20000    
+> >   
+> > >  /* DSDT */
+> > >  static void
+> > >  build_dsdt(GArray *table_data, BIOSLinker *linker, VirtMachineState *vms)
+> > > @@ -841,10 +863,9 @@ build_dsdt(GArray *table_data, BIOSLinker *linker, VirtMachineState *vms)
+> > >                        HOTPLUG_HANDLER(vms->acpi_dev),
+> > >                        irqmap[VIRT_ACPI_GED] + ARM_SPI_BASE, AML_SYSTEM_MEMORY,
+> > >                        memmap[VIRT_ACPI_GED].base);
+> > > -    } else {
+> > > -        acpi_dsdt_add_gpio(scope, &memmap[VIRT_GPIO],
+> > > -                           (irqmap[VIRT_GPIO] + ARM_SPI_BASE));
+> > >      }
+> > > +    acpi_dsdt_add_gpio(scope, &memmap[VIRT_GPIO],
+> > > +                       (irqmap[VIRT_GPIO] + ARM_SPI_BASE));    
+> > 
+> > Arguably excess brackets, but obviously this is just a code move
+> > so fine to keep it the same.  
+> 
+> I'll drop the extra brackets.
+> 
+> > >  
+> > >      if (vms->acpi_dev) {
+> > >          uint32_t event = object_property_get_uint(OBJECT(vms->acpi_dev),
+> > > @@ -858,6 +879,7 @@ build_dsdt(GArray *table_data, BIOSLinker *linker, VirtMachineState *vms)
+> > >      }
+> > >  
+> > >      acpi_dsdt_add_power_button(scope);  
+> 
+> > > +    acpi_dsdt_add_generic_event_device(scope);  
+> 
+> I'm also renaming this function/function call to run away from GED,
+> calling it as:
+> 
+> 	 acpi_dsdt_add_error_device(scope);
+> 
+> > >  #ifdef CONFIG_TPM
+> > >      acpi_dsdt_add_tpm(scope, vms);
+> > >  #endif    
+> >   
+> 
+> Thanks,
+> Mauro
+
 
