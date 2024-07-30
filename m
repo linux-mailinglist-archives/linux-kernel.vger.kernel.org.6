@@ -1,177 +1,113 @@
-Return-Path: <linux-kernel+bounces-267735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7C2E9414E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:55:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8BB9414E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB3511C20BB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:55:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5F4F1F24242
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3881A2C14;
-	Tue, 30 Jul 2024 14:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C181A2551;
+	Tue, 30 Jul 2024 14:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mkYn7Zkj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cOPZoCnN";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mkYn7Zkj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cOPZoCnN"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Bsgod2Oo"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27C61A0B00;
-	Tue, 30 Jul 2024 14:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AAD1A0B00
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722351336; cv=none; b=u9KaAy8D1A5I4NVfV5EZT7mOpGzWWSmUlI6OfWjkwxx8FHWwP8enB0UaJIFeh6uzt3jfGbYlKAVzQE8X4KDLPraGjQ0XHYekIJXBk7HZXSmpCIBhn/6DLDiCqiEq0UMJ/nXEPeUtumXP0B9+8otf1N5iEd6BG63W9aDwBRMZ9Qo=
+	t=1722351365; cv=none; b=pDUThyPStAgKyDgycVCKiPqeCoEuP60DxhPnUtqoPqvFR7w9Q6KaoP42/EcCAWx4HBn8c2fArzqb5XKbBMyUWe6jGCs+Sya9FhilaClZozNEXp2owHvnk98WN9el4LxNovid2Ub0NAe1TJ4rOugA+ZiC3l2pXXe5maHcSJhHpZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722351336; c=relaxed/simple;
-	bh=Rj118SMS7mHyC9fTXygo6X4w1TOan3CniNMvys/OtQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SnlAj/dR/Fa0xaefnJDIsADvnclyqS0kghAhivs1s9XeM0p+qv5iK2x9aC02OgFXLPEBHja/NROmJxDbKrSyNW1BIi8iN3lZ8ffnR0ZTZWUSC1pqA53CWakY6Fhm6AqlKRePT+XTqGE776HlWOKUmBqHqYc/QgSqT2dN6zZASrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mkYn7Zkj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cOPZoCnN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mkYn7Zkj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cOPZoCnN; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 068EA1F80B;
-	Tue, 30 Jul 2024 14:55:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722351333;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1722351365; c=relaxed/simple;
+	bh=pRnwFF1DBYPuHIUWK7WpL/leuce84Sg78hOMGMTG7uE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=J6qcH8pfd2ROIAm3gtSywhaAxXvi57hW+PcgGt1sEUnYpi7o9Xq3XtKzGPMlAgpqAHMg8Q8UAF8Cq18I6UG11fovKCZIvenGpTETbS7bZqoD2Y0jJZf9CkEpFHojKsCYm3vnAKzpx5+oB9AO/iUC3MiwaM0Dqaq5ht5FDRvI190=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Bsgod2Oo; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1722351360;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BdT8JZg3DKfuwfUEfQlxvR1YOrlQZRc3CKq5j//fq6g=;
-	b=mkYn7ZkjFXh+fKHvGddJA3gDM4FtF94uw8TwTLcBBe7hEibl1d0/QHvtjsuzAEk6+wH1sp
-	xEK9kVmf+4P5tB1v4soIPjRqFDYBztYbS4EwBnKbQMwRnx/7WoFhlQX7elNxTarEUqQVfn
-	U3NB2NbI1sJlfchuiG5e7hjw+yADX7o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722351333;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BdT8JZg3DKfuwfUEfQlxvR1YOrlQZRc3CKq5j//fq6g=;
-	b=cOPZoCnNb6NzOjMLgxoyoZttDu5pGoP5kZQhKQM3kYWL6T6ZPNY7nW8DSHmbsq3xg35bEP
-	6ncwJ8X3tU2Gi0Dw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=mkYn7Zkj;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cOPZoCnN
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722351333;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BdT8JZg3DKfuwfUEfQlxvR1YOrlQZRc3CKq5j//fq6g=;
-	b=mkYn7ZkjFXh+fKHvGddJA3gDM4FtF94uw8TwTLcBBe7hEibl1d0/QHvtjsuzAEk6+wH1sp
-	xEK9kVmf+4P5tB1v4soIPjRqFDYBztYbS4EwBnKbQMwRnx/7WoFhlQX7elNxTarEUqQVfn
-	U3NB2NbI1sJlfchuiG5e7hjw+yADX7o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722351333;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BdT8JZg3DKfuwfUEfQlxvR1YOrlQZRc3CKq5j//fq6g=;
-	b=cOPZoCnNb6NzOjMLgxoyoZttDu5pGoP5kZQhKQM3kYWL6T6ZPNY7nW8DSHmbsq3xg35bEP
-	6ncwJ8X3tU2Gi0Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D931113297;
-	Tue, 30 Jul 2024 14:55:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id p53GNOT+qGY9dQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 30 Jul 2024 14:55:32 +0000
-Date: Tue, 30 Jul 2024 16:55:27 +0200
-From: David Sterba <dsterba@suse.cz>
-To: syzbot <syzbot+05fd41caa517e957851d@syzkaller.appspotmail.com>
-Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [btrfs?] general protection fault in
- btrfs_stop_all_workers (2)
-Message-ID: <20240730145527.GM17473@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <00000000000096049806186fc6f9@google.com>
+	bh=ggwthiFQ/X7fBJQwMR1MmGMAUCHRrlc0veNg6zHF7rA=;
+	b=Bsgod2OoO7yXRVvzqYpfrtbe2Y9UkMqDP+ocPAmN5J9/eQlnEc2eQqWBH2tOyrMVMMctTi
+	mE/jCwpD5Zpcfzb8xFF/jCa78x5wnjZVBM+szeCjjdsdHQ93yFeoDK51kl/9ei8Xpl+jrB
+	Nvg3IUjFJ4PSkbHFYi7LXYYyvXv+d4E=
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Jan Kara <jack@suse.cz>
+Cc: Kemeng Shi <shikemeng@huaweicloud.com>,  tytso@mit.edu,  jack@suse.com,
+  linux-ext4@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] jbd2: correctly compare tids with tid_geq function
+ in jbd2_fc_begin_commit
+In-Reply-To: <20240730132159.opjknn477owojkrq@quack3> (Jan Kara's message of
+	"Tue, 30 Jul 2024 15:21:59 +0200")
+References: <20240730113335.2365290-1-shikemeng@huaweicloud.com>
+	<20240730113335.2365290-2-shikemeng@huaweicloud.com>
+	<20240730132159.opjknn477owojkrq@quack3>
+Date: Tue, 30 Jul 2024 15:55:52 +0100
+Message-ID: <87sevrylmv.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000096049806186fc6f9@google.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 068EA1F80B
-X-Spam-Score: -1.51
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-1.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=3310e643b6ef5d69];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,syzkaller.appspot.com:url,storage.googleapis.com:url,appspotmail.com:email];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[05fd41caa517e957851d];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, May 14, 2024 at 01:23:32PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    f03359bca01b Merge tag 'for-6.9-rc6-tag' of git://git.kern..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17a0fbc4980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3310e643b6ef5d69
-> dashboard link: https://syzkaller.appspot.com/bug?extid=05fd41caa517e957851d
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/1b4deeb2639b/disk-f03359bc.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/f3c3d98db8ef/vmlinux-f03359bc.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/6f79ee1ae20f/bzImage-f03359bc.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+05fd41caa517e957851d@syzkaller.appspotmail.com
-> 
-> BTRFS info (device loop2): last unmount of filesystem c9fe44da-de57-406a-8241-57ec7d4412cf
-> general protection fault, probably for non-canonical address 0xe01ffbf11002a143: 0000 [#1] PREEMPT SMP KASAN PTI
-> KASAN: maybe wild-memory-access in range [0x00ffff8880150a18-0x00ffff8880150a1f]
+On Tue, Jul 30 2024, Jan Kara wrote:
 
-Most likely this was a side effect of bug fixed by commit f3a5367c679d
-("btrfs: protect folio::private when attaching extent buffer folios").
-The timeframe corresponds with increased number of bogus errors caused by
-use-after-free of a page.
+> On Tue 30-07-24 19:33:29, Kemeng Shi wrote:
+>> Use tid_geq to compare tids to work over sequence number wraps.
+>>=20
+>> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+>> ---
+>>  fs/jbd2/journal.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Indeed, Luis seems to have missed this when fixing these bugs recently.
 
-The fix is best guess.
+Ah! It looks like I did missed it.  Thanks!
 
-#syz fix: btrfs: protect folio::private when attaching extent buffer folios
+Cheers,
+--=20
+Lu=C3=ADs
+
+> Feel free to add:
+>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+>
+> 								Honza
+>
+>>=20
+>> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+>> index 1ebf2393bfb7..da5a56d700f1 100644
+>> --- a/fs/jbd2/journal.c
+>> +++ b/fs/jbd2/journal.c
+>> @@ -710,7 +710,7 @@ int jbd2_fc_begin_commit(journal_t *journal, tid_t t=
+id)
+>>  		return -EINVAL;
+>>=20=20
+>>  	write_lock(&journal->j_state_lock);
+>> -	if (tid <=3D journal->j_commit_sequence) {
+>> +	if (tid_geq(journal->j_commit_sequence, tid)) {
+>>  		write_unlock(&journal->j_state_lock);
+>>  		return -EALREADY;
+>>  	}
+>> --=20
+>> 2.30.0
+>>=20
+> --=20
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+
 
