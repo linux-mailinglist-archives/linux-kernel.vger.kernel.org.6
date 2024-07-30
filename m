@@ -1,140 +1,114 @@
-Return-Path: <linux-kernel+bounces-268197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA830942184
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:22:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70F87942187
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC2D31C22BF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:22:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D1B1C23675
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E6D18DF6C;
-	Tue, 30 Jul 2024 20:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4AA918DF69;
+	Tue, 30 Jul 2024 20:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ehTrVYl7"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NuyD+pJZ"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89BC18CBF9
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 20:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C671218CBF9;
+	Tue, 30 Jul 2024 20:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722370910; cv=none; b=Dt5jqVyhJjijcX4fd37t8c3FDj/ovUaEIMlCQFyuMWa9kOO7YcQXNkIK+ELWQlDMJ/jMOXYLu/IrpvoGv2D/ff6G/k0dDdhEbrWW/vLD4aDKldw5/zP3v4BvG+ZGiVgC8vTF/LY5y+2vp40kJ9QRhERm4Kwf2CIevr0sSc7yfOI=
+	t=1722370976; cv=none; b=rNpEZlneRBxw8hlXCYVGQe//TIFl2p+FEm9UsXToKJniWAJO4bxlyfYGChmN0U9Zx0VA8NjQke00BM0AphKGJiHZPg7SDramsO6WEliATjnTg+YCP89rybh50xzwGWQAA4Mk51if+wXM1AVvr6DS23H+WBYVSC3gjlvbmqICiHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722370910; c=relaxed/simple;
-	bh=HxOBAEamRc5o/YLmQaHET0I/Gtrys86BlZ/DJ9hLc6w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hMFWR3LoNNgmteh4V8LXxt72gocHRXZdvQlcW8H/vu6F7OTpoxmY5xp2zRa6cRUal57jETEkMchMq59gmXq02ujRAHPu0TTs6mz4JInRTG+/KQSA4f0yB0GG8+WoB7EC6qB5UJueNO/5glDlHL0qdajtr0hA252ftiTDMeOQ8wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ehTrVYl7; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2cb4bcdd996so202672a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 13:21:48 -0700 (PDT)
+	s=arc-20240116; t=1722370976; c=relaxed/simple;
+	bh=qgIM6c6I7ActKGrTkv0LUY7kFUEtEmpH3NypCwcOYbI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RiEcNDCsRc1OOnnYtCqNQrCbRxC9weJo09mLCrXyiWoPX7dPgnQcvcHXDq206V35gUAb9c6vsK7aycT2IIMIV6UpTmrlai3VIJR26xMmDet4uwbjSbN6iLrMbDZ+pArk/x+YDrgi2jrAvnbtuSVVi2FiiCkXUu/WODOsfTPuC5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NuyD+pJZ; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7a263f6439eso2828656a12.3;
+        Tue, 30 Jul 2024 13:22:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722370908; x=1722975708; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lo0MEBygX1JypWEaHf/k6xfxdkehMYQ1A9Hdq1FNmkM=;
-        b=ehTrVYl7ugsY3JYZO9kauqgaXCi5Yu8YAv+l7pKP0TmcYiOx0XWELMAB7fIpsoD11p
-         YMhfj1hr1m9UQ91+UCdXj4PaZXPzMOIeZXLdqI3SxWXrQ511zgMEpkVnTTUVmtcZVJzE
-         7ngnSB7TH68MCxRhQpadZVY1l2t/bxixdfXd4n6UiRtFsaHwAKVcPAydTGe0NdjffHGB
-         PLPy1PyzzS3ATtrLnCZEixHHRZtZn8h6nWfWB5TUglzgSDVOI9ogDS0SGq90tQ6l1Uat
-         77P9xsqtCIhXCKjby9msZnX80QBPk7n/dfYjROGqqJaTj6SQ70N68/dUJO2+9yNFfhEa
-         LdWg==
+        d=gmail.com; s=20230601; t=1722370974; x=1722975774; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qgIM6c6I7ActKGrTkv0LUY7kFUEtEmpH3NypCwcOYbI=;
+        b=NuyD+pJZZiwe/nDPxhbU+06l9PD2+4u6zRl4If9ecw7njvKGbVjeviKVnIcRBaA8pP
+         2p9FlTrEl3cK60lxqgQK/hDUsjdD+XkqVdT3y5R/tX+CxFi/rbIJH9qnUkkhDJusuTMo
+         Vesk3cy8Rfsl3bLz7WxgiJojmXc7bzmrDPGukJ2OH/LYal9KBAgFDn4buItsW6uYRqAz
+         5P69Bk3bRZ6Yd/h7m5dhOcbsON4zLUIMhm5qfyO1qXcrV/HnssbmeZ9Le/vmy6VVX9Vw
+         VHSGTfqCl4SjA6BuZqqEJMnGpckiKoH6dtBj8eac6essgH1Cyi4/YsOs9Hh7SuG/gEvP
+         jQlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722370908; x=1722975708;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lo0MEBygX1JypWEaHf/k6xfxdkehMYQ1A9Hdq1FNmkM=;
-        b=oJ6yaFNN9ygXJdv+/Z80WgMt/hAg6gQ13QDxpaWeJfnI4B99XTkuGD4TRAuUngClCS
-         IDZx5QfZvcDTLa9lBxjOXCTNtgNipkJ5QjOIF+2joVbngs1hrqg5wPuGGOvKkKFEXZsi
-         hTVKup21mDEWVFZDGGADmClOMEEXAgbx13DLtb9nsbvrfn41L/IoQCDug5Wauqz6qoBA
-         MDvuUcSFDoxhJPs9zDwI3MIHtYSxsPuM0in+TTFEetCo6pleZGf6CuOCls8jumx6N2wZ
-         fnQB8Tgb/TRpL9iNdemv59k64HZnlIu46Is3qjwycw8zNr4ExwlDkOr/kx53lJU7ldOv
-         yyPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwYsfADui+U32s7VmksPz13Fp+OB/UVT08y0cXOYyEr5WzV7RlFk31qhAwOPA1MlAP/vY09QMHlfyltXrxI4P43oQozuK3dJdeyBLp
-X-Gm-Message-State: AOJu0YwAEZarG6VCANqnoa/iV8N7+CBMAk73+l3K8AhhChsLHMHGd8DE
-	0XRGq3SI38whqC1LKBpuvSNIx8HrsWcWR9JahHitag/cMyt7Dc/7nJJNSc5OTQy+XzeMSpO7bQB
-	7Hg==
-X-Google-Smtp-Source: AGHT+IFRxL1KATidTTKhi0tYZI3Y5cQGXURHMsVQzSWYAdVw9bcIrYssZFg0WYN1ZfdRJ6uqRn8d2puX7Kc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:ca8b:b0:2cf:93dc:112d with SMTP id
- 98e67ed59e1d1-2cfcab4fa5emr42966a91.4.1722370907896; Tue, 30 Jul 2024
- 13:21:47 -0700 (PDT)
-Date: Tue, 30 Jul 2024 13:21:46 -0700
-In-Reply-To: <992c4a07-fb84-42d8-93b3-96fb3a12c8e0@redhat.com>
+        d=1e100.net; s=20230601; t=1722370974; x=1722975774;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qgIM6c6I7ActKGrTkv0LUY7kFUEtEmpH3NypCwcOYbI=;
+        b=hfw37Bc4Pxmv2ql8QPXrJ8sDDvuDteprYJiUNA2V64Hi0mK6miKfu4SttwCRmrt44f
+         XGUySPIVd9JLUfyyWeYwmPWYzV+YWm2X9RUkvFoGUQT4SvW29FnsoaJxmy+9JlCznOJg
+         XjRYw0cWSeP/rIO9L/DgUAzYcCGS68Z7lbmgrXWVXnw20aYT1CBw25E9j3C0n9cQRLD9
+         7AXamo0/8ZZvZBEFQvfS8wfkNJmsR6S7Lh/iEIu0usriP4xBs36y5rivJr7vaxueah7q
+         OlP2h0bDG5wx8FwQbrOjYCiPhJhwFseqXcqLt7iQgV7sW8Ko9NQmThKlH8o8hMmJHonq
+         aj7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVLxA0hvSqhCpApqGa52ZChgpeJ5OoLu0tBza4Kf4Qzhc0BK4YYeTIdQ/0ECB8HmDovG2X5l4s7QZ8h7MMIh1wj9WfYKerQaYFQWV8T3/PcFLf+BkMYGDxEu494TeRZ8BJzo3lw6atJoLlBT34=
+X-Gm-Message-State: AOJu0YyY4+Vk7NsAgQ5RvqUC+1BuhQ1w5HUA9dEfajYo8wZslsu3WyyZ
+	EmJ4AX30Wpw1/jf29DPp/K7DHmPe9OMQ6GRNfzL53vA+XmVHdr0aQVi4CV5tQau28FXW07UoUQG
+	UKwhnBPo9a1DOFBQJCPU56azPHcM=
+X-Google-Smtp-Source: AGHT+IHCzS/rd7b1oz4vmEzbNtTxafJlsZS84UjHMW+33i7wxde9VAxzqRvvwyZppvHikLIMBEJEM7F0XUjrbhZBkok=
+X-Received: by 2002:a17:90b:2248:b0:2c9:74f2:3b24 with SMTP id
+ 98e67ed59e1d1-2cf7e1eda57mr10326001a91.12.1722370973899; Tue, 30 Jul 2024
+ 13:22:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240726235234.228822-1-seanjc@google.com> <20240726235234.228822-85-seanjc@google.com>
- <992c4a07-fb84-42d8-93b3-96fb3a12c8e0@redhat.com>
-Message-ID: <ZqlLWl0R1p41CS0O@google.com>
-Subject: Re: [PATCH v12 84/84] KVM: Don't grab reference on VM_MIXEDMAP pfns
- that have a "struct page"
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20240730155702.1110144-1-ojeda@kernel.org> <CAH5fLgj-0EsVjh8xdV1mXZBXPxKGnwUa8-R+Bg1eyjh0Gh_BWg@mail.gmail.com>
+In-Reply-To: <CAH5fLgj-0EsVjh8xdV1mXZBXPxKGnwUa8-R+Bg1eyjh0Gh_BWg@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 30 Jul 2024 22:22:41 +0200
+Message-ID: <CANiq72==6_Km_UYWaxxWw4gLS0g5yK5dQYvq+2xGTQvmm4aHyA@mail.gmail.com>
+Subject: Re: [PATCH] rust: error: allow `useless_conversion` for 32-bit builds
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Christian Schrefl <chrisi.schrefl@gmail.com>, Jamie Cunliffe <Jamie.Cunliffe@arm.com>, 
+	Sven Van Asbroeck <thesven73@gmail.com>, linux-arm-kernel@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30, 2024, Paolo Bonzini wrote:
-> On 7/27/24 01:52, Sean Christopherson wrote:
-> > Now that KVM no longer relies on an ugly heuristic to find its struct page
-> > references, i.e. now that KVM can't get false positives on VM_MIXEDMAP
-> > pfns, remove KVM's hack to elevate the refcount for pfns that happen to
-> > have a valid struct page.  In addition to removing a long-standing wart
-> > in KVM, this allows KVM to map non-refcounted struct page memory into the
-> > guest, e.g. for exposing GPU TTM buffers to KVM guests.
-> 
-> Feel free to leave it to me for later, but there are more cleanups that
-> can be made, given how simple kvm_resolve_pfn() is now:
+On Tue, Jul 30, 2024 at 7:55=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> The formatting here is a bit weird. Perhaps we should swap the cfg and
+> the comment?
 
-I'll revisit kvm_resolve_pfn(), Maxim also wasn't a fan of a similar helper that
-existed in v11.
+Yeah, I don't like it either -- I reflexively did it because in the
+safety series I am sending, there was a case where it would not notice
+the `// SAFETY` comment if an attribute was placed afterwards.
 
-> Also, check_user_page_hwpoison() should not be needed anymore, probably
-> not since commit 234b239bea39 ("kvm: Faults which trigger IO release the
-> mmap_sem", 2014-09-24) removed get_user_pages_fast() from hva_to_pfn_slow().
+But for blocks like this works fine, so it is not needed here, so we
+can change it, even we may need to be inconsistent in a few places
+about this, at least until it is fixed (assuming it is indeed a false
+positive).
 
-Ha, I *knew* this sounded familiar.  Past me apparently came to the same
-conclusion[*], though I wrongly suspected a memory leak and promptly forgot to
-ever send a patch.  I'll tack one on this time around.
+I created an issue in Clippy about it:
+https://github.com/rust-lang/rust-clippy/issues/13189.
 
-[*] https://lore.kernel.org/all/ZGKC9fHoE+kDs0ar@google.com
+Thanks!
 
-> The only way that you could get a poisoned page without returning -EHWPOISON,
-> is if FOLL_HWPOISON was not passed.  But even without these patches,
-> the cases are:
-> - npages == 0, then you must have FOLL_NOWAIT and you'd not use
->   check_user_page_hwpoison()
-> - npages == 1 or npages == -EHWPOISON, all good
-> - npages == -EAGAIN from mmap_read_lock_killable() - should handle that like -EINTR
-> - everything else including -EFAULT can go downt the vma_lookup() path, because
-> npages < 0 means we went through hva_to_pfn_slow() which uses FOLL_HWPOISON
-> 
-> This means that you can simply have
-> 
-> 	if (npages == -EHWPOISON)
-> 		return KVM_PFN_ERR_HWPOISON;
-> 
-> before the mmap_read_lock() line.  You may either sneak this at the beginning
-> of the series or leave it for later.
-> 
-> Paolo
-> 
+Cheers,
+Miguel
 
