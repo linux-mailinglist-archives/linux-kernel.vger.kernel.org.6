@@ -1,175 +1,256 @@
-Return-Path: <linux-kernel+bounces-267364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C9A9410B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:39:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D0C9410AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44F611C232FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:38:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C687A28554E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066C719F474;
-	Tue, 30 Jul 2024 11:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629C619E7E5;
+	Tue, 30 Jul 2024 11:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhL8iLc8"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="YPAV4rdI"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDF5166316
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581EC19E7D1;
+	Tue, 30 Jul 2024 11:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722339503; cv=none; b=f5PQM3/Gm1NZjTGObkyo1EiRMeVTdtric32y9XgCKn5JsvAAJc3KnqAdPKs217AYXL9h+d1SNJ1VIY7mSGIZKkuT4hekiOHYZYcqPeHZx+SFjWtUcwAzLv5lvfcobCvF0ma6zYkzbtoimMyxq2OQbfYu0UQj5NSzGNZP5NOQTWI=
+	t=1722339501; cv=none; b=V25u11LB2cSiNhHxpaM/7hf9v9Y85mi9iSTDkB5HJqzdtAQ6pYQL1xoHU+oITDCzH5bzYcK5X2D1h8bepRt1+9KLK06kL7iptmZnuDzDQ8pSFt/GhJSWS11eH135UKwN9FN78lTQOjP/LcVBbLwxAt1gxu+XSvJeu07EFN+53wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722339503; c=relaxed/simple;
-	bh=6G1biqxBW4A97FWPzupirAJ6si3ybW9x6Gmja8IXRIE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rP3kSUckIQ6UssfIVLPT2ZKb/RIkBV8s3FGA9Ichaygn6STpU1/uBQK84KksO/4H2tt1ZReDx+Zg1d+j0H8EvfgkdKXlxwv2E60z980kx2VHZJO6EPhc9j8GeQxYAPHwiKaCEr0Jsz0hYbzgrVXoVFCiD+qWna4VvjVDjPsQVAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mhL8iLc8; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52efbc57456so4688793e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 04:38:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722339498; x=1722944298; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lP9ZC3R5hMrSLBrjIcRWHj9UaDtclwyOij0udu20d1U=;
-        b=mhL8iLc81e9zGaxif9BYkWhSeBEydVz4MxlTKz/7LNz/CbKG/12a2ikD44dvsYtnul
-         dbhh7beQUuzyVEgMGbBg54z8irIagbx3d2uyss/Kamt1fxaBpRGB2+BxRgkNwmoa5nCC
-         oszQyoUsYtiHaTbOAkDAaO/Ay0a7W0T2qJ+EziZ24c9RlpgYXqHKTMfiRuy4m0dXimRG
-         3tZLmPcPCzYAYl76ExrxqEdoIUqA50iP5EBULi/e9H5F8iPp/Vhq96ikVK1Cteg5Er5R
-         dGY25i4rwZMShdPNVelPf7f0WAn5SJEJ4cu2BBhlVCqieUkg/oi7WZvAHrCaaXrmqTG3
-         pYYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722339498; x=1722944298;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lP9ZC3R5hMrSLBrjIcRWHj9UaDtclwyOij0udu20d1U=;
-        b=LMgrK6o+2NiUTIFi8mPw7RuMrI2lGBmqhurSRszzRJIno+fb82bXcLVBLELVF7d1ey
-         I8dlGAgNaCvhlakxcAgAVRXJey3396XpqbFGqpwZfhQ9eGY5s27wd2oPWgzNWG5s5lkR
-         Gkejlt6tCda5hWQJhkFo+JVAXq1682AXNx5sSWLnmFao4OuQTjWAL6DRQ43yAf/XeB1q
-         xkd9A4PBNKDlAjkBUf3GAWHhKPHDcVO2pexYKaOofzXVydF0a5v+hRIWQsSxj46Jmd+f
-         SjgHbmW0XmuyuiF4DoKHug7uCU5sGw1+VWq/BEJcGph8dm0Gjni8hPLXZYlC6JT9PX4G
-         pc7w==
-X-Forwarded-Encrypted: i=1; AJvYcCX4Y8QXM1VuQLmxeHKUVyiOs0QpventmXinuMW/N+dDNhDoOwD0/zwosWCgAq5iPWwsi7fh3vPnC90H3xNsds0BspD6xA3UYe/c/8Ct
-X-Gm-Message-State: AOJu0YyVdCXtuqcwC19/iys0qey7xHvp95+kW0jI1HfWbNNYsP0kObO3
-	FqxARdVWFpnONhAwLZcQ60RRZAcJTWEdZHb9sVTeKmTIJTxV9Gn+
-X-Google-Smtp-Source: AGHT+IEhL0AF4VJATyVfHZMXtaBFUppKExZeQWXMI1cwWGjKNu0oR/QUccYAXymk39Z4fcAa1bkkqg==
-X-Received: by 2002:a19:7404:0:b0:52c:d80e:55a5 with SMTP id 2adb3069b0e04-5309b2c3071mr6147385e87.41.1722339498077;
-        Tue, 30 Jul 2024 04:38:18 -0700 (PDT)
-Received: from pc636 (host-90-235-1-92.mobileonline.telia.com. [90.235.1.92])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c08ec2sm1876073e87.127.2024.07.30.04.38.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 04:38:17 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 30 Jul 2024 13:38:15 +0200
-To: Adrian Huang <adrianhuang0701@gmail.com>
-Cc: urezki@gmail.com, ahuang12@lenovo.com, akpm@linux-foundation.org,
-	andreyknvl@gmail.com, bhe@redhat.com, dvyukov@google.com,
-	glider@google.com, hch@infradead.org, kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	ryabinin.a.a@gmail.com, sunjw10@lenovo.com,
-	vincenzo.frascino@arm.com
-Subject: Re: [PATCH 1/1] mm/vmalloc: Combine all TLB flush operations of
- KASAN shadow virtual address into one operation
-Message-ID: <ZqjQp8NrTYM_ORN1@pc636>
-References: <Zqd9AsI5tWH7AukU@pc636>
- <20240730093630.5603-1-ahuang12@lenovo.com>
+	s=arc-20240116; t=1722339501; c=relaxed/simple;
+	bh=6FnWkCsu3mhQhY6xg1ZN0vRP1DpBGb9NXiQrJKGUvBA=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=KljF7t5UwNziLxfq089ALlCa5uMkfp+Dt291K2gJivdBZIpRNHRpdlakB1JZV3567dzbfwcrNdaZc+C/CnK5UEuKjPqxbJBfL8SEXQBjK8fxf8FswvakFrxJ/Qako9zWN7nxJEemXt0z8+ppOBTDQ8114clOjcHosZXIBek5aSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=YPAV4rdI; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 08EADC0004;
+	Tue, 30 Jul 2024 11:38:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
+	t=1722339497;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OrZd8bURUH6yJXWQuFtTxqq3uVzfiftlLP02djENBPc=;
+	b=YPAV4rdICBvbU1vpTxZpmwwp5h/YYFLYFR9nt8t5LfoHd7Px89anwpCq/TQcpoXG550Qyd
+	NzrIZIjtRuFOUT3hmjOMAmud+ep2WVz5m5MX4HxQSkU/mC5gCqYr+RFWiwhsd2Ao2Pq5MZ
+	KujTY/XJQj61Tf1mKyD18WzeCllcF14ssHRNIjR9kqu/FHZsImXNT5JXAEU3qGGpbpNn+A
+	saRG6DlFnN2nw6A2kFsN4yFuqckI6MUBsYq+YTeq6UKozFUIILvEBvuZtODWh5Zl1fjqvS
+	Po9WT5Yq3XL+ej9z4lpmpp+jS2S8OTFxFUUoR0i5y6M/L3U486ui6GK8IMyXhw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730093630.5603-1-ahuang12@lenovo.com>
+Date: Tue, 30 Jul 2024 14:38:15 +0300
+From: arinc.unal@arinc9.com
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>, Paolo
+ Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>, Jakub
+ Kicinski <kuba@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, Daniel Golle <daniel@makrotopia.org>,
+ frank-w@public-files.de, Frank Wunderlich <linux@fw-web.de>, Rob Herring
+ <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
+In-Reply-To: <2076f699540c3c9d10effdb8b55d3f89@arinc9.com>
+References: <20240516204847.171029-1-linux@fw-web.de>
+ <0cba095c-3d55-416a-a7ad-b359129731cf@arinc9.com>
+ <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
+ <2cac4cf68304e81abffbd9ff0387ee100323c2b7.camel@redhat.com>
+ <b49c801c-6628-40a6-8294-0876d8871ba7@leemhuis.info>
+ <e92c3ca0-c9be-44ac-a4fc-57ca5ebedbc5@leemhuis.info>
+ <1807a142-1534-4fa4-ad4b-d1c03af014c2@arinc9.com>
+ <58d8ddea-71cc-427a-94cc-a95f6bce61d2@collabora.com>
+ <16e9c06e-9908-455d-a387-614fefe5bcf8@arinc9.com>
+ <5e87d31c-b059-4f9a-93f7-dc87465ed14a@collabora.com>
+ <4416ef22-78cc-4ce5-b61d-69ff0903811e@arinc9.com>
+ <bd6b6929-d34d-4bd5-9cb0-bc8fe850ee46@leemhuis.info>
+ <af561268-9793-4b5d-aa0f-d09698fd6fb0@arinc9.com>
+ <750a60a6-4585-4bd2-97be-cf944e51fbdb@leemhuis.info>
+ <9c498e37-df8b-469e-818a-9b1c9f2b1a3c@collabora.com>
+ <cebb10b8-b0bf-4cb7-bba4-c3f941ba2b82@leemhuis.info>
+ <1aedb1d4-8dc3-4e17-aff1-7cc417465967@arinc9.com>
+ <130518e2-d6dd-49ed-9cc2-ca9cdec93b98@leemhuis.info>
+ <aeb255ff-3755-4f76-a8f8-cda27a67f818@arinc9.com>
+ <b3fa66cc-516b-4d78-aee5-62a47b52a3b1@collabora.com>
+ <2076f699540c3c9d10effdb8b55d3f89@arinc9.com>
+Message-ID: <3363e07a0ba483e98414754bd4bb1e5e@arinc9.com>
+X-Sender: arinc.unal@arinc9.com
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: arinc.unal@arinc9.com
 
-> On Mon, Jul 29, 2024 at 7:29 PM Uladzislau Rezki <urezki@gmail.com> wrote:
-> > It would be really good if Adrian could run the "compiling workload" on
-> > his big system and post the statistics here.
-> >
-> > For example:
-> >   a) v6.11-rc1 + KASAN.
-> >   b) v6.11-rc1 + KASAN + patch.
+On 2024-07-30 14:22, arinc.unal@arinc9.com wrote:
+> On 2024-07-30 12:41, AngeloGioacchino Del Regno wrote:
+>> Il 01/07/24 10:15, Arınç ÜNAL ha scritto:
+>>> On 01/07/2024 11:04, Linux regression tracking (Thorsten Leemhuis) 
+>>> wrote:
+>>>> On 01.07.24 09:44, Arınç ÜNAL wrote:
+>>>>> On 01/07/2024 09:16, Linux regression tracking (Thorsten Leemhuis) 
+>>>>> wrote:
+>>>>>> [CCing the other net maintainers]
+>>>>>> 
+>>>>>> On 25.06.24 10:51, AngeloGioacchino Del Regno wrote:
+>>>>>>> Il 25/06/24 07:56, Linux regression tracking (Thorsten Leemhuis) 
+>>>>>>> ha
+>>>>>>> scritto:
+>>>>>>>> On 17.06.24 13:08, Arınç ÜNAL wrote:
+>>>>>>>>> On 17/06/2024 11:33, Linux regression tracking (Thorsten 
+>>>>>>>>> Leemhuis)
+>>>>>>>>> wrote:
+>>>>>>>>> [...]
+>>>>>>>> It looks more and more like we are stuck here (or was there 
+>>>>>>>> progress
+>>>>>>>> and
+>>>>>>>> I just missed it?) while the 6.10 final is slowly getting 
+>>>>>>>> closer.
+>>>>>>>> Hence:
+>>>>>>>> 
+>>>>>>>> AngeloGioacchino, should we ask the net maintainers to revert
+>>>>>>>> 868ff5f4944aa9 ("net: dsa: mt7530-mdio: read PHY address of 
+>>>>>>>> switch from
+>>>>>>>> device tree") for now to resolve this regression? Reminder, 
+>>>>>>>> there is
+>>>>>>>> nothing wrong with that commit per se afaik, it just exposes a 
+>>>>>>>> problem
+>>>>>>>> that needs to be fixed first before it can be reapplied.
+>>>>>>> 
+>>>>>>> To be clear on this: I asked for the commit to be fixed such that 
+>>>>>>> it
+>>>>>>> guarantees
+>>>>>>> backwards compatibility with older device trees.
+>>>>>>> 
+>>>>>>> If no fix comes,
+>>>>>> 
+>>>>>> I haven't see any since that mail, did you? If not, I think...
+>>>>>> 
+>>>>>>> then I guess that we should ask them to revert this commit
+>>>>>>> until a fix is available.
+>>>>>> 
+>>>>>> ...it's time to ask them for the revert to resolve this for -rc7 
+>>>>>> (and
+>>>>>> avoid a last minute revert), or what do you think?
+>>>>> 
+>>>>> This is quite frustrating. I absolutely won't consent to a revert. 
+>>>>> [...]
+>>>> 
+>>>> Reminder: try to not see a revert as a bad thing. It's just means 
+>>>> "not
+>>>> ready yet, revert and we'll try again later" -- that's actually
+>>>> something Linus wrote just a few hours ago:
+>>>> https://lore.kernel.org/lkml/CAHk-=wgQMOscLeeA3QXOs97xOz_CTxdqJjpC20tJ-7bUdHWtSA@mail.gmail.com/
+>>> 
+>>> Except it is ready and trying again is my responsibility, which means
+>>> unnecessary work for me to do. I've already got a ton of things to 
+>>> do.
+>>> Applying the device tree patch resolves this regression; no reverts 
+>>> needed.
+>>> And then there's the patch in the works by Daniel that will address 
+>>> all the
+>>> remaining cases outside of the reported regression.
+>>> 
+>> 
+>> The commit that fixes your breakage in a way that does *not* please me
+>> (because of older devicetrees being still broken with the new driver) 
+>> was
+>> picked and it is in v6.11-rc1.
+>> 
+>> I had to do this because I value the community (in this case, the 
+>> users) much
+>> more than trying to make an arrogant developer to act in a 
+>> community-friendly
+>> manner while leaving things completely broken.
+>> 
+>> That said, remembering that we're humans and, as such, it's normal to 
+>> get something
+>> wrong during the development process, I want to remind you that:
+>> 
+>>  1. A series that creates regressions is *not* good and *not* ready to 
+>> be
+>>     upstreamed; and
+>>  2. As a maintainer, you have the responsibility of not breaking the 
+>> kernel,
+>>     not breaking devices and not breaking currently working 
+>> functionality; and
+>>  3. Devicetrees being wrong (but working) since day 0 is not an excuse 
+>> to break
+>>     functionality; and
+>>  4. Blaming the one who introduced the devicetree (you're doing that, 
+>> since you
+>>     are blaming the devicetree being wrong) isn't solving anything and 
+>> will not
+>>     magically make your code acceptable or good; and
+>>  5. If you push a wrong commit, there's nothing to be ashamed of; and
+>>  6. If you make a mistake, you should recognize that and find a way to
+>>     make things right, that should be done for the community, not for
+>>     yourself; and
+>>  7. You shall respect the community: in this case, with your arrogant 
+>> behavior
+>>     you did *not* respect the users.
+>> 
+>> P.S.: The right way of making such change is to:
+>>       1. Avoid breaking currently working devices by making sure that 
+>> their DT
+>>          still works with the new driver; and
+>>       2. If breakage is unavoidable, make it so one kernel version has 
+>> a fix that
+>>          works with both old and new driver, and the next version 
+>> introduces the
+>>          breakage. N.2 should ideally never happen, anyway.
+>> 
+>> Let's wrap up this matter now - I don't want to spend any more word, 
+>> nor time,
+>> on this, as I really have nothing else to say.
+>> 
+>> Best regards,
+>> Angelo
 > 
-> Sure, please see the statistics below.
+> To be clear, I only became aware that my patch was picked by reading 
+> this
+> email. It is clear that we have different views. To that extend, all of
+> what you have written above can be answered to by reading what I have
+> already written in this thread. Therefore, I don't see any wrongdoing 
+> from
+> my side and invite everyone to fully read this thread to draw their own
+> conclusions; something you seem not to have done. And I'm not the one,
+> calling people names here. I can only offer my respect for hard working
+> people.
 > 
-> Test Result (based on 6.11-rc1)
-> ===============================
+> In my view, your behaviour of not applying a devicetree patch before a
+> Linux driver patch was applied, and then not replying to any arguments
+> whatsoever, was keeping the devicetree files hostage until your demands
+> were met. What I see is that, you failed as a maintainer to attend to 
+> my
+> points against this practice. It's no surprise that, after not having 
+> heard
+> back from you with an argument against my points, my patch was 
+> eventually
+> taken in by someone else.
 > 
-> 1. Profile purge_vmap_node()
-> 
->    A. Command: trace-cmd record -p function_graph -l purge_vmap_node make -j $(nproc)
-> 
->    B. Average execution time of purge_vmap_node():
-> 
-> 	no patch (us)		patched (us)	saved
-> 	-------------		------------    -----
->       	 147885.02	 	  3692.51	 97%  
-> 
->    C. Total execution time of purge_vmap_node():
-> 
-> 	no patch (us)		patched (us)	saved
-> 	-------------		------------	-----
-> 	  194173036		  5114138	 97%
-> 
->    [ftrace log] Without patch: https://gist.github.com/AdrianHuang/a5bec861f67434e1024bbf43cea85959
->    [ftrace log] With patch: https://gist.github.com/AdrianHuang/a200215955ee377288377425dbaa04e3
-> 
-> 2. Use `time` utility to measure execution time
->  
->    A. Command: make clean && time make -j $(nproc)
-> 
->    B. The following result is the average kernel execution time of five-time
->       measurements. ('sys' field of `time` output):
-> 
-> 	no patch (seconds)	patched (seconds)	saved
-> 	------------------	----------------	-----
-> 	    36932.904		   31403.478		 15%
-> 
->    [`time` log] Without patch: https://gist.github.com/AdrianHuang/987b20fd0bd2bb616b3524aa6ee43112
->    [`time` log] With patch: https://gist.github.com/AdrianHuang/da2ea4e6aa0b4dcc207b4e40b202f694
->
-I meant another statistics. As noted here https://lore.kernel.org/linux-mm/ZogS_04dP5LlRlXN@pc636/T/#m5d57f11d9f69aef5313f4efbe25415b3bae4c818
-i came to conclusion that below place and lock:
+> Arınç
 
-<snip>
-static void exit_notify(struct task_struct *tsk, int group_dead)
-{
-	bool autoreap;
-	struct task_struct *p, *n;
-	LIST_HEAD(dead);
+Funny. It turns out it was not even my patch that was picked but rather 
+the
+patch that spawned this thread. Picked by you, no less. An improper 
+patch
+whose log was loaded with incorrect logic, and the patch itself not 
+fixing
+all the remaining broken trees. Now someone needs to submit another 
+patch
+to close the remaining hole, 
+arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts.
+I shall do that.
 
-	write_lock_irq(&tasklist_lock);
-...
-<snip>
-
-keeps IRQs disabled, so it means that the purge_vmap_node() does the progress
-but it can be slow.
-
-CPU_1:
-disables IRQs
-trying to grab the tasklist_lock
-
-CPU_2:
-Sends an IPI to CPU_1
-waits until the specified callback is executed on CPU_1
-
-Since CPU_1 has disabled IRQs, serving an IPI and completion of callback
-takes time until CPU_1 enables IRQs back.
-
-Could you please post lock statistics for kernel compiling use case?
-KASAN + patch is enough, IMO. This just to double check whether a
-tasklist_lock is a problem or not.
-
-Thanks!
-
---
-Uladzislau Rezki
+Arınç
 
