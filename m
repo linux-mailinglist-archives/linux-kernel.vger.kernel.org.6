@@ -1,127 +1,307 @@
-Return-Path: <linux-kernel+bounces-267398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 298E09410FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:46:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07526941106
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8FD9B254B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:46:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5A33281347
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B6619B3F9;
-	Tue, 30 Jul 2024 11:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A293919FA94;
+	Tue, 30 Jul 2024 11:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p7/icNJO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rs8gIPSc"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C3612DD88
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DFB19EED8
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722339876; cv=none; b=pcfR5TtYFWrR5ZQ/jN77Rp9wiXCujZEGzZLyX6AwNJSMXhmTY3XZegrbfTZtUR1y4Knyu8lPt42BBYhVQXMueAwdYtbJ3t8XGRFmL8GCNdSJohtWFbNxQ2BFCIvSMmCxlyPliJMIsoQejtLf19N51dCuyhRCehSinQM/rhR16pI=
+	t=1722339886; cv=none; b=McgRliGFeBgmc0LiqqWoJ/kABT0xj0CaDwJgm+z8ATXBqVMw7Dv0ji6RokWxlxtasZWo8yn+0/87kxlg1aP9ioEG11KE+9scIkzBBXIsQXE7ZtCaAHCvgAgYasRgstJZ/U8WyqdmT7gZblUDGCBUsM8woJ/kTP9I0a3We1qiOSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722339876; c=relaxed/simple;
-	bh=J6l5W49n9iB+uwt8CQ5AwWNy3Kxlt/FstVprC/06sNs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PeCLtNz1M9O6dvU4OEvnJS1JOTR8Zjeu6OyJ7CYS0cmIvpA9kXGOcKx7VV0vk2Vva5r6CAB2ERXwj99J7YrrDoT0ozfYz4HgNNWwO2UL8S9CYISRQtKVx/Vi9mE1cFVlS+e5EHUabhBqwLncgozZHUwVuN4PQk/olxNiJJs75e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p7/icNJO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA5FDC32782;
-	Tue, 30 Jul 2024 11:44:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722339875;
-	bh=J6l5W49n9iB+uwt8CQ5AwWNy3Kxlt/FstVprC/06sNs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=p7/icNJOorkHw2oyyid0QdM7u2sShTPcn/oid4wg/yX7l3KOB7qv9gIYedc6s3OEA
-	 5frJ+dO+wtno+AtyLQgO23wT3ofFWtEU2GJ8wHErrr5RL7Y1+TNqvNPGBIkSEt4Xv5
-	 SGbFH1AtHRKhJtXRAtYlkIYD0ZWeO/96aiuV36rYU6lnUGWd372xSjizDALcr7k8ry
-	 qOx5VqVxlMgb7QE03nskbeQMf4MWaTIeq9U2e4Y3xIY7bgCYDE+PnMkHTsSXFW7Q1h
-	 GlCZU/MBKBqC/puNpPHR6i1+r4plFC9OlHRYHJBi+C+akm57DkU8DPgNO0kHbOK6L5
-	 4M7yVBA5kvPeg==
-From: Will Deacon <will@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Will Deacon <will@kernel.org>,
-	Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [PATCH] workqueue: Fix UBSAN 'subtraction overflow' error in shift_and_mask()
-Date: Tue, 30 Jul 2024 12:44:31 +0100
-Message-Id: <20240730114431.1119-1-will@kernel.org>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1722339886; c=relaxed/simple;
+	bh=QRXj6RQttpiz5ZDNTET50nTYV/yvORvJdoGwJq46rAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=kZkVyuYSDN4rOv5o+uY5vVXbDCytupdEHVZBA3T8raKls4GRc/mMD4e7f0cJupKqZ5O2HX+6iqzu/qUtyyiINrqSzLTDx7qX7Mmz1qWfVqiuJDL6p0pMhH3AsGH8wCDzhwzGcelzrNm+nPf4Z7FNny0LL5mXiLsVht8WVOY9k+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rs8gIPSc; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240730114442euoutp028e315df076162014393c2c61cea28f99~m_v9TNVAd0403904039euoutp02t
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:44:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240730114442euoutp028e315df076162014393c2c61cea28f99~m_v9TNVAd0403904039euoutp02t
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1722339882;
+	bh=pCbKlJaDg+laaap6ynSdGrvZR5pllUN9unnnOVUI4G8=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=rs8gIPScHO8jZM6ap4o3/sxp21x7cC0pcFyFnF+SJHByu7fnuOeVCJtdex4+P780o
+	 f7L94JS9S8Ob7ckpIPDmJniSA8cX2GEi2lFvZAAJgQFnuhMjuHEGeHxuojG6tau6Eh
+	 XVdIhdmKidleBdAPtOI5ATsEWNQmNVksTXde/+Dg=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240730114441eucas1p23f9982159414f819fc4d4b0cd76acbdf~m_v9Df34n1769217692eucas1p2d;
+	Tue, 30 Jul 2024 11:44:41 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 77.1D.09620.922D8A66; Tue, 30
+	Jul 2024 12:44:41 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240730114441eucas1p16aabcc3a8097dbe284e73ecf69e6d03c~m_v8fTgWy0204902049eucas1p10;
+	Tue, 30 Jul 2024 11:44:41 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240730114441eusmtrp1170c8f6f96a84f6504c8002787a1890e~m_v8erAUp2598725987eusmtrp1V;
+	Tue, 30 Jul 2024 11:44:41 +0000 (GMT)
+X-AuditID: cbfec7f5-d1bff70000002594-77-66a8d229829e
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 6C.2F.09010.822D8A66; Tue, 30
+	Jul 2024 12:44:40 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240730114439eusmtip1a520c3de7ae9ea61577d8218c192c31c~m_v7K3nXv0586705867eusmtip1P;
+	Tue, 30 Jul 2024 11:44:39 +0000 (GMT)
+Message-ID: <09e9cf0b-27fd-46b8-8631-87d798afd19e@samsung.com>
+Date: Tue, 30 Jul 2024 13:44:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] ARM: dts: samsung: Add cache information to the
+ Exynos542x SoC
+To: Anand Moon <linux.amoon@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20240730091322.5741-2-linux.amoon@gmail.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJKsWRmVeSWpSXmKPExsWy7djPc7qal1akGXy/p2jxYN42Nos1e88x
+	Wcw/co7V4uWse2wWmx5fY7W4vGsOm8WM8/uYLNZtvMVu8X/PDnYHTo+ds+6ye2xa1cnmsXlJ
+	vUffllWMHp83yQWwRnHZpKTmZJalFunbJXBl/Fh2h71gsmHF/Xs/mBoYF6p2MXJySAiYSMx4
+	NYG5i5GLQ0hgBaPEhgN3GCGcL4wSvdeOMINUCQl8ZpS4v1oBpuP8hFdQRcsZJc6daWODcD4y
+	SrRf+QXWwStgJ7Fr5RRWEJtFQFXi5eSVrBBxQYmTM5+wgNiiAvIS92/NYAexhQViJD7vWwN2
+	h4jAPkaJHdsWs4M4zALtjBKn5twAq2IWEJe49WQ+E4jNJmAo0fW2iw3E5hSwknjY+pYJokZe
+	YvvbOWCTJATecEhMaGpmhzjcReLZ9TesELawxKvjW6DiMhKnJ/ewQDQAbVvw+z4ThDOBUaLh
+	+S1GiCpriTvnfgGt4wBaoSmxfpc+RNhR4lrbW7CwhACfxI23ghBH8ElM2jadGSLMK9HRJgRR
+	rSYx6/g6uLUHL1xinsCoNAspYGYheXMWkndmIexdwMiyilE8tbQ4Nz212DgvtVyvODG3uDQv
+	XS85P3cTIzA1nf53/OsOxhWvPuodYmTiYDzEKMHBrCTCG39laZoQb0piZVVqUX58UWlOavEh
+	RmkOFiVxXtUU+VQhgfTEktTs1NSC1CKYLBMHp1QDk8s149+mJ77+l/F9meD5ZSrbmin67V9M
+	u//KTykJcJKc3FN07+SEYy8br9t/bVv8ZueamfbNug4RW6a5f9l1fY4b+9MlbfU/nxkXfuuS
+	tyg945D/lrnlHZuQTfNEqymVxRc+uovdv/f7sgo7a9qN2z/uFCzf9eL0rsZbjVIXv+w/u+jR
+	xHs/y3e+kZtUev9/8c7jF3wTmJyCwlrmWH+cuZnt6mddV8VPX/4rlLzh3xPEsi7U9skEWRXF
+	BC/DrzGaJzsnVilXKh1we5OU5x71qbbGZseZAy5P+08qi50SbJEx3Lf9/iqpk3x5wfOm+Z95
+	FuDkuGTGqcdv/X/vtyjceWFz1OnSacZyFna6XVulfxQosRRnJBpqMRcVJwIAKAYGFbwDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNIsWRmVeSWpSXmKPExsVy+t/xu7oal1akGXy4aGXxYN42Nos1e88x
+	Wcw/co7V4uWse2wWmx5fY7W4vGsOm8WM8/uYLNZtvMVu8X/PDnYHTo+ds+6ye2xa1cnmsXlJ
+	vUffllWMHp83yQWwRunZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTm
+	ZJalFunbJehl/Fh2h71gsmHF/Xs/mBoYF6p2MXJySAiYSJyf8IoRxBYSWMooMWunNkRcRuLk
+	tAZWCFtY4s+1LrYuRi6gmveMEpsOz2UDSfAK2EnsWjkFrIhFQFXi5eSVrBBxQYmTM5+wgNii
+	AvIS92/NYAexhQViJD7vW8MMMkhEYB+jxNmppxlBHGaBdkaJO29nQ63YC3TGim9MIC3MAuIS
+	t57MB7PZBAwlut52ga3mFLCSeNj6FqrGTKJraxcjhC0vsf3tHOYJjEKzkFwyC8moWUhaZiFp
+	WcDIsopRJLW0ODc9t9hIrzgxt7g0L10vOT93EyMwFrcd+7llB+PKVx/1DjEycTAeYpTgYFYS
+	4Y2/sjRNiDclsbIqtSg/vqg0J7X4EKMpMDgmMkuJJucDk0FeSbyhmYGpoYmZpYGppZmxkjiv
+	Z0FHopBAemJJanZqakFqEUwfEwenVAPTboafDLIse7uEW0U/H6zl82nzqHD5fezsmlqdTbYT
+	+uzPtE54+UVhfUHLGYPDvrWKfyZ80fH69j1Ycos87//Loe2Vy35cWbROxCu30Mo9THj39Sk9
+	+kzGvzVTbjPYB2yJFXF4/aT/3wb+ysfqL75477hqr83E1rgs8UCmx2/XGV+fz3f9X9kSqcD4
+	K2Pn/PL7Rw4vTRZsifw7Z+7ULTfDn1VcjrooyPwtlImtj62IZSXn0VdPQt0tGDQ/+KTPZHoY
+	XGfT+f3reZO1nsZT4m2K1h5MDThXxbnc/OnNYylBPsySkinXxUqMG32/PGfjv8Z4atcEq+Uv
+	C9SFz6g0WU/26p4Q+3PRRRvV1EYTMx8lluKMREMt5qLiRACaRA+FTgMAAA==
+X-CMS-MailID: 20240730114441eucas1p16aabcc3a8097dbe284e73ecf69e6d03c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240730091412eucas1p18feced3968a5f87dc8fe05f78d5c7659
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240730091412eucas1p18feced3968a5f87dc8fe05f78d5c7659
+References: <20240730091322.5741-1-linux.amoon@gmail.com>
+	<CGME20240730091412eucas1p18feced3968a5f87dc8fe05f78d5c7659@eucas1p1.samsung.com>
+	<20240730091322.5741-2-linux.amoon@gmail.com>
 
-UBSAN reports the following 'subtraction overflow' error when booting
-in a virtual machine on Android:
 
- | Internal error: UBSAN: integer subtraction overflow: 00000000f2005515 [#1] PREEMPT SMP
- | Modules linked in:
- | CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.10.0-00006-g3cbe9e5abd46-dirty #4
- | Hardware name: linux,dummy-virt (DT)
- | pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
- | pc : cancel_delayed_work+0x34/0x44
- | lr : cancel_delayed_work+0x2c/0x44
- | sp : ffff80008002ba60
- | x29: ffff80008002ba60 x28: 0000000000000000 x27: 0000000000000000
- | x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
- | x23: 0000000000000000 x22: 0000000000000000 x21: ffff1f65014cd3c0
- | x20: ffffc0e84c9d0da0 x19: ffffc0e84cab3558 x18: ffff800080009058
- | x17: 00000000247ee1f8 x16: 00000000247ee1f8 x15: 00000000bdcb279d
- | x14: 0000000000000001 x13: 0000000000000075 x12: 00000a0000000000
- | x11: ffff1f6501499018 x10: 00984901651fffff x9 : ffff5e7cc35af000
- | x8 : 0000000000000001 x7 : 3d4d455453595342 x6 : 000000004e514553
- | x5 : ffff1f6501499265 x4 : ffff1f650ff60b10 x3 : 0000000000000620
- | x2 : ffff80008002ba78 x1 : 0000000000000000 x0 : 0000000000000000
- | Call trace:
- |  cancel_delayed_work+0x34/0x44
- |  deferred_probe_extend_timeout+0x20/0x70
- |  driver_register+0xa8/0x110
- |  __platform_driver_register+0x28/0x3c
- |  syscon_init+0x24/0x38
- |  do_one_initcall+0xe4/0x338
- |  do_initcall_level+0xac/0x178
- |  do_initcalls+0x5c/0xa0
- |  do_basic_setup+0x20/0x30
- |  kernel_init_freeable+0x8c/0xf8
- |  kernel_init+0x28/0x1b4
- |  ret_from_fork+0x10/0x20
- | Code: f9000fbf 97fffa2f 39400268 37100048 (d42aa2a0)
- | ---[ end trace 0000000000000000 ]---
- | Kernel panic - not syncing: UBSAN: integer subtraction overflow: Fatal exception
+On 30.07.2024 11:13, Anand Moon wrote:
+> As per Exynos 5422 user manual add missing cache information to
+> the Exynos542x SoC.
+>
+> - Each Cortex-A7 core has 32 KB of instruction cache and
+> 	32 KB of L1 data cache available.
+> - Each Cortex-A15 core has 32 KB of L1 instruction cache and
+> 	32 KB of L1 data cache available.
+> - The little (A7) cluster has 512 KB of unified L2 cache available.
+> - The big (A15) cluster has 2 MB of unified L2 cache available.
+>
+> Features:
+> - Exynos 5422 support cache coherency interconnect (CCI) bus with
+>    L2 cache snooping capability. This hardware automatic L2 cache
+>    snooping removes the efforts of synchronizing the contents of the
+>    two L2 caches in core switching event.
+>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 
-This is due to shift_and_mask() using a signed immediate to construct
-the mask and being called with a shift of 31 (WORK_OFFQ_POOL_SHIFT) so
-that it ends up decrementing from INT_MIN.
 
-Use an unsigned constant '1U' to generate the mask in shift_and_mask().
+The provided values are not correct. Please refer to commit 5f41f9198f29 
+("ARM: 8864/1: Add workaround for I-Cache line size mismatch between CPU 
+cores"), which adds workaround for different l1 icache line size between 
+big and little CPUs. This workaround gets enabled on all Exynos542x/5800 
+boards.
 
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Fixes: 1211f3b21c2a ("workqueue: Preserve OFFQ bits in cancel[_sync] paths")
-Signed-off-by: Will Deacon <will@kernel.org>
----
- kernel/workqueue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 1745ca788ede..b35f8ce80bc7 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -897,7 +897,7 @@ static struct worker_pool *get_work_pool(struct work_struct *work)
- 
- static unsigned long shift_and_mask(unsigned long v, u32 shift, u32 bits)
- {
--	return (v >> shift) & ((1 << bits) - 1);
-+	return (v >> shift) & ((1U << bits) - 1);
- }
- 
- static void work_offqd_unpack(struct work_offq_data *offqd, unsigned long data)
+> ---
+>   .../arm/boot/dts/samsung/exynos5422-cpus.dtsi | 74 +++++++++++++++++++
+>   1 file changed, 74 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/samsung/exynos5422-cpus.dtsi b/arch/arm/boot/dts/samsung/exynos5422-cpus.dtsi
+> index 412a0bb4b988..9b9b2bdfb522 100644
+> --- a/arch/arm/boot/dts/samsung/exynos5422-cpus.dtsi
+> +++ b/arch/arm/boot/dts/samsung/exynos5422-cpus.dtsi
+> @@ -59,6 +59,13 @@ cpu0: cpu@100 {
+>   			reg = <0x100>;
+>   			clocks = <&clock CLK_KFC_CLK>;
+>   			clock-frequency = <1000000000>;
+> +			d-cache-line-size = <32>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-sets = <32>;
+> +			i-cache-line-size = <32>;
+> +			i-cache-size = <0x8000>;
+> +			i-cache-sets = <32>;
+> +			next-level-cache = <&L2_a7>;
+>   			cci-control-port = <&cci_control0>;
+>   			operating-points-v2 = <&cluster_a7_opp_table>;
+>   			#cooling-cells = <2>; /* min followed by max */
+> @@ -72,6 +79,13 @@ cpu1: cpu@101 {
+>   			reg = <0x101>;
+>   			clocks = <&clock CLK_KFC_CLK>;
+>   			clock-frequency = <1000000000>;
+> +			d-cache-line-size = <32>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-sets = <32>;
+> +			i-cache-line-size = <32>;
+> +			i-cache-size = <0x8000>;
+> +			i-cache-sets = <32>;
+> +			next-level-cache = <&L2_a7>;
+>   			cci-control-port = <&cci_control0>;
+>   			operating-points-v2 = <&cluster_a7_opp_table>;
+>   			#cooling-cells = <2>; /* min followed by max */
+> @@ -85,6 +99,13 @@ cpu2: cpu@102 {
+>   			reg = <0x102>;
+>   			clocks = <&clock CLK_KFC_CLK>;
+>   			clock-frequency = <1000000000>;
+> +			d-cache-line-size = <32>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-sets = <32>;
+> +			i-cache-line-size = <32>;
+> +			i-cache-size = <0x8000>;
+> +			i-cache-sets = <32>;
+> +			next-level-cache = <&L2_a7>;
+>   			cci-control-port = <&cci_control0>;
+>   			operating-points-v2 = <&cluster_a7_opp_table>;
+>   			#cooling-cells = <2>; /* min followed by max */
+> @@ -98,6 +119,13 @@ cpu3: cpu@103 {
+>   			reg = <0x103>;
+>   			clocks = <&clock CLK_KFC_CLK>;
+>   			clock-frequency = <1000000000>;
+> +			d-cache-line-size = <32>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-sets = <32>;
+> +			i-cache-line-size = <32>;
+> +			i-cache-size = <0x8000>;
+> +			i-cache-sets = <32>;
+> +			next-level-cache = <&L2_a7>;
+>   			cci-control-port = <&cci_control0>;
+>   			operating-points-v2 = <&cluster_a7_opp_table>;
+>   			#cooling-cells = <2>; /* min followed by max */
+> @@ -111,6 +139,13 @@ cpu4: cpu@0 {
+>   			reg = <0x0>;
+>   			clocks = <&clock CLK_ARM_CLK>;
+>   			clock-frequency = <1800000000>;
+> +			d-cache-line-size = <32>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-sets = <32>;
+> +			i-cache-line-size = <32>;
+> +			i-cache-size = <0x8000>;
+> +			i-cache-sets = <32>;
+> +			next-level-cache = <&L2_a15>;
+>   			cci-control-port = <&cci_control1>;
+>   			operating-points-v2 = <&cluster_a15_opp_table>;
+>   			#cooling-cells = <2>; /* min followed by max */
+> @@ -124,6 +159,13 @@ cpu5: cpu@1 {
+>   			reg = <0x1>;
+>   			clocks = <&clock CLK_ARM_CLK>;
+>   			clock-frequency = <1800000000>;
+> +			d-cache-line-size = <32>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-sets = <32>;
+> +			i-cache-line-size = <32>;
+> +			i-cache-size = <0x8000>;
+> +			i-cache-sets = <32>;
+> +			next-level-cache = <&L2_a15>;
+>   			cci-control-port = <&cci_control1>;
+>   			operating-points-v2 = <&cluster_a15_opp_table>;
+>   			#cooling-cells = <2>; /* min followed by max */
+> @@ -137,6 +179,13 @@ cpu6: cpu@2 {
+>   			reg = <0x2>;
+>   			clocks = <&clock CLK_ARM_CLK>;
+>   			clock-frequency = <1800000000>;
+> +			d-cache-line-size = <32>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-sets = <32>;
+> +			i-cache-line-size = <32>;
+> +			i-cache-size = <0x8000>;
+> +			i-cache-sets = <32>;
+> +			next-level-cache = <&L2_a15>;
+>   			cci-control-port = <&cci_control1>;
+>   			operating-points-v2 = <&cluster_a15_opp_table>;
+>   			#cooling-cells = <2>; /* min followed by max */
+> @@ -150,12 +199,37 @@ cpu7: cpu@3 {
+>   			reg = <0x3>;
+>   			clocks = <&clock CLK_ARM_CLK>;
+>   			clock-frequency = <1800000000>;
+> +			d-cache-line-size = <32>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-sets = <32>;
+> +			i-cache-line-size = <32>;
+> +			i-cache-size = <0x8000>;
+> +			i-cache-sets = <32>;
+> +			next-level-cache = <&L2_a15>;
+>   			cci-control-port = <&cci_control1>;
+>   			operating-points-v2 = <&cluster_a15_opp_table>;
+>   			#cooling-cells = <2>; /* min followed by max */
+>   			capacity-dmips-mhz = <1024>;
+>   			dynamic-power-coefficient = <310>;
+>   		};
+> +
+> +		L2_a7: l2-cache-cluster0 {
+> +			compatible = "cache";
+> +			cache-level = <2>;
+> +			cache-unified;
+> +			cache-size = <0x80000>;	/* L2. 512 KB */
+> +			cache-line-size = <64>;
+> +			cache-sets = <512>;
+> +		};
+> +
+> +		L2_a15: l2-cache-cluster1 {
+> +			compatible = "cache";
+> +			cache-level = <2>;
+> +			cache-unified;
+> +			cache-size = <0x200000>; /* L2, 2M */
+> +			cache-line-size = <64>;
+> +			cache-sets = <512>;
+> +		};
+>   	};
+>   };
+>   
+
+Best regards
 -- 
-2.46.0.rc1.232.g9752f9e123-goog
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
