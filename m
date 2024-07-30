@@ -1,295 +1,136 @@
-Return-Path: <linux-kernel+bounces-267764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A90F941534
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:12:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8104941536
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3F7E1F24766
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:12:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6427E284732
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C3E1A2C2C;
-	Tue, 30 Jul 2024 15:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAEBC1A2C25;
+	Tue, 30 Jul 2024 15:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKxeQ5is"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GmYNc+ep"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2171B147C86;
-	Tue, 30 Jul 2024 15:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA81C1A2C1E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722352366; cv=none; b=qN0+a53l3nnatPgGqlgGMElb43kILy81u0r+9izzkK1SmOiOpSBwU60GBQg3unIA0SI8CgP3fbYkK0pKo+3sDNURtRLIYZngdkaO2QFEkSUjjHUF0/SGEu8eXvP1RhEApK/ubIrUFD8mhKQnOmKDpkJrQoNH1v/VWNTs4xRm8n4=
+	t=1722352446; cv=none; b=P52Zd0lykuZrwfTr01++cx+UJITehQxatQV0dvOwrLKQ5cBITjmQ/uCsC6LhJba22bRWyKVHmk2YKgGYk1j0jYO1CUb4aV31DMz5cUOIeCUjNB7uHeuo92VjlV7N45Ok10iAbXzx2GPxHaPTfVYA7QCfyC4AlzOMVsU1vUx8bs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722352366; c=relaxed/simple;
-	bh=M5btl9zhnmbfhJoLplSVhG526+SFLj2aZcgaFMUW9Ls=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NlcCX0OoYRr6KYIHP4MDnp/XN/xS06n4QEJLTGfmTyxeGdJMhVG5ot7gfoNpPlci4kZBirdDUwDhqJ6/UJ294EC7sIlBry27D01gK+ih7Hmty8c77FaNviYBwshPYJMKHOSGbjmmFg0n6tgBqBtPWCjBwge3JxYrrkkv5yINH9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MKxeQ5is; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70d1a74a43bso3171942b3a.1;
-        Tue, 30 Jul 2024 08:12:44 -0700 (PDT)
+	s=arc-20240116; t=1722352446; c=relaxed/simple;
+	bh=AdTHQeQ7kLyo3mfmwgSTm9XPXXY74L+sdG/PYhBWOtE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OEqa9k4F3KQ+0ycNqj//p4yR6H9cjF4tb68aPkODmeOi67ObDnqtpBhnNBwFTbuE5vMXTL0LADbYRROhgPQuyitIeDOFKmS30qpmGQySk4fRReoIb7o7FGpWyp6MQnES+CdbklmJXhyYfxUjMzBkliL2kb1cyEIKxaqu/7WXnKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GmYNc+ep; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52efaae7edfso5204998e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:14:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722352364; x=1722957164; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GVugQl+eanMaRvw5CudOTZB+XSH5eb6DxiOKQnVK1ZE=;
-        b=MKxeQ5isoF5NZK4yZ4s8oN2jaeo4bSqXb5QcTDDAHITnNeg4QEutKuWbof+mH9H3ts
-         BURn8lEIGh5hO5cXfHrauCipuYT9HVE4W/DBL3jMnZmx/hbFOs4bF+doa0/5FirpvrFR
-         Hr2d3kSsNsCYvHNVbS/0jNuKJL7FZ47wCyAXtQghagKvbEfioAf26Taf8V0TIazvFgnM
-         G1z/j0oGuvatlx3A43OYL3qgBncpqcaZtjTuILo4EcMhebu5R0nz5xndT/o7hiX2Jt7w
-         aeMhmPVFrdGcbgRdVBCn3CJKLeLYHcD0CagD0e0/9RJ2BFnmc2yissSXAFjQFpG9jy2+
-         fUKQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722352441; x=1722957241; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AdTHQeQ7kLyo3mfmwgSTm9XPXXY74L+sdG/PYhBWOtE=;
+        b=GmYNc+epkEPEL6F3gkJQVfz2nwQKkQyjVDnt1xU3BDsuQVq49zXldJzXvsZvSPedAl
+         xJvrdaui8t8p6llOi4hfo29LXpEGCZQ3mqan+i+vO+kZv3sZR/Qsk2zr/HhmFpigS9nh
+         4RqB1ocIrsXCGuM3gLW9jhTSiy6cNhVMxOtyDmkgmN+z8AwkRg8n2Q8jeQHViVy1W/1q
+         mKxa4NKrcWz6CPB3ynux4pauNsPsHMD068WtrdHjFw1+aUZd57+0gm1mbGYzMDKUbCt1
+         N8fx7bM9H2p/UeTuZD5IgjivGJ4EfsqQbyMm3Jmsq7QPhXSD0BDYYXTPIqBFQXuenU+H
+         Aokg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722352364; x=1722957164;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GVugQl+eanMaRvw5CudOTZB+XSH5eb6DxiOKQnVK1ZE=;
-        b=ZOPn0cBCw+JIWkTMTks7T8pRO5fZSLP/+lLnjOGRLLw//c5+ziTrYYiU22wuhqH1yc
-         FFiuPlfmDg1rTEBPBDHbvMVZggzDJKA4coCsw40Nmlh9bxdnvXN21Fus1S3Ai1WzIkWt
-         SYvmoT2WAKN6B2Xdh713ktfRA029t+RDFqQwG88hkoSuNYiHw8Rm/8NR0i2utKxO3vuZ
-         0nspnWf/Os4aD88Ji4HatSnvSRyFanxfMchA/WphpEcDbmARPoWPbPu7BgPf97T8CqId
-         5a6O3KxcwU2HRC+cqCsHUu03mdTwPMrCSElANqzCvCfV0VVNuWBnMlxhOJknuKDm7s9M
-         usOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDmzg3ZUqLrC69XQ7TltzX8KOIDr3e8kB4wd4Jwp/sW6oDJBZFjak05dKqigtVKCAPmbupG8JjZF3py0UQhMFsJDCgbXngBMukv6WthSqy4LKpk9P8mEP6TfSONFJmnZhYPupr
-X-Gm-Message-State: AOJu0YxSlpNtybojTYG9N6PE6YuSU8SGjOE5euhmh1jPLrk8nIaGag0r
-	VrzI+Vz4j23HbFnC07hpPoxxlv/PJMtG/+AVzCerBRTCtDI6JsxF
-X-Google-Smtp-Source: AGHT+IG6Wbc+HpZnPJAIkBLRjtEPwFwwp0fU1uZJ4MVK7qA9lP0PQrlK4lJvsis2L2DdAAjdHrrJGQ==
-X-Received: by 2002:a05:6a00:9141:b0:70d:2583:7227 with SMTP id d2e1a72fcca58-70ece9eba1emr9492005b3a.6.1722352364104;
-        Tue, 30 Jul 2024 08:12:44 -0700 (PDT)
-Received: from [192.168.0.128] ([98.97.103.43])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70ead8748a1sm8568598b3a.150.2024.07.30.08.12.42
+        d=1e100.net; s=20230601; t=1722352441; x=1722957241;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AdTHQeQ7kLyo3mfmwgSTm9XPXXY74L+sdG/PYhBWOtE=;
+        b=AjWnASjxROm4SYB2jkxgKHRxtF5nqLbkWiMj14lgIiVrOEBrXvSXF/Gfm7lb7gq8oU
+         ojH3b7Rm+yR6Sz7oS7C5vTwO0UAlhFuaGPIuzdv2ptfOBtCagcbK1kkJjYFijiY41EdV
+         ZvF/uhhxZ7zW7QJNR1QkWeoTosIcDfDuoGlmGCaMmXfV+JNsFz18UV6AzxlADMu4+Rkz
+         /1zuYcBvdG2r4Q/oK5nsoai9h0tQ7jsuE77CM7Kc8Gor8g2bY+9d6s+X7UgRQtTX8VpW
+         R1rFKjIbXeKdKJDkmzBNi2qNdnQG+iKWZZ6Q1fbUvKMGmsM6onLaT9KMo2tGOZUgiA0B
+         B+0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW7n7AQXzMZGSDnBWk5Dq6e02WQYwDrURwD29kr4YoMqmYpy4YY/xYGRVflf8uvhqnVn0Bhc9JOQ0vPyGP4HYEjzHoAu1wTHs3czDs7
+X-Gm-Message-State: AOJu0YzHFym/9hAdTRtD5C0cNyDkqxQ4YI86pxnd+ETGP9V3ZD84LgSG
+	9o6u9AT5qQ2F9hn6piBvxEYhslSbZJtz+dMTeTmX5zkzmeiP0UhVAuMagbZk+jE=
+X-Google-Smtp-Source: AGHT+IGLH7u6gNvmP31iep2dgQ8sNneBa4byGkknFmkyHaJGeb6F7VEVA6LUgnVJgSR4NXzXiXtiLw==
+X-Received: by 2002:a05:6512:b8a:b0:530:ab86:1e with SMTP id 2adb3069b0e04-530ab8601femr1807985e87.6.1722352440709;
+        Tue, 30 Jul 2024 08:14:00 -0700 (PDT)
+Received: from localhost (p50915eb1.dip0.t-ipconnect.de. [80.145.94.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad91010sm658249966b.172.2024.07.30.08.13.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 08:12:42 -0700 (PDT)
-Message-ID: <ad691cb4a744cbdc7da283c5c068331801482b36.camel@gmail.com>
-Subject: Re: [RFC v11 08/14] mm: page_frag: some minor refactoring before
- adding new API
-From: Alexander H Duyck <alexander.duyck@gmail.com>
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton
-	 <akpm@linux-foundation.org>, linux-mm@kvack.org
-Date: Tue, 30 Jul 2024 08:12:42 -0700
-In-Reply-To: <af06fc13-ae3f-41ca-9723-af1c8d9d051d@huawei.com>
-References: <20240719093338.55117-1-linyunsheng@huawei.com>
-	 <20240719093338.55117-9-linyunsheng@huawei.com>
-	 <dbf876b000158aed8380d6ac3a3f6e8dd40ace7b.camel@gmail.com>
-	 <fdc778be-907a-49bd-bf10-086f45716181@huawei.com>
-	 <CAKgT0UeQ9gwYo7qttak0UgXC9+kunO2gedm_yjtPiMk4VJp9yQ@mail.gmail.com>
-	 <5a0e12c1-0e98-426a-ab4d-50de2b09f36f@huawei.com>
-	 <af06fc13-ae3f-41ca-9723-af1c8d9d051d@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Tue, 30 Jul 2024 08:14:00 -0700 (PDT)
+Date: Tue, 30 Jul 2024 17:13:58 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] pwm: Make info in traces about affected pwm more useful
+Message-ID: <pmz5sgzaroljhbyeulvh3mf6izhwna3d2mjueo3udosy45uza5@5dljnvmtpu5v>
+References: <20240705211452.1157967-2-u.kleine-koenig@baylibre.com>
+ <qye5vuh5hzoemdciohq3x4oofjpvw6pwe777loqacqfmhf4grg@5gtprhv3g377>
+ <20240730103910.6de49acf@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ri2nz55ffg37fvyu"
+Content-Disposition: inline
+In-Reply-To: <20240730103910.6de49acf@gandalf.local.home>
 
-On Tue, 2024-07-30 at 21:20 +0800, Yunsheng Lin wrote:
-> On 2024/7/23 21:19, Yunsheng Lin wrote:
-> > >=20
 
-...
+--ri2nz55ffg37fvyu
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > > The only piece that is really reused here is the pagecnt_bias
-> > > assignment. What is obfuscated away is that the order is gotten
-> > > through one of two paths. Really order isn't order here it is size.
-> > > Which should have been fetched already. What you end up doing with
-> > > this change is duplicating a bunch of code throughout the function.
-> > > You end up having to fetch size multiple times multiple ways. here yo=
-u
-> > > are generating it with order. Then you have to turn around and get it
-> > > again at the start of the function, and again after calling this
-> > > function in order to pull it back out.
-> >=20
-> > I am assuming you would like to reserve old behavior as below?
-> >=20
-> > 	if(!encoded_va) {
-> > refill:
-> > 		__page_frag_cache_refill()
-> > 	}
-> >=20
-> >=20
-> > 	if(remaining < fragsz) {
-> > 		if(!__page_frag_cache_recharge())
-> > 			goto refill;
-> > 	}
-> >=20
-> > As we are adding new APIs, are we expecting new APIs also duplicate
-> > the above pattern?
-> >=20
-> > >=20
+On Tue, Jul 30, 2024 at 10:39:10AM -0400, Steven Rostedt wrote:
+> On Tue, 30 Jul 2024 09:22:53 +0200
+> Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com> wrote:
 >=20
-> How about something like below? __page_frag_cache_refill() and
-> __page_frag_cache_reuse() does what their function name suggests
-> as much as possible, __page_frag_cache_reload() is added to avoid
-> new APIs duplicating similar pattern as much as possible, also
-> avoid fetching size multiple times multiple ways as much as possible.
+> > I think the patch is obvious enough to be ok even without the tracing
+> > maintainer's blessing. I applied it to
+> > https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/=
+for-next
+> > .
+>=20
+> No problem. Thanks for the Cc. I don't always reply if the patch is pretty
+> straight forward. But I do look for things like holes in the TP_struct()
+> portion, that would waste ring buffer space. As well as uses of
+> dereferencing pointers.
 
-This is better. Still though with the code getting so spread out we
-probably need to start adding more comments to explain things.
+Looking at
+https://lore.kernel.org/linux-pwm/7b9c9ee490df1df1de3bbfafd501f45c6cb2ec4c.=
+1722261050.git.u.kleine-koenig@baylibre.com
+is this also in the "straight forward" category? If not, some feedback
+would be appreciated there.
 
-> static struct page *__page_frag_cache_reuse(unsigned long encoded_va,
->                                             unsigned int pagecnt_bias)
-> {
->         struct page *page;
->=20
->         page =3D virt_to_page((void *)encoded_va);
->         if (!page_ref_sub_and_test(page, pagecnt_bias))
->                 return NULL;
->=20
->         if (unlikely(encoded_page_pfmemalloc(encoded_va))) {
->                 VM_BUG_ON(compound_order(page) !=3D
->                           encoded_page_order(encoded_va));
+Thanks
+Uwe
 
-This VM_BUG_ON here makes no sense. If we are going to have this
-anywhere it might make more sense in the cache_refill case below to
-verify we are setting the order to match when we are generating the
-encoded_va.
+--ri2nz55ffg37fvyu
+Content-Type: application/pgp-signature; name="signature.asc"
 
->                 free_unref_page(page, encoded_page_order(encoded_va));
->                 return NULL;
->         }
->=20
->         /* OK, page count is 0, we can safely set it */
->         set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
->         return page;
+-----BEGIN PGP SIGNATURE-----
 
-Why are you returning page here? It isn't used by any of the callers.
-We are refilling the page here anyway so any caller should already have
-access to the page since it wasn't changed.
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmapAzMACgkQj4D7WH0S
+/k4QMwf/dmmEA3gl+PIcynIa/JtYamuZSqSBc7oJ9ffWZ8YdfNaMUlcQa16DmIl/
+DA5Rg8eX6Y8/ZARJG6xgB8dqgyZFf2al2+oPTE/BOiL/a3qWLsKwlJlwrQ8/FYfc
+R9WQtlOYxcRO7L57iGoPR4zQ89y+UiSy0IL57O02NxNSXE130TSB2Ue7gmDEXFn1
+PL571J86vCnGNaX5odZsYU/d0ZtsFX2GkuU9sk4W2i+JfZz8s3geDJPGnC0/14SI
+xVHneq/7Wgqy7xDM7O/glS1BmYTjbi1P9qYR3cLhaM/sx8xVRg9DbmIsAeZc+c6M
+2mCsgAd8lCb8x0Xm8hetCjylkXs/1Q==
+=dJbl
+-----END PGP SIGNATURE-----
 
-> }
->=20
-> static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->                                              gfp_t gfp_mask)
-> {
->         unsigned long order =3D PAGE_FRAG_CACHE_MAX_ORDER;
->         struct page *page =3D NULL;
->         gfp_t gfp =3D gfp_mask;
->=20
-> #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
->         gfp_mask =3D (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
->                    __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
->         page =3D alloc_pages_node(NUMA_NO_NODE, gfp_mask,
->                                 PAGE_FRAG_CACHE_MAX_ORDER);
-
-I suspect the compliler is probably already doing this, but we should
-probably not be updating gfp_mask but instead gfp since that is our
-local variable.
-
-> #endif
->         if (unlikely(!page)) {
->                 page =3D alloc_pages_node(NUMA_NO_NODE, gfp, 0);
->                 if (unlikely(!page)) {
->                         memset(nc, 0, sizeof(*nc));
->                         return NULL;
->                 }
->=20
->                 order =3D 0;
->         }
->=20
->         nc->encoded_va =3D encode_aligned_va(page_address(page), order,
->                                            page_is_pfmemalloc(page));
->=20
->         /* Even if we own the page, we do not use atomic_set().
->          * This would break get_page_unless_zero() users.
->          */
->         page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
->=20
->         return page;
-
-Again, returning page here doesn't make much sense. You are better off
-not exposing internals as you have essentially locked the page down for
-use by the frag API so you shouldn't be handing out the page directly
-to callers.
-
-> }
->=20
-> static struct page *__page_frag_cache_reload(struct page_frag_cache *nc,
->                                              gfp_t gfp_mask)
-> {
->         struct page *page;
->=20
->         if (likely(nc->encoded_va)) {
->                 page =3D __page_frag_cache_reuse(nc->encoded_va, nc->page=
-cnt_bias);
->                 if (page)
->                         goto out;
->         }
->=20
->         page =3D __page_frag_cache_refill(nc, gfp_mask);
->         if (unlikely(!page))
->                 return NULL;
->=20
-> out:
->         nc->remaining =3D page_frag_cache_page_size(nc->encoded_va);
->         nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
->         return page;
-
-Your one current caller doesn't use the page value provided here. I
-would recommend just not bothering with the page variable until you
-actually need it.
-
-> }
->=20
-> void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
->                                  unsigned int fragsz, gfp_t gfp_mask,
->                                  unsigned int align_mask)
-> {
->         unsigned long encoded_va =3D nc->encoded_va;
->         unsigned int remaining;
->=20
->         remaining =3D nc->remaining & align_mask;
->         if (unlikely(remaining < fragsz)) {
-
-You might as well swap the code paths. It would likely be much easier
-to read the case where you are handling remaining >=3D fragsz in here
-rather than having more if statements buried within the if statement.
-With that you will have more room for the comment and such below.
-
->                 if (unlikely(fragsz > PAGE_SIZE)) {
->                         /*
->                          * The caller is trying to allocate a fragment
->                          * with fragsz > PAGE_SIZE but the cache isn't bi=
-g
->                          * enough to satisfy the request, this may
->                          * happen in low memory conditions.
->                          * We don't release the cache page because
->                          * it could make memory pressure worse
->                          * so we simply return NULL here.
->                          */
->                         return NULL;
->                 }
->=20
->                 if (unlikely(!__page_frag_cache_reload(nc, gfp_mask)))
->                         return NULL;
-
-This is what I am talking about in the earlier comments. You go to the
-trouble of returning page through all the callers just to not use it
-here. So there isn't any point in passing it through the functions.
-
->=20
->                 nc->pagecnt_bias--;
->                 nc->remaining -=3D fragsz;
->=20
->                 return encoded_page_address(nc->encoded_va);
->         }
->=20
->         nc->pagecnt_bias--;
->         nc->remaining =3D remaining - fragsz;
->=20
->         return encoded_page_address(encoded_va) +
->                 (page_frag_cache_page_size(encoded_va) - remaining);
-
-Parenthesis here shouldn't be needed, addition and subtractions
-operations can happen in any order with the result coming out the same.
+--ri2nz55ffg37fvyu--
 
