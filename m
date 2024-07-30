@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-267943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53867941CA5
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF58941CA4
 	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 820061C203D9
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA3551F21390
 	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA461A6CA4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1E01A6CA2;
 	Tue, 30 Jul 2024 17:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R+YUsJsL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CVYVP9SX"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mY9zMUyh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="x7EQsSD0"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62621A3DAF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398801A3DCA;
 	Tue, 30 Jul 2024 17:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722359201; cv=none; b=HkDniWW46pzd46xwn83hSHmGwugAQa4FzuBk/6uyEF7ExhhaHoaSqazWEzk7vC8Moq/PLUlo6D6jFyzw6pcwUUnC6Ac1FVKn5XYV7MydfDwpGmemQdUhPEKYn+OnOcLL7XoJ9mcMZQEuWui4qWWOvcjfTadgKE4eQg2DhkiUfXA=
+	t=1722359201; cv=none; b=P8HZ/ig+cwiET7fm+biP1lePI1zncSd2zPahxwcVhyNq8mns0fUdteT1Wyy4ppnWBLzhEoxd/KpD4zfCakfSJnLoayVdrLjcpyqWLtVLKLSrGbeiKCMd1hPFOTUCMteXxNNqnE60yw6ogUEk5+aL+lbo4W17S88MG09uoZP/91Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722359201; c=relaxed/simple;
-	bh=sLw7BTDQMPZOtN+Fqqi4I+1boLhhFnu5YsZD2HnV5hU=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=SP1aNS2B6fNsnb9lDsfT+d1XThmcKZ8OhLWCXJwH2B3oTtH2Rq1vs1VX2T52AInvaYAba/RRJO2t5ek1gE9U1uu0pvZg1HiJDMB5hI9hYIFsms6DuAeBZstrhv+frDILkjQ61NuqD0ehzYAsysEU6Qn04zj26om2hnpICMJQADU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R+YUsJsL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CVYVP9SX; arc=none smtp.client-ip=193.142.43.55
+	bh=dsW1UlSH3W78AohLzhWISglm00cjdlBJNa4aUSCNeZk=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=B8KFf+eGIIroDoZABbd4U4IHjn/UOsz0gjKqqKni3paobtckmGi9tBM4aEAY3vQn53vRVojEADyGjtCP/b+JerQEnPrpWJC00HpgOEEu6DbH++78cymEcVOGc85xaNi+7EiCUzUQtsHDKGeAC26ImipQjaqOnu1oycqNtfAWSUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mY9zMUyh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=x7EQsSD0; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 30 Jul 2024 17:06:36 -0000
+Date: Tue, 30 Jul 2024 17:06:37 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722359196;
+	s=2020; t=1722359197;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=f/+lcoxn8OcbGEny1gCkeUO062GvnLQFor7DsDJBs2Y=;
-	b=R+YUsJsLjlNWAP7Z28D0mfz93f5rkq5bz5liZnSjcvHa7K33oBlgKsLUCnd48iETW4hVeE
-	GJjVYx4MRZPMI6Vgu86hyNvhee/EgojltbIBHNP3U1bZ8QkHhjIwhMkc94g76y9Q2+XTnm
-	iMYhEjh0l0bcXmp75ElfVqDZXisX0sTYB6r5jIx+plu9hBD6gk82a1E0hzU283fQrmrAVX
-	M65oEF7wGW8I+PBnM+UhtNa5IWIlb6AE2NUOxC2IUpgDwBs1lvhaWBzhjtzObIV0lXZq3l
-	EjknNiOJ3L4YBvzts7eU1SvoqZ+YxC+ETl6QNHmgCrGuqIcj2aWe9WSZzs0ubw==
+	bh=41qZ6dAePFjMobfE6G66yYk17XUBvvoyDpRpuPbwpQY=;
+	b=mY9zMUyhef9toe4WAU8eKV1auhEvWZkQdUizsUArS9ZV/t76/R3ht80hPy5vUwc4lL15CP
+	fJ+2bRqrksLTEuN7l2asjtMC3R+qEnqlA1zcGTLtzB73hoV4TTZetN6Y30vAr5JVgoRYaz
+	b7P47bhEf82ub+nJJdgmpC+z6tdKgCyqcpH5YLqxJGG7ZXosHndownyGvZTNyCBdABcSIy
+	xMrYWicQiu7MjsJAXdoQpkywEf9so4yHZOXpvi+YcPwOGuZygp859/ErrHiOiWuRdBt6OJ
+	QDMOevRaiHVTnGEcDn36FJgF4Pn6Y8yQIMQGwUtH+O4la4jecwOVm/tRVvgL+g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722359196;
+	s=2020e; t=1722359197;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=f/+lcoxn8OcbGEny1gCkeUO062GvnLQFor7DsDJBs2Y=;
-	b=CVYVP9SXXW7pceHtMRQyGxgcdUq2Mjcg3fLfb+/ZywJmotU4Mu+s0xBXbpHNaiQHo4rSDD
-	TgpTUzb1rbzdsfAg==
+	bh=41qZ6dAePFjMobfE6G66yYk17XUBvvoyDpRpuPbwpQY=;
+	b=x7EQsSD09n9wlyFpBJklLEatlR5xTEn71HRapU3I9Ymo8H4gEqax3JV2f+uK7QVEKc+6O/
+	4li3nBk6U90BT4DA==
 From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] selftests/timers/posix-timers: Validate SIGEV_NONE
+Subject: [tip: timers/core] selftests/timers/posix_timers: Add SIG_IGN test
 Cc: Thomas Gleixner <tglx@linutronix.de>,
  Frederic Weisbecker <frederic@kernel.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
@@ -64,7 +64,7 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172235919618.2215.3752821533607227878.tip-bot2@tip-bot2>
+Message-ID: <172235919708.2215.8583429542972280603.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -74,75 +74,142 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     2c2b56132bb74b6b801dcb82f57489ae1cf81a91
-Gitweb:        https://git.kernel.org/tip/2c2b56132bb74b6b801dcb82f57489ae1cf81a91
+Commit-ID:     45c4225c3dcc7db2c0cdbf889cc7a9c72a53f742
+Gitweb:        https://git.kernel.org/tip/45c4225c3dcc7db2c0cdbf889cc7a9c72a53f742
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 10 Jun 2024 18:42:10 +02:00
+AuthorDate:    Mon, 10 Jun 2024 18:42:07 +02:00
 Committer:     Frederic Weisbecker <frederic@kernel.org>
 CommitterDate: Mon, 29 Jul 2024 21:57:34 +02:00
 
-selftests/timers/posix-timers: Validate SIGEV_NONE
+selftests/timers/posix_timers: Add SIG_IGN test
 
-Posix timers with a delivery mode of SIGEV_NONE deliver no signals but the
-remaining expiry time must be readable via timer_gettime() for both one
-shot and interval timers.
+Add a test case to validate correct behaviour vs. SIG_IGN.
 
-That's implemented correctly for regular posix timers but broken for posix
-CPU timers.
+The posix specification states:
 
-Add a self test so the fixes can be verified.
+  "Setting a signal action to SIG_IGN for a signal that is pending shall
+   cause the pending signal to be discarded, whether or not it is blocked."
+
+The kernel implements this in the signal handling code, but due to the way
+how posix timers are handling SIG_IGN for periodic timers, the behaviour
+after installing a real handler again is inconsistent and suprising.
+
+The following sequence is expected to deliver a signal:
+
+  install_handler(SIG);
+  block_signal(SIG);
+  timer_create(...);	 <- Should send SIG
+  timer_settime(value=100ms, interval=100ms);
+  sleep(1);		 <- Timer expires and queues signal, timer is not rearmed
+  			    as that should happen in the signal delivery path
+  ignore_signal(SIG);	 <- Discards queued signal
+  install_handler(SIG);  <- Restore handler, should rearm but does not
+  sleep(1);
+  unblock_signal(SIG);	 <- Should deliver one signal with overrun count
+  			    set in siginfo
+
+This fails because nothing rearms the timer when the signal handler is
+restored. Add a test for this case which fails until the signal and posix
+timer code is fixed.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- tools/testing/selftests/timers/posix_timers.c | 53 +++++++++++++++++-
- 1 file changed, 52 insertions(+), 1 deletion(-)
+ tools/testing/selftests/timers/posix_timers.c | 127 ++++++++++++++++-
+ 1 file changed, 125 insertions(+), 2 deletions(-)
 
 diff --git a/tools/testing/selftests/timers/posix_timers.c b/tools/testing/selftests/timers/posix_timers.c
-index 41b43d1..097a132 100644
+index 38db82c..8a6139a 100644
 --- a/tools/testing/selftests/timers/posix_timers.c
 +++ b/tools/testing/selftests/timers/posix_timers.c
-@@ -11,6 +11,7 @@
- #include <sys/types.h>
+@@ -6,8 +6,9 @@
+  *
+  * Kernel loop code stolen from Steven Rostedt <srostedt@redhat.com>
+  */
+-
++#define _GNU_SOURCE
+ #include <sys/time.h>
++#include <sys/types.h>
  #include <stdio.h>
  #include <signal.h>
-+#include <stdint.h>
  #include <string.h>
- #include <unistd.h>
- #include <time.h>
-@@ -20,6 +21,7 @@
- 
- #define DELAY 2
- #define USECS_PER_SEC 1000000
-+#define NSECS_PER_SEC 1000000000
- 
- static void __fatal_error(const char *test, const char *name, const char *what)
- {
-@@ -438,10 +440,57 @@ static void check_delete(void)
- 	ksft_test_result(!tsig.signals, "check_delete\n");
+@@ -214,10 +215,129 @@ static void check_timer_distribution(void)
+ 		ksft_test_result_skip("check signal distribution (old kernel)\n");
  }
  
-+static inline int64_t calcdiff_ns(struct timespec t1, struct timespec t2)
-+{
-+	int64_t diff;
++struct tmrsig {
++	int	signals;
++	int	overruns;
++};
 +
-+	diff = NSECS_PER_SEC * (int64_t)((int) t1.tv_sec - (int) t2.tv_sec);
-+	diff += ((int) t1.tv_nsec - (int) t2.tv_nsec);
-+	return diff;
++static void siginfo_handler(int sig, siginfo_t *si, void *uc)
++{
++	struct tmrsig *tsig = si ? si->si_ptr : NULL;
++
++	if (tsig) {
++		tsig->signals++;
++		tsig->overruns += si->si_overrun;
++	}
 +}
 +
-+static void check_sigev_none(int which, const char *name)
++static void *ignore_thread(void *arg)
 +{
-+	struct timespec start, now;
++	unsigned int *tid = arg;
++	sigset_t set;
++
++	sigemptyset(&set);
++	sigaddset(&set, SIGUSR1);
++	if (sigprocmask(SIG_BLOCK, &set, NULL))
++		fatal_error(NULL, "sigprocmask(SIG_BLOCK)");
++
++	*tid = gettid();
++	sleep(100);
++
++	if (sigprocmask(SIG_UNBLOCK, &set, NULL))
++		fatal_error(NULL, "sigprocmask(SIG_UNBLOCK)");
++	return NULL;
++}
++
++static void check_sig_ign(int thread)
++{
++	struct tmrsig tsig = { };
 +	struct itimerspec its;
++	unsigned int tid = 0;
++	struct sigaction sa;
 +	struct sigevent sev;
++	pthread_t pthread;
 +	timer_t timerid;
++	sigset_t set;
++
++	if (thread) {
++		if (pthread_create(&pthread, NULL, ignore_thread, &tid))
++			fatal_error(NULL, "pthread_create()");
++		sleep(1);
++	}
++
++	sa.sa_flags = SA_SIGINFO;
++	sa.sa_sigaction = siginfo_handler;
++	sigemptyset(&sa.sa_mask);
++	if (sigaction(SIGUSR1, &sa, NULL))
++		fatal_error(NULL, "sigaction()");
++
++	/* Block the signal */
++	sigemptyset(&set);
++	sigaddset(&set, SIGUSR1);
++	if (sigprocmask(SIG_BLOCK, &set, NULL))
++		fatal_error(NULL, "sigprocmask(SIG_BLOCK)");
 +
 +	memset(&sev, 0, sizeof(sev));
-+	sev.sigev_notify = SIGEV_NONE;
++	sev.sigev_notify = SIGEV_SIGNAL;
++	sev.sigev_signo = SIGUSR1;
++	sev.sigev_value.sival_ptr = &tsig;
++	if (thread) {
++		sev.sigev_notify = SIGEV_THREAD_ID;
++		sev._sigev_un._tid = tid;
++	}
 +
-+	if (timer_create(which, &sev, &timerid))
-+		fatal_error(name, "timer_create()");
++	if (timer_create(CLOCK_MONOTONIC, &sev, &timerid))
++		fatal_error(NULL, "timer_create()");
 +
 +	/* Start the timer to expire in 100ms and 100ms intervals */
 +	its.it_value.tv_sec = 0;
@@ -151,39 +218,59 @@ index 41b43d1..097a132 100644
 +	its.it_interval.tv_nsec = 100000000;
 +	timer_settime(timerid, 0, &its, NULL);
 +
-+	if (clock_gettime(which, &start))
-+		fatal_error(name, "clock_gettime()");
++	sleep(1);
 +
-+	do {
-+		if (clock_gettime(which, &now))
-+			fatal_error(name, "clock_gettime()");
-+	} while (calcdiff_ns(now, start) < NSECS_PER_SEC);
++	/* Set the signal to be ignored */
++	if (signal(SIGUSR1, SIG_IGN) == SIG_ERR)
++		fatal_error(NULL, "signal(SIG_IGN)");
 +
-+	if (timer_gettime(timerid, &its))
-+		fatal_error(name, "timer_gettime()");
++	sleep(1);
++
++	if (thread) {
++		/* Stop the thread first. No signal should be delivered to it */
++		if (pthread_cancel(pthread))
++			fatal_error(NULL, "pthread_cancel()");
++		if (pthread_join(pthread, NULL))
++			fatal_error(NULL, "pthread_join()");
++	}
++
++	/* Restore the handler */
++	if (sigaction(SIGUSR1, &sa, NULL))
++		fatal_error(NULL, "sigaction()");
++
++	sleep(1);
++
++	/* Unblock it, which should deliver the signal in the !thread case*/
++	if (sigprocmask(SIG_UNBLOCK, &set, NULL))
++		fatal_error(NULL, "sigprocmask(SIG_UNBLOCK)");
 +
 +	if (timer_delete(timerid))
-+		fatal_error(name, "timer_delete()");
++		fatal_error(NULL, "timer_delete()");
 +
-+	ksft_test_result(its.it_value.tv_sec || its.it_value.tv_nsec,
-+			 "check_sigev_none %s\n", name);
++	if (!thread) {
++		ksft_test_result(tsig.signals == 1 && tsig.overruns == 29,
++				 "check_sig_ign SIGEV_SIGNAL\n");
++	} else {
++		ksft_test_result(tsig.signals == 0 && tsig.overruns == 0,
++				 "check_sig_ign SIGEV_THREAD_ID\n");
++	}
 +}
 +
  int main(int argc, char **argv)
  {
  	ksft_print_header();
--	ksft_set_plan(10);
-+	ksft_set_plan(12);
+-	ksft_set_plan(6);
++	ksft_set_plan(8);
  
  	ksft_print_msg("Testing posix timers. False negative may happen on CPU execution \n");
  	ksft_print_msg("based timers if other threads run on the CPU...\n");
-@@ -467,6 +516,8 @@ int main(int argc, char **argv)
- 	check_sig_ign(1);
- 	check_rearm();
- 	check_delete();
-+	check_sigev_none(CLOCK_MONOTONIC, "CLOCK_MONOTONIC");
-+	check_sigev_none(CLOCK_PROCESS_CPUTIME_ID, "CLOCK_PROCESS_CPUTIME_ID");
+@@ -239,5 +359,8 @@ int main(int argc, char **argv)
+ 	check_timer_create(CLOCK_PROCESS_CPUTIME_ID, "CLOCK_PROCESS_CPUTIME_ID");
+ 	check_timer_distribution();
  
++	check_sig_ign(0);
++	check_sig_ign(1);
++
  	ksft_finished();
  }
 
