@@ -1,130 +1,99 @@
-Return-Path: <linux-kernel+bounces-267117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C701D940CC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:02:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC98D940CC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80470287194
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:02:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2A2AB26202
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2373C193091;
-	Tue, 30 Jul 2024 09:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="au+dq3kF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D712194128;
+	Tue, 30 Jul 2024 09:02:42 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC2C442C;
-	Tue, 30 Jul 2024 09:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9BBF442C
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722330153; cv=none; b=joOnpS7M4tvVzS+7NrlAXDhit8SjUaABbqMLTCeSBTxbyqHAnDKkk7E5mXbexXwwCNsWHN41d0vkPBvD8RoNGXO+OnghtHPv1b4KOk6D12MAQSBjd7OE02snkI/0v0g0/X5o0stcdQYQ1REV0cHvF70w5opbPS/3+elSVfFumH4=
+	t=1722330162; cv=none; b=DCr0k8X9gPXtpzBWxMfaaKMAa44ZxJZKvsbT2ImaFEiPQQ4RKt5KUoPMQCMToP5t3+FDvICwNKtPVKfUJ0U2GnFTMRQmK4ePjWJHDOi3kpZUZxFJ0E5xG6zrtNLYBZ2rLWyMcwYxW/ObvtV9f8Kz0y+Cuy2ND0P5dUzBD20tdE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722330153; c=relaxed/simple;
-	bh=0TVoV5VLLp8+TtiKDi9dEQ98nuZZyb/UWZHg2aLQUDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uRJIFY//TIiwarw5Je7b1RAwF3D7xLkt4lMlYQE4tC4vDCiKtjV5HwPH4RjhMlnsOkII3LtMNoZeDYhzOc+88pIedzpWBTM0swjcCsroeg18hZzJ9mIJV+nO/io4KyD8XMEgnMlbegMVe2qgxr2bfmt0Lx7C6BiAp5gsUngRy08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=au+dq3kF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05073C4AF0C;
-	Tue, 30 Jul 2024 09:02:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722330152;
-	bh=0TVoV5VLLp8+TtiKDi9dEQ98nuZZyb/UWZHg2aLQUDw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=au+dq3kFW313hptNVsxVR36NX0rOoF8tbjGrL92KFaudLi9UYGAN8++qjqKHcAdDu
-	 tidpw1SkS8mGSoE54YrgVElovp25LcacKphngM+Bad0mzbxz+K6aHWPB9le8MLiaxy
-	 Kt8RHMGLCyfDQw5sPFftk4td5ORZRLiKzmpJ/ZvBdpFo8FZinQ0AIsHNkT1/EmCiDL
-	 b5t/tKJzFxM8t5qwMSvjkhsixlku/sL5Ith8Ya5xSqJLf9N0P8PpiTFW4sJ/hnHCpL
-	 uWMDA3ePCtCZq/dqc5uLesyZx16/ij8zesXFUt/tFk9teLmd7ieLQuhkP6Cp2RK4pq
-	 FZBxKs6NG3A5A==
-Message-ID: <b6c9ca90-bb72-414b-afea-f1a197f552d9@kernel.org>
-Date: Tue, 30 Jul 2024 11:02:22 +0200
+	s=arc-20240116; t=1722330162; c=relaxed/simple;
+	bh=haamtbP7P1AS05UpaIZRbA3fAGQeOlmNGOHrR7ugnLY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WVUnGGCVHVncd1kx7PSjsBWrT7h+3ZpvGRx4teiIlUOwLpqWzrVt2ouS7QbPzLzLEXTOxWpC/OZ/X/puILnF55mFPsnyL0flV5XiUFTgkIWzzh7tGHIrIExcgoRE+xmsrJugCUtltOsiupm4WdhM2Iqc7dfaacZO8faC37wbJVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WY8JP0rmJz2Clb0;
+	Tue, 30 Jul 2024 16:57:57 +0800 (CST)
+Received: from kwepemd500019.china.huawei.com (unknown [7.221.188.86])
+	by mail.maildlp.com (Postfix) with ESMTPS id AB4F51A016C;
+	Tue, 30 Jul 2024 17:02:29 +0800 (CST)
+Received: from [10.67.109.61] (10.67.109.61) by kwepemd500019.china.huawei.com
+ (7.221.188.86) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 30 Jul
+ 2024 17:02:29 +0800
+Message-ID: <2c7d8983-2004-4886-32b2-93091a0c0679@huawei.com>
+Date: Tue, 30 Jul 2024 17:02:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/11] soc: qcom: socinfo: Add Soc IDs for SM7325 family
-To: Danila Tikhonov <danila@jiaxyga.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
- konrad.dybcio@linaro.org, rafael@kernel.org, viresh.kumar@linaro.org,
- heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org,
- kees@kernel.org, tony.luck@intel.com, gpiccoli@igalia.com,
- sudeep.holla@arm.com, quic_rjendra@quicinc.com, andre.przywara@arm.com,
- ulf.hansson@linaro.org, davidwronek@gmail.com, neil.armstrong@linaro.org,
- heiko.stuebner@cherry.de, rafal@milecki.pl, macromorgan@hotmail.com,
- linus.walleij@linaro.org, dmitry.baryshkov@linaro.org,
- johan+linaro@kernel.org, javier.carrasco.cruz@gmail.com,
- quic_kriskura@quicinc.com, lpieralisi@kernel.org, fekz115@gmail.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-hardening@vger.kernel.org,
- linux@mainlining.org
-References: <20240729201843.142918-1-danila@jiaxyga.com>
- <20240729201843.142918-3-danila@jiaxyga.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240729201843.142918-3-danila@jiaxyga.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] sched/fair: Correct CPU selection from isolated domain
+To: wujing <realwujing@qq.com>, <mingo@redhat.com>, <peterz@infradead.org>
+CC: <linux-kernel@vger.kernel.org>, <dongml2@chinatelecom.cn>, QiLiang Yuan
+	<yuanql9@chinatelecom.cn>
+References: <tencent_E2C5C1A1B50F453656C6C7FB140CD3AFB305@qq.com>
+From: zhengzucheng <zhengzucheng@huawei.com>
+In-Reply-To: <tencent_E2C5C1A1B50F453656C6C7FB140CD3AFB305@qq.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd500019.china.huawei.com (7.221.188.86)
 
-On 29/07/2024 22:18, Danila Tikhonov wrote:
-> Add Soc ID table entries for Qualcomm SM7325 family.
-> 
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+it has already been addressed by the following patches in tip/sched/core:
+
+8aeaffef8c6e ("sched/fair: Take the scheduling domain into account in 
+select_idle_smt()")
+23d04d8c6b8e ("sched/fair: Take the scheduling domain into account in 
+select_idle_core()")
+
+在 2024/7/30 15:10, wujing 写道:
+> We encountered an issue where the kernel thread `ksmd` runs on the PMD
+> dedicated isolated core, leading to high latency in OVS packets.
+>
+> Upon analysis, we discovered that this is caused by the current
+> select_idle_smt() function not taking the sched_domain mask into account.
+>
+> Kernel version: linux-4.19.y
+>
+> Signed-off-by: wujing <realwujing@qq.com>
+> Signed-off-by: QiLiang Yuan <yuanql9@chinatelecom.cn>
 > ---
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+>   kernel/sched/fair.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 09f82c84474b..0950cabfc1d0 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -6171,7 +6171,8 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
+>   		return -1;
+>   
+>   	for_each_cpu(cpu, cpu_smt_mask(target)) {
+> -		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
+> +		if (!cpumask_test_cpu(cpu, &p->cpus_allowed) ||
+> +			!cpumask_test_cpu(cpu, sched_domain_span(sd)))
+>   			continue;
+>   		if (available_idle_cpu(cpu))
+>   			return cpu;
 
