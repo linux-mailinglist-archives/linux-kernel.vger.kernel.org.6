@@ -1,93 +1,138 @@
-Return-Path: <linux-kernel+bounces-268131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7898A9420B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:38:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96AF69420C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:39:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA7301C21715
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:38:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 272C0B21C49
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E8B18C93F;
-	Tue, 30 Jul 2024 19:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9478A18CC1B;
+	Tue, 30 Jul 2024 19:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b5SNfnZW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDJ0cQxz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7A8E573;
-	Tue, 30 Jul 2024 19:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB52018CC09;
+	Tue, 30 Jul 2024 19:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722368294; cv=none; b=Txq1AzmqHnQRzl+4bivP6CgwzZ2vM+KRuNNIhKaCJ/ahK1S6wjkblDlk95CMnegnYUzzdKkpF3mu3C0kvD+eb8HHgW9sxKSs/hN2NnrMNFPoOhV05QuQ7BinO0C43FFIo0aQ9BM5liBgtiMCNR26FF6sRpKWxZSTzE6UjpSHkH0=
+	t=1722368335; cv=none; b=NDfpU883s2xz2CtEjdNW+gQ7KDbemG73NZ/kqTGxg5ZYPf0yCjrEPZcurZWNwMt0LptXYMph+JPk6F1BRHKGAZ+1Xfk8maIz9vNmaOGhv3KYJL18LS6qr/J7bwc5pzECK6wVevKmSMjugEfJmDRLlXnjkGI0oa8UrqAwgcYMJmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722368294; c=relaxed/simple;
-	bh=1Q3oYDiFwiET51QQHldopTOPb7rykWbwFZNGKpQ8i2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N1sSJE9HO3+stAqqNL8Mo31hwxzPGyurCneHbMHmOsJ8hmhUmHsMCnLQK6D+TlP3gAymucF045+qAViuArBytOiDYTLgAFlyhg1rBfbCLHGu/qBqd2cxRO4o79FKO8X3QsRDeianod1yZbQuSYe+t1rgjAH9y8ntuEv7l4OFhxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b5SNfnZW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81FADC4AF0A;
-	Tue, 30 Jul 2024 19:38:13 +0000 (UTC)
+	s=arc-20240116; t=1722368335; c=relaxed/simple;
+	bh=5lpKaUgX4LewI+2gJzXQuBzlVZD7Vurrl6h6fEr9DDs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UHtdDjcXYz4d+X4juCIykxv404jwXCK0adGJdF6sbGBs06QyogR9z75h8sS2MGeo7Em7hWXYaikcIkbCOKv/n2WPk/EMDCRgVvrNq3TG5QcWNBRVXnqmXJ3a0xI48PXfp49yjiLgs3qC7WHJel1w1j/xaY6odHSJlZmn9/xK8Iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDJ0cQxz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50248C4AF0F;
+	Tue, 30 Jul 2024 19:38:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722368293;
-	bh=1Q3oYDiFwiET51QQHldopTOPb7rykWbwFZNGKpQ8i2I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b5SNfnZWVKNhTbqkDx8vzpcjMhB1J8B0pmubW1Ic5UpwesI+PoYUgdb6lHpjZ3ovN
-	 8G4sbzmEGw6Fa9pDq3kEk5ykliyFEgJhdzoUBp3N8cbxUmwBGcL237rdlZ+iON7U7d
-	 go9TrVciOn6kRgo+MNe/t1BAhpD8YI72Beyl8toTfQ0475Rea3PRxXxi4Uc+msrn9D
-	 qOjJM+06Fn7BOkE3EFuQ+MBXdr963OkncsOU61vh99Np3ucn+hTmvQt35e4w4nskUt
-	 fm0e560NO6rtQ+/Dr0IPH5B/Oj+YW3cNAqBFXiS83UkP2WbhD5NEg+j44S56ix13V+
-	 mhidA5T1hWglA==
-Date: Tue, 30 Jul 2024 13:38:12 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Andy Hsieh <andy.hsieh@mediatek.com>, linux-media@vger.kernel.org,
+	s=k20201202; t=1722368335;
+	bh=5lpKaUgX4LewI+2gJzXQuBzlVZD7Vurrl6h6fEr9DDs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MDJ0cQxz//BRJPcyL0nrwk9o6pH0odNZ2Bz/RvGfk8pwZq4b91O3Q2DOZ8B5tJ9Ve
+	 YIUFkbUBz44fXGfe9cSNX7638tkrsmZ0UUV/Fx+UG2JAY3AJ0JTjdp2k+hezcnNTh8
+	 nuXiGUbgaXRAqNqCW3LAsg8tX7TuEgKNQVRdPpUmEG59hDLTUssTws7Zr7wvSzSor9
+	 R/ha4if0Z0Xi14R9Wyn1jVptQyAczsc5fsGZYOMa1RI5sSn9/kwwJGJFM9VrWCpKk8
+	 nUBSpcb0H1TMd7uo0w+S2AXuYa+cP7J6ovgyufMqZ55WjMGF+FDPE1iMVY2QD8B6g4
+	 Q/kjMuNSYpXxw==
+From: Michael Walle <mwalle@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Phi-Bang Nguyen <pnguyen@baylibre.com>,
-	Louis Kuo <louis.kuo@mediatek.com>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v6 1/5] dt-bindings: media: add mediatek ISP3.0 sensor
- interface
-Message-ID: <172236829078.2026749.11343043764808466079.robh@kernel.org>
-References: <20240729-add-mtk-isp-3-0-support-v6-0-c374c9e0c672@baylibre.com>
- <20240729-add-mtk-isp-3-0-support-v6-1-c374c9e0c672@baylibre.com>
+	Michael Walle <mwalle@kernel.org>
+Subject: [PATCH] usb: gadget: u_serial: add .get_icount() support
+Date: Tue, 30 Jul 2024 21:38:40 +0200
+Message-Id: <20240730193840.2580358-1-mwalle@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729-add-mtk-isp-3-0-support-v6-1-c374c9e0c672@baylibre.com>
+Content-Transfer-Encoding: 8bit
 
+Add icount support for the transmitting and receiving characters. This
+will make the tty LED trigger work with the ttyGS devices.
 
-On Mon, 29 Jul 2024 16:48:00 +0200, Julien Stephan wrote:
-> From: Louis Kuo <louis.kuo@mediatek.com>
-> 
-> This adds the bindings, for the mediatek ISP3.0 SENINF module embedded in
-> some Mediatek SoC, such as the mt8365
-> 
-> Signed-off-by: Louis Kuo <louis.kuo@mediatek.com>
-> Signed-off-by: Phi-Bang Nguyen <pnguyen@baylibre.com>
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> ---
->  .../bindings/media/mediatek,mt8365-seninf.yaml     | 259 +++++++++++++++++++++
->  MAINTAINERS                                        |   7 +
->  2 files changed, 266 insertions(+)
-> 
+Signed-off-by: Michael Walle <mwalle@kernel.org>
+---
+ drivers/usb/gadget/function/u_serial.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
+index eec7f7a2e40f..bbc5f7617a13 100644
+--- a/drivers/usb/gadget/function/u_serial.c
++++ b/drivers/usb/gadget/function/u_serial.c
+@@ -28,6 +28,7 @@
+ #include <linux/kthread.h>
+ #include <linux/workqueue.h>
+ #include <linux/kfifo.h>
++#include <linux/serial.h>
+ 
+ #include "u_serial.h"
+ 
+@@ -126,6 +127,7 @@ struct gs_port {
+ 	wait_queue_head_t	close_wait;
+ 	bool			suspended;	/* port suspended */
+ 	bool			start_delayed;	/* delay start when suspended */
++	struct async_icount	icount;
+ 
+ 	/* REVISIT this state ... */
+ 	struct usb_cdc_line_coding port_line_coding;	/* 8-N-1 etc */
+@@ -257,6 +259,7 @@ __acquires(&port->port_lock)
+ 			break;
+ 		}
+ 		do_tty_wake = true;
++		port->icount.tx += len;
+ 
+ 		req->length = len;
+ 		list_del(&req->list);
+@@ -408,6 +411,7 @@ static void gs_rx_push(struct work_struct *work)
+ 				size -= n;
+ 			}
+ 
++			port->icount.rx += size;
+ 			count = tty_insert_flip_string(&port->port, packet,
+ 					size);
+ 			if (count)
+@@ -851,6 +855,23 @@ static int gs_break_ctl(struct tty_struct *tty, int duration)
+ 	return status;
+ }
+ 
++static int gs_get_icount(struct tty_struct *tty,
++			 struct serial_icounter_struct *icount)
++{
++	struct gs_port *port = tty->driver_data;
++	struct async_icount cnow;
++	unsigned long flags;
++
++	spin_lock_irqsave(&port->port_lock, flags);
++	cnow = port->icount;
++	spin_unlock_irqrestore(&port->port_lock, flags);
++
++	icount->rx = cnow.rx;
++	icount->tx = cnow.tx;
++
++	return 0;
++}
++
+ static const struct tty_operations gs_tty_ops = {
+ 	.open =			gs_open,
+ 	.close =		gs_close,
+@@ -861,6 +882,7 @@ static const struct tty_operations gs_tty_ops = {
+ 	.chars_in_buffer =	gs_chars_in_buffer,
+ 	.unthrottle =		gs_unthrottle,
+ 	.break_ctl =		gs_break_ctl,
++	.get_icount =		gs_get_icount,
+ };
+ 
+ /*-------------------------------------------------------------------------*/
+-- 
+2.39.2
 
 
