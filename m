@@ -1,152 +1,226 @@
-Return-Path: <linux-kernel+bounces-266781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD1129406C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:11:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5890D9406C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F4F41F2365C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:11:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CC0E1C227D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202D7168487;
-	Tue, 30 Jul 2024 05:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F4714F9EA;
+	Tue, 30 Jul 2024 05:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="GtUlpQMk"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="OVHIQH/r"
+Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB8B79B8E;
-	Tue, 30 Jul 2024 05:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8DE2114
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 05:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722316279; cv=none; b=jC7QSwqzyKb89U30soja6HgripiXna//x2uWXYGz6jrHpjqNJUGWRx6podiFopJ7dxk1a8dZSlt9G6ZYiA8/bz9oPjosTVnMH8VJ0p+r9DS0zdVKh8sjVxsnp3vCwiy1yo/4iNotbR811GN0xM8y8FZewSUrBwA1HPYuAajT+I0=
+	t=1722316348; cv=none; b=FhBlgFJzkeI2HGMLZgGZgOs2Kmm3+6LNKG4v6P8vqUFCIa9OEOkgiXy1wWa3b49bWS3egdWe2Y8d2s9yROiuEulk6tn0Jhj+XfGE3pneg2Sf/XvutWzr/ZIS+ulnljH264u/YBNx2WQL0W5jlcwDXDu+78fzYjmDIBdJJek/G3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722316279; c=relaxed/simple;
-	bh=y+xJg/pVcJ1y/GxBn6qUhLzXw2h4YczuJeQD8VE2xG4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KiGKsBPqC8OiW/M2w3nbc/ajZDlKdE0vqZWtTF7d+snQXLGkLcRKiJPl4HHTQwEUaaIP2XWRBcitBCTDIwylvBtMjwMmcc9YkBtyNStc6lqPVeXwXCeUI9Ck0rQIzlqlG1N2uxOQn9rxgBX0kfVgp003j/eeCotDMunnlj+CSzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=GtUlpQMk; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1722316220; x=1722921020; i=wahrenst@gmx.net;
-	bh=g2qT0PqPzss90wszs6Vw/sUubex/AK94mW4YSO8z+6g=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=GtUlpQMkqXYlCdfWx8/dX0Wq2i6sof9gWcfWs64aI6BJI3qKXo5+AodwEWK9DWlA
-	 qdbZJl00uu9DO9wgVIbwnYx8jfGZ0s5QYVYeOwxNJA+3dXSLSlFhuhDug0PkV83LI
-	 HJciUHdFGIpJrkMfT/yjUkyP2mR+cXomXFm8XaIxS0emkgkyso5T4BJaNqAGSLz59
-	 nOlEZfPY3HD72EzVhl0enqT6jUq16emh66uYAHxezsQUB4wiCFoo0pOsoa+Rf/bCu
-	 kBQoB3127MY4K+K1SOFniXT7bztwsts/ohM52GHds0Ccj8kU6eJts9Agn1FN2l546
-	 ZO3uZL9hAi5j4qWOdg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mqs0R-1rvQLd2h8b-00m67u; Tue, 30
- Jul 2024 07:10:20 +0200
-Message-ID: <0b2cb5ca-f134-4733-a931-9e192e47c65d@gmx.net>
-Date: Tue, 30 Jul 2024 07:10:16 +0200
+	s=arc-20240116; t=1722316348; c=relaxed/simple;
+	bh=bme4o/4I0sgLcFj7XGElo3gb53rFuL8XYo4QvTtxmvM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B6RW7rrZjz+6x3aD7Qlq91B266wqOr+HczdoyKX+no6BiVPUU0MFf39DXU5Go1q1lDerqPD/LDSND4a7STDdPLjx1fCJILpx0V5VewaG0y3s7RLuaJyO9ak6kEEri9H1CDHrvyLMte/iZ9lRj2QJ7lYtzRRc0a5V7bFmO4DaW8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=OVHIQH/r; arc=none smtp.client-ip=209.85.216.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-2cf11b91813so2572001a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 22:12:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1722316346; x=1722921146; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TT6aLVW/zdodnhT+XtKZ6i2hFkw9MF/DUQGOLynubkI=;
+        b=OVHIQH/rKzwUq7b4vEx/+heu2xuxrHIWvwD7yg400MhvHR0S7UyeRd/rt9OZMgho+f
+         Zkz/53RsAX1UbEOsS5Jo3i9SIWy0TI5tp7imHyiqkp8/VYteOPpZe8xqBOqZu93ZZQ9J
+         IZMQc6hKZ6RAvYqNeNR2aHe5FQwBqori+MhAQQpu244xQVcNJrY04ozkfzIXqwE6d0H/
+         ICRtfVBOibjAlYg9qPxpTs5nabYavatyQSG6rGqpZD8QE3OABDFpO5p6alhVF7rq1Plz
+         xK9fRSWQ0dnwCwnWeYnq9fPVrbNgJ7GdYuRWHCJXAMOXu2PmsJEDlMbC9+J8uKCdwDwi
+         ngmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722316346; x=1722921146;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TT6aLVW/zdodnhT+XtKZ6i2hFkw9MF/DUQGOLynubkI=;
+        b=aaf3FCY8uYRh6DGnALo+zAfP8sq0BOMmDGNMPISNrDEEqu8MoEBUWhjkl7RlFw8dXt
+         HgJEkeS6hCJSg4GjHJ/4MhlKeBzwuKKcyQJ3onlbSgjUHSRQz9sVx3236nX4X0RaZjAQ
+         eEvpklSEjqrkmxb5G2T8XDJUgsv33+30rtvafC8IaiFgPKbzHmfLxBOxBrlRG6e+SIX6
+         kYZdXYyOqPpUrg/+IVj6zO/BrN8xhjUtBMUa68ax/F27eyGtKNm6sC3/2lTnxHfrr9RO
+         TGCSi6KFa0KbpzPkPdMot/qVhHqyYwabHN5nxweUdOb+u1wd/2SXK6/maa6wx+0PCuLy
+         mBNQ==
+X-Gm-Message-State: AOJu0YzzAe4LhB7uBcvlDhvCXVf7Sqcj9o58RNNjHnPmb33qxKGCzDMm
+	f8j2nUNwtkuDVee6ae6tHuTjZY6YtChTyCBoj8usNRt5+7ayPzDIKufEXuLbql68J/gEM2mmnRH
+	e2V7QTucm
+X-Google-Smtp-Source: AGHT+IFMHivNH4RMDotuWrEigk/566gljKmvKgYSaYrdZAxDrTLZ78PUztPHx2BFQsrKbEtPpLVQaw==
+X-Received: by 2002:a17:90a:1787:b0:2c9:75c6:32dc with SMTP id 98e67ed59e1d1-2cf7e09a8b8mr8383256a91.1.1722316345586;
+        Mon, 29 Jul 2024 22:12:25 -0700 (PDT)
+Received: from sunil-pc.tail07344b.ts.net ([106.51.198.16])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb74e8957sm11497728a91.39.2024.07.29.22.12.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 22:12:25 -0700 (PDT)
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Andrei Warkentin <andrei.warkentin@intel.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Drew Fustini <dfustini@tenstorrent.com>,
+	Sunil V L <sunilvl@ventanamicro.com>
+Subject: [PATCH] serial: 8250_platform: Enable generic 16550A platform devices
+Date: Tue, 30 Jul 2024 10:42:18 +0530
+Message-ID: <20240730051218.767580-1-sunilvl@ventanamicro.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/5] wifi: brcmfmac: Add optional lpo clock enable
- support
-To: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org,
- krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org
-Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
- minipli@grsecurity.net, brcm80211@lists.linux.dev,
- brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com
-References: <20240730033053.4092132-1-jacobe.zang@wesion.com>
- <20240730033053.4092132-5-jacobe.zang@wesion.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20240730033053.4092132-5-jacobe.zang@wesion.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8WNkQqDKD6KnO7CaHnNyvZKHD2ZLfpHZ1KvW+8D6yIJ+YdzOq/6
- CLWdUvzbu9l6YctXbf1haRex8PX2JKcQU7WhDqvAMzzMsm0/6HAKqHK0DRnctKDabAs5BFZ
- vthC6Ht7+pR02+u8OGMUjdtgk+oE3lYNkxhNpFYnAVOFycdKUFvB88ZkSJ5bFY724iQYRV+
- Tuwsjq0ksT2Qcf7t1diEg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:nd+W6xGWmI4=;A2cfTUJ99aOtAX+YCl0i1dYvdGn
- gY8LRgEJiagSJAvzjLo+cxqcN9VESNtTRJi9hoM9ziTMuej/tBgQQsP7MgG43c40YNV2JIIUP
- zJQFD680l97chT4EvmvCycxhn5qU8JNSfYHBmonmQbC+Q+T+WAW9pfNm6U1KDt0E/AwS3jhrc
- r718kLHUxjeK6MA3cvv4UC9gUMdLBhC7wST4tXu4K4L5qK1z60i6ln4DDJgBJNrlj56OMv8ld
- qijT74jCjIf8yOKIhlve+/bOCvFONfBKh/JuVlefEOABQ5PRQmOLya0XNtfq8Q0Jixif/gCxd
- TWUKlZfKnL2AuXXzl8Yu5KViNX+fbBCnCGf4CzPSXT0jiOcOfPYTHdwDjWilOFt3we5aik5Oe
- uxoPvt6CpHUkI7VwX2vqi2zcR8EkoPH5FnzzdDfF+VwO1U6LOEPpmhIL3QGfiiFNvkfCQKXaO
- FcEG7Fn8ScOcG+THZNobY1VgeafUJ1OhS69VcarqU4FbT8BRZPx24o7KZE9Z462ljJl5GX6UH
- Uu+0n+E/BZkcjksmo3oQcJB+eXADkhWdTJ1u0xWIThc5Nh3OOS2RPam8/a/dbsb/G8/zsAWlV
- vhzkPh/Q9RK8j2MYXuKWi+nFZenzFU9KZG+XjmdjhhwaWVNqsAtwLW/DnEJTjDhLctPatGuTS
- GEtSWP5tZtmgB6E3SKFlOghoSCAj3xz8VXIZpJilYua+EbRkvmuwmUMb+trLyL6DU/sLz19QK
- 42yut5KRB/w5+tWdzdB4rt20sjl8bNwO10reoIKWt31a1oYp96fRXkeoKb/dWStZ1yI7rk+2S
- k0ufOL0hbl5TsgctUT3VJ2Sg==
+Content-Transfer-Encoding: 8bit
 
-Hi Jacobe,
+Currently, 8250_platform driver is used only for devices with fixed
+serial ports (plat_serial8250_port). Extend this driver for any generic
+16550A platform devices which can be probed using standard hardware
+discovery mechanisms like ACPI.
 
-Am 30.07.24 um 05:30 schrieb Jacobe Zang:
-> WiFi modules often require 32kHz clock to function. Add support to
-> enable the clock to PCIe driver.
->
-> Co-developed-by: Ondrej Jirman <megi@xff.cz>
-> Signed-off-by: Ondrej Jirman <megi@xff.cz>
-> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
-> ---
->   drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
->
-> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c b/dri=
-vers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-> index e406e11481a62..6246e3fd7399f 100644
-> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-> @@ -6,6 +6,7 @@
->   #include <linux/of.h>
->   #include <linux/of_irq.h>
->   #include <linux/of_net.h>
-> +#include <linux/clk.h>
->
->   #include <defs.h>
->   #include "debug.h"
-> @@ -70,6 +71,7 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus=
-_type bus_type,
->   {
->   	struct brcmfmac_sdio_pd *sdio =3D &settings->bus.sdio;
->   	struct device_node *root, *np =3D dev->of_node;
-> +	struct clk *clk;
->   	const char *prop;
->   	int irq;
->   	int err;
-> @@ -113,6 +115,12 @@ void brcmf_of_probe(struct device *dev, enum brcmf_=
-bus_type bus_type,
->   		of_node_put(root);
->   	}
->
-> +	clk =3D devm_clk_get_optional_enabled(dev, "lpo");
-> +	if (!IS_ERR_OR_NULL(clk)) {
-> +		brcmf_dbg(INFO, "enabling 32kHz clock\n");
-> +		clk_set_rate(clk, 32768);
-> +	}
-even if the clock is optional, there should be a proper error handling
-(e.g. the -EPROBE_DEFER case).
+This is required in particular for RISC-V which has non-PNP generic
+16550A compatible UART that needs to be enumerated as ACPI platform
+device.
 
-Best regards
-> +
->   	if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
->   		return;
->
+Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
+---
+ drivers/tty/serial/8250/8250_platform.c | 77 +++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+
+diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial/8250/8250_platform.c
+index d5c8d851348d..bdfb16bed4f2 100644
+--- a/drivers/tty/serial/8250/8250_platform.c
++++ b/drivers/tty/serial/8250/8250_platform.c
+@@ -6,7 +6,9 @@
+  *	      PNP 8250/16550 ports
+  *	      "serial8250" platform devices
+  */
++#include <linux/acpi.h>
+ #include <linux/array_size.h>
++#include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/once.h>
+@@ -100,6 +102,65 @@ void __init serial8250_isa_init_ports(void)
+ 	DO_ONCE(__serial8250_isa_init_ports);
+ }
+ 
++/*
++ * Generic 16550A platform devices
++ */
++static int serial8250_platform_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct uart_8250_port uart = { 0 };
++	struct resource *regs;
++	unsigned char iotype;
++	int ret, line;
++
++	regs = platform_get_resource(pdev, IORESOURCE_IO, 0);
++	if (regs) {
++		uart.port.iobase = regs->start;
++		iotype = UPIO_PORT;
++	} else {
++		regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++		if (!regs) {
++			dev_err(dev, "no registers defined\n");
++			return -EINVAL;
++		}
++
++		uart.port.mapbase = regs->start;
++		uart.port.mapsize = resource_size(regs);
++		uart.port.flags = UPF_IOREMAP;
++		iotype = UPIO_MEM;
++	}
++
++	/* Default clock frequency*/
++	uart.port.uartclk = 1843200;
++	uart.port.type = PORT_16550A;
++	uart.port.dev = &pdev->dev;
++	uart.port.flags |= UPF_SKIP_TEST | UPF_BOOT_AUTOCONF;
++	ret = uart_read_and_validate_port_properties(&uart.port);
++	/* no interrupt -> fall back to polling */
++	if (ret == -ENXIO)
++		ret = 0;
++	if (ret)
++		return ret;
++
++	if (uart.port.mapbase) {
++		uart.port.membase = devm_ioremap(dev, uart.port.mapbase, uart.port.mapsize);
++		if (!uart.port.membase)
++			return -ENOMEM;
++	}
++
++	/*
++	 * The previous call may not set iotype correctly when reg-io-width
++	 * property is absent and it doesn't support IO port resource.
++	 */
++	uart.port.iotype = iotype;
++
++	line = serial8250_register_8250_port(&uart);
++	if (line < 0)
++		return -ENODEV;
++
++	return 0;
++}
++
+ /*
+  * Register a set of serial devices attached to a platform device.  The
+  * list is terminated with a zero flags entry, which means we expect
+@@ -110,6 +171,15 @@ static int serial8250_probe(struct platform_device *dev)
+ 	struct plat_serial8250_port *p = dev_get_platdata(&dev->dev);
+ 	struct uart_8250_port uart;
+ 	int ret, i, irqflag = 0;
++	struct fwnode_handle *fwnode = dev_fwnode(&dev->dev);
++
++	/*
++	 * Probe platform UART devices defined using standard hardware
++	 * discovery mechanism like ACPI or DT. Support only ACPI based
++	 * serial device for now.
++	 */
++	if (!p && is_acpi_node(fwnode))
++		return serial8250_platform_probe(dev);
+ 
+ 	memset(&uart, 0, sizeof(uart));
+ 
+@@ -198,6 +268,12 @@ static int serial8250_resume(struct platform_device *dev)
+ 	return 0;
+ }
+ 
++static const struct acpi_device_id acpi_platform_serial_table[] = {
++	{ "RSCV0003", 0 }, // RISC-V Generic 16550A UART
++	{ },
++};
++MODULE_DEVICE_TABLE(acpi, acpi_platform_serial_table);
++
+ static struct platform_driver serial8250_isa_driver = {
+ 	.probe		= serial8250_probe,
+ 	.remove_new	= serial8250_remove,
+@@ -205,6 +281,7 @@ static struct platform_driver serial8250_isa_driver = {
+ 	.resume		= serial8250_resume,
+ 	.driver		= {
+ 		.name	= "serial8250",
++		.acpi_match_table = ACPI_PTR(acpi_platform_serial_table),
+ 	},
+ };
+ 
+-- 
+2.43.0
 
 
