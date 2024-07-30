@@ -1,109 +1,137 @@
-Return-Path: <linux-kernel+bounces-266640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF059403FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:49:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ACAB9403FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEFF9282C41
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:49:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B98BF1F2249E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A22CA6F;
-	Tue, 30 Jul 2024 01:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA51D268;
+	Tue, 30 Jul 2024 01:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GW5E6T7v"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Q5xftTyA"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A9D29AF;
-	Tue, 30 Jul 2024 01:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEB8BE5D
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 01:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722304136; cv=none; b=A6E0xXqUgmY9kzYzbFVxd8KV7Gvts45ATY2g01Yj1fKr6HoKYPhxKZeNqLD+X24g9NiKg/Hvq8spTM/yF9xIr/+Ikon1LmnulIexRAhZNs7lc1rhxvriKWl+emYaS7pqP/TUw9Z5p3paS7mzxZk/ivzeXgHR4vK38PhdLp6udqU=
+	t=1722304347; cv=none; b=tsVQmNIzczVh5DA9Nx1lZre32DK8C7AkgZkkTmuQ9ytryaUyeHFXcNBjlT30FGUkX4AIk4/v2PdSWCaJfNQJPrtdBqBzVV/X0D6UsaSviPSc220lQ0mcptL8BetlykPLUOD/ANCiTkhuB7m4tw0GA2FG1gv+9hkl6LUVRDQ+ctI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722304136; c=relaxed/simple;
-	bh=8n1996Y8lpYFOWA5Eh8nbf6QZqyqbZ6W7WJigmpON5M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ke/Ih2egH4MmgkCPGhuhCe/b6EVSiLUG18q5EtLGs9TQf2hQLQD4dpdcgRsPybvqaBtrs5iOeUws54kP8HUb0eWxMcZ1InWqU8/tU52sVCt0oAseHCNZJ9kucJVAWbXlaw2ihhdVV4W/dZi9+IFoIWLdkrNj9cjiF1VWDpOun78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GW5E6T7v; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70d18d4b94cso2777517b3a.2;
-        Mon, 29 Jul 2024 18:48:54 -0700 (PDT)
+	s=arc-20240116; t=1722304347; c=relaxed/simple;
+	bh=gf/GDI6z8l6UshEUMugdA1PqOjxDdam6KyY6KT43zFg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ngePBXAXrMJfPvOC2kZV7TcbAEnw0IRrpwHSjBMjkcO79M+ssqs/99IqCTt/jjOdymJcnvCYJEGfhfcyXmoGdk6NWUcARt7/kCg2BqsfmBLwhcCe576OaMYkfOvq6dsBthXjMoz2H3s7tDMrSbXINnx5fd0ZZBe4Sou8ZTUIwIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Q5xftTyA; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-59589a9be92so6261744a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:52:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722304134; x=1722908934; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8n1996Y8lpYFOWA5Eh8nbf6QZqyqbZ6W7WJigmpON5M=;
-        b=GW5E6T7vXiAe6IfvUY2Dce/It1eXMLZm41VcnnR75EVgcZcIPcqvBAA2eUmLc/pne7
-         EImM3UxCKxVtL6Ewp3/4Z6vSfJPSNce+e3sXf3pEVg/NC5AaURzLl+ipKQHmqFt0cUqf
-         /hI+yt10gdL22xZucEtqpO6Y4yWNy1raMtA0RcmNYgYFa+vcc+9DAkj9ivCblcikvnXa
-         mCgGjQUXxSZBOW0yfYIOed5UJUU2PJ6kViSR50SIcWF+a2UCiHbcsnlayv10+eMrP148
-         s9KhOzTagU+gE+fuIxQbr++vzkHTeHwJmRScodkyu8rCgtVzqxF13pVdogmJn+muI7YU
-         8Vaw==
+        d=linuxfoundation.org; s=google; t=1722304343; x=1722909143; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iXIPbaTCS5ZLwFvLSTc3lM2kcdvwengf9gnEid7wlG4=;
+        b=Q5xftTyAAOt39IhXDNZu6BExVqi3g5OiUKnATG9kCiUPjmXER/sdJsZMrxrPsaecQG
+         SEn6TYvUvzgKoTTepcfXLHln/QyGgQkhOw/YiSQV+aDZ2s3dqaKeY/yfJOWqT2WarMTc
+         8K9GIlrzBUHWYiFn0+hlCF7EkSBJmmAIQH5hY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722304134; x=1722908934;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8n1996Y8lpYFOWA5Eh8nbf6QZqyqbZ6W7WJigmpON5M=;
-        b=YKSRfemQ9SP4buKMtQlYpldHC/lj/Q6zLbXPGn0hHFhPVywejSKmetFP2L14+8IS2i
-         I4soVOwO5QKP3alKdrziLpbNA5HhOfg7uokjUsb9NTAsgMS1Ea37pMWu4IQYZQf4eTi1
-         UpfNw+CPHNTZscQsD2UzXOUU3u/pr1BzyM5yrENqkq8BSrV2kXAppJzg4/Uj2MEqx7Ne
-         F0D8P3B1j7j8DaA9u0nGaRI35ahJuzN/njvVt3HcAlQXoABP93eek1P7E/OnyaKoF7SI
-         FGMteB4uZNe2/cLItreF4O2fkKIxAvJKthVOPhGQVXaagnwBIM6Y+Bt3TIzWRBdzN9G7
-         azqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWb7+6MlpJMjH2dpcOe0aatMgNTBboTKY5bs7MJHnKx7u9ucesVptxU6q9SRrS3X6tY0uWFC1JUCx0PvZzLZ/jLQDLUMLJr9jDUEvepOBKv3wkQ4RyMrs9v375gnc3pang5oxQC+uO6
-X-Gm-Message-State: AOJu0YxKrglUbe4DU8plpE5Wy6OQOwO5eCQzejMbk5viRkizb7up9Pkt
-	yI/fWvLRtlRTNSjoiSNdmMK3lJjLgoZZpW/SnOXk05ikMni+D1sV
-X-Google-Smtp-Source: AGHT+IH7sIH1zweCsioW01t/maDkdbU9IGjwQFzOiWkCdl997w0ao4hui3UQ4BFfljKQfqX+6cWd4A==
-X-Received: by 2002:a05:6a00:8597:b0:70b:2a:15da with SMTP id d2e1a72fcca58-70ece9facb3mr6515521b3a.4.1722304133953;
-        Mon, 29 Jul 2024 18:48:53 -0700 (PDT)
-Received: from [192.168.255.10] ([43.132.141.21])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead890cb3sm7399127b3a.184.2024.07.29.18.48.50
+        d=1e100.net; s=20230601; t=1722304343; x=1722909143;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iXIPbaTCS5ZLwFvLSTc3lM2kcdvwengf9gnEid7wlG4=;
+        b=wIyV6/rH2/ioIvyKjrSHnMZCWTTuHLBHDRNu8fmEsucDnnsdmUw9ZwS6KFHm9PU9kQ
+         DAdIAq8kSKrfodFlwTzyJuQdmLfvyYn5UyZHo99C2wj4kaRZmM9gu9Ak/BJ8JfpX0K8V
+         XrynlKLzAPGuQo1fUnZnJq69O9tQv5y6MYTPOU47hGMY1jGqU9BWerhD0YXEYBLUNBEP
+         IlomSzGYZgC2edthmq41UbL/mQMLLZMEcBiV6cviYkM9G1wl+M/4Rg0qf1PjDNQ8hBQ2
+         AwCaHXbPTVBbff2D3InJMqtvIWAZE4Po4KSvLT680IZoUW8tAH6jzAtVC62kon4p6j+8
+         XBkA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZK3QqRNVvRxMo/ON9SBnAAOpRQQ+4bdTQdsBWBlgOFCDE+pwMpvRazkHmxQI/87oVm/bzpXk5ShAddYclNNE0ElVam6CDzTjvFNxv
+X-Gm-Message-State: AOJu0YzcWrTdM+maQl5UA31BY+pB6cR2MKlsJIJN6B7UTzEjyTZmnjuw
+	CbRiwEfjkiSM4xSbt1/E85TxYCEFrUukTwkGwbMNc/r+IBfquCgHeDQdWZU2ZTw/gMIf/9wZDBB
+	RX09ggQ==
+X-Google-Smtp-Source: AGHT+IHUrCt5rA0M5d3lFAUKJNEaiGBOczWhHzqZTHO2hYRE8f/8ccyXs6HZHViweGUZHS9GW37O7A==
+X-Received: by 2002:a50:aacf:0:b0:5a8:2f2b:d2c9 with SMTP id 4fb4d7f45d1cf-5b020cba661mr5706278a12.21.1722304343367;
+        Mon, 29 Jul 2024 18:52:23 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac631b033fsm6538378a12.1.2024.07.29.18.52.20
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jul 2024 18:48:53 -0700 (PDT)
-Message-ID: <90b4bfb3-8fb1-4f77-b3e2-1c55605a8cbd@gmail.com>
-Date: Tue, 30 Jul 2024 09:48:49 +0800
+        Mon, 29 Jul 2024 18:52:21 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-59589a9be92so6261696a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:52:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVnQoUhTcePeaBoKt5PkQtmdzO32pGPIOva1Mr9/5koLiCHfblTpRfZOjyR8tJxJJKjYqrMMKTbCSehNvuvkhj4gZk+J7eQ/1syhkhd
+X-Received: by 2002:a50:9318:0:b0:5a1:c43:82ca with SMTP id
+ 4fb4d7f45d1cf-5b021f0d87bmr4930298a12.26.1722304340583; Mon, 29 Jul 2024
+ 18:52:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] docs/zh_CN: Add dev-tools/kcsan Chinese translation
-To: Dongliang Mu <mudongliangabcd@gmail.com>
-Cc: Haoyang Liu <tttturtleruss@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-References: <20240727150844.6502-1-tttturtleruss@hust.edu.cn>
- <7670e090-92e5-48ed-9365-e611ae1d4972@gmail.com>
- <75cbc7d7-5faf-4286-a702-ac242c6f87f3@hust.edu.cn>
- <bbbc3a51-21c6-47fc-ba3e-924ad8d86b63@gmail.com>
- <CAD-N9QWBH8yZcUhSLwUCZCOBrLbS1AUONik2p5E4LWYkhyVaxQ@mail.gmail.com>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <CAD-N9QWBH8yZcUhSLwUCZCOBrLbS1AUONik2p5E4LWYkhyVaxQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
+ <5cd3e11780df40b0b771da5548966ebd@AcuMS.aculab.com> <CAHk-=wj=Zv+mMuqJQJptH9zGFhPXqku9YKyR7Vo4f0O0HEcbxw@mail.gmail.com>
+ <b47fad1d0cf8449886ad148f8c013dae@AcuMS.aculab.com> <CAHk-=wgH0oETG1eY9WS79aKrPqYZZzfOYxjtgmyr7jH52c8vsg@mail.gmail.com>
+ <e718056c1999497ebf8726af49475701@AcuMS.aculab.com> <CAHk-=wj900Q3FtEWJFGADQ0EbmYwBHW8cWzB0p0nvFck=0+y6A@mail.gmail.com>
+ <e946e002-8ca8-4a09-a800-d117c89b39d3@app.fastmail.com> <CAHk-=whCvSUpbOawsbj4A6EUT7jO8562FG+vqiLQvW0CBBZZzA@mail.gmail.com>
+In-Reply-To: <CAHk-=whCvSUpbOawsbj4A6EUT7jO8562FG+vqiLQvW0CBBZZzA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Mon, 29 Jul 2024 18:52:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiuTQRE6nWbmrhgCQKhA6+L5=y7kcrG0QHpvehasz2osw@mail.gmail.com>
+Message-ID: <CAHk-=wiuTQRE6nWbmrhgCQKhA6+L5=y7kcrG0QHpvehasz2osw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: David Laight <David.Laight@aculab.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Matthew Wilcox <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>, 
+	"pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 29 Jul 2024 at 16:21, Linus Torvalds
+<torvalds@linuxfoundation.org> wrote:
+>
+> What we actually care about is not "constant", but "no side effects".
 
+Ho humm..
 
-On 7/30/24 9:38 AM, Dongliang Mu wrote:
->>>> "compiler instrumenting" 为什么要翻译成插桩？
->>> 指的是“KCSAN then relies on the compiler instrumenting plain accesses.”这句吗。
->> I don't understand the details of KCSAN, but according the doc, KCSAN make a array and
->> watch the data address in the array, so is there a real stub which inserted by gcc/clang?
-> Yes, the compiler(gcc or clang) will insert a real stub, i.e. some
-> assembly code, in the generated kernel image.
+We actually could do something like this:
 
-OK， then it's fine to translate like this.
+   #define no_side_effects(x) __builtin_constant_p((x,0))
+
+because __builtin_constant_p() doesn't actually look at just the value
+of the expression, but is defined to return 0 even if the value is
+constant but the expression has side effects.
+
+So no_side_effects(variable) returns true, but
+no_side_effects(variable++) returns false.
+
+Note that this is also why _static_assert() and
+__builtin_choose_expr() are generally very dubiously useful. Because
+they are limited to a "C constant expression", they fundamentally
+cannot take advantage of trivial optimization things, and fall flat on
+their face in many real life situations.
+
+In contrast, __builtin_constant_p() works for arbitrary expressions,
+and just says "I can easily turn this expression into a constant".
+
+Which makes it much more powerful than the nasty syntactic "C constant
+expression" thing that is very limited.
+
+Things like __builtin_choose_expr() are ok with very simple and direct
+conditionals like "is this a double", and they have their place, but
+in something like min() that by definition takes many different types
+- including pointer types - it's been a huge pain.
+
+              Linus
 
