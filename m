@@ -1,87 +1,156 @@
-Return-Path: <linux-kernel+bounces-266703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC5C940596
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:03:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B24F94059A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 175FCB213FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:03:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C57B1C21127
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B877FBD1;
-	Tue, 30 Jul 2024 03:03:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3599C14659B;
+	Tue, 30 Jul 2024 03:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="zYRa+bNI"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A060933E8
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 03:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D257D33E8;
+	Tue, 30 Jul 2024 03:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722308586; cv=none; b=k51t7r+bYq3hxNt7UJEuLH1VDOxN/Y5B9KyxM6kqnF4WFgX0F62ppjweP4xk0KtmVWZ5mz2yGDkOM72lnc8Vkr587AvNPrwAi4lZhEVdUlTkFXHpHKVQ7+nJ6cXbB36s8uNGE7q8/zE37OdrLXgPET9v+1HGxBPoen0PoBOHHNo=
+	t=1722308754; cv=none; b=PstY44WcMDjgnmFqnuscrDBnlAEacDLBwTaxQ8RdEgyhLbBees+1KZ7Gf9v4/DxK6lMEwOgcWELoskeiEASCbRSszYCgcp5D+swpk5fQ43apTUIcrc1dUR6CZyq4CGurbXLWfs7b3C6XzQ4k+zBd8yM0tdeh1AM+Np7aChfHkKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722308586; c=relaxed/simple;
-	bh=NpyqljaOvpFdHFDt+c4ojHKkj19Ogky1R9Zd7IGb7EA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HXBZrqaXbmgeaybiD2nFjQzRzZNhV77Hv5nq1xeLWZzpeS4mxnxsxb4UIe6cJvW04V8s3+KCDHYG1DvgVei/cN384qLBvW1lde1eSYkGacTwa3Sv+g2nc5wQVrSP6oQAJMVfF2GbVG5U16ru4jkPJBS8B97762OTjNpnGJro8gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81fa44764bbso333043239f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:03:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722308584; x=1722913384;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xJF8fNiX+fEwOeb6daqLS/WayYFFALyzPSai1klZsjM=;
-        b=UMYPQfPVfp3AVjtFT/iN51n0BFh8dhGVIORyW6cShfbvmDyhvyYtQ8xGM7LkuZOku0
-         2TTfWWmIYiknnr2dblk9JIgb1dgKYRk2m9QrulqQn4Dqwvemrg3LUAt1dDrSLf3haCEK
-         jwlz9myxHhX9gYe2+6bLYni1Zd7SDCXhPzBc+/O2HW/ZqbXXaMgYPckXgm9bOatGcOpH
-         TLO/Dr+9+aQP8IHU3m2DKaIomgIk96ky05kpvgKwvIpTgEKxbfnClBZhskHCjcTTg8jr
-         5m8i5SGIhn8VwLfL8qVjuSbUpsLSqzQC5B3SfiseurZn8wWGURcbVbyH3HqglcW0lFlF
-         xz3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVr2gjWsci0v5WtasANbI432j9Ekhx8tnJYHL+rWJpy7Rt5MnaKE5eaf05W4vjqbYJIEShEpfDQSfprdq89gd/Fa6Pr0MytMm7qHC0E
-X-Gm-Message-State: AOJu0YwZltVId0v/GNuBHx9xkZ2SnILKfIzQz2p9RHVSE/IYKAElVZD+
-	CyvyN/UO0ohGITdd/O7ywaw1iMaUnRjBQMQkgRGQwlT3TflrNPVF4MSJ+JBWKqOyNKvXn7il/du
-	SlLlcOg/j0gbevtw9BFvxdoILKxwolst2TJkbrFKzv4oxhrgylXsDwtU=
-X-Google-Smtp-Source: AGHT+IHMl7ZB1zCdlPFtgEeVRI0wvSZd6lEaz87UvCdW0BZJzQgHKLxC89ps1B2s+GnjXc6XIIImF2R/tSukPiNJLjS/ZemQ6pa0
+	s=arc-20240116; t=1722308754; c=relaxed/simple;
+	bh=fJtYSrbyH1dAnyqRrSXst5jMS/WOlvXufcWcez53Apo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Tz1rce5l10Si0ib9RyTnFKX8QyhSflcOeQpyVy7NSzqp8LGjx/Ewq5qhrHEozfwr1++lGFyE9S9CmziuJx/+vjdi8J9Svay7l+rxHQmsEED9TlqEIHCdvr/nY6ih6Wih4VpSWQ4MddBYHi4f6Wf+ujeA4a5ZpPBCR7xmxb8aNns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=zYRa+bNI; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TL3jXc023245;
+	Mon, 29 Jul 2024 23:05:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=7hTnzFi1T4HIoHzxjrwqHcVDVUN
+	zn4sUFizSEga3JL8=; b=zYRa+bNI5K78aInL+AF6Rt4VJMH6o4P0SXhsehMU5dK
+	ogynw7jRZ37IAcNBFXjVJIk5Ulch26j34j27ul35JWY+ldtzIoF0ItkgP6PWnIOt
+	3wiCulpDjwMjawFke+LqQft7UhrfQ4GKTmS2kirZidhtmUqCrn060jNNHzKFPiLn
+	zQadb5O/+2xzhGSP5b50Q8GdvBDunggJhnBsk6KNI+tXy22NCqyhAZ+IPNU6bi6R
+	D6XQqAaGMDCvMgZQmi2eL+T0hFd9t2AlcKGivPJDkxRAcZ4KkabO3zmoatG5oTMA
+	cJMF7sSRhjNvLot3DvIRwMejNbzFbrBA134H+yF3NFg==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 40ndy4ps4t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 23:05:36 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 46U35YSA029548
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 29 Jul 2024 23:05:34 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 29 Jul
+ 2024 23:05:33 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Mon, 29 Jul 2024 23:05:33 -0400
+Received: from MTINACO-L03.ad.analog.com (MTINACO-L03.ad.analog.com [10.117.116.75])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 46U35GSX017771;
+	Mon, 29 Jul 2024 23:05:19 -0400
+From: Mariel Tinaco <Mariel.Tinaco@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Marcelo
+ Schmitt <marcelo.schmitt1@gmail.com>,
+        Dimitri Fedrau <dima.fedrau@gmail.com>,
+        David Lechner <dlechner@baylibre.com>,
+        =?UTF-8?q?Nuno=20S=C3=A1?=
+	<noname.nuno@gmail.com>
+Subject: [PATCH v2 0/2] add AD8460 DAC driver
+Date: Tue, 30 Jul 2024 11:05:07 +0800
+Message-ID: <20240730030509.57834-1-Mariel.Tinaco@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2dc8:b0:7fb:ff2b:5116 with SMTP id
- ca18e2360f4ac-81f95c391f0mr41337139f.4.1722308583809; Mon, 29 Jul 2024
- 20:03:03 -0700 (PDT)
-Date: Mon, 29 Jul 2024 20:03:03 -0700
-In-Reply-To: <tencent_DAEC5ACEE079366E9C2C516E6C9568E9AA0A@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000054f2ec061e6e379f@google.com>
-Subject: Re: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Read in journal_entry_dev_usage_to_text
-From: syzbot <syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: XioP8xUXB20vOzT25Soqb6WXKO76yTrG
+X-Proofpoint-GUID: XioP8xUXB20vOzT25Soqb6WXKO76yTrG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-30_03,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 spamscore=0 priorityscore=1501
+ impostorscore=0 clxscore=1011 adultscore=0 phishscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407300021
 
-Hello,
+Add support to AD8460 Waveform Generator DAC
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+changes in v2
 
-Reported-by: syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com
-Tested-by: syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com
+ad8460:
+  * Mapped the fault monitoring settings for overcurrent, overvoltage
+    and overtemperature limits to IIO Event threshold controls.
+  * Added optional raw temperature attribute that gets data from an
+    IIO provider if it is present. e.g. an ADC channel that reads data
+    from TMP pin
+  * Added setter/getter for raw current
+  * Used devm_iio_dmaengine_buffer_setup_ext to setup DMA engine buffer
+    (No IIO Backend)
+  * Used byte-swapping and bulk-transfer for HVDAC data words
+  * Refactored regulator section to make us of
+    devm_regulator_get_enable_read_voltage
+  * Fixed error handling for rset_ohms property
+  * Reverted IIO_ALTVOLTAGE channel type to IIO_VOLTAGE. Setting it aside
+    for when IIO backend would be implemented
+  * Added attributes for toggle_en, symbol and 16 raw values following
+    the generalized sysfs ABI for DAC devices.
+    toggle_en: (0) to enable Arbitrary Waveform Generator (AWG) mode,
+                   generate DAC output from parallel interface
+               (1) to enable Arbitrary Pattern Generator (APG) mode,
+                   generate DAC output from HVDAC data words
+    symbol: for APG mode, declare the number of raw HVDAC data words
+            from 0 to cycle through in the DAC output, a.k.a Pattern Depth
+    rawN: HVDAC Data words available, from 0 to 15
 
-Tested on:
+Bindings:
+  * Matched property name of REFIO_1P2V regulator to its pin name.
+  * Added GPIO bindings for sdn-reset, reset, and sdn-io although only
+    reset is supported by the driver.
+  * Added Regulator bindings for hvcc, hvee, vcc-5v, vref-5v,
+    dvdd-3p3v and avdd-3p3v
+  * Added DMA-channel bindings.
+  * Hard-coded limits for voltage, current and temperature
 
-commit:         1722389b Merge tag 'net-6.11-rc1' of git://git.kernel...
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=155741c9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b698a1b2fcd7ef5f
-dashboard link: https://syzkaller.appspot.com/bug?extid=05d7520be047c9be86e0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1492a303980000
+Mariel Tinaco (2):
+  dt-bindings: iio: dac: add docs for ad8460
+  iio: dac: support the ad8460 Waveform DAC
 
-Note: testing is done by a robot and is best-effort only.
+ .../bindings/iio/dac/adi,ad8460.yaml          | 154 +++
+ MAINTAINERS                                   |   8 +
+ drivers/iio/dac/Kconfig                       |  13 +
+ drivers/iio/dac/Makefile                      |   1 +
+ drivers/iio/dac/ad8460.c                      | 976 ++++++++++++++++++
+ 5 files changed, 1152 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ad8460.yaml
+ create mode 100644 drivers/iio/dac/ad8460.c
+
+
+base-commit: 9900e7a54764998ba3a22f06ec629f7b5fe0b422
+-- 
+2.34.1
+
 
