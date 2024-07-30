@@ -1,138 +1,109 @@
-Return-Path: <linux-kernel+bounces-267120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F00940CCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:03:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6AD0940CCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EAF228689F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:03:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7CBB1C24555
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8331A1946AD;
-	Tue, 30 Jul 2024 09:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4101940AA;
+	Tue, 30 Jul 2024 09:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="bCfFGBIT"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="df/UTeRk"
+Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14305944E
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF83442C;
+	Tue, 30 Jul 2024 09:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722330208; cv=none; b=ZCZ6/lN4DY72PeFdEoXClM6kRCQx4HGb8gcNCnwBRuEMbZaxeK2/NwvHXePIwq3uoJQXOT00H/hu1KSrawBojpRxfmtS+uYydlph2LXIck5n/RRteBLS+KojnZ2SLpK8sLur4Ocljpr68vAjmTkxhmd0f+9RUM9jGnZ04XqbNBE=
+	t=1722330232; cv=none; b=fvmRHM6cvqCwlWZiDDWtyy7S0kDT7bcKs/ezPkjpBzTNtZOidIsxPxZptcxLAneFHgSSKAlIeizf/N8qnW8rc5BtrkTj+J5HXHPXBI1in3vKMD3rTppbet4XXP2NBFa4V/+WlaBFlq3KnM3bhaTE9c8bP73CXWRjpjugeDwcclI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722330208; c=relaxed/simple;
-	bh=zc7ynQ7hZEdCKr5OMyZXMTbXDiP/ds7IClc69cxmDUc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mzaDMfETUoaS8xKkRfxReecmpEXQi1gh3VPxiqudlXMHknO13TXuDeKxEWtDJ/pYzHyhD4hWqhY68hSTceZ9tUcEUmXBbU2zWUXsWdgM0LaChP/SXhDUDJuyA8f6G63C9CTjrsLsEuWk1UL2MvPLAKJNvtCMIQdP4QjWlkj5jiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=bCfFGBIT; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1722330203;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B1rX42vyLb2o7bCFZWbpolb7axljRnf+cPcxVtkPaGQ=;
-	b=bCfFGBIT1faiidn30la/pcdfIJvxka3DNVc0xjGFfX6kvV2FhIXUlEqbjhoKhyZVD6OrZu
-	rUWUQCJCb90tmf8Ez/2TwpgNJatjH6TVQ2qCBKL6H1pwV2sVJIuEwRP9qxWWFT+CrqbuFX
-	IKAjb5OD/VQm9YCL6AEP+0qmdTMRRpA36I4UqbQ6LxOkXwRaXEhfPwhsGbjsGOrxweKuOX
-	EvdKyeXhkFALDJjEWLNZJ0Hr7gSWA75mH6TWg25dyyU3j00GjKVCoTSNaVBvQhMEElubb6
-	7Qd/GNZXXTZRjpCPAImtTpu5VYy3orfCohbBN26pAlMSOWBH5vwLH7nb9B/3Qw==
-From: Diederik de Haas <didi.debian@cknow.org>
-To: Dragan Simic <dsimic@manjaro.org>, Daniel Golle <daniel@makrotopia.org>
-Cc: Chen-Yu Tsai <wens@kernel.org>, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- Herbert Xu <herbert@gondor.apana.org.au>, Martin Kaiser <martin@kaiser.cx>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Ard Biesheuvel <ardb@kernel.org>,
- Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <ukleinek@debian.org>,
- devicetree@vger.kernel.org, linux-crypto@vger.kernel.org,
- Philipp Zabel <p.zabel@pengutronix.de>, Olivia Mackall <olivia@selenic.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Aurelien Jarno <aurelien@aurel32.net>, Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
-Date: Tue, 30 Jul 2024 11:03:06 +0200
-Message-ID: <6690040.iosknibmi9@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <ZqgjTQMgWZO2FjaC@makrotopia.org>
-References:
- <cover.1720969799.git.daniel@makrotopia.org>
- <faa0baebabd3c31adf1afa7efbbdf608@manjaro.org>
- <ZqgjTQMgWZO2FjaC@makrotopia.org>
+	s=arc-20240116; t=1722330232; c=relaxed/simple;
+	bh=aT6YWkhZEjQkMgQHoHWRPl+epeU7SgJNatRtcANLLYU=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=CoqXdFWkmHAdowJTR5LkyQTidO7LSui437cxaPymWyWUp9Ey5lsKxnJNrQTNbHfo922lHkMKzKQBWfMxtVGC7FBANMpf96WaiVNyqSHPSGKxTHYfTLfmLz26gNLwwKHkl8zWrQca4rmwhM1rE+fatLEmzXYJLVn1bfI0R3aDOOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=df/UTeRk; arc=none smtp.client-ip=203.205.221.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1722330222; bh=aT6YWkhZEjQkMgQHoHWRPl+epeU7SgJNatRtcANLLYU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=df/UTeRk6OMrA44J1VPz4wDecfgCMZAf1keSpOP7+/rg0OgQCdoquWal6kHhEbrIF
+	 7NwPXCW2leY9hKPZQW0R74UBLQq+EM6ThDqtzaJhtzbbqHVYVRYf4E3gOkDVn3TL4m
+	 hBTCPwmfkZB9rleklXdgC+0vH3jma24KTxpoK/Bo=
+Received: from localhost.localdomain ([36.111.64.84])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id E632620; Tue, 30 Jul 2024 17:03:38 +0800
+X-QQ-mid: xmsmtpt1722330218txljhelz7
+Message-ID: <tencent_0C989DE2631E74C23BA8B60EA234C4B2FA0A@qq.com>
+X-QQ-XMAILINFO: NQR8mRxMnur9EFx0+urXeijJN/+EJfxmwlNIY4BESdMbuBo+oGNSI8+KoUd3B9
+	 CnZUyf58rLslEK8uADQd6L6gQC3EZPf19y1NH5bDfHV4gj46tViFU5jD25hF40HSPR5YoWGyPfdy
+	 fI4Uk9W7J+dodq6c6lZfC2vAIoLvzDblfNJp/q0ZwqD42T3t4Ji4UJF0kUzyblNyrHZKFzMlpYLs
+	 nHO2TrS6KqgF4U9XJc7kDdySW6PWTvv1Y50NJ7L61gIx3bKhD8eSJ6ElQs/dB3TfyawecUlebuB3
+	 J8XmqxbtzZzS78JaaKQ0A0ujk7GaEUEIapOvn562ELhyeV9PIU5uN0wyP0pLLY2YuuBebYC8hj/K
+	 YBkc2nlqptrxW2L5ssUN3/tYNB+U+gnT5mXfwnSAjBDixDZEymuU4xWlu1Ie3Q8ONXQD491cvAbK
+	 3WQIk9/ZN7Nf2p2oZj9vtY172XmpIF4U/UPyDEl877d6t6S2qyUuA/KNG/XnPVDcs5lmO271Wrbo
+	 ZtNzyUgarDYdDPmgMuwYg2D5igxikBKT6oL2G2SErjPKnkbT4ep/RdJJcLPzlEFxgv5ok5p7VUKD
+	 5/oMucmjCLU48ea3ebIy8bb9SN9pn1hrtLODBNcEUSYWG8858A4Ha7Qrq0KCE+b6zHd6s+m6/b0P
+	 tMS0JMLfdmT37iiUZPL6R65t11YqLUyDF4KBGOODOU4PFCqN2OueE3NWa+OPnhQyIxUdQJZpfGVk
+	 wjy8UoMsaK09RhQuPgxz/pqEsSX4OXECX3YZR+d8imUq1ihqFFkyAo2BiEpoaMOLoTBJz5auwGqS
+	 3mtu/m90/1giQMqqBI3eTBLjcb+sDe1pz7QGqcPsSVHvpr6M0teqIIciHaq/5FHKp3f4miqlOQor
+	 hxCWCDmJgsxjHOKe1epvf9Vw1+stby01YmNL/6jOJKfzp3NNIkTxCaQZJ5LLpAQ1t+DFayBkN6e4
+	 2uhny4FV7VorVH8mseI1Qo8wqAZtiyZp/4lD2cFKbllYUd7xAheVnODUT3hZdj
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: wujing <realwujing@qq.com>
+To: peterz@infradead.org
+Cc: dongml2@chinatelecom.cn,
+	linux-kernel@vger.kernel.org,
+	mingo@redhat.com,
+	realwujing@qq.com,
+	yuanql9@chinatelecom.cn,
+	stable@vger.kernel.org,
+	mengong8.dong@gmail.com
+Subject: Re: Re: [PATCH] sched/fair: Correct CPU selection from isolated domain
+Date: Tue, 30 Jul 2024 17:03:38 +0800
+X-OQ-MSGID: <20240730090338.28438-1-realwujing@qq.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240730082239.GF33588@noisy.programming.kicks-ass.net>
+References: <20240730082239.GF33588@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart20867227.UFCzubSe9b";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
---nextPart20867227.UFCzubSe9b
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Diederik de Haas <didi.debian@cknow.org>
-Date: Tue, 30 Jul 2024 11:03:06 +0200
-Message-ID: <6690040.iosknibmi9@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <ZqgjTQMgWZO2FjaC@makrotopia.org>
-MIME-Version: 1.0
+> If you're trying to backport something, I think you forgot to Cc stable
+> and provide the proper upstream commit.
+>
+> As is this isn't something I can do anything with. The patch does not
+> apply to any recent kernel and AFAICT this issue has long since been
+> fixed.
 
-On Tuesday, 30 July 2024 01:18:37 CEST Daniel Golle wrote:
-> On Wed, Jul 24, 2024 at 08:07:51AM +0200, Dragan Simic wrote:
-> > Thanks a lot for the testing.  Though, such wildly different test results
-> > can, regrettably, lead to only one conclusion:  the HWRNG found in RK3566
-> > is unusable. :/
+When fixing this bug, I didn't pay much attention to upstream changes.
+Upon reviewing the history of relevant commits, I found that they have
+been merged and reverted multiple times:
 
-FTR: I agree with Dragan, unfortunately.
+```bash
+git log -S 'cpumask_test_cpu(cpu, sched_domain_span(sd))' --oneline \
+kernel/sched/fair.c
 
-> The results on RK3568 look much better and the series right now also
-> only enabled the RNG on RK3568 systems. However, we have only seen few
-> boards with RK3568 up to now, and I only got a couple of NanoPi R5C
-> here to test, all with good hwrng results.
-> 
-> Do you think it would be agreeable to only enable the HWRNG for RK3568
-> as suggested in this series? Or are we expecting quality to also vary
-> as much as it (sadly) does for RK3566?
+8aeaffef8c6e sched/fair: Take the scheduling domain into account in select_idle_smt()
+3e6efe87cd5c sched/fair: Remove redundant check in select_idle_smt()
+3e8c6c9aac42 sched/fair: Remove task_util from effective utilization in feec()
+c722f35b513f sched/fair: Bring back select_idle_smt(), but differently
+6cd56ef1df39 sched/fair: Remove select_idle_smt()
+df3cb4ea1fb6 sched/fair: Fix wrong cpu selecting from isolated domain
+```
 
-Unless we get *evidence* to the contrary, we should assume that the HWRNG on 
-RK3568 is fine as the currently available test results are fine.
-So I think enabling it only for RK3568 is the right thing to do.
-
-So a 'revert' to v7 variant seems appropriate, but with the following changes:
-- Add `status = "disabled";` property to the definition in rk356x.dtsi
-- Add a new commit where you enable it only for rk3568 and document in the 
-commit message why it's not enabled on rk3566 with a possible link to the v7 
-thread for clarification on why that is
-
-You could probably also integrate that into 1 commit, but make sure that the 
-commit summary and description match the implementation.
-IMO that wasn't 'technically' the case in v8 as the rng node was added to 
-rk356x, but it was only enabled on rk3568.
-
-My 0.02
---nextPart20867227.UFCzubSe9b
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZqisSgAKCRDXblvOeH7b
-brDnAQD8u6tajseWbanb373R9KrnELq+Iwcw8RlufXKnVpFIQwD/YZ/Dq5lXye++
-z2hXSo/Jh+izrQpNgfewXWOAVGeswAI=
-=mbtE
------END PGP SIGNATURE-----
-
---nextPart20867227.UFCzubSe9b--
-
-
+The latest upstream commit 8aeaffef8c6e is not applicable to linux-4.19.y.
+The current patch has been tested on linux-4.19.y and I am looking forward
+to its inclusion in the stable version.
 
 
