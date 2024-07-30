@@ -1,169 +1,117 @@
-Return-Path: <linux-kernel+bounces-267034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB1B1940BA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:31:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 438C0940B3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBB421C23520
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:31:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDA601F24027
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31591A01AF;
-	Tue, 30 Jul 2024 08:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62071922F3;
+	Tue, 30 Jul 2024 08:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="qNiCW+mr"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ShivCfQm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZQdrai36"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC9D192B87;
-	Tue, 30 Jul 2024 08:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FA781ACA;
+	Tue, 30 Jul 2024 08:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722327902; cv=none; b=em+deapnYx/s8cqyZMoNImvQRIOGeAXgBbPuJG9h7MQ9QQkH+eVxPuL8FOoqsNp2var1BjZv9i4wsw1cdnQPUqL8SGiUXONTzS76gn9wMRKfL2MvwpISLcunPwGTqFeMg+HubvFEvo4nLcf8j71MYezBGxkRAH4Z7cV4rKpGG10=
+	t=1722327884; cv=none; b=Oncs+mb/FheeprAlJbeAjwMAUaf0i2VDYfI3sa/u+wzUhclWpf69OFKDs36zIO5UGH7qInI4cX0UxAJ5ThxL7mlgxyvqzQa5meSvqvROanHOSdaOVLvPc/7xJgDmJ9lMX2NoJ5PxtP94arcdVHIYChr8yTCb33Hhgn+Svs48ZBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722327902; c=relaxed/simple;
-	bh=Z5PpKmUt6ndVpX6eH/PPsQpUJ7qGgb6oyllXrZBd/P4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jC0sx07Owx0wBpA3tL03VKBHEiaybILh5oLTdOyxE1wzI73RkY+cV7sE7s7Gj9d+cM7q+p0JdeP2cE6KSz1TYuXYbaiqPmYK5Ux1PhmUr+KwzqYck2v4ZJGGohZTgOhRLRf0l38XJgH7AvOvPlZpx8lPfqti0WxgdASTJOAJDg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=qNiCW+mr; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 330f6ba24e4d11efb5b96b43b535fdb4-20240730
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=CcJzTAL9IFu4/nhUMP2RjTp8+dJQAQi4jXS1e0DRnFY=;
-	b=qNiCW+mrbTHqMq3Ivje8mGgJ4ZQKBFLQEC2qveMZ0lC4L7aAUe/GnTBZh1UgRbJzgCt6H+9KhJQGMxHbIOg5/wmTnyD86y0MrqBZ+e6159qIp/L0LM23xbtGXYFOx2ZOTPrLhi2lKQboD4VsRrE7+EzYN41tHKSWL3mv8KNTPKk=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:bc0159b6-2371-4ec5-8d8b-ef1790efd4a1,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:-50
-X-CID-META: VersionHash:6dc6a47,CLOUDID:1e23e245-a117-4f46-a956-71ffeac67bfa,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:1,IP:nil,UR
-	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
-	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 330f6ba24e4d11efb5b96b43b535fdb4-20240730
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
-	(envelope-from <liju-clr.chen@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1299080935; Tue, 30 Jul 2024 16:24:54 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 30 Jul 2024 01:24:40 -0700
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Tue, 30 Jul 2024 16:24:40 +0800
-From: Liju-clr Chen <liju-clr.chen@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Catalin
- Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Richard Cochran
-	<richardcochran@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Liju-clr Chen <Liju-clr.Chen@mediatek.com>, Yingshiuan Pan
-	<Yingshiuan.Pan@mediatek.com>, Ze-yu Wang <Ze-yu.Wang@mediatek.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-trace-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, Shawn Hsiao <shawn.hsiao@mediatek.com>,
-	PeiLun Suei <PeiLun.Suei@mediatek.com>, Chi-shen Yeh
-	<Chi-shen.Yeh@mediatek.com>, Kevenny Hsieh <Kevenny.Hsieh@mediatek.com>
-Subject: [PATCH v12 24/24] virt: geniezone: Emulate IPI for guest VM
-Date: Tue, 30 Jul 2024 16:24:36 +0800
-Message-ID: <20240730082436.9151-25-liju-clr.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20240730082436.9151-1-liju-clr.chen@mediatek.com>
-References: <20240730082436.9151-1-liju-clr.chen@mediatek.com>
+	s=arc-20240116; t=1722327884; c=relaxed/simple;
+	bh=vh73RcD0dsNWX94i6wyPtIRpKHmSi5iNja2wPXOs5KU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=GGfCGsl3XXM34YtZKnfut2BdBnjHHCl9lXNDwzQN3ogp3I4aUTyqMMAbPqe+Nd5Gl43jB+jzY6M3sEZMlnaPg/jKqIawREPO8TBs2Eqdb84olowZ4eMYxrWCWkBrbM8ScfFzdmRB7QXO6CpHac4VZRWyy5oHCVmhH9dyolDUwQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ShivCfQm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZQdrai36; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 30 Jul 2024 08:24:39 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722327879;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=26p0U864dvAEsXPQ0l7lbm6kMNWa/GxO5A5ANvx9yaU=;
+	b=ShivCfQmqgBemucj2ONlrHTSLQKObBAV2k/KT1UXNcE0KBJepWtq+3v2XddUUFBb6lGtde
+	zPYR4KoSODh2/9h+1maKZiFQHPn7MLthRGnYcx9MxiBbteXPHp71q4j2dYhymeDjNEAXqQ
+	m+0s0UvfcRO6UrjDSX+DB5JIcSLlzFZTfMA6s3XXaFbG1PkBGy4W5CSS50wv0ANcafJd6O
+	e2Cry6ePJhOdu/87DxeNKb3OGaRk4HCAEt1FYDz+zgFHZLiwiYqkWM+RBW+doPh/6DWFDX
+	OMjZzYDaakm+7veiaxuTNGt/PzQy7xhqotXkjq9V9/DIzi6D+xnCdGmD5i/AOw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722327879;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=26p0U864dvAEsXPQ0l7lbm6kMNWa/GxO5A5ANvx9yaU=;
+	b=ZQdrai36/QCqsGzKdITqGnht4wTIpBHtakvU128PYEtuHgNiBy2vak3wmW03/tNmliB2J3
+	POjPkqiD4+pGRAAQ==
+From: "tip-bot2 for Pavan Kumar Paluri" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/sev: Fix __reserved field in sev_config
+Cc: Pavan Kumar Paluri <papaluri@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240729180808.366587-1-papaluri@amd.com>
+References: <20240729180808.366587-1-papaluri@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Message-ID: <172232787903.2215.4743307326689102334.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-From: Kevenny Hsieh <kevenny.hsieh@mediatek.com>
+The following commit has been merged into the x86/urgent branch of tip:
 
-Emulate Inter-Processor Interrupts (IPI) handling for guest VMs.
-Ensure that when a vCPU thread enters an idle state and relinquishes
-CPU control to the host, it can be woken up by IPIs issued by other
-vCPUs through the gzvm driver.
+Commit-ID:     c14e4114582c20276467226387d5bae7310a849e
+Gitweb:        https://git.kernel.org/tip/c14e4114582c20276467226387d5bae7310a849e
+Author:        Pavan Kumar Paluri <papaluri@amd.com>
+AuthorDate:    Mon, 29 Jul 2024 13:08:08 -05:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Tue, 30 Jul 2024 10:07:26 +02:00
 
-Add a new wake-up mechanism, `GZVM_EXIT_IPI`, to handle IPIs. Ensure
-that idle vCPUs can be woken up not only by virtual timer (vtimer) and
-virtio interrupts but also by IPIs issued by other vCPUs.
+x86/sev: Fix __reserved field in sev_config
 
-Ensure proper handling of IPIs, allowing idle vCPUs to be woken up and
-respond to interrupts, thereby maintaining correct and efficient
-inter-processor communication within the guest VM.
+sev_config currently has debug, ghcbs_initialized, and use_cas fields.
+However, __reserved count has not been updated. Fix this.
 
-Signed-off-by: Kevenny Hsieh <kevenny.hsieh@mediatek.com>
-Signed-off-by: Liju Chen <liju-clr.chen@mediatek.com>
+Fixes: 34ff65901735 ("x86/sev: Use kernel provided SVSM Calling Areas")
+Signed-off-by: Pavan Kumar Paluri <papaluri@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/r/20240729180808.366587-1-papaluri@amd.com
 ---
- drivers/virt/geniezone/gzvm_exception.c | 5 +++++
- drivers/virt/geniezone/gzvm_vcpu.c      | 3 +++
- include/linux/soc/mediatek/gzvm_drv.h   | 1 +
- include/uapi/linux/gzvm.h               | 1 +
- 4 files changed, 10 insertions(+)
+ arch/x86/coco/sev/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/virt/geniezone/gzvm_exception.c b/drivers/virt/geniezone/gzvm_exception.c
-index 391168a3f737..7a4e3d76aa7a 100644
---- a/drivers/virt/geniezone/gzvm_exception.c
-+++ b/drivers/virt/geniezone/gzvm_exception.c
-@@ -105,3 +105,8 @@ int gzvm_handle_guest_idle(struct gzvm_vcpu *vcpu)
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index 082d61d..de1df0c 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -163,7 +163,7 @@ struct sev_config {
+ 	       */
+ 	      use_cas		: 1,
  
- 	return ret;
- }
-+
-+void gzvm_handle_guest_ipi(struct gzvm_vcpu *vcpu)
-+{
-+	gzvm_vcpu_wakeup_all(vcpu->gzvm);
-+}
-diff --git a/drivers/virt/geniezone/gzvm_vcpu.c b/drivers/virt/geniezone/gzvm_vcpu.c
-index 247848ee126c..5cdd6ccbe76d 100644
---- a/drivers/virt/geniezone/gzvm_vcpu.c
-+++ b/drivers/virt/geniezone/gzvm_vcpu.c
-@@ -184,6 +184,9 @@ static long gzvm_vcpu_run(struct gzvm_vcpu *vcpu, void __user *argp)
- 		case GZVM_EXIT_IDLE:
- 			gzvm_handle_guest_idle(vcpu);
- 			break;
-+		case GZVM_EXIT_IPI:
-+			gzvm_handle_guest_ipi(vcpu);
-+			break;
- 		case GZVM_EXIT_UNKNOWN:
- 			fallthrough;
- 		default:
-diff --git a/include/linux/soc/mediatek/gzvm_drv.h b/include/linux/soc/mediatek/gzvm_drv.h
-index 61f3ae4ee793..0302890ed69e 100644
---- a/include/linux/soc/mediatek/gzvm_drv.h
-+++ b/include/linux/soc/mediatek/gzvm_drv.h
-@@ -241,6 +241,7 @@ int gzvm_handle_relinquish(struct gzvm_vcpu *vcpu, phys_addr_t ipa);
- bool gzvm_handle_guest_hvc(struct gzvm_vcpu *vcpu);
- bool gzvm_arch_handle_guest_hvc(struct gzvm_vcpu *vcpu);
- int gzvm_handle_guest_idle(struct gzvm_vcpu *vcpu);
-+void gzvm_handle_guest_ipi(struct gzvm_vcpu *vcpu);
- void gzvm_vcpu_wakeup_all(struct gzvm *gzvm);
- 
- int gzvm_arch_create_device(u16 vm_id, struct gzvm_create_device *gzvm_dev);
-diff --git a/include/uapi/linux/gzvm.h b/include/uapi/linux/gzvm.h
-index 1fe483ef2ed5..bcbc4d62a70f 100644
---- a/include/uapi/linux/gzvm.h
-+++ b/include/uapi/linux/gzvm.h
-@@ -189,6 +189,7 @@ enum {
- 	GZVM_EXIT_SHUTDOWN = 0x92920009,
- 	GZVM_EXIT_GZ = 0x9292000a,
- 	GZVM_EXIT_IDLE = 0x9292000b,
-+	GZVM_EXIT_IPI = 0x9292000d,
+-	      __reserved	: 62;
++	      __reserved	: 61;
  };
  
- /* exception definitions of GZVM_EXIT_EXCEPTION */
--- 
-2.18.0
-
+ static struct sev_config sev_cfg __read_mostly;
 
