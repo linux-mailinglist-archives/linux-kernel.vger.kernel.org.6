@@ -1,222 +1,231 @@
-Return-Path: <linux-kernel+bounces-268317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF4794231C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:53:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4433C942325
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0AB91C214F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:53:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02647284A67
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE3A1917D8;
-	Tue, 30 Jul 2024 22:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A65192B81;
+	Tue, 30 Jul 2024 22:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="T3tlHtdl"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hAhj+sm/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8457F145A11
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722379997; cv=none; b=b0QaklIgtJb5qp39KgGC/kZTpPK3y58GTWEEASgy61k8oHzxeZRHWSpFvljBVF3pRaFIC9JKp4KH4rgRoByfstyP6lRCztCDOr67mcla4X8ZjepJb4d3YDVwhBVKHOHaSZcSt+i305Ee+laG5/j1xcCC7b8tYhRERvBXXyzA19I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722379997; c=relaxed/simple;
-	bh=/PslQQLZN/zdRD59UniGw0srRAMMcQ2Nh/BSv98frgs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K8fnLhy3RRM07Va6zFHXsuwKdI6cjhIzoynyvufUcgh6Gb85Ska6zxdi8WMX69q32mAhshid582IkpsAyrfBlGDOn7il2VsycR2tWgmgg7GcFZHhti9rvDiCKm0rc/JmNfSxIZBGiFtNeDia+XfuyoglALRijfTh3rsAhYa9I64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=T3tlHtdl; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-81f861f36a8so27608739f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:53:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722379994; x=1722984794; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WPMoeXZqmKRQ4o+dKvqsFWwSIzXunsz7D3ow40LFnYU=;
-        b=T3tlHtdl5DINj/s/f+RV5vPMiS5MAkwX0TKXZEhUt08YQbI258PG1bvWWeZnoO2m92
-         NYsn8lRLUyfQmlMVA5NSzbfomfAnYi8vflMouCppHaWOqnjNC1xIkmEtDFhWw9XRwklr
-         IH8op8xeX6wG3TBHCab3rTc4L5gwnMY0dHFOs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722379994; x=1722984794;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WPMoeXZqmKRQ4o+dKvqsFWwSIzXunsz7D3ow40LFnYU=;
-        b=ZCdIGgARgWl5mBtkOoXpWI6cy+psfxji1idIXc3IHRuAtb3FKFSmc/4dbB7y5OQrDf
-         viCWRvhgLm3+MeNdYLYKWmA5f4/QgcDWNn5ZMLZkGiJDs3Fm3oo/F8BqR9Sci2oB5OY7
-         WGeLwKUig1SPp+KF5hHfTOTssf4HGG7tVsmK8caj31bjEwPJdxVb1v8HOaQ/vWTaCoA0
-         UCdpTnEPXih7fS+JpQqLKekv3AKwvSzB3TdJJ3QFDVfdoF/KGHTe8S5FaktC+B16rxX8
-         k0hoLhN3O3/W7aGTaJsDteXHmHI0SuaNms0OKRCKQ/ETKuGUHC2A9u1sROjfvWMBqbiE
-         bA4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUg8l82QrL7abm0QvwdK4zxCUSkAJRaA19r/Tr4dqLdaR+hEhjRVn1QiJvu9dmsrz+rlDSy38a4/chvaxs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTfkfRG8kN/INBrmerpqTxolwcy/jAHr5ie8VBzNzCVx5Oy5+Q
-	VCATcRiWO7TvMOxKJTxNek/RGfn+qP9v/p+8F7PTzyQyWFd3uu0xJCXoE26HugA=
-X-Google-Smtp-Source: AGHT+IHxnD3eBdC2Bgi8Gl2hYh2pT25cjicNcqNiylFVhsrxU6nTTmpOoOUNvO58TXcK/TH8wZ8dwA==
-X-Received: by 2002:a05:6e02:2185:b0:39a:e9a1:92a6 with SMTP id e9e14a558f8ab-39ae9a197a0mr97995675ab.4.1722379994441;
-        Tue, 30 Jul 2024 15:53:14 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39a22e97be2sm50338215ab.34.2024.07.30.15.53.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 15:53:14 -0700 (PDT)
-Message-ID: <7f85416e-6e79-491c-902b-df6146928ff9@linuxfoundation.org>
-Date: Tue, 30 Jul 2024 16:53:13 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777E318FC9A
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722380076; cv=fail; b=ZVJZCi/eyMBIEX8LUlbHgWlS6uxvj8nEMBnaDUpvzTz9kOWgnbdNr55xP2osqXYw+lShNuyOLz/rxi3P7HQHjNiePWv82y1cxUyIE6QSV980UMY/mYKBYQIk1ThI4txJy/DNsOz5NrTCXhPPP6155waMIyE3CweWfXUmDnOf8zs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722380076; c=relaxed/simple;
+	bh=hb13xG4QlCyashQZqM6yQvWilUn96XSY6DGtUKq5exc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=TSXsHhS/iaxUrLn7fO/2He0C0K1G+Le7T2rTWKGO56mxl/7IwGq33sTQbXETGUxMLn5bQMys4fuI/g0o3vZzNSpHp41WNRRUMjOIB7RIW77d2mfcwTzat3eXbQot1oq2x/d0UZOIHoGbKcqv7DNOdRJ7X5zO61v5DO8pNlTpB/o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hAhj+sm/; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722380074; x=1753916074;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=hb13xG4QlCyashQZqM6yQvWilUn96XSY6DGtUKq5exc=;
+  b=hAhj+sm/bfjJY1zoKJBq8cV/m36MwuF1d2EBAYWyxTHSvBgU6ziqDDMX
+   Xq2Jb61+31MGjid2aiyPh0NtCsRwaUmpXYxvI7Lk5Gzxb+VhGRolENatI
+   B1D0WY7DT8KDQBo+C2JoSKvJqHsVXaD72LBuMki7AJchm9O4+yTU8BsKS
+   KIUX56loNAF0doztx3vauCc/HHhk7UiWAo1o5hMLBGkshih6jkXGhKXRN
+   DoSHk3ZZtDcyNPodyW6pcv33GqdSdU3WmcEk1QJm01OSo3+5goI2oWN+b
+   0EqJQWljIKZjdp058QZoKXNWNOAm8S3kJOI5AQ4TFb3ZIKyi49A89d9W9
+   Q==;
+X-CSE-ConnectionGUID: WORJQ1pkQIOPidKxPBo4PA==
+X-CSE-MsgGUID: 9PZPTYHrQjmZfjXz73htGQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="20037675"
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="20037675"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 15:54:33 -0700
+X-CSE-ConnectionGUID: e3Y3Hq0JSFy4jqluJrn73g==
+X-CSE-MsgGUID: hJd22y0hS7W4yN/ANi3kSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="59339482"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Jul 2024 15:54:33 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 30 Jul 2024 15:54:33 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 30 Jul 2024 15:54:32 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 30 Jul 2024 15:54:32 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.46) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 30 Jul 2024 15:54:32 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lzNlP3z01HfQqyPLg/nfoW0yXxRD6jCpMu/lMfaAFOsIppTEtSRFurybhPXGbx0kOPOXOlypdC5v9JHrZmi/ezHTQP2+2QRwmODhdGaODZhqPKY6KtywmPe2z9VWNUgIU8WxYliDmv14jIAV8QTbgrHI2NLaoh3PLSxSo0JlZlB+6IZ/0gJUhHRd+loJG5p98RNEoIACPW2vZB3iTkmC12jXVJVyEAZb/JZnxhUDuzf2EzqoYea5vFQ9ItIEDN/mzwfCnOyupuuNKNJsNNgTXd5fF+FgnUgGEu8T0DYtI4PcxqtaOoRtFi3B/Zzf17hzvf6hk/WhaEB588GsZ4RQhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eLgXO2ysHzYzT4/+z5R8fIQJD6HH80sd9AJnsPFUcpk=;
+ b=wg2BfSGxTMj3NeX5iri9CpAsMOYqkoED8rCWy83W4Df/x3zR+RTal7JQbc0Lmp3ntXVa1oItUiphvu1t0eLhsisg/SSg8YoKA3xyN2OP1pMJphNPpGJPeJydi9QEooDdz0D/c4jRJIkRS867/fUc3TStjZVy/LXr0NYvQ2Vhvja8TL3B/d8uKTopnjp7IVOcsJmUkXGYPphvBdQtcFPVxxlxH1h6RZ5NMwMPJkGy1xDyLZrl1qVqzIQPpGKcNkD1C5tVquHW5eNLnB4zD+JB67Ibphnsz8kb6CtYv8/xTGE9rOCHRGGf3ZkQCXMkU1aU8woavRUs4V7U2n+jvr6JXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
+ by CH3PR11MB7819.namprd11.prod.outlook.com (2603:10b6:610:125::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.19; Tue, 30 Jul
+ 2024 22:54:30 +0000
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332%6]) with mapi id 15.20.7807.026; Tue, 30 Jul 2024
+ 22:54:30 +0000
+Date: Tue, 30 Jul 2024 22:53:38 +0000
+From: Matthew Brost <matthew.brost@intel.com>
+To: Tejun Heo <tj@kernel.org>
+CC: <intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <jiangshanlai@gmail.com>,
+	<christian.koenig@amd.com>, <ltuikov89@gmail.com>, <daniel@ffwll.ch>
+Subject: Re: [RFC PATCH 1/3] workqueue: Add interface for user-defined
+ workqueue lockdep map
+Message-ID: <Zqlu8gq2d8mtn7rC@DUT025-TGLU.fm.intel.com>
+References: <20240730221742.2248527-1-matthew.brost@intel.com>
+ <20240730221742.2248527-2-matthew.brost@intel.com>
+ <ZqlqYLZWCiLKhVJf@slm.duckdns.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZqlqYLZWCiLKhVJf@slm.duckdns.org>
+X-ClientProxiedBy: SJ0PR03CA0197.namprd03.prod.outlook.com
+ (2603:10b6:a03:2ef::22) To PH7PR11MB6522.namprd11.prod.outlook.com
+ (2603:10b6:510:212::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Converting kselftest test modules to kunit
-To: David Gow <davidgow@google.com>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Kees Cook <keescook@chromium.org>, Shuah Khan <shuah@kernel.org>,
- "open list : KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>, kunit-dev@googlegroups.com,
- "kernel@collabora.com" <kernel@collabora.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <327831fb-47ab-4555-8f0b-19a8dbcaacd7@collabora.com>
- <533826b3-8bc4-40f8-a491-5bb5614469c3@linuxfoundation.org>
- <CABVgOSkbOr28j7yD-M0Lk3G6sJHey_QjpGdLZWBise1Tbeumkg@mail.gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <CABVgOSkbOr28j7yD-M0Lk3G6sJHey_QjpGdLZWBise1Tbeumkg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|CH3PR11MB7819:EE_
+X-MS-Office365-Filtering-Correlation-Id: 678fd1be-3168-4685-5a3a-08dcb0ea9269
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?NoEevO1kJl5LDgD4VZUt2As8dAEuwqccOPPj1wCTM0XMhyUiYehV0IJcSQY1?=
+ =?us-ascii?Q?3q3d18bVoZdZKjQeO/CgYmkRPhYc1OKr6kCPLyMhqsDfZbaGkX1CZ77tE0TB?=
+ =?us-ascii?Q?1JJ3nLb3Rx29aaHLtUgpMixkgt/Kwjdo0+/Uc9sOIDOgfMjH0nmuISRejscY?=
+ =?us-ascii?Q?Kh2KY9IyIy+i9RGYide4DEVKzyJT6+Maa9VI9/eudAKb17bLZWr0bB6qoYrE?=
+ =?us-ascii?Q?98tBJVS0Du5Rqh2B9r7yHvh/z5aPkxZB0ZEe1AL3Sgk9vCvWFQe/4Xnn7S0l?=
+ =?us-ascii?Q?cYfydEjRuFMTOtW9GXfuR6FcM5nOgmNICVI8LPhOm+rayliUSYGO9SdfhpsD?=
+ =?us-ascii?Q?yx7b+qdV5DoLvIdQ6y7txKp5lXDM+g5gTGj9lQr7TqmO08GLTIMclU04+K5N?=
+ =?us-ascii?Q?GwEB0q74weMG50K2fhoetR1ksJtSY+HktTUy9mTSvK8bMv2DFHdzgCiLlChv?=
+ =?us-ascii?Q?xO131WWJ37j7lgv0UtiLsVvPUVeCJr7QNHbZZbDH7NROEI2/Z+98WPkelDfC?=
+ =?us-ascii?Q?KmheCSct7keBU9O5KY56lCIO48r5joqRp8BC3ShB/QU+1NurAwvMkz3kMa8c?=
+ =?us-ascii?Q?TEKG8CcBXQhi5d6nWUCacnkFY05RYPvYDXKe/GnU+931LbkcAMadQeiIznz3?=
+ =?us-ascii?Q?UMdgUzsoyZFnx3/8psHJ6/ON88QxS6pvi+YSd0egQICW1THgMEiyUiQUinaQ?=
+ =?us-ascii?Q?2mQ8r0PUtExGVDphwE3sLQJr/n4zLHvR/iIeGR3ADmZqOFPJ7c12LLgqczgd?=
+ =?us-ascii?Q?/kXhfrKjwLOtaPpzRD8YuqCzOpHXxfXORUjPbqc6WMHaOb7UFqFls8k177h0?=
+ =?us-ascii?Q?5VH3ASImyJTRFI+xbTG6/enWpp4VTq7dJdKN32y9OrvO22PsWkFx+HMC/uX3?=
+ =?us-ascii?Q?ktiB+q96E1gvIQq7FCIVfOnnHgVoKqaW3pqDByOPTwfSktq0jaAzQuVvpYyU?=
+ =?us-ascii?Q?whzmOE7MN3oSM+iP5cWAglsBIfjydsM7wBpm3qoNAILZvLPB9DJcsZc27yTs?=
+ =?us-ascii?Q?D8nnHnlJGKMhKJwk6MhnWDm27WykhMl2lCvFyKBfFxk4cdCEdrsIDYKj4bzO?=
+ =?us-ascii?Q?jdwbnBnX5wmWfSDQzd/j67n8BCqRBYCtFHfBvyKhHLo3Pha+sxFIJgJFm5jp?=
+ =?us-ascii?Q?4bX0/nTe/jB0+/9LKg1VepLkn8EXxosSAA7s9W7z6WSaMkVgjTUAFguWin/C?=
+ =?us-ascii?Q?H/vg436N0VcMXMBnmqIg9I9wAygeC6g6KfE2CGBPKhB3Difsdx2mN3atfXkT?=
+ =?us-ascii?Q?TNZpRzgnzlUEC2RTUKamYFr6lImnOY2s6DqMlCqpcU7hvPHaRF1GY8k8Qb5e?=
+ =?us-ascii?Q?wcKfcAkNGpC5qHWJdu8B2c4dT4M50zMSsRpaUi2A9B5kOQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?PjJG4mCHfz8l9ilpS3h0yNAMZLX86dRvH2obKEgv254UHGXkVuO71ByaBwaO?=
+ =?us-ascii?Q?uE9vGZ45DvwxJOPgnLQbkErUDKNcYyKedvLLz7y1d4J2IOj/SQqMUCOP8noC?=
+ =?us-ascii?Q?V6HtuPSoS8IDU9k6MjfPgyejACcPjJ+/SFaH/Kai+SdYRsbJvWQGpmrHmof7?=
+ =?us-ascii?Q?EqlhsW1a40Q7Xx7G6nA4lLAF1JjAinvCn9pCnWJqsgj19yfbiCiYFI/pZjjJ?=
+ =?us-ascii?Q?wKvfYx27u8onM8EcBRVzujlSOyiEdWCxDU0E9jMjyQvVAF8/djRLcfOx6hFK?=
+ =?us-ascii?Q?NOApyTmG0UuFQkF0pGm1US1N2GKLTX+r29gQE9i9+jcn0YQRZIPvBDvWauBy?=
+ =?us-ascii?Q?m7ZlxniOr44+dBYsW0cjnu6q92c3VBXe8d+GPJ/CoDr436UpXIlwdWMBdnET?=
+ =?us-ascii?Q?S3tv9uQQ4UNOtIqM71H55l43xOMAiG/xWz4fNGyzuwLu8t8ON2pRifL394Km?=
+ =?us-ascii?Q?ZYVI6F5daWHcDNNrW+QxTfxVXj/2ILp8wzPilnjJqdvXInzDiDe4SlEvDI2h?=
+ =?us-ascii?Q?tQjdktG3f3V7whKS/KTwVGC8tpMYfPsRUENHr6oDzDWbnyyWnogmTLFHLCAW?=
+ =?us-ascii?Q?+ia8+FsAgEDHog90+UjqbXdg8SyKHiWUi+DBMNtFYb4wKDm8+E6wHjfe6X2l?=
+ =?us-ascii?Q?fvIbbvSM45zzrKGOG+/CnWuub9mxBt/xB/thyY2ebUhXI2gmxlk9zmCiIrsT?=
+ =?us-ascii?Q?yTVy4fhoqbIrnr4v0BXwJaOI041VvQMSLUgelyWjHDKhwhwRmHBF4Rqr2sJi?=
+ =?us-ascii?Q?QZXiuaoFhZ4kzZ/40d6fjRYnhevpDJp5sOIQf8md9fp0mn2C4HyzdY1SHGNA?=
+ =?us-ascii?Q?LWTLRLdjOFkOGrZhDojpX0Kfk3B11KRb/I1XvWROejMwLAVdBXpQGhTr49G2?=
+ =?us-ascii?Q?gza631wPgoh9NWj0ITf078Ti0Kxk9XsIvfCYkSSplh7mG8EffiQxOnuBYmtw?=
+ =?us-ascii?Q?sw673DYrWWE/2vq9u3P3ODnOe8vUYHOSDtVbWPaN1+NkNBHsbFUmbmMOHOFc?=
+ =?us-ascii?Q?4n7RGkpxNJC/+JFSDPf7eQ3oyONyQS+tv8eT1uBKuWh1mA1d/1QeoR9pWvDG?=
+ =?us-ascii?Q?q/Majcqxzzzl1RnSG5Qhxsi+KKgmANScp8PKTev1/xSpGt+tRuNImBVYzBuY?=
+ =?us-ascii?Q?2/75nrCv7SvjgjXQ11zBuhQMe5K9JyziY71OsMt82aE8JEekkUHd5mR1R96i?=
+ =?us-ascii?Q?B4M0skq9mKW1HNtawWXvPpNRud3CCjEjFunSOtfhy8QrCBO4q8QQ9eDHS1QC?=
+ =?us-ascii?Q?SaJTPd/EoAlCutfyNkVqCXj9x6ZhODd/gKqTT2oyMuVuVFXmwf+q+9jsPY8Q?=
+ =?us-ascii?Q?NzziTIqe4y81dnGXUS7NPTfuC6J4vvcFl8GYdS1EQgqaplxo9lRowk+PtHG+?=
+ =?us-ascii?Q?ptPm8iv9Hjzly81U6MDsy+ebPPzFU2Zvk9l7Tnt3XzBqzcXYajyjO0h8kRFS?=
+ =?us-ascii?Q?i3zM7CcXM6j3Ha90tHK63IFaXiygcE8zx9Xcgm/LCCm7cLwqyd1i2VU1Mwcw?=
+ =?us-ascii?Q?v9xM16O3I6Lw7WbjrO6Swvoiv2EcAJjvCI6+ZfYf93gGs5FN6VMCk1xp9MW4?=
+ =?us-ascii?Q?srAj7HKjsOqgZE/MUD19aSjOQKBQWt4nRUFvG2Z+zZ2lj9SQT47JSzDvrAin?=
+ =?us-ascii?Q?gQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 678fd1be-3168-4685-5a3a-08dcb0ea9269
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 22:54:30.6196
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eyM1X8OpCVDywmlXqIjXqpw9qXzaCdZeAyOP+BR3d7ysAcSqL/Zvevl9A0+nmmbM/o4WZUD1YHZ91ux0njlDjg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7819
+X-OriginatorOrg: intel.com
 
-On 7/29/24 23:23, David Gow wrote:
-> On Sat, 27 Jul 2024 at 03:35, Shuah Khan <skhan@linuxfoundation.org> wrote:
->>
->> On 7/15/24 04:09, Muhammad Usama Anjum wrote:
->>> Hi Kees and All,
->>>
->>> There are several tests in kselftest subsystem which load modules to tests
->>> the internals of the kernel. Most of these test modules are just loaded by
->>> the kselftest, their status isn't read and reported to the user logs. Hence
->>> they don't provide benefit of executing those tests.
->>>
->>> I've found patches from Kees where he has been converting such kselftests
->>> to kunit tests [1]. The probable motivation is to move tests output of
->>> kselftest subsystem which only triggers tests without correctly reporting
->>> the results. On the other hand, kunit is there to test the kernel's
->>> internal functions which can't be done by userspace.
->>>
->>> Kselftest:    Test user facing APIs from userspace
->>> Kunit:                Test kernel's internal functions from kernelspace
->>>
->>> This brings me to conclusion that kselftest which are loading modules to
->>> test kernelspace should be converted to kunit tests. I've noted several
->>> such kselftests.
->>>
->>> This is just my understanding. Please mention if I'm correct above or more
->>> reasons to support kselftest test modules transformation into kunit test.
->>>
->>> [1] https://lore.kernel.org/all/20221018082824.never.845-kees@kernel.org/
->>>
->>
->> Please make sure you aren't taking away the ability to run these tests during
->> boot. It doesn't make sense to convert every single test especially when it
->> is intended to be run during boot without dependencies - not as a kunit test
->> but a regression test during boot.
+On Tue, Jul 30, 2024 at 12:34:08PM -1000, Tejun Heo wrote:
+> Hello, Matthew.
 > 
-> Given KUnit tests can run at boot (and, indeed, do by default if
-> enabled), I'd've assumed that this would be a good candidate for such
-> a conversion. It does add the KUnit 'dependency', but I can't think of
-> how that could be a problem. Is there a specific situation where
-> enabling CONFIG_KUNIT would cause problems?
+> On Tue, Jul 30, 2024 at 03:17:40PM -0700, Matthew Brost wrote:
+> > +/**
+> > + * wq_init_user_lockdep_map - init user lockdep map for workqueue
+> > + * @wq: workqueue to init lockdep map for
+> > + * @lockdep_map: lockdep map to use for workqueue
+> > + *
+> > + * Initialize workqueue with a user defined lockdep map. WQ_USER_OWNED_LOCKDEP
+> > + * must be set for workqueue.
+> > + */
+> > +void wq_init_user_lockdep_map(struct workqueue_struct *wq,
+> > +			      struct lockdep_map *lockdep_map)
+> > +{
+> > +	if (WARN_ON_ONCE(!(wq->flags & WQ_USER_OWNED_LOCKDEP)))
+> > +		return;
+> > +
+> > +	wq->lockdep_map = lockdep_map;
+> > +}
+> > +EXPORT_SYMBOL_GPL(wq_init_user_lockdep_map);
 > 
->> bitmap is one example - pay attention to the config help test - bitmap
->> one clearly states it runs regression testing during boot. Any test that
->> says that isn't a candidate for conversion.
-> 
-> Again, most KUnit tests are effectively regression tests at boot, so I
-> don't really understand what makes bitmap different. If it's just a
-> matter of there being a different interface to it, that's surely
-> something that we'll either be able to adapt to, or to have some
-> wrapper/shim to maintain compatibility. I agree that having needless
-> churn in formats is bad, but KUnit does seem the proper place for
-> these sorts of tests.
-> 
-
-The problem is whether not kunit can test at boot time. The issue is
-that this type of change removes a selftest which can be run without
-kunit dependency thereby removing the ability to run these tests on
-a running system without kunit.
-
-This is absolutely necessary for testing on a running system to debug
-or sopt check.
-
-> If this isn't the case, do we need to modify the testing guide to
-> mention this, as it definitely suggests KUnit for tests of in-kernel
-> functionality like this.
+> Would it be possible to make it a one-piece interface - ie. add
+> alloc_workqueue_lockdep_map() which takes an external lockdep map rather
+> than splitting it over two calls?
 > 
 
-Please do. It was never the intent to convert all existing tests toi
-kunit.
+I didn't want to change the export alloc_workqueue() arguments so I went
+with this approach. Are you suggesting export a new function
+alloc_workqueue_lockdep_map() which will share an internal
+implementation with the existing alloc_workqueue() but passes in a
+lockdep map? That could work.
 
-Repeating what I said on the bitmap removal thread:
+Matt
 
-This doesn't help people who want run a run bitmap test on a running
-system. This is a wrong direction to go to say all testing has to be
-done under kunit.
-
-What happened to the effort to run selftests as is under KUnit? What
-is the motivation to convert all tests to kunit instead of trying to
-provide support to run kselftest under kunit environment?
-
-We discussed this a few years ago as I recall. Let's work on that
-instead of removing existing selftests and regressing current use-cases?
-
-Can we look into providing:
-
-1. running kselftest under kunit environment without changes
-     as user space applications?
-
-2. Leave kselftests alone so we don't weaken kernel testing by
-    removing existing ones and making them dependent on kunit
-    thereby removing the existing ability to be able run them on
-    non-kunit kernels.
-
-
-It isn't about kunit vs. kselftest. It is about overall kernel validation
-and ability to test effectively by developers and users.
-
-KUnit isn't ideal for cases where people would want to check a subsystem
-on a running kernel - KUnit covers some use-cases and kselftest covers
-others.
-
-What happens if we are debugging a problem that requires us to debug on
-a running system? Please don't go converting kselftest into kunit without
-understanding how these frameworks are intended to be used.
-
-Yes kselftest results need to be looked at. Write a parser which can
-be improved. What you are doing is reducing the coverage and talking
-away the ability to debug and test on running system.
-
-Fix what needs to be fixed instead of deleting tests.
-
-Think through the use-cases before advocating KUnit is suitable for
-all testing needs and talking about being able to force or not force
-people to use one or the other.
-
-Reports aren't everything. The primary reason we have these tests is for
-developers to be able to test. Reports can be improved and shouldn't
-come at the expense of coverage and testing. Any patch that does that
-will be NACKed.
-
-I already nacked several patches and will continue to nack. Please don't
-send me patches that remove existing kselftest tests and turn them into
-kunit tests.
-
-thanks,
--- Shuah
-
-
-
-
+> Thanks.
+> 
+> -- 
+> tejun
 
