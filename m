@@ -1,269 +1,152 @@
-Return-Path: <linux-kernel+bounces-266784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80BF940797
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:28:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD1129406C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3577F1F239BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:28:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F4F41F2365C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700891684BE;
-	Tue, 30 Jul 2024 05:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202D7168487;
+	Tue, 30 Jul 2024 05:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="tkJgpyGF"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="GtUlpQMk"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D550153BF7;
-	Tue, 30 Jul 2024 05:21:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB8B79B8E;
+	Tue, 30 Jul 2024 05:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722316917; cv=none; b=Cmwo9W6CuwohuyjEhacRAJaTVc7ublQtQYM3E82fdgDAAJ8y3aaAIOrm8CXdoprn6XSTiB2hDTValKIg6KAexmVRBOCsEEdmtpkwBf1SRgvAfYgXTIGamr0z6OTHsIpPoMPxeiY3PGpNrTl+IS+4p5isDkqQa1CI+Wg+w+ikEQc=
+	t=1722316279; cv=none; b=jC7QSwqzyKb89U30soja6HgripiXna//x2uWXYGz6jrHpjqNJUGWRx6podiFopJ7dxk1a8dZSlt9G6ZYiA8/bz9oPjosTVnMH8VJ0p+r9DS0zdVKh8sjVxsnp3vCwiy1yo/4iNotbR811GN0xM8y8FZewSUrBwA1HPYuAajT+I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722316917; c=relaxed/simple;
-	bh=Kk9Q3R4jaeKgwoXtf8T50QoXGM27YdMm/UT0HVVSXvk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PYJx1cuCPsPKrOmB7XvuI3IMps1og80hyHTzQBO5zpOgrYIxIwyGlD8RAa5uwvWD1mPGuiUsEWSRxsNJatqdl6nC0UXTeuL9mxQF6zG/x9Qh+j4NLs5iYFQ+v405m5XK5TwXCPOu8GOM618GxvXGX0A6E4/a1gw5NjKaomdJuRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=tkJgpyGF; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id D1ADB10000E;
-	Tue, 30 Jul 2024 08:21:43 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru D1ADB10000E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1722316903;
-	bh=HltX1eHB+gX6/FvTdK5jTFQKH3MsCpYQvWl2DuJkA3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=tkJgpyGF5AdvkBtheLV/1Gjn0MDuaK6RvazH8JrIxxpEoJCweReC3PILvSx+RLq81
-	 brNejISPFG39LPM71bNMpQUu4BZesh/aPcNb8P1dc9jlP6FNIVu3bnLf0ltlLW+XQR
-	 yV9do1oOhbYketRJVq4Y36RauYBqx1KjOjzaNq+foklJ6lX57RsdOb5zAAMd1vWBPP
-	 8MlE6YoOJUqiwpZsO+WwdUXdStuombWNhNpmvKdrGCow7gqMQI1tz1xvDUsP6dVgUv
-	 HlNd+kpk/gWN2KHG0V4Nq2L+kZExhnqEh1I3F39jCx/I68RJBFqVveyLO2px8lMchW
-	 S4WuwJRTEP7fA==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Tue, 30 Jul 2024 08:21:43 +0300 (MSK)
-Received: from [172.28.128.200] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Tue, 30 Jul 2024 08:21:42 +0300
-Message-ID: <41421bd7-e6e1-db2d-6a43-06d6a44cfeb8@salutedevices.com>
-Date: Tue, 30 Jul 2024 08:09:23 +0300
+	s=arc-20240116; t=1722316279; c=relaxed/simple;
+	bh=y+xJg/pVcJ1y/GxBn6qUhLzXw2h4YczuJeQD8VE2xG4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KiGKsBPqC8OiW/M2w3nbc/ajZDlKdE0vqZWtTF7d+snQXLGkLcRKiJPl4HHTQwEUaaIP2XWRBcitBCTDIwylvBtMjwMmcc9YkBtyNStc6lqPVeXwXCeUI9Ck0rQIzlqlG1N2uxOQn9rxgBX0kfVgp003j/eeCotDMunnlj+CSzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=GtUlpQMk; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1722316220; x=1722921020; i=wahrenst@gmx.net;
+	bh=g2qT0PqPzss90wszs6Vw/sUubex/AK94mW4YSO8z+6g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=GtUlpQMkqXYlCdfWx8/dX0Wq2i6sof9gWcfWs64aI6BJI3qKXo5+AodwEWK9DWlA
+	 qdbZJl00uu9DO9wgVIbwnYx8jfGZ0s5QYVYeOwxNJA+3dXSLSlFhuhDug0PkV83LI
+	 HJciUHdFGIpJrkMfT/yjUkyP2mR+cXomXFm8XaIxS0emkgkyso5T4BJaNqAGSLz59
+	 nOlEZfPY3HD72EzVhl0enqT6jUq16emh66uYAHxezsQUB4wiCFoo0pOsoa+Rf/bCu
+	 kBQoB3127MY4K+K1SOFniXT7bztwsts/ohM52GHds0Ccj8kU6eJts9Agn1FN2l546
+	 ZO3uZL9hAi5j4qWOdg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mqs0R-1rvQLd2h8b-00m67u; Tue, 30
+ Jul 2024 07:10:20 +0200
+Message-ID: <0b2cb5ca-f134-4733-a931-9e192e47c65d@gmx.net>
+Date: Tue, 30 Jul 2024 07:10:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [RFC PATCH net-next v6 07/14] virtio/vsock: add common datagram
- send path
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/5] wifi: brcmfmac: Add optional lpo clock enable
+ support
+To: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org,
+ krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org
+Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
+ minipli@grsecurity.net, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com
+References: <20240730033053.4092132-1-jacobe.zang@wesion.com>
+ <20240730033053.4092132-5-jacobe.zang@wesion.com>
 Content-Language: en-US
-To: Amery Hung <ameryhung@gmail.com>
-CC: <stefanha@redhat.com>, <sgarzare@redhat.com>, <mst@redhat.com>,
-	<jasowang@redhat.com>, <xuanzhuo@linux.alibaba.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<kys@microsoft.com>, <haiyangz@microsoft.com>, <wei.liu@kernel.org>,
-	<decui@microsoft.com>, <bryantan@vmware.com>, <vdasa@vmware.com>,
-	<pv-drivers@vmware.com>, <dan.carpenter@linaro.org>,
-	<simon.horman@corigine.com>, <oxffffaa@gmail.com>, <kvm@vger.kernel.org>,
-	<virtualization@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-hyperv@vger.kernel.org>,
-	<bpf@vger.kernel.org>, <bobby.eshleman@bytedance.com>,
-	<jiang.wang@bytedance.com>, <amery.hung@bytedance.com>,
-	<xiyou.wangcong@gmail.com>, <kernel@sberdevices.ru>
-References: <20240710212555.1617795-8-amery.hung@bytedance.com>
- <e1647f5f-5056-5cf0-e81c-5ef71fd6efd0@salutedevices.com>
- <CAMB2axMXzcxrFr+zWV6CFJxDrKwH+U85F7dkeXfJjAO10EmSAg@mail.gmail.com>
-From: Arseniy Krasnov <avkrasnov@salutedevices.com>
-In-Reply-To: <CAMB2axMXzcxrFr+zWV6CFJxDrKwH+U85F7dkeXfJjAO10EmSAg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186782 [Jul 29 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/30 01:23:00 #26176971
-X-KSMG-AntiVirus-Status: Clean, skipped
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20240730033053.4092132-5-jacobe.zang@wesion.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8WNkQqDKD6KnO7CaHnNyvZKHD2ZLfpHZ1KvW+8D6yIJ+YdzOq/6
+ CLWdUvzbu9l6YctXbf1haRex8PX2JKcQU7WhDqvAMzzMsm0/6HAKqHK0DRnctKDabAs5BFZ
+ vthC6Ht7+pR02+u8OGMUjdtgk+oE3lYNkxhNpFYnAVOFycdKUFvB88ZkSJ5bFY724iQYRV+
+ Tuwsjq0ksT2Qcf7t1diEg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:nd+W6xGWmI4=;A2cfTUJ99aOtAX+YCl0i1dYvdGn
+ gY8LRgEJiagSJAvzjLo+cxqcN9VESNtTRJi9hoM9ziTMuej/tBgQQsP7MgG43c40YNV2JIIUP
+ zJQFD680l97chT4EvmvCycxhn5qU8JNSfYHBmonmQbC+Q+T+WAW9pfNm6U1KDt0E/AwS3jhrc
+ r718kLHUxjeK6MA3cvv4UC9gUMdLBhC7wST4tXu4K4L5qK1z60i6ln4DDJgBJNrlj56OMv8ld
+ qijT74jCjIf8yOKIhlve+/bOCvFONfBKh/JuVlefEOABQ5PRQmOLya0XNtfq8Q0Jixif/gCxd
+ TWUKlZfKnL2AuXXzl8Yu5KViNX+fbBCnCGf4CzPSXT0jiOcOfPYTHdwDjWilOFt3we5aik5Oe
+ uxoPvt6CpHUkI7VwX2vqi2zcR8EkoPH5FnzzdDfF+VwO1U6LOEPpmhIL3QGfiiFNvkfCQKXaO
+ FcEG7Fn8ScOcG+THZNobY1VgeafUJ1OhS69VcarqU4FbT8BRZPx24o7KZE9Z462ljJl5GX6UH
+ Uu+0n+E/BZkcjksmo3oQcJB+eXADkhWdTJ1u0xWIThc5Nh3OOS2RPam8/a/dbsb/G8/zsAWlV
+ vhzkPh/Q9RK8j2MYXuKWi+nFZenzFU9KZG+XjmdjhhwaWVNqsAtwLW/DnEJTjDhLctPatGuTS
+ GEtSWP5tZtmgB6E3SKFlOghoSCAj3xz8VXIZpJilYua+EbRkvmuwmUMb+trLyL6DU/sLz19QK
+ 42yut5KRB/w5+tWdzdB4rt20sjl8bNwO10reoIKWt31a1oYp96fRXkeoKb/dWStZ1yI7rk+2S
+ k0ufOL0hbl5TsgctUT3VJ2Sg==
 
+Hi Jacobe,
 
+Am 30.07.24 um 05:30 schrieb Jacobe Zang:
+> WiFi modules often require 32kHz clock to function. Add support to
+> enable the clock to PCIe driver.
+>
+> Co-developed-by: Ondrej Jirman <megi@xff.cz>
+> Signed-off-by: Ondrej Jirman <megi@xff.cz>
+> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+> ---
+>   drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+>
+> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c b/dri=
+vers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+> index e406e11481a62..6246e3fd7399f 100644
+> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+> @@ -6,6 +6,7 @@
+>   #include <linux/of.h>
+>   #include <linux/of_irq.h>
+>   #include <linux/of_net.h>
+> +#include <linux/clk.h>
+>
+>   #include <defs.h>
+>   #include "debug.h"
+> @@ -70,6 +71,7 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus=
+_type bus_type,
+>   {
+>   	struct brcmfmac_sdio_pd *sdio =3D &settings->bus.sdio;
+>   	struct device_node *root, *np =3D dev->of_node;
+> +	struct clk *clk;
+>   	const char *prop;
+>   	int irq;
+>   	int err;
+> @@ -113,6 +115,12 @@ void brcmf_of_probe(struct device *dev, enum brcmf_=
+bus_type bus_type,
+>   		of_node_put(root);
+>   	}
+>
+> +	clk =3D devm_clk_get_optional_enabled(dev, "lpo");
+> +	if (!IS_ERR_OR_NULL(clk)) {
+> +		brcmf_dbg(INFO, "enabling 32kHz clock\n");
+> +		clk_set_rate(clk, 32768);
+> +	}
+even if the clock is optional, there should be a proper error handling
+(e.g. the -EPROBE_DEFER case).
 
-On 30.07.2024 01:51, Amery Hung wrote:
-> On Mon, Jul 29, 2024 at 1:12 PM Arseniy Krasnov
-> <avkrasnov@salutedevices.com> wrote:
->>
->> Hi,
->>
->>> diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
->>> index a1c76836d798..46cd1807f8e3 100644
->>> --- a/net/vmw_vsock/virtio_transport_common.c
->>> +++ b/net/vmw_vsock/virtio_transport_common.c
->>> @@ -1040,13 +1040,98 @@ int virtio_transport_shutdown(struct vsock_sock *vsk, int mode)
->>>  }
->>>  EXPORT_SYMBOL_GPL(virtio_transport_shutdown);
->>>
->>> +static int virtio_transport_dgram_send_pkt_info(struct vsock_sock *vsk,
->>> +                                             struct virtio_vsock_pkt_info *info)
->>> +{
->>> +     u32 src_cid, src_port, dst_cid, dst_port;
->>> +     const struct vsock_transport *transport;
->>> +     const struct virtio_transport *t_ops;
->>> +     struct sock *sk = sk_vsock(vsk);
->>> +     struct virtio_vsock_hdr *hdr;
->>> +     struct sk_buff *skb;
->>> +     void *payload;
->>> +     int noblock = 0;
->>> +     int err;
->>> +
->>> +     info->type = virtio_transport_get_type(sk_vsock(vsk));
->>> +
->>> +     if (info->pkt_len > VIRTIO_VSOCK_MAX_PKT_BUF_SIZE)
->>> +             return -EMSGSIZE;
->>
->> Small suggestion, i think we can check for packet length earlier ? Before
->> info->type = ...
-> 
-> Certainly.
-> 
->>
->>> +
->>> +     transport = vsock_dgram_lookup_transport(info->remote_cid, info->remote_flags);
->>> +     t_ops = container_of(transport, struct virtio_transport, transport);
->>> +     if (unlikely(!t_ops))
->>> +             return -EFAULT;
->>> +
->>> +     if (info->msg)
->>> +             noblock = info->msg->msg_flags & MSG_DONTWAIT;
->>> +
->>> +     /* Use sock_alloc_send_skb to throttle by sk_sndbuf. This helps avoid
->>> +      * triggering the OOM.
->>> +      */
->>> +     skb = sock_alloc_send_skb(sk, info->pkt_len + VIRTIO_VSOCK_SKB_HEADROOM,
->>> +                               noblock, &err);
->>> +     if (!skb)
->>> +             return err;
->>> +
->>> +     skb_reserve(skb, VIRTIO_VSOCK_SKB_HEADROOM);
->>> +
->>> +     src_cid = t_ops->transport.get_local_cid();
->>> +     src_port = vsk->local_addr.svm_port;
->>> +     dst_cid = info->remote_cid;
->>> +     dst_port = info->remote_port;
->>> +
->>> +     hdr = virtio_vsock_hdr(skb);
->>> +     hdr->type       = cpu_to_le16(info->type);
->>> +     hdr->op         = cpu_to_le16(info->op);
->>> +     hdr->src_cid    = cpu_to_le64(src_cid);
->>> +     hdr->dst_cid    = cpu_to_le64(dst_cid);
->>> +     hdr->src_port   = cpu_to_le32(src_port);
->>> +     hdr->dst_port   = cpu_to_le32(dst_port);
->>> +     hdr->flags      = cpu_to_le32(info->flags);
->>> +     hdr->len        = cpu_to_le32(info->pkt_len);
->>
->> There is function 'virtio_transport_init_hdr()' in this file, may be reuse it ?
-> 
-> Will do.
-> 
->>
->>> +
->>> +     if (info->msg && info->pkt_len > 0) {
->>
->> If pkt_len is 0, do we really need to send such packets ? Because for connectible
->> sockets, we ignore empty OP_RW packets.
-> 
-> Thanks for pointing this out. I think virtio dgram should also follow that.
-> 
->>
->>> +             payload = skb_put(skb, info->pkt_len);
->>> +             err = memcpy_from_msg(payload, info->msg, info->pkt_len);
->>> +             if (err)
->>> +                     goto out;
->>> +     }
->>> +
->>> +     trace_virtio_transport_alloc_pkt(src_cid, src_port,
->>> +                                      dst_cid, dst_port,
->>> +                                      info->pkt_len,
->>> +                                      info->type,
->>> +                                      info->op,
->>> +                                      info->flags,
->>> +                                      false);
->>
->> ^^^ For SOCK_DGRAM, include/trace/events/vsock_virtio_transport_common.h also should
->> be updated?
-> 
-> Can you elaborate what needs to be changed?
+Best regards
+> +
+>   	if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
+>   		return;
+>
 
-Sure, there are:
-
-TRACE_DEFINE_ENUM(VIRTIO_VSOCK_TYPE_STREAM);
-TRACE_DEFINE_ENUM(VIRTIO_VSOCK_TYPE_SEQPACKET);
-
-#define show_type(val) \
-	__print_symbolic(val, \
-			 { VIRTIO_VSOCK_TYPE_STREAM, "STREAM" }, \
-			 { VIRTIO_VSOCK_TYPE_SEQPACKET, "SEQPACKET" })
-
-I guess SOCK_DGRAM handling should be added to print type of socket.
-
-Thanks, Arseniy
-
-> 
-> Thank you,
-> Amery
-> 
->>
->>> +
->>> +     return t_ops->send_pkt(skb);
->>> +out:
->>> +     kfree_skb(skb);
->>> +     return err;
->>> +}
->>> +
->>>  int
->>>  virtio_transport_dgram_enqueue(struct vsock_sock *vsk,
->>>                              struct sockaddr_vm *remote_addr,
->>>                              struct msghdr *msg,
->>>                              size_t dgram_len)
->>>  {
->>> -     return -EOPNOTSUPP;
->>> +     /* Here we are only using the info struct to retain style uniformity
->>> +      * and to ease future refactoring and merging.
->>> +      */
->>> +     struct virtio_vsock_pkt_info info = {
->>> +             .op = VIRTIO_VSOCK_OP_RW,
->>> +             .remote_cid = remote_addr->svm_cid,
->>> +             .remote_port = remote_addr->svm_port,
->>> +             .remote_flags = remote_addr->svm_flags,
->>> +             .msg = msg,
->>> +             .vsk = vsk,
->>> +             .pkt_len = dgram_len,
->>> +     };
->>> +
->>> +     return virtio_transport_dgram_send_pkt_info(vsk, &info);
->>>  }
->>>  EXPORT_SYMBOL_GPL(virtio_transport_dgram_enqueue);
->>>
->>> --
->>> 2.20.1
->>
->> Thanks, Arseniy
 
