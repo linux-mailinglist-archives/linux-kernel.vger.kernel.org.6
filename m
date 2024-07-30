@@ -1,311 +1,297 @@
-Return-Path: <linux-kernel+bounces-268079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADFD394201C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:55:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DFF294201F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B155EB24F2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:55:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2C111F24E11
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99F518CBE2;
-	Tue, 30 Jul 2024 18:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C09918B482;
+	Tue, 30 Jul 2024 18:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ifUrBHax"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="J+YemTIt"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2088.outbound.protection.outlook.com [40.107.223.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB41A18C920
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 18:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722365684; cv=none; b=eyBdhOHEmZLXCkSbcU5O+wAQsmMyCRUjNnMzyvtEtYnNN9bKY1qf5GEI0KTVxnsfBT7Mb8XdNuNdr9swYLtYrtA2rSG2DUVrUmVItqXI87PJ4BAucJS5WzLaqVdcrKR7ExCuc1oHyvE6JXu/e42PNrqy5wbl46UotsdncW0D36g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722365684; c=relaxed/simple;
-	bh=R+HZ2qhBwwDcRT2H1HHrYWuZkq79fE6W1A37S3ndvQM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UZRoWaz2W0QuIzcHUCdTmKwVQhHcW4MsMQBjJXNEYxxzH2GSmj3NjB4KVdks3O5K7Zgm3y9uYvzUNmwUfGyX+bWx+VF2we3CRTo1e7S1jOPtiI984M/9fl9AJPXLCvMJ/k7+Q9IBhiwHiZ0WLUd7FEU4KTYemRqtZU2P2gq2t3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ifUrBHax; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52efd530a4eso7726185e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:54:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722365681; x=1722970481; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z/1GE3IrS8NiIL30sftPH4qk7dd8iILO7+WJcRg0JuA=;
-        b=ifUrBHaxkgqk3swasG57luMUSS8ibHeLxL74FobVNlTOG2hSfez9opzJ8MrcOFdnYD
-         tOWBy9G4hf1IZxtzb/D/koDyrEd4hqdCQLjS7mW297YPPAQdvKcrBD4AQZdyH9EmP+PV
-         xv77vhLACAzWAK0vhbtxsp287ajG2b3DuW9M7KtrTcOyZuhDLxbYcD/5JUUXlfcWhHD6
-         kWxD+93NszCJxz1oPdtuhHgq0qvyKEW7UTcT8y+HkTskYkaJNHhv7v+pbeguJG3UfwBy
-         2yyuO5LT226Bjap2VWzVK/KGb1V8f3Ow8guxxaYEMUuzQMSHWB3bqZyzXRCZEGcOPPEl
-         841A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722365681; x=1722970481;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z/1GE3IrS8NiIL30sftPH4qk7dd8iILO7+WJcRg0JuA=;
-        b=DzLGJdU3JY2GsMG+L1V8IFo6n46Oz6WTVuDOLYRvU8wlgUUj3+/KtKW/fk8RovWUfi
-         wYm0zKLf630iZWr3XxzoM2TbKRpFoMq/pcM0591+X/a00PI3fgJaMACqi5mVgicQvuCt
-         Kc7nZcrrvUXL3AZFVPn/8OO8qemPmMDsIh0LPYlGNrVg8BpTAGS9XgWcJyCdqjls9T16
-         EikVp/HKH87VMHH0Crco01srvTy8+CW+x06iiWIc0bBekiz5mGpfQObSYdN/0oTh9Fox
-         BrWq4IHSzM79X4xbu+JAJPT8DIEeekCQeiNPx2BZuj58uraUH5bw5RBiFC8JotqNc2/w
-         3K7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXyzgKXZ0HupVo00aOXvML7iEfWkPcV/2m2HNhF11CE9DtGlQnVIYj4WSrQVqh62vzNlGlPDj3Ma1D4np35hTbYOKWCsH4mLoiTSNm6
-X-Gm-Message-State: AOJu0YxZUE88QQYtHz4nCcy5+rXoGME+gvcItGG7FSwzmPaxn4jNIQa0
-	LY/qD5mmMnyqCjod+ZvmSqNo9MbBr/3nWC3TV/uhe20OhxYg6NNW+UwU+V13ZMBz/NskIJ74MoL
-	LfLGqPe3Bv2R9B9aATy7x8AdgwPUnDG41TfZE
-X-Google-Smtp-Source: AGHT+IE/GCdWKR8yt8pDQ9ks7L5eK7ye0WxDPTIGgAQOFMUunS3XFIOR7/+yZQ/aJrpIfhJUMP8/iVjDMItj0X2ayBk=
-X-Received: by 2002:ac2:5210:0:b0:52e:767a:ada3 with SMTP id
- 2adb3069b0e04-5309b2ca86amr7130273e87.47.1722365680166; Tue, 30 Jul 2024
- 11:54:40 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D95E18C900;
+	Tue, 30 Jul 2024 18:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722365693; cv=fail; b=rUuKXLPxVCpc+vfvabNpXiLdgyK4C0MxwslUpHKFR3CFa+4x7gIyD+8Gd0vsAmpuoetxbLo2cv5ZPDmirCTIPfPhSOOTlF0ZuPw7apAi5BcUNKbjqmIjxs//cV3/YQdPHIuMYl6lVxekPWymwxbfys4EfLLtottqWq/JubEr8aU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722365693; c=relaxed/simple;
+	bh=A9AiBIhNB4emx/K6xc8akiVZcyQmssGw1Ja58JzbpJE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F+m8PxgigKsiHqgsE4Ftv/XQTHw6qNzo/5iSGKmn4OfeRaTY6lSH1zhmlJz56voQ2VHY18jlXZpEE0f34EiTpaauzpUFU/Oc94ciLpYxPLqay9bo26L9p1gpU6V6ZN/NAzSIlQ7xKNLNUT39zZWjPxLz8URicORAv2P0b0YnaJQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=J+YemTIt; arc=fail smtp.client-ip=40.107.223.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IcBhH5gDQKtvLM+3RVgPVCItWAWX2Y9lwVfzCZ/35ftxNXuVjvpSSPgD7qF4cx2eoBQ00MQ9otz5VwhsRLqjQiNXIzObkfwjvRZrg8LceoB0mZMykCoeiYKpCBSBiC+wcCv4x+uQYTfCGNk3no2k6NKy7qYkt09T8srYwX7JUUX1bKLjr6QTX75J9zu8lRrJ2BP/gSurTgLcD726smEbs6XrmaDH3cYSsCCPO41TJlIe2DxaRPpEpS7G0JynsekrjXiQ0qT98uhKhyRJ54NLOva8CPXMCHNHVWpCJ62uX85tgMEer5a9xGUE1djcVVQ7oPs/RjGyqQInA4meUV8qaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bOiU/RQiLyr76l6EQEz9SQV+TWwZAGxvTx701NtM2jc=;
+ b=CuI2Y0XuJ7ROqIMFVzeqh6tbKmyPQKtfMssRy6vLX9daX/VhNDMjhGZOLhUokD0Rq+2QqZXQub7psAgNTG+4rx5iRwSeSAAf1zRSGQYEZMe7vLgt/Fpb194mXgzPHnG2IUej9PNVwiueqVJMvOcsUxfr0GYsUSdWRZV7EoDcdSi2bgJJlGFnJwZ1EeMlcNP+AY/ztbydQpooydQEWmAhYC0lyNhywaPq031gdSxBRIQhEjOueShj/SL3DpHwZ7CR5Y36jMWViCxqVhVJv1KcUF5x+O5Ar1sg6mAz3iBYB8K2uCrRUjzHuoMoV2WdOOPWLR5jLU5JI3Vzojns8Y4GcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bOiU/RQiLyr76l6EQEz9SQV+TWwZAGxvTx701NtM2jc=;
+ b=J+YemTItrnVgKS/I86RxKWzdu7ubVsokc9FaNkt+lMuJNlC+PGJQQVNkuVV3RJUDiNgRMDcoWzwyilL+Z0//YkB/N8IUD/uVHUm7xdXC094xkhRF8xxHRFIJRKk2SxdgfDYBXDO8NQy7Lph7zjf4PL2Jj1wZdFAvPb7qTBtr58M=
+Received: from CH0PR13CA0004.namprd13.prod.outlook.com (2603:10b6:610:b1::9)
+ by DS7PR12MB5741.namprd12.prod.outlook.com (2603:10b6:8:70::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7807.27; Tue, 30 Jul 2024 18:54:48 +0000
+Received: from CH1PEPF0000AD7A.namprd04.prod.outlook.com
+ (2603:10b6:610:b1:cafe::a8) by CH0PR13CA0004.outlook.office365.com
+ (2603:10b6:610:b1::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21 via Frontend
+ Transport; Tue, 30 Jul 2024 18:54:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH1PEPF0000AD7A.mail.protection.outlook.com (10.167.244.59) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7828.19 via Frontend Transport; Tue, 30 Jul 2024 18:54:48 +0000
+Received: from titanite-d354host.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 30 Jul 2024 13:54:46 -0500
+From: Avadhut Naik <avadhut.naik@amd.com>
+To: <x86@kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-edac@vger.kernel.org>, <linux-acpi@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
+	<rafael@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<rostedt@goodmis.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
+	<james.morse@arm.com>, <airlied@gmail.com>, <yazen.ghannam@amd.com>,
+	<john.allen@amd.com>, <avadnaik@amd.com>
+Subject: [PATCH v3 3/4] x86/mce/apei: Handle variable register array size
+Date: Tue, 30 Jul 2024 13:54:05 -0500
+Message-ID: <20240730185406.3709876-4-avadhut.naik@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240730185406.3709876-1-avadhut.naik@amd.com>
+References: <20240730185406.3709876-1-avadhut.naik@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <172139415725.3084888.13770938453137383953.stgit@firesoul>
- <CAJD7tkaVwpYWu_c+vgr7mJiWzFofq9jmx-hyOx1i5kkHWc62dg@mail.gmail.com> <c55f852b-39b7-4bf9-a054-0e7933912730@kernel.org>
-In-Reply-To: <c55f852b-39b7-4bf9-a054-0e7933912730@kernel.org>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 30 Jul 2024 11:54:04 -0700
-Message-ID: <CAJD7tkaZuiSCj4RZ2v6jOCtwiv++YNQxA0x6MEp-HrHaYO6_9g@mail.gmail.com>
-Subject: Re: [PATCH V8 1/2] cgroup/rstat: Avoid flushing if there is an
- ongoing overlapping flush
-To: Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: tj@kernel.org, cgroups@vger.kernel.org, shakeel.butt@linux.dev, 
-	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
-	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7A:EE_|DS7PR12MB5741:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4199e651-b529-42f5-09e7-08dcb0c915da
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?OLG4YDvG5FvL5UMgOj+fE1rSrHFMD8m7zKQnNURMTZ0mVzlArHv8c+VvPEqr?=
+ =?us-ascii?Q?tq3YhDHA9P+Ab8xyv8tITmzO+jJZI0vftZDHa90UFOjIaMGFW2higa3jzsKI?=
+ =?us-ascii?Q?oFwZllfdXrk+UvE5gZOqXN44SsQQeYIDDUHqyrDWRqj07yIQJVKVX2abqzDN?=
+ =?us-ascii?Q?AykSH5iXgCtpQIDRFXRYhKgPPqE8ilpHUO2oFeExPEE+LHSA5YOvkcBfTiPJ?=
+ =?us-ascii?Q?dBMbPZPs+8iWdQdf5fxodenf4XoInmnyHwCRkmgOJzqbWGTB3FI2pztnSzvf?=
+ =?us-ascii?Q?lxnG/7hdf012T+DC7sTaK8MbLtw4PJHjGg8ONCLNXvJGHlGIkEw9e0F/ehMx?=
+ =?us-ascii?Q?3375FUKynjTUHaTziNVezhz0WgDXekbReZxb2q7WNF2nlkWKHv+ZSUkzK8uk?=
+ =?us-ascii?Q?kjjPOqKaAaUn+DmzCC6cpTj32wKstlqZZxr7LxLVEjyQeNZQCSoGCMpaw9UU?=
+ =?us-ascii?Q?SNAZ7cpwxvCHuol9yqHx9RYKcObUlKoAT+dkMYDPHVUJgiTowULCYv1g+kkC?=
+ =?us-ascii?Q?p1h927rieXKdC9YaUz3sSEm4QR+aKcUQbm9AEZeU4X9teIkSE8SnIHUbP4u1?=
+ =?us-ascii?Q?flrGash1RPHJ88TDSEDpEJXGCUK2bA629N8mWYQN3RuZ8Pl8oSXUyfMHbj1e?=
+ =?us-ascii?Q?niDu5TiM+xpgOuTvXLPhN+WbeooU62ESTQJuysJEVNx2Zo1AuUigAwH8ukEG?=
+ =?us-ascii?Q?L2/cYsLPNCcTPnD0uMI60YlLjnHKS+4Ua2WeQGkCnk2nupp3fnbA+hTUayGB?=
+ =?us-ascii?Q?O+Otd/Tv4O3V84vYTl89DadjRVQjt5I8hEy+j5FKLnhxCjoWKmrk1IFA7T56?=
+ =?us-ascii?Q?onTMxueaKPhSzVT9+qZ4xQYEMFbpKR2RMhHLrfUkF0ROQ9fGkQwmKgScfyhS?=
+ =?us-ascii?Q?eLSPZxRRuWCoyv+ztlrTdN99ocimHz1Y45EWHKlYNOG+nTawFanofU6QOtU6?=
+ =?us-ascii?Q?RIsasn4lFFzZ80w5kU+Ns4oDLKvby193BN7ZJOtBiu++sCTcYRYUx2us+QH1?=
+ =?us-ascii?Q?XT9rQFJTFCyilYQxpjAXhMQQDNid1wQ159I7VCp2Q4ScbNtP75kXg9a+3e0r?=
+ =?us-ascii?Q?IAr8rXs7vE/VXBehU/3v1e4fQfR7jlTSL788sIasqRfv4A+vFNtcKymuhUqr?=
+ =?us-ascii?Q?JkhxQKEaHnOPDIHOuGaZBtcihDOUAtp8+i/GbU8mZfL9e/pvMPDBXsxKA4bc?=
+ =?us-ascii?Q?sYUvubgtYw9AS87lbJ0eb9BYWUNKRkDILpQ2q4udxy6nn0TmYAd0brvJLVc4?=
+ =?us-ascii?Q?DH4c6ymROZNk5EHRyqNgN4mcEWEdXQYDjWyFFcBDbXGgLqckO2HDkUaBv78b?=
+ =?us-ascii?Q?kiXslUI72U6EjhQ/Kb/RPSNrEBN/elbfF2E3N48bziikJ1DYc/nYCVi/5Txb?=
+ =?us-ascii?Q?n9sZMxr6rTqCDQADpzmS4mf4j+TfAIDosz2+6iE4aB3lhhSKuA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 18:54:48.0512
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4199e651-b529-42f5-09e7-08dcb0c915da
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD7A.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5741
 
-[..]
-> >> +static inline void __cgroup_rstat_lock(struct cgroup *cgrp, int cpu_in_loop,
-> >> +                                      bool already_contended)
-> >>          __acquires(&cgroup_rstat_lock)
-> >>   {
-> >> -       bool contended;
-> >> +       bool locked = false;
-> >>
-> >> -       contended = !spin_trylock_irq(&cgroup_rstat_lock);
-> >> -       if (contended) {
-> >> -               trace_cgroup_rstat_lock_contended(cgrp, cpu_in_loop, contended);
-> >> +       if (already_contended) /* Skip trylock if already contended */
-> >> +               locked = __cgroup_rstat_trylock(cgrp, cpu_in_loop);
-> >
-> > Should this be the other way around?
-> >
->
-> I think it is correct, but I used it wrong in once place, in
-> cgroup_rstat_flush_hold(), as cgroup_rstat_trylock_flusher() returning
-> false doesn't mean it was already_contended, but that ongoing flusher
-> "skipped" (and waited for) a flush.  I need to correct this.
+From: Yazen Ghannam <yazen.ghannam@amd.com>
 
-Something isn't adding up here as well. The comment says skip trylock
-if already contended, then if already_contended is true we do a
-trylock. Am I confusing myself here? :)
+ACPI Boot Error Record Table (BERT) is being used by the kernel to
+report errors that occurred in a previous boot. On some modern AMD
+systems, these very errors within the BERT are reported through the
+x86 Common Platform Error Record (CPER) format which consists of one
+or more Processor Context Information Structures. These context
+structures provide a starting address and represent an x86 MSR range
+in which the data constitutes a contiguous set of MSRs starting from,
+and including the starting address.
 
->
->
-> >> +
-> >> +       if (!locked) {
-> >>                  spin_lock_irq(&cgroup_rstat_lock);
-> >> +               trace_cgroup_rstat_locked(cgrp, cpu_in_loop, true);
-> >>          }
-> >> -       trace_cgroup_rstat_locked(cgrp, cpu_in_loop, contended);
-> >>   }
-> >>
-> >>   static inline void __cgroup_rstat_unlock(struct cgroup *cgrp, int cpu_in_loop)
-> >> @@ -299,6 +316,72 @@ static inline void __cgroup_rstat_unlock(struct cgroup *cgrp, int cpu_in_loop)
-> >>          spin_unlock_irq(&cgroup_rstat_lock);
-> >>   }
-> >>
-> >> +#define MAX_WAIT       msecs_to_jiffies(100)
-> >> +/**
-> >> + * cgroup_rstat_trylock_flusher - Trylock that checks for on ongoing flusher
-> >> + * @cgrp: target cgroup
-> >> + *
-> >> + * Function return value follow trylock semantics. Returning true when lock is
-> >> + * obtained. Returning false when not locked and it detected flushing can be
-> >> + * skipped as another ongoing flusher took care of the flush.
-> >> + */
-> >> +static bool cgroup_rstat_trylock_flusher(struct cgroup *cgrp)
-> >> +{
-> >> +       struct cgroup *ongoing;
-> >> +       bool locked;
-> >> +
-> >> +       /*
-> >> +        * Check if ongoing flusher is already taking care of this, if
-> >> +        * we are a descendant skip work, but wait for ongoing flusher
-> >> +        * to complete work.
-> >> +        */
-> >> +retry:
-> >> +       ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
-> >> +       if (ongoing && cgroup_is_descendant(cgrp, ongoing)) {
-> >
-> > The discussion about cgrp_rstat_ongoing_flusher possibly going away in
-> > parallel never reached a conclusion AFAICT. Should we use
-> > cgroup_tryget() here to get a ref on 'ongoing' until wait completes?
->
-> I like the cgroup_tryget() idea, but I though we needed to do this on
-> the 'cgrp' that will be waiting in the completion queue on 'ongoing'?
+It's common, for AMD systems that implement this behavior, that the
+MSR range represents the MCAX register space used for the Scalable MCA
+feature. The apei_smca_report_x86_error() function decodes and passes
+this information through the MCE notifier chain. However, this function
+assumes a fixed register size based on the original HW/FW implementation.
 
-I think we need to protect the 'ongoing' cgroup because it could go
-away between reading cgrp_rstat_ongoing_flusher and using it to check
-if we are a descendant and wait for its completion.
+This assumption breaks with the addition of two new MCAX registers viz.
+MCA_SYND1 and MCA_SYND2. These registers are added at the end of the
+MCAX register space, so they won't be included when decoding the CPER
+data.
 
-The lifetime of 'cgrp' should be handled by the caller, right?
+Rework apei_smca_report_x86_error() to support a variable register array
+size. This covers any case where the MSR context information starts at
+the MCAX address for MCA_STATUS and ends at any other register within
+the MCAX register space.
 
->
-> > This shouldn't add much complexity AFAICT.
->
-> >
-> > I think just using RCU here wouldn't be enough as we can flush rstat
-> > after the RCU grace period when a cgroup is being freed.
-> >
-> >> +               wait_for_completion_interruptible_timeout(
-> >> +                       &ongoing->flush_done, MAX_WAIT);
-> >> +               /* TODO: Add tracepoint here */
-> >> +               return false;
-> >> +       }
-> >> +
-> >> +       locked = __cgroup_rstat_trylock(cgrp, -1);
-> >> +       if (!locked) {
-> >> +               /* Contended: Handle losing race for ongoing flusher */
-> >> +               if (!ongoing && READ_ONCE(cgrp_rstat_ongoing_flusher))
-> >> +                       goto retry;
-> >> +
-> >> +               __cgroup_rstat_lock(cgrp, -1, true);
-> >> +       }
-> >> +       /*
-> >> +        * Obtained lock, record this cgrp as the ongoing flusher.
-> >> +        * Due to lock yielding, we might obtain lock while another
-> >> +        * ongoing flusher (that isn't a parent) owns ongoing_flusher.
-> >> +        */
-> >> +       ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
-> >> +       if (!ongoing) {
-> >
-> > I think we don't need protection here since we never dereference
-> > 'cgrp_rstat_ongoing_flusher', but I think it may be clearer to
-> > directly check it to make this obvious:
-> >
-> > if (!READ_ONCE(cgrp_rstat_ongoing_flusher)) {
-> >
->
-> Makes sense, but I use the 'ongoing' variable in the next patch in a
-> tracepoint to diagnose this happening.
->
-> > Perhaps we can also explicitly mention in the comment why we do not
-> > need any protection here, but I am not sure how helpful that will be.
-> >
-> >> +               /*
-> >> +                * Limit to top-level as lock yielding allows others to obtain
-> >> +                * lock without being ongoing_flusher. Leading to cgroup that
-> >> +                * isn't descendant to obtain lock via yielding. So, prefer
-> >> +                * ongoing_flusher with many descendants.
-> >> +                */
-> >> +               if (cgrp->level < 2) {
-> >
-> > This covers roots and top-level cgroups under them, right? Did them
-> > improve the numbers you were observing?
-> >
->
-> The numbers from prod improved significantly, then cadvisor and kswapd
-> collide.
+Add code comments indicating the MCAX register at each offset.
 
-Do you mean that the numbers improved compared to without this patch,
-or compared with allowing all cgroups to be the ongoing flusher?
+[Yazen: Add Avadhut as co-developer for wrapper changes.]
 
-The latter was my question. For the former, I definitely agree this
-patch improves things based on the data.
+Co-developed-by: Avadhut Naik <avadhut.naik@amd.com>
+Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+---
+Changes in v2:
+[1] https://lore.kernel.org/linux-edac/20240521125434.1555845-1-yazen.ghannam@amd.com/
+[2] https://lore.kernel.org/linux-edac/20240523155641.2805411-1-yazen.ghannam@amd.com/
 
-> But cadvisor still flush a couple of level 1 cgroups, and can still
-> cause lock contention for level 0 and other non-decendent cgroups.
->
-> 11:30:08 @ongoing_flusher_yield[0]: 68
-> @ongoing_flusher_cnt[kswapd11]: 4
-> @ongoing_flusher_cnt[kswapd2]: 4
-> @ongoing_flusher_cnt[kswapd5]: 4
-> @ongoing_flusher_cnt[handled_race]: 4
-> @ongoing_flusher_cnt[kswapd9]: 5
-> @ongoing_flusher_cnt[kswapd7]: 5
-> @ongoing_flusher_cnt[kswapd4]: 5
-> @ongoing_flusher_cnt[kswapd6]: 5
-> @ongoing_flusher_cnt[kswapd1]: 5
-> @ongoing_flusher_cnt[kswapd8]: 6
-> @ongoing_flusher_cnt[kswapd10]: 6
-> @ongoing_flusher_cnt[kswapd3]: 6
-> @ongoing_flusher_cnt[kswapd0]: 6
-> @ongoing_flusher_cnt[cadvisor]: 8
-> @ongoing_flusher_cnt[all]: 65
-> @cnt[tracepoint:cgroup:cgroup_ongoing_flusher_yield]: 4
-> @cnt[tracepoint:cgroup:cgroup_rstat_lock_contended]: 26
-> @cnt[tracepoint:cgroup:cgroup_ongoing_flusher_wait]: 60
-> @cnt[kfunc:vmlinux:cgroup_rstat_flush_locked]: 475
-> @cnt[tracepoint:cgroup:cgroup_rstat_locked]: 1953
-> @lock_contended[normal, 1]: 2
-> @lock_contended[normal, 3]: 8
-> @lock_contended[normal, 0]: 16
->
-> We see that level 0 observe lock_contended 16 times, but we should
-> subtract 4 as that was "handled_race" cases. So 12 times, the root-cgrp
-> was spinning on the lock. In total (26-4) 22 times flushers contented on
-> the lock.  Given 475 flushes happen within this 1 sec period, every 2.1
-> ms, then I do call it it a significant reduction for lock contention.
+1. Drop dependencies on sets [1] and [2] above and rebase on top of
+tip/master.
 
-Agreed :)
+Changes in v3:
+1. Incorporate suggested touchup.
+2. Fix SoB chain to properly reflect the patch path.
+---
+ arch/x86/kernel/cpu/mce/apei.c | 72 +++++++++++++++++++++++++++-------
+ 1 file changed, 58 insertions(+), 14 deletions(-)
 
->
->
-> > AFAICT, we can remove this restriction completely if/when we use a
-> > mutex and support a single ongoing flusher. If so, let's explicitly
-> > mention this, perhaps:
-> >
->
-> Well... I'm still not convinced that it makes sense to have level >= 2
-> be the ongoing flusher.
->
-> E.g. if a level 2 cgroup becomes ongoing flusher, and kswapd starts 12
-> NUMA flushes at the same time, then the code will have these 12 kswapd
-> threads spin on the lock, until ongoing flusher finishes. That is likely
-> what happened above (for a level 1).  These 12 spinning (root) flushers
-> will not recheck ongoing_flusher and will all flush the root
-> (unnecessarily 11 times).
+diff --git a/arch/x86/kernel/cpu/mce/apei.c b/arch/x86/kernel/cpu/mce/apei.c
+index b8f4e75fb8a7..5949fc103be4 100644
+--- a/arch/x86/kernel/cpu/mce/apei.c
++++ b/arch/x86/kernel/cpu/mce/apei.c
+@@ -69,9 +69,9 @@ EXPORT_SYMBOL_GPL(apei_mce_report_mem_error);
+ int apei_smca_report_x86_error(struct cper_ia_proc_ctx *ctx_info, u64 lapic_id)
+ {
+ 	const u64 *i_mce = ((const u64 *) (ctx_info + 1));
++	unsigned int cpu, num_regs;
+ 	struct mce_hw_err err;
+ 	struct mce *m = &err.m;
+-	unsigned int cpu;
+ 
+ 	memset(&err, 0, sizeof(struct mce_hw_err));
+ 
+@@ -91,16 +91,12 @@ int apei_smca_report_x86_error(struct cper_ia_proc_ctx *ctx_info, u64 lapic_id)
+ 		return -EINVAL;
+ 
+ 	/*
+-	 * The register array size must be large enough to include all the
+-	 * SMCA registers which need to be extracted.
+-	 *
+ 	 * The number of registers in the register array is determined by
+ 	 * Register Array Size/8 as defined in UEFI spec v2.8, sec N.2.4.2.2.
+-	 * The register layout is fixed and currently the raw data in the
+-	 * register array includes 6 SMCA registers which the kernel can
+-	 * extract.
++	 * Sanity-check registers array size.
+ 	 */
+-	if (ctx_info->reg_arr_size < 48)
++	num_regs = ctx_info->reg_arr_size >> 3;
++	if (!num_regs)
+ 		return -EINVAL;
+ 
+ 	mce_setup(m);
+@@ -118,12 +114,60 @@ int apei_smca_report_x86_error(struct cper_ia_proc_ctx *ctx_info, u64 lapic_id)
+ 
+ 	m->apicid = lapic_id;
+ 	m->bank = (ctx_info->msr_addr >> 4) & 0xFF;
+-	m->status = *i_mce;
+-	m->addr = *(i_mce + 1);
+-	m->misc = *(i_mce + 2);
+-	/* Skipping MCA_CONFIG */
+-	m->ipid = *(i_mce + 4);
+-	m->synd = *(i_mce + 5);
++
++	/*
++	 * The SMCA register layout is fixed and includes 16 registers.
++	 * The end of the array may be variable, but the beginning is known.
++	 * Cap the number of registers to expected max (15).
++	 */
++	if (num_regs > 15)
++		num_regs = 15;
++
++	switch (num_regs) {
++	/* MCA_SYND2 */
++	case 15:
++		err.vendor.amd.synd2 = *(i_mce + 14);
++		fallthrough;
++	/* MCA_SYND1 */
++	case 14:
++		err.vendor.amd.synd1 = *(i_mce + 13);
++		fallthrough;
++	/* MCA_MISC4 */
++	case 13:
++	/* MCA_MISC3 */
++	case 12:
++	/* MCA_MISC2 */
++	case 11:
++	/* MCA_MISC1 */
++	case 10:
++	/* MCA_DEADDR */
++	case 9:
++	/* MCA_DESTAT */
++	case 8:
++	/* reserved */
++	case 7:
++	/* MCA_SYND */
++	case 6:
++		m->synd = *(i_mce + 5);
++		fallthrough;
++	/* MCA_IPID */
++	case 5:
++		m->ipid = *(i_mce + 4);
++		fallthrough;
++	/* MCA_CONFIG */
++	case 4:
++	/* MCA_MISC0 */
++	case 3:
++		m->misc = *(i_mce + 2);
++		fallthrough;
++	/* MCA_ADDR */
++	case 2:
++		m->addr = *(i_mce + 1);
++		fallthrough;
++	/* MCA_STATUS */
++	case 1:
++		m->status = *i_mce;
++	}
+ 
+ 	mce_log(&err);
+ 
+-- 
+2.34.1
 
-Hmm regardless of whether or not the level-2 cgroup becomes the
-ongoing flusher, the kswapd threads will all spin on the lock anyway
-since none of them can be the ongoing flusher until the level-2 cgroup
-finishes. Right?
-
-Is the scenario you have in mind that the level-2 cgroup starts
-flushing at the same time as kswapd, so there is a race on who gets to
-be the ongoing flusher? In this case as well, whoever gets the lock
-will be the ongoing flusher anyway.
-
-Not allowing whoever is holding the lock to be the ongoing flusher
-based on level is only useful when we can have multiple ongoing
-flushers (with lock yielding). Right?
-
-Perhaps I am missing something here.
-
->
-> So, I don't think it is a good idea to have anything else that the root
-> as the ongoing flusher.
->
-> Can you explain/convince me why having sub-cgroups as ongoing flusher is
-> an advantage?
-
-I just don't see the benefit of the special casing here as I mentioned
-above. If I missed something please let me know.
-
->
-> --Jesper
->
-> > XXX: Remove this restriction if/when lock yielding is removed
-> >
-[..]
 
