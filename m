@@ -1,195 +1,106 @@
-Return-Path: <linux-kernel+bounces-267569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 714039412EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:17:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D48E9412E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A048D1C2311B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:17:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DAA3B21AEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB3919EECA;
-	Tue, 30 Jul 2024 13:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5876C19FA8F;
+	Tue, 30 Jul 2024 13:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SFbNY/iz"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="HQAazus6"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47BB2CA7;
-	Tue, 30 Jul 2024 13:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A04F19EECA;
+	Tue, 30 Jul 2024 13:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722345433; cv=none; b=RSsmBq/ZHeH2hyBEMCoYgIdJA0axbVNqsdIKOZHm2lhRvtlKmzfI3o2qYGNOLN0N5eCGFdnRbKowoGtX9YFRwlS4eDUx78eUHnPrZlsowVSVA9usrHZ5xnAnfgDpCkdMPjY1E1BQJzTrIIG+59hcL6/e4Ickuq48vj0xi/Az7PU=
+	t=1722345405; cv=none; b=HBy23JuoZjh0wnCYl9Hud+FAq8goM6GdYTVWIknsXJ24NEVmQ/hgTVK26TvHJBoqwMqueJQ/Sam0F7sjIUk9Ma+rMV39P4jhs9Rf2szNAah6UTDsql2UPlbaPZsRqJvbUbzjurDoV/F0pMwKkFxzJD9JYjMl65xo0wn9yCmCSiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722345433; c=relaxed/simple;
-	bh=PpgPcz4mJgFasB7hcoUur2pfvf6LkgH1ozOGEkjpKPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WZTJ8upowNsTNRH2SBL1Gzu2FIqTnzU1D64Fr6CdGQuie+nOYP/dyEzntXSnSXYObf2z5Y3TViuFeG/W25NgrXqcPm464dkE1KtHyK86mXFIfDgDGKHMZV02FXfEECzQ+kVjEPbv4+dakagKFb8IDseqPGeMMzeJzwdS50MOaR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SFbNY/iz; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A4B1940E01CD;
-	Tue, 30 Jul 2024 13:17:05 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id t4KCJeA0thJX; Tue, 30 Jul 2024 13:17:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1722345421; bh=3mmWlxNZdjshKUX8r4jOpJ3VKzvjNoDxxlHvf6e8xD8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SFbNY/iz5BcDMeQbxp+X3vfPiEdb2t4PxqUSRoXozRWhAmaBtlRDGuE08MO8YNiHd
-	 0kWk3d4kQ/jr9kIeS6dQJXMe5sWFb8iuXKz0+Wj0F9/iv63K5PmspTFI8gzv32bKeX
-	 G4NZNegTN3fny0rb7f/4VXsAzxTCriaoLrIFj+97x0hkLjB/LYxiwju7zwiR6+Anp4
-	 3TZYTkAeB1pArVh3DaSjjIK+pUuiAsHAvA+7Br2lJT1DCdMOAyjKZnwIhx6DzxcPDQ
-	 rXUVdcyDcYBHJCuduN7ee6Q21ZTKrh+eODkc7zm60TqMNWa4ygLVjpLgCnxz+Cqo5o
-	 mlNHN1sQ6B7IvLFGQ3vEdwIdWROgKr/ojk87Vf7/PW9a3ScLuYhU+D6BadXeJr1RNx
-	 7//S/hoxIa9wg6ng3iAxCcdwF+Sep8dyJEEzietrnQgH1E8GlngfVhkbpwtkJYNpGO
-	 yaxScn/BQtyomvosHryIu6U0RFg9TtoCMyfcRal5cUIk72/6Y6xpHKne7Bq+kH3Xxy
-	 164Zd9i193avNZ1IsrsL1Vbo8QrNYKfktbGsQjg7ym1U193nMYcqeGo7U69xU3dLXC
-	 Oatzf5Oq8aqMAzWOR0rnvLY6E63LmKMrPj7oSi0EdjRzJt3h+Kd2dIIdUAfH0IqvwJ
-	 tXYi7emc/bZwNzvSN1hU2JXU=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BAD0840E01A8;
-	Tue, 30 Jul 2024 13:16:16 +0000 (UTC)
-Date: Tue, 30 Jul 2024 15:16:11 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: shiju.jose@huawei.com
-Cc: linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, tony.luck@intel.com,
-	rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
-	dan.j.williams@intel.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, david@redhat.com, Vilas.Sridharan@amd.com,
-	leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
-	jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
-	naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
-	somasundaram.a@hpe.com, erdemaktas@google.com, pgonda@google.com,
-	duenwen@google.com, mike.malvestuto@intel.com, gthelen@google.com,
-	wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
-	wbs@os.amperecomputing.com, nifan.cxl@gmail.com,
-	tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
-	roberto.sassu@huawei.com, kangkang.shen@futurewei.com,
-	wanghuiqiang@huawei.com, linuxarm@huawei.com
-Subject: Re: [PATCH v10 01/11] EDAC: Add generic EDAC RAS control feature
- driver
-Message-ID: <20240730131611.GAZqjnm9D4ZJoGBIuZ@fat_crate.local>
-References: <20240726160556.2079-1-shiju.jose@huawei.com>
- <20240726160556.2079-2-shiju.jose@huawei.com>
+	s=arc-20240116; t=1722345405; c=relaxed/simple;
+	bh=zj0aIYvulMLaTJ7jE+J2kdKeVFkwwt29ptI8jdT24ac=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ub5NO6ASK2wRtaVgcRBqA3oMCqzRdZMaW2Awe49enxcSPvSn7QxLHjZx2TJxGbAf9Nd/7WQoBLdwzeBJmVy1AIRiapph6JFG40VhDqeJGTVvBrb/vWcevCLDPSvIh3p9Lp6QDBnpPLSz+N+sZZsyTdwBZro8mKvojpIPDG3G9Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=HQAazus6; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UAeME7001880;
+	Tue, 30 Jul 2024 06:16:39 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=RADa8Ey5n2vTN7vraUqNbAm
+	IjccE2rtWUFiiMqI//WQ=; b=HQAazus67isubswKRp/WgN5GrNgGns7wIJ+bn8r
+	j+TjLQVtHYYO2UaN84/e1enegjXiWOdo77MBLuaHa6PnFEAglKPZcZSBS5jAPnv2
+	9lDBPZviVp7zvyRdBr+LmSHvY1okOJNdPhGIQATj5VyCSUMi0YE22RxoMSgsG/lh
+	ZA+AlB7H3uNjcdvR9+1qYOdTtqpD/QSfqapIWzPXHxSP2rml+xOUWgRbSsodmAwE
+	1OIt6YROKYAD0g61ihe4v5TzShgoEguSvncL4FR+k4bqjcyb0CkB+Tnr/s4vm0kj
+	kfxvjpOvi7JQwm+GqUqltgG5kxezygexsCJSZ1DBCwjWfBg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 40pnp5ja8q-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 06:16:38 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 30 Jul 2024 06:16:37 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 30 Jul 2024 06:16:37 -0700
+Received: from Dell2s-9.sclab.marvell.com (unknown [10.110.150.250])
+	by maili.marvell.com (Postfix) with ESMTP id E99D05B692F;
+	Tue, 30 Jul 2024 06:16:36 -0700 (PDT)
+From: Witold Sadowski <wsadowski@marvell.com>
+To: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: <broonie@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <pthombar@cadence.com>, Witold Sadowski <wsadowski@marvell.com>
+Subject: [PATCH 1/1] spi: cadence: Add 64BIT Kconfig dependency
+Date: Tue, 30 Jul 2024 06:16:26 -0700
+Message-ID: <20240730131627.1874257-1-wsadowski@marvell.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240726160556.2079-2-shiju.jose@huawei.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: 5OAndy0DIvkuBJ6ZpACMykqzjd_s7uRy
+X-Proofpoint-ORIG-GUID: 5OAndy0DIvkuBJ6ZpACMykqzjd_s7uRy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-30_11,2024-07-30_01,2024-05-17_01
 
-On Fri, Jul 26, 2024 at 05:05:45PM +0100, shiju.jose@huawei.com wrote:
-> From: Shiju Jose <shiju.jose@huawei.com>
-> 
-> Add generic EDAC driver supports registering RAS features supported
-> in the system. The driver exposes feature's control attributes to the
-> userspace in /sys/bus/edac/devices/<dev-name>/<ras-feature>/
-> 
-> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-> ---
->  drivers/edac/Makefile            |   1 +
->  drivers/edac/edac_ras_feature.c  | 181 +++++++++++++++++++++++++++++++
->  include/linux/edac_ras_feature.h |  66 +++++++++++
->  3 files changed, 248 insertions(+)
->  create mode 100755 drivers/edac/edac_ras_feature.c
->  create mode 100755 include/linux/edac_ras_feature.h
-> 
-> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
-> index 9c09893695b7..c532b57a6d8a 100644
-> --- a/drivers/edac/Makefile
-> +++ b/drivers/edac/Makefile
-> @@ -10,6 +10,7 @@ obj-$(CONFIG_EDAC)			:= edac_core.o
->  
->  edac_core-y	:= edac_mc.o edac_device.o edac_mc_sysfs.o
->  edac_core-y	+= edac_module.o edac_device_sysfs.o wq.o
-> +edac_core-y	+= edac_ras_feature.o
+xSPI block requires 64 bit operation for proper Marvell SDMA handling.
+Disallow bulding on targets without 64 bit support.
 
-EDAC and RAS and feature?!
+Signed-off-by: Witold Sadowski <wsadowski@marvell.com>
+---
+ drivers/spi/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Oh boy.
-
-EDAC == RAS.
-
-"feature" is silly.
-
-Looking at the code below, you're registering an EDAC device.
-- edac_ras_dev_register().
-
-So why isn't this thing in edac_device.c?
-
-> diff --git a/include/linux/edac_ras_feature.h b/include/linux/edac_ras_feature.h
-> new file mode 100755
-> index 000000000000..8f0e0c47a617
-> --- /dev/null
-> +++ b/include/linux/edac_ras_feature.h
-> @@ -0,0 +1,66 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * EDAC RAS control features.
-> + *
-> + * Copyright (c) 2024 HiSilicon Limited.
-> + */
-> +
-> +#ifndef __EDAC_RAS_FEAT_H
-> +#define __EDAC_RAS_FEAT_H
-> +
-> +#include <linux/types.h>
-> +#include <linux/edac.h>
-> +
-> +#define EDAC_RAS_NAME_LEN	128
-> +
-> +enum edac_ras_feat {
-> +	RAS_FEAT_SCRUB,
-> +	RAS_FEAT_ECS,
-> +	RAS_FEAT_MAX
-> +};
-> +
-> +struct edac_ecs_ex_info {
-> +	u16 num_media_frus;
-> +};
-> +
-> +/*
-> + * EDAC RAS feature information structure
-> + */
-> +struct edac_scrub_data {
-> +	const struct edac_scrub_ops *ops;
-> +	void *private;
-> +};
-> +
-> +struct edac_ecs_data {
-> +	const struct edac_ecs_ops *ops;
-> +	void *private;
-> +};
-
-So each "feature" would require a separate struct type?
-
-Why don't you define a *single* struct which accomodates any RAS
-functionality?
-
-Thx.
-
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index a2c99ff33e0a..d7b5c9b5c676 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -267,7 +267,7 @@ config SPI_CADENCE_QUADSPI
+ 
+ config SPI_CADENCE_XSPI
+ 	tristate "Cadence XSPI controller"
+-	depends on OF && HAS_IOMEM
++	depends on OF && HAS_IOMEM && 64BIT
+ 	depends on SPI_MEM
+ 	help
+ 	  Enable support for the Cadence XSPI Flash controller.
 -- 
-Regards/Gruss,
-    Boris.
+2.43.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
