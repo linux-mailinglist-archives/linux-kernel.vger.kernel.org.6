@@ -1,87 +1,117 @@
-Return-Path: <linux-kernel+bounces-266732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D545940603
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:40:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BAE1940605
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A9BEB21FCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:40:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF816B22214
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BF21494A9;
-	Tue, 30 Jul 2024 03:40:07 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4DD14B06A;
+	Tue, 30 Jul 2024 03:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DXRtoH4O"
+Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9518D22315
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 03:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C83D22315;
+	Tue, 30 Jul 2024 03:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722310807; cv=none; b=k1BtiMsbzkNEm10lbpNV7rciIo096x7rmf558zuF5Hh2KReTZU5z7Er79XdB5lQ8+qiC3rQqdUleYrEeOXrb9UK0QgaANWTGePbCZVSzVBGE7sbblp+twAyXN/Sd9LHziAq7W4aGuB4rF8T76np/0zSGof9ERDqBQLc2FOas/0k=
+	t=1722310837; cv=none; b=mr8ughudO0VwKZrHUQ9phujFpgvBZN1byqw1+KcT/RhvdG+oo6dI70WgOF8s3y1MKf90lvvlm83rhqRzmIzAb2VTCGv++Ij5asKcyzSbdCVUxkC0Qpn/H+8IDqzQVOuhGzRSKKZgsvLukfus0JDtVhrmem6Qect4j9K1wsuD27Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722310807; c=relaxed/simple;
-	bh=7nNEom+tKFy1he5iLNLwo2GnAaSCHd/Fs0n8B2jFjLs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OPQkJW/0IjfwKTPbzueg8ih9IS+JLPFXJziDZnEmIXBQQHmCk1nPYcb9NGZyR710pDFaoFAEE9GoH3Yo1w7zPJ9HSQi7RW/ITON4va0UfoehnkX1TgORdtOtmPd2A5d20huW8fPtKDjeUn2SydtEg+iD0lHfYRrPILc/qEiArZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81d1b92b559so620248639f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:40:05 -0700 (PDT)
+	s=arc-20240116; t=1722310837; c=relaxed/simple;
+	bh=YIVJK7qavlVu/lpvL1z7Y0qhDDDzATFp5dl2mGa9m7U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CNZr9IXpgQK12k1XVllOiuJvgVEEHSGQm2gDGHkv2Ba/WlgNMbHACyglbUlrHltHgBBRFcANDxB0PVLQiVOPIOH6fKt02PAnOQQzO6n/WE/8C6LLqwYNDNV9RUtYZQ/nE8/vz4OW2wij+DOHXbKJGpPXnfQ8oWZTdID2mgxBVio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DXRtoH4O; arc=none smtp.client-ip=209.85.215.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-7b396521ff6so17253a12.1;
+        Mon, 29 Jul 2024 20:40:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722310836; x=1722915636; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wJtNZjx9etI7bcF/1fKvF0Zp9I41hOiDShU7BUYb0wY=;
+        b=DXRtoH4OsSNiSR8t67HraRXdVjv3swX1JbzSw0NmfIYTa5OTcvt+P4IYZq/WmAIj4N
+         6vc994tLsKid5eg0CEwV+rm/TPqiFCEY2/aGgB5UoWIm+lRxx+osci+WJ4AcLOvO6YAb
+         G1uQ4d4IhF+HAo5mvxU47D9DgTrSs9bF/tgjp4c+F62mH0wW3mrjOK9jyCmxU6ddGIqi
+         djlhbbriWBEBidXh+92A1mLq7kWJHLjvBiRNKTTiWsJynbk1tLkNDWdglPNQi3NHDDeQ
+         8VrNo2FbkE36g5IG0ti1/zohr3EWRyQf2VPdJUPpkM6wIUaQdtkPUwg/DJv/K2v0gAfZ
+         z3KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722310805; x=1722915605;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fkY2tHjimGZZhkUzaV0v8TP/RmubO42dTqzG6swAL30=;
-        b=QddIP04aXQZQZUHDLSvZ5NWc53BmJ7cgfqqxsg55OrkQCe9EZdyoQviZO6bW3SkYCO
-         cxBoaiaqHCDi6QiGSv/KM/3Ki6tckFFa01GhlXLe5s0+TCMd4tDY812dYCo2qjJ5fOBA
-         LjeRLFVgdq1Athq33CTXUYPUBg79bwSVJv+PjMom+J7Pbv0dX9Ym/gnCuHle5em7YSF2
-         Ai2OHIvxn1WZUai7D8mpAq3EX+iqmFtNFcC05DI59JRDXr7wrbmMDol3Fg/zw52pTMI9
-         vYTnelwuU8sKkORyiCr4NuxFxKJLNDPz71HId0ToL0mGoUdlZSrKCLjPuNYrFOs4iusf
-         UlHA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5nJLbm73dXMMbnaaXjrx8UguRdFchBUIQJZu5sIpg2IebxKg9JIjSb6SzHgruoOJ27PQVN6qUEWVqxCM0uXnBQAuefWLMooWOVAr8
-X-Gm-Message-State: AOJu0YxffULPg3bnKVcTt5euNz43uAXDbjiAL3ZaE4lf9kBSHWmMTMUT
-	VOXq+rR2hswhuCTemva6Z2m0cp7rWq+cMv58B03xgLBb4OCi6h82C29crz71P40RnV+DNngSLnp
-	62F7KhkkD8aYxrW8vb7k8rmikCc3WZFeO9wtwo+HdN6tQ/JC6MONA5bg=
-X-Google-Smtp-Source: AGHT+IE71GBqTZ/x6rw5cBJo0SqOCh5ad4Hu+P+E557ae7kkKJLMAjguNnQ83qTEfiWLJwr6BDpNV1eImc+LZFpqSaqV0z7Z8l9h
+        d=1e100.net; s=20230601; t=1722310836; x=1722915636;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wJtNZjx9etI7bcF/1fKvF0Zp9I41hOiDShU7BUYb0wY=;
+        b=OtVR6ej+Z+7eT3mJ0PMUW/eGm5UaN2D+NYYwC1SfbkIdZkXRsPZ7dmdWz99pTVTtbv
+         KGBBU9/z+zWytQTmv7+wYDimFHybGbrCNd5tDWe567INiIefyyDH5BK3RoO3Hpb6yNNk
+         aUYhIo9TIjPGEIoAc4WlOO/GPypnNxK8Hdo+QsXa6GLhLNTjIRcgz1RijiDb5CIhLV3H
+         tgeJ2+yWdLBXPRr1F8PFiZ7n5PthH55HO4LY4hYqSf7QLhuiVCRZ+Vloe2LRhRhBBYXx
+         +V97p+Yh2t3EbkeaTPPFoIKA+xq+NAuJnMygkmhZX1PBupBaKnk4WN182ouOlvU/5O8X
+         AlPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQk7gA/VGAENsziFLhX0zZ7TMgXL/AiblZ0mpEHMtUeXdy+HG6sHCbqneHOnFK4a1GgMh8pCtMVRu9iFNiz0PLtq/abpGddfyjZxRF
+X-Gm-Message-State: AOJu0Yw6SDU/DG8jqDh82GhXVBT5CQe3QRvW6lEfEFhrIHBRepGQ9iA8
+	cooIaDG3n6CfnhDUahqRdmcxqruZilfcdedRbIaCyvU//iMv2M6BO+qbBkEqkECZyw==
+X-Google-Smtp-Source: AGHT+IEGS87IyT+labjUGMdjw2ZzjPMOQqC0653x45y64ZRQiTK/H/AX89AkmIBqqIS+88CphDWs1A==
+X-Received: by 2002:a17:90a:8c07:b0:2cd:4593:2a8e with SMTP id 98e67ed59e1d1-2cf7e1df145mr10575470a91.15.1722310835144;
+        Mon, 29 Jul 2024 20:40:35 -0700 (PDT)
+Received: from localhost (66.112.216.249.16clouds.com. [66.112.216.249])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb76013b9sm11364797a91.53.2024.07.29.20.40.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 20:40:34 -0700 (PDT)
+From: John Wang <wangzq.jn@gmail.com>
+X-Google-Original-From: John Wang <wangzhiqiang02@ieisystem.com>
+To: Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] net: mctp: Consistent peer address handling in ioctl tag allocation
+Date: Tue, 30 Jul 2024 11:40:31 +0800
+Message-Id: <20240730034031.87151-1-wangzhiqiang02@ieisystem.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:15c5:b0:804:bfc0:382e with SMTP id
- ca18e2360f4ac-81f960dc663mr23355939f.4.1722310804715; Mon, 29 Jul 2024
- 20:40:04 -0700 (PDT)
-Date: Mon, 29 Jul 2024 20:40:04 -0700
-In-Reply-To: <tencent_72A97943A1E444F76C577266D59361437C05@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b548a3061e6ebb78@google.com>
-Subject: Re: [syzbot] [wireless?] WARNING in plfxlc_mac_release
-From: syzbot <syzbot+51a42f7c2e399392ea82@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+When executing ioctl to allocate tags, if the peer address is 0,
+mctp_alloc_local_tag now replaces it with 0xff. However, during tag
+dropping, this replacement is not performed, potentially causing the key
+not to be dropped as expected.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Signed-off-by: John Wang <wangzhiqiang02@ieisystem.com>
+Change-Id: I9c75aa8aff4bc048dd3be563f7f50a6fb14dc028
+---
+ net/mctp/af_mctp.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Reported-by: syzbot+51a42f7c2e399392ea82@syzkaller.appspotmail.com
-Tested-by: syzbot+51a42f7c2e399392ea82@syzkaller.appspotmail.com
+diff --git a/net/mctp/af_mctp.c b/net/mctp/af_mctp.c
+index de52a9191da0..43288b408fde 100644
+--- a/net/mctp/af_mctp.c
++++ b/net/mctp/af_mctp.c
+@@ -486,6 +486,9 @@ static int mctp_ioctl_droptag(struct mctp_sock *msk, bool tagv2,
+ 	tag = ctl.tag & MCTP_TAG_MASK;
+ 	rc = -EINVAL;
+ 
++	if (ctl.peer_addr == MCTP_ADDR_NULL)
++		ctl.peer_addr = MCTP_ADDR_ANY;
++
+ 	spin_lock_irqsave(&net->mctp.keys_lock, flags);
+ 	hlist_for_each_entry_safe(key, tmp, &msk->keys, sklist) {
+ 		/* we do an irqsave here, even though we know the irq state,
+-- 
+2.34.1
 
-Tested on:
-
-commit:         93306970 Merge tag '6.11-rc-smb3-server-fixes' of git:..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=13d5a94b980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f828342678294017
-dashboard link: https://syzkaller.appspot.com/bug?extid=51a42f7c2e399392ea82
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=163cd19d980000
-
-Note: testing is done by a robot and is best-effort only.
 
