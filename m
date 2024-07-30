@@ -1,47 +1,70 @@
-Return-Path: <linux-kernel+bounces-267818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0126941603
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:55:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C19941606
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85C5B1F23946
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:55:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5E981F23753
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4CD1BA86A;
-	Tue, 30 Jul 2024 15:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94EE41BA886;
+	Tue, 30 Jul 2024 15:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIQyC4z7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BTMYePbX"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520BD1B5837;
-	Tue, 30 Jul 2024 15:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E261B5837
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722354921; cv=none; b=gYGxOR1icKe8JjmkM5D69DHEN6Yz//WfNO1AeTJOZy90GopIJa4bd9SAJlfLfotgnY2/cGCeGh9aWIclj4BJabhW+5wKtCgYLF4c9BrRFEm3Gu4kdTZL1Cx0+yPiQBWlMWWzHGMmKgMLXpxjQhKLcZ7G7ZGB0rjMOmuZ0LnLNcs=
+	t=1722354926; cv=none; b=um+YRPgcJTDyouEoVQKbYuozbzyQShvGiNaa9znQCKLp0MIJbzWN3zIuy94qaVP8GYlVeE94fwVa5Bf1zU1ktZTGj4ON0Fn7awLS/bhO2lKBAss8uAaodOVBMQA4VyFhxV/gAGlRjHNRGB0oHcVH7/PYemaXuVRUHTlWjvTsHgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722354921; c=relaxed/simple;
-	bh=xYtSwqJGDTf2FfqT2U56g2vG/vLggIF/nyA+uPeuj/o=;
+	s=arc-20240116; t=1722354926; c=relaxed/simple;
+	bh=vWmqf+DZ6yy7uefW9kB1OXmHEFwi0VcF0uleWNg69dU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E5y+9sJiw3k+4LWCO25L70suKrbek/c36sDXyulNiOTxBjEx3ELSmIUFnhoFkFNa3ZbKjSgljUKdsDg4t0kBRDi5wpbxtPGgfAzDM83kCRiwAtY/4OQZJPz1vfLa9TCLWGOkITA3S85PNYGFDIgcyMjoR4xpS0YSMVQ4pb0F3LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIQyC4z7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07A61C4AF0C;
-	Tue, 30 Jul 2024 15:55:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722354921;
-	bh=xYtSwqJGDTf2FfqT2U56g2vG/vLggIF/nyA+uPeuj/o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fIQyC4z7fOtrnEeDBLESzUszXgbPo7KIWu4kXECDiqf2b/zyetLFXriLOuhFiCYpK
-	 rmAxanN2l9ilXJmQA67wOGF9QoEl/2pja9vgFPZ8Rm0SpJiGXxZhDNGcdvxgwpuW3U
-	 RnmaY33naB7TkXJZoD7rkzqwspds6y32152Wtw3awCrOr0ZaHuNJLipnU0gVGLbz2x
-	 L7WdbCn38J0xScHvuKtYmoDZ8BvTTfqkkM2GZlz+hA/mqyToEhhYcno3WyFAvnvVgt
-	 Mb9oGGfAhf6p5avvKbBHMRSmmnadSGR+YWnKBa3OKPJL0yKtt2Ayo9fbzgmN/jo4od
-	 vbIitJAvEO/ag==
-Message-ID: <0c8fe4f3-c3d8-4a7e-bf3e-f6b1390c9ced@kernel.org>
-Date: Tue, 30 Jul 2024 17:55:14 +0200
+	 In-Reply-To:Content-Type; b=sa3kQ+WL+lYoHbQ/8qDQe1vheqCmKvxQJMFTMmBduoMgLGvYtUhQRgWlgObsLdLCpqzD5ghGRCAR7lfXUafenkuv+YPmARKOIwOd5hJloUJ1MgRBnzjoQ61m8+G3B94kxALq/TRSlS07wM1XwhMn3Pl8zTwmCIyioI+pX/Y+rxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BTMYePbX; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-81f8add99b6so24345739f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:55:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1722354924; x=1722959724; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PzCaghtWJkWwHrbcMiszDi+qmsX7TBq8ffoDMqJhL1o=;
+        b=BTMYePbXq0tPGbhaW4vRXZ1gc/9bf8MtYyrdJZO7wVBIcf7EzMPy2tuE9Q/onuiAfR
+         L1WHSKI8jfkMMnXtmJklEnEY6+/rzrK/L4t/G4NMaNhnxPK547CQNyt0s4NbL2Kf3nfF
+         PuWGGgAh3hxYV4FPl3fKmxpcaphg3HBdyt0EM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722354924; x=1722959724;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PzCaghtWJkWwHrbcMiszDi+qmsX7TBq8ffoDMqJhL1o=;
+        b=fVniKrm0QSWl3rihAo05uCLwHXLEVfTtWFAAXwSDDysfs4FF0rhz/wCUL0Yu4RarKP
+         bvBTvZyhqe8sTxWIUEtVAo1xrcSMCX8v2iHQQWNZNa+wdKHDY9IevRoNQNhkpnohAvrI
+         VSFxnFiVWHnv3+5/i8mYaViGpj/8We47sJPcK+C8ZoEerOke0DWzrljvofcc5e8uP71t
+         X4l7YxRcY6Kf2rJIOAsLFQV49XWSqEeQtJLIh++XPVRQQWi1siQPps0Q68MYGs1DqZ4v
+         Efo/xzT/rxiT4zgO+MFIsr+dscgKL7FmiVz9dNGuDB0yEm/bn13Cg5yRXkmwR8/cXrXa
+         Bxww==
+X-Forwarded-Encrypted: i=1; AJvYcCWOYwxGnlIsusfLMOiLY7/p7qeagV4pdVI/u6MxUY46Oz84wSQrlumhy0jf2ZU9E+EjLfa9DRZnbzEkWXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1DF5dDBkSqsigqZrB/W1pzqVzBoSke78LAdcOnxvmyCQNT3Jm
+	fT5ZaZPZuT9HOsVuKkTSrJdEzA9MGwto7wEw01BW5U8AyZRf4lCEwqQfQ6ROVQE=
+X-Google-Smtp-Source: AGHT+IGuQMM6gxKKpjFLk13+wgKSCeu7d/MaJ7gUsdzsTKePVhPCSVaQL3WB7bTmQo5YaG+Bs9e4GA==
+X-Received: by 2002:a05:6602:1ccb:b0:81f:bf02:fd0a with SMTP id ca18e2360f4ac-81fbf0301ccmr96363439f.3.1722354924184;
+        Tue, 30 Jul 2024 08:55:24 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c29fc42b48sm2721593173.157.2024.07.30.08.55.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 08:55:23 -0700 (PDT)
+Message-ID: <714e7642-6f92-4e41-aa36-c854668e0bb0@linuxfoundation.org>
+Date: Tue, 30 Jul 2024 09:55:22 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,105 +72,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: gpio: nxp,lpc3220-gpio: Convert to dtschema
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240727130008.408772-1-animeshagarwal28@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/3] bitmap: Rename module
+To: David Gow <davidgow@google.com>, Randy Dunlap <rdunlap@infradead.org>,
+ kees@kernel.org, Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Yury Norov <yury.norov@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ John Hubbard <jhubbard@nvidia.com>, kernel@collabora.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240726110658.2281070-1-usama.anjum@collabora.com>
+ <20240726110658.2281070-3-usama.anjum@collabora.com>
+ <ZqUvy_h4YblYkIXU@yury-ThinkPad>
+ <85f575b4-4842-4189-9bba-9ee1085a5e80@collabora.com>
+ <c0e5978b-7c11-4657-bd07-9962cd04bf9a@infradead.org>
+ <CABVgOSnkxgeXXXm9xp5_PvBxtMGbyFN-Jmd6YJ1u6g81MF_fyw@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240727130008.408772-1-animeshagarwal28@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CABVgOSnkxgeXXXm9xp5_PvBxtMGbyFN-Jmd6YJ1u6g81MF_fyw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 27/07/2024 15:00, Animesh Agarwal wrote:
-> Convert the NXP LPC3220 SoC GPIO controller bindings to DT schema format.
+On 7/30/24 04:10, David Gow wrote:
+> On Mon, 29 Jul 2024 at 22:09, Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>>
+>>
+>> On 7/29/24 1:07 AM, Muhammad Usama Anjum wrote:
+>>> On 7/27/24 10:35 PM, Yury Norov wrote:
+>>>> On Fri, Jul 26, 2024 at 04:06:57PM +0500, Muhammad Usama Anjum wrote:
+>>>>> Rename module to bitmap_kunit and rename the configuration option
+>>>>> compliant with kunit framework.
+>>>>
+>>>> ... , so those enabling bitmaps testing in their configs by setting
+>>>> "CONFIG_TEST_BITMAP=y" will suddenly get it broken, and will likely
+>>>> not realize it until something nasty will happen.
+>>> CONFIG_TEST_BITMAP was being enabled by the kselftest suite lib. The bitmap
+>>> test and its config option would disappear. The same test can be run by
+>>> just enabling KUNIT default config option:
+>>>
+>>> KUNIT_ALL_TESTS=y enables this bitmap config by default.
+>>>
+>>>>
+>>>> Sorry, NAK for config rename.
+>>>>
+>>
+>> I agree with Yury. Using KUNIT takes away test coverage for people who
+>> are willing to run selftests but not use KUNIT.
+
+This is incorrect. There are selftest that are used to
+
+- regression test a subsystem or a abi during boot
+- spot check on a running system to debug and test by loading
+   a test module.
+
 > 
-> Cc: Daniel Baluta <daniel.baluta@nxp.com>
-> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+> I can see the point that renaming the config option is just churn, but
+> is there a reason people would run the bitmap selftest but be unable
+> or unwilling to use KUnit?
 > 
-> --
+> Beyond a brief period of adjustment (which could probably be made
+> quite minimal with a wrapper script or something), there shouldn't
+> really be any fundamental difference: KUnit tests can already run at
+> boot, be configured with a config option, and write output to the
+> kernel log. There's nothing really being taken away here, and the
+> bonus of having easier access to run the tests with KUnit's tooling
+> (or have them automatically run by systems which run KUnit tests)
+> would seem worthwhile to me, especially since it's optional. And
+> CONFIG_KUNIT shouldn't be heavy enough to cause problems.
+> 
+> Obviously I can't force people to use KUnit, but this is exactly the
+> sort of test which would fit KUnit well, and -- forgive me if I'm
+> missing something -- the only real argument against it I'm hearing is
+> "it's different". And while that's valid (as I said, churn for churn's
+> sake isn't great), none of the "people who are willing to run
+> selftests but not use KUnit" have given reasons why. Especially since
+> this is the sort of test (testing in-kernel functions) we're
+> encouraging people to write with KUnit in
+> Documentation/dev-tools/testing-overview.rst -- if there are good
+> reasons people are refusing to run these, maybe we need to fix those
+> or change the recommendation.
 
-Not a complete delimiter.
+It isn't about kunit vs. kselftest. It is about overall kernel validation
+and ability to test effectively by developers and users.
 
-> Changes in v2:
->   - Changed the file name to match the compatible string.
->   - Removed optional from the description of '#gpio-cells' as it was wrongly
->     present.
-> ---
+KUnit isn't ideal for cases where people would want to check a subsystem
+on a running kernel - KUnit covers some use-cases and kselftest covers
+others.
 
-...
+What happens if we are debugging a problem that requires us to debug on
+a running system? Please don't go converting kselftest into kunit without
+understanding how these frameworks are intended to be used.
 
-> +  - compatible
-> +  - reg
-> +  - gpio-controller
-> +  - '#gpio-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
+Yes kselftest results need to be looked at. Write a parser which can
+be improved. What you are doing is reducing the coverage and talking
+away the ability to debug and test on running system.
 
-Drop include
+Fix what needs to be fixed instead of deleting tests.
 
-> +
-> +    gpio@40028000 {
-> +        compatible = "nxp,lpc3220-gpio";
-> +        reg = <0x40028000 0x1000>;
-> +        gpio-controller;
-> +        #gpio-cells = <3>; /* bank, pin, flags */
-> +    };
+Think through the use-cases before advocating KUnit is suitable for
+all testing needs and talking about being able to force or not force
+people to use one or the other.
 
-Best regards,
-Krzysztof
+Reports aren't everything. The primary reason we have these tests is for
+developers to be able to test. Reports can be improved and shouldn't
+come at the expense of coverage and testing. Any patch that does that
+will be NACKed.
+
+thanks,
+-- Shuah
+
 
 
