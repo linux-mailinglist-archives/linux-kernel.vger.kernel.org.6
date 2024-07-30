@@ -1,107 +1,108 @@
-Return-Path: <linux-kernel+bounces-267718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 991D99414B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:47:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A52FB9414BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7E571C22A45
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:47:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 604F1284992
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8394E19F499;
-	Tue, 30 Jul 2024 14:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pIj0NQ4y"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2912F1974FE
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FED719EED3;
+	Tue, 30 Jul 2024 14:47:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD4F1A2562;
+	Tue, 30 Jul 2024 14:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722350822; cv=none; b=VAlQZrUXqma/Cg9TcylA4H9WxZRPdpgfgkEchLAtfTxoCQ2WFOTHj1ahwgO3ytCstDy3qx6zck1QEUN8dCC1koc9Kzbqz36Jpltno+mTqwnPdftHgJF6Q+Ctsb3XTJgTHaoZERFExg00TGv6BMT1L8BNvhsamGB5BbPu0AZEqcM=
+	t=1722350878; cv=none; b=JL8LtqbU2x8W5aMOR1u+PgRInLfDv/+8fBSxwuPPYsmZbJULUHiN3/rzd/NKsfNe1dFebBGLzwFAAWh29WuG/u7te7fAahX/KRKxQBbyVyDem8dCs4CtpZ1c4L+/UCAWNaHbBD6Xzc1ysAyUMI9TUhGEtFYOy+rf5bC1P5N/npg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722350822; c=relaxed/simple;
-	bh=kYTYimlYBjiquYDmbW3OVap8P13dPnSkQlQ5r4BDh/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BbSS89xUbzrea8OX1iWEyTATCFLxPLq1oloe2N+dDOh+x+RTxuC6/hx89xeezWACR+Q5UKVSdmQYnblO1lE4KFV1SJxa/RCDOk98Qa37B8S2i24skjiyZXekxmajtI+vWZ6AV3XCnNRFuT0slNJnL5BecUbYNLgd9lfge8iLdWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pIj0NQ4y; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-70936061d0dso2776779a34.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:46:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722350819; x=1722955619; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=19bzD3dFV7tz7aCe19kweAd1yB7wIjeVyw1SeEg2Kvc=;
-        b=pIj0NQ4y64pWz4ZYm6uy6j6zeRk0wlOa/FmU1h6DnQfg3glxp9YKQQ9IJ8kRp1NFS7
-         PewXM5NkRW2WeDDTNC0t2x6QPSG4TTDkFQlTlsAh9jyPpsnzQXtJcVpqX5oyl8C/oMhb
-         lLeeRmA4JkK5Lau2E+hqlD1TgemI8nHTY5I3jtuZHgD+WzWHWwiDobpuUZfxjeLAKNB4
-         ngYNjSjXRb0jz+CJuT9NXFCxe6r4PURXlkh7/uQZmiVNcMsg+cQsUkbI/5rUuojQIeCp
-         8A40TyHgGpbNTIChHng6cpCcvM4hQ8UqMo3zf4LLRkrT1fct/QJH0qd5rbpCYbxep0vA
-         ov/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722350819; x=1722955619;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=19bzD3dFV7tz7aCe19kweAd1yB7wIjeVyw1SeEg2Kvc=;
-        b=h/EICIrfkyADPqVMEDucuUFb9Ln08K9AFaUTeiVue810iQeBBG45LF6SOdpeAUcs9f
-         cLiTaIAR54ap698dccRo6yWCVBQEw/3VUQyOP0HVvrnXmZ7xTddMqwpNIFpPzDiXsJuX
-         b8LPB8wu4Ylx7OtzQ/gER7yxDuGlJlG9XMuJyHI/nkPkBDTFIb2ROkZy9U5i0kKx7mSy
-         rtAVB/wGKlkTAG5hALBfxVei5ql5p8wFhfTT4YDR8QXktAfRkYZtxdQ5W7r/KcJIfvW7
-         I9L8ZvywxTZuq4wi5yqteW0QjywZ0+Ex/FxP00kNYaiNSyzJ3bXKiI5Tm8zH7+PXu2CC
-         nQwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ4AlQZYacbJ2PeRYueD+BIrES5BEwnr+w0LB0N2P6biD7ie+6VuE83MuLzqmm5F/ea6nfnP6b7RJETInM4tyEedi2xaDa4hzg5E/P
-X-Gm-Message-State: AOJu0Yxixw7zGnI8BAObq+CKTWhHGkhaQho4m/u5hdCeTTaEZQG3RJ9v
-	owOL4d11bcRtMqizQJp6gz97Ht8/4VzyuAfyW/nnmXmvboobbhiYEFnc7ef0dSU=
-X-Google-Smtp-Source: AGHT+IFzmIHN0DOkgtHQwpPa+Hy+IykmpFZBDq+APGpQyBzcGQJhlffeH0XZLGJ3D0C3lyQkcihSlA==
-X-Received: by 2002:a05:6830:6819:b0:703:6543:ecf3 with SMTP id 46e09a7af769-70940c0bb40mr11828257a34.9.1722350819159;
-        Tue, 30 Jul 2024 07:46:59 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700::17c0])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5d5b35c810asm1236669eaf.22.2024.07.30.07.46.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 07:46:58 -0700 (PDT)
-Date: Tue, 30 Jul 2024 09:46:56 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sai Sree Kartheek Adivi <sskartheekadivi@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	~lkcamp/patches@lists.sr.ht, helen.koike@collabora.com
-Subject: Re: [PATCH v2] staging: rtl8723bs: style fix open brace on new line
-Message-ID: <ad55619f-f663-4bc2-ae73-aae7dcaa4272@suswa.mountain>
-References: <20240730065901.35254-1-sskartheekadivi@gmail.com>
+	s=arc-20240116; t=1722350878; c=relaxed/simple;
+	bh=2sgCmXyTvyCNB45FWIC91IVz4X+itKN3UPLmwF3Xl8A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZY1fbJ7z5iGdbztZLVUNmoIznFhE4OKJxIhV3YfZmM0sUs6eqpCWlgbdLl+xvkmsjdouLJrLFMsSbwButAIKWanLGt0TVjgEVBU6e7V2yry5m/XM4gblfyrfGMHfVCj4vULxdSC5UUWd+6AQWbYBJWvTovdQlW94pbVZnrjTtXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 717921007;
+	Tue, 30 Jul 2024 07:48:18 -0700 (PDT)
+Received: from pluto.guestnet.cambridge.arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 01B4D3F766;
+	Tue, 30 Jul 2024 07:47:49 -0700 (PDT)
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: sudeep.holla@arm.com,
+	james.quinlan@broadcom.com,
+	f.fainelli@gmail.com,
+	vincent.guittot@linaro.org,
+	etienne.carriere@st.com,
+	peng.fan@oss.nxp.com,
+	michal.simek@amd.com,
+	quic_sibis@quicinc.com,
+	quic_nkela@quicinc.com,
+	dan.carpenter@linaro.org,
+	souvik.chakravarty@arm.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	Cristian Marussi <cristian.marussi@arm.com>
+Subject: [PATCH v1 0/6] Add SCMI transport descriptors
+Date: Tue, 30 Jul 2024 15:47:01 +0100
+Message-ID: <20240730144707.1647025-1-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730065901.35254-1-sskartheekadivi@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 30, 2024 at 06:59:01AM +0000, Sai Sree Kartheek Adivi wrote:
-> It fixes the following checkpatch.pl error
-> "ERROR: that open brace { should be on the previous line" and avoids the
-> warning "WARNING: braces {} are not necessary for single statement blocks".
-> 
-> Signed-off-by: Sai Sree Kartheek Adivi <sskartheekadivi@gmail.com>
-> ---
-> Updated the commit message.
-> This is my first contribution. Hope I did everything right!
-> 
+Hi,
 
-The only thing you didn't do was explain what changed between v1 and v2.
+this small series is an extended version of this recent, already reviewed,
+series [1] posted by Peng to add a new arm,scmi property to describe some
+platform-specific SCMI timeout constraints.
 
-https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+On top of that, this adds 2 more properties to describe a couple more
+platform-specific transport characteristics.
 
-Please send a v3 patch.
+To minimize conflicts, the whole series is based on top of another recent
+series, which represents a rework of the core SCMI stack to split SCMI
+transports as standalone drivers. [2]
 
-regards,
-dan carpenter
+Thanks,
+Cristian
+
+[1]: https://lore.kernel.org/linux-arm-kernel/20240709140957.3171255-1-peng.fan@oss.nxp.com/
+[2]: https://lore.kernel.org/linux-arm-kernel/20240730133318.1573765-1-cristian.marussi@arm.com/T/#t
+
+---
+
+Cristian Marussi (5):
+  firmware: arm_scmi: Remove const from transport descriptors
+  firmware: arm_scmi: Use max-rx-timeout-ms from devicetree
+  dt-bindings: firmware: arm,scmi: Introduce more transport properties
+  firmware: arm_scmi: Use max_msg and max_msg_size from devicetree
+  firmware: arm_scmi: Relocate atomic_threshold to scmi_desc
+
+Peng Fan (1):
+  dt-bindings: firmware: arm,scmi: Introduce property max-rx-timeout-ms
+
+ .../bindings/firmware/arm,scmi.yaml           | 22 +++++++++
+ drivers/firmware/arm_scmi/common.h            |  9 +++-
+ drivers/firmware/arm_scmi/driver.c            | 46 ++++++++++++-------
+ .../arm_scmi/scmi_transport_mailbox.c         |  2 +-
+ .../firmware/arm_scmi/scmi_transport_optee.c  |  2 +-
+ .../firmware/arm_scmi/scmi_transport_smc.c    |  2 +-
+ .../firmware/arm_scmi/scmi_transport_virtio.c |  2 +-
+ 7 files changed, 64 insertions(+), 21 deletions(-)
+
+-- 
+2.45.2
 
 
