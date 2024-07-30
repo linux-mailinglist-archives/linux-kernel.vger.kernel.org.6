@@ -1,118 +1,167 @@
-Return-Path: <linux-kernel+bounces-268283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332629422B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:21:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C6869422BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E46A8285675
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:21:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9DE71F24F52
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C023C1917C1;
-	Tue, 30 Jul 2024 22:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEEA1917C9;
+	Tue, 30 Jul 2024 22:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=whu.edu.cn header.i=@whu.edu.cn header.b="sVlb9nUq"
-Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A64157466;
-	Tue, 30 Jul 2024 22:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="LJ0i3kBM"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B32157466;
+	Tue, 30 Jul 2024 22:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722378076; cv=none; b=k4mkhF2uI/pR9qfUu9889O8lnMsTyBF6UbjKjRa8KkGBWNK1hdKCyQiThmv+vUiZ/reH/BL4lG4tPnuNL4zGbpHYIASjhbUo/MTu6XiLWJt2OfPRE3UxX7rYiBmO7gZGb6NHRkd6ekVhTfuB3kK6Is6li64b7FmA+n3Y3YzW7cc=
+	t=1722378234; cv=none; b=dpf0XdFm2q25Ob3i9NuaQPGNSoI8wWtNYq/wxtmIRX8NUX70L1cUWYdPj+w8ZyhGkAM0OBXBcEwci0NlMIGJPOTONDKW4kyULi6B8L6qW/07O6RsJjoRXJuHmRefoqjmomnuaRR9okEBKosWvf//JlubKhk6Ih5NGf/QIr3MaB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722378076; c=relaxed/simple;
-	bh=IBY9niT3crChkL57i2tqKYDFZoHdqXWz0t4ljNwbLrQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KxJo7fokmHfOXXyiuloMYifUhCdBA4092P4t5tk0wqFQY9Ka0pGbqBhuH90UL24oOeYMm/Vg7+GrbVbrw940cNQF9ChYJVmYiHO2/PKbQI5RiLSq/rHwSNGSHTFmURT3+QUaMx0D6sAQgrQnj4vci6bQ947r38hK7ULgsG49rh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=whu.edu.cn; spf=pass smtp.mailfrom=whu.edu.cn; dkim=fail (0-bit key) header.d=whu.edu.cn header.i=@whu.edu.cn header.b=sVlb9nUq reason="key not found in DNS"; arc=none smtp.client-ip=162.243.161.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=whu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whu.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=whu.edu.cn; s=dkim; h=Received:Received:From:To:Cc:Subject:
-	Date:Message-ID:MIME-Version:Content-Transfer-Encoding; bh=JLqJc
-	6R1ahX/CN5dyLs8cECox0Rx+KE2rkJzMprmvtI=; b=sVlb9nUqZ9YRy2/cPQcpP
-	r+VmKV2zgaKIfS+BU4iX68cyUZ5Hw2CgHnPcgkkROzfjal7HiBCQrK0bVIklopiQ
-	zPba+yd7KKKfah+8y67T4+2FnmVDrqkCWlclim1OTE4YTq1vwFxr+1BxRoAK36rb
-	1y0vsAvRuheuxb2lo7mR+U=
-Received: from whu.edu.cn (unknown [10.1.14.8])
-	by app1 (Coremail) with SMTP id Bg4BCgAnACZOZ6lmc4bOAA--.29964S2;
-	Wed, 31 Jul 2024 06:21:02 +0800 (CST)
-Received: from zehuixu-vmwarevirtualplatform.localdomain (unknown [82.130.46.207])
-	by mtasvr (Coremail) with SMTP id _____wB3Q_VIZ6lmkd4JAA--.480S2;
-	Wed, 31 Jul 2024 06:21:01 +0800 (CST)
-From: Zehui Xu <zehuixu@whu.edu.cn>
-To: ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	wedsonaf@gmail.com
-Cc: boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@samsung.com,
-	aliceryhl@google.com,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zehuixu@whu.edu.cn
-Subject: [PATCH] rust: Kbuild: Skip -fmin-function-alignment in bindgen flags
-Date: Wed, 31 Jul 2024 01:20:53 +0300
-Message-ID: <20240730222053.37066-1-zehuixu@whu.edu.cn>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722378234; c=relaxed/simple;
+	bh=fxqK6isVZYwjWROTSakPQHD1uYqeONWbVadqH001MSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rcuNn1zoFjH4UKJTPjyu/KRpZetlHFHpUFzstfU9ZCD+AM0FjL6/7cdCyS2RveXtxwg0ayiN6n6ls7sO3ktsp8ZTYdMfFFAmZumMmfEChnJr4YVNkFkTXP/Df70DNZNGYb4vbklPdz7CW1ZoaajCxLlMN1kJl/cd9jfpBCxzA5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=LJ0i3kBM; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=P+25ADvoROh3ffi6FNyXx7pUdybk/3nfa31XZxVnXGU=; b=LJ0i3kBMZtOgfYX0X+jr54WU8/
+	W9xQIb84pCCea3gJlCjH4CUOTRsN58XNQQkw1cWWUVUVVmgRXXNlEIHeyL/z9d3Rdjsu/ftFIK2A+
+	3kUnKkYLcHRCPVzJwl8Di/BMkS4Z2Xwl/4uOGous4gtTb2lM78upQP3gmpQsfxhLuKMF5IhsviSjB
+	EPWVtOn4FotVQNh+VkMMMt34vncPV1seypghmuIvDESSHvGij99auSvphf97GDCbf4tTNSJx82Dum
+	Rqw56fcYvcgp6asoejhVC/CkEJ6Hmd/113iofRhS3veG4ojBhx2bLd4MwbWB+JP1Fn/D5F9oFrCCX
+	zcpAN3mw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36616)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sYvFI-0007jE-17;
+	Tue, 30 Jul 2024 23:23:04 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sYvFB-0005am-Gh; Tue, 30 Jul 2024 23:22:57 +0100
+Date: Tue, 30 Jul 2024 23:22:57 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Allen Pais <allen.lkml@gmail.com>, kuba@kernel.org,
+	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Mirko Lindner <mlindner@marvell.com>,
+	Stephen Hemminger <stephen@networkplumber.org>,
+	jes@trained-monkey.org, kda@linux-powerpc.org,
+	cai.huoqing@linux.dev, dougmill@linux.ibm.com, npiggin@gmail.com,
+	christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org,
+	naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com,
+	tlfalcon@linux.ibm.com, cooldavid@cooldavid.org, nbd@nbd.name,
+	sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com,
+	lorenzo@kernel.org, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, borisp@nvidia.com,
+	bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com,
+	louis.peens@corigine.com, richardcochran@gmail.com,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-acenic@sunsite.dk, linux-net-drivers@amd.com,
+	netdev@vger.kernel.org
+Subject: Re: [net-next v3 14/15] net: marvell: Convert tasklet API to new
+ bottom half workqueue mechanism
+Message-ID: <ZqlnwSDCvhrRe32K@shell.armlinux.org.uk>
+References: <20240730183403.4176544-1-allen.lkml@gmail.com>
+ <20240730183403.4176544-15-allen.lkml@gmail.com>
+ <fbb19744-cc77-4541-90b5-0760e0eeae22@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Bg4BCgAnACZOZ6lmc4bOAA--.29964S2
-Authentication-Results: app1; spf=neutral smtp.mail=zehuixu@whu.edu.cn
-	;
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cr13Gw47KF4rGw4kGw1xKrg_yoW8Wry7pa
-	sYkr4xCa1DGr4vkrs7Cr4fXay0934Sqa1UuFyjgw1rZrZxKF92krWxKry5GrW2yr1furWa
-	vrnrKFy3tF1UA3DanT9S1TB71UUUU1JqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Fb7Iv0xC_Cr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2
-	z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2kKe7AKxVWUtV
-	W8ZwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VCjz48v1sIEY20_GF4lOx8S6xCaFVCjc4AY6r1j6r4UM4
-	x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04k20xvY0x0E
-	wIxGrwCF04k20xvE74AGY7Cv6cx26r4xMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I
-	0E14v26r1q6r43MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
-	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6r
-	yUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
-	JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7IUjKLvtUUUUU==
-X-CM-SenderInfo: qsqrmjqqqqijqqxyq4lkxovvfxof0/1tbiAgYOA2apDkcEwwAAsI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fbb19744-cc77-4541-90b5-0760e0eeae22@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-GCC recently added the -fmin-function-alignment option, which will appear in GCC 14. However, this flag can cause issues when passed to the Rust Makefile and affect the bindgen process. Bindgen relies on libclang to parse C code, and currently does not support the -fmin-function-alignment flag, leading to compilation failures when GCC 14 is used.
+On Tue, Jul 30, 2024 at 10:39:51PM +0200, Andrew Lunn wrote:
+> > - * Called only from mvpp2_txq_done(), called from mvpp2_tx()
+> > - * (migration disabled) and from the TX completion tasklet (migration
+> > - * disabled) so using smp_processor_id() is OK.
+> > + * Called only from mvpp2_txq_done().
+> > + *
+> > + * Historically, this function was invoked directly from mvpp2_tx()
+> > + * (with migration disabled) and from the bottom half workqueue.
+> > + * Verify that the use of smp_processor_id() is still appropriate
+> > + * considering the current bottom half workqueue implementation.
+> 
+> What does this mean? You want somebody else to verify this? You are
+> potentially breaking this driver?
 
-This patch addresses the issue by adding -fmin-function-alignment to the bindgen_skip_c_flags in rust/Makefile, ensuring it is skipped during the bindgen process. This prevents the flag from causing compilation issues and maintains compatibility with the upcoming GCC 14.
+I don't see how, the only thing that's changing in mvpp2 seems to be
+an outdated comment that happens to mention a tasklet, but the
+driver doesn't use tasklets.
 
-This is my first patch to the kernel, if there are any issues or improvements needed, please let me know. ;)
+Let's look at the original comment which claims what the call sites
+are:
 
-Reference:
-https://lore.kernel.org/linux-kbuild/20240222133500.16991-1-petr.pavlu@suse.com/
+static void mvpp2_txq_done(struct mvpp2_port *port, struct mvpp2_tx_queue *txq,
+                           struct mvpp2_txq_pcpu *txq_pcpu)
+{
+...
+        tx_done = mvpp2_txq_sent_desc_proc(port, txq);
 
-Signed-off-by: Zehui Xu <zehuixu@whu.edu.cn>
----
- rust/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+and that is it. _This_ function is called from several places:
 
-diff --git a/rust/Makefile b/rust/Makefile
-index 1f10f92737f2..0c8736cce64f 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -227,7 +227,7 @@ bindgen_skip_c_flags := -mno-fp-ret-in-387 -mpreferred-stack-boundary=% \
- 	-fno-reorder-blocks -fno-allow-store-data-races -fasan-shadow-offset=% \
- 	-fzero-call-used-regs=% -fno-stack-clash-protection \
- 	-fno-inline-functions-called-once -fsanitize=bounds-strict \
--	-fstrict-flex-arrays=% \
-+	-fstrict-flex-arrays=% -fmin-function-alignment=% \
- 	--param=% --param asan-%
- 
- # Derived from `scripts/Makefile.clang`.
+mvpp2_tx_done()
+mvpp2_xdp_finish_tx()
+mvpp2_tx()
+
+So I suppose that the original comment was referring to the
+mvpp2_tx() -> mvpp2_txq_done() -> mvpp2_txq_sent_desc_proc() call path,
+and the others were added over time.
+
+mvpp2_tx_done() is called from mvpp2_hr_timer_cb(), and yes, back in
+the distant history there was a tasklet here - see:
+
+ecb9f80db23a net/mvpp2: Replace tasklet with softirq hrtimer
+
+So, the comment referring to a tasklet was left over from that commit
+and never fixed up.
+
+Given this, I don't think the new paragraph starting "Historically"
+is correct (or even relevant) as I think it misinterprets the original
+comment - and "this function" is ambiguous in it, but either way its
+still wrong.
+
+If we assume that "this function" refers to the one below the comment,
+then this has never been called directly from mvpp2_tx() nor the
+tasklet, and talking about a bottom half workqueue makes no sense
+because "historically" it's never been called from a bottom half
+workqueue.
+
+If we assume that "this function" refers to mvpp2_txq_done(), then
+it's not historical that this was called from mvpp2_tx(), because it
+still is today. And the bit about being called from a bottom half
+workqueue is still false.
+
+Given that bottom half workqueues have absolutely nothing to do with
+this code path, the sentence beginning with "Verify" seems totally
+irrelevant (at least to me.)
+
+So, I think I've comprehensively ripped the new comment to shreds.
+It would be far better to leave the driver alone and not change the
+comment despite it incorrectly referring to a tasklet that has
+already been eliminated (and at least was historically correct),
+rather than the new comment which just seems wrong.
+
 -- 
-2.45.2
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
