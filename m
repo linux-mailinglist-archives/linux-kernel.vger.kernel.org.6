@@ -1,185 +1,422 @@
-Return-Path: <linux-kernel+bounces-266929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DCA29409E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:27:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAB5F94098F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 420BC1C23448
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:27:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED6461C22D17
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D7D18FDA5;
-	Tue, 30 Jul 2024 07:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A253618FDB7;
+	Tue, 30 Jul 2024 07:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gQu7pBbL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vja3T545"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB7915FD08
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EFE418EFED;
+	Tue, 30 Jul 2024 07:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722324359; cv=none; b=E8QGsdYnE8fNUmR+5F3lEglHX7/OVBCzE5hR9N20DzY5yIKofkjnWzx+v/kUc69TrP8Q5jgC+913wJTusJhknhLjXmPOuPhCP+BaGUXC/lfZpZDyimxW9VwyEzg2eHk55s04iEVK0lQ3nPg3+mGRHL8D72ByLdVKxnaJ/JX/OL4=
+	t=1722324145; cv=none; b=FgGxmuKLzciEriQqXnuzdq+Kd+oNi4vOsmyT2OrbjqNmUdeYBhFFLwlyYVO9wl9nzRi/FdRnJTO7LJfVHwxTgobdd5Urh4wYpdkfM3kglbERmmtAJa6xfIqXEOjHdxRMpLUiImH8xRb4BkJNCHyzeIzrbadHDNHq5UL2wINoiX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722324359; c=relaxed/simple;
-	bh=KszZfXemds+tM1XMbpuKFozsX2kZ/r4nuJvmkMsZsR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RXwaLrYo5o8S8H1oGVCQfiDCI6aXT0ktC6Dcrq43PqlmT4Gc3eCIsK3gUCtDckxqN2BpnimZGWNE1Z+TqNRaMhbryPibGFRv39uHgY+GS2UtmdoQrFJC7bFe4iUTx7ew82kpiFBxCnc0yNuNlAsQ0z4ox3occxJanIFV5XYJ8fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gQu7pBbL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722324355;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y5xEK7R2nb157eewENV4C21/1t6bjW/YfM6JPF2QG74=;
-	b=gQu7pBbLGXX2vxwqNi5fL5V73qTLFW2kSyeeXpPY8yCGXw4V2bBxyJ1PKJv8e8dgeyJwvZ
-	sB6DhddfgFwZ9MKH4FC019o/bO7Ota5Ktyd5OR/3xoRDsXxqllzro41UH0WIvL80s9OJBY
-	Wy5hfVOvm/o7MkckgfOGKFcNl6jkQwA=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-551-trrlKunfMZW1pEDhd_lJIw-1; Tue, 30 Jul 2024 03:25:52 -0400
-X-MC-Unique: trrlKunfMZW1pEDhd_lJIw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-427ffa0c9c7so33973505e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 00:25:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722324351; x=1722929151;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y5xEK7R2nb157eewENV4C21/1t6bjW/YfM6JPF2QG74=;
-        b=oMLiUSf/l/B47m+HdnTbGHAcfLuAkT4bIp+rh8g6azB1utjxNLjgiZqDyku6+i/LWJ
-         bubvIBn7bvyzvJ9sxStn2LSVlMBFzzGymbe+vMlH9+1LwJV6PhhqyQVbz6iUNpRlbxeG
-         ap78mVZFSVsax7nNwX4E4cO3CVmlpRZPqsVWlV3ulzyQDH+hWlf7edcbMjlLzN+w4sG4
-         /g+eYCxIkniPHLd2AhqzfL1+rO5rOV3NOze1tqtUqTqyHGYU/SPEmqG45rxvm3dLwiZO
-         t4jBug/8++zm1VD+vf5vzEwgTAhZa2ejxlllpsatSbokh/gRUJh9twadN80s1a9tkhjI
-         /D5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWcnKjFR2MatgfrpSwl3U/MAr71/jBHxW/MgUmDXrehZCJ1KHuW3RxfNKTHti0sIljZGsYeWKL8pJRvuEg7uvA2RLPwKFe0qwSV1EUg
-X-Gm-Message-State: AOJu0YzQCBGX6bkcRDngkOHu7lu9f3Xpu+sargTr6o/tNHevXkjHkKJ3
-	Fi04La9EP8ROvA1e9xUXEhfGmYwuK3q1kUOLJ8kpkqJv+uvZVotPUQiMEvY+uJ0kXqt5+dQeVX8
-	CyV1mlG7BlDFMGFzAEC3BjPw2SK1PDCuHoFshQT9DHeXQTaW9z8HWpQ2SzBWLGQ==
-X-Received: by 2002:a05:600c:4585:b0:426:61fc:fc1a with SMTP id 5b1f17b1804b1-42811d7792bmr90856465e9.3.1722324351588;
-        Tue, 30 Jul 2024 00:25:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE/gDWBFo6htQDYTEcS5D2SAcLjd2SmqORuGhu3ZlxQ75NycjD7PqRFbIHMJtcxRFp9bn/8wQ==
-X-Received: by 2002:a05:600c:4585:b0:426:61fc:fc1a with SMTP id 5b1f17b1804b1-42811d7792bmr90856125e9.3.1722324351142;
-        Tue, 30 Jul 2024 00:25:51 -0700 (PDT)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4281225141dsm120696385e9.45.2024.07.30.00.25.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 00:25:50 -0700 (PDT)
-Date: Tue, 30 Jul 2024 09:25:49 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Peter Maydell <peter.maydell@linaro.org>, Shannon
- Zhao <shannon.zhaosl@gmail.com>, linux-kernel@vger.kernel.org,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v3 1/7] arm/virt: place power button pin number on a
- define
-Message-ID: <20240730092549.6898ff3c@imammedo.users.ipa.redhat.com>
-In-Reply-To: <bf8367bddfdc95e378b5725c732533c3ba20d388.1721630625.git.mchehab+huawei@kernel.org>
-References: <cover.1721630625.git.mchehab+huawei@kernel.org>
-	<bf8367bddfdc95e378b5725c732533c3ba20d388.1721630625.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1722324145; c=relaxed/simple;
+	bh=HFILjDyuOkFueGdpeZ+expeCNrW1pem0IxRTIfXPmJE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KpZqgiY/JtaURoj1leXAiB06BsDNiBfTXahfYlH1GFTiR8RkhJwpHCHnAikfboDYk9gvvZV7jOyrEaxXRqMwkLbSFRt/gUuGz6ffzmHo9iF2crjhSVETtd3G9OOjlh13oWz9+8CYEK7bHZAKs0PJewg6UsAAr+SmVIJaDmvAI74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vja3T545; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5824C4AF09;
+	Tue, 30 Jul 2024 07:22:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722324144;
+	bh=HFILjDyuOkFueGdpeZ+expeCNrW1pem0IxRTIfXPmJE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Vja3T5454h4Q+VtrSRmXah9kscyuQ0sdUaWF4cc6GQNdR4jZLqcvzt/NApj4QHVhI
+	 pqrlzT+GWHsnAid/s7t2kxwJYFUtrUPlxfokjC/Txb/CQVYpaKg0WAWtESCPzRq71x
+	 NXeojkPNmEJrPbsYGdO5TaC1GuWCiXQv76PuZ6FU1/c+ZAWYWlluAS+r9mBDcGbOt5
+	 1D/+y4VcHKQVl6RBo7gAGoNGP9Euq87+ecG3V1+RQ5tu2ME9dlPBD4ssUxQBUeIFyI
+	 uYUT3ZAY3PQJ/mREouQl40/x4dEbUyqiFsmeMNBhlEBFnnYo1M91KLOZ77KIeR/1sW
+	 TD6wdpb7tGFTQ==
+From: alexs@kernel.org
+To: Will Deacon <will@kernel.org>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+	Nick Piggin <npiggin@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Brian Cain <bcain@quicinc.com>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Jonas Bonn <jonas@southpole.se>,
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+	Stafford Horne <shorne@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Naveen N Rao <naveen@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Bibo Mao <maobibo@loongson.cn>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	linux-arch@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-csky@vger.kernel.org,
+	linux-hexagon@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-m68k@lists.linux-m68k.org,
+	linux-openrisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Vishal Moola <vishal.moola@gmail.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Lance Yang <ioworker0@gmail.com>,
+	Peter Xu <peterx@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	linux-s390@vger.kernel.org
+Cc: Guo Ren <guoren@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Oscar Salvador <osalvador@suse.de>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Breno Leitao <leitao@debian.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Hugh Dickins <hughd@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Alex Shi <alexs@kernel.org>,
+	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>
+Subject: [RFC PATCH 11/18] mm/pgtable: introduce ptdesc_pfn and use ptdesc in free_pte_range()
+Date: Tue, 30 Jul 2024 15:27:12 +0800
+Message-ID: <20240730072719.3715016-1-alexs@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240730064712.3714387-1-alexs@kernel.org>
+References: <20240730064712.3714387-1-alexs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 22 Jul 2024 08:45:53 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+From: Alex Shi <alexs@kernel.org>
 
-> Having magic numbers inside the code is not a good idea, as it
-> is error-prone. So, instead, create a macro with the number
-> definition.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> ---
->  hw/arm/virt-acpi-build.c | 6 +++---
->  hw/arm/virt.c            | 7 ++++---
->  include/hw/arm/virt.h    | 3 +++
->  3 files changed, 10 insertions(+), 6 deletions(-)
-> 
-> diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
-> index e10cad86dd73..f76fb117adff 100644
-> --- a/hw/arm/virt-acpi-build.c
-> +++ b/hw/arm/virt-acpi-build.c
-> @@ -154,10 +154,10 @@ static void acpi_dsdt_add_gpio(Aml *scope, const MemMapEntry *gpio_memmap,
->      aml_append(dev, aml_name_decl("_CRS", crs));
->  
->      Aml *aei = aml_resource_template();
-> -    /* Pin 3 for power button */
-> -    const uint32_t pin_list[1] = {3};
-> +
-> +    const uint32_t pin = GPIO_PIN_POWER_BUTTON;
->      aml_append(aei, aml_gpio_int(AML_CONSUMER, AML_EDGE, AML_ACTIVE_HIGH,
-> -                                 AML_EXCLUSIVE, AML_PULL_UP, 0, pin_list, 1,
-> +                                 AML_EXCLUSIVE, AML_PULL_UP, 0, &pin, 1,
->                                   "GPO0", NULL, 0));
->      aml_append(dev, aml_name_decl("_AEI", aei));
->  
-> diff --git a/hw/arm/virt.c b/hw/arm/virt.c
-> index b0c68d66a345..c99c8b1713c6 100644
-> --- a/hw/arm/virt.c
-> +++ b/hw/arm/virt.c
-> @@ -1004,7 +1004,7 @@ static void virt_powerdown_req(Notifier *n, void *opaque)
->      if (s->acpi_dev) {
->          acpi_send_event(s->acpi_dev, ACPI_POWER_DOWN_STATUS);
->      } else {
-> -        /* use gpio Pin 3 for power button event */
-> +        /* use gpio Pin for power button event */
->          qemu_set_irq(qdev_get_gpio_in(gpio_key_dev, 0), 1);
+Replace pgtable_t by ptdesc in free_pte_range and it's callee pte_free_tlb
+series functions. And save some converters now. We have to use type
+casting for pmd_pgtable() instead of page_ptdesc() helper since
+different arch has different type of pgtable_t.
 
-/me confused, it was saying Pin 3 but is passing 0 as argument where as elsewhere
-you are passing 3. Is this a bug?
+btw, we can not simplify pmd_ptdesc() via replace pmd_pgtable_page by
+pmd_page, since some arch may have no pmd_page yet.
 
-BTW: dropping '3' from comment doesn't make it any better.
+Signed-off-by: Alex Shi <alexs@kernel.org>
+Cc: Anup Patel <anup@brainfault.org>
+Cc: Samuel Holland <samuel.holland@sifive.com>
+Cc: Jisheng Zhang <jszhang@kernel.org>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Guo Ren <guoren@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-openrisc@vger.kernel.org
+Cc: linux-m68k@lists.linux-m68k.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-mm@kvack.org
+Cc: linux-arch@vger.kernel.org
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Naveen N. Rao <naveen.n.rao@linux.ibm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Stafford Horne <shorne@gmail.com>
+Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
+Cc: Jonas Bonn <jonas@southpole.se>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Nick Piggin <npiggin@gmail.com>
+Cc: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Breno Leitao <leitao@debian.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Vishal Moola  <vishal.moola@gmail.com>
+Cc: Mike Rapoport  <rppt@kernel.org>
+---
+ arch/arm/include/asm/tlb.h                   |  4 +---
+ arch/arm64/include/asm/tlb.h                 |  4 +---
+ arch/csky/include/asm/pgalloc.h              |  4 ++--
+ arch/hexagon/include/asm/pgalloc.h           |  4 ++--
+ arch/loongarch/include/asm/pgalloc.h         |  4 ++--
+ arch/m68k/include/asm/motorola_pgalloc.h     |  4 ++--
+ arch/openrisc/include/asm/pgalloc.h          |  4 ++--
+ arch/powerpc/include/asm/book3s/32/pgalloc.h |  2 +-
+ arch/powerpc/include/asm/book3s/64/pgalloc.h |  2 +-
+ arch/riscv/include/asm/pgalloc.h             |  8 +++-----
+ arch/x86/include/asm/pgalloc.h               |  4 ++--
+ arch/x86/mm/pgtable.c                        |  6 +++---
+ include/linux/mm.h                           | 14 ++++++++++++++
+ mm/memory.c                                  |  3 ++-
+ 14 files changed, 38 insertions(+), 29 deletions(-)
 
->      }
->  }
-> @@ -1013,7 +1013,8 @@ static void create_gpio_keys(char *fdt, DeviceState *pl061_dev,
->                               uint32_t phandle)
->  {
->      gpio_key_dev = sysbus_create_simple("gpio-key", -1,
-> -                                        qdev_get_gpio_in(pl061_dev, 3));
-> +                                        qdev_get_gpio_in(pl061_dev,
-> +                                                         GPIO_PIN_POWER_BUTTON));
->  
->      qemu_fdt_add_subnode(fdt, "/gpio-keys");
->      qemu_fdt_setprop_string(fdt, "/gpio-keys", "compatible", "gpio-keys");
-> @@ -1024,7 +1025,7 @@ static void create_gpio_keys(char *fdt, DeviceState *pl061_dev,
->      qemu_fdt_setprop_cell(fdt, "/gpio-keys/poweroff", "linux,code",
->                            KEY_POWER);
->      qemu_fdt_setprop_cells(fdt, "/gpio-keys/poweroff",
-> -                           "gpios", phandle, 3, 0);
-> +                           "gpios", phandle, GPIO_PIN_POWER_BUTTON, 0);
->  }
->  
->  #define SECURE_GPIO_POWEROFF 0
-> diff --git a/include/hw/arm/virt.h b/include/hw/arm/virt.h
-> index ab961bb6a9b8..a4d937ed45ac 100644
-> --- a/include/hw/arm/virt.h
-> +++ b/include/hw/arm/virt.h
-> @@ -47,6 +47,9 @@
->  /* See Linux kernel arch/arm64/include/asm/pvclock-abi.h */
->  #define PVTIME_SIZE_PER_CPU 64
->  
-> +/* GPIO pins */
-> +#define GPIO_PIN_POWER_BUTTON  3
-> +
->  enum {
->      VIRT_FLASH,
->      VIRT_MEM,
+diff --git a/arch/arm/include/asm/tlb.h b/arch/arm/include/asm/tlb.h
+index f40d06ad5d2a..ed6aa4255518 100644
+--- a/arch/arm/include/asm/tlb.h
++++ b/arch/arm/include/asm/tlb.h
+@@ -37,10 +37,8 @@ static inline void __tlb_remove_table(void *_table)
+ #include <asm-generic/tlb.h>
+ 
+ static inline void
+-__pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte, unsigned long addr)
++__pte_free_tlb(struct mmu_gather *tlb, struct ptdesc *ptdesc, unsigned long addr)
+ {
+-	struct ptdesc *ptdesc = page_ptdesc(pte);
+-
+ 	pagetable_pte_dtor(ptdesc);
+ 
+ #ifndef CONFIG_ARM_LPAE
+diff --git a/arch/arm64/include/asm/tlb.h b/arch/arm64/include/asm/tlb.h
+index a947c6e784ed..cee7234af6e7 100644
+--- a/arch/arm64/include/asm/tlb.h
++++ b/arch/arm64/include/asm/tlb.h
+@@ -77,11 +77,9 @@ static inline void tlb_flush(struct mmu_gather *tlb)
+ 			  last_level, tlb_level);
+ }
+ 
+-static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte,
++static inline void __pte_free_tlb(struct mmu_gather *tlb, struct ptdesc *ptdesc,
+ 				  unsigned long addr)
+ {
+-	struct ptdesc *ptdesc = page_ptdesc(pte);
+-
+ 	pagetable_pte_dtor(ptdesc);
+ 	tlb_remove_ptdesc(tlb, ptdesc);
+ }
+diff --git a/arch/csky/include/asm/pgalloc.h b/arch/csky/include/asm/pgalloc.h
+index 9c84c9012e53..b24b4611436e 100644
+--- a/arch/csky/include/asm/pgalloc.h
++++ b/arch/csky/include/asm/pgalloc.h
+@@ -63,8 +63,8 @@ static inline pgd_t *pgd_alloc(struct mm_struct *mm)
+ 
+ #define __pte_free_tlb(tlb, pte, address)		\
+ do {							\
+-	pagetable_pte_dtor(page_ptdesc(pte));		\
+-	tlb_remove_page_ptdesc(tlb, page_ptdesc(pte));	\
++	pagetable_pte_dtor(pte);			\
++	tlb_remove_page_ptdesc(tlb, pte);		\
+ } while (0)
+ 
+ extern void pagetable_init(void);
+diff --git a/arch/hexagon/include/asm/pgalloc.h b/arch/hexagon/include/asm/pgalloc.h
+index 55988625e6fb..a3e082e54b74 100644
+--- a/arch/hexagon/include/asm/pgalloc.h
++++ b/arch/hexagon/include/asm/pgalloc.h
+@@ -89,8 +89,8 @@ static inline void pmd_populate_kernel(struct mm_struct *mm, pmd_t *pmd,
+ 
+ #define __pte_free_tlb(tlb, pte, addr)				\
+ do {								\
+-	pagetable_pte_dtor((page_ptdesc(pte)));			\
+-	tlb_remove_page_ptdesc((tlb), (page_ptdesc(pte)));	\
++	pagetable_pte_dtor((pte));				\
++	tlb_remove_page_ptdesc((tlb), (pte));			\
+ } while (0)
+ 
+ #endif
+diff --git a/arch/loongarch/include/asm/pgalloc.h b/arch/loongarch/include/asm/pgalloc.h
+index 4e2d6b7ca2ee..c96d7160babc 100644
+--- a/arch/loongarch/include/asm/pgalloc.h
++++ b/arch/loongarch/include/asm/pgalloc.h
+@@ -46,8 +46,8 @@ extern pgd_t *pgd_alloc(struct mm_struct *mm);
+ 
+ #define __pte_free_tlb(tlb, pte, address)			\
+ do {								\
+-	pagetable_pte_dtor(page_ptdesc(pte));			\
+-	tlb_remove_page_ptdesc((tlb), page_ptdesc(pte));	\
++	pagetable_pte_dtor(pte);				\
++	tlb_remove_page_ptdesc((tlb), pte);			\
+ } while (0)
+ 
+ #ifndef __PAGETABLE_PMD_FOLDED
+diff --git a/arch/m68k/include/asm/motorola_pgalloc.h b/arch/m68k/include/asm/motorola_pgalloc.h
+index f6bb375971dc..f9ee5ec4574d 100644
+--- a/arch/m68k/include/asm/motorola_pgalloc.h
++++ b/arch/m68k/include/asm/motorola_pgalloc.h
+@@ -44,10 +44,10 @@ static inline void pte_free(struct mm_struct *mm, struct ptdesc *ptdesc)
+ 	free_pointer_table(ptdesc_page(ptdesc), TABLE_PTE);
+ }
+ 
+-static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t pgtable,
++static inline void __pte_free_tlb(struct mmu_gather *tlb, struct ptdesc *ptdesc,
+ 				  unsigned long address)
+ {
+-	free_pointer_table(pgtable, TABLE_PTE);
++	free_pointer_table(ptdesc_page(ptdesc), TABLE_PTE);
+ }
+ 
+ 
+diff --git a/arch/openrisc/include/asm/pgalloc.h b/arch/openrisc/include/asm/pgalloc.h
+index c6a73772a546..2251d940c3d8 100644
+--- a/arch/openrisc/include/asm/pgalloc.h
++++ b/arch/openrisc/include/asm/pgalloc.h
+@@ -68,8 +68,8 @@ extern pte_t *pte_alloc_one_kernel(struct mm_struct *mm);
+ 
+ #define __pte_free_tlb(tlb, pte, addr)				\
+ do {								\
+-	pagetable_pte_dtor(page_ptdesc(pte));			\
+-	tlb_remove_page_ptdesc((tlb), (page_ptdesc(pte)));	\
++	pagetable_pte_dtor(pte);			\
++	tlb_remove_page_ptdesc((tlb), (pte));	\
+ } while (0)
+ 
+ #endif
+diff --git a/arch/powerpc/include/asm/book3s/32/pgalloc.h b/arch/powerpc/include/asm/book3s/32/pgalloc.h
+index dd4eb3063175..a435c84d1f9a 100644
+--- a/arch/powerpc/include/asm/book3s/32/pgalloc.h
++++ b/arch/powerpc/include/asm/book3s/32/pgalloc.h
+@@ -64,7 +64,7 @@ static inline void __tlb_remove_table(void *_table)
+ 	pgtable_free(table, shift);
+ }
+ 
+-static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t table,
++static inline void __pte_free_tlb(struct mmu_gather *tlb, struct ptdesc *table,
+ 				  unsigned long address)
+ {
+ 	pgtable_free_tlb(tlb, table, 0);
+diff --git a/arch/powerpc/include/asm/book3s/64/pgalloc.h b/arch/powerpc/include/asm/book3s/64/pgalloc.h
+index eb7d2ca59f62..675eca34fe40 100644
+--- a/arch/powerpc/include/asm/book3s/64/pgalloc.h
++++ b/arch/powerpc/include/asm/book3s/64/pgalloc.h
+@@ -167,7 +167,7 @@ static inline void pmd_populate(struct mm_struct *mm, pmd_t *pmd,
+ 	*pmd = __pmd(__pgtable_ptr_val(pte_page) | PMD_VAL_BITS);
+ }
+ 
+-static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t table,
++static inline void __pte_free_tlb(struct mmu_gather *tlb, struct ptdesc *table,
+ 				  unsigned long address)
+ {
+ 	pgtable_free_tlb(tlb, table, PTE_INDEX);
+diff --git a/arch/riscv/include/asm/pgalloc.h b/arch/riscv/include/asm/pgalloc.h
+index f52264304f77..63596efcd528 100644
+--- a/arch/riscv/include/asm/pgalloc.h
++++ b/arch/riscv/include/asm/pgalloc.h
+@@ -183,13 +183,11 @@ static inline void __pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmd,
+ 
+ #endif /* __PAGETABLE_PMD_FOLDED */
+ 
+-static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte,
++static inline void __pte_free_tlb(struct mmu_gather *tlb, struct ptdesc *pte,
+ 				  unsigned long addr)
+ {
+-	struct ptdesc *ptdesc = page_ptdesc(pte);
+-
+-	pagetable_pte_dtor(ptdesc);
+-	riscv_tlb_remove_ptdesc(tlb, ptdesc);
++	pagetable_pte_dtor(pte);
++	riscv_tlb_remove_ptdesc(tlb, pte);
+ }
+ #endif /* CONFIG_MMU */
+ 
+diff --git a/arch/x86/include/asm/pgalloc.h b/arch/x86/include/asm/pgalloc.h
+index 497c757b5b98..06a9a5867a86 100644
+--- a/arch/x86/include/asm/pgalloc.h
++++ b/arch/x86/include/asm/pgalloc.h
+@@ -53,9 +53,9 @@ extern void pgd_free(struct mm_struct *mm, pgd_t *pgd);
+ 
+ extern struct ptdesc *pte_alloc_one(struct mm_struct *);
+ 
+-extern void ___pte_free_tlb(struct mmu_gather *tlb, struct page *pte);
++extern void ___pte_free_tlb(struct mmu_gather *tlb, struct ptdesc *pte);
+ 
+-static inline void __pte_free_tlb(struct mmu_gather *tlb, struct page *pte,
++static inline void __pte_free_tlb(struct mmu_gather *tlb, struct ptdesc *pte,
+ 				  unsigned long address)
+ {
+ 	___pte_free_tlb(tlb, pte);
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index c27d15cd01b9..3cf9c0d25dbd 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -50,10 +50,10 @@ static int __init setup_userpte(char *arg)
+ }
+ early_param("userpte", setup_userpte);
+ 
+-void ___pte_free_tlb(struct mmu_gather *tlb, struct page *pte)
++void ___pte_free_tlb(struct mmu_gather *tlb, struct ptdesc *pte)
+ {
+-	pagetable_pte_dtor(page_ptdesc(pte));
+-	paravirt_release_pte(page_to_pfn(pte));
++	pagetable_pte_dtor(pte);
++	paravirt_release_pte(ptdesc_pfn(pte));
+ 	paravirt_tlb_remove_table(tlb, pte);
+ }
+ 
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 381750f41767..7424f964dff3 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2859,6 +2859,20 @@ static inline bool pagetable_is_reserved(struct ptdesc *pt)
+ 	return folio_test_reserved(ptdesc_folio(pt));
+ }
+ 
++/**
++ * ptdesc_pfn - Return the Page Frame Number of a ptdesc.
++ * @ptdesc: The ptdesc.
++ *
++ * A ptdesc may contain multiple pages.  The pages have consecutive
++ * Page Frame Numbers.
++ *
++ * Return: The Page Frame Number of the first page in the ptdesc.
++ */
++static inline unsigned long ptdesc_pfn(struct ptdesc *ptdesc)
++{
++	return page_to_pfn(ptdesc_page(ptdesc));
++}
++
+ /**
+  * pagetable_alloc - Allocate pagetables
+  * @gfp:    GFP flags
+diff --git a/mm/memory.c b/mm/memory.c
+index 3014168e7296..27c2f63b7487 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -189,7 +189,8 @@ void mm_trace_rss_stat(struct mm_struct *mm, int member)
+ static void free_pte_range(struct mmu_gather *tlb, pmd_t *pmd,
+ 			   unsigned long addr)
+ {
+-	pgtable_t token = pmd_pgtable(*pmd);
++	struct ptdesc *token = (struct ptdesc *)pmd_pgtable(*pmd);
++
+ 	pmd_clear(pmd);
+ 	pte_free_tlb(tlb, token, addr);
+ 	mm_dec_nr_ptes(tlb->mm);
+-- 
+2.43.0
 
 
