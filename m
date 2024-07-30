@@ -1,159 +1,117 @@
-Return-Path: <linux-kernel+bounces-267304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44883940FCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:45:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C97940FD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEA7A28146D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7A51F247D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D711A0AFC;
-	Tue, 30 Jul 2024 10:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AAF19FA87;
+	Tue, 30 Jul 2024 10:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lv6jdWRV"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x91cXv63"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3411719FA86;
-	Tue, 30 Jul 2024 10:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15BAE1A0B1F
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722336013; cv=none; b=LD6FZTXoluaGseu9iMVcDA1GbZzpINrWonOlUu9QDpfV5Uzh5WHmaA9wPM+UON9RxpSDEI1qgQKL51nw9uWopafBlelOIFJJLD82tvrib3j3B8VdXk5pRa0oAGeLQtJY8DAlpVnMJHGryhKOW2WbbCohCFTA56iN6H3NQbMtwPo=
+	t=1722336023; cv=none; b=YTCrb655H0/0a431KwFJZdQNKSGalaRCm718EBSEavAhzIsb/EP0Cq3ujOmAQw0iEzn0q1jvJF3PpmDKTLxZGWdggpy8TWdEepmZEpkP2p+nkO8t9rjJIPfofAjSKTKia5Bu7FU5kG5n3O7Z4N5zS87d1TQ+V2PlWdwonG43O4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722336013; c=relaxed/simple;
-	bh=l4VpL9x+WgkqxnYD2dAEQ8MULWjm5ogOKxxCT/nRsKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fCWGh/YjwPCJlJAeoi58rTjSc1rpOk99s3eYssG2CuuXbZm61eO73u+SbfLnbQx0Y6HlgJami7I9Iku9U9XSFuIqqu9BD3nbQpRof3mjwzGNvIGGXn425o+1xL2Zb3+E5FKuaMgU9UQcPwfdimb94DlmU/ZUqmjx7zqlIkdrrXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lv6jdWRV; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46U9tKjU012030;
-	Tue, 30 Jul 2024 10:39:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=pp1; bh=
-	DkGdvAdKyg11kiXdiASBE8PWg35HTN6fIm33pARXv0M=; b=lv6jdWRVC7uz0NIW
-	l1NelhuPv8RIbUQotpKu8x6enuyXNRDQO+gIebwvS0VYFVDmi4K7pP2t6FHP4qgH
-	LpSCyYXgBMnj8pUokGna9wxetuUKq27HgJhi35ppf+zmp77VY55N3yW+KTm6xXho
-	d62+eQvjRXutiNE1lnGx3wpSxQ3jUuyL+k2EZoty07wJtX/bbqDLqANrCTJsymn7
-	d+cqPk9qiz5Cli/YgrKec5Hlr3ZYadyi6SV2/staT720h+lxAAi6T5UxcBKksgdr
-	IKN9Rgu3Q6o8/k8UE+AWVlzyhrlli28J9UQB0SBHEWGjRTdv6wyaP71b1IEVErvL
-	T3nrcw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40pra21bqv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 10:39:57 +0000 (GMT)
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46UAdund021238;
-	Tue, 30 Jul 2024 10:39:56 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40pra21bqs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 10:39:56 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46U85H98011151;
-	Tue, 30 Jul 2024 10:39:56 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40ncqmm4kd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 10:39:56 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46UAdoZB50921962
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 30 Jul 2024 10:39:52 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2C19820043;
-	Tue, 30 Jul 2024 10:39:50 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F1A5820040;
-	Tue, 30 Jul 2024 10:39:49 +0000 (GMT)
-Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 30 Jul 2024 10:39:49 +0000 (GMT)
-Date: Tue, 30 Jul 2024 12:39:48 +0200
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        Andrew Morton
- <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Heiko
- Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander
- Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger
- <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Janosch
- Frank <frankja@linux.ibm.com>
-Subject: Re: [PATCH v1 0/3] mm: remove arch_make_page_accessible()
-Message-ID: <20240730123948.6833576c@p-imbrenda.boeblingen.de.ibm.com>
-In-Reply-To: <20240729183844.388481-1-david@redhat.com>
-References: <20240729183844.388481-1-david@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1722336023; c=relaxed/simple;
+	bh=XK2vz41KExPbrsjdjcBuzNEb9VnxO/ji4DDW6PPtcz0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S7aBllvA0iq7144xBw8UI13GNYg6BXmlwsT/MQRiIxTMcrwca1gLsh+nYgkHcTekJi99IbCh4cdHsDZcJxdKoop3x7YgJFaz6sI2c9CtbAIs4winMA3Ogsp3VIV+pIMvEODZH+4Ffuvz8j7Uj7giXwwzAf4ApsSpECD6NGXxxFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x91cXv63; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so16595415e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 03:40:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722336020; x=1722940820; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yf2EBrF/xoIg4XnnkuWAq411eye617onXjc36oa4tx0=;
+        b=x91cXv63377pknF15NFhPB4zj6PwuQJbBRNLr2qjPKo+/ppZK78O9KsKArATufEyuX
+         Nq9p7JWft0ScTkfjFCfhM1+mue9rWemKDdma5uJULuQoasO4OvMP3hP8hjsroekdwoXK
+         ptggdvYAeIU5WWTEHH6Zmd9tDJPd5S5CkDI4peHzI6Z+2DvbP7nATDUvPObWO0wmXcom
+         cnZZBWuKOT/BJUL0kPEZvoIVy9NenOfbsRtAEhB/SSo5/W/DWYEbNRcXC1FMX9YJ/giy
+         3rz01H1WL90/vZiztuTbuj2A95PEtAKfN6YsKIL4JdWbIdzvSWYWV/avO7jlm9kuXe4V
+         q3vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722336020; x=1722940820;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yf2EBrF/xoIg4XnnkuWAq411eye617onXjc36oa4tx0=;
+        b=cCRPNlxcCbHXgRNDP8kNA4t2og6Xi1zkULKTN7VoTGEVQIdceERRtzqBfRWA6x5bJT
+         /gNlFukPzU/LIMI4FUQtHKxlMiaopaMt8gb3SfDhEWHhraVmJ9kHOf+3c/bq4EI0OX29
+         WnMdyK2+N/I8Kk3TEwsbc/4OiWoAfuDHSe30EibKlgk44tBWmaD+Ggn2GnM5p2O7FwJf
+         6eSLWIu79hp+SsovRRf9ENP1rNsZ301CRJOZeRrR8PQja6Fb+TiLd49Udz/3BAJQIYo5
+         X8fXF34tIPUWUU6fHEUsx9hQj13N4ShkWX/voEmS1Iv+dC7Hd2S1w7tUo9lIfI1nlpbM
+         VYAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOki3fHBPhqMF88AkPjEt5BmMtDrq8Dxr1q4IJwIZ9xnHuhu2+9YtuKV5u0vdKnmEtNOzrnk69k3jIdGmCuCor3llOMA3LDD9ewXM+
+X-Gm-Message-State: AOJu0YxJSWcMPweybKRopkV0ga+yeE0PI9qAPVKHNJMOgglRahVbr/lB
+	83GDoM3bH3UqJ6a9fwgitzeYo1aUVbTrw9vdurEHnVFQf9bPcNCzbmh2Jx4QyO4=
+X-Google-Smtp-Source: AGHT+IFztmIvpi5e6zvIrQFHfTnJ6M1HTFlAZ0o0tSn7EJGgisCW751On8kDQJ0gXBzeW2QXpYXtPg==
+X-Received: by 2002:a05:600c:a41:b0:428:9c0:2ad with SMTP id 5b1f17b1804b1-4282445d0c0mr10083445e9.18.1722336020479;
+        Tue, 30 Jul 2024 03:40:20 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42809e4423dsm175962665e9.13.2024.07.30.03.40.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 03:40:20 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Alex Elder <elder@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH net-next] net: MAINTAINERS: Demote Qualcomm IPA to "maintained"
+Date: Tue, 30 Jul 2024 12:40:16 +0200
+Message-ID: <20240730104016.22103-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -D3mUbFgCBPLb-63vf3XcLrcobweWmky
-X-Proofpoint-ORIG-GUID: JCR5ort0nw7-4C2vezlqKFBQVfD1e3XV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_11,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=654
- lowpriorityscore=0 clxscore=1011 adultscore=0 suspectscore=0
- priorityscore=1501 spamscore=0 impostorscore=0 phishscore=0 mlxscore=0
- bulkscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407300074
+Content-Transfer-Encoding: 8bit
 
-Thank you for taking care of this!
+To the best of my knowledge, Alex Elder is not being paid to support
+Qualcomm IPA networking drivers, so drop the status from "supported" to
+"maintained".
 
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Whole series:
+---
 
-Reviewed-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+... or maybe this should be Odd Fixes?
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-On Mon, 29 Jul 2024 20:38:41 +0200
-David Hildenbrand <david@redhat.com> wrote:
-
-> Now that s390x implements arch_make_folio_accessible(), let's convert
-> remaining users to use arch_make_folio_accessible() instead so we can
-> remove arch_make_page_accessible().
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Heiko Carstens <hca@linux.ibm.com>
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-> Cc: Sven Schnelle <svens@linux.ibm.com>
-> Cc: Janosch Frank <frankja@linux.ibm.com>
-> Cc: Claudio Imbrenda <imbrenda@linux.ibm.com>
-> 
-> David Hildenbrand (3):
->   mm: simplify arch_make_folio_accessible()
->   mm/gup: convert to arch_make_folio_accessible()
->   s390/uv: drop arch_make_page_accessible()
-> 
->  arch/s390/include/asm/page.h |  2 --
->  arch/s390/kernel/uv.c        |  5 -----
->  include/linux/mm.h           | 18 +-----------------
->  mm/gup.c                     |  8 +++++---
->  4 files changed, 6 insertions(+), 27 deletions(-)
-> 
-> 
-> base-commit: 3bb434b9ff9bfeacf7f4aef6ae036146ae3c40cc
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 43e7668aacb0..f1c80c9fc213 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18452,7 +18452,7 @@ F:	drivers/usb/misc/qcom_eud.c
+ QCOM IPA DRIVER
+ M:	Alex Elder <elder@kernel.org>
+ L:	netdev@vger.kernel.org
+-S:	Supported
++S:	Maintained
+ F:	drivers/net/ipa/
+ 
+ QEMU MACHINE EMULATOR AND VIRTUALIZER SUPPORT
+-- 
+2.43.0
 
 
