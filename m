@@ -1,167 +1,129 @@
-Return-Path: <linux-kernel+bounces-268284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6869422BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:24:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 766169422E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9DE71F24F52
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:24:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C2FB1F25166
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEEA1917C9;
-	Tue, 30 Jul 2024 22:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE401A71F9;
+	Tue, 30 Jul 2024 22:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="LJ0i3kBM"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GtCtvSRJ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B32157466;
-	Tue, 30 Jul 2024 22:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426041917C1;
+	Tue, 30 Jul 2024 22:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722378234; cv=none; b=dpf0XdFm2q25Ob3i9NuaQPGNSoI8wWtNYq/wxtmIRX8NUX70L1cUWYdPj+w8ZyhGkAM0OBXBcEwci0NlMIGJPOTONDKW4kyULi6B8L6qW/07O6RsJjoRXJuHmRefoqjmomnuaRR9okEBKosWvf//JlubKhk6Ih5NGf/QIr3MaB8=
+	t=1722378292; cv=none; b=G7Zs3LlZj62A1wezaJwD6PFpPWjL7BP5afH6s3XVsylvGeNBS/N8UA8ASdNXheHxirIH3lXdCF4zALQN+KXolBrCEGmRha9YvXu+thPYyEDT2RMk7ILpBfX7nKAVCrPa+of1OQb2bXpyo+KW/RqxUalagL2lPQ6FrXLVibPLK8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722378234; c=relaxed/simple;
-	bh=fxqK6isVZYwjWROTSakPQHD1uYqeONWbVadqH001MSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rcuNn1zoFjH4UKJTPjyu/KRpZetlHFHpUFzstfU9ZCD+AM0FjL6/7cdCyS2RveXtxwg0ayiN6n6ls7sO3ktsp8ZTYdMfFFAmZumMmfEChnJr4YVNkFkTXP/Df70DNZNGYb4vbklPdz7CW1ZoaajCxLlMN1kJl/cd9jfpBCxzA5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=LJ0i3kBM; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=P+25ADvoROh3ffi6FNyXx7pUdybk/3nfa31XZxVnXGU=; b=LJ0i3kBMZtOgfYX0X+jr54WU8/
-	W9xQIb84pCCea3gJlCjH4CUOTRsN58XNQQkw1cWWUVUVVmgRXXNlEIHeyL/z9d3Rdjsu/ftFIK2A+
-	3kUnKkYLcHRCPVzJwl8Di/BMkS4Z2Xwl/4uOGous4gtTb2lM78upQP3gmpQsfxhLuKMF5IhsviSjB
-	EPWVtOn4FotVQNh+VkMMMt34vncPV1seypghmuIvDESSHvGij99auSvphf97GDCbf4tTNSJx82Dum
-	Rqw56fcYvcgp6asoejhVC/CkEJ6Hmd/113iofRhS3veG4ojBhx2bLd4MwbWB+JP1Fn/D5F9oFrCCX
-	zcpAN3mw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36616)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sYvFI-0007jE-17;
-	Tue, 30 Jul 2024 23:23:04 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sYvFB-0005am-Gh; Tue, 30 Jul 2024 23:22:57 +0100
-Date: Tue, 30 Jul 2024 23:22:57 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Allen Pais <allen.lkml@gmail.com>, kuba@kernel.org,
-	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Mirko Lindner <mlindner@marvell.com>,
-	Stephen Hemminger <stephen@networkplumber.org>,
-	jes@trained-monkey.org, kda@linux-powerpc.org,
-	cai.huoqing@linux.dev, dougmill@linux.ibm.com, npiggin@gmail.com,
-	christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org,
-	naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com,
-	tlfalcon@linux.ibm.com, cooldavid@cooldavid.org, nbd@nbd.name,
-	sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com,
-	lorenzo@kernel.org, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com, borisp@nvidia.com,
-	bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com,
-	louis.peens@corigine.com, richardcochran@gmail.com,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-acenic@sunsite.dk, linux-net-drivers@amd.com,
-	netdev@vger.kernel.org
-Subject: Re: [net-next v3 14/15] net: marvell: Convert tasklet API to new
- bottom half workqueue mechanism
-Message-ID: <ZqlnwSDCvhrRe32K@shell.armlinux.org.uk>
-References: <20240730183403.4176544-1-allen.lkml@gmail.com>
- <20240730183403.4176544-15-allen.lkml@gmail.com>
- <fbb19744-cc77-4541-90b5-0760e0eeae22@lunn.ch>
+	s=arc-20240116; t=1722378292; c=relaxed/simple;
+	bh=Y1YUWTu9p9TtMmqaAUmxjqmhhFsd+wclbBmjz8m2ndc=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=m6YNfhVqQ4UGQgwSmmroIcfxc0VZSxCDqSD7FWk0jeIkYOlbESdUW37Qv3GZyyvY+FPN3+HBhoGcQQSFy4NqrI/dKcGHWw7SI+DRDxDyc9DPfxYUGU+BMssQEnX91Fbn+QJD0uBaoex9xPb3tV58hMG3guFnzIsnwOWBjA3+27M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GtCtvSRJ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UHefKo028667;
+	Tue, 30 Jul 2024 22:24:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=y18rRoiX/nrp
+	dfsMJ1ZjbT1khAyK+E8nAD8l0ekOAD4=; b=GtCtvSRJEo2ac+5Jhabs5fK0Jqic
+	1qEkwlNebzVqLYpE4kJNy1SeqSXM7LExsHQ/IJyLqKIlK2fN262VEBapB11OliKk
+	Ozr8SAGfdPoNzAdEdp1BcFO47g4PpgBehqFxW3+WkMDOlbeNxZ9xqJieRpIx3CHV
+	AN2ArGoNv1q3jLSOqxXZe5BvfHLv+9WPFqNxEa1kCXk2xklOnwEw0rTQVP7X8teg
+	yCxPtnCaWf1ne23AUplvRHf35fopBiwJ3U4ibr3ycO6v4I7Y56UT6V4lnNoiHim9
+	2KD0ps2QQmbr6iwzA18vlZQTdWwzrQfy3fIdmEtotqFzsR/Ckrtu6FZl+A==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mqw79429-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 22:24:43 +0000 (GMT)
+Received: from pps.filterd (NALASPPMTA01.qualcomm.com [127.0.0.1])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTP id 46UMOgOq024870;
+	Tue, 30 Jul 2024 22:24:42 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NALASPPMTA01.qualcomm.com (PPS) with ESMTPS id 40pfs7cjpc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 30 Jul 2024 22:24:42 +0000
+Received: from NALASPPMTA01.qualcomm.com (NALASPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 46UMOg0i024855;
+	Tue, 30 Jul 2024 22:24:42 GMT
+Received: from hu-devc-lv-u18-c.qualcomm.com (hu-eserrao-lv.qualcomm.com [10.47.235.27])
+	by NALASPPMTA01.qualcomm.com (PPS) with ESMTP id 46UMOfK5024850;
+	Tue, 30 Jul 2024 22:24:42 +0000
+Received: by hu-devc-lv-u18-c.qualcomm.com (Postfix, from userid 464172)
+	id A820A5000A8; Tue, 30 Jul 2024 15:24:41 -0700 (PDT)
+From: Elson Roy Serrao <quic_eserrao@quicinc.com>
+To: andersson@kernel.org, konrad.dybcio@linaro.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        Elson Roy Serrao <quic_eserrao@quicinc.com>
+Subject: [PATCH 0/8] Enable EUD on Qualcomm sm8450 SoC
+Date: Tue, 30 Jul 2024 15:24:31 -0700
+Message-Id: <20240730222439.3469-1-quic_eserrao@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: QxQ1gt92dzC7_pcbrfDmtqqQE9za5FpO
+X-Proofpoint-GUID: QxQ1gt92dzC7_pcbrfDmtqqQE9za5FpO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-30_18,2024-07-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=524 spamscore=0 impostorscore=0 lowpriorityscore=0
+ clxscore=1015 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
+ phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407300155
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fbb19744-cc77-4541-90b5-0760e0eeae22@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, Jul 30, 2024 at 10:39:51PM +0200, Andrew Lunn wrote:
-> > - * Called only from mvpp2_txq_done(), called from mvpp2_tx()
-> > - * (migration disabled) and from the TX completion tasklet (migration
-> > - * disabled) so using smp_processor_id() is OK.
-> > + * Called only from mvpp2_txq_done().
-> > + *
-> > + * Historically, this function was invoked directly from mvpp2_tx()
-> > + * (with migration disabled) and from the bottom half workqueue.
-> > + * Verify that the use of smp_processor_id() is still appropriate
-> > + * considering the current bottom half workqueue implementation.
-> 
-> What does this mean? You want somebody else to verify this? You are
-> potentially breaking this driver?
+The Embedded USB Debugger (EUD) is a mini High-Speed USB on-chip hub to
+support the USB-based debug and trace capabilities on Qualcomm devices.
+The current implementation lacks in below aspects that are needed for
+proper EUD functionality.
 
-I don't see how, the only thing that's changing in mvpp2 seems to be
-an outdated comment that happens to mention a tasklet, but the
-driver doesn't use tasklets.
+1.) HS-Phy control: EUD being a HS hub needs HS-Phy support for it's
+    operation. Hence EUD module should enable/disable HS-phy
+    accordingly.
+	
+2.) Proper routing of USB role switch notifications: EUD hub is physically
+    present in between the USB connector and the USB controller. So the
+    usb role switch notifications originating from the connector should
+    route through EUD. EUD also relies on role switch notifications to
+    communicate with the USB, regarding EUD attach/detach events.
 
-Let's look at the original comment which claims what the call sites
-are:
+This series aims at implementing the above aspects to enable EUD on
+Qualcomm sm8450 SoC.
 
-static void mvpp2_txq_done(struct mvpp2_port *port, struct mvpp2_tx_queue *txq,
-                           struct mvpp2_txq_pcpu *txq_pcpu)
-{
-...
-        tx_done = mvpp2_txq_sent_desc_proc(port, txq);
+Elson Roy Serrao (8):
+  dt-bindings: soc: qcom: eud: Add phy related bindings
+  dt-bindings: soc: qcom: eud: Add usb role switch property
+  dt-bindings: soc: qcom: eud: Add compatible for sm8450
+  arm64: dts: qcom: sm8450: Add EUD node
+  arm64: dts: qcom: Enable EUD on sm8450 hdk
+  usb: misc: eud: Add High-Speed Phy control for EUD operations
+  usb: misc: eud: Handle usb role switch notifications
+  usb: misc: eud: Add compatible for sm8450
 
-and that is it. _This_ function is called from several places:
-
-mvpp2_tx_done()
-mvpp2_xdp_finish_tx()
-mvpp2_tx()
-
-So I suppose that the original comment was referring to the
-mvpp2_tx() -> mvpp2_txq_done() -> mvpp2_txq_sent_desc_proc() call path,
-and the others were added over time.
-
-mvpp2_tx_done() is called from mvpp2_hr_timer_cb(), and yes, back in
-the distant history there was a tasklet here - see:
-
-ecb9f80db23a net/mvpp2: Replace tasklet with softirq hrtimer
-
-So, the comment referring to a tasklet was left over from that commit
-and never fixed up.
-
-Given this, I don't think the new paragraph starting "Historically"
-is correct (or even relevant) as I think it misinterprets the original
-comment - and "this function" is ambiguous in it, but either way its
-still wrong.
-
-If we assume that "this function" refers to the one below the comment,
-then this has never been called directly from mvpp2_tx() nor the
-tasklet, and talking about a bottom half workqueue makes no sense
-because "historically" it's never been called from a bottom half
-workqueue.
-
-If we assume that "this function" refers to mvpp2_txq_done(), then
-it's not historical that this was called from mvpp2_tx(), because it
-still is today. And the bit about being called from a bottom half
-workqueue is still false.
-
-Given that bottom half workqueues have absolutely nothing to do with
-this code path, the sentence beginning with "Verify" seems totally
-irrelevant (at least to me.)
-
-So, I think I've comprehensively ripped the new comment to shreds.
-It would be far better to leave the driver alone and not change the
-comment despite it incorrectly referring to a tasklet that has
-already been eliminated (and at least was historically correct),
-rather than the new comment which just seems wrong.
+ .../bindings/soc/qcom/qcom,eud.yaml           |  17 +++
+ arch/arm64/boot/dts/qcom/sm8450-hdk.dts       |  15 ++-
+ arch/arm64/boot/dts/qcom/sm8450.dtsi          |  29 ++++
+ drivers/usb/misc/qcom_eud.c                   | 125 +++++++++++++++---
+ 4 files changed, 164 insertions(+), 22 deletions(-)
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.17.1
+
 
