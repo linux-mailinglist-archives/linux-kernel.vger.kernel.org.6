@@ -1,76 +1,123 @@
-Return-Path: <linux-kernel+bounces-267820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A81B9941622
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:56:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370D2941628
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8F071C22C44
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:56:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCD771F24F1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538861BA874;
-	Tue, 30 Jul 2024 15:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B481BA87F;
+	Tue, 30 Jul 2024 15:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjqtR9qv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KloSbefG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D60F29A2;
-	Tue, 30 Jul 2024 15:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692E429A2;
+	Tue, 30 Jul 2024 15:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722354994; cv=none; b=Fu9DrOw3nniJV7nO/e4sGIlpsspPC3viTcXLtguuXkcNsJ8YQjKdCEZhSvuehyVFeFima8ML03CT9nlnG5TjOrz64ZH2X8l24mpGJZ+nNXXUpnpQHpTpI022j9kCgAJO+lvH+2EX/eVkln+STMqKsdmDIxJy6NJyEAivNPvo1Qo=
+	t=1722355011; cv=none; b=FGNm0FTe28COMfAT4M3EryZY2gDJNy3/+05PWTF0CGy6iH4OvZfJtrY3S6iPm21wUcrdzX7TbN2JfYfmDqsENLaPczcuFxuk0tpySzljL8IUc8FOe4EXmCiwf/J1z1RE7AHtCLBb6lmx/i3DoF22BpC9YYR0L7BAWIWm/C2wO8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722354994; c=relaxed/simple;
-	bh=8CuFTMoQBnrtRBkUggxshUDoWUpQGu2HjJyh4gH80Mw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ghodh3vASlQwFzURXq8Rnxz9Ts4dpw/EfPH7K50evjxlSQ+Ki6oHVtp+brtHWHB2R9D+yWzyjOfM/T3wyIQeYFdjhV1A/fI8iu3coZQKRdg6uhdw06hA07tVapVkMajKOofL4M8CNyckuQZR5BExZppt0PoHsl44Uwjgu6H5go8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjqtR9qv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C743BC32782;
-	Tue, 30 Jul 2024 15:56:33 +0000 (UTC)
+	s=arc-20240116; t=1722355011; c=relaxed/simple;
+	bh=NwxPPUduOd4UYeuGxtrrawyvduj3Rfr54xa8BTINUL8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KdZu2N3BgYmixQtHF/7qnECrtkaCMgTRVRO2lN4BlyH8biai/hSwaWlJT14PB8xi4/fErXCYoGBioRDxJpj6LOk/lgiaSMfjUlkOhShMvNphSrx7qILPLUryhXqec1HTk0nJfoCgg20ST6qZy1A1GIfdf2UolIsG/i3EhCRz9II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KloSbefG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E25D3C32782;
+	Tue, 30 Jul 2024 15:56:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722354994;
-	bh=8CuFTMoQBnrtRBkUggxshUDoWUpQGu2HjJyh4gH80Mw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KjqtR9qv5UM8+ljLItAIdwvv9zglpbdEDAbUJFlBDhczu7WZ6DgjptPvtuSCpgSU2
-	 /79F3CwhyJjC7eZ8e0rFF0j8xBaHZ8ohimE0aFnU/btHPgphNjysHQICXPoEhV64zd
-	 ujX/Ei1qebabKrfxGHH3WdcfZhAl5aeLJgRuDr6cjEfS82sf3CGAXE0TYHRlMlighD
-	 KALwCyoZsZhNjRTdfLUP8ZpFA5HnvewhWvclubuMMaj8Dyv4Z4jXn3yWDq09X8ndXB
-	 vVc09H2fcqBuIJJylREg8qVt/GjGZk8My2f0PJ8Y7whd8z2CHmlBgyaFjUiD6fSTtz
-	 yRfvVsyVTwFUQ==
-Date: Tue, 30 Jul 2024 08:56:32 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>
-Cc: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>, <netdev@vger.kernel.org>,
- <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <horatiu.vultur@microchip.com>, <linux-kernel@vger.kernel.org>,
- <stable@vger.kernel.org>, <UNGLinuxDriver@microchip.com>
-Subject: Re: [PATCH net V1] net: phy: micrel: Fix the KSZ9131 MDI-X status
- issue
-Message-ID: <20240730085632.1934ae5f@kernel.org>
-In-Reply-To: <20240725071125.13960-1-Raju.Lakkaraju@microchip.com>
-References: <20240725071125.13960-1-Raju.Lakkaraju@microchip.com>
+	s=k20201202; t=1722355011;
+	bh=NwxPPUduOd4UYeuGxtrrawyvduj3Rfr54xa8BTINUL8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KloSbefGq6eTp3plC8iMf2GcsuBesky1HKZAXzQJpzWzh0ILWsIqoC0/SKjTkgj+1
+	 qepI5/xPYFNYxwXHKA5ijBeFBGy2UE7lspnkIindMibnIym5kVGDtdEdb7T2I31l+6
+	 wHXdajr+7W96WzOahcKWjVCnmCyLf/DDyDSnpIhG5A8Ksp44PifBvcs38y7bXllDwV
+	 Ooehd4BmRoUm2H3KizjmFoYhsCqZcPZfCP3k+FCuY9EfplADnbyck9kWYa3gL0+BFd
+	 HGEsFp1tq2Ik2pMt7yoQdtGL8Ubn6W6/mdcCF0iYxG2koW15Z669qCI/7RxMbGQSgz
+	 sI5hIrBrXeJFw==
+From: Will Deacon <will@kernel.org>
+To: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Will Deacon <will@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Michal Luczaj <mhal@rbox.co>,
+	Alexander Potapenko <glider@google.com>,
+	Marc Zyngier <maz@kernel.org>
+Subject: [PATCH] KVM: Fix error path in kvm_vm_ioctl_create_vcpu() on xa_store() failure
+Date: Tue, 30 Jul 2024 16:56:46 +0100
+Message-Id: <20240730155646.1687-1-will@kernel.org>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 25 Jul 2024 12:41:25 +0530 Raju Lakkaraju wrote:
-> The MDIX status is not accurately reflecting the current state after the link
-> partner has manually altered its MDIX configuration while operating in forced
-> mode.
-> 
-> Access information about Auto mdix completion and pair selection from the
-> KSZ9131's Auto/MDI/MDI-X status register
-> 
-> Fixes: b64e6a8794d9 ("net: phy: micrel: Add PHY Auto/MDI/MDI-X set driver for KSZ9131")
-> Signed-off-by: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+If the xa_store() fails in kvm_vm_ioctl_create_vcpu() then we shouldn't
+drop the reference to the 'struct kvm' because the vCPU fd has been
+installed and will take care of the refcounting.
 
-LGTM, can we get an ack from PHY maintainers?
+This was found by inspection, but forcing the xa_store() to fail
+confirms the problem:
+
+ | Unable to handle kernel paging request at virtual address ffff800080ecd960
+ | Call trace:
+ |  _raw_spin_lock_irq+0x2c/0x70
+ |  kvm_irqfd_release+0x24/0xa0
+ |  kvm_vm_release+0x1c/0x38
+ |  __fput+0x88/0x2ec
+ |  ____fput+0x10/0x1c
+ |  task_work_run+0xb0/0xd4
+ |  do_exit+0x210/0x854
+ |  do_group_exit+0x70/0x98
+ |  get_signal+0x6b0/0x73c
+ |  do_signal+0xa4/0x11e8
+ |  do_notify_resume+0x60/0x12c
+ |  el0_svc+0x64/0x68
+ |  el0t_64_sync_handler+0x84/0xfc
+ |  el0t_64_sync+0x190/0x194
+ | Code: b9000909 d503201f 2a1f03e1 52800028 (88e17c08)
+
+Add a new label to the error path so that we can branch directly to the
+xa_release() if the xa_store() fails.
+
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Michal Luczaj <mhal@rbox.co>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Will Deacon <will@kernel.org>
+---
+ virt/kvm/kvm_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index d0788d0a72cc..b80dd8cead8c 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -4293,7 +4293,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+ 
+ 	if (KVM_BUG_ON(xa_store(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, 0), kvm)) {
+ 		r = -EINVAL;
+-		goto kvm_put_xa_release;
++		goto err_xa_release;
+ 	}
+ 
+ 	/*
+@@ -4310,6 +4310,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+ 
+ kvm_put_xa_release:
+ 	kvm_put_kvm_no_destroy(kvm);
++err_xa_release:
+ 	xa_release(&kvm->vcpu_array, vcpu->vcpu_idx);
+ unlock_vcpu_destroy:
+ 	mutex_unlock(&kvm->lock);
+-- 
+2.46.0.rc1.232.g9752f9e123-goog
+
 
