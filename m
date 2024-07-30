@@ -1,133 +1,89 @@
-Return-Path: <linux-kernel+bounces-266912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8696940960
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:17:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 964B2940962
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15B421C229B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:17:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEC471C2104A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CD718FDA5;
-	Tue, 30 Jul 2024 07:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A87819007D;
+	Tue, 30 Jul 2024 07:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bILk69M0"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IEZ5fsGO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D29138B;
-	Tue, 30 Jul 2024 07:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554BD38B;
+	Tue, 30 Jul 2024 07:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722323846; cv=none; b=kvuEaYQiZCY7xMetI9ZxsDyABkDspwjBs5OTpo4F5SnanB/SfeifX5lanblHQkqSXSVcz2WONmP7/zJKsbCQqaqaznQcqy1JzKodBOC6OPv6er+8cnxVYJZUOLNViA7XQcArIIqQj52C+ghFJ5vme4Fdms9T4NazQMwPC4mP0sU=
+	t=1722323862; cv=none; b=Vl5BVeXqlm3gYv/Im9lf3x9aB+bDrwpqJI7VHc1CG6R7K+LM0PuKZjjIdJUyTxH5VULUHw7ZEJgy+j4epq3+FEwLmArXy8Yquse8fsZzI8vWfERLwF2EtTXbmvZMidw8g7nIgY5sxGaab79NDoDciKMXbFAnahVdLB9L7kpDKDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722323846; c=relaxed/simple;
-	bh=XcmupE1Ud6f59uZriwGid5ey5LMkkHhfgGhLIoG5Idw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ntXF1J695OPFNxdpjDSO5rMGQIEC8UYMcbiZaDwwlv2vkieGE2qPxk5a5wp6XmZDkgSF70j07jkgQk/Ig4emqmrsqA2VRliwnpDjVY+Epx4S/Rldravo3hVqNRAS5NpI1HaJbslQFg4tZiM/NLL9LN71mfxffuUSMT+NbNFWSDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bILk69M0; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52f025ab3a7so6645134e87.2;
-        Tue, 30 Jul 2024 00:17:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722323842; x=1722928642; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ldS7VLFYx4sIrwzuVLb7MPZlQOq5ka3sCS/nDmd1nds=;
-        b=bILk69M0eLTODEt7mT4F1NYtsgMUkgjha1sgSm4mSwyFKCHUoF65BvDbPMjQck6J/2
-         hMpluGDOtn3fSXK6GyvTPxei/MjV9WZKBp1VZO19QIT1hR7SIerf3mkIep3u3XRw03kl
-         gf3FoI2JTZMMaCvqaYoa3ZfstM7+i+hToZ+wKu1S4ey2hZUa1zAXwp4Ix8XKGdRjYkdQ
-         mFTUoolLBL4ZaZ5CndBGUWlyjqiIsF2M/Ff+m+Fu7T1BjEKiBQVdRrh3QcJJzQ+JoAiZ
-         KdbQPeUp/W3vWWgeX3y77z8q0EuEVFTEfamiOirJ6ikRTEr4taKBkxmxI3WHmUdQ2++s
-         PKaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722323842; x=1722928642;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ldS7VLFYx4sIrwzuVLb7MPZlQOq5ka3sCS/nDmd1nds=;
-        b=be8RRgFackFv4rDRqkrkaKTaNzUQEDPF2wdcN4JEi9wcNgm+O2hP3zeJsPce9EDXYq
-         hF7uPVsLmkBzl/iBQYAxl7F7s0/NiOIF6Mue0WTeiWG6/qUDY1oKgAHSk+6iip2BJbVL
-         UPn6kmkHKL2csfeeml7WD6bFwIVpggfXH7gwYUm2N4vvWydvZj5cTITr8B4wc6vu5eso
-         3WBSSZInucYwtFSHfTMMtPa+iTKJBWkvVjfVWwszlNQYBdqymWuzOb/1NWTnYaEKKQE/
-         RhcmCMuxz7eWEWkQMUqv5/ID4t49hD7uRfBuNp6gQAEEhYNUrO+MgASmip1jp/qVybU0
-         aTfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV24KAoYLilofjdEXV9g/ylaCaURzh0xmemiiuTe+0nW0CC4okkbiY+LFq89ZtBSM09uOmpY3rf1VKBwGGx3hA95Rmn920paSFwuxBM
-X-Gm-Message-State: AOJu0Yw8siy0BPn4Kb0Ypw8+/iZZ57GW7IXIpOvqThtdAkwLkBi/bs03
-	9rfd+PB1z8yfGlYNhQHZmMIeBh8+8WZpQgyZuB/nUuREgnW8T/wyl6bYWi3xPwI+zr9Rn7tgn8d
-	pJOwQi9om8nJPSr2SxPM6I5AtfwI=
-X-Google-Smtp-Source: AGHT+IFSLjo/Uo/C3SQw84ZGy0FZOtnM+o0dZwZkEpOawt26qeINYI8tlx/Dy51fiV489jiGd5KMZiFBwu4ksttmwww=
-X-Received: by 2002:ac2:5bc6:0:b0:52c:8a12:3d3b with SMTP id
- 2adb3069b0e04-5309b2e0afemr5307584e87.56.1722323842117; Tue, 30 Jul 2024
- 00:17:22 -0700 (PDT)
+	s=arc-20240116; t=1722323862; c=relaxed/simple;
+	bh=VVI1imebOJVZF9QSxnCFZP3BleBHP121TLHTCjh66WQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i+5UOPWqpoH4UOWvlXLULa3gPCoj/Ux3gZdKo2jD1Emp+ouZGsHmFTqfK55JGE1a5Z5+8y7uZoNz8NaZDEwsFKE2yFlrEnt+begdz6PrWigpz4JvAbKySfag8powpo0OUhep559av89ldhXL0Top0DPJSQ8nHJrXGzXX1s2uUyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IEZ5fsGO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6347EC4AF0F;
+	Tue, 30 Jul 2024 07:17:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722323861;
+	bh=VVI1imebOJVZF9QSxnCFZP3BleBHP121TLHTCjh66WQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IEZ5fsGOwu84wMRvOs2CcTyBXd/kUDc0zoJP0qAxBcuTP1uIeLCMyNd4QbZyrnn0S
+	 txxwzOmm4o6VkwJMWLAE9Y3dvi8gBkBulrn8EI8QszSmR4BVfazjynysN76r6sSmxD
+	 jPYFW1etK6uytPRZ3YZ213jqbpmeEJbv4ckRS/FA=
+Date: Tue, 30 Jul 2024 09:17:38 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Sakirnth Nagarasa <sakirnth@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	~lkcamp/patches@lists.sr.ht, helen.koike@collabora.com
+Subject: Re: [PATCH] staging: fbtft: Remove trailing semicolon in macro.
+Message-ID: <2024073026-clubhouse-vividness-600d@gregkh>
+References: <sakirnth@gmail.com>
+ <20240730071455.37494-1-sakirnth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729115056.355466-1-abhashkumarjha123@gmail.com>
- <20240729115056.355466-3-abhashkumarjha123@gmail.com> <20240729205329.57390e20@jic23-huawei>
-In-Reply-To: <20240729205329.57390e20@jic23-huawei>
-From: Abhash jha <abhashkumarjha123@gmail.com>
-Date: Tue, 30 Jul 2024 12:47:10 +0530
-Message-ID: <CAG=0RqKuhn-WHjMbEqq4bCQOs9ERPKZR_udeCf3noqz+TzULyA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] iio: light: ltr390: Add ALS channel and support
- for gain and resolution
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org, anshulusr@gmail.com, lars@metafoo.de, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730071455.37494-1-sakirnth@gmail.com>
 
-On Tue, Jul 30, 2024 at 1:23=E2=80=AFAM Jonathan Cameron <jic23@kernel.org>=
- wrote:
->
-> On Mon, 29 Jul 2024 17:20:54 +0530
-> Abhash Jha <abhashkumarjha123@gmail.com> wrote:
->
-> > Add new ALS channel and allow reading raw and scale values.
-> > Also provide gain and resolution configuration for ALS channel.
-> > Add automatic mode switching between the UVS and ALS channel
-> > based on which channel is being accessed.
-> > The default mode in which the sensor start is ALS mode.
-> >
-> > Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
-> Hi Abhash,
->
-> Patch looks good but one quick question.
-> Why not present an IIO_LIGHT channel?  Needs to be converted
-> to be illuminance (with scale / offset applied) rather than IIO_INTENSITY
-> which we use when the frequency response is different from the requiremen=
-ts
-> to measure Lux (and the units get very vague!)
->
-> Looks like what you have here is close, but not quite the right scale
-> factor as not including integration time and the mysterious 0.6 on the da=
-tasheet.
+On Tue, Jul 30, 2024 at 07:14:55AM +0000, Sakirnth Nagarasa wrote:
+> Fix checkpath warning: "WARNING: macros should not use a trailing semicolon
+> in fbtft.h:356.
+> 
+> Signed-off-by: Sakirnth Nagarasa <sakirnth@gmail.com>
+> 
+> ---
+> 
+> Hello, this is my first patch to the kernel.
+> ---
+>  drivers/staging/fbtft/fbtft.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/fbtft/fbtft.h b/drivers/staging/fbtft/fbtft.h
+> index f86ed9d47..45dfc92b8 100644
+> --- a/drivers/staging/fbtft/fbtft.h
+> +++ b/drivers/staging/fbtft/fbtft.h
+> @@ -365,7 +365,7 @@ MODULE_DEVICE_TABLE(spi, spi_ids);						\
+>  										\
+>  FBTFT_SPI_DRIVER(_name, _comp_vend "," _comp_dev, _display, spi_ids)		\
+>  										\
+> -module_spi_driver(fbtft_driver_spi_driver);
+> +module_spi_driver(fbtft_driver_spi_driver)
 
-Yes, I just noticed it now. I will provide the integration time and
-0.6 as part of the
-scale calculation in the next version.
+checkpatch is wrong here, the ';' is correct.
 
->
-> If we can provide a signal scaled to illuminance that tends to be a lot
-> more useful for things like screen brightness control because it should
-> be close at least to other light sensors.
->
-Hi Jonathan,
-It did not occur to me that the IIO_LIGHT channel could be used
-directly and hence I
-went with the IIO_INTENSITY approach.
-Yes we could provide the IIO_LIGHT channel and perform lux calculation
-in the driver.
-Would that mean forgoing the IIO_INTENSITY channel? Or do we keep both?
+thanks,
 
-Abhash
-
-> Jonathan
+greg k-h
 
