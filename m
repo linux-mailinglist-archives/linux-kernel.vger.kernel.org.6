@@ -1,80 +1,54 @@
-Return-Path: <linux-kernel+bounces-266945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2390D940A28
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:45:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D5BD940A30
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 477A31C233BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:45:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E8DF1C233BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1484D150994;
-	Tue, 30 Jul 2024 07:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92505190482;
+	Tue, 30 Jul 2024 07:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FTQ6A8jz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fsUL2SW5"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92DE1667C2
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D216150994;
+	Tue, 30 Jul 2024 07:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722325523; cv=none; b=M1L115OrItT5/f7P+hBaiQmYJPBy3VB8nASrdsqzKOvTv+z9qijufaNh2LNNpXUVXwQRAWtKvoSKLss0v+fw8EomanMk4rMlhY0pmlrA6Lbt2txvFNWD4dlmblTpXFq1k7x3L4IF+5nyjHQi/ANyB0YYHl9qdeJUcOOTECYGfno=
+	t=1722325623; cv=none; b=WhoE/z5u8zLqqNL4Vapq/1McNjnXOOH/gZj6fGG1UJrk5B67BAO+z2zoDziXCxC7DQvYBm8Z2ToxKPqD+i8cvtibXHQdYHqem6T1R6nGlK+hUTFprruR5IIekLo0JxuHdN1RAXFdk5ouavypISqEpyCoG59NOZe8se0vIH/WLcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722325523; c=relaxed/simple;
-	bh=wznoV680KqMWS/MlCZxoXHKepY/0Ug6LCGof+aLUtFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HRv0jP0y0st2dzk3Za7qthjs7MQ7SBpcZikfPGa/vWKhz4WnrYLec03GKBaEO15+XBAK17Xj3e0iagefOmdgXx7EfXFXn+gV/efiq5qV5Qyc1CGaVVTBsE1fLhSjl3uaHOj6YWi+eKeKFNSZnhyKHmWO3xa2PUOSGAw4kMs4DuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FTQ6A8jz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722325520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ck64k5Euo2onW/2Qr1N2B97paaQEw63eQ9tuTmojtHA=;
-	b=FTQ6A8jz80PayX1u7mHDrHULdKuoPwSHa1Jx1jmofDhAirQ8iWe8cE5upZdLF32aqABBHw
-	E7pAc0TgpMKpF2Z1OF4SGjRcqv22jyX10jyeGDarc9i6GBvgXReIVam/cteudrT8HzO0Xh
-	Uxvjmv3zYucYadu7UDicHOhSipdUdJM=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-542-TuLoXIcsMAO-oDxud1wutw-1; Tue, 30 Jul 2024 03:45:19 -0400
-X-MC-Unique: TuLoXIcsMAO-oDxud1wutw-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42816096cb8so31449975e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 00:45:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722325518; x=1722930318;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ck64k5Euo2onW/2Qr1N2B97paaQEw63eQ9tuTmojtHA=;
-        b=kq/h3PePjVj6tfcSwP1IkW3Gk/ZFq29FicAF+uYzFmbyag0/gzHilQ9FRZ3AnvnGut
-         vEv0RIOf8ifY650h+z+vTxbKaFrNzPvYRKpaZeh2r8KU+TClzEksRumWp7reCdFP/naQ
-         GVDuh8tr7cgrGT4uj5Zl2twybAILfTtkaVbHBq5rxCIlxX58A2WKYA9Kow3/sMjeBxIh
-         IDrFXXD4dg0tVDA0jg7+DDgxH/rPXibVFusISyoczSMyQ3mP1PrgTU2WcKWIeIcoZBSO
-         TLsfqN/Y1EasloxsUHat9i8OgAPrIkdZwCXbKfkGeEezyRS25TThFQ8OxMSDBFZZU1KS
-         VAJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUr/NeFXzOLbABjXL7BBaWR4LA4PdMpTZYRK4dbsyF/Dbkp4J0JfEHkAe1mzcRYqefMYX/Q8vuKJAHoD+j5d2Vw0r1ayOpfM3CZbkZa
-X-Gm-Message-State: AOJu0YwUB/cef1MDWX1jH6n26boL7aZ4cMfuN9DHWY4ZDJmFa5C5ZMXz
-	MLpVA6LWqfcPmBWilTIKX7z9LXSs7AnwxjFqNVtgIzFBrmoed73S/kZ61Ej6gZHs/AOXQVX/mOS
-	rLbEI9CQviCnmOwsDD/bRs4pQnvpa2LblXBJVZyJwPI91D5s+DmvSZG4YmhdLEw==
-X-Received: by 2002:a05:600c:19c8:b0:426:6fd2:e14b with SMTP id 5b1f17b1804b1-42811d8c0d7mr85828295e9.11.1722325518024;
-        Tue, 30 Jul 2024 00:45:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IENux1tTvDpWwy183jVoXH1C4ya6HGPC6j4TO1QjnTCASeMbFQ6ofo9sRvfuz5lGq+AWJjSyQ==
-X-Received: by 2002:a05:600c:19c8:b0:426:6fd2:e14b with SMTP id 5b1f17b1804b1-42811d8c0d7mr85827955e9.11.1722325517290;
-        Tue, 30 Jul 2024 00:45:17 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c706:4e00:31ad:5274:e21c:b59? (p200300cbc7064e0031ad5274e21c0b59.dip0.t-ipconnect.de. [2003:cb:c706:4e00:31ad:5274:e21c:b59])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428057b7218sm203076875e9.47.2024.07.30.00.45.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 00:45:16 -0700 (PDT)
-Message-ID: <9e018975-8a80-46a6-ab38-f3e2945c8878@redhat.com>
-Date: Tue, 30 Jul 2024 09:45:15 +0200
+	s=arc-20240116; t=1722325623; c=relaxed/simple;
+	bh=x9M7HV/oJMHN9SaUohbVRMTRV7I4w25EQLwnBP6m1nA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Z5KNcU86lFEtIFrxZ5Vke4JcOcDggWsJSZgOKzcKFNKriFtbniPmA2a4j86toXN8TpgXNhSrs7g6X7qj1pilB/1WbFW1Vju8oHR0HJdUjf1UCQVCO0SdWFbaNEPHjjgz/KY1nEqgjxESJ5P8AQDysSWlEwpyVsT+lx5sBPmXcJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=fsUL2SW5; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1722325603; x=1722930403; i=markus.elfring@web.de;
+	bh=x9M7HV/oJMHN9SaUohbVRMTRV7I4w25EQLwnBP6m1nA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=fsUL2SW5qmCX6O3DIYdLGC1B8MWnB0OeZaBATWaUSC+NQkNkZjRZi80SucLuFZQK
+	 sgT4nQwrWNhpJAk4ixtW4KXrjdt1xPEQz1JA7gzy3QBaWSou8S/VptA8j4OLu9BFt
+	 7LrHQv/aRUhvB2qYkU1s4OauXTYkbF+tXk4cZcMlIQDOKogDTsePIae7NV7fBRWhX
+	 fl+YKMbj7Wp/YfcYvb5ZSKa2ME8YIIM+iMobey9JHOqdZF2uIvIq17HHT4r42Jn5g
+	 edn4h4rL3ng2R1E1i7rHRf+xtaY1odkUBou84B1/j3c1SyJDCQSdScR3ZIi4KMgRM
+	 PnfCQZAAKKeqGr0s7A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MQgl2-1swP5h0zck-00KjM0; Tue, 30
+ Jul 2024 09:46:43 +0200
+Message-ID: <3a764900-12ef-4026-af03-7e8cd2d09b04@web.de>
+Date: Tue, 30 Jul 2024 09:46:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,91 +56,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] mm/gup: Clear the LRU flag of a page before adding to
- LRU batch
-To: Ge Yang <yangge1116@126.com>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- 21cnbao@gmail.com, baolin.wang@linux.alibaba.com, liuzixing@hygon.cn
-References: <1719038884-1903-1-git-send-email-yangge1116@126.com>
- <3a2ab0ea-3a07-45a0-ae0e-b9d48bf409bd@redhat.com>
- <79234eac-d7cc-424b-984d-b78861a5e862@126.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <79234eac-d7cc-424b-984d-b78861a5e862@126.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Florian Sylvestre <fsylvestre@baylibre.com>,
+ Julien Stephan <jstephan@baylibre.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Paul Elder <paul.elder@ideasonboard.com>,
+ Phi-bang Nguyen <pnguyen@baylibre.com>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, Andy Hsieh <andy.hsieh@mediatek.com>,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240704-add-mtk-isp-3-0-support-v5-4-bfccccc5ec21@baylibre.com>
+Subject: Re: [PATCH v5 4/5] media: platform: mediatek: isp_30: add mediatek
+ ISP3.0 camsv
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240704-add-mtk-isp-3-0-support-v5-4-bfccccc5ec21@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:HxfUk98qhjXor8EeRRmEwu+XEwDZNRk1/c9HrRw62G48QGp0iP2
+ pikrkJzo4/SWpXOX5wePvMFYdIdMRWZMzRnkk4Fc1BhNrp+YFt8WyEZTg0Q7+hhF4L7gHwO
+ kN0LR+Yi31HgOSaxuz3cBouWcefbb1oiSf6ZBmGQQNARZ+VZaXW1VxVcRaE09Cn52U1/IG6
+ ohlr+FpKtk1jR8fJAs+XA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ChkxlR19o00=;uiURpJ3lineKtUAkoX/d6ZXTj8b
+ cOzJcVdyHJkd08/1gAx1NJZnaOAFt5YTheV4N1YzLIECN2kRAnBbyKN18rSnlPQPzn2AzQvUY
+ 5gESyQlxbo3YI9l2VhjC7N42ep2nZQlDvTdhh2QfhQvlzdKUz7Zbop9LdzjdfhZLjwqyzX9mp
+ yYl4NyzFw/qjr9qSCCD7/vJGlWkXwshnclAIsU6aKCr6vOxTISE3ksopHAiQmx/ybCXTooan/
+ 0hIAHvZP+LKlATMr4P42YY+BnoiUbIXntVbzqZ7rVVNzj22b3cLfjUAqXtrw82BXDgbuuww6G
+ r7E7UmqDquz5uuxZpHtQbd9pf9A6jg5k1QkS3ArO96QfLrFiXjNyMYlG+y/t1FWKuJOfqMbWq
+ gPYzRCu/1fLgSY8T3I2JsUPMlTECsSV6SB++8M1SijaOSikQ4SMIDtfq5A2nzvLyiTV5zYVuA
+ zliVMrbJdt9bs14R15T5G+UjC/g0hrEQHv5UMfTRmjDfVejwH6nRZlmgfPrFq6aDe7lZAvRJN
+ pWkOeA9x/NONJfEZQfmbU8CD0RlHGEiAxM5LReTv4ruUnB9TAh8Sq10uFHjjPu7poWn/o0WPA
+ ZgK7hYY9SqWXFUDqTLfsx1gdUsU2xbldPU7wmCMKCW3pCZh1Y444xXJWhD6UmUfc8IAqSE0bu
+ H8wYrnzdgQncGQW/VUqyNIxJf7YfVCyn2LndEmmy4wz9uBS4bIFTZIiSBhph2j/Ifu7atWYSe
+ F6mI4NLN6AaGoasT35moG3R2/apGbQ/BcJTosqEW4e9dYISwvpR6NPIvpsD5G2+tUqBFuiLvs
+ nszSfL5FPMiTmOrdVq6/ycBQ==
 
->> Looking at this in more detail, I wonder if we can turn that to
->>
->> if (!folio_test_clear_lru(folio))
->>       return;
->> folio_get(folio);
->>
->> In all cases? The caller must hold a reference, so this should be fine.
->>
-> 
-> Seems the caller madvise_free_pte_range(...), calling
-> folio_mark_lazyfree(...), doesn't hold a reference on folio.
-> 
+=E2=80=A6
+> +++ b/drivers/media/platform/mediatek/isp/isp_30/camsv/mtk_camsv.h
+> @@ -0,0 +1,196 @@
+=E2=80=A6
+> +#ifndef __MTK_CAMSV_H__
+> +#define __MTK_CAMSV_H__
+=E2=80=A6
 
-If that would be the case and the folio could get freed concurrently, 
-the folio_get(folio) would be completely broken.
+I suggest to omit leading underscores from such identifiers.
+https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
+efine+a+reserved+identifier
 
-In madvise_free_pte_range() we hold the PTL, so the folio cannot get 
-freed concurrently.
-
-folio_get() is only allowed when we are sure the folio cannot get freed 
-concurrently, because we know there is a reference that cannot go away.
-
-
--- 
-Cheers,
-
-David / dhildenb
-
+Regards,
+Markus
 
