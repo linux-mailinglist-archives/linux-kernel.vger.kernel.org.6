@@ -1,117 +1,151 @@
-Return-Path: <linux-kernel+bounces-267349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20CC394108D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:33:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8B5E9410A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85E3FB253E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:33:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0650A1C22FC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1882019E7D3;
-	Tue, 30 Jul 2024 11:33:49 +0000 (UTC)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDF81A00DE;
+	Tue, 30 Jul 2024 11:36:19 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BBE199223;
-	Tue, 30 Jul 2024 11:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2029E19DFAB;
+	Tue, 30 Jul 2024 11:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722339228; cv=none; b=jWURTNvCZqdnEiyRYRZrXUQ4lEMZvfevUf56VfxlqvKB9m5OMkS5h5CeX2bawOZccC34PpgTAIcSRjsmipSFu2N1zlk1CmE8k92LzSuHTwkvZSmPScxwKIVYnCzOyO0QLGpOElrX5zQZOTOCv5lb6RNkYox1gI8dn3RGpC6utaw=
+	t=1722339378; cv=none; b=LwMjoxCerJ2mT9ikN2XOCdK+hew+NyPkz/19MJVEw2Iz+WizsYsnDxAbi+p1uaYIyg2wHMzeG9NB0jjAx/fso5+blz6KbgPbGiANvK55RTWP1DT/oxF4pEz98dKGuVv8CP8IHAbj9T3yKiyMwQEkVof6Q6cetJtqFoovM8jCkeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722339228; c=relaxed/simple;
-	bh=jreJikrD50z/MsfiEtCcf4z8wcJkXKTDq/80kkn76Nw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nT3I8HzPxKPIMj37kRmR5yf3Rt/cAG/2LkJbotis434y9KDZTl6z0W1ykW8T8ko9PAwX6H0GQ/AoDBMTM8eoMFMZbgEv8u6clPNwyXYCFCUJTRFWeq816eEi36Mm+jOD8JBFmDOgVKhTlKpmN+L2O2dQoIzLEfcjl4r20IR/nic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-66599ca3470so30400957b3.2;
-        Tue, 30 Jul 2024 04:33:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722339225; x=1722944025;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iu/0Gl/ovPvi/QUyUkK6QwbKoB2ipspmsxhrwXiqkYw=;
-        b=ic0hTlA3UK9Ro60RO0Ax6js8DVo7RO0RmsD3BRC2fxg/wN/6fuF6h+hu7D82jXpDin
-         MlC87uYL0t/E0TNinirVupFsklg3tV08Wmf7pIcC3cOVRVFHM9fYxbH8/CIY7j2eX8DH
-         UawXIug9YKSLqrvK1GO2MqQImSRlu/HLvuXdrU72u+x+/FSu1IbsJWOy/ti8NdQUh8QY
-         SDUoncFZv2Uc+6+DWsbm/EiGOaToF3IB0cB77mu8WyArxOO1hvlrlFPwy+9Ja5Elx6jd
-         KEDZxftX50ppuERKHlajidv7gFzERI0IYyWi+FrF9hHGAxaVUnr9yGkW0Dt7VGtPavfg
-         2zyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWeBi4+acJNvx8BE5vZwThYC6SAZideLBCuJDsdh9rYGINUQkzRjWHaCO5uDvrKqGhwfGa4NnEJVA7dypLePcIIoFyPh5SBx+Y/Ve2+3PWc8qtO77v169palY6WubAmJqGAbrMCNa55mrJGzr5VITO906K13ZdaKgnyDMnikOQYuaJDsCnRlJKSopC1WZ7f7MJPniDzkDdTfLsdAaB6tfgFbo+8xHGHvg==
-X-Gm-Message-State: AOJu0YwuL8pKEwTxIqJK8sRnSS5JVkzoUda139hGY2QUsTAtOjoR+5yB
-	jIVd55XdTuBXRsSRRO8+yBco/4IJHxPcNq5NRjflipba0VnKUfA8/aI2ksE3
-X-Google-Smtp-Source: AGHT+IFlyDYKgquLBP/4RknrDD3fRIW2rWfI9Ebj23wJ/BPXn4oeMh//SKFIZu0NrOLAWmfCVYPdlw==
-X-Received: by 2002:a0d:c1c5:0:b0:63b:d242:4fa0 with SMTP id 00721157ae682-67a07b756edmr127437507b3.21.1722339225149;
-        Tue, 30 Jul 2024 04:33:45 -0700 (PDT)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6756b02477dsm24629607b3.103.2024.07.30.04.33.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 04:33:44 -0700 (PDT)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-67b709024bfso33659827b3.3;
-        Tue, 30 Jul 2024 04:33:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU9MK1jPi9myi9TNhKR1uM6IMxHWYqDtTZP/t2yiL50n36ZBpao8c7bEpTG+ZsN34Jj1jHwvXcIzu7Xzysr4AVCek5JCsPr1xdv8tFt3VctJyGgnTlemrk9vWNa470uCz7JP78PVZpYf3cqJWBjYdod7kKoR9aAzqEoeT7LdSuMAERHyKXRHV86XP6iEB/rNdgMTK7/GzdfZ1+mrn+1NeBeeuRfiEkXBQ==
-X-Received: by 2002:a05:6902:1883:b0:e0b:128e:d86e with SMTP id
- 3f1490d57ef6-e0b54615aabmr13170000276.48.1722339224669; Tue, 30 Jul 2024
- 04:33:44 -0700 (PDT)
+	s=arc-20240116; t=1722339378; c=relaxed/simple;
+	bh=/SY875lF/WxaEhkkK9bjvkqo1hDe3vsZWN51cif7RFs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=mJ72VlLq8WgnM38rLiY4VQi5IVDgIPhwcL/rHzfgykEDWlHYuqwAEzQ+v2nVoxz7wS8CmI1grThv+ZzgN84nX4fC9wsNS7uN05GxIpzWGYPLk72V7Sxmddbek+/z3wE6YQ7gqA+eohZx8zgLQ1qued+KVw1vEFevkaM7mm5q888=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WYCpl2Q6nz4f3lfZ;
+	Tue, 30 Jul 2024 19:35:59 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 3C7941A12D1;
+	Tue, 30 Jul 2024 19:36:13 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.124.27])
+	by APP1 (Coremail) with SMTP id cCh0CgCH2kwq0Khmm+QUAQ--.5153S7;
+	Tue, 30 Jul 2024 19:36:13 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: tytso@mit.edu,
+	jack@suse.com
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 5/7] jbd2: remove unneeded done_copy_out variable in jbd2_journal_write_metadata_buffer
+Date: Tue, 30 Jul 2024 19:33:33 +0800
+Message-Id: <20240730113335.2365290-6-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20240730113335.2365290-1-shikemeng@huaweicloud.com>
+References: <20240730113335.2365290-1-shikemeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625200316.4282-1-paul.barker.ct@bp.renesas.com>
-In-Reply-To: <20240625200316.4282-1-paul.barker.ct@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 30 Jul 2024 13:33:32 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdURWfM-TMrxVaCq3kWKtF2tYEnkE+QZXPYMhjFKxW-qyQ@mail.gmail.com>
-Message-ID: <CAMuHMdURWfM-TMrxVaCq3kWKtF2tYEnkE+QZXPYMhjFKxW-qyQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/9] Configure GbEth for RGMII on RZ/G2L family
-To: Paul Barker <paul.barker.ct@bp.renesas.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgCH2kwq0Khmm+QUAQ--.5153S7
+X-Coremail-Antispam: 1UD129KBjvJXoW7ur13Jr43Zr1kXw47tw47Jwb_yoW5JFy8pF
+	WSkrZrtryvqry2yr4kXw4DZryUKrWDWryjkFsrCa4ayay3u3sF9F1jyw10k34jyrZ7J3W8
+	XryUZFWxWwnIyFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvKb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
+	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
+	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
+	AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAF
+	wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
+	WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkE
+	bVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x07jeVbkUUUUU=
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-On Tue, Jun 25, 2024 at 10:03=E2=80=AFPM Paul Barker
-<paul.barker.ct@bp.renesas.com> wrote:
-> For devices in the RZ/G2L family, we have so far relied on U-Boot
-> correctly configuring the Ethernet interfaces in RGMII mode with
-> PVDD=3D1.8V before the kernel is booted. Instead, the required
-> configuration should be described in the device tree and activated
-> within the pinctrl driver.
+It's more intuitive to use jh_in->b_frozen_data directly instead of
+done_copy_out variable. Simply remove unneeded done_copy_out variable
+and use b_frozen_data instead.
 
-> Paul Barker (9):
->   arm64: dts: renesas: rzg2l: Enable Ethernet TXC output
->   arm64: dts: renesas: rzg2lc: Enable Ethernet TXC output
->   arm64: dts: renesas: rzg2ul: Enable Ethernet TXC output
->   arm64: dts: renesas: rzg2l: Set Ethernet PVDD to 1.8V
->   arm64: dts: renesas: rzg2lc: Set Ethernet PVDD to 1.8V
->   arm64: dts: renesas: rzg2ul: Set Ethernet PVDD to 1.8V
+Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+---
+ fs/jbd2/journal.c | 21 ++++++++-------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
 
-Now commit 2453e858e945e5e2 ("pinctrl: renesas: rzg2l: Support output
-enable on RZ/G2L")  is in v6.11-rc1, I will queue the DTS patches
-in renesas-devel for v6.12.
+diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+index 9c1ffb0dc740..f17d05bc61df 100644
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -318,7 +318,6 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+ 				  struct buffer_head **bh_out,
+ 				  sector_t blocknr)
+ {
+-	int done_copy_out = 0;
+ 	int do_escape = 0;
+ 	char *mapped_data;
+ 	struct buffer_head *new_bh;
+@@ -349,7 +348,6 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+ 	 * we use that version of the data for the commit.
+ 	 */
+ 	if (jh_in->b_frozen_data) {
+-		done_copy_out = 1;
+ 		new_folio = virt_to_folio(jh_in->b_frozen_data);
+ 		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
+ 		mapped_data = jh_in->b_frozen_data;
+@@ -357,17 +355,15 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+ 		new_folio = bh_in->b_folio;
+ 		new_offset = offset_in_folio(new_folio, bh_in->b_data);
+ 		mapped_data = kmap_local_folio(new_folio, new_offset);
+-	}
+-
+-	/*
+-	 * Fire data frozen trigger if data already wasn't frozen.  Do this
+-	 * before checking for escaping, as the trigger may modify the magic
+-	 * offset.  If a copy-out happens afterwards, it will have the correct
+-	 * data in the buffer.
+-	 */
+-	if (!done_copy_out)
++		/*
++		 * Fire data frozen trigger if data already wasn't frozen. Do
++		 * this before checking for escaping, as the trigger may modify
++		 * the magic offset.  If a copy-out happens afterwards, it will
++		 * have the correct data in the buffer.
++		 */
+ 		jbd2_buffer_frozen_trigger(jh_in, mapped_data,
+ 					   jh_in->b_triggers);
++	}
+ 
+ 	/*
+ 	 * Check for escaping
+@@ -380,7 +376,7 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+ 	/*
+ 	 * Do we need to do a data copy?
+ 	 */
+-	if (do_escape && !done_copy_out) {
++	if (do_escape && !jh_in->b_frozen_data) {
+ 		char *tmp;
+ 
+ 		spin_unlock(&jh_in->b_state_lock);
+@@ -408,7 +404,6 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+ copy_done:
+ 		new_folio = virt_to_folio(jh_in->b_frozen_data);
+ 		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
+-		done_copy_out = 1;
+ 	}
+ 
+ 	/*
+-- 
+2.30.0
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
