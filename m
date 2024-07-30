@@ -1,126 +1,228 @@
-Return-Path: <linux-kernel+bounces-267189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30343940E23
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:44:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5EA3940E32
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54F6D1C24779
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:44:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34DD51F2490F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82656195F28;
-	Tue, 30 Jul 2024 09:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9611B19645E;
+	Tue, 30 Jul 2024 09:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DowYfad9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=freebsd.org header.i=@freebsd.org header.b="PcvRPzpA"
+Received: from mx2.freebsd.org (mx2.freebsd.org [96.47.72.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37A1195B33;
-	Tue, 30 Jul 2024 09:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722332640; cv=none; b=O0wIbPRunYOs6hzuOBvTiy8jBFFDQtjrWBShg1as8cVGoyVdhRCBtsO73w9LgBXNfrlgaGo5ETK0tVUMGiJZozZ4F34e9SUN2ZFNlEskHWZBcAh4PiUvtgJr7IFNPIumTKdNHCjhiZrh04vgCv6EHIwK+kB89gJCOkqR9u1Q3ws=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722332640; c=relaxed/simple;
-	bh=n+bDskUWnn1bpt3i1mkDbx3XQvcnjEMr1Kdl+ZZWL1E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QX3fufNFhPkVXCiw6vRFf7Bo8iaWhPWskYF1V0Z0qMwZOKBHR8wsr8L0EEE2glUOUwz/B2cVR1YZ9X/DubcPcD0lCo9rWEHjwZ65uW1l2tBeevvNsRTV2LvdFYRnP02cbc2Q/9Ddiqb1g0o59awFPzhi83e4w//he5MWLX9c4uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DowYfad9; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722332639; x=1753868639;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=n+bDskUWnn1bpt3i1mkDbx3XQvcnjEMr1Kdl+ZZWL1E=;
-  b=DowYfad9xMZ7nNn6MrC18K1qJAvGCQwuZcGEbtxqEtUJq3eKOAf89ehu
-   Wrq6q8D0DhwMUKxk+1t007nWwSvgYVVMS1xy2s9SJYrxLs+7+l3xchsMA
-   LcPBkKin2SNt99JJ05sCTLRElrd0MYSDcDCPdkamZjMObqz0JlePa8zj8
-   iaDnOTgi4AxBklEjtj9n9SEKLgvMkE7RuV0HOsPy9LhHbcfCMO72y5LtV
-   LWoAkzU4Eg4ROMVHHHaW+4mFfB7qgQeetDB5qdOtfL6iP6Z21A0ahqr4u
-   J6SZJAyS8zL5zi/4DGmZpYgxlt4bpYuhXTgAAgvmFnu776K+63IAxpzOC
-   g==;
-X-CSE-ConnectionGUID: cT2PX+ZcQuK7/JE2bI/gpw==
-X-CSE-MsgGUID: wguzLZpJTQ6L83GENO+ntw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="31545732"
-X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
-   d="scan'208";a="31545732"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 02:43:58 -0700
-X-CSE-ConnectionGUID: pew9M1btT9Ce452/apMdbw==
-X-CSE-MsgGUID: ShtEv/XbR2+cJhrDgLtQlw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
-   d="scan'208";a="54191390"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO [10.245.246.40]) ([10.245.246.40])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 02:43:55 -0700
-Message-ID: <d3d4e197-285a-49d9-8c1b-f718cd1f30d7@linux.intel.com>
-Date: Tue, 30 Jul 2024 11:43:53 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588DF15FA68;
+	Tue, 30 Jul 2024 09:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=96.47.72.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722332744; cv=pass; b=CLnVEHiAQMHwsJGfgpua6nvn5sXVPUETqgTs+n0P6Dl95MwC486qLdNYb2raNPsH/eETL7hWpdE5lDMFjQtmCA9nU6KNuhwODfdZWl9sCtZ1l4K0iMWJ5KEGYx5/UbRmm+bNQEFSn3T8Tw+RL0D9sn9lsD+MzNH+8Hzq6gherpA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722332744; c=relaxed/simple;
+	bh=NxJQHFeKDBPSSCSem9Kg5zW3ESKcJl+9AC5WX+DwD6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ospzn9l0FfIpuNyQkC2mvXELdFM4fvZDHPU7nafiHuCO8ndhnjfJ8oj7x5SJ7A6AVVEPQCPgmH5cMBLrQzJpWEjxI0OYGQgmGvY1lnoBOQcMQmQZ9MXzmBmmhtGbFq8SHL9SVNLYGFeyypsMEas0mcOasMji+AE5IfesfWfq9Mc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freebsd.org; spf=pass smtp.mailfrom=freebsd.org; dkim=pass (2048-bit key) header.d=freebsd.org header.i=@freebsd.org header.b=PcvRPzpA; arc=pass smtp.client-ip=96.47.72.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freebsd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freebsd.org
+Received: from mx1.freebsd.org (mx1.freebsd.org [IPv6:2610:1c1:1:606c::19:1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits)
+	 client-signature RSA-PSS (4096 bits))
+	(Client CN "mx1.freebsd.org", Issuer "R10" (verified OK))
+	by mx2.freebsd.org (Postfix) with ESMTPS id 4WY9MT0lFCz4Q2S;
+	Tue, 30 Jul 2024 09:45:41 +0000 (UTC)
+	(envelope-from ssouhlal@freebsd.org)
+Received: from freefall.freebsd.org (freefall.freebsd.org [IPv6:2610:1c1:1:6074::16:84])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "freefall.freebsd.org", Issuer "R3" (verified OK))
+	by mx1.freebsd.org (Postfix) with ESMTPS id 4WY9MS6kNfz4L7B;
+	Tue, 30 Jul 2024 09:45:40 +0000 (UTC)
+	(envelope-from ssouhlal@freebsd.org)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org; s=dkim;
+	t=1722332740;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mm7A2OClIPrdIz1avKQCGU773Am3hFLJmryBXSiCwwQ=;
+	b=PcvRPzpAKzoFZbE6SFnpFEYMdc0RBgAWBKgZpjelRv79tpLVdPc8EXppIylLtdM99tx3Id
+	1E+ZUPL0lnRdcfr5c1NFI4EbZ0yhFpFtopnM6znTwr0hTq7eFA3gsHyZVhmKLm6zMCo8Hv
+	REc4w/Lsgs6z+eXQpJLJHJVLv/v+0xu/VIZM6Cz4agZt/bTdah4dTYpuCIJ5mMevklB3MH
+	VXETZTFmWrMdn3MNZ8/vydlTt/wBiWzaWVNvGX/mEPV9HmX9pIkQgY4NoAio5r7A/bFNUb
+	/D1UMnu8Wj+K38NYpG3O+4hRXvflHUltTrVgMh5Fk7A5eIQvPNXKPywqHOfWIA==
+ARC-Seal: i=1; s=dkim; d=freebsd.org; t=1722332740; a=rsa-sha256; cv=none;
+	b=I39drHy52c0QMmlwa/plZO9SPPCc6G2WNNEiboLNugZjlZ9Sw/UpRzFzXOaG24MDB9Qjv1
+	GzokEwi8fX9mh/00Ksv/2lhkM2sxRtIlc8oMx+aB3hFsHmkOU4JCzbu+vGYfboK3mAyOpV
+	oECw0R373p0ZoQbIvOdUD1lKoI04ssS/1pgil+6HKaU2RtyeLWeLcVMcBuMYC6gUhSokr9
+	aFI9TBFz2X6c51uwVPfw+VLGPk8nL7zzMfKdEea2rNBKHh6kWWh+lFhm/EnPvPQWCc5O8M
+	Pl3UfZPiNXcGVdTcxWicBDv1Zqqc4vqqgeWexRa1PuuBG4/VEu9qVRYMFoGBOQ==
+ARC-Authentication-Results: i=1;
+	mx1.freebsd.org;
+	none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org;
+	s=dkim; t=1722332740;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mm7A2OClIPrdIz1avKQCGU773Am3hFLJmryBXSiCwwQ=;
+	b=EIsyOaBI1T6PH8ETeh6ZpJ+VXnQIM5QHsX0Ji/Rk28aAoxfS3ixgLjCzFOik3LJB8Nwpeg
+	OPERCmeBJXvG63mQXUC1Qbp2ajrUaC7bBq/9U79ss2DrlDUT6ddkPeBvVWBEkYDfRTijj0
+	Ow0RnGSnSnI9Zwz3X+1ZzDbr5q28lQdUq2JEUfkmZddL+EBgjuNn07JKHlbxc5mXRFyzQ3
+	638sjzxR6Q+A/n+X0A0yFZa5FEMiIPxD3Bs922VCPEryKFydp4rRNwyfw+Mw+/8N0isJ2n
+	q0Wf8xTaeeMMIUpDk3D6LVElRPyQibLSfMc/8rc7J/cfJEFa4BrcwU4vDdg4uw==
+Received: by freefall.freebsd.org (Postfix, from userid 1026)
+	id BFEF1CAAD; Tue, 30 Jul 2024 09:45:40 +0000 (UTC)
+Date: Tue, 30 Jul 2024 09:45:40 +0000
+From: Suleiman Souhlal <ssouhlal@freebsd.org>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Suleiman Souhlal <suleiman@google.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: x86: Include host suspended time in steal time.
+Message-ID: <Zqi2RJKp8JxSedOI@freefall.freebsd.org>
+References: <20240710074410.770409-1-suleiman@google.com>
+ <ZqhPVnmD7XwFPHtW@chao-email>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soundwire: stream: fix programming slave ports for
- non-continous port maps
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Bard Liao <yung-chuan.liao@linux.intel.com>,
- Sanyog Kale <sanyog.r.kale@intel.com>, Shreyas NC <shreyas.nc@intel.com>,
- alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20240729140157.326450-1-krzysztof.kozlowski@linaro.org>
- <095d7119-8221-450a-9616-2df6a0df4c77@linux.intel.com>
- <22b20ad7-8a25-4cb2-a24e-d6841b219977@linaro.org>
- <dc66cd0d-6807-4613-89a8-296ce5dd2daf@linaro.org>
- <62280458-3e74-43b0-b9a1-84df09abd30e@linux.intel.com>
- <7171817f-e8c6-4828-8423-0929644ff2df@linaro.org>
- <048122b2-f4cc-4cfa-a766-6fcfb05f840a@linux.intel.com>
- <9b916fb9-84ac-4574-8f3d-aad2f539fcd0@linaro.org>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <9b916fb9-84ac-4574-8f3d-aad2f539fcd0@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqhPVnmD7XwFPHtW@chao-email>
 
-
-
-On 7/30/24 11:29, Krzysztof Kozlowski wrote:
-> On 30/07/2024 11:28, Pierre-Louis Bossart wrote:
->>>
->>>>
->>>> So if ports can be either source or sink, I am not sure how the
->>>> properties could be shared with a single array?
->>>
->>> Because I could, just easier to code. :) Are you saying the code is not
->>> correct? If I understand the concept of source/sink dpn port mask, it
->>> should be correct. I have some array with source and sink ports. I pass
->>> it to Soundwire with a mask saying which ports are source and which are
->>> sink.
->>>
->>>>
->>>> Those two lines aren't clear to me at all:
->>>>
->>>> 	pdev->prop.sink_dpn_prop = wsa884x_sink_dpn_prop;
->>>> 	pdev->prop.src_dpn_prop = wsa884x_sink_dpn_prop;
->>>
->>> I could do: s/wsa884x_sink_dpn_prop/wsa884x_dpn_prop/ and expect the
->>> code to be correct.
->>
->> Ah I think I see what you are trying to do, you have a single dpn_prop
->> array but each entry is valid for either sink or source depending on the
->> sink / source_mask which don't overlap.
->>
->> Did I get this right?
+On Tue, Jul 30, 2024 at 10:26:30AM +0800, Chao Gao wrote:
+> Hi,
 > 
-> Yes, correct.
+> On Wed, Jul 10, 2024 at 04:44:10PM +0900, Suleiman Souhlal wrote:
+> >When the host resumes from a suspend, the guest thinks any task
+> >that was running during the suspend ran for a long time, even though
+> >the effective run time was much shorter, which can end up having
+> >negative effects with scheduling. This can be particularly noticeable
+> >if the guest task was RT, as it can end up getting throttled for a
+> >long time.
+> >
+> >To mitigate this issue, we include the time that the host was
+> >suspended in steal time, which lets the guest can subtract the
+> >duration from the tasks' runtime.
+> >
+> >Signed-off-by: Suleiman Souhlal <suleiman@google.com>
+> >---
+> > arch/x86/kvm/x86.c       | 23 ++++++++++++++++++++++-
+> > include/linux/kvm_host.h |  4 ++++
+> > 2 files changed, 26 insertions(+), 1 deletion(-)
+> >
+> >diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> >index 0763a0f72a067f..94bbdeef843863 100644
+> >--- a/arch/x86/kvm/x86.c
+> >+++ b/arch/x86/kvm/x86.c
+> >@@ -3669,7 +3669,7 @@ static void record_steal_time(struct kvm_vcpu *vcpu)
+> > 	struct kvm_steal_time __user *st;
+> > 	struct kvm_memslots *slots;
+> > 	gpa_t gpa = vcpu->arch.st.msr_val & KVM_STEAL_VALID_BITS;
+> >-	u64 steal;
+> >+	u64 steal, suspend_duration;
+> > 	u32 version;
+> > 
+> > 	if (kvm_xen_msr_enabled(vcpu->kvm)) {
+> >@@ -3696,6 +3696,12 @@ static void record_steal_time(struct kvm_vcpu *vcpu)
+> > 			return;
+> > 	}
+> > 
+> >+	suspend_duration = 0;
+> >+	if (READ_ONCE(vcpu->suspended)) {
+> >+		suspend_duration = vcpu->kvm->last_suspend_duration;
+> >+		vcpu->suspended = 0;
+> 
+> Can you explain why READ_ONCE() is necessary here, but WRITE_ONCE() isn't used
+> for clearing vcpu->suspended?
 
-Sounds good, thanks for the explanations.
+Because this part of the code is essentially single-threaded, it didn't seem
+like WRITE_ONCE() was needed. I can add it in an eventual future version of
+the patch if it makes things less confusing (if this code still exists).
 
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> 
+> >+	}
+> >+
+> > 	st = (struct kvm_steal_time __user *)ghc->hva;
+> > 	/*
+> > 	 * Doing a TLB flush here, on the guest's behalf, can avoid
+> >@@ -3749,6 +3755,7 @@ static void record_steal_time(struct kvm_vcpu *vcpu)
+> > 	unsafe_get_user(steal, &st->steal, out);
+> > 	steal += current->sched_info.run_delay -
+> > 		vcpu->arch.st.last_steal;
+> >+	steal += suspend_duration;
+> > 	vcpu->arch.st.last_steal = current->sched_info.run_delay;
+> > 	unsafe_put_user(steal, &st->steal, out);
+> > 
+> >@@ -6920,6 +6927,7 @@ static int kvm_arch_suspend_notifier(struct kvm *kvm)
+> > 
+> > 	mutex_lock(&kvm->lock);
+> > 	kvm_for_each_vcpu(i, vcpu, kvm) {
+> >+		WRITE_ONCE(vcpu->suspended, 1);
+> > 		if (!vcpu->arch.pv_time.active)
+> > 			continue;
+> > 
+> >@@ -6932,15 +6940,28 @@ static int kvm_arch_suspend_notifier(struct kvm *kvm)
+> > 	}
+> > 	mutex_unlock(&kvm->lock);
+> > 
+> >+	kvm->suspended_time = ktime_get_boottime_ns();
+> >+
+> > 	return ret ? NOTIFY_BAD : NOTIFY_DONE;
+> > }
+> > 
+> >+static int
+> >+kvm_arch_resume_notifier(struct kvm *kvm)
+> >+{
+> >+	kvm->last_suspend_duration = ktime_get_boottime_ns() -
+> >+	    kvm->suspended_time;
+> 
+> Is it possible that a vCPU doesn't get any chance to run (i.e., update steal
+> time) between two suspends? In this case, only the second suspend would be
+> recorded.
 
+Good point. I'll address this.
+
+> 
+> Maybe we need an infrastructure in the PM subsystem to record accumulated
+> suspended time. When updating steal time, KVM can add the additional suspended
+> time since the last update into steal_time (as how KVM deals with
+> current->sched_info.run_deley). This way, the scenario I mentioned above won't
+> be a problem and KVM needn't calculate the suspend duration for each guest. And
+> this approach can potentially benefit RISC-V and ARM as well, since they have
+> the same logic as x86 regarding steal_time.
+
+Thanks for the suggestion.
+I'm a bit wary of making a whole PM subsystem addition for such a counter, but
+maybe I can make a architecture-independent KVM change for it, with a PM
+notifier in kvm_main.c.
+
+> 
+> Additionally, it seems that if a guest migrates to another system after a suspend
+> and before updating steal time, the suspended time is lost during migration. I'm
+> not sure if this is a practical issue.
+
+The systems where the host suspends don't usually do VM migrations. Or at least
+the ones where we're encountering the problem this patch is trying to address
+don't (laptops).
+But even if they did, it doesn't seem that likely that the migration would
+happen over a host suspend.
+If it's ok with you, I'll put this issue aside for the time being.
+
+Thanks for the comments.
+-- Suleiman
 
