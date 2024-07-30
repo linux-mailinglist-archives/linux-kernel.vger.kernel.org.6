@@ -1,134 +1,98 @@
-Return-Path: <linux-kernel+bounces-266837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16C7940852
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:23:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F35940859
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CE8F1F200E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:23:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EAF41F23E29
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3719D18D4B2;
-	Tue, 30 Jul 2024 06:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73FE18A951;
+	Tue, 30 Jul 2024 06:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZC/eD78"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=spwhitton.name header.i=@spwhitton.name header.b="SSBixUhb";
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="RWNx1rlH"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F6516A921
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 06:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353CD15ECDB
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 06:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722320595; cv=none; b=Z65xZbPGvVIh+YKDNHdMKrL5iQLfN1L7lFUtytoPezRXTIe8Ngbp6iSiwLtc+S1Wmpw86NCDO9In+LQFYFhjhLq0Y3rIyXWW6yMWBwwXIPAlAmoWjj3W9Vu4g7MJW4S9Dp/tjiXIyQYCho41e5bj+P1WtK1qO/Woj+ZLB4vaxZ0=
+	t=1722320701; cv=none; b=bTLfqStVyKSTyX2xqHLG9Q/xLxPJs8DSVR85+dKxSVoL3t1NF5VEpbwO56Mez89hDN9dVCCNIvKVNgVroqcz3y1DuyT/By8dEB6pSv67znZYTMI9AQNCFHaYqsczXnyw3+uKNEXEF4ED20tmsgs1ZsgMz6K4UmDoPU/pZDWQAao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722320595; c=relaxed/simple;
-	bh=Fn1XpXCE3F2UiQm6K2YQyMZaD6wcHBWyJavcktEFMnw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uyW5QiKXmNui892V1WN9ftgPeZbKzthF1QcgByZVjtT7OGIoxmTvpPICf0LkdtK6QezJWoBwWCjuj4uj+5R8g3tDINtrUCWpAzEJLFB8bp6B7aRK2th6Tvy+59F4vu6B3Voeo1nr86ZFcqBXpRo233EDzu7zZV1nTAFqvZ1haJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZC/eD78; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b7a0ef0e75so23936276d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:23:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722320593; x=1722925393; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fn1XpXCE3F2UiQm6K2YQyMZaD6wcHBWyJavcktEFMnw=;
-        b=eZC/eD78FtDXqcge/3ZnVsjowM+Evepa7gK3TumZMZ95MUgbsIs5obzc2gn4rBq+EK
-         fRahuvbWMtPXUXKBOa6Ruf7+YuuPzMEqvP7R/DKsJW1V6JERXE+qf0M93WPSWvxs3HHS
-         sNEIJyitPk1HrN24GUhqX842g5xZiXdai+nJ1vFyJKQ+eqpdCdKok64fbt5AX82fZK/V
-         JlWWUPNOy6GbMkt1SeeD76klhwyosgfSMWgItjkj5HqjKYYZKZNONQHLTczd+GQOYAyJ
-         hdhhceToxHz9ZG9bLtafmel0hr9Xp9MSve1ToDBP9vaXjcvCxDHCHwDyK45duWHQuzMe
-         HICg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722320593; x=1722925393;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fn1XpXCE3F2UiQm6K2YQyMZaD6wcHBWyJavcktEFMnw=;
-        b=v9e76NWqESt0Jk+5lZyavaY+UOXxNXYTFByOK6L+fmeIHBDdq5GK7l0JPHsEi9+p9e
-         un8/Bj9jC0tV9SdcIsQ+CLdp8xq1eWTsMrmztO55eK/NVdveuPmmHwPzsty3aUyzOwdG
-         Y/my16+sWUzOjt1gasjI79k4vXSAQPuOae/JM/jD25uKrO0Hf9v7VVwJhbX72QyQgjUV
-         A+QIYvULzREkMpWLKT+B0ZaJXV0JklnxU8CVu5ytRTSCK530UbRXC7vjAvt8Itci/U+v
-         6pZ5A9O/45nXTgLT3zt8VdkXFEKQerBdCWx6ocFh47wt4Ikc0T9s2p0+Md/SJDtzo5V/
-         imaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlvyUR2d2ZrL7LVO4Fs3+auxw0Zqy5zeiim2vUnldb268AqLRhkNR3IlyiNYMOA6nltHbaGyMchBKdIAcsX54ep5RPShqTyQe2jggn
-X-Gm-Message-State: AOJu0YxHp2FqekTgg2NSJNA6OxJbrPe45eQ022wzPB/KAcDTQNrHOKnY
-	kUSYU5Ei7aVBjI6YkuPQC4286PsEhqfYRa0qcbobMo4vFGGTRyhRXvUQhnsxefolxhh08aw9NsA
-	Rd6ac7sKZYXTUNkXeYAnH2VSoPfyY5ZRcSqA=
-X-Google-Smtp-Source: AGHT+IG/RqYM7kt+KRNXWWffNels/XWJSltBqDKYgCfhE8HLCM9PZI9detPGXhrcKY6JSoBDOwE4NjCeFSonvB3ozGA=
-X-Received: by 2002:ad4:5ba4:0:b0:6b5:4865:948c with SMTP id
- 6a1803df08f44-6bb55a41ce9mr123582076d6.27.1722320592677; Mon, 29 Jul 2024
- 23:23:12 -0700 (PDT)
+	s=arc-20240116; t=1722320701; c=relaxed/simple;
+	bh=dUyy9LcCFJTUHFoF7o/LnN7dB2UmsNlAkEA8N/x9jek=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CvBioeEOPeToqL2iN1u9sfoYTA5WY+tnk6PEY9keCN19YJwP0PGKH+GUZjKONaveALluObR9rnyF8GfOyoPKBxBk+xDEGJ+XgEN0hkgSn1TDNkfeZtrl3XFzYbHnqI2UOwWtBtcUCK1pXbH0hgDHoWXlAfNQ6/OzthToImRnM0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spwhitton.name; spf=pass smtp.mailfrom=spwhitton.name; dkim=pass (2048-bit key) header.d=spwhitton.name header.i=@spwhitton.name header.b=SSBixUhb; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=RWNx1rlH; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spwhitton.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=spwhitton.name
+DKIM-Signature: a=rsa-sha256; b=SSBixUhb7S2CgiznJlvGrZVOycI+cIJkQHNByx4651Z/uAEXyw+Rq9THk/8fUMtbs5mb5sf5W6XTEz+TYliVH49qG1RTjNvtcQtzsbyh9K6RAaVVfZipon0NLGQ+CL+O8+KBwDJoN0eF2CrjwN09hBfPKFF3Lxe9vsN1ScPOb1Svsl10iOow82WKpzevf5SDPYyNeQ1kmlLhJj/adO9gkOVU0WCicQKGisl+G/BE6prZUuxjRaBP7mJ6zQ4q1zAMjc//Z84taBXoCrTs0klzy/QBQDSOzDeEZoh2LvmWT8hq3mqvIN79yb3x3q+jjxrEE6roCxg+bElK6DJtgHmg/Q==; s=purelymail2; d=spwhitton.name; v=1; bh=dUyy9LcCFJTUHFoF7o/LnN7dB2UmsNlAkEA8N/x9jek=; h=Received:Received:From:To:Subject:Date;
+DKIM-Signature: a=rsa-sha256; b=RWNx1rlHomrhXHPn7h4uw89thkp9gLp5yc7K3xster75q5LE0lBlPlJO56uX9PN1LZd3qkJe8bsN1c6AEtueNo9L9Y0IOrBE1SwgBkVyOV3SaO95t2MCgztKS2F3Q4+bGNjua0qoz9tcG5LP82SFJrReFBGLxPhgY4RgsT+VqJRSxhXYxwVhsqeUJDWFhsUdxiTvPuutUN8Oag/nChDpYBQtfKJbYwe6S69Uq2q2o5YpClplTF55lWzEjds9FaVk7QR3iC4b/53EjL6803dxgKiPrbQhKg3kJg9pSAWV65D0x1z/yshKrHKK3DGWU5TtVxzbfUhGP4Cn9qDc/hCn4A==; s=purelymail2; d=purelymail.com; v=1; bh=dUyy9LcCFJTUHFoF7o/LnN7dB2UmsNlAkEA8N/x9jek=; h=Feedback-ID:Received:Received:From:To:Subject:Date;
+Feedback-ID: 20115:3760:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -579794942;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Tue, 30 Jul 2024 06:24:21 +0000 (UTC)
+Received: by melete.silentflame.com (Postfix, from userid 1000)
+	id 7FC1F7F30E5; Tue, 30 Jul 2024 15:24:18 +0900 (KST)
+From: Sean Whitton <spwhitton@spwhitton.name>
+To: 
+Cc: ~lkcamp/patches@lists.sr.ht,
+	helen.koike@collabora.com,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: media: atomisp: Add parentheses around macro definitions
+Date: Tue, 30 Jul 2024 15:23:45 +0900
+Message-ID: <20240730062348.46205-2-spwhitton@spwhitton.name>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725232813.2260665-1-nphamcs@gmail.com> <20240725232813.2260665-2-nphamcs@gmail.com>
- <CAJD7tkY4Jt_OXDEsUN9jzQkrF4mEeLA0BxyNKppSK8k9xL-xKw@mail.gmail.com> <20240730033929.GB2866591@cmpxchg.org>
-In-Reply-To: <20240730033929.GB2866591@cmpxchg.org>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Mon, 29 Jul 2024 23:23:01 -0700
-Message-ID: <CAKEwX=NsuNBijq9LEau9tM6e1r4qTbDLSfsF-f8bAcKFFx28mw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] zswap: implement a second chance algorithm for
- dynamic zswap shrinker
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	kernel-team@meta.com, linux-kernel@vger.kernel.org, flintglass@gmail.com, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-MIME-Autoconverted: from 8bit to quoted-printable by Purelymail
+Content-Type: text/plain; charset=UTF-8
 
-On Mon, Jul 29, 2024 at 8:39=E2=80=AFPM Johannes Weiner <hannes@cmpxchg.org=
-> wrote:
->
-> Seek is a fixed coefficient for the scan rate.
->
-> We want to slow writeback when recent zswapouts dominate the zswap
-> pool (expanding or thrashing), and speed it up when recent entries
-> make up a small share of the pool (stagnating).
->
-> This is what the second chance accomplishes.
+Fix checkpatch error
+"ERROR: Macros with complex values should be enclosed in parentheses"
+at hive_isp_css_include/sp.h:41, hive_isp_css_include/sp.h:42.
 
-Wow, this is something that I did not even consider. Thanks for
-pointing this out, Johannes.
+Signed-off-by: Sean Whitton <spwhitton@spwhitton.name>
+---
+ drivers/staging/media/atomisp/pci/hive_isp_css_include/sp.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-shrinker->seeks tuning allows you to adjust writeback pacing, as a
-ratio of the pool size. When the pool is static (no/few zswpin or
-zswpout), then these two are similar (on average). But with concurrent
-activities (pages coming in and out), the dynamics can potentially be
-different.
+This is my first Linux kernel patch, from Helen Koike's DebConf24 workshop.
+Thanks!
 
-Second chance allows you to have different dynamics depending on
-recent pool activities. The recent zswpouts will be protected by
-virtue of the reference bits (and given another chance, which will be
-taken if it's used again soon), and the pages concurrently zswapped in
-obviously will be too, whereas the stale objects who have already been
-touched by the shrinker once in the past will be evicted immediately.
-IOW, all of the above activities (zswpin, zswpout, reclaim pressure)
-can harmonize seamlessly to adjust the effective rate of writeback.
+diff --git a/drivers/staging/media/atomisp/pci/hive_isp_css_include/sp.h b/=
+drivers/staging/media/atomisp/pci/hive_isp_css_include/sp.h
+index a7d00c7bb8bc..128109afe842 100644
+--- a/drivers/staging/media/atomisp/pci/hive_isp_css_include/sp.h
++++ b/drivers/staging/media/atomisp/pci/hive_isp_css_include/sp.h
+@@ -38,8 +38,8 @@
+ #define STORAGE_CLASS_SP_C
+ #include "sp_public.h"
+ #else  /* __INLINE_SP__ */
+-#define STORAGE_CLASS_SP_H static inline
+-#define STORAGE_CLASS_SP_C static inline
++#define STORAGE_CLASS_SP_H (static inline)
++#define STORAGE_CLASS_SP_C (static inline)
+ #include "sp_private.h"
+ #endif /* __INLINE_SP__ */
+=20
+--=20
+2.45.2
 
-Without any additional heuristics (old or new), increasing seek (i.e
-decreasing the writeback rate) by itself only has a static effect, and
-definitely does not accomplish the aformentioned dynamic writeback
-rate adjustment. Now, we can (and did try to) mimic the above behavior
-somewhat with the protection size scheme: only return the unprotected
-size, carefully increase it on zswpout and swpin (so that zswpouts are
-not considered), carefully prevent shrinker from reclaiming into
-protected area, etc.. But it's incredibly brittle - with all these
-hacks, it becomes even more complicated and unintuitive than the
-second chance algorithm. If it's performing well, then sure, but it's
-not. Might as well do the simpler thing? :)
-
-Besides, the problem with the haphazard aging (i.e protection
-decaying) remains - at which point do we decay, and how much do we
-decay? Compare this with the new second chance scheme, which gives you
-a natural aging mechanism, and can elegantly adjust itself with
-reclaim/memory pressure.
 
