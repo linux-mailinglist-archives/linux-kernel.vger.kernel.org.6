@@ -1,168 +1,244 @@
-Return-Path: <linux-kernel+bounces-266977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A3D5940A9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:01:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C528940AA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACA0AB249A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:01:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21F29280997
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03DC187343;
-	Tue, 30 Jul 2024 08:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EAF193072;
+	Tue, 30 Jul 2024 08:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C708Uhm5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Esw43aTY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A581186E4F
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163BE188CD1
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722326409; cv=none; b=oDW8B+HXzLby+5uZJuSxmvSjlqcGARuY9BJrMFYyz++5tRtxnyaFrOSVJ55v93nuV3TVillr34RZwhTQKkWmBVsQ696r8oBp3G42CESAdNTuUzEgQSQ2/uU1kYIJFRxOASTWhJxZP+mHoYNPitU1bgwKDjk5DSAXBs72ExzBcKI=
+	t=1722326437; cv=none; b=qFoGFA8wNayLl/o7gxXdxUMyOlOCnXVb/2ZHhc0mQeJ7ga6X9DWMqcpecq/PiTS9eZEzzaTO0q0m/90NKO8z6ln2X/sUIQsOtOVMLf+EULeqvW48dBObA6E8YjanWdaWDEv/BhVAM8p0qjAz7B+V6hZFPUikBUwj8QVV325RXO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722326409; c=relaxed/simple;
-	bh=CniaYDnRATpHlUBQAU6fUV84X3DZPceXVpYV08y62g4=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
-	 In-Reply-To; b=Kj70fwscYLg+npQ2TDx4ZCoh4j0ug3mdvEe0Xp08gV39SRYbw8vOiczGznDYobIsnIKRTb9vKfUJCiNdsd9BTggEDXrLqYq4/9BAQGYkAm1TttUmSN3mwuBL+04hEpUveZr+b562f0ZgW1Pf8Blon/5Ax+hnni3Qq+SKwlaZUXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C708Uhm5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38DF5C4AF09;
-	Tue, 30 Jul 2024 08:00:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722326407;
-	bh=CniaYDnRATpHlUBQAU6fUV84X3DZPceXVpYV08y62g4=;
-	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
-	b=C708Uhm5+PEhyeLz+K6SvIsqQUqE+wrv8CE1GSljfy3RE8XNoWeC+F5vv6Drkw2cp
-	 zsFSTYkSidoHQ/II+QsNZk3RGiwZtAQWHcSm7m6qtof/fdptSs8IcSZugln+aghpFq
-	 S/7kXZFFKHelPcTjyuW755H5MRdFb/zptFpGFTgEbvnVmfPFCY12Do9hnwGYJHXe+F
-	 8ZO4Pq4Fx2ZvTtQcsz+d9a4gLGYFDxqHz5THXGc/y95Gqvtc3oTVCN+pvlqiw051D0
-	 0I7Q8/bdGnm3XwIPdKAj49yncZ/u4tI9gmdGzEFrTS7DFzVZzaunIcmu61dJee4lVt
-	 VRAv3v744arSQ==
-Content-Type: multipart/signed;
- boundary=95cb2f6b2372b8c8d1366bfc28389e4f6d080c4216470e4cd6558fd47f48;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Tue, 30 Jul 2024 10:00:03 +0200
-Message-Id: <D32PR6R1LENM.3RUPQVJ1HRWG7@kernel.org>
-Subject: Re: Subject: [PATCH] mtd: spi-nor: add support for MRAM Everspin
- EM008LXB
-Cc: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: <claus.fabig@emerson.com>, <tudor.ambarus@linaro.org>,
- <pratyush@kernel.org>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
- <vigneshr@ti.com>
-X-Mailer: aerc 0.16.0
-References: <5bb5d445-e54c-48c3-b7f7-c07886af629e@usgdcecpmsgap03.emrsn.org>
-In-Reply-To: <5bb5d445-e54c-48c3-b7f7-c07886af629e@usgdcecpmsgap03.emrsn.org>
+	s=arc-20240116; t=1722326437; c=relaxed/simple;
+	bh=trwZ6o7rehpDaqVsUVCfcq0HbmYKcWR5iz0dYHW4Jrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nBfnhjU6CjRwF3j/gH7FgHdi0ih5zhgQJXY8D7wMnbycOR3Mr2NhoLlrboj3c4PBExNX3und9nTLQ4a/e3mo/56U9m237/YB+jhJMjWKT9+bi2Zajw4nBeyooLsUhvY41elANkUN16n2xsv5O0PGkNqc4H4L0etFC9a2zNFUftk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Esw43aTY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722326434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pxacbdL3FJeAXrV3TFbvw9W3EhUwqie1OGKtk+yVIvU=;
+	b=Esw43aTYJ8+E79hXMkCBPuCfl88DXebi6QXHJNIgBQBVEDHw+9j6U1H/bQ5Lj5aLQLG/ga
+	0fnYZ0177MMogyv5qkYTFUryTB4sJ5Gl+G9Rdn4rO0MpAb7gYPrmbdZPkD0pBi5Q5Va0UT
+	so71lvoA797yCr0276ahfhyvNrYt9Xw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-201-FNRoswHzMYuVve8R-vkXiw-1; Tue, 30 Jul 2024 04:00:32 -0400
+X-MC-Unique: FNRoswHzMYuVve8R-vkXiw-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4280d8e685eso25054695e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 01:00:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722326431; x=1722931231;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pxacbdL3FJeAXrV3TFbvw9W3EhUwqie1OGKtk+yVIvU=;
+        b=dx2WKsL7cdy6N7nG/yxP2ppXKsld7pOETYoYPcG/KxLYWu02HfXw8IuK19Pybc2ot0
+         j7LOTCJZHqhyjTfYQx0xkGW4Mjk5W0PbqGaA6HnmoOQM+JszsjXxRofVyEMxyPMidJzg
+         qqkLKYtqqJh4OAyw2KUVijF6zMuU2NdDkWWkWk+B8tc37ws+HxdQm0ov37mRIDsC35D4
+         7V2uU+TzW9Y5y3LeBIM6SZAgt/lroOsH9j1dGpz72pnx2NWP42MUsfYqi9xUPlcmJ4Xb
+         X/pf/xiTJnINGCJo9esMtxy0EfH2DNzqrNYMvmAicynzD0JUyM22xfGd1UZ4F1/uuJVP
+         hlKA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSPmPZv55bk6TsBA3nzxSzYtEcfRpGpPCmkJXdTQEov3pt7DZhiR1lSTUbdO+DFMdKFHIFcwz3MWcmk8Gny0vBb1Ysxd4EJMWOG0wF
+X-Gm-Message-State: AOJu0YxUNJDHXdZZ5wM84zNIOJCep1x6a/yZ8MiX+3/4gK9eFOGEjyTD
+	QuzXhWDtY3zIeKNsZxQMy0WChK1U8+pbycEF/qzaro3DvMIpetIuEQSmkm/3AW87hsvTFM9izCz
+	32uTxxXR0eGR4uIbOpljQ1Gywgd75jzj1Mb++TpuMXpoVcE/Aq6W7yVwnfXzlbg==
+X-Received: by 2002:a05:600c:1c83:b0:426:622d:9e6b with SMTP id 5b1f17b1804b1-42811dd79fbmr66276825e9.23.1722326430679;
+        Tue, 30 Jul 2024 01:00:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGOWCFqW/SaDwkVD/PGge9k+/l+vMiylzg43IopSMzOrTgQOVgmPKCvBcKQbTb1kZSxSstYJw==
+X-Received: by 2002:a05:600c:1c83:b0:426:622d:9e6b with SMTP id 5b1f17b1804b1-42811dd79fbmr66276385e9.23.1722326429913;
+        Tue, 30 Jul 2024 01:00:29 -0700 (PDT)
+Received: from sgarzare-redhat ([62.205.9.89])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36857e3bsm13973574f8f.81.2024.07.30.01.00.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 01:00:28 -0700 (PDT)
+Date: Tue, 30 Jul 2024 10:00:25 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Amery Hung <ameryhung@gmail.com>
+Cc: stefanha@redhat.com, mst@redhat.com, jasowang@redhat.com, 
+	xuanzhuo@linux.alibaba.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org, 
+	decui@microsoft.com, bryantan@vmware.com, vdasa@vmware.com, pv-drivers@vmware.com, 
+	dan.carpenter@linaro.org, simon.horman@corigine.com, oxffffaa@gmail.com, 
+	kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	bpf@vger.kernel.org, bobby.eshleman@bytedance.com, jiang.wang@bytedance.com, 
+	amery.hung@bytedance.com, xiyou.wangcong@gmail.com
+Subject: Re: [RFC PATCH net-next v6 04/14] af_vsock: generalize bind table
+ functions
+Message-ID: <ba2hivznnjcyeftr7ch7gvrwjvkimx5u2t2anv7wv7n7yb3j36@dbagnaylvu6o>
+References: <20240710212555.1617795-1-amery.hung@bytedance.com>
+ <20240710212555.1617795-5-amery.hung@bytedance.com>
+ <CAGxU2F7wCUR-KhDRBopK+0gv=bM0PCKeWM87j1vEYmbvhO8WHQ@mail.gmail.com>
+ <CAMB2axNUZa221WKTjLt0G5KNdtkAbm20ViDZRGBh6pL9y3wosg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMB2axNUZa221WKTjLt0G5KNdtkAbm20ViDZRGBh6pL9y3wosg@mail.gmail.com>
 
---95cb2f6b2372b8c8d1366bfc28389e4f6d080c4216470e4cd6558fd47f48
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Sun, Jul 28, 2024 at 11:52:54AM GMT, Amery Hung wrote:
+>On Tue, Jul 23, 2024 at 7:40 AM Stefano Garzarella <sgarzare@redhat.com> wrote:
+>>
+>> On Wed, Jul 10, 2024 at 09:25:45PM GMT, Amery Hung wrote:
+>> >From: Bobby Eshleman <bobby.eshleman@bytedance.com>
+>> >
+>> >This commit makes the bind table management functions in vsock usable
+>> >for different bind tables. Future work will introduce a new table for
+>> >datagrams to avoid address collisions, and these functions will be used
+>> >there.
+>> >
+>> >Signed-off-by: Bobby Eshleman <bobby.eshleman@bytedance.com>
+>> >---
+>> > net/vmw_vsock/af_vsock.c | 34 +++++++++++++++++++++++++++-------
+>> > 1 file changed, 27 insertions(+), 7 deletions(-)
+>> >
+>> >diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+>> >index acc15e11700c..d571be9cdbf0 100644
+>> >--- a/net/vmw_vsock/af_vsock.c
+>> >+++ b/net/vmw_vsock/af_vsock.c
+>> >@@ -232,11 +232,12 @@ static void __vsock_remove_connected(struct vsock_sock *vsk)
+>> >       sock_put(&vsk->sk);
+>> > }
+>> >
+>> >-static struct sock *__vsock_find_bound_socket(struct sockaddr_vm *addr)
+>> >+static struct sock *vsock_find_bound_socket_common(struct sockaddr_vm *addr,
+>> >+                                                 struct list_head *bind_table)
+>> > {
+>> >       struct vsock_sock *vsk;
+>> >
+>> >-      list_for_each_entry(vsk, vsock_bound_sockets(addr), bound_table) {
+>> >+      list_for_each_entry(vsk, bind_table, bound_table) {
+>> >               if (vsock_addr_equals_addr(addr, &vsk->local_addr))
+>> >                       return sk_vsock(vsk);
+>> >
+>> >@@ -249,6 +250,11 @@ static struct sock *__vsock_find_bound_socket(struct sockaddr_vm *addr)
+>> >       return NULL;
+>> > }
+>> >
+>> >+static struct sock *__vsock_find_bound_socket(struct sockaddr_vm *addr)
+>> >+{
+>> >+      return vsock_find_bound_socket_common(addr, vsock_bound_sockets(addr));
+>> >+}
+>> >+
+>> > static struct sock *__vsock_find_connected_socket(struct sockaddr_vm *src,
+>> >                                                 struct sockaddr_vm *dst)
+>> > {
+>> >@@ -671,12 +677,18 @@ static void vsock_pending_work(struct work_struct *work)
+>> >
+>> > /**** SOCKET OPERATIONS ****/
+>> >
+>> >-static int __vsock_bind_connectible(struct vsock_sock *vsk,
+>> >-                                  struct sockaddr_vm *addr)
+>> >+static int vsock_bind_common(struct vsock_sock *vsk,
+>> >+                           struct sockaddr_vm *addr,
+>> >+                           struct list_head *bind_table,
+>> >+                           size_t table_size)
+>> > {
+>> >       static u32 port;
+>> >       struct sockaddr_vm new_addr;
+>> >
+>> >+      if (WARN_ONCE(table_size < VSOCK_HASH_SIZE,
+>> >+                    "table size too small, may cause overflow"))
+>> >+              return -EINVAL;
+>> >+
+>>
+>> I'd add this in another commit.
+>>
+>> >       if (!port)
+>> >               port = get_random_u32_above(LAST_RESERVED_PORT);
+>> >
+>> >@@ -692,7 +704,8 @@ static int __vsock_bind_connectible(struct
+>> >vsock_sock *vsk,
+>> >
+>> >                       new_addr.svm_port = port++;
+>> >
+>> >-                      if (!__vsock_find_bound_socket(&new_addr)) {
+>> >+                      if (!vsock_find_bound_socket_common(&new_addr,
+>> >+                                                          &bind_table[VSOCK_HASH(addr)])) {
+>>
+>> Can we add a macro for `&bind_table[VSOCK_HASH(addr)])` ?
+>>
+>
+>Definitely. I will add the following macro:
+>
+>#define vsock_bound_sockets_in_table(bind_table, addr) \
+>        (&bind_table[VSOCK_HASH(addr)])
 
-Hi,
+yeah.
 
-On Fri Jul 26, 2024 at 2:04 PM CEST, claus.fabig wrote:
-> > Hi,
-> Hi Michael, thanks for your response resp. advices and apologies for the =
-late response.
-> >=20
-> > There is something odd with your mail client, maybe have a look at
-> > git send-email.
-> Unfortunately I am only able to send/receive email from my windows machin=
-e and=20
-> therefore have some challenges within our company infrastructure.
-> I still try to find the best way to get the formatting correct.
+>
+>> >                               found = true;
+>> >                               break;
+>> >                       }
+>> >@@ -709,7 +722,8 @@ static int __vsock_bind_connectible(struct vsock_sock *vsk,
+>> >                       return -EACCES;
+>> >               }
+>> >
+>> >-              if (__vsock_find_bound_socket(&new_addr))
+>> >+              if (vsock_find_bound_socket_common(&new_addr,
+>> >+                                                 &bind_table[VSOCK_HASH(addr)]))
+>> >                       return -EADDRINUSE;
+>> >       }
+>> >
+>> >@@ -721,11 +735,17 @@ static int __vsock_bind_connectible(struct vsock_sock *vsk,
+>> >        * by AF_UNIX.
+>> >        */
+>> >       __vsock_remove_bound(vsk);
+>> >-      __vsock_insert_bound(vsock_bound_sockets(&vsk->local_addr), vsk);
+>> >+      __vsock_insert_bound(&bind_table[VSOCK_HASH(&vsk->local_addr)], vsk);
+>> >
+>> >       return 0;
+>> > }
+>> >
+>> >+static int __vsock_bind_connectible(struct vsock_sock *vsk,
+>> >+                                  struct sockaddr_vm *addr)
+>> >+{
+>> >+      return vsock_bind_common(vsk, addr, vsock_bind_table, VSOCK_HASH_SIZE + 1);
+>>
+>> What about using ARRAY_SIZE(x) ?
+>>
+>> BTW we are using that size just to check it, but all the arrays we use
+>> are statically allocated, so what about a compile time check like
+>> BUILD_BUG_ON()?
+>>
+>
+>I will remove the table_size check you mentioned earlier and the
+>argument here as the arrays are allocated statically like you
+>mentioned.
+>
+>If you think this check may be a good addition, I can add a
+>BUILD_BUG_ON() in the new vsock_bound_sockets_in_table() macro.
 
-In that case you can also have a look at:
-https://b4.docs.kernel.org/en/latest/contributor/send.html
+If you want to add it, we need to do it in a separate commit. But since 
+we already have so many changes and both arrays are statically allocated 
+in the same file, IMHO we can avoid the check.
 
-> > Also we usually push back on the MRAM devices and refer the users to
-> > the at25 driver. But as this doesn't use the NO_ERASE flag.. I'll
-> > let Tudor and Pratyush decide.
-> I am aware that using at25 driver works but have the task to integrate th=
-at in mtd
-> since another used MRAM Everspin flash MR25H10 on our board is also acces=
-sed=20
-> in that way and already part of the mainline. That will lead to confusion=
- on user side.
+Stefano
 
-I suggest that you'll look into evaluating and converting your
-existing boards to nvmem (which is the interface at25 exposes)
-instead.
-
-The MTD maintainers agreed that new fram/mram won't likely be added
-anymore. As I said, this patch might be an exception, because you
-are actually emulating a flash device (because you *don't* have the
-NO_ERASE flag). Otherwise, the m/fram are more like an EEPROM and
-thus should use the at25 driver.
-
-> > > From: Claus Fabig <claus.fabig@emerson.com>
-> > > Date: Thu, 18 Jul 2024 09:53:36 +0200
-> > > Subject: [PATCH] mtd: spi-nor: add support for MRAM Everspin EM008LXB
-> > >
-> > > The Everspin EM008LXB MRAM has 8Mb and is populated on a custom
-> > board
-> > > using Microchip's PCI12000 spi host controller running on low 30MHz c=
-lock.
-> > > According to Everspin Read Fast (0xb) command below 60MHz is neither
-> > > specified and nor tested. Test shows that using Read Fast (0xb) will
-> > > result in reading inconsistent data in this setup but writing is fine=
-, so
-> > > only supporting Read (0x3) command should be acceptable for the momen=
-t.
-> >=20
-> > This is really odd. Is there an explanation for that? Usually, fast
-> > read will just add dummy cycles in between. Also the datasheet just
-> > mentions a "maximum frequency" which actually makes sense. Do the
-> > dummy cycles for our fast read operation match the number of dummy
-> > cycles in your device?
-> >=20
-> Yes, at first I configured the chip with 8 dummy cycles to match with pla=
-tform
-> dummy cycles with the result of reading inconsistent data.=20
-> The answer from Everspin product engineering was:
-> "Read fast has only been tested down to 66 Mhz. If you are only running a=
-t 30 Mhz,=20
-> you should be using the Read command instead. Read Fast is designed for H=
-igher=20
-> speed operation". Unfortunately no more explanation.
-
-I guess you cannot use it with at least 66MHz?
-
-> > > The device is JEDEC compatible (JESD251 and JESD251-1) but not able t=
-o
-> > > provide SFDP information.
-> >=20
-> > There is no SFDP data for this chip is it? But it has a READ_ID
-> > command.
-> For my understanding reading SFDP works with command 0x5A which is not=20
-> supported, reading ID is command 0x9F and supported. I don't understand y=
-our point.
-> Maybe you could give me a hint to better understand.
-
-Please see my comments on the code in my first reply. You basically
-don't probe the driver by the name, but by it's ID.
-
--michael
-
---95cb2f6b2372b8c8d1366bfc28389e4f6d080c4216470e4cd6558fd47f48
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZqidgxIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/jHRQF+O2Tp2yymNM81QCMqmznfxfBIfi6OjCWD
-PXij072XPxSy0DLrC+I1IkoxaV4DXCemAYD4Bp6go3cilHA545XnLXyR0lfuaAIb
-F2NuZbR818FQ8NdTvGVsKNSGifUHyahLzoU=
-=3Ucz
------END PGP SIGNATURE-----
-
---95cb2f6b2372b8c8d1366bfc28389e4f6d080c4216470e4cd6558fd47f48--
 
