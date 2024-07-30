@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-267956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DE7F941DCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBAB0941DE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DA021F27ABC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:21:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A8CB1F27B94
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72331A76CA;
-	Tue, 30 Jul 2024 17:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F75A1A76BF;
+	Tue, 30 Jul 2024 17:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R4t8+Kv4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BV9NiEb9"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048CA1A76AE;
-	Tue, 30 Jul 2024 17:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892131A76A1;
+	Tue, 30 Jul 2024 17:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722360078; cv=none; b=cNPx7ALwvFO/kP8hs8S6Nstr2H+9JrM39veK4BQbyaXe9GZVJA9osrRnEjIHP01e3NmSqmX+bPhsZpaGHSBnrdXO9xlLz+D/+OQKbd8kvtWmWntffNP+r1VVoFWN0e7HsXxzbujSrBCdvu7ETVj1A4A0SVjcSASDK3wn4KAmGBo=
+	t=1722360172; cv=none; b=RCcu0vWHbmjb2h/En0J/pYB0ipfwlwmBikMTW+E7CmeHX9h7RS7l4xN0o2S9sfO6U5GdjnFMLu1DURLBQzbzzeV8QSNZi2JpUBHgVZZ6ybW3oQTZAwpY7ZSsKIHHJWJxDN9P00JWDFk2uV8a1LhC9qu5+XwEyy+aScRkjcgCQcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722360078; c=relaxed/simple;
-	bh=0GANLwW5a4SeUEYoVgNyPAu6EVILqmQHIw3PVOGNjBw=;
+	s=arc-20240116; t=1722360172; c=relaxed/simple;
+	bh=Vw/GjoCR4tfIIcezM9LS1NKEKDR9mj8TB2z4q2kAW9g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VeihNwxL3svvH1FbSqc+KOHcVL5/b0N+lRoFb7UHVzOjHFSqGsKimfXR7Qj20MlNXnKB3Y0f+3lk82c0xCqtDx54hpX4pgPmbykYQyUpjB8ZBR38m2Voiw1cBdf6fiC4omFT/k5qTyfiQWpIRDKfOGD6Kwfm0wU2KA6ncZOzuDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R4t8+Kv4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C60FC4AF0E;
-	Tue, 30 Jul 2024 17:21:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722360077;
-	bh=0GANLwW5a4SeUEYoVgNyPAu6EVILqmQHIw3PVOGNjBw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R4t8+Kv49cmGOBQRECCcdOlSP/O8bo9I86x6sW1iX6BoMNIHPZ5RcviHw+WoFQvCQ
-	 7X0yA1qhSxULxAil3zNFb51PpapRGX7gPx4AUADoKRjM5/fbYtqWX/T3llUAoexlj8
-	 NUIVos2kXumtG79ft+a47rB919u6gUSshjphNwo/YS1Sjh/OWVTJ6GghjkBmc9xn7f
-	 mBpHZzSthJLda+W6qMHaW0WtscbOKR+aE93PIr6UtxYVrw52k5FVryaK53kbaUpquc
-	 4RkUS2jNWrPPhcN/SvURwwyXiTfFwE1UORQOF0aqFfQkU8iPMy5ohc906N8wopA6JO
-	 eNgyj7CDu7Djw==
-Message-ID: <e980d20f-ea8a-43e3-8d3f-179a269b5956@kernel.org>
-Date: Tue, 30 Jul 2024 19:21:13 +0200
+	 In-Reply-To:Content-Type; b=jMY2Qg6qZZRR0Kz5K4D1O9GuTxI/uvTNUtq9taCP+oLSP+dqslconac1I9Z219jZnyzXyyKSLCKgugiByUzQPwUr37RmsWo/WdkElVIJT7vZl1xT2BchZFK1TPHVuXnkiLcby+TFe7BftPk/2vXyw78hkTnuGlumr3f7LXUh+ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BV9NiEb9; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52efa9500e0so5960489e87.3;
+        Tue, 30 Jul 2024 10:22:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722360169; x=1722964969; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9SrOWLauCw0n1dZB3h45/pyK2Bmr2sMoKoIxGkx4yOw=;
+        b=BV9NiEb9jAPic+xGLe52Ivz10GH3b5z+Q8IDz6zsukt81dTtRALqxBymnSd/8lmwlO
+         jcYy+uJLGi2wM7yVNl6vlR+WLx24X+zhXdWApc1zA4blBkqoL14nJwXr9g53kOX4I5TG
+         r2792eKSFBqPLzxQy6sMJwLNPbv1eLhctWIsdthXjgi+OUqyW1/akV2qhy7inz4ozaY9
+         vV7TjrR8JAcnu1rN/ijVg8pKbtZ2blONY/5wzO2WkTqSMSvkwCbSqXkhM+PoGOpOpldd
+         o8eJyT77HfbReD5dcMwqVJG03vON/3UqlKc7c5hb+WRTUE094K98VfzN3W+ji8Pfxzrm
+         0DDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722360169; x=1722964969;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9SrOWLauCw0n1dZB3h45/pyK2Bmr2sMoKoIxGkx4yOw=;
+        b=YK4BKvwST6F8VhYZ/Jxgf8MJI1JFTwLkarVScV9OAMVI3RxhzoxAg5YuFFdEYGoY6b
+         YpTPJDwluuVQ+nfLijVA0jHNcsS5pmm4EAJ/To+cVItMPPtHcRV9hPJUuEGUMATpyFo+
+         uWPp9Zs0bY5hWnr/Ya05ojQ/YDGtQaju4vW7aIfazI0ZsbwebcHP6BnSz6p+yIhqLdsR
+         M4imqlDlC6xSso9uKKx33Fddld2/53IlTJHF//KBrQj4F1LPT5FZdV0pfeSPeOqTGbgF
+         jEzbHj79X1CUXmE5GH9vxTQDcFzF7ut6NfQMOkElwaXGgeyo4oqp7YKnmEAAJccdfynT
+         naNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFgwlXygHYrz0D+veOYdczcF+R+TZQsUJGavKWQbDyXLBrJYRV8MI3ogsmyqSFtriJbhjmDNWQYDx0EqBN@vger.kernel.org, AJvYcCXQHco1l/l3xNRAQwDn4dpbbgRewDrvUE4jluszhJJhOYXRcGH7y+Kjjqn91lUEuJ3eSsDqgkkNBNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOfk3AgGzn8LxAzV5K7KPnkMDNy7e4kpHThetFHt0sKs7KeQyu
+	l7Oa2gSlOjBYNZyTOvDV3LYpa1J3yCbvDCzZ52qkGnzwNTwYlog4WR6sM7wpbnE=
+X-Google-Smtp-Source: AGHT+IGJtevap8SjGgLimtdXlsjljiFbrSf8UAhsdPH88eKRaqwyIl+zlGuqwGhOP+K8Zc+fGj+UwQ==
+X-Received: by 2002:ac2:4e05:0:b0:52e:969c:db83 with SMTP id 2adb3069b0e04-5309b26bf0emr7926267e87.17.1722360168092;
+        Tue, 30 Jul 2024 10:22:48 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::4:6947])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad414d7sm665498766b.110.2024.07.30.10.22.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 10:22:47 -0700 (PDT)
+Message-ID: <01899bc3-1920-4ff2-a470-decd1c282e38@gmail.com>
+Date: Tue, 30 Jul 2024 18:22:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,178 +75,178 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG REPORT]net: page_pool: kernel crash at
- iommu_get_dma_domain+0xc/0x20
-To: Yonglong Liu <liuyonglong@huawei.com>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- pabeni@redhat.com, ilias.apalodimas@linaro.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Alexander Duyck <alexander.duyck@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, linyunsheng <linyunsheng@huawei.com>,
- "shenjian (K)" <shenjian15@huawei.com>, Salil Mehta <salil.mehta@huawei.com>
-References: <0e54954b-0880-4ebc-8ef0-13b3ac0a6838@huawei.com>
- <8743264a-9700-4227-a556-5f931c720211@huawei.com>
+Subject: Re: [PATCH 0/6] mm: split underutilized THPs
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org
+Cc: hannes@cmpxchg.org, riel@surriel.com, shakeel.butt@linux.dev,
+ roman.gushchin@linux.dev, yuzhao@google.com, baohua@kernel.org,
+ ryan.roberts@arm.com, rppt@kernel.org, willy@infradead.org,
+ cerasuolodomenico@gmail.com, corbet@lwn.net, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, kernel-team@meta.com
+References: <20240730125346.1580150-1-usamaarif642@gmail.com>
+ <dc00a32f-e4aa-4f48-b82a-176c9f615f3e@redhat.com>
+ <3cd1b07d-7b02-4d37-918a-5759b23291fb@gmail.com>
+ <73b97a03-3742-472f-9a36-26ba9009d715@gmail.com>
+ <95ed1631-ff62-4627-8dc6-332096e673b4@redhat.com>
 Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <8743264a-9700-4227-a556-5f931c720211@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <95ed1631-ff62-4627-8dc6-332096e673b4@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 
 
-On 30/07/2024 15.08, Yonglong Liu wrote:
-> I found a bug when running hns3 driver with page pool enabled, the log 
-> as below:
+On 30/07/2024 17:11, David Hildenbrand wrote:
+> On 30.07.24 17:19, Usama Arif wrote:
+>>
+>>
+>> On 30/07/2024 16:14, Usama Arif wrote:
+>>>
+>>>
+>>> On 30/07/2024 15:35, David Hildenbrand wrote:
+>>>> On 30.07.24 14:45, Usama Arif wrote:
+>>>>> The current upstream default policy for THP is always. However, Meta
+>>>>> uses madvise in production as the current THP=always policy vastly
+>>>>> overprovisions THPs in sparsely accessed memory areas, resulting in
+>>>>> excessive memory pressure and premature OOM killing.
+>>>>> Using madvise + relying on khugepaged has certain drawbacks over
+>>>>> THP=always. Using madvise hints mean THPs aren't "transparent" and
+>>>>> require userspace changes. Waiting for khugepaged to scan memory and
+>>>>> collapse pages into THP can be slow and unpredictable in terms of performance
+>>>>> (i.e. you dont know when the collapse will happen), while production
+>>>>> environments require predictable performance. If there is enough memory
+>>>>> available, its better for both performance and predictability to have
+>>>>> a THP from fault time, i.e. THP=always rather than wait for khugepaged
+>>>>> to collapse it, and deal with sparsely populated THPs when the system is
+>>>>> running out of memory.
+>>>>>
+>>>>> This patch-series is an attempt to mitigate the issue of running out of
+>>>>> memory when THP is always enabled. During runtime whenever a THP is being
+>>>>> faulted in or collapsed by khugepaged, the THP is added to a list.
+>>>>> Whenever memory reclaim happens, the kernel runs the deferred_split
+>>>>> shrinker which goes through the list and checks if the THP was underutilized,
+>>>>> i.e. how many of the base 4K pages of the entire THP were zero-filled.
+>>>>> If this number goes above a certain threshold, the shrinker will attempt
+>>>>> to split that THP. Then at remap time, the pages that were zero-filled are
+>>>>> not remapped, hence saving memory. This method avoids the downside of
+>>>>> wasting memory in areas where THP is sparsely filled when THP is always
+>>>>> enabled, while still providing the upside THPs like reduced TLB misses without
+>>>>> having to use madvise.
+>>>>>
+>>>>> Meta production workloads that were CPU bound (>99% CPU utilzation) were
+>>>>> tested with THP shrinker. The results after 2 hours are as follows:
+>>>>>
+>>>>>                               | THP=madvise |  THP=always   | THP=always
+>>>>>                               |             |               | + shrinker series
+>>>>>                               |             |               | + max_ptes_none=409
+>>>>> -----------------------------------------------------------------------------
+>>>>> Performance improvement     |      -      |    +1.8%      |     +1.7%
+>>>>> (over THP=madvise)          |             |               |
+>>>>> -----------------------------------------------------------------------------
+>>>>> Memory usage                |    54.6G    | 58.8G (+7.7%) |   55.9G (+2.4%)
+>>>>> -----------------------------------------------------------------------------
+>>>>> max_ptes_none=409 means that any THP that has more than 409 out of 512
+>>>>> (80%) zero filled filled pages will be split.
+>>>>>
+>>>>> To test out the patches, the below commands without the shrinker will
+>>>>> invoke OOM killer immediately and kill stress, but will not fail with
+>>>>> the shrinker:
+>>>>>
+>>>>> echo 450 > /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none
+>>>>> mkdir /sys/fs/cgroup/test
+>>>>> echo $$ > /sys/fs/cgroup/test/cgroup.procs
+>>>>> echo 20M > /sys/fs/cgroup/test/memory.max
+>>>>> echo 0 > /sys/fs/cgroup/test/memory.swap.max
+>>>>> # allocate twice memory.max for each stress worker and touch 40/512 of
+>>>>> # each THP, i.e. vm-stride 50K.
+>>>>> # With the shrinker, max_ptes_none of 470 and below won't invoke OOM
+>>>>> # killer.
+>>>>> # Without the shrinker, OOM killer is invoked immediately irrespective
+>>>>> # of max_ptes_none value and kill stress.
+>>>>> stress --vm 1 --vm-bytes 40M --vm-stride 50K
+>>>>>
+>>>>> Patches 1-2 add back helper functions that were previously removed
+>>>>> to operate on page lists (needed by patch 3).
+>>>>> Patch 3 is an optimization to free zapped tail pages rather than
+>>>>> waiting for page reclaim or migration.
+>>>>> Patch 4 is a prerequisite for THP shrinker to not remap zero-filled
+>>>>> subpages when splitting THP.
+>>>>> Patches 6 adds support for THP shrinker.
+>>>>>
+>>>>> (This patch-series restarts the work on having a THP shrinker in kernel
+>>>>> originally done in
+>>>>> https://lore.kernel.org/all/cover.1667454613.git.alexlzhu@fb.com/.
+>>>>> The THP shrinker in this series is significantly different than the
+>>>>> original one, hence its labelled v1 (although the prerequisite to not
+>>>>> remap clean subpages is the same).)
+>>>>
+>>>> As shared previously, there is one issue with uffd (even when currently not active for a VMA!), where we must not zap present page table entries.
+>>>>
+>>>> Something that is always possible (assuming no GUP pins of course, which) is replacing the zero-filled subpages by shared zeropages.
+>>>>
+>>>> Is that being done in this patch set already, or are we creating pte_none() entries?
+>>>>
+>>>
+>>> I think thats done in Patch 4/6. In function try_to_unmap_unused, we have below which I think does what you are suggesting? i.e. point to shared zeropage and not clear pte for uffd armed vma.
+>>>
+>>>     if (userfaultfd_armed(pvmw->vma)) {
+>>>         newpte = pte_mkspecial(pfn_pte(page_to_pfn(ZERO_PAGE(pvmw->address)),
+>>>                            pvmw->vma->vm_page_prot));
+>>>         ptep_clear_flush(pvmw->vma, pvmw->address, pvmw->pte);
+>>>         set_pte_at(pvmw->vma->vm_mm, pvmw->address, pvmw->pte, newpte);
+>>>     }
+>>
+>>
+>> Ah are you suggesting userfaultfd_armed(pvmw->vma) will evaluate to false even if its uffd? I think something like below would work in that case.
 > 
-> [ 4406.956606] Unable to handle kernel NULL pointer dereference at 
-> virtual address 00000000000000a8
+> I remember one ugly case in QEMU with postcopy live-migration where we must not zap zero-filled pages. I am not 100% regarding THP (if it could be enabled at that point), but imagine the following
+> 
+> 1) mmap(), enable THP
+> 2) Migrate a bunch of pages from the source during precopy (writing to
+>    the memory). Might end up creating THPs (during fault/khugepaged)
+> 3) Register UFFD on the VMA
+> 4) Disable new THPs from forming via MADV_NOHUGEPAGE on the VMA
+> 5) Discard any pages that have been re-dirtied or not migrated yet
+> 6) Migrate-on-demand any holes using uffd
+> 
+> 
+> If we discard zero-filled pages between 2) and 3) we might get wrong uffd notifications in 6 for pages that have already been migrated).
+> 
+> I'll have to check if that actually happens in that sequence in QEMU: if QEMU would disable THP right before 2) we would be safe. But I recall that it is not the case :/
+> 
+> 
 
-struct iommu_domain *iommu_get_dma_domain(struct device *dev)
-{
-	return dev->iommu_group->default_domain;
-}
+Thanks for the example!
 
-$ pahole -C iommu_group --hex | grep default_domain
-	struct iommu_domain *      default_domain;   /*  0xa8   0x8 */
+Just to understand the issue better, as I am not very familiar with live-migration code, the problem is only for zero-filled pages that were migrated, right? If a THP is created and a subpage of it was a zero-page that was migrated and its split before VMA is armed with uffd, userfaultfd_armed(pvmw->vma) will return false when splitting and it will become pte_none. And afterwards when the destination faults on it, uffd will see that its pte_clear and will request the zero-page back from source. Uffd will then have to get the page again from source.
 
-Looks like iommu_group is a NULL pointer (that when deref member
-'default_domain' cause this fault).
+If I understand the example correctly, the below diff over patch 6 should be good? i.e. just point to the empty_zero_page instead of doing pte_clear. This should still use the same amount of memory, although ptep_clear_flush means it might be slighly more expensive.
 
-
-> [ 4406.965379] Mem abort info:
-> [ 4406.968160]   ESR = 0x0000000096000004
-> [ 4406.971906]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [ 4406.977218]   SET = 0, FnV = 0
-> [ 4406.980258]   EA = 0, S1PTW = 0
-> [ 4406.983404]   FSC = 0x04: level 0 translation fault
-> [ 4406.988273] Data abort info:
-> [ 4406.991154]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> [ 4406.996632]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> [ 4407.001681]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [ 4407.006985] user pgtable: 4k pages, 48-bit VAs, pgdp=0000202828326000
-> [ 4407.013430] [00000000000000a8] pgd=0000000000000000, 
-> p4d=0000000000000000
-> [ 4407.020212] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> [ 4407.026454] Modules linked in: hclgevf xt_CHECKSUM ipt_REJECT 
-> nf_reject_ipv4 ip6table_mangle ip6table_nat iptable_mangle 
-> ip6table_filter ip6_tables hns_roce_hw_v2 hns3 hclge hnae3 xt_addrtype 
-> iptable_filter xt_conntrack overlay arm_spe_pmu arm_smmuv3_pmu 
-> hisi_uncore_hha_pmu hisi_uncore_ddrc_pmu hisi_uncore_l3c_pmu 
-> hisi_uncore_pmu fuse rpcrdma ib_isert iscsi_target_mod ib_iser libiscsi 
-> scsi_transport_iscsi crct10dif_ce hisi_sec2 hisi_hpre hisi_zip 
-> hisi_sas_v3_hw xhci_pci sbsa_gwdt hisi_qm hisi_sas_main hisi_dma 
-> xhci_pci_renesas uacce libsas [last unloaded: hnae3]
-> [ 4407.076027] CPU: 48 PID: 610 Comm: kworker/48:1
-> [ 4407.093343] Workqueue: events page_pool_release_retry
-> [ 4407.098384] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS 
-> BTYPE=--)
-> [ 4407.105316] pc : iommu_get_dma_domain+0xc/0x20
-> [ 4407.109744] lr : iommu_dma_unmap_page+0x38/0xe8
-> [ 4407.114255] sp : ffff80008bacbc80
-> [ 4407.117554] x29: ffff80008bacbc80 x28: 0000000000000000 x27: 
-> ffffc31806be7000
-> [ 4407.124659] x26: ffff2020002b6ac0 x25: 0000000000000000 x24: 
-> 0000000000000002
-> [ 4407.131762] x23: 0000000000000022 x22: 0000000000001000 x21: 
-> 00000000fcd7c000
-> [ 4407.138865] x20: ffff0020c9882800 x19: ffff0020856f60c8 x18: 
-> ffff8000d3503c58
-> [ 4407.145968] x17: 0000000000000000 x16: 1fffe00419521061 x15: 
-> 0000000000000001
-> [ 4407.153073] x14: 0000000000000003 x13: 00000401850ae012 x12: 
-> 000006b10004e7fb
-> [ 4407.160177] x11: 0000000000000067 x10: 0000000000000c70 x9 : 
-> ffffc3180405cd20
-> [ 4407.167280] x8 : fefefefefefefeff x7 : 0000000000000001 x6 : 
-> 0000000000000010
-> [ 4407.174382] x5 : ffffc3180405cce8 x4 : 0000000000000022 x3 : 
-> 0000000000000002
-> [ 4407.181485] x2 : 0000000000001000 x1 : 00000000fcd7c000 x0 : 
-> 0000000000000000
-> [ 4407.188589] Call trace:
-> [ 4407.191027]  iommu_get_dma_domain+0xc/0x20
-> [ 4407.195105]  dma_unmap_page_attrs+0x38/0x1d0
-> [ 4407.199361]  page_pool_return_page+0x48/0x180
-> [ 4407.203699]  page_pool_release+0xd4/0x1f0
-> [ 4407.207692]  page_pool_release_retry+0x28/0xe8
-
-I suspect that the DMA IOMMU part was deallocated and freed by the 
-driver even-though page_pool still have inflight packets.
-
-The page_pool bumps refcnt via get_device() + put_device() on the DMA
-'struct device', to avoid it going away, but I guess there is also some
-IOMMU code that we need to make sure doesn't go away (until all inflight
-pages are returned) ???
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 2731ac20ff33..52aa4770fbed 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -206,14 +206,10 @@ static bool try_to_unmap_unused(struct page_vma_mapped_walk *pvmw,
+        if (dirty)
+                return false;
+ 
+-       pte_clear_not_present_full(pvmw->vma->vm_mm, pvmw->address, pvmw->pte, false);
+-
+-       if (userfaultfd_armed(pvmw->vma)) {
+-               newpte = pte_mkspecial(pfn_pte(page_to_pfn(ZERO_PAGE(pvmw->address)),
+-                                              pvmw->vma->vm_page_prot));
+-               ptep_clear_flush(pvmw->vma, pvmw->address, pvmw->pte);
+-               set_pte_at(pvmw->vma->vm_mm, pvmw->address, pvmw->pte, newpte);
+-       }
++       newpte = pte_mkspecial(pfn_pte(page_to_pfn(ZERO_PAGE(pvmw->address)),
++                                       pvmw->vma->vm_page_prot));
++       ptep_clear_flush(pvmw->vma, pvmw->address, pvmw->pte);
++       set_pte_at(pvmw->vma->vm_mm, pvmw->address, pvmw->pte, newpte);
+ 
+        dec_mm_counter(pvmw->vma->vm_mm, mm_counter(folio));
+        return true;
 
 
-> [ 4407.212119]  process_one_work+0x164/0x3e0
-> [ 4407.216116]  worker_thread+0x310/0x420
-> [ 4407.219851]  kthread+0x120/0x130
-> [ 4407.223066]  ret_from_fork+0x10/0x20
-> [ 4407.226630] Code: ffffc318 aa1e03e9 d503201f f9416c00 (f9405400)
-> [ 4407.232697] ---[ end trace 0000000000000000 ]---
-> 
-> 
-> The hns3 driver use page pool like this, just call once when the driver 
-> initialize:
-> 
-> static void hns3_alloc_page_pool(struct hns3_enet_ring *ring)
-> {
->      struct page_pool_params pp_params = {
->          .flags = PP_FLAG_DMA_MAP | PP_FLAG_PAGE_FRAG |
->                  PP_FLAG_DMA_SYNC_DEV,
->          .order = hns3_page_order(ring),
->          .pool_size = ring->desc_num * hns3_buf_size(ring) /
->                  (PAGE_SIZE << hns3_page_order(ring)),
->          .nid = dev_to_node(ring_to_dev(ring)),
->          .dev = ring_to_dev(ring),
->          .dma_dir = DMA_FROM_DEVICE,
->          .offset = 0,
->          .max_len = PAGE_SIZE << hns3_page_order(ring),
->      };
-> 
->      ring->page_pool = page_pool_create(&pp_params);
->      if (IS_ERR(ring->page_pool)) {
->          dev_warn(ring_to_dev(ring), "page pool creation failed: %ld\n",
->               PTR_ERR(ring->page_pool));
->          ring->page_pool = NULL;
->      }
-> }
-> 
-> And call page_pool_destroy(ring->page_pool)  when the driver uninitialized.
-> 
-> 
-> We use two devices, the net port connect directory, and the step of the 
-> test case like below:
-> 
-> 1. enable a vf of '7d:00.0':  echo 1 > 
-> /sys/class/net/eno1/device/sriov_numvfs
-> 
-> 2. use iperf to produce some flows(the problem happens to the side which 
-> runs 'iperf -s')
-> 
-> 3. use ifconfig down/up to the vf
-> 
-> 4. kill iperf
-> 
-> 5. disable the vf: echo 0 > /sys/class/net/eno1/device/sriov_numvfs
-> 
-> 6. run 1~5 with another port bd:00.0
-> 
-> 7. repeat 1~6
-> 
-> 
-> And when running this test case, we can found another related message (I 
-> replaced pr_warn() to dev_warn()):
-> 
-> pci 0000:7d:01.0: page_pool_release_retry() stalled pool shutdown: id 
-> 949, 98 inflight 1449 sec
-> 
-> 
-> Even when stop the traffic, stop the test case, disable the vf, this 
-> message is still being printed.
-> 
-> We must run the test case for about two hours to reproduce the problem. 
-> Is there some advise to solve or debug the problem?
-> 
+
+
 
