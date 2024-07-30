@@ -1,124 +1,108 @@
-Return-Path: <linux-kernel+bounces-266961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0006E940A76
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:56:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC6C940A79
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADEF028484D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:56:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFCA0B2496E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F481922D9;
-	Tue, 30 Jul 2024 07:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFDC1922DE;
+	Tue, 30 Jul 2024 07:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="heURljBQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WfMQnBUd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4137C190666
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C571922D0;
+	Tue, 30 Jul 2024 07:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722326154; cv=none; b=QFKn0/OTsMW4N3LQ+4OTGskZuzrizjawx0nJa1Qar3WOFbJiGAOer6r+SkW1fNRKqgtrOcdEg6Bn2qqEX1z4cg2ECcGIn3oxlzo/K5YPv3CWfe0osLq3Eud8dqwowIgMhnyOMdjqB1bi5vgfnEkUFg3CMbmlFYGFJZS4VAmQIvc=
+	t=1722326168; cv=none; b=WE0q8cb4UwYwhHx5aBV+MsOVzmY1U1F5oGflTFYjSrsdMlxqt7CHFZffHnjReUjKxE14MmDTsD4I0XmZHvoeCaKi9//6sCcvbGqFM4C+tNLqn4O0n3XagAM8XJiDvnedmWJ7uWO1YAqTBpj7XJHF8tB+hSWicuqdGQ7Vqcp6j9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722326154; c=relaxed/simple;
-	bh=pUneXqc1tawiKl8hOSNTSHjlMaasizdprX1F4ta/+GU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dYHFg8M0hFTIYuH2w7DlHZIiQUc0Vhm4Z6lyEBWEqh744oe5eNx2JWNaLIOjIVCEN1YCR8iJifLKGV4PsoAyt9yQFK55ptXUNscGL/j4/jhaowtl2cUN9aILZXEGwxAv8xDwhG+vsfCKIHtWSrlwCFpbL0Yf4EMKIe5oPy7PYsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=heURljBQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722326152;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VeZf4S2zN1755hAgpbxKY28IpphydX1J+Zavqe1s4gs=;
-	b=heURljBQzJJtuTIReUb+snaWCEEV5kyTKS+Z1qKkvWf1AGJHpYsXpZ9z+K8B2EGJSPA54n
-	XbSa+AirhnQjFbSZTyJBcvpY+1pHT0/VSEWHBLSP+1JhaOPL+J3xAvkl1WlzpWLHzdD051
-	WZG/dt+UONpS182WmHU9ql85rWTbp/0=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-322-sCGQKRjSPciPX4Akn3WraQ-1; Tue,
- 30 Jul 2024 03:55:41 -0400
-X-MC-Unique: sCGQKRjSPciPX4Akn3WraQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D82481955D45;
-	Tue, 30 Jul 2024 07:55:38 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.141])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 64D5119560AA;
-	Tue, 30 Jul 2024 07:55:31 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: andrew@lunn.ch
-Cc: UNGLinuxDriver@microchip.com,
-	davem@davemloft.net,
-	dsimic@manjaro.org,
-	edumazet@google.com,
-	f.fainelli@gmail.com,
-	gregkh@linuxfoundation.org,
-	jtornosm@redhat.com,
-	kuba@kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	lucas.demarchi@intel.com,
-	masahiroy@kernel.org,
-	mcgrof@kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	woojung.huh@microchip.com
-Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy module
-Date: Tue, 30 Jul 2024 09:55:28 +0200
-Message-ID: <20240730075529.8263-1-jtornosm@redhat.com>
-In-Reply-To: <c8450f9c-a7f8-4775-8d26-7a070aa68e4d@lunn.ch>
-References: <c8450f9c-a7f8-4775-8d26-7a070aa68e4d@lunn.ch>
+	s=arc-20240116; t=1722326168; c=relaxed/simple;
+	bh=Oxb3+9POPgRRPmdnvmiri4xP1ANzqB1A7za7uLZ+riE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fdu6BHvZ2t5rC9Uk7jNwXgh6C6uMqvHuoR9X855+sOxO79KGJYULLKFoY7VILjC4VcCN+MdA7WW4XTJOA/lS8x2Tt1cktty20vAgZfeF2LwdqitYxmbrtx57Ex88k/SV6f39G5mbAT2antk4fq6pcqtQW0tM57Sn7cNM58msbeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WfMQnBUd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29B65C32782;
+	Tue, 30 Jul 2024 07:56:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722326168;
+	bh=Oxb3+9POPgRRPmdnvmiri4xP1ANzqB1A7za7uLZ+riE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WfMQnBUdNcYRvkPAKw2JMQ78ChPfzJ5kzCQ8ex1qJCARJDiVCAxJa/gCjGTtKpZcS
+	 TquSXgiMLGgj79aKJz1bN4bbTx7RaLmsbJBGi+4nCMIa9ILARHF2z/LqPU25+IYpts
+	 FV7xP0PFnn7SBNNx6NiaZBxDc9C1hsIZTrMbnjxxxgd26069KtBdH3dw2VuFPcxeJF
+	 tXsEtGRrVgpdCmSNLdUVZnE7beEYIIFDnIg+GQAxtJ5hc9NyLnVRU5Pg56zqx2GQKb
+	 ldeVeBko9FhVJ1fUqbRvtnqzS1Th+wM/qJ9YGQMYKyXOwacKzYuUh2FPnJF/JT2a5V
+	 LVeb88nz8znTg==
+Date: Tue, 30 Jul 2024 09:56:04 +0200
+From: Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, 
+	kabel@kernel.org
+Subject: Re: [tip: irq/core] irqchip/armada-370-xp: Change symbol prefixes to
+ mpic
+Message-ID: <z3vgu5vimj5wkcvlxs27y5s7q3epvmtgrtb7zovdfojpregcye@pqdxzesipb36>
+References: <20240711115748.30268-7-kabel@kernel.org>
+ <172224658404.2215.1380801249029241672.tip-bot2@tip-bot2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <172224658404.2215.1380801249029241672.tip-bot2@tip-bot2>
 
-Hello Andrew,
+Hi Thomas,
 
-> So are you saying current initramfs are broken, because they don't
-> include the needed PHY modules?
-I am just saying that the default initramfs including the current lan78xx
-driver is broken because in this case there is no information to collect
-the possible phy modules. And as I commented, after the complete boot, the
-only solution is to unload and load lan78xx to get the phy module from
-rootfs.
- 
-> You can fix one example of the lan78xx
-> USB dongle, but are going to leave everything else broken?
-My intention was to fix the case for lan78xx because it is the one that I
-have detected that does not work. Others are already working, for example
-r8169, by means of a softdep with realtek phy. And my idea was to do the
-same for the other detected/needed, if any (I am not aware of other similar
-reported issues).
-I see that you prefer to fix all the cases and always including all the phy
-modules would solve the problem for lan78xx and for other possible ones.
-But take into account that we should also try to avoid creating large
-initramfs if not necessary, at least, if there is anyway to solve this.  
-Indeed, if I am not wrong, only some phy modules are possible for
-a driver and these are known.
-Anyway, as it was suggested, we can explore some automatic procedure to
-identify the hardware and with that, select the phy module or at least,
-reduce the number of phy modules to introduce.
+so I am going through the differences of the commits that you applied
+in contrast to the originals that I sent, as you asked.
 
-Thanks
+This commit is rather large, so understandably there was a larger
+probability for a mistake. It seems ok, but I have the notes:
 
-Best regards
-José Ignacio
+>  	if (WARN_ON(!base_ipi))
+>  		return;
+> -
+>  	set_smp_ipi_range(base_ipi, IPI_DOORBELL_END);
+>  }
 
+^^ I did not remove this line in my original patch, I always try to
+leave an empty line after conditional return:
+  if (cond)
+    return;
+  // empty line
+  code;
+
+I guess this is not an issue, though.
+
+> @@ -704,62 +687,60 @@ armada_370_xp_handle_irq(struct pt_regs *regs)
+>  			int ipi;
+>  
+>  			ipimask = readl_relaxed(per_cpu_int_base + MPIC_IN_DRBEL_CAUSE) &
+> -						IPI_DOORBELL_MASK;
+> +				  IPI_DOORBELL_MASK;
+>  
+
+^^ This change also was not in my original patch. I would have put this
+into the "improve indentation" commit, instead of the one that "changes
+symbol prefixes to mpic_", since semantically it belongs into the first
+one.
+
+IMO it would have been better to leave these patches as they are, and
+do the change to 100 columns in a subsequent patch, all in one, since
+there are many other parts of the code that would have benefited from
+it. And you would not need to spend time going through the patches line
+by line :-)
+
+Anyway, this patch seems ok.
+
+Marek
 
