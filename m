@@ -1,94 +1,79 @@
-Return-Path: <linux-kernel+bounces-268232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C94F1942203
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:07:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D0C0942205
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F782284CA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:07:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0EEE1C22C44
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45AA1189911;
-	Tue, 30 Jul 2024 21:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB64018A6C6;
+	Tue, 30 Jul 2024 21:07:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="K/mzdPaH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jqpr76b7";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="K/mzdPaH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jqpr76b7"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ddgct8WC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C86238B
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 21:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E11338B
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 21:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722373620; cv=none; b=Ibh0YuSWeKnTc1kNV37qFHfr7j1YkOTPHqTUlYws1OR/7TLrZoF83DaQJ2d0JsqVfYIC39MXzjoveUsPsWz2rRmQQEyFOW8VlqjqY7UrPzpBrtMgH2TYZi6XMg76C7655rqaWOg2aqKM+SL9WmaqgJ9ICZLL9trf1Is/MYyhXzs=
+	t=1722373674; cv=none; b=EcNSSGJCNHBgYfdEXxtZPd/nwy71ELEjKidO+gThqesMz3Un+sMUysPArCNrMwbUb6DXlvZ2FbXFiM4AVtZZyjCLiW9irOz+oRRxe8ddh5BEtnIrGJx06HKqu9g7FcFlvSAGxTxr1A1ZJTFkSZCMAVA75G8MMdpwgnlxLzlyujo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722373620; c=relaxed/simple;
-	bh=BVSHOTFi/7QifxnhQsRlu8quhzF39Hl89yIL3lMO/FA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cTRjJ+GrHqoqo1HpyQK++2YjyUsaxadIb6+XN6/x0JD078kYTShKbX8PHLIuP8c5MVyA2UZ3U1VSdboGedQkvRbyp6V+rbHycQfRheA2OBXUGaVjN8qLv9FXcvopE3AfCskuMmcoQblHdX/u08Q2qmpWJ/Bf6ymUCldisAvTvJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=K/mzdPaH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Jqpr76b7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=K/mzdPaH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Jqpr76b7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5487721A19;
-	Tue, 30 Jul 2024 21:06:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722373616; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1722373674; c=relaxed/simple;
+	bh=LjX5xxKf7y8U8CvhLltOmXsulnREXizmjwCNa5xizpw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=P5MEuwqJ+ZRgWs1HgVim7gagMA+WYDD0WqIFzSp+PmNAtOf+4tDq0Fvj2Tmk4GujrvSIYj1wPMNdTzPByPBjpQEm6ojUKM+4msPQEbz6K6Z2kZYj+9tJuMJ2Ai0x69JCiVFD0UN9e6Exz4Gk4nQQCtkVZJschs6/rtpR3KKaDwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ddgct8WC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722373671;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=smX5tEVpIjxllAV42JGBizsl4IP88fKQHfu78rKR9w4=;
-	b=K/mzdPaHFaE9H4p/muESdWTHyk+GGvC0gjizW0R6I7kjgZucfBBZcMc0qe+/z2awfaOrWL
-	VV4PCIUUgCIfhbr3Phc266crmb5FMRG8PEJ9QEHgam/zBsA/av8x/cyZa5iovmmvFgth5P
-	2i0yCxYAnL5oo6glcgJ3GvdgwkO4vdE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722373616;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=smX5tEVpIjxllAV42JGBizsl4IP88fKQHfu78rKR9w4=;
-	b=Jqpr76b7//dXbPzhjjORI5DO0WzwDSIEYYHNQ0A8s3U+zuSmNY61ox/Tdea0gxrVf+Dm1d
-	Fvtogf3iELA75CBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722373616; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=smX5tEVpIjxllAV42JGBizsl4IP88fKQHfu78rKR9w4=;
-	b=K/mzdPaHFaE9H4p/muESdWTHyk+GGvC0gjizW0R6I7kjgZucfBBZcMc0qe+/z2awfaOrWL
-	VV4PCIUUgCIfhbr3Phc266crmb5FMRG8PEJ9QEHgam/zBsA/av8x/cyZa5iovmmvFgth5P
-	2i0yCxYAnL5oo6glcgJ3GvdgwkO4vdE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722373616;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=smX5tEVpIjxllAV42JGBizsl4IP88fKQHfu78rKR9w4=;
-	b=Jqpr76b7//dXbPzhjjORI5DO0WzwDSIEYYHNQ0A8s3U+zuSmNY61ox/Tdea0gxrVf+Dm1d
-	Fvtogf3iELA75CBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3CD8513983;
-	Tue, 30 Jul 2024 21:06:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BGd8DvBVqWaRVwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 30 Jul 2024 21:06:56 +0000
-Message-ID: <9369adda-9cb9-4447-92fa-b7a70bd81fb6@suse.cz>
-Date: Tue, 30 Jul 2024 23:06:55 +0200
+	bh=80Ng7xC1cKZ5QTx3CUuSU+YasGNRQkH4TTL6Nc/ilrU=;
+	b=ddgct8WCVDpCCW4epTme3RZd1RpPrqQaAteZxd8bTZNJrYDcchZFO6sX6tYF1zfD2cssxz
+	WP2WTQAxWSx7udS/DGEF5epCH1146yjcIjaOxuRZmUKJLMGx3pVGQbKJIZ9UB9RWZnmyGO
+	smfSGYCJfuz2Ah3INNvoHsSmwH18wrY=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-496-Guv-fpzqNKOJjHd5hnJEVA-1; Tue, 30 Jul 2024 17:07:46 -0400
+X-MC-Unique: Guv-fpzqNKOJjHd5hnJEVA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-427ffa0c9c7so42681805e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:07:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722373665; x=1722978465;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=80Ng7xC1cKZ5QTx3CUuSU+YasGNRQkH4TTL6Nc/ilrU=;
+        b=w4CIWPA9U5+gtehvCObhx/bCcd0ozMJTjPy7g3i9Nz4Hz/RxoF0vJLvFaKHI9BgB+V
+         3qdKZCYcG+nu3zWrgRFB/Ntv0AdAB387IDDzds/ZZpDHgAJoFpxLg+vL+yLzhi52w+Yd
+         A6t+4KcbgEGFn+BmsOWW5EShn+sc60NS6/YIYIn8c3JKhz4XkaVlfP0pUhVy+hvoP1+A
+         uE9ktixjKwbxWJmxqVMHhwfnbY352Bzjqr/t2hPxZphSeVNhMchB0+4WD0cl6frZ9Mmz
+         2Z7SgFtFQEdKamygA+rhD3p+e6gAp7dwayf1MrJ6jWqABk0ersH1uHm91sbNtjU/CpyZ
+         w0zQ==
+X-Gm-Message-State: AOJu0YyQcYlWHobbwS3ZbaT7pQQ/y6CAMAmIexYyuy8sfpMZ2NDbQxGU
+	joloZYjqNOtRv+TRO0ujgdXJQgC7SyIfZ/kdEewl4NAO+fC8p+BM0Z3o8th8vVlvEfS4N57McUC
+	bjlPf3MPjIIWvRqiREhMNh0gdKcABZcAv6kPLy9BXVLKv0Q1qJVnBVJCe8i7TTw==
+X-Received: by 2002:a05:600c:19c8:b0:426:6fd2:e14b with SMTP id 5b1f17b1804b1-42811d8c0d7mr104718755e9.11.1722373665590;
+        Tue, 30 Jul 2024 14:07:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGTetu89WIWYw+9ILtoy7SI1hVdLkZzRU4VSJ/Y1jhqXOI5Xcnk3AKNC4xZ1eO3nvXHrn7nsg==
+X-Received: by 2002:a05:600c:19c8:b0:426:6fd2:e14b with SMTP id 5b1f17b1804b1-42811d8c0d7mr104718605e9.11.1722373665173;
+        Tue, 30 Jul 2024 14:07:45 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c706:4e00:31ad:5274:e21c:b59? (p200300cbc7064e0031ad5274e21c0b59.dip0.t-ipconnect.de. [2003:cb:c706:4e00:31ad:5274:e21c:b59])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42809e4423dsm194895745e9.13.2024.07.30.14.07.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 14:07:44 -0700 (PDT)
+Message-ID: <b74fcedb-60c5-4fd3-bcc7-74959e12c38d@redhat.com>
+Date: Tue, 30 Jul 2024 23:07:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,144 +81,143 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm: krealloc: consider spare memory for __GFP_ZERO
+Subject: Re: [PATCH v2] mm/hugetlb: fix hugetlb vs. core-mm PT locking
+From: David Hildenbrand <david@redhat.com>
+To: James Houghton <jthoughton@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, stable@vger.kernel.org,
+ Peter Xu <peterx@redhat.com>, Oscar Salvador <osalvador@suse.de>,
+ Muchun Song <muchun.song@linux.dev>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>
+References: <20240730200341.1642904-1-david@redhat.com>
+ <CADrL8HXRCNFzmg67p=j0_0Y_NAFo5rUDmvnr40F5HGAsQMvbnw@mail.gmail.com>
+ <3f6c97b5-ccd8-4226-a9ac-78d555b0d048@redhat.com>
 Content-Language: en-US
-To: Andrew Morton <akpm@linux-foundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-Cc: cl@linux.com, penberg@kernel.org, rientjes@google.com,
- iamjoonsoo.kim@lge.com, roman.gushchin@linux.dev, 42.hyeyoo@gmail.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240730194214.31483-1-dakr@kernel.org>
- <20240730133111.d180e1a6fc63b2883fe99821@linux-foundation.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240730133111.d180e1a6fc63b2883fe99821@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [0.41 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.com,kernel.org,google.com,lge.com,linux.dev,gmail.com,vger.kernel.org,kvack.org];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: 0.41
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <3f6c97b5-ccd8-4226-a9ac-78d555b0d048@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 7/30/24 10:31 PM, Andrew Morton wrote:
-> On Tue, 30 Jul 2024 21:42:05 +0200 Danilo Krummrich <dakr@kernel.org> wrote:
+On 30.07.24 23:00, David Hildenbrand wrote:
+> On 30.07.24 22:43, James Houghton wrote:
+>> On Tue, Jul 30, 2024 at 1:03 PM David Hildenbrand <david@redhat.com> wrote:
+>>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>>> index b100df8cb5857..1b1f40ff00b7d 100644
+>>> --- a/include/linux/mm.h
+>>> +++ b/include/linux/mm.h
+>>> @@ -2926,6 +2926,12 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
+>>>           return ptlock_ptr(page_ptdesc(pmd_page(*pmd)));
+>>>    }
+>>>
+>>> +static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
+>>> +{
+>>> +       BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
+>>> +       return ptlock_ptr(virt_to_ptdesc(pte));
+>>
+>> Hi David,
+>>
 > 
->> As long as krealloc() is called with __GFP_ZERO consistently, starting
->> with the initial memory allocation, __GFP_ZERO should be fully honored.
->> 
->> However, if for an existing allocation krealloc() is called with a
->> decreased size, it is not ensured that the spare portion the allocation
->> is zeroed. Thus, if krealloc() is subsequently called with a larger size
->> again, __GFP_ZERO can't be fully honored, since we don't know the
->> previous size, but only the bucket size.
+> Hi!
 > 
-> Well that's bad.
+>> Small question: ptep_lockptr() does not handle the case where the size
+>> of the PTE table is larger than PAGE_SIZE, but pmd_lockptr() does.
 > 
->> Example:
->> 
->> 	buf = kzalloc(64, GFP_KERNEL);
+> I thought I convinced myself that leaf page tables are always single
+> pages and had a comment in v1.
 > 
-> If this was kmalloc()
+> But now I have to double-check again, and staring at
+> pagetable_pte_ctor() callers I am left confused.
+> 
+> It certainly sounds more future proof to just align the pointer down to
+> the start of the PTE table like pmd_lockptr() would.
+> 
+>> IIUC, for pte_lockptr() and ptep_lockptr() to return the same result
+>> in this case, ptep_lockptr() should be doing the masking that
+>> pmd_lockptr() is doing. Are you sure that you don't need to be doing
+>> it? (Or maybe I am misunderstanding something.)
+> 
+> It's a valid concern even if it would not be required. But I'm afraid I
+> won't dig into the details and simply do the alignment in a v3.
 
-Then already here we have unitialized kernel memory that a buggy user could
-expose, no?
+To be precise, the following on top:
 
->> 	memset(buf, 0xff, 64);
->> 
->> 	buf = krealloc(buf, 48, GFP_KERNEL | __GFP_ZERO);
->> 
->> 	/* After this call the last 16 bytes are still 0xff. */
->> 	buf = krealloc(buf, 64, GFP_KERNEL | __GFP_ZERO);
-> 
-> then this would expose uninitialized kernel memory to kernel code, with
-> a risk that the kernel code will expose that to userspace, yes?
-> 
-> This does seem rather a trap, and I wonder whether krealloc() should
-> just zero out any such data by default.
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 1b1f40ff00b7d..f6c7fe8f5746f 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2926,10 +2926,22 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
+         return ptlock_ptr(page_ptdesc(pmd_page(*pmd)));
+  }
+  
+-static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
++static inline struct page *ptep_pgtable_page(pte_t *pte)
+  {
++       unsigned long mask = ~(PTRS_PER_PTE * sizeof(pte_t) - 1);
++
+         BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
+-       return ptlock_ptr(virt_to_ptdesc(pte));
++       return virt_to_page((void *)((unsigned long)pte & mask));
++}
++
++static inline struct ptdesc *ptep_ptdesc(pte_t *pte)
++{
++       return page_ptdesc(ptep_pgtable_page(pte));
++}
++
++static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
++{
++       return ptlock_ptr(ptep_ptdesc(pte));
+  }
+  
 
-So unless I'm missing how this differs from plain kmalloc(), relying on
-want_init_on_alloc() seems the right way how to opt-in harden against this
-potential exposure.
+virt_to_ptdesc() really is of limited use in core-mm code as it seems ...
 
->> Fix this, by explicitly setting spare memory to zero, when shrinking an
->> allocation with __GFP_ZERO flag set or init_on_alloc enabled.
->> 
->> --- a/mm/slab_common.c
->> +++ b/mm/slab_common.c
->> @@ -1273,6 +1273,13 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
->>  
->>  	/* If the object still fits, repoison it precisely. */
->>  	if (ks >= new_size) {
->> +		/* Zero out spare memory. */
->> +		if (want_init_on_alloc(flags)) {
->> +			kasan_disable_current();
->> +			memset((void *)p + new_size, 0, ks - new_size);
-> 
-> Casting away the constness of `*p'.  This is just misleading everyone,
-> really.  It would be better to make argument `p' have type "void *".
-> 
->> +			kasan_enable_current();
->> +		}
->> +
->>  		p = kasan_krealloc((void *)p, new_size, flags);
-> 
+-- 
+Cheers,
+
+David / dhildenb
 
 
