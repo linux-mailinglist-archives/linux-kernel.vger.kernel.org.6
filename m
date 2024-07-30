@@ -1,188 +1,148 @@
-Return-Path: <linux-kernel+bounces-266610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EA1940322
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:09:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D48B940346
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77BED1C21EAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:09:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD2971C213AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642438C13;
-	Tue, 30 Jul 2024 01:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A54F79E1;
+	Tue, 30 Jul 2024 01:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ob8XjfSq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fhLx/YnX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52107464
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 01:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F0C6FD3;
+	Tue, 30 Jul 2024 01:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722301743; cv=none; b=afNCz5U4pVxDgFlD826t5vuPvste2yzFvRmMj0JTpzu/gtU9HvkwRgr/TApfsafwKVIhOiUpLpATtOwIi9Hbi+b015fLy4QJjpcNk19IdVsAkQqpfDwQ1w0I5aLLn0xNSueD2JyYEkp57o6QRaP+pEYbZpDEniL0ky0INBDHm30=
+	t=1722302193; cv=none; b=g36ijuIL/2v+qJUpM0nYM9ZXx038fq6NW0OXEzNo33mnXL6UiqlSqgDM2A2MiisyExcwWrZf2almkC904223dr4mamKHQ/JlvP6PiXS8hSz6LRIaAAkCBrbHA65twHI4jKcS5+Yc8RTqoZKS7QmtJchb7GVAov8+ArV7gamHddM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722301743; c=relaxed/simple;
-	bh=00h3vLXLvu9qJfB2DJPqbuEki7u3R/BDUL3XxZOien4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=quWTQRcw8TJvOApWH+AfaK78zPvz8eXgBdkQcPf031KqCO82DSZPsqTJSzAHoF2x0+J6W25RXc/n5k7Yhup4EHAlLZV4IsWHlsRV2f/W5JghfaODKDneIwtp/OHGIwCvS86tJykAK+Q9FYADHSFH7H1ggc21qo4fTBBbsXPHZMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ob8XjfSq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF7C5C32786;
-	Tue, 30 Jul 2024 01:09:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722301743;
-	bh=00h3vLXLvu9qJfB2DJPqbuEki7u3R/BDUL3XxZOien4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ob8XjfSqsHmR/KbOnkMZ94dCIyptHn0vixnagWEVhpi1pjUBfAdBT5EMWdA6yrs65
-	 I/+cVdpEKzzE37HgOpcY9zDqkWFhCTVRFZN/S3v936R/0ThQRspibuVR1sPfRWsz15
-	 Ejg4k8fbK32Fe8LLVNOCsrnRL/J692rHmhKXLDAF09UH9XzLqXRUqyRZnD6dX3rV8k
-	 VN1Wq/EpXRJyqhMYWcncykoSoJlJjmIdZlZbZG9WLT+3qpSdAzI/5eq2L2KhqiK0z4
-	 e1pG4/pLH4nnFoU4ZSwUIBaKQ4NzKEPvQmVXw+ExfN8x4/+mM2G441Y4H3ecsANomE
-	 cFo7ZJITqrWQg==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
-Subject: [PATCH v2] f2fs: fix to avoid use-after-free in f2fs_stop_gc_thread()
-Date: Tue, 30 Jul 2024 09:08:55 +0800
-Message-Id: <20240730010855.2942132-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1722302193; c=relaxed/simple;
+	bh=SxYB33kknq3g61Lw+Frbi/7XC84m2aM2NRAipQSxfZ0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Xv4z5vpMeF7qjo7KIBFuAinbqF36UfQ3p8yJtruJXQv7rcgAZYzUnzmRpJjCRsxeTdkJSuEaYIIay5cK7pG5Ii89Zaz+GO/4sFQ4VDLoxC6ENiFSx+Nrb3Vr682v0jgDHpyv62aMvN8OsC2vjuDA8FcGIhpMcE9liU4N9obo0Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fhLx/YnX; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722302192; x=1753838192;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=SxYB33kknq3g61Lw+Frbi/7XC84m2aM2NRAipQSxfZ0=;
+  b=fhLx/YnXc2WwwaifyAch5Pguy3P/gp/1UFces3gfnbFVyLnSN338Fwse
+   RjUZmwFQMEgKgF8a6VbDun5FIdJAkW9o+5oJFM5xRHX2XOrqFc32H1FjV
+   X4gArAyYlgL2hqNsM23hqYJMTIhPfps/rZbZUawYdIR9W9BhU6Zc4fvsG
+   45QMNhUvEFZLlEEKW09Zdq1zyqym+8u8RbLENjJYmpi4XY0OxBsD4iKYg
+   vExy4oO7GcTepGQ1UKXnZwkWnTn3W8MfeFmSSIV+d7uNi9Vu03Q8O4td4
+   o2zKNKWVl6i09jwryLDpq7/0IHdNpH7klqwCcsdt9sOHIl5laIm1YPjHH
+   Q==;
+X-CSE-ConnectionGUID: B6tgRBgaTreuDrYSGwu03Q==
+X-CSE-MsgGUID: vsqvDjElRXasVVx7O7763g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="19933797"
+X-IronPort-AV: E=Sophos;i="6.09,247,1716274800"; 
+   d="scan'208";a="19933797"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 18:16:32 -0700
+X-CSE-ConnectionGUID: tm+3ugd8QyKNtsjjBQf4Vw==
+X-CSE-MsgGUID: aJ1byG5/ROWt+SDXLRMMpQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,247,1716274800"; 
+   d="scan'208";a="54131848"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 18:16:29 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Gregory Price <gourry@gourry.net>
+Cc: linux-mm@kvack.org,  akpm@linux-foundation.org,  dave.jiang@intel.com,
+  Jonathan.Cameron@huawei.com,  horenchuang@bytedance.com,
+  linux-kernel@vger.kernel.org,  linux-acpi@vger.kernel.org,
+  dan.j.williams@intel.com,  lenb@kernel.org, Aneesh Kumar K.V
+ <aneesh.kumar@linux.ibm.com>
+Subject: Re: [PATCH] acpi/hmat,mm/memtier: always register hmat adist
+ calculation callback
+In-Reply-To: <ZqelvPwM2MIG26wY@PC2K9PVX.TheFacebook.com> (Gregory Price's
+	message of "Mon, 29 Jul 2024 10:22:52 -0400")
+References: <20240726215548.10653-1-gourry@gourry.net>
+	<87ttg91046.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<ZqelvPwM2MIG26wY@PC2K9PVX.TheFacebook.com>
+Date: Tue, 30 Jul 2024 09:12:55 +0800
+Message-ID: <877cd3u1go.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ascii
 
-syzbot reports a f2fs bug as below:
+Gregory Price <gourry@gourry.net> writes:
 
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- print_report+0xe8/0x550 mm/kasan/report.c:491
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
- atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
- __refcount_add include/linux/refcount.h:184 [inline]
- __refcount_inc include/linux/refcount.h:241 [inline]
- refcount_inc include/linux/refcount.h:258 [inline]
- get_task_struct include/linux/sched/task.h:118 [inline]
- kthread_stop+0xca/0x630 kernel/kthread.c:704
- f2fs_stop_gc_thread+0x65/0xb0 fs/f2fs/gc.c:210
- f2fs_do_shutdown+0x192/0x540 fs/f2fs/file.c:2283
- f2fs_ioc_shutdown fs/f2fs/file.c:2325 [inline]
- __f2fs_ioctl+0x443a/0xbe60 fs/f2fs/file.c:4325
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> On Mon, Jul 29, 2024 at 09:02:33AM +0800, Huang, Ying wrote:
+>> Gregory Price <gourry@gourry.net> writes:
+>> 
+>> > In the event that hmat data is not available for the DRAM tier,
+>> > or if it is invalid (bandwidth or latency is 0), we can still register
+>> > a callback to calculate the abstract distance for non-cpu nodes
+>> > and simply assign it a different tier manually.
+>> >
+>> > In the case where DRAM HMAT values are missing or not sane we
+>> > manually assign adist=(MEMTIER_ADISTANCE_DRAM + MEMTIER_CHUNK_SIZE).
+>> >
+>> > If the HMAT data for the non-cpu tier is invalid (e.g. bw = 0), we
+>> > cannot reasonable determine where to place the tier, so it will default
+>> > to MEMTIER_ADISTANCE_DRAM (which is the existing behavior).
+>> 
+>> Why do we need this?  Do you have machines with broken HMAT table?  Can
+>> you ask the vendor to fix the HMAT table?
+>>
+>
+> It's a little unclear from the ACPI specification whether HMAT is
+> technically optional or not (given that the kernel handles missing HMAT
+> gracefully, it certainly seems optional). In one scenario I have seen
+> incorrect data, and in another scenario I have seen the HMAT omitted
+> entirely. In another scenario I have seen the HMAT-SLLBI omitted while
+> the CDAT is present.
 
-The root cause is below race condition, it may cause use-after-free
-issue in sbi->gc_th pointer.
+IIUC, HMAT is optional.  Is it possible for you to ask the system vendor
+to fix the broken HMAT table.
 
-- remount
- - f2fs_remount
-  - f2fs_stop_gc_thread
-   - kfree(gc_th)
-				- f2fs_ioc_shutdown
-				 - f2fs_do_shutdown
-				  - f2fs_stop_gc_thread
-				   - kthread_stop(gc_th->f2fs_gc_task)
-   : sbi->gc_thread = NULL;
+> In all scenarios the result is the same: all nodes in the same tier.
 
-We will call f2fs_do_shutdown() in two paths:
-- for f2fs_ioc_shutdown() path, we should grab sb->s_umount semaphore
-for fixing.
-- for f2fs_shutdown() path, it's safe since caller has already grabbed
-sb->s_umount semaphore.
+I don't think so, in drivers/dax/kmem.c, we will put memory devices
+onlined by kmem.c in another tier by default.
 
-Reported-by: syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-f2fs-devel/0000000000005c7ccb061e032b9b@google.com
-Fixes: 7950e9ac638e ("f2fs: stop gc/discard thread after fs shutdown")
-Signed-off-by: Chao Yu <chao@kernel.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
-v2:
-- fix deadlock pointed out by Jaegeuk
- fs/f2fs/f2fs.h  |  2 +-
- fs/f2fs/file.c  | 11 +++++++++--
- fs/f2fs/super.c |  2 +-
- 3 files changed, 11 insertions(+), 4 deletions(-)
+> The HMAT is explicitly described as "A hint" in the ACPI spec.
+>
+> ACPI 5.2.28.1 HMAT Overview
+>
+> "The software is expected to use this information as a hint for
+> optimization, or when the system has heterogeneous memory"
+>
+> If something is "a hint", then it should not be used prescriptively.
+>
+> Right now HMAT appears to be used prescriptively, this despite the fact
+> that there was a clear intent to separate CPU-nodes and non-CPU-nodes in
+> the memory-tier code. So this patch simply realizes this intent when the
+> hints are not very reasonable.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 51fd5063a69c..0e0189084462 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3508,7 +3508,7 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- int f2fs_truncate_hole(struct inode *inode, pgoff_t pg_start, pgoff_t pg_end);
- void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count);
- int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
--							bool readonly);
-+						bool readonly, bool need_lock);
- int f2fs_precache_extents(struct inode *inode);
- int f2fs_fileattr_get(struct dentry *dentry, struct fileattr *fa);
- int f2fs_fileattr_set(struct mnt_idmap *idmap,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 270c32e3385f..ac61c88f7688 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2292,7 +2292,7 @@ static int f2fs_ioc_abort_atomic_write(struct file *filp)
- }
- 
- int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
--							bool readonly)
-+						bool readonly, bool need_lock)
- {
- 	struct super_block *sb = sbi->sb;
- 	int ret = 0;
-@@ -2339,12 +2339,19 @@ int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
- 	if (readonly)
- 		goto out;
- 
-+	/* grab sb->s_umount to avoid racing w/ remount() */
-+	if (need_lock)
-+		down_read(&sbi->sb->s_umount);
-+
- 	f2fs_stop_gc_thread(sbi);
- 	f2fs_stop_discard_thread(sbi);
- 
- 	f2fs_drop_discard_cmd(sbi);
- 	clear_opt(sbi, DISCARD);
- 
-+	if (need_lock)
-+		up_read(&sbi->sb->s_umount);
-+
- 	f2fs_update_time(sbi, REQ_TIME);
- out:
- 
-@@ -2381,7 +2388,7 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
- 		}
- 	}
- 
--	ret = f2fs_do_shutdown(sbi, in, readonly);
-+	ret = f2fs_do_shutdown(sbi, in, readonly, true);
- 
- 	if (need_drop)
- 		mnt_drop_write_file(filp);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 4d2f3bb8e418..4a09dbb9fd54 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2560,7 +2560,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 
- static void f2fs_shutdown(struct super_block *sb)
- {
--	f2fs_do_shutdown(F2FS_SB(sb), F2FS_GOING_DOWN_NOSYNC, false);
-+	f2fs_do_shutdown(F2FS_SB(sb), F2FS_GOING_DOWN_NOSYNC, false, false);
- }
- 
- #ifdef CONFIG_QUOTA
--- 
-2.40.1
+If HMAT isn't available, it's hard to put memory devices to
+appropriate memory tiers without other information.  In commit
+992bf77591cb ("mm/demotion: add support for explicit memory tiers"),
+Aneesh pointed out that it doesn't work for his system to put
+non-CPU-nodes in lower tier.
 
+Even if we want to use other information to put memory devices to memory
+tiers, we can register another adist calculation callback instead of
+reusing hmat callback.
+
+--
+Best Regards,
+Huang, Ying
 
