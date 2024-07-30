@@ -1,128 +1,82 @@
-Return-Path: <linux-kernel+bounces-267244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF89B940EDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:20:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A23FB940F8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EECF283845
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:20:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46C2F1F27766
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA95F195FCE;
-	Tue, 30 Jul 2024 10:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="m3rSuNUk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1824019EEC8;
+	Tue, 30 Jul 2024 10:32:01 +0000 (UTC)
+Received: from mail115-95.sinamail.sina.com.cn (mail115-95.sinamail.sina.com.cn [218.30.115.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A49208DA;
-	Tue, 30 Jul 2024 10:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553AB19E7F2
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722334843; cv=none; b=XAoi0+AenvXUULUyd3j8CjQ8COmA245dj2p9ejaLNs6uw2JXPgl5BF3CwxOYHljUuhtPkq70to9XNg6Gq+Bc8IO+ZJpyWMg9DRRoE1qQ0qwv1+WIq2OMCbxnm5xyCM2oKit1NmcdbrMqj1qd7N65KBoZ+r/y1vkDUq77K6duQmo=
+	t=1722335520; cv=none; b=kwhXeICU+yS9oZU5iXfsFarrPNhPdp24JWg1pwNas46TDTWOxqfasiB2pTLjTpCr+WDtLiRNM0zYN9FH7BJgd67dz+y7P3LmA2yrPnIkAgPEi0MjPNZdzjolbqiAEMr9w9tMO/f4Hix+CnBos7M/VBOazXMAYVuWEQEyEtXfe/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722334843; c=relaxed/simple;
-	bh=5kuY+GXkSu2+PSobo1SL9QjXJZESAQjxDibn3e5uTmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kVTbJurL6WNG+G9ct3ISc2fu4JurG7u0e9+r3ZeRMUZT1xpw+3Y/XrOCYGXMfP/bQNQOf0cK3YmEn8jgwG9HrgMdeaeept1hjda93QJv9nNmQKE3Zb1vL7O5t176aNHf4SmuNwwAbyC2NXkQNYN4KKXboi5JxUXwMbIBns3ZgTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=m3rSuNUk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 302FCC4AF09;
-	Tue, 30 Jul 2024 10:20:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1722334842;
-	bh=5kuY+GXkSu2+PSobo1SL9QjXJZESAQjxDibn3e5uTmw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m3rSuNUkYKBBuYyJOOw9KBi/Rfc/IV1bBGaLZFuUQmm9Klpg2ck7HkjLM1rFY+rY0
-	 ikFf1AIJ3o6hKN4NEm+1kny/iuHxkLdPjB5H7XglDGmzc8dX72kycNB7f/421/bkED
-	 gNBNqqwSXm0g0BrkV0yMNUOkBRDo8p7Qt94FvEqo=
-Date: Tue, 30 Jul 2024 12:20:39 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: wujing <realwujing@qq.com>
-Cc: dongml2@chinatelecom.cn, linux-kernel@vger.kernel.org,
-	menglong8.dong@gmail.com, mingo@redhat.com, peterz@infradead.org,
-	stable@vger.kernel.org, yuanql9@chinatelecom.cn
-Subject: Re: Re: [PATCH] sched/fair: Correct CPU selection from isolated
- domain
-Message-ID: <2024073000-uncouple-stipend-2062@gregkh>
-References: <2024073011-operating-pointless-7ab9@gregkh>
- <tencent_16253196C5C7F0141593B633CA21A0150505@qq.com>
+	s=arc-20240116; t=1722335520; c=relaxed/simple;
+	bh=fHagWOwq4NW10fYxjt4TKFsUQTKtXPpkpWNC+7lN75I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=CdQIguzuSIhXJKaTX5GJA3k0iw6rLGcBY9ClgR1qy3D4+kluQ15BaeL5WTTvIqtn1aJt6D6JUAoWZk+xYgx2tai3HeJqsASaC1qdJXtsP6X6J63RWjN7cgNvn3TySTv3fr/dvgRyNGxjdME1PeGNLZZzhpCsltjfZ1EYsEgJ2sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.8.37])
+	by sina.com (10.185.250.23) with ESMTP
+	id 66A8BED1000035C3; Tue, 30 Jul 2024 18:22:12 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 5479958913416
+X-SMAIL-UIID: B41EF79B58854A399F9EF1DA04D1DA37-20240730-182212-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [wireguard?] WARNING in kthread_unpark (2)
+Date: Tue, 30 Jul 2024 18:22:00 +0800
+Message-Id: <20240730102200.2312-1-hdanton@sina.com>
+In-Reply-To: <000000000000e9a538061e64cae7@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_16253196C5C7F0141593B633CA21A0150505@qq.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 30, 2024 at 06:11:06PM +0800, wujing wrote:
-> > On Tue, Jul 30, 2024 at 05:40:17PM +0800, wujing wrote:
-> > > > What "current patch"?
-> > > >
-> > > > confused,
-> > > >
-> > > > greg k-h
-> > >
-> > > The current patch is in my first email.
-> >
-> > What message exactly?  I don't see any such message on the stable list.
-> >
-> > > Please ignore the previous two emails.
-> > > The "current patch" mentioned in the earlier emails refers to the upstream
-> > > status, but the latest upstream patch can no longer be applied to linux-4.19.y.
-> >
-> > Again, please read:
-> >     https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-> > for how to do this properly.
-> >
-> > thanks,
-> >
-> > greg k-h
+On Mon, 29 Jul 2024 08:48:30 -0700
+> syzbot has found a reproducer for the following issue on:
 > 
-> The email you just replied to is correct.
-> 
-> I reviewed the link in the email, and according to the link,
-> the patch I submitted meets the third criterion. I have noted
-> Upstream commit <8aeaffef8c6e> in the patch log.
-> 
-> 
-> 
-> >From 9d4ecc9314088c2b0aa39c2248fb5e64042f1eef Mon Sep 17 00:00:00 2001
-> From: wujing <realwujing@gmail.com>
-> Date: Tue, 30 Jul 2024 15:35:53 +0800
-> Subject: [PATCH] sched/fair: Correct CPU selection from isolated domain
-> 
-> We encountered an issue where the kernel thread `ksmd` runs on the PMD
-> dedicated isolated core, leading to high latency in OVS packets.
-> 
-> Upon analysis, we discovered that this is caused by the current
-> select_idle_smt() function not taking the sched_domain mask into account.
-> 
-> Upstream commit <8aeaffef8c6e>
-> 
-> Kernel version: linux-4.19.y
+> HEAD commit:    dc1c8034e31b minmax: simplify min()/max()/clamp() implemen..
+> git tree:       upstream
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1022b573980000
 
-This is not in a format that I can take.
+#syz test upstream  dc1c8034e31b
 
-Also, this does not match that commit id, so you need to document it
-really really well why this is different.
-
-And you lost the original authorship information, and the reviews.
-
-And finally, we can't take a change for 4.19.y that is also not in newer
-kernel releases, because if we did that, and you upgraded, you would
-have a regression.
-
-But most importantly, why are you still doing stuff on 4.19.y?  This
-kernel is going to go end-of-life very soon, and you should already have
-all of your systems that rely on it off of it by now, or planned to
-within a few months.  To not do that is to ensure that you will end up
-with insecure systems when the end-of-life deadline happens.
-
-thanks,
-
-greg k-h
+--- x/kernel/workqueue.c
++++ y/kernel/workqueue.c
+@@ -2679,7 +2679,8 @@ static void worker_attach_to_pool(struct
+ 		worker->flags |= WORKER_UNBOUND;
+ 	} else {
+ 		WARN_ON_ONCE(pool->flags & POOL_BH);
+-		kthread_set_per_cpu(worker->task, pool->cpu);
++		if (!worker->rescue_wq)
++			kthread_set_per_cpu(worker->task, pool->cpu);
+ 	}
+ 
+ 	if (worker->rescue_wq)
+--
 
