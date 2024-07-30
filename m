@@ -1,107 +1,147 @@
-Return-Path: <linux-kernel+bounces-266755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A1B294065C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:12:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08591940676
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A9C4283639
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 04:12:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80CE2B220D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 04:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CC6190052;
-	Tue, 30 Jul 2024 04:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318BC161901;
+	Tue, 30 Jul 2024 04:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="jl/tVaxq"
-Received: from out203-205-221-192.mail.qq.com (out203-205-221-192.mail.qq.com [203.205.221.192])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V0cZh5nr"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6692C18F2E8;
-	Tue, 30 Jul 2024 04:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.192
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C00FC8C0;
+	Tue, 30 Jul 2024 04:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722312631; cv=none; b=Ha+UOZQ9UBqT2/DiGuE6xKBM9xrPeb7UT4gPpwn/NiToHVr/e5reFO9MerQD5jU8g9OVAJl3avYvuQD1ljlvo4JCbEqlIt7rUsSxTlEfzBl7rAF2aZa66eZg5dyry9Yt2dWGPQNOY1spIAWZXrtH66TW8Nz7o6d8BGldQMm+IdY=
+	t=1722312920; cv=none; b=VvIwjTiaxK5OmE0tOMYO19K5uZ910RPw0eKb49msoAd4QzfFgVdkZgP9N82G9tktAO7yEUndLAdGmhDya9a8+9FRlT8nD7TiyadT0FjaLeiKwcoY0eFImiqmp4YG3bA259knyvz+6xeFuaPYVj1eEiLWEdOojLkIEXhwCn0xHvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722312631; c=relaxed/simple;
-	bh=tu/3M/G8db/oINDtWgmjFTcLEcSIY+X4DQnYH3EzaRw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=ggJISLZXGMrRInsjVd3bclMA9NMHPKc/QBSIr4x/5Cf/WI83WKzP47yjkRiPD7sX/rnfS5AxbApxSk+eMzt4Ng8l+vNeZh+tYl9coR3ESHfbjl5bmfdwCQLH89iIHuyCNiQRA9UYFpCwjgSjEnJPkbn9UH3TJnPy3qY953cwrsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=jl/tVaxq; arc=none smtp.client-ip=203.205.221.192
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1722312620; bh=bQK+VWkHD4YqAQbmlzZUliUqtHWomCHtvQ/iZQIYIA0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=jl/tVaxqkZMYG+NWZQUEFDbon6NrwGd322fIhIssNbiv2ljIL9+tOvpY1ftN4EBkv
-	 i68qQotTdD9dXKyfNRE38OL0eCvtzryFtt+2S6amY4fGL8pElQsIKA6HeH/d21DczT
-	 JYfPcXXbtEtQverIuk2cnzZCOGLQ9B5Bb90zk/zE=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 2928BEB7; Tue, 30 Jul 2024 12:10:18 +0800
-X-QQ-mid: xmsmtpt1722312618t828q0iwq
-Message-ID: <tencent_3D4E4FB18DDDA5988DE9920ADDDFDD859907@qq.com>
-X-QQ-XMAILINFO: MIAHdi1iQo+zBFmN+HK1i+P/wF/PoKVyCBY10lzCT4A4sl8knTiEl3HjenBJW+
-	 4/Idai47EUV2k2SOEDI3Tjlr+96P3se6ipmgTfNXWbZ7zFZSDuNy9Mcrdme7tb42KvrsLJ9ttgki
-	 Z0NBa0rjdPaRKG9snioh3RtythC321TlyX4K4xpehxfVsMs2/nvuFn6GxnJVmlYu3gYUJlgaW60M
-	 AoE4/tWm9vNGG66IXh5LmwQtTj5D0TIZuNsNbXzwth1DKEycUly1Q1BTEPZbk8bKa87I2TsFo/mB
-	 zYIkIXv8WACDJba9jJpqFRZZj6EnGWZDShCb+2x5/IJCawjPBMghLi6WdjWZ//U0o65hQhFC4t0E
-	 3ZBGfFeUov/QD0KPfoi6OSGmJcdo6pScUYJtc+M/TTOXxIs/KdFQyFwRZc2zX677ZRjJByxWHgXg
-	 zH+hWISWxq/yi6ynkPEXCa8xyDs25HNIJshyZdX5AjNfGw2lXq1I5kfXFYhYY9ltbQ3K/USjA+yX
-	 6p2c2dJBKSsXzKE2KGabnp9Geb1tzcyo5eBxKfn7Xq6L/vGsISJOI0DV4VUvfS86biqKP9zr7BSJ
-	 3vi8mDhYZdlv1++wAlPuQ39AINrybnVpXjYH0T2wEFPSeXOItrzuf9ws/IxC09WRVT2k8c8JMkT/
-	 Gva/zL5+uYNn9E3Nb7FnfONOwmT2ku7bnCaGHpCXwgM6lxVF/39rMpDh7XPCL7CECz6V8d79OeNt
-	 CChORkK5zRYlbxLP8m7n0ASCuoReH2NvLNq8jvdKGTwTyNDkJhxKfnliG4R41rPCTydKFR4AJ/iK
-	 TD8CHaezHi400mG+d+qRFWpbNhrRVMPOw5kyw8u3/iNHQ7IfEfvQoCHfWkdMv1rcdiPbNnLztAYb
-	 56jirJcCK++YIBbvy8Ygel5UBfXyggke6yQc6cMSYgtQQ6d7jQyGIj5p/CwdDVCw==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com
-Cc: kent.overstreet@linux.dev,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] bcachefs: Add checks for entry's _data bytes
-Date: Tue, 30 Jul 2024 12:10:19 +0800
-X-OQ-MSGID: <20240730041018.84379-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000b2c0fc061e6cb26b@google.com>
-References: <000000000000b2c0fc061e6cb26b@google.com>
+	s=arc-20240116; t=1722312920; c=relaxed/simple;
+	bh=yKhGSofWwfAOF1j4MdDDoJDYbHpLaFaUDP3S/J1WTa0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kuIC8o9b6QeSuqkOSrdzK8znB57BoxJFbD0gYsa8tgrlEC08oq50TF+hrJsIEaotZRMI+9H1nxF3N0hPh3gz7cU1z1pk9sEkjeXsNEbCpCxbFkyrIWUPtr/OuxfqKAMPny1j7yMdjqhxX2NJVAdhKHkEofhUmPP4cYsLxfE46A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V0cZh5nr; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=u46sMFvuuMaySXNfye9HUANEHV0JVAtOo8sz3Uimg0k=; b=V0cZh5nrMOrz4Q4Z2tq82wW05b
+	ZpWdT8ArO33FCsdebYq8iumnMIPDkfqDjswHRyUEfrPPbk6lcEx1PMiI33PcVbcS2CpR1Zk9IFJ4l
+	dDezZgdUgfnp+YEJ9TPmj17vfg9QUxZBoal7moFYmvnazTS/ayrELLoOY+4uUNpxbNVrPXN39zl04
+	bl/S7IX/TSsII5j+mxktOKW2RfaeC/HrVOesXF+UZzKrN33iJTaMP7b+GzNbg15mCx9TNFtZ8cJ5Q
+	juFLr2xvsRcY3wTaUAZF5luIqhMg8JPDvApQEH54ppBRYYj415YEEmbn14/5Q9XTrcOICa09+aRey
+	EbL4MdzA==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sYeGT-0000000DZOn-2JSl;
+	Tue, 30 Jul 2024 04:15:09 +0000
+Message-ID: <6750b19d-4af3-44c8-90a6-9cb70fcec385@infradead.org>
+Date: Mon, 29 Jul 2024 21:15:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 13/14] microchip: lan865x: add driver support
+ for Microchip's LAN865X MAC-PHY
+To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, saeedm@nvidia.com,
+ anthony.l.nguyen@intel.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, andrew@lunn.ch, corbet@lwn.net,
+ linux-doc@vger.kernel.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, horatiu.vultur@microchip.com,
+ ruanjinjie@huawei.com, steen.hegelund@microchip.com, vladimir.oltean@nxp.com
+Cc: masahiroy@kernel.org, alexanderduyck@fb.com, krzk+dt@kernel.org,
+ robh@kernel.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ UNGLinuxDriver@microchip.com, Thorsten.Kummermehr@microchip.com,
+ Pier.Beruto@onsemi.com, Selvamani.Rajagopal@onsemi.com,
+ Nicolas.Ferre@microchip.com, benjamin.bigler@bernformulastudent.ch,
+ linux@bigler.io
+References: <20240730040906.53779-1-Parthiban.Veerasooran@microchip.com>
+ <20240730040906.53779-14-Parthiban.Veerasooran@microchip.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240730040906.53779-14-Parthiban.Veerasooran@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-syzbot report slab-out-of-bounds in journal_entry_dev_usage_to_text,
-it because vstruct_bytes(entry) smaller than sizeof(struct 
-jset_entry_dev_usage), overflow occurs when calculating the difference in
-jset_entry_dev_usage_nr_types(u).
 
-Reported-by: syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=05d7520be047c9be86e0
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/bcachefs/sb-clean.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/fs/bcachefs/sb-clean.c b/fs/bcachefs/sb-clean.c
-index 47f10ab57f40..278e1a25159a 100644
---- a/fs/bcachefs/sb-clean.c
-+++ b/fs/bcachefs/sb-clean.c
-@@ -310,6 +310,9 @@ static void bch2_sb_clean_to_text(struct printbuf *out, struct bch_sb *sb,
- 		    !entry->u64s)
- 			continue;
- 
-+		if (vstruct_bytes(entry) < sizeof(struct jset_entry_dev_usage))
-+			continue;
-+
- 		bch2_journal_entry_to_text(out, NULL, entry);
- 		prt_newline(out);
- 	}
+On 7/29/24 9:09 PM, Parthiban Veerasooran wrote:
+> The LAN8650/1 is designed to conform to the OPEN Alliance 10BASE-T1x
+> MAC-PHY Serial Interface specification, Version 1.1. The IEEE Clause 4
+> MAC integration provides the low pin count standard SPI interface to any
+> microcontroller therefore providing Ethernet functionality without
+> requiring MAC integration within the microcontroller. The LAN8650/1
+> operates as an SPI client supporting SCLK clock rates up to a maximum of
+> 25 MHz. This SPI interface supports the transfer of both data (Ethernet
+> frames) and control (register access).
+> 
+> By default, the chunk data payload is 64 bytes in size. The Ethernet
+> Media Access Controller (MAC) module implements a 10 Mbps half duplex
+> Ethernet MAC, compatible with the IEEE 802.3 standard. 10BASE-T1S
+> physical layer transceiver integrated is into the LAN8650/1. The PHY and
+> MAC are connected via an internal Media Independent Interface (MII).
+> 
+> Signed-off-by: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+> ---
+>  MAINTAINERS                                   |   6 +
+>  drivers/net/ethernet/microchip/Kconfig        |   1 +
+>  drivers/net/ethernet/microchip/Makefile       |   1 +
+>  .../net/ethernet/microchip/lan865x/Kconfig    |  19 +
+>  .../net/ethernet/microchip/lan865x/Makefile   |   6 +
+>  .../net/ethernet/microchip/lan865x/lan865x.c  | 391 ++++++++++++++++++
+>  6 files changed, 424 insertions(+)
+>  create mode 100644 drivers/net/ethernet/microchip/lan865x/Kconfig
+>  create mode 100644 drivers/net/ethernet/microchip/lan865x/Makefile
+>  create mode 100644 drivers/net/ethernet/microchip/lan865x/lan865x.c
+> 
+
+> diff --git a/drivers/net/ethernet/microchip/lan865x/Kconfig b/drivers/net/ethernet/microchip/lan865x/Kconfig
+> new file mode 100644
+> index 000000000000..f3d60d14e202
+> --- /dev/null
+> +++ b/drivers/net/ethernet/microchip/lan865x/Kconfig
+> @@ -0,0 +1,19 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +#
+> +# Microchip LAN865x Driver Support
+> +#
+> +
+> +if NET_VENDOR_MICROCHIP
+> +
+> +config LAN865X
+> +	tristate "LAN865x support"
+> +	depends on SPI
+> +	depends on OA_TC6
+
+Since OA_TC6 is described as a library, it would make sense to select OA_TC6 here instead
+of depending on it.
+OTOH, that might cause some Kconfig dependency issues... I haven't looked into that.
+
+> +	help
+> +	  Support for the Microchip LAN8650/1 Rev.B1 MACPHY Ethernet chip. It
+> +	  uses OPEN Alliance 10BASE-T1x Serial Interface specification.
+> +
+> +	  To compile this driver as a module, choose M here. The module will be
+> +	  called lan865x.
+> +
+> +endif # NET_VENDOR_MICROCHIP
+
+
 -- 
-2.43.0
-
+~Randy
 
