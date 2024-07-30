@@ -1,145 +1,95 @@
-Return-Path: <linux-kernel+bounces-267869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EAE49417D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:16:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3172941784
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E341828499D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:16:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74B69B235AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7C318B470;
-	Tue, 30 Jul 2024 16:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CPmxrc49"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32D218B491;
+	Tue, 30 Jul 2024 16:09:39 +0000 (UTC)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569ED183CDF;
-	Tue, 30 Jul 2024 16:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E390A183CA0;
+	Tue, 30 Jul 2024 16:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722355963; cv=none; b=nW1HiL1MuOp2hBS6KaRO+sDh4qIOnXuHgYCjo7b50SW0SKRHy8/KOMhkfIX7NySQrNaOtHIAuN4MLSXzE3qeQQ1wL2FVaEATvdcOCPs18I0U1I9RsqBkycQWuiGoXJV6H/hjAMvisErIx3yTo+rsqF8UtM1QdYkRTVSJfilzUV8=
+	t=1722355779; cv=none; b=b05a8H45sixlNau03uf6fTANQo6Rwl3z//Y7rxazowJGgfes/arFqMJAL5Box0uzypSJcL6hn1vyoQbylDUviSCDp24l9XJm/g6tuoSHVI0ETFDC88KhYAs6VhHdCV58jENcjzF+TFaNqavT3w7xmORdx2A7V5/WMhgl3PmSSg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722355963; c=relaxed/simple;
-	bh=s++80n9+rmfOboCZ7B8NazDEUVsaeUfjIsEJqeBwIyM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eKkvIzgDgok0oOlDpIV0YfvdT9W++k8/CiBzX75Mv67jWCd0ijiANZGG/lZAX3V7aqKi/1G2QWTkYpL92tqyRJKYgY9J/x3luU8ZFswugKlvFIrHfE42NU7CdbNcKQzJonCheVqLjckX1dRz3JifJCWCK7zgDuuwbhKD+DfyHfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CPmxrc49; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFACBC32782;
-	Tue, 30 Jul 2024 16:12:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1722355963;
-	bh=s++80n9+rmfOboCZ7B8NazDEUVsaeUfjIsEJqeBwIyM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CPmxrc49DOFV1+sBzDSH7No3LR9Pr0EFc2j9sPVIBaIPKHEHfSSbRTS6Kzj+GJOul
-	 BrId1mlkjqbRczONu/pe05OEIEoWlEiBAMS5tRgYgY/S0IcjviDNLND11f4w5rR8k/
-	 pSinCd1QklHXLfG9J1bySVCwFsdonXpXmZfE7VEc=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: corbet@lwn.net
-Cc: workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michael Dolan <mdolan@linuxfoundation.org>
-Subject: [PATCH 2/2] Documentation: embargoed-hardware-issues.rst: add a section documenting the "early access" process
-Date: Tue, 30 Jul 2024 18:09:32 +0200
-Message-ID: <2024073035-bagel-vertigo-e0dd@gregkh>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <2024073032-outsource-sniff-e8ea@gregkh>
-References: <2024073032-outsource-sniff-e8ea@gregkh>
+	s=arc-20240116; t=1722355779; c=relaxed/simple;
+	bh=N8xmTDJRMvIhJBBDeTk4nVtpHzkV3FiuLMDSMp87x1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fh4QAzXfaXQ7N6PiivmbstMc/20eF6Yo6qVEmZgrr3lDI2V8qaVtAulZFyCq0wzrAQustwMf4v6g4NeelMTr+f+cMbixXCBB7ZLQk/HJ3fweeK+5V3l+HifEU+AZWjvYgwjASGhyrnaSYn8bUvCzBDnOzchl7aQrv9LKfvqpPv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a309d1a788so6588671a12.3;
+        Tue, 30 Jul 2024 09:09:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722355776; x=1722960576;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AAcn4UmH5RiCwAaknPHPG0WgcmYmIAy8lr/o5KP9yT4=;
+        b=vvimV+mBJRKu5EW2+WIGy74XWe0HpZ326QCHYjfn+aTnEWlqXo9rHKHqPJ+N5nIsAF
+         2RI9z1wCHQNQeT/n/ury2oqQBpIohsN5AhtHBPDCiOzAbzPR3jIqujmend4sboN4n/wk
+         1fTqe431MkFO6jOXzWoQfASccsCMb5ZNXjCBLHz5T9y/3fJyVveo1L7Oj3esN3uch7Ae
+         m6nKpmOoChoL83H1SF6uEP+oHV3LRJ3KpPVFLqw7t6fDmzbvKlxsarHPLIXIOxDSSDww
+         nb+Txe4sNBXDRggb+yHP8aFwHD2nfyVCiwu25y0x0EGRUIt6MV8HtYB/MY5d76hdD5tZ
+         im+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVD85g3QusxJYV8kTu0GxKGIK588ikVj3DkPcmCDNC+gl1MbtmfzQkOKUfBu2gnF1khm7+Fy0bojirrrso93J0oufJtxnWBNck7InVuwryN4xuVwAjJbrH4UAL3TTkk0InGwcoc
+X-Gm-Message-State: AOJu0YxA8quAA5xU4M4O0k8UoSd7fdHvTFfjpURXy4nQ+Eq/+wgsPlt3
+	mEaDau0rHpmo+hCSBDRrIg4VbSvCHH1K2/Bwc0q2pJFl8icMQIRz
+X-Google-Smtp-Source: AGHT+IFRH7D+1NcrPIs8KojJvmyN56aun5heC6nmYH4odFzhrksr2nwOayScHxlDc2wTkVc3AyiM/A==
+X-Received: by 2002:a17:907:874c:b0:a7a:b781:60ee with SMTP id a640c23a62f3a-a7d401654ecmr844326966b.48.1722355775723;
+        Tue, 30 Jul 2024 09:09:35 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acadb021asm660879866b.188.2024.07.30.09.09.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 09:09:35 -0700 (PDT)
+Date: Tue, 30 Jul 2024 09:09:33 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Simon Horman <horms@kernel.org>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	kuba@kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: Add skbuff.h to MAINTAINERS
+Message-ID: <ZqkQPeb8iNlqfSh9@gmail.com>
+References: <20240729141259.2868150-1-leitao@debian.org>
+ <20240730125700.GB1781874@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Lines: 78
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3824; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=s++80n9+rmfOboCZ7B8NazDEUVsaeUfjIsEJqeBwIyM=; b=owGbwMvMwCRo6H6F97bub03G02pJDGkrBeyFuefarT5yjmfpl7igs7/W7pyok3y4Kzdpnb+wq /D5CX3tHbEsDIJMDLJiiixftvEc3V9xSNHL0PY0zBxWJpAhDFycAjCRKZMZFpxf8aj8yyS1rUus 5POOxsaKn5hnEMkwP2q1QtVs+512QUc3B4Uy1H68xXN7MQA=
-X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730125700.GB1781874@kernel.org>
 
-Over the past years there have been many "misunderstandings" and
-"confusion" as to who is, and is not, allowed early access to the
-changes created by the members of the embargoed hardware issue teams
-working on a specific problem.
+Hello Simon,
 
-The current process, while it does work, is "difficult" for many
-companies to understand and agree with.  Because of this, there has been
-numerous attempts by many companies to work around the process by lies,
-subterfuge, and other side channels sometimes involving unsuspecting
-lawyers.  Cut all of that out, and put the responsibility of
-distributing code on the silicon vendor affected, as they already have
-legal agreements in place that cover this type of distribution.  When
-this distribution happens, the developers involved MUST be notified of
-this happening, to be kept aware of the situation at all times.
+On Tue, Jul 30, 2024 at 01:57:00PM +0100, Simon Horman wrote:
+> On Mon, Jul 29, 2024 at 07:12:58AM -0700, Breno Leitao wrote:
+> > The network maintainers need to be copied if the skbuff.h is touched.
+> > 
+> > This also helps git-send-email to figure out the proper maintainers when
+> > touching the file.
+> > 
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
+> 
+> I might have chosen the NETWORKING [GENERAL] rather than the
+> NETWORKING DRIVERS section. But in any case I agree skbuff.h
+> should be added to Maintainers.
 
-The wording here has been hashed out by many different companies and
-lawyers involved in the process, as well as community members and
-everyone now agrees that the proposed change here should work better
-than what is currently happening.
+I will move the same change to "NETWORKING [GENERAL]" then, and carry
+you Reviewed-by if you don't mind.
 
-This change has been approved by a review from a large number of
-different open source legal members, representing the companies involved
-in this process.
-
-Co-developed-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Co-developed-by: Michael Dolan <mdolan@linuxfoundation.org>
-Signed-off-by: Michael Dolan <mdolan@linuxfoundation.org>
-Co-developed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- .../process/embargoed-hardware-issues.rst     | 31 +++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/Documentation/process/embargoed-hardware-issues.rst b/Documentation/process/embargoed-hardware-issues.rst
-index 2b34bb6b7cda..daebce49cfdf 100644
---- a/Documentation/process/embargoed-hardware-issues.rst
-+++ b/Documentation/process/embargoed-hardware-issues.rst
-@@ -219,6 +219,37 @@ List participants may not communicate about the issue outside of the
- private mailing list. List participants may not use any shared resources
- (e.g. employer build farms, CI systems, etc) when working on patches.
- 
-+Early access
-+""""""""""""
-+
-+The patches discussed and developed on the list can neither be distributed
-+to any individual who is not a member of the response team nor to any other
-+organization.
-+
-+To allow the affected silicon vendors to work with their internal teams and
-+industry partners on testing, validation, and logistics, the following
-+exception is provided:
-+
-+	Designated representatives of the affected silicon vendors are
-+	allowed to hand over the patches at any time to the silicon
-+	vendor’s response team. The representative must notify the kernel
-+	response team about the handover. The affected silicon vendor must
-+	have and maintain their own documented security process for any
-+	patches shared with their response team that is consistent with
-+	this policy.
-+
-+	The silicon vendor’s response team can distribute these patches to
-+	their industry partners and to their internal teams under the
-+	silicon vendor’s documented security process. Feedback from the
-+	industry partners goes back to the silicon vendor and is
-+	communicated by the silicon vendor to the kernel response team.
-+
-+	The handover to the silicon vendor’s response team removes any
-+	responsibility or liability from the kernel response team regarding
-+	premature disclosure, which happens due to the involvement of the
-+	silicon vendor’s internal teams or industry partners. The silicon
-+	vendor guarantees this release of liability by agreeing to this
-+	process.
- 
- Coordinated release
- """""""""""""""""""
--- 
-2.45.2
-
+Thanks
+--breno
 
