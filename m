@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-267617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F6F094136C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:44:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B80941370
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03C7328255D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:44:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82DC7B25EA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80531A0706;
-	Tue, 30 Jul 2024 13:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2A619F499;
+	Tue, 30 Jul 2024 13:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iQsMyG2t"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gy24zIJP"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB8F19FA77
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 13:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D656419FA9D;
+	Tue, 30 Jul 2024 13:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722347015; cv=none; b=IdsTaTNKfc8+w3pgAOkVYxShSLrJX0lMRMo1dNKnZZLu4uFhlpA3mE86mNe5M9w7xZSWAWcWpDeEgEWRErPGl5lkM1yw2Twa3PFagoZEcYoTU6gd+6RapqtNchdX9rU4QqKHRTZ0TsaRAR5kCeeei8DxSbwezA73oYVPSrNMlnw=
+	t=1722347029; cv=none; b=RpkXPqdl/mYoqAgrFbBeQQ6NeVxtVRnNU+4S/gO8U1FKvu8Nzf3SnU8QV4Gq+Sw6wvgNeAtSe2oqC4Y9M+L8cgiKVbUOB48eWORW3dcvcLa8eyxglrz9BJ2io++sOzhva8AOqg/3Csw+nsddr40/vR0G5JCICpIWlV25CJR9FtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722347015; c=relaxed/simple;
-	bh=fEeMyQpbe7hW1c3kPn8049ViTcs11muKc2j6GTTlrFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qbpy7rd8+UoOfBuTdv/Zdt+72Y4K7dUrZsrT/skoJpsJYQFIiG1RAFZsGCTGYT+mj0oQeET7M1GumIs27CnhoOeGe7YewUjr/0mc5WwkrNjE62Qhvcvo81TFLquWe+Uo7Hm0Er6itOlFqSvORBDqVU08KisJodHo241H5WVVtGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iQsMyG2t; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722347012;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lIKQ8Grre4gzjcjmQf4lltrimuZ0xoo96Uhzmgo74TQ=;
-	b=iQsMyG2tHlBvU7HTuBcEUcdHxKMHYmk8nIEYzX+KNfJMwNdBJKVSNOVXSk94X8Gtj0rnGs
-	+LRJkpgUmLDB9qqEqYWsldtjS6WSo5RbJieJ1S9IcbWrdSKEHdMldXTHs8KeeJNX929zLp
-	3MVGr0mtnRlse5pX0G5fiIBHk+ezcsQ=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-347-U1oEnSsmOrS9U4NkSJhiZQ-1; Tue, 30 Jul 2024 09:43:31 -0400
-X-MC-Unique: U1oEnSsmOrS9U4NkSJhiZQ-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a7a83fad218so363530566b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 06:43:30 -0700 (PDT)
+	s=arc-20240116; t=1722347029; c=relaxed/simple;
+	bh=luHvXeKnY/PrZwEP44sNc3lYYJs11kxHZzy1zyXTx/U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TBEGfFkA4AvY8YzFM6jeiowtfMbzduxh1IxDT2b5nLGbBuFD9bRWWiIs5YARnRRKJRq8QWNYr+5j+33x1TR/UjHXzlsm0S5axH85ggXFxZ8jqiwwHe8j94Y30JbUQskmTrN+ZLNXzVbCuXrM21pz4TSUWjWt1/GsBh9zAcbMw7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gy24zIJP; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3687fb526b9so2108356f8f.0;
+        Tue, 30 Jul 2024 06:43:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722347026; x=1722951826; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gtgxA2PssDFaogYfTQNLJ3b/Lh3FbXzi+L0/39/oBQ0=;
+        b=gy24zIJPfSuk99gtX1KUqOJLJCWsycC3VFFC5T9wsgUbI4+uoMVX/v8Qyf505FJYY+
+         ZKDGv58ZMy20J5E5QdKJ3l5Iuy9QN0eyxhLnt5HvrWNdIRVuHoRqBNEkpIiZQToPoKSl
+         NJyooZfPyPwP0hwSEU6joZedI7F2R/kqmFM0Iw3ytcvSBpOnR4EzGrzBrAl9ZjHPGz63
+         +BEUaD5/ltMqxgY+VEBedbkj2Doq0wlg4fVL3U35cI+wCy/rvTujCcH/Nwe1FIyT+reu
+         q505cgE5kc9BVlF+GNQeBdL09F1wI0uCigocYXlvw1bwNuWysjOKTWQkBWdQHln+hDZM
+         mliQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722347010; x=1722951810;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lIKQ8Grre4gzjcjmQf4lltrimuZ0xoo96Uhzmgo74TQ=;
-        b=AbWKHYKg/+e9sloqt+gB6Xl01X0yQ948y/psdkmS+lNvNcLhqzxYeLdEHL1IhDgn43
-         6TQ7Vy3KtLn0XBffIO113YX/HAhGNDceRAQh1HuDsk8KYQlg6+BoeSmdFVXc1lwAc9gT
-         RUgPwzG6G2ynuQi3ZqrjIgymU9Vxz9jlFt+FyKgoyoem/1dAzit8HWxS0Gs2NnGW9HMT
-         UA0CChHNm3+EKsvivx6Uuy1aZ+vH9yc7ixCFUGl7+PUX/B/kwtplWTfOYhoSXyaP8lsn
-         AWuWRk3NmWYvRl7zbrTCFzD33hLX5wpfbA1jAe1PsF1TXeDwbiWlUzVgIv+wS3od7JeP
-         cD/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXWzhVCtdmyJLNITuBT9c+nVP2Pyl4w/QN24yEZUc85ljB8fnS6WobMfZ6TFr5ie0zRUpPs3AFXeid3ivbMNYO5qz9ork5PeXNVk7vM
-X-Gm-Message-State: AOJu0Yx+MVBgdXMPoPxn8wwvLkjF2Qomx+shhR6h2lDRz05F6Dd0YKau
-	mnlNByAtsyBIWK+mm9S0qkel928CBWgXj2poWFZt4bVOBy9yay3CH4sVIxnvQvpvu3+MQbThs08
-	T0SY5xSfK7tPLgG5jKaP2Gk0HeYJz7X9sF0u4Hf4QzFzfWWAYVkOUvCqvEBwUSi5Vpvaq6kHp
-X-Received: by 2002:a17:907:d8e:b0:a72:b4d6:ec6c with SMTP id a640c23a62f3a-a7d400bb2c0mr810840266b.33.1722347009692;
-        Tue, 30 Jul 2024 06:43:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGr2bhyq9b3mRAXR4ScB9mSPQa/VqSDPkEyk7KB6VJG2Hb0KepNOOSVf8hvsqrlqQD3F5QpPg==
-X-Received: by 2002:a17:907:d8e:b0:a72:b4d6:ec6c with SMTP id a640c23a62f3a-a7d400bb2c0mr810838166b.33.1722347009227;
-        Tue, 30 Jul 2024 06:43:29 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab5151csm642601266b.74.2024.07.30.06.43.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 06:43:28 -0700 (PDT)
-Message-ID: <389396f9-2b07-4d7f-a609-747f3abd4864@redhat.com>
-Date: Tue, 30 Jul 2024 15:43:27 +0200
+        d=1e100.net; s=20230601; t=1722347026; x=1722951826;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gtgxA2PssDFaogYfTQNLJ3b/Lh3FbXzi+L0/39/oBQ0=;
+        b=su8ANDVOHq8tD70Dz1G/MH0xFoI6KFOC/5j6MDi4H0S8RFewIjIE6mGUVhs/1jt9VW
+         RGgCDcaM+1c4vxnzJtcmY/OWNMeOu/N+Z2r9E1oJzST/t0frmJp/2QcrtqRFXv1M4VAS
+         g6atCQ28mduh7ZbBELIZ2E0RJBGTLmRiXeoChOzKp+Q1Jtt6hT4t6nNiXw7yZy8yKste
+         SS6r/iPouFGTBzR2RfzVlzWExbnJdrYtsCCGRdC7mNz9nTGYVXJR2wgZYqBPlmFaIsxg
+         q1rIRFheWx/8AXWehUtE7xNSvTM7rf3R+n7oVTB1JvpCpCV2nTjyhnMnr6Rd4uIn4Azc
+         A3fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWqozKYPKYkjUxUmNEC76ZESihLTxUOjCIlisMlItXnPPSYt14Nqh2XK7izTf4ThZ7CVM+7TwPi5NOLQiGYSNNn3rN8dMJK67Gg+xHlGu9pPHL+CyFAixqzvsQOa+t4BaG27vOzQEww+2RM71E6Fjs2yVzCfGw2TktFD0gMjbUv
+X-Gm-Message-State: AOJu0YyzWtVaISwKc4FZkJi0L47Ve8FfcOJKhYu8dYeogkooz6XNd0dI
+	jOs8L7SyAXwGZNGcOs3o4ocuoPRu6s41JnSKnPryjSU8rVfI/Mw8knr57L8n5exIsJL1PoN5WQV
+	8+oFopXpflBjo5AM1L+AZHKS2YKA=
+X-Google-Smtp-Source: AGHT+IF/IGsg58iKG3GnfQw+6W1bKQo6nzfvGP/3nOOGv8qkaWDadLz8++6LC/scQFwOoZMV4Hgy5eSjT7gI5UTPQr0=
+X-Received: by 2002:a5d:59a8:0:b0:368:747c:5a05 with SMTP id
+ ffacd0b85a97d-36b5cf2534emr8775942f8f.36.1722347025779; Tue, 30 Jul 2024
+ 06:43:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] staging: rtl8723bs: remove space after pointer
-To: Kartik Kulkarni <kartik.koolks@gmail.com>, mchehab@kernel.org,
- akari.ailus@linux.intel.com, gregkh@linuxfoundation.org,
- linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Cc: ~lkcamp/patches@lists.sr.ht, helen.koike@collabora.com
-References: <20240730134155.37784-1-kartik.koolks@gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240730134155.37784-1-kartik.koolks@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240729022316.92219-1-andrey.konovalov@linux.dev>
+ <baae33f5602d8bcd38b48cd6ea4617c8e17d8650.camel@sylv.io> <CA+fCnZcWvtnTrST3PrORdPwmo0m2rrE+S-hWD74ZU_4RD6mSPA@mail.gmail.com>
+ <d4ed3fb2-0d59-4376-af12-de4cd2167b18@rowland.harvard.edu>
+In-Reply-To: <d4ed3fb2-0d59-4376-af12-de4cd2167b18@rowland.harvard.edu>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Tue, 30 Jul 2024 15:43:34 +0200
+Message-ID: <CA+fCnZebutAq7dfzutMhp-KO0vwM67PC7r4FRHPUcY1eg5rW3Q@mail.gmail.com>
+Subject: Re: [PATCH] usb: gadget: dummy_hcd: execute hrtimer callback in
+ softirq context
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Marcello Sylvester Bauer <sylv@sylv.io>, andrey.konovalov@linux.dev, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Aleksandr Nogikh <nogikh@google.com>, Marco Elver <elver@google.com>, 
+	Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	syzbot+2388cdaeb6b10f0c13ac@syzkaller.appspotmail.com, 
+	syzbot+17ca2339e34a1d863aad@syzkaller.appspotmail.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Jul 29, 2024 at 8:01=E2=80=AFPM Alan Stern <stern@rowland.harvard.e=
+du> wrote:
+>
+> > And I also found one more:
+> >
+> > Reported-by: syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=3Dedd9fe0d3a65b14588d5
+>
+> You need to be careful about claiming that this patch will fix those bug
+> reports.  At least one of them (the last one above) still fails with the
+> patch applied.  See:
+>
+> https://lore.kernel.org/linux-usb/ade15714-6aa3-4988-8b45-719fc9d74727@ro=
+wland.harvard.edu/
+>
+> and the following response.
 
-On 7/30/24 3:41 PM, Kartik Kulkarni wrote:
-> Fix checkpatch error "foo * bar" should be "foo *bar"
-> in osdep_service.h:105
-> 
-> Signed-off-by: Kartik Kulkarni <kartik.koolks@gmail.com>
+Ah, right, that one is something else, so let's not add those last
+Reported-by/Closes.
 
-Thanks, patch looks good to me:
+However, that crash was bisected to the same guilty patch, so the
+issue is somehow related. Even if we were to mark it as to be fixed
+with the patch I sent, this wouldn't be critical: syzbot would just
+rereport it, and with fresher stack traces.
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
-
-> ---
->  drivers/staging/rtl8723bs/include/osdep_service.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/include/osdep_service.h b/drivers/staging/rtl8723bs/include/osdep_service.h
-> index cf96b5f7a..d6d651342 100644
-> --- a/drivers/staging/rtl8723bs/include/osdep_service.h
-> +++ b/drivers/staging/rtl8723bs/include/osdep_service.h
-> @@ -102,7 +102,7 @@ static inline int rtw_bug_check(void *parg1, void *parg2, void *parg3, void *par
->  #define MAC_ARG(x) (x)
->  #endif
->  
-> -extern void rtw_free_netdev(struct net_device * netdev);
-> +extern void rtw_free_netdev(struct net_device *netdev);
->  
->  /* Macros for handling unaligned memory accesses */
->  
-
+Thank you!
 
