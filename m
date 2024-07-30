@@ -1,112 +1,121 @@
-Return-Path: <linux-kernel+bounces-267769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0114594153E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:15:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF8B94154B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0127284F56
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:15:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 150A71F237C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3825E1A2C1D;
-	Tue, 30 Jul 2024 15:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683CE1A2C20;
+	Tue, 30 Jul 2024 15:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="u2BG2S5f"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/LZnrE7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFCF29A2;
-	Tue, 30 Jul 2024 15:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1CF29A2;
+	Tue, 30 Jul 2024 15:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722352545; cv=none; b=Q1sUMkJfQ7M93HBOd+qYDu2CWssJGnue8LILQZo4XMS0j2AZ0wyhczvNEL6BmoJ/2WIJgBUc+SbTgRfzxCfFcYtZ6Mf099sktBeDTd+pA61b/e82iDQWcRN7gYMVNxQGIf8gmz2oqdMaIJj8/mBcan27SJzXv72+7yMtyalDWgU=
+	t=1722352645; cv=none; b=d7VbqJ3XbMtQsYWYeOSr+Ls3PUP6hoj2QIprLT/kt9amGlKFHI1aZM0hzi96Je8HCw354rZiZ9nPI9xXbUYQp7HoWPC7WYNS83M1AwEeQl0GYm374A9ynotpjDqyC+UdCz0fkKjIcjwt/p70W+vTjd2UlYxK1nCcFFvh6PWM6/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722352545; c=relaxed/simple;
-	bh=D5LVzzB7kowWJcR0ltmplTWIAFHKASYh/zNFa6qeTwk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ZEZqrE8nCJbWu7oaT4M+ilQsn8UqCxZzrGT7v2gLwsoZ7jORk7iLA7dkAtuPa9O0/JyqmXptVczilOq9zzoFEh14hRHvk6rFsLZCOgx0guhX7VCIPOQTYB16P3f4P88VdVdxvLj7LtiV2QaGFoOyk4j/i0lZVjKfOhqHvLuTxM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=u2BG2S5f; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1722352525; x=1722957325; i=markus.elfring@web.de;
-	bh=D5LVzzB7kowWJcR0ltmplTWIAFHKASYh/zNFa6qeTwk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=u2BG2S5fShfrTz2KSbLCvSFXFwItKYCMdoIxmASSv9b8s2xQCV235GafUv6vUldP
-	 3KHlmW6FNFT6YUNaPHKPaxLr9pwBnhk/9NwB3Yyqu4olL0143qZmOXk28Li4/fDd6
-	 gamQN79EM94ih2w0faDWdRAwZ2gfaoHz48snPD2sgdIGvZqKk8lgWgLg5Oppm1YXD
-	 vx7pDt3kro8kM21sk1WEICxNBmoF8w7CnOTMP0w7xFNRcA0LOe+z0yz1tUClO/AHH
-	 RbzL//hjSFEJjmqDuctnUF+AXecMR2o5b5LFILpK2dggCo8OOyEJP5/lC3/yXvJVg
-	 RevWNc1SOmNAEMNN2A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MsrdM-1sFELl2X1M-00yGFk; Tue, 30
- Jul 2024 17:15:25 +0200
-Message-ID: <51bbc95c-00e7-41fd-a3eb-65a4eba5ebd0@web.de>
-Date: Tue, 30 Jul 2024 17:15:22 +0200
+	s=arc-20240116; t=1722352645; c=relaxed/simple;
+	bh=vWu0Diub1TRNjZ/jW742Kn7BUgxLuuip+5MVKdN9IvA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BIvNvv21k9mZlocTwu/sxmKQTWPUEnpJKxzaou+ZmaXCkpFS1luWzKI85e81FKmx59WqahhegIauJDsAUHClayQRKLY9NHAM+agtCJT1k91IEcJuLUCGKXRszu5SEQ8uvnwydQCEZyi7j/EVXB+XvUSfeY41apu1v3NhNudJRW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/LZnrE7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 548B1C32782;
+	Tue, 30 Jul 2024 15:17:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722352645;
+	bh=vWu0Diub1TRNjZ/jW742Kn7BUgxLuuip+5MVKdN9IvA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=n/LZnrE7akfepcW9wBTIiMI/Jg7JrZWIn/RhYgk7p1GKI/ORNIGAaC7ihTNEVIzku
+	 b2kO473LDHBk5FYrAmRl8gkGl9LtWCnW2e5Jhb075qph3do3sd/yEJklJc4TeAwgXq
+	 zLlW0eEMqEH86WofjqjpWrp8YTKGdciy7iGP5ubYQ756ni2kJeoy+qKs9HNdTsdcj/
+	 vtvI+xydzaqc5BNmVPNMH2LcN8mQTtp11A05h7qaQfHRZVcfSgy4ZOdv9LcharuoKQ
+	 TzP7VgkwLIR/Fvv1Ab4vZ20Ad0qfCQZZGQul6//9nMGdAaOUz6EnhLVnaN99F6EKye
+	 aQOxVYEE9XXbg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	kernel test robot <lkp@intel.com>,
+	Dave Chinner <dchinner@redhat.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] xfs: trace: replace strncpy() with strscpy()
+Date: Tue, 30 Jul 2024 17:16:26 +0200
+Message-Id: <20240730151716.2511975-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Florian Sylvestre <fsylvestre@baylibre.com>,
- Julien Stephan <jstephan@baylibre.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Louis Kuo <louis.kuo@mediatek.com>, Paul Elder
- <paul.elder@ideasonboard.com>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, Andy Hsieh <andy.hsieh@mediatek.com>,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240729-add-mtk-isp-3-0-support-v6-3-c374c9e0c672@baylibre.com>
-Subject: Re: [PATCH v6 3/5] media: platform: mediatek: isp_30: add mediatek
- ISP3.0 sensor interface
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240729-add-mtk-isp-3-0-support-v6-3-c374c9e0c672@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:21Jmp9I0A53wGyh/tH2upxHfxiNe9xt5HKxVrv5eI5sABo4Y9ZX
- SFCQ8eDdb7WPzamqdlBCwf/uRhdkRTfE8F3gdhpI65/dJxQuSeG4hnd3dzheZ8R9AJXdjcy
- FYxBBRSOy57Oa6UHLvPoXwbHiTIBDmWjbiJ4EEd5rqS2CBHOK3HjPzThNvGQ241L8CrxfE+
- bBfb/BENESk4mfJSyeGDg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:bInlfz3A99s=;5rCP1cLLs+hEWLWLOFuvYTh2W3B
- H+RWSvGjnEOgHOGsQbuqVGOODQ8+cVXrLJdZ5tRZGYeFH2sANVGAZjDHzrszwRFgc1CNw+j3G
- jR1WEZ9png0gtiMAsecQBAcSlRti51RZN61xEdR0l+qciQbrOsE/rEGSHAaTo/KhX5iw6UHAf
- CsFRXZo/7o9jtyuS3OaGrUs4eGJp0XZYkzJa8HFwk2xws7VjoFI6WZcAZb7XiM1MqJ3PvH3f1
- XrPnFONOT/6SFXuK8pjYA/+9bIE5/N2sXok8h+ORRH2ztoHz0DJ5P/DpkLOkW0rp8FrG/S0pE
- TibRD5Agx5CEeqQL6mjgnwpdY2kjUpusSUg9rqE0U8R982Z10VBBScv2955a0qpwH+0BmIN8f
- REui6T2VdWAFfkFih5O5C94STBlDdX9e+udkojjjZDlywOs1wn+EYr0ahdkRHW4R6M7WO0csU
- EXN2wD2qGH56+ItmH+EvtQvGeBY02Z1TIv2Euj12tUhLyi4j2/VBtTJEwJNtPDba9rfIlQUSs
- deJPpkkOXPDXZTh7BYjf/jEqpvxY/gl/YEN9Tsv/r1Rl0eiJuSK10c8E3y3wFW10FUCG6N3rl
- XhpY9+YrSWj8iqtBp/YU8Cr3ya/M+Q9iN7sNHAzpornNYui6dWwVndj9Sh8VU5gruCtBJtdW+
- 8HhmDgd6R/VilktpnM4LVJE8Dm6Bx4ZAhajd/xYLF2+izVgYQmbmcY+NpTyF7OtcDmEkfLgjD
- ddoxLNAefhIZpivlWOpWasTQr+e2pwtRPGbwNB8hEiE5i9Y2FymtLozy0XV8S3vDKJHqvOOyP
- Uqh2/xmGPlcv+rNzflaNt6Kg==
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> +++ b/drivers/media/platform/mediatek/isp/isp_30/seninf/mtk_seninf_reg.h
-> @@ -0,0 +1,117 @@
-=E2=80=A6
-> +#ifndef __SENINF_REG_H__
-> +#define __SENINF_REG_H__
-=E2=80=A6
+From: Arnd Bergmann <arnd@arndb.de>
 
-How do you think about to omit leading underscores from such identifiers?
-https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
-efine+a+reserved+identifier
+I got a warning about an strncpy() with possibly missing NUL-termination:
 
-Regards,
-Markus
+In file included from include/trace/define_trace.h:102,
+                 from fs/xfs/scrub/trace.h:3584,
+                 from fs/xfs/scrub/trace.c:58:
+fs/xfs/./scrub/trace.h: In function 'trace_event_raw_event_xfile_create':
+fs/xfs/./scrub/trace.h:973:3: error: 'strncpy' specified bound 256 equals destination size [-Werror=stringop-truncation]
+
+Use strscpy() to auto-size the output, and zero-pad the string
+as before.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Fixes: 3934e8ebb7cc ("xfs: create a big array data structure")
+Closes: https://lore.kernel.org/oe-kbuild-all/202403290419.HPcyvqZu-lkp@intel.com/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+I'm not entirely sure about whether to pad or not, as about half of the
+ftrace macros with strscpy() pad and the other half don't. We probably
+want them all to do the same thing here.
+
+If there is a chance of leaking kernel stack data to userspace here,
+we need to pad the string, otherwise not.
+---
+ fs/xfs/scrub/trace.h | 2 +-
+ fs/xfs/xfs_trace.h   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/xfs/scrub/trace.h b/fs/xfs/scrub/trace.h
+index 92ef4cdc486e..6f7fa24e1273 100644
+--- a/fs/xfs/scrub/trace.h
++++ b/fs/xfs/scrub/trace.h
+@@ -970,7 +970,7 @@ TRACE_EVENT(xfile_create,
+ 		path = file_path(xf->file, pathname, sizeof(pathname) - 1);
+ 		if (IS_ERR(path))
+ 			path = "(unknown)";
+-		strncpy(__entry->pathname, path, sizeof(__entry->pathname));
++		strscpy_pad(__entry->pathname, path);
+ 	),
+ 	TP_printk("xfino 0x%lx path '%s'",
+ 		  __entry->ino,
+diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
+index 5646d300b286..79d159fab2e6 100644
+--- a/fs/xfs/xfs_trace.h
++++ b/fs/xfs/xfs_trace.h
+@@ -4728,7 +4728,7 @@ TRACE_EVENT(xmbuf_create,
+ 		path = file_path(file, pathname, sizeof(pathname) - 1);
+ 		if (IS_ERR(path))
+ 			path = "(unknown)";
+-		strncpy(__entry->pathname, path, sizeof(__entry->pathname));
++		strscpy_pad(__entry->pathname, path);
+ 	),
+ 	TP_printk("dev %d:%d xmino 0x%lx path '%s'",
+ 		  MAJOR(__entry->dev), MINOR(__entry->dev),
+-- 
+2.39.2
+
 
