@@ -1,108 +1,228 @@
-Return-Path: <linux-kernel+bounces-267758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0604A941526
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:10:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AEF4941529
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5104282BB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:10:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 202C92837AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E5B1A2C1F;
-	Tue, 30 Jul 2024 15:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645611A2C26;
+	Tue, 30 Jul 2024 15:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WRr7mFa2"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="A+mrM7MV"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA80C1A2553;
-	Tue, 30 Jul 2024 15:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE751A2553;
+	Tue, 30 Jul 2024 15:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722352242; cv=none; b=sdSNPjRBEp5A3ptfVFi0BFFYJ5HHsHMZF01gCQnjY1T3DX77NRIBoU/t7UkwQ4c5NjOt5XDgF1gDrkxvMruROE4wuu66ZpzDjbJtTdn6Lj5BXjyupkyo0Rc1fkJJuAUrw5D17mHPh6R6QUwdNTheJU9Hn1sOQ14PlbtCxAvDPnA=
+	t=1722352278; cv=none; b=ExbvHKgV16ploJYZh0ZpEdtnhVep4U1UY/XKGFpHywH0seQ9PXAeX34sq/QPjUKtQzXvudPhXjg9MQUNr4Ks3HpxCvUx0kz03LOq1bpkuZw6fsOeC6Ajgg9qUcMcFouNlxxaboeu8aEkuEge+AtR0AhRteNs0lXg1miP2VlA0Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722352242; c=relaxed/simple;
-	bh=hmwWQzDQ25SuorwsyKRj4wl1UNLVTz4Upf0N6htKTwU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GdqiRtfVNrbl4nCSI70Cfr99tqpH1Z59T7+ct07e3UjNQOVGCOOW+qRXl5Y8RZWqPw2gtgfWu59RuLkQbCeyaGlZjpdw/IHsY2lwik6R1vVP6lSW3wmeoHSV/ZkOehWlnMzpn8ATT8T60jGCAkVXsq4RZy7y9pbCj+3hBOjAgeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WRr7mFa2; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cb64529a36so2985886a91.0;
-        Tue, 30 Jul 2024 08:10:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722352240; x=1722957040; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5UkVYv8YMQHHFJCnBclXsFYTEqiC7YVlm5OC6CeRyng=;
-        b=WRr7mFa2+3MLngRIx9wg9SMbtvx1iel+LcaTCPKIVaAP4cZa4KSa9c/ktw1uNw4MFs
-         jUBs9/oglrm8D7TI8ze0NOIQAjQgWJKnFlQkGr3tG8Ii12hDd2bLYqkmosiTqps6HYCF
-         D0OZUkBqWygi4IyrCY0AJMbeBhW+hb21y0bVGsWLH3Su13oGinVWYZf+Web4nADyS6/0
-         1qUNXLOOdOO15SUnBwAng6/clizb5T7pM1lPjdbeOmPrO73gnPWhSz0HMkXNR4fynk/m
-         vWW/bRv5dQbDRXsoK8hNZbMvf+Pvax+CKSSqRja1JJ+RKs6SA3FgOM3slxHSk6Vm8tlA
-         hCoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722352240; x=1722957040;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5UkVYv8YMQHHFJCnBclXsFYTEqiC7YVlm5OC6CeRyng=;
-        b=BodHpZogec1HvNWVPYdnwnKBY7TJiooG3LT+aJK4U4j8MXyxIwwOXbyYhjk1eYZPux
-         dFp05/fj2vEX0016ej1Ftq69i1XdzDwCQet27+hoc+xLQsJA9kjiBfgaa0Y3E0hwiZwX
-         L1gPUYrRoPZHezKGlpaxK1ZAZiMmMT6dFONTzZdZNElcOvGArIu7RzKILzRgxd9/A+5a
-         1qPOUSM4stU4GpXDxR5WYHYxvrD9auFvWvC2MHdOzSvjeiSEQ6ViAn3PNeJ1z2Qr9UKr
-         BbmkNmPuC8K3472GWFzBsDfuF+k16334RiOCO12XRxVGo1EFg9tlAS87UkAKTx5Egixc
-         KsYA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3f/bxWHWiFjHRYPFI7bud2pmYVeszl/qzD9kIZ89kRXgbFwxsMuHN25d0qDPPuVDf1UY1x1+9YHAGkDnBrUBjD/K5r8hX6EgjXkIWVKLooeYx6iYPrgFqpjrMY3lma9WgIRdYmaCBxvangUcGdGxo
-X-Gm-Message-State: AOJu0Yzk+1/t/AhuceJbi+eT6N6e3RKZk2+B0GO29jP+t+MDU09cGZi1
-	irtf2GRxOo6mbBu5u82DoPMX3D1bZWfwqb2PvlMmIoz+W7zqFZClatRVf5LEFc61lNGb2Dqxdla
-	FftJscmYckkY+qPSaayQk59xPB4w=
-X-Google-Smtp-Source: AGHT+IEE2NO8I7fi5nFGGtfWNaJ+PkkmNA+AZhI8q3l2322eNWiDRwfgixixPDGESLR99hs50XbskW7ZfeO+MQEg67k=
-X-Received: by 2002:a17:90b:3ec7:b0:2c9:7a8d:43f7 with SMTP id
- 98e67ed59e1d1-2cf7e207332mr9724330a91.23.1722352240158; Tue, 30 Jul 2024
- 08:10:40 -0700 (PDT)
+	s=arc-20240116; t=1722352278; c=relaxed/simple;
+	bh=7drJBd4vPAXeOYN4Bu2gVS5O0LnnsSk7ZDISvuwDoQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eJjlWWYZPTO2o0Cauc0gVqmezB2NulXfjAq2MLQKqhSebhfI71bhQw9uK/9S68y2HiX7tBNprp1eOKjW3Q42uIqbXKbU7b3jPP7x0jUvLsvBndz9RsmVMhEbt4bnXPvQ/C1z9UfIIts2A89duG8tesU39URys0wkLJy3VLxkqBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=A+mrM7MV; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=443IySO6h1genY6Yw2BSH0jKpFakov/7cWHx1qwPkTk=; b=A+mrM7MVeYF57oDlHFJE4uIsfn
+	A2CZV/hJVhLXT/t92lJ6UwfQujQswwTEcS0ztAJhloKPx+wmt41URcHLbcsM3Bsw1WnC9WaznP1pI
+	JB8JiYTXObUXmVBwxDfnmK7rXalmzbNlDnrakVh+U79h4M1vXQQ4rbfPLY1cBBS6E9/ksmjziCjtw
+	Y0SJbkSZkl8T37XBt8uektg6oBh/1ILtoyn3C155fzwCzVoz3ch2Ygab8/xlUmf7xcCDfsXjGWLTX
+	rpV1wpz3sM1REbebZCQI4AP96Egi5TVaQ70iG17ECXvawehMm3yU4eW9A1hvWJBSCYyqXrtZpMtj4
+	8Bq6EmZQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57572)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sYoVH-0007CP-0s;
+	Tue, 30 Jul 2024 16:11:07 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sYoVL-0005M3-9k; Tue, 30 Jul 2024 16:11:11 +0100
+Date: Tue, 30 Jul 2024 16:11:11 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
+	andrew@lunn.ch, horms@kernel.org, hkallweit1@gmail.com,
+	richardcochran@gmail.com, rdunlap@infradead.org,
+	Bryan.Whitehead@microchip.com, edumazet@google.com,
+	pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net-next V3 4/4] net: lan743x: Add support to ethtool
+ phylink get and set settings
+Message-ID: <ZqkCj9gENW5ILWED@shell.armlinux.org.uk>
+References: <20240730140619.80650-1-Raju.Lakkaraju@microchip.com>
+ <20240730140619.80650-5-Raju.Lakkaraju@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730123421.GA9085@redhat.com>
-In-Reply-To: <20240730123421.GA9085@redhat.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 30 Jul 2024 08:10:27 -0700
-Message-ID: <CAEf4BzadOamfkR+ww-4F2romXJzMo96V6=MTgqN1G+p5CXuOmw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] uprobes: simplify _unregister paths
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org, 
-	jolsa@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730140619.80650-5-Raju.Lakkaraju@microchip.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, Jul 30, 2024 at 5:34=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wro=
-te:
->
-> On top of
->
->         [PATCH v2 0/5] uprobes: misc cleanups/simplifications
->         https://lore.kernel.org/all/20240729134444.GA12293@redhat.com/
->
-> I sent yesterday.
->
-> Oleg.
-> ---
->
+On Tue, Jul 30, 2024 at 07:36:19PM +0530, Raju Lakkaraju wrote:
+> diff --git a/drivers/net/ethernet/microchip/lan743x_ethtool.c b/drivers/net/ethernet/microchip/lan743x_ethtool.c
+> index 3a63ec091413..a649ea7442a4 100644
+> --- a/drivers/net/ethernet/microchip/lan743x_ethtool.c
+> +++ b/drivers/net/ethernet/microchip/lan743x_ethtool.c
+> @@ -1058,61 +1058,48 @@ static int lan743x_ethtool_get_eee(struct net_device *netdev,
+>  				   struct ethtool_keee *eee)
+>  {
+>  	struct lan743x_adapter *adapter = netdev_priv(netdev);
+> -	struct phy_device *phydev = netdev->phydev;
+> -	u32 buf;
+> -	int ret;
+> -
+> -	if (!phydev)
+> -		return -EIO;
+> -	if (!phydev->drv) {
+> -		netif_err(adapter, drv, adapter->netdev,
+> -			  "Missing PHY Driver\n");
+> -		return -EIO;
+> -	}
+>  
+> -	ret = phy_ethtool_get_eee(phydev, eee);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	buf = lan743x_csr_read(adapter, MAC_CR);
+> -	if (buf & MAC_CR_EEE_EN_) {
+> -		/* EEE_TX_LPI_REQ_DLY & tx_lpi_timer are same uSec unit */
+> -		buf = lan743x_csr_read(adapter, MAC_EEE_TX_LPI_REQ_DLY_CNT);
+> -		eee->tx_lpi_timer = buf;
+> -	} else {
+> -		eee->tx_lpi_timer = 0;
+> -	}
+> +	eee->tx_lpi_timer = lan743x_csr_read(adapter,
+> +					     MAC_EEE_TX_LPI_REQ_DLY_CNT);
+> +	eee->eee_enabled = adapter->eee_enabled;
+> +	eee->eee_active = adapter->eee_active;
+> +	eee->tx_lpi_enabled = adapter->tx_lpi_enabled;
 
-Both patch sets look good to me. It would be nice to get them applied
-ASAP to have a stable uprobes code base to work on. Rebasing is
-painful and error-prone.
+You really need to start paying attention to the commits other people
+make as a result of development to other parts of the kernel.
 
->  kernel/events/uprobes.c | 47 ++++++++++++++++++++++++-------------------=
-----
->  1 file changed, 24 insertions(+), 23 deletions(-)
->
+First, see:
+
+commit ef460a8986fa0dae1cdcb158a06127f7af27c92d
+Author: Andrew Lunn <andrew@lunn.ch>
+Date:   Sat Apr 6 15:16:00 2024 -0500
+
+    net: lan743x: Fixup EEE
+
+and note that the assignment of eee->eee_enabled, eee->eee_active, and
+eee->tx_lpi_enabled were all removed.
+
+Next...
+
+>  
+> -	return 0;
+> +	return phylink_ethtool_get_eee(adapter->phylink, eee);
+
+phylink_ethtool_get_eee() will call phy_ethtool_get_eee(), which
+in turn calls genphy_c45_ethtool_get_eee() and eeecfg_to_eee().
+
+genphy_c45_ethtool_get_eee() will do this:
+
+        data->eee_enabled = is_enabled;
+        data->eee_active = ret;
+
+thus overwriting your assignment to eee->eee_enabled and
+eee->eee_active.
+
+eeecfg_to_eee() will overwrite eee->tx_lpi_enabled and
+eee->eee_enabled.
+
+Thus, writing to these fields and then calling
+phylink_ethtool_get_eee() results in these fields being overwritten.
+
+>  static int lan743x_ethtool_set_eee(struct net_device *netdev,
+>  				   struct ethtool_keee *eee)
+>  {
+> -	struct lan743x_adapter *adapter;
+> -	struct phy_device *phydev;
+> -	u32 buf = 0;
+> +	struct lan743x_adapter *adapter = netdev_priv(netdev);
+>  
+> -	if (!netdev)
+> -		return -EINVAL;
+> -	adapter = netdev_priv(netdev);
+> -	if (!adapter)
+> -		return -EINVAL;
+> -	phydev = netdev->phydev;
+> -	if (!phydev)
+> -		return -EIO;
+> -	if (!phydev->drv) {
+> -		netif_err(adapter, drv, adapter->netdev,
+> -			  "Missing PHY Driver\n");
+> -		return -EIO;
+> -	}
+> +	if (eee->tx_lpi_enabled)
+> +		lan743x_csr_write(adapter, MAC_EEE_TX_LPI_REQ_DLY_CNT,
+> +				  eee->tx_lpi_timer);
+> +	else
+> +		lan743x_csr_write(adapter, MAC_EEE_TX_LPI_REQ_DLY_CNT, 0);
+>  
+> -	if (eee->eee_enabled) {
+> -		buf = (u32)eee->tx_lpi_timer;
+> -		lan743x_csr_write(adapter, MAC_EEE_TX_LPI_REQ_DLY_CNT, buf);
+> -	}
+> +	adapter->eee_enabled = eee->eee_enabled;
+> +	adapter->tx_lpi_enabled = eee->tx_lpi_enabled;
+
+Given that phylib stores these and overwrites your copies in the get_eee
+method above, do you need to store these?
+
+> @@ -3013,7 +3025,12 @@ static void lan743x_phylink_mac_link_down(struct phylink_config *config,
+>  					  unsigned int link_an_mode,
+>  					  phy_interface_t interface)
+>  {
+> +	struct net_device *netdev = to_net_dev(config->dev);
+> +	struct lan743x_adapter *adapter = netdev_priv(netdev);
+> +
+>  	netif_tx_stop_all_queues(to_net_dev(config->dev));
+> +	adapter->eee_active = false;
+
+phylib tracks this for you.
+
+> +	lan743x_set_eee(adapter, false);
+>  }
+>  
+>  static void lan743x_phylink_mac_link_up(struct phylink_config *config,
+> @@ -3055,6 +3072,14 @@ static void lan743x_phylink_mac_link_up(struct phylink_config *config,
+>  					  cap & FLOW_CTRL_TX,
+>  					  cap & FLOW_CTRL_RX);
+>  
+> +	if (phydev && adapter->eee_enabled) {
+> +		bool enable;
+> +
+> +		adapter->eee_active = phy_init_eee(phydev, false) >= 0;
+> +		enable = adapter->eee_active && adapter->tx_lpi_enabled;
+
+No need. Your enable should be conditional on phydev->enable_tx_lpi
+here. See Andrew's commit and understand his changes, rather than
+just ignoring Andrew's work and continuing with your old pattern of
+EEE support. Things have moved forward.
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
