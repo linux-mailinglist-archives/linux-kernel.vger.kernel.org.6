@@ -1,140 +1,126 @@
-Return-Path: <linux-kernel+bounces-267342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4110394107C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:29:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C2A2941082
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70CD31C22C43
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:29:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E8E3B23D6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900DA18A92F;
-	Tue, 30 Jul 2024 11:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="WG4o4ScU"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2A119E7E0;
+	Tue, 30 Jul 2024 11:31:00 +0000 (UTC)
+Received: from smtp134-24.sina.com.cn (smtp134-24.sina.com.cn [180.149.134.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454AB19DF8E;
-	Tue, 30 Jul 2024 11:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5879D187340
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722338977; cv=none; b=APS15u4KbrxbZvnK4grV6EG3/z1PI6FCHxlPrWmSlaOlj8fPyooc6SqdXoJBtVDZiM24V6hgdO+26bWUGxYhjbYEuQ+4upolTbJrK8CEIxtPk0AMyUP11CJLhOJbtG4kFEcFMrp5YTjOoohSlJ/ObZdyf4FaeOMfdIkhOT77ZTE=
+	t=1722339059; cv=none; b=leO3bejvNcijc0uUqB2rCb8W1NilaanjXun6MJTAcrgcADnQx8OntK+UdMSb59fOg6W7qjRAq/sAP8RRqPb163HfPz4qByhmSTJ/BhzIUBzHwqjNFew0MESjj6mfEI8Me06S3VD8bStMIF2x2r0Bc+6IVYCwfzDdLDt2KPjF4Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722338977; c=relaxed/simple;
-	bh=/1pWOQ14ozSfFQK/tkD76Lfh3dTPGMLPwzHVYx5iXcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d3Ls+0jHmMxAslpsqNn4255Gm2BKVnxz2aI9/f0gviLoB7SKOZI+xfCQMBaHQ8jbJn267en7pOu/pu21jb6xm4jSrw3bEdqNvQqZbgha/KCNxh+yUVyPAJiIDUzzc1bMUKEF/14MDwPvvB2DcItyx4lcK66zkDGO4hnkJVuv6s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=WG4o4ScU; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Ki2/TBdxrP8a5ktzFO1CppFcT6yCDwCNmjbPTgHYyOU=; b=WG4o4ScUMxSc7o8zseeiqpQR2R
-	A5QrjYcAfq5DmnxWbzcz+pmsorwKH6DTRKFGM+XxCU4pv73wLY5s/MNYX/6OTD0+LSTEUnbYqxuO/
-	+w1p80cOCofWLFSvNTVOvO+PstkZ5piTrHRQtW3zziwgsHRv4K1pgfQ/7yGHG+D0kBaG9XuvR4xjC
-	hfT7/fl+0mbNdihbOo66oSdQXXgZivTF94hhTuN4lmg87zxxaz7XSUXHsQ1AtsUhSuB0tUdXgpgpE
-	YV2dx/0JH5IPlJcVZDT+G+i5ypiuawUr34nwKWlZKHlvdCK1tNLHSa+6CbxCuWkuJltgxtjXpzOsw
-	t+9YcbIA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55588)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sYl2k-0006Zg-07;
-	Tue, 30 Jul 2024 12:29:26 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sYl2m-0005EG-Mh; Tue, 30 Jul 2024 12:29:28 +0100
-Date: Tue, 30 Jul 2024 12:29:28 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
-	andrew@lunn.ch, horms@kernel.org, hkallweit1@gmail.com,
-	richardcochran@gmail.com, rdunlap@infradead.org,
-	bryan.whitehead@microchip.com, edumazet@google.com,
-	pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH net-next V2 3/4] net: lan743x: Migrate phylib to phylink
-Message-ID: <ZqjOmOzNLE0+oYP2@shell.armlinux.org.uk>
-References: <20240716113349.25527-1-Raju.Lakkaraju@microchip.com>
- <20240716113349.25527-4-Raju.Lakkaraju@microchip.com>
- <Zqdd1mfSUDK9EifJ@shell.armlinux.org.uk>
- <ZqjE9A8laPxYP1ta@HYD-DK-UNGSW21.microchip.com>
+	s=arc-20240116; t=1722339059; c=relaxed/simple;
+	bh=7by8ITos4+QAaUPN5cD7CLTjQgm2N0ZFHxPolUlmbz8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Ix9YyiJviugR2xiLGQTh0XLqRLLPQRSpcyyU6K4Z3LXLXYf6zwZGnb3AGbIUm67vbA/zVssHbTVSCCZRzWpRMImvnfMYQJBB8zBxxeIZuQ2tGRFYgqiJ0QiMsP5owcfIkdk8M9ohmHa7Kj74jewAmxgzp0bYOxDCQEvd7F/bm6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.8.37])
+	by sina.com (10.185.250.21) with ESMTP
+	id 66A8CEDB00000E91; Tue, 30 Jul 2024 19:30:38 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 1080953408335
+X-SMAIL-UIID: 94CEDC4AAA844D50B4A4EC9F1046FD97-20240730-193038-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com>
+Cc: Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [wireguard?] WARNING in kthread_unpark (2)
+Date: Tue, 30 Jul 2024 19:30:26 +0800
+Message-Id: <20240730113026.2365-1-hdanton@sina.com>
+In-Reply-To: <000000000000e9a538061e64cae7@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZqjE9A8laPxYP1ta@HYD-DK-UNGSW21.microchip.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 30, 2024 at 04:18:20PM +0530, Raju Lakkaraju wrote:
-> Ok. 
-> After change, i ran the checkpatch script. it's giving follwoing warning
-> i.e.
-> "CHECK: Comparison to NULL could be written "dn"" 
+On Mon, 29 Jul 2024 08:48:30 -0700
+> syzbot has found a reproducer for the following issue on:
 > 
-> Is it OK ?
-
-Assuming its referring to:
-
-        return dn != NULL;
-
-in a function that returns a bool, I find that utterly perverse, and I
-suggest in this case ignoring checkpatch.
-
-> > > +static int lan743x_phylink_connect(struct lan743x_adapter *adapter)
-> > > +{
-> > > +     struct device_node *dn = adapter->pdev->dev.of_node;
-> > > +     struct net_device *dev = adapter->netdev;
-> > > +     struct fixed_phy_status fphy_status = {
-> > > +             .link = 1,
-> > > +             .speed = SPEED_1000,
-> > > +             .duplex = DUPLEX_FULL,
-> > > +     };
-> > > +     struct phy_device *phydev;
-> > > +     int ret;
-> > > +
-> > > +     if (dn)
-> > > +             ret = phylink_of_phy_connect(adapter->phylink, dn, 0);
-> > > +
-> > > +     if (!dn || (ret && !lan743x_phy_handle_exists(dn))) {
-> > > +             phydev = phy_find_first(adapter->mdiobus);
-> > > +             if (!phydev) {
-> > > +                     if (((adapter->csr.id_rev & ID_REV_ID_MASK_) ==
-> > > +                           ID_REV_ID_LAN7431_) || adapter->is_pci11x1x) {
-> > > +                             phydev = fixed_phy_register(PHY_POLL,
-> > > +                                                         &fphy_status,
-> > > +                                                         NULL);
-> > > +                             if (IS_ERR(phydev)) {
-> > > +                                     netdev_err(dev, "No PHY/fixed_PHY found\n");
-> > > +                                     return PTR_ERR(phydev);
-> > > +                             }
-> > 
-> > Eww. Given that phylink has its own internal fixed-PHY support, can we
-> > not find some way to avoid the legacy fixed-PHY usage here?
+> HEAD commit:    dc1c8034e31b minmax: simplify min()/max()/clamp() implemen..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=100341c9980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2258b49cd9b339fa
+> dashboard link: https://syzkaller.appspot.com/bug?extid=943d34fa3cf2191e3068
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1022b573980000
 > 
-> Yes. I agree with you. This is very much valid suggestion.
-> Andrew also gave same suggestion.
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/6699621c3baa/disk-dc1c8034.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/22380dec726f/vmlinux-dc1c8034.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/04c3f45e6e2d/bzImage-dc1c8034.xz
 > 
-> Currently we don't have Device Tree support for LAN743X driver. 
-> For SFP support, I create the software-node an passing the paramters there.
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com
 > 
-> I don't have fixed-PHY hardware setup currently.
-> I would like to take this as action item to fix it after SFP support commits.
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 53 at kernel/kthread.c:525 __kthread_bind_mask kernel/kthread.c:525 [inline]
+> WARNING: CPU: 0 PID: 53 at kernel/kthread.c:525 __kthread_bind kernel/kthread.c:538 [inline]
+> WARNING: CPU: 0 PID: 53 at kernel/kthread.c:525 kthread_unpark+0x16b/0x210 kernel/kthread.c:631
 
-Note that SFP shouldn't be using a fixed-phy at all.
+This warning looks bogus to me since a running workqueue rescuer could not
+have a state with TASK_PARKED set.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 53 Comm: kworker/u8:3 Not tainted 6.11.0-rc1-syzkaller-00004-gdc1c8034e31b #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+> Workqueue: netns cleanup_net
+> 
+> RIP: 0010:__kthread_bind_mask kernel/kthread.c:525 [inline]
+> RIP: 0010:__kthread_bind kernel/kthread.c:538 [inline]
+> RIP: 0010:kthread_unpark+0x16b/0x210 kernel/kthread.c:631
+> Code: 00 fc ff df 41 0f b6 04 06 84 c0 0f 85 93 00 00 00 41 80 4d 03 04 4c 89 e7 48 8b 34 24 e8 ad f7 56 0a eb 09 e8 06 a0 33 00 90 <0f> 0b 90 48 89 ef be 08 00 00 00 e8 c5 b5 97 00 f0 80 65 00 fb 4c
+> RSP: 0018:ffffc90000bd7760 EFLAGS: 00010293
+> 
+> RAX: ffffffff815fe27a RBX: 0000000000000000 RCX: ffff888015f90000
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: ffff88801fcd8200 R08: ffffffff815fe207 R09: 1ffffffff269d71e
+> R10: dffffc0000000000 R11: fffffbfff269d71f R12: 0000000000000001
+> R13: ffff888029c75a2c R14: 1ffff1100538eb45 R15: ffff888029c75a00
+> FS:  0000000000000000(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fc23f437d60 CR3: 000000007e72a000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  kthread_stop+0x17a/0x630 kernel/kthread.c:707
+>  destroy_workqueue+0x136/0xc40 kernel/workqueue.c:5793
+>  wg_destruct+0x1e2/0x2e0 drivers/net/wireguard/device.c:257
+>  netdev_run_todo+0xe1a/0x1000 net/core/dev.c:10753
+>  default_device_exit_batch+0xa14/0xa90 net/core/dev.c:11889
+>  ops_exit_list net/core/net_namespace.c:178 [inline]
+>  cleanup_net+0x89d/0xcc0 net/core/net_namespace.c:640
+>  process_one_work kernel/workqueue.c:3231 [inline]
+>  process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+>  worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
+>  kthread+0x2f0/0x390 kernel/kthread.c:389
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
 
