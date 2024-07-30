@@ -1,155 +1,164 @@
-Return-Path: <linux-kernel+bounces-268033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D908941F93
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:32:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6FC8941F99
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE330B24070
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:32:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47737B23978
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677F218A6C6;
-	Tue, 30 Jul 2024 18:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA9A18B484;
+	Tue, 30 Jul 2024 18:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iAZ2un2h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="kxVpww3g"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFF51A76BE;
-	Tue, 30 Jul 2024 18:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276A31662F7;
+	Tue, 30 Jul 2024 18:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722364354; cv=none; b=GWYHJ+amkVsZ8cPrg0n0ivP4scENA32XQLpECj0pQoGYr4D5FHZ58wjKTlHzx2aqxnOTKuwarpeB7+GZDcvwRWqxv068avjWRc7zvPnugTckQ6QAcBgb2fojvihhvzwtAzcRS2UZ50xZy8f7bsZlOOPWNUd5uyAohQpYeySJsWo=
+	t=1722364417; cv=none; b=JyGN1IAy5kP3aufvGddljFzW4tEQdm+7xny0xfZH1upnKzOxIGBySuYvdsT/waYBp4JUozouUBW+YzHVYpbj1pxbVmg7meKHCztC7sARkMDbXdzGBXv/JEuxjlnGW6vz2AJ6R9sr3ZjxnBT4DBJyB5FFXg9gufRsQvPG8fgio+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722364354; c=relaxed/simple;
-	bh=g+OGyy+vT85w380nT0+iGcOi+FcSygg/gUut0p0k0Fg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rsekSzPsF1QEUlPdxu5HV84vsyAHhEqUqmHdgYcv/E9mZFMKwQJcmrPCBc6G5/mrOHtnE7qHnnTJslhfejmwQyouIJa3+YbpV5r69W/M3xFtgNbAhUhndXOHrkG/DIUxb+NtNo6tUZgPmFdaS5q9ItKsPkpXSGLU6YCkFWFgs7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iAZ2un2h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D519EC4AF0A;
-	Tue, 30 Jul 2024 18:32:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722364354;
-	bh=g+OGyy+vT85w380nT0+iGcOi+FcSygg/gUut0p0k0Fg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iAZ2un2hLYorsB4Sjl+hLldJqIsVwwJ3R4Un+dzc3l/i1xHUw/S92H01WG1RXJ73U
-	 8ex5pqe5YFWQIQTygJq6lgwNByv0Hu/BLNUgvirpTi4UTx9arZmfNKTbXNU30BcTTM
-	 Qy0BXT7WCyKv6OaKWewsL/gDy2D/Q1/cjLfzMsNP+Xk2jpo9u4AJBbmOu1BzGRuGEG
-	 FgPMZoyoYhWDqXyuXjJPNLDXnsqRLxyEeIB0DS+xq1/qo0H4+PCJD2i4cOmL+FJHKR
-	 zClTy1Jgh3QIDxzCg4bRAQixcFSuOK5WqihiGDbDZlEjewmIa8HrNzrfKZF63+w00C
-	 pUhU+inxh4pyw==
-Date: Tue, 30 Jul 2024 11:32:32 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: kernel test robot <lkp@intel.com>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [tip:x86/microcode 1/1]
- arch/x86/kernel/cpu/microcode/amd.c:714:6: warning: variable 'equiv_id' is
- used uninitialized whenever 'if' condition is false
-Message-ID: <20240730183232.GA2428521@thelio-3990X>
-References: <202407291815.gJBST0P3-lkp@intel.com>
- <20240729112614.GBZqd8Vu27mFVSHynA@fat_crate.local>
- <20240729153008.GA685493@thelio-3990X>
- <20240730080326.GAZqieTl1Gz4RheSiI@fat_crate.local>
+	s=arc-20240116; t=1722364417; c=relaxed/simple;
+	bh=1OBo5ac7UB980Vwp9IAp/IzlYLKbqDBtnTkktrSInEY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KWCGrbrw/vqJ1JlfGspO7NMrDSOKaV8lA5uq0YczYMD+NyfrdMt5yJvxeJbLxL/m04Gmzf4MEploucTbrPwKB30zzaUcWXe1a93aayQU83kBkiIzkhAIZFAWIr0vdLkxA0w5q0FvIJb+L47n329AWIc4Jvi+jSyXiBcbhS7cXAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=kxVpww3g reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 3b628da5022b9dc8; Tue, 30 Jul 2024 20:33:33 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 8F388956ED0;
+	Tue, 30 Jul 2024 20:33:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1722364413;
+	bh=1OBo5ac7UB980Vwp9IAp/IzlYLKbqDBtnTkktrSInEY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=kxVpww3gkRboC5/DX5eRm0xJHayHx2aOJiphYQPpQguW7TuLOeex0kd/Uf5ny6kes
+	 VnGxuEW1HxUVvoV+XlcqYv/lw064F8H0tenzVBDEkCbgViZwm6sCqYQ90ofKHpItPu
+	 nEuUN2PFcfdeFvFgN8zmP1G9RdGjcGLpNC6YYMt/5LtHvgvAd2bkt3gM8tn8jS7MGV
+	 2LfMOqF72Aqbu0kvd58EI7Cl63oMBsyKUU6dUYCbMYJMPqVWp8axrC0TBZRThAIfHJ
+	 fuJF1DAR3aCdmJs8s9qgVMz1ohss7RcBLOJGmKhlOexbjk7hapenQQrv63ENwSBh9K
+	 f6TCBAl6Tj85g==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux ACPI <linux-acpi@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ Peter Kaestle <peter@piie.net>, platform-driver-x86@vger.kernel.org
+Subject:
+ [PATCH v1 12/17] platform/x86: acerhdf: Use the .should_bind() thermal zone
+ callback
+Date: Tue, 30 Jul 2024 20:33:32 +0200
+Message-ID: <2242500.C4sosBPzcN@rjwysocki.net>
+In-Reply-To: <1922131.tdWV9SEqCh@rjwysocki.net>
+References: <1922131.tdWV9SEqCh@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730080326.GAZqieTl1Gz4RheSiI@fat_crate.local>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeggdduvdejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepkedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
+ rhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohepphgvthgvrhesphhiihgvrdhnvghtpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekieesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=32 Fuz1=32 Fuz2=32
 
-On Tue, Jul 30, 2024 at 10:03:26AM +0200, Borislav Petkov wrote:
-> On Mon, Jul 29, 2024 at 08:30:08AM -0700, Nathan Chancellor wrote:
-> > Right, as clang does not perform interprocedural analysis for the sake
-> > of warnings. That's partly why GCC's version of this warning was
-> > disabled in commit 78a5255ffb6a ("Stop the ad-hoc games with
-> > -Wno-maybe-initialized").
-> 
-> So why aren't we shutting up clang too?
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Because it does not suffer from the same issues. There are many more
-instances of local variables that are genuinely uninitialized when used
-that get properly flagged than instances such as this where lack of
-interprocedural analysis may cause emission of a false positive. Losing
-Clang's version of the warning means that no compiler would warn on
-instances of obviously uninitialized local variables, which still occurs
-quite frequently.
+Make the acerhdf driver use the .should_bind() thermal zone
+callback to provide the thermal core with the information on whether or
+not to bind the given cooling device to the given trip point in the
+given thermal zone.  If it returns 'true', the thermal core will bind
+the cooling device to the trip and the corresponding unbinding will be
+taken care of automatically by the core on the removal of the involved
+thermal zone or cooling device.
 
-> > While it may be properly handled now, I think this pattern of
-> > conditionally avoiding using a variable uninitialized is dubious.
-> 
-> Well, in this particular case of the microcode loader, this is the best
-> compromise I can think of - I have two different paths of handling a microcode
-> patch - Zen and newer - and before - so I need those separate flows.
-> 
-> So sometimes it makes sense.
+The previously existing acerhdf_bind() function bound cooling devices
+to thermal trip point 0 only, so the new callback needs to return 'true'
+for trip point 0.  However, it is straightforward to observe that trip
+point 0 is an active trip point and the only other trip point in the
+driver's thermal zone is a critical one, so it is sufficient to return
+'true' from that callback if the type of the given trip point is
+THERMAL_TRIP_ACTIVE.
 
-Sure, I just think it is a potential footgun waiting to happen but it's
-obviously fine now.
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-> > So I guess you can just ignore this if you want but others (maybe even
-> > Linus) will likely notice this and report it as well.
-> 
-> I think this warning should be behind W=1 if it can trigger false positives.
+This patch only depends on patch [09/17].
 
-I disagree, any warning can trigger false positives, as they are
-heuristics. Feel free to propose a patch if you feel strongly about it
-though and we can bring the discussion to a wider audience.
+---
+ drivers/platform/x86/acerhdf.c |   33 ++++++---------------------------
+ 1 file changed, 6 insertions(+), 27 deletions(-)
 
-> Anyway:
-> 
-> From: "Borislav Petkov (AMD)" <bp@alien8.de>
-> Date: Tue, 30 Jul 2024 09:52:43 +0200
-> Subject: [PATCH] x86/microcode/AMD: Fix a -Wsometimes-uninitialized clang
->  false positive
-> 
-> Initialize equiv_id in order to shut up:
-> 
->   arch/x86/kernel/cpu/microcode/amd.c:714:6: warning: variable 'equiv_id' is \
->   used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
->         if (x86_family(bsp_cpuid_1_eax) < 0x17) {
->             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> because clang doesn't do interprocedural analysis for warnings to see
-> that this variable won't be used uninitialized.
-> 
-> Fixes: 94838d230a6c ("x86/microcode/AMD: Use the family,model,stepping encoded in the patch ID")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202407291815.gJBST0P3-lkp@intel.com/
-> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Index: linux-pm/drivers/platform/x86/acerhdf.c
+===================================================================
+--- linux-pm.orig/drivers/platform/x86/acerhdf.c
++++ linux-pm/drivers/platform/x86/acerhdf.c
+@@ -378,33 +378,13 @@ static int acerhdf_get_ec_temp(struct th
+ 	return 0;
+ }
+ 
+-static int acerhdf_bind(struct thermal_zone_device *thermal,
+-			struct thermal_cooling_device *cdev)
++static bool acerhdf_should_bind(struct thermal_zone_device *thermal,
++				const struct thermal_trip *trip,
++				struct thermal_cooling_device *cdev,
++				struct cooling_spec *c)
+ {
+ 	/* if the cooling device is the one from acerhdf bind it */
+-	if (cdev != cl_dev)
+-		return 0;
+-
+-	if (thermal_zone_bind_cooling_device(thermal, 0, cdev,
+-			THERMAL_NO_LIMIT, THERMAL_NO_LIMIT,
+-			THERMAL_WEIGHT_DEFAULT)) {
+-		pr_err("error binding cooling dev\n");
+-		return -EINVAL;
+-	}
+-	return 0;
+-}
+-
+-static int acerhdf_unbind(struct thermal_zone_device *thermal,
+-			  struct thermal_cooling_device *cdev)
+-{
+-	if (cdev != cl_dev)
+-		return 0;
+-
+-	if (thermal_zone_unbind_cooling_device(thermal, 0, cdev)) {
+-		pr_err("error unbinding cooling dev\n");
+-		return -EINVAL;
+-	}
+-	return 0;
++	return cdev == cl_dev && trip->type == THERMAL_TRIP_ACTIVE;
+ }
+ 
+ static inline void acerhdf_revert_to_bios_mode(void)
+@@ -447,8 +427,7 @@ static int acerhdf_get_crit_temp(struct
+ 
+ /* bind callback functions to thermalzone */
+ static struct thermal_zone_device_ops acerhdf_dev_ops = {
+-	.bind = acerhdf_bind,
+-	.unbind = acerhdf_unbind,
++	.should_bind = acerhdf_should_bind,
+ 	.get_temp = acerhdf_get_ec_temp,
+ 	.change_mode = acerhdf_change_mode,
+ 	.get_crit_temp = acerhdf_get_crit_temp,
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-> ---
->  arch/x86/kernel/cpu/microcode/amd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-> index 1f5d36f92b8a..f63b051f25a0 100644
-> --- a/arch/x86/kernel/cpu/microcode/amd.c
-> +++ b/arch/x86/kernel/cpu/microcode/amd.c
-> @@ -703,7 +703,7 @@ static struct ucode_patch *find_patch(unsigned int cpu)
->  {
->  	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
->  	u32 rev, dummy __always_unused;
-> -	u16 equiv_id;
-> +	u16 equiv_id = 0;
->  
->  	/* fetch rev if not populated yet: */
->  	if (!uci->cpu_sig.rev) {
-> -- 
-> 2.43.0
-> 
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
+
 
