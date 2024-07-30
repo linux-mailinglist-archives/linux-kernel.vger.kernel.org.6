@@ -1,310 +1,524 @@
-Return-Path: <linux-kernel+bounces-267552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 291849412BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:01:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A539412BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A18FC1F247A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:01:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DC691F24540
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C3D19307B;
-	Tue, 30 Jul 2024 13:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583121940B3;
+	Tue, 30 Jul 2024 13:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xHUGXHcB"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="anxpxvwG"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93888623
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 13:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D76256E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 13:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722344481; cv=none; b=bqU0YuN2tSITSvnYSZAoxnwXhL0bnq1bi4SOz0WCp/DC+BTI7JF1b9kBEs1Il3WtOHTfRni18DDBAyfXEKzKPSZoq3iDNsLpjskkLWkT7eK0nz7tSIV1Izjfs4+ojnS38HVYzT8kBEE4PbVvUyz9QXP471G8z7jqHem4A2tMpp0=
+	t=1722344558; cv=none; b=HmXhkLNqCx7WAHUpAQXd/3z1F+hjgvAV8GcxRtutYU07NBFhxtbSd1XFCR5RFrHOGkBBOApImmC+/RnkznLVOh9GLxyvRHEee1jw9AEnKUrvyQZddeQFe6DvGl/YUXfr0H3qRnoEbazGN8SZNF6cB48W8CF5a8J58bq5OdaUrEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722344481; c=relaxed/simple;
-	bh=hmhLIng6c059pzvOYv2iZcklNrlk4sp5KvNtRpk3gAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=niRXyiz+Z2xMwJf23eqdc1kIKvvpTSkNioS00lc2xd2hITZRLyv9vQdyrJkqf8Fdqi1B4+SwxRO6CDI+FCd5kMK9u8XLq5AjAE2Qk4D/OWnA+vnt22Cpntk9N9M2B5Mor5Y0j88xArgniFtMvvNWqrzutfjyOJRbtc+N4e8reA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xHUGXHcB; arc=none smtp.client-ip=209.85.166.178
+	s=arc-20240116; t=1722344558; c=relaxed/simple;
+	bh=hrDllh0mNU8XywMa0JRzu7wg1R37WLjH1EOOxeHp8yY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LQKt/aWxSraGdV9bbnoGbeYY/6CopApyvZ2MUOGzA5BtXIDe4CGxo7M5pejJ+6Mfi6/Ff7WvkvJPzL3grgWv1VYsQU1whTjGCR/Di1rJqKSExpUrbjCS/dreQF5M+K24DQ7vNsxPkxlX/kxwhXMHxSQWusZIGPcsDp+ePXjvSds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=anxpxvwG; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-396675b83afso26019875ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 06:01:18 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-428101fa30aso26830195e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 06:02:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722344478; x=1722949278; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9RI/exw0UDuuOm9Ra0mTLdt9ClxNeQNOb2ROdTYCmDE=;
-        b=xHUGXHcB1hZQFDJOAWy0/VQ90KtlquSLM7Soag2K7XZEV5b9BKAoW4z0iMhJfYUOEK
-         dF3iqq4tAhhNhjG61Ixg0wkxB5bgHp1XJYh9bDsm/OuGPjXWGdfjmCQ+tRhDtGXH2THR
-         S8wEqUp92/mc6/ZUNuL3EYb2gWeSd4JSx815bnPzCTgRZSQw9rqqQzu2kTdu+8lZR3Pm
-         QqCkXKrflCXmp+5DBxUsihHvAsKySSFPxkxzuOvqpSYtPwlLA+HhgqvtdfkdKjgNAQJO
-         FIBC1q7qQ9RNwiBDXlWpsuz7brUl1sMnQSzfi21YJZMVIjYpMHt3GBCc4tu78CYHUypv
-         5h/g==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722344554; x=1722949354; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=R2dIB4QTYc9vVKi6HADA4MXWLrYLxkVXN+gnrOZFtN0=;
+        b=anxpxvwG3fJuGQXSCO58+Rag/5bk4JDl/+B9tqgjYCaZhcyBj7kM6nqRrI+cqk2FH6
+         oH8QivvHKWGMgSXI6FHjsc85SAwGq92TJ1KfDhD/mkhYe1CDemv7Nbq2xCrWDgV+oPTc
+         6M6mNs4IelvuhsTPKD8wmZggNZ0K0g2uyDLdU3qd4F0cJYOELorbFFYtkxK9YvVVQcpc
+         WvPv1P/zt2MLJlpdt6qFIG7l/5gCdTMHk4WcmxciK9seg2ibw0snNluKS253XmPEuv8J
+         iaTscOm3vYbxkqPCAePEy/jd/Ut0tEOdjtXIKx0bDyDEAKtFz4aTwgDjbfEjKKJ45Hoe
+         DwlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722344478; x=1722949278;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9RI/exw0UDuuOm9Ra0mTLdt9ClxNeQNOb2ROdTYCmDE=;
-        b=G/SkEEKOgDbYlwc3Z1mbNfZOVV/xXtwN1npt2XfrWaaZDPBIZ8vkfKx+UfFs44AST4
-         MDtqej3f3TnbT12wSdllhrA0LcDK19vFRSDbRl8SJp1BuPlTlJx7qCmjwFgINv3SVahQ
-         hcL44tslnDzv2vdw9ygXnD1oI8dKhbueFaSa4DJClIQxmicye0Dxbr88sPdlFQgcQVus
-         hq+lMm3ipvetyL+YD4HkXh/MXO5/fhJRDxAnYWehiCO474jWK1Qe1fEySYS5jFLz67WF
-         cPKQLy0ZO+Ccfk00ulxwuqo8ErLRA8AHHuD1MZF0b1UexxqtI7c/a1YErz3HRzc63XLS
-         Hcww==
-X-Forwarded-Encrypted: i=1; AJvYcCVGSDB8omKYj7Zk4xJdoMCDFdHCFXmUgB8ma03rK98w6kgviFUaV80cfya5KoyYjK9PP14qmqXW97hAwwqj4V/e5byvxuYVyPRU1lcz
-X-Gm-Message-State: AOJu0YyUXndqqxfZA0Y+TaNpSPQ5YkZ7YHARMqDZwRrdspfbaVcHs28g
-	mVuK4ocV5qpWF0doese4Fz1HqBtC4gXeAWoqYSuptGC04JFbPEutB2yZBSe+JsE=
-X-Google-Smtp-Source: AGHT+IFgbcLAc1fRk8/4fljINGyXBPTYgpctkSdW9iE6bPdmkFssRuKjeYeo4aPuqUr2D4zXXdux2w==
-X-Received: by 2002:a92:c26e:0:b0:385:e2e5:ac37 with SMTP id e9e14a558f8ab-39aec40c9c6mr134065645ab.22.1722344477441;
-        Tue, 30 Jul 2024 06:01:17 -0700 (PDT)
-Received: from blmsp ([2001:4091:a245:8609:c1c4:a4f8:94c8:31f2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39a22f13f81sm46399455ab.70.2024.07.30.06.01.14
+        d=1e100.net; s=20230601; t=1722344554; x=1722949354;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R2dIB4QTYc9vVKi6HADA4MXWLrYLxkVXN+gnrOZFtN0=;
+        b=ZfmQqnfxO66FHgJ6/wzFBcjGcyOoRQ/m3BShp7T4WMazeSBaldhKHbBpm8XUHuTbkl
+         ForPUCzD8hkCOJ1m5x0eMO1MTgT7inesXpldecxkNjOMEj94Qs0In86XkUnO4hI5QTfV
+         8ZwYRwubn5vOfwwaq2t2sY3uAD8h1oyik4PO6yuiROzyj3bx00jrc3bsm/ipg9hZRwkU
+         5vaX66KkZjAWWcjc2ThQrqKrR/E55Ejhx98KW7MO7BGpaE6wXOWx1UdNU552P0nsD7hA
+         AMPOKfHO4BfJhr0w5yzCpDdfIokCTfstmT2NsWCydtmu08E1nojqMKRmR85gUEjxgR4M
+         dALA==
+X-Forwarded-Encrypted: i=1; AJvYcCXrGnQ4TnS44bSIL8WP3VjFvDYtcsdhGiaKPuVgsGVZt8Q1UdutLXB3nBDEex0kRo08bH3rt59vuzJJYB3qfuK8MZVptbszxUiW2fH3
+X-Gm-Message-State: AOJu0YyVkywAWSLU1f1fZ4P+s1IDaFaUBXw8Iu0OUgR/GAhbSTm+Ww4D
+	rsQMaBHbFWygnoUReUJnDpUQU0QegwXtF3pFGWaI99FIrJUiULZKAH6sbtsG54Q=
+X-Google-Smtp-Source: AGHT+IFJLfvBrTrdxWRIISn31wIE0LGu6jnrEGDic8jUofnRSO+fbzG98BOGseW0OOZ2U+Lb9vizkg==
+X-Received: by 2002:a05:600c:4ec9:b0:427:ff1e:ab1f with SMTP id 5b1f17b1804b1-42811d9ca69mr92858975e9.14.1722344553806;
+        Tue, 30 Jul 2024 06:02:33 -0700 (PDT)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:291e:4a48:358e:6f49])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-428134a8323sm128244305e9.46.2024.07.30.06.02.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 06:01:16 -0700 (PDT)
-Date: Tue, 30 Jul 2024 15:01:13 +0200
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-To: Nishanth Menon <nm@ti.com>
-Cc: Tero Kristo <kristo@kernel.org>, 
-	Santosh Shilimkar <ssantosh@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Vibhore Vardhan <vibhore@ti.com>, 
-	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] firmware: ti_sci: Partial-IO support
-Message-ID: <x4y44ajcdi2y2dieaa6oohrptpzyiono3fruvwcdelmtzsh4ne@cgqxsz45ohcy>
-References: <20240729080101.3859701-1-msp@baylibre.com>
- <20240729080101.3859701-3-msp@baylibre.com>
- <20240730122801.jzo5ahkurxaexwcm@ambiance>
+        Tue, 30 Jul 2024 06:02:33 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pmdomain: amlogic: remove obsolete vpu domain driver
+Date: Tue, 30 Jul 2024 15:02:22 +0200
+Message-ID: <20240730130227.712894-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240730122801.jzo5ahkurxaexwcm@ambiance>
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 30, 2024 at 07:28:01AM GMT, Nishanth Menon wrote:
-> On 10:00-20240729, Markus Schneider-Pargmann wrote:
-> > Add support for Partial-IO poweroff. In Partial-IO pins of a few modules
-> > can generate system wakeups while DDR memory is not powered resulting in
-> > a fresh boot of the system. The modules that can be wakeup sources are
-> > defined by the devicetree.
-> > 
-> > Only wakeup sources that are actually enabled by the user will be
-> > considered as a an active wakeup source. If none of the wakeup sources
-> > are enabled the system will do a normal poweroff. If at least one wakeup
-> > source is enabled it will instead send a TI_SCI_MSG_PREPARE_SLEEP
-> > message from the sys_off handler. Sending this message will result in an
-> > immediate shutdown of the system. No execution is expected after this
-> > point. The code will enter an infinite loop.
-> > 
-> > The wakeup source device nodes are gathered during probe. But they are
-> > only resolved to the actual devices in the sys_off handler, if they
-> > exist. If they do not exist, they are ignored.
-> > 
-> > A short documentation about Partial-IO can be found in section 6.2.4.5
-> > of the TRM at
-> >   https://www.ti.com/lit/pdf/spruiv7
-> > 
-> > Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
-> > ---
-> >  drivers/firmware/ti_sci.c | 160 +++++++++++++++++++++++++++++++++-----
-> >  drivers/firmware/ti_sci.h |  34 ++++++++
-> >  2 files changed, 175 insertions(+), 19 deletions(-)
-> > 
-> > diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-> > index 160968301b1f..ba2e56da0215 100644
-> > --- a/drivers/firmware/ti_sci.c
-> > +++ b/drivers/firmware/ti_sci.c
-> > @@ -99,6 +99,9 @@ struct ti_sci_desc {
-> >   * @node:	list head
-> >   * @host_id:	Host ID
-> >   * @users:	Number of users of this instance
-> > + * @nr_wakeup_sources: Number of device nodes in wakeup_source_nodes
-> > + * @wakeup_source_nodes: Array of all device_nodes listed as wakeup sources in
-> > + *			 the devicetree
-> >   */
-> >  struct ti_sci_info {
-> >  	struct device *dev;
-> > @@ -116,6 +119,9 @@ struct ti_sci_info {
-> >  	u8 host_id;
-> >  	/* protected by ti_sci_list_mutex */
-> >  	int users;
-> > +
-> > +	int nr_wakeup_sources;
-> > +	struct device_node **wakeup_source_nodes;
-> >  };
-> >  
-> >  #define cl_to_ti_sci_info(c)	container_of(c, struct ti_sci_info, cl)
-> > @@ -392,10 +398,13 @@ static void ti_sci_put_one_xfer(struct ti_sci_xfers_info *minfo,
-> >  static inline int ti_sci_do_xfer(struct ti_sci_info *info,
-> >  				 struct ti_sci_xfer *xfer)
-> >  {
-> > +	struct ti_sci_msg_hdr *hdr = (struct ti_sci_msg_hdr *)xfer->tx_message.buf;
-> >  	int ret;
-> >  	int timeout;
-> >  	struct device *dev = info->dev;
-> >  	bool done_state = true;
-> > +	bool response_expected = !!(hdr->flags & (TI_SCI_FLAG_REQ_ACK_ON_PROCESSED |
-> > +						  TI_SCI_FLAG_REQ_ACK_ON_RECEIVED));
-> 
-> I think a separate patch to introduce a no_response expected patch would
-> make sense on which we build tisci_sys_off_handler in the next patch?
-> 
-> >  
-> >  	ret = mbox_send_message(info->chan_tx, &xfer->tx_message);
-> >  	if (ret < 0)
-> > @@ -403,25 +412,27 @@ static inline int ti_sci_do_xfer(struct ti_sci_info *info,
-> >  
-> >  	ret = 0;
-> >  
-> > -	if (system_state <= SYSTEM_RUNNING) {
-> > -		/* And we wait for the response. */
-> > -		timeout = msecs_to_jiffies(info->desc->max_rx_timeout_ms);
-> > -		if (!wait_for_completion_timeout(&xfer->done, timeout))
-> > -			ret = -ETIMEDOUT;
-> > -	} else {
-> > -		/*
-> > -		 * If we are !running, we cannot use wait_for_completion_timeout
-> > -		 * during noirq phase, so we must manually poll the completion.
-> > -		 */
-> > -		ret = read_poll_timeout_atomic(try_wait_for_completion, done_state,
-> > -					       done_state, 1,
-> > -					       info->desc->max_rx_timeout_ms * 1000,
-> > -					       false, &xfer->done);
-> > -	}
-> > +	if (response_expected) {
-> 
-> 	How about a goto?
+meson-gx-pwrc-vpu has been superseded by meson-ee-pwrc since
+commit 53773f2dfd9c ("soc: amlogic: meson-ee-pwrc: add support for the Meson GX SoCs"),
+so v5.8.
 
-Yes, thanks, looks cleaner.
+This driver is obsolete and no longer used or tested.
+There is no reason to keep it around so remove it.
 
-> 
-> if (!response_expected)
-> 	goto no_response;
-> > +		if (system_state <= SYSTEM_RUNNING) {
-> > +			/* And we wait for the response. */
-> > +			timeout = msecs_to_jiffies(info->desc->max_rx_timeout_ms);
-> > +			if (!wait_for_completion_timeout(&xfer->done, timeout))
-> > +				ret = -ETIMEDOUT;
-> > +		} else {
-> > +			/*
-> > +			 * If we are !running, we cannot use wait_for_completion_timeout
-> > +			 * during noirq phase, so we must manually poll the completion.
-> > +			 */
-> > +			ret = read_poll_timeout_atomic(try_wait_for_completion, done_state,
-> > +						       done_state, 1,
-> > +						       info->desc->max_rx_timeout_ms * 1000,
-> > +						       false, &xfer->done);
-> > +		}
-> >  
-> > -	if (ret == -ETIMEDOUT)
-> > -		dev_err(dev, "Mbox timedout in resp(caller: %pS)\n",
-> > -			(void *)_RET_IP_);
-> > +		if (ret == -ETIMEDOUT)
-> > +			dev_err(dev, "Mbox timedout in resp(caller: %pS)\n",
-> > +				(void *)_RET_IP_);
-> > +	}
-> >  
-> no_response:
-> 
-> >  	/*
-> >  	 * NOTE: we might prefer not to need the mailbox ticker to manage the
-> > @@ -3262,6 +3273,82 @@ static int tisci_reboot_handler(struct sys_off_data *data)
-> >  	return NOTIFY_BAD;
-> >  }
-> >  
-> [...]
-> 
-> > +static int tisci_sys_off_handler(struct sys_off_data *data)
-> > +{
-> > +	struct ti_sci_info *info = data->cb_data;
-> > +	int i;
-> > +	int ret;
-> > +	bool enter_partial_io = false;
-> > +
-> > +	for (i = 0; i != info->nr_wakeup_sources; ++i) {
-> > +		struct platform_device *pdev =
-> > +			of_find_device_by_node(info->wakeup_source_nodes[i]);
-> > +
-> > +		if (!pdev)
-> > +			continue;
-> > +
-> > +		if (device_may_wakeup(&pdev->dev)) {
-> > +			dev_dbg(info->dev, "%pOFp identified as wakeup source\n",
-> > +				info->wakeup_source_nodes[i]);
-> > +			enter_partial_io = true;
-> > +		}
-> > +	}
-> > +
-> > +	if (!enter_partial_io)
-> > +		return NOTIFY_DONE;
-> > +
-> > +	ret = tisci_enter_partial_io(info);
-> > +
-> > +	if (ret) {
-> > +		dev_err(info->dev,
-> > +			"Failed to enter Partial-IO %pe, trying to do an emergency restart\n",
-> > +			ERR_PTR(ret));
-> > +		emergency_restart();
-> > +	}
-> > +
-> > +	while (1);
-> 
-> Why not fall through OR go through emergency_restart (since there is
-> no fall through for shutdown path) if it acks, but actually fails to
-> enter LPM state after a dt described or a default timeout period?
-> 
-> > +
-> > +	return NOTIFY_DONE;
-> > +}
-> > +
-> >  /* Description for K2G */
-> >  static const struct ti_sci_desc ti_sci_pmmc_k2g_desc = {
-> >  	.default_host_id = 2,
-> > @@ -3398,6 +3485,35 @@ static int ti_sci_probe(struct platform_device *pdev)
-> >  		goto out;
-> >  	}
-> >  
-> > +	if (of_property_read_bool(dev->of_node, "ti,partial-io-wakeup-sources")) {
-> 
-> You should probably check on TISCI_MSG_QUERY_FW_CAPS[1] if
-> Partial IO on low power mode is supported as well? if there is a
-> mismatch, report so?
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/pmdomain/amlogic/Kconfig             |  11 -
+ drivers/pmdomain/amlogic/Makefile            |   1 -
+ drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c | 380 -------------------
+ 3 files changed, 392 deletions(-)
+ delete mode 100644 drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
 
-I actually have another series in my queue that introduces this check. I
-just implemented this check for Partial-IO yesterday in the patch that
-introduces fw capabilities. If you like I can switch these series
-around.
+diff --git a/drivers/pmdomain/amlogic/Kconfig b/drivers/pmdomain/amlogic/Kconfig
+index 2108729909b5..e72b664174af 100644
+--- a/drivers/pmdomain/amlogic/Kconfig
++++ b/drivers/pmdomain/amlogic/Kconfig
+@@ -1,17 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ menu "Amlogic PM Domains"
+ 
+-config MESON_GX_PM_DOMAINS
+-	tristate "Amlogic Meson GX Power Domains driver"
+-	depends on ARCH_MESON || COMPILE_TEST
+-	depends on PM && OF
+-	default ARCH_MESON
+-	select PM_GENERIC_DOMAINS
+-	select PM_GENERIC_DOMAINS_OF
+-	help
+-	  Say yes to expose Amlogic Meson GX Power Domains as
+-	  Generic Power Domains.
+-
+ config MESON_EE_PM_DOMAINS
+ 	tristate "Amlogic Meson Everything-Else Power Domains driver"
+ 	depends on ARCH_MESON || COMPILE_TEST
+diff --git a/drivers/pmdomain/amlogic/Makefile b/drivers/pmdomain/amlogic/Makefile
+index 3d58abd574f9..99f195f09957 100644
+--- a/drivers/pmdomain/amlogic/Makefile
++++ b/drivers/pmdomain/amlogic/Makefile
+@@ -1,4 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-obj-$(CONFIG_MESON_GX_PM_DOMAINS) += meson-gx-pwrc-vpu.o
+ obj-$(CONFIG_MESON_EE_PM_DOMAINS) += meson-ee-pwrc.o
+ obj-$(CONFIG_MESON_SECURE_PM_DOMAINS) += meson-secure-pwrc.o
+diff --git a/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c b/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
+deleted file mode 100644
+index 6028e91664a4..000000000000
+--- a/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
++++ /dev/null
+@@ -1,380 +0,0 @@
+-/*
+- * Copyright (c) 2017 BayLibre, SAS
+- * Author: Neil Armstrong <narmstrong@baylibre.com>
+- *
+- * SPDX-License-Identifier: GPL-2.0+
+- */
+-
+-#include <linux/platform_device.h>
+-#include <linux/pm_domain.h>
+-#include <linux/bitfield.h>
+-#include <linux/regmap.h>
+-#include <linux/mfd/syscon.h>
+-#include <linux/of.h>
+-#include <linux/reset.h>
+-#include <linux/clk.h>
+-#include <linux/module.h>
+-
+-/* AO Offsets */
+-
+-#define AO_RTI_GEN_PWR_SLEEP0		(0x3a << 2)
+-
+-#define GEN_PWR_VPU_HDMI		BIT(8)
+-#define GEN_PWR_VPU_HDMI_ISO		BIT(9)
+-
+-/* HHI Offsets */
+-
+-#define HHI_MEM_PD_REG0			(0x40 << 2)
+-#define HHI_VPU_MEM_PD_REG0		(0x41 << 2)
+-#define HHI_VPU_MEM_PD_REG1		(0x42 << 2)
+-#define HHI_VPU_MEM_PD_REG2		(0x4d << 2)
+-
+-struct meson_gx_pwrc_vpu {
+-	struct generic_pm_domain genpd;
+-	struct regmap *regmap_ao;
+-	struct regmap *regmap_hhi;
+-	struct reset_control *rstc;
+-	struct clk *vpu_clk;
+-	struct clk *vapb_clk;
+-};
+-
+-static inline
+-struct meson_gx_pwrc_vpu *genpd_to_pd(struct generic_pm_domain *d)
+-{
+-	return container_of(d, struct meson_gx_pwrc_vpu, genpd);
+-}
+-
+-static int meson_gx_pwrc_vpu_power_off(struct generic_pm_domain *genpd)
+-{
+-	struct meson_gx_pwrc_vpu *pd = genpd_to_pd(genpd);
+-	int i;
+-
+-	regmap_update_bits(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
+-			   GEN_PWR_VPU_HDMI_ISO, GEN_PWR_VPU_HDMI_ISO);
+-	udelay(20);
+-
+-	/* Power Down Memories */
+-	for (i = 0; i < 32; i += 2) {
+-		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG0,
+-				   0x3 << i, 0x3 << i);
+-		udelay(5);
+-	}
+-	for (i = 0; i < 32; i += 2) {
+-		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG1,
+-				   0x3 << i, 0x3 << i);
+-		udelay(5);
+-	}
+-	for (i = 8; i < 16; i++) {
+-		regmap_update_bits(pd->regmap_hhi, HHI_MEM_PD_REG0,
+-				   BIT(i), BIT(i));
+-		udelay(5);
+-	}
+-	udelay(20);
+-
+-	regmap_update_bits(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
+-			   GEN_PWR_VPU_HDMI, GEN_PWR_VPU_HDMI);
+-
+-	msleep(20);
+-
+-	clk_disable_unprepare(pd->vpu_clk);
+-	clk_disable_unprepare(pd->vapb_clk);
+-
+-	return 0;
+-}
+-
+-static int meson_g12a_pwrc_vpu_power_off(struct generic_pm_domain *genpd)
+-{
+-	struct meson_gx_pwrc_vpu *pd = genpd_to_pd(genpd);
+-	int i;
+-
+-	regmap_update_bits(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
+-			   GEN_PWR_VPU_HDMI_ISO, GEN_PWR_VPU_HDMI_ISO);
+-	udelay(20);
+-
+-	/* Power Down Memories */
+-	for (i = 0; i < 32; i += 2) {
+-		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG0,
+-				   0x3 << i, 0x3 << i);
+-		udelay(5);
+-	}
+-	for (i = 0; i < 32; i += 2) {
+-		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG1,
+-				   0x3 << i, 0x3 << i);
+-		udelay(5);
+-	}
+-	for (i = 0; i < 32; i += 2) {
+-		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG2,
+-				   0x3 << i, 0x3 << i);
+-		udelay(5);
+-	}
+-	for (i = 8; i < 16; i++) {
+-		regmap_update_bits(pd->regmap_hhi, HHI_MEM_PD_REG0,
+-				   BIT(i), BIT(i));
+-		udelay(5);
+-	}
+-	udelay(20);
+-
+-	regmap_update_bits(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
+-			   GEN_PWR_VPU_HDMI, GEN_PWR_VPU_HDMI);
+-
+-	msleep(20);
+-
+-	clk_disable_unprepare(pd->vpu_clk);
+-	clk_disable_unprepare(pd->vapb_clk);
+-
+-	return 0;
+-}
+-
+-static int meson_gx_pwrc_vpu_setup_clk(struct meson_gx_pwrc_vpu *pd)
+-{
+-	int ret;
+-
+-	ret = clk_prepare_enable(pd->vpu_clk);
+-	if (ret)
+-		return ret;
+-
+-	ret = clk_prepare_enable(pd->vapb_clk);
+-	if (ret)
+-		clk_disable_unprepare(pd->vpu_clk);
+-
+-	return ret;
+-}
+-
+-static int meson_gx_pwrc_vpu_power_on(struct generic_pm_domain *genpd)
+-{
+-	struct meson_gx_pwrc_vpu *pd = genpd_to_pd(genpd);
+-	int ret;
+-	int i;
+-
+-	regmap_update_bits(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
+-			   GEN_PWR_VPU_HDMI, 0);
+-	udelay(20);
+-
+-	/* Power Up Memories */
+-	for (i = 0; i < 32; i += 2) {
+-		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG0,
+-				   0x3 << i, 0);
+-		udelay(5);
+-	}
+-
+-	for (i = 0; i < 32; i += 2) {
+-		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG1,
+-				   0x3 << i, 0);
+-		udelay(5);
+-	}
+-
+-	for (i = 8; i < 16; i++) {
+-		regmap_update_bits(pd->regmap_hhi, HHI_MEM_PD_REG0,
+-				   BIT(i), 0);
+-		udelay(5);
+-	}
+-	udelay(20);
+-
+-	ret = reset_control_assert(pd->rstc);
+-	if (ret)
+-		return ret;
+-
+-	regmap_update_bits(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
+-			   GEN_PWR_VPU_HDMI_ISO, 0);
+-
+-	ret = reset_control_deassert(pd->rstc);
+-	if (ret)
+-		return ret;
+-
+-	ret = meson_gx_pwrc_vpu_setup_clk(pd);
+-	if (ret)
+-		return ret;
+-
+-	return 0;
+-}
+-
+-static int meson_g12a_pwrc_vpu_power_on(struct generic_pm_domain *genpd)
+-{
+-	struct meson_gx_pwrc_vpu *pd = genpd_to_pd(genpd);
+-	int ret;
+-	int i;
+-
+-	regmap_update_bits(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
+-			   GEN_PWR_VPU_HDMI, 0);
+-	udelay(20);
+-
+-	/* Power Up Memories */
+-	for (i = 0; i < 32; i += 2) {
+-		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG0,
+-				   0x3 << i, 0);
+-		udelay(5);
+-	}
+-
+-	for (i = 0; i < 32; i += 2) {
+-		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG1,
+-				   0x3 << i, 0);
+-		udelay(5);
+-	}
+-
+-	for (i = 0; i < 32; i += 2) {
+-		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG2,
+-				   0x3 << i, 0);
+-		udelay(5);
+-	}
+-
+-	for (i = 8; i < 16; i++) {
+-		regmap_update_bits(pd->regmap_hhi, HHI_MEM_PD_REG0,
+-				   BIT(i), 0);
+-		udelay(5);
+-	}
+-	udelay(20);
+-
+-	ret = reset_control_assert(pd->rstc);
+-	if (ret)
+-		return ret;
+-
+-	regmap_update_bits(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
+-			   GEN_PWR_VPU_HDMI_ISO, 0);
+-
+-	ret = reset_control_deassert(pd->rstc);
+-	if (ret)
+-		return ret;
+-
+-	ret = meson_gx_pwrc_vpu_setup_clk(pd);
+-	if (ret)
+-		return ret;
+-
+-	return 0;
+-}
+-
+-static bool meson_gx_pwrc_vpu_get_power(struct meson_gx_pwrc_vpu *pd)
+-{
+-	u32 reg;
+-
+-	regmap_read(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0, &reg);
+-
+-	return (reg & GEN_PWR_VPU_HDMI);
+-}
+-
+-static struct meson_gx_pwrc_vpu vpu_hdmi_pd = {
+-	.genpd = {
+-		.name = "vpu_hdmi",
+-		.power_off = meson_gx_pwrc_vpu_power_off,
+-		.power_on = meson_gx_pwrc_vpu_power_on,
+-	},
+-};
+-
+-static struct meson_gx_pwrc_vpu vpu_hdmi_pd_g12a = {
+-	.genpd = {
+-		.name = "vpu_hdmi",
+-		.power_off = meson_g12a_pwrc_vpu_power_off,
+-		.power_on = meson_g12a_pwrc_vpu_power_on,
+-	},
+-};
+-
+-static int meson_gx_pwrc_vpu_probe(struct platform_device *pdev)
+-{
+-	const struct meson_gx_pwrc_vpu *vpu_pd_match;
+-	struct regmap *regmap_ao, *regmap_hhi;
+-	struct meson_gx_pwrc_vpu *vpu_pd;
+-	struct device_node *parent_np;
+-	struct reset_control *rstc;
+-	struct clk *vpu_clk;
+-	struct clk *vapb_clk;
+-	bool powered_off;
+-	int ret;
+-
+-	vpu_pd_match = of_device_get_match_data(&pdev->dev);
+-	if (!vpu_pd_match) {
+-		dev_err(&pdev->dev, "failed to get match data\n");
+-		return -ENODEV;
+-	}
+-
+-	vpu_pd = devm_kzalloc(&pdev->dev, sizeof(*vpu_pd), GFP_KERNEL);
+-	if (!vpu_pd)
+-		return -ENOMEM;
+-
+-	memcpy(vpu_pd, vpu_pd_match, sizeof(*vpu_pd));
+-
+-	parent_np = of_get_parent(pdev->dev.of_node);
+-	regmap_ao = syscon_node_to_regmap(parent_np);
+-	of_node_put(parent_np);
+-	if (IS_ERR(regmap_ao)) {
+-		dev_err(&pdev->dev, "failed to get regmap\n");
+-		return PTR_ERR(regmap_ao);
+-	}
+-
+-	regmap_hhi = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
+-						     "amlogic,hhi-sysctrl");
+-	if (IS_ERR(regmap_hhi)) {
+-		dev_err(&pdev->dev, "failed to get HHI regmap\n");
+-		return PTR_ERR(regmap_hhi);
+-	}
+-
+-	rstc = devm_reset_control_array_get_exclusive(&pdev->dev);
+-	if (IS_ERR(rstc))
+-		return dev_err_probe(&pdev->dev, PTR_ERR(rstc),
+-				     "failed to get reset lines\n");
+-
+-	vpu_clk = devm_clk_get(&pdev->dev, "vpu");
+-	if (IS_ERR(vpu_clk)) {
+-		dev_err(&pdev->dev, "vpu clock request failed\n");
+-		return PTR_ERR(vpu_clk);
+-	}
+-
+-	vapb_clk = devm_clk_get(&pdev->dev, "vapb");
+-	if (IS_ERR(vapb_clk)) {
+-		dev_err(&pdev->dev, "vapb clock request failed\n");
+-		return PTR_ERR(vapb_clk);
+-	}
+-
+-	vpu_pd->regmap_ao = regmap_ao;
+-	vpu_pd->regmap_hhi = regmap_hhi;
+-	vpu_pd->rstc = rstc;
+-	vpu_pd->vpu_clk = vpu_clk;
+-	vpu_pd->vapb_clk = vapb_clk;
+-
+-	platform_set_drvdata(pdev, vpu_pd);
+-
+-	powered_off = meson_gx_pwrc_vpu_get_power(vpu_pd);
+-
+-	/* If already powered, sync the clock states */
+-	if (!powered_off) {
+-		ret = meson_gx_pwrc_vpu_setup_clk(vpu_pd);
+-		if (ret)
+-			return ret;
+-	}
+-
+-	vpu_pd->genpd.flags = GENPD_FLAG_ALWAYS_ON;
+-	pm_genpd_init(&vpu_pd->genpd, NULL, powered_off);
+-
+-	return of_genpd_add_provider_simple(pdev->dev.of_node,
+-					    &vpu_pd->genpd);
+-}
+-
+-static void meson_gx_pwrc_vpu_shutdown(struct platform_device *pdev)
+-{
+-	struct meson_gx_pwrc_vpu *vpu_pd = platform_get_drvdata(pdev);
+-	bool powered_off;
+-
+-	powered_off = meson_gx_pwrc_vpu_get_power(vpu_pd);
+-	if (!powered_off)
+-		vpu_pd->genpd.power_off(&vpu_pd->genpd);
+-}
+-
+-static const struct of_device_id meson_gx_pwrc_vpu_match_table[] = {
+-	{ .compatible = "amlogic,meson-gx-pwrc-vpu", .data = &vpu_hdmi_pd },
+-	{
+-	  .compatible = "amlogic,meson-g12a-pwrc-vpu",
+-	  .data = &vpu_hdmi_pd_g12a
+-	},
+-	{ /* sentinel */ }
+-};
+-MODULE_DEVICE_TABLE(of, meson_gx_pwrc_vpu_match_table);
+-
+-static struct platform_driver meson_gx_pwrc_vpu_driver = {
+-	.probe	= meson_gx_pwrc_vpu_probe,
+-	.shutdown = meson_gx_pwrc_vpu_shutdown,
+-	.driver = {
+-		.name		= "meson_gx_pwrc_vpu",
+-		.of_match_table	= meson_gx_pwrc_vpu_match_table,
+-	},
+-};
+-module_platform_driver(meson_gx_pwrc_vpu_driver);
+-MODULE_DESCRIPTION("Amlogic Meson GX Power Domains driver");
+-MODULE_LICENSE("GPL v2");
+-- 
+2.43.0
 
-> 
-> > +		info->nr_wakeup_sources =
-> > +			of_count_phandle_with_args(dev->of_node,
-> > +						   "ti,partial-io-wakeup-sources",
-> > +						   NULL);
-> > +		info->wakeup_source_nodes =
-> > +			devm_kzalloc(dev, sizeof(*info->wakeup_source_nodes),
-> > +				     GFP_KERNEL);
-> > +
-> > +		for (i = 0; i != info->nr_wakeup_sources; ++i) {
-> > +			struct device_node *devnode =
-> > +				of_parse_phandle(dev->of_node,
-> > +						 "ti,partial-io-wakeup-sources",
-> > +						 i);
-> > +			info->wakeup_source_nodes[i] = devnode;
-> 
-> Curious: Don't we need to maintain reference counting for the devnode
-> if CONFIG_OF_DYNAMIC?
-
-In case you mean I missed of_node_put(), yes, I did, thank you. I added
-it in a ti_sci_remove().
-
-Best
-Markus
 
