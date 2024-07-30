@@ -1,326 +1,266 @@
-Return-Path: <linux-kernel+bounces-268025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26496941F80
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:23:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69605941F81
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:24:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6B971F24E3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:23:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D2111C232B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC7918B49F;
-	Tue, 30 Jul 2024 18:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6634818A92F;
+	Tue, 30 Jul 2024 18:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="ouYQfA6w"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qr4kTpqb"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFCD18A6A9;
-	Tue, 30 Jul 2024 18:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B4D16C44A
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 18:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722363810; cv=none; b=qSCRylqLz4YsK0jxDqGtaNKdssfbvc6XKaDm8a8cNxbKz3NgqR3v7zerU1ssARna52wpi3v355RkQybxV4SchHyXkYjYdceFJP2ZaKnSn8G3/CX1pel9n8MB07Xp/BfldmPqg5rbTgqud3moOq3wsW8wHVeqoiypbIstTAUE+j0=
+	t=1722363854; cv=none; b=q1rWH2sazA3v3NN1EKjaetwxIBS6sOYzywyJoKXIytXsUYJBUiAKuzI68Swftv1RHdWA+5imlD/0dC3PzE+qE93F0s3BNEliCQV1d9mq95jKF7QXm1LhXxQfxis2KQp0t0zi73nvgdrfP22a4COtZ4SnrV7V//mh8jFeQ63wokg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722363810; c=relaxed/simple;
-	bh=Qb8br/vYDxwoplIJZm4RYBfSu7yRRiPHE51oAyH7OIA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eMdLMiYXq8zmEeO1oUrd/uCaDh38q576Apo2F/IwB36O2R5BguZUn//WsOH1R4U13PKJP/TmbvgxFYPFij3ekZP3bbUXdElAHKEOJs+CA9OUlFrvvUzyFUMf5yU0pjmmMLtD03Pk5/uTZpxSoEYZbhBa0ZqW5hIswD/XCOmzI+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=ouYQfA6w reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id ff954b6e5b4296e5; Tue, 30 Jul 2024 20:23:26 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id B69F7956ED0;
-	Tue, 30 Jul 2024 20:23:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1722363806;
-	bh=Qb8br/vYDxwoplIJZm4RYBfSu7yRRiPHE51oAyH7OIA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ouYQfA6wHHEqQMaqk/TnALI11BIN6PNxgeRzcBT43lZOMNU4590RioYBWqPet6XXj
-	 AdcVgO19ClcxIR3FkKxZ8c7gb7vlYSD+SSW8zx5pOBh30nDc95rjOOt1ZdoxP4461B
-	 UlSnKfKOkX3njOTlewE7Ote/967GR74RTpcuxO3/55AT0YV3Vm7YXunv+76ho9CEZd
-	 q8SQ5WOt8tjwZZTgKpXQoIS4dLZQ4gE30l4XPci9ZGRiko6XB77rKVPmMVeLlJ+0X4
-	 gokiaePiAvHkKc7cuKXALF6JRJzmLjM0YS/lUQVuUbZMthjQzPbb2DijGZcaZ7qVcW
-	 ir4Tmq8mYRweQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux ACPI <linux-acpi@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
-Subject:
- [PATCH v1 08/17] thermal: core: Introduce .should_bind() thermal zone
- callback
-Date: Tue, 30 Jul 2024 20:23:25 +0200
-Message-ID: <2902112.88bMQJbFj6@rjwysocki.net>
-In-Reply-To: <1922131.tdWV9SEqCh@rjwysocki.net>
-References: <1922131.tdWV9SEqCh@rjwysocki.net>
+	s=arc-20240116; t=1722363854; c=relaxed/simple;
+	bh=cQHWKG/nVySOQS+Ef6ysuyUXCSFnnF1K/ca9qz2n2mw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CW4T+0/TxfjErjIy93IXyNFgMuI42BaiYg0bFZrDVVMVPXByD0IpP9yNwfeTC24Fx3K5mailkIYJMlt1CpCoWPtN/BFPiPF9qcOp7bnA2u4k3/Nr982/wfme3cHCWvdh+7OGhKi4f9k3l0nbQLO+7BiIdLHGm8AFtbcHurrg3MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qr4kTpqb; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-49294575ad8so72759137.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:24:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722363852; x=1722968652; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qgn98Rs0vFZ6vwFLptR9+FqcC4bD5nEP0/iSprZQXIE=;
+        b=qr4kTpqbJwVMLbN4lV4empHFxpl7SYz93LBysX3byQxqdDne9ZcShZynHh1ylkyHRg
+         dGL182ZwjE3tAxW0sLsZ1df1peaygcqIXjSFVR2PoRZb9OdqGD7wvsDtnFdZKqJ1vn1e
+         vMTqam7UgCQdsR4eb+LduGFr4vFTHfrPHJNlIE+/v4ar8RHjuzSnZ9J2K0L1uD/NGjzO
+         TVKLiXIQQIlKCm+0RTdIiE7fA9OwY68kFODA9g+mFnhfFbvSTSXFCMxRdOq9hN2cgan1
+         01yxKkYAC1ZP1jwc87ywXGjnLS7ZBWtfinxCAYEQXA58NbuZkbMDbnqAj/YlyfAqEX/O
+         TgDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722363852; x=1722968652;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qgn98Rs0vFZ6vwFLptR9+FqcC4bD5nEP0/iSprZQXIE=;
+        b=qwRMEWw6/aOISy152i7u8XFSlrRvl03hs6MBCNUnkwJszmMRhsKC9Zoj9/9mn3mall
+         /HYfjLOhKaMK+vxfU8yrXNSP7iGlAq1/TYtnXIExp4b5H2DkP0sEF1Uq5SG/+JkLBmwV
+         N+Gsfs5AAD1i0ULUWUI2GoL5FpofRaAuPlPUktrbx+chXAQGUGsz1lK/bTMHQshq4Xbp
+         9OZREIrc0ZSX/iKEJYQjhOaQxDq0cmx4WtPEmKr+YtqEiLg75yU4RyDgxD8O2ku4RITQ
+         aE2prmMp3hJVpfTzrmB9R4tIw4NXvm8VkfTK9VJ5QGOMPRCEM/Ysdnm1O3DZzHk15lH6
+         8Ixg==
+X-Forwarded-Encrypted: i=1; AJvYcCW04qNkB3sGMco7J79FXg3qDftKcWGvly7hS8O4bi4WSVwtc+G7UdAjFe+8Xz/UlGHRTHwTj96Afm810FrHT3qkLWlvlbbR47nL0F4W
+X-Gm-Message-State: AOJu0Yz8TNUTrPZxvaglcseI4xmW2Q/HNGjwx9ID3V6GJ/OQ0IpmojpY
+	6KSCNj1RhuLO8Q+K7VkGXTnK1ltj1WfFoJ7+dfqC1vnPykEvPlCjzP25R5NYuWvGkpcROb2VA+q
+	yAH65GFObpVIM5orFsM6h8uvMwrDpI2n7Ccvo
+X-Google-Smtp-Source: AGHT+IHqMhIcIB7MmFSRCmP+6Dl5wgB3Ta7vjwrWUhyeeqUD31fdpY7fSWauWCYAoV8voiWfscrwOuHigapRlXklOJo=
+X-Received: by 2002:a05:6102:5489:b0:48f:3b56:a184 with SMTP id
+ ada2fe7eead31-49435606a62mr1793572137.5.1722363851381; Tue, 30 Jul 2024
+ 11:24:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+References: <20240727230635.3170-1-flintglass@gmail.com> <20240727230635.3170-2-flintglass@gmail.com>
+ <CAJD7tkYKC8Cy0tCc=1m5x=bXVaXPhzRhWjeP5n6YofuPeTgOwg@mail.gmail.com> <CAPpoddcHCgZGx3DZXBzDCZRVNYpzf+aoeTYYd8Fr3GyndtNC2w@mail.gmail.com>
+In-Reply-To: <CAPpoddcHCgZGx3DZXBzDCZRVNYpzf+aoeTYYd8Fr3GyndtNC2w@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Tue, 30 Jul 2024 11:23:32 -0700
+Message-ID: <CAJD7tkZzb=PDtm=ba03hjPz_AOasmKEYBU+P9c0xWr-Hjd0XPA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] mm: zswap: fix global shrinker memcg iteration
+To: Takero Funaki <flintglass@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeggdduvdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
- rhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=24 Fuz1=24 Fuz2=24
+Content-Transfer-Encoding: quoted-printable
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Mon, Jul 29, 2024 at 10:25=E2=80=AFPM Takero Funaki <flintglass@gmail.co=
+m> wrote:
+>
+> 2024=E5=B9=B47=E6=9C=8830=E6=97=A5(=E7=81=AB) 3:24 Yosry Ahmed <yosryahme=
+d@google.com>:
+> >
+> > On Sat, Jul 27, 2024 at 4:06=E2=80=AFPM Takero Funaki <flintglass@gmail=
+.com> wrote:
+> > >
+> > > This patch fixes an issue where the zswap global shrinker stopped
+> > > iterating through the memcg tree.
+> > >
+> > > The problem was that shrink_worker() would restart iterating memcg tr=
+ee
+> > > from the tree root, considering an offline memcg as a failure, and ab=
+ort
+> > > shrinking after encountering the same offline memcg 16 times even if
+> > > there is only one offline memcg. After this change, an offline memcg =
+in
+> > > the tree is no longer considered a failure. This allows the shrinker =
+to
+> > > continue shrinking the other online memcgs regardless of whether an
+> > > offline memcg exists, gives higher zswap writeback activity.
+> > >
+> > > To avoid holding refcount of offline memcg encountered during the mem=
+cg
+> > > tree walking, shrink_worker() must continue iterating to release the
+> > > offline memcg to ensure the next memcg stored in the cursor is online=
+.
+> > >
+> > > The offline memcg cleaner has also been changed to avoid the same iss=
+ue.
+> > > When the next memcg of the offlined memcg is also offline, the refcou=
+nt
+> > > stored in the iteration cursor was held until the next shrink_worker(=
+)
+> > > run. The cleaner must release the offline memcg recursively.
+> > >
+> > > Fixes: a65b0e7607cc ("zswap: make shrinking memcg-aware")
+> > > Signed-off-by: Takero Funaki <flintglass@gmail.com>
+> > > ---
+> > >  mm/zswap.c | 73 ++++++++++++++++++++++++++++++++++++----------------=
+--
+> > >  1 file changed, 49 insertions(+), 24 deletions(-)
+> > >
+> > > diff --git a/mm/zswap.c b/mm/zswap.c
+> > > index adeaf9c97fde..e9b5343256cd 100644
+> > > --- a/mm/zswap.c
+> > > +++ b/mm/zswap.c
+> > > @@ -765,12 +765,31 @@ void zswap_folio_swapin(struct folio *folio)
+> > >         }
+> > >  }
+> > >
+> > > +/*
+> > > + * This function should be called when a memcg is being offlined.
+> > > + *
+> > > + * Since the global shrinker shrink_worker() may hold a reference
+> > > + * of the memcg, we must check and release the reference in
+> > > + * zswap_next_shrink.
+> > > + *
+> > > + * shrink_worker() must handle the case where this function releases
+> > > + * the reference of memcg being shrunk.
+> > > + */
+> > >  void zswap_memcg_offline_cleanup(struct mem_cgroup *memcg)
+> > >  {
+> > >         /* lock out zswap shrinker walking memcg tree */
+> > >         spin_lock(&zswap_shrink_lock);
+> > > -       if (zswap_next_shrink =3D=3D memcg)
+> > > -               zswap_next_shrink =3D mem_cgroup_iter(NULL, zswap_nex=
+t_shrink, NULL);
+> > > +       if (zswap_next_shrink =3D=3D memcg) {
+> > > +               do {
+> > > +                       zswap_next_shrink =3D mem_cgroup_iter(NULL, z=
+swap_next_shrink, NULL);
+> > > +               } while (zswap_next_shrink && !mem_cgroup_online(zswa=
+p_next_shrink));
+> > > +               /*
+> > > +                * We verified the next memcg is online.  Even if the=
+ next
+> > > +                * memcg is being offlined here, another cleaner must=
+ be
+> > > +                * waiting for our lock.  We can leave the online mem=
+cg
+> > > +                * reference.
+> > > +                */
+> >
+> > I thought we agreed to drop this comment :)
+> >
+> > > +       }
+> > >         spin_unlock(&zswap_shrink_lock);
+> > >  }
+> > >
+> > > @@ -1304,43 +1323,49 @@ static void shrink_worker(struct work_struct =
+*w)
+> > >         /* Reclaim down to the accept threshold */
+> > >         thr =3D zswap_accept_thr_pages();
+> > >
+> > > -       /* global reclaim will select cgroup in a round-robin fashion=
+. */
+> > > +       /* global reclaim will select cgroup in a round-robin fashion=
+.
+> >
+> > nit: s/global/Global
+> >
+> > > +        *
+> > > +        * We save iteration cursor memcg into zswap_next_shrink,
+> > > +        * which can be modified by the offline memcg cleaner
+> > > +        * zswap_memcg_offline_cleanup().
+> > > +        *
+> > > +        * Since the offline cleaner is called only once, we cannot l=
+eave an
+> > > +        * offline memcg reference in zswap_next_shrink.
+> > > +        * We can rely on the cleaner only if we get online memcg und=
+er lock.
+> > > +        *
+> > > +        * If we get an offline memcg, we cannot determine if the cle=
+aner has
+> > > +        * already been called or will be called later. We must put b=
+ack the
+> > > +        * reference before returning from this function. Otherwise, =
+the
+> > > +        * offline memcg left in zswap_next_shrink will hold the refe=
+rence
+> > > +        * until the next run of shrink_worker().
+> > > +        */
+> > >         do {
+> > >                 spin_lock(&zswap_shrink_lock);
+> > > -               zswap_next_shrink =3D mem_cgroup_iter(NULL, zswap_nex=
+t_shrink, NULL);
+> > > -               memcg =3D zswap_next_shrink;
+> > >
+> > >                 /*
+> > > -                * We need to retry if we have gone through a full ro=
+und trip, or if we
+> > > -                * got an offline memcg (or else we risk undoing the =
+effect of the
+> > > -                * zswap memcg offlining cleanup callback). This is n=
+ot catastrophic
+> > > -                * per se, but it will keep the now offlined memcg ho=
+stage for a while.
+> > > -                *
+> > > +                * Start shrinking from the next memcg after zswap_ne=
+xt_shrink.
+> > > +                * When the offline cleaner has already advanced the =
+cursor,
+> > > +                * advancing the cursor here overlooks one memcg, but=
+ this
+> > > +                * should be negligibly rare.
+> > > +                */
+> > > +               do {
+> > > +                       memcg =3D mem_cgroup_iter(NULL, zswap_next_sh=
+rink, NULL);
+> > > +                       zswap_next_shrink =3D memcg;
+> > > +               } while (memcg && !mem_cgroup_tryget_online(memcg));
+> >
+> > Let's move spin_lock() and spin_unlock() to be right above and before
+> > the do-while loop, similar to zswap_memcg_offline_cleanup(). This
+> > should make it more obvious what the lock is protecting.
+> >
+> > Actually, maybe it would be cleaner at this point to move the
+> > iteration to find the next online memcg under lock into a helper, and
+> > use it here and in zswap_memcg_offline_cleanup(). zswap_shrink_lock
+> > and zswap_next_shrink can be made static to this helper and maybe some
+> > of the comments could live there instead. Something like
+> > zswap_next_shrink_memcg().
+> >
+> > This will abstract this whole iteration logic and make shrink_worker()
+> > significantly easier to follow. WDYT?
+> >
+> > I can do that in a followup cleanup patch if you prefer this as well.
+> >
+>
+> I'd really appreciate it. Sorry to have kept you waiting for a novice
+> coder. Thank you for all your comments and support.
 
-The current design of the code binding cooling devices to trip points in
-thermal zones is convoluted and hard to follow.
+I will send a followup patch after this lands in mm-unstable. For this
+patch, feel free to add:
 
-Namely, a driver that registers a thermal zone can provide .bind()
-and .unbind() operations for it, which are required to call either
-thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip(),
-respectively, or thermal_zone_bind_cooling_device() and
-thermal_zone_unbind_cooling_device(), respectively, for every relevant
-trip point and the given cooling device.  Moreover, if .bind() is
-provided and .unbind() is not, the cleanup necessary during the removal
-of a thermal zone or a cooling device may not be carried out.
-
-In other words, the core relies on the thermal zone owners to do the
-right thing, which is error prone and far from obvious, even though all
-of that is not really necessary.  Specifically, if the core could ask
-the thermal zone owner, through a special thermal zone callback, whether
-or not a given cooling device should be bound to a given trip point in
-the given thermal zone, it might as well carry out all of the binding
-and unbinding by itself.  In particular, the unbinding can be done
-automatically without involving the thermal zone owner at all because
-all of the thermal instances associated with a thermal zone or cooling
-device going away must be deleted regardless.
-
-Accordingly, introduce a new thermal zone operation, .should_bind(),
-that can be invoked by the thermal core for a given thermal zone,
-trip point and cooling device combination in order to check whether
-or not the cooling device should be bound to the trip point at hand.
-It takes an additional cooling_spec argument allowing the thermal
-zone owner to specify the highest and lowest cooling states of the
-cooling device and its weight for the given trip point binding.
-
-Make the thermal core use this operation, if present, in the absence of
-.bind() and .unbind().  Note that .should_bind() will be called under
-the thermal zone lock.
-
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/thermal_core.c |  106 +++++++++++++++++++++++++++++++----------
- include/linux/thermal.h        |   10 +++
- 2 files changed, 92 insertions(+), 24 deletions(-)
-
-Index: linux-pm/include/linux/thermal.h
-===================================================================
---- linux-pm.orig/include/linux/thermal.h
-+++ linux-pm/include/linux/thermal.h
-@@ -84,11 +84,21 @@ struct thermal_trip {
- 
- struct thermal_zone_device;
- 
-+struct cooling_spec {
-+	unsigned long upper;	/* Highest cooling state  */
-+	unsigned long lower;	/* Lowest cooling state  */
-+	unsigned int weight;	/* Cooling device weight */
-+};
-+
- struct thermal_zone_device_ops {
- 	int (*bind) (struct thermal_zone_device *,
- 		     struct thermal_cooling_device *);
- 	int (*unbind) (struct thermal_zone_device *,
- 		       struct thermal_cooling_device *);
-+	bool (*should_bind) (struct thermal_zone_device *,
-+			     const struct thermal_trip *,
-+			     struct thermal_cooling_device *,
-+			     struct cooling_spec *);
- 	int (*get_temp) (struct thermal_zone_device *, int *);
- 	int (*set_trips) (struct thermal_zone_device *, int, int);
- 	int (*change_mode) (struct thermal_zone_device *,
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -1000,12 +1000,61 @@ static struct class *thermal_class;
- 
- static inline
- void print_bind_err_msg(struct thermal_zone_device *tz,
-+			const struct thermal_trip *trip,
- 			struct thermal_cooling_device *cdev, int ret)
- {
-+	if (trip) {
-+		dev_err(&tz->device, "binding cdev %s to trip %d failed: %d\n",
-+			cdev->type, thermal_zone_trip_id(tz, trip), ret);
-+		return;
-+	}
-+
- 	dev_err(&tz->device, "binding zone %s with cdev %s failed:%d\n",
- 		tz->type, cdev->type, ret);
- }
- 
-+static void thermal_zone_cdev_binding(struct thermal_zone_device *tz,
-+				      struct thermal_cooling_device *cdev)
-+{
-+	struct thermal_trip_desc *td;
-+	int ret;
-+
-+	/*
-+	 * Old-style binding. The .bind() callback is expected to call
-+	 * thermal_bind_cdev_to_trip() under the thermal zone lock.
-+	 */
-+	if (tz->ops.bind) {
-+		ret = tz->ops.bind(tz, cdev);
-+		if (ret)
-+			print_bind_err_msg(tz, NULL, cdev, ret);
-+
-+		return;
-+	}
-+
-+	if (!tz->ops.should_bind)
-+		return;
-+
-+	mutex_lock(&tz->lock);
-+
-+	for_each_trip_desc(tz, td) {
-+		struct thermal_trip *trip = &td->trip;
-+		struct cooling_spec c = {
-+			.upper = THERMAL_NO_LIMIT,
-+			.lower = THERMAL_NO_LIMIT,
-+			.weight = THERMAL_WEIGHT_DEFAULT
-+		};
-+
-+		if (tz->ops.should_bind(tz, trip, cdev, &c)) {
-+			ret = thermal_bind_cdev_to_trip(tz, trip, cdev, c.upper,
-+							c.lower, c.weight);
-+			if (ret)
-+				print_bind_err_msg(tz, trip, cdev, ret);
-+		}
-+	}
-+
-+	mutex_unlock(&tz->lock);
-+}
-+
- /**
-  * __thermal_cooling_device_register() - register a new thermal cooling device
-  * @np:		a pointer to a device tree node.
-@@ -1101,13 +1150,8 @@ __thermal_cooling_device_register(struct
- 	list_add(&cdev->node, &thermal_cdev_list);
- 
- 	/* Update binding information for 'this' new cdev */
--	list_for_each_entry(pos, &thermal_tz_list, node) {
--		if (pos->ops.bind) {
--			ret = pos->ops.bind(pos, cdev);
--			if (ret)
--				print_bind_err_msg(pos, cdev, ret);
--		}
--	}
-+	list_for_each_entry(pos, &thermal_tz_list, node)
-+		thermal_zone_cdev_binding(pos, cdev);
- 
- 	list_for_each_entry(pos, &thermal_tz_list, node)
- 		if (atomic_cmpxchg(&pos->need_update, 1, 0))
-@@ -1308,6 +1352,28 @@ unlock_list:
- }
- EXPORT_SYMBOL_GPL(thermal_cooling_device_update);
- 
-+static void thermal_zone_cdev_unbinding(struct thermal_zone_device *tz,
-+					struct thermal_cooling_device *cdev)
-+{
-+	struct thermal_trip_desc *td;
-+
-+	/*
-+	 * Old-style unbinding.  The .unbind callback is expected to call
-+	 * thermal_unbind_cdev_from_trip() under the thermal zone lock.
-+	 */
-+	if (tz->ops.unbind) {
-+		tz->ops.unbind(tz, cdev);
-+		return;
-+	}
-+
-+	mutex_lock(&tz->lock);
-+
-+	for_each_trip_desc(tz, td)
-+		thermal_unbind_cdev_from_trip(tz, &td->trip, cdev);
-+
-+	mutex_unlock(&tz->lock);
-+}
-+
- /**
-  * thermal_cooling_device_unregister - removes a thermal cooling device
-  * @cdev:	the thermal cooling device to remove.
-@@ -1334,10 +1400,8 @@ void thermal_cooling_device_unregister(s
- 	list_del(&cdev->node);
- 
- 	/* Unbind all thermal zones associated with 'this' cdev */
--	list_for_each_entry(tz, &thermal_tz_list, node) {
--		if (tz->ops.unbind)
--			tz->ops.unbind(tz, cdev);
--	}
-+	list_for_each_entry(tz, &thermal_tz_list, node)
-+		thermal_zone_cdev_unbinding(tz, cdev);
- 
- 	mutex_unlock(&thermal_list_lock);
- 
-@@ -1412,6 +1476,7 @@ thermal_zone_device_register_with_trips(
- 					unsigned int polling_delay)
- {
- 	const struct thermal_trip *trip = trips;
-+	struct thermal_cooling_device *cdev;
- 	struct thermal_zone_device *tz;
- 	struct thermal_trip_desc *td;
- 	int id;
-@@ -1434,8 +1499,9 @@ thermal_zone_device_register_with_trips(
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	if (!ops || !ops->get_temp) {
--		pr_err("Thermal zone device ops not defined\n");
-+	if (!ops || !ops->get_temp || (ops->should_bind && ops->bind) ||
-+	    (ops->should_bind && ops->unbind)) {
-+		pr_err("Thermal zone device ops not defined or invalid\n");
- 		return ERR_PTR(-EINVAL);
- 	}
- 
-@@ -1548,15 +1614,8 @@ thermal_zone_device_register_with_trips(
- 	mutex_unlock(&tz->lock);
- 
- 	/* Bind cooling devices for this zone */
--	if (tz->ops.bind) {
--		struct thermal_cooling_device *cdev;
--
--		list_for_each_entry(cdev, &thermal_cdev_list, node) {
--			result = tz->ops.bind(tz, cdev);
--			if (result)
--				print_bind_err_msg(tz, cdev, result);
--		}
--	}
-+	list_for_each_entry(cdev, &thermal_cdev_list, node)
-+		thermal_zone_cdev_binding(tz, cdev);
- 
- 	mutex_unlock(&thermal_list_lock);
- 
-@@ -1650,8 +1709,7 @@ void thermal_zone_device_unregister(stru
- 
- 	/* Unbind all cdevs associated with 'this' thermal zone */
- 	list_for_each_entry(cdev, &thermal_cdev_list, node)
--		if (tz->ops.unbind)
--			tz->ops.unbind(tz, cdev);
-+		thermal_zone_cdev_unbinding(tz, cdev);
- 
- 	mutex_unlock(&thermal_list_lock);
- 
-
-
-
+Acked-by: Yosry Ahmed <yosryahmed@google.com>
 
