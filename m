@@ -1,261 +1,164 @@
-Return-Path: <linux-kernel+bounces-268175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41ED294212A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:59:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E8A942131
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6781B240BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:59:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25BD2B24D4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57E218CBF8;
-	Tue, 30 Jul 2024 19:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13F218C923;
+	Tue, 30 Jul 2024 20:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ALJkCuIo"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="UMdY8vFk"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE3B83A17;
-	Tue, 30 Jul 2024 19:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D937418CBF8
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 20:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722369570; cv=none; b=RulvgzEdO5TS+plNz7sBsbYcf/UtmjcB3rCrFPRXriKNns+AmaHvn1f7+BVlsXaTILeTq9XpnO30m0ekeBRWipt2Z5zkTUMGVsAy3yIAEJ7gy2jRAoXhc6bjig2BBzXzcbt8TP6ZBk4RIKKd6bR3BzlDvKQoKqQPeo6UzVTEYN0=
+	t=1722369643; cv=none; b=T51Z5GBMqDS8scy8OMNYkTquMJEsW0oQD5tu2lXOGEyP8Tp4NByjITItc4Ptx68a+hZ4McUkBtJ/Umd7foR9vzjKdFqkdpWRaDyXdDwCkIibjxajk7qQkQP3EvheDh09lQUhOLj0eHDh/A5rrT7Sw8FgjcU8ZQe4Hg7iCsCe198=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722369570; c=relaxed/simple;
-	bh=4hQkXi5WLs8pJ/Vq6vYswgN8fGBYwAM7n3n3GD5Mr/I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HGAsP/MP6HjeVrZRQjuOMZPBCipNLxBcqP4vcAWEhXcFuqfYqyirgMP9Fqn7u8duu51+S9wTj2E7jyWumq/ImBrugnpoocWDPTdRK5dr1YZrv8jtkn7KVzIeGYrmdMqW9l84msg3Q0RQxaRgFaDOQkvGdWT6k0E+JEjv746va8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ALJkCuIo; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UGQRHM014799;
-	Tue, 30 Jul 2024 19:59:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	qFEeWFv9Z5aPzQ0u6MCbEPw/esjJjzCYHGRQMjNTY7U=; b=ALJkCuIoxmhDtAwz
-	SO5Kdhdxu/LqbInvG5dq9t24YNOR1Aa5f0zERQYYHkQWE+NTO5tlfLBq1ePVpzHM
-	C1f4Todza+eAbbx2s9/e8KIygPnwVUCuA/nxWH7h5TzqNj7SPyu70G8DRe4vg8/D
-	zAFJpzSqBdFSbAJVSOkqTM3uL2uu1jRji/Cielz76uOxb5cnPG0a5nOgZNMVkXXh
-	dC2iodgwrTzh//daKEZIkcax6FsLr6BpE24aDolEn5ZjsaQ3+gYb9zKHwMOO4ftj
-	kpRqpkildJNVkTMX3ohdDMytxwZwwKU1QniVe658nHUugvbNWdKrbowuvCUCS+7M
-	mgyD3Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40q139rxv4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 19:59:20 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46UJxKX9017102;
-	Tue, 30 Jul 2024 19:59:20 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40q139rxv2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 19:59:20 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46UJX0q0029103;
-	Tue, 30 Jul 2024 19:59:19 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40nbm0q0mv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 19:59:19 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46UJxGck24838844
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 30 Jul 2024 19:59:18 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 554B05805C;
-	Tue, 30 Jul 2024 19:59:16 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1E1CA58059;
-	Tue, 30 Jul 2024 19:59:14 +0000 (GMT)
-Received: from [9.171.11.107] (unknown [9.171.11.107])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 30 Jul 2024 19:59:13 +0000 (GMT)
-Message-ID: <b06e8e396d64d7202f9a8aae91e0c556b344cc5b.camel@linux.ibm.com>
-Subject: Re: [PATCH] PCI: s390: Handle ARI on bus without associated struct
- pci_dev
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-        Gerald Schaefer
- <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily
- Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Christian Borntraeger
- <borntraeger@linux.ibm.com>,
-        Gerd Bayer <gbayer@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Date: Tue, 30 Jul 2024 21:59:13 +0200
-In-Reply-To: <20240730-ari_no_bus_dev-v1-1-7de17676f9fe@linux.ibm.com>
-References: <20240730-ari_no_bus_dev-v1-1-7de17676f9fe@linux.ibm.com>
-Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+	s=arc-20240116; t=1722369643; c=relaxed/simple;
+	bh=KW8P1f9QtLpNiOED/9q/P8RZi+voxvllnMDRlZd/H2A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T7i5JwZtH3LHBElRaObov1pqJuxo79B6607h+O6UlAnrF54zkOEQIf24nTZIgCGApDI5nLJDyX5K2lu6ERheJj9PPssNoRW/Du6PHZgeX2GtGImNnc54Knh/zS8GnZAA6X7jnbUYmLWRtcPHHlBYXZMA9SnQV2+plemMRpvydKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=UMdY8vFk; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a10bb7bcd0so7740228a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 13:00:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1722369640; x=1722974440; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VbPZYMLRnlwPHtoaKt4K6dn+FyDOOUhmY8EoiLqybE0=;
+        b=UMdY8vFkU3l54CTk70AIDub1zNuhBBpWlzfDJ/euXjLqdFGm+58FUHxJuyERUfogZ9
+         J7X1/rVKCsoWpDAMtb+K29O/bBJm0W/aJTTR9Jh6XsT+QdFgrQVCSFhFwDoR0Lpq+Rhr
+         l1tWxLeVnLfUbZcWndfRfK2opZxKknonZH3OVD3is6yHYc6V1/d81xdfqIJNXUqUTHA9
+         voLHjm4vQEo852eg00ZTPXiUP39d98YDBgaGmMuT1dPPfkOSikA0yspaDH6BKjuq1hX/
+         7jk1bUPA9H8w8rCGppkV3Iq8Q8VirenY879zfC63mrUcasLwNAewS6+sWxzbuPjV+PIm
+         rEmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722369640; x=1722974440;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VbPZYMLRnlwPHtoaKt4K6dn+FyDOOUhmY8EoiLqybE0=;
+        b=V6H3+VdhCpbV0L0l8GMYIAEhLNeiiQ4P6ggujo7ab1lLeQJ9gufg6L5cjC3EG5s+h5
+         beh2IWtaVxE+ifEKHDAgO2uvHcl153bjUcQgFDQwv6Pk8V8J7a/q0VVzEuIGp8VL2afp
+         Ot69ppf1iCIA4rdAFVE/5l1zpp/qskdxzWEfCtAlWiqL8dY2pJP5Qwm9FidvNtxOSrgj
+         YqhQp7zlKVvLE0GLl+cCtiEtxmlW7yDsFEJN+I8b680H7FXVLwdoTjKStYFiU4QE42QQ
+         BKg7QdVF3LrOn41VXDKNPLHAsp7djrx37c68f/Drh5rLi7VAxw5jSLjkU0h+bvdqHx8s
+         5zuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSH+qMl1S8Jcl+gFgCotP5/Y95ljzP17NwPPWKrWr5htVzB1p+k+8NpW6iAhIwtxO8um4DbdkbPxfTn1s1sLD12UK+eP5BrjHtukDE
+X-Gm-Message-State: AOJu0YxuASWVojqfH3ZPkj8G5qHNpCKhGWHC9QTWzF1KjD7lL2UuZnQR
+	Om5w6uEQE3jZwOj1GqAb2I78Xv0zjZes/Rd5BlXvo+6y0We2YLYv8hiJakgpX1BJRIS4g2XWEL4
+	wjxuBY9zbl9rSfWdXwuZlQ6s72MxY7mrnQxvh9w==
+X-Google-Smtp-Source: AGHT+IEE5EzRjQgQf7OLsadPZRVm5wfpMjhdtPXwM5eAo5BtDg8quTA9PAyUuMV7aPlhtR9I5OqiC7L3/3tTJkE4oTA=
+X-Received: by 2002:a17:907:a80d:b0:a6f:6126:18aa with SMTP id
+ a640c23a62f3a-a7d40173b7emr694439966b.67.1722369640184; Tue, 30 Jul 2024
+ 13:00:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -b6LlMr7Qn-dK98s_PJpItgemZKagEe3
-X-Proofpoint-ORIG-GUID: itKTzGb2PY6fWDGEesSyGX8RS-v_3Gpy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_15,2024-07-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- mlxlogscore=999 clxscore=1015 priorityscore=1501 lowpriorityscore=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407300136
+References: <20240729091532.855688-1-max.kellermann@ionos.com>
+ <3575457.1722355300@warthog.procyon.org.uk> <CAKPOu+9_TQx8XaB2gDKzwN-YoN69uKoZGiCDPQjz5fO-2ztdFQ@mail.gmail.com>
+In-Reply-To: <CAKPOu+9_TQx8XaB2gDKzwN-YoN69uKoZGiCDPQjz5fO-2ztdFQ@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Tue, 30 Jul 2024 22:00:29 +0200
+Message-ID: <CAKPOu+-qJR08WMfP0ZKCyWzXO6EgPGiKH1F_SB5S+v=sgNGeOQ@mail.gmail.com>
+Subject: Re: [PATCH] netfs, ceph: Revert "netfs: Remove deprecated use of
+ PG_private_2 as a second writeback flag"
+To: David Howells <dhowells@redhat.com>
+Cc: Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, 
+	Jeff Layton <jlayton@kernel.org>, willy@infradead.org, ceph-devel@vger.kernel.org, 
+	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2024-07-30 at 21:36 +0200, Niklas Schnelle wrote:
-> On s390 PCI busses are virtualized and the downstream ports are
-> invisible to the OS and struct pci_bus::self is NULL. This associated
-> struct pci_dev is however relied upon in pci_ari_enabled() to check
-> whether ARI is enabled for the bus. ARI is therefor always detected as
-> disabled.
->=20
-> At the same time firmware on s390 always enables and relies upon ARI
-> thus causing a mismatch. Moreover with per-PCI function pass-through
-> there may exist busses with no function with devfn 0. For example
-> a SR-IOV capable device with two PFs may have separate function
-> dependency link chains for each of the PFs and their child VFs. In this
-> case the OS may only see the second PF and its child VFs on a bus
-> without a devfn 0 function. A situation which is also not supported by
-> the common pci_configure_ari() code.
->=20
-> Dispite simply being a mismatch this causes problems as some PCI devices
-> present a different SR-IOV topology depending on PCI_SRIOV_CTRL_ARI.
->=20
-> A similar mismatch may occur with SR-IOV when virtfn_add_bus() creates ne=
-w
-> busses with no associated struct pci_dev. Here too pci_ari_enabled()
-> on these busses would return false even if ARI is actually used.
->=20
-> Prevent both mismatches by moving the ari_enabled flag from struct
-> pci_dev to struct pci_bus making it independent from struct pci_bus::
-> self. Let the bus inherit the ari_enabled state from its parent bus when
-> there is no bridge device such that busses added by virtfn_add_bus()
-> match their parent. For s390 set ari_enabled when the device supports
-> ARI in the awareness that all PCIe ports on s390 systems are ARI
-> capable.
->=20
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> ---
->  arch/s390/pci/pci_bus.c | 12 ++++++++++++
->  drivers/pci/pci.c       |  4 ++--
->  drivers/pci/probe.c     |  1 +
->  include/linux/pci.h     |  4 ++--
->  4 files changed, 17 insertions(+), 4 deletions(-)
->=20
-> diff --git a/arch/s390/pci/pci_bus.c b/arch/s390/pci/pci_bus.c
-> index daa5d7450c7d..021319438dad 100644
-> --- a/arch/s390/pci/pci_bus.c
-> +++ b/arch/s390/pci/pci_bus.c
-> @@ -278,6 +278,18 @@ void pcibios_bus_add_device(struct pci_dev *pdev)
->  {
->  	struct zpci_dev *zdev =3D to_zpci(pdev);
-> =20
-> +	/*
-> +	 * On s390 PCI busses are virtualized and the bridge
-> +	 * devices are invisible to the OS. Furthermore busses
-> +	 * may exist without a devfn 0 function. Thus the normal
-> +	 * ARI detection does not work. At the same time fw/hw
-> +	 * has always enabled ARI when possible. Reflect the actual
-> +	 * state by setting ari_enabled whenever a device on the bus
-> +	 * supports it.
-> +	 */
-> +	if (pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ARI))
-> +		zdev->zbus->bus->ari_enabled =3D 1;
-> +
+On Tue, Jul 30, 2024 at 6:28=E2=80=AFPM Max Kellermann <max.kellermann@iono=
+s.com> wrote:
+> I'll let you know when problems occur later, but until
+> then, I agree with merging your revert instead of my patches.
 
-@Bjorn unstead of adding the above code to s390 specific code an
-alternative I considered would be to modify pci_configure_ari() like
-below. I tested this as well but wasn't sure if it is too much churn
-especially the handling of the dev->devfn !=3D 0 case. Then again it
-might be nice to have this in common code.
+Not sure if that's the same bug/cause (looks different), but 6.10.2
+with your patch is still unstable:
 
-@@ -3523,12 +3524,18 @@ void pci_configure_ari(struct pci_dev *dev)
-        u32 cap;
-        struct pci_dev *bridge;
-
--       if (pcie_ari_disabled || !pci_is_pcie(dev) || dev->devfn)
-+       if (pcie_ari_disabled || !pci_is_pcie(dev))
-+               return;
-+
-+       if (dev->devfn && !hypervisor_isolated_pci_functions())
-                return;
-
-        bridge =3D dev->bus->self;
--       if (!bridge)
-+       if (!bridge) {
-+               if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ARI))
-+                       dev->bus->ari_enabled =3D 1;
-                return;
-+       }
-
-        pcie_capability_read_dword(bridge, PCI_EXP_DEVCAP2, &cap);
-        if (!(cap & PCI_EXP_DEVCAP2_ARI))
-
+ rcu: INFO: rcu_sched detected expedited stalls on CPUs/tasks: {
+9-.... 15-.... } 521399 jiffies s: 2085 root: 0x1/.
+ rcu: blocking rcu_node structures (internal RCU debug): l=3D1:0-15:0x8200/=
+.
+ Sending NMI from CPU 3 to CPUs 9:
+ NMI backtrace for cpu 9
+ CPU: 9 PID: 2756 Comm: kworker/9:2 Tainted: G      D
+6.10.2-cm4all2-vm+ #171
+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01=
+/2014
+ Workqueue: ceph-msgr ceph_con_workfn
+ RIP: 0010:native_queued_spin_lock_slowpath+0x80/0x260
+ Code: 57 85 c0 74 10 0f b6 03 84 c0 74 09 f3 90 0f b6 03 84 c0 75 f7
+b8 01 00 00 00 66 89 03 5b 5d 41 5c 41 5d c3 cc cc cc cc f3 90 <eb> 93
+8b 37 b8 00 02 00 00 81 fe 00 01 00 00 74 07 eb a1 83 e8 01
+ RSP: 0018:ffffaf5880c03bb8 EFLAGS: 00000202
+ RAX: 0000000000000001 RBX: ffffa02bc37c9e98 RCX: ffffaf5880c03c90
+ RDX: 0000000000000001 RSI: 0000000000000001 RDI: ffffa02bc37c9e98
+ RBP: ffffa02bc2f94000 R08: ffffaf5880c03c90 R09: 0000000000000010
+ R10: 0000000000000514 R11: 0000000000000000 R12: ffffaf5880c03c90
+ R13: ffffffffb4bcb2f0 R14: ffffa036c9e7e8e8 R15: ffffa02bc37c9e98
+ FS:  0000000000000000(0000) GS:ffffa036cf040000(0000) knlGS:00000000000000=
+00
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 000055fecac48568 CR3: 000000030d82c002 CR4: 00000000001706b0
+ DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+ DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ Call Trace:
+  <NMI>
+  ? nmi_cpu_backtrace+0x83/0xf0
+  ? nmi_cpu_backtrace_handler+0xd/0x20
+  ? nmi_handle+0x56/0x120
+  ? default_do_nmi+0x40/0x100
+  ? exc_nmi+0xdc/0x100
+  ? end_repeat_nmi+0xf/0x53
+  ? __pfx_ceph_ino_compare+0x10/0x10
+  ? native_queued_spin_lock_slowpath+0x80/0x260
+  ? native_queued_spin_lock_slowpath+0x80/0x260
+  ? native_queued_spin_lock_slowpath+0x80/0x260
+  </NMI>
+  <TASK>
+  ? __pfx_ceph_ino_compare+0x10/0x10
+  _raw_spin_lock+0x1e/0x30
+  find_inode+0x6e/0xc0
+  ? __pfx_ceph_ino_compare+0x10/0x10
+  ? __pfx_ceph_set_ino_cb+0x10/0x10
+  ilookup5_nowait+0x6d/0xa0
+  ? __pfx_ceph_ino_compare+0x10/0x10
+  iget5_locked+0x33/0xe0
+  ceph_get_inode+0xb8/0xf0
+  mds_dispatch+0xfe8/0x1ff0
+  ? inet_recvmsg+0x4d/0xf0
+  ceph_con_process_message+0x66/0x80
+  ceph_con_v1_try_read+0xcfc/0x17c0
+  ? __switch_to_asm+0x39/0x70
+  ? finish_task_switch.isra.0+0x78/0x240
+  ? __schedule+0x32a/0x1440
+  ceph_con_workfn+0x339/0x4f0
+  process_one_work+0x138/0x2e0
+  worker_thread+0x2b9/0x3d0
+  ? __pfx_worker_thread+0x10/0x10
+  kthread+0xba/0xe0
+  ? __pfx_kthread+0x10/0x10
+  ret_from_fork+0x30/0x50
+  ? __pfx_kthread+0x10/0x10
+  ret_from_fork_asm+0x1a/0x30
+ </TASK>
 
