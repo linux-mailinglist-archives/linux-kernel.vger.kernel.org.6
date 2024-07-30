@@ -1,232 +1,360 @@
-Return-Path: <linux-kernel+bounces-267436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0CF4941178
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:04:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A85F4941181
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AA4E1F2106E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:04:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57FCB283A8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D3B19DFAC;
-	Tue, 30 Jul 2024 12:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B2219DF78;
+	Tue, 30 Jul 2024 12:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="qYGHgWHZ"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2084.outbound.protection.outlook.com [40.107.117.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NXoCrKng"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18BC18F2FF;
-	Tue, 30 Jul 2024 12:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722341054; cv=fail; b=qy3OeAGEv9qSguhHLcvBdcTr4yB2/OqMjEfRDedzOrVpGAXM3w6MJ0z4O0T9GG5SFtwSiNOnEjbX51sRXk/aFlYVWUTnzMzLwHeV3fWVBfUudjLnhPhjCKneq/M5jQiILwtrTW3OO2qBEWV+PrxVdE2fzAR1FFW0U9zwAFnNJ4c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722341054; c=relaxed/simple;
-	bh=XglHYmnuFnCneejPc1fTfczv7TICdC/Ib+i3a2WIcpo=;
-	h=Message-ID:Date:Subject:From:To:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ugUYqGMhL6v4IN3YzlXUwqAcBe4bVd7lPjUIlo3Soq1ulsnaUuY8MKuDLWQjyXnJn+mSUjayJrc85ydi4rtyrQVz5yNPYswDnv5ES84JLK6a9AkvQUVqEzZIzaD7mVrpdQTX8X6RGFsikrLaw/DNjOgf32R+yyDc7Vn+D218Rks=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=qYGHgWHZ; arc=fail smtp.client-ip=40.107.117.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QJdLgjr5I15R8hAXRpv3jPVLM59EndiUVImeqOD/t6nI39bq2YtpYwIv3nRb3hLvDFrhrKoXMNW1iQM0O8EPM3idbpuDNJTAm2hxIGsSRStz86stwKdmN63XPmtvevaM7hzTIVhSvVdP+pYbfxplZi5azr5eKfBKRqLp4hBBH60DvbxuMhVMEpfWSfWwG539tX+Aa0PSf5k6Gka+1KN9Z1hbZmdJT18cyoNfcx4w3qTTd2biRxh2l9qXv0jYVxThYMhcblSvhE9jfgFX09Hgc0UiuumSFCbb1Wl/+NKdFoLW+IwI15PtvxRkA/jSdCTvx2+n6pSvpytvB7LornXDuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kmdVkcDeU1z0aYSqIMfqjo2tosEpadt428IBbZ+koCk=;
- b=FZop6QIgoFtp9bR8AOLDFaX50rU1jBVfeIBvpPz4VE6Sceuynuv1fk3Zhu+Lpk4PnatEhAhpvvJLYrDwKaChNFIamk9s0Gk2KwmD82PRHZu+o3O2skb3sg1Wfjnszg44Yieu524M7abnNmp2NHAFShmUfjBeFb1jVU6lDe75puGOpgSt1+1ftBSiYwzD1MChYU/audW4gzfe2/z4KPIkSNL9+ipRROrwnJ7sn9CPqEQNEJtGxV65x1L/Gf59lOD+3pCHGFnCQvlwSH2zfc1bzx7Af+A4Ql+/PqROwxhnptYhxn3RJE8a4fIfU/fNyob4Rygb0AAgqh/MttfkW28USg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kmdVkcDeU1z0aYSqIMfqjo2tosEpadt428IBbZ+koCk=;
- b=qYGHgWHZAcBbeMsnGThulD5qj6RRfxyGEOrLWSksOqu8hh95686x9UQMvJdpRJ+JLlL8I9/bHtGCDWXWjkPC6/EgxBSv5L/Gf3k8DZfo0LaioXkjvEpoa09yFrjWeKoEq/hamfK9N3Q4h/jhdQTeGHq9L9KD2cILg+VWxJHDPFG1snBVYSFTq1pv1+4tZdSC7GU9QqTEpsmTfG7mruE2bvN6jPL0c66DgCPwEHIEaRXASdzYks+sHZntsrn6amqdcKu+yO67QGjEKv6to05BgyR7GjP/WllDewoP3ZoZ/4NCv+Rnm321Kx4/D/Mkt/CCKbMAZRFm1ROP3P9J/SweAA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
- by SEZPR06MB6611.apcprd06.prod.outlook.com (2603:1096:101:18a::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Tue, 30 Jul
- 2024 12:04:09 +0000
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7807.026; Tue, 30 Jul 2024
- 12:04:09 +0000
-Message-ID: <37b07e69-df85-45fc-888d-54cb7c4be97a@vivo.com>
-Date: Tue, 30 Jul 2024 20:04:04 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] Introduce DMA_HEAP_ALLOC_AND_READ_FILE heap flag
-From: Huan Yang <link@vivo.com>
-To: Sumit Semwal <sumit.semwal@linaro.org>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T.J. Mercier" <tjmercier@google.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
- opensource.kernel@vivo.com
-References: <20240730075755.10941-1-link@vivo.com>
- <Zqiqv7fomIp1IPS_@phenom.ffwll.local>
- <25cf34bd-b11f-4097-87b5-39e6b4a27d85@vivo.com>
-In-Reply-To: <25cf34bd-b11f-4097-87b5-39e6b4a27d85@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR02CA0065.apcprd02.prod.outlook.com
- (2603:1096:4:54::29) To PUZPR06MB5676.apcprd06.prod.outlook.com
- (2603:1096:301:f8::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDA3194C8D
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 12:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722341153; cv=none; b=u5ml4s2uO1XOJDvTP5S+8u0Xu+sUa/Q84bcrRtkCQhRAUQ3r2llhnYo+vloufUCLCUBUK60TM9oHEp2NtUxA9C8Jao6tvVhdEBoO/o9TN8EWo9cOtDd0GvpDObYXyeaZGv9JkfFSqd8Ezxj/2boSMCiEGsuyk+svWYwfO5LAYUY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722341153; c=relaxed/simple;
+	bh=JD2cBdu9k/WO1pOJepobDhQwaeQ1SW6evxBKp1GZePY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uBhi0EUCDZYNaZyvS/jkMrphSnM56aWVna18bm52SQswHoSyUSYeBxxouCLiVeE+q9SH/ckWlWr/mMBw9lEDF14nC5bHUuFKHsiuqCkJhGY2/BHDKaIlo82kO+nGcGj2m+tY5Akg3sU0rB1KyNA/gMg7Rh0nARTEDZovEfMuBD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaslanka.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NXoCrKng; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaslanka.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6698f11853aso76180717b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 05:05:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722341151; x=1722945951; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=G4GPJTNACJVmyvK8yCIcXTVNooYietpPwpeg6FVIOno=;
+        b=NXoCrKngyKrYgAyWjEUWD6WRAWHrNuq7SGSDLZzyHN19d1TB57DquwnWs31Yh3MXI9
+         UqrMWSN1gI2BXT6JZjy+gxJGxHIA+YVzGpmS3dE3mT2TqjX7UUHHrmnhKNRyNPFPUFtt
+         8aUIK9PBEnvkfhCgmWTpXt+T/e6XKuRDJKLJ1HsgEiHzJHaJl6NAZ1Dumk/ZM9wJqQ2w
+         e/p9FnUafCsTJ5bq9Y/RluohMaDYwsFAKl9gYUJfNA16ZZTmgj1aAfl/V5v9u4GZi8dB
+         VxKeB+K0Bcv6xFR5R0vDQQbk9oiF2yFxytGWT75iGklA+P7qhjuOwvkZy/KcIskMa7Ft
+         lAYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722341151; x=1722945951;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G4GPJTNACJVmyvK8yCIcXTVNooYietpPwpeg6FVIOno=;
+        b=bTK9oeW2xoSc7XZhN7fyxJVAWECJP+I2rjp9Z+IZNcB9DIvOWwaNnkuUn0BX+n2/x9
+         ZWTOyRhW8XKsFyeGOl3tdDwYw4t4U1vdLFvds43dehsENosN2V9IfvbNetTplBUrftsF
+         MoDKmT2Nq19On1gv+G9mUSE59FoM3HptqfpV54YSgUkV+5tFGw5wbjVaYqNKbv4FhaYc
+         +ovypTI5EII7Ub0+SsbwFadYaO3MFpzJKUOaLZwD2ZS5S01i5z1VzIhQxCOyTlHhcwO7
+         q+32MvMAdstQWJ0lvP9ECr8vu5161FxW/r30hIQIW6DeZpxRuW821dTH6rBT7RsZbCj6
+         Zlwg==
+X-Gm-Message-State: AOJu0YxSJJStRzRn5+maL+0VpQj6Z/kEYkdrOfZ/vGX0Ns3ZlfUMtsdm
+	pm8ahCrDOIJ39yVmxYvMQpfHrYeVO6xomA54o6sxxd1CQrlqkRF2DA+NTIMdiBFRYUJpAhHU4Q0
+	RE6Cr1JFMIbEURnKpsbMTG9m6ZVVJJ/5xsSBKDIJAqUxW26hCjN5W8RVQ0yaplBGElrI7A/4lnq
+	VymLknxziekxbiey5oR+7TX9EaV2Kw+Cy6Vz/uPbAfrlI1/Tm5B+3rD1/P
+X-Google-Smtp-Source: AGHT+IEd32rqD5qWvdku11FoYZwTC33fpk2BKn6/V45gNAyY7zwU0OV3kL4PpCOUNj473K3R4DS0dSVUGA6SI54=
+X-Received: from mmaslanka2.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:b8d])
+ (user=mmaslanka job=sendgmr) by 2002:a05:690c:ecd:b0:650:93e3:fe73 with SMTP
+ id 00721157ae682-67a09784099mr1320817b3.5.1722341150640; Tue, 30 Jul 2024
+ 05:05:50 -0700 (PDT)
+Date: Tue, 30 Jul 2024 12:05:44 +0000
+In-Reply-To: <CAGcaFA2sQNRo9UThN-C1NOLtGUJ3sKzc=pEC9wdDWMi501iLsA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|SEZPR06MB6611:EE_
-X-MS-Office365-Filtering-Correlation-Id: bc83207f-9537-4df7-4845-08dcb08fb7e1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|52116014|1800799024|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Sm12ajhxU0UwbE5hNEM5YmwyeFdXNlZ4UmhVeFpVTHY4YUlmTFduMWROOC92?=
- =?utf-8?B?TWxzNjNXOXdwMDV2NzRvdDVPUVAzUnNrTWZyWnlEaGVmS1JWaEVSUmZuTlR2?=
- =?utf-8?B?Zk1XSTNwVHBZMkExbzVSOWttdE4wR0t3MXJiYTFHQkFZbTJpc255bWV6R0Er?=
- =?utf-8?B?cmdwNFNwRnE0SUJwSWZOdHBWZm5FajJMSFdRdmowWWdybGY3UWlRTGN6aTBr?=
- =?utf-8?B?blkxV3FjRkg1Zm9hYlhqK3hjTEFhTHVhRHlvbnphdFhrRkljQzlFUytWdkRJ?=
- =?utf-8?B?UlhJSVQzTWJKMHNYT0RCQTR6YzJwSTROMitaZndBWjV1ZmVsblhpbWM4S2R1?=
- =?utf-8?B?QTJ0NFBqb3l1ZnlZcVozb0dkbnczSUk2TUVPN2VkS21tTktIazFvMXlrQ3ds?=
- =?utf-8?B?SloyS1pDU2x4ODV6MmJHSmxhckVGeWRGV1BuNHU1eFp3TkNma25vRXhHcHJO?=
- =?utf-8?B?bUZBOFlGQytiaXpHOHdQL1l1Sm5iSXdsTVl1N1lnRDJ2SG4yME0vdGsvM0ht?=
- =?utf-8?B?STJCUjhjYzZBaGZqTUx5L2w3M3JPVGhpanB5VHhudU9uWkZUVTdYQXZFVms2?=
- =?utf-8?B?MEFHT2xIellud3E2c0VEUHFXSmNyRWc1cEpVSVdSdFpKbHVKOE1ja0JIZXBy?=
- =?utf-8?B?Q3VkL1dtS3NZVWZiZVp4aHZBd0RJRUFOQXI0M3hKQ1ZOeTA1R29PeG11ZUNr?=
- =?utf-8?B?bVY0eWlSUEd3NzV2QVBPSHhQN2NqQjBjLzJ3bFNoY1ZxZDhQMUUxdi8vSjNq?=
- =?utf-8?B?RU9md3VzVE8zWTY4VlFGM1pmLy9UTEUxWktudTJjTUhxZk8zQWxHUkEzNnhh?=
- =?utf-8?B?eFFJOGNzZ2tidkZpWFQ2blgvMGJPWS80M1NuQnpTejNQTkE0QU1PT1dnNnpC?=
- =?utf-8?B?STBUU3FRdlBBaXp5UDIyTkk5UlM0MWl2VXE0L0xoS1kxeTVPb3U2Uktta2Jq?=
- =?utf-8?B?YkxaaFJGckFmOGh3ckU1ak1lc1Rud294WFBqdFQ5VmJIbjd2UjQzaXJJc3dD?=
- =?utf-8?B?SVJxaHdkcXQydlV6OWY3R1lTeTN5b2xUbzR5S1ZCM3dpejZ6OVpGdlJNZ2ti?=
- =?utf-8?B?a09zK3VseEMxdGhSejdLK2FpS1FkbVVGVldkL0NjRmw5cU5zbTlYU2I4aVF6?=
- =?utf-8?B?NWliNUFPdTYvTEJhWDRSYTNJSnBDY1RQK09aeHZEZWVCaGRMVUJSVFdzRmpT?=
- =?utf-8?B?OW5SUzZoc0lvcjQzSndudCtWaVRuU2M5RzZwVG1WMlBNMXJsQ09YNFpnRE5J?=
- =?utf-8?B?c0swVUtZOEpLTEV5RWorYlNqem4zc3VnRndEcFRockU0RkZCS0MwcjJYNkln?=
- =?utf-8?B?RW10Vng1YldjVTBsY25FTldWamhSYWhaWk5JbkxQSmtwak1jcWpJcXAxbnJQ?=
- =?utf-8?B?UkdEdnpONzRXNEpTMlFJOGFadXlSQlVkMTVpVXY4aWR2MWJ5b1hJVDhlSGQ3?=
- =?utf-8?B?am9DU0JkRVFlVVdMcllqdHlHbW85NDdmd3E2anRCY210azEzdzRkNXVXbXVR?=
- =?utf-8?B?NkF2eEtrejFOWDNUQ3BwZHFvTUZQNm1BL2JZL3FPZE92Nm50bU1sUVpKbVN6?=
- =?utf-8?B?WGRZaE5uVXhFN1NQelhPNXM1aGJWQVc5U2dZcXFRZUdHek0rdjNIR2VxekNH?=
- =?utf-8?B?andkeFFONlhpbnNTa0lHQ2dWTzNZaStLbXBTUmc1dFlsdW9Da2hLbW1vUmsy?=
- =?utf-8?B?cGIxbDZlc0V1aEJpcjJSSjk0eElNM2cwVTZuTzJ5WXVRSWVzSjZPYW4vemhk?=
- =?utf-8?B?U2lvVDZkRlI4RnNWS3VlZnptZE82cXdWTUFzbFhINFYxN0Rlb0hzNmh6YkpT?=
- =?utf-8?Q?M28ZD92MVedJM09g1HCCikqfxTSA3BCpFhwPY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(52116014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cTh5NlhZVEVqSDBVaElPNlhFK1loejFSMWZFOWFvMk5TSVRoRFptaEZuZVBT?=
- =?utf-8?B?WkMvZ2lzZC9Oa3N1aGFPa2N4UmdobHBoYThzSHNWTGpjcVVseEV4Nzh0cHdu?=
- =?utf-8?B?STdyV1p1THNVcHRvenFOVUNhbERhUzByRFgvOGIwak5CMzk1VGNuZGJ5RDRJ?=
- =?utf-8?B?Y1NBTGVObDVOV0I5Z1hGNEpTamNUaUdYSEJNOHowR0h1VWEvWGl1c2tWc2Nk?=
- =?utf-8?B?M3d4bHRVanRKd254dWI5ZFoyQTk5YVN3d0luWmJwWnZWM2JiUTlzVGdxemIx?=
- =?utf-8?B?OEcwa2JuYlVaS0IvL0RkMXNsYWt3QW9yNVkyNmUyY2txR255TTZncWNGN2xO?=
- =?utf-8?B?ZzNQMTQyUk55N1hGVFkwZlhCUnRyVXNYaExIZ01pZ2RPR1BWbWhNd3NjRTlL?=
- =?utf-8?B?bUhGR1RPZlpMaW1pcHNkeHFFUVNYdEFOYldqNVdFd0JrMCtYWFZGMXNNbC93?=
- =?utf-8?B?dmtRNm5LVDdmNFVoZTZKd0pQODdydXhBdThEUmxOcWI2UnNKMzZIQU5SVUM3?=
- =?utf-8?B?dXlLQ2dhZ2xpczJnZUgrRnE1dVg3VVRJcE10SUFmZ3cvc29qQmlLK0pVdzB5?=
- =?utf-8?B?OHFWTThJVThaZlR0MVNxS1B3VWVEZTdzM1JRejhSMGF5TFFjWjdzZ3NTZ2RB?=
- =?utf-8?B?U0ROcitZaVEwWnFIRWtleTA4RCs2WWhVOWU3Z05TbzhUUmpJOE5aOWFCaWMy?=
- =?utf-8?B?V2FwV3piYnpWK254YWZKRnMwcStSQzhPSG1XZXlVVHprcGVabjZ1VDFGbFhE?=
- =?utf-8?B?bWo5bmpoSStQM2dsc1BQK0hUS1RaK21FUm5jVGdZYnV3UVNyN1FTRlVya0pi?=
- =?utf-8?B?Q3lBV1diL01TSkxpYjB4NzhVS2pDWjBNL3dQYW1OM05uQ0xLTUdBM25XNWVW?=
- =?utf-8?B?cjRCenczaWtvM3AwNVpzT3VSb1FXemFNUGV6WkYyMTN4NVA0RlFOZ0RqeGlr?=
- =?utf-8?B?M3J5RlR3UGk0TWdvZEsyL3NEOGV6M2xlbnBZRnBkNGt1WVhKY2JtcUJBTFRY?=
- =?utf-8?B?Nk5ocHBCblBWUDBTK1J0VTgwcDdpSkNnTHB2eWdtNzFVV0JpZ2RyREJQcUJu?=
- =?utf-8?B?Q29IWDZBOGJQK1hUT0NMZk5ucEw2Ulp4NVFtcEJCeU1iOEQvbzhzbXYzT1Va?=
- =?utf-8?B?cVMzTll4R1Q3ek8xNnNqeVdkNE5XR2lSTXJFZTd2dkRrOG05aG5BeTZRcFkw?=
- =?utf-8?B?YjM2bmhaaGNzWWZpTzVja29ObW9DTWdqeWJ5dUR0OEdzeGtNeFVabXdKUCtw?=
- =?utf-8?B?RFdwaDVJR1RXbXlMNnIzK3Nvcm5pdGVPK0YvSTkrS1l1emswU2l0SEZIakdP?=
- =?utf-8?B?TlF5TkxXMVdPU2lQQWdxM3g0aTJqU2xuamowK0REQmQ1ZFk2OFR2QnZod0Ry?=
- =?utf-8?B?bGJLYTVVckRNc0VRd0N2QWJsMFB5VzczQzlRMHZMakJOa0xub0FQZDVtcmVW?=
- =?utf-8?B?ZGlWSXVINlg5eDFZYXJlbnZoL0RDT21SYWpoMjdpSVpoRlNUaW9XbFlyT3JR?=
- =?utf-8?B?SzdUVlRMdE12UWpvd05VeG5HUWd3M2JjSWxORjJ2d3I2bGZ5ZkQzdHFuY0dK?=
- =?utf-8?B?Zkpic2JMRUxpampYcEp1RWJWZmtxVTY1WVY2b1E5dVJEVThvMlJwaStvV1dn?=
- =?utf-8?B?RVV2aFpOaG5kOFAxME1CbnpvYjdGN2hJcFlkS2hwa0gvaUtOMkFrQnVNWVVF?=
- =?utf-8?B?VzVHNVJkN1YxdlNOeXNEem53cFBSb29xYWtJZmcwQVN3Tk5zMFd3RnlnZ3p4?=
- =?utf-8?B?S3k4VkN1a2JPVnRBcDRLd1Q3b3k3SUJpQ0x0TUtDcGN2bG5COUh0a1NKekhy?=
- =?utf-8?B?cXBJbVFpQTlFL1FGYmpVdXFJSEhPQ0QveS9RTFRjMUt2cnhEckhWZlZrVElv?=
- =?utf-8?B?L3l1cFNYNVh3MDZSKzA2Q2dHV1dwUlBROTQ4SjU5T3F6Rm1sM1FjdURBMFJJ?=
- =?utf-8?B?VllSVkRMMjRaeW03d3dORytISTZyNWNaQ0tIU3RBUEVpZ2lZU09WS1d1a3NV?=
- =?utf-8?B?ZUFETFJkZ05oZFNPMEFPdEExSEMrNVBzdG9BQTFwczZYcmtpdEdORXowZ0Zi?=
- =?utf-8?B?c1psSkxCZnVxTTZ3cmgxMWN1cEViWXUwblhQNkNLUUZRWXZVNlc4OWY1aDEz?=
- =?utf-8?Q?1uSFcfhDf3b6B8zgarwC/p+RS?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc83207f-9537-4df7-4845-08dcb08fb7e1
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 12:04:09.3480
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nDkBtJTTeXkrce5oOSwiVoLMy1r9RBHZqWnbdcqCFfNAQQnOOTsqvptOEUiCRIKsS+isn5pV5x0GeARmg1Qg/Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6611
+Mime-Version: 1.0
+References: <CAGcaFA2sQNRo9UThN-C1NOLtGUJ3sKzc=pEC9wdDWMi501iLsA@mail.gmail.com>
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
+Message-ID: <20240730120546.1042515-1-mmaslanka@google.com>
+Subject: [PATCH v3] platform/x86:intel/pmc: Enable the ACPI PM Timer to be
+ turned off when suspended
+From: Marek Maslanka <mmaslanka@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Marek Maslanka <mmaslanka@google.com>, Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>, 
+	David E Box <david.e.box@intel.com>, Hans de Goede <hdegoede@redhat.com>, 
+	"=?UTF-8?q?Ilpo=20J=C3=A4rvinen?=" <ilpo.jarvinen@linux.intel.com>, John Stultz <jstultz@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+	platform-driver-x86@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Allow to disable ACPI PM Timer on suspend and enable on resume. A
+disabled timer helps optimise power consumption when the system is
+suspended. On resume the timer is only reactivated if it was activated
+prior to suspend, so unless the ACPI PM timer is enabled in the BIOS,
+this won't change anything.
 
-在 2024/7/30 17:05, Huan Yang 写道:
->
-> 在 2024/7/30 16:56, Daniel Vetter 写道:
->> [????????? daniel.vetter@ffwll.ch ????????? 
->> https://aka.ms/LearnAboutSenderIdentification?????????????]
->>
->> On Tue, Jul 30, 2024 at 03:57:44PM +0800, Huan Yang wrote:
->>> UDMA-BUF step:
->>>    1. memfd_create
->>>    2. open file(buffer/direct)
->>>    3. udmabuf create
->>>    4. mmap memfd
->>>    5. read file into memfd vaddr
->> Yeah this is really slow and the worst way to do it. You absolutely want
->> to start _all_ the io before you start creating the dma-buf, ideally 
->> with
->> everything running in parallel. But just starting the direct I/O with
->> async and then creating the umdabuf should be a lot faster and avoid
-> That's greate,  Let me rephrase that, and please correct me if I'm wrong.
->
-> UDMA-BUF step:
->   1. memfd_create
->   2. mmap memfd
->   3. open file(buffer/direct)
->   4. start thread to async read
->   3. udmabuf create
->
-> With this, can improve
+Signed-off-by: Marek Maslanka <mmaslanka@google.com>
 
-I just test with it. Step is:
+---
+Changes in v3:
+- Add the clocksource_current_cs_name and clocksource_suspend_cs_name to the clocksource.c
+- Do not disable the ACPI PM timer if it's selected as the clocksource
+- Link to v2: https://lore.kernel.org/lkml/20240703113850.2726539-1-mmaslanka@google.com/
+---
+---
+ drivers/platform/x86/intel/pmc/adl.c  |  2 ++
+ drivers/platform/x86/intel/pmc/cnp.c  |  2 ++
+ drivers/platform/x86/intel/pmc/core.c | 47 +++++++++++++++++++++++++++
+ drivers/platform/x86/intel/pmc/core.h |  8 +++++
+ drivers/platform/x86/intel/pmc/icl.c  |  2 ++
+ drivers/platform/x86/intel/pmc/mtl.c  |  2 ++
+ drivers/platform/x86/intel/pmc/spt.c  |  2 ++
+ drivers/platform/x86/intel/pmc/tgl.c  |  2 ++
+ include/linux/clocksource.h           |  2 ++
+ kernel/time/clocksource.c             | 22 +++++++++++++
+ 10 files changed, 91 insertions(+)
 
-UDMA-BUF step:
-   1. memfd_create
-   2. mmap memfd
-   3. open file(buffer/direct)
-   4. start thread to async read
-   5. udmabuf create
+diff --git a/drivers/platform/x86/intel/pmc/adl.c b/drivers/platform/x86/intel/pmc/adl.c
+index e7878558fd909..9d9c07f44ff61 100644
+--- a/drivers/platform/x86/intel/pmc/adl.c
++++ b/drivers/platform/x86/intel/pmc/adl.c
+@@ -295,6 +295,8 @@ const struct pmc_reg_map adl_reg_map = {
+ 	.ppfear_buckets = CNP_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+ 	.ltr_ignore_max = ADL_NUM_IP_IGN_ALLOWED,
+ 	.lpm_num_modes = ADL_LPM_NUM_MODES,
+ 	.lpm_num_maps = ADL_LPM_NUM_MAPS,
+diff --git a/drivers/platform/x86/intel/pmc/cnp.c b/drivers/platform/x86/intel/pmc/cnp.c
+index dd72974bf71e2..513c02670c5aa 100644
+--- a/drivers/platform/x86/intel/pmc/cnp.c
++++ b/drivers/platform/x86/intel/pmc/cnp.c
+@@ -200,6 +200,8 @@ const struct pmc_reg_map cnp_reg_map = {
+ 	.ppfear_buckets = CNP_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+ 	.ltr_ignore_max = CNP_NUM_IP_IGN_ALLOWED,
+ 	.etr3_offset = ETR3_OFFSET,
+ };
+diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
+index 10c96c1a850af..1a435f5ca08c5 100644
+--- a/drivers/platform/x86/intel/pmc/core.c
++++ b/drivers/platform/x86/intel/pmc/core.c
+@@ -12,6 +12,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/bitfield.h>
++#include <linux/clocksource.h>
+ #include <linux/debugfs.h>
+ #include <linux/delay.h>
+ #include <linux/dmi.h>
+@@ -1171,6 +1172,44 @@ static bool pmc_core_is_pson_residency_enabled(struct pmc_dev *pmcdev)
+ 	return val == 1;
+ }
+ 
++/*
++ * Enable or disable APCI PM Timer
++ *
++ * @return: Previous APCI PM Timer enabled state
++ */
++static bool pmc_core_enable_apci_pm_timer(struct pmc_dev *pmcdev, bool enable)
++{
++	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
++	const struct pmc_reg_map *map = pmc->map;
++	char cs_name[32];
++	bool state;
++	u32 reg;
++
++	if (!map->acpi_pm_tmr_ctl_offset)
++		return false;
++
++	clocksource_current_cs_name(cs_name, sizeof(cs_name));
++	if (strncmp(cs_name, "acpi_pm", sizeof(cs_name)) == 0)
++		return false;
++
++	clocksource_suspend_cs_name(cs_name, sizeof(cs_name));
++	if (strncmp(cs_name, "acpi_pm", sizeof(cs_name)) == 0)
++		return false;
++
++	mutex_lock(&pmcdev->lock);
++
++	reg = pmc_core_reg_read(pmc, map->acpi_pm_tmr_ctl_offset);
++	state = !(reg & map->acpi_pm_tmr_disable_bit);
++	if (enable)
++		reg &= ~map->acpi_pm_tmr_disable_bit;
++	else
++		reg |= map->acpi_pm_tmr_disable_bit;
++	pmc_core_reg_write(pmc, map->acpi_pm_tmr_ctl_offset, reg);
++
++	mutex_unlock(&pmcdev->lock);
++
++	return state;
++}
+ 
+ static void pmc_core_dbgfs_unregister(struct pmc_dev *pmcdev)
+ {
+@@ -1446,6 +1485,10 @@ static __maybe_unused int pmc_core_suspend(struct device *dev)
+ 	if (pmcdev->suspend)
+ 		pmcdev->suspend(pmcdev);
+ 
++	/* Disable APCI PM Timer */
++	pmcdev->enable_acpi_pm_timer_on_resume =
++		pmc_core_enable_apci_pm_timer(pmcdev, false);
++
+ 	/* Check if the syspend will actually use S0ix */
+ 	if (pm_suspend_via_firmware())
+ 		return 0;
+@@ -1500,6 +1543,10 @@ int pmc_core_resume_common(struct pmc_dev *pmcdev)
+ 	int offset = pmc->map->lpm_status_offset;
+ 	int i;
+ 
++	/* Enable APCI PM Timer */
++	if (pmcdev->enable_acpi_pm_timer_on_resume)
++		pmc_core_enable_apci_pm_timer(pmcdev, true);
++
+ 	/* Check if the syspend used S0ix */
+ 	if (pm_suspend_via_firmware())
+ 		return 0;
+diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
+index 83504c49a0e31..fe1a94f693b63 100644
+--- a/drivers/platform/x86/intel/pmc/core.h
++++ b/drivers/platform/x86/intel/pmc/core.h
+@@ -67,6 +67,8 @@ struct telem_endpoint;
+ #define SPT_PMC_LTR_SCC				0x3A0
+ #define SPT_PMC_LTR_ISH				0x3A4
+ 
++#define SPT_PMC_ACPI_PM_TMR_CTL_OFFSET		0x18FC
++
+ /* Sunrise Point: PGD PFET Enable Ack Status Registers */
+ enum ppfear_regs {
+ 	SPT_PMC_XRAM_PPFEAR0A = 0x590,
+@@ -147,6 +149,8 @@ enum ppfear_regs {
+ #define SPT_PMC_VRIC1_SLPS0LVEN			BIT(13)
+ #define SPT_PMC_VRIC1_XTALSDQDIS		BIT(22)
+ 
++#define SPT_PMC_BIT_ACPI_PM_TMR_DISABLE		BIT(1)
++
+ /* Cannonlake Power Management Controller register offsets */
+ #define CNP_PMC_SLPS0_DBG_OFFSET		0x10B4
+ #define CNP_PMC_PM_CFG_OFFSET			0x1818
+@@ -344,6 +348,8 @@ struct pmc_reg_map {
+ 	const u8  *lpm_reg_index;
+ 	const u32 pson_residency_offset;
+ 	const u32 pson_residency_counter_step;
++	const u32 acpi_pm_tmr_ctl_offset;
++	const u32 acpi_pm_tmr_disable_bit;
+ };
+ 
+ /**
+@@ -417,6 +423,8 @@ struct pmc_dev {
+ 	u32 die_c6_offset;
+ 	struct telem_endpoint *punit_ep;
+ 	struct pmc_info *regmap_list;
++
++	bool enable_acpi_pm_timer_on_resume;
+ };
+ 
+ enum pmc_index {
+diff --git a/drivers/platform/x86/intel/pmc/icl.c b/drivers/platform/x86/intel/pmc/icl.c
+index 71b0fd6cb7d84..cbbd440544688 100644
+--- a/drivers/platform/x86/intel/pmc/icl.c
++++ b/drivers/platform/x86/intel/pmc/icl.c
+@@ -46,6 +46,8 @@ const struct pmc_reg_map icl_reg_map = {
+ 	.ppfear_buckets = ICL_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+ 	.ltr_ignore_max = ICL_NUM_IP_IGN_ALLOWED,
+ 	.etr3_offset = ETR3_OFFSET,
+ };
+diff --git a/drivers/platform/x86/intel/pmc/mtl.c b/drivers/platform/x86/intel/pmc/mtl.c
+index c7d15d864039d..91f2fa728f5c8 100644
+--- a/drivers/platform/x86/intel/pmc/mtl.c
++++ b/drivers/platform/x86/intel/pmc/mtl.c
+@@ -462,6 +462,8 @@ const struct pmc_reg_map mtl_socm_reg_map = {
+ 	.ppfear_buckets = MTL_SOCM_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+ 	.lpm_num_maps = ADL_LPM_NUM_MAPS,
+ 	.ltr_ignore_max = MTL_SOCM_NUM_IP_IGN_ALLOWED,
+ 	.lpm_res_counter_step_x2 = TGL_PMC_LPM_RES_COUNTER_STEP_X2,
+diff --git a/drivers/platform/x86/intel/pmc/spt.c b/drivers/platform/x86/intel/pmc/spt.c
+index ab993a69e33ee..2cd2b3c68e468 100644
+--- a/drivers/platform/x86/intel/pmc/spt.c
++++ b/drivers/platform/x86/intel/pmc/spt.c
+@@ -130,6 +130,8 @@ const struct pmc_reg_map spt_reg_map = {
+ 	.ppfear_buckets = SPT_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = SPT_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = SPT_PMC_READ_DISABLE_BIT,
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+ 	.ltr_ignore_max = SPT_NUM_IP_IGN_ALLOWED,
+ 	.pm_vric1_offset = SPT_PMC_VRIC1_OFFSET,
+ };
+diff --git a/drivers/platform/x86/intel/pmc/tgl.c b/drivers/platform/x86/intel/pmc/tgl.c
+index e0580de180773..371b4e30f1426 100644
+--- a/drivers/platform/x86/intel/pmc/tgl.c
++++ b/drivers/platform/x86/intel/pmc/tgl.c
+@@ -197,6 +197,8 @@ const struct pmc_reg_map tgl_reg_map = {
+ 	.ppfear_buckets = ICL_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+ 	.ltr_ignore_max = TGL_NUM_IP_IGN_ALLOWED,
+ 	.lpm_num_maps = TGL_LPM_NUM_MAPS,
+ 	.lpm_res_counter_step_x2 = TGL_PMC_LPM_RES_COUNTER_STEP_X2,
+diff --git a/include/linux/clocksource.h b/include/linux/clocksource.h
+index 0ad8b550bb4b4..f1953c5687683 100644
+--- a/include/linux/clocksource.h
++++ b/include/linux/clocksource.h
+@@ -305,5 +305,7 @@ static inline unsigned int clocksource_get_max_watchdog_retry(void)
+ }
+ 
+ void clocksource_verify_percpu(struct clocksource *cs);
++void clocksource_current_cs_name(char *buf, size_t buf_size);
++void clocksource_suspend_cs_name(char *buf, size_t buf_size);
+ 
+ #endif /* _LINUX_CLOCKSOURCE_H */
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index e5b260aa0e02c..e2e2609f7f4b2 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -1320,6 +1320,28 @@ int clocksource_unregister(struct clocksource *cs)
+ }
+ EXPORT_SYMBOL(clocksource_unregister);
+ 
++void clocksource_suspend_cs_name(char *buf, size_t buf_size)
++{
++	mutex_lock(&clocksource_mutex);
++
++	buf[0] = '\0';
++	if (suspend_clocksource)
++		strscpy(buf, suspend_clocksource->name, buf_size);
++
++	mutex_unlock(&clocksource_mutex);
++}
++
++void clocksource_current_cs_name(char *buf, size_t buf_size)
++{
++	mutex_lock(&clocksource_mutex);
++
++	buf[0] = '\0';
++	if (curr_clocksource)
++		strscpy(buf, curr_clocksource->name, buf_size);
++
++	mutex_unlock(&clocksource_mutex);
++}
++
+ #ifdef CONFIG_SYSFS
+ /**
+  * current_clocksource_show - sysfs interface for current clocksource
+-- 
+2.46.0.rc2.264.g509ed76dc8-goog
 
-   6 . join wait
-
-3G file read all step cost 1,527,103,431ns, it's greate.
-
->
->> needlessly serialization operations.
->>
->> The other issue is that the mmap has some overhead, but might not be too
->> bad.
-> Yes, the time spent on page fault in mmap should be negligible 
-> compared to the time spent on file read.
->> -Sima
->> -- 
->> Daniel Vetter
->> Software Engineer, Intel Corporation
->> http://blog.ffwll.ch
 
