@@ -1,108 +1,103 @@
-Return-Path: <linux-kernel+bounces-267449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A1AF9411A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:13:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A199411B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:21:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FF40283E35
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:13:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF391284FCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4817419E7E4;
-	Tue, 30 Jul 2024 12:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jCS60ClH"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D0719EEA0;
+	Tue, 30 Jul 2024 12:20:53 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC22386AEE;
-	Tue, 30 Jul 2024 12:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CCE51957F0;
+	Tue, 30 Jul 2024 12:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722341628; cv=none; b=SYi2D/Q98why6ddWUAv3P2mQPNdSc2UfoE1FU0lROaP+TeIooz+1gfqqWpA/8e5A4I9sLYU4P7uTwvUlaLjI4AOgs5kgRDuTy4r2/jAHH2c4f/rsmk7Qvc202RFkWRyAIcsA8bw4btWxHo6c4KqcQoasYbzYwyw56R4x3Ou5CXQ=
+	t=1722342053; cv=none; b=bVRJUVw64eVCUGcfEKMRsAiB9vKD13QCd5mKM65LvS99GrBI2kBKAMqSoNMjSsk6la/bHOQ+BfTkPUx9AM/4xzoE9f9YgLQAQ3mLu+VwApEpYbD48Qr7sX66YCWoSY+0cflVRuqqiMBiM4GswDogTBpcTR17mNnyEgKixHVQtd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722341628; c=relaxed/simple;
-	bh=DGtauJHCr0FZld4Ft5Qk/tU7dgtHaE+AsK0ORYRV2oQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tLyXIWSJOR9ICxhBH0zhIKIDuPoI+bwUZbiy5yjK7yaFwcyIm4/tTyNEU39zP3MId3Oyl1PQJ4UJjHOUaYopp63rsJ9swJ/UOwlEe2h6crpjZ2GdHN4ylWcyRSkm+X5kMWQFtelAo7KGnUbUQDe7Pn3a9+7+kXywe1mTXBf1Kyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jCS60ClH; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=UXeY05NSq152fyD8Tat83B75Y3dwXggOdGcXPcJNsJk=; b=jCS60ClHbhABG+HN4d++Hwfxor
-	b7aUF1hYwl0LcXDpNa+ChaXU+ri659VAXu2KfY+ikXnpJfpdf1pZ5lm/GuniD1liOngs6wGOH2C34
-	IeMRaFxd7LixnvBsLb02b2K8BVzo1ulrY7IIgd3ckUJmWdB8MIPeJvUKXwqwPt56U0vesJjwuVgvF
-	HYO3uTatKjzKEBerEtiu3NFIBQqevvuSgn9oEn5ZcaBebCnPgLQAPGwYhTlwq+3JacsL8sefEnosI
-	dixn/GXVH5pap+dvZO072jQYfZXi1+uSg0PlvRxpZdKNiRWPb/u9op2Rq8aQsEypC2XumAcQxlpbO
-	qdT0nHgg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sYljV-0000000Eep2-0V7D;
-	Tue, 30 Jul 2024 12:13:37 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 28DAC3003EA; Tue, 30 Jul 2024 14:13:36 +0200 (CEST)
-Date: Tue, 30 Jul 2024 14:13:36 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 1/2] cfi: add CONFIG_CFI_ICALL_NORMALIZE_INTEGERS
-Message-ID: <20240730121336.GL33588@noisy.programming.kicks-ass.net>
-References: <20240730-kcfi-v1-0-bbb948752a30@google.com>
- <20240730-kcfi-v1-1-bbb948752a30@google.com>
- <CANiq72nxq0gnCXbQfFiZ4jErLptR8juyNzv1mKL_MEyWyDQdWA@mail.gmail.com>
+	s=arc-20240116; t=1722342053; c=relaxed/simple;
+	bh=MFpgjuZt+KC9o1pgyJcjr4gTDU/RS6sOdeTZNHd97WE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HoUdLNhiogtu+lScaNCj6t6YDLDl8TRjipo51nYU0UIINLpLxx2j0IHX0eKsBD76XOXu27DKU8deLhnLXSlR8KYxp+UGQht9nZsxUU13759siY2krAeE/RGx82hR84K+lRmeoi3YyQMGmU7EXFeEWMSP9XG5bOmlKwMVMlMxCBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WYDj6575tz1S6qF;
+	Tue, 30 Jul 2024 20:16:10 +0800 (CST)
+Received: from kwepemm600005.china.huawei.com (unknown [7.193.23.191])
+	by mail.maildlp.com (Postfix) with ESMTPS id C719E14037E;
+	Tue, 30 Jul 2024 20:20:43 +0800 (CST)
+Received: from huawei.com (10.50.165.33) by kwepemm600005.china.huawei.com
+ (7.193.23.191) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 30 Jul
+ 2024 20:20:43 +0800
+From: Longfang Liu <liulongfang@huawei.com>
+To: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <jonathan.cameron@huawei.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@openeuler.org>, <liulongfang@huawei.com>
+Subject: [PATCH v7 0/4] debugfs to hisilicon migration driver
+Date: Tue, 30 Jul 2024 20:14:34 +0800
+Message-ID: <20240730121438.58455-1-liulongfang@huawei.com>
+X-Mailer: git-send-email 2.24.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72nxq0gnCXbQfFiZ4jErLptR8juyNzv1mKL_MEyWyDQdWA@mail.gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemm600005.china.huawei.com (7.193.23.191)
 
-On Tue, Jul 30, 2024 at 01:38:33PM +0200, Miguel Ojeda wrote:
-> On Tue, Jul 30, 2024 at 11:40 AM Alice Ryhl <aliceryhl@google.com> wrote:
-> >
-> > Introduce a Kconfig option for enabling the experimental option to
-> > normalize integer types. This ensures that integer types of the same
-> > size and signedness are considered compatible by the Control Flow
-> > Integrity sanitizer.
-> >
-> > This option exists for compatibility with Rust, as C and Rust do not
-> > have the same set of integer types. There are cases where C has two
-> > different integer types of the same size and alignment, but Rust only
-> > has one integer type of that size and alignment. When Rust calls into
-> > C functions using such types in their signature, this results in CFI
-> > failures.
-> >
-> > This patch introduces a dedicated option for this because it is
-> > undesirable to have CONFIG_RUST affect CC_FLAGS in this way.
-> 
-> Is there any case where we would want CFI_ICALL_NORMALIZE_INTEGERS
-> when Rust is not enabled, then? If not, is the idea here to make this
-> an explicit extra question in the config before enabling Rust? Or why
-> wouldn't it be done automatically?
+Add a debugfs function to the hisilicon migration driver in VFIO to
+provide intermediate state values and data during device migration.
 
-I suspect CFI_ICALL_NORMALIZE_INTEGERS breaks ABI, then again, Linux
-doesn't promise or preserve ABI except for the SYSCALL layer. So yeah,
-meh.
+When the execution of live migration fails, the user can view the
+status and data during the migration process separately from the
+source and the destination, which is convenient for users to analyze
+and locate problems.
+
+Changes v6 -> v7
+	Remove redundant kernel error log printing and
+	remove unrelated bugfix code
+
+Changes v5 -> v6
+	Modify log output calling error
+
+Changes v4 -> v5
+	Adjust the descriptioniptionbugfs file directory
+
+Changes v3 -> v4
+	Rebased on kernel6.9
+
+Changes 2 -> v3
+	Solve debugfs serialization problem.
+
+Changes v1 -> v2
+	Solve the racy problem of io_base.
+
+
+Longfang Liu (4):
+  hisi_acc_vfio_pci: extract public functions for container_of
+  hisi_acc_vfio_pci: create subfunction for data reading
+  hisi_acc_vfio_pci: register debugfs for hisilicon migration driver
+  Documentation: add debugfs description for hisi migration
+
+ .../ABI/testing/debugfs-hisi-migration        |  25 ++
+ .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 295 ++++++++++++++++--
+ .../vfio/pci/hisilicon/hisi_acc_vfio_pci.h    |   6 +
+ 3 files changed, 295 insertions(+), 31 deletions(-)
+ create mode 100644 Documentation/ABI/testing/debugfs-hisi-migration
+
+-- 
+2.24.0
+
 
