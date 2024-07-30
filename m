@@ -1,223 +1,206 @@
-Return-Path: <linux-kernel+bounces-268233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D0C0942205
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:07:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B9C942207
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0EEE1C22C44
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:07:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F06B7284A30
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB64018A6C6;
-	Tue, 30 Jul 2024 21:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4140189911;
+	Tue, 30 Jul 2024 21:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ddgct8WC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="iuIjEFrg"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02olkn2063.outbound.protection.outlook.com [40.92.15.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E11338B
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 21:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722373674; cv=none; b=EcNSSGJCNHBgYfdEXxtZPd/nwy71ELEjKidO+gThqesMz3Un+sMUysPArCNrMwbUb6DXlvZ2FbXFiM4AVtZZyjCLiW9irOz+oRRxe8ddh5BEtnIrGJx06HKqu9g7FcFlvSAGxTxr1A1ZJTFkSZCMAVA75G8MMdpwgnlxLzlyujo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722373674; c=relaxed/simple;
-	bh=LjX5xxKf7y8U8CvhLltOmXsulnREXizmjwCNa5xizpw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=P5MEuwqJ+ZRgWs1HgVim7gagMA+WYDD0WqIFzSp+PmNAtOf+4tDq0Fvj2Tmk4GujrvSIYj1wPMNdTzPByPBjpQEm6ojUKM+4msPQEbz6K6Z2kZYj+9tJuMJ2Ai0x69JCiVFD0UN9e6Exz4Gk4nQQCtkVZJschs6/rtpR3KKaDwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ddgct8WC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722373671;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=80Ng7xC1cKZ5QTx3CUuSU+YasGNRQkH4TTL6Nc/ilrU=;
-	b=ddgct8WCVDpCCW4epTme3RZd1RpPrqQaAteZxd8bTZNJrYDcchZFO6sX6tYF1zfD2cssxz
-	WP2WTQAxWSx7udS/DGEF5epCH1146yjcIjaOxuRZmUKJLMGx3pVGQbKJIZ9UB9RWZnmyGO
-	smfSGYCJfuz2Ah3INNvoHsSmwH18wrY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-496-Guv-fpzqNKOJjHd5hnJEVA-1; Tue, 30 Jul 2024 17:07:46 -0400
-X-MC-Unique: Guv-fpzqNKOJjHd5hnJEVA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-427ffa0c9c7so42681805e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:07:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722373665; x=1722978465;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=80Ng7xC1cKZ5QTx3CUuSU+YasGNRQkH4TTL6Nc/ilrU=;
-        b=w4CIWPA9U5+gtehvCObhx/bCcd0ozMJTjPy7g3i9Nz4Hz/RxoF0vJLvFaKHI9BgB+V
-         3qdKZCYcG+nu3zWrgRFB/Ntv0AdAB387IDDzds/ZZpDHgAJoFpxLg+vL+yLzhi52w+Yd
-         A6t+4KcbgEGFn+BmsOWW5EShn+sc60NS6/YIYIn8c3JKhz4XkaVlfP0pUhVy+hvoP1+A
-         uE9ktixjKwbxWJmxqVMHhwfnbY352Bzjqr/t2hPxZphSeVNhMchB0+4WD0cl6frZ9Mmz
-         2Z7SgFtFQEdKamygA+rhD3p+e6gAp7dwayf1MrJ6jWqABk0ersH1uHm91sbNtjU/CpyZ
-         w0zQ==
-X-Gm-Message-State: AOJu0YyQcYlWHobbwS3ZbaT7pQQ/y6CAMAmIexYyuy8sfpMZ2NDbQxGU
-	joloZYjqNOtRv+TRO0ujgdXJQgC7SyIfZ/kdEewl4NAO+fC8p+BM0Z3o8th8vVlvEfS4N57McUC
-	bjlPf3MPjIIWvRqiREhMNh0gdKcABZcAv6kPLy9BXVLKv0Q1qJVnBVJCe8i7TTw==
-X-Received: by 2002:a05:600c:19c8:b0:426:6fd2:e14b with SMTP id 5b1f17b1804b1-42811d8c0d7mr104718755e9.11.1722373665590;
-        Tue, 30 Jul 2024 14:07:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGTetu89WIWYw+9ILtoy7SI1hVdLkZzRU4VSJ/Y1jhqXOI5Xcnk3AKNC4xZ1eO3nvXHrn7nsg==
-X-Received: by 2002:a05:600c:19c8:b0:426:6fd2:e14b with SMTP id 5b1f17b1804b1-42811d8c0d7mr104718605e9.11.1722373665173;
-        Tue, 30 Jul 2024 14:07:45 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c706:4e00:31ad:5274:e21c:b59? (p200300cbc7064e0031ad5274e21c0b59.dip0.t-ipconnect.de. [2003:cb:c706:4e00:31ad:5274:e21c:b59])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42809e4423dsm194895745e9.13.2024.07.30.14.07.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 14:07:44 -0700 (PDT)
-Message-ID: <b74fcedb-60c5-4fd3-bcc7-74959e12c38d@redhat.com>
-Date: Tue, 30 Jul 2024 23:07:43 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C1D161320;
+	Tue, 30 Jul 2024 21:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.15.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722373716; cv=fail; b=tcTJ6qoyPd8c/AskjnMFOTY/MxyVHSiHTtnj0usJ4avulncdoIzo6Hr0Qtmw+c3J3xhECzh6BkqTCN+Ce+bIE8/srHz56H9OWNBqQzYRGie6tg3stsxg5SAlP4llcE9EZHWNyG6peM1jjW9oyPa1fSEny2DZqbTXsX9dQeRtPtA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722373716; c=relaxed/simple;
+	bh=2suon3LeJwlMrIGrl3Ms+IbtmnWdSe+YpYeddaeoH98=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=VpsodNfVPiFLkFcLk6G0KV90Rf51f66ctP2DAcRZTyreW8gPWIZdsbQk6cVk3sMvt4Sn7UEivWiYfPKpyXFHYCoxLJmc2fEUXNgqP/FCKZuulkCYyiPSW/He9uGgQNJRt9RH3v/VGAUnbwGVaPiFgKYgcaNKIfZ3b6aLLZOQHt4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=iuIjEFrg; arc=fail smtp.client-ip=40.92.15.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D4QBy9cWacbqgTnTNWLz7qfS8ggvokw/aBTN6f3VbyO76CHQ2FwdyeqiSYfdyJ30Og8tXINdfF7A0/M9IGcq9BlXnHaCgtUekco9/7gfLA/ua18MoWD+rhxuj7qA8Psr6dgS53boUTkTz5ECNUX2iVlaL8wjTNiUZl3zVofHZ+tukg2pDJIM3gMElNy9bG5udvWM9N1nKHZGeT6leRsS1V6meWynEhATOH2/UEoAxCHA0ctiA+v/b14dorehVlxLUentrw73RvzRmikHQTRHVb3jx7eSpUf8Ixzaz3v8hJNsqQgPIwDa7VPshSMcaYrk8+MxR1suCdb5bXJnXx/Xng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=y9mrUVB59R5bVM8C+RfV6hgsCyOEIlC6ZlnwrbmL4PY=;
+ b=FoFMt+IFLniTkAIlC99UEJ7S/JshvhvgTUWJyv3Q5gL4r86QnhVkTQDP/A561Oncai1ayEWFj1hGLmEqa5Zzf2xNC/ZPCMHbzzGk0y69XAnqAM9RMVU3QPpzWsOWkF6IA3BTJAhkdWs1O8NsERgiwMd7wcD9k8g0s/lw42vK4eL/ug3020KNBLw0+v+xkHMj3XNoWk287I5pFvFhCWkdVp4klAp5hhf+56WpRwJAd5i041Xry64EiURhDbdpvqVCe3iYhC8QrDGIgfIMddSQmfE6n+xwnLwMIgavAx4r6r9+xG35TgTcyk7UKQV9aHx3DmG12gRqSRgQRgDEf98hXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y9mrUVB59R5bVM8C+RfV6hgsCyOEIlC6ZlnwrbmL4PY=;
+ b=iuIjEFrgSXQv/UKFnJJ7HUAaCLj2ovHmsMJ4ymmQk2BDrjx/2odwQHMLFJrNmUh9l6N3M7htMkO124njO3oYLSrUpX7z/DU6xV9PL9GEYBb30ZgEvFEq+jriuUkCJ4LXaVmF5TQdcSmEk/es1Uv4XvPmuhea+g6jgz0KHuE5d9SFkwo++dHFiz58QY8eXvYHlgmrR3UxlUqxHbRbuH/B6hRkVn9jZZ3YcVi4k91N+o+yhmfH90fRa6LWJcOaG1QD2fzROoY2fZehV+wzfth+Bjbj6gHTD/jd+4bnM/B0ZCNv6S2nIsdISeek8yWs8Ip3464FH1uSsM75zxD1UgY4+w==
+Received: from SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM (2603:10b6:a03:570::8)
+ by SA1P223MB1263.NAMP223.PROD.OUTLOOK.COM (2603:10b6:806:3e9::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.17; Tue, 30 Jul
+ 2024 21:08:32 +0000
+Received: from SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+ ([fe80::b5cd:c37a:bd3e:e3fd]) by SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+ ([fe80::b5cd:c37a:bd3e:e3fd%2]) with mapi id 15.20.7807.026; Tue, 30 Jul 2024
+ 21:08:32 +0000
+From: Steven Davis <goldside000@outlook.com>
+To: marvin24@gmx.de,
+	gregkh@linuxfoundation.org
+Cc: ac100@lists.launchpad.net,
+	linux-tegra@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Steven Davis <goldside000@outlook.com>
+Subject: [PATCH] staging: nvec: Capitalize outputs to match the rest of the driver
+Date: Tue, 30 Jul 2024 17:08:12 -0400
+Message-ID:
+ <SJ2P223MB102626B10E837EF5A93ED1F1F7B02@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.45.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [fAXp9/x3ZIhWtAdkdxPUvqaH0zVd1119]
+X-ClientProxiedBy: CH2PR11CA0017.namprd11.prod.outlook.com
+ (2603:10b6:610:54::27) To SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:a03:570::8)
+X-Microsoft-Original-Message-ID:
+ <20240730210812.5648-1-goldside000@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm/hugetlb: fix hugetlb vs. core-mm PT locking
-From: David Hildenbrand <david@redhat.com>
-To: James Houghton <jthoughton@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, stable@vger.kernel.org,
- Peter Xu <peterx@redhat.com>, Oscar Salvador <osalvador@suse.de>,
- Muchun Song <muchun.song@linux.dev>,
- Baolin Wang <baolin.wang@linux.alibaba.com>
-References: <20240730200341.1642904-1-david@redhat.com>
- <CADrL8HXRCNFzmg67p=j0_0Y_NAFo5rUDmvnr40F5HGAsQMvbnw@mail.gmail.com>
- <3f6c97b5-ccd8-4226-a9ac-78d555b0d048@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <3f6c97b5-ccd8-4226-a9ac-78d555b0d048@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2P223MB1026:EE_|SA1P223MB1263:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9f4fe501-a62b-40a4-fed9-08dcb0dbc47b
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|19110799003|5072599009|8060799006|3412199025|440099028|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	ysYryLvYfbsg75mWbf7dEfPPVqbUYCiAePPORDX0mhJa7q5jlKl3JXbaFE6hmHKjRdak2mz7GWKoVhx5k9xDmBPXmVMAxlQBrppVc24ZLiN5L/x2Mh/JRcrvdDRnJq/Eiq5wcsUXFM/RBOLs/LMJAxFdehJO0XIXyud+qrPj5DHDaG5K9LfAv3DW6TwBX5BRGcyEFFSbdpurTqlb94KIiLzfPKMJDUdvalkqalEVJVBeNunSR7+o1VEuGFKfMh7JDfZwRsToBtRO3qCZVvF2y2QYyZINLkVwBc9iKBIh+B/ML2qwutpdpH18eece35HubJO4X2uD6E3HHOTQOY5K5A/6Ib62OLo0OcuaIeOa7KI5Q3LKT0lEoXOD6a29UP5ANtQNxikeKf9x5RGtl+q712Ja2dvZrARyEAeagperlFKuQpx6U7uwZaQjQcNdn6f9QG8WSQxSPoRwN0GYy+Djh16/c83xH3bKzmPqDSww5iCvRsGdWWuzGQ1d5GpArufWkuYO1Ik+GCtyFgizMQRfL9Bv1bqhXCVwQc12bOFh8BAAw8u2bmuSRgU64GsLy/8akqZGrerXyxi3XzXGmRyAE0CgxbWNfYxmTrD0bzYasVgoOwt2pkgGEV+SwtAa8ibwGtrqh9AAIoKgO91WQoCR7A5LTK6tCkPmXC1oLyhNGENmgKknTNBB01V/x581iW+TFMxQ9T8hIxFS5h6DmKW1PQ==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CSly8yyW4JLR38Ttqot2CDtW8vRtYL9RtIQ0AVG5zpx9a80Dqc6jWrK/TpAo?=
+ =?us-ascii?Q?Pc56P+jRgtqMMMMwx8JR0G1XxK51x4/wMpKTUMFQYgZa+xgQZJiCB6LC0vQH?=
+ =?us-ascii?Q?oZ7qLNfOukr8VripaMHblPOBMG3bWYxUaayOd4x0FgyxcGq9ax5z0aK+IX8g?=
+ =?us-ascii?Q?FZ23j+tq8oM62321cLMZA+W62xF3HHFcLTVBm/tjesJIV03O8rOXW9A8l/T4?=
+ =?us-ascii?Q?d55MvQogVGD4sDakzC9CMBD76aAnX1mJzqum5ko4xQ4tvO9sQD4JQeJWX6cH?=
+ =?us-ascii?Q?pS8VmwWRLhB+qdvlY7Vev/0EjmlGKAMeV5q68A3V34hBH33iQZt6HP6NG7Vv?=
+ =?us-ascii?Q?0JTCZ1nr7fS+G7xjzieRUQiZRe4xUOhXndua+gc9YTbjNcROIzSIwitbcYsu?=
+ =?us-ascii?Q?Mg7KazkqA/4iRrZ7ETWdaFvzS2pJHs72GnKVuTGrdSNmgeVK+EMbbCzndPtb?=
+ =?us-ascii?Q?0vFQETvnoY1jjMfrxF6HpVZWZSfzA9I0Ns/s5eAFRmjJBjQXHwk8bUOicdZc?=
+ =?us-ascii?Q?GE1d+WHak9heBLQjxSzHKMkRXV+6qXY3SwiJHZogkpBI49edvimLcKzSOYnR?=
+ =?us-ascii?Q?YhC7ynLrNLSjI1lQOGTwaaWK9HElUvAUskO7hiT1DqvkQNsnSj3fUZyAz00S?=
+ =?us-ascii?Q?XUaRPJ+OLcGq7H9FZJ9tACTsOeYSWyV0/BpPxR0T75d2zJAyyu44NXriH3LV?=
+ =?us-ascii?Q?tMqET3zxkKbc335U2QtwCsR6wFl8eDpH4VURVDNE6OnyKh/jYETVY/OGlBHh?=
+ =?us-ascii?Q?MWpEbS4ePjQll8h6yB4xfVhLhoRpg/PvUKCvxxzUaNLTqZjFIvKJADtYcuHV?=
+ =?us-ascii?Q?6cTX0bJPgv7qXV5Rk8WAGe+iccrEg3B9TfdmaFCGxZt4TacIkc3Ufmov55SG?=
+ =?us-ascii?Q?WyqQgzD7fSiN/B7yRgqSkxBwSlh2GnuJbmV4QEQBhwuuEMZgL0g+BmD+C0k+?=
+ =?us-ascii?Q?+rymtRiee5+pEKwA+mUSDEut7RXzPNQhxH1ZV8BmYffpX0+6lN17jXAyrvux?=
+ =?us-ascii?Q?6fvd4cG4+uBAtUaUeQ4YYF/xUSKQKwg0pFZ2pyAzpmy/g6pd480wSPS8oJ0e?=
+ =?us-ascii?Q?gLgFoUnShImQ93+13ct4VUJdOclcyQHJiZx0GjaJEk60OWRe9xK651f+zV5z?=
+ =?us-ascii?Q?rgVtP34RmGZPyJLdb0hhgyM8Lh4D/7YcdOB8lns8SJxZUaqv6CI8CqeMq3PI?=
+ =?us-ascii?Q?X9iEkMd/33hYg0qSXc+o5AcP9a8dMmdBern5qx/ZuHr8au25VWdyU8H3sTg?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9f4fe501-a62b-40a4-fed9-08dcb0dbc47b
+X-MS-Exchange-CrossTenant-AuthSource: SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 21:08:32.3778
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1P223MB1263
 
-On 30.07.24 23:00, David Hildenbrand wrote:
-> On 30.07.24 22:43, James Houghton wrote:
->> On Tue, Jul 30, 2024 at 1:03 PM David Hildenbrand <david@redhat.com> wrote:
->>> diff --git a/include/linux/mm.h b/include/linux/mm.h
->>> index b100df8cb5857..1b1f40ff00b7d 100644
->>> --- a/include/linux/mm.h
->>> +++ b/include/linux/mm.h
->>> @@ -2926,6 +2926,12 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
->>>           return ptlock_ptr(page_ptdesc(pmd_page(*pmd)));
->>>    }
->>>
->>> +static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
->>> +{
->>> +       BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
->>> +       return ptlock_ptr(virt_to_ptdesc(pte));
->>
->> Hi David,
->>
-> 
-> Hi!
-> 
->> Small question: ptep_lockptr() does not handle the case where the size
->> of the PTE table is larger than PAGE_SIZE, but pmd_lockptr() does.
-> 
-> I thought I convinced myself that leaf page tables are always single
-> pages and had a comment in v1.
-> 
-> But now I have to double-check again, and staring at
-> pagetable_pte_ctor() callers I am left confused.
-> 
-> It certainly sounds more future proof to just align the pointer down to
-> the start of the PTE table like pmd_lockptr() would.
-> 
->> IIUC, for pte_lockptr() and ptep_lockptr() to return the same result
->> in this case, ptep_lockptr() should be doing the masking that
->> pmd_lockptr() is doing. Are you sure that you don't need to be doing
->> it? (Or maybe I am misunderstanding something.)
-> 
-> It's a valid concern even if it would not be required. But I'm afraid I
-> won't dig into the details and simply do the alignment in a v3.
+Noticing that some messages were capitalized and some weren't, I
+capitalized them to match the rest. This makes the messages relatively
+easier to understand for an end user, and reduces confusion about
+capitalization. A comment was also capitalized.
 
-To be precise, the following on top:
+Signed-off-by: Steven Davis <goldside000@outlook.com>
+---
+ drivers/staging/nvec/nvec.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 1b1f40ff00b7d..f6c7fe8f5746f 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2926,10 +2926,22 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
-         return ptlock_ptr(page_ptdesc(pmd_page(*pmd)));
-  }
-  
--static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
-+static inline struct page *ptep_pgtable_page(pte_t *pte)
-  {
-+       unsigned long mask = ~(PTRS_PER_PTE * sizeof(pte_t) - 1);
-+
-         BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
--       return ptlock_ptr(virt_to_ptdesc(pte));
-+       return virt_to_page((void *)((unsigned long)pte & mask));
-+}
-+
-+static inline struct ptdesc *ptep_ptdesc(pte_t *pte)
-+{
-+       return page_ptdesc(ptep_pgtable_page(pte));
-+}
-+
-+static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
-+{
-+       return ptlock_ptr(ptep_ptdesc(pte));
-  }
-  
-
-virt_to_ptdesc() really is of limited use in core-mm code as it seems ...
-
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index d09211589d1c..bf7a61f05b06 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -175,7 +175,7 @@ static struct nvec_msg *nvec_msg_alloc(struct nvec_chip *nvec,
+ 		}
+ 	}
+ 
+-	dev_err(nvec->dev, "could not allocate %s buffer\n",
++	dev_err(nvec->dev, "Could not allocate %s buffer\n",
+ 		(category == NVEC_MSG_TX) ? "TX" : "RX");
+ 
+ 	return NULL;
+@@ -315,7 +315,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+ 	if (!(wait_for_completion_timeout(&nvec->sync_write,
+ 					  msecs_to_jiffies(2000)))) {
+ 		dev_warn(nvec->dev,
+-			 "timeout waiting for sync write to complete\n");
++			 "Timeout waiting for sync write to complete\n");
+ 		mutex_unlock(&nvec->sync_write_mutex);
+ 		return -ETIMEDOUT;
+ 	}
+@@ -392,7 +392,7 @@ static void nvec_request_master(struct work_struct *work)
+ 								msecs_to_jiffies(5000));
+ 
+ 		if (err == 0) {
+-			dev_warn(nvec->dev, "timeout waiting for ec transfer\n");
++			dev_warn(nvec->dev, "Timeout waiting for ec transfer\n");
+ 			nvec_gpio_set_value(nvec, 1);
+ 			msg->pos = 0;
+ 		}
+@@ -454,7 +454,7 @@ static void nvec_dispatch(struct work_struct *work)
+ 
+ 		if (nvec->sync_write_pending ==
+ 		      (msg->data[2] << 8) + msg->data[0]) {
+-			dev_dbg(nvec->dev, "sync write completed!\n");
++			dev_dbg(nvec->dev, "Sync write completed!\n");
+ 			nvec->sync_write_pending = 0;
+ 			nvec->last_sync_msg = msg;
+ 			complete(&nvec->sync_write);
+@@ -477,7 +477,7 @@ static void nvec_tx_completed(struct nvec_chip *nvec)
+ {
+ 	/* We got an END_TRANS, let's skip this, maybe there's an event */
+ 	if (nvec->tx->pos != nvec->tx->size) {
+-		dev_err(nvec->dev, "premature END_TRANS, resending\n");
++		dev_err(nvec->dev, "Premature END_TRANS, resending\n");
+ 		nvec->tx->pos = 0;
+ 		nvec_gpio_set_value(nvec, 0);
+ 	} else {
+@@ -608,7 +608,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+ 
+ 	/* Filter out some errors */
+ 	if ((status & irq_mask) == 0 && (status & ~irq_mask) != 0) {
+-		dev_err(nvec->dev, "unexpected irq mask %lx\n", status);
++		dev_err(nvec->dev, "Unexpected irq mask %lx\n", status);
+ 		return IRQ_HANDLED;
+ 	}
+ 	if ((status & I2C_SL_IRQ) == 0) {
+@@ -631,7 +631,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+ 		if (status != (I2C_SL_IRQ | RCVD))
+ 			nvec_invalid_flags(nvec, status, false);
+ 		break;
+-	case 1:		/* command byte */
++	case 1:		/* Command byte */
+ 		if (status != I2C_SL_IRQ) {
+ 			nvec_invalid_flags(nvec, status, true);
+ 		} else {
 -- 
-Cheers,
-
-David / dhildenb
+2.45.2
 
 
