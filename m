@@ -1,138 +1,293 @@
-Return-Path: <linux-kernel+bounces-267882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E37F9419B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:35:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19936941900
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4366B2C250
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:27:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7FD8285B5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF80A1A6166;
-	Tue, 30 Jul 2024 16:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969A31A618E;
+	Tue, 30 Jul 2024 16:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zF0k4au6"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IVlz7RrK"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD751078F
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2A21A6160
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722356822; cv=none; b=c/SuocJ7rx2GDbz2TfT/tnpxbqncVp+vOkuUSIFvL+S6rMN8sNCq2mR5BK4MAvwhU+Dc0ILxMv7BcCD674k9MAizUAYJQbXrO83tAfDR3FHktS9qBhxRCY7FzZvzqTNSgetwCX5r/slWUWUkBziqb4gCqUqo5mvDCa7KDvJJKe0=
+	t=1722356864; cv=none; b=dqtZntYiKUTI69OaVmz79RJTuIxU0pcOcA0oERHfeeZ1IgEMBV7s0j+H+n0WVnXV8MjJcrr68NDtIedNGazQuclrhptC3cdGNjcIkFj5u53lVJYzrOMvwGDtwlu8vN20yl4m0iTvmyHBrj7JT1A4KAI4tQcPbf/PyVEi8qlkJc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722356822; c=relaxed/simple;
-	bh=kQNK+5LQKlx1ppqQPGwujEovNpGVoQIlPYkQzQaO+Kw=;
+	s=arc-20240116; t=1722356864; c=relaxed/simple;
+	bh=rAH6AMsvIiLGMl4BOA32ybHtRVjZL+YRo4kv3IueAVk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oXl95MevKl0+OnHlovxBMdbLQK8HjOR8b94jje8XYDbv7aim1pLZjKLrEY1KXxmFuefKkL3C/hNfn+GhB2hq9fsqND9zbC6G+0KGG/xF/TKZ1ExpGQsZDfAw9PxUxgauiWhb892JhZShsyL8d54n2F2lRY9JRWAuvMtesqr0c5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zF0k4au6; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7a130ae7126so3366686a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:27:00 -0700 (PDT)
+	 To:Cc:Content-Type; b=JejOrUs9G05fxAsrqOetz/qcSv08dXN0ac8sLTl58lcjqYyR/kozwrl1ctmSuSDmDHvM9HqUyXNrwgo2PLU9z0xELz+/hegLAGr6vb38Kij0YHl4p4Hg1lDT6tggK1nsJ7PwLaDLtEQeY5pOu/diu26BUPR2kX/s8oxApy9f5PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IVlz7RrK; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-59589a9be92so7195610a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:27:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722356820; x=1722961620; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722356859; x=1722961659; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kQNK+5LQKlx1ppqQPGwujEovNpGVoQIlPYkQzQaO+Kw=;
-        b=zF0k4au6kLMTg4oAZefG0HNgbbRFzy6bY7c5TTCAJG2uxF+UEUx2Cis2x7EAbdKVA9
-         UhyD3t35hOcHd6wmNf9VNxhSdvM0YZ6kHvDDut3aEqEVGkq4Tx/ZJwWCM5Uk0B/xhCrj
-         tYGMAdDPMhxOE8P/kTjHaiOwX1VXp2JJhQ41Ih9qpcl+pWY+/9qOrUH6E5kM3ELJ5FiN
-         0J/1Q0EDXMzeaBxghfL9H57/8KELw1mvqUK6Qqlc6COlujrpFn2E/tggDA+S9lMTgTa8
-         zxZpz1pXe/Q7YRRldzXCUiWSsaPo5/5w7assOtYG+GJdSprzf64z6JVkKCsX3zN/YRX9
-         hjoA==
+        bh=DQMm3j/WDX5wm2f/0bMEKkx0ZnqFo9kz+zHN+GCN6hs=;
+        b=IVlz7RrK4px1cRuX3XoW3CDlalSQDgq7rtn+KJFx1jMn97KlQR1DLX1uKUcDdhyWi0
+         9iNY75/XwoBv7gsXWDeTR3/YOUWL3d74lsxds7TvMkZkpdLoPrO1jETC9JWjDopenOD4
+         zcLUG5Lwf5l5MXDHnLBwrOScnW7zYSPr8IkLxMorF/qYavvK+vRWSo80QLAU3aif7q1N
+         mM3k5RyydVT9bmWN02lMqwFZbwda6syeqzWIZ6W6PqbKVoIDqaKz/8DmkkvknLRJD6Yn
+         8uNLVT+HVdtz1oSiYF2Ch02pzoJwKuwjaE1Y3IC1VorJez0V5FihAOHNG5UKWmW6yojo
+         3uoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722356820; x=1722961620;
+        d=1e100.net; s=20230601; t=1722356859; x=1722961659;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kQNK+5LQKlx1ppqQPGwujEovNpGVoQIlPYkQzQaO+Kw=;
-        b=nY0XbVjXZeAW2xKk8t1INQXLQUmRHWDw2u8ha+5pagfkIPg87tNvwEqLOveowi2aXA
-         /5cYkizEKR+qzMRN7c6Sh/ATW2UxzEikLehP11whfybT9Jjc0zPzG/cwzl5y9tv3u7vF
-         bJYf/YpeR9IGe5iHyEKES7LGPJ1wYrap3JSWCWxFov1uRtBtePR52DLx+5v38kzyY+ET
-         tj8mOmyPueKRDeoJHyBbs0AHmNTJQvjmCgH6ryaCLtaI+MMJ9FgzrCozUFtSccYdgJWX
-         QEkUSb2o4am3uTZO+YH0QT4jx/IpRVIVWWlVM96z6afadg19J0VUcICqsomjG7lmSUId
-         rz4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXlf+M2nLilwnXx6yEhvWsWVxjNLZylJLPZOhgliVVMoYvTv/urQjtMEizvGzLXgMvFNXvnFCQEDPjufwRr6hQINs3en1C9gf5Hk1zX
-X-Gm-Message-State: AOJu0Yz8ZfKA8MYr6sFDbNZakTeIRx6Dr0n6MCslromxmckipE+vfPtF
-	zCpmIzilyLWoFi2CrjfRDmeb6W5ZNJ6sjHfjwB7cIu2BRMg7prBMyu8HcfhJJuwKmCOQS4Bbuo/
-	DPXP82JtKDlc0uzTikble2ZFuZAX7nCcBz88E
-X-Google-Smtp-Source: AGHT+IH2bhdE3J33J4DuPGXSsf9pf6XtvNOPsEFMcSI5oGjgQnyJup7odZDVU7oJdzlUXiuC4RRVxkbmC6UonWag5XE=
-X-Received: by 2002:a17:90a:ea11:b0:2c1:c648:1c50 with SMTP id
- 98e67ed59e1d1-2cf7e1cb3a3mr13024532a91.17.1722356819562; Tue, 30 Jul 2024
- 09:26:59 -0700 (PDT)
+        bh=DQMm3j/WDX5wm2f/0bMEKkx0ZnqFo9kz+zHN+GCN6hs=;
+        b=n7yu8b5Hyo2dqGUvBmb+dvNlB5axLVtGc3w0R2EzMmRazR+khJVrDBilpDrFfwjS5i
+         YENckJ+5sRrQv6+BJOqB0UsoCGqM7kuYWzebkZ+mXPfBIBJEpof7dcg5c5S1GGwhRsfK
+         Z+WiVTPm3FQOKBxOyrLViOLOzU1LxO32LOO23sB4hcKjSAqW66pgZf8qRJn9eSwQlJut
+         qqlgTys+WSpmu1w9TiYI9yNO5ylsQMjQuESLuvgh/WB8f5+wVYBl8Ka0b6jK24CiJ5Oi
+         4R+7dXq6cJE3UaDQoNiES4qWxP6a6dTwKfClBhrvdTo1yao/au5SdG1J81bkCJLRvodH
+         kE8w==
+X-Forwarded-Encrypted: i=1; AJvYcCX5JupKHpz+AKOP0DHJuIPfXBoGTiZjOpHVmwqmyTGeBtNHF2NVp/yTNvkkpCdU9DjOBZvBtlHtdeTf0injWtHBZTHVGpEzQqa4toVz
+X-Gm-Message-State: AOJu0YzbaQaxBACOqpwnu3dMFdhtLGCr+Zi91/56nt2EM0pIA7nS3r9T
+	Ivxh1bWeHdT29KFQfqJ3IrXv3+FL1zT0cw3RQwus0JcATV12tz95b6Kbz0k9PoXNmyGH/FYv886
+	P52Q2yfOAqTQTdLtzeULyhwEPamA=
+X-Google-Smtp-Source: AGHT+IEawiuRpfNoqf12SzW44BnpY3hQf+/7DfHQBAHQN8MUUs+CehBB8Rl4GCcTifyw+pnQ2rwaBYTO97pGym0rkKg=
+X-Received: by 2002:a50:c30b:0:b0:58b:73f4:2ed with SMTP id
+ 4fb4d7f45d1cf-5b0224cf4d6mr6499683a12.35.1722356858839; Tue, 30 Jul 2024
+ 09:27:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730-kcfi-v1-0-bbb948752a30@google.com> <20240730-kcfi-v1-2-bbb948752a30@google.com>
- <20240730103236.GK33588@noisy.programming.kicks-ass.net> <CABCJKuf+=bxrZphtFZ+N_t2whCS0gx2GVHybTzcNmY6TX6c7cw@mail.gmail.com>
- <20240730160314.GP33588@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240730160314.GP33588@noisy.programming.kicks-ass.net>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 30 Jul 2024 18:26:45 +0200
-Message-ID: <CAH5fLgjU87JsdwFv9umd0U3vLv=-UPiE6sf=F7B-RTujchcjYw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] rust: cfi: add support for CFI_CLANG with Rust
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Sami Tolvanen <samitolvanen@google.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <Zqd9AsI5tWH7AukU@pc636> <20240730093630.5603-1-ahuang12@lenovo.com>
+ <ZqjQp8NrTYM_ORN1@pc636>
+In-Reply-To: <ZqjQp8NrTYM_ORN1@pc636>
+From: Huang Adrian <adrianhuang0701@gmail.com>
+Date: Wed, 31 Jul 2024 00:27:27 +0800
+Message-ID: <CAHKZfL3c2Y91yP6X5+GUDCsN6QAa9L46czzJh+iQ6LhGJcAeqw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mm/vmalloc: Combine all TLB flush operations of KASAN
+ shadow virtual address into one operation
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: ahuang12@lenovo.com, akpm@linux-foundation.org, andreyknvl@gmail.com, 
+	bhe@redhat.com, dvyukov@google.com, glider@google.com, hch@infradead.org, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	ryabinin.a.a@gmail.com, sunjw10@lenovo.com, vincenzo.frascino@arm.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30, 2024 at 6:03=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
+On Tue, Jul 30, 2024 at 7:38=E2=80=AFPM Uladzislau Rezki <urezki@gmail.com>=
+ wrote:
 >
-> On Tue, Jul 30, 2024 at 08:24:15AM -0700, Sami Tolvanen wrote:
-> > On Tue, Jul 30, 2024 at 3:32=E2=80=AFAM Peter Zijlstra <peterz@infradea=
-d.org> wrote:
+> > On Mon, Jul 29, 2024 at 7:29 PM Uladzislau Rezki <urezki@gmail.com> wro=
+te:
+> > > It would be really good if Adrian could run the "compiling workload" =
+on
+> > > his big system and post the statistics here.
 > > >
-> > > On Tue, Jul 30, 2024 at 09:40:12AM +0000, Alice Ryhl wrote:
-> > > > From: Matthew Maurer <mmaurer@google.com>
-> > > >
-> > > > Make it possible to use the Control Flow Integrity (CFI) sanitizer =
-when
-> > > > Rust is enabled. Enabling CFI with Rust requires that CFI is config=
-ured
-> > > > to normalize integer types so that all integer types of the same si=
-ze
-> > > > and signedness are compatible under CFI.
-> > >
-> > > I am assuming -- because I have to, because you're not actually sayin=
-g
-> > > anyting -- that this is fully compatible with the C version and all t=
-he
-> > > fun and games we play with rewriting the function prologue for FineIB=
-T
-> > > and the like also work?
+> > > For example:
+> > >   a) v6.11-rc1 + KASAN.
+> > >   b) v6.11-rc1 + KASAN + patch.
 > >
-> > Rust uses the same LLVM backend for the actual code generation, so it
-> > should be fully compatible.
+> > Sure, please see the statistics below.
+> >
+> > Test Result (based on 6.11-rc1)
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > 1. Profile purge_vmap_node()
+> >
+> >    A. Command: trace-cmd record -p function_graph -l purge_vmap_node ma=
+ke -j $(nproc)
+> >
+> >    B. Average execution time of purge_vmap_node():
+> >
+> >       no patch (us)           patched (us)    saved
+> >       -------------           ------------    -----
+> >                147885.02                3692.51        97%
+> >
+> >    C. Total execution time of purge_vmap_node():
+> >
+> >       no patch (us)           patched (us)    saved
+> >       -------------           ------------    -----
+> >         194173036               5114138        97%
+> >
+> >    [ftrace log] Without patch: https://gist.github.com/AdrianHuang/a5be=
+c861f67434e1024bbf43cea85959
+> >    [ftrace log] With patch: https://gist.github.com/AdrianHuang/a200215=
+955ee377288377425dbaa04e3
+> >
+> > 2. Use `time` utility to measure execution time
+> >
+> >    A. Command: make clean && time make -j $(nproc)
+> >
+> >    B. The following result is the average kernel execution time of five=
+-time
+> >       measurements. ('sys' field of `time` output):
+> >
+> >       no patch (seconds)      patched (seconds)       saved
+> >       ------------------      ----------------        -----
+> >           36932.904              31403.478             15%
+> >
+> >    [`time` log] Without patch: https://gist.github.com/AdrianHuang/987b=
+20fd0bd2bb616b3524aa6ee43112
+> >    [`time` log] With patch: https://gist.github.com/AdrianHuang/da2ea4e=
+6aa0b4dcc207b4e40b202f694
+> >
+> I meant another statistics. As noted here https://lore.kernel.org/linux-m=
+m/ZogS_04dP5LlRlXN@pc636/T/#m5d57f11d9f69aef5313f4efbe25415b3bae4c818
+> i came to conclusion that below place and lock:
 >
-> Yes, but we also combine that with -fpatchable-function-entry=3D for a
-> very specific effect, and I don't think I see the Rust thingy do that.
+> <snip>
+> static void exit_notify(struct task_struct *tsk, int group_dead)
+> {
+>         bool autoreap;
+>         struct task_struct *p, *n;
+>         LIST_HEAD(dead);
+>
+>         write_lock_irq(&tasklist_lock);
+> ...
+> <snip>
+>
+> keeps IRQs disabled, so it means that the purge_vmap_node() does the prog=
+ress
+> but it can be slow.
+>
+> CPU_1:
+> disables IRQs
+> trying to grab the tasklist_lock
+>
+> CPU_2:
+> Sends an IPI to CPU_1
+> waits until the specified callback is executed on CPU_1
+>
+> Since CPU_1 has disabled IRQs, serving an IPI and completion of callback
+> takes time until CPU_1 enables IRQs back.
+>
+> Could you please post lock statistics for kernel compiling use case?
+> KASAN + patch is enough, IMO. This just to double check whether a
+> tasklist_lock is a problem or not.
 
-Oh, you're right. I missed this because we're not using FineIBT, and
-when this patch was originally written we had not yet implemented a
-Rust equivalent to -fpatchable-function-entry=3D. However, that flag is
-now available as of rustc version 1.80.0, so it shouldn't be an issue.
-I'll fix this for v2 of this series.
+Sorry for the misunderstanding.
 
-Thanks for catching this!
+Two experiments are shown as follows. I saw you think KASAN + patch is
+enough. But, in case you need another one. ;-)
 
-As for whether it works other than that, I've been using this on my
-personal phone together with Rust Binder for several months, so it's
-well tested on arm64.
+a) v6.11-rc1 + KASAN
 
-Alice
+The result is different from yours, so I ran two tests (make sure the
+soft lockup warning was triggered).
+
+Test #1: waittime-max =3D 5.4ms
+<snip>
+...
+class name    con-bounces    contentions   waittime-min   waittime-max
+waittime-total   waittime-avg    acq-bounces   acquisitions
+holdtime-min   holdtime-max holdtime-total   holdtime-avg
+...
+tasklist_lock-W:        118762         120090           0.44
+5443.22    24807413.37         206.57         429757         569051
+       2.27        3222.00    69914505.87         122.86
+tasklist_lock-R:        108262         108300           0.41
+5381.34    23613372.10         218.04         489132         541541
+       0.20        5543.40    10095470.68          18.64
+    ---------------
+    tasklist_lock          44594          [<0000000099d3ea35>]
+exit_notify+0x82/0x900
+    tasklist_lock          32041          [<0000000058f753d8>]
+release_task+0x104/0x3f0
+    tasklist_lock          99240          [<000000008524ff80>]
+__do_wait+0xd8/0x710
+    tasklist_lock          43435          [<00000000f6e82dcf>]
+copy_process+0x2a46/0x50f0
+    ---------------
+    tasklist_lock          98334          [<0000000099d3ea35>]
+exit_notify+0x82/0x900
+    tasklist_lock          82649          [<0000000058f753d8>]
+release_task+0x104/0x3f0
+    tasklist_lock              2          [<00000000da5a7972>]
+mm_update_next_owner+0xc0/0x430
+    tasklist_lock          26708          [<00000000f6e82dcf>]
+copy_process+0x2a46/0x50f0
+...
+<snip>
+
+Test #2:waittime-max =3D 5.7ms
+<snip>
+...
+class name    con-bounces    contentions   waittime-min   waittime-max
+waittime-total   waittime-avg    acq-bounces   acquisitions
+holdtime-min   holdtime-max holdtime-total   holdtime-avg
+...
+tasklist_lock-W:        121742         123167           0.43
+5713.02    25252257.61         205.02         432111         569762
+       2.25        3083.08    70711022.74         124.11
+tasklist_lock-R:        111479         111523           0.39
+5050.50    24557264.88         220.20         491404         542221
+       0.20        5611.81    10007782.09          18.46
+    ---------------
+    tasklist_lock         102317          [<000000008524ff80>]
+__do_wait+0xd8/0x710
+    tasklist_lock          44606          [<00000000f6e82dcf>]
+copy_process+0x2a46/0x50f0
+    tasklist_lock          45584          [<0000000099d3ea35>]
+exit_notify+0x82/0x900
+    tasklist_lock          32969          [<0000000058f753d8>]
+release_task+0x104/0x3f0
+    ---------------
+    tasklist_lock         100498          [<0000000099d3ea35>]
+exit_notify+0x82/0x900
+    tasklist_lock          27401          [<00000000f6e82dcf>]
+copy_process+0x2a46/0x50f0
+    tasklist_lock          85473          [<0000000058f753d8>]
+release_task+0x104/0x3f0
+    tasklist_lock            650          [<000000004d0b9f6b>]
+tty_open_proc_set_tty+0x23/0x210
+...
+<snip>
+
+
+b) v6.11-rc1 + KASAN + patch: waittime-max =3D 5.7ms
+<snip>
+...
+class name    con-bounces    contentions   waittime-min   waittime-max
+waittime-total   waittime-avg    acq-bounces   acquisitions
+holdtime-min   holdtime-max holdtime-total   holdtime-avg
+...
+tasklist_lock-W:        108876         110087           0.33
+5688.64    18622460.43         169.16         426740         568715
+       1.94        2930.76    62560515.48         110.00
+tasklist_lock-R:         99864          99909           0.43
+5868.69    17849478.20         178.66         487654         541328
+       0.20        5709.98     9207504.90          17.01
+    ---------------
+    tasklist_lock          91655          [<00000000a622e532>]
+__do_wait+0xd8/0x710
+    tasklist_lock          41100          [<00000000ccf53925>]
+exit_notify+0x82/0x900
+    tasklist_lock           8254          [<00000000093ccded>]
+tty_open_proc_set_tty+0x23/0x210
+    tasklist_lock          39542          [<00000000a0e6bf4d>]
+copy_process+0x2a46/0x50f0
+    ---------------
+    tasklist_lock          90525          [<00000000ccf53925>]
+exit_notify+0x82/0x900
+    tasklist_lock          76934          [<00000000cb7ca00c>]
+release_task+0x104/0x3f0
+    tasklist_lock          23723          [<00000000a0e6bf4d>]
+copy_process+0x2a46/0x50f0
+    tasklist_lock          18223          [<00000000a622e532>]
+__do_wait+0xd8/0x710
+...
+<snip>
 
