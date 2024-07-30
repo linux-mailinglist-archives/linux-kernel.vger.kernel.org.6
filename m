@@ -1,177 +1,308 @@
-Return-Path: <linux-kernel+bounces-267149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED5E0940D91
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:29:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B332F940D9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD626282F89
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:29:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68576285F9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085831990D1;
-	Tue, 30 Jul 2024 09:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0ED7195FE6;
+	Tue, 30 Jul 2024 09:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKL6OOdf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JrgIGN0L"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2815A198A2C;
-	Tue, 30 Jul 2024 09:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722331688; cv=none; b=B+TvLlv36u+KmQZLmYKYAk88CKtbDRWwbBS1Ru2nGiRn8OJ2P/IRJn/alPj2V3EpxL+onVCmYttHn0NGnQBkZHo0rb3bzthpyrOKzpCaUTNWVxcsC7QQTe4zwDKd7re6qiNUsQm+8AMWxeMLMPDz4YfLGCZhM8FAXFNNPgkiAgE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722331688; c=relaxed/simple;
-	bh=C+p6pZ0h7zLgsZsTQ5Q7sPudkgmPqZXi5xwOwAfqCMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pKCN4KO8Ha/ibPH+mCaNvl07QAJOaz27yLNAm0BIkOUgaFTTTuFcWOwQeqjhNpNe0CEGqpLjAq2QmeKqqoqNkxk8Y4X2LZ2UyfAExuo1P+PHKKvtn8m47HkL/3gPOSqOCFcRFv3KMMoaI2YrXRGqdHlZ3S1Hi2kiNFOFttnPJTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKL6OOdf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A6A5C4AF09;
-	Tue, 30 Jul 2024 09:28:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722331687;
-	bh=C+p6pZ0h7zLgsZsTQ5Q7sPudkgmPqZXi5xwOwAfqCMo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eKL6OOdflGNTg4njDQOMEVg3m4GDky/0orsrRCzoyNMXydHEklzyg0YZQryY2VlXY
-	 zJVEksFzAfc2fAOctikH5EeFMH1j8n0SzO/cGXBFkX6WER/RBCbe/9NsWosNulO51d
-	 Fm9xt9rBQ7LBs7QjOpy+m3FQ4ou6miPWj33WL9vf1AhfzhRE60SNGH5p9e/UTZ092o
-	 iWNOOqghLVgvyN9+ZbQgntdtBcg9XhRXryDaPM4aodRIZei6Pu+sbBc4Z1iwvfp+Hc
-	 PoBDR+1+u76Z6+//UTH859u6wnP85JbKmLErWHiVAcMfjXvM9j76Qs2VoWNNBI/pmM
-	 7hisK/VqMYo+Q==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sYj9S-0000000017y-1Now;
-	Tue, 30 Jul 2024 11:28:15 +0200
-Date: Tue, 30 Jul 2024 11:28:14 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
-Subject: Re: [PATCH 1/2] soc: qcom: pd_mapper: Add X1E80100
-Message-ID: <ZqiyLvP0gkBnuekL@hovoldconsulting.com>
-References: <20240708-x1e80100-pd-mapper-v1-0-854386af4cf5@linaro.org>
- <20240708-x1e80100-pd-mapper-v1-1-854386af4cf5@linaro.org>
- <Zqet8iInnDhnxkT9@hovoldconsulting.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09409195997;
+	Tue, 30 Jul 2024 09:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722331729; cv=fail; b=HjYZdvWPLcbbGjUDEO05BAw3ILKzBDX3D0ScJKFFTK3Q1hiOO++Q0VlDECbVJBQYCws1QiEA890Ie7U69JXxW56f4UzCPgBdmgeR9LnsOeizpaRKzliuzAoiTrCuhCGb3cKvbffPY0trNctnflicCERjn/kT5AfEiA33uv854S8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722331729; c=relaxed/simple;
+	bh=dzrjbZ0G46sPV7Io4/UaOGZpRueCgc5jJwljO/Fw/Zo=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=YJ1Uj2z5yB2B5hia7P2UhTMo3r/79MtZdpie+LqKmXmyLjEDqoOPlDoP9c00QrH0KSG21hk8VbmvAABQXFm+6kBsuxfUQq3FNBviujGy6vlUkpPmA/z9e5Lbe8LDJHkjA1Iuncjk89bvbAK8qTsBwT0i1u5K9dwdeNtN07l0R5s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JrgIGN0L; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722331728; x=1753867728;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=dzrjbZ0G46sPV7Io4/UaOGZpRueCgc5jJwljO/Fw/Zo=;
+  b=JrgIGN0LmI0LWfdx+7qvKjlTioq4+TK9fpWRLFWkEeOiTd2d9Y7yKakz
+   epk1GAUttMOU7dpq1b6/OyOO+Z6pRpSXk8HHhv4o3DZ1t3ipisH4WbC+s
+   db2yg742oGj+tIY8gMV4W1EZ0J/dym10kKES72ohc+LJMWQ8ZB/syjmHb
+   3dwZ9P3ouF4AEjTYVzaNSUU0BBFFlo8tidAM2J2wGO9WMFstyAWdoUezi
+   xccElDDeXUifU7boVoFzQiFTQaiWA81qnrOwY+Wv26FURE5c1QZExH6Vx
+   Rf0tZC99B1umOzdSbajYeTX3A1Pw9FVfoBacWhn9J8d/9WcVflXpOPauY
+   Q==;
+X-CSE-ConnectionGUID: QjHs1YTSSqWN11/DwAxXtg==
+X-CSE-MsgGUID: TE9duwZQSXerzKVgix73ag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="24000025"
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="24000025"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 02:28:47 -0700
+X-CSE-ConnectionGUID: Tk2fp56vQ8CsItEZGlI/8A==
+X-CSE-MsgGUID: FHdCZ+5KTi60oY1JzMvKhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="85228027"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Jul 2024 02:28:47 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 30 Jul 2024 02:28:46 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 30 Jul 2024 02:28:46 -0700
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.41) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 30 Jul 2024 02:28:46 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ekPqDaPE+flhE5AzjU/sp975fYAidmP8PU4Snlq1awhE+JrVYYLtZxTmzSIZgOk9/tUWkg4z7wXMX+eJ/7AIqOpmlbySLAc1K32g9vL/J4U9Vs1plZNtlrd1YH2YEGZpcvhSX96qizUixDRzzktWzUKCbGg47r5jfEA/jpB+hM7wXlzSShXqKvdnY7pmyPpwNQICT6zPuUC2SWqwWAfDh6Mxexu7Qlb4fNC6uOb0IDAm5BD/Ay6FwsqA9elyRZdGNUsQ41wtJQyB7Vefxquc/085Dyhop/akJwQVU/MLv7Df16mYmgY+e3GbMT3UlZPxR1xl+gHvlnWl2Vt4/ftpCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0QoBvI0n5AwtDiv1H1ML6HLrAoAZgFNrQBII5WqIv84=;
+ b=cPmxwjBBogepFJ36RNmCP3qDUbAAKRseiNfqI7aUKUhMwTqQSjekUeh+Rdxmpz45NeTEh/ih/JGS0WD+4UHHmxbY1UIvqPKS8jqZaNHBhlP8wcPJrJNaanvZ2yicVz1qYIm/Ia16jVzAs+yroGMvzQM/yJj4LrN5devjvhTyRsDA6sCMgW4DEbKju/scdazOGrBdhbrZgsozpm5Fg8QPaDCY9S7pTKs4RJOqmtgqmU0S8r5ZRChFYTx1QlZ27fz3haEFsHpX/vkuVDftvzVrQEVTOO0J82UpTgnXwHX5VfI/HRiiEpDlEJAYFlJdGhWRS1EFRdrgPTueRlBqIfIb+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MW4PR11MB5776.namprd11.prod.outlook.com (2603:10b6:303:183::9)
+ by SA1PR11MB6870.namprd11.prod.outlook.com (2603:10b6:806:2b4::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14; Tue, 30 Jul
+ 2024 09:28:39 +0000
+Received: from MW4PR11MB5776.namprd11.prod.outlook.com
+ ([fe80::4bea:b8f6:b86f:6942]) by MW4PR11MB5776.namprd11.prod.outlook.com
+ ([fe80::4bea:b8f6:b86f:6942%6]) with mapi id 15.20.7807.026; Tue, 30 Jul 2024
+ 09:28:39 +0000
+Message-ID: <46b36141-aae0-468f-be27-cc64b00050d0@intel.com>
+Date: Tue, 30 Jul 2024 11:28:32 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next,v3] net: phy: phy_device: fix PHY WOL enabled, PM
+ failed to suspend
+To: Youwan Wang <youwan@nfschina.com>, <linux@armlinux.org.uk>
+CC: <andrew@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<hkallweit1@gmail.com>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, Russell King
+	<rmk+kernel@armlinux.org.uk>
+References: <20240730081516.698738-1-youwan@nfschina.com>
+Content-Language: en-US
+From: Wojciech Drewek <wojciech.drewek@intel.com>
+In-Reply-To: <20240730081516.698738-1-youwan@nfschina.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR2P278CA0020.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:46::6) To MW4PR11MB5776.namprd11.prod.outlook.com
+ (2603:10b6:303:183::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zqet8iInnDhnxkT9@hovoldconsulting.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR11MB5776:EE_|SA1PR11MB6870:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3f5ec195-bc5c-4782-6c04-08dcb079feca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZUJUSTB6QzBpa3MvODk2Mk5jR1lLcEI3Q0NmcGY4cDYyNnBSaW9mbkdMSHN5?=
+ =?utf-8?B?SDFVY2pZSEtnM1g0VXgxdHpWTEt0RitmbzJPL0svV2hHeE1NVXF1YVB1azUr?=
+ =?utf-8?B?dlBYUXFNRCtFMVFtcnF2ZnE5a004VWZKWCtRbzBySmlzZURVVG4ya0dyM0lr?=
+ =?utf-8?B?UXdkTk9teFU5QXNNVEFJWjBFMzlTSHl1QUo1YXRjTlV1aGxLc2V1YUR2YTV2?=
+ =?utf-8?B?R2V3TGNJWHY5cHQyMVQwZWM4WnZQTG1MZW1GcU5aRHlsdlNRMVEzWXVqUDVI?=
+ =?utf-8?B?b29OSHplZlVMbDFSdWZRek9ybHhDQUNnZHN5N2trSmRmRnNyVXMvNG5Ub2g0?=
+ =?utf-8?B?SnFvOWFDWHo5NHpjUXZTWmsxMFNyZWl5WHNEN1AyVzRSS21tSXJCMlNZRDZt?=
+ =?utf-8?B?Z2FaU0pmSFRoSW8yU2ZiSWwydXdFUXJpMUs5TEVCMExUZUwrV0ZVT0pGSCs4?=
+ =?utf-8?B?dVRabytJVE9vNFhSaWl1Yi9peTZWM3llL3diZnc3Y0owUXpZZy96NWVCUCtT?=
+ =?utf-8?B?VnYzQnBKaU5CVnB4L1ZEbW9UK24yaS80MjB4bWRQQ3lQSWZibktTbnRGRDFs?=
+ =?utf-8?B?MVpEaGMrbk41NElUTHY4N3lqQnpYdFhoRzEwMGxkWis0WmJJU0FINGpNOTFx?=
+ =?utf-8?B?VGMxWkV1QjZrRFJZbEFuWXZybUNHdzc4dVJYZENpemprMC9ONnR0c1pPbmhp?=
+ =?utf-8?B?MUhjVHZucEdNRVdTM2Z1Q3JybU1QVTYrcXFVWlNvTGRxeWpqVSs4ckI1dm4v?=
+ =?utf-8?B?YzYrbk1jcmNabVlkeDd3SHdPZDg1SVd6MmQ1YWVab1NaQlZ0NnR0RlR6Vjk2?=
+ =?utf-8?B?bCtVUnZwa1hHTTl5THNMTHRIeHNYWTRsQmd6VHpITENaaWJGZlRyVVFGaGox?=
+ =?utf-8?B?a1NtamNUdmtxc3I2MUpkaXBZSHVzUmtHZC85MHhrQ2dkVklCNVpwWTg3UXdT?=
+ =?utf-8?B?WVBtUmNudmgzZy9vM1UweDlVL1FuTTlwOExyQkE1THNscTJZdFdiZ0U1bTM0?=
+ =?utf-8?B?RGEyL0E3VzRtd0tiS29iYWF6TGJUbzJGZ3ByRzhVak5ZaVZJTmNWSVk2RkZz?=
+ =?utf-8?B?d3hBN2N2a25ES2hQOWU4SkZ5T3NWbEJrZk9FTVNpQlNrSTBrSEhJUHBmelpt?=
+ =?utf-8?B?QjlBK2pydUxFaTNETElkdTM5YzRZNDlERXFWRDV5bXh6dG83b09NelVzdWZ5?=
+ =?utf-8?B?SXd1a3lxUnJUaUgrenYvT25NK1V5V1RvdnRSVFVxTlFFekJXclJQUzViMlc5?=
+ =?utf-8?B?eVhhVGZmY2Roa2xLUnRUS1pQZjE1R1c3cHFnUHdxMitzQXE0OHpSMGtTZ25k?=
+ =?utf-8?B?WUZhaUxheFpIYndRMjNxUWZkcjhKODVjdlYxVExQd1ZEQUhCR0xIbTdSdWxT?=
+ =?utf-8?B?NXFrZXZlMnFVci95czJ0U29FdGdGcFpwNUEwdXAxQzFTUnUxOEFWcE9FUUFY?=
+ =?utf-8?B?dXhpQUQxL1V2aWttSmZ4Uk52c3JYazJSN09NUVVKb2pzVTZEcmFtbjU4T012?=
+ =?utf-8?B?T242anFQWjVOY3MyWTBRbnVCUGh3L3YrMkhVMm9hSWQySWphbHZsZ2hsYWI2?=
+ =?utf-8?B?TUltZThzTGNmc1NoNUlhTWJDUythZmpFUzVUdWgvcnp4S2xFRlBhSGNiNEo4?=
+ =?utf-8?B?bzNUbHZCVWZVcDdCd0hTanRzYjViVGE5WDYrQzRFcWhiemF4NnFSU3NDMS9E?=
+ =?utf-8?B?M0FqV05obXZtODFkZ21mOXR4ZHM4aVh2MEJYQ3JLWDZlTGNWcFBXS25xQktm?=
+ =?utf-8?B?TGRWelJqNXdyYjZrdWpMelpzYVlYSHM3V1d6RU92UlNJOU1VYy9CbWh3eDF1?=
+ =?utf-8?B?YTV1NnBPa3loZzBBNDhndz09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR11MB5776.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MkZBRnZOd3dEVkYreUhZcHNBckJZb3I1ZGIzS2FENGxpWXFTZ3NsaHdYRzAx?=
+ =?utf-8?B?OTAvTDVoTm5abDlmMVljOGdnbSt0d0lYbWpwdVhEVG5sQkczUUhtODVyZCtz?=
+ =?utf-8?B?ZmdKNXJHaWRMVVRVeUhLNE8wc0V1TTVLUElIMGU0S3lCN3RVa0xrbXh0bkFB?=
+ =?utf-8?B?TXhXc3Ruajljak0vTUIxQklHeU9rWXhLSFFua3JJZk5RckxJdGhFQkNQRmRp?=
+ =?utf-8?B?N2p3Rmc0ZGZBVEoyTWFhUkU2YWZiU2ZXMXo2aFg5dExlVW15c0llS1lReXZq?=
+ =?utf-8?B?eEJZSlNjWHZENnhvMkd1V01zMTU0aDdNSlRqMU1ZODVwM0cyRWFGWXdzRVRv?=
+ =?utf-8?B?Q2hXTWNGVVdITWgzdnFjVG5pdlp4VTJlRUU2NGpCM21FRmEvQ3dFMGN6dFY2?=
+ =?utf-8?B?NmpEeW04TS80VHRCVnVSODZCMFY1aFNDQnV5QmV4WGttaFJ5WWZBMjJzRktP?=
+ =?utf-8?B?Z1hHd0lPaS84U1U0WmpQM3Q3aHNNR1FEUUNNS3hOM3pzRUREcUtIU2VBZzNK?=
+ =?utf-8?B?MlBzbzlNYVV0SSsxNXNpNXh3R3d1YzFZMC9Tc0NobGxVWWIzWHF2TjBnRTFy?=
+ =?utf-8?B?bFBoRXNlQ1ZkQ1dWaFh5Z2hyd2R4aXluM1V1QVZMWEovakhlNFFhODF3WTVX?=
+ =?utf-8?B?UTAzZDQrVTFxbVMrUHVPTWZONkZsSHdFT1grWWtscHhMOUdicVFGTU80OTNC?=
+ =?utf-8?B?ZjlYMlVJSExEM2YyaTNLa3RIbG9USUFCejFRSVNnMGU0OGY3TTQ3cTQwa3Ro?=
+ =?utf-8?B?Y3N3K2gwNjl2RUU5bExwUjZSbzV5eDZVZEtYc0hScW0xVFRCZUY4QTJsTDRZ?=
+ =?utf-8?B?UHZ3djNhYjlqbXhML1haUURLVWpGWVpzUnhsajRVd0tjQ1BXd3kzLzVCWjFj?=
+ =?utf-8?B?c1lOQkZQN2wvM0Z0R3hiUHR4MlplN3RXR2tMcVNHOVpwQ2FueG5sNGlieHl4?=
+ =?utf-8?B?ZjBDWjhVZjQ2MU9QcnhwM20vTGtuUmJqa1dtMkZlTFFuamc4djBHMEg2K1pN?=
+ =?utf-8?B?MWdlajdGYWhUMDRaQkw1bUcxV1NDK1RJWU1BbTNQM1pTL2Iwdm8wbzlOd2t3?=
+ =?utf-8?B?NmpPREM4OG0ybnVoTDVGZXB4ak40NUdhbGJWWW0ydWRPWFRaSTRmeEZ4cCto?=
+ =?utf-8?B?VTBpc283ODdrSXF0bGEweUIyRWZhZUJDYkVvQjdPVGMvaEk0M3grRUI1RnVY?=
+ =?utf-8?B?NWNVbHFPZEJuRGVrS2hVV3F0cDJHTGE1ajUvM0ExSUdoODJiaFpUYng1d1NF?=
+ =?utf-8?B?TFF1NkFRaTBiRHliM1NXQ3ZDRlRFQjhHZU8ycklFOFFwTm9ZUTBreXAwVGM3?=
+ =?utf-8?B?bmZuTjFjdTJWMXM5K1pnNUJ3M2tOUEd4cHZCbytaSnpVVGFXOHV2TnVLbnRX?=
+ =?utf-8?B?NXlHUC9id1pmaVYxbXZRMVl0MEtTb253UktTK1luSEx2MFBVcGNNNlBzWlZo?=
+ =?utf-8?B?a1l5ekRlZUVPVGFod05KSGdWNUdhajhPa3BkQ3hxS0FDR0dwRWx3blZZVWNP?=
+ =?utf-8?B?djZVa2hrSVYwMmYvZHZlYi9oM0tia3dFR2svRjROclBIYTB0QUR4azY5UUlB?=
+ =?utf-8?B?RjhpZStyd1BQQnFsSjJDdEVqM3V0bjk3bFJsam5lck5FSklseDRUdUJWK0R3?=
+ =?utf-8?B?VlFwOENGeXE3VGRlYitwUGpIN0NNN0RWRUdwanJUdFNXTTdJbWZaV1h1b3F1?=
+ =?utf-8?B?ZHR5OE5XSnRqVkFIR0Znc2cyZEZLd1ArcHBKRGJWcWQxeDNuekJ4RjdnZjlY?=
+ =?utf-8?B?RjM2WjUyODdFZ1g2RDF3VUpGcVczekZ2azlzVmd4enAzUmpqNHlSVHlFek1n?=
+ =?utf-8?B?U1dEZktpZ1R1UDJoUk1FTnZIN1Jvb3lVMVBna3VRaXRZbExCYlhxdHRYaEwv?=
+ =?utf-8?B?ckkrbEZmWjNsTjVjRUkxZjFVdEhjaVdoTEs4ZjJ3SkF2aE1ObDlONUQybS9o?=
+ =?utf-8?B?djRZUnNvd3U1a3psQVhKNHRFN2RHSllONnNrbm52RE5RZGxlY0hVNXJXcVZL?=
+ =?utf-8?B?UUxtOVAxU1ltc2pyNDg2eVJKNXF4TFkra2lyNm1WaGxJYk5BVHRwWWc1bDlC?=
+ =?utf-8?B?Mkh0OGtDUmNOZjhlQlYyUTFXcWNCSW92dTNDdkx2a1prSDB3d3NoVVhKWEd0?=
+ =?utf-8?Q?bCgpnQpfRVREk7l88Grv7m3Fm?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f5ec195-bc5c-4782-6c04-08dcb079feca
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB5776.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 09:28:39.4313
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uhCvyrR1tYkeO8g95p/vsgj8v1CaspTA7c5NxXWRbYUjEMbnPrZVWA/2pr/Z6w60tgofGUAg87QXqycqiVVBzE+OqdvwqYbObOsZMT0xFeg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6870
+X-OriginatorOrg: intel.com
 
-On Mon, Jul 29, 2024 at 04:57:54PM +0200, Johan Hovold wrote:
-> On Mon, Jul 08, 2024 at 06:22:09PM +0200, Stephan Gerhold wrote:
-> > X1E80100 has the same protection domains as SM8550, except that MPSS is
-> > missing. Add it to the in-kernel pd-mapper to avoid having to run the
-> > daemon in userspace for charging and audio functionality.
+
+
+On 30.07.2024 10:15, Youwan Wang wrote:
+> If the PHY of the mido bus is enabled with Wake-on-LAN (WOL),
+> we cannot suspend the PHY. Although the WOL status has been
+> checked in phy_suspend(), returning -EBUSY(-16) would cause
+> the Power Management (PM) to fail to suspend. Since
+> phy_suspend() is an exported symbol (EXPORT_SYMBOL),
+> timely error reporting is needed. Therefore, an additional
+> check is performed here. If the PHY of the mido bus is enabled
+> with WOL, we skip calling phy_suspend() to avoid PM failure.
 > 
-> I'm seeing a bunch of new errors when running with this patch applied on
-> top of 6.11-rc1. I'm assuming it is due to changes in timing that are
-> either exposing existing bugs or there is a general problem with the
-> in-kernel pd-mapper implementation.
+> From the following logs, it has been observed that the phydev->attached_dev
+> is NULL, phydev is "stmmac-0:01", it not attached, but it will affect suspend
+> and resume.The actually attached "stmmac-0:00" will not dpm_run_callback():
+> mdio_bus_phy_suspend().
 > 
-> In any case, this does does not seem to be specific to x1e80100 even if
-> I'm not seeing as many issues on sc8280xp (there is one new error there
-> too however).
+> init log:
+> [    5.932502] YT8521 Gigabit Ethernet stmmac-0:00: attached PHY driver
+> (mii_bus:phy_addr=stmmac-0:00, irq=POLL)
+> [    5.932512] YT8521 Gigabit Ethernet stmmac-0:01: attached PHY driver
+> (mii_bus:phy_addr=stmmac-0:01, irq=POLL)
+> [   24.566289] YT8521 Gigabit Ethernet stmmac-0:00: yt8521_read_status,
+> link down, media: UTP
 > 
-> It doesn't happen on every boot, but with the in-kernel pd-mapper I
-> often (every 3-4 boots) see the following errors on the x1e80100 CRD
-> during boot:
+> suspend log:
+> [  322.631362] OOM killer disabled.
+> [  322.631364] Freezing remaining freezable tasks
+> [  322.632536] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+> [  322.632540] printk: Suspending console(s) (use no_console_suspend to debug)
+> [  322.633052] YT8521 Gigabit Ethernet stmmac-0:01:
+> PM: dpm_run_callback(): mdio_bus_phy_suspend+0x0/0x110 [libphy] returns -16
+> [  322.633071] YT8521 Gigabit Ethernet stmmac-0:01:
+> PM: failed to suspend: error -16
+> [  322.669699] PM: Some devices failed to suspend, or early wake event detected
+> [  322.669949] OOM killer enabled.
+> [  322.669951] Restarting tasks ... done.
+> [  322.671008] random: crng reseeded on system resumption
+> [  322.671014] PM: suspend exit
 > 
-> 	[    9.799719] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to send altmode request: 0x10 (-125)
->         [    9.812446] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to request altmode notifications: -125
->         [    9.831796] ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: failed to send UCSI read request: -125
+> Add a function that phylib can inquire of the driver whether WoL
+> has been enabled at the PHY.
 > 
-> 	[    9.269230] qcom_battmgr.pmic_glink_power_supply pmic_glink.power-supply.0: failed to request power notifications
+> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: Youwan Wang <youwan@nfschina.com>
+> ---
+
+Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
+
+>  drivers/net/phy/phy_device.c | 19 ++++++++++++++++---
+>  1 file changed, 16 insertions(+), 3 deletions(-)
 > 
-> I've also seen the following, which may also be related:
-> 
-> 	[   14.565059] PDR: avs/audio get domain list txn wait failed: -110
->         [   14.571943] PDR: service lookup for avs/audio failed: -110
-> 
-> I haven't seen the -ECANCELED (-125) errors in 30 reboots with the patch
-> reverted again.
-
-Here's another bug, a NULL deref in the battery driver, that is
-apparently exposed by the in-kernel pd-mapper. This is also on the
-x1e80100 CRD with a couple of added printks to indicate when the
-pd-mapper probes and when the pmic glink services are up:
-
-[    8.933775] remoteproc remoteproc1: powering up 32300000.remoteproc
-[    8.934623] qcom_pmic_glink pmic-glink: Failed to create device link (0x180) with fd5000.phy
-[    8.945244] remoteproc remoteproc1: Booting fw image qcom/x1e80100/cdsp.mbn, size 3027368
-[    8.965537] remoteproc remoteproc0: powering up 30000000.remoteproc
-[    8.971075] qcom_pmic_glink pmic-glink: Failed to create device link (0x180) with fda000.phy
-[    8.974299] remoteproc remoteproc0: Booting fw image qcom/x1e80100/adsp.mbn, size 21424472
-[    8.999726] msm-mdss ae00000.display-subsystem: Adding to iommu group 4
-[    9.007697] qcom_pmic_glink pmic-glink: Failed to create device link (0x180) with fdf000.phy
-[    9.101196] remoteproc remoteproc1: remote processor 32300000.remoteproc is now up
-[    9.103860] qcom_pd_mapper.qcom-pdm-mapper qcom_common.pd-mapper.1: qcom_pdm_probe
-[    9.105989] qcom_pd_mapper.qcom-pdm-mapper qcom_common.pd-mapper.0: qcom_pdm_probe
-
- - pd-mapper probing
-
-[    9.112983] qcom-snps-eusb2-hsphy fd3000.phy: Registered Qcom-eUSB2 phy
-[    9.296879] remoteproc remoteproc0: remote processor 30000000.remoteproc is now up
-
- - adsp is up
-
-[    9.300086] qcom_pmic_glink pmic-glink: pmic_glink_pdr_callback - state = 7fffffff
-
- - SERVREG_SERVICE_STATE_UNINIT
-
-[    9.301878] qcom-snps-eusb2-hsphy fd9000.phy: Registered Qcom-eUSB2 phy
-[    9.306985] qcom,fastrpc 30000000.remoteproc:glink-edge.fastrpcglink-apps-dsp.-1.-1: no reserved DMA memory for FAST
-RPC
-[    9.309924] qcom,fastrpc-cb 30000000.remoteproc:glink-edge:fastrpc:compute-cb@3: Adding to iommu group 5
-[    9.311367] qcom,fastrpc-cb 30000000.remoteproc:glink-edge:fastrpc:compute-cb@4: Adding to iommu group 6
-[    9.318330] PDR: Indication received from msm/adsp/charger_pd, state: 0x1fffffff, trans-id: 1
-
- - This looks suspicious
-
-[    9.323924] qcom-snps-eusb2-hsphy fde000.phy: Registered Qcom-eUSB2 phy
-[    9.325275] qcom,fastrpc-cb 30000000.remoteproc:glink-edge:fastrpc:compute-cb@5: Adding to iommu group 7
-[    9.326008] qcom,fastrpc-cb 30000000.remoteproc:glink-edge:fastrpc:compute-cb@6: Adding to iommu group 8
-[    9.326733] qcom,fastrpc-cb 30000000.remoteproc:glink-edge:fastrpc:compute-cb@7: Adding to iommu group 9
-[    9.336582] qcom_pmic_glink pmic-glink: pmic_glink_pdr_callback - state = 1fffffff
-
- - SERVREG_SERVICE_STATE_UP
-
-[    9.345544] dwc3 a000000.usb: Adding to iommu group 10
-[    9.361410] qcom,apr 30000000.remoteproc:glink-edge.adsp_apps.-1.-1: Adding APR/GPR dev: gprsvc:service:2:1
-[    9.362803] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to send altmode request: 0x10 (-125)
-[    9.362882] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to request altmode notifications: -125
-
- - -ECANCELED errors I reported earlier
-
-[    9.364298] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000010
-...
-[    9.364339] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-[    9.364395] CPU: 6 UID: 0 PID: 111 Comm: kworker/6:4 Not tainted 6.11.0-rc1 #70
-[    9.364397] Hardware name: Qualcomm CRD, BIOS 6.0.231221.BOOT.MXF.2.4-00348.1-HAMOA-1 12/21/2023
-[    9.364398] Workqueue: events qcom_battmgr_enable_worker [qcom_battmgr]
-[    9.364401] pstate: 01400005 (nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-[    9.364403] pc : pmic_glink_send+0xc/0x24 [pmic_glink]
-[    9.364405] lr : qcom_battmgr_enable_worker+0x60/0xbc [qcom_battmgr]
-...
-[    9.364427] Call trace:
-[    9.364428]  pmic_glink_send+0xc/0x24 [pmic_glink]
-[    9.364429]  qcom_battmgr_enable_worker+0x60/0xbc [qcom_battmgr]
-[    9.364430]  process_one_work+0x210/0x614
-[    9.364435]  worker_thread+0x244/0x388
-[    9.364436]  kthread+0x124/0x128
-[    9.364437]  ret_from_fork+0x10/0x20
-[    9.364439] Code: 17fffff7 d503233f a9bf7bfd 910003fd (f9400800)
-[    9.364441] ---[ end trace 0000000000000000 ]---
-
-[    9.365205] ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: failed to send UCSI read request: -125
-
-Johan
+> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+> index 7752e9386b40..04a9987ac092 100644
+> --- a/drivers/net/phy/phy_device.c
+> +++ b/drivers/net/phy/phy_device.c
+> @@ -279,6 +279,15 @@ static struct phy_driver genphy_driver;
+>  static LIST_HEAD(phy_fixup_list);
+>  static DEFINE_MUTEX(phy_fixup_lock);
+>  
+> +static bool phy_drv_wol_enabled(struct phy_device *phydev)
+> +{
+> +       struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
+> +
+> +       phy_ethtool_get_wol(phydev, &wol);
+> +
+> +       return wol.wolopts != 0;
+> +}
+> +
+>  static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
+>  {
+>  	struct device_driver *drv = phydev->mdio.dev.driver;
+> @@ -288,6 +297,12 @@ static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
+>  	if (!drv || !phydrv->suspend)
+>  		return false;
+>  
+> +	/* If the PHY on the mido bus is not attached but has WOL enabled
+> +	 * we cannot suspend the PHY.
+> +	 */
+> +	if (!netdev && phy_drv_wol_enabled(phydev))
+> +		return false;
+> +
+>  	/* PHY not attached? May suspend if the PHY has not already been
+>  	 * suspended as part of a prior call to phy_disconnect() ->
+>  	 * phy_detach() -> phy_suspend() because the parent netdev might be the
+> @@ -1975,7 +1990,6 @@ EXPORT_SYMBOL(phy_detach);
+>  
+>  int phy_suspend(struct phy_device *phydev)
+>  {
+> -	struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
+>  	struct net_device *netdev = phydev->attached_dev;
+>  	const struct phy_driver *phydrv = phydev->drv;
+>  	int ret;
+> @@ -1983,8 +1997,7 @@ int phy_suspend(struct phy_device *phydev)
+>  	if (phydev->suspended || !phydrv)
+>  		return 0;
+>  
+> -	phy_ethtool_get_wol(phydev, &wol);
+> -	phydev->wol_enabled = wol.wolopts ||
+> +	phydev->wol_enabled = phy_drv_wol_enabled(phydev) ||
+>  			      (netdev && netdev->ethtool->wol_enabled);
+>  	/* If the device has WOL enabled, we cannot suspend the PHY */
+>  	if (phydev->wol_enabled && !(phydrv->flags & PHY_ALWAYS_CALL_SUSPEND))
 
