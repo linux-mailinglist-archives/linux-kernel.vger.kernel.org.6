@@ -1,166 +1,105 @@
-Return-Path: <linux-kernel+bounces-267963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA6CB941E73
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:29:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C6F941EC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F9A72822FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:29:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0955FB25CF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFFE1A76C5;
-	Tue, 30 Jul 2024 17:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D3113AD13;
+	Tue, 30 Jul 2024 17:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b1Po+Yvf"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFuI62Xo"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26AE1A76BE
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDA51A76BE;
+	Tue, 30 Jul 2024 17:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722360542; cv=none; b=ZOTCz4aspqs664uyfXqf5bREC1C/5//+tQwzGwDaH+uDN2YF/DRbbPxAyHHlwx03/jaH309qaurE71wMatQVFEB0yAtsS28FosIhvu/JNAfAFLTZ5AwOAWb20IPqFY2manC5igORy0260d1xETQXr6T5I7Iz7HLnQpAWv8yQfI0=
+	t=1722360556; cv=none; b=nFfxL+0bYVgk6kBaAB3DHqHWTaycmW466ytP7pXOre8naS+ZzKrokom13GF3FnkaOhawtXZXtVXkSRjZgdwJVzphqdgp4RSxRSoe+MhriQxYpC1eqqgkCrmpHVsQ2DeISszVREFoK8USJimxpLE1IVoAMZpc4z1g6VwTOgNtej0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722360542; c=relaxed/simple;
-	bh=JP1s8QjYEdh+uFt+cmIt4OJAgmgev3dxGNW2dQ2XwRU=;
+	s=arc-20240116; t=1722360556; c=relaxed/simple;
+	bh=GjlOMBAG3NQG0ljYfJguk2Akgzj/vQe/Tx1QnoDiCK0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c7Lf4+InpaaRqsKUiF6ZM9EpzrT+lraF0grvJ9yyQGqqUmOEPMUVeUq0DHD2h1Uv7bm/49Nnwl8PVu51tvax83Wdes9D/2Go0w0uLECZfrMgEyXwYWlbyjzzlr+4vI0+IYVbpUP+JxjHU5rCdUeap+xWG4tsescs1kG2/px3OZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b1Po+Yvf; arc=none smtp.client-ip=209.85.128.174
+	 To:Cc:Content-Type; b=uQLoz3d85CE5cSI3ztbnWP/VHJ4i2ORYF8oBoLkc9QiHTerURGSUaXXAO8Cw/aOQAkr2XK24jFkEC3X43W6eZLAXF/t5MO8MJi5M14rN+TYZX/FYz8vsB8+BM3o/LtPQUnMjxWtWj9nOS5Ue6brFmj/gL2YDrO79EOxAjMGHEGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LFuI62Xo; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6518f8bc182so857657b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:29:00 -0700 (PDT)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-75a6c290528so3147045a12.1;
+        Tue, 30 Jul 2024 10:29:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722360540; x=1722965340; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722360554; x=1722965354; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JP1s8QjYEdh+uFt+cmIt4OJAgmgev3dxGNW2dQ2XwRU=;
-        b=b1Po+YvfPuzhtiuM3ahXtPb4nIh8j7dLANVBQDvmnz5XwYGYbmLayKVZXMm8g64nKb
-         ks8CSc1flN1ZVCVvcAkqxZNbqMPZFWOMRambL44fzfn9au5etrhnmT2IkcP1cbgngPxT
-         VY6fdh3EWRk819vlaJ2BQQdOPofTBKs+u6Yvz7Kh53iYKVOHuTU4+zk5KLdrcZnObztF
-         rF1r2d8vt8Ki0Ahgtsv6lmqLCVoOy68OO54h+2eXWCe/yQC3lYlKRMkd2/Rx+qxmKyXB
-         6PJ9ZGhgg10plGQ3i36S/ypdmZwOJjdQ9f5fw7/mtM2vOsHh08Q8X80+qlXJPeJzT/40
-         2SEw==
+        bh=GjlOMBAG3NQG0ljYfJguk2Akgzj/vQe/Tx1QnoDiCK0=;
+        b=LFuI62Xok3zLmEYmoBahNgW3J0jIL0MfslM4hxMaIU8Ivkqg7CvSnpwLTmeUPypcL0
+         HmZ/ZaHsTDGlB+KgMkdGUez4WPfLeDVl31AmGP/BPJE/dZcN8D65qDMSxX4+Amlua2ZB
+         Lmr95pdla0Eyzp0LL/cZcjTX7GMq0SuJjVzOHRN4CrwrnM+g+YGSk5Pw4wSRM807F4VB
+         S6rkd06yi0+FWDzF2EvObEtmFIwfQNaKL8Wk1dRq0DHsAci7cUZLXQmtOUxBaUpXbAU/
+         7mooQGZ8+ebHjDf0dtPM5PSRMKj5fpEoGE4VtQZUr+oOA0Lo7RT9OHPGV5Dy0cfJKc8p
+         66vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722360540; x=1722965340;
+        d=1e100.net; s=20230601; t=1722360554; x=1722965354;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JP1s8QjYEdh+uFt+cmIt4OJAgmgev3dxGNW2dQ2XwRU=;
-        b=bCNFAdVrqFXFoi+AeGoW76AQtDmlQSY8f4OQjR5kEl6fhRAVHjyb4K+KbQhh+Jc9pZ
-         6YyaurCxft35yym7JKMfOUBKOry+zSVqGQoOUrbLBNlI8KlcU4kY0FmUEYF+VczGQjbS
-         zXu3Ol1efdPyACh7LX42NBFukK33ifI72i+4oQtwgMkLzwdP4eSwFG3a2juCoos94FMj
-         zCOrRasd3llzAW543DD2Q5A80jHDPJpOnK/OA0LSxvNAEIJo9wRHxBsND+1Ykiw4K1ld
-         mi2HZGXb+ArQ8igaOg7ST4tanqbVFuBYPF5NDHcK5q7eML9WKQyY2f3R+4evNuwNvz7F
-         i+mA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPvdACaxttOS/hhBlZNZ0J25MawtV2vf57xq8Oiw+20FWbKqggKCAnhAt3/BAnKEgW/GhNOHLTcelUPxMRtnG6plhx2mT7xur2je/r
-X-Gm-Message-State: AOJu0YzyMjMhcN1GMPRkaBOLtBGw9HfrjRLtMBT/AJALxfRCoVZzpxsU
-	9UaYfs+H6OMsmHSICkYkEPUQwlqAoBJkPsVIDo4Taf3zHmmIGgpXoqgaHzo+R36GvuVjLTtYx7m
-	Kvg6FdwndsTqMU+UvaNAKzZt+0LE=
-X-Google-Smtp-Source: AGHT+IHjhwrPp9CibFnetfBtnFVu8ekaB8v8h7DpbGWNITgABcH0CpPLw7LAylTC580BwBw9woSzMfuBDmpv3rONZMQ=
-X-Received: by 2002:a05:6902:1202:b0:e05:eccb:95f5 with SMTP id
- 3f1490d57ef6-e0b9e1fa50bmr2913232276.18.1722360539852; Tue, 30 Jul 2024
- 10:28:59 -0700 (PDT)
+        bh=GjlOMBAG3NQG0ljYfJguk2Akgzj/vQe/Tx1QnoDiCK0=;
+        b=mgPF8hypoDr9+gFN+ZAogCbWvHrnR5d4nC9gDzvpmm2f6ASeNSFRdKcekeXKfRaZqU
+         Jc+WPWj9B9SjQY1n2hb8B6OW+xzFEtQYuHvvA1tOzQzRQ6BOjrBA6oVAqg8+qgu+rejO
+         6MA46UfGnic4yTIe1hkPrgLIO6MIZAxqvvDG818Ab/zKWPxGDzFdOyGkd559pc9OMSkb
+         yCWEx2BuFvRHblSHSjkrVfu/AdeJphL7qn9v15gnEzpN6cqW0m6C66OIlVbsSYUHYLqw
+         u3JhtTc1R85NY6ITqmJbIoEhC92frUatkIJLyxdjh++sT20Jw8rV1zQRR7B/HNFot6Fd
+         P7kA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8bBl5OPKbONJd89qnD0MJTcwzMjE3akppppV+EhkrKYsa+qfSswY1H5MDAG7JpKYpZ+JUqtgNxIBa3oOvNkqQinLqjctsKBWpmtB+kpRHmOe7vJ7rA29rwfY0vyBg7Rgs1WzbV6ICTLmdQw0RcSPm9KzSPGINCVyxjb1nnOJJ1gTEQv8P4X4/h08=
+X-Gm-Message-State: AOJu0YwGRqZHPyibJ7fgMKhOJWAChM6hKUcfC6dEpDlToVP7E6RI6tfH
+	WbKWSRhxsd4GjvBF60arWbasuIFbEW1XSUgZ89eMIzuHpWQgD91VyB42Nb0/vPyPspRid0SPpy1
+	vsrkIaCnGqxDB59QZK/Zfe/O0kBM=
+X-Google-Smtp-Source: AGHT+IFhRfa36mEODzNwgucOaonXWYtImLvUNBLghEHAYnCAws9ajlDQJTWh2FqXMOlQ7Yu+3ZvmM1kDokO4hRmoCnU=
+X-Received: by 2002:a17:90a:5601:b0:2c9:57a4:a8c4 with SMTP id
+ 98e67ed59e1d1-2cf7e730999mr9716749a91.42.1722360553918; Tue, 30 Jul 2024
+ 10:29:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726185825.142733-1-computersforpeace@gmail.com>
- <D32OADQF733D.3CVS3ZRPEBL2O@kernel.org> <454deacb-88cc-4ab0-80b4-006d863a56d2@linaro.org>
-In-Reply-To: <454deacb-88cc-4ab0-80b4-006d863a56d2@linaro.org>
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Tue, 30 Jul 2024 10:28:48 -0700
-Message-ID: <CAN8TOE8-9=P7p8Tkc+5kG5Sqan+RAWAc7k2VH-p5W9hR-bb_Xg@mail.gmail.com>
-Subject: Re: [PATCH] mtd: spi-nor: micron-st: Add n25q064a WP support
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Michael Walle <mwalle@kernel.org>, linux-mtd@lists.infradead.org, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Pratyush Yadav <pratyush@kernel.org>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org
+References: <20240730-kcfi-v1-0-bbb948752a30@google.com> <20240730-kcfi-v1-2-bbb948752a30@google.com>
+ <CANiq72mshrgXJLw+AZ+ovfhZXjYYfgQLdyYdW_v0FmdWdEjvbg@mail.gmail.com> <CAH5fLghu8Gy8copyBgcBknMN7GaikhYZb57M0Ye2_xANW6YzoQ@mail.gmail.com>
+In-Reply-To: <CAH5fLghu8Gy8copyBgcBknMN7GaikhYZb57M0Ye2_xANW6YzoQ@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 30 Jul 2024 19:29:02 +0200
+Message-ID: <CANiq72m7dup--to6gxCfjhgY3hk1iV=UD8hqJfT5=kWkwo_MaA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] rust: cfi: add support for CFI_CLANG with Rust
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Sami Tolvanen <samitolvanen@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tudor, Michael,
+On Tue, Jul 30, 2024 at 6:44=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> Hmm. It seems like the existing variables containing rustc flags just
+> use RUST not RUSTC in the name?
 
-On Tue, Jul 30, 2024 at 4:33=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
-.org> wrote:
-> On 7/30/24 7:51 AM, Michael Walle wrote:
-> > On Fri Jul 26, 2024 at 8:58 PM CEST, Brian Norris wrote:
-> >> These flash chips are used on Google / TP-Link / ASUS OnHub devices, a=
-nd
-> >> OnHub devices are write-protected by default (same as any other
-> >> ChromeOS/Chromebook system). I've referred to datasheets, and tested o=
-n
-> >> OnHub devices.
-> >
-> > Out of curiosity, there is also a hardware write protect switch
-> > somehow, right? At least that's my understanding how verify boot
-> > works.
+If you mean things like RUSTFLAGS, it was because the C side uses
+CFLAGS, but for the equivalent of CC_FLAGS or CLANG_FLAGS, I would say
+it should be RUSTC_FLAGS.
 
-There's a whole doc on this:
-https://www.chromium.org/chromium-os/developer-library/reference/security/w=
-rite-protection/
-
-Short answer: yes.
-
-If you want to see how this fits together in practice on a
-non-ChromiumOS system, you can see my companion OpenWrt work here:
-https://github.com/openwrt/openwrt/pull/16014
-
-Basically, I just try to make it easier for tools (in this case, the
-CrOS vboot tools) to find the write-protect GPIO, and cross-reference
-that with the software (MTD "locked" ioctls) protection status. We
-need to understand and manipulate both if we want to (temporarily)
-remove write protection, while otherwise retaining verified boot
-integrity.
-
-> >> Signed-off-by: Brian Norris <computersforpeace@gmail.com>
-> >
-> > This looks good:
-> > Reviewed-by: Michael Walle <mwalle@kernel.org>
-> >
-> > But could you have a look whether this flash supports SFDP.
-> > According to the datasheet it looks like it does. In that case,
-> > could you please dump it according to:
-> > https://docs.kernel.org/driver-api/mtd/spi-nor.html
-
-Sorry, I didn't notice this doc. It's not technically a "new" flash,
-so it doesn't necessarily apply, but for the mail-archive record:
-
-# xxd -p /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
-53464450000100ff00000109300000ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffffffffffe520f1ffffffff0329eb276b
-083b27bbffffffffffff27bbffff29eb0c2010d800000000
-
-> This would help getting rid of the no_sfdp_flags and size from the flash
-> definition. Another reason is that the SFDP dump can help us
-> differentiate between flavors of the same flash, if it'll ever be the
-> case, and help us keep backward compatibility.
-
-I wonder, since manufacturers seem to reuse IDs sometimes, is it
-possible (or, likely) for SFDP and non-SFDP versions of the same flash
-to exist? I'm not really sure whether I can truly drop the non-SFDP
-definitions.
-
-> Also, if you care, would be good to extend the SPI NOR documentation on
-> how one shall test the Block Protection.
-
-That sounds tougher. I don't know that there's really a standard
-toolset for handling protection -- I guess the 'flash_{un,}lock'
-utilities in mtd-utils qualify, but they aren't even packaged by
-relevant distros (e.g., OpenWrt; but I guess they're in Debian). I
-typically use flashrom, since that's what ChromiumOS uses, and it's
-available in OpenWrt -- would that be an OK basis for docs?
-
-It's also highly conditional on what sort of range(s) the flash
-supports. So it's almost like we might want a programmatic
-write-protection test suite as part of mtd-utils/tests/, rather than a
-bespoke narrative document. Which ... is getting a little larger than
-I signed up for.
-
-Brian
+Cheers,
+Miguel
 
