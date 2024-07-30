@@ -1,194 +1,227 @@
-Return-Path: <linux-kernel+bounces-267781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 340BB941562
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:21:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2324E941566
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A51EA1F245EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:21:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A50B91F235E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6CE1A2C34;
-	Tue, 30 Jul 2024 15:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607391A38C3;
+	Tue, 30 Jul 2024 15:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UPUnUBwz"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+4dR+sW"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9EAB1A2C17
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103C829A2;
+	Tue, 30 Jul 2024 15:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722352889; cv=none; b=Q/kFrlmzMJeWuJJmoEIxiCl1pqQmHnGfhh/eQq5DCNtPuJFa56Sqce8feCrlYKUMkh5aqX5MDBFzLQFJmhwKP3KE0K++ZrzNkFoopCRKeTqWP7M0zCSjTFpnGxPL5STVoF3gnES98cKch1v9pvF9Ffk73phiTM075Qpf9vnj0GI=
+	t=1722353004; cv=none; b=He3jbRQQXdK0ERFA17BzgyU0/VRYOOCWhnX4ysRcYQi76bVI5DWoqJddt6da2DZxlj2JS8IBXQqZJjSkvZct5oLWGpIm75i7F3JDRQMfNFHM5j9YNSnud4L4dXxw6wLiuYMRnmL9ynXRjYO8WKhfpTkZbnSPA7By9I+HnYw+f88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722352889; c=relaxed/simple;
-	bh=0qpnTgOzReVulZgfg9hj0scl4g1+GaSa56gFYhhPCYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YidqeNpmzbL6kE1RoOEc/yToXv8eRtEWpFwhfXI7W4tLBmBXy6lMzlY3i61z3657cCgexGNXvT8iZQTr5wrF+qYB5XvlI3y4+jPOGuM+II4xzelXZZGW/af4ZJp3zI2qfRxHJAeLfk/Jnk8yILmLJ1zF2IdLysKtMeT4YGW0WJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UPUnUBwz; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 055B740E01CD;
-	Tue, 30 Jul 2024 15:21:22 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id xpnqvJtBHNib; Tue, 30 Jul 2024 15:21:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1722352877; bh=5JOjjO8RaohXhYODiyBW0i2sbPCLIRgv9IHMA2dz5AY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UPUnUBwzUvpjACJ/50ROdLLWPI+7htLt2zmQfBGD+UuctqisXbAzdCMNV6DY0tuni
-	 fa+97XNn5+3x/ABAgOquj8BizA4/MswvyurL4lXubcPNx/elEC1Z73ytvIzXt9sTfu
-	 fr9m1A84Zkofv7vPjwfcJUsnSV0xD1WA77AtW1Pte1sWHYy9ZoGsXBF49/ZtTmYc0s
-	 /PwUGNiBMxL1tAakbJSpPPLSMOmO69VGpLFN42xdzb+dMmg7nxvFKpO2UKiRJLOdos
-	 dXpggc7AuBp5JkTNBT45teB+O8oKUgIIzpsaVQfWMDITgumb33UcuIZ8wLUrNiwVHR
-	 Zr/Zu4V9L8aNN5PFeAWnWofInLNM1HHGCQ4l/r+wiWnjIkdaKb/KuilMv9Fu7+M8xa
-	 fDiqohndrwOVibrfK239Fxky4J6tzUf6HhVPxQrLdWyUrMgJOZZoYzcisJj2/cF2vG
-	 Oamb7UHPNWd3HB82rYsvHHF/Id271rqV5ubr6ns+caYxQe3cYAaCwHwa+iN/RE0z11
-	 cg56oJaqjS6QdofyoyRpHPF9v4Y6qaJmN9Zwf/AOgyCeJRKHHAkJhqnZ+bhbQdPPkq
-	 mztcyDep7O2TacJMQ6KhJq/CqRecHi5Oz8yrzwqm7Qv0ZQk34sWV7Tw7ZFrRzocGBK
-	 TMY9twHvXs6R3A87LRCq9KZY=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 79F0F40E01A8;
-	Tue, 30 Jul 2024 15:21:14 +0000 (UTC)
-Date: Tue, 30 Jul 2024 17:21:08 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Mike Lothian <mike@fireburn.co.uk>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [PATCH] x86/setup: Parse the builtin command line before merging
-Message-ID: <20240730152108.GAZqkE5Dfi9AuKllRw@fat_crate.local>
-References: <CAHbf0-G4bmpuXorwH-e_chWm1fXX7AJ8ck5AL4p+AFevhvdBfg@mail.gmail.com>
- <20240722152330.GCZp55ck8E_FT4kPnC@fat_crate.local>
- <CAHbf0-FTrRPfDTkkSjq9yvyFrWvoYjH_uJAW5KDae8vO-hch+w@mail.gmail.com>
+	s=arc-20240116; t=1722353004; c=relaxed/simple;
+	bh=864nHVVRqWlFox1rNDD/5Fp3rh8bfEudn31vCUNbV8g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HUDpuSfgKEBj55BvDCjpQVkTQuph5Lg5KM39b6ij1xDLnIbqnWpkLPZHL223sjC0nB20Y+hcnxyIo3ov6i9YFlLsIh7lLc7MjoB6MgNzRm2T4jQhLJKE4CwfXIy0RYsz2Wf9rpwxAQwg4yavnxNiImhsZjUE7H5s+9l+ERn5qIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c+4dR+sW; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7669d62b5bfso2847593a12.1;
+        Tue, 30 Jul 2024 08:23:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722353002; x=1722957802; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o86PbfiWNjxwnBHZXbIFiiSZ4WNL1lp7elfQvMtdViU=;
+        b=c+4dR+sWRHr3oSTsBdoK1HiGM1EUg+si5Oyqm8XsQ05qaaBxCmyRHFmtcLEOJ9xrWH
+         SSmWNZhh9W8ban4RWsMFj2QjoBHkp9DaCj0IOch/AlsXDZIG0MfVfu+bLwMhYG2PpE4i
+         jKGFHBFkiDK3gKyENkvotdqWWQp/Fks1LvIqpdKU+ulrQQ8MtHhAuIBEhcIDWi35D+YP
+         2d0Ha5P8/ebUd0RKS98KygYyGMgtLyaRSiioC9Md1SNuN5pPJb+U8t7rkyzDQxfVibRP
+         eMDZ0prB9zyeE2AQmJAprKWcO6gjEwnaAA/+Cvv6m8RZWWPTtXZIAMMclHz22u1xNEBP
+         oG8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722353002; x=1722957802;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o86PbfiWNjxwnBHZXbIFiiSZ4WNL1lp7elfQvMtdViU=;
+        b=SG7PDrD7cbbv44Z9hgktqB+d9B/w2QNGSM06SKtss2grcD8av9nK48IXodal1Eew28
+         T7mBMBfjf7IS85fd/Xyiiux41ezKltBCUGZPDDyjrKQI7qMNXG+6JxTYeUZ9Qei3Llih
+         j6bYSzP8PjoAVOVYPtw7zEZ+fSiZtlRhA7po4umDlUaEaNeNnjrf9rsck5W5Tk2GAE+z
+         i6bhjDUJM98z/18fp3hWVFeJoKRFde8u7iXYYGd4MH7mGfJ1h342tkfSV+lCEJqmImDW
+         wz45XZq8fnxwK5XCVGb0OSx9m/fV1mBJ0z9zyXlWFK5jMjKAfpF/8KHZQLXkvsSsMOJb
+         Whnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwKTDcCiaf8/kt7HkjQ4nic91MuLogZjziV4r20f2UkI7arvCkM9Qq13kN/1QvhioiTqtEuICUC9159eBnY64+MHZYYO1hjU6Ht0LLTfFsHarec8rNRzSMD7x4oRTpgswL5M1w
+X-Gm-Message-State: AOJu0Yx4XNz2EyCrEtffZGmN1JDsFexcIDRl3+ETSknB12EU668YzlMP
+	asuV/UnTuQLsHeHN+i3E3XsrlNJHGiY91GIdzZ8CP/Euwh52zQVM
+X-Google-Smtp-Source: AGHT+IE2tlSy8RnNB+VlKa7GaFvaKOYKuQ9IQxZUZVFhC4OaGaYY5u8ATy0JeEJkaOsiX268b6vI/g==
+X-Received: by 2002:a17:90a:4b04:b0:2c8:538d:95b7 with SMTP id 98e67ed59e1d1-2cf7e606ca1mr9596549a91.32.1722353002268;
+        Tue, 30 Jul 2024 08:23:22 -0700 (PDT)
+Received: from localhost.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb739114bsm13005593a91.2.2024.07.30.08.23.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 08:23:21 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: idosch@nvidia.com,
+	jiri@resnulli.us,
+	amcohen@nvidia.com,
+	liuhangbin@gmail.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH net] rtnetlink: fix possible deadlock in team_port_change_check
+Date: Wed, 31 Jul 2024 00:22:10 +0900
+Message-Id: <20240730152210.25153-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHbf0-FTrRPfDTkkSjq9yvyFrWvoYjH_uJAW5KDae8vO-hch+w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 22, 2024 at 05:56:08PM +0100, Mike Lothian wrote:
-> That patch does indeed make the warning go away :D
-> 
-> Is there anything else you need from me?
+do_setlink() changes the flag of the device and then enslaves it. However,
+in this case, if the IFF_UP flag is set, the enslavement process calls
+team_add_slave() to acquire 'team->lock', but when dev_open() opens the
+newly enslaved device, the NETDEV_UP event occurs, and as a result,
+a deadlock occurs when team_port_change_check() tries to acquire 
+'team->lock' again.
 
-Nah, all good.
+To solve this, you need to enslave it before changing the flag of the
+device.
 
-Thanks for reporting and testing.
+============================================
+WARNING: possible recursive locking detected
+6.10.0-syzkaller-12562-g1722389b0d86 #0 Not tainted
+--------------------------------------------
+syz-executor122/5360 is trying to acquire lock:
+ffff88802c258d40 (team->team_lock_key){+.+.}-{3:3}, at: team_port_change_check drivers/net/team/team_core.c:2950 [inline]
+ffff88802c258d40 (team->team_lock_key){+.+.}-{3:3}, at: team_device_event+0x2c7/0x770 drivers/net/team/team_core.c:2973
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
-Date: Tue, 30 Jul 2024 16:15:12 +0200
-Subject: [PATCH] x86/setup: Parse the builtin command line before merging
+but task is already holding lock:
+ffff88802c258d40 (team->team_lock_key){+.+.}-{3:3}, at: team_add_slave+0x9c/0x20e0 drivers/net/team/team_core.c:1975
 
-Commit in Fixes was added as a catch-all for cases where the cmdline is
-parsed before being merged with the builtin one.
+other info that might help us debug this:
+ Possible unsafe locking scenario:
 
-And promptly one issue appeared, see Link below. And the microcode
-loader really needs to parse it that early. And the merging happens
-late. Reshuffling the early boot nightmare^W code to handle that
-properly would be a painful exercise for another day so do the chicken
-thing and parse the builtin cmdline too before it has been merged.
+       CPU0
+       ----
+  lock(team->team_lock_key);
+  lock(team->team_lock_key);
 
-Fixes: 0c40b1c7a897 ("x86/setup: Warn when option parsing is done too early")
-Reported-by: Mike Lothian <mike@fireburn.co.uk>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20240722152330.GCZp55ck8E_FT4kPnC@fat_crate.local
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+2 locks held by syz-executor122/5360:
+ #0: ffffffff8fa1e9a8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fa1e9a8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x372/0xea0 net/core/rtnetlink.c:6644
+ #1: ffff88802c258d40 (team->team_lock_key){+.+.}-{3:3}, at: team_add_slave+0x9c/0x20e0 drivers/net/team/team_core.c:1975
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5360 Comm: syz-executor122 Not tainted 6.10.0-syzkaller-12562-g1722389b0d86 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
+ check_deadlock kernel/locking/lockdep.c:3061 [inline]
+ validate_chain kernel/locking/lockdep.c:3855 [inline]
+ __lock_acquire+0x2167/0x3cb0 kernel/locking/lockdep.c:5142
+ lock_acquire kernel/locking/lockdep.c:5759 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+ team_port_change_check drivers/net/team/team_core.c:2950 [inline]
+ team_device_event+0x2c7/0x770 drivers/net/team/team_core.c:2973
+ notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
+ call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
+ call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
+ call_netdevice_notifiers net/core/dev.c:2046 [inline]
+ __dev_notify_flags+0x12d/0x2e0 net/core/dev.c:8876
+ dev_change_flags+0x10c/0x160 net/core/dev.c:8914
+ vlan_device_event+0xdfc/0x2120 net/8021q/vlan.c:468
+ notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
+ call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
+ call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
+ call_netdevice_notifiers net/core/dev.c:2046 [inline]
+ dev_open net/core/dev.c:1515 [inline]
+ dev_open+0x144/0x160 net/core/dev.c:1503
+ team_port_add drivers/net/team/team_core.c:1216 [inline]
+ team_add_slave+0xacd/0x20e0 drivers/net/team/team_core.c:1976
+ do_set_master+0x1bc/0x230 net/core/rtnetlink.c:2701
+ do_setlink+0xcaf/0x3ff0 net/core/rtnetlink.c:2907
+ __rtnl_newlink+0xc35/0x1960 net/core/rtnetlink.c:3696
+ rtnl_newlink+0x67/0xa0 net/core/rtnetlink.c:3743
+ rtnetlink_rcv_msg+0x3c7/0xea0 net/core/rtnetlink.c:6647
+ netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2550
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x544/0x830 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg net/socket.c:745 [inline]
+ ____sys_sendmsg+0xab5/0xc90 net/socket.c:2597
+ ___sys_sendmsg+0x135/0x1e0 net/socket.c:2651
+ __sys_sendmsg+0x117/0x1f0 net/socket.c:2680
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f424ca7e7b9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 31 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd8c496978 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f424ca7e7b9
+RDX: 0000000000000000 RSI: 0000000020000600 RDI: 0000000000000012
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
+R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 00007ffd8c4969a0
+
+Reported-by: syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
+Fixes: ec4ffd100ffb ("Revert "net: rtnetlink: Enslave device before bringing it up"")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 ---
- arch/x86/include/asm/cmdline.h |  4 ++++
- arch/x86/kernel/setup.c        |  2 +-
- arch/x86/lib/cmdline.c         | 29 ++++++++++++++++++++++-------
- 3 files changed, 27 insertions(+), 8 deletions(-)
+ net/core/rtnetlink.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/include/asm/cmdline.h b/arch/x86/include/asm/cmdline.h
-index 6faaf27e8899..6cbd9ae58b21 100644
---- a/arch/x86/include/asm/cmdline.h
-+++ b/arch/x86/include/asm/cmdline.h
-@@ -2,6 +2,10 @@
- #ifndef _ASM_X86_CMDLINE_H
- #define _ASM_X86_CMDLINE_H
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index 87e67194f240..178f5b85fd87 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -2896,13 +2896,6 @@ static int do_setlink(const struct sk_buff *skb,
+ 		call_netdevice_notifiers(NETDEV_CHANGEADDR, dev);
+ 	}
  
-+#include <asm/setup.h>
-+
-+extern char builtin_cmdline[COMMAND_LINE_SIZE];
-+
- int cmdline_find_option_bool(const char *cmdline_ptr, const char *option);
- int cmdline_find_option(const char *cmdline_ptr, const char *option,
- 			char *buffer, int bufsize);
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 5d34cad9b7b1..6129dc2ba784 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -164,7 +164,7 @@ unsigned long saved_video_mode;
+-	if (ifm->ifi_flags || ifm->ifi_change) {
+-		err = dev_change_flags(dev, rtnl_dev_combine_flags(dev, ifm),
+-				       extack);
+-		if (err < 0)
+-			goto errout;
+-	}
+-
+ 	if (tb[IFLA_MASTER]) {
+ 		err = do_set_master(dev, nla_get_u32(tb[IFLA_MASTER]), extack);
+ 		if (err)
+@@ -2910,6 +2903,13 @@ static int do_setlink(const struct sk_buff *skb,
+ 		status |= DO_SETLINK_MODIFIED;
+ 	}
  
- static char __initdata command_line[COMMAND_LINE_SIZE];
- #ifdef CONFIG_CMDLINE_BOOL
--static char __initdata builtin_cmdline[COMMAND_LINE_SIZE] = CONFIG_CMDLINE;
-+char builtin_cmdline[COMMAND_LINE_SIZE] = CONFIG_CMDLINE;
- bool builtin_cmdline_added __ro_after_init;
- #endif
- 
-diff --git a/arch/x86/lib/cmdline.c b/arch/x86/lib/cmdline.c
-index 384da1fdd5c6..c51726c251a0 100644
---- a/arch/x86/lib/cmdline.c
-+++ b/arch/x86/lib/cmdline.c
-@@ -207,18 +207,33 @@ __cmdline_find_option(const char *cmdline, int max_cmdline_size,
- 
- int cmdline_find_option_bool(const char *cmdline, const char *option)
- {
--	if (IS_ENABLED(CONFIG_CMDLINE_BOOL))
--		WARN_ON_ONCE(!builtin_cmdline_added);
-+	int ret;
- 
--	return __cmdline_find_option_bool(cmdline, COMMAND_LINE_SIZE, option);
-+	ret = __cmdline_find_option_bool(cmdline, COMMAND_LINE_SIZE, option);
-+	if (ret > 0)
-+		return ret;
-+
-+	if (IS_ENABLED(CONFIG_CMDLINE_BOOL)) {
-+		if (!builtin_cmdline_added)
-+			return __cmdline_find_option_bool(builtin_cmdline, COMMAND_LINE_SIZE, option);
++	if (ifm->ifi_flags || ifm->ifi_change) {
++		err = dev_change_flags(dev, rtnl_dev_combine_flags(dev, ifm),
++				       extack);
++		if (err < 0)
++			goto errout;
 +	}
 +
-+	return ret;
- }
- 
- int cmdline_find_option(const char *cmdline, const char *option, char *buffer,
- 			int bufsize)
- {
--	if (IS_ENABLED(CONFIG_CMDLINE_BOOL))
--		WARN_ON_ONCE(!builtin_cmdline_added);
-+	int ret;
-+
-+	ret = __cmdline_find_option(cmdline, COMMAND_LINE_SIZE, option, buffer, bufsize);
-+	if (ret > 0)
-+		return ret;
-+
-+	if (IS_ENABLED(CONFIG_CMDLINE_BOOL)) {
-+		if (!builtin_cmdline_added)
-+			return __cmdline_find_option(builtin_cmdline, COMMAND_LINE_SIZE, option, buffer, bufsize);
-+	}
- 
--	return __cmdline_find_option(cmdline, COMMAND_LINE_SIZE, option,
--				     buffer, bufsize);
-+	return ret;
- }
--- 
-2.43.0
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+ 	if (tb[IFLA_CARRIER]) {
+ 		err = dev_change_carrier(dev, nla_get_u8(tb[IFLA_CARRIER]));
+ 		if (err)
+--
 
