@@ -1,89 +1,109 @@
-Return-Path: <linux-kernel+bounces-267653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A21D9413FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:12:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB78941401
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95DB51C22A4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:12:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 261B51F24C81
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E428D1A2548;
-	Tue, 30 Jul 2024 14:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F6E1A2575;
+	Tue, 30 Jul 2024 14:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bfjPHw0p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozLpGhYZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B261A0B07;
-	Tue, 30 Jul 2024 14:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374F41A073C;
+	Tue, 30 Jul 2024 14:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722348635; cv=none; b=u/mNmEDaLn4oVe2DTv6zihCEQxtE/qclYc+98aneovRNrmhy1zax5vCC7bcCssViAqI1MQxwtBriMq6dWoU8CbI0Qm0kbc2cKaZPZHY6XG9YYwNMoiDvSm+9HqakNeF8N7gLGHzJpoRhrylFIDePmOF+SY4H/33zDZkoyb/T8Gc=
+	t=1722348667; cv=none; b=DS7aewoyCXb0Q4njUwfeKQ86elj72bZK0zMufz0n/zIEpCCit02mpk5QN0qnkvt+XAfmRMlOPdLdDBhiwpTZcz80ymy4kTjMEdsqsoIoVpZi/D1G3NccnYwn2sho7YBg/i3su/wlRnTrhwN2jFmcEhGZDZL6NAZAsslMTCLXsMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722348635; c=relaxed/simple;
-	bh=wrQ7oIFb7ZfWpq1LFWJSkHq5ZgJ2T0LLjTR5jUjr0ts=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Lm74t9jY/A9s06BeUaUmYiXpX+r/b0PnEthO+PNJIZmd8gnZMGuG33+47G6snF+cRBoh/Tj8Dhn2a65TqsPo9KRKajT2ry8Aw2+GMKISdo7t8fdt2NNnCxZGxC2xgHVU731zL2dlajFwCj/Pa9LwOdcM9xOr98OnWsyPrbmbkFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bfjPHw0p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CFC7C32782;
-	Tue, 30 Jul 2024 14:10:34 +0000 (UTC)
+	s=arc-20240116; t=1722348667; c=relaxed/simple;
+	bh=NXSW+Ww4qnog5Wakb9vB7eNj7FiGI0hJ4qlSFMOdIis=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LPT7yiIMZ/SxHJV+6N+rmJpe5YOCkVhx4q3MXmif++qNmPzDny3KWZjTBYKdv0mzxeOWQicjSdSNeSFHdfYxdn4JoGnSR2wIUBCmVAIkgRDGVY8J+s+KyvqD4xwxhDvy/93cCI5Tsb2I26+amUGaPsP1CPukbzSU9pLaEKm++us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozLpGhYZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F7FAC32782;
+	Tue, 30 Jul 2024 14:11:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722348634;
-	bh=wrQ7oIFb7ZfWpq1LFWJSkHq5ZgJ2T0LLjTR5jUjr0ts=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bfjPHw0pL09+R7mfHFQhZYRMSSt9sUYb9wP0nvhEExJz60wTIaPvlZNsDc8mI/T+J
-	 pV1j7cW1gR/K0ugMGgfX2/FbGN9upBjYMJmZZVQawV0IWZu0qjdUKPOt9JfiqnbUyy
-	 lOo0qTbsj9NSnVrhOgrOXOEXAuGSzk+Dl2JYINRW/HkG+60qoJ3+5pnDySFV5MwVDi
-	 WCaSKkHDXr2aDkYe607FS3k+6ail/IZpiyH++MMclMXqFzZnBOfsrPLXIL6HBdPAju
-	 zeSzWJfAtKOWJ01t7HaQ7l8hvJqWJuGN9v7Blc8nebujA8AJQbQDWZBnTu5R/UfMZ/
-	 a5/1JYjPp3xZQ==
-Date: Tue, 30 Jul 2024 07:10:33 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Florian Westphal <fw@strlen.de>, Breno Leitao <leitao@debian.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, leit@meta.com, Chris Mason <clm@fb.com>, "open
- list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, open list
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: skbuff: Skip early return in skb_unref
- when debugging
-Message-ID: <20240730071033.24c9127c@kernel.org>
-In-Reply-To: <c61c4921-0ddc-42cf-881d-4302ff599053@redhat.com>
-References: <20240729104741.370327-1-leitao@debian.org>
-	<e6b1f967-aaf4-47f4-be33-c981a7abc120@redhat.com>
-	<20240730105012.GA1809@breakpoint.cc>
-	<c61c4921-0ddc-42cf-881d-4302ff599053@redhat.com>
+	s=k20201202; t=1722348666;
+	bh=NXSW+Ww4qnog5Wakb9vB7eNj7FiGI0hJ4qlSFMOdIis=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ozLpGhYZBO6f+OrxkhcxLN8vWcBKBQFGwrRpMExe+1K9qNn2Yh+nQaGW3ECUqOVXV
+	 cO1IMg5JkySVBUfURubNl9MIiTpq/YFSAwKijWsOB4yYP4cK9Sq/ePdkOySk4Hd/jG
+	 7cBtRHxIZSKc568DR9Hk7y/rIjkAPg33TEhPmfhbKIn0tUizsH4p3mlyNquLGv3Ess
+	 71t9viPqmMiu41zocV9T5RFYuZrrt4FM1f6nn5IFjkv+rWk06wejahoKFH16v7wPf1
+	 +0pK2eaDzzYINz7v7oQJFA8/L8nXeICFkfuRNvW2IFjwUpRlQBMxRbXIfnsPXM6ZoC
+	 F2ykVF+8UaGyw==
+From: Christian Brauner <brauner@kernel.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Benjamin LaHaise <bcrl@kvack.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-aio@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/aio: Fix __percpu annotation of *cpu pointer in struct kioctx
+Date: Tue, 30 Jul 2024 16:10:53 +0200
+Message-ID: <20240730-halbmarathon-galionsfigur-8cd5615a4f7d@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240730121915.4514-1-ubizjak@gmail.com>
+References: <20240730121915.4514-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1952; i=brauner@kernel.org; h=from:subject:message-id; bh=NXSW+Ww4qnog5Wakb9vB7eNj7FiGI0hJ4qlSFMOdIis=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSt+FKioz99g7KTs9tKH5FtJcck17dnsgr8fZ/t48GTs XzrJNvSjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkEtDIy7Oiw+MmSGa39uv/b MxdF0fAfz37ar172ctqr7LBJLk4q2xj+Gb1oPfxqjrxTWFOKqjpHm/OTjbf4//8+5tz5RvD1l3U HGAE=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, 30 Jul 2024 13:15:57 +0200 Paolo Abeni wrote:
-> > If thats the case why does it exist at all?
-
-+1
-
-> > I was under impression that entire reason for CONFIG_DEBUG_NET was
-> > to enable more checks for fuzzers and the like, i.e. NOT for production
-> > kernels.  
+On Tue, 30 Jul 2024 14:18:34 +0200, Uros Bizjak wrote:
+> __percpu annotation of *cpu pointer in struct kioctx is put at
+> the wrong place, resulting in several sparse warnings:
 > 
-> I feel like I already had this discussion and I forgot the outcome, if 
-> so I'm sorry. To me the "but is safe to select." part in the knob 
-> description means this could be enabled in production, and AFAICS the 
-> CONFIG_DEBUG_NET-enabled code so far respects that assumption.
+> aio.c:623:24: warning: incorrect type in argument 1 (different address spaces)
+> aio.c:623:24:    expected void [noderef] __percpu *__pdata
+> aio.c:623:24:    got struct kioctx_cpu *cpu
+> aio.c:788:18: warning: incorrect type in assignment (different address spaces)
+> aio.c:788:18:    expected struct kioctx_cpu *cpu
+> aio.c:788:18:    got struct kioctx_cpu [noderef] __percpu *
+> aio.c:835:24: warning: incorrect type in argument 1 (different address spaces)
+> aio.c:835:24:    expected void [noderef] __percpu *__pdata
+> aio.c:835:24:    got struct kioctx_cpu *cpu
+> aio.c:940:16: warning: incorrect type in initializer (different address spaces)
+> aio.c:940:16:    expected void const [noderef] __percpu *__vpp_verify
+> aio.c:940:16:    got struct kioctx_cpu *
+> aio.c:958:16: warning: incorrect type in initializer (different address spaces)
+> aio.c:958:16:    expected void const [noderef] __percpu *__vpp_verify
+> aio.c:958:16:    got struct kioctx_cpu *
+> 
+> [...]
 
-I believe the previous discussion was page pool specific and there
-wasn't as much of a conclusion as an acquiescence (read: we had more
-important things on our minds than that argument ;)).
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-Should we set a bar for how much perf impact is okay?
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-FTR I suspect there will be no measurable perf impact here.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] fs/aio: Fix __percpu annotation of *cpu pointer in struct kioctx
+      https://git.kernel.org/vfs/vfs/c/b484eca083f7
 
