@@ -1,151 +1,118 @@
-Return-Path: <linux-kernel+bounces-267474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FC9E9411EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:30:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37BA9411E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8193C1C23140
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:30:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1822B2859F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520CF19E7E5;
-	Tue, 30 Jul 2024 12:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0B61A00CE;
+	Tue, 30 Jul 2024 12:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RvmrdIGe"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CL4YamNW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B52C1922E2
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 12:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AB419FA8D
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 12:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722342641; cv=none; b=FkygbXA6JvGZZxAMBbo6VGney+Az4DCP4xLwaDEL9k95F4LjnAwKeoZNc9SoHSMTRymqdT9kMEjgbHaWPLJUfjlU9EW0XhpH69vHJ1kh6FkCq9Homr8U4bjccogyeql57Jri/UXrpE4ep0+gAHTtJHLmToLNREpMUmkWD4Eml4M=
+	t=1722342462; cv=none; b=phmv5L6fPQtL9D8v8RIGJxHEHNke+3DPKNdJXG770Ix/VbDob5D0h3goh2huzHdsfogAG5SHUNm1kcNJbqDMW3JRfjJ++DYMqv5/tgB01NOR5okK7GJHlIRmbEwchZRtKLCFkC8vW2pL9SIWEysmfaQOr+4uAyvYbfbkFhqnLcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722342641; c=relaxed/simple;
-	bh=yB6rRXPulKe8ER/kgRWjockJNCr7wU0t40Cgr3W/kqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fCKQLGvcqugTFDbGX9qiS9BDeMZxJu2vsSZJPpXWOojuA0PVmm8Eer809JRuA7yPNeMfv39seUsDnzk0wCMc9Z6mgTylgoa3fGmv6cs8oXb0ITa+eGyV7DVGtzEtvOELlYw+CIbRrIg3IZeQ+LW2iSfvKY4CGKFU1L+qrUmGO7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RvmrdIGe; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52f04c29588so8150248e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 05:30:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1722342637; x=1722947437; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mPqerWhUZy1/aAz0EtcQxQ+rdP9sW3XIfvIfHEpzdfQ=;
-        b=RvmrdIGeS5PsC6sYfFV5SDbgFOKyAfHn5yA9VxQZa1YI+jBh9rwqJUsfhGf2UlaUMg
-         oHgLiy9u0HrP46JHPts3O++aIGgXmUI+UV9IDXi+ADqFHsLfE6o6p7QvRO8PQesTxsCN
-         oEZFo2jG9TpBQiKpYDJfue02+bnAmWkzXQjjtGHBvacP5wR7eY9bIXiHtvgvv5HLgse0
-         E59GtloRKNKk6JvNtquKIkxzruZ+0P4pCxx+1qrz0l5b9aT4by++bcnrsM4W+MRDnLkl
-         4PpkO0566RWYF0oqo5bHSMSSRodQft0/wTi/eq6IbmGwFbjaVl0qAro7XgxF1EVUdotT
-         1XPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722342637; x=1722947437;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mPqerWhUZy1/aAz0EtcQxQ+rdP9sW3XIfvIfHEpzdfQ=;
-        b=EVkoNsDm0QhLPJTxYFoZNDO5lduvYdSkKS2TEWEdQt45h8UVB/UgPRvJDOIixg1HQw
-         OqZg8aorFXIVQD8I1DEEh0rIbAuNbZ9fnTYxXktByf4s97e1COOCmZ4mfg6qOeiPJkSm
-         Q+8vmaU4mPIyyHbMmZUrlJEBMy3Ae0MTIiCtgrEh9KXOaMDrH5Yyp6ChKn3OJZXMbBya
-         1UFoZHAnWI+ZRUVJSQwJLQd+mgiCq4sJ0DBgXtod1eQu41oTgZffVh1fpsqKfMG4tsUJ
-         NAyjnin1NjwEeWmiyEolfjWy4SErXYW855zX1cw7uMZ4o+9vUo8vT13uJ3b3s4rOX1yp
-         V5Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCVusE0RCmUDzT6AhZah3qiy3XSoMqYhdKPPfucBeyVCVVs0G3ZN9+T7YZsCaA9jFz72IPU9fHsYv/0qn6R+xAj5XqiB9V03RJ1eEp3r
-X-Gm-Message-State: AOJu0YwdVEGhCul5qNsd9WChbPxIMGzytefXixgSCV3p+X0Us+01cPaJ
-	mbYlHv4OD10TZMb8+dxcHpRDgZYmAtcONAA7HxpxfnWoa2Gf7APBfBX9b4Hch4E=
-X-Google-Smtp-Source: AGHT+IEKliAdIsWwyGoq7/gtKcT5IxaLalwveAES344NAJZjLbb0B5nGpRIuDsDEk7y65gdiL1wWAA==
-X-Received: by 2002:a05:6512:2c85:b0:52e:f9f1:c13a with SMTP id 2adb3069b0e04-5309b2698c3mr8956076e87.12.1722342637190;
-        Tue, 30 Jul 2024 05:30:37 -0700 (PDT)
-Received: from pathway.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab4debasm640720966b.60.2024.07.30.05.30.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 05:30:35 -0700 (PDT)
-Date: Tue, 30 Jul 2024 14:30:33 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH printk v3 08/19] printk: nbcon: Add context to usable()
- and emit()
-Message-ID: <Zqjc6eDy9NzSaStJ@pathway.suse.cz>
-References: <20240722171939.3349410-1-john.ogness@linutronix.de>
- <20240722171939.3349410-9-john.ogness@linutronix.de>
+	s=arc-20240116; t=1722342462; c=relaxed/simple;
+	bh=rBOTxVukObDt26c+er7K24D5TzmL/+0zcqF1Wh3ZGHE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AdggzB7R+SBhfiUFSCwjFyy/zdNsReaTdTMn/AOSKzp7R5HRO5QaisFDJS1ASulEbtX1jc2CfvRQ2uMLCAWD+SGvAeQDTUR5mjOcFN9U/cbyhGdnacWq+lDSI4Uo4xJUYvn4amtsVs7jxXu7FwReKTCu9oT1oVpfZhz4HqJUGyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CL4YamNW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BC51C32782;
+	Tue, 30 Jul 2024 12:27:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722342461;
+	bh=rBOTxVukObDt26c+er7K24D5TzmL/+0zcqF1Wh3ZGHE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CL4YamNWq/Sh4OpNbR8MweHnWdrmkAREEsaoqPREX07MePcgTdhGqtesC1js1Awty
+	 qc2hh95WqP5Pu2/aFf9j/Xg+TNY67MMwk9HzZFVMivzAFZogpcGCd76qJ25KXj82d1
+	 T3vhlM//Y30II7zafEEvIifpvK/iPqFtr5k+J9fmGCHE9rpIKuPbur7mU/3eyUg4pz
+	 VoPNv5r87i0T4jm2kHnDon8VU8AJG4VUOBIUvTgeDhaP9Ym5aL6N1B0iMt2ExmNbnt
+	 QwzHKMzrZVJCeO6AAliH+4JF/TsjzXH+2OkCp603oaAukOdkyqqSWT7Iv39JtP/ULI
+	 1KluTFaLBQB9A==
+From: alexs@kernel.org
+To: alexs@kernel.org
+Cc: 42.hyeyoo@gmail.com,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	linmiaohe@huawei.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	minchan@kernel.org,
+	nphamcs@gmail.com,
+	senozhatsky@chromium.org,
+	vitaly.wool@konsulko.com,
+	willy@infradead.org,
+	yosryahmed@google.com
+Subject: [PATCH 23/23] mm/zsmalloc: introduce zpdesc_clear_first() helper
+Date: Tue, 30 Jul 2024 20:31:57 +0800
+Message-ID: <20240730123157.3761782-1-alexs@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240729112534.3416707-1-alexs@kernel.org>
+References: <20240729112534.3416707-1-alexs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240722171939.3349410-9-john.ogness@linutronix.de>
+Content-Transfer-Encoding: 8bit
 
-On Mon 2024-07-22 19:25:28, John Ogness wrote:
-> The nbcon consoles will have two callbacks to be used for
-> different contexts. In order to determine if an nbcon console
-> is usable, console_is_usable() must know if it is a context
-> that will need to use the optional write_atomic() callback.
-> Also, nbcon_emit_next_record() must know which callback it
-> needs to call.
-> 
-> Add an extra parameter @use_atomic to console_is_usable() and
-> nbcon_emit_next_record() to specify this.
-> 
-> Since so far only the write_atomic() callback exists,
-> @use_atomic is set to true for all call sites.
-> 
-> For legacy consoles, @use_atomic is not used.
-> 
-> --- a/kernel/printk/nbcon.c
-> +++ b/kernel/printk/nbcon.c
-> @@ -938,6 +939,18 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt)
->  	unsigned long con_dropped;
->  	unsigned long dropped;
->  
-> +	/*
-> +	 * This function should never be called for consoles that have not
-> +	 * implemented the necessary callback for writing: i.e. legacy
-> +	 * consoles and, when atomic, nbcon consoles with no write_atomic().
-> +	 * Handle it as if ownership was lost and try to continue.
-> +	 */
-> +	if (WARN_ON_ONCE((use_atomic && !con->write_atomic) ||
-> +			 !(console_srcu_read_flags(con) & CON_NBCON))) {
-> +		nbcon_context_release(ctxt);
-> +		return false;
-> +	}
-> +
->  	/*
->  	 * The printk buffers are filled within an unsafe section. This
->  	 * prevents NBCON_PRIO_NORMAL and NBCON_PRIO_EMERGENCY from
-> @@ -972,7 +985,7 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt)
->  	/* Initialize the write context for driver callbacks. */
->  	nbcon_write_context_set_buf(wctxt, &pmsg.pbufs->outbuf[0], pmsg.outbuf_len);
->  
-> -	if (con->write_atomic) {
-> +	if (use_atomic) {
->  		con->write_atomic(con, wctxt);
->  	} else {
->  		/*
+From: Alex Shi <alexs@kernel.org>
 
-This "else" code path duplicates the WARN_ON_ONCE() and nbcon_context_release(ctxt).
-It could/should be removed.
+Like the zpdesc_set_first(), introduce zpdesc_clear_first() helper for
+ClearPagePrivate(), then clean up a 'struct page' usage in
+reset_zpdesc().
 
-BTW: There is the opposite bug in the next patch which adds con->write_thread().
-     It removes this duplicate "else" path but it does not extend the initial check.
+Signed-off-by: Alex Shi <alexs@kernel.org>
+To: linux-kernel@vger.kernel.org
+To: linux-mm@kvack.org
+To: Andrew Morton <akpm@linux-foundation.org>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Minchan Kim <minchan@kernel.org>
+---
+ mm/zsmalloc.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-     I am sorry. These are mistakes from the refactoring which I have asked you
-     to do.
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 50ce4a3b8279..731055ccef23 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -259,6 +259,11 @@ static inline void zpdesc_set_first(struct zpdesc *zpdesc)
+ 	SetPagePrivate(zpdesc_page(zpdesc));
+ }
+ 
++static inline void zpdesc_clear_first(struct zpdesc *zpdesc)
++{
++	ClearPagePrivate(zpdesc_page(zpdesc));
++}
++
+ static inline void zpdesc_inc_zone_page_state(struct zpdesc *zpdesc)
+ {
+ 	inc_zone_page_state(zpdesc_page(zpdesc), NR_ZSPAGES);
+@@ -844,10 +849,8 @@ static inline bool obj_allocated(struct zpdesc *zpdesc, void *obj,
+ 
+ static void reset_zpdesc(struct zpdesc *zpdesc)
+ {
+-	struct page *page = zpdesc_page(zpdesc);
+-
+ 	__zpdesc_clear_movable(zpdesc);
+-	ClearPagePrivate(page);
++	zpdesc_clear_first(zpdesc);
+ 	zpdesc->zspage = NULL;
+ 	zpdesc->next = NULL;
+ 	reset_first_obj_offset(zpdesc);
+-- 
+2.43.0
 
-
-Otherwise, this patch good.
-
-Best Regards,
-Petr
 
