@@ -1,212 +1,203 @@
-Return-Path: <linux-kernel+bounces-266735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4202494060D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:46:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A07940612
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:46:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF4D01F23619
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:46:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85AA5281FC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF19150980;
-	Tue, 30 Jul 2024 03:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DaFNcVUH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8301516130B;
+	Tue, 30 Jul 2024 03:46:42 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA671BE5D;
-	Tue, 30 Jul 2024 03:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0476FBE5D;
+	Tue, 30 Jul 2024 03:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722311193; cv=none; b=BdOj4cpbEU+VR5GE0rnPJvx9ecpg7aZr05K3iMl/ht1KEdBp90qYELuISEcLimL3m+HQ+z4RVXZcCfeQq8NHBoib2NbZmZkOkoMbiYFuAgjDK+7SQ8xmLdP/2oIyyS3+zWUOMm61ZxGj9znhm2bwqAqFZZogrk0KaRvdhG7yDBo=
+	t=1722311202; cv=none; b=lY3t8LvSzxIrfOuc3bCqFEYwcjrC+czCkhqJQ+sEFjqGLj40OGGtTqpAtjxmzbroyPWhTn3NphXpHL975wKSjz6Daf0CkM0lUcn4ABse5lKKuQaVSdxvxirAZlPR1moSpisy4HqMxUD+5QCLc3dzCKa+KZgveXHfFmNeCOmoNqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722311193; c=relaxed/simple;
-	bh=A75fw6f+nIprBzqKB4p3N6PXQxqepgrg6HYNGrPLWz0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gPxt8y5HkFM1Gaz1mJWa3zpZpxtMGDmPBBlr6KYG0lPA+Ik7OTNw67xmdtyQdv4KL9n/MHP2oIzEIgUuVwqgOC2ivmKRQQ30HNlRQgUWovxhJ0AecEo2ne9ZzwNvvM5yy7of++k+Qr9zo9GJbsRtntdjjoaq5EsQbXaDC/A5P20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DaFNcVUH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46U0FX7q007429;
-	Tue, 30 Jul 2024 03:46:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=CsxwxBF4R7vSIxeod3/nje
-	Og8ZQ4XZzw13+ijnWmlA8=; b=DaFNcVUHnOZeIYxCTKWVBXcIZTEYBbwcPiImvR
-	gu8i9x7KQTQvCgiBrBsz9G0Xzv52U/3GAQpSTtDfNldKhB8TPm0E5cgNXFBnqbha
-	8lRiTQzHTTO6VVbwNn3TUyS07NDbN1cfxtjsTSNLKT0y++FK4ASyh3r+leXKpLi6
-	s55kjzwMcMAr6d5Jt8v26Qc8hfdzqmkJJd8eupiW5AYFg8oB1PjjoC6+gnao6kCe
-	RjsxtYyadQTtqw7jtVegFybpwr7D8hseI9BvZ4a4cZIupv7qt4pbHMKT73a1hvHu
-	QushGFBejJP0kzbWqC3k9/hWTv2jci1kRvRo2SF1MMw/3jVg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mr7gp43r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 03:46:16 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46U3kFY4004851
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 03:46:15 GMT
-Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 29 Jul 2024 20:46:09 -0700
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        "Satya
- Priya Kakitapalli" <quic_skakitap@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        "kernel
- test robot" <lkp@intel.com>
-Subject: [PATCH V3] dt-bindings: clock: qcom: Remove required-opps from required list on SM8650
-Date: Tue, 30 Jul 2024 09:15:52 +0530
-Message-ID: <20240730034552.31271-1-quic_jkona@quicinc.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722311202; c=relaxed/simple;
+	bh=RePeZ6R08jESN3zyMQsVV6ciDd415r7oFNYRuEApO5w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZqIvUoN+5g+uH86lOD4hUmd9mXe8TtW7e3b/Lk18ul9cNgyeFGBQ33/bobaU5wECjdRXe7rWTPcdPRbenOtkj5Zdn6rhKTm0PdrKr4/NC6tBagoxUs79gdUNBzQF+6EvyEY74VJh36KPIp3qdXZwf8v6P9si0idqBjcjQOUMjfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WY1Ny5J05z1L99p;
+	Tue, 30 Jul 2024 11:46:26 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5655F180100;
+	Tue, 30 Jul 2024 11:46:36 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 30 Jul
+ 2024 11:46:35 +0800
+Message-ID: <a3ff05d8-3acd-4d7d-b2b5-3c512fe93cbf@huawei.com>
+Date: Tue, 30 Jul 2024 11:46:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cgroup/cpuset: fix panic caused by partcmd_update
+To: Waiman Long <longman@redhat.com>, <tj@kernel.org>,
+	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <adityakali@google.com>,
+	<sergeh@kernel.org>
+CC: <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240730015316.2324188-1-chenridong@huawei.com>
+ <0ba00b7c-5292-4242-b648-4ca8d4a457c6@redhat.com>
+ <425f1151-14e6-43f6-810e-efe95f6f401e@huawei.com>
+ <a93a670c-27fa-4159-a910-ccb17066edc0@redhat.com>
+Content-Language: en-US
+From: chenridong <chenridong@huawei.com>
+In-Reply-To: <a93a670c-27fa-4159-a910-ccb17066edc0@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: gNFsSdnLlNZs-ki3WpgqCfNObBTJzsgV
-X-Proofpoint-GUID: gNFsSdnLlNZs-ki3WpgqCfNObBTJzsgV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_03,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- impostorscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
- spamscore=0 clxscore=1011 priorityscore=1501 mlxlogscore=932 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2407300026
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-On SM8650, the minimum voltage corner supported on MMCX from cmd-db is
-sufficient for clock controllers to operate and there is no need to specify
-the required-opps. Hence remove the required-opps property from the list of
-required properties for SM8650 camcc and videocc bindings.
 
-This fixes:
-arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@aaf0000:
-'required-opps' is a required property
 
-arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@ade0000:
-'required-opps' is a required property
+On 2024/7/30 11:15, Waiman Long wrote:
+> On 7/29/24 22:55, chenridong wrote:
+>>
+>>
+>> On 2024/7/30 10:34, Waiman Long wrote:
+>>> On 7/29/24 21:53, Chen Ridong wrote:
+>>>> We find a bug as below:
+>>>> BUG: unable to handle page fault for address: 00000003
+>>>> PGD 0 P4D 0
+>>>> Oops: 0000 [#1] PREEMPT SMP NOPTI
+>>>> CPU: 3 PID: 358 Comm: bash Tainted: G        W I 6.6.0-10893-g60d6
+>>>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 
+>>>> 04/4
+>>>> RIP: 0010:partition_sched_domains_locked+0x483/0x600
+>>>> Code: 01 48 85 d2 74 0d 48 83 05 29 3f f8 03 01 f3 48 0f bc c2 89 c0 
+>>>> 48 9
+>>>> RSP: 0018:ffffc90000fdbc58 EFLAGS: 00000202
+>>>> RAX: 0000000100000003 RBX: ffff888100b3dfa0 RCX: 0000000000000000
+>>>> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000002fe80
+>>>> RBP: ffff888100b3dfb0 R08: 0000000000000001 R09: 0000000000000000
+>>>> R10: ffffc90000fdbcb0 R11: 0000000000000004 R12: 0000000000000002
+>>>> R13: ffff888100a92b48 R14: 0000000000000000 R15: 0000000000000000
+>>>> FS:  00007f44a5425740(0000) GS:ffff888237d80000(0000) 
+>>>> knlGS:0000000000000
+>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>> CR2: 0000000100030973 CR3: 000000010722c000 CR4: 00000000000006e0
+>>>> Call Trace:
+>>>>   <TASK>
+>>>>   ? show_regs+0x8c/0xa0
+>>>>   ? __die_body+0x23/0xa0
+>>>>   ? __die+0x3a/0x50
+>>>>   ? page_fault_oops+0x1d2/0x5c0
+>>>>   ? partition_sched_domains_locked+0x483/0x600
+>>>>   ? search_module_extables+0x2a/0xb0
+>>>>   ? search_exception_tables+0x67/0x90
+>>>>   ? kernelmode_fixup_or_oops+0x144/0x1b0
+>>>>   ? __bad_area_nosemaphore+0x211/0x360
+>>>>   ? up_read+0x3b/0x50
+>>>>   ? bad_area_nosemaphore+0x1a/0x30
+>>>>   ? exc_page_fault+0x890/0xd90
+>>>>   ? __lock_acquire.constprop.0+0x24f/0x8d0
+>>>>   ? __lock_acquire.constprop.0+0x24f/0x8d0
+>>>>   ? asm_exc_page_fault+0x26/0x30
+>>>>   ? partition_sched_domains_locked+0x483/0x600
+>>>>   ? partition_sched_domains_locked+0xf0/0x600
+>>>>   rebuild_sched_domains_locked+0x806/0xdc0
+>>>>   update_partition_sd_lb+0x118/0x130
+>>>>   cpuset_write_resmask+0xffc/0x1420
+>>>>   cgroup_file_write+0xb2/0x290
+>>>>   kernfs_fop_write_iter+0x194/0x290
+>>>>   new_sync_write+0xeb/0x160
+>>>>   vfs_write+0x16f/0x1d0
+>>>>   ksys_write+0x81/0x180
+>>>>   __x64_sys_write+0x21/0x30
+>>>>   x64_sys_call+0x2f25/0x4630
+>>>>   do_syscall_64+0x44/0xb0
+>>>>   entry_SYSCALL_64_after_hwframe+0x78/0xe2
+>>>> RIP: 0033:0x7f44a553c887
+>>>>
+>>>> It can be reproduced with cammands:
+>>>> cd /sys/fs/cgroup/
+>>>> mkdir test
+>>>> cd test/
+>>>> echo +cpuset > ../cgroup.subtree_control
+>>>> echo root > cpuset.cpus.partition
+>>>> echo 0-3 > cpuset.cpus // 3 is nproc
+>>> What do you mean by "3 is nproc"? Are there only 3 CPUs in the 
+>>> system? What are the value of /sys/fs/cgroup/cpuset.cpu*?
+>> Yes, I tested it with qemu, only 3 cpus are available.
+>> # cat /sys/fs/cgroup/cpuset.cpus.effective
+>> 0-3
+>> This case is taking all cpus away from root, test should fail to be a 
+>> valid root, it should not rebuild scheduling domains.
+> I see. So there are 4 CPUs in the systems. So nproc should be 4. That is 
+> why I got confused when you said nproc is 3. I think you should clarify 
+> this in your patch.
 
-Fixes: a6a61b9701d1 ("dt-bindings: clock: qcom: Add SM8650 video clock controller")
-Fixes: 1ae3f0578e0e ("dt-bindings: clock: qcom: Add SM8650 camera clock controller")
-Reported-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Closes: https://lore.kernel.org/all/0f13ab6b-dff1-4b26-9707-704ae2e2b535@linaro.org/
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202407070147.C9c3oTqS-lkp@intel.com/
-Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
----
-Changes in V3:
- - Made only required-opps property conditional and added it based on the variant
- - Link to V2: https://lore.kernel.org/all/20240720052818.26441-1-quic_jkona@quicinc.com/
-Changes in V2:
- - Made required: conditional and dropped required-opps from it only for SM8650 platform
- - Dropped Krzysztof Acked-by tag due to above changes
- - Link to V1: https://lore.kernel.org/all/20240708130836.19273-1-quic_jkona@quicinc.com/
+Sorry about that. Is it clear as below?
 
- .../bindings/clock/qcom,sm8450-camcc.yaml     | 22 +++++++++++++++----
- .../bindings/clock/qcom,sm8450-videocc.yaml   | 14 +++++++++++-
- 2 files changed, 31 insertions(+), 5 deletions(-)
+It can be reproduced with cammands:
+cd /sys/fs/cgroup/
+mkdir test
+cd test/
+echo +cpuset > ../cgroup.subtree_control
+echo root > cpuset.cpus.partition
+# cat /sys/fs/cgroup/cpuset.cpus.effective
+0-3
+echo 0-3 > cpuset.cpus // taking away all cpus from root
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-index f58edfc10f4c..eb806ef6dbea 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-@@ -21,9 +21,6 @@ description: |
-     include/dt-bindings/clock/qcom,sm8650-camcc.h
-     include/dt-bindings/clock/qcom,x1e80100-camcc.h
- 
--allOf:
--  - $ref: qcom,gcc.yaml#
--
- properties:
-   compatible:
-     enum:
-@@ -57,7 +54,24 @@ required:
-   - compatible
-   - clocks
-   - power-domains
--  - required-opps
-+
-+allOf:
-+  - $ref: qcom,gcc.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - qcom,sc8280xp-camcc
-+              - qcom,sm8450-camcc
-+              - qcom,sm8550-camcc
-+              - qcom,x1e80100-camcc
-+    then:
-+      required:
-+        - required-opps
-+    else:
-+      properties:
-+        required-opps: false
- 
- unevaluatedProperties: false
- 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-index b2792b4bb554..c5c3fe5091fb 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-@@ -44,11 +44,23 @@ required:
-   - compatible
-   - clocks
-   - power-domains
--  - required-opps
-   - '#power-domain-cells'
- 
- allOf:
-   - $ref: qcom,gcc.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - qcom,sm8450-videocc
-+              - qcom,sm8550-videocc
-+    then:
-+      required:
-+        - required-opps
-+    else:
-+      properties:
-+        required-opps: false
- 
- unevaluatedProperties: false
- 
--- 
-2.45.2
-
+Thanks
+Ridong
+>>
+>>>>
+>>>> This issue is caused by the incorrect rebuilding of scheduling domains.
+>>>> In this scenario, test/cpuset.cpus.partition should be an invalid root
+>>>> and should not trigger the rebuilding of scheduling domains. When 
+>>>> calling
+>>>> update_parent_effective_cpumask with partcmd_update, if newmask is not
+>>>> null, it should recheck newmask whether there are cpus is available
+>>>> for parect/cs that has tasks.
+>>>>
+>>>> Fixes: 0c7f293efc87 ("cgroup/cpuset: Add 
+>>>> cpuset.cpus.exclusive.effective for v2")
+>>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>>>> ---
+>>>>   kernel/cgroup/cpuset.c | 2 ++
+>>>>   1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>>>> index 40ec4abaf440..a9b6d56eeffa 100644
+>>>> --- a/kernel/cgroup/cpuset.c
+>>>> +++ b/kernel/cgroup/cpuset.c
+>>>> @@ -1991,6 +1991,8 @@ static int 
+>>>> update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+>>>>               part_error = PERR_CPUSEMPTY;
+>>>>               goto write_error;
+>>>>           }
+>>>> +        /* Check newmask again, whether cpus are available for 
+>>>> parent/cs */
+>>>> +        nocpu |= tasks_nocpu_error(parent, cs, newmask);
+>>>>           /*
+>>>>            * partcmd_update with newmask:
+>>>
+>>> The code change looks reasonable to me. However, I would like to know 
+>>> more about the reproduction steps.
+> 
+> I am OK with this patch other than missing some information in your 
+> reproduction step.
+> 
+> Cheers,
+> Longman
+> 
+> 
 
