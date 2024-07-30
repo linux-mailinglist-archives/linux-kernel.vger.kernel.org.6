@@ -1,166 +1,119 @@
-Return-Path: <linux-kernel+bounces-267285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B12E940F91
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:37:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3243F940F93
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E98E0284DF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:37:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 646221C209AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1480B1A08C4;
-	Tue, 30 Jul 2024 10:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ma5iCXvb"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846FD1A0AF2;
+	Tue, 30 Jul 2024 10:33:26 +0000 (UTC)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401A819FA62;
-	Tue, 30 Jul 2024 10:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E7819FA76;
+	Tue, 30 Jul 2024 10:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722335565; cv=none; b=l6BM7oMrdRgsXHUhmFangMZddUf2Uwj8XDaRK3Jfqfb+yx8E3x32nIl64PnTk6kp/DVJRPdicf5Mvm7flsex5bA7ebqbaRF9aAQWdXOhSecEcm5elyH2WebZ9BB/tgJUxW2tQWzWxmAjWlCdB5vbN1Q2AYSk4n73SFjNukoZnYY=
+	t=1722335606; cv=none; b=UJtYUxcPbka6j7WhmenREetR8pAeOOQ5VIWc9eVkT04DwreynvLPxQYrchAbpvGGGutwhBe4VvicbbTRK0bZ9n3CrGlub/EHss9QLcxTRt7cCIxxDXiLWaNHZ8b5ow/Dk6S6q5vBnAhwm053YJSuXgJ40etXkk3pDfvLJVUc0Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722335565; c=relaxed/simple;
-	bh=vaFA6ejx/mQhpvEGpodwUK70mDX8ML/uSgigSqL5z4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EfAVYUpNOSOgLY76iQuEQOnW3eHAk269La1r8E8st49pkQFUWnfeR4nOMdkJS7jXu0iHeXiyqy1AqY6dpP6MRJW+5BLWqqZHjBvsZ1vVwKoeNyo8wmoDgJ7/GliXHWo0qpEyIWlfyRuKOcZwI0BAK1q+K5uoRK2hoRuvUDV2qsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ma5iCXvb; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=GKJ0BOdI4p7S6+rKK3aA2Nwz9hN0PGkAVyY4twLfyNw=; b=ma5iCXvbFu/Oy/A3nr1+b61zc3
-	5XE5Z94zAXg+sbeqjjlPEXFIIRpkCXJYPoU3ztA08PEqx/vwDjApSi2o1lftwjFx56hGEd2yd0NHB
-	dINMstJbAELjZp3lKWHrca3cPimaYv8fphL/MJhtWe1NtGDyl9OJGvhkcKaKyuMbiXB8WOkqzIEon
-	bTP3HkKMrmVWUT4h+Tcn0BW2U7CH9dmkGuY9MVPZ6JK5HDEl02Yj8aLhyuDaoEliANbe0JYa3rOMH
-	JBivuBU2vROBDPRPysqv/n6QteZ+W/CeTc9FDn8aeOXy12p0ykFY7wr+dZurnwUWO7bkuScYFM2vh
-	jwGStDcg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sYk9k-00000004yjV-3oOh;
-	Tue, 30 Jul 2024 10:32:37 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 898053003EA; Tue, 30 Jul 2024 12:32:36 +0200 (CEST)
-Date: Tue, 30 Jul 2024 12:32:36 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 2/2] rust: cfi: add support for CFI_CLANG with Rust
-Message-ID: <20240730103236.GK33588@noisy.programming.kicks-ass.net>
-References: <20240730-kcfi-v1-0-bbb948752a30@google.com>
- <20240730-kcfi-v1-2-bbb948752a30@google.com>
+	s=arc-20240116; t=1722335606; c=relaxed/simple;
+	bh=135AlmRgLOAFNAbD5oG9kFcFDEEB9aEGjaLEjOTTRmc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ShHtAP3Ib/9LrgrFGt+t352BsOfmO4uy6PJM/u6ujZ4EOV4YrihjYGIidfZ6eP0/gxiNnd2fd2SpR7Gw6x6LzfOmyDAz3xve39pc8UZKOlsZXxGdqSKxntLFqYMHXRbV9vJhvn5of8ZEzs2DrNBJsWY6Gwz6PN86B3JclwtVR6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5b01af9b0c9so3244611a12.3;
+        Tue, 30 Jul 2024 03:33:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722335603; x=1722940403;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mSe2xEaIfSV4qwU+SZGcrsIVQrX4aS65AXhHQDRizuQ=;
+        b=BMnSiKn3WAE1xeZyLXC3ZcIa0eMJKg8FoAYxcIAI7tUGU2kHuSScO2vXwtQT3fZuwT
+         y/yinGPn4eB9vC01I/1qwF59p1R3N5No+O3xoaEG9fghGwpcmVDfAjfWESi+J1EPuDpM
+         9VlPOG8zo4yD6LceWjnvczUrSKIpG9Bz7DBsIlWWyKiYc4mqLXGC3Rz8M4w9QFV5SVJl
+         yeZAzFEudkdCblEOzP1hOyXj3xJbAQJmbaY3h4RnAJoB1KbFlUljbOKmzWn9gRzHCClV
+         SV42HOID1IGsqZIm0bhB49PbS51SVwe6VLviLtEjEiFBXnnENJGwhemazPhVzMGzSGSJ
+         MQ0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ9/fqVZP7oeXlNVVd1XcCPxXVK+OvpIoZ+MUo4Ehc6y3vO0D/H8gt5+/7eBsq1YTfsxLi1ZycyJQAPHWzQ6agJLPiohGpxGNI93oT
+X-Gm-Message-State: AOJu0YymOS6yv6M9GEnRQCiBEfhCB+U1jy5KQi6CNxCrBWiGJD0ckRhF
+	AeVyAJpIOa+HHy/KG0yWG1HEcqq9cphsvvOLs9iuSLXLvQ8T2x1x
+X-Google-Smtp-Source: AGHT+IE86Br6rR5EDD4zyKmnMVymS2QsEPo568XaQa0PyHS+acc6Q1Zpk1Uy9PtfPxK6YWNRxCRPSQ==
+X-Received: by 2002:a17:907:968e:b0:a7a:9144:e251 with SMTP id a640c23a62f3a-a7d3fdb7e94mr889027066b.11.1722335602415;
+        Tue, 30 Jul 2024 03:33:22 -0700 (PDT)
+Received: from [127.0.0.1] (p200300f6f732f200fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f732:f200:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acadb9f60sm622455266b.223.2024.07.30.03.33.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 03:33:21 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+Subject: [PATCH v2 0/5] btrfs: fix relocation on RAID stripe-tree
+ filesystems
+Date: Tue, 30 Jul 2024 12:33:13 +0200
+Message-Id: <20240730-debug-v2-0-38e6607ecba6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730-kcfi-v1-2-bbb948752a30@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGnBqGYC/zXMSw7CIBSF4a00dyyGRxXqyH2YDopcKNFAA0o0D
+ XsXGx3+JyffChmTxwynboWExWcfQwu+6+A6T8Eh8aY1cMp7KvmRGNRPRyyzqOgBJyE1tO+S0Pr
+ X5lzG1rPPj5jeG1vYd/0Lw08ojFBiqRZGKjP0Qp1vmALe9zE5GGutH6OEAD2bAAAA
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+ David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Johannes Thumshirn <johannes.thumshirn@wdc.com>, 
+ Johannes Thumshirn <jthumshirn@wdc.com>, Filipe Manana <fdmanana@suse.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1116; i=jth@kernel.org;
+ h=from:subject:message-id; bh=135AlmRgLOAFNAbD5oG9kFcFDEEB9aEGjaLEjOTTRmc=;
+ b=kA0DAAoW0p7yIq+KHe4ByyZiAGaowXCgyv97WprzYCcmcgaItYzusFc97puLCApg1Xg62HQd0
+ Ih1BAAWCgAdFiEEx1U9vxg1xAeUwus20p7yIq+KHe4FAmaowXAACgkQ0p7yIq+KHe4FGgD9HHAK
+ ZN8LDX5byxGQHZNfI+cTN9loWRk1LFzUEQM3vGgBAN9L4ZEBKx4WW75BisWbb9VYniiIslYCKif
+ AdNQLbA4M
+X-Developer-Key: i=jth@kernel.org; a=openpgp;
+ fpr=EC389CABC2C4F25D8600D0D00393969D2D760850
 
-On Tue, Jul 30, 2024 at 09:40:12AM +0000, Alice Ryhl wrote:
-> From: Matthew Maurer <mmaurer@google.com>
-> 
-> Make it possible to use the Control Flow Integrity (CFI) sanitizer when
-> Rust is enabled. Enabling CFI with Rust requires that CFI is configured
-> to normalize integer types so that all integer types of the same size
-> and signedness are compatible under CFI.
+When doing relocation on RST backed filesystems, there is a possibility of
+a scatter-gather list corruption.
 
-I am assuming -- because I have to, because you're not actually saying
-anyting -- that this is fully compatible with the C version and all the
-fun and games we play with rewriting the function prologue for FineIBT
-and the like also work?
+See patch 4 for details.
 
-> Signed-off-by: Matthew Maurer <mmaurer@google.com>
-> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  Makefile                        | 7 +++++++
->  init/Kconfig                    | 2 +-
->  rust/Makefile                   | 2 +-
->  scripts/generate_rust_target.rs | 1 +
->  4 files changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index 484c6900337e..8d7d52f57c63 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -955,6 +955,13 @@ CC_FLAGS_CFI	:= -fsanitize=kcfi
->  ifdef CONFIG_CFI_ICALL_NORMALIZE_INTEGERS
->  	CC_FLAGS_CFI	+= -fsanitize-cfi-icall-experimental-normalize-integers
->  endif
-> +ifdef CONFIG_RUST
-> +	# Always pass -Zsanitizer-cfi-normalize-integers as CONFIG_RUST depends
-> +	# on CONFIG_CFI_ICALL_NORMALIZE_INTEGERS.
-> +	RS_FLAGS_CFI   := -Zsanitizer=kcfi -Zsanitizer-cfi-normalize-integers
-> +	KBUILD_RUSTFLAGS += $(RS_FLAGS_CFI)
-> +	export RS_FLAGS_CFI
-> +endif
->  KBUILD_CFLAGS	+= $(CC_FLAGS_CFI)
->  export CC_FLAGS_CFI
->  endif
-> diff --git a/init/Kconfig b/init/Kconfig
-> index b0238c4b6e79..d0d3442d1756 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1905,11 +1905,11 @@ config RUST
->  	bool "Rust support"
->  	depends on HAVE_RUST
->  	depends on RUST_IS_AVAILABLE
-> -	depends on !CFI_CLANG
->  	depends on !MODVERSIONS
->  	depends on !GCC_PLUGINS
->  	depends on !RANDSTRUCT
->  	depends on !DEBUG_INFO_BTF || PAHOLE_HAS_LANG_EXCLUDE
-> +	depends on !CFI_CLANG || RUSTC_VERSION >= 107900 && CFI_ICALL_NORMALIZE_INTEGERS
->  	help
->  	  Enables Rust support in the kernel.
->  
-> diff --git a/rust/Makefile b/rust/Makefile
-> index f6b9bb946609..a2c9a3e03a23 100644
-> --- a/rust/Makefile
-> +++ b/rust/Makefile
-> @@ -305,7 +305,7 @@ $(obj)/bindings/bindings_helpers_generated.rs: $(src)/helpers.c FORCE
->  quiet_cmd_exports = EXPORTS $@
->        cmd_exports = \
->  	$(NM) -p --defined-only $< \
-> -		| awk '/ (T|R|D) / {printf "EXPORT_SYMBOL_RUST_GPL(%s);\n",$$3}' > $@
-> +		| awk '$$2~/(T|R|D)/ && $$3!~/__cfi/ {printf "EXPORT_SYMBOL_RUST_GPL(%s);\n",$$3}' > $@
->  
->  $(obj)/exports_core_generated.h: $(obj)/core.o FORCE
->  	$(call if_changed,exports)
-> diff --git a/scripts/generate_rust_target.rs b/scripts/generate_rust_target.rs
-> index c31657380bf9..9b184099278a 100644
-> --- a/scripts/generate_rust_target.rs
-> +++ b/scripts/generate_rust_target.rs
-> @@ -192,6 +192,7 @@ fn main() {
->          }
->          ts.push("features", features);
->          ts.push("llvm-target", "x86_64-linux-gnu");
-> +        ts.push("supported-sanitizers", ["kcfi"]);
->          ts.push("target-pointer-width", "64");
->      } else if cfg.has("X86_32") {
->          // This only works on UML, as i386 otherwise needs regparm support in rustc
-> 
-> -- 
-> 2.46.0.rc1.232.g9752f9e123-goog
-> 
+CI Link: https://github.com/btrfs/linux/actions/runs/10143804038
+
+---
+Changes in v2:
+- Change RST lookup error message to debug
+- Link to v1: https://lore.kernel.org/r/20240729-debug-v1-0-f0b3d78d9438@kernel.org
+
+---
+Johannes Thumshirn (5):
+      btrfs: don't dump stripe-tree on lookup error
+      btrfs: rename btrfs_io_stripe::is_scrub to rst_search_commit_root
+      btrfs: set rst_search_commit_root in case of relocation
+      btrfs: don't readahead the relocation inode on RST
+      btrfs: change RST lookup error message to debug
+
+ fs/btrfs/bio.c              |  3 ++-
+ fs/btrfs/raid-stripe-tree.c |  8 +++-----
+ fs/btrfs/relocation.c       | 14 ++++++++++----
+ fs/btrfs/scrub.c            |  2 +-
+ fs/btrfs/volumes.h          |  2 +-
+ 5 files changed, 17 insertions(+), 12 deletions(-)
+---
+base-commit: 543cb1b052748dc53ff06b23273fcb78f11b8254
+change-id: 20240726-debug-f1fe805ea37b
+
+Best regards,
+-- 
+Johannes Thumshirn <jth@kernel.org>
+
 
