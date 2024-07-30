@@ -1,122 +1,157 @@
-Return-Path: <linux-kernel+bounces-267739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189D09414EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:57:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5143A9414F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8BE81F24624
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:57:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D017286ADA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89751A2C14;
-	Tue, 30 Jul 2024 14:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316731A2577;
+	Tue, 30 Jul 2024 14:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="E/P1HEI4"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DBXqE7pM"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069B41A08BB;
-	Tue, 30 Jul 2024 14:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAA81A08BB
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722351421; cv=none; b=mtWvMNMYT4xnky5zwsJY69RfAj0oFdWxGnTGSOkJqVK2nArJ/SgkeymO7SoAz7N4FlQY97o0D3WUCxmBDmFBAhOG0StDSHfk+SnTG5O6FfKAkFcstEENsaXX2dnkYW06u3k/nf+VkSrPAF1+1UxI2LYcTcs7whGyRDhOfm+5wjw=
+	t=1722351447; cv=none; b=iK3EnztHeEvT5TXicw2SWrPs85ASUFe/1mEysDlzQwusMoKX+rkcbwJnxK8syqdK2aD1CS2zE5VkqpWSs9V0Xd9UcAcEqdJMV3TD0ARIIXZnSxFOxuJ2fUJ4ocYlwrxMJswhLiYf9BbVx37iCR2znzU+g1BG3JJF0vtfT8ukSJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722351421; c=relaxed/simple;
-	bh=ZG2BW7HRwMwlFzbDidMpWOwpAld4L9NCBDh6SnEl9C8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tn4wmn3XmKbkICoL0QQAh55LQjIiafzD6GKPXdcxmKXw2WenuGxxryuD/ElSVAcDfiymuhfBSpeUR/rC7KSa5SCnYrIG0x1D5nnJ6JT1HMAomwBYde7NGX07cJ8ELhHtTGPtEHb3K+6l+e1VviqQrJX+fpNkIowVK8pmFz83VCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=E/P1HEI4; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=hIGC36tkkIZG1tDGHIcOcd8U+y/WwlKRJN/j1gjykKo=; b=E/P1HEI4LUxjEnSegF37z23bgE
-	bAWngh490Gon4qV3DvV/GC8m0ejWhVAyeSqmoF0xttdRXz+GG7tOGNxT7TZ7gyvFwto2YXTLEQs7d
-	klh7Xvs5QCShAxnIPlo4BtJmFxSnjqdU15HrGNrRxwsXkbK9H4AhFJyWrlNcbDKXjgQH9Bx/2b5Mc
-	ITtcYOyMxmMfw8w5rIg6EHnxkEijC9qitw7d41alJkWG+vHBNdVUj+OZ1j4vlie+LKtUy0dAiTGZp
-	QvIiWqO1p8CvjaLDzMjw7h+LqrUMtGqEzXaNF8es2fMO9v2H5Jd5FckrSGBweDVScKhAZoue2NY8a
-	cxdOoLZQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47874)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sYoHO-0007At-08;
-	Tue, 30 Jul 2024 15:56:46 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sYoHR-0005L5-78; Tue, 30 Jul 2024 15:56:49 +0100
-Date: Tue, 30 Jul 2024 15:56:49 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
-	andrew@lunn.ch, horms@kernel.org, hkallweit1@gmail.com,
-	richardcochran@gmail.com, rdunlap@infradead.org,
-	Bryan.Whitehead@microchip.com, edumazet@google.com,
-	pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH net-next V3 3/4] net: lan743x: Migrate phylib to phylink
-Message-ID: <Zqj/Mdoy5rhD2YXx@shell.armlinux.org.uk>
-References: <20240730140619.80650-1-Raju.Lakkaraju@microchip.com>
- <20240730140619.80650-4-Raju.Lakkaraju@microchip.com>
+	s=arc-20240116; t=1722351447; c=relaxed/simple;
+	bh=MNyIklkvk5eNrbXx1HAIESYmSdzQGisP3oacgmCWrJQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YEekcWE1qtZG6GhOxcINFrSgQWrb13yFB7iGWRWb81A2h4yl/B1pi1ES42RlWc+xiYRTri4uYtcawLM0Ae8FQ3vACL1avibROTio3f4URAfSFXZ5FO8HUm/1PmlfB7HcGpxoPyPH5NklIucu/K/HPHZu07zOHjQQWnCM92F/pZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DBXqE7pM; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-368313809a4so1888760f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:57:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722351443; x=1722956243; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LQkDwkMKeHB3gfeZECnxLbG2/UiCvD08G2Fc8wZUh4Q=;
+        b=DBXqE7pMmv/a2ruOPbY13Np+OuXij5rE17wlqZzYl3pymE3ST491zFLvYwkULMd6nS
+         mM6J5jx++J7ARxcFocBBPzBBnEK9oYMTZSqc48jNGN/i8EgBKyE0jpEx3kqvFncJmAbz
+         5p7ceCP7h41RTJWHjjrJfUBIbwpPNR6t64LtyjTXB6xeNEOoK6FpL9YrJ2abktTBKAAZ
+         75RW19eYN76HNleqS5/SKD3Y+lpPkNd/xVvzOxztjlJJgVusUS3kxRsJDjBIFndcE749
+         1F44WNHtPLZDz5prheSaI//+oTcQn9ss64pEsAic4x1pvo4Op35m3Ar45/6bmZdepIl2
+         CEbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722351443; x=1722956243;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LQkDwkMKeHB3gfeZECnxLbG2/UiCvD08G2Fc8wZUh4Q=;
+        b=XWj3EHc9g1CoqyVCGDrzXLP0Zml1DfPWq0lUYc+Q0c0puK8X2apZKFJ+PyLryTYlLi
+         4NC3xkgVhOkLSSXN39ug0cJ8fT+JxhOcfY8WsvRD5etJnGI9xPZz8P3ldVEryMp+MWa6
+         u98YrWR8zQy6N0xBQNNtN2hZ0XQBTpOtLnu1f9FiMt762iQAd00kq0DohSixRhaAUYGR
+         AyvtigGeWSA8oM75k3Z++SH4G9JCJMfGvHCkuTZGfJO1Ei/IU0b7P2yxoaA2WExNe/8f
+         MquhEMIS8zJWgO0G/+UlLdyDMghjExlEOuIWt+q7mly4lVU46suDik6ug6TnFij+/muO
+         u3Wg==
+X-Gm-Message-State: AOJu0YwCNKsT0PyA+0UUR7v8vdTy7t6L9+f9Cb7pk4xvlaW6APq7zjfG
+	Qlc65tdRs+DdKZ3RkoB4zN62VLxvaj1ocQCuox7taje5ORao2zg9XL081Vf+YaE=
+X-Google-Smtp-Source: AGHT+IE8K5z3y5NAb85msPqG0Tkidle9ZyftH1V9Ip7movF2FO60IW4SMO/JQ0qbCQRYVV7qKFrV1w==
+X-Received: by 2002:adf:b1da:0:b0:360:7856:fa62 with SMTP id ffacd0b85a97d-36b8c8e99e0mr1439005f8f.15.1722351442739;
+        Tue, 30 Jul 2024 07:57:22 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42808f684d0sm196227775e9.6.2024.07.30.07.57.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 07:57:22 -0700 (PDT)
+Message-ID: <4448b729-5998-440c-939e-08e719070ac5@linaro.org>
+Date: Tue, 30 Jul 2024 16:57:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730140619.80650-4-Raju.Lakkaraju@microchip.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] thermal: trip: Avoid skipping trips in
+ thermal_zone_set_trips()
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>
+References: <12509184.O9o76ZdvQC@rjwysocki.net>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <12509184.O9o76ZdvQC@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 30, 2024 at 07:36:18PM +0530, Raju Lakkaraju wrote:
-> +	default:
-> +		__set_bit(PHY_INTERFACE_MODE_RGMII,
-> +			  adapter->phylink_config.supported_interfaces);
-> +		__set_bit(PHY_INTERFACE_MODE_RGMII_ID,
-> +			  adapter->phylink_config.supported_interfaces);
-> +		__set_bit(PHY_INTERFACE_MODE_RGMII_RXID,
-> +			  adapter->phylink_config.supported_interfaces);
-> +		__set_bit(PHY_INTERFACE_MODE_RGMII_TXID,
-> +			  adapter->phylink_config.supported_interfaces);
+On 30/07/2024 16:41, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Say there are 3 trip points A, B, C sorted in ascending temperature
+> order with no hysteresis.  If the zone temerature is exactly equal to
+> B, thermal_zone_set_trips() will set the boundaries to A and C and the
+> hardware will not catch any crossing of B (either way) until either A
+> or C is crossed and the boundaries are changed.
 
-There's a shorter way to write this:
+When the temperature is B, an interrupt fired which led to the 
+thermal_zone_update() and in turn it calls thermal_zone_set_trips()
 
-		phy_interface_set_rgmii(adapter->phylink_config.supported_interfaces);
+As the current temperature is equal to trip B, it makes sense to set A 
+and C, as B has been processes when handling the thermal trips right 
+before calling thermal_zone_set_trips()
 
-> +static int lan743x_phylink_connect(struct lan743x_adapter *adapter)
-> +{
-> +	struct device_node *dn = adapter->pdev->dev.of_node;
-> +	struct net_device *dev = adapter->netdev;
-> +	struct fixed_phy_status fphy_status = {
-> +		.link = 1,
-> +		.speed = SPEED_1000,
-> +		.duplex = DUPLEX_FULL,
-> +	};
-> +	struct phy_device *phydev;
-> +	int ret;
-> +
-> +	if (dn)
-> +		ret = phylink_of_phy_connect(adapter->phylink, dn, 0);
-> +
-> +	if (!dn || (ret && !lan743x_phy_handle_exists(dn))) {
-> +		phydev = phy_find_first(adapter->mdiobus);
-> +		if (!phydev) {
-> +			if (((adapter->csr.id_rev & ID_REV_ID_MASK_) ==
-> +			      ID_REV_ID_LAN7431_) || adapter->is_pci11x1x) {
-> +				phydev = fixed_phy_register(PHY_POLL,
-> +							    &fphy_status,
-> +							    NULL);
+I'm failing to understand the issue you describe
 
-I thought something was going to happen with this?
+Were you able to reproduce the issue with emul_temp ?
+
+
+> To avoid that, use non-strict inequalities when comparing the trip
+> threshold to the zone temperature in thermal_zone_set_trips().
+> 
+> In the example above, it will cause both boundaries to be set to B,
+> which is desirable because an interrupt will trigger when the zone
+> temperature becomes different from B regardless of which way it goes.
+> That will allow a new interval to be set depending on the direction of
+> the zone temperature change.
+> 
+> Fixes: 893bae92237d ("thermal: trip: Make thermal_zone_set_trips() use trip thresholds")
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> 6.11-rc material.
+> 
+> ---
+>   drivers/thermal/thermal_trip.c |    4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/thermal_trip.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_trip.c
+> +++ linux-pm/drivers/thermal/thermal_trip.c
+> @@ -82,10 +82,10 @@ void thermal_zone_set_trips(struct therm
+>   		return;
+>   
+>   	for_each_trip_desc(tz, td) {
+> -		if (td->threshold < tz->temperature && td->threshold > low)
+> +		if (td->threshold <= tz->temperature && td->threshold > low)
+>   			low = td->threshold;
+>   
+> -		if (td->threshold > tz->temperature && td->threshold < high)
+> +		if (td->threshold >= tz->temperature && td->threshold < high)
+>   			high = td->threshold;
+>   	}
+>   
+> 
+> 
+> 
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
 
