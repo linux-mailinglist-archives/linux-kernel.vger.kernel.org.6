@@ -1,127 +1,124 @@
-Return-Path: <linux-kernel+bounces-267885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D38941925
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:29:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7979941A73
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CAEB1F238FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:29:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC545B2D309
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD601A618F;
-	Tue, 30 Jul 2024 16:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B759B183CC3;
+	Tue, 30 Jul 2024 16:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="DDWUlSQZ"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="URAzUQcM"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5211A6196;
-	Tue, 30 Jul 2024 16:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D70F1A616E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722356964; cv=none; b=LcBiA2vQDVVQhMiXKbNhzUVVR/ai0p8Kq4PsjP3t4YytkJL0xue6fUAys4cLJ8pxBp8j3wQISnoe0L3bjwEkMabffKce+Dheu5huuS9xY41zxPqOwlOeSVTBt5qkWu4HkNMidpGO3xFKa5ZxMJeJOECKlA6sJktdgr+ROlQOBv8=
+	t=1722356982; cv=none; b=OKn618+DfZj82Vo4ScDpTTHfIRqVsjoBhvg4zxA45CkfbTPPg5N5sSeMbV+kpE/TL+KsrKoq+RS0WY2XSYLksZq9jU8CKLGfUCYvP6yvAl1Iy8VJ2DKDKJxDwXd95pOlam8A+PFDt7P9gyZu06ickwEyXW2AtDCVYLM73OLIGY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722356964; c=relaxed/simple;
-	bh=VlviwKtHP665YGCmI0bZGZDw7hxPytqD75fhyDynpxM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A1lhYwbw7GnxJTRwH3xMvEYPNgd8qTYHuJbZOl+XNly0HkkH7UZ8tKjzZh4XVsq1x+sz0P1JCQhjrJFrAEt0Om8i4pz1xRB2gAUADrQj3x4Tyuvzxzk0jxW8jMfT7OyZBR0rjFG7bEIW/Ah4A0MoXmxDuumOJU5ZFLCJIZYxXFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=DDWUlSQZ; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UFVqWH031765;
-	Tue, 30 Jul 2024 11:29:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PODMain02222019; bh=u1uco8dY1nLjJCL5
-	MRzVa0owg84ItQ/f5cnVxKxZ2bA=; b=DDWUlSQZyvwsTXbUbXAxP8/uZ17K70YL
-	G4UpuIX8udTkAt/uqA8L+B6WYySWRKQSNlQz86+twVh1s3/37mMmGzSIwIYFIS24
-	0G1eBZaC9CX/48DDaOoQyPkWpQsbCibmq9/+foMEhKqKfcyWUmmLHUDQYPtWnzQ4
-	8cFzj3nazD4bF0L04m2JuqnmizdjBmzUC7vsj14v36pj5XCUMgIL7l3QeJOR8i7q
-	C31AkjYOXIW7BSPduI+qaRdUAmuinWYL0riGYsOoOlfn+/U8gAwidbWFUDrxHjGG
-	GrE1rsopz6F7Fy8EHeB21LkQC5uEc47+Tl50W6JB3bWUTYlgj+DkRQ==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 40mx9yknva-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 11:29:16 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 30 Jul
- 2024 17:29:13 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Tue, 30 Jul 2024 17:29:13 +0100
-Received: from lonswws01.ad.cirrus.com (lonswws01.ad.cirrus.com [198.90.188.26])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 6E219820244;
-	Tue, 30 Jul 2024 16:29:13 +0000 (UTC)
-From: Simon Trimmer <simont@opensource.cirrus.com>
-To: <tiwai@suse.com>
-CC: <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        "Simon
- Trimmer" <simont@opensource.cirrus.com>
-Subject: [PATCH v2] ALSA: hda: cs35l56: Stop creating ALSA controls for firmware coefficients
-Date: Tue, 30 Jul 2024 16:29:07 +0000
-Message-ID: <20240730162907.300046-1-simont@opensource.cirrus.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722356982; c=relaxed/simple;
+	bh=OWoGdwhwYZW5tY59QsQSyPvrPY75gV1c7fzfG1/iMv8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=sas6AHK8BRzsXY/tYJWSLRwXZ0e5fTOIvc7DUvVcvzsv1yI8AYgfhtJX1/BeF4cYiil6ylefUe4HkeRIwVMRaHXdg35vcDsJ3j1KrnvkL3q2DULh4anaKVUTrg7vBqoMJwNyc7+RtCNY7hFN1mw/kdM0R1CW/JARSPx5HIvtTDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=URAzUQcM; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-39b04f0b486so3900375ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:29:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ieee.org; s=google; t=1722356978; x=1722961778; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VqTqk5AYvzMGB0HtIG2FuLVHpIAW43yrLDffT8nbEjA=;
+        b=URAzUQcMBZE7eu1MvvHc6EsvbX1Iv1oGpeJ2v8tpVYMANc0Mip4PqOswWctQMcpL48
+         vcTPL/6z33qM6tJoM+AHcOU2Vqdk7Z5R7992lrYtR46UxFRgcJGUJaba71kpdAwo+sKc
+         1nYAd2LZ0Ep+KOljJKsPChVEVtpHsndvKAmKI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722356978; x=1722961778;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VqTqk5AYvzMGB0HtIG2FuLVHpIAW43yrLDffT8nbEjA=;
+        b=t2Zn4a/5lm6ZZywQt8g7VsShfICQS8XKhCy+bZt0FHtpPO/VxGOTYB1guUsSTjmhW7
+         zx6pXQ2I4s3y3wdawzU5GwPMkYUFroryyHrQoR4q5/aR7zSK9jExj5CJ3NFTZc53t3vi
+         YA336+Spm5eb3VHnZhANZhzMmpYL5ZliLiy2cpRGtMdUQVOwRhFanfxAQNo/0U37P6zq
+         IiinjT684GbrPjfI0xjEKs1Lo2/10M2HYVK3TqLnJtV8AuuyHGwAvn3xtvTruXC7pwO8
+         GcBT0n1uKTnWh1rZ2yWLM/pERqVDGm90KWIQpKP+4dur6h8v37Ubpp5eblO+dMt1Ui9N
+         exHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKYPU3o3YQDfVthMq4gLrWmqccsKR+0GLXwbLCsNsVjMjNMWbSBB/OkgwB5zBEH0ncghD7uqnOJCdIWTa5kiB9RHlq9GTJvjUvJEbo
+X-Gm-Message-State: AOJu0YwYaudmkTbRgUBu0smL4NTAyOeAAX8cm1hYZ8O4Q8gwkK8mWizJ
+	I6JSICEhA2qIl0N3n2zUwrjCVImL+Jq5Nz3SA97rjRJNQm61AIg5Hc1EDlJFsw==
+X-Google-Smtp-Source: AGHT+IFlSlLAVsqGKByHNiTQAtcMhfy7nQe5qrcqVBYZdOj+zvzXelBObOYgl7N2haohCixMcpBCNQ==
+X-Received: by 2002:a92:cdac:0:b0:375:8b0e:4434 with SMTP id e9e14a558f8ab-39aec2eda9cmr117641025ab.16.1722356978241;
+        Tue, 30 Jul 2024 09:29:38 -0700 (PDT)
+Received: from [10.211.55.3] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.googlemail.com with ESMTPSA id e9e14a558f8ab-39af2425345sm27113615ab.75.2024.07.30.09.29.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 09:29:37 -0700 (PDT)
+Message-ID: <31f49da0-403c-40af-b61b-8e05f5b343e8@ieee.org>
+Date: Tue, 30 Jul 2024 11:29:36 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: BG-5tlWomrq32wMWkNjD7FexXkw-8csm
-X-Proofpoint-ORIG-GUID: BG-5tlWomrq32wMWkNjD7FexXkw-8csm
-X-Proofpoint-Spam-Reason: safe
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: MAINTAINERS: Demote Qualcomm IPA to
+ "maintained"
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Alex Elder <elder@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240730104016.22103-1-krzysztof.kozlowski@linaro.org>
+From: Alex Elder <elder@ieee.org>
+In-Reply-To: <20240730104016.22103-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-A number of laptops have gone to market with old firmware versions that
-export controls that have since been hidden, but we can't just install a
-newer firmware because the firmware for each product is customized and
-qualified by the OEM. The issue is that alsactl save and restore has no
-idea what controls are good to persist which can lead to
-misconfiguration.
+On 7/30/24 5:40 AM, Krzysztof Kozlowski wrote:
+> To the best of my knowledge, Alex Elder is not being paid to support
+> Qualcomm IPA networking drivers, so drop the status from "supported" to
+> "maintained".
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-As the ALSA controls for the firmware coefficients are not used in
-normal operation they can all be hidden, but add a kernel parameter so
-that they can be re-enabled for debugging.
+I hadn't thought much about the distinction, and it might not
+make a lot of difference right now.  But it's true I'm not
+being *paid* to maintain the IPA driver (but will continue).
 
-Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
----
-Changes in v2:
-- v1 was accidentally the backport version for older kernels instead of
-  the one for v6.11
+Acked-by: Alex Elder <elder@kernel.org>
 
- sound/pci/hda/cs35l56_hda.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/sound/pci/hda/cs35l56_hda.c b/sound/pci/hda/cs35l56_hda.c
-index 96d3f13c5abf..f2f623f713d1 100644
---- a/sound/pci/hda/cs35l56_hda.c
-+++ b/sound/pci/hda/cs35l56_hda.c
-@@ -23,6 +23,10 @@
- #include "hda_cs_dsp_ctl.h"
- #include "hda_generic.h"
- 
-+static bool expose_dsp_controls;
-+module_param(expose_dsp_controls, bool, 0444);
-+MODULE_PARM_DESC(expose_dsp_controls, "Expose firmware controls as ALSA controls 0=no (default), 1=yes");
-+
-  /*
-   * The cs35l56_hda_dai_config[] reg sequence configures the device as
-   *  ASP1_BCLK_FREQ = 3.072 MHz
-@@ -613,7 +617,7 @@ static void cs35l56_hda_fw_load(struct cs35l56_hda *cs35l56)
- 	 */
- 	if (cs35l56->base.fw_patched)
- 		cs_dsp_power_down(&cs35l56->cs_dsp);
--	else
-+	else if (expose_dsp_controls)
- 		add_dsp_controls_required = true;
- 
- 	cs35l56->base.fw_patched = false;
--- 
-2.43.0
+> ---
+> 
+> ... or maybe this should be Odd Fixes?
+> ---
+>   MAINTAINERS | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 43e7668aacb0..f1c80c9fc213 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18452,7 +18452,7 @@ F:	drivers/usb/misc/qcom_eud.c
+>   QCOM IPA DRIVER
+>   M:	Alex Elder <elder@kernel.org>
+>   L:	netdev@vger.kernel.org
+> -S:	Supported
+> +S:	Maintained
+>   F:	drivers/net/ipa/
+>   
+>   QEMU MACHINE EMULATOR AND VIRTUALIZER SUPPORT
 
 
