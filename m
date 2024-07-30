@@ -1,524 +1,370 @@
-Return-Path: <linux-kernel+bounces-267553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81A539412BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:02:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 831129412C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DC691F24540
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:02:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 101761F23798
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583121940B3;
-	Tue, 30 Jul 2024 13:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6367195FE5;
+	Tue, 30 Jul 2024 13:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="anxpxvwG"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2Xvohiv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D76256E
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 13:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BB9623;
+	Tue, 30 Jul 2024 13:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722344558; cv=none; b=HmXhkLNqCx7WAHUpAQXd/3z1F+hjgvAV8GcxRtutYU07NBFhxtbSd1XFCR5RFrHOGkBBOApImmC+/RnkznLVOh9GLxyvRHEee1jw9AEnKUrvyQZddeQFe6DvGl/YUXfr0H3qRnoEbazGN8SZNF6cB48W8CF5a8J58bq5OdaUrEk=
+	t=1722344591; cv=none; b=NI6HfrIcbM2HC3LfB0tzbr3z5j5OpxcjHlNVRziDVYcb+2wZ8ZXGE/Jewg302gdT0CIPpAaijivQbgtQqa2s0NEq6ahwugdHnuHoo6jiNrLAIb4Ls3o2knf+iqdeawA3IyAwtvobOqB4PdB0GAWLCB4QZ5PPEo7aY3dRwrHkIew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722344558; c=relaxed/simple;
-	bh=hrDllh0mNU8XywMa0JRzu7wg1R37WLjH1EOOxeHp8yY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LQKt/aWxSraGdV9bbnoGbeYY/6CopApyvZ2MUOGzA5BtXIDe4CGxo7M5pejJ+6Mfi6/Ff7WvkvJPzL3grgWv1VYsQU1whTjGCR/Di1rJqKSExpUrbjCS/dreQF5M+K24DQ7vNsxPkxlX/kxwhXMHxSQWusZIGPcsDp+ePXjvSds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=anxpxvwG; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-428101fa30aso26830195e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 06:02:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722344554; x=1722949354; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=R2dIB4QTYc9vVKi6HADA4MXWLrYLxkVXN+gnrOZFtN0=;
-        b=anxpxvwG3fJuGQXSCO58+Rag/5bk4JDl/+B9tqgjYCaZhcyBj7kM6nqRrI+cqk2FH6
-         oH8QivvHKWGMgSXI6FHjsc85SAwGq92TJ1KfDhD/mkhYe1CDemv7Nbq2xCrWDgV+oPTc
-         6M6mNs4IelvuhsTPKD8wmZggNZ0K0g2uyDLdU3qd4F0cJYOELorbFFYtkxK9YvVVQcpc
-         WvPv1P/zt2MLJlpdt6qFIG7l/5gCdTMHk4WcmxciK9seg2ibw0snNluKS253XmPEuv8J
-         iaTscOm3vYbxkqPCAePEy/jd/Ut0tEOdjtXIKx0bDyDEAKtFz4aTwgDjbfEjKKJ45Hoe
-         DwlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722344554; x=1722949354;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R2dIB4QTYc9vVKi6HADA4MXWLrYLxkVXN+gnrOZFtN0=;
-        b=ZfmQqnfxO66FHgJ6/wzFBcjGcyOoRQ/m3BShp7T4WMazeSBaldhKHbBpm8XUHuTbkl
-         ForPUCzD8hkCOJ1m5x0eMO1MTgT7inesXpldecxkNjOMEj94Qs0In86XkUnO4hI5QTfV
-         8ZwYRwubn5vOfwwaq2t2sY3uAD8h1oyik4PO6yuiROzyj3bx00jrc3bsm/ipg9hZRwkU
-         5vaX66KkZjAWWcjc2ThQrqKrR/E55Ejhx98KW7MO7BGpaE6wXOWx1UdNU552P0nsD7hA
-         AMPOKfHO4BfJhr0w5yzCpDdfIokCTfstmT2NsWCydtmu08E1nojqMKRmR85gUEjxgR4M
-         dALA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrGnQ4TnS44bSIL8WP3VjFvDYtcsdhGiaKPuVgsGVZt8Q1UdutLXB3nBDEex0kRo08bH3rt59vuzJJYB3qfuK8MZVptbszxUiW2fH3
-X-Gm-Message-State: AOJu0YyVkywAWSLU1f1fZ4P+s1IDaFaUBXw8Iu0OUgR/GAhbSTm+Ww4D
-	rsQMaBHbFWygnoUReUJnDpUQU0QegwXtF3pFGWaI99FIrJUiULZKAH6sbtsG54Q=
-X-Google-Smtp-Source: AGHT+IFJLfvBrTrdxWRIISn31wIE0LGu6jnrEGDic8jUofnRSO+fbzG98BOGseW0OOZ2U+Lb9vizkg==
-X-Received: by 2002:a05:600c:4ec9:b0:427:ff1e:ab1f with SMTP id 5b1f17b1804b1-42811d9ca69mr92858975e9.14.1722344553806;
-        Tue, 30 Jul 2024 06:02:33 -0700 (PDT)
-Received: from toaster.lan ([2a01:e0a:3c5:5fb1:291e:4a48:358e:6f49])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-428134a8323sm128244305e9.46.2024.07.30.06.02.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 06:02:33 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pmdomain: amlogic: remove obsolete vpu domain driver
-Date: Tue, 30 Jul 2024 15:02:22 +0200
-Message-ID: <20240730130227.712894-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722344591; c=relaxed/simple;
+	bh=wLyA6QVib/GIMTrnS6r4GKjrJR4apBVlx6+Gt2k/tOo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=V8wY3vZPJsJmUW4LpMJ0zjJQbdj9u+TiYE48FvL67BbUnwbPnjEcysM9wieCy7LiQLC+kcDJRc+Jt0MTeYPktq/Qf8M/7GwiYmOpB7RUxr0HbeR0TdX+4Wj7pd+lwv8Mg7lngSzrPwc698i/kELeJly1d+ZPqhm5v8l447eZUYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q2Xvohiv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB905C32782;
+	Tue, 30 Jul 2024 13:03:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722344591;
+	bh=wLyA6QVib/GIMTrnS6r4GKjrJR4apBVlx6+Gt2k/tOo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Q2XvohivvzndDw42vEN6+/ssb1np22L3SL+tJXQZBO3T7ICcBSBEGbiUReJ85cpXt
+	 +eRU5YKfOHtDgbzau+om1a8Yd/nA3AZW4V1lmYrXs42SfLPsV70WvHH7XLOdJrpwmI
+	 a/UIptb6VjnqJObMsA3hgyaBkkj0k3jDcwnISCJm4Bu9tpRG2mhZj/gpOMIVPCItPA
+	 ZMghb5qRsjKEG+ckqZ0U+kpooHuCD1jGRblcWf9xnmItG6UvUOvY02E3ZIyPUKbm4b
+	 FQXNyPc77XBsXStp8oQPkuXD5voYIpbvj5vOlIkGz7Yvkp/LC5yceSqLGZ+UC0Y6BT
+	 4UzBB5jBSuz7A==
+Date: Tue, 30 Jul 2024 22:03:04 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, jpoimboe@kernel.org, jikos@kernel.org,
+ mbenes@suse.cz, pmladek@suse.com, joe.lawrence@redhat.com,
+ nathan@kernel.org, morbo@google.com, justinstitt@google.com,
+ mcgrof@kernel.org, thunder.leizhen@huawei.com, kees@kernel.org,
+ kernel-team@meta.com, mmaurer@google.com, samitolvanen@google.com,
+ mhiramat@kernel.org, rostedt@goodmis.org
+Subject: Re: [PATCH 2/3] kallsyms: Add APIs to match symbol without
+ .llmv.<hash> suffix.
+Message-Id: <20240730220304.558355ff215d0ee74b56a04b@kernel.org>
+In-Reply-To: <20240730005433.3559731-3-song@kernel.org>
+References: <20240730005433.3559731-1-song@kernel.org>
+	<20240730005433.3559731-3-song@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-meson-gx-pwrc-vpu has been superseded by meson-ee-pwrc since
-commit 53773f2dfd9c ("soc: amlogic: meson-ee-pwrc: add support for the Meson GX SoCs"),
-so v5.8.
+On Mon, 29 Jul 2024 17:54:32 -0700
+Song Liu <song@kernel.org> wrote:
 
-This driver is obsolete and no longer used or tested.
-There is no reason to keep it around so remove it.
+> With CONFIG_LTO_CLANG=y, the compiler may add suffix to function names
+> to avoid duplication. This causes confusion with users of kallsyms.
+> On one hand, users like livepatch are required to match the symbols
+> exactly. On the other hand, users like kprobe would like to match to
+> original function names.
+> 
+> Solve this by splitting kallsyms APIs. Specifically, existing APIs now
+> should match the symbols exactly. Add two APIs that matches the full
+> symbol, or only the part without .llvm.suffix. Specifically, the following
+> two APIs are added:
+> 
+> 1. kallsyms_lookup_name_or_prefix()
+> 2. kallsyms_on_each_match_symbol_or_prefix()
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/pmdomain/amlogic/Kconfig             |  11 -
- drivers/pmdomain/amlogic/Makefile            |   1 -
- drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c | 380 -------------------
- 3 files changed, 392 deletions(-)
- delete mode 100644 drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
+Since this API only removes the suffix, "match prefix" is a bit confusing.
+(this sounds like matching "foo" with "foo" and "foo_bar", but in reality,
+it only matches "foo" and "foo.llvm.*")
+What about the name below?
 
-diff --git a/drivers/pmdomain/amlogic/Kconfig b/drivers/pmdomain/amlogic/Kconfig
-index 2108729909b5..e72b664174af 100644
---- a/drivers/pmdomain/amlogic/Kconfig
-+++ b/drivers/pmdomain/amlogic/Kconfig
-@@ -1,17 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
- menu "Amlogic PM Domains"
- 
--config MESON_GX_PM_DOMAINS
--	tristate "Amlogic Meson GX Power Domains driver"
--	depends on ARCH_MESON || COMPILE_TEST
--	depends on PM && OF
--	default ARCH_MESON
--	select PM_GENERIC_DOMAINS
--	select PM_GENERIC_DOMAINS_OF
--	help
--	  Say yes to expose Amlogic Meson GX Power Domains as
--	  Generic Power Domains.
--
- config MESON_EE_PM_DOMAINS
- 	tristate "Amlogic Meson Everything-Else Power Domains driver"
- 	depends on ARCH_MESON || COMPILE_TEST
-diff --git a/drivers/pmdomain/amlogic/Makefile b/drivers/pmdomain/amlogic/Makefile
-index 3d58abd574f9..99f195f09957 100644
---- a/drivers/pmdomain/amlogic/Makefile
-+++ b/drivers/pmdomain/amlogic/Makefile
-@@ -1,4 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
--obj-$(CONFIG_MESON_GX_PM_DOMAINS) += meson-gx-pwrc-vpu.o
- obj-$(CONFIG_MESON_EE_PM_DOMAINS) += meson-ee-pwrc.o
- obj-$(CONFIG_MESON_SECURE_PM_DOMAINS) += meson-secure-pwrc.o
-diff --git a/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c b/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
-deleted file mode 100644
-index 6028e91664a4..000000000000
---- a/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
-+++ /dev/null
-@@ -1,380 +0,0 @@
--/*
-- * Copyright (c) 2017 BayLibre, SAS
-- * Author: Neil Armstrong <narmstrong@baylibre.com>
-- *
-- * SPDX-License-Identifier: GPL-2.0+
-- */
--
--#include <linux/platform_device.h>
--#include <linux/pm_domain.h>
--#include <linux/bitfield.h>
--#include <linux/regmap.h>
--#include <linux/mfd/syscon.h>
--#include <linux/of.h>
--#include <linux/reset.h>
--#include <linux/clk.h>
--#include <linux/module.h>
--
--/* AO Offsets */
--
--#define AO_RTI_GEN_PWR_SLEEP0		(0x3a << 2)
--
--#define GEN_PWR_VPU_HDMI		BIT(8)
--#define GEN_PWR_VPU_HDMI_ISO		BIT(9)
--
--/* HHI Offsets */
--
--#define HHI_MEM_PD_REG0			(0x40 << 2)
--#define HHI_VPU_MEM_PD_REG0		(0x41 << 2)
--#define HHI_VPU_MEM_PD_REG1		(0x42 << 2)
--#define HHI_VPU_MEM_PD_REG2		(0x4d << 2)
--
--struct meson_gx_pwrc_vpu {
--	struct generic_pm_domain genpd;
--	struct regmap *regmap_ao;
--	struct regmap *regmap_hhi;
--	struct reset_control *rstc;
--	struct clk *vpu_clk;
--	struct clk *vapb_clk;
--};
--
--static inline
--struct meson_gx_pwrc_vpu *genpd_to_pd(struct generic_pm_domain *d)
--{
--	return container_of(d, struct meson_gx_pwrc_vpu, genpd);
--}
--
--static int meson_gx_pwrc_vpu_power_off(struct generic_pm_domain *genpd)
--{
--	struct meson_gx_pwrc_vpu *pd = genpd_to_pd(genpd);
--	int i;
--
--	regmap_update_bits(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
--			   GEN_PWR_VPU_HDMI_ISO, GEN_PWR_VPU_HDMI_ISO);
--	udelay(20);
--
--	/* Power Down Memories */
--	for (i = 0; i < 32; i += 2) {
--		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG0,
--				   0x3 << i, 0x3 << i);
--		udelay(5);
--	}
--	for (i = 0; i < 32; i += 2) {
--		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG1,
--				   0x3 << i, 0x3 << i);
--		udelay(5);
--	}
--	for (i = 8; i < 16; i++) {
--		regmap_update_bits(pd->regmap_hhi, HHI_MEM_PD_REG0,
--				   BIT(i), BIT(i));
--		udelay(5);
--	}
--	udelay(20);
--
--	regmap_update_bits(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
--			   GEN_PWR_VPU_HDMI, GEN_PWR_VPU_HDMI);
--
--	msleep(20);
--
--	clk_disable_unprepare(pd->vpu_clk);
--	clk_disable_unprepare(pd->vapb_clk);
--
--	return 0;
--}
--
--static int meson_g12a_pwrc_vpu_power_off(struct generic_pm_domain *genpd)
--{
--	struct meson_gx_pwrc_vpu *pd = genpd_to_pd(genpd);
--	int i;
--
--	regmap_update_bits(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
--			   GEN_PWR_VPU_HDMI_ISO, GEN_PWR_VPU_HDMI_ISO);
--	udelay(20);
--
--	/* Power Down Memories */
--	for (i = 0; i < 32; i += 2) {
--		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG0,
--				   0x3 << i, 0x3 << i);
--		udelay(5);
--	}
--	for (i = 0; i < 32; i += 2) {
--		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG1,
--				   0x3 << i, 0x3 << i);
--		udelay(5);
--	}
--	for (i = 0; i < 32; i += 2) {
--		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG2,
--				   0x3 << i, 0x3 << i);
--		udelay(5);
--	}
--	for (i = 8; i < 16; i++) {
--		regmap_update_bits(pd->regmap_hhi, HHI_MEM_PD_REG0,
--				   BIT(i), BIT(i));
--		udelay(5);
--	}
--	udelay(20);
--
--	regmap_update_bits(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
--			   GEN_PWR_VPU_HDMI, GEN_PWR_VPU_HDMI);
--
--	msleep(20);
--
--	clk_disable_unprepare(pd->vpu_clk);
--	clk_disable_unprepare(pd->vapb_clk);
--
--	return 0;
--}
--
--static int meson_gx_pwrc_vpu_setup_clk(struct meson_gx_pwrc_vpu *pd)
--{
--	int ret;
--
--	ret = clk_prepare_enable(pd->vpu_clk);
--	if (ret)
--		return ret;
--
--	ret = clk_prepare_enable(pd->vapb_clk);
--	if (ret)
--		clk_disable_unprepare(pd->vpu_clk);
--
--	return ret;
--}
--
--static int meson_gx_pwrc_vpu_power_on(struct generic_pm_domain *genpd)
--{
--	struct meson_gx_pwrc_vpu *pd = genpd_to_pd(genpd);
--	int ret;
--	int i;
--
--	regmap_update_bits(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
--			   GEN_PWR_VPU_HDMI, 0);
--	udelay(20);
--
--	/* Power Up Memories */
--	for (i = 0; i < 32; i += 2) {
--		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG0,
--				   0x3 << i, 0);
--		udelay(5);
--	}
--
--	for (i = 0; i < 32; i += 2) {
--		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG1,
--				   0x3 << i, 0);
--		udelay(5);
--	}
--
--	for (i = 8; i < 16; i++) {
--		regmap_update_bits(pd->regmap_hhi, HHI_MEM_PD_REG0,
--				   BIT(i), 0);
--		udelay(5);
--	}
--	udelay(20);
--
--	ret = reset_control_assert(pd->rstc);
--	if (ret)
--		return ret;
--
--	regmap_update_bits(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
--			   GEN_PWR_VPU_HDMI_ISO, 0);
--
--	ret = reset_control_deassert(pd->rstc);
--	if (ret)
--		return ret;
--
--	ret = meson_gx_pwrc_vpu_setup_clk(pd);
--	if (ret)
--		return ret;
--
--	return 0;
--}
--
--static int meson_g12a_pwrc_vpu_power_on(struct generic_pm_domain *genpd)
--{
--	struct meson_gx_pwrc_vpu *pd = genpd_to_pd(genpd);
--	int ret;
--	int i;
--
--	regmap_update_bits(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
--			   GEN_PWR_VPU_HDMI, 0);
--	udelay(20);
--
--	/* Power Up Memories */
--	for (i = 0; i < 32; i += 2) {
--		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG0,
--				   0x3 << i, 0);
--		udelay(5);
--	}
--
--	for (i = 0; i < 32; i += 2) {
--		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG1,
--				   0x3 << i, 0);
--		udelay(5);
--	}
--
--	for (i = 0; i < 32; i += 2) {
--		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG2,
--				   0x3 << i, 0);
--		udelay(5);
--	}
--
--	for (i = 8; i < 16; i++) {
--		regmap_update_bits(pd->regmap_hhi, HHI_MEM_PD_REG0,
--				   BIT(i), 0);
--		udelay(5);
--	}
--	udelay(20);
--
--	ret = reset_control_assert(pd->rstc);
--	if (ret)
--		return ret;
--
--	regmap_update_bits(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
--			   GEN_PWR_VPU_HDMI_ISO, 0);
--
--	ret = reset_control_deassert(pd->rstc);
--	if (ret)
--		return ret;
--
--	ret = meson_gx_pwrc_vpu_setup_clk(pd);
--	if (ret)
--		return ret;
--
--	return 0;
--}
--
--static bool meson_gx_pwrc_vpu_get_power(struct meson_gx_pwrc_vpu *pd)
--{
--	u32 reg;
--
--	regmap_read(pd->regmap_ao, AO_RTI_GEN_PWR_SLEEP0, &reg);
--
--	return (reg & GEN_PWR_VPU_HDMI);
--}
--
--static struct meson_gx_pwrc_vpu vpu_hdmi_pd = {
--	.genpd = {
--		.name = "vpu_hdmi",
--		.power_off = meson_gx_pwrc_vpu_power_off,
--		.power_on = meson_gx_pwrc_vpu_power_on,
--	},
--};
--
--static struct meson_gx_pwrc_vpu vpu_hdmi_pd_g12a = {
--	.genpd = {
--		.name = "vpu_hdmi",
--		.power_off = meson_g12a_pwrc_vpu_power_off,
--		.power_on = meson_g12a_pwrc_vpu_power_on,
--	},
--};
--
--static int meson_gx_pwrc_vpu_probe(struct platform_device *pdev)
--{
--	const struct meson_gx_pwrc_vpu *vpu_pd_match;
--	struct regmap *regmap_ao, *regmap_hhi;
--	struct meson_gx_pwrc_vpu *vpu_pd;
--	struct device_node *parent_np;
--	struct reset_control *rstc;
--	struct clk *vpu_clk;
--	struct clk *vapb_clk;
--	bool powered_off;
--	int ret;
--
--	vpu_pd_match = of_device_get_match_data(&pdev->dev);
--	if (!vpu_pd_match) {
--		dev_err(&pdev->dev, "failed to get match data\n");
--		return -ENODEV;
--	}
--
--	vpu_pd = devm_kzalloc(&pdev->dev, sizeof(*vpu_pd), GFP_KERNEL);
--	if (!vpu_pd)
--		return -ENOMEM;
--
--	memcpy(vpu_pd, vpu_pd_match, sizeof(*vpu_pd));
--
--	parent_np = of_get_parent(pdev->dev.of_node);
--	regmap_ao = syscon_node_to_regmap(parent_np);
--	of_node_put(parent_np);
--	if (IS_ERR(regmap_ao)) {
--		dev_err(&pdev->dev, "failed to get regmap\n");
--		return PTR_ERR(regmap_ao);
--	}
--
--	regmap_hhi = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
--						     "amlogic,hhi-sysctrl");
--	if (IS_ERR(regmap_hhi)) {
--		dev_err(&pdev->dev, "failed to get HHI regmap\n");
--		return PTR_ERR(regmap_hhi);
--	}
--
--	rstc = devm_reset_control_array_get_exclusive(&pdev->dev);
--	if (IS_ERR(rstc))
--		return dev_err_probe(&pdev->dev, PTR_ERR(rstc),
--				     "failed to get reset lines\n");
--
--	vpu_clk = devm_clk_get(&pdev->dev, "vpu");
--	if (IS_ERR(vpu_clk)) {
--		dev_err(&pdev->dev, "vpu clock request failed\n");
--		return PTR_ERR(vpu_clk);
--	}
--
--	vapb_clk = devm_clk_get(&pdev->dev, "vapb");
--	if (IS_ERR(vapb_clk)) {
--		dev_err(&pdev->dev, "vapb clock request failed\n");
--		return PTR_ERR(vapb_clk);
--	}
--
--	vpu_pd->regmap_ao = regmap_ao;
--	vpu_pd->regmap_hhi = regmap_hhi;
--	vpu_pd->rstc = rstc;
--	vpu_pd->vpu_clk = vpu_clk;
--	vpu_pd->vapb_clk = vapb_clk;
--
--	platform_set_drvdata(pdev, vpu_pd);
--
--	powered_off = meson_gx_pwrc_vpu_get_power(vpu_pd);
--
--	/* If already powered, sync the clock states */
--	if (!powered_off) {
--		ret = meson_gx_pwrc_vpu_setup_clk(vpu_pd);
--		if (ret)
--			return ret;
--	}
--
--	vpu_pd->genpd.flags = GENPD_FLAG_ALWAYS_ON;
--	pm_genpd_init(&vpu_pd->genpd, NULL, powered_off);
--
--	return of_genpd_add_provider_simple(pdev->dev.of_node,
--					    &vpu_pd->genpd);
--}
--
--static void meson_gx_pwrc_vpu_shutdown(struct platform_device *pdev)
--{
--	struct meson_gx_pwrc_vpu *vpu_pd = platform_get_drvdata(pdev);
--	bool powered_off;
--
--	powered_off = meson_gx_pwrc_vpu_get_power(vpu_pd);
--	if (!powered_off)
--		vpu_pd->genpd.power_off(&vpu_pd->genpd);
--}
--
--static const struct of_device_id meson_gx_pwrc_vpu_match_table[] = {
--	{ .compatible = "amlogic,meson-gx-pwrc-vpu", .data = &vpu_hdmi_pd },
--	{
--	  .compatible = "amlogic,meson-g12a-pwrc-vpu",
--	  .data = &vpu_hdmi_pd_g12a
--	},
--	{ /* sentinel */ }
--};
--MODULE_DEVICE_TABLE(of, meson_gx_pwrc_vpu_match_table);
--
--static struct platform_driver meson_gx_pwrc_vpu_driver = {
--	.probe	= meson_gx_pwrc_vpu_probe,
--	.shutdown = meson_gx_pwrc_vpu_shutdown,
--	.driver = {
--		.name		= "meson_gx_pwrc_vpu",
--		.of_match_table	= meson_gx_pwrc_vpu_match_table,
--	},
--};
--module_platform_driver(meson_gx_pwrc_vpu_driver);
--MODULE_DESCRIPTION("Amlogic Meson GX Power Domains driver");
--MODULE_LICENSE("GPL v2");
+kallsyms_lookup_name_without_suffix()
+kallsyms_on_each_match_symbol_without_suffix()
+
+> 
+> These APIs will be used by kprobe.
+
+No other user need this?
+
+Thank you,
+
+
+> 
+> Also cleanup some code and adjust kallsyms_selftests accordingly.
+> 
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>  include/linux/kallsyms.h   | 14 +++++++
+>  kernel/kallsyms.c          | 83 ++++++++++++++++++++++++++------------
+>  kernel/kallsyms_selftest.c | 22 +---------
+>  3 files changed, 73 insertions(+), 46 deletions(-)
+> 
+> diff --git a/include/linux/kallsyms.h b/include/linux/kallsyms.h
+> index c3f075e8f60c..09b2d2099107 100644
+> --- a/include/linux/kallsyms.h
+> +++ b/include/linux/kallsyms.h
+> @@ -74,9 +74,12 @@ int kallsyms_on_each_symbol(int (*fn)(void *, const char *, unsigned long),
+>  			    void *data);
+>  int kallsyms_on_each_match_symbol(int (*fn)(void *, unsigned long),
+>  				  const char *name, void *data);
+> +int kallsyms_on_each_match_symbol_or_prefix(int (*fn)(void *, unsigned long),
+> +					    const char *name, void *data);
+>  
+>  /* Lookup the address for a symbol. Returns 0 if not found. */
+>  unsigned long kallsyms_lookup_name(const char *name);
+> +unsigned long kallsyms_lookup_name_or_prefix(const char *name);
+>  
+>  extern int kallsyms_lookup_size_offset(unsigned long addr,
+>  				  unsigned long *symbolsize,
+> @@ -104,6 +107,11 @@ static inline unsigned long kallsyms_lookup_name(const char *name)
+>  	return 0;
+>  }
+>  
+> +static inline unsigned long kallsyms_lookup_name_or_prefix(const char *name)
+> +{
+> +	return 0;
+> +}
+> +
+>  static inline int kallsyms_lookup_size_offset(unsigned long addr,
+>  					      unsigned long *symbolsize,
+>  					      unsigned long *offset)
+> @@ -165,6 +173,12 @@ static inline int kallsyms_on_each_match_symbol(int (*fn)(void *, unsigned long)
+>  {
+>  	return -EOPNOTSUPP;
+>  }
+> +
+> +static inline int kallsyms_on_each_match_symbol_or_prefix(int (*fn)(void *, unsigned long),
+> +							  const char *name, void *data)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+>  #endif /*CONFIG_KALLSYMS*/
+>  
+>  static inline void print_ip_sym(const char *loglvl, unsigned long ip)
+> diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+> index fb2c77368d18..4285dd85d814 100644
+> --- a/kernel/kallsyms.c
+> +++ b/kernel/kallsyms.c
+> @@ -164,9 +164,6 @@ static void cleanup_symbol_name(char *s)
+>  {
+>  	char *res;
+>  
+> -	if (!IS_ENABLED(CONFIG_LTO_CLANG))
+> -		return;
+> -
+>  	/*
+>  	 * LLVM appends various suffixes for local functions and variables that
+>  	 * must be promoted to global scope as part of LTO.  This can break
+> @@ -181,13 +178,13 @@ static void cleanup_symbol_name(char *s)
+>  	return;
+>  }
+>  
+> -static int compare_symbol_name(const char *name, char *namebuf)
+> +static int compare_symbol_name(const char *name, char *namebuf, bool exact_match)
+>  {
+> -	/* The kallsyms_seqs_of_names is sorted based on names after
+> -	 * cleanup_symbol_name() (see scripts/kallsyms.c) if clang lto is enabled.
+> -	 * To ensure correct bisection in kallsyms_lookup_names(), do
+> -	 * cleanup_symbol_name(namebuf) before comparing name and namebuf.
+> -	 */
+> +	int ret = strcmp(name, namebuf);
+> +
+> +	if (exact_match || !ret)
+> +		return ret;
+> +
+>  	cleanup_symbol_name(namebuf);
+>  	return strcmp(name, namebuf);
+>  }
+> @@ -204,13 +201,17 @@ static unsigned int get_symbol_seq(int index)
+>  
+>  static int kallsyms_lookup_names(const char *name,
+>  				 unsigned int *start,
+> -				 unsigned int *end)
+> +				 unsigned int *end,
+> +				 bool exact_match)
+>  {
+>  	int ret;
+>  	int low, mid, high;
+>  	unsigned int seq, off;
+>  	char namebuf[KSYM_NAME_LEN];
+>  
+> +	if (!IS_ENABLED(CONFIG_LTO_CLANG))
+> +		exact_match = true;
+> +
+>  	low = 0;
+>  	high = kallsyms_num_syms - 1;
+>  
+> @@ -219,7 +220,7 @@ static int kallsyms_lookup_names(const char *name,
+>  		seq = get_symbol_seq(mid);
+>  		off = get_symbol_offset(seq);
+>  		kallsyms_expand_symbol(off, namebuf, ARRAY_SIZE(namebuf));
+> -		ret = compare_symbol_name(name, namebuf);
+> +		ret = compare_symbol_name(name, namebuf, exact_match);
+>  		if (ret > 0)
+>  			low = mid + 1;
+>  		else if (ret < 0)
+> @@ -236,7 +237,7 @@ static int kallsyms_lookup_names(const char *name,
+>  		seq = get_symbol_seq(low - 1);
+>  		off = get_symbol_offset(seq);
+>  		kallsyms_expand_symbol(off, namebuf, ARRAY_SIZE(namebuf));
+> -		if (compare_symbol_name(name, namebuf))
+> +		if (compare_symbol_name(name, namebuf, exact_match))
+>  			break;
+>  		low--;
+>  	}
+> @@ -248,7 +249,7 @@ static int kallsyms_lookup_names(const char *name,
+>  			seq = get_symbol_seq(high + 1);
+>  			off = get_symbol_offset(seq);
+>  			kallsyms_expand_symbol(off, namebuf, ARRAY_SIZE(namebuf));
+> -			if (compare_symbol_name(name, namebuf))
+> +			if (compare_symbol_name(name, namebuf, exact_match))
+>  				break;
+>  			high++;
+>  		}
+> @@ -268,13 +269,35 @@ unsigned long kallsyms_lookup_name(const char *name)
+>  	if (!*name)
+>  		return 0;
+>  
+> -	ret = kallsyms_lookup_names(name, &i, NULL);
+> +	ret = kallsyms_lookup_names(name, &i, NULL, true);
+>  	if (!ret)
+>  		return kallsyms_sym_address(get_symbol_seq(i));
+>  
+>  	return module_kallsyms_lookup_name(name);
+>  }
+>  
+> +/*
+> + * Lookup the address for this symbol.
+> + *
+> + * With CONFIG_LTO_CLANG=y, if there is no exact match, also try lookup
+> + * symbol.llvm.<hash>.
+> + */
+> +unsigned long kallsyms_lookup_name_or_prefix(const char *name)
+> +{
+> +	unsigned long addr;
+> +
+> +	addr = kallsyms_lookup_name(name);
+> +
+> +	if (!addr && IS_ENABLED(CONFIG_LTO_CLANG)) {
+> +		int ret, i;
+> +
+> +		ret = kallsyms_lookup_names(name, &i, NULL, false);
+> +		if (!ret)
+> +			addr = kallsyms_sym_address(get_symbol_seq(i));
+> +	}
+> +	return addr;
+> +}
+> +
+>  /*
+>   * Iterate over all symbols in vmlinux.  For symbols from modules use
+>   * module_kallsyms_on_each_symbol instead.
+> @@ -303,7 +326,25 @@ int kallsyms_on_each_match_symbol(int (*fn)(void *, unsigned long),
+>  	int ret;
+>  	unsigned int i, start, end;
+>  
+> -	ret = kallsyms_lookup_names(name, &start, &end);
+> +	ret = kallsyms_lookup_names(name, &start, &end, true);
+> +	if (ret)
+> +		return 0;
+> +
+> +	for (i = start; !ret && i <= end; i++) {
+> +		ret = fn(data, kallsyms_sym_address(get_symbol_seq(i)));
+> +		cond_resched();
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +int kallsyms_on_each_match_symbol_or_prefix(int (*fn)(void *, unsigned long),
+> +					    const char *name, void *data)
+> +{
+> +	int ret;
+> +	unsigned int i, start, end;
+> +
+> +	ret = kallsyms_lookup_names(name, &start, &end, false);
+>  	if (ret)
+>  		return 0;
+>  
+> @@ -450,8 +491,6 @@ const char *kallsyms_lookup(unsigned long addr,
+>  
+>  int lookup_symbol_name(unsigned long addr, char *symname)
+>  {
+> -	int res;
+> -
+>  	symname[0] = '\0';
+>  	symname[KSYM_NAME_LEN - 1] = '\0';
+>  
+> @@ -462,16 +501,10 @@ int lookup_symbol_name(unsigned long addr, char *symname)
+>  		/* Grab name */
+>  		kallsyms_expand_symbol(get_symbol_offset(pos),
+>  				       symname, KSYM_NAME_LEN);
+> -		goto found;
+> +		return 0;
+>  	}
+>  	/* See if it's in a module. */
+> -	res = lookup_module_symbol_name(addr, symname);
+> -	if (res)
+> -		return res;
+> -
+> -found:
+> -	cleanup_symbol_name(symname);
+> -	return 0;
+> +	return lookup_module_symbol_name(addr, symname);
+>  }
+>  
+>  /* Look up a kernel symbol and return it in a text buffer. */
+> diff --git a/kernel/kallsyms_selftest.c b/kernel/kallsyms_selftest.c
+> index 2f84896a7bcb..873f7c445488 100644
+> --- a/kernel/kallsyms_selftest.c
+> +++ b/kernel/kallsyms_selftest.c
+> @@ -187,31 +187,11 @@ static void test_perf_kallsyms_lookup_name(void)
+>  		stat.min, stat.max, div_u64(stat.sum, stat.real_cnt));
+>  }
+>  
+> -static bool match_cleanup_name(const char *s, const char *name)
+> -{
+> -	char *p;
+> -	int len;
+> -
+> -	if (!IS_ENABLED(CONFIG_LTO_CLANG))
+> -		return false;
+> -
+> -	p = strstr(s, ".llvm.");
+> -	if (!p)
+> -		return false;
+> -
+> -	len = strlen(name);
+> -	if (p - s != len)
+> -		return false;
+> -
+> -	return !strncmp(s, name, len);
+> -}
+> -
+>  static int find_symbol(void *data, const char *name, unsigned long addr)
+>  {
+>  	struct test_stat *stat = (struct test_stat *)data;
+>  
+> -	if (strcmp(name, stat->name) == 0 ||
+> -	    (!stat->perf && match_cleanup_name(name, stat->name))) {
+> +	if (!strcmp(name, stat->name)) {
+>  		stat->real_cnt++;
+>  		stat->addr = addr;
+>  
+> -- 
+> 2.43.0
+> 
+
+
 -- 
-2.43.0
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
