@@ -1,125 +1,161 @@
-Return-Path: <linux-kernel+bounces-267779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1121A94155F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:20:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8944E94155B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4158F1C20456
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:20:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43850283B0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AC01A38F1;
-	Tue, 30 Jul 2024 15:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BA71A3BAA;
+	Tue, 30 Jul 2024 15:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KNr9Bg/9"
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfSvVS7/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D81B1A38E4
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27231A38CE;
+	Tue, 30 Jul 2024 15:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722352794; cv=none; b=eBcpCSIpN05cJvrb1ET5uaozfSwFhC9Jr8sjX6WF2sG4f1p64rRc3/mvw7WOuuZmo8b7r8zc4ukFF1BK+TDv3WTHstByU0gCIBZM+38W4qyP7b1hLQujTYrEfCRQRzywDeiyTdNIAoap9SS7CMYCgC+cSNzjsF+Rm8ITlDiHIRY=
+	t=1722352776; cv=none; b=fPCDLJqO3sHibvZ6e6uYBTnQrMEz1gzdWwu3aaHjxELN7P4IlAjpnzdefOv5DonNUIZjCNRhxt41rKcTSaBa5Nrj6CxGn2a1UQDXwMfELs5+lR/PaafxY1eDiSAUKB1eClFeHXfbsejTMRjVp68tvBpwFBR2/02kD9SRAaGuHnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722352794; c=relaxed/simple;
-	bh=2B8WwI7Cb180r9Sb7Hq5sHlqUuB8r+N3bxW/DWxf/vU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AOoXouEOsnEEz+JQsdODUSE0KmU+lkGZNVXH0b0ChIc0yffos7+VvS27z9sJwTdpYFWDu8CSd7aQAWenXzO6aEouZ1NRdU1WBaC954GlbEE6YPEDFb9UTWGhuncQJ779eRizXrLiQGpGpsDnbvZUzKTEK3kV2Vn1ocPKdJ/ZeFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KNr9Bg/9; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4f2c8e99c0fso1585813e0c.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:19:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722352792; x=1722957592; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2B8WwI7Cb180r9Sb7Hq5sHlqUuB8r+N3bxW/DWxf/vU=;
-        b=KNr9Bg/9rl79pMS1k1B2JDeNc86fwCxIVYV5+xVYkTVsYmZzaha6SIFRmPeUYGxgyi
-         N6h7r5UAd7zW7JMG2oi9PH5xjGAjuvhAuk7VDB5IcvxriDzAPU/Vu/P/k5wdPnhX5o4f
-         E6lXshJm8xUslzpUVBr1ZIIjRNV9ysMyqW5uS5JfUtdhk6Qq226VIqnE5LBnE9Xs4CsY
-         lq+MGp0OW3L1xnqAlA0B273Y57RoRCT1ukyjFEk9KOaNU2AQCR1cx3Ma0sgoES/XCEb4
-         l5YRVd95KrIa2NvrqFXgqBBln1VIONnXAUssxkdHHGxN0y+rDWZf5OP+/s6/2wUSdn5l
-         KGGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722352792; x=1722957592;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2B8WwI7Cb180r9Sb7Hq5sHlqUuB8r+N3bxW/DWxf/vU=;
-        b=bPotF4qFT0P6Q2JRWxc0iwgObiMNETAEvRt7K+JAYkoEEF3MHB08bbAznBlKywsxbz
-         vMMSEnH1Bc16ZK5NR8pSwQGmVC1cRfsktAU8/One++3GpJmadAzXy3ECvXbVMfol/0Do
-         N+RSfRWOIh7X5VDneZ8okhstDzWWMohJdA1HH27eSaq/4M0DOfgaXk5YbKZ44u93PWK1
-         n0WX1UJN93ssyb9inp66rY7dIMkeNVLHGa6GXk677WYpryiZTzxk9VcXdgsxAD0/9i/8
-         SP5g6y6b2r12Fis8WJ+v3RE6VVSFK+iyNSh3erZju6XBTKmKd9RFTRN34ckWsPwu8O9C
-         JS2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVFJfveIOkadqTLGVEF9APVhhUqTwMv3pbxSSXVyvYFVLLezPP7eYy4cGfGgCC2gHBMJLnOfOS1mKgTVb0kIcBjLbK14WC6vEVjlH4J
-X-Gm-Message-State: AOJu0Yz1rlfGCcQ/hGk1BsGVl6Nl0wU68aaKs07rOdYh+90nPmsmT0RJ
-	8k9bPBy3K6/zYd/L+MKO4BfEglgYijhuqz1vuLQlhCMbZUazUiDnEx5iOiY22EuV66r0X8WFDAQ
-	Qfkqmcy4Sc+8IEyrf8DKXmm40vujE5E61Mz7u
-X-Google-Smtp-Source: AGHT+IFYWl0B6ozqGp9/4MappOQC0WeCJttsu9HV93WtvH7H37A+U1SNe41tpi9Z7+Ch7vETcUsz4gucQAkyakUjzhY=
-X-Received: by 2002:a05:6122:1828:b0:4f5:27ac:ce6e with SMTP id
- 71dfb90a1353d-4f6e68ef18bmr12317085e0c.7.1722352791754; Tue, 30 Jul 2024
- 08:19:51 -0700 (PDT)
+	s=arc-20240116; t=1722352776; c=relaxed/simple;
+	bh=HQyeNatBMcZUiljeFYyRppT2tTjxGc2zpD8FbNK5N5I=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=sBc0Gw4hIyDX5OuqkBejFxNNx2/nbnHjD4IWEqiJH7kggM3nJYvZpAFcjNI1MntMvwRUNgOfAoPCAgl6h0cfGIYxu9OeCfq1aavEsA6HrjzDFz9wofbm/aldEcWPjaM9+39SEpCLKRNf6puGdlskifQx2cQ8gX9P7gocS+phTVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dfSvVS7/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD582C32782;
+	Tue, 30 Jul 2024 15:19:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722352776;
+	bh=HQyeNatBMcZUiljeFYyRppT2tTjxGc2zpD8FbNK5N5I=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=dfSvVS7/d8KPZPKUkfVhR1IPwbfw2H/bM4HKjfeI4pFExH9EyeitXFLhMJI5LVV7n
+	 Naf9ekfBgSReMsRCoE+OSbtCMwGQVbDrH1xuPqo8UNQWK7DuWsRyJQuRIUhc0337YS
+	 BOCe0gGaaTMrDTSv5rBJJxhP/lyex1GrCjOxj3P9VwQce0exE8aNijpr63cFLNHzhn
+	 LN/6XQepQLusNJ+ue1byLNOHiCv6XMqiutiyclTsx6SOYoBHwdzR/QeNYaz1GxTKhF
+	 l8LGPWMAocdB5V+QJzhDXGVAnhSJnuxBLaTJDk8dTQBUnOdsdIxFtDLurK8OkRrmND
+	 KuoyZ4O52oQcw==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730-kcfi-v1-0-bbb948752a30@google.com> <20240730-kcfi-v1-1-bbb948752a30@google.com>
- <20240730102856.GJ33588@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240730102856.GJ33588@noisy.programming.kicks-ass.net>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Tue, 30 Jul 2024 08:19:13 -0700
-Message-ID: <CABCJKuc8ue1y7WBPo3YRRoDeGUFpRon4at=Wa1rQjrXzOGpt9w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] cfi: add CONFIG_CFI_ICALL_NORMALIZE_INTEGERS
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240729150315.65798-1-brgl@bgdev.pl>
+References: <20240729150315.65798-1-brgl@bgdev.pl>
+Subject: Re: [PATCH net v2] net: phy: aquantia: only poll GLOBAL_CFG regs on aqr113, aqr113c and aqr115c
+From: Antoine Tenart <atenart@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Jon Hunter <jonathanh@nvidia.com>
+To: Andrew Lunn <andrew@lunn.ch>, Bartosz Golaszewski <brgl@bgdev.pl>, David S . Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Heiner Kallweit <hkallweit1@gmail.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>
+Date: Tue, 30 Jul 2024 17:19:32 +0200
+Message-ID: <172235277231.5002.4869673206653529793@kwain.local>
 
-On Tue, Jul 30, 2024 at 3:29=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Tue, Jul 30, 2024 at 09:40:11AM +0000, Alice Ryhl wrote:
-> > Introduce a Kconfig option for enabling the experimental option to
-> > normalize integer types. This ensures that integer types of the same
-> > size and signedness are considered compatible by the Control Flow
-> > Integrity sanitizer.
-> >
-> > This option exists for compatibility with Rust, as C and Rust do not
-> > have the same set of integer types. There are cases where C has two
-> > different integer types of the same size and alignment, but Rust only
-> > has one integer type of that size and alignment. When Rust calls into
-> > C functions using such types in their signature, this results in CFI
-> > failures.
-> >
-> > This patch introduces a dedicated option for this because it is
-> > undesirable to have CONFIG_RUST affect CC_FLAGS in this way.
->
-> To be clear, any code compiled with this is incompatible with code
-> compiled without this, as the function signatures will differ, right?
->
-> Specifically, it will map things like 'unsigned long long' and 'unsigned
-> long' -- which are both u64 on LP64 targets to the same 'type', right?
->
-> I suppose it has been decided the security impact of this change is
-> minimal?
+Quoting Bartosz Golaszewski (2024-07-29 17:03:14)
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>=20
+> Commit 708405f3e56e ("net: phy: aquantia: wait for the GLOBAL_CFG to
+> start returning real values") introduced a workaround for an issue
+> observed on aqr115c. However there were never any reports of it
+> happening on other models and the workaround has been reported to cause
+> and issue on aqr113c (and it may cause the same on any other model not
+> supporting 10M mode).
+>=20
+> Let's limit the impact of the workaround to aqr113, aqr113c and aqr115c
+> and poll the 100M GLOBAL_CFG register instead as both models are known
+> to support it correctly.
+>=20
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Closes: https://lore.kernel.org/lkml/7c0140be-4325-4005-9068-7e0fc5ff344d=
+@nvidia.com/
+> Fixes: 708405f3e56e ("net: phy: aquantia: wait for the GLOBAL_CFG to star=
+t returning real values")
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I looked into this last year, and integer normalization reduced the
-number of unique type hashes in the kernel by ~1%, which should be
-fine.
+Reviewed-by: Antoine Tenart <atenart@kernel.org>
 
-Sami
+Thanks!
+
+> ---
+> v1 -> v2:
+> - update the commit message to mention aqr113 too
+> - fix the comment in the source file: 10M -> 100M
+>=20
+>  drivers/net/phy/aquantia/aquantia_main.c | 29 +++++++++++++++++-------
+>  1 file changed, 21 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/a=
+quantia/aquantia_main.c
+> index d12e35374231..e982e9ce44a5 100644
+> --- a/drivers/net/phy/aquantia/aquantia_main.c
+> +++ b/drivers/net/phy/aquantia/aquantia_main.c
+> @@ -653,13 +653,7 @@ static int aqr107_fill_interface_modes(struct phy_de=
+vice *phydev)
+>         unsigned long *possible =3D phydev->possible_interfaces;
+>         unsigned int serdes_mode, rate_adapt;
+>         phy_interface_t interface;
+> -       int i, val, ret;
+> -
+> -       ret =3D phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
+> -                                       VEND1_GLOBAL_CFG_10M, val, val !=
+=3D 0,
+> -                                       1000, 100000, false);
+> -       if (ret)
+> -               return ret;
+> +       int i, val;
+> =20
+>         /* Walk the media-speed configuration registers to determine which
+>          * host-side serdes modes may be used by the PHY depending on the
+> @@ -708,6 +702,25 @@ static int aqr107_fill_interface_modes(struct phy_de=
+vice *phydev)
+>         return 0;
+>  }
+> =20
+> +static int aqr113c_fill_interface_modes(struct phy_device *phydev)
+> +{
+> +       int val, ret;
+> +
+> +       /* It's been observed on some models that - when coming out of su=
+spend
+> +        * - the FW signals that the PHY is ready but the GLOBAL_CFG regi=
+sters
+> +        * continue on returning zeroes for some time. Let's poll the 100M
+> +        * register until it returns a real value as both 113c and 115c s=
+upport
+> +        * this mode.
+> +        */
+> +       ret =3D phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
+> +                                       VEND1_GLOBAL_CFG_100M, val, val !=
+=3D 0,
+> +                                       1000, 100000, false);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return aqr107_fill_interface_modes(phydev);
+> +}
+> +
+>  static int aqr113c_config_init(struct phy_device *phydev)
+>  {
+>         int ret;
+> @@ -725,7 +738,7 @@ static int aqr113c_config_init(struct phy_device *phy=
+dev)
+>         if (ret)
+>                 return ret;
+> =20
+> -       return aqr107_fill_interface_modes(phydev);
+> +       return aqr113c_fill_interface_modes(phydev);
+>  }
+> =20
+>  static int aqr107_probe(struct phy_device *phydev)
+> --=20
+> 2.43.0
+>=20
+>
 
