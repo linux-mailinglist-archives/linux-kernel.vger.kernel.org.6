@@ -1,123 +1,117 @@
-Return-Path: <linux-kernel+bounces-268347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983E1942379
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:38:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7791A94235F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5900128654D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:38:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 344BC285544
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761FD194132;
-	Tue, 30 Jul 2024 23:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1281192B9D;
+	Tue, 30 Jul 2024 23:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ek-dev.de header.i=@ek-dev.de header.b="gsmNAw5y"
-Received: from server.cpprotect6.de (server.cpprotect6.de [185.225.135.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DbrPwNLE"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C72E18CC03;
-	Tue, 30 Jul 2024 23:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.225.135.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBF5190468
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 23:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722382706; cv=none; b=F6AjBF1hGSilsFEhnojG6eHS7QBBVJ0XCoaVNXxWngr2bzFO23+e5wDWyiKPDf2qWU/P7RcwtONcfpIh2qpHbaW96eekRurBIGI+O/k5/ClQYIfHV4YGcZ5oqMGN2Gxi+erDuWHfmXCXiuzrWReDTzuZS0oSCdu/TLmvboljn/M=
+	t=1722381515; cv=none; b=IHNisC2msuw+ydLGs6LYXhJCVH3rhmQwiMpg2EpYojUj8WueqMOifcVCSUfT3hHPg0gwed+knDHKgKWAsMxRmZE5fgv4a36pczCPclwLIUX3LhvJIJJodf3rhNqLcV0BKfzWVdP9MRKjjgyysQrQUh4nnWOZYFUV6KUwBtqwp3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722382706; c=relaxed/simple;
-	bh=3X/NlXDhom883Ym0Q2HQWNCIX5xq5rdeIKix2YEq0eo=;
-	h=To:Cc:From:Subject:Message-ID:Date:MIME-Version:Content-Type; b=bbTkmg4KyZzNi196e7FJzzfvlH1KNU2ABjDVMj2Ync+AYdygBuin+np1mSlD5aP2fRbOT6ha12YBmgHzTJTMiGK3DdztJw+wXLsgsB3Nh5q0/V6ljnPJZTj1KbGeGtPsRTjN4yUrA8qZYtIhBJHPSTQtRBiodNnQaC5nCytIkx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ek-dev.de; spf=pass smtp.mailfrom=ek-dev.de; dkim=pass (2048-bit key) header.d=ek-dev.de header.i=@ek-dev.de header.b=gsmNAw5y; arc=none smtp.client-ip=185.225.135.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ek-dev.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ek-dev.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=ek-dev.de;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ub6bitsfL2bAe5/YRicKaZIw/i3hZpWx6GHxBHvGEyA=; b=gsmNAw5yg7n9mouaiGJabU+beo
-	KuVmXd10GVhqGE8H2aww3DrUPCBP4cPEc8EOiIdYzRpXKkl2m4sKHiwyuSZ+Lj+YZlym2wwefsca6
-	NgN/1nRO4tu4Dx9fHpo/vnyqyGvtcrVpt5f85W5sfMjyoT3zKBZk26RrIU6ZC95e5ADbj95ARxLrq
-	LcuTpGx3ClSiCZcFIly7kX/kMySjXZTZG01U2Hw0BJ3oaodFNcrz7Um2OyGRi4D2RQrv3o+cIFVQE
-	j24o5w1Ii7aVSmnh6Hpbk5R9OKeesUutOrAYrHv3C5AomTk1WzUhkA4XkptFwFO6TTz/Qd+CagPu+
-	2TdEqTnA==;
-Received: from p508fb154.dip0.t-ipconnect.de ([80.143.177.84]:50278 helo=[192.168.178.50])
-	by server.cpprotect6.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.97.1)
-	(envelope-from <thomas.blocher@ek-dev.de>)
-	id 1sYw53-00000002x2n-49ST;
-	Wed, 31 Jul 2024 01:16:36 +0200
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Ludovic Desroches <ludovic.desroches@microchip.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: Thomas Blocher <thomas.blocher@ek-dev.de>
-Subject: [PATCH] pinctrl: at91: make it work with current gpiolib
-Message-ID: <5b992862-355d-f0de-cd3d-ff99e67a4ff1@ek-dev.de>
-Date: Wed, 31 Jul 2024 01:16:26 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1722381515; c=relaxed/simple;
+	bh=BHpnOjHsaw3hGBR29qRjNfSHbrZWROLb8eFVAKfMx6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=htBoGU4ib77nCRZn5/52GdmQVlqcTrtlMnf46jwvSabzZgEMrpbPKCh0P57H+V4JqA9mRhd7fhqWDPDJE5uIjl8Ma0t9Jv7h50cmgrWTj8Iat4vKVqsfF7YMizcNoyuyH8VW8EYoMm9L/ypBqrRYK9nFxj5906O0IZm3dPefw/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DbrPwNLE; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-81f82478b70so27949439f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:18:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1722381511; x=1722986311; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Pfnz1Mhod0xB0jg/7UultOZotMIwcjsz34ryNq1e+NQ=;
+        b=DbrPwNLEBLlyZpUuqHVqbP+PBXF2ugsjVg7CXEH7zcgRkFq1G/YH5knpgs78iDLW5+
+         DM9ithpXkCc+Sgr1Z1hj0kWwulBG9p0f+mL+35MG6TFhtBu4PHEK9wyOr28OMmktc9OA
+         Eot9bj7QeMTyM4tvPTiGay865rx60gmQSQBbc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722381511; x=1722986311;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pfnz1Mhod0xB0jg/7UultOZotMIwcjsz34ryNq1e+NQ=;
+        b=XK/btk3XB6X925/FogjrEREDfoFd50GY0bqK54Y24IvdKGYj4T31SRfFip40PNT4b1
+         JmMMiUMCZpdMty7ZrQ8pQ+VmTJVjJEf5ZtD9ngX8EAqsgz2F2xa+o60XfpmU5Wlqzglv
+         pGOqakfCbzF2GikimrWl/pgep80qV3MV6tpkADApPV/KI9urpPht498zgZ8z4FELWquW
+         8fMife8Gn6zkL7ExF+Fq12H99D7zacawfy8Wt8vQ0YZketX5DuJnXwJ9tFSZ3lPEtvUP
+         cLVGZZ+UXQmKRLVfoRngw3o+4jIYa0+ke4tnb8jD9FUfl/ujmaYHs+zSub2IlltpUbt/
+         elYA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8gUm2SvwLtek8oLPQ4lDfEvdZyoCpoiYacKOzBqy/ODh0sBnXerHc2Gb2wZoz+529uTZGyNlpfe/Q/N8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+73KptHehfHwqqBrRb9zNGJMzgRf6/s783MVRJOy3i0ogqjne
+	dqeOCKVX/qFfEPgnYAJLVb66N33L84pK9AwV4sI/RLzTW25KbogAE87/TWrdhNE=
+X-Google-Smtp-Source: AGHT+IFPYVEDGwXLv3ojVCIG4y5kw975DDdJ1Ftcw9CCAG+4ZNh4B/SMv9IBFcQwK8WwRKd2Y5lOAA==
+X-Received: by 2002:a5e:c116:0:b0:81f:9219:4494 with SMTP id ca18e2360f4ac-81f92194514mr840008839f.2.1722381511530;
+        Tue, 30 Jul 2024 16:18:31 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c29fc5c850sm2935042173.167.2024.07.30.16.18.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 16:18:31 -0700 (PDT)
+Message-ID: <061886f7-c5ec-419b-8505-b57638c5cf31@linuxfoundation.org>
+Date: Tue, 30 Jul 2024 17:18:30 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/440] 6.1.103-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240730151615.753688326@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240730151615.753688326@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.cpprotect6.de
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - ek-dev.de
-X-Get-Message-Sender-Via: server.cpprotect6.de: authenticated_id: thomas.blocher@ek-dev.de
-X-Authenticated-Sender: server.cpprotect6.de: thomas.blocher@ek-dev.de
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 
-pinctrl-at91 currently does not support the gpio-groups devicetree
-property and has no pin-range.
-Because of this at91 gpios stopped working since patch
-commit 2ab73c6d8323fa1e ("gpio: Support GPIO controllers without pin-ranges")
-This was discussed in the patches
-commit fc328a7d1fcce263 ("gpio: Revert regression in sysfs-gpio (gpiolib.c)")
-commit 56e337f2cf132632 ("Revert "gpio: Revert regression in sysfs-gpio (gpiolib.c)"")
+On 7/30/24 09:43, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.103 release.
+> There are 440 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 01 Aug 2024 15:14:54 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.103-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-As a workaround manually set pin-range via gpiochip_add_pin_range() until
-a) pinctrl-at91 is reworked to support devicetree gpio-groups
-b) another solution as mentioned in
-commit 56e337f2cf132632 ("Revert "gpio: Revert regression in sysfs-gpio (gpiolib.c)"")
-is found
+Compiled and failed to boot on my test system. Panic during
+boot. I will work on finding the problem commit.
 
-Signed-off-by: Thomas Blocher <thomas.blocher@ek-dev.de>
----
- drivers/pinctrl/pinctrl-at91.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-index b3c3f5fb2e2e..93ab277d9943 100644
---- a/drivers/pinctrl/pinctrl-at91.c
-+++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -1403,8 +1403,11 @@ static int at91_pinctrl_probe(struct platform_device *pdev)
- 
- 	/* We will handle a range of GPIO pins */
- 	for (i = 0; i < gpio_banks; i++)
--		if (gpio_chips[i])
-+		if (gpio_chips[i]) {
- 			pinctrl_add_gpio_range(info->pctl, &gpio_chips[i]->range);
-+			gpiochip_add_pin_range(&gpio_chips[i]->chip, dev_name(info->pctl->dev), 0,
-+				gpio_chips[i]->range.pin_base, gpio_chips[i]->range.npins);
-+		}
- 
- 	dev_info(dev, "initialized AT91 pinctrl driver\n");
- 
-
-base-commit: c91a7dee0555f6f9d3702d86312382e4c4729d0a
--- 
-2.30.2
+thanks,
+-- Shuah
 
 
