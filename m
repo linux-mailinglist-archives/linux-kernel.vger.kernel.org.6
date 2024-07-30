@@ -1,229 +1,213 @@
-Return-Path: <linux-kernel+bounces-267082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A951F940C26
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:47:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C828940C27
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 290F01F2899E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:47:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD801C2426F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40AE4192B9B;
-	Tue, 30 Jul 2024 08:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31C619409A;
+	Tue, 30 Jul 2024 08:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R7kLNWxe"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GLiM+lz3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968D615622E
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722329237; cv=fail; b=PmhuiBjYs2QJ9cGmUwGyCr01Wb39Wh9oCF7gH5GJUMhtsehImGhAafJCbZtyba3bpHDwX0raysyMsJ8Rq5yfB/BrisykMwrZeJt7UgnB4YGtaCqu7x/1G0/3z66EoCMb255V2exlre18WB/QVJMRb5rN/9aafVtvoP0gZKiI7/U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722329237; c=relaxed/simple;
-	bh=9RX4FZ/7xlKQqJ5uoLmJdbpV09neCJmPz0bHlDfTnfI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=BEq5eYvohcHR5bigaHuN9ftZMJb9/U2DVMFBoy3v6mE8+vOk7I2gKHcHszO05l7vmR5cm6B3CCvCxTHsG+8WZbQACrqUv8j9vDzkfFWPr7sC2jKNj7fAfX1fr5k/2957/KdwTV/iDv5G3WoWbI+NqtVOFseQ1gJj1BJyFKRvwAs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R7kLNWxe; arc=fail smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722329236; x=1753865236;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=9RX4FZ/7xlKQqJ5uoLmJdbpV09neCJmPz0bHlDfTnfI=;
-  b=R7kLNWxe4TGVXexxKXHjHO3DrUb4TcppQKEX+c1EvCQaD0mLNcbACwnP
-   rcG3pSNI9oCD8sF5+EVwGYnHmSrHcMCVdbi0STEsVvYPmtfg+ZeWMVrMc
-   /fhmO8zFf9QUgkFF8haiZAUqwfXHxHekYh6Y7YW8v+ISBfyIJV4H+sbwT
-   0zsAa9VAQShSFWX9+RS+PgqddUxYJKssbOunPp3NJ2+S88BXqF9eNslDg
-   HkUyKEk59lBlqmSymet2qlT9tcxsv89mCxqYKvNnHCoFTvz8SR+qe6Vue
-   dUIBrLNOZGykTc4swUDpo97Pxxb7/81TEf0OWXhSxuBd8UafaA6awDMC5
-   w==;
-X-CSE-ConnectionGUID: SdZfSnRiQceVx8gK+6OVwA==
-X-CSE-MsgGUID: dP8YVzHeSlekzwvpmmyWpQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="20282426"
-X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
-   d="scan'208";a="20282426"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 01:47:15 -0700
-X-CSE-ConnectionGUID: rb4mJbRvS8ObRDEQjcbcKw==
-X-CSE-MsgGUID: u6xrMGI7QP6vb+91Y3CbwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
-   d="scan'208";a="53934397"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Jul 2024 01:47:14 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 30 Jul 2024 01:47:13 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 30 Jul 2024 01:47:13 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 30 Jul 2024 01:47:13 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V/PUhtWCz7hWmg7/bc4C18QoZVJ7PR3UC5i9iRD6jeDkMlvNcSjFuiijLLjQuOmJIUKBsKHoYalZMVyF0G7iTEkgzUP5PXLBZAnKfdV21r0PiCyjFZ+1bdA+Ha0rt6cXQvNfFpYkxq+qxlKzy5lO1fUSf9kUazLDh3MNbuEYSMFA418qgmPuRTk+B1poCBaAyhLzGbqU4F8yG1pbX0mCp5NqpJsM7bolKfRbPL3WVY145AI3Uz1jilIVgeAb+VUE6QqBQ5d4nxrgo4k2R0n0mCZzQSR3qDUCZ8P4s4vW+ococM5BcCBUBheTjZxAixMdksisUEtiSmMDWZ6feFmuag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pVilcJXosC9Mwi7xWOwjSCyOOH1o5HhBlhNPLjSdTMU=;
- b=l6y0q7vYVEZd+epSH7yp2OisSC+UG0Yj8DdvaW4UsP8suaYaWF05lUm+gu5RfghWsAcBs5lJxLErQJujXTSA8Ozhh+Mw7JgZXS7Qsvag7zLaMlkTshZDkgFkZ2N1ZaYtpjjpMYp2KWz5QEc5813WxXSPGCv7bAHqnMzAHcBJMKRCRqHTvSicrDPxC3VnIOg2EWGD+2RJNVuG5JY+G1oQ4mxbf+vYQZne2IQXmfexjL9qMRvENfsisdXln+SeNvpXKn3PCUJCm1rwksuWJt/M4Lcvt8sp6f0a8CC6YEKwbAmJriZeQx/mfxzeRy4U+wVXqKCjkwLPwCOZRVi4XG2Wew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) by
- IA1PR11MB7728.namprd11.prod.outlook.com (2603:10b6:208:3f0::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7807.27; Tue, 30 Jul 2024 08:47:11 +0000
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce]) by DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce%4]) with mapi id 15.20.7807.026; Tue, 30 Jul 2024
- 08:47:11 +0000
-Date: Tue, 30 Jul 2024 16:46:53 +0800
-From: Chen Yu <yu.c.chen@intel.com>
-To: maobibo <maobibo@loongson.cn>
-CC: Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann
-	<arnd@arndb.de>, <virtualization@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, Juergen Gross <jgross@suse.com>, "Nikolay
- Borisov" <nik.borisov@suse.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>, "Prem
- Nath Dey" <prem.nath.dey@intel.com>, Xiaoping Zhou <xiaoping.zhou@intel.com>,
-	"Peter Zijlstra" <peterz@infradead.org>
-Subject: Re: [PATCH v4] x86/paravirt: Disable virt spinlock on bare metal
-Message-ID: <ZqiofczTqmn4bvhy@chenyu5-mobl2>
-References: <20240729065236.407758-1-yu.c.chen@intel.com>
- <08d75c12-215e-3781-ed89-b1ed5c1e39c8@loongson.cn>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <08d75c12-215e-3781-ed89-b1ed5c1e39c8@loongson.cn>
-X-ClientProxiedBy: SI2PR04CA0013.apcprd04.prod.outlook.com
- (2603:1096:4:197::6) To DM4PR11MB6020.namprd11.prod.outlook.com
- (2603:10b6:8:61::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17189193092
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722329245; cv=none; b=FJuUxQhO2CNRuM9stZccuXfnZh9EF61g/I/v3kUwBJb+pStFuvQJq9NJ35oFDwit5i9uYqnq9M/3vA2ftOoJZfhz7hJqBScyrzNXz048rKUlKWZrfwfTGZ0+IBb/nYf54fGjM3q44lcDmiekC7rzFO8sYuh0EUtxhEnMKCQ2vVA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722329245; c=relaxed/simple;
+	bh=S5DAsQ9ph9ormZyq+s22JdGzO1HyrgtPXPLHlYNPLXU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NGL6Fju2bzUMQ3N3hNFAXIoMnT0uEW/+DdlZ6qL5Xs3O1Zx7jHKQ0ZqKSaprLAu8QvU2nyoSK4JRMuxgb6dW12jBEkh2s8/AXss9LDpmZMHLOqYsmXJa6JqDHzN1MIZzYKm5qZyWIrccjHZgWC4FkK0RTM8tzmpn0lzf8FZyM8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GLiM+lz3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722329242;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BoagRk+gSe5xue+rd2621fYhA6FVlq9e/Frmy4c0XII=;
+	b=GLiM+lz3WVc6tteww53HqIC+adzuodHp3gqz9/GAjOFoBR02WgzBZZsCMmYCVoReoJh2d5
+	zV1AN2AY4Tg+CsazDYKUV925ooHXjWdeOtXY2v1F7BTp3mkUeg1+ftwVHgFEMcbqb1pnFk
+	zBAFkySaYkXvWjEQf/Tn7fEKfymsAiw=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-635-RH2XNbPyMnuGvg_YswdLjg-1; Tue, 30 Jul 2024 04:47:21 -0400
+X-MC-Unique: RH2XNbPyMnuGvg_YswdLjg-1
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2ef1ba2a5e6so45320061fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 01:47:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722329240; x=1722934040;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BoagRk+gSe5xue+rd2621fYhA6FVlq9e/Frmy4c0XII=;
+        b=eOd1IAx9fTxcCmSPAsGcEufqiOVysxCLIgmBXxqQcuHHyALQcWPBjlZAJRs+1xILRt
+         l++yNe1Uectc3gcYf10FYD/NpJ0a7LAulkLlJIDUWKDLYT5G9F4Z27hzMZerOS4o8nWQ
+         F8uON79Q5Mq7gGBLFP4S7ghlOtn5UgdpppmmO4U7r9HTrTqiB3B+tuJbuWLm2Z8sVtz1
+         XhaVMz4Yg+pF9tDNsbtcq5HtNeNu+X/4sxrZPnGXroQ/I5ngQkn+/plyvcLu9mryl+94
+         d7EIe4CWsCRvdrPZULqeY5HeMPSGcheFVFbckBtI1eW9qqRTiegmNhNt8W/qZoPvL5WO
+         38VA==
+X-Forwarded-Encrypted: i=1; AJvYcCWr8tbdu5Dq9eswa0jeC7E/nAs2C1WNZreS9aQZ2p/YjeG7vtxEhn0Knsw4TXkIkGGnaNexNLjUIUJy/VpA3D+ii9Lsdn1s61kueKmS
+X-Gm-Message-State: AOJu0YzVSvzT+1dpZypqv9MUDspK/CLiHjxKz6vMI7tys6KB1CHdo1B9
+	C4+dZ6u8ulgp3uI1Y3kqJXiwUUkCv72aCqsh4eFmBCBW3VQJezGDzqaQpaTCnRIUT8d8qRqlnI+
+	YFDN0x2qAE41TIM0G1phjF1yBv51fzyTHPaR0WySC84/Phpdwo/2VQ7fD+g1rig==
+X-Received: by 2002:a2e:a4ac:0:b0:2ef:392e:e4f with SMTP id 38308e7fff4ca-2f12ee2f0e1mr52206321fa.47.1722329239643;
+        Tue, 30 Jul 2024 01:47:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHp78HIdgJdyE0H3uqbbJxnRLg6C1y31kOyGCMPQ69rbANTg7A1Z8vi9tPcoxyWbTF4SzUYjQ==
+X-Received: by 2002:a2e:a4ac:0:b0:2ef:392e:e4f with SMTP id 38308e7fff4ca-2f12ee2f0e1mr52206131fa.47.1722329239002;
+        Tue, 30 Jul 2024 01:47:19 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c706:4e00:31ad:5274:e21c:b59? (p200300cbc7064e0031ad5274e21c0b59.dip0.t-ipconnect.de. [2003:cb:c706:4e00:31ad:5274:e21c:b59])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42808f684d0sm183470695e9.6.2024.07.30.01.47.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 01:47:18 -0700 (PDT)
+Message-ID: <f61235d6-5d33-4853-a498-72db2fb13b10@redhat.com>
+Date: Tue, 30 Jul 2024 10:47:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6020:EE_|IA1PR11MB7728:EE_
-X-MS-Office365-Filtering-Correlation-Id: abc4f9f6-8df4-440e-2425-08dcb07433f4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?/pvd/lAxDeeU82yr0xftKEgGf31RX3Lm3NOywWs2H3Pi2z/oASYoTJmir9dU?=
- =?us-ascii?Q?jyN21Q6OC80WsWK0SvCKJ4NXipTu78cKxyMD/G3R1L4+G5X04j6WeR63eNuQ?=
- =?us-ascii?Q?q6Nb05FJZtDP2ROwOLdBXUP5on3QqKWbzjLrlHIZBc4Eyzz1FhiPhSuNpedC?=
- =?us-ascii?Q?if2tgRV4JBckV9lZq+giGTxDFbe50EP7gxmIWmPE5ispFn1+gmtA7r71DuOf?=
- =?us-ascii?Q?b35jJ8Ih4VNaQvrJDzNVjvzBAkPGxlsysGK+Pn4zuCUpJ9vyclTwhjuNLjUY?=
- =?us-ascii?Q?nRFdYC9G2M3BYA4G2yEHvTmmc6H/f8cqTojJysIQXyqLRnrQRY/IGgUiNoZO?=
- =?us-ascii?Q?jeIkEOlDWNbWDcA1gEDGzfQhiXpmjh98X9cX4PESwoDIpQoqKGHN6WodW6Iu?=
- =?us-ascii?Q?UAR0PIJ3zzxMBVoO2VT9vqhAHFjUMYii1ercDG/K4aN4Z4zOXtTk4OYkPY3m?=
- =?us-ascii?Q?KuEeWx4YoSL/J1HEAgz0buN8jX8RNDxOs6alUkH/53H1L+n2BfNIbjueW86l?=
- =?us-ascii?Q?1bzYtyMQHcRw85Pe3d/Pvw0sYhpBOUwQlM3xkL5GIDOE9K+KpSvP6nABGAzI?=
- =?us-ascii?Q?gX+Qiim4Ff4YXFkABCTGVGqWB0s214Gbbt6NPnUBIHVfPDEOVVyZrKjaLYjO?=
- =?us-ascii?Q?P44e9h1FgHvgzi0BeYc1dNmGfUstqOSBcRnZqd3MXmT9AXrHZvRK2trFm8sa?=
- =?us-ascii?Q?oCjBvZ1qvnyXCw1cFAdIGXbkQSf4wiyeunMN8OpzPN9KkkL5wWRv74WRWa+k?=
- =?us-ascii?Q?0Lbyl74QeFpftR7/4Al7MW8WqoHgm2K0gMRqzYzmi5Fkwhy77hhP3Qvo34Tn?=
- =?us-ascii?Q?2+40fv5zEAtOWw2ZH27oOcx1dWG3vhxgxNOmDXObMIaZApSwD6atcMOWL4zL?=
- =?us-ascii?Q?kps1GJ+XSaGztxTo6tex+mWehMcZ/GXj2ErtqFquzFA3kZp6XcvXyvAAAg6a?=
- =?us-ascii?Q?ffWBNf61KbYN/19eqYni4p4/pdKPXw40kMvCAKF6egChDD7MqKNwhww8Ze2k?=
- =?us-ascii?Q?iyQKpOs5gJ6whcsCOuBAA6g5QT/q+aWjYJCDE3MiGIJEB6vd31qqaN7BwDyS?=
- =?us-ascii?Q?jEMG2IQdYmA4bIsulmlLCrij2c758VULnnzBVDGSQst2Lwf7lhp0OMbq8ZFA?=
- =?us-ascii?Q?iK/htPY80I6RJYqg1LGtg+l1ZTLHV0D72j6z8XDzToKqdDnvoST2PmkfoLSm?=
- =?us-ascii?Q?fapM6w/w7xzQnidlj/VYsm/Zk0DAwpV9atqRUABWOzSX2aStwf/e39inECU8?=
- =?us-ascii?Q?vGv5a9Vsro79yT7jZRIvcGXFsDbbYT0gqlpNyqoWiqBqB27hR3gdkwv794Rm?=
- =?us-ascii?Q?H/ZG/8pVxhhP1iKFd+OQSAaAxvzPFISXQXBuFPxrNgLhBQ=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6020.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?BtmG9ashaw9oAGOwRZ1jVa6w6zoRXlzxsjakb8G0eLXUFhYaok+Nz6rQ9a3v?=
- =?us-ascii?Q?1QxNR1L7G7k6JmXaRQ3BRhQ3GMu9egHifLP9gZK6CKRmPhF7fTij7V1pct5Y?=
- =?us-ascii?Q?RMlKPQYFaJNV71EwNlkmp0HWKzYNFZsQuerMGICrOmjp3yIVAWikGPketTCa?=
- =?us-ascii?Q?mpCeg39/rPdTP8zULr2lXnd+RrwMQ25SW3ih6wwrSBWKTwE+A7snNN041Zj+?=
- =?us-ascii?Q?FK+10UhulU7Z0PEUK6QJoNCDlx7NmDal42Dg9zOsnDrN200ApmGT08t9FOju?=
- =?us-ascii?Q?fEQBLN+6rFOllqSDq2XqEpyFh/u01+BZuHHJnPMdNsz4FtTkPF2Jg7XpzwPj?=
- =?us-ascii?Q?pw5WpYpaYufOiSn66UwVCbLJ1mWuSrjeP4m0zxzatRCAWDwtySZMkOi4w2Qk?=
- =?us-ascii?Q?G4CAh5vT2HmvOfQEkW/9m9OCwzCnnZqjK++W+RiFw4qhbuYPZPOan3dZj/jL?=
- =?us-ascii?Q?yO9YkBEGBU9ga4NCULUTA6FXzJIGkGxJgG3OUwasewuidIOoJwXEG2HGHWYM?=
- =?us-ascii?Q?TwHksp4/ZFlnHR/I4qVieDKl5J+lZw4m1GBQJyOj792u6Qm1i/4+13k2tGXS?=
- =?us-ascii?Q?MyT4KlJk/FojzIr+cEQXyg8TdvpgryPFhVipesFXKExMzH3V0vXgpKghRtWc?=
- =?us-ascii?Q?5WnviHu5+ojqhfF3/EEmhjt8nC8Bh9crD70RLS0+BIeBQ0hZiD+5wKHh++Dr?=
- =?us-ascii?Q?G8eX1h6t+OwI0ZWHZuIoBYk6+BLVR/p5udFCe9dxjrxM1G6VQVaWAJm8fbly?=
- =?us-ascii?Q?/rh3psWVN0DuvgNsqA7fguYXxUJ+oKX2g2ncMa3fU1EenFBBnxnveuK3uKSF?=
- =?us-ascii?Q?4lV7AGMSXgIQDQ9Dt1RMixaSup9gkqqbTsGgE8067ZIqxb5g9JmkIACWW1G1?=
- =?us-ascii?Q?4VHn29z7DCu5YFSL4eV6mduDYknp1IevSUCiC9N/eOgf+dYriY14NFx5TAOX?=
- =?us-ascii?Q?F8M3XtTtKsw2IH5k+Wq5p84hDxCsYWEZZ4W1svHcKQHdXu5o9KXCLhXAGv4Q?=
- =?us-ascii?Q?LLKMvha67sSoTMp9Xb9GktxGmrQpS65KWWRdi6iO0lPtPpQhjc1l5CTSopPq?=
- =?us-ascii?Q?tagxs8BWiwYVsLkXG9Jt/qqK80G4vIBhaiEeJoBH5CqtIR+NcENYtfOyMaqE?=
- =?us-ascii?Q?rQj7K8/B3r4Zc8UEVai0qeOQ8VEsdKlDtPYVfkkhNqxogcOMaJaPJa2ZTOW1?=
- =?us-ascii?Q?jDExkfsX0L8Lo0thrFGYefxQns3wKxEHMK58Ie0ijo/iclbj6kppRF7r9RS4?=
- =?us-ascii?Q?cKlOwlYPu8sIjcjdBicn9Ow3zzrlD4QhQfMXOwAUxZMrfo/bCD2pLbf+aVfh?=
- =?us-ascii?Q?jgq/JG6d1MDXxY/808Z3QKCxFdthdnut0jbOBOksywIqmB+XjjXdJkTT/WZo?=
- =?us-ascii?Q?9lZt4oZTVJzABzUEz9YSkuIyZ8pCR6uPKtRG5Sp9rcHZpX2n7Uc8EaVfGEFf?=
- =?us-ascii?Q?+8mozLPcatmkJrRndwtt3HM+Kw8u7wVvazMIWvuKiBCpNvbfjgaOWcHWLrMV?=
- =?us-ascii?Q?VQ064iqHCueqZy4In2O944eDbCKTWkdRymK1KK7LscxRcGEwbo77QNIGRdP7?=
- =?us-ascii?Q?M9ZXVOTOaQx7X3BFs2q6wYpPQQ5D12xiHvYYOvas?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: abc4f9f6-8df4-440e-2425-08dcb07433f4
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6020.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 08:47:11.5161
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9TFWsz+X2QaZFz0FFyoyDRhPEsPeQMqVg5RMy6f+DxEq+kuIzeo8uewiFyZubUD0IdNOoRG9JGHvM1HrpU4+Fg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7728
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/4] mm: Introduce per-thpsize swapin control policy
+To: Ryan Roberts <ryan.roberts@arm.com>, Matthew Wilcox
+ <willy@infradead.org>, Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, ying.huang@intel.com,
+ baolin.wang@linux.alibaba.com, chrisl@kernel.org, hannes@cmpxchg.org,
+ hughd@google.com, kaleshsingh@google.com, kasong@tencent.com,
+ linux-kernel@vger.kernel.org, mhocko@suse.com, minchan@kernel.org,
+ nphamcs@gmail.com, senozhatsky@chromium.org, shakeel.butt@linux.dev,
+ shy828301@gmail.com, surenb@google.com, v-songbaohua@oppo.com,
+ xiang@kernel.org, yosryahmed@google.com
+References: <20240726094618.401593-1-21cnbao@gmail.com>
+ <20240726094618.401593-5-21cnbao@gmail.com>
+ <ZqcR_oZmVpi2TrHO@casper.infradead.org>
+ <f0c7f061-6284-4fe5-8cbf-93281070895b@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <f0c7f061-6284-4fe5-8cbf-93281070895b@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Bibo,
-
-On 2024-07-30 at 09:21:45 +0800, maobibo wrote:
-> Chenyu,
+On 30.07.24 10:36, Ryan Roberts wrote:
+> On 29/07/2024 04:52, Matthew Wilcox wrote:
+>> On Fri, Jul 26, 2024 at 09:46:18PM +1200, Barry Song wrote:
+>>> A user space interface can be implemented to select different swap-in
+>>> order policies, similar to the mTHP allocation order policy. We need
+>>> a distinct policy because the performance characteristics of memory
+>>> allocation differ significantly from those of swap-in. For example,
+>>> SSD read speeds can be much slower than memory allocation. With
+>>> policy selection, I believe we can implement mTHP swap-in for
+>>> non-SWAP_SYNCHRONOUS scenarios as well. However, users need to understand
+>>> the implications of their choices. I think that it's better to start
+>>> with at least always never. I believe that we will add auto in the
+>>> future to tune automatically, which can be used as default finally.
+>>
+>> I strongly disagree.  Use the same sysctl as the other anonymous memory
+>> allocations.
 > 
-> Sorry to bother you, I am porting pv spinlock to LoongArch platform, I do
-> not know the history about function virt_spin_lock().
+> I vaguely recall arguing in the past that just because the user has requested 2M
+> THP that doesn't mean its the right thing to do for performance to swap-in the
+> whole 2M in one go. That's potentially a pretty huge latency, depending on where
+> the backend is, and it could be a waste of IO if the application never touches
+> most of the 2M. Although the fact that the application hinted for a 2M THP in
+> the first place hopefully means that they are storing objects that need to be
+> accessed at similar times. Today it will be swapped in page-by-page then
+> eventually collapsed by khugepaged.
 > 
-> When CONFIG_PARAVIRT_SPINLOCKS is enabled, there is pv_enabled() before
-> virt_spin_lock(), it seems that virt_spin_lock is never called in this
-> condition.
-
-Right, if CONFIG_PARAVIRT_SPINLOCKS is enabled, virt_spin_lock() will not be
-checked at all and go directly to pv_queue lock section.
-
->         if (pv_enabled())
->                 goto pv_queue;
+> But I think those arguments become weaker as the THP size gets smaller. 16K/64K
+> swap-in will likely yield significant performance improvements, and I think
+> Barry has numbers for this?
 > 
->         if (virt_spin_lock(lock))
->                 return;
+> So I guess we have a few options:
 > 
-> When CONFIG_PARAVIRT_SPINLOCKS is disabled, there is no pv qspinlock
-> compiled, so what is the usage about function virt_spin_lock()? 
-> Is it to switch spinlock method from test-set spinlock to qspinlock? 
-> why is there such requirement for spinlock switching method?
+>   - Just use the same sysfs interface as for anon allocation, And see if anyone
+> reports performance regressions. Investigate one of the options below if an
+> issue is raised. That's the simplest and cleanest approach, I think.
+> 
+>   - New sysfs interface as Barry has implemented; nobody really wants more
+> controls if it can be helped.
+> 
+>   - Hardcode a size limit (e.g. 64K); I've tried this in a few different contexts
+> and never got any traction.
+> 
+>   - Secret option 4: Can we allocate a full-size folio but only choose to swap-in
+> to it bit-by-bit? You would need a way to mark which pages of the folio are
+> valid (e.g. per-page flag) but guess that's a non-starter given the strategy to
+> remove per-page flags?
 
-Firstly, according to the commit 2aa79af64263 ("locking/qspinlock: Revert
-to test-and-set on hypervisors"), virt_spin_lock() was originally introduced
-to avoid the over-preemption of native qspinlock(when paravirt-spinlock is
-disabled).
+Maybe we could allocate for folios in the swapcache a bitmap to store 
+that information (folio->private).
 
-Secondly, there is user requirement to use native qspinlock over test-set lock
-in the VM. For example, nopvspin parameter is parsed in xen_init_spinlocks().
-commit 9043442b43b1 ("locking/paravirt: Use new static key for controlling call
-of virt_spin_lock()") was introduced to adjust the key from user boot up commandline.
-so the key switches between test-set and the native qspinlock. I've Cced
-Juergen and Peter in case I misunderstood. 
+But I am not convinced that is the right thing to do.
 
-thanks,
-Chenyu
+If we know some basic properties of the backend, can't we automatically 
+make a pretty good decision regarding the folio size to use? E.g., slow 
+disk, avoid 2M ...
+
+Avoiding sysctls if possible here would really be preferable...
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
