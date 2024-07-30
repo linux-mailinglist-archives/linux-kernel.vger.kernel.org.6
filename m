@@ -1,172 +1,143 @@
-Return-Path: <linux-kernel+bounces-266699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 289CD94058C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 04:55:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DB3940590
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 04:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C7381C21193
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 02:55:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AE35282E64
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 02:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8D03398E;
-	Tue, 30 Jul 2024 02:55:13 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C2E145B0C;
+	Tue, 30 Jul 2024 02:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XvUZhhsQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A58CA6F;
-	Tue, 30 Jul 2024 02:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10B3CA6F;
+	Tue, 30 Jul 2024 02:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722308113; cv=none; b=BqZKPMsp6fNmKDC37H9We5IwaNg+P9wLAosmkuOFt0O05aggT4dYlDyuwoo2bKdcsO8Vd9YTg6oRvffNSTStB2dWzQT+vMVUPPlGLRf9gtQjqjGOMr1ttcE375Q0mqNJcrLRTh0iHJ0+c/6Eu5FIPP3LkjQTGW8iZzumRyvuJAQ=
+	t=1722308303; cv=none; b=GbyGiuO6UVXBCl6aQMtYwi+L2ysoLmjgBFjwfdC+FviFq6rfvwGBt4QNISRGDungoW5bNdMPDAk0gjVnm23+8Ge3of49dEcaV1x1K8ylX8Q+YN5oQ9VkXIujxycziZCYNMHf/BmQY7ijfi/daUZg/x7DT2DqR3dxMyQlJkAOEJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722308113; c=relaxed/simple;
-	bh=ggTULUx/cgLYPQgUXYAYMtqgXzl0s0ytU7ZJQllJKWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ioGKoNU1bu5UmKZutM42u/Lx7Bxb4qMh00UdMo9qx5ykmUinQzOURQCUWeDbEQCJqISoM60l0FbnQICaikDKCgHQAPeUrKCi/I9ULzc7r0VDXPmBMbRfm1iu50+iNuehLYMstpvXZz4V3220UoHA3tX7w4j9lECfc0mUzjgAQl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WY08n2SdwzQn9M;
-	Tue, 30 Jul 2024 10:50:49 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id D020E140417;
-	Tue, 30 Jul 2024 10:55:06 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 30 Jul
- 2024 10:55:06 +0800
-Message-ID: <425f1151-14e6-43f6-810e-efe95f6f401e@huawei.com>
-Date: Tue, 30 Jul 2024 10:55:05 +0800
+	s=arc-20240116; t=1722308303; c=relaxed/simple;
+	bh=oJEsx3xbe0US5zKtnHkifmq15x8BlK/2xDiLeLK2+JQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fO9O8oOnlEnq8Wk4UvITKUb5rTxjjB1WaQdXejfqI2h3f9wbkoEMFcZKNd2HSfwYv++0xOHjZ4GZL2CP59PPFJbBs1/SWdPHIFLagyF3gErLecxnpGF9f69Wfz7uYBbWXVq6UyBYz9knm5gf6VXksRXhZvxdGHF0J8Q7qBuk6SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XvUZhhsQ; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722308302; x=1753844302;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oJEsx3xbe0US5zKtnHkifmq15x8BlK/2xDiLeLK2+JQ=;
+  b=XvUZhhsQz8AkoFQbXffipdW5SEe44jUCcbQiW1BGqRlG4VXrhGBJQphV
+   4gfSv80akAetOhEbdZylS327Km5uVX+jNbGxHjtGEp2nDesd7rBe4E3oB
+   qia3vWNzqazhMaTrzsjzOc4H5h9X+5nwpCpbBC5D+VKHRkimi4fLgP2zZ
+   m/NsesFfCSGuKrQcQe3sSPPiOt4Fh3+Xz8PpFY97DiuNmJpgbhPFqvuuC
+   ymwZuY9m8T14ivISlBKx//EsAqIAzXu16AMO0AQidF14PVOtGYTuUl/0O
+   hBBND/qthvJJMryVbwQcK8PvSyKzzM1ez8SSFrr4WT5m8aEn/ZNl8eN9W
+   Q==;
+X-CSE-ConnectionGUID: kCB5EPRaQiSMf7ECrxl9rQ==
+X-CSE-MsgGUID: rDD93Z6pTMuIasD2nRigkQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="31496393"
+X-IronPort-AV: E=Sophos;i="6.09,247,1716274800"; 
+   d="scan'208";a="31496393"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 19:58:21 -0700
+X-CSE-ConnectionGUID: SnWCYWfWTYm4KsasHgyTAw==
+X-CSE-MsgGUID: tCPHR/58QA2oVwgK2BcKuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,247,1716274800"; 
+   d="scan'208";a="59007393"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 29 Jul 2024 19:58:18 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sYd43-000sP4-31;
+	Tue, 30 Jul 2024 02:58:15 +0000
+Date: Tue, 30 Jul 2024 10:57:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ivan Orlov <ivan.orlov0322@gmail.com>, perex@perex.cz, tiwai@suse.com,
+	corbet@lwn.net, broonie@kernel.org, shuah@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Ivan Orlov <ivan.orlov0322@gmail.com>,
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr, Axel Holzinger <aholzinger@gmx.de>
+Subject: Re: [PATCH v2 3/4] ALSA: timer: Introduce virtual userspace-driven
+ timers
+Message-ID: <202407301002.SaoBM0NA-lkp@intel.com>
+References: <20240729085905.6602-4-ivan.orlov0322@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cgroup/cpuset: fix panic caused by partcmd_update
-To: Waiman Long <longman@redhat.com>, <tj@kernel.org>,
-	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <adityakali@google.com>,
-	<sergeh@kernel.org>
-CC: <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240730015316.2324188-1-chenridong@huawei.com>
- <0ba00b7c-5292-4242-b648-4ca8d4a457c6@redhat.com>
-Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <0ba00b7c-5292-4242-b648-4ca8d4a457c6@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729085905.6602-4-ivan.orlov0322@gmail.com>
 
+Hi Ivan,
 
+kernel test robot noticed the following build warnings:
 
-On 2024/7/30 10:34, Waiman Long wrote:
-> On 7/29/24 21:53, Chen Ridong wrote:
->> We find a bug as below:
->> BUG: unable to handle page fault for address: 00000003
->> PGD 0 P4D 0
->> Oops: 0000 [#1] PREEMPT SMP NOPTI
->> CPU: 3 PID: 358 Comm: bash Tainted: G        W I        6.6.0-10893-g60d6
->> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/4
->> RIP: 0010:partition_sched_domains_locked+0x483/0x600
->> Code: 01 48 85 d2 74 0d 48 83 05 29 3f f8 03 01 f3 48 0f bc c2 89 c0 48 9
->> RSP: 0018:ffffc90000fdbc58 EFLAGS: 00000202
->> RAX: 0000000100000003 RBX: ffff888100b3dfa0 RCX: 0000000000000000
->> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000002fe80
->> RBP: ffff888100b3dfb0 R08: 0000000000000001 R09: 0000000000000000
->> R10: ffffc90000fdbcb0 R11: 0000000000000004 R12: 0000000000000002
->> R13: ffff888100a92b48 R14: 0000000000000000 R15: 0000000000000000
->> FS:  00007f44a5425740(0000) GS:ffff888237d80000(0000) knlGS:0000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 0000000100030973 CR3: 000000010722c000 CR4: 00000000000006e0
->> Call Trace:
->>   <TASK>
->>   ? show_regs+0x8c/0xa0
->>   ? __die_body+0x23/0xa0
->>   ? __die+0x3a/0x50
->>   ? page_fault_oops+0x1d2/0x5c0
->>   ? partition_sched_domains_locked+0x483/0x600
->>   ? search_module_extables+0x2a/0xb0
->>   ? search_exception_tables+0x67/0x90
->>   ? kernelmode_fixup_or_oops+0x144/0x1b0
->>   ? __bad_area_nosemaphore+0x211/0x360
->>   ? up_read+0x3b/0x50
->>   ? bad_area_nosemaphore+0x1a/0x30
->>   ? exc_page_fault+0x890/0xd90
->>   ? __lock_acquire.constprop.0+0x24f/0x8d0
->>   ? __lock_acquire.constprop.0+0x24f/0x8d0
->>   ? asm_exc_page_fault+0x26/0x30
->>   ? partition_sched_domains_locked+0x483/0x600
->>   ? partition_sched_domains_locked+0xf0/0x600
->>   rebuild_sched_domains_locked+0x806/0xdc0
->>   update_partition_sd_lb+0x118/0x130
->>   cpuset_write_resmask+0xffc/0x1420
->>   cgroup_file_write+0xb2/0x290
->>   kernfs_fop_write_iter+0x194/0x290
->>   new_sync_write+0xeb/0x160
->>   vfs_write+0x16f/0x1d0
->>   ksys_write+0x81/0x180
->>   __x64_sys_write+0x21/0x30
->>   x64_sys_call+0x2f25/0x4630
->>   do_syscall_64+0x44/0xb0
->>   entry_SYSCALL_64_after_hwframe+0x78/0xe2
->> RIP: 0033:0x7f44a553c887
->>
->> It can be reproduced with cammands:
->> cd /sys/fs/cgroup/
->> mkdir test
->> cd test/
->> echo +cpuset > ../cgroup.subtree_control
->> echo root > cpuset.cpus.partition
->> echo 0-3 > cpuset.cpus // 3 is nproc
-> What do you mean by "3 is nproc"? Are there only 3 CPUs in the system? 
-> What are the value of /sys/fs/cgroup/cpuset.cpu*?
-Yes, I tested it with qemu, only 3 cpus are available.
-# cat /sys/fs/cgroup/cpuset.cpus.effective
-0-3
-This case is taking all cpus away from root, test should fail to be a 
-valid root, it should not rebuild scheduling domains.
+[auto build test WARNING on tiwai-sound/for-next]
+[also build test WARNING on tiwai-sound/for-linus linus/master v6.11-rc1 next-20240729]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->>
->> This issue is caused by the incorrect rebuilding of scheduling domains.
->> In this scenario, test/cpuset.cpus.partition should be an invalid root
->> and should not trigger the rebuilding of scheduling domains. When calling
->> update_parent_effective_cpumask with partcmd_update, if newmask is not
->> null, it should recheck newmask whether there are cpus is available
->> for parect/cs that has tasks.
->>
->> Fixes: 0c7f293efc87 ("cgroup/cpuset: Add 
->> cpuset.cpus.exclusive.effective for v2")
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   kernel/cgroup/cpuset.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index 40ec4abaf440..a9b6d56eeffa 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -1991,6 +1991,8 @@ static int 
->> update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->>               part_error = PERR_CPUSEMPTY;
->>               goto write_error;
->>           }
->> +        /* Check newmask again, whether cpus are available for 
->> parent/cs */
->> +        nocpu |= tasks_nocpu_error(parent, cs, newmask);
->>           /*
->>            * partcmd_update with newmask:
-> 
-> The code change looks reasonable to me. However, I would like to know 
-> more about the reproduction steps.
-> 
-> Cheers,
-> Longman
-> 
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/Ivan-Orlov/ALSA-aloop-Allow-using-global-timers/20240729-171015
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git for-next
+patch link:    https://lore.kernel.org/r/20240729085905.6602-4-ivan.orlov0322%40gmail.com
+patch subject: [PATCH v2 3/4] ALSA: timer: Introduce virtual userspace-driven timers
+config: nios2-randconfig-r113-20240730 (https://download.01.org/0day-ci/archive/20240730/202407301002.SaoBM0NA-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20240730/202407301002.SaoBM0NA-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407301002.SaoBM0NA-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> sound/core/timer.c:2030:1: sparse: sparse: symbol 'snd_utimer_ids' was not declared. Should it be static?
+   sound/core/timer.c:230:12: sparse: sparse: context imbalance in 'check_matching_master_slave' - different lock contexts for basic block
+   sound/core/timer.c:405:9: sparse: sparse: context imbalance in 'remove_slave_links' - wrong count at exit
+   sound/core/timer.c:456:9: sparse: sparse: context imbalance in 'snd_timer_close_locked' - wrong count at exit
+   sound/core/timer.c:492:15: sparse: sparse: context imbalance in 'snd_timer_resolution' - different lock contexts for basic block
+   sound/core/timer.c:541:12: sparse: sparse: context imbalance in 'snd_timer_start1' - wrong count at exit
+   sound/core/timer.c:596:12: sparse: sparse: context imbalance in 'snd_timer_start_slave' - wrong count at exit
+   sound/core/timer.c:616:12: sparse: sparse: context imbalance in 'snd_timer_stop1' - wrong count at exit
+   sound/core/timer.c:673:9: sparse: sparse: context imbalance in 'snd_timer_stop_slave' - wrong count at exit
+   sound/core/timer.c:780:25: sparse: sparse: context imbalance in 'snd_timer_process_callbacks' - unexpected unlock
+   sound/core/timer.c:798:9: sparse: sparse: context imbalance in 'snd_timer_clear_callbacks' - wrong count at exit
+   sound/core/timer.c:806:13: sparse: sparse: context imbalance in 'snd_timer_work' - different lock contexts for basic block
+   sound/core/timer.c:825:6: sparse: sparse: context imbalance in 'snd_timer_interrupt' - different lock contexts for basic block
+   sound/core/timer.c:1049:6: sparse: sparse: context imbalance in 'snd_timer_notify' - different lock contexts for basic block
+   sound/core/timer.c:1323:9: sparse: sparse: context imbalance in 'snd_timer_user_interrupt' - wrong count at exit
+   sound/core/timer.c:1430:12: sparse: sparse: context imbalance in 'realloc_user_queue' - wrong count at exit
+   sound/core/timer.c:1672:12: sparse: sparse: context imbalance in 'snd_timer_user_gstatus' - different lock contexts for basic block
+   sound/core/timer.c:2412:9: sparse: sparse: context imbalance in 'snd_timer_user_poll' - wrong count at exit
+
+vim +/snd_utimer_ids +2030 sound/core/timer.c
+
+  2024	
+  2025	#ifdef CONFIG_SND_UTIMER
+  2026	/*
+  2027	 * Since userspace-driven timers are passed to userspace, we need to have an identifier
+  2028	 * which will allow us to use them (basically, the subdevice number of udriven timer).
+  2029	 */
+> 2030	DEFINE_IDA(snd_utimer_ids);
+  2031	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
