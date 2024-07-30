@@ -1,197 +1,122 @@
-Return-Path: <linux-kernel+bounces-267825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADCF394164D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:58:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BE00941654
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:59:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68F2B28315F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:58:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CD832862C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5091BC06D;
-	Tue, 30 Jul 2024 15:58:23 +0000 (UTC)
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EDB11BE242;
+	Tue, 30 Jul 2024 15:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGInaVWp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CDE1BBBD9
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB711BA885;
+	Tue, 30 Jul 2024 15:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722355103; cv=none; b=l0jx8AXqDeF3pUrASbdxFi1WetSwNSvK/kyIr7syeTH0RkQXkQ1pYehzkIfE84q2ofcJx6uFVE1RkezKwXvl+X12FBbp1aw6xBiEJaiBUcy0Dsy9Xl9KpG1uzgYviUVse4m0ZCE82ASoTqHX2N5xKNDOhQiFsYqbdqhb3qVQ/3A=
+	t=1722355113; cv=none; b=BYPKWQplucAWIK20lH0N+nNJ547gHCm8qptr6C0wE1i9TFZ/jEaZvUi4Vyak5D02fDl3it3pb0el55IFdkZALc3A1ValYo8oV5pXotgZIKrRETjw1Z7WGYRYbTdA7uT3VMN54iQ59toK390quOYEbJgxKNqDmdUzDg74UTwi3rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722355103; c=relaxed/simple;
-	bh=PhE0zHyhBPpXrP8vj024jFThH76fT2vGmRe0f5Rv87M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=bNdLgp4JdkWgA0iFVf3651/i5abL7005g2kBdusjDAWaLrD8108JaoDQYe5Nwh99EnOwcrEgxAEotBB3pBdhkujBRHvgjqjMqKywU0UlmvXPWLTHFKIkUIXfhA4erZ7FLZEyErPe3n82vZDY0jJsm+gEX7dhE9PeNfDdLRYTzwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:520d:93ad:ff6d:335e])
-	by xavier.telenet-ops.be with bizsmtp
-	id tryD2C00F30Ayot01ryDmm; Tue, 30 Jul 2024 17:58:17 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sYpEU-004BRd-Ki;
-	Tue, 30 Jul 2024 17:58:13 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sYpEr-00EdEl-L7;
-	Tue, 30 Jul 2024 17:58:13 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Chris Down <chris@chrisdown.name>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] drm/radeon/r100: Handle unknown family in r100_cp_init_microcode()
-Date: Tue, 30 Jul 2024 17:58:12 +0200
-Message-Id: <ae4d951d022e6c34b87ae46e15f1522f8d6d3480.1722355024.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722355113; c=relaxed/simple;
+	bh=bKaa+XXOeGGCc6a9XP0WkpZ8zTbkQLyNOTqWXHPC3uE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kyri4HB8kmIgbLLkUr1/Gitb34NWIO7lqAxLzAgTK+CxD2Ba6KDV1hCTt/sPMNAKM8UC/pvDpghVNdZjC7eEWchq+p5vrUjvb3fS++35dQl1eHdTdfp72u2fzz7pcKfCm6QrQTUGmGpf68r9iK3t4a40Zg0O+upN+wGQF77MMDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGInaVWp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD43CC4AF0A;
+	Tue, 30 Jul 2024 15:58:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722355113;
+	bh=bKaa+XXOeGGCc6a9XP0WkpZ8zTbkQLyNOTqWXHPC3uE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EGInaVWpbt0wiDvSMXCG5Dq1rLp7OjXeEZE3cVOAiV9sCH5JkEDhWv/Eq2g8MX4NZ
+	 Ja7ZxN/rPAgllTaGhJeriQR2+pwGVxcZ1L4QpsnfpaK043duPYeePRQ4tDk2oa86Ex
+	 NVNAvX4k3AC+X3NJq0KuOHyESEPiCP7zM6S4x2jETq5MQ8lBeN3UC5Ty3GR4Ll6U/7
+	 K6lw1wc1rl7WO5Tkeps3lWVzG8ZhiYF+SNVDa2CP41MH48UHQEVyG5ycH/SD8U1d7c
+	 tC5MLI77oXjIcsX5CI2zROreX1ITdjHRpWQufHsDUx8tzrn6BqeBqd11ZFA6v3Lw9f
+	 AEvx79Ym5NA0w==
+Message-ID: <4183344f-21d5-4dda-a5e8-e347301f332a@kernel.org>
+Date: Tue, 30 Jul 2024 17:58:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: clock: nxp,lpc3220-usb-clk: Convert bindings
+ to dtschema
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240730141338.46234-1-animeshagarwal28@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240730141338.46234-1-animeshagarwal28@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-With -Werror:
+On 30/07/2024 16:13, Animesh Agarwal wrote:
+> Convert the NXP LPC32xx USB Clock Controller bindings to yaml format.
+> 
+> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 
-    In function ‘r100_cp_init_microcode’,
-	inlined from ‘r100_cp_init’ at drivers/gpu/drm/radeon/r100.c:1136:7:
-    include/linux/printk.h:465:44: error: ‘%s’ directive argument is null [-Werror=format-overflow=]
-      465 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-	  |                                            ^
-    include/linux/printk.h:437:17: note: in definition of macro ‘printk_index_wrap’
-      437 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-	  |                 ^~~~~~~
-    include/linux/printk.h:508:9: note: in expansion of macro ‘printk’
-      508 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-	  |         ^~~~~~
-    drivers/gpu/drm/radeon/r100.c:1062:17: note: in expansion of macro ‘pr_err’
-     1062 |                 pr_err("radeon_cp: Failed to load firmware \"%s\"\n", fw_name);
-	  |                 ^~~~~~
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Fix this by converting the if/else if/... construct into a proper
-switch() statement with a default to handle the error case.
-
-As a bonus, the generated code is ca. 100 bytes smaller (with gcc 11.4.0
-targeting arm32).
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Compile-tested only.
----
- drivers/gpu/drm/radeon/r100.c | 70 ++++++++++++++++++++++-------------
- 1 file changed, 45 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/gpu/drm/radeon/r100.c b/drivers/gpu/drm/radeon/r100.c
-index 0b1e19345f43a771..bfd42e3e161e984f 100644
---- a/drivers/gpu/drm/radeon/r100.c
-+++ b/drivers/gpu/drm/radeon/r100.c
-@@ -1016,45 +1016,65 @@ static int r100_cp_init_microcode(struct radeon_device *rdev)
- 
- 	DRM_DEBUG_KMS("\n");
- 
--	if ((rdev->family == CHIP_R100) || (rdev->family == CHIP_RV100) ||
--	    (rdev->family == CHIP_RV200) || (rdev->family == CHIP_RS100) ||
--	    (rdev->family == CHIP_RS200)) {
-+	switch (rdev->family) {
-+	case CHIP_R100:
-+	case CHIP_RV100:
-+	case CHIP_RV200:
-+	case CHIP_RS100:
-+	case CHIP_RS200:
- 		DRM_INFO("Loading R100 Microcode\n");
- 		fw_name = FIRMWARE_R100;
--	} else if ((rdev->family == CHIP_R200) ||
--		   (rdev->family == CHIP_RV250) ||
--		   (rdev->family == CHIP_RV280) ||
--		   (rdev->family == CHIP_RS300)) {
-+		break;
-+
-+	case CHIP_R200:
-+	case CHIP_RV250:
-+	case CHIP_RV280:
-+	case CHIP_RS300:
- 		DRM_INFO("Loading R200 Microcode\n");
- 		fw_name = FIRMWARE_R200;
--	} else if ((rdev->family == CHIP_R300) ||
--		   (rdev->family == CHIP_R350) ||
--		   (rdev->family == CHIP_RV350) ||
--		   (rdev->family == CHIP_RV380) ||
--		   (rdev->family == CHIP_RS400) ||
--		   (rdev->family == CHIP_RS480)) {
-+		break;
-+
-+	case CHIP_R300:
-+	case CHIP_R350:
-+	case CHIP_RV350:
-+	case CHIP_RV380:
-+	case CHIP_RS400:
-+	case CHIP_RS480:
- 		DRM_INFO("Loading R300 Microcode\n");
- 		fw_name = FIRMWARE_R300;
--	} else if ((rdev->family == CHIP_R420) ||
--		   (rdev->family == CHIP_R423) ||
--		   (rdev->family == CHIP_RV410)) {
-+		break;
-+
-+	case CHIP_R420:
-+	case CHIP_R423:
-+	case CHIP_RV410:
- 		DRM_INFO("Loading R400 Microcode\n");
- 		fw_name = FIRMWARE_R420;
--	} else if ((rdev->family == CHIP_RS690) ||
--		   (rdev->family == CHIP_RS740)) {
-+		break;
-+
-+	case CHIP_RS690:
-+	case CHIP_RS740:
- 		DRM_INFO("Loading RS690/RS740 Microcode\n");
- 		fw_name = FIRMWARE_RS690;
--	} else if (rdev->family == CHIP_RS600) {
-+		break;
-+
-+	case CHIP_RS600:
- 		DRM_INFO("Loading RS600 Microcode\n");
- 		fw_name = FIRMWARE_RS600;
--	} else if ((rdev->family == CHIP_RV515) ||
--		   (rdev->family == CHIP_R520) ||
--		   (rdev->family == CHIP_RV530) ||
--		   (rdev->family == CHIP_R580) ||
--		   (rdev->family == CHIP_RV560) ||
--		   (rdev->family == CHIP_RV570)) {
-+		break;
-+
-+	case CHIP_RV515:
-+	case CHIP_R520:
-+	case CHIP_RV530:
-+	case CHIP_R580:
-+	case CHIP_RV560:
-+	case CHIP_RV570:
- 		DRM_INFO("Loading R500 Microcode\n");
- 		fw_name = FIRMWARE_R520;
-+		break;
-+
-+	default:
-+		DRM_ERROR("Unsupported Radeon family %u\n", rdev->family);
-+		return -EINVAL;
- 	}
- 
- 	err = request_firmware(&rdev->me_fw, fw_name, rdev->dev);
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
