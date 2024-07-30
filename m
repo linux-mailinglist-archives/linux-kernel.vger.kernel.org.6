@@ -1,145 +1,179 @@
-Return-Path: <linux-kernel+bounces-267986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0966941F0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:55:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E1F941F12
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DA55282334
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:55:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93E191C22E46
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCE7189916;
-	Tue, 30 Jul 2024 17:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DD418A6CB;
+	Tue, 30 Jul 2024 17:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mLKOUrwq"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="klepgEJm"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698071A76C9
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E36318A6B5;
+	Tue, 30 Jul 2024 17:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722362117; cv=none; b=G892tti6qjeNZZRIQkUWwq8wpYEMJmxM8ZVd2w2h7FP5v7DG/BFGSXFkD1v3Pcl6m3rjtQ1Of6SIpa4pWND8m4nxH/dVIcrOvAuGV+4DLTHgwixoROK4I5MjSMuN8+Qop++hY+4SSCSoSU4vz7Ap1k7xTWNGHz/410bM0X8B+0k=
+	t=1722362192; cv=none; b=b0Ilay/ijaDsXDBwNtS1SHVJGTimsWaHR1y0jvoHt6bfaWoC7bznc++K93snbrxe79/J9IV3xcJ7vdOfBqemw0RjVCKuFh3K4CN6T+tCTiTPAADHIPp0odoJMKTlWNAHU4LgR6/EYbbiPXvfxmbaQyGH/DFeAwC/m23dG5tEp78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722362117; c=relaxed/simple;
-	bh=JH2Cd2lN6IoitPNPrBTESvV7VWxwDFLNLbMvOE9YGkQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M5hg2hFEDfe/yaTn7RZ5czj10q2cFfM3eCd9Ki5mtXgOo9FTupSRzOY0lfnOAhF4Jy83FoD9fykD9Adf/57P4Emr5QdjZvqP7K54vGiA6IZwHADbGHOhWzfoEXeO7K0d+aPUaOd5rx5RziKU8JPLA14/7c5c4H8GmrotPABNrOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mLKOUrwq; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4280b3a7efaso30596535e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:55:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722362113; x=1722966913; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hZVb9b6idPdGqOLlS0LbFKJPOJQMfcfymuIDhlC2e8U=;
-        b=mLKOUrwqFZa6T0nnjfgtPp8pimtVksOVpOXOzcRYNRT5ZdEG9a32SjEdk4+fAQ1461
-         58PZ47xygOZlAeF7LfN22d4zV61MHqFa2+5MfMJstwCK8ueHEmqpuRVzI9fdS4BCYstI
-         eZteu/3S1qSbNPfCFNvFccnxkQCli98UsNCUAg3hM8TzLDTZ2BjSjxV4IT7dmOA5JmmC
-         qKJNWutEPguWqxkYm3jtsJaBwbq6jwY4tjvSccOajT80Wnmm3vY3x8Inr1FGMAl+Htl7
-         IZ4khNBSq9N5FWQxpglf8Nj8xZEbRi1hbXzj/zC17zGIaiRoBRj/BXRhbQzzrTNswpfd
-         nAQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722362113; x=1722966913;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hZVb9b6idPdGqOLlS0LbFKJPOJQMfcfymuIDhlC2e8U=;
-        b=R7LLvke9FTcyitDJf3fHp4L324cgNDpYRQSRCxvPZSpWwVSHzYW41E9DQA4CNxLn9E
-         JbTHIT9Ui8T8fKmIE5H5Whg1oUEiQUKRpvO2tHqV3jonChSpPAqH1UtQX53kXZQJ1xev
-         /9JqcXIqfWKRcRUx4XIofJlCoBt+pOT3vnku37aovW3N7GSAd0WFseocLJYU35bqcCjS
-         PocHqY5topoRO6aVi6u1Y5nuRe/rMlY4BlSpCaCfwgtoudAgFqmHR2UjlarSUslGN+JX
-         07RuaPOZcL8scUvMtl//3PzMwK/1rU8KITOBT8ZyUraodIAuCcOWwsKJKeK5wNF4IFTQ
-         UAwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYFstLEY1lA63yWEArZXzbS4ZsipnueduWAPUN5HaGzR75NeeBAsNZX3ZBE/z1R0rUXY8IoJGEXxYDkx9Hh4dRSjJX8DWrcXUn+6Qx
-X-Gm-Message-State: AOJu0YxK/eoiXiLVcGr7RmIpsUYCN+CFvkr3WB43AofO+Au8Zov4zvx2
-	5cg4hgOunGD1Z1Znr2mZjruEt1Up3DtMX5m3T/1lsdNPSTCjz4qdj7yX5pMvu/kyI1U2uV0Akq4
-	O+0w8LCYyPg048Uw6/LB9dxb7WNWHRibyj54d
-X-Google-Smtp-Source: AGHT+IGmM1tNNed7IrynwbRJCkV3w6w+USTXC/B0W7HVIfMnsxonH0cqX1VcweXyc+Pt8fczaIJn3PMNd+t6XksY8VY=
-X-Received: by 2002:a05:6000:1e47:b0:367:f0f2:66c1 with SMTP id
- ffacd0b85a97d-36b5cee9ddcmr6956783f8f.12.1722362112425; Tue, 30 Jul 2024
- 10:55:12 -0700 (PDT)
+	s=arc-20240116; t=1722362192; c=relaxed/simple;
+	bh=KPcOEhklZO3FM3wBXFnTbyT4tAd+unwVmWSV5hM/i2g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bZ6XdIwTQrcVbH9wm25VSc6vfB4c7PDayrIJXclYy2RCvB7BjO49iyP2Q2S+8yRRS2bJe00jidNy0BprfCBVX1R2Rv/UgRKgT5CyE95js/bfKmADKTJ0+HKj3Ravi5FQcrBlfTtcRcPAS+trAJMR1rmJRNXt+1rImhyLdUKbpk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=klepgEJm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UHK2xp016748;
+	Tue, 30 Jul 2024 17:55:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=i2v8w4Z2+u7WgDhCofOnrD
+	SAfFazSqBarjGO9eEcIvg=; b=klepgEJm6qiTqHFpUv2lAvjBeQ435iGMaTxjP2
+	HOp2E78UJ3q/KQ2952Hs9xAVx25yjvWO5agOjGJW5JJWUXNhCYjvATlxqa0+/HqY
+	pD670UQZhOlb53etF44lfkgVyDLO9Unhnli0a7LHJrFvvh/H2qtsPILdbEgKrFkC
+	xR8xdpTH78BW9Ig3rR1sSJ+yp6Em4la8cuNA5J4e1Cc1qyBNPzsgHo78/O7sRz3W
+	H9k4yRy9H7X72IpwdMYjJ9JKUX2F6hIQgFzCElnhu5zkTh20mZz5W71o+DoV0RNP
+	z+jZVcTo1jpGgFgTNO3ifF6FOYFwGDB2UkoLWNcbArMqs9Qw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40ms438cht-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 17:55:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46UHtpU8014609
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 17:55:51 GMT
+Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 30 Jul 2024 10:55:50 -0700
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>,
+        Tanmay Shah <tanmay@codeaurora.org>,
+        Guenter Roeck
+	<groeck@chromium.org>,
+        Chandan Uddaraju <chandanu@codeaurora.org>,
+        "Kuogee
+ Hsieh" <quic_khsieh@quicinc.com>
+CC: <dri-devel@lists.freedesktop.org>, <quic_jesszhan@quicinc.com>,
+        <swboyd@chromium.org>, <dianders@chromium.org>,
+        <neil.armstrong@linaro.org>, <andersson@kernel.org>,
+        <abel.vesa@linaro.org>, Vara Reddy
+	<quic_varar@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] drm/msm/dp: fix the max supported bpp logic
+Date: Tue, 30 Jul 2024 10:55:40 -0700
+Message-ID: <20240730175541.2549592-1-quic_abhinavk@quicinc.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730155702.1110144-1-ojeda@kernel.org>
-In-Reply-To: <20240730155702.1110144-1-ojeda@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 30 Jul 2024 19:55:00 +0200
-Message-ID: <CAH5fLgj-0EsVjh8xdV1mXZBXPxKGnwUa8-R+Bg1eyjh0Gh_BWg@mail.gmail.com>
-Subject: Re: [PATCH] rust: error: allow `useless_conversion` for 32-bit builds
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Christian Schrefl <chrisi.schrefl@gmail.com>, Jamie Cunliffe <Jamie.Cunliffe@arm.com>, 
-	Sven Van Asbroeck <thesven73@gmail.com>, linux-arm-kernel@lists.infradead.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6xHDLTXkLDJRN9YqM9AcTaiv9bip-Ty8
+X-Proofpoint-ORIG-GUID: 6xHDLTXkLDJRN9YqM9AcTaiv9bip-Ty8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-30_14,2024-07-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
+ mlxlogscore=999 suspectscore=0 phishscore=0 priorityscore=1501
+ clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407300123
 
-On Tue, Jul 30, 2024 at 5:57=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> For the new Rust support for 32-bit arm [1], Clippy warns:
->
->     error: useless conversion to the same type: `i32`
->        --> rust/kernel/error.rs:139:36
->         |
->     139 |         unsafe { bindings::ERR_PTR(self.0.into()) as *mut _ }
->         |                                    ^^^^^^^^^^^^^ help: consider=
- removing `.into()`: `self.0`
->         |
->         =3D help: for further information visit https://rust-lang.github.=
-io/rust-clippy/master/index.html#useless_conversion
->         =3D note: `-D clippy::useless-conversion` implied by `-D warnings=
-`
->         =3D help: to override `-D warnings` add `#[allow(clippy::useless_=
-conversion)]`
->
-> The `self.0.into()` converts an `c_int` into `ERR_PTR`'s parameter
-> which is a `c_long`. Thus, both types are `i32` in 32-bit. Therefore,
-> allow it for those architectures.
->
-> Link: https://lore.kernel.org/rust-for-linux/2dbd1491-149d-443c-9802-7578=
-6a6a3b73@gmail.com/ [1]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
->  rust/kernel/error.rs | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-> index 145f5c397009..6f1587a2524e 100644
-> --- a/rust/kernel/error.rs
-> +++ b/rust/kernel/error.rs
-> @@ -135,8 +135,11 @@ pub(crate) fn to_blk_status(self) -> bindings::blk_s=
-tatus_t {
->      /// Returns the error encoded as a pointer.
->      #[allow(dead_code)]
->      pub(crate) fn to_ptr<T>(self) -> *mut T {
-> +        #[cfg_attr(target_pointer_width =3D "32", allow(clippy::useless_=
-conversion))]
->          // SAFETY: `self.0` is a valid error due to its invariant.
-> -        unsafe { bindings::ERR_PTR(self.0.into()) as *mut _ }
-> +        unsafe {
-> +            bindings::ERR_PTR(self.0.into()) as *mut _
-> +        }
->      }
+Fix the dp_panel_get_supported_bpp() API to return the minimum
+supported bpp correctly for relevant cases and use this API
+to correct the behavior of DP driver which hard-codes the max supported
+bpp to 30.
 
-The formatting here is a bit weird. Perhaps we should swap the cfg and
-the comment?
+This is incorrect because the number of lanes and max data rate
+supported by the lanes need to be taken into account.
 
-Either way, it looks good to me.
+Replace the hardcoded limit with the appropriate math which accounts
+for the accurate number of lanes and max data rate.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+changes in v2:
+	- Fix the dp_panel_get_supported_bpp() and use it
+	- Drop the max_t usage as dp_panel_get_supported_bpp() already
+	  returns the min_bpp correctly now
+
+Fixes: c943b4948b58 ("drm/msm/dp: add displayPort driver support")
+Closes: https://gitlab.freedesktop.org/drm/msm/-/issues/43
+Reported-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # SM8350-HDK
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+---
+ drivers/gpu/drm/msm/dp/dp_panel.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/dp_panel.c
+index a916b5f3b317..3777b1abacad 100644
+--- a/drivers/gpu/drm/msm/dp/dp_panel.c
++++ b/drivers/gpu/drm/msm/dp/dp_panel.c
+@@ -90,22 +90,22 @@ static int dp_panel_read_dpcd(struct dp_panel *dp_panel)
+ static u32 dp_panel_get_supported_bpp(struct dp_panel *dp_panel,
+ 		u32 mode_edid_bpp, u32 mode_pclk_khz)
+ {
+-	struct dp_link_info *link_info;
++	const struct dp_link_info *link_info;
+ 	const u32 max_supported_bpp = 30, min_supported_bpp = 18;
+-	u32 bpp = 0, data_rate_khz = 0;
++	u32 bpp, data_rate_khz;
+ 
+ 	bpp = min_t(u32, mode_edid_bpp, max_supported_bpp);
+ 
+ 	link_info = &dp_panel->link_info;
+ 	data_rate_khz = link_info->num_lanes * link_info->rate * 8;
+ 
+-	while (bpp > min_supported_bpp) {
++	do {
+ 		if (mode_pclk_khz * bpp <= data_rate_khz)
+-			break;
++			return bpp;
+ 		bpp -= 6;
+-	}
++	} while (bpp > min_supported_bpp);
+ 
+-	return bpp;
++	return min_supported_bpp;
+ }
+ 
+ int dp_panel_read_sink_caps(struct dp_panel *dp_panel,
+@@ -423,8 +423,9 @@ int dp_panel_init_panel_info(struct dp_panel *dp_panel)
+ 				drm_mode->clock);
+ 	drm_dbg_dp(panel->drm_dev, "bpp = %d\n", dp_panel->dp_mode.bpp);
+ 
+-	dp_panel->dp_mode.bpp = max_t(u32, 18,
+-				min_t(u32, dp_panel->dp_mode.bpp, 30));
++	dp_panel->dp_mode.bpp = dp_panel_get_mode_bpp(dp_panel, dp_panel->dp_mode.bpp,
++						      dp_panel->dp_mode.drm_mode.clock);
++
+ 	drm_dbg_dp(panel->drm_dev, "updated bpp = %d\n",
+ 				dp_panel->dp_mode.bpp);
+ 
+-- 
+2.44.0
+
 
