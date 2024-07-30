@@ -1,198 +1,230 @@
-Return-Path: <linux-kernel+bounces-268153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 656B29420E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:45:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F269420E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15D36282B1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:45:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D9C1C23505
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AF51917EB;
-	Tue, 30 Jul 2024 19:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F2B18CC01;
+	Tue, 30 Jul 2024 19:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h16IfaV0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpJMeF/a"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2029118C938;
-	Tue, 30 Jul 2024 19:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3909318991F;
+	Tue, 30 Jul 2024 19:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722368614; cv=none; b=QNGINuuJL7OWe9Eh2K16+gvWGfbWpj0QNCJvjp+A4J9HiNwvQ/GYP7rIqBhWB2kYbj3huvYdLu0o0/qkDQa4bTTz9e9lF/VHmFLMomgIVIFr4q2DeJ4HSmTFOFsXIWLclxxr9hDuEQd2OuUpPTq9ATgeuwzCD1x4Qn5RKS9Zuhk=
+	t=1722368632; cv=none; b=AUdeH1tnVP2JJy/b0ZJdRsxGW0iMDBlbZ5MnjZP6dL17I7c7YjsX+ljxPOpvnfKS676rksQtFLEdk2DgKWtvbrLaKZ1VplSyIheQW8E/Fdyb2shbC6D9O/vGpQkccbFKWzBE9jW4QPJ7GKbq5wiMuWFTJF3Qj7lqNwbS7y8UeVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722368614; c=relaxed/simple;
-	bh=7ZWS8u9aPiBFISBPRpifvY/WoT4OE1+Bi2YojbT+WFI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MuqWHs+m38mYa5SKnIoOweiimzUaJapsJZD/qMnqkZwODtCwJIGeBI2XHlhR9IVGbwYmX5aeieCKdZmtuWUMpKhEkjtUG87gvj04miwVdJI2h3xCUc9vQohpgyGUc7LDFOs9wnGhfeNbf/uk3AX+Y+1f5iWGy1G3FmLSsYNSlkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h16IfaV0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ED71C32782;
-	Tue, 30 Jul 2024 19:43:33 +0000 (UTC)
+	s=arc-20240116; t=1722368632; c=relaxed/simple;
+	bh=VpiOq6EFkVYobmmtpujUtbY2EDrMaIz8r37j6lzSw+0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o4x1nF7eClviC9ok2e5eBh642kCWqURJ8Aes77MjoZLNwqfl7ZyhGR/9i76iBRlUDgGzFFtmYpLXRua4fcYuSwPbunCPG8GGdwNT/8RBANzxBhGpo0JJgxjj5qFCZ2PakpLUW9FOqtawE+IZXuRkOXeU4iXGafMbFiMXCzJtDmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rpJMeF/a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5E84C32782;
+	Tue, 30 Jul 2024 19:43:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722368613;
-	bh=7ZWS8u9aPiBFISBPRpifvY/WoT4OE1+Bi2YojbT+WFI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h16IfaV09C1EP1HeYxv9Lfjjb2QZyn6y/AGl00vvL51gux3ZdTtCtkgu1PIeevz3U
-	 YrtJ9cB2kTu+C92kK9ODdHm62FWdQ9kRPww0iYG2WF2JZNknNKf7OJ4pBS+3Ra3ZUm
-	 TLrcthVrzu2tpe2tHmCZayfZLHjFltdbNsnyxOaO4LmqVyj1w+bYWGy8ONNaxa3MT3
-	 BqEVfWi00ONraIbPRf+advZiGJIkjyui2jnFDq/0hSCCWxMoRgmjqyHGJfDjvgL0dF
-	 78gLkeyOjG83pes5QNqVGE+uugTbXEdwA/Ewsoz0mC6xJ4W6104pzswLOYoh/YY9Q2
-	 rBxV0kM3qlooA==
-Date: Tue, 30 Jul 2024 13:43:32 -0600
-From: Rob Herring <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:FREESCALE SOC DRIVERS" <linuxppc-dev@lists.ozlabs.org>,
-	"moderated list:FREESCALE SOC DRIVERS" <linux-arm-kernel@lists.infradead.org>,
-	imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: soc: fsl: Convert rcpm to yaml format
-Message-ID: <20240730194332.GA2029820-robh@kernel.org>
-References: <20240729191143.1826125-1-Frank.Li@nxp.com>
+	s=k20201202; t=1722368631;
+	bh=VpiOq6EFkVYobmmtpujUtbY2EDrMaIz8r37j6lzSw+0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rpJMeF/ai0Ptkcc62zMu9iNiTx+1PkcLaXGYPG/jqz2MLQ/6xcNvnArP68d9H6Iza
+	 8EaLLMELqYMvGoTM/tFBuqmiZ6l/e7VWULYXs0OqETS5v6ZZaeiXJwrlvsgASfIF4x
+	 hwV9yrw0vz+Vw2Vdq6wXtmpga2Ftvmi7b5pnubZBJMKA0LTjcWv056V7oxUzFpt8t3
+	 XTt+OoB5yWhCEs+UVph4NtunG+o7tVIaCS3kWBsRTLXCgELZKyFSJ32lYihYyJVoAT
+	 P1sV0ofI642sxteBTn6ErJ1QKqFqrO9Kq+/tSHLEuYiZbZ4dXV0+j/iK7gXHFDAOJ+
+	 cRPfd0uUTuy3Q==
+From: Michael Walle <mwalle@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michael Walle <mwalle@kernel.org>
+Subject: [PATCH] usb: gadget: f_acm: make bInterfaceProtocol configurable
+Date: Tue, 30 Jul 2024 21:43:37 +0200
+Message-Id: <20240730194337.2583784-1-mwalle@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729191143.1826125-1-Frank.Li@nxp.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 29, 2024 at 03:11:42PM -0400, Frank Li wrote:
-> Convert dt-binding rcpm from txt to yaml format.
-> Add fsl,ls1028a-rcpm compatible string.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../bindings/rtc/fsl,ls-ftm-alarm.yaml        |  2 +-
->  .../devicetree/bindings/soc/fsl/fsl,rcpm.yaml | 91 +++++++++++++++++++
->  .../devicetree/bindings/soc/fsl/rcpm.txt      | 69 --------------
->  3 files changed, 92 insertions(+), 70 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
->  delete mode 100644 Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml b/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
-> index 388102ae30cd8..3ec111f2fdc40 100644
-> --- a/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
-> +++ b/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
-> @@ -42,7 +42,7 @@ properties:
->          minItems: 1
->      description:
->        phandle to rcpm node, Please refer
-> -      Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-> +      Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
->  
->    big-endian:
->      $ref: /schemas/types.yaml#/definitions/flag
-> diff --git a/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml b/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
-> new file mode 100644
-> index 0000000000000..6c6cda7f2b220
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
-> @@ -0,0 +1,91 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/fsl/fsl,rcpm.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Run Control and Power Management
-> +
-> +description:
-> +  The RCPM performs all device-level tasks associated with device run control
-> +  and power management.
-> +
-> +maintainers:
-> +  - Frank Li <Frank.Li@nxp.com>
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - fsl,ls1012a-rcpm
-> +          - fsl,ls1021a-rcpm
-> +          - fsl,ls1028a-rcpm
-> +          - fsl,ls1043a-rcpm
-> +          - fsl,ls1045a-rcpm
-> +          - fsl,p2041-rcpm
-> +          - fsl,p5020-rcpm
-> +          - fsl,t4240-rcpm
-> +      - enum:
-> +          - fsl,qoriq-rcpm-1.0
-> +          - fsl,qoriq-rcpm-2.0
-> +          - fsl,qoriq-rcpm-2.1
-> +          - fsl,qoriq-rcpm-2.1+
+The bInterfaceProtocol is hardcoded to USB_CDC_ACM_PROTO_AT_V25TER. This
+will lead to problems with ModemManger which will gladly try to probe
+that port as a modem if the gadget also has a network function.
+ModemManager will try to send AT commands to the ACM port. Make the
+bInterfaceProtocol configurable.
 
-You can't just allow any combination.
+This will also set bFunctionProtocol to the same value, see commit
+5c8db070b448 ("USB: Change acm_iad_descriptor bFunctionProtocol to
+USB_CDC_ACM_PROTO_AT_V25TER") for more details.
 
-> +    minItems: 1
-> +    description: |
-> +      All references to "1.0" and "2.0" refer to the QorIQ chassis version to
-> +      which the chip complies.
-> +      Chassis Version         Example Chips
-> +      ---------------         -------------------------------
-> +      1.0                     p4080, p5020, p5040, p2041, p3041
-> +      2.0                     t4240, b4860, b4420
-> +      2.1                     t1040,
-> +      2.1+                    ls1021a, ls1012a, ls1043a, ls1046a
+Signed-off-by: Michael Walle <mwalle@kernel.org>
+---
+See the following link for the filter logic:
+https://gitlab.freedesktop.org/mobile-broadband/ModemManager/-/blob/main/src/mm-filter.c?ref_type=heads#L303
+---
+ .../ABI/testing/configfs-usb-gadget-acm       |  7 +++
+ drivers/usb/gadget/function/f_acm.c           | 50 ++++++++++++++++++-
+ drivers/usb/gadget/function/u_serial.h        |  4 ++
+ 3 files changed, 59 insertions(+), 2 deletions(-)
 
-The compatible lists above needs to match this.
+diff --git a/Documentation/ABI/testing/configfs-usb-gadget-acm b/Documentation/ABI/testing/configfs-usb-gadget-acm
+index d21092d75a05..25e68be9eb66 100644
+--- a/Documentation/ABI/testing/configfs-usb-gadget-acm
++++ b/Documentation/ABI/testing/configfs-usb-gadget-acm
+@@ -6,3 +6,10 @@ Description:
+ 		This item contains just one readonly attribute: port_num.
+ 		It contains the port number of the /dev/ttyGS<n> device
+ 		associated with acm function's instance "name".
++
++What:		/config/usb-gadget/gadget/functions/acm.name/protocol
++Date:		Aug 2024
++KernelVersion:	6.13
++Description:
++		Reported bInterfaceProtocol for the ACM device. For legacy
++		reasons, this defaults to 1 (USB_CDC_ACM_PROTO_AT_V25TER).
+diff --git a/drivers/usb/gadget/function/f_acm.c b/drivers/usb/gadget/function/f_acm.c
+index 724b2631f249..b78f46586a0f 100644
+--- a/drivers/usb/gadget/function/f_acm.c
++++ b/drivers/usb/gadget/function/f_acm.c
+@@ -41,6 +41,7 @@ struct f_acm {
+ 	struct gserial			port;
+ 	u8				ctrl_id, data_id;
+ 	u8				port_num;
++	u8				bInterfaceProtocol;
+ 
+ 	u8				pending;
+ 
+@@ -89,7 +90,7 @@ acm_iad_descriptor = {
+ 	.bInterfaceCount = 	2,	// control + data
+ 	.bFunctionClass =	USB_CLASS_COMM,
+ 	.bFunctionSubClass =	USB_CDC_SUBCLASS_ACM,
+-	.bFunctionProtocol =	USB_CDC_ACM_PROTO_AT_V25TER,
++	/* .bFunctionProtocol = DYNAMIC */
+ 	/* .iFunction =		DYNAMIC */
+ };
+ 
+@@ -101,7 +102,7 @@ static struct usb_interface_descriptor acm_control_interface_desc = {
+ 	.bNumEndpoints =	1,
+ 	.bInterfaceClass =	USB_CLASS_COMM,
+ 	.bInterfaceSubClass =	USB_CDC_SUBCLASS_ACM,
+-	.bInterfaceProtocol =	USB_CDC_ACM_PROTO_AT_V25TER,
++	/* .bInterfaceProtocol = DYNAMIC */
+ 	/* .iInterface = DYNAMIC */
+ };
+ 
+@@ -663,6 +664,9 @@ acm_bind(struct usb_configuration *c, struct usb_function *f)
+ 		goto fail;
+ 	acm->notify = ep;
+ 
++	acm_iad_descriptor.bFunctionProtocol = acm->bInterfaceProtocol;
++	acm_control_interface_desc.bInterfaceProtocol = acm->bInterfaceProtocol;
++
+ 	/* allocate notification */
+ 	acm->notify_req = gs_alloc_req(ep,
+ 			sizeof(struct usb_cdc_notification) + 2,
+@@ -719,8 +723,14 @@ static void acm_unbind(struct usb_configuration *c, struct usb_function *f)
+ static void acm_free_func(struct usb_function *f)
+ {
+ 	struct f_acm		*acm = func_to_acm(f);
++	struct f_serial_opts	*opts;
++
++	opts = container_of(f->fi, struct f_serial_opts, func_inst);
+ 
+ 	kfree(acm);
++	mutex_lock(&opts->lock);
++	opts->refcnt--;
++	mutex_unlock(&opts->lock);
+ }
+ 
+ static void acm_resume(struct usb_function *f)
+@@ -761,7 +771,11 @@ static struct usb_function *acm_alloc_func(struct usb_function_instance *fi)
+ 	acm->port.func.disable = acm_disable;
+ 
+ 	opts = container_of(fi, struct f_serial_opts, func_inst);
++	mutex_lock(&opts->lock);
+ 	acm->port_num = opts->port_num;
++	acm->bInterfaceProtocol = opts->protocol;
++	opts->refcnt++;
++	mutex_unlock(&opts->lock);
+ 	acm->port.func.unbind = acm_unbind;
+ 	acm->port.func.free_func = acm_free_func;
+ 	acm->port.func.resume = acm_resume;
+@@ -812,11 +826,42 @@ static ssize_t f_acm_port_num_show(struct config_item *item, char *page)
+ 
+ CONFIGFS_ATTR_RO(f_acm_, port_num);
+ 
++static ssize_t f_acm_protocol_show(struct config_item *item, char *page)
++{
++	return sprintf(page, "%u\n", to_f_serial_opts(item)->protocol);
++}
++
++static ssize_t f_acm_protocol_store(struct config_item *item,
++		const char *page, size_t count)
++{
++	struct f_serial_opts *opts = to_f_serial_opts(item);
++	int ret;
++
++	mutex_lock(&opts->lock);
++
++	if (opts->refcnt) {
++		ret = -EBUSY;
++		goto out;
++	}
++
++	ret = kstrtou8(page, 0, &opts->protocol);
++	if (ret)
++		goto out;
++	ret = count;
++
++out:
++	mutex_unlock(&opts->lock);
++	return ret;
++}
++
++CONFIGFS_ATTR(f_acm_, protocol);
++
+ static struct configfs_attribute *acm_attrs[] = {
+ #ifdef CONFIG_U_SERIAL_CONSOLE
+ 	&f_acm_attr_console,
+ #endif
+ 	&f_acm_attr_port_num,
++	&f_acm_attr_protocol,
+ 	NULL,
+ };
+ 
+@@ -843,6 +888,7 @@ static struct usb_function_instance *acm_alloc_instance(void)
+ 	opts = kzalloc(sizeof(*opts), GFP_KERNEL);
+ 	if (!opts)
+ 		return ERR_PTR(-ENOMEM);
++	opts->protocol = USB_CDC_ACM_PROTO_AT_V25TER;
+ 	opts->func_inst.free_func_inst = acm_free_instance;
+ 	ret = gserial_alloc_line(&opts->port_num);
+ 	if (ret) {
+diff --git a/drivers/usb/gadget/function/u_serial.h b/drivers/usb/gadget/function/u_serial.h
+index 901d99310bc4..1782d7d7f7be 100644
+--- a/drivers/usb/gadget/function/u_serial.h
++++ b/drivers/usb/gadget/function/u_serial.h
+@@ -17,6 +17,10 @@
+ struct f_serial_opts {
+ 	struct usb_function_instance func_inst;
+ 	u8 port_num;
++	u8 protocol;
++
++	struct mutex lock;
++	int refcnt;
+ };
+ 
+ /*
+-- 
+2.39.2
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#fsl,rcpm-wakeup-cells":
-> +    description: |
-> +      The number of IPPDEXPCR register cells in the
-> +      fsl,rcpm-wakeup property.
-> +
-> +      Freescale RCPM Wakeup Source Device Tree Bindings
-> +
-> +      Required fsl,rcpm-wakeup property should be added to a device node if
-> +      the device can be used as a wakeup source.
-> +
-> +      fsl,rcpm-wakeup: Consists of a phandle to the rcpm node and the IPPDEXPCR
-> +      register cells. The number of IPPDEXPCR register cells is defined in
-> +      "#fsl,rcpm-wakeup-cells" in the rcpm node. The first register cell is
-> +      the bit mask that should be set in IPPDEXPCR0, and the second register
-> +      cell is for IPPDEXPCR1, and so on.
-> +
-> +      Note: IPPDEXPCR(IP Powerdown Exception Control Register) provides a
-> +      mechanism for keeping certain blocks awake during STANDBY and MEM, in
-> +      order to use them as wake-up sources.
-> +
-> +  little-endian:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      RCPM register block is Little Endian. Without it RCPM
-> +      will be Big Endian (default case).
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    rcpm: global-utilities@e2000 {
-> +          compatible = "fsl,t4240-rcpm", "fsl,qoriq-rcpm-2.0";
-> +          reg = <0xe2000 0x1000>;
-> +          #fsl,rcpm-wakeup-cells = <2>;
-> +    };
-> +
-> +    serial@2950000 {
-> +         compatible = "fsl,ls1021a-lpuart";
-> +         reg = <0x2950000 0x1000>;
-> +         interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
-> +         clocks = <&sysclk>;
-> +         clock-names = "ipg";
-> +         fsl,rcpm-wakeup = <&rcpm 0x0 0x40000000>;
-> +    };
 
