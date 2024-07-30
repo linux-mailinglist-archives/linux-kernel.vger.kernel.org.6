@@ -1,147 +1,99 @@
-Return-Path: <linux-kernel+bounces-267647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE019413E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:09:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056CA941405
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A17231F24675
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:09:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31CFC1C22FDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0EA1A08B6;
-	Tue, 30 Jul 2024 14:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF0C1A2569;
+	Tue, 30 Jul 2024 14:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Umcs4q74"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syUL+W51"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3468623
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90EE19F499;
+	Tue, 30 Jul 2024 14:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722348572; cv=none; b=HwjILlVajwtom73bGcPrwnHjFsaOTnIQQZ89usK27cKtV54NZEjZSLU8jNS4d+MOvnNWWbc48LE60uqAPsStOELp3PyDB/webJn8DtJohvM5YZZu5Y3NgpOXErJXsdhMTSk6qEuIxIrpLEUNzrf4sZfMeUZAsOfq6Khb4R9M7JA=
+	t=1722348703; cv=none; b=DX+SSRB5f0vzl+PtVUmJ/6Rliyo9Ybg192160s7ed1SptmLEHqjnGaFReJ/1zrOyuLjDRRJVu+oqUIMzLS+c1G0H6fDTmhp2tkn0DeV8wl5pnYfxCfbuBNmUxoEcthAr2X53TX6Px4332jARPzzAIFtcPoTAfcD86zNQEAFxz8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722348572; c=relaxed/simple;
-	bh=8KdfWYe00oFaSreHDo+9R5LqRefFgQsvndyhNhVo6YQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CTqGkZR01KMd4Uvpk5cVMYnBhQxHMCnRJwrhkL5wqDr5wTSHKHN5yfb2KhjHPpacxcT5dksrq8kMJPyarRt1jhYmxy4kWKz/k1V7t3mXzbQe9sY+XA+z11wi24doJ4wTAsynaJK1r0wOGpv5RtbOGJO6LxVJyfQfN53FQmJWHOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Umcs4q74; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef1c12ae23so55759321fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:09:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722348569; x=1722953369; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UAEM9ctJ2LCO1h/CKfcm4zgElIlWA+z8iuPE30GRH/s=;
-        b=Umcs4q74J5E9YqPbS8njKbiCEQWTr3rwB6ClLciWw7Tw+L3lzomR0XSjknTPThGfXB
-         fmb37AbaSKrXFkV4LeaBqH5y75iYrCYeCI1c8zELx457yYuCGScgu9GQyKnt9xEe7MlJ
-         zwomeW1ZvTSIL5M7jvPn9IyE58vbXaN5p2D4C3ayQYT5pbazGW2rHPj4Js01+K4r5Q7U
-         9zhorSFJh5XZZgO2JWgORBbZ0JljE0BlNNc6p54+KTkXk8/sZaD3+2Iy2sL/0T70w+vx
-         1JJ9bE5DH1/QNCX7Hm0zgOukeySQS9ahb1BVLLxIYtf2bFbAn0tv++sK/THC3IygQ6jI
-         bzMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722348569; x=1722953369;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UAEM9ctJ2LCO1h/CKfcm4zgElIlWA+z8iuPE30GRH/s=;
-        b=Rcq/Y6ghSYshMF8si03dusXgeDwI7NWLmmmOoermEJEwGl/IchrYMtR+V0lqZ79uK1
-         Zoz/Ed/PxizXMURGn21Rx1stwqQhVt+BRKRGHvosI5Op1A7q5jKAQOKRLUBiSQoWFG6b
-         9NSmyIk8vHhdaVlN1Lvnc8Kg+epFdjzswrXAkoA9Mu+hK6S5y6kt2pFopnoE674/Hzkf
-         NqaYHZp/1D8uSBECCgrrGwl1NU7Q0gcMLONwi/MRWGmw+d45Qt8T/fUufe2QQJgZydwk
-         oatQb+9JpD+ONHCxpPgJMB+XPXrHoHVEytyUrkTXjbQR6jeFl4G4TZcqzhxh+BuEu8Dv
-         v7nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTgSYA2EJlifmLp52f+Cy5v+1crx+Rchanu/MvipY0+hu9UpL+5Ql/jN7QD0NpXK8oUu8Bw9qnDOJa4AtHRt44JMaEkxgrBPqxyZcV
-X-Gm-Message-State: AOJu0YwTCcbUdHd1V6FJLKUlLvO4bzU7Cc3csOerhv+dvVkd99oPR5j+
-	j7X6CXArVOG27lVeczxVCpRTjVlDEMg6N9Y5RKQ2Jq/m2uKvsojhIhRXY3Vkea/uKpJqlC4ztc+
-	1vZtkxPso6tI44T8gV78HRK59s80=
-X-Google-Smtp-Source: AGHT+IGribPyo8RciGBgcvwdQMsvA36qdoaMnvSfkx9bkengomf0ZQ0vzIeJ6mbsZ1m2rHhZPiY/8nEm4QP5gqL4HVM=
-X-Received: by 2002:a05:651c:c1:b0:2ef:2016:262e with SMTP id
- 38308e7fff4ca-2f12eaa152amr75582411fa.0.1722348568694; Tue, 30 Jul 2024
- 07:09:28 -0700 (PDT)
+	s=arc-20240116; t=1722348703; c=relaxed/simple;
+	bh=DNNAvsBgtEMxyU0K/tgTdZjkyyIouP9Wz2FU5+7NrB8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l9G2ht4t0SqFM4tCLCdoL6EhIUQEcNzMkiC3b2aGQJ9b2PHKW7V+pHsUEswmVqA0jQFWt+xAHJyYKTgUsWnWEFmZDZGO4n8dw8r32Zlju9Ji8G0owrmk+0Ab4c3AGPdcvBtEeFF+36c+xUOoziD0h6jUzDLFOV5NAS27JUArG5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=syUL+W51; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A890DC32782;
+	Tue, 30 Jul 2024 14:11:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722348702;
+	bh=DNNAvsBgtEMxyU0K/tgTdZjkyyIouP9Wz2FU5+7NrB8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=syUL+W51v5ODSxCIYb4BjhevWjQjsWw2HdfXuDf16FcIPMffZdGGzpMDpW6dxaTdW
+	 kR91k51aBUDTBGb4Q7gS8SSss6BcxpT8qvcbxAu9uhLWKCQ+kkGjdDAppyIdk84lWr
+	 yR7pF34500PSlHZd7C/ldyBXCtbVqqhfh5zZfza7Qqga8ebO+1/U+YW2RXLpIYNVBb
+	 Mbhv4AleQJbwNwl4ZkuPxyx+QC+8/BrXLLxInbSK4hBPOLekeZZai/GlbiH3Gpu+vV
+	 BsoDeKNR+po9b4BvMmQG1uCTqY2hPBkNGTj1JbioJ4U39W6ZxLQtBlN9jnmpbofw52
+	 thHT0/bBBkR7g==
+From: djakov@kernel.org
+To: djakov@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	quic_okukatla@quicinc.com,
+	linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: interconnect: qcom: Do not require reg for sc8180x virt NoCs
+Date: Tue, 30 Jul 2024 17:10:16 +0300
+Message-Id: <20240730141016.1142608-1-djakov@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726104848.2756962-1-leitao@debian.org> <CAC5umygxnq=h1H2CCeprzaggu_A4DxZia3EEBTYk7sb72OnQFA@mail.gmail.com>
- <ZqdaAn0s8J3fZ15u@gmail.com>
-In-Reply-To: <ZqdaAn0s8J3fZ15u@gmail.com>
-From: Akinobu Mita <akinobu.mita@gmail.com>
-Date: Tue, 30 Jul 2024 23:09:15 +0900
-Message-ID: <CAC5umyjXX7OkLLAusz5wLtNm+f-B+Vo90szHtJjh_C4fSEw+NA@mail.gmail.com>
-Subject: Re: [PATCH] fault-injection: Enhance failcmd to exit on non-hex
- address input
-To: Breno Leitao <leitao@debian.org>
-Cc: akpm@linux-foundation.org, leit@meta.com, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-2024=E5=B9=B47=E6=9C=8829=E6=97=A5(=E6=9C=88) 17:59 Breno Leitao <leitao@de=
-bian.org>:
->
-> Hello Akinobu,
->
-> On Sun, Jul 28, 2024 at 06:00:14PM +0900, Akinobu Mita wrote:
-> > 2024=E5=B9=B47=E6=9C=8826=E6=97=A5(=E9=87=91) 19:50 Breno Leitao <leita=
-o@debian.org>:
->
-> > > +exit_if_not_hex() {
-> > > +    local value=3D"$1"
-> > > +    if ! [[ $value =3D~ ^0x[0-9a-fA-F]+$ ]]; then
-> > > +        echo "Error: The provided value '$value' is not a valid hexa=
-decimal number."
-> >
-> > It is better to write error messages to standard error rather than
-> > standard output.
->
-> Agree. I've sent a V2 with your proposed change. Thanks!
->
-> > Other than that I think it's good.
->
-> Thanks.
->
-> By the way, this file seems unmaintained by looking at MAINTAINERS.
-> Would you mind if I send something as:
+From: Georgi Djakov <djakov@kernel.org>
 
-No problem.
+The virtual interconnect providers do not have their own IO address space,
+but this is not documented in the DT schema and the following warnings are
+reported by dtbs_check:
 
-> Author: Breno Leitao <leitao@debian.org>
-> Date:   Mon Jul 29 01:53:44 2024 -0700
->
->     failcmd: Add script file in MAINTAINERS
->
->     failcmd is one of the main interfaces to fault injection framework, b=
-ut,
->     it is not listed under FAULT INJECTION SUPPORT entry in MAINTAINERS.
->     This is unfortunate, since git-send-email doesn't find emails to send
->     the patches to, forcing the user to try to guess who maintains it.
->
->     Akinobu Mita seems to be actively maintaining it, so, let's add the f=
-ile
->     under FAULT INJECTION SUPPORT section.
->
->     Signed-off-by: Breno Leitao <leitao@debian.org>
+sc8180x-lenovo-flex-5g.dtb: interconnect-camnoc-virt: 'reg' is a required property
+sc8180x-lenovo-flex-5g.dtb: interconnect-mc-virt: 'reg' is a required property
+sc8180x-lenovo-flex-5g.dtb: interconnect-qup-virt: 'reg' is a required property
+sc8180x-primus.dtb: interconnect-camnoc-virt: 'reg' is a required property
+sc8180x-primus.dtb: interconnect-mc-virt: 'reg' is a required property
+sc8180x-primus.dtb: interconnect-qup-virt: 'reg' is a required property
 
-Reviewed-by: Akinobu Mita <akinobu.mita@gmail.com>
+Fix this by adding them to the list of compatibles that do not require
+the reg property.
 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0748d6bd0c4f..11f3ef0b5ffd 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8388,6 +8388,7 @@ M:        Akinobu Mita <akinobu.mita@gmail.com>
->  S:     Supported
->  F:     Documentation/fault-injection/
->  F:     lib/fault-inject.c
-> +F:     tools/testing/fault-injection/
->
->  FBTFT Framebuffer drivers
->  L:     dri-devel@lists.freedesktop.org
+Signed-off-by: Georgi Djakov <djakov@kernel.org>
+---
+ Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml b/Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml
+index 9318b845ec35..70f5b2670085 100644
+--- a/Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml
++++ b/Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml
+@@ -113,6 +113,9 @@ allOf:
+         properties:
+           compatible:
+             enum:
++              - qcom,sc8180x-camnoc-virt
++              - qcom,sc8180x-mc-virt
++              - qcom,sc8180x-qup-virt
+               - qcom,sdx65-mc-virt
+               - qcom,sm8250-qup-virt
+     then:
 
