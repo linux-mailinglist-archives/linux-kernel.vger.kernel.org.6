@@ -1,159 +1,107 @@
-Return-Path: <linux-kernel+bounces-268345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D058942374
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:37:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806CB942375
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA81A28645C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:37:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B288C1C22F86
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C35D19413D;
-	Tue, 30 Jul 2024 23:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A18F1940A1;
+	Tue, 30 Jul 2024 23:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U9CRTTqn"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b="LK+65/V1"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952FA1917F3
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 23:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF3D1922C9;
+	Tue, 30 Jul 2024 23:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722382655; cv=none; b=m8mC6O0lybwLRU777lOtyrI7mZQLTEH/wjoLsAfJ9vPNy8LLrCLEdMpQLoBTzQDLmOqf7qFRPhQ9MDkbgP/5WiP8y2NOc0GS6qCHffOzPoDQdPSqYr4ftrfu/wrqIwAeZuzQiBCOH2AwgSN8AeDqZ24Mw0k5D8LtdmRB7Scpw1I=
+	t=1722382683; cv=none; b=cKvd9B1zx+2MHRUVayiEv6fWEdHS+Q9XRbJ4p8zINcekzESSxstJEDT2//51aGxm2f7DHtgXUctBEdQDqWW5SPOlxNNRIOshdc8hWe6iIjpV8ZE0VpsGRbqLN1e7jHRResDdVcnzdsfTjKmZsegxBMMQGSh3VYTbZ0/sHOOCBV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722382655; c=relaxed/simple;
-	bh=YNZYfYn4w5ke9RW0tyQxu79sOTptrm5gk82g0CxqW+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p2m3l1KlrsX+bKeDg+r3py5jWj7j4YRJhw9zKWO7WkKDvubKHnLPfE1tSnkrGZ5eG9PIL0nh/Y5OSaSwBoBKjyMRri2MQiLmuCR6F1nuv1mIbTmMCvxQ67gI8Yne1WDbXc+vjeDdtKxKgte7O1dCS4d/BtDIyNDnmuqhaDC7hU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U9CRTTqn; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e05f4c63de6so4093130276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:37:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722382652; x=1722987452; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=apsj18L5RiLbCE3V7d5wYObDfke+MtN7b20V/SGi9LI=;
-        b=U9CRTTqnTYi4/j+xi+A6odKLNzbyuWfFzoVktm08YjJMkSj5KOsVfV3GjSt4HjTwQ2
-         AELjFBhR9Ph9EdJPAH+V10tdif9ob0Mm72xdelJpbmCDYSkxy2Cf90EE7fJNgJ1pj+XD
-         7B2o6ALWd/Iw0fr0IbNI2YJO6t7A39cuBaBJfYB8RxuDRB47p81WB+J+hkvuI/RtdcmE
-         j4UC/YIkwox2V+qyApn6FTm7rfprg/xD/vM4yq+sXIjqtaIBGp05eUhdLgl58M7H60K4
-         Q5xZrIoXv3mopfr4ZeYWMKNnHSEcvloNVB+7cJMkXT/AbQj2LoAk8n36//OZiq6056sB
-         ZLXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722382652; x=1722987452;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=apsj18L5RiLbCE3V7d5wYObDfke+MtN7b20V/SGi9LI=;
-        b=NgJ+rUdrz8itMAk9qJOrm4Z7a8GpKXAHrr81+tuWS2lnW0C0TpefT/EUXhcn5TunqL
-         E8B0/FavZhnuRn614x/Ku9WlrZ9LfOzAYVblREy2NT0dvqquthXiGuih0uz/6AfguYWX
-         re1Y2I0mdATrtnIFN7ZMgOFO3ona9+h53eXehp53aCggJap9ie36ppvbgVcsMl/+Tuyv
-         JHi/kaqgh1Z51LVJJk+10BOpZcE6Q8tZ4Z+ZZPp984ikzxJMRYiEokcJwit1c/KJ7UuZ
-         YTrqraZv2cblh3gDt+SK0mSYEjZfhgSwx29c61ubXw3rwjvMbNn4DO6pfEaZ/O7EDysG
-         skhw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvKUww6tlu/ppOWiJ/LmseebMLSPaNweHZdWSGQrTEByitS9WXfXhcWn14nwsWvvSmcAegyexhHxdwuL5mSXwWvYMYuQReXePb9VUS
-X-Gm-Message-State: AOJu0YxxnvbDvPQNo11RZw3d7bUnmp+zOp1PqoPBZixj1y08OAUsCmwm
-	7/KfghGLmXEKHLsuxRzx8vG61vsuhpAh0QC+JtYd9g0A+pofp3Y55KjTZZNwIUgIUy6cftf6c0D
-	U40ukx3zTrMhHX50QldTp/jD4pNOGNW5s06FWZQ==
-X-Google-Smtp-Source: AGHT+IEDA3z4HQLp7/ppDMSd/bRutuiaKfZkNuY77GF8ZdjW9ojdmDyxfn655oJsipNSIcC7k6lYxtXZwwsdVOne2mY=
-X-Received: by 2002:a05:6902:1029:b0:dff:2ce8:cc1b with SMTP id
- 3f1490d57ef6-e0b545bc297mr15384010276.35.1722382652566; Tue, 30 Jul 2024
- 16:37:32 -0700 (PDT)
+	s=arc-20240116; t=1722382683; c=relaxed/simple;
+	bh=pfGOhwlGmouFtMJ0LMMKY43IxW6am2yU3qWY1OWUPmA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=SExvWRL4s87lE9bVYI+f6W99Tp4162s1PRl3yBxzR2mhqgne2/gUg+8DBuo83RKqX7RDbjDgu0lhoVn4qePC1HusLu4DhfazO1CaymDLRMzWFYOFBiQx2BeTMD4Hbf1h/C22+3D4CmCSaatTMk0GwiaOXhPU4srCvoPkhFLn510=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b=LK+65/V1; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1722382657; x=1722987457; i=frank.scheiner@web.de;
+	bh=pfGOhwlGmouFtMJ0LMMKY43IxW6am2yU3qWY1OWUPmA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=LK+65/V1L0pD4HHTDDGP8oMAoHIrKGenItafE4PyYSGtPvbteB4+zOXt2L6qtRHi
+	 BGqvxqF9HcHVkFZ1IE7ElWJcscdGp2N2GkT8446OL4zwQzfZ0gtuebVW1+o26GUXs
+	 6oxBpLoqMAKwa6JCzEhPMo4MSxOEGcmiQAntvI6KiqTh1e1UUV7jUkXy/KDEuaFqG
+	 KdhUIj3bT97CwVz22lorYNuDMW+i7AfweyPIKlcC2rTkDp7j+5qe954ybNo/IHgKg
+	 /yvHrc3GRXoP3coaR/N1S4Fopy9xzLAz6UvCqjB9pwDFxp2YMdWKZZGdGGbqL8/F7
+	 bttn9lIkLOtjl/F+0A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.30] ([79.200.213.131]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MWi9q-1sjoN63neS-00WTOJ; Wed, 31
+ Jul 2024 01:37:37 +0200
+Message-ID: <017486e3-2132-44a0-ade8-94647de78cef@web.de>
+Date: Wed, 31 Jul 2024 01:37:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729231259.2122976-1-quic_amelende@quicinc.com>
- <20240729231259.2122976-5-quic_amelende@quicinc.com> <pzu2ijzkofzxpehpc4yphj5567ijdrxngqrepaq54njdagjenh@3vxmezjoepqg>
- <35402164-dce0-b972-bf98-c025fe5620f0@quicinc.com>
-In-Reply-To: <35402164-dce0-b972-bf98-c025fe5620f0@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 31 Jul 2024 02:37:21 +0300
-Message-ID: <CAA8EJprBZfO8mMoXAm0iw0u=VZhcSkT1iQ7m-AupdKFnk26Qyw@mail.gmail.com>
-Subject: Re: [PATCH 4/5] thermal: qcom-spmi-temp-alarm: add support for GEN2
- rev 2 PMIC peripherals
-To: Anjelique Melendez <quic_amelende@quicinc.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, amitk@kernel.org, 
-	thara.gopinath@gmail.com, andersson@kernel.org, quic_collinsd@quicinc.com, 
-	rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
-	lukasz.luba@arm.com, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: skhan@linuxfoundation.org
+Cc: akpm@linux-foundation.org, allen.lkml@gmail.com, broonie@kernel.org,
+ conor@kernel.org, f.fainelli@gmail.com, gregkh@linuxfoundation.org,
+ jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux@roeck-us.net,
+ lkft-triage@lists.linaro.org, patches@kernelci.org, patches@lists.linux.dev,
+ pavel@denx.de, rwarsow@gmx.de, shuah@kernel.org, srw@sladewatkins.net,
+ stable@vger.kernel.org, sudipm.mukherjee@gmail.com,
+ torvalds@linux-foundation.org
+References: <061886f7-c5ec-419b-8505-b57638c5cf31@linuxfoundation.org>
+Subject: Re: [PATCH 6.1 000/440] 6.1.103-rc1 review
+Content-Language: en-US
+From: Frank Scheiner <frank.scheiner@web.de>
+In-Reply-To: <061886f7-c5ec-419b-8505-b57638c5cf31@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:2dTZdmSWRU/x4dv0xlpSz/d6Dbza/593i4QpMsNA+iJ/2HOu3mF
+ Pd6cnDKpBXwT1zHTyiInUyjQGgaJUZGc+EivPfVMd2OLIsWzB3N8vRsUzLQhz2LUNlSErs6
+ Lb2YD6GZb92lLvt2BOq6KlU+6QdKKQpt2XUTv2Ycq8c2mhe2pwr7Pp3T+FagTnWMKa5YgSu
+ dDlw7TNaZXyhxES/3i1vg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:1+j7zSTl8Vk=;M/4QAP+AGMFNfHB+Ko0N2nOnH5B
+ BEY/TTkKCzO1a3q/vOVkPg5hXEjmj5C/fEqpF+W2RbJ+pLcw62sKCi+mVo03MGiGeLXMFWzE4
+ oDyiqn1OpXEMkXcLCL1draoeC/nRs+UsBmF92Kq1M6oqqs4G1/oX2Pefn7w/8IPKTDQ/dqC6F
+ elnuKRL0PpofHTR7Mo0y3pIWGm1oLGYcJ4ZTz3ttBYThEmvnu3BfgSJPDIE94nf29XUPDpuWL
+ lpjhZ3ucCNWCdTO0nLr7c6dmJNN7c34YLjchSPHoOqOjpsOhXfMva6dCVQvvVUPf4ffoRza3l
+ 15TxQnZTx2UfdCmnvVnqsTF2lrnmxwMAGzrR9n4Yl+Rq3jCg/dv1xiFW9Z6n9YK0hSM5TCDiR
+ b1KMeoLZsTqZt97tOqNlfvddcMMqx421N/hQadlKh9rE8/49WgiV/14NgMZsy0jqSjDGdeKyF
+ KBBqYl0TbYmZPHg5Ibny3sSTejDw+xizqAxXaVCDQGQ0Ofocy4LCzZh1fUFiE0TQgoDdIjTp+
+ UnGYoSz5nEHA40G3I0fwwJoQLYRbdjyXQFVZdQnULIuCFuq7jMPa+1YJkGmsm996KSEkfPubf
+ b7FeN/ZV3hSRM/ow04QzRgxlU0HqKyfk16zfOOCtIiyR8uOq1OvV0//DPm3us290MGwb0JGmX
+ OpWsxDYCmMw25VkcYsvhKhnvusDxceIBgH7GT8j+DhyahnOmU0sq/j4+kihI5QivFQg3WnmaK
+ DaiyTSavg8LI9Zfu0QmxW6M1obwfM+SUdAHcOIrgPiw/invPJcPHcEusy2AiwwzMoYFcEtLP1
+ jHvQfoeI/rQyDu3A3F1vWOlIQxD8I10VdjtQQLAWZt99E=
 
-On Wed, 31 Jul 2024 at 01:44, Anjelique Melendez
-<quic_amelende@quicinc.com> wrote:
->
-> >>
-> >> +/* Configure TEMP_DAC registers based on DT thermal_zone trips */
-> >> +static int qpnp_tm_gen2_rev2_update_trip_temps(struct qpnp_tm_chip *chip)
-> >> +{
-> >> +    struct thermal_trip trip = {0};
-> >> +    int ret, ntrips, i;
-> >> +
-> >> +    ntrips = thermal_zone_get_num_trips(chip->tz_dev);
-> >> +    /* Keep hardware defaults if no DT trips are defined. */
-> >> +    if (ntrips <= 0)
-> >> +            return 0;
-> >> +
-> >> +    for (i = 0; i < ntrips; i++) {
-> >> +            ret = thermal_zone_get_trip(chip->tz_dev, i, &trip);
-> >> +            if (ret < 0)
-> >> +                    return ret;
-> >> +
-> >> +            ret = qpnp_tm_gen2_rev2_set_temp_thresh(chip, i, trip.temperature);
-> >> +            if (ret < 0)
-> >> +                    return ret;
-> >> +    }
-> >> +
-> >> +    /* Verify that trips are strictly increasing. */
-> >
-> > There is no such requirement in the DT bindings. Please don't invent
-> > artificial restrictions, especially if they are undocumented.
-> >
->
-> This is not an entirely new restirction. Currently the temp alarm driver
-> has hardcoded temperature thresholds options which are "strictly increasing"
-> (https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/thermal/qcom/qcom-spmi-temp-alarm.c?h=v6.11-rc1#n44).
-> The threshold values are initially configured based on the stage 2 critical trip
-> temperature.
-> For newer PMICs, we have individual temperature registers for stage 1, 2, and 3,
-> so we instead configure each threshold temperature as defined in DT. In general
-> since stage 1 = warning, stage 2 = system should shut down, stage 3 = emergency shutdown,
-> we would expect for temperature thresholds to increase for each stage
-> (https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/drivers/thermal?h=v5.4.281&id=f1599f9e4cd6f1dd0cad202853fb830854f4e944).
->
-> I agree that we are missing some documentation but since the trips are defined in the
-> thermal_zone node what is the best way to mention this requirement? Will adding a
-> few sentences to qcom,spmi-temp-alarm.yaml description be enough? Do we need
-> to make changes to thermal_zone.yaml so that dt_binding_check catches this requirement?
+Hi,
 
-In my opinion the driver needs to be fixed to compile the state after
-looking at all trip points, but Daniel / Amit / Thara can have a more
-qualified opinion.
+could be the same issue as for me, see [1] for details.
 
->
-> >> +    for (i = 1; i < STAGE_COUNT; i++) {
-> >> +            if (chip->temp_dac_map[i] <= chip->temp_dac_map[i - 1]) {
-> >> +                    dev_err(chip->dev, "Threshold %d=%ld <= threshold %d=%ld\n",
-> >> +                            i, chip->temp_dac_map[i], i - 1,
-> >> +                            chip->temp_dac_map[i - 1]);
-> >> +                    return -EINVAL;
-> >> +            }
-> >> +    }
-> >> +
-> >> +    return 0;
-> Thanks,
-> Anjelique
+[1]:
+https://lore.kernel.org/stable/de6f52bb-c670-4e03-9ce1-b4ee9b981686@web.de=
+/
 
+Does applying 6259151c04d4e0085e00d2dcb471ebdd1778e72e from mainline
+(adapt hunk #2 to cleanly apply) help in your case, too, or do you maybe
+detected a different issue?
 
-
--- 
-With best wishes
-Dmitry
+Cheers,
+Frank
 
