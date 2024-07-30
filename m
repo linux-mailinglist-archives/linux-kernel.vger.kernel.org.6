@@ -1,45 +1,101 @@
-Return-Path: <linux-kernel+bounces-267673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF2194142A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:17:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2936894142C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:18:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54DE32863DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:17:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C27EA1F2565F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1531AAE39;
-	Tue, 30 Jul 2024 14:15:27 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72AA1A2571;
+	Tue, 30 Jul 2024 14:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o/LTdYw+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gHiLL7RA";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o/LTdYw+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gHiLL7RA"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028C31AAE32
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEBE1974FA;
+	Tue, 30 Jul 2024 14:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722348927; cv=none; b=YU2R6whwa8a7pMT0AzHAqYb2kuA2wTpp2iN/ervRf0kKnUOE3q00KOioKnwejUowDR3oYwOEFpD/4smMO4+25dYO7eBz4gUQW6N4pgRs+hXsjCbc0YE5Qid7Zl6U7vAnPOfe/CfgnVtniACRCJ8y1NDxBgoH7aTJcAo4fZaUrZM=
+	t=1722349021; cv=none; b=TTdZqnEd1OIhoVZ4ufHo4BfWt2syICHzARn4yGiigv0qagkheYugsJe7xaX9t4NZOdsztJGO3xXM1Qlrrh1lZyMYh9I/qVkCn2bVOsi4SdNTfnUAMyO8qJ0De/3ADzkxDuTncgt6kZuHleaSJ2tU/P06mgXisLYalhweMOD350c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722348927; c=relaxed/simple;
-	bh=x/qwv8P+XpwLHi5ILoq4CyLpPvPRoct675sdkGxWgeo=;
+	s=arc-20240116; t=1722349021; c=relaxed/simple;
+	bh=7m3MiQsQ9koTNx3v01eza7T9WaT/o1AEwfofP0vf5I0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FYySOR/CL89QI6y27ysOgQWFyDjTGKdsmm3GgSqmtkLdpGUKH0udw7JKg0HAD28TjCxO1XNlJKw1rc8bn647EfhpkprZxRnLnFnC487nz9XMpAGfDjW/WCY/2DhSTsOXqU/CHhNr93G1uax7xfLggqRsHrKoanJGB4Y5JF/Uivo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D10A0C4AF0A;
-	Tue, 30 Jul 2024 14:15:22 +0000 (UTC)
-Date: Tue, 30 Jul 2024 15:15:20 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
-	Chen Jun <chenjun102@huawei.com>,
-	Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	kernel@openvz.org
-Subject: Re: [PATCH 1/2] kmemleak: enable tracking for percpu pointers
-Message-ID: <Zqj1eByCCStxAKNJ@arm.com>
-References: <20240725041223.872472-1-ptikhomirov@virtuozzo.com>
- <20240725041223.872472-2-ptikhomirov@virtuozzo.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lEEidYjvoTHzat4V47N6dvtJeouGS8ZklXKckZYrX1KKcHwlLAPA4uIquBdaXRx8pwtkNNGfY8IIfyJlcSzGA3cLL2bo1Pz3jRZQaiz9Dc0GOUpvtvmW3D0RnTDqozmSpYirhPUa4v/3nNgnF92szKZkpKcUYr8nFjUGCF9zZhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=o/LTdYw+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gHiLL7RA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=o/LTdYw+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gHiLL7RA; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 767C71F806;
+	Tue, 30 Jul 2024 14:16:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722349017;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fsHYgDeR+YwfXlKpC0Hd6eV+yFDzQlRWhJk68UD4pU4=;
+	b=o/LTdYw+XSMqqkWaq01jJzG/hhqltXZjo6YbpZNtO89F8+319O3SCs0q1CsxHkIUCA8E37
+	VOicldbUk6LrZwewjz3H4GN2HWbk8ULYsd2XjugCr3NQ4Ql3toE89+hB5RSoGsJlSc6vNX
+	Io/aUMCGH2KFrilqQ4uQ/KgH0NnIwV0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722349017;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fsHYgDeR+YwfXlKpC0Hd6eV+yFDzQlRWhJk68UD4pU4=;
+	b=gHiLL7RA+Db3AE5Fk9EC9ZQ/ud5sRmQv8uEIV1jrE2zEfDoCX9WXjSNannaGO4k0rGOhuS
+	8OGzkDcXPiQEmEBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722349017;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fsHYgDeR+YwfXlKpC0Hd6eV+yFDzQlRWhJk68UD4pU4=;
+	b=o/LTdYw+XSMqqkWaq01jJzG/hhqltXZjo6YbpZNtO89F8+319O3SCs0q1CsxHkIUCA8E37
+	VOicldbUk6LrZwewjz3H4GN2HWbk8ULYsd2XjugCr3NQ4Ql3toE89+hB5RSoGsJlSc6vNX
+	Io/aUMCGH2KFrilqQ4uQ/KgH0NnIwV0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722349017;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fsHYgDeR+YwfXlKpC0Hd6eV+yFDzQlRWhJk68UD4pU4=;
+	b=gHiLL7RA+Db3AE5Fk9EC9ZQ/ud5sRmQv8uEIV1jrE2zEfDoCX9WXjSNannaGO4k0rGOhuS
+	8OGzkDcXPiQEmEBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5561F13297;
+	Tue, 30 Jul 2024 14:16:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Sc8FFNn1qGZ7aQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 30 Jul 2024 14:16:57 +0000
+Date: Tue, 30 Jul 2024 16:16:56 +0200
+From: David Sterba <dsterba@suse.cz>
+To: syzbot <syzbot+8e86db7d430e87415248@syzkaller.appspotmail.com>
+Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] INFO: trying to register non-static key in
+ btrfs_stop_all_workers
+Message-ID: <20240730141656.GD17473@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <000000000000de6b81061a5938d6@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,59 +104,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240725041223.872472-2-ptikhomirov@virtuozzo.com>
+In-Reply-To: <000000000000de6b81061a5938d6@google.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=998c63c06e77f5e7];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	TAGGED_RCPT(0.00)[8e86db7d430e87415248];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -1.30
 
-Hi Pavel,
+On Fri, Jun 07, 2024 at 09:19:28PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    f06ce441457d Merge tag 'loongarch-fixes-6.10-1' of git://g..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=176b7026980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=998c63c06e77f5e7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8e86db7d430e87415248
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: i386
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
 
-On Thu, Jul 25, 2024 at 12:12:15PM +0800, Pavel Tikhomirov wrote:
-> @@ -1308,12 +1319,23 @@ static bool update_checksum(struct kmemleak_object *object)
->  {
->  	u32 old_csum = object->checksum;
->  
-> -	if (WARN_ON_ONCE(object->flags & (OBJECT_PHYS | OBJECT_PERCPU)))
-> +	if (WARN_ON_ONCE(object->flags & OBJECT_PHYS))
->  		return false;
->  
->  	kasan_disable_current();
->  	kcsan_disable_current();
-> -	object->checksum = crc32(0, kasan_reset_tag((void *)object->pointer), object->size);
-> +	if (object->flags & OBJECT_PERCPU) {
-> +		unsigned int cpu;
-> +
-> +		object->checksum = 0;
-> +		for_each_possible_cpu(cpu) {
-> +			void *ptr = per_cpu_ptr((void __percpu *)object->pointer, cpu);
-> +
-> +			object->checksum ^= crc32(0, kasan_reset_tag((void *)ptr), object->size);
-> +		}
+Most likely this was a side effect of bug fixed by commit f3a5367c679d
+("btrfs: protect folio::private when attaching extent buffer folios").
+There's only one syzbot report and the timeframe corresponds with
+increased number of bogus errors caused by use-after-free of a page.
 
-Slight worry this may take too long for large-ish objects with a large
-number of CPUs. But we can revisit if anyone complains.
+The fix is best guess.
 
-> +	} else {
-> +		object->checksum = crc32(0, kasan_reset_tag((void *)object->pointer), object->size);
-> +	}
->  	kasan_enable_current();
->  	kcsan_enable_current();
->  
-> @@ -1365,6 +1387,64 @@ static int scan_should_stop(void)
->  	return 0;
->  }
->  
-> +static void scan_pointer(struct kmemleak_object *scanned,
-> +			 unsigned long pointer, unsigned int objflags)
-
-Nitpick: I'd have called this lookup_pointer or something like that.
-When I first saw it, I tried to figure out why it doesn't have a size
-argument but it became clear that it's not actually scanning/reading the
-location at 'pointer' but simply looking the value up in various trees.
-Up to you if you want to change the name to something else. The patch
-looks good.
-
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-
-Thanks.
-
--- 
-Catalin
+#syz fix: btrfs: protect folio::private when attaching extent buffer folios
 
