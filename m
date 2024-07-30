@@ -1,242 +1,94 @@
-Return-Path: <linux-kernel+bounces-267165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E372D940DDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:37:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9A5C940DCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D234B285C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:35:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FC632852B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0C51990BE;
-	Tue, 30 Jul 2024 09:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P01FVI3s"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4113F194A64;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AF6194C9D;
+	Tue, 30 Jul 2024 09:33:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCB0194AF2;
 	Tue, 30 Jul 2024 09:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722332036; cv=fail; b=b/RLfN8JnSiJ6eYbBHZfBj6pVkTITUaqnZ81V6JPNQRxxLNvFOxe4MVLvS+XJADdqtPzTpfdYXv+S9M+RLHTzH4YmwsH509UHRj1Eee93wxuVX0hozfyRE+9rzRhhPkjCIOnEv7NLyaa3HfrUAOPCaoAfRAaAMOt3ON3UFFkSE4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722332036; c=relaxed/simple;
-	bh=+eO2uO7JYWpLUmnyjkv2DATEMt7h7zpMFhXZdm44Zyc=;
-	h=Message-ID:Date:Subject:From:To:CC:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=RejO+m62dLUnVRGFhrpwy6QJLTONqPPaIYav//YNYsF0kIjsE5dC99elwhJgtZb94HEMX4khP/ZGAX3BLvzQiZDea9TZEptqpx1af/9pAPsEiyHebRdMDRlzFAuhQ2PMMyxsbe7oM3DqgsbFGjjapEWIJ7BHkQvPdNw2LDBVafM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P01FVI3s; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722332032; x=1753868032;
-  h=message-id:date:subject:from:to:cc:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=+eO2uO7JYWpLUmnyjkv2DATEMt7h7zpMFhXZdm44Zyc=;
-  b=P01FVI3spC6DaFKe9RwFo1O2dYHeI4B/yzfIb+PXoAyeKvrNLqWX8RBT
-   d5TepUKSjGwp0Fav6Ou+dYGXkzFjlIAuolZT1jwzWKlKCtBsWdFXUmQzJ
-   5Sru9oAUlcuVjgNsHJNfmtE5jo2cPzcUufnTUFZMwoOkDbeV3SoTvKesL
-   DbM0pLxf3KYwnFky9bB0Hvj6Ho6cgd5tMOvndQgaRcbT3/JZldAKt+aqw
-   1YxnvOVlU+7381/fS13UKKgUNbrJviXl1d3dusS/LE+Pv3xWTgvHrKQXO
-   oX/EOEqzzebcXMWKrJAPSGytlr8hXkkooRMoUN+ky13mpNv7I+CfHX6vS
-   A==;
-X-CSE-ConnectionGUID: cXuxAGTPTJy1q/hiUYyX0w==
-X-CSE-MsgGUID: B+KRiZ8ASHyFzSWjqyv3KQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="24000703"
-X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
-   d="scan'208";a="24000703"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 02:33:51 -0700
-X-CSE-ConnectionGUID: ygSwjAfYSS2dmZtxRb+5pA==
-X-CSE-MsgGUID: zGhqOwvJSiCXT387CJALaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
-   d="scan'208";a="59357661"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Jul 2024 02:33:52 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 30 Jul 2024 02:33:50 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 30 Jul 2024 02:33:50 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 30 Jul 2024 02:33:50 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.101)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 30 Jul 2024 02:33:49 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=s9P1RLh5LkZW2kzRr5UrTPvpc1SGueiCKL2MNS46MVjDRA4pmK794L3AHUxlymymygJl1Obq2T+x5vavN39QqiC0ajfpkJPeFr0oY5YLdgS5oFdWt/pC5GgA/AGk1EVQemgX/+HbC8EBhQY8g6vFE+0amI4kLGegyEs9GPBMTBLyww67zp93Emqw0yzt3gQ/HXFXU3pi601H1XYb4kSxTLdD3B9ZsTOnsE/kgF+HMeRUhy+CQKVinpFn2SiJCjEImQZBQSRevG49CjRVPmPHhgut7uoQLMVB1zwngMRUiNKCPd5wwKbJmyeeJMxxsjjF9ANcpBzugQRj78ZvK5RvBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YeKZJI/ERg8ArzkKClNoVzxAcIcSlxvsTfIBMcqR2mY=;
- b=zQkaEq+MCH3Ppw1g4hjz1kbb15AItG+9V66uvkJocVLPhytGl9R+prdd/H4YkIwPneMknTdrK5N+6UIcl58mD6NA1zniH4D9fRUrgO/9wgMgEIAzqa/4i0YS8HwDrU8/ZoO5WyHgWgOemn5dQUk5tWL4K429Xm69yAlQEqCEqG+Q8MkJN7874P8KB+cqasPzvR1kLc22yGjzGrcBhBPeZhLiF7C8rXFRvQoreKOz7yzWLM5kYgUw028vsgtY5sbX/0BHnvyFEtCKVI0p9JzGSVIwvAMCEBmhtnZtCrJKOWcWCaxRAN7DQkz37dwTibAzwG+X4/E2Pj8YPObfylVjTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL1PR11MB5399.namprd11.prod.outlook.com (2603:10b6:208:318::12)
- by IA1PR11MB6417.namprd11.prod.outlook.com (2603:10b6:208:3ab::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Tue, 30 Jul
- 2024 09:33:43 +0000
-Received: from BL1PR11MB5399.namprd11.prod.outlook.com
- ([fe80::b8f1:4502:e77d:e2dc]) by BL1PR11MB5399.namprd11.prod.outlook.com
- ([fe80::b8f1:4502:e77d:e2dc%7]) with mapi id 15.20.7828.016; Tue, 30 Jul 2024
- 09:33:43 +0000
-Message-ID: <f1ea076c-e576-417c-9ecc-abb4aa7ebff7@intel.com>
-Date: Tue, 30 Jul 2024 11:33:34 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH iwl-next v2 3/6] ice: add Tx hang
- devlink health reporter
-From: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: <intel-wired-lan@lists.osuosl.org>, <apw@canonical.com>,
-	<joe@perches.com>, <dwaipayanray1@gmail.com>, <lukas.bulwahn@gmail.com>,
-	<akpm@linux-foundation.org>, <willemb@google.com>, <edumazet@google.com>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, Przemek Kitszel
-	<przemyslaw.kitszel@intel.com>, Igor Bagnucki <igor.bagnucki@intel.com>,
-	Wojciech Drewek <wojciech.drewek@intel.com>
-References: <20240712093251.18683-1-mateusz.polchlopek@intel.com>
- <20240712093251.18683-4-mateusz.polchlopek@intel.com>
- <20240714072333.2fff045c@kernel.org>
- <f1eb7226-0af7-4475-a57d-e3293dbc1071@intel.com>
-Content-Language: pl
-Organization: Intel
-In-Reply-To: <f1eb7226-0af7-4475-a57d-e3293dbc1071@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ZR0P278CA0177.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:45::11) To BL1PR11MB5399.namprd11.prod.outlook.com
- (2603:10b6:208:318::12)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722332034; cv=none; b=m0vS72TutjGFCVXR7iw8KXF5gp4HBkdE2QC7d9aEbBZVP8hcDpvbfzrur7MGaVGd2HYeuXTOpIgHbTWqvZFLU+Sjhtu1T9N5ZYmLlnx7aKWYSpPLWdj2Na3ntbNe0+o+uko38PDEixOniDZFpa6EQceJPocZXIpXOBwfWR5SnQo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722332034; c=relaxed/simple;
+	bh=QNY808UvNbqPyMNJKu9Vk8rv1bD1a1jgery45zCLV+o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e/ruTYl+uSb23H/buvcNveS47egWXU+kNYw0kQcoW/c1LQTtksTqRSP8o08J4lv1n8AV501O7mI44ZqyL+A++XXc9P84Ckl0NLHiojhvAAkY2KU7FaD7jpKjHQSULlj+BYkOP4+OFcQvdc4rqgNcPJjrp/f7zEjoqf/dLNzzOD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC5BF1007;
+	Tue, 30 Jul 2024 02:34:16 -0700 (PDT)
+Received: from thinkcentre-m93p.cambridge.arm.com (thinkcentre-m93p.cambridge.arm.com [10.1.197.43])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 265763F5A1;
+	Tue, 30 Jul 2024 02:33:50 -0700 (PDT)
+From: Luke Parkin <luke.parkin@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org
+Cc: sudeep.holla@arm.com,
+	cristian.marussi@arm.com,
+	Luke Parkin <luke.parkin@arm.com>
+Subject: [PATCH v4 0/5]  Add Per-transport SCMI debug statistics
+Date: Tue, 30 Jul 2024 10:33:37 +0100
+Message-Id: <20240730093342.3558162-1-luke.parkin@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR11MB5399:EE_|IA1PR11MB6417:EE_
-X-MS-Office365-Filtering-Correlation-Id: c0f6c546-b563-4e73-2c10-08dcb07ab3bd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?L2pnak9aTUxYNUVDc29WVlRVY1l6RjhDTU50a2VGMHdtQ0RQekpDcENIWFBa?=
- =?utf-8?B?bkJLVmZUVTYzM29tU1FZdExrbzhWeEx5UFRVNXNiUlpDdE5IRmNKRWlNb2Ez?=
- =?utf-8?B?a0hxNll5MEVSR0tNMktLZExZRXpaMlhEOWFlZWhjQldCNVVjaDRzakJreEVK?=
- =?utf-8?B?YUZKcVhIMkhvRW5vM1pDR3hNR1E2QWdqOWNzb2gwcnhvWFpuTllxejM3andS?=
- =?utf-8?B?RDVjS1V3aUw4Zy9IeW5CZ010amFDZGh4ekVpV28xdmUyVm12cTcyOWwvdDJp?=
- =?utf-8?B?WnUrQUJkZkRjcTJJOUtYM2QvaFdjNEZ1ZE5SaE9IV0tYRWxJaGNKcGRSMHph?=
- =?utf-8?B?THRaZUsxOFZ4Q2pJMkdBZDFqcTNVVTJ1bGh4V0hkWmpRaVVTb0orWTFtRFQ1?=
- =?utf-8?B?Q0ZzTXZuNzZyQUlZTlYvY3dycmZ1ZGd4Mi9Va2hQUkRjYlR1U1J2dmNjZWo0?=
- =?utf-8?B?SEpBZFFOemI3Qm9hdUZzQVNUaHBrSXl1eHNYcC92b0tQQ2lxdzBzNXpCRWRY?=
- =?utf-8?B?RnNnZmtLUVVJcmN4TlJXeC95RWllSVJCNWNhQ2hwMTNGdzNIUS9TeUIram1G?=
- =?utf-8?B?d0gvYnBhMzR6TzcvcHdHVnJFUkd0VXRvelkvSHBleGZsbDR5M1JMN2w0ZG0w?=
- =?utf-8?B?RTJva2I2c21rRkdUQUpnV2kwWWFYRGpGR1NqaWh6cEprdHZucFBGUWZkSUk5?=
- =?utf-8?B?UXhkaFF2SkNtM0xJMHFMUHYvTzFhWVVXVVFRQjFrekl2U1JXeDRGR0RqY2pj?=
- =?utf-8?B?VE9pQTFLWFo1d0UydDdleGE5bTFlRWYxZEwwRWVEZkkvdHhsVEZSNFlsczFh?=
- =?utf-8?B?WHZGc0lmVmt1YnFtVlA1VWhWakRPN3lpaU5OdUlGMzhBUXV5dXh5eGpvYkRz?=
- =?utf-8?B?STRVTUJ2MTR5RHJ5b3RzMkdUZWdRTUxHRHBKR0NmWEg3djFIMkN0cFIxa2FL?=
- =?utf-8?B?TGlYbGR4WWZsY1ZnTVJYaUJVNU9RWFYrdE00VjZVcnM4Vyt2T3RQUEEyR1Ez?=
- =?utf-8?B?S2VxVFhuWG1uY1Irc09kQUlFOHFoMDlBWEhia09QYzVxQzlZOThCdTZGMTFH?=
- =?utf-8?B?UHlTbWdoS0cxOE1DNUI4ZXJTUlJ6MFJIU3h5M2NBZzVnQWcvc0g0dWFiNXgr?=
- =?utf-8?B?RmR0YzFTK05rcjhxOHhUaENFRCs0VXg4b0MrUXhYQW5BWVlXYUJicG9zWWFw?=
- =?utf-8?B?N2duV3FSRGtJaDhIT3NOdWFoZkFSbmsvcmVFTGY3MnYxZ20xbEI4RVFueUc2?=
- =?utf-8?B?Y0MzSDZ2ek12bTY2bVlneitVS3pmdEt1Rk95L1p4T3RMVE1jZVZuck90NjNR?=
- =?utf-8?B?SXV2bUsxNmg0MDFwdk9TN29iNXhVc1h3R0NVV3ZqeGRxZERZR0lObGQ5WVNl?=
- =?utf-8?B?NnNWaGd3Z2c5VjV4QWJCQnJ6dS96bEdBQXpvaFNJQ2RmWDZESytaSnNPQktv?=
- =?utf-8?B?eHdqS09JaGZZdGxlTG0xclNOcjRkM1Z6dnV2SEtaaHlDMElOMkE1YmZLcmQy?=
- =?utf-8?B?Y1QzQXlEUTh6L3gzMUxza0FJbXhmeEZpWThmWUxVdGN1T3p2bno4QUNYbVVT?=
- =?utf-8?B?cFZmaU1aWldQanhPMlowdTdYa2lPbVN6UTJ6bkluNHRaTzNveE04RS82WEV0?=
- =?utf-8?B?VmhnV1dqMVlCdkZMdlN3TFc3ZXg4MERhWEtUYnRSN1VNZmFBTkYxbVA1WGtX?=
- =?utf-8?B?UU1GQmhiVGsyS09xaHRZOXdnYW9QOEV1dDZXQ0tSQnlObWM0dllJcXNVY3Fi?=
- =?utf-8?B?N2RGUGlwdENNYlREMVRDTHBwV2ZaYU5xNWd1NVpMc2NPcGJqR0ZDbHRZbGYr?=
- =?utf-8?B?Rk5qbWVUL2pyb0ZhdHU3Zz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eVEvd3JnblhXU01Ga0Z5RTFZdjFSb3BOOHU4cG9mNlE3TllnZ0JFMGl0V2tL?=
- =?utf-8?B?R1M4YThWaEY4TzVkNXRvUzdBL1pYSjQ1MzBZMk9iVU1jK3ljcDRKRElEUlRW?=
- =?utf-8?B?bzFZWlJVSFJXWmdwVWJZMVl4K1dsdS83Q0JRWWxPY3BQQ0Q5VnVQVmFvZCs3?=
- =?utf-8?B?Z0tsWGNuNFIzK3ZGRHM5VWVTWU8rcFRuc1lRR00wZDBDWE9sZlcrY3FiLzNx?=
- =?utf-8?B?dnUwazNHQUlkWi90WjJWMjdneGZkdDRYeUZCc0JWYk54V3lPbkFxN0RXYmcv?=
- =?utf-8?B?MGlmR1cyT2IxZVo3dXJLRGxuQVFUQkdzUXI5UmwvWFpyOEZJY0ZITEN1cWxa?=
- =?utf-8?B?eUFNMWd0VG16Zlg1UGdyVG1Ra2gvNGFrS0pQSGRkdUZwZ0NHUmg3dmdncExr?=
- =?utf-8?B?NkN4NWVQRmNNdTE0ODlsSWp3cHBiT0FRYmRjYVpQcVptRHV3d0h2WE9ZaGd2?=
- =?utf-8?B?VkorcnpPZE9oS3p5UXk4RlJMc2ZCeEJPbHhtY1VMWnRNVXRCNkRINzErQVFC?=
- =?utf-8?B?ZjVRcGZ0N0hpZy9tdkppOEVFalNxUm81dWRRblo1TDhrN0NRc1JmcmlYRnVq?=
- =?utf-8?B?cE1aRFhXWnJyUG5LNGVqRzRXN3FJalpqcVFjdTZaMm5tbnZ3anJjTXlURnN4?=
- =?utf-8?B?aExCZHRTVlNvM01sRDIwVmYveFBjQ2t1RFo0SC9qcWFiQjFGRWI1R1ptZEpk?=
- =?utf-8?B?Q0x4L2xRRkdaY1NLaWFwcnZWQ1N1RWFBMEtVUCtHSWZRemdhV1paNDlQUjUx?=
- =?utf-8?B?MmRaN2hTMjBmZkxIa2xhd0xET2JHZzh1UGpGYXI2eE5NM0RYeWhVcU5hTnQ0?=
- =?utf-8?B?NXlLczJkY0hrKzBMMnV1bS80Tk1EbnZvSUp0di9xUis1RFF5eWVxQmZjY2lN?=
- =?utf-8?B?aGc0c3MwdVFXL214Zjl5Nm8yaHcrN1JsTkNTSmlVN0ZGejQ3aGhRemkrS2VT?=
- =?utf-8?B?a0xJaHVMK0JETDVBOUJsNElXODFzY0cvWFdFTDZOQmw0SWFJMTRlSFhtRG1q?=
- =?utf-8?B?NlAzUldDOXFlaGlDbTY4clFtNlFlNmREczczOWw3d2VuZEdrdUZSYVM5YTJp?=
- =?utf-8?B?N3VvVk1YaDd1dmNhbzUwNnpCQmI5cGNzVkxiekx2NzBOSjZmampoYVhTTjlv?=
- =?utf-8?B?bUFtZmhaNnNXSkJMSUZDbWF3bW9BckNBallCTnhsY0FnMlFpT05lbi94cTds?=
- =?utf-8?B?c1NXSkZjUGxQdXJYV2E4bUpvZTJXS1d1SDNRYjU1TmthOXhZQkdMNzR2ZHh4?=
- =?utf-8?B?NU1KRlhwMy9SL3pjY3BDUi9URi9ZdkljVnRyNGtPUDlxSkZUQ2VORzYzZk1I?=
- =?utf-8?B?UXVPZHJaUHNmVkUwZWNobnJ0YWFHQVgySW5PMmdFR1N5ZU8zZm1OQUc5QVht?=
- =?utf-8?B?WEI1VXc4RmM1L0xJMU5iVndSakJ2Z2w4eE45N1l6Smk5d0ZTeVgwaVNKYWdB?=
- =?utf-8?B?U3AwSkQvOXpybytxVkF0THFBVHoyS2Rsb1hoeTR3NTFpQXFML1pwY0hKVXJU?=
- =?utf-8?B?MmhZeWhnb3V4dmJ0SDN5d1VENWhacmJYc1FRbXVPUEZlajd0UDVWN3htZ1JP?=
- =?utf-8?B?N1ZWeTM4ZnVkTFM4WU1TRDJiN3poVG44UzIzVERwV3lLUmNXMktDYjhrWTNV?=
- =?utf-8?B?QTdRVG1LcGhNeERibGxxV0xHcU5xY1NnVlRKa0Q3NUN1ZmtLaEx4TlhwZjFR?=
- =?utf-8?B?anFtZ0QrNDRZdDVWVzdiK0U0Q2t6S3oyZkdyTWRiUE1yZDZ0YjlINzBaQitC?=
- =?utf-8?B?d2Zkc2lPZ0ZFYVBDVTJZM3NGNnBjNE9jdmdrbjEzcnUxQXpxSE42MVBxK01w?=
- =?utf-8?B?OTIvckRtQWIzUXV1Q0ZlVkozTENZclNUcnN2SUUybytJNEVhekREbVgvWW84?=
- =?utf-8?B?eVJKbWpVRXZrei9vUGlSK0duNkZWTFZyV01MWEhQMjdBdnR1UXhsSVJYbGl4?=
- =?utf-8?B?UVpNNU5vQnZmQ2JyWG9CaklrZ3E5TTNnM3d2REFoa3F1cmlRZ1VvRzUzS1pk?=
- =?utf-8?B?UkRvSU1YVHg3OEtubllxeXBQSmZUdXRud21zbUd2V2RIdEQyVjdRV1YxUVhK?=
- =?utf-8?B?RmVDYTRBTVlicXkwY2tFSmN6L1RqUXlLeG1BZjBQQWY4OU43K1E2WjZrZjJV?=
- =?utf-8?B?WjI5YUMrd2pXZUJEWEp0SWE4VWJvUjNZazkrN1FLVmNjVDdtRU45SzdCQ01h?=
- =?utf-8?B?aFE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0f6c546-b563-4e73-2c10-08dcb07ab3bd
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5399.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 09:33:42.9894
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kIPiNXRznMhnssXFUUFLYTyDfnfRN4H91PEtyssORSQGywAK5Y9ttFq6uQc/nnPflJGGTwm2Mt7rCv9UqQgd3AAL3rIyDSEGnGe3zzJQa/A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6417
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
+This series adds support for tracking information about the SCMI [Patch 2/3]
+A config option to enable this [Patch 2]
+Cleans up a unneeded call to handle_scmi_info [Patch 1]
+In [Patch 4] a selection of new debugfs entries to present these counters
+Then finally in [Patch 5] enabled writing on the debugfs entries to reset counts
 
+Based on v6.9, Tested on Arm Juno [1]
 
-On 7/22/2024 11:23 AM, Mateusz Polchlopek wrote:
-> 
-> 
-> On 7/14/2024 4:23 PM, Jakub Kicinski wrote:
->> On Fri, 12 Jul 2024 05:32:48 -0400 Mateusz Polchlopek wrote:
->>> +    err = devlink_health_report(reporter, msg, priv_ctx);
->>> +    if (err) {
->>> +        struct ice_pf *pf = devlink_health_reporter_priv(reporter);
->>> +
->>> +        dev_err(ice_pf_to_dev(pf),
->>> +            "failed to report %s via devlink health, err %d\n",
->>> +            msg, err);
->>
->> My knee-jerk reaction is - why not put it in devlink_health_report()?
->> Also, I'd rate limit the message.
-> 
-> Hmmm... That's good point. I will talk to the author about that but
-> seems to be good point Jakub.
-> 
+Thanks,
+Luke
 
-I took a look into the code and it seems that we do not do auto
-recovering, so also ignoring return value which always will be 0.
+[1]: https://www.arm.com/products/development-tools/development-boards/juno-arm-dev-platform
 
-I will remove this error checking in v3 version.
+V3->V4
+Rename to counters rather than statistics to reflect the scmi protocol better.
+Use basic writing rather than custom function on debugfs in patch 5.
+V2->V3
+Switch statistic counters to an array to store statistics.
+Add more statistics
+Add the ability to reset statistics, both individually and all
+V1->V2
+Add a minor fix removing an unneeded call to handle_to_scmi_info
+Use new scmi_log_stats op/no-op rather than if(IS_ENABLED)
+Drop unneeded atomic_set's
+Use a helper function for stats debugfs creation
+
+Luke Parkin (5):
+  firmware: arm_scmi: Remove superfluous handle_to_scmi_info
+  firmware: arm_scmi: Add support for tracking metrics
+  firmware: arm_scmi: Track basic SCMI metrics
+  firmware: arm_scmi: Create debugfs files for counts
+  firmware: arm_scmi: Reset counters
+
+ drivers/firmware/arm_scmi/Kconfig  | 11 ++++
+ drivers/firmware/arm_scmi/common.h | 27 ++++++++++
+ drivers/firmware/arm_scmi/driver.c | 87 +++++++++++++++++++++++++++---
+ 3 files changed, 117 insertions(+), 8 deletions(-)
+
+-- 
+2.34.1
+
 
