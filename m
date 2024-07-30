@@ -1,92 +1,110 @@
-Return-Path: <linux-kernel+bounces-267631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E8E99413A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:52:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 589B19413AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57C1E28275D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:52:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AA021C22C72
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5561A08B5;
-	Tue, 30 Jul 2024 13:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AFB1A08BE;
+	Tue, 30 Jul 2024 13:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HE7E8UMg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M6Pjtl8f"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA141A08A0;
-	Tue, 30 Jul 2024 13:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD89C19D8A6;
+	Tue, 30 Jul 2024 13:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722347533; cv=none; b=u3oboxXWqysvIvoYK4CBpU9mOIzVCkcKZtwZkffxhV95wT7OqO6qdgboM3fl+Ze676HmAzcShihahIzLLMcFwTRs+q5t7iFJJGQQHB9gs9nL07yG5lZI3jXv8f2t4aXG5/LUxL7+2BQ2TSkmeFr/QrqzCZECAuV+pwEIYzXYOvA=
+	t=1722347602; cv=none; b=GOXCW95t4cdNZtSVVp27dCXj0vauyFneEqZZEgnD7XJ2gvGM9AwSUJurheUzZEaPsSSQr6ua6h6lok3SHWGdMc/B06zeW8bcVOYafA8G3pVh8OU7QJhT9Yi4dTZBaN9Z8XcV00o2dPfLktmmeguG/0DaFpvgMN7Eb87bbn4SBxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722347533; c=relaxed/simple;
-	bh=JB1JmpQOHXQSbmP4KdJxJfStFVVP6caJ1tkYro5w+UM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iaGZADcCbgZKuc2wHPuNPCpt1q0oz8mSpQq41Pn686/ckeZrxDeSPVLEvnEr8SyNsZINYfB7licIZZH7z8SNe4vSmu5Mw4jp6bQytwfroYcWiI4VTu0+L3Z1e2sTsjmK6DugjxBA8HoZa4ZUu52rACrQv+fTHXq8RoBkflZi6/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HE7E8UMg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A12FBC32782;
-	Tue, 30 Jul 2024 13:52:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722347532;
-	bh=JB1JmpQOHXQSbmP4KdJxJfStFVVP6caJ1tkYro5w+UM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HE7E8UMg71EPqW0ZW5L68kmJ1zfnq6HJXU2asMPLep660uG69Tw3cT6hcX4nmlnvL
-	 BddxOvoCByds58G2rUeoDSKt7XOC7meRleLR/9YLQElvv1iCjquAW9dAlJDpGii1sP
-	 WeIwZPweBgNgracm+VtVHnKmN3q3a3JhsdC6ZrhPKjFbyAYpp55/Sn1xULWkqTcPk1
-	 6F0sCXltfU/n7w6H8O9XH5ePq4DsA8EepF4ZxcC9JHOttO33zbG1XHwgEw/A3knVye
-	 wZDuzc/q6hdZ5yXQhpGWDLJTjTI4W7QnuwhyXkyOnP+OYevvhWPOS5QpretGs9Tu2z
-	 lqzIPXPx1HWdQ==
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3db18a5835dso250024b6e.1;
-        Tue, 30 Jul 2024 06:52:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU9YEaZk9TS+F3tksTqfLKgo0VF+ILfDNMSWrbKtoAd4vVIT5Yiig8MM3rsv0y+w+vDGOcX9bR2+bfE314=@vger.kernel.org, AJvYcCV44opGkEz10g2fdIaVzRpfgoeXJyweQDwuw+yoB+ZRTAlTtVVWBHwLH3jj9P3n+7CSL4bXNfndVKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLjwzHShd7Wv9QY0p+xogwfe7v4N23Gqq75l6MFe4QKrXkA3Hs
-	5F4l4c/8+blqZ2tcV5oAgWkQ6nqUGE+0QCWM6K4xbi/7bHwyGza0iDwlrtgPNt9ozGnnLcmXbUL
-	HgzWHVpcXGoFVuTJ3ok5y6+ktXNo=
-X-Google-Smtp-Source: AGHT+IFUaD3/qlGfwQrOf1J1ggoANMlVkbDqTmMHN1JFNnYvLDRoFFcJWFyJC27cQnNe7zR+nGaQ3AIPBs0JiZFbzyg=
-X-Received: by 2002:a05:6808:199e:b0:3d6:9b79:1536 with SMTP id
- 5614622812f47-3db11f60f0emr10883949b6e.0.1722347532035; Tue, 30 Jul 2024
- 06:52:12 -0700 (PDT)
+	s=arc-20240116; t=1722347602; c=relaxed/simple;
+	bh=1wt9tbhzxucxujPN3EJqVWuigWyV/ezHUpMX6w9628c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SeIjws2jmikVOJQusFCks/5aB6tMpBFD9tsFuowQnyURsWZp4i/oFVIh0TL/65JfZTTZPqBSWMuSHVthRWrTZ6I8pnhO8ZDK+GxQHEUbZ3tMz/Kvhof1LNLvk+C4n3pyP72AReLFFSKEl/j/VEuIJsAUG6Ol0SHywUWdMeKl4nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=M6Pjtl8f; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=C1dDtqY6wlVhNoJaxCgvs1wD1Xs/hztxRhH9qieq1dM=; b=M6Pjtl8fusPjT4FTSmaa38EvA9
+	2Uv9BniiXp0x8wCeGvp9NE21prUuBB/jibyLwI3MxX5kqZKNfuSB7sFyILMvDLvrUUjSBaZ/m65+y
+	raAZmTvGydkhLQ67BFD/UqkkQzeGZJSClmQQd8YJRwKOYJzIsoTWIT22U2+xVbd0BEcvT6uJrLDtw
+	LEPJ99+j3+EDUK3X1rlZqxBZtWaYqxPhnPTDHCC14AZpbplXmHfFq0ZnZHjslurauQSwibsrlgBxJ
+	vSC3JlTajU9fLVYhUZQ5VJVv6b27MG/8fJM0OKTzEdVNZFsrGwGl6Zrt6qFy6GV+jdlI/uSda/Z9T
+	4FzGmV9Q==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sYnHz-0000000FLyf-3uoI;
+	Tue, 30 Jul 2024 13:53:20 +0000
+Message-ID: <2d1a2d58-d856-41c8-bc8f-c144bc7f2e81@infradead.org>
+Date: Tue, 30 Jul 2024 06:53:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723140228.865919-1-srinivas.pandruvada@linux.intel.com>
-In-Reply-To: <20240723140228.865919-1-srinivas.pandruvada@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 30 Jul 2024 15:52:00 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ifNGa6yOZkGnbvUKX=S-HLmpU8ESf6i1fjKUQqKAZUig@mail.gmail.com>
-Message-ID: <CAJZ5v0ifNGa6yOZkGnbvUKX=S-HLmpU8ESf6i1fjKUQqKAZUig@mail.gmail.com>
-Subject: Re: [PATCH 0/3] thermal: intel: int340x: Fix Lunar Lake MSI support
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
-	lukasz.luba@arm.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yijun.Shen@dell.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] bitmap: Rename module
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Yury Norov <yury.norov@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kees@kernel.org, David Gow <davidgow@google.com>,
+ John Hubbard <jhubbard@nvidia.com>, kernel@collabora.com
+References: <20240726110658.2281070-1-usama.anjum@collabora.com>
+ <20240726110658.2281070-3-usama.anjum@collabora.com>
+ <ZqUvy_h4YblYkIXU@yury-ThinkPad>
+ <85f575b4-4842-4189-9bba-9ee1085a5e80@collabora.com>
+ <c0e5978b-7c11-4657-bd07-9962cd04bf9a@infradead.org>
+ <4ed00550-dfc9-4a7b-803a-0a1f5c117d2d@collabora.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <4ed00550-dfc9-4a7b-803a-0a1f5c117d2d@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 23, 2024 at 4:02=E2=80=AFPM Srinivas Pandruvada
-<srinivas.pandruvada@linux.intel.com> wrote:
->
-> On some pre-production systems, there is a partial support for thermal
-> interrupts. This cause kernel warning and fail to register TCPU sensor.
->
-> This series address these issues.
->
-> Srinivas Pandruvada (3):
->   thermal: intel: int340x: Fix kernel warning during MSI cleanup
->   thermal: intel: int340x: Allow limited thermal MSI support
->   thermal: intel: int340x: Free MSI IRQ vectors on module exit
->
->  .../processor_thermal_device_pci.c            | 29 ++++++++++++++-----
->  1 file changed, 22 insertions(+), 7 deletions(-)
->
-> --
 
-All patches applied as 6.11-rc material, thanks!
+
+On 7/30/24 12:51 AM, Muhammad Usama Anjum wrote:
+> On 7/29/24 7:09 PM, Randy Dunlap wrote:
+>>
+>>
+>> On 7/29/24 1:07 AM, Muhammad Usama Anjum wrote:
+>>> On 7/27/24 10:35 PM, Yury Norov wrote:
+>>>> On Fri, Jul 26, 2024 at 04:06:57PM +0500, Muhammad Usama Anjum wrote:
+>>>>> Rename module to bitmap_kunit and rename the configuration option
+>>>>> compliant with kunit framework.
+>>>>
+>>>> ... , so those enabling bitmaps testing in their configs by setting
+>>>> "CONFIG_TEST_BITMAP=y" will suddenly get it broken, and will likely
+>>>> not realize it until something nasty will happen.
+>>> CONFIG_TEST_BITMAP was being enabled by the kselftest suite lib. The bitmap
+>>> test and its config option would disappear. The same test can be run by
+>>> just enabling KUNIT default config option:
+>>>
+>>> KUNIT_ALL_TESTS=y enables this bitmap config by default.
+>>>
+>>>>
+>>>> Sorry, NAK for config rename.
+>>>>  
+>>
+>> I agree with Yury. Using KUNIT takes away test coverage for people who
+>> are willing to run selftests but not use KUNIT.
+> How is a kselftest useful when it doesn't even check results of the tests
+> and report failures when they happen?
+
+That should be an easy fix then.
+
+-- 
+~Randy
 
