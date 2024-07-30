@@ -1,226 +1,218 @@
-Return-Path: <linux-kernel+bounces-266782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5890D9406C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:12:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61ECF9406C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CC0E1C227D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:12:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE19E1F22705
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F4714F9EA;
-	Tue, 30 Jul 2024 05:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8B51667F1;
+	Tue, 30 Jul 2024 05:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="OVHIQH/r"
-Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqHBDCq3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8DE2114
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 05:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA851662F8
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 05:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722316348; cv=none; b=FhBlgFJzkeI2HGMLZgGZgOs2Kmm3+6LNKG4v6P8vqUFCIa9OEOkgiXy1wWa3b49bWS3egdWe2Y8d2s9yROiuEulk6tn0Jhj+XfGE3pneg2Sf/XvutWzr/ZIS+ulnljH264u/YBNx2WQL0W5jlcwDXDu+78fzYjmDIBdJJek/G3o=
+	t=1722316417; cv=none; b=oAGYwx1s7egVGY9NTl+zKh4FYs9hcp/dM7gVYFTEOTKP/NXXL3L37bwdStisHj2P24OovabEvloNPUWrBgwYhsCqvcPmMz8E64LkiQqDyg69jWbIPcZy9Mm0TOK7BmIHrjQWMKtkjX8MH4QO72WeUIajmfi1ZAcaiLKAwvOSSpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722316348; c=relaxed/simple;
-	bh=bme4o/4I0sgLcFj7XGElo3gb53rFuL8XYo4QvTtxmvM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B6RW7rrZjz+6x3aD7Qlq91B266wqOr+HczdoyKX+no6BiVPUU0MFf39DXU5Go1q1lDerqPD/LDSND4a7STDdPLjx1fCJILpx0V5VewaG0y3s7RLuaJyO9ak6kEEri9H1CDHrvyLMte/iZ9lRj2QJ7lYtzRRc0a5V7bFmO4DaW8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=OVHIQH/r; arc=none smtp.client-ip=209.85.216.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-2cf11b91813so2572001a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 22:12:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1722316346; x=1722921146; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TT6aLVW/zdodnhT+XtKZ6i2hFkw9MF/DUQGOLynubkI=;
-        b=OVHIQH/rKzwUq7b4vEx/+heu2xuxrHIWvwD7yg400MhvHR0S7UyeRd/rt9OZMgho+f
-         Zkz/53RsAX1UbEOsS5Jo3i9SIWy0TI5tp7imHyiqkp8/VYteOPpZe8xqBOqZu93ZZQ9J
-         IZMQc6hKZ6RAvYqNeNR2aHe5FQwBqori+MhAQQpu244xQVcNJrY04ozkfzIXqwE6d0H/
-         ICRtfVBOibjAlYg9qPxpTs5nabYavatyQSG6rGqpZD8QE3OABDFpO5p6alhVF7rq1Plz
-         xK9fRSWQ0dnwCwnWeYnq9fPVrbNgJ7GdYuRWHCJXAMOXu2PmsJEDlMbC9+J8uKCdwDwi
-         ngmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722316346; x=1722921146;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TT6aLVW/zdodnhT+XtKZ6i2hFkw9MF/DUQGOLynubkI=;
-        b=aaf3FCY8uYRh6DGnALo+zAfP8sq0BOMmDGNMPISNrDEEqu8MoEBUWhjkl7RlFw8dXt
-         HgJEkeS6hCJSg4GjHJ/4MhlKeBzwuKKcyQJ3onlbSgjUHSRQz9sVx3236nX4X0RaZjAQ
-         eEvpklSEjqrkmxb5G2T8XDJUgsv33+30rtvafC8IaiFgPKbzHmfLxBOxBrlRG6e+SIX6
-         kYZdXYyOqPpUrg/+IVj6zO/BrN8xhjUtBMUa68ax/F27eyGtKNm6sC3/2lTnxHfrr9RO
-         TGCSi6KFa0KbpzPkPdMot/qVhHqyYwabHN5nxweUdOb+u1wd/2SXK6/maa6wx+0PCuLy
-         mBNQ==
-X-Gm-Message-State: AOJu0YzzAe4LhB7uBcvlDhvCXVf7Sqcj9o58RNNjHnPmb33qxKGCzDMm
-	f8j2nUNwtkuDVee6ae6tHuTjZY6YtChTyCBoj8usNRt5+7ayPzDIKufEXuLbql68J/gEM2mmnRH
-	e2V7QTucm
-X-Google-Smtp-Source: AGHT+IFMHivNH4RMDotuWrEigk/566gljKmvKgYSaYrdZAxDrTLZ78PUztPHx2BFQsrKbEtPpLVQaw==
-X-Received: by 2002:a17:90a:1787:b0:2c9:75c6:32dc with SMTP id 98e67ed59e1d1-2cf7e09a8b8mr8383256a91.1.1722316345586;
-        Mon, 29 Jul 2024 22:12:25 -0700 (PDT)
-Received: from sunil-pc.tail07344b.ts.net ([106.51.198.16])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb74e8957sm11497728a91.39.2024.07.29.22.12.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 22:12:25 -0700 (PDT)
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Andrei Warkentin <andrei.warkentin@intel.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Drew Fustini <dfustini@tenstorrent.com>,
-	Sunil V L <sunilvl@ventanamicro.com>
-Subject: [PATCH] serial: 8250_platform: Enable generic 16550A platform devices
-Date: Tue, 30 Jul 2024 10:42:18 +0530
-Message-ID: <20240730051218.767580-1-sunilvl@ventanamicro.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722316417; c=relaxed/simple;
+	bh=PQJFs7gjyhFWEMZiRmJiA0Z37OpC0Ojvb6+jE9X5Pog=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Dy63oh8B7/X9fF25anqksvRYoaY7AG38o9/JjXGSbpe9Dflw8r/+yCi6FPlUHWEFjvK0krSEYM3D7H2m27EZm420OatAF+DfZVkWXGmtobMV9f8rPmRcHvr8JHUeFKNrIqJSDhX40dt/hod9lEJkWflnFXK/tM+04Jh01aCfKPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqHBDCq3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78D1BC32782;
+	Tue, 30 Jul 2024 05:13:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722316416;
+	bh=PQJFs7gjyhFWEMZiRmJiA0Z37OpC0Ojvb6+jE9X5Pog=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tqHBDCq310djAi++Ewo9maQ/VNgqX66At3Yh8sG3vIxc0/p65dSLG1xc2mRpcG2Qm
+	 jgnVnPnbbmCBDrhw6/a8E3EeL7fjFVZv/nCbbcvQ4zvdnGW3QhyAzl6hAoczPRDBEg
+	 WjM8FshXqcJCcfV2uXbOMOY5jcRJd7VXbOmhqtx6R4o+cJvld+qcwsKpOBOUerZ3WS
+	 XfnQisOT09MkkXz/oZriuOtbjgSx9bypVx3PF1eBMTbfxKqWHjX/qrASsa8ZQx3YGd
+	 nvy+oKL0AM9chTUlBdRPKPvWVB9i40SRWRWp8p9V6PWZf0pmkbGWTmTsAb+pXAjKVN
+	 Nmoa6m/za+bBg==
+Date: Tue, 30 Jul 2024 07:13:30 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Shiju Jose <shiju.jose@huawei.com>, "Michael S. Tsirkin"
+ <mst@redhat.com>, Philippe =?UTF-8?B?TWF0aGlldS1EYXVkw6k=?=
+ <philmd@linaro.org>, Ani Sinha <anisinha@redhat.com>, Eduardo Habkost
+ <eduardo@habkost.net>, Igor Mammedov <imammedo@redhat.com>, "Marcel
+ Apfelbaum" <marcel.apfelbaum@gmail.com>, Peter Maydell
+ <peter.maydell@linaro.org>, Shannon Zhao <shannon.zhaosl@gmail.com>, "Yanan
+ Wang" <wangyanan55@huawei.com>, Zhao Liu <zhao1.liu@intel.com>,
+ <linux-kernel@vger.kernel.org>, <qemu-arm@nongnu.org>,
+ <qemu-devel@nongnu.org>
+Subject: Re: [PATCH v4 2/6] arm/virt: Wire up GPIO error source for ACPI /
+ GHES
+Message-ID: <20240730071330.4835e943@foz.lan>
+In-Reply-To: <20240729170840.00004763@Huawei.com>
+References: <cover.1722259246.git.mchehab+huawei@kernel.org>
+	<e994c3944d31775d62bbd017dec3adff50ddf269.1722259246.git.mchehab+huawei@kernel.org>
+	<20240729170840.00004763@Huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Currently, 8250_platform driver is used only for devices with fixed
-serial ports (plat_serial8250_port). Extend this driver for any generic
-16550A platform devices which can be probed using standard hardware
-discovery mechanisms like ACPI.
+Em Mon, 29 Jul 2024 17:08:40 +0100
+Jonathan Cameron <Jonathan.Cameron@Huawei.com> escreveu:
 
-This is required in particular for RISC-V which has non-PNP generic
-16550A compatible UART that needs to be enumerated as ACPI platform
-device.
+> On Mon, 29 Jul 2024 15:21:06 +0200
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> 
+> > From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > 
+> > Creates a Generic Event Device (GED) as specified at  
+> 
+> I wrote this a while back and wasn't aware of the naming
+> mess around GED in the ACPI spec.  This one is just
+> referred to as 'error device' whereas there is also
+> a Generic Event Device.
+> 
+> Linux solved this clash by going with Hardware Error Device
+> I think we should do the same here.
 
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
----
- drivers/tty/serial/8250/8250_platform.c | 77 +++++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
+I opted to do it a little bit different to stay closer to ACPI 6.5
+18.3.2.7.2. - Event Notification For Generic Error Sources.
 
-diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial/8250/8250_platform.c
-index d5c8d851348d..bdfb16bed4f2 100644
---- a/drivers/tty/serial/8250/8250_platform.c
-+++ b/drivers/tty/serial/8250/8250_platform.c
-@@ -6,7 +6,9 @@
-  *	      PNP 8250/16550 ports
-  *	      "serial8250" platform devices
-  */
-+#include <linux/acpi.h>
- #include <linux/array_size.h>
-+#include <linux/io.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
- #include <linux/once.h>
-@@ -100,6 +102,65 @@ void __init serial8250_isa_init_ports(void)
- 	DO_ONCE(__serial8250_isa_init_ports);
- }
- 
-+/*
-+ * Generic 16550A platform devices
-+ */
-+static int serial8250_platform_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct uart_8250_port uart = { 0 };
-+	struct resource *regs;
-+	unsigned char iotype;
-+	int ret, line;
-+
-+	regs = platform_get_resource(pdev, IORESOURCE_IO, 0);
-+	if (regs) {
-+		uart.port.iobase = regs->start;
-+		iotype = UPIO_PORT;
-+	} else {
-+		regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+		if (!regs) {
-+			dev_err(dev, "no registers defined\n");
-+			return -EINVAL;
-+		}
-+
-+		uart.port.mapbase = regs->start;
-+		uart.port.mapsize = resource_size(regs);
-+		uart.port.flags = UPF_IOREMAP;
-+		iotype = UPIO_MEM;
-+	}
-+
-+	/* Default clock frequency*/
-+	uart.port.uartclk = 1843200;
-+	uart.port.type = PORT_16550A;
-+	uart.port.dev = &pdev->dev;
-+	uart.port.flags |= UPF_SKIP_TEST | UPF_BOOT_AUTOCONF;
-+	ret = uart_read_and_validate_port_properties(&uart.port);
-+	/* no interrupt -> fall back to polling */
-+	if (ret == -ENXIO)
-+		ret = 0;
-+	if (ret)
-+		return ret;
-+
-+	if (uart.port.mapbase) {
-+		uart.port.membase = devm_ioremap(dev, uart.port.mapbase, uart.port.mapsize);
-+		if (!uart.port.membase)
-+			return -ENOMEM;
-+	}
-+
-+	/*
-+	 * The previous call may not set iotype correctly when reg-io-width
-+	 * property is absent and it doesn't support IO port resource.
-+	 */
-+	uart.port.iotype = iotype;
-+
-+	line = serial8250_register_8250_port(&uart);
-+	if (line < 0)
-+		return -ENODEV;
-+
-+	return 0;
-+}
-+
- /*
-  * Register a set of serial devices attached to a platform device.  The
-  * list is terminated with a zero flags entry, which means we expect
-@@ -110,6 +171,15 @@ static int serial8250_probe(struct platform_device *dev)
- 	struct plat_serial8250_port *p = dev_get_platdata(&dev->dev);
- 	struct uart_8250_port uart;
- 	int ret, i, irqflag = 0;
-+	struct fwnode_handle *fwnode = dev_fwnode(&dev->dev);
-+
-+	/*
-+	 * Probe platform UART devices defined using standard hardware
-+	 * discovery mechanism like ACPI or DT. Support only ACPI based
-+	 * serial device for now.
-+	 */
-+	if (!p && is_acpi_node(fwnode))
-+		return serial8250_platform_probe(dev);
- 
- 	memset(&uart, 0, sizeof(uart));
- 
-@@ -198,6 +268,12 @@ static int serial8250_resume(struct platform_device *dev)
- 	return 0;
- }
- 
-+static const struct acpi_device_id acpi_platform_serial_table[] = {
-+	{ "RSCV0003", 0 }, // RISC-V Generic 16550A UART
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(acpi, acpi_platform_serial_table);
-+
- static struct platform_driver serial8250_isa_driver = {
- 	.probe		= serial8250_probe,
- 	.remove_new	= serial8250_remove,
-@@ -205,6 +281,7 @@ static struct platform_driver serial8250_isa_driver = {
- 	.resume		= serial8250_resume,
- 	.driver		= {
- 		.name	= "serial8250",
-+		.acpi_match_table = ACPI_PTR(acpi_platform_serial_table),
- 	},
- };
- 
--- 
-2.43.0
+There, it is actually talking about a General Purpose Event (GPE).
+Current ACPI spec doesn't mention "GED", so maybe such term was fixed
+on some previous ACPI spec revision.
 
+Basically, it currently mentions:
+	- error device
+	- GPE / General Purpose Event
+	- Generic Hardware Error Source Structure 
+
+I guess Linux crafted the term Hardware Error device by mixing
+those.
+
+As we don't need to really preserve such names here, as this appears
+only at the patch description, I opted to rewrite the patch description
+to:
+
+    arm/virt: Wire up GPIO error source for ACPI / GHES
+    
+    Creates a hardware event device to support General Purpose
+    Event (GPE) as specified at ACPI 6.5 specification at 18.3.2.7.2:
+    https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#event-notification-for-generic-error-sources
+    using HID PNP0C33.
+    
+    The PNP0C33 device is used to report hardware errors to
+    the bios via ACPI APEI Generic Hardware Error Source (GHES).
+    
+    It is aligned with Linux Kernel patch:
+    https://lore.kernel.org/lkml/1272350481-27951-8-git-send-email-ying.huang@intel.com/
+    
+    [mchehab: use a define for the generic event pin number and do some cleanups]
+    Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+    Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+
+Clearly associating "hardware event device" with ACPI GPE. That sounds
+good enough to be stored at the git description associated with such
+change.
+
+> > ACPI 6.5 specification at 18.3.2.7.2:
+> > https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#event-notification-for-generic-error-sources
+> > with HID PNP0C33.
+> > 
+> > The PNP0C33 device is used to report hardware errors to
+> > the bios via ACPI APEI Generic Hardware Error Source (GHES).
+> > 
+> > It is aligned with Linux Kernel patch:
+> > https://lore.kernel.org/lkml/1272350481-27951-8-git-send-email-ying.huang@intel.com/
+> > 
+> > [mchehab: use a define for the generic event pin number and do some cleanups]
+> > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>  
+> 
+> > ---
+> >  hw/arm/virt-acpi-build.c | 30 ++++++++++++++++++++++++++----
+> >  hw/arm/virt.c            | 14 ++++++++++++--
+> >  include/hw/arm/virt.h    |  1 +
+> >  include/hw/boards.h      |  1 +
+> >  4 files changed, 40 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
+> > index f76fb117adff..c502ccf40909 100644
+> > --- a/hw/arm/virt-acpi-build.c
+> > +++ b/hw/arm/virt-acpi-build.c
+> > @@ -63,6 +63,7 @@
+> >  
+> >  #define ARM_SPI_BASE 32
+> >  
+> > +#define ACPI_GENERIC_EVENT_DEVICE "GEDD"  
+> 
+> Ah. My mistake. This is the confusing named GENERIC_ERROR_DEVICE
+> or HARDWARE_ERROR_DEVICE (which is what Linux called it because
+> in the ACPI Spec it is just (all lower case) error device).
+
+I opted to use a different name there, using just error device,
+together with the name of the PNP device. So:
+
+	#define PNP0C33_ERROR_DEVICE "GEDD"
+
+This is clear enough for people just looking at the driver, and
+even clearer for people familiar with session 18.3.2.7.2 of the
+ACPI spec.
+
+> 
+> >  #define ACPI_BUILD_TABLE_SIZE             0x20000  
+> 
+> >  /* DSDT */
+> >  static void
+> >  build_dsdt(GArray *table_data, BIOSLinker *linker, VirtMachineState *vms)
+> > @@ -841,10 +863,9 @@ build_dsdt(GArray *table_data, BIOSLinker *linker, VirtMachineState *vms)
+> >                        HOTPLUG_HANDLER(vms->acpi_dev),
+> >                        irqmap[VIRT_ACPI_GED] + ARM_SPI_BASE, AML_SYSTEM_MEMORY,
+> >                        memmap[VIRT_ACPI_GED].base);
+> > -    } else {
+> > -        acpi_dsdt_add_gpio(scope, &memmap[VIRT_GPIO],
+> > -                           (irqmap[VIRT_GPIO] + ARM_SPI_BASE));
+> >      }
+> > +    acpi_dsdt_add_gpio(scope, &memmap[VIRT_GPIO],
+> > +                       (irqmap[VIRT_GPIO] + ARM_SPI_BASE));  
+> 
+> Arguably excess brackets, but obviously this is just a code move
+> so fine to keep it the same.
+
+I'll drop the extra brackets.
+
+> >  
+> >      if (vms->acpi_dev) {
+> >          uint32_t event = object_property_get_uint(OBJECT(vms->acpi_dev),
+> > @@ -858,6 +879,7 @@ build_dsdt(GArray *table_data, BIOSLinker *linker, VirtMachineState *vms)
+> >      }
+> >  
+> >      acpi_dsdt_add_power_button(scope);
+
+> > +    acpi_dsdt_add_generic_event_device(scope);
+
+I'm also renaming this function/function call to run away from GED,
+calling it as:
+
+	 acpi_dsdt_add_error_device(scope);
+
+> >  #ifdef CONFIG_TPM
+> >      acpi_dsdt_add_tpm(scope, vms);
+> >  #endif  
+> 
+
+Thanks,
+Mauro
 
