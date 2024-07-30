@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-267202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEEF9940E59
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:54:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27539940E5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A67E1F22229
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:54:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D0CE1F230AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66670198833;
-	Tue, 30 Jul 2024 09:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA43197A87;
+	Tue, 30 Jul 2024 09:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cYY9TG2y"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AtlYzQPj"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7A319754D;
-	Tue, 30 Jul 2024 09:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932A1196D90;
+	Tue, 30 Jul 2024 09:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722333253; cv=none; b=bXmCTyqsh0L7e0L5kGiwvwyNXTconw8agIGiH74qzH8mxi2Ohs8e8htfjrN354I/cPlXAr1QUyrWNo/koHCkUm9brDe5w2embwieG9FQDF9f5OheFn/isUCBvDl8Sfhi/x1ydUhvcd/6KOsgJJ90CIM74XVvwzynbOTKeL5DLj0=
+	t=1722333268; cv=none; b=HkywlwEMCuUeURoP3vAmsYvitM/HwkVgz8j7S040Zzds56GjAVydVyNyfHGxZlLi/77E2O5z60fqcEsoxJPXMFTL6XSV5RrkJ5Sfmc3+rVOCUiqErltY23yrz8yOVhg8JrN0qr6tK6a7WOfbwB5hMG3BI8A5swqU9Nf8fSKC+c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722333253; c=relaxed/simple;
-	bh=hiLcZYfQb2JawZ+5iNiTislscZwwgvIpbvuhQhQ1pZo=;
+	s=arc-20240116; t=1722333268; c=relaxed/simple;
+	bh=zry/bodtwVll3pFkNc5YctAhK3qFagPkEVKM0V03aTI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Cj53JzyI1DFaAwT3A1vZN5XO/5kZjriRsUX/rP305qHLgLcU+MJUfTjrrejkCv1XxyxB2kOpjwj24Uo2ToArPkrDD8GCe75SkWwrhJMUCXYKh4ioWmOI39bF+Jkvh+KFLFzbG7GV8bSC64rB2tSOstnbM7B2qA7ICkJip20NYr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cYY9TG2y; arc=none smtp.client-ip=198.47.23.248
+	 In-Reply-To:To:CC; b=GHPSsjAB3wRxwwNZktd6XzUXjFd5ve4H+SEphJRWlaTLI78wyGHqVh93LrmauyWEo+INheVAPMuwZh1y2U8ewPWmzanwGDs7thcTgZOzut1vXcAEZR2HvWA3Un6E3rLwFFXytoodG4JkReuCWfUfpqYkyeTF1Mp9wZQMtmNJPw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AtlYzQPj; arc=none smtp.client-ip=198.47.19.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46U9s5r5006893;
-	Tue, 30 Jul 2024 04:54:05 -0500
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46U9sAnN006266;
+	Tue, 30 Jul 2024 04:54:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722333245;
-	bh=aXSyP+BT64fFkl8L/4dAJH8ibQqwdtHmmPqg4lKkChc=;
+	s=ti-com-17Q1; t=1722333250;
+	bh=y0XmRH2km8u1WBSPAhLdIwBWAGS7cOAerD0MdNPBl0U=;
 	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=cYY9TG2yu34aR81SGTP5Zoj2+Gno8qe/shKfCcg+46gbUHU4I5zdml4LKD4CknY80
-	 t56P61yRPZ72e/kyw2TCVwtcqjQIaMsB8bcOizUBpucEtbThYn9v9Si/Zw4JOT/B80
-	 WYHj/yOMM+rWUqSWu5wk9PDtYlfhcuD97cWPBW+8=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46U9s5va087484
+	b=AtlYzQPjO3XRpfuOiFtVOR/K6fYg0dDm8cC/aITT2XWgDGhUNPuEYrvzgr8o3f/p7
+	 f6zGC09XLIa90CqBJKrsPuOnFcMuWyGXqVumNbqP9ZsP1crNvrJbz9QluWZRd5PEiK
+	 tn8b5GgID+1PWiEf7p/BMMcOxuM2B1f/9tOVfCyI=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46U9sAr7087502
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 30 Jul 2024 04:54:05 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 30 Jul 2024 04:54:10 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 30
- Jul 2024 04:54:05 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ Jul 2024 04:54:09 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 30 Jul 2024 04:54:05 -0500
+ Frontend Transport; Tue, 30 Jul 2024 04:54:09 -0500
 Received: from [127.0.1.1] (uda0497581.dhcp.ti.com [10.24.68.185])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46U9rulv008969;
-	Tue, 30 Jul 2024 04:54:01 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46U9rulw008969;
+	Tue, 30 Jul 2024 04:54:05 -0500
 From: Manorit Chawdhry <m-chawdhry@ti.com>
-Date: Tue, 30 Jul 2024 15:23:51 +0530
-Subject: [PATCH v3 1/5] arm64: dts: ti: k3-j721s2*: Add bootph-* properties
+Date: Tue, 30 Jul 2024 15:23:52 +0530
+Subject: [PATCH v3 2/5] arm64: dts: ti: k3-j784s4*: Remove bootph
+ properties from parent nodes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,7 +67,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240730-b4-upstream-bootph-all-v3-1-9bc2eccb6952@ti.com>
+Message-ID: <20240730-b4-upstream-bootph-all-v3-2-9bc2eccb6952@ti.com>
 References: <20240730-b4-upstream-bootph-all-v3-0-9bc2eccb6952@ti.com>
 In-Reply-To: <20240730-b4-upstream-bootph-all-v3-0-9bc2eccb6952@ti.com>
 To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
@@ -84,192 +85,114 @@ CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         Manorit Chawdhry
 	<m-chawdhry@ti.com>
 X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722333236; l=7367;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722333236; l=3825;
  i=m-chawdhry@ti.com; s=20231127; h=from:subject:message-id;
- bh=hiLcZYfQb2JawZ+5iNiTislscZwwgvIpbvuhQhQ1pZo=;
- b=VoCtfvMITtk8T7g6cJ1Mp0ete9+QaeibzPg7oycan1HaxfRnCABTgklQoDckGGuMFaUj/JA/7
- psF+lPfQaNTAmMg+ITn3aJnQ8d29UFx0zVDqifzotfXNh906NTxpOCy
+ bh=zry/bodtwVll3pFkNc5YctAhK3qFagPkEVKM0V03aTI=;
+ b=RZOKC6WoxxcvkCnj4f3LcC2cMutzsIsn+0FQWCrFhmyvPoENGFF29+Hd/zU3evUq3vSA9Bgvi
+ m2CXay0alpaChIse1GS1/JRhbRVCs3TaP2tM/M4BXFj8icgpX4mjslC
 X-Developer-Key: i=m-chawdhry@ti.com; a=ed25519;
  pk=fsr6Tm39TvsTgfyfFQLk+nnqIz2sBA1PthfqqfiiYSs=
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Adds bootph-* properties to the leaf nodes to enable U-boot to
-utilise them.
+Removes bootph-* properties from parent nodes and aligns the bootph-* to
+other u-boot.dtsi
 
 Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts | 14 ++++++++++++++
- arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi             |  2 ++
- arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi       | 11 +++++++++++
- arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi           |  2 ++
- 4 files changed, 29 insertions(+)
+ arch/arm64/boot/dts/ti/k3-j784s4-evm.dts         | 9 +--------
+ arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi | 8 ++++----
+ 2 files changed, 5 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts b/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts
-index c5a0b7cbb14f..6ce14f9e087b 100644
---- a/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts
-@@ -138,6 +138,7 @@ J721S2_IOPAD(0x044, PIN_OUTPUT, 14) /* (Y26) MCASP0_AXR1.UART8_RTSn */
- 			J721S2_IOPAD(0x0d0, PIN_INPUT, 11) /* (AF26) SPI0_CS1.UART8_RXD */
- 			J721S2_IOPAD(0x0d4, PIN_OUTPUT, 11) /* (AH27) SPI0_CLK.UART8_TXD */
- 		>;
-+		bootph-all;
- 	};
+diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
+index ffa38f41679d..311844490027 100644
+--- a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
++++ b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
+@@ -461,7 +461,6 @@ J784S4_IOPAD(0x078, PIN_OUTPUT, 1) /* (AH37) MCAN2_RX.AUDIO_EXT_REFCLK1 */
+ };
  
- 	main_i2c3_pins_default: main-i2c3-default-pins {
-@@ -165,6 +166,7 @@ J721S2_IOPAD(0x0f4, PIN_INPUT, 0) /* (R24) MMC1_DAT2 */
- 			J721S2_IOPAD(0x0f0, PIN_INPUT, 0) /* (R22) MMC1_DAT3 */
- 			J721S2_IOPAD(0x0e8, PIN_INPUT, 8) /* (AE25) TIMER_IO0.MMC1_SDCD */
- 		>;
-+		bootph-all;
- 	};
- 
- 	vdd_sd_dv_pins_default: vdd-sd-dv-default-pins {
-@@ -177,6 +179,7 @@ main_usbss0_pins_default: main-usbss0-default-pins {
+ &wkup_pmx2 {
+-	bootph-all;
+ 	wkup_uart0_pins_default: wkup-uart0-default-pins {
+ 		bootph-all;
  		pinctrl-single,pins = <
- 			J721S2_IOPAD(0x0ec, PIN_OUTPUT, 6) /* (AG25) TIMER_IO1.USB0_DRVVBUS */
- 		>;
-+		bootph-all;
- 	};
- 
- 	main_mcan3_pins_default: main-mcan3-default-pins {
-@@ -200,6 +203,7 @@ wkup_uart0_pins_default: wkup-uart0-default-pins {
- 			J721S2_WKUP_IOPAD(0x048, PIN_INPUT, 0) /* (D28) WKUP_UART0_RXD */
- 			J721S2_WKUP_IOPAD(0x04c, PIN_OUTPUT, 0) /* (D27) WKUP_UART0_TXD */
- 		>;
-+		bootph-all;
- 	};
- 
- 	mcu_uart0_pins_default: mcu-uart0-default-pins {
-@@ -209,6 +213,7 @@ J721S2_WKUP_IOPAD(0x094, PIN_OUTPUT, 0) /* (D25) WKUP_GPIO0_15.MCU_UART0_RTSn */
- 			J721S2_WKUP_IOPAD(0x08c, PIN_INPUT, 0) /* (C24) WKUP_GPIO0_13.MCU_UART0_RXD */
- 			J721S2_WKUP_IOPAD(0x088, PIN_OUTPUT, 0) /* (C25) WKUP_GPIO0_12.MCU_UART0_TXD */
- 		>;
-+		bootph-all;
- 	};
- 
- 	mcu_cpsw_pins_default: mcu-cpsw-default-pins {
-@@ -301,6 +306,7 @@ J721S2_WKUP_IOPAD(0x020, PIN_INPUT, 0) /* (A20) MCU_OSPI1_D3 */
- 			J721S2_WKUP_IOPAD(0x010, PIN_INPUT, 0) /* (B19) MCU_OSPI1_DQS */
- 			J721S2_WKUP_IOPAD(0x00c, PIN_INPUT, 0) /* (B20) MCU_OSPI1_LBCLKO */
- 		>;
-+		bootph-all;
- 	};
+@@ -577,7 +576,6 @@ J784S4_WKUP_IOPAD(0x028, PIN_INPUT, 7)
  };
  
-@@ -316,12 +322,14 @@ &wkup_uart0 {
- 	status = "reserved";
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&wkup_uart0_pins_default>;
-+	bootph-all;
+ &wkup_pmx0 {
+-	bootph-all;
+ 	mcu_fss0_ospi0_pins_default: mcu-fss0-ospi0-default-pins {
+ 		bootph-all;
+ 		pinctrl-single,pins = <
+@@ -597,7 +595,6 @@ J784S4_WKUP_IOPAD(0x008, PIN_INPUT, 0) /* (C34) MCU_OSPI0_DQS */
  };
  
- &mcu_uart0 {
+ &wkup_pmx1 {
+-	bootph-all;
+ 	mcu_fss0_ospi0_1_pins_default: mcu-fss0-ospi0-1-default-pins {
+ 		bootph-all;
+ 		pinctrl-single,pins = <
+@@ -668,6 +665,7 @@ bucka12: buck12 {
+ 				regulator-max-microvolt = <1100000>;
+ 				regulator-boot-on;
+ 				regulator-always-on;
++				bootph-pre-ram;
+ 			};
+ 
+ 			bucka3: buck3 {
+@@ -769,18 +767,15 @@ &ufs_wrapper {
+ };
+ 
+ &fss {
+-	bootph-all;
+ 	status = "okay";
+ };
+ 
+ &ospi0 {
+-	bootph-all;
  	status = "okay";
  	pinctrl-names = "default";
- 	pinctrl-0 = <&mcu_uart0_pins_default>;
-+	bootph-all;
- };
+ 	pinctrl-0 = <&mcu_fss0_ospi0_pins_default>, <&mcu_fss0_ospi0_1_pins_default>;
  
- &main_uart8 {
-@@ -330,6 +338,7 @@ &main_uart8 {
- 	pinctrl-0 = <&main_uart8_pins_default>;
- 	/* Shared with TFA on this platform */
- 	power-domains = <&k3_pds 357 TI_SCI_PD_SHARED>;
-+	bootph-all;
- };
- 
- &main_i2c0 {
-@@ -385,6 +394,7 @@ &main_sdhci0 {
- 	non-removable;
- 	ti,driver-strength-ohm = <50>;
- 	disable-wp;
-+	bootph-all;
- };
- 
- &main_sdhci1 {
-@@ -395,6 +405,7 @@ &main_sdhci1 {
- 	disable-wp;
- 	vmmc-supply = <&vdd_mmc1>;
- 	vqmmc-supply = <&vdd_sd_dv>;
-+	bootph-all;
- };
- 
- &mcu_cpsw {
-@@ -446,11 +457,13 @@ &usbss0 {
- 	pinctrl-names = "default";
- 	ti,vbus-divider;
- 	ti,usb2-only;
-+	bootph-all;
- };
- 
- &usb0 {
- 	dr_mode = "otg";
- 	maximum-speed = "high-speed";
-+	bootph-all;
+ 	flash@0 {
+-		bootph-all;
+ 		compatible = "jedec,spi-nor";
+ 		reg = <0x0>;
+ 		spi-tx-bus-width = <8>;
+@@ -837,13 +832,11 @@ partition@3fc0000 {
  };
  
  &ospi1 {
-@@ -469,6 +482,7 @@ flash@0 {
- 		cdns,tchsh-ns = <60>;
- 		cdns,tslch-ns = <60>;
- 		cdns,read-delay = <2>;
-+		bootph-all;
- 	};
- };
+-	bootph-all;
+ 	status = "okay";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mcu_fss0_ospi1_pins_default>;
  
-diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
-index 9ed6949b40e9..0ea6817de65c 100644
---- a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
-@@ -816,6 +816,7 @@ secure_proxy_main: mailbox@32c00000 {
- 			      <0x00 0x32800000 0x00 0x100000>;
- 			interrupt-names = "rx_011";
- 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+			bootph-all;
- 		};
+ 	flash@0 {
+-		bootph-all;
+ 		compatible = "jedec,spi-nor";
+ 		reg = <0x0>;
+ 		spi-tx-bus-width = <1>;
+diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi
+index f3a6ed1c979d..3f89277e3c2c 100644
+--- a/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi
+@@ -7,7 +7,6 @@
  
- 		hwspinlock: spinlock@30e00000 {
-@@ -1225,6 +1226,7 @@ usb0: usb@6000000 {
- 			interrupt-names = "host", "peripheral", "otg";
- 			maximum-speed = "super-speed";
- 			dr_mode = "otg";
-+			bootph-all;
- 		};
+ &cbass_mcu_wakeup {
+ 	sms: system-controller@44083000 {
+-		bootph-all;
+ 		compatible = "ti,k2g-sci";
+ 		ti,host-id = <12>;
+ 
+@@ -39,7 +38,6 @@ k3_reset: reset-controller {
  	};
  
-diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
-index 8feb42c89e47..8345313f8d94 100644
---- a/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
-@@ -21,16 +21,19 @@ sms: system-controller@44083000 {
- 		k3_pds: power-controller {
- 			compatible = "ti,sci-pm-domain";
- 			#power-domain-cells = <2>;
-+			bootph-all;
- 		};
- 
- 		k3_clks: clock-controller {
- 			compatible = "ti,k2g-sci-clk";
- 			#clock-cells = <2>;
-+			bootph-all;
- 		};
- 
- 		k3_reset: reset-controller {
- 			compatible = "ti,sci-reset";
- 			#reset-cells = <2>;
-+			bootph-all;
- 		};
- 	};
- 
-@@ -43,6 +46,7 @@ wkup_conf: bus@43000000 {
- 		chipid: chipid@14 {
- 			compatible = "ti,am654-chipid";
- 			reg = <0x14 0x4>;
-+			bootph-all;
- 		};
- 	};
- 
-@@ -59,6 +63,7 @@ secure_proxy_sa3: mailbox@43600000 {
+ 	wkup_conf: bus@43000000 {
+-		bootph-all;
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+@@ -65,6 +63,7 @@ secure_proxy_sa3: mailbox@43600000 {
  		 * firmware on non-MPU processors
  		 */
  		status = "disabled";
@@ -277,39 +200,27 @@ index 8feb42c89e47..8345313f8d94 100644
  	};
  
  	mcu_ram: sram@41c00000 {
-@@ -170,6 +175,7 @@ mcu_timer0: timer@40400000 {
+@@ -175,10 +174,10 @@ mcu_timer0: timer@40400000 {
  		ti,timer-pwm;
  		/* Non-MPU Firmware usage */
  		status = "reserved";
-+		bootph-pre-ram;
- 	};
- 
- 	mcu_timer1: timer@40410000 {
-@@ -362,6 +368,7 @@ wkup_i2c0: i2c@42120000 {
- 		clock-names = "fck";
- 		power-domains = <&k3_pds 223 TI_SCI_PD_EXCLUSIVE>;
- 		status = "disabled";
 +		bootph-all;
  	};
  
- 	mcu_i2c0: i2c@40b00000 {
-@@ -474,6 +481,7 @@ mcu_ringacc: ringacc@2b800000 {
- 			ti,sci = <&sms>;
- 			ti,sci-dev-id = <272>;
- 			msi-parent = <&main_udmass_inta>;
-+			bootph-all;
- 		};
- 
- 		mcu_udmap: dma-controller@285c0000 {
-@@ -497,6 +505,7 @@ mcu_udmap: dma-controller@285c0000 {
- 			ti,sci-rm-range-rchan = <0x0a>, /* RX_CHAN */
- 						<0x0b>; /* RX_HCHAN */
- 			ti,sci-rm-range-rflow = <0x00>; /* GP RFLOW */
-+			bootph-all;
- 		};
+ 	mcu_timer1: timer@40410000 {
+-		bootph-all;
+ 		compatible = "ti,am654-timer";
+ 		reg = <0x00 0x40410000 0x00 0x400>;
+ 		interrupts = <GIC_SPI 817 IRQ_TYPE_LEVEL_HIGH>;
+@@ -458,7 +457,6 @@ mcu_spi2: spi@40320000 {
  	};
  
-@@ -513,6 +522,7 @@ secure_proxy_mcu: mailbox@2a480000 {
+ 	mcu_navss: bus@28380000 {
+-		bootph-all;
+ 		compatible = "simple-bus";
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+@@ -521,6 +519,7 @@ secure_proxy_mcu: mailbox@2a480000 {
  		 * firmware on non-MPU processors
  		 */
  		status = "disabled";
@@ -317,34 +228,14 @@ index 8feb42c89e47..8345313f8d94 100644
  	};
  
  	mcu_cpsw: ethernet@46000000 {
-@@ -667,6 +677,7 @@ wkup_vtm0: temperature-sensor@42040000 {
- 		      <0x00 0x42050000 0x0 0x350>;
- 		power-domains = <&k3_pds 180 TI_SCI_PD_SHARED>;
+@@ -632,6 +631,7 @@ wkup_vtm0: temperature-sensor@42040000 {
+ 		      <0x00 0x42050000 0x00 0x350>;
+ 		power-domains = <&k3_pds 243 TI_SCI_PD_SHARED>;
  		#thermal-sensor-cells = <1>;
 +		bootph-pre-ram;
  	};
  
- 	mcu_r5fss0: r5fss@41000000 {
-diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi
-index 82aacc01e8fe..dfcc223809e7 100644
---- a/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi
-@@ -170,6 +170,7 @@ J721S2_WKUP_IOPAD(0x028, PIN_INPUT, 0) /* (F20) MCU_OSPI0_D7 */
- 			J721S2_WKUP_IOPAD(0x008, PIN_INPUT, 0) /* (E18) MCU_OSPI0_DQS */
- 			J721S2_WKUP_IOPAD(0x004, PIN_INPUT, 0) /* (E20) MCU_OSPI0_LBCLKO */
- 		>;
-+		bootph-all;
- 	};
- };
- 
-@@ -445,6 +446,7 @@ flash@0 {
- 		cdns,tchsh-ns = <60>;
- 		cdns,tslch-ns = <60>;
- 		cdns,read-delay = <4>;
-+		bootph-all;
- 	};
- };
- 
+ 	tscadc0: tscadc@40200000 {
 
 -- 
 2.45.1
