@@ -1,105 +1,114 @@
-Return-Path: <linux-kernel+bounces-267159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04FCA940DB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:33:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D5D1940D6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A52DB1F24720
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:33:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC7051F2492C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE63194C7B;
-	Tue, 30 Jul 2024 09:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3450194C7B;
+	Tue, 30 Jul 2024 09:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="BDkdyyN1"
-Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="CbWJN3ji"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095CD188CC7;
-	Tue, 30 Jul 2024 09:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5606194AF2;
+	Tue, 30 Jul 2024 09:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722331822; cv=none; b=r1DHyGfWgTAObTTLnTStxEglEgo874eGBen2nVvSGYZjhICUqBgOA8N4ENft7+vC6p8QoHkXNSSKp96C8p3KY5j2hNK5mv2ENRO+Zc8+9C3PqWG1KN5rDq6xSi0yEUspUfBMfah6Ie9ocUR1wLMv7CsqZ+RvchV4DNi5Q6+SbEA=
+	t=1722331558; cv=none; b=A7RP2aaT/+CR8tDIbdBw96amHQEesnfAAYjQs2KAItxh4zxPIjlqCs1/ReiASVDidbnLo84Ud+A1rZY3NiJBVxzLBfqn83OSgDLjof/wBeDk6JWVvjq+JL5tO7seKVOiONb48k5Y6KzjZFQgKMxnJRbiT898sld9e3gxsDybI+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722331822; c=relaxed/simple;
-	bh=vavhuKswM/3UJ7RKw8cXf3oDRdQ9aHvYMqr5DHYL9qs=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=RVoOSCUMijASsVTFTHRImR/Q2QOUAd3enwzEaXmAy3qquypQGtwyuXl/ZmJsRKjenWOFKFmYM/w3aqw6V2jE+y6eQRhhNbpxBfkO5RC93++WZZrUv0JF0pbA4u0PB7gJTadbgKTBdAu80SPEBBaJ94PORyv7j/uL0anTFKnVyCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=BDkdyyN1; arc=none smtp.client-ip=203.205.221.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1722331517; bh=60gLN9JdTKEP1C1p1aBTRlyiT21+gnTSf3rmZ1dVFz4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=BDkdyyN1CoKwFdjDbkuPpTRfLbvI39D9poAOg9i/6JpkXFZZu01QkcNPMf95FWlkY
-	 tFhkknT5kAQfTFJDoOIRHjFDiDksgtInVQhbD5OEdFKxLQcdd6/xl0I9WmvzzrNaph
-	 Ah2eMXusay2E3OM1DGozSokk0r2kRl7YtEOLHWqE=
-Received: from localhost.localdomain ([36.111.64.84])
-	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
-	id 64E37C5C; Tue, 30 Jul 2024 17:25:14 +0800
-X-QQ-mid: xmsmtpt1722331514ti2mdsjo0
-Message-ID: <tencent_A7A264C6C6F9289CAE6046759239DCB45A0A@qq.com>
-X-QQ-XMAILINFO: MR/iVh5QLeienvsCx/U4UbqmyHgJAqVZxMmDyd7UbZm0Jje+Yv/zxqQ1QnJIzJ
-	 ZqVopIGUHbDdybBNKbul9/nw/sc3vmNfwgdoIf0EqoIQEp6hXpg3qs5SFegTswut74bOq46z1kkr
-	 ndnQ+nD/YsFRJmqpwKrQi8HVjahzD1wPDZjr6WHWHAekrjVtkV7kvNdzz7ZpCJ/OEGixLEcpV4zs
-	 jcEapJgjSAaPq8KW/+xBSBf9CvrkiHTg7/LRDbtcltFQhb6NyYp5RBp2bG54eyk1BaXE4HcNREmi
-	 HfEnlp/EZn0UYs9p7ACh3QOoNsExQS/TXLe250aYIsYNvOgQkBC4qPKpy1Csc16JJ9ovdRfgIqxh
-	 7lly1vbtgbZgHRoinmZrEL4IBsj7JVzohxqNXp8Dwk5Wge00G54H5BFIiiOqnOxaoh6hKFJdKQhh
-	 P14SjGPRVkd819d8FRHOosO7Mb+5zwlIlTMQiUgNBYDLvMuZQSDOlCFsQxsLG3lNjGByFBxVIXyU
-	 QhWnDXC2BS6JJwoEXLD9aseicAJqHBcNSq1jPzJzfdP9vx+YJP6kSQJjKHd+4lpA/GtO/0lgD1S3
-	 SRymxWEW2vLmCatg0k8FbZauP0SPbXHhqmLBx7D/A0G/6dwIUHjoquIkyXsOBvD+Y5MvBFB8l9bo
-	 2+NfgvEuPmTyHNHjj/HkPNNAKkhJerFdL2IoPJ5GkhIHVXpab6InfWzEvWQoLfSrICk3alMRnzx/
-	 HK0ngfTon/aaT6qWIY7ugzHBA3ea8pCz9e+V4B9AtqEpiyfQ7thPR6mSC1oJE8+EPRT5Ml2bTAyA
-	 km51CM9aEojt/yzJJ5fSSnCHyXeOHl4mTaRHwNEKEb1tO4Le4vyZcRy3uRtUhJAQEGb9PtJZK2z2
-	 FGKF66sq63zLECPLcysYur7ZZ3l2448RtxUJjp5gIYVCc3KkgSuxNxYlhby1iSndWw+TyEytvUL7
-	 T8DOvEHBScHZ8tzrlLWOTGymeh+sMKGTG0DFWA/3g72CI+y1ve/I6BzeKiojsZ+cEgPY2AB5Qyyi
-	 qAJAYJ0A==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: wujing <realwujing@qq.com>
-To: gregkh@linuxfoundation.org
-Cc: dongml2@chinatelecom.cn,
-	linux-kernel@vger.kernel.org,
-	menglong8.dong@gmail.com,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	realwujing@qq.com,
-	stable@vger.kernel.org,
-	yuanql9@chinatelecom.cn
-Subject: Re: Re: [PATCH] sched/fair: Correct CPU selection from isolated domain
-Date: Tue, 30 Jul 2024 17:25:13 +0800
-X-OQ-MSGID: <20240730092513.37979-1-realwujing@qq.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <2024073032-ferret-obtrusive-3ce4@gregkh>
-References: <2024073032-ferret-obtrusive-3ce4@gregkh>
+	s=arc-20240116; t=1722331558; c=relaxed/simple;
+	bh=B8pPZpptIq748GFBsju+USRBJIgQXhm6PsH1p3yF93A=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Qwa1vq2BV5B2RMb60HACV48ScqQ/q9buvL745YF/A/1PbS1acircsZBrkn6GEatwav7qZB3IMrVoM4uMI1K1vfq8gdLQ7bO0zm3wmhRiCdJWKjzGw+QmvdL3FYnTe5vwEgiiqHiTe0LV+C9pWyULs8GrhH24SJcyvxuGhx0m0Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=CbWJN3ji; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1722331528; x=1722936328; i=markus.elfring@web.de;
+	bh=UuXPUKpAxDUJSU7l9ijEWWWr13YM4cXuW3gjBPRNm0A=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=CbWJN3jib0JHsUqML0cfbUsCpoVIXwrEAp4um1p1ZXrQnbPsLAdzmjtLCjzHoGyA
+	 RX4lCwa8DEKaSIDXORdG9MVXZKZJ7Pfd8rxaECmwt43AFpQ63umvVIt0yGgohBVYu
+	 PYmD1PIAjlQwaSNHXCTPYQYQFZKObRKggSzYG1y09BjVkXydAl2PqNHUUDUnKuHzS
+	 LjinVc9VJqK909fcj/tjFcBgBB2ZCCHfjVdzO7n918mHdOuUd0no2WgOsN862Y7r3
+	 pGTY5S/Wg3Z1Ekwr+igGsHwVkEtOagg2IohZh+b9Rz4yjE1LM3YStZkEm2zOwLGQS
+	 /ZwJpKonFm/8KlDDCQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MLzmv-1sqfV30ZZx-00W9SH; Tue, 30
+ Jul 2024 11:25:28 +0200
+Message-ID: <7ed0f4dc-9865-4139-bd88-7ca270b9a466@web.de>
+Date: Tue, 30 Jul 2024 11:25:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Herve Codina <herve.codina@bootlin.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+ Mark Brown <broonie@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
+ Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20240729142107.104574-15-herve.codina@bootlin.com>
+Subject: Re: [PATCH 14/36] soc: fsl: cpm1: tsa: Add support for QUICC Engine
+ (QE) implementation
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240729142107.104574-15-herve.codina@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Enr+kaZULtHao8xj1MEf/uKFDf7xcXnvnwHaPuDxNtdiZHuvaY1
+ faTKq0TSqBUp5PnbVfJHtSKkWkSvb14oZqqMrmafdm9no2GWN+cFWhjHN15JJxYtMz9Y+u+
+ rlbcI5vrBr9iXxgxveDoHTs1RKZ9xgqvf3m/bg2joG0pnQwCi/b1i14gAI/SZySsyF82FFS
+ 2x8gGxTr1kypTc+y1/2nQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:m0k7Pq+00cY=;zaWDnDXkBAX0V6Qm/QR6xTJQWOt
+ lAzDsi9PqBK3FR60RDK/jWhujt8nktX2uQqP+P1rZpIjM6bcrcbu7XF4jxeK7o5Dt223usX35
+ BBqN7NnPy3zRkbJ9sSQHLljufz3JvkdfSn112I6X0ooGDqUSYtQl9PTh6KkkFhWiUOETGeFgW
+ XIZ5qSKnxOU76/JX5GRyBBVCvQGWTRPzbjJ66wkoKI4p8mGV26r2lJ3Q/8JLKvO0KUIg+EM12
+ uUeYj+q40/yNl2shqnpXHYqjZttEdqgsi7MFjoP0YJMcrqCVAgGLZtPdtQOeXMj8ak/5ejWRd
+ ylynbfeCMHWELfdbyuewGClmsxHONIG0Esg1PAX4WOtCuX5bh42F0wREKEXMe5E287j822sHu
+ 5i5XVkYFSbw9BGJkwDEb9GJaklRvCTM5JbRjCdiiH2QwW62Q0Ak9jalIolsECfVWMMQVqC01z
+ Vcpolul3yrBMxSt7jqfO0jFdU+UBgZCIZ4L0NU5qfDtFvgJYGFasD4zivPogv1ONbg+qjTXPf
+ 7UtYgTmnkEm86b7xm0BjmK72gKSCdUYlZxM3ThVuKcsYLn6mn7s5T1jyTEcXsVDZK5lCS7oM0
+ Sbx20VAB2q99Vx5shGWmbnNcbOIhaaefhqvszRRfSCy9FMxLTy6cZ1mkMFM4L+QlA7ghXjRdX
+ +aGhCK0qr99HW+SvCxyFearKhmz5L16uGS53BatAUNTk4M05+aUJgjwvZHzKHQFRmAcuc0dLz
+ E52BPCsWSgYAbpm4Dvr+4xqEgos82xxwSC/EsjogHDCNv26J98AWK8HRD8YwoHvSnpAC8v54f
+ N2mHin7mhcn4fXhNJ1jmq+Bg==
 
-> What "current patch"?
->
-> confused,
->
-> greg k-h
+=E2=80=A6
+> +++ b/drivers/soc/fsl/qe/tsa.c
+=E2=80=A6
+> +static int tsa_qe_serial_connect(struct tsa_serial *tsa_serial, bool co=
+nnect)
+> +{
+=E2=80=A6
+> +	spin_lock_irqsave(&tsa->lock, flags);
+> +	ret =3D ucc_set_qe_mux_tsa(ucc_num, connect);
+> +	spin_unlock_irqrestore(&tsa->lock, flags);
+=E2=80=A6
 
-```bash
-git remote -v
-stable  git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git (fetch)
-stable  git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git (push)
-```
+Under which circumstances would you become interested to apply a statement
+like =E2=80=9Cguard(spinlock_irqsave)(&tsa->lock);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.11-rc1/source/include/linux/spinlock.h=
+#L572
 
-```bash
-git branch
-*master
-```
-
-In the git repository information provided above, 8aeaffef8c6e is one of the
-output items from the command `git log -S 'cpumask_test_cpu(cpu, \
-sched_domain_span(sd))' --oneline kernel/sched/fair.c`.
-
+Regards,
+Markus
 
