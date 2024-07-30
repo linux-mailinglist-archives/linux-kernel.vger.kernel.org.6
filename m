@@ -1,100 +1,104 @@
-Return-Path: <linux-kernel+bounces-267418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04FC1941136
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:53:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F4394112A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8608282C35
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:53:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE55CB22047
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AB419DFBF;
-	Tue, 30 Jul 2024 11:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCAA319B5AC;
+	Tue, 30 Jul 2024 11:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ugf7IYCj"
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nAHOglBF"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA81166316;
-	Tue, 30 Jul 2024 11:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D43166316;
+	Tue, 30 Jul 2024 11:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722340381; cv=none; b=G2NQ53NDX4dt8ggdcaffQ/AOwD9Q7QpOLpf5S7SDvr6HpbAVO8N/KB14Loxg1TsYcuoQXwmvVDXD1Pcz6sGOssPR9U3/Fk4er0SZWgziZtF1AaVsJ6wlYfHzGeYxNXtCVmL11tWuRZrJWZZpoQNWjdIT2dtzxJvUvAKqhdT9j78=
+	t=1722340261; cv=none; b=ZkF3sunLbABKaVrYp14c85J0GycbjY2mUSPhSFXme0hAewZue7fD/ie9a/w+mBngLiXkVzPit95Ei0ErLIq3R6Yhk/QsIgI+IdKhh9m71aDSvWPC6Tkw8jer2XMLaAjgtvWvEImCQ1c08qzv6t4++UVnVtlQ4ZpgCQyjxOBcxYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722340381; c=relaxed/simple;
-	bh=3U2t4PjSm3nGE8tUHltVJ/FufrtRhfcNuKwP2zsJLvE=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=hmdCz+rOJcujNqNUJ3zSdO2fqvH7fSCR2rx81FsS2jHt3S6Ydrlyd7ozoP0TgLKF2MwAgq1GHX7DNnvHh0c4nr5aZ9fZpfx0qhwucqAsz3eVt29y7kEN1WEzuuuR7ovDXz2L98AHYGYz+zmh9Bv5TuFXGLNrrMbQu7FYZrad92w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ugf7IYCj; arc=none smtp.client-ip=203.205.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1722340374; bh=rfuhs/Z+9bw5iQ2Bo/tcqR1/U5bKvoVkGTLb5omlojc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ugf7IYCjSzDJh/zWUzxMmY5bqU1VFwUqNyY7c6MmXLQUindOXi3E8lzqMY6q2epqC
-	 gK73xVYHQNfriLyvFuKJ9Fya2+JP5Zvv+SUZUCAoQIlFerBTV27pdwfmGokxjYV1LO
-	 OncFn+YpgGEYd+HNkgIPZdvcg0rzxiATJdhBe6uY=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id BB1A7E97; Tue, 30 Jul 2024 19:46:49 +0800
-X-QQ-mid: xmsmtpt1722340009t3xxspdre
-Message-ID: <tencent_48A8AECCEEC30C8EE7C8C6F692C2064D4906@qq.com>
-X-QQ-XMAILINFO: OOPJ7pYMv25ttYYXMSLL7LDhJwHo7h14cxc7k5mpeuZwgYP8Mgv1XHhcsz0T9b
-	 7TwKBMYlbE/WcyWEdhBLspwEWyduLVLQ9sL1c7Y8ktRrqr9ckpBOBZ9YhP/ctFYI9iVT0nI6s/uq
-	 0GE6DMKC+DECxAxzO4G3bp02TFcLFaeHQ5Qw9mmheAZyWH42X4gtztPQjPuu6JlP3OZ3WKqh37mn
-	 tN7gey74LGv+D+j7bnCI1DREyy+zsJPLoBXCVT9sCdJd2CIVjHIYFfcSG2ea7XrHZlCgGUYEJkPK
-	 Rta2CchhEQqgrBYl0htASiWroGERVje13kIS4xdhNCsNt7+QmmR23+p1pxacHQs+fosNYAkQuEvu
-	 8Zi37Euz6c+fADGzWMyBYHBF9ffeCr+UGJKkTrIxgq3nRfX11W5yZMnPxs/sWJK9ZrLS/dEk8MxB
-	 RWjjtrrucIwa1Q0MtSZImZnePJElsJdKQZe2wyiqfgVQ/MQvrAy+cUm7da+w1s94bbE6Z2ncpCsb
-	 4Y2CLfvG2leTzmbmYmW5Db9M6XZsX6002O16yjNZhVcCt4jvQ20vazRqerVo8KhEl4rD/JMBDkFX
-	 zogRkkzWGy4C1HVh0m/OrYTLwXyL0Vr1XMxW3/4dvFJsDJ3v394dvGQeAfoukTe8LK69bRuKZS3W
-	 UL/GCnFEF5X3skDiUO5HSu3jOHsmviKsp6boWxddLNbIjBg850ay1xlHWSosusVTKFiMRMtV0yu9
-	 vpVmhKQLP/2r4hbcq2h1BThb86vXp5waYKlHT05eq9XiZC9RzRm6f+C/xvm7KHJrOiUHs/8chpOY
-	 aP+rLt6AsiKtFMDSzMc8dd89vy95ahoKFs1ml+OvYfHPn/gUVvVE07cJzk/wI+JdVSK6EhZEHx4h
-	 yFDvxHN7Iwc3MdYWz+QGCemrDvqAr3MVnKTRTP6IIFv8DDg3EaLws5Lpmyudw1t4ufqlOpIqtaUW
-	 n7SfZN0ZQ=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: kvalo@kernel.org
-Cc: eadavis@qq.com,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
-	srini.raju@purelifi.com,
-	syzbot+51a42f7c2e399392ea82@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] wifi: plfxlc: remove assert for mac->lock
-Date: Tue, 30 Jul 2024 19:46:50 +0800
-X-OQ-MSGID: <20240730114649.498184-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <877cd39nhg.fsf@kernel.org>
-References: <877cd39nhg.fsf@kernel.org>
+	s=arc-20240116; t=1722340261; c=relaxed/simple;
+	bh=eE2oW6livb9nXMNEPrn34gplnKzITeuZUZeclXaFmdc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BlEdj0KGGSRAE6o8MXbhFcAgt0eJGkTrw4dTbtQWaNwm6aR0VO0zumDbGOefW1gU+VN87R2jS1fhay73JSjfW/g7/V0WR4gzGqk0eyZi5d5MaT6MBrADyUUK/PsABHp90cucpJQshlXK30DBaSuM7FSTYGMBEwHUff9FvKH+TaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nAHOglBF; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7515437ff16so3400762a12.2;
+        Tue, 30 Jul 2024 04:50:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722340259; x=1722945059; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kDWvXRl7W+y++kTMY5mGMMgDtm0Z1tL8PpSxD7HMetg=;
+        b=nAHOglBF+WHU2PX+C7/U30wMPLD4eOvX3GRv/Bs2VzVBAnKh5pcrR2dmnLNy/LKsVd
+         DjaX0ASyTtvFEHhXmVzF4UtlqFmAE2HvLIGQ2mG0GkTYWFumqv2DLB2tRsHweZgmDB9c
+         xjtbXCtO9bt/agYDsdlzICx+SR1jVSOh/YylaWL3l+w8+1K717r4Peth4l/OM9juCZ0n
+         8Nxv0oG+mepx7A3889c6LOPseqr8hpWyt1QFHHKYarIn975h7R2FVls/HVjATLDKpzaK
+         sYqKIf6zDcHYSzSfQVsMm3zvDf0+aqEr6gn7aE5vRybGceiT945y3Peta0IzYbS+ccZZ
+         vIWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722340259; x=1722945059;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kDWvXRl7W+y++kTMY5mGMMgDtm0Z1tL8PpSxD7HMetg=;
+        b=KxVzJ4SYk4OTwgEypJHX3yrQFBahIO0AS5SV/Rh0qVSyVVuhtQFEHRnpfgfkpAzav5
+         TSlpjws83YmzLmAy79SWRRnpQVk8TDx/CGNCPf6KtLuOD/XyQeSz++fEY+n7bpiBgeCX
+         3zRlin7zUHJXFbwiGWD+AA1cGttDSyktiG4LYxT+qPEzsXoM93XL2veSlQxab+v0+oZQ
+         0oz9C1QyrGt0FAnz+QasxTN5w9v4Tzlwx9MGP5g6B2KL/96IJQ3ONwiIYckOTSKNddk2
+         r1wUZbuMjXPQev3Cub7T1cyIrrXzUZMCzDeFTsu7B7bgdEBLMHn4y4XqGfL6oDMNxoJT
+         i/Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUuCohd2MFj+CEwyBxOVZGk+o0QctlrADngHkL9WwU3zYfsV+MEOT98upwm4NdirQ7pPXA/A/bNMFMsttYC5BLcmx58yNZeUr0f4cLMtOElln976/tKI5l0oXveQOkxI11YZxaUc5B+uk3jP0qdhW1Kn+yQyWEfImQArgbpNPvsqW5APKS2OetwtM=
+X-Gm-Message-State: AOJu0Yy3o7U4aPkAZLThxysRr20ncRvbdqR4cGM5MkfXfv+q14GBGVYt
+	5Ryb24sfTBBlYEujj5buGpc9hKlNuL1ka6iaVXjpxB6LsfELxpKqcygYwAHVUhV7F79iaJWoVWc
+	DuzBzM9KPuda18ZMAXX19sKAEZdA=
+X-Google-Smtp-Source: AGHT+IHyBAvrz5piafL+fjC21VKH7j72SmnKC582QDIYm5TpHtK7qfMI7hI+BOACpwHlqxBRr6tXBjtQy+O1Ch0yPMY=
+X-Received: by 2002:a17:90b:388b:b0:2ca:ffa0:6cee with SMTP id
+ 98e67ed59e1d1-2cf7e60bf70mr12725280a91.31.1722340258994; Tue, 30 Jul 2024
+ 04:50:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240730-kcfi-v1-0-bbb948752a30@google.com> <20240730-kcfi-v1-2-bbb948752a30@google.com>
+In-Reply-To: <20240730-kcfi-v1-2-bbb948752a30@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 30 Jul 2024 13:50:45 +0200
+Message-ID: <CANiq72mshrgXJLw+AZ+ovfhZXjYYfgQLdyYdW_v0FmdWdEjvbg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] rust: cfi: add support for CFI_CLANG with Rust
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Sami Tolvanen <samitolvanen@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 30 Jul 2024 13:35:07 +0300, Kalle Valo wrote:
-> > syzbot report WARNING in plfxlc_mac_release, according to the context,
-> > there is not need assert for mac->lock.
-> 
-> The commit message should explain _why_ the assert is not needed.
-> Otherwise it looks that you are randomly removing it to get rid of the
-> warning.
-mac->lock is used to protect mac data, but after calling plfxlc_mac_release(), 
-there are two functions:ieee80211_unregister_hw() and ieee80211_free_hw(),
-there is no action to operate on mac data in these two functions, so mac->lock
-is not required.
+On Tue, Jul 30, 2024 at 11:40=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+>
+> +       RS_FLAGS_CFI   :=3D -Zsanitizer=3Dkcfi -Zsanitizer-cfi-normalize-=
+integers
 
-On the other hand, there is no holding action for mac->lock before calling plfxlc_mac_release.
+Before I forget: this should probably be `RUSTC_...` for consistency
+with the rest (and, in this case, these are flags, so it makes sense
+they target the particular compiler).
 
---
-Edward
-
+Cheers,
+Miguel
 
