@@ -1,160 +1,130 @@
-Return-Path: <linux-kernel+bounces-267467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21179411DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:27:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC129411DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FE4C1C231CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:27:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22EBFB284D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A08E1922E2;
-	Tue, 30 Jul 2024 12:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B823119FA77;
+	Tue, 30 Jul 2024 12:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gDtPAdA0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmuBha4/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AAC1991DB;
-	Tue, 30 Jul 2024 12:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0910419E81D
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 12:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722342446; cv=none; b=XO0G5u6+J+4hY2tELI8RJ7FcccvPYiZd2qdGYCSt9wl5DS0u3hMft8zZyeRpT7ePKF1/Gs66K1R9pWJ8reHbBjf9G5PXqIYr1cRicVv7G5pWA3msf64XeWthUh2rJcm2l//IUBgxQH40j0Y/mdv2yOhdFdmuUsb2Dm0P+aizbqM=
+	t=1722342454; cv=none; b=m3UQJ+hWY+CI+ppVRNZWgfSgjBfvheTCwow6rPypw3ikEBnE0pwvx5sEis2q78TyqPCBGAjli+ELDq5O1t+ZqTC26I/sFbVogQMtjM4MEVhe1WBlQUh0hk9BfaUbik4aVXDiGjPcTKWBtSTfQ4RaAuP67p6sFsEsXZoI3g/2+Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722342446; c=relaxed/simple;
-	bh=e+ZL6TSqkZKahnPMn90VX3rkVqcs9drz8zKkWT9DWFw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QIurGqFhZuoZor+Y2vkS2HFSasqPTQAUYNo9hNrArfY9tXcnAJohv9n+A+UnLAMP2duHC0s8sGYl/1FLdfRf8Xs4fuT+87bUZNcK5IcxBxM5RuEZ5NvtNdkGrcFZIzGkajoNcgREhhOxNaMC/Z5SApTBkoQd5RdINIILKy6b3t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gDtPAdA0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E77DC4AF0A;
-	Tue, 30 Jul 2024 12:27:21 +0000 (UTC)
+	s=arc-20240116; t=1722342454; c=relaxed/simple;
+	bh=prajFAXc15IKFQqLopgO8RX/edCg/+NlgdG7rdK6U/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ebg1+rIivuhPPAH9n4N39ZdFmCLwsFte6BYRdUnlWdvD2WxxiMfRJHC0oVHUqdXJvAzvWNue10lVxMcw75gBuRpMn936z6x2njCD+pc8NQ/Dd6s1CrH4Z+WaX+l11zQD6qBeihbowEn6DnXj76YTadSOq8QPrXm9fnFIVPzTxhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PmuBha4/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56A2DC4AF0A;
+	Tue, 30 Jul 2024 12:27:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722342445;
-	bh=e+ZL6TSqkZKahnPMn90VX3rkVqcs9drz8zKkWT9DWFw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gDtPAdA0DBtv2cPn/6Ldv1M1znhjV911ZuUyuwF8RPAvjlvnIbxHdneu+pbzF1ebH
-	 RSXoFyduWAMFePay2i5XunVbKVAkeLO7jRsVnSbk8/ilUhW6T1L6AADlrcAfMphn/i
-	 qv0IIxnWFK/qWT5rziazAP7bGCJcq8fsHdcbA/o20/ZuoIOxIUUidD8zaC9paVMTNR
-	 PxxC/SJz5dOVPgj484QF7i/Q2wsYghmXy6o911F2hxmctuI9GrugQGHIacDLdM6hTE
-	 4hytrJCVM+vJ7qk0DHSlvjRUjsoI80doqlJA29IzXn4g3eKhE3vBvXXAWc6tbBUKUw
-	 xwCJfbL2aMgTw==
-Message-ID: <a41a6143-ef2e-4d86-b102-eaf442985173@kernel.org>
-Date: Tue, 30 Jul 2024 14:27:19 +0200
+	s=k20201202; t=1722342453;
+	bh=prajFAXc15IKFQqLopgO8RX/edCg/+NlgdG7rdK6U/8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PmuBha4/V+uRHTVN+VPOqRW/TQ30dPB6xXATXhyonRat7B2RfN7P8YkKRrE15qFRi
+	 WtBcvhKW1kueI7YgCPrv6BLxE5NKD9iAj9syawPvx42rRHJaCisiKyEPxpQVNzwy8Q
+	 DGkdm0+qPLQR3GaHqDcfUt2JlAYCzE7/OyCbgRx8ts4l5bF86F7C10l/WvgfiQfemg
+	 EO3ejrHVI4CvCYfDrmIjimYePkS5bvVsfq7esD/RZD5V+MghD5OYnmhuFdJq/6Y6ih
+	 3OyC97nXxoWq8QXRHxoiOLqCs7+qF5STFLIFhdqPOQ+WFECAiA0+z161AcGqOTjTCU
+	 Em4SEGCQRSBdQ==
+Date: Tue, 30 Jul 2024 13:27:24 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Ding, Shenghao" <shenghao-ding@ti.com>
+Cc: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+	"perex@perex.cz" <perex@perex.cz>,
+	"pierre-louis.bossart@linux.intel.com" <pierre-louis.bossart@linux.intel.com>,
+	"13916275206@139.com" <13916275206@139.com>,
+	"zhourui@huaqin.com" <zhourui@huaqin.com>,
+	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+	"Salazar, Ivan" <i-salazar@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Chadha, Jasjot Singh" <j-chadha@ti.com>,
+	"liam.r.girdwood@intel.com" <liam.r.girdwood@intel.com>,
+	"Yue, Jaden" <jaden-yue@ti.com>,
+	"yung-chuan.liao@linux.intel.com" <yung-chuan.liao@linux.intel.com>,
+	"Rao, Dipa" <dipa@ti.com>,
+	"yuhsuan@google.com" <yuhsuan@google.com>,
+	"Lo, Henry" <henry.lo@ti.com>, "tiwai@suse.de" <tiwai@suse.de>,
+	"Xu, Baojun" <baojun.xu@ti.com>, "soyer@irl.hu" <soyer@irl.hu>,
+	"Baojun.Xu@fpt.com" <Baojun.Xu@fpt.com>,
+	"judyhsiao@google.com" <judyhsiao@google.com>,
+	"Navada Kanyana, Mukund" <navada@ti.com>,
+	"cujomalainey@google.com" <cujomalainey@google.com>,
+	"Kutty, Aanya" <aanya@ti.com>,
+	"Mahmud, Nayeem" <nayeem.mahmud@ti.com>,
+	"savyasanchi.shukla@netradyne.com" <savyasanchi.shukla@netradyne.com>,
+	"flaviopr@microsoft.com" <flaviopr@microsoft.com>,
+	"Ji, Jesse" <jesse-ji@ti.com>,
+	"darren.ye@mediatek.com" <darren.ye@mediatek.com>,
+	"antheas.dk@gmail.com" <antheas.dk@gmail.com>
+Subject: Re: [EXTERNAL] Re: [PATCH v1] ASoc: tas2781: Move tas2563_dvc_table
+ into a separate Header file
+Message-ID: <e8ce11fd-ff6a-4ca0-ac33-5abf20cf242d@sirena.org.uk>
+References: <20240716061123.127-1-shenghao-ding@ti.com>
+ <1dc0518a-f0b3-4617-9c79-ac903ca9ee33@sirena.org.uk>
+ <9f92b5275c3e4b7d896e90f8a654f11e@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] ARM: dts: samsung: Add cache information to the
- Exynos542x SoC
-To: Anand Moon <linux.amoon@gmail.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240730091322.5741-1-linux.amoon@gmail.com>
- <CGME20240730091412eucas1p18feced3968a5f87dc8fe05f78d5c7659@eucas1p1.samsung.com>
- <20240730091322.5741-2-linux.amoon@gmail.com>
- <09e9cf0b-27fd-46b8-8631-87d798afd19e@samsung.com>
- <CANAwSgT_TOFwP80+H8-CdXDLLu+u2XZMr2dnxcsSDe8S5yeYCw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CANAwSgT_TOFwP80+H8-CdXDLLu+u2XZMr2dnxcsSDe8S5yeYCw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="M31YrSuujxfYiekN"
+Content-Disposition: inline
+In-Reply-To: <9f92b5275c3e4b7d896e90f8a654f11e@ti.com>
+X-Cookie: Don't SANFORIZE me!!
 
-On 30/07/2024 14:06, Anand Moon wrote:
-> Hi Marek,
-> 
-> On Tue, 30 Jul 2024 at 17:14, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->>
->>
->> On 30.07.2024 11:13, Anand Moon wrote:
->>> As per Exynos 5422 user manual add missing cache information to
->>> the Exynos542x SoC.
->>>
->>> - Each Cortex-A7 core has 32 KB of instruction cache and
->>>       32 KB of L1 data cache available.
->>> - Each Cortex-A15 core has 32 KB of L1 instruction cache and
->>>       32 KB of L1 data cache available.
->>> - The little (A7) cluster has 512 KB of unified L2 cache available.
->>> - The big (A15) cluster has 2 MB of unified L2 cache available.
->>>
->>> Features:
->>> - Exynos 5422 support cache coherency interconnect (CCI) bus with
->>>    L2 cache snooping capability. This hardware automatic L2 cache
->>>    snooping removes the efforts of synchronizing the contents of the
->>>    two L2 caches in core switching event.
->>>
->>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>
->>
->> The provided values are not correct. Please refer to commit 5f41f9198f29
->> ("ARM: 8864/1: Add workaround for I-Cache line size mismatch between CPU
->> cores"), which adds workaround for different l1 icache line size between
->> big and little CPUs. This workaround gets enabled on all Exynos542x/5800
->> boards.
->>
-> Ok, I have just referred to the Exynos 5422 user manual for this patch,
-> This patch is just updating the cache size for CPU for big.litle architecture..
-> 
 
-Let me get it right. Marek's comment was that you used wrong values.
-Marek also provided rationale for this. Now your reply is that you
-update cache size? Sorry, I fail how you address Marek's comment.
+--M31YrSuujxfYiekN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Do not repeat what the patch is doing. We all can see it. Instead
-respond to the comment with some sort of arguments.
+On Tue, Jul 30, 2024 at 01:24:34AM +0000, Ding, Shenghao wrote:
 
-Best regards,
-Krzysztof
+> One more thing, these day my colleague and I want have some adjustment on=
+ the=20
+> tas2781 driver code to support both i2c and spi interface, and plan to ab=
+stract
+> the common part, especially the dsp binary parsing, as a shared lib. Woul=
+d you
+> be so kind and give us some advice on it? Thanks.
 
+That seems like a sensible and reasonable design - factoring out common
+code is a good idea, there's a number of existing drivers doing things
+ike that.  Possibly the biggest example is the Cirrus/Wolfson Arizona
+drivers and the wm_adsp DSPs they use.  Do you have specific questions
+around this?
+
+--M31YrSuujxfYiekN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmao3CsACgkQJNaLcl1U
+h9BGQgf4kAzdugFNKyAftef9KQS+4e7h1g9tO7s0fepdIaECIgySGuABwn0nfyjh
+DKoldNoNHuv/YOW7I1iwHkcgG+WGaR7i2cfecBTBmHOmuELB+HUx+3WypdxiVBJA
+QvtR70ebI/7G3f259pd4v1PIMxNt8gkIn7hYyouqI21ocPKd9W93lR7lzia/B42a
+p3zrqgnIgXH8w724gwYjuTdYQfqJPoHUPWNGtLoT5Vcpd6SPtq1aC2L77E5buUxa
+21LXUGX3h3X4up38Cd4jaPb2Y/+3bPzW++33PhEcTSgc456HoNHXN/z1+k9/+b8b
+4IJb5mBQWptGhDn0Pv+DucscmB8w
+=3BSB
+-----END PGP SIGNATURE-----
+
+--M31YrSuujxfYiekN--
 
