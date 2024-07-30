@@ -1,216 +1,166 @@
-Return-Path: <linux-kernel+bounces-268008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BCEC941F4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:12:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79B88941F53
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB1CCB26F55
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:12:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC054B27400
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917F618A6B7;
-	Tue, 30 Jul 2024 18:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F23C18991F;
+	Tue, 30 Jul 2024 18:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="DR6/9FRx"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gxblxc6X"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8139D189539
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 18:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8494454648;
+	Tue, 30 Jul 2024 18:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722363145; cv=none; b=sLWibRa0sgT97tTYlQuXs4dwpB1C8cjrVNMHQJpTiBQRvhdEswHCZ8wgA/lrFYRPJj+wTCbIShqyg/saoUwgJZKLSrYAP91oyZeOLnsDhOpX1htg0y9ko7DE0aP9Z0OX8FEnxxXHSdp5jfXN/Kn48oxFn5eFtLPA9rovUH7HbAQ=
+	t=1722363362; cv=none; b=aO+6gc+DcRYUcryDXxw/XkN/k8w1+CkMPTOJcjXGBkrDItYFerezpf+dAkLOpKAut+aT8d15kIf9KTmgDjYHeC0yyu88kC90PXYyNYKKXkYb/QFVTEzLmjLaiq+j2ZBICPW+GyNKMOcBCk6TaVS9L9cWUFLjO0iwDUnwIYibapA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722363145; c=relaxed/simple;
-	bh=kcvDJmx+C47meXpz+wUXe1vMZqDkU7qreGG8KGLE9iE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cbTmwZamgLX97cAYPm5hgR7GxInCweexRaEkeyAAClDu24NhC3Sx5uvLdR62NrfM8MbULWCyUwSgFDO4Hps5vY7vGKIv8hNH4cclTCoANzCWvWtDV5+NkHag33dHST6eeAyPWBt+MY+2mcF/viDJvAT3Zon6iB4YdN56fGrd/1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=DR6/9FRx; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6003a.ext.cloudfilter.net ([10.0.30.151])
-	by cmsmtp with ESMTPS
-	id Yr8AsH9NDjnP5YrKbsN9XP; Tue, 30 Jul 2024 18:12:17 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id YrKasiV1ZV2ivYrKasaUWT; Tue, 30 Jul 2024 18:12:16 +0000
-X-Authority-Analysis: v=2.4 cv=OLns3jaB c=1 sm=1 tr=0 ts=66a92d00
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=ZI_cG6RJAAAA:8 a=VwQbUJbxAAAA:8
- a=XKjV9n0moFAzRToWf84A:9 a=QEXdDO2ut3YA:10 a=CiASUvFRIoiJKylo2i9u:22
- a=AjGcO6oz07-iQ99wixmX:22 a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=C7yj6HZoiynA1VQrhCm4ZNKd8a/Pzm79loFKlcCi4d4=; b=DR6/9FRxYztGwP/fEwwHPEFTc9
-	ZbAarS55FHFLWKM698dsi/Z//C9qEfOoKd2RN5LWXU3gjk3W1Gm/d/em31XY1Lq1D9sRyDdzl1Ho5
-	chMPSoV+QPUGFIV+UxLqiE6Ifgj5r7kADQghMkcqnQYC4z+a033OkaFYVDboeA59rDpE4k0Z5aL6m
-	QTEazEPX5BbZqAcZs6347jM7eFgjSYz9YRUrv/AjVM0kLpm1bP8DuJnzIHaeSztuF4FCnh3xs1G7x
-	l4AH/3hmiHtefzwUm1Rq4FY4KMdEuPmpFH92t1zrPo0Q8RD8Vw30ceK2emMVlG18qDxiFdz+9bfv5
-	f19xz9VQ==;
-Received: from [201.172.173.139] (port=44630 helo=[192.168.15.5])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sYrKZ-000mdF-02;
-	Tue, 30 Jul 2024 13:12:15 -0500
-Message-ID: <d4362976-ac3d-4236-a213-666a42560dfe@embeddedor.com>
-Date: Tue, 30 Jul 2024 12:12:09 -0600
+	s=arc-20240116; t=1722363362; c=relaxed/simple;
+	bh=7Dt+EiDOIG9FTgUWs5mQwUm3EnLxmry8VZ4p/ANjCEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JbcKDt84S788BcOTYlBJx0sAvZ3NiRSnZDctcfnzkO/slw7akeAMZ9Rn4EbE6ytJxoRQQSAJaLj82/ACsJE0p70hiVe2hmAoHVJCyKnLm+Mbab01Opy2Nbrqqu0iFuydXEVHtLUAZGgV9TyyhclP+XHf2s0KzWTYnX8cGGj9pmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gxblxc6X; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70d1fb6c108so3468004b3a.3;
+        Tue, 30 Jul 2024 11:16:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722363361; x=1722968161; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3d05lVpk2PS8LF6saDvzv531mIV2sO6Z2VMgmPghOMA=;
+        b=Gxblxc6XyoTAgCmq9hAg5iwNRhiCg9d7QtxsM+8TRutBwwbGsfOMdPU4AURAOdcam3
+         Zb8i77vJpzAv0hOMvureC1yznobJued/QgrNxfuMuViPzw5HKNNkt/L85E3g+fgh27Tv
+         ILcqWSJz/Z9ciC88DooazQssHHR6sDttu0S0/JrDwifk7ts9J6EU0U4IYkq3JsRn1IFQ
+         rWmtx2Zzm8merw5Myev8CTLKboWvmvEI77cjfIp9PdAVd9fKknr0W+YkO/9QGdGs1rXB
+         j+lGSHvd/66iYqylbr3piUQIwHJ9qtDI3RWFVXirN7VgyNtPUSKD2F4/GfzMymltbL6x
+         ptag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722363361; x=1722968161;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3d05lVpk2PS8LF6saDvzv531mIV2sO6Z2VMgmPghOMA=;
+        b=V/1gH9s46gXiBy5SGJJJcVS7vSR8n1Ur3orWTO/CaZFqLTYa7N3IOijozZp29FQHIm
+         QUgFDQR3XV6yJVesWOpWxJ+V5U9+KDA45MGziu6U8L0SzKmnzTtqlchrtagF7Z15pIcx
+         xCSqcMR9xcSwhvxrsAYqnnNaZuJ7n59O00vb+S42VXUrl7g3OwIgcWgxPhAyK0FyVGYq
+         4L/sxSfpcVMysgx5yLhHjdkh9i4mWjn1Vl4w7p4Uk5Mb+Z7W5LgnYhpevc6V1XaFQSli
+         SN3xEOAjtok9zOh+knN1YE4eJw8qOGsK8y6rC2bn1F2nlvODyHAusmw3BGKpEi8ZrSSC
+         cXtA==
+X-Forwarded-Encrypted: i=1; AJvYcCXIb+8eoGzKl20W/QAHDFFhALYvy6AuZHxHPNhzIhqI7VScNGrUH3YQJslvUk38L+kyjtz8/3gNYqBdwqeY41PWR4aSfWD1IMnxrA==
+X-Gm-Message-State: AOJu0YyZ3WjeAPgHuHLlsk4mOcQQ8a9e4Qnmh/ow5GcMOhQLa9EraOxM
+	YPKeNsgGOMME59FY1TGtdwYzNC46wPsKM5nEyNqjAmW2RV77nDIl
+X-Google-Smtp-Source: AGHT+IHb2fKz1aXKzt0sKcve3mazQq1tjUkBukTatORAeLSphnAmbrsZ1UhkMTNPJ61IK+qaEXbtLA==
+X-Received: by 2002:a05:6a20:a111:b0:1c0:ee57:a9a3 with SMTP id adf61e73a8af0-1c4a13a354dmr11043975637.35.1722363360629;
+        Tue, 30 Jul 2024 11:16:00 -0700 (PDT)
+Received: from localhost ([216.228.127.129])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead87d58asm8986339b3a.177.2024.07.30.11.15.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 11:15:59 -0700 (PDT)
+Date: Tue, 30 Jul 2024 11:15:57 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
+Subject: Re: [PATCH V2 1/2] uapi: Define GENMASK_U128
+Message-ID: <Zqkt3byHNZQvCZiB@yury-ThinkPad>
+References: <20240725054808.286708-1-anshuman.khandual@arm.com>
+ <20240725054808.286708-2-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ext4: Annotate struct ext4_xattr_inode_array with
- __counted_by()
-To: Thorsten Blum <thorsten.blum@toblux.com>, tytso@mit.edu,
- adilger.kernel@dilger.ca, kees@kernel.org, gustavoars@kernel.org
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20240730172301.231867-4-thorsten.blum@toblux.com>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240730172301.231867-4-thorsten.blum@toblux.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sYrKZ-000mdF-02
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.5]) [201.172.173.139]:44630
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfJZeg6E1lNAVoZhH7ltdMPSCWFMRtBVzIj8wQsFYVB4qdfC37vaL3idofZr7hxeXD4H1+/KT9Kh4FCCwH/h4lKZhYFaKl2SVZ6J3mt25YHD6FtumXFVj
- oQMYmP9v9HTmb/7qrK1ezkNEONkUAQ96x4lUnAgJoESmRcRAs2F4gXyeblTBqHMBxDhjgzv841Un0j2zOu/Yg5JXFXY0xQsxDzOoszvtjiXBp6fjq7MNet6Y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240725054808.286708-2-anshuman.khandual@arm.com>
 
-
-
-On 30/07/24 11:23, Thorsten Blum wrote:
-> Add the __counted_by compiler attribute to the flexible array member
-> inodes to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-> CONFIG_FORTIFY_SOURCE.
+On Thu, Jul 25, 2024 at 11:18:07AM +0530, Anshuman Khandual wrote:
+> This adds GENMASK_U128() and __GENMASK_U128() macros using __BITS_PER_U128
+> and __int128 data types. These macros will be used in providing support for
+> generating 128 bit masks.
 > 
-> Remove the now obsolete comment on the count field.
-> 
-> Refactor ext4_expand_inode_array() by assigning count before copying any
-> data using memcpy(). Copy only the inodes array instead of the whole
-> struct because count has been set explicitly.
-> 
-> Use struct_size() and struct_size_t() instead of offsetof().
-> 
-> Change the data type of the local variable count to unsigned int to
-> match the struct's count data type.
-> 
-> Compile-tested only.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> Cc: Yury Norov <yury.norov@gmail.com>
+> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Cc: Arnd Bergmann <arnd@arndb.de>>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-arch@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 > ---
-> Changes in v2:
-> - Adjust ext4_expand_inode_array() as suggested by Gustavo A. R. Silva
-> - Use struct_size() and struct_size_t() instead of offsetof()
-> - Link to v1: https://lore.kernel.org/linux-kernel/20240729110454.346918-3-thorsten.blum@toblux.com/
-> ---
->   fs/ext4/xattr.c | 20 +++++++++-----------
->   fs/ext4/xattr.h |  4 ++--
->   2 files changed, 11 insertions(+), 13 deletions(-)
+>  include/linux/bits.h                   | 2 ++
+>  include/uapi/asm-generic/bitsperlong.h | 2 ++
+>  include/uapi/linux/bits.h              | 3 +++
+>  include/uapi/linux/const.h             | 1 +
+>  4 files changed, 8 insertions(+)
 > 
-> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-> index 46ce2f21fef9..b27543587103 100644
-> --- a/fs/ext4/xattr.c
-> +++ b/fs/ext4/xattr.c
-> @@ -2879,11 +2879,10 @@ ext4_expand_inode_array(struct ext4_xattr_inode_array **ea_inode_array,
->   	if (*ea_inode_array == NULL) {
->   		/*
->   		 * Start with 15 inodes, so it fits into a power-of-two size.
-> -		 * If *ea_inode_array is NULL, this is essentially offsetof()
->   		 */
->   		(*ea_inode_array) =
-> -			kmalloc(offsetof(struct ext4_xattr_inode_array,
-> -					 inodes[EIA_MASK]),
-> +			kmalloc(struct_size_t(struct ext4_xattr_inode_array,
-> +					      inodes, EIA_MASK),
+> diff --git a/include/linux/bits.h b/include/linux/bits.h
+> index 0eb24d21aac2..0a174cce09d2 100644
+> --- a/include/linux/bits.h
+> +++ b/include/linux/bits.h
+> @@ -35,5 +35,7 @@
+>  	(GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
+>  #define GENMASK_ULL(h, l) \
+>  	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_ULL(h, l))
+> +#define GENMASK_U128(h, l) \
+> +	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_U128(h, l))
+>  
+>  #endif	/* __LINUX_BITS_H */
+> diff --git a/include/uapi/asm-generic/bitsperlong.h b/include/uapi/asm-generic/bitsperlong.h
+> index fadb3f857f28..6275367b17bb 100644
+> --- a/include/uapi/asm-generic/bitsperlong.h
+> +++ b/include/uapi/asm-generic/bitsperlong.h
+> @@ -28,4 +28,6 @@
+>  #define __BITS_PER_LONG_LONG 64
+>  #endif
+>  
+> +#define __BITS_PER_U128 128
 
-As Kees previously commented, you can use struct_size() here.
+Do we need such a macro for a fixed-width type? Even if we do, I'm not
+sure that a header named bitsperlong.h is a good place to host it.
 
->   				GFP_NOFS);
->   		if (*ea_inode_array == NULL)
->   			return -ENOMEM;
-> @@ -2891,17 +2890,16 @@ ext4_expand_inode_array(struct ext4_xattr_inode_array **ea_inode_array,
->   	} else if (((*ea_inode_array)->count & EIA_MASK) == EIA_MASK) {
->   		/* expand the array once all 15 + n * 16 slots are full */
->   		struct ext4_xattr_inode_array *new_array = NULL;
-> -		int count = (*ea_inode_array)->count;
-> +		unsigned int count = (*ea_inode_array)->count;
+> +
+>  #endif /* _UAPI__ASM_GENERIC_BITS_PER_LONG */
+> diff --git a/include/uapi/linux/bits.h b/include/uapi/linux/bits.h
+> index 3c2a101986a3..4d4b7b08003c 100644
+> --- a/include/uapi/linux/bits.h
+> +++ b/include/uapi/linux/bits.h
+> @@ -12,4 +12,7 @@
+>          (((~_ULL(0)) - (_ULL(1) << (l)) + 1) & \
+>           (~_ULL(0) >> (__BITS_PER_LONG_LONG - 1 - (h))))
+>  
+> +#define __GENMASK_U128(h, l) \
+> +	((_BIT128((h) + 1)) - (_BIT128(l)))
+> +
+>  #endif /* _UAPI_LINUX_BITS_H */
+> diff --git a/include/uapi/linux/const.h b/include/uapi/linux/const.h
+> index a429381e7ca5..a0211136dfd8 100644
+> --- a/include/uapi/linux/const.h
+> +++ b/include/uapi/linux/const.h
+> @@ -27,6 +27,7 @@
+>  
+>  #define _BITUL(x)	(_UL(1) << (x))
+>  #define _BITULL(x)	(_ULL(1) << (x))
+> +#define _BIT128(x)	((unsigned __int128)(1) << (x))
 
-It seems `count` is not actually needed anymore.
+GENMASK() macros may be used in assembly code. This is not the case
+for GENMASK_128 at this time, of course, but I think we'd introduce 
+assembly glue at this point to simplify things in future. Can you
+check the include/uapi/linux/const.h and add something like _U128()
+in there?
 
-If you remove it and directly use `(*ea_inode_array)->count` in the following
-call to `kmalloc()`, you could use `struct_size()` in the call to `memcpy()`
-below, and copy the whole thing in one line. See below.
-
->   
-> -		/* if new_array is NULL, this is essentially offsetof() */
-> -		new_array = kmalloc(
-> -				offsetof(struct ext4_xattr_inode_array,
-> -					 inodes[count + EIA_INCR]),
-> -				GFP_NOFS);
-> +		new_array = kmalloc(struct_size(*ea_inode_array, inodes,
-> +						count + EIA_INCR),
-> +				    GFP_NOFS);
->   		if (new_array == NULL)
->   			return -ENOMEM;
-> -		memcpy(new_array, *ea_inode_array,
-> -		       offsetof(struct ext4_xattr_inode_array, inodes[count]));
-> +		new_array->count = count;
-> +		memcpy(new_array->inodes, (*ea_inode_array)->inodes,
-> +		       count * sizeof(struct inode *));
-
-memcpy(new_array, *ea_inode_array, struct_size(new_array, inodes, (*ea_inode_array)->count));
-
->   		kfree(*ea_inode_array);
->   		*ea_inode_array = new_array;
->   	}
-
-Also, you are missing one more like just below this one, where `(*ea_inode_array)->count`
-is currently being used to directly index `inodes`:
-
-(*ea_inode_array)->inodes[(*ea_inode_array)->count++] = inode;
-
-Thanks
---
-Gustavo
-
-> diff --git a/fs/ext4/xattr.h b/fs/ext4/xattr.h
-> index bd97c4aa8177..e14fb19dc912 100644
-> --- a/fs/ext4/xattr.h
-> +++ b/fs/ext4/xattr.h
-> @@ -130,8 +130,8 @@ struct ext4_xattr_ibody_find {
->   };
->   
->   struct ext4_xattr_inode_array {
-> -	unsigned int count;		/* # of used items in the array */
-> -	struct inode *inodes[];
-> +	unsigned int count;
-> +	struct inode *inodes[] __counted_by(count);
->   };
->   
->   extern const struct xattr_handler ext4_xattr_user_handler;
+>  
+>  #define __ALIGN_KERNEL(x, a)		__ALIGN_KERNEL_MASK(x, (__typeof__(x))(a) - 1)
+>  #define __ALIGN_KERNEL_MASK(x, mask)	(((x) + (mask)) & ~(mask))
+> -- 
+> 2.30.2
 
