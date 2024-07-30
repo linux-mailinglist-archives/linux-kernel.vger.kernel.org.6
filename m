@@ -1,113 +1,141 @@
-Return-Path: <linux-kernel+bounces-268084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C149C942029
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:56:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED2B94202B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEC6E1C2341F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:56:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC4D61F243BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E8218C931;
-	Tue, 30 Jul 2024 18:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBA518C920;
+	Tue, 30 Jul 2024 18:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TmQAVrwq"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="mYkrWsuQ"
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13801AA3C6;
-	Tue, 30 Jul 2024 18:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4069918A6CB;
+	Tue, 30 Jul 2024 18:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722365724; cv=none; b=l0tGMhyvPy+l1CASTYdjaIbt6nnd7QBnj3cos1ja/09FlWE7TiXB0erh6Er1ChgELgB3jpY15omZsKbUzI0RQmZyzjz58LyGy6qrBz3OPMV0/IqGULjjferSvfcdggNcmYyeKzryv1sJAQA3pWEmh14s9FSbNlimS2uZbX2f1Q0=
+	t=1722365747; cv=none; b=ujo/c00swakgFdA2+Ia+SwYlXE7JCYgX+oDOWPW0nxIsol6CCK7c1QDrS8BPkav8oK2ClgAMiUTeHwUzXP/SdwwRYa1nhY2dR02406iCTwCDJpM+GOXEjf3rGyb+5S6IZ3FKRpaDSMnf1Xwf+yB+MzICCqyU0REfiryjStAFZ3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722365724; c=relaxed/simple;
-	bh=2dCsYnwkPXSeLC4b0QubMn/+6f2i/bESS5WxH91G0x0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HjOl4WlzpD5FhWdR11uoIGzxijk0KWd68f9+ognKAHJjRWGFAs5Wp1DgO5+ifCTTfQtrtimPAQIQgy8Kc/UA0lqQOkOM5qFH3OLLJfxzL21ptlFT1ZqOOUOrp+X6pzwVvHpnvMPP811g0woNjp1PKs73CHd1kXjPAs1uNqzTVhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TmQAVrwq; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso3551361276.0;
-        Tue, 30 Jul 2024 11:55:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722365722; x=1722970522; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2dCsYnwkPXSeLC4b0QubMn/+6f2i/bESS5WxH91G0x0=;
-        b=TmQAVrwqq5pXFsYEKafx0cPUpMCh2Nkvew5AjSwa5F89YDg1VPhi6WApOBJxIqBotf
-         +or0A2k0XZ5oVsg6PeregZwb67/qoKuR5/O+7luhh0JTzAgUEz8xZV2c4GhEgx0H3DAp
-         89AzkoUVOmWiD3PrGtBOrOxWdLxVY/dS5WF9JKh4r2TUZBfRVDjeOyARlk7PtpI0qF+D
-         9WakrXGRTYkflllLC0W4YiD2gDnKN1TWepRmpsUWr8QWoOKh9A3fhMAniM771cvrs/24
-         pd24SwklKvIaq80O9OPIzZZgyEWV4FHfsF3hc7Y1mqtbaP0CX5APbmFhXORy4QsfDZKr
-         jSiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722365722; x=1722970522;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2dCsYnwkPXSeLC4b0QubMn/+6f2i/bESS5WxH91G0x0=;
-        b=ue6uY9yVIkeqiCSaVMagEZeHcGYkTEJS6nBGZeHJK8UzTnemKVk9jxePEXYkwLGhyl
-         cOld22p1SZeApeBUR1sOW7mq6vBCVtehRQJS0FwAJtS2yUpD7KqOs+eEQ8+h/gRUwTXW
-         emlc1iSMzlEvcoP7nnUYAsoVKPdE9TtYMGS5emTW9/aFwg8j/Q7DpnLcMHukOaoGufOn
-         FZqoAIIiu0VEMXcry1+ZhdeEcnn9h5SIZ3OFMPOxhEDctQM5az5VnT8OMsUAdEEbckAW
-         OIJpZuRZ45ufal/oaQulAsjEvmBFRi+jer4MXtTvbFFK1Cszf4no6r4pO+5LJMeO0cAs
-         RnRA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5evpyVPyH62GxOVZW5PFgr5FRqaSCdZephoJSfYtton2D9GCr1p5iCl448yKXmjtW38iE/43sCl9JqUTaIjv7BCsc6WLTzYu5s8N0
-X-Gm-Message-State: AOJu0Yy923NvEx11zdYuKom3DcPHQRTPw9gp3uCxQh8mmxZoFP4q9SDW
-	AGs5l9VIlvghP4exWJOtBlBIPbzVsR3GrjszoerJjGP1O80fja+Nz+1pyvSNHjS8g28HdgNo+74
-	PTZ0sFayS5yoSHPKqDPE03Ok0p3k=
-X-Google-Smtp-Source: AGHT+IGvA3MAl7nGobKWT1GG47gu2pKSHB96B4iZ1KpXmJ8bZ3AIHUGP8s5tylGtCTrHVZ+wkXScmdB7CN+JfY59L1w=
-X-Received: by 2002:a05:6902:1445:b0:e0b:a7c1:9dcc with SMTP id
- 3f1490d57ef6-e0ba7c1a1a3mr2041732276.20.1722365721796; Tue, 30 Jul 2024
- 11:55:21 -0700 (PDT)
+	s=arc-20240116; t=1722365747; c=relaxed/simple;
+	bh=Deu814CCLVwaucA6XBvJViX6k/ku4mshypf1ZnH3w+s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SHZ2CM0/n8wJ3jYOEask1wCo4Prw1y6dyx44YaljzxlRlz/1rNzhyeQZlv6P8sfhqL6ESH5CrQEh5aK7XCJeSkT/5LJoklW3u1DYimhDXWb173k8sBqLhlvQsyAnsKe4WRA0jOUO7mmfB+tEtyPYdztxf2fpizZb/ydXci1pkaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=mYkrWsuQ; arc=none smtp.client-ip=185.226.149.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1sYs0T-005ZTB-91; Tue, 30 Jul 2024 20:55:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
+	bh=reBcGaqh1Qs+RsA6vlYhvOzZeocEG4QDGc75R4XnN6I=; b=mYkrWsuQWmTapcM9HgDwRx1Ze6
+	azR9QetEQud03iHpktzIPivM14spdbIpJ8I8BeNXuMyuisqIUGSug/b80F93CibzrI4953Os77d/G
+	EqC72wIqbbWwe0/9zZUcLIJLcaV9Iezy6X3mn//LZtWtSMTrEAYAMy5ssrPKsXIgTP1g544WyFk0/
+	uSEcCLw0M/ED2KgJzxyQpjVyz4g7+lZKtrmfHs2ep/pMVDLs/kLnhzDc1bcw+k6T+rdyANu5V0yiY
+	2r3WLHrz3AUHbNDcE2q/33TiioKiEwHhBzCLHuQBMwVQHf5joW+LiQS+N6CMbA8iT4/JEKCuyNYT/
+	IMyuKaCQ==;
+Received: from [10.9.9.74] (helo=submission03.runbox)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1sYs0S-0005aB-0C; Tue, 30 Jul 2024 20:55:32 +0200
+Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1sYs0I-001BsR-QL; Tue, 30 Jul 2024 20:55:22 +0200
+Message-ID: <ccd40ae1-14aa-454e-9620-b34154f03e53@rbox.co>
+Date: Tue, 30 Jul 2024 20:55:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729210615.279952-1-paweldembicki@gmail.com>
- <20240729210615.279952-7-paweldembicki@gmail.com> <56335a76-7f71-4c70-9c4b-b7494009fa63@lunn.ch>
-In-Reply-To: <56335a76-7f71-4c70-9c4b-b7494009fa63@lunn.ch>
-From: =?UTF-8?Q?Pawe=C5=82_Dembicki?= <paweldembicki@gmail.com>
-Date: Tue, 30 Jul 2024 20:55:10 +0200
-Message-ID: <CAJN1KkzJrMV8uDU+Z5xdLSd56uUwLtX+wo1w-8YbNgg-w8GiPA@mail.gmail.com>
-Subject: Re: [PATCH net-next 6/9] net: dsa: vsc73xx: speed up mdio bus to max
- allowed value
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: netdev@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, 
-	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: Fix error path in kvm_vm_ioctl_create_vcpu() on
+ xa_store() failure
+To: Will Deacon <will@kernel.org>, kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Alexander Potapenko <glider@google.com>, Marc Zyngier <maz@kernel.org>
+References: <20240730155646.1687-1-will@kernel.org>
+Content-Language: pl-PL, en-GB
+From: Michal Luczaj <mhal@rbox.co>
+In-Reply-To: <20240730155646.1687-1-will@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-wt., 30 lip 2024 o 01:10 Andrew Lunn <andrew@lunn.ch> napisa=C5=82(a):
->
-> On Mon, Jul 29, 2024 at 11:06:12PM +0200, Pawel Dembicki wrote:
-> > According the datasheet, vsc73xx family max internal mdio bus speed is
-> > 20MHz. It also allow to disable preamble.
-> >
-> > This commit sets mdio clock prescaler to minimal value and crop preambl=
-e
-> > to speed up mdio operations.
->
-> Just checking...
->
-> This has no effect on the external MDIO bus, correct. It has its own
-> set of registers for the divider and to crop the preamble.
+On 7/30/24 17:56, Will Deacon wrote:
+> If the xa_store() fails in kvm_vm_ioctl_create_vcpu() then we shouldn't
+> drop the reference to the 'struct kvm' because the vCPU fd has been
+> installed and will take care of the refcounting.
+> 
+> This was found by inspection, but forcing the xa_store() to fail
+> confirms the problem:
+> 
+>  | Unable to handle kernel paging request at virtual address ffff800080ecd960
+>  | Call trace:
+>  |  _raw_spin_lock_irq+0x2c/0x70
+>  |  kvm_irqfd_release+0x24/0xa0
+>  |  kvm_vm_release+0x1c/0x38
+>  |  __fput+0x88/0x2ec
+>  |  ____fput+0x10/0x1c
+>  |  task_work_run+0xb0/0xd4
+>  |  do_exit+0x210/0x854
+>  |  do_group_exit+0x70/0x98
+>  |  get_signal+0x6b0/0x73c
+>  |  do_signal+0xa4/0x11e8
+>  |  do_notify_resume+0x60/0x12c
+>  |  el0_svc+0x64/0x68
+>  |  el0t_64_sync_handler+0x84/0xfc
+>  |  el0t_64_sync+0x190/0x194
+>  | Code: b9000909 d503201f 2a1f03e1 52800028 (88e17c08)
+> 
+> Add a new label to the error path so that we can branch directly to the
+> xa_release() if the xa_store() fails.
+> 
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Michal Luczaj <mhal@rbox.co>
+> Cc: Alexander Potapenko <glider@google.com>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Signed-off-by: Will Deacon <will@kernel.org>
+> ---
+>  virt/kvm/kvm_main.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index d0788d0a72cc..b80dd8cead8c 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -4293,7 +4293,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+>  
+>  	if (KVM_BUG_ON(xa_store(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, 0), kvm)) {
+>  		r = -EINVAL;
+> -		goto kvm_put_xa_release;
+> +		goto err_xa_release;
+>  	}
+>  
+>  	/*
+> @@ -4310,6 +4310,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+>  
+>  kvm_put_xa_release:
+>  	kvm_put_kvm_no_destroy(kvm);
+> +err_xa_release:
+>  	xa_release(&kvm->vcpu_array, vcpu->vcpu_idx);
+>  unlock_vcpu_destroy:
+>  	mutex_unlock(&kvm->lock);
 
-Yes. It's configured in a completely different subblock. Internal and
-external mdio buses have symmetrical register set. It can be
-configured separately.
+My bad for neglecting the "impossible" path. Thanks for the fix.
 
---=20
-Best regards,
-Pawel Dembicki
+I wonder if it's complete. If we really want to consider the possibility of
+this xa_store() failing, then keeping vCPU fd installed and calling
+kmem_cache_free(kvm_vcpu_cache, vcpu) on the error path looks wrong.
+
 
