@@ -1,513 +1,305 @@
-Return-Path: <linux-kernel+bounces-267972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6408A941EE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:37:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDECA941EEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E993B25A6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:37:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F351F24115
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3080F18A6B3;
-	Tue, 30 Jul 2024 17:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ojjgZ7Tk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4040A189918;
+	Tue, 30 Jul 2024 17:37:09 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050E618A6AC;
-	Tue, 30 Jul 2024 17:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C56189503;
+	Tue, 30 Jul 2024 17:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722360994; cv=none; b=GLDNyWum1tTRSDmnOzIXS108fAUVOf0+EJTuaZ5WVdZz6hNQ+lSFqP5pmqO/QCoWprf8QDu0wYYE4LBtQkyaJJvpDgdwzWJORIcr7maN4X4Wpmq0yE1NTNkVRf94SWxphGT8IBvJ19YonWKnpKm/4e1qaW38JDteBzJWxJxT7+0=
+	t=1722361028; cv=none; b=X6NW20ilHwphOVaihIIpHDF5P7trsvt4eV6TNKtZgnmeNvWv1vIsvwZzo3XC6waf8ZKJVjQt7JnIYdLAjm1XXxPq54LIPzBlEEgor7T1Tphs9MAnYzxuosdU/7aBElBabruBC+tojPaHF3cIQHx0e1wQXZ681+xn/aiqPjvtFzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722360994; c=relaxed/simple;
-	bh=4gmNvshIhA5Sq/t3xitvxYwN5dATcceEcntvV5Tbdm0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MDuYmP7zebPz9R/dxFlXwl3PMksjvJdC5L6RHsTLaSsTTp4sm5RZN7jcjrKDKaTQlW/zRFg6ynLPA+dWorwM7yGrpUh3bPKOmGQgdXnJP3WVlv+7tSXsyxAszdCXYCCZ1A5OA5g2gGd2lwxr++WK4GGNdE41/4LWlwA11pHZCHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ojjgZ7Tk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF607C4AF0C;
-	Tue, 30 Jul 2024 17:36:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722360993;
-	bh=4gmNvshIhA5Sq/t3xitvxYwN5dATcceEcntvV5Tbdm0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ojjgZ7TkPjiezoupGF7Kfk4AuVW5AZV0nJSD39WvdcqK+zNV67c/usjPygTxHaW93
-	 Hn42dqlghqgOblsw9nUoKCtiYv2CbgQGoG1Xqk+siFlkLU8UhKfIG+ow1F8gLoUpvc
-	 Jt1+svcxy7XTJyq3ajx5Grl27CMH1LTJZf77FmUGWO0r/gO1pgxy/5XOb4jslKRd0+
-	 3U83m0Cfj9uuilhcrZuALH9ij/rBHxfyfXV2l61ws+wzCE9yCKtDwFzofHZcSHD914
-	 o46t2LK7X2JMOSWvKdov37S3ZdRj4fsBlsu27WCBoJN/Cbl95GrS+jKFxgFddhUW8B
-	 SDEpK/DrSyb1A==
-From: "Alexey Gladkov (Intel)" <legion@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-coco@lists.linux.dev
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yuan Yao <yuan.yao@intel.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Yuntao Wang <ytcoode@gmail.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Baoquan He <bhe@redhat.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Joerg Roedel <jroedel@suse.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	cho@microsoft.com,
-	decui@microsoft.com,
-	John.Starks@microsoft.com
-Subject: [PATCH v1 4/4] x86/tdx: Implement movs for MMIO
-Date: Tue, 30 Jul 2024 19:35:59 +0200
-Message-ID: <c24855b0003df4397e3931f35d7ec285db5bc8bf.1722356794.git.legion@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1722356794.git.legion@kernel.org>
-References: <cover.1722356794.git.legion@kernel.org>
+	s=arc-20240116; t=1722361028; c=relaxed/simple;
+	bh=uMR8IFBYVi7FGt1EqN9nqUOCXPRCq+EEfHfhXrxYe7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jmxBKE0/h9fyGGnwpsFm+Rre+GThjb2hFVxo2x3o2eJGGgSmPuighFNu4ZafEzCUd01Y4x7ILtsN023DBdojz4e8Hsn0eWq/OBqFm71SpFPwZ+yI+6lR6JglPouecV2Aiiz+oKtzB38mD42WwEBwXS4RfdI5+trydGQ/N8HdVuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Tue, 30 Jul
+ 2024 20:36:55 +0300
+Received: from [192.168.211.130] (10.0.253.138) by Ex16-01.fintech.ru
+ (10.0.10.18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Tue, 30 Jul
+ 2024 20:36:55 +0300
+Message-ID: <158d9e56-d8af-4d0f-980c-4355639f6ff8@fintech.ru>
+Date: Tue, 30 Jul 2024 10:36:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/radeon/evergreen_cs: fix int overflow errors in cs
+ track offsets
+Content-Language: en-US
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Alex Deucher
+	<alexdeucher@gmail.com>
+CC: Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, "Jerome
+ Glisse" <jglisse@redhat.com>, Dave Airlie <airlied@redhat.com>,
+	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>,
+	<stable@vger.kernel.org>
+References: <20240725180950.15820-1-n.zhandarovich@fintech.ru>
+ <e5199bf0-0861-4b79-8f32-d14a784b116f@amd.com>
+ <CADnq5_PuzU12x=M09HaGkG7Yqg8Lk1M1nWDAut7iP09TT33D6g@mail.gmail.com>
+ <fb530f45-df88-402a-9dc0-99298b88754c@amd.com>
+ <e497f5cb-a3cb-477b-8947-f96276e401b7@fintech.ru>
+ <1914cfcb-9700-4274-8120-9746e241cb54@amd.com>
+ <cb85a5c1-526b-4024-8e8f-23c2fe0d8381@amd.com>
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+In-Reply-To: <cb85a5c1-526b-4024-8e8f-23c2fe0d8381@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-
-Adapt AMD's implementation of the MOVS instruction. Since the
-implementations are similar, it is possible to reuse the code.
-
-MOVS emulation consists of dividing it into a series of read and write
-operations, which in turn will be validated separately.
-
-Signed-off-by: Alexey Gladkov (Intel) <legion@kernel.org>
----
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
 
-I don't really understand the reasoning behind AMD's approach of returning to
-userspace after every read/write operation in vc_handle_mmio_movs(). I didn't
-change this so as not to break their implementation.
 
-But if this can be changed then the whole vc_handle_mmio_movs() could be used as
-a common helper.
+On 7/29/24 11:12, Christian König wrote:
+> Am 29.07.24 um 20:04 schrieb Christian König:
+>> Am 29.07.24 um 19:26 schrieb Nikita Zhandarovich:
+>>> Hi,
+>>>
+>>> On 7/29/24 02:23, Christian König wrote:
+>>>> Am 26.07.24 um 14:52 schrieb Alex Deucher:
+>>>>> On Fri, Jul 26, 2024 at 3:05 AM Christian König
+>>>>> <christian.koenig@amd.com> wrote:
+>>>>>> Am 25.07.24 um 20:09 schrieb Nikita Zhandarovich:
+>>>>>>> Several cs track offsets (such as 'track->db_s_read_offset')
+>>>>>>> either are initialized with or plainly take big enough values that,
+>>>>>>> once shifted 8 bits left, may be hit with integer overflow if the
+>>>>>>> resulting values end up going over u32 limit.
+>>>>>>>
+>>>>>>> Some debug prints take this into account (see according
+>>>>>>> dev_warn() in
+>>>>>>> evergreen_cs_track_validate_stencil()), even if the actual
+>>>>>>> calculated value assigned to local 'offset' variable is missing
+>>>>>>> similar proper expansion.
+>>>>>>>
+>>>>>>> Mitigate the problem by casting the type of right operands to the
+>>>>>>> wider type of corresponding left ones in all such cases.
+>>>>>>>
+>>>>>>> Found by Linux Verification Center (linuxtesting.org) with static
+>>>>>>> analysis tool SVACE.
+>>>>>>>
+>>>>>>> Fixes: 285484e2d55e ("drm/radeon: add support for evergreen/ni
+>>>>>>> tiling informations v11")
+>>>>>>> Cc: stable@vger.kernel.org
+>>>>>> Well first of all the long cast doesn't makes the value 64bit, it
+>>>>>> depends on the architecture.
+>>>>>>
+>>>>>> Then IIRC the underlying hw can only handle a 32bit address space so
+>>>>>> having the offset as long is incorrect to begin with.
+>>>>> Evergreen chips support a 36 bit internal address space and NI and
+>>>>> newer support a 40 bit one, so this is applicable.
+>>>> In that case I strongly suggest that we replace the unsigned long with
+>>>> u64 or otherwise we get different behavior on 32 and 64bit machines.
+>>>>
+>>>> Regards,
+>>>> Christian.
+>>>>
+>>> To be clear, I'll prepare v2 patch that changes 'offset' to u64 as well
+>>> as the cast of 'track->db_z_read_offset' (and the likes) to u64 too.
+>>>
+>>> On the other note, should I also include casting to wider type of the
+>>> expression surf.layer_size * mslice (example down below) in
+>>> evergreen_cs_track_validate_cb() and other similar functions? I can't
+>>> properly gauge if the result will definitively fit into u32, maybe it
+>>> makes sense to expand it as well?
+>>
+>> The integer overflows caused by shifts are irrelevant and doesn't need
+>> any fixing in the first place.
+> 
+> Wait a second.
+> 
+> Thinking more about it the integer overflows are actually necessary
+> because that is exactly what happens in the hardware as well.
+> 
+> If you don't overflow those shifts you actually create a security
+> problem because the HW the might access at a different offset then you
+> calculated here.
+> 
+> We need to use something like a mask or use lower_32_bits() here.
 
+Christian,
 
- arch/x86/coco/sev/core.c  | 133 ++++----------------------------------
- arch/x86/coco/tdx/tdx.c   |  56 ++++++++++++++--
- arch/x86/include/asm/io.h |   3 +
- arch/x86/lib/iomem.c      | 132 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 199 insertions(+), 125 deletions(-)
+My apologies, I may be getting a bit confused here.
 
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index 082d61d85dfc..3135c89802e9 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -369,72 +369,17 @@ static enum es_result vc_decode_insn(struct es_em_ctxt *ctxt)
- static enum es_result vc_write_mem(struct es_em_ctxt *ctxt,
- 				   char *dst, char *buf, size_t size)
- {
--	unsigned long error_code = X86_PF_PROT | X86_PF_WRITE;
-+	unsigned long error_code;
-+	int ret = __put_iomem(dst, buf, size);
- 
--	/*
--	 * This function uses __put_user() independent of whether kernel or user
--	 * memory is accessed. This works fine because __put_user() does no
--	 * sanity checks of the pointer being accessed. All that it does is
--	 * to report when the access failed.
--	 *
--	 * Also, this function runs in atomic context, so __put_user() is not
--	 * allowed to sleep. The page-fault handler detects that it is running
--	 * in atomic context and will not try to take mmap_sem and handle the
--	 * fault, so additional pagefault_enable()/disable() calls are not
--	 * needed.
--	 *
--	 * The access can't be done via copy_to_user() here because
--	 * vc_write_mem() must not use string instructions to access unsafe
--	 * memory. The reason is that MOVS is emulated by the #VC handler by
--	 * splitting the move up into a read and a write and taking a nested #VC
--	 * exception on whatever of them is the MMIO access. Using string
--	 * instructions here would cause infinite nesting.
--	 */
--	switch (size) {
--	case 1: {
--		u8 d1;
--		u8 __user *target = (u8 __user *)dst;
--
--		memcpy(&d1, buf, 1);
--		if (__put_user(d1, target))
--			goto fault;
--		break;
--	}
--	case 2: {
--		u16 d2;
--		u16 __user *target = (u16 __user *)dst;
--
--		memcpy(&d2, buf, 2);
--		if (__put_user(d2, target))
--			goto fault;
--		break;
--	}
--	case 4: {
--		u32 d4;
--		u32 __user *target = (u32 __user *)dst;
--
--		memcpy(&d4, buf, 4);
--		if (__put_user(d4, target))
--			goto fault;
--		break;
--	}
--	case 8: {
--		u64 d8;
--		u64 __user *target = (u64 __user *)dst;
-+	if (!ret)
-+		return ES_OK;
- 
--		memcpy(&d8, buf, 8);
--		if (__put_user(d8, target))
--			goto fault;
--		break;
--	}
--	default:
--		WARN_ONCE(1, "%s: Invalid size: %zu\n", __func__, size);
-+	if (ret == -EIO)
- 		return ES_UNSUPPORTED;
--	}
- 
--	return ES_OK;
-+	error_code = X86_PF_PROT | X86_PF_WRITE;
- 
--fault:
- 	if (user_mode(ctxt->regs))
- 		error_code |= X86_PF_USER;
- 
-@@ -448,71 +393,17 @@ static enum es_result vc_write_mem(struct es_em_ctxt *ctxt,
- static enum es_result vc_read_mem(struct es_em_ctxt *ctxt,
- 				  char *src, char *buf, size_t size)
- {
--	unsigned long error_code = X86_PF_PROT;
-+	unsigned long error_code;
-+	int ret = __get_iomem(src, buf, size);
- 
--	/*
--	 * This function uses __get_user() independent of whether kernel or user
--	 * memory is accessed. This works fine because __get_user() does no
--	 * sanity checks of the pointer being accessed. All that it does is
--	 * to report when the access failed.
--	 *
--	 * Also, this function runs in atomic context, so __get_user() is not
--	 * allowed to sleep. The page-fault handler detects that it is running
--	 * in atomic context and will not try to take mmap_sem and handle the
--	 * fault, so additional pagefault_enable()/disable() calls are not
--	 * needed.
--	 *
--	 * The access can't be done via copy_from_user() here because
--	 * vc_read_mem() must not use string instructions to access unsafe
--	 * memory. The reason is that MOVS is emulated by the #VC handler by
--	 * splitting the move up into a read and a write and taking a nested #VC
--	 * exception on whatever of them is the MMIO access. Using string
--	 * instructions here would cause infinite nesting.
--	 */
--	switch (size) {
--	case 1: {
--		u8 d1;
--		u8 __user *s = (u8 __user *)src;
--
--		if (__get_user(d1, s))
--			goto fault;
--		memcpy(buf, &d1, 1);
--		break;
--	}
--	case 2: {
--		u16 d2;
--		u16 __user *s = (u16 __user *)src;
--
--		if (__get_user(d2, s))
--			goto fault;
--		memcpy(buf, &d2, 2);
--		break;
--	}
--	case 4: {
--		u32 d4;
--		u32 __user *s = (u32 __user *)src;
-+	if (!ret)
-+		return ES_OK;
- 
--		if (__get_user(d4, s))
--			goto fault;
--		memcpy(buf, &d4, 4);
--		break;
--	}
--	case 8: {
--		u64 d8;
--		u64 __user *s = (u64 __user *)src;
--		if (__get_user(d8, s))
--			goto fault;
--		memcpy(buf, &d8, 8);
--		break;
--	}
--	default:
--		WARN_ONCE(1, "%s: Invalid size: %zu\n", __func__, size);
-+	if (ret == -EIO)
- 		return ES_UNSUPPORTED;
--	}
- 
--	return ES_OK;
-+	error_code = X86_PF_PROT;
- 
--fault:
- 	if (user_mode(ctxt->regs))
- 		error_code |= X86_PF_USER;
- 
-diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-index 26b2e52457be..cf209381d63b 100644
---- a/arch/x86/coco/tdx/tdx.c
-+++ b/arch/x86/coco/tdx/tdx.c
-@@ -499,6 +499,53 @@ static int decode_insn_struct(struct insn *insn, struct pt_regs *regs)
- 	return 0;
- }
- 
-+static int handle_mmio_movs(struct insn *insn, struct pt_regs *regs, int size, struct ve_info *ve)
-+{
-+	unsigned long ds_base, es_base;
-+	unsigned char *src, *dst;
-+	unsigned char buffer[8];
-+	int off, ret;
-+	bool rep;
-+
-+	/*
-+	 * The in-kernel code must use a special API that does not use MOVS.
-+	 * If the MOVS instruction is received from in-kernel, then something
-+	 * is broken.
-+	 */
-+	WARN_ON_ONCE(!user_mode(regs));
-+
-+	ds_base = insn_get_seg_base(regs, INAT_SEG_REG_DS);
-+	es_base = insn_get_seg_base(regs, INAT_SEG_REG_ES);
-+
-+	if (ds_base == -1L || es_base == -1L)
-+		return -EINVAL;
-+
-+	rep = insn_has_rep_prefix(insn);
-+
-+	do {
-+		src = ds_base + (unsigned char *) regs->si;
-+		dst = es_base + (unsigned char *) regs->di;
-+
-+		ret = __get_iomem(src, buffer, size);
-+		if (ret)
-+			return ret;
-+
-+		ret = __put_iomem(dst, buffer, size);
-+		if (ret)
-+			return ret;
-+
-+		off = (regs->flags & X86_EFLAGS_DF) ? -size : size;
-+
-+		regs->si += off;
-+		regs->di += off;
-+
-+		if (rep)
-+			regs->cx -= 1;
-+	} while (rep || regs->cx > 0);
-+
-+	return insn->length;
-+}
-+
- static int handle_mmio_write(struct insn *insn, enum insn_mmio_type mmio, int size,
- 		struct pt_regs *regs, struct ve_info *ve)
- {
-@@ -520,9 +567,8 @@ static int handle_mmio_write(struct insn *insn, enum insn_mmio_type mmio, int si
- 		return insn->length;
- 	case INSN_MMIO_MOVS:
- 		/*
--		 * MMIO was accessed with an instruction that could not be
--		 * decoded or handled properly. It was likely not using io.h
--		 * helpers or accessed MMIO accidentally.
-+		 * MOVS is processed through higher level emulation which breaks
-+		 * this instruction into a sequence of reads and writes.
- 		 */
- 		return -EINVAL;
- 	default:
-@@ -591,6 +637,9 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
- 	if (WARN_ON_ONCE(mmio == INSN_MMIO_DECODE_FAILED))
- 		return -EINVAL;
- 
-+	if (mmio == INSN_MMIO_MOVS)
-+		return handle_mmio_movs(&insn, regs, size, ve);
-+
- 	vaddr = (unsigned long)insn_get_addr_ref(&insn, regs);
- 
- 	if (user_mode(regs)) {
-@@ -619,7 +668,6 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
- 	switch (mmio) {
- 	case INSN_MMIO_WRITE:
- 	case INSN_MMIO_WRITE_IMM:
--	case INSN_MMIO_MOVS:
- 		ret = handle_mmio_write(&insn, mmio, size, regs, ve);
- 		break;
- 	case INSN_MMIO_READ:
-diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
-index 1d60427379c9..ac01d53466cb 100644
---- a/arch/x86/include/asm/io.h
-+++ b/arch/x86/include/asm/io.h
-@@ -402,4 +402,7 @@ static inline void iosubmit_cmds512(void __iomem *dst, const void *src,
- 	}
- }
- 
-+int __get_iomem(char *src, char *buf, size_t size);
-+int __put_iomem(char *src, char *buf, size_t size);
-+
- #endif /* _ASM_X86_IO_H */
-diff --git a/arch/x86/lib/iomem.c b/arch/x86/lib/iomem.c
-index 5eecb45d05d5..e4919ad22206 100644
---- a/arch/x86/lib/iomem.c
-+++ b/arch/x86/lib/iomem.c
-@@ -2,6 +2,7 @@
- #include <linux/module.h>
- #include <linux/io.h>
- #include <linux/kmsan-checks.h>
-+#include <asm/uaccess.h>
- 
- #define movs(type,to,from) \
- 	asm volatile("movs" type:"=&D" (to), "=&S" (from):"0" (to), "1" (from):"memory")
-@@ -124,3 +125,134 @@ void memset_io(volatile void __iomem *a, int b, size_t c)
- 	}
- }
- EXPORT_SYMBOL(memset_io);
-+
-+int __get_iomem(char *src, char *buf, size_t size)
-+{
-+	/*
-+	 * This function uses __get_user() independent of whether kernel or user
-+	 * memory is accessed. This works fine because __get_user() does no
-+	 * sanity checks of the pointer being accessed. All that it does is
-+	 * to report when the access failed.
-+	 *
-+	 * Also, this function runs in atomic context, so __get_user() is not
-+	 * allowed to sleep. The page-fault handler detects that it is running
-+	 * in atomic context and will not try to take mmap_sem and handle the
-+	 * fault, so additional pagefault_enable()/disable() calls are not
-+	 * needed.
-+	 *
-+	 * The access can't be done via copy_from_user() here because
-+	 * mmio_read_mem() must not use string instructions to access unsafe
-+	 * memory. The reason is that MOVS is emulated by the #VC handler by
-+	 * splitting the move up into a read and a write and taking a nested #VC
-+	 * exception on whatever of them is the MMIO access. Using string
-+	 * instructions here would cause infinite nesting.
-+	 */
-+	switch (size) {
-+	case 1: {
-+		u8 d1;
-+		u8 __user *s = (u8 __user *)src;
-+
-+		if (__get_user(d1, s))
-+			return -EFAULT;
-+		memcpy(buf, &d1, 1);
-+		break;
-+	}
-+	case 2: {
-+		u16 d2;
-+		u16 __user *s = (u16 __user *)src;
-+
-+		if (__get_user(d2, s))
-+			return -EFAULT;
-+		memcpy(buf, &d2, 2);
-+		break;
-+	}
-+	case 4: {
-+		u32 d4;
-+		u32 __user *s = (u32 __user *)src;
-+
-+		if (__get_user(d4, s))
-+			return -EFAULT;
-+		memcpy(buf, &d4, 4);
-+		break;
-+	}
-+	case 8: {
-+		u64 d8;
-+		u64 __user *s = (u64 __user *)src;
-+		if (__get_user(d8, s))
-+			return -EFAULT;
-+		memcpy(buf, &d8, 8);
-+		break;
-+	}
-+	default:
-+		WARN_ONCE(1, "%s: Invalid size: %zu\n", __func__, size);
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+int __put_iomem(char *dst, char *buf, size_t size)
-+{
-+	/*
-+	 * This function uses __put_user() independent of whether kernel or user
-+	 * memory is accessed. This works fine because __put_user() does no
-+	 * sanity checks of the pointer being accessed. All that it does is
-+	 * to report when the access failed.
-+	 *
-+	 * Also, this function runs in atomic context, so __put_user() is not
-+	 * allowed to sleep. The page-fault handler detects that it is running
-+	 * in atomic context and will not try to take mmap_sem and handle the
-+	 * fault, so additional pagefault_enable()/disable() calls are not
-+	 * needed.
-+	 *
-+	 * The access can't be done via copy_to_user() here because
-+	 * put_iomem() must not use string instructions to access unsafe
-+	 * memory. The reason is that MOVS is emulated by the #VC handler by
-+	 * splitting the move up into a read and a write and taking a nested #VC
-+	 * exception on whatever of them is the MMIO access. Using string
-+	 * instructions here would cause infinite nesting.
-+	 */
-+	switch (size) {
-+	case 1: {
-+		u8 d1;
-+		u8 __user *target = (u8 __user *)dst;
-+
-+		memcpy(&d1, buf, 1);
-+		if (__put_user(d1, target))
-+			return -EFAULT;
-+		break;
-+	}
-+	case 2: {
-+		u16 d2;
-+		u16 __user *target = (u16 __user *)dst;
-+
-+		memcpy(&d2, buf, 2);
-+		if (__put_user(d2, target))
-+			return -EFAULT;
-+		break;
-+	}
-+	case 4: {
-+		u32 d4;
-+		u32 __user *target = (u32 __user *)dst;
-+
-+		memcpy(&d4, buf, 4);
-+		if (__put_user(d4, target))
-+			return -EFAULT;
-+		break;
-+	}
-+	case 8: {
-+		u64 d8;
-+		u64 __user *target = (u64 __user *)dst;
-+
-+		memcpy(&d8, buf, 8);
-+		if (__put_user(d8, target))
-+			return -EFAULT;
-+		break;
-+	}
-+	default:
-+		WARN_ONCE(1, "%s: Invalid size: %zu\n", __func__, size);
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
--- 
-2.45.2
+If integer overflows caused by shifts are predictable and constitute
+normal behavior in this case, and there is no need to "fix" them, does
+it still make sense to use any mitigations at all, i.e. masks or macros?
+Leaving these shifts to u32 variables as they are now will achieve the
+same result as, for example, doing something along the lines of:
 
+offset = lower_32_bits((u64)track->cb_color_bo_offset[id] << 8);
+
+which seems clunky and unnecessary, even if it suppresses some static
+analyzer triggers (and that seems overboard).
+Or am I missing something obvious here?
+> 
+> Regards,
+> Christian.
+> 
+>>
+>> The point is rather that we need to avoid multiplication overflows and
+>> the security problems which come with those.
+>>
+>>>
+>>> 441         }
+>>> 442
+>>> 443         offset += surf.layer_size * mslice;
+>>
+>> In other words that here needs to be validated correctly.
+>>
+
+Agreed, I think either casting right operand to u64 (once 'offset' is
+also changed from unsigned long to u64) or using mul_u32_u32() here and
+in other places should suffice.
+
+>> Regards,
+>> Christian.
+>>
+>>> 444         if (offset > radeon_bo_size(track->cb_color_bo[id])) {
+>>> 445                 /* old ddx are broken they allocate bo with w*h*bpp
+>>>
+>>> Regards,
+>>> Nikita
+>>>>> Alex
+>>>>>
+>>>>>> And finally that is absolutely not material for stable.
+>>>>>>
+>>>>>> Regards,
+>>>>>> Christian.
+>>>>>>
+>>>>>>> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+>>>>>>> ---
+>>>>>>> P.S. While I am not certain that track->cb_color_bo_offset[id]
+>>>>>>> actually ends up taking values high enough to cause an overflow,
+>>>>>>> nonetheless I thought it prudent to cast it to ulong as well.
+>>>>>>>
+>>>>>>>     drivers/gpu/drm/radeon/evergreen_cs.c | 18 +++++++++---------
+>>>>>>>     1 file changed, 9 insertions(+), 9 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/gpu/drm/radeon/evergreen_cs.c
+>>>>>>> b/drivers/gpu/drm/radeon/evergreen_cs.c
+>>>>>>> index 1fe6e0d883c7..d734d221e2da 100644
+>>>>>>> --- a/drivers/gpu/drm/radeon/evergreen_cs.c
+>>>>>>> +++ b/drivers/gpu/drm/radeon/evergreen_cs.c
+>>>>>>> @@ -433,7 +433,7 @@ static int evergreen_cs_track_validate_cb(struct
+>>>>>>> radeon_cs_parser *p, unsigned i
+>>>>>>>                 return r;
+>>>>>>>         }
+>>>>>>>
+>>>>>>> -     offset = track->cb_color_bo_offset[id] << 8;
+>>>>>>> +     offset = (unsigned long)track->cb_color_bo_offset[id] << 8;
+>>>>>>>         if (offset & (surf.base_align - 1)) {
+>>>>>>>                 dev_warn(p->dev, "%s:%d cb[%d] bo base %ld not
+>>>>>>> aligned with %ld\n",
+>>>>>>>                          __func__, __LINE__, id, offset,
+>>>>>>> surf.base_align);
+>>>>>>> @@ -455,7 +455,7 @@ static int evergreen_cs_track_validate_cb(struct
+>>>>>>> radeon_cs_parser *p, unsigned i
+>>>>>>>                                 min = surf.nby - 8;
+>>>>>>>                         }
+>>>>>>>                         bsize =
+>>>>>>> radeon_bo_size(track->cb_color_bo[id]);
+>>>>>>> -                     tmp = track->cb_color_bo_offset[id] << 8;
+>>>>>>> +                     tmp = (unsigned
+>>>>>>> long)track->cb_color_bo_offset[id] << 8;
+>>>>>>>                         for (nby = surf.nby; nby > min; nby--) {
+>>>>>>>                                 size = nby * surf.nbx * surf.bpe *
+>>>>>>> surf.nsamples;
+>>>>>>>                                 if ((tmp + size * mslice) <=
+>>>>>>> bsize) {
+>>>>>>> @@ -476,10 +476,10 @@ static int
+>>>>>>> evergreen_cs_track_validate_cb(struct radeon_cs_parser *p,
+>>>>>>> unsigned i
+>>>>>>>                         }
+>>>>>>>                 }
+>>>>>>>                 dev_warn(p->dev, "%s:%d cb[%d] bo too small (layer
+>>>>>>> size %d, "
+>>>>>>> -                      "offset %d, max layer %d, bo size %ld, slice
+>>>>>>> %d)\n",
+>>>>>>> +                      "offset %ld, max layer %d, bo size %ld, slice
+>>>>>>> %d)\n",
+>>>>>>>                          __func__, __LINE__, id, surf.layer_size,
+>>>>>>> -                     track->cb_color_bo_offset[id] << 8, mslice,
+>>>>>>> - radeon_bo_size(track->cb_color_bo[id]), slice);
+>>>>>>> +                     (unsigned long)track->cb_color_bo_offset[id]
+>>>>>>> << 8,
+>>>>>>> +                     mslice,
+>>>>>>> radeon_bo_size(track->cb_color_bo[id]), slice);
+>>>>>>>                 dev_warn(p->dev, "%s:%d problematic surf: (%d %d)
+>>>>>>> (%d
+>>>>>>> %d %d %d %d %d %d)\n",
+>>>>>>>                          __func__, __LINE__, surf.nbx, surf.nby,
+>>>>>>>                         surf.mode, surf.bpe, surf.nsamples,
+>>>>>>> @@ -608,7 +608,7 @@ static int
+>>>>>>> evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
+>>>>>>>                 return r;
+>>>>>>>         }
+>>>>>>>
+>>>>>>> -     offset = track->db_s_read_offset << 8;
+>>>>>>> +     offset = (unsigned long)track->db_s_read_offset << 8;
+>>>>>>>         if (offset & (surf.base_align - 1)) {
+>>>>>>>                 dev_warn(p->dev, "%s:%d stencil read bo base %ld not
+>>>>>>> aligned with %ld\n",
+>>>>>>>                          __func__, __LINE__, offset,
+>>>>>>> surf.base_align);
+>>>>>>> @@ -627,7 +627,7 @@ static int
+>>>>>>> evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
+>>>>>>>                 return -EINVAL;
+>>>>>>>         }
+>>>>>>>
+>>>>>>> -     offset = track->db_s_write_offset << 8;
+>>>>>>> +     offset = (unsigned long)track->db_s_write_offset << 8;
+>>>>>>>         if (offset & (surf.base_align - 1)) {
+>>>>>>>                 dev_warn(p->dev, "%s:%d stencil write bo base %ld
+>>>>>>> not
+>>>>>>> aligned with %ld\n",
+>>>>>>>                          __func__, __LINE__, offset,
+>>>>>>> surf.base_align);
+>>>>>>> @@ -706,7 +706,7 @@ static int
+>>>>>>> evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
+>>>>>>>                 return r;
+>>>>>>>         }
+>>>>>>>
+>>>>>>> -     offset = track->db_z_read_offset << 8;
+>>>>>>> +     offset = (unsigned long)track->db_z_read_offset << 8;
+>>>>>>>         if (offset & (surf.base_align - 1)) {
+>>>>>>>                 dev_warn(p->dev, "%s:%d stencil read bo base %ld not
+>>>>>>> aligned with %ld\n",
+>>>>>>>                          __func__, __LINE__, offset,
+>>>>>>> surf.base_align);
+>>>>>>> @@ -722,7 +722,7 @@ static int
+>>>>>>> evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
+>>>>>>>                 return -EINVAL;
+>>>>>>>         }
+>>>>>>>
+>>>>>>> -     offset = track->db_z_write_offset << 8;
+>>>>>>> +     offset = (unsigned long)track->db_z_write_offset << 8;
+>>>>>>>         if (offset & (surf.base_align - 1)) {
+>>>>>>>                 dev_warn(p->dev, "%s:%d stencil write bo base %ld
+>>>>>>> not
+>>>>>>> aligned with %ld\n",
+>>>>>>>                          __func__, __LINE__, offset,
+>>>>>>> surf.base_align);
+>>
+> 
 
