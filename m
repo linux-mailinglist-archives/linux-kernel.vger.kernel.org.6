@@ -1,171 +1,99 @@
-Return-Path: <linux-kernel+bounces-267529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B8C941289
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:52:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 102A9941285
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F10DA285E22
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:52:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 364031C227D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBFA1A08CF;
-	Tue, 30 Jul 2024 12:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDB319DFA5;
+	Tue, 30 Jul 2024 12:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MaK778k6"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DXYD9q+9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FAF1A08BC;
-	Tue, 30 Jul 2024 12:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECD11946DA;
+	Tue, 30 Jul 2024 12:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722343681; cv=none; b=CVteKnfzrSczEhV1p7WcLulaFDRWf0+abuJjrY+Q3oC2q1zWuKrZRxLif5GeDFhvhyRYl+gAEsV30dn/zj1UWxZgA6NXmkQjUTTgJe1T2Ghu6PI044YjWMvndhazaLIBifBmxDooT6NQs+zDKStCgFgLgZqtKKQi81IodvVhW8Q=
+	t=1722343674; cv=none; b=AEQTf5b7/rHvcH5+lYIarrnj9fX8UCV3PY5D7rIrNqCp1czlwEcF9yCxe3wyyYUyZNen6wvGCdTKkf3JcoN1eWNCa4igJp9CXqeEN//fKpIGgrpQvJEE7mhT+Ryw3BOTOlkLSjK8A/FLBXvhPDmjV7uDt6s7xUp3mAUpff3i5DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722343681; c=relaxed/simple;
-	bh=TH14SZVKEQYd33hCGU2MbRZHy86J+QbddqBKiFIxfMI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Egm6TbybtmjBwc683yO+pnRRrxFSXWGLdVeQ1alQT7p8F4suIEmTeiXqgavaVNStT3CSlkpO4VbGybzLim2J8tH6FsmKf/zUTXvmSLWPN2lRqSkm9S9sM5Q2Dt/qMXxMNw3tk2NTF6Q27Zl+KEW3GGhz7B/YoXUa5SDlI2gVWTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MaK778k6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UA0XXJ014432;
-	Tue, 30 Jul 2024 12:47:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=90Im+Dj/0aVNIvCzFKCmXT
-	yf0WUls8JPX3+qap19Q9o=; b=MaK778k6VR5pp0JMAnQJ/+v0rmJKfRtILafcH1
-	YPJJsMsQIQ1SEWEJ6ML8YnKlv+soOO23+5M6n1IVoc18GXxCNYwIDoESD4m6+Od4
-	0XP3vGgNoOkCH+KMu5etm/btqfvQsZll54Ht7QG/FoLVI47bpnNzpc5QYo8dRp5M
-	RXV20iCOH17qgeVhwoSBdE81hvfQPWZyEpnEqF7/wAwEx/PS2ijUXJ9TBx/nmS34
-	1nShnxPeOS9Nx49PIL69825dr4b1Z+aesczTFaQfejjQILXaV+gT4kE3lHFQvMQk
-	FId2IO69kWj1wru3Ua+KARUiaBTwMxXlLubq1z36CA+HOHcw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mqurqdhy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 12:47:55 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46UClsMm003087
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 12:47:54 GMT
-Received: from hu-prashk-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 30 Jul 2024 05:47:52 -0700
-From: Prashanth K <quic_prashk@quicinc.com>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        Prashanth K
-	<quic_prashk@quicinc.com>, <stable@vger.kernel.org>
-Subject: [PATCH] usb: dwc3: Fix latency of DSTS while receiving wakeup event
-Date: Tue, 30 Jul 2024 18:17:42 +0530
-Message-ID: <20240730124742.561408-1-quic_prashk@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1722343674; c=relaxed/simple;
+	bh=HCMw+ye02m6d7XJ0spXH32xuEwXzeFs4NvSPJ9z77k8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=f71PdoNKFi5JLdylmCTQN2OnF01phAiq4hEm61xBYXNP1p1GW/TrTStSGIauD2TFvxgbS2Dy7LDoNtwfkEF3Nkmmx572cZ0pxDGPvSqPyt9UcKcgQjbPSmZWlM5EjpcPJvYU5TUWkmi6CP71th2D8tQvYZVuq6CkUgP7RNbz1Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DXYD9q+9; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722343673; x=1753879673;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=HCMw+ye02m6d7XJ0spXH32xuEwXzeFs4NvSPJ9z77k8=;
+  b=DXYD9q+9SMSSyQSg5r8pXlrfql4f4JGjptp0vKUqDFvMJK1swfkg+GRi
+   LIp09axXXVQVR5tVAH1JE9CsBCeUhsPmAPa/QbVUJjLRjbf6GSjxNMq3A
+   FzbHBu0d0pTmnnlG41DdKEC6iOSpu+XfgQiX9THUqNRvT5k6zkRWZ117d
+   QSW6T0KTEr+fZERChey7q2yoZvV3n9xdF/BDSVXYcu4awRGYlaXZr8tc0
+   /NYR3FPoD62m9XHsOTuzv8ij6IbE7WCgicAXj6b/IUp75ruSBH3pKdETf
+   3uYlneYp/Bq0n5DDNJEmqPuW5RFgphkecpHgmID7H7bhwDlzhY72vHaiZ
+   Q==;
+X-CSE-ConnectionGUID: zHuU8/NMSqW+yPdhM8Jykw==
+X-CSE-MsgGUID: 5Ywh1g1DTCe2HVDM+27PkA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="24020044"
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="24020044"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 05:47:52 -0700
+X-CSE-ConnectionGUID: FTkYwRuBShKELfX30HED6Q==
+X-CSE-MsgGUID: xyvgGgQTTmGMR8bOASgddg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="54582421"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.25])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 05:47:51 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: platform-driver-x86@vger.kernel.org, "Luke D. Jones" <luke@ljones.dev>
+Cc: linux-kernel@vger.kernel.org, hdegoede@redhat.com, 
+ Shyam-sundar.S-k@amd.com
+In-Reply-To: <20240729020831.28117-1-luke@ljones.dev>
+References: <20240729020831.28117-1-luke@ljones.dev>
+Subject: Re: [PATCH] platform/x86/amd: pmf: Add quirk for ROG Ally X
+Message-Id: <172234366629.2712.7922428038159021547.b4-ty@linux.intel.com>
+Date: Tue, 30 Jul 2024 15:47:46 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3rgcpzxn7SdzM362vH93kMVILUpmx3IW
-X-Proofpoint-ORIG-GUID: 3rgcpzxn7SdzM362vH93kMVILUpmx3IW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_11,2024-07-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=649 spamscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
- clxscore=1011 bulkscore=0 malwarescore=0 mlxscore=0 impostorscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407300089
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-When operating in High-Speed, it is observed that DSTS[USBLNKST] doesn't
-update link state immediately after receiving the wakeup interrupt. Since
-wakeup event handler calls the resume callbacks, there is a chance that
-function drivers can perform an ep queue. Which in turn tries to perform
-remote wakeup from send_gadget_ep_cmd(), this happens because DSTS[[21:18]
-wasn't updated to U0 yet. It is observed that the latency of DSTS can be
-in order of milli-seconds. Hence update the dwc->link_state from evtinfo,
-and use this variable to prevent calling remote wakup unnecessarily.
+On Mon, 29 Jul 2024 14:08:31 +1200, Luke D. Jones wrote:
 
-Fixes: ecba9bc9946b ("usb: dwc3: gadget: Check for L1/L2/U3 for Start Transfer")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Prashanth K <quic_prashk@quicinc.com>
----
- drivers/usb/dwc3/gadget.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+> The ASUS ROG Ally X has the same issue as the G14 where it advertises
+> SPS support but doesn't use it.
+> 
+> 
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 89fc690fdf34..3b55285118b0 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -328,7 +328,8 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned int cmd,
- 	}
- 
- 	if (DWC3_DEPCMD_CMD(cmd) == DWC3_DEPCMD_STARTTRANSFER) {
--		int link_state;
-+		int	link_state;
-+		bool	remote_wakeup = false;
- 
- 		/*
- 		 * Initiate remote wakeup if the link state is in U3 when
-@@ -339,15 +340,26 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned int cmd,
- 		link_state = dwc3_gadget_get_link_state(dwc);
- 		switch (link_state) {
- 		case DWC3_LINK_STATE_U2:
--			if (dwc->gadget->speed >= USB_SPEED_SUPER)
-+			if (dwc->gadget->speed < USB_SPEED_SUPER)
-+				remote_wakeup = true;
-+			break;
-+		case DWC3_LINK_STATE_U3:
-+			/*
-+			 * In HS, DSTS can take few milliseconds to update linkstate bits,
-+			 * so rely on dwc->link_state to identify whether gadget woke up.
-+			 * Don't issue remote wakuep again if link is already in U0.
-+			 */
-+			if (dwc->link_state == DWC3_LINK_STATE_U0)
- 				break;
- 
--			fallthrough;
--		case DWC3_LINK_STATE_U3:
-+			remote_wakeup = true;
-+			break;
-+		}
-+
-+		if (remote_wakeup) {
- 			ret = __dwc3_gadget_wakeup(dwc, false);
- 			dev_WARN_ONCE(dwc->dev, ret, "wakeup failed --> %d\n",
- 					ret);
--			break;
- 		}
- 	}
- 
-@@ -4214,6 +4226,7 @@ static void dwc3_gadget_conndone_interrupt(struct dwc3 *dwc)
- static void dwc3_gadget_wakeup_interrupt(struct dwc3 *dwc, unsigned int evtinfo)
- {
- 	dwc->suspended = false;
-+	dwc->link_state = evtinfo & DWC3_LINK_STATE_MASK;
- 
- 	/*
- 	 * TODO take core out of low power mode when that's
-@@ -4225,8 +4238,6 @@ static void dwc3_gadget_wakeup_interrupt(struct dwc3 *dwc, unsigned int evtinfo)
- 		dwc->gadget_driver->resume(dwc->gadget);
- 		spin_lock(&dwc->lock);
- 	}
--
--	dwc->link_state = evtinfo & DWC3_LINK_STATE_MASK;
- }
- 
- static void dwc3_gadget_linksts_change_interrupt(struct dwc3 *dwc,
--- 
-2.25.1
+
+Thank you for your contribution, it has been applied to my local
+review-ilpo branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[1/1] platform/x86/amd: pmf: Add quirk for ROG Ally X
+      commit: 4c83ee4bf32ea8e57ae2321906c067d69ad7c41b
+
+--
+ i.
 
 
