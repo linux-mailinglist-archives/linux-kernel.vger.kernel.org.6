@@ -1,126 +1,108 @@
-Return-Path: <linux-kernel+bounces-267827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6F1941677
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:00:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A87A9413E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC5FBB22B24
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:00:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AA8F280E8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A08D1BE873;
-	Tue, 30 Jul 2024 16:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585431A08B6;
+	Tue, 30 Jul 2024 14:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="nyuzWyqJ"
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L2mKtnhg"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE2F1BE23F
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE451A01A7
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722355219; cv=none; b=kOIjMXrutP+tH/VcLq4lE98bVC0S+66MDeBZPRvuen5oRnUF5QqZx4uipYETeqNkoWLcdvNeQuwapjgb+iPL7wo07dVaV6Xwo+BFwu0FOVOrL3hhxwhqsB9a1qigBtpGtv93l+x2c6cGyBaTTZKyt6795vZZtRuIjnUw/svVDM0=
+	t=1722348353; cv=none; b=NG9VsvBILj2ONvEOCkdOUOPtefPG2rGaZSu1PP+g2ro+c1UTRPp2zkD5k4EJww5x85JSEm76puAnOKQLfhp4uMWxHuyumpuxC/Gx+b9TY+oobdldA6FcVcqyU2w+wYFkQsyfO8q7IFvAGjpzCTk89WBq61iVcHN5v0g2VqZDML4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722355219; c=relaxed/simple;
-	bh=mCh601FrRtPxjpmD6wTsae7FGFqTSFvvavFvDhd9LnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V/i6U5en8hcQVO7pjpbInxOhJy8rwyMmNyiJj/fpRF9ZqCY9lkco+yFHFeQNKvHe31hbd7gpW80iYevF8yNqwhCXpXALDAZzf1ZsB2D5p3h811yMsh8yY0pXB6jQxC0DfGIqxykBaTKhfPlsBKX12CHhPz7oLNQbkOX/JOLsB0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=nyuzWyqJ; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4928989e272so1129118137.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:00:17 -0700 (PDT)
+	s=arc-20240116; t=1722348353; c=relaxed/simple;
+	bh=VC3Hv+Ia3AY2+pr6dBLfrjDouP+kBGT4vnIdcpyk174=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YcdIcXbooLlGg80UpfkmEBcmEmtoXjdetbStLnpRLpg5z8SY1SwAyX0nPtyQtMxupQCiB3X2flxHMwL7EC7wXxsN4orxNvwAKJROKD5d/VrRTbbnJHLHB43NJfZWWWJ5Sb47Vo3lJcj+hk22U0nYklR/Vq5xL4uCrPqNiv2skbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L2mKtnhg; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52efc60a6e6so7376802e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:05:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1722355216; x=1722960016; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ebSu3UElL8dKrK505UtfSRAh4jbtzC8DMHGUOIQGm/A=;
-        b=nyuzWyqJID1+9n4yHSdJ8yP0dcTZQrXCr+yT6oD2PBfMFklD2z9JCBubRwnGxCZC93
-         FlOqMi0PMh6oZvMH/40Ul7+kzE5yB0jws7Nuk1fySJEAwpzG5wmbIzM8DR+wU8edIGPJ
-         6c2fcej1jARgTQ0hcZI6H/Fil1nNsJlqN+lG2zeH065UtJ9WWA7FBaBJxV8iYIiAJ/cV
-         hZOnK3UmgKTF6Blban3ZvcWHcdWNMock4tNMzUMFlo7Dia0/D9BRDEZA5Uks4kIAhl5Z
-         eerUqmd5Twu2HVfNXVXDXRUmw+VjlXtooIYHzX1E8Cln7cXA7+XpAf2aoAhJ8/0AP8/Q
-         ActQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722355216; x=1722960016;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1722348350; x=1722953150; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ebSu3UElL8dKrK505UtfSRAh4jbtzC8DMHGUOIQGm/A=;
-        b=bDMRnINsFMM+SytANK6qEBheMoZyWrQ1LA+VpK/cYRsvsPreintILxRhbiW64HZ95H
-         3/J9QK9jbVzcEhBiBjp7PRR30ZS/anfqIfoWGw9o8IWhwsBtnoF7bA615UfRSQT1fPd4
-         WAJZ3s7xuqAlBGzrUJobkjU+dkmSnUMGn+9WJZQAgkbzcNIzmwrloMdxNO29euoXNrNc
-         kjPNAwBr/OEnQ5MC63xn52WEmXnbk32GkjojAsvgXCbXVoivqZTBZASMZvnIabO0wr0Y
-         ag5vC6Axjwteg8wSh/K5aGN60nzH47hKmyJRoKg6+yat3ZZLa7ERMTvrmQjguanEmlhX
-         Pr2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUbisoODO5ReKKb2DSNY0XlsP5qqu1Wiia7oEoyw8kteZmPg8v/32Xs3ceBini5IZnLYs+13GK7lb0d2OLJaeGjh+aqzldyskPZDiDW
-X-Gm-Message-State: AOJu0YzHQW+E3umGzEiC4K6cDNDWkLLfoeopY82I2Ytm+ulBK2GO1Pes
-	0W7TCFq8sQbZBYG9I4/UW2KmTSMD2uJQRcL79FdSjdVns6zMXIK077vFxUuELOk=
-X-Google-Smtp-Source: AGHT+IG64oD/0BAxRTYSk9Um5ejrwHurtyJiWine+vs8I2db0quwR2iEnh/I3UfX946vZydcmQjuVg==
-X-Received: by 2002:a05:6102:3ec2:b0:493:b2b4:3708 with SMTP id ada2fe7eead31-493fad54e1fmr12048280137.27.1722355216237;
-        Tue, 30 Jul 2024 09:00:16 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73b2036sm653148085a.38.2024.07.30.09.00.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 09:00:15 -0700 (PDT)
-Date: Tue, 30 Jul 2024 01:19:53 -0400
-From: Gregory Price <gourry@gourry.net>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, dave.jiang@intel.com,
-	Jonathan.Cameron@huawei.com, horenchuang@bytedance.com,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	dan.j.williams@intel.com, lenb@kernel.org,
-	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: Re: [PATCH] acpi/hmat,mm/memtier: always register hmat adist
- calculation callback
-Message-ID: <Zqh3-TWBkhyY5kPw@PC2K9PVX.TheFacebook.com>
-References: <20240726215548.10653-1-gourry@gourry.net>
- <87ttg91046.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <ZqelvPwM2MIG26wY@PC2K9PVX.TheFacebook.com>
- <877cd3u1go.fsf@yhuang6-desk2.ccr.corp.intel.com>
+        bh=VC3Hv+Ia3AY2+pr6dBLfrjDouP+kBGT4vnIdcpyk174=;
+        b=L2mKtnhgZX5r58eIG6p9HWtbDYd5yiy4p71HwjTHAzdwoEVEZUOYsC6Lr4T8TOUOUG
+         GITQEN3p6V+aSRIqmoMdtBzHEVnS5gvVpGexTxS9yEb2YClLP9I3ijNXVBxJ2bzU+/9W
+         C8Bz7tMFOyS0dpbqg/1AEmFgfulEQjlWq29zMnlI1olLszWWR669q0PgRxeI8ezfWA0i
+         UweRxN5P1z61Uo7trR8EiK786UeHCyVKd9bvWQq4LRoRJGtu8nD8XFuDxcBTZ0JOx6UF
+         a3B19i37qjRf0lEBDEpMe3WN7faHYCFcqO/RlC+9eU0B5jcluBOSwXS1SIgoqP0TCmpS
+         YTIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722348350; x=1722953150;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VC3Hv+Ia3AY2+pr6dBLfrjDouP+kBGT4vnIdcpyk174=;
+        b=laoHHh9rBefyuzyEN8K+JRrQjOrkB8CcppJhDhFNjYJXgdsh1b0n9iU4HIlDziG/i1
+         PqRBHTW5v0xmtyBymbM/7R/NTv7k20GE5qZ9gDVvrgZX6fw9N7Jt9d3SiyEDTkA5Pixc
+         TLfkp/1zbsXIHud2A6yEncKDumDcU0aocMpLTKB9kK5XFkRHPOcDHLj9Vj5tcnkizEQ8
+         TBA5GcZruYPN7e4VsfKl1dej89DfWtJl8QKTDe0c2Q2ARdbdw7/5lVSwpUGh9EtpbKmK
+         so6Wfg27IvswDJD7aPxZRZaHWWkYrPpKLPVRnoGuQCD27S0Yy2lCFoEbEGM77WxFKaZL
+         QN7w==
+X-Forwarded-Encrypted: i=1; AJvYcCV4gwjqPCdGNB2qrTMI2QKqRLVSsoGu7xijqiWoqoSK6AlE2GlO/cSd9mqq3fO+ku5DziGd0veOoHvNsRB/oEP9dLNbttNT5lrRs5Kz
+X-Gm-Message-State: AOJu0Yywz2HYaLNoE5uvwxRvcO8ixmb2VVXZprR1tFrbiOgooyKYistO
+	RmLeEgQulZEZpgPf+Tpzrf5T+Viy6m0wpAxz5/YLKIMp+qnUnbtp/UZTJXm6YjNWG2MOMukannr
+	PXRRbzcT7ad5GMNfqSRbkJdti+kI=
+X-Google-Smtp-Source: AGHT+IF98QuDW7lc53dcOToWH9YfWSH3jB7gchsnJzoJ+D7ZfI0i8260ABtL4jLpb2mCN4SXEymoL4k87b3Ph+1DrSs=
+X-Received: by 2002:a05:6512:b96:b0:52e:767a:ada7 with SMTP id
+ 2adb3069b0e04-5309b2c3ad6mr8984085e87.50.1722348349571; Tue, 30 Jul 2024
+ 07:05:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <877cd3u1go.fsf@yhuang6-desk2.ccr.corp.intel.com>
+References: <20240729084512.3349928-1-leitao@debian.org>
+In-Reply-To: <20240729084512.3349928-1-leitao@debian.org>
+From: Akinobu Mita <akinobu.mita@gmail.com>
+Date: Tue, 30 Jul 2024 23:05:37 +0900
+Message-ID: <CAC5umyg90wADke-YRC2vqrcf6Dh=47HmQ4GApQd8dNeJ6BHG7g@mail.gmail.com>
+Subject: Re: [PATCH v2] fault-injection: Enhance failcmd to exit on non-hex
+ address input
+To: Breno Leitao <leitao@debian.org>
+Cc: akpm@linux-foundation.org, leit@meta.com, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30, 2024 at 09:12:55AM +0800, Huang, Ying wrote:
-> > Right now HMAT appears to be used prescriptively, this despite the fact
-> > that there was a clear intent to separate CPU-nodes and non-CPU-nodes in
-> > the memory-tier code. So this patch simply realizes this intent when the
-> > hints are not very reasonable.
-> 
-> If HMAT isn't available, it's hard to put memory devices to
-> appropriate memory tiers without other information.  In commit
-> 992bf77591cb ("mm/demotion: add support for explicit memory tiers"),
-> Aneesh pointed out that it doesn't work for his system to put
-> non-CPU-nodes in lower tier.
-> 
+2024=E5=B9=B47=E6=9C=8829=E6=97=A5(=E6=9C=88) 17:45 Breno Leitao <leitao@de=
+bian.org>:
+>
+> The failcmd.sh script in the fault-injection toolkit does not currently
+> validate whether the provided address is in hexadecimal format. This can
+> lead to silent failures if the address is sourced from places like
+> `/proc/kallsyms`, which omits the '0x' prefix, potentially causing users
+> to operate under incorrect assumptions.
+>
+> Introduce a new function, `exit_if_not_hex`, which checks the format of
+> the provided address and exits with an error message if the address is
+> not a valid hexadecimal number.
+>
+> This enhancement prevents users from running the command with
+> improperly formatted addresses, thus improving the robustness and
+> usability of the failcmd tool.
+>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-Per Aneesh in 992bf77591cb - The code explicitly states the intent is
-to put non-CPU-nodes in a lower tier by default.
+Looks good.
 
-
-    The current implementation puts all nodes with CPU into the highest
-    tier, and builds the tier hierarchy by establishing the per-node
-    demotion targets based on the distances between nodes.
-
-This is accurate for the current code
-
-
-    The current tier initialization code always initializes each
-    memory-only NUMA node into a lower tier.
-
-This is *broken* for the currently upstream code.
-
-This appears to be the result of the hmat adistance callback introduction
-(though it may have been broken before that).
-
-~Gregory
+Reviewed-by: Akinobu Mita <akinobu.mita@gmail.com>
 
