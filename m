@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-266943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E69E2940A24
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:44:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C87A940A26
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44A9EB21D9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:44:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 088A51F25141
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F53419005A;
-	Tue, 30 Jul 2024 07:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D589F19007D;
+	Tue, 30 Jul 2024 07:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aKqPk131"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YdTSBTJO"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758661662E8;
-	Tue, 30 Jul 2024 07:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A3618FC80;
+	Tue, 30 Jul 2024 07:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722325451; cv=none; b=VO/FaICqnKgQRQhqNhziCDWBMWhMhsqgGux3K1Mo0Ea1ZgR/A9dftF7EyVooab0e56qkqmsh+KtJXsdf+4Qb+3cWfQWgAgy2MewOvIRxXBITZpehtZ2mr+BMZvOtNcx+tjh7XmO9M4kVib2CU5yjiGzcfBXpuC4AZLsge9NRBUM=
+	t=1722325473; cv=none; b=Xu65IaKematZUaJsM6vTIyPzznLHGNro3SM8uAEVItHTnksBS36lJUGBLXD3bUSsbAsixTXAevDNO4jIFfiflg+DqHfuKrCBK5kcHTaYzJlbgUglM2KwypY9E0tXWy022D4iuEYLBvhEqU9xZjcD1Tg6Vq0KGBr02h631bsSkhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722325451; c=relaxed/simple;
-	bh=1g/t7ljDEEMZaF9QKFLSVrGcCV6DmGX+hiOIu+Dzc0E=;
+	s=arc-20240116; t=1722325473; c=relaxed/simple;
+	bh=N9PmLv3ESEq4vrYGTcVlMOPN4DtUer7tuRF4Xxi/wXA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GIOeg/IFmvgEWtsM7fDJbrUcAW3U2sImZYHqXUuPNwSgzu3596IAr071ZPxbzchbZkYWBYxagxuDW1Nj7SKGgIL8q+fC9ctpYTdkquz9L9y9yhVQ3fvtcPT0ylaW/R6pv9eWyQ79DDNlzkRZEF8bS38u/aHc8f29GHT1wYdfq3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aKqPk131; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24ADFC32782;
-	Tue, 30 Jul 2024 07:44:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722325451;
-	bh=1g/t7ljDEEMZaF9QKFLSVrGcCV6DmGX+hiOIu+Dzc0E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aKqPk131CCKu2OCRZYxmUf2q9yg/o2hqvU0QgKY8jDuxZSbKubqzyGBDof+eVRp7E
-	 P7SqGs3O+HWjYndUwjPOxzbQTR2dLa/tPPLv+QrDg9MzySUJ32+yw+rvRwoZ2+lDq4
-	 +5dDhEVr85Fdvr/cBIZcjP02wdfVJrbkYxawukWzjfKt19C3HmHW8eEwNeZksZ5yN+
-	 z+B2b4KhusPFp/4I840W7HshgOB0/40DMf2WuuTttGm+0sM9Rk9vaxaDwl0/wGhrkn
-	 vF8hsaYbO09GeWNRl6UGbMboYr3XpKsL1OuY6lHmS8DTWX5fNwZwEtlEabsCITjyGA
-	 SE2aYky5wR5tA==
-Message-ID: <0e7a8d52-6556-4531-882f-73513f99259b@kernel.org>
-Date: Tue, 30 Jul 2024 09:44:00 +0200
+	 In-Reply-To:Content-Type; b=JIdWbx/ynLZky2PieIQxLXOLw6RK+x+M6Y0ek0n1eivMzmoKZ+4nV8eQoDul5TgBMwyM7SiL0PaFRsPnHxUD+NdNxmaKvL27kasUIssdNgq26/O3dDU7y3Kv1W0GDn2pdhjy4gb0HXNByPekJJdUD0sg7yMIqZUnvMBX7LhA6Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YdTSBTJO; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-70943b07c2cso1812085a34.1;
+        Tue, 30 Jul 2024 00:44:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722325471; x=1722930271; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wNYxaQ9fql7AcxhX+8qLd2dvHKZ22065YdHw+3VqujE=;
+        b=YdTSBTJOFgosihI+OLNSMyKizdLKKc8Nn3UlkvNxbbHyxBS3dSgU0dLwLltkMka0wA
+         D9C4avLqwDplXG0TCjJ52YWVvoUi737xAajtAIrfV0AFM9WRXNXtLMvjoESbBZwc88hP
+         W6Y7gXsGJmZB+06LnjqVF7wnwRf7F2undoKfzxxBDDtqqvgaJ0D49Z+w0RSG2qRwRah4
+         skgzmnxUucuQMI+rxYL5BEqSlSWLbNbd9CPpSd+1ARbGPMydHqyl5QHWrUau5B13Abc7
+         zLq5h8qn48HLF1l4Cb7rPozNQ2Vg3W9IjHO69GoAqg06KMAiwdM/o5+9L/dl9hpfKZOx
+         eiAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722325471; x=1722930271;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wNYxaQ9fql7AcxhX+8qLd2dvHKZ22065YdHw+3VqujE=;
+        b=iZYvFMmKEQZY3viMKksfcp0cGoaCpfibB2ji9ipCBBAHATMDAaabJgZuT4r7qbqlXW
+         aH9CFuxvOlbVfrm0uKX8JF/BRGr92LgIuRABzPWz7UOKrfYM86ep7MI5Nmmz6lij2rhX
+         SUSie1PPulx5J8U7prZQ1czp0VcTZYqtUnYwcL6d4frUd6YtF3pYgjusBkLFUuVXRA8D
+         EizbyqXAMom5APK7N7jWhrTjn/HYRk/8nCemwCZbBrzWFwFqKM1jqVHdUAHaG4buPvxq
+         ed51F1grEDwK46v6uuyZbaUtugtHxDG7RWC3Cvwr9jTdcnXE4toR6lO1dswU2/hFb2ja
+         OsDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWYgfWDFh68PCcavNadIxY/ilT0IsXrUjH31uTEKLvms3j/+EWpAjzrjsvFOgiDajoynfryJZ5r/AumnXNtowRbRUAXwcqfB+rTawxpqtgrT+UM9m7pTJRukXsaJbN6kQcgKsvv6vylLQ==
+X-Gm-Message-State: AOJu0YzXMNzRIxWB3wQYgKictq6d2lYWdJHjfShwqNj2+fnkLliHFWWs
+	jXBaL5EdrUNr07WXSqTCTob6pmwwzSyAU/bs8z2zfCQaVNCS7QZclpwOJQ==
+X-Google-Smtp-Source: AGHT+IHA3y9ineuFQRIfYwPGht449sZqVs7AGfDBI2LAtebiSKNfsBHTFgwPABi4zoEnD9vRCeMVdA==
+X-Received: by 2002:a05:6830:6b03:b0:703:6434:aba8 with SMTP id 46e09a7af769-70940ba10f9mr16558955a34.0.1722325470596;
+        Tue, 30 Jul 2024 00:44:30 -0700 (PDT)
+Received: from [172.19.1.53] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead813a19sm7867713b3a.117.2024.07.30.00.44.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 00:44:30 -0700 (PDT)
+Message-ID: <37f1ecdc-9d98-4681-803a-75442fe04ab3@gmail.com>
+Date: Tue, 30 Jul 2024 15:44:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,126 +75,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/16] drm/imx: Add i.MX8qxp Display Controller pixel
- engine
-To: Liu Ying <victor.liu@nxp.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, tglx@linutronix.de, vkoul@kernel.org, kishon@kernel.org,
- aisheng.dong@nxp.com, agx@sigxcpu.org, francesco@dolcini.it, frank.li@nxp.com
-References: <20240712093243.2108456-1-victor.liu@nxp.com>
- <20240712093243.2108456-8-victor.liu@nxp.com>
- <ibdzow7lvbimaefrp2z2aolgp4pytpq3dcr2y3pegjavvknhgm@2e6j3f4zytqp>
- <107d89b9-e7b8-4613-bc07-9af7b52c2b8a@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: phy: nuvoton,ma35-usb2-phy: add new
+ bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>, vkoul@kernel.org,
+ kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240729061509.83828-1-hpchen0nvt@gmail.com>
+ <20240729061509.83828-2-hpchen0nvt@gmail.com>
+ <c4c2b30a-8ff9-4fc4-a1ed-adcd366d15a7@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <107d89b9-e7b8-4613-bc07-9af7b52c2b8a@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Hui-Ping Chen <hpchen0nvt@gmail.com>
+In-Reply-To: <c4c2b30a-8ff9-4fc4-a1ed-adcd366d15a7@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 30/07/2024 08:55, Liu Ying wrote:
-> On 07/28/2024, Dmitry Baryshkov wrote:
->> On Fri, Jul 12, 2024 at 05:32:34PM GMT, Liu Ying wrote:
->>> i.MX8qxp Display Controller pixel engine consists of all processing
->>> units that operate in the AXI bus clock domain.  Add drivers for
->>> ConstFrame, ExtDst, FetchLayer, FetchWarp and LayerBlend units, as
->>> well as a pixel engine driver, so that two displays with primary
->>> planes can be supported.  The pixel engine driver as a master binds
->>> those unit drivers as components.  While at it, the pixel engine
->>> driver is a component to be bound with the upcoming DRM driver.
->>
->> Same question / comment: create subnodes directly, without going
->> through the subdevices. A lot of small functions that would benefit
->> being inlined.
-> 
-> Like I replied in patch 06/16, I can't create sub devices directly.
-> 
-> Can you please point out typical ones for those small functions if
-> the comment still stands?
-> 
->>
->>> +static int dc_cf_bind(struct device *dev, struct device *master, void *data)
->>> +{
->>> +	struct platform_device *pdev = to_platform_device(dev);
->>> +	struct dc_drm_device *dc_drm = data;
->>> +	struct dc_pe *pe = dc_drm->pe;
->>> +	struct dc_cf_priv *priv;
->>> +	int id;
->>> +
->>> +	priv = drmm_kzalloc(&dc_drm->base, sizeof(*priv), GFP_KERNEL);
->>> +	if (!priv)
->>> +		return -ENOMEM;
->>> +
->>> +	priv->reg_cfg = devm_platform_ioremap_resource_byname(pdev, "cfg");
->>> +	if (IS_ERR(priv->reg_cfg))
->>> +		return PTR_ERR(priv->reg_cfg);
->>> +
->>> +	id = of_alias_get_id(dev->of_node, "dc0-constframe");
->>
->> Is it documented? Acked?
-> 
-> Like I replied in patch 06/16, I can add aliases nodes to examples,
-> if needed.
-> 
-> No Nak from DT maintainers I'd say, but I hope there will be direct
-> Ack(s).
-> 
+Dear Krzysztof,
 
-It was not Acked, because there was no documentation added for it.
-Anyway, naming is quite cryptic, e.g. "0" in "dc0" is quite confusing.
-Do you expect different aliases for dc1 or dc9? But anyway, aliases for
-sub-devices of pipeline look wrong.
+Thank you for your reply.
+
+
+
+On 2024/7/29 下午 03:29, Krzysztof Kozlowski wrote:
+> On 29/07/2024 08:15, hpchen0 wrote:
+>> Add dt-bindings for USB2 PHY found on the Nuvoton MA35 SoC.
+>>
+>> Signed-off-by: hpchen0 <hpchen0nvt@gmail.com>
+> Please use proper name.
+
+Okay, I will make the correction and use the correct name.
+
+
+
+>> ---
+>>   .../bindings/phy/nuvoton,ma35-usb2-phy.yaml   | 51 +++++++++++++++++++
+>>   1 file changed, 51 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/phy/nuvoton,ma35-usb2-phy.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/nuvoton,ma35-usb2-phy.yaml b/Documentation/devicetree/bindings/phy/nuvoton,ma35-usb2-phy.yaml
+>> new file mode 100644
+>> index 000000000000..415ea2c45975
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/phy/nuvoton,ma35-usb2-phy.yaml
+>> @@ -0,0 +1,51 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/phy/nuvoton,ma35-usb2-phy.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Nuvoton MA35 USB2 phy
+>> +
+>> +maintainers:
+>> +  - hpchen0 <hpchen0nvt@gmail.com>
+> Same here
+Okay, I will make the correction and use the correct name.
+
+
+
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - nuvoton,ma35-usb2-phy
+> All other devices have name ma35d1. Is this a different SoC?
+The SoC is the same as ma35d1. I will modify ma35 to ma35d1.
+
+Originally, I intended to create a series of shared drivers.
+
+
+
+>> +
+>> +  "#phy-cells":
+>> +    const: 0
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +    description: USB PHY clock
+> Drop description, it's obvious.
+Okay, I will remove the description.
+
+
+
+>> +
+>> +  clock-names:
+>> +    const: usbd_gate
+> Drop clock-names, you do not bring any new information.
+
+Okay, I will remove the clock-names.
+
+
+
+>> +
+>> +  nuvoton,sys:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description:
+>> +      phandle of the system-management node.
+> Describe what is it for.
+
+Because this driver has some status bits located in the sys, it is 
+necessary to reference the sys link.
+
+
+
+>> +
+>> +required:
+>> +  - compatible
+>> +  - clocks
+>> +  - nuvoton,sys
+>> +  - "#phy-cells"
+> Keep the same order as in properties.
+
+Okay, I will correct this issue.
+
+
+
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> Where do you use it?
+
+This is not used and will be removed. Thanks for the reminder.
+
+
+
+>> +    #include <dt-bindings/clock/nuvoton,ma35d1-clk.h>
+>> +
+>> +    usb_phy: usb-phy {
+>> +        compatible = "nuvoton,ma35-usb2-phy";
+>> +        clocks = <&clk USBD_GATE>;
+>> +        clock-names = "usbd_gate";
+>> +        nuvoton,sys = <&sys>;
+>> +        #phy-cells = <0>;
+>> +    };
+> Best regards,
+> Krzysztof
+
 
 Best regards,
-Krzysztof
+
+Hui-Ping Chen
+
 
 
