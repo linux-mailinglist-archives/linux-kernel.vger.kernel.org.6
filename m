@@ -1,132 +1,119 @@
-Return-Path: <linux-kernel+bounces-268307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743C2942309
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:39:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0880194230D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5D761C21531
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:39:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74B24B23D96
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CCC1917D5;
-	Tue, 30 Jul 2024 22:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9911917D9;
+	Tue, 30 Jul 2024 22:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kuuv4gBS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mtqvYCWU"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C8F18DF9D;
-	Tue, 30 Jul 2024 22:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DD718FC70;
+	Tue, 30 Jul 2024 22:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722379185; cv=none; b=u2W6JRrEl0Q5NPsA0FzJP0XKqlog9BNQY8ivTxNc90/4/lYD7LoUY2zIRhGuRNjDD185D5/t52vxP8JJ/GEWiNu570s32bQsjidZs/E/7JRyg688k0MAX7n+tqY8NdWyTDjHgrWkvIHY924vFQviVrNH8CqFkkcP0mrNt6otF0o=
+	t=1722379250; cv=none; b=p5dv181W8fMpxTiUzM51knpI+F75NkyCW79U0SCUy65n7f5a0IOMKY/rg/9tgDtPXJn5qjsagj4OR2vyjHZ8UlTyFwdB9ToHU9V+BHOxM+0E9d2Zc+YRU2+6iS2AeDxmJ39lZmpgfVXaS6nu+g70jZYZ9Le+IvZiob+5qkffZdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722379185; c=relaxed/simple;
-	bh=rtuFGI9jAe9/Raa5wEA4SM4Wq3tXO1YX1GDI7wdpApA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iBMTYLTRGLRmvzASVL3x470jBCbnOWAzpnwOC6lsfSoI+VtzC/Hej1lnhWAYAZ2Cg/cj1oTwhEHjrXYGmPl7zwh2ONUiS687+hEC5WcwaEJ+2dcbGAbPv7So3EG7zolNX7WEb1yP5V1EjX+U7bzd+XP0pLHBxeb33ZUU9tyf2io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kuuv4gBS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BA1AC32782;
-	Tue, 30 Jul 2024 22:39:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722379185;
-	bh=rtuFGI9jAe9/Raa5wEA4SM4Wq3tXO1YX1GDI7wdpApA=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Kuuv4gBSULAP6CRw/beCkkN0jcplY6SVlH4GzyKcM6aj8wBqbd+HDhohPa85uvf1b
-	 ewRQAPLBHJVvzbUDVfUPdH/+ClBjyfklgIvN6C93r9abiWNDXjuv9saJegVRuLB1o2
-	 BqrkhatJ+BDLwrULqMV/XR2BsCacpvvMZu8sshIfB1ZOQNF7GegoLkrWasR7ilc2jL
-	 GWDhOOoTbvRt5fiAY5lPexOexVG6ON1grfxQZsE7YEmsGneLWBkoNkso7A4Cq4Cxn9
-	 Y7sstDuN3jB4qJeznIBo0F4Hj/INNvl3BdQ2urCbnx3Wy4xb1gt7kCfY5vOl2SmKNz
-	 aXaQ8jOANEo/w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A2F4ACE0A63; Tue, 30 Jul 2024 15:39:44 -0700 (PDT)
-Date: Tue, 30 Jul 2024 15:39:44 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Valentin Schneider <vschneid@redhat.com>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: RCU-Task[-Trace] VS EQS (was Re: [PATCH v3 13/25]
- context_tracking, rcu: Rename rcu_dynticks_task*() into rcu_task*())
-Message-ID: <30c6d4aa-7598-4dc1-8592-7533d64714c2@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240724144325.3307148-1-vschneid@redhat.com>
- <20240724144325.3307148-14-vschneid@redhat.com>
- <ZqJiDlKtD4wvsv1j@localhost.localdomain>
- <31d78183-4526-41e8-90df-d03c95fdb9b2@paulmck-laptop>
- <ZqlmjVyWXIneklCm@pavilion.home>
+	s=arc-20240116; t=1722379250; c=relaxed/simple;
+	bh=n1oety/HXkXrrdiFjXUbok72gHTpJBT9M6nVGr3yB0U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sIvJ72ZHuFhiPn3a3JRddKix6ZFrjlV6mr+zcf4ELgz4XvDbNlIM6/okY2EIaelmcodQrgd9wHrKldxeNMKgKXHPFod65zteEO/H1I6tlW8rxRLhi/8eVC9ygeS9GRRqv9Y3XGRLytAWO3R7w8m1xwEr1AMrHC+Loct1fKuhKVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mtqvYCWU; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4503ccbc218so3113471cf.1;
+        Tue, 30 Jul 2024 15:40:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722379247; x=1722984047; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Lh9GVDD6OoCtr0k7pBMipRKv14eFzV2Gv2WBzW2ndOs=;
+        b=mtqvYCWUCYRF7unwYUoEErbloamJeOeN3vI4uqo3ZVZIyEGqDCz3+9zzZTVJcR3hph
+         k+xXm7WQTZ2qD9WvGunU+bpI1pXGzlePBc2zzz359DRYWQtWoeKcQ0o/rJaYQtm+LgYz
+         5A6Pu6Ut7Olh32PRmmhR/Sl9s2Dcz3rFm80KyT/yvp20Vx0W7bZChuVRfCE8ASdsZekq
+         k6KhRygJqm2ri1by6JmQS6zJAxPr889B3TokfHa2Q5JJbVW91vaS9noMuUmZhBi0vR1/
+         DHD1RDF1HHeLN0Hab/75LFkmvSWP5Mxn2pa/GhjFhePjJJxDsMFIdFal0ENporkl34Cg
+         Qx4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722379247; x=1722984047;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lh9GVDD6OoCtr0k7pBMipRKv14eFzV2Gv2WBzW2ndOs=;
+        b=bz5zLxIVhgS6B6s28nCxq8BDRzyUQfV+D6GXORARx7LPAijoCwkAn6dKig5IAh5RaN
+         c8nb0Rv45sD5CBw/RsB/i1J4XLaLv7DbT+i3kjJNwlBqfeJc1o30wgp3x2FqQuv5FyIQ
+         SHt1h6BfoOhJazXbLXxj6Q1W4NIY3arYeOJUt0cC8Zk3IfpgwuurhWj2pVW/2EfXyaun
+         s1oABrVAFkGkiV9ROP3K7yyTzcc+tAffnkJBWTzV8CozFpoJACJ9ByglbNy7izk5vXVy
+         9lU2riKgAtndRDC4+q/VCME9b5cjwdV0VlEv3JPflnzedujoFpI1ypHXo0pqroRxwi2F
+         fOYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQwxdj8SOzwzTJdFClxryYKhWLNNXHaqOXikEnnTISZC/qLvsK7sAnURMZJ9JWXwVEBubfYQHLIV0GGQjKIg02HincwAO/JbDddWHwO6t/nfvNnZIETbRKQk3yOPH5j+OxmJbZ
+X-Gm-Message-State: AOJu0Yz0kQGDST0MbabRvTeb2E3VfmzdA8Ih100V+0wvRBSGRi9nmsjQ
+	a88kLtq8Ht/ZS9r+x8jGolmozTljAGLPrJidcwp5W2j88cUy38V8
+X-Google-Smtp-Source: AGHT+IEz03OTW0OWshfpq6CgIxXtN2wnx4Ll1uuIScwi+8LcsE+ExMs/fDgCHXc4cOpe+gu1u/GQ+A==
+X-Received: by 2002:a0c:c48f:0:b0:6b5:2de3:32b0 with SMTP id 6a1803df08f44-6bb77fb12b6mr57670756d6.7.1722379247499;
+        Tue, 30 Jul 2024 15:40:47 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6bb3f9122c0sm68194166d6.56.2024.07.30.15.40.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 15:40:46 -0700 (PDT)
+Message-ID: <5f22c1fe-40ac-4a08-9645-a14c348195dc@gmail.com>
+Date: Tue, 30 Jul 2024 15:40:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZqlmjVyWXIneklCm@pavilion.home>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/440] 6.1.103-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240730151615.753688326@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240730151615.753688326@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 31, 2024 at 12:17:49AM +0200, Frederic Weisbecker wrote:
-> Le Tue, Jul 30, 2024 at 07:23:58AM -0700, Paul E. McKenney a écrit :
-> > On Thu, Jul 25, 2024 at 04:32:46PM +0200, Frederic Weisbecker wrote:
-> > > Le Wed, Jul 24, 2024 at 04:43:13PM +0200, Valentin Schneider a écrit :
-> > > > -/* Turn on heavyweight RCU tasks trace readers on idle/user entry. */
-> > > > -static __always_inline void rcu_dynticks_task_trace_enter(void)
-> > > > +/* Turn on heavyweight RCU tasks trace readers on kernel exit. */
-> > > > +static __always_inline void rcu_task_trace_exit(void)
-> > > 
-> > > Before I proceed on this last one, a few questions for Paul and others:
-> > > 
-> > > 1) Why is rcu_dynticks_task_exit() not called while entering in NMI?
-> > >    Does that mean that NMIs aren't RCU-Task read side critical sections?
-> > 
-> > Because Tasks RCU Rude handles that case currently.  So good catch,
-> > because this might need adjustment when we get rid of Tasks RCU Rude.
-> > And both rcu_dynticks_task_enter() and rcu_dynticks_task_exit() look safe
-> > to invoke from NMI handlers.  Memory ordering needs checking, of course.
-> > 
-> > Except that on architectures defining CONFIG_ARCH_WANTS_NO_INSTR, Tasks
-> > RCU should instead check the ct_kernel_enter_state(RCU_DYNTICKS_IDX)
-> > state, right?  And on those architectures, I believe that
-> > rcu_dynticks_task_enter() and rcu_dynticks_task_exit() can just be no-ops.
-> > Or am I missing something here?
+On 7/30/24 08:43, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.103 release.
+> There are 440 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> I think rcu_dynticks_task_enter() and rcu_dynticks_task_exit() are
-> still needed anyway because the target task can migrate. So unless the rq is locked,
-> it's hard to match a stable task_cpu() with the corresponding RCU_DYNTICKS_IDX.
-
-Can it really migrate while in entry/exit or deep idle code?  Or am I
-missing a trick here?
-
-> > > 2) Looking further into CONFIG_TASKS_TRACE_RCU_READ_MB=y, it seems to
-> > >    allow for uses of rcu_read_[un]lock_trace() while RCU is not watching
-> > >    (EQS). Is it really a good idea to support that? Are we aware of any
-> > >    such potential usecase?
-> > 
-> > I hope that in the longer term, there will be no reason to support this.
-> > Right now, architectures not defining CONFIG_ARCH_WANTS_NO_INSTR must
-> > support this because tracers really can attach probes where RCU is
-> > not watching.
-> > 
-> > And even now, in architectures defining CONFIG_ARCH_WANTS_NO_INSTR, I
-> > am not convinced that the early incoming and late outgoing CPU-hotplug
-> > paths are handled correctly.  RCU is not watching them, but I am not so
-> > sure that they are all marked noinstr as needed.
+> Responses should be made by Thu, 01 Aug 2024 15:14:54 +0000.
+> Anything received after that time might be too late.
 > 
-> Ok I see...
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.103-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-If need be, the outgoing-CPU transition to RCU-not-watching could be
-delayed into arch-specific code.  We already allow this for the incoming
-transition.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-							Thanx, Paul
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
+
 
