@@ -1,108 +1,117 @@
-Return-Path: <linux-kernel+bounces-266963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FC6C940A79
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:56:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E401B940A7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFCA0B2496E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:56:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EB47284CDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFDC1922DE;
-	Tue, 30 Jul 2024 07:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WfMQnBUd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C571922D0;
-	Tue, 30 Jul 2024 07:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0821922E1;
+	Tue, 30 Jul 2024 07:57:48 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1F618D4DC;
+	Tue, 30 Jul 2024 07:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722326168; cv=none; b=WE0q8cb4UwYwhHx5aBV+MsOVzmY1U1F5oGflTFYjSrsdMlxqt7CHFZffHnjReUjKxE14MmDTsD4I0XmZHvoeCaKi9//6sCcvbGqFM4C+tNLqn4O0n3XagAM8XJiDvnedmWJ7uWO1YAqTBpj7XJHF8tB+hSWicuqdGQ7Vqcp6j9M=
+	t=1722326268; cv=none; b=UskYcxZvZOiKfLs+vmC0aUXxx45rIfxd3KEQ+9xhnEf8IUrIwOeoUbMvHyVzJRXMAJffj/BSZSYmuxGe8s26/7TI3GxsqSWB5ck9cdVwU1KcUQvoCiTN1DkMnsl2phl5Kj1iSxGgvdxmwWCCTD4nyY7WBIMmDD0UIhRgRKvcVHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722326168; c=relaxed/simple;
-	bh=Oxb3+9POPgRRPmdnvmiri4xP1ANzqB1A7za7uLZ+riE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fdu6BHvZ2t5rC9Uk7jNwXgh6C6uMqvHuoR9X855+sOxO79KGJYULLKFoY7VILjC4VcCN+MdA7WW4XTJOA/lS8x2Tt1cktty20vAgZfeF2LwdqitYxmbrtx57Ex88k/SV6f39G5mbAT2antk4fq6pcqtQW0tM57Sn7cNM58msbeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WfMQnBUd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29B65C32782;
-	Tue, 30 Jul 2024 07:56:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722326168;
-	bh=Oxb3+9POPgRRPmdnvmiri4xP1ANzqB1A7za7uLZ+riE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WfMQnBUdNcYRvkPAKw2JMQ78ChPfzJ5kzCQ8ex1qJCARJDiVCAxJa/gCjGTtKpZcS
-	 TquSXgiMLGgj79aKJz1bN4bbTx7RaLmsbJBGi+4nCMIa9ILARHF2z/LqPU25+IYpts
-	 FV7xP0PFnn7SBNNx6NiaZBxDc9C1hsIZTrMbnjxxxgd26069KtBdH3dw2VuFPcxeJF
-	 tXsEtGRrVgpdCmSNLdUVZnE7beEYIIFDnIg+GQAxtJ5hc9NyLnVRU5Pg56zqx2GQKb
-	 ldeVeBko9FhVJ1fUqbRvtnqzS1Th+wM/qJ9YGQMYKyXOwacKzYuUh2FPnJF/JT2a5V
-	 LVeb88nz8znTg==
-Date: Tue, 30 Jul 2024 09:56:04 +0200
-From: Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, 
-	kabel@kernel.org
-Subject: Re: [tip: irq/core] irqchip/armada-370-xp: Change symbol prefixes to
- mpic
-Message-ID: <z3vgu5vimj5wkcvlxs27y5s7q3epvmtgrtb7zovdfojpregcye@pqdxzesipb36>
-References: <20240711115748.30268-7-kabel@kernel.org>
- <172224658404.2215.1380801249029241672.tip-bot2@tip-bot2>
+	s=arc-20240116; t=1722326268; c=relaxed/simple;
+	bh=DfV+XSkYlxPxGgegljPBL3o7ugd5RhsUT0FJbNXDZEM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rd6eZcoajn9+AgF+kkUzkjfxyEMnm+aXEqxls/xqAoAJm572IPAUm/AZkwmZMEleIJ92jfBshx/1xJNJhT67AVMWUaW5D24p6vF/bRWS87BzahjuvDUXoof9iHnQ1Ncw8syTo0OzR91IBhfcN1vW+tUM4rXLl71SepwHCl+hMOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8Cxruv4nKhm8VEEAA--.15032S3;
+	Tue, 30 Jul 2024 15:57:44 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowMAxX8f4nKhmrTUGAA--.30670S2;
+	Tue, 30 Jul 2024 15:57:44 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>,
+	kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH v6 0/3] LoongArch: KVM: Add Binary Translation extension support
+Date: Tue, 30 Jul 2024 15:57:40 +0800
+Message-Id: <20240730075744.1215856-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172224658404.2215.1380801249029241672.tip-bot2@tip-bot2>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMAxX8f4nKhmrTUGAA--.30670S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-Hi Thomas,
+Loongson Binary Translation (LBT) is used to accelerate binary
+translation, which contains 4 scratch registers (scr0 to scr3), x86/ARM
+eflags (eflags) and x87 fpu stack pointer (ftop).
 
-so I am going through the differences of the commits that you applied
-in contrast to the originals that I sent, as you asked.
+Like FPU extension, here lately enabling method is used for LBT. LBT
+context is saved/restored during vcpu context switch path.
 
-This commit is rather large, so understandably there was a larger
-probability for a mistake. It seems ok, but I have the notes:
+Also this patch set LBT capability detection, and LBT register get and set
+interface for userspace vmm, so that vm supports migration with BT
+extension.
 
->  	if (WARN_ON(!base_ipi))
->  		return;
-> -
->  	set_smp_ipi_range(base_ipi, IPI_DOORBELL_END);
->  }
+---
+v5 ... v6:
+  1. Solve compiling issue with function kvm_get_one_reg() and
+     kvm_set_one_reg().
 
-^^ I did not remove this line in my original patch, I always try to
-leave an empty line after conditional return:
-  if (cond)
-    return;
-  // empty line
-  code;
+v4 ... v5:
+  1. Add feature detection for LSX/LASX from vm side, previously
+     LSX/LASX feature is detected from vcpu ioctl command, now both
+     methods are supported.
 
-I guess this is not an issue, though.
+v3 ... v4:
+  1. Merge LBT feature detection for VM and VCPU into one patch.
+  2. Move function declaration such as kvm_lose_lbt()/kvm_check_fcsr()/
+     kvm_enable_lbt_fpu() from header file to c file, since it is only
+     used in one c file.
 
-> @@ -704,62 +687,60 @@ armada_370_xp_handle_irq(struct pt_regs *regs)
->  			int ipi;
->  
->  			ipimask = readl_relaxed(per_cpu_int_base + MPIC_IN_DRBEL_CAUSE) &
-> -						IPI_DOORBELL_MASK;
-> +				  IPI_DOORBELL_MASK;
->  
+v2 ... v3:
+  1. Split KVM_LOONGARCH_VM_FEAT_LBT capability checking into three
+     sub-features, KVM_LOONGARCH_VM_FEAT_X86BT/KVM_LOONGARCH_VM_FEAT_ARMBT
+     and KVM_LOONGARCH_VM_FEAT_MIPSBT. Return success only if host
+     supports the sub-feature.
 
-^^ This change also was not in my original patch. I would have put this
-into the "improve indentation" commit, instead of the one that "changes
-symbol prefixes to mpic_", since semantically it belongs into the first
-one.
+v1 ... v2:
+  1. With LBT register read or write interface to userpace, replace
+     device attr method with KVM_GET_ONE_REG method, since lbt register is
+     vcpu register and can be added in kvm_reg_list in future.
+  2. Add vm device attr ctrl marcro KVM_LOONGARCH_VM_FEAT_CTRL, it is
+     used to get supported LBT feature before vm or vcpu is created.
+---
+Bibo Mao (3):
+  LoongArch: KVM: Add HW Binary Translation extension support
+  LoongArch: KVM: Add LBT feature detection function
+  LoongArch: KVM: Add vm migration support for LBT registers
 
-IMO it would have been better to leave these patches as they are, and
-do the change to 100 columns in a subsequent patch, all in one, since
-there are many other parts of the code that would have benefited from
-it. And you would not need to spend time going through the patches line
-by line :-)
+ arch/loongarch/include/asm/kvm_host.h |   8 ++
+ arch/loongarch/include/asm/kvm_vcpu.h |   6 ++
+ arch/loongarch/include/uapi/asm/kvm.h |  17 ++++
+ arch/loongarch/kvm/exit.c             |   9 ++
+ arch/loongarch/kvm/vcpu.c             | 128 +++++++++++++++++++++++++-
+ arch/loongarch/kvm/vm.c               |  52 ++++++++++-
+ 6 files changed, 218 insertions(+), 2 deletions(-)
 
-Anyway, this patch seems ok.
 
-Marek
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+-- 
+2.39.3
+
 
