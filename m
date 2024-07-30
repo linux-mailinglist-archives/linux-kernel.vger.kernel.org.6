@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-267534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07B7F94128E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:53:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5454094128F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:53:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3338A1C20A03
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:53:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1A1C1F2464A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3921A0702;
-	Tue, 30 Jul 2024 12:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABF41A2549;
+	Tue, 30 Jul 2024 12:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0YQUy07G"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="IQDw6a7u"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1BC19F467
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 12:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7FC1A00E6
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 12:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722343841; cv=none; b=fjCg8+TszA2EpVISBUVqFAOL7tTuB+6wiVaCUoDrn9tcdPMS1VCi0vguDC16k7YbPMLkf4mSxesQmvRznOWOTlJEuXScHuTj2bb/IaCdHeth7F1gYUxCe+phpyR6sg2TTnDJFML3yfMgAVBFI6LUdgzjnh9SUVw+mdWgg4bde2A=
+	t=1722343842; cv=none; b=O88VfgjXW4t4jbPLa58Q7Tdds0wPCjx4ytvFCD9l0+PntD+ZX+BuHVUc0WF/FYl7EiCtl6qoyFjPXuLg4sr359YfdALsYho0yygMAV1EeOTn9GX/fSuAot/7c1XeJIfHCeMZQJv2MbjRrmg7n6R94mrXCqkXNBYpwfrfg1uOE9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722343841; c=relaxed/simple;
-	bh=ND1Z2QSEc8ze0NZoRpWgZwD08lwNK0gF0FUUxf0STs8=;
+	s=arc-20240116; t=1722343842; c=relaxed/simple;
+	bh=DMsUH1wkM5FQeR+Q94gKxFOskWK5JayWf+Su90i3p4s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lSKsHPM845hGqV3gmZyq6iT+g75UFSzgHCDTHkHaqseqKEGlTHaD9ZZaQEH7Mhn5Bah5BeaMI85HO5zbt0EpusDt0WC2Ov0vP5jaOrG/I5SjFnYZcjvSpwypHDIbekS0ga1zbum2mWUM9WUbRIksYZXKwCd3FwVrKbLyOsAYBH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0YQUy07G; arc=none smtp.client-ip=209.85.221.44
+	 MIME-Version; b=ExT6X8Xb4c88rEZx8T/8C091JO+6/DHfMEVb4jUvn3ZDDwnCHOgTOJBtW/Y5Rwp0fncvmIJfPFPCM4OFlE8ev9JRBNsb8aGN3diDvfhsjRwVRivIN/GmjLpcvz7R/H0sxpjAjbqKHgTBOqdR0yivbtkkC6R+x2koIj9is677Y5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=IQDw6a7u; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-36858357bb7so2107511f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 05:50:39 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso27071805e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 05:50:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722343838; x=1722948638; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722343839; x=1722948639; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8FpQIo3/nECT6BJG3YrzIm131E/DRxLPrAjjYNTEWJA=;
-        b=0YQUy07G9qEIjZ503mj3yKWW+kP7EmVd1PnO8cex/Epa/S2hvHwrtgSlVHBJ6h5yJ5
-         rfEEezCKKBV+fZ5p0wsoGpiFNzhCQ69evl5F9dFEGpPp9UvW8He7wuAiU4IXa/Ir5M8y
-         RzZrTC0z7SBbFr7c6QoFbgNAgKuwv66VzsAzp0FPkgvhkn0Ei214Ami7Csv0Nw/DIetU
-         Wx2WtVWZ9OEjLuCEGJJgjlS4WvtWX7iQYnkV7dbfEu2ab3HL7H2ZO7e57muAqURjzAyh
-         i4Rb2ZRNVYhxFcqdVp6WvH/4iqnyjpP5kZJ0WhemRcicG6Hv5nhSPtTscrT52BtVQK22
-         OXqA==
+        bh=Nb/qSKjbB/ZuPlpTHCI0SwTZiwfEpxk2uiLYY2slQL4=;
+        b=IQDw6a7uh/XlG9YuA1Aua1itA+07UlpaBvFZtSnQHP8Gyq5Z1FAOHbmt6PuB/9Yl4I
+         wizVzx1XX50ubkPjMNXUKAjCzYfXqM+tQzCPWtQQ0Qa5AbM6LOgYjNcx8k6QHVxFR8Iz
+         lczwOriE+hlwnldW41l/OTCIBY2kEGmoXe6PTdn/HgFqu+l9tasLt3zafLZDXgbMQOCh
+         FzHz23Qpvk0CLRTawrh2/m8W0/M19/GkJEYvGCdc49waEBToLGv48/BL7aC1NSdQJ8Av
+         0ofUozXJPhsrqdxAXWGTE0pMidiHVx0yLPtscjVg4Qss+xrl/N1/CtFK/qk1w5xA3zGm
+         koDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722343838; x=1722948638;
+        d=1e100.net; s=20230601; t=1722343839; x=1722948639;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8FpQIo3/nECT6BJG3YrzIm131E/DRxLPrAjjYNTEWJA=;
-        b=TZyyVJ0iuWSOMeiY6tap5C3IyiHBkfgFQPEPAATMxLpmfFupNCGkYZwuoLJLmzr2N2
-         /R51gTvmexFiWIvEXm7dWQ+UTi2XwkyMbnDRntXeP1LjgwGN6z1sdmf3Qg4KvdwD/d1l
-         VrZlGRfofCpySuxOYvUeKFcm7F27ItGYkeRcljh8+PwbFYVNqXah01S1DH+MsodSOOTm
-         bEY8D2XDSQgf9aHtE9HFdC/1hnrmpr26qILtOEkzn1DIhT9E4Z5+IByXVyORiu+V0L9B
-         b3JrnVbmz8ZSXnGj89dN/3VihR6X/tlb0aSBsdH4+4wp+50bFKv8p2+174RpknqZnns+
-         h9yg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwNZkYaYAd9o3cGNod516Nob5FIVmMZFGv0mvzkS4puJge5H2Wbcujo1IQGpklUaH6Y516TBF/+vMux8mgH6idtrVz+8AGRCywZva2
-X-Gm-Message-State: AOJu0YyWuHyfIrUurlpdZEPWmlzXggbO7wc9KlG5Uzw/mABMLTVxWL9W
-	/8MkUhpKOnYSh1BrP8L4uzw6ojW1Q21/BADsAS5QnBJ5nrS9WPYgSfufZxIScUk=
-X-Google-Smtp-Source: AGHT+IFYKETa1maYsbR/lXJacP4Dulbw5t+LnfR9HzWYE5KbSp8mR/aHH1IRgvWxRpjGsQ/h6Ss4mQ==
-X-Received: by 2002:a05:6000:4029:b0:36b:63b5:ed64 with SMTP id ffacd0b85a97d-36b63b5f8e9mr8234742f8f.40.1722343837924;
-        Tue, 30 Jul 2024 05:50:37 -0700 (PDT)
+        bh=Nb/qSKjbB/ZuPlpTHCI0SwTZiwfEpxk2uiLYY2slQL4=;
+        b=FlOhAhCWL1wPAHCQ5SqxYvtlYtjj8UnlSb02Q/dt9DeB7JOVFB4rP7ePf0PkLz83XT
+         6tBvnSLSOP2hH4LuiSpKm11HdDty4ghrh9lUdDHeRMGZs4lALhvBQCCrd+sQn53TqJLV
+         XCRz5UMQcZZVmpf91NTHQzY9UUCgRYcG8HRF5laGKGY/0wGBgI7chOhiCWa6bTqw88Jr
+         LkZABn8TWCpHf6I3dC7ZfiLjK8wwpzDOmNDD+fcf9+H9BYs1zLiDJ0y0KBUsPkVvrtBf
+         2G0EkYiKJ+StEzMboH6sR5R8SAt9EkcAoZI8BQxzPwB++9P0yZW3JlMcFPaE9m+3vvqP
+         SJEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWiLlsHhJEZEsWNga1mq+dRupB5NvR9tQ2IjSy2OJFnt5H3rFRadc6poZT1BxAF5MrWDDRH2BUqVOu3bSJBnGsM+bURDMcESMf7w6my
+X-Gm-Message-State: AOJu0YyUzg4x5k+Cyep8Bh81m3lmDddyUwz+E4cTI7Lb9i2mYRKOuOBt
+	swIuncT9LfBrBr7ilEGW2aEfUnoAkSQRKMFMLW6F4hTUVGjrQivxpV8cYhwsBRo=
+X-Google-Smtp-Source: AGHT+IGtrN/qyndOtU5EbVTBBPgvlT3scXPmXKI31g3Y8pvJ2hEwbqVrraWIOB4B+x6XQNOoMWE1ow==
+X-Received: by 2002:a05:600c:1ca3:b0:427:dac4:d36 with SMTP id 5b1f17b1804b1-42811d73a0cmr67316145e9.7.1722343838742;
+        Tue, 30 Jul 2024 05:50:38 -0700 (PDT)
 Received: from toaster.lan ([2a01:e0a:3c5:5fb1:291e:4a48:358e:6f49])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42805730e68sm216521405e9.9.2024.07.30.05.50.37
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42805730e68sm216521405e9.9.2024.07.30.05.50.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 05:50:37 -0700 (PDT)
+        Tue, 30 Jul 2024 05:50:38 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -79,9 +79,9 @@ Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-amlogic@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/9] drm/meson: dw-hdmi: fix incorrect comment in suspend
-Date: Tue, 30 Jul 2024 14:50:14 +0200
-Message-ID: <20240730125023.710237-5-jbrunet@baylibre.com>
+Subject: [PATCH 5/9] drm/meson: dw-hdmi: split resets out of hw init.
+Date: Tue, 30 Jul 2024 14:50:15 +0200
+Message-ID: <20240730125023.710237-6-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240730125023.710237-1-jbrunet@baylibre.com>
 References: <20240730125023.710237-1-jbrunet@baylibre.com>
@@ -94,32 +94,58 @@ MIME-Version: 1.0
 X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 
-Comment in suspend says TOP is put in suspend, but the register
-poke following is actually de-asserting the reset, like in init.
+This prepares the migration to regmap usage.
 
-It is doing the opposite of what the comment says.
+To properly setup regmap, the APB needs to be in working order.
+This is easier handled if the resets are not mixed with hw init.
 
-Align the comment with what the code is doing for now and add
-a FIXME note to sort this out later
+More checks are required to determine if the resets are needed
+on resume or not. Add a note for this.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/gpu/drm/meson/meson_dw_hdmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/meson/meson_dw_hdmi.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-index 2890796f9d49..5cd3264ab874 100644
+index 5cd3264ab874..47aa3e184e98 100644
 --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
 +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-@@ -751,7 +751,7 @@ static int __maybe_unused meson_dw_hdmi_pm_suspend(struct device *dev)
+@@ -581,11 +581,6 @@ static void meson_dw_hdmi_init(struct meson_dw_hdmi *meson_dw_hdmi)
+ 	/* Bring HDMITX MEM output of power down */
+ 	regmap_update_bits(priv->hhi, HHI_MEM_PD_REG0, 0xff << 8, 0);
+ 
+-	/* Reset HDMITX APB & TX & PHY */
+-	reset_control_reset(meson_dw_hdmi->hdmitx_apb);
+-	reset_control_reset(meson_dw_hdmi->hdmitx_ctrl);
+-	reset_control_reset(meson_dw_hdmi->hdmitx_phy);
+-
+ 	/* Enable APB3 fail on error */
+ 	if (!meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A)) {
+ 		writel_bits_relaxed(BIT(15), BIT(15),
+@@ -675,6 +670,10 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
+ 		return PTR_ERR(meson_dw_hdmi->hdmitx_phy);
+ 	}
+ 
++	reset_control_reset(meson_dw_hdmi->hdmitx_apb);
++	reset_control_reset(meson_dw_hdmi->hdmitx_ctrl);
++	reset_control_reset(meson_dw_hdmi->hdmitx_phy);
++
+ 	meson_dw_hdmi->hdmitx = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(meson_dw_hdmi->hdmitx))
+ 		return PTR_ERR(meson_dw_hdmi->hdmitx);
+@@ -765,6 +764,11 @@ static int __maybe_unused meson_dw_hdmi_pm_resume(struct device *dev)
  	if (!meson_dw_hdmi)
  		return 0;
  
--	/* Reset TOP */
-+	/* FIXME: This actually bring top out reset on suspend, why ? */
- 	meson_dw_hdmi->data->top_write(meson_dw_hdmi,
- 				       HDMITX_TOP_SW_RESET, 0);
++	/* TODO: Is this really necessary/desirable on resume ? */
++	reset_control_reset(meson_dw_hdmi->hdmitx_apb);
++	reset_control_reset(meson_dw_hdmi->hdmitx_ctrl);
++	reset_control_reset(meson_dw_hdmi->hdmitx_phy);
++
+ 	meson_dw_hdmi_init(meson_dw_hdmi);
  
+ 	dw_hdmi_resume(meson_dw_hdmi->hdmi);
 -- 
 2.43.0
 
