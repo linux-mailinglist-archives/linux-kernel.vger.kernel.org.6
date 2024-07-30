@@ -1,103 +1,173 @@
-Return-Path: <linux-kernel+bounces-267756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C9694151F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:07:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0850941523
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00B1E1C22D9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:07:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27E71B242E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6296B1A2C21;
-	Tue, 30 Jul 2024 15:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B711A2C28;
+	Tue, 30 Jul 2024 15:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KbwII/pT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lfbQJcAB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FXCctCsa"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2404F1A0B15;
-	Tue, 30 Jul 2024 15:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF41B1A2C1E;
+	Tue, 30 Jul 2024 15:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722352064; cv=none; b=WdvfS5UOUi/hlyCXhzcIx++QqrfE6h61OJj89azYruwIJ8EVSftgNR7rqqQBDeY5CSRVpC4x2uUBmW9S29xUjIYV8g+8UlXdjIU2yuzDz2P8EcHtGogQtt2hdFfbGGzZseAJXIGOLUr7eA6ObPzQtVpwaaa0AmYTTkFTgx3Xvtg=
+	t=1722352143; cv=none; b=FWxGWe7rxODkCbOdr6ECe+0INz8xgQLb0ql27V8rDR2VVWtXI4SE6pL3boaIEhBQIN3v0CU4svscHCpUO94VQ+Iilu2Y8Jkgz2Ap0r02sxVdwBDFFAIDFUcyMi0RSqJNT4mGW7jZTrCwnUjR8nAaf2elvrDkP70jMPZ7pzdPk3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722352064; c=relaxed/simple;
-	bh=0vEHp4A4cdwoQ2NXtwvbDJ+K7DRuc7Cd0ke5pgmBak0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ipTQ23KGy89Tz91JiZQ8zjYIL2jTLcnb+KTAplMcoCL64OuIN05IMdHGs3d/bWdYTA+HxJX9BbXh7zs8s2s38z7k6WV7q7kH5ZRUXVbITOO5qDiHtMWdf4M2T+IXSBHSZQmCog665edZNWhP5lXixRf19pbd+kFbO+vfsrK8s/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KbwII/pT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lfbQJcAB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722352061;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fpwPEpw3JPhRv9nBi1m3AsS0B+P8D+BFBm1aO7bI/bE=;
-	b=KbwII/pTq8x8+n5OR+jcZaKlUYBbB6p32/ph+Tp9EVTYJ7YLcic2bejdbtMrAb3Cah9Lrf
-	fSxktmAE6+QjoPUmaEc6IY/bE3pZm39L7xgbZi7K0m6iUB9LyN6wuOu6ajDLvOndETtAfe
-	oVzTyLwEQTPQwx3eAZ7HIUOf5D/YZSO3+tz/WMxaTRtFg+2etA1/aw6Opijpws7vjbhxoT
-	e27B1pFneznZRjgC+GQX8v6ciWJLLN1/eemDRV0M4VvsKmxTZU0GJrXWHEeiB8VSmyeElk
-	CTtuFesifLLLGt3SIzjzMoC5AKeBhJt+qYTz/gtXvosqW93PfZs28VcS+taSOg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722352061;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fpwPEpw3JPhRv9nBi1m3AsS0B+P8D+BFBm1aO7bI/bE=;
-	b=lfbQJcABo49SKHgsRCI3VbvBYJY/1C1r4+NcBjv+Kz6tCTlhv8/dHZ6SdJkHVKL/ZabQf2
-	djXo+eroYdiME+BQ==
-To: David Wang <00107082@163.com>, liaoyu15@huawei.com
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
- stable@vger.kernel.org, x86@kernel.org
-Subject: Re: [Regression] 6.11.0-rc1: BUG: using smp_processor_id() in
- preemptible when suspend the system
-In-Reply-To: <20240730142557.4619-1-00107082@163.com>
-References: <20240730142557.4619-1-00107082@163.com>
-Date: Tue, 30 Jul 2024 17:07:41 +0200
-Message-ID: <87ikwm7waq.ffs@tglx>
+	s=arc-20240116; t=1722352143; c=relaxed/simple;
+	bh=8ENJOjZwJdGgNFQOL8N6OJHTAv8NY+3Jqa9OsnFVcBw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Sd5RG8R6AV3FZz56z3JNrwySrYw3h/Ni199U557hyEFUrkNfXrOcx7s9BzZmSD/MvEafLe1bfK/hcH4Xrc2bgBTwLlUs7K1GC+UrcdOEsfPxHgAIRj1SNmNz5tyYAoY/uj2elK6B92vZJP8uLdTuoh/s8p7DMA4cOuYPyVmCOiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FXCctCsa; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2cb510cd097so3408253a91.1;
+        Tue, 30 Jul 2024 08:09:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722352141; x=1722956941; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UiEQQfSFvVIlUjdarShKIntPOK/qyPeJHSyrwGVtIbs=;
+        b=FXCctCsayOZNnuuSdPncFPrOOdmitTQHxmnDj71ZMSgAsbr9Ep83X8kq/xJr47gprI
+         bQtbiXR7mqQekSHiLTV7H1SF/pfk6Ik5iZ9ZWPx5ixPg7pGTQKkVSoApP/unXlGisQwE
+         QTCWkZFvpURbwHebEOyESjSEWqB+Ne45S8EsgHw2Srm02/JcFzR9W9Pl1wxdCsL9RfN9
+         Sili3FrtgxfJ+N7MJkz/q4NVNzmfzJwwcIY/IYT8OvAGS7rB+937AIR5dN5xUYhqXyD2
+         2iP6uHrR8ZMl5h5Be3D24LhjSuS5vao+aK47/t5Pr+UmL2lAS3FSB9jTg9rYRCaXk4+8
+         tNcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722352141; x=1722956941;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UiEQQfSFvVIlUjdarShKIntPOK/qyPeJHSyrwGVtIbs=;
+        b=dkbrbFg2Cne46sMWjiSEAfQL9K2NSiteWWOJqMX0MLfcOJFalr8tK+/2NZaGihd0es
+         ElmoZcpUIAPnOHoOFuD7btDC6E30ndaGJC1bn0zoOlhz+H/9rC829vp+LjbktxkNoNBt
+         ZJBgDVXOuX60bimu5JTyXUI378joA7k5Nn8gUMtkSdXIDBgQ0g7+6LtX8EQVJIuvcYw4
+         gzq1NrE275iErjgR6qlajfDZFxJqlDXdgVTn9VYaUNSQc8bL8TKJrHfcnGu+CewYAqbY
+         INT/2OOPfDxV7ZYFOcAEc9/muS90FuxXhiEJ7PACKI8XIDutJFuNqEpWthOJ6P0KbmRS
+         v7wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUocgXN76FLLF10CVVcuEU18x1Y+rdyqoK51+poLLeEdNN8vegHwYFku0GEGypG8doHfZFAnbDgG06Xn15zRf12H98DmpDDHCclCc93ooYXj6RJgCh+r6T8uStTGmkH8G7K5xSs/rJepg2mb8fv2Qc0
+X-Gm-Message-State: AOJu0YxyU2TfEU83koh23nAZCfUYEzyxauCCuHSRhG3yH+L44ZabLlAi
+	B5JuAuAgWcnB34qxFYIgF4iqMZlWbwDihsQByffaZ4cHW7LOQTFcsbN58JOBD69IlJd4aiEN8To
+	tQ2gtWe6QenHrdn96FSiLY9jfkgc=
+X-Google-Smtp-Source: AGHT+IGlO6F6UOrUzQz8J2QDhkFJHgPfixGJLN9Qvf4u+3VqNqRQOQE9sqawX452qNdusKAUSXmkFBKym34FJXwOlSE=
+X-Received: by 2002:a17:90a:5d17:b0:2c9:a151:44fb with SMTP id
+ 98e67ed59e1d1-2cf7e1fad43mr13111838a91.22.1722352141201; Tue, 30 Jul 2024
+ 08:09:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240730123421.GA9085@redhat.com> <20240730123457.GA9108@redhat.com>
+In-Reply-To: <20240730123457.GA9108@redhat.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 30 Jul 2024 08:08:49 -0700
+Message-ID: <CAEf4BzZ=vMh9=t3iH+pqwTDaYGfXvuF-0BqaLsOgAx2qV7Vqzw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] uprobes: shift put_uprobe() from delete_uprobe() to uprobe_unregister()
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org, 
+	jolsa@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30 2024 at 22:25, David Wang wrote:
-> When I suspend my system, via `systemctl suspend`, kernel BUG shows up in log:
+On Tue, Jul 30, 2024 at 5:35=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wro=
+te:
 >
->  kernel: [ 1734.412974] smpboot: CPU 2 is now offline
->  kernel: [ 1734.414952] BUG: using smp_processor_id() in preemptible [00000000] code: systemd-sleep/4619
->  kernel: [ 1734.414957] caller is hotplug_cpu__broadcast_tick_pull+0x1c/0xc0
+> Kill the extra get_uprobe() + put_uprobe() in uprobe_unregister() and
+> move the possibly final put_uprobe() from delete_uprobe() to its only
+> caller, uprobe_unregister().
+>
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> ---
+>  kernel/events/uprobes.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+>
 
-The below should fix that.
+LGTM as well.
 
-Thanks,
+BTW, do you have anything against me changing refcounting so that
+uprobes_tree itself doesn't hold a refcount, and all the refcounting
+is done based on consumers holding implicit refcount and whatever
+temporary get/put uprobe is necessary for runtime uprobe/uretprobe
+functioning.
 
-        tglx
----
---- a/kernel/time/tick-broadcast.c
-+++ b/kernel/time/tick-broadcast.c
-@@ -1141,7 +1141,6 @@ void tick_broadcast_switch_to_oneshot(vo
- #ifdef CONFIG_HOTPLUG_CPU
- void hotplug_cpu__broadcast_tick_pull(int deadcpu)
- {
--	struct tick_device *td = this_cpu_ptr(&tick_cpu_device);
- 	struct clock_event_device *bc;
- 	unsigned long flags;
- 
-@@ -1167,6 +1166,8 @@ void hotplug_cpu__broadcast_tick_pull(in
- 		 * device to avoid the starvation.
- 		 */
- 		if (tick_check_broadcast_expired()) {
-+			struct tick_device *td = this_cpu_ptr(&tick_cpu_device);
-+
- 			cpumask_clear_cpu(smp_processor_id(), tick_broadcast_force_mask);
- 			tick_program_event(td->evtdev->next_event, 1);
- 		}
+I can do that with a simple refcount_t and refcount_inc_not_zero(), no
+fancy custom refcounting. This schema makes most sense to me, it will
+also simplify registration by avoiding that annoying
+is_uprobe_active() check + retry. Thoughts?
+
+All that would be additional on top of your change. BTW, do you plan
+any more clean ups like this? It's a bit of a moving target because of
+your refactoring, so I'd appreciate some stability to build upon :)
+
+Also, can you please push this and your previous patch set into some
+branch somewhere I can pull from, preferably based on the latest
+linux-trace's probes/for-next? Thanks!
+
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index c06e1a5f1783..f88b7ff20587 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -939,7 +939,6 @@ static void delete_uprobe(struct uprobe *uprobe)
+>         rb_erase(&uprobe->rb_node, &uprobes_tree);
+>         write_unlock(&uprobes_treelock);
+>         RB_CLEAR_NODE(&uprobe->rb_node); /* for uprobe_is_active() */
+> -       put_uprobe(uprobe);
+>  }
+>
+>  struct map_info {
+> @@ -1094,7 +1093,6 @@ void uprobe_unregister(struct uprobe *uprobe, struc=
+t uprobe_consumer *uc)
+>  {
+>         int err;
+>
+> -       get_uprobe(uprobe);
+>         down_write(&uprobe->register_rwsem);
+>         if (WARN_ON(!consumer_del(uprobe, uc)))
+>                 err =3D -ENOENT;
+> @@ -1102,10 +1100,16 @@ void uprobe_unregister(struct uprobe *uprobe, str=
+uct uprobe_consumer *uc)
+>                 err =3D register_for_each_vma(uprobe, NULL);
+>
+>         /* TODO : cant unregister? schedule a worker thread */
+> -       if (!err && !uprobe->consumers)
+> -               delete_uprobe(uprobe);
+> +       if (!err) {
+> +               if (!uprobe->consumers)
+> +                       delete_uprobe(uprobe);
+> +               else
+> +                       err =3D -EBUSY;
+
+This bit is weird because really it's not an error... but this makes
+this change simpler and moves put_uprobe outside of rwsem. With my
+proposed change to refcounting schema this would be unnecessary, but
+let's see what you think.
+
+> +       }
+>         up_write(&uprobe->register_rwsem);
+> -       put_uprobe(uprobe);
+> +
+> +       if (!err)
+> +               put_uprobe(uprobe);
+>  }
+>  EXPORT_SYMBOL_GPL(uprobe_unregister);
+>
+> --
+> 2.25.1.362.g51ebf55
+>
 
