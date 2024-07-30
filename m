@@ -1,174 +1,133 @@
-Return-Path: <linux-kernel+bounces-267689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C08BB941461
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:29:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBD1941467
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F78D1F20D3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:29:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 049751C230F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B5C1A2564;
-	Tue, 30 Jul 2024 14:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816C11A2568;
+	Tue, 30 Jul 2024 14:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lPRmNix3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="prPUmBZc";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lPRmNix3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="prPUmBZc"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsILu2Jz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499FA1A2542;
-	Tue, 30 Jul 2024 14:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BD318FC75;
+	Tue, 30 Jul 2024 14:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722349746; cv=none; b=YOaUTMF6xtwDKrrpa6LgX1vqiuCmgadc7p6FGS9wxLEEpGWEDganYx9ZNBLNRgW/4KhY13UYFqUlWF9vkLnZ6bUVrUblKKX2fO/o7ko9OpqcPpogWeZsf9FooH+AaGuJTJEEyqDpCz+yUJOyBK6MpZey83bptMFuPkzb4d50ozY=
+	t=1722349935; cv=none; b=kHuuuU1hK6z2LWjbtBi47D6wJMuHmuk6s34qngJfSVn8enjnnVtNnuzmIKYcJJ1oZeCJ5a7iBQZO4xiigvTfD8cqL7zfC+88aPRWSm1izmqvq34PFjpw/LPmGFHCUInrG/RP/MUbiK0/PVILmBbzv3JmREqSRXfOgt4fiycKcwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722349746; c=relaxed/simple;
-	bh=zVFqjIcSC24t3cQoOBUUphoHlw9VpenKgLWiWbbaCOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MAq6NUwvt7hB+cr9awzyL/kdSDKyFUFXiR5flpKeq2J2ZTxXPq1zdBbUcc8DdWLNIF6vYOh8KmwnEtxYi3Cl4Qt9mFm52S1vgrlvHk03/anbeKGUYbydddaRrRvOg9S7R1+G8fx19sJ4EEklA5ULRDYh0+Qsrgq4f/Zk7nYjAsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lPRmNix3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=prPUmBZc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lPRmNix3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=prPUmBZc; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2F7AE21B58;
-	Tue, 30 Jul 2024 14:29:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722349742;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t4QbICu75iotzMNKAZjA2FIKW9tUy1bLDgCgXCB20LE=;
-	b=lPRmNix3xg4s7lmeLMUkEMl0efFS8BnM1R1EfKy1XyoDdrblPaBqYuwSIDIWl7ecWFMnOR
-	Lvx9hhOl2bfMWkf6m+rkAgklco7ns8h0wEerPuYkweRvXKe5/Dac7YWf58GElW4llzudid
-	FFJquEjDAKZSXC3/hXatQdYUpy2A2KU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722349742;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t4QbICu75iotzMNKAZjA2FIKW9tUy1bLDgCgXCB20LE=;
-	b=prPUmBZcLxvFGKoEs8BBlX6SW6NreDRbuZwdTzu1j3pC1A9ajF6j0ztfHEkQoQ1GecaW6F
-	PZoSAXqwii89c3AA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=lPRmNix3;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=prPUmBZc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722349742;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t4QbICu75iotzMNKAZjA2FIKW9tUy1bLDgCgXCB20LE=;
-	b=lPRmNix3xg4s7lmeLMUkEMl0efFS8BnM1R1EfKy1XyoDdrblPaBqYuwSIDIWl7ecWFMnOR
-	Lvx9hhOl2bfMWkf6m+rkAgklco7ns8h0wEerPuYkweRvXKe5/Dac7YWf58GElW4llzudid
-	FFJquEjDAKZSXC3/hXatQdYUpy2A2KU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722349742;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t4QbICu75iotzMNKAZjA2FIKW9tUy1bLDgCgXCB20LE=;
-	b=prPUmBZcLxvFGKoEs8BBlX6SW6NreDRbuZwdTzu1j3pC1A9ajF6j0ztfHEkQoQ1GecaW6F
-	PZoSAXqwii89c3AA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 15C3E13297;
-	Tue, 30 Jul 2024 14:29:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7IQUBa74qGZMbQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 30 Jul 2024 14:29:02 +0000
-Date: Tue, 30 Jul 2024 16:29:00 +0200
-From: David Sterba <dsterba@suse.cz>
-To: syzbot <syzbot+c86c7974966b98aab23d@syzkaller.appspotmail.com>
-Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, terrelln@fb.com
-Subject: Re: [syzbot] [btrfs?] KMSAN: uninit-value in
- ZSTD_compressBlock_doubleFast
-Message-ID: <20240730142900.GF17473@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <000000000000794dc0061a448fc0@google.com>
+	s=arc-20240116; t=1722349935; c=relaxed/simple;
+	bh=CKlxjvDkzyWdGGZLK/lWcnBd5Y6Qq9WMwdYBOc4rO20=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k5saVjbc6fDCRQ9kNfii88s6eXKwHRTK537dOZWRu4minv7znRIHSQO+OUU1KUFoP9aoEi5apvM1q7W9i8jkyXmKzovy1FCHIBAdTjc1tpm0miWVg/hki8xng+1JrVMCGACOV0KVBAjUDLrsxNwiDusyfJxQQ4pFqkzjhUqc6nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsILu2Jz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5A93C4AF0C;
+	Tue, 30 Jul 2024 14:32:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722349935;
+	bh=CKlxjvDkzyWdGGZLK/lWcnBd5Y6Qq9WMwdYBOc4rO20=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tsILu2JzPF0VJidxPkvQGTHWZikMKNUxpqj8Oxtekl9o07wpClAu0xFV6uqP0dW6z
+	 5RmBTu7lO9XfU6c5FpJvOA2vVTW51+YiCESx2D+ZqI8Kapss6N47T0xOFpaEXIYlZy
+	 eyB5X43dinX2xIlTgj2by+nXGk5DKiUNsGeE2Ib4GD6whAVo4QsrV2UonZovXtRy2d
+	 BGbupK3XX13l2qhmrfpyaOI1WjQFwrXwxQbVH1j/49a7u3nxZ2hEQB3N3940ivsjy+
+	 J2hFOZ8ch6d9CcEenpR1hLbFoGRWEY+INpxyKYOoLYJisZ8S5eoYMsYc3IGgHSFUtJ
+	 lwCWyABq42c1Q==
+Message-ID: <31173e79-4b2d-4027-a4a2-61071206f387@kernel.org>
+Date: Tue, 30 Jul 2024 16:32:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000794dc0061a448fc0@google.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [1.49 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[storage.googleapis.com:url,appspotmail.com:email,suse.cz:replyto,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,syzkaller.appspot.com:url];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[c86c7974966b98aab23d];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spamd-Bar: +
-X-Rspamd-Queue-Id: 2F7AE21B58
-X-Spam-Level: *
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: 1.49
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: interconnect: qcom: Do not require reg for
+ sc8180x virt NoCs
+To: djakov@kernel.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ quic_okukatla@quicinc.com, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
+References: <20240730141016.1142608-1-djakov@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240730141016.1142608-1-djakov@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 06, 2024 at 08:40:27PM -0700, syzbot wrote:
-> Hello,
+On 30/07/2024 16:10, djakov@kernel.org wrote:
+> From: Georgi Djakov <djakov@kernel.org>
 > 
-> syzbot found the following issue on:
+> The virtual interconnect providers do not have their own IO address space,
+> but this is not documented in the DT schema and the following warnings are
+> reported by dtbs_check:
 > 
-> HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=164aa5f2980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c86c7974966b98aab23d
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> sc8180x-lenovo-flex-5g.dtb: interconnect-camnoc-virt: 'reg' is a required property
+> sc8180x-lenovo-flex-5g.dtb: interconnect-mc-virt: 'reg' is a required property
+> sc8180x-lenovo-flex-5g.dtb: interconnect-qup-virt: 'reg' is a required property
+> sc8180x-primus.dtb: interconnect-camnoc-virt: 'reg' is a required property
+> sc8180x-primus.dtb: interconnect-mc-virt: 'reg' is a required property
+> sc8180x-primus.dtb: interconnect-qup-virt: 'reg' is a required property
 > 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+c86c7974966b98aab23d@syzkaller.appspotmail.com
+> Fix this by adding them to the list of compatibles that do not require
+> the reg property.
 
-Most likely this was a side effect of bug fixed by commit f3a5367c679d
-("btrfs: protect folio::private when attaching extent buffer folios").
-There are 3 reports by syzbot, timeframe corresponds with increased
-number of bogus errors caused by use-after-free of a page, compression
-is reuses pages quite often.
+So I guess we are giving up on
+https://lore.kernel.org/all/20230530162454.51708-4-vkoul@kernel.org/
+?
 
-The fix is best guess.
+Best regards,
+Krzysztof
 
-#syz fix: btrfs: protect folio::private when attaching extent buffer folios
 
