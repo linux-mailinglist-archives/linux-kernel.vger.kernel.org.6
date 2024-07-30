@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-267385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4685D9410EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:43:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E72C9410F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED1F51F24E86
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:43:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D10711F23352
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1C51A2C2B;
-	Tue, 30 Jul 2024 11:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3051A3BA3;
+	Tue, 30 Jul 2024 11:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HT06jDRy";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ixByoDIZ"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4BVEZZ8M";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gtzn9Tz4"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC32C1A01BD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DE41A01A9;
 	Tue, 30 Jul 2024 11:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722339608; cv=none; b=L2oLEaMpImOrIKJix2+XVppJMjECp1xIfF1VqABXNIP+kogMJCxXbDZeuzJYMLi5yvQzexvMPkVZnsBSBcvjs2vDjU7ZdP6e0bSaZU8a/HFG7rv1INwtyEDugjQg5m1+RAYhoaZaCmMEYXpDANxFY//3tqatxlyFqcJ81u8E9l0=
+	t=1722339611; cv=none; b=eQ8vJfig/PLYpUJZ61TsXDmriwrAPWGsZ+xbIjsmIx4EB25nRkoYVkX9DERzVOuyLQPIp0D+eiBkukAiim6DtQ27PP3UxrQquuKxyftaHINYNfLOb5aWhkHKZLys5laOsxVAI2FOc6R30rWZ/9OnRK6RNvfX6mcoudTz9EjjGJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722339608; c=relaxed/simple;
-	bh=eKeLgpaNKJtK8eElYTDUHO9mUOmJcF/Ezj6ahkNzMHA=;
+	s=arc-20240116; t=1722339611; c=relaxed/simple;
+	bh=WVSLVkS08z3yoOWmnxUNsqlrNGIZht46gq2yGTdXqYg=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=oGAe5GS+hCvzMMBeO4eCEl27+xeMUwZ3/yNNC71nXb5kAKZVmQggjufW3TXA/VvqGyQwHILogd4d6oCz77jnXeDZli4Bk+Ud4xhYbCQHvn4/qKAkLlZMPbTxBz1M1LHe5MJru6aOhQRM60pQwGVWsMDouSbeo0glWsVnjMfJbws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HT06jDRy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ixByoDIZ; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=CCWPWHQubL3/0ExOLI4SzeTiYIyeYxKMulKOEYgLycVWiv5HAPFAkfzhm8VQNZMpFIoAHytSmicjAPbgpub84J1HDOeioANOog0OowN9rlBI31I7sXRrwnJ24ECAwR0nXq+I6eA8Jfl4dw22pchfOYz8q/cGh18vag47g/vUsJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4BVEZZ8M; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gtzn9Tz4; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Tue, 30 Jul 2024 11:40:02 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722339603;
+	s=2020; t=1722339602;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=QYgfqiyG1rxoUOLYMHn6U7B1GyDqmdMHy0D+tgUDtKY=;
-	b=HT06jDRyz+KNsq+cuLTzA4V0Pm1EZwWlrFwcf0Z6WQOaJSeCgB+RyNC2h0yiPfbqd+2je5
-	1ht2Z35cDazQA3CCtf1FoLhNTfIhBpwvsfrqhDpRp2gpHcPtxtxcl1GJKO0qjWp1U3U7dy
-	HQN0egV80m4xlhykcI6ffyVw4j2RP06tC4Xm1CGZu7DVEKWpNZpsTSc6t4jryqyGRcWvZ2
-	36n+EXEyupiTZvDN+e/fUz1wwm9XHUNyUfNyJV+XhTfXOnU1ZoOQSiWbD4NshjaOisAXx5
-	iwdn1pO7XG1olCgmUKV1LzFM8g9gi59SOLXBFvnUF5Ulaj6J4ahec07BWZV07Q==
+	bh=Ba4wa4ozctylJgeYbfNfiLq7DerZiHstCkEtRncYFSM=;
+	b=4BVEZZ8Ms2eEd5UoOibXw63wfMmJHGxd+0tY1hgjbXyD9YUuq9WrniwN6i+KsYgugXpfPx
+	3pn3uR3UIbM7Uv4nKvI+bf/5NexRxfMSBkMG/aGLhNiKXi3MJ5D+mNABVKSa+o4/vxMjXM
+	9G5evk/vAagAsVs+2sKgVzY1+XxpNKZk6LVHbQAynGZ8ZuAMSKB7JUO3q0JvNTcuPvvHec
+	N64oBPs7uuhkwKOauteOL6hUszpZD9t8seivriTMJ0Tz2a9XZQkA3QJx+jbDFlJlobfTkp
+	yxuc6TWlIBqe7rUKKyHoPNLDLeTz9fnyW+Yo/DgauvlrcrotnchuHhIhqaJ1iQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722339603;
+	s=2020e; t=1722339602;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=QYgfqiyG1rxoUOLYMHn6U7B1GyDqmdMHy0D+tgUDtKY=;
-	b=ixByoDIZPQ/2XzKfX2cuo96o1TYVKHz0Sfhg7iG53vx/nXKY9WTu+zbxiykvlhNJIBJJ5N
-	at87SA6lytbscuDA==
+	bh=Ba4wa4ozctylJgeYbfNfiLq7DerZiHstCkEtRncYFSM=;
+	b=gtzn9Tz4xrSgBP0H1/timOd5lo4f9HCrnZomZ9/6K66fsVlks+dIkgljCdAWjx32GyOuXE
+	6ZyFj44y3TaJS7Bw==
 From: tip-bot2 for Marek =?utf-8?q?Beh=C3=BAn?= <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/core] irqchip/armada-370-xp: Change to SPDX license identifier
+Subject: [tip: irq/core] irqchip/armada-370-xp: Declare iterators in for loop
 Cc: kabel@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
  Andrew Lunn <andrew@lunn.ch>, x86@kernel.org, linux-kernel@vger.kernel.org,
  maz@kernel.org
-In-Reply-To: <20240708151801.11592-10-kabel@kernel.org>
-References: <20240708151801.11592-10-kabel@kernel.org>
+In-Reply-To: <20240708151801.11592-11-kabel@kernel.org>
+References: <20240708151801.11592-11-kabel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172233960264.2215.17680881873823067331.tip-bot2@tip-bot2>
+Message-ID: <172233960240.2215.2650099025109026332.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,47 +81,135 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     045c4bb864489fda99309dfa902346570d576a39
-Gitweb:        https://git.kernel.org/tip/045c4bb864489fda99309dfa902346570d5=
-76a39
+Commit-ID:     644799f920c906666b5393c33dcf3008ace1ef6b
+Gitweb:        https://git.kernel.org/tip/644799f920c906666b5393c33dcf3008ace=
+1ef6b
 Author:        Marek Beh=C3=BAn <kabel@kernel.org>
-AuthorDate:    Mon, 08 Jul 2024 17:18:00 +02:00
+AuthorDate:    Mon, 08 Jul 2024 17:18:01 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Tue, 30 Jul 2024 13:35:46 +02:00
 
-irqchip/armada-370-xp: Change to SPDX license identifier
+irqchip/armada-370-xp: Declare iterators in for loop
 
-Change the license identifier to SPDX style.
+Where possible, declare iterators in for cycle. This is possible since
+kernel uses -std=3Dgnu11.
 
 Signed-off-by: Marek Beh=C3=BAn <kabel@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Link: https://lore.kernel.org/all/20240708151801.11592-10-kabel@kernel.org
+Link: https://lore.kernel.org/all/20240708151801.11592-11-kabel@kernel.org
 
 
 ---
- drivers/irqchip/irq-armada-370-xp.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/irqchip/irq-armada-370-xp.c | 27 ++++++++++-----------------
+ 1 file changed, 10 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada=
 -370-xp.c
-index cfd6dc8..3d15d0b 100644
+index 3d15d0b..22e1a49 100644
 --- a/drivers/irqchip/irq-armada-370-xp.c
 +++ b/drivers/irqchip/irq-armada-370-xp.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0-only
- /*
-  * Marvell Armada 370 and Armada XP SoC IRQ handling
-  *
-@@ -7,10 +8,6 @@
-  * Gregory CLEMENT <gregory.clement@free-electrons.com>
-  * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-  * Ben Dooks <ben.dooks@codethink.co.uk>
-- *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
+@@ -276,7 +276,7 @@ static struct irq_chip armada_370_xp_msi_bottom_irq_chip =
+=3D {
+ static int armada_370_xp_msi_alloc(struct irq_domain *domain, unsigned int v=
+irq,
+ 				   unsigned int nr_irqs, void *args)
+ {
+-	int hwirq, i;
++	int hwirq;
 =20
- #include <linux/bits.h>
+ 	mutex_lock(&msi_used_lock);
+ 	hwirq =3D bitmap_find_free_region(msi_used, msi_doorbell_size(),
+@@ -286,7 +286,7 @@ static int armada_370_xp_msi_alloc(struct irq_domain *dom=
+ain, unsigned int virq,
+ 	if (hwirq < 0)
+ 		return -ENOSPC;
+=20
+-	for (i =3D 0; i < nr_irqs; i++) {
++	for (int i =3D 0; i < nr_irqs; i++) {
+ 		irq_domain_set_info(domain, virq + i, hwirq + i,
+ 				    &armada_370_xp_msi_bottom_irq_chip,
+ 				    domain->host_data, handle_simple_irq,
+@@ -436,9 +436,7 @@ static int armada_370_xp_ipi_alloc(struct irq_domain *d,
+ 					 unsigned int virq,
+ 					 unsigned int nr_irqs, void *args)
+ {
+-	int i;
+-
+-	for (i =3D 0; i < nr_irqs; i++) {
++	for (int i =3D 0; i < nr_irqs; i++) {
+ 		irq_set_percpu_devid(virq + i);
+ 		irq_domain_set_info(d, virq + i, i, &ipi_irqchip,
+ 				    d->host_data,
+@@ -463,9 +461,7 @@ static const struct irq_domain_ops ipi_domain_ops =3D {
+=20
+ static void ipi_resume(void)
+ {
+-	int i;
+-
+-	for (i =3D 0; i < IPI_DOORBELL_END; i++) {
++	for (int i =3D 0; i < IPI_DOORBELL_END; i++) {
+ 		int irq;
+=20
+ 		irq =3D irq_find_mapping(ipi_domain, i);
+@@ -517,12 +513,12 @@ static int armada_xp_set_affinity(struct irq_data *d,
+ static void armada_xp_mpic_smp_cpu_init(void)
+ {
+ 	u32 control;
+-	int nr_irqs, i;
++	int nr_irqs;
+=20
+ 	control =3D readl(main_int_base + MPIC_INT_CONTROL);
+ 	nr_irqs =3D (control >> 2) & 0x3ff;
+=20
+-	for (i =3D 0; i < nr_irqs; i++)
++	for (int i =3D 0; i < nr_irqs; i++)
+ 		writel(i, per_cpu_int_base + MPIC_INT_SET_MASK);
+=20
+ 	if (!is_ipi_available())
+@@ -540,10 +536,8 @@ static void armada_xp_mpic_smp_cpu_init(void)
+=20
+ static void armada_xp_mpic_reenable_percpu(void)
+ {
+-	unsigned int irq;
+-
+ 	/* Re-enable per-CPU interrupts that were enabled before suspend */
+-	for (irq =3D 0; irq < MPIC_MAX_PER_CPU_IRQS; irq++) {
++	for (unsigned int irq =3D 0; irq < MPIC_MAX_PER_CPU_IRQS; irq++) {
+ 		struct irq_data *data;
+ 		int virq;
+=20
+@@ -735,11 +729,10 @@ static void armada_370_xp_mpic_resume(void)
+ {
+ 	bool src0, src1;
+ 	int nirqs;
+-	irq_hw_number_t irq;
+=20
+ 	/* Re-enable interrupts */
+ 	nirqs =3D (readl(main_int_base + MPIC_INT_CONTROL) >> 2) & 0x3ff;
+-	for (irq =3D 0; irq < nirqs; irq++) {
++	for (irq_hw_number_t irq =3D 0; irq < nirqs; irq++) {
+ 		struct irq_data *data;
+ 		int virq;
+=20
+@@ -797,7 +790,7 @@ static int __init armada_370_xp_mpic_of_init(struct devic=
+e_node *node,
+ 					     struct device_node *parent)
+ {
+ 	struct resource main_int_res, per_cpu_int_res;
+-	int nr_irqs, i;
++	int nr_irqs;
+ 	u32 control;
+=20
+ 	BUG_ON(of_address_to_resource(node, 0, &main_int_res));
+@@ -821,7 +814,7 @@ static int __init armada_370_xp_mpic_of_init(struct devic=
+e_node *node,
+ 	control =3D readl(main_int_base + MPIC_INT_CONTROL);
+ 	nr_irqs =3D (control >> 2) & 0x3ff;
+=20
+-	for (i =3D 0; i < nr_irqs; i++)
++	for (int i =3D 0; i < nr_irqs; i++)
+ 		writel(i, main_int_base + MPIC_INT_CLEAR_ENABLE);
+=20
+ 	armada_370_xp_mpic_domain =3D
 
