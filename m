@@ -1,338 +1,229 @@
-Return-Path: <linux-kernel+bounces-267100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A57C7940C5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:52:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A951F940C26
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E371EB25995
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:52:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 290F01F2899E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C19A19306A;
-	Tue, 30 Jul 2024 08:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40AE4192B9B;
+	Tue, 30 Jul 2024 08:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="jEgth1jh"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R7kLNWxe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E70615622E;
-	Tue, 30 Jul 2024 08:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722329491; cv=none; b=lwsJ4dLTYwVD8Droed/U3FZEf51Nw+x4GXjtQtBR0VY2jhcJhoi+D9Id1D3TzgBc78hNE80TaZOeCwcleAVeO7X84EeQtTv60yWa0Gc9Eva1Ir0FrcXqjSebc44N4Tf7BdjNCtrjGZOtGpBQFcCmsQ0DRaE5s6he65VW9x5MFuc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722329491; c=relaxed/simple;
-	bh=TXgQv/I3aZ+D6uBY/xsjV9L1CA+jPlOAl87PGoN/Omw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TtT6zMggwxyB54MtdfqBWLKHnvyHhVO2QnNa4SuacvYlb1iycG4VAoeeGKUpqE82Jp+3kaDyHzxadi+T4T3O2FTE7Dm5zLQs9TSVl5BmaJXAO5qCxis0N5iy41BPQ9KDtIBNcaVrgxfawWtez3YBfPN8wfB8srEqS3aDdZMfUu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=jEgth1jh; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46U7ujZ8015052;
-	Tue, 30 Jul 2024 10:51:07 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	Zc9/X4j3vJ2t4CaIU7+DDvgCjlFR9hhyzjbmNEqyg0M=; b=jEgth1jhjhsLQhQf
-	UZV8ZARAIAhzDebr3GVK5fPKsKr7roYphjsebtKYBIqgawwXZZ+WmA4M5H89ZeEy
-	ne/oxfMseiUtMclc4WiGefSdhrqnvSV4p914g4pz1rFCH0os6lvxGXz9K8vtADyD
-	w4vufZt8CmqgDQ64/n103+S5O4G/XqBr0t+oXYWsH03mJML5cpFcUBJ8LcAQFQAg
-	fiVrAEAhu9EPD3GOMlEf0U6qZIDYta1E8qwZoCOauPuu/EhqByUEr9U0OAzc9/Qg
-	BjQUdOUDOjAA4bKRuDty3n/ygiVJVJ8MoED01lZzxiAIzNO/o+PBquPzyhF9N5iR
-	OlEhMw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 40naf29e8f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 10:51:07 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C67D240044;
-	Tue, 30 Jul 2024 10:50:57 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3571121ADDB;
-	Tue, 30 Jul 2024 10:50:25 +0200 (CEST)
-Received: from localhost (10.252.3.32) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 30 Jul
- 2024 10:50:24 +0200
-From: Olivier Moysan <olivier.moysan@foss.st.com>
-To: <fabrice.gasnier@foss.st.com>, Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC: Olivier Moysan <olivier.moysan@foss.st.com>, Nuno Sa <nuno.sa@analog.com>,
-        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v6 9/9] iio: adc: stm32-dfsdm: add scaling support to dfsdm
-Date: Tue, 30 Jul 2024 10:46:39 +0200
-Message-ID: <20240730084640.1307938-10-olivier.moysan@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240730084640.1307938-1-olivier.moysan@foss.st.com>
-References: <20240730084640.1307938-1-olivier.moysan@foss.st.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968D615622E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722329237; cv=fail; b=PmhuiBjYs2QJ9cGmUwGyCr01Wb39Wh9oCF7gH5GJUMhtsehImGhAafJCbZtyba3bpHDwX0raysyMsJ8Rq5yfB/BrisykMwrZeJt7UgnB4YGtaCqu7x/1G0/3z66EoCMb255V2exlre18WB/QVJMRb5rN/9aafVtvoP0gZKiI7/U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722329237; c=relaxed/simple;
+	bh=9RX4FZ/7xlKQqJ5uoLmJdbpV09neCJmPz0bHlDfTnfI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=BEq5eYvohcHR5bigaHuN9ftZMJb9/U2DVMFBoy3v6mE8+vOk7I2gKHcHszO05l7vmR5cm6B3CCvCxTHsG+8WZbQACrqUv8j9vDzkfFWPr7sC2jKNj7fAfX1fr5k/2957/KdwTV/iDv5G3WoWbI+NqtVOFseQ1gJj1BJyFKRvwAs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R7kLNWxe; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722329236; x=1753865236;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=9RX4FZ/7xlKQqJ5uoLmJdbpV09neCJmPz0bHlDfTnfI=;
+  b=R7kLNWxe4TGVXexxKXHjHO3DrUb4TcppQKEX+c1EvCQaD0mLNcbACwnP
+   rcG3pSNI9oCD8sF5+EVwGYnHmSrHcMCVdbi0STEsVvYPmtfg+ZeWMVrMc
+   /fhmO8zFf9QUgkFF8haiZAUqwfXHxHekYh6Y7YW8v+ISBfyIJV4H+sbwT
+   0zsAa9VAQShSFWX9+RS+PgqddUxYJKssbOunPp3NJ2+S88BXqF9eNslDg
+   HkUyKEk59lBlqmSymet2qlT9tcxsv89mCxqYKvNnHCoFTvz8SR+qe6Vue
+   dUIBrLNOZGykTc4swUDpo97Pxxb7/81TEf0OWXhSxuBd8UafaA6awDMC5
+   w==;
+X-CSE-ConnectionGUID: SdZfSnRiQceVx8gK+6OVwA==
+X-CSE-MsgGUID: dP8YVzHeSlekzwvpmmyWpQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="20282426"
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="20282426"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 01:47:15 -0700
+X-CSE-ConnectionGUID: rb4mJbRvS8ObRDEQjcbcKw==
+X-CSE-MsgGUID: u6xrMGI7QP6vb+91Y3CbwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="53934397"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Jul 2024 01:47:14 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 30 Jul 2024 01:47:13 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 30 Jul 2024 01:47:13 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 30 Jul 2024 01:47:13 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=V/PUhtWCz7hWmg7/bc4C18QoZVJ7PR3UC5i9iRD6jeDkMlvNcSjFuiijLLjQuOmJIUKBsKHoYalZMVyF0G7iTEkgzUP5PXLBZAnKfdV21r0PiCyjFZ+1bdA+Ha0rt6cXQvNfFpYkxq+qxlKzy5lO1fUSf9kUazLDh3MNbuEYSMFA418qgmPuRTk+B1poCBaAyhLzGbqU4F8yG1pbX0mCp5NqpJsM7bolKfRbPL3WVY145AI3Uz1jilIVgeAb+VUE6QqBQ5d4nxrgo4k2R0n0mCZzQSR3qDUCZ8P4s4vW+ococM5BcCBUBheTjZxAixMdksisUEtiSmMDWZ6feFmuag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pVilcJXosC9Mwi7xWOwjSCyOOH1o5HhBlhNPLjSdTMU=;
+ b=l6y0q7vYVEZd+epSH7yp2OisSC+UG0Yj8DdvaW4UsP8suaYaWF05lUm+gu5RfghWsAcBs5lJxLErQJujXTSA8Ozhh+Mw7JgZXS7Qsvag7zLaMlkTshZDkgFkZ2N1ZaYtpjjpMYp2KWz5QEc5813WxXSPGCv7bAHqnMzAHcBJMKRCRqHTvSicrDPxC3VnIOg2EWGD+2RJNVuG5JY+G1oQ4mxbf+vYQZne2IQXmfexjL9qMRvENfsisdXln+SeNvpXKn3PCUJCm1rwksuWJt/M4Lcvt8sp6f0a8CC6YEKwbAmJriZeQx/mfxzeRy4U+wVXqKCjkwLPwCOZRVi4XG2Wew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) by
+ IA1PR11MB7728.namprd11.prod.outlook.com (2603:10b6:208:3f0::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7807.27; Tue, 30 Jul 2024 08:47:11 +0000
+Received: from DM4PR11MB6020.namprd11.prod.outlook.com
+ ([fe80::4af6:d44e:b6b0:fdce]) by DM4PR11MB6020.namprd11.prod.outlook.com
+ ([fe80::4af6:d44e:b6b0:fdce%4]) with mapi id 15.20.7807.026; Tue, 30 Jul 2024
+ 08:47:11 +0000
+Date: Tue, 30 Jul 2024 16:46:53 +0800
+From: Chen Yu <yu.c.chen@intel.com>
+To: maobibo <maobibo@loongson.cn>
+CC: Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+	<bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann
+	<arnd@arndb.de>, <virtualization@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, Juergen Gross <jgross@suse.com>, "Nikolay
+ Borisov" <nik.borisov@suse.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>, "Prem
+ Nath Dey" <prem.nath.dey@intel.com>, Xiaoping Zhou <xiaoping.zhou@intel.com>,
+	"Peter Zijlstra" <peterz@infradead.org>
+Subject: Re: [PATCH v4] x86/paravirt: Disable virt spinlock on bare metal
+Message-ID: <ZqiofczTqmn4bvhy@chenyu5-mobl2>
+References: <20240729065236.407758-1-yu.c.chen@intel.com>
+ <08d75c12-215e-3781-ed89-b1ed5c1e39c8@loongson.cn>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <08d75c12-215e-3781-ed89-b1ed5c1e39c8@loongson.cn>
+X-ClientProxiedBy: SI2PR04CA0013.apcprd04.prod.outlook.com
+ (2603:1096:4:197::6) To DM4PR11MB6020.namprd11.prod.outlook.com
+ (2603:10b6:8:61::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_09,2024-07-26_01,2024-05-17_01
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6020:EE_|IA1PR11MB7728:EE_
+X-MS-Office365-Filtering-Correlation-Id: abc4f9f6-8df4-440e-2425-08dcb07433f4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?/pvd/lAxDeeU82yr0xftKEgGf31RX3Lm3NOywWs2H3Pi2z/oASYoTJmir9dU?=
+ =?us-ascii?Q?jyN21Q6OC80WsWK0SvCKJ4NXipTu78cKxyMD/G3R1L4+G5X04j6WeR63eNuQ?=
+ =?us-ascii?Q?q6Nb05FJZtDP2ROwOLdBXUP5on3QqKWbzjLrlHIZBc4Eyzz1FhiPhSuNpedC?=
+ =?us-ascii?Q?if2tgRV4JBckV9lZq+giGTxDFbe50EP7gxmIWmPE5ispFn1+gmtA7r71DuOf?=
+ =?us-ascii?Q?b35jJ8Ih4VNaQvrJDzNVjvzBAkPGxlsysGK+Pn4zuCUpJ9vyclTwhjuNLjUY?=
+ =?us-ascii?Q?nRFdYC9G2M3BYA4G2yEHvTmmc6H/f8cqTojJysIQXyqLRnrQRY/IGgUiNoZO?=
+ =?us-ascii?Q?jeIkEOlDWNbWDcA1gEDGzfQhiXpmjh98X9cX4PESwoDIpQoqKGHN6WodW6Iu?=
+ =?us-ascii?Q?UAR0PIJ3zzxMBVoO2VT9vqhAHFjUMYii1ercDG/K4aN4Z4zOXtTk4OYkPY3m?=
+ =?us-ascii?Q?KuEeWx4YoSL/J1HEAgz0buN8jX8RNDxOs6alUkH/53H1L+n2BfNIbjueW86l?=
+ =?us-ascii?Q?1bzYtyMQHcRw85Pe3d/Pvw0sYhpBOUwQlM3xkL5GIDOE9K+KpSvP6nABGAzI?=
+ =?us-ascii?Q?gX+Qiim4Ff4YXFkABCTGVGqWB0s214Gbbt6NPnUBIHVfPDEOVVyZrKjaLYjO?=
+ =?us-ascii?Q?P44e9h1FgHvgzi0BeYc1dNmGfUstqOSBcRnZqd3MXmT9AXrHZvRK2trFm8sa?=
+ =?us-ascii?Q?oCjBvZ1qvnyXCw1cFAdIGXbkQSf4wiyeunMN8OpzPN9KkkL5wWRv74WRWa+k?=
+ =?us-ascii?Q?0Lbyl74QeFpftR7/4Al7MW8WqoHgm2K0gMRqzYzmi5Fkwhy77hhP3Qvo34Tn?=
+ =?us-ascii?Q?2+40fv5zEAtOWw2ZH27oOcx1dWG3vhxgxNOmDXObMIaZApSwD6atcMOWL4zL?=
+ =?us-ascii?Q?kps1GJ+XSaGztxTo6tex+mWehMcZ/GXj2ErtqFquzFA3kZp6XcvXyvAAAg6a?=
+ =?us-ascii?Q?ffWBNf61KbYN/19eqYni4p4/pdKPXw40kMvCAKF6egChDD7MqKNwhww8Ze2k?=
+ =?us-ascii?Q?iyQKpOs5gJ6whcsCOuBAA6g5QT/q+aWjYJCDE3MiGIJEB6vd31qqaN7BwDyS?=
+ =?us-ascii?Q?jEMG2IQdYmA4bIsulmlLCrij2c758VULnnzBVDGSQst2Lwf7lhp0OMbq8ZFA?=
+ =?us-ascii?Q?iK/htPY80I6RJYqg1LGtg+l1ZTLHV0D72j6z8XDzToKqdDnvoST2PmkfoLSm?=
+ =?us-ascii?Q?fapM6w/w7xzQnidlj/VYsm/Zk0DAwpV9atqRUABWOzSX2aStwf/e39inECU8?=
+ =?us-ascii?Q?vGv5a9Vsro79yT7jZRIvcGXFsDbbYT0gqlpNyqoWiqBqB27hR3gdkwv794Rm?=
+ =?us-ascii?Q?H/ZG/8pVxhhP1iKFd+OQSAaAxvzPFISXQXBuFPxrNgLhBQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6020.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?BtmG9ashaw9oAGOwRZ1jVa6w6zoRXlzxsjakb8G0eLXUFhYaok+Nz6rQ9a3v?=
+ =?us-ascii?Q?1QxNR1L7G7k6JmXaRQ3BRhQ3GMu9egHifLP9gZK6CKRmPhF7fTij7V1pct5Y?=
+ =?us-ascii?Q?RMlKPQYFaJNV71EwNlkmp0HWKzYNFZsQuerMGICrOmjp3yIVAWikGPketTCa?=
+ =?us-ascii?Q?mpCeg39/rPdTP8zULr2lXnd+RrwMQ25SW3ih6wwrSBWKTwE+A7snNN041Zj+?=
+ =?us-ascii?Q?FK+10UhulU7Z0PEUK6QJoNCDlx7NmDal42Dg9zOsnDrN200ApmGT08t9FOju?=
+ =?us-ascii?Q?fEQBLN+6rFOllqSDq2XqEpyFh/u01+BZuHHJnPMdNsz4FtTkPF2Jg7XpzwPj?=
+ =?us-ascii?Q?pw5WpYpaYufOiSn66UwVCbLJ1mWuSrjeP4m0zxzatRCAWDwtySZMkOi4w2Qk?=
+ =?us-ascii?Q?G4CAh5vT2HmvOfQEkW/9m9OCwzCnnZqjK++W+RiFw4qhbuYPZPOan3dZj/jL?=
+ =?us-ascii?Q?yO9YkBEGBU9ga4NCULUTA6FXzJIGkGxJgG3OUwasewuidIOoJwXEG2HGHWYM?=
+ =?us-ascii?Q?TwHksp4/ZFlnHR/I4qVieDKl5J+lZw4m1GBQJyOj792u6Qm1i/4+13k2tGXS?=
+ =?us-ascii?Q?MyT4KlJk/FojzIr+cEQXyg8TdvpgryPFhVipesFXKExMzH3V0vXgpKghRtWc?=
+ =?us-ascii?Q?5WnviHu5+ojqhfF3/EEmhjt8nC8Bh9crD70RLS0+BIeBQ0hZiD+5wKHh++Dr?=
+ =?us-ascii?Q?G8eX1h6t+OwI0ZWHZuIoBYk6+BLVR/p5udFCe9dxjrxM1G6VQVaWAJm8fbly?=
+ =?us-ascii?Q?/rh3psWVN0DuvgNsqA7fguYXxUJ+oKX2g2ncMa3fU1EenFBBnxnveuK3uKSF?=
+ =?us-ascii?Q?4lV7AGMSXgIQDQ9Dt1RMixaSup9gkqqbTsGgE8067ZIqxb5g9JmkIACWW1G1?=
+ =?us-ascii?Q?4VHn29z7DCu5YFSL4eV6mduDYknp1IevSUCiC9N/eOgf+dYriY14NFx5TAOX?=
+ =?us-ascii?Q?F8M3XtTtKsw2IH5k+Wq5p84hDxCsYWEZZ4W1svHcKQHdXu5o9KXCLhXAGv4Q?=
+ =?us-ascii?Q?LLKMvha67sSoTMp9Xb9GktxGmrQpS65KWWRdi6iO0lPtPpQhjc1l5CTSopPq?=
+ =?us-ascii?Q?tagxs8BWiwYVsLkXG9Jt/qqK80G4vIBhaiEeJoBH5CqtIR+NcENYtfOyMaqE?=
+ =?us-ascii?Q?rQj7K8/B3r4Zc8UEVai0qeOQ8VEsdKlDtPYVfkkhNqxogcOMaJaPJa2ZTOW1?=
+ =?us-ascii?Q?jDExkfsX0L8Lo0thrFGYefxQns3wKxEHMK58Ie0ijo/iclbj6kppRF7r9RS4?=
+ =?us-ascii?Q?cKlOwlYPu8sIjcjdBicn9Ow3zzrlD4QhQfMXOwAUxZMrfo/bCD2pLbf+aVfh?=
+ =?us-ascii?Q?jgq/JG6d1MDXxY/808Z3QKCxFdthdnut0jbOBOksywIqmB+XjjXdJkTT/WZo?=
+ =?us-ascii?Q?9lZt4oZTVJzABzUEz9YSkuIyZ8pCR6uPKtRG5Sp9rcHZpX2n7Uc8EaVfGEFf?=
+ =?us-ascii?Q?+8mozLPcatmkJrRndwtt3HM+Kw8u7wVvazMIWvuKiBCpNvbfjgaOWcHWLrMV?=
+ =?us-ascii?Q?VQ064iqHCueqZy4In2O944eDbCKTWkdRymK1KK7LscxRcGEwbo77QNIGRdP7?=
+ =?us-ascii?Q?M9ZXVOTOaQx7X3BFs2q6wYpPQQ5D12xiHvYYOvas?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: abc4f9f6-8df4-440e-2425-08dcb07433f4
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6020.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 08:47:11.5161
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9TFWsz+X2QaZFz0FFyoyDRhPEsPeQMqVg5RMy6f+DxEq+kuIzeo8uewiFyZubUD0IdNOoRG9JGHvM1HrpU4+Fg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7728
+X-OriginatorOrg: intel.com
 
-Add scaling support to STM32 DFSDM.
+Hi Bibo,
 
-When used in an analog context, a DFSDM filter typically converts the data
-from a sigma delta modulator. The IIO device associated to the DFSDM
-filter provides these data as raw data.
-The IIO device can provide scaling information (voltage and offset) to
-allow conversion of raw data into physical values.
+On 2024-07-30 at 09:21:45 +0800, maobibo wrote:
+> Chenyu,
+> 
+> Sorry to bother you, I am porting pv spinlock to LoongArch platform, I do
+> not know the history about function virt_spin_lock().
+> 
+> When CONFIG_PARAVIRT_SPINLOCKS is enabled, there is pv_enabled() before
+> virt_spin_lock(), it seems that virt_spin_lock is never called in this
+> condition.
 
-With the new binding based on IIO backend framework, the sigma delta
-modulators are defined as backends providing scaling information.
+Right, if CONFIG_PARAVIRT_SPINLOCKS is enabled, virt_spin_lock() will not be
+checked at all and go directly to pv_queue lock section.
 
-The scaling is not supported with legacy binding.
+>         if (pv_enabled())
+>                 goto pv_queue;
+> 
+>         if (virt_spin_lock(lock))
+>                 return;
+> 
+> When CONFIG_PARAVIRT_SPINLOCKS is disabled, there is no pv qspinlock
+> compiled, so what is the usage about function virt_spin_lock()? 
+> Is it to switch spinlock method from test-set spinlock to qspinlock? 
+> why is there such requirement for spinlock switching method?
 
-Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
-Acked-by: Nuno Sa <nuno.sa@analog.com>
----
- drivers/iio/adc/Kconfig           |   1 +
- drivers/iio/adc/stm32-dfsdm-adc.c | 105 +++++++++++++++++++++++++++++-
- 2 files changed, 105 insertions(+), 1 deletion(-)
+Firstly, according to the commit 2aa79af64263 ("locking/qspinlock: Revert
+to test-and-set on hypervisors"), virt_spin_lock() was originally introduced
+to avoid the over-preemption of native qspinlock(when paravirt-spinlock is
+disabled).
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index 43ff8182b2ea..f4f25a4b4719 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -1250,6 +1250,7 @@ config STM32_DFSDM_ADC
- 	select IIO_BUFFER
- 	select IIO_BUFFER_HW_CONSUMER
- 	select IIO_TRIGGERED_BUFFER
-+	select IIO_BACKEND
- 	help
- 	  Select this option to support ADCSigma delta modulator for
- 	  STMicroelectronics STM32 digital filter for sigma delta converter.
-diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
-index ebfeefebf698..1a24d496fc61 100644
---- a/drivers/iio/adc/stm32-dfsdm-adc.c
-+++ b/drivers/iio/adc/stm32-dfsdm-adc.c
-@@ -9,6 +9,7 @@
- #include <linux/dmaengine.h>
- #include <linux/dma-mapping.h>
- #include <linux/iio/adc/stm32-dfsdm-adc.h>
-+#include <linux/iio/backend.h>
- #include <linux/iio/buffer.h>
- #include <linux/iio/hw-consumer.h>
- #include <linux/iio/sysfs.h>
-@@ -78,6 +79,7 @@ struct stm32_dfsdm_adc {
- 	/* ADC specific */
- 	unsigned int oversamp;
- 	struct iio_hw_consumer *hwc;
-+	struct iio_backend **backend;
- 	struct completion completion;
- 	u32 *buffer;
- 
-@@ -672,6 +674,8 @@ static int stm32_dfsdm_generic_channel_parse_of(struct stm32_dfsdm *dfsdm,
- 						struct fwnode_handle *node)
- {
- 	struct stm32_dfsdm_channel *df_ch;
-+	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
-+	struct iio_backend *backend;
- 	const char *of_str;
- 	int ret, val;
- 
-@@ -721,6 +725,14 @@ static int stm32_dfsdm_generic_channel_parse_of(struct stm32_dfsdm *dfsdm,
- 	if (ret != -EINVAL)
- 		df_ch->alt_si = 0;
- 
-+	if (adc->dev_data->type == DFSDM_IIO) {
-+		backend = devm_iio_backend_fwnode_get(&indio_dev->dev, NULL, node);
-+		if (IS_ERR(backend))
-+			return dev_err_probe(&indio_dev->dev, PTR_ERR(backend),
-+					     "Failed to get backend\n");
-+		adc->backend[ch->scan_index] = backend;
-+	}
-+
- 	return 0;
- }
- 
-@@ -1056,6 +1068,7 @@ static int stm32_dfsdm_update_scan_mode(struct iio_dev *indio_dev,
- static int stm32_dfsdm_postenable(struct iio_dev *indio_dev)
- {
- 	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
-+	int i = 0;
- 	int ret;
- 
- 	/* Reset adc buffer index */
-@@ -1067,6 +1080,15 @@ static int stm32_dfsdm_postenable(struct iio_dev *indio_dev)
- 			return ret;
- 	}
- 
-+	if (adc->backend) {
-+		while (adc->backend[i]) {
-+			ret = iio_backend_enable(adc->backend[i]);
-+			if (ret < 0)
-+				return ret;
-+			i++;
-+		}
-+	}
-+
- 	ret = stm32_dfsdm_start_dfsdm(adc->dfsdm);
- 	if (ret < 0)
- 		goto err_stop_hwc;
-@@ -1099,6 +1121,7 @@ static int stm32_dfsdm_postenable(struct iio_dev *indio_dev)
- static int stm32_dfsdm_predisable(struct iio_dev *indio_dev)
- {
- 	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
-+	int i = 0;
- 
- 	stm32_dfsdm_stop_conv(indio_dev);
- 
-@@ -1106,6 +1129,13 @@ static int stm32_dfsdm_predisable(struct iio_dev *indio_dev)
- 
- 	stm32_dfsdm_stop_dfsdm(adc->dfsdm);
- 
-+	if (adc->backend) {
-+		while (adc->backend[i]) {
-+			iio_backend_disable(adc->backend[i]);
-+			i++;
-+		}
-+	}
-+
- 	if (adc->hwc)
- 		iio_hw_consumer_disable(adc->hwc);
- 
-@@ -1278,8 +1308,16 @@ static int stm32_dfsdm_read_raw(struct iio_dev *indio_dev,
- 				int *val2, long mask)
- {
- 	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
-+
-+	struct stm32_dfsdm_filter *fl = &adc->dfsdm->fl_list[adc->fl_id];
-+	struct stm32_dfsdm_filter_osr *flo = &fl->flo[fl->fast];
-+	u32 max = flo->max << (flo->lshift - chan->scan_type.shift);
-+	int idx = chan->scan_index;
- 	int ret;
- 
-+	if (flo->lshift < chan->scan_type.shift)
-+		max = flo->max >> (chan->scan_type.shift - flo->lshift);
-+
- 	switch (mask) {
- 	case IIO_CHAN_INFO_RAW:
- 		ret = iio_device_claim_direct_mode(indio_dev);
-@@ -1287,6 +1325,8 @@ static int stm32_dfsdm_read_raw(struct iio_dev *indio_dev,
- 			return ret;
- 		if (adc->hwc)
- 			ret = iio_hw_consumer_enable(adc->hwc);
-+		if (adc->backend)
-+			ret = iio_backend_enable(adc->backend[idx]);
- 		if (ret < 0) {
- 			dev_err(&indio_dev->dev,
- 				"%s: IIO enable failed (channel %d)\n",
-@@ -1297,6 +1337,8 @@ static int stm32_dfsdm_read_raw(struct iio_dev *indio_dev,
- 		ret = stm32_dfsdm_single_conv(indio_dev, chan, val);
- 		if (adc->hwc)
- 			iio_hw_consumer_disable(adc->hwc);
-+		if (adc->backend)
-+			iio_backend_disable(adc->backend[idx]);
- 		if (ret < 0) {
- 			dev_err(&indio_dev->dev,
- 				"%s: Conversion failed (channel %d)\n",
-@@ -1316,6 +1358,50 @@ static int stm32_dfsdm_read_raw(struct iio_dev *indio_dev,
- 		*val = adc->sample_freq;
- 
- 		return IIO_VAL_INT;
-+
-+	case IIO_CHAN_INFO_SCALE:
-+		/*
-+		 * Scale is expressed in mV.
-+		 * When fast mode is disabled, actual resolution may be lower
-+		 * than 2^n, where n = realbits - 1.
-+		 * This leads to underestimating the input voltage.
-+		 * To compensate this deviation, the voltage reference can be
-+		 * corrected with a factor = realbits resolution / actual max
-+		 */
-+		if (adc->backend) {
-+			ret = iio_backend_read_scale(adc->backend[idx], chan, val, NULL);
-+			if (ret < 0)
-+				return ret;
-+
-+			*val = div_u64((u64)*val * (u64)BIT(DFSDM_DATA_RES - 1), max);
-+			*val2 = chan->scan_type.realbits;
-+			if (chan->differential)
-+				*val *= 2;
-+		}
-+		return IIO_VAL_FRACTIONAL_LOG2;
-+
-+	case IIO_CHAN_INFO_OFFSET:
-+		/*
-+		 * DFSDM output data are in the range [-2^n, 2^n],
-+		 * with n = realbits - 1.
-+		 * - Differential modulator:
-+		 * Offset correspond to SD modulator offset.
-+		 * - Single ended modulator:
-+		 * Input is in [0V, Vref] range,
-+		 * where 0V corresponds to -2^n, and Vref to 2^n.
-+		 * Add 2^n to offset. (i.e. middle of input range)
-+		 * offset = offset(sd) * vref / res(sd) * max / vref.
-+		 */
-+		if (adc->backend) {
-+			ret = iio_backend_read_offset(adc->backend[idx], chan, val, NULL);
-+			if (ret < 0)
-+				return ret;
-+
-+			*val = div_u64((u64)max * *val, BIT(*val2 - 1));
-+			if (!chan->differential)
-+				*val += max;
-+		}
-+		return IIO_VAL_INT;
- 	}
- 
- 	return -EINVAL;
-@@ -1442,7 +1528,15 @@ static int stm32_dfsdm_adc_chan_init_one(struct iio_dev *indio_dev, struct iio_c
- 	 * IIO_CHAN_INFO_RAW: used to compute regular conversion
- 	 * IIO_CHAN_INFO_OVERSAMPLING_RATIO: used to set oversampling
- 	 */
--	ch->info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
-+	if (child) {
-+		ch->info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+					 BIT(IIO_CHAN_INFO_SCALE) |
-+					 BIT(IIO_CHAN_INFO_OFFSET);
-+	} else {
-+		/* Legacy. Scaling not supported */
-+		ch->info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
-+	}
-+
- 	ch->info_mask_shared_by_all = BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO) |
- 					BIT(IIO_CHAN_INFO_SAMP_FREQ);
- 
-@@ -1571,6 +1665,14 @@ static int stm32_dfsdm_adc_init(struct device *dev, struct iio_dev *indio_dev)
- 		if (IS_ERR(adc->hwc))
- 			return dev_err_probe(&indio_dev->dev, -EPROBE_DEFER,
- 					     "waiting for SD modulator\n");
-+	} else {
-+		/* Generic binding. SD modulator IIO device not used. Use SD modulator backend. */
-+		adc->hwc = NULL;
-+
-+		adc->backend = devm_kcalloc(&indio_dev->dev, num_ch, sizeof(*adc->backend),
-+					    GFP_KERNEL);
-+		if (!adc->backend)
-+			return -ENOMEM;
- 	}
- 
- 	ch = devm_kcalloc(&indio_dev->dev, num_ch, sizeof(*ch), GFP_KERNEL);
-@@ -1795,3 +1897,4 @@ module_platform_driver(stm32_dfsdm_adc_driver);
- MODULE_DESCRIPTION("STM32 sigma delta ADC");
- MODULE_AUTHOR("Arnaud Pouliquen <arnaud.pouliquen@st.com>");
- MODULE_LICENSE("GPL v2");
-+MODULE_IMPORT_NS(IIO_BACKEND);
--- 
-2.25.1
+Secondly, there is user requirement to use native qspinlock over test-set lock
+in the VM. For example, nopvspin parameter is parsed in xen_init_spinlocks().
+commit 9043442b43b1 ("locking/paravirt: Use new static key for controlling call
+of virt_spin_lock()") was introduced to adjust the key from user boot up commandline.
+so the key switches between test-set and the native qspinlock. I've Cced
+Juergen and Peter in case I misunderstood. 
 
+thanks,
+Chenyu
 
