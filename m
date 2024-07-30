@@ -1,95 +1,91 @@
-Return-Path: <linux-kernel+bounces-267859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3172941784
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:12:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD0BC94178A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74B69B235AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:12:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56F2B1F22C25
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32D218B491;
-	Tue, 30 Jul 2024 16:09:39 +0000 (UTC)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4067C18455D;
+	Tue, 30 Jul 2024 16:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ot/qMUX5"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E390A183CA0;
-	Tue, 30 Jul 2024 16:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8134A184535;
+	Tue, 30 Jul 2024 16:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722355779; cv=none; b=b05a8H45sixlNau03uf6fTANQo6Rwl3z//Y7rxazowJGgfes/arFqMJAL5Box0uzypSJcL6hn1vyoQbylDUviSCDp24l9XJm/g6tuoSHVI0ETFDC88KhYAs6VhHdCV58jENcjzF+TFaNqavT3w7xmORdx2A7V5/WMhgl3PmSSg8=
+	t=1722355787; cv=none; b=fLWujrqRI4C/PFurlBbPnZCse5lU9UhZuIdlJxl2pH6wL3jHMuvZO/Fs2O+gQh4aHVb4zRMNWboaGmcPZh6IExeIWbWTi0nqNqs1bAbImwflyfiq4Wf5k/iHTgBg4sSXdMk5f/UiRjM2O4vPO5IreFYzeWtBnH9Y/pN95Y4LDwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722355779; c=relaxed/simple;
-	bh=N8xmTDJRMvIhJBBDeTk4nVtpHzkV3FiuLMDSMp87x1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fh4QAzXfaXQ7N6PiivmbstMc/20eF6Yo6qVEmZgrr3lDI2V8qaVtAulZFyCq0wzrAQustwMf4v6g4NeelMTr+f+cMbixXCBB7ZLQk/HJ3fweeK+5V3l+HifEU+AZWjvYgwjASGhyrnaSYn8bUvCzBDnOzchl7aQrv9LKfvqpPv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a309d1a788so6588671a12.3;
-        Tue, 30 Jul 2024 09:09:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722355776; x=1722960576;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AAcn4UmH5RiCwAaknPHPG0WgcmYmIAy8lr/o5KP9yT4=;
-        b=vvimV+mBJRKu5EW2+WIGy74XWe0HpZ326QCHYjfn+aTnEWlqXo9rHKHqPJ+N5nIsAF
-         2RI9z1wCHQNQeT/n/ury2oqQBpIohsN5AhtHBPDCiOzAbzPR3jIqujmend4sboN4n/wk
-         1fTqe431MkFO6jOXzWoQfASccsCMb5ZNXjCBLHz5T9y/3fJyVveo1L7Oj3esN3uch7Ae
-         m6nKpmOoChoL83H1SF6uEP+oHV3LRJ3KpPVFLqw7t6fDmzbvKlxsarHPLIXIOxDSSDww
-         nb+Txe4sNBXDRggb+yHP8aFwHD2nfyVCiwu25y0x0EGRUIt6MV8HtYB/MY5d76hdD5tZ
-         im+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVD85g3QusxJYV8kTu0GxKGIK588ikVj3DkPcmCDNC+gl1MbtmfzQkOKUfBu2gnF1khm7+Fy0bojirrrso93J0oufJtxnWBNck7InVuwryN4xuVwAjJbrH4UAL3TTkk0InGwcoc
-X-Gm-Message-State: AOJu0YxA8quAA5xU4M4O0k8UoSd7fdHvTFfjpURXy4nQ+Eq/+wgsPlt3
-	mEaDau0rHpmo+hCSBDRrIg4VbSvCHH1K2/Bwc0q2pJFl8icMQIRz
-X-Google-Smtp-Source: AGHT+IFRH7D+1NcrPIs8KojJvmyN56aun5heC6nmYH4odFzhrksr2nwOayScHxlDc2wTkVc3AyiM/A==
-X-Received: by 2002:a17:907:874c:b0:a7a:b781:60ee with SMTP id a640c23a62f3a-a7d401654ecmr844326966b.48.1722355775723;
-        Tue, 30 Jul 2024 09:09:35 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acadb021asm660879866b.188.2024.07.30.09.09.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 09:09:35 -0700 (PDT)
-Date: Tue, 30 Jul 2024 09:09:33 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Simon Horman <horms@kernel.org>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	kuba@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: Add skbuff.h to MAINTAINERS
-Message-ID: <ZqkQPeb8iNlqfSh9@gmail.com>
-References: <20240729141259.2868150-1-leitao@debian.org>
- <20240730125700.GB1781874@kernel.org>
+	s=arc-20240116; t=1722355787; c=relaxed/simple;
+	bh=/COP5d4lcWWm1MPCW33JkqIwJpoFVmcdzXmXsC3yKgM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=qbRic7BryOSkaf6uBhfwpJwrJ9H0GgC8L5pAM+zXNEfBV67d0/w2msqyFHHfm0TgEgTKUE3X7b91Rei6ZD4mN2yGYgsMbub9RJKglq9xKa52FCva/rqp+MaJnhUiPBo9vCed09l6U+FNEu5Jt5GusLbmIHI2RaRM7UFuTbLdfhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ot/qMUX5; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 991B41C0003;
+	Tue, 30 Jul 2024 16:09:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1722355778;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/COP5d4lcWWm1MPCW33JkqIwJpoFVmcdzXmXsC3yKgM=;
+	b=Ot/qMUX5Wl8TuolPF3Q3e34haHtoENDlSlggWsFdsxVnMh4YQB2DcGgFdH3+dHHImE77XE
+	KwDRgayvZdzn2SiFn8z82Yn9Ni2czG0tfoYbU7fkpobX+eR8zBRKhjg/b5kQ3Ay94xgB+Q
+	NQ9XDSAYeONEHkxvz9K7Jr5vgizwz6us4TR6b6Bo1eoplW+Cp/NK4K6QTyEgQ3fhIYAx5t
+	8eYNeLfXro7Dmxqkm1OOMkcNJyA8eibyWjRRyRkCxXsCDqMqBNiPUje2wZo1mGrjqxNANA
+	23eWAaeuHxaPPBiVEDK0QCNT10iLJqUUaZX1tqTIADzuch9Jfoy3l4HRya9PqQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730125700.GB1781874@kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 30 Jul 2024 18:09:37 +0200
+Message-Id: <D33060WY0OJ5.1UQYALBQ8A6QG@bootlin.com>
+Subject: Re: [PATCH RESEND v2 0/2] Add Mobileye EyeQ5 pinctrl support
+Cc: <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Linus Walleij"
+ <linus.walleij@linaro.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: aerc 0.18.1-0-gaa8319bc591f
+References: <20240730-mbly-pinctrl-v2-0-d470f64e0395@bootlin.com>
+In-Reply-To: <20240730-mbly-pinctrl-v2-0-d470f64e0395@bootlin.com>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-Hello Simon,
+Hello all,
 
-On Tue, Jul 30, 2024 at 01:57:00PM +0100, Simon Horman wrote:
-> On Mon, Jul 29, 2024 at 07:12:58AM -0700, Breno Leitao wrote:
-> > The network maintainers need to be copied if the skbuff.h is touched.
-> > 
-> > This also helps git-send-email to figure out the proper maintainers when
-> > touching the file.
-> > 
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> 
-> I might have chosen the NETWORKING [GENERAL] rather than the
-> NETWORKING DRIVERS section. But in any case I agree skbuff.h
-> should be added to Maintainers.
+On Tue Jul 30, 2024 at 6:08 PM CEST, Th=C3=A9o Lebrun wrote:
+> This series adds a driver handling EyeQ5 (and only EyeQ5, not EyeQ6L nor
+> EyeQ6H) SoC pin config and muxing. It is an auxiliary driver being
+> instantiated by the platform clk driver.
 
-I will move the same change to "NETWORKING [GENERAL]" then, and carry
-you Reviewed-by if you don't mind.
+This is a friendly RESEND of the Mobileye system-controller pinctrl
+series. It can rebase on v6.11-rc1 without issues, and it works as
+expected on real hardware.
 
-Thanks
---breno
+Thanks,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
