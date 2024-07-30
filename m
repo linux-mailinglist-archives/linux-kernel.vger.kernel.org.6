@@ -1,71 +1,78 @@
-Return-Path: <linux-kernel+bounces-266709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E40A09405AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:11:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B26B19405A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 224111C20F87
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:11:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D0C9282E3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46CC31482F3;
-	Tue, 30 Jul 2024 03:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69032145B24;
+	Tue, 30 Jul 2024 03:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="oVyA8tt6"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cE/TIY0b"
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6701465B1
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 03:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F55433C1
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 03:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722309087; cv=none; b=H34HRLjh81oWQjnxdApZ236lfbBgrqkzUcW3PjbVgU/3lk6e2WpmHlXnBmk9bXwfetszLqYwoty7V1JWxQehFy3vDSpgSQlyca0fgJabN1zVmQ1AzCu+5ZwNknbhyxIHFWyH0z5veY4/V2aLbPTJBi/kEa2HzE0bE7CmVFzLbNs=
+	t=1722308985; cv=none; b=DeFq61MuuForgEIIjhuF4F/kblWF3szX/BdpMOKrztShJCI96UajodQ6QQlVE7uZTrAzm4nN8ejFSbbhSSHAYORvgSttlTtXqCjnkqgF2xYZhQ9GJ40oLl4L6K7FQQ3OockHHQ3+k6DlUB+eSc98M9RZVb8PQvSwD+H8m3eFf+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722309087; c=relaxed/simple;
-	bh=+wxcmadN9NVif5OBF5L6ceDegH8NCLkbNCXozC+OsCE=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=HeoLDTwM/+tHILyvh/FhfQ0GL8cRJNue0znnAquULlywHfi8JCD7s2Jf7+UakGvGFfDNtjiLBmRDIZMgAkxpz32r1F1qIMXcLP5TZazUU5lppDZOShL/whcXDW4pJPCjCPqro6BIIXULqvw7d0sxXTshKckP5tZ2D45OjPkKjF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=oVyA8tt6; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1722308774; bh=CgOD8orFsRTD1zH+T0pOZzjW1uV2wy1jomLL5w5N30A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=oVyA8tt6H3mz5KUy0M9qU7ZF191C9GVW8VF5KpI8HQG1P9SxdXeHZuQPEKgWM0P99
-	 nE0tNhxkkCyY/oilH/zt1Z8EcazaQT/uVKmOouPbtlPZCyi3qy58dCogdq4F7oqtqW
-	 r+2M3kUjjN600y5DDF1sbsTLacGskFIRc5k2tno0=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id 18C1AE0C; Tue, 30 Jul 2024 11:06:12 +0800
-X-QQ-mid: xmsmtpt1722308772t41szhzu5
-Message-ID: <tencent_72A97943A1E444F76C577266D59361437C05@qq.com>
-X-QQ-XMAILINFO: OKKHiI6c9SH3SIrcCIdANgosjxkWqcqB+uAFcPENi/nWVI7lrkA/CmPtFwILcN
-	 Lpsb2nR9esOHJfTFnL0J8LeieM7uW/2a10gw8zeIrz0HHzllYo9qV6k3cNkj4LgsSyI/1n55s03q
-	 oZp8EB6C68l+ZZOtFEXAD8gPD/VGW7BihzG5XVBkf3AdDshCwM+3ms75W1WAlUaRDfgA1PRX7b4l
-	 Omokj05m+lSTWRnpqIy1cN+XAzRMTRNN+C+JlNgZAnQhJdlolyc8GdZNyIUReshpePxzSMEah29M
-	 EJl4K3x5Bb04DjZwm5YlYOtL7OmxioDRfMQ3V1T0CB8BKDZWUej9fGiRhG9pW5yiHm37jegE46lJ
-	 kNga8afRgvTKFba32NnjZWHCO/dUrEBSRLZQ0MceTC11gO/OU3WTRJmVwhKY8PWCZ3mZWNX/wTm5
-	 i+wQOpXtQ8RBcBOPbr1CrZvHZOtRycz+boVQ4kpx/9fIePBXi0bZS/Wcvipddpcn5uSbTygKo1/a
-	 lc9LW9O2qtlHqYbDg/e9u5ZQEFe8z+3acbuVM1mzKr8RYNEWAmGkXQ18ISJUB5xMqC+n4KfoQcV0
-	 adRPBVWcz0yoMQ3RCX7PaFq/3cvonTKizTiGulvC/+PsLY4N56rhri32Opvyd87r5WNSF3T6pp7U
-	 Kvug528RouyuFFansYWHRNOq7f2W3hDucaEwiFz6sXzje3zdfyFhBerLYVC4/jXeOMKVkpQxYbc2
-	 vvZXXsvu1XT6oR1Hkf7PYcPhp57bThpdY84NoY3G7ECSi8lw2Y8zijGKcghE7isi6qSLjSgk/Xn4
-	 mhYU5nzfolJc4Uz4pgD3ieUMYqqvEuVme+HMWADlliANtvinMxMnPMDj7hfCdTmRM18ySB3PhvaD
-	 gWOZBxjj/vmW5OeXj7YSwTc57r5vF5qcjyqw2XQlymE8NFiNSVlJbr9ISsVLr/PIHRdbLrcpHC+B
-	 MdXgIAlgU=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+51a42f7c2e399392ea82@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [wireless?] WARNING in plfxlc_mac_release
-Date: Tue, 30 Jul 2024 11:06:13 +0800
-X-OQ-MSGID: <20240730030612.25921-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000ac553b061e675573@google.com>
-References: <000000000000ac553b061e675573@google.com>
+	s=arc-20240116; t=1722308985; c=relaxed/simple;
+	bh=rbmTH/MVqhdntEaNz5qQp01MHYwN0bcFA2Ny4BFYcEs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QpMSqIfX7QclWZPwuii51Drvy60tZ/wusPstpO8YyRGB5e99Dsj7hyuVaKVIZVI4g+kJgRCy8HffTkELyq6GpIRNFyV620euhJVtgY0T5o+mYFuA3Kwbff0W8I5JMaZte6WkkHoQBzN3Y5VyWtpKAVvU+I4WtSA/W4vlTYsJQ3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cE/TIY0b; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-70943b07c2cso1687264a34.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:09:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722308983; x=1722913783; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6o/LSAsnPfKQgia5vbIjKijTxONit5l+FP4hTEMfTrI=;
+        b=cE/TIY0bpQ24wXciQjG5tC4L9pf0G2ook7fOngh5X1MBd+NElI3ZKLAS7fuPmAHmhv
+         tCTJXQyRGmkmdYM5t5mUV+GiIUHSZ+BqYYogBgRjOF4ysf7BF2zgSUvjJqXHGCLDCteQ
+         wRybguwizRbzzahYrRMesiGASQ7zrgqQMsaC/1OERVqgIi9AtjSI0g5GNJyD+93+TshE
+         c0lBko9wq2vzma3+EM4b7E7amsVlQJsMrOl2YS7QX3EnwOYBxsWmToUtOwEVXPydeLjy
+         S/OP6nymwaf8jEUwT0gdLmgWh1snqKFnreAiJcdB/JhuR6vBVjHTPv4LxU3fgn0O8iik
+         qqQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722308983; x=1722913783;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6o/LSAsnPfKQgia5vbIjKijTxONit5l+FP4hTEMfTrI=;
+        b=id467kLjuwTPvpFemtpLY5y5Y/4FbE7ube7Wq1eauLsUPRTtFBzD78zAbsx/gGfd4f
+         e1kk08owS8Rn0oAyIKa8+jT/fownPjvyexnA1ESGNxOlpuLUKhmwM2UGNiYMTqsBEVQL
+         zveufq0dqcsahzCOSmSwDHgzP4eCIgJUzYNJI8iyvSNuLSoRlOmqOumJBVOhLzwwcv8J
+         PbU6sSNoYof72AMN0dxPGnuG/WrjIsGTEtLV8o1OAO2n6xYFVIc3pEFP4OC6g950cleX
+         +lI6t9nnFKttzxjxZ4XMb0RO5wg9jTqMlt4kc/YxP7HQlN6bpvUgzOexCgC0X9n8ifSS
+         EPSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRxWuruVWTCeXKOVw5gJJAGVrmaueVO5Yi2EEjBfOVp2uas3c/3olqmGVHXNkAyjgnaj36QDkNRvJPaoJlYVxBdAQQtxJK9y5VO8WM
+X-Gm-Message-State: AOJu0Yx+bkpOw1WneFUEiUn2exAg0IgiNocIaSL5D1rR1EMqIJgcHQso
+	DrJZyFY0ybRBhkATpz+e4c7g2cNM3+oOFa4Z3qUbpFhW7mvR4AV0
+X-Google-Smtp-Source: AGHT+IE7JmJrGduCxqsOlwg8TXr/phg1W24qan1v9DfhqFI2Guv3u6NYJBnwHK1M+4z8CZ0EnqZOKA==
+X-Received: by 2002:a9d:7f11:0:b0:708:b2b0:bb0b with SMTP id 46e09a7af769-70940c12142mr9790307a34.10.1722308983213;
+        Mon, 29 Jul 2024 20:09:43 -0700 (PDT)
+Received: from localhost.localdomain ([190.196.134.53])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8146aesm7469899b3a.131.2024.07.29.20.09.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 20:09:42 -0700 (PDT)
+From: Camila Alvarez <cam.alvarez.i@gmail.com>
+To: syzbot+916742d5d24f6c254761@syzkaller.appspotmail.com
+Cc: syzkaller-bugs@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	Camila Alvarez <cam.alvarez.i@gmail.com>
+Subject: [PATCH] usb: slab-use-after-free Read in hdm_disconnect
+Date: Mon, 29 Jul 2024 23:07:58 -0400
+Message-Id: <20240730030757.109700-1-cam.alvarez.i@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,21 +81,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-not need assert for mac->lock in plfxlc_mac_release
+#syz test
+All references on the device were lost when deregistering the interface. To make sure the device is not released before freeing all the memory we add get_device to increase the ref count by one.
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git 933069701c1b
+Reported-by: syzbot+916742d5d24f6c254761@syzkaller.appspotmail.com
+Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
+---
+ drivers/most/most_usb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/purelifi/plfxlc/mac.c b/drivers/net/wireless/purelifi/plfxlc/mac.c
-index 641f847d47ab..f603fddead90 100644
---- a/drivers/net/wireless/purelifi/plfxlc/mac.c
-+++ b/drivers/net/wireless/purelifi/plfxlc/mac.c
-@@ -102,7 +102,6 @@ int plfxlc_mac_init_hw(struct ieee80211_hw *hw)
- void plfxlc_mac_release(struct plfxlc_mac *mac)
- {
- 	plfxlc_chip_release(&mac->chip);
--	lockdep_assert_held(&mac->lock);
- }
+diff --git a/drivers/most/most_usb.c b/drivers/most/most_usb.c
+index 485d5ca39951..e178a5a0d3aa 100644
+--- a/drivers/most/most_usb.c
++++ b/drivers/most/most_usb.c
+@@ -1120,6 +1120,7 @@ static void hdm_disconnect(struct usb_interface *interface)
  
- int plfxlc_op_start(struct ieee80211_hw *hw)
+ 	if (mdev->dci)
+ 		device_unregister(&mdev->dci->dev);
++	get_device(&mdev->dev);
+ 	most_deregister_interface(&mdev->iface);
+ 
+ 	kfree(mdev->busy_urbs);
+-- 
+2.34.1
 
 
