@@ -1,106 +1,77 @@
-Return-Path: <linux-kernel+bounces-267568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D48E9412E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:17:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 871C59412E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DAA3B21AEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:17:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D9E71F24514
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5876C19FA8F;
-	Tue, 30 Jul 2024 13:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22628199389;
+	Tue, 30 Jul 2024 13:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="HQAazus6"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YgsAvC5W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A04F19EECA;
-	Tue, 30 Jul 2024 13:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210922CA7
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 13:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722345405; cv=none; b=HBy23JuoZjh0wnCYl9Hud+FAq8goM6GdYTVWIknsXJ24NEVmQ/hgTVK26TvHJBoqwMqueJQ/Sam0F7sjIUk9Ma+rMV39P4jhs9Rf2szNAah6UTDsql2UPlbaPZsRqJvbUbzjurDoV/F0pMwKkFxzJD9JYjMl65xo0wn9yCmCSiQ=
+	t=1722345402; cv=none; b=Mlz1PjnZexTxmlcM/wg2pYMQ0ZQUnTETShfDzWZ/gsHNK9IuvE9fYhJjGh1pvAOxvosnxA2TQZ2QImn54O+IJwINbtKfRmwyVjY+R95x9e+GbCUUTnbwoRhC7FBIImLp7YZ6689JQn6bgfvEDL/3X6TBAXLACvs1Q+MAAAbPhGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722345405; c=relaxed/simple;
-	bh=zj0aIYvulMLaTJ7jE+J2kdKeVFkwwt29ptI8jdT24ac=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ub5NO6ASK2wRtaVgcRBqA3oMCqzRdZMaW2Awe49enxcSPvSn7QxLHjZx2TJxGbAf9Nd/7WQoBLdwzeBJmVy1AIRiapph6JFG40VhDqeJGTVvBrb/vWcevCLDPSvIh3p9Lp6QDBnpPLSz+N+sZZsyTdwBZro8mKvojpIPDG3G9Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=HQAazus6; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UAeME7001880;
-	Tue, 30 Jul 2024 06:16:39 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=RADa8Ey5n2vTN7vraUqNbAm
-	IjccE2rtWUFiiMqI//WQ=; b=HQAazus67isubswKRp/WgN5GrNgGns7wIJ+bn8r
-	j+TjLQVtHYYO2UaN84/e1enegjXiWOdo77MBLuaHa6PnFEAglKPZcZSBS5jAPnv2
-	9lDBPZviVp7zvyRdBr+LmSHvY1okOJNdPhGIQATj5VyCSUMi0YE22RxoMSgsG/lh
-	ZA+AlB7H3uNjcdvR9+1qYOdTtqpD/QSfqapIWzPXHxSP2rml+xOUWgRbSsodmAwE
-	1OIt6YROKYAD0g61ihe4v5TzShgoEguSvncL4FR+k4bqjcyb0CkB+Tnr/s4vm0kj
-	kfxvjpOvi7JQwm+GqUqltgG5kxezygexsCJSZ1DBCwjWfBg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 40pnp5ja8q-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 06:16:38 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 30 Jul 2024 06:16:37 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 30 Jul 2024 06:16:37 -0700
-Received: from Dell2s-9.sclab.marvell.com (unknown [10.110.150.250])
-	by maili.marvell.com (Postfix) with ESMTP id E99D05B692F;
-	Tue, 30 Jul 2024 06:16:36 -0700 (PDT)
-From: Witold Sadowski <wsadowski@marvell.com>
-To: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: <broonie@kernel.org>, <robh@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <pthombar@cadence.com>, Witold Sadowski <wsadowski@marvell.com>
-Subject: [PATCH 1/1] spi: cadence: Add 64BIT Kconfig dependency
-Date: Tue, 30 Jul 2024 06:16:26 -0700
-Message-ID: <20240730131627.1874257-1-wsadowski@marvell.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722345402; c=relaxed/simple;
+	bh=KqdWcM5MP7L+cX9udLexDIx4xd68NTvESqR9R08kK8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RtntF9Wz4SCIffZTt5gkQ1o3sz/E/1Ix+8NUQWRPlFBIlDtxId79KEJikUtVq/1/PSwwGIZDp288kGcfeAupG3wjg2Xx3+OnRyIFMdWixXBPXfW70cqcKBzFmpJSxVpMWcLn+9Q+oNcyy/g6FB9kFuMi+iYSQHXYuMsE+HG/PwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YgsAvC5W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42914C4AF0A;
+	Tue, 30 Jul 2024 13:16:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722345401;
+	bh=KqdWcM5MP7L+cX9udLexDIx4xd68NTvESqR9R08kK8U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YgsAvC5WE1sNIJo9pwyW15Pa5dG/pT3CEsUkRwUTSXlz0uVufyeFk2ODJHBdbi6RN
+	 6s+T4UvwRftmKK+u03P2xqUOma7kGq1bJ5X9jDFG4Nync1c9BLu8wnWaefC9Z8ulmB
+	 t99la74Smqj9igCh7H+ThlD9fN94W0wdQJufPAns=
+Date: Tue, 30 Jul 2024 15:16:38 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: =?utf-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"opensource.kernel" <opensource.kernel@vivo.com>
+Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQ0hdIHVzYjog?=
+ =?utf-8?Q?gadget=3AFixed_th?= =?utf-8?Q?e?= problem of abnormal function of
+ mobile  phone as UVC camera.
+Message-ID: <2024073015-cannon-colt-b4e2@gregkh>
+References: <TYUPR06MB621753631B9F7836583E7BEED2AB2@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <2024072537-landowner-diaphragm-1d22@gregkh>
+ <TYUPR06MB62176D779EE13F08D6295C3ED2AB2@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <TYUPR06MB621755F6FD643E99DBD21D42D2B02@TYUPR06MB6217.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: 5OAndy0DIvkuBJ6ZpACMykqzjd_s7uRy
-X-Proofpoint-ORIG-GUID: 5OAndy0DIvkuBJ6ZpACMykqzjd_s7uRy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_11,2024-07-30_01,2024-05-17_01
+In-Reply-To: <TYUPR06MB621755F6FD643E99DBD21D42D2B02@TYUPR06MB6217.apcprd06.prod.outlook.com>
 
-xSPI block requires 64 bit operation for proper Marvell SDMA handling.
-Disallow bulding on targets without 64 bit support.
+On Tue, Jul 30, 2024 at 12:14:33PM +0000, 胡连勤 wrote:
+> Hello  linux community expert:
+> 
+>   What other information do we need to provide for this patch to be uploaded?
 
-Signed-off-by: Witold Sadowski <wsadowski@marvell.com>
----
- drivers/spi/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please answer the questions and redo the patch based on the review.
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index a2c99ff33e0a..d7b5c9b5c676 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -267,7 +267,7 @@ config SPI_CADENCE_QUADSPI
- 
- config SPI_CADENCE_XSPI
- 	tristate "Cadence XSPI controller"
--	depends on OF && HAS_IOMEM
-+	depends on OF && HAS_IOMEM && 64BIT
- 	depends on SPI_MEM
- 	help
- 	  Enable support for the Cadence XSPI Flash controller.
--- 
-2.43.0
+And please do not send HTML email, the mailing lists reject it.
 
+thanks,
+
+greg k-h
 
