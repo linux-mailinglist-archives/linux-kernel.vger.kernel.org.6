@@ -1,356 +1,446 @@
-Return-Path: <linux-kernel+bounces-267944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41F43941CA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:10:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C6B1941CD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64E9F1C21385
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:10:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406C1289684
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8B81A6CB7;
-	Tue, 30 Jul 2024 17:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E6118E044;
+	Tue, 30 Jul 2024 17:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QoOEndaI";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b3WVuPaV"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GO3ovaGd"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE4418C907;
-	Tue, 30 Jul 2024 17:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6432718991F
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722359201; cv=none; b=s2qnXjWV7tFp3EhQY66bH6MklyfeOC3eGny9ls8Xz2zbGiTDflPaIGtvdqB/iAcj2d6D96YydgWJNaGG+vzzkbNlsJKD5XIAzK5kj5TvTrkxKHjMmT975YcTLl3aMXMsIDofXEwGdtdVOvXook+yJLNplcV/z5RjFp5rQWytdBs=
+	t=1722359334; cv=none; b=JnGRiwWX11wCzilN77GyjJ/8eDR3L5D8skAQvi8ZGvjWQxp5s4Oj4zkrJKGAJZbIsFTR5XgodSHTHEMSwUfwIpF3J/LZInBkdlvIWhgl1nDCy+wBuqMlNYAlZC/99k2kxU+UhDvKqRTQy4DLF9a4Q3X9bgnuwpq0AoT/olg74vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722359201; c=relaxed/simple;
-	bh=VpNcHbhJMVkQzK37gufq1qJOirGgZDBUxMIfqM1WMJk=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=SsC77sFUy5ElDRri37nS5VOH/ACUY7tFmaqOJmEkWFbFTvr+lxpM7GCpR+8rPn1Aog/JIzONVKI8222yf3HAS05lkz1/oqWoWTLbqOum2onBR7PeO/9iOzt7bht2068cBde++rLKMb4wpieG359oQ2puNU3o6/0BnskA7nSeH3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QoOEndaI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b3WVuPaV; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 30 Jul 2024 17:06:37 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722359198;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=1GSNgRge/ShNllYXBvKwjEQdJwmkvEYVSVbbURbu02k=;
-	b=QoOEndaITTFtsNVorfpCqJV0hF1/WDFOjwJukwdq+Vrhl/zZ29uCUuslI9NnQZTE11ZM8M
-	2Fnrg1VM6gNW+MgI3rGdGlrcuVovKfV9RiRZSSm9yHU3Kzj1iXNCN66uqdT08Pxwa1WDfi
-	9ZFBHw52C/DhmQtxxjcizVBFt0H48ZBws7kmkJHTN9qozn3fehnQaw64WOJDr3QTE8tflB
-	JpKCAvdDxGmkjAFXdScsHHLjudnH35jhCQ2ptPtBUybT7tjKU1iEkqrWR6qiiZkpbLo7AS
-	zZVH5do9HYwdVj/eJ0c3Su3IcDt5pD8RRyXwC83RCUEIYx64iKrpAOJBSKvKdA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722359198;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=1GSNgRge/ShNllYXBvKwjEQdJwmkvEYVSVbbURbu02k=;
-	b=b3WVuPaVOAIQNADjy8/N9yk7Kawo32E+mQX3wOTtSH1hkOMP5hjrPdN93vXtyECiUWw86+
-	chWkJT57b8Iu7hBQ==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: timers/core] selftests/timers/posix_timers: Simplify error handling
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- "Anna-Maria Behnsen" <anna-maria@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1722359334; c=relaxed/simple;
+	bh=yx4rqUWItmn1vyFdwqB5nWkzZYpgxj1l70D0RG6zTY4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c+4vwt6mhHJx4tDWNNpTPE3OwGEWnTMK5YggapH58BUnmAa4dpH/pznieXkVurmVl7by8pn7sOpUjrn0myll+lSwhc4Id1nFmGJo5A2eZ+TgGJmhaF53+S7R6SU+eBM41w4fkoBWv/f25YDjw3IX4VNGcd/Vkl6krmGC6a7vMjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GO3ovaGd; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ATX.abc.com (unknown [IPv6:2405:201:2015:f873:55f8:639e:8e9f:12ec])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7BB8E268;
+	Tue, 30 Jul 2024 19:07:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1722359282;
+	bh=yx4rqUWItmn1vyFdwqB5nWkzZYpgxj1l70D0RG6zTY4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GO3ovaGdLSlkICMAqQseF2C5FUab8cTvzoEa4hfJY2Py83O5w9KDQFmFULol9qxRT
+	 Os8I/VHM83NX2vNqa39N0OBYavScLG34Qud+Fnt2RT7SIaSOAGb3Fj8YVb2upsF5aH
+	 VCTYZBTM6el1B4hpHWjfez53W4fC8sy3v0wl5cAo=
+From: Umang Jain <umang.jain@ideasonboard.com>
+To: linux-staging@lists.linux.dev
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Umang Jain <umang.jain@ideasonboard.com>
+Subject: [PATCH] staging: vchiq: Avoid mixing bulk_userdata kernel and userspace pointer
+Date: Tue, 30 Jul 2024 22:38:40 +0530
+Message-ID: <20240730170840.1603752-1-umang.jain@ideasonboard.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172235919756.2215.8366740488070916839.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the timers/core branch of tip:
+In vchiq_dev.c, there are two places where the __user bulk_userdata
+pointer to set to a kernel-space pointer which then gives relevant
+Sparse warnings as below:
 
-Commit-ID:     0af02a8e356fc6d3b1eebb32fae7d35625127835
-Gitweb:        https://git.kernel.org/tip/0af02a8e356fc6d3b1eebb32fae7d35625127835
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 10 Jun 2024 18:42:06 +02:00
-Committer:     Frederic Weisbecker <frederic@kernel.org>
-CommitterDate: Mon, 29 Jul 2024 21:57:34 +02:00
+vchiq_dev.c:328:26: warning: incorrect type in assignment (different address spaces)
+vchiq_dev.c:328:26:    expected void *[assigned] userdata
+vchiq_dev.c:328:26:    got void [noderef] __user *userdata
+vchiq_dev.c:543:47: warning: incorrect type in assignment (different address spaces)
+vchiq_dev.c:543:47:    expected void [noderef] __user *[addressable] [assigned] bulk_userdata
+vchiq_dev.c:543:47:    got void *bulk_userdata
 
-selftests/timers/posix_timers: Simplify error handling
+This is solved by adding additional functional argument to track the
+userspace bulk_userdata separately and passing it accordingly to
+completion handlers.
 
-No point in returning to main() on fatal errors. Just exit right away.
+This patch is inspired by commit
+1c954540c0eb ("staging: vchiq: avoid mixing kernel and user pointers").
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Reviewed-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+There are no Sparse warnings left to be fixed in vc04_services,
+hence drop the relevant TODO entry as well.
+
+Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
 ---
- tools/testing/selftests/timers/posix_timers.c | 151 +++++------------
- 1 file changed, 52 insertions(+), 99 deletions(-)
+ .../bcm2835-audio/bcm2835-vchiq.c             |  3 ++-
+ .../include/linux/raspberrypi/vchiq.h         |  7 +++--
+ drivers/staging/vc04_services/interface/TODO  |  4 ---
+ .../interface/vchiq_arm/vchiq_arm.c           | 26 +++++++++++--------
+ .../interface/vchiq_arm/vchiq_arm.h           |  3 ++-
+ .../interface/vchiq_arm/vchiq_core.c          | 21 ++++++++-------
+ .../interface/vchiq_arm/vchiq_core.h          |  5 ++--
+ .../interface/vchiq_arm/vchiq_dev.c           | 10 ++-----
+ .../vc04_services/vchiq-mmal/mmal-vchiq.c     |  2 +-
+ 9 files changed, 42 insertions(+), 39 deletions(-)
 
-diff --git a/tools/testing/selftests/timers/posix_timers.c b/tools/testing/selftests/timers/posix_timers.c
-index 07c81c0..38db82c 100644
---- a/tools/testing/selftests/timers/posix_timers.c
-+++ b/tools/testing/selftests/timers/posix_timers.c
-@@ -10,6 +10,7 @@
- #include <sys/time.h>
- #include <stdio.h>
- #include <signal.h>
-+#include <string.h>
- #include <unistd.h>
- #include <time.h>
- #include <pthread.h>
-@@ -19,6 +20,20 @@
- #define DELAY 2
- #define USECS_PER_SEC 1000000
- 
-+static void __fatal_error(const char *test, const char *name, const char *what)
-+{
-+	char buf[64];
-+
-+	strerror_r(errno, buf, sizeof(buf));
-+
-+	if (name && strlen(name))
-+		ksft_exit_fail_msg("%s %s %s %s\n", test, name, what, buf);
-+	else
-+		ksft_exit_fail_msg("%s %s %s\n", test, what, buf);
-+}
-+
-+#define fatal_error(name, what)	__fatal_error(__func__, name, what)
-+
- static volatile int done;
- 
- /* Busy loop in userspace to elapse ITIMER_VIRTUAL */
-@@ -74,24 +89,13 @@ static int check_diff(struct timeval start, struct timeval end)
- 	return 0;
- }
- 
--static int check_itimer(int which)
-+static void check_itimer(int which, const char *name)
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
+index 133ed15f3dbc..c44f3d5cca70 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
+@@ -96,7 +96,8 @@ static int bcm2835_audio_send_simple(struct bcm2835_audio_instance *instance,
+ static int audio_vchi_callback(struct vchiq_instance *vchiq_instance,
+ 			       enum vchiq_reason reason,
+ 			       struct vchiq_header *header,
+-			       unsigned int handle, void *userdata)
++			       unsigned int handle, void *userdata,
++			       void __user *uuserdata)
  {
--	const char *name;
--	int err;
- 	struct timeval start, end;
- 	struct itimerval val = {
- 		.it_value.tv_sec = DELAY,
- 	};
+ 	struct bcm2835_audio_instance *instance = vchiq_get_service_userdata(vchiq_instance,
+ 									     handle);
+diff --git a/drivers/staging/vc04_services/include/linux/raspberrypi/vchiq.h b/drivers/staging/vc04_services/include/linux/raspberrypi/vchiq.h
+index 6c40d8c1dde6..c777952dd9d9 100644
+--- a/drivers/staging/vc04_services/include/linux/raspberrypi/vchiq.h
++++ b/drivers/staging/vc04_services/include/linux/raspberrypi/vchiq.h
+@@ -56,7 +56,8 @@ struct vchiq_service_base {
+ 			enum vchiq_reason reason,
+ 			struct vchiq_header *header,
+ 			unsigned int handle,
+-			void *bulk_userdata);
++			void *bulk_userdata,
++			void __user *ubulk_userdata);
+ 	void *userdata;
+ };
  
--	if (which == ITIMER_VIRTUAL)
--		name = "ITIMER_VIRTUAL";
--	else if (which == ITIMER_PROF)
--		name = "ITIMER_PROF";
--	else if (which == ITIMER_REAL)
--		name = "ITIMER_REAL";
--	else
--		return -1;
+@@ -65,6 +66,7 @@ struct vchiq_completion_data_kernel {
+ 	struct vchiq_header *header;
+ 	void *service_userdata;
+ 	void *bulk_userdata;
++	void __user *ubulk_userdata;
+ };
+ 
+ struct vchiq_service_params_kernel {
+@@ -73,7 +75,8 @@ struct vchiq_service_params_kernel {
+ 			enum vchiq_reason reason,
+ 			struct vchiq_header *header,
+ 			unsigned int handle,
+-			void *bulk_userdata);
++			void *bulk_userdata,
++			void __user *ubulk_userdata);
+ 	void *userdata;
+ 	short version;       /* Increment for non-trivial changes */
+ 	short version_min;   /* Update for incompatible changes */
+diff --git a/drivers/staging/vc04_services/interface/TODO b/drivers/staging/vc04_services/interface/TODO
+index dfb1ee49633f..2ae75362421b 100644
+--- a/drivers/staging/vc04_services/interface/TODO
++++ b/drivers/staging/vc04_services/interface/TODO
+@@ -27,10 +27,6 @@ The code follows the 80 characters limitation yet tends to go 3 or 4 levels of
+ indentation deep making it very unpleasant to read. This is specially relevant
+ in the character driver ioctl code and in the core thread functions.
+ 
+-* Clean up Sparse warnings from __user annotations. See
+-vchiq_irq_queue_bulk_tx_rx(). Ensure that the address of "&waiter->bulk_waiter"
+-is never disclosed to userspace.
 -
- 	done = 0;
+ * Fix behavior of message handling
  
- 	if (which == ITIMER_VIRTUAL)
-@@ -101,17 +105,11 @@ static int check_itimer(int which)
- 	else if (which == ITIMER_REAL)
- 		signal(SIGALRM, sig_handler);
+ The polling behavior of vchiq_bulk_transmit(), vchiq_bulk_receive() and
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index c4d97dbf6ba8..fae939f35642 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -859,7 +859,7 @@ vchiq_bulk_transmit(struct vchiq_instance *instance, unsigned int handle, const
+ 		case VCHIQ_BULK_MODE_CALLBACK:
+ 			ret = vchiq_bulk_transfer(instance, handle,
+ 						  (void *)data, NULL,
+-						  size, userdata, mode,
++						  size, userdata, NULL, mode,
+ 						  VCHIQ_BULK_TRANSMIT);
+ 			break;
+ 		case VCHIQ_BULK_MODE_BLOCKING:
+@@ -896,7 +896,7 @@ int vchiq_bulk_receive(struct vchiq_instance *instance, unsigned int handle,
+ 		case VCHIQ_BULK_MODE_NOCALLBACK:
+ 		case VCHIQ_BULK_MODE_CALLBACK:
+ 			ret = vchiq_bulk_transfer(instance, handle, data, NULL,
+-						  size, userdata,
++						  size, userdata, NULL,
+ 						  mode, VCHIQ_BULK_RECEIVE);
+ 			break;
+ 		case VCHIQ_BULK_MODE_BLOCKING:
+@@ -969,7 +969,7 @@ vchiq_blocking_bulk_transfer(struct vchiq_instance *instance, unsigned int handl
+ 	}
  
--	err = gettimeofday(&start, NULL);
--	if (err < 0) {
--		ksft_perror("Can't call gettimeofday()");
--		return -1;
--	}
-+	if (gettimeofday(&start, NULL) < 0)
-+		fatal_error(name, "gettimeofday()");
- 
--	err = setitimer(which, &val, NULL);
--	if (err < 0) {
--		ksft_perror("Can't set timer");
--		return -1;
--	}
-+	if (setitimer(which, &val, NULL) < 0)
-+		fatal_error(name, "setitimer()");
- 
- 	if (which == ITIMER_VIRTUAL)
- 		user_loop();
-@@ -120,68 +118,41 @@ static int check_itimer(int which)
- 	else if (which == ITIMER_REAL)
- 		idle_loop();
- 
--	err = gettimeofday(&end, NULL);
--	if (err < 0) {
--		ksft_perror("Can't call gettimeofday()");
--		return -1;
--	}
-+	if (gettimeofday(&end, NULL) < 0)
-+		fatal_error(name, "gettimeofday()");
- 
- 	ksft_test_result(check_diff(start, end) == 0, "%s\n", name);
--
--	return 0;
- }
- 
--static int check_timer_create(int which)
-+static void check_timer_create(int which, const char *name)
+ 	ret = vchiq_bulk_transfer(instance, handle, data, NULL, size,
+-				  &waiter->bulk_waiter,
++				  &waiter->bulk_waiter, NULL,
+ 				  VCHIQ_BULK_MODE_BLOCKING, dir);
+ 	if ((ret != -EAGAIN) || fatal_signal_pending(current) || !waiter->bulk_waiter.bulk) {
+ 		struct vchiq_bulk *bulk = waiter->bulk_waiter.bulk;
+@@ -996,7 +996,7 @@ vchiq_blocking_bulk_transfer(struct vchiq_instance *instance, unsigned int handl
+ static int
+ add_completion(struct vchiq_instance *instance, enum vchiq_reason reason,
+ 	       struct vchiq_header *header, struct user_service *user_service,
+-	       void *bulk_userdata)
++	       void *bulk_userdata, void __user *ubulk_userdata)
  {
--	const char *type;
--	int err;
--	timer_t id;
- 	struct timeval start, end;
- 	struct itimerspec val = {
- 		.it_value.tv_sec = DELAY,
- 	};
--
--	if (which == CLOCK_THREAD_CPUTIME_ID) {
--		type = "thread";
--	} else if (which == CLOCK_PROCESS_CPUTIME_ID) {
--		type = "process";
--	} else {
--		ksft_print_msg("Unknown timer_create() type %d\n", which);
--		return -1;
--	}
-+	timer_t id;
+ 	struct vchiq_completion_data_kernel *completion;
+ 	struct vchiq_drv_mgmt *mgmt = dev_get_drvdata(instance->state->dev);
+@@ -1027,6 +1027,7 @@ add_completion(struct vchiq_instance *instance, enum vchiq_reason reason,
+ 	/* N.B. service_userdata is updated while processing AWAIT_COMPLETION */
+ 	completion->service_userdata = user_service->service;
+ 	completion->bulk_userdata = bulk_userdata;
++	completion->ubulk_userdata = ubulk_userdata;
  
- 	done = 0;
--	err = timer_create(which, NULL, &id);
--	if (err < 0) {
--		ksft_perror("Can't create timer");
--		return -1;
--	}
--	signal(SIGALRM, sig_handler);
+ 	if (reason == VCHIQ_SERVICE_CLOSED) {
+ 		/*
+@@ -1058,7 +1059,8 @@ add_completion(struct vchiq_instance *instance, enum vchiq_reason reason,
+ static int
+ service_single_message(struct vchiq_instance *instance,
+ 		       enum vchiq_reason reason,
+-		       struct vchiq_service *service, void *bulk_userdata)
++		       struct vchiq_service *service,
++		       void *bulk_userdata, void __user *ubulk_userdata)
+ {
+ 	struct user_service *user_service;
  
--	err = gettimeofday(&start, NULL);
--	if (err < 0) {
--		ksft_perror("Can't call gettimeofday()");
--		return -1;
--	}
-+	if (timer_create(which, NULL, &id) < 0)
-+		fatal_error(name, "timer_create()");
+@@ -1076,7 +1078,7 @@ service_single_message(struct vchiq_instance *instance,
+ 		dev_dbg(instance->state->dev,
+ 			"arm: Inserting extra MESSAGE_AVAILABLE\n");
+ 		ret = add_completion(instance, reason, NULL, user_service,
+-				     bulk_userdata);
++				     bulk_userdata, ubulk_userdata);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -1094,7 +1096,8 @@ service_single_message(struct vchiq_instance *instance,
  
--	err = timer_settime(id, 0, &val, NULL);
--	if (err < 0) {
--		ksft_perror("Can't set timer");
--		return -1;
--	}
-+	if (signal(SIGALRM, sig_handler) == SIG_ERR)
-+		fatal_error(name, "signal()");
-+
-+	if (gettimeofday(&start, NULL) < 0)
-+		fatal_error(name, "gettimeofday()");
-+
-+	if (timer_settime(id, 0, &val, NULL) < 0)
-+		fatal_error(name, "timer_settime()");
+ int
+ service_callback(struct vchiq_instance *instance, enum vchiq_reason reason,
+-		 struct vchiq_header *header, unsigned int handle, void *bulk_userdata)
++		 struct vchiq_header *header, unsigned int handle,
++		 void *bulk_userdata, void __user *ubulk_userdata)
+ {
+ 	/*
+ 	 * How do we ensure the callback goes to the right client?
+@@ -1147,8 +1150,8 @@ service_callback(struct vchiq_instance *instance, enum vchiq_reason reason,
+ 			DEBUG_TRACE(SERVICE_CALLBACK_LINE);
+ 			DEBUG_COUNT(MSG_QUEUE_FULL_COUNT);
  
- 	user_loop();
+-			ret = service_single_message(instance, reason,
+-						     service, bulk_userdata);
++			ret = service_single_message(instance, reason, service,
++						     bulk_userdata, ubulk_userdata);
+ 			if (ret) {
+ 				DEBUG_TRACE(SERVICE_CALLBACK_LINE);
+ 				vchiq_service_put(service);
+@@ -1186,7 +1189,7 @@ service_callback(struct vchiq_instance *instance, enum vchiq_reason reason,
+ 		return 0;
  
--	err = gettimeofday(&end, NULL);
--	if (err < 0) {
--		ksft_perror("Can't call gettimeofday()");
--		return -1;
--	}
-+	if (gettimeofday(&end, NULL) < 0)
-+		fatal_error(name, "gettimeofday()");
- 
- 	ksft_test_result(check_diff(start, end) == 0,
--			 "timer_create() per %s\n", type);
--
--	return 0;
-+			 "timer_create() per %s\n", name);
+ 	return add_completion(instance, reason, header, user_service,
+-		bulk_userdata);
++		bulk_userdata, ubulk_userdata);
  }
  
- static pthread_t ctd_thread;
-@@ -209,15 +180,14 @@ static void *ctd_thread_func(void *arg)
+ void vchiq_dump_platform_instances(struct vchiq_state *state, struct seq_file *f)
+@@ -1273,7 +1276,8 @@ static int
+ vchiq_keepalive_vchiq_callback(struct vchiq_instance *instance,
+ 			       enum vchiq_reason reason,
+ 			       struct vchiq_header *header,
+-			       unsigned int service_user, void *bulk_user)
++			       unsigned int service_user,
++			       void *bulk_userdata, void __user *ubulk_userdata)
+ {
+ 	dev_err(instance->state->dev, "suspend: %s: callback reason %d\n",
+ 		__func__, reason);
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.h
+index b402aac333d9..43c73e986779 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.h
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.h
+@@ -155,7 +155,8 @@ static inline int vchiq_register_chrdev(struct device *parent) { return 0; }
  
- 	ctd_count = 100;
- 	if (timer_create(CLOCK_PROCESS_CPUTIME_ID, NULL, &id))
--		return "Can't create timer\n";
-+		fatal_error(NULL, "timer_create()");
- 	if (timer_settime(id, 0, &val, NULL))
--		return "Can't set timer\n";
--
-+		fatal_error(NULL, "timer_settime()");
- 	while (ctd_count > 0 && !ctd_failed)
- 		;
+ extern int
+ service_callback(struct vchiq_instance *vchiq_instance, enum vchiq_reason reason,
+-		 struct vchiq_header *header, unsigned int handle, void *bulk_userdata);
++		 struct vchiq_header *header, unsigned int handle,
++		 void *bulk_userdata, void __user *ubulk_userdata);
  
- 	if (timer_delete(id))
--		return "Can't delete timer\n";
-+		fatal_error(NULL, "timer_delete()");
+ extern void
+ free_bulk_waiter(struct vchiq_instance *instance);
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+index 50af04b217f4..b24a27a46074 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+@@ -449,7 +449,8 @@ mark_service_closing(struct vchiq_service *service)
  
- 	return NULL;
- }
-@@ -225,19 +195,16 @@ static void *ctd_thread_func(void *arg)
- /*
-  * Test that only the running thread receives the timer signal.
+ static inline int
+ make_service_callback(struct vchiq_service *service, enum vchiq_reason reason,
+-		      struct vchiq_header *header, void *bulk_userdata)
++		      struct vchiq_header *header,
++		      void *bulk_userdata, void __user *ubulk_userdata)
+ {
+ 	int status;
+ 
+@@ -457,7 +458,7 @@ make_service_callback(struct vchiq_service *service, enum vchiq_reason reason,
+ 		service->state->id, service->localport, reason_names[reason],
+ 		header, bulk_userdata);
+ 	status = service->base.callback(service->instance, reason, header, service->handle,
+-					bulk_userdata);
++					bulk_userdata, ubulk_userdata);
+ 	if (status && (status != -EAGAIN)) {
+ 		dev_warn(service->state->dev,
+ 			 "core: %d: ignoring ERROR from callback to service %x\n",
+@@ -1339,7 +1340,7 @@ notify_bulks(struct vchiq_service *service, struct vchiq_bulk_queue *queue,
+ 				enum vchiq_reason reason =
+ 						get_bulk_reason(bulk);
+ 				status = make_service_callback(service, reason,	NULL,
+-							       bulk->userdata);
++							       bulk->userdata, bulk->uuserdata);
+ 				if (status == -EAGAIN)
+ 					break;
+ 			}
+@@ -1689,7 +1690,7 @@ parse_message(struct vchiq_state *state, struct vchiq_header *header)
+ 			claim_slot(state->rx_info);
+ 			DEBUG_TRACE(PARSE_LINE);
+ 			if (make_service_callback(service, VCHIQ_MESSAGE_AVAILABLE, header,
+-						  NULL) == -EAGAIN) {
++						  NULL, NULL) == -EAGAIN) {
+ 				DEBUG_TRACE(PARSE_LINE);
+ 				goto bail_not_ready;
+ 			}
+@@ -2072,7 +2073,7 @@ sync_func(void *v)
+ 			if ((service->remoteport == remoteport) &&
+ 			    (service->srvstate == VCHIQ_SRVSTATE_OPENSYNC)) {
+ 				if (make_service_callback(service, VCHIQ_MESSAGE_AVAILABLE, header,
+-							  NULL) == -EAGAIN)
++							  NULL, NULL) == -EAGAIN)
+ 					dev_err(state->dev,
+ 						"sync: error: synchronous callback to service %d returns -EAGAIN\n",
+ 						localport);
+@@ -2624,7 +2625,7 @@ close_service_complete(struct vchiq_service *service, int failstate)
+ 		return -EINVAL;
+ 	}
+ 
+-	status = make_service_callback(service, VCHIQ_SERVICE_CLOSED, NULL, NULL);
++	status = make_service_callback(service, VCHIQ_SERVICE_CLOSED, NULL, NULL, NULL);
+ 
+ 	if (status != -EAGAIN) {
+ 		int uc = service->service_use_count;
+@@ -2987,7 +2988,8 @@ vchiq_remove_service(struct vchiq_instance *instance, unsigned int handle)
+  * structure.
   */
--static int check_timer_distribution(void)
-+static void check_timer_distribution(void)
+ int vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned int handle,
+-			void *offset, void __user *uoffset, int size, void *userdata,
++			void *offset, void __user *uoffset, int size,
++			void *userdata, void __user *uuserdata,
+ 			enum vchiq_bulk_mode mode, enum vchiq_bulk_dir dir)
  {
--	const char *errmsg;
--
--	signal(SIGALRM, ctd_sighandler);
-+	if (signal(SIGALRM, ctd_sighandler) == SIG_ERR)
-+		fatal_error(NULL, "signal()");
+ 	struct vchiq_service *service = find_service_by_handle(instance, handle);
+@@ -3062,6 +3064,7 @@ int vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned int handle,
+ 	bulk->mode = mode;
+ 	bulk->dir = dir;
+ 	bulk->userdata = userdata;
++	bulk->uuserdata = uuserdata;
+ 	bulk->size = size;
+ 	bulk->actual = VCHIQ_BULK_ACTUAL_ABORTED;
  
--	errmsg = "Can't create thread\n";
- 	if (pthread_create(&ctd_thread, NULL, ctd_thread_func, NULL))
--		goto err;
-+		fatal_error(NULL, "pthread_create()");
+@@ -3074,9 +3077,9 @@ int vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned int handle,
+ 	 */
+ 	wmb();
  
--	errmsg = "Can't join thread\n";
--	if (pthread_join(ctd_thread, (void **)&errmsg) || errmsg)
--		goto err;
-+	if (pthread_join(ctd_thread, NULL))
-+		fatal_error(NULL, "pthread_join()");
- 
- 	if (!ctd_failed)
- 		ksft_test_result_pass("check signal distribution\n");
-@@ -245,10 +212,6 @@ static int check_timer_distribution(void)
- 		ksft_test_result_fail("check signal distribution\n");
- 	else
- 		ksft_test_result_skip("check signal distribution (old kernel)\n");
--	return 0;
--err:
--	ksft_print_msg("%s", errmsg);
--	return -1;
- }
- 
- int main(int argc, char **argv)
-@@ -259,17 +222,10 @@ int main(int argc, char **argv)
- 	ksft_print_msg("Testing posix timers. False negative may happen on CPU execution \n");
- 	ksft_print_msg("based timers if other threads run on the CPU...\n");
- 
--	if (check_itimer(ITIMER_VIRTUAL) < 0)
--		ksft_exit_fail();
--
--	if (check_itimer(ITIMER_PROF) < 0)
--		ksft_exit_fail();
--
--	if (check_itimer(ITIMER_REAL) < 0)
--		ksft_exit_fail();
--
--	if (check_timer_create(CLOCK_THREAD_CPUTIME_ID) < 0)
--		ksft_exit_fail();
-+	check_itimer(ITIMER_VIRTUAL, "ITIMER_VIRTUAL");
-+	check_itimer(ITIMER_PROF, "ITIMER_PROF");
-+	check_itimer(ITIMER_REAL, "ITIMER_REAL");
-+	check_timer_create(CLOCK_THREAD_CPUTIME_ID, "CLOCK_THREAD_CPUTIME_ID");
+-	dev_dbg(state->dev, "core: %d: bt (%d->%d) %cx %x@%pad %pK\n",
++	dev_dbg(state->dev, "core: %d: bt (%d->%d) %cx %x@%pad %pK %p\n",
+ 		state->id, service->localport, service->remoteport,
+-		dir_char, size, &bulk->data, userdata);
++		dir_char, size, &bulk->data, userdata, uuserdata);
  
  	/*
- 	 * It's unfortunately hard to reliably test a timer expiration
-@@ -280,11 +236,8 @@ int main(int argc, char **argv)
- 	 * to ensure true parallelism. So test only one thread until we
- 	 * find a better solution.
- 	 */
--	if (check_timer_create(CLOCK_PROCESS_CPUTIME_ID) < 0)
--		ksft_exit_fail();
--
--	if (check_timer_distribution() < 0)
--		ksft_exit_fail();
-+	check_timer_create(CLOCK_PROCESS_CPUTIME_ID, "CLOCK_PROCESS_CPUTIME_ID");
-+	check_timer_distribution();
+ 	 * The slot mutex must be held when the service is being closed, so
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+index 77cc4d7ac077..6d915aeeae7f 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+@@ -114,6 +114,7 @@ struct vchiq_bulk {
+ 	short mode;
+ 	short dir;
+ 	void *userdata;
++	void __user *uuserdata;
+ 	dma_addr_t data;
+ 	int size;
+ 	void *remote_data;
+@@ -472,8 +473,8 @@ remote_event_pollall(struct vchiq_state *state);
  
- 	ksft_finished();
- }
+ extern int
+ vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned int handle, void *offset,
+-		    void __user *uoffset, int size, void *userdata, enum vchiq_bulk_mode mode,
+-		    enum vchiq_bulk_dir dir);
++		    void __user *uoffset, int size, void *userdata, void __user *uuserdata,
++		    enum vchiq_bulk_mode mode, enum vchiq_bulk_dir dir);
+ 
+ extern void
+ vchiq_dump_state(struct seq_file *f, struct vchiq_state *state);
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+index 9cd2a64dce5e..3bb45342e89e 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+@@ -324,12 +324,10 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_instance *instance,
+ 		dev_dbg(service->state->dev, "arm: found bulk_waiter %pK for pid %d\n",
+ 			waiter, current->pid);
+ 		userdata = &waiter->bulk_waiter;
+-	} else {
+-		userdata = args->userdata;
+ 	}
+ 
+ 	status = vchiq_bulk_transfer(instance, args->handle, NULL, args->data, args->size,
+-				     userdata, args->mode, dir);
++				     userdata, args->userdata, args->mode, dir);
+ 
+ 	if (!waiter) {
+ 		ret = 0;
+@@ -536,11 +534,7 @@ static int vchiq_ioc_await_completion(struct vchiq_instance *instance,
+ 		    !instance->use_close_delivered)
+ 			vchiq_service_put(service);
+ 
+-		/*
+-		 * FIXME: address space mismatch, does bulk_userdata
+-		 * actually point to user or kernel memory?
+-		 */
+-		user_completion.bulk_userdata = completion->bulk_userdata;
++		user_completion.bulk_userdata = completion->ubulk_userdata;
+ 
+ 		if (vchiq_put_completion(args->buf, &user_completion, ret)) {
+ 			if (ret == 0)
+diff --git a/drivers/staging/vc04_services/vchiq-mmal/mmal-vchiq.c b/drivers/staging/vc04_services/vchiq-mmal/mmal-vchiq.c
+index 67489c334f7b..24777e570ad5 100644
+--- a/drivers/staging/vc04_services/vchiq-mmal/mmal-vchiq.c
++++ b/drivers/staging/vc04_services/vchiq-mmal/mmal-vchiq.c
+@@ -551,7 +551,7 @@ static void bulk_abort_cb(struct vchiq_mmal_instance *instance,
+ /* incoming event service callback */
+ static int mmal_service_callback(struct vchiq_instance *vchiq_instance,
+ 				 enum vchiq_reason reason, struct vchiq_header *header,
+-				 unsigned int handle, void *bulk_ctx)
++				 unsigned int handle, void *bulk_ctx, void __user *bulk_uctx)
+ {
+ 	struct vchiq_mmal_instance *instance = vchiq_get_service_userdata(vchiq_instance, handle);
+ 	u32 msg_len;
+-- 
+2.45.0
+
 
