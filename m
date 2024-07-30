@@ -1,144 +1,164 @@
-Return-Path: <linux-kernel+bounces-267713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F6FF9414A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:45:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F10A9414AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2226D1F24187
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:45:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB2E2B23833
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069F71A2C2B;
-	Tue, 30 Jul 2024 14:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E561A3BDD;
+	Tue, 30 Jul 2024 14:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NLDm1GIj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zUILXe1o"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tIsbXp81";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NZKj9YTw";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tIsbXp81";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NZKj9YTw"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73271A2C14
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149541A257E;
+	Tue, 30 Jul 2024 14:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722350692; cv=none; b=k3cyTiwaz9henpUbEaVY6d3ROYpixhMpeWMsYbPbQTer7aBYqpooE6Bewhz3TG7zLE33FFbXziO9+GhFxut6LI87uysvqxQXCRCXUjEr7Oxc6NmPthvmwdLbXYQ5pJIP+L76y0WgILXc8/pupeFKs5VZmfKj4h+bpaigTpjyC6A=
+	t=1722350699; cv=none; b=LpNmr7AzmYA0918FeFquyd/gJnlk3/938BGYf6cpzL/Z01gAwGLFFCQjLEoRWM/bGbuUVi+TOxLL8kTuUzADT0ien6cZuxXpLDwE/5mR05prdpV+nprdiz/7DnRxn2fqpUSBylvHuk0F84x14gq1vcKXh7YQpEblvNza461VWHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722350692; c=relaxed/simple;
-	bh=ZhNDsibfxYp0EqZqkFA+mzwy7syy0osi3AXGATSHLik=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GUeS14vQTMwFngJghBtMSfmiA8EQHnk4Ssnb4RiZM/bvW9HuSB42mMl2GaomH4lmLn+EZw3vRocDdVrFFQPAc3ubxJjeogJk9YPReBi7nYd4QMHrav3qFayn8QiQjlxzIVWasCipJ6aQgxK7o5bufeseAk54EPr9iqoHeBgDXr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NLDm1GIj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zUILXe1o; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722350688;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1722350699; c=relaxed/simple;
+	bh=gSx/7lHE/PMLy5Y8F0EJAp52+7h2a/VarY4YUcAPLDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l5QIRpTOp4le0AyJSXaTLkdo9GnsszSvkTBxEfw8f2kgT5W63xxlV9ubvj/mtzHNXN0gcC6i/HGWGLSOWaFSOQLs1K7GXfktFdHQUJZNo7mVurOhWaqud8JLahm+y+4Y1f62wXfG4XNKbhZdAI02BabI9/TWY1ymm/4Kpf9DNpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tIsbXp81; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NZKj9YTw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tIsbXp81; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NZKj9YTw; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 25DF421A5B;
+	Tue, 30 Jul 2024 14:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722350696;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KBPSYycLm+Hxs9OxGsqcRUDjEHzyYk/DNTtVSBAzrVI=;
-	b=NLDm1GIj5wz0yF3S8BMLfqeNesNYZIPBQ5vo7+iQxHWC7D2u/aZse9Itqr+n6zHs0/6Gpx
-	fXCKaWo/Q6YT6Qwri6GdyPxVYblQmLrUDI/T6yYsFQ638RE7LerfqMbarNahp9gJMNJgKn
-	zSoYyooO0aGCr+1p+IkEKMmwBBLxMTAOINlH24p69+p7YT7qswJUdOhYuglQBYKbiSgbcA
-	nB4AM6YloZfckL48w0JN9yepOvz/Vs44//IrouWmdl3JD+Uy9lIkbo/bZf1GiMPcUlHZMK
-	RBF5oreJUTTszbKXV3iP3yG71iZAQTVe1BJrwimY2yY63IAkW5jfC98VPEQfNw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722350688;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	bh=QUsMKtPBcMux5juoA7RFd6oW5fn/anZ8vNoPsKM4bYU=;
+	b=tIsbXp81Nj+S2JtqAAh01D45atHp728i+MLSd6e9DYJbw5p1adBclSdBXmHMQksAubJWVA
+	kOWPjJJzm4lGoPkRR/QUVhaXfCQJcO8nJTxrdbtIRl8HCu+9Dsbgcrj8mIOiqGiYYsbjbr
+	SBCjyY46n7z8bf1OmxmxN93DfKg/0sQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722350696;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KBPSYycLm+Hxs9OxGsqcRUDjEHzyYk/DNTtVSBAzrVI=;
-	b=zUILXe1oZWWS4K8wnbJdbKUTujPHlULcSPvxDVqMdeW8YCSJQZGf0RhKLDOzNI51frICmA
-	D06uqstoVk254eDA==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
- <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
- linux-kernel@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH printk v3 09/19] printk: nbcon: Introduce printer kthreads
-In-Reply-To: <20240722171939.3349410-10-john.ogness@linutronix.de>
-References: <20240722171939.3349410-1-john.ogness@linutronix.de>
- <20240722171939.3349410-10-john.ogness@linutronix.de>
-Date: Tue, 30 Jul 2024 16:50:47 +0206
-Message-ID: <871q3bkkgw.fsf@jogness.linutronix.de>
+	bh=QUsMKtPBcMux5juoA7RFd6oW5fn/anZ8vNoPsKM4bYU=;
+	b=NZKj9YTw5gKqZksOrMEIEkrFyZEfPhgcLw3GxwhjX5TRzquOxMOCpsmUiFXNeZ30qdVx7P
+	KxD9VW0RhHMBTlAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=tIsbXp81;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=NZKj9YTw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722350696;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QUsMKtPBcMux5juoA7RFd6oW5fn/anZ8vNoPsKM4bYU=;
+	b=tIsbXp81Nj+S2JtqAAh01D45atHp728i+MLSd6e9DYJbw5p1adBclSdBXmHMQksAubJWVA
+	kOWPjJJzm4lGoPkRR/QUVhaXfCQJcO8nJTxrdbtIRl8HCu+9Dsbgcrj8mIOiqGiYYsbjbr
+	SBCjyY46n7z8bf1OmxmxN93DfKg/0sQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722350696;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QUsMKtPBcMux5juoA7RFd6oW5fn/anZ8vNoPsKM4bYU=;
+	b=NZKj9YTw5gKqZksOrMEIEkrFyZEfPhgcLw3GxwhjX5TRzquOxMOCpsmUiFXNeZ30qdVx7P
+	KxD9VW0RhHMBTlAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0AEC913297;
+	Tue, 30 Jul 2024 14:44:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Cr55Amj8qGbncQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 30 Jul 2024 14:44:56 +0000
+Date: Tue, 30 Jul 2024 16:44:54 +0200
+From: David Sterba <dsterba@suse.cz>
+To: syzbot <syzbot+ca895d3f00092ebf1408@syzkaller.appspotmail.com>
+Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] KMSAN: uninit-value in btrfs_compress_heuristic
+Message-ID: <20240730144454.GI17473@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <0000000000005c792d0619962ca1@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000005c792d0619962ca1@google.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 25DF421A5B
+X-Spam-Score: -1.51
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-1.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TAGGED_RCPT(0.00)[ca895d3f00092ebf1408];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:dkim,syzkaller.appspot.com:url,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
 
-On 2024-07-22, John Ogness <john.ogness@linutronix.de> wrote:
-> +/**
-> + * nbcon_kthread_should_wakeup - Check whether a printer thread should wakeup
-> + * @con:	Console to operate on
-> + * @ctxt:	The nbcon context from nbcon_context_try_acquire()
-> + *
-> + * Return:	True if the thread should shutdown or if the console is
-> + *		allowed to print and a record is available. False otherwise.
-> + *
-> + * After the thread wakes up, it must first check if it should shutdown before
-> + * attempting any printing.
-> + */
-> +static bool nbcon_kthread_should_wakeup(struct console *con, struct nbcon_context *ctxt)
-> +{
-> +	bool ret = false;
-> +	short flags;
-> +	int cookie;
-> +
-> +	if (kthread_should_stop())
-> +		return true;
-> +
-> +	cookie = console_srcu_read_lock();
-> +
-> +	flags = console_srcu_read_flags(con);
-> +	if (console_is_usable(con, flags, false)) {
-> +		/* Bring the sequence in @ctxt up to date */
-> +		ctxt->seq = nbcon_seq_read(con);
-> +
-> +		ret = prb_read_valid(prb, ctxt->seq, NULL);
+On Wed, May 29, 2024 at 04:37:20AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14573014980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ca895d3f00092ebf1408
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
 
-With this v3 series, the kthreads could be started before @nbcon_seq has
-been set to the correct initial value. This will cause it to start
-printing immediately from 0.
+Most likely this was a side effect of bug fixed by commit f3a5367c679d
+("btrfs: protect folio::private when attaching extent buffer folios").
+The timeframe corresponds with increased number of bogus errors caused
+by use-after-free of a page.
 
-To fix this, I would change nbcon_alloc() to initialize @nbcon_seq to
-the highest possible value:
+The fix is best guess.
 
-	/*
-	 * Initialize @nbcon_seq to the highest possible sequence number so
-	 * that practically speaking it will have nothing to print until a
-	 * desired initial sequence number has been set via nbcon_seq_force().
-	 */
-	atomic_long_set(&ACCESS_PRIVATE(con, nbcon_seq), ULSEQ_MAX(prb));
-
-With the following ULSEQ_MAX macro added to printk_ringbuffer.h:
-
-#ifdef CONFIG_64BIT
-#define ULSEQ_MAX(rb) (-1)
-#else
-#define ULSEQ_MAX(rb) (prb_first_seq(rb) + 0x80000000)
-#endif
-
-This will allow the prb_read_valid() in nbcon_kthread_should_wakeup() to
-return false and the kthread will sleep until @nbcon_seq has been
-correctly setup and the kthread is woken when the "enabled" printk() is
-called.
-
-> +	}
-> +
-> +	console_srcu_read_unlock(cookie);
-> +	return ret;
-> +}
-
-Other options would be to add extra checks to
-nbcon_kthread_should_wakeup() or add some wait/notify code before
-entering the kthread main loop. But both are overkill for this simple
-startup scenario.
-
-Thoughts?
-
-John Ogness
+#syz fix: btrfs: protect folio::private when attaching extent buffer folios
 
