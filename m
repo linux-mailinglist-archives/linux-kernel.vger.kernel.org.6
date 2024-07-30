@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-268108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBB3D942074
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:21:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C6D942075
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:21:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 120CA1C23D17
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:21:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 240731C23F08
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8A2189B94;
-	Tue, 30 Jul 2024 19:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D186A18C906;
+	Tue, 30 Jul 2024 19:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QW601ZZw"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2071.outbound.protection.outlook.com [40.107.237.71])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0Lr5uLBB"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2078.outbound.protection.outlook.com [40.107.237.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1EB1AA3F1
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 19:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574BB189B97
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 19:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.78
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722367276; cv=fail; b=MGQYO0LnWPDYf0FaWbbC0gf2BqLH9BQ2fSXSyXC33OwKr5S1Ik+SVNPj5Op9H1+atNBH+5NTqv31ummETd2UfWjP+OAybN6o2oysDgKyWSBj/iDj/eA2cY39XEjgbQUL7Gp5c4raK0cRn0WHBSoE1YkuWbvVRFDkK1M09TUanu4=
+	t=1722367305; cv=fail; b=IRpYmvJWA416TWaaY4zP1O/y2abFHdDiuunseE7WBAvNQaTTfBs6J2bNnLwiYYEhiJRq5cT49S2ufWAoVt02uFQYvBoGqs8h7hCjboqYLWN33dfai8oSf6nPIFZHuWKIqzBq9YEMibpmTq1RDlkE+Sel/EVUwXLcUQ/b5wTm/GM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722367276; c=relaxed/simple;
-	bh=K+yg8o1b9uLT/1rGIeaOvsRrag2QQDbM2u4qGKoc35Q=;
+	s=arc-20240116; t=1722367305; c=relaxed/simple;
+	bh=KMnNrU51AHoj7SypggOopSsUFQbVOXNKtOWQuOuQMvM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gM08I8S7/mmkaL6kzcQWDtYs9KEsS/LNszSkfrC6aNXMprYDpOvsPsVOTUMl3eUEDM0ZkrYlnxwZsk2u29c7UAfVROXHgsjPX/m4iyHeGOBnLoi3JESFdo0W66v3orHIDbhffRsVlK2o9rbmqDObRc04FYzdKmYQhteR0X8WelM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QW601ZZw; arc=fail smtp.client-ip=40.107.237.71
+	 MIME-Version:Content-Type; b=aaANu/Sft8zgNBrcKn7LE+tCTWFoG9eZ+9mIZX0/f0+jtb7iuUBYgqNoT5j7h9SSp6H1GkFNci7YK4pKRWXSaeBm9xTVJx2Fdvj8LwmyKnWvK/bn1iwNWZ10ZY6ZfUo0B5Xk3rygj3LEQzxkGfOuK1TdHgHnA0sa5hyUilxE3cA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0Lr5uLBB; arc=fail smtp.client-ip=40.107.237.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f0a/oFoFZfxgA4baGulrkSx5hdPZ0c5nSrAdc9JcOxiqXB6sMHSpxuIkNDkt2MEZn7qHcsSESRBiHJtBJ7ukoXDN/rM9Um+zKQ+RNY2lgbzHlVGEf/P8HcNyxTEXWyGbeSc3PyTJiIpiU0L5/Az1p34xL6O3xnNdP9AilrK0o4KkzEFlzIkowbdsQ+y6kZTMOffW0lzW3v2bt256ignKMX1aKCAkAfR+kOubraeMOvEeygbUZGmzhn6+Gs3aORPK8YgWNkVKwCrdfE7zkHDGSFt7n9JNLure9xLqEZP9+ze6MPXXK26jWEdX2fN0dQQLyS+kA/6ZdNfQXM1vP1AD3Q==
+ b=yIecIjZF3Pzvtk0bleucNm6aKHvmPcPQ9Bfd6CQ1/t/Yl+oFxQsLpboQa40xPv4sY4R/QaNF6YaLmG60cTHQn5D7BXtyoj/QZlXpCbRW8f3dLIo8DY0bg3n0GX56HDmzd65JkJZ7n9RR7LelhEjY6r4fNA/YM+3eFjTdKzGr59rjMv8lvasIxp8LSuoOB9pgRonX2E21lw+qL5ry/54rU/FQdAJaDTX2A6xGPRXtsqYu3fl/eKkdg18uHvWXTCddQUXdvl9qvFJjyzdNBs0UZ5Z4KZGUtE0vfux4zQQ23g5ZywjEE0tcZ7NX64qG2JBEiUx3zvkdr/eAlV2AdmCyUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HFA3Pz+q46+E5LeXMJl5ntuyyGYrHV1JUzZBwjsseRE=;
- b=UIMcxy1zKKDzMnSaHCiVcsMrg6TjSpcPfNAEvVGHRljaWEJCLoLTLuN8N0gnPLuc6Hyh459SDvTeuPOVCUUCHVBxwan6Q4DXZHhfFHH9jFwp4IS0BlhL+/kHfDjur6xrRqxhlPz0/rWInRmC+KYypdd0/x/ChRVzrcjxTjFQaJ7ZWxqFyyQgbA53lFX2hdwI0sQVqddBQV02ILWlukFmOAtVoq+04vQ2p0Pwtr9BXe9jaPDdyzByVy+dCiuqIpwGdSy7OsjOOzp2yW5OdLq5yd5noe7kYHhFwlbiaY7D1YCGhabgBbxeosf0Ng+Pk5NmIyG0q6AJRyCrlTb5XhSMEA==
+ bh=xAW6P1BTBJSfNIUvVl8FqTOvvJPB1XAot5xkWOzWcuA=;
+ b=WCcopJ0RJfIJyjHv6oTwZmUMn+EGEuQOK6hpqXeFZKrYD9zbY6ianWHKmOIfa7ekcONIFpA8vhE6KkR/3R0yB0kq/s53tj305PROFtlB6EO/fg73ZgzzDB8EZKQKlNd7alziYPPnflsDoKtle5SNr+bWpv4BUNk6EaEUg6fpMDDwKg0n7fTyFR80nRRsTN2hKAvq/k5nyd8hHCh6D4mT7LGOxC8YNhQa+kt3IavScdrOTsVhvadyNijhvE+SA6YLbthsJljBfk2bjsUJwLOgIwKq+1TAG2CYRyxwmpL8c7/hC/mK0iVZgjAtGOxflgOPSIjNJ/wSxAuUXlqGuvljkg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HFA3Pz+q46+E5LeXMJl5ntuyyGYrHV1JUzZBwjsseRE=;
- b=QW601ZZwyyFceMt6OOtOHe5xjNFjQDKuR0M+1AnjrTW/N4RWt+TFYnMZwQrJS9FCFzkMJVGfncUBO5qXaIIFnxugS02fg7mwWnqhSThMMf/jWQ55cnYaiE8eWRjzwEfpKsssdJicCLYPIR/loRCJaObqoGKfrKPt2Kdff8ws0Cc=
-Received: from BN9PR03CA0676.namprd03.prod.outlook.com (2603:10b6:408:10e::21)
- by PH7PR12MB6935.namprd12.prod.outlook.com (2603:10b6:510:1b9::16) with
+ bh=xAW6P1BTBJSfNIUvVl8FqTOvvJPB1XAot5xkWOzWcuA=;
+ b=0Lr5uLBBL0uQ5ihtcueWpMj+Hg48RFdQdb+kiJN+LS3D979V/lc55aoExgg+z8bGKFhwqDTTxpX27jfFJAPAjww3GDaD9/37PW9k+46zEwUq2EVE4UDKcukqC5f3Q2vRiAwo+8rqN9eHDvfn1XxnYR1wW5fbP+bRF5PMyAq3zQc=
+Received: from BN1PR10CA0026.namprd10.prod.outlook.com (2603:10b6:408:e0::31)
+ by DM6PR12MB4233.namprd12.prod.outlook.com (2603:10b6:5:210::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Tue, 30 Jul
- 2024 19:21:11 +0000
-Received: from BN1PEPF00004686.namprd03.prod.outlook.com
- (2603:10b6:408:10e:cafe::1a) by BN9PR03CA0676.outlook.office365.com
- (2603:10b6:408:10e::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.19; Tue, 30 Jul
+ 2024 19:21:39 +0000
+Received: from BN1PEPF00004682.namprd03.prod.outlook.com
+ (2603:10b6:408:e0:cafe::9f) by BN1PR10CA0026.outlook.office365.com
+ (2603:10b6:408:e0::31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.34 via Frontend
- Transport; Tue, 30 Jul 2024 19:21:11 +0000
+ Transport; Tue, 30 Jul 2024 19:21:38 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN1PEPF00004686.mail.protection.outlook.com (10.167.243.91) with Microsoft
+ BN1PEPF00004682.mail.protection.outlook.com (10.167.243.88) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7828.19 via Frontend Transport; Tue, 30 Jul 2024 19:21:10 +0000
+ 15.20.7828.19 via Frontend Transport; Tue, 30 Jul 2024 19:21:37 +0000
 Received: from ethanolx7e2ehost.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 30 Jul
- 2024 14:21:09 -0500
+ 2024 14:21:31 -0500
 From: Ashish Kalra <Ashish.Kalra@amd.com>
 To: <dave.hansen@linux.intel.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
 	<bp@alien8.de>, <x86@kernel.org>
@@ -81,12 +81,12 @@ CC: <hpa@zytor.com>, <rafael@kernel.org>, <peterz@infradead.org>,
 	<vkuznets@redhat.com>, <dionnaglaze@google.com>, <anisinha@redhat.com>,
 	<ardb@kernel.org>, <dyoung@redhat.com>, <kexec@lists.infradead.org>,
 	<linux-coco@lists.linux.dev>, <jroedel@suse.de>
-Subject: [PATCH v12 0/3] x86/snp: Add kexec support
-Date: Tue, 30 Jul 2024 19:20:59 +0000
-Message-ID: <cover.1722366144.git.ashish.kalra@amd.com>
+Subject: [PATCH v12 1/3] x86/boot: Skip video memory access in the decompressor for SEV-ES/SNP
+Date: Tue, 30 Jul 2024 19:21:22 +0000
+Message-ID: <cce6dc40e78996fbd4814690a05a21babc761125.1722366144.git.ashish.kalra@amd.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240614095904.1345461-1-kirill.shutemov@linux.intel.com>
-References: <20240614095904.1345461-1-kirill.shutemov@linux.intel.com>
+In-Reply-To: <cover.1722366144.git.ashish.kalra@amd.com>
+References: <20240614095904.1345461-1-kirill.shutemov@linux.intel.com> <cover.1722366144.git.ashish.kalra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,167 +99,114 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00004686:EE_|PH7PR12MB6935:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0a4ffd1a-2d72-4a60-1fd6-08dcb0ccc4fc
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004682:EE_|DM6PR12MB4233:EE_
+X-MS-Office365-Filtering-Correlation-Id: f913a7b2-3274-488a-a7e7-08dcb0ccd55f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|82310400026|376014|36860700013;
+	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oPkFKnAKweUarvObEGfzRcX4OqWP6MLgApQPdtf7ZjWRzGZhFRRxAf+SSh20?=
- =?us-ascii?Q?0QY90SrJ7dGXjS2EyE5/3MolT8Ezl7mZrSTdrg9e35atAqNkcU5xN4Uf5gsi?=
- =?us-ascii?Q?sCcpR76ufn3y6xvgQDqtogM+bDcG4upiZlAiBae7swYEBQdyahbNwXFmNvdH?=
- =?us-ascii?Q?Ana7EUOWylGmVQ/c0z6jXcBA9Sknf8y3Di7NpngAhBjvScaeOLa8GMoCtdeM?=
- =?us-ascii?Q?9c+nwTJdj+3T9/z2na75y0Ka0LV1Sz7zGdMi9gmo1LAwAZ6D07FByzucVhBm?=
- =?us-ascii?Q?ADgrDVr/U/eoKpgkXTMP93zniB3y75PAKz4QB4R0lPWBbr8Am0GZ/6cLJOXR?=
- =?us-ascii?Q?N72IMnxOJY6Tc+4o+wTlVl5GSCQo91WVDHER9Pi3IJGiuDNhEfyTJrbaqvLd?=
- =?us-ascii?Q?KUWXr0yPqkvElmlS3MCQSEpGvTejzsdcxKMZwvHRV3lJxR2xv5x7pT1IARWv?=
- =?us-ascii?Q?l51qwHFCjL821YZjcIzBwz+LkiHvc37UhkuHodvfpxJv4tvQC4QifPyN1S05?=
- =?us-ascii?Q?FxK6ucqpYuEN/fn0O/PBHs4dXdFEPhGqFXTgcXok/oj0C9EA7srMP67C1WGk?=
- =?us-ascii?Q?npeOww1g/J+pR052PKzKaKAldGqBfGzQ5fdwKMbzc7j+L5UF6tTOPQstw9xu?=
- =?us-ascii?Q?4YGhIKYeAEXnErY4BzqvExzWqHE3xL8UhXH0aIbd+NuQhBfDqyhGX2j7a5+z?=
- =?us-ascii?Q?kIkwRpOPyEBVQhL881HUpsrFEIC3pbqB0kWfr6ciGD9CLErFCRw/W/jZ+xh0?=
- =?us-ascii?Q?4k7upV+2jyVgS4puEvu1aViGMKXy/hWDXQnmLGRUnjmqut9zjp6zx/X0VIol?=
- =?us-ascii?Q?5RDgoyeHnTtN4Jee+j8PgiUh+nP0DkhIg/f4zjFpBxMm3B9uiNGHwDtMMqif?=
- =?us-ascii?Q?pw+hRfIfGDWQ7/a1C7i3kmYQ6rf2ytNA1GsOebgPWXxXrw57gSxq/pn5K50s?=
- =?us-ascii?Q?mifPiBsBAiKIRj8AM0NdsDcO0S4NKBFCAoNzl5LaSTnPityuF2rX7GbdCB8v?=
- =?us-ascii?Q?dmGZfhYLgNloURbqUllFOq7Qc9Z7cfhd1avmiY9xtH2APGZSEEJPjCqrfPbA?=
- =?us-ascii?Q?BWabCBoL+RTICtWz/cHJnyWLT+33yk6wZrWCgeNFuB3U6e6utGPyBUI/UcVb?=
- =?us-ascii?Q?4Ta0wRbn7g1HHmSoNnd0kGRNrQ+Z+lCy4WsmsRT6SpZq2Iml71yaLoucBEO1?=
- =?us-ascii?Q?fyhVtu5umDYUA26UY3w0L0onIZPJGmLqKbc7Q2C/EEELk4QYPngufT2HXy/W?=
- =?us-ascii?Q?C2q+eiSjBLkEm94c0FJLd07fDJZGyEGtX+0oOVRQtPQuoGkSd3MIuINhALEm?=
- =?us-ascii?Q?ZAstGmbvEAUn+uXh9uEhvhNvvrby32P6yNQBrD5YxyasgvynyDVaQduypoAn?=
- =?us-ascii?Q?OGyWrfvW5AQTqLa09zXyozjokm+IHXxIrDjnJHD3HpSmphrjcw=3D=3D?=
+	=?us-ascii?Q?GXvsiPJGeS23HD+wrg33C1I060edwWhbKXsuS33AYO0+qxZZYhZHqkFG23q0?=
+ =?us-ascii?Q?5hH5nVwoaCjaPZIpbBxF2Uk7Y8BlfrprpONT0ivhVccYWeZKaDc0EaOETYPL?=
+ =?us-ascii?Q?y/16gBppAyCKLobvA3huPliBtKCHZOwK0NnL5SsUYu3KafJhFk5gTwYPcms5?=
+ =?us-ascii?Q?SySp106qG3K+96HWLmhpnI4ecCrVHrzLAqBlwpBXnM5qUbbibRZMoYQRgAPQ?=
+ =?us-ascii?Q?weUCa6raICsuiwhbGmJToiifyy6iMJKhEfD9JwJBxVlLciBovkgm7cQN2FfX?=
+ =?us-ascii?Q?f2A8Eqq6D58pIITa4M5D1M0C+P38CxUtwQc2qDxo6sV4RmQRUY8G2mb1UcWz?=
+ =?us-ascii?Q?MA58/kPvnwVrGZbtUQG3NKkQ/jf34PNgvDDcDaDrd5oZioL6A4Nvf2poEQyz?=
+ =?us-ascii?Q?rHwgeRueSDwyf5zCCheq0r9OuUKG9ouWq+sDI5Mz0nPFOzf/rOxzIfQ06cl6?=
+ =?us-ascii?Q?RHPR5D2eVIqcL7W+tdH4aWgFhuRW2sk9Oa5hlGte/u01lBVQjupYMw12kxrl?=
+ =?us-ascii?Q?gLB+TZ40n30Xhch9HmwIvDbk94ViAImMkMT/hjMBtYT+NTQk8g2g0ddEbPT1?=
+ =?us-ascii?Q?PokUGSc/jG6wyd2bZMNvcSaeHRljarRvtzBzvneT19cYf/zBMlfo3WBMljcV?=
+ =?us-ascii?Q?ONepSK41trjmEY2b+lQpc8gzTropnWbPK9F2c8uGP6bX2YKwrUpGMeQh8Bqb?=
+ =?us-ascii?Q?aIHwlW0zZWyN+tLp8uaWIx/MNsKgWjg9tVwCTP2zrq1wWMZeR+S+3wjnvYeR?=
+ =?us-ascii?Q?RBKid4oaupatcC1qYBeXbPf0U89jCVmHetNMA5cq3P58oRwPcHAYb/kDTNTP?=
+ =?us-ascii?Q?b9gNciqSqLKVnTh3C2XKwJaiQD13AQguT1Zc76nc/0C4QfvMX9Kt/5ArfBNZ?=
+ =?us-ascii?Q?csD4jTRmAgstKenzZVFK1O61qWRJ5bde8dXSJDGbSTu1+yXKoI8oOLYQipIV?=
+ =?us-ascii?Q?KRP+YgCbKAi3aL2nLQqCyOai0hVc9P05TjkIyG3SnJuhsg4ICWDcCTfM8S8o?=
+ =?us-ascii?Q?/IpzviYhJi+WkI/4pX49L4gNoKXLnclHGmcflTvhqu8VvL+jd7aC0Bq8T/O0?=
+ =?us-ascii?Q?2/OmGOwDBo4KIUabk3W7QS2X/TrBIhTupkffySihJVCt8ylWggcUVB1qi/7N?=
+ =?us-ascii?Q?8jm0eIT2XkcXY7u29TvJJ5XlvTX9TqmK11ibUnHCNSH2vgEkcb32PlLbeNQO?=
+ =?us-ascii?Q?kZrXUVhbHo9G++ydExWC6yVdsm5Fx0o+YtSdQkI3Jkkn8TTVRjnfH4DO2MYS?=
+ =?us-ascii?Q?s/uD/yhr/rPlSHfMLC4XA5t1Lb0dXhRW79Vt7PuZp3/8qNu4m0Co/mVPm1IS?=
+ =?us-ascii?Q?1k1rv4cYfBayruVuNGocFwBlK7BRRrUkugGTO6k9psByx5p3CmKLabH933si?=
+ =?us-ascii?Q?GjQXRf2A80ZV9k9b/HhkxPsTTJ4UkvtuHiY5kEX0sQvKKdIGgc6QGSloRinf?=
+ =?us-ascii?Q?Z7nESksT/ozNwndmJK32/QGfa4GgPowP?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 19:21:10.3973
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 19:21:37.8775
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0a4ffd1a-2d72-4a60-1fd6-08dcb0ccc4fc
+X-MS-Exchange-CrossTenant-Network-Message-Id: f913a7b2-3274-488a-a7e7-08dcb0ccd55f
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00004686.namprd03.prod.outlook.com
+	BN1PEPF00004682.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6935
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4233
 
 From: Ashish Kalra <ashish.kalra@amd.com>
 
-The patchset adds bits and pieces to get kexec (and crashkernel) work on
-SNP guest.
+Accessing guest video memory/RAM in the decompressor causes guest
+termination as the boot stage2 #VC handler for SEV-ES/SNP systems does
+not support MMIO handling.
 
-This patchset requires the following fix for preventing EFI memory map
-corruption while doing SNP guest kexec:
-  https://lore.kernel.org/all/16131a10-b473-41cc-a96e-d71a4d930353@amd.com/T/#m77f2f33f5521d1369b0e8d461802b99005b4ffd6
+This issue is observed during a SEV-ES/SNP guest kexec as kexec -c adds
+screen_info to the boot parameters passed to the second kernel, which
+causes console output to be dumped to both video and serial.
 
-The series is based off and tested against tree:
-  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+As the decompressor output gets cleared really fast, it is preferable to
+get the console output only on serial, hence, skip accessing the video
+RAM during decompressor stage to prevent guest termination.
 
-----
+Serial console output during decompressor stage works as boot stage2 #VC
+handler already supports handling port I/O.
 
-v12:
-- cleanups as suggested as per upstream review.
-- Moved unshare_all_bss_decrypted_memory() into unshare_all_memory().
-- Zap make_pte_private() and merge into unshare_all_memory().
+  [ bp: Massage. ]
 
-v11:
-- Refactored __set_clr_pte_enc() and added two new helper functions to
-  set/clear PTE C-bit from early SEV/SNP initialization code and
-  later during normal system operations and shutdown/kexec.
-- Removed kexec_last_addr_to_make_private and now skip per-cpu
-  GHCB addresses when making all pages private and then after 
-  converting all pages to private in snp_kexec_finish(), go over
-  the per-cpu GHCB addresses and convert them to private explicitly.
-- Fixed comments and commit logs as per upstream review.
+Suggested-by: Borislav Petkov (AMD) <bp@alien8.de>
+Suggested-by: Thomas Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+---
+ arch/x86/boot/compressed/misc.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-v10:
-- Removed pr_debug() calls as per upstream review feedback.
-- Add review tags.
-
-v9:
-- Rebased onto current tip/master;
-- Rebased on top of [PATCH] x86/sev: Move SEV compilation units 
-  and uses the coco directory hierarchy for SEV guest kexec patches.
-- Includes the above mentioned patch as part of this patch-set to
-  fix any kernel test robot/build issues.
-- Includes the massaged version of patch 2/3 as per upstream
-  review/feedback.
-
-v8:
-- removed fix EFI memory map corruption with kexec patch as this
-  is a use-after-free bug that is not specific to SNP/TDX or kexec
-  and a generic fix for the same has been posted. 
-- Add new early_sev_detect() and move detection of SEV-ES/SNP guest
-  and skip accessing video RAM during decompressor stage into
-  this function as per feedback from upstream review.
-
-v7:
-- Rebased onto current tip/master;
-- Moved back to checking the md attribute instead of checking the
-  efi_setup for detecting if running under kexec kernel as 
-  suggested in upstream review feedback.
-
-v6:
-- Updated and restructured the commit message for patch 1/3 to
-  explain the issue in detail.
-- Updated inline comments in patch 1/3 to explain the issue in 
-  detail.
-- Moved back to checking efi_setup for detecting if running
-  under kexec kernel.
-
-v5:
-- Removed sev_es_enabled() function and using sev_status directly to
-  check for SEV-ES/SEV-SNP guest.
-- used --base option to generate patches to specify Kirill's TDX guest
-  kexec patches as prerequisite patches to fix kernel test robot
-  build errors.
-
-v4:
-- Rebased to current tip/master.
-- Reviewed-bys from Sathya.
-- Remove snp_kexec_unprep_rom_memory() as it is not needed any more as 
-  SEV-SNP code is not validating the ROM range in probe_roms() anymore.
-- Fix kernel test robot build error/warnings.
-
-v3:
-- Rebased;
-- moved Keep page tables that maps E820_TYPE_ACPI patch to Kirill's tdx
-  guest kexec patch series.
-- checking the md attribute instead of checking the efi_setup for
-  detecting if running under kexec kernel.
-- added new sev_es_enabled() function.
-- skip video memory access in decompressor for SEV-ES/SNP systems to 
-  prevent guest termination as boot stage2 #VC handler does not handle
-  MMIO.
-
-v2:
-- address zeroing of unaccepted memory table mappings at all page table levels
-  adding phys_pte_init(), phys_pud_init() and phys_p4d_init().
-- include skip efi_arch_mem_reserve() in case of kexec as part of this 
-  patch set.
-- rename last_address_shd_kexec to a more appropriate 
-  kexec_last_address_to_make_private.
-- remove duplicate code shared with TDX and use common interfaces
-  defined for SNP and TDX for kexec/kdump.
-- remove set_pte_enc() dependency on pg_level_to_pfn() and make the 
-  function simpler.
-- rename unshare_pte() to make_pte_private().
-- clarify and make the comment for using kexec_last_address_to_make_private  
-  more understandable.
-- general cleanup. 
-
-Ashish Kalra (3):
-  x86/boot: Skip video memory access in the decompressor for SEV-ES/SNP
-  x86/mm: refactor __set_clr_pte_enc()
-  x86/snp: Convert shared memory back to private on kexec
-
- arch/x86/boot/compressed/misc.c |  15 ++++
- arch/x86/coco/sev/core.c        | 132 ++++++++++++++++++++++++++++++++
- arch/x86/include/asm/sev.h      |  24 ++++++
- arch/x86/mm/mem_encrypt_amd.c   |  77 ++++++++++++-------
- 4 files changed, 222 insertions(+), 26 deletions(-)
-
+diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+index 944454306ef4..826b4d5cb1f0 100644
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -385,6 +385,19 @@ static void parse_mem_encrypt(struct setup_header *hdr)
+ 		hdr->xloadflags |= XLF_MEM_ENCRYPTION;
+ }
+ 
++static void early_sev_detect(void)
++{
++	/*
++	 * Accessing video memory causes guest termination because
++	 * the boot stage2 #VC handler of SEV-ES/SNP guests does not
++	 * support MMIO handling and kexec -c adds screen_info to the
++	 * boot parameters passed to the kexec kernel, which causes
++	 * console output to be dumped to both video and serial.
++	 */
++	if (sev_status & MSR_AMD64_SEV_ES_ENABLED)
++		lines = cols = 0;
++}
++
+ /*
+  * The compressed kernel image (ZO), has been moved so that its position
+  * is against the end of the buffer used to hold the uncompressed kernel
+@@ -440,6 +453,8 @@ asmlinkage __visible void *extract_kernel(void *rmode, unsigned char *output)
+ 	 */
+ 	early_tdx_detect();
+ 
++	early_sev_detect();
++
+ 	console_init();
+ 
+ 	/*
 -- 
 2.34.1
 
