@@ -1,101 +1,165 @@
-Return-Path: <linux-kernel+bounces-267687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0063294145B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:28:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC3C94145E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF251284D86
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:28:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5F841F2416C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077411A255F;
-	Tue, 30 Jul 2024 14:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AD31A255E;
+	Tue, 30 Jul 2024 14:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gi1ZEjPR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oGUPIzVo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HQCBrGY/";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oGUPIzVo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HQCBrGY/"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F34E1A08AB;
-	Tue, 30 Jul 2024 14:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CBC1A08AB;
+	Tue, 30 Jul 2024 14:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722349689; cv=none; b=ppUzdPZ88n6kLhwM45TyRpB2XhLKVZBP//dCn/BZj6lWDUnvv8R7c9Ia6ZXGKaZe19Sh9N/YHhFxFlIyvN+wbABQ2b3AHI+Ic/bFOt1mzkQBiC0vjHRsEuQDyR6qVTsVMpyZgsIGi9fBBZm+/0V/4hi6e8D7bLcNqqklVVD+BYY=
+	t=1722349716; cv=none; b=XJOEFgzVjJ5doAFBwSLzzE5l+EoHdTf3bPly2n3pMTwi2MGSlILM3Xu32AeiAQK1uSgsWGhmE9CkCb4dd5K8pUdryFDTA5mlhY3fhTWB4u2f/ahtzOiz+IEoOJWCLSQkQvTZgmvDTjL+r8RXQ9JLvLg5JkpqKLF2XKeOdic0bnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722349689; c=relaxed/simple;
-	bh=v94Q6O93dIkGqquJJVrs9WTgJESEvwnwlclXeilEtus=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RK4AIJNW5QhSOvjXkwH4LAxAnt8CBrdjrxRIy4UXUlpu1+PdaW0X08IyKlpZ+k4lFIDURhPe5lWfdwEGL2f3hphASFMGJSJ7imFk3hYHmK/l0oYDqOacsj2x3+VDBP4SjwOVm0LSQGht04MUDhSk37CNQvGQxdHAbNjEgiSJVB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gi1ZEjPR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F627C32782;
-	Tue, 30 Jul 2024 14:28:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722349688;
-	bh=v94Q6O93dIkGqquJJVrs9WTgJESEvwnwlclXeilEtus=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gi1ZEjPRA7JZo8a2YhG1Rl02E1bR2Ma/crld/CAqxWPQmlh3V1QKujEyB1Msa+Si+
-	 eoxXvEK7SPlIK4OLeSAcLtRNRZijercBTXjtL7om62wbFwXAo+yzBgy3+muwhZK1yx
-	 eJHcl1IEy/RPKxLcjH02iCUdnjpqW175UJAamxtOK6dxhLFN8mCqL3MSG+xCcE67Eb
-	 Py0xu9p4DcS60smDSidoV4PNMc01bu03zcgbQgDAGBxvqURiFpjtPn9+wj1Hc6Klp8
-	 BLMcNWR+A0IV1/r1dNbuzhG5cqweVgErcx8zvvEza+ZSm92wa0P8M4O+VGpvdA0cL0
-	 YetbsSaJa+hKQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>,
-	Richard Fung <richardfung@google.com>,
-	Eric Biggers <ebiggers@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] fuse: fs-verity: aoid out-of-range comparison
-Date: Tue, 30 Jul 2024 16:27:52 +0200
-Message-Id: <20240730142802.1082627-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1722349716; c=relaxed/simple;
+	bh=qx13nq3SEnPMDNr253sRMWKRBXPTmN/h9yjYqkOa/Vs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cf8vpNzIMxRsw+Yx+oPkfQlBrHj+Y000DZZJuWieH0LHGJ7+cxVDoXF9UlNVTD38BqzYib5jAj61zlhY177uJiwGToUZkKMwgMu3LuX1qtRYMiuY+aH05V8ctmISXDfXW4bdOWpnj+JFbRn2CpQXDbaRT7OKAvTK+n3JxrFCMe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oGUPIzVo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HQCBrGY/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oGUPIzVo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HQCBrGY/; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 103CB1F806;
+	Tue, 30 Jul 2024 14:28:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722349713;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kt23SUbWMMxeqhRF/o2EWrjBr5aT1WhWSxRDgIEDb9o=;
+	b=oGUPIzVoD/kCh1hrlUVR0l2YYeoGSNrMGXty94eUli6LRXtTN1ZmLwU9nTsz9gkCN8dywC
+	v5z+Rs4XUK/pqdQfIuUqeHeG1GWYGbcOXKhiYmQIbScYAxYIa7hjc3baVs253J1/jmH7oW
+	08FNkBLWb+VwsFzWfxCaR+1KzkkF3v8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722349713;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kt23SUbWMMxeqhRF/o2EWrjBr5aT1WhWSxRDgIEDb9o=;
+	b=HQCBrGY/9I7SKbZWXeiXpaGKS2nsTXmpUSAW5IEs0LedQXP1RIdCIzxVDzpnO2L6Vn6ln0
+	DKO1fey+RFVhlhDg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=oGUPIzVo;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="HQCBrGY/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722349713;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kt23SUbWMMxeqhRF/o2EWrjBr5aT1WhWSxRDgIEDb9o=;
+	b=oGUPIzVoD/kCh1hrlUVR0l2YYeoGSNrMGXty94eUli6LRXtTN1ZmLwU9nTsz9gkCN8dywC
+	v5z+Rs4XUK/pqdQfIuUqeHeG1GWYGbcOXKhiYmQIbScYAxYIa7hjc3baVs253J1/jmH7oW
+	08FNkBLWb+VwsFzWfxCaR+1KzkkF3v8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722349713;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kt23SUbWMMxeqhRF/o2EWrjBr5aT1WhWSxRDgIEDb9o=;
+	b=HQCBrGY/9I7SKbZWXeiXpaGKS2nsTXmpUSAW5IEs0LedQXP1RIdCIzxVDzpnO2L6Vn6ln0
+	DKO1fey+RFVhlhDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E3BFD13297;
+	Tue, 30 Jul 2024 14:28:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0F1jN5D4qGYWbQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 30 Jul 2024 14:28:32 +0000
+Date: Tue, 30 Jul 2024 16:28:31 +0200
+From: David Sterba <dsterba@suse.cz>
+To: syzbot <syzbot+1d896c57cf020d5e4151@syzkaller.appspotmail.com>
+Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] KMSAN: uninit-value in deflate_fast
+Message-ID: <20240730142831.GE17473@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <000000000000cfe31a061a45a2cb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000cfe31a061a45a2cb@google.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [1.49 / 50.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TAGGED_RCPT(0.00)[1d896c57cf020d5e4151];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:dkim,syzkaller.appspot.com:url,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Spamd-Bar: +
+X-Rspamd-Queue-Id: 103CB1F806
+X-Spam-Level: *
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: 1.49
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Thu, Jun 06, 2024 at 09:57:26PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1736345a980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
+> dashboard link: https://syzkaller.appspot.com/bug?extid=1d896c57cf020d5e4151
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
 
-clang points out that comparing the 16-bit size of the digest against
-SIZE_MAX is not a helpful comparison:
+Most likely this was a side effect of bug fixed by commit f3a5367c679d
+("btrfs: protect folio::private when attaching extent buffer folios").
+There are 3 reports by syzbot, timeframe corresponds with increased
+number of bogus errors caused by use-after-free of a page, compression
+is reuses pages quite often.
 
-fs/fuse/ioctl.c:130:18: error: result of comparison of constant 18446744073709551611 with expression of type '__u16' (aka 'unsigned short') is always false [-Werror,-Wtautological-constant-out-of-range-compare]
-        if (digest_size > SIZE_MAX - sizeof(struct fsverity_digest))
-            ~~~~~~~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The fix is best guess.
 
-This either means tha tthe check can be removed entirely, or that the
-intended comparison was for the 16-bit range. Assuming the latter was
-intended, compare against U16_MAX instead.
-
-Fixes: 9fe2a036a23c ("fuse: Add initial support for fs-verity")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/fuse/ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/fuse/ioctl.c b/fs/fuse/ioctl.c
-index 572ce8a82ceb..5711d86c549d 100644
---- a/fs/fuse/ioctl.c
-+++ b/fs/fuse/ioctl.c
-@@ -127,7 +127,7 @@ static int fuse_setup_measure_verity(unsigned long arg, struct iovec *iov)
- 	if (copy_from_user(&digest_size, &uarg->digest_size, sizeof(digest_size)))
- 		return -EFAULT;
- 
--	if (digest_size > SIZE_MAX - sizeof(struct fsverity_digest))
-+	if (digest_size > U16_MAX - sizeof(struct fsverity_digest))
- 		return -EINVAL;
- 
- 	iov->iov_len = sizeof(struct fsverity_digest) + digest_size;
--- 
-2.39.2
-
+#syz fix: btrfs: protect folio::private when attaching extent buffer folios
 
