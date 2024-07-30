@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-268350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F047E94238B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:45:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3763494238D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B3D8B23335
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:45:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68FF71C22662
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA75191F7A;
-	Tue, 30 Jul 2024 23:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFEE192B79;
+	Tue, 30 Jul 2024 23:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NtHB0BCR"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="JfoWytVU"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2AB18C90C;
-	Tue, 30 Jul 2024 23:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2266E18CC1E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 23:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722383136; cv=none; b=JlPj98JlZ0ITgcBCcjFfESocJH2KlS479e7FSAUBICvfKhlt4s0encBuXb8Za3gGToiULM5Ow81udGgJyv8JgwG2w35sh+6Ka2B/Moyh02e2glG9kf//SPN5KtPucKL8D3jlzPHpjhCRWlshhCPzAyiXGN5kOoYBHXYNy0g2EHE=
+	t=1722383165; cv=none; b=ggYebcJgzpkH7MwLdgNbIK5SZxMGDIym1wUhDo6YOIPr13dUULLPgmqYumw3e13LN2zkQpn1nUcte0KkHtJNn24ySavMcgCrDJa2cQjieqQSx0IpA+OhKJ1UHEhuMs4GOzT8KkcPc2fTjgiONS4UBJYrGhV8GTti4sjF2wHn5Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722383136; c=relaxed/simple;
-	bh=B+so1HY6tJLsFQOdo7twd1h20ZOn0arRt+sRAkZunro=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D5YthP61nxVNroDom66sg5oYPz4nFSIr0WBcOEQ++b48bVcmsEWiZu/xAxYqk5jQyZ00dRZC0AftPnT+y9TI8ZV0vgzEfhisLlYPldoO3N+pL8zLAxahnh5KtV6koVuX8HlC92xwWbm8hd3/oY+ZIXJ2RjvjgOXk5CTeabQxV/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NtHB0BCR; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-70943b07c2cso2447384a34.1;
-        Tue, 30 Jul 2024 16:45:35 -0700 (PDT)
+	s=arc-20240116; t=1722383165; c=relaxed/simple;
+	bh=/F2IkqN6onhi8bqBg+Ffra8tWyO9XNvT/nQhWcfnN24=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ANB1MtNDVlTJLtFkmeq6S6kqf39R2NmOzVgtS91gQTLKOcw5yNSmD3EmnWsRuNaxyiqup7layXtc12tJDg8psvunpF0Xi3Kl6HPYPx4Co096sR+EHf1kQQUH/9ooy7kFKAYeKO2tNjTTwwQpQ1ObgK9oqBj0bz7X7nN2uRRHPRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=JfoWytVU; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa69dso5603508a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:46:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722383134; x=1722987934; darn=vger.kernel.org;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1722383161; x=1722987961; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=a4+H8fzB2Ohutauq+QxzhFxCMnikVLp2bFfGFeuADRs=;
-        b=NtHB0BCRAOTJjnoSkJ4X8vwKuvtaDqBs6HDNcZo7Tpo2kdMkFrV7iHkyD7kwPKZdZZ
-         Y+PywHbWT3coGm20aalvbpdUiGN/QYZ8o0kNeUFpxGavK0hZbKNxWIsuYQ1o3T9OMxPy
-         70LRfXDhzM9X/NptRlpydLBNYJ14QkNw1+ZUTaM28QCHq7phSyL8XYZlYgvvZgoOUgfe
-         Z4y+gFgU+MkX/mR3JFNQOwG8tuvu4qSOOdWE24F08gV1f5TlK2ubsBNM8D1d0h2Gitj/
-         XcynVjoU+dpNW9NHNjVobo3ZEo3GoV3rKEUiGH2RUBewHwuzAc4dCHBjqePqD4rmrOox
-         A+XQ==
+        bh=1I1Xf39ndiqFsWjFiF87exVBTjo0QTgARXHDppQr8z0=;
+        b=JfoWytVU1KVqd5RFWpCaRBkF/BqIZCiQ9OopqdfzDgvA+DNEBWXNsiKJdPZ4qPT0Vd
+         H7lbG9OgymYa6BZm/eBWVcXDnU1hV/YMW0rsdWECMm/oQUr+OJelc+H3PRnjOPUnVkRn
+         HcAD/Z5tIbZDBEO+Jsc8nmm6o6Q5X9hEmQxiwZ626jb46J50dHta/IkkGBX9BNRCE2nR
+         Z8uTpvvU5bZFkHzeW9oFUz9yEfjzKtajH5FjlmOJLYJ8E3ma9Nv525CQuxHgYNGbKmxC
+         u9E/NY3+nEOcDlf4pkdhPlyZlOYt6zWvMVTKi25yjVR5jf/6xUdmCRUkETES/OIV7uzq
+         Kytw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722383134; x=1722987934;
+        d=1e100.net; s=20230601; t=1722383161; x=1722987961;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=a4+H8fzB2Ohutauq+QxzhFxCMnikVLp2bFfGFeuADRs=;
-        b=lgCS1dMlbUJzkFzOMHkcq0kwACMLZ/wzWDdaU37dB06R3xBvokm7JfMZEvh9FQ9ezL
-         uMKp4o+bi6o8UsL/tnG08tycxWv7iVQo8/j1tuP27LgzfpiDyvwi3UErfM94hLSdI1hZ
-         AI2WrBTjAOHdiQtNzPDdCvekfWU/qIeh2VnyZj4meZ8nVAsnQHKngdujQolsYIXdFpeL
-         2NKUo57Uczqff/HJK0kTXcAjuH0Sg+vfayWH3hWfVqhyXbsHQ+xgZYoAkbgIoeSQpaOV
-         VsHZ4b8HjFBEjuIC8yXvdzz1tbAV0spRQ+oemXaQH3H9pMwVdXPCRtT4rMw2hv0+zboT
-         uZ4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVNP4GqnYChkPK1pB/D+m4KexiSJkvZkp+xpV/xW2cwuH//m3me/8vwuBfyTQzT0StX+QN70oPfbPmNIbkWEW/q5SHfL8Wp3JAbAPir
-X-Gm-Message-State: AOJu0Yz3bpZ6yD1qZdUTkBVeQHV3ZH4uXgSRpEARUjRBT0aAkyaLpsil
-	TNdrr/1iIv0o26d4E6vKb3lom0SB9pZzidgFdg8Ae9Xs1l9hJMJY
-X-Google-Smtp-Source: AGHT+IGQB++PpYdXRIB/kAjcG3Vp7C80TqDMpq25Xpz8a8CfzVmNyxd1C8WEJLc4zHEdY34Bw0Fwxw==
-X-Received: by 2002:a05:6830:699b:b0:709:4060:1093 with SMTP id 46e09a7af769-70940c6de89mr14554097a34.22.1722383134401;
-        Tue, 30 Jul 2024 16:45:34 -0700 (PDT)
-Received: from localhost.localdomain ([190.196.134.53])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f817ae28sm8113593a12.25.2024.07.30.16.45.32
+        bh=1I1Xf39ndiqFsWjFiF87exVBTjo0QTgARXHDppQr8z0=;
+        b=LPVUL3zOYaEfEy57DBRn/PvVHVynCe+dAVU8fKY36f7uT12xageE7L0568wnh7CUBp
+         72rPAUpgzxU7PPSJeqqznuvvoU2FlIy6fka2tR5h3e2ke1HHVLCokGnYR3yHxwlXNDBx
+         WhdssyWdtXUJHP+KlXT9ajZ5MvFB5D/Q2cJ1XnWy7cXOe/vv7LuD4VcRl3o9NIGyWSzF
+         ZXLgTl18v0S0NvmqVc0RpalZHB5dmQUfen3aE46/7R4KrY1nSxK+2989ngvrIF204Ncj
+         20m4Hp1wUSlBCHdpVb1w/oYpXsTr/nBs+ERefhoHvbAhbkANLu9fyAJ6wU0Av7nnJ8Q2
+         KpxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlifNkgz/FJRQW2uZr5hPa/q/hW8k3N5/dL5GU1o9HrRhDt7VDTsgK9fjhRCrInwukMJGob/etrkB8DnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrQz085FMFIici1sF/EOfVK2pOrvVaPul1wR/wGN0VimIA9gDj
+	6o+kcKk81078wuHgyU5p7nPSH7r9aWf5x7RWuuab5x7pAQ+4vc4JXlxpRrCKfj1qm90OAWfW3tw
+	CE/0=
+X-Google-Smtp-Source: AGHT+IFAqKafX8aRVJKcPGIDXAPBt1l3roBbIwncVQu/DpqAKoun9DJpA1Bn0XY2A7WL+ctL0IkviA==
+X-Received: by 2002:a05:6402:35d6:b0:5a2:2fa5:f146 with SMTP id 4fb4d7f45d1cf-5b021f0dcfbmr8913623a12.28.1722383161200;
+        Tue, 30 Jul 2024 16:46:01 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-26.dynamic.mnet-online.de. [82.135.80.26])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63c50fdesm7861299a12.56.2024.07.30.16.46.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 16:45:33 -0700 (PDT)
-From: Camila Alvarez <cam.alvarez.i@gmail.com>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-input@vger.kernel.org,
+        Tue, 30 Jul 2024 16:46:00 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: geert@linux-m68k.org
+Cc: linux-m68k@lists.linux-m68k.org,
 	linux-kernel@vger.kernel.org,
-	Camila Alvarez <cam.alvarez.i@gmail.com>,
-	syzbot+24c0361074799d02c452@syzkaller.appspotmail.com
-Subject: [PATCH] usb: fix slab-out-of-bounds Read in cougar_report_fixup
-Date: Tue, 30 Jul 2024 19:42:43 -0400
-Message-Id: <20240730234242.256598-1-cam.alvarez.i@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [RESEND PATCH] m68k: cmpxchg: Use swap() to improve code
+Date: Wed, 31 Jul 2024 01:45:07 +0200
+Message-ID: <20240730234506.492743-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,30 +82,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-report_fixup for the Cougar 500k Gaming Keyboard was not verifying
-that the report descriptor size was correct before accessing it
+Remove the local variable tmp and use the swap() macro instead.
 
-Reported-by: syzbot+24c0361074799d02c452@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=24c0361074799d02c452
-Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 ---
- drivers/hid/hid-cougar.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/m68k/include/asm/cmpxchg.h | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/hid/hid-cougar.c b/drivers/hid/hid-cougar.c
-index cb8bd8aae15b..0fa785f52707 100644
---- a/drivers/hid/hid-cougar.c
-+++ b/drivers/hid/hid-cougar.c
-@@ -106,7 +106,7 @@ static void cougar_fix_g6_mapping(void)
- static __u8 *cougar_report_fixup(struct hid_device *hdev, __u8 *rdesc,
- 				 unsigned int *rsize)
+diff --git a/arch/m68k/include/asm/cmpxchg.h b/arch/m68k/include/asm/cmpxchg.h
+index 4ba14f3535fc..71fbe5c5c564 100644
+--- a/arch/m68k/include/asm/cmpxchg.h
++++ b/arch/m68k/include/asm/cmpxchg.h
+@@ -3,6 +3,7 @@
+ #define __ARCH_M68K_CMPXCHG__
+ 
+ #include <linux/irqflags.h>
++#include <linux/minmax.h>
+ 
+ #define __xg(type, x) ((volatile type *)(x))
+ 
+@@ -11,25 +12,19 @@ extern unsigned long __invalid_xchg_size(unsigned long, volatile void *, int);
+ #ifndef CONFIG_RMW_INSNS
+ static inline unsigned long __arch_xchg(unsigned long x, volatile void * ptr, int size)
  {
--	if (rdesc[2] == 0x09 && rdesc[3] == 0x02 &&
-+	if (*rsize >= 117 && rdesc[2] == 0x09 && rdesc[3] == 0x02 &&
- 	    (rdesc[115] | rdesc[116] << 8) >= HID_MAX_USAGES) {
- 		hid_info(hdev,
- 			"usage count exceeds max: fixing up report descriptor\n");
+-	unsigned long flags, tmp;
++	unsigned long flags;
+ 
+ 	local_irq_save(flags);
+ 
+ 	switch (size) {
+ 	case 1:
+-		tmp = *(u8 *)ptr;
+-		*(u8 *)ptr = x;
+-		x = tmp;
++		swap(*(u8 *)ptr, x);
+ 		break;
+ 	case 2:
+-		tmp = *(u16 *)ptr;
+-		*(u16 *)ptr = x;
+-		x = tmp;
++		swap(*(u16 *)ptr, x);
+ 		break;
+ 	case 4:
+-		tmp = *(u32 *)ptr;
+-		*(u32 *)ptr = x;
+-		x = tmp;
++		swap(*(u32 *)ptr, x);
+ 		break;
+ 	default:
+ 		x = __invalid_xchg_size(x, ptr, size);
 -- 
-2.34.1
+2.45.2
 
 
