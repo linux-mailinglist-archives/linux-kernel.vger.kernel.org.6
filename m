@@ -1,339 +1,182 @@
-Return-Path: <linux-kernel+bounces-266934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A4A9409FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:34:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EDBB9409FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F27841C22E47
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:34:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 280FB28249A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309911667ED;
-	Tue, 30 Jul 2024 07:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB216190461;
+	Tue, 30 Jul 2024 07:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WgN5qOBE"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UBDYZ/G2"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F9513B780
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06BC13B780;
+	Tue, 30 Jul 2024 07:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722324870; cv=none; b=Y918wsqWi+wBT502Jdim4+5yXG0kzCOy5fkBJBHVOiZ5RZL8ipUEoD0OkXijcS+rTmyQoeYN8qEouGx3dXbaMRF2c21F+rmJQct0/pkrIyt+VHremGVM2dKhBQywX41mZh+/SuoANFx9oMFyW4fk6x/z6X4BGzX17FEAAyPp2J0=
+	t=1722325017; cv=none; b=nqjBNVSLf2WcTXGDIIBHsijFtNs1xdkvzMgcJ3v3OXHGvO/dQIcfX9BO0/KOdtnYmInat2QXmVR4X7NAtKU491R2jqShpZok/VHxsxwT4rN0rwcw86hVquy9sRXUeXZHVm+98BFaXEjZbHeoQlgTqvuOfjdIFbWZWFGV/LBxclY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722324870; c=relaxed/simple;
-	bh=/yanJWci5adiH+b5cmxFSNuwKqSYqIJG9yYRCOApKfA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZRtly2QbDL7vea51A04nsoAnkN8bySWutYIqWwMujt578H33Z1DJErm/O2i6qbHwqzNR8V/0yiN8QCAeqNALFXM3DTxKneTqXGVcEdRVykwMptsgyhc0LBHRqg/V3gpu5q4QMhxf0LEMAPT4goIvJ1UwsMLknfd9c4Ou37tl6nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WgN5qOBE; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a2ffc34677so6577758a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 00:34:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722324865; x=1722929665; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KnlNZBUKFWWuLP1yHz03yPRGsdCvNDqwyKE9RjIwHOI=;
-        b=WgN5qOBEL4k3N+CPACT+VJEt9qFSo1g9gHlx5zSEby1hEtkoF6sW+5iCOe3asQpmZ/
-         9HMAG3K7IY8jZUCpCEkxCVt2ejOW2w+iWakUPHPzYRKm/ynWJ4DGYvIkalz9oB3SqkkL
-         Pq6x8rG1OzsnHmmnjPjixNE8Fsnl+cACaWZ35Ra/Ca0+ygOKxpl1ZdFKHDqnBxcgpHUm
-         32Di67P2nEDjmsADNzbzuQ9rTDqwPkP2QbFUvK4ToiNCp+vbJME4uQOJVQlOc6QPkNLD
-         o+WgKCVbPQnB1Oxe68lZbhgcCMjVdqyB/zVWUanYtJ6U4Rim/HcSMQfrLH6TsSGPx1ik
-         Sy/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722324865; x=1722929665;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KnlNZBUKFWWuLP1yHz03yPRGsdCvNDqwyKE9RjIwHOI=;
-        b=CxZxVy1buvDT+ysDGoiM2Ub/ONkRhb/4McVt1/fdff2OkMvOxxII/clhAMoHmZd2o0
-         75RXAcn+NjEkL7YC2yNP17airR9i8ysfBaVYRzYn9qQN8bPKPKVXRmQvmhZmLF4SMQ3J
-         exFT3idEJucDQDAGRS9tBdiCWE8RrlMHiAbRE6VtpMxJ21B7W3W5WK95oxbhIRXq6YML
-         EQyWzTAoB0puYyYiQC7eRQf2pAIyc+Cew0vXoKnWT1IsSDwFwSVhZB+I/d/uPCE+WmZN
-         IcnisvwSnFxgRVHSSt4YKTPWHAynqT9pMB+mu6Vv6TuqfiwQjAbS/qVRnd0ZDxL2toxH
-         EE4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWiGVi9ihaZSxx9GZhDSee+a/u93jemm1HPHJnyaD3fXYlgA1LyP6w4TctYre0OzLRx4vT99LL9RaP5r41mw32EqKAZnfRGCidTrGRK
-X-Gm-Message-State: AOJu0YyxUCizcycBwKoFwocJbmFIlUAEzzr2VdwUbXlB8tlMz0H9XlNo
-	Fl1+wF+K9z/7han3o1y7rTdw99vjqZhKeUvKzFTXBsGh39J21BhBQr3PHDTfaS6TlH/aU2vKN1w
-	eum2RFazw/syfR1JOSpRHaY+q0L5hYLq3r2UfRQ==
-X-Google-Smtp-Source: AGHT+IHNTjLxPRsYOaCW7sQ2ielVuARpjdVjLenWrAEef5XGmG/sgtaM4rKmC2eNcZJYBB+jqTnfLxX9eQ/P42IO8lE=
-X-Received: by 2002:a17:907:7244:b0:a7a:a892:8e07 with SMTP id
- a640c23a62f3a-a7d3fff5621mr781284966b.31.1722324865298; Tue, 30 Jul 2024
- 00:34:25 -0700 (PDT)
+	s=arc-20240116; t=1722325017; c=relaxed/simple;
+	bh=oa+Afng6R5K3QmPktSUjt9b3d3Diz8j19/vzUfAKm6k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R/MNXI8AOqor8DXgajs48qLfCCIdJX19+U7WHDBs2tRAuUMNpKbmJ8okXQnB0mit3f3ynmbsFwFrEPJcwUhE0iAZTMacOe1W4ZHIMiCL9tMEZdp2DaIfA+WksNOkfZ7GywfGqyhmEze7Y/7ZVNajnfMWKerqSGo+9R9lDYBLRxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=UBDYZ/G2; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TKtV14022219;
+	Tue, 30 Jul 2024 07:36:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:mime-version:content-type
+	:content-transfer-encoding; s=corp-2023-11-20; bh=vRACKsqsmtS90X
+	/En0V7eGmEXSmI+PyodfcrJK7YG7k=; b=UBDYZ/G2P3SyvjmGHqjQqFn81gocgH
+	B4/34mmMeS4hlggvcPpdRGYp0O4bKt56/T35zEw4DOJe7Dc7wVmsJT4nOC0zy95g
+	tTJCB4RpqH6kIRfH2lVGa+5O8L/y+bMVxCCMBJSHB2w4k1jHaZMO6ceH5zVIVsPb
+	7dkPY2rUZYJy2+t3KyJepZwZ/RfBLjQ/IEjcmvx7aX87WId4NEfJJYm1oLJM4Fnm
+	g35wSAk/O57541KSXZ4RZbyzoyMA4rUKKkfjkSO6Zp26f2BTFYUvM5j/5g2bFQf/
+	S/AdyS4Dpikyy9/7kMFAX2rlmoi1QEfQSdYN65S4zzVtR9CqyZV382jg==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40mrgs4c6t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 30 Jul 2024 07:36:43 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46U7UH36037991;
+	Tue, 30 Jul 2024 07:36:42 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40pm82vv6g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 30 Jul 2024 07:36:42 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 46U7agg4020312;
+	Tue, 30 Jul 2024 07:36:42 GMT
+Received: from aakhoje-ol.in.oracle.com (dhcp-10-191-235-170.vpn.oracle.com [10.191.235.170])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 40pm82vv4k-1;
+	Tue, 30 Jul 2024 07:36:41 +0000
+From: Anand Khoje <anand.a.khoje@oracle.com>
+To: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc: saeedm@mellanox.com, leon@kernel.org, tariqt@nvidia.com,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        davem@davemloft.net, rama.nichanamatlu@oracle.com,
+        manjunath.b.patil@oracle.com
+Subject: [PATCH net-next v7] net/mlx5: Reclaim max 50K pages at once
+Date: Tue, 30 Jul 2024 13:06:33 +0530
+Message-ID: <20240730073634.114407-1-anand.a.khoje@oracle.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726-ad7380-add-single-ended-chips-v1-0-2d628b60ccd1@baylibre.com>
- <20240726-ad7380-add-single-ended-chips-v1-4-2d628b60ccd1@baylibre.com> <20240728173553.2d6ac4d0@jic23-huawei>
-In-Reply-To: <20240728173553.2d6ac4d0@jic23-huawei>
-From: Julien Stephan <jstephan@baylibre.com>
-Date: Tue, 30 Jul 2024 09:34:13 +0200
-Message-ID: <CAEHHSvbDSet2pFqc6TPCioq7ShVwXQfhxYSkgDDy3a+55X0AJg@mail.gmail.com>
-Subject: Re: [PATCH 4/5] ad7380: enable sequencer for single-ended parts
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Michael Hennerich <michael.hennerich@analog.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-30_07,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 mlxscore=0
+ suspectscore=0 phishscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2407300055
+X-Proofpoint-GUID: GIS15TYoOrrSxeI6sVq7U0GqUhcuXbYh
+X-Proofpoint-ORIG-GUID: GIS15TYoOrrSxeI6sVq7U0GqUhcuXbYh
 
-Le dim. 28 juil. 2024 =C3=A0 18:36, Jonathan Cameron <jic23@kernel.org> a =
-=C3=A9crit :
->
-> On Fri, 26 Jul 2024 17:20:09 +0200
-> Julien Stephan <jstephan@baylibre.com> wrote:
->
-> > ad7386/7/8(-4) single-ended parts have a 2:1 mux in front of each ADC.
-> >
-> > From an IIO point of view, all inputs are exported, i.e ad7386/7/8
-> > export 4 channels and ad7386-4/7-4/8-4 export 8 channels. First inputs
-> > of muxes correspond to the first half of IIO channels (i.e 0-1 or 0-3)
-> > and second inputs correspond to second half (i.e 2-3 or 4-7)
-> >
-> > Currently, the driver supports only sampling first half OR second half =
-of
-> > the IIO channels. To enable sampling all channels simultaneously, these
-> > parts have an internal sequencer that automatically cycle through the
-> > mux entries.
-> >
-> > When enabled, the maximum throughput is divided by two. Moreover, the A=
-DCs
-> > need additional settling time, so we add an extra CS toggle to correctl=
-y
-> > propagate setting, and an additional spi transfer to read the second
-> > half.
-> >
-> > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> Hi Julien,
->
-> All looks good. Main comment is a suggestion that we add a core
-> interface to get the index of the active_scan_mask if it is built
-> from available_scan_masks.  That will avoid the mask matching code
-> in here.
->
-> Implementation for now would be a simple bit of pointer
-> arithmetic after checking available_scan_masks is set.
->
-> Jonathan
->
-> > ---
-> >  drivers/iio/adc/ad7380.c | 164 ++++++++++++++++++++++++++++++++++-----=
---------
-> >  1 file changed, 121 insertions(+), 43 deletions(-)
-> >
-> > diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
-> > index 25d42fff1839..11ed010431cf 100644
-> > --- a/drivers/iio/adc/ad7380.c
-> > +++ b/drivers/iio/adc/ad7380.c
-> > @@ -33,7 +33,7 @@
->
-> > @@ -290,16 +291,22 @@ static const unsigned long ad7380_4_channel_scan_=
-masks[] =3D {
-> >   *
-> >   * Since this is simultaneous sampling for AinX0 OR AinX1 we have two =
-separate
-> >   * scan masks.
-> > + * When sequencer mode is enabled, chip automatically cycle through
->
-> cycles
->
-> > + * AinX0 and AinX1 channels. From an IIO point of view, we ca enable a=
-ll
-> > + * channels, at the cost of an extra read, thus dividing the maximum r=
-ate by
-> > + * two.
-> >   */
->
-> ...
->
-> >        * DMA (thus cache coherency maintenance) requires the transfer b=
-uffers
-> >        * to live in their own cache lines.
-> > @@ -609,33 +619,47 @@ static int ad7380_set_ch(struct ad7380_state *st,=
- unsigned int ch)
-> >  static void ad7380_update_xfers(struct ad7380_state *st,
-> >                               const struct iio_scan_type *scan_type)
-> >  {
-> > -     /*
-> > -      * First xfer only triggers conversion and has to be long enough =
-for
-> > -      * all conversions to complete, which can be multiple conversion =
-in the
-> > -      * case of oversampling. Technically T_CONVERT_X_NS is lower for =
-some
-> > -      * chips, but we use the maximum value for simplicity for now.
-> > -      */
-> > -     if (st->oversampling_ratio > 1)
-> > -             st->xfer[0].delay.value =3D T_CONVERT_0_NS + T_CONVERT_X_=
-NS *
-> > -                                             (st->oversampling_ratio -=
- 1);
-> > -     else
-> > -             st->xfer[0].delay.value =3D T_CONVERT_NS;
-> > -
-> > -     st->xfer[0].delay.unit =3D SPI_DELAY_UNIT_NSECS;
-> > +     struct spi_transfer *xfer =3D st->seq ? st->seq_xfer : st->normal=
-_xfer;
-> > +     unsigned int t_convert =3D T_CONVERT_NS;
-> >
-> >       /*
-> > -      * Second xfer reads all channels. Data size depends on if resolu=
-tion
-> > -      * boost is enabled or not.
-> > +      * In the case of oversampling, conversion time is higher than in=
- normal
-> > +      * mode. Technically T_CONVERT_X_NS is lower for some chips, but =
-we use
-> > +      * the maximum value for simplicity for now.
-> >        */
-> > -     st->xfer[1].bits_per_word =3D scan_type->realbits;
-> > -     st->xfer[1].len =3D BITS_TO_BYTES(scan_type->storagebits) *
-> > -                       st->chip_info->num_simult_channels;
-> > +     if (st->oversampling_ratio > 1)
-> > +             t_convert =3D T_CONVERT_0_NS + T_CONVERT_X_NS *
-> > +                     (st->oversampling_ratio - 1);
-> > +
-> > +     if (st->seq) {
-> > +             xfer[0].delay.value =3D xfer[1].delay.value =3D t_convert=
-;
-> > +             xfer[0].delay.unit =3D xfer[1].delay.unit =3D SPI_DELAY_U=
-NIT_NSECS;
-> > +             xfer[2].bits_per_word =3D xfer[3].bits_per_word =3D
-> > +                     scan_type->realbits;
-> > +             xfer[2].len =3D xfer[3].len =3D
-> > +                     BITS_TO_BYTES(scan_type->storagebits) *
-> > +                     st->chip_info->num_simult_channels;
-> > +             xfer[3].rx_buf =3D xfer[2].rx_buf + xfer[2].len;
-> > +             /* Additional delay required here when oversampling is en=
-abled */
-> > +             if (st->oversampling_ratio > 1)
-> > +                     xfer[2].delay.value =3D t_convert;
-> > +             else
-> > +                     xfer[2].delay.value =3D 0;
-> > +             xfer[2].delay.unit =3D SPI_DELAY_UNIT_NSECS;
-> > +     } else {
-> > +             xfer[0].delay.value =3D t_convert;
-> > +             xfer[0].delay.unit =3D SPI_DELAY_UNIT_NSECS;
-> > +             xfer[1].bits_per_word =3D scan_type->realbits;
-> > +             xfer[1].len =3D BITS_TO_BYTES(scan_type->storagebits) *
-> > +                     st->chip_info->num_simult_channels;
-> > +     }
-> >  }
-> >
-> >  static int ad7380_triggered_buffer_preenable(struct iio_dev *indio_dev=
-)
-> >  {
-> >       struct ad7380_state *st =3D iio_priv(indio_dev);
-> >       const struct iio_scan_type *scan_type;
-> > +     struct spi_message *msg =3D &st->normal_msg;
-> >
-> >       /*
-> >        * Currently, we always read all channels at the same time. The s=
-can_type
-> > @@ -646,34 +670,62 @@ static int ad7380_triggered_buffer_preenable(stru=
-ct iio_dev *indio_dev)
-> >               return PTR_ERR(scan_type);
-> >
-> >       if (st->chip_info->has_mux) {
-> > -             unsigned int num_simult_channels =3D st->chip_info->num_s=
-imult_channels;
-> > +             unsigned int num_simult_channels =3D
-> > +                     st->chip_info->num_simult_channels;
->
-> Unrelated change. Push this back to the earlier patch (or leave it alone =
-- whether
-> it matters for readability is debatable anyway, so I think this is fine e=
-ither way).
->
-> >               unsigned long active_scan_mask =3D *indio_dev->active_sca=
-n_mask;
-> >               unsigned int ch =3D 0;
-> >               int ret;
-> >
-> >               /*
-> >                * Depending on the requested scan_mask and current state=
-,
-> > -              * we need to change CH bit to sample correct data.
-> > +              * we need to either change CH bit, or enable sequencer m=
-ode
-> > +              * to sample correct data.
-> > +              * Sequencer mode is enabled if active mask corresponds t=
-o all
-> > +              * IIO channels enabled. Otherwise, CH bit is set.
-> >                */
-> > -             if (active_scan_mask =3D=3D GENMASK(2 * num_simult_channe=
-ls - 1,
-> > -                                             num_simult_channels))
-> > -                     ch =3D 1;
-> > +             if (active_scan_mask =3D=3D GENMASK(2 * num_simult_channe=
-ls - 1, 0)) {
->
-> Whilst it's an implementation detail that you can (IIRC) just compare the=
- active_scan_mask
-> address with that of your available_scan_masks array entries, maybe it's =
-worth providing
-> an interface that gets the index of that array?
->
-> int iio_active_scan_mask_index(struct iio_dev *)
-> that returns an error if available_scan_masks isn't set.
+In non FLR context, at times CX-5 requests release of ~8 million FW pages.
+This needs humongous number of cmd mailboxes, which to be released once
+the pages are reclaimed. Release of humongous number of cmd mailboxes is
+consuming cpu time running into many seconds. Which with non preemptible
+kernels is leading to critical process starving on that cpu’s RQ.
+On top of it, the FW does not use all the mailbox messages as it has a
+limit of releasing 50K pages at once per MLX5_CMD_OP_MANAGE_PAGES +
+MLX5_PAGES_TAKE device command. Hence, the allocation of these many
+mailboxes is extra and adds unnecessary overhead.
+To alleviate this, this change restricts the total number of pages
+a worker will try to reclaim to maximum 50K pages in one go.
 
-Hi Jonathan,
+Our tests have shown significant benefit of this change in terms of
+time consumed by dma_pool_free().
+During a test where an event was raised by HCA
+to release 1.3 Million pages, following observations were made:
 
-I'll send a v2 of this series in a couple of days, with all comments
-fixed and I'll try to implement an iio_active_scan_mask_index
-function.
+- Without this change:
+Number of mailbox messages allocated was around 20K, to accommodate
+the DMA addresses of 1.3 million pages.
+The average time spent by dma_pool_free() to free the DMA pool is between
+16 usec to 32 usec.
+           value  ------------- Distribution ------------- count
+             256 |                                         0
+             512 |@                                        287
+            1024 |@@@                                      1332
+            2048 |@                                        656
+            4096 |@@@@@                                    2599
+            8192 |@@@@@@@@@@                               4755
+           16384 |@@@@@@@@@@@@@@@                          7545
+           32768 |@@@@@                                    2501
+           65536 |                                         0
 
-Cheers
-Julien
+- With this change:
+Number of mailbox messages allocated was around 800; this was to
+accommodate DMA addresses of only 50K pages.
+The average time spent by dma_pool_free() to free the DMA pool in this case
+lies between 1 usec to 2 usec.
+           value  ------------- Distribution ------------- count
+             256 |                                         0
+             512 |@@@@@@@@@@@@@@@@@@                       346
+            1024 |@@@@@@@@@@@@@@@@@@@@@@                   435
+            2048 |                                         0
+            4096 |                                         0
+            8192 |                                         1
+           16384 |                                         0
 
->
-> We know the active_scan_mask will always be selected from the available o=
-nes
-> so this interface should be fine even if we change how they are handled i=
-nternally
-> in the future.
->
-> That would then make all these matches simpler.
->
-> > +                     ret =3D regmap_update_bits(st->regmap,
-> > +                                              AD7380_REG_ADDR_CONFIG1,
-> > +                                              AD7380_CONFIG1_SEQ,
-> > +                                              FIELD_PREP(AD7380_CONFIG=
-1_SEQ, 1));
-> > +                     msg =3D &st->seq_msg;
-> > +                     st->seq =3D true;
-> > +             } else {
-> > +                     if (active_scan_mask =3D=3D GENMASK(2 * num_simul=
-t_channels - 1,
-> > +                                                     num_simult_channe=
-ls))
-> > +                             ch =3D 1;
-> > +
-> > +                     ret =3D ad7380_set_ch(st, ch);
-> > +             }
-> >
-> > -             ret =3D ad7380_set_ch(st, ch);
-> >               if (ret)
-> >                       return ret;
->
-> I'd just duplicate this if (ret) check as the two calls are very differen=
-t so to
-> me this doesn't make logical sense (even if it works).
->
-> >       }
-> >
-> >       ad7380_update_xfers(st, scan_type);
-> >
-> > -     return spi_optimize_message(st->spi, &st->msg);
-> > +     return spi_optimize_message(st->spi, msg);
-> >  }
+Signed-off-by: Anand Khoje <anand.a.khoje@oracle.com>
+Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
+Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
+Acked-by: Saeed Mahameed <saeedm@nvidia.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
+index d894a88..972e8e9 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
+@@ -608,6 +608,11 @@ enum {
+ 	RELEASE_ALL_PAGES_MASK = 0x4000,
+ };
+ 
++/* This limit is based on the capability of the firmware as it cannot release
++ * more than 50000 back to the host in one go.
++ */
++#define MAX_RECLAIM_NPAGES (-50000)
++
+ static int req_pages_handler(struct notifier_block *nb,
+ 			     unsigned long type, void *data)
+ {
+@@ -639,7 +644,16 @@ static int req_pages_handler(struct notifier_block *nb,
+ 
+ 	req->dev = dev;
+ 	req->func_id = func_id;
+-	req->npages = npages;
++
++	/* npages > 0 means HCA asking host to allocate/give pages,
++	 * npages < 0 means HCA asking host to reclaim back the pages allocated.
++	 * Here we are restricting the maximum number of pages that can be
++	 * reclaimed to be MAX_RECLAIM_NPAGES. Note that MAX_RECLAIM_NPAGES is
++	 * a negative value.
++	 * Since MAX_RECLAIM is negative, we are using max() to restrict
++	 * req->npages (and not min ()).
++	 */
++	req->npages = max_t(s32, npages, MAX_RECLAIM_NPAGES);
+ 	req->ec_function = ec_function;
+ 	req->release_all = release_all;
+ 	INIT_WORK(&req->work, pages_work_handler);
+-- 
+1.8.3.1
+
 
