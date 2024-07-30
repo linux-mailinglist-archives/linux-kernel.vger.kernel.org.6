@@ -1,111 +1,151 @@
-Return-Path: <linux-kernel+bounces-268354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA399942396
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:52:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1AD2942399
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2822D1C20DEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:52:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B095A285191
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BDB1917F4;
-	Tue, 30 Jul 2024 23:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825FB1922D8;
+	Tue, 30 Jul 2024 23:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BjTBQz3h"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEIOlIPc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45C618E04E
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 23:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A2B18E04E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 23:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722383550; cv=none; b=gvOlzAPEiLptSf+QivSs3GWv18L9J+7wLvu2l0yUAnb+QO69hKAK94lvLDxpze/XoaodP5dNyW1vC8bUMHYRC0CG7SdGgBXBo3TL51N9I9jmwVXAt+MIO6qryzKEPtltM/suzUg5G+5M7fRKmBIEOKQxu3jplQ2lIWrmjx9Ou2Q=
+	t=1722383663; cv=none; b=WI1Vmwi981StxBSbp9F/l1xnd6G9DsmyI4h21eVvog4NLTlwK+EL0tiSPs4NVJWPHzoeTLKdcZbsIEaAkwZuVDlsnK+5of+VHbpJK7y1UM6XdktaJ11bzJ7/VES+A9JMWgPj3bwi9ykd4hVaFXCTqWz7stu78U30a+kL/4J8csg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722383550; c=relaxed/simple;
-	bh=vWR7eaB2ziX0DQZ+eFOVqHJGrdk55GJujcwPPE799oY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g89pClvqu1ALmbLYAXQdIie4sI2Jod/UOldxYpDhS9qRehIMfIGb9agNt4++vdB6TnkI0625h98NW8s7DXJxYLD/Hbl4EzPuNCBYvztAr7yPaSXANRXktKEQ72wnStj/Lw+g9nf5Nq6PSGL71/mLIkHqXtYinXnBeZBKzsf9toQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BjTBQz3h; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-398041b6e3dso1372205ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:52:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722383548; x=1722988348; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vS2WcqLfwwuILiFNO1YcUTH9wMYaCwcHDsqOO6vbtSQ=;
-        b=BjTBQz3hMGsJSg6tvGjbFwJ17+puZI259bB6XIilJCgap8o1KuSqYdxIT4Zfk8SYEM
-         RVrbfoW58qatBBgdFir3HHULuD71znGgbCpT/256x64JRwZOPEArXpb6SbuoQxVXAWW3
-         gKABFJOvyNMqoCHEUpIfhWsBJG4ckx9agBGco=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722383548; x=1722988348;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vS2WcqLfwwuILiFNO1YcUTH9wMYaCwcHDsqOO6vbtSQ=;
-        b=jBQ+NNe4o/eJ5PEnGL+nZxN7pf1ETB/SyxfsHIzLzkDwcBZWKfi1IQl6xhbN9bf5gP
-         LImLKHVUeDKfrJQ5PrRuFNIdxiKajArHmTQG3fNkntmiKiKMu3vHziltWMc4fxhFXnIl
-         yCDdDSUeCtkSQWSpZ0Y4OOtpzJtccBbjX2II2nr1cxzZyy5tU/B/OJpT0DKnS6bSrdjU
-         aEegO9Cp5CqvEqPBJVCOMcyyG40LJcwzMgqNrdFyrAhEwnQmQ3ohbp/lIe50BBy3gPiY
-         5tShyid72BPFewUsE6pNTWP0LyYUZUBdO7D6QFnd//iG2L7p6NjTNSKiJNrOhpElSUAL
-         9Zag==
-X-Forwarded-Encrypted: i=1; AJvYcCX2jEJjwcB6xRi16sJAxYUUOMf5iLX0K63XsvNnJ0CfX+7ZnCJGC/wVCx94BgfosXGf/0C+dq7W7KE0u00=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHZmeDaCmNsMD7Re4hAkq6bEhxf9o1RZXRsswUtqgJVLCbaR3C
-	kKH6ycAp3P2fWA2Nh+Y7y/6Nbm2DGbWeZFSbt3Ayp7F7rS4+9d3MWIJvYeVhaDs=
-X-Google-Smtp-Source: AGHT+IGX3WJ0TMHz/80Kr8J8XRAJeVloO4pdMttS6ct5idJVS8UQy6Bnk9x2cGMv+tLMdMuWwyxNgw==
-X-Received: by 2002:a05:6e02:2185:b0:39a:e9a1:92a6 with SMTP id e9e14a558f8ab-39ae9a197a0mr98874205ab.4.1722383547949;
-        Tue, 30 Jul 2024 16:52:27 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39b0b51ee4fsm5841605ab.28.2024.07.30.16.52.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 16:52:27 -0700 (PDT)
-Message-ID: <29aa906b-a026-46ca-83a9-43d0e8d6e779@linuxfoundation.org>
-Date: Tue, 30 Jul 2024 17:52:26 -0600
+	s=arc-20240116; t=1722383663; c=relaxed/simple;
+	bh=tonEYU/q2zJv8yeNhlMtWuw0j+u5Hwyu1Vvs427U5G8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sh/SczYxtHM87/M91E1l/WAiM9RnTO60VQV8F84EPM5CNWXXRHJm6XjPpq/gKnin43jsZv4DiwHShyFBJGikqBZysfBCabYka+h4Mer8QNiK1eWx/S8A9cvoEeihaxnggps5YQ6HB8ZnUrYMPI8SVJPiTeV/DQbs+Zs4Vxq8nDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eEIOlIPc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBA6BC32782;
+	Tue, 30 Jul 2024 23:54:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722383663;
+	bh=tonEYU/q2zJv8yeNhlMtWuw0j+u5Hwyu1Vvs427U5G8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eEIOlIPc+JHS5zlVZkivZULuFnL5V2QDbJkwbHDhORZUkNF8FaZmpBr7YKtdNuTuv
+	 2G01+wUQfD47yw1RIA1VrBwACjJDBpYMruEZZafoJRvgYf8Tw7jvX0hlTC2Z9DvcI6
+	 f3fpfSIh2cOHfwAoSZQE9pdoK7wwUIxVIRrs4hekx5i6fB9PVk9eEhdIkV2Ss21suL
+	 Q5yq0Qq3UKsKB4bXF3KESelTIUoudMf5qfhziin0t4ADx3LlibnWggPnMaRMyt9Cs6
+	 CJvDezP46dy+N2G6Pg1GHjmra3yFkjBLXKJwacbUry44cpQIk1q1hollMPoEg5/mZv
+	 kwfoCnPuTOIzA==
+Date: Wed, 31 Jul 2024 01:54:17 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: akpm@linux-foundation.org, cl@linux.com, penberg@kernel.org,
+	rientjes@google.com, iamjoonsoo.kim@lge.com,
+	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kasan-dev <kasan-dev@googlegroups.com>
+Subject: Re: [PATCH 1/2] mm: krealloc: consider spare memory for __GFP_ZERO
+Message-ID: <Zql9KXRDBb5Ufpp-@pollux.localdomain>
+References: <20240730194214.31483-1-dakr@kernel.org>
+ <66836dd6-b0c2-4f77-b2a3-c43296aa6c93@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/440] 6.1.103-rc1 review
-To: Frank Scheiner <frank.scheiner@web.de>
-Cc: akpm@linux-foundation.org, allen.lkml@gmail.com, broonie@kernel.org,
- conor@kernel.org, f.fainelli@gmail.com, gregkh@linuxfoundation.org,
- jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux@roeck-us.net,
- lkft-triage@lists.linaro.org, patches@kernelci.org, patches@lists.linux.dev,
- pavel@denx.de, rwarsow@gmx.de, shuah@kernel.org, srw@sladewatkins.net,
- stable@vger.kernel.org, sudipm.mukherjee@gmail.com,
- torvalds@linux-foundation.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <061886f7-c5ec-419b-8505-b57638c5cf31@linuxfoundation.org>
- <017486e3-2132-44a0-ade8-94647de78cef@web.de>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <017486e3-2132-44a0-ade8-94647de78cef@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <66836dd6-b0c2-4f77-b2a3-c43296aa6c93@suse.cz>
 
-On 7/30/24 17:37, Frank Scheiner wrote:
-> Hi,
+On Tue, Jul 30, 2024 at 11:14:16PM +0200, Vlastimil Babka wrote:
+> On 7/30/24 9:42 PM, Danilo Krummrich wrote:
+> > As long as krealloc() is called with __GFP_ZERO consistently, starting
+> > with the initial memory allocation, __GFP_ZERO should be fully honored.
+> > 
+> > However, if for an existing allocation krealloc() is called with a
+> > decreased size, it is not ensured that the spare portion the allocation
+> > is zeroed. Thus, if krealloc() is subsequently called with a larger size
+> > again, __GFP_ZERO can't be fully honored, since we don't know the
+> > previous size, but only the bucket size.
+> > 
+> > Example:
+> > 
+> > 	buf = kzalloc(64, GFP_KERNEL);
+> > 	memset(buf, 0xff, 64);
+> > 
+> > 	buf = krealloc(buf, 48, GFP_KERNEL | __GFP_ZERO);
+> > 
+> > 	/* After this call the last 16 bytes are still 0xff. */
+> > 	buf = krealloc(buf, 64, GFP_KERNEL | __GFP_ZERO);
+> > 
+> > Fix this, by explicitly setting spare memory to zero, when shrinking an
+> > allocation with __GFP_ZERO flag set or init_on_alloc enabled.
+> > 
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > ---
+> >  mm/slab_common.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/mm/slab_common.c b/mm/slab_common.c
+> > index 40b582a014b8..cff602cedf8e 100644
+> > --- a/mm/slab_common.c
+> > +++ b/mm/slab_common.c
+> > @@ -1273,6 +1273,13 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+> >  
+> >  	/* If the object still fits, repoison it precisely. */
+> >  	if (ks >= new_size) {
+> > +		/* Zero out spare memory. */
+> > +		if (want_init_on_alloc(flags)) {
+> > +			kasan_disable_current();
+> > +			memset((void *)p + new_size, 0, ks - new_size);
+> > +			kasan_enable_current();
 > 
-> could be the same issue as for me, see [1] for details.
-> 
-> [1]:
-> https://lore.kernel.org/stable/de6f52bb-c670-4e03-9ce1-b4ee9b981686@web.de/
-> 
-> Does applying 6259151c04d4e0085e00d2dcb471ebdd1778e72e from mainline
-> (adapt hunk #2 to cleanly apply) help in your case, too, or do you maybe
-> detected a different issue?
-> 
+> If we do kasan_krealloc() first, shouldn't the memset then be legal
+> afterwards without the disable/enable dance?
 
-Thank you for the tip. I will try this first to see if this fixes the problem
-for me.
+No, we always write into the poisoned area. The following tables show what we do
+in the particular case:
 
-thanks,
--- Shuah
+Shrink
+------
+          new        old
+0         size       size        ks
+|----------|----------|----------|
+|   keep   |        poison       |  <- poison
+|--------------------------------|
+|   keep   |         zero        |  <- data
 
+
+Poison and zero things between old size and ks is not necessary, but we don't
+know old size, hence we have do it between new size and ks.
+
+Grow
+----
+          old        new
+0         size       size        ks
+|----------|----------|----------|
+|       unpoison      |   keep   | <- poison
+|--------------------------------|
+|         keep        |   zero   | <- data
+
+Zeroing between new_size and ks in not necessary in this case, since it must be
+zero already. But without knowing the old size we don't know whether we shrink
+and actually need to do something, or if we grow and don't need to do anything.
+
+Analogously, we also unpoison things between 0 and old size for the same reason.
+
+> 
+> > +		}
+> > +
+> >  		p = kasan_krealloc((void *)p, new_size, flags);
+> >  		return (void *)p;
+> >  	}
+> > 
+> > base-commit: 7c3dd6d99f2df6a9d7944ee8505b195ba51c9b68
+> 
 
