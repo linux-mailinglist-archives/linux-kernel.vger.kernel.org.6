@@ -1,302 +1,169 @@
-Return-Path: <linux-kernel+bounces-268083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A74B942027
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:56:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC029942021
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A086BB26230
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:56:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BA4D1C20CE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52BA18DF8B;
-	Tue, 30 Jul 2024 18:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3jD3241p"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2081.outbound.protection.outlook.com [40.107.93.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062E518CC0B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6C118C90C;
 	Tue, 30 Jul 2024 18:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722365707; cv=fail; b=oURwOg1O/4MXAhC0QHqm0n2dX17ArwN08XgVW1sVaPNiBx8VUUK34kSHJr3CQcD7f8J1/phxMD20Crfa2ybjOtNLC1/SCE+CEbULtv0alG2Dq8St3bSkGa7Ov46XS4nGLwJ13rx9hMDrzlKh+LhVpVmV8tDqyyI8ViPkgglPIog=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722365707; c=relaxed/simple;
-	bh=0v0C+HGzIAxIvHr8Ni7NCkjeGpGOK7r392nLJnXCdxs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nmcd/Eo8Wc5bvrVc2D6SMNMXjTFcXMS6wvY99YGk3U5WF7q1e+9lhByb7URdrKuYkoD36w7bTvaSYYiS8GTmuGdCJllgbZDsEEwXfEkjn0inCi0ckfr2dPrzBM8LMv9nII+4YZR4WCzir5pvRUKJqCR1feDUOOzoBzSzAQSh1XY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3jD3241p; arc=fail smtp.client-ip=40.107.93.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cTrQt5ZHWN1UCC8FOg+hkgW5ZoMGoyy29GbZzk/O+mkbCS1yHpEFkl7zOhgWyoIRkTAMp2fsDvY8p3LUiDOkseIV3V0/5UaTZsTRE8Z0XmLV6Bc5Svlg6XKnfjn+Z6lISKt8C2Kv5/rG6RHO7akZqAwTjReFPmjBFtFYTU91hShCHPyXtLaxHqlYwX0XCVflZYCO57n7b/QmqMTVPV+mUQkm8tQc8jHk/x4sPWlFJjiYtutcWOxdbzoPzWXoA+tJPxHZXownYCc5lh5VBPmEx8c8Bg8WUR8ITHN2yuhahojWRWj2m2+Lj7UWhlWP35omngbePQdiEvd9/+q0C1H7kw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XmQRvxxMB3CItzDn44urORtpgb/R+cUfZE9EtJUONmY=;
- b=YKPDUK5hF0twc6z5tcAKnU3Nxfq09dBFwv9ncgwgrybx4cXLYrm8BVzI/EPOqEQysI0rqypLJ2IP5F8SUUh92KpBYQBctkKkwnBTswHmLz+0T/fvOFNasLGGmrTDEvut4yz1LHAINJwdq0ONxrW7QV+Q9JAzb4v4IKJ8xo9bCH333fzAhgnaWjEzjSZAg+jfrar12F4JpSNb7VkNUN07s9dWVnS3Lm5I4Qo58ugvcLcVd+1Pc9RNGgLbqs+EpscFTwU+YZKHo3j8cki1shjWb6XLezPvGg7igdP9AX6e0xkL/lKWlGn1gpBdYHiFKFqkMXlI2pbcHh9Sqo06yAYqPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XmQRvxxMB3CItzDn44urORtpgb/R+cUfZE9EtJUONmY=;
- b=3jD3241pRCG0DG4HRMoGL8epStmPa7K3n9DwysJMsGjmgInvi5i7wXDYX/VgSiYaiUdB9Cw7FTG2/ESuigy6PznOOY5eb+qlkGqBVkBWY532ifIRQN2vh8jzuSXi5eERou8xoZUBgSI46boFJBhaOep1bN6Q/92hm7f8VxxIC+A=
-Received: from CH2PR17CA0022.namprd17.prod.outlook.com (2603:10b6:610:53::32)
- by CH3PR12MB7739.namprd12.prod.outlook.com (2603:10b6:610:151::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Tue, 30 Jul
- 2024 18:54:59 +0000
-Received: from CH1PEPF0000AD75.namprd04.prod.outlook.com
- (2603:10b6:610:53:cafe::8a) by CH2PR17CA0022.outlook.office365.com
- (2603:10b6:610:53::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.35 via Frontend
- Transport; Tue, 30 Jul 2024 18:54:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH1PEPF0000AD75.mail.protection.outlook.com (10.167.244.54) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7828.19 via Frontend Transport; Tue, 30 Jul 2024 18:54:59 +0000
-Received: from titanite-d354host.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 30 Jul 2024 13:54:58 -0500
-From: Avadhut Naik <avadhut.naik@amd.com>
-To: <x86@kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-edac@vger.kernel.org>, <linux-acpi@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
-	<rafael@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<rostedt@goodmis.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
-	<james.morse@arm.com>, <airlied@gmail.com>, <yazen.ghannam@amd.com>,
-	<john.allen@amd.com>, <avadnaik@amd.com>
-Subject: [PATCH v3 4/4] EDAC/mce_amd: Add support for FRU Text in MCA
-Date: Tue, 30 Jul 2024 13:54:06 -0500
-Message-ID: <20240730185406.3709876-5-avadhut.naik@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240730185406.3709876-1-avadhut.naik@amd.com>
-References: <20240730185406.3709876-1-avadhut.naik@amd.com>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="F5vmT3s3"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE5C1AA3F6
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 18:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722365704; cv=none; b=ZKdIM78SobXC1dOr95tKEXVEmaonMd+pW6Fg/cak5p9rfIw/JnGxtvTRni7uJlWEFjGq6uOAhFmhokAgC8PPNJB66eZPEc37TAULSS/pWo2URBO9yS8pHXQ5OV+SnT9HI+TrOWBdvIamWSJAk5V1DwvFZM6B0GPsSnQ1lSlVCXY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722365704; c=relaxed/simple;
+	bh=D6XK+MkXe4vSuFdneTto5My6pUrb1NhewSPXD7ICrLk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=KHb3lovfcllDSqDESgqoZ5RHNEakKu5o/V0IzNpJ3vJGSSYP4uZUvRiZ0bhZeF0h/91q8IVmH/QaGGii5KyMvi1+D+2MMYXDoTdDxBisoPYAy/HHJ3CAdngUU3BKBGOYB+VA0VwXix/WSQ+5w3DH8gVc701mJVVUkAnShmH9h50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=F5vmT3s3; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fc4b03fca0so2934315ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:55:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1722365700; x=1722970500; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=UWZrz0GTTBtVx+qj8RLYBvZn4vPsV/d3sE0GhBIu0gA=;
+        b=F5vmT3s3x6choYQ/vh1/WuUgLbzNapaZuSKWlS9BNT8g12x4n/AQLcKOFmOs+dpQFh
+         U+LkZRDjd6x0gqTu1QToML5jt7zVUEZ0ZO5McwmyutO++r2iWy/pOJDoMvX5vI/worFO
+         2j83nsj8PmCo8lzqF+L5uP0d91H2WuvLZLssp/9OZfFKljNH+ScsDAMs+q2/1gIENVYN
+         ZkU1QeEDSi5eU1GrNfPTqk/s0YnduuQoBY3kycwotZhGMZvyIroLcHZK7GXuwfXAwcLE
+         5beQjOG9gwvfmPThq1dfkcYcrdgVv9Jt1OvhXXUM5LqrD7Ng+AyES0+M84RLm4cPaW1l
+         H7RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722365700; x=1722970500;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UWZrz0GTTBtVx+qj8RLYBvZn4vPsV/d3sE0GhBIu0gA=;
+        b=fMf3fw2ytiHCvsRN0uJ4l0TuvupWejNykkb3DwfG8X1kwBUuqr+8w87m14t0WDDsze
+         ort1wgaEf0ox54GTjVAkkr7YXofRXsjUbiwVsWolvBUy2wRjjd6KHMxCxXamlNLLgSJ1
+         KaI6cJLhiMjrEDKr8dOGkoQgvLPB8+CLTlTQVyhmbSAqbfkgAx1/OZtYAQHwJ9dA+mm7
+         J3k4YK+n8o4PlR1irfOFYEClA7hLX0t2i0c3HbpioVxFfiImyRIJas+IKVDIHXkb8rqB
+         WlpCkns/OyUFH3lT13eU70ZMxk/GfUWtTw3ukGxZRj3WDXuzSdAhkxBua/+2wawxgyoi
+         Ik3Q==
+X-Gm-Message-State: AOJu0YxpnrrgwnFDm/B91k5AJ2AGzgRmsdlzJn+VLzHqVEGF/ydNOel1
+	72q+FMhyfoM7zcDJDlw+mXp+wm0xdsPzzfSpVv/vsbY4rqT7SNR2PLOQ9S3xrP8=
+X-Google-Smtp-Source: AGHT+IG6BPYC2ppBcM9hDozr25lCPvFecGj3JJ/GmzwdQ7lbXbaIq/ub4rBWzKik1JYHmkIFX7PK+Q==
+X-Received: by 2002:a17:902:e542:b0:1fd:d7a7:a88d with SMTP id d9443c01a7336-1fed6d24609mr123875495ad.11.1722365700362;
+        Tue, 30 Jul 2024 11:55:00 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ee4d16sm105445805ad.146.2024.07.30.11.54.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 11:54:59 -0700 (PDT)
+Message-ID: <d7c7bf83-245a-4426-8ba1-f1841a28568c@kernel.dk>
+Date: Tue, 30 Jul 2024 12:54:58 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD75:EE_|CH3PR12MB7739:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0a012713-dee7-49e7-bd10-08dcb0c91ca2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WoF4udGN1FvNWxdnbuEQxjEfDzPparIvYcGt1Ga2RIG+4L/IdVZ88tJBP+Lz?=
- =?us-ascii?Q?YV4gByedy+OfDUrX8oGtnGdf49enWLIeJvygMgxZbYDb0hgHoqHSOPM/eoAC?=
- =?us-ascii?Q?+mcD40vFDwDnGTJ0BndlZOcYdVRUHSep4aIxgUtI1IZcUBMR6CdCZK0VrIjy?=
- =?us-ascii?Q?Rvk12KQNt++6dG7rGLjNaWpqcTveIeMeQTp36Dbd3yvVE0xUvyeox6Cqnh1A?=
- =?us-ascii?Q?LcOPiRTw9XfheOXTOuudYrofVHBZC6cblkpM7RIDPCcRR4y7nEtrVqO85L+T?=
- =?us-ascii?Q?cOSHrhDhMt+k95Mpt/B3ZQtOHApE0uxEgYParJ9gQA3LTzoKM0qDUWqqJont?=
- =?us-ascii?Q?CgXFE+m8FJBTFmmzskGkHQsmKGlQ91N1qIwb9SyDKYzU8Z8cH+flzo3TbgpS?=
- =?us-ascii?Q?ZsR6LyF692QJbhV8/p9fq+pU75FqjQVb6YlQMcwPViulxwxfgdCnVz0I4LYG?=
- =?us-ascii?Q?LEVTGiI4KiTrN2W5B3KEphi0dFTqjG1jlilPDKZn0DuQFxZFZj8KknSYAv2i?=
- =?us-ascii?Q?pANvFWJLiqCZQn5H9vgiELmXMQnBdmMmvsl3jpGxWKcntStwFF160Z6laFgw?=
- =?us-ascii?Q?6OJ+IAxt3mtMkOn1/UTZ1PNi1eQFthv/BpGHLuramMwjqcKQ1w92rmMPN7eK?=
- =?us-ascii?Q?VWgY5EUSUqYrk0xEkjPTBAdPA5rBs3V8tA6dAvbwwOQAW3ngAvshiXYs0IuF?=
- =?us-ascii?Q?SJcCV7w5t180Y0Anxo64/b2h1+LaxQva79dgagri4rQh5W75Mv5S8X0NjvdX?=
- =?us-ascii?Q?Ggz7yLSHzjkJNdKgv7nYF+FIdu+VrK2rGhc7YOUqvRxWwbHwiHeF+esOiMnm?=
- =?us-ascii?Q?dmrQMBN3CjRhOpdrhG8Vv5aKuxG04mx7glFgfzJqFzuwEbbUdX2S3Ff/3m6n?=
- =?us-ascii?Q?VqP+//PdqAhhZUctPKNPTT3bkeldQX8E8Dfwe7JeXE7UYay5AyElB6KsgOqK?=
- =?us-ascii?Q?HEZ0EqCWIQQ/kf0uWxN0oY4xzlrZkq199onO5c9FtFDCSm3MtQ094vVNmERQ?=
- =?us-ascii?Q?e9r9CAEPQlhxlIDCRVqYnIMBegYTdiUbC324zUpfnUGgSrNxRw8n9c0LzbL/?=
- =?us-ascii?Q?9kNk+pLkGfISRkN87WyIgZhP9Yxy+8PnsQOeF/gPe7uTsqvV6MGQ9ILTsLOh?=
- =?us-ascii?Q?GqZQK2BCqImy6Q9sFnCGsIZATDYvNWdKjRsShsD8B+C54pvp/ljWGMTil7ys?=
- =?us-ascii?Q?oKgJs5jBeIe0tTXrZaeYUvBVeDLO/Q0nhXz5Pw8kfV+h6NIRp0hTQTPCO8m4?=
- =?us-ascii?Q?HUUc+4PnpAigwPX6p5FwrsRHqOnEuhLIWwjQoNizTZgENk2xzAtURcqlFu7Q?=
- =?us-ascii?Q?XyeLkV1cM1EcUdBLHVMiQzq0l2aiklGCnZCvT2A7m0F+ssV12XcLtBzwZMBV?=
- =?us-ascii?Q?E5e84+d+pJVsGD27jB06jvnjUNRG7exDVn0/jzKzVVrPCvz5jQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 18:54:59.4172
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0a012713-dee7-49e7-bd10-08dcb0c91ca2
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD75.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7739
+User-Agent: Mozilla Thunderbird
+Subject: Re: Linux 6.11-rc1
+From: Jens Axboe <axboe@kernel.dk>
+To: Guenter Roeck <linux@roeck-us.net>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAHk-=wiyNokz0d3b=GRORij=mGvwoYHy=+bv6m2Hu_VqNdg66g@mail.gmail.com>
+ <f8677c93-a76d-473c-8abc-8dc7b4403691@roeck-us.net>
+ <b7ecddb7-4486-4b2d-9179-82250cf830e7@roeck-us.net>
+ <63e7adbf-0eb8-4d59-ae7a-689b9d9f69b4@kernel.dk>
+ <5963cdad-40be-4278-a84e-2a804334e77c@roeck-us.net>
+ <3f65bfad-bd04-4651-bbe3-e2b1925f1a13@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <3f65bfad-bd04-4651-bbe3-e2b1925f1a13@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+On 7/30/24 12:35 PM, Jens Axboe wrote:
+> On 7/30/24 12:22 PM, Guenter Roeck wrote:
+>> On 7/30/24 10:20, Jens Axboe wrote:
+>>> On 7/30/24 11:04 AM, Guenter Roeck wrote:
+>>>> On Mon, Jul 29, 2024 at 08:29:20AM -0700, Guenter Roeck wrote:
+>>>>> On Sun, Jul 28, 2024 at 02:40:01PM -0700, Linus Torvalds wrote:
+>>>>>> The merge window felt pretty normal, and the stats all look pretty
+>>>>>> normal too. I was expecting things to be quieter because of summer
+>>>>>> vacations, but that (still) doesn't actually seem to have been the
+>>>>>> case.
+>>>>>>
+>>>>>> There's 12k+ regular commits (and another 850 merge commits), so as
+>>>>>> always the summary of this all is just my merge log. The diffstats are
+>>>>>> also (once again) dominated by some big hardware descriptions (another
+>>>>>> AMD GPU register dump accounts for ~45% of the lines in the diff, and
+>>>>>> some more perf event JSON descriptor files account for another 5%).
+>>>>>>
+>>>>>> But if you ignore those HW dumps, the diff too looks perfectly
+>>>>>> regular: drivers account for a bit over half (even when not counting
+>>>>>> the AMD register description noise). The rest is roughly one third
+>>>>>> architecture updates (lots of it is dts files, so I guess I could have
+>>>>>> lumped that in with "more hw descriptor tables"), one third tooling
+>>>>>> and documentation, and one third "core kernel" (filesystems,
+>>>>>> networking, VM and kernel). Very roughly.
+>>>>>>
+>>>>>> If you want more details, you should get the git tree, and then narrow
+>>>>>> things down based on interests.
+>>>>>>
+>>>>>
+>>>>> Build results:
+>>>>>     total: 158 pass: 139 fail: 19
+>>>>> Failed builds:
+>>>> ...
+>>>>>     i386:q35:pentium3:defconfig:pae:nosmp:net=ne2k_pci:initrd
+>>>>
+>>>> This failure bisects to commit 0256994887d7 ("Merge tag
+>>>> 'for-6.11/block-post-20240722' of git://git.kernel.dk/linux"). I have no
+>>>> idea why that would be the case, but it is easy to reproduce. Maybe it is
+>>>> coincidental. Either case, copying Jens in case he has an idea.
+>>>
+>>> I can take a look, but please post some details on what is actually
+>>> being run here so I can attempt to reproduce it. I looked at your
+>>> initial email too, and there's a link in there to:
+>>>
+>>> https://kerneltests.org/builders
+>>>
+>>> but I'm still not sure what's being run.
+>>>
+>>
+>> Please see http://server.roeck-us.net/qemu/x86-nosmp/
+> 
+> Works fine for me on current master, boots and run self tests and
+> then shuts down. Tried it 5 times now.
+> 
+> axboe@r7625 ~/g/linux-vm (master)> qemu-system-i386 --version
+> QEMU emulator version 8.2.4 (Debian 1:8.2.4+ds-1)
+> Copyright (c) 2003-2023 Fabrice Bellard and the QEMU Project developers
+> 
+> Then tried 6.11-rc1 10 times in a loop, and also didn't see any failures.
+> 
+> I then switched to using gcc-11 as that seems to be what you are using,
+> and them it does indeed bomb during boot. Funky. I'll check the post
+> branch and see if it's anything from there.
 
-A new "FRU Text in MCA" feature is defined where the Field Replaceable
-Unit (FRU) Text for a device is represented by a string in the new
-MCA_SYND1 and MCA_SYND2 registers. This feature is supported per MCA
-bank, and it is advertised by the McaFruTextInMca bit (MCA_CONFIG[9]).
+I can fully revert that for-6.11/block-post merge and it still crashes
+in the same way for me. So don't believe that's the culprit. It
+consistently crashes with a double fault when starting cryptomgr, so
+that may be a clue.
 
-The FRU Text is populated dynamically for each individual error state
-(MCA_STATUS, MCA_ADDR, et al.). This handles the case where an MCA bank
-covers multiple devices, for example, a Unified Memory Controller (UMC)
-bank that manages two DIMMs.
+FWIW, if I disable KFENCE, then it boots just fine with gcc-11. Or if I
+use gcc 13 or 14 it works just fine regardless of whether KFENCE is set
+or not.
 
-Since MCA_CONFIG[9] is instrumental in decoding FRU Text, it has to be
-exported through the mce_record tracepoint so that userspace tools like
-the rasdaemon can determine if FRU Text has been reported through the
-MCA_SYND1 and MCA_SYND2 registers and output it.
-
-[Yazen: Add Avadhut as co-developer for wrapper changes.]
-
-Co-developed-by: Avadhut Naik <avadhut.naik@amd.com>
-Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
----
-Changes in v2:
-[1] https://lore.kernel.org/linux-edac/20240521125434.1555845-1-yazen.ghannam@amd.com/
-[2] https://lore.kernel.org/linux-edac/20240523155641.2805411-1-yazen.ghannam@amd.com/
-
-1. Drop dependencies on sets [1] and [2] above and rebase on top of
-tip/master.
-
-Changes in v3:
-1. Modify commit message per feedback provided.
-2. Remove call to memset() for the string frutext. Instead, just ensure
-that it is NULL terminated.
-2. Fix SoB chain to properly reflect the patch path.
----
- arch/x86/include/asm/mce.h     |  2 ++
- arch/x86/kernel/cpu/mce/amd.c  |  1 +
- arch/x86/kernel/cpu/mce/apei.c |  2 ++
- arch/x86/kernel/cpu/mce/core.c |  3 +++
- drivers/edac/mce_amd.c         | 21 ++++++++++++++-------
- 5 files changed, 22 insertions(+), 7 deletions(-)
-
-diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
-index a5be7463c78a..377a5469ed7e 100644
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -61,6 +61,7 @@
-  *  - TCC bit is present in MCx_STATUS.
-  */
- #define MCI_CONFIG_MCAX		0x1
-+#define MCI_CONFIG_FRUTEXT	BIT_ULL(9)
- #define MCI_IPID_MCATYPE	0xFFFF0000
- #define MCI_IPID_HWID		0xFFF
- 
-@@ -213,6 +214,7 @@ struct mce_hw_err {
- 		struct {
- 			u64 synd1;		/* MCA_SYND1 MSR */
- 			u64 synd2;		/* MCA_SYND2 MSR */
-+			u64 config;		/* MCA_CONFIG MSR */
- 		} amd;
- 	} vendor;
- };
-diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-index a2a5fb940bb6..00b6fa987094 100644
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -798,6 +798,7 @@ static void __log_error(unsigned int bank, u64 status, u64 addr, u64 misc)
- 
- 	if (mce_flags.smca) {
- 		rdmsrl(MSR_AMD64_SMCA_MCx_IPID(bank), m->ipid);
-+		rdmsrl(MSR_AMD64_SMCA_MCx_CONFIG(bank), err.vendor.amd.config);
- 
- 		if (m->status & MCI_STATUS_SYNDV) {
- 			rdmsrl(MSR_AMD64_SMCA_MCx_SYND(bank), m->synd);
-diff --git a/arch/x86/kernel/cpu/mce/apei.c b/arch/x86/kernel/cpu/mce/apei.c
-index 5949fc103be4..db2677f3023a 100644
---- a/arch/x86/kernel/cpu/mce/apei.c
-+++ b/arch/x86/kernel/cpu/mce/apei.c
-@@ -156,6 +156,8 @@ int apei_smca_report_x86_error(struct cper_ia_proc_ctx *ctx_info, u64 lapic_id)
- 		fallthrough;
- 	/* MCA_CONFIG */
- 	case 4:
-+		err.vendor.amd.config = *(i_mce + 3);
-+		fallthrough;
- 	/* MCA_MISC0 */
- 	case 3:
- 		m->misc = *(i_mce + 2);
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index c8089d7a8e9b..054188aac2ee 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -195,6 +195,8 @@ static void __print_mce(struct mce_hw_err *err)
- 			pr_cont("SYND2 %llx ", err->vendor.amd.synd2);
- 		if (m->ipid)
- 			pr_cont("IPID %llx ", m->ipid);
-+		if (err->vendor.amd.config)
-+			pr_cont("CONFIG %llx ", err->vendor.amd.config);
- 	}
- 
- 	pr_cont("\n");
-@@ -667,6 +669,7 @@ static noinstr void mce_read_aux(struct mce_hw_err *err, int i)
- 
- 	if (mce_flags.smca) {
- 		m->ipid = mce_rdmsrl(MSR_AMD64_SMCA_MCx_IPID(i));
-+		err->vendor.amd.config = mce_rdmsrl(MSR_AMD64_SMCA_MCx_CONFIG(i));
- 
- 		if (m->status & MCI_STATUS_SYNDV) {
- 			m->synd = mce_rdmsrl(MSR_AMD64_SMCA_MCx_SYND(i));
-diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
-index aea68999c849..f7f7ea0a5292 100644
---- a/drivers/edac/mce_amd.c
-+++ b/drivers/edac/mce_amd.c
-@@ -795,6 +795,7 @@ amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
- 	struct mce_hw_err *err = (struct mce_hw_err *)data;
- 	struct mce *m = &err->m;
- 	unsigned int fam = x86_family(m->cpuid);
-+	u64 mca_config = err->vendor.amd.config;
- 	int ecc;
- 
- 	if (m->kflags & MCE_HANDLED_CEC)
-@@ -814,11 +815,7 @@ amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
- 		((m->status & MCI_STATUS_PCC)	? "PCC"	  : "-"));
- 
- 	if (boot_cpu_has(X86_FEATURE_SMCA)) {
--		u32 low, high;
--		u32 addr = MSR_AMD64_SMCA_MCx_CONFIG(m->bank);
--
--		if (!rdmsr_safe(addr, &low, &high) &&
--		    (low & MCI_CONFIG_MCAX))
-+		if (mca_config & MCI_CONFIG_MCAX)
- 			pr_cont("|%s", ((m->status & MCI_STATUS_TCC) ? "TCC" : "-"));
- 
- 		pr_cont("|%s", ((m->status & MCI_STATUS_SYNDV) ? "SyndV" : "-"));
-@@ -853,8 +850,18 @@ amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
- 
- 		if (m->status & MCI_STATUS_SYNDV) {
- 			pr_cont(", Syndrome: 0x%016llx\n", m->synd);
--			pr_emerg(HW_ERR "Syndrome1: 0x%016llx, Syndrome2: 0x%016llx",
--				 err->vendor.amd.synd1, err->vendor.amd.synd2);
-+			if (mca_config & MCI_CONFIG_FRUTEXT) {
-+				char frutext[17];
-+				frutext[16] = '\0';
-+
-+				memcpy(&frutext[0], &err->vendor.amd.synd1, 8);
-+				memcpy(&frutext[8], &err->vendor.amd.synd2, 8);
-+
-+				pr_emerg(HW_ERR "FRU Text: %s", frutext);
-+			} else {
-+				pr_emerg(HW_ERR "Syndrome1: 0x%016llx, Syndrome2: 0x%016llx",
-+					  err->vendor.amd.synd1, err->vendor.amd.synd2);
-+			}
- 		}
- 
- 		pr_cont("\n");
 -- 
-2.34.1
+Jens Axboe
 
 
