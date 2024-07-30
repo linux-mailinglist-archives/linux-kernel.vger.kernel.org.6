@@ -1,397 +1,117 @@
-Return-Path: <linux-kernel+bounces-267895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D169419D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B37189419DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 962B01C210E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:36:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E279D1C22DD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F6D18800D;
-	Tue, 30 Jul 2024 16:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD366189538;
+	Tue, 30 Jul 2024 16:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BLncoXjd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+RR24Tj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874F91A6192;
-	Tue, 30 Jul 2024 16:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284131A6192;
+	Tue, 30 Jul 2024 16:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722357412; cv=none; b=VquDxcVGUhiXw849mQFzatcrWH40lfPqwlCy7/LPtFJboTxWDhwfyjGGg+/be13ks487tZEs7nF6GCj2cY4psTq2Lho5VL2mwYus44QmJBRJ9VEg0QjPFpDLIWtCCJAGcS/E+HfNhVnweP2uWJeOwXsM3ymHchRoERFdDUQ9Mag=
+	t=1722357432; cv=none; b=H+Huf9nJd/8WZx6ZEN0XADZLFN1/ex/tTLiujWYSBa3D8i0DQ/tRgtlGt5SkeixRwuaEuqIIsjTrgFM8zgIMf0HK1OJCwraTaiCh04t2LQ+E9flUXxZAE2/UNBMzI/T8ak9qwuIlnmUpdSuKNa3X4y8h7bs3u3n0+qC0kG5zFZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722357412; c=relaxed/simple;
-	bh=nEQ6g8TpZc05DT9oydxD8xTF1FV2/Sefc8EpeaQWliY=;
+	s=arc-20240116; t=1722357432; c=relaxed/simple;
+	bh=bxVr8C3E506uZB5bmiS2osb5teqHHgbwQEADek6Rytc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fDSLOByQHSY0u3qVXSu1t/vR6gRPmDBIGIG97fj8rslA1f8TtVy+2iy0AfkMMZf2DeXOl6cLhaEX26satDDzBqPczy3IsGWJ30L0m3h9DhsNyb4AQkNvdok/gbjhh111pcb4eXkGl6VuKAX8cDva3LXvtptc4IxsA3IJ8B9f250=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BLncoXjd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C06BAC4AF0A;
-	Tue, 30 Jul 2024 16:36:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=H2hd3F+wgqxbdZU2aakk/uKM/xa5EC6N8K6hphfzZN2qEurtN2v6kq4+7/q/xpoWtAeHRFZqekradRk4cyWX/7P8bKKc6e9R1hPVU+EHwBDQcgkgOTfsbb6bbypGw8Ghe5BB9DmU56JI2AuhHHH/c5ja9+FC/W2c6wZ8TUYDqPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B+RR24Tj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E281EC32782;
+	Tue, 30 Jul 2024 16:37:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722357412;
-	bh=nEQ6g8TpZc05DT9oydxD8xTF1FV2/Sefc8EpeaQWliY=;
+	s=k20201202; t=1722357432;
+	bh=bxVr8C3E506uZB5bmiS2osb5teqHHgbwQEADek6Rytc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BLncoXjdUTQvcC1Q6npjh39K4rPs9J8yue/MnwXdmdpTQWgzYYUtG33uPqHnFh8wv
-	 K9orkElGQWnACWcw/SONV3j+hBnpHU5fTk+6PCYr9rcxWNy/jJ9ZGa8/7F/qy8HEEV
-	 kir/3sYQRi+T9bSuzFJvcUSKfuk1lLvZsJHadub1LG1DlTiLH44GI7aODHHjvCiIjb
-	 LSUQNtuhpDNzVYF+xyVTmUZctNBBZvcudFMrKqCM3hTIVhL295kwU745yuMWOK+hUH
-	 ppJ4U4PCrpIo5m3TQCxB7iL7EOxULZhp8LPE3gOM6WsnHZsG896Q7L8HiK6Qt4S1pD
-	 9pX0nuj4OCBSw==
-Date: Tue, 30 Jul 2024 09:36:49 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>, Leo Yan <leo.yan@linux.dev>,
-	Changbin Du <changbin.du@huawei.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] perf cap: Tidy up and improve capability testing
-Message-ID: <ZqkWoQEyJcU5xBZG@google.com>
-References: <20240729181931.2870851-1-irogers@google.com>
+	b=B+RR24TjS9AtJPeSYPZ7XMvdocqiT20L19VuYE1im6SipXXnAMTjpgyWBwtnSdeAl
+	 pl1yWdD3uoSXbDLFwQZSUvW64duNcEf+S7c8I5/BoyyosARET1OcXy4gL7W7oD3GWC
+	 w+8/TVNGxUl7f3OG+/duaHiz23SBUjeNNDiB/5xK14BD45u8FOHxOv0/IDVys5U9hc
+	 QbYWQaYBXOfzXX+dp+zmxiKHU6jzoUvsTEZlcXKLcDWdvnDyZaMNu+B+WDWZmTw64P
+	 H3Lp4cIX4hisEH+EEZT46I7k5pvTfFBH9+Xeb9rLFuNZhkmMbxs4vhbk2hpnVfbGSs
+	 z8uCZrxep+eiw==
+Date: Tue, 30 Jul 2024 17:37:07 +0100
+From: Simon Horman <horms@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH iwl-net 1/3] idpf: fix memory leaks and crashes while
+ performing a soft reset
+Message-ID: <20240730163707.GB1967603@kernel.org>
+References: <20240724134024.2182959-1-aleksander.lobakin@intel.com>
+ <20240724134024.2182959-2-aleksander.lobakin@intel.com>
+ <20240726160954.GO97837@kernel.org>
+ <870cd73e-0f87-41eb-95d1-c9fe27ed1230@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240729181931.2870851-1-irogers@google.com>
+In-Reply-To: <870cd73e-0f87-41eb-95d1-c9fe27ed1230@intel.com>
 
-On Mon, Jul 29, 2024 at 11:19:31AM -0700, Ian Rogers wrote:
-> Remove dependence on libcap. libcap is only used to query whether a
-> capability is supported, which is just 1 capget system call.
+On Mon, Jul 29, 2024 at 10:54:50AM +0200, Alexander Lobakin wrote:
+> From: Simon Horman <horms@kernel.org>
+> Date: Fri, 26 Jul 2024 17:09:54 +0100
 > 
-> If the capget system call fails, fall back on root permission
-> checking. Previously if libcap fails then the permission is assumed
-> not present which may be pessimistic/wrong.
+> > On Wed, Jul 24, 2024 at 03:40:22PM +0200, Alexander Lobakin wrote:
+> >> The second tagged commit introduced a UAF, as it removed restoring
+> >> q_vector->vport pointers after reinitializating the structures.
+> >> This is due to that all queue allocation functions are performed here
+> >> with the new temporary vport structure and those functions rewrite
+> >> the backpointers to the vport. Then, this new struct is freed and
+> >> the pointers start leading to nowhere.
 > 
-> Add a used_root out argument to perf_cap__capable to say whether the
-> fall back root check was used. This allows the correct error message,
-> "root" vs "users with the CAP_PERFMON or CAP_SYS_ADMIN capability", to
-> be selected.
+> [...]
 > 
-> Tidy uses of perf_cap__capable so that tests aren't repeated if capget
-> isn't supported, to reduce calls or refactor similar to:
-> https://lore.kernel.org/lkml/20240729004127.238611-3-namhyung@kernel.org/
-
-I'm not familiar with the capability so it's hard to review the code but
-it'd be better to split the code for perf_cap__capable() and its usage.
-
-> ---
-> v2: fix syscall number and '>' should have been '>='
+> >>  err_reset:
+> >> -	idpf_vport_queues_rel(new_vport);
+> >> +	idpf_send_add_queues_msg(vport, vport->num_txq, vport->num_complq,
+> >> +				 vport->num_rxq, vport->num_bufq);
+> >> +
+> >> +err_open:
+> >> +	if (current_state == __IDPF_VPORT_UP)
+> >> +		idpf_vport_open(vport);
+> > 
+> > Hi Alexander,
+> > 
+> > Can the system end up in an odd state if this call to idpf_vport_open(), or
+> > the one above, fails. Likewise if the above call to
+> > idpf_send_add_queues_msg() fails.
 > 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/Makefile.config  | 11 -------
->  tools/perf/builtin-ftrace.c | 44 ++++++++++++--------------
->  tools/perf/util/Build       |  2 +-
->  tools/perf/util/cap.c       | 63 ++++++++++++++++++++++++++-----------
->  tools/perf/util/cap.h       | 23 ++------------
->  tools/perf/util/symbol.c    |  8 ++---
->  tools/perf/util/util.c      | 12 +++++--
->  7 files changed, 81 insertions(+), 82 deletions(-)
-> 
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index a4829b6532d8..a9517272f80c 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -1018,17 +1018,6 @@ ifndef NO_LIBZSTD
->    endif
->  endif
->  
-> -ifndef NO_LIBCAP
-> -  ifeq ($(feature-libcap), 1)
-> -    CFLAGS += -DHAVE_LIBCAP_SUPPORT
-> -    EXTLIBS += -lcap
-> -    $(call detected,CONFIG_LIBCAP)
-> -  else
-> -    $(warning No libcap found, disables capability support, please install libcap-devel/libcap-dev)
-> -    NO_LIBCAP := 1
-> -  endif
-> -endif
-> -
->  ifndef NO_BACKTRACE
->    ifeq ($(feature-backtrace), 1)
->      CFLAGS += -DHAVE_BACKTRACE_SUPPORT
-> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
-> index eb30c8eca488..435208288d24 100644
-> --- a/tools/perf/builtin-ftrace.c
-> +++ b/tools/perf/builtin-ftrace.c
-> @@ -560,6 +560,23 @@ static void select_tracer(struct perf_ftrace *ftrace)
->  	pr_debug("%s tracer is used\n", ftrace->tracer);
->  }
->  
-> +static bool check_ftrace_capable(void)
-> +{
-> +	bool used_root;
-> +
-> +	if (perf_cap__capable(CAP_PERFMON, &used_root))
-> +		return true;
-> +
-> +	if (!used_root && perf_cap__capable(CAP_SYS_ADMIN, &used_root))
-> +		return true;
-> +
-> +	pr_err("ftrace only works for %s!\n",
-> +		used_root ? "root"
-> +			  : "users with the CAP_PERFMON or CAP_SYS_ADMIN capability"
-> +		);
-> +	return -1;
-> +}
-> +
->  static int __cmd_ftrace(struct perf_ftrace *ftrace)
->  {
->  	char *trace_file;
-> @@ -569,18 +586,6 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace)
->  		.events = POLLIN,
->  	};
->  
-> -	if (!(perf_cap__capable(CAP_PERFMON) ||
-> -	      perf_cap__capable(CAP_SYS_ADMIN))) {
-> -		pr_err("ftrace only works for %s!\n",
-> -#ifdef HAVE_LIBCAP_SUPPORT
-> -		"users with the CAP_PERFMON or CAP_SYS_ADMIN capability"
-> -#else
-> -		"root"
-> -#endif
-> -		);
-> -		return -1;
-> -	}
-> -
->  	select_tracer(ftrace);
->  
->  	if (reset_tracing_files(ftrace) < 0) {
-> @@ -885,18 +890,6 @@ static int __cmd_latency(struct perf_ftrace *ftrace)
->  	};
->  	int buckets[NUM_BUCKET] = { };
->  
-> -	if (!(perf_cap__capable(CAP_PERFMON) ||
-> -	      perf_cap__capable(CAP_SYS_ADMIN))) {
-> -		pr_err("ftrace only works for %s!\n",
-> -#ifdef HAVE_LIBCAP_SUPPORT
-> -		"users with the CAP_PERFMON or CAP_SYS_ADMIN capability"
-> -#else
-> -		"root"
-> -#endif
-> -		);
-> -		return -1;
-> -	}
-> -
->  	trace_fd = prepare_func_latency(ftrace);
->  	if (trace_fd < 0)
->  		goto out;
-> @@ -1197,6 +1190,9 @@ int cmd_ftrace(int argc, const char **argv)
->  	INIT_LIST_HEAD(&ftrace.graph_funcs);
->  	INIT_LIST_HEAD(&ftrace.nograph_funcs);
->  
-> +	if (!check_ftrace_capable())
-> +		return -1;
-> +
->  	signal(SIGINT, sig_handler);
->  	signal(SIGUSR1, sig_handler);
->  	signal(SIGCHLD, sig_handler);
-> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-> index 0f18fe81ef0b..91ce0ab4defc 100644
-> --- a/tools/perf/util/Build
-> +++ b/tools/perf/util/Build
-> @@ -220,7 +220,7 @@ perf-util-$(CONFIG_ZLIB) += zlib.o
->  perf-util-$(CONFIG_LZMA) += lzma.o
->  perf-util-$(CONFIG_ZSTD) += zstd.o
->  
-> -perf-util-$(CONFIG_LIBCAP) += cap.o
-> +perf-util-y += cap.o
->  
->  perf-util-$(CONFIG_CXX_DEMANGLE) += demangle-cxx.o
->  perf-util-y += demangle-ocaml.o
-> diff --git a/tools/perf/util/cap.c b/tools/perf/util/cap.c
-> index c3ba841bbf37..7574a67651bc 100644
-> --- a/tools/perf/util/cap.c
-> +++ b/tools/perf/util/cap.c
-> @@ -3,27 +3,52 @@
->   * Capability utilities
->   */
->  
-> -#ifdef HAVE_LIBCAP_SUPPORT
-> -
->  #include "cap.h"
-> -#include <stdbool.h>
-> -#include <sys/capability.h>
-> -
-> -bool perf_cap__capable(cap_value_t cap)
-> -{
-> -	cap_flag_value_t val;
-> -	cap_t caps = cap_get_proc();
-> +#include "debug.h"
-> +#include <errno.h>
-> +#include <string.h>
-> +#include <unistd.h>
-> +#include <linux/capability.h>
-> +#include <sys/syscall.h>
->  
-> -	if (!caps)
-> -		return false;
-> +#ifndef SYS_capget
-> +#define SYS_capget 90
-> +#endif
->  
-> -	if (cap_get_flag(caps, cap, CAP_EFFECTIVE, &val) != 0)
-> -		val = CAP_CLEAR;
-> +#define MAX_LINUX_CAPABILITY_U32S _LINUX_CAPABILITY_U32S_3
->  
-> -	if (cap_free(caps) != 0)
-> -		return false;
-> -
-> -	return val == CAP_SET;
-> +bool perf_cap__capable(int cap, bool *used_root)
-> +{
-> +	struct __user_cap_header_struct header = {
-> +		.version = _LINUX_CAPABILITY_VERSION_3,
-> +		.pid = getpid(),
-> +	};
-> +	struct __user_cap_data_struct data[MAX_LINUX_CAPABILITY_U32S];
-> +	__u32 cap_val;
-> +
-> +	*used_root = false;
-> +	while (syscall(SYS_capget, &header, &data[0]) == -1) {
-> +		/* Retry, first attempt has set the header.version correctly. */
-> +		if (errno == EINVAL && header.version != _LINUX_CAPABILITY_VERSION_3 &&
-> +		    header.version == _LINUX_CAPABILITY_VERSION_1)
+> Adding the queues with the parameters that were before changing them
+> almost can't fail. But if any of these two fails, it really will be in
+> an odd state...
 
-It seems you can just check it with _VERSION1.
+Thanks for the clarification, this is my concern.
 
-But I'm not sure about what this code does.  Who set the version
-correctly?  Is there any chance for an infinite loop?
+> Perhaps we need to do a more powerful reset then? Can we somehow tell
+> the kernel that in fact our iface is down, so that the user could try
+> to enable it manually once again?
+> Anyway, feels like a separate series or patch to -next, what do you think?
 
-Thanks,
-Namhyung
+Yes, sure. I agree that this patch improves things, and more extreme
+corner cases can be addressed separately.
 
-> +			continue;
-> +
-> +		pr_debug2("capget syscall failed (%s - %d) fall back on root check\n",
-> +			  strerror(errno), errno);
-> +		*used_root = true;
-> +		return geteuid() == 0;
-> +	}
-> +
-> +	/* Extract the relevant capability bit. */
-> +	if (cap >= 32) {
-> +		if (header.version == _LINUX_CAPABILITY_VERSION_3) {
-> +			cap_val = data[1].effective;
-> +		} else {
-> +			/* Capability beyond 32 is requested but only 32 are supported. */
-> +			return false;
-> +		}
-> +	} else {
-> +		cap_val = data[0].effective;
-> +	}
-> +	return (cap_val & (1 << (cap & 0x1f))) != 0;
->  }
-> -
-> -#endif  /* HAVE_LIBCAP_SUPPORT */
-> diff --git a/tools/perf/util/cap.h b/tools/perf/util/cap.h
-> index ae52878c0b2e..0c6a1ff55f07 100644
-> --- a/tools/perf/util/cap.h
-> +++ b/tools/perf/util/cap.h
-> @@ -3,26 +3,6 @@
->  #define __PERF_CAP_H
->  
->  #include <stdbool.h>
-> -#include <linux/capability.h>
-> -#include <linux/compiler.h>
-> -
-> -#ifdef HAVE_LIBCAP_SUPPORT
-> -
-> -#include <sys/capability.h>
-> -
-> -bool perf_cap__capable(cap_value_t cap);
-> -
-> -#else
-> -
-> -#include <unistd.h>
-> -#include <sys/types.h>
-> -
-> -static inline bool perf_cap__capable(int cap __maybe_unused)
-> -{
-> -	return geteuid() == 0;
-> -}
-> -
-> -#endif /* HAVE_LIBCAP_SUPPORT */
->  
->  /* For older systems */
->  #ifndef CAP_SYSLOG
-> @@ -33,4 +13,7 @@ static inline bool perf_cap__capable(int cap __maybe_unused)
->  #define CAP_PERFMON	38
->  #endif
->  
-> +/* Query if a capability is supported, used_root is set if the fallback root check was used. */
-> +bool perf_cap__capable(int cap, bool *used_root);
-> +
->  #endif /* __PERF_CAP_H */
-> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-> index 19eb623e0826..a18927d792af 100644
-> --- a/tools/perf/util/symbol.c
-> +++ b/tools/perf/util/symbol.c
-> @@ -2425,14 +2425,14 @@ static bool symbol__read_kptr_restrict(void)
->  {
->  	bool value = false;
->  	FILE *fp = fopen("/proc/sys/kernel/kptr_restrict", "r");
-> +	bool used_root;
-> +	bool cap_syslog = perf_cap__capable(CAP_SYSLOG, &used_root);
->  
->  	if (fp != NULL) {
->  		char line[8];
->  
->  		if (fgets(line, sizeof(line), fp) != NULL)
-> -			value = perf_cap__capable(CAP_SYSLOG) ?
-> -					(atoi(line) >= 2) :
-> -					(atoi(line) != 0);
-> +			value = cap_syslog ? (atoi(line) >= 2) : (atoi(line) != 0);
->  
->  		fclose(fp);
->  	}
-> @@ -2440,7 +2440,7 @@ static bool symbol__read_kptr_restrict(void)
->  	/* Per kernel/kallsyms.c:
->  	 * we also restrict when perf_event_paranoid > 1 w/o CAP_SYSLOG
->  	 */
-> -	if (perf_event_paranoid() > 1 && !perf_cap__capable(CAP_SYSLOG))
-> +	if (perf_event_paranoid() > 1 && !cap_syslog)
->  		value = true;
->  
->  	return value;
-> diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-> index 4f561e5e4162..9d55a13787ce 100644
-> --- a/tools/perf/util/util.c
-> +++ b/tools/perf/util/util.c
-> @@ -325,9 +325,15 @@ int perf_event_paranoid(void)
->  
->  bool perf_event_paranoid_check(int max_level)
->  {
-> -	return perf_cap__capable(CAP_SYS_ADMIN) ||
-> -			perf_cap__capable(CAP_PERFMON) ||
-> -			perf_event_paranoid() <= max_level;
-> +	bool used_root;
-> +
-> +	if (perf_cap__capable(CAP_SYS_ADMIN, &used_root))
-> +		return true;
-> +
-> +	if (!used_root && perf_cap__capable(CAP_PERFMON, &used_root))
-> +		return true;
-> +
-> +	return perf_event_paranoid() <= max_level;
->  }
->  
->  static int
-> -- 
-> 2.46.0.rc1.232.g9752f9e123-goog
-> 
+With the above in mind, I'm happy with this patch.
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
 
