@@ -1,101 +1,339 @@
-Return-Path: <linux-kernel+bounces-266932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 763E39409F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:33:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0A4A9409FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31B32285152
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:33:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F27841C22E47
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040EB19004B;
-	Tue, 30 Jul 2024 07:33:09 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309911667ED;
+	Tue, 30 Jul 2024 07:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WgN5qOBE"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6D213B780
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F9513B780
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722324788; cv=none; b=R+vn0RK8/cjjYbtk1uS6z7fKB90Wcq2qnbhQGRtxb/fspzGtjKU4qHdXHHAr/zX9YASFxJ8vfuPggwQolSramV2UYX1zk+KN6lB69gATRIT1RptuF1bpgN2nahW1hSH+nOZkZxko2i7nrN5uuQt5/px2HaT8fSjzudHvDHL/7Cs=
+	t=1722324870; cv=none; b=Y918wsqWi+wBT502Jdim4+5yXG0kzCOy5fkBJBHVOiZ5RZL8ipUEoD0OkXijcS+rTmyQoeYN8qEouGx3dXbaMRF2c21F+rmJQct0/pkrIyt+VHremGVM2dKhBQywX41mZh+/SuoANFx9oMFyW4fk6x/z6X4BGzX17FEAAyPp2J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722324788; c=relaxed/simple;
-	bh=bZmNkgXEILZ2YIp65MgOXVKj1+cOXwU33ukgOud5Lts=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LZLsqO/fLZ/+lIsoVwpSoHk4C0nSy/kWSOFgVID7JoqD0bCKE9ueAemTL41DvcpNHAAswqGbH21xZLpt85LSKMSRROSM/ssBohqRSN7nER71dS/nUiUJbpMJJP5UChxQE5P3XDS2ltpNTbbVB1gadwH71+h5ufaIrXtfTSTjoPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e86192c.versanet.de ([94.134.25.44] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sYhLt-0004sW-UC; Tue, 30 Jul 2024 09:32:58 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-kernel@vger.kernel.org,
-	ukleinek@debian.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 00/14] Expand available features on Qnap TS433
-Date: Tue, 30 Jul 2024 09:32:56 +0200
-Message-Id: <172232476458.2326272.436459219153385141.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240723195538.1133436-1-heiko@sntech.de>
-References: <20240723195538.1133436-1-heiko@sntech.de>
+	s=arc-20240116; t=1722324870; c=relaxed/simple;
+	bh=/yanJWci5adiH+b5cmxFSNuwKqSYqIJG9yYRCOApKfA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZRtly2QbDL7vea51A04nsoAnkN8bySWutYIqWwMujt578H33Z1DJErm/O2i6qbHwqzNR8V/0yiN8QCAeqNALFXM3DTxKneTqXGVcEdRVykwMptsgyhc0LBHRqg/V3gpu5q4QMhxf0LEMAPT4goIvJ1UwsMLknfd9c4Ou37tl6nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WgN5qOBE; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a2ffc34677so6577758a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 00:34:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722324865; x=1722929665; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KnlNZBUKFWWuLP1yHz03yPRGsdCvNDqwyKE9RjIwHOI=;
+        b=WgN5qOBEL4k3N+CPACT+VJEt9qFSo1g9gHlx5zSEby1hEtkoF6sW+5iCOe3asQpmZ/
+         9HMAG3K7IY8jZUCpCEkxCVt2ejOW2w+iWakUPHPzYRKm/ynWJ4DGYvIkalz9oB3SqkkL
+         Pq6x8rG1OzsnHmmnjPjixNE8Fsnl+cACaWZ35Ra/Ca0+ygOKxpl1ZdFKHDqnBxcgpHUm
+         32Di67P2nEDjmsADNzbzuQ9rTDqwPkP2QbFUvK4ToiNCp+vbJME4uQOJVQlOc6QPkNLD
+         o+WgKCVbPQnB1Oxe68lZbhgcCMjVdqyB/zVWUanYtJ6U4Rim/HcSMQfrLH6TsSGPx1ik
+         Sy/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722324865; x=1722929665;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KnlNZBUKFWWuLP1yHz03yPRGsdCvNDqwyKE9RjIwHOI=;
+        b=CxZxVy1buvDT+ysDGoiM2Ub/ONkRhb/4McVt1/fdff2OkMvOxxII/clhAMoHmZd2o0
+         75RXAcn+NjEkL7YC2yNP17airR9i8ysfBaVYRzYn9qQN8bPKPKVXRmQvmhZmLF4SMQ3J
+         exFT3idEJucDQDAGRS9tBdiCWE8RrlMHiAbRE6VtpMxJ21B7W3W5WK95oxbhIRXq6YML
+         EQyWzTAoB0puYyYiQC7eRQf2pAIyc+Cew0vXoKnWT1IsSDwFwSVhZB+I/d/uPCE+WmZN
+         IcnisvwSnFxgRVHSSt4YKTPWHAynqT9pMB+mu6Vv6TuqfiwQjAbS/qVRnd0ZDxL2toxH
+         EE4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWiGVi9ihaZSxx9GZhDSee+a/u93jemm1HPHJnyaD3fXYlgA1LyP6w4TctYre0OzLRx4vT99LL9RaP5r41mw32EqKAZnfRGCidTrGRK
+X-Gm-Message-State: AOJu0YyxUCizcycBwKoFwocJbmFIlUAEzzr2VdwUbXlB8tlMz0H9XlNo
+	Fl1+wF+K9z/7han3o1y7rTdw99vjqZhKeUvKzFTXBsGh39J21BhBQr3PHDTfaS6TlH/aU2vKN1w
+	eum2RFazw/syfR1JOSpRHaY+q0L5hYLq3r2UfRQ==
+X-Google-Smtp-Source: AGHT+IHNTjLxPRsYOaCW7sQ2ielVuARpjdVjLenWrAEef5XGmG/sgtaM4rKmC2eNcZJYBB+jqTnfLxX9eQ/P42IO8lE=
+X-Received: by 2002:a17:907:7244:b0:a7a:a892:8e07 with SMTP id
+ a640c23a62f3a-a7d3fff5621mr781284966b.31.1722324865298; Tue, 30 Jul 2024
+ 00:34:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20240726-ad7380-add-single-ended-chips-v1-0-2d628b60ccd1@baylibre.com>
+ <20240726-ad7380-add-single-ended-chips-v1-4-2d628b60ccd1@baylibre.com> <20240728173553.2d6ac4d0@jic23-huawei>
+In-Reply-To: <20240728173553.2d6ac4d0@jic23-huawei>
+From: Julien Stephan <jstephan@baylibre.com>
+Date: Tue, 30 Jul 2024 09:34:13 +0200
+Message-ID: <CAEHHSvbDSet2pFqc6TPCioq7ShVwXQfhxYSkgDDy3a+55X0AJg@mail.gmail.com>
+Subject: Re: [PATCH 4/5] ad7380: enable sequencer for single-ended parts
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Michael Hennerich <michael.hennerich@analog.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 23 Jul 2024 21:55:24 +0200, Heiko Stuebner wrote:
-> Thanks to the nicely supported rk3568, the hardest part for adding things,
-> is to pull things from the vendor-kernel and translating them to mainline
-> standards.
-> 
-> This series allows the TS433 to use all 4 bays [0], wiggle some LEDs and
-> access devices connected to all 3 usb ports.
-> 
-> [...]
+Le dim. 28 juil. 2024 =C3=A0 18:36, Jonathan Cameron <jic23@kernel.org> a =
+=C3=A9crit :
+>
+> On Fri, 26 Jul 2024 17:20:09 +0200
+> Julien Stephan <jstephan@baylibre.com> wrote:
+>
+> > ad7386/7/8(-4) single-ended parts have a 2:1 mux in front of each ADC.
+> >
+> > From an IIO point of view, all inputs are exported, i.e ad7386/7/8
+> > export 4 channels and ad7386-4/7-4/8-4 export 8 channels. First inputs
+> > of muxes correspond to the first half of IIO channels (i.e 0-1 or 0-3)
+> > and second inputs correspond to second half (i.e 2-3 or 4-7)
+> >
+> > Currently, the driver supports only sampling first half OR second half =
+of
+> > the IIO channels. To enable sampling all channels simultaneously, these
+> > parts have an internal sequencer that automatically cycle through the
+> > mux entries.
+> >
+> > When enabled, the maximum throughput is divided by two. Moreover, the A=
+DCs
+> > need additional settling time, so we add an extra CS toggle to correctl=
+y
+> > propagate setting, and an additional spi transfer to read the second
+> > half.
+> >
+> > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> Hi Julien,
+>
+> All looks good. Main comment is a suggestion that we add a core
+> interface to get the index of the active_scan_mask if it is built
+> from available_scan_masks.  That will avoid the mask matching code
+> in here.
+>
+> Implementation for now would be a simple bit of pointer
+> arithmetic after checking available_scan_masks is set.
+>
+> Jonathan
+>
+> > ---
+> >  drivers/iio/adc/ad7380.c | 164 ++++++++++++++++++++++++++++++++++-----=
+--------
+> >  1 file changed, 121 insertions(+), 43 deletions(-)
+> >
+> > diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
+> > index 25d42fff1839..11ed010431cf 100644
+> > --- a/drivers/iio/adc/ad7380.c
+> > +++ b/drivers/iio/adc/ad7380.c
+> > @@ -33,7 +33,7 @@
+>
+> > @@ -290,16 +291,22 @@ static const unsigned long ad7380_4_channel_scan_=
+masks[] =3D {
+> >   *
+> >   * Since this is simultaneous sampling for AinX0 OR AinX1 we have two =
+separate
+> >   * scan masks.
+> > + * When sequencer mode is enabled, chip automatically cycle through
+>
+> cycles
+>
+> > + * AinX0 and AinX1 channels. From an IIO point of view, we ca enable a=
+ll
+> > + * channels, at the cost of an extra read, thus dividing the maximum r=
+ate by
+> > + * two.
+> >   */
+>
+> ...
+>
+> >        * DMA (thus cache coherency maintenance) requires the transfer b=
+uffers
+> >        * to live in their own cache lines.
+> > @@ -609,33 +619,47 @@ static int ad7380_set_ch(struct ad7380_state *st,=
+ unsigned int ch)
+> >  static void ad7380_update_xfers(struct ad7380_state *st,
+> >                               const struct iio_scan_type *scan_type)
+> >  {
+> > -     /*
+> > -      * First xfer only triggers conversion and has to be long enough =
+for
+> > -      * all conversions to complete, which can be multiple conversion =
+in the
+> > -      * case of oversampling. Technically T_CONVERT_X_NS is lower for =
+some
+> > -      * chips, but we use the maximum value for simplicity for now.
+> > -      */
+> > -     if (st->oversampling_ratio > 1)
+> > -             st->xfer[0].delay.value =3D T_CONVERT_0_NS + T_CONVERT_X_=
+NS *
+> > -                                             (st->oversampling_ratio -=
+ 1);
+> > -     else
+> > -             st->xfer[0].delay.value =3D T_CONVERT_NS;
+> > -
+> > -     st->xfer[0].delay.unit =3D SPI_DELAY_UNIT_NSECS;
+> > +     struct spi_transfer *xfer =3D st->seq ? st->seq_xfer : st->normal=
+_xfer;
+> > +     unsigned int t_convert =3D T_CONVERT_NS;
+> >
+> >       /*
+> > -      * Second xfer reads all channels. Data size depends on if resolu=
+tion
+> > -      * boost is enabled or not.
+> > +      * In the case of oversampling, conversion time is higher than in=
+ normal
+> > +      * mode. Technically T_CONVERT_X_NS is lower for some chips, but =
+we use
+> > +      * the maximum value for simplicity for now.
+> >        */
+> > -     st->xfer[1].bits_per_word =3D scan_type->realbits;
+> > -     st->xfer[1].len =3D BITS_TO_BYTES(scan_type->storagebits) *
+> > -                       st->chip_info->num_simult_channels;
+> > +     if (st->oversampling_ratio > 1)
+> > +             t_convert =3D T_CONVERT_0_NS + T_CONVERT_X_NS *
+> > +                     (st->oversampling_ratio - 1);
+> > +
+> > +     if (st->seq) {
+> > +             xfer[0].delay.value =3D xfer[1].delay.value =3D t_convert=
+;
+> > +             xfer[0].delay.unit =3D xfer[1].delay.unit =3D SPI_DELAY_U=
+NIT_NSECS;
+> > +             xfer[2].bits_per_word =3D xfer[3].bits_per_word =3D
+> > +                     scan_type->realbits;
+> > +             xfer[2].len =3D xfer[3].len =3D
+> > +                     BITS_TO_BYTES(scan_type->storagebits) *
+> > +                     st->chip_info->num_simult_channels;
+> > +             xfer[3].rx_buf =3D xfer[2].rx_buf + xfer[2].len;
+> > +             /* Additional delay required here when oversampling is en=
+abled */
+> > +             if (st->oversampling_ratio > 1)
+> > +                     xfer[2].delay.value =3D t_convert;
+> > +             else
+> > +                     xfer[2].delay.value =3D 0;
+> > +             xfer[2].delay.unit =3D SPI_DELAY_UNIT_NSECS;
+> > +     } else {
+> > +             xfer[0].delay.value =3D t_convert;
+> > +             xfer[0].delay.unit =3D SPI_DELAY_UNIT_NSECS;
+> > +             xfer[1].bits_per_word =3D scan_type->realbits;
+> > +             xfer[1].len =3D BITS_TO_BYTES(scan_type->storagebits) *
+> > +                     st->chip_info->num_simult_channels;
+> > +     }
+> >  }
+> >
+> >  static int ad7380_triggered_buffer_preenable(struct iio_dev *indio_dev=
+)
+> >  {
+> >       struct ad7380_state *st =3D iio_priv(indio_dev);
+> >       const struct iio_scan_type *scan_type;
+> > +     struct spi_message *msg =3D &st->normal_msg;
+> >
+> >       /*
+> >        * Currently, we always read all channels at the same time. The s=
+can_type
+> > @@ -646,34 +670,62 @@ static int ad7380_triggered_buffer_preenable(stru=
+ct iio_dev *indio_dev)
+> >               return PTR_ERR(scan_type);
+> >
+> >       if (st->chip_info->has_mux) {
+> > -             unsigned int num_simult_channels =3D st->chip_info->num_s=
+imult_channels;
+> > +             unsigned int num_simult_channels =3D
+> > +                     st->chip_info->num_simult_channels;
+>
+> Unrelated change. Push this back to the earlier patch (or leave it alone =
+- whether
+> it matters for readability is debatable anyway, so I think this is fine e=
+ither way).
+>
+> >               unsigned long active_scan_mask =3D *indio_dev->active_sca=
+n_mask;
+> >               unsigned int ch =3D 0;
+> >               int ret;
+> >
+> >               /*
+> >                * Depending on the requested scan_mask and current state=
+,
+> > -              * we need to change CH bit to sample correct data.
+> > +              * we need to either change CH bit, or enable sequencer m=
+ode
+> > +              * to sample correct data.
+> > +              * Sequencer mode is enabled if active mask corresponds t=
+o all
+> > +              * IIO channels enabled. Otherwise, CH bit is set.
+> >                */
+> > -             if (active_scan_mask =3D=3D GENMASK(2 * num_simult_channe=
+ls - 1,
+> > -                                             num_simult_channels))
+> > -                     ch =3D 1;
+> > +             if (active_scan_mask =3D=3D GENMASK(2 * num_simult_channe=
+ls - 1, 0)) {
+>
+> Whilst it's an implementation detail that you can (IIRC) just compare the=
+ active_scan_mask
+> address with that of your available_scan_masks array entries, maybe it's =
+worth providing
+> an interface that gets the index of that array?
+>
+> int iio_active_scan_mask_index(struct iio_dev *)
+> that returns an error if available_scan_masks isn't set.
 
-Applied, thanks!
+Hi Jonathan,
 
-[01/14] arm64: dts: rockchip: add PCIe supply regulator to Qnap-TS433
-        commit: e0ec6d48226fb3d4df18895b56f0b7a94c0fe474
-[02/14] arm64: dts: rockchip: enable second PCIe controller on the Qnap-TS433
-        commit: 0f5f87a1d602a33028522784eb005647fa1b5c11
-[03/14] arm64: dts: rockchip: enable uart0 on Qnap-TS433
-        commit: 07ef8be476bebd77cba3ca4804be03cc0dba414f
-[04/14] arm64: dts: rockchip: enable usb ports on Qnap-TS433
-        commit: d992203f57c5caad0dbd4a9c669d79b315873c81
-[05/14] arm64: dts: rockchip: add stdout path on Qnap-TS433
-        commit: e1cb5d8a92e41171bf4d5ddc459bd96372500901
-[06/14] arm64: dts: rockchip: enable sata1+2 on Qnap-TS433
-        commit: 673c1353b3d476b9c5df6b84a777ed171e5594f5
-[07/14] arm64: dts: rockchip: add board-aliases for Qnap-TS433
-        commit: dadd4256e12360d3ff1f6481b2e4697f9d890caf
-[08/14] arm64: dts: rockchip: add hdd leds to Qnap-TS433
-        commit: ea91aabf18bcad6f5eceae6848ea6570ea61f126
-[09/14] arm64: dts: rockchip: enable the tsadc on the Qnap-TS433
-        commit: 2dfdddd9d20306fd0d04b88fcbbf36d76fb67f11
-[10/14] arm64: dts: rockchip: add gpio-keys to Qnap-TS433
-        commit: 9b682d31b24f1f70b5b4d0618095d46e0722b9d8
-[11/14] arm64: dts: rockchip: define cpu-supply on the Qnap-TS433
-        commit: 99b36ba910d896bddbb9a190ca686c6d9cd0325f
-[12/14] arm64: dts: rockchip: add missing pmic information on Qnap-TS433
-        commit: ee078c7daa98353496410b715a5acbb41d7d3a90
-[13/14] arm64: dts: rockchip: enable gpu on Qnap-TS433
-        commit: 9130eb62586f4cef0557d0378fb7e78d7397ab2d
-[14/14] arm64: dts: rockchip: add 2 pmu_io_domain supplies for Qnap-TS433
-        commit: 64b7f16fb3947e5d08d9e9b860ce966250e45d52
+I'll send a v2 of this series in a couple of days, with all comments
+fixed and I'll try to implement an iio_active_scan_mask_index
+function.
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+Cheers
+Julien
+
+>
+> We know the active_scan_mask will always be selected from the available o=
+nes
+> so this interface should be fine even if we change how they are handled i=
+nternally
+> in the future.
+>
+> That would then make all these matches simpler.
+>
+> > +                     ret =3D regmap_update_bits(st->regmap,
+> > +                                              AD7380_REG_ADDR_CONFIG1,
+> > +                                              AD7380_CONFIG1_SEQ,
+> > +                                              FIELD_PREP(AD7380_CONFIG=
+1_SEQ, 1));
+> > +                     msg =3D &st->seq_msg;
+> > +                     st->seq =3D true;
+> > +             } else {
+> > +                     if (active_scan_mask =3D=3D GENMASK(2 * num_simul=
+t_channels - 1,
+> > +                                                     num_simult_channe=
+ls))
+> > +                             ch =3D 1;
+> > +
+> > +                     ret =3D ad7380_set_ch(st, ch);
+> > +             }
+> >
+> > -             ret =3D ad7380_set_ch(st, ch);
+> >               if (ret)
+> >                       return ret;
+>
+> I'd just duplicate this if (ret) check as the two calls are very differen=
+t so to
+> me this doesn't make logical sense (even if it works).
+>
+> >       }
+> >
+> >       ad7380_update_xfers(st, scan_type);
+> >
+> > -     return spi_optimize_message(st->spi, &st->msg);
+> > +     return spi_optimize_message(st->spi, msg);
+> >  }
 
