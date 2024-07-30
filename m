@@ -1,112 +1,108 @@
-Return-Path: <linux-kernel+bounces-267301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E89F940FC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:44:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD61940FC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C32828334F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:44:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26C0E2838C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F13E1AAE0F;
-	Tue, 30 Jul 2024 10:37:15 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A686D1A4F29;
+	Tue, 30 Jul 2024 10:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N9qFpIo0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC37C19EECC;
-	Tue, 30 Jul 2024 10:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9C919EED3;
+	Tue, 30 Jul 2024 10:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722335834; cv=none; b=A26V2Fb31PihcgwEU8cILLcHJeqxuDljJeLyf7y+Y8e/RBDfdWNRXiPvvQ5VQOdSIBAnrj9y4jXyDGAWBkKoCLVc2e6GrbRlIfnayWKNkh2JpV6QqGjBPEJAKXxr8lYroHrpxzBNjMQa6YN63+DRjLazrK1Zk7qmv1oc0QM6vIw=
+	t=1722335833; cv=none; b=FLJZJ+ngMITkPFQCyeqlBM9u6zv1zGlXtQeXr+rJwj9NcVCd6LvigNi4M0gvDMcpLdjx3vZCtNA6vjCip3v6euW4PhA7XhpXLtLWNlLPa/lH+vR7zdynOU5iHoUH2QDl4dyib1+d0OOxuKWgvf1ImgfuW+BaSBilQBLkmF/yUPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722335834; c=relaxed/simple;
-	bh=0SgQaEY8DZuj3TmOOql7MlYsQeToAOZWAyjpozBErJw=;
+	s=arc-20240116; t=1722335833; c=relaxed/simple;
+	bh=M4eg2RA2dVioVZclF6JHvBR8dH2//m8JYd+0R0imYZA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qeh/uImY1PHn8IDSVoRIQ136TE5jjTiJkbS5bnHH0oL75fyD1ve58d8kR8s3GfUpXfNyUKFeocDIOfsTprnram/t0Z+TFW8VFRmclilhNStmDCUrUzxhWYCePKP/ttbYZao8tey9y4Y4zZx8feEyrZZe62uylEWNuGrQv4Tu2GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e86192c.versanet.de ([94.134.25.44] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sYkDk-0007C3-Qa; Tue, 30 Jul 2024 12:36:44 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Dragan Simic <dsimic@manjaro.org>, Daniel Golle <daniel@makrotopia.org>,
- Diederik de Haas <didi.debian@cknow.org>
-Cc: Chen-Yu Tsai <wens@kernel.org>, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- Herbert Xu <herbert@gondor.apana.org.au>, Martin Kaiser <martin@kaiser.cx>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Ard Biesheuvel <ardb@kernel.org>,
- Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <ukleinek@debian.org>,
- devicetree@vger.kernel.org, linux-crypto@vger.kernel.org,
- Philipp Zabel <p.zabel@pengutronix.de>, Olivia Mackall <olivia@selenic.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Aurelien Jarno <aurelien@aurel32.net>
-Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
-Date: Tue, 30 Jul 2024 12:36:43 +0200
-Message-ID: <17577153.5WZRyvrzyv@diego>
-In-Reply-To: <6690040.iosknibmi9@bagend>
-References:
- <cover.1720969799.git.daniel@makrotopia.org>
- <ZqgjTQMgWZO2FjaC@makrotopia.org> <6690040.iosknibmi9@bagend>
+	 MIME-Version:Content-Type; b=oS4hArUrx6Prr7CfWwKMfARlYg2SgGEowgRNKc8G/IaU0+Ek/SWet4JPz1Amuc+VJ8asIALEFWKUv8+HRgypCEEYvEqySjIv4Mtc6ACfdTp+12yC4uyukGBnJ/DXpnhjbpxm/Aa64HrZUV18RdhceKCUPjTatH9jViqlNv2EBtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N9qFpIo0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FF37C4AF09;
+	Tue, 30 Jul 2024 10:37:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722335832;
+	bh=M4eg2RA2dVioVZclF6JHvBR8dH2//m8JYd+0R0imYZA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=N9qFpIo0XG2+as2sCBNP421gFXLGXitO22buNn5D+6stzkGoS9HaPxRMQqxX3xjf9
+	 5e0x5+W/0YeRenNHJORfGa8KySj2GvC6/qYC74VKf3edqHJZtBdtU5wUEgxTiZIys7
+	 dtAHSf71IblUjBJwJH68PfzO3Oy280ihPuDRIAMonzaoO+YKFYnoMFsAqUi1uDtKS/
+	 ThKrqUheO+S2RtVhc0ZR4X0gXngw7CFN4oA0Dkj1d8hCBRHiH9HWcB81smZLZRrvxd
+	 nLBYxt6mb/TF5Zv0aaFYjMjJ9kKYa+4zqrmAkyowfILhIoIbYwVRdRFZFEBp1JM1j5
+	 LqOnkS4Ymt4sw==
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Gao Xiang <xiang@kernel.org>,
+	Steve French <smfrench@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: (subset) [PATCH 00/24] netfs: Read/write improvements
+Date: Tue, 30 Jul 2024 12:36:50 +0200
+Message-ID: <20240730-kaschieren-glitten-89d803c5d4ae@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240729162002.3436763-1-dhowells@redhat.com>
+References: <20240729162002.3436763-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=961; i=brauner@kernel.org; h=from:subject:message-id; bh=M4eg2RA2dVioVZclF6JHvBR8dH2//m8JYd+0R0imYZA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaStOOQfILK00PPW9Etftt1+ufrx1Tc7OsPuXM7c9UVy9 72fTsfXtXaUsjCIcTHIiimyOLSbhMst56nYbJSpATOHlQlkCAMXpwBM5PF/RobHbwN1fQ3vrlPe zSXvY39gUXmtoiHrhCNck4/oH0uNlIph+MO777/y1U2XvSv+ZVQlPeSt+/k3J6znVvq6zOVlMw5 vUuYBAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Am Dienstag, 30. Juli 2024, 11:03:06 CEST schrieb Diederik de Haas:
-> On Tuesday, 30 July 2024 01:18:37 CEST Daniel Golle wrote:
-> > On Wed, Jul 24, 2024 at 08:07:51AM +0200, Dragan Simic wrote:
-> > > Thanks a lot for the testing.  Though, such wildly different test results
-> > > can, regrettably, lead to only one conclusion:  the HWRNG found in RK3566
-> > > is unusable. :/
+On Mon, 29 Jul 2024 17:19:29 +0100, David Howells wrote:
+> This set of patches includes one fscache fix and one cachefiles fix
 > 
-> FTR: I agree with Dragan, unfortunately.
-> 
-> > The results on RK3568 look much better and the series right now also
-> > only enabled the RNG on RK3568 systems. However, we have only seen few
-> > boards with RK3568 up to now, and I only got a couple of NanoPi R5C
-> > here to test, all with good hwrng results.
-> > 
-> > Do you think it would be agreeable to only enable the HWRNG for RK3568
-> > as suggested in this series? Or are we expecting quality to also vary
-> > as much as it (sadly) does for RK3566?
-> 
-> Unless we get *evidence* to the contrary, we should assume that the HWRNG on 
-> RK3568 is fine as the currently available test results are fine.
-> So I think enabling it only for RK3568 is the right thing to do.
-> 
-> So a 'revert' to v7 variant seems appropriate, but with the following changes:
-> - Add `status = "disabled";` property to the definition in rk356x.dtsi
-> - Add a new commit where you enable it only for rk3568 and document in the 
-> commit message why it's not enabled on rk3566 with a possible link to the v7 
-> thread for clarification on why that is
+>  (1) Fix a cookie access race in fscache.
+> [...]
 
-I was going to protest about the "disable" until reading the 2nd part :-D .
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-And yeah that makes a lot of sense, "add" it to rk356x.dtsi, as the IP is
-part of both variants, but only enable it in rk3568.dtsi because of the
-seemingly faulty implementation on the rk3566.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-> You could probably also integrate that into 1 commit, but make sure that the 
-> commit summary and description match the implementation.
-> IMO that wasn't 'technically' the case in v8 as the rng node was added to 
-> rk356x, but it was only enabled on rk3568.
-> 
-> My 0.02
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
-
-
+[01/24] fs/netfs/fscache_cookie: add missing "n_accesses" check
+        https://git.kernel.org/vfs/vfs/c/965a561e4026
 
