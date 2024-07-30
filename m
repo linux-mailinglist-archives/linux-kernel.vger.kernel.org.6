@@ -1,206 +1,448 @@
-Return-Path: <linux-kernel+bounces-267629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2EED941399
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:50:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D544B9413A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E95C1F238D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:50:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 627761F2388F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B99D1A08BC;
-	Tue, 30 Jul 2024 13:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CzfF7ntO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9NAV39oo";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sei8oBXd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dxIb1Y8J"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF841A073B;
-	Tue, 30 Jul 2024 13:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3921A08C0;
+	Tue, 30 Jul 2024 13:51:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDFD198856;
+	Tue, 30 Jul 2024 13:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722347388; cv=none; b=p2GDfT6KD+z5zsB8VAp/Xf9qpk81lM7DG/puUPFQXUsABMAv9EnHdwImE3WAs1LW7JBYewVi23mRKqB0jZPHwcHPSON6LlrEZEt1H68gPGifxPPiWh+e7Ey2XknKH+hxsXGwY5/04gs/gnZr6Ja4nVsSW955yh9sR5X4lGkUzfU=
+	t=1722347506; cv=none; b=uRO/iBMhwiAvSw6W+I9HDimdeCSUQWHMF3RkGr98KTC4+X32DddBbG3RZYr6dCKu7kI5BAsdzNmXZ0KtHsWGkq++85bFATyxoiBPGDtE16qch83kXgN/k06Ith7KFaODe7prT6M3oTmmskXQitUc1smPn9Na5ZAP8p5TZ9soNno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722347388; c=relaxed/simple;
-	bh=jU3aiZVomZnAPqUoHCHAli8BTgU6RkcwBw95QvWafrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cCTtGBSHxwh5kP3ll0bIb+oHXeG3dcjJvvnGjQGf+EK4weD0euxWqCm2d+XIN7nti25abYC+3WdZKOwELelDTr8vONH4DAZL52OGVSqFFye2VZbLAlNjfpgO0QH3jD+NGpvqkbt7o6hZwLvlGd/Itb/s1eih10DKhgjD7R5DbAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CzfF7ntO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9NAV39oo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sei8oBXd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dxIb1Y8J; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E3FFC21B2B;
-	Tue, 30 Jul 2024 13:49:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722347384; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SRUJ85wJganPzBfhSgfDqep7IoKWMa8zEd3jiw9hB6k=;
-	b=CzfF7ntOH3/Nkn63GmQnXxq6mK/m0cl6+7aWODtArZZpoLzhuvNjJ5qkzGZeinkKvmdQ0J
-	qsCYmfaKGo+Pt9LvMCZwjRL45EM/Ccoc1b4ujhY5cLK2A64nKiP3pGIK7JZq0BwJ7GOYTZ
-	jnMOC/VxFIwBs8A4sSKzwmv9wA9NPhY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722347384;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SRUJ85wJganPzBfhSgfDqep7IoKWMa8zEd3jiw9hB6k=;
-	b=9NAV39oo0fE0B2OvBmYWysJnxGmIVHdRp1He7xAyrGF4ll7kK5H9L6UGspVXOMsGudcT95
-	if0bTwhcp1OZU+Dw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=sei8oBXd;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=dxIb1Y8J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722347383; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SRUJ85wJganPzBfhSgfDqep7IoKWMa8zEd3jiw9hB6k=;
-	b=sei8oBXdF7tuQIXaYjnVHIOjjuJb8tfLXlDjA8lKDt8UTvdvSZ/qJJw6gGeeR+BxzopjR1
-	zUnKJXMaPOkajIWJxRcbJApYEHqwIU8ddaNVySjpI3wrAZy1rgyViJS/y1eMC56u9B6zvh
-	kIwuy49VQyuA9ybOWOg81TeDpPFEL/o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722347383;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SRUJ85wJganPzBfhSgfDqep7IoKWMa8zEd3jiw9hB6k=;
-	b=dxIb1Y8JexEACAvJGWbIRuUiA6HrH1GH1Kjbb4pL5TDYohvDurOYWJ3fTK+MBnQ2Xbn+/O
-	YzHBdVHaoBuIpZBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CD98313983;
-	Tue, 30 Jul 2024 13:49:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YN8rMnfvqGYSYQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 30 Jul 2024 13:49:43 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 7A6CAA099C; Tue, 30 Jul 2024 15:49:43 +0200 (CEST)
-Date: Tue, 30 Jul 2024 15:49:43 +0200
-From: Jan Kara <jack@suse.cz>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/7] jbd2: remove unneeded done_copy_out variable in
- jbd2_journal_write_metadata_buffer
-Message-ID: <20240730134943.ircjz6l5ix6zmmwe@quack3>
-References: <20240730113335.2365290-1-shikemeng@huaweicloud.com>
- <20240730113335.2365290-6-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1722347506; c=relaxed/simple;
+	bh=v84jDA2Jy0vq2wzWcyDW+Xy7r1OC4+RaSYYN0UBsC/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q3t5Z7fxELmMsbh10EA8L/QOK31T7aGN9c4yfYs3tfkoqskmWjyuUlRlio1l6d2wi4wI2CvtoveiOL/BPdX7+p5itfbLwjzlXJ1CwtVRAvPybckPX1F+jXeqAPiZlW/YTMqAScpriQN7xcS0lIi6/aGAWlVY6S6cQaWLJL16pbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB4C81007;
+	Tue, 30 Jul 2024 06:52:09 -0700 (PDT)
+Received: from [10.57.94.83] (unknown [10.57.94.83])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B50D63F766;
+	Tue, 30 Jul 2024 06:51:40 -0700 (PDT)
+Message-ID: <7203814a-1a1d-41c4-8fc5-95216e2febcd@arm.com>
+Date: Tue, 30 Jul 2024 14:51:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730113335.2365290-6-shikemeng@huaweicloud.com>
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: E3FFC21B2B
-X-Spam-Score: -3.81
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.81 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim,huaweicloud.com:email];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 03/15] arm64: Detect if in a realm and set RIPAS RAM
+Content-Language: en-GB
+To: Gavin Shan <gshan@redhat.com>, Steven Price <steven.price@arm.com>,
+ kvm@vger.kernel.org, kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240701095505.165383-1-steven.price@arm.com>
+ <20240701095505.165383-4-steven.price@arm.com>
+ <2b4f0496-99f4-4bc6-af6c-a8be8fca69a8@redhat.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <2b4f0496-99f4-4bc6-af6c-a8be8fca69a8@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue 30-07-24 19:33:33, Kemeng Shi wrote:
-> It's more intuitive to use jh_in->b_frozen_data directly instead of
-> done_copy_out variable. Simply remove unneeded done_copy_out variable
-> and use b_frozen_data instead.
+Hi Gavin
+
+Thanks for your review, comments inline.
+
+On 30/07/2024 00:37, Gavin Shan wrote:
+> On 7/1/24 7:54 PM, Steven Price wrote:
+>> From: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>
+>> Detect that the VM is a realm guest by the presence of the RSI
+>> interface.
+>>
+>> If in a realm then all memory needs to be marked as RIPAS RAM initially,
+>> the loader may or may not have done this for us. To be sure iterate over
+>> all RAM and mark it as such. Any failure is fatal as that implies the
+>> RAM regions passed to Linux are incorrect - which would mean failing
+>> later when attempting to access non-existent RAM.
+>>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Co-developed-by: Steven Price <steven.price@arm.com>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>> Changes since v3:
+>>   * Provide safe/unsafe versions for converting memory to protected,
+>>     using the safer version only for the early boot.
+>>   * Use the new psci_early_test_conduit() function to avoid calling an
+>>     SMC if EL3 is not present (or not configured to handle an SMC).
+>> Changes since v2:
+>>   * Use DECLARE_STATIC_KEY_FALSE rather than "extern struct
+>>     static_key_false".
+>>   * Rename set_memory_range() to rsi_set_memory_range().
+>>   * Downgrade some BUG()s to WARN()s and handle the condition by
+>>     propagating up the stack. Comment the remaining case that ends in a
+>>     BUG() to explain why.
+>>   * Rely on the return from rsi_request_version() rather than checking
+>>     the version the RMM claims to support.
+>>   * Rename the generic sounding arm64_setup_memory() to
+>>     arm64_rsi_setup_memory() and move the call site to setup_arch().
+>> ---
+>>   arch/arm64/include/asm/rsi.h      | 64 +++++++++++++++++++++++++
+>>   arch/arm64/include/asm/rsi_cmds.h | 22 +++++++++
+>>   arch/arm64/kernel/Makefile        |  3 +-
+>>   arch/arm64/kernel/rsi.c           | 77 +++++++++++++++++++++++++++++++
+>>   arch/arm64/kernel/setup.c         |  8 ++++
+>>   5 files changed, 173 insertions(+), 1 deletion(-)
+>>   create mode 100644 arch/arm64/include/asm/rsi.h
+>>   create mode 100644 arch/arm64/kernel/rsi.c
+>>
+>> diff --git a/arch/arm64/include/asm/rsi.h b/arch/arm64/include/asm/rsi.h
+>> new file mode 100644
+>> index 000000000000..29fdc194d27b
+>> --- /dev/null
+>> +++ b/arch/arm64/include/asm/rsi.h
+>> @@ -0,0 +1,64 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (C) 2024 ARM Ltd.
+>> + */
+>> +
+>> +#ifndef __ASM_RSI_H_
+>> +#define __ASM_RSI_H_
+>> +
+>> +#include <linux/jump_label.h>
+>> +#include <asm/rsi_cmds.h>
+>> +
+>> +DECLARE_STATIC_KEY_FALSE(rsi_present);
+>> +
+>> +void __init arm64_rsi_init(void);
+>> +void __init arm64_rsi_setup_memory(void);
+>> +static inline bool is_realm_world(void)
+>> +{
+>> +    return static_branch_unlikely(&rsi_present);
+>> +}
+>> +
+>> +static inline int rsi_set_memory_range(phys_addr_t start, phys_addr_t 
+>> end,
+>> +                       enum ripas state, unsigned long flags)
+>> +{
+>> +    unsigned long ret;
+>> +    phys_addr_t top;
+>> +
+>> +    while (start != end) {
+>> +        ret = rsi_set_addr_range_state(start, end, state, flags, &top);
+>> +        if (WARN_ON(ret || top < start || top > end))
+>> +            return -EINVAL;
+>> +        start = top;
+>> +    }
+>> +
+>> +    return 0;
+>> +}
+>> +
 > 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> @flags has been defined as int instead of unsigned long, which is 
+> inconsistent
+> to TF-RMM's definitions since it has type of 'unsigned long'.
 
-> @@ -357,17 +355,15 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  		new_folio = bh_in->b_folio;
->  		new_offset = offset_in_folio(new_folio, bh_in->b_data);
->  		mapped_data = kmap_local_folio(new_folio, new_offset);
-> -	}
-> -
-> -	/*
-> -	 * Fire data frozen trigger if data already wasn't frozen.  Do this
-> -	 * before checking for escaping, as the trigger may modify the magic
-> -	 * offset.  If a copy-out happens afterwards, it will have the correct
-> -	 * data in the buffer.
-> -	 */
-> -	if (!done_copy_out)
-> +		/*
-> +		 * Fire data frozen trigger if data already wasn't frozen. Do
-> +		 * this before checking for escaping, as the trigger may modify
-> +		 * the magic offset.  If a copy-out happens afterwards, it will
-> +		 * have the correct data in the buffer.
-> +		 */
->  		jbd2_buffer_frozen_trigger(jh_in, mapped_data,
->  					   jh_in->b_triggers);
-> +	}
+Sorry, do you mean that TF-RMM treats the "flags" as an "int" instead of
+unsigned long and we should be consistent with TF-RMM ? If so, I don't
+think that is correct. We should be compliant to the RMM spec, which
+describes "RsiRipasChangeFlags" as a 64bit value and thus must be
+'unsigned long' as we used here.
 
-I like how you've got rid of the conditional. But I'd go further and also
-move the escaping check and thus unmap & possible frozen buffer creation
-into the branch. Like:
-
-		do_escape = jbd2_data_needs_escaping(mapped_data);
-			- create this trivial helper
-		kunmap_local(mapped_data);
-		if (do_escape) {
-			handle b_frozen_data creation
-		}
-
-								Honza
-
->  
->  	/*
->  	 * Check for escaping
-> @@ -380,7 +376,7 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  	/*
->  	 * Do we need to do a data copy?
->  	 */
-> -	if (do_escape && !done_copy_out) {
-> +	if (do_escape && !jh_in->b_frozen_data) {
->  		char *tmp;
->  
->  		spin_unlock(&jh_in->b_state_lock);
-> @@ -408,7 +404,6 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  copy_done:
->  		new_folio = virt_to_folio(jh_in->b_frozen_data);
->  		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
-> -		done_copy_out = 1;
->  	}
->  
->  	/*
-> -- 
-> 2.30.0
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>> +/*
+>> + * Convert the specified range to RAM. Do not use this if you rely on 
+>> the
+>> + * contents of a page that may already be in RAM state.
+>> + */
+>> +static inline int rsi_set_memory_range_protected(phys_addr_t start,
+>> +                         phys_addr_t end)
+>> +{
+>> +    return rsi_set_memory_range(start, end, RSI_RIPAS_RAM,
+>> +                    RSI_CHANGE_DESTROYED);
+>> +}
+>> +
+>> +/*
+>> + * Convert the specified range to RAM. Do not convert any pages that 
+>> may have
+>> + * been DESTROYED, without our permission.
+>> + */
+>> +static inline int rsi_set_memory_range_protected_safe(phys_addr_t start,
+>> +                              phys_addr_t end)
+>> +{
+>> +    return rsi_set_memory_range(start, end, RSI_RIPAS_RAM,
+>> +                    RSI_NO_CHANGE_DESTROYED);
+>> +}
+>> +
+>> +static inline int rsi_set_memory_range_shared(phys_addr_t start,
+>> +                          phys_addr_t end)
+>> +{
+>> +    return rsi_set_memory_range(start, end, RSI_RIPAS_EMPTY, 0);
+>> +}
+>> +#endif
+> 
+> s/0/RSI_NO_CHANGE_DESTROYED
+
+This is not required as we do not care if the GRANULE was destroyed or
+not, since it is going to be "UNUSED" anyway in a protected way 
+(RIPAS_EMPTY). And we do not rely on the contents of the memory being
+preserved, when the page is made shared (In fact we cannot do that
+with Arm CCA).
+
+Thus we do not get any security benefits with the flag. The flag is ONLY
+useful, when the Realm does a "blanket" IPA_STATE_SET(RIPAS_RAM) for
+all of its memory area described as RAM. In this case, we want to make
+sure that the Host hasn't destroyed any DATA that was loaded (and
+measured) in the "NEW" state.
+
+e.g, Host loads Kernel at Addr X in RAM (which is transitioned to 
+RIPAS_RAM, measured in RIM by RMM) and ACTIVATEs the Realm. Host could 
+then destroy some pages of the loaded image before the Realm boots (thus
+transitioning into DESTROYED). But for the Realm, at early boot, it is
+much easier to "mark" the entire RAM region as RIPAS_RAM,
+
+
+for_each_memory_region(region) {
+	set_ipa_state_range(region->start, region->end, RIPAS_RAM, 
+RSI_NO_CHANGE_DESTROYED);
+}
+
+rather than performing:
+
+for_each_granule(g in DRAM) :
+
+switch (rsi_get_ipa_state(g)) {
+case RIPAS_EMPTY: rsi_set_ipa_state(g, RIPAS_RAM); break;
+case RIPAS_RAM: break; /* Nothing to do */
+case DESTROYED: BUG();
+}
+
+
+
+
+
+> s/#endif/#endif /* __ASM_RSI_H_ */
+> 
+>> diff --git a/arch/arm64/include/asm/rsi_cmds.h 
+>> b/arch/arm64/include/asm/rsi_cmds.h
+>> index 89e907f3af0c..acb557dd4b88 100644
+>> --- a/arch/arm64/include/asm/rsi_cmds.h
+>> +++ b/arch/arm64/include/asm/rsi_cmds.h
+>> @@ -10,6 +10,11 @@
+>>   #include <asm/rsi_smc.h>
+>> +enum ripas {
+>> +    RSI_RIPAS_EMPTY,
+>> +    RSI_RIPAS_RAM,
+>> +};
+>> +
+>>   static inline unsigned long rsi_request_version(unsigned long req,
+>>                           unsigned long *out_lower,
+>>                           unsigned long *out_higher)
+>> @@ -35,4 +40,21 @@ static inline unsigned long 
+>> rsi_get_realm_config(struct realm_config *cfg)
+>>       return res.a0;
+>>   }
+>> +static inline unsigned long rsi_set_addr_range_state(phys_addr_t start,
+>> +                             phys_addr_t end,
+>> +                             enum ripas state,
+>> +                             unsigned long flags,
+>> +                             phys_addr_t *top)
+>> +{
+>> +    struct arm_smccc_res res;
+>> +
+>> +    arm_smccc_smc(SMC_RSI_IPA_STATE_SET, start, end, state,
+>> +              flags, 0, 0, 0, &res);
+>> +
+>> +    if (top)
+>> +        *top = res.a1;
+>> +
+>> +    return res.a0;
+>> +}
+>> +
+>>   #endif
+>> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+>> index 763824963ed1..a483b916ed11 100644
+>> --- a/arch/arm64/kernel/Makefile
+>> +++ b/arch/arm64/kernel/Makefile
+>> @@ -33,7 +33,8 @@ obj-y            := debug-monitors.o entry.o irq.o 
+>> fpsimd.o        \
+>>                  return_address.o cpuinfo.o cpu_errata.o        \
+>>                  cpufeature.o alternative.o cacheinfo.o        \
+>>                  smp.o smp_spin_table.o topology.o smccc-call.o    \
+>> -               syscall.o proton-pack.o idle.o patching.o pi/
+>> +               syscall.o proton-pack.o idle.o patching.o pi/    \
+>> +               rsi.o
+>>   obj-$(CONFIG_COMPAT)            += sys32.o signal32.o            \
+>>                          sys_compat.o
+>> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
+>> new file mode 100644
+>> index 000000000000..f01bff9dab04
+>> --- /dev/null
+>> +++ b/arch/arm64/kernel/rsi.c
+>> @@ -0,0 +1,77 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (C) 2023 ARM Ltd.
+>> + */
+>> +
+>> +#include <linux/jump_label.h>
+>> +#include <linux/memblock.h>
+>> +#include <linux/psci.h>
+>> +#include <asm/rsi.h>
+>> +
+>> +DEFINE_STATIC_KEY_FALSE_RO(rsi_present);
+>> +EXPORT_SYMBOL(rsi_present);
+>> +
+>> +static bool rsi_version_matches(void)
+>> +{
+>> +    unsigned long ver_lower, ver_higher;
+>> +    unsigned long ret = rsi_request_version(RSI_ABI_VERSION,
+>> +                        &ver_lower,
+>> +                        &ver_higher);
+>> +
+>> +    if (ret == SMCCC_RET_NOT_SUPPORTED)
+>> +        return false;
+>> +
+>> +    if (ret != RSI_SUCCESS) {
+>> +        pr_err("RME: RMM doesn't support RSI version %u.%u. Supported 
+>> range: %lu.%lu-%lu.%lu\n",
+>> +               RSI_ABI_VERSION_MAJOR, RSI_ABI_VERSION_MINOR,
+>> +               RSI_ABI_VERSION_GET_MAJOR(ver_lower),
+>> +               RSI_ABI_VERSION_GET_MINOR(ver_lower),
+>> +               RSI_ABI_VERSION_GET_MAJOR(ver_higher),
+>> +               RSI_ABI_VERSION_GET_MINOR(ver_higher));
+>> +        return false;
+>> +    }
+>> +
+>> +    pr_info("RME: Using RSI version %lu.%lu\n",
+>> +        RSI_ABI_VERSION_GET_MAJOR(ver_lower),
+>> +        RSI_ABI_VERSION_GET_MINOR(ver_lower));
+>> +
+>> +    return true;
+>> +}
+>> +
+>> +void __init arm64_rsi_setup_memory(void)
+>> +{
+>> +    u64 i;
+>> +    phys_addr_t start, end;
+>> +
+>> +    if (!is_realm_world())
+>> +        return;
+>> +
+>> +    /*
+>> +     * Iterate over the available memory ranges and convert the state to
+>                                               
+> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                                               blocks and convert them to
+
+TBH, I don't see any significant difference between the two. Am I
+missing something ?
+
+> 
+>> +     * protected memory. We should take extra care to ensure that we 
+>> DO NOT
+>> +     * permit any "DESTROYED" pages to be converted to "RAM".
+>> +     *
+>> +     * BUG_ON is used because if the attempt to switch the memory to
+>> +     * protected has failed here, then future accesses to the memory are
+>> +     * simply going to be reflected as a fault which we can't handle.
+>> +     * Bailing out early prevents the guest limping on and dieing later.
+>> +     */
+>> +    for_each_mem_range(i, &start, &end) {
+>> +        BUG_ON(rsi_set_memory_range_protected_safe(start, end));
+>> +    }
+>> +}
+>> +
+> 
+> If I'm understanding the code completely, this changes the memory state 
+> from
+> RIPAS_EMPTY to RIPAS_RAM so that the following page faults can be routed to
+> host properly. Otherwise, a SEA is injected to the realm according to
+> tf-rmm/runtime/core/exit.c::handle_data_abort(). The comments can be more
+> explicit to replace "fault" with "SEA (Synchronous External Abort)".
+
+Agreed.  SEA is more accurate than fault.
+
+> 
+> Besides, this forces a guest exit with reason RMI_EXIT_RIPAS_CHANGE 
+> which is
+> handled by the host, where RMI_RTT_SET_RIPAS is triggered to convert the 
+> memory
+> state from RIPAS_EMPTY to RIPAS_RAM. The question is why the conversion 
+> can't
+> be done by VMM (QEMU)?
+
+A VMM could potentially do this via INIT_RIPAS at Realm creation for
+the entire RAM. But, as far as the Realm is concerned it is always safer 
+to do this step and is relatively a lightweight operation at boot. 
+Physical pages need not be allocated/mapped in stage2 with the IPA State 
+change.
+
+
+Suzuki
+> 
+>> +void __init arm64_rsi_init(void)
+>> +{
+>> +    /*
+>> +     * If PSCI isn't using SMC, RMM isn't present. Don't try to 
+>> execute an
+>> +     * SMC as it could be UNDEFINED.
+>> +     */
+>> +    if (!psci_early_test_conduit(SMCCC_CONDUIT_SMC))
+>> +        return;
+>> +    if (!rsi_version_matches())
+>> +        return;
+>> +
+>> +    static_branch_enable(&rsi_present);
+>> +}
+>> +
+>> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+>> index a096e2451044..143f87615af0 100644
+>> --- a/arch/arm64/kernel/setup.c
+>> +++ b/arch/arm64/kernel/setup.c
+>> @@ -43,6 +43,7 @@
+>>   #include <asm/cpu_ops.h>
+>>   #include <asm/kasan.h>
+>>   #include <asm/numa.h>
+>> +#include <asm/rsi.h>
+>>   #include <asm/scs.h>
+>>   #include <asm/sections.h>
+>>   #include <asm/setup.h>
+>> @@ -293,6 +294,11 @@ void __init __no_sanitize_address setup_arch(char 
+>> **cmdline_p)
+>>        * cpufeature code and early parameters.
+>>        */
+>>       jump_label_init();
+>> +    /*
+>> +     * Init RSI before early param so that "earlycon" console uses the
+>> +     * shared alias when in a realm
+>> +     */
+>> +    arm64_rsi_init();
+>>       parse_early_param();
+>>       dynamic_scs_init();
+>> @@ -328,6 +334,8 @@ void __init __no_sanitize_address setup_arch(char 
+>> **cmdline_p)
+>>       arm64_memblock_init();
+>> +    arm64_rsi_setup_memory();
+>> +
+>>       paging_init();
+>>       acpi_table_upgrade();
+> 
+> Thanks,
+> Gavin
+> 
+
 
