@@ -1,78 +1,120 @@
-Return-Path: <linux-kernel+bounces-267292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D087940FA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:40:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 644DD940FA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B636E1F21529
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:40:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C4531C22356
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330AF1A01C1;
-	Tue, 30 Jul 2024 10:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1571A0713;
+	Tue, 30 Jul 2024 10:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qbz+i/Cc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WT8RJLWt"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A6518E771;
-	Tue, 30 Jul 2024 10:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AB218A958
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722335711; cv=none; b=N/itRyVinH1VrD2zPyqVmLYgq70f80g5oy5Y2dwTeepC3viSLxrfm9Bire0qtA3Yzs/HOojJk7FukGpj2sxpSNopXO53fjZRNF3nhm/rc94ORwh/u7Cv2EHYdb68vnBYZVlWVC6OdfZxQDWZY6QwW16M9zBneXfyKR3zpm0vBFE=
+	t=1722335721; cv=none; b=P8ulsNmMtHnYDZCk9pBpwp1AlORGg6u/FhQZSGl9KfjlKYX6OFc4IpOxfKN9kAZapNQDfr2nlip5YPKvDUHdy5vCOmvAH5Gxo/7cHd6cr7sq3sDucB8pIMjhKTmEib3yg0CuADGHFmgtEpb5EMql5daMz9mkJJ1au3ctik0A3M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722335711; c=relaxed/simple;
-	bh=OqxNeHY/v/ofIyNQ5/aXLZvlFKdi959PW4sxej3ug0g=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=MSk6LFgFDcSWZRhRnpupppVLIRzIkxyvQEmgb7x27HAUG7HpJL227slnttkEkf9bQJ0CX25P0tvBfsJSLEiERqOKOvDawQUF5Jif3XDNhWFWWEZUCnqTlIxKpLNKEyqlLXvXuihlDe5RRDJL/PUTqPe6NrTqwjN7LaMKwk9ISEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qbz+i/Cc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC1EC32782;
-	Tue, 30 Jul 2024 10:35:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722335711;
-	bh=OqxNeHY/v/ofIyNQ5/aXLZvlFKdi959PW4sxej3ug0g=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=Qbz+i/Cco0lnSDPNjQN+SaRbmxOshKdQC6MssEjqIU6ejREpmK2scACSon+eU76dg
-	 uYe69ibi8IJzSVqVr6vW7wUgyQ+/dY4vSQ1fT5X2mahlxnoruM8yo6Vki9v1RBpyXM
-	 tyhgbPaHcNhjnkWPiQoJ2cqOaZ6LKsWbw0Hoh79JzhlFVDlux2rIJotqegxuDVKsE2
-	 2CqnoHRtQ7Y5hwcGE5+uoj6u0AHG6RIKT077wAOsCcCFVC1BwSMwPuirOAVejpkbWo
-	 Hc26awOAqsbdxOZ6koziZZmWFOB2G0t+LSQLJ2IP17Y7hlfHGlmdc5aN5ArUqIv3lH
-	 kZ73tPfdGQbAA==
-From: Kalle Valo <kvalo@kernel.org>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+51a42f7c2e399392ea82@syzkaller.appspotmail.com,
-  linux-kernel@vger.kernel.org,  linux-usb@vger.kernel.org,
-  linux-wireless@vger.kernel.org,  netdev@vger.kernel.org,
-  srini.raju@purelifi.com,  syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] wifi: plfxlc: remove assert for mac->lock
-References: <000000000000ac553b061e675573@google.com>
-	<tencent_03969636CA4BC874A7763F66D23D15366009@qq.com>
-Date: Tue, 30 Jul 2024 13:35:07 +0300
-In-Reply-To: <tencent_03969636CA4BC874A7763F66D23D15366009@qq.com> (Edward
-	Adam Davis's message of "Tue, 30 Jul 2024 12:28:42 +0800")
-Message-ID: <877cd39nhg.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1722335721; c=relaxed/simple;
+	bh=b75YOHBxm2lQYDbG5iuWV5yJhvgfQruxGNEGB+zBnrQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IbBqhwgDzryeb7M3joSnlhekhTp1rV1l48nDNNyCZRts+UiC+qVleb5zpEWyB0cVza/5gEZHbapJd9yqGYOA8jitvY4+VCmrONqtdmm6vgPVVDDbD6dVXlVoKkkbtfjtwt4N1rOPsd/itlcz064Rwnjc17FZ0MJdB4BYDWQCQvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WT8RJLWt; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4280ee5f1e3so25576355e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 03:35:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722335718; x=1722940518; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2k7WfqvNrE7q/baTECjG6uCgYMUMqGAXr8zev5hDQtc=;
+        b=WT8RJLWtCu7YKXagIOYx7OpehU+d9157smwQf4ZrarAgu7syI5XKl72z9BAx8LbE7n
+         w9pLqpiWoD2/HdS7AQkZBXllPCM1VUHWSBn+RViLn658BH7NUxzR5Gi49jM6EFecYGE4
+         5Ztw/MIcfJuOMBgY9BA5e0Aa+O5gwsVfQiNSnMdv9scgEg6aVFkdWH1h/vRsIZdtDRy5
+         +Zx6dCzDKFZ3ctr2cnesqPzxvl4TiJ5SJKSMlsJ7ou58LA0BHbiw8EDJTkhxK8AsE2Pr
+         rJRzABsdCTBpNasXEyNqI+BD4/FaT1RL9OzbvIltKO3DPe6sRr3Njuds1kk1tpGHpDh6
+         u12Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722335718; x=1722940518;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2k7WfqvNrE7q/baTECjG6uCgYMUMqGAXr8zev5hDQtc=;
+        b=jY2vPvFOSU9AfXRbCt5vcA+BvIr2pyHe8GbyzM6e4e7KF3OGwa8513z1lcql6bioec
+         UUFvVn8f6EJm6JPsoHxG7OCFqS7+0YDO/G3r9jmPRjkrDvmf+aNIbV9GBYbmdgAi+QXL
+         Eh2gLbroH2xAMpOojY6XBAeC9HqAXbVqFTHx6QRNKukfSVxjdj7NI6cGgaImt7fTw6BR
+         39O6aLGXmZoMAkb/3DA4NNsu1N7LZ4+HBDNfbU9EurOs67g+nknQHGm3690y4/fzrQrJ
+         QOGVbXtQ4o3MNKjTSVEEOeMLdk66CKtZqIxoGEGlJfXqbX7/5CCUrb5IbpDnIIWKZH0c
+         LH9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUu6kThVwlaPMoWA4AgwjL6kVACSz/f/whYLdB41HeHGyg4GDYB6DI1NUSipXqlb2nWmqk6xJ4uinvVBQXRf2p3msB1h0JT1iLj52Fd
+X-Gm-Message-State: AOJu0YxfLNiJV1z+Z13ByDn8v4H2VqZgEGvP1Fz+WHXUUuiJyq+d2eIV
+	vH6ogxHibvtleNBpwgkzfk0mIACeQSZhQm8WqW6McPcrRdVQKcIn7ydeyF8Gi5g=
+X-Google-Smtp-Source: AGHT+IE9D+3MsMR02xuAhjzlxgXskiGjsFnlnKtGunsAe9F0MUMFrjLgF7vKlnZ2xqmjqZZBdUI2XA==
+X-Received: by 2002:a5d:560d:0:b0:369:5d7d:ee96 with SMTP id ffacd0b85a97d-36b5ceee0dfmr7519309f8f.27.1722335717783;
+        Tue, 30 Jul 2024 03:35:17 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36863d87sm14284048f8f.110.2024.07.30.03.35.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 03:35:17 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	alsa-devel@alsa-project.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] ASoC: MAINTAINERS: Drop Banajit Goswami from Qualcomm sound drivers
+Date: Tue, 30 Jul 2024 12:35:11 +0200
+Message-ID: <20240730103511.21728-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Edward Adam Davis <eadavis@qq.com> writes:
+There was no active maintenance from Banajit Goswami - last email is
+from 2019 - so make obvious that Qualcomm sound drivers are maintained
+by only one person.
 
-> syzbot report WARNING in plfxlc_mac_release, according to the context,
-> there is not need assert for mac->lock.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-The commit message should explain _why_ the assert is not needed.
-Otherwise it looks that you are randomly removing it to get rid of the
-warning.
+---
 
+Not moving to credits because lore does not point to significant
+contributions. Just ~140 emails:
+https://lore.kernel.org/all/?q=f%3A%22Banajit+Goswami%22
+---
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c8e16a649a0e..43e7668aacb0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18419,7 +18419,6 @@ F:	drivers/crypto/intel/qat/
+ 
+ QCOM AUDIO (ASoC) DRIVERS
+ M:	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+-M:	Banajit Goswami <bgoswami@quicinc.com>
+ L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+ L:	linux-arm-msm@vger.kernel.org
+ S:	Supported
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+2.43.0
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
