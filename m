@@ -1,147 +1,136 @@
-Return-Path: <linux-kernel+bounces-267442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CF5494118B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:08:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E24F5941190
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1900C2831C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:08:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CD161F21876
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB9B19E7D1;
-	Tue, 30 Jul 2024 12:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EB719E81D;
+	Tue, 30 Jul 2024 12:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhoKyhBw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="grlfVSz5"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2EFE19415E;
-	Tue, 30 Jul 2024 12:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D14119DF8E;
+	Tue, 30 Jul 2024 12:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722341301; cv=none; b=SXx3P+CCLo+wCKY9oM2Le09tlBSjgA6k7mKC/N0cjnS0IpU82vOanXGc9NqKRf5sMZ7O0JPYp72UPze94cfU628obY2wd+R3WNgongV47RS3V1zgxqNvRAbVPSJLAymLZ6a/oSqFxxc/KELfAV5I5UpybVeHSttP8pJMcwxjsGo=
+	t=1722341327; cv=none; b=RM3RQc/CMhZoy97DZCXIaPQyEURQ29qqh1FmysTbJrAelOpTzdFTL7KYPsrA6ZcelXQE/WJc2S7P8kpSNUCt3FVpyMCg+9PKLriw3Z/azlB4k20X4XapsRekezINHXD4QmU903cCPlPUKqjd6/7OXVQ8FvL1KgU/YIgD3/PMwLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722341301; c=relaxed/simple;
-	bh=pPjpBfbivKL6cAv5q8a1r5/0D4K3ehqMUNcKDTlaZW8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eQUpYaH1bswKApE7vU+dhdkf1z+baYOP1eOAvG3/+lwPQ1hArbG73KaVoIonzb89v04xzQZ0aRkgHdq4JVN9t2nSZpT4xla+Ud5qDzfyLFjgAudiS73tplkdwllovnCKtdx5nHAlURl4UJfuu4KTTRQMry9Q93e9/hStYX33w9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FhoKyhBw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB8BDC32782;
-	Tue, 30 Jul 2024 12:08:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722341299;
-	bh=pPjpBfbivKL6cAv5q8a1r5/0D4K3ehqMUNcKDTlaZW8=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=FhoKyhBwlE5KAF61bGSntzRr7kl53sTSu/xykZvfmLRgajXu3ecq9K2BPuXOpNMQG
-	 RJR+GKm6G/0Ox9UEp+ToWbP3PmBzRruOg5A8z7oOo1I+idyScmPoCtuklB+xGtTsJo
-	 xcCwVB7hM4omI4xl8AE2vvNiOgFqldoSwXtMZ1pG8GCfk0+ZRv7tooqUnHM/OGZEWZ
-	 hrk8ioBYhzHaOyBeyrr0FZcu8sKDWaBlixHe7BkhoN7/rmS2EnYFdO7duEtCaQMNci
-	 wsrst8amyTth0X5Twgby5vRpU1Mv1spZK0V7rVrx3qACqnGoSuC24lZ1LCV0F6Qx/r
-	 IXHMhZsZCTIUw==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f035ae1083so59562111fa.3;
-        Tue, 30 Jul 2024 05:08:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWCrofFxFNIny2wraNiJ9RK+FAesF/nJ74h1EIMu8rQvij4301DxOzO76dPdLJnI55SzlTUCUuVqsG6nMxiet4yticTKI62Z9vomjj45z5cmgyAZlQBVjn4agTT1JrkoPTNcXMJZc55RpTf+jFhuu4jgUJAEoP+ErZ4IOiCwxzOZwR0fTeMsg==
-X-Gm-Message-State: AOJu0YzyX2Jcy5WmkTEYtC9j444PhLwQpfElHBCjxsaKGJ0dCfF0fMOj
-	wo11okaC6w3AKHJHRqqlMsOQ0McUIXzJFNZIiZQZdoodhwNfdwjFB1plGSczZpbCHETVeMLdc3m
-	YcQrxHFFpq7y4jxZT6x1v7EiNPi8=
-X-Google-Smtp-Source: AGHT+IEew2ptwjzerzes/DjMQPGgSwoLU7EI7pt/rY+1Yqs+CFA3dSUw8u2GOoxP5Z1uV8X2YApMbOoHS69Zl0l9/D8=
-X-Received: by 2002:a2e:91d4:0:b0:2ef:1f68:eae1 with SMTP id
- 38308e7fff4ca-2f12ee077famr71560271fa.17.1722341298040; Tue, 30 Jul 2024
- 05:08:18 -0700 (PDT)
+	s=arc-20240116; t=1722341327; c=relaxed/simple;
+	bh=G59Nwd7Jc6ZEt5wUtpcbCBpDf2emnwJYpQzoa37E3FM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qsX9yL/mk3+rwPFy0lu9VkL92Ya91i84+ciOh7LyZ8gpkeZGMVS5wYhNnxTco8SP8rhQMqhf3RhRpj1QGrfXhlwytTme9qrJqpRAMLVkoj0+KwXHF8IUgHqI3/H26wbpnN1g+f8kyzIRbm5wUe+pu3NsJvGuyk9zlx4XIUeVJ1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=grlfVSz5; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46UC8GmE067205;
+	Tue, 30 Jul 2024 07:08:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1722341296;
+	bh=/lXOg0L8dVXlkFZBdB+ojALd2ZihbFA/rRCnQXeEcRc=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=grlfVSz5AYT/ms0te+8Iytf5z+av8tHkfIdv4srmU3+Dug5Xuu4cuS0KDjBSLDsUD
+	 Hy4pCk8+03Q2I4s4FKHCQQRF39ZEgFEzNzPKd04vXec2J0P7Qav+Woi1S0XNBdUW7+
+	 G9puQgW5ihsefTCDnnKTLC5f0iLrealD3wEKHcy0=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46UC8Gea028049
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 30 Jul 2024 07:08:16 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 30
+ Jul 2024 07:08:16 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 30 Jul 2024 07:08:16 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46UC8GHe012926;
+	Tue, 30 Jul 2024 07:08:16 -0500
+Date: Tue, 30 Jul 2024 07:08:16 -0500
+From: Nishanth Menon <nm@ti.com>
+To: MD Danish Anwar <danishanwar@ti.com>
+CC: Suman Anna <s-anna@ti.com>, Sai Krishna <saikrishnag@marvell.com>,
+        Jan
+ Kiszka <jan.kiszka@siemens.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Diogo Ivo <diogo.ivo@siemens.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Kory Maincent <kory.maincent@bootlin.com>,
+        Simon Horman <horms@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Santosh
+ Shilimkar <ssantosh@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Roger
+ Quadros <rogerq@kernel.org>,
+        Tero Kristo <kristo@kernel.org>, <srk@ti.com>
+Subject: Re: [DO NOT MERGE][PATCH v4 6/6] arm64: dts: ti: k3-am64: Add
+ ti,pa-stats property
+Message-ID: <20240730120816.unujbfewvcfd3xov@geiger>
+References: <20240729113226.2905928-1-danishanwar@ti.com>
+ <20240729113226.2905928-7-danishanwar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1720969799.git.daniel@makrotopia.org> <ZqgjTQMgWZO2FjaC@makrotopia.org>
- <6690040.iosknibmi9@bagend> <17577153.5WZRyvrzyv@diego>
-In-Reply-To: <17577153.5WZRyvrzyv@diego>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Tue, 30 Jul 2024 20:08:04 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65xZEeZWmKFCRqyO7H=r7_jA4FTJxwKSVj7-qVXPS_fKw@mail.gmail.com>
-Message-ID: <CAGb2v65xZEeZWmKFCRqyO7H=r7_jA4FTJxwKSVj7-qVXPS_fKw@mail.gmail.com>
-Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Dragan Simic <dsimic@manjaro.org>, Daniel Golle <daniel@makrotopia.org>, 
-	Diederik de Haas <didi.debian@cknow.org>, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Martin Kaiser <martin@kaiser.cx>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@debian.org>, 
-	devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Olivia Mackall <olivia@selenic.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Aurelien Jarno <aurelien@aurel32.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240729113226.2905928-7-danishanwar@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Jul 30, 2024 at 6:37=E2=80=AFPM Heiko St=C3=BCbner <heiko@sntech.de=
-> wrote:
->
-> Am Dienstag, 30. Juli 2024, 11:03:06 CEST schrieb Diederik de Haas:
-> > On Tuesday, 30 July 2024 01:18:37 CEST Daniel Golle wrote:
-> > > On Wed, Jul 24, 2024 at 08:07:51AM +0200, Dragan Simic wrote:
-> > > > Thanks a lot for the testing.  Though, such wildly different test r=
-esults
-> > > > can, regrettably, lead to only one conclusion:  the HWRNG found in =
-RK3566
-> > > > is unusable. :/
-> >
-> > FTR: I agree with Dragan, unfortunately.
-> >
-> > > The results on RK3568 look much better and the series right now also
-> > > only enabled the RNG on RK3568 systems. However, we have only seen fe=
-w
-> > > boards with RK3568 up to now, and I only got a couple of NanoPi R5C
-> > > here to test, all with good hwrng results.
-> > >
-> > > Do you think it would be agreeable to only enable the HWRNG for RK356=
-8
-> > > as suggested in this series? Or are we expecting quality to also vary
-> > > as much as it (sadly) does for RK3566?
-> >
-> > Unless we get *evidence* to the contrary, we should assume that the HWR=
-NG on
-> > RK3568 is fine as the currently available test results are fine.
-> > So I think enabling it only for RK3568 is the right thing to do.
-> >
-> > So a 'revert' to v7 variant seems appropriate, but with the following c=
-hanges:
-> > - Add `status =3D "disabled";` property to the definition in rk356x.dts=
-i
-> > - Add a new commit where you enable it only for rk3568 and document in =
-the
-> > commit message why it's not enabled on rk3566 with a possible link to t=
-he v7
-> > thread for clarification on why that is
->
-> I was going to protest about the "disable" until reading the 2nd part :-D=
- .
->
-> And yeah that makes a lot of sense, "add" it to rk356x.dtsi, as the IP is
-> part of both variants, but only enable it in rk3568.dtsi because of the
-> seemingly faulty implementation on the rk3566.
+On 17:02-20240729, MD Danish Anwar wrote:
+> Add ti,pa-stats phandles to k3-am64x-evm.dts. This is a phandle to
+> PA_STATS syscon regmap and will be used to dump IET related statistics
+> for ICSSG Driver
+> 
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> Reviewed-by: Roger Quadros <rogerq@kernel.org>
+> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+> ---
+>  arch/arm64/boot/dts/ti/k3-am642-evm.dts | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm.dts b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
+> index 6bb1ad2e56ec..dcb28d3e7379 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am642-evm.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
+> @@ -253,6 +253,7 @@ icssg1_eth: icssg1-eth {
+>  		ti,mii-g-rt = <&icssg1_mii_g_rt>;
+>  		ti,mii-rt = <&icssg1_mii_rt>;
+>  		ti,iep = <&icssg1_iep0>,  <&icssg1_iep1>;
+> +		ti,pa-stats = <&icssg1_pa_stats>;
 
-Better yet, mark it as "broken" in rk3566.dtsi to reflect the tests that
-we've all done.
+Follow:  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n117
+for ordering properties.
+>  		interrupt-parent = <&icssg1_intc>;
+>  		interrupts = <24 0 2>, <25 1 3>;
+>  		interrupt-names = "tx_ts0", "tx_ts1";
+> -- 
+> 2.34.1
+> 
 
-ChenYu
-
-> > You could probably also integrate that into 1 commit, but make sure tha=
-t the
-> > commit summary and description match the implementation.
-> > IMO that wasn't 'technically' the case in v8 as the rng node was added =
-to
-> > rk356x, but it was only enabled on rk3568.
-> >
-> > My 0.02
->
->
->
->
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
