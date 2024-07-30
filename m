@@ -1,140 +1,135 @@
-Return-Path: <linux-kernel+bounces-267499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B948941226
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:44:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0550394122E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5D8D280D48
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:44:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D77EB22880
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8AC19FA82;
-	Tue, 30 Jul 2024 12:43:16 +0000 (UTC)
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795C019EEB6;
+	Tue, 30 Jul 2024 12:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IJrzOeWu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C4A19FA77
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 12:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBD818EFE3;
+	Tue, 30 Jul 2024 12:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722343396; cv=none; b=D97yhXo2ZiFXYUmtToC7iTeSHnW6n3xpsJ+7kfizHIy+nndFZo1fY/L0Xo+ES7Ts+Pr9JR04JCyOaf4/cy4xNjBIZMouz1+oYVhvnJ/UZzlPLqvRF72pbjGTI7gPAjlFSUfKnPfupUou67dRSVT8Sy11dBJZ3DycTXg3If6mY4Y=
+	t=1722343522; cv=none; b=ARf3EZOqZnZaB68y9s4szhspNFa0r+YhMVDpRwQj676698kxMUv4BMiBWnHnD2m6dXWjHdfB6k4APEDblPeREMSSE/JuO81eA+ANxvffBcZdGFPWaV0W3EzXwkIk6KGqHk7PZ5UDBF8skeI4Y2qcKdozJ0/d10Bmqe6ZBb/Gwyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722343396; c=relaxed/simple;
-	bh=HIfo3bTVT8YWrcUgJqif/A3PM/nmsNvtVSnjCcVreWs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XHlzYoKr7lYhfkNM+9CbV3+yWDdYQNRmol2WvB0RT3nhRrbxev48rHEbg8SLd1k3LfDMqmdJZtbjprmMcEmQtHCjAFIdAtRTCKxfJSa7ocOWtXhxUI3B1XeB177POlAoQnBQo3c81a/fZOA+0rGXdHPe3xK73tkzd5Ux23LZChY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BD4E9FF80D;
-	Tue, 30 Jul 2024 12:43:02 +0000 (UTC)
-Message-ID: <2f83c6a3-8db0-46f7-928a-8bf585e4a3b9@ghiti.fr>
-Date: Tue, 30 Jul 2024 14:43:02 +0200
+	s=arc-20240116; t=1722343522; c=relaxed/simple;
+	bh=IMF8+4MHOeraCDCrlonTlDlvCabBYM/nLcb9RAKd+kw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d55iQVsXzivN/LHy3t/uCWwz9gy8WM3+uiqkruYuKTLEyRp9waO+GRQsBoIz4pcAkq7E6uliP0ghQ2/FRSohNVXArKtXAhYkoGlCCuDC20bzTUR6Mxa24jIjCzbDp8y+09YYISvIv0UZi1CdiQjdjzbe8a8TfHhz0RvxlUDWXTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IJrzOeWu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37893C32782;
+	Tue, 30 Jul 2024 12:45:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722343522;
+	bh=IMF8+4MHOeraCDCrlonTlDlvCabBYM/nLcb9RAKd+kw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IJrzOeWuYLNUzSkt7te+9ugnewyYJYcQ6x29YUoZgPKnoFEhKqeJWT1mTKNtxJ9to
+	 RsWg067BDQPNhOUsYAq1PERGlPNe4cSZsPm4zBQODV4g8uCmqjXUNOdh6jrwDO5rkz
+	 oCRH+sDDUQWV1Z3ywnjgWOAVm8XwQLJhSF6ra7cz+pF3rVLcUULcRywyTrQuiXItpC
+	 ON94N70UVLZDRcItLa2jj06VVTa3Ek4Bm4WAr/sefIVtCrQWcWw/g8WBymOlyMDrcs
+	 MsuImeH6YKfkD2ccRDjg94jpTm5+q7HOCguPAw5P7vrWiIU+LpmiA5B71xLcNPDVnt
+	 KsbufURdlu84w==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Chao Yu <chao@kernel.org>,
+	syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 6.10 1/7] f2fs: fix to do sanity check on F2FS_INLINE_DATA flag in inode during GC
+Date: Tue, 30 Jul 2024 08:45:07 -0400
+Message-ID: <20240730124519.3093607-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] riscv/mm: Add handling for VM_FAULT_SIGSEGV in
- mm_fault_error()
-Content-Language: en-US
-To: Zhe Qiao <qiaozhe@iscas.ac.cn>, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, surenb@google.com,
- alexghiti@rivosinc.com, akpm@linux-foundation.org,
- wangkefeng.wang@huawei.com, willy@infradead.org
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240730073822.27732-1-qiaozhe@iscas.ac.cn>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20240730073822.27732-1-qiaozhe@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.10.2
+Content-Transfer-Encoding: 8bit
 
-Hi Zhe,
+From: Chao Yu <chao@kernel.org>
 
-On 30/07/2024 09:38, Zhe Qiao wrote:
-> Hello everyone, recently while learning about the Riscv architecture's
-> handling of page fault exceptions in the Linux kernel, I found that
-> there is no handling of VM_CAULT_SIGSEGV in mm_fault_erroneous (), but
-> rather a BUG() is executed directly. Therefore, I simultaneously analyzed
-> the processing procedures of arm64, powerpc, and sh architectures for
-> this area and found that all three architectures have processing for
-> VM_CAULT_SIGSEGV. Therefore, I added relevant processing methods for
-> VM_CAULT_SIGSEGV on the riscv architecture.
->
-> As a beginner, I am not sure if this processing method is correct and
-> would like to hear the opinions of my seniors.
+[ Upstream commit fc01008c92f40015aeeced94750855a7111b6929 ]
 
+syzbot reports a f2fs bug as below:
 
-FWIW, we correctly handle "normal" segfaults (ie no VMA or permission 
-access faults).
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/inline.c:258!
+CPU: 1 PID: 34 Comm: kworker/u8:2 Not tainted 6.9.0-rc6-syzkaller-00012-g9e4bc4bcae01 #0
+RIP: 0010:f2fs_write_inline_data+0x781/0x790 fs/f2fs/inline.c:258
+Call Trace:
+ f2fs_write_single_data_page+0xb65/0x1d60 fs/f2fs/data.c:2834
+ f2fs_write_cache_pages fs/f2fs/data.c:3133 [inline]
+ __f2fs_write_data_pages fs/f2fs/data.c:3288 [inline]
+ f2fs_write_data_pages+0x1efe/0x3a90 fs/f2fs/data.c:3315
+ do_writepages+0x35b/0x870 mm/page-writeback.c:2612
+ __writeback_single_inode+0x165/0x10b0 fs/fs-writeback.c:1650
+ writeback_sb_inodes+0x905/0x1260 fs/fs-writeback.c:1941
+ wb_writeback+0x457/0xce0 fs/fs-writeback.c:2117
+ wb_do_writeback fs/fs-writeback.c:2264 [inline]
+ wb_workfn+0x410/0x1090 fs/fs-writeback.c:2304
+ process_one_work kernel/workqueue.c:3254 [inline]
+ process_scheduled_works+0xa12/0x17c0 kernel/workqueue.c:3335
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3416
+ kthread+0x2f2/0x390 kernel/kthread.c:388
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-What we don't handle is handle_mm_fault() returning VM_FAULT_SIGSEGV, 
-which can happen in different situations. For example, the BPF arena 
-stuff implements a vma fault handler which can return VM_FAULT_SIGSEGV 
-(see 
-https://elixir.bootlin.com/linux/v6.10/source/kernel/bpf/arena.c#L273). 
-In that case, we would BUG() instead of correctly killing the process.
+The root cause is: inline_data inode can be fuzzed, so that there may
+be valid blkaddr in its direct node, once f2fs triggers background GC
+to migrate the block, it will hit f2fs_bug_on() during dirty page
+writeback.
 
-So I agree that we need this patch. Can you just rephrase the commit 
-log? I would say something similar (without the link) to what I have 
-just said above. And can you also add the following Fixes tag?
+Let's add sanity check on F2FS_INLINE_DATA flag in inode during GC,
+so that, it can forbid migrating inline_data inode's data block for
+fixing.
 
-Fixes: 07037db5d479 ("RISC-V: Paging and MMU")
+Reported-by: syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/linux-f2fs-devel/000000000000d103ce06174d7ec3@google.com
+Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/f2fs/gc.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Thanks,
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 6066c6eecf41d..20e2f989013b7 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1563,6 +1563,16 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 				continue;
+ 			}
+ 
++			if (f2fs_has_inline_data(inode)) {
++				iput(inode);
++				set_sbi_flag(sbi, SBI_NEED_FSCK);
++				f2fs_err_ratelimited(sbi,
++					"inode %lx has both inline_data flag and "
++					"data block, nid=%u, ofs_in_node=%u",
++					inode->i_ino, dni.nid, ofs_in_node);
++				continue;
++			}
++
+ 			err = f2fs_gc_pinned_control(inode, gc_type, segno);
+ 			if (err == -EAGAIN) {
+ 				iput(inode);
+-- 
+2.43.0
 
-Alex
-
-
->
-> Signed-off-by: Zhe Qiao <qiaozhe@iscas.ac.cn>
-> ---
->   arch/riscv/mm/fault.c | 17 +++++++++--------
->   1 file changed, 9 insertions(+), 8 deletions(-)
->
-> diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
-> index 5224f3733802..868163b904e2 100644
-> --- a/arch/riscv/mm/fault.c
-> +++ b/arch/riscv/mm/fault.c
-> @@ -61,26 +61,27 @@ static inline void no_context(struct pt_regs *regs, unsigned long addr)
->   
->   static inline void mm_fault_error(struct pt_regs *regs, unsigned long addr, vm_fault_t fault)
->   {
-> +	if (!user_mode(regs)) {
-> +		no_context(regs, addr);
-> +		return;
-> +	}
-> +
->   	if (fault & VM_FAULT_OOM) {
->   		/*
->   		 * We ran out of memory, call the OOM killer, and return the userspace
->   		 * (which will retry the fault, or kill us if we got oom-killed).
->   		 */
-> -		if (!user_mode(regs)) {
-> -			no_context(regs, addr);
-> -			return;
-> -		}
->   		pagefault_out_of_memory();
->   		return;
->   	} else if (fault & (VM_FAULT_SIGBUS | VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE)) {
->   		/* Kernel mode? Handle exceptions or die */
-> -		if (!user_mode(regs)) {
-> -			no_context(regs, addr);
-> -			return;
-> -		}
->   		do_trap(regs, SIGBUS, BUS_ADRERR, addr);
->   		return;
-> +	} else if (fault & VM_FAULT_SIGSEGV) {
-> +		do_trap(regs, SIGSEGV, SEGV_MAPERR, addr);
-> +		return;
->   	}
-> +
->   	BUG();
->   }
->   
 
