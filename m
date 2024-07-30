@@ -1,115 +1,120 @@
-Return-Path: <linux-kernel+bounces-267489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C2CE94120E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:41:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 307E0941211
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96354B25757
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:41:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D89E61F24387
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F02419EEC8;
-	Tue, 30 Jul 2024 12:41:38 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456D019F47A;
+	Tue, 30 Jul 2024 12:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCi8btfp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58386757FC
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 12:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82641757FC;
+	Tue, 30 Jul 2024 12:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722343297; cv=none; b=Za7kBgQ9GMo3SOfTCAb9q3kJWcHKNy0942s0oYnKBO+/k7OFk9gYr10pdo05/txAHpzWTOJPrgg9fwD7wO3uiFK240Yn7R7ugWKKCXh7e6o2Px8I3A0Xne8hrZFWWO/wORqy0g2XYRQ7ZkIDDt8bfhR/uGdUr3TDVkbis675ing=
+	t=1722343346; cv=none; b=TefX+Kaw2uBc6WGSUyJO9v4k0yBhHSUgEzF13pkojLyjWOXBAc86XyjR7P1e/56QTcjb/Fh7KcgXQZm3qjDpPDp+dQcTNnHst1bpQFg1EReyjEhwcqGdgKQjaglSaSOONgpkEMKFLrJ7czpgcvUdza8QMOYP/xEFDCC8oBr8KQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722343297; c=relaxed/simple;
-	bh=Sa4pUeLQ+vlZbd2pzjfIpSqx5Zwhcsm4o129UDbEoLI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rluhcZg3Ti0nitJS5D6XFx3VJfuIXAMzAUWobamOJUPXeBhBCrb2E6NVY5d16dkDRXDXfA0VIO/bPnUCpMyE+SjFnnZvX8CBi9nb9VD4j5IUk/5YH1x8Kfutaw8HX3oxpeVfwbRJCCglEmNhjk1/YeiyhIVsaEMWWrhzHr8ZPpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-37642e69d7eso63382795ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 05:41:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722343295; x=1722948095;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DsuWEAwFesBmVmB4583XOMo/wby9g3RmZDSGzW/7gaU=;
-        b=t8IzLK3xUYht1vDoNK5kodAiXdttLCVXLftYRWFnT/fr2LxCXnwJFkg22YxZjp/oCW
-         0mQDXZtDXwZI0PlW84XUrKAA2x4bE57Euo9fLaZaYqouCWQ95cHj9XIn1c5WTTXB3ltL
-         O1BPBKzALQbMtqD1DMxG71HMs0Ko8inu3uA/MXFtk9huyQmG0m61/itAhd5Z9cenqpfk
-         nUmQw+dR8x6IE3qtftJwuuMaSuyKtI8iusEt6fNKJssH90UDKOrVdi1q8+b/ltj5lrxB
-         isB7bCiXH3xt6khvsri97w09iNFVBn37VBW07PaVxMfb6NxXFSAWY72iw1RY8h1nchgy
-         Z4nQ==
-X-Gm-Message-State: AOJu0YzouNty/ZUv8B5LopeLW6ILBVGJ8juIPjedsZ2wdVv6iNu9R6Ga
-	Vg3jigAVU0rmZjBLcIs6XaT1x1KHTUxMALulJEEKac4/kLxTVhNam99vhrijMrzMwpN0hezt6t2
-	+9SaWaJu9xwoc+wuiQGyaiy+P+bYkYxlgN8KVajyqXxEUzEbwPS9U7Gc=
-X-Google-Smtp-Source: AGHT+IFBzWxqeUmj57QaeX34OfdH2pTxYjwbnBxvjvZYzQvFDKa4hz+JwKxknwE9hwD8TyiJLP/wMUpLMOm/Bq8xq8gCgouD0n8f
+	s=arc-20240116; t=1722343346; c=relaxed/simple;
+	bh=OX7gXcQNPCvmHTvgcG7NfG9PhoIqqO3oQ/laTGMlWFI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kDO2Uqj6eFd5wGRAnS2aclHV9chNVcA1qala+Abp+A+rU2l1OhfWEvC3w6wjE3fTA335iVrmHvwoqHNJoP57jz4yfZ56Qyw0Nbr+pVvvv4WgCEt0N85m+97l5SQkrkkVN5qQ8R2r+m6tk/k7/IA6hZXLWuTzRRwhQtgbLhyoClE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCi8btfp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0829AC32782;
+	Tue, 30 Jul 2024 12:42:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722343345;
+	bh=OX7gXcQNPCvmHTvgcG7NfG9PhoIqqO3oQ/laTGMlWFI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iCi8btfpZmMmoNrYlDrhSuGluxOfeClACuaAEioHJd07u4DcnQSLQxyGKGDzcmoob
+	 cSSRdLIJ9XrrrAcIJ38g5dXEHSUrtMHdD+KTDQpJFA9c279uvgghBezBlG5b+k9cWR
+	 QUhwsuVOxKQSC5xn32N+8kqoylRqv+QLaypFrwQVsI/ZlZaEvczptnFBQHgo4X8dLq
+	 eVF537Dvgpbqvs4EVFwHBBJlLXX1PKJeKqqVLSSXG04J1C1SsCUlWe7sc7/9/7pjcs
+	 afzX+3xWEkIOeg3XhkMDp7rHkakoqCk7V3p2xkB4VmrhJDezxCINatcN++q14xs36T
+	 GacQGIKC32K8A==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Sasha Levin <sashal@kernel.org>,
+	linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.10 1/3] block: don't call bio_uninit from bio_endio
+Date: Tue, 30 Jul 2024 08:42:19 -0400
+Message-ID: <20240730124222.3083443-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b2e:b0:39a:ea7d:2a9a with SMTP id
- e9e14a558f8ab-39aec438d4cmr7824925ab.6.1722343295473; Tue, 30 Jul 2024
- 05:41:35 -0700 (PDT)
-Date: Tue, 30 Jul 2024 05:41:35 -0700
-In-Reply-To: <0000000000004da3b0061808451e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004eea70061e764caf@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [net?] possible deadlock in
- team_device_event (3)
-From: syzbot <syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.10.2
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+From: Christoph Hellwig <hch@lst.de>
 
-***
+[ Upstream commit bf4c89fc8797f5c0964a0c3d561fbe7e8483b62f ]
 
-Subject: Re: [syzbot] [net?] possible deadlock in team_device_event (3)
-Author: aha310510@gmail.com
+Commit b222dd2fdd53 ("block: call bio_uninit in bio_endio") added a call
+to bio_uninit in bio_endio to work around callers that use bio_init but
+fail to call bio_uninit after they are done to release the resources.
+While this is an abuse of the bio_init API we still have quite a few of
+those left.  But this early uninit causes a problem for integrity data,
+as at least some users need the bio_integrity_payload.  Right now the
+only one is the NVMe passthrough which archives this by adding a special
+case to skip the freeing if the BIP_INTEGRITY_USER flag is set.
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+Sort this out by only putting bi_blkg in bio_endio as that is the cause
+of the actual leaks - the few users of the crypto context and integrity
+data all properly call bio_uninit, usually through bio_put for
+dynamically allocated bios.
 
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+Link: https://lore.kernel.org/r/20240702151047.1746127-4-hch@lst.de
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/rtnetlink.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ block/bio.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index 87e67194f240..178f5b85fd87 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -2896,13 +2896,6 @@ static int do_setlink(const struct sk_buff *skb,
- 		call_netdevice_notifiers(NETDEV_CHANGEADDR, dev);
+diff --git a/block/bio.c b/block/bio.c
+index e9e809a63c597..c7a4bc05c43e7 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1630,8 +1630,18 @@ void bio_endio(struct bio *bio)
+ 		goto again;
  	}
  
--	if (ifm->ifi_flags || ifm->ifi_change) {
--		err = dev_change_flags(dev, rtnl_dev_combine_flags(dev, ifm),
--				       extack);
--		if (err < 0)
--			goto errout;
--	}
--
- 	if (tb[IFLA_MASTER]) {
- 		err = do_set_master(dev, nla_get_u32(tb[IFLA_MASTER]), extack);
- 		if (err)
-@@ -2910,6 +2903,13 @@ static int do_setlink(const struct sk_buff *skb,
- 		status |= DO_SETLINK_MODIFIED;
- 	}
- 
-+	if (ifm->ifi_flags || ifm->ifi_change) {
-+		err = dev_change_flags(dev, rtnl_dev_combine_flags(dev, ifm),
-+				       extack);
-+		if (err < 0)
-+			goto errout;
+-	/* release cgroup info */
+-	bio_uninit(bio);
++#ifdef CONFIG_BLK_CGROUP
++	/*
++	 * Release cgroup info.  We shouldn't have to do this here, but quite
++	 * a few callers of bio_init fail to call bio_uninit, so we cover up
++	 * for that here at least for now.
++	 */
++	if (bio->bi_blkg) {
++		blkg_put(bio->bi_blkg);
++		bio->bi_blkg = NULL;
 +	}
++#endif
 +
- 	if (tb[IFLA_CARRIER]) {
- 		err = dev_change_carrier(dev, nla_get_u8(tb[IFLA_CARRIER]));
- 		if (err)
---
+ 	if (bio->bi_end_io)
+ 		bio->bi_end_io(bio);
+ }
+-- 
+2.43.0
+
 
