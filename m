@@ -1,116 +1,173 @@
-Return-Path: <linux-kernel+bounces-267515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B1E941261
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:49:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72506941299
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 379FAB2AD37
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:49:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CE501F237B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8FF1A01AD;
-	Tue, 30 Jul 2024 12:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC3E19F49B;
+	Tue, 30 Jul 2024 12:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xp0ee1VJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4O04Ubr"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3A619FA91;
-	Tue, 30 Jul 2024 12:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEAF1991A7;
+	Tue, 30 Jul 2024 12:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722343569; cv=none; b=lZ9YQN2sqepFTntbcwFbE64eftFLsyoU2safCxVrkIJ7oaXXYIn06h4QdA/GoGp8WnKrDpPKzFd1aLlxQDwI4hnrhM5qruF6379aA05Nam+ah77DxXCxEdnzQxMwfobVIfRwSvvydsicwSXmmVXhDGPcp8TR/+BXoE9yhiaQXks=
+	t=1722344053; cv=none; b=p0IDr4kjAIOcryxH7ORzrNHr8nPZJ8A/wMriD1DlKH4gslMLuJlkX0PYlnn8SkXNuNhXDdr6PjJOeIc+xlTh6uSvRCY2zZR7SqWuJ5p/45QoYBCEjdLyv/qslJyMpm1DJWwlFOke9YRhtrjkkyMCNDATpeXMSJXEdnvKOM8VfwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722343569; c=relaxed/simple;
-	bh=MVz/znc9I233RgIM9zDHWcICToeODo3lTIKp9s5T8N4=;
+	s=arc-20240116; t=1722344053; c=relaxed/simple;
+	bh=hMifvmNy6jSvPiHEg2g5JNijSpLu2sbjQPsrq9O1zvU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DvpBmhQ6O5CUDOLdvcRVHVoRD7kv+9ceCwSCeXYMHaac9mXrhy00RimTTKIS9s/XlJhqd5wREtcX1UoBtB7VFhuTQZY0ClLkyNKJs3gmyvVAQLdGfHJ6h96yY4oyXgyX5AVIZ0QTcNN5cNDOqDNpr72QzhF8TJCqYvc6VROoOQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xp0ee1VJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E65AC32782;
-	Tue, 30 Jul 2024 12:46:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722343568;
-	bh=MVz/znc9I233RgIM9zDHWcICToeODo3lTIKp9s5T8N4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Xp0ee1VJmq6ZhWgM6Wrk4y9aDyJ882nXmDGUzzzDx89DddDh0paEdLY84nFcYDyRZ
-	 F57x7oPaq54OijOYiw+2DMpwJJMGkmZJTqbzxpohFhmO0Qiut9Qt6uIe2858lL+lXq
-	 OXA7bqNkIaiyuJu3xLdVpMdKo4bA/8CX1YPhot2e7bTnlJiZ8KRlGNuDCct9Yskf4X
-	 hq4qvxtAJMifRDSn7W6tT2SmvUiyhaFjRew/4AbDEMFDLo2l3XO36ZG9+5WTRxVCMo
-	 cUUMhiie0VbM0RI93I9O4eCjlsQzjXeWDXnlRo/0vWCUhpCvAxJsW/8nONin/CcKBM
-	 6Sr5fYuZQuT7Q==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Edward Adam Davis <eadavis@qq.com>,
-	syzbot+bba84aef3a26fb93deb9@syzkaller.appspotmail.com,
-	Dave Kleikamp <dave.kleikamp@oracle.com>,
-	Sasha Levin <sashal@kernel.org>,
-	shaggy@kernel.org,
-	osmtendev@gmail.com,
-	ghandatmanas@gmail.com,
-	jfs-discussion@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 6.1 2/3] jfs: fix null ptr deref in dtInsertEntry
-Date: Tue, 30 Jul 2024 08:45:58 -0400
-Message-ID: <20240730124603.3096510-2-sashal@kernel.org>
+	 MIME-Version; b=MxO1cPcBqAQz/oVmwBlSqe7cM59rt/U2Uo9WRMQ1sw9HYv1hRpdBQ3DcIvrM6VfIW6WYPhjVMdGFyGT/DbDVtOgkPASrTgJTiGYvJ2MnS8SplafNsCyRFBAGyNbDlcD9zuZGzRYUAE2NhOt6Ko9TIOzMPH2DGBs9zfx8OHuZ2uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4O04Ubr; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7a1e0ff6871so266746085a.2;
+        Tue, 30 Jul 2024 05:54:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722344050; x=1722948850; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KP/Cz3QVNU5uyUnKyaSLbXt0q/kOvLrAG+hU9UnZ/BE=;
+        b=H4O04UbrYXXl9To4EKPfYL55GxQrD2MI2z1hACXcwe+bv0nl0i7i8AioP+8dSCy8dk
+         5/LWp8jqCMuQLHTdxxAFZ2kWwRZHycQ5jhyjZYmo3XdJ3COtQjDlR64gibKiVdzWE8Z+
+         e7wRVXFRTJToeCeTEbD53nrn0KZCc3zIU5nZXzKLakEehY1NCaIxlmd26Gb0Cmm6P+WM
+         rGgV3GQiaPrYBpIAokLZpKswaQJ6NlNc3gKWLngwBozdBURsVhHoqEK2rXxtjpIMHSwR
+         Pyrjotu1++uyymZU/wJLbJEdYsc9FA/HotzHKZF/FTH2+daHr3523AxVF05gBO4b9Ie+
+         0yDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722344050; x=1722948850;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KP/Cz3QVNU5uyUnKyaSLbXt0q/kOvLrAG+hU9UnZ/BE=;
+        b=bPxDoyFZ06Occh9X4rMqohSxWoYlPy2xkV2hO09dTGEksWlvhzoUBrfb8lGdejc9eX
+         8fhejPFGozL2zB/jT7QBCM+4B13m3lDkp55dD8uC+k4qnQfVhrBv0lWyvJMQIVGYBaoL
+         zhszPaGRfQ2eY4ZR1ItWV8MDChUZHVD6uBd8b3UThSqanZwmFoET6TUed5YIlhZ2qJia
+         kMx/Mz6shbJZriq6DiueM4P0LVippDtGRu5mwJ9vxl+7QMLbx/8f/QN+lQwyAO1/gHwV
+         VQlRKNsa2q1J2/RFB3DNG6WScCiK3XvSp8Mm33+Vu71BPGUM59J6x7SDx0yh+A+PdmU3
+         rZNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEZr0yDNq67fKmKEIwMOg0+3ukVvHAzZNl6SGt3WIYZ0+OQyN8Jr1S6E0wf/K+t0Z9CpY40idn5AyoKPDjD3akGt2Z8pf/A0X8ws6vPJLXia7U+QCtxE7PRSjsE4cU5N84AxCv4n+8
+X-Gm-Message-State: AOJu0Yy2PyQgF3zEnIoQeXMZvW2W9enJBzoLTlpMzBfs3LoSvW2kTcfZ
+	ycJ+IxwYVKaaWrB6Xb0M8lJJBVvXQ3kWdOXPjyhp1LPZa4iEDrjE
+X-Google-Smtp-Source: AGHT+IGKfomzFh7hnhpcESd3MD/dzvcJlg6cDEKXingUGcZg56zluFUVdo6AMVlaIlW4lTWHXPgxoA==
+X-Received: by 2002:a05:620a:24c3:b0:79e:fcb8:815c with SMTP id af79cd13be357-7a1e52cdbf2mr1496430585a.54.1722344050589;
+        Tue, 30 Jul 2024 05:54:10 -0700 (PDT)
+Received: from localhost (fwdproxy-ash-009.fbsv.net. [2a03:2880:20ff:9::face:b00c])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73ea990sm626878885a.55.2024.07.30.05.54.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 05:54:09 -0700 (PDT)
+From: Usama Arif <usamaarif642@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: hannes@cmpxchg.org,
+	riel@surriel.com,
+	shakeel.butt@linux.dev,
+	roman.gushchin@linux.dev,
+	yuzhao@google.com,
+	david@redhat.com,
+	baohua@kernel.org,
+	ryan.roberts@arm.com,
+	rppt@kernel.org,
+	willy@infradead.org,
+	cerasuolodomenico@gmail.com,
+	corbet@lwn.net,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>
+Subject: [PATCH 1/6] Revert "memcg: remove mem_cgroup_uncharge_list()"
+Date: Tue, 30 Jul 2024 13:45:58 +0100
+Message-ID: <20240730125346.1580150-2-usamaarif642@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240730124603.3096510-1-sashal@kernel.org>
-References: <20240730124603.3096510-1-sashal@kernel.org>
+In-Reply-To: <20240730125346.1580150-1-usamaarif642@gmail.com>
+References: <20240730125346.1580150-1-usamaarif642@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.102
 Content-Transfer-Encoding: 8bit
 
-From: Edward Adam Davis <eadavis@qq.com>
+mem_cgroup_uncharge_list will be needed in a later patch for an
+optimization to free zapped tail pages when splitting isolated thp.
 
-[ Upstream commit ce6dede912f064a855acf6f04a04cbb2c25b8c8c ]
-
-[syzbot reported]
-general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 0 PID: 5061 Comm: syz-executor404 Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-RIP: 0010:dtInsertEntry+0xd0c/0x1780 fs/jfs/jfs_dtree.c:3713
-...
-[Analyze]
-In dtInsertEntry(), when the pointer h has the same value as p, after writing
-name in UniStrncpy_to_le(), p->header.flag will be cleared. This will cause the
-previously true judgment "p->header.flag & BT-LEAF" to change to no after writing
-the name operation, this leads to entering an incorrect branch and accessing the
-uninitialized object ih when judging this condition for the second time.
-
-[Fix]
-After got the page, check freelist first, if freelist == 0 then exit dtInsert()
-and return -EINVAL.
-
-Reported-by: syzbot+bba84aef3a26fb93deb9@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Usama Arif <usamaarif642@gmail.com>
 ---
- fs/jfs/jfs_dtree.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/memcontrol.h | 12 ++++++++++++
+ mm/memcontrol.c            | 19 +++++++++++++++++++
+ 2 files changed, 31 insertions(+)
 
-diff --git a/fs/jfs/jfs_dtree.c b/fs/jfs/jfs_dtree.c
-index 031d8f570f581..5d3127ca68a42 100644
---- a/fs/jfs/jfs_dtree.c
-+++ b/fs/jfs/jfs_dtree.c
-@@ -834,6 +834,8 @@ int dtInsert(tid_t tid, struct inode *ip,
- 	 * the full page.
- 	 */
- 	DT_GETSEARCH(ip, btstack->top, bn, mp, p, index);
-+	if (p->header.freelist == 0)
-+		return -EINVAL;
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 07eadf7ecbba..cbaf0ea1b217 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -713,6 +713,14 @@ static inline void mem_cgroup_uncharge(struct folio *folio)
+ 	__mem_cgroup_uncharge(folio);
+ }
  
- 	/*
- 	 *	insert entry for new key
++void __mem_cgroup_uncharge_list(struct list_head *page_list);
++static inline void mem_cgroup_uncharge_list(struct list_head *page_list)
++{
++	if (mem_cgroup_disabled())
++		return;
++	__mem_cgroup_uncharge_list(page_list);
++}
++
+ void __mem_cgroup_uncharge_folios(struct folio_batch *folios);
+ static inline void mem_cgroup_uncharge_folios(struct folio_batch *folios)
+ {
+@@ -1203,6 +1211,10 @@ static inline void mem_cgroup_uncharge(struct folio *folio)
+ {
+ }
+ 
++static inline void mem_cgroup_uncharge_list(struct list_head *page_list)
++{
++}
++
+ static inline void mem_cgroup_uncharge_folios(struct folio_batch *folios)
+ {
+ }
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 9b3ef3a70833..f568b9594c2b 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4717,6 +4717,25 @@ void __mem_cgroup_uncharge(struct folio *folio)
+ 	uncharge_batch(&ug);
+ }
+ 
++/**
++ * __mem_cgroup_uncharge_list - uncharge a list of page
++ * @page_list: list of pages to uncharge
++ *
++ * Uncharge a list of pages previously charged with
++ * __mem_cgroup_charge().
++ */
++void __mem_cgroup_uncharge_list(struct list_head *page_list)
++{
++	struct uncharge_gather ug;
++	struct folio *folio;
++
++	uncharge_gather_clear(&ug);
++	list_for_each_entry(folio, page_list, lru)
++		uncharge_folio(folio, &ug);
++	if (ug.memcg)
++		uncharge_batch(&ug);
++}
++
+ void __mem_cgroup_uncharge_folios(struct folio_batch *folios)
+ {
+ 	struct uncharge_gather ug;
 -- 
 2.43.0
 
