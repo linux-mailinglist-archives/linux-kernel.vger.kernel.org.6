@@ -1,186 +1,76 @@
-Return-Path: <linux-kernel+bounces-267819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C19941606
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:55:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A81B9941622
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5E981F23753
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:55:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8F071C22C44
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94EE41BA886;
-	Tue, 30 Jul 2024 15:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538861BA874;
+	Tue, 30 Jul 2024 15:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BTMYePbX"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjqtR9qv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E261B5837
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D60F29A2;
+	Tue, 30 Jul 2024 15:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722354926; cv=none; b=um+YRPgcJTDyouEoVQKbYuozbzyQShvGiNaa9znQCKLp0MIJbzWN3zIuy94qaVP8GYlVeE94fwVa5Bf1zU1ktZTGj4ON0Fn7awLS/bhO2lKBAss8uAaodOVBMQA4VyFhxV/gAGlRjHNRGB0oHcVH7/PYemaXuVRUHTlWjvTsHgc=
+	t=1722354994; cv=none; b=Fu9DrOw3nniJV7nO/e4sGIlpsspPC3viTcXLtguuXkcNsJ8YQjKdCEZhSvuehyVFeFima8ML03CT9nlnG5TjOrz64ZH2X8l24mpGJZ+nNXXUpnpQHpTpI022j9kCgAJO+lvH+2EX/eVkln+STMqKsdmDIxJy6NJyEAivNPvo1Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722354926; c=relaxed/simple;
-	bh=vWmqf+DZ6yy7uefW9kB1OXmHEFwi0VcF0uleWNg69dU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sa3kQ+WL+lYoHbQ/8qDQe1vheqCmKvxQJMFTMmBduoMgLGvYtUhQRgWlgObsLdLCpqzD5ghGRCAR7lfXUafenkuv+YPmARKOIwOd5hJloUJ1MgRBnzjoQ61m8+G3B94kxALq/TRSlS07wM1XwhMn3Pl8zTwmCIyioI+pX/Y+rxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BTMYePbX; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-81f8add99b6so24345739f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:55:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722354924; x=1722959724; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PzCaghtWJkWwHrbcMiszDi+qmsX7TBq8ffoDMqJhL1o=;
-        b=BTMYePbXq0tPGbhaW4vRXZ1gc/9bf8MtYyrdJZO7wVBIcf7EzMPy2tuE9Q/onuiAfR
-         L1WHSKI8jfkMMnXtmJklEnEY6+/rzrK/L4t/G4NMaNhnxPK547CQNyt0s4NbL2Kf3nfF
-         PuWGGgAh3hxYV4FPl3fKmxpcaphg3HBdyt0EM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722354924; x=1722959724;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PzCaghtWJkWwHrbcMiszDi+qmsX7TBq8ffoDMqJhL1o=;
-        b=fVniKrm0QSWl3rihAo05uCLwHXLEVfTtWFAAXwSDDysfs4FF0rhz/wCUL0Yu4RarKP
-         bvBTvZyhqe8sTxWIUEtVAo1xrcSMCX8v2iHQQWNZNa+wdKHDY9IevRoNQNhkpnohAvrI
-         VSFxnFiVWHnv3+5/i8mYaViGpj/8We47sJPcK+C8ZoEerOke0DWzrljvofcc5e8uP71t
-         X4l7YxRcY6Kf2rJIOAsLFQV49XWSqEeQtJLIh++XPVRQQWi1siQPps0Q68MYGs1DqZ4v
-         Efo/xzT/rxiT4zgO+MFIsr+dscgKL7FmiVz9dNGuDB0yEm/bn13Cg5yRXkmwR8/cXrXa
-         Bxww==
-X-Forwarded-Encrypted: i=1; AJvYcCWOYwxGnlIsusfLMOiLY7/p7qeagV4pdVI/u6MxUY46Oz84wSQrlumhy0jf2ZU9E+EjLfa9DRZnbzEkWXM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1DF5dDBkSqsigqZrB/W1pzqVzBoSke78LAdcOnxvmyCQNT3Jm
-	fT5ZaZPZuT9HOsVuKkTSrJdEzA9MGwto7wEw01BW5U8AyZRf4lCEwqQfQ6ROVQE=
-X-Google-Smtp-Source: AGHT+IGuQMM6gxKKpjFLk13+wgKSCeu7d/MaJ7gUsdzsTKePVhPCSVaQL3WB7bTmQo5YaG+Bs9e4GA==
-X-Received: by 2002:a05:6602:1ccb:b0:81f:bf02:fd0a with SMTP id ca18e2360f4ac-81fbf0301ccmr96363439f.3.1722354924184;
-        Tue, 30 Jul 2024 08:55:24 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c29fc42b48sm2721593173.157.2024.07.30.08.55.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 08:55:23 -0700 (PDT)
-Message-ID: <714e7642-6f92-4e41-aa36-c854668e0bb0@linuxfoundation.org>
-Date: Tue, 30 Jul 2024 09:55:22 -0600
+	s=arc-20240116; t=1722354994; c=relaxed/simple;
+	bh=8CuFTMoQBnrtRBkUggxshUDoWUpQGu2HjJyh4gH80Mw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ghodh3vASlQwFzURXq8Rnxz9Ts4dpw/EfPH7K50evjxlSQ+Ki6oHVtp+brtHWHB2R9D+yWzyjOfM/T3wyIQeYFdjhV1A/fI8iu3coZQKRdg6uhdw06hA07tVapVkMajKOofL4M8CNyckuQZR5BExZppt0PoHsl44Uwjgu6H5go8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjqtR9qv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C743BC32782;
+	Tue, 30 Jul 2024 15:56:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722354994;
+	bh=8CuFTMoQBnrtRBkUggxshUDoWUpQGu2HjJyh4gH80Mw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KjqtR9qv5UM8+ljLItAIdwvv9zglpbdEDAbUJFlBDhczu7WZ6DgjptPvtuSCpgSU2
+	 /79F3CwhyJjC7eZ8e0rFF0j8xBaHZ8ohimE0aFnU/btHPgphNjysHQICXPoEhV64zd
+	 ujX/Ei1qebabKrfxGHH3WdcfZhAl5aeLJgRuDr6cjEfS82sf3CGAXE0TYHRlMlighD
+	 KALwCyoZsZhNjRTdfLUP8ZpFA5HnvewhWvclubuMMaj8Dyv4Z4jXn3yWDq09X8ndXB
+	 vVc09H2fcqBuIJJylREg8qVt/GjGZk8My2f0PJ8Y7whd8z2CHmlBgyaFjUiD6fSTtz
+	 yRfvVsyVTwFUQ==
+Date: Tue, 30 Jul 2024 08:56:32 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>
+Cc: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>, <netdev@vger.kernel.org>,
+ <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <horatiu.vultur@microchip.com>, <linux-kernel@vger.kernel.org>,
+ <stable@vger.kernel.org>, <UNGLinuxDriver@microchip.com>
+Subject: Re: [PATCH net V1] net: phy: micrel: Fix the KSZ9131 MDI-X status
+ issue
+Message-ID: <20240730085632.1934ae5f@kernel.org>
+In-Reply-To: <20240725071125.13960-1-Raju.Lakkaraju@microchip.com>
+References: <20240725071125.13960-1-Raju.Lakkaraju@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] bitmap: Rename module
-To: David Gow <davidgow@google.com>, Randy Dunlap <rdunlap@infradead.org>,
- kees@kernel.org, Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Yury Norov <yury.norov@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- John Hubbard <jhubbard@nvidia.com>, kernel@collabora.com,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240726110658.2281070-1-usama.anjum@collabora.com>
- <20240726110658.2281070-3-usama.anjum@collabora.com>
- <ZqUvy_h4YblYkIXU@yury-ThinkPad>
- <85f575b4-4842-4189-9bba-9ee1085a5e80@collabora.com>
- <c0e5978b-7c11-4657-bd07-9962cd04bf9a@infradead.org>
- <CABVgOSnkxgeXXXm9xp5_PvBxtMGbyFN-Jmd6YJ1u6g81MF_fyw@mail.gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <CABVgOSnkxgeXXXm9xp5_PvBxtMGbyFN-Jmd6YJ1u6g81MF_fyw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 7/30/24 04:10, David Gow wrote:
-> On Mon, 29 Jul 2024 at 22:09, Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->>
->>
->> On 7/29/24 1:07 AM, Muhammad Usama Anjum wrote:
->>> On 7/27/24 10:35 PM, Yury Norov wrote:
->>>> On Fri, Jul 26, 2024 at 04:06:57PM +0500, Muhammad Usama Anjum wrote:
->>>>> Rename module to bitmap_kunit and rename the configuration option
->>>>> compliant with kunit framework.
->>>>
->>>> ... , so those enabling bitmaps testing in their configs by setting
->>>> "CONFIG_TEST_BITMAP=y" will suddenly get it broken, and will likely
->>>> not realize it until something nasty will happen.
->>> CONFIG_TEST_BITMAP was being enabled by the kselftest suite lib. The bitmap
->>> test and its config option would disappear. The same test can be run by
->>> just enabling KUNIT default config option:
->>>
->>> KUNIT_ALL_TESTS=y enables this bitmap config by default.
->>>
->>>>
->>>> Sorry, NAK for config rename.
->>>>
->>
->> I agree with Yury. Using KUNIT takes away test coverage for people who
->> are willing to run selftests but not use KUNIT.
-
-This is incorrect. There are selftest that are used to
-
-- regression test a subsystem or a abi during boot
-- spot check on a running system to debug and test by loading
-   a test module.
-
+On Thu, 25 Jul 2024 12:41:25 +0530 Raju Lakkaraju wrote:
+> The MDIX status is not accurately reflecting the current state after the link
+> partner has manually altered its MDIX configuration while operating in forced
+> mode.
 > 
-> I can see the point that renaming the config option is just churn, but
-> is there a reason people would run the bitmap selftest but be unable
-> or unwilling to use KUnit?
+> Access information about Auto mdix completion and pair selection from the
+> KSZ9131's Auto/MDI/MDI-X status register
 > 
-> Beyond a brief period of adjustment (which could probably be made
-> quite minimal with a wrapper script or something), there shouldn't
-> really be any fundamental difference: KUnit tests can already run at
-> boot, be configured with a config option, and write output to the
-> kernel log. There's nothing really being taken away here, and the
-> bonus of having easier access to run the tests with KUnit's tooling
-> (or have them automatically run by systems which run KUnit tests)
-> would seem worthwhile to me, especially since it's optional. And
-> CONFIG_KUNIT shouldn't be heavy enough to cause problems.
-> 
-> Obviously I can't force people to use KUnit, but this is exactly the
-> sort of test which would fit KUnit well, and -- forgive me if I'm
-> missing something -- the only real argument against it I'm hearing is
-> "it's different". And while that's valid (as I said, churn for churn's
-> sake isn't great), none of the "people who are willing to run
-> selftests but not use KUnit" have given reasons why. Especially since
-> this is the sort of test (testing in-kernel functions) we're
-> encouraging people to write with KUnit in
-> Documentation/dev-tools/testing-overview.rst -- if there are good
-> reasons people are refusing to run these, maybe we need to fix those
-> or change the recommendation.
+> Fixes: b64e6a8794d9 ("net: phy: micrel: Add PHY Auto/MDI/MDI-X set driver for KSZ9131")
+> Signed-off-by: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
 
-It isn't about kunit vs. kselftest. It is about overall kernel validation
-and ability to test effectively by developers and users.
-
-KUnit isn't ideal for cases where people would want to check a subsystem
-on a running kernel - KUnit covers some use-cases and kselftest covers
-others.
-
-What happens if we are debugging a problem that requires us to debug on
-a running system? Please don't go converting kselftest into kunit without
-understanding how these frameworks are intended to be used.
-
-Yes kselftest results need to be looked at. Write a parser which can
-be improved. What you are doing is reducing the coverage and talking
-away the ability to debug and test on running system.
-
-Fix what needs to be fixed instead of deleting tests.
-
-Think through the use-cases before advocating KUnit is suitable for
-all testing needs and talking about being able to force or not force
-people to use one or the other.
-
-Reports aren't everything. The primary reason we have these tests is for
-developers to be able to test. Reports can be improved and shouldn't
-come at the expense of coverage and testing. Any patch that does that
-will be NACKed.
-
-thanks,
--- Shuah
-
-
+LGTM, can we get an ack from PHY maintainers?
 
