@@ -1,82 +1,83 @@
-Return-Path: <linux-kernel+bounces-268301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAFE29422F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:33:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC5949422F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87202284984
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:33:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EA691F241A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E9C1917C0;
-	Tue, 30 Jul 2024 22:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8D718FDA3;
+	Tue, 30 Jul 2024 22:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k0eobpUe"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QwG8MXvS"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1B438B;
-	Tue, 30 Jul 2024 22:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3D338B
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722378785; cv=none; b=GF3BZQcR4bS02jLkR/zuEiCShg93gNnBxaYC61A4uW/vPvscKWNqcBomOQnypP6Y2POJt008vli7B6/+y/h6+ZJsQYzL4DO+AjUHyQaVgMGmrCAi6i9Q9Af4Fg4wmqXMA16BNbxiDAdIseKSjRvWfxArKV/oTG/4tDmXjuH9B6I=
+	t=1722378852; cv=none; b=KrTQXK0s5z/vDacJSPUKKtdD/vAkSjy2ZMEx/2yCwI3PlUjwgk87qwlNhrNqB7GBFc1iGqyn73rT8n8BLpIHPZHxyaLUXYZ+mU11g8jQoqZIqwjFiQKGnsWQ+MuoOBZpHXDPqWff2J1cZs+HhUBFB6Q0yxYe4pKvl4XDmyf2ISQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722378785; c=relaxed/simple;
-	bh=4KyrR7IBFroJVL6n5U1GngfyCCWFp7LmRr5KSEnFCjk=;
+	s=arc-20240116; t=1722378852; c=relaxed/simple;
+	bh=ACxRB1KnbLurwJqq/VLuaMCJUyRXmJFACq7ZQBFy0d4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IXqhuB0IBv93OFdd3MbTK6VjcnZy6v4C+Z8XSh+qN8sq3OQpPE7CQCchNUP5BZJyqPb8UE+u469102qgKBgFEuKSLcHZEfheoX+Pq4m+Foj/MqB12FltmXi0rhr/QsyqZXtBo0qw+1TV9MpwS1YBfmI0q1o6bWOZ+n1pR/dtXHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k0eobpUe; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEHxGY3bfSeArXJG83PxVKQXEb7YVtxvksu0dop/v6bzgx+0QW+Q6O08O3fQE1S93xTplHZ/qcKQOrx7iHgiB95UBSDSBJEcrxs36TI/UJCOlF3I6tfTlHVXiLOb7Gbxe+zvGMYW6dcZ3MZK644uZLkBESb4rWfLoIv2UrSYnn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QwG8MXvS; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2cdadce1a57so3341773a91.2;
-        Tue, 30 Jul 2024 15:33:03 -0700 (PDT)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70d19c525b5so3439115b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:34:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722378783; x=1722983583; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722378850; x=1722983650; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6/KILlL1Tc4x1X/M530YMHjk8qNUj5A9ozgEiMjiu+s=;
-        b=k0eobpUe2racFdh2iZxouIUbFJuCB9hF9zP59MD8vYQJu8zcy4llkFLXPwW3EiRi4w
-         2K6gFYAY9vOgs3weQNFK3XFp75TCTElCZCv2NiQi83NZyo2qQ0P8c4orS5FVTx5VEOZi
-         sIJNcgav3skoNGJF83R+45Vb0U7KMS9FezURAWy2eOB7L53i3RyMbUu4YByGn1UPm9d0
-         7+mxw6lyJPamoKBb/hBnOCYPGBacR/LUBwfpSZeaxCfToSd/hlUmYU9Icr42c24AYTwd
-         eQTD941Vz4n5APJZJl7ysIkS5/JJCFfL9Bo+vhL2Zp5WQwFBTG5sRmb3qVJzImBv8dnA
-         t56A==
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fGVgOlNgOT878PCHFDWA1bgAufTRCTw9AMRW+Zn7Z0E=;
+        b=QwG8MXvS34+JgX45eUcCbU8G6j23iV95NRnLbQqGX+SVVIyji9iWN0ozoWUSgbC3Ji
+         isGyv0pr/QDDYi8pBd3r0MhkSIas6TjI8wqmT6lDCcQncIhHrF5lHMg4aH4+w0wvxemQ
+         x5UjPuj2hCFpcjNxNk7dGlg8ieswwhUuIRSNjhfsGyvKfmb9u60bLyWAQOjdxJSQZ14x
+         Jx9rvpeXix2L1XpS0Mu/wRp5bIA+Hy0z1Jcx2TxBj0IATPFNETelEZZnsLkvQY/9L7P1
+         ddmkwvrR28Z/O+fw8kasTasvF7Eo/aYPDbz726HsUAlzV+j/SWVqDq3/r3me45lgbKLa
+         G4LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722378783; x=1722983583;
+        d=1e100.net; s=20230601; t=1722378850; x=1722983650;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6/KILlL1Tc4x1X/M530YMHjk8qNUj5A9ozgEiMjiu+s=;
-        b=SD4Vqxk7xsv42SHAIVF16ueSJ5RCin5qPbUcIbdwVER3+EICSo/Uq2XGr3kzLKreNR
-         nO5jFHOtzfSiFg7gBBjcyjn/xZNSSD8PmVMmuvTtIZJGpzVV9tDdWAkuAUb/wDKvjTIf
-         D5a6lcqPeqfRY7pFsH/xLIOjLV2DQ/ZrASexkm+/u6rCis1LEFl9ASK04YBOdt+kyLRg
-         XjdoqD5qqh8sxozxHaslk7QHDWDNh+wHfgmX9qrK8HYy9Cx0i6xeTK1+ahMgcploYoPf
-         PFEZJ7Oop2inLvk9zrGBhEKXb+rGuFgP6kyY13I+6wDPo/H9H2TslKD94de2qpppAR7W
-         lC8w==
-X-Forwarded-Encrypted: i=1; AJvYcCW7s32uND2XGWTr2GROMNdIYu/6Xy2QHT3i6hbWJwwPlzG1u49Ub8FwIHXeCSsfA5ltN98Zi7wSlUe3MPRDXfa5iACP+BXQC4jRpGVHPdmND7hC/3fp3KdCcJnJs5rLN2n5FOUgbbpfq/qD9aA=
-X-Gm-Message-State: AOJu0Yy1JgpY2/w0MUg5PIy/4sS+HHWcXTvuvlfW2F3cHPXKSH3a3QF4
-	gGXoM9Y1qYhEnumA0g2C2MrqLntfcaCz3m+U5Bn/6ZGgt9fLi5NT
-X-Google-Smtp-Source: AGHT+IFdV1/gP8EJPMtyj+owOMo5lX+sPiezN2WkqrqktYYE1JaS/XVJCZLCNnLEnOGFfXinqt1YoQ==
-X-Received: by 2002:a17:90b:b83:b0:2c8:7897:eb46 with SMTP id 98e67ed59e1d1-2cf7e831814mr10242028a91.37.1722378782857;
-        Tue, 30 Jul 2024 15:33:02 -0700 (PDT)
-Received: from Gatlins-MacBook-Pro.local ([131.252.51.123])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cf28c7b0b3sm11382488a91.15.2024.07.30.15.33.02
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fGVgOlNgOT878PCHFDWA1bgAufTRCTw9AMRW+Zn7Z0E=;
+        b=lZuW0rjSDhW0i48btx3JT9MNeXEd0ybHR5gQYvS3BT/5AAgZ0WbzuJXfbbkeYcb4ho
+         c9yrZd299iWV2gio6/OkposkkDNW76OVrIRznpWr1AfI6bvn/W3phc9EjEHkAWcNuURE
+         jEVZhqIUZAb/0w+yIzfdzk2zj3IZJcxAc5Tzl5vsgZ/fNBsvqtCWFUWKCHQNSCVOF7j2
+         ZxTFQVA38PztAEeatAbWEVYKyYAcMTVzf1eHUk7V1pQR1nNq9A16B4DXSjUng4SF9P9k
+         BUNfxduWwSM+dqeH5BHXwFIcvIfxO4F0A3odHcyVAmHlvYy996VzbC6WHYRUUJv+QVkU
+         0Rug==
+X-Forwarded-Encrypted: i=1; AJvYcCVosgDUqvk68J/d9vNUXbbhEaUMvVbDaHlf7Ja8OS0E4qmD1x6ZeJe9z9S7IS7vDyV7nq5IPohi3aNGLefw3ht5pbfbIV5YPT8NmjfP
+X-Gm-Message-State: AOJu0Yw92Kv9EMpYaRlRKFE6ygFDvF1wzXtbom+RH102IpKVm5zkizvf
+	xLvXTHUw2mfXm3TkacmZKc90bWwkxcZqkdIJDz+arIRWdS0849za
+X-Google-Smtp-Source: AGHT+IHLMghuz0GXRqifWQUr2fqTNJGM+/BW5td2jxBxhYkXrbaXvteLwK2lMQMAN2FE+UH0wfVdxw==
+X-Received: by 2002:a05:6a00:1389:b0:70d:3337:7820 with SMTP id d2e1a72fcca58-70ecea0e6e0mr12366446b3a.8.1722378849828;
+        Tue, 30 Jul 2024 15:34:09 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8a39d8sm8934759b3a.213.2024.07.30.15.34.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 15:33:02 -0700 (PDT)
-Date: Tue, 30 Jul 2024 15:33:01 -0700
-From: Gatlin Newhouse <gatlin.newhouse@gmail.com>
-To: Gary Guo <gary@garyguo.net>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Matthew Maurer <mmaurer@google.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: support arrays in target JSON
-Message-ID: <smaafae5mqjcxm65rddnsayhsvwb6kd2joj3mfghskmtzspwzc@d5wg2its6jac>
-References: <20240730-target-json-arrays-v1-1-2b376fd0ecf4@google.com>
- <20240730105646.1aa7ac07@eugeo>
+        Tue, 30 Jul 2024 15:34:09 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 30 Jul 2024 12:34:08 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, jiangshanlai@gmail.com,
+	christian.koenig@amd.com, ltuikov89@gmail.com, daniel@ffwll.ch
+Subject: Re: [RFC PATCH 1/3] workqueue: Add interface for user-defined
+ workqueue lockdep map
+Message-ID: <ZqlqYLZWCiLKhVJf@slm.duckdns.org>
+References: <20240730221742.2248527-1-matthew.brost@intel.com>
+ <20240730221742.2248527-2-matthew.brost@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,30 +86,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240730105646.1aa7ac07@eugeo>
+In-Reply-To: <20240730221742.2248527-2-matthew.brost@intel.com>
 
-On Tue, Jul 30, 2024 at 10:56:46AM UTC, Gary Guo wrote:
-> On Tue, 30 Jul 2024 09:26:24 +0000
-> Alice Ryhl <aliceryhl@google.com> wrote:
-> 
-> > From: Matthew Maurer <mmaurer@google.com>
-> > 
-> > Some configuration options such as the supported sanitizer list are
-> > arrays. To support using Rust with sanitizers on x86, we must update the
-> > target.json generator to support this case.
-> > 
-> > The Push trait is removed in favor of the From trait because the Push
-> > trait doesn't work well in the nested case where you are not really
-> > pushing values to a TargetSpec.
-> > 
-> > Signed-off-by: Matthew Maurer <mmaurer@google.com>
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> 
-> Reviewed-by: Gary Guo <gary@garyguo.net>
+Hello, Matthew.
 
-Tested-by: Gatlin Newhouse <gatlin.newhouse@gmail.com>
+On Tue, Jul 30, 2024 at 03:17:40PM -0700, Matthew Brost wrote:
+> +/**
+> + * wq_init_user_lockdep_map - init user lockdep map for workqueue
+> + * @wq: workqueue to init lockdep map for
+> + * @lockdep_map: lockdep map to use for workqueue
+> + *
+> + * Initialize workqueue with a user defined lockdep map. WQ_USER_OWNED_LOCKDEP
+> + * must be set for workqueue.
+> + */
+> +void wq_init_user_lockdep_map(struct workqueue_struct *wq,
+> +			      struct lockdep_map *lockdep_map)
+> +{
+> +	if (WARN_ON_ONCE(!(wq->flags & WQ_USER_OWNED_LOCKDEP)))
+> +		return;
+> +
+> +	wq->lockdep_map = lockdep_map;
+> +}
+> +EXPORT_SYMBOL_GPL(wq_init_user_lockdep_map);
 
-> > ---
-> >  scripts/generate_rust_target.rs | 82 +++++++++++++++++++++------------
-> >  1 file changed, 53 insertions(+), 29 deletions(-)
+Would it be possible to make it a one-piece interface - ie. add
+alloc_workqueue_lockdep_map() which takes an external lockdep map rather
+than splitting it over two calls?
+
+Thanks.
+
+-- 
+tejun
 
