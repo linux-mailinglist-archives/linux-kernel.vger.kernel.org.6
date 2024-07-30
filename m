@@ -1,164 +1,137 @@
-Return-Path: <linux-kernel+bounces-268176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E8A942131
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:00:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00AD6942133
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:01:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25BD2B24D4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:00:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABCDA2869B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13F218C923;
-	Tue, 30 Jul 2024 20:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C4F18DF7B;
+	Tue, 30 Jul 2024 20:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="UMdY8vFk"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YGQ6Sro+"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D937418CBF8
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 20:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D5F18CC0E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 20:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722369643; cv=none; b=T51Z5GBMqDS8scy8OMNYkTquMJEsW0oQD5tu2lXOGEyP8Tp4NByjITItc4Ptx68a+hZ4McUkBtJ/Umd7foR9vzjKdFqkdpWRaDyXdDwCkIibjxajk7qQkQP3EvheDh09lQUhOLj0eHDh/A5rrT7Sw8FgjcU8ZQe4Hg7iCsCe198=
+	t=1722369653; cv=none; b=J5n4wJF++jwrM0hSz1bEjk6sla5h0Bj49r55TF/eXzZeuWU1HRIDWGqU5cZ+OX5RxvHKNDSxL3E2n9BjkewF5Ezx4hoCWDx/hAyQ0Ed1dsauuAUm/AYSwM2qnqI0+Til9kC8UCFsQ25YGPVJqf6NEGrVMesKgagbHrB/1x/Ol4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722369643; c=relaxed/simple;
-	bh=KW8P1f9QtLpNiOED/9q/P8RZi+voxvllnMDRlZd/H2A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T7i5JwZtH3LHBElRaObov1pqJuxo79B6607h+O6UlAnrF54zkOEQIf24nTZIgCGApDI5nLJDyX5K2lu6ERheJj9PPssNoRW/Du6PHZgeX2GtGImNnc54Knh/zS8GnZAA6X7jnbUYmLWRtcPHHlBYXZMA9SnQV2+plemMRpvydKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=UMdY8vFk; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a10bb7bcd0so7740228a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 13:00:41 -0700 (PDT)
+	s=arc-20240116; t=1722369653; c=relaxed/simple;
+	bh=Sm9YliIBseVNdVtXfF6wU54oboHpFF3iBhE8X9in9r4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qdNyCsWP5ly2tJkQ7tA96p1IeXRH7ZR3ld1VXsDF8erMphf+l6clzVh9fieHi2pb27CyOhktAI6MDjh1a1Zil5D7U18xNoNnvR7iLiPWoOJLN8eOytFo+OsmzGm/n2pczwmUGUBmqi2oeJNBMrg3AR+xqdK9xxZ7n933ZX9M7yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YGQ6Sro+; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7a134fd9261so5432458a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 13:00:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1722369640; x=1722974440; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VbPZYMLRnlwPHtoaKt4K6dn+FyDOOUhmY8EoiLqybE0=;
-        b=UMdY8vFkU3l54CTk70AIDub1zNuhBBpWlzfDJ/euXjLqdFGm+58FUHxJuyERUfogZ9
-         J7X1/rVKCsoWpDAMtb+K29O/bBJm0W/aJTTR9Jh6XsT+QdFgrQVCSFhFwDoR0Lpq+Rhr
-         l1tWxLeVnLfUbZcWndfRfK2opZxKknonZH3OVD3is6yHYc6V1/d81xdfqIJNXUqUTHA9
-         voLHjm4vQEo852eg00ZTPXiUP39d98YDBgaGmMuT1dPPfkOSikA0yspaDH6BKjuq1hX/
-         7jk1bUPA9H8w8rCGppkV3Iq8Q8VirenY879zfC63mrUcasLwNAewS6+sWxzbuPjV+PIm
-         rEmA==
+        d=google.com; s=20230601; t=1722369651; x=1722974451; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T1b0dd+u4QtRKmjCQ1fWaclUboiBOp5PBFZF+RqiWy8=;
+        b=YGQ6Sro+JlS75Jcs5Glq0mA6Fjof9EetpnArPZqMi3brBlwbX3/13pn/E7ftqvq1dE
+         Z1Ow3kKecRFDO2zWvVDkeVPRjXo54Di2flPIM+Pp/u6iuNjpj2eaGRmYx5KJAt0CGoQN
+         kj3ncsccSYT/L064wske3OgY3RE+/wfKzGb4DRHxzF5xadVELUA2oJRxKWA6e8bdv8wW
+         JNlTI9fRGHS+OnxREc35TSZl7/5HgJM4Xm4IWTS45v2ucZFOg1LnyTOeXe8pk1RqMtjF
+         d1yOWOUICOKbMeJx9b6xvj9w2SHek6TM6QIGlZFrQnQ6ymvR9+JRt4yhc1w2Yg+UafXL
+         R1WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722369640; x=1722974440;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VbPZYMLRnlwPHtoaKt4K6dn+FyDOOUhmY8EoiLqybE0=;
-        b=V6H3+VdhCpbV0L0l8GMYIAEhLNeiiQ4P6ggujo7ab1lLeQJ9gufg6L5cjC3EG5s+h5
-         beh2IWtaVxE+ifEKHDAgO2uvHcl153bjUcQgFDQwv6Pk8V8J7a/q0VVzEuIGp8VL2afp
-         Ot69ppf1iCIA4rdAFVE/5l1zpp/qskdxzWEfCtAlWiqL8dY2pJP5Qwm9FidvNtxOSrgj
-         YqhQp7zlKVvLE0GLl+cCtiEtxmlW7yDsFEJN+I8b680H7FXVLwdoTjKStYFiU4QE42QQ
-         BKg7QdVF3LrOn41VXDKNPLHAsp7djrx37c68f/Drh5rLi7VAxw5jSLjkU0h+bvdqHx8s
-         5zuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSH+qMl1S8Jcl+gFgCotP5/Y95ljzP17NwPPWKrWr5htVzB1p+k+8NpW6iAhIwtxO8um4DbdkbPxfTn1s1sLD12UK+eP5BrjHtukDE
-X-Gm-Message-State: AOJu0YxuASWVojqfH3ZPkj8G5qHNpCKhGWHC9QTWzF1KjD7lL2UuZnQR
-	Om5w6uEQE3jZwOj1GqAb2I78Xv0zjZes/Rd5BlXvo+6y0We2YLYv8hiJakgpX1BJRIS4g2XWEL4
-	wjxuBY9zbl9rSfWdXwuZlQ6s72MxY7mrnQxvh9w==
-X-Google-Smtp-Source: AGHT+IEE5EzRjQgQf7OLsadPZRVm5wfpMjhdtPXwM5eAo5BtDg8quTA9PAyUuMV7aPlhtR9I5OqiC7L3/3tTJkE4oTA=
-X-Received: by 2002:a17:907:a80d:b0:a6f:6126:18aa with SMTP id
- a640c23a62f3a-a7d40173b7emr694439966b.67.1722369640184; Tue, 30 Jul 2024
- 13:00:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722369651; x=1722974451;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T1b0dd+u4QtRKmjCQ1fWaclUboiBOp5PBFZF+RqiWy8=;
+        b=FxUhuh0gFdMg+UnmAE9q+mAb4giSs8moo61+eJupvUcjFMuz/MpVpg07tk1X+yVM1R
+         CAP1Wem25ouTRl2dOsMdzeJLhIbR6BCFbalu28Dp6BvhldeIZmwKXz2S6D2i1VWb8Gl6
+         KpUdUvKulSe8F8/1LtpZ/GrEnStezMYTLsDinHeQU3ghFf2rVNcrBJ64d/h5AYlw5FYa
+         4DUKsTsqpmkRQzM7il/gg0JEyaWaflMtsxbzNYpGFT5CmMsN0+5ZPg0tW+I9mE5DUC/Y
+         INkv5Bss/ptMgfvL5JnchyJMi54a+ByT4z4ceHyv375whZYt8v57dhIhN8VD9Nhe2YVm
+         UmSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYo5Qt2dbMRxlB/1n+YDNwNbQr5/dB6VW8AtfAISE4dGev+MES9Frp9BQOAjTAF63y3nwo6IYg1yTQNIqdTi4Pu5QaZed9jjJzTEHW
+X-Gm-Message-State: AOJu0YzEkeHNlwu8wIOur6IqmceDOwrqBqMR/BiILcbdbtpR/Gw44eF4
+	o92S+9wnZUelvYnIEXTQAP8d3VYSZe9xZ+2ERTfdz2ZPzcqznqyCfXNGPQTxKR8S2NhzDeBGYrg
+	JIA==
+X-Google-Smtp-Source: AGHT+IFIpN0t9CwDntyaqKmkPJ5cyx3sfG1IwNUw2ka0n2i9gazwPDbMR7YOpYtas1d8Mj8EPxP4qtxT2wA=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a02:5a3:b0:6bc:b210:c1dd with SMTP id
+ 41be03b00d2f7-7ac8fd2ec71mr34114a12.8.1722369651264; Tue, 30 Jul 2024
+ 13:00:51 -0700 (PDT)
+Date: Tue, 30 Jul 2024 13:00:49 -0700
+In-Reply-To: <2da6b57e-d5c2-4016-b89b-d51700eeb845@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240729091532.855688-1-max.kellermann@ionos.com>
- <3575457.1722355300@warthog.procyon.org.uk> <CAKPOu+9_TQx8XaB2gDKzwN-YoN69uKoZGiCDPQjz5fO-2ztdFQ@mail.gmail.com>
-In-Reply-To: <CAKPOu+9_TQx8XaB2gDKzwN-YoN69uKoZGiCDPQjz5fO-2ztdFQ@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Tue, 30 Jul 2024 22:00:29 +0200
-Message-ID: <CAKPOu+-qJR08WMfP0ZKCyWzXO6EgPGiKH1F_SB5S+v=sgNGeOQ@mail.gmail.com>
-Subject: Re: [PATCH] netfs, ceph: Revert "netfs: Remove deprecated use of
- PG_private_2 as a second writeback flag"
-To: David Howells <dhowells@redhat.com>
-Cc: Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, 
-	Jeff Layton <jlayton@kernel.org>, willy@infradead.org, ceph-devel@vger.kernel.org, 
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20240726235234.228822-1-seanjc@google.com> <20240726235234.228822-46-seanjc@google.com>
+ <2da6b57e-d5c2-4016-b89b-d51700eeb845@redhat.com>
+Message-ID: <ZqlGcaESdxw5vzl8@google.com>
+Subject: Re: [PATCH v12 45/84] KVM: guest_memfd: Provide "struct page" as
+ output from kvm_gmem_get_pfn()
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Jul 30, 2024 at 6:28=E2=80=AFPM Max Kellermann <max.kellermann@iono=
-s.com> wrote:
-> I'll let you know when problems occur later, but until
-> then, I agree with merging your revert instead of my patches.
+On Tue, Jul 30, 2024, Paolo Bonzini wrote:
+> On 7/27/24 01:51, Sean Christopherson wrote:
+> > Provide the "struct page" associated with a guest_memfd pfn as an output
+> > from __kvm_gmem_get_pfn() so that KVM guest page fault handlers can
+>        ^^^^^^^^^^^^^^^^^^^^
+> 
+> Just "kvm_gmem_get_pfn()".
+> 
+> > directly put the page instead of having to rely on
+> > kvm_pfn_to_refcounted_page().
+> 
+> This will conflict with my series, where I'm introducing
+> folio_file_pfn() and using it here:
+> > -	page = folio_file_page(folio, index);
+> > +	*page = folio_file_page(folio, index);
+> > -	*pfn = page_to_pfn(page);
+> > +	*pfn = page_to_pfn(*page);
+> >   	if (max_order)
+> >   		*max_order = 0;
+> 
+> That said, I think it's better to turn kvm_gmem_get_pfn() into
+> kvm_gmem_get_page() here, and pull the page_to_pfn() or page_to_phys()
+> to the caller as applicable.  This highlights that the caller always
+> gets a refcounted page with guest_memfd.
 
-Not sure if that's the same bug/cause (looks different), but 6.10.2
-with your patch is still unstable:
+I have mixed feelings on this.
 
- rcu: INFO: rcu_sched detected expedited stalls on CPUs/tasks: {
-9-.... 15-.... } 521399 jiffies s: 2085 root: 0x1/.
- rcu: blocking rcu_node structures (internal RCU debug): l=3D1:0-15:0x8200/=
-.
- Sending NMI from CPU 3 to CPUs 9:
- NMI backtrace for cpu 9
- CPU: 9 PID: 2756 Comm: kworker/9:2 Tainted: G      D
-6.10.2-cm4all2-vm+ #171
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01=
-/2014
- Workqueue: ceph-msgr ceph_con_workfn
- RIP: 0010:native_queued_spin_lock_slowpath+0x80/0x260
- Code: 57 85 c0 74 10 0f b6 03 84 c0 74 09 f3 90 0f b6 03 84 c0 75 f7
-b8 01 00 00 00 66 89 03 5b 5d 41 5c 41 5d c3 cc cc cc cc f3 90 <eb> 93
-8b 37 b8 00 02 00 00 81 fe 00 01 00 00 74 07 eb a1 83 e8 01
- RSP: 0018:ffffaf5880c03bb8 EFLAGS: 00000202
- RAX: 0000000000000001 RBX: ffffa02bc37c9e98 RCX: ffffaf5880c03c90
- RDX: 0000000000000001 RSI: 0000000000000001 RDI: ffffa02bc37c9e98
- RBP: ffffa02bc2f94000 R08: ffffaf5880c03c90 R09: 0000000000000010
- R10: 0000000000000514 R11: 0000000000000000 R12: ffffaf5880c03c90
- R13: ffffffffb4bcb2f0 R14: ffffa036c9e7e8e8 R15: ffffa02bc37c9e98
- FS:  0000000000000000(0000) GS:ffffa036cf040000(0000) knlGS:00000000000000=
-00
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 000055fecac48568 CR3: 000000030d82c002 CR4: 00000000001706b0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- Call Trace:
-  <NMI>
-  ? nmi_cpu_backtrace+0x83/0xf0
-  ? nmi_cpu_backtrace_handler+0xd/0x20
-  ? nmi_handle+0x56/0x120
-  ? default_do_nmi+0x40/0x100
-  ? exc_nmi+0xdc/0x100
-  ? end_repeat_nmi+0xf/0x53
-  ? __pfx_ceph_ino_compare+0x10/0x10
-  ? native_queued_spin_lock_slowpath+0x80/0x260
-  ? native_queued_spin_lock_slowpath+0x80/0x260
-  ? native_queued_spin_lock_slowpath+0x80/0x260
-  </NMI>
-  <TASK>
-  ? __pfx_ceph_ino_compare+0x10/0x10
-  _raw_spin_lock+0x1e/0x30
-  find_inode+0x6e/0xc0
-  ? __pfx_ceph_ino_compare+0x10/0x10
-  ? __pfx_ceph_set_ino_cb+0x10/0x10
-  ilookup5_nowait+0x6d/0xa0
-  ? __pfx_ceph_ino_compare+0x10/0x10
-  iget5_locked+0x33/0xe0
-  ceph_get_inode+0xb8/0xf0
-  mds_dispatch+0xfe8/0x1ff0
-  ? inet_recvmsg+0x4d/0xf0
-  ceph_con_process_message+0x66/0x80
-  ceph_con_v1_try_read+0xcfc/0x17c0
-  ? __switch_to_asm+0x39/0x70
-  ? finish_task_switch.isra.0+0x78/0x240
-  ? __schedule+0x32a/0x1440
-  ceph_con_workfn+0x339/0x4f0
-  process_one_work+0x138/0x2e0
-  worker_thread+0x2b9/0x3d0
-  ? __pfx_worker_thread+0x10/0x10
-  kthread+0xba/0xe0
-  ? __pfx_kthread+0x10/0x10
-  ret_from_fork+0x30/0x50
-  ? __pfx_kthread+0x10/0x10
-  ret_from_fork_asm+0x1a/0x30
- </TASK>
+On one hand, it's silly/confusing to return a pfn+page pair and thus imply that
+guest_memfd can return a pfn without a page.
+
+On the other hand, if guest_memfd does ever serve pfns without a struct page,
+it could be quite painful to unwind all of the arch arch code we'll accrue that
+assumes guest_memfd only ever returns a refcounted page (as evidenced by this
+series).
+
+The probability of guest_memfd not having struct page for mapped pfns is likely
+very low, but at the same time, providing a pfn+page pair doesn't cost us much.
+And if it turns out that not having struct page is nonsensical, deferring the
+kvm_gmem_get_pfn() => kvm_gmem_get_page() conversion could be annoying, but highly
+unlikely to be painful since it should be 100% mechanical.  Whereas reverting back
+to kvm_gmem_get_pfn() if we make the wrong decision now could mean doing surgery
+on a pile of arch code.
 
