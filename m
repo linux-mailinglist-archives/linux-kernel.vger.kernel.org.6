@@ -1,62 +1,64 @@
-Return-Path: <linux-kernel+bounces-267926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 940C1941C74
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:07:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A559941C7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DC0F284934
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:07:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BB4C1C213DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D510018C930;
-	Tue, 30 Jul 2024 17:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5EB18E05F;
+	Tue, 30 Jul 2024 17:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VONGelcf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZV1XYeHQ"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gTkM6WH5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PKe30KCs"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D27618B465;
-	Tue, 30 Jul 2024 17:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7123218C902;
+	Tue, 30 Jul 2024 17:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722359193; cv=none; b=E24tOhdEXZRe4XXCyYOedTwNJ+LuuLcmtDFxOq8eiUBgVHtrz/++kviyO0WzHidGoYKwsez9A9ZBaDdpgbylGr3k86cQ1yA3GhqqC4FDfKZPf0ZSCtnJXuii+LTv7bfUrkty68aK1OaE1+WGxzZTZX1HccXqaFWG5ulRJ3jE8A8=
+	t=1722359194; cv=none; b=pNWNXox4t7eiZF/7QYX45Ijakam5gay2k89feZOKRuco/fUf5H00CX01Y9F+g5mt5X51d83jcAnp4Fd3rL9KYMOml5Ji4HHpTMJTkTDsnidMtffj3iXezgoBUHWRON+eVjMvEAFDlmdSscJ3UOt5bEjWnPHjtoopKgoOJJbEvFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722359193; c=relaxed/simple;
-	bh=UNX0aqnK7dafOW8thFHIPb/PT4OKDmfCAQ9tEgoXJ+M=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=KX5S3BJff/exkOkdy0QLn7sg6In0TBf35pzjQsofMxQqW/x0hkWbHzt0Bb7Tv6MJeeQB5oAJZ51Q8US6wgtmrIbH0K5EMfKxBzwAp7mbKb5IolpG/XhYIprJ3fyAMHAe5lqip9c0+2S4DNpuFgEqlzhO6XhhE+/dSr4trEOecJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VONGelcf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZV1XYeHQ; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1722359194; c=relaxed/simple;
+	bh=0wvArvbtmDcZgrOWXIWq4bLtzXffkU2h8BWLMAchJTA=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=tOjoOMkPVR1+R/brJkTafLvd5i+kDDfIy8UFZx+BNbNEMo9J/Qlp3vJt91EvH7Q3zZh1geTWqu6LqAOFaM01eYaDgB9OsgU3jxreshuHH66XRgzyMi/pvrH5zFLAcGvR7PusTVQuO9wJLK1cgS/VdFi8BjCxWKnp8CsB0i0Ss8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gTkM6WH5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PKe30KCs; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Tue, 30 Jul 2024 17:06:29 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722359189;
+	s=2020; t=1722359190;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=WRW3c6N6w738qfDV+HTihxBnVzJLnMxBe4erYxjPmro=;
-	b=VONGelcfxQf67e/7sJyDTvox5mnR4HIifsJX2FBbiO8znJ3DBZlE4k590pqcbv+q+LNre+
-	vVJ1jPHTW05+jgrfYMdzuyjOHB+cp3nTBvEvnlfLzyuv0HTU2dhwqc21mb2YGep+5z21fr
-	hMpnxqFLctGFJWuZFr+Dxq7kvEAp1oyKrd2gHk8u1VPzDEVXlCzBpVT9Wciz+giVU078hk
-	M0uVapO81srJKZumky38OPl2EdPyIvRmesqxRfAmpH2O0uRmVuy17FSCfK7nfSKDW+cdBi
-	Oicxqf6fdCucv36HIhpPzP4MkzANlRyEjoAIW0prXYlZ3XrlDazEt9VW1vZprA==
+	bh=CRK8eI6uJD1N++bpaKwXRf3DW91bIs4V7MAPyhQZxac=;
+	b=gTkM6WH5BagZJGYdneVACtWz/ieBUDSCw1dOa2LS2Olt+iW7X6ega+i9tDYmVhzlwz8scd
+	T97KVHcOa+EgA2yJks1UipgiCJHrHz4giBJSxH3EitShc0sYGnLYKoPF2NqNY5qvGEp8Hh
+	DARGFiiKxfTDQuxVCZzPwKdMRESPbojZXnZYFUUBWSpVRLXn16BU0m8SdiTdH1NlPcfB/2
+	pv/i0MAuOJKxBpB9a7s7dCogumFw3Jgd8LVDjXl/nvLNX0WSppGuMmn9JpcLGAKWefdJ9s
+	fpA/RUwcuiKHsQ3ZTHMAxNtoAcX23QClkgy++LONgCemfHDdJD5ITkzA7gyNEw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722359189;
+	s=2020e; t=1722359190;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=WRW3c6N6w738qfDV+HTihxBnVzJLnMxBe4erYxjPmro=;
-	b=ZV1XYeHQiTn0t6FgGpmYvRdqIJ/oUh3YCROVLS+xCQ5CaXEmoCJYSOrewzhga9ey0kvO26
-	AFF2fBQUgKLVK3DA==
+	bh=CRK8eI6uJD1N++bpaKwXRf3DW91bIs4V7MAPyhQZxac=;
+	b=PKe30KCsuTeAKdB2mk0rRQs1JEaq+nS8THJkjKoe3O3Wo/g/CytKZORSlaKm3kZJlfu1zp
+	hwAaVIJJKvkp+NCg==
 From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] posix-timers: Clear overrun in common_timer_set()
+Subject: [tip: timers/core] posix-timers: Retrieve interval in common
+ timer_settime() code
 Cc: Thomas Gleixner <tglx@linutronix.de>,
  Frederic Weisbecker <frederic@kernel.org>,
+ "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
 Precedence: bulk
@@ -65,7 +67,7 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172235918931.2215.3635195802816682801.tip-bot2@tip-bot2>
+Message-ID: <172235918977.2215.15763526336696027464.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -75,36 +77,83 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     aca1dc0ce128a9b12640c39c0e035266bf9c9fa5
-Gitweb:        https://git.kernel.org/tip/aca1dc0ce128a9b12640c39c0e035266bf9c9fa5
+Commit-ID:     bfa408f03fc74bcfe8f275a434294bde06eabb00
+Gitweb:        https://git.kernel.org/tip/bfa408f03fc74bcfe8f275a434294bde06eabb00
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 10 Jun 2024 18:42:27 +02:00
+AuthorDate:    Mon, 10 Jun 2024 18:42:26 +02:00
 Committer:     Frederic Weisbecker <frederic@kernel.org>
 CommitterDate: Mon, 29 Jul 2024 21:57:35 +02:00
 
-posix-timers: Clear overrun in common_timer_set()
+posix-timers: Retrieve interval in common timer_settime() code
 
-Keeping the overrun count of the previous setup around is just wrong. The
-new setting has nothing to do with the previous one and has to start from a
-clean slate.
+No point in doing this all over the place.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Reviewed-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/time/posix-timers.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/time/posix-cpu-timers.c | 10 ++--------
+ kernel/time/posix-timers.c     |  5 ++++-
+ 2 files changed, 6 insertions(+), 9 deletions(-)
 
+diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
+index c6fe017..4107977 100644
+--- a/kernel/time/posix-cpu-timers.c
++++ b/kernel/time/posix-cpu-timers.c
+@@ -622,8 +622,8 @@ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
+ {
+ 	bool sigev_none = timer->it_sigev_notify == SIGEV_NONE;
+ 	clockid_t clkid = CPUCLOCK_WHICH(timer->it_clock);
+-	u64 old_expires, new_expires, old_incr, now;
+ 	struct cpu_timer *ctmr = &timer->it.cpu;
++	u64 old_expires, new_expires, now;
+ 	struct sighand_struct *sighand;
+ 	struct task_struct *p;
+ 	unsigned long flags;
+@@ -660,10 +660,7 @@ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
+ 		return -ESRCH;
+ 	}
+ 
+-	/*
+-	 * Disarm any old timer after extracting its expiry time.
+-	 */
+-	old_incr = timer->it_interval;
++	/* Retrieve the current expiry time before disarming the timer */
+ 	old_expires = cpu_timer_getexpires(ctmr);
+ 
+ 	if (unlikely(timer->it.cpu.firing)) {
+@@ -742,9 +739,6 @@ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
+ 		cpu_timer_fire(timer);
+ out:
+ 	rcu_read_unlock();
+-	if (old)
+-		old->it_interval = ns_to_timespec64(old_incr);
+-
+ 	return ret;
+ }
+ 
 diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index 056966b..53a993e 100644
+index b924f0f..056966b 100644
 --- a/kernel/time/posix-timers.c
 +++ b/kernel/time/posix-timers.c
-@@ -881,6 +881,7 @@ int common_timer_set(struct k_itimer *timr, int flags,
- 	timr->it_requeue_pending = (timr->it_requeue_pending + 2) &
- 		~REQUEUE_PENDING;
- 	timr->it_overrun_last = 0;
-+	timr->it_overrun = -1LL;
+@@ -904,7 +904,7 @@ static int do_timer_settime(timer_t timer_id, int tmr_flags,
+ 	const struct k_clock *kc;
+ 	struct k_itimer *timr;
+ 	unsigned long flags;
+-	int error = 0;
++	int error;
  
- 	/* Switch off the timer when it_value is zero */
- 	if (!new_setting->it_value.tv_sec && !new_setting->it_value.tv_nsec)
+ 	if (!timespec64_valid(&new_spec64->it_interval) ||
+ 	    !timespec64_valid(&new_spec64->it_value))
+@@ -918,6 +918,9 @@ retry:
+ 	if (!timr)
+ 		return -EINVAL;
+ 
++	if (old_spec64)
++		old_spec64->it_interval = ktime_to_timespec64(timr->it_interval);
++
+ 	kc = timr->kclock;
+ 	if (WARN_ON_ONCE(!kc || !kc->timer_set))
+ 		error = -EINVAL;
 
