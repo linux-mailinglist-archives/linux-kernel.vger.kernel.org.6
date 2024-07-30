@@ -1,124 +1,202 @@
-Return-Path: <linux-kernel+bounces-267366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9090B9410B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:39:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F219410C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43C9028670A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:39:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDAF5286598
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071C519E7C7;
-	Tue, 30 Jul 2024 11:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F1919E826;
+	Tue, 30 Jul 2024 11:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q6gb7aG5"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BBy/7X/b";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XNccfgGZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C5312DD88
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E301018FC82;
+	Tue, 30 Jul 2024 11:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722339527; cv=none; b=ogr4Ruh2fg+ucb9ONe7X3fnmCxTdCLjNR+n0Cy1bKle0gVXBuDUssDev7WpfHV642vk2/1zzulMmm6F5lh/vU0NruH7102RCJ/bH6/LjfZ1YC53c9xOZkb1cTKudM7voc6SdgZfNGaKRdSMzuwfnO1OeoBnRRHe5b3H6wGsn2Mc=
+	t=1722339601; cv=none; b=a/G+zxNAIF0rZS7x2rl7G+j7PK4LsRQe8/LQfBuhFWGNt/vLJ5wunSoUPrnmbRxMcUmCCWjKgRG2Fu5h6hZdIUCa+wrrgwDes5286AKqX0h1Caejd08uYILmlsuNCzR66TYiwAFcpjADM+xeojillGiF8f+75bJSCYfJNHav9KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722339527; c=relaxed/simple;
-	bh=gMX/uY3P00RuMEhik2gboHQR3I6sJ6AQz4rzZO6AJn8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EIne9qMv1dKbL5WR4wOcrj65X78ZAqlKNr9SiaQL/3ngec2iGPRocZno+HXhwTj5nvlwgFoE7IY12ftoBZLTKKwyZmLDsrXQi9m3VE4AcklRRSImnLcRW1fOddeGscS+A53ycxO9EAE2dVV7My7JDvhHkGnOytX5He85qq2kG0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q6gb7aG5; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fc56fd4de1so26326755ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 04:38:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722339525; x=1722944325; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8MFqGZ8807+PNXQ8BnyhmtNVvHRUHtuiqEf4+LLnxW4=;
-        b=Q6gb7aG5mKK/nHrD6dj176JtynQbc72PQJo0nRbAmYz0lo7NHFlDBiFpYd1b1lZcD+
-         A2vykQu1BV60qlrhC6DQbx2COooSiqYcB3TxtTduhlzJC89UlZ6C19wWRjkvI4gpKomj
-         bqYldhHtMCUyhOcpMCsxWAVS54Cy64k5nkV41jKSJQpb+zzbfRtJZ1JOmugF/8V+YxHw
-         N4QmxHkKtQMLBk9aBRgJRFUgQ0jOvRW9ZrDwgCZxI0fxqGgX+UOZzA9t3CRjKJaGLzPt
-         GkmsCkOrjyUI+cUiA86X5r2eKJfK2Bb5IQFoypPOOgWNVrGxG2VWtR22jrwo6vCK320s
-         CMiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722339525; x=1722944325;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8MFqGZ8807+PNXQ8BnyhmtNVvHRUHtuiqEf4+LLnxW4=;
-        b=MQdWR5FtmCwc02XnlNZhuM4OLhnO636QVK36IRco9TsZBuuP+bqBgqsIsVK6jnCjlL
-         LlgtS7/vugKxQwux/LiwFKk/HTCEwGCjKYaUseWcVROQcash3UVrRpCsRr+5ledAdXUQ
-         bgLUZwX+ovDOYYtjEvU6Jah0qNHsIUVi0SK89m9FB8QOxq6uvXx5dUAC16uTFiTi+wDr
-         r/hLYTzEGQkglmSDYjXcnpFEO5YiCOcPya7oD13KWag674WmT0YIy3XwgNaUFXYdQRyd
-         1e5Qw8mW1qvILdnhlDiVOTuD8sWBMhrNLLmCY2h+RG6BBxNdSPCQy4DGfJ2LO/8Rb487
-         UWfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+HcZKqP7l+YG0K3LIJSp+aDCKvoiuNI4BRO3/mGd5laJnycOB8VKGcUpvtSMN+mjSnJy/aSfCOt50JCtk4bMq+A/Gbj0+ot2/eCsv
-X-Gm-Message-State: AOJu0YwGaXA7oRXvXe5STGpXNYIwk4H6905gvNAfnR95hBoUn3/BTkip
-	ssZgZ8gxcF68VgxbF3XEIPaNOI1mWOOWtPMoxjAD9V90rcW8hKo/
-X-Google-Smtp-Source: AGHT+IEBBOHnFCkjS4erYNgJjiprwps8xwQLgMn5LY7rnBhZttmUOgpWuMTyJ9yoYQq+SzqmMUcUrQ==
-X-Received: by 2002:a17:902:e850:b0:1fb:4f57:6a65 with SMTP id d9443c01a7336-1ff37c3167fmr25480215ad.30.1722339525125;
-        Tue, 30 Jul 2024 04:38:45 -0700 (PDT)
-Received: from [192.168.255.10] ([43.132.141.21])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f1ac12sm99336475ad.186.2024.07.30.04.38.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 04:38:44 -0700 (PDT)
-Message-ID: <5ed6a7fa-31e0-4516-8cbf-8a725377aa32@gmail.com>
-Date: Tue, 30 Jul 2024 19:38:40 +0800
+	s=arc-20240116; t=1722339601; c=relaxed/simple;
+	bh=8rAQ6AB4aVrykSkTJSRX8IRsbErbebxe/9SwefwIFgI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=hfnSGjABz14/KUdhBuUE7ns31CyM+/EYI7ppdxouGjvcD0TJj984QbVvw5NgfdRZGtuP93flHsUKj353p3NMI5S4k5ajJeyVS+e56z48pMe2fNJcyTT7OCZzvOWFva1MLkVVtXju4I0LpcjqJncl74fYXuoq42NHTM8+qmkeZtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BBy/7X/b; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XNccfgGZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 30 Jul 2024 11:39:57 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722339598;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vF8mvkjAN+c3CY38EZzeEucm0iDnmotAbIve7kMbOwE=;
+	b=BBy/7X/bJBlxXwcGnV9IOeR4xdBRjs2v3DuZxDZ3AeeByoO168WgZAXJ1r4VYZRsajwEmd
+	bgmAnDtHsrDnNvliMyv62W+vu0YlF8nt+HduBIS0hx4kvHs4ST6UAHgH0PL1aWt+DFUxBu
+	mHetgst1clowDpHT++QRrxO/W7HbE6e8/oHeiMhkJDdhO9tulC0oEv9SFgCjPBJkAvGpdJ
+	vtYGqGxM/W3Cdcg8Pr6iAu5vqJxB67CAZSFUouHihQc6zGFGzoBhVZSy/CeuwoPidZBK5H
+	fHznwl7MDPs96KKZhZqY8oa3nx7YITdpgNjUSCVQJR06IrLUI/q7iXI8Vm4jGg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722339598;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vF8mvkjAN+c3CY38EZzeEucm0iDnmotAbIve7kMbOwE=;
+	b=XNccfgGZWX36wmSgWRy74Rz0Q6ECU73/KKHNCW7gqVk7ITmNIA61flCrnTbjNY+mVlq8tj
+	XnSE6jIhMN1tlCDA==
+From: tip-bot2 for Marek =?utf-8?q?Beh=C3=BAn?= <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] irqchip/armada-370-xp: Refactor initial memory
+ regions mapping
+Cc: kabel@kernel.org, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20240711160907.31012-10-kabel@kernel.org>
+References: <20240711160907.31012-10-kabel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 18/22] mm/zsmalloc: introduce __zpdesc_clear_movable
-To: Sergey Senozhatsky <senozhatsky@chromium.org>, alexs@kernel.org
-Cc: Vitaly Wool <vitaly.wool@konsulko.com>, Miaohe Lin
- <linmiaohe@huawei.com>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, minchan@kernel.org,
- willy@infradead.org, david@redhat.com, 42.hyeyoo@gmail.com,
- Yosry Ahmed <yosryahmed@google.com>, nphamcs@gmail.com
-References: <20240729112534.3416707-1-alexs@kernel.org>
- <20240729112534.3416707-19-alexs@kernel.org>
- <20240730093419.GA16599@google.com>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <20240730093419.GA16599@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <172233959779.2215.13281468626631095243.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+The following commit has been merged into the irq/core branch of tip:
+
+Commit-ID:     654caa9db6649dbecdfa55ea29c9cbf4603fb402
+Gitweb:        https://git.kernel.org/tip/654caa9db6649dbecdfa55ea29c9cbf4603=
+fb402
+Author:        Marek Beh=C3=BAn <kabel@kernel.org>
+AuthorDate:    Thu, 11 Jul 2024 18:09:06 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 30 Jul 2024 13:35:49 +02:00
+
+irqchip/armada-370-xp: Refactor initial memory regions mapping
+
+Refactor the initial memory regions mapping:
+- put into its own function
+- return error numbers on failure
+- use WARN_ON() instead of BUG_ON()
+
+Signed-off-by: Marek Beh=C3=BAn <kabel@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20240711160907.31012-10-kabel@kernel.org
 
 
+---
+ drivers/irqchip/irq-armada-370-xp.c | 60 +++++++++++++++++++---------
+ 1 file changed, 41 insertions(+), 19 deletions(-)
 
-On 7/30/24 5:34 PM, Sergey Senozhatsky wrote:
-> On (24/07/29 19:25), alexs@kernel.org wrote:
-> [..]
->> +static inline void __zpdesc_clear_movable(struct zpdesc *zpdesc)
->> +{
->> +	__ClearPageMovable(zpdesc_page(zpdesc));
->> +}
-> 
-> [..]
-> 
->> @@ -846,7 +846,7 @@ static void reset_zpdesc(struct zpdesc *zpdesc)
->>  {
->>  	struct page *page = zpdesc_page(zpdesc);
->>  
->> -	__ClearPageMovable(page);
->> +	__zpdesc_clear_movable(zpdesc);
->>  	ClearPagePrivate(page);
-> 
-> Just a quick question, I see that you wrote wrappers for pretty
-> much everything, including SetPagePrivate(), but not for
-> ClearPagePrivate()?
-
-Hi Sergey,
-
-Thanks for comment!
-Yes, it's better to have one for clear, I'll sent a patch soon.
-
-Alex
+diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada=
+-370-xp.c
+index 8b28188..9c66c25 100644
+--- a/drivers/irqchip/irq-armada-370-xp.c
++++ b/drivers/irqchip/irq-armada-370-xp.c
+@@ -12,6 +12,7 @@
+=20
+ #include <linux/bitfield.h>
+ #include <linux/bits.h>
++#include <linux/err.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+@@ -751,29 +752,50 @@ static struct syscore_ops mpic_syscore_ops =3D {
+ 	.resume		=3D mpic_resume,
+ };
+=20
+-static int __init mpic_of_init(struct device_node *node,
+-			       struct device_node *parent)
++static int __init mpic_map_region(struct device_node *np, int index,
++				  void __iomem **base, phys_addr_t *phys_base)
+ {
+-	struct resource main_int_res, per_cpu_int_res;
+-	unsigned int nr_irqs;
++	struct resource res;
++	int err;
++
++	err =3D of_address_to_resource(np, index, &res);
++	if (WARN_ON(err))
++		goto fail;
++
++	if (WARN_ON(!request_mem_region(res.start, resource_size(&res), np->full_na=
+me))) {
++		err =3D -EBUSY;
++		goto fail;
++	}
++
++	*base =3D ioremap(res.start, resource_size(&res));
++	if (WARN_ON(!*base)) {
++		err =3D -ENOMEM;
++		goto fail;
++	}
+=20
+-	BUG_ON(of_address_to_resource(node, 0, &main_int_res));
+-	BUG_ON(of_address_to_resource(node, 1, &per_cpu_int_res));
++	if (phys_base)
++		*phys_base =3D res.start;
+=20
+-	BUG_ON(!request_mem_region(main_int_res.start,
+-				   resource_size(&main_int_res),
+-				   node->full_name));
+-	BUG_ON(!request_mem_region(per_cpu_int_res.start,
+-				   resource_size(&per_cpu_int_res),
+-				   node->full_name));
++	return 0;
++
++fail:
++	pr_err("%pOF: Unable to map resource %d: %pE\n", np, index, ERR_PTR(err));
++	return err;
++}
++
++static int __init mpic_of_init(struct device_node *node, struct device_node =
+*parent)
++{
++	phys_addr_t phys_base;
++	unsigned int nr_irqs;
++	int err;
+=20
+-	main_int_base =3D ioremap(main_int_res.start,
+-				resource_size(&main_int_res));
+-	BUG_ON(!main_int_base);
++	err =3D mpic_map_region(node, 0, &main_int_base, &phys_base);
++	if (err)
++		return err;
+=20
+-	per_cpu_int_base =3D ioremap(per_cpu_int_res.start,
+-				   resource_size(&per_cpu_int_res));
+-	BUG_ON(!per_cpu_int_base);
++	err =3D mpic_map_region(node, 1, &per_cpu_int_base, NULL);
++	if (err)
++		return err;
+=20
+ 	nr_irqs =3D FIELD_GET(MPIC_INT_CONTROL_NUMINT_MASK, readl(main_int_base + M=
+PIC_INT_CONTROL));
+=20
+@@ -794,7 +816,7 @@ static int __init mpic_of_init(struct device_node *node,
+ 	mpic_perf_init();
+ 	mpic_smp_cpu_init();
+=20
+-	mpic_msi_init(node, main_int_res.start);
++	mpic_msi_init(node, phys_base);
+=20
+ 	if (parent_irq <=3D 0) {
+ 		irq_set_default_host(mpic_domain);
 
