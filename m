@@ -1,95 +1,179 @@
-Return-Path: <linux-kernel+bounces-267135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32990940D22
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:11:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55231940D2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61F731C23479
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:11:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00B641F24997
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9511946AB;
-	Tue, 30 Jul 2024 09:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDAD1946D3;
+	Tue, 30 Jul 2024 09:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HiqYXjPS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bifEDcN/"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE94194154;
-	Tue, 30 Jul 2024 09:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BBA194128;
+	Tue, 30 Jul 2024 09:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722330709; cv=none; b=tMs4jiBCfTt95+V2p+wSgLptqxXH6MGZJ6+82g0RMFsbi3BnFME0bv8EdegV+lplFap/NJTsdH8JWX/2bJ7GfH9/i2eNla07vo975U9IFzURSb1Nr9gDSAlDa4ju0vaWcSpXKK/i1CcCuDjU6yzgFAYssfP5rT/BvEbgVz72qrQ=
+	t=1722330832; cv=none; b=tLNATE7/goEDmKkkT/gQQ0S7hEbo4AANw2GGZjfKtKLPxgUH18/jm0Y9M8YV9Fy36sht1odYZV4pK35t2rDgWVeIrvnK7zSy9T6GiILrGK3Lo2q+mJb7XVDGB+0LKQYFTWpwZ1yZ/9UJMT7aKq6c4Lv2rv1MNvMZBszs1fGG/ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722330709; c=relaxed/simple;
-	bh=OwiYcdxTSrCffCnuGSDj7ZNsbAxtXP8QO7bcFGAC/3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VGddm4ch/iEzenCwska5C+RMTCmwqGwjeLdJJWL2IkfFvbjQtKfHPdyi6SfW2LYKRGEAOaxL1WpjEw6Qdu5AEa8gif/NRBnT6oJUxwcJ90grUIZZnoRoDeO7nvxFrU+sE2l+Ukgi6P63BLHtv0dwj1DyV/4KzI6sQc39ZkDMudo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HiqYXjPS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F869C32782;
-	Tue, 30 Jul 2024 09:11:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1722330708;
-	bh=OwiYcdxTSrCffCnuGSDj7ZNsbAxtXP8QO7bcFGAC/3k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HiqYXjPSJRF19w4HQfL1m/VS8x+MTCT0mGBUKZGTIIqi8FUr90sn9zhPC4N72SCw0
-	 qh33R2WlMOmoA5GURaAM6I0fywBWGgGgpoaodTKMMETKG75mV87MueZC0yr7vVdIZA
-	 IjsKvUaS4r0bzNizvHTltD64qJVpa6vvU8wPegH0=
-Date: Tue, 30 Jul 2024 11:11:45 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: wujing <realwujing@qq.com>
-Cc: peterz@infradead.org, dongml2@chinatelecom.cn,
-	linux-kernel@vger.kernel.org, mingo@redhat.com,
-	yuanql9@chinatelecom.cn, stable@vger.kernel.org,
-	mengong8.dong@gmail.com
-Subject: Re: Re: [PATCH] sched/fair: Correct CPU selection from isolated
- domain
-Message-ID: <2024073032-ferret-obtrusive-3ce4@gregkh>
-References: <20240730082239.GF33588@noisy.programming.kicks-ass.net>
- <tencent_0C989DE2631E74C23BA8B60EA234C4B2FA0A@qq.com>
+	s=arc-20240116; t=1722330832; c=relaxed/simple;
+	bh=htKe20TSWKdJB9QebCXsVMQDG06681QGIc9x40lR1f8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aFV+g6uyfgRA4+YGo125HJAH71MneaswPJ+eIVOnzkNKIWiM63pgJy0d1/2FpzWe8HsuviW4PGDlrQs362cCg5jZM3F/ElFsBVFJAGoPvchSNcp+Pytrq5cWZ9YPTWIakUtrjhwgA4o1dBoqLjip/+7eGulGUYqx21T2cqEV2P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bifEDcN/; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7a2123e9ad5so2568984a12.1;
+        Tue, 30 Jul 2024 02:13:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722330830; x=1722935630; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bkS47RCfrEJvvAZyZ9jDL/uElV8WeOywhndpY10cj3U=;
+        b=bifEDcN/njmLwXyETgnWFNPUm/Xf66g2qawZQZ3ie3IwLOXt8M4CeM5X2jfyYQcE/4
+         Q5RL1EZO8oBhRsjTqtqa5ESbqMfnubgsVp+Y4dYag1F1X/GP7eayRG2A5G2PV1CsGGtf
+         MG1QIb9EAkG19XSVBpcwKRxtxeo+Ndj333Q8S8afoFg7NJ/PPhzwpmYqEAZ+PpJIRvbA
+         LE+GWpJaf+hIJEo9280vrAc0/CBGk+JKzZVHlsHodawHZPknDBQCWLvVNJ2kEj+fJ9dC
+         E/buQpW/Mcj4tEwLasFwvVtKdJ2POhnB0CrvogLp1qKMqqB9xNmRrFDwOS5dQ6gK3yE/
+         d/tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722330830; x=1722935630;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bkS47RCfrEJvvAZyZ9jDL/uElV8WeOywhndpY10cj3U=;
+        b=uL2sZRO0gQ6dQFnYbTyqJS0PiDL4NRzGeBVPyQ6r7piCefJynUXJ7InWOsvSoYEcOo
+         nKLTf1CXP8YSsMloxw8lvNzr4NBHSzE0sMeUlahWn43T6wKu4tw+m8DKsBWoT7mIMVAz
+         jB2ncwpBsJu0iMj+rLTO5jUdK1UuU7BOGlsypspbU27TkVurMFHxJBTu6nvp8B4t+oeo
+         OVd8mFifY0v5k9Kbc8s6+7pZhFMI/+jkp8PhQL8tJ8jgikrFuu16B1RgaFsYwlKdqnkk
+         plqsRrYwP6WtxfzSLzP9fhZPPb3Gd9SHJmmd1SXUA5+TXQqAsoeGxJO7dHK95dBlj8P4
+         RUkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUG2Aqru31ZnFWsnGyWRy3+d245A2EnQda7eH9BmOXV85TIRBHfXwq0fMTzr5CzS5E0wpaVWsr9ccOhPbzWicn82k0O4NxV2STqQkEhGtu7RSz1VDUYpwVTCBOrgsMDFdIcKl4ibNPa3d/C5HPpTf/+wz1QsH1j7J8vC5gCTsH9+RR/EoBjiKnwm45X
+X-Gm-Message-State: AOJu0YxDBK4F6kqO5IdJW2A0EBef2m/jj6sSDJJ5nGGym6XvWU3nsowZ
+	b5/FND5vHcMuZlKEnHXue4MLHyTH54vauaDxxT7X7atkE3BiNevG1/6U1Q==
+X-Google-Smtp-Source: AGHT+IGVyj9pJWIOX4Vx31p9HO2PHhOuvTQg2ltGOlkVo/9UeMUxUrJzNT4EnXGBXRa/aXRN1N8uRQ==
+X-Received: by 2002:a17:90a:a785:b0:2c9:5a71:1500 with SMTP id 98e67ed59e1d1-2cfca981a8amr2464063a91.0.1722330830242;
+        Tue, 30 Jul 2024 02:13:50 -0700 (PDT)
+Received: from localhost.localdomain ([113.30.217.222])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cf28c565c9sm10023970a91.3.2024.07.30.02.13.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 02:13:49 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/2] ARM: dts: samsung: Add cache information to the Exynos4412 SoCS
+Date: Tue, 30 Jul 2024 14:43:18 +0530
+Message-ID: <20240730091322.5741-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_0C989DE2631E74C23BA8B60EA234C4B2FA0A@qq.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 30, 2024 at 05:03:38PM +0800, wujing wrote:
-> > If you're trying to backport something, I think you forgot to Cc stable
-> > and provide the proper upstream commit.
-> >
-> > As is this isn't something I can do anything with. The patch does not
-> > apply to any recent kernel and AFAICT this issue has long since been
-> > fixed.
-> 
-> When fixing this bug, I didn't pay much attention to upstream changes.
-> Upon reviewing the history of relevant commits, I found that they have
-> been merged and reverted multiple times:
-> 
-> ```bash
-> git log -S 'cpumask_test_cpu(cpu, sched_domain_span(sd))' --oneline \
-> kernel/sched/fair.c
-> 
-> 8aeaffef8c6e sched/fair: Take the scheduling domain into account in select_idle_smt()
-> 3e6efe87cd5c sched/fair: Remove redundant check in select_idle_smt()
-> 3e8c6c9aac42 sched/fair: Remove task_util from effective utilization in feec()
-> c722f35b513f sched/fair: Bring back select_idle_smt(), but differently
-> 6cd56ef1df39 sched/fair: Remove select_idle_smt()
-> df3cb4ea1fb6 sched/fair: Fix wrong cpu selecting from isolated domain
-> ```
-> 
-> The latest upstream commit 8aeaffef8c6e is not applicable to linux-4.19.y.
-> The current patch has been tested on linux-4.19.y and I am looking forward
-> to its inclusion in the stable version.
+As per the Exynos 4412 user manaual add missing cache information to
+the Exynos 4412 SoC.
 
-What "current patch"?
+- Each Cortex-A9 core has 32KB of L1 instruction cache available and
+	32KB of L1 data cache available.
+- Along with 1M unified L2 cache.
 
-confused,
+Features of ARM Cortex-A9
+- Optimized L1 caches for system performance and power.
+- Integrated 1 MB L2 Cache using standard compiled RAMs.
 
-greg k-h
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ arch/arm/boot/dts/samsung/exynos4412.dtsi | 37 +++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+
+diff --git a/arch/arm/boot/dts/samsung/exynos4412.dtsi b/arch/arm/boot/dts/samsung/exynos4412.dtsi
+index dcbe0ce6180f..d133c8a8e8d4 100644
+--- a/arch/arm/boot/dts/samsung/exynos4412.dtsi
++++ b/arch/arm/boot/dts/samsung/exynos4412.dtsi
+@@ -48,6 +48,13 @@ cpu0: cpu@a00 {
+ 			clock-names = "cpu";
+ 			operating-points-v2 = <&cpu0_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
++			d-cache-line-size = <32>;
++			d-cache-size = <0x8000>;
++			d-cache-sets = <32>;
++			i-cache-line-size = <32>;
++			i-cache-size = <0x8000>;
++			i-cache-sets = <32>;
++			next-level-cache = <&L2>;
+ 		};
+ 
+ 		cpu1: cpu@a01 {
+@@ -58,6 +65,13 @@ cpu1: cpu@a01 {
+ 			clock-names = "cpu";
+ 			operating-points-v2 = <&cpu0_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
++			d-cache-line-size = <32>;
++			d-cache-size = <0x8000>;
++			d-cache-sets = <32>;
++			i-cache-line-size = <32>;
++			i-cache-size = <0x8000>;
++			i-cache-sets = <32>;
++			next-level-cache = <&L2>;
+ 		};
+ 
+ 		cpu2: cpu@a02 {
+@@ -68,6 +82,13 @@ cpu2: cpu@a02 {
+ 			clock-names = "cpu";
+ 			operating-points-v2 = <&cpu0_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
++			d-cache-line-size = <32>;
++			d-cache-size = <0x8000>;
++			d-cache-sets = <32>;
++			i-cache-line-size = <32>;
++			i-cache-size = <0x8000>;
++			i-cache-sets = <32>;
++			next-level-cache = <&L2>;
+ 		};
+ 
+ 		cpu3: cpu@a03 {
+@@ -78,6 +99,22 @@ cpu3: cpu@a03 {
+ 			clock-names = "cpu";
+ 			operating-points-v2 = <&cpu0_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
++			d-cache-line-size = <32>;
++			d-cache-size = <0x8000>;
++			d-cache-sets = <32>;
++			i-cache-line-size = <32>;
++			i-cache-size = <0x8000>;
++			i-cache-sets = <32>;
++			next-level-cache = <&L2>;
++		};
++
++		L2: l2-cache {
++			compatible = "cache";
++			cache-level = <2>;
++			cache-unified;
++			cache-size = <0x100000>; /* L2, 1M */
++			cache-line-size = <64>;
++			cache-sets = <512>;
+ 		};
+ 	};
+ 
+
+base-commit: dc1c8034e31b14a2e5e212104ec508aec44ce1b9
+-- 
+2.44.0
+
 
