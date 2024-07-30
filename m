@@ -1,107 +1,140 @@
-Return-Path: <linux-kernel+bounces-268173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A82B942125
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:56:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F17DB942126
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:58:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20C5B1F24103
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:56:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A210A28687D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F69718CBFC;
-	Tue, 30 Jul 2024 19:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DEBB18CBF9;
+	Tue, 30 Jul 2024 19:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C+mNxKIs"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="O+P8dBOV";
+	dkim=permerror (0-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="S1d/U/Hc"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811FD18991F;
-	Tue, 30 Jul 2024 19:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722369352; cv=none; b=sVmZVsoPZfLylGSsizHtaDfGX5IAd5Ba9INbCRUE3BPRz9FJp4F3SRYGLu6E2X6LOeGyPJplWw+L4rE6ae0kBvyq/mT0AuGC2py/Smca8Gq0tHblU8vXsfg+c/yeEJq+KHqf4resDw8bRqB3UQn6H5Tzcb68WVwRfGxpRI2iDW0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722369352; c=relaxed/simple;
-	bh=klFMNX1xsq1LBJZrZ1M9SzxlV+qwwz8Pg1eqq5jDIF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s4czwZ9Rhd6eJEOoDPs90vVz2V70fl8Rz3pKGgMfx0uGDT++jD7mw/d4sO4YDbkFqBVpFeWUt/5ZAxSmQiOGdbBfU7XR065uIc+1x/lZ2jvLu+ZsblszA6Jw3M1AeD1zbErU+UKFPDnB4CvLonRuNeUwxkDWO4GeS7qOplfuUhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C+mNxKIs; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d2b921cd1so4350192b3a.1;
-        Tue, 30 Jul 2024 12:55:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722369351; x=1722974151; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KE4/z63NukpwZv55tRsNWCKauGei4gQs0/R3qZRePOc=;
-        b=C+mNxKIsFiewpcgdad6Ih+M6YrNgMrEfwTAT6Yo30P/tKbx5YfYU7pQ0MIyZh5fcGn
-         2ZFuNM+6q4rTJvyPUxcAgzH7166r27sG4Iv1c7pmuVoMgXgaQc/C9bjj536N2OM45DWF
-         jkuHtuhW9m0+p/+jmfG8ui2ZcB84TTY3jLeMU8Y1Zo71PN/4mi9SkFJn8lKzoP6d5xuj
-         aaByqSAIS89GoYjsFxnfCd8g0qpMRYQAu3hrN2eRZgNGwyhlHv0dzUNmiJKi3iGQNYu3
-         a+pazcD8Sjj6Jj2tBV0VVAHBohzsTni/mJ9JLbDi+JRWMP4GrgVqxcy1BFMo1IW6etOB
-         OqRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722369351; x=1722974151;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KE4/z63NukpwZv55tRsNWCKauGei4gQs0/R3qZRePOc=;
-        b=Rlg9yQyvF1apsjBujRmrd+hERPsYpaMGJq1UN3dighYR0Fbpl67mxPQrEeCzV/MaiE
-         aJzXdr1K9ycD0VmuYphJ7Chg+UsM/hZzvh+eTxPK7r6znS37W7mYNV6cBQfM4kDfA5jK
-         1Sc2LjHJ0sZPSEBR3kz1DnGGkEl1voVjgGA8Li06AK3pBVxkwHcE9WHWCXwsqPBqh5xj
-         rvZqSKDjmLEEQIz96qlldmwbfW4axJjx9ch1V6YCLhIdmCruEq1bDv6iWkJ4SJJdf71Y
-         kxEbz81S5WnSqGRxnYJ8nnVKC30+/zYvhgf5lMOxyhRO1QfADZstx9hL/4fUQmS2YlyU
-         +ICA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfZeHwIjkYzil25SWWPOsPEk4jqT4sM7FsG51Kk3pCcTHIpVVciBatX1SgmbL8R2w3dQXvTYNrukpiTwLQ+RZbygBJmCZPH/8DzoTr/VGGnL5PeZpj+mY4RG+Nd6MFQtzxJbmD1QgMQcDPXysO4LNdKWtzppnGfF2Y6A==
-X-Gm-Message-State: AOJu0YylBQcr6PkvH9Uw0tUQu9gKBl4biEC5SS7oVHL4lK/KgU5dt1gB
-	qNltQQrghzjmyFuFZfrrL86n3yDuO9ELq8UhcDqGFK89i7+mwFGZbSitKA==
-X-Google-Smtp-Source: AGHT+IHjlwh7/K6G1J9Qt8L1k2MCqMqomhjRCsSdVSVbZ2l2EgjEjJ563Idkh7IIK1RNtBsV6tIm6A==
-X-Received: by 2002:aa7:88c5:0:b0:70e:8d38:2845 with SMTP id d2e1a72fcca58-70ece9fad5cmr17057812b3a.1.1722369350657;
-        Tue, 30 Jul 2024 12:55:50 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70efcbeec52sm1736014b3a.62.2024.07.30.12.55.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 12:55:50 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 30 Jul 2024 09:55:49 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Chen Ridong <chenridong@huawei.com>
-Cc: lizefan.x@bytedance.com, hannes@cmpxchg.org, longman@redhat.com,
-	adityakali@google.com, sergeh@kernel.org, bpf@vger.kernel.org,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] cgroup/cpuset: fix panic caused by partcmd_update
-Message-ID: <ZqlFRaDp3dPrCp2z@slm.duckdns.org>
-References: <20240730095126.2328303-1-chenridong@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19FB83A17;
+	Tue, 30 Jul 2024 19:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.166
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722369529; cv=pass; b=AfHRkA1p7FUUWRyHlC5vf9e+vqwZbfedEAiqk13nhaivJhefwLAE1II+HkeAVxpG3l+LRplBDHmoLrt1gBjWS3PFOKBihtvgeFwwzrT57+gbLA6vWFFLI4TQyNzLqcYNKcVR7YRc4mPgPhMFyCyU1L2xXGgxglZY9hmLDe89HWI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722369529; c=relaxed/simple;
+	bh=rXllNwgPg9V8TBY10KyD+qXKZdw2EfkkClgM1/RQCZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NTNg7zuzd3mFXur1WvHBpivtdHATnbWP/Bxltl7LrGrxqZeOaJ1KNcWPxn9Aco+hkW8+/xFB1UBphNtZwkptZVcPO2C8c8lq63+FEQAG4/0UGOrO+irDSpzfvwVvrMMFJZARo7W26IR/SpEqyIAYwIHWPCdwm0LD7LgRDNC/eto=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de; spf=none smtp.mailfrom=aepfle.de; dkim=pass (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b=O+P8dBOV; dkim=permerror (0-bit key) header.d=aepfle.de header.i=@aepfle.de header.b=S1d/U/Hc; arc=pass smtp.client-ip=81.169.146.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=aepfle.de
+ARC-Seal: i=1; a=rsa-sha256; t=1722369518; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=B2vVThl62f1Q0+3QFP+0zZ2iFfaajdC9qylZqbYAQ543Qx9yn656ClO3VtitjllClr
+    CIfH1HKXEcCYUKrZBG4CG/wtcuNisb9vYiUPg7GayCBWIqmp+chl8vdGQnvYdG7Ohm9c
+    SCzvXqq5A4cy3cQM71Hnfxwk3Xpiy8aq9OhHWQGzcWUb692HL70CyPEEUD0Oqg53eV96
+    rAF69suhfjiw4eszIYJdI+uuQVPfOQv0Oo37DV4q2YR3bbxbO0FWpFD0fNGas7yZx6Cu
+    GEQQqD+UUzdA1rwRaoUDEHDkxXN7+pw1gRJ4bbVjvWXXIIpHU9i4tsZ4cuza26bUf+6N
+    GX/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1722369518;
+    s=strato-dkim-0002; d=strato.com;
+    h=References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=rXllNwgPg9V8TBY10KyD+qXKZdw2EfkkClgM1/RQCZk=;
+    b=RTPLXjE0Ymjfl3sMVpOLDJRtMd8/gNry2u05R1HziVHzZSEBt7Q/foI4IHZ7FfhpnK
+    ZxIYcBzQXbmws/mNOQ6t/AMc/JOHTGWJPXt6VmuccnzaD6GFGZadKH8BWJhGO0LZ2Xlt
+    e5d9hptw9Txs3mY3QA2VkU4NrbX9hTihie8HZvBxZYrvDnpMFlJYt2Bw13FvbV289lUa
+    4OT5iWcLTIHRgAUHMG/5SZmG9P+1h608AcB2sznnCHgnVZ9v9hz7iov4/PUl1h7N3YpZ
+    puRnd+BS3UOC8DTuIDk5s0DVluqM4LZkZqtSOSrXBcDQAvVjavpjug9XeKTAav6O7Dl5
+    lMrQ==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1722369517;
+    s=strato-dkim-0002; d=aepfle.de;
+    h=References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=rXllNwgPg9V8TBY10KyD+qXKZdw2EfkkClgM1/RQCZk=;
+    b=O+P8dBOVZpEMXNQBMHfelGXi2QhLXZ6BN0ak9thtUW5Tj2H536dqHwtfqszF9tTW+m
+    jrTFcNkjiRXsJoOpPSQGhc6qcW5F9kvhON66j69Z2tkDGg6pdk3dXu3LtXvbaThvD8Q6
+    fmYns72yOUu3CZIZuTvI1v27cAnBn76BTGH6sHGqqtqPulsSDB7CDm0JB6ILYmHz3QS5
+    UVlKgV0V1LrgKN/n+xjUQjj4L39/qzw8aXY0ukGv61P1w8K5g+MZRwPmxgGKeSKaBoPP
+    AtdUR5e+J7itM5PciUyhptLStXoZTFEHrDNa63xKp2BeUsM8cQ0USNnFcvEQ9t1gLRrl
+    3c9w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1722369517;
+    s=strato-dkim-0003; d=aepfle.de;
+    h=References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=rXllNwgPg9V8TBY10KyD+qXKZdw2EfkkClgM1/RQCZk=;
+    b=S1d/U/Hc2aD3qoFv7iaecmh1MJz5KpiLtamCujQ3hkr9zUhwDHPmEb7VzeSPAMLCcj
+    2fnCXxfFKCazL0lw7rCA==
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QLpd5ylWvMDX3y/OuD5rXVisR5WhGIY03sl8P3E8+0INaYkLbLK6amJ4tjV9TKUg=="
+Received: from sender
+    by smtp.strato.de (RZmta 51.1.0 AUTH)
+    with ESMTPSA id Da26f206UJwbPFT
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Tue, 30 Jul 2024 21:58:37 +0200 (CEST)
+Date: Tue, 30 Jul 2024 21:58:27 +0200
+From: Olaf Hering <olaf@aepfle.de>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Deepa Dinamani <deepa.kernel@gmail.com>, Jeff Layton
+ <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>
+Subject: Re: [PATCH v1] mount: handle OOM on mnt_warn_timestamp_expiry
+Message-ID: <20240730215827.77b90c8a.olaf@aepfle.de>
+In-Reply-To: <20240730154924.GF5334@ZenIV>
+References: <20240730085856.32385-1-olaf@aepfle.de>
+	<20240730154924.GF5334@ZenIV>
+X-Mailer: Claws Mail (olh) 20240408T134401.7adfa8f7 hat ein Softwareproblem, kann man nichts machen.
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730095126.2328303-1-chenridong@huawei.com>
+Content-Type: multipart/signed; boundary="Sig_/ZiFKxp.EPGj5=M_RD=QwsTu";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 30, 2024 at 09:51:26AM +0000, Chen Ridong wrote:
-...
-> This issue is caused by the incorrect rebuilding of scheduling domains.
-> In this scenario, test/cpuset.cpus.partition should be an invalid root
-> and should not trigger the rebuilding of scheduling domains. When calling
-> update_parent_effective_cpumask with partcmd_update, if newmask is not
-> null, it should recheck newmask whether there are cpus is available
-> for parect/cs that has tasks.
-> 
-> Fixes: 0c7f293efc87 ("cgroup/cpuset: Add cpuset.cpus.exclusive.effective for v2")
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+--Sig_/ZiFKxp.EPGj5=M_RD=QwsTu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Applied to cgroup/for-6.11-fixes w/ stable tag added.
+Tue, 30 Jul 2024 16:49:24 +0100 Al Viro <viro@zeniv.linux.org.uk>:
 
-Thanks.
+> d_path() is *NOT* going to return NULL.
 
--- 
-tejun
+The existing documentation does not state that fact.
+
+
+Olaf
+
+--Sig_/ZiFKxp.EPGj5=M_RD=QwsTu
+Content-Type: application/pgp-signature
+Content-Description: Digitale Signatur von OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE97o7Um30LT3B+5b/86SN7mm1DoAFAmapReMACgkQ86SN7mm1
+DoCBQQ//YkTVdDlvslQv03pTYTIg+dKeFTXz/SA2mQjxGAHWmHr9m8PHoVgj26JM
+Lzj+WMErLr6ooPKjCqCN7Fs5iWkhKWZaXZVXPweLF03Q/dy+uCSB5FIeXgClkyWz
+d8BzzVO5OKenAmHoM2GK6IL82UaTJoTCYk3SUEdTD9yurrGrb8STh4mTEoZ6dYIe
+KKzASwLqx2yFisB8vXU0KPjr9X0DHX8jUa7WiEo5HnT/yc1WPD1GpEpgb1gMILs/
+4QdtDzHXwte58cTtLivj4jHmllelF565pBIw785eWR7cXc/PcGAp7NTFaEnNjgUt
+Z5vYoBTdMzQCPyvohzr7budI/hJ2apDLlObxOidF0B+DX8/xq9MAr2837S7C5xiI
+urK+I1x1cAT0AkxqUlxLnDykMFiTNqtA7XZ8+qbsGmHD90PaYU9snUljJaEHJStf
+U3J6qR4HzMY3vbjCfWO4j4R3ZkZCJVh4BRkJv6+kPkwKZ5slG8B6Y5eXkuf3gsYK
+wNBb1tIaVQIlyOIrh13b3fVSPj/l1GV4hIfvUQSzD/ufCPrJySPeub43kurQ0tYN
+D7UV7G8kFLhjj6XYQqaRLmyEictbqum281dMzJN0YObL/B+GDG++69swY7sO5fmd
+E6XCzBce1PYPm0ai2O0vm32mDJnIz/SO3gyvrsqPewlYxQJVNx0=
+=/miM
+-----END PGP SIGNATURE-----
+
+--Sig_/ZiFKxp.EPGj5=M_RD=QwsTu--
 
