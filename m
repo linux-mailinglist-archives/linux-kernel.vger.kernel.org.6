@@ -1,149 +1,83 @@
-Return-Path: <linux-kernel+bounces-267213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426DB940E76
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:59:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6F2A940E4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95661F2207E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:59:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042151C20CEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D0F199389;
-	Tue, 30 Jul 2024 09:58:51 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92B71974FE;
+	Tue, 30 Jul 2024 09:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="orh6NyBo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4C6195FE5;
-	Tue, 30 Jul 2024 09:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF74196C9C;
+	Tue, 30 Jul 2024 09:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722333530; cv=none; b=Iuvuq2XU1M3P+jVkpSedA2GtGwvfmgwwpOnDNTlSwv87BvQL3TLxk/ZrSt5ImkHeRNrBxR6iQaw/S0H5wJJ0tLgfxEpmzRvucdl9kCW2Z7y4CvVdHS6MSVencOfYkXcWLZZRiFRI6L4JsG5b58qm0LTL3hlV1RfmvguBJvoixXE=
+	t=1722333110; cv=none; b=jGICuiy7/H1Sgw2SzbdqSIxyyXs5h4WGdlD2Q2fovjsGZEqRX3mGjtn7O/J5MuBoEAdeRYD/ZGdODOB0rih66pTCKlh2YinjWGAoe6bneCTi0bn2z5p1A+SduyRa0efiTdX+FjQz/YjaFBUVw7oNXDgcj9/MGS9QDvfJuRt1cTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722333530; c=relaxed/simple;
-	bh=WlU574jLMQuNk5+lBuLDz//M2KDX46PA/hO5ZdTtgkE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pqG34PHY5mHbxMDutb20Zd3XxsnmmnJy6guVYDW+9gQPFYjR1phZjTK3Hgei6aDl24HVQKt5dFI/EFL33onSxVfNBlqiMmw6MJtT7zZT2gGVcr5b96exOUb5oRrtO6+XJevt9ioRffPNnS0CcW/XwQ3eK98UuWs73037e15bBEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WY9fK6chTz1L9FL;
-	Tue, 30 Jul 2024 17:58:33 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id D69A2180100;
-	Tue, 30 Jul 2024 17:58:43 +0800 (CST)
-Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 30 Jul
- 2024 17:58:43 +0800
-From: Chen Ridong <chenridong@huawei.com>
-To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
-	<longman@redhat.com>, <adityakali@google.com>, <sergeh@kernel.org>
-CC: <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] cgroup/cpuset: fix panic caused by partcmd_update
-Date: Tue, 30 Jul 2024 09:51:26 +0000
-Message-ID: <20240730095126.2328303-1-chenridong@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722333110; c=relaxed/simple;
+	bh=SnF19pvKLoYPy4IqzuGyrn7K0fDIxfITLHSn4a9BnXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rXDJ94EGmr+ntI14Mrhnx5GYAnxj/jrBtzX4AM4i4jwWhVrJy8acFP6h9vnfHT4Tmmq7RDaA+O0LOPZBb5VATyXX29fL01LjditMhRIlF/0+F2HsfOEiaklFg0HiurgI+lwVNpqinK1P3SIBH67b3edjWkTpVZT/o56KXb8+7QI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=orh6NyBo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F764C32782;
+	Tue, 30 Jul 2024 09:51:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722333109;
+	bh=SnF19pvKLoYPy4IqzuGyrn7K0fDIxfITLHSn4a9BnXg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=orh6NyBoG63k+4jodAp1LEDHkhwn3e9eWpbjp6E5jL5d2DcSnn78qdlVjPec6KPic
+	 7jM/UAaHpqpp5gWkTQvQu6a+/ZZ1HR5CploH784OgIFmh4BhSSc48eGGt4j2aMieDm
+	 pnPEG+PSer/sLC+ONGUlcdmhemFwYjQCG8SYE9QE=
+Date: Tue, 30 Jul 2024 11:51:46 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: wujing <realwujing@qq.com>
+Cc: dongml2@chinatelecom.cn, linux-kernel@vger.kernel.org,
+	menglong8.dong@gmail.com, mingo@redhat.com, peterz@infradead.org,
+	stable@vger.kernel.org, yuanql9@chinatelecom.cn
+Subject: Re: Re: [PATCH] sched/fair: Correct CPU selection from isolated
+ domain
+Message-ID: <2024073011-operating-pointless-7ab9@gregkh>
+References: <2024073032-ferret-obtrusive-3ce4@gregkh>
+ <tencent_02C238CCB4CAA1D0C58AF9A89E8263AE740A@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_02C238CCB4CAA1D0C58AF9A89E8263AE740A@qq.com>
 
-We find a bug as below:
-BUG: unable to handle page fault for address: 00000003
-PGD 0 P4D 0
-Oops: 0000 [#1] PREEMPT SMP NOPTI
-CPU: 3 PID: 358 Comm: bash Tainted: G        W I        6.6.0-10893-g60d6
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/4
-RIP: 0010:partition_sched_domains_locked+0x483/0x600
-Code: 01 48 85 d2 74 0d 48 83 05 29 3f f8 03 01 f3 48 0f bc c2 89 c0 48 9
-RSP: 0018:ffffc90000fdbc58 EFLAGS: 00000202
-RAX: 0000000100000003 RBX: ffff888100b3dfa0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000002fe80
-RBP: ffff888100b3dfb0 R08: 0000000000000001 R09: 0000000000000000
-R10: ffffc90000fdbcb0 R11: 0000000000000004 R12: 0000000000000002
-R13: ffff888100a92b48 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007f44a5425740(0000) GS:ffff888237d80000(0000) knlGS:0000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000100030973 CR3: 000000010722c000 CR4: 00000000000006e0
-Call Trace:
- <TASK>
- ? show_regs+0x8c/0xa0
- ? __die_body+0x23/0xa0
- ? __die+0x3a/0x50
- ? page_fault_oops+0x1d2/0x5c0
- ? partition_sched_domains_locked+0x483/0x600
- ? search_module_extables+0x2a/0xb0
- ? search_exception_tables+0x67/0x90
- ? kernelmode_fixup_or_oops+0x144/0x1b0
- ? __bad_area_nosemaphore+0x211/0x360
- ? up_read+0x3b/0x50
- ? bad_area_nosemaphore+0x1a/0x30
- ? exc_page_fault+0x890/0xd90
- ? __lock_acquire.constprop.0+0x24f/0x8d0
- ? __lock_acquire.constprop.0+0x24f/0x8d0
- ? asm_exc_page_fault+0x26/0x30
- ? partition_sched_domains_locked+0x483/0x600
- ? partition_sched_domains_locked+0xf0/0x600
- rebuild_sched_domains_locked+0x806/0xdc0
- update_partition_sd_lb+0x118/0x130
- cpuset_write_resmask+0xffc/0x1420
- cgroup_file_write+0xb2/0x290
- kernfs_fop_write_iter+0x194/0x290
- new_sync_write+0xeb/0x160
- vfs_write+0x16f/0x1d0
- ksys_write+0x81/0x180
- __x64_sys_write+0x21/0x30
- x64_sys_call+0x2f25/0x4630
- do_syscall_64+0x44/0xb0
- entry_SYSCALL_64_after_hwframe+0x78/0xe2
-RIP: 0033:0x7f44a553c887
+On Tue, Jul 30, 2024 at 05:40:17PM +0800, wujing wrote:
+> > What "current patch"?
+> >
+> > confused,
+> >
+> > greg k-h
+> 
+> The current patch is in my first email.
 
-It can be reproduced with cammands:
-cd /sys/fs/cgroup/
-mkdir test
-cd test/
-echo +cpuset > ../cgroup.subtree_control
-echo root > cpuset.cpus.partition
-cat /sys/fs/cgroup/cpuset.cpus.effective
-0-3
-echo 0-3 > cpuset.cpus // taking away all cpus from root
+What message exactly?  I don't see any such message on the stable list.
 
-This issue is caused by the incorrect rebuilding of scheduling domains.
-In this scenario, test/cpuset.cpus.partition should be an invalid root
-and should not trigger the rebuilding of scheduling domains. When calling
-update_parent_effective_cpumask with partcmd_update, if newmask is not
-null, it should recheck newmask whether there are cpus is available
-for parect/cs that has tasks.
+> Please ignore the previous two emails.
+> The "current patch" mentioned in the earlier emails refers to the upstream
+> status, but the latest upstream patch can no longer be applied to linux-4.19.y.
 
-Fixes: 0c7f293efc87 ("cgroup/cpuset: Add cpuset.cpus.exclusive.effective for v2")
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- kernel/cgroup/cpuset.c | 2 ++
- 1 file changed, 2 insertions(+)
+Again, please read:
+    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+for how to do this properly.
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 40ec4abaf440..a9b6d56eeffa 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -1991,6 +1991,8 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
- 			part_error = PERR_CPUSEMPTY;
- 			goto write_error;
- 		}
-+		/* Check newmask again, whether cpus are available for parent/cs */
-+		nocpu |= tasks_nocpu_error(parent, cs, newmask);
- 
- 		/*
- 		 * partcmd_update with newmask:
--- 
-2.34.1
+thanks,
 
+greg k-h
 
