@@ -1,258 +1,361 @@
-Return-Path: <linux-kernel+bounces-266620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C6D940376
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:23:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B690940384
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22504283158
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:23:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF155B21C49
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA56179E1;
-	Tue, 30 Jul 2024 01:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD15C121;
+	Tue, 30 Jul 2024 01:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I6Y8rYxs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bMBjIHTV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1A26FD3
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 01:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6EA8BE8;
+	Tue, 30 Jul 2024 01:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722302596; cv=none; b=oIoTJ+gGPZgTGkuLATZfzhqoKU69xGMzlgGUNHSRxwnGWdlINWGfeGAtaWSAa6D20ILtC4eC1fVf24msBE+etqJpAfkKKBEWvXPaeFzADAXh+r3TfOdxkQR6yo8/scUoQmbkQF2xMPR4DKn8tW/3Iycm53ahqYUI7l2pEhn9ZoA=
+	t=1722302632; cv=none; b=nckbh7eTSoELtn5bwU1YsBFCcckhgUnfF1N6qQZ8OJVG31JpulDKdTRPaOpep5Lo9T+RaRizgg+K5JdcVd1dCGiPOOaEcEafGgbKkBO24VPx2kzLnu37jHCIDyuGqxEUR9hy/OJIHE1baDkMwY5Xb6VjMntHSQHGlrkVCvldauw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722302596; c=relaxed/simple;
-	bh=ybTFoXoymcQLMDqmPeltfdlqvtqnUenRkuggUgq3rX0=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=p/zDKxxuAZUwb6T53/eLV7ToUfdobRh0tPCC8CXxb0Cck8H+/bpDV8lj40WrmV10WeU8wG9g7CLfaXo8Fyl37nD5GoHEFfjIP7OXXah+f/EdwfO3Se3nQROqAiFr+G2zNr34C7nomguW+guBDG0cWfuWmJ81PgmHDdBfz7XSVzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I6Y8rYxs; arc=none smtp.client-ip=198.175.65.11
+	s=arc-20240116; t=1722302632; c=relaxed/simple;
+	bh=6fA9RTyEjiNifxbl0Sg2Mfk6p9bgGUuXoF5o0fPzn70=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ezFVqirCIJ2tkDdR2KkNmcYBnvK7eMwkWV+u0FX09PPVM/IUVXnjgzrOMGf4ExoFT4W3pOwlqVUji6dE+bP3QkrSmFkxv2KP/Jqx9hU7R4fwZV0+w9m92YDrnJovWkbfUUegWLlWykZEgEBbRr7+ZKlpshPVbENQ6xvtq9ZfD7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bMBjIHTV; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722302595; x=1753838595;
-  h=date:from:to:cc:subject:message-id;
-  bh=ybTFoXoymcQLMDqmPeltfdlqvtqnUenRkuggUgq3rX0=;
-  b=I6Y8rYxsGxN06SrRr+aqNq776nOfOgnhGWP3xQagxo7fLFEDoTXOhwXy
-   dMlqHENraxWkbSw7vlBV77nerihpcGmX6TzhDI84tmkNAwGHR+jp52Tjd
-   QzeoieFhakUzwv0+R3SvpyiynP56FkZ0k9zSg8/jz3Q14ILhXxCvmlkWt
-   91DxkpEXvaWPKHuT1xk/RG0mNdnfzcJwBDfvdmlwP9N0I7Q6yVS6cA6Nw
-   NZF/nWVw9fzItl00QQfDTv/xYlP5VpkZzpLK6c4zmACgmzV5k2TvqSePs
-   mMKZktGSb+yx3oUlFvTHaBajZhxCXVyxvclAvFg3z9XHTgQxlw6SPbJuz
-   A==;
-X-CSE-ConnectionGUID: jA9PtPC1Rny8iRMmw5NJNQ==
-X-CSE-MsgGUID: oXg23R+cRciQk59YlbLmxg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="30680744"
+  t=1722302630; x=1753838630;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=6fA9RTyEjiNifxbl0Sg2Mfk6p9bgGUuXoF5o0fPzn70=;
+  b=bMBjIHTVLddTzDg6nCHh1PPrLVizXmJygfx0GCR77P2I6kq1+IQyIQcg
+   r2ePYJpLvJeQveFblzZMHg4kLc07FiylQALndmPDhvao9G7ixE+ij3Y4F
+   qLZfxR1BizBgu8pbTA0QjwtQTOP8e3Ok+vNKgkxgg1IDwz+yDRqdgRfeA
+   NuD1nnH5slkL3IvlbYORmihhtrY3iagoxLZEg4Pn+qA/LTmwPJm+APYSM
+   2fpukGVI1UxiTEuJE+zSweW1Tzw5aGyAw9VPUAXuYfPBz1E8sUa7JonwK
+   lU7smmUJOoNdMqOfsul2Iu7Ts1JnTlzmrRx4UiMhWucGR1dTchfhT+QAi
+   Q==;
+X-CSE-ConnectionGUID: 6EltkfD9RVSrbzzpQ8ePZA==
+X-CSE-MsgGUID: dWYqyJNZQWet2w6pQEsyWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="19894982"
 X-IronPort-AV: E=Sophos;i="6.09,247,1716274800"; 
-   d="scan'208";a="30680744"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 18:23:14 -0700
-X-CSE-ConnectionGUID: G/Z21oABRumMg2LLQziO6A==
-X-CSE-MsgGUID: ZCiSayBnTFWL6OA9j4aVWg==
+   d="scan'208";a="19894982"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 18:23:49 -0700
+X-CSE-ConnectionGUID: NipeZddZTauPmwsUZXEkiw==
+X-CSE-MsgGUID: EI8p0QXcSCiwk94KhuloFA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,247,1716274800"; 
-   d="scan'208";a="91655548"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 29 Jul 2024 18:23:13 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sYba2-000sIH-2F;
-	Tue, 30 Jul 2024 01:23:10 +0000
-Date: Tue, 30 Jul 2024 09:22:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:sched/core] BUILD SUCCESS
- cea5a3472ac43f18590e1bd6b842f808347a810c
-Message-ID: <202407300947.3simm4ik-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+   d="scan'208";a="59240054"
+Received: from p12ill20yoongsia.png.intel.com ([10.88.227.28])
+  by orviesa004.jf.intel.com with ESMTP; 29 Jul 2024 18:23:44 -0700
+From: Song Yoong Siang <yoong.siang.song@intel.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Shinas Rasheed <srasheed@marvell.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Brett Creeley <brett.creeley@amd.com>,
+	Blanco Alcaine Hector <hector.blanco.alcaine@intel.com>,
+	Joshua Hay <joshua.a.hay@intel.com>,
+	Sasha Neftin <sasha.neftin@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: [PATCH iwl-next,v1 2/3] igc: Add default Rx queue configuration via sysfs
+Date: Tue, 30 Jul 2024 09:23:12 +0800
+Message-Id: <20240730012312.775893-1-yoong.siang.song@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
-branch HEAD: cea5a3472ac43f18590e1bd6b842f808347a810c  sched/fair: Cleanup fair_server
+From: Blanco Alcaine Hector <hector.blanco.alcaine@intel.com>
 
-elapsed time: 893m
+This commit introduces the support to configure default Rx queue during
+runtime. A new sysfs attribute "default_rx_queue" has been added, allowing
+users to check and modify the default Rx queue.
 
-configs tested: 166
-configs skipped: 8
+1. Command to check the currently configured default Rx queue:
+   cat /sys/devices/pci0000:00/.../default_rx_queue
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+2. Command to set the default Rx queue to a desired value, for example 3:
+   echo 3 > /sys/devices/pci0000:00/.../default_rx_queue
 
-tested configs:
-alpha                             allnoconfig   gcc-13.3.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.3.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                        nsimosci_defconfig   gcc-13.2.0
-arc                   randconfig-001-20240730   gcc-13.2.0
-arc                   randconfig-002-20240730   gcc-13.2.0
-arm                              allmodconfig   gcc-14.1.0
-arm                               allnoconfig   clang-20
-arm                              allyesconfig   gcc-14.1.0
-arm                                 defconfig   clang-14
-arm                            hisi_defconfig   gcc-14.1.0
-arm                        keystone_defconfig   gcc-14.1.0
-arm                             pxa_defconfig   gcc-14.1.0
-arm                   randconfig-001-20240730   gcc-14.1.0
-arm                   randconfig-002-20240730   gcc-14.1.0
-arm                   randconfig-003-20240730   gcc-14.1.0
-arm                   randconfig-004-20240730   gcc-14.1.0
-arm64                            allmodconfig   clang-20
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-14.1.0
-arm64                 randconfig-001-20240730   gcc-14.1.0
-arm64                 randconfig-002-20240730   clang-20
-arm64                 randconfig-003-20240730   clang-20
-arm64                 randconfig-004-20240730   gcc-14.1.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-14.1.0
-csky                  randconfig-001-20240730   gcc-14.1.0
-csky                  randconfig-002-20240730   gcc-14.1.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   clang-20
-hexagon                          allyesconfig   clang-20
-hexagon                             defconfig   clang-20
-hexagon               randconfig-001-20240730   clang-20
-hexagon               randconfig-002-20240730   clang-20
-i386                             allmodconfig   gcc-13
-i386                              allnoconfig   gcc-13
-i386                             allyesconfig   gcc-13
-i386         buildonly-randconfig-001-20240729   clang-18
-i386         buildonly-randconfig-002-20240729   gcc-13
-i386         buildonly-randconfig-003-20240729   clang-18
-i386         buildonly-randconfig-004-20240729   gcc-10
-i386         buildonly-randconfig-005-20240729   clang-18
-i386         buildonly-randconfig-006-20240729   gcc-8
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240729   gcc-12
-i386                  randconfig-002-20240729   clang-18
-i386                  randconfig-003-20240729   gcc-10
-i386                  randconfig-004-20240729   gcc-13
-i386                  randconfig-005-20240729   gcc-8
-i386                  randconfig-006-20240729   gcc-13
-i386                  randconfig-011-20240729   gcc-13
-i386                  randconfig-012-20240729   clang-18
-i386                  randconfig-013-20240729   gcc-9
-i386                  randconfig-014-20240729   clang-18
-i386                  randconfig-015-20240729   gcc-13
-i386                  randconfig-016-20240729   clang-18
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-14.1.0
-loongarch             randconfig-001-20240730   gcc-14.1.0
-loongarch             randconfig-002-20240730   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-14.1.0
-mips                           gcw0_defconfig   clang-20
-mips                            gpr_defconfig   clang-20
-mips                      maltaaprp_defconfig   clang-14
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-14.1.0
-nios2                 randconfig-001-20240730   gcc-14.1.0
-nios2                 randconfig-002-20240730   gcc-14.1.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                generic-64bit_defconfig   gcc-14.1.0
-parisc                randconfig-001-20240730   gcc-14.1.0
-parisc                randconfig-002-20240730   gcc-14.1.0
-parisc64                            defconfig   gcc-14.1.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   clang-20
-powerpc                 canyonlands_defconfig   clang-20
-powerpc               randconfig-002-20240730   clang-16
-powerpc                    sam440ep_defconfig   gcc-14.1.0
-powerpc64             randconfig-001-20240730   gcc-14.1.0
-powerpc64             randconfig-003-20240730   gcc-14.1.0
-riscv                            allmodconfig   clang-20
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   clang-20
-riscv                               defconfig   clang-20
-riscv                 randconfig-001-20240730   clang-14
-riscv                 randconfig-002-20240730   gcc-14.1.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   clang-20
-s390                  randconfig-001-20240730   gcc-14.1.0
-s390                  randconfig-002-20240730   clang-20
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                             espt_defconfig   gcc-14.1.0
-sh                          polaris_defconfig   gcc-14.1.0
-sh                          r7780mp_defconfig   gcc-14.1.0
-sh                    randconfig-001-20240730   gcc-14.1.0
-sh                    randconfig-002-20240730   gcc-14.1.0
-sh                          rsk7269_defconfig   gcc-14.1.0
-sh                           se7721_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240730   gcc-14.1.0
-sparc64               randconfig-002-20240730   gcc-14.1.0
-um                               allmodconfig   clang-20
-um                                allnoconfig   clang-17
-um                               allyesconfig   gcc-13
-um                                  defconfig   clang-20
-um                             i386_defconfig   gcc-13
-um                    randconfig-001-20240730   gcc-13
-um                    randconfig-002-20240730   clang-20
-um                           x86_64_defconfig   clang-15
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240729   clang-18
-x86_64       buildonly-randconfig-002-20240729   gcc-13
-x86_64       buildonly-randconfig-003-20240729   gcc-10
-x86_64       buildonly-randconfig-004-20240729   gcc-10
-x86_64       buildonly-randconfig-005-20240729   gcc-10
-x86_64       buildonly-randconfig-006-20240729   gcc-10
-x86_64                              defconfig   gcc-13
-x86_64                randconfig-001-20240729   gcc-13
-x86_64                randconfig-002-20240729   clang-18
-x86_64                randconfig-003-20240729   clang-18
-x86_64                randconfig-004-20240729   clang-18
-x86_64                randconfig-005-20240729   clang-18
-x86_64                randconfig-006-20240729   clang-18
-x86_64                randconfig-011-20240729   gcc-8
-x86_64                randconfig-012-20240729   gcc-8
-x86_64                randconfig-013-20240729   gcc-13
-x86_64                randconfig-014-20240729   clang-18
-x86_64                randconfig-015-20240729   gcc-13
-x86_64                randconfig-016-20240729   clang-18
-x86_64                randconfig-071-20240729   gcc-13
-x86_64                randconfig-072-20240729   gcc-13
-x86_64                randconfig-073-20240729   clang-18
-x86_64                randconfig-074-20240729   gcc-8
-x86_64                randconfig-075-20240729   gcc-12
-x86_64                randconfig-076-20240729   gcc-13
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-14.1.0
-xtensa                randconfig-001-20240730   gcc-14.1.0
-xtensa                randconfig-002-20240730   gcc-14.1.0
-xtensa                    smp_lx200_defconfig   gcc-14.1.0
+Signed-off-by: Blanco Alcaine Hector <hector.blanco.alcaine@intel.com>
+Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
+---
+ drivers/net/ethernet/intel/igc/Makefile    |   3 +-
+ drivers/net/ethernet/intel/igc/igc_main.c  |   6 +
+ drivers/net/ethernet/intel/igc/igc_regs.h  |   6 +
+ drivers/net/ethernet/intel/igc/igc_sysfs.c | 156 +++++++++++++++++++++
+ drivers/net/ethernet/intel/igc/igc_sysfs.h |  10 ++
+ 5 files changed, 180 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/net/ethernet/intel/igc/igc_sysfs.c
+ create mode 100644 drivers/net/ethernet/intel/igc/igc_sysfs.h
 
+diff --git a/drivers/net/ethernet/intel/igc/Makefile b/drivers/net/ethernet/intel/igc/Makefile
+index efc5e7983dad..c31bc18ede13 100644
+--- a/drivers/net/ethernet/intel/igc/Makefile
++++ b/drivers/net/ethernet/intel/igc/Makefile
+@@ -8,5 +8,6 @@
+ obj-$(CONFIG_IGC) += igc.o
+ 
+ igc-y := igc_main.o igc_mac.o igc_i225.o igc_base.o igc_nvm.o igc_phy.o \
+-	 igc_diag.o igc_ethtool.o igc_ptp.o igc_dump.o igc_tsn.o igc_xdp.o
++	 igc_diag.o igc_ethtool.o igc_ptp.o igc_dump.o igc_tsn.o igc_xdp.o \
++	 igc_sysfs.o
+ igc-$(CONFIG_IGC_LEDS) += igc_leds.o
+diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+index cb5c7b09e8a0..6a925615911a 100644
+--- a/drivers/net/ethernet/intel/igc/igc_main.c
++++ b/drivers/net/ethernet/intel/igc/igc_main.c
+@@ -18,6 +18,7 @@
+ 
+ #include "igc.h"
+ #include "igc_hw.h"
++#include "igc_sysfs.h"
+ #include "igc_tsn.h"
+ #include "igc_xdp.h"
+ 
+@@ -7069,6 +7070,9 @@ static int igc_probe(struct pci_dev *pdev,
+ 			goto err_register;
+ 	}
+ 
++	if (igc_sysfs_init(adapter))
++		dev_err(&pdev->dev, "Failed to allocate sysfs resources\n");
++
+ 	return 0;
+ 
+ err_register:
+@@ -7124,6 +7128,8 @@ static void igc_remove(struct pci_dev *pdev)
+ 	if (IS_ENABLED(CONFIG_IGC_LEDS))
+ 		igc_led_free(adapter);
+ 
++	igc_sysfs_exit(adapter);
++
+ 	/* Release control of h/w to f/w.  If f/w is AMT enabled, this
+ 	 * would have already happened in close and is redundant.
+ 	 */
+diff --git a/drivers/net/ethernet/intel/igc/igc_regs.h b/drivers/net/ethernet/intel/igc/igc_regs.h
+index e5b893fc5b66..df96800f6e3b 100644
+--- a/drivers/net/ethernet/intel/igc/igc_regs.h
++++ b/drivers/net/ethernet/intel/igc/igc_regs.h
+@@ -63,6 +63,12 @@
+ /* RSS registers */
+ #define IGC_MRQC		0x05818 /* Multiple Receive Control - RW */
+ 
++/* MRQC register bit definitions */
++#define IGC_MRQC_ENABLE_MQ		0x00000000
++#define IGC_MRQC_ENABLE_MASK		GENMASK(2, 0)
++#define IGC_MRQC_DEFAULT_QUEUE_MASK	GENMASK(5, 3)
++#define IGC_MRQC_DEFAULT_QUEUE_SHIFT	3
++
+ /* Filtering Registers */
+ #define IGC_ETQF(_n)		(0x05CB0 + (4 * (_n))) /* EType Queue Fltr */
+ #define IGC_FHFT(_n)		(0x09000 + (256 * (_n))) /* Flexible Host Filter */
+diff --git a/drivers/net/ethernet/intel/igc/igc_sysfs.c b/drivers/net/ethernet/intel/igc/igc_sysfs.c
+new file mode 100644
+index 000000000000..34d838e6a019
+--- /dev/null
++++ b/drivers/net/ethernet/intel/igc/igc_sysfs.c
+@@ -0,0 +1,156 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2024 Intel Corporation */
++
++#include <linux/device.h>
++#include <linux/kobject.h>
++#include <linux/module.h>
++#include <linux/netdevice.h>
++#include <linux/sysfs.h>
++#include <linux/types.h>
++
++#include "igc.h"
++#include "igc_regs.h"
++#include "igc_sysfs.h"
++
++/**
++ * igc_is_default_queue_supported - Checks if default Rx queue can be configured
++ * @mrqc: MRQC register content
++ *
++ * Checks if the current configuration of the device supports changing the
++ * default Rx queue configuration.
++ *
++ * Return: true if the default Rx queue can be configured, false otherwise.
++ */
++static bool igc_is_default_queue_supported(u32 mrqc)
++{
++	u32 mrqe = mrqc & IGC_MRQC_ENABLE_MASK;
++
++	/* The default Rx queue setting is applied only if Multiple Receive
++	 * Queues (MRQ) as defined by filters (2-tuple filters, L2 Ether-type
++	 * filters, SYN filter and flex filters) is enabled.
++	 */
++	if (mrqe != IGC_MRQC_ENABLE_MQ && mrqe != IGC_MRQC_ENABLE_RSS_MQ)
++		return false;
++
++	return true;
++}
++
++/**
++ * igc_get_default_rx_queue - Returns the index of default Rx queue
++ * @adapter: address of board private structure
++ *
++ * Return: index of the default Rx queue.
++ */
++static u32 igc_get_default_rx_queue(struct igc_adapter *adapter)
++{
++	struct igc_hw *hw = &adapter->hw;
++	u32 mrqc = rd32(IGC_MRQC);
++
++	if (!igc_is_default_queue_supported(mrqc)) {
++		netdev_warn(adapter->netdev,
++			    "MRQ disabled: default RxQ is ignored.\n");
++	}
++
++	return (mrqc & IGC_MRQC_DEFAULT_QUEUE_MASK) >>
++		IGC_MRQC_DEFAULT_QUEUE_SHIFT;
++}
++
++/**
++ * igc_set_default_rx_queue - Sets the default Rx queue
++ * @adapter: address of board private structure
++ * @queue: index of the queue to be set as default Rx queue
++ *
++ * Return: 0 on success, negative error code on failure.
++ */
++static int igc_set_default_rx_queue(struct igc_adapter *adapter, u32 queue)
++{
++	struct igc_hw *hw = &adapter->hw;
++	u32 mrqc = rd32(IGC_MRQC);
++
++	if (!igc_is_default_queue_supported(mrqc)) {
++		netdev_err(adapter->netdev,
++			   "Default RxQ not supported. Please enable MRQ.\n");
++		return -EOPNOTSUPP;
++	}
++
++	if (queue > adapter->rss_queues - 1) {
++		netdev_err(adapter->netdev,
++			   "Invalid default RxQ index %d. Valid range: 0-%u.\n",
++			   queue, adapter->rss_queues - 1);
++		return -EINVAL;
++	}
++
++	/* Set the default Rx queue */
++	mrqc = rd32(IGC_MRQC);
++	mrqc &= ~IGC_MRQC_DEFAULT_QUEUE_MASK;
++	mrqc |= queue << IGC_MRQC_DEFAULT_QUEUE_SHIFT;
++	wr32(IGC_MRQC, mrqc);
++
++	return 0;
++}
++
++static ssize_t default_rx_queue_show(struct device *dev,
++				     struct device_attribute *attr,
++				     char *buf)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++	struct net_device *netdev = pci_get_drvdata(pdev);
++	struct igc_adapter *adapter = netdev_priv(netdev);
++	u32 default_rx_queue = igc_get_default_rx_queue(adapter);
++
++	return sysfs_emit(buf, "%d\n", default_rx_queue);
++}
++
++static ssize_t default_rx_queue_store(struct device *dev,
++				      struct device_attribute *attr,
++				      const char *buf, size_t count)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++	struct net_device *netdev = pci_get_drvdata(pdev);
++	struct igc_adapter *adapter = netdev_priv(netdev);
++	u32 default_rx_queue;
++	int err;
++
++	err = kstrtou32(buf, 10, &default_rx_queue);
++	if (err) {
++		netdev_err(adapter->netdev,
++			   "Invalid default RxQ index. Valid range: 0-%u.\n",
++			   adapter->rss_queues - 1);
++		return err;
++	}
++
++	err = igc_set_default_rx_queue(adapter, default_rx_queue);
++	if (err < 0)
++		return -EINVAL;
++
++	return count;
++}
++
++static DEVICE_ATTR_RW(default_rx_queue);
++
++static struct attribute *attrs[] = {
++	&dev_attr_default_rx_queue.attr,
++	NULL,
++};
++
++static struct attribute_group attr_group = {
++	.attrs = attrs,
++};
++
++int igc_sysfs_init(struct igc_adapter *adapter)
++{
++	int err;
++
++	err = sysfs_create_group(&adapter->pdev->dev.kobj, &attr_group);
++	if (err) {
++		netdev_err(adapter->netdev,
++			   "Failed to create sysfs attribute group.\n");
++	}
++
++	return err;
++}
++
++void igc_sysfs_exit(struct igc_adapter *adapter)
++{
++	sysfs_remove_group(&adapter->pdev->dev.kobj, &attr_group);
++}
+diff --git a/drivers/net/ethernet/intel/igc/igc_sysfs.h b/drivers/net/ethernet/intel/igc/igc_sysfs.h
+new file mode 100644
+index 000000000000..b074ad4bc63a
+--- /dev/null
++++ b/drivers/net/ethernet/intel/igc/igc_sysfs.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2024 Intel Corporation */
++
++#ifndef _IGC_SYSFS_H_
++#define _IGC_SYSFS_H_
++
++int igc_sysfs_init(struct igc_adapter *adapter);
++void igc_sysfs_exit(struct igc_adapter *adapter);
++
++#endif /* _IGC_SYSFS_H_ */
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
