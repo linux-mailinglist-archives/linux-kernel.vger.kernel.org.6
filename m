@@ -1,179 +1,131 @@
-Return-Path: <linux-kernel+bounces-267989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E1F941F12
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:56:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27F73941F0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93E191C22E46
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:56:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 587001C230F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DD418A6CB;
-	Tue, 30 Jul 2024 17:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C21E189906;
+	Tue, 30 Jul 2024 17:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="klepgEJm"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FP1eOuxI"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E36318A6B5;
-	Tue, 30 Jul 2024 17:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575031A76C9;
+	Tue, 30 Jul 2024 17:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722362192; cv=none; b=b0Ilay/ijaDsXDBwNtS1SHVJGTimsWaHR1y0jvoHt6bfaWoC7bznc++K93snbrxe79/J9IV3xcJ7vdOfBqemw0RjVCKuFh3K4CN6T+tCTiTPAADHIPp0odoJMKTlWNAHU4LgR6/EYbbiPXvfxmbaQyGH/DFeAwC/m23dG5tEp78=
+	t=1722362177; cv=none; b=tmR4actXdIEwgGbnL0tinPitfrJkAFzcm4NQEZY+Fm3A2hhL2uMjUDoMrHRRpv09c+HcN44DNF2UiesviyeQsL1GlSZpD/1WJksV5xgU7dK5zRZ6blmlKcOu9MMrfjpBT+E6Pzxs9HyXfHc4Uu3dbTFrRLUgTeJaynjenML8ib8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722362192; c=relaxed/simple;
-	bh=KPcOEhklZO3FM3wBXFnTbyT4tAd+unwVmWSV5hM/i2g=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bZ6XdIwTQrcVbH9wm25VSc6vfB4c7PDayrIJXclYy2RCvB7BjO49iyP2Q2S+8yRRS2bJe00jidNy0BprfCBVX1R2Rv/UgRKgT5CyE95js/bfKmADKTJ0+HKj3Ravi5FQcrBlfTtcRcPAS+trAJMR1rmJRNXt+1rImhyLdUKbpk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=klepgEJm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UHK2xp016748;
-	Tue, 30 Jul 2024 17:55:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=i2v8w4Z2+u7WgDhCofOnrD
-	SAfFazSqBarjGO9eEcIvg=; b=klepgEJm6qiTqHFpUv2lAvjBeQ435iGMaTxjP2
-	HOp2E78UJ3q/KQ2952Hs9xAVx25yjvWO5agOjGJW5JJWUXNhCYjvATlxqa0+/HqY
-	pD670UQZhOlb53etF44lfkgVyDLO9Unhnli0a7LHJrFvvh/H2qtsPILdbEgKrFkC
-	xR8xdpTH78BW9Ig3rR1sSJ+yp6Em4la8cuNA5J4e1Cc1qyBNPzsgHo78/O7sRz3W
-	H9k4yRy9H7X72IpwdMYjJ9JKUX2F6hIQgFzCElnhu5zkTh20mZz5W71o+DoV0RNP
-	z+jZVcTo1jpGgFgTNO3ifF6FOYFwGDB2UkoLWNcbArMqs9Qw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40ms438cht-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 17:55:52 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46UHtpU8014609
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 17:55:51 GMT
-Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 30 Jul 2024 10:55:50 -0700
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-To: <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>,
-        Tanmay Shah <tanmay@codeaurora.org>,
-        Guenter Roeck
-	<groeck@chromium.org>,
-        Chandan Uddaraju <chandanu@codeaurora.org>,
-        "Kuogee
- Hsieh" <quic_khsieh@quicinc.com>
-CC: <dri-devel@lists.freedesktop.org>, <quic_jesszhan@quicinc.com>,
-        <swboyd@chromium.org>, <dianders@chromium.org>,
-        <neil.armstrong@linaro.org>, <andersson@kernel.org>,
-        <abel.vesa@linaro.org>, Vara Reddy
-	<quic_varar@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] drm/msm/dp: fix the max supported bpp logic
-Date: Tue, 30 Jul 2024 10:55:40 -0700
-Message-ID: <20240730175541.2549592-1-quic_abhinavk@quicinc.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1722362177; c=relaxed/simple;
+	bh=6vAOKdphjzKdVk57ZBLwcpv4/xeXmTtrgguL3dS7fiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T45VnjTQ+CyiyqS8wNu57gOj0WgFSUrY76bkKqF9m/cbjP2FarGZrFuKcLJtY4MqoMzTVHazauEpYTp+UG6Tu64AidAYNNRYmyIKhvIqLpsyEr3hjYQ0VfNTpUL0GYwj8qUguObeabplVsWt7E24b58BV56FD9kRYGHBK59oVmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FP1eOuxI; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fdd6d81812so38751675ad.1;
+        Tue, 30 Jul 2024 10:56:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722362175; x=1722966975; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=No6rY78M5KIj3DpjY3N15+J63kX9R0sT/Ncp0Ijs1fo=;
+        b=FP1eOuxIiURPotTFUa6M5Kt0ST9pJPUXLiO6259MpvvLvP12luhtx95PsPq2sDyJH0
+         2Zbk4hDLDiFhNkGcEf8JH6IakxnoaMG3D+YUw5VaDFBLbLaWdgSXraZOu2wJW+h8DseC
+         cpO5TyQNpw2rOBlx5c4eHmNL9F9uxpSO5LJtp0H4IQjuX/g9Vj6Ihlel3QIj3n6Pv2Mk
+         pbQxvrAm5L+YPStU1KwONdapqCezB0BxkkbpVpdGHZCem0J9zNdR807wQu3RWdDplU8V
+         RnZINNOGux+pXHXCgvHJR7j227Knowx9xgKrWwXmPeYmSFcP4bXGoFIBctYAlocU0/Fw
+         4xPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722362175; x=1722966975;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=No6rY78M5KIj3DpjY3N15+J63kX9R0sT/Ncp0Ijs1fo=;
+        b=mxCMKXCqRp/fd+HMQj86qMAINjC7YAQmuBMYjzOrwjSWwoCk7eqE/nUGrZ24EzaRoU
+         SP+4ai8r5V4BPpw28ZV6LiN/lzpCb+1Ah7lKjyjrK1qJxzkE8mTmGdt1hiyAlE6GDIja
+         lIb+p0dFSnGXsJDwb1AHufuc0dsXt3IidQT6OX+K7AOOM8IC1PjmnhpiBQyyT2Hc0wIJ
+         cVKcE9mrKGtJpQ3xZmbLK+BKIE25pp/XhWaWMDUtBc1kkTfmCRY2DysPymi5HAaicIx4
+         QfnV1gkeEkPMI0n9vjOI2d9stQHx4VSlzPAxj9MbPbKucZV2kHia1HWw2l6fqdKwLpkS
+         yQLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUB9aGUTuc4tZ/G9aZl6jlb7xV3I6K7VBQj0qMOMHussp7g+QLbpRs1DNZmbpLf/XinkgWD9LlB0DBP@vger.kernel.org, AJvYcCXswenjQwkeIKt0izPAvrQ/XylXhQli5sbhVB+YrtoX2IO4phoOLgdL9XQZX/lk9+VUH94/J/r48QLYNps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGbmt9tkVu1nJkbPeEHnNOJ5rjoGPB8wh5gv45lnP0Se6vLVXa
+	UiKXA0PojOvU8Eq0bUXSOcZCG1M6jgqBXdGISCATPRcMM2//kCBt
+X-Google-Smtp-Source: AGHT+IGeSA5Ardyq54qcy8JsPanVQiscsfFe2/iPX0z4l1px61+9+Ma6z8Z0QjCES1xy2qE3CX/ZOQ==
+X-Received: by 2002:a17:902:fc48:b0:1fb:1cc3:646d with SMTP id d9443c01a7336-1ff048521b8mr155538275ad.29.1722362175400;
+        Tue, 30 Jul 2024 10:56:15 -0700 (PDT)
+Received: from embed-PC.myguest.virtualbox.org ([49.37.130.209])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f1b6c3sm104848285ad.192.2024.07.30.10.56.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 10:56:14 -0700 (PDT)
+Date: Tue, 30 Jul 2024 23:26:09 +0530
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: Oliver Neukum <oneukum@suse.com>
+Cc: stern@rowland.harvard.edu, gregkh@linuxfoundation.org,
+	usb-storage@lists.one-eyed-alien.net, linux-usb@vger.kernel.org,
+	skhan@linuxfoundation.org, dan.carpenter@linaro.org,
+	rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: storage: ene_ub6250: Fix right shift warnings
+Message-ID: <ZqkpOQIjcBSAg8rC@embed-PC.myguest.virtualbox.org>
+References: <20240729182348.451436-1-abhishektamboli9@gmail.com>
+ <e72cc56a-3066-4cb8-848d-bfe27a48c095@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6xHDLTXkLDJRN9YqM9AcTaiv9bip-Ty8
-X-Proofpoint-ORIG-GUID: 6xHDLTXkLDJRN9YqM9AcTaiv9bip-Ty8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_14,2024-07-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
- mlxlogscore=999 suspectscore=0 phishscore=0 priorityscore=1501
- clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407300123
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e72cc56a-3066-4cb8-848d-bfe27a48c095@suse.com>
 
-Fix the dp_panel_get_supported_bpp() API to return the minimum
-supported bpp correctly for relevant cases and use this API
-to correct the behavior of DP driver which hard-codes the max supported
-bpp to 30.
+On Tue, Jul 30, 2024 at 09:09:05AM +0200, Oliver Neukum wrote:
+> 
+> 
+> On 29.07.24 20:23, Abhishek Tamboli wrote:
+> > Change bl_len from u16 to u32 to accommodate the necessary bit shifts.
+> 
+> Hi,
+> 
+> while this patch is technically correct, it papers over the issue.
+> Could you please
+Thank you for your feedback on my patch. I have a few questions to ensure 
+I make the appropriate changes.
+> 
+> 1. use a constant, where a constant is used
+I think you are suggesting that I should replace hard-coded values like the 
+buffer size with named constants. For example:
 
-This is incorrect because the number of lanes and max data rate
-supported by the lanes need to be taken into account.
+#define BUF_SIZE 8
+unsigned char buf[BUF_SIZE];
 
-Replace the hardcoded limit with the appropriate math which accounts
-for the accurate number of lanes and max data rate.
+> 2. use the macros for converting endianness
+Can I use macros like cpu_to_le32 for converting the bl_num and bl_len values.
+Should I replace all instances of manual bitwise shifts with these macros?
+For example:
 
-changes in v2:
-	- Fix the dp_panel_get_supported_bpp() and use it
-	- Drop the max_t usage as dp_panel_get_supported_bpp() already
-	  returns the min_bpp correctly now
+    u32 bl_len = 0x200;
+    buf[0] = cpu_to_le32(bl_num) >> 24;
+    buf[4] = cpu_to_le32(bl_len) >> 24;
 
-Fixes: c943b4948b58 ("drm/msm/dp: add displayPort driver support")
-Closes: https://gitlab.freedesktop.org/drm/msm/-/issues/43
-Reported-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # SM8350-HDK
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
----
- drivers/gpu/drm/msm/dp/dp_panel.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+Is using cpu_to_le32 appropriate for the data format required by this
+device?
 
-diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/dp_panel.c
-index a916b5f3b317..3777b1abacad 100644
---- a/drivers/gpu/drm/msm/dp/dp_panel.c
-+++ b/drivers/gpu/drm/msm/dp/dp_panel.c
-@@ -90,22 +90,22 @@ static int dp_panel_read_dpcd(struct dp_panel *dp_panel)
- static u32 dp_panel_get_supported_bpp(struct dp_panel *dp_panel,
- 		u32 mode_edid_bpp, u32 mode_pclk_khz)
- {
--	struct dp_link_info *link_info;
-+	const struct dp_link_info *link_info;
- 	const u32 max_supported_bpp = 30, min_supported_bpp = 18;
--	u32 bpp = 0, data_rate_khz = 0;
-+	u32 bpp, data_rate_khz;
- 
- 	bpp = min_t(u32, mode_edid_bpp, max_supported_bpp);
- 
- 	link_info = &dp_panel->link_info;
- 	data_rate_khz = link_info->num_lanes * link_info->rate * 8;
- 
--	while (bpp > min_supported_bpp) {
-+	do {
- 		if (mode_pclk_khz * bpp <= data_rate_khz)
--			break;
-+			return bpp;
- 		bpp -= 6;
--	}
-+	} while (bpp > min_supported_bpp);
- 
--	return bpp;
-+	return min_supported_bpp;
- }
- 
- int dp_panel_read_sink_caps(struct dp_panel *dp_panel,
-@@ -423,8 +423,9 @@ int dp_panel_init_panel_info(struct dp_panel *dp_panel)
- 				drm_mode->clock);
- 	drm_dbg_dp(panel->drm_dev, "bpp = %d\n", dp_panel->dp_mode.bpp);
- 
--	dp_panel->dp_mode.bpp = max_t(u32, 18,
--				min_t(u32, dp_panel->dp_mode.bpp, 30));
-+	dp_panel->dp_mode.bpp = dp_panel_get_mode_bpp(dp_panel, dp_panel->dp_mode.bpp,
-+						      dp_panel->dp_mode.drm_mode.clock);
-+
- 	drm_dbg_dp(panel->drm_dev, "updated bpp = %d\n",
- 				dp_panel->dp_mode.bpp);
- 
--- 
-2.44.0
+I will make the necessary updates once I have your confirmation.
 
+Best Regards,
+Abhishek Tamboli
+> 
+> 	Regards
+> 		Oliver
+> 
 
