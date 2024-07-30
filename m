@@ -1,112 +1,133 @@
-Return-Path: <linux-kernel+bounces-268250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DDAA942233
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:29:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D57942236
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:29:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBF79B23B90
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:29:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D73DF1F25BF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47ABB18E04C;
-	Tue, 30 Jul 2024 21:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D65118E02A;
+	Tue, 30 Jul 2024 21:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="V5L7ipvg"
-Received: from mx0.riseup.net (mx0.riseup.net [198.252.153.6])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="P9MH1t4B";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VwCStJUU"
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D5B18E03A;
-	Tue, 30 Jul 2024 21:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D8618E03A;
+	Tue, 30 Jul 2024 21:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722374957; cv=none; b=N1+kLqWNTf/vY0kbKCNNTdeDj9mNThXkYdoYm6NPUur3yQ2H5SvndT4WB4z9ETM0Dy+5NiIVT3ZobLX0LJRbnLshN08X3ft0MWZLNViPN5ZLM4rUCcZakDh/ena/yHYVVhLJxBo+3lF+gCsgXGJ05ZryJADxRVGGs0DamB0OHVM=
+	t=1722374968; cv=none; b=KbliMBhK7k4MKALPA0ZzfwjhPpzJ2aWA7vXNFqiCGgx4f0uMyu4ydkz1xz7wx8ULqPStb17qU/js70FSk3FRCKS3Faud89ASig346j3KMa2fLGsjvvl7fySqm4h8Ru2G5Rs260pLyuKP0fTLBfL4kiyweaJWkj0CQyIQBP+VKmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722374957; c=relaxed/simple;
-	bh=C6VSGx8RupmJLdmFxZP9iZzz+DlZoP0RzAD1ZTJ0how=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yf/dI0iwXn0w/J5vhidGNEv2SKqVc8r/tn29HUhkzkuTNKtKjpRCoeNqoD9s8D45tFizyTg7ssFXVOFyLaWxeosxNM93zAHpcCDL97r5VGln6DBkr8EEZ84ZYHG0pH8WT88YDEddrvo81A9CMVpxHK512y1IQhXg/UGPQeNrg0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=V5L7ipvg; arc=none smtp.client-ip=198.252.153.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from fews02-sea.riseup.net (fews02-sea-pn.riseup.net [10.0.1.112])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx0.riseup.net (Postfix) with ESMTPS id 4WYSzG3Pp0z9wZt;
-	Tue, 30 Jul 2024 21:29:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1722374954; bh=C6VSGx8RupmJLdmFxZP9iZzz+DlZoP0RzAD1ZTJ0how=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=V5L7ipvgVlzC91Pzne7nAADR7bQtYLQzbxxoAp1O7ESB5SeV3FyVCUBU3cyad1vtg
-	 ni/E3TkldiiLdrQnCxdXeS3hwwiFBMfNEeRl48LWXqxyX12SfmWdcHwC1/LtsxCei4
-	 t8/Gi2l7+LqzksIymXFx78BPkCWNxhtmFoZ9eDh0=
-X-Riseup-User-ID: BDB4D0B77CB8B1A37EA613107467F4BD0693762E86973698D43FFCD98055D728
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews02-sea.riseup.net (Postfix) with ESMTPSA id 4WYSz20qdPzFvlN;
-	Tue, 30 Jul 2024 21:29:01 +0000 (UTC)
-From: =?UTF-8?q?Santiago=20Ruano=20Rinc=C3=B3n?= <santiagorr@riseup.net>
-To: Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: helen.koike@collabora.com,
-	~lkcamp/patches@lists.sr.ht
-Subject: [PATCH v3 2/2] staging: media: sdis: move open braces to the previous line
-Date: Wed, 31 Jul 2024 06:28:54 +0900
-Message-Id: <20240730212854.474708-2-santiagorr@riseup.net>
-In-Reply-To: <20240730212854.474708-1-santiagorr@riseup.net>
-References: <20240730212854.474708-1-santiagorr@riseup.net>
+	s=arc-20240116; t=1722374968; c=relaxed/simple;
+	bh=TrKpeWrsxxk4QWXJtnSdjpfuE/x/c2FUFEVUPK84s9s=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=e8+EtUN0pvTTtwXIt17i33caug6QrNPxO83AGvmzQdvFdmiZrPDJ+Otc4LigiIevu/lUHaVA5z0clxU4AHcw1SA47uDO5RCQcvuSLcPibHaglIaQYAAOny6WGBoqxTtVQR+EG+iU0sAKT457WHfljv4PUWf3avXFtKZob+GF1YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=P9MH1t4B; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VwCStJUU; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 5CB99114016F;
+	Tue, 30 Jul 2024 17:29:25 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Tue, 30 Jul 2024 17:29:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1722374965;
+	 x=1722461365; bh=5n9fouO0ra4h/XfpQSfM+wn8VO0HJGyybTEITn+kRl0=; b=
+	P9MH1t4Bkyc+6t2ivR+RIkxgqZ9U1g/53F0pvDDeKj4pEJWqog+erBadcXjLGeWc
+	v4L15Lf5zFW42nVkKeZUJ5nBjmWPYBgMHWOxTIY7IXToOFfCHT1FU00w8qnPDv5C
+	EvTqMuKrqZGjGgbNpBTszlNVW5XN3D4QmD80r41gzAQBaM/Y6f5mPFAGaolFhxMv
+	ZuXCUBbQvgROYSz08F329YJUx6dFkMVpbbxiBGMjaeBa9ceKHeFVrIkyuxHpeGwK
+	VRlp3NixYJT6ro8t4ml0oB0KNZ+vEvnQEsJVIKgphOywyPEcgyyTfipotuP30uC/
+	4QEj34DI33WtIgtmZaJ2jg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722374965; x=
+	1722461365; bh=5n9fouO0ra4h/XfpQSfM+wn8VO0HJGyybTEITn+kRl0=; b=V
+	wCStJUUevQumkP4MsPFWbM/PD7QROMtldhxp8YoJTxh5ReoHcEXOvTxZ7mI8OlB8
+	Re7j+CvYWvjd7//TtwJwDk1IMgWJXL8Cu+IbjS+4p0WnfuBMmUWkjGIfT1F3s8FN
+	VyNuIkCEGJXl99OuzSQA96EjnqlF8xelWej5wP158W2aDTpVqgSQRMeuRArX+Jeb
+	errry7GdGJPAPQd50WBpIXWknTGOlgjReYQGuuhBqA/oP2SWZQm8D/cKWSa0UH5i
+	OqHlwHe4z6eM6O7B4Nxj5F4UkZGQ5BqGEPQVDPvhvkqPweBwinsb4dUBaT9FsjEQ
+	SymV4luIIuMpgHqUNwFNA==
+X-ME-Sender: <xms:NFupZooqQLMXe5aI-jCY4uHqWVztG3X48CEVEF9SaC7ud2TZpDdJiw>
+    <xme:NFupZuo0uCOJRy-cwYdaGX5dpk5LzinLDPbRnVG_P2guJvVzXWK5QQ-wZUyKccrmM
+    gw5Ffd48fNKg87pink>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeggdduieegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefh
+    vdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtoheptd
+X-ME-Proxy: <xmx:NFupZtMbEWCtnkiVp85m26g4zcmlEzSPvLmGTuNkoqao22wXFpcisw>
+    <xmx:NFupZv7WrytzoA9vkk7MQtFvy1ryr8Huybca0l7Ok2rkw_tObr7XQw>
+    <xmx:NFupZn6CckdCqAQvf7wVA4V_m5UQ2oaYbf6YKve145H9tgPfrU5m9g>
+    <xmx:NFupZvhfDV5qrbzbHOb9uNqrZaGxrcIEUJOEOrSWbp2AvNHpAUV6nw>
+    <xmx:NVupZkzfrPRCW7QXTmLiOc839vdRYT1hOS4pUYZsWth6DCZLF-uePaeY>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 3220AB6008D; Tue, 30 Jul 2024 17:29:24 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Tue, 30 Jul 2024 23:29:02 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jann Horn" <jannh@google.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Will Deacon" <will@kernel.org>, "Heiko Carstens" <hca@linux.ibm.com>,
+ "Vasily Gorbik" <gor@linux.ibm.com>,
+ "Alexander Gordeev" <agordeev@linux.ibm.com>,
+ "Christian Borntraeger" <borntraeger@linux.ibm.com>,
+ "Sven Schnelle" <svens@linux.ibm.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>
+Message-Id: <dba4f23f-385c-4b8c-84ee-cb2a7c791aae@app.fastmail.com>
+In-Reply-To: 
+ <20240730-runtime-constants-refactor-v1-1-90c2c884c3f8@google.com>
+References: 
+ <20240730-runtime-constants-refactor-v1-1-90c2c884c3f8@google.com>
+Subject: Re: [PATCH] runtime constants: move list of constants to vmlinux.lds.h
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Fix checkpatch error "ERROR: that open brace { should be on the previous
-line" in ia_css_sdis.host.c:253 and :258.
+On Tue, Jul 30, 2024, at 22:15, Jann Horn wrote:
+> Refactor the list of constant variables into a macro.
+> This should make it easier to add more constants in the future.
+>
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+> I'm not sure whose tree this has to go through - I guess Arnd's?
 
-Signed-off-by: Santiago Ruano Rincón <santiagorr@riseup.net>
+This is for 6.12, right? I can take it through the asm-generic
+tree if that helps, but someone else should review it first.
 
----
-This is one of my first patches. Could you please if is there anything
-wrong with it? Thank you
+If you have any other patches that would depend on this patch,
+you can also take it through the other tree and add
 
-V3: Insert the change history (including for V2)
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-V2: Remove spurious [PATCH] header from the Subject, inserted by mistake
----
- .../pci/isp/kernels/sdis/sdis_1.0/ia_css_sdis.host.c        | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+for cross-architecture bits.
 
-diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/sdis/sdis_1.0/ia_css_sdis.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/sdis/sdis_1.0/ia_css_sdis.host.c
-index cabacfc84..467572d84 100644
---- a/drivers/staging/media/atomisp/pci/isp/kernels/sdis/sdis_1.0/ia_css_sdis.host.c
-+++ b/drivers/staging/media/atomisp/pci/isp/kernels/sdis/sdis_1.0/ia_css_sdis.host.c
-@@ -250,13 +250,11 @@ ia_css_get_dvs_statistics(
- 	assert(isp_stats);
- 
- 	map = ia_css_isp_dvs_statistics_map_allocate(isp_stats, NULL);
--	if (map)
--	{
-+	if (map) {
- 		hmm_load(isp_stats->data_ptr, map->data_ptr, isp_stats->size);
- 		ia_css_translate_dvs_statistics(host_stats, map);
- 		ia_css_isp_dvs_statistics_map_free(map);
--	} else
--	{
-+	} else {
- 		IA_CSS_ERROR("out of memory");
- 		ret = -ENOMEM;
- 	}
--- 
-2.39.2
-
+    Arnd
 
