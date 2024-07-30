@@ -1,73 +1,94 @@
-Return-Path: <linux-kernel+bounces-267778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0137594155D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:20:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D602994154D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:18:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82DD81F24611
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 646751F24773
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66C91A3BBD;
-	Tue, 30 Jul 2024 15:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383101A2C0F;
+	Tue, 30 Jul 2024 15:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QCF4N//f"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="X8pDdYGR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5IhyBajd";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OAahq62D";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+JzXWHb6"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7A21A38D7;
-	Tue, 30 Jul 2024 15:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7614629A2;
+	Tue, 30 Jul 2024 15:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722352782; cv=none; b=tKjykerXMeB8jqZMueIIAowoDVM+1ikxbjKNn3Lmtav32BLUdbMdLUyT4Z3PhQOQr+N2gmzI6RE6+TH/Vv8pksSFXxlmU3z3Zxz6kKuZ++WbGPOyQ4u9F1AX8JXg3oV1i9vMV81gOKLlSxx1Bqrkd90AhPS4mvw8XY4rfz8AOdY=
+	t=1722352715; cv=none; b=SfXd4l9FYOMc/J/+eHXEfcKUK93OF5b/+TrvYt3F+dCRKCB2OhkVaFlRMLYhg9hjTimO2DNyQ5O8irdcn/cRatSuhI/dclLX8xsuD8U4tHOYIQ/J7vs3AEDGNVcDZvDV07PNM6pRnFaULPHq2f/1NZdofixINaXvI7MIPsrXKDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722352782; c=relaxed/simple;
-	bh=w1/u0Z0jOAKJI7sre8Y0r/w7YTvezznWjJcNoSAdlQ0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=sJctmJIjgD+kVz4Cu3qBDMkuET9FWeKud+xiHvFw5JuLskF6OdvNc8XcVEN8j8oNhmYKp4yj1DbnwV9+hcfxmUJ7Kw3UWadeeRMJAtXiabVWM3dvzON5UuJJZTrfKjP5F0DyexHIaLFWqH8gwdJJYXlEo5qxek/4fEu2wv5dqDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QCF4N//f; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7a81bd549eso442431866b.3;
-        Tue, 30 Jul 2024 08:19:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722352779; x=1722957579; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eHB8wsNtQM0jQmp43r431yPVklm/f1PUXfgTnNmnzKA=;
-        b=QCF4N//f9VRDCV2Mc772mrPgLmqCqSp1wiUhIzWBRrg+naH4ESnuv5Hkzu2wD2/sd+
-         5aZiC4vlxjBCbxkOHSJU5rZUThovR1lBPzoRtZywz4msee0f8s9ITWRfxomhw7kF4Lq2
-         0N4bT0BTzpWTIEtxjKkCR9Tj6sPLvFh8+aVpGFUgb0U4Mx2j/8z35J3lQzD36IuiAnB3
-         ghlf4zzuIkQZUxPV7HTfSzyUpjnyPLrcw790ske/JTJ6Zx/lflxzbA2I9blW7xlf3qgm
-         wMvf1Lys3qn3SKzSO1oWc4lDMbZQSLOTLAEzDd/aOPRbGkxf3qv9NGSZ9xEqzs4qBJIn
-         hwjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722352779; x=1722957579;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eHB8wsNtQM0jQmp43r431yPVklm/f1PUXfgTnNmnzKA=;
-        b=ukOyAQw6tXTmYID11H39X8dx21GdsSP73M5FX3UeASdjLFi9Jz3OWfDWQMMjhH2ORe
-         dYlqXP4tscbqsKKZYM5uUsM4tHijfIxDWFwLo+KPIQhHFzDvWG1W/tgiojLvw5yEtZQh
-         87y5gytK2KP6XMWSF/yKHEimdLcqsm/M+tFdQQfCp+8hOcDBpCewpDPvvkw5uxk9zIPZ
-         kadiLcRUURsuf005mgxXA98MQtJwKs1zGJ5gcaIlFipW3VF/FfDOfYpAl0QPMaAnB9A1
-         bZfpsl1zApkrJkYoqEt0gtnIVA5SV4EEix4EKo6TefDrfWybP2NnzY7JqYBn/dvbEYNs
-         WcOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEtXsLU2r7LKhfp2pM/Lh41qO6VCPbSMc4xTy3s8Rq40QNFeameO2ePja+YtTAGIiESzyRaq3PhpvQR/ooCrJ+YQjnVoKMODlQJLs8KzbMOoaDJgEMZmBtZX1OFUXIpzksNqPvOrQH
-X-Gm-Message-State: AOJu0YwxdJDvUX5bFdL6/fS+1c6GxuF++FBo8bFY+GCA5ho0f2376oQm
-	UdXN6qnUoCx7S/nwnWe9BBv2qd3I5XvEaFQaAwYpzruFkgWTJfNm
-X-Google-Smtp-Source: AGHT+IGs11AYO4xwAn5557+PuXhwriowqcH1vobWUOSOVDyy55bquyq/3Qmck1ti02y41QEfv9gl7Q==
-X-Received: by 2002:a17:907:7209:b0:a77:c84b:5a60 with SMTP id a640c23a62f3a-a7d4005a6b7mr865847166b.26.1722352778866;
-        Tue, 30 Jul 2024 08:19:38 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::4:6947])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab22ff1sm655739566b.35.2024.07.30.08.19.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 08:19:38 -0700 (PDT)
-Message-ID: <73b97a03-3742-472f-9a36-26ba9009d715@gmail.com>
-Date: Tue, 30 Jul 2024 16:19:37 +0100
+	s=arc-20240116; t=1722352715; c=relaxed/simple;
+	bh=eNLcA7zSXCe8eGEIGM92EQ1HzdaOkMHWmwqNFSsQaFM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qpLgGLWUpVcacxhTpJNkjYXi0HDBNyxs+uh/PiAsgghzX8HnNwNIOqzIa9XyHtMdh7cJbv/J1SjSwkmYspOEKWJdEeVH+ij88pIk0dr6SAbW+6A1P1glG0RvEc3MDUixKSZCHC1LLMSMTXNYOyH5ZEpOWKJPPTQS3d37/ERzUEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=X8pDdYGR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5IhyBajd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OAahq62D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+JzXWHb6; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 875331F80F;
+	Tue, 30 Jul 2024 15:18:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722352711; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NFJe/5/G1p03fX9svK0QGYtK67e42X0x0vZlF3sKQmE=;
+	b=X8pDdYGRZKJJiSnTBMQ2aRjc5h1nKbZXnPDW6l+89Rviffkm2EW9kSIsapRvQCdrxJrdHj
+	sk3Z5kvJfnESn+rDgK+crd4SzAa0XXybxhWT40kQ+H7Y6G6+c9UdZ6xQpGJm6CsQQL//fN
+	U5cXrvvBz/galQRit3rsSgWjBoSeAok=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722352711;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NFJe/5/G1p03fX9svK0QGYtK67e42X0x0vZlF3sKQmE=;
+	b=5IhyBajdg+yj97Z43Gq0+F05kxDRzacE7qcJlTkMiCn68PO1U2rKXYHDY3wOsKuEsUQ8uU
+	mWrcsKC1IhdADqDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722352710; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NFJe/5/G1p03fX9svK0QGYtK67e42X0x0vZlF3sKQmE=;
+	b=OAahq62Dd6dpqibjbseuq9Q9OS4Fzgz2TN4s9OSAyyPALLipJgas85S6MXqg4w+PUTSG3e
+	99PyuggbEwGoahbGijWdGFZ58SUnYLvmhWbzMx7E9FNBOhy+GAmuzIYTQ9zcJ6V6yhi1tF
+	V2FNrKhKBbSpm1hEIP11SIVvIlNnqeY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722352710;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NFJe/5/G1p03fX9svK0QGYtK67e42X0x0vZlF3sKQmE=;
+	b=+JzXWHb64Snsq5UIjtYgdRZjFd7lqRAG3jTSlDT+8ZMkcXw8ALW/T00iz6v0bR08ehc2I9
+	8ccLGiIEhDhDEwCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7275113983;
+	Tue, 30 Jul 2024 15:18:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id g1GqG0YEqWYsfAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 30 Jul 2024 15:18:30 +0000
+Message-ID: <f977c691-4d51-4b23-90b1-8ebcd1f36d73@suse.cz>
+Date: Tue, 30 Jul 2024 17:20:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,146 +96,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] mm: split underutilized THPs
-From: Usama Arif <usamaarif642@gmail.com>
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org
-Cc: hannes@cmpxchg.org, riel@surriel.com, shakeel.butt@linux.dev,
- roman.gushchin@linux.dev, yuzhao@google.com, baohua@kernel.org,
- ryan.roberts@arm.com, rppt@kernel.org, willy@infradead.org,
- cerasuolodomenico@gmail.com, corbet@lwn.net, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kernel-team@meta.com
-References: <20240730125346.1580150-1-usamaarif642@gmail.com>
- <dc00a32f-e4aa-4f48-b82a-176c9f615f3e@redhat.com>
- <3cd1b07d-7b02-4d37-918a-5759b23291fb@gmail.com>
+Subject: Re: [RFC PATCH 11/20] kthread: Make sure kthread hasn't started while
+ binding it
+To: Frederic Weisbecker <frederic@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org
+References: <20240726215701.19459-1-frederic@kernel.org>
+ <20240726215701.19459-12-frederic@kernel.org>
 Content-Language: en-US
-In-Reply-To: <3cd1b07d-7b02-4d37-918a-5759b23291fb@gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20240726215701.19459-12-frederic@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-2.59 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,kernel.org,infradead.org,linutronix.de,kvack.org,joelfernandes.org,gmail.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -2.59
 
-
-
-On 30/07/2024 16:14, Usama Arif wrote:
+On 7/26/24 11:56 PM, Frederic Weisbecker wrote:
+> Make sure the kthread is sleeping in the schedule_preempt_disabled()
+> call before calling its handler when kthread_bind[_mask]() is called
+> on it. This provides a sanity check verifying that the task is not
+> randomly blocked later at some point within its function handler, in
+> which case it could be just concurrently awaken, leaving the call to
+> do_set_cpus_allowed() without any effect until the next voluntary sleep.
 > 
+> Rely on the wake-up ordering to ensure that the newly introduced "started"
+> field returns the expected value:
 > 
-> On 30/07/2024 15:35, David Hildenbrand wrote:
->> On 30.07.24 14:45, Usama Arif wrote:
->>> The current upstream default policy for THP is always. However, Meta
->>> uses madvise in production as the current THP=always policy vastly
->>> overprovisions THPs in sparsely accessed memory areas, resulting in
->>> excessive memory pressure and premature OOM killing.
->>> Using madvise + relying on khugepaged has certain drawbacks over
->>> THP=always. Using madvise hints mean THPs aren't "transparent" and
->>> require userspace changes. Waiting for khugepaged to scan memory and
->>> collapse pages into THP can be slow and unpredictable in terms of performance
->>> (i.e. you dont know when the collapse will happen), while production
->>> environments require predictable performance. If there is enough memory
->>> available, its better for both performance and predictability to have
->>> a THP from fault time, i.e. THP=always rather than wait for khugepaged
->>> to collapse it, and deal with sparsely populated THPs when the system is
->>> running out of memory.
->>>
->>> This patch-series is an attempt to mitigate the issue of running out of
->>> memory when THP is always enabled. During runtime whenever a THP is being
->>> faulted in or collapsed by khugepaged, the THP is added to a list.
->>> Whenever memory reclaim happens, the kernel runs the deferred_split
->>> shrinker which goes through the list and checks if the THP was underutilized,
->>> i.e. how many of the base 4K pages of the entire THP were zero-filled.
->>> If this number goes above a certain threshold, the shrinker will attempt
->>> to split that THP. Then at remap time, the pages that were zero-filled are
->>> not remapped, hence saving memory. This method avoids the downside of
->>> wasting memory in areas where THP is sparsely filled when THP is always
->>> enabled, while still providing the upside THPs like reduced TLB misses without
->>> having to use madvise.
->>>
->>> Meta production workloads that were CPU bound (>99% CPU utilzation) were
->>> tested with THP shrinker. The results after 2 hours are as follows:
->>>
->>>                              | THP=madvise |  THP=always   | THP=always
->>>                              |             |               | + shrinker series
->>>                              |             |               | + max_ptes_none=409
->>> -----------------------------------------------------------------------------
->>> Performance improvement     |      -      |    +1.8%      |     +1.7%
->>> (over THP=madvise)          |             |               |
->>> -----------------------------------------------------------------------------
->>> Memory usage                |    54.6G    | 58.8G (+7.7%) |   55.9G (+2.4%)
->>> -----------------------------------------------------------------------------
->>> max_ptes_none=409 means that any THP that has more than 409 out of 512
->>> (80%) zero filled filled pages will be split.
->>>
->>> To test out the patches, the below commands without the shrinker will
->>> invoke OOM killer immediately and kill stress, but will not fail with
->>> the shrinker:
->>>
->>> echo 450 > /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none
->>> mkdir /sys/fs/cgroup/test
->>> echo $$ > /sys/fs/cgroup/test/cgroup.procs
->>> echo 20M > /sys/fs/cgroup/test/memory.max
->>> echo 0 > /sys/fs/cgroup/test/memory.swap.max
->>> # allocate twice memory.max for each stress worker and touch 40/512 of
->>> # each THP, i.e. vm-stride 50K.
->>> # With the shrinker, max_ptes_none of 470 and below won't invoke OOM
->>> # killer.
->>> # Without the shrinker, OOM killer is invoked immediately irrespective
->>> # of max_ptes_none value and kill stress.
->>> stress --vm 1 --vm-bytes 40M --vm-stride 50K
->>>
->>> Patches 1-2 add back helper functions that were previously removed
->>> to operate on page lists (needed by patch 3).
->>> Patch 3 is an optimization to free zapped tail pages rather than
->>> waiting for page reclaim or migration.
->>> Patch 4 is a prerequisite for THP shrinker to not remap zero-filled
->>> subpages when splitting THP.
->>> Patches 6 adds support for THP shrinker.
->>>
->>> (This patch-series restarts the work on having a THP shrinker in kernel
->>> originally done in
->>> https://lore.kernel.org/all/cover.1667454613.git.alexlzhu@fb.com/.
->>> The THP shrinker in this series is significantly different than the
->>> original one, hence its labelled v1 (although the prerequisite to not
->>> remap clean subpages is the same).)
->>
->> As shared previously, there is one issue with uffd (even when currently not active for a VMA!), where we must not zap present page table entries.
->>
->> Something that is always possible (assuming no GUP pins of course, which) is replacing the zero-filled subpages by shared zeropages.
->>
->> Is that being done in this patch set already, or are we creating pte_none() entries?
->>
+>     TASK A                                   TASK B
+>     ------                                   ------
+> READ kthread->started
+> wake_up_process(B)
+>    rq_lock()
+>    ...
+>    rq_unlock() // RELEASE
+>                                            schedule()
+>                                               rq_lock() // ACQUIRE
+>                                               // schedule task B
+>                                               rq_unlock()
+>                                               WRITE kthread->started
 > 
-> I think thats done in Patch 4/6. In function try_to_unmap_unused, we have below which I think does what you are suggesting? i.e. point to shared zeropage and not clear pte for uffd armed vma.
+> Similarly, writing kthread->started before subsequent voluntary sleeps
+> will be visible after calling wait_task_inactive() in
+> __kthread_bind_mask(), reporting potential misuse of the API.
 > 
-> 	if (userfaultfd_armed(pvmw->vma)) {
-> 		newpte = pte_mkspecial(pfn_pte(page_to_pfn(ZERO_PAGE(pvmw->address)),
-> 					       pvmw->vma->vm_page_prot));
-> 		ptep_clear_flush(pvmw->vma, pvmw->address, pvmw->pte);
-> 		set_pte_at(pvmw->vma->vm_mm, pvmw->address, pvmw->pte, newpte);
-> 	}
+> Upcoming patches will make further use of this facility.
+> 
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Ah are you suggesting userfaultfd_armed(pvmw->vma) will evaluate to false even if its uffd? I think something like below would work in that case.
-
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 2731ac20ff33..52aa4770fbed 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -206,14 +206,10 @@ static bool try_to_unmap_unused(struct page_vma_mapped_walk *pvmw,
-        if (dirty)
-                return false;
- 
--       pte_clear_not_present_full(pvmw->vma->vm_mm, pvmw->address, pvmw->pte, false);
--
--       if (userfaultfd_armed(pvmw->vma)) {
--               newpte = pte_mkspecial(pfn_pte(page_to_pfn(ZERO_PAGE(pvmw->address)),
--                                              pvmw->vma->vm_page_prot));
--               ptep_clear_flush(pvmw->vma, pvmw->address, pvmw->pte);
--               set_pte_at(pvmw->vma->vm_mm, pvmw->address, pvmw->pte, newpte);
--       }
-+       newpte = pte_mkspecial(pfn_pte(page_to_pfn(ZERO_PAGE(pvmw->address)),
-+                                       pvmw->vma->vm_page_prot));
-+       ptep_clear_flush(pvmw->vma, pvmw->address, pvmw->pte);
-+       set_pte_at(pvmw->vma->vm_mm, pvmw->address, pvmw->pte, newpte);
- 
-        dec_mm_counter(pvmw->vma->vm_mm, mm_counter(folio));
-        return true;
-
+> ---
+>  kernel/kthread.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/kernel/kthread.c b/kernel/kthread.c
+> index f7be976ff88a..ecb719f54f7a 100644
+> --- a/kernel/kthread.c
+> +++ b/kernel/kthread.c
+> @@ -53,6 +53,7 @@ struct kthread_create_info
+>  struct kthread {
+>  	unsigned long flags;
+>  	unsigned int cpu;
+> +	int started;
+>  	int result;
+>  	int (*threadfn)(void *);
+>  	void *data;
+> @@ -382,6 +383,8 @@ static int kthread(void *_create)
+>  	schedule_preempt_disabled();
+>  	preempt_enable();
+>  
+> +	self->started = 1;
+> +
+>  	ret = -EINTR;
+>  	if (!test_bit(KTHREAD_SHOULD_STOP, &self->flags)) {
+>  		cgroup_kthread_ready();
+> @@ -540,7 +543,9 @@ static void __kthread_bind(struct task_struct *p, unsigned int cpu, unsigned int
+>  
+>  void kthread_bind_mask(struct task_struct *p, const struct cpumask *mask)
+>  {
+> +	struct kthread *kthread = to_kthread(p);
+>  	__kthread_bind_mask(p, mask, TASK_UNINTERRUPTIBLE);
+> +	WARN_ON_ONCE(kthread->started);
+>  }
+>  
+>  /**
+> @@ -554,7 +559,9 @@ void kthread_bind_mask(struct task_struct *p, const struct cpumask *mask)
+>   */
+>  void kthread_bind(struct task_struct *p, unsigned int cpu)
+>  {
+> +	struct kthread *kthread = to_kthread(p);
+>  	__kthread_bind(p, cpu, TASK_UNINTERRUPTIBLE);
+> +	WARN_ON_ONCE(kthread->started);
+>  }
+>  EXPORT_SYMBOL(kthread_bind);
+>  
 
