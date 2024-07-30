@@ -1,94 +1,134 @@
-Return-Path: <linux-kernel+bounces-268299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E9C59422F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:30:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 571999422F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4C52817D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:30:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2CD81F21D80
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1DB1917CA;
-	Tue, 30 Jul 2024 22:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED2A157466;
+	Tue, 30 Jul 2024 22:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VsnXh0cI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XpfEXB3S"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D34A157466
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10441AA3E8
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722378597; cv=none; b=aV2gNnL0uXGx9uLgc+vugywLNfOavLzNjASTw7JjZuzIqKPcn2IONWTfrnHs3mWDhSIwV3t9yHTt19EbJxLWSncqijq8im9/0T4w4OpeR3n9ljuTl6QCwHjnF/C5uTK22MNBRGGrwEDCem+d03k3DeMLNrizOXn4bii+A/MGHxA=
+	t=1722378616; cv=none; b=McKmlrl6Cy7+LeQgNNzdDpixYWfqR8eJYkU94W498Gsar5dZZwINmL3bhYi5IwtWZ5mgUmDS7exv2Du27oOc1WfF9lJ7QmFBufxtIpomzpYqn3QpDp9Ey8oiCKod13QHzk8ZTm86JI9CqQW8cC/oS+tKIyPMzekJb2rSK8w+nM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722378597; c=relaxed/simple;
-	bh=iXwmhYCCcyRDw2DJIPfqL2B2J9LqKdHICiKlj40dCDM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=QBshbknbzcIktKAxAVFn/jVr0/4OZFk1TOpga4CX3NkoDqPLy1pYvscfwR7OiznGrGlkISqifc1d+re6XQsJxdD3KcHON60Q59+OaWrKYwyiIRhp95yFgmYQ7kJTEECGpQvMJN5g5DsJyVy5SSlV6vxQuza8FIGSE3qylv0VIY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VsnXh0cI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 733B4C32782;
-	Tue, 30 Jul 2024 22:29:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722378597;
-	bh=iXwmhYCCcyRDw2DJIPfqL2B2J9LqKdHICiKlj40dCDM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=VsnXh0cIy6MwRgYVov2Hu44Q4Oy3vb1WSweVdDxDaI97QumUZaMY8yvnIJ4nu3tdK
-	 Qcah3xymNH1R6+gerYm9S2QtrUOH9w2EPp3hX0mLAcrTv5LEGF06PE/2BiHqakmqgR
-	 oFfBFMVKfzS3GviRUTLV1g7i4AMqQMSgAGsE0gCWdxZwVJT1BJQ4CU6OrJlLpKoTbZ
-	 YR95RfkHdzuAGmUh+mbn1vlQ5MkgdYiO0M0uz/m/fPVLkT/gzSGlgR5r/ymXcsHq3Y
-	 bQv0u7POqU54AT+PkRoxBl5UNZ55ocumaEAdfM1yzfaMR+zvEkGgVAgyBp/NOH3BAB
-	 vNr9zJ9isCXKg==
-Date: Tue, 30 Jul 2024 15:29:54 -0700 (PDT)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
-To: Amneesh Singh <a-singh21@ti.com>, mst@redhat.com
-cc: sstabellini@kernel.org, boris.ostrovsky@oracle.com, hch@infradead.org, 
-    iommu@lists.linux-foundation.org, jasowang@redhat.com, jgross@suse.com, 
-    konrad.wilk@oracle.com, linux-arm-kernel@lists.infradead.org, 
-    linux-imx@nxp.com, linux-kernel@vger.kernel.org, peng.fan@nxp.com, 
-    virtualization@lists.linux-foundation.org, x86@kernel.org, 
-    xen-devel@lists.xenproject.org
-Subject: Re: [PATCH] xen: introduce xen_vring_use_dma
-In-Reply-To: <20240730105910.443753-1-a-singh21@ti.com>
-Message-ID: <alpine.DEB.2.22.394.2407301519330.4857@ubuntu-linux-20-04-desktop>
-References: <alpine.DEB.2.21.2007151001140.4124@sstabellini-ThinkPad-T480s> <20240730105910.443753-1-a-singh21@ti.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1722378616; c=relaxed/simple;
+	bh=lukyko6WhLd86bIprzKWnfPyMYA0WNaoHkIQZi8WLTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kfypYwazzRDqMd+M1cHIL/3v4lFwKMGPAiBKwyyFq7jK9EFFK6aTWcI/Pf/euSwP/R388dCVf+mKcflppFWD03V0I8KAiri2VNe7aak3H0X5J06JPZgERSPdXjqFR/7Fp+sFcSKdOBbqM6CnmDSaszu+24rV0d1uOXEvvj8uykM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XpfEXB3S; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722378613;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y5kNYpg9eUUfaVFQlHs3iXOjdZpeVmxNiRg//4lRozI=;
+	b=XpfEXB3SzQ8Y4UEQYGQ2olq0xkLmBVtRXIvglB8OpAgJ0GWdftYpKze0Z6bhcJH4W7oSKT
+	95oFUwA6S+tLegCevjmSoCPJFvRHnqztryBy4vmz5ZTS5K3JmzwPn3jBv9zJw4XFv7cNh7
+	4b/4mTmnVjP4DzhQm6udxW4DOCebXWY=
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
+ [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-313-x1VUQTxWPT6O7nMry64tRA-1; Tue, 30 Jul 2024 18:30:10 -0400
+X-MC-Unique: x1VUQTxWPT6O7nMry64tRA-1
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5d5b4ffa0c8so1027348eaf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:30:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722378609; x=1722983409;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y5kNYpg9eUUfaVFQlHs3iXOjdZpeVmxNiRg//4lRozI=;
+        b=jhD3M9nETrMbKb7ujGHWdWtzMpe1vjL4Qog/BI2uj40uJXXJX95CeAbn6xdE1l2z3F
+         22bgHUO7nAga9az9SMDbGZuCmeHjsNZFlBnaCONliHI07rRr9CpjLdCbMrn0T3ZFZSt6
+         sT5VgWQtgxV4r9U1P/nCDNjicBgYuaw7VY5UKTST4JHuKLcIbvQB4zJlG3OOC70bEwIB
+         uwFJuWQ/WH3slRNZLZ50maoCOtP80lNlYEmMzBLSuK9w8J3jMLQuycExY9jf1vTY2LbQ
+         B5tZiVYSOf8kULtiryw6/a/SC7aVlsZ9UnsS4Y8UJrZctrJU6rQKhTXP9r4+BO/Y6sAf
+         x1fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6M8xfhFUZfgDfOT+rYHvLxzhFlg6xHDcdA4/6AIJOe4ce7QKbCiplKvtu5E2XoDaHReInH7hUVvuox/IaGBpZduLK6ENlfbhKdo4n
+X-Gm-Message-State: AOJu0YwyH1lGJYqHF59d682rCAPjLVzwHzFV0QER9JT2iFLJ40RRSge3
+	cltzenNSlxrgSkI0AqCfX3y+0gjs3dLAE4MBaISs9f5ymT9v8X2y9ZdIWoPLE8XS03ultGe2Py0
+	QJQo2I+zh+zqsHLtcjXXJStarkcWGqd9kt2IUfDjHLDHFh79/xqi2bmhChjtmag==
+X-Received: by 2002:a4a:a542:0:b0:5c7:b587:40a7 with SMTP id 006d021491bc7-5d5b15373c5mr10749399eaf.1.1722378609511;
+        Tue, 30 Jul 2024 15:30:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJByCxdD1t4UZwfqqPdgCZsn2gbVDdIJGfCxxyPNKDP8T1DbcoLV+Wd5i1D2Eds9HHRRl71Q==
+X-Received: by 2002:a4a:a542:0:b0:5c7:b587:40a7 with SMTP id 006d021491bc7-5d5b15373c5mr10749390eaf.1.1722378609089;
+        Tue, 30 Jul 2024 15:30:09 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb5bcffd18sm45807036d6.15.2024.07.30.15.30.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 15:30:08 -0700 (PDT)
+Date: Tue, 30 Jul 2024 18:30:06 -0400
+From: Peter Xu <peterx@redhat.com>
+To: James Houghton <jthoughton@google.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, stable@vger.kernel.org,
+	Oscar Salvador <osalvador@suse.de>,
+	Muchun Song <muchun.song@linux.dev>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: Re: [PATCH v2] mm/hugetlb: fix hugetlb vs. core-mm PT locking
+Message-ID: <ZqlpbuJ7bXE_r9dO@x1n>
+References: <20240730200341.1642904-1-david@redhat.com>
+ <CADrL8HXRCNFzmg67p=j0_0Y_NAFo5rUDmvnr40F5HGAsQMvbnw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADrL8HXRCNFzmg67p=j0_0Y_NAFo5rUDmvnr40F5HGAsQMvbnw@mail.gmail.com>
 
-On Tue, 30 Jul 2024, Amneesh Singh wrote:
-> Hi Stefano,
+On Tue, Jul 30, 2024 at 01:43:35PM -0700, James Houghton wrote:
+> On Tue, Jul 30, 2024 at 1:03 PM David Hildenbrand <david@redhat.com> wrote:
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index b100df8cb5857..1b1f40ff00b7d 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -2926,6 +2926,12 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
+> >         return ptlock_ptr(page_ptdesc(pmd_page(*pmd)));
+> >  }
+> >
+> > +static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
+> > +{
+> > +       BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
+> > +       return ptlock_ptr(virt_to_ptdesc(pte));
 > 
-> First off, apologies for bumping this dead thread.
+> Hi David,
 > 
-> I came across this patch signed off by you recently
-> https://github.com/Xilinx/linux-xlnx/commit/72cb5514953be3aa2ac00c57c9eaa100ecc67176
-> 
-> and was wondering if a patch replacing xen_domain() with xen_pv_domain() in
-> vring_use_dma_api() can be sent upstream? If not, is there a reason why?
+> Small question: ptep_lockptr() does not handle the case where the size
+> of the PTE table is larger than PAGE_SIZE, but pmd_lockptr() does.
+> IIUC, for pte_lockptr() and ptep_lockptr() to return the same result
+> in this case, ptep_lockptr() should be doing the masking that
+> pmd_lockptr() is doing. Are you sure that you don't need to be doing
+> it? (Or maybe I am misunderstanding something.)
 
-Hi Amneesh,
+I was just curious and looked at pte_alloc_one(), not too much archs
+implemented it besides the default (which calls pte_alloc_one_noprof(), and
+should be order=0 there).  I didn't see any arch that actually allocated
+with non-zero orders.
 
-Yes this patch is still required for Xen on ARM and it fixes a real bug.
-Unfortunately the upstreaming process stalled so we had to keep the fix
-in our Xilinx Linux branch. Here is the link to the start of this
-conversation and to the last message:
+The motorola/m68k one is slightly involved, but still.. nothing I spot yet.
 
-https://marc.info/?i=20200624091732.23944-1-peng.fan%40nxp.com
-https://marc.info/?i=alpine.DEB.2.21.2007151001140.4124%40sstabellini-ThinkPad-T480s
+Thanks,
 
-
-Hi Michael, I see you are CCed to this email. Would you be open to
-acking this patch now that a 3rd independent engineer from a different
-company (NXP first, then AMD/Xilinx, now TI) has reported this as a bug
-fix?
-
+-- 
+Peter Xu
 
 
