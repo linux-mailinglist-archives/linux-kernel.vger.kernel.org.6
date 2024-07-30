@@ -1,361 +1,169 @@
-Return-Path: <linux-kernel+bounces-267007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0E3940B28
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:20:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB137940B0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C5FF1F23FA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:20:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F85A280F94
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487D71922F6;
-	Tue, 30 Jul 2024 08:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2C518FC70;
+	Tue, 30 Jul 2024 08:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AEqjYOfr"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cRE976g7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F12167D83
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFE98003F
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722327649; cv=none; b=tsIlsqsYWt+590Pt2eFXv4ObYEPyGib/SGK8JWnyIa98g/Uy6yfz2bs21swsatWzSieYfsGc910wWa0mC9P1QlF72iw4FSR829yCQAFZObHmT3jN5TKtZraNCaadAPZB4aOf9alvo7mvD4przHN5ukAh1DeEAKUSD18dEvGFUJU=
+	t=1722327338; cv=none; b=EuuP3oxE06pnVfHcuJGMORAB1L9+NzpYwPLhja0cY3t2m7S6ZtBAROWhul3dd5KLi4l5KbMmreV3JWF2rW3kZoYmMYnHANzcx6q4xNOqnk4PR8ke44gT7OS4fHj6JhqdNqwFnaAx9ghZkIWAswwkWr5UqWRw2Tt8CVRfXwvvDUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722327649; c=relaxed/simple;
-	bh=WW2mY7HiQIsCzAiCRzc87OMPGGCBvuGmTjOrzAW8Aq4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V94vGIY4MpmFOXe67ka+ukkLN0gjJhv591ekd2RYpmKM9yXf0n4EuxFYa+74xnOfMXLCYYL0i/QsrL4/F+KQ719UEry5OZY59wi92YztvAt+ECHraTuPChX8yC1GsvVSGsVz/UOzas0yZvWGxOSM49SwE2EZ+9G6B5Y3LvoOFpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AEqjYOfr; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1722327638; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=13VFHkQ5EKKSlLcss4J5ZWHUutiLOAeHwk1lZO1Xyp8=;
-	b=AEqjYOfrEyg9QajQjZ0WuJoyu7tnlb+N/0MSB8SoM8aTilfLKEEEnAGFh2m22scZuYtKjTH1AMYOt6H3It9v0SA2yyNcQ5gO2WEKk+OynoZXXws0dViKU/4b1vQz4vRg2OKPWAu2VdhsLgnDRDIlgCFfWW86PBd/2pAOlkemx7w=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R861e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=23;SR=0;TI=SMTPD_---0WBessTl_1722327318;
-Received: from 30.97.56.73(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WBessTl_1722327318)
-          by smtp.aliyun-inc.com;
-          Tue, 30 Jul 2024 16:15:19 +0800
-Message-ID: <18a6bed3-112b-4107-9aaa-6963b6b0bc08@linux.alibaba.com>
-Date: Tue, 30 Jul 2024 16:15:18 +0800
+	s=arc-20240116; t=1722327338; c=relaxed/simple;
+	bh=WOOMSfhnQcNODeN5xJyfMfPqy0keIAX/hzTWSUrYaGA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gUQ7ny3NkMJqaSXByidI3pixX7yhS5UhZLiqEZyK3e+ipGrA//QaF4lGR/amc8DvIe1bLNoYjRb2pLhMyreatghTbYTyUZOPQjn23xkQ3kxayGXucEaBtGmA3KTxGls4+oMBxQfJMxcbkUHO3wDsf1qAYuRqOBs3jUtha+PzH30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cRE976g7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722327336;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WOOMSfhnQcNODeN5xJyfMfPqy0keIAX/hzTWSUrYaGA=;
+	b=cRE976g7DlunkmS4hBkuad6ImBvLzLG2A5rM62fUDTQtiQ3Q+91PHC2pJgJ7125V4Mk9ud
+	jOXtpbfv1xWAm+R7mu8pbDQtiIqncKdOJWCeU0z9RzfyHaoHPcMGn97GfvMVbdiWCf8H2H
+	2Dm5g5QAXn64m+GOGsX1ALCRRlMxgf4=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-21-zszeyCOWN9itLy9cDV-CAQ-1; Tue, 30 Jul 2024 04:15:33 -0400
+X-MC-Unique: zszeyCOWN9itLy9cDV-CAQ-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2cb685d5987so5579236a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 01:15:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722327332; x=1722932132;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WOOMSfhnQcNODeN5xJyfMfPqy0keIAX/hzTWSUrYaGA=;
+        b=VDeM4ZGx0AoJeOavn/1xYua13uN0L7z/X50NxyIzfAyCnpezPfKgh7t2xfl4J+ZtUh
+         jQbcRxVIKMjFX/r3xtVTVdy4bmuar495VF6gBkHNFQ+RsF5aKNqtrYMVhtiz2f56KWxl
+         O+rrK6gJy7tE6OfGGcWcpxAY8c8wlzo+oaS4y29cTykgDy7OgFwR1M2Q4QBSa8WVgead
+         thqxTUeqdIG4cTRF4Op8N4LUNqHpXf1YvfiNLsctbXK+6FrwIwc1Q3f3O1p/Zio09s38
+         wvKhEhelBp58RO6J3xKOOUn5kVzV0st4LjOCmPKY7ZMRzMvCFQmES2Xr/ZoeAMduc/t6
+         o/2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUIqa+5ChHuxt6u+MXGuGbIQCENOvXPWtpYnwq5bBpgrJDvgpIWu/KOyTrF6wHYz/Q/2HpSrqvyUyhrafuJvIsLGqRs12GQSyAQ0Uev
+X-Gm-Message-State: AOJu0YyT76ts6HIIej8OCpkVYjnXKcbcihqyQzkgmEtPck85UrrWEsFE
+	l9Qu6JjNrD/Vi7evel83T9anvBNm4Neow7HzFA7W1GrP7M5zVauEgA5iY0XUKm9qMHbBaO8Lj8Q
+	bCyqJZ6vVO/1O3YEdqQ5p4JzFLhTGnhlBPSirf90tAXU4jmmmejxwjDF0Jxs0QNAsy1mI9JHF3R
+	aQuj1bEvJWriYvr36pIGeW66C1le6EDdeYNrUO
+X-Received: by 2002:a17:90b:1e03:b0:2c9:7219:1db0 with SMTP id 98e67ed59e1d1-2cf7e097ee5mr11968770a91.3.1722327332664;
+        Tue, 30 Jul 2024 01:15:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEeIY6efqBzVRcnHDrZf789cD3QSb4GU491Vbgv01oZGYCmlbPHS55aNBW4HeDxvzWdKSlTy0/zXAZP3u9j+fc=
+X-Received: by 2002:a17:90b:1e03:b0:2c9:7219:1db0 with SMTP id
+ 98e67ed59e1d1-2cf7e097ee5mr11968756a91.3.1722327332330; Tue, 30 Jul 2024
+ 01:15:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] mm: swap: add nr argument in swapcache_prepare and
- swapcache_clear to support large folios
-To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org
-Cc: chrisl@kernel.org, david@redhat.com, hannes@cmpxchg.org,
- hughd@google.com, kaleshsingh@google.com, kasong@tencent.com,
- linux-kernel@vger.kernel.org, mhocko@suse.com, minchan@kernel.org,
- nphamcs@gmail.com, ryan.roberts@arm.com, senozhatsky@chromium.org,
- shakeel.butt@linux.dev, shy828301@gmail.com, surenb@google.com,
- v-songbaohua@oppo.com, willy@infradead.org, xiang@kernel.org,
- ying.huang@intel.com, yosryahmed@google.com
-References: <20240730071339.107447-1-21cnbao@gmail.com>
- <20240730071339.107447-2-21cnbao@gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20240730071339.107447-2-21cnbao@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240702095401.16278-1-gongruiqi1@huawei.com> <9473d6eb-3f56-4c73-8e61-69111837c07b@huawei.com>
+ <CAHC9VhR+tk4mwmaQ6u8SEnzg6zMF2krFHKVwxKx91GX1K=4A=g@mail.gmail.com>
+ <0729db54-98cf-4006-91d0-0ebda4dbc251@huawei.com> <CAFqZXNsN9M__Mo018L8m0txi60vm3Ui5HgHvJYQK__0hhhMULQ@mail.gmail.com>
+ <55390a1e-5994-465a-a5c5-94f3370259c3@huawei.com> <CAFqZXNu_cLLH811Z8CxDb07Adf+E_z+1nH=7nkO9H83CY9RETw@mail.gmail.com>
+ <CAEjxPJ4H_MVWd5iaP5eE_q0tbebSFRE=KMS80-dE3EdRpmv84A@mail.gmail.com>
+In-Reply-To: <CAEjxPJ4H_MVWd5iaP5eE_q0tbebSFRE=KMS80-dE3EdRpmv84A@mail.gmail.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
+Date: Tue, 30 Jul 2024 10:15:21 +0200
+Message-ID: <CAFqZXNtNipvJLt3kvhQ0hB-P_Niyn0fQK0VTp-+Ce15WiJYO+A@mail.gmail.com>
+Subject: Re: [PATCH testsuite] tests/task_setscheduler: add cgroup v2 case for
+ moving proc to root cgroup
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Gong Ruiqi <gongruiqi1@huawei.com>, Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Wang Weiyang <wangweiyang2@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jul 29, 2024 at 1:55=E2=80=AFPM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+>
+> On Mon, Jul 29, 2024 at 6:29=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.=
+com> wrote:
+> >
+> > On Sat, Jul 27, 2024 at 4:55=E2=80=AFAM Gong Ruiqi <gongruiqi1@huawei.c=
+om> wrote:
+> > >
+> > >
+> > > On 2024/07/26 21:43, Ondrej Mosnacek wrote:
+> > > > On Thu, Jul 18, 2024 at 2:34=E2=80=AFPM Gong Ruiqi <gongruiqi1@huaw=
+ei.com> wrote:
+> > > >>
+> > > >>
+> > > >> On 2024/07/18 0:17, Paul Moore wrote:
+> > > >>> ...
+> > > >>>
+> > > >>> Where (what distribution, version, etc.) did you see this problem=
+?
+> > > >>
+> > > >> The problem occurred when I ran the testsuite on Fedora 40 with v6=
+.6
+> > > >> kernel, and it was the only failed testcase.
+> > > >
+> > > > Sorry for the delay... For some reason the test passes for me even
+> > > > with cgroup v2 only and without the patch (also when run from a
+> > > > regular user account with sudo). Do you happen to know what
+> > > > circumstances are needed for it to fail when the cgroup is not
+> > > > switched?
+> > > >
+> > >
+> > > As the comment in the script says, a process need to be in the root
+> > > cgroup in order to switch its scheduler policy to SCHED_{RR,FIFO}. So
+> > > maybe in your case the shell process is already in the root cgroup?
+> > >
+> > > In my case I need to ssh to a Fedora VM, and that makes my shell proc=
+ess
+> > > to be in a sub cgroup called /user.slice/.../XXX.scope (looks like so=
+me
+> > > systemd stuff). And since /sys/fs/cgroup/cpu/tasks doesn't exit in th=
+e
+> > > system with cgroup v2 only, the script skips moving the target proces=
+s
+> > > to the root cgroup, and therefore the subsequent test fails.
+> >
+> > In my case I ssh as root and end up in
+> > /user.slice/user-0.slice/session-1.scope cgroup,
+> > /sys/fs/cgroup/cpu/tasks also doesn't exist, and yet the test passes.
+> > The same also happens when I ssh as a regular user (with cgroup
+> > /user.slice/user-1000.slice/session-3.scope) and run the testsuite
+> > with sudo. So there must be something more to it... maybe some kernel
+> > config or sysctl setting?
+>
+> As a further data point, I also have been unable to reproduce the
+> reported behavior.
+> That said, since tasks doesn't exist, isn't the passing test a false
+> negative (i.e. it isn't truly testing as intended)?
 
+I don't think it is. The test wants to verify that it is possible to
+change the scheduling policy with the SELinux permission and that it
+is not possible without it - and it tests basically identical
+conditions with the permission allowed and denied, so it indeed
+verifies it correctly. The cgroup switch is just a preparation step so
+that changing the policy to realtime policies can succeed at all. When
+the test fully passes without switching the cgroup, then it just means
+that the switch wasn't necessary for whatever reason.
 
-On 2024/7/30 15:13, Barry Song wrote:
-> From: Barry Song <v-songbaohua@oppo.com>
-> 
-> Right now, swapcache_prepare() and swapcache_clear() supports one entry
-> only, to support large folios, we need to handle multiple swap entries.
-> 
-> To optimize stack usage, we iterate twice in __swap_duplicate(): the
-> first time to verify that all entries are valid, and the second time
-> to apply the modifications to the entries.
-> 
-> Currently, we're using nr=1 for the existing users.
-> 
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+--=20
+Ondrej Mosnacek
+Senior Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
-Thanks Barry. Tested it with my shmem swap patches, and works well. So
-Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-
-> ---
->   include/linux/swap.h |   4 +-
->   mm/memory.c          |   6 +--
->   mm/swap.h            |   5 ++-
->   mm/swap_state.c      |   2 +-
->   mm/swapfile.c        | 101 +++++++++++++++++++++++++------------------
->   5 files changed, 68 insertions(+), 50 deletions(-)
-> 
-> diff --git a/include/linux/swap.h b/include/linux/swap.h
-> index ba7ea95d1c57..5b920fa2315b 100644
-> --- a/include/linux/swap.h
-> +++ b/include/linux/swap.h
-> @@ -480,7 +480,7 @@ extern int get_swap_pages(int n, swp_entry_t swp_entries[], int order);
->   extern int add_swap_count_continuation(swp_entry_t, gfp_t);
->   extern void swap_shmem_alloc(swp_entry_t);
->   extern int swap_duplicate(swp_entry_t);
-> -extern int swapcache_prepare(swp_entry_t);
-> +extern int swapcache_prepare(swp_entry_t entry, int nr);
->   extern void swap_free_nr(swp_entry_t entry, int nr_pages);
->   extern void swapcache_free_entries(swp_entry_t *entries, int n);
->   extern void free_swap_and_cache_nr(swp_entry_t entry, int nr);
-> @@ -554,7 +554,7 @@ static inline int swap_duplicate(swp_entry_t swp)
->   	return 0;
->   }
->   
-> -static inline int swapcache_prepare(swp_entry_t swp)
-> +static inline int swapcache_prepare(swp_entry_t swp, int nr)
->   {
->   	return 0;
->   }
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 833d2cad6eb2..b8675617a5e3 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4081,7 +4081,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->   			 * reusing the same entry. It's undetectable as
->   			 * pte_same() returns true due to entry reuse.
->   			 */
-> -			if (swapcache_prepare(entry)) {
-> +			if (swapcache_prepare(entry, 1)) {
->   				/* Relax a bit to prevent rapid repeated page faults */
->   				schedule_timeout_uninterruptible(1);
->   				goto out;
-> @@ -4387,7 +4387,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->   out:
->   	/* Clear the swap cache pin for direct swapin after PTL unlock */
->   	if (need_clear_cache)
-> -		swapcache_clear(si, entry);
-> +		swapcache_clear(si, entry, 1);
->   	if (si)
->   		put_swap_device(si);
->   	return ret;
-> @@ -4403,7 +4403,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->   		folio_put(swapcache);
->   	}
->   	if (need_clear_cache)
-> -		swapcache_clear(si, entry);
-> +		swapcache_clear(si, entry, 1);
->   	if (si)
->   		put_swap_device(si);
->   	return ret;
-> diff --git a/mm/swap.h b/mm/swap.h
-> index baa1fa946b34..7c6330561d84 100644
-> --- a/mm/swap.h
-> +++ b/mm/swap.h
-> @@ -59,7 +59,7 @@ void __delete_from_swap_cache(struct folio *folio,
->   void delete_from_swap_cache(struct folio *folio);
->   void clear_shadow_from_swap_cache(int type, unsigned long begin,
->   				  unsigned long end);
-> -void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry);
-> +void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry, int nr);
->   struct folio *swap_cache_get_folio(swp_entry_t entry,
->   		struct vm_area_struct *vma, unsigned long addr);
->   struct folio *filemap_get_incore_folio(struct address_space *mapping,
-> @@ -120,7 +120,7 @@ static inline int swap_writepage(struct page *p, struct writeback_control *wbc)
->   	return 0;
->   }
->   
-> -static inline void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry)
-> +static inline void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry, int nr)
->   {
->   }
->   
-> @@ -172,4 +172,5 @@ static inline unsigned int folio_swap_flags(struct folio *folio)
->   	return 0;
->   }
->   #endif /* CONFIG_SWAP */
-> +
->   #endif /* _MM_SWAP_H */
-> diff --git a/mm/swap_state.c b/mm/swap_state.c
-> index a1726e49a5eb..b06f2a054f5a 100644
-> --- a/mm/swap_state.c
-> +++ b/mm/swap_state.c
-> @@ -477,7 +477,7 @@ struct folio *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
->   		/*
->   		 * Swap entry may have been freed since our caller observed it.
->   		 */
-> -		err = swapcache_prepare(entry);
-> +		err = swapcache_prepare(entry, 1);
->   		if (!err)
->   			break;
->   
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 5f73a8553371..757d38a86f56 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -3363,7 +3363,7 @@ void si_swapinfo(struct sysinfo *val)
->   }
->   
->   /*
-> - * Verify that a swap entry is valid and increment its swap map count.
-> + * Verify that nr swap entries are valid and increment their swap map counts.
->    *
->    * Returns error code in following case.
->    * - success -> 0
-> @@ -3373,60 +3373,77 @@ void si_swapinfo(struct sysinfo *val)
->    * - swap-cache reference is requested but the entry is not used. -> ENOENT
->    * - swap-mapped reference requested but needs continued swap count. -> ENOMEM
->    */
-> -static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
-> +static int __swap_duplicate(swp_entry_t entry, unsigned char usage, int nr)
->   {
->   	struct swap_info_struct *p;
->   	struct swap_cluster_info *ci;
->   	unsigned long offset;
->   	unsigned char count;
->   	unsigned char has_cache;
-> -	int err;
-> +	int err, i;
->   
->   	p = swp_swap_info(entry);
->   
->   	offset = swp_offset(entry);
-> +	VM_WARN_ON(nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
->   	ci = lock_cluster_or_swap_info(p, offset);
->   
-> -	count = p->swap_map[offset];
-> +	err = 0;
-> +	for (i = 0; i < nr; i++) {
-> +		count = p->swap_map[offset + i];
->   
-> -	/*
-> -	 * swapin_readahead() doesn't check if a swap entry is valid, so the
-> -	 * swap entry could be SWAP_MAP_BAD. Check here with lock held.
-> -	 */
-> -	if (unlikely(swap_count(count) == SWAP_MAP_BAD)) {
-> -		err = -ENOENT;
-> -		goto unlock_out;
-> -	}
-> +		/*
-> +		 * swapin_readahead() doesn't check if a swap entry is valid, so the
-> +		 * swap entry could be SWAP_MAP_BAD. Check here with lock held.
-> +		 */
-> +		if (unlikely(swap_count(count) == SWAP_MAP_BAD)) {
-> +			err = -ENOENT;
-> +			goto unlock_out;
-> +		}
->   
-> -	has_cache = count & SWAP_HAS_CACHE;
-> -	count &= ~SWAP_HAS_CACHE;
-> -	err = 0;
-> +		has_cache = count & SWAP_HAS_CACHE;
-> +		count &= ~SWAP_HAS_CACHE;
->   
-> -	if (usage == SWAP_HAS_CACHE) {
-> +		if (usage == SWAP_HAS_CACHE) {
-> +			/* set SWAP_HAS_CACHE if there is no cache and entry is used */
-> +			if (!has_cache && count)
-> +				continue;
-> +			else if (has_cache)		/* someone else added cache */
-> +				err = -EEXIST;
-> +			else				/* no users remaining */
-> +				err = -ENOENT;
->   
-> -		/* set SWAP_HAS_CACHE if there is no cache and entry is used */
-> -		if (!has_cache && count)
-> -			has_cache = SWAP_HAS_CACHE;
-> -		else if (has_cache)		/* someone else added cache */
-> -			err = -EEXIST;
-> -		else				/* no users remaining */
-> -			err = -ENOENT;
-> +		} else if (count || has_cache) {
->   
-> -	} else if (count || has_cache) {
-> +			if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)
-> +				continue;
-> +			else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_MAX)
-> +				err = -EINVAL;
-> +			else if (swap_count_continued(p, offset + i, count))
-> +				continue;
-> +			else
-> +				err = -ENOMEM;
-> +		} else
-> +			err = -ENOENT;			/* unused swap entry */
->   
-> -		if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)
-> +		if (err)
-> +			goto unlock_out;
-> +	}
-> +
-> +	for (i = 0; i < nr; i++) {
-> +		count = p->swap_map[offset + i];
-> +		has_cache = count & SWAP_HAS_CACHE;
-> +		count &= ~SWAP_HAS_CACHE;
-> +
-> +		if (usage == SWAP_HAS_CACHE)
-> +			has_cache = SWAP_HAS_CACHE;
-> +		else if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)
->   			count += usage;
-> -		else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_MAX)
-> -			err = -EINVAL;
-> -		else if (swap_count_continued(p, offset, count))
-> -			count = COUNT_CONTINUED;
->   		else
-> -			err = -ENOMEM;
-> -	} else
-> -		err = -ENOENT;			/* unused swap entry */
-> +			count = COUNT_CONTINUED;
->   
-> -	if (!err)
-> -		WRITE_ONCE(p->swap_map[offset], count | has_cache);
-> +		WRITE_ONCE(p->swap_map[offset + i], count | has_cache);
-> +	}
->   
->   unlock_out:
->   	unlock_cluster_or_swap_info(p, ci);
-> @@ -3439,7 +3456,7 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
->    */
->   void swap_shmem_alloc(swp_entry_t entry)
->   {
-> -	__swap_duplicate(entry, SWAP_MAP_SHMEM);
-> +	__swap_duplicate(entry, SWAP_MAP_SHMEM, 1);
->   }
->   
->   /*
-> @@ -3453,29 +3470,29 @@ int swap_duplicate(swp_entry_t entry)
->   {
->   	int err = 0;
->   
-> -	while (!err && __swap_duplicate(entry, 1) == -ENOMEM)
-> +	while (!err && __swap_duplicate(entry, 1, 1) == -ENOMEM)
->   		err = add_swap_count_continuation(entry, GFP_ATOMIC);
->   	return err;
->   }
->   
->   /*
-> - * @entry: swap entry for which we allocate swap cache.
-> + * @entry: first swap entry from which we allocate nr swap cache.
->    *
-> - * Called when allocating swap cache for existing swap entry,
-> + * Called when allocating swap cache for existing swap entries,
->    * This can return error codes. Returns 0 at success.
->    * -EEXIST means there is a swap cache.
->    * Note: return code is different from swap_duplicate().
->    */
-> -int swapcache_prepare(swp_entry_t entry)
-> +int swapcache_prepare(swp_entry_t entry, int nr)
->   {
-> -	return __swap_duplicate(entry, SWAP_HAS_CACHE);
-> +	return __swap_duplicate(entry, SWAP_HAS_CACHE, nr);
->   }
->   
-> -void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry)
-> +void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry, int nr)
->   {
->   	unsigned long offset = swp_offset(entry);
->   
-> -	cluster_swap_free_nr(si, offset, 1, SWAP_HAS_CACHE);
-> +	cluster_swap_free_nr(si, offset, nr, SWAP_HAS_CACHE);
->   }
->   
->   struct swap_info_struct *swp_swap_info(swp_entry_t entry)
 
