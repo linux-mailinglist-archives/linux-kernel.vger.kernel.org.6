@@ -1,154 +1,227 @@
-Return-Path: <linux-kernel+bounces-266982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0122E940AB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:04:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A7C7940AAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:03:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B160E2815DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:04:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D93F1C22D6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DA51922CA;
-	Tue, 30 Jul 2024 08:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE4B187856;
+	Tue, 30 Jul 2024 08:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Gza4Y6Q3"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MO2jGGnK"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00448187322
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6A8D2E5;
+	Tue, 30 Jul 2024 08:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722326633; cv=none; b=iOd2Dq+65S7LCVx5YqSzuQZPDtakbECchSxGdiEHHOkmMgSYG6ZqLjcPrs42KjR51S23wS0NPWLuZgCoL6douZiL2/l8yqonIIOjkjh26so1zBxsq9YlfCK2V/JqkYXIRtDOyP8H0lwLQuBZDfh5HqB2eflhF32rnuJ3T8o8Ays=
+	t=1722326621; cv=none; b=rMaywGLQEvx5O9OTWXpAR7tUhDRiAE+oL5zx3g+FMpkOh89um/ZoUNSe86zf74i8ooTmINS1rPoVr5EAjci8vPNrx9ZKUEmMYEJw6ucIN6FTkJYpwM89un45naZ5kamdHGdRRtioreePtsuePp2yHacyfKn8cHfNcw78Yz5d1OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722326633; c=relaxed/simple;
-	bh=DWNGubRHzRjEGM6zExLcknP5Nhoynsr4fLCjY31dlVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=av/nnWw47sv4rJ7XNGTr3orXETVCB2NuX3O8DjdgnfMt/Ye9qwg0dkOqmd2sUAAHG1O5MrBmelBWY4fuBHH2127nsRlenYfRm9RZlqQ3SXfk+Vw3fBFpgRGjatxQneLr/2C1dAHDpjvuJ79ksZCxgruWlppbtLhDQzcoSZ7+2y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Gza4Y6Q3; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0F7F140E019C;
-	Tue, 30 Jul 2024 08:03:43 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id L0jvRNJ3Hi_0; Tue, 30 Jul 2024 08:03:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1722326618; bh=uS3wYUx2MIQdz67Z0GsNFcq352DD4UyeUgFguSrShBQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gza4Y6Q3mVzoO/ieO9julrMhVsdsn2Fp82fRyCIxnf9q6DtczIhRHYoNisb1AvpL5
-	 wlHN57sGvNQuYZR9sOgvqGyJvjdng5mvWMpNvS4ubKIkS4y0oRbZfTSy4Ht+B/xzy5
-	 HqTuOdU+Din0kGBkwhfEIUhe7PccA5/THisY9ptVQn93WwtCinT/Xw2oTRVyuwwiNb
-	 IMcR7+4m4QHS9+17SC9v5oUn9BwEyPv2gEA/Kfhmg79KPOsBVz/xX5V6NUHUc3ocFv
-	 5Sy0WpHGTW/Y8cFfCuo+DM2JOcG7Vs4gcjb2tlbZcQoNWQd3OBHvjblVN+qbakCnUe
-	 NsVoth3ZzxbFgWKGt4pvuMekIfB109Em0ApoHrnVLgbNTYkv8r609HGyzDsDCCZE3B
-	 eNxisJS0IrGKigXASPe+6Bx/gE9DDybblFBDhfqzi901WaFLOIleoH61Q6NAUCnrvG
-	 SDPDlieuC5nmQudaoVWfadELWZRjkWD8vHYBo36rWSplEvt1pJibgonyoNCaPxpjQY
-	 xW6oP3NI3TlDSDNUd/OcaNKINyE5ADrllXUjwE5GZONbUUlAkpdRPj0adGv5TckpOv
-	 XOCPHIVZRpBh9cPeLLswKSdEG3XUAFK+lLw9FTV+7bFJfbYCTk4HrjQWh/UAYzD9Oc
-	 FDzGWpv2aIIUtU6vuB+cU9Q8=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AF5D140E01BB;
-	Tue, 30 Jul 2024 08:03:32 +0000 (UTC)
-Date: Tue, 30 Jul 2024 10:03:26 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: kernel test robot <lkp@intel.com>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [tip:x86/microcode 1/1]
- arch/x86/kernel/cpu/microcode/amd.c:714:6: warning: variable 'equiv_id' is
- used uninitialized whenever 'if' condition is false
-Message-ID: <20240730080326.GAZqieTl1Gz4RheSiI@fat_crate.local>
-References: <202407291815.gJBST0P3-lkp@intel.com>
- <20240729112614.GBZqd8Vu27mFVSHynA@fat_crate.local>
- <20240729153008.GA685493@thelio-3990X>
+	s=arc-20240116; t=1722326621; c=relaxed/simple;
+	bh=zrOPpP7n6wpVbT0LbTrIPNP60QQatw1aJrnNVWHz73c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jGmzhA7u7ppidHlnRnjnP+iklS5vBO53XzuNgCLjb9VQGjVyJjco9btgVvD8MeMqJci8nEzhXdjKFxLq/usO1r4U1Ps13ev1SNle/PadP4KVL58r6LgMiFlA9Bpdoh6q3Fb25En2NZyeAUTDFi3eRyLGE3rxHJtdoI41C4aUH7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MO2jGGnK; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fed72d23a7so27850735ad.1;
+        Tue, 30 Jul 2024 01:03:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722326619; x=1722931419; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9OVNGQMe/C64240V64c1zunaFPC+HkZVviRBxRM9hd0=;
+        b=MO2jGGnK4YXSNabs1kpyAhN2qg0nrcdUO2mTb5JaRLwvKUyCYUWZYIZxyeArwonika
+         ePsjzPfAPcBDGE4ie1CF58hGtSQnLq9L/d/9jNEa65Nn2ssdjEfqxSUS1o1XXOAIzZDh
+         lxSKZnFfJOHIGpMCooWZKPXhQu3aNjZY+GmpjtB3ZhjZrinQ6jonlJ8NHrpzlEATabPC
+         0dptM0c09S1iAy54UdjCZgNZXZR/PLuWQtook0py8dBfdFCNQWbSiexeT+U+ls6PPK1O
+         SX+Al9FX0WykaTx/ocVU4XGApMSET8tw3JAR5/TxI4Xo8QJ0NMYFw47YUTvwWyQP++J1
+         itEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722326619; x=1722931419;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9OVNGQMe/C64240V64c1zunaFPC+HkZVviRBxRM9hd0=;
+        b=LEke934TUimMYYC7LawyFjUrOcF1YINhYb7/ww1DSOb02w1lPbGvc30+XC/3egrDol
+         ZL36BgMVH5Ll4uowKZEF0PdDxJ3NWxAzWTDfLa6vZxT69x679sfgkdEJUBikWLPNZleB
+         HaFZuomLwFysVqWklaSg/QVg1XgZvA8w6Du0v2jGVVCjPulcjrtXzC6gvXAaJTwq0O2O
+         eEL1rDKUcbicVmk/rOjtT3AGnUN6TJgcuXQtIoMxDXf6FM5V2QPzi2WZQ8O2UF7KYz/A
+         UaILOOli+b630w1l32i0EoWvSoNZw5HCQajcpGQGk3/8lJXNrzV/Qk64rlxwtxj9ic59
+         CCEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNE1CXd5hoA4+dUaRpvvvaQgSVON5aNzY+CNe1fEuTA2P9we8ArRIo9Z16bia1bIn/RhHvNEb6mwte6rUbZaJqbnwU2jki3lRUKJfxZSPNmNf77Y0O/jl8UvY1k6BZCqOBUtnOVH7sOw==
+X-Gm-Message-State: AOJu0YxUSqkRUTZMCFg+0FjAb6IRG0vklV/JNZ/VFrKv5b1IwGuvBhCc
+	uLhrCuidA8gc/cTES0x/cyoDLdk8KwUAzvy/Hv/ZVHpCmOnOqRE3
+X-Google-Smtp-Source: AGHT+IHzrH25cPutln0r6hKGEy+zOvRDkcSSoWRSjTAN0Fvh/KG4hSP/q7SqXRvaVQfALvD8yJBdcQ==
+X-Received: by 2002:a17:902:d4cd:b0:1fb:68a2:a948 with SMTP id d9443c01a7336-1ff04809ab3mr67129815ad.15.1722326618767;
+        Tue, 30 Jul 2024 01:03:38 -0700 (PDT)
+Received: from [172.19.1.53] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ff067esm95122855ad.295.2024.07.30.01.03.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 01:03:38 -0700 (PDT)
+Message-ID: <85a4b5c2-89f1-40d1-baec-b17479f5cae2@gmail.com>
+Date: Tue, 30 Jul 2024 16:03:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240729153008.GA685493@thelio-3990X>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: phy: nuvoton,ma35-usb2-phy: add new
+ bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>, vkoul@kernel.org,
+ kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240729061509.83828-1-hpchen0nvt@gmail.com>
+ <20240729061509.83828-2-hpchen0nvt@gmail.com>
+ <c4c2b30a-8ff9-4fc4-a1ed-adcd366d15a7@kernel.org>
+Content-Language: en-US
+From: Hui-Ping Chen <hpchen0nvt@gmail.com>
+In-Reply-To: <c4c2b30a-8ff9-4fc4-a1ed-adcd366d15a7@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 29, 2024 at 08:30:08AM -0700, Nathan Chancellor wrote:
-> Right, as clang does not perform interprocedural analysis for the sake
-> of warnings. That's partly why GCC's version of this warning was
-> disabled in commit 78a5255ffb6a ("Stop the ad-hoc games with
-> -Wno-maybe-initialized").
+Dear Krzysztof,
 
-So why aren't we shutting up clang too?
-
-> While it may be properly handled now, I think this pattern of
-> conditionally avoiding using a variable uninitialized is dubious.
-
-Well, in this particular case of the microcode loader, this is the best
-compromise I can think of - I have two different paths of handling a microcode
-patch - Zen and newer - and before - so I need those separate flows.
-
-So sometimes it makes sense.
-
-> So I guess you can just ignore this if you want but others (maybe even
-> Linus) will likely notice this and report it as well.
-
-I think this warning should be behind W=1 if it can trigger false positives.
-
-Anyway:
-
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
-Date: Tue, 30 Jul 2024 09:52:43 +0200
-Subject: [PATCH] x86/microcode/AMD: Fix a -Wsometimes-uninitialized clang
- false positive
-
-Initialize equiv_id in order to shut up:
-
-  arch/x86/kernel/cpu/microcode/amd.c:714:6: warning: variable 'equiv_id' is \
-  used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-        if (x86_family(bsp_cpuid_1_eax) < 0x17) {
-            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-because clang doesn't do interprocedural analysis for warnings to see
-that this variable won't be used uninitialized.
-
-Fixes: 94838d230a6c ("x86/microcode/AMD: Use the family,model,stepping encoded in the patch ID")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202407291815.gJBST0P3-lkp@intel.com/
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- arch/x86/kernel/cpu/microcode/amd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index 1f5d36f92b8a..f63b051f25a0 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -703,7 +703,7 @@ static struct ucode_patch *find_patch(unsigned int cpu)
- {
- 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
- 	u32 rev, dummy __always_unused;
--	u16 equiv_id;
-+	u16 equiv_id = 0;
- 
- 	/* fetch rev if not populated yet: */
- 	if (!uci->cpu_sig.rev) {
--- 
-2.43.0
+Thank you for your reply.
 
 
--- 
-Regards/Gruss,
-    Boris.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+On 2024/7/29 下午 03:29, Krzysztof Kozlowski wrote:
+> On 29/07/2024 08:15, hpchen0 wrote:
+>> Add dt-bindings for USB2 PHY found on the Nuvoton MA35 SoC.
+>>
+>> Signed-off-by: hpchen0 <hpchen0nvt@gmail.com>
+> Please use proper name.
+
+Okay, I will make the correction and use the correct name.
+
+
+
+>> ---
+>>   .../bindings/phy/nuvoton,ma35-usb2-phy.yaml   | 51 +++++++++++++++++++
+>>   1 file changed, 51 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/phy/nuvoton,ma35-usb2-phy.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/nuvoton,ma35-usb2-phy.yaml b/Documentation/devicetree/bindings/phy/nuvoton,ma35-usb2-phy.yaml
+>> new file mode 100644
+>> index 000000000000..415ea2c45975
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/phy/nuvoton,ma35-usb2-phy.yaml
+>> @@ -0,0 +1,51 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/phy/nuvoton,ma35-usb2-phy.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Nuvoton MA35 USB2 phy
+>> +
+>> +maintainers:
+>> +  - hpchen0 <hpchen0nvt@gmail.com>
+> Same here
+
+Okay, I will make the correction and use the correct name.
+
+
+
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - nuvoton,ma35-usb2-phy
+> All other devices have name ma35d1. Is this a different SoC?
+
+The SoC is the same as ma35d1. I will modify ma35 to ma35d1.
+
+Originally, I intended to create a series of shared drivers.
+
+
+
+>> +
+>> +  "#phy-cells":
+>> +    const: 0
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +    description: USB PHY clock
+> Drop description, it's obvious.
+
+Okay, I will remove the description.
+
+
+
+>> +
+>> +  clock-names:
+>> +    const: usbd_gate
+> Drop clock-names, you do not bring any new information.
+
+Okay, I will remove the clock-names.
+
+
+
+>> +
+>> +  nuvoton,sys:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description:
+>> +      phandle of the system-management node.
+> Describe what is it for.
+
+Because this driver has some status bits located in the sys, it is 
+necessary to reference the sys link.
+
+
+
+>> +
+>> +required:
+>> +  - compatible
+>> +  - clocks
+>> +  - nuvoton,sys
+>> +  - "#phy-cells"
+> Keep the same order as in properties.
+
+Okay, I will correct this issue.
+
+
+
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> Where do you use it?
+
+This is not used and will be removed. Thanks for the reminder.
+
+
+
+>> +    #include <dt-bindings/clock/nuvoton,ma35d1-clk.h>
+>> +
+>> +    usb_phy: usb-phy {
+>> +        compatible = "nuvoton,ma35-usb2-phy";
+>> +        clocks = <&clk USBD_GATE>;
+>> +        clock-names = "usbd_gate";
+>> +        nuvoton,sys = <&sys>;
+>> +        #phy-cells = <0>;
+>> +    };
+> Best regards,
+> Krzysztof
+
+
+Best regards,
+
+Hui-Ping Chen
+
+
+
 
