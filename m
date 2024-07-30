@@ -1,100 +1,126 @@
-Return-Path: <linux-kernel+bounces-267991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37701941F1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:57:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DDD941F20
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D30862820F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:57:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA76D1C21677
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D393189916;
-	Tue, 30 Jul 2024 17:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC6918A6A6;
+	Tue, 30 Jul 2024 17:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rls7Fzj2"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I/WKhAUx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534D8184547
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE671649C6;
+	Tue, 30 Jul 2024 17:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722362261; cv=none; b=gwTEGYLn3AVgkxvxaT+M/v/7STd2jmHeD6sWh1B7ZVLYhyFnVKjLvf8HOdac4OFmVdMhorCYzDhsqiQfwf1M7hwXMjTjth4C/M7FlCFPZ+9QAL+eSzGc6QI4VNQ+ZuIC73GFk0ZSpgVc/ngkbXfjnavd/EmfqO+fAszO3cJvFog=
+	t=1722362307; cv=none; b=h48X9QJy6pB9TntJWswOx1pH/8Fv9VuYG62yIq/RCpT0Kyv3mAkhurMDIOodAlbVSq5SJU5UMC/WAc0qkhnj5dPxj0oZlH8ydyF2RZon2xt7AK9lvrQbPi4LFwECHa1tSFFQQuyHnA8xEnIcnqKG5gvhFPou/opPNatkcDcyuzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722362261; c=relaxed/simple;
-	bh=aN8XLejS5eKcdTw4Fka+qGK3eZ9UApC18AQUPmc5PIA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lw/8vGPQlFj7MQZ4FB9x5fWq2SPj+2TQX3va437Miw83LIoyp+nFsHM4n0SWhjyzj/j7sP7aOKLZWUl269eTNgUBhFsidsKb6OuHi2Y1mwdZZ4gbXTqUbV8GlUfWHp0gImeWfvFs2JfV/Y2V88+3IZ0zyLnxS5tTrEo/G9jzxkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rls7Fzj2; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ce860f0b-2a05-451f-a2e5-90c00070370b@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722362257;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E6SSLdV1+BEQ9lFafavy7nOb236w9iKR5PJPw85QXo0=;
-	b=rls7Fzj2PTwK6fD9FijmG7QTS/ngjrL9NKRq1MR92jYRs0P4PwfXKqIWjhFPXhi2H2cH0e
-	w5SW1WO8lrKChWkPwC6PlKBq9M/zOKVUAhmOoeFRU4zqSTYoG9zgKqfRtt6+MH8sq8aT3D
-	V5SiWqKynkavDIv9gtQ0EqFj/ec5/0g=
-Date: Wed, 31 Jul 2024 01:57:32 +0800
+	s=arc-20240116; t=1722362307; c=relaxed/simple;
+	bh=CWiMZzQc6iujg0PhZc5Dl7DAw2HDLJyke0lETFBLUzI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dBtV1nhBFDFXOgZoKH4NM7UIL5qnzX+g5/jXQp06Ayh4AT/Su6DwEXl7rnmN90FHywECyYrL4lAldIv9/dcoii/Q1ucoLTZHowVxcQ4A0iTrudW6JFINBQsskfHm3ZWVY8z7ocTndNff96EAVJ7ka7ZMow14eyjPfw5Scs2I7AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I/WKhAUx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UHvgHN030534;
+	Tue, 30 Jul 2024 17:58:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	i3zIHuBSrqmdngqmaB2D8Qm7MvBmeypkC15fgCfN9gk=; b=I/WKhAUxaVTywhvd
+	Y3JLrZ0uRbDqJD7smtwj6qwwNihnHeq/dQo3f4AVfC5Wf7w8VVWKCTpsWaWwokTP
+	RAA3BM1sakDpnWdLCitV8Mlk+TjUyffrE5M+g+cW7J38kYpzBWpWMYmmhhVczKyn
+	1E21aZTadwiWI/dB/vu66k8/o0t2FTDwbLpMAAHCA8zelC8WvCJ2w6grX0wONxw/
+	BFRf/GaKcBv8mQHogTNMKnrsh44t1uwm5Gs8ZDtNrQ1JQyggDPzx0KFvl/rznEVL
+	hucEbGlQkT+vRmG8u+kplQWaPg7MXkQk1NeCV2GS7onsbgwzWoS3LlkE/Kw23Col
+	20xrvA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mt68rcbe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 17:58:13 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46UHwCYq025157
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 17:58:12 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 30 Jul
+ 2024 10:58:11 -0700
+Message-ID: <cecfbed5-aec1-439b-a866-4eebcd3bd421@quicinc.com>
+Date: Tue, 30 Jul 2024 10:58:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v5 2/2] drm/loongson: Add dummy gpu driver as a
- subcomponent
-To: Markus Elfring <Markus.Elfring@web.de>, dri-devel@lists.freedesktop.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>
-References: <20240728152858.346211-1-sui.jingfeng@linux.dev>
- <20240728152858.346211-3-sui.jingfeng@linux.dev>
- <139afaab-343e-4cb4-83b7-2695129d27b1@web.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/msm/dp: fix the max supported bpp logic
+To: Stephen Boyd <swboyd@chromium.org>, Daniel Vetter <daniel@ffwll.ch>,
+        "David Airlie" <airlied@gmail.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Marijn
+ Suijten <marijn.suijten@somainline.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Vara Reddy <quic_varar@quicinc.com>, <freedreno@lists.freedesktop.org>
+CC: <dri-devel@lists.freedesktop.org>, <quic_jesszhan@quicinc.com>,
+        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
+        <quic_khsieh@quicinc.com>, Rob Clark <robdclark@chromium.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240725220320.130916-1-quic_abhinavk@quicinc.com>
+ <CAE-0n50mBEX98HH+5BurM-uRyzrxcPXFJ7yLg__hFJHfYjm67Q@mail.gmail.com>
+ <8fa86c0c-183b-4787-9525-38dfe6bcecc6@quicinc.com>
+ <CAE-0n537mpOMkVWrXGSpjU8cHZtUZXFfdG1YTfevu2SRo1hPTQ@mail.gmail.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <139afaab-343e-4cb4-83b7-2695129d27b1@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-
-Hi,
-
-On 2024/7/29 15:15, Markus Elfring wrote:
-> …
->> the driver is loaded, drm/loongson driver still need to wait all of
->                                                    needs to wait on …?
->
->
-> …
->> design. Therefore, add a dummy driver for the GPU, …
-> Is there a need to reconsider the categorisation and usability descriptions
-> another bit for such a software component?
-
-
-For honoring the framework and testing the framework purpose.
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <CAE-0n537mpOMkVWrXGSpjU8cHZtUZXFfdG1YTfevu2SRo1hPTQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ErS6-3DdwiciUDQ3xRLHRPJw_DHd-uI7
+X-Proofpoint-GUID: ErS6-3DdwiciUDQ3xRLHRPJw_DHd-uI7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-30_14,2024-07-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 adultscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0
+ impostorscore=0 mlxlogscore=986 malwarescore=0 suspectscore=0
+ clxscore=1015 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407300123
 
 
-The GPU can possibly be the master of the all sub-components, this 
-definitely need some extra
 
-consideration and negotiation with the DC and the fake master device. 
-Depend on  configuration
+On 7/29/2024 1:08 PM, Stephen Boyd wrote:
+> Quoting Abhinav Kumar (2024-07-29 11:28:35)
+>>
+>> Thanks for the feedback.
+>>
+>> Your change looks valid. We can use this and drop the max_t usage.
+>>
+>> Let me push this with your Suggested-by credits.
+> 
+> You can take my
+> 
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> 
+> and either squash it in or make a follow-up.
 
-and user space expectation. The problem should be solved earlier.
+Done, I have squashed it into this.
 
-
-> Regards,
-> Markus
-
--- 
-Best regards,
-Sui
-
+I have also re-tested and since the logic is the same, I have retained 
+Dmitry's Tested-by
 
