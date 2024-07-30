@@ -1,117 +1,160 @@
-Return-Path: <linux-kernel+bounces-267305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6C97940FD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:46:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 283C8940FD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:46:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7A51F247D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:46:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A84651F25491
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AAF19FA87;
-	Tue, 30 Jul 2024 10:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C4D1993B0;
+	Tue, 30 Jul 2024 10:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x91cXv63"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h8loI54U"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15BAE1A0B1F
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDBA197A89
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722336023; cv=none; b=YTCrb655H0/0a431KwFJZdQNKSGalaRCm718EBSEavAhzIsb/EP0Cq3ujOmAQw0iEzn0q1jvJF3PpmDKTLxZGWdggpy8TWdEepmZEpkP2p+nkO8t9rjJIPfofAjSKTKia5Bu7FU5kG5n3O7Z4N5zS87d1TQ+V2PlWdwonG43O4o=
+	t=1722336099; cv=none; b=t4Wig9KF0MJTedxsApT58gohLVks7i5hieo3fQuAK9Wwcthn3SjES0Aor2tISEV3eIeMiErXHpReOK3gbD7IGC8PXVWWm6n+GB6hYRiB2+T5yZQ3QLSVsCmX26k4JOEqoBs2drBJPej5wwT3aP2rk2avoWlItOD7MldM28rBz9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722336023; c=relaxed/simple;
-	bh=XK2vz41KExPbrsjdjcBuzNEb9VnxO/ji4DDW6PPtcz0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S7aBllvA0iq7144xBw8UI13GNYg6BXmlwsT/MQRiIxTMcrwca1gLsh+nYgkHcTekJi99IbCh4cdHsDZcJxdKoop3x7YgJFaz6sI2c9CtbAIs4winMA3Ogsp3VIV+pIMvEODZH+4Ffuvz8j7Uj7giXwwzAf4ApsSpECD6NGXxxFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x91cXv63; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so16595415e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 03:40:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722336020; x=1722940820; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yf2EBrF/xoIg4XnnkuWAq411eye617onXjc36oa4tx0=;
-        b=x91cXv63377pknF15NFhPB4zj6PwuQJbBRNLr2qjPKo+/ppZK78O9KsKArATufEyuX
-         Nq9p7JWft0ScTkfjFCfhM1+mue9rWemKDdma5uJULuQoasO4OvMP3hP8hjsroekdwoXK
-         ptggdvYAeIU5WWTEHH6Zmd9tDJPd5S5CkDI4peHzI6Z+2DvbP7nATDUvPObWO0wmXcom
-         cnZZBWuKOT/BJUL0kPEZvoIVy9NenOfbsRtAEhB/SSo5/W/DWYEbNRcXC1FMX9YJ/giy
-         3rz01H1WL90/vZiztuTbuj2A95PEtAKfN6YsKIL4JdWbIdzvSWYWV/avO7jlm9kuXe4V
-         q3vA==
+	s=arc-20240116; t=1722336099; c=relaxed/simple;
+	bh=DhzCAI2qKRiMRe5MUI4Qm796RQ6OVVSx+lGb39s7xlc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RgL36jkNpOOm9D+cTeblEMoSiJzEYqZX+HCp8PRTXx2Ks9sfRaY07ppE4naemUGBirD1Y51qrNHPGSiIlmyzR4nQhIBeE2Wsr5fiRpbpOcbkOEQml6/Du8gs4MUp4m7kQWezaE6+xtVdQykC5JADU1NEkIzbuKGBL3SPMErpHDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h8loI54U; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722336097;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8g9eu69hY+tFcVns2hzHdTrw7hODbFfcDdVx3JGaNxs=;
+	b=h8loI54UCxG6Zff7gPnY7QgZs8eudQqQPEmbop9iqOUbDfVGqxrJ2AmzbmaefnxeJrLKwm
+	56AOV8rS2crTqhzy126eCwJTft3MLrBbQDyoI7E9tUVN+5a9ttzDfbYjJBrBURQLejLGNM
+	kIMOzOixwuevLkXWJf8kdDiK88K20Cw=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-614-TMHVEpzCNgmhN2lPdiuccg-1; Tue, 30 Jul 2024 06:41:35 -0400
+X-MC-Unique: TMHVEpzCNgmhN2lPdiuccg-1
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-57c93227bbeso4348299a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 03:41:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722336020; x=1722940820;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1722336094; x=1722940894;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yf2EBrF/xoIg4XnnkuWAq411eye617onXjc36oa4tx0=;
-        b=cCRPNlxcCbHXgRNDP8kNA4t2og6Xi1zkULKTN7VoTGEVQIdceERRtzqBfRWA6x5bJT
-         /gNlFukPzU/LIMI4FUQtHKxlMiaopaMt8gb3SfDhEWHhraVmJ9kHOf+3c/bq4EI0OX29
-         WnMdyK2+N/I8Kk3TEwsbc/4OiWoAfuDHSe30EibKlgk44tBWmaD+Ggn2GnM5p2O7FwJf
-         6eSLWIu79hp+SsovRRf9ENP1rNsZ301CRJOZeRrR8PQja6Fb+TiLd49Udz/3BAJQIYo5
-         X8fXF34tIPUWUU6fHEUsx9hQj13N4ShkWX/voEmS1Iv+dC7Hd2S1w7tUo9lIfI1nlpbM
-         VYAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOki3fHBPhqMF88AkPjEt5BmMtDrq8Dxr1q4IJwIZ9xnHuhu2+9YtuKV5u0vdKnmEtNOzrnk69k3jIdGmCuCor3llOMA3LDD9ewXM+
-X-Gm-Message-State: AOJu0YxJSWcMPweybKRopkV0ga+yeE0PI9qAPVKHNJMOgglRahVbr/lB
-	83GDoM3bH3UqJ6a9fwgitzeYo1aUVbTrw9vdurEHnVFQf9bPcNCzbmh2Jx4QyO4=
-X-Google-Smtp-Source: AGHT+IFztmIvpi5e6zvIrQFHfTnJ6M1HTFlAZ0o0tSn7EJGgisCW751On8kDQJ0gXBzeW2QXpYXtPg==
-X-Received: by 2002:a05:600c:a41:b0:428:9c0:2ad with SMTP id 5b1f17b1804b1-4282445d0c0mr10083445e9.18.1722336020479;
-        Tue, 30 Jul 2024 03:40:20 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42809e4423dsm175962665e9.13.2024.07.30.03.40.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 03:40:20 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Alex Elder <elder@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH net-next] net: MAINTAINERS: Demote Qualcomm IPA to "maintained"
-Date: Tue, 30 Jul 2024 12:40:16 +0200
-Message-ID: <20240730104016.22103-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        bh=8g9eu69hY+tFcVns2hzHdTrw7hODbFfcDdVx3JGaNxs=;
+        b=UE0bo353yVPMROo++wXpHkn50f++arSwBmaZxg6IwOnu+mv2ffrD1TnqfK2WxQpRxn
+         Ooky953Hnw+E23Oe4x2U/y1GWX6pt2NOc6JfsTDzqwYSV4ObcBX1aQM4eAm1lm0QAdZh
+         dvxnXL7h0iaUf0kzgeQxRzMybdcrdM/7MsjJ6oGsS5qE/ovYa4pOKL3MzEq49Rc7RmTK
+         RBGX3EaQUVTQ/z8byzj79l+2adDzYejAlixygtDMUa4kJ0RqvL8Tnm92dBp4He6cTuzf
+         HlQJQfR3L9hBUwg/mrh99v9Re7L6Yd+luGsIoY5tOCLqMiKV5ekqR2WHcWZuw7ykBnzM
+         vRFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuJoM5+7bEG9iV4brYfKmHYb0TEnGiLx3hrAu07Khvi+SM5tvriSOBMpHO6vGnzxN4E9wGNaszcZuzZRAcBA3d1TUQXGYC3yTSAcQC
+X-Gm-Message-State: AOJu0YzQhEEzBmIrIHqleS4cruG8wu4tvVoIhXN9ytgMHAHvoGHRY2YH
+	eShmiDkhlYiy8I9D8xI27ISFDhSfRPwzv9PWZx6/qrgqanSQCSicd1iXpfqeqEeiip4BhNlHNPT
+	m7l0JFoKUExhlPBICmC7HJHAG+EoWX3fJI//8oI0LnPgCJ/fqLEJ2rcHKLDgiTw==
+X-Received: by 2002:a50:a411:0:b0:5a1:7d68:62d8 with SMTP id 4fb4d7f45d1cf-5b022c81f43mr6159519a12.38.1722336094340;
+        Tue, 30 Jul 2024 03:41:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEDPyYZQ8rptYaeG/QLRVtJLyqTXdGIvl8oYe7Os3i41TwtBzRWbRKhmb66UoorwOaLwZdqjQ==
+X-Received: by 2002:a50:a411:0:b0:5a1:7d68:62d8 with SMTP id 4fb4d7f45d1cf-5b022c81f43mr6159475a12.38.1722336093853;
+        Tue, 30 Jul 2024 03:41:33 -0700 (PDT)
+Received: from [192.168.10.47] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5ac6377e06fsm7118734a12.28.2024.07.30.03.41.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 03:41:33 -0700 (PDT)
+Message-ID: <63c41e25-2523-4397-96b4-557394281443@redhat.com>
+Date: Tue, 30 Jul 2024 12:41:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 34/84] KVM: Add a helper to lookup a pfn without
+ grabbing a reference
+To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
+ <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
+ Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, loongarch@lists.linux.dev,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, David Matlack <dmatlack@google.com>,
+ David Stevens <stevensd@chromium.org>
+References: <20240726235234.228822-1-seanjc@google.com>
+ <20240726235234.228822-35-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0j
+ UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT7CwU0EEwECACMFAlRCcBICGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
+ 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
+ jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
+ VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
+ CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
+ SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
+ AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
+ AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
+ nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
+ bQ4tlFFuVjArBZcapSIe6NV8C4cEiSTOwE0EVEJx7gEIAMeHcVzuv2bp9HlWDp6+RkZe+vtl
+ KwAHplb/WH59j2wyG8V6i33+6MlSSJMOFnYUCCL77bucx9uImI5nX24PIlqT+zasVEEVGSRF
+ m8dgkcJDB7Tps0IkNrUi4yof3B3shR+vMY3i3Ip0e41zKx0CvlAhMOo6otaHmcxr35sWq1Jk
+ tLkbn3wG+fPQCVudJJECvVQ//UAthSSEklA50QtD2sBkmQ14ZryEyTHQ+E42K3j2IUmOLriF
+ dNr9NvE1QGmGyIcbw2NIVEBOK/GWxkS5+dmxM2iD4Jdaf2nSn3jlHjEXoPwpMs0KZsgdU0pP
+ JQzMUMwmB1wM8JxovFlPYrhNT9MAEQEAAcLBMwQYAQIACQUCVEJx7gIbDAAKCRB+FRAMzTZp
+ sadRDqCctLmYICZu4GSnie4lKXl+HqlLanpVMOoFNnWs9oRP47MbE2wv8OaYh5pNR9VVgyhD
+ OG0AU7oidG36OeUlrFDTfnPYYSF/mPCxHttosyt8O5kabxnIPv2URuAxDByz+iVbL+RjKaGM
+ GDph56ZTswlx75nZVtIukqzLAQ5fa8OALSGum0cFi4ptZUOhDNz1onz61klD6z3MODi0sBZN
+ Aj6guB2L/+2ZwElZEeRBERRd/uommlYuToAXfNRdUwrwl9gRMiA0WSyTb190zneRRDfpSK5d
+ usXnM/O+kr3Dm+Ui+UioPf6wgbn3T0o6I5BhVhs4h4hWmIW7iNhPjX1iybXfmb1gAFfjtHfL
+ xRUr64svXpyfJMScIQtBAm0ihWPltXkyITA92ngCmPdHa6M1hMh4RDX+Jf1fiWubzp1voAg0
+ JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
+ dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
+ b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
+In-Reply-To: <20240726235234.228822-35-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-To the best of my knowledge, Alex Elder is not being paid to support
-Qualcomm IPA networking drivers, so drop the status from "supported" to
-"maintained".
+On 7/27/24 01:51, Sean Christopherson wrote:
+> Add a kvm_follow_pfn() wrapper, kvm_lookup_pfn(), to allow looking up a
+> gfn=>pfn mapping without the caller getting a reference to any underlying
+> page.  The API will be used in flows that want to know if a gfn points at
+> a valid pfn, but don't actually need to do anything with the pfn.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Can you rename the function kvm_gfn_has_pfn(), or 
+kvm_gfn_can_be_mapped(), and make it return a bool?
 
----
+(As an aside, I wonder if reexecute_instruction() could just use 
+kvm_is_error_hva(kvm_vcpu_gfn_to_hva(vcpu, gpa_to_gfn(gpa)) instead of 
+going all the way to a pfn.  But it's ok to be more restrictive).
 
-... or maybe this should be Odd Fixes?
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 43e7668aacb0..f1c80c9fc213 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18452,7 +18452,7 @@ F:	drivers/usb/misc/qcom_eud.c
- QCOM IPA DRIVER
- M:	Alex Elder <elder@kernel.org>
- L:	netdev@vger.kernel.org
--S:	Supported
-+S:	Maintained
- F:	drivers/net/ipa/
- 
- QEMU MACHINE EMULATOR AND VIRTUALIZER SUPPORT
--- 
-2.43.0
+Paolo
 
 
