@@ -1,121 +1,142 @@
-Return-Path: <linux-kernel+bounces-267744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BAA9414FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:01:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F222941501
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D73D1287C79
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:01:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC55B287F7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6901A257E;
-	Tue, 30 Jul 2024 15:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39EB1A0B1A;
+	Tue, 30 Jul 2024 15:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="SZ33MQPc"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V5iWenDP"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7F42A1C7;
-	Tue, 30 Jul 2024 15:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F712A1C7;
+	Tue, 30 Jul 2024 15:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722351660; cv=none; b=m7iz83h+akRT+ib8XDvyfpDrasptagcwnwyVjVzB/Mtii+GIpS2VpfL1RuB8pAbpn4/ZN+dMGezr8d+CVm498nOqGedSVQ60ghkRc2325giYFFUSbrUvCps76S096uOfl4wZR+SpNmoN9wqx9bZgGtXd9i+gUwn84tCFtBvkbJM=
+	t=1722351671; cv=none; b=suIohhibBquYtKcURYQx/Gklh4l/bahXsP+7GUHzgLgSa2ofCBB/mp7FiZqIDLf72RQn1oemQVzGPEw0bcjgoNqjxaahjdswTOpeFEuqnmDnxI+HwnReY13CL8RUl+qGwPp0GcM6wjYOJT6xSR9KzBnELYml10om7nYZfQJwVII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722351660; c=relaxed/simple;
-	bh=C46lnTgTdEUHa4MNm/fgHHaaUwl9VVGJLeuJ6XjMX7Q=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=qtLYoHdgyKOp8e5dZm8h97LyEHM8XmE56utyrMIs/IrGQwR50WI5oJvFZmY1SriiwX+MUgGmeea/P/FtEJjQfDsUIzCZo/CIOazUmKFHy1Ze8twB3C4c0GVz5ViVSDIKGu99/0rbevSGkOAk+8VHw3iY3qRJXzLXQ9G0VCNOKx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=SZ33MQPc; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1722351619; x=1722956419; i=markus.elfring@web.de;
-	bh=fzQR8FFAK3t7+2p17buzYuiThMVwwBizpzlOP3GSlj8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=SZ33MQPcPzwuLTVOaAuIFcUXcJ/beaQl8rUgcEJZSQ5g6wEB/pg5XVTiKNkT/NPP
-	 LxTt9N5eJhGyqskFL/xQzclyRO6ZC63gLCfRHpZVmu1yDs8IGERT8yUZTRzB7ENsS
-	 mj9X/Kh978YrttoI7vqhdy5BjzztdIXWVzGnCReC6eD3Kw6aVNvpsudMBYRxGSGhI
-	 L/QLEdPFhZlC2V9z10GpKi0zOGXKVkRY3ClhMeAebY5j80ZyGGbtJtYBxONv7qi7J
-	 0HljMTJh7mDJwyxLa8rhdGYU6I67l0LbbUihAjcDzkvNasg2WfR3d92DZUJ2ZxSVW
-	 SEsSDe7p9Pi2y3luiA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MFJnh-1sRzvG16PR-00BmDG; Tue, 30
- Jul 2024 17:00:19 +0200
-Message-ID: <f88557ca-536f-4ea4-ac13-e20fb296195c@web.de>
-Date: Tue, 30 Jul 2024 17:00:17 +0200
+	s=arc-20240116; t=1722351671; c=relaxed/simple;
+	bh=j2kcCboMR5Rhb1/mHRYSxmbZjT89UOEP4J9cH0mzlNU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JrQA8xPEzjM2Sbn8qY2g3WLaBEDgBdmXO6A+3hbKkfgzg+HaD90sFzPrkxsfsbmO+qoSuvm551K8vCRH/kOIPtvVt+M86DDtutf4ZjldWLICLdTVq/ceJ2LWz1stq8dSckIQhPDoZEYX3MEnkuKdIQVYdJSVBwA9X0sh59KsGvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V5iWenDP; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fc5239faebso28839495ad.1;
+        Tue, 30 Jul 2024 08:01:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722351669; x=1722956469; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JZesiVrRNJp8rIjtaqy6O2hv8WkNzQU4Ni/NwPdEkSQ=;
+        b=V5iWenDPDwCFnzCvBTQ76j1fLN1Sf53zXRKax9GUlBzwv8KyDL9d1YpV1LQNFK2fha
+         MG4vD7O57zcV9dSKz5+HGpq3E6a4HfungrHM0OW29afDaBSlFSH4cHmYfwO9HuD7cWOw
+         /IImXdHmv5KyVrItRMvtnBA+rE0hI5NqLBQtQ+Gs0jjhEAlb3L/QmQ7TZitNVTccxA43
+         HhvxR5yBhs+gO1C+Iq38dIh4wn4pbiYxsLdb20+S0QcvHDKWzcSC1OBjv5mwLTl0NoCX
+         vPuZfyX8gT8Bgxh894ks4cONce/YXBUTQn9TsaqdNrTiKjevyhnODD38YEMtUrby3dyW
+         ab1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722351669; x=1722956469;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JZesiVrRNJp8rIjtaqy6O2hv8WkNzQU4Ni/NwPdEkSQ=;
+        b=FvZ71eLxhLvsq5X3aimEnZkcdPvuZaehrQx7Hnk5cqkPUGZ+vu+s0HjxozD9+5uxj9
+         W8VD1Pi0W5QH3dXMnoMtWg+xsu9m6dbJwdJn9wjEV3KtmavXgWjXAA0ZEcwenlNyyF75
+         lRPTZLSOVlPlk06KGWm7QnpVHvdBbE7lyMeLF89LMyl74J2mIrEeG3aZAIE8nHh9sQjV
+         OMkLG5sDFP640/pUKakkzWQvsChTQNuacjSKQvtiJjWrkbFyAMLLiICJdoR9A6Pf52+0
+         M9G5yahSG37fkAjZ7IECQNLrjTst1JOZxqLXDJKwZi3vN4hlmWgvabdq2Z+dVtE0Blgt
+         mEOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVL6oLWhiOr3SPHgPQXv7beCSYs3rkG/VUOIkv6cwHzpeSoCBshRSXqMR05z+jem3cxTZs6K8rd3kVFEBMFmpE9xNkUEEtFIi2Ox6Xj2p9tZeQ0itBByNDIPR3sb3oBYy/iMoeNkoiQaiqtfrgZy4mz
+X-Gm-Message-State: AOJu0YxrrPxqy/jx18IGmQSSqcWxq1cXLpPBVNmjgJy7bztmZLXBbExY
+	j17bLZlemCzMeDggmiUomsULkWICd6DdsaAEhwi0N9AMUQ3T8OTY1Rm3t2/BQMRb36dU242DAZX
+	vaPBGwbnLDBsb+ZBpuQX+BbR9ZIctnGV8
+X-Google-Smtp-Source: AGHT+IEvFBm8THSAoNlLCuFQCtC8Bpr3mG0mLNomGsUm5mfhR2GPbp6EU9ie9/y9wULGYr6l2lGsBIQ62m7BsphMURM=
+X-Received: by 2002:a17:90a:66c9:b0:2c4:b0f0:8013 with SMTP id
+ 98e67ed59e1d1-2cf7e1c06e4mr8298736a91.11.1722351667125; Tue, 30 Jul 2024
+ 08:01:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Florian Sylvestre <fsylvestre@baylibre.com>,
- Julien Stephan <jstephan@baylibre.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Paul Elder <paul.elder@ideasonboard.com>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, Andy Hsieh <andy.hsieh@mediatek.com>,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240729-add-mtk-isp-3-0-support-v6-4-c374c9e0c672@baylibre.com>
-Subject: Re: [PATCH v6 4/5] media: platform: mediatek: isp_30: add mediatek
- ISP3.0 camsv
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240729-add-mtk-isp-3-0-support-v6-4-c374c9e0c672@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20240730123421.GA9085@redhat.com> <20240730123447.GA9099@redhat.com>
+In-Reply-To: <20240730123447.GA9099@redhat.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 30 Jul 2024 08:00:55 -0700
+Message-ID: <CAEf4BzYP_WqC=+ntYw6YE83hZWi6qnPvSoTb4qt+Py-FyHcmew@mail.gmail.com>
+Subject: Re: [PATCH 1/3] uprobes: change uprobe_register() to use
+ uprobe_unregister() instead of __uprobe_unregister()
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org, 
+	jolsa@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4Zb/x/JAgneBRKvvPm7xyrFIbDn22ofBuCL90y77rx2Jfy2Zbi2
- RJ6KHcqJfBXMxBGJWCexAO8OMDdoKFRK0ClzvdKoTH97oQgYRBc9P7FLWwOrTuRJtNCkuIA
- bLSAeCcxrEr5KQt/mJ33MA2xFGWiFIVU96M6cIcgW0f9M8b0eYeD+itSGxBveAzdkk2xagE
- c3CinLYom+6K7w6U8YTOg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:bHM4AXgBl7w=;lD6T+yVR3keWuF801q7VmAjs13/
- gwxHaMPiF66h5qf0tryLq2OfzWDbHh6meIwbYdkSypjLUV3BOnLeorO4UwYI2iWQsx4YHs7Rv
- /P4mnaDQZFDRCDr+Vywxzz5PalF1juvLXQEXXHrnoKvFNPA3DDcqX+cXZsn/Jx228jKPMbjoe
- GWqRDT61JvCoa2lqF5iMciRoIlvyVVH+pxxbw/olVwe/tLgsbz7EGgBXhXnbm97nO7ZnoAay3
- 6mufhXoq7vynQNx1Whg50Iuv5c4tIPxJrLACcH3pjaLxFFHyNl6/+BpDqtdPIHjaMFAuoViju
- USpyhAY6LiryeON9/rh3j8fARMaccC/sMtxDf/B4DB2Rdd4OArxvffZnwA7U9BVaj/nRTt2ei
- TVWCftEzH2BaKLq50VZSAfMm3NBpCD6RVUs8TpLaLgTuKQSoqXdZEUCjREHL2dGzA9k7vybml
- 4pHlZxYv3XA1Mz+R0AERoK54ESzsBXT27YMflMGGKHAXS/stlgNJ9X1HyQmm3hr/9zIOHdDzM
- y1PcCglz0zdAyVE1apYyqAMjdjXFhoM3n9p4ltiewazV2tMc4ZMnreQxSaNaNTzN0M5e4jXJ9
- YyB8nK6+zoSdXpXC9dXdGbyGLW8vjcTzn+cY9oAi2Ff53WIbbe9iHAEcf0dmoD3gZECjTwDez
- m4duuqDqN9KFcx6/nGDGWD0MFz4MNY/iVYTkkx0IVulRQxOF45P0EapBtEdq4tfgh+9WCLfbc
- 8b26+A1XqGrHiCaGZuFavo3brp94dq/aX724fQSMBdsgAu3ukpuZHbYbFgPEBMgPZfZu09GrI
- 8jdThC2m+7BJIeO7fBQD4M9w==
 
-=E2=80=A6
-> +++ b/drivers/media/platform/mediatek/isp/isp_30/camsv/mtk_camsv30_hw.c
-> @@ -0,0 +1,413 @@
-=E2=80=A6
-> +static int mtk_camsv30_runtime_resume(struct device *dev)
-> +{
-=E2=80=A6
-> +		mtk_camsv30_setup(cam_dev, fmt->width, fmt->height,
-> +				  fmt->plane_fmt[0].bytesperline, vdev->fmtinfo->code);
-> +
-> +		spin_lock_irqsave(&cam_dev->buf_list_lock, flags);
-=E2=80=A6
-> +		mtk_camsv30_cmos_vf_hw_enable(cam_dev);
-> +
-> +		spin_unlock_irqrestore(&cam_dev->buf_list_lock, flags);
-=E2=80=A6
+On Tue, Jul 30, 2024 at 5:34=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wro=
+te:
+>
+> If register_for_each_vma() fails uprobe_register() can safely drop
+> uprobe->register_rwsem and use uprobe_unregister(). There is no worry
+> about the races with another register/unregister, consumer_add() was
+> already called so this case doesn't differ from _unregister() right
+> after the successful _register().
+>
+> Yes this means the extra up_write() + down_write(), but this is the
+> slow and unlikely case anyway.
+>
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> ---
+>  kernel/events/uprobes.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+>
 
-Under which circumstances would you become interested to apply a statement
-like =E2=80=9Cguard(spinlock_irqsave)(&cam_dev->buf_list_lock);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.11-rc1/source/include/linux/spinlock.h=
-#L572
+Yep, makes total sense, in my local patches I basically already done
+that as well.
 
-Regards,
-Markus
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 974474680820..5ea0aabe8774 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -1174,16 +1174,18 @@ struct uprobe *uprobe_register(struct inode *inod=
+e,
+>         if (likely(uprobe_is_active(uprobe))) {
+>                 consumer_add(uprobe, uc);
+>                 ret =3D register_for_each_vma(uprobe, uc);
+> -               if (ret)
+> -                       __uprobe_unregister(uprobe, uc);
+>         }
+>         up_write(&uprobe->register_rwsem);
+>         put_uprobe(uprobe);
+>
+> -       if (unlikely(ret =3D=3D -EAGAIN))
+> -               goto retry;
+> +       if (ret) {
+> +               if (unlikely(ret =3D=3D -EAGAIN))
+> +                       goto retry;
+> +               uprobe_unregister(uprobe, uc);
+> +               return ERR_PTR(ret);
+> +       }
+>
+> -       return ret ? ERR_PTR(ret) : uprobe;
+> +       return uprobe;
+>  }
+>  EXPORT_SYMBOL_GPL(uprobe_register);
+>
+> --
+> 2.25.1.362.g51ebf55
+>
 
