@@ -1,186 +1,276 @@
-Return-Path: <linux-kernel+bounces-267582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D50AB941312
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:24:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58084941316
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62CE41F219E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:24:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDB9A1F21B86
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7271B19FA66;
-	Tue, 30 Jul 2024 13:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467FE19FA93;
+	Tue, 30 Jul 2024 13:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VzUK5gJW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r9kbbwug";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VzUK5gJW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r9kbbwug"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="i6r2ymPk"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1941218FC6E;
-	Tue, 30 Jul 2024 13:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED0F18FC6E;
+	Tue, 30 Jul 2024 13:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722345869; cv=none; b=meF34r8GBCfJzKfxSm+FudFAo+ezwIIVxZDAPjqO7HVGOH6Uf8ugo5wWf3p9yBy6xwNNVrihxR8e3Xk/8DIi52x2QZdUSjyvVsD0UdMWUvZef/JN+8rqrvtFYcqgkCjoJtGXxrt2ldVzUg13z/ATtkRQ1Pz6VF8Xm4wej8BQY2E=
+	t=1722345939; cv=none; b=MqX98F3x9Ua0v2coO/+bBB2/b/LMPaCGKOacY6NhPJ+c0PGh+9JQEDlNjNvL9bZQsby034S5RKnPsLg207HLOHH+x2utkPa+G3Ec/Vuq2kA2dnJqP4HTMUE4ER+Vi/z6+vo9unjRujk7O58MHMQl8s0YvFCuo1iLQiwULYPUQ7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722345869; c=relaxed/simple;
-	bh=0nzwucZf/UnR3lR+fBoHfvcPfVbl0MDGRDCs9RnPFRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IL+ShIqGZ37vWwtG7Boz+GT6f0M6ItjmP3+O+gIZ7m2mR5x02nLfz+lQYx7CAlc68kCnhAPYs3hRbdYHnSSCq+HoJiiOjPHnGPnOFNFIVQPXIhfhrf16FpD3G47+V9G6IUr17P8+96krUw0JnvaXWm0jbln3tiN2GLt8dxc4eME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VzUK5gJW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r9kbbwug; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VzUK5gJW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r9kbbwug; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1722345939; c=relaxed/simple;
+	bh=WT3Bb5gBjWLfxiTfkrDaL+wPbGJlxpfE99B3tCgVJE0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XAH1VWG5AU1r/ugkTLpGfGBSpKasPfTam6eoOSlnNZhi3U53i+T6gE0q8T55C7ON6US48pye1nAm3J/qpSBpXjnAEHeAWJtnqMIKlWD4Fs+Gi7WGM4NDEcp33+6UMlgita3L8X5rSaEoDkFs/+h8nwx0UzScNpf3zk+ZLG0ZE94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=i6r2ymPk; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722345935;
+	bh=WT3Bb5gBjWLfxiTfkrDaL+wPbGJlxpfE99B3tCgVJE0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=i6r2ymPkk0GsxsZXI5ObZyrXVDEWTM1SgzRiuQNPTczIRkgtGJnrzMko+y03lkMZ+
+	 Dt+ZYVH5kKTRdBiC+K6TEc1WZn2IoZ+v4/7lLhNJOImu/kyfZpJst9IoWjOQ7gaMjX
+	 Z3kQl1nJuZHxprHguYpslfOHiZ31GWksw0R5kzaWLDjj09gY2k+Dip1wJCKMQbo/la
+	 rUknisIm7JjnSCs+XeYi4CGqBC9wytVm8mquSPjFdTZnS14V4q5yADZ+70e95hjojC
+	 gY3kV3NtZk3lp51w0AYalkruWwDPtzBbVY9pn6kwQkBLS2pfTQlnd2om8ly+bNuPIg
+	 U6k5c+A2DMYyw==
+Received: from gentoo.ratioveremundo.com (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3566C1F7E2;
-	Tue, 30 Jul 2024 13:24:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722345866; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4Tz20vg4yDuRcYFda0wL+ovMuwWR5VKY2CsYEfxoyLY=;
-	b=VzUK5gJWfrugW7NK6ARqcGABhlUB3a0T6UT02trtQTqzrR93gh8/1z/Y1SO1+C1du+BXQg
-	aR+wOmvbglUgW0+LoDyO1gfI/+B4mHK30bi3xTrwdOX552ryNsUf750r5eHQ7HxmiH2CPk
-	usGyqj9F81z5qn8i1TdXRTrxZSaW7d0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722345866;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4Tz20vg4yDuRcYFda0wL+ovMuwWR5VKY2CsYEfxoyLY=;
-	b=r9kbbwugy+EFFiir39tW7CFSm7Jj+0xYpiGTz3atfRv6NRHcP/N9WdNFwGy8FZ4xrGbIwL
-	yFdORUbrrQMDY3Bg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722345866; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4Tz20vg4yDuRcYFda0wL+ovMuwWR5VKY2CsYEfxoyLY=;
-	b=VzUK5gJWfrugW7NK6ARqcGABhlUB3a0T6UT02trtQTqzrR93gh8/1z/Y1SO1+C1du+BXQg
-	aR+wOmvbglUgW0+LoDyO1gfI/+B4mHK30bi3xTrwdOX552ryNsUf750r5eHQ7HxmiH2CPk
-	usGyqj9F81z5qn8i1TdXRTrxZSaW7d0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722345866;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4Tz20vg4yDuRcYFda0wL+ovMuwWR5VKY2CsYEfxoyLY=;
-	b=r9kbbwugy+EFFiir39tW7CFSm7Jj+0xYpiGTz3atfRv6NRHcP/N9WdNFwGy8FZ4xrGbIwL
-	yFdORUbrrQMDY3Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1E9FC13983;
-	Tue, 30 Jul 2024 13:24:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0sp3B4rpqGb7WAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 30 Jul 2024 13:24:26 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D5E51A099C; Tue, 30 Jul 2024 15:24:25 +0200 (CEST)
-Date: Tue, 30 Jul 2024 15:24:25 +0200
-From: Jan Kara <jack@suse.cz>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/7] jbd2: remove unused return value of
- jbd2_fc_release_bufs
-Message-ID: <20240730132425.gkskeg4hwsciwczj@quack3>
-References: <20240730113335.2365290-1-shikemeng@huaweicloud.com>
- <20240730113335.2365290-4-shikemeng@huaweicloud.com>
+	(Authenticated sender: aratiu)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D9E4F3781188;
+	Tue, 30 Jul 2024 13:25:34 +0000 (UTC)
+From: Adrian Ratiu <adrian.ratiu@collabora.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	kernel@collabora.com,
+	gbiv@google.com,
+	inglorion@google.com,
+	ajordanr@google.com,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Doug Anderson <dianders@chromium.org>,
+	Jeff Xu <jeffxu@google.com>,
+	Jann Horn <jannh@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH v4] proc: add config & param to block forcing mem writes
+Date: Tue, 30 Jul 2024 16:25:28 +0300
+Message-ID: <20240730132528.1143520-1-adrian.ratiu@collabora.com>
+X-Mailer: git-send-email 2.44.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730113335.2365290-4-shikemeng@huaweicloud.com>
-X-Spamd-Result: default: False [-3.60 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.60
+Content-Transfer-Encoding: 8bit
 
-On Tue 30-07-24 19:33:31, Kemeng Shi wrote:
-> Remove unused return value of jbd2_fc_release_bufs.
-> 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+This adds a Kconfig option and boot param to allow removing
+the FOLL_FORCE flag from /proc/pid/mem write calls because
+it can be abused.
 
-Looks good. Feel free to add:
+The traditional forcing behavior is kept as default because
+it can break GDB and some other use cases.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Previously we tried a more sophisticated approach allowing
+distributions to fine-tune /proc/pid/mem behavior, however
+that got NAK-ed by Linus [1], who prefers this simpler
+approach with semantics also easier to understand for users.
 
-								Honza
+Link: https://lore.kernel.org/lkml/CAHk-=wiGWLChxYmUA5HrT5aopZrB7_2VTa0NLZcxORgkUe5tEQ@mail.gmail.com/ [1]
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Jeff Xu <jeffxu@google.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+---
+Changes in v4:
+* Fixed doc punctuation, used passive tense, improved
+  wording consistency, fixed default value wording
+* Made struct constant_table a static const __initconst
+* Reworked proc_mem_foll_force() indentation and var
+  declarations to make code clearer
+* Reworked enum + struct definition so lookup_constant()
+  defaults to 'always'.
 
-> ---
->  fs/jbd2/journal.c    | 4 +---
->  include/linux/jbd2.h | 2 +-
->  2 files changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index b5d02de1ffff..312c7575b54f 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -903,7 +903,7 @@ int jbd2_fc_wait_bufs(journal_t *journal, int num_blks)
->  }
->  EXPORT_SYMBOL(jbd2_fc_wait_bufs);
->  
-> -int jbd2_fc_release_bufs(journal_t *journal)
-> +void jbd2_fc_release_bufs(journal_t *journal)
->  {
->  	struct buffer_head *bh;
->  	int i, j_fc_off;
-> @@ -917,8 +917,6 @@ int jbd2_fc_release_bufs(journal_t *journal)
->  		put_bh(bh);
->  		journal->j_fc_wbuf[i] = NULL;
->  	}
-> -
-> -	return 0;
->  }
->  EXPORT_SYMBOL(jbd2_fc_release_bufs);
->  
-> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-> index b900c642210c..735229e8ad17 100644
-> --- a/include/linux/jbd2.h
-> +++ b/include/linux/jbd2.h
-> @@ -1665,7 +1665,7 @@ int jbd2_fc_get_buf(journal_t *journal, struct buffer_head **bh_out);
->  int jbd2_submit_inode_data(journal_t *journal, struct jbd2_inode *jinode);
->  int jbd2_wait_inode_data(journal_t *journal, struct jbd2_inode *jinode);
->  int jbd2_fc_wait_bufs(journal_t *journal, int num_blks);
-> -int jbd2_fc_release_bufs(journal_t *journal);
-> +void jbd2_fc_release_bufs(journal_t *journal);
->  
->  /*
->   * is_journal_abort
-> -- 
-> 2.30.0
-> 
+Changes in v3:
+* Simplified code to use shorthand ifs and a
+  lookup_constant() table
+
+Changes in v2:
+* Added bootparam on top of Linus' patch
+* Slightly reworded commit msg
+---
+ .../admin-guide/kernel-parameters.txt         | 10 ++++
+ fs/proc/base.c                                | 54 ++++++++++++++++++-
+ security/Kconfig                              | 32 +++++++++++
+ 3 files changed, 95 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index f1384c7b59c9..8396e015aab3 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4788,6 +4788,16 @@
+ 	printk.time=	Show timing data prefixed to each printk message line
+ 			Format: <bool>  (1/Y/y=enable, 0/N/n=disable)
+ 
++	proc_mem.force_override= [KNL]
++			Format: {always | ptrace | never}
++			Traditionally /proc/pid/mem allows memory permissions to be
++			overridden without restrictions. This option may be set to
++			restrict that. Can be one of:
++			- 'always': traditional behavior always allows mem overrides.
++			- 'ptrace': only allow mem overrides for active ptracers.
++			- 'never':  never allow mem overrides.
++			If not specified, default is the CONFIG_PROC_MEM_* choice.
++
+ 	processor.max_cstate=	[HW,ACPI]
+ 			Limit processor to maximum C-state
+ 			max_cstate=9 overrides any DMI blacklist limit.
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 72a1acd03675..daacb8070042 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -85,6 +85,7 @@
+ #include <linux/elf.h>
+ #include <linux/pid_namespace.h>
+ #include <linux/user_namespace.h>
++#include <linux/fs_parser.h>
+ #include <linux/fs_struct.h>
+ #include <linux/slab.h>
+ #include <linux/sched/autogroup.h>
+@@ -117,6 +118,35 @@
+ static u8 nlink_tid __ro_after_init;
+ static u8 nlink_tgid __ro_after_init;
+ 
++enum proc_mem_force {
++	PROC_MEM_FORCE_ALWAYS,
++	PROC_MEM_FORCE_PTRACE,
++	PROC_MEM_FORCE_NEVER
++};
++
++static enum proc_mem_force proc_mem_force_override __ro_after_init =
++	IS_ENABLED(CONFIG_PROC_MEM_NO_FORCE) ? PROC_MEM_FORCE_NEVER :
++	IS_ENABLED(CONFIG_PROC_MEM_FORCE_PTRACE) ? PROC_MEM_FORCE_PTRACE :
++	PROC_MEM_FORCE_ALWAYS;
++
++static const struct constant_table proc_mem_force_table[] __initconst = {
++	{ "never", PROC_MEM_FORCE_NEVER },
++	{ "ptrace", PROC_MEM_FORCE_PTRACE },
++	{ }
++};
++
++static int __init early_proc_mem_force_override(char *buf)
++{
++	if (!buf)
++		return -EINVAL;
++
++	proc_mem_force_override = lookup_constant(proc_mem_force_table,
++						  buf, PROC_MEM_FORCE_ALWAYS);
++
++	return 0;
++}
++early_param("proc_mem.force_override", early_proc_mem_force_override);
++
+ struct pid_entry {
+ 	const char *name;
+ 	unsigned int len;
+@@ -835,6 +865,26 @@ static int mem_open(struct inode *inode, struct file *file)
+ 	return ret;
+ }
+ 
++static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
++{
++	struct task_struct *task;
++	bool ptrace_active = false;
++
++	switch (proc_mem_force_override) {
++	case PROC_MEM_FORCE_NEVER:
++		return false;
++	case PROC_MEM_FORCE_PTRACE:
++		task = get_proc_task(file_inode(file));
++		if (task) {
++			ptrace_active = task->ptrace && task->mm == mm && task->parent == current;
++			put_task_struct(task);
++		}
++		return ptrace_active;
++	default:
++		return true;
++	}
++}
++
+ static ssize_t mem_rw(struct file *file, char __user *buf,
+ 			size_t count, loff_t *ppos, int write)
+ {
+@@ -855,7 +905,9 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
+ 	if (!mmget_not_zero(mm))
+ 		goto free;
+ 
+-	flags = FOLL_FORCE | (write ? FOLL_WRITE : 0);
++	flags = write ? FOLL_WRITE : 0;
++	if (proc_mem_foll_force(file, mm))
++		flags |= FOLL_FORCE;
+ 
+ 	while (count > 0) {
+ 		size_t this_len = min_t(size_t, count, PAGE_SIZE);
+diff --git a/security/Kconfig b/security/Kconfig
+index 412e76f1575d..a93c1a9b7c28 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -19,6 +19,38 @@ config SECURITY_DMESG_RESTRICT
+ 
+ 	  If you are unsure how to answer this question, answer N.
+ 
++choice
++	prompt "Allow /proc/pid/mem access override"
++	default PROC_MEM_ALWAYS_FORCE
++	help
++	  Traditionally /proc/pid/mem allows users to override memory
++	  permissions for users like ptrace, assuming they have ptrace
++	  capability.
++
++	  This allows people to limit that - either never override, or
++	  require actual active ptrace attachment.
++
++	  Defaults to the traditional behavior (for now)
++
++config PROC_MEM_ALWAYS_FORCE
++	bool "Traditional /proc/pid/mem behavior"
++	help
++	  This allows /proc/pid/mem accesses to override memory mapping
++	  permissions if you have ptrace access rights.
++
++config PROC_MEM_FORCE_PTRACE
++	bool "Require active ptrace() use for access override"
++	help
++	  This allows /proc/pid/mem accesses to override memory mapping
++	  permissions for active ptracers like gdb.
++
++config PROC_MEM_NO_FORCE
++	bool "Never"
++	help
++	  Never override memory mapping permissions
++
++endchoice
++
+ config SECURITY
+ 	bool "Enable different security models"
+ 	depends on SYSFS
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.44.2
+
 
