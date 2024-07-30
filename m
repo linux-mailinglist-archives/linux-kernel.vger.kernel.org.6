@@ -1,158 +1,109 @@
-Return-Path: <linux-kernel+bounces-267824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6CD8941642
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:58:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 593ED94167A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8753B284DF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:58:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1299928414F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D31B1BC088;
-	Tue, 30 Jul 2024 15:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6591C0DE2;
+	Tue, 30 Jul 2024 16:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f9/wurqa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZkGS4vDs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2351BA883;
-	Tue, 30 Jul 2024 15:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298741BF323;
+	Tue, 30 Jul 2024 16:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722355073; cv=none; b=Ljo3cLXCzyZtJENALLlejPgv/kIgQ9yDOhxeYahllsAYbF0j6Wf01OEVXVpUhrjveh2nzyN0paedkKa9ufNmKipSkRLpQjEq9F5xUknCDiNSDfEgiCf6rZ/Ds1VQyRXK5ZaD32TeILINzCrhCuyNlr2tvGtapnRiBumwPB16/x8=
+	t=1722355227; cv=none; b=DLrVw1EjZxTzdPZUMeB6d8izvACTJtnzrv62nrWJBCAsBT0qjs+khF1UQN51bp0omZ8pyfUTMlFATUdaRAmdiwnovh6O5v99O01okkfTkUxBHoV2jGC7cnvx+nN+q+TjidyEy7fbdGHR+GI0m1VnSGn4vbx6rPxA7+mOtE16l58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722355073; c=relaxed/simple;
-	bh=SQELyUfZGLCrV0rCnnFI6nALeOacjdEpR7+pAQn4+nE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uFostc1Q4GvLMjI5gJbl4zldmFDAOEr3LLrWEi48P2GWHAt6N6HM60L1PPsS83PYPjTPMefS5TDncJcXVqDAiGiZz7IpG5bgTdeBrFfjLoWi+m+BzRHJv4QZ3MQ5bRBJ2RTalb0XUfLf336O9LfMI4U7kIZM6ssK0SEtB8j0Ozc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f9/wurqa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0781EC4AF0C;
-	Tue, 30 Jul 2024 15:57:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722355073;
-	bh=SQELyUfZGLCrV0rCnnFI6nALeOacjdEpR7+pAQn4+nE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f9/wurqa0yfYVsJuBkbK6J7tObzE+3vXMlykd4KnNdPkhEBpk905nhG8RxR8gyYn1
-	 O+tWxQvzVTSIF1Zd7PNUnYMIu62rZEvyhAlbcXvqMY0wHup+Gn8Ah/pnZAlkOv80ch
-	 ju4dj1iJqUEN+ATmo8Aart438cz7ritrj6EEqthhuRVWATKTkpJJndTC/4CZERhtuL
-	 mhnSfJA01ozuqE69UxjINvGprwgiOT43aqy9NbFe1A2gOk2ctgpgGJ4GkLtKqo7pHy
-	 OcGnwg/9o+/l7NZwcU6xGgnyDXeJ53VoRywkpnbD3lPpk60fqjojlelUFXbDhEjuKj
-	 cVvh2qz+pCHxQ==
-Message-ID: <159a9d77-5038-4691-8246-e10d3b49e26a@kernel.org>
-Date: Tue, 30 Jul 2024 17:57:47 +0200
+	s=arc-20240116; t=1722355227; c=relaxed/simple;
+	bh=7kEFzKvb+2kvsc9DM4YMRT7BQ4fgSkAEYz8Cpv71pXM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BunnfjWG0POCP2CaxoRkCgWIT4HHISWMhna7DEGXcr3ycIhBHJYHvATRufXW+9iZie1PqQDdASWhJzVLLCpESmKlwxFtVu4hsfVI3zizlkTpgg85tb5yv/R9qLrig0Qm/vyhpFttxraxPvAS4CLVfQkIanS0IliX1wRYSm2zcjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZkGS4vDs; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722355225; x=1753891225;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=7kEFzKvb+2kvsc9DM4YMRT7BQ4fgSkAEYz8Cpv71pXM=;
+  b=ZkGS4vDsLGrXMx48ksniEbU5u/J7P7a1TB6KO2z5itEn40JIEwEmxUb8
+   2bwdqJgQL2mnkwHykatgRRp0M6D0oYJx4L56TiQvafiN3wR5RIliulOxp
+   2BMUY7ncJIpvcCaUUAZZHcNGL7Z02h0G04Q8UCpOwgWXcXF5NhOoiZAet
+   RxXlgYYX4SrvMFOiCpVsDOHkef0D2LtvmakGL96XRBv9Lhqv48ZEZHbS1
+   ogKhTutHUYiewRSw4n3vfdkhpwaUiBlZrMbYJI+ymX7bL72gSyirsBpIK
+   vBIzXmL7yVWYwg+Vg1uMd8Ozri4sljkDIAv1oZZrOjRQnxnaHCG0j/z99
+   A==;
+X-CSE-ConnectionGUID: r8Wws8yuSm6u60CvVBMhag==
+X-CSE-MsgGUID: HFwXCAZ/TYWiNjfr1lQVXQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="20339525"
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="20339525"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 09:00:25 -0700
+X-CSE-ConnectionGUID: ODccXaP/TlGGmR+xvfhqNw==
+X-CSE-MsgGUID: z3M9hNmPTEC1LOFE7iu5+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="59231322"
+Received: from skuppusw-desk2.jf.intel.com ([10.165.154.101])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 09:00:24 -0700
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Jithu Joseph <jithu.joseph@intel.com>
+Cc: Ashok Raj <ashok.raj@intel.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shankar Ravi V <ravi.v.shankar@intel.com>
+Subject: [PATCH v1] platform/x86/intel/ifs: trace: Avoid hole in ifs_status trace struct
+Date: Tue, 30 Jul 2024 15:57:58 +0000
+Message-Id: <20240730155758.1754419-1-sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: nxp,lpc3220-clk: Convert bindings to
- DT schema
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240729193731.142069-1-animeshagarwal28@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240729193731.142069-1-animeshagarwal28@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29/07/2024 21:37, Animesh Agarwal wrote:
-> Convert the NXP LPC32xx Clock Controller bindings to yaml format.
-> 
-> Cc: Daniel Baluta <daniel.baluta@nxp.com>
-> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+Rearrange the ifs_status trace struct members to eliminate a 4-byte
+alignment hole. It reduces memory overhead.
 
-> +
-> +properties:
-> +  compatible:
-> +    const: nxp,lpc3220-clk
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  clocks:
-> +    description: Phandles of external oscillators, the list must contain one
-> +      32768 Hz oscillator and may have one optional high frequency oscillator.
-> +    maxItems: 2
+Suggested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Reviewed-by: Jithu Joseph <jithu.joseph@intel.com>
+Reviewed-by: Ashok Raj <ashok.raj@intel.com>
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+---
+ include/trace/events/intel_ifs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-That's not correct and does not match clock-names. List the items with
-description instead of above "phandles ...." and add minItems.
-
-
-> +
-> +  clock-names:
-> +    oneOf:
-
-Drop. It's:
-
-minItems: 1
-items:
- - const: ...
- - const:
-
-> +      - items:
-> +          - const: xtal_32k
-> +          - const: xtal
-> +      - const: xtal_32k
-> +
-
-
-Best regards,
-Krzysztof
+diff --git a/include/trace/events/intel_ifs.h b/include/trace/events/intel_ifs.h
+index 0d88ebf2c980..32e9532e954e 100644
+--- a/include/trace/events/intel_ifs.h
++++ b/include/trace/events/intel_ifs.h
+@@ -15,8 +15,8 @@ TRACE_EVENT(ifs_status,
+ 	TP_ARGS(batch, start, stop, status),
+ 
+ 	TP_STRUCT__entry(
+-		__field(	int,	batch	)
+ 		__field(	u64,	status	)
++		__field(	int,	batch	)
+ 		__field(	u16,	start	)
+ 		__field(	u16,	stop	)
+ 	),
+-- 
+2.25.1
 
 
