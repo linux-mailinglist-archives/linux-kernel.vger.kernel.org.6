@@ -1,178 +1,104 @@
-Return-Path: <linux-kernel+bounces-267726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E40199414C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFEE99414B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A35C42851C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:49:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A0B02818D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2C4CA6B;
-	Tue, 30 Jul 2024 14:48:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302631A3BD7;
-	Tue, 30 Jul 2024 14:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA86A1A0AFA;
+	Tue, 30 Jul 2024 14:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y3DCa3Fi"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EF21993B0
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722350894; cv=none; b=FrSM4gqwbxxnhXhcOLumSTxndEgWoIsv9t4/VpY0Lnr2Rz34ICe7GEVJDlQag3TiC4zrJi55g7rCFKmH7h+l8mTbBRh++86YGBiQZcRhFscRqz49Lr/wC6d/0YlBLl89BBBZGEbdMEj43z3OFxQoZXEgLDZubpUiMH1EV8dUa4Q=
+	t=1722350874; cv=none; b=h4ck1JkDMAsqTSdMdeZg+L2rVJ5GQvUwnZEZMPfQ2wibM+NzDhEJ/DiUVif9wF5H+IyTwk6LppIIIw0zK8OLiDkBcsuEMDu8/FDYFPrgF9Q4cXLpFWCmf/2M2LFnIWU05zgR5ZUEDNzd9T37WBmzSAcHbfnRyLsr2JJAjt9xdaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722350894; c=relaxed/simple;
-	bh=/98SPjl3bs049AFP8/MXLSTbsr2VdIQZ/hmRsPc75N8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Bg7UdZur+hKANKnBIuHeKOr0Zaam1/QjRzCcMXjc1mB5RpDNaDX/4qzUf/a6VikK3/89G+ycYwIxZJ/VaSydBnW1ZOCFzWCTB1pOesb4jgB0qu/HqcXtg3Df0ErTDrF5P6WQhd6HMfD9w/z4ckiZj4oGcZyZ5MlYz0BDy5Tie9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 255921007;
-	Tue, 30 Jul 2024 07:48:38 -0700 (PDT)
-Received: from pluto.guestnet.cambridge.arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8BD2D3F766;
-	Tue, 30 Jul 2024 07:48:09 -0700 (PDT)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	james.quinlan@broadcom.com,
-	f.fainelli@gmail.com,
-	vincent.guittot@linaro.org,
-	etienne.carriere@st.com,
-	peng.fan@oss.nxp.com,
-	michal.simek@amd.com,
-	quic_sibis@quicinc.com,
-	quic_nkela@quicinc.com,
-	dan.carpenter@linaro.org,
-	souvik.chakravarty@arm.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH v1 6/6] firmware: arm_scmi: Relocate atomic_threshold to scmi_desc
-Date: Tue, 30 Jul 2024 15:47:07 +0100
-Message-ID: <20240730144707.1647025-7-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240730144707.1647025-1-cristian.marussi@arm.com>
-References: <20240730144707.1647025-1-cristian.marussi@arm.com>
+	s=arc-20240116; t=1722350874; c=relaxed/simple;
+	bh=cTI+YjBitz74R3nmR72IlRqLtVxl6R9IAY+bHLuOOrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bv27RPXrkJrXWxsnMPz/+qy0Zlb3fot9CLa0byBp8SVb/5tVhIJ6CYknVzJIto/C9GJJ4Caq7CImkHHykO/lTmJXRHVk82t1IpRyqAXVJ++r7WLNsy5h+K5pQHRfrZ/DpaSWPk7X6KCFOGoWG2MoZ9RdiSDFDX6gpBczFFjzD/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y3DCa3Fi; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7093705c708so4717477a34.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:47:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722350872; x=1722955672; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KrPUSNeFtUoQE47sRLQsqvHeQ5MzWDhr7teSoQBbv/o=;
+        b=Y3DCa3FiVIQm7Mh5UlFyjMuzSuLdiuHDdeU4VesWPrrFf9dGQL0AXvbe24MfTdXWn9
+         0kcB8HWPf6SD2d+wR6c+Lu9blDVTLHqRODJRzb33SfgdraSFwD2aYduWYhlk7Zc8QILE
+         OQ+BF8h75irdyajy16yvoVrFgBQYDQ/M1Rw2JLyd23rlgteLF8RHlSJNn97T/NCn6KUI
+         RQZQaK6bRFDkwT6uzRWogBtkdWQXBoVF+kXMX5TLUzRp9EdeYBxBO0fn15UbQIS4mKPX
+         alWqRcY+S68rn1WExiY1z2Da/Kt/HLAby2Eow+hKDKqXsNsQbDY7U0rHTNve74xRENzL
+         GXMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722350872; x=1722955672;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KrPUSNeFtUoQE47sRLQsqvHeQ5MzWDhr7teSoQBbv/o=;
+        b=diKHu1ahlfAQVTtre3GSeOomLCSgz19Y2KyQugFiiV50h9yzxU8nmvlHIMdjcYCrbE
+         zp+5N7RqVB00BGm7z/ddUEVQqM+gZO7v2RV/9jpUFBo/RPbQpzTxJWDewIJACioYbekD
+         qoqVQUX7AnHQ2R6XPuN4q3O/cXKXghVSoaAGCBjZTayZRwMfWotAUaNs1cPBFJSUtQLd
+         2g3pR/6d/x/Ox8c3fx1fBdIUSPw2ZAhd27ak1gAHrwW37FUGZvt0hc6dZPvdIPG5kdqs
+         Q7r7ebOoSQFdkZK76gWTlxSkDXv20bth3sZu75FhcAogUsqm1D1ulUIqjvhf0MRxO25M
+         yJaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWz7lv2pf3uP6rEtg6e+U9DjeZ5ubBM49oJZdH8+POcB6JEhm58zbcoEaUn/tGxFa9YwXGTCllJHtq3qlcgvjaLFJPPz8qCcTjOIJV
+X-Gm-Message-State: AOJu0YxgcEe1T+YwKWERBKQMtBjNrSr/lImlmHXrgYnGr+HpdvzOasTe
+	i9JcMIRzwQXRWWJQyNm9dX6h4mWFcbgs5XrqhFLPWMrQPd0w7dwTUDio65NJ4kM=
+X-Google-Smtp-Source: AGHT+IGIo7EZ1NVtJyYeWy7OjNQHB6/jdcUWY8JQ73VVrZG1sHvv/LZIidEEuXYsZbvfuhtDSsM+Bg==
+X-Received: by 2002:a05:6830:309c:b0:709:2fa3:133a with SMTP id 46e09a7af769-70940c1ae83mr9532547a34.18.1722350871901;
+        Tue, 30 Jul 2024 07:47:51 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700::17c0])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7095aea6512sm403459a34.62.2024.07.30.07.47.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 07:47:51 -0700 (PDT)
+Date: Tue, 30 Jul 2024 09:47:50 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Sai Sree Kartheek Adivi <sskartheekadivi@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	~lkcamp/patches@lists.sr.ht, helen.koike@collabora.com
+Subject: Re: [PATCH] staging: media: atomisp: remove trailing statement
+Message-ID: <2ca1633e-aee9-42cf-a807-7f397ff31b4a@suswa.mountain>
+References: <20240730071808.35591-1-sskartheekadivi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730071808.35591-1-sskartheekadivi@gmail.com>
 
-Relocate the atomic_threshold field to scmi_desc and move the related code
-to scmi_transport_setup.
+On Tue, Jul 30, 2024 at 07:18:08AM +0000, Sai Sree Kartheek Adivi wrote:
+> this patch fixes the following checkpatch.pl error..
+> ERROR: trailing statements should be on next line
+> #48: FILE: drivers/staging/media/atomisp/pci/isp/kernels/anr/anr_1.0/ia_css_anr.host.c:48:
+> +	if (!anr) return;
+> 
+> Signed-off-by: Sai Sree Kartheek Adivi <sskartheekadivi@gmail.com>
+> ---
+> Just started contributing to the kernel. please help me understand my
+> mistakes if any.
+> 
 
-No functional change.
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
----
- drivers/firmware/arm_scmi/common.h |  7 +++++++
- drivers/firmware/arm_scmi/driver.c | 25 +++++++++----------------
- 2 files changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
-index 5261dc9b5f96..3bb5fdc0d57d 100644
---- a/drivers/firmware/arm_scmi/common.h
-+++ b/drivers/firmware/arm_scmi/common.h
-@@ -223,6 +223,12 @@ struct scmi_transport_ops {
-  *	be pending simultaneously in the system. May be overridden by the
-  *	get_max_msg op.
-  * @max_msg_size: Maximum size of data per message that can be handled.
-+ * @atomic_threshold: Optional system wide DT-configured threshold, expressed
-+ *		      in microseconds, for atomic operations.
-+ *		      Only SCMI synchronous commands reported by the platform
-+ *		      to have an execution latency lesser-equal to the threshold
-+ *		      should be considered for atomic mode operation: such
-+ *		      decision is finally left up to the SCMI drivers.
-  * @force_polling: Flag to force this whole transport to use SCMI core polling
-  *		   mechanism instead of completion interrupts even if available.
-  * @sync_cmds_completed_on_ret: Flag to indicate that the transport assures
-@@ -241,6 +247,7 @@ struct scmi_desc {
- 	int max_rx_timeout_ms;
- 	int max_msg;
- 	int max_msg_size;
-+	unsigned int atomic_threshold;
- 	const bool force_polling;
- 	const bool sync_cmds_completed_on_ret;
- 	const bool atomic_enabled;
-diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index 8295e63be38e..26781e678cc3 100644
---- a/drivers/firmware/arm_scmi/driver.c
-+++ b/drivers/firmware/arm_scmi/driver.c
-@@ -147,12 +147,6 @@ struct scmi_debug_info {
-  *		   base protocol
-  * @active_protocols: IDR storing device_nodes for protocols actually defined
-  *		      in the DT and confirmed as implemented by fw.
-- * @atomic_threshold: Optional system wide DT-configured threshold, expressed
-- *		      in microseconds, for atomic operations.
-- *		      Only SCMI synchronous commands reported by the platform
-- *		      to have an execution latency lesser-equal to the threshold
-- *		      should be considered for atomic mode operation: such
-- *		      decision is finally left up to the SCMI drivers.
-  * @notify_priv: Pointer to private data structure specific to notifications.
-  * @node: List head
-  * @users: Number of users of this instance
-@@ -178,7 +172,6 @@ struct scmi_info {
- 	struct mutex protocols_mtx;
- 	u8 *protocols_imp;
- 	struct idr active_protocols;
--	unsigned int atomic_threshold;
- 	void *notify_priv;
- 	struct list_head node;
- 	int users;
-@@ -2427,7 +2420,7 @@ static bool scmi_is_transport_atomic(const struct scmi_handle *handle,
- 	ret = info->desc->atomic_enabled &&
- 		is_transport_polling_capable(info->desc);
- 	if (ret && atomic_threshold)
--		*atomic_threshold = info->atomic_threshold;
-+		*atomic_threshold = info->desc->atomic_threshold;
- 
- 	return ret;
- }
-@@ -2892,7 +2885,7 @@ static struct scmi_debug_info *scmi_debugfs_common_setup(struct scmi_info *info)
- 			   (char **)&dbg->name);
- 
- 	debugfs_create_u32("atomic_threshold_us", 0400, top_dentry,
--			   &info->atomic_threshold);
-+			   (u32 *)&info->desc->atomic_threshold);
- 
- 	debugfs_create_str("type", 0400, trans, (char **)&dbg->type);
- 
-@@ -3001,6 +2994,13 @@ static const struct scmi_desc *scmi_transport_setup(struct device *dev)
- 		 trans->desc->max_rx_timeout_ms, trans->desc->max_msg_size,
- 		 trans->desc->max_msg);
- 
-+	/* System wide atomic threshold for atomic ops .. if any */
-+	if (!of_property_read_u32(dev->of_node, "atomic-threshold-us",
-+				  &trans->desc->atomic_threshold))
-+		dev_info(dev,
-+			 "SCMI System wide atomic threshold set to %d us\n",
-+			 trans->desc->atomic_threshold);
-+
- 	return trans->desc;
- }
- 
-@@ -3050,13 +3050,6 @@ static int scmi_probe(struct platform_device *pdev)
- 	handle->devm_protocol_acquire = scmi_devm_protocol_acquire;
- 	handle->devm_protocol_get = scmi_devm_protocol_get;
- 	handle->devm_protocol_put = scmi_devm_protocol_put;
--
--	/* System wide atomic threshold for atomic ops .. if any */
--	if (!of_property_read_u32(np, "atomic-threshold-us",
--				  &info->atomic_threshold))
--		dev_info(dev,
--			 "SCMI System wide atomic threshold set to %d us\n",
--			 info->atomic_threshold);
- 	handle->is_transport_atomic = scmi_is_transport_atomic;
- 
- 	/* Setup all channels described in the DT at first */
--- 
-2.45.2
+regards,
+dan carpenter
 
 
