@@ -1,108 +1,196 @@
-Return-Path: <linux-kernel+bounces-267300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD61940FC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:44:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 067C3941013
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26C0E2838C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:44:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3D40B2DCA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A686D1A4F29;
-	Tue, 30 Jul 2024 10:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D9819FA66;
+	Tue, 30 Jul 2024 10:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N9qFpIo0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="RNYzcpct";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lfIpJC0E"
+Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9C919EED3;
-	Tue, 30 Jul 2024 10:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1DA19E7E4;
+	Tue, 30 Jul 2024 10:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722335833; cv=none; b=FLJZJ+ngMITkPFQCyeqlBM9u6zv1zGlXtQeXr+rJwj9NcVCd6LvigNi4M0gvDMcpLdjx3vZCtNA6vjCip3v6euW4PhA7XhpXLtLWNlLPa/lH+vR7zdynOU5iHoUH2QDl4dyib1+d0OOxuKWgvf1ImgfuW+BaSBilQBLkmF/yUPc=
+	t=1722335861; cv=none; b=o1kPes+P1+ZcgzDV4uLzaNQ8NrJe0+r3GW79I4gkh22IrgF0mCFgBBJ1vuwLskCaUyNPJANKWzXZH54j+XY0y6uTssfL6DV4657UH6T3PF8XF/jx4BstW5yBfOpkT3pmbEk4NzdVWmTqt8IbsxG4jPdb0ZlL/myjmBnQOGri6ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722335833; c=relaxed/simple;
-	bh=M4eg2RA2dVioVZclF6JHvBR8dH2//m8JYd+0R0imYZA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oS4hArUrx6Prr7CfWwKMfARlYg2SgGEowgRNKc8G/IaU0+Ek/SWet4JPz1Amuc+VJ8asIALEFWKUv8+HRgypCEEYvEqySjIv4Mtc6ACfdTp+12yC4uyukGBnJ/DXpnhjbpxm/Aa64HrZUV18RdhceKCUPjTatH9jViqlNv2EBtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N9qFpIo0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FF37C4AF09;
-	Tue, 30 Jul 2024 10:37:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722335832;
-	bh=M4eg2RA2dVioVZclF6JHvBR8dH2//m8JYd+0R0imYZA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=N9qFpIo0XG2+as2sCBNP421gFXLGXitO22buNn5D+6stzkGoS9HaPxRMQqxX3xjf9
-	 5e0x5+W/0YeRenNHJORfGa8KySj2GvC6/qYC74VKf3edqHJZtBdtU5wUEgxTiZIys7
-	 dtAHSf71IblUjBJwJH68PfzO3Oy280ihPuDRIAMonzaoO+YKFYnoMFsAqUi1uDtKS/
-	 ThKrqUheO+S2RtVhc0ZR4X0gXngw7CFN4oA0Dkj1d8hCBRHiH9HWcB81smZLZRrvxd
-	 nLBYxt6mb/TF5Zv0aaFYjMjJ9kKYa+4zqrmAkyowfILhIoIbYwVRdRFZFEBp1JM1j5
-	 LqOnkS4Ymt4sw==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Gao Xiang <xiang@kernel.org>,
-	Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: (subset) [PATCH 00/24] netfs: Read/write improvements
-Date: Tue, 30 Jul 2024 12:36:50 +0200
-Message-ID: <20240730-kaschieren-glitten-89d803c5d4ae@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240729162002.3436763-1-dhowells@redhat.com>
-References: <20240729162002.3436763-1-dhowells@redhat.com>
+	s=arc-20240116; t=1722335861; c=relaxed/simple;
+	bh=7bhmWJ4F4fCA4+A84l6x7aUr8sGx8nmnSiTTUK2/c6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ua8IxBRDvEJjJoCEukvMCa0wy0NxIqIsLr70MIYAaGKgbdJuzv6Vi5oNTxO5TNSCF4uVjlZwuFXCgIohjgP2K+dYubFV4IgqF8T9W2dRG1N6QQF7MVh/tSvq2CSv1vf2HIwUQ/2jkx8MvMzpf4cQ7s7KTvEUiWOfmuU9i9LutQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=RNYzcpct; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lfIpJC0E; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 936FC13806A6;
+	Tue, 30 Jul 2024 06:37:34 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Tue, 30 Jul 2024 06:37:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1722335854;
+	 x=1722422254; bh=VX/Tkdcy9ImXaRgVm/RQ9iSM0HkWsMXF2m6jBPYecV8=; b=
+	RNYzcpctswcndh6F8lRrEqri9PmkFhm/Q2Rl4RRIuqNJmo6Emx256ztgkbAXWOmk
+	/kxt+x1fAJCKXEzGTFx6Giw5Pvw8bulIZxQc9Y8bPq1C2rO592kde/P+7uoNpNMB
+	LKA3WtKEgf3U9AEDMOBG6JRUwC4EqWGgQe8rG3XPzCbnbB9k4RZzjyqa/SoIgj2n
+	AeV8Ezs8ONqpgLcUUFtH2/nJrCDMHlPweQoK2LN8OuSSWChI+ujyVaV0Q1G7R+FZ
+	7q3lnMUtfp+roDnz1nj6aVXT9/IIlTC84cwZrXErXFny2F9wxG+WnvfDknuTlptT
+	/kwre63qyWcTQkrwA8giPg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722335854; x=
+	1722422254; bh=VX/Tkdcy9ImXaRgVm/RQ9iSM0HkWsMXF2m6jBPYecV8=; b=l
+	fIpJC0EejGnJsumzLRqCCINacradXLkA5W+fE6aLiNE3RIUbA08zYqMj1bobOW6W
+	WzMph3hFJi3iF+qLkmOR1HjwFQrzUuaO5hbrWfEukSSbukqmipwxLrSczfA26WjA
+	d0Ik0mAb3/2E1zhjLfoIwCnlXQy+Aq46xIZhuHWcpR5PHtBr7spEveBRSzm4lnsu
+	V0JyB8y9DEL9GU2TTtFzvisYc0tOWKHeGcPylbCJNcXNdKDhPIlvfHccmXLvyJsz
+	V1+BUaxJFX62wVnTfO2c4VlR6XAK3KytIBMcC+i7kTv47LiGmMDzW4myql19pRzn
+	zTXOppnPJVHpgbF9Pyobw==
+X-ME-Sender: <xms:bsKoZhEm0eo8D2zhR7XdEbaoceA4YpcsRtXVzqNaFO7-ziQbxQJmww>
+    <xme:bsKoZmWX4gDLIdJWG5YYhOQ4gGEeNVGQFaZYy8ccceg3VOfYeXE8e8Hgo9Fd35F3u
+    _Q8Vz_NBUlexE-vcZg>
+X-ME-Received: <xmr:bsKoZjKM-xJcazB2zIo7VaF5MH-lXA2cpwabb1kgTBdU6CGT9ENRtPAvv4NJpqOHCJ2LTHQL_Jk1p04GDEggacFaoa22YNU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeggdeftdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomheppfhikhhl
+    rghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhgusehrrghgnh
+    grthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepffdtgeefveefgfeutdevveelgfel
+    keeuvdefgefgfeehfeeijeehudelhfejkefgnecuffhomhgrihhnpehkvghrnhgvlhdroh
+    hrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehn
+    ihhklhgrshdrshhouggvrhhluhhnugesrhgrghhnrghtvggthhdrshgvpdhnsggprhgtph
+    htthhopedt
+X-ME-Proxy: <xmx:bsKoZnEJC_T05Om-Qz_rHkvlurA5A7Ya147pXIerz1Bec1xbVK2N4g>
+    <xmx:bsKoZnVPnsFoRefjRoZ9t5WPUhYXxieN9C0q0E9VKJZWFs7lCnF_aA>
+    <xmx:bsKoZiOPjeI1K07R-AYdRafN0Qy1Kco0brNXn80iXAIvQGQwAEEeGg>
+    <xmx:bsKoZm31wGWNK6X1cpI1XRIh-rOZzXyVit9Te7-F7idAyaDX830-Iw>
+    <xmx:bsKoZpIxiIzsx34oFlaTCViP6t2TKo58rsBYG55lYvzaZi8Xr_2klUph>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 30 Jul 2024 06:37:33 -0400 (EDT)
+Date: Tue, 30 Jul 2024 12:37:32 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 7/8] thermal: trip: Get rid of
+ thermal_zone_get_num_trips()
+Message-ID: <20240730103732.GC4118426@ragnatech.se>
+References: <2211925.irdbgypaU6@rjwysocki.net>
+ <2636988.Lt9SDvczpP@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=961; i=brauner@kernel.org; h=from:subject:message-id; bh=M4eg2RA2dVioVZclF6JHvBR8dH2//m8JYd+0R0imYZA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaStOOQfILK00PPW9Etftt1+ufrx1Tc7OsPuXM7c9UVy9 72fTsfXtXaUsjCIcTHIiimyOLSbhMst56nYbJSpATOHlQlkCAMXpwBM5PF/RobHbwN1fQ3vrlPe zSXvY39gUXmtoiHrhCNck4/oH0uNlIph+MO777/y1U2XvSv+ZVQlPeSt+/k3J6znVvq6zOVlMw5 vUuYBAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <2636988.Lt9SDvczpP@rjwysocki.net>
 
-On Mon, 29 Jul 2024 17:19:29 +0100, David Howells wrote:
-> This set of patches includes one fscache fix and one cachefiles fix
+Hi Rafael,
+
+Thanks for your work.
+
+On 2024-07-29 18:11:29 +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
->  (1) Fix a cookie access race in fscache.
-> [...]
+> The only existing caller of thermal_zone_get_num_trips(), which is
+> rcar_gen3_thermal_probe(), uses this function to put the number of
+> trip points into a kernel log message, but this information is also
+> available from the thermal sysfs interface.
+> 
+> For this reason, remove the thermal_zone_get_num_trips() call from
+> rcar_gen3_thermal_probe() and drop the former altogether.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+> ---
+> 
+> A new version, based on the discussion following the v1:
+> 
+> https://lore.kernel.org/linux-pm/20240617183949.GO382677@ragnatech.se/
+> 
+> The Renesas driver change does not depend on the previous patches
+> in the series.
+> 
+> ---
+>  drivers/thermal/renesas/rcar_gen3_thermal.c |    6 +-----
+>  drivers/thermal/thermal_trip.c              |    6 ------
+>  include/linux/thermal.h                     |    1 -
+>  3 files changed, 1 insertion(+), 12 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/renesas/rcar_gen3_thermal.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/renesas/rcar_gen3_thermal.c
+> +++ linux-pm/drivers/thermal/renesas/rcar_gen3_thermal.c
+> @@ -563,11 +563,7 @@ static int rcar_gen3_thermal_probe(struc
+>  		if (ret)
+>  			goto error_unregister;
+>  
+> -		ret = thermal_zone_get_num_trips(tsc->zone);
+> -		if (ret < 0)
+> -			goto error_unregister;
+> -
+> -		dev_info(dev, "Sensor %u: Loaded %d trip points\n", i, ret);
+> +		dev_info(dev, "Sensor %u: Loaded\n", i);
+>  	}
+>  
+>  	if (!priv->num_tscs) {
+> Index: linux-pm/drivers/thermal/thermal_trip.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_trip.c
+> +++ linux-pm/drivers/thermal/thermal_trip.c
+> @@ -55,12 +55,6 @@ int thermal_zone_for_each_trip(struct th
+>  }
+>  EXPORT_SYMBOL_GPL(thermal_zone_for_each_trip);
+>  
+> -int thermal_zone_get_num_trips(struct thermal_zone_device *tz)
+> -{
+> -	return tz->num_trips;
+> -}
+> -EXPORT_SYMBOL_GPL(thermal_zone_get_num_trips);
+> -
+>  /**
+>   * thermal_zone_set_trips - Computes the next trip points for the driver
+>   * @tz: a pointer to a thermal zone device structure
+> Index: linux-pm/include/linux/thermal.h
+> ===================================================================
+> --- linux-pm.orig/include/linux/thermal.h
+> +++ linux-pm/include/linux/thermal.h
+> @@ -210,7 +210,6 @@ int for_each_thermal_trip(struct thermal
+>  int thermal_zone_for_each_trip(struct thermal_zone_device *tz,
+>  			       int (*cb)(struct thermal_trip *, void *),
+>  			       void *data);
+> -int thermal_zone_get_num_trips(struct thermal_zone_device *tz);
+>  void thermal_zone_set_trip_temp(struct thermal_zone_device *tz,
+>  				struct thermal_trip *trip, int temp);
+>  
+> 
+> 
+> 
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[01/24] fs/netfs/fscache_cookie: add missing "n_accesses" check
-        https://git.kernel.org/vfs/vfs/c/965a561e4026
+-- 
+Kind Regards,
+Niklas Söderlund
 
