@@ -1,158 +1,166 @@
-Return-Path: <linux-kernel+bounces-267962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F949941E65
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:28:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6CB941E73
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC2D0285EF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:28:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F9A72822FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4297D188016;
-	Tue, 30 Jul 2024 17:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFFE1A76C5;
+	Tue, 30 Jul 2024 17:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nXgaEszb"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b1Po+Yvf"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331671A76B4;
-	Tue, 30 Jul 2024 17:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26AE1A76BE
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722360499; cv=none; b=PqolimUGfIf9qgjUQL7MGHPQ2Uf8nn5PVneHcvur9AdBNSb9VmUYUIdTqn2puj+1vwDMQF9Iu8w4DooFVZ4eu6A7fE7zr4JwLgApmUC2KnIJNONEB6cxwuKV8wn991wG9VZI8RZ8WFyLaflwTC9h6eJHlwEKhxdHBlt+utFFYII=
+	t=1722360542; cv=none; b=ZOTCz4aspqs664uyfXqf5bREC1C/5//+tQwzGwDaH+uDN2YF/DRbbPxAyHHlwx03/jaH309qaurE71wMatQVFEB0yAtsS28FosIhvu/JNAfAFLTZ5AwOAWb20IPqFY2manC5igORy0260d1xETQXr6T5I7Iz7HLnQpAWv8yQfI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722360499; c=relaxed/simple;
-	bh=8BZ/+0c6LLhCVOq9k2EINS3eEOtUNO6eq6SWmLze7J4=;
+	s=arc-20240116; t=1722360542; c=relaxed/simple;
+	bh=JP1s8QjYEdh+uFt+cmIt4OJAgmgev3dxGNW2dQ2XwRU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cBBU2DZEQena0Sats4PX4/Da8GZu2FeZuGXaGtoHJid2JG4S2hhpQFfSv2TsT/JMW7+eHW2lo77Z92VLTZzlr2fG4+5K6Ks0ldl5wclkKif1wNbqFAyG5Ehnbnm3u3Dgooij7GpgI11/rRUPO7f8TYYG6lPOSGXRvIZ/iEDVUUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nXgaEszb; arc=none smtp.client-ip=209.85.216.52
+	 To:Cc:Content-Type; b=c7Lf4+InpaaRqsKUiF6ZM9EpzrT+lraF0grvJ9yyQGqqUmOEPMUVeUq0DHD2h1Uv7bm/49Nnwl8PVu51tvax83Wdes9D/2Go0w0uLECZfrMgEyXwYWlbyjzzlr+4vI0+IYVbpUP+JxjHU5rCdUeap+xWG4tsescs1kG2/px3OZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b1Po+Yvf; arc=none smtp.client-ip=209.85.128.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2cf78366187so2945609a91.3;
-        Tue, 30 Jul 2024 10:28:17 -0700 (PDT)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6518f8bc182so857657b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:29:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722360497; x=1722965297; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722360540; x=1722965340; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8BZ/+0c6LLhCVOq9k2EINS3eEOtUNO6eq6SWmLze7J4=;
-        b=nXgaEszbt0UOyEfIYHFXgTQkWeKWohcuczrueIDnTwaYDHlQoRB5knBMpwQAR3FQbc
-         OiJ1Z791GNbDW7q7dhXf/x10g/m4YZK2+JdIOPP7llTIhOtdNnSENCuffDZJWLEikgE9
-         hX8vX4gnwttmCXZb1eBQiS96yLaWilb3gEHZeuNjtk+jhVtme/+GAC8yOXu8lHjKaXkq
-         W8evZk9yW2tMzN5D9qWB1okIURRDVogrxzFWcsdcCnvO/Ozy7TrfNQeQanDqCYxDKIl8
-         o7s5DcH4KbVovMtSkDjt7pSrMfV9g1JnuRligm/CpDSgfi1Q4wFX0TkTT3u9+meY9rbM
-         j0ng==
+        bh=JP1s8QjYEdh+uFt+cmIt4OJAgmgev3dxGNW2dQ2XwRU=;
+        b=b1Po+YvfPuzhtiuM3ahXtPb4nIh8j7dLANVBQDvmnz5XwYGYbmLayKVZXMm8g64nKb
+         ks8CSc1flN1ZVCVvcAkqxZNbqMPZFWOMRambL44fzfn9au5etrhnmT2IkcP1cbgngPxT
+         VY6fdh3EWRk819vlaJ2BQQdOPofTBKs+u6Yvz7Kh53iYKVOHuTU4+zk5KLdrcZnObztF
+         rF1r2d8vt8Ki0Ahgtsv6lmqLCVoOy68OO54h+2eXWCe/yQC3lYlKRMkd2/Rx+qxmKyXB
+         6PJ9ZGhgg10plGQ3i36S/ypdmZwOJjdQ9f5fw7/mtM2vOsHh08Q8X80+qlXJPeJzT/40
+         2SEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722360497; x=1722965297;
+        d=1e100.net; s=20230601; t=1722360540; x=1722965340;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8BZ/+0c6LLhCVOq9k2EINS3eEOtUNO6eq6SWmLze7J4=;
-        b=fRsAHwflunKq0ROSOrraXa/CVi9dzCPY/dITtmA/VrvVgTl5/iGbqPxmRHQZoutRdZ
-         G+/PfcKgOuCtZZbVkBseEvuy3IidW6LWiObG1feIIfMO1c1cnUbhEtbP7z15b1/k2XGR
-         x0HDl99ana+eVoQX4N/pDd5pZfHO9TjjGyVHo55q+wz3jruU6+/6FPFUa+zD6Yu/nW+P
-         GOGsjSk9x8S5fQynyBMhLV1k7DQZsivkNONanb6GWfPU3LoGRRWQ7mGQlA44rlKYg6qT
-         Xmkxs8ofKcELgoEWQfvn4lhyRGubTtCFJnPQ2emtqMIx8EUblRZG4j6WTqRgrTBuPdNT
-         G+iw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjt2SG+0KTOdleOAyuT1BsOPFGANHtsEgpMo47/IVUdFKCxwo39kfhhNba80VBAZ9OwAP3HgepatHWofjU5Tks1/q606AmnVexPgklZXXMWcl0+KwyYQng8wsnw9Q7LD7Q
-X-Gm-Message-State: AOJu0YwRVHwAOrnjR2D9ljvPixjlsN8JnVfpaIIgpvceEazWERFNR4fJ
-	zQkEzswW+RNx4ucdTqcaZ9aBbsdjvuOBVenMfeK6ux7zeK4Z0aWTzqzGL/iTkEwIOGfMQM00hqx
-	ch5zGQqkOfXi+py5mktI5+JRtsks=
-X-Google-Smtp-Source: AGHT+IFQj44xGrJQzBKXeAfqMiTWnJw1eB1EU3KpViUSxTKAmGZvV4rwEMp8Y8nHHQuuAQ0LIG+XNDrBv2GFl4azYnQ=
-X-Received: by 2002:a17:90a:e544:b0:2c9:7849:4e28 with SMTP id
- 98e67ed59e1d1-2cf7e60bedbmr14036584a91.27.1722360497433; Tue, 30 Jul 2024
- 10:28:17 -0700 (PDT)
+        bh=JP1s8QjYEdh+uFt+cmIt4OJAgmgev3dxGNW2dQ2XwRU=;
+        b=bCNFAdVrqFXFoi+AeGoW76AQtDmlQSY8f4OQjR5kEl6fhRAVHjyb4K+KbQhh+Jc9pZ
+         6YyaurCxft35yym7JKMfOUBKOry+zSVqGQoOUrbLBNlI8KlcU4kY0FmUEYF+VczGQjbS
+         zXu3Ol1efdPyACh7LX42NBFukK33ifI72i+4oQtwgMkLzwdP4eSwFG3a2juCoos94FMj
+         zCOrRasd3llzAW543DD2Q5A80jHDPJpOnK/OA0LSxvNAEIJo9wRHxBsND+1Ykiw4K1ld
+         mi2HZGXb+ArQ8igaOg7ST4tanqbVFuBYPF5NDHcK5q7eML9WKQyY2f3R+4evNuwNvz7F
+         i+mA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPvdACaxttOS/hhBlZNZ0J25MawtV2vf57xq8Oiw+20FWbKqggKCAnhAt3/BAnKEgW/GhNOHLTcelUPxMRtnG6plhx2mT7xur2je/r
+X-Gm-Message-State: AOJu0YzyMjMhcN1GMPRkaBOLtBGw9HfrjRLtMBT/AJALxfRCoVZzpxsU
+	9UaYfs+H6OMsmHSICkYkEPUQwlqAoBJkPsVIDo4Taf3zHmmIGgpXoqgaHzo+R36GvuVjLTtYx7m
+	Kvg6FdwndsTqMU+UvaNAKzZt+0LE=
+X-Google-Smtp-Source: AGHT+IHjhwrPp9CibFnetfBtnFVu8ekaB8v8h7DpbGWNITgABcH0CpPLw7LAylTC580BwBw9woSzMfuBDmpv3rONZMQ=
+X-Received: by 2002:a05:6902:1202:b0:e05:eccb:95f5 with SMTP id
+ 3f1490d57ef6-e0b9e1fa50bmr2913232276.18.1722360539852; Tue, 30 Jul 2024
+ 10:28:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725051511.57112-1-me@manjusaka.me> <08e180da-e841-427d-bed6-3ba8d73e8519@linux.dev>
- <c7952df9-5830-45d3-89bb-b45f2b030e24@gmail.com> <6511ce2a-1c7d-497c-aeb6-d4f0b17271ed@linux.dev>
- <2c6b1737-0a96-44ed-afe9-655444121984@gmail.com> <CAEf4BzbL0xfdCEYmzfQ4qCWQxKJAK=TwsdS3k=L58AoVyObL3Q@mail.gmail.com>
- <0f5b7717-fad3-4c89-bacf-7a11baf7a9df@gmail.com> <CAEf4BzZCz+sLuAUF65SaHqPUemsUb0WBhAhLYoaAs54VfH1V2w@mail.gmail.com>
- <a1ba10df-b521-40f7-941f-ab94b1bf9890@gmail.com> <CAEf4BzZhsQeDn8biUnt9WXt6RVcW_PPX76YFyZo6CjEXGKTdDg@mail.gmail.com>
- <9f68005d-511f-4223-af8f-69fb885024a1@gmail.com>
-In-Reply-To: <9f68005d-511f-4223-af8f-69fb885024a1@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 30 Jul 2024 10:28:05 -0700
-Message-ID: <CAEf4BzbzM85_946eB95e9U6stknBh4ucLMKVo5SEqUsihe4K1A@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2] bpf: Add bpf_check_attach_target_with_klog
- method to output failure logs to kernel
-To: Leon Hwang <hffilwlqm@gmail.com>
-Cc: Yonghong Song <yonghong.song@linux.dev>, Zheao Li <me@manjusaka.me>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240726185825.142733-1-computersforpeace@gmail.com>
+ <D32OADQF733D.3CVS3ZRPEBL2O@kernel.org> <454deacb-88cc-4ab0-80b4-006d863a56d2@linaro.org>
+In-Reply-To: <454deacb-88cc-4ab0-80b4-006d863a56d2@linaro.org>
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Tue, 30 Jul 2024 10:28:48 -0700
+Message-ID: <CAN8TOE8-9=P7p8Tkc+5kG5Sqan+RAWAc7k2VH-p5W9hR-bb_Xg@mail.gmail.com>
+Subject: Re: [PATCH] mtd: spi-nor: micron-st: Add n25q064a WP support
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Michael Walle <mwalle@kernel.org>, linux-mtd@lists.infradead.org, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Pratyush Yadav <pratyush@kernel.org>, 
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 8:32=E2=80=AFPM Leon Hwang <hffilwlqm@gmail.com> wr=
-ote:
->
->
->
-> On 30/7/24 05:01, Andrii Nakryiko wrote:
-> > On Fri, Jul 26, 2024 at 9:04=E2=80=AFPM Leon Hwang <hffilwlqm@gmail.com=
-> wrote:
-> >>
-> >>
-> >>
-> >> On 2024/7/27 08:12, Andrii Nakryiko wrote:
-> >>> On Thu, Jul 25, 2024 at 7:57=E2=80=AFPM Leon Hwang <hffilwlqm@gmail.c=
-om> wrote:
-> >>>>
-> >>>>
-> >>>>
->
-> [...]
->
-> >>>>
-> >>>> Is it OK to add a tracepoint here? I think tracepoint is more generi=
-c
-> >>>> than retsnoop-like way.
-> >>>
-> >>> I personally don't see a problem with adding tracepoint, but how woul=
-d
-> >>> it look like, given we are talking about vararg printf-style function
-> >>> calls? I'm not sure how that should be represented in such a way as t=
-o
-> >>> make it compatible with tracepoints and not cause any runtime
-> >>> overhead.
-> >>
-> >> The tracepoint is not about vararg printf-style function calls.
-> >>
-> >> It is to trace the reason why it fails to bpf_check_attach_target() at
-> >> attach time.
-> >>
-> >
-> > Oh, that changes things. I don't think we can keep adding extra
-> > tracepoints for various potential reasons that BPF prog might be
-> > failing to verify.
-> >
-> > But there is usually no need either. This particular code already
-> > supports emitting extra information into verifier log, you just have
-> > to provide that. This is done by libbpf automatically, can't your
-> > library of choice do the same (if BPF program failed).
-> >
-> > Why go to all this trouble if we already have a facility to debug
-> > issues like this. Note every issue is logged into verifier log, but in
-> > this case it is.
-> >
->
-> Yeah, it is unnecessary to add tracepoint here, as we are able to trace
-> the log message in bpf_log() arguments with retsnoop.
+Hi Tudor, Michael,
 
-My point was that you don't even need retsnoop, you can just ask for
-verifier log directly, that's the main way to understand and debug BPF
-program verification/load failures.
+On Tue, Jul 30, 2024 at 4:33=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
+.org> wrote:
+> On 7/30/24 7:51 AM, Michael Walle wrote:
+> > On Fri Jul 26, 2024 at 8:58 PM CEST, Brian Norris wrote:
+> >> These flash chips are used on Google / TP-Link / ASUS OnHub devices, a=
+nd
+> >> OnHub devices are write-protected by default (same as any other
+> >> ChromeOS/Chromebook system). I've referred to datasheets, and tested o=
+n
+> >> OnHub devices.
+> >
+> > Out of curiosity, there is also a hardware write protect switch
+> > somehow, right? At least that's my understanding how verify boot
+> > works.
 
->
-> Thanks,
-> Leon
+There's a whole doc on this:
+https://www.chromium.org/chromium-os/developer-library/reference/security/w=
+rite-protection/
+
+Short answer: yes.
+
+If you want to see how this fits together in practice on a
+non-ChromiumOS system, you can see my companion OpenWrt work here:
+https://github.com/openwrt/openwrt/pull/16014
+
+Basically, I just try to make it easier for tools (in this case, the
+CrOS vboot tools) to find the write-protect GPIO, and cross-reference
+that with the software (MTD "locked" ioctls) protection status. We
+need to understand and manipulate both if we want to (temporarily)
+remove write protection, while otherwise retaining verified boot
+integrity.
+
+> >> Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+> >
+> > This looks good:
+> > Reviewed-by: Michael Walle <mwalle@kernel.org>
+> >
+> > But could you have a look whether this flash supports SFDP.
+> > According to the datasheet it looks like it does. In that case,
+> > could you please dump it according to:
+> > https://docs.kernel.org/driver-api/mtd/spi-nor.html
+
+Sorry, I didn't notice this doc. It's not technically a "new" flash,
+so it doesn't necessarily apply, but for the mail-archive record:
+
+# xxd -p /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
+53464450000100ff00000109300000ffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffe520f1ffffffff0329eb276b
+083b27bbffffffffffff27bbffff29eb0c2010d800000000
+
+> This would help getting rid of the no_sfdp_flags and size from the flash
+> definition. Another reason is that the SFDP dump can help us
+> differentiate between flavors of the same flash, if it'll ever be the
+> case, and help us keep backward compatibility.
+
+I wonder, since manufacturers seem to reuse IDs sometimes, is it
+possible (or, likely) for SFDP and non-SFDP versions of the same flash
+to exist? I'm not really sure whether I can truly drop the non-SFDP
+definitions.
+
+> Also, if you care, would be good to extend the SPI NOR documentation on
+> how one shall test the Block Protection.
+
+That sounds tougher. I don't know that there's really a standard
+toolset for handling protection -- I guess the 'flash_{un,}lock'
+utilities in mtd-utils qualify, but they aren't even packaged by
+relevant distros (e.g., OpenWrt; but I guess they're in Debian). I
+typically use flashrom, since that's what ChromiumOS uses, and it's
+available in OpenWrt -- would that be an OK basis for docs?
+
+It's also highly conditional on what sort of range(s) the flash
+supports. So it's almost like we might want a programmatic
+write-protection test suite as part of mtd-utils/tests/, rather than a
+bespoke narrative document. Which ... is getting a little larger than
+I signed up for.
+
+Brian
 
