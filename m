@@ -1,256 +1,343 @@
-Return-Path: <linux-kernel+bounces-267363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38D0C9410AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:38:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5A09410B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C687A28554E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:38:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6237286436
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629C619E7E5;
-	Tue, 30 Jul 2024 11:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D674B19FA8D;
+	Tue, 30 Jul 2024 11:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="YPAV4rdI"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ejYypXOk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581EC19E7D1;
-	Tue, 30 Jul 2024 11:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C0819E822
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722339501; cv=none; b=V25u11LB2cSiNhHxpaM/7hf9v9Y85mi9iSTDkB5HJqzdtAQ6pYQL1xoHU+oITDCzH5bzYcK5X2D1h8bepRt1+9KLK06kL7iptmZnuDzDQ8pSFt/GhJSWS11eH135UKwN9FN78lTQOjP/LcVBbLwxAt1gxu+XSvJeu07EFN+53wM=
+	t=1722339507; cv=none; b=Qx9br2db3dhGLzagrFsv0G+LHdOQrYmreuMsc2kmLFhGOij1edguFQgbKQk8BJouSS3ZcWtoURQ0yOP9U7giBJQVR3XYuefZL/c+P5h83NNNNx1uAA37ilgCjZjPss7uJjO2CxvV46dcyKLPE+09QQG7abpj9uqzQQoG8XGYARI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722339501; c=relaxed/simple;
-	bh=6FnWkCsu3mhQhY6xg1ZN0vRP1DpBGb9NXiQrJKGUvBA=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=KljF7t5UwNziLxfq089ALlCa5uMkfp+Dt291K2gJivdBZIpRNHRpdlakB1JZV3567dzbfwcrNdaZc+C/CnK5UEuKjPqxbJBfL8SEXQBjK8fxf8FswvakFrxJ/Qako9zWN7nxJEemXt0z8+ppOBTDQ8114clOjcHosZXIBek5aSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=YPAV4rdI; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 08EADC0004;
-	Tue, 30 Jul 2024 11:38:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-	t=1722339497;
+	s=arc-20240116; t=1722339507; c=relaxed/simple;
+	bh=jEQjAI9y/pos62ZtY9408Lx8xEWIbgsSw4bTFr5ulUY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SL6G0r+6wsMpsLvYdukpxf1VUENL8+jJiayvzMAVGFHD6Ih7HskW60PlbH4JkBQQWgL029W/Yx7LxZJ7Sdot7OI1s4IK1n2veeTtE6rvR+2CwVxUL+SpQzq8C0wd6w6F78Rp7CDogC/9dgVtBNzwQhZw/gOD7Q1tvLeywzH5z2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ejYypXOk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722339505;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OrZd8bURUH6yJXWQuFtTxqq3uVzfiftlLP02djENBPc=;
-	b=YPAV4rdICBvbU1vpTxZpmwwp5h/YYFLYFR9nt8t5LfoHd7Px89anwpCq/TQcpoXG550Qyd
-	NzrIZIjtRuFOUT3hmjOMAmud+ep2WVz5m5MX4HxQSkU/mC5gCqYr+RFWiwhsd2Ao2Pq5MZ
-	KujTY/XJQj61Tf1mKyD18WzeCllcF14ssHRNIjR9kqu/FHZsImXNT5JXAEU3qGGpbpNn+A
-	saRG6DlFnN2nw6A2kFsN4yFuqckI6MUBsYq+YTeq6UKozFUIILvEBvuZtODWh5Zl1fjqvS
-	Po9WT5Yq3XL+ej9z4lpmpp+jS2S8OTFxFUUoR0i5y6M/L3U486ui6GK8IMyXhw==
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ERqvjmTEXa43pGz7pfJyJekKhPX7hTshV7jfkEYTbUI=;
+	b=ejYypXOkPR0PxCnWqnkxkXPj0IXbIgDL1+3P2QgiUXGq3QPUVEcz+8QxN/ZmFtsmBFzJAi
+	saHLDKThOwYm8rDOvNTKJt39wT5jDXmNMv3QcWqs6QsnkOEHZhOqc++Cx2lCsbi6yxNhu7
+	E/eZXlg/eZoM9eVUUGkZ/yNMX6BoZt4=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-96-T90e2l6mMhyekQFXDF-i1A-1; Tue, 30 Jul 2024 07:38:22 -0400
+X-MC-Unique: T90e2l6mMhyekQFXDF-i1A-1
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5a8b0832defso8345456a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 04:38:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722339501; x=1722944301;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ERqvjmTEXa43pGz7pfJyJekKhPX7hTshV7jfkEYTbUI=;
+        b=IXOcJm4eJKCd2LeVFuMrmFV65XKgguvc6skS8iE6/H2Gmszj4DeU+NAQ2J7nJ0KbRR
+         2PG2oCiyhVDGdxIhNbH35+7+HrJ/v+8cEt3AYDWv0aLoqMFzTMqTP5AHplGuVANtTTe1
+         bshERwDf0BRfnXKP/iKsJBtj7vne8FOvV1fsggaxZ4D+23dFjZnv70VDWanLEtrrq40y
+         44RzoDzK0euq8VxhWRuwlUpyxK3hytJucuvHyYRFf0GWAoi1qUZTA3uc1UtkXB87GseG
+         DJYgug/B1L0zhNBCU4SVvSFc3x/vCn+rRRBD84zFocUOe2hkAO7Rv3V4gCGo0Ca5yoG7
+         LlvA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCXehexm31+nJQi6/mnC67bZI6OHvs2cyxkX/q77r7UxmxgeUEars7TPpBcAbnMFg4Zjkuz00B/PCcjNzVVxl0e7YqYQnkdE6myK+x
+X-Gm-Message-State: AOJu0YxITDDTCtewOO9mIPVeudgxqaafnfpTj8elQd2/Mg4tIrd9ScmL
+	HoeCdprnaJ3A6s6JqUmYiQfnYyTxjXXSxFYMtPQEQSciE80fCcAf07QDsRDkUuiJdlZCI2EzKJb
+	gWz+oaG6QkBW7A+aKyH05X4GXTMPLQ6c5Fw7BT5Ef0dv7uiQQZk/cd3PxvAw52g==
+X-Received: by 2002:a50:8a97:0:b0:58a:f14f:4d6d with SMTP id 4fb4d7f45d1cf-5b46dcc63bemr1603234a12.19.1722339500910;
+        Tue, 30 Jul 2024 04:38:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH5mXget4GcehKSHwg1m9swHhHUWQVbVnzHoQE7CArjlMaR1EOy+GWFyRYZ9RZxu1lu8WCBeQ==
+X-Received: by 2002:a50:8a97:0:b0:58a:f14f:4d6d with SMTP id 4fb4d7f45d1cf-5b46dcc63bemr1603198a12.19.1722339500323;
+        Tue, 30 Jul 2024 04:38:20 -0700 (PDT)
+Received: from [192.168.10.47] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63b59c86sm7201458a12.42.2024.07.30.04.38.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 04:38:19 -0700 (PDT)
+Message-ID: <992c4a07-fb84-42d8-93b3-96fb3a12c8e0@redhat.com>
+Date: Tue, 30 Jul 2024 13:38:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 30 Jul 2024 14:38:15 +0300
-From: arinc.unal@arinc9.com
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Linux regressions mailing list <regressions@lists.linux.dev>, Paolo
- Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>, Jakub
- Kicinski <kuba@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, Daniel Golle <daniel@makrotopia.org>,
- frank-w@public-files.de, Frank Wunderlich <linux@fw-web.de>, Rob Herring
- <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
-In-Reply-To: <2076f699540c3c9d10effdb8b55d3f89@arinc9.com>
-References: <20240516204847.171029-1-linux@fw-web.de>
- <0cba095c-3d55-416a-a7ad-b359129731cf@arinc9.com>
- <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
- <2cac4cf68304e81abffbd9ff0387ee100323c2b7.camel@redhat.com>
- <b49c801c-6628-40a6-8294-0876d8871ba7@leemhuis.info>
- <e92c3ca0-c9be-44ac-a4fc-57ca5ebedbc5@leemhuis.info>
- <1807a142-1534-4fa4-ad4b-d1c03af014c2@arinc9.com>
- <58d8ddea-71cc-427a-94cc-a95f6bce61d2@collabora.com>
- <16e9c06e-9908-455d-a387-614fefe5bcf8@arinc9.com>
- <5e87d31c-b059-4f9a-93f7-dc87465ed14a@collabora.com>
- <4416ef22-78cc-4ce5-b61d-69ff0903811e@arinc9.com>
- <bd6b6929-d34d-4bd5-9cb0-bc8fe850ee46@leemhuis.info>
- <af561268-9793-4b5d-aa0f-d09698fd6fb0@arinc9.com>
- <750a60a6-4585-4bd2-97be-cf944e51fbdb@leemhuis.info>
- <9c498e37-df8b-469e-818a-9b1c9f2b1a3c@collabora.com>
- <cebb10b8-b0bf-4cb7-bba4-c3f941ba2b82@leemhuis.info>
- <1aedb1d4-8dc3-4e17-aff1-7cc417465967@arinc9.com>
- <130518e2-d6dd-49ed-9cc2-ca9cdec93b98@leemhuis.info>
- <aeb255ff-3755-4f76-a8f8-cda27a67f818@arinc9.com>
- <b3fa66cc-516b-4d78-aee5-62a47b52a3b1@collabora.com>
- <2076f699540c3c9d10effdb8b55d3f89@arinc9.com>
-Message-ID: <3363e07a0ba483e98414754bd4bb1e5e@arinc9.com>
-X-Sender: arinc.unal@arinc9.com
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: arinc.unal@arinc9.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 84/84] KVM: Don't grab reference on VM_MIXEDMAP pfns
+ that have a "struct page"
+To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
+ <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
+ Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, loongarch@lists.linux.dev,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, David Matlack <dmatlack@google.com>,
+ David Stevens <stevensd@chromium.org>
+References: <20240726235234.228822-1-seanjc@google.com>
+ <20240726235234.228822-85-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20240726235234.228822-85-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2024-07-30 14:22, arinc.unal@arinc9.com wrote:
-> On 2024-07-30 12:41, AngeloGioacchino Del Regno wrote:
->> Il 01/07/24 10:15, Arınç ÜNAL ha scritto:
->>> On 01/07/2024 11:04, Linux regression tracking (Thorsten Leemhuis) 
->>> wrote:
->>>> On 01.07.24 09:44, Arınç ÜNAL wrote:
->>>>> On 01/07/2024 09:16, Linux regression tracking (Thorsten Leemhuis) 
->>>>> wrote:
->>>>>> [CCing the other net maintainers]
->>>>>> 
->>>>>> On 25.06.24 10:51, AngeloGioacchino Del Regno wrote:
->>>>>>> Il 25/06/24 07:56, Linux regression tracking (Thorsten Leemhuis) 
->>>>>>> ha
->>>>>>> scritto:
->>>>>>>> On 17.06.24 13:08, Arınç ÜNAL wrote:
->>>>>>>>> On 17/06/2024 11:33, Linux regression tracking (Thorsten 
->>>>>>>>> Leemhuis)
->>>>>>>>> wrote:
->>>>>>>>> [...]
->>>>>>>> It looks more and more like we are stuck here (or was there 
->>>>>>>> progress
->>>>>>>> and
->>>>>>>> I just missed it?) while the 6.10 final is slowly getting 
->>>>>>>> closer.
->>>>>>>> Hence:
->>>>>>>> 
->>>>>>>> AngeloGioacchino, should we ask the net maintainers to revert
->>>>>>>> 868ff5f4944aa9 ("net: dsa: mt7530-mdio: read PHY address of 
->>>>>>>> switch from
->>>>>>>> device tree") for now to resolve this regression? Reminder, 
->>>>>>>> there is
->>>>>>>> nothing wrong with that commit per se afaik, it just exposes a 
->>>>>>>> problem
->>>>>>>> that needs to be fixed first before it can be reapplied.
->>>>>>> 
->>>>>>> To be clear on this: I asked for the commit to be fixed such that 
->>>>>>> it
->>>>>>> guarantees
->>>>>>> backwards compatibility with older device trees.
->>>>>>> 
->>>>>>> If no fix comes,
->>>>>> 
->>>>>> I haven't see any since that mail, did you? If not, I think...
->>>>>> 
->>>>>>> then I guess that we should ask them to revert this commit
->>>>>>> until a fix is available.
->>>>>> 
->>>>>> ...it's time to ask them for the revert to resolve this for -rc7 
->>>>>> (and
->>>>>> avoid a last minute revert), or what do you think?
->>>>> 
->>>>> This is quite frustrating. I absolutely won't consent to a revert. 
->>>>> [...]
->>>> 
->>>> Reminder: try to not see a revert as a bad thing. It's just means 
->>>> "not
->>>> ready yet, revert and we'll try again later" -- that's actually
->>>> something Linus wrote just a few hours ago:
->>>> https://lore.kernel.org/lkml/CAHk-=wgQMOscLeeA3QXOs97xOz_CTxdqJjpC20tJ-7bUdHWtSA@mail.gmail.com/
->>> 
->>> Except it is ready and trying again is my responsibility, which means
->>> unnecessary work for me to do. I've already got a ton of things to 
->>> do.
->>> Applying the device tree patch resolves this regression; no reverts 
->>> needed.
->>> And then there's the patch in the works by Daniel that will address 
->>> all the
->>> remaining cases outside of the reported regression.
->>> 
->> 
->> The commit that fixes your breakage in a way that does *not* please me
->> (because of older devicetrees being still broken with the new driver) 
->> was
->> picked and it is in v6.11-rc1.
->> 
->> I had to do this because I value the community (in this case, the 
->> users) much
->> more than trying to make an arrogant developer to act in a 
->> community-friendly
->> manner while leaving things completely broken.
->> 
->> That said, remembering that we're humans and, as such, it's normal to 
->> get something
->> wrong during the development process, I want to remind you that:
->> 
->>  1. A series that creates regressions is *not* good and *not* ready to 
->> be
->>     upstreamed; and
->>  2. As a maintainer, you have the responsibility of not breaking the 
->> kernel,
->>     not breaking devices and not breaking currently working 
->> functionality; and
->>  3. Devicetrees being wrong (but working) since day 0 is not an excuse 
->> to break
->>     functionality; and
->>  4. Blaming the one who introduced the devicetree (you're doing that, 
->> since you
->>     are blaming the devicetree being wrong) isn't solving anything and 
->> will not
->>     magically make your code acceptable or good; and
->>  5. If you push a wrong commit, there's nothing to be ashamed of; and
->>  6. If you make a mistake, you should recognize that and find a way to
->>     make things right, that should be done for the community, not for
->>     yourself; and
->>  7. You shall respect the community: in this case, with your arrogant 
->> behavior
->>     you did *not* respect the users.
->> 
->> P.S.: The right way of making such change is to:
->>       1. Avoid breaking currently working devices by making sure that 
->> their DT
->>          still works with the new driver; and
->>       2. If breakage is unavoidable, make it so one kernel version has 
->> a fix that
->>          works with both old and new driver, and the next version 
->> introduces the
->>          breakage. N.2 should ideally never happen, anyway.
->> 
->> Let's wrap up this matter now - I don't want to spend any more word, 
->> nor time,
->> on this, as I really have nothing else to say.
->> 
->> Best regards,
->> Angelo
-> 
-> To be clear, I only became aware that my patch was picked by reading 
-> this
-> email. It is clear that we have different views. To that extend, all of
-> what you have written above can be answered to by reading what I have
-> already written in this thread. Therefore, I don't see any wrongdoing 
-> from
-> my side and invite everyone to fully read this thread to draw their own
-> conclusions; something you seem not to have done. And I'm not the one,
-> calling people names here. I can only offer my respect for hard working
-> people.
-> 
-> In my view, your behaviour of not applying a devicetree patch before a
-> Linux driver patch was applied, and then not replying to any arguments
-> whatsoever, was keeping the devicetree files hostage until your demands
-> were met. What I see is that, you failed as a maintainer to attend to 
-> my
-> points against this practice. It's no surprise that, after not having 
-> heard
-> back from you with an argument against my points, my patch was 
-> eventually
-> taken in by someone else.
-> 
-> Arınç
+On 7/27/24 01:52, Sean Christopherson wrote:
+> Now that KVM no longer relies on an ugly heuristic to find its struct page
+> references, i.e. now that KVM can't get false positives on VM_MIXEDMAP
+> pfns, remove KVM's hack to elevate the refcount for pfns that happen to
+> have a valid struct page.  In addition to removing a long-standing wart
+> in KVM, this allows KVM to map non-refcounted struct page memory into the
+> guest, e.g. for exposing GPU TTM buffers to KVM guests.
 
-Funny. It turns out it was not even my patch that was picked but rather 
-the
-patch that spawned this thread. Picked by you, no less. An improper 
-patch
-whose log was loaded with incorrect logic, and the patch itself not 
-fixing
-all the remaining broken trees. Now someone needs to submit another 
-patch
-to close the remaining hole, 
-arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts.
-I shall do that.
+Feel free to leave it to me for later, but there are more cleanups that
+can be made, given how simple kvm_resolve_pfn() is now:
 
-Arınç
+> @@ -2814,35 +2768,10 @@ static kvm_pfn_t kvm_resolve_pfn(struct kvm_follow_pfn *kfp, struct page *page,
+>   	if (kfp->map_writable)
+>   		*kfp->map_writable = writable;
+>   
+> 	if (pte)
+>   		pfn = pte_pfn(*pte);
+> 	else
+>   		pfn = page_to_pfn(page);
+>   
+>   	*kfp->refcounted_page = page;
+>   
+
+Something like (untested/uncompiled):
+
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -2758,32 +2758,12 @@ static inline int check_user_page_hwpois
+  	return rc == -EHWPOISON;
+  }
+  
+-static kvm_pfn_t kvm_resolve_pfn(struct kvm_follow_pfn *kfp, struct page *page,
+-				 pte_t *pte, bool writable)
+-{
+-	kvm_pfn_t pfn;
+-
+-	WARN_ON_ONCE(!!page == !!pte);
+-
+-	if (kfp->map_writable)
+-		*kfp->map_writable = writable;
+-
+-	if (pte)
+-		pfn = pte_pfn(*pte);
+-	else
+-		pfn = page_to_pfn(page);
+-
+-	*kfp->refcounted_page = page;
+-
+-	return pfn;
+-}
+-
+  /*
+   * The fast path to get the writable pfn which will be stored in @pfn,
+   * true indicates success, otherwise false is returned.  It's also the
+   * only part that runs if we can in atomic context.
+   */
+-static bool hva_to_pfn_fast(struct kvm_follow_pfn *kfp, kvm_pfn_t *pfn)
++static bool hva_to_page_fast(struct kvm_follow_pfn *kfp)
+  {
+  	struct page *page;
+  	bool r;
+@@ -2799,23 +2779,21 @@ static bool hva_to_pfn_fast(struct kvm_f
+  		return false;
+  
+  	if (kfp->pin)
+-		r = pin_user_pages_fast(kfp->hva, 1, FOLL_WRITE, &page) == 1;
++		r = pin_user_pages_fast(kfp->hva, 1, FOLL_WRITE, kfp->refcounted_page) == 1;
+  	else
+-		r = get_user_page_fast_only(kfp->hva, FOLL_WRITE, &page);
++		r = get_user_page_fast_only(kfp->hva, FOLL_WRITE, kfp->refcounted_page);
+  
+-	if (r) {
+-		*pfn = kvm_resolve_pfn(kfp, page, NULL, true);
+-		return true;
+-	}
++	if (r)
++		kfp->flags |= FOLL_WRITE;
+  
+-	return false;
++	return r;
+  }
+  
+  /*
+   * The slow path to get the pfn of the specified host virtual address,
+   * 1 indicates success, -errno is returned if error is detected.
+   */
+-static int hva_to_pfn_slow(struct kvm_follow_pfn *kfp, kvm_pfn_t *pfn)
++static int hva_to_page(struct kvm_follow_pfn *kfp)
+  {
+  	/*
+  	 * When a VCPU accesses a page that is not mapped into the secondary
+@@ -2829,34 +2807,32 @@ static int hva_to_pfn_slow(struct kvm_fo
+  	 * implicitly honor NUMA hinting faults and don't need this flag.
+  	 */
+  	unsigned int flags = FOLL_HWPOISON | FOLL_HONOR_NUMA_FAULT | kfp->flags;
+-	struct page *page, *wpage;
++	struct page *wpage;
+  	int npages;
+  
++	if (hva_to_page_fast(kfp))
++		return 1;
++
+  	if (kfp->pin)
+-		npages = pin_user_pages_unlocked(kfp->hva, 1, &page, flags);
++		npages = pin_user_pages_unlocked(kfp->hva, 1, kfp->refcounted_page, flags);
+  	else
+-		npages = get_user_pages_unlocked(kfp->hva, 1, &page, flags);
+-	if (npages != 1)
+-		return npages;
++		npages = get_user_pages_unlocked(kfp->hva, 1, kfp->refcounted_page, flags);
+  
+  	/*
+-	 * Pinning is mutually exclusive with opportunistically mapping a read
+-	 * fault as writable, as KVM should never pin pages when mapping memory
+-	 * into the guest (pinning is only for direct accesses from KVM).
++	 * Map read fault as writable if possible; pinning is mutually exclusive
++	 * with opportunistically mapping a read fault as writable, as KVM should
++	 * should never pin pages when mapping memory into the guest (pinning is
++	 * only for direct accesses from KVM).
+  	 */
+-	if (WARN_ON_ONCE(kfp->map_writable && kfp->pin))
+-		goto out;
+-
+-	/* map read fault as writable if possible */
+-	if (!(flags & FOLL_WRITE) && kfp->map_writable &&
++	if (npages == 1 &&
++	    kfp->map_writable && !WARN_ON_ONCE(kfp->pin) &&
++	    !(flags & FOLL_WRITE) &&
+  	    get_user_page_fast_only(kfp->hva, FOLL_WRITE, &wpage)) {
+-		put_page(page);
+-		page = wpage;
+-		flags |= FOLL_WRITE;
++		put_page(kfp->refcounted_page);
++		kfp->refcounted_page = wpage;
++		kfp->flags |= FOLL_WRITE;
+  	}
+  
+-out:
+-	*pfn = kvm_resolve_pfn(kfp, page, NULL, flags & FOLL_WRITE);
+  	return npages;
+  }
+  
+@@ -2915,7 +2891,9 @@ static int hva_to_pfn_remapped(struct vm
+  		goto out;
+  	}
+  
+-	*p_pfn = kvm_resolve_pfn(kfp, NULL, &pte, pte_write(pte));
++	if (kfp->map_writable)
++		*kfp->map_writable = pte_write(pte);
++	*p_pfn = pte_pfn(pte);
+  out:
+  	pte_unmap_unlock(ptep, ptl);
+  	return r;
+@@ -2932,12 +2910,13 @@ kvm_pfn_t hva_to_pfn(struct kvm_follow_p
+  	if (WARN_ON_ONCE(!kfp->refcounted_page))
+  		return KVM_PFN_ERR_FAULT;
+  
+-	if (hva_to_pfn_fast(kfp, &pfn))
+-		return pfn;
++	npages = hva_to_page(kfp);
++	if (npages == 1) {
++		if (kfp->map_writable)
++			*kfp->map_writable = kfp->flags & FOLL_WRITE;
++		return page_to_pfn(kfp->refcounted_page);
++	}
+  
+-	npages = hva_to_pfn_slow(kfp, &pfn);
+-	if (npages == 1)
+-		return pfn;
+  	if (npages == -EINTR)
+  		return KVM_PFN_ERR_SIGPENDING;
+  
+
+
+Also, check_user_page_hwpoison() should not be needed anymore, probably
+not since commit 234b239bea39 ("kvm: Faults which trigger IO release the
+mmap_sem", 2014-09-24) removed get_user_pages_fast() from hva_to_pfn_slow().
+
+The only way that you could get a poisoned page without returning -EHWPOISON,
+is if FOLL_HWPOISON was not passed.  But even without these patches,
+the cases are:
+- npages == 0, then you must have FOLL_NOWAIT and you'd not use
+   check_user_page_hwpoison()
+- npages == 1 or npages == -EHWPOISON, all good
+- npages == -EAGAIN from mmap_read_lock_killable() - should handle that like -EINTR
+- everything else including -EFAULT can go downt the vma_lookup() path, because
+npages < 0 means we went through hva_to_pfn_slow() which uses FOLL_HWPOISON
+
+This means that you can simply have
+
+	if (npages == -EHWPOISON)
+		return KVM_PFN_ERR_HWPOISON;
+
+before the mmap_read_lock() line.  You may either sneak this at the beginning
+of the series or leave it for later.
+
+Paolo
+
 
