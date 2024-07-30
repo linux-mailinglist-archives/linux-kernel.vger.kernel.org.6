@@ -1,89 +1,133 @@
-Return-Path: <linux-kernel+bounces-268193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C61B94217C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:17:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8745494217E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED35B1F256C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:17:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8E791C22AE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E5C18DF63;
-	Tue, 30 Jul 2024 20:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1761218CC1E;
+	Tue, 30 Jul 2024 20:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gVC1yRa/"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hLI5bs82"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143961AA3DE;
-	Tue, 30 Jul 2024 20:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5055E18B482;
+	Tue, 30 Jul 2024 20:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722370641; cv=none; b=sMkp8sQtRX2PtAoFq7Ab9FbMYsYAX7aio1QHg8jeFK6zTLxWgzVlXSbmFbw3VRLjlPxYSjtRR4r3Dm8PLKbA8pY28C95mJReeNkVLeqrPVjRbhEhIjOhS45frSpA6qAVe/bxIVAIZ0PpOLceVhL/zmGlO3JlhlVGia2l+yPK4E4=
+	t=1722370659; cv=none; b=ga6AeRI2gaVLSf+cFFwNsxdI+luhGoAAimazdoVU+RyEMVJIZoVXXUDKJKYtVvXwcBK6axkTRnGZd9KSO/q+wJqZ6bwNUvz2FIOMY8nHokvle2LYYaAl5W8bB/DpExkOQMSVU+FDvRe6qYLg29U9rVYbeRUsDWNWIPekXc8DFMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722370641; c=relaxed/simple;
-	bh=gF3lfL6j+rF5HMLG0BmJKAJNwfOdOHt/PyxdqYrFHDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r8wO7HiLvLOnYpLqfgRxcfNIa3BamqUyOJ4qSx+LoK6pBLDe+1pjLkIpcM9/+bFITMo3s5pXblncvveUXCb7FSkbVERUz8meRlIb9eGuSHWgxL/T3NdS5dVUIr0RR2qkOLwSO1ONdPP/9ER+5OL5qFa0Y74qLhlmrdYIpe9sl2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gVC1yRa/; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=lm/VSDVZ3hXA+T+kOA2i3wv7H/4Q1WtwruXE/eLzuBo=; b=gV
-	C1yRa/marQW7bc1iO5+jyKFvzTe4DF7ND9/o3vbDLpPCzalM2xmH9RbLVgPaaUZYZHJeA+xuoNc8/
-	TerzIbeSHEbDUXGWyGiZLZw9B9HMXvWzVFIOFUh4Q5JqACkFJ2pLtaT0BWAwUECXj1MgQZTsC4fb5
-	htKrBg9O21bO2c8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sYtHS-003bua-EK; Tue, 30 Jul 2024 22:17:10 +0200
-Date: Tue, 30 Jul 2024 22:17:10 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Swathi K S <swathi.ks@samsung.com>
-Cc: krzk@kernel.org, robh@kernel.org, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	conor+dt@kernel.org, richardcochran@gmail.com,
-	mcoquelin.stm32@gmail.com, alim.akhtar@samsung.com,
-	linux-fsd@tesla.com, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, alexandre.torgue@foss.st.com,
-	peppe.cavallaro@st.com, joabreu@synopsys.com, rcsekar@samsung.com,
-	ssiddha@tesla.com, jayati.sahu@samsung.com,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com,
-	gost.dev@samsung.com
-Subject: Re: [PATCH v4 4/4] arm64: dts: fsd: Add Ethernet support for PERIC
- Block of FSD SoC
-Message-ID: <9a6a1605-5056-4a7a-9577-a26699738daf@lunn.ch>
-References: <20240730091648.72322-1-swathi.ks@samsung.com>
- <CGME20240730092913epcas5p18c3be42421fffe1a229f83ceeca1ace0@epcas5p1.samsung.com>
- <20240730091648.72322-5-swathi.ks@samsung.com>
+	s=arc-20240116; t=1722370659; c=relaxed/simple;
+	bh=hiPhK21c5P7EMNupOAOqRzWrDTeHJmYPdjtDirfzxtM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rkjaAxxW5BlNEzTmKGiQ1DHfUEQEdMBD1NQIqxq7VOYqVA04VVi9/rOPiEYx5TYtaiCKbdv0bGQvbFGbjIJenZIwQ+plRCPiOzjlWjClcAr3nI/iyYT27ylLhHaF90n+bsC+Tr8BOL9q4dJVA6Y7a2u7/tWE07bsbUCub0xjfEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hLI5bs82; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFD01C4AF0F;
+	Tue, 30 Jul 2024 20:17:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722370658;
+	bh=hiPhK21c5P7EMNupOAOqRzWrDTeHJmYPdjtDirfzxtM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hLI5bs82CIN9xksE/zYd3/aBzI4qgx82L11GZyJh0mvH31Igvfx2kCvoDqTka6a2s
+	 xaTc46/T1hk5jQWVZEGulqu16IGVfH99Ts1KIn1wa94idHtxhQAjyPnseRtE+CLgIF
+	 3mGnFnkIOHs+RQ4XBKsT3L+RFKrIGJyx/QsIxi8m1SZOLbhG3Eal1jpfY/bQDwyYMd
+	 IaHRk6Lf/J8Q1ms4n84q2NLGhlcXUijBiNiyOCrP/3UQqaO3M9AkMXAqECkMWcqavY
+	 Oa9tx3AXEn/r7KeXr1P0nhHAAiZTqzTsMobSy/q3FpLmX7fbDmglwbQ204ufwKNp4J
+	 idkf0gV0e/bjA==
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3db26a895bfso183073b6e.3;
+        Tue, 30 Jul 2024 13:17:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVRe5dpU1U0tIgEBHmVD09cX1L8ul5nQZ1ZdZg/rKuu2bs00EatKKfYFtsVgaS3+UmjC3CAoa0vjTw=@vger.kernel.org, AJvYcCVo1KKoDpxgdwdHQzeJa9pkus188raiTnRCCQVvwemM8F7nTRap57gWZKCwl2C3/eAA4KY4WtYnwGm6/r4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+lggoAcwk78NXBn//Pq9x0Jr3Wp5bGXvcdB5Ai7bTPt6UwfwF
+	eoNy7GwRrPIPOPW1J3EKJKBiD1z1m5HxayNsLklXTL5p4bQqKyKYPGT4RWJCxxkQcyCrybtUwff
+	Yg8irX/DYW7+cfDEKBlOH71f4Tz0=
+X-Google-Smtp-Source: AGHT+IFpzgIUQWTq1kr8AvdOCiJmJ0G7+o8CulyHu7qoiO7iXp+lA9nyN9c5UPQSK7+IehsxfARb+YwES8XN61f6CPs=
+X-Received: by 2002:a4a:df47:0:b0:5d5:bc1f:daa with SMTP id
+ 006d021491bc7-5d5bc1f0f75mr9835767eaf.1.1722370657984; Tue, 30 Jul 2024
+ 13:17:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <12509184.O9o76ZdvQC@rjwysocki.net> <4448b729-5998-440c-939e-08e719070ac5@linaro.org>
+ <CAJZ5v0iAd18d3_o8i74ao9tg=JPXhBZ29wMiYBd8xS64B7wGsA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0iAd18d3_o8i74ao9tg=JPXhBZ29wMiYBd8xS64B7wGsA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 30 Jul 2024 22:17:26 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hF+P34O3NDg1GXo9RWGhz5v+BYJj+6YCgipXT+4eEijQ@mail.gmail.com>
+Message-ID: <CAJZ5v0hF+P34O3NDg1GXo9RWGhz5v+BYJj+6YCgipXT+4eEijQ@mail.gmail.com>
+Subject: Re: [PATCH v1] thermal: trip: Avoid skipping trips in thermal_zone_set_trips()
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240730091648.72322-5-swathi.ks@samsung.com>
 
-> +&ethernet_1 {
-> +	status =3D "okay";
-> +
-> +	fixed-link {
-> +		speed =3D <1000>;
-> +		full-duplex;
-> +	};
+On Tue, Jul 30, 2024 at 6:46=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>
+> On Tue, Jul 30, 2024 at 4:57=E2=80=AFPM Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+> >
+> > On 30/07/2024 16:41, Rafael J. Wysocki wrote:
+> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >
+> > > Say there are 3 trip points A, B, C sorted in ascending temperature
+> > > order with no hysteresis.  If the zone temerature is exactly equal to
+> > > B, thermal_zone_set_trips() will set the boundaries to A and C and th=
+e
+> > > hardware will not catch any crossing of B (either way) until either A
+> > > or C is crossed and the boundaries are changed.
+> >
+> > When the temperature is B, an interrupt fired which led to the
+> > thermal_zone_update() and in turn it calls thermal_zone_set_trips()
+> >
+> > As the current temperature is equal to trip B, it makes sense to set A
+> > and C, as B has been processes when handling the thermal trips right
+> > before calling thermal_zone_set_trips()
+>
+> So say that A, B and C are active trips and the thermal zone uses the
+> Bang-bang governor.  Say that each trip point has a fan associated
+> with it, so that every time it is crossed on the way up, the fan
+> should be turned on, and every time it is crossed on the way down, the
+> fan should be turned off.  Denote these fans as f_A, f_B, and f_C,
+> respectively.
+>
+> Say the initial thermal zone temperature is below A, so the initial
+> thermal_zone_set_trips() interval is {-INT_MAX, A}.  The zone
+> temperature starts to rise and A is reached, so an interrupt triggers.
+> __thermal_zone_device_update() runs and it sees that the zone
+> temperature is equal to A, so thermal_zone_set_trips() sets the new
+> interval to {-INT_MAX, B} and f_A is turned on.
+>
+> Say the zone temperature is still rising, despite f_A being on, and B
+> is reached.   __thermal_zone_device_update() runs and it sees that the
+> zone temperature is equal to B, so thermal_zone_set_trips() sets the
+> new interval to {A, C} and f_B is turned on.
+>
+> Say the temperature rises somewhat above B, but does not reach C and
+> starts to fall down.  B is crossed on the way down, so f_B should be
+> turned off, but nothing happens, because an interrupt will only
+> trigger when A is reached.
 
-Another fixed link? That is a bit unusual.
+Worse yet, if the zone temperature starts to fall down between A and
+B, after setting the thermal_zone_set_trips() interval to {-INT_MAX,
+B},,nothing will happen when A is crossed on the way down, and since
+the low boundary is clearly of the "don't care" type, f_A will not be
+turned off until B is reached AFAICS, which may be never.
 
-=11	Andrew
+> > I'm failing to understand the issue you describe
+>
+> I hope the above helps.
+>
+> > Were you able to reproduce the issue with emul_temp ?
+>
+> I haven't tried, but I'm sure I'd be able to reproduce it.
 
