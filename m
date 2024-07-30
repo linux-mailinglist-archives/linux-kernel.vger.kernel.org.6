@@ -1,83 +1,88 @@
-Return-Path: <linux-kernel+bounces-267453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F7A19411AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:19:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 730C99411CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE6811F23BD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:19:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A56481C231E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A0919E827;
-	Tue, 30 Jul 2024 12:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEDA19EEBA;
+	Tue, 30 Jul 2024 12:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Am8G9Y6S"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lJqG08Hz"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22231957F0;
-	Tue, 30 Jul 2024 12:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895E8187340;
+	Tue, 30 Jul 2024 12:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722341983; cv=none; b=RrCX2Jh+wPHkr2shg/Y0na80UyVe7zb2aQD58Onmij8tOyr1EsKWNsKsup65KaaDlCTRlbV8kQQd4YOU2fX4lvPmA1infbCX6I8LayHzFM4TLNFNUP0SXTaNGbMoepDi7VIAF6svYNWpJBdNUFuxeECbl/+9RsJ7k5S+g5XnxHA=
+	t=1722342383; cv=none; b=L1PJZ3xhmCAM1C8H+t91lAvFyEm/qx2QYN3yyYMoIHeD2vMbmk+vqYw7ihJqFcrvz1EDMC19g4nk+9zAqjIhDZE4ArtYsEbC+JKxBUwmvjEyXjJKFDcGWMyxPF2HhBG3+eGiTGv622E5xdViLFFI7tMCrVba3XRXliqYKkSkJ7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722341983; c=relaxed/simple;
-	bh=Na6bYBOwEr1UOvSI96Mi3YFL2ql7LlGEgYQvcbyWNgk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EYqK1rKn4TsrBOh2R30biiQVDsWL3XWfvJAHkWTuYoAIPxiF37DWoFZvCJd54kkzz75PcS46AWvzPi4iSSq88NzfeRuvV3eWQiAy0xg+gDfQCEWCST+XTZtE7C3KVQVx2GYGb2FJ1A3lF1k6qH5dIw/pEN0/6vKW7n0iEuLguYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Am8G9Y6S; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1722342383; c=relaxed/simple;
+	bh=psjpdqny/AT34993h/rSHUqKDueTCD4QaVMuA7f5Gik=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TkRTxRMmBWluM6Sc6fglwftSau5E7nLNSetKeseJMklAJIgixzH5QUP7Y4Fz2ZPdm+907AZiNge+7XRHcfNai0PPFUoLbmSgEbc6wwPPssIXDyPUGvqlYwH2/iqVZsp8r1tNktIbDD5EYnJc23/7F+Ej4tprWpl13Ny/8bavsBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lJqG08Hz; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7d638a1f27so159395166b.2;
-        Tue, 30 Jul 2024 05:19:41 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4281abc65daso19829355e9.2;
+        Tue, 30 Jul 2024 05:26:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722341980; x=1722946780; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722342380; x=1722947180; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zhzbbMF50wjWGe/fOseTA4c3yfyiRq1RlDd9IV2SLmk=;
-        b=Am8G9Y6SHXJY9R/me/DZVm0e0gCN/BZCAL33MYPirHtADR97jEcC5AqYBRzUCocaMQ
-         gCsb9QtMa5ad1aFuIFqnWiiQjawI1WY5u9bLSbCEcDU0Joa5plhXZ6ZEJWtNGaVw+qIj
-         Va4qFYj8q7uO15lsjOctzAzXaI1lxUVM+FtouHwaTvdMFeeeC3uDE1BbjxLeA7U1imWV
-         joSXdl8QC5QQSEp2qgx6t0M5xoYlvMC/s5Ow2P0JGRp2D5U+tLTF1QRBTFjknjteu0UE
-         uv1yt5qhOFsjEE3qIvoIOEoOdeycaHkF3AdnEplwSkQofgDPMRTrtISd9XQguZq9zQnX
-         coiQ==
+        bh=3un4gr+dg+yEKLgzvAmUvLBXXzIjzbNm9J4CeMjygc0=;
+        b=lJqG08HzhIBuV8wfGYc7DAs3D04IeMi28xix3UWWbPPSlDqYX/mYxGuVAGLFVTFia4
+         c8mWQIowTAEX/viDoEmlM3eb9kURqptIG65FwQDX24Lq9vUCKIj5fh2zQ6/J7++H4yfm
+         pNxMK1+0B3QYqjetWl/iqLH4GNtWUGNqHL8KW3yRoDGH9bPgJ5Jfe0ZVU8p/HDMiKs+s
+         JOqdLHB+sDBihFhI/lqThla7hIT93lrEr+N7RxSsPFkO/pzji2IO8dVpCtGWYKKB0hvy
+         2Yq0MdcAAkIrsn5Zkb5PYF2xhcJB9LH9ySTn4Ff/rNKOd5gJEXy+Q9pZhgNu6gOoYV4K
+         eH0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722341980; x=1722946780;
+        d=1e100.net; s=20230601; t=1722342380; x=1722947180;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zhzbbMF50wjWGe/fOseTA4c3yfyiRq1RlDd9IV2SLmk=;
-        b=d6N1faSoIx34ZV2hY2dZa4lHsv8AdizgQ5xSWTKeSDSJdXYOXWzvy8L+PNfuLgCALP
-         EYWufxF8ab6P8/w6yS/2PbzUwI6nzcOkFHWnB3jyhiLixf4ZsIz67v3/puW92hAhXnm7
-         GmrdeDqcwdtxShiZHdO5vW9k+uSAqy8u5iaVcVCBUV3bZXnWgst1LbVnGyrCpCUNyeCl
-         MDuCHBvGuCkmEjViY8q+AUjZcmqrsZxsMsXJ9WTWo63J5dEhweXepOTeFXcb7LXErWWV
-         JcojOsEW97b8afcQpdcMqAXneqc3N7Ja+Q2xp2BXdfaBhO0sZAJpr8TCf4MBK33p1r/5
-         hXvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVhgvhWihtgd7L0M5cYQKPYDRvmhH++DOA0zNuluUxc147MCqkjDnADXTu6D5JcBud702LV8WjRtCEBMkTuZEeegesWhiYK9WZNx8tTdQ4R8l4FZcO/qcH1Fhgcb4nDsm/gxxz6WyhtWCpGrg==
-X-Gm-Message-State: AOJu0YwpaeYIpjopeprtI5g2obB+Fn52oUhZxU/SGN6U5Uo2n1AglGAc
-	oA421w9zALsiPdtPiYdOu8ggrYT6VkNnZY+aFAAxLk4aIO0h5QGt
-X-Google-Smtp-Source: AGHT+IHfRp+O14nVgEID49LLxSuex4Ar8OcA5hfvS5NVNTLKChUqfW6WP4zhDTMwJhCu3zBkgzGQRg==
-X-Received: by 2002:a05:6402:50c7:b0:5a0:f9f7:6565 with SMTP id 4fb4d7f45d1cf-5b021e1745dmr10267734a12.21.1722341979914;
-        Tue, 30 Jul 2024 05:19:39 -0700 (PDT)
-Received: from localhost.localdomain (93-103-32-68.dynamic.t-2.net. [93.103.32.68])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac631b0395sm7224733a12.20.2024.07.30.05.19.39
+        bh=3un4gr+dg+yEKLgzvAmUvLBXXzIjzbNm9J4CeMjygc0=;
+        b=T3UHyDyII0lkliw/NKV8hz4XBygUa5+J+QcfWuusD3Mxe66MxyEL3cWayRgZ9/dSaQ
+         uYeaHRqejYmqSIubDVWKqaXBc3wtkwAnOe8GDpk/EibxrWSSrOKrBBFvr0DF9ryEm+G8
+         86JQ/w0VL2Q+RHwhaqu1mnuTYbtXgV9OJUXzx2MgdDQrAkHFw+3YSo3+syo55j0q2fqw
+         b1C0HTI+28jBuT7B0Mm5L94nqWEstM7VIm4ywNPn5DBbL5mAk8RRlmkOaZxhdfYWpxzP
+         ojQlJub7suYXjjfzcihaeT4xbAHGrkBkgKH7azKpy45hP16G8bdiPsdPhMtDcM6M+cBP
+         he3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWVL+OAz3YfO0YAfxLI8e5mFAo+4lkYmOoGGbCedFW7HUCCf6hso0Rp1Px41QOmsLtPt4U/aZWOIVHgzVnFWaq11miAz356/ARScGHuXcLbZMGsfbHAgiySSqvWClknPgEZXKoxabkuFA==
+X-Gm-Message-State: AOJu0YxOvTrq1bweAsp8uTlEZjM1IOqDvTBGwqdMhJGQF5ngMcl4LfBj
+	cuPgQODKBh7nM4mayOWFGoQ7NZdJFbTsWk5NV+14dVb1XabbBB/L
+X-Google-Smtp-Source: AGHT+IEo0OR4xTtPsdsqpG9cCpF2H2qx9Mp+KLkzvQb7BSn1LNo54KkYB9VB5F3x2a7GDaRrqqiQHQ==
+X-Received: by 2002:a05:600c:19d3:b0:426:5b3b:88b0 with SMTP id 5b1f17b1804b1-42811d89d55mr80911355e9.14.1722342379341;
+        Tue, 30 Jul 2024 05:26:19 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:a2b2:16cc:b7df:405d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42813a5b3f6sm125366615e9.2.2024.07.30.05.26.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 05:19:39 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-aio@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Benjamin LaHaise <bcrl@kvack.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] fs/aio: Fix __percpu annotation of *cpu pointer in struct kioctx
-Date: Tue, 30 Jul 2024 14:18:34 +0200
-Message-ID: <20240730121915.4514-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        Tue, 30 Jul 2024 05:26:18 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Marc Zyngier <maz@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/4] arm64: dts: renesas: Correct GICD and GICR sizes
+Date: Tue, 30 Jul 2024 13:24:32 +0100
+Message-Id: <20240730122436.350013-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,51 +91,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-__percpu annotation of *cpu pointer in struct kioctx is put at
-the wrong place, resulting in several sparse warnings:
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-aio.c:623:24: warning: incorrect type in argument 1 (different address spaces)
-aio.c:623:24:    expected void [noderef] __percpu *__pdata
-aio.c:623:24:    got struct kioctx_cpu *cpu
-aio.c:788:18: warning: incorrect type in assignment (different address spaces)
-aio.c:788:18:    expected struct kioctx_cpu *cpu
-aio.c:788:18:    got struct kioctx_cpu [noderef] __percpu *
-aio.c:835:24: warning: incorrect type in argument 1 (different address spaces)
-aio.c:835:24:    expected void [noderef] __percpu *__pdata
-aio.c:835:24:    got struct kioctx_cpu *cpu
-aio.c:940:16: warning: incorrect type in initializer (different address spaces)
-aio.c:940:16:    expected void const [noderef] __percpu *__vpp_verify
-aio.c:940:16:    got struct kioctx_cpu *
-aio.c:958:16: warning: incorrect type in initializer (different address spaces)
-aio.c:958:16:    expected void const [noderef] __percpu *__vpp_verify
-aio.c:958:16:    got struct kioctx_cpu *
+Hi All,
 
-Put __percpu annotation at the right place to fix these warnings.
+This patch series aims to correct GICD and GICR sizes on RZ/G2L(LC),
+RZ/G2UL, RZ/V2L and RZ/G3S SoCs. These SoCs are equipped with GIC-600.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Benjamin LaHaise <bcrl@kvack.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- fs/aio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+GIC-600 supports MBI by default, so GICD size is set to 128kB.
+On RZ/G2UL and RZ/G3S SoC despite being single core the GICR size is set
+to 256kB as dumping the GICR_IIDR register shows it has two instances of
+GICR.
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 6066f64967b3..e8920178b50f 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -100,7 +100,7 @@ struct kioctx {
- 
- 	unsigned long		user_id;
- 
--	struct __percpu kioctx_cpu *cpu;
-+	struct kioctx_cpu __percpu *cpu;
- 
- 	/*
- 	 * For percpu reqs_available, number of slots we move to/from global
+v1->v2
+- Dropped changes for single core
+- Updated commit message
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (4):
+  arm64: dts: renesas: r9a08g045: Correct GICD and GICR sizes
+  arm64: dts: renesas: r9a07g043u: Correct GICD and GICR sizes
+  arm64: dts: renesas: r9a07g054: Correct GICD and GICR sizes
+  arm64: dts: renesas: r9a07g044: Correct GICD and GICR sizes
+
+ arch/arm64/boot/dts/renesas/r9a07g043u.dtsi | 4 ++--
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi  | 4 ++--
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi  | 4 ++--
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi  | 4 ++--
+ 4 files changed, 8 insertions(+), 8 deletions(-)
+
 -- 
-2.45.2
+2.34.1
 
 
