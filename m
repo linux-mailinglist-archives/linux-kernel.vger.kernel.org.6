@@ -1,105 +1,132 @@
-Return-Path: <linux-kernel+bounces-268305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BE81942300
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:37:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 743C2942309
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEBB11C21878
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:37:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5D761C21531
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D90F1917D2;
-	Tue, 30 Jul 2024 22:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CCC1917D5;
+	Tue, 30 Jul 2024 22:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eycCCwWp"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kuuv4gBS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6692618DF9D
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C8F18DF9D;
+	Tue, 30 Jul 2024 22:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722379044; cv=none; b=TNTbhIl6WlDLlU4tiGXX6UWm2Y0fMXYBhhcWc7gHYbFUpbWo7o5huZ/jQl9yH8NWvFOoEByWm2qXDR8eUjPdfp3NKuyaVSNS5Z9gFD3TTkogZxLZ6R90W0rv6slBv6anXn5MKFdnX29xyOddY7mLps7ec55ydRxrTQ2z1EttzAo=
+	t=1722379185; cv=none; b=u2W6JRrEl0Q5NPsA0FzJP0XKqlog9BNQY8ivTxNc90/4/lYD7LoUY2zIRhGuRNjDD185D5/t52vxP8JJ/GEWiNu570s32bQsjidZs/E/7JRyg688k0MAX7n+tqY8NdWyTDjHgrWkvIHY924vFQviVrNH8CqFkkcP0mrNt6otF0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722379044; c=relaxed/simple;
-	bh=SHSkH6WVtoSt0+9xxmAtSO1AOYxfaTf6X6tRZUPHolk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ota4vptivKS5rTtubshWk+WBtflwUUB6Kj7sDnZMrtJJOOfn4ktJ3zBpj4iMlMisbw7q/hFDRhJtR5kuu+xQj46j7FrFKrB7UvxUyYtm7ugnPukLjoV9nGzuUj3YrLuSA1cn3CpGdlXN4KUQeEUo2LuyyKxvGPYrlN0QK9sS9vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eycCCwWp; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-8075313cc7aso28800239f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:37:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722379042; x=1722983842; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XBUf5s8wTKFksIEZ7OczGBQ304rkGN/otRWigA83r3U=;
-        b=eycCCwWpMzTN1xAw1zkPz2ptBgB/xQYaYku6IWCCNaoafPvuMeoUjzmRnH+dUcU0X1
-         dt7cOrK7yT13HQGyWLIZfavJDtPIU2WNIe2XUOocuTVMmO8RxYsOtvZGtHlNJDDVErBW
-         ldsFRHXK0yu4EvWwiBDLnr4XLB0M2pW3vfrRs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722379042; x=1722983842;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XBUf5s8wTKFksIEZ7OczGBQ304rkGN/otRWigA83r3U=;
-        b=dQ07spv+2pueFeK9nfUZH7rVYYh3dncZYeTGSrIEk7IAUqBPFSuRjbhcFKiv6/uf4S
-         0n0cMr715J76VcBSyagf6ijYZWhBn5KJt3MdwQHCzt/uYA4yLywjzSabhwMf2qMHkl7e
-         bQWO6R0Ks5JEQ7kyDFza5tKDH3il1XkHz2NPcMZwfRw9H7GK8pDQgO5j45rEtjAREJ5k
-         zDajWxHQNFQSo1G3T759HsIh/HK2AbJYvKrFpJ0pJX9YvALTGkCHQc19KdGjDq4OuNW5
-         2lC2kSzmOdPe4r2giTf+M4nQkloaT4ZTQ3zLBpexo+07/4xmQlcBznk7wUs0Mflg/Ozf
-         +ROg==
-X-Forwarded-Encrypted: i=1; AJvYcCX6Tgray3mVcNqdAcQ83VmRVrCuBssOR09lPdKXSXpYvTYjkv2GHMb4d3w0RjmQsHYS2q+CdMyzK/Ba8QNoNDgKxhf+sG6TLnhuxw7t
-X-Gm-Message-State: AOJu0YxhLWy3HSnANgqYB0WyJFOFThT8j3eNOFdXjcenDgSYpbiwCXYp
-	6+0PhPfxxl3lT0G4nLnCixyudEW367Y9TLoUBFhOMczbzzFN9ZTClWdTO4qZQaU=
-X-Google-Smtp-Source: AGHT+IHtcRRr8g3z2xirD6z2B77KRitfjm9MVf5aaQhDzXm8SieKmYtHCoOtv8sMQXc9nZUBZ3mWPw==
-X-Received: by 2002:a5e:c91a:0:b0:81f:922a:efdb with SMTP id ca18e2360f4ac-81f922af876mr783327439f.1.1722379042596;
-        Tue, 30 Jul 2024 15:37:22 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-81f7d787e4dsm368702839f.25.2024.07.30.15.37.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 15:37:22 -0700 (PDT)
-Message-ID: <9d5c0793-e90a-4549-92b1-41ad06b85de6@linuxfoundation.org>
-Date: Tue, 30 Jul 2024 16:37:21 -0600
+	s=arc-20240116; t=1722379185; c=relaxed/simple;
+	bh=rtuFGI9jAe9/Raa5wEA4SM4Wq3tXO1YX1GDI7wdpApA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iBMTYLTRGLRmvzASVL3x470jBCbnOWAzpnwOC6lsfSoI+VtzC/Hej1lnhWAYAZ2Cg/cj1oTwhEHjrXYGmPl7zwh2ONUiS687+hEC5WcwaEJ+2dcbGAbPv7So3EG7zolNX7WEb1yP5V1EjX+U7bzd+XP0pLHBxeb33ZUU9tyf2io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kuuv4gBS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BA1AC32782;
+	Tue, 30 Jul 2024 22:39:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722379185;
+	bh=rtuFGI9jAe9/Raa5wEA4SM4Wq3tXO1YX1GDI7wdpApA=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=Kuuv4gBSULAP6CRw/beCkkN0jcplY6SVlH4GzyKcM6aj8wBqbd+HDhohPa85uvf1b
+	 ewRQAPLBHJVvzbUDVfUPdH/+ClBjyfklgIvN6C93r9abiWNDXjuv9saJegVRuLB1o2
+	 BqrkhatJ+BDLwrULqMV/XR2BsCacpvvMZu8sshIfB1ZOQNF7GegoLkrWasR7ilc2jL
+	 GWDhOOoTbvRt5fiAY5lPexOexVG6ON1grfxQZsE7YEmsGneLWBkoNkso7A4Cq4Cxn9
+	 Y7sstDuN3jB4qJeznIBo0F4Hj/INNvl3BdQ2urCbnx3Wy4xb1gt7kCfY5vOl2SmKNz
+	 aXaQ8jOANEo/w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id A2F4ACE0A63; Tue, 30 Jul 2024 15:39:44 -0700 (PDT)
+Date: Tue, 30 Jul 2024 15:39:44 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Valentin Schneider <vschneid@redhat.com>, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: RCU-Task[-Trace] VS EQS (was Re: [PATCH v3 13/25]
+ context_tracking, rcu: Rename rcu_dynticks_task*() into rcu_task*())
+Message-ID: <30c6d4aa-7598-4dc1-8592-7533d64714c2@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240724144325.3307148-1-vschneid@redhat.com>
+ <20240724144325.3307148-14-vschneid@redhat.com>
+ <ZqJiDlKtD4wvsv1j@localhost.localdomain>
+ <31d78183-4526-41e8-90df-d03c95fdb9b2@paulmck-laptop>
+ <ZqlmjVyWXIneklCm@pavilion.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests: lib: remove strscpy test
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Shuah Khan <shuah@kernel.org>, Kees Cook <kees@kernel.org>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240725121212.808206-1-usama.anjum@collabora.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240725121212.808206-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZqlmjVyWXIneklCm@pavilion.home>
 
-On 7/25/24 06:11, Muhammad Usama Anjum wrote:
-> The strscpy test loads test_strscpy module for testing. But test_strscpy
-> was converted to Kunit (see fixes). Hence remove strscpy.
+On Wed, Jul 31, 2024 at 12:17:49AM +0200, Frederic Weisbecker wrote:
+> Le Tue, Jul 30, 2024 at 07:23:58AM -0700, Paul E. McKenney a écrit :
+> > On Thu, Jul 25, 2024 at 04:32:46PM +0200, Frederic Weisbecker wrote:
+> > > Le Wed, Jul 24, 2024 at 04:43:13PM +0200, Valentin Schneider a écrit :
+> > > > -/* Turn on heavyweight RCU tasks trace readers on idle/user entry. */
+> > > > -static __always_inline void rcu_dynticks_task_trace_enter(void)
+> > > > +/* Turn on heavyweight RCU tasks trace readers on kernel exit. */
+> > > > +static __always_inline void rcu_task_trace_exit(void)
+> > > 
+> > > Before I proceed on this last one, a few questions for Paul and others:
+> > > 
+> > > 1) Why is rcu_dynticks_task_exit() not called while entering in NMI?
+> > >    Does that mean that NMIs aren't RCU-Task read side critical sections?
+> > 
+> > Because Tasks RCU Rude handles that case currently.  So good catch,
+> > because this might need adjustment when we get rid of Tasks RCU Rude.
+> > And both rcu_dynticks_task_enter() and rcu_dynticks_task_exit() look safe
+> > to invoke from NMI handlers.  Memory ordering needs checking, of course.
+> > 
+> > Except that on architectures defining CONFIG_ARCH_WANTS_NO_INSTR, Tasks
+> > RCU should instead check the ct_kernel_enter_state(RCU_DYNTICKS_IDX)
+> > state, right?  And on those architectures, I believe that
+> > rcu_dynticks_task_enter() and rcu_dynticks_task_exit() can just be no-ops.
+> > Or am I missing something here?
 > 
-> Fixes: 41eefc46a3a4 ("string: Convert strscpy() self-test to KUnit")
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
-> Changes since v1:
-> - Remove from Makefile and config file as well
-> ---
+> I think rcu_dynticks_task_enter() and rcu_dynticks_task_exit() are
+> still needed anyway because the target task can migrate. So unless the rq is locked,
+> it's hard to match a stable task_cpu() with the corresponding RCU_DYNTICKS_IDX.
 
-As mentioned in other threads on this conversion to kunit and removal
-of kselfttest - NACK on this patch.
+Can it really migrate while in entry/exit or deep idle code?  Or am I
+missing a trick here?
 
-Please don't send me any more of these conversion and removal patches.
+> > > 2) Looking further into CONFIG_TASKS_TRACE_RCU_READ_MB=y, it seems to
+> > >    allow for uses of rcu_read_[un]lock_trace() while RCU is not watching
+> > >    (EQS). Is it really a good idea to support that? Are we aware of any
+> > >    such potential usecase?
+> > 
+> > I hope that in the longer term, there will be no reason to support this.
+> > Right now, architectures not defining CONFIG_ARCH_WANTS_NO_INSTR must
+> > support this because tracers really can attach probes where RCU is
+> > not watching.
+> > 
+> > And even now, in architectures defining CONFIG_ARCH_WANTS_NO_INSTR, I
+> > am not convinced that the early incoming and late outgoing CPU-hotplug
+> > paths are handled correctly.  RCU is not watching them, but I am not so
+> > sure that they are all marked noinstr as needed.
+> 
+> Ok I see...
 
-thanks,
--- Shuah
+If need be, the outgoing-CPU transition to RCU-not-watching could be
+delayed into arch-specific code.  We already allow this for the incoming
+transition.
+
+							Thanx, Paul
 
