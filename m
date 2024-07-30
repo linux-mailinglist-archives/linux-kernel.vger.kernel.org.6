@@ -1,84 +1,129 @@
-Return-Path: <linux-kernel+bounces-267862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 827719417A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:13:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 465C19417AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF919B270A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:13:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E577F1F230DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0DE18C928;
-	Tue, 30 Jul 2024 16:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C1D18E044;
+	Tue, 30 Jul 2024 16:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hscoFwZO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dGRWXxim"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B31518B46A;
-	Tue, 30 Jul 2024 16:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330A718E046
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722355845; cv=none; b=BP32s7ZFTnBCIFge1wjz/ewsCiLknoopfmxrOfenLJTO7E0I3f1Ck3HDXNNiuSuPMHSqtna7s+ja/fu+RSiMMHZn7EAhkbeRhaCt6mFKJVnfPPdWgCrFx8pHN8ng21V5/V0fKZjkjA/f7VCVA9IbwpQF3HeEwJjcGC7mkPrwN1s=
+	t=1722355861; cv=none; b=jAitj9l90nNmeTZku79gVCrugOHpGc9Not9/qUtQew38xHU0SX/rPkVYhATqFCYE2LvlPOvFRqnUIPh/l5V4yUaw/wbutxSe6KXgKWhopn00EVvVQ52misFGDIQyp/uPPxTv611S3fvdLHw66bzRGgTqvkK3dCYwtNMemwP977Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722355845; c=relaxed/simple;
-	bh=ruZCOMj4GJJR9diWNZwtPXkWLCbh7l5zwXN9Wrur3to=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E8LmS7FnkyqhfqyC5jfYk0LNND9HqJysuy3CfQkquYZOA78dqN1nI6Rujg/1Q/f4VKf6aw3RdFP5IiAEKVwhlQNgajLCpyhCyvjYGY8UNMxm+nec4c8EGhasH8i7H9lDDkt24aYqI3gxaHOYJj5GLnN1WO+yyDcZ3fA4j4ZpfUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hscoFwZO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A9E8C4AF0F;
-	Tue, 30 Jul 2024 16:10:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722355844;
-	bh=ruZCOMj4GJJR9diWNZwtPXkWLCbh7l5zwXN9Wrur3to=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hscoFwZOwv5/8Bg9JkyOHYkxUOVRz9xOXGnuptijczkPuXrxJ3KDhGgmoW3Ok99cD
-	 mOM0TjXktxqYjpiYsHszIPlzylf764x5Uc8piW+7hFzXvxazi61UgnzmuiquLY0me9
-	 5zy3SSqftcye4xK69nsBNrzRoQNdNcPb6OKHKhncZmAAVhL+7FKDM/MchUuuCL7BY4
-	 WQiui4vW/5kUsFxzdMQxA37/sRla1cHelMgY8jKTPACT0QEyHzx8zmJan4CwiieJGl
-	 hqzHPw+ANKKEZNqe7nF52DT/kqldmhbIvZ6kxl4UcAvwQe1O2WvN5C6PACEHANbMZk
-	 LNWArYpWTcp/Q==
-Date: Tue, 30 Jul 2024 10:10:43 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Farouk Bouabid <farouk.bouabid@cherry.de>
-Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	Quentin Schulz <quentin.schulz@cherry.de>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
-	Peter Rosin <peda@axentia.se>, Conor Dooley <conor+dt@kernel.org>,
-	linux-rockchip@lists.infradead.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v6 3/8] dt-bindings: hwmon: add support for ti,amc6821
-Message-ID: <172235584253.1397741.13902491716086703093.robh@kernel.org>
-References: <20240725-dev-mule-i2c-mux-v6-0-f9f6d7b60fb2@cherry.de>
- <20240725-dev-mule-i2c-mux-v6-3-f9f6d7b60fb2@cherry.de>
+	s=arc-20240116; t=1722355861; c=relaxed/simple;
+	bh=N77xPJMWo4kvlJgzR3iBKZ9hbdNs75+A97/bfiZSefU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TRoqFijCoBefaA0TNQ2nx7k4HWllI/90mGJf78spAmMBXlR2cz9P7AIejBYbsFaKffHnFkpvtNiR2dSAlL9YoQ+qyYpM0/R61hVcenz5l8kPjD8h2mKYLzSwKq+y/yHQNI2bz5pZ+GITqGq233x4UERG9FbTXjJ4NHKml9D5Rbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dGRWXxim; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-428178fc07eso26333415e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:10:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722355858; x=1722960658; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N77xPJMWo4kvlJgzR3iBKZ9hbdNs75+A97/bfiZSefU=;
+        b=dGRWXximrOtl9UJw9//C5rGcFOzoH7GhYNoOiEkbVwRkCN21rqqP/2PNkhsZs8u9oL
+         ClnpJwWo4znxOaLGwD40vbT4voSScDmb3Bz2NhOUDuuhLt2IcwJdUWJy3eeCEUUNb2pw
+         GHc2jN8MQEYJzsgljRVbzKpf0ybXe7BT0a2QnkRueZRwdCWLsw0VfNfdaeIvHMp4Q0Fl
+         wFlLd/PplSlRm6ILLe/CwYpXAGPPbC6o5V/VikpiTTteEOv0ZAZ7pv/W8B9cR2hfm5Ql
+         JYKBvWfktjo2gGUN8aNa478tkMtZgJTP/Hl3+Czuk7EGqQvhgckQZjKJFtJfvYhbn1cd
+         wcRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722355858; x=1722960658;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N77xPJMWo4kvlJgzR3iBKZ9hbdNs75+A97/bfiZSefU=;
+        b=LCQ4LmrxXypgOaBmRBTAbcDQy+6bxShDPy6aBXsFiRC6isZn9+ucDPftl5t/abwvNk
+         Lkjd8JiF0J58x7QgKL8OfT6G4GSqUI/zfCxJzweBOy2VoF3L5uD1GFrNLlKd4HuZPP7q
+         jv2RdSSmv4uw6KKEaoKqQjHvg7UL27pwlV43QjfQItjpdMLq7ED3GmYvSsp283I0M5Ec
+         fktnSmFiRwPRU4adw+nNFwAYtolfPnZLPexwvOuYF9FLEgG6gSv0D3klQd6JEwrMlDnn
+         iG5of8aRpt2MOkGS+EIGxLNNEIhtO0Ymez2cRePUxahyU5r6hyyWI6HA8f3CL0+Xwn58
+         tsKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXmyhBNzd5GhmI7dSuCYpFcOCnUAao6AL9JOk3TFqHLcJt/5DnX//dyrXqEFcTqd3FyCODkl4t5nsgaHbDTlFTZoQSonQMgrc1qV/AU
+X-Gm-Message-State: AOJu0YwspKB8nZF0BroY9ghjVU0F9QHAMAU6kMySrGWHiqL5S3e35Rmr
+	5zNAfCJn8rskgutvbqCUuZtmWtqtsRCKk0OcJce02rtVR7Qme0iYXgmlHDCWU9g/Hn6+0GWeVAl
+	DXhzyohbqZi2XnrIm3H8R+ftBPct8uH26NBV6
+X-Google-Smtp-Source: AGHT+IGEXQ9k57Q6q6L8r4Dbm14onw56YDf9aw0oYCbfbedA5kbLa6rjhEKX71olZ9dxXMrp1GSu7GEb4x9u0KMSBQ4=
+X-Received: by 2002:adf:fc4c:0:b0:362:8ec2:53d6 with SMTP id
+ ffacd0b85a97d-36b5d0bf207mr7653551f8f.61.1722355858189; Tue, 30 Jul 2024
+ 09:10:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240725-dev-mule-i2c-mux-v6-3-f9f6d7b60fb2@cherry.de>
+References: <20240730-kcfi-v1-0-bbb948752a30@google.com> <20240730-kcfi-v1-1-bbb948752a30@google.com>
+ <CANiq72nxq0gnCXbQfFiZ4jErLptR8juyNzv1mKL_MEyWyDQdWA@mail.gmail.com>
+In-Reply-To: <CANiq72nxq0gnCXbQfFiZ4jErLptR8juyNzv1mKL_MEyWyDQdWA@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 30 Jul 2024 18:10:45 +0200
+Message-ID: <CAH5fLgi6OPLGNztKeM7pD3v7_NG6SrPrhXi8H0tFn6Rx-eVgcw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] cfi: add CONFIG_CFI_ICALL_NORMALIZE_INTEGERS
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Sami Tolvanen <samitolvanen@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jul 30, 2024 at 1:38=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Tue, Jul 30, 2024 at 11:40=E2=80=AFAM Alice Ryhl <aliceryhl@google.com=
+> wrote:
+> >
+> > Introduce a Kconfig option for enabling the experimental option to
+> > normalize integer types. This ensures that integer types of the same
+> > size and signedness are considered compatible by the Control Flow
+> > Integrity sanitizer.
+> >
+> > This option exists for compatibility with Rust, as C and Rust do not
+> > have the same set of integer types. There are cases where C has two
+> > different integer types of the same size and alignment, but Rust only
+> > has one integer type of that size and alignment. When Rust calls into
+> > C functions using such types in their signature, this results in CFI
+> > failures.
+> >
+> > This patch introduces a dedicated option for this because it is
+> > undesirable to have CONFIG_RUST affect CC_FLAGS in this way.
+>
+> Is there any case where we would want CFI_ICALL_NORMALIZE_INTEGERS
+> when Rust is not enabled, then? If not, is the idea here to make this
+> an explicit extra question in the config before enabling Rust? Or why
+> wouldn't it be done automatically?
 
-On Thu, 25 Jul 2024 15:27:49 +0200, Farouk Bouabid wrote:
-> Add dt-bindings for amc6821 intelligent temperature monitor and
-> pulse-width modulation (PWM) fan controller.
-> 
-> Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
-> ---
->  .../devicetree/bindings/hwmon/ti,amc6821.yaml      | 86 ++++++++++++++++++++++
->  .../devicetree/bindings/trivial-devices.yaml       |  2 -
->  2 files changed, 86 insertions(+), 2 deletions(-)
-> 
+I'm adding this flag to make the bringup process for RUST easier.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+I'm working on enabling RUST in a new branch. We're eventually going
+to have both RUST and CFI_ICALL_NORMALIZE_INTEGERS enabled in our
+build, but the path to getting there is complex and we would like to
+turn on CFI_ICALL_NORMALIZE_INTEGERS first, and then turn on RUST
+later. Both options are non-trivial to turn on and I want to
+disentangle them.
 
+Alice
 
