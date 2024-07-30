@@ -1,57 +1,76 @@
-Return-Path: <linux-kernel+bounces-266648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43DB3940428
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 04:10:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C98B894046C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 04:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B83B01F21BE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 02:10:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECC3A1C210C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 02:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB7E1A291;
-	Tue, 30 Jul 2024 02:09:55 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E8813FD83;
+	Tue, 30 Jul 2024 02:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="d7+7tAMz"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132A11773D;
-	Tue, 30 Jul 2024 02:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBBECA6B;
+	Tue, 30 Jul 2024 02:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722305394; cv=none; b=PLW5EP01mAwC9cdZSOutY+NBDEO37a2+wdNxnPMnXqI4VuEVBN6ei9MGjvt6V2K9m0bdrBfUo8ridUU5iuKIZ2pJLRWVp18mhN6pYAyJbmL612X3D9HR5vz9lfOFbMYjHWiZzlb/XIIjnD5vU59kdRoa9uwfvOdqwfthg0uA4g4=
+	t=1722305801; cv=none; b=fs0/zTsSy8dZpndTRPfgJTxiZWtBmyZLWPWbL3IJu/+fn2pUj0MSaOFDV4A0rPxsgbrn6qA0iB+XXqn0Ut1tbMAWjPfxXHx5DWarwFxGA/1oHE66KOOcp2pNIWkVZJ5S/N849JIhMYWWW7uwW8Jf9GieB74UkVp5omgkQaBgLak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722305394; c=relaxed/simple;
-	bh=M1AzgA+O8CKFtzCP2VkdIQ3xs3VxBhk5kXKmJJNDWyg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZRpmQWDP7u5M3+OtMxP5w4BM5x3QoIho0+0P2Ofwi44ospw+f8CAgd/aYoLZn19NOflQUzFB5Ai2kW1Npv1eCNeo096YV33D11nSl0nv4OjcJsWfby4F38EFFB2oAV1MTczSkq3y0btzR844BBUfMEnRcQTqwPFumv4h0J2wPBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WXz8F3dxkz28fvb;
-	Tue, 30 Jul 2024 10:05:17 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 82149180043;
-	Tue, 30 Jul 2024 10:09:49 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
- (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 30 Jul
- 2024 10:09:48 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <linux@armlinux.org.uk>, <peterz@infradead.org>, <mingo@redhat.com>,
-	<acme@kernel.org>, <namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
-	<will@kernel.org>, <arnd@arndb.de>, <afd@ti.com>,
-	<rmk+kernel@armlinux.org.uk>, <linus.walleij@linaro.org>,
-	<akpm@linux-foundation.org>, <masahiroy@kernel.org>,
-	<eric.devolder@oracle.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH v2] ARM: stacktrace: Add USER_STACKTRACE support
-Date: Tue, 30 Jul 2024 10:15:32 +0800
-Message-ID: <20240730021532.1752582-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722305801; c=relaxed/simple;
+	bh=9oRikuIjBeqowAAlsBB19ZugmBxBNVEEhZNvOJNY0EM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YAp7sKItk8LAhLT0ivbjt1s79BV7wekgIgqTrGZKdaXlqacgnSGyg9Zr21d4mcedLXmu0AR5tJoSbIjK/F+iqOfV1hlD+UOojdGamEcML22qNa7PH8JLxY/rrnTYPQKIU8s6jtqqUBnGfKUHYE7nT3m9y1Hb0tvv7bVcK3+Zdcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=d7+7tAMz; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722305797;
+	bh=9oRikuIjBeqowAAlsBB19ZugmBxBNVEEhZNvOJNY0EM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=d7+7tAMzg034Q6hb+PheTRmGGdCSeSco+Y1qjunn9X4foOCRvBCjvMbviWdmRiezw
+	 GwO1fSlOIHN8KFMIyx+0MpWkL1/VnrV/LHsOKPmvrNtJEug2L5c2000yTWWXHdVZgp
+	 nwtHY5W7nhyInReyTCExYmisJfIDMXFKqXzj8sr1RJai258jBHUo8xl7dy6pzNxjue
+	 9++jWqQBiACeZwgxBrXtkdFGMrdqTAfubOJdGIpAYRemCOqj9qOhRVDzp0pigneKd5
+	 L7nBKx6Fmv9Ufrmb4Dv32oTT3Uluz/6bDP/eCC/eGI3ZTpLkv4yI1N0MU7c1+/iun7
+	 LoLkBx3RjdLbQ==
+Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B741F3780521;
+	Tue, 30 Jul 2024 02:16:32 +0000 (UTC)
+From: Vignesh Raman <vignesh.raman@collabora.com>
+To: dri-devel@lists.freedesktop.org
+Cc: daniels@collabora.com,
+	helen.koike@collabora.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	robdclark@gmail.com,
+	guilherme.gallo@collabora.com,
+	sergi.blanch.torne@collabora.com,
+	deborah.brouwer@collabora.com,
+	dmitry.baryshkov@linaro.org,
+	mcanal@igalia.com,
+	melissa.srw@gmail.com,
+	linux-mediatek@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v9 0/6] drm/ci: Add support for GPU and display testing
+Date: Tue, 30 Jul 2024 07:45:35 +0530
+Message-ID: <20240730021545.912271-1-vignesh.raman@collabora.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,231 +78,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi100008.china.huawei.com (7.221.188.57)
 
-Currently, userstacktrace is unsupported for ARM. So use the
-perf_callchain_user() code as blueprint to implement the
-arch_stack_walk_user() which add userstacktrace support on ARM.
-Meanwhile, we can use arch_stack_walk_user() to simplify the implementation
-of perf_callchain_user().
+Some ARM SOCs have a separate display controller and GPU, each with
+different drivers. For mediatek mt8173, the GPU driver is powervr,
+and the display driver is mediatek. In the case of mediatek mt8183,
+the GPU driver is panfrost, and the display driver is mediatek.
+With rockchip rk3288/rk3399, the GPU driver is panfrost, while the
+display driver is rockchip. For amlogic meson G12B (A311D) SOC, the
+GPU driver is panfrost, and the display driver is meson.
 
-A ftrace test case is shown as below:
-	# cd /sys/kernel/debug/tracing
-	# echo 1 > options/userstacktrace
-	# echo 1 > options/sym-userobj
-	# echo 1 > events/sched/sched_process_fork/enable
-	# cat trace
+IGT tests run various tests with different xfails and can test both
+GPU devices and KMS/display devices. Currently, in drm-ci for MediaTek,
+Rockchip, and Amlogic Meson platforms, only the GPU driver is tested.
+This leads to incomplete coverage since the display is never tested on
+these platforms. This commit series adds support in drm-ci to run tests
+for both GPU and display drivers for MediaTek mt8173/mt8183, Rockchip
+rk3288/rk3399, and Amlogic Meson G12B (A311D) platforms.
 
-	......
-	              sh-100     [000] .....    51.779261: sched_process_fork: comm=sh pid=100 child_comm=sh child_pid=108
-	              sh-100     [000] .....    51.779285: <user stack trace>
-	 => /lib/libc.so.6[+0xb3c8c]
-	 => /bin/busybox[+0xffb901f1]
+Update the expectations file, and skip driver-specific tests and
+tools_test on non-intel platforms.
 
-Also a simple perf test is ok as below:
-	# perf record -e cpu-clock --call-graph fp top
-	# perf report --call-graph
+Working pipeline link,
+https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1235518
 
-	.....
-	  [[31m  65.00%[[m     0.00%  top      [kernel.kallsyms]  [k] __ret_fast_syscall
+Vignesh Raman (6):
+  drm/ci: arm64.config: Enable CONFIG_DRM_ANALOGIX_ANX7625
+  drm/ci: skip tools_test on non-intel platforms
+  drm/ci: mediatek: add tests for mediatek display driver
+  drm/ci: mediatek: add tests for powervr gpu driver
+  drm/ci: meson: add tests for meson display driver
+  drm/ci: rockchip: add tests for rockchip display driver
 
-	            |
-	            ---__ret_fast_syscall
-	               |
-	               |--[[31m30.00%[[m--__se_sys_getdents64
-	               |          iterate_dir
-	               |          |
-	               |          |--[[31m25.00%[[m--proc_pid_readdir
+ MAINTAINERS                                   |   2 +
+ drivers/gpu/drm/ci/arm64.config               |   1 +
+ drivers/gpu/drm/ci/gitlab-ci.yml              |   3 +-
+ drivers/gpu/drm/ci/igt_runner.sh              |  10 --
+ drivers/gpu/drm/ci/test.yml                   | 123 ++++++++++++++----
+ .../gpu/drm/ci/xfails/amdgpu-stoney-fails.txt |   1 -
+ .../gpu/drm/ci/xfails/amdgpu-stoney-skips.txt |   1 +
+ .../drm/ci/xfails/mediatek-mt8173-fails.txt   |   1 -
+ .../drm/ci/xfails/mediatek-mt8173-skips.txt   |   1 +
+ .../drm/ci/xfails/mediatek-mt8183-fails.txt   |  28 +++-
+ .../drm/ci/xfails/mediatek-mt8183-flakes.txt  |  20 +++
+ .../drm/ci/xfails/mediatek-mt8183-skips.txt   |   5 +-
+ .../gpu/drm/ci/xfails/meson-g12b-fails.txt    |  19 ++-
+ .../gpu/drm/ci/xfails/meson-g12b-skips.txt    |   5 +-
+ .../gpu/drm/ci/xfails/msm-apq8016-fails.txt   |   1 -
+ .../gpu/drm/ci/xfails/msm-apq8016-skips.txt   |   1 +
+ .../gpu/drm/ci/xfails/msm-apq8096-fails.txt   |   1 -
+ .../gpu/drm/ci/xfails/msm-apq8096-skips.txt   |   1 +
+ .../msm-sc7180-trogdor-kingoftown-fails.txt   |   1 -
+ .../msm-sc7180-trogdor-kingoftown-skips.txt   |   1 +
+ ...sm-sc7180-trogdor-lazor-limozeen-fails.txt |   1 -
+ ...sm-sc7180-trogdor-lazor-limozeen-skips.txt |   1 +
+ .../gpu/drm/ci/xfails/msm-sdm845-fails.txt    |   1 -
+ .../gpu/drm/ci/xfails/msm-sdm845-skips.txt    |   1 +
+ .../gpu/drm/ci/xfails/panfrost-g12b-fails.txt |   1 +
+ .../gpu/drm/ci/xfails/panfrost-g12b-skips.txt |  23 ++++
+ .../drm/ci/xfails/panfrost-mt8183-fails.txt   |   1 +
+ .../drm/ci/xfails/panfrost-mt8183-skips.txt   |  23 ++++
+ .../drm/ci/xfails/panfrost-rk3288-fails.txt   |   1 +
+ .../drm/ci/xfails/panfrost-rk3288-skips.txt   |  26 ++++
+ .../drm/ci/xfails/panfrost-rk3399-fails.txt   |   1 +
+ .../drm/ci/xfails/panfrost-rk3399-flakes.txt  |   6 +
+ .../drm/ci/xfails/panfrost-rk3399-skips.txt   |  26 ++++
+ .../drm/ci/xfails/rockchip-rk3288-fails.txt   |  22 +++-
+ .../drm/ci/xfails/rockchip-rk3288-flakes.txt  |   6 +
+ .../drm/ci/xfails/rockchip-rk3288-skips.txt   |  55 +-------
+ .../drm/ci/xfails/rockchip-rk3399-fails.txt   |  90 ++++++++++++-
+ .../drm/ci/xfails/rockchip-rk3399-flakes.txt  |  50 ++++++-
+ .../drm/ci/xfails/rockchip-rk3399-skips.txt   |   8 +-
+ .../drm/ci/xfails/virtio_gpu-none-fails.txt   |   1 -
+ .../drm/ci/xfails/virtio_gpu-none-skips.txt   |   1 +
+ drivers/gpu/drm/ci/xfails/vkms-none-fails.txt |   1 -
+ drivers/gpu/drm/ci/xfails/vkms-none-skips.txt |   1 +
+ 43 files changed, 433 insertions(+), 140 deletions(-)
+ create mode 100644 drivers/gpu/drm/ci/xfails/mediatek-mt8183-flakes.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/panfrost-g12b-fails.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/panfrost-g12b-skips.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/panfrost-mt8183-fails.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/panfrost-mt8183-skips.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/panfrost-rk3288-fails.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/panfrost-rk3288-skips.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/panfrost-rk3399-fails.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/panfrost-rk3399-flakes.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/panfrost-rk3399-skips.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/rockchip-rk3288-flakes.txt
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
-v2:
-- Update the wrong patch title.
-- Take off the merged bugfix patch.
-- Remove the Tested-by.
----
- arch/arm/Kconfig                 |  1 +
- arch/arm/kernel/perf_callchain.c | 70 +++-----------------------------
- arch/arm/kernel/stacktrace.c     | 65 +++++++++++++++++++++++++++++
- 3 files changed, 72 insertions(+), 64 deletions(-)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 54b2bb817a7f..eb9a587935ef 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -152,6 +152,7 @@ config ARM
- 	select HAVE_ARCH_VMAP_STACK if MMU && ARM_HAS_GROUP_RELOCS
- 	select TRACE_IRQFLAGS_SUPPORT if !CPU_V7M
- 	select USE_OF if !(ARCH_FOOTBRIDGE || ARCH_RPC || ARCH_SA1100)
-+	select USER_STACKTRACE_SUPPORT
- 	# Above selects are sorted alphabetically; please add new ones
- 	# according to that.  Thanks.
- 	help
-diff --git a/arch/arm/kernel/perf_callchain.c b/arch/arm/kernel/perf_callchain.c
-index 1d230ac9d0eb..cdb7aa31c6ec 100644
---- a/arch/arm/kernel/perf_callchain.c
-+++ b/arch/arm/kernel/perf_callchain.c
-@@ -12,70 +12,6 @@
- 
- #include <asm/stacktrace.h>
- 
--/*
-- * The registers we're interested in are at the end of the variable
-- * length saved register structure. The fp points at the end of this
-- * structure so the address of this struct is:
-- * (struct frame_tail *)(xxx->fp)-1
-- *
-- * This code has been adapted from the ARM OProfile support.
-- */
--struct frame_tail {
--	struct frame_tail __user *fp;
--	unsigned long sp;
--	unsigned long lr;
--} __attribute__((packed));
--
--/*
-- * Get the return address for a single stackframe and return a pointer to the
-- * next frame tail.
-- */
--static struct frame_tail __user *
--user_backtrace(struct frame_tail __user *tail,
--	       struct perf_callchain_entry_ctx *entry)
--{
--	struct frame_tail buftail;
--	unsigned long err;
--
--	if (!access_ok(tail, sizeof(buftail)))
--		return NULL;
--
--	pagefault_disable();
--	err = __copy_from_user_inatomic(&buftail, tail, sizeof(buftail));
--	pagefault_enable();
--
--	if (err)
--		return NULL;
--
--	perf_callchain_store(entry, buftail.lr);
--
--	/*
--	 * Frame pointers should strictly progress back up the stack
--	 * (towards higher addresses).
--	 */
--	if (tail + 1 >= buftail.fp)
--		return NULL;
--
--	return buftail.fp - 1;
--}
--
--void
--perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs)
--{
--	struct frame_tail __user *tail;
--
--	perf_callchain_store(entry, regs->ARM_pc);
--
--	if (!current->mm)
--		return;
--
--	tail = (struct frame_tail __user *)regs->ARM_fp - 1;
--
--	while ((entry->nr < entry->max_stack) &&
--	       tail && !((unsigned long)tail & 0x3))
--		tail = user_backtrace(tail, entry);
--}
--
- /*
-  * Gets called by walk_stackframe() for every stackframe. This will be called
-  * whist unwinding the stackframe and is like a subroutine return so we use
-@@ -88,6 +24,12 @@ callchain_trace(void *data, unsigned long pc)
- 	return perf_callchain_store(entry, pc) == 0;
- }
- 
-+void
-+perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs)
-+{
-+	arch_stack_walk_user(callchain_trace, entry, regs);
-+}
-+
- void
- perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs)
- {
-diff --git a/arch/arm/kernel/stacktrace.c b/arch/arm/kernel/stacktrace.c
-index 620aa82e3bdd..b744792755b5 100644
---- a/arch/arm/kernel/stacktrace.c
-+++ b/arch/arm/kernel/stacktrace.c
-@@ -194,4 +194,69 @@ void arch_stack_walk(stack_trace_consume_fn consume_entry, void *cookie,
- 
- 	walk_stackframe(&frame, consume_entry, cookie);
- }
-+
-+/*
-+ * The registers we're interested in are at the end of the variable
-+ * length saved register structure. The fp points at the end of this
-+ * structure so the address of this struct is:
-+ * (struct frame_tail *)(xxx->fp)-1
-+ *
-+ * This code has been adapted from the ARM OProfile support.
-+ */
-+struct frame_tail {
-+	struct frame_tail __user *fp;
-+	unsigned long sp;
-+	unsigned long lr;
-+} __packed;
-+
-+/*
-+ * Get the return address for a single stackframe and return a pointer to the
-+ * next frame tail.
-+ */
-+static struct frame_tail __user *
-+unwind_user_frame(struct frame_tail __user *tail, void *cookie,
-+		  stack_trace_consume_fn consume_entry)
-+{
-+	struct frame_tail buftail;
-+	unsigned long err;
-+
-+	if (!access_ok(tail, sizeof(buftail)))
-+		return NULL;
-+
-+	pagefault_disable();
-+	err = __copy_from_user_inatomic(&buftail, tail, sizeof(buftail));
-+	pagefault_enable();
-+
-+	if (err)
-+		return NULL;
-+
-+	if (!consume_entry(cookie, buftail.lr))
-+		return NULL;
-+
-+	/*
-+	 * Frame pointers should strictly progress back up the stack
-+	 * (towards higher addresses).
-+	 */
-+	if (tail + 1 >= buftail.fp)
-+		return NULL;
-+
-+	return buftail.fp - 1;
-+}
-+
-+void arch_stack_walk_user(stack_trace_consume_fn consume_entry, void *cookie,
-+			  const struct pt_regs *regs)
-+{
-+	struct frame_tail __user *tail;
-+
-+	if (!consume_entry(cookie, regs->ARM_pc))
-+		return;
-+
-+	if (!current->mm)
-+		return;
-+
-+	tail = (struct frame_tail __user *)regs->ARM_fp - 1;
-+
-+	while (tail && !((unsigned long)tail & 0x3))
-+		tail = unwind_user_frame(tail, cookie, consume_entry);
-+}
- #endif
 -- 
-2.34.1
+2.43.0
 
 
