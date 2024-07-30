@@ -1,426 +1,247 @@
-Return-Path: <linux-kernel+bounces-267205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93894940E60
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:55:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A00940E65
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16C451F22196
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:55:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74D131F23187
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380A1197A9D;
-	Tue, 30 Jul 2024 09:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3978B19D8BA;
+	Tue, 30 Jul 2024 09:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BzRsKe/p"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="laAYV2YG"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2052.outbound.protection.outlook.com [40.107.103.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70264199225;
-	Tue, 30 Jul 2024 09:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722333272; cv=none; b=nj+vRCs6ZcKtBwolN3OSvs0oWJlpZ4CnWdEtoOSnJ5JT4RUDngm9Ix702xZOuPjxErmscyPs+oVp7bQL3AC19fCprWeFvzGahm/SQLV18ehOAnuaG44/wyU7rrFwaiRVe8Q3MWbZ90twcHGIQSribO3/2ZDTV+R4klo2UAHvgpk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722333272; c=relaxed/simple;
-	bh=fJUUZy63DNja79BO/QofyCOSdxt0gOQiU3c2Hu4DV3k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=p2OS5axv6CaG4xATG+++3gRq/uNdf0Jl+HyzOr2PF7EEhSauUASnBegKzqwprmLSErIsjXfxmM0FDJJBoF/2q+OEv5FNAJdt/pVeY+XqHe2/SNTVGYSlL4xHFtJk0yMrFniRQeSw+cFUhQVeBTYEig8OJfVo9yO730xHBUj2nTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BzRsKe/p; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46U9sNre006293;
-	Tue, 30 Jul 2024 04:54:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722333263;
-	bh=ziikP3lPhDAWibpFuyPIt0s7BPO6Q9yElVmKm2Gtm3o=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=BzRsKe/pDfmf4XXHvZBJveSnjE3qPUWd2Hg9J5bozwPcsn9r7wKwIvF/7UYbMceYI
-	 lMrvHmUu35Z6uT2/catMZMqJe3kwp86v+VJ/NcBgty43rrIpmmO/b5ML/2dIb1qHKq
-	 i5IRreZ71SwQbvh7U9sGWPVsU2xy36Az+1vWUhD8=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46U9sNi1064105
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 30 Jul 2024 04:54:23 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 30
- Jul 2024 04:54:23 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 30 Jul 2024 04:54:23 -0500
-Received: from [127.0.1.1] (uda0497581.dhcp.ti.com [10.24.68.185])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46U9rum1008969;
-	Tue, 30 Jul 2024 04:54:19 -0500
-From: Manorit Chawdhry <m-chawdhry@ti.com>
-Date: Tue, 30 Jul 2024 15:23:55 +0530
-Subject: [PATCH v3 5/5] arm64: dts: ti: k3-j7200*: Add bootph-* properties
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CB019599C;
+	Tue, 30 Jul 2024 09:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722333285; cv=fail; b=cXW/JopvLjPZbDmgWIjkeSgysug8LDRcESXPZn78xTmBW8owMfn3nrHtT3ge6Ca/ExLYH61kfhCRN1tLEmOb/o5JsH3ofeIV//SeOZQysmn44juljs7CoU+e1dH9KaptTJ6AucWeFF/FVUI/ZaaJyrebN2GP8MjgNMi0Oa42LKI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722333285; c=relaxed/simple;
+	bh=/Yx13Y7TSs05VJKZi69JX0OqlXAqv8nvgptjoN844AU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=nPnmGZFoCjBMj/EZcK8NOyFYPLWhwUDr0D89uxGt41CvzMJ8GlynI0XxKRZyruHoXK5zLNpavEYvxpOA64u/luH8JwQ/1WfSjdtZPy39Ek/QOuuUctHBsJTMMgodG9y7aADDcosDueDBGn46rfLlKyomOUAjntdgyDfcQpWYQJ4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=laAYV2YG; arc=fail smtp.client-ip=40.107.103.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rZV5Jmo3q+3qB5u70iJdb8vtKjSCwhBjoStnkVnJQlXz5vpg0ztX9JtG4bT6PoHX568W6pTnrDEfoNGwUd+Cx4EkpArc+kMr46LwprM47ZMiXWWKwn11/oSf4QowqcXnehhWI+5ruutBzMZeE9HJyTCFIEZ/REx6p3e59R+vIh862rw0c0aWgL5pvmMP2wChH/YU4u87tQi0/Xu0pu08KwdJMLDTd6GWQGIL60XJQ2fYTOMAs1aJ46daNIrImym8EdDIvvCoZJIPGj7njCxg+N4912DsBdlC0fJgwNkCyZcnX5jQSDcxejct74DQYohPr1ItNG63kUZHfs4uLhuVlg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WkoX6eAnZaQAU/5TOwdVi8tlzn1Z2jN2WJfGy/iPDQA=;
+ b=RC2VxdoSh5/QdbCb76UzZB+XJRBljseraV6TSInqEszEq2ojuwneVOJ0H2G2MVONUhkCiOoSH04hxfgKZnHHGx6YCIZG54T6sOepqFaNDv5+D45d2wUTSOmBJdOwT5CXI9X3F99wCq5lJ6OlGeR5NzZslb5oICjBkrtbllh6oyRSTHC3XC1pOHVhWgSxoyq+PN/6jT/+CimmGzudivxziSryK94tQKrCj7QSdiC4likT1QOhfELqnnlP9nQnxFX0l15/ie+4XmCFDMQpuV6Zu8/ZAhJfPVI3/hPja/j9xQoUb1nPq/iXgJSiI1Jkg0LUSAXQJn+GIFH8VPO+M2S2HQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=de.bosch.com; dmarc=pass action=none header.from=de.bosch.com;
+ dkim=pass header.d=de.bosch.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WkoX6eAnZaQAU/5TOwdVi8tlzn1Z2jN2WJfGy/iPDQA=;
+ b=laAYV2YGtMzN68sH2a7ECR994oubjpoqmfdBpmB38HsbPvRM6oE4aAQ+tlEWNkG1R8q1vUXehDFftqmlZ1L6ySvNDHGfprE1ekbTOD8e7pquoYsgfAwpRW28sFw2U7mrSHuHjPyaIQUxyhqQERjMtU+Z1ouc5I/IfbE0DoqJ8JiRZIyaMbsdVIKh9W7i/WWFHY6haFqEZal8l9qEpfOVDOXPY2bnRV5RBCaLIqlFjBp4n0/UzSTvajhPrKI0wWZxKtxAGQamxx6rWCY+Ktl0feyJ3jsJEkwWH2e0UBBE2ZXdIPzXdsr3ixjcHqPbaYv2DGkUxqjjvXQdPY/AEy+zQg==
+Received: from AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:315::22)
+ by AM7PR10MB3528.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:13a::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Tue, 30 Jul
+ 2024 09:54:38 +0000
+Received: from AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::6748:a0c9:d73d:db74]) by AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::6748:a0c9:d73d:db74%4]) with mapi id 15.20.7807.026; Tue, 30 Jul 2024
+ 09:54:38 +0000
+From: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
+To: Jonathan Cameron <jic23@kernel.org>, Conor Dooley <conor@kernel.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, "lars@metafoo.de"
+	<lars@metafoo.de>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"dima.fedrau@gmail.com" <dima.fedrau@gmail.com>, "marcelo.schmitt1@gmail.com"
+	<marcelo.schmitt1@gmail.com>, "linux-iio@vger.kernel.org"
+	<linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Lorenz Christian (ME-SE/EAD2)"
+	<Christian.Lorenz3@de.bosch.com>, "Frauendorf Ulrike (ME/PJ-SW3)"
+	<Ulrike.Frauendorf@de.bosch.com>, "Dolde Kai (ME-SE/PAE-A3)"
+	<Kai.Dolde@de.bosch.com>
+Subject: RE: [PATCH] dt-bindings: iio: imu: SMI240: add bosch,smi240.yaml
+Thread-Topic: [PATCH] dt-bindings: iio: imu: SMI240: add bosch,smi240.yaml
+Thread-Index: AQHa3chB8xxiR7i0TkqCxVScMqlaI7IF2/MAgAAOijCAABVsgIAEnx6AgARxWBA=
+Date: Tue, 30 Jul 2024 09:54:37 +0000
+Message-ID:
+ <AM8PR10MB472120A0BF7377F4D800E165CDB02@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
+References: <20240724125115.10110-1-Jianping.Shen@de.bosch.com>
+	<20a8ad37-f6ce-4342-a2f7-bf3495dfeb69@kernel.org>
+	<AM8PR10MB47219903C83BA4F0AFE2DAA3CDAA2@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
+	<20240724-ogle-equal-d14de4318080@spud>
+ <20240727150011.019344c6@jic23-huawei>
+In-Reply-To: <20240727150011.019344c6@jic23-huawei>
+Accept-Language: en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=de.bosch.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM8PR10MB4721:EE_|AM7PR10MB3528:EE_
+x-ms-office365-filtering-correlation-id: 2917c69a-a1d2-4e73-161d-08dcb07d9fe8
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|7416014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?JSNfREDAaDxfjoL7EfBCtl0N+63/5yArh5hTdUIam0/qEpoSZ7TigFnECU?=
+ =?iso-8859-1?Q?5ffQn8Fs0ld/mpBfPWXt2/2XViQcKZ6N/2sA934XO7QNiBV1CcqMCCerzq?=
+ =?iso-8859-1?Q?EEEnNMLlsnUq6UI30RL6yiJNdhCTfTHL6L+CMZW2oQfqyCH3ZURhzrGscv?=
+ =?iso-8859-1?Q?WpfjUT03GF4mIeX5Rky1Ync5EIHE845Y/VHBGH3+mPKyY1tYThHTJpzxiu?=
+ =?iso-8859-1?Q?sHKqo6MAXK/0ETgX8qrlKszeVwKJNI8MLCyDdLf8aue85LOYLs7V4zQslc?=
+ =?iso-8859-1?Q?Dv351noBvsfIO25o1x3IeshIbKrbYG7MefOhJHgUgHMXUFu7MQ3SsLfwA9?=
+ =?iso-8859-1?Q?zWyUflsE5C+cvTgrMvliwIfISs2es2LLKw+q2ah8YLXxuyZo+I2NnkyuUr?=
+ =?iso-8859-1?Q?clxEjWTpmyVZFNFJ2CHUiQkGOOaS1FmlJpJ5bCAuE4s5x01BWDYYq2OuIM?=
+ =?iso-8859-1?Q?fQ7BLSW1abbmOd+/2EUxM3SWQ5A0p9kkHR8q8PtoT2zUZX1XoI5MQHaElZ?=
+ =?iso-8859-1?Q?1jRzSij6y1ZndRT/DR2EG8EzB1ecm0vVbwUWt49muxzzNYg3qGHA0gUYGc?=
+ =?iso-8859-1?Q?vUYaeeXNGtLS2MXdi6vhYui2To2lkakP2tUAR1c26+S+6YmdF5OIFzXIYY?=
+ =?iso-8859-1?Q?4+KwvQR9q6eu0+ZNeSm6i+CVP+NIvvYvGGuMjr5jCT/15x59XU6HyAFU7i?=
+ =?iso-8859-1?Q?EZTlOJ/CUnnOTF8BGCZXqjEq+hXv5p056uc3tvSplUXPdo8GemzkL3cq1e?=
+ =?iso-8859-1?Q?umyYfuCN5LgKrBe5ZZ9fQRhd3IcW/jfpqZkZBWIF3LqmxnfUcjq9utJfyB?=
+ =?iso-8859-1?Q?C+LPOCdRvl3gvwWFh4zgUCsp9UaOKYFckqzRtGTYsVA0gw6YOr7bG6c7SU?=
+ =?iso-8859-1?Q?Wp9voUdm32MK5RJJ9wvd/jujKqEXzSfzvHobTfezWcSCqI3AfDLs6t8Mqq?=
+ =?iso-8859-1?Q?RVD8hR6XyjB5tH99q2p7OUf6uZqT5lbKGRveADDrISjd92kAvbUsiwjtaA?=
+ =?iso-8859-1?Q?WeZ668XCyP7dndF9iVFZM9SoDPOCRNQX3NmOVH4eORPj6lfbkg9UEFCtfv?=
+ =?iso-8859-1?Q?ARx6QzSE3nrEhZTY8BeW2FK6Oec7SG6T87ou/lCa5LTdNh4/x27Lmh9ySw?=
+ =?iso-8859-1?Q?iuntd9h4z72m7Xli+AM5yyNeW5m7Jtr4kMMzK8BR7YQVcTEgF4hJOyJmeB?=
+ =?iso-8859-1?Q?LiCJ7ucUwaPH7mHURtowQ0pDH4p/W4oA4Atu80xtTIngLlN9xDxb+n5Ft3?=
+ =?iso-8859-1?Q?YKiMldavDAKUC3g8zBcu89zVr/iXv/3eVUtXS1jfUDElmDWUowUOgGAWkf?=
+ =?iso-8859-1?Q?J7LEh5ANchultUY4iQ8G2S16mzk1tzH3v2ch9wgsIfyvYsA+yjccG1kkMn?=
+ =?iso-8859-1?Q?0reW7F51ZkJZo4CbwhTq9vRe0x8PHiSRnwAhIrYbh2tqHQsIGOn2M=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?flATRYw9LoMN/ZpyNhaCVxUOlTexL/fOgycH19gQfqLhkIgpkbM7DL/+kU?=
+ =?iso-8859-1?Q?f2zqpxNWklWUVFBJA5KAcn2sMHpCOkDHXWgK+DEF8CK9qLxhDKiFAYy5V9?=
+ =?iso-8859-1?Q?O2V0EuJkGUKlWSCvKYdu9l0MGcXqYYLe6BZ6UNNJvq3hKTfoEB+fdB/EzD?=
+ =?iso-8859-1?Q?wIwvx8wUUGPOzNCOArihrso7LiYt3yT9YeZ3KsZ4NZPjbzzJYcPVj5grJM?=
+ =?iso-8859-1?Q?Pc9xB6X6dYfnK321JiAFfOrbI7Pwh5L1aEnwi6THL8uGAUDJdOgmm6Z2Mg?=
+ =?iso-8859-1?Q?NRWrKYlYhcr4BEqcweCgZAZB38VYEd9+zfJgkdcObYMxATz5iltUV3i4wh?=
+ =?iso-8859-1?Q?xhITtMGeotEAI3Zgy4+xzF3I23x4yslDYdWold8jiRllz65dqI20/IABSR?=
+ =?iso-8859-1?Q?KaNbWkvQKFbUXVtMqao3LRcjEZrWkxQpnTl5CNgKTEMftIbOAJ9q4aA7qc?=
+ =?iso-8859-1?Q?o9P5QdCLSaAK8pXDxN6YTBEndTkReICsefIKTyOdcf8w7zKv5ZDpKmOHeQ?=
+ =?iso-8859-1?Q?XHPLXDZeUsoN5xPvT7xUEHlAFAGbtSE/n4GAYuY4rscTgnlil22sBh/TXG?=
+ =?iso-8859-1?Q?1lLNSphVc87rcnWTYHogOsYvudJVieQu0xWuEeG2vuU6cM8E/uagUsKT+M?=
+ =?iso-8859-1?Q?ZxjsQCIf/1XFkazRYdI0oriSkJ31tBkMI7bbo9zNRn8Rm/W1AX6qv/jDmd?=
+ =?iso-8859-1?Q?PNnjgSV0XZ0lhWXdV88ic+eP11byMzyTdhBkKj+mtWbx8rkE+u0bKiRFDB?=
+ =?iso-8859-1?Q?KvViG79/yxFk60V14AwevHvMJuZsg6AgCEwEPzB6ZIuJ2E+k/rVvqtT2/c?=
+ =?iso-8859-1?Q?U3dx/j7cBehbk2HS50axPl+LYZwa74Uh1E8AhpOg8tCT/U+aSYsE3QOxxG?=
+ =?iso-8859-1?Q?TGC7dkCO8SpViBxa+eDmqNLkESMluonUYWN+tMn6mc6vPs3JPoXrSNVUhA?=
+ =?iso-8859-1?Q?u/4Twc9iriDrbvlZphAk9+sw6cFbe0fgDuawOtXkW2BXB18lRE/TbrtOaU?=
+ =?iso-8859-1?Q?VvhrZg8DBxwjbYLat6JYDpR5il06hgq+ymHsX3/rXdgjLZEAUowqL3VscD?=
+ =?iso-8859-1?Q?fTuIH0Z+KzFRN2W0hzC8sYF+HN2gyMT861oo+j8d1DwkllMmUBjRlB6XM3?=
+ =?iso-8859-1?Q?E4aPdxBeHBMhnF69YsbOTOsePJgCjfxG0JRSkAR+4QZf2bbMmFw+CvkFB0?=
+ =?iso-8859-1?Q?Sx4OVP/FHO7BI85+UIzVA/GbDyZUHsRVf7U4jsPblU0IXZpKb8zIhKCvJi?=
+ =?iso-8859-1?Q?iF3nZnTXUEU7KBOQ5UeptdPXef/PaOLHbH/TVHNMSfk7HUYiqWac6/A2dr?=
+ =?iso-8859-1?Q?1AqP8lDitZiAZUWPEKmnQK8FBFDKP1IlIYPCvcHgMUsueCQJU7KNGKowW6?=
+ =?iso-8859-1?Q?DFLSsacdYlznyV9HQWS8lpC5RLHt5Wky1ipDkz7CiYbR8MWiyZLbwj743F?=
+ =?iso-8859-1?Q?Ydy8joFoz+/r5zORsCyhHxS0RxnckYCn2bzCkfXWC7JH8CAVlK8HGAqdoh?=
+ =?iso-8859-1?Q?bXjPImuzyyJDVg6KTxReagOgWYES+Pd4iWkuZTbVBdpvQ+PXACBIia3p+2?=
+ =?iso-8859-1?Q?nwJwwVHaQdB+diNfOUO2BU8pXq66eXLJJgzcjNDg7Q7ScMiuFMj3bX5UU5?=
+ =?iso-8859-1?Q?YeI6lLbmgf9Ss=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240730-b4-upstream-bootph-all-v3-5-9bc2eccb6952@ti.com>
-References: <20240730-b4-upstream-bootph-all-v3-0-9bc2eccb6952@ti.com>
-In-Reply-To: <20240730-b4-upstream-bootph-all-v3-0-9bc2eccb6952@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Neha Malcom Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>, Udit Kumar <u-kumar1@ti.com>,
-        Beleswar Padhi
-	<b-padhi@ti.com>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>,
-        Manorit Chawdhry
-	<m-chawdhry@ti.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722333236; l=9380;
- i=m-chawdhry@ti.com; s=20231127; h=from:subject:message-id;
- bh=fJUUZy63DNja79BO/QofyCOSdxt0gOQiU3c2Hu4DV3k=;
- b=LVEl++b5VIi15Q/5XwU66x4xqX9Ra0ipFCVNKi9fxTFxT040QgmdkZcpi9v8/vBkSfQ8oYQEj
- DT/mqEra1DlDDt0s7Q+qg1dYbYH0pTcV6EcpW15IPsN6II/gyK5VMk3
-X-Developer-Key: i=m-chawdhry@ti.com; a=ed25519;
- pk=fsr6Tm39TvsTgfyfFQLk+nnqIz2sBA1PthfqqfiiYSs=
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2917c69a-a1d2-4e73-161d-08dcb07d9fe8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2024 09:54:37.9336
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +1rAJbo2gMCWf6fx17mlGw5lxCXXquqkrhsWy5AH98nHHhuEYTd+TXxclg7Ucj9esIlBp5gtq9ff49CEM6DbYA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3528
 
-Adds bootph-* properties to the leaf nodes to enable U-boot to
-utilise them.
+Hello Jonathan,
 
-Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
----
- .../arm64/boot/dts/ti/k3-j7200-common-proc-board.dts | 20 ++++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-j7200-main.dtsi            |  2 ++
- arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi      | 10 ++++++++++
- arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi          |  7 +++++++
- 4 files changed, 39 insertions(+)
+Thank you for the explanation !   We will construct the patch-set as you su=
+ggested.=20
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts b/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-index 6593c5da82c0..ec522595fc83 100644
---- a/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-@@ -129,6 +129,7 @@ J721E_WKUP_IOPAD(0x94, PIN_OUTPUT, 0) /* (E21) MCU_UART0_RTSn */
- 			J721E_WKUP_IOPAD(0x8c, PIN_INPUT, 0) /* (D20) MCU_UART0_RXD */
- 			J721E_WKUP_IOPAD(0x88, PIN_OUTPUT, 0) /* (D19) MCU_UART0_TXD */
- 		>;
-+		bootph-all;
- 	};
- 
- 	wkup_uart0_pins_default: wkup-uart0-default-pins {
-@@ -136,6 +137,7 @@ wkup_uart0_pins_default: wkup-uart0-default-pins {
- 			J721E_WKUP_IOPAD(0x48, PIN_INPUT, 0) /* (B14) WKUP_UART0_RXD */
- 			J721E_WKUP_IOPAD(0x4c, PIN_OUTPUT, 0) /* (A14) WKUP_UART0_TXD */
- 		>;
-+		bootph-all;
- 	};
- 
- 	mcu_cpsw_pins_default: mcu-cpsw-default-pins {
-@@ -159,6 +161,7 @@ wkup_gpio_pins_default: wkup-gpio-default-pins {
- 		pinctrl-single,pins = <
- 			J721E_WKUP_IOPAD(0x70, PIN_INPUT, 7) /* (C14) WKUP_GPIO0_6 */
- 		>;
-+		bootph-all;
- 	};
- 
- 	mcu_mdio_pins_default: mcu-mdio1-default-pins {
-@@ -204,6 +207,7 @@ J721E_IOPAD(0xb4, PIN_OUTPUT, 0) /* (T17) UART0_TXD */
- 			J721E_IOPAD(0xc0, PIN_INPUT, 2) /* (W3) SPI0_CS0.UART0_CTSn */
- 			J721E_IOPAD(0xc4, PIN_OUTPUT, 2) /* (U5) SPI0_CS1.UART0_RTSn */
- 		>;
-+		bootph-all;
- 	};
- 
- 	main_uart1_pins_default: main-uart1-default-pins {
-@@ -238,6 +242,7 @@ J721E_IOPAD(0xf0, PIN_INPUT, 0) /* (N20) MMC1_DAT2 */
- 			J721E_IOPAD(0xec, PIN_INPUT, 0) /* (N19) MMC1_DAT3 */
- 			J721E_IOPAD(0xe4, PIN_INPUT, 8) /* (V1) TIMER_IO0.MMC1_SDCD */
- 		>;
-+		bootph-all;
- 	};
- 
- 	vdd_sd_dv_pins_default: vdd-sd-dv-default-pins {
-@@ -259,6 +264,7 @@ main_usbss0_pins_default: main-usbss0-default-pins {
- 		pinctrl-single,pins = <
- 			J721E_IOPAD(0x04, PIN_OUTPUT, 0) /* (T4) USB0_DRVVBUS */
- 		>;
-+		bootph-all;
- 	};
- };
- 
-@@ -267,12 +273,14 @@ &wkup_uart0 {
- 	status = "reserved";
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&wkup_uart0_pins_default>;
-+	bootph-all;
- };
- 
- &mcu_uart0 {
- 	status = "okay";
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mcu_uart0_pins_default>;
-+	bootph-all;
- };
- 
- &main_uart0 {
-@@ -281,6 +289,7 @@ &main_uart0 {
- 	power-domains = <&k3_pds 146 TI_SCI_PD_SHARED>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&main_uart0_pins_default>;
-+	bootph-all;
- };
- 
- &main_uart1 {
-@@ -310,6 +319,7 @@ &wkup_gpio0 {
- 	status = "okay";
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&wkup_gpio_pins_default>;
-+	bootph-all;
- };
- 
- &mcu_cpsw {
-@@ -341,6 +351,7 @@ exp1: gpio@20 {
- 		reg = <0x20>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		bootph-all;
- 	};
- 
- 	exp2: gpio@22 {
-@@ -348,6 +359,7 @@ exp2: gpio@22 {
- 		reg = <0x22>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		bootph-all;
- 	};
- };
- 
-@@ -381,6 +393,7 @@ &main_sdhci0 {
- 	non-removable;
- 	ti,driver-strength-ohm = <50>;
- 	disable-wp;
-+	bootph-all;
- };
- 
- &main_sdhci1 {
-@@ -392,15 +405,18 @@ &main_sdhci1 {
- 	vqmmc-supply = <&vdd_sd_dv>;
- 	ti,driver-strength-ohm = <50>;
- 	disable-wp;
-+	bootph-all;
- };
- 
- &serdes_ln_ctrl {
- 	idle-states = <J7200_SERDES0_LANE0_PCIE1_LANE0>, <J7200_SERDES0_LANE1_PCIE1_LANE1>,
- 		      <J7200_SERDES0_LANE2_QSGMII_LANE1>, <J7200_SERDES0_LANE3_IP4_UNUSED>;
-+	bootph-all;
- };
- 
- &usb_serdes_mux {
- 	idle-states = <1>; /* USB0 to SERDES lane 3 */
-+	bootph-all;
- };
- 
- &usbss0 {
-@@ -408,11 +424,13 @@ &usbss0 {
- 	pinctrl-0 = <&main_usbss0_pins_default>;
- 	ti,vbus-divider;
- 	ti,usb2-only;
-+	bootph-all;
- };
- 
- &usb0 {
- 	dr_mode = "otg";
- 	maximum-speed = "high-speed";
-+	bootph-all;
- };
- 
- &tscadc0 {
-@@ -432,6 +450,7 @@ serdes0_pcie_link: phy@0 {
- 		#phy-cells = <0>;
- 		cdns,phy-type = <PHY_TYPE_PCIE>;
- 		resets = <&serdes_wiz0 1>, <&serdes_wiz0 2>;
-+		bootph-all;
- 	};
- 
- 	serdes0_qsgmii_link: phy@1 {
-@@ -440,6 +459,7 @@ serdes0_qsgmii_link: phy@1 {
- 		#phy-cells = <0>;
- 		cdns,phy-type = <PHY_TYPE_QSGMII>;
- 		resets = <&serdes_wiz0 3>;
-+		bootph-all;
- 	};
- };
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-index 9386bf3ef9f6..b95656942412 100644
---- a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-@@ -136,6 +136,7 @@ secure_proxy_main: mailbox@32c00000 {
- 			      <0x00 0x32800000 0x00 0x100000>;
- 			interrupt-names = "rx_011";
- 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+			bootph-all;
- 		};
- 
- 		hwspinlock: spinlock@30e00000 {
-@@ -1528,5 +1529,6 @@ main_esm: esm@700000 {
- 		compatible = "ti,j721e-esm";
- 		reg = <0x0 0x700000 0x0 0x1000>;
- 		ti,esm-pins = <656>, <657>;
-+		bootph-all;
- 	};
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
-index 5097d192c2b2..f8a5ad4737da 100644
---- a/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
-@@ -21,16 +21,19 @@ dmsc: system-controller@44083000 {
- 		k3_pds: power-controller {
- 			compatible = "ti,sci-pm-domain";
- 			#power-domain-cells = <2>;
-+			bootph-all;
- 		};
- 
- 		k3_clks: clock-controller {
- 			compatible = "ti,k2g-sci-clk";
- 			#clock-cells = <2>;
-+			bootph-all;
- 		};
- 
- 		k3_reset: reset-controller {
- 			compatible = "ti,sci-reset";
- 			#reset-cells = <2>;
-+			bootph-all;
- 		};
- 	};
- 
-@@ -45,6 +48,7 @@ mcu_timer0: timer@40400000 {
- 		assigned-clock-parents = <&k3_clks 35 2>;
- 		power-domains = <&k3_pds 35 TI_SCI_PD_EXCLUSIVE>;
- 		ti,timer-pwm;
-+		bootph-pre-ram;
- 	};
- 
- 	mcu_timer1: timer@40410000 {
-@@ -191,6 +195,7 @@ wkup_conf: bus@43000000 {
- 		chipid: chipid@14 {
- 			compatible = "ti,am654-chipid";
- 			reg = <0x14 0x4>;
-+			bootph-all;
- 		};
- 	};
- 
-@@ -349,6 +354,7 @@ mcu_ringacc: ringacc@2b800000 {
- 			ti,sci = <&dmsc>;
- 			ti,sci-dev-id = <235>;
- 			msi-parent = <&main_udmass_inta>;
-+			bootph-all;
- 		};
- 
- 		mcu_udmap: dma-controller@285c0000 {
-@@ -373,6 +379,7 @@ mcu_udmap: dma-controller@285c0000 {
- 			ti,sci-rm-range-rchan = <0x0a>, /* RX_CHAN */
- 						<0x0b>; /* RX_HCHAN */
- 			ti,sci-rm-range-rflow = <0x00>; /* GP RFLOW */
-+			bootph-all;
- 		};
- 	};
- 
-@@ -389,6 +396,7 @@ secure_proxy_mcu: mailbox@2a480000 {
- 		 * firmware on non-MPU processors
- 		 */
- 		status = "disabled";
-+		bootph-pre-ram;
- 	};
- 
- 	mcu_cpsw: ethernet@46000000 {
-@@ -534,6 +542,7 @@ hbmc_mux: mux-controller@47000004 {
- 			reg = <0x00 0x47000004 0x00 0x4>;
- 			#mux-control-cells = <1>;
- 			mux-reg-masks = <0x0 0x2>; /* HBMC select */
-+			bootph-pre-ram;
- 		};
- 
- 		hbmc: hyperbus@47034000 {
-@@ -652,6 +661,7 @@ wkup_vtm0: temperature-sensor@42040000 {
- 		      <0x00 0x42050000 0x00 0x350>;
- 		power-domains = <&k3_pds 154 TI_SCI_PD_EXCLUSIVE>;
- 		#thermal-sensor-cells = <1>;
-+		bootph-pre-ram;
- 	};
- 
- 	mcu_esm: esm@40800000 {
-diff --git a/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
-index 21fe194a5766..d78f86889bf9 100644
---- a/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
-@@ -121,6 +121,7 @@ J721E_WKUP_IOPAD(0x20, PIN_INPUT, 1) /* (B8) MCU_OSPI0_D5.MCU_HYPERBUS0_DQ5 */
- 			J721E_WKUP_IOPAD(0x24, PIN_INPUT, 1) /* (A8) MCU_OSPI0_D6.MCU_HYPERBUS0_DQ6 */
- 			J721E_WKUP_IOPAD(0x28, PIN_INPUT, 1) /* (A7) MCU_OSPI0_D7.MCU_HYPERBUS0_DQ7 */
- 		>;
-+		bootph-all;
- 	};
- 
- 	mcu_fss0_ospi0_pins_default: mcu-fss0-ospi0-default-pins {
-@@ -137,6 +138,7 @@ J721E_WKUP_IOPAD(0x0024, PIN_INPUT, 0)  /* MCU_OSPI0_D6 */
- 			J721E_WKUP_IOPAD(0x0028, PIN_INPUT, 0)  /* MCU_OSPI0_D7 */
- 			J721E_WKUP_IOPAD(0x0008, PIN_INPUT, 0)  /* MCU_OSPI0_DQS */
- 		>;
-+		bootph-all;
- 	};
- };
- 
-@@ -146,6 +148,7 @@ wkup_i2c0_pins_default: wkup-i2c0-default-pins {
- 			J721E_WKUP_IOPAD(0x98, PIN_INPUT_PULLUP, 0) /* (F20) WKUP_I2C0_SCL */
- 			J721E_WKUP_IOPAD(0x9c, PIN_INPUT_PULLUP, 0) /* (H21) WKUP_I2C0_SDA */
- 		>;
-+		bootph-all;
- 	};
- };
- 
-@@ -163,6 +166,7 @@ main_i2c0_pins_default: main-i2c0-default-pins {
- 			J721E_IOPAD(0xd4, PIN_INPUT_PULLUP, 0) /* (V3) I2C0_SCL */
- 			J721E_IOPAD(0xd8, PIN_INPUT_PULLUP, 0) /* (W2) I2C0_SDA */
- 		>;
-+		bootph-all;
- 	};
- 
- 	main_mcan0_pins_default: main-mcan0-default-pins {
-@@ -186,6 +190,7 @@ &hbmc {
- 	flash@0,0 {
- 		compatible = "cypress,hyperflash", "cfi-flash";
- 		reg = <0x00 0x00 0x4000000>;
-+		bootph-all;
- 
- 		partitions {
- 			compatible = "fixed-partitions";
-@@ -330,6 +335,7 @@ bucka1: buck1 {
- 				regulator-max-microvolt = <1800000>;
- 				regulator-boot-on;
- 				regulator-always-on;
-+				bootph-all;
- 			};
- 
- 			bucka2: buck2 {
-@@ -464,6 +470,7 @@ flash@0 {
- 		cdns,tchsh-ns = <60>;
- 		cdns,tslch-ns = <60>;
- 		cdns,read-delay = <4>;
-+		bootph-all;
- 
- 		partitions {
- 			compatible = "fixed-partitions";
+Since the rework of the driver still takes some time, we will send the new =
+version once we finish it.
 
--- 
-2.45.1
+Mit freundlichen Gr=FC=DFen / Best regards
 
+Jianping Shen
+
+Mobility Electronics - Sensors, Engineering Advanced Development - MEMS Sol=
+utions Software (ME-SE/EAD2)
+Robert Bosch GmbH | Postfach 13 42 | 72703 Reutlingen | GERMANY | www.bosch=
+.com
+Tel. +49 7121 35-37749 | Telefax +49 711 811-509378 | Jianping.Shen@de.bosc=
+h.com
+
+Sitz: Stuttgart, Registergericht: Amtsgericht Stuttgart, HRB 14000;
+Aufsichtsratsvorsitzender: Prof. Dr. Stefan Asenkerschbaumer;=20
+Gesch=E4ftsf=FChrung: Dr. Stefan Hartung, Dr. Christian Fischer, Dr. Markus=
+ Forschner,=20
+Stefan Grosch, Dr. Markus Heyn, Dr. Frank Meyer, Dr. Tanja R=FCckert
+
+-----Original Message-----
+From: Jonathan Cameron <jic23@kernel.org>=20
+Sent: Saturday, July 27, 2024 4:00 PM
+To: Conor Dooley <conor@kernel.org>
+Cc: Shen Jianping (ME-SE/EAD2) <Jianping.Shen@de.bosch.com>; Krzysztof Kozl=
+owski <krzk@kernel.org>; lars@metafoo.de; robh@kernel.org; krzk+dt@kernel.o=
+rg; conor+dt@kernel.org; dima.fedrau@gmail.com; marcelo.schmitt1@gmail.com;=
+ linux-iio@vger.kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.k=
+ernel.org; Lorenz Christian (ME-SE/EAD2) <Christian.Lorenz3@de.bosch.com>; =
+Frauendorf Ulrike (ME/PJ-SW3) <Ulrike.Frauendorf@de.bosch.com>; Dolde Kai (=
+ME-SE/PAE-A3) <Kai.Dolde@de.bosch.com>
+Subject: Re: [PATCH] dt-bindings: iio: imu: SMI240: add bosch,smi240.yaml
+
+On Wed, 24 Jul 2024 16:25:39 +0100
+Conor Dooley <conor@kernel.org> wrote:
+
+> On Wed, Jul 24, 2024 at 02:19:25PM +0000, Shen Jianping (ME-SE/EAD2) wrot=
+e:
+> > Anyway, please send bindings with driver in the same patchset.
+> >  =20
+> > -> It's fine for us. Nevertheless according to the Devicetree (DT)=20
+> > -> binding submitting rules 1.1
+> >=20
+> > " The Documentation/ and include/dt-bindings/ portion of the patch=20
+> > should be a separate patch." See ->=20
+> > https://eur03.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fww
+> > w.kernel.org%2Fdoc%2Fhtml%2Flatest%2Fdevicetree%2Fbindings%2Fsubmitt
+> > ing-patches.html%23i-for-patch-submitters&data=3D05%7C02%7CJianping.Sh
+> > en%40de.bosch.com%7C3d03781ae4564e7e3f7708dcae447463%7C0ae51e1907c84
+> > e4bbb6d648ee58410f4%7C0%7C0%7C638576856248420833%7CUnknown%7CTWFpbGZ
+> > sb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0
+> > %3D%7C0%7C%7C%7C&sdata=3DOEaFoGpb%2F7CVAN2gEpNwG9I1zGBlUNYdLUy%2F7w5Dh
+> > b0%3D&reserved=3D0
+> >=20
+> > Shall we still put the binding and driver in the same patch ? =20
+>=20
+> No, different patches please. Also, please fix your mail client so=20
+> that it quotes emails properly.
+To add a little more detail.
+We are looking for a cover letter and a pair of patches.
+1st adds the dt-binding docs.
+2nd provides the driver.
+
+The cover letter provides a brief summary of the whole series and provides =
+a convenient name for tracking it as a whole.
+
+Take a look at how other recent driver addition patch series have been brok=
+en up.
+
+Jonathan
 
