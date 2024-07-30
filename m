@@ -1,114 +1,93 @@
-Return-Path: <linux-kernel+bounces-267874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9BF941826
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:19:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78C12941855
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:21:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A39831F25034
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:19:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A922B1C23E68
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEAB18990B;
-	Tue, 30 Jul 2024 16:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A9918991C;
+	Tue, 30 Jul 2024 16:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="afeRAfvX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAcg5fZ1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466DD189516;
-	Tue, 30 Jul 2024 16:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B138B1A6190;
+	Tue, 30 Jul 2024 16:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722356270; cv=none; b=CJTGa6WCmCsnDRZcRDHg0uF3tC51QVSd5O055KGy16M1OyH2gFh/JpytlS/iCgSJaGp8jCnK0Cnmyy8na+hZONzWb19YoJMhmqx25rYSotOg1oN688aAdq/CreXIM65SXIMs69sppt4UUC+WW3d1ECYffJdotEhWqElx1xi26m0=
+	t=1722356430; cv=none; b=hUriAUi+dqYBD+s7OPDyjPDmNY/62w+YAFp25tRDch1UGUlToqx/9q6+BhJfN0u8bfFUHZuY7aVEkljd+O1cY0w1vhjDRDYvISaEAmUvyBIpdmrtDUxUuxnr/8tQV7+CZWpSij9lT05G3XR39eEsJgEThlTo8cuUajTk6eBt8h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722356270; c=relaxed/simple;
-	bh=OGxKQ4I9St0tmE2nsVXT+IFnBRjjfbo0RmqqbjRFRUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=udCjmI2tuVjzFwoA6AwIg61ACtpq2nMN+nJtOYIMUaqaPSCMY+Lf+KBPq+HbYPe1rn9TtngVpEPxuNgehLFROyYntRQyZzTeMtq4AE+ICrkZxFLyzQlykmP46ss6hjnDgi3cZHtK1fBESjKkax3IdVHQJl5gppb3yndxGN77MHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=afeRAfvX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFDBCC4AF0A;
-	Tue, 30 Jul 2024 16:17:49 +0000 (UTC)
+	s=arc-20240116; t=1722356430; c=relaxed/simple;
+	bh=BUUyY1NTz3JrwklnZ/Mk1s3DehDybPuYkwhI5XkEtLg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=TH3IxE55ZtTxYsaYK7CmiffMJ8spqLR4oJeHrn1Fj4shj1rmAy99VTMKDEjNaR0j1YNNlWAilZPNOAbBZNmcvMhBGhazcErsI+dqbHftwkvTY2DjSf5fIOHUJsLIPamG6BRL75JupdI6SPeYaT68SOEFVCSYpEq5OF9ZqajxxCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WAcg5fZ1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 85926C4AF0C;
+	Tue, 30 Jul 2024 16:20:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722356270;
-	bh=OGxKQ4I9St0tmE2nsVXT+IFnBRjjfbo0RmqqbjRFRUA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=afeRAfvXyF4qzTQqkpPROjhSChSjFnVo9K+eR6y96JuNLk+SoBy0eW+ihXGbBY6CH
-	 kOH+HdzCgTbu9JU9gyghbRXqeVz67ymKy7JDxPPgvVUmxQSEgIWZ+biVRW0cx1ip4O
-	 2lpnQNa3CdZInm8Y/FJC8Yy9vhAOlFTwBd+Sxoydyvud70ahzDDgQ36d0ITlHtIBKC
-	 qPsWLw5V5pq5FsdTbp404HlsT0A+s8oToxUzC1trA6Y0XkIrJvZBVz5ph4HiVBlHja
-	 x3TTUtFWICBcVzcxa0vWhmkSa90ATABlcVcmqcU3H+VzuZDp2eWk2wvErrI56lymIm
-	 beKhcOp7o77Mg==
-Date: Tue, 30 Jul 2024 10:17:48 -0600
-From: Rob Herring <robh@kernel.org>
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH v2 6/6] dt-bindings: thermal: samsung,exynos: remove
- outdated information on trip point count
-Message-ID: <20240730161748.GA1414176-robh@kernel.org>
-References: <20240726110114.1509733-1-m.majewski2@samsung.com>
- <CGME20240726110142eucas1p29f261e5e81c177456fd5bb5546871eb4@eucas1p2.samsung.com>
- <20240726110114.1509733-7-m.majewski2@samsung.com>
+	s=k20201202; t=1722356430;
+	bh=BUUyY1NTz3JrwklnZ/Mk1s3DehDybPuYkwhI5XkEtLg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=WAcg5fZ1skHq3iYqMc8IUfB/jA7JF4wcIzUJSb7VvWTkC3VWJ9cKGK6B/VoUaT9EM
+	 iEESRyZtsKQJpXDXeSpdk/tk/N2XVgJB4H10fKKY/C4cl1/d1mefL3hDmgbMDni52n
+	 OV5rO/OBi6OcEEP7X1trOUvQn//pUsrJBGSAIFU81u04QCz46/NfyYuk219b5PsCRR
+	 T97IbGQkEzwQDug5bzCN3zYpH2nLX1WyqbLefxuAC1MFcM2QJiOYvhfpn1HV/TwveW
+	 aYSOTuhn7jWLZuFafDSWDOLdU+ZBc3F7/L3kFnYbLU+z8Y6F88DmWCABtExJhokD7p
+	 y7aATP87ypOpA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 73D1DC6E398;
+	Tue, 30 Jul 2024 16:20:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240726110114.1509733-7-m.majewski2@samsung.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: mvpp2: Don't re-use loop iterator
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172235643047.2398.10999820377012165647.git-patchwork-notify@kernel.org>
+Date: Tue, 30 Jul 2024 16:20:30 +0000
+References: <eaa8f403-7779-4d81-973d-a9ecddc0bf6f@stanley.mountain>
+In-Reply-To: <eaa8f403-7779-4d81-973d-a9ecddc0bf6f@stanley.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: stefanc@marvell.com, marcin.s.wojtas@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 
-On Fri, Jul 26, 2024 at 01:01:10PM +0200, Mateusz Majewski wrote:
-> This is not true as of commit 5314b1543787 ("thermal/drivers/exynos: Use
-> set_trips ops").
+Hello:
 
-What is not true?
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-How can the h/w change? I already asked that. Please make your commit 
-message summarize prior discussions so that the patch stands on its own 
-and you don't get the same response again. Assume the reviewers have 0 
-recollection of the prior versions because we don't. This is just one of 
-100s of patches a week...
+On Wed, 24 Jul 2024 11:06:56 -0500 you wrote:
+> This function has a nested loop.  The problem is that both the inside
+> and outside loop use the same variable as an iterator.  I found this
+> via static analysis so I'm not sure the impact.  It could be that it
+> loops forever or, more likely, the loop exits early.
+> 
+> Fixes: 3a616b92a9d1 ("net: mvpp2: Add TX flow control support for jumbo frames")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> [...]
 
-> 
-> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
-> ---
-> v1 -> v2: remove an unnecessary sentence.
-> 
->  .../devicetree/bindings/thermal/samsung,exynos-thermal.yaml | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-> index b8c0bb7f4263..b85b4c420cd3 100644
-> --- a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-> @@ -40,11 +40,7 @@ properties:
->    interrupts:
->      description: |
->        The Exynos TMU supports generating interrupts when reaching given
-> -      temperature thresholds. Number of supported thermal trip points depends
-> -      on the SoC (only first trip points defined in DT will be configured)::
-> -       - most of SoC: 4
-> -       - samsung,exynos5433-tmu: 8
-> -       - samsung,exynos7-tmu: 8
-> +      temperature thresholds.
->      maxItems: 1
->  
->    reg:
-> -- 
-> 2.45.1
-> 
+Here is the summary with links:
+  - [net] net: mvpp2: Don't re-use loop iterator
+    https://git.kernel.org/netdev/net/c/0aa3ca956c46
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
