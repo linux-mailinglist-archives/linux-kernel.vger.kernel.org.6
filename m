@@ -1,235 +1,95 @@
-Return-Path: <linux-kernel+bounces-267348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67CE3941089
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:33:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B881941096
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA5311F222AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:33:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A8741C22BCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C8819DFAB;
-	Tue, 30 Jul 2024 11:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="qaW014ZO"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2053.outbound.protection.outlook.com [40.107.117.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA8919E7DC;
+	Tue, 30 Jul 2024 11:36:17 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7175C1990AD;
-	Tue, 30 Jul 2024 11:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722339208; cv=fail; b=q0zLavGruOUbRx76w3wjC2S1YXzSCpAvpwMR1OpPkk7JpnrlHthitVuxkMMB+yWGJKAtmIq61JNG3n6hSuk87qv8035SItYXF+Q6m9duzKaCG98kDZUFJisj2spg8IiAvRP51H68SNoHMKvNvWVIX83A/dRfjbY5TU2JOUtsLOQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722339208; c=relaxed/simple;
-	bh=G+VenYYHuAC4wicuDUbfACS8SDsjQZ1URUMKYORqTHQ=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=DIMqnbxSr/itts7WiNHj9sV0ItXCFR8NzZfBh/tU2dlyr2GbLXCHn/WqT0y68GWRvnagVG0bE/+cjc3/FdHuOBci8jIwtHqTXvreMKQpo9LoC55FMwp1k5Bogd/gwCqQy6gG6Yyf4DWDuW7955sbgjfwYG7eltlVtjvnRo68xig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=qaW014ZO; arc=fail smtp.client-ip=40.107.117.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iPCy/TpXcbaJMxonqnGWhVNV958JibJI/7vlSvPNES8XS4R/8Ubce9rSrihxq1VSC31SPRMomsmOgU0Z645PfJ0V7smy9+annatW7ZIVfNJIv8iUUZ3ahFgPU0wmpXtk3EVqIF/dTUKdsR1/7RNh25rHPQGs5G+sAJ063DWVLlO2HtkS/RdVJxqagRm89jbK39b2fl4WdC0iIDFIOpYQOQqPL28Gj2j8KWBAGoekkW4M1VRYskUeAR0QT+bJwJCtRmOmdq2t0Pr1+mV2EQox/QIohqe34WopZWQItI5OtdIYNjYili2LRXTAt5GOJuEfFpjDFjZsvE2AGSphwkHS5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pUljHyGFPIgtt/f0HnaqHPCDmiHKDnb1p8Sft811DkM=;
- b=MmAJ9L6fY4sI1hVoA662ywmCikN9LlOQBcZg1b9wc+cb9E/rQLEAJ+V/mxS2GErsYikCXZmhYz7lBLjE2zeSEIvZJDmzClSl8w0n98ugaJEdukliF0Ri6NvZUqyOlMU7z5ynTaZf8KFRIGM9clF1Vs5bCfDw/t5jl1d5byb+fekvzsxRxbEFxErFBmUplKEJhhHSgc1HYPKeFFDCh93ddCoKEVqhoEqw5MWkBjfDMbbzAqO/TEDKW7Mp0eLGBIc+MKmPLVK8KwB785j4NDVzcbvfU2yaG5Bbs1+z28O7fBGpyTs7JdPFvd87rPR/mIrijQsmPcdLwt4AW63dQhEF9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pUljHyGFPIgtt/f0HnaqHPCDmiHKDnb1p8Sft811DkM=;
- b=qaW014ZOu8fdr1RYSi+xaj//jYce6mXW0V/NGkU3NVbtZhsPLE86d2e5+4lvPa5fpeFJcGMzs2L7SBKSXJV7urXraVy+9EC7daRij2PFINTfwSLPrhY9CS1Xao+7injUPk2ztf2+gDI/ULlTYK7cnTWyASs0qE8H4K7MJUVmjrMJr4lhtHhLBDShg7jLRgwPs9FyQ7iQH92oVnJxvhHeA76X1YVfbNOlYW1iJBdsXRfOgcrTBR4aV14WH1DXVu7vyQWAzB6i2OBMCq0ZiGrWeKi9TmEbjlvp5vxAHFVCnQQZzi9izkTSR+4872C84qGJ3E4sDUXWs0B7qQXzPWjzsA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
- by SEYPR06MB5961.apcprd06.prod.outlook.com (2603:1096:101:d6::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Tue, 30 Jul
- 2024 11:33:18 +0000
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7807.026; Tue, 30 Jul 2024
- 11:33:18 +0000
-Message-ID: <33775a86-206a-4724-a662-3eb5c70b8f03@vivo.com>
-Date: Tue, 30 Jul 2024 19:33:14 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] Introduce DMA_HEAP_ALLOC_AND_READ_FILE heap flag
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T.J. Mercier" <tjmercier@google.com>, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
- linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-References: <20240730075755.10941-1-link@vivo.com>
- <Zqiqv7fomIp1IPS_@phenom.ffwll.local>
- <25cf34bd-b11f-4097-87b5-39e6b4a27d85@vivo.com>
- <fe460c96-fb5f-41e7-8312-a2aa30140042@amd.com>
-From: Huan Yang <link@vivo.com>
-In-Reply-To: <fe460c96-fb5f-41e7-8312-a2aa30140042@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI1PR02CA0025.apcprd02.prod.outlook.com
- (2603:1096:4:1f4::13) To PUZPR06MB5676.apcprd06.prod.outlook.com
- (2603:1096:301:f8::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521E0199230;
+	Tue, 30 Jul 2024 11:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722339377; cv=none; b=UjLn0RnpAtg0nKm8P7DIg4x+SQBK04ZVa4qgy0XPuDdXDrtfy5ACp0/EP75fzilIftk2utkjF/VNblfj1QN+EEtxu/fr+oQgTQ2ICKNTaTmbyQdkm5+wr65XLVhgwLobZn4e1/7ozy5rYERpsBK9+ECvsYMP2bt4HM3dfvHOH4g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722339377; c=relaxed/simple;
+	bh=yYxJ22SQbeRiW53xkrC3spUhsoJhj3TfioxXvQ12jZk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EgruNjmvDRjg9wA8tkyTBhq6STTX1esKyf1+1GACt+vpBU9+m+q5j9BvuIStowiU3uK+MLO/qXY63eHDdR5a87stM7EObQRr0NpFIOiznDGxhHyCEGXVuUxVfmTa3mia/gHpmp1Ik0JgZ3XHdmfXlUyksrJgCruJ7Qf+jNe6I6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WYCpq1z8cz4f3k6D;
+	Tue, 30 Jul 2024 19:36:03 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id DD31B1A14A5;
+	Tue, 30 Jul 2024 19:36:11 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.124.27])
+	by APP1 (Coremail) with SMTP id cCh0CgCH2kwq0Khmm+QUAQ--.5153S2;
+	Tue, 30 Jul 2024 19:36:11 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: tytso@mit.edu,
+	jack@suse.com
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] Fix and cleanups to jbd2
+Date: Tue, 30 Jul 2024 19:33:28 +0800
+Message-Id: <20240730113335.2365290-1-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|SEYPR06MB5961:EE_
-X-MS-Office365-Filtering-Correlation-Id: 034fa845-d980-4c9c-f7aa-08dcb08b6884
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|7416014|1800799024|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b2dHNVpzU0U1dFY0eDA3WDVuT3FzU1pRajlwSmZvaXBQMVpEQU1vNDBIem5q?=
- =?utf-8?B?TTZVTkFmeXcyeGpld05IS1BhYVI1eFZncjZGT3pPeDUzWm5jTHdpc2lvL2x3?=
- =?utf-8?B?VzNBZ1NQYk54YnNhai9BZzJBRGxDN3BCRmZRL0pSRkJJeGVhazBVVlkvMjVM?=
- =?utf-8?B?S24rbXFjNkY0VmNnVG5Bc1NTRm9YUzRJM3NUeVZPWkk3UnNUaStHV2lBU21F?=
- =?utf-8?B?cFBta0R3MkU4NEhaUjhTUzUwUFNuZXEzZWFnbnpSSFN4NWc5R21RaDRDZUQw?=
- =?utf-8?B?aUFHQjVDRmZHdHV0RjhpWm5ON2lqNHV1OTdNZkFDczljS1gvZkxtbmxYbSt0?=
- =?utf-8?B?NktHc0U5WXg4Z1hLUERuK3lqUURUcE5WYXJaWTR3OUVHa2l1UHI5ODBBK3Zw?=
- =?utf-8?B?TktMcXlpdytOR2dPUS8xaHRmRStITW11Y2ZEWGloUitadDl3cEM4N1lzYnho?=
- =?utf-8?B?RjZlZGkvemNBU2JPWmJoc2lFQ0xrVkg1RlBibVBFN2p3RnZVL3llMTRwNjJO?=
- =?utf-8?B?Ujl4TzVFSlN4SkZTcHQwRTdDZWUrZUNMVzNLUlQxdVNhUTdYajF4M3JTUi9Q?=
- =?utf-8?B?ME9lWkJLekRmbDBvMklCaitOZFQwdGkxRnlEWTE2UnRmay9RTVpaenZUY2I4?=
- =?utf-8?B?ZUlXakE0ajY5VkZsa0JGbXZLa2RJQ2xuMm8vRzAvaTNGdXRRbDE2VUdrU0FH?=
- =?utf-8?B?RTNJcys3bGc2M0tDM3QzVEsrelNaeExuTG8valJrMUdSWWRvekczN1NISE9u?=
- =?utf-8?B?Yis1ZUpkOXFDWjFYcUsxSzdKSFUyZC8xaHVrVlBnUlZqMlYrYklodXNYalEr?=
- =?utf-8?B?Q3FFSy80bTBhamVjZXFsOXdPcUtUZHBkVWEwblVVWkF3SmRWeWFmbDZRYk1n?=
- =?utf-8?B?VmFMRm9HZXlwVzlZOVI1QW93cVJWMDdRTC9lWFF5eUNwYjVGNWphWHJFMDFp?=
- =?utf-8?B?WVFkRHJqUkNlNS84NEVEbHk5VFNiQlZKTE5pVFlCdWZBS2oxQVhZcFNZNGJG?=
- =?utf-8?B?NVhKOHFFRFBHM0Vqd0dYMUJNbzBLVEgzeU53SjR0Y1FlY1I1MUJrdjJRejBu?=
- =?utf-8?B?cGZjTjFyNVg1Unlqa3R3ZW04REFWQ3dxOTYxeXJCR1lGWlhlS2IzQWRRQ1Fw?=
- =?utf-8?B?a0VXMUZXcHFIV3ZPck5CUEtLejZlYkRYOVlGc0hSTm9YTWNDQTNJNkJWc1lO?=
- =?utf-8?B?cjNEcHg0Vy9Udy83OTJMUmRrbmtIQUhPUjdWL2lHWGhzaUZGN1dJMlp1V1Ur?=
- =?utf-8?B?aGljMUM0QUlXRCtBN0tpT2JWMEZNcTF6TlppS09EUzZubUtTN0dXbjdhMThM?=
- =?utf-8?B?cDh6UWI2V0dQMWhVQVJNckpua1B0WFNFWlAzMG84ekthRi92MnlvWTJtSUJS?=
- =?utf-8?B?UUI5VnlBblFDOHZvODZwTW9CZWpzTHVZS0Vpd2JiVFptaXd4dC9tTlpsRzBX?=
- =?utf-8?B?ZlVGaXJUU0F3b1h3TzFwRzNYQkNCNEk2YSsrYUN2dHJYdmE2OXpKSysvZEs5?=
- =?utf-8?B?M0FPMzN4Uk11aGVsYkIwZHppNExFV3BrL3dWMmk2Q211czcwL21nYUdYS3ZO?=
- =?utf-8?B?ZjN2VnRPK0NEWUY4b21zbVpCSHlsYi9VSkdSSFZWUGJxUnQyakVhSVpRUk04?=
- =?utf-8?B?ZDFzK2FaanZXRGx2TTNxQlZaaXFVQWtqWlhHa3gyNkVKSDRtb0FJT1k1SERn?=
- =?utf-8?B?eTlSdkJ4R2pkenh5aFgxa094dmhqVFlJZVhNVWJiZzZPNm5wdG1PenUwSVFm?=
- =?utf-8?B?am9TbVorNnByYUk2ODlRT2dDSHFOdTJVcDJhQmhaTFJIeVo1cnM4UEtRckY2?=
- =?utf-8?Q?A5mEVb2Hlb+BHLTjB+A+k+vmh0s3lOeSfCb58=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(7416014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?azNQSnFCdVMxbjIzeUV6Z2hrWi9SanJOZnhzR3FTTDgwOE12eHJQRUE5aDIw?=
- =?utf-8?B?SFVEN0JOd0FIUjJDeUN6cFdoSVJCeUpqUkxLa1BHREN0MjhsWTh4L1Y2YWVm?=
- =?utf-8?B?amFIQmk2eEdGckIyNTVzanNPWUVLK0RibUVRYmx2a21yRU10MHVWT2NUSUlu?=
- =?utf-8?B?YmxNYXVrMEJqNkFIS29qdkFxS3NvYjhoYUpUSlAvejlUQVY1S2pxU1oxMTkr?=
- =?utf-8?B?TjhBY3JCR1dEenVvWlFybERqZWFOcUlwMzBVbHpUQzBMQXhaZTR6K3F0Tjhw?=
- =?utf-8?B?L0Vnbisrd3prM1dCdDFQYm45MU5YZWtoUlVKZTg2bm9jcjdXYmN1eEczZGky?=
- =?utf-8?B?d0JIOHdkWFl4ME1sQVJtSkt4M3hVQU9tdXcwQjBGb2FxNzEvcHFBeXZIaGUz?=
- =?utf-8?B?NkRzc2hRSWlHd2ZyVUxCMFNBL3A3c3lsaHFGT0FmMEN5cHYrVlVDRExiOHVi?=
- =?utf-8?B?cWlTaGRBZndUTmUrSC8wc0JJN0tGSWt0ZGJheHNoZGRKNEl3QWRCZlhnNWJT?=
- =?utf-8?B?MXowY3BQa3hGNEk3dzJPdXJTcnVuMUIxVHFyQ0VYVldYQVRZVERlbGE1MzVL?=
- =?utf-8?B?RTM4MU1XRzZrWVZaNTFZWHY1a1pQM01TR0JVSEpMMnhXaVJadGVtbmsvMHk2?=
- =?utf-8?B?dTNWL1ZlWXE1TEEvWWE3YmNpUEsrZkZMeFMvZ2NQZGpvRmtkU3VSckI0YjNl?=
- =?utf-8?B?RjZQVXRCc2E5ZjlWQjV5ZXF2VVB6bEtXclE1c1VWcm90cXIwQ0F1TTI0bHBN?=
- =?utf-8?B?ektKVmF3RnZILzIvNmJ5eklDUVlLU3ZIZFNZSXlOczlyNllsSE9tcFF3VEkx?=
- =?utf-8?B?b1VDMTlINCtBNU43TDBjazAxT0x6ZzB0cjdwejMyN2huSU5oYkx2SXFKbVZM?=
- =?utf-8?B?eURwWXhwc3JsZWtXVjB5SEhTa09aNTZZWlN6Qll1YkhpSFA4amRDME55UXpX?=
- =?utf-8?B?ZURTVC9XQVhvOVVZWHlVZ0I3bFI2OUo5QzdsTFA2QSt3akVkRnZPd1gzb1Z5?=
- =?utf-8?B?bDhEckxKbVovUGdTTjFDaW9kN0xWcGJsSHFJTm14dVJrQmpnbG5HeFI5eHVt?=
- =?utf-8?B?K0lsVGhlKzd1UWpTeEZHK3N0N0xGSjVEY3c3UkZjVlpjNHdDeS9pbmZOWXVy?=
- =?utf-8?B?Q1MzWHc0WHF6bTBzaTQ0ZXRxR2NTVXNzKzRlUkt2ZmU3Vk5MczJ3QnV0STVh?=
- =?utf-8?B?K2x6N3Q4Mm5ldnRHaEpHTEhIdkVMZ243RklQVlFIQnlpUjg1N1d2YzN4YXA1?=
- =?utf-8?B?Z2FCNEVUaGliL1NqOXBHMDQzeHJoSEdQUFJPcnNiOC8venlreGVGanZzbURB?=
- =?utf-8?B?cmxVTXhSSFpZYnpMMDNWQ2xja3czR013QWFBMVhab01sNHdUNE1sb0wwMUVO?=
- =?utf-8?B?RmYzUHlYZGhlSHRQUkhyVU5IRHRTWlFNMmFyVGdtTWNWbnpyV0tnMlprWk1Y?=
- =?utf-8?B?bFl1clluWFMyN1d3d3g0RUR1Tng2SnJMN1MweUx5bDhlNWRlaFhJMEZwNkV6?=
- =?utf-8?B?KytRZ1E5ZEt5cW5WS0tycmEzbVBPNXR6SXZNblRRNWZUY0oyNk03UXJTaTcw?=
- =?utf-8?B?ajlUSTYrVXg3QmluVlZiZTVwYk5mblAwM2c4NkJsUDIvRk9WY081TkF6eWU0?=
- =?utf-8?B?VlRRWW54cVp3amlxOG9RYS9wNy9sdHVkTDBOZkRQcFh2NnFnWisva2RyalVz?=
- =?utf-8?B?eGxZWTRkY0taK3c3SmE4UVJQeUt0L3IwaWk4YzVISGxwcE9ad1BmUjdyS3Q0?=
- =?utf-8?B?UGtjOWZZbHRmWjMrTm1ISVEzMU9QMmpjQmpma3lQNkVLL3JzenNZUTgxRXJB?=
- =?utf-8?B?b0gzdXZiaVFVMktObmVqVGRYWFZHeXNhb0lEMEwwK2hiM25kL0l1R2h4c1Qr?=
- =?utf-8?B?b2FISVg3RjhrdTNEUkJPUXdHN0ZYaGdVVEpEUXhUVlRKdnlnYStuYVd2R3Jx?=
- =?utf-8?B?ek84V1BiNWhROW5KT29kWkxXcWRhQzBObEJ2dnd2dmc3YUVySjJXSnd2c1Zh?=
- =?utf-8?B?d1ExV1pLUjlIT1lxZnpWR2RYSmpUU2t2anpOc0pOcU5LbDRxR2w5L2VCQkg3?=
- =?utf-8?B?a2Y3dnRJYTdLMTdwL1JOaDgrbnJ3a05obnJDcml4VThpMDNXRlozNXZEelJu?=
- =?utf-8?Q?7QDZoWkVbWxN6cLw5k4WFTD1Y?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 034fa845-d980-4c9c-f7aa-08dcb08b6884
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 11:33:18.2022
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zKZIhvm0oNcmlUldtkG7deiV6V+F3LYbG1GmMzUbBjEVXr4ACk8yD/29ZU69OrAC6OIfANGrK6WHzKvlzZLODA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5961
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgCH2kwq0Khmm+QUAQ--.5153S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xr4xJrWrJryrJF4UKr1rJFb_yoW3Zrc_XF
+	WvgF98Xw4aqF17W3WxCF13GrZ5Ww4xWr1rKFn3Xw4DKrn2q3Z5Cw1DCr4UZrnrZFWvkrya
+	qrn8K34vyw1kAjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbOkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267
+	AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80
+	ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4
+	AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
+	6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
+	CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF
+	0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
+	AIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIev
+	Ja73UjIFyTuYvjxUzsqWUUUUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
+This series contains a fix and some random cleanups to jbd2. More
+details can be found in respective patches. Thanks!
 
-在 2024/7/30 18:42, Christian König 写道:
-> Am 30.07.24 um 11:05 schrieb Huan Yang:
->>
->> 在 2024/7/30 16:56, Daniel Vetter 写道:
->>> [????????? daniel.vetter@ffwll.ch ????????? 
->>> https://aka.ms/LearnAboutSenderIdentification?????????????]
->>>
->>> On Tue, Jul 30, 2024 at 03:57:44PM +0800, Huan Yang wrote:
->>>> UDMA-BUF step:
->>>>    1. memfd_create
->>>>    2. open file(buffer/direct)
->>>>    3. udmabuf create
->>>>    4. mmap memfd
->>>>    5. read file into memfd vaddr
->>> Yeah this is really slow and the worst way to do it. You absolutely 
->>> want
->>> to start _all_ the io before you start creating the dma-buf, ideally 
->>> with
->>> everything running in parallel. But just starting the direct I/O with
->>> async and then creating the umdabuf should be a lot faster and avoid
->> That's greate,  Let me rephrase that, and please correct me if I'm 
->> wrong.
->>
->> UDMA-BUF step:
->>   1. memfd_create
->>   2. mmap memfd
->>   3. open file(buffer/direct)
->>   4. start thread to async read
->>   3. udmabuf create
->>
->> With this, can improve
->>
->>> needlessly serialization operations.
->>>
->>> The other issue is that the mmap has some overhead, but might not be 
->>> too
->>> bad.
->> Yes, the time spent on page fault in mmap should be negligible 
->> compared to the time spent on file read.
->
-> You should try to avoid mmap as much as possible. Especially the TLB 
-> invalidation overhead is really huge on platforms with a large number 
-> of CPUs.
-But, if not mmap, how to read file from fd to fd? sendfile may 
-help(shmemfs may support it, I do not test it), but use pipe buffer is 
-not good through test.
->
-> Regards,
-> Christian.
->
->>> -Sima
->>> -- 
->>> Daniel Vetter
->>> Software Engineer, Intel Corporation
->>> http://blog.ffwll.ch/ 
->>>
->
+Kemeng Shi (7):
+  jbd2: correctly compare tids with tid_geq function in
+    jbd2_fc_begin_commit
+  jbd2: remove dead check in journal_alloc_journal_head
+  jbd2: remove unused return value of jbd2_fc_release_bufs
+  jbd2: remove unneeded kmap for jh_in->b_frozen_data in
+    jbd2_journal_write_metadata_buffer
+  jbd2: remove unneeded done_copy_out variable in
+    jbd2_journal_write_metadata_buffer
+  jbd2: correct comment jbd2_mark_journal_empty
+  jbd2: remove unneeded check of ret in jbd2_fc_get_buf
+
+ fs/jbd2/journal.c    | 46 +++++++++++++++++---------------------------
+ include/linux/jbd2.h |  2 +-
+ 2 files changed, 19 insertions(+), 29 deletions(-)
+
+-- 
+2.30.0
+
 
