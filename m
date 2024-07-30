@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-267600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680A5941337
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:35:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F5D941338
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C5BE1C2353B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:35:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD7281F250DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981201A071F;
-	Tue, 30 Jul 2024 13:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2801A0AF9;
+	Tue, 30 Jul 2024 13:34:05 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2A41A08B5;
-	Tue, 30 Jul 2024 13:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BD01A00E7;
+	Tue, 30 Jul 2024 13:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722346442; cv=none; b=eoZANFmdfz2yxDquN1NTy4thL3b0Ee5pVYp1bZgTStBYt0DG9aQ+2vZcKTeU8hU4iYe4XkMUWWtP5RExTr1RA8RKbWl21gLDYt3AiFxE76evNv/PQ9PfaTgqvjp9kVRg4YS8v6VszA/3PjeJUvPz/wFVAl0j/ZsekrXj6Hb35Rk=
+	t=1722346445; cv=none; b=bHO+a/h5MppI1WLo/4IGmf7ecpfxjxVYDdKhpoumUCmiWWTk8h4QJ1twFVCxcQnNwY35fT/BpVBlm+pQCKWYkhNZ6hh6tM0k9Msd9DvN/DbjdaC05JOjYOL80wM/zO2TV69R+I32lYTc0I+rT4zEZo/CPEeB0ZkR7ZhP3mskQZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722346442; c=relaxed/simple;
-	bh=5FIksF/KU0+nb4wa9QbNrPkjt6vdx2/HTR2ofeKeyzQ=;
+	s=arc-20240116; t=1722346445; c=relaxed/simple;
+	bh=/pZGdLDkczKQndNo6Gq5sJk05wn7Z+IeYQJK7L0gSRA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IEM7Ev/W82/fcQX9mpuNgPw0LiA5K3CELUjhwW6pxVmeyWk6S9IQSsU6IvjxT1gLMsXeN2moJjTAJJ64xpz7MhTNcpDL9BA0WfuVPeB2PqHm75zEt8n71DdL4a+z42AlvdEFFH1aEial6iI6AWXZTW7N+zIUWM8m0HKOdBEX2M4=
+	 MIME-Version; b=JaLOwZmFHn70We6DiVjre9aQtvizD2Vf3xYXcKC2g2fe7mmVnxR9T8ESY9zpTU2b7DTOu2uKYknezle5DrzaMOlw2bEf4FCW7y9hzbJRQEMRO+ApN7J6CicOs/11I+jA1+83yZti0vi4bQBFsd4eIoxTWI6AYFLX5q0lEIldZrE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 524C61007;
-	Tue, 30 Jul 2024 06:34:25 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4EF9C106F;
+	Tue, 30 Jul 2024 06:34:28 -0700 (PDT)
 Received: from pluto.guestnet.cambridge.arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EFD123F5A1;
-	Tue, 30 Jul 2024 06:33:56 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 04E723F5A1;
+	Tue, 30 Jul 2024 06:33:59 -0700 (PDT)
 From: Cristian Marussi <cristian.marussi@arm.com>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
@@ -49,10 +49,10 @@ Cc: sudeep.holla@arm.com,
 	dan.carpenter@linaro.org,
 	souvik.chakravarty@arm.com,
 	Cristian Marussi <cristian.marussi@arm.com>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH v3 6/9] firmware: arm_scmi: Make SMC transport a standalone driver
-Date: Tue, 30 Jul 2024 14:33:15 +0100
-Message-ID: <20240730133318.1573765-7-cristian.marussi@arm.com>
+	Etienne Carriere <etienne.carriere@foss.st.com>
+Subject: [PATCH v3 7/9] firmware: arm_scmi: Make OPTEE transport a standalone driver
+Date: Tue, 30 Jul 2024 14:33:16 +0100
+Message-ID: <20240730133318.1573765-8-cristian.marussi@arm.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240730133318.1573765-1-cristian.marussi@arm.com>
 References: <20240730133318.1573765-1-cristian.marussi@arm.com>
@@ -64,187 +64,294 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make SCMI SMC transport a standalone driver that can be optionally
+Make SCMI OPTEE transport a standalone driver that can be optionally
 loaded as a module.
 
-CC: Peng Fan <peng.fan@nxp.com>
-CC: Nikunj Kela <quic_nkela@quicinc.com>
+CC: Etienne Carriere <etienne.carriere@foss.st.com>
 Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 ---
 v2 --> v3
 - fixed spacing in Kconfig and Copyright
+- fixed platform_driver_unregister call in .remove
+  (was called to late to work...)
 - use new params in DEFINE_SCMI_TRANSPORT_DRIVER
 v1 --> v2
-- make scmi_smc_desc static
+- handle platform_driver_register() failures
 ---
- drivers/firmware/arm_scmi/Kconfig             |  4 ++-
+ drivers/firmware/arm_scmi/Kconfig             |  6 +-
  drivers/firmware/arm_scmi/Makefile            |  2 +-
- drivers/firmware/arm_scmi/common.h            |  3 --
- drivers/firmware/arm_scmi/driver.c            |  5 ---
- .../arm_scmi/{smc.c => scmi_transport_smc.c}  | 32 +++++++++++++++----
- 5 files changed, 30 insertions(+), 16 deletions(-)
- rename drivers/firmware/arm_scmi/{smc.c => scmi_transport_smc.c} (88%)
+ drivers/firmware/arm_scmi/common.h            |  3 -
+ drivers/firmware/arm_scmi/driver.c            |  3 -
+ .../{optee.c => scmi_transport_optee.c}       | 90 ++++++++++---------
+ 5 files changed, 52 insertions(+), 52 deletions(-)
+ rename drivers/firmware/arm_scmi/{optee.c => scmi_transport_optee.c} (91%)
 
 diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
-index f03875169215..f634c5af1912 100644
+index f634c5af1912..5186794b0505 100644
 --- a/drivers/firmware/arm_scmi/Kconfig
 +++ b/drivers/firmware/arm_scmi/Kconfig
-@@ -102,7 +102,7 @@ config ARM_SCMI_TRANSPORT_OPTEE
- 	  transport based on OP-TEE SCMI service, answer Y.
+@@ -89,8 +89,8 @@ config ARM_SCMI_TRANSPORT_MAILBOX
+ 	  will be called scmi_transport_mailbox.
  
- config ARM_SCMI_TRANSPORT_SMC
--	bool "SCMI transport based on SMC"
-+	tristate "SCMI transport based on SMC"
- 	depends on HAVE_ARM_SMCCC_DISCOVERY
+ config ARM_SCMI_TRANSPORT_OPTEE
+-	bool "SCMI transport based on OP-TEE service"
+-	depends on OPTEE=y || OPTEE=ARM_SCMI_PROTOCOL
++	tristate "SCMI transport based on OP-TEE service"
++	depends on OPTEE
  	select ARM_SCMI_HAVE_TRANSPORT
  	select ARM_SCMI_HAVE_SHMEM
-@@ -112,6 +112,8 @@ config ARM_SCMI_TRANSPORT_SMC
+ 	select ARM_SCMI_HAVE_MSG
+@@ -100,6 +100,8 @@ config ARM_SCMI_TRANSPORT_OPTEE
  
  	  If you want the ARM SCMI PROTOCOL stack to include support for a
- 	  transport based on SMC, answer Y.
+ 	  transport based on OP-TEE SCMI service, answer Y.
 +	  This driver can also be built as a module. If so, the module
-+	  will be called scmi_transport_smc.
++	  will be called scmi_transport_optee.
  
- config ARM_SCMI_TRANSPORT_SMC_ATOMIC_ENABLE
- 	bool "Enable atomic mode support for SCMI SMC transport"
+ config ARM_SCMI_TRANSPORT_SMC
+ 	tristate "SCMI transport based on SMC"
 diff --git a/drivers/firmware/arm_scmi/Makefile b/drivers/firmware/arm_scmi/Makefile
-index 121612d75f0b..6868a47fa4ab 100644
+index 6868a47fa4ab..b04119ce972f 100644
 --- a/drivers/firmware/arm_scmi/Makefile
 +++ b/drivers/firmware/arm_scmi/Makefile
-@@ -5,7 +5,6 @@ scmi-core-objs := $(scmi-bus-y)
- scmi-driver-y = driver.o notify.o
- scmi-driver-$(CONFIG_ARM_SCMI_RAW_MODE_SUPPORT) += raw_mode.o
+@@ -7,13 +7,13 @@ scmi-driver-$(CONFIG_ARM_SCMI_RAW_MODE_SUPPORT) += raw_mode.o
  scmi-transport-$(CONFIG_ARM_SCMI_HAVE_SHMEM) = shmem.o
--scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_SMC) += smc.o
  scmi-transport-$(CONFIG_ARM_SCMI_HAVE_MSG) += msg.o
  scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_VIRTIO) += virtio.o
- scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_OPTEE) += optee.o
-@@ -13,6 +12,7 @@ scmi-protocols-y := base.o clock.o perf.o power.o reset.o sensors.o system.o vol
+-scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_OPTEE) += optee.o
+ scmi-protocols-y := base.o clock.o perf.o power.o reset.o sensors.o system.o voltage.o powercap.o
  scmi-protocols-y += pinctrl.o
  scmi-module-objs := $(scmi-driver-y) $(scmi-protocols-y) $(scmi-transport-y)
  
-+obj-$(CONFIG_ARM_SCMI_TRANSPORT_SMC) += scmi_transport_smc.o
+ obj-$(CONFIG_ARM_SCMI_TRANSPORT_SMC) += scmi_transport_smc.o
  obj-$(CONFIG_ARM_SCMI_TRANSPORT_MAILBOX) += scmi_transport_mailbox.o
++obj-$(CONFIG_ARM_SCMI_TRANSPORT_OPTEE) += scmi_transport_optee.o
  
  obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-core.o
+ obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-module.o
 diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
-index abaf7ce6fbab..f44763bfec16 100644
+index f44763bfec16..3ee775fca1d2 100644
 --- a/drivers/firmware/arm_scmi/common.h
 +++ b/drivers/firmware/arm_scmi/common.h
-@@ -286,9 +286,6 @@ int scmi_xfer_raw_inflight_register(const struct scmi_handle *handle,
- int scmi_xfer_raw_wait_for_message_response(struct scmi_chan_info *cinfo,
- 					    struct scmi_xfer *xfer,
- 					    unsigned int timeout_ms);
--#ifdef CONFIG_ARM_SCMI_TRANSPORT_SMC
--extern const struct scmi_desc scmi_smc_desc;
--#endif
+@@ -289,9 +289,6 @@ int scmi_xfer_raw_wait_for_message_response(struct scmi_chan_info *cinfo,
  #ifdef CONFIG_ARM_SCMI_TRANSPORT_VIRTIO
  extern const struct scmi_desc scmi_virtio_desc;
  #endif
+-#ifdef CONFIG_ARM_SCMI_TRANSPORT_OPTEE
+-extern const struct scmi_desc scmi_optee_desc;
+-#endif
+ 
+ void scmi_rx_callback(struct scmi_chan_info *cinfo, u32 msg_hdr, void *priv);
+ 
 diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index 9d869ab2d003..c4d0195f0fdb 100644
+index c4d0195f0fdb..e4fb1f75200f 100644
 --- a/drivers/firmware/arm_scmi/driver.c
 +++ b/drivers/firmware/arm_scmi/driver.c
-@@ -3254,11 +3254,6 @@ static const struct of_device_id scmi_of_match[] = {
- #ifdef CONFIG_ARM_SCMI_TRANSPORT_OPTEE
- 	{ .compatible = "linaro,scmi-optee", .data = &scmi_optee_desc },
- #endif
--#ifdef CONFIG_ARM_SCMI_TRANSPORT_SMC
--	{ .compatible = "arm,scmi-smc", .data = &scmi_smc_desc},
--	{ .compatible = "arm,scmi-smc-param", .data = &scmi_smc_desc},
--	{ .compatible = "qcom,scmi-smc", .data = &scmi_smc_desc},
+@@ -3251,9 +3251,6 @@ ATTRIBUTE_GROUPS(versions);
+ 
+ /* Each compatible listed below must have descriptor associated with it */
+ static const struct of_device_id scmi_of_match[] = {
+-#ifdef CONFIG_ARM_SCMI_TRANSPORT_OPTEE
+-	{ .compatible = "linaro,scmi-optee", .data = &scmi_optee_desc },
 -#endif
  #ifdef CONFIG_ARM_SCMI_TRANSPORT_VIRTIO
  	{ .compatible = "arm,scmi-virtio", .data = &scmi_virtio_desc},
  #endif
-diff --git a/drivers/firmware/arm_scmi/smc.c b/drivers/firmware/arm_scmi/scmi_transport_smc.c
-similarity index 88%
-rename from drivers/firmware/arm_scmi/smc.c
-rename to drivers/firmware/arm_scmi/scmi_transport_smc.c
-index 4cb86386c490..1c203a68acd4 100644
---- a/drivers/firmware/arm_scmi/smc.c
-+++ b/drivers/firmware/arm_scmi/scmi_transport_smc.c
-@@ -16,6 +16,7 @@
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
- #include <linux/limits.h>
+diff --git a/drivers/firmware/arm_scmi/optee.c b/drivers/firmware/arm_scmi/scmi_transport_optee.c
+similarity index 91%
+rename from drivers/firmware/arm_scmi/optee.c
+rename to drivers/firmware/arm_scmi/scmi_transport_optee.c
+index dae68adf6f9e..974128d73f2d 100644
+--- a/drivers/firmware/arm_scmi/optee.c
++++ b/drivers/firmware/arm_scmi/scmi_transport_optee.c
+@@ -9,6 +9,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
 +#include <linux/platform_device.h>
- #include <linux/processor.h>
  #include <linux/slab.h>
- 
-@@ -69,12 +70,14 @@ struct scmi_smc {
- 	unsigned long cap_id;
+ #include <linux/tee_drv.h>
+ #include <linux/uuid.h>
+@@ -148,12 +149,11 @@ struct scmi_optee_agent {
+ 	struct list_head channel_list;
  };
  
 +static struct scmi_transport_core_operations *core;
 +
- static irqreturn_t smc_msg_done_isr(int irq, void *data)
+ /* There can be only 1 SCMI service in OP-TEE we connect to */
+ static struct scmi_optee_agent *scmi_optee_private;
+ 
+-/* Forward reference to scmi_optee transport initialization */
+-static int scmi_optee_init(void);
+-
+ /* Open a session toward SCMI OP-TEE service with REE_KERNEL identity */
+ static int open_session(struct scmi_optee_agent *agent, u32 *tee_session)
  {
- 	struct scmi_smc *scmi_info = data;
- 
--	scmi_rx_callback(scmi_info->cinfo,
--			 scmi_shmem_ops.read_header(scmi_info->shmem), NULL);
-+	core->rx_callback(scmi_info->cinfo,
-+			  core->shmem->read_header(scmi_info->shmem), NULL);
- 
- 	return IRQ_HANDLED;
- }
-@@ -141,7 +144,7 @@ static int smc_chan_setup(struct scmi_chan_info *cinfo, struct device *dev,
- 	if (!scmi_info)
- 		return -ENOMEM;
- 
--	scmi_info->shmem = scmi_shmem_ops.setup_iomap(cinfo, dev, tx, &res);
-+	scmi_info->shmem = core->shmem->setup_iomap(cinfo, dev, tx, &res);
- 	if (IS_ERR(scmi_info->shmem))
- 		return PTR_ERR(scmi_info->shmem);
- 
-@@ -226,7 +229,7 @@ static int smc_send_message(struct scmi_chan_info *cinfo,
- 	 */
- 	smc_channel_lock_acquire(scmi_info, xfer);
- 
--	scmi_shmem_ops.tx_prepare(scmi_info->shmem, xfer, cinfo);
-+	core->shmem->tx_prepare(scmi_info->shmem, xfer, cinfo);
- 
- 	if (scmi_info->cap_id != ULONG_MAX)
- 		arm_smccc_1_1_invoke(scmi_info->func_id, scmi_info->cap_id, 0,
-@@ -250,7 +253,7 @@ static void smc_fetch_response(struct scmi_chan_info *cinfo,
- {
- 	struct scmi_smc *scmi_info = cinfo->transport_info;
- 
--	scmi_shmem_ops.fetch_response(scmi_info->shmem, xfer);
-+	core->shmem->fetch_response(scmi_info->shmem, xfer);
+@@ -312,24 +312,6 @@ static int invoke_process_msg_channel(struct scmi_optee_channel *channel, size_t
+ 	return 0;
  }
  
- static void smc_mark_txdone(struct scmi_chan_info *cinfo, int ret,
-@@ -270,7 +273,7 @@ static const struct scmi_transport_ops scmi_smc_ops = {
- 	.fetch_response = smc_fetch_response,
- };
+-static int scmi_optee_link_supplier(struct device *dev)
+-{
+-	if (!scmi_optee_private) {
+-		if (scmi_optee_init())
+-			dev_dbg(dev, "Optee bus not yet ready\n");
+-
+-		/* Wait for optee bus */
+-		return -EPROBE_DEFER;
+-	}
+-
+-	if (!device_link_add(dev, scmi_optee_private->dev, DL_FLAG_AUTOREMOVE_CONSUMER)) {
+-		dev_err(dev, "Adding link to supplier optee device failed\n");
+-		return -ECANCELED;
+-	}
+-
+-	return 0;
+-}
+-
+ static bool scmi_optee_chan_available(struct device_node *of_node, int idx)
+ {
+ 	u32 channel_id;
+@@ -343,7 +325,7 @@ static void scmi_optee_clear_channel(struct scmi_chan_info *cinfo)
+ 	struct scmi_optee_channel *channel = cinfo->transport_info;
  
--const struct scmi_desc scmi_smc_desc = {
-+static const struct scmi_desc scmi_smc_desc = {
- 	.ops = &scmi_smc_ops,
- 	.max_rx_timeout_ms = 30,
- 	.max_msg = 20,
-@@ -286,3 +289,20 @@ const struct scmi_desc scmi_smc_desc = {
- 	.sync_cmds_completed_on_ret = true,
- 	.atomic_enabled = IS_ENABLED(CONFIG_ARM_SCMI_TRANSPORT_SMC_ATOMIC_ENABLE),
- };
+ 	if (!channel->tee_shm)
+-		scmi_shmem_ops.clear_channel(channel->req.shmem);
++		core->shmem->clear_channel(channel->req.shmem);
+ }
+ 
+ static int setup_dynamic_shmem(struct device *dev, struct scmi_optee_channel *channel)
+@@ -368,7 +350,7 @@ static int setup_dynamic_shmem(struct device *dev, struct scmi_optee_channel *ch
+ static int setup_static_shmem(struct device *dev, struct scmi_chan_info *cinfo,
+ 			      struct scmi_optee_channel *channel)
+ {
+-	channel->req.shmem = scmi_shmem_ops.setup_iomap(cinfo, dev, true, NULL);
++	channel->req.shmem = core->shmem->setup_iomap(cinfo, dev, true, NULL);
+ 	if (IS_ERR(channel->req.shmem))
+ 		return PTR_ERR(channel->req.shmem);
+ 
+@@ -479,10 +461,11 @@ static int scmi_optee_send_message(struct scmi_chan_info *cinfo,
+ 	mutex_lock(&channel->mu);
+ 
+ 	if (channel->tee_shm) {
+-		scmi_msg_ops.tx_prepare(channel->req.msg, xfer);
+-		ret = invoke_process_msg_channel(channel, scmi_msg_ops.command_size(xfer));
++		core->msg->tx_prepare(channel->req.msg, xfer);
++		ret = invoke_process_msg_channel(channel,
++						 core->msg->command_size(xfer));
+ 	} else {
+-		scmi_shmem_ops.tx_prepare(channel->req.shmem, xfer, cinfo);
++		core->shmem->tx_prepare(channel->req.shmem, xfer, cinfo);
+ 		ret = invoke_process_smt_channel(channel);
+ 	}
+ 
+@@ -498,9 +481,10 @@ static void scmi_optee_fetch_response(struct scmi_chan_info *cinfo,
+ 	struct scmi_optee_channel *channel = cinfo->transport_info;
+ 
+ 	if (channel->tee_shm)
+-		scmi_msg_ops.fetch_response(channel->req.msg, channel->rx_len, xfer);
++		core->msg->fetch_response(channel->req.msg,
++					  channel->rx_len, xfer);
+ 	else
+-		scmi_shmem_ops.fetch_response(channel->req.shmem, xfer);
++		core->shmem->fetch_response(channel->req.shmem, xfer);
+ }
+ 
+ static void scmi_optee_mark_txdone(struct scmi_chan_info *cinfo, int ret,
+@@ -512,7 +496,6 @@ static void scmi_optee_mark_txdone(struct scmi_chan_info *cinfo, int ret,
+ }
+ 
+ static struct scmi_transport_ops scmi_optee_ops = {
+-	.link_supplier = scmi_optee_link_supplier,
+ 	.chan_available = scmi_optee_chan_available,
+ 	.chan_setup = scmi_optee_chan_setup,
+ 	.chan_free = scmi_optee_chan_free,
+@@ -527,6 +510,22 @@ static int scmi_optee_ctx_match(struct tee_ioctl_version_data *ver, const void *
+ 	return ver->impl_id == TEE_IMPL_ID_OPTEE;
+ }
+ 
++static const struct scmi_desc scmi_optee_desc = {
++	.ops = &scmi_optee_ops,
++	.max_rx_timeout_ms = 30,
++	.max_msg = 20,
++	.max_msg_size = SCMI_OPTEE_MAX_MSG_SIZE,
++	.sync_cmds_completed_on_ret = true,
++};
 +
 +static const struct of_device_id scmi_of_match[] = {
-+	{ .compatible = "arm,scmi-smc" },
-+	{ .compatible = "arm,scmi-smc-param" },
-+	{ .compatible = "qcom,scmi-smc" },
++	{ .compatible = "linaro,scmi-optee" },
 +	{ /* Sentinel */ },
 +};
 +
-+DEFINE_SCMI_TRANSPORT_DRIVER(scmi_smc, scmi_smc_driver, scmi_smc_desc,
++DEFINE_SCMI_TRANSPORT_DRIVER(scmi_optee, scmi_optee_driver, scmi_optee_desc,
 +			     scmi_of_match, core);
-+module_platform_driver(scmi_smc_driver);
 +
-+MODULE_ALIAS("scmi-transport-smc");
-+MODULE_AUTHOR("Peng Fan <peng.fan@nxp.com>");
-+MODULE_AUTHOR("Nikunj Kela <quic_nkela@quicinc.com>");
-+MODULE_DESCRIPTION("SCMI SMC Transport driver");
+ static int scmi_optee_service_probe(struct device *dev)
+ {
+ 	struct scmi_optee_agent *agent;
+@@ -562,6 +561,12 @@ static int scmi_optee_service_probe(struct device *dev)
+ 	smp_mb();
+ 	scmi_optee_private = agent;
+ 
++	ret = platform_driver_register(&scmi_optee_driver);
++	if (ret) {
++		scmi_optee_private = NULL;
++		goto err;
++	}
++
+ 	return 0;
+ 
+ err:
+@@ -577,6 +582,8 @@ static int scmi_optee_service_remove(struct device *dev)
+ 	if (!scmi_optee_private)
+ 		return -EINVAL;
+ 
++	platform_driver_unregister(&scmi_optee_driver);
++
+ 	if (!list_empty(&scmi_optee_private->channel_list))
+ 		return -EBUSY;
+ 
+@@ -598,7 +605,7 @@ static const struct tee_client_device_id scmi_optee_service_id[] = {
+ 
+ MODULE_DEVICE_TABLE(tee, scmi_optee_service_id);
+ 
+-static struct tee_client_driver scmi_optee_driver = {
++static struct tee_client_driver scmi_optee_service_driver = {
+ 	.id_table	= scmi_optee_service_id,
+ 	.driver		= {
+ 		.name = "scmi-optee",
+@@ -608,22 +615,19 @@ static struct tee_client_driver scmi_optee_driver = {
+ 	},
+ };
+ 
+-static int scmi_optee_init(void)
++static int __init scmi_transport_optee_init(void)
+ {
+-	return driver_register(&scmi_optee_driver.driver);
++	return driver_register(&scmi_optee_service_driver.driver);
+ }
++module_init(scmi_transport_optee_init);
+ 
+-static void scmi_optee_exit(void)
++static void __exit scmi_transport_optee_exit(void)
+ {
+-	if (scmi_optee_private)
+-		driver_unregister(&scmi_optee_driver.driver);
++	driver_unregister(&scmi_optee_service_driver.driver);
+ }
++module_exit(scmi_transport_optee_exit);
+ 
+-const struct scmi_desc scmi_optee_desc = {
+-	.transport_exit = scmi_optee_exit,
+-	.ops = &scmi_optee_ops,
+-	.max_rx_timeout_ms = 30,
+-	.max_msg = 20,
+-	.max_msg_size = SCMI_OPTEE_MAX_MSG_SIZE,
+-	.sync_cmds_completed_on_ret = true,
+-};
++MODULE_ALIAS("scmi-transport-optee");
++MODULE_AUTHOR("Etienne Carriere <etienne.carriere@foss.st.com>");
++MODULE_DESCRIPTION("SCMI OPTEE Transport driver");
 +MODULE_LICENSE("GPL");
 -- 
 2.45.2
