@@ -1,70 +1,79 @@
-Return-Path: <linux-kernel+bounces-268225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A08DC9421ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:59:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA609421F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D25C61C240FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:59:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A184D1C24149
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB14B18E024;
-	Tue, 30 Jul 2024 20:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0966183A17;
+	Tue, 30 Jul 2024 21:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XOqPEddU"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ds0Iyeqq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A7018DF68
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 20:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1FF1422D2
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 21:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722373191; cv=none; b=S5zv5kf8n4+DEbHptO3ImJS54DURDzUTd30mpWRFFSm/UHG6lQ719WH5VKuMUT6R/nICVfC7/0w4eALg9BbnjVo203Rg4EMwm92M+9pV21heRIdCsOGjjL/pFAXxmLtL7pnEonqHrJPrRG5ENbInCF+31671/GTxTVP2vsa3gs8=
+	t=1722373208; cv=none; b=e7ZwcHLgRIAOvnk/KMsazGDIVKi7BWnrbQs5EzmzOxk6IiNbcqLOwa1eiXMhC/gwAYrRHX5P0+WQJeKXZszceRk8vxIF9YBtMPDvRY4fhFOe8NjKnLifBsYmoAtsCsvTwMwWCBTOEva9Woqad0SKkY7jKReP/bWhRr/4CwGAl0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722373191; c=relaxed/simple;
-	bh=Rpnfp00xfPTWyxn1g/3uIW3ZpbsDnsff7qomylYe5lk=;
+	s=arc-20240116; t=1722373208; c=relaxed/simple;
+	bh=O5Ol+FhNUttO8Rc6kBMkNVl92zf0rjm0gCmDpPRvkZI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KwBeVVyVfz2k1haz+XUEYuAa8jp+hEQ4slL38cX0E5LKxrnVKmVx5AlSdFQB+bl55LoAuMLPk6wVpzu40oFEcryE9NCjIsiy27XH03lkDC7Jv2P7MtOgCiPX2dKcsM3U8FtRAUflgyjrDthF7eGyEIGosavHX9we0r2g6KyBHr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XOqPEddU; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-81f8add99b6so26454439f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 13:59:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722373188; x=1722977988; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vvfSMGLDwVal7HDi2rHRI6rmGo9DD4NGmTwc2V7ATHM=;
-        b=XOqPEddUohUuYUoT4pq2lW5gmAjqui0pjLvLDo1r/W9uRaqx7udpvRtxXgAWAMjesr
-         BPZ4C2vD2rFlPmJVwIOl+kN2Orwr5J2ptLIpGogmHkiz8iD2DKqYk/3v/0Z6HPWLGjg5
-         c9uQuvS+CubNUmH4LoMPJUJYN2sSU7TtvgF0s=
+	 In-Reply-To:Content-Type; b=pjLGqMcBQ+xI+cdT/T3wh+vWGUZP9XbRERbw/bi9hVCaT0Ge42y/CL9QwLKJoxgsJbwprBZqiydNHsz/JbSEQ8oFRb0hD94AtVx+tj8pbODahPYyrIaZe1UMwYQxHywppgZOXkihpVEKz2n84YAft4uALl88gMIaPm0t4etHz0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ds0Iyeqq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722373205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Dd2GE5fxYQXd3FamrUnZxrNJqYzFYBEEnX6o4Yw/b8A=;
+	b=Ds0Iyeqq+K2mtBd4rFUY/MeypVuxnuLEIyrGhKl5fzglaLBhgLlCW3Pxrt2tLL/mkgph2e
+	LqNzLq1Ug12uCzXuJMIcmVjtrRUwj0xCln50j7FlHeZOArRPRiHyQ4hnmkNNFJ9ERUY77h
+	MMSvF6DKKc65ImkDkzO+Y4Qt21upBS8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-499-dILhNo8kMDWglbwc_7yZWw-1; Tue, 30 Jul 2024 17:00:03 -0400
+X-MC-Unique: dILhNo8kMDWglbwc_7yZWw-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4281ca9f4dbso22625175e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:00:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722373188; x=1722977988;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vvfSMGLDwVal7HDi2rHRI6rmGo9DD4NGmTwc2V7ATHM=;
-        b=LcJ+6/L2+AtwMc1FTVVtJIY2Ed2DOjjInuEs6CsojObufqX8xQI9UYCK3jHxi+mCik
-         o8clVxcFzKWuhHEjqGXmhzZ+k8d9blQl6lIw8qBgQed0Pz2Ta5PAnkDnme/LrxfZ2AwN
-         dnDuepy4jR34g54MFuhAls/o168930ZaCvmPXHvM65ZGiwJmgYvhEUsDa00wfRaYy1O0
-         jintxviTOVFMUnzstDZk3iRMutkQLTb/LGvwM33jJ9fY81tB6z7PJqpch4lYuY0QOie4
-         q6QU/l+pBucLD5f0E2+JNfOgOULMMzJcL0OTdvfhphozpcDEnsvdQMbHpX2WD+UbYD9E
-         Mc/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVzzL9TBW8hTfWFEHQAjbC2mRk3hWvtTQg03l92v+zTi7biXvEsFpU+GLFhQrX2BCqK73q44yjehV3tDFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtE/dkFIRZ85ESMisjxia/pY7tHL1bQhOOJbED20Fl0Sbr5Cf1
-	kpWuBJI3teDDLM6a4v1PP15QwrOGTV02/nswVYRxxBdMDh60ummme7z8v6AndJQ=
-X-Google-Smtp-Source: AGHT+IGU6jaGqNkJim01ZwIH04fmf59qPO2I9OG/k2EjYG9u32i+V2Q3VFZoWqo6SZyZGyMey3G1lw==
-X-Received: by 2002:a05:6e02:1fcf:b0:381:c5f0:20d5 with SMTP id e9e14a558f8ab-39a22c4add5mr125507425ab.0.1722373188542;
-        Tue, 30 Jul 2024 13:59:48 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39ae9aa98bfsm38112125ab.81.2024.07.30.13.59.47
+        d=1e100.net; s=20230601; t=1722373203; x=1722978003;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Dd2GE5fxYQXd3FamrUnZxrNJqYzFYBEEnX6o4Yw/b8A=;
+        b=CXF4SK3o0/BUHCKoAKmDmh08ZBSfJi26W+D7JRRlPj5fUqJBAC4yKk8nhXlHWnofyZ
+         O03FeqQggsrOcTtgaUPTbpDCnlPoD31dnAtugibrailPTV3dGyzXzKPb655AuuuwaEBb
+         RhfNmZIKqR1ajUgwmVwNkQP+oJkyhj2br9XlBKMpT8AyNEh5GJm+2XMvPUfR9Ijv8zlo
+         wzBJ2DVxJT8fOZXBuzRQ3cikM67z4/IfgqfHwR9Li2uenio38qju1UPV2F6iVy8D27LE
+         2jUC1NSMjTi9WmYdrJZDCBhckeWh/LmE07MfxqJQUaLGDsULmVX8lXDe+zZtmq2iM7NL
+         4Xhg==
+X-Gm-Message-State: AOJu0Yyg/2L0QjD+cRknCm/FwLcbakV7lJYPg75xi/D1HwojcBmPNz1H
+	jAOrX/cmr5TbXvb91xIE8NQ9J4b65JYT2oW0oqhpD6lKklScSsF+m8n34zqaHsU5qx3OyHGNh+j
+	hUYfBmnngAfnInFnST0uw9+5s/0yF8qmUuJ1mlXpHKJgjNWckxNWgxnc4Z4xUuw==
+X-Received: by 2002:a05:600c:3109:b0:428:1663:2c2e with SMTP id 5b1f17b1804b1-42816632d21mr72811335e9.17.1722373202598;
+        Tue, 30 Jul 2024 14:00:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFNCsRwlsvh43ZSSbMWT/1ocm0X/IsCJR1zXxkMwP6xwcDRthKIbvBG39LDykQwp4+7n9CM9g==
+X-Received: by 2002:a05:600c:3109:b0:428:1663:2c2e with SMTP id 5b1f17b1804b1-42816632d21mr72811245e9.17.1722373202064;
+        Tue, 30 Jul 2024 14:00:02 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c706:4e00:31ad:5274:e21c:b59? (p200300cbc7064e0031ad5274e21c0b59.dip0.t-ipconnect.de. [2003:cb:c706:4e00:31ad:5274:e21c:b59])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428175e60b7sm123163245e9.42.2024.07.30.14.00.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 13:59:48 -0700 (PDT)
-Message-ID: <ab271d7f-f495-4853-813e-10972cbff45d@linuxfoundation.org>
-Date: Tue, 30 Jul 2024 14:59:47 -0600
+        Tue, 30 Jul 2024 14:00:01 -0700 (PDT)
+Message-ID: <3f6c97b5-ccd8-4226-a9ac-78d555b0d048@redhat.com>
+Date: Tue, 30 Jul 2024 23:00:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,46 +81,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/1] selftest: drivers: Add support its msi hwirq checking
-To: Joseph Jang <jjang@nvidia.com>, shuah@kernel.org, mochs@nvidia.com,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Bjorn Helgaas <bjorn@helgaas.com>
-Cc: linux-tegra@vger.kernel.org,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240530012727.324611-1-jjang@nvidia.com>
+Subject: Re: [PATCH v2] mm/hugetlb: fix hugetlb vs. core-mm PT locking
+To: James Houghton <jthoughton@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, stable@vger.kernel.org,
+ Peter Xu <peterx@redhat.com>, Oscar Salvador <osalvador@suse.de>,
+ Muchun Song <muchun.song@linux.dev>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>
+References: <20240730200341.1642904-1-david@redhat.com>
+ <CADrL8HXRCNFzmg67p=j0_0Y_NAFo5rUDmvnr40F5HGAsQMvbnw@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240530012727.324611-1-jjang@nvidia.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CADrL8HXRCNFzmg67p=j0_0Y_NAFo5rUDmvnr40F5HGAsQMvbnw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/29/24 19:27, Joseph Jang wrote:
-> In order to validate ITS-MSI hwirq entry in the /proc/interrupts, we
-> have created a shell script to check is there any duplicated ITS-MSI
-> hwirq entry.
+On 30.07.24 22:43, James Houghton wrote:
+> On Tue, Jul 30, 2024 at 1:03 PM David Hildenbrand <david@redhat.com> wrote:
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index b100df8cb5857..1b1f40ff00b7d 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -2926,6 +2926,12 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
+>>          return ptlock_ptr(page_ptdesc(pmd_page(*pmd)));
+>>   }
+>>
+>> +static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
+>> +{
+>> +       BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
+>> +       return ptlock_ptr(virt_to_ptdesc(pte));
 > 
-> Joseph Jang (1):
->    selftest: drivers: Add support its msi hwirq checking
-> 
->   tools/testing/selftests/drivers/irq/Makefile  |  5 +++++
->   .../selftests/drivers/irq/its-msi-irq-test.sh | 20 +++++++++++++++++++
->   2 files changed, 25 insertions(+)
->   create mode 100644 tools/testing/selftests/drivers/irq/Makefile
->   create mode 100755 tools/testing/selftests/drivers/irq/its-msi-irq-test.sh
+> Hi David,
 > 
 
-Sorry for the delay on this. It has gotten lost in my Inbox.
-Since this is related to PCIe and MSI, I would like PCIe
-maintainers to review this first.
+Hi!
 
-Adding Bjorn Helgaas and linux-pci@vger.kernel.org list
+> Small question: ptep_lockptr() does not handle the case where the size
+> of the PTE table is larger than PAGE_SIZE, but pmd_lockptr() does.
 
-Bjorn, please review - I can take this through kselftest
-tree once I get your okay.
+I thought I convinced myself that leaf page tables are always single 
+pages and had a comment in v1.
 
-thanks,
--- Shuah
+But now I have to double-check again, and staring at 
+pagetable_pte_ctor() callers I am left confused.
 
+It certainly sounds more future proof to just align the pointer down to 
+the start of the PTE table like pmd_lockptr() would.
+
+> IIUC, for pte_lockptr() and ptep_lockptr() to return the same result
+> in this case, ptep_lockptr() should be doing the masking that
+> pmd_lockptr() is doing. Are you sure that you don't need to be doing
+> it? (Or maybe I am misunderstanding something.)
+
+It's a valid concern even if it would not be required. But I'm afraid I 
+won't dig into the details and simply do the alignment in a v3.
+
+I'm hoping I'll be done with that hugetlb crap soon; it's starting to 
+annoy me and I really should be working on other stuff ...
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
