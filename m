@@ -1,67 +1,81 @@
-Return-Path: <linux-kernel+bounces-267549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E32FC9412B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:58:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 414299412B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7F7E1C22C2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:58:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2450285719
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199C119F49B;
-	Tue, 30 Jul 2024 12:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E162819F49C;
+	Tue, 30 Jul 2024 12:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fvoNIAOg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="go/1Zx3T"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0C8442C;
-	Tue, 30 Jul 2024 12:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DB3442C;
+	Tue, 30 Jul 2024 12:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722344291; cv=none; b=tI1aQtG9Ll8tdRL/sVhOQ7/gAfqr6WPD24ZK7KDUZyucUzS9oSUpdKIgWU0Cb5zynOEWIsozzi90uu9SDSnLkAfPRIhjfFQxArOEe8i9PjYs4C0slPQspKCYP9nUtf/GThYHkzIx8N3yBirgdoAAC95s3QE0gnOXf4Ani2ITK7c=
+	t=1722344352; cv=none; b=BqjgC8qk9d0bGhpRuos5a5XbEyb3+Z9bdAZOVc9BoBea7Nl5g73QQlt5z4poLkDxB4T9QtrzHxFT1pWmKDV3KavjBI24EVpwI2dVXQFlooeDVy4lf2tX8PW5BAUglFw/tyKpa3nPZcMJ3PFnf2ay8naXgamxB4gGr9JRcyxgzBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722344291; c=relaxed/simple;
-	bh=RQBJKoskUKzpFj6PGr8szjBFffKz+3SsoTGNet8lQ7o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q72SF3OY6zca2IjYDsu8l+N+Di/V4koQSWq1RkIdQ2MylgcmdF1g29f0WoFlTLfjGp83JKkdOmkVc+F8HFyHgcV0YMPrWt7CK851CsOI4G0W1FXzsvARWatBWTavd68mcGb5Pv28N44VY0s+gnEmWfCKl5vpmUagkLO/ubqzQBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fvoNIAOg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46U9Y2ET023699;
-	Tue, 30 Jul 2024 12:58:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=oAhBaZHNfR8JhfcemRsRdo
-	aMewxSIn3JrfT6P0v+VDg=; b=fvoNIAOgCn98T+3aBWkGj3xBkqcuVSClXeF/1e
-	JntGOCxRKtXGf8R/MYJHkX6ThsxQ15hwXoqrhDmP/YG6GTj4aDRf3xliUjpmjVNm
-	q2xfe0Ds867+XVEdJ4AyB24e6By9SemCCA1ODaIUYFd91jHR5hvkOJ8U5zxjfIBb
-	TrCMsN6+6j5AMrR6BSw95LgTqQpu/DwNUz4spJu3PGyjFogDynB8f/WDQ0slA/sr
-	pXLGEEZERmWIKHyPWxViWeDpFUptM3HdKwIjt4hzHWXLMjLgzTPkhKgHMZqQ6iu4
-	uU08WmDkBCopj7Byx2KbrY8ujipofVxIP77ixCZJEWd7tjzg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mrytyepr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 12:58:08 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46UCw61Y020448
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 12:58:06 GMT
-Received: from hu-prashk-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 30 Jul 2024 05:58:04 -0700
-From: Prashanth K <quic_prashk@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        Prashanth K
-	<quic_prashk@quicinc.com>, <stable@vger.kernel.org>
-Subject: [PATCH] usb: gadget: u_serial: Set start_delayed during suspend
-Date: Tue, 30 Jul 2024 18:27:54 +0530
-Message-ID: <20240730125754.576326-1-quic_prashk@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1722344352; c=relaxed/simple;
+	bh=eqXcPBYhZBDafuHBni2TZwrobW4eaMMgljUweKQ30xo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IP3wTEs3HKIfqom1o/I4Iiv22B36HvHv15RriwAkETffEL/kzRJ0jc6glpobwYa81KHRGlvTNTVuMhx8kWIWcK4x8jGfrM+bWyoytGUGCoczb0OLyW3HP30cVA2+o8PFpJCSyPvYEvxDO1z/omkQRD4q2c2pQ0fdK22ykP4VP2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=go/1Zx3T; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52f01993090so7118015e87.2;
+        Tue, 30 Jul 2024 05:59:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722344348; x=1722949148; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/nqx6Y1Pu/keDudNv6N0ITjqRriMkyri+n9sVB+9k5k=;
+        b=go/1Zx3TImHB3COHB74AuQ/Wjy55d1irY8jsYttfa5luugl9vMipq+Zvj02RDaD+VD
+         l+/vT839F+TX2NLiAZ1XS4mXMs4mgsS6p1j6/bfFtguqJ7AfT2vqpKuJmeNHwVlpERTM
+         AEa73jJPFQNdBlQpHmSkgySgbgdJ8+qPpnH3W7QJlIFeHrY7PoO2oUQyoXjKtg6LNQs8
+         gCE2BR+nxhPNXsI/DNSu3lmpdrIDlLM+AIRY5ikPPyxiJIG5ISs+N5kCOFANrz9YRWMJ
+         nhVPDwD8LmelMCFisPoyjvtu5/a0PJ8WeZlJyED/VqS33hq5+DEUtRgZu+MO40Doj7Zb
+         D4Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722344348; x=1722949148;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/nqx6Y1Pu/keDudNv6N0ITjqRriMkyri+n9sVB+9k5k=;
+        b=ZQSnQkSIbBbLR3posMa4j/wfZGX/LeAu99ppvzxPVeHnIgkEwmn8AWrukmlwcCC95f
+         l6b0f2uSjIsPEs0ffFHPEGTWDUlagA+kOfdkaMyVEX9PxKpZf53Ou4QvL7kq9C8s4WsF
+         ibJHYfkIM7gnRSW7GGzWhu9FNhlnIA2ahG7PtIu/2nm0Zpva4hFBXOzLMDm83Ab+aEqW
+         KPSrTSXD6QFXUa4L0lT0YSiPbD26oj3H38Ch1wl0oCzeMsietf5szJtdYo7gxrVfxJsN
+         biQgPQrbuj+F63JflhfDRK2K0Yg3Hu/Jp5AH0HGsEPAQTAM0uotE9qbe2fhHBamPBu/O
+         Cvpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWEg5BKDkXL7D8Vw5Fbz4TL5mj8TDYw0vrLzglYnH2LmAMGbnJtsfFTJo8bSR2eskdnWaPlah1BZcrV5ZDxAWO4RnNjuvfSc4FvZOQW
+X-Gm-Message-State: AOJu0YyOWc/BiZrXun2IPxcu42ddPkFX7rydGyKil3S+G/UzZIOZDQjA
+	+kbLUlPEk1MuuZKjLLX1lPhum41Xq694/vjN29ku2T7UP4r1CVHrZZkaCw==
+X-Google-Smtp-Source: AGHT+IGZ+UjHZXid+MQwVVXxMKLUsxgcRy2pLmFUwyU4tteUjKrlEcbQ316/hXV2XIB3k+h2jjb4+w==
+X-Received: by 2002:a05:6512:3e15:b0:52c:e28f:4da6 with SMTP id 2adb3069b0e04-5309b2c54fbmr8564267e87.51.1722344348005;
+        Tue, 30 Jul 2024 05:59:08 -0700 (PDT)
+Received: from localhost.localdomain (93-103-32-68.dynamic.t-2.net. [93.103.32.68])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad418f1sm636286166b.135.2024.07.30.05.59.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 05:59:07 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH] net/chelsio/libcxgb: Add __percpu annotations to libcxgb_ppm.c
+Date: Tue, 30 Jul 2024 14:58:19 +0200
+Message-ID: <20240730125856.7321-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,50 +83,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: S53PUg33R01bo6JvTuiu9FrmpRalREvJ
-X-Proofpoint-GUID: S53PUg33R01bo6JvTuiu9FrmpRalREvJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_11,2024-07-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 suspectscore=0 bulkscore=0 adultscore=0 spamscore=0
- impostorscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=980
- mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407300090
 
-Upstream commit aba3a8d01d62 ("usb: gadget: u_serial: add suspend
-resume callbacks") added started_delayed flag, so that new ports
-which are opened after USB suspend can start IO while resuming.
-But if the port was already opened, and gadget suspend kicks in
-afterwards, start_delayed will never be set. This causes resume
-to bail out before calling gs_start_io(). Fix this by setting
-start_delayed during suspend.
+Compiling libcxgb_ppm.c results in several sparse warnings:
 
-Fixes: aba3a8d01d62 ("usb: gadget: u_serial: add suspend resume callbacks")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Prashanth K <quic_prashk@quicinc.com>
+libcxgb_ppm.c:368:15: warning: incorrect type in assignment (different address spaces)
+libcxgb_ppm.c:368:15:    expected struct cxgbi_ppm_pool *pools
+libcxgb_ppm.c:368:15:    got void [noderef] __percpu *_res
+libcxgb_ppm.c:374:48: warning: incorrect type in initializer (different address spaces)
+libcxgb_ppm.c:374:48:    expected void const [noderef] __percpu *__vpp_verify
+libcxgb_ppm.c:374:48:    got struct cxgbi_ppm_pool *
+libcxgb_ppm.c:484:19: warning: incorrect type in assignment (different address spaces)
+libcxgb_ppm.c:484:19:    expected struct cxgbi_ppm_pool [noderef] __percpu *pool
+libcxgb_ppm.c:484:19:    got struct cxgbi_ppm_pool *[assigned] pool
+libcxgb_ppm.c:511:21: warning: incorrect type in argument 1 (different address spaces)
+libcxgb_ppm.c:511:21:    expected void [noderef] __percpu *__pdata
+libcxgb_ppm.c:511:21:    got struct cxgbi_ppm_pool *[assigned] pool
+
+Add __percpu annotation to *pools and *pool percpu pointers and to
+ppm_alloc_cpu_pool() function that returns percpu pointer to fix
+these warnings.
+
+Compile tested only, but there is no difference in the resulting object file.
+
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
 ---
- drivers/usb/gadget/function/u_serial.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
-index eec7f7a2e40f..b394105e55d6 100644
---- a/drivers/usb/gadget/function/u_serial.c
-+++ b/drivers/usb/gadget/function/u_serial.c
-@@ -1441,6 +1441,7 @@ void gserial_suspend(struct gserial *gser)
- 	spin_lock(&port->port_lock);
- 	spin_unlock(&serial_port_lock);
- 	port->suspended = true;
-+	port->start_delayed = true;
- 	spin_unlock_irqrestore(&port->port_lock, flags);
+diff --git a/drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c b/drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c
+index 854d87e1125c..01d776113500 100644
+--- a/drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c
++++ b/drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c
+@@ -342,10 +342,10 @@ int cxgbi_ppm_release(struct cxgbi_ppm *ppm)
  }
- EXPORT_SYMBOL_GPL(gserial_suspend);
+ EXPORT_SYMBOL(cxgbi_ppm_release);
+ 
+-static struct cxgbi_ppm_pool *ppm_alloc_cpu_pool(unsigned int *total,
+-						 unsigned int *pcpu_ppmax)
++static struct cxgbi_ppm_pool __percpu *ppm_alloc_cpu_pool(unsigned int *total,
++							  unsigned int *pcpu_ppmax)
+ {
+-	struct cxgbi_ppm_pool *pools;
++	struct cxgbi_ppm_pool __percpu *pools;
+ 	unsigned int ppmax = (*total) / num_possible_cpus();
+ 	unsigned int max = (PCPU_MIN_UNIT_SIZE - sizeof(*pools)) << 3;
+ 	unsigned int bmap;
+@@ -392,7 +392,7 @@ int cxgbi_ppm_init(void **ppm_pp, struct net_device *ndev,
+ 		   unsigned int iscsi_edram_size)
+ {
+ 	struct cxgbi_ppm *ppm = (struct cxgbi_ppm *)(*ppm_pp);
+-	struct cxgbi_ppm_pool *pool = NULL;
++	struct cxgbi_ppm_pool __percpu *pool = NULL;
+ 	unsigned int pool_index_max = 0;
+ 	unsigned int ppmax_pool = 0;
+ 	unsigned int ppod_bmap_size;
 -- 
-2.25.1
+2.45.2
 
 
