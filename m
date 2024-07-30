@@ -1,158 +1,112 @@
-Return-Path: <linux-kernel+bounces-267950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EDF1941D78
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:17:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 749EC941D8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D01C01C236B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:17:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25D1B1F26D9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CAA1A76BA;
-	Tue, 30 Jul 2024 17:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356961A76BE;
+	Tue, 30 Jul 2024 17:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QpJt54++"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fTabwNNt"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44691A76B3
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FE91A76A4
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722359869; cv=none; b=lonrKXAjrE6L54LQlqSQa8FEpolrMy5hpglV0yU0sdEYwqUq4H89PpoaP4a7eRiiv85+MEwmXl+Hrxx3KAYCVQM7qC1+K91vtSY3ndhc1mpubDeMbsEJBxpD8EwXvI8TMqnP0bdfaiQvZgeidhsWaLgFI8p28LYD421yRFIZU6k=
+	t=1722359914; cv=none; b=CKV7p2pYcQvbGPCimjjDPuSLvrVsJS+hKd+CLWTFQs5VPQWKlW//DUGonElUcX2KvxUhQD+fmTUI8zqWpqYTQonAj49Yk4K0+QEaWjEYUP+sSIwM4Dmk3RPQaAnkkLKzbktjAR9LHE0k+U1RNm0yruusPS9k3tOqa3eWgbRmG/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722359869; c=relaxed/simple;
-	bh=7S8qBivfmksIDCRjowz+E3chlu8P6UM7PipkX6yM/Eo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P6G8U4iEEGVMZMuW6BD+LA995TAMtC6GQPTzS0OfQ4+FQcBzqfRhuaZiGievuEd2aO/hGh+vdfC+9hPOH2nfY/yQnCn/CX6OBeWYa9R9N1h/PUUDrp8t0qnEWM93vuaxyNYCWEjqhCJLXZ9I31r8bRzx/JU518SeKnER6Bfyrjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QpJt54++; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722359866;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s7X5S4hdI3KRREsro0BMCE0/9TvraRM4Id7gYH2wZOw=;
-	b=QpJt54++rejzAD9xW02vG7ipgzifxYowpSfaRPvDNdx0qqXKw0xcLyq3iPdo9bvFIAyA5A
-	qHC8hQ1nvUpGTjXW492jRHt9IBT/R0NIwZzVZOG5WE42btvdZcyvggs8oyYk8ZWOgYvQFD
-	ZSQWaX7xRYgva+7t/0U2/bpOMhZDU4E=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-693-YS0d8ur5OP21uxpvspE9ZA-1; Tue,
- 30 Jul 2024 13:17:41 -0400
-X-MC-Unique: YS0d8ur5OP21uxpvspE9ZA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 246271955D4A;
-	Tue, 30 Jul 2024 17:17:39 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.179])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 09EDF1955F3B;
-	Tue, 30 Jul 2024 17:17:35 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 30 Jul 2024 19:17:38 +0200 (CEST)
-Date: Tue, 30 Jul 2024 19:17:34 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org,
-	jolsa@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] uprobes: shift put_uprobe() from delete_uprobe() to
- uprobe_unregister()
-Message-ID: <20240730171733.GA10822@redhat.com>
-References: <20240730123421.GA9085@redhat.com>
- <20240730123457.GA9108@redhat.com>
- <CAEf4BzZ=vMh9=t3iH+pqwTDaYGfXvuF-0BqaLsOgAx2qV7Vqzw@mail.gmail.com>
+	s=arc-20240116; t=1722359914; c=relaxed/simple;
+	bh=NSwh2S4jFZUNLW279mrTn3SdwO4l4yQsEMBUgQrDYbk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Cw3e1Iq7ElzZdDYxqG39sbkd7HCin4VzIdy1j2W5QX5iEDpGCv7JFEF0V1DCQR/UxwsDLDxbTZoAUF74vLtPtj0M0XX0cBsHvt5ydujjLVPMAKaqxF59kD07jE/s0tzFbII2NAci6kWZZcV7jDxcHRQKE67UaXuAzkt6a5J6Ovg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fTabwNNt; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a728f74c23dso650160666b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:18:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722359911; x=1722964711; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NSwh2S4jFZUNLW279mrTn3SdwO4l4yQsEMBUgQrDYbk=;
+        b=fTabwNNtYtA7HLvaqUBBdNxT4tS73r4+fqmiwTog+3WOJI2HxQkeVLkzHOruUMosaF
+         4YsMiepGT2kx8waWoJKhvIwFRpH6bXFAZKAJWzzMc6mGOM9dhOrxzKHdWqRg/Tz4K8vW
+         5aUs7u/5hmc+uHoLT1T0xD3Y/KwRevxMeBm+EMPCHjc4AtVbLpLHQiWdXFWKrYN3WgaK
+         nhQ/GVnuI4z+2RzST+ROiYu8YVb3HdgynbMJqfd7NJs5GWpSQP3yBQirLxs5DCxv/Kok
+         fcSL/MpciHjVEPRq2od7BPXWlEyRtIaadqTEXq86f29sMci16aHFqz/MqSNSC9+xmCGY
+         hvmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722359911; x=1722964711;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NSwh2S4jFZUNLW279mrTn3SdwO4l4yQsEMBUgQrDYbk=;
+        b=TSqEoBLYq36f8Zx6EYc8RlTZr7sP7IVujxH3XezmiVUMnoOt7ajyP8kqXUktonP4L1
+         B12QNCFEqDkglUe4K9RgGyzEbSjDKcdrqcFskR5QJr73peWsbC73a3FSel0t8CrO4SOl
+         ofhmLvV+R/nP5vkP/3tWvaUH2xDcOCyJHvOIm9g0V2TuitWH1D5PI0c6/ElO6CJD65NP
+         vRSffDuoVzedYTxDobdyF5BoS6FQom/EqIBylmRdfdHDMQlw+E4IoOpCMkANmmHufNp+
+         +CTejxKz6zPsDwEJVgu7AlawmhAZohqi3Tq3l9/q/8Nevyg6byRcIakZAaCs4vQIgsfQ
+         qGWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEjhGkL9wmV6FHoVrt3LHHaz0C66RXRrvY9htDdt1dhAVJ+gWCf4g9+/f3cOSRI0MRF8hYM92JEQTxTVnaaOnwLHHxShbFKic1vX49
+X-Gm-Message-State: AOJu0YwTn1pVYCVi5fQMgkscl4Emao+HnifQ3AENCH8TFUBEjXhbIMCM
+	K2s1ahq9nIUb3ODJSAY8vzcse7/7x45eWF/GCjIrTI2J4YtVGAx8+7kCMgOxy7oLKQgNUozg+K1
+	xaB5vDHdseLAQcbcDnKJUC28NG7C75trteqFN
+X-Google-Smtp-Source: AGHT+IH48rycmcn5SYzBW5ZC8UbZoUnMTbOHz0noIuwNpgbbja3UlcoUmoGDSVmhxt7iRguQJ6tBZo30R0axzOWbm+Y=
+X-Received: by 2002:a17:906:c10f:b0:a77:d441:c6f1 with SMTP id
+ a640c23a62f3a-a7d400af7f6mr804585366b.33.1722359910408; Tue, 30 Jul 2024
+ 10:18:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEf4BzZ=vMh9=t3iH+pqwTDaYGfXvuF-0BqaLsOgAx2qV7Vqzw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20240730150158.832783-1-pasha.tatashin@soleen.com> <20240730150158.832783-2-pasha.tatashin@soleen.com>
+In-Reply-To: <20240730150158.832783-2-pasha.tatashin@soleen.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Tue, 30 Jul 2024 10:17:54 -0700
+Message-ID: <CAJD7tkZ2f6g3P7qVP3fL0jFjZNHNgsW6BUb2-megpq_NQ3W7kg@mail.gmail.com>
+Subject: Re: [PATCH v6 1/3] memcg: increase the valid index range for memcg stats
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, jpoimboe@kernel.org, kent.overstreet@linux.dev, 
+	peterz@infradead.org, nphamcs@gmail.com, cerasuolodomenico@gmail.com, 
+	surenb@google.com, lizhijian@fujitsu.com, willy@infradead.org, 
+	shakeel.butt@linux.dev, vbabka@suse.cz, ziy@nvidia.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for looking at this!
-
-On 07/30, Andrii Nakryiko wrote:
+On Tue, Jul 30, 2024 at 8:02=E2=80=AFAM Pasha Tatashin
+<pasha.tatashin@soleen.com> wrote:
 >
-> BTW, do you have anything against me changing refcounting so that
-> uprobes_tree itself doesn't hold a refcount, and all the refcounting
-> is done based on consumers holding implicit refcount and whatever
-> temporary get/put uprobe is necessary for runtime uprobe/uretprobe
-> functioning.
-
-No, I have nothing against.
-
-To be honest, I don't really understand the value of this change, but
-a) this is probably because I didn't see a separate patch(es) which
-does this and b) assuming that it doesn't complicate the code too much
-I won't argue in any case ;)
-
-And in fact I had your proposed change in mind when I did these cleanups.
-I think that they can even simplify this change, at least I hope they can
-not complicate it.
-
-> BTW, do you plan
-> any more clean ups like this? It's a bit of a moving target because of
-> your refactoring, so I'd appreciate some stability to build upon :)
-
-Well yes... may be this week.
-
-I'd like to (try to) optimize/de-uglify register_for_each_vma() for
-the multiple-consumers case. And, more importantly, the case when perf
-does uprobe_register() + uprobe_apply().
-
-But. All these changes will only touch the register_for_each_vma() paths,
-so this is completely orthogonal to this series and your and/or Peter's
-changes.
-
-> Also, can you please push this and your previous patch set into some
-> branch somewhere I can pull from, preferably based on the latest
-> linux-trace's probes/for-next? Thanks!
-
-Cough ;)
-
-No, sorry, I can't. I lost my kernel.org account years ago (and this is
-the second time this has happened!), but since I am a lazy dog I didn't
-even bother to try to restore it.
-
-> Acked-by: Andrii Nakryiko <andrii@kernel.org>
-
-Thanks!
-
-> > @@ -1102,10 +1100,16 @@ void uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
-> >                 err = register_for_each_vma(uprobe, NULL);
-> >
-> >         /* TODO : cant unregister? schedule a worker thread */
-> > -       if (!err && !uprobe->consumers)
-> > -               delete_uprobe(uprobe);
-> > +       if (!err) {
-> > +               if (!uprobe->consumers)
-> > +                       delete_uprobe(uprobe);
-> > +               else
-> > +                       err = -EBUSY;
+> From: Shakeel Butt <shakeel.butt@linux.dev>
 >
-> This bit is weird because really it's not an error... but this makes
-> this change simpler and moves put_uprobe outside of rwsem.
+> At the moment the valid index for the indirection tables for memcg stats
+> and events is < S8_MAX. These indirection tables are used in performance
+> critical codepaths. With the latest addition to the vm_events, the
+> NR_VM_EVENT_ITEMS has gone over S8_MAX. One way to resolve is to
+> increase the entry size of the indirection table from int8_t to int16_t
+> but this will increase the potential number of cachelines needed to
+> access the indirection table.
+>
+> This patch took a different approach and make the valid index < U8_MAX.
+> In this way the size of the indirection tables will remain same and we
+> only need to invalid index check from less than 0 to equal to U8_MAX.
+> In this approach we have also removed a subtraction from the performance
+> critical codepaths.
+>
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Co-developed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 
-Agreed, uprobe->consumers != NULL is not an error. But we don't return
-this error code, just we need to ensure that "err == 0" means that
-"delete_uprobe() was actually called".
-
-> With my
-> proposed change to refcounting schema this would be unnecessary,
-
-Yes.
-
-Oleg.
-
+Reviewed-by: Yosry Ahmed <yosryahmed@google.com>
 
