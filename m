@@ -1,114 +1,99 @@
-Return-Path: <linux-kernel+bounces-267979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EEE0941EF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:46:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F770941EFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:46:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E9221C216D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:46:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27B6A2827D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4AA188008;
-	Tue, 30 Jul 2024 17:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C0D188008;
+	Tue, 30 Jul 2024 17:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RuvxqRWk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Q1r4uMXc"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229741A76C9
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0C41A76C9
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722361556; cv=none; b=mObV5TngeeKnVsoASiY6iBnGhLrAG6lDWFn/uuhjdGc8UgmoRpeqOYEfJ5q56/+QYHaMoq5EMl5dHU0Sp8IStvVpmAx2xwxbKWfj0eldbyFkQ8krwidzfP3ep2HSbmCNE5VlWPpxdX2TD+lSko+SVN6uzHoWchTFkqCtPo05+t0=
+	t=1722361611; cv=none; b=VprdmSh4YPkFgpcOXCd4lkx+WXoKUPS7bSsTkGS+mGu0l2LRvyjCDYIjFEfWMY+Gv7kzvyBeXUbcLt88hfCoS7N1BfbKcmciljISmo4EX6HPTAL+7F05eIs6dAp0LgKQ/i72ju29Gi1Z6t31YIhOqWuSCMen7/uUNARMZ+Myk/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722361556; c=relaxed/simple;
-	bh=aMT+ozBRTbYdHL+fhh5svvBL+WbYmjyLUnaF92OcDaw=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WOWrbldrF1FwNeNQw0rmyL+FIPpUoHwMzLFJ56XIR09QMGbU0Xm8OV8XLu/BXj0gpQTdfengYBnmxQR+KE8pS86VmYZFaRR184QQYBrPXIXXP3bgVWqkRlDy1IIa+7NiakIMSBvD+KcBQVUkpv9EZd6Fp7wGrMmDhusIltKnU3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RuvxqRWk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722361553;
+	s=arc-20240116; t=1722361611; c=relaxed/simple;
+	bh=KhltE2uwTR5I1ruE1O/m4LkEh0gZn3py6elfWt1S1+M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KxSZUsJS6aUoHDgexEN/+ZVI8552H3Wvkw/mnXWlLgU5f5Fn5ddhxZ+P2wGukkw8s/4qkDRUvMHDUpS4TlAuIVNxxyuC1BHhUJp+IXFIN+7u9XZLpOxHbqxZQ52+ruMDTZncjZAW/mfeoAk60PCSiNnvDBAKZVaLj6B+7wIHVPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Q1r4uMXc; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <7b34fb4c-abde-47e8-984b-3ea55d4475a7@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1722361606;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=2JtWX8h/qlZ5cL2mugzGiR7VThwI4jeywtxnPIFTnFc=;
-	b=RuvxqRWkGtexiN4PRfnUSo19uIoaTu9VHw9G/04J0ggxlTfoyMltciWFi4BvFRHv3cjYHO
-	9eoovfen90loS8LLXSXFlNm1Zx5qvIYtZQh+uMg37AiiDSqtdd7qMkjOtzo2dATBE5L4oG
-	bygVzrRZKnGtA5jCI4vHkLTe44QMFEw=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-441-hYIRVspJM9Cp1Bwu3q_gyw-1; Tue,
- 30 Jul 2024 13:45:50 -0400
-X-MC-Unique: hYIRVspJM9Cp1Bwu3q_gyw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A69D619560B1;
-	Tue, 30 Jul 2024 17:45:49 +0000 (UTC)
-Received: from localhost (unknown [10.22.34.81])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D0B3C19560B2;
-	Tue, 30 Jul 2024 17:45:48 +0000 (UTC)
-Date: Tue, 30 Jul 2024 14:45:47 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH V2] lockdep: suggest the fix for "lockdep bfs error:-1" on
- print_bfs_bug
-Message-ID: <Zqkmy0lS-9Sw0M9j@uudg.org>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i1PkLT7Wa1W5BhecQMpMGwCc4qguu8cW9tK12igjtDs=;
+	b=Q1r4uMXcLcLpHMCejh7/3AzUWmCg7wLrpVz2oRWHPiNbeU8KyE+NPBYmCu84FnWjsFZTBo
+	pDt9FOiKbHnox38QpWbXF/F3tre3DF6dX5oHzBYA+IDbSMloAuTNyaJLeDvBUbgmMx2Pa1
+	WBDSZ9LxYWGoIg7ywOdmOdevoYYdI40=
+Date: Wed, 31 Jul 2024 01:46:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Subject: Re: [PATCH v5 1/2] drm/loongson: Introduce component framework
+ support
+To: Markus Elfring <Markus.Elfring@web.de>, dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+References: <20240728152858.346211-1-sui.jingfeng@linux.dev>
+ <20240728152858.346211-2-sui.jingfeng@linux.dev>
+ <6dbe975a-59eb-4d4b-9fea-b930fa44e4ec@web.de>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <6dbe975a-59eb-4d4b-9fea-b930fa44e4ec@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-When lockdep fails while performing the Breadth-first-search operation
-due to lack of memory, hint that increasing the value of the config
-switch LOCKDEP_CIRCULAR_QUEUE_BITS should fix the warning.
+Hi,
 
-Preface the scary backtrace with the suggestion:
 
-    [  163.849242] Increase LOCKDEP_CIRCULAR_QUEUE_BITS to avoid this warning:
-    [  163.849248] ------------[ cut here ]------------
-    [  163.849250] lockdep bfs error:-1
-    [  163.849263] WARNING: CPU: 24 PID: 2454 at kernel/locking/lockdep.c:2091 print_bfs_bug+0x27/0x40
-    ...
+On 2024/7/29 14:40, Markus Elfring wrote:
+> …
+>> +++ b/drivers/gpu/drm/loongson/loongson_drv.h
+>> @@ -0,0 +1,108 @@
+> …
+>> +#ifndef __LOONGSON_DRV_H__
+>> +#define __LOONGSON_DRV_H__
+> …
+>
+> I suggest to omit leading underscores from such identifiers.
+> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+define+a+reserved+identifier
 
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-Reviewed-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
----
 
-Changes in v2:
-  - removed extra space from the if condition.
+I suggest add this rules to the checkpatch.pl script,
 
- kernel/locking/lockdep.c | 3 +++
- 1 file changed, 3 insertions(+)
+It's more safe to follow *after* your suggestion is accepted.
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 58c88220a478a..1cf6d9fdddc9c 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -2067,6 +2067,9 @@ static noinline void print_bfs_bug(int ret)
- 	/*
- 	 * Breadth-first-search failed, graph got corrupted?
- 	 */
-+	if (ret == BFS_EQUEUEFULL)
-+		pr_warn("Increase LOCKDEP_CIRCULAR_QUEUE_BITS to avoid this warning:\n");
-+
- 	WARN(1, "lockdep bfs error:%d\n", ret);
- }
- 
+After all, the checkpatch.pl is de-facto standard.
+
+checkpatch.pl is happy about my patch for now.
+
+
+> Regards,
+> Markus
+
 -- 
-2.45.2
+Best regards,
+Sui
 
 
