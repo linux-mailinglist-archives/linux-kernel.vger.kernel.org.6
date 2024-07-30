@@ -1,82 +1,188 @@
-Return-Path: <linux-kernel+bounces-266609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0BA9940307
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:04:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45EA1940322
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 875621F2319A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:04:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77BED1C21EAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38D3524C;
-	Tue, 30 Jul 2024 01:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642438C13;
+	Tue, 30 Jul 2024 01:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZSQBGtB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ob8XjfSq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11ABF8BF0;
-	Tue, 30 Jul 2024 01:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52107464
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 01:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722301439; cv=none; b=YPIA3FSV6xMxC66DBrni1jInwX69vXxzId2e+wBJchEFGeA33MCGY7kFbfsJ+7HeL0hsqohNbsx+eoj7M540oG7Gz+i7vmQuFxKmAlX44ZqXni8vN+Q7aZlP2j3y8hTzgqz42AElVQlMyFnvmAwp+0H19YuQxjEg8KsR6J/NuK0=
+	t=1722301743; cv=none; b=afNCz5U4pVxDgFlD826t5vuPvste2yzFvRmMj0JTpzu/gtU9HvkwRgr/TApfsafwKVIhOiUpLpATtOwIi9Hbi+b015fLy4QJjpcNk19IdVsAkQqpfDwQ1w0I5aLLn0xNSueD2JyYEkp57o6QRaP+pEYbZpDEniL0ky0INBDHm30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722301439; c=relaxed/simple;
-	bh=2Q7uEnGSSgWeJik9prx3AAxtezJhB7SlZbfhdLKQFcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tS112wrZerdsA2HUBlfqd3wA27QLhLoBGD/uWzcxQQn8m0GZSLpWEaYxRV/YB3gHurudZBgl6saOgey85xdKSGZ6jVHhVabh45Rlfdo53asQNSQ4h4Wnp8kg3gZ2jmtaBxNBsZG2+rsVUZYh12EW2atUOBR18DKDLym54y2mVlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZSQBGtB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDBEFC32786;
-	Tue, 30 Jul 2024 01:03:58 +0000 (UTC)
+	s=arc-20240116; t=1722301743; c=relaxed/simple;
+	bh=00h3vLXLvu9qJfB2DJPqbuEki7u3R/BDUL3XxZOien4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=quWTQRcw8TJvOApWH+AfaK78zPvz8eXgBdkQcPf031KqCO82DSZPsqTJSzAHoF2x0+J6W25RXc/n5k7Yhup4EHAlLZV4IsWHlsRV2f/W5JghfaODKDneIwtp/OHGIwCvS86tJykAK+Q9FYADHSFH7H1ggc21qo4fTBBbsXPHZMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ob8XjfSq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF7C5C32786;
+	Tue, 30 Jul 2024 01:09:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722301438;
-	bh=2Q7uEnGSSgWeJik9prx3AAxtezJhB7SlZbfhdLKQFcQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kZSQBGtBAkoTz9EFp/H1Pu8+qxJ/8O2YBanXsU4pnJKrwcXrNs8x38Xy01nIcpwbg
-	 rLfaJ+KKVytSVnhEtzGSiNPYjDsMWgwu5PXevo/MHVqwDLKVMp4rbY8AnGr6iQHYy8
-	 mVm73iF6Io+obCXDy/2dL/clkb65IshU0dXIp4raeyFhOrK/uhhFFo6XkIcdWdzZ1e
-	 J4TzwDDGgWIa5lzJNP6+4WQfhYRr6xGtbqHJUFWoPmGioVyOK8cq1tRY3GSD2G2mAj
-	 BXEgF5mXaoBhwogbWAy0QTG99NhiFOja3O99NRkOBNE4PT1HJwNrkidspNDRxBw/bY
-	 E/MYlkPl5N7Hw==
-Date: Mon, 29 Jul 2024 18:03:58 -0700
-From: Kees Cook <kees@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCH 4/4] kbuild: cross-compile linux-headers package when
- possible
-Message-ID: <202407291757.BE6D847803@keescook>
-References: <20240727074526.1771247-1-masahiroy@kernel.org>
- <20240727074526.1771247-5-masahiroy@kernel.org>
+	s=k20201202; t=1722301743;
+	bh=00h3vLXLvu9qJfB2DJPqbuEki7u3R/BDUL3XxZOien4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ob8XjfSqsHmR/KbOnkMZ94dCIyptHn0vixnagWEVhpi1pjUBfAdBT5EMWdA6yrs65
+	 I/+cVdpEKzzE37HgOpcY9zDqkWFhCTVRFZN/S3v936R/0ThQRspibuVR1sPfRWsz15
+	 Ejg4k8fbK32Fe8LLVNOCsrnRL/J692rHmhKXLDAF09UH9XzLqXRUqyRZnD6dX3rV8k
+	 VN1Wq/EpXRJyqhMYWcncykoSoJlJjmIdZlZbZG9WLT+3qpSdAzI/5eq2L2KhqiK0z4
+	 e1pG4/pLH4nnFoU4ZSwUIBaKQ4NzKEPvQmVXw+ExfN8x4/+mM2G441Y4H3ecsANomE
+	 cFo7ZJITqrWQg==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
+Subject: [PATCH v2] f2fs: fix to avoid use-after-free in f2fs_stop_gc_thread()
+Date: Tue, 30 Jul 2024 09:08:55 +0800
+Message-Id: <20240730010855.2942132-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240727074526.1771247-5-masahiroy@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 27, 2024 at 04:42:04PM +0900, Masahiro Yamada wrote:
-> There are known limitations:
-> 
->  - GCC plugins
-> 
->    It would possible to rebuild GCC plugins for the target architecture
->    by passing HOSTCXX=${CROSS_COMPILE}g++ with necessary packages
->    installed, but gcc on the installed system emits
->    "cc1: error: incompatible gcc/plugin versions". I did not find a
->    solution for this because 'gcc' on a foreign architecture is a
->    different compiler after all.
+syzbot reports a f2fs bug as below:
 
-Do you mean having a plugins as part of a distro package? Does anyone do
-this?
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_report+0xe8/0x550 mm/kasan/report.c:491
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
+ __refcount_add include/linux/refcount.h:184 [inline]
+ __refcount_inc include/linux/refcount.h:241 [inline]
+ refcount_inc include/linux/refcount.h:258 [inline]
+ get_task_struct include/linux/sched/task.h:118 [inline]
+ kthread_stop+0xca/0x630 kernel/kthread.c:704
+ f2fs_stop_gc_thread+0x65/0xb0 fs/f2fs/gc.c:210
+ f2fs_do_shutdown+0x192/0x540 fs/f2fs/file.c:2283
+ f2fs_ioc_shutdown fs/f2fs/file.c:2325 [inline]
+ __f2fs_ioctl+0x443a/0xbe60 fs/f2fs/file.c:4325
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
+The root cause is below race condition, it may cause use-after-free
+issue in sbi->gc_th pointer.
+
+- remount
+ - f2fs_remount
+  - f2fs_stop_gc_thread
+   - kfree(gc_th)
+				- f2fs_ioc_shutdown
+				 - f2fs_do_shutdown
+				  - f2fs_stop_gc_thread
+				   - kthread_stop(gc_th->f2fs_gc_task)
+   : sbi->gc_thread = NULL;
+
+We will call f2fs_do_shutdown() in two paths:
+- for f2fs_ioc_shutdown() path, we should grab sb->s_umount semaphore
+for fixing.
+- for f2fs_shutdown() path, it's safe since caller has already grabbed
+sb->s_umount semaphore.
+
+Reported-by: syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/linux-f2fs-devel/0000000000005c7ccb061e032b9b@google.com
+Fixes: 7950e9ac638e ("f2fs: stop gc/discard thread after fs shutdown")
+Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+v2:
+- fix deadlock pointed out by Jaegeuk
+ fs/f2fs/f2fs.h  |  2 +-
+ fs/f2fs/file.c  | 11 +++++++++--
+ fs/f2fs/super.c |  2 +-
+ 3 files changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 51fd5063a69c..0e0189084462 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3508,7 +3508,7 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ int f2fs_truncate_hole(struct inode *inode, pgoff_t pg_start, pgoff_t pg_end);
+ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count);
+ int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
+-							bool readonly);
++						bool readonly, bool need_lock);
+ int f2fs_precache_extents(struct inode *inode);
+ int f2fs_fileattr_get(struct dentry *dentry, struct fileattr *fa);
+ int f2fs_fileattr_set(struct mnt_idmap *idmap,
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 270c32e3385f..ac61c88f7688 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2292,7 +2292,7 @@ static int f2fs_ioc_abort_atomic_write(struct file *filp)
+ }
+ 
+ int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
+-							bool readonly)
++						bool readonly, bool need_lock)
+ {
+ 	struct super_block *sb = sbi->sb;
+ 	int ret = 0;
+@@ -2339,12 +2339,19 @@ int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
+ 	if (readonly)
+ 		goto out;
+ 
++	/* grab sb->s_umount to avoid racing w/ remount() */
++	if (need_lock)
++		down_read(&sbi->sb->s_umount);
++
+ 	f2fs_stop_gc_thread(sbi);
+ 	f2fs_stop_discard_thread(sbi);
+ 
+ 	f2fs_drop_discard_cmd(sbi);
+ 	clear_opt(sbi, DISCARD);
+ 
++	if (need_lock)
++		up_read(&sbi->sb->s_umount);
++
+ 	f2fs_update_time(sbi, REQ_TIME);
+ out:
+ 
+@@ -2381,7 +2388,7 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
+ 		}
+ 	}
+ 
+-	ret = f2fs_do_shutdown(sbi, in, readonly);
++	ret = f2fs_do_shutdown(sbi, in, readonly, true);
+ 
+ 	if (need_drop)
+ 		mnt_drop_write_file(filp);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 4d2f3bb8e418..4a09dbb9fd54 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2560,7 +2560,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 
+ static void f2fs_shutdown(struct super_block *sb)
+ {
+-	f2fs_do_shutdown(F2FS_SB(sb), F2FS_GOING_DOWN_NOSYNC, false);
++	f2fs_do_shutdown(F2FS_SB(sb), F2FS_GOING_DOWN_NOSYNC, false, false);
+ }
+ 
+ #ifdef CONFIG_QUOTA
 -- 
-Kees Cook
+2.40.1
+
 
