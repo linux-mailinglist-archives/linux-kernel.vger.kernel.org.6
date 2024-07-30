@@ -1,215 +1,264 @@
-Return-Path: <linux-kernel+bounces-267211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84781940E6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:58:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 270BD940E73
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39B1B28311D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:58:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49EA81C22767
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C72319599C;
-	Tue, 30 Jul 2024 09:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9F7198A03;
+	Tue, 30 Jul 2024 09:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BDFBnhLC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uR0sgPqO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k4Js5UuQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5849C194098
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC9E195FE5;
+	Tue, 30 Jul 2024 09:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722333519; cv=none; b=L7640c+400PM6a1+rE7NJ7Jw6o0lqhUAePtzV9oWJPSLqYzUFC/DEWIN7bwOB2TLkBEil2j193UN0HPhOUJbSkyIV1DNMD623z7HdE0t9tO37tlLV+havGlgIVPmRIMAxZJsUCv6j59Lru8tSI2J50ljeCb8RXYIRsaZT3Gw1jk=
+	t=1722333521; cv=none; b=iFWG4p8s+Oqug/dF6gBww+xJsoB34wOjCEKNbv/Znqr069SH/gpb/2oz23wpjDe0W44HYThC2YUrtQYhthMekRzdEkOtsEWcaqp4Y7rx+bLoecJeNiqIvEIXMneFsNDFxcYOxaxkt640+Z6ojqMJvUUd30AUO0Pzq3Qz86I/Fv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722333519; c=relaxed/simple;
-	bh=JbxmviDN3q5fXCkPDjYhop6hI/tQ8luNTRkQe7Jirks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FM7C5M17zRQVf3ukFACH0NbsvgIJe3fye78lu3rJ0wfHzqhbmJd8kkSrPRJIgke+mkdAvxi4MXc0ik4zmxhdhnn4Yoar1KGuHwo8YKFr5RTlJtv2kg2VnGgGBf45MHpMLls2o+lIkPX0sJePbl2R6Py4v6A/ncGv/O714VexkaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BDFBnhLC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722333516;
+	s=arc-20240116; t=1722333521; c=relaxed/simple;
+	bh=pBW1iXUgUWPqF8BiZCdFB4ILrvn3db6+hfo+Ctdyk48=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=q5Nd90TKyL4H2AHmvzD7CCga67+0tTzlmxXXCl9lLgTSap8D7+p4XDz6zLN3M7shEqgrSarU15EywuMVfbZyHwuDKG21byfPB6aCpk6ahWmUGsuE0y+G8Qnp6sIbMtiSf+MJEEz/wxdczR4OMf0bofi+DMfNSMsb7G9bPcedYyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uR0sgPqO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k4Js5UuQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Kurt Kanzenbach <kurt@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722333516;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=t03tmxSDfARU1oKw87lsNxFJz2231fG7AE9X11nUN7w=;
-	b=BDFBnhLCIfb3193sHwhTIO4wEvUdOkBOlm6Ex5WP4TRopWtyRIv2bwzjNAeFrrrvsicwB1
-	8j4S4kpJUocIMy9qki9m5k2LRy37NXaXWFi4Sj1ykgPJWMuo08XdbaturqtTxO+MxGQMmx
-	7xb8bPWGsen0t/vqmGYCx/qGUzLTGQU=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-493-bpXdhtiiOTCK3Xnt7GoSzg-1; Tue, 30 Jul 2024 05:58:34 -0400
-X-MC-Unique: bpXdhtiiOTCK3Xnt7GoSzg-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4280cf2be19so24090895e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 02:58:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722333513; x=1722938313;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=t03tmxSDfARU1oKw87lsNxFJz2231fG7AE9X11nUN7w=;
-        b=qJ7wkehXbehs/GQjoiesmfohuxr153Op/ETeir4U90m7QZM/2mZBT8gSxD884h2C9V
-         JyvBc1jwexxQC8f6QhPyvAll3IUv7KNJDmJQQ+4kvyZYfdS/rZLnUDvyFYDJOIVEcNgU
-         rbeqiT4JPu6dGYtAc9lvmHTieT4vhRE7Pmss1lawf5C2YmQv//QOKX33e2ucbGJwmSrl
-         4g4uStkn7fomsBsjzwWjpgbUEfAs3FYSX7xBqNSPFelzZKCQmo2op6jXa0lVwLuI/Yyc
-         YWCLR2lpOOhCbz4VFufu6v+KSTI4Cu6Kl8Z48M3nGrBbdWifODTPm94S8oHUFDj/+DSp
-         lodA==
-X-Forwarded-Encrypted: i=1; AJvYcCUumlb7T36y5v5TLFTRYk8mmc74n8wZRj9hsh7+moHBQbyVNwohLX/ee1zyYNx6LH6F6fQfWkqvQnN5TeFuoYrQjTxV5QiGC1nIO609
-X-Gm-Message-State: AOJu0Yze1AnXKge94+NlxWz+o26r/7zZNo4tZC7BRkNI/iwE/xS6XLn0
-	r+OA5jMtybqFbr4ecPbsiRGb4EnoEsl5Ek3jcRMKidML0IdfYETTMd4m9ygnIqPGUAIMm79nD/O
-	wUs8GbKHoyTVU6lGXU5T8zJVAAJ6o7PrInQ+P9bY74gg5tutv9nhOgHvS0+uVfw==
-X-Received: by 2002:a05:600c:3ca9:b0:426:5b21:9801 with SMTP id 5b1f17b1804b1-42811dd104amr77482815e9.27.1722333513285;
-        Tue, 30 Jul 2024 02:58:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFjHJhbMoUZVX7WBhr4ERqKfYO3F2LOMGgrJHWePKzPMYabknpM0fF/kysDXDazUXLiyLgDPg==
-X-Received: by 2002:a05:600c:3ca9:b0:426:5b21:9801 with SMTP id 5b1f17b1804b1-42811dd104amr77482675e9.27.1722333512798;
-        Tue, 30 Jul 2024 02:58:32 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c706:4e00:31ad:5274:e21c:b59? (p200300cbc7064e0031ad5274e21c0b59.dip0.t-ipconnect.de. [2003:cb:c706:4e00:31ad:5274:e21c:b59])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428068cda0csm202163035e9.47.2024.07.30.02.58.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 02:58:32 -0700 (PDT)
-Message-ID: <d41865b4-d6fa-49ba-890a-921eefad27dd@redhat.com>
-Date: Tue, 30 Jul 2024 11:58:31 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=RGoEM2sBI9H+4jdzkqFA7zQ20wEq+y0hpMq3862q89o=;
+	b=uR0sgPqO4CkZIXC3qLkB1+lOBK+9HOm16MLEx8B+FIaE4W5QuWyc44hBBJ++xHLjrdjDTm
+	R5IuH5iW7j70XU2Q3HgFoNYtJ8nskjskL5fdMD3sGiZijIYqoZ8pS6o9b6XHYx+N/nKbRE
+	V+Y6HThiQMlnVbmJzm65d0qxzVOQosw5QZ/I1q3eUXDCth2hW8r460bc1bfbNVcnOPGd/A
+	iskkM3RRSKYFcGbZAjlqmg7oOCWVEad/ILxPfDdcVTBvNXbavf2Y1sMKcHo26hV8a+huNq
+	9fMzm2JZAKYTsS3crhhOi1N5FBINQBSJGdPM0n/PzyEpyZ4cG9oEiEe3+hVKyQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722333516;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RGoEM2sBI9H+4jdzkqFA7zQ20wEq+y0hpMq3862q89o=;
+	b=k4Js5UuQd4uIH5icrNshrFG5sJwDCLMzqjPnnBx9lE40D/UgblZ5kjap+oBRnQj9eCYa2i
+	KXp+/I9hlX78TwBg==
+To: Song Yoong Siang <yoong.siang.song@intel.com>, Tony Nguyen
+ <anthony.l.nguyen@intel.com>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Richard Cochran
+ <richardcochran@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Vinicius Costa Gomes
+ <vinicius.gomes@intel.com>, Jonathan Corbet <corbet@lwn.net>, Przemek
+ Kitszel <przemyslaw.kitszel@intel.com>, Shinas Rasheed
+ <srasheed@marvell.com>, Kevin Tian <kevin.tian@intel.com>, Brett Creeley
+ <brett.creeley@amd.com>, Blanco Alcaine Hector
+ <hector.blanco.alcaine@intel.com>, Joshua Hay <joshua.a.hay@intel.com>,
+ Sasha Neftin <sasha.neftin@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH iwl-next,v1 2/3] igc: Add default Rx queue configuration
+ via sysfs
+In-Reply-To: <20240730012312.775893-1-yoong.siang.song@intel.com>
+References: <20240730012312.775893-1-yoong.siang.song@intel.com>
+Date: Tue, 30 Jul 2024 11:58:34 +0200
+Message-ID: <87plqvjj5h.fsf@kurt.kurt.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] mm/gup: Clear the LRU flag of a page before adding to
- LRU batch
-To: Ge Yang <yangge1116@126.com>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- 21cnbao@gmail.com, baolin.wang@linux.alibaba.com, liuzixing@hygon.cn
-References: <1719038884-1903-1-git-send-email-yangge1116@126.com>
- <3a2ab0ea-3a07-45a0-ae0e-b9d48bf409bd@redhat.com>
- <79234eac-d7cc-424b-984d-b78861a5e862@126.com>
- <9e018975-8a80-46a6-ab38-f3e2945c8878@redhat.com>
- <1c5f1582-d6ea-4e27-a966-e6e992cf7c22@126.com>
- <a8abf253-b1bb-422a-9d3f-d0dd24990617@redhat.com>
- <9f1b8c87-6ea4-4f88-9332-13ac4b1b35d9@126.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <9f1b8c87-6ea4-4f88-9332-13ac4b1b35d9@126.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
-On 30.07.24 11:56, Ge Yang wrote:
-> 
-> 
-> 在 2024/7/30 17:41, David Hildenbrand 写道:
->> On 30.07.24 11:36, Ge Yang wrote:
->>>
->>>
->>> 在 2024/7/30 15:45, David Hildenbrand 写道:
->>>>>> Looking at this in more detail, I wonder if we can turn that to
->>>>>>
->>>>>> if (!folio_test_clear_lru(folio))
->>>>>>         return;
->>>>>> folio_get(folio);
->>>>>>
->>>>>> In all cases? The caller must hold a reference, so this should be
->>>>>> fine.
->>>>>>
->>>>>
->>>>> Seems the caller madvise_free_pte_range(...), calling
->>>>> folio_mark_lazyfree(...), doesn't hold a reference on folio.
->>>>>
->>>>
->>>> If that would be the case and the folio could get freed concurrently,
->>>> the folio_get(folio) would be completely broken.
->>>>
->>>> In madvise_free_pte_range() we hold the PTL, so the folio cannot get
->>>> freed concurrently.
->>>>
->>>
->>> Right.
->>>
->>>> folio_get() is only allowed when we are sure the folio cannot get freed
->>>> concurrently, because we know there is a reference that cannot go away.
->>>>
->>>>
->>>
->>> When cpu0 runs folio_activate(), and cpu1 runs folio_put() concurrently,
->>> a possible bad scenario would like:
->>>
->>> cpu0                                           cpu1
->>>
->>>                                               folio_put_testzero(folio)
->>> if (!folio_test_clear_lru(folio))// Seems folio shouldn't be accessed
->>>
->>>           return;
->>> folio_get(folio);
->>>                                                __folio_put(folio)
->>>                                                __folio_clear_lru(folio)
->>>
->>>
->>> Seems we should use folio_try_get(folio) instead of folio_get(folio).
->>
->> In which case is folio_activate() called without the PTL on a mapped
->> page or without a raised refcount?
->>
-> 
-> No such case has been found. But, folio_put() can be run at anytime, so
-> folio_activate() may access a folio with a reference count of 0.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-If you can't find such a case then nothing is broken and no switch to 
-folio_try_get() is required.
+On Tue Jul 30 2024, Song Yoong Siang wrote:
+> From: Blanco Alcaine Hector <hector.blanco.alcaine@intel.com>
+>
+> This commit introduces the support to configure default Rx queue during
+> runtime. A new sysfs attribute "default_rx_queue" has been added, allowing
+> users to check and modify the default Rx queue.
+>
+> 1. Command to check the currently configured default Rx queue:
+>    cat /sys/devices/pci0000:00/.../default_rx_queue
+>
+> 2. Command to set the default Rx queue to a desired value, for example 3:
+>    echo 3 > /sys/devices/pci0000:00/.../default_rx_queue
+>
+> Signed-off-by: Blanco Alcaine Hector <hector.blanco.alcaine@intel.com>
+> Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
 
--- 
-Cheers,
+[...]
 
-David / dhildenb
+> index e5b893fc5b66..df96800f6e3b 100644
+> --- a/drivers/net/ethernet/intel/igc/igc_regs.h
+> +++ b/drivers/net/ethernet/intel/igc/igc_regs.h
+> @@ -63,6 +63,12 @@
+>  /* RSS registers */
+>  #define IGC_MRQC		0x05818 /* Multiple Receive Control - RW */
+>=20=20
+> +/* MRQC register bit definitions */
 
+Nit: Now, the MRQC register definitions are scattered over two files:
+igc_regs.h and igc.h. igc.h has
+
+#define IGC_MRQC_ENABLE_RSS_MQ		0x00000002
+#define IGC_MRQC_RSS_FIELD_IPV4_UDP	0x00400000
+#define IGC_MRQC_RSS_FIELD_IPV6_UDP	0x00800000
+
+Maybe combine them into a single location?
+
+> +#define IGC_MRQC_ENABLE_MQ		0x00000000
+> +#define IGC_MRQC_ENABLE_MASK		GENMASK(2, 0)
+> +#define IGC_MRQC_DEFAULT_QUEUE_MASK	GENMASK(5, 3)
+> +#define IGC_MRQC_DEFAULT_QUEUE_SHIFT	3
+
+Nit: FIELD_GET() and FIELD_PREP() can help to get rid of the manual
+shifting. See below.=20
+
+> +
+>  /* Filtering Registers */
+>  #define IGC_ETQF(_n)		(0x05CB0 + (4 * (_n))) /* EType Queue Fltr */
+>  #define IGC_FHFT(_n)		(0x09000 + (256 * (_n))) /* Flexible Host Filter */
+> diff --git a/drivers/net/ethernet/intel/igc/igc_sysfs.c b/drivers/net/eth=
+ernet/intel/igc/igc_sysfs.c
+> new file mode 100644
+> index 000000000000..34d838e6a019
+> --- /dev/null
+> +++ b/drivers/net/ethernet/intel/igc/igc_sysfs.c
+> @@ -0,0 +1,156 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright (c) 2024 Intel Corporation */
+> +
+> +#include <linux/device.h>
+> +#include <linux/kobject.h>
+> +#include <linux/module.h>
+> +#include <linux/netdevice.h>
+> +#include <linux/sysfs.h>
+> +#include <linux/types.h>
+> +
+> +#include "igc.h"
+> +#include "igc_regs.h"
+> +#include "igc_sysfs.h"
+> +
+> +/**
+> + * igc_is_default_queue_supported - Checks if default Rx queue can be co=
+nfigured
+> + * @mrqc: MRQC register content
+> + *
+> + * Checks if the current configuration of the device supports changing t=
+he
+> + * default Rx queue configuration.
+> + *
+> + * Return: true if the default Rx queue can be configured, false otherwi=
+se.
+> + */
+> +static bool igc_is_default_queue_supported(u32 mrqc)
+> +{
+> +	u32 mrqe =3D mrqc & IGC_MRQC_ENABLE_MASK;
+> +
+> +	/* The default Rx queue setting is applied only if Multiple Receive
+> +	 * Queues (MRQ) as defined by filters (2-tuple filters, L2 Ether-type
+> +	 * filters, SYN filter and flex filters) is enabled.
+> +	 */
+> +	if (mrqe !=3D IGC_MRQC_ENABLE_MQ && mrqe !=3D IGC_MRQC_ENABLE_RSS_MQ)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +/**
+> + * igc_get_default_rx_queue - Returns the index of default Rx queue
+> + * @adapter: address of board private structure
+> + *
+> + * Return: index of the default Rx queue.
+> + */
+> +static u32 igc_get_default_rx_queue(struct igc_adapter *adapter)
+> +{
+> +	struct igc_hw *hw =3D &adapter->hw;
+> +	u32 mrqc =3D rd32(IGC_MRQC);
+> +
+> +	if (!igc_is_default_queue_supported(mrqc)) {
+> +		netdev_warn(adapter->netdev,
+> +			    "MRQ disabled: default RxQ is ignored.\n");
+> +	}
+> +
+> +	return (mrqc & IGC_MRQC_DEFAULT_QUEUE_MASK) >>
+> +		IGC_MRQC_DEFAULT_QUEUE_SHIFT;
+
+Nit: return FIELD_GET(IGC_MRQC_DEFAULT_QUEUE_MASK, mrqc);
+
+> +}
+> +
+> +/**
+> + * igc_set_default_rx_queue - Sets the default Rx queue
+> + * @adapter: address of board private structure
+> + * @queue: index of the queue to be set as default Rx queue
+> + *
+> + * Return: 0 on success, negative error code on failure.
+> + */
+> +static int igc_set_default_rx_queue(struct igc_adapter *adapter, u32 que=
+ue)
+> +{
+> +	struct igc_hw *hw =3D &adapter->hw;
+> +	u32 mrqc =3D rd32(IGC_MRQC);
+> +
+> +	if (!igc_is_default_queue_supported(mrqc)) {
+> +		netdev_err(adapter->netdev,
+> +			   "Default RxQ not supported. Please enable MRQ.\n");
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	if (queue > adapter->rss_queues - 1) {
+> +		netdev_err(adapter->netdev,
+> +			   "Invalid default RxQ index %d. Valid range: 0-%u.\n",
+> +			   queue, adapter->rss_queues - 1);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Set the default Rx queue */
+> +	mrqc =3D rd32(IGC_MRQC);
+> +	mrqc &=3D ~IGC_MRQC_DEFAULT_QUEUE_MASK;
+> +	mrqc |=3D queue << IGC_MRQC_DEFAULT_QUEUE_SHIFT;
+
+Nit: mrqc |=3D FIELD_PREP(IGC_MRQC_DEFAULT_QUEUE_MASK, queue);
+
+Thanks,
+Kurt
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJHBAEBCgAxFiEEvLm/ssjDfdPf21mSwZPR8qpGc4IFAmaouUoTHGt1cnRAbGlu
+dXRyb25peC5kZQAKCRDBk9HyqkZzgtBQEACSIf0aYuaOphs8JPYmE2MJMfO+x270
+iNE9MGJpBgiso4SlT3dNT05mFcKNDVQW/azmtJDRlgMSf3xBlbdexN2Gag/PK4Ah
+lJATYGUABykY3ThNAAhMUV4YbzcAa0r0C34oorr3s+mIGh4k0xeRbAaAF12tTezN
+asnXQ5tFLlCMfi3uKK7y+YW4SENhnDMbw4QEPzN8xqoU1gfVSVSZHdlE2E7aGx2r
+GTIdo3gNiYwplUZo4zPQfC9v02XGzM73bYNs7mNBlktnxn9Tn5GH+TmNxFbDgroI
+kQaw2ytg9X+b+9TSGkCCvCzFv2fH4DmRPMshOetPnrHhKm9VYTkGhbvdr4k9jZUi
+EG72L1w+8YBy8UG+bo63bjhFRnIP+7N7YVYVZBrUBmBFtdHyWIE8vG2IppUWUw+r
+8UChtvhhmRjmyTTbKE4YvdFOu2u4EF9a3ex0s/4sMN86pjegqZFm8qBlWbjIh+B1
+O6iyzKkWHBtrUJZYHto8xM+1nwkz1+Ny5muGhqZh6AHKZItDsrbwwWJYeLd/ovmX
+oiGRoQ5XSDBlZaV9PE6LmZnfE616UgbSuLfIfF4yQxrbCa4BGe9SaawBX4aiB/kG
+qL+xJUKR98cjwmCKSYQvGOHyAno4HWv3tgCP8oz0LZyUs6/hxs461S/biL87c58R
+yCkNyHwZ0+2zWg==
+=vGQh
+-----END PGP SIGNATURE-----
+--=-=-=--
 
