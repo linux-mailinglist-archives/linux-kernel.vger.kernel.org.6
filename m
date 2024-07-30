@@ -1,111 +1,188 @@
-Return-Path: <linux-kernel+bounces-268263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A600942258
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:48:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 217BC94225A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E573B21EEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:48:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 963FA1F2425A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA0E18E02D;
-	Tue, 30 Jul 2024 21:48:31 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0697D18E02B;
+	Tue, 30 Jul 2024 21:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="UGz7Gj0i"
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0881AA3EF
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 21:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6981AA3EF
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 21:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722376111; cv=none; b=R9ZhSdwrQndkw0gboBHTz/aUkSAzWagvXvTwt+vjERTveKYGpFzJA0r6jizCGTfM9e+nOKQJA17vCpFTjCSPKNv0cEI5EDccd/8dcqF+VlPC+G6QoJspypO+95wqWVhcEnzF1gHL7rxhel3tiM9nJxFbh5yJJkXaTUt95PipMWY=
+	t=1722376237; cv=none; b=q11rMdtJKRNv1IOd7hwQxJFtw9AHKx1XMFcQyWjT6/xFURnhSki2dFIwGKqa+5mRrlA34hgNEvJbolz4CquIevxh68Y9zOYz4P52Cth0JtVrxdgubFIJ6+RsUgRwZR5joE2Q/sqnGS6+2KWIqdWy7W6LCwboor8bGg88p6fNz2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722376111; c=relaxed/simple;
-	bh=EPi7Pcr+AtZumapJv1s6AtqIt6HCVk8ogwWNTo7FWyc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=gsO+cEjL5VlOWiZyLOA1TH2ROa5Yjk5ualaNM9Ibky+tOY54sNTl7NvdVkJmsXlKp+WGV5KhBq1CW9OBgrCBRsnOtmNC1heQ4TiQDBbNr7QWsN1yJ+nja3iYSfnRCAeRQSETiFRbYdiT4bdIaOVE4lLj0bPEJAPJllsNfVWKXCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-143-MLWHvDC0PxWV6zvLC7p7GA-1; Tue, 30 Jul 2024 22:48:25 +0100
-X-MC-Unique: MLWHvDC0PxWV6zvLC7p7GA-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Tue, 30 Jul
- 2024 22:47:47 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Tue, 30 Jul 2024 22:47:47 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Linus Torvalds' <torvalds@linuxfoundation.org>, Arnd Bergmann
-	<arnd@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe
-	<axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>, Christoph Hellwig
-	<hch@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, "Andy
- Shevchenko" <andriy.shevchenko@linux.intel.com>, Dan Carpenter
-	<dan.carpenter@linaro.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
-	"pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, Mateusz Guzik
-	<mjguzik@gmail.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "Lorenzo
- Stoakes" <lorenzo.stoakes@oracle.com>
-Subject: RE: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
-Thread-Topic: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
-Thread-Index: Adrg+PsJWBOjJVDsQ/+qaYGHKHGutQAEaRMAAANJSHAAAfkwAAACaxqgAGQsLzQABAMbUA==
-Date: Tue, 30 Jul 2024 21:47:47 +0000
-Message-ID: <73d65e2553e543069f9969ccec4ea9b3@AcuMS.aculab.com>
-References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
- <5cd3e11780df40b0b771da5548966ebd@AcuMS.aculab.com>
- <CAHk-=wj=Zv+mMuqJQJptH9zGFhPXqku9YKyR7Vo4f0O0HEcbxw@mail.gmail.com>
- <b47fad1d0cf8449886ad148f8c013dae@AcuMS.aculab.com>
- <CAHk-=wgH0oETG1eY9WS79aKrPqYZZzfOYxjtgmyr7jH52c8vsg@mail.gmail.com>
- <e718056c1999497ebf8726af49475701@AcuMS.aculab.com>
- <CAHk-=wj900Q3FtEWJFGADQ0EbmYwBHW8cWzB0p0nvFck=0+y6A@mail.gmail.com>
- <e946e002-8ca8-4a09-a800-d117c89b39d3@app.fastmail.com>
- <CAHk-=whCvSUpbOawsbj4A6EUT7jO8562FG+vqiLQvW0CBBZZzA@mail.gmail.com>
- <CAHk-=wgRDupSBzUX_N_Qo_eaYyDfOH=VTihhikN36cGxCc+jvg@mail.gmail.com>
- <f88a19d1-c374-43d1-a905-1e973fb6ce5a@app.fastmail.com>
- <8111159a-c571-4c71-b731-184af56b5cb1@app.fastmail.com>
- <CAHk-=wgLsFdNert_OfCmRon7Y9+ETnjxkz_UA5mv0=1RB71kww@mail.gmail.com>
- <CAHk-=widciTZs3CCoi7X2+4SnVWrKu1Jv2uOV9+oewXGen7Q9A@mail.gmail.com>
-In-Reply-To: <CAHk-=widciTZs3CCoi7X2+4SnVWrKu1Jv2uOV9+oewXGen7Q9A@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1722376237; c=relaxed/simple;
+	bh=RI+MO1DUmLECB6a6KqRs8Ki6aLcuzWc/MPzcype02eU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kzC6HJKpeK98kGBMpWUQuqjO6QJOfdAxP8tnAP84i+73bYMDhPhEVN+liLTPotKAIc7R/4H4BW9NiMbD3KF8GQz3sDbKd+dPA3I9AQPH2lfw3LkCu1lnOkSeASq24KsOMIBc2TedP2cfF4xEl6X7pxOlpkrYvKh/2BX5VHITMaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=UGz7Gj0i; arc=none smtp.client-ip=188.165.51.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1722376228; x=1722635428;
+	bh=RI+MO1DUmLECB6a6KqRs8Ki6aLcuzWc/MPzcype02eU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=UGz7Gj0iD8b72ONMMp3U48oCY1W36JIttlQHOkCcqR/Dc+w7CYGPg/YufXPF7KsU7
+	 KrkG/ONaPjUaam0ECrUVRVP9lLELqvIRgkPZ5Wzt33lSRrR51bfosllpoWRvDYhlPM
+	 i+BO6sachtnZvkwHB3zF7yfzZUPJV2YRgtzb0p4nBIo0kQ/q4WPkYFF970mcx34y7l
+	 xf21DkbiDQ0LjJZKW1vcpdZBQf5oEofESJneA2veF6E5Yo+qYjnqK7wBhv6wB904lr
+	 HyjJ1ZpVKiKP37xoyGxjSAGb3VNEZW+14yO/pRLreonkwfz+3mNpmelQPApyJeyPuN
+	 JChuwW8z7tP7g==
+Date: Tue, 30 Jul 2024 21:50:23 +0000
+To: Andy Yan <andy.yan@rock-chips.com>
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: "airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "heiko@sntech.de" <heiko@sntech.de>, "hjc@rock-chips.com" <hjc@rock-chips.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>
+Subject: Re: [PATCH v3] rockchip/drm: vop2: add support for gamma LUT
+Message-ID: <jmdWz62Mhq515i3Kg6STPlrgiBbmxcryXENKYO5ov3fNtDwuF3_6eeq-sC4DC5HB0BDzlCGnPNnuNQoXYgVRI9YZDiUxKlXsS_bf27IwdEo=@proton.me>
+In-Reply-To: <7d998e4c-e1d3-4e8b-af76-c5bc83b43647@rock-chips.com>
+References: <TkgKVivuaLFLILPY-n3iZo_8KF-daKdqdu-0_e0HP-5Ar_8DALDeNWog2suwWKjX7eomcbGET0KZe7DlzdhK2YM6CbLbeKeFZr-MJzJMtw0=@proton.me> <ec283a7c-845b-4c58-8d86-cdd07862a0dc@rock-chips.com> <KbOjWzFKMM_fwDora8CjaLFBHWypRP1Mk6nPzHkwNAGxFHzJIynx3W8_jyZvbygH99lRAXDdrJmdFEQuY8M2Ao-a8F42zt8no4B1DCBiQIs=@proton.me> <48249708-8c05-40d2-a5d8-23de960c5a77@rock-chips.com> <y_bpV0FizWkAqq0XPIKrauaZ07r_Ds-MnDr696Y1qFTLNiLsx7pL4C-Zsu-K9TzVBJ85L5cdkzDQOExcXXTf0owUYramMHdZd4erMRpJUXI=@proton.me> <7d998e4c-e1d3-4e8b-af76-c5bc83b43647@rock-chips.com>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: d2e110ff2b83b052d01e54318b01eb36611f3ec6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMzAgSnVseSAyMDI0IDIwOjUzDQo+IFRvOiBB
-cm5kIEJlcmdtYW5uIDxhcm5kQGtlcm5lbC5vcmc+DQo+IENjOiBEYXZpZCBMYWlnaHQgPERhdmlk
-LkxhaWdodEBBQ1VMQUIuQ09NPjsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgSmVucyBB
-eGJvZQ0KPiA8YXhib2VAa2VybmVsLmRrPjsgTWF0dGhldyBXaWxjb3ggPHdpbGx5QGluZnJhZGVh
-ZC5vcmc+OyBDaHJpc3RvcGggSGVsbHdpZyA8aGNoQGluZnJhZGVhZC5vcmc+OyBBbmRyZXcNCj4g
-TW9ydG9uIDxha3BtQGxpbnV4LWZvdW5kYXRpb24ub3JnPjsgQW5keSBTaGV2Y2hlbmtvIDxhbmRy
-aXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb20+OyBEYW4gQ2FycGVudGVyDQo+IDxkYW4uY2Fy
-cGVudGVyQGxpbmFyby5vcmc+OyBKYXNvbiBBIC4gRG9uZW5mZWxkIDxKYXNvbkB6eDJjNC5jb20+
-OyBwZWRyby5mYWxjYXRvQGdtYWlsLmNvbTsgTWF0ZXVzeg0KPiBHdXppayA8bWpndXppa0BnbWFp
-bC5jb20+OyBsaW51eC1tbUBrdmFjay5vcmc7IExvcmVuem8gU3RvYWtlcyA8bG9yZW56by5zdG9h
-a2VzQG9yYWNsZS5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjIgMS84XSBtaW5tYXg6IFB1
-dCBhbGwgdGhlIGNsYW1wKCkgZGVmaW5pdGlvbnMgdG9nZXRoZXINCj4gDQo+IE9uIFR1ZSwgMzAg
-SnVsIDIwMjQgYXQgMTE6MDIsIExpbnVzIFRvcnZhbGRzDQo+IDx0b3J2YWxkc0BsaW51eGZvdW5k
-YXRpb24ub3JnPiB3cm90ZToNCj4gPg0KPiA+IE9uIFR1ZSwgMzAgSnVsIDIwMjQgYXQgMDc6MTUs
-IEFybmQgQmVyZ21hbm4gPGFybmRAa2VybmVsLm9yZz4gd3JvdGU6DQo+ID4gPg0KPiA+ID4gVGhl
-cmUgaXMgYW5vdGhlciBvbmUgdGhhdCBJIHNlZSB3aXRoIGdjYy04IHJhbmRjb25maWdzIChhcm02
-NCk6DQo+ID4NCj4gPiBTbyBJIGVuZGVkIHVwIHVuZG9pbmcgdGhhdCBwYXJ0IG9mIG15IHBhdGNo
-LCBzbyBpdCdzIGEgbm9uLWlzc3VlIFsuLl0NCj4gDQo+IEkgcHVzaGVkIG91dCBteSBjdXJyZW50
-IG9uZS4NCg0KSGF2ZSB5b3UgYSBwbGFuIHRvICdmaXgnIG1pbjMoKSA/DQoNCglEYXZpZA0KDQot
-DQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwg
-TWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2Fs
-ZXMpDQo=
+On Tuesday, July 30th, 2024 at 12:43 PM, Andy Yan <andy.yan@rock-chips.com>=
+ wrote:
 
+> Hi Piotr,
+
+Hi Andy
+
+> On 7/30/24 05:20, Piotr Zalewski wrote:
+>=20
+> >=20
+> > On Monday, July 29th, 2024 at 4:35 AM, Andy Yan andy.yan@rock-chips.com=
+ wrote:
+> >=20
+> > > > > > +
+> > > > > > +static void vop2_crtc_gamma_set(struct vop2 *vop2, struct drm_=
+crtc *crtc,
+> > > > > > + struct drm_crtc_state *old_state)
+> > > > > > +{
+> > > > > > + struct drm_crtc_state *state =3D crtc->state;
+> > > > > > + struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
+> > > > > > + u32 dsp_ctrl;
+> > > > > > + int ret;
+> > > > > > +
+> > > > > > + if (!vop2->lut_regs)
+> > > > > > + return;
+> > > > > > +
+> > > > > > + if (!state->gamma_lut) {
+> > > > >=20
+> > > > > What's the purpose of checking !state->gamma_lut here,
+> > > > >=20
+> > > > > and you check it again at the end for return.
+> > > > > This makes me very confused.
+> > > >=20
+> > > > I understood it this way - since the vop2 lock is unlocked after di=
+sabling
+> > > > gamma LUT, the CRTC state can change while waiting for DSP_LUT_EN b=
+it to
+> > > > be unset. With the change I sent in response to Daniel's reply, gam=
+ma LUT
+> > > > state modification should now be fully atomic so there shouldn't be=
+ a need
+> > > > for the second state check there anymore (if my logic is incorrect =
+please
+> > > > explain).
+> > >=20
+> > > After reading the commit message for adding gamma control for rk3399[=
+0] i understand
+> > > what is going on here:
+> > >=20
+> > > we should run into the if block in two cases:
+> > >=20
+> > > (1) if the state->gamma_lut is null, we just need to disable dsp_lut =
+and return,
+> > >=20
+> > > this is why vop1 code check !state->gamma_lut again at the end.
+> > >=20
+> > > (2) for platform unlinke rk3399(rk3566/8), we also need to disable ds=
+p_lut befor we
+> > > write gamma_lut data, for platform like rk3399(rk3588), we don't need=
+ do the disable,
+> > > this is why vop1 code also has a !VOP_HAS_REG(vop, common, update_gam=
+ma_lut) check.
+> > >=20
+> > > so we also need a similary check here:
+> > > (1) if the state->gamma_lut is null, disable dsp lut and return direc=
+tly.
+> > >=20
+> > > (1) if the state has a gamma_lut, we shoud dsiable dsp_lut than write=
+ gamma lut data on rk3566/8,
+> > > buf for rk3588, we should not disable dsp_lut before write gamma
+> > >=20
+> > > [0]https://lists.infradead.org/pipermail/linux-rockchip/2021-October/=
+028132.html
+> >=20
+> > Ok I see it. So In my patch it doesn't make sense at all to check it ag=
+ain
+> > (forgot about that extra if statement condition there, which I cut out
+> > when porting to VOP2). I reworked my patch further for it to handle RK3=
+588
+> > case and to better utilize DRM atomic updates. It's contained in the
+> > response to Daniel's review [1]. I experienced some problems so I'm wai=
+ting
+> > for his response/comment on that.
+> >=20
+> > Regarding RK3588, I checked RK3588 TRM v1.0 part2. In its VOP2 section =
+I
+> > found:
+> > - SYS_CTRL_LUT_PORT_SEL: gamma_ahb_write_sel (seems to represent the
+> > same concept as LUT_PORT_SEL in case of RK356x)
+>=20
+>=20
+> We should also setting it to she VP id we want write gamma, this is used =
+for selet
+> ahb bus.
+>=20
+> > - VOP2_POST0_DSP_CTRL: gamma_update_en (seems to represent the same
+> > concept as in VOP1 in case of RK3399)
+>=20
+> we also need to set it every time we update the gamma lut.
+>=20
+> > - I also found dsp_lut_en but I presume it is a bug in documentation.
+>=20
+>=20
+> No, it is not a bug, we should set it when we enable gamma lut, we just d=
+on't
+> need to disable it before we update gamma lut.
+>=20
+> Here is some code you can take as reference [0]
+> [0]:https://github.com/radxa/kernel/blob/linux-6.1-stan-rkr1/drivers/gpu/=
+drm/rockchip/rockchip_drm_vop2.c#L3437
+>=20
+
+Thank you for further clarification. I will include it in the next version
+of my patch.
+
+> > Should RK3588 be handled as RK3399? (gamma LUT can be written directly =
+but
+> > gamma_update_en bit has to be set before). What about gamma_ahb_write_s=
+el?
+> >=20
+> > [1] https://lkml.org/lkml/2024/7/27/293
+> >=20
+
+Best Regards, Piotr Zalewski
 
