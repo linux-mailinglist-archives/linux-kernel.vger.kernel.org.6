@@ -1,59 +1,71 @@
-Return-Path: <linux-kernel+bounces-267246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDA2F940EE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62722940EF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBE4F1C22957
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:22:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92FC91C22924
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA32198852;
-	Tue, 30 Jul 2024 10:22:27 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9592B19884A;
+	Tue, 30 Jul 2024 10:24:14 +0000 (UTC)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2131F208DA;
-	Tue, 30 Jul 2024 10:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDC0196DA1;
+	Tue, 30 Jul 2024 10:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722334946; cv=none; b=SV5kHUMa/JEsiGcAYvPE+Jlh6ryIBoMpvzSnXkq2CGVC1U1Kc84ZzsQxPFTh6+2h/ry810VsYCCMvSkRlNTfTE+E7EDsiMNNb2rTrWLBPlZAo/OTbWy02vtit+P2klPemJRNJ+7zmna16u9SIAFNsg1jvsnZhfGksuAUPsvrel4=
+	t=1722335054; cv=none; b=a7YIlClUjbJqUMQl2Dhp1Wa/8KAoig9QWDmqukRrmV3ZThGpV8wu6/uhw5UyqsRf0YIo5hrp26MW2cJ5Z4TnJiVk61n5cKZb5btkTbf3x/51Ca5NmdwUFy0WRBFM2IfsDmL3m8nSJjOx9ZXfPCB1LMGx3owE8MI5aAD5K3yFqu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722334946; c=relaxed/simple;
-	bh=BivS+la4gSjtSh1xdp30RqJ5DGQazYFqoa7A16gtlZo=;
+	s=arc-20240116; t=1722335054; c=relaxed/simple;
+	bh=01+ZIHMMRxtvZeJgKqLcbttvt1/2M9rdui/cBlDT4fs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k1K0FapuMOEh0RdsUXLvls6EfsXNa0Zovdtw9pMPPgYEUKScM80pM1Feb8QqSBmV0WR892nrCUGfxUcRTLlVfzUus67ztWYdtQehoQbkSFhTkP+LZ2U4AJWCn2VLP/R1yZovmVDqwnoR8cmdkHNlisXuINBprQuhFEZRWuUMRV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sYjzi-000000000f5-09Ad;
-	Tue, 30 Jul 2024 10:22:14 +0000
-Date: Tue, 30 Jul 2024 11:22:06 +0100
-From: Daniel Golle <daniel@makrotopia.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qwwgafEOns6LZCOE2R90ZvfwvR1sX9hVAJzZaFmbssHB1tA+Xdhr58pnmjGN7D8STC0R3VS2rvz1mM8IMQrQsZgK4UwEBw2jKwO5RpmFOC+Z3zQ0fxCRuykZ2KEUMlzyq0Mq3mMVS7AtBSpDb7ta10F+6ZTT0IwJ9cw3C+vt77w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7a9185e1c0so416557366b.1;
+        Tue, 30 Jul 2024 03:24:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722335051; x=1722939851;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Oi88lXchJSc4G46YbZ5TzeeR41rMBBTQGzJDjHyoh/M=;
+        b=PRUSEEfCXMdNYI+bxQtbmc+CNBBFYzfEjxN4hDROfuz6hgqwcD7ChvlYfkqp6kpXKr
+         QOfrELry+ZsuKRw4tXk7gkNEpeCvgR4s3fNXzGcI1PyU0zX1U3AFPk/cxPathBhLeqgD
+         Rz9iadMiMz2vqavQu+RBb5Dv0vwFD+vUffMXVejGCR9dlrrPlfMzvW/mPz6zxcGuJ13J
+         SdWt1+t8fmIWVFcDSmdGTiu3IXeu9EbLElGgvVQogDyyHgtFvFzAYQiE2x1ixgu72HV8
+         X6g9STD30/ZG6UpSywRYB6RmigiAUWa68CY6oUN6y/AaywPCCJ4O8+q6mDDduTPC3Ank
+         zEjw==
+X-Forwarded-Encrypted: i=1; AJvYcCXmXFLtnuQ9VCGF/p1UyNq1TPx0O6n0pA48CO8pEqhIee8dk59WvVL1TZ6rEIyM6g66gnidAgHo9eQV/sXCb+kscGxHx171VN3JswJohXyJs9U0nIZdyF+DU/9Sqtu1ivu3H4QL
+X-Gm-Message-State: AOJu0YyzkMOkUIdVrQqnqQQSzjE3IdeLilkyf76FT64c9GxTzs1yBTEv
+	c0kqkthLXpd86Oq5RIFvH1gC1VtpjZowV2E24ulbidHReYzmRIOl
+X-Google-Smtp-Source: AGHT+IEFyRuo7CXOwDK1c0OaUIC0ZtIYN4M6PIvvPtfyaqJOBmjajz+6luwF95swsst5NbTFu+uG2A==
+X-Received: by 2002:a17:907:3e1a:b0:a77:b052:877e with SMTP id a640c23a62f3a-a7d3fffeae5mr805941266b.19.1722335050546;
+        Tue, 30 Jul 2024 03:24:10 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-115.fbsv.net. [2a03:2880:30ff:73::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab535d9sm621889766b.75.2024.07.30.03.24.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 03:24:10 -0700 (PDT)
+Date: Tue, 30 Jul 2024 03:24:08 -0700
+From: Breno Leitao <leitao@debian.org>
 To: Paolo Abeni <pabeni@redhat.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Felix Fietkau <nbd@nbd.name>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Mark Lee <Mark-MC.Lee@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
+Cc: "David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net v2] net: ethernet: mtk_eth_soc: drop clocks unused by
- Ethernet driver
-Message-ID: <Zqi-zr32ZXl0AyzR@makrotopia.org>
-References: <5f7fc409ecae7794e4f09d90437db1dd9e4e7132.1722207277.git.daniel@makrotopia.org>
- <20240729190634.33c50e2a@kernel.org>
- <738f69e6-1e8d-4acc-adfa-9592505723fe@redhat.com>
+	Jakub Kicinski <kuba@kernel.org>, leit@meta.com,
+	Chris Mason <clm@fb.com>,
+	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] net: skbuff: Skip early return in skb_unref
+ when debugging
+Message-ID: <Zqi/SL/icYA9IwjH@gmail.com>
+References: <20240729104741.370327-1-leitao@debian.org>
+ <e6b1f967-aaf4-47f4-be33-c981a7abc120@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,23 +74,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <738f69e6-1e8d-4acc-adfa-9592505723fe@redhat.com>
+In-Reply-To: <e6b1f967-aaf4-47f4-be33-c981a7abc120@redhat.com>
 
-On Tue, Jul 30, 2024 at 10:53:19AM +0200, Paolo Abeni wrote:
-> On 7/30/24 04:06, Jakub Kicinski wrote:
-> > On Mon, 29 Jul 2024 00:00:23 +0100 Daniel Golle wrote:
-> > > Clocks for SerDes and PHY are going to be handled by standalone drivers
-> > > for each of those hardware components. Drop them from the Ethernet driver.
-> > > 
-> > > The clocks which are being removed for this patch are responsible for
-> > > the for the SerDes PCS and PHYs used for the 2nd and 3rd MAC which are
-> > > anyway not yet supported. Hence backwards compatibility is not an issue.
-> > 
-> > What user visible issue is it fixing, then?
+Hello Paolo,
+
+On Tue, Jul 30, 2024 at 11:38:38AM +0200, Paolo Abeni wrote:
+> On 7/29/24 12:47, Breno Leitao wrote:
+
+> > --- a/include/linux/skbuff.h
+> > +++ b/include/linux/skbuff.h
+> > @@ -1225,7 +1225,7 @@ static inline bool skb_unref(struct sk_buff *skb)
+> >   {
+> >   	if (unlikely(!skb))
+> >   		return false;
+> > -	if (likely(refcount_read(&skb->users) == 1))
+> > +	if (!IS_ENABLED(CONFIG_DEBUG_NET) && likely(refcount_read(&skb->users) == 1))
+> >   		smp_rmb();
+> >   	else if (likely(!refcount_dec_and_test(&skb->users)))
+> >   		return false;
+ 
+> I think one assumption behind CONFIG_DEBUG_NET is that enabling such config
+> should not have any measurable impact on performances.
 > 
-> Indeed this looks like more a cleanup than a fix. @Daniel why net-next
-> without fixes tag is not a suitable target here?
+> I suspect the above could indeed cause some measurable impact, e.g. under
+> UDP flood, when the user-space receiver and the BH runs on different cores,
+> as this will increase pressure on the CPU cache. Could you please benchmark
+> such scenario before and after this patch?
 
-There is no user visible issue. I didn't know that this would be the
-condition for going into 'net'. I will resend the patch to net-next.
+Sure, I am more than happy to do so. I will be back with it soon.
+
+Assuming there is some performance overhead, isn't it a worthwhile
+trade-off for those who are debugging the network? In other words,
+wouldn't it be better to prioritize correctness over optimization in
+this the CONFIG_DEBUG_NET case, even if it means sacrificing some
+performance?
+
+Thanks for reviewing,
+--breno
 
