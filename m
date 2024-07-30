@@ -1,104 +1,132 @@
-Return-Path: <linux-kernel+bounces-267415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F4394112A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:51:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3767F94112C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE55CB22047
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:51:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5AE1B26192
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCAA319B5AC;
-	Tue, 30 Jul 2024 11:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF7C18FC6E;
+	Tue, 30 Jul 2024 11:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nAHOglBF"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="gU3vBD83"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D43166316;
-	Tue, 30 Jul 2024 11:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8224C13DDAE
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722340261; cv=none; b=ZkF3sunLbABKaVrYp14c85J0GycbjY2mUSPhSFXme0hAewZue7fD/ie9a/w+mBngLiXkVzPit95Ei0ErLIq3R6Yhk/QsIgI+IdKhh9m71aDSvWPC6Tkw8jer2XMLaAjgtvWvEImCQ1c08qzv6t4++UVnVtlQ4ZpgCQyjxOBcxYI=
+	t=1722340305; cv=none; b=IFJP85Y5hBSQ6HK7kFLGlvrik0dNt8nPFADfagmzjIHSEvc5bDHBjOzM4bI7mOuXk9y7Zc8PYDbngGd1L3uB1SMlOrdG+fzMhJxj0hS3lY0cs1J67ue16jlrhb2p3N2z0h87gZ6gGohxVpyZUeFgugej0+ElQOtMCiWjts69QX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722340261; c=relaxed/simple;
-	bh=eE2oW6livb9nXMNEPrn34gplnKzITeuZUZeclXaFmdc=;
+	s=arc-20240116; t=1722340305; c=relaxed/simple;
+	bh=/LxOA/sf8jUq2ce1URddnOWOpBaWlE7GJFwaYB1FXgk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BlEdj0KGGSRAE6o8MXbhFcAgt0eJGkTrw4dTbtQWaNwm6aR0VO0zumDbGOefW1gU+VN87R2jS1fhay73JSjfW/g7/V0WR4gzGqk0eyZi5d5MaT6MBrADyUUK/PsABHp90cucpJQshlXK30DBaSuM7FSTYGMBEwHUff9FvKH+TaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nAHOglBF; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7515437ff16so3400762a12.2;
-        Tue, 30 Jul 2024 04:50:59 -0700 (PDT)
+	 To:Cc:Content-Type; b=Z3dEam2kqQmdtY4wznW85SisIWifQBqSMrTImU8LlhvwkKy8BuVTNV3qq4Hbi5mR0aWMtrwIguE/Yq2apx2mnXyEybmoG/AsHINeWA9j0wSO8GmpZuph0bou6qhb2+f9cq7POfsJLX42++eC/FgM3Z5YOwkRBRhn98NbX4hkots=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=gU3vBD83; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ef2d7d8854so56633591fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 04:51:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722340259; x=1722945059; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1722340302; x=1722945102; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kDWvXRl7W+y++kTMY5mGMMgDtm0Z1tL8PpSxD7HMetg=;
-        b=nAHOglBF+WHU2PX+C7/U30wMPLD4eOvX3GRv/Bs2VzVBAnKh5pcrR2dmnLNy/LKsVd
-         DjaX0ASyTtvFEHhXmVzF4UtlqFmAE2HvLIGQ2mG0GkTYWFumqv2DLB2tRsHweZgmDB9c
-         xjtbXCtO9bt/agYDsdlzICx+SR1jVSOh/YylaWL3l+w8+1K717r4Peth4l/OM9juCZ0n
-         8Nxv0oG+mepx7A3889c6LOPseqr8hpWyt1QFHHKYarIn975h7R2FVls/HVjATLDKpzaK
-         sYqKIf6zDcHYSzSfQVsMm3zvDf0+aqEr6gn7aE5vRybGceiT945y3Peta0IzYbS+ccZZ
-         vIWA==
+        bh=mj9g02teE95oWkxud71FxjRcOnjoY1sRk9LiH0FRY4s=;
+        b=gU3vBD83mlKqPTQDWCA65w/sZ09PWnBC06+eKWi+7qg3yKO9jaU8b35MxDfo3LKYyT
+         r+I+1E/Ff1/0ZylDIHOv4uWZsQJgHUKOEUgHJBGeglv4roRcrEVPyGd2p2L1UsuaSgQ1
+         iJr7ynBRkO5ypG1BhijYiq5J13YmqbA1n2GRDS3CBZwVW3zd9G2CHm9MYZRE7FJ5qhXL
+         0PtNyvwollqkxS3Dtol3EWkEzmAY6TvQnpAmFRzfHoMuEoeBQJyLI/I9FVF5VfQTCT/1
+         0aNkPNtBI/CpMNeweDN/oZYUrlieaet9rPiJFR+LQlTzltn4/G42eg0dZbmdAfuDEy9y
+         wiQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722340259; x=1722945059;
+        d=1e100.net; s=20230601; t=1722340302; x=1722945102;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kDWvXRl7W+y++kTMY5mGMMgDtm0Z1tL8PpSxD7HMetg=;
-        b=KxVzJ4SYk4OTwgEypJHX3yrQFBahIO0AS5SV/Rh0qVSyVVuhtQFEHRnpfgfkpAzav5
-         TSlpjws83YmzLmAy79SWRRnpQVk8TDx/CGNCPf6KtLuOD/XyQeSz++fEY+n7bpiBgeCX
-         3zRlin7zUHJXFbwiGWD+AA1cGttDSyktiG4LYxT+qPEzsXoM93XL2veSlQxab+v0+oZQ
-         0oz9C1QyrGt0FAnz+QasxTN5w9v4Tzlwx9MGP5g6B2KL/96IJQ3ONwiIYckOTSKNddk2
-         r1wUZbuMjXPQev3Cub7T1cyIrrXzUZMCzDeFTsu7B7bgdEBLMHn4y4XqGfL6oDMNxoJT
-         i/Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUuCohd2MFj+CEwyBxOVZGk+o0QctlrADngHkL9WwU3zYfsV+MEOT98upwm4NdirQ7pPXA/A/bNMFMsttYC5BLcmx58yNZeUr0f4cLMtOElln976/tKI5l0oXveQOkxI11YZxaUc5B+uk3jP0qdhW1Kn+yQyWEfImQArgbpNPvsqW5APKS2OetwtM=
-X-Gm-Message-State: AOJu0Yy3o7U4aPkAZLThxysRr20ncRvbdqR4cGM5MkfXfv+q14GBGVYt
-	5Ryb24sfTBBlYEujj5buGpc9hKlNuL1ka6iaVXjpxB6LsfELxpKqcygYwAHVUhV7F79iaJWoVWc
-	DuzBzM9KPuda18ZMAXX19sKAEZdA=
-X-Google-Smtp-Source: AGHT+IHyBAvrz5piafL+fjC21VKH7j72SmnKC582QDIYm5TpHtK7qfMI7hI+BOACpwHlqxBRr6tXBjtQy+O1Ch0yPMY=
-X-Received: by 2002:a17:90b:388b:b0:2ca:ffa0:6cee with SMTP id
- 98e67ed59e1d1-2cf7e60bf70mr12725280a91.31.1722340258994; Tue, 30 Jul 2024
- 04:50:58 -0700 (PDT)
+        bh=mj9g02teE95oWkxud71FxjRcOnjoY1sRk9LiH0FRY4s=;
+        b=veQGGh+5fleWyOYi2qiFvbK9Nn3k/gInZQ6qz0xPq41VJAKR7RiIdlQTV22vAqg5yU
+         D69qMzzEtRUnWckeDXoZK7TLWM+pTerbf9EelV/XkyWN4+nhESEedom/UGQcli6mk5F7
+         KnmVuWQJaKFoUtfisqBFYnFgmyz8plzOpSdH5jNY5Ao4LtZuGTmRK8nwKusNBWk5Ow03
+         44bTIEtMe11DJbR+jFrosk0F0tUk6ACjtC8nQK9Ln09C2+DqsDePTZor5Tt0I4QlOOMx
+         L/8mARBiuJluIQ/mMMQxKYOwUOwH5oY55FryACh2wPYIb6SCkv+2mre33aszNbFSW6Aj
+         +KQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUuLpjkZhTi35Cnem7zF8GSY4M7xd2489nbytsZNL7nhXOQmoBWooKvOToILseOJIvEQC6eZia5rlA3svKtBdeqUhC2u0zFc9IeRBQT
+X-Gm-Message-State: AOJu0YwHttKeFwcCDlHW7n2rEBqwZNiuBzar48f61yzqfV6DlpgKZglN
+	OA6TEN4f1Igxqh5JBvE863+DmqkRsb/1AZVV7J3KaeEKuZbmW3IHGff0E5e5Y3ID78BC2lCgHoe
+	v3s/2x2lGfjH/hkZ5iLdkHnCUD2qoJ2CuX/kSdA==
+X-Google-Smtp-Source: AGHT+IGKbiw+jL9QwWM+pv2VMutUmDfrKG8cwt2tgt9Gcf3IMi7/XSU9egzEdXOKkg8uxDSXz6DRPDTvLA5vScLpLBk=
+X-Received: by 2002:a05:651c:1541:b0:2ef:2d3d:3cc3 with SMTP id
+ 38308e7fff4ca-2f12ebc95b8mr81065521fa.4.1722340301491; Tue, 30 Jul 2024
+ 04:51:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730-kcfi-v1-0-bbb948752a30@google.com> <20240730-kcfi-v1-2-bbb948752a30@google.com>
-In-Reply-To: <20240730-kcfi-v1-2-bbb948752a30@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 30 Jul 2024 13:50:45 +0200
-Message-ID: <CANiq72mshrgXJLw+AZ+ovfhZXjYYfgQLdyYdW_v0FmdWdEjvbg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] rust: cfi: add support for CFI_CLANG with Rust
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Sami Tolvanen <samitolvanen@google.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <20240729095542.21097-1-johan+linaro@kernel.org>
+ <CAMRc=McuqEv1Sk9O6kn4aHo9wOfzskZS0z2QxzNM=q2N8XZ3zw@mail.gmail.com>
+ <Zqduv66H2OczRgaH@hovoldconsulting.com> <CAMRc=MfEkPcKUNb7HbiNrqv+7q1n0wRD9sKQ8WrydoR4grao2A@mail.gmail.com>
+ <ZqeP7CqEoC5iWAdL@hovoldconsulting.com> <CAMRc=MecyZU6DBWjg7vtohhxtVoaOR6jCRHdEiAKinqvmEtDyQ@mail.gmail.com>
+In-Reply-To: <CAMRc=MecyZU6DBWjg7vtohhxtVoaOR6jCRHdEiAKinqvmEtDyQ@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 30 Jul 2024 13:51:30 +0200
+Message-ID: <CAMRc=Mcwe0nV=pgfk=Wezq5eopJiZZii=BZ162QknT0t1Uf9Rw@mail.gmail.com>
+Subject: Re: [PATCH] Revert "firmware: qcom: qseecom: convert to using the TZ allocator"
+To: Johan Hovold <johan@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Maximilian Luz <luzmaximilian@gmail.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Amirreza Zarrabi <quic_azarrabi@quicinc.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Elliot Berman <quic_eberman@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	regressions@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30, 2024 at 11:40=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
+On Tue, Jul 30, 2024 at 1:35=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 >
-> +       RS_FLAGS_CFI   :=3D -Zsanitizer=3Dkcfi -Zsanitizer-cfi-normalize-=
-integers
+> On Mon, Jul 29, 2024 at 2:49=E2=80=AFPM Johan Hovold <johan@kernel.org> w=
+rote:
+> >
+> > On Mon, Jul 29, 2024 at 02:35:39PM +0200, Bartosz Golaszewski wrote:
+> > > > > On Mon, Jul 29, 2024 at 11:58=E2=80=AFAM Johan Hovold <johan+lina=
+ro@kernel.org> wrote:
+> > > > > >
+> > > > > > This reverts commit 6612103ec35af6058bb85ab24dae28e119b3c055.
+> > > > > >
+> > > > > > Using the "TZ allocator" for qcseecom breaks efivars on machine=
+s like
+> > > > > > the Lenovo ThinkPad X13s and x1e80100 CRD:
+> > > > > >
+> > > > > >         qcom_scm firmware:scm: qseecom: scm call failed with er=
+ror -22
+> >
+> > > How do you reproduce this on x1e?
+> >
+> > Just boot 6.11-rc1 and you should see the above error (and there are no
+> > variables under /sys/firmware/efi/efivars/).
+> >
+> > Johan
+>
+> I'm trying to figure out what the difference is with and without
+> tzmem. Surprisingly the physical address passed down to the SCM call
+> is actually the same in both cases.
+>
+> I figured that maybe using different struct device for the underlying
+> dma_alloc_coherent() would be the culprit but I checked and no.
+>
+> I'm still on it.
+>
+> Bart
 
-Before I forget: this should probably be `RUSTC_...` for consistency
-with the rest (and, in this case, these are flags, so it makes sense
-they target the particular compiler).
+Nevermind, I found the culprit. I will send a fix proposal shortly.
 
-Cheers,
-Miguel
+Bart
 
