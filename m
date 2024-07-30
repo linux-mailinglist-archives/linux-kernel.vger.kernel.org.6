@@ -1,95 +1,114 @@
-Return-Path: <linux-kernel+bounces-268204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EAF194219D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:29:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4739421A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC0D71C2358C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:29:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3505B24196
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D363318DF85;
-	Tue, 30 Jul 2024 20:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD08818CBF4;
+	Tue, 30 Jul 2024 20:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="sstIam/L"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EbDwYwoN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2699A1662F4;
-	Tue, 30 Jul 2024 20:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B05E1684BE
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 20:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722371366; cv=none; b=QSpCPHD6gDo4sPL1F2Le+Sp3ucAbXVJtJDVJnYmkxEbNjMKk9SSZSBb0Z5SOABNHFGo3KD4f9xnPKyUKBGz/9moPjp8a4T8lUutC17qxLvAo8ce0rW1zVe2P722qN7HpLQJeDb+INPTPa2ru2NnHgT1P/sz6d5CikLXvCNuKeEg=
+	t=1722371473; cv=none; b=CMTL7PcK2QPh0VSKmRFammdOMc8Ta8sN3a2ofsd1is1MAyM+j/mMD6d584ljj27haZC1nOUscHy2SaNewRB2KImnvbv7RsmrLlgJx9LqljumMLg/p2kLDPYMONsnRV91mpcVDCjO5hVmb8jDKT3emQKSAublxx1ViRvYWJT4eKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722371366; c=relaxed/simple;
-	bh=VysUb6IsHW4duSZ79kXmXf0tnEltW4aDIGDrPlAtLRc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RUAW2eDfDh64dQwEA0SsWXuI+dOKwmcD4jRjZ1oa71qYzB7EnBEteJk29LseaNwg2SFkoPv0Nx44rn2MptKpZDWiMjHW11Tl8i1ll9bSHIZiDNl51Z1BBCUJ5XlWvgiEpljFy5ohrE+r4OrLoZr+BpRri/soN6MsCxFSLRdIzc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=sstIam/L; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=biBLOAKr0WksW2u6STl5rcpBdcaPI/8W4IiaoGv9CUE=; b=sstIam/LlC1tYpgq863ldGQv/f
-	vPnXWzsNfMFVJXjVRjPog9ubslY+B2vLGFJvxL8YVXDaINT1DSazom9ZEIKq6jzCkfhPSWc5bzxLB
-	B21k60lT8DOKkiHxWcCljP0qvlCIqYgOUrgMQwi9XA5y2u+x9hsrflBK40Z2pA+kBbMo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sYtT2-003bzE-A5; Tue, 30 Jul 2024 22:29:08 +0200
-Date: Tue, 30 Jul 2024 22:29:08 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, saeedm@nvidia.com,
-	anthony.l.nguyen@intel.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, corbet@lwn.net,
-	linux-doc@vger.kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, horatiu.vultur@microchip.com,
-	ruanjinjie@huawei.com, steen.hegelund@microchip.com,
-	vladimir.oltean@nxp.com, masahiroy@kernel.org,
-	alexanderduyck@fb.com, krzk+dt@kernel.org, robh@kernel.org,
-	rdunlap@infradead.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
-	UNGLinuxDriver@microchip.com, Thorsten.Kummermehr@microchip.com,
-	Pier.Beruto@onsemi.com, Selvamani.Rajagopal@onsemi.com,
-	Nicolas.Ferre@microchip.com, benjamin.bigler@bernformulastudent.ch,
-	linux@bigler.io
-Subject: Re: [PATCH net-next v5 00/14] Add support for OPEN Alliance
- 10BASE-T1x MACPHY Serial Interface
-Message-ID: <c9627346-9a04-4626-9970-ae5b2fe257da@lunn.ch>
-References: <20240730040906.53779-1-Parthiban.Veerasooran@microchip.com>
+	s=arc-20240116; t=1722371473; c=relaxed/simple;
+	bh=L9LJLEF4Y6p/2yxTdyr9c533JPHoNLKbpTwRH9JUtnk=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ksls+WxZqwgEwW00/SrBqGuBBiSsxAURP5q7UFXzxLyDVoj49S2ZMZeuCEfjKk/e8PiThFWeNTL+r8cOqPZy+ivy5oBMs8s0WMZUWe2J/Wptm6SUaYrKnlrLjyeUZiGLJGjs2yXNVyl+9LLoXCvHKzfeJoJXiYBbwA8JiTmfRH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EbDwYwoN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ACEAC4AF0B;
+	Tue, 30 Jul 2024 20:31:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1722371472;
+	bh=L9LJLEF4Y6p/2yxTdyr9c533JPHoNLKbpTwRH9JUtnk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EbDwYwoNKUocRBBgSecGIn8A3tOfN/0arc68+tvaKGxfyydiSqxN7QJUAT9euMZ67
+	 Mk8bAHSjG0AEOv6I3Nd4BfrojmDZ7ckWlP0nA0/7747hAOkOmTc/TtrAUEpFtt3ht6
+	 957spyvWyAa7tCz04lf/gLEIJo6Hev3f5wjiUxJg=
+Date: Tue, 30 Jul 2024 13:31:11 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: cl@linux.com, penberg@kernel.org, rientjes@google.com,
+ iamjoonsoo.kim@lge.com, vbabka@suse.cz, roman.gushchin@linux.dev,
+ 42.hyeyoo@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] mm: krealloc: consider spare memory for __GFP_ZERO
+Message-Id: <20240730133111.d180e1a6fc63b2883fe99821@linux-foundation.org>
+In-Reply-To: <20240730194214.31483-1-dakr@kernel.org>
+References: <20240730194214.31483-1-dakr@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730040906.53779-1-Parthiban.Veerasooran@microchip.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 30, 2024 at 09:38:52AM +0530, Parthiban Veerasooran wrote:
-> This patch series contain the below updates,
-> - Adds support for OPEN Alliance 10BASE-T1x MACPHY Serial Interface in the
->   net/ethernet/oa_tc6.c.
->   Link to the spec:
->   -----------------
->   https://opensig.org/download/document/OPEN_Alliance_10BASET1x_MAC-PHY_Serial_Interface_V1.1.pdf
+On Tue, 30 Jul 2024 21:42:05 +0200 Danilo Krummrich <dakr@kernel.org> wrote:
+
+> As long as krealloc() is called with __GFP_ZERO consistently, starting
+> with the initial memory allocation, __GFP_ZERO should be fully honored.
 > 
-> - Adds driver support for Microchip LAN8650/1 Rev.B1 10BASE-T1S MACPHY
->   Ethernet driver in the net/ethernet/microchip/lan865x/lan865x.c.
->   Link to the product:
->   --------------------
->   https://www.microchip.com/en-us/product/lan8650
+> However, if for an existing allocation krealloc() is called with a
+> decreased size, it is not ensured that the spare portion the allocation
+> is zeroed. Thus, if krealloc() is subsequently called with a larger size
+> again, __GFP_ZERO can't be fully honored, since we don't know the
+> previous size, but only the bucket size.
 
-FYI: This is on my RADAR, but low priority, probably not until i get
-back from vacation. Given the very long timer between revisions, i
-don't see this delay being a problem.
+Well that's bad.
 
-      Andrew
+> Example:
+> 
+> 	buf = kzalloc(64, GFP_KERNEL);
+
+If this was kmalloc()
+
+> 	memset(buf, 0xff, 64);
+> 
+> 	buf = krealloc(buf, 48, GFP_KERNEL | __GFP_ZERO);
+> 
+> 	/* After this call the last 16 bytes are still 0xff. */
+> 	buf = krealloc(buf, 64, GFP_KERNEL | __GFP_ZERO);
+
+then this would expose uninitialized kernel memory to kernel code, with
+a risk that the kernel code will expose that to userspace, yes?
+
+This does seem rather a trap, and I wonder whether krealloc() should
+just zero out any such data by default.
+
+> Fix this, by explicitly setting spare memory to zero, when shrinking an
+> allocation with __GFP_ZERO flag set or init_on_alloc enabled.
+> 
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -1273,6 +1273,13 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+>  
+>  	/* If the object still fits, repoison it precisely. */
+>  	if (ks >= new_size) {
+> +		/* Zero out spare memory. */
+> +		if (want_init_on_alloc(flags)) {
+> +			kasan_disable_current();
+> +			memset((void *)p + new_size, 0, ks - new_size);
+
+Casting away the constness of `*p'.  This is just misleading everyone,
+really.  It would be better to make argument `p' have type "void *".
+
+> +			kasan_enable_current();
+> +		}
+> +
+>  		p = kasan_krealloc((void *)p, new_size, flags);
+
 
