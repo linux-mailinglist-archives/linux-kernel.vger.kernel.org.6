@@ -1,188 +1,119 @@
-Return-Path: <linux-kernel+bounces-268015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78699941F67
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:19:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED14B941F6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BF231C22A58
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:19:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298741C229DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB73318A6DD;
-	Tue, 30 Jul 2024 18:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E367418B463;
+	Tue, 30 Jul 2024 18:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="tqrMCEkW"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTUqP+sO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDB118A6A9;
-	Tue, 30 Jul 2024 18:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A9018A6D1;
+	Tue, 30 Jul 2024 18:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722363550; cv=none; b=WoVxErxhkkNMr0bJx4oVPTHxcOLumCkCEuiU51dHf51rePs0tsGlOjIXDEucavZVHZJWifHyGUk54v4PCnIojx2cwpHq2m0MLzZMi68frEpinNH66zbG2rIfTTR0qmYc7ra+iyDKdehAbUEMrv+YFkc5VcXVybcX/j1Me/o8Z3s=
+	t=1722363573; cv=none; b=RWGMtRqgSHSfqaUrZoXF/u1U2c4tsFCvGZIIl3+jdlGeUx+Bw8Q+qCE2chdtiAOFoPzxC52mFkHl/gJppDYJ5kXPWuiNqHBuxvQqtc/Py1oE4q3o83JPyY5+CMPvuijQhcezC69y9WZzWcJmbXA77ARelezM1Mk/24vZNa8W+XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722363550; c=relaxed/simple;
-	bh=Lw3o3WysVqe0lpIVzXtZiPYkXrCErMtGG0bqQ8x88U0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QaeM+7rAfwIsNEvBNCov8W3VcEVzsq/yfIWumdGG619471BYLHBBnivoGnkBIW5M6sQLc0O1OceXYRBYQnaQ/pcf/8DPdNUj1crJdCh2yhqsKraqhoyyEQWoM6U/s/zFP4Fd5wmRK/0pfY14AhKg3Ov2KJYWnP1JeP64PYBSv2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=tqrMCEkW reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 0046fc716da64a47; Tue, 30 Jul 2024 20:19:05 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 0CDEF956ED1;
-	Tue, 30 Jul 2024 20:19:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1722363545;
-	bh=Lw3o3WysVqe0lpIVzXtZiPYkXrCErMtGG0bqQ8x88U0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=tqrMCEkW9MUaBV/SJg1+NhlZeUiFBqyPhm8gt1w9mVcSUZJAQPEZ7CDR7n4UHCGnD
-	 AKTMQU7Q2T4t1oQ74Z0BugNJcCgdtLqYJmgLRr85heUDc51pH8S5Cib9C2/0cfXqvK
-	 8Q3Nh+vaUswsf2h/rc3I6qa2SYJ4Ho/S2xk28n5E3e3ucqwQmDg7wmGyTuaxzsQSpz
-	 iy2N0v+mAejiMdUS3Lo5fAzx3QJLRJLaRh0XTdkUehHr4yPSr33HF8hRHh2QJeopFt
-	 f/rTa9dvk6+zBEAhahlGEm18teXlkQgloVmap/QeH0KvLjjXlPd2wIo/2Y1Nsvgqen
-	 p3Qe4wOa2hPBw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux ACPI <linux-acpi@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
-Subject:
- [PATCH v1 01/17] thermal: core: Fold two functions into their respective
- callers
-Date: Tue, 30 Jul 2024 20:19:04 +0200
-Message-ID: <14034461.RDIVbhacDa@rjwysocki.net>
-In-Reply-To: <1922131.tdWV9SEqCh@rjwysocki.net>
-References: <1922131.tdWV9SEqCh@rjwysocki.net>
+	s=arc-20240116; t=1722363573; c=relaxed/simple;
+	bh=RxSnMRhu64wq5qQ8HmvF7KxdiaI0InhhbVSiBN9Xnfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PJzSRM1CWaxiRgjDFlLXG63hbFyEmRj/qaqmePvRkH8BKdjn4FkRzdFvyzAs/2a8STslEHiWwtHYZ0q1uu2yGYFANhpVAf4cgA//YMJdeaAknqrlWbzlxH3KTk+9XQdJ3SkCZPXkHbi5sY1G7cXuOp+1jYhPj6v+GIv/czt69dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTUqP+sO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A3A9C32782;
+	Tue, 30 Jul 2024 18:19:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722363572;
+	bh=RxSnMRhu64wq5qQ8HmvF7KxdiaI0InhhbVSiBN9Xnfo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OTUqP+sOp7QOtjw6saoR1RZk04qvW2elmg1Mn0i7f7Avb9A/Oe+CCIrirogkRUhiA
+	 gvsdvm3SxoX7OGrxzIwB/ZB1wpnQ5QfOIVXOyHHrpxmwcqw3LixqQX5TIYbKzpK5l4
+	 +FMpGs6JanFz9brHTiquhDZjsEcZ0qufTaVqqXn4FRJ71Op74hR4yRTgv6LgOUnBVh
+	 a9PYti3+e4jIBc/542LUREFSb2e4gdSIbOgYBVg80cA7p0Q6jamQ8ZMgrtgRIFenlf
+	 MhRH9I9lnFI5Sbsvn/WtA4HEVu6wQyVf2ZhX2XCZGBGapC1/Yb3QowtDzpvlFflpYX
+	 EQDucApEt142w==
+Date: Tue, 30 Jul 2024 19:19:23 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, "Hennerich, Michael" <Michael.Hennerich@analog.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, "Bogdan, Dragos" <Dragos.Bogdan@analog.com>,
+ "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/2] *** Add ADF4378 Support ***
+Message-ID: <20240730191923.0ad01e2f@jic23-huawei>
+In-Reply-To: <fc357a23-0d4d-47e8-95fd-6abb4a33e301@kernel.org>
+References: <20240729095047.25040-1-antoniu.miclaus@analog.com>
+	<c93a6bf3-7360-4696-833d-82726d10f604@kernel.org>
+	<CY4PR03MB339984EFB38E801AEEE1368D9BB02@CY4PR03MB3399.namprd03.prod.outlook.com>
+	<fc357a23-0d4d-47e8-95fd-6abb4a33e301@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeggdduvdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgepieenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
- rhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=18 Fuz1=18 Fuz2=18
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, 30 Jul 2024 10:42:51 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Fold bind_cdev() into __thermal_cooling_device_register() and bind_tz()
-into thermal_zone_device_register_with_trips() to reduce code bloat and
-make it somewhat easier to follow the code flow.
+> On 30/07/2024 10:23, Miclaus, Antoniu wrote:
+> >> -----Original Message-----
+> >> From: Krzysztof Kozlowski <krzk@kernel.org>
+> >> Sent: Monday, July 29, 2024 5:58 PM
+> >> To: Miclaus, Antoniu <Antoniu.Miclaus@analog.com>; Lars-Peter Clausen
+> >> <lars@metafoo.de>; Hennerich, Michael <Michael.Hennerich@analog.com>;
+> >> Jonathan Cameron <jic23@kernel.org>; Rob Herring <robh@kernel.org>;
+> >> Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
+> >> <conor+dt@kernel.org>; Bogdan, Dragos <Dragos.Bogdan@analog.com>;
+> >> linux-iio@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> >> kernel@vger.kernel.org
+> >> Subject: Re: [PATCH v3 0/2] *** Add ADF4378 Support ***
+> >>
+> >> [External]
+> >>
+> >> On 29/07/2024 11:50, Antoniu Miclaus wrote:  
+> >>> Add support for ADF4378 high performance, ultra-low jitter, integer-N
+> >>> phased locked loop (PLL) with an integrated voltage controlled
+> >>> oscillator (VCO) and system reference (SYSREF) retimer ideally
+> >>> suited for data converter and mixed signal front end (MxFE) clock
+> >>> applications.
+> >>>
+> >>> The main difference between ADF4377 and ADF4378 is that the second one
+> >>> provides only one output frequency channel which is enable/disabled via
+> >>> one GPIO.
+> >>>
+> >>> Both the driver and the bindings are updated to reflect that difference.  
+> >>
+> >> That's a v3, but where is the changelog?  
+> > 
+> > Each of the two patches has their own changelog.
+> > For the cover letter there's no changelog since it was added with v3.   
+> 
+> Ah, ok, it was not that easy to find, without any spacing from the diffstat.
+> 
+> Best regards,
+> Krzysztof
+> 
+Applied to the togreg branch of iio.git and pushed out as testing initially
+for 0-day to take a first look at it.
 
-No intentional functional impact.
+Thanks,
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/thermal_core.c |   55 ++++++++++++++---------------------------
- 1 file changed, 19 insertions(+), 36 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -991,20 +991,6 @@ void print_bind_err_msg(struct thermal_z
- 		tz->type, cdev->type, ret);
- }
- 
--static void bind_cdev(struct thermal_cooling_device *cdev)
--{
--	int ret;
--	struct thermal_zone_device *pos = NULL;
--
--	list_for_each_entry(pos, &thermal_tz_list, node) {
--		if (pos->ops.bind) {
--			ret = pos->ops.bind(pos, cdev);
--			if (ret)
--				print_bind_err_msg(pos, cdev, ret);
--		}
--	}
--}
--
- /**
-  * __thermal_cooling_device_register() - register a new thermal cooling device
-  * @np:		a pointer to a device tree node.
-@@ -1100,7 +1086,13 @@ __thermal_cooling_device_register(struct
- 	list_add(&cdev->node, &thermal_cdev_list);
- 
- 	/* Update binding information for 'this' new cdev */
--	bind_cdev(cdev);
-+	list_for_each_entry(pos, &thermal_tz_list, node) {
-+		if (pos->ops.bind) {
-+			ret = pos->ops.bind(pos, cdev);
-+			if (ret)
-+				print_bind_err_msg(pos, cdev, ret);
-+		}
-+	}
- 
- 	list_for_each_entry(pos, &thermal_tz_list, node)
- 		if (atomic_cmpxchg(&pos->need_update, 1, 0))
-@@ -1338,25 +1330,6 @@ void thermal_cooling_device_unregister(s
- }
- EXPORT_SYMBOL_GPL(thermal_cooling_device_unregister);
- 
--static void bind_tz(struct thermal_zone_device *tz)
--{
--	int ret;
--	struct thermal_cooling_device *pos = NULL;
--
--	if (!tz->ops.bind)
--		return;
--
--	mutex_lock(&thermal_list_lock);
--
--	list_for_each_entry(pos, &thermal_cdev_list, node) {
--		ret = tz->ops.bind(tz, pos);
--		if (ret)
--			print_bind_err_msg(tz, pos, ret);
--	}
--
--	mutex_unlock(&thermal_list_lock);
--}
--
- static void thermal_set_delay_jiffies(unsigned long *delay_jiffies, int delay_ms)
- {
- 	*delay_jiffies = msecs_to_jiffies(delay_ms);
-@@ -1554,13 +1527,23 @@ thermal_zone_device_register_with_trips(
- 	}
- 
- 	mutex_lock(&thermal_list_lock);
-+
- 	mutex_lock(&tz->lock);
- 	list_add_tail(&tz->node, &thermal_tz_list);
- 	mutex_unlock(&tz->lock);
--	mutex_unlock(&thermal_list_lock);
- 
- 	/* Bind cooling devices for this zone */
--	bind_tz(tz);
-+	if (tz->ops.bind) {
-+		struct thermal_cooling_device *cdev;
-+
-+		list_for_each_entry(cdev, &thermal_cdev_list, node) {
-+			result = tz->ops.bind(tz, cdev);
-+			if (result)
-+				print_bind_err_msg(tz, cdev, result);
-+		}
-+	}
-+
-+	mutex_unlock(&thermal_list_lock);
- 
- 	thermal_zone_device_init(tz);
- 	/* Update the new thermal zone and mark it as already updated. */
-
+Jonathan
 
 
 
