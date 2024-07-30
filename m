@@ -1,39 +1,54 @@
-Return-Path: <linux-kernel+bounces-267052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF540940BC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:37:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49877940BDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E16591C23B68
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:37:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 000D51F23474
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F941922E5;
-	Tue, 30 Jul 2024 08:36:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897A2193078
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6147B19307E;
+	Tue, 30 Jul 2024 08:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iBhmIlEu"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3A8156C4B;
+	Tue, 30 Jul 2024 08:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722328607; cv=none; b=rjcqnd9zMH9NBA207t8hlhIrHf1twcohcXxW5g4RFnIWSGUT726h/g4qSAWLgwMhTGymiyufKgcJS3H75UqlRF4RKtoBjkew0wCC/Pvu5+O8LBnjylHsDgegnRUQnWeAMJXgpwUObvdQ792FfoaPdyn+FesfNW9CG2H4djuGvXM=
+	t=1722328770; cv=none; b=RzAZJaqEENxI4qkLNIxlWPllEwuxudL8Kkmu9bTgzDr0awsWB6ndx3eSsV5LAor78AxQVGfVPkvjkVpxZvaC8aYFfl1yyIuuTztLX65ip3/1xv+GW8NdlAF8pXAH2IXNI/zUCKk/c3eDPOU4XSVYQFbnHffRgqJV5MFkypN47ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722328607; c=relaxed/simple;
-	bh=wFR5OkArG5cogDqZr9dJ/pJdxh5F4WNEWQOZLjQbOug=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E7XScxaFJHcKbJKO34bfrfYBYG6YgyK2s68jHwdIHTd5i7t85Eun+LqeU1Bi057M1sd12eTMvj1hthhj5v1uyvx3UyWSWNZVRAiCa2i1VnmwJjkdyuKHqKbiuLzmqn2FDTLc57taI7+f5aEhB4UqRx3e5qSCLIuCiJos8nmdroY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D4481007;
-	Tue, 30 Jul 2024 01:37:10 -0700 (PDT)
-Received: from [10.57.78.186] (unknown [10.57.78.186])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1F5BD3F766;
-	Tue, 30 Jul 2024 01:36:40 -0700 (PDT)
-Message-ID: <f0c7f061-6284-4fe5-8cbf-93281070895b@arm.com>
-Date: Tue, 30 Jul 2024 09:36:39 +0100
+	s=arc-20240116; t=1722328770; c=relaxed/simple;
+	bh=07fx0OcCY32v0SirWQHDNSZfPG7HMF4hAqbJnMhyg3s=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=doaUhOprRAe6U8YQwCTdBJQwJbWw9dLJU7RBmP68ZdyLXzzOzPNT9M1raD3mNIuv+cF7+d/BcMrV+1wq5T8hKILBNJ6KknE68eHe3LlFgU2Sxsf3blqqOB59WLoUA6hlwdVhuzZeHa1kXBePQxAvtH6MCw3VAMexAe3hKYpzT9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iBhmIlEu; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1722328685; x=1722933485; i=markus.elfring@web.de;
+	bh=07fx0OcCY32v0SirWQHDNSZfPG7HMF4hAqbJnMhyg3s=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=iBhmIlEu1DTEhbIId4CW/iiPJylb+jiOQ9na/RS5h69bGT/imWvKAbYeaJ6pivjz
+	 JMnQXpy3cOlHf6p3bxFw2uqBaGPOuz17LrdoEApiGvMmHL9F2kIIYCb9ueGy62+tI
+	 Z412cOhJGP5xxEr98kCfPNdYFjVPufN30A6OcLhTRbHeOoqDpZ30cxm7YBR3nSSWl
+	 8w95ukxErNzkX2hWTvH3N3Q/O+9nRoQJ+CINjbJQKXo8kr7CjpakPcjmpI9mTGMkm
+	 t7htz1r1rdr1c1sSbkVKfGHWXeJSssKDwuuEu3A8VxxvqEIW9YncbE1WpCLHOz/i4
+	 zpVozzeWA1xcB3gjBw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MKMA1-1sq6tO21QF-00MgS1; Tue, 30
+ Jul 2024 10:38:05 +0200
+Message-ID: <5d3c74da-7d44-4b88-8961-60f21f84f0ac@web.de>
+Date: Tue, 30 Jul 2024 10:37:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,71 +56,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/4] mm: Introduce per-thpsize swapin control policy
+To: Daniel Vetter <daniel.vetter@ffwll.ch>,
+ Kaiyuan Zhang <kaiyuanz@google.com>, Mina Almasry <almasrymina@google.com>,
+ Pavel Begunkov <asml.silence@gmail.com>,
+ Willem de Bruijn <willemb@google.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ bpf@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andreas Larsson
+ <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
+ Bagas Sanjaya <bagasdotme@gmail.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Christoph Hellwig <hch@infradead.org>, David Ahern <dsahern@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, David Wei <dw@davidwei.uk>,
+ Donald Hunter <donald.hunter@gmail.com>, Eric Dumazet <edumazet@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>, Helge Deller <deller@gmx.de>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Jakub Kicinski
+ <kuba@kernel.org>,
+ "James E. J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Jeroen de Borst <jeroendb@google.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Matt Turner <mattst88@gmail.com>, Nikolay Aleksandrov <razor@blackwall.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Praveen Kaligineedi <pkaligineedi@google.com>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Shailend Chand <shailend@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Shuah Khan <shuah@kernel.org>,
+ Steffen Klassert <steffen.klassert@secunet.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Taehee Yoo <ap420073@gmail.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Yunsheng Lin <linyunsheng@huawei.com>
+References: <20240730022623.98909-4-almasrymina@google.com>
+Subject: Re: [PATCH net-next v17 03/14] netdev: support binding dma-buf to
+ netdevice
 Content-Language: en-GB
-To: Matthew Wilcox <willy@infradead.org>, Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, ying.huang@intel.com,
- baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com,
- hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com,
- kasong@tencent.com, linux-kernel@vger.kernel.org, mhocko@suse.com,
- minchan@kernel.org, nphamcs@gmail.com, senozhatsky@chromium.org,
- shakeel.butt@linux.dev, shy828301@gmail.com, surenb@google.com,
- v-songbaohua@oppo.com, xiang@kernel.org, yosryahmed@google.com
-References: <20240726094618.401593-1-21cnbao@gmail.com>
- <20240726094618.401593-5-21cnbao@gmail.com>
- <ZqcR_oZmVpi2TrHO@casper.infradead.org>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <ZqcR_oZmVpi2TrHO@casper.infradead.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240730022623.98909-4-almasrymina@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:3zASUQdt0WnRJJo2JsH8HgMCSLLJrSOm6wxlRg1HbHDrGJYPFAR
+ 4UrI46t5fFnsIQP5D20a4Q4/ar+Qe149EAafa7XhskHQN56xyU9dWXWOdOe9cqX+BeVMF3I
+ 8WFhpDkIxnYHJeZdnRHZDAN3teiQz55j6x07IL1LXqdRPVKwtTq1AIEwtRutuGvYx2Pn/lI
+ 6wer7tct5AinmIXcBPXRw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:pHmLyOskFkY=;I7pCl1VILl5yztEF5uEKXmycDP5
+ HNg30ml4ujtQp8hDTQ3k68nNJHnulVh43c1GvXrokXoDUhvvfoxNn12GmkZ+HgPxu8P5cN86n
+ HjOpfP8/MmUIpzxPlAqq3wxO4BHOXC7nCoou7XGF6loLekm4A+xubNt9riTQyV1qFBcyB94i1
+ 9nkx3l/0I3vtPPF6IXAuFeSgWGNbnMAc5yBzRdvhRx4NgMckDkjJvObOV+sApUE4abxW5IdYc
+ buKUkVmNMowUtx9d8ohNyHP5l0MvM+BrMJ+U6i6NSpHCcHyN+Db4gk/km/Nfpyxzicq+cw9kM
+ dbUuFQy20IeEzlt0JBmJTvh3npkouDOC8d+ppHNvGFDc2VX95QZiP8oAV1KqYVeet622rengR
+ 3AtZYxLW2HL9cJRJdGCFiSSoh2Ma1PdedqtRTNQE8x65ul4oZ5zC5oC7GI0KrfC2lDBmt7U9H
+ d3quaXmP5M08fs3HGNmDo2dJT4Mof8Rvu8b/1zeyNdFkx2ISKEqxruq9cgOvPVDOzWnM6q1hQ
+ j/Oo//f3eoHLmD9gSZJlyPqNPXnEofdZIoAkzr1NHrrLlxHQQCxQg4K2Ctyi0eEOGrXaAGGMW
+ U86dnhPzR1dN3MoSlZwMFv+d+ur6MNAU2LFwQiVgsiYO2r4PdA6g2/epD6XWGMZzsV3xD1bW9
+ ezFK4C0vxtvaDH0C0PO+CEdfJXWpA6ElBZbDAsD0DefszWZDdZo0DdR8nfhg96M442XbukoWM
+ HqCWkB1S51RK5OLQqCoLFxLM1/As4Y1LHCojxd9Oj8S237g0l+yUpVWT2ul1az/vHGJE2iOpx
+ VrU7WYLZwjqQf3tDPMnChwHw==
 
-On 29/07/2024 04:52, Matthew Wilcox wrote:
-> On Fri, Jul 26, 2024 at 09:46:18PM +1200, Barry Song wrote:
->> A user space interface can be implemented to select different swap-in
->> order policies, similar to the mTHP allocation order policy. We need
->> a distinct policy because the performance characteristics of memory
->> allocation differ significantly from those of swap-in. For example,
->> SSD read speeds can be much slower than memory allocation. With
->> policy selection, I believe we can implement mTHP swap-in for
->> non-SWAP_SYNCHRONOUS scenarios as well. However, users need to understand
->> the implications of their choices. I think that it's better to start
->> with at least always never. I believe that we will add auto in the
->> future to tune automatically, which can be used as default finally.
-> 
-> I strongly disagree.  Use the same sysctl as the other anonymous memory
-> allocations.
+=E2=80=A6
+> +++ b/include/net/devmem.h
+> @@ -0,0 +1,115 @@
+=E2=80=A6
+> +#ifndef _NET_DEVMEM_H
+> +#define _NET_DEVMEM_H
+=E2=80=A6
 
-I vaguely recall arguing in the past that just because the user has requested 2M
-THP that doesn't mean its the right thing to do for performance to swap-in the
-whole 2M in one go. That's potentially a pretty huge latency, depending on where
-the backend is, and it could be a waste of IO if the application never touches
-most of the 2M. Although the fact that the application hinted for a 2M THP in
-the first place hopefully means that they are storing objects that need to be
-accessed at similar times. Today it will be swapped in page-by-page then
-eventually collapsed by khugepaged.
+I suggest to omit leading underscores from such identifiers.
+https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
+efine+a+reserved+identifier
 
-But I think those arguments become weaker as the THP size gets smaller. 16K/64K
-swap-in will likely yield significant performance improvements, and I think
-Barry has numbers for this?
-
-So I guess we have a few options:
-
- - Just use the same sysfs interface as for anon allocation, And see if anyone
-reports performance regressions. Investigate one of the options below if an
-issue is raised. That's the simplest and cleanest approach, I think.
-
- - New sysfs interface as Barry has implemented; nobody really wants more
-controls if it can be helped.
-
- - Hardcode a size limit (e.g. 64K); I've tried this in a few different contexts
-and never got any traction.
-
- - Secret option 4: Can we allocate a full-size folio but only choose to swap-in
-to it bit-by-bit? You would need a way to mark which pages of the folio are
-valid (e.g. per-page flag) but guess that's a non-starter given the strategy to
-remove per-page flags?
-
-Thanks,
-Ryan
-
+Regards,
+Markus
 
