@@ -1,124 +1,163 @@
-Return-Path: <linux-kernel+bounces-267893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16509419B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:35:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B1CE9419C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F17B1C23714
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:35:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EC031C20CB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A3E189538;
-	Tue, 30 Jul 2024 16:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374B91A6192;
+	Tue, 30 Jul 2024 16:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ns0/Z2DH"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aM03wjTM"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B79188014;
-	Tue, 30 Jul 2024 16:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE2C8BE8
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722357310; cv=none; b=LVhWYlTOyp0ZZJjT/32IuxxwCyXK1LjfUo3tmMhS3fjL++XpjOwqqUujjFsFATT5+NddsUsUK0FhqWXXB3q5cQk3jDtKSEns5I6HVj0bwHkZN5qVtMyqzPIFx7bbMsVEVbU4p9P0Ny3AnxtyYMDpp2LrReWNe1LvnSrfNqa+9qk=
+	t=1722357367; cv=none; b=d1HutJnh3WZUEFg35JiD8cVmKT7DUBDkQlYuxi0XwaSgfiONexAMwlFNfSRYA5kvYEMoXoSYweFdXkHewwcTW5b1Tm6Iev+XMyW7YXChK0Poh3LiSmWxp3YtK+aUlgIUHbJ9JGbjaP5YjYIKbZlqP+S9g4DcaTV5yILE/EOU/bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722357310; c=relaxed/simple;
-	bh=qpwx5001siDU0s6OL/tG1xsE074fklT/oGpzD5zgkpM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FkDIQ8mJKs7Ii6DteJelmx4C0fvUluZz7s/DvD8Y0/Goc+qhnhABxOfpjxEqTVd24rN1gRyzDCvshPZW4AmDmqaRrisp+pjgzrqxOuaPvtQyBur6H+tICW51Bu0C7hXQGUi7HYqp2FaVorZZjoL3RwtctdABq1Hs92qta2VnMo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ns0/Z2DH; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7a94478a4eso3716466b.1;
-        Tue, 30 Jul 2024 09:35:08 -0700 (PDT)
+	s=arc-20240116; t=1722357367; c=relaxed/simple;
+	bh=M71YWmDfwUPDQ/xFbYOO023UBNW5/d3iHZwZLBQ9j2g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j8+BD3pwSPoE/k+RtVLsTsarhs924P+wfqJcKDvN+GF+3d8sr4Q36Aezw8tZgbz1DdVcPa+6JYeq+uuyad1RwAUyckady8aH9IYfwQiGMAclfp/fAywey3T8wlBEIHJ2W5TrOKeVgzFQ24krfmqu8vzTNSsKeQ+F2jNyBM47nm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aM03wjTM; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so7473067a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:36:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722357307; x=1722962107; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TGt4uBOUi8jDZlWojXnrBBKatTCqNqcHlJ4CdF8OBHI=;
-        b=Ns0/Z2DHbRercklpKLvNOt+I0wwFNUhOHPqhzoS7VyFkM6s0GTW6Kf5K+E/RIsLLbw
-         zXVwu5XWMRh4u8+FNRkxMB63f445TrP7SCGXL+DVlYMqw8ecKw0K2c9QRQSKboiSjSFL
-         LVWji1oaPYP8IquNGQYv2k14JjbEvUK4irZEOY0jwn9z1S5zMJfMN2ajMyJBiKuHBxzm
-         NoTRxKUfoqIfqU0seYqbU0wqvNmuNaXRjvvwQP6hfhAuZW+g6u4W6vVsrqiomjmNKONT
-         OL62xCOJ0zbIhyXSPA6hgozyDh8RURe4NoUPvNAMqcIERhgpgqnko0853NerLgoi2wIU
-         IhOg==
+        d=linuxfoundation.org; s=google; t=1722357363; x=1722962163; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KLHg6Rt8hE2c6f9s+Hk5e7EMcF8gl1hqD8o20b3cA+8=;
+        b=aM03wjTMCnALbCzLg1enVlVfUb7lVXzXz9wmi60gRR3BDmCPeyOoVOBH9zceHPZzGM
+         k9cPMmqv/s5uCe1iJg02CinZgu3aww+u+ciQfpPY2F9Jc/Pn0r58xjCHNTETBLxD1OtI
+         DgY01dgLIImoL1ADctYl25RjPm9H4+V8t7jxc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722357307; x=1722962107;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TGt4uBOUi8jDZlWojXnrBBKatTCqNqcHlJ4CdF8OBHI=;
-        b=jOxVxC2wY14JCgMCIve5QFAZKaluU/7hT9yK2awkPwm8SCFl4fennq5NNlM6VNTvZP
-         nNoeyUsv6gYtym1/3KTSxy0g0BPYQdUctS2CkiNZ76BihjJPLzXEJ7PDAr4W6dBbIHIw
-         vZhEMpN9EP70B86b3BZljTB/uPoObL9eUBMNGvpBJUB2y7N5nhTITssIX1PTMgUY++M+
-         Jq0o+a5MvHKu1jsWNxpJhtnNHLO53X9tr1dO+bEDF4S6md2Hg/jedx+Fk5amtlIwNorc
-         X4Eb5T3JOaukKwxiiKhNdx5eDFSyCXJsW93qxQJV8xgytMZo4a3cJEgCCN/yhdFADHsZ
-         Brhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJIauPsO0PbPyfy5M19eA/ee2kIvHF2GUTxm6h1scxgCE6NSGv82o99Q5ueYWGLmII9u328KvrjJ4rhp6TJtEgxZQfIpjqY414BF4N+Vs=
-X-Gm-Message-State: AOJu0Yz+0HKadhuJSSBFPHiPmuo6eYKR1jttTwIUL1I4UORZIR7AO//v
-	jcR7QfXtDD5AzrVOR19itNZuYMYB1RzlvkFU0656mt2Ba0UnmNCCiNdyVs3h
-X-Google-Smtp-Source: AGHT+IG+HFPbS7nERqEKywu745vcoB0gSCuNfJ9cQyWhtB3XRVyjU6U2KYUcbWp7LK5pWJpsWRXDzw==
-X-Received: by 2002:a17:906:6187:b0:a72:5f3f:27a2 with SMTP id a640c23a62f3a-a7d85a426f1mr223777266b.26.1722357306450;
-        Tue, 30 Jul 2024 09:35:06 -0700 (PDT)
-Received: from [192.168.43.50] (212095005041.public.telering.at. [212.95.5.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad434a3sm661572866b.139.2024.07.30.09.35.05
+        d=1e100.net; s=20230601; t=1722357363; x=1722962163;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KLHg6Rt8hE2c6f9s+Hk5e7EMcF8gl1hqD8o20b3cA+8=;
+        b=eZ6JFqoy02gdMPFFp2DhA4c4UC4bx6xt+MVpxpjNtKQTXSib4KjsFVVGwDJlj6+b/j
+         kE+rSWPdojA0BKQNmAOiSkbxlAB8OXoBlz9luu/dcPQeiNGwJREb5rorrih+p/aBXcIY
+         mYB/3zoVJPJEbZuyhrSL7a/ERiIbSOdew34LPN3LSdW2F3UGlOlGaHuPMnxECRujR5uO
+         2jVcI7hfL42eOjAVAmeYOpi5ddXJFExfBps38fQI5glHS6WaeIHOBsayDmG435oK6lkW
+         tPDtixNuVXRTkOVao7ixOyClecglpmMHFEQvq/V/C8vAzzY+8tCPKcc/OCtQuGFcgVqL
+         vO9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVCOftRV4KGUkwwy1VdDWxCfvdueyuk3EqUCsmWxOGY+LiAM3yxvflxE382KIvve7o08KUm9JHEtqctgHtXWye2/Li92Ynq08tK3gwx
+X-Gm-Message-State: AOJu0Ywg8zsjtbDcsfDGLFQkG1afZMvXjvfzNwZ2ky4rZslJaRrivLEV
+	8RceMEl5w1V5daWoQZuxfX5odaiSpsYgVOoyUQAJJYupeYTm++5FGgwEC4dzb5UkoxitEG1YtbV
+	kIbWqqA==
+X-Google-Smtp-Source: AGHT+IF3jKWJUfCO2NRW+D3BabcPkarXfrMy8zDb7H9DHDGOVL+Buok4ht+fUp/vDYFEUtjruneivw==
+X-Received: by 2002:a50:8d58:0:b0:5a3:f5c6:7cd5 with SMTP id 4fb4d7f45d1cf-5b021d21f18mr6415812a12.26.1722357363498;
+        Tue, 30 Jul 2024 09:36:03 -0700 (PDT)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac631b033fsm7472607a12.1.2024.07.30.09.36.02
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 09:35:06 -0700 (PDT)
-Message-ID: <d85d50d4-3f52-4440-a57a-260d7943179e@gmail.com>
-Date: Tue, 30 Jul 2024 18:35:04 +0200
+        Tue, 30 Jul 2024 09:36:02 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a3b866ebc9so6693681a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:36:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWazetDxQmNS9/+8rSjeQb8uBPfE/Na8UqEb3m/cnIp70+BNtbnfPYnn0N21VYU3frpWQnmMhML4SWlTdQ0QlX5WVXYxhIg8UXfnosW
+X-Received: by 2002:a50:d55c:0:b0:57c:78fb:1a32 with SMTP id
+ 4fb4d7f45d1cf-5b020ba8220mr7207696a12.19.1722357362359; Tue, 30 Jul 2024
+ 09:36:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm: rust: Enable Rust support for ARMv7
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
- Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
- Sven Van Asbroeck <thesven73@gmail.com>,
- Geert Stappers <stappers@stappers.nl>, Andrew Lunn <andrew@lunn.ch>
-References: <2dbd1491-149d-443c-9802-75786a6a3b73@gmail.com>
- <fc3e956c-4f0d-4705-8429-2b7c50e335ce@gmail.com>
- <CANiq72=kAdq4TsCPvMWBwdzngeOst8g2cGzkk1DxM2yW=V4emQ@mail.gmail.com>
-Content-Language: en-US
-From: Christian Schrefl <chrisi.schrefl@gmail.com>
-In-Reply-To: <CANiq72=kAdq4TsCPvMWBwdzngeOst8g2cGzkk1DxM2yW=V4emQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
+ <5cd3e11780df40b0b771da5548966ebd@AcuMS.aculab.com> <CAHk-=wj=Zv+mMuqJQJptH9zGFhPXqku9YKyR7Vo4f0O0HEcbxw@mail.gmail.com>
+ <b47fad1d0cf8449886ad148f8c013dae@AcuMS.aculab.com> <CAHk-=wgH0oETG1eY9WS79aKrPqYZZzfOYxjtgmyr7jH52c8vsg@mail.gmail.com>
+ <e718056c1999497ebf8726af49475701@AcuMS.aculab.com> <CAHk-=wj900Q3FtEWJFGADQ0EbmYwBHW8cWzB0p0nvFck=0+y6A@mail.gmail.com>
+ <e946e002-8ca8-4a09-a800-d117c89b39d3@app.fastmail.com> <CAHk-=whCvSUpbOawsbj4A6EUT7jO8562FG+vqiLQvW0CBBZZzA@mail.gmail.com>
+ <CAHk-=wgRDupSBzUX_N_Qo_eaYyDfOH=VTihhikN36cGxCc+jvg@mail.gmail.com> <f88a19d1-c374-43d1-a905-1e973fb6ce5a@app.fastmail.com>
+In-Reply-To: <f88a19d1-c374-43d1-a905-1e973fb6ce5a@app.fastmail.com>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Tue, 30 Jul 2024 09:35:45 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg4ETks+pGUco4gDrRxT+1UBbFGQtpOqSxLSzvVAWpm5w@mail.gmail.com>
+Message-ID: <CAHk-=wg4ETks+pGUco4gDrRxT+1UBbFGQtpOqSxLSzvVAWpm5w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: David Laight <David.Laight@aculab.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Matthew Wilcox <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>, 
+	"pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 30.07.24 6:00 PM, Miguel Ojeda wrote:
-> On Mon, Jul 29, 2024 at 11:58 AM Christian Schrefl
-> <chrisi.schrefl@gmail.com> wrote:
->>
->> This has been on the mailing list for quite some time with only a few responses.
-> 
-> Up to arm to take it -- if it helps, I tried the patch, including
-> building, booting in QEMU, running the KUnit tests and loading the
-> sample modules. Thus:
-> 
-> Acked-by: Miguel Ojeda <ojeda@kernel.org>
-> Tested-by: Miguel Ojeda <ojeda@kernel.org>
+On Tue, 30 Jul 2024 at 03:11, Arnd Bergmann <arnd@kernel.org> wrote:
+>
+> I'm giving this a spin on the randconfig test setup now to see
+> if there are some other cases like the bcachefs one. So far I've
+> seen one failure, but I can't make sense of it yet:
 
-Did you apply it on 6.11-rc1?
- 
-> However, to keep our build Clippy-clean, it requires a a patch like:
-> 
->     https://lore.kernel.org/rust-for-linux/20240730155702.1110144-1-ojeda@kernel.org/
-> 
-> which should ideally be applied together.
+So the new checks are actually a lot smarter, since unlike the old
+ones they don't require a C constant expression, and will find cases
+where the compiler can see expressions that turn out statically
+optimizable.
 
-I think that I ran clippy, maybe that changed between 6.10 and 6.11. 
-> I hope that helps!
-> 
-> (Nit: please avoid top-posting, see https://subspace.kernel.org/etiquette.html)
+This is a great example of that, although "great" in this case is
+sadly not what we want:
 
-Sorry, I'm still getting used to using the mailing list.
+> drivers/gpu/drm/i915/display/intel_backlight.c: In function 'scale':
+> include/linux/compiler_types.h:510:45: error: call to '__compiletime_assert_905' declared with attribute error: clamp() low limit source_min greater than high limit source_max
+> include/linux/minmax.h:107:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+>   107 |         BUILD_BUG_ON_MSG(statically_true(ulo > uhi),                            \
+> drivers/gpu/drm/i915/display/intel_backlight.c:47:22: note: in expansion of macro 'clamp'
+>    47 |         source_val = clamp(source_val, source_min, source_max);
 
-Cheers,
-Christian
+So here *locally*, source_min and source_max can't be ordered, but
+what I think has happened is that we had that earlier
+
+        WARN_ON(source_min > source_max);
+
+and then gcc sees the "statically_true(ulo > uhi)" test, and will do
+CSE on the variables and on the test condition and the conditional,
+and basically have turned all of this into
+
+        if (source_min > source_max) {
+                WARN(..)
+                source_val = clamp(source_val, source_min, source_max);
+        } else {
+                source_val = clamp(source_val, source_min, source_max);
+        }
+
+and now the case with the WARN() will statically obviously be bad.
+
+I don't see the failure, so it clearly depends on some config default,
+and I suspect with my allmodconfig build, for example, there is so
+much else going on that gcc won't have done the above trivial
+conversion.
+
+The old code never saw any of this, because the old code was using the
+terminally stupid _static_assert(), and within the much more limited
+scope of a "C constant expression", that "source_min < source_max"
+could never be true, even if there are code paths where it *is* true.
+
+But here I think we were bitten by excessive cleverness.
+
+> That's still a typo in the 32-bit case, right?
+> I've changed
+>
+>  __builtin_choose_expr(sizeof(ux)>32,1LL,1L))
+>
+> to check for sizeof(ux)>4 for my testing.
+
+Bah yes. I had that fix locally, and sent the old patch.
+
+            Linus
 
