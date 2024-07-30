@@ -1,102 +1,94 @@
-Return-Path: <linux-kernel+bounces-268298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A9D9422EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:29:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E9C59422F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAD441C232AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:29:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4C52817D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B101917CC;
-	Tue, 30 Jul 2024 22:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1DB1917CA;
+	Tue, 30 Jul 2024 22:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MS8YDn39"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VsnXh0cI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E728D157466;
-	Tue, 30 Jul 2024 22:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D34A157466
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722378578; cv=none; b=uKVpGjoT5SAupZJx4wmDN6E4/ZnpiV9p8RXAJHomnB7x3l/QF61etKG5myiIhGsHDuIWYFEce1f8zQZXUxJszS1T7Z9g19a8VZQDE1+qXjVzWT7oNmDOeUn/KUO5ISFE2An+W+NdYjYIW+Lmq6du7kE4/tdZnvIAmPVfv16a8bU=
+	t=1722378597; cv=none; b=aV2gNnL0uXGx9uLgc+vugywLNfOavLzNjASTw7JjZuzIqKPcn2IONWTfrnHs3mWDhSIwV3t9yHTt19EbJxLWSncqijq8im9/0T4w4OpeR3n9ljuTl6QCwHjnF/C5uTK22MNBRGGrwEDCem+d03k3DeMLNrizOXn4bii+A/MGHxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722378578; c=relaxed/simple;
-	bh=2RMHV4d5NjJxz6HUYb+Sms0zlAjGFqcIpujxTAW79OE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t6IgPBnDxxFzSs+T3EL1p3/k7uyreq6VRfFP+mBN3zP/7WMucZBgIe5sq5K9s8Jb8Ke79+ff8jpS4ncFLxiFDFoYQpPmPY4oPUeErAYx/sh+89c2v2il7UP5bXh0bIevrmEmPSMUx8AAVxi9MIpMQxiHckMD2hHDN1V3FjlXHtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MS8YDn39; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fd9e70b592so33519385ad.3;
-        Tue, 30 Jul 2024 15:29:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722378576; x=1722983376; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wubjsLA9Pfrz1RUDGqNYYIEp2h10KWcO+ZTm6F7lL1g=;
-        b=MS8YDn39uGBVuUxpp9N92hHIvc56nAHireUqvPytKo3dB5ihCIi8UXJ9MDnJG6Eu8k
-         csGH9ZQEwTMkwMqtfT/MIhBBIFrweQdFWLpRw3dsheR750ltMAmmhLFZYmikAaI3m0gl
-         0DYatAB0Mx7tPQxzkE8VqETNI6mCO4iZGIgqCmBrsLc7v4sGk49EbC3kqtIK0Y3saTiB
-         6WbLtr2m/7nRdYLOC0OWjm2gohqy7YqHSgeL40pAhbTGQzmxJkTqEa9c43g1XjpDePa+
-         fg73dNag6B88pRMj2Z/pPOh7ATZ2InXxirFuNxcBqjWxqVF4lqWxAGFvZu6vo1iJ0y2t
-         PMWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722378576; x=1722983376;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wubjsLA9Pfrz1RUDGqNYYIEp2h10KWcO+ZTm6F7lL1g=;
-        b=ijUXg3lViK8rUgsWrck7aD8rBvkVF2kCGBHgpUAA7QHeSm124bAEi1sweg1YjIj6pw
-         9PupHrEnGpd6XvtYA6bP4gmw2ACE4XHNlzFxhrZv4NdJ4UrcORH3DrRNPWYD2vM8eHSK
-         GNv4+F/+EwW7S+nFBH/DsUIvlvVvCQ0ouDFXtcPFCblneyH+YDoTgitkxys8xYFNHCui
-         aFtrUL39LwSPSYeevQS3Z0eFUpIry0JepP3iLa2WnWhC9TKq5CSl8v7BVvwuHQ75Orkg
-         INqR9VhYv6AlbtJKHoyWkcl5oCltNAJzuj/fA6rZGIpm4YQSfcySGTZ2lPZCKWgKvjJS
-         A3Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5eV6ZHzHE9u3qcn2mKvOQ+XhxL+gr3W9obQbBoPuosIhoWspIROUnZGg0BCN2MN2SmtKjp6lB5F1FTYTwwy/Q9kMo5XFRGgc3mfBj6bl16tMt6DFGUfZv263Mx/tg6HzdoNV7Zw==
-X-Gm-Message-State: AOJu0YxitKcRGLu1r0HHMRCYLRn6wmN+kAPkWyaSyqvhlboph1OKZDxN
-	e4luVVMShqr8DRt/fpODg0sRQBdxvrhyhguSBCvHhLZt25AmeRuW
-X-Google-Smtp-Source: AGHT+IFBvt0i2ECELFib8beenl5MXAf11naCxmnyGMQ7CLPWwOWj2NGhocDdpFwshdAMYDVj3mrIig==
-X-Received: by 2002:a17:903:24f:b0:1fc:4aa0:fb14 with SMTP id d9443c01a7336-1ff047811c1mr115817205ad.2.1722378576136;
-        Tue, 30 Jul 2024 15:29:36 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f6dc27sm107059365ad.237.2024.07.30.15.29.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 15:29:35 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 30 Jul 2024 12:29:34 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Xiu Jianfeng <xiujianfeng@huawei.com>
-Cc: longman@redhat.com, lizefan.x@bytedance.com, mingo@redhat.com,
-	peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, mkoutny@suse.com,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] cgroup/cpuset: Remove cpuset_slab_spread_rotor
-Message-ID: <ZqlpTgb8L_J8i-cX@slm.duckdns.org>
-References: <20240713085916.3373085-1-xiujianfeng@huawei.com>
+	s=arc-20240116; t=1722378597; c=relaxed/simple;
+	bh=iXwmhYCCcyRDw2DJIPfqL2B2J9LqKdHICiKlj40dCDM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=QBshbknbzcIktKAxAVFn/jVr0/4OZFk1TOpga4CX3NkoDqPLy1pYvscfwR7OiznGrGlkISqifc1d+re6XQsJxdD3KcHON60Q59+OaWrKYwyiIRhp95yFgmYQ7kJTEECGpQvMJN5g5DsJyVy5SSlV6vxQuza8FIGSE3qylv0VIY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VsnXh0cI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 733B4C32782;
+	Tue, 30 Jul 2024 22:29:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722378597;
+	bh=iXwmhYCCcyRDw2DJIPfqL2B2J9LqKdHICiKlj40dCDM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=VsnXh0cIy6MwRgYVov2Hu44Q4Oy3vb1WSweVdDxDaI97QumUZaMY8yvnIJ4nu3tdK
+	 Qcah3xymNH1R6+gerYm9S2QtrUOH9w2EPp3hX0mLAcrTv5LEGF06PE/2BiHqakmqgR
+	 oFfBFMVKfzS3GviRUTLV1g7i4AMqQMSgAGsE0gCWdxZwVJT1BJQ4CU6OrJlLpKoTbZ
+	 YR95RfkHdzuAGmUh+mbn1vlQ5MkgdYiO0M0uz/m/fPVLkT/gzSGlgR5r/ymXcsHq3Y
+	 bQv0u7POqU54AT+PkRoxBl5UNZ55ocumaEAdfM1yzfaMR+zvEkGgVAgyBp/NOH3BAB
+	 vNr9zJ9isCXKg==
+Date: Tue, 30 Jul 2024 15:29:54 -0700 (PDT)
+From: Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
+To: Amneesh Singh <a-singh21@ti.com>, mst@redhat.com
+cc: sstabellini@kernel.org, boris.ostrovsky@oracle.com, hch@infradead.org, 
+    iommu@lists.linux-foundation.org, jasowang@redhat.com, jgross@suse.com, 
+    konrad.wilk@oracle.com, linux-arm-kernel@lists.infradead.org, 
+    linux-imx@nxp.com, linux-kernel@vger.kernel.org, peng.fan@nxp.com, 
+    virtualization@lists.linux-foundation.org, x86@kernel.org, 
+    xen-devel@lists.xenproject.org
+Subject: Re: [PATCH] xen: introduce xen_vring_use_dma
+In-Reply-To: <20240730105910.443753-1-a-singh21@ti.com>
+Message-ID: <alpine.DEB.2.22.394.2407301519330.4857@ubuntu-linux-20-04-desktop>
+References: <alpine.DEB.2.21.2007151001140.4124@sstabellini-ThinkPad-T480s> <20240730105910.443753-1-a-singh21@ti.com>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240713085916.3373085-1-xiujianfeng@huawei.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Sat, Jul 13, 2024 at 08:59:16AM +0000, Xiu Jianfeng wrote:
-> Since the SLAB implementation was removed in v6.8, so the
-> cpuset_slab_spread_rotor is no longer used and can be removed.
+On Tue, 30 Jul 2024, Amneesh Singh wrote:
+> Hi Stefano,
 > 
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+> First off, apologies for bumping this dead thread.
+> 
+> I came across this patch signed off by you recently
+> https://github.com/Xilinx/linux-xlnx/commit/72cb5514953be3aa2ac00c57c9eaa100ecc67176
+> 
+> and was wondering if a patch replacing xen_domain() with xen_pv_domain() in
+> vring_use_dma_api() can be sent upstream? If not, is there a reason why?
 
-Applied cgroup/for-6.12.
+Hi Amneesh,
 
-Thanks.
+Yes this patch is still required for Xen on ARM and it fixes a real bug.
+Unfortunately the upstreaming process stalled so we had to keep the fix
+in our Xilinx Linux branch. Here is the link to the start of this
+conversation and to the last message:
 
--- 
-tejun
+https://marc.info/?i=20200624091732.23944-1-peng.fan%40nxp.com
+https://marc.info/?i=alpine.DEB.2.21.2007151001140.4124%40sstabellini-ThinkPad-T480s
+
+
+Hi Michael, I see you are CCed to this email. Would you be open to
+acking this patch now that a 3rd independent engineer from a different
+company (NXP first, then AMD/Xilinx, now TI) has reported this as a bug
+fix?
+
+
 
