@@ -1,177 +1,107 @@
-Return-Path: <linux-kernel+bounces-267967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44AC2941EDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:34:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD533941DEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5BEF1F21AFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:34:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66B762898B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6878189B85;
-	Tue, 30 Jul 2024 17:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E3C1A76BE;
+	Tue, 30 Jul 2024 17:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="Zrin0xiK"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i7ZqNx4f"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB181A76C6
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835631A76AB
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722360876; cv=none; b=IdJBZtxQDUH9Q6f1P2f03mnv4ixRT1VjWuoEYOp5XVbGquXcq2rcH0dHD9khebgEftjo/56cdR2kjDX3OpkxHzrp8blT7vOu8SftC6iIj5mVuvXWDjyKgJqWrChFIBVrhLfr0CoQCqSq0dZgyKSzLaGvpicds7d0LEipMACP7gw=
+	t=1722360199; cv=none; b=K6TliTa/6LgzMzfhErG79qOzADcrS3ItDB5VkTIVlB/aQxMoHNcibuBzHasT6ASfTvdmmTOkb8+LlRGaaz3AQkEvUBKhcdKwEcDcD5W4yoKfx5xaOUApnHXoShHn7dw7J6aT+h0cUzsrubwyjEqt4mcTEYgf2wr3gi0xrIUFU/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722360876; c=relaxed/simple;
-	bh=p4cubfFpB4SwjUmGePnpy0zwIKgF0IzXbZRFMcEdeaU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bumUaIyO8NcV5YTXnQ04ExC7ye9xTD+yr5M2nApDaxKo5n3a/WgyHOoYYZOcJaf0Lq0gfm9Vrc79jrY8s11Vx8dkKWddvmvB/6RvnGCxsC7u0du8MqPmBR0gFkMjs0zcNK1QdQ/0pWJXmSJFwf3zTmNbgf8f5lbns5hiA2Z5H7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=Zrin0xiK; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5af6a1afa7bso4863965a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:34:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1722360873; x=1722965673; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oI4YVy1BXwYbNcruHIdCKsyVSQdrOcNz4/HMxfsnW/Q=;
-        b=Zrin0xiK9gSZCT2kuhoZ1VhIZwOoW/x1jUBLvhfHYYgcsQ/bFYRtn+vDBL+cP+ovAq
-         b6/kb/x0fa+JauIobVXN9FjJpiX66tUZq+Wl5gNn6QQzVmzQVBy1DafEf3u8qqi5FZzQ
-         j+qCu7TvcDdDq82q/Ug8mX+ZCmqM9uBBsQUTyxIk5rV0wBwPZ4+kGr9v4RNRaR3Kd8XF
-         qEfFk+/XrFeHyCHv7N3/ULu3H3oRWA8UQltptBRXdecWlyssH0tefof/+DIFf3Efe1AS
-         bdKZcJXNx6mBdEciIPyBQ2HOjSgZzNH5AT6naUaL02dn/EY6mV60x4sX3joktZH910kd
-         XEMg==
+	s=arc-20240116; t=1722360199; c=relaxed/simple;
+	bh=WSLbTFOqtwvBvuu2Pk3Vz3v059bdDQQYXqnULrM1dyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gvBjyrGWGGDmdySO4GzoyncbiLsxiVxEAgQ0CScnthQgedCJGrSAMdP3JJINvf3aXl3s9qGOfBs20pAsPdyPLXN/hPPoxSyePTJPH+Nl6gAxB1fGAal0N9uEUFubuItErxV0Lg/7895x8Fe82CSnFBiCAJnliRg278/nBIZgPK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i7ZqNx4f; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722360196;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IGuwjnT9GWQX6tSgZYcf238XJcRm98rHlMAflHHg3Kw=;
+	b=i7ZqNx4ftmSP7ownxAakaMXW3GwAuraCjBKrJGU9GDCzdQZjlGmkZhS+ZBCBLOZOv+8n38
+	4DOJ0Oj3LVbExurp6Jnbi0vCxoyvT+cX+4zH4ZVQIVVkTJDdSQmU1X9HjtUQdyOXVE+yEX
+	lB2eF2o0b1Nra6Vv4P1oUSS7E+Bo3z4=
+Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com
+ [209.85.221.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-101-ao0ThDHnMbK0ByVhzmuN_A-1; Tue, 30 Jul 2024 13:23:15 -0400
+X-MC-Unique: ao0ThDHnMbK0ByVhzmuN_A-1
+Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-4f52d5b872bso1326043e0c.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:23:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722360873; x=1722965673;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oI4YVy1BXwYbNcruHIdCKsyVSQdrOcNz4/HMxfsnW/Q=;
-        b=Krhnwie16GWTJnH2wuq08i6DBGug+p1bA9QVjBLRsggu+/iwGmRIgPUTIqiqQjdFmp
-         uIdB2aJ+WB2hhTNmOTEo4jh9apafAkpvBHlgb7zaWI69Szazr2gTCj7dfEmAzN3TjXot
-         cAcJTr92UhUW/fiYfaxdPiYJIdbOZiN6NlhH03GXJxx980pv8kZxRayrRQ6hrh4XZVyT
-         TXEe/Qp/SPqT5P/HhmFNTkDeJt3G0LWobECGlbwBL4/HMuR4UXjutKNS6ZGjs5EjCytx
-         dmzCrYztbtZkALhYXghCEPW424dlyeso0x83ghTi17G/6G4CggduFP0ehpNplyFUpXKm
-         lZwA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3owbRFrbUoZnIrz/olRdZ4VtyrZFsCJSyv6XhcxH1viWHIBeHCbAgmm/mPfIOt3nJVfdaIakWDqQUfhRuZbo3R8SGLde85Xzvx/cU
-X-Gm-Message-State: AOJu0YwN5jVzmggfB0uiZgUiuMlFasv1eVsstFhw0OFJP/QIiBX4oGRN
-	Fo4STF2nyBxzxT/DKm8m4jLotel/Oxmmgv63wrQjk8jVOitWfOK5NAHufwsmVnY=
-X-Google-Smtp-Source: AGHT+IHZR4OPtXkjQVGXyuC91BDI4+TPmGIfln1ZTQtGyV3RvpF1pKaboUyR1fA81F7p4NVEO9MKkw==
-X-Received: by 2002:a50:cdd0:0:b0:5aa:2a06:d325 with SMTP id 4fb4d7f45d1cf-5b02000c114mr7252627a12.7.1722360872841;
-        Tue, 30 Jul 2024 10:34:32 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-82-135-80-26.dynamic.mnet-online.de. [82.135.80.26])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac655996fasm7404532a12.84.2024.07.30.10.34.31
+        d=1e100.net; s=20230601; t=1722360194; x=1722964994;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IGuwjnT9GWQX6tSgZYcf238XJcRm98rHlMAflHHg3Kw=;
+        b=bYrSV8httIPNIP7Pve0LGx/2fiWJakfYirDadD3k3AbfWFUHbZiiVv+hj6ucBYhuK4
+         VeoQ02kE6nHGEr8UrADjUGWnYFiF0pF+4oErRwfd5Dd9E5cDromYBGiiBgtlMlIdLdoC
+         T7149LnIUFCcyME1l9U56XHDVqFBM2ako1hItWIl5iD74fyU41cCKmwhuIvcGvuXLOzp
+         RfoxWsEGbbTWbQ9xyV9opbrDRRtUdGDknOlTwja3RdfT6QtXdZqy70MC1NJ03hAWnepO
+         agaGM4SC/raVRFqlU26U5BEyBf1ZjNptfIZnXaFTPEhf4W7jHMALfjcWITMeKtT2pG+u
+         7Kmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxjodWmlo7Lyjlg5mthx+73UtbyUxvHQ+4a5xafs1Gk2Z8yv5UwtK6SYMAWpRMXQTVi9fxQt7Ky/I3tLFiwBARV5+dOawuGTjK+/Wi
+X-Gm-Message-State: AOJu0YwYceH1+iQid5Wpn5PFGq6v2qRjsrdk/qjhDsLUXLH4q3i7q8VO
+	D3TT/yDXwjlU1ztdCff5LNyPuSc8xFv85UXLKjgcHcfpX91GDXWe9MgBV4G0E450wBzmqStlCta
+	3Dz0LL0m+fz9yyghVj2cSJrX/ufNnAupCty1a94+dUyzXgq2azevhR0xti2Y3Ng==
+X-Received: by 2002:a05:6122:411f:b0:4eb:5cb9:f219 with SMTP id 71dfb90a1353d-4f6e66da493mr13681485e0c.0.1722360194383;
+        Tue, 30 Jul 2024 10:23:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHWbirP7h94q0zBxDXPvLWzG9yiO2xstVTbnFEvAf7XvK6WAL4K2A8c3RqeBtWZrGGc6bL7ow==
+X-Received: by 2002:a05:6122:411f:b0:4eb:5cb9:f219 with SMTP id 71dfb90a1353d-4f6e66da493mr13681461e0c.0.1722360194024;
+        Tue, 30 Jul 2024 10:23:14 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::33])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44fe8201583sm51136421cf.69.2024.07.30.10.23.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 10:34:32 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	kees@kernel.org,
-	gustavoars@kernel.org
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH v2] ext4: Annotate struct ext4_xattr_inode_array with __counted_by()
-Date: Tue, 30 Jul 2024 19:23:04 +0200
-Message-ID: <20240730172301.231867-4-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.2
+        Tue, 30 Jul 2024 10:23:13 -0700 (PDT)
+Date: Tue, 30 Jul 2024 12:23:11 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Elliot Berman <quic_eberman@quicinc.com>, 
+	Amirreza Zarrabi <quic_azarrabi@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Johan Hovold <johan+linaro@kernel.org>, 
+	Maximilian Luz <luzmaximilian@gmail.com>
+Subject: Re: [PATCH 2/2] firmware: qcom: qseecom: remove unused functions
+Message-ID: <ftbxl4e3fwsylm2nsewcklnmnknqfkaircphlq5ypziovweekt@ucyhurn6ps47>
+References: <20240730-tzmem-efivars-fix-v1-0-bb78884810b5@linaro.org>
+ <20240730-tzmem-efivars-fix-v1-2-bb78884810b5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730-tzmem-efivars-fix-v1-2-bb78884810b5@linaro.org>
 
-Add the __counted_by compiler attribute to the flexible array member
-inodes to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
+On Tue, Jul 30, 2024 at 05:38:49PM GMT, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> qseecom_scm_dev(), qseecom_dma_alloc() and qseecom_dma_free() are no
+> longer used following the conversion to using tzmem. Remove them.
+> 
+> Fixes: 6612103ec35a ("firmware: qcom: qseecom: convert to using the TZ allocator")
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Remove the now obsolete comment on the count field.
-
-Refactor ext4_expand_inode_array() by assigning count before copying any
-data using memcpy(). Copy only the inodes array instead of the whole
-struct because count has been set explicitly.
-
-Use struct_size() and struct_size_t() instead of offsetof().
-
-Change the data type of the local variable count to unsigned int to
-match the struct's count data type.
-
-Compile-tested only.
-
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
-Changes in v2:
-- Adjust ext4_expand_inode_array() as suggested by Gustavo A. R. Silva
-- Use struct_size() and struct_size_t() instead of offsetof()
-- Link to v1: https://lore.kernel.org/linux-kernel/20240729110454.346918-3-thorsten.blum@toblux.com/
----
- fs/ext4/xattr.c | 20 +++++++++-----------
- fs/ext4/xattr.h |  4 ++--
- 2 files changed, 11 insertions(+), 13 deletions(-)
-
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 46ce2f21fef9..b27543587103 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -2879,11 +2879,10 @@ ext4_expand_inode_array(struct ext4_xattr_inode_array **ea_inode_array,
- 	if (*ea_inode_array == NULL) {
- 		/*
- 		 * Start with 15 inodes, so it fits into a power-of-two size.
--		 * If *ea_inode_array is NULL, this is essentially offsetof()
- 		 */
- 		(*ea_inode_array) =
--			kmalloc(offsetof(struct ext4_xattr_inode_array,
--					 inodes[EIA_MASK]),
-+			kmalloc(struct_size_t(struct ext4_xattr_inode_array,
-+					      inodes, EIA_MASK),
- 				GFP_NOFS);
- 		if (*ea_inode_array == NULL)
- 			return -ENOMEM;
-@@ -2891,17 +2890,16 @@ ext4_expand_inode_array(struct ext4_xattr_inode_array **ea_inode_array,
- 	} else if (((*ea_inode_array)->count & EIA_MASK) == EIA_MASK) {
- 		/* expand the array once all 15 + n * 16 slots are full */
- 		struct ext4_xattr_inode_array *new_array = NULL;
--		int count = (*ea_inode_array)->count;
-+		unsigned int count = (*ea_inode_array)->count;
- 
--		/* if new_array is NULL, this is essentially offsetof() */
--		new_array = kmalloc(
--				offsetof(struct ext4_xattr_inode_array,
--					 inodes[count + EIA_INCR]),
--				GFP_NOFS);
-+		new_array = kmalloc(struct_size(*ea_inode_array, inodes,
-+						count + EIA_INCR),
-+				    GFP_NOFS);
- 		if (new_array == NULL)
- 			return -ENOMEM;
--		memcpy(new_array, *ea_inode_array,
--		       offsetof(struct ext4_xattr_inode_array, inodes[count]));
-+		new_array->count = count;
-+		memcpy(new_array->inodes, (*ea_inode_array)->inodes,
-+		       count * sizeof(struct inode *));
- 		kfree(*ea_inode_array);
- 		*ea_inode_array = new_array;
- 	}
-diff --git a/fs/ext4/xattr.h b/fs/ext4/xattr.h
-index bd97c4aa8177..e14fb19dc912 100644
---- a/fs/ext4/xattr.h
-+++ b/fs/ext4/xattr.h
-@@ -130,8 +130,8 @@ struct ext4_xattr_ibody_find {
- };
- 
- struct ext4_xattr_inode_array {
--	unsigned int count;		/* # of used items in the array */
--	struct inode *inodes[];
-+	unsigned int count;
-+	struct inode *inodes[] __counted_by(count);
- };
- 
- extern const struct xattr_handler ext4_xattr_user_handler;
--- 
-2.45.2
+Reviewed-by: Andrew Halaney <ahalaney@redhat.com>
 
 
