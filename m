@@ -1,308 +1,208 @@
-Return-Path: <linux-kernel+bounces-267151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B332F940D9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:30:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A78C940D99
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68576285F9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:30:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 257DC1F2475E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0ED7195FE6;
-	Tue, 30 Jul 2024 09:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4657A19580A;
+	Tue, 30 Jul 2024 09:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JrgIGN0L"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q962MRQN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09409195997;
-	Tue, 30 Jul 2024 09:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722331729; cv=fail; b=HjYZdvWPLcbbGjUDEO05BAw3ILKzBDX3D0ScJKFFTK3Q1hiOO++Q0VlDECbVJBQYCws1QiEA890Ie7U69JXxW56f4UzCPgBdmgeR9LnsOeizpaRKzliuzAoiTrCuhCGb3cKvbffPY0trNctnflicCERjn/kT5AfEiA33uv854S8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722331729; c=relaxed/simple;
-	bh=dzrjbZ0G46sPV7Io4/UaOGZpRueCgc5jJwljO/Fw/Zo=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=YJ1Uj2z5yB2B5hia7P2UhTMo3r/79MtZdpie+LqKmXmyLjEDqoOPlDoP9c00QrH0KSG21hk8VbmvAABQXFm+6kBsuxfUQq3FNBviujGy6vlUkpPmA/z9e5Lbe8LDJHkjA1Iuncjk89bvbAK8qTsBwT0i1u5K9dwdeNtN07l0R5s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JrgIGN0L; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A6E194C74;
+	Tue, 30 Jul 2024 09:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722331726; cv=none; b=VpJo6OO1oramnvDa9z3Abl0Ft9jQN12b+GFGMR3WrDXOCmk+e4grMkTQjR0a4qhsui1NftQHrNi1hKb8uFNFYHpgU72mbC79gGxebf4Px8Ab3yprxaTJBcIpFCPggXRlwdAQEOLEYkyKA7iiRT3HfjifwcEzMTtjIXOSzJuD2Zc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722331726; c=relaxed/simple;
+	bh=FTZPCGs19HrWuOXGCtCh9HJCvH3o9m5VKj2oA581aUI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gscif4T/c9waJDTWbbG1GKpfsc0zs0vCFEDaecP+trqNk8XQDIFP/lIENnZl6BBPs7tM4gBLZJCQFP8LuxlGhoo9FArRj3Gr0zWaopdSABQXugKLjdNMI1G+Y19v96mQQyFeyIURpIUL+Rh0d9qgMDX9ofMLmQK2Fb8FY/W2o/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q962MRQN; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722331728; x=1753867728;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=dzrjbZ0G46sPV7Io4/UaOGZpRueCgc5jJwljO/Fw/Zo=;
-  b=JrgIGN0LmI0LWfdx+7qvKjlTioq4+TK9fpWRLFWkEeOiTd2d9Y7yKakz
-   epk1GAUttMOU7dpq1b6/OyOO+Z6pRpSXk8HHhv4o3DZ1t3ipisH4WbC+s
-   db2yg742oGj+tIY8gMV4W1EZ0J/dym10kKES72ohc+LJMWQ8ZB/syjmHb
-   3dwZ9P3ouF4AEjTYVzaNSUU0BBFFlo8tidAM2J2wGO9WMFstyAWdoUezi
-   xccElDDeXUifU7boVoFzQiFTQaiWA81qnrOwY+Wv26FURE5c1QZExH6Vx
-   Rf0tZC99B1umOzdSbajYeTX3A1Pw9FVfoBacWhn9J8d/9WcVflXpOPauY
-   Q==;
-X-CSE-ConnectionGUID: QjHs1YTSSqWN11/DwAxXtg==
-X-CSE-MsgGUID: TE9duwZQSXerzKVgix73ag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="24000025"
+  t=1722331725; x=1753867725;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=FTZPCGs19HrWuOXGCtCh9HJCvH3o9m5VKj2oA581aUI=;
+  b=Q962MRQNPqVPSJjtywgjN2pMqB1s6rviOZfLEgIYHd6jQ8F1eEMXvriK
+   M5i7+QIg+EGqnpJhYNkOGkX+qUyTtnvFHAUhsTkyprwLfwK1lLdUI+acN
+   Uzz+k47olkDdV48yhK3F4OXux+UffhfkBCOQpGmLDHiHyNF/S9PCFSffJ
+   cLllYmTZDoIkbqiCe8zvQ1TrkWhy0N84WRtbUr0+o3EEJRslZqiT/lQCz
+   RjMQK34jJ1n99jgOhX5Hb7GZ3uMBFkYdw0PVoQVJwPw60VXyXlO4igNqk
+   7e41XFkRaa5NGBeuFhbnXDehRMlOYsD7sOOBZpqtRgRV6FpVW488aitMg
+   w==;
+X-CSE-ConnectionGUID: 4LlLnd/ITcCkh/MwArtdEg==
+X-CSE-MsgGUID: z0TTpMd/TeiSFiOTcocWzA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="30798418"
 X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
-   d="scan'208";a="24000025"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 02:28:47 -0700
-X-CSE-ConnectionGUID: Tk2fp56vQ8CsItEZGlI/8A==
-X-CSE-MsgGUID: FHdCZ+5KTi60oY1JzMvKhg==
+   d="scan'208";a="30798418"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 02:28:44 -0700
+X-CSE-ConnectionGUID: 0UWqluEYSc6AIJUsE5rrmg==
+X-CSE-MsgGUID: 4q8DWr3YR9u5Cc6l/nkC3Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
-   d="scan'208";a="85228027"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Jul 2024 02:28:47 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 30 Jul 2024 02:28:46 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 30 Jul 2024 02:28:46 -0700
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.41) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 30 Jul 2024 02:28:46 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ekPqDaPE+flhE5AzjU/sp975fYAidmP8PU4Snlq1awhE+JrVYYLtZxTmzSIZgOk9/tUWkg4z7wXMX+eJ/7AIqOpmlbySLAc1K32g9vL/J4U9Vs1plZNtlrd1YH2YEGZpcvhSX96qizUixDRzzktWzUKCbGg47r5jfEA/jpB+hM7wXlzSShXqKvdnY7pmyPpwNQICT6zPuUC2SWqwWAfDh6Mxexu7Qlb4fNC6uOb0IDAm5BD/Ay6FwsqA9elyRZdGNUsQ41wtJQyB7Vefxquc/085Dyhop/akJwQVU/MLv7Df16mYmgY+e3GbMT3UlZPxR1xl+gHvlnWl2Vt4/ftpCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0QoBvI0n5AwtDiv1H1ML6HLrAoAZgFNrQBII5WqIv84=;
- b=cPmxwjBBogepFJ36RNmCP3qDUbAAKRseiNfqI7aUKUhMwTqQSjekUeh+Rdxmpz45NeTEh/ih/JGS0WD+4UHHmxbY1UIvqPKS8jqZaNHBhlP8wcPJrJNaanvZ2yicVz1qYIm/Ia16jVzAs+yroGMvzQM/yJj4LrN5devjvhTyRsDA6sCMgW4DEbKju/scdazOGrBdhbrZgsozpm5Fg8QPaDCY9S7pTKs4RJOqmtgqmU0S8r5ZRChFYTx1QlZ27fz3haEFsHpX/vkuVDftvzVrQEVTOO0J82UpTgnXwHX5VfI/HRiiEpDlEJAYFlJdGhWRS1EFRdrgPTueRlBqIfIb+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MW4PR11MB5776.namprd11.prod.outlook.com (2603:10b6:303:183::9)
- by SA1PR11MB6870.namprd11.prod.outlook.com (2603:10b6:806:2b4::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14; Tue, 30 Jul
- 2024 09:28:39 +0000
-Received: from MW4PR11MB5776.namprd11.prod.outlook.com
- ([fe80::4bea:b8f6:b86f:6942]) by MW4PR11MB5776.namprd11.prod.outlook.com
- ([fe80::4bea:b8f6:b86f:6942%6]) with mapi id 15.20.7807.026; Tue, 30 Jul 2024
- 09:28:39 +0000
-Message-ID: <46b36141-aae0-468f-be27-cc64b00050d0@intel.com>
-Date: Tue, 30 Jul 2024 11:28:32 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next,v3] net: phy: phy_device: fix PHY WOL enabled, PM
- failed to suspend
-To: Youwan Wang <youwan@nfschina.com>, <linux@armlinux.org.uk>
-CC: <andrew@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<hkallweit1@gmail.com>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>, Russell King
-	<rmk+kernel@armlinux.org.uk>
-References: <20240730081516.698738-1-youwan@nfschina.com>
-Content-Language: en-US
-From: Wojciech Drewek <wojciech.drewek@intel.com>
-In-Reply-To: <20240730081516.698738-1-youwan@nfschina.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZR2P278CA0020.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:46::6) To MW4PR11MB5776.namprd11.prod.outlook.com
- (2603:10b6:303:183::9)
+   d="scan'208";a="58603633"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO [10.245.246.40]) ([10.245.246.40])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 02:28:41 -0700
+Message-ID: <048122b2-f4cc-4cfa-a766-6fcfb05f840a@linux.intel.com>
+Date: Tue, 30 Jul 2024 11:28:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR11MB5776:EE_|SA1PR11MB6870:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3f5ec195-bc5c-4782-6c04-08dcb079feca
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZUJUSTB6QzBpa3MvODk2Mk5jR1lLcEI3Q0NmcGY4cDYyNnBSaW9mbkdMSHN5?=
- =?utf-8?B?SDFVY2pZSEtnM1g0VXgxdHpWTEt0RitmbzJPL0svV2hHeE1NVXF1YVB1azUr?=
- =?utf-8?B?dlBYUXFNRCtFMVFtcnF2ZnE5a004VWZKWCtRbzBySmlzZURVVG4ya0dyM0lr?=
- =?utf-8?B?UXdkTk9teFU5QXNNVEFJWjBFMzlTSHl1QUo1YXRjTlV1aGxLc2V1YUR2YTV2?=
- =?utf-8?B?R2V3TGNJWHY5cHQyMVQwZWM4WnZQTG1MZW1GcU5aRHlsdlNRMVEzWXVqUDVI?=
- =?utf-8?B?b29OSHplZlVMbDFSdWZRek9ybHhDQUNnZHN5N2trSmRmRnNyVXMvNG5Ub2g0?=
- =?utf-8?B?SnFvOWFDWHo5NHpjUXZTWmsxMFNyZWl5WHNEN1AyVzRSS21tSXJCMlNZRDZt?=
- =?utf-8?B?Z2FaU0pmSFRoSW8yU2ZiSWwydXdFUXJpMUs5TEVCMExUZUwrV0ZVT0pGSCs4?=
- =?utf-8?B?dVRabytJVE9vNFhSaWl1Yi9peTZWM3llL3diZnc3Y0owUXpZZy96NWVCUCtT?=
- =?utf-8?B?VnYzQnBKaU5CVnB4L1ZEbW9UK24yaS80MjB4bWRQQ3lQSWZibktTbnRGRDFs?=
- =?utf-8?B?MVpEaGMrbk41NElUTHY4N3lqQnpYdFhoRzEwMGxkWis0WmJJU0FINGpNOTFx?=
- =?utf-8?B?VGMxWkV1QjZrRFJZbEFuWXZybUNHdzc4dVJYZENpemprMC9ONnR0c1pPbmhp?=
- =?utf-8?B?MUhjVHZucEdNRVdTM2Z1Q3JybU1QVTYrcXFVWlNvTGRxeWpqVSs4ckI1dm4v?=
- =?utf-8?B?YzYrbk1jcmNabVlkeDd3SHdPZDg1SVd6MmQ1YWVab1NaQlZ0NnR0RlR6Vjk2?=
- =?utf-8?B?bCtVUnZwa1hHTTl5THNMTHRIeHNYWTRsQmd6VHpITENaaWJGZlRyVVFGaGox?=
- =?utf-8?B?a1NtamNUdmtxc3I2MUpkaXBZSHVzUmtHZC85MHhrQ2dkVklCNVpwWTg3UXdT?=
- =?utf-8?B?WVBtUmNudmgzZy9vM1UweDlVL1FuTTlwOExyQkE1THNscTJZdFdiZ0U1bTM0?=
- =?utf-8?B?RGEyL0E3VzRtd0tiS29iYWF6TGJUbzJGZ3ByRzhVak5ZaVZJTmNWSVk2RkZz?=
- =?utf-8?B?d3hBN2N2a25ES2hQOWU4SkZ5T3NWbEJrZk9FTVNpQlNrSTBrSEhJUHBmelpt?=
- =?utf-8?B?QjlBK2pydUxFaTNETElkdTM5YzRZNDlERXFWRDV5bXh6dG83b09NelVzdWZ5?=
- =?utf-8?B?SXd1a3lxUnJUaUgrenYvT25NK1V5V1RvdnRSVFVxTlFFekJXclJQUzViMlc5?=
- =?utf-8?B?eVhhVGZmY2Roa2xLUnRUS1pQZjE1R1c3cHFnUHdxMitzQXE0OHpSMGtTZ25k?=
- =?utf-8?B?WUZhaUxheFpIYndRMjNxUWZkcjhKODVjdlYxVExQd1ZEQUhCR0xIbTdSdWxT?=
- =?utf-8?B?NXFrZXZlMnFVci95czJ0U29FdGdGcFpwNUEwdXAxQzFTUnUxOEFWcE9FUUFY?=
- =?utf-8?B?dXhpQUQxL1V2aWttSmZ4Uk52c3JYazJSN09NUVVKb2pzVTZEcmFtbjU4T012?=
- =?utf-8?B?T242anFQWjVOY3MyWTBRbnVCUGh3L3YrMkhVMm9hSWQySWphbHZsZ2hsYWI2?=
- =?utf-8?B?TUltZThzTGNmc1NoNUlhTWJDUythZmpFUzVUdWgvcnp4S2xFRlBhSGNiNEo4?=
- =?utf-8?B?bzNUbHZCVWZVcDdCd0hTanRzYjViVGE5WDYrQzRFcWhiemF4NnFSU3NDMS9E?=
- =?utf-8?B?M0FqV05obXZtODFkZ21mOXR4ZHM4aVh2MEJYQ3JLWDZlTGNWcFBXS25xQktm?=
- =?utf-8?B?TGRWelJqNXdyYjZrdWpMelpzYVlYSHM3V1d6RU92UlNJOU1VYy9CbWh3eDF1?=
- =?utf-8?B?YTV1NnBPa3loZzBBNDhndz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR11MB5776.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MkZBRnZOd3dEVkYreUhZcHNBckJZb3I1ZGIzS2FENGxpWXFTZ3NsaHdYRzAx?=
- =?utf-8?B?OTAvTDVoTm5abDlmMVljOGdnbSt0d0lYbWpwdVhEVG5sQkczUUhtODVyZCtz?=
- =?utf-8?B?ZmdKNXJHaWRMVVRVeUhLNE8wc0V1TTVLUElIMGU0S3lCN3RVa0xrbXh0bkFB?=
- =?utf-8?B?TXhXc3Ruajljak0vTUIxQklHeU9rWXhLSFFua3JJZk5RckxJdGhFQkNQRmRp?=
- =?utf-8?B?N2p3Rmc0ZGZBVEoyTWFhUkU2YWZiU2ZXMXo2aFg5dExlVW15c0llS1lReXZq?=
- =?utf-8?B?eEJZSlNjWHZENnhvMkd1V01zMTU0aDdNSlRqMU1ZODVwM0cyRWFGWXdzRVRv?=
- =?utf-8?B?Q2hXTWNGVVdITWgzdnFjVG5pdlp4VTJlRUU2NGpCM21FRmEvQ3dFMGN6dFY2?=
- =?utf-8?B?NmpEeW04TS80VHRCVnVSODZCMFY1aFNDQnV5QmV4WGttaFJ5WWZBMjJzRktP?=
- =?utf-8?B?Z1hHd0lPaS84U1U0WmpQM3Q3aHNNR1FEUUNNS3hOM3pzRUREcUtIU2VBZzNK?=
- =?utf-8?B?MlBzbzlNYVV0SSsxNXNpNXh3R3d1YzFZMC9Tc0NobGxVWWIzWHF2TjBnRTFy?=
- =?utf-8?B?bFBoRXNlQ1ZkQ1dWaFh5Z2hyd2R4aXluM1V1QVZMWEovakhlNFFhODF3WTVX?=
- =?utf-8?B?UTAzZDQrVTFxbVMrUHVPTWZONkZsSHdFT1grWWtscHhMOUdicVFGTU80OTNC?=
- =?utf-8?B?ZjlYMlVJSExEM2YyaTNLa3RIbG9USUFCejFRSVNnMGU0OGY3TTQ3cTQwa3Ro?=
- =?utf-8?B?Y3N3K2gwNjl2RUU5bExwUjZSbzV5eDZVZEtYc0hScW0xVFRCZUY4QTJsTDRZ?=
- =?utf-8?B?UHZ3djNhYjlqbXhML1haUURLVWpGWVpzUnhsajRVd0tjQ1BXd3kzLzVCWjFj?=
- =?utf-8?B?c1lOQkZQN2wvM0Z0R3hiUHR4MlplN3RXR2tMcVNHOVpwQ2FueG5sNGlieHl4?=
- =?utf-8?B?ZjBDWjhVZjQ2MU9QcnhwM20vTGtuUmJqa1dtMkZlTFFuamc4djBHMEg2K1pN?=
- =?utf-8?B?MWdlajdGYWhUMDRaQkw1bUcxV1NDK1RJWU1BbTNQM1pTL2Iwdm8wbzlOd2t3?=
- =?utf-8?B?NmpPREM4OG0ybnVoTDVGZXB4ak40NUdhbGJWWW0ydWRPWFRaSTRmeEZ4cCto?=
- =?utf-8?B?VTBpc283ODdrSXF0bGEweUIyRWZhZUJDYkVvQjdPVGMvaEk0M3grRUI1RnVY?=
- =?utf-8?B?NWNVbHFPZEJuRGVrS2hVV3F0cDJHTGE1ajUvM0ExSUdoODJiaFpUYng1d1NF?=
- =?utf-8?B?TFF1NkFRaTBiRHliM1NXQ3ZDRlRFQjhHZU8ycklFOFFwTm9ZUTBreXAwVGM3?=
- =?utf-8?B?bmZuTjFjdTJWMXM5K1pnNUJ3M2tOUEd4cHZCbytaSnpVVGFXOHV2TnVLbnRX?=
- =?utf-8?B?NXlHUC9id1pmaVYxbXZRMVl0MEtTb253UktTK1luSEx2MFBVcGNNNlBzWlZo?=
- =?utf-8?B?a1l5ekRlZUVPVGFod05KSGdWNUdhajhPa3BkQ3hxS0FDR0dwRWx3blZZVWNP?=
- =?utf-8?B?djZVa2hrSVYwMmYvZHZlYi9oM0tia3dFR2svRjROclBIYTB0QUR4azY5UUlB?=
- =?utf-8?B?RjhpZStyd1BQQnFsSjJDdEVqM3V0bjk3bFJsam5lck5FSklseDRUdUJWK0R3?=
- =?utf-8?B?VlFwOENGeXE3VGRlYitwUGpIN0NNN0RWRUdwanJUdFNXTTdJbWZaV1h1b3F1?=
- =?utf-8?B?ZHR5OE5XSnRqVkFIR0Znc2cyZEZLd1ArcHBKRGJWcWQxeDNuekJ4RjdnZjlY?=
- =?utf-8?B?RjM2WjUyODdFZ1g2RDF3VUpGcVczekZ2azlzVmd4enAzUmpqNHlSVHlFek1n?=
- =?utf-8?B?U1dEZktpZ1R1UDJoUk1FTnZIN1Jvb3lVMVBna3VRaXRZbExCYlhxdHRYaEwv?=
- =?utf-8?B?ckkrbEZmWjNsTjVjRUkxZjFVdEhjaVdoTEs4ZjJ3SkF2aE1ObDlONUQybS9o?=
- =?utf-8?B?djRZUnNvd3U1a3psQVhKNHRFN2RHSllONnNrbm52RE5RZGxlY0hVNXJXcVZL?=
- =?utf-8?B?UUxtOVAxU1ltc2pyNDg2eVJKNXF4TFkra2lyNm1WaGxJYk5BVHRwWWc1bDlC?=
- =?utf-8?B?Mkh0OGtDUmNOZjhlQlYyUTFXcWNCSW92dTNDdkx2a1prSDB3d3NoVVhKWEd0?=
- =?utf-8?Q?bCgpnQpfRVREk7l88Grv7m3Fm?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f5ec195-bc5c-4782-6c04-08dcb079feca
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB5776.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 09:28:39.4313
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uhCvyrR1tYkeO8g95p/vsgj8v1CaspTA7c5NxXWRbYUjEMbnPrZVWA/2pr/Z6w60tgofGUAg87QXqycqiVVBzE+OqdvwqYbObOsZMT0xFeg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6870
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soundwire: stream: fix programming slave ports for
+ non-continous port maps
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Vinod Koul <vkoul@kernel.org>, Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Sanyog Kale <sanyog.r.kale@intel.com>, Shreyas NC <shreyas.nc@intel.com>,
+ alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20240729140157.326450-1-krzysztof.kozlowski@linaro.org>
+ <095d7119-8221-450a-9616-2df6a0df4c77@linux.intel.com>
+ <22b20ad7-8a25-4cb2-a24e-d6841b219977@linaro.org>
+ <dc66cd0d-6807-4613-89a8-296ce5dd2daf@linaro.org>
+ <62280458-3e74-43b0-b9a1-84df09abd30e@linux.intel.com>
+ <7171817f-e8c6-4828-8423-0929644ff2df@linaro.org>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <7171817f-e8c6-4828-8423-0929644ff2df@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
-On 30.07.2024 10:15, Youwan Wang wrote:
-> If the PHY of the mido bus is enabled with Wake-on-LAN (WOL),
-> we cannot suspend the PHY. Although the WOL status has been
-> checked in phy_suspend(), returning -EBUSY(-16) would cause
-> the Power Management (PM) to fail to suspend. Since
-> phy_suspend() is an exported symbol (EXPORT_SYMBOL),
-> timely error reporting is needed. Therefore, an additional
-> check is performed here. If the PHY of the mido bus is enabled
-> with WOL, we skip calling phy_suspend() to avoid PM failure.
+On 7/30/24 11:19, Krzysztof Kozlowski wrote:
+> On 30/07/2024 10:59, Pierre-Louis Bossart wrote:
+>>>>>
+>>>>> 	/* Read dpn properties for source port(s) */
+>>>>> 	sdw_slave_read_dpn(slave, prop->src_dpn_prop, nval,
+>>>>> 			   prop->source_ports, "source");
+>>>>>
+>>>>> IOW, this is a valid change, but it's an optimization, not a fix in the
+>>>>> usual sense of 'kernel oops otherwise'.
+>>>>>
+>>>>> Am I missing something?
+>>>>>
+>>>>> BTW, the notion of DPn is that n > 0. DP0 is a special case with
+>>>>> different properties, BIT(0) cannot be set for either of the sink/source
+>>>>> port bitmask.
+>>>>
+>>>> I think we speak about two different things. port num > 1, that's
+>>>> correct. But index for src_dpn_prop array is something different. Look
+>>>> at mipi-disco sdw_slave_read_dpn():
+>>>>
+>>>> 173         u32 bit, i = 0;
+>>>> ...
+>>>> 178         addr = ports;
+>>>> 179         /* valid ports are 1 to 14 so apply mask */
+>>>> 180         addr &= GENMASK(14, 1);
+>>>> 181
+>>>> 182         for_each_set_bit(bit, &addr, 32) {
+>>>> ...
+>>>> 186                 dpn[i].num = bit;
+>>>>
+>>>>
+>>>> so dpn[0..i] = 1..n
+>>>> where i is also the bit in the mask.
+>>
+>> yes, agreed on the indexing.
+>>
+>> But are we in agreement that the case of non-contiguous ports would not
+>> create any issues? the existing code is not efficient but it wouldn't
+>> crash, would it?
+>>
+>> There are multiple cases of non-contiguous ports, I am not aware of any
+>> issues...
+>>
+>> rt700-sdw.c:    prop->source_ports = 0x14; /* BITMAP: 00010100 */
+>> rt711-sdca-sdw.c:       prop->source_ports = 0x14; /* BITMAP: 00010100
+>> rt712-sdca-sdw.c:       prop->source_ports = BIT(8) | BIT(4);
+>> rt715-sdca-sdw.c:       prop->source_ports = 0x50;/* BITMAP: 01010000 */
+>> rt722-sdca-sdw.c:       prop->source_ports = BIT(6) | BIT(2); /* BITMAP:
+>> 01000100 */
+>>
+>> same for sinks:
+>>
+>> rt712-sdca-sdw.c:       prop->sink_ports = BIT(3) | BIT(1); /* BITMAP:
+>> 00001010 */
+>> rt722-sdca-sdw.c:       prop->sink_ports = BIT(3) | BIT(1); /* BITMAP:
+>> 00001010 */
 > 
-> From the following logs, it has been observed that the phydev->attached_dev
-> is NULL, phydev is "stmmac-0:01", it not attached, but it will affect suspend
-> and resume.The actually attached "stmmac-0:00" will not dpm_run_callback():
-> mdio_bus_phy_suspend().
+> All these work because they have separate source and sink dpn_prop
+> arrays. Separate arrays, separate number of ports, separate masks - all
+> this is good. Now going to my code...
 > 
-> init log:
-> [    5.932502] YT8521 Gigabit Ethernet stmmac-0:00: attached PHY driver
-> (mii_bus:phy_addr=stmmac-0:00, irq=POLL)
-> [    5.932512] YT8521 Gigabit Ethernet stmmac-0:01: attached PHY driver
-> (mii_bus:phy_addr=stmmac-0:01, irq=POLL)
-> [   24.566289] YT8521 Gigabit Ethernet stmmac-0:00: yt8521_read_status,
-> link down, media: UTP
+>>
+>>>> Similar implementation was done in Qualcomm wsa and wcd codecs like:
+>>>> array indexed from 0:
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/sound/soc/codecs/wcd938x-sdw.c?h=v6.11-rc1#n51
+>>>>
+>>>> genmask from 0, with a mistake:
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/sound/soc/codecs/wcd938x-sdw.c?h=v6.11-rc1#n1255
+>>>>
+>>>> The mistake I corrected here:
+>>>> https://lore.kernel.org/all/20240726-asoc-wcd-wsa-swr-ports-genmask-v1-0-d4d7a8b56f05@linaro.org/
+>>>>
+>>>> To summarize, the mask does not denote port numbers (1...14) but indices
+>>>> of the dpn array which are from 0..whatever (usually -1 from port number).
+>>>>
+>>>
+>>> Let me also complete this with a real life example of my work in
+>>> progress. I want to use same dpn_prop array for sink and source ports
+>>> and use different masks. The code in progress is:
+>>>
+>>> https://git.codelinaro.org/krzysztof.kozlowski/linux/-/commit/ef709a0e8ab2498751305367e945df18d7a05c78#6f965d7b74e712a5cfcbc1cca407b85443a66bac_2147_2157
+>>>
+>>> Without this patch, I get -EINVAL from sdw_get_slave_dpn_prop():
+>>>   soundwire sdw-master-1-0: Program transport params failed: -2
+>>
+>> Not following, sorry. The sink and source masks are separate on purpose,
+>> to allow for bi-directional ports. The SoundWire spec allows a port to
+>> be configured at run-time either as source or sink. In practice I've
+>> never seen this happen, all existing hardware relies on ports where the
+>> direction is hard-coded/fixed, but still we want to follow the spec.
 > 
-> suspend log:
-> [  322.631362] OOM killer disabled.
-> [  322.631364] Freezing remaining freezable tasks
-> [  322.632536] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
-> [  322.632540] printk: Suspending console(s) (use no_console_suspend to debug)
-> [  322.633052] YT8521 Gigabit Ethernet stmmac-0:01:
-> PM: dpm_run_callback(): mdio_bus_phy_suspend+0x0/0x110 [libphy] returns -16
-> [  322.633071] YT8521 Gigabit Ethernet stmmac-0:01:
-> PM: failed to suspend: error -16
-> [  322.669699] PM: Some devices failed to suspend, or early wake event detected
-> [  322.669949] OOM killer enabled.
-> [  322.669951] Restarting tasks ... done.
-> [  322.671008] random: crng reseeded on system resumption
-> [  322.671014] PM: suspend exit
+> The ports are indeed hard-coded/fixed.
 > 
-> Add a function that phylib can inquire of the driver whether WoL
-> has been enabled at the PHY.
+>>
+>> So if ports can be either source or sink, I am not sure how the
+>> properties could be shared with a single array?
 > 
-> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> Signed-off-by: Youwan Wang <youwan@nfschina.com>
-> ---
+> Because I could, just easier to code. :) Are you saying the code is not
+> correct? If I understand the concept of source/sink dpn port mask, it
+> should be correct. I have some array with source and sink ports. I pass
+> it to Soundwire with a mask saying which ports are source and which are
+> sink.
+> 
+>>
+>> Those two lines aren't clear to me at all:
+>>
+>> 	pdev->prop.sink_dpn_prop = wsa884x_sink_dpn_prop;
+>> 	pdev->prop.src_dpn_prop = wsa884x_sink_dpn_prop;
+> 
+> I could do: s/wsa884x_sink_dpn_prop/wsa884x_dpn_prop/ and expect the
+> code to be correct.
 
-Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
+Ah I think I see what you are trying to do, you have a single dpn_prop
+array but each entry is valid for either sink or source depending on the
+sink / source_mask which don't overlap.
 
->  drivers/net/phy/phy_device.c | 19 ++++++++++++++++---
->  1 file changed, 16 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-> index 7752e9386b40..04a9987ac092 100644
-> --- a/drivers/net/phy/phy_device.c
-> +++ b/drivers/net/phy/phy_device.c
-> @@ -279,6 +279,15 @@ static struct phy_driver genphy_driver;
->  static LIST_HEAD(phy_fixup_list);
->  static DEFINE_MUTEX(phy_fixup_lock);
->  
-> +static bool phy_drv_wol_enabled(struct phy_device *phydev)
-> +{
-> +       struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
-> +
-> +       phy_ethtool_get_wol(phydev, &wol);
-> +
-> +       return wol.wolopts != 0;
-> +}
-> +
->  static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
->  {
->  	struct device_driver *drv = phydev->mdio.dev.driver;
-> @@ -288,6 +297,12 @@ static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
->  	if (!drv || !phydrv->suspend)
->  		return false;
->  
-> +	/* If the PHY on the mido bus is not attached but has WOL enabled
-> +	 * we cannot suspend the PHY.
-> +	 */
-> +	if (!netdev && phy_drv_wol_enabled(phydev))
-> +		return false;
-> +
->  	/* PHY not attached? May suspend if the PHY has not already been
->  	 * suspended as part of a prior call to phy_disconnect() ->
->  	 * phy_detach() -> phy_suspend() because the parent netdev might be the
-> @@ -1975,7 +1990,6 @@ EXPORT_SYMBOL(phy_detach);
->  
->  int phy_suspend(struct phy_device *phydev)
->  {
-> -	struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
->  	struct net_device *netdev = phydev->attached_dev;
->  	const struct phy_driver *phydrv = phydev->drv;
->  	int ret;
-> @@ -1983,8 +1997,7 @@ int phy_suspend(struct phy_device *phydev)
->  	if (phydev->suspended || !phydrv)
->  		return 0;
->  
-> -	phy_ethtool_get_wol(phydev, &wol);
-> -	phydev->wol_enabled = wol.wolopts ||
-> +	phydev->wol_enabled = phy_drv_wol_enabled(phydev) ||
->  			      (netdev && netdev->ethtool->wol_enabled);
->  	/* If the device has WOL enabled, we cannot suspend the PHY */
->  	if (phydev->wol_enabled && !(phydrv->flags & PHY_ALWAYS_CALL_SUSPEND))
+Did I get this right?
+
 
