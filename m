@@ -1,47 +1,67 @@
-Return-Path: <linux-kernel+bounces-267897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01189419DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:37:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9591A941A33
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68105281108
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:37:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBF69B2CE2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA1F1898F7;
-	Tue, 30 Jul 2024 16:37:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EB818990C;
-	Tue, 30 Jul 2024 16:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1152A18990B;
+	Tue, 30 Jul 2024 16:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYx05w+l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475C11A619B;
+	Tue, 30 Jul 2024 16:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722357436; cv=none; b=fTm5D3xV/nSY2UVQWuGaNGQaX0KY1N0tA3pxqEhSfDkdqvQjf1gKM+7w6kvu6/0dRVkTXuZ74Ey+BmSNvZC95I61Aa9xnVaq2M0WNZ+uy+mRfZ7fGAfwnFpS9sfbgx60/nNEBY9S8eXV9o59ncvaAlNIoiPaDw+gMphPHazRI4g=
+	t=1722357456; cv=none; b=rDNEmQcWpe9CNKWmqoC1ijuv3MtmyQKQtgFXydnB0Dxf4ONfPxPY/DJg3a3AilnMpidrxx/abv1l/XnR9bOKQVFMNxo//6Fi4Xo14YXLopGwi4XyijTo3xmlTtsjbwqDtk7kaAuxYCBFSE56LWZPbOJKOEGK/NhivBAFrZSf8Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722357436; c=relaxed/simple;
-	bh=wTphMzmUblkTwc2aZhMEXaKe57a3bkZCi1hqSZrrrRw=;
+	s=arc-20240116; t=1722357456; c=relaxed/simple;
+	bh=IZnrgju2UE3ttoRGRDJsGzu6kxTRyR3poGUPLXgoINI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=js7gpta2voj3xTvF0vOL/geK5wN6GzWqu+m/ijFq+xsVJUY5clecRStkRR6NFO0pFK9VoMwG2a5lBJ5Z7EtCGDXViGQm4BYJ2HBwEvGZRcMgd2BW1wwq/yMzPb2R8oqt0oVG3JE9D820sosnw+asUZU+rUe048mOPRJssZ6kMd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE8191007;
-	Tue, 30 Jul 2024 09:37:39 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F05653F5A1;
-	Tue, 30 Jul 2024 09:37:12 -0700 (PDT)
-Date: Tue, 30 Jul 2024 17:37:10 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Luke Parkin <luke.parkin@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	cristian.marussi@arm.com
-Subject: Re: [PATCH v4 5/5] firmware: arm_scmi: Reset counters
-Message-ID: <ZqkWthQKF2X4Famt@pluto>
-References: <20240730093342.3558162-1-luke.parkin@arm.com>
- <20240730093342.3558162-6-luke.parkin@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S2GBGzIF7rpSEj9ZAWZnXNLMMqxsifRRVqvG/z59/zxXA3NaZXeSkpmWXG6C+0nMK0hxOWYwsKCGZmwe/GsTyY13kncRVgFXh8/2QZDZa6h0m8IAgGnZX41xq4H+oge2MZsixOupxBCgMuncOXfF/rz5vVfG6PNo9XdmVg1LCOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYx05w+l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 403A6C32782;
+	Tue, 30 Jul 2024 16:37:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722357456;
+	bh=IZnrgju2UE3ttoRGRDJsGzu6kxTRyR3poGUPLXgoINI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DYx05w+lggKad+7kxiOgbr3aKEnJcYXVTcXpmJO1psJ0eXGxezWdzPfeQ7m7yfbnj
+	 Odo7L/ufXiILOqVGaWgqQL57V/HWqSWUA1vEbTzj9YpeQyPNshVNDfvayjAhGeCFsn
+	 ND2RFfavrtRypdFsjgj4KkbBGhryQi7ZXF2MpNVaAtoXXbkTubysnkO55Q0X6zAd+r
+	 8kkWTaz4YmZzEAf2dAjeLq6ZylejpAeUaWIktYWkceR5d3H/+4X4E2PpSLeEZS8dIS
+	 xrzwTH9EqndBn6IAMN+lH5U5+p+VF/ex0sngo2SoQ3nCrjkmjp8STkDkmWC9QwTwMR
+	 2RaO6Vn/jjc0Q==
+Date: Tue, 30 Jul 2024 17:37:30 +0100
+From: Simon Horman <horms@kernel.org>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: kernel@pengutronix.de, Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	David Jander <david.jander@protonic.nl>, linux-can@vger.kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH can-next 11/21] can: rockchip_canfd: add functions to
+ check if CAN-FD frames are equal
+Message-ID: <20240730163730.GC1967603@kernel.org>
+References: <20240729-rockchip-canfd-v1-0-fa1250fd6be3@pengutronix.de>
+ <20240729-rockchip-canfd-v1-11-fa1250fd6be3@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,15 +70,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240730093342.3558162-6-luke.parkin@arm.com>
+In-Reply-To: <20240729-rockchip-canfd-v1-11-fa1250fd6be3@pengutronix.de>
 
-On Tue, Jul 30, 2024 at 10:33:42AM +0100, Luke Parkin wrote:
-> Allow writing to atomics to reset
-> Create reset_all counters debugfs file to reset all counters
+On Mon, Jul 29, 2024 at 03:05:42PM +0200, Marc Kleine-Budde wrote:
+> Add a pair new functions to check if 2 struct canfd_frame are equal.
+> The 1st checks if the header of the CAN frames are equal, the 2nd
+> checks if the data portion are equal:
 > 
+> - rkcanfd_can_frame_header_equal()
+> - rkcanfd_can_frame_data_equal()
+> 
+> This functionality is needed in the next patch.
 
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+nit: I would squash this into the next patch as
+     rkcanfd_can_frame_header_equal() is defined but
+     unused in this patch, which is flagged by
+     allmodconfig W=1 builds.
 
-Thanks,
-Cristian
+...
 
