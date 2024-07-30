@@ -1,104 +1,113 @@
-Return-Path: <linux-kernel+bounces-268082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 195EA942024
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:56:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C149C942029
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:56:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9AE8B255EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:56:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEC6E1C2341F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB55818CC1C;
-	Tue, 30 Jul 2024 18:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E8218C931;
+	Tue, 30 Jul 2024 18:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKpi5eBE"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TmQAVrwq"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A812818C900;
-	Tue, 30 Jul 2024 18:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13801AA3C6;
+	Tue, 30 Jul 2024 18:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722365706; cv=none; b=QgFXymFOppD7SkOdrdqZagbLbJ3QOIpTreKkUZLVCo1NiJjFCmQN3I6018PTXPmtWrfTWBw79S145QZmEk5m7rgrsxACcZ+2iOxw7u/TaA6Dk2CQdtZbq7eSaxfbDtQH/FSOUZVRow96Ybc9tc/BgidOd05P7iaHBuD4u+8eidM=
+	t=1722365724; cv=none; b=l0tGMhyvPy+l1CASTYdjaIbt6nnd7QBnj3cos1ja/09FlWE7TiXB0erh6Er1ChgELgB3jpY15omZsKbUzI0RQmZyzjz58LyGy6qrBz3OPMV0/IqGULjjferSvfcdggNcmYyeKzryv1sJAQA3pWEmh14s9FSbNlimS2uZbX2f1Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722365706; c=relaxed/simple;
-	bh=gkAsGyAn23ZHk18oY7nwdT/kqQrSIPA5N6C5BvHvup4=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HcXtJGA5J2JWrUBD+xP9DExUopaltAsIDcrK9MVZ77LaoOGJn8JlXfGWXkNFqH3ygJz6eFVO5op4VyqHeBFQJcI198zk1PU//BDAYCh1SgQihc2yA7y3N2DIRcaYm1LlBb7OQDzz3NOXG7VnhOToHv8chVs89fg4KfY9cJRiqQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hKpi5eBE; arc=none smtp.client-ip=209.85.210.179
+	s=arc-20240116; t=1722365724; c=relaxed/simple;
+	bh=2dCsYnwkPXSeLC4b0QubMn/+6f2i/bESS5WxH91G0x0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HjOl4WlzpD5FhWdR11uoIGzxijk0KWd68f9+ognKAHJjRWGFAs5Wp1DgO5+ifCTTfQtrtimPAQIQgy8Kc/UA0lqQOkOM5qFH3OLLJfxzL21ptlFT1ZqOOUOrp+X6pzwVvHpnvMPP811g0woNjp1PKs73CHd1kXjPAs1uNqzTVhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TmQAVrwq; arc=none smtp.client-ip=209.85.219.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70d1c8d7d95so3063771b3a.2;
-        Tue, 30 Jul 2024 11:55:04 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso3551361276.0;
+        Tue, 30 Jul 2024 11:55:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722365704; x=1722970504; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=gkAsGyAn23ZHk18oY7nwdT/kqQrSIPA5N6C5BvHvup4=;
-        b=hKpi5eBEKauParRoKmXZyXBpXezLjF3CzZFuUDmsV8lbiiDSLeyH4YMYe80FdM9EbH
-         v7QDVn7KZDhOwVOhbP99nBnscC1xp/PZhL7OqhR10pFb+L7fLhhSvXRUSWbC9o15KKSW
-         LpcJNKNB2FOAOT2f8J0BF1CaRgMYbJ1Uj+eI/lCVGLKSzTIXRPxZsPz+EvxX3nvHjrgO
-         fKJPB4RzxvqQLgPNnAQVdDPJN/Kl0KFRVFlrlXK5jcNHVIoXfE9Fp25lIR1V0K6kSIQL
-         eu8nSSSVjSGyv99+Ws6uwOEZAVafKFoH7lPUdylzPw9YIKxXuaWbPkcAWZqJ54Wtf68H
-         E2iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722365704; x=1722970504;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1722365722; x=1722970522; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gkAsGyAn23ZHk18oY7nwdT/kqQrSIPA5N6C5BvHvup4=;
-        b=OCKDDcWSmalWG3Odr2KZZV3E0HKRMKLrs0ZIMBzNJneONeSGknUM7puf387IfMmybP
-         PWi5eeeMDahBAuOf93C5jxv0zkist6FRNCV3a7DvP4/Ki45R3SOXS9gEwCBbFxup24b+
-         tVqsVFAAAc5pUL3g4+Z2FOeCYbP2NqSmfkc4xVXVtP16ec+YlxMoC9oRSPXd4DXzktNf
-         XzsOpfg6wyIZergFoLS4s8BL/4fRv9zxDU+h1HkiE4ZRXUPyZ4JXrIFpvTCtwasPpkX7
-         e2PQlOelPq0qw+7aELZLey+rUbjPLBTP5Qr6sPJZVqGrIRQhVB93K2bj2goFQ9ohJA2K
-         3BhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXm3UNgfV83yAmbiijYNyiwRg5S3AoE9etwvE4OtnlYIVjVuap6aHdqL/Rz/0RUcu80NlTo7Ja8jryCyXYvol9jntNLU2/eEVzth6gdgjo9hn+jSH4Zwek75qBjN4gpGw==
-X-Gm-Message-State: AOJu0Yxj7XpRiIKpbi3oRORC23SP2uQXrowoSjJTsV+HosHWKPUeoaYX
-	ys56rkkQ/iCAsDuNwHWMJMtNGjdXwPxEjvPgyeAiFuglQkJ+KyGC
-X-Google-Smtp-Source: AGHT+IG24Db8snQL11PjMMgEFIueB/WO93zvgt26ms7Bw0B7zKNsl38EnEPihdhP9qRIpA/ZEQ2UgA==
-X-Received: by 2002:a05:6a00:850:b0:70d:2ca0:896a with SMTP id d2e1a72fcca58-70ecea40f66mr11275694b3a.18.1722365703739;
-        Tue, 30 Jul 2024 11:55:03 -0700 (PDT)
-Received: from DESKTOP-DUKSS9G. (c-76-133-131-165.hsd1.ca.comcast.net. [76.133.131.165])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead882b2esm9039627b3a.179.2024.07.30.11.55.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 11:55:03 -0700 (PDT)
-Message-ID: <66a93707.050a0220.5f9eb.7cc0@mx.google.com>
-X-Google-Original-Message-ID: <Zqk3BFd4aGaPGcWe@DESKTOP-DUKSS9G.>
-Date: Tue, 30 Jul 2024 11:55:00 -0700
-From: Vishal Moola <vishal.moola@gmail.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>
-Subject: Re: [PATCH v1 0/3] mm: remove arch_make_page_accessible()
-References: <20240729183844.388481-1-david@redhat.com>
+        bh=2dCsYnwkPXSeLC4b0QubMn/+6f2i/bESS5WxH91G0x0=;
+        b=TmQAVrwqq5pXFsYEKafx0cPUpMCh2Nkvew5AjSwa5F89YDg1VPhi6WApOBJxIqBotf
+         +or0A2k0XZ5oVsg6PeregZwb67/qoKuR5/O+7luhh0JTzAgUEz8xZV2c4GhEgx0H3DAp
+         89AzkoUVOmWiD3PrGtBOrOxWdLxVY/dS5WF9JKh4r2TUZBfRVDjeOyARlk7PtpI0qF+D
+         9WakrXGRTYkflllLC0W4YiD2gDnKN1TWepRmpsUWr8QWoOKh9A3fhMAniM771cvrs/24
+         pd24SwklKvIaq80O9OPIzZZgyEWV4FHfsF3hc7Y1mqtbaP0CX5APbmFhXORy4QsfDZKr
+         jSiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722365722; x=1722970522;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2dCsYnwkPXSeLC4b0QubMn/+6f2i/bESS5WxH91G0x0=;
+        b=ue6uY9yVIkeqiCSaVMagEZeHcGYkTEJS6nBGZeHJK8UzTnemKVk9jxePEXYkwLGhyl
+         cOld22p1SZeApeBUR1sOW7mq6vBCVtehRQJS0FwAJtS2yUpD7KqOs+eEQ8+h/gRUwTXW
+         emlc1iSMzlEvcoP7nnUYAsoVKPdE9TtYMGS5emTW9/aFwg8j/Q7DpnLcMHukOaoGufOn
+         FZqoAIIiu0VEMXcry1+ZhdeEcnn9h5SIZ3OFMPOxhEDctQM5az5VnT8OMsUAdEEbckAW
+         OIJpZuRZ45ufal/oaQulAsjEvmBFRi+jer4MXtTvbFFK1Cszf4no6r4pO+5LJMeO0cAs
+         RnRA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5evpyVPyH62GxOVZW5PFgr5FRqaSCdZephoJSfYtton2D9GCr1p5iCl448yKXmjtW38iE/43sCl9JqUTaIjv7BCsc6WLTzYu5s8N0
+X-Gm-Message-State: AOJu0Yy923NvEx11zdYuKom3DcPHQRTPw9gp3uCxQh8mmxZoFP4q9SDW
+	AGs5l9VIlvghP4exWJOtBlBIPbzVsR3GrjszoerJjGP1O80fja+Nz+1pyvSNHjS8g28HdgNo+74
+	PTZ0sFayS5yoSHPKqDPE03Ok0p3k=
+X-Google-Smtp-Source: AGHT+IGvA3MAl7nGobKWT1GG47gu2pKSHB96B4iZ1KpXmJ8bZ3AIHUGP8s5tylGtCTrHVZ+wkXScmdB7CN+JfY59L1w=
+X-Received: by 2002:a05:6902:1445:b0:e0b:a7c1:9dcc with SMTP id
+ 3f1490d57ef6-e0ba7c1a1a3mr2041732276.20.1722365721796; Tue, 30 Jul 2024
+ 11:55:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729183844.388481-1-david@redhat.com>
+References: <20240729210615.279952-1-paweldembicki@gmail.com>
+ <20240729210615.279952-7-paweldembicki@gmail.com> <56335a76-7f71-4c70-9c4b-b7494009fa63@lunn.ch>
+In-Reply-To: <56335a76-7f71-4c70-9c4b-b7494009fa63@lunn.ch>
+From: =?UTF-8?Q?Pawe=C5=82_Dembicki?= <paweldembicki@gmail.com>
+Date: Tue, 30 Jul 2024 20:55:10 +0200
+Message-ID: <CAJN1KkzJrMV8uDU+Z5xdLSd56uUwLtX+wo1w-8YbNgg-w8GiPA@mail.gmail.com>
+Subject: Re: [PATCH net-next 6/9] net: dsa: vsc73xx: speed up mdio bus to max
+ allowed value
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, 
+	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Linus Walleij <linus.walleij@linaro.org>, 
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 08:38:41PM +0200, David Hildenbrand wrote:
-> Now that s390x implements arch_make_folio_accessible(), let's convert
-> remaining users to use arch_make_folio_accessible() instead so we can
-> remove arch_make_page_accessible().
+wt., 30 lip 2024 o 01:10 Andrew Lunn <andrew@lunn.ch> napisa=C5=82(a):
+>
+> On Mon, Jul 29, 2024 at 11:06:12PM +0200, Pawel Dembicki wrote:
+> > According the datasheet, vsc73xx family max internal mdio bus speed is
+> > 20MHz. It also allow to disable preamble.
+> >
+> > This commit sets mdio clock prescaler to minimal value and crop preambl=
+e
+> > to speed up mdio operations.
+>
+> Just checking...
+>
+> This has no effect on the external MDIO bus, correct. It has its own
+> set of registers for the divider and to crop the preamble.
 
-For the whole series:
+Yes. It's configured in a completely different subblock. Internal and
+external mdio buses have symmetrical register set. It can be
+configured separately.
 
-Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+--=20
+Best regards,
+Pawel Dembicki
 
