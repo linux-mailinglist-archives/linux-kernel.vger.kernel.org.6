@@ -1,178 +1,106 @@
-Return-Path: <linux-kernel+bounces-268133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D5859420BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:39:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4539420BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B40CB24B9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:39:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32D8B1F23E91
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A4E18CC00;
-	Tue, 30 Jul 2024 19:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A40C18C938;
+	Tue, 30 Jul 2024 19:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ci+tJr19"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Kkih7tUL"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E79E573;
-	Tue, 30 Jul 2024 19:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10896E573
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 19:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722368333; cv=none; b=FGgVtkEueIag4ZtKcAVMcX/WBH1NVn4PJq4OV7yRvHmf/iuMEZPXOYlDl4lQqJ0X4bZkSE9hSKJ1TaEEuqsObhYngVqZxvPOHPFQAAOpN26kAb7h61viP7yQRaLRyrg1KMpLCrqHTyiKPvNb38KE2/vIB2yqB9LZLaX4UYBFdpY=
+	t=1722368327; cv=none; b=uznXHr7Q/D9rMW6AQcOtIp94c16b1Nna3wjTrxOnrWjqC+HHMWpZSjfQDxwCfUS0264WabadzOnfUAlQRreUu/MAwsnuhWHsbgtr6vYatawQEl3yEFD+Mx7ZNb6V8bCvQZSXWsfr4M6UVGlpMvV9NUEVHgLrk/MkBGsZRp2DUsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722368333; c=relaxed/simple;
-	bh=S1GPOgfG/eTOGcrRWUd+VDiuTDR1p8fuZXxeZ4ogaVk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J4kVThYlz/gWaMYO/QG2k50GT3DsJzF1J5Jfiebd9sO51iqOMsRBoRN8wzVqd9wwlReCBqfZjq8xtY0K8kh1TDOdcRPYyL6ctMbp8rU0A8ZTzYKOXAaBzi9w35ZOQukjKl1idfB4hU8BcWZtc2RuIbtH3nnK20BAhs+xZQz2/PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ci+tJr19; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4DA8C4AF0E;
-	Tue, 30 Jul 2024 19:38:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722368332;
-	bh=S1GPOgfG/eTOGcrRWUd+VDiuTDR1p8fuZXxeZ4ogaVk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ci+tJr194qT+QgXwU3gy4fYoVvljceE4xgSi5ILpIvvXiSRXhS8c6l8ni4/YhGHNW
-	 lHicp5AfssUClH7hfHukpc7BcXJkL+MFxLnPGHfpPckH1gj69tzxhRs2xotiPIpdCS
-	 MOnpBj/mSxSbNTN+KZBOVCgr9wQ4+cR+8mBFBUpRkxYisQTenLIgLWl/pp4n5kYZ+X
-	 6F4gxW4t2pkczbbEJU00jIEdXr7QOXpHT8j8/KJJxJHCgMXr8pScBGwfe30cL5NOAG
-	 0icxZNvZ+oO9ZsHnp2zf/SU93M/+mcbdm7PI+it7t2/4O/jxerl/Ponf25xK+MEDrP
-	 5Od7z5HXHDxhQ==
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3db192667f5so549083b6e.2;
-        Tue, 30 Jul 2024 12:38:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW2qXFr41fhSxfMEtRnsEaeJCRN99zlxclvwQEv25mHlS7HfaEIpSfXDIIWrf+nwAffCe/oFMKydo3f2m4cY0KbHgSYSXy7AmHqIr83tz5YqRwj8Y/h13//qFInSpp/IK+UtmQ+N7Fi4w==
-X-Gm-Message-State: AOJu0Yw35YU92G4OTe211kmmjI97i0XArXkFemR54q06mdKhU1RZLKsL
-	gZObKocyhrNOi8MkchXVEkzVx0Yp5NbmKF01fQhOtijTXu5CCArG9EobuYA4bwAUD5DdNL27HRh
-	zJuoXfRQv3kQkUv/q3/XRqccsnDg=
-X-Google-Smtp-Source: AGHT+IEs8v2vHlL5ftoah5h3Zbd9pBpdugOrEKu0N/FItKrXImlqbQc3nhL13Wp4szqsfPo6V2ZlqOHqAai1iendqYA=
-X-Received: by 2002:a05:6808:2218:b0:3d9:2751:a219 with SMTP id
- 5614622812f47-3db1236c927mr12467190b6e.3.1722368331856; Tue, 30 Jul 2024
- 12:38:51 -0700 (PDT)
+	s=arc-20240116; t=1722368327; c=relaxed/simple;
+	bh=rslhWtrvQ9mk+QWH55Eo3kU1eTDQX6P/vW/HHjoC1BY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h40rC+oVpS7YFDVSrnoTn74Z6qtE6ScHL98c7s1NxYnFc5SWGn7uTuCktUbb7rcwQidreYu9YQGhlMr9ROxdTKoJzmFTXGWr8/v0s6ZYWTI9S6oX8XuJ5r1AmlLK4lWydsddoue+3DlX22x5p4FE7sUzo9zYJBHlyegPKmuy5Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Kkih7tUL; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sYTBm2JyQE4Fqzv992X+FDRLe/C2+ewskX/9CEbqAns=; b=Kkih7tULFXS4IO8Pxbp7kpL6ms
+	/vD6gzBtEnjtlpG57gFTBskjcMTurJw1wTAyQzZUs9lKaDZ7VAoPYxc6J/DSMcRL+OMoYA1vimpIS
+	VIPwj7jPBFOcFpQjT3Mj1+AWeVodobmTzsPXKHEFNwvtzBzR6EMzZnYcIEQTKs4pXTZ0Di4ufSO/D
+	PJfNuZS3lcS4b0HAV78AJhj1jFIQJzHRYrd29A0F8M0FmuiHQHhmJT4v4GKFPDCs9D1IgH58k5CQ/
+	cKa1cf69z5e3CKQKF/UV2LE1qk0cG98hl8m1tiNPCQjj84RZmso3YGKhJ3ytUiskrTbSdxdHBFwT8
+	cQB5b0nQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sYsgD-000000054jB-2Lgo;
+	Tue, 30 Jul 2024 19:38:42 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 34B313003EA; Tue, 30 Jul 2024 21:38:41 +0200 (CEST)
+Date: Tue, 30 Jul 2024 21:38:41 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Peter Anvin <hpa@zytor.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: Linux 6.11-rc1
+Message-ID: <20240730193841.GS33588@noisy.programming.kicks-ass.net>
+References: <CAHk-=wiyNokz0d3b=GRORij=mGvwoYHy=+bv6m2Hu_VqNdg66g@mail.gmail.com>
+ <f8677c93-a76d-473c-8abc-8dc7b4403691@roeck-us.net>
+ <b7ecddb7-4486-4b2d-9179-82250cf830e7@roeck-us.net>
+ <CAHk-=wj2BYPvYQAQa-pyT3hERcd2pVw+rL5kw7Y=-8PA3JTDAg@mail.gmail.com>
+ <20240730192237.GR33588@noisy.programming.kicks-ass.net>
+ <231e7a2e-7e2e-4b82-b084-8943b2236de0@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5038376.0VBMTVartN@rjwysocki.net>
-In-Reply-To: <5038376.0VBMTVartN@rjwysocki.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 30 Jul 2024 21:38:40 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jo5vh2uD5t4GqBnN0qukMBG_ty33PB=NiEqigqxzBcsw@mail.gmail.com>
-Message-ID: <CAJZ5v0jo5vh2uD5t4GqBnN0qukMBG_ty33PB=NiEqigqxzBcsw@mail.gmail.com>
-Subject: Re: [PATCH v1 00/17] thermal: Rework binding cooling devices to trip points
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux ACPI <linux-acpi@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <231e7a2e-7e2e-4b82-b084-8943b2236de0@kernel.dk>
 
-On Tue, Jul 30, 2024 at 8:18=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysocki.ne=
-t> wrote:
->
-> Hi Everyone,
->
-> The code for binding cooling devices to trip points (and unbinding them f=
-rom
-> trip point) is one of the murkiest pieces of the thermal subsystem.  It i=
-s
-> convoluted, bloated with unnecessary code doing questionable things, and =
-it
-> works backwards.
->
-> The idea is to bind cooling devices to trip points in accordance with som=
-e
-> information known to the thermal zone owner (thermal driver).  This infor=
-mation
-> is not known to the thermal core when the thermal zone is registered, so =
-the
-> driver needs to be involved, but instead of just asking the driver whethe=
-r
-> or not the given cooling device should be bound to a given trip point, th=
-e
-> thermal core expects the driver to carry out all of the binding process
-> including calling functions specifically provided by the core for this
-> purpose which is cumbersome and counter-intuitive.
->
-> Because the driver has no information regarding the representation of the=
- trip
-> points at the core level, it is forced to walk them (and it has to avoid =
-some
-> locking traps while doing this), or it needs to make questionable assumpt=
-ions
-> regarding the ordering of the trips in the core.  There are drivers doing=
- both
-> these things.
->
-> But there's more.  The size of the binding/unbinding code can be reduced =
-by
-> simply moving some parts of it around.  Some checks in it are overkill or
-> redundant.  White space is used inconsistently in it.  Its locking can be
-> made more straightforward.
->
-> Moreover, overhead can be reduced, especially in governors, if the lists =
-of
-> thermal instances representing the bindings between cooling devices and t=
-rip
-> points are moved from thermal zone objects to trip descriptors.
->
-> The first 7 patches in the series deal with the minor issues listed above=
- in
-> preparation for a more substantial change which is the introduction of a =
-new
-> thermal operation, called .should_bind(), that will allow the core to do
-> exactly what it needs: as the driver whether or not the given cooling dev=
-ice
-> should be bound to a given trip, in patch [08/17].
->
-> Patch [09/17] makes the ACPI thermal driver use .should_bind() instead of
-> the .bind() and .unbind() operations which is a substantial simplificatio=
-n.
->
-> Patch [10/17] unexports two core functions previously used by the ACPI dr=
-iver
-> that can be static now.
->
-> Patches [11-14/17] modify the remaining drivers implementing .bind() and
-> .undind() to use .should_bind() instead of them which results in signific=
-ant
-> simplifications of the code.
->
-> The remaining 3 patches carry out cleanups that can be done after all of =
-the
-> previous changes, resulting if further code size reductions.
->
-> Thanks!
+On Tue, Jul 30, 2024 at 01:31:18PM -0600, Jens Axboe wrote:
+> On 7/30/24 1:22 PM, Peter Zijlstra wrote:
+> > On Tue, Jul 30, 2024 at 11:53:31AM -0700, Linus Torvalds wrote:
+> > 
+> >> Which makes me think it's asm_exc_int3 just recursively failing.
+> > 
+> > Sounds like text_poke() going sideways, there's a jump_label fail out
+> > there:
+> > 
+> >  https://lkml.kernel.org/r/20240730132626.GV26599@noisy.programming.kicks-ass.net
+> 
+> No change with this applied...
+> 
+> Also not sure if you read my link, but a few things to note:
+> 
+> - It only happens with gcc-11 here. I tried 12/13/14 and those
+>   are fine, don't have anything older
 
-This is a cover letter for the series at
+One of my test boxes has 4.4 4.6 4.8 4.9 5 6 8 9 10 11 12 13
 
-https://lore.kernel.org/linux-pm/3134863.CbtlEUcBR6@rjwysocki.net/T/#t
+(now I gotta go figure out wth 7 went :-) And yeah, we don't support
+most of those version anymore (phew).
 
-but I had made a technical mistake while sending it and it was sent
-with an incorrect message ID.  Sorry about that.
+So if its easy to setup, I could try older GCCs.
 
-Fortunately, Patchwork gets the patch ordering in this series right,
-so if you go to
+> - It only happens with KFENCE enabled.
 
-https://patchwork.kernel.org/project/linux-pm/patch/14034461.RDIVbhacDa@rjw=
-ysocki.net/
+I missed the KFENCE bit. Happen to have the .config handy, I couldn't
+make much sense of Gunther's website in a hurry.
 
-and click on "Series", it will create a mailbox containing all of the
-patches in the right order.
-
-Apart from that, I have put this series on the thermal-core-testing
-branch in linux-pm.git:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log/?h=
-=3Dthermal-core-testing
-
-along with the two (unrelated) series posted yesterday:
-
-https://lore.kernel.org/linux-pm/2211925.irdbgypaU6@rjwysocki.net/
-https://lore.kernel.org/linux-pm/46571375.fMDQidcC6G@rjwysocki.net/
-
-Thanks!
 
