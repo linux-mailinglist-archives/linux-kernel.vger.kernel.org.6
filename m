@@ -1,179 +1,208 @@
-Return-Path: <linux-kernel+bounces-267242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F12940ED4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:19:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B789940ED8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7B73B24DE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:19:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23EAD283398
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB0B198E6D;
-	Tue, 30 Jul 2024 10:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02302197A89;
+	Tue, 30 Jul 2024 10:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WxTTp3OH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="RJlGkIxR"
+Received: from GBR01-CWX-obe.outbound.protection.outlook.com (mail-cwxgbr01on2128.outbound.protection.outlook.com [40.107.121.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA12191F91;
-	Tue, 30 Jul 2024 10:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722334698; cv=none; b=sZyA0Nu1mrdANRRi8d+TeSa7OElDHhUSQCaDlGYnO7mKduTG1VuuqnlSqkFzCXqzpMIf6peT5bRNI6EtsagERqqsk4knjegsoGYfwwvUuCYMXN8wNdyevbdDMcYmc13fYBGdAhYQBVBHt6oZSB13d8uIxD/p1NWJh34yLx8gAaU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722334698; c=relaxed/simple;
-	bh=dgapsSUvyz1RmzNFWZwgzxuzg9iCKSYYw6aIwpJPBIc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r/FGK5lxZJ0j7+8JLq7ODX42bdHEDgoFiTbUZOSftxEQEgfdF0ddhqp3TUVBoA/HfEVPer0Z5+7fgVy34jflnMivoo7dicVglbFag4pwm84H15gErEuqK15FYTtfRVOTDKPafJzPm0UELLgPytEBuQ6haZaRo5O4nnOWqAf5cFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WxTTp3OH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F261DC32782;
-	Tue, 30 Jul 2024 10:18:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722334697;
-	bh=dgapsSUvyz1RmzNFWZwgzxuzg9iCKSYYw6aIwpJPBIc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WxTTp3OH33Sr9TEajoa5stvPiK+uen6ojhdAX5akri7tWRT0M0q+CXR7JkjDHSuu+
-	 WFEam31JmKPdUfNiBFxxFOF23T6HUsWJ3E9ynGFJu9rLuVVw7keSIcNVM/tzPp0J08
-	 CZKpxehbTxoILcSfU+x9O/rKxKBL+sxIuXdt12HJkkVZq20icIGheVT92ycXRQQlq+
-	 fRXpN0Dwv+GTzy/KydsLUjaBmwapwltX5iolmn6DwWFv4jeEKtUPFARf7DbEJNmn6D
-	 JMBdl2v/B0fcREciw3ZsB+3jWZzlZ/89JmtB2VGQFYL7GtY20R5z0EEpL2guudS60I
-	 vk+a09HNbtdGg==
-Message-ID: <3d3b8e0a-7492-4db1-bd73-c30a488edaa7@kernel.org>
-Date: Tue, 30 Jul 2024 12:18:06 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F73208DA;
+	Tue, 30 Jul 2024 10:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.121.128
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722334822; cv=fail; b=XLFPoGdn7iYGqikLXR0Rbk3qT2q1MLeWiARsgO1GrH41i9sbmkjCzygy6PfQQdAPlxOoTToli+Aiqxb1dBT11/0rADtC0pL/fpQwt+DUENC7HPO3ug6i6iRf4Fc1C4jMcmZDb4eqHrYjwZpcB/qxuU68riU8mfVrS86rzSAtktI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722334822; c=relaxed/simple;
+	bh=DRBX85TKORC6ogGB9Xdfymm5GWtJCaf6cp+bzF5BvNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FZE5w1vLZron4/ekd2EgulCISMznFI3DP8FsJtDUEXgrDiWv1QRljhZQCYut/9jM5KFP8r7V05LBNmN72QEQe5hT+ihBe+DrsNYWeJhVAEjmYdNbkM7ZpBtJJLCL6RmEu7Y4nBoeL3qY/XSZBb91joYid6YJLEeTsq5Q3vTnRSc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=RJlGkIxR; arc=fail smtp.client-ip=40.107.121.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H15IKT4X4gpjBH0ZtjQEraW+3QLG1g5joOzVUjQq9Sm64V+ypIwqyqIdrp3wmnoJh1gaK0U11KkxTGLeT8SlEMA7axaUHl8wm4AHyJVraHVSQYCSSHrRWCcilAVK0dGI3a+ET7FqBREvFtVlLevxsdtUsqNkBA7yE4j2oiU7eEGalicy4EfwniCJpbIaoMBzlo3E5N+MpRMnlkUuBi/z/cHo/onGHi3BLmNShZ+O52pHSwrg9koN0VVacHG3iXa6/LvXzSugwDGeDHUS0ps+/DUVVaYle964ArDq9KBNHtd8PjF5Gc3OWeq/05Jtk1SC2jbgyKpuugYn5tTvxoxCog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gFZ82QBk/r0tIiq+WrT1tcKo2VV8NOsNSkcij4YS1pg=;
+ b=Ggft1D4oulvbyEWNZMDfApoFwK+ToPgN389N+OcMbSTX2xGJ6qchY97kyAJ2pY4jCsOgSkLa7fEoe00sS2lPquryAICgA8CyDUEj7Pb/UuZPjnVYnHzdouHM+4ZkL1H69/uaFGtUkklB1LpSjNNKZhuNKpDbE5pCnG4Wpso+H71shnMToAit24LwTs9a3J2VbBfv+YkhZ5CblIuy7rkgOpTN4nB8Rjg0L6Rav/V69nO0RtWzWMuOYVfBeITxXI59caAgtsHR05Jp70Nrq7ooqk/EWD2B22Eh4EbMWb3685KX2cLtE70X0fRjlkE9HsEU5SYuKJUCqLq0X2UnIp56EQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gFZ82QBk/r0tIiq+WrT1tcKo2VV8NOsNSkcij4YS1pg=;
+ b=RJlGkIxR8mQmOnjSLUu9nwNd32BFSnZxcDREeSrA+bZuqDBWqiKrVbt9fe9JI/vo8OhyGmpTaQeO3DoLmmXWXSUwnmwIVXqN0KfWfVq6zVAGmL6y7ZMuBuEhUg2kjj5FrjhlxtKBxW9p8PW1/SmxNkRxJvSy/iY98gnG9gqHpTo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by LO2P265MB3481.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:1a2::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Tue, 30 Jul
+ 2024 10:20:17 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%7]) with mapi id 15.20.7807.026; Tue, 30 Jul 2024
+ 10:20:17 +0000
+Date: Tue, 30 Jul 2024 11:20:13 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf
+ <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, Ard Biesheuvel
+ <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun
+ Feng <boqun.feng@gmail.com>, "=?UTF-8?B?QmrDtnJu?= Roy Baron"
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
+ Hindborg <a.hindborg@samsung.com>, linux-trace-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann
+ <arnd@arndb.de>, linux-arch@vger.kernel.org, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)"
+ <peterz@infradaed.org>, Sean Christopherson <seanjc@google.com>, Uros
+ Bizjak <ubizjak@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton
+ <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, Ryan Roberts
+ <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-arm-kernel@lists.infradead.org, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, Andrew Jones
+ <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, Conor
+ Dooley <conor.dooley@microchip.com>, Samuel Holland
+ <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, Huacai Chen
+ <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Bibo Mao
+ <maobibo@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton
+ <akpm@linux-foundation.org>, Tianrui Zhao <zhaotianrui@loongson.cn>,
+ loongarch@lists.linux.dev
+Subject: Re: [PATCH v4 1/2] rust: add static_key_false
+Message-ID: <20240730112013.4d0cd624@eugeo>
+In-Reply-To: <20240628-tracepoint-v4-1-353d523a9c15@google.com>
+References: <20240628-tracepoint-v4-0-353d523a9c15@google.com>
+	<20240628-tracepoint-v4-1-353d523a9c15@google.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM9P250CA0024.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21c::29) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/5] dt-bindings: net: wireless: brcm4329-fmac: add
- clock description for AP6275P
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>,
- Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org, krzk+dt@kernel.org,
- heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
- minipli@grsecurity.net, brcm80211@lists.linux.dev,
- brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com
-References: <20240730033053.4092132-1-jacobe.zang@wesion.com>
- <20240730033053.4092132-3-jacobe.zang@wesion.com>
- <191025b5268.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
- <f45c1fa7-f321-4a1f-b65c-6ed326a18268@kernel.org>
- <191030eac78.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <191030eac78.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO2P265MB3481:EE_
+X-MS-Office365-Filtering-Correlation-Id: 08349b05-4d70-48aa-6913-08dcb081352b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6InyZ1pyPdlryjPSoDsqa3qc5xecLwKH2pZ2dSBXOiS7gY1uEP6ohU1xMUYh?=
+ =?us-ascii?Q?j/9TTKBsuucGStJUqNwSzzaJAjQCDGAlbgIKz+7E0BxCwkOBHX45Wxv5aGSM?=
+ =?us-ascii?Q?GwvkxhZVToGtOgEENkx8rJvLNP3DTBSzYKYYcQYpXLLO6JrKXbFVzIJK4MES?=
+ =?us-ascii?Q?RixYG5RvXPKNUZKYd0WxkbYLSQBFs43CAGpMNfSmRFDdN+N6Do0jmnLjAwhI?=
+ =?us-ascii?Q?StU019DdXLpsw3YVcTpKr0I+FERrCXZ1TxQc6hIB8h7mOB/SmQ1rCzyiK3r3?=
+ =?us-ascii?Q?gMnlUF+ps8d7/twrbOJB4KGxrW/CkOJRKuC0ixHi5WqF0Pm4yJDavsBaDiMe?=
+ =?us-ascii?Q?wghIJRhQuUhqDyaLx/wF38Ff7kyCEXzOGwz69R6iYQEL0Y2opRmJnzhpl3Yi?=
+ =?us-ascii?Q?h5n+GGsk9h3gtBWdOw34/ZbOGYCaz2bFetVSPCgnPYsFdsWoZZJ7pvI/Om5g?=
+ =?us-ascii?Q?Of18hllFtQCoQDfeBe4PVtmZ9tqQ2tNu5TY/m04/c1ulvyLliiHRM5jmW7Ro?=
+ =?us-ascii?Q?GRnKq7sBmdluFdPd8ISFbFYC47KYM6WhEqXS4om2lqRNWo4ZSK5Ejcx/e7lE?=
+ =?us-ascii?Q?sJFSNtYDwIyxKT8fFvqVYWTDTIozymMx9G+Axv6PegMLstw911ZfiKh13Uyn?=
+ =?us-ascii?Q?B7Rt/cY3elLC0dunxvucu06d3MtMLFO5m91UNuu+e4UnfCq6413CoyFPjptc?=
+ =?us-ascii?Q?vAr1zanRmmzMxy4hxezOl8JLZVhZxuz0tSuSYprV6EE43rfGVzd+lUfhEy30?=
+ =?us-ascii?Q?Pc/8epaUHzn7KPRj3xXs/aStFmrEv45/pPCDuGUFJ1Jft1U4ZSxzCbXvDt2Z?=
+ =?us-ascii?Q?G8nRDd4RcPDebMGpYZv6r7qTvJhq9nEhIB8hnAXc+7bAiXBUx/74xlddiul/?=
+ =?us-ascii?Q?SYSPN/vpMEkYz9u3HV+Q6uxGts/1+Mcmbhx8AW0gjY906jJefzi2z0pNnbhi?=
+ =?us-ascii?Q?BNPaL3IsWumqmLSrhtJoODAIOvYrZmKRneQVpWcjjDZOd3UZxTY6zykqN/LO?=
+ =?us-ascii?Q?WDmH9bAPaa29mjnJwK36uTyjswh+sMyqJl/rOhx/hEsVayjF539WR3MwUvUA?=
+ =?us-ascii?Q?/Iyf9cKlPwOsr/6iaiDzekENyVSIKRVBokmrWLJrAfpLz4PF21w/n3C4lTAb?=
+ =?us-ascii?Q?L+XJ8jWv/hnRBZIvs4wZW237hTuuagJ31NtN9WNorZy09Kao++w1QB+UMZxw?=
+ =?us-ascii?Q?OqMR+HZ1Mq8A1O3P5oYxTeORLx6BmjjVfpaDveWdUZ3tzTNLExq6foCSYn9T?=
+ =?us-ascii?Q?akguO5NylAQ3P0DEUAMEd0GtM7VPu6Cy1jqCNM+CEooyH7kpZwnvUm+sarJU?=
+ =?us-ascii?Q?/Gc48ri2j0kr0a4pkb91sBnqjMMdapkskMFwN+VP7bdIww=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?l7gP54bxgXn652BZq7K1Jc4ll7qzkjUERp2b+Q0uQfl2xJo+tiXAl5iOAGNa?=
+ =?us-ascii?Q?zoKD8cGxRWhzX0uHtc3AcVTtDZU/9hsJPWRUowT5BRirCpilGE/Gc+itwT82?=
+ =?us-ascii?Q?3wExkpg8qGE+yClKj5sK+V4rNTaKlDxIPFRkw+YSGuBM7cHSWgW+2/cSwxKj?=
+ =?us-ascii?Q?dW6NuU7HFTfVETg2+5jSAX96vUjMAYNH9p32vnxs22YZY/fYpkRry+py5Np5?=
+ =?us-ascii?Q?DZzUJ6JHDQ7LSVFsdrXFDJIcu4IIdaCiSlLjlU08eDr12qcnsXq/MWkGv9UQ?=
+ =?us-ascii?Q?+u0iEFe2oEySGJACspIDMSZeudqkp54X2czbpEOSudoIzE4DM1hakv57wgCw?=
+ =?us-ascii?Q?RRzZPEvBALdESNfqDPLiZ/ATq0HUInTzp+mYqXCFkNzsDolJRNcEhps6JUQx?=
+ =?us-ascii?Q?EdFic9U5nePg6eV1FraDWRUfVuy8WypNRn0Y3qV9SlP8mPv4P/K7XTYpAMfO?=
+ =?us-ascii?Q?r0qge7PAOcvi/JHfmaUlUxg4RKliRVXlED209vX+G2RlRA7QCZwSnxm0EyUg?=
+ =?us-ascii?Q?KS+aE12UzHocwhCrl4V7wI434Sn9CYG2zEF4QaVztgY3gsG7HA1iTUlcZOAV?=
+ =?us-ascii?Q?6OiFG1XGmGW2R1zhjjxc+Zhnwh/LTjIqW0E66KMCpNyDGxyw8O+0sm6FEzT7?=
+ =?us-ascii?Q?fAKyta0Rds7XbIttVMEXhCmj7LqyE7O+R6Zk9Fu7siZ73SyvERt1QwYcy+G1?=
+ =?us-ascii?Q?LiCI8Y5aIfzsaW02lFwiiZsujH4PX4JaMXbO/F8D2fYHVlXhnbwONvAsXbQ/?=
+ =?us-ascii?Q?AeshYtEFeD0Y4fvupGlt8mbm1N8n+hEowHMZsgqokxm7U5IFJhCWggy+YilY?=
+ =?us-ascii?Q?laNi8MnL3omjlnqde30movfFH+GA1ArJXBjEOSsBsomYC1w8mPKi6od8uAxO?=
+ =?us-ascii?Q?rOJGEdUnwBO2kmK1WKRL/I0xwycwGW6S9bfqzuH/zQaBfD6RYSh53Zh20Hj7?=
+ =?us-ascii?Q?L9t5Avd0Qb8B+ZlRHf9X5wZHad4af05ZtLQxddZp2w1QA8GDn979c8tePATr?=
+ =?us-ascii?Q?zJdKYMFEWcwdXIUI73IUuwzAaG9Nq5f+EaBTY2Ofm6CcoplXZ0zeRSFUeJ1H?=
+ =?us-ascii?Q?jSMhoaHmnNmtJRu2xxOkDmdTxj1ovTHJL/fdoaFzAUWTIDEL8qcuygQk0Ygr?=
+ =?us-ascii?Q?0Sh7XKpWrok7fzMB5StLEA/uKe8hN9YFvliG8ligyUhkduu5i0dMAZwr+kRA?=
+ =?us-ascii?Q?foJN7vO8h2ZvapQJUNSwjALglrIfrtc35oDzzlwx4k0C6m/X89rAc434Xc4+?=
+ =?us-ascii?Q?khh7W5OsAw0Bg/+mNla+qeannP9XQsP/WYk2lvviUGK+xElo+KYa+AMVo0H3?=
+ =?us-ascii?Q?Ac2IvOUxXOktIbuT68KYxLrMInLIccVpetC7N36gjqlyim40kCZGpEclTr+i?=
+ =?us-ascii?Q?gJb7umNn7q3eg+cnSqKhciuSzhLxglovY5IWFjSzeZSOZ/YSpsvfconxugvq?=
+ =?us-ascii?Q?Zldr1UdfeLiMI8WJY6zRqEA1OIChbamcvcQOKKhMBcQMzL7vs2YGVk2gNF28?=
+ =?us-ascii?Q?/FSMVPI/dxUzZ8n1ZEGXHKcRGMtdS6i0vCtKEsfa3nElluK1j7lGfVNcpZfq?=
+ =?us-ascii?Q?f8BIX/+ZPk6I4/gYAl1R7EQkKXA2aZ30Yy4AP7By?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08349b05-4d70-48aa-6913-08dcb081352b
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 10:20:17.0874
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BnqH9N/yzHb61y5doCAdlqbsaLVkwmp33gdB7v1mqY05HviLF/DyVb/0pEGRnsjzIl8bwhE133VXVGzle7l0Tw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO2P265MB3481
 
-On 30/07/2024 11:52, Arend Van Spriel wrote:
-> On July 30, 2024 11:01:43 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Fri, 28 Jun 2024 13:23:31 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
+
+> Add just enough support for static key so that we can use it from
+> tracepoints. Tracepoints rely on `static_key_false` even though it is
+> deprecated, so we add the same functionality to Rust.
 > 
->> On 30/07/2024 08:37, Arend Van Spriel wrote:
->>> + Linus W
->>>
->>> On July 30, 2024 5:31:15 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
->>>
->>>> Not only AP6275P Wi-Fi device but also all Broadcom wireless devices allow
->>>> external low power clock input. In DTS the clock as an optional choice in
->>>> the absence of an internal clock.
->>>>
->>>> Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
->>>> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
->>>> ---
->>>> .../bindings/net/wireless/brcm,bcm4329-fmac.yaml          | 8 ++++++++
->>>> 1 file changed, 8 insertions(+)
->>>>
->>>> diff --git
->>>> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->>>> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->>>> index 2c2093c77ec9a..a3607d55ef367 100644
->>>> --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->>>> +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->>>> @@ -122,6 +122,14 @@ properties:
->>>> NVRAM. This would normally be filled in by the bootloader from platform
->>>> configuration data.
->>>>
->>>> +  clocks:
->>>> +    items:
->>>> +      - description: External Low Power Clock input (32.768KHz)
->>>> +
->>>> +  clock-names:
->>>> +    items:
->>>> +      - const: lpo
->>>> +
->>>
->>> We still have an issue that this clock input is also present in the
->>> bindings specification broadcom-bluetooth.yaml (not in bluetooth
->>> subfolder). This clock is actually a chip resource. What happens if both
->>> are defined and both wifi and bt drivers try to enable this clock? Can this
->>> be expressed in yaml or can we only put a textual warning in the property
->>> descriptions?
->>
->> Just like all clocks, what would happen? It will be enabled.
+> It is not possible to use the existing C implementation of
+> arch_static_branch because it passes the argument `key` to inline
+> assembly as an 'i' parameter, so any attempt to add a C helper for this
+> function will fail to compile because the value of `key` must be known
+> at compile-time.
 > 
-> Oh, wow! Cool stuff. But seriously is it not a problem to have two entities 
-> controlling one and the same clock? Is this use-case taken into account by 
-> the clock framework?
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Yes, it is handled correctly. That's a basic use-case, handled by CCF
-since some years (~12?). Anyway, whatever OS is doing (or not doing)
-with the clocks is independent of the bindings here. The question is
-about hardware - does this node, which represents PCI interface of the
-chip, has/uses the clocks?
+Reviewed-by: Gary Guo <gary@garyguo.net>
 
-Best regards,
-Krzysztof
-
+> ---
+>  rust/kernel/arch/arm64/jump_label.rs     | 34 ++++++++++++++++++++++++++++
+>  rust/kernel/arch/loongarch/jump_label.rs | 35 +++++++++++++++++++++++++++++
+>  rust/kernel/arch/mod.rs                  | 24 ++++++++++++++++++++
+>  rust/kernel/arch/riscv/jump_label.rs     | 38 ++++++++++++++++++++++++++++++++
+>  rust/kernel/arch/x86/jump_label.rs       | 35 +++++++++++++++++++++++++++++
+>  rust/kernel/lib.rs                       |  2 ++
+>  rust/kernel/static_key.rs                | 32 +++++++++++++++++++++++++++
+>  scripts/Makefile.build                   |  2 +-
+>  8 files changed, 201 insertions(+), 1 deletion(-)
 
