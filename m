@@ -1,210 +1,188 @@
-Return-Path: <linux-kernel+bounces-268022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E89AB941F7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:22:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16317941F7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74BF51F24D8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:22:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394131C22E7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922EE18B473;
-	Tue, 30 Jul 2024 18:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D3218A92F;
+	Tue, 30 Jul 2024 18:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="VllSNXeU"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hqGfP+GT"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D13B188011;
-	Tue, 30 Jul 2024 18:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E9D18A6DD
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 18:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722363719; cv=none; b=fuHA+kRZhnBG3bHvUYqBiPcwGpUh1sJp8zEKxSXlW0iOkMBw/6Ux13Xc96Hd0U/KmdoN9o5z3yytXamPjGDEn+jGIZ24TrnZrlrlIxTns3D4a4BAKQo6wQdbSz5dOLRjmthDs5GnzNzw/A9zFWdQRd6LZZDDfkQCumwTZP2rltM=
+	t=1722363757; cv=none; b=hob0QUmkCkgvGI5CyBuMwdCFHaG0BqvcvZwSWEXiYcN2pvHSCi98YAwK+QOX1mr+SGngRgVNlsqy13mXQN6F6xxKbLCJa/XLk308L7a2gRDGFjxd0t7XOwG+/IpFRv3a150q6T63gOJT0dR2/vqqqSmRdUPb+WHBh+lAX4PqvlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722363719; c=relaxed/simple;
-	bh=EfLcgc+QvrXR30l2a0w2IX5i1JNNXIEVvGDNJX6FF7s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oFE8NyLCDuwJxXHYaSmrDdkfEWR4OGlGUioQUX0rkWLn/FJ/pa8gBV9M97efsnYSWCPXi0d1ZCM9Udg53j5XTaHJC37pqPFdeBQYPyPyZx7bMSLsdzZ0RZfET9tWiIeEKLUtO7SZ58sRAphfqsb1Wu/baH3ttKUOwkKNV+XsRhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=VllSNXeU reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 0dfcb0ba80d42fc1; Tue, 30 Jul 2024 20:21:55 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 0014B956ED0;
-	Tue, 30 Jul 2024 20:21:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1722363715;
-	bh=EfLcgc+QvrXR30l2a0w2IX5i1JNNXIEVvGDNJX6FF7s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=VllSNXeUf4zhNmAzSs2NG9zYmxhD9H7roYO5WDQ+lKI4y9rGl0IDXpICELXT+5yav
-	 cxmOW9HGr2vgJGS3+n063vWRGMBhlkpzS1sYQKRebRS8iOm880IHFJOhviq25+b3rX
-	 xaON4/Ps3c2H5Uc+2tgmTqsRkV45Juc7IT42I8+iPtKShq03aMTg1JlCl6zSxNspr+
-	 DfDI3EPb2tU6F2g0Tpfd7a5Y5y34T5ZM+CIRZSqXYJyqGYVeDJJYHXt5WkgvwfFKG0
-	 TY+8VykkzeUHywEL+Rzr30IN/F5pnE7AL+bcLs3rODnTSF23oXPPM9diBVHFPJNmxh
-	 yTSWZTvlFm95Q==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux ACPI <linux-acpi@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
-Subject:
- [PATCH v1 07/17] thermal: core: Move thermal zone locking out of bind/unbind
- functions
-Date: Tue, 30 Jul 2024 20:21:54 +0200
-Message-ID: <2681296.7s5MMGUR32@rjwysocki.net>
-In-Reply-To: <1922131.tdWV9SEqCh@rjwysocki.net>
-References: <1922131.tdWV9SEqCh@rjwysocki.net>
+	s=arc-20240116; t=1722363757; c=relaxed/simple;
+	bh=cWdsxSSY9bCGXCxVlGXkkFL2YFDuN2cWdJkpLihqIyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cXcgf5bKJ90emVqPPoxN1NQhFMVx7LXFnr46w4AoBMjLyWFD9zUyvPnsNT9vGJtfRdmt1+ZfvBw+6mgKpivf32OLYXBwVHQ0HBKo2tGc3n3anRi4fy2xxkhpRHEpFKbekGQCPp432nNA6SK4kk+BwzkLvFvw4SNhXQgwafKjtrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hqGfP+GT; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70d316f0060so94466b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:22:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722363755; x=1722968555; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=WuuUhMYQQSlR+3Pwz3JpqDaA99BP6vvzQyK5UCiRXC8=;
+        b=hqGfP+GTwwJC6TkTeR/yAmweYFJD5rds9uqkHH4Jul8CR97PtfCe/mdXPg+5Hw5R1C
+         aEn1eyoj9vfG1FG9DN1ft0bLJnNsnzgflMP1TNsUzRvDAFrrN0SWL1acfGZkIr2BqF/v
+         BnlRKGdCMyYejjq823bLFjQbZyrvm4I0tXmT9irtNUUN+62H+JnGJbFHB64li53mdDel
+         /RiZvqlD1dJ8iEZXda5h2neF6FlI9eAZMg7UgnvuLZpSFeLD/UqSc1EJ4ZCtpMw9h/+5
+         x61VmZ3x3s/XEfKWEeLNHLizCN08CDBRgcRsP5kEcxb4C2mU4RckzmRef3n140qqW3jv
+         eVCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722363755; x=1722968555;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WuuUhMYQQSlR+3Pwz3JpqDaA99BP6vvzQyK5UCiRXC8=;
+        b=an4C2WqQIz4zHzMlF5CeCDfgHL6IQCn+OjBUsIMCmW4A05mS8QHrdA4mFnK6kaGjZJ
+         wnvf7IoZ5BfGZKdE8yzk+CwF4Y4ZA3ti0fg2jY6kfYtZ/NPWtnApjbkfTHpFG/oJCFPz
+         AegCXVQmbRaKBQaLIKmJbRIGbyhTjawFTU2szXx3s2GaZ7N7BZa4Lgh9Svat4Tt0lfj/
+         DnO8fwvjwVtTgG4s12tca0cau5uQU8BgTAwolIJNOY8Vxv7M4pfeJTGNgRQMrxD8LxO2
+         uDL5jScE2gbdMSMR9fCfOY9c2LH8EKCa1kl/5XYWZpBa0yAlva369TCVHxNOWB93rYA7
+         u3aQ==
+X-Gm-Message-State: AOJu0YzQ1EqJNnzC2zCyLSj9tHhnFLoCKbS8cMwo+I6yefFqZSSUdwT8
+	vy0Lj/0laeDOh032X7NitF5mXzWVL2UZrBBTiMF2tEGTDKA8Wxci
+X-Google-Smtp-Source: AGHT+IGECf6xmV4GfG+RKVds6vioSvQK/uZUwDxVBpuXJ5RIJ8oK1TM2NyE5UqD5RCq9/QzuUa6DPA==
+X-Received: by 2002:a05:6a20:a11a:b0:1bd:1d5f:35be with SMTP id adf61e73a8af0-1c4e47a42b3mr4823781637.11.1722363755243;
+        Tue, 30 Jul 2024 11:22:35 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead89fd67sm8705554b3a.192.2024.07.30.11.22.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 11:22:34 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <5963cdad-40be-4278-a84e-2a804334e77c@roeck-us.net>
+Date: Tue, 30 Jul 2024 11:22:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeggdduvdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
- rhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=18 Fuz1=18 Fuz2=18
+User-Agent: Mozilla Thunderbird
+Subject: Re: Linux 6.11-rc1
+To: Jens Axboe <axboe@kernel.dk>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAHk-=wiyNokz0d3b=GRORij=mGvwoYHy=+bv6m2Hu_VqNdg66g@mail.gmail.com>
+ <f8677c93-a76d-473c-8abc-8dc7b4403691@roeck-us.net>
+ <b7ecddb7-4486-4b2d-9179-82250cf830e7@roeck-us.net>
+ <63e7adbf-0eb8-4d59-ae7a-689b9d9f69b4@kernel.dk>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <63e7adbf-0eb8-4d59-ae7a-689b9d9f69b4@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 7/30/24 10:20, Jens Axboe wrote:
+> On 7/30/24 11:04 AM, Guenter Roeck wrote:
+>> On Mon, Jul 29, 2024 at 08:29:20AM -0700, Guenter Roeck wrote:
+>>> On Sun, Jul 28, 2024 at 02:40:01PM -0700, Linus Torvalds wrote:
+>>>> The merge window felt pretty normal, and the stats all look pretty
+>>>> normal too. I was expecting things to be quieter because of summer
+>>>> vacations, but that (still) doesn't actually seem to have been the
+>>>> case.
+>>>>
+>>>> There's 12k+ regular commits (and another 850 merge commits), so as
+>>>> always the summary of this all is just my merge log. The diffstats are
+>>>> also (once again) dominated by some big hardware descriptions (another
+>>>> AMD GPU register dump accounts for ~45% of the lines in the diff, and
+>>>> some more perf event JSON descriptor files account for another 5%).
+>>>>
+>>>> But if you ignore those HW dumps, the diff too looks perfectly
+>>>> regular: drivers account for a bit over half (even when not counting
+>>>> the AMD register description noise). The rest is roughly one third
+>>>> architecture updates (lots of it is dts files, so I guess I could have
+>>>> lumped that in with "more hw descriptor tables"), one third tooling
+>>>> and documentation, and one third "core kernel" (filesystems,
+>>>> networking, VM and kernel). Very roughly.
+>>>>
+>>>> If you want more details, you should get the git tree, and then narrow
+>>>> things down based on interests.
+>>>>
+>>>
+>>> Build results:
+>>> 	total: 158 pass: 139 fail: 19
+>>> Failed builds:
+>> ...
+>>> 	i386:q35:pentium3:defconfig:pae:nosmp:net=ne2k_pci:initrd
+>>
+>> This failure bisects to commit 0256994887d7 ("Merge tag
+>> 'for-6.11/block-post-20240722' of git://git.kernel.dk/linux"). I have no
+>> idea why that would be the case, but it is easy to reproduce. Maybe it is
+>> coincidental. Either case, copying Jens in case he has an idea.
+> 
+> I can take a look, but please post some details on what is actually
+> being run here so I can attempt to reproduce it. I looked at your
+> initial email too, and there's a link in there to:
+> 
+> https://kerneltests.org/builders
+> 
+> but I'm still not sure what's being run.
+> 
 
-Since thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip()
-acquire the thermal zone lock, the locking rules for their callers get
-complicated.  In particular, the thermal zone lock cannot be acquired
-in any code path leading to one of these functions even though it might
-be useful to do so.
+Please see http://server.roeck-us.net/qemu/x86-nosmp/
 
-To address this, remove the thermal zone locking from both these
-functions, add lockdep assertions for the thermal zone lock to both
-of them and make their callers acquire the thermal zone lock instead.
-
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/thermal.c         |    2 +-
- drivers/thermal/thermal_core.c |   30 ++++++++++++++++++++++--------
- 2 files changed, 23 insertions(+), 9 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -789,6 +789,7 @@ int thermal_bind_cdev_to_trip(struct the
- 	int result;
- 
- 	lockdep_assert_held(&thermal_list_lock);
-+	lockdep_assert_held(&tz->lock);
- 
- 	if (list_empty(&tz->node) || list_empty(&cdev->node))
- 		return -EINVAL;
-@@ -851,7 +852,6 @@ int thermal_bind_cdev_to_trip(struct the
- 	if (result)
- 		goto remove_trip_file;
- 
--	mutex_lock(&tz->lock);
- 	mutex_lock(&cdev->lock);
- 
- 	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
-@@ -868,7 +868,6 @@ int thermal_bind_cdev_to_trip(struct the
- 	thermal_governor_update_tz(tz, THERMAL_TZ_BIND_CDEV);
- 
- 	mutex_unlock(&cdev->lock);
--	mutex_unlock(&tz->lock);
- 
- 	return 0;
- 
-@@ -892,11 +891,19 @@ int thermal_zone_bind_cooling_device(str
- 				     unsigned long upper, unsigned long lower,
- 				     unsigned int weight)
- {
-+	int ret;
-+
- 	if (trip_index < 0 || trip_index >= tz->num_trips)
- 		return -EINVAL;
- 
--	return thermal_bind_cdev_to_trip(tz, &tz->trips[trip_index].trip, cdev,
--					 upper, lower, weight);
-+	mutex_lock(&tz->lock);
-+
-+	ret = thermal_bind_cdev_to_trip(tz, &tz->trips[trip_index].trip, cdev,
-+					upper, lower, weight);
-+
-+	mutex_unlock(&tz->lock);
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(thermal_zone_bind_cooling_device);
- 
-@@ -919,7 +926,8 @@ int thermal_unbind_cdev_from_trip(struct
- 	struct thermal_trip_desc *td = trip_to_trip_desc(trip);
- 	struct thermal_instance *pos, *next;
- 
--	mutex_lock(&tz->lock);
-+	lockdep_assert_held(&tz->lock);
-+
- 	mutex_lock(&cdev->lock);
- 
- 	list_for_each_entry_safe(pos, next, &td->thermal_instances, trip_node) {
-@@ -930,13 +938,11 @@ int thermal_unbind_cdev_from_trip(struct
- 			thermal_governor_update_tz(tz, THERMAL_TZ_UNBIND_CDEV);
- 
- 			mutex_unlock(&cdev->lock);
--			mutex_unlock(&tz->lock);
- 			goto free;
- 		}
- 	}
- 
- 	mutex_unlock(&cdev->lock);
--	mutex_unlock(&tz->lock);
- 
- 	return -ENODEV;
- 
-@@ -954,10 +960,18 @@ int thermal_zone_unbind_cooling_device(s
- 				       int trip_index,
- 				       struct thermal_cooling_device *cdev)
- {
-+	int ret;
-+
- 	if (trip_index < 0 || trip_index >= tz->num_trips)
- 		return -EINVAL;
- 
--	return thermal_unbind_cdev_from_trip(tz, &tz->trips[trip_index].trip, cdev);
-+	mutex_lock(&tz->lock);
-+
-+	ret = thermal_unbind_cdev_from_trip(tz, &tz->trips[trip_index].trip, cdev);
-+
-+	mutex_unlock(&tz->lock);
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(thermal_zone_unbind_cooling_device);
- 
-Index: linux-pm/drivers/acpi/thermal.c
-===================================================================
---- linux-pm.orig/drivers/acpi/thermal.c
-+++ linux-pm/drivers/acpi/thermal.c
-@@ -609,7 +609,7 @@ static int acpi_thermal_bind_unbind_cdev
- 		.thermal = thermal, .cdev = cdev, .bind = bind
- 	};
- 
--	return for_each_thermal_trip(thermal, bind_unbind_cdev_cb, &bd);
-+	return thermal_zone_for_each_trip(thermal, bind_unbind_cdev_cb, &bd);
- }
- 
- static int
-
-
+Thanks,
+Guenter
 
 
