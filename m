@@ -1,103 +1,108 @@
-Return-Path: <linux-kernel+bounces-267873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28296941843
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:20:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8970A941801
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1486B2401C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:18:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0A12B29111
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1331E1917E3;
-	Tue, 30 Jul 2024 16:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="fdo6MlLH"
-Received: from msa.smtpout.orange.fr (smtp-76.smtpout.orange.fr [80.12.242.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC28218B492;
+	Tue, 30 Jul 2024 16:14:18 +0000 (UTC)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD81818E05B;
-	Tue, 30 Jul 2024 16:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E293C18A92F;
+	Tue, 30 Jul 2024 16:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722356109; cv=none; b=GT3FDpm+CEKX5mIZLLBU6VhEXUqbRrEyWwM/H9CxpaPLVxy8qSfQi7UnEZbk5d6gUMKlvG/oCf4GcJuaszwOii0M1zDIG4fUTaA8mApr+kZ/cQHFQU3g6Q0G5BMbXEbqPUtQHsw9TXKdn789HLtimYNiFNXX4FlaR31paHKGVhM=
+	t=1722356058; cv=none; b=mICcB/DXED08xHCLekFWVG0COppxSjsJhhCgQQ4k3arI7xR8lhSrS9XXjI+bqdfDskYBtT81gaobxUJT7tiWsZ0E7Dj2Cb7FaL0+HoPrnwYWZgzfa2A8U0MDT8zhrsiZnfTMsCwtbu4Z2Tb8ACv9q451sHadqVtm725xZBS1UCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722356109; c=relaxed/simple;
-	bh=U3QezZ/9wLTpiMytSi3mde8e/Rpz1z+6n85JpdNsLmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q3i3NpOul5p6VfFfG1iRrTVon1C/UH31/oFYatDgLdFOOP0EM4ZH+N3RsdYyqp2Z5QeRtcQ4dQ+PZH/uMkBx6XgfpX0gi+JM/1YH0wzc4xtx9Pby1Uu0qxPgD3gix+L2h5WHqMeB8LYR5E0yrJiztr+InLXlqJByp/EXgZvhO4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=fdo6MlLH; arc=none smtp.client-ip=80.12.242.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id YpU0sUBCQk1NHYpU0sP4HH; Tue, 30 Jul 2024 18:13:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722356035;
-	bh=3tCIQaWxilVkn/dJTsZpd50Op2owwp++CqpwU8TwuPE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=fdo6MlLHu85cEcoMZ2uiANcnCGmV+TzzgTJ4zTxCZ4zf30nGsxwiWDTK8qcfeJfjE
-	 jKbGSxZHceNV4EW/JXKtGItBFMS5MHrbig3qg7Hhdz17QLIZ72PBXEquL4PRiLr1z+
-	 Xlo+akORH42h+yLJ8plujsHO7z5zuTW4BYpCidzEURc1hYzYnzZsrZyAasVt50eMWc
-	 jLKF4mbV0RUlN6SsdJiwIeMVY24IZEG4KzNLzhegMxFD8xvcMcu8TbJus8rw6QvXq+
-	 l6XxgGrwXF9k05eAqWg8Je1le6Xm2ssf4dJthncJErSgvSlYU+auGroz6Xncw2B7Dz
-	 JdDWa5K3Lrh7g==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 30 Jul 2024 18:13:55 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <f82860ef-71d4-42af-807a-94e33f58d769@wanadoo.fr>
-Date: Tue, 30 Jul 2024 18:13:50 +0200
+	s=arc-20240116; t=1722356058; c=relaxed/simple;
+	bh=ii3HR5+wMx769JFD3o2IrRXFpu4Nzq9Jsjq3hmoXOFU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VPEQZEM0kSHY0ceSWVSIZBunKdPuATH0p5XjkFfSyAv+Yrj6T1jEDUGPrHPH1geU2E0GmsMIslmS3QnBwGcnPtAhrkMsIw6Fdg5Ttx3d84yJRo57nY7t6WN00UjOw3UdABlwvqCroi+fgery6/pCUDi7WfALIFAdU1H1UPK5ywY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7a91cdcc78so288512966b.3;
+        Tue, 30 Jul 2024 09:14:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722356055; x=1722960855;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MzhMg19ph/DOe53231JHDUwm37lww++KloBs0Jq6d4o=;
+        b=lm6mqBkyOkl+2Izip/i/kiqMXrbfgKRvLvTTIDzvcIt6hnCl7ofe/vq7S+kY14ggb5
+         glYhE9TXbs8quAzCbar07iKOWX73JZb3JRpQTtH9WCLuN00WrIthI2gpqysBK5JV//em
+         Dkejj1wHjgtlmXGIbyiShDwrzwjY2jbmj9s+LHr7FalGBWT4lmTc60YtVF+dIUdTRlfZ
+         yPBtAVUkVQrgVmMydDcSI1Aude8qaY3GsvG1Gd/w5GzqWi602jx7bG8kILvH2lJDhKIp
+         RABmrYCA/xoZEez5UF288gtmsCXXFiiJCPhVrATJPXUsbHBCf+TQNChALqI6dr/2J+VI
+         b0eg==
+X-Forwarded-Encrypted: i=1; AJvYcCUG30tm2TSUuEr7XybXqtX7ztv8GkPbk+lvfAnrXllif/Dd1m6cu+djFiGM/OxmNQk1lywZyPV4wRVQUkfOx1UhUxvVCSNA/zGDHtQR
+X-Gm-Message-State: AOJu0YxUERuO6/2Q3LaEc5qaZqT+VkapchYj9ZG7yW8X2b5pU+AAq3xI
+	e/7jJMOWN3znjdF99Qj6S1PDUfImTXXlYtPJGinjlaL1jO23PHPz
+X-Google-Smtp-Source: AGHT+IG3hCITzrgP8JYJVpqDsgLyS0/sYZMwDjPJXrkv6yJ30BIMqnDWBbGjOHHdjvwpFS7cEYx7Gw==
+X-Received: by 2002:a50:9b5b:0:b0:5a2:e73f:1528 with SMTP id 4fb4d7f45d1cf-5b0217572b0mr9429677a12.12.1722356055033;
+        Tue, 30 Jul 2024 09:14:15 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b145c8320esm4382814a12.17.2024.07.30.09.14.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 09:14:14 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	kuba@kernel.org
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Simon Horman <horms@kernel.org>
+Subject: [PATCH net v2] net: Add skbuff.h to MAINTAINERS
+Date: Tue, 30 Jul 2024 09:14:03 -0700
+Message-ID: <20240730161404.2028175-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH 1/2] PM: hibernate: Use sysfs_emit() and
- sysfs_emit_at() in "show" functions
-To: Xueqin Luo <luoxueqin@kylinos.cn>, rafael@kernel.org, pavel@ucw.cz,
- len.brown@intel.com
-Cc: linux-pm@vger.kernel.org, xiongxin@kylinos.cn,
- linux-kernel@vger.kernel.org
-References: <20240730065454.2096296-1-luoxueqin@kylinos.cn>
- <20240730065454.2096296-2-luoxueqin@kylinos.cn>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240730065454.2096296-2-luoxueqin@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 30/07/2024 à 08:54, Xueqin Luo a écrit :
-> As Documentation/filesystems/sysfs.rst suggested,
-> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-> the value to be returned to user space.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Xueqin Luo <luoxueqin@kylinos.cn>
-> ---
+The network maintainers need to be copied if the skbuff.h is touched.
 
-Hi,
-...
+This also helps git-send-email to figure out the proper maintainers when
+touching the file.
 
-> @@ -1210,7 +1210,7 @@ power_attr(disk);
->   static ssize_t resume_show(struct kobject *kobj, struct kobj_attribute *attr,
->   			   char *buf)
->   {
-> -	return sprintf(buf, "%d:%d\n", MAJOR(swsusp_resume_device),
-> +	return sysfs_emit(buf, "%d:%d\n", MAJOR(swsusp_resume_device),
->   		       MINOR(swsusp_resume_device));
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Reviewed-by: Simon Horman <horms@kernel.org>
+---
+Changelog:
+v2:
+	* Move the entry from "NETWORKING DRIVERS" to "NETWORKING
+	  [GENERAL]" (Simon Horman)
 
-Nitpick: now the alignment with the '(' is not correct anymore.
+v1:
+	* https://lore.kernel.org/all/20240729141259.2868150-1-leitao@debian.org/
 
->   }
->   
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-...
-
-CJ
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 64087e9bde34..75f5607c1b84 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15937,6 +15937,7 @@ F:	include/linux/in.h
+ F:	include/linux/indirect_call_wrapper.h
+ F:	include/linux/net.h
+ F:	include/linux/netdevice.h
++F:	include/linux/skbuff.h
+ F:	include/net/
+ F:	include/uapi/linux/in.h
+ F:	include/uapi/linux/net.h
+-- 
+2.43.0
 
 
