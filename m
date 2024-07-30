@@ -1,142 +1,96 @@
-Return-Path: <linux-kernel+bounces-267433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04BDD94116F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:02:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9D2941170
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35F4F1C22E51
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:02:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5F35286095
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B92B19DFBB;
-	Tue, 30 Jul 2024 12:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="eRPQVMsY"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5C519E804;
+	Tue, 30 Jul 2024 12:02:34 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB4B757FC;
-	Tue, 30 Jul 2024 12:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5361991CC
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 12:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722340883; cv=none; b=tO63LGa4ZQ7qoXh3/dwqPi3sgn1ypa47AdhqVTwDVUDmaSfBFeCvWVer3u8yS3fHoRO3QtJmrVP6aAJ/4k2CkGhmhGimbiE/RK6MvxhbkIiCoVc8jJz0X7kJz08cEBTVeP+JWWbC1SXEuSMbKI0+FLmGl8x/FOVUsfRgZuorfkg=
+	t=1722340953; cv=none; b=oANtBhpUJbQtNQOLrQkItjdW/FaJwI8VWr25/eeecEVrWqjNS/1vj+ZgDqiHG7szYajr68Gga0ictUKvZppctfeg39XxDl8rJvVrofp+lPWVMPukNgTTwrXEEZRi3R4Ar2XdHNyX7oP9G03NoqbqAk3n0mYZEH6cmf2lfYIE1Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722340883; c=relaxed/simple;
-	bh=4jKsHKTvty4PUcCCXuhg1uYU4hjwbtkRKIr+BCTwAiU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m2REb6kKIZ5TrcQkPdQGr0mBBI9SnTM71U9QJMHKYcjaf6OhswOE3tN5R6IScXtsEFY/UyQold1hSMp5ifA+4HFad6ov5f2KAS0bVeZ0oBvQmkMeDwpsqfeBj74BJZJSYPv7dTdn89yjFIZFadxtaz4eXXH/0rhYZobLbh6ApNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=eRPQVMsY; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id A8EA71F91A;
-	Tue, 30 Jul 2024 14:01:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1722340869;
-	bh=gJKco2VTa1Fg2A5oLOeS7gBjwDsEG+Heea3+gbMISO4=; h=From:To:Subject;
-	b=eRPQVMsY/03MnTkG/WjZxFzc4Jz85M6st+Klt0Ub0ncT0tzWbIWTo/m1JCfIknjln
-	 sNfhSPPybYLaX07us+Sw5ldCXvHnBhSFWMsOQ4TNkq07MsOEJlQPRUBo1DO0mP3Myb
-	 k5IjQ8jE4nUVIx0kcEyZMK+HeoJv45jUZcHUzLK8J+/w0ChEIXzp9BkOEcAf4ESja6
-	 LOG5x6I5HiiS5RUiyCMMen9gqmYlRKDzmY59CubZZ4GPyXIwENdU0fgMq8gFm4Ln22
-	 B2U07DyloYIebyOIiZ60zUJnRUQqf1Zd0CubsWNzlA1p/8+jc3V7skNWd7LEIELgd/
-	 x3z8jPEMTOp8A==
-Date: Tue, 30 Jul 2024 14:01:04 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Nishanth Menon <nm@ti.com>
-Cc: Parth Pancholi <parth.pancholi@toradex.com>,
-	"vigneshr@ti.com" <vigneshr@ti.com>,
-	"parth105105@gmail.com" <parth105105@gmail.com>,
-	"kristo@kernel.org" <kristo@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"j-choudhary@ti.com" <j-choudhary@ti.com>
-Subject: Re: [PATCH] arm64: dts: ti: k3-j784s4-main: Correct McASP DMAs
-Message-ID: <20240730120034.GA39114@francesco-nb>
-References: <20240730093754.1659782-1-parth105105@gmail.com>
- <94a0be3616425c7aef7bb0507d60ee11d4776545.camel@toradex.com>
- <20240730110444.fctc2lje62ewg4ob@safari>
+	s=arc-20240116; t=1722340953; c=relaxed/simple;
+	bh=Dni9mzsdk3z8ttQfg40ozZbiPry1CG2bm0J6Cth08FY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hSZmEwXGSlmTdWfP10QCunzSaLBcVaEPBOc+XQ/JEcOLZo2UtIQPyjBphJEw8Uoa0m3m/jRiRHPyOioAtP2JhvvApQCtJtcuPtBbdRUOJ5IF0bFrSPQZPcLMlr7mPQ08T0qUKyKVimXMe45kWhfyaLcbzIesTsF4UeELCNq2neQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39a29e7099dso73079275ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 05:02:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722340950; x=1722945750;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7UVRLoW76axzmR9JNfwOSYbdYDTeDFhUwYH4fPWEeCE=;
+        b=dxkIsKcnvdHYmRES1Q5gEI4y9hNNlI+K2+o5enZqNfoUAtesbuZNLz7+a96XcBexDr
+         OkuCo+2KfuDulw3z7zH6ZZtzSZAE+mOligac3YHJktgsPC/7uctCog9z4W7O2G+OPu3B
+         /A867HFBdHSNOZ86O2DOXaVWK+SgO5vHLApVvfwaQ5AoD4FUTaEihP1OCLhBTM+HYIAn
+         CQUhhfVRLma+xUinCMsp/79JTeYnX5lAIRUlBuFUQL2D9XuPJTd+xTA6/1BTmaUgCsV5
+         oW2l1i/sel6P3vKMTHTvgrxohc+/9lw08Ts64LesOaL7IxNhaW1dO31VHjswpy5Y6Mjc
+         7dLg==
+X-Gm-Message-State: AOJu0Yy9/5HbojpF4nYgffkqk507xJqmMa0zJ5608bgolXu9aPoFrsfu
+	2XxnjkbEzklYb7JE58euVMpkERAXu8ypkLcvXS3srqAUV7m4MFMgFJ4os9q2baMtkyVZvNDtxbN
+	0BUyA3wRqVRY/ognGINWn/CljhkUmZLr7zsFnFfMrQXJadIXlTTOaRtE=
+X-Google-Smtp-Source: AGHT+IGKXo35uDYUI/+NR/jwpGWQ1PrLiKPEK55w3We/D34CGoHfZJQ6dson7ecbqGGyLoTYb2EweiRuqPpQBLoq7yrhBYCrwIBa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240730110444.fctc2lje62ewg4ob@safari>
+X-Received: by 2002:a05:6e02:b22:b0:397:35d4:3811 with SMTP id
+ e9e14a558f8ab-39aec40159amr8959635ab.3.1722340950412; Tue, 30 Jul 2024
+ 05:02:30 -0700 (PDT)
+Date: Tue, 30 Jul 2024 05:02:30 -0700
+In-Reply-To: <0000000000004da3b0061808451e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000881e74061e75c047@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] possible deadlock in
+ team_device_event (3)
+From: syzbot <syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Nishanth,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-On Tue, Jul 30, 2024 at 06:04:44AM -0500, Nishanth Menon wrote:
-> On 10:50-20240730, Parth Pancholi wrote:
-> > On Tue, 2024-07-30 at 11:37 +0200, Parth Pancholi wrote:
-> > This message originated from outside your organization
-> > 
-> > From: Parth Pancholi <parth.pancholi@toradex.com>
-> > 
-> > Correct the McASP nodes - mcasp3 and mcasp4 with the right
-> > DMAs thread IDs as per TISCI documentation [1] for J784s4.
-> > This fixes the related McASPs probe failure due to incorrect
-> > DMA IDs.
-> > 
-> > Link: http://downloads.ti.com/tisci/esd/latest/5_soc_doc/j784s4/psil_cfg.html#psi-l-source-and-destination-thread-ids/<http://downloads.ti.com/tisci/esd/latest/5_soc_doc/j784s4/psil_cfg.html#psi-l-source-and-destination-thread-ids> [1]
-> > Fixes: 5095ec4aa1ea ("arm64: dts: ti: k3-j784s4-main: Add McASP nodes")
-> > Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
-> > ---
-> > arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi | 4 ++--
-> > 1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-> > index f170f80f00c1..d4ac1c9872a5 100644
-> > --- a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-> > +++ b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-> > @@ -2755,7 +2755,7 @@ mcasp3: mcasp@2b30000 {
-> > interrupts = <GIC_SPI 550 IRQ_TYPE_LEVEL_HIGH>,
-> > <GIC_SPI 551 IRQ_TYPE_LEVEL_HIGH>;
-> > interrupt-names = "tx", "rx";
-> > - dmas = <&main_udmap 0xc500>, <&main_udmap 0x4500>;
-> > + dmas = <&main_udmap 0xc403>, <&main_udmap 0x4403>;
-> > dma-names = "tx", "rx";
-> > clocks = <&k3_clks 268 0>;
-> > clock-names = "fck";
-> > @@ -2773,7 +2773,7 @@ mcasp4: mcasp@2b40000 {
-> > interrupts = <GIC_SPI 552 IRQ_TYPE_LEVEL_HIGH>,
-> > <GIC_SPI 553 IRQ_TYPE_LEVEL_HIGH>;
-> > interrupt-names = "tx", "rx";
-> > - dmas = <&main_udmap 0xc501>, <&main_udmap 0x4501>;
-> > + dmas = <&main_udmap 0xc404>, <&main_udmap 0x4404>;
-> > dma-names = "tx", "rx";
-> > clocks = <&k3_clks 269 0>;
-> > clock-names = "fck";
-> > 
-> I think your patch got corrupted. Could you use git send-email or a
-> proper client?
+***
 
-Are you sure it was not your side to mess-up with it?
+Subject: Re: [syzbot] [net?] possible deadlock in team_device_event (3)
+Author: aha310510@gmail.com
 
-I tested and it applies fine to me
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-$ b4 shazam 20240730093754.1659782-1-parth105105@gmail.com
-Grabbing thread from lore.kernel.org/all/20240730093754.1659782-1-parth105105%40gmail.com/t.mbox.gz
-Checking for newer revisions
-Grabbing search results from lore.kernel.org
-Analyzing 2 messages in the thread
-Checking attestation on all messages, may take a moment...
 ---
-  ✓ [PATCH] arm64: dts: ti: k3-j784s4-main: Correct McASP DMAs
-  ---
-  ✓ Signed: DKIM/gmail.com
----
-Total patches: 1
----
-Applying: arm64: dts: ti: k3-j784s4-main: Correct McASP DMAs
+ drivers/net/team/team_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
+diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
+index ab1935a4aa2c..056889eff6b1 100644
+--- a/drivers/net/team/team_core.c
++++ b/drivers/net/team/team_core.c
+@@ -2947,7 +2947,7 @@ static void team_port_change_check(struct team_port *port, bool linkup)
+ {
+ 	struct team *team = port->team;
+ 
+-	mutex_lock(&team->lock);
++	mutex_lock_nested(&team->lock, 1);
+ 	__team_port_change_check(port, linkup);
+ 	mutex_unlock(&team->lock);
+ }
+--
 
