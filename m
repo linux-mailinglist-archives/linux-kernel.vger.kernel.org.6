@@ -1,110 +1,78 @@
-Return-Path: <linux-kernel+bounces-267291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9F5E940FA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:41:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D087940FA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4968AB2C001
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:39:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B636E1F21529
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316881A2C3C;
-	Tue, 30 Jul 2024 10:33:31 +0000 (UTC)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330AF1A01C1;
+	Tue, 30 Jul 2024 10:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qbz+i/Cc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A061A257B;
-	Tue, 30 Jul 2024 10:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A6518E771;
+	Tue, 30 Jul 2024 10:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722335610; cv=none; b=d83lXoQAi87PqwR/GPwDvkCnhPPm1yVvpQCh3CZ4sbxNy+pWF2gPB95D3ppZ4tL6BXmx5M4/IsFqkFGwexg/3U4xhswGFQ8dEgZ7n2PDnF8+XMc0bjL7rjCo0fmDY0HfpDBXMoHpUBm+iLS9bJWOgYqRhmW6EMhREqvqEUa046E=
+	t=1722335711; cv=none; b=N/itRyVinH1VrD2zPyqVmLYgq70f80g5oy5Y2dwTeepC3viSLxrfm9Bire0qtA3Yzs/HOojJk7FukGpj2sxpSNopXO53fjZRNF3nhm/rc94ORwh/u7Cv2EHYdb68vnBYZVlWVC6OdfZxQDWZY6QwW16M9zBneXfyKR3zpm0vBFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722335610; c=relaxed/simple;
-	bh=yOFE4cthNpKAw1Wf+HIS6SvopF2maYH+CgYnhjyzGGc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=V4CnIygIH30n27NTK2pBngaWB8gf6Ec4YvFYopP3qlQcLP7PJte9smTLPkDdyFe89/yMY33cZlIxcV6vU5KBL5MGYk6cnNKom2m2eOwuTHk9IwRBpu3SThyFPZiXMZoRmp4BtDyTFGAbelB2/AwpGd9JAuCp04nUE5nwAl82H/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7aa212c1c9so606802866b.2;
-        Tue, 30 Jul 2024 03:33:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722335607; x=1722940407;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CaFTL1duU5GueP6k8bggejkXYESAFbdWPOLFrsucxBA=;
-        b=MrFng3Hwg+lRRxARXsykX6zbk5DZrqWCSEgQaSA7pSx3jSD5sz9st1bdp2bz68vR/c
-         dQgy7NII3f8e768BzRIU39MlTt9sxPPKBl74a9XLeA2PHqQws3Zif++JCJ7YYgD4/l6W
-         Bm0mrvth5Spn4iYSADOpBXzqLzVYkKVc/nQHUxu7YjQD8NvBPdQkKQzfirCFG604y5AM
-         guUuF+OjakOHDybPMl0ZtjKeMmbVhxGy7++Uu76CDUVa6IwhxOcJ5CzIvCI/qVbU6Csj
-         8q1+5wQG3Qz2YhL2R5NzSCSIFxcovdDtaz4XRxrGgQ+29Wg2WirwV/6gEDUq2x9002W7
-         XgQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDu8fijTCjOq5cZum0wHTlxvLuXsH0eoeYy6lObBJQ7BCpjKpxopD6Bij0TV37SDeWpfoLhG3GkUvH/Z2GccFD6G2oTWKrqTjiPsZ7
-X-Gm-Message-State: AOJu0Yx0JjFNnXv4mzuEjT5C9rTrusywrpG3XiFPPYT7aMAbVsw5Ssbz
-	iFtfCz5GR6Mz3WiD2HkgCtpfW5NWNeSRMNzEk8o5SZ6tKZyZLw8y
-X-Google-Smtp-Source: AGHT+IHRRUmXvR3WWPVqOcTceVSq3FWDHM1Sc7Qnyw/GDuk1HhEJ9VLDJxXOztwOLL35Bn+flWfeKQ==
-X-Received: by 2002:a17:907:874c:b0:a7a:acae:340e with SMTP id a640c23a62f3a-a7d400744bcmr665951266b.26.1722335607401;
-        Tue, 30 Jul 2024 03:33:27 -0700 (PDT)
-Received: from [127.0.0.1] (p200300f6f732f200fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f732:f200:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acadb9f60sm622455266b.223.2024.07.30.03.33.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 03:33:26 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-Date: Tue, 30 Jul 2024 12:33:18 +0200
-Subject: [PATCH v2 5/5] btrfs: change RST lookup error message to debug
+	s=arc-20240116; t=1722335711; c=relaxed/simple;
+	bh=OqxNeHY/v/ofIyNQ5/aXLZvlFKdi959PW4sxej3ug0g=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=MSk6LFgFDcSWZRhRnpupppVLIRzIkxyvQEmgb7x27HAUG7HpJL227slnttkEkf9bQJ0CX25P0tvBfsJSLEiERqOKOvDawQUF5Jif3XDNhWFWWEZUCnqTlIxKpLNKEyqlLXvXuihlDe5RRDJL/PUTqPe6NrTqwjN7LaMKwk9ISEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qbz+i/Cc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC1EC32782;
+	Tue, 30 Jul 2024 10:35:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722335711;
+	bh=OqxNeHY/v/ofIyNQ5/aXLZvlFKdi959PW4sxej3ug0g=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=Qbz+i/Cco0lnSDPNjQN+SaRbmxOshKdQC6MssEjqIU6ejREpmK2scACSon+eU76dg
+	 uYe69ibi8IJzSVqVr6vW7wUgyQ+/dY4vSQ1fT5X2mahlxnoruM8yo6Vki9v1RBpyXM
+	 tyhgbPaHcNhjnkWPiQoJ2cqOaZ6LKsWbw0Hoh79JzhlFVDlux2rIJotqegxuDVKsE2
+	 2CqnoHRtQ7Y5hwcGE5+uoj6u0AHG6RIKT077wAOsCcCFVC1BwSMwPuirOAVejpkbWo
+	 Hc26awOAqsbdxOZ6koziZZmWFOB2G0t+LSQLJ2IP17Y7hlfHGlmdc5aN5ArUqIv3lH
+	 kZ73tPfdGQbAA==
+From: Kalle Valo <kvalo@kernel.org>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+51a42f7c2e399392ea82@syzkaller.appspotmail.com,
+  linux-kernel@vger.kernel.org,  linux-usb@vger.kernel.org,
+  linux-wireless@vger.kernel.org,  netdev@vger.kernel.org,
+  srini.raju@purelifi.com,  syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] wifi: plfxlc: remove assert for mac->lock
+References: <000000000000ac553b061e675573@google.com>
+	<tencent_03969636CA4BC874A7763F66D23D15366009@qq.com>
+Date: Tue, 30 Jul 2024 13:35:07 +0300
+In-Reply-To: <tencent_03969636CA4BC874A7763F66D23D15366009@qq.com> (Edward
+	Adam Davis's message of "Tue, 30 Jul 2024 12:28:42 +0800")
+Message-ID: <877cd39nhg.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240730-debug-v2-5-38e6607ecba6@kernel.org>
-References: <20240730-debug-v2-0-38e6607ecba6@kernel.org>
-In-Reply-To: <20240730-debug-v2-0-38e6607ecba6@kernel.org>
-To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
- David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Johannes Thumshirn <johannes.thumshirn@wdc.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=920; i=jth@kernel.org;
- h=from:subject:message-id; bh=5Nb2TPyDI1r9k9JWR1KqOfBjfmC0JElmTsqSFizt6aE=;
- b=owGbwMvMwCV2ad4npfVdsu8YT6slMaStOFhwLfDCms/Vc9Z0qT9m4OTjn/bu41vHGRyPDRnOn
- FD4PkF9ZUcpC4MYF4OsmCLL8VDb/RKmR9inHHptBjOHlQlkCAMXpwBMJFWO4b/Xs/BM33323zeK
- Xi7vF16w8F9z2oXHO7j2W18Vv36woWIBw39/z8f/Jj7tffGWeafHLPsZ7wSvfb8uPZOrz+TaLuN
- /1v8YAQ==
-X-Developer-Key: i=jth@kernel.org; a=openpgp;
- fpr=EC389CABC2C4F25D8600D0D00393969D2D760850
+Content-Type: text/plain
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Edward Adam Davis <eadavis@qq.com> writes:
 
-Now that RAID stripe-tree lookup failures are not treated as a fatal issue
-any more, change the RAID stripe-tree lookup error message to debug level.
+> syzbot report WARNING in plfxlc_mac_release, according to the context,
+> there is not need assert for mac->lock.
 
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
- fs/btrfs/raid-stripe-tree.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
-index bfb567f602b1..a734e25a6a55 100644
---- a/fs/btrfs/raid-stripe-tree.c
-+++ b/fs/btrfs/raid-stripe-tree.c
-@@ -284,7 +284,7 @@ int btrfs_get_raid_extent_offset(struct btrfs_fs_info *fs_info,
- 	if (ret > 0)
- 		ret = -ENOENT;
- 	if (ret && ret != -EIO && !stripe->rst_search_commit_root) {
--		btrfs_err(fs_info,
-+		btrfs_debug(fs_info,
- 		"cannot find raid-stripe for logical [%llu, %llu] devid %llu, profile %s",
- 			  logical, logical + *length, stripe->dev->devid,
- 			  btrfs_bg_type_to_raid_name(map_type));
+The commit message should explain _why_ the assert is not needed.
+Otherwise it looks that you are randomly removing it to get rid of the
+warning.
 
 -- 
-2.43.0
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
