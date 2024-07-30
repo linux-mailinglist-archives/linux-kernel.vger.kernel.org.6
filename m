@@ -1,90 +1,116 @@
-Return-Path: <linux-kernel+bounces-267321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A840394101D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:00:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BAD4941026
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63587284A68
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:00:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF1F71F23463
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4039F19DFAC;
-	Tue, 30 Jul 2024 11:00:07 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85CB7198E70;
+	Tue, 30 Jul 2024 11:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mLO4SXu+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AA7199389
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A6013DDAE;
+	Tue, 30 Jul 2024 11:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722337206; cv=none; b=jpwsvroX7eDIIeFrmIJDWBCgLf1ndzWcRVOs3wsEoH21QQIiOwRQGGV7CFr4zDALcgFPIUzCzhIS4lP2kVnyBo4srTAzjdkggV9nRPgKErC1UgMPnPq5dq1MCx6Ard32+Qn9rIS5ekXi2wLDj0rFST770k9JpkihjQKXmZkqrBY=
+	t=1722337409; cv=none; b=S1vYA4+mKKCCZz/h6kj4zQLQsShiAEIvo7JJ1mY2A6XF0fesfNPZWFk0aFaG1yusl2NJcIvCCRpSeSv8onpHnQlAhEXvPZ8RXegiWgJj55+HUNmhH8gFWUCOtZlOJsk/BV/Ug51XoaSV/Pgq9IRvBF0jAGwgt+xP7pfupX2BoQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722337206; c=relaxed/simple;
-	bh=7/zSghOsO/+ohSfNdiHJsYt37rEBzzUbEVydMJXZiks=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=I1nrFWWPsNRI0qD8RsFneDdznfMZ1fB6EDpKHHgwdQ7oQTslSVo5+wzwokMwjQgFcELp1r1p1BPxnJbrEcJZ67bTVSqg0l2RFYNIYKA9DMPW8iM1YqKWx+MilNhE0ZW+1xCLJmbzsbz58rAzK7wJN3fzhKTRtn1+PwQJThsIcZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f8c78cc66so674032739f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 04:00:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722337204; x=1722942004;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oXNGiiF6PZnIEppYDKDeXtIbd3Wz+BDRNBDIPWnAEGs=;
-        b=TA5/2Iw/JjTIC6gQTU/CxHZLFPkd4kgaLkFBjMq0sG3yW2VhSqxJPzseNO9+jEkAQb
-         4Wk0/t4oV4ORKw6S7B10lbR/A2y8CW+wrBXa83fQI9IP2CDSYFmp3kcLffgIbKbgeFZ3
-         czgnI72ahNprOqcOStpR+WVrY1JXaVhvApd1YUYaN5R1TbZeU8NUZCqxjAeVrLGFZ9PR
-         sNmMnBY/ntvB97CH+BaUlcPOitg7iaqetSlKoq/RdCp9unmsFFDK1f6rIp7M0SDjrHyh
-         +Vi6lA/O3iGxQYrgoVT/pmXFZXBk2rRH6D7BKusfQFGi5YDPFWqPh6KVaYjeMWEKYezI
-         EtTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWopzRZNJH+aaevKQ48ULjjiIr1XekDPRrit/P8N7gyvfBSZtWlNmedQZmkRH3jnfD0fILgHFl+D7UC83elfjyEun/W02dOMZROZulT
-X-Gm-Message-State: AOJu0YxNZ0qubxnPUHevxkb5bCjFQCZfQXV58f8t6Bvtc4KYEvPYSKuv
-	fcbdFuSEGZL3KcOIEVp4MnjatjZHnRgHL4YUsjip7eOPQ638qMMo3mJQUFbSxjk47Rby8NZxlLT
-	Q01zZW6fMlqGi3fU/tmiZtlS/RkNZrIFIpruDq1oe3Xz9xeY/PfDqByE=
-X-Google-Smtp-Source: AGHT+IEDysm6wtaPUGs0aWDcCep4e8pdGPJs61zCKGHHToRahzqlvZu05LqbuKTZg30Zm6FMNmjZDMgRwiHaMri2DpS1/Wzn3wGU
+	s=arc-20240116; t=1722337409; c=relaxed/simple;
+	bh=CXkoGsg6csuPovdY1NpQLB+BXK7giXSuwsrflARY14U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FoTWQQMEH3LeXf/j6SGEjNE86HB0B3jdyMwig5rJytSzHKa4Vh+3E5gz6gX6bmw5FtAYSUdws+ipzppu4a21Yb4Bcg08VqCRyQm5vzl4y6O4xwpaJAaHpHjFaya3xZBoc5SyNbiyARWxIpaxen8bFwdnqzInyeRz58GbURDE8+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mLO4SXu+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9157FC32782;
+	Tue, 30 Jul 2024 11:03:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722337409;
+	bh=CXkoGsg6csuPovdY1NpQLB+BXK7giXSuwsrflARY14U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mLO4SXu+NXYj5kFTql9ncVanh291Pk0zTWF7m91Ti2+VYyNB6GsWUQqxeqPpI5R97
+	 L3MT4tlWOsqc63ESriMBteo0sdNIupp5c/Y1qiA7CyvNu7w4TfwnOmh3fdQ6IQcLzw
+	 R9E7KFPOsKw4A+UvrXc3gdvLc+SXDDqwvSVF7gXi3TVy5teOxeUvk9oJ48B361BCaw
+	 /WbFnCa8TG35i6JFsi41i4ZWm3CR3XGJZNpN+0SwizPjdo4uLeQYW0O7qmC9K18AOa
+	 o6ncDE5dt06FVN20AivMHhB8aObwUkLPZFy8Xs6TXNdbZgc/Pm8DnZrHHg7B/a4i86
+	 GS/E3V8rVMp6w==
+Date: Tue, 30 Jul 2024 12:03:25 +0100
+From: Simon Horman <horms@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH iwl-net 1/3] idpf: fix memory leaks and crashes while
+ performing a soft reset
+Message-ID: <20240730110325.GA1781874@kernel.org>
+References: <20240724134024.2182959-1-aleksander.lobakin@intel.com>
+ <20240724134024.2182959-2-aleksander.lobakin@intel.com>
+ <20240726160954.GO97837@kernel.org>
+ <870cd73e-0f87-41eb-95d1-c9fe27ed1230@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:178d:b0:397:3a28:94f1 with SMTP id
- e9e14a558f8ab-39aec4177b3mr8138805ab.3.1722337204064; Tue, 30 Jul 2024
- 04:00:04 -0700 (PDT)
-Date: Tue, 30 Jul 2024 04:00:04 -0700
-In-Reply-To: <20240730102200.2312-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003b634b061e74e106@google.com>
-Subject: Re: [syzbot] [wireguard?] WARNING in kthread_unpark (2)
-From: syzbot <syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <870cd73e-0f87-41eb-95d1-c9fe27ed1230@intel.com>
 
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: rcu detected stall in corrupted
-
-rcu: INFO: rcu_preempt detected expedited stalls on CPUs/tasks: { P5301
- } 2655 jiffies s: 7261 root: 0x0/T
-rcu: blocking rcu_node structures (internal RCU debug):
-
-
-
-Tested on:
-
-commit:         dc1c8034 minmax: simplify min()/max()/clamp() implemen..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1547f655980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2258b49cd9b339fa
-dashboard link: https://syzkaller.appspot.com/bug?extid=943d34fa3cf2191e3068
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=136148d3980000
-
+On Mon, Jul 29, 2024 at 10:54:50AM +0200, Alexander Lobakin wrote:
+> From: Simon Horman <horms@kernel.org>
+> Date: Fri, 26 Jul 2024 17:09:54 +0100
+> 
+> > On Wed, Jul 24, 2024 at 03:40:22PM +0200, Alexander Lobakin wrote:
+> >> The second tagged commit introduced a UAF, as it removed restoring
+> >> q_vector->vport pointers after reinitializating the structures.
+> >> This is due to that all queue allocation functions are performed here
+> >> with the new temporary vport structure and those functions rewrite
+> >> the backpointers to the vport. Then, this new struct is freed and
+> >> the pointers start leading to nowhere.
+> 
+> [...]
+> 
+> >>  err_reset:
+> >> -	idpf_vport_queues_rel(new_vport);
+> >> +	idpf_send_add_queues_msg(vport, vport->num_txq, vport->num_complq,
+> >> +				 vport->num_rxq, vport->num_bufq);
+> >> +
+> >> +err_open:
+> >> +	if (current_state == __IDPF_VPORT_UP)
+> >> +		idpf_vport_open(vport);
+> > 
+> > Hi Alexander,
+> > 
+> > Can the system end up in an odd state if this call to idpf_vport_open(), or
+> > the one above, fails. Likewise if the above call to
+> > idpf_send_add_queues_msg() fails.
+> 
+> Adding the queues with the parameters that were before changing them
+> almost can't fail. But if any of these two fails, it really will be in
+> an odd state...
+> 
+> Perhaps we need to do a more powerful reset then? Can we somehow tell
+> the kernel that in fact our iface is down, so that the user could try
+> to enable it manually once again?
+> Anyway, feels like a separate series or patch to -next, what do you think?
+> 
+> > 
+> >> +
+> >>  free_vport:
+> >>  	kfree(new_vport);
+> 
+> Thanks,
+> Olek
+> 
 
