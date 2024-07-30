@@ -1,203 +1,121 @@
-Return-Path: <linux-kernel+bounces-268280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04ECB9422A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:17:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92A2E9422A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ED2E1C224EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:17:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 382741F250D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB7A191F7A;
-	Tue, 30 Jul 2024 22:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFE51917C7;
+	Tue, 30 Jul 2024 22:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Spv8JYtT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M3MFS7ln"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D19A191484
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A0F157466;
+	Tue, 30 Jul 2024 22:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722377821; cv=none; b=uPfMRzEm1cbTBHaq9l8ff+qr4RlG+vvcNYH+67Pv2/yHZeliH/b4zPLxcP9v5SE81tuOWtXI1e9fGMdsTXs2stEe50adDN955EEGlgP6pN0DdYqPsywMlcQP/6eS3/SY0nHd+y3yl2FokE3JNqsXBzzZt1XFLYY+f3bzhujsSx0=
+	t=1722377873; cv=none; b=j7O3TEwGdZ6izpHr+0P5bQdMUaKVAkiAEr0AEEYUPDOqBvcylystv4xR1UAhAFs4XO/ANxPo/0SDMkrHTpjlRSHfcZh+hWXqlgR5SjQ7rXpgCkaB8vGjeql1lXltgC2qTtdQcewhBGEaHE5IrhJ4m2fV2ULY48eyMMayim124xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722377821; c=relaxed/simple;
-	bh=ND0M1O/b09cO9CGWjH0eDAueXMZa8J6c/uYozl9G1ZY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nUcezfCd1CwMA8LauStXWjFpqcdcjbNBzEMenVE8zb/HuBVDn9IhjM/BUwV7nsDG1DftY/hv2TgB4qojURY1sFDuHTEPYKVb5DFa1alkQ+f1Tp4A/07frkL1QQOElKYmQLAWYKZEKUMaMC4gfbn+ynnWAhVczRy+FK//lb4pnqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Spv8JYtT; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722377819; x=1753913819;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ND0M1O/b09cO9CGWjH0eDAueXMZa8J6c/uYozl9G1ZY=;
-  b=Spv8JYtTdZ80OBXBdPUgD24xrdw3J6HNm+1sRxBkJEh8FCx41mAqneFw
-   Mggfa2jREyOJ5+zN+HeV2hXirZt23XQa77+lxFkYuMSHT8BQp/ri7JvDH
-   MkxW2zB/tQOzHCfco/iU2xg3/8B395FACH2tFZaqMCRe26C6BDSKII9ZB
-   MdlR6BpkuHtA5BR+YiBcWxug/lte0tJGDFDWxa6YEV72qmtVtYCm5wOqR
-   w1m3zaNxxlw0MFucz/FRaHcgpIFyp+RvqaW19SyNZ99JMp6Crz8c2vTnt
-   YfrA/5AAKySkVKkcywV8H1qIw1IwVGO/IrAnA+fMhLwK1JyUNXL9lHaMz
-   w==;
-X-CSE-ConnectionGUID: 5V26OP1uSUaL/74ZtI9fug==
-X-CSE-MsgGUID: FcpkaAsdSb+vZbG0x0x17Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="24094135"
-X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
-   d="scan'208";a="24094135"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 15:16:55 -0700
-X-CSE-ConnectionGUID: 7WxHhnR9TaueAGKqB2JvwA==
-X-CSE-MsgGUID: pNpF4eF7S02MYcejiLF95Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
-   d="scan'208";a="58613347"
-Received: from lstrano-desk.jf.intel.com ([10.54.39.91])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 15:16:56 -0700
-From: Matthew Brost <matthew.brost@intel.com>
-To: intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: tj@kernel.org,
-	jiangshanlai@gmail.com,
-	christian.koenig@amd.com,
-	ltuikov89@gmail.com,
-	daniel@ffwll.ch
-Subject: [RFC PATCH 3/3] drm/xe: Drop GuC submit_wq pool
-Date: Tue, 30 Jul 2024 15:17:42 -0700
-Message-Id: <20240730221742.2248527-4-matthew.brost@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240730221742.2248527-1-matthew.brost@intel.com>
-References: <20240730221742.2248527-1-matthew.brost@intel.com>
+	s=arc-20240116; t=1722377873; c=relaxed/simple;
+	bh=YybkcUYxUqpqpli8HO6mbkTLp9GQFuDUuGBq2RcnVow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rrW+CciKP46VmfePiOyEO1ouUGeqS3Cvfw5pmb6ST1SHPZyKLGjRz7wFfl9bv3CmlvETor+mH20uifT8ReH0EIjLwsfsDmkzFkRKyQQq3m6ROlM5AVujUsVqSbx1AoIlWhG2pOFjXSnIIeysPCY7hEs40U2h3GMSSB6+/msCwy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M3MFS7ln; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58C1AC32782;
+	Tue, 30 Jul 2024 22:17:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722377872;
+	bh=YybkcUYxUqpqpli8HO6mbkTLp9GQFuDUuGBq2RcnVow=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M3MFS7ln8pjCp1q+JHfKsxFSSUcvu3lpDofyDgXqUJJ0DJCFrWakWPrPXurSiCO8e
+	 qU5jMZKcY3+njjH9+OyvZBQ/mN5bVMNnOKUTzJGR/ufTfNKXWZdnCI9woPvoD1j8fZ
+	 ATuAIqBDKswoVEzPXdBi9kM1TQ7KHq3ZvfhoRhPO3XURTwNlMtHrZgsiKpeDHyZuSY
+	 fanRrpj34F/ZoBvYoULlc8QlKc81ZJJbHtGdH31ovYO9emF/OzBVU3YI8tTyivNGWV
+	 lZnFt4F5w29JJgs5A2H+6JXxwjvhFjzaDQWYYCG7Q8oPD6d1A49QZS6+De/XYxkzB4
+	 dmkmZVsqI6lCQ==
+Date: Wed, 31 Jul 2024 00:17:49 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Valentin Schneider <vschneid@redhat.com>, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: RCU-Task[-Trace] VS EQS (was Re: [PATCH v3 13/25]
+ context_tracking, rcu: Rename rcu_dynticks_task*() into rcu_task*())
+Message-ID: <ZqlmjVyWXIneklCm@pavilion.home>
+References: <20240724144325.3307148-1-vschneid@redhat.com>
+ <20240724144325.3307148-14-vschneid@redhat.com>
+ <ZqJiDlKtD4wvsv1j@localhost.localdomain>
+ <31d78183-4526-41e8-90df-d03c95fdb9b2@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <31d78183-4526-41e8-90df-d03c95fdb9b2@paulmck-laptop>
 
-Now that drm sched uses a single lockdep map for all submit_wq, drop the
-GuC submit_wq pool hack.
+Le Tue, Jul 30, 2024 at 07:23:58AM -0700, Paul E. McKenney a écrit :
+> On Thu, Jul 25, 2024 at 04:32:46PM +0200, Frederic Weisbecker wrote:
+> > Le Wed, Jul 24, 2024 at 04:43:13PM +0200, Valentin Schneider a écrit :
+> > > -/* Turn on heavyweight RCU tasks trace readers on idle/user entry. */
+> > > -static __always_inline void rcu_dynticks_task_trace_enter(void)
+> > > +/* Turn on heavyweight RCU tasks trace readers on kernel exit. */
+> > > +static __always_inline void rcu_task_trace_exit(void)
+> > 
+> > Before I proceed on this last one, a few questions for Paul and others:
+> > 
+> > 1) Why is rcu_dynticks_task_exit() not called while entering in NMI?
+> >    Does that mean that NMIs aren't RCU-Task read side critical sections?
+> 
+> Because Tasks RCU Rude handles that case currently.  So good catch,
+> because this might need adjustment when we get rid of Tasks RCU Rude.
+> And both rcu_dynticks_task_enter() and rcu_dynticks_task_exit() look safe
+> to invoke from NMI handlers.  Memory ordering needs checking, of course.
+> 
+> Except that on architectures defining CONFIG_ARCH_WANTS_NO_INSTR, Tasks
+> RCU should instead check the ct_kernel_enter_state(RCU_DYNTICKS_IDX)
+> state, right?  And on those architectures, I believe that
+> rcu_dynticks_task_enter() and rcu_dynticks_task_exit() can just be no-ops.
+> Or am I missing something here?
 
-Signed-off-by: Matthew Brost <matthew.brost@intel.com>
----
- drivers/gpu/drm/xe/xe_guc_submit.c | 60 +-----------------------------
- drivers/gpu/drm/xe/xe_guc_types.h  |  7 ----
- 2 files changed, 1 insertion(+), 66 deletions(-)
+I think rcu_dynticks_task_enter() and rcu_dynticks_task_exit() are
+still needed anyway because the target task can migrate. So unless the rq is locked,
+it's hard to match a stable task_cpu() with the corresponding RCU_DYNTICKS_IDX.
 
-diff --git a/drivers/gpu/drm/xe/xe_guc_submit.c b/drivers/gpu/drm/xe/xe_guc_submit.c
-index 460808507947..882cef3a10dc 100644
---- a/drivers/gpu/drm/xe/xe_guc_submit.c
-+++ b/drivers/gpu/drm/xe/xe_guc_submit.c
-@@ -224,64 +224,11 @@ static bool exec_queue_killed_or_banned_or_wedged(struct xe_exec_queue *q)
- 		 EXEC_QUEUE_STATE_BANNED));
- }
- 
--#ifdef CONFIG_PROVE_LOCKING
--static int alloc_submit_wq(struct xe_guc *guc)
--{
--	int i;
--
--	for (i = 0; i < NUM_SUBMIT_WQ; ++i) {
--		guc->submission_state.submit_wq_pool[i] =
--			alloc_ordered_workqueue("submit_wq", 0);
--		if (!guc->submission_state.submit_wq_pool[i])
--			goto err_free;
--	}
--
--	return 0;
--
--err_free:
--	while (i)
--		destroy_workqueue(guc->submission_state.submit_wq_pool[--i]);
--
--	return -ENOMEM;
--}
--
--static void free_submit_wq(struct xe_guc *guc)
--{
--	int i;
--
--	for (i = 0; i < NUM_SUBMIT_WQ; ++i)
--		destroy_workqueue(guc->submission_state.submit_wq_pool[i]);
--}
--
--static struct workqueue_struct *get_submit_wq(struct xe_guc *guc)
--{
--	int idx = guc->submission_state.submit_wq_idx++ % NUM_SUBMIT_WQ;
--
--	return guc->submission_state.submit_wq_pool[idx];
--}
--#else
--static int alloc_submit_wq(struct xe_guc *guc)
--{
--	return 0;
--}
--
--static void free_submit_wq(struct xe_guc *guc)
--{
--
--}
--
--static struct workqueue_struct *get_submit_wq(struct xe_guc *guc)
--{
--	return NULL;
--}
--#endif
--
- static void guc_submit_fini(struct drm_device *drm, void *arg)
- {
- 	struct xe_guc *guc = arg;
- 
- 	xa_destroy(&guc->submission_state.exec_queue_lookup);
--	free_submit_wq(guc);
- }
- 
- static void guc_submit_wedged_fini(struct drm_device *drm, void *arg)
-@@ -337,10 +284,6 @@ int xe_guc_submit_init(struct xe_guc *guc, unsigned int num_ids)
- 	if (err)
- 		return err;
- 
--	err = alloc_submit_wq(guc);
--	if (err)
--		return err;
--
- 	gt->exec_queue_ops = &guc_exec_queue_ops;
- 
- 	xa_init(&guc->submission_state.exec_queue_lookup);
-@@ -1445,8 +1388,7 @@ static int guc_exec_queue_init(struct xe_exec_queue *q)
- 	timeout = (q->vm && xe_vm_in_lr_mode(q->vm)) ? MAX_SCHEDULE_TIMEOUT :
- 		  msecs_to_jiffies(q->sched_props.job_timeout_ms);
- 	err = xe_sched_init(&ge->sched, &drm_sched_ops, &xe_sched_ops,
--			    get_submit_wq(guc),
--			    q->lrc[0]->ring.size / MAX_JOB_SIZE_BYTES, 64,
-+			    NULL, q->lrc[0]->ring.size / MAX_JOB_SIZE_BYTES, 64,
- 			    timeout, guc_to_gt(guc)->ordered_wq, NULL,
- 			    q->name, gt_to_xe(q->gt)->drm.dev);
- 	if (err)
-diff --git a/drivers/gpu/drm/xe/xe_guc_types.h b/drivers/gpu/drm/xe/xe_guc_types.h
-index 546ac6350a31..585f5c274f09 100644
---- a/drivers/gpu/drm/xe/xe_guc_types.h
-+++ b/drivers/gpu/drm/xe/xe_guc_types.h
-@@ -72,13 +72,6 @@ struct xe_guc {
- 		atomic_t stopped;
- 		/** @submission_state.lock: protects submission state */
- 		struct mutex lock;
--#ifdef CONFIG_PROVE_LOCKING
--#define NUM_SUBMIT_WQ	256
--		/** @submission_state.submit_wq_pool: submission ordered workqueues pool */
--		struct workqueue_struct *submit_wq_pool[NUM_SUBMIT_WQ];
--		/** @submission_state.submit_wq_idx: submission ordered workqueue index */
--		int submit_wq_idx;
--#endif
- 		/** @submission_state.enabled: submission is enabled */
- 		bool enabled;
- 	} submission_state;
--- 
-2.34.1
+> 
+> > 2) Looking further into CONFIG_TASKS_TRACE_RCU_READ_MB=y, it seems to
+> >    allow for uses of rcu_read_[un]lock_trace() while RCU is not watching
+> >    (EQS). Is it really a good idea to support that? Are we aware of any
+> >    such potential usecase?
+> 
+> I hope that in the longer term, there will be no reason to support this.
+> Right now, architectures not defining CONFIG_ARCH_WANTS_NO_INSTR must
+> support this because tracers really can attach probes where RCU is
+> not watching.
+> 
+> And even now, in architectures defining CONFIG_ARCH_WANTS_NO_INSTR, I
+> am not convinced that the early incoming and late outgoing CPU-hotplug
+> paths are handled correctly.  RCU is not watching them, but I am not so
+> sure that they are all marked noinstr as needed.
 
+Ok I see...
+
+Thanks.
 
