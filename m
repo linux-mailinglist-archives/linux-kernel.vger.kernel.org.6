@@ -1,174 +1,160 @@
-Return-Path: <linux-kernel+bounces-266689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A13294054F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 04:35:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE7B940554
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 04:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23C471F22009
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 02:35:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D07251C20FE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 02:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1238F335C7;
-	Tue, 30 Jul 2024 02:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DC32A1D5;
+	Tue, 30 Jul 2024 02:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E8hYCMp0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="blNb7v2e"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB881FAA
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 02:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7679F138E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 02:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722306895; cv=none; b=LAg8gRl+6CBmYWQVdUcTjF+mseAyAMkik7akaYO6SYQJA3oXKWhbBblp1J/Ff2OM7FSkiLadEuywh1Rg1lRI30XW0s6ZWKtwXmLpHStYW+nPR2355yaUGaVDqwNIcgw82oAJL2WwTo1ukencEA0j04Ed0ji7ypDlqLTftPMH75k=
+	t=1722307014; cv=none; b=k30XG+v/g1xjudc7dNj6Bz5lh3oezx9cbSKPpnSWbMz/CjvSGmAZfV7a7i/xSNd9cBcT0PM1cdzUPwzPxGOv1A7fCx4qdsFKDE0HXqGrjiyVD92TXrDxkdxVlBtz3Y0F4E8GmqfBxTkjLAvPXLHRAmRfJa3nD0FcfDlfyVNvZbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722306895; c=relaxed/simple;
-	bh=GUvmxPPm0jYNi4Z3hQdqbY1v+48X4IyOWwEYZTsZSHs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=me73I8rBoocDAC4A3KYdu46SJET2hzZG1yMCtS3WE9rsh/JHUdRbKyb/zj3hE+5IpjXj4Wh+udUrkCoHOcRzsCCxWslFdo3gy+27kR4NpkvKzWDBCAagosa1ej5Pb3+uMpyEWf/kUc/wNJJfeegNDETkvQhTCEgqg5AL8MURjgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E8hYCMp0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722306892;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rvpdUUy1gC16rKJQqCkEQx6oYFt3EumxDbymf0Hj7Xo=;
-	b=E8hYCMp01vd/kBduV8NipCWufMZdL8jZDvcJTmOPiFmHisupe6esgPys4QicMlnc8/E9q0
-	fa0NTZ2AbkUYkAuB6UPY0lqjeohCkHHoFweu2fqvkUYVUaRjXZCnn00lJ5sqbeKuYb96Xw
-	R22aMud02PX1IWOP0WNZX6b2XvA7ryw=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-267-659DcF95N4KkpuWSPfN_Kg-1; Mon,
- 29 Jul 2024 22:34:48 -0400
-X-MC-Unique: 659DcF95N4KkpuWSPfN_Kg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 68C3018B64A5;
-	Tue, 30 Jul 2024 02:34:40 +0000 (UTC)
-Received: from [10.2.16.36] (unknown [10.2.16.36])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5B4501955D59;
-	Tue, 30 Jul 2024 02:34:38 +0000 (UTC)
-Message-ID: <0ba00b7c-5292-4242-b648-4ca8d4a457c6@redhat.com>
-Date: Mon, 29 Jul 2024 22:34:37 -0400
+	s=arc-20240116; t=1722307014; c=relaxed/simple;
+	bh=g1yZH1V46FcktRKSAGE4Rt1Xtgl+3khSNZh029A5l2A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h6edcPUsLnvTW4On0Yg7ZlYLX2yfvPADBHUg1WtNU8tr91MLKUVncikPeDoy2gXIDi1W3NeFEhRIx6dyXk7b0+fzxzYvId1W91GDg4eH0DBRaZQtJaD8//AFAzdUzt8UgFTf84mE/sxhiYIP9exOVkLrEehXZy1v/613rEQAoRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=blNb7v2e; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e0365588ab8so2434964276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 19:36:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1722307011; x=1722911811; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O26GKDhtv591gra4JQQ34BTo4tc5eigPOf2lGXgMa24=;
+        b=blNb7v2e0S3Kg5PVM3CuOU7Gvbw6tM9oa7UsUY4y7EXrGRBOR8fAXgJeCOcOn/9Voa
+         w9r5bXs3tc4QG69I+/AnOp1n7GEEyf0d/eh5fyc7OMPwMckIc2TTTRR9t6erQDRqrIpJ
+         MtauUT4FxV0f982P6WMDQ/SCWNZqKltMQ6Sx7j4/9ni+T4XAPxd4VkTmiBKUi/Tb6sLe
+         NmBhYSvOsP28NAH8FeADJT5V2Z8c+5ZbKycs97VZVNEILLpXOUcvrWL6X1lqUZ+LvIX3
+         UCUTwz9TpKoQNNso4x6YVRHASRX4epIbfCCavR7iOwgzQQuZ+ceOG0CU7YWGeM0y0skv
+         Hm0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722307011; x=1722911811;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O26GKDhtv591gra4JQQ34BTo4tc5eigPOf2lGXgMa24=;
+        b=Tv34/B7yaMzT/pazdFD2CI8qJeJuL588/tQoqZeGgf9LRQByfzKdGap/4VOnmXO3Qa
+         7lLz8kz2JWZyhXNzKnnA9xbia92y1mpVZWuy6KRZx56kWV3WDXiMKq2guSCXZwLwyMFg
+         LHxordPKfewmREO3UWkSZ0rzXMO/2Dwz80XCjg7I+IYR5OiIycE2rRgDf30wb4ClS4Nr
+         7AWQGlo2O5RDK3aewRCTWszFJaiRCsVlZ1I7KNXso6zhRxuZapiPv7mhbzlshuh02Ho0
+         9kbObyMiVwT7XAnTjChDjyFdb0iKF/EDJHdDGkBERXX6uH176b4MYV2PSbABDOftu0d/
+         UayQ==
+X-Gm-Message-State: AOJu0YxgHmMmqGHIJ3OCLJQuv+To35CfqBsDCS0ACs7fmuzUyG3JBFqL
+	U6zVIfAMCwj/mpNIe7PTjWI7lXOP2e1TUEjsnZyUG/AaiSwmMNh76PhfCMFieXJEKNlQ9Jo5KsK
+	/gr+PegK5xwFGWCJZGkIoSIjB1/SlWleqy/4lR9gthPTc1uY=
+X-Google-Smtp-Source: AGHT+IEgs6DHlLgJ+nYRlIUc5X5fI8YJ+RjXhIJ4st65C4LVEnzb/AdD74OgH7JD/QTDsJRmyfPztttMx092rHJM9zI=
+X-Received: by 2002:a05:6902:1509:b0:e08:631a:742c with SMTP id
+ 3f1490d57ef6-e0b544ef022mr9626002276.16.1722307011343; Mon, 29 Jul 2024
+ 19:36:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cgroup/cpuset: fix panic caused by partcmd_update
-To: Chen Ridong <chenridong@huawei.com>, tj@kernel.org,
- lizefan.x@bytedance.com, hannes@cmpxchg.org, adityakali@google.com,
- sergeh@kernel.org
-Cc: bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240730015316.2324188-1-chenridong@huawei.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240730015316.2324188-1-chenridong@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <ae7e78f8-e2ed-4406-b9ee-87ff255bae63.bugreport@valiantsec.com>
+In-Reply-To: <ae7e78f8-e2ed-4406-b9ee-87ff255bae63.bugreport@valiantsec.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 29 Jul 2024 22:36:40 -0400
+Message-ID: <CAHC9VhQ763vGOhBbyQtCZJ4Sj=dhdKBCzosk29kjg=xGQo=BNg@mail.gmail.com>
+Subject: Re: WARNING in hashtab_init
+To: Ubisectech Sirius <bugreport@valiantsec.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, jmorris <jmorris@namei.org>, 
+	serge <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/29/24 21:53, Chen Ridong wrote:
-> We find a bug as below:
-> BUG: unable to handle page fault for address: 00000003
-> PGD 0 P4D 0
-> Oops: 0000 [#1] PREEMPT SMP NOPTI
-> CPU: 3 PID: 358 Comm: bash Tainted: G        W I        6.6.0-10893-g60d6
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/4
-> RIP: 0010:partition_sched_domains_locked+0x483/0x600
-> Code: 01 48 85 d2 74 0d 48 83 05 29 3f f8 03 01 f3 48 0f bc c2 89 c0 48 9
-> RSP: 0018:ffffc90000fdbc58 EFLAGS: 00000202
-> RAX: 0000000100000003 RBX: ffff888100b3dfa0 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000002fe80
-> RBP: ffff888100b3dfb0 R08: 0000000000000001 R09: 0000000000000000
-> R10: ffffc90000fdbcb0 R11: 0000000000000004 R12: 0000000000000002
-> R13: ffff888100a92b48 R14: 0000000000000000 R15: 0000000000000000
-> FS:  00007f44a5425740(0000) GS:ffff888237d80000(0000) knlGS:0000000000000
+On Sun, Jul 28, 2024 at 10:49=E2=80=AFPM Ubisectech Sirius
+<bugreport@valiantsec.com> wrote:
+>
+> Hello.
+> We are Ubisectech Sirius Team, the vulnerability lab of China ValiantSec.=
+ Recently, our team has discovered a issue in Linux kernel 6.8. Attached to=
+ the email were a PoC file of the issue.
+>
+> Stack dump:
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 10493 at mm/page_alloc.c:4545 __alloc_pages+0x402/0x=
+21b0 mm/page_alloc.c:4545
+> Modules linked in:
+> CPU: 0 PID: 10493 Comm: syz.3.141 Not tainted 6.8.0 #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/0=
+1/2014
+> RIP: 0010:__alloc_pages+0x402/0x21b0 mm/page_alloc.c:4545
+> Code: ff 00 0f 84 15 fe ff ff 80 ce 01 e9 0d fe ff ff 83 fe 0a 0f 86 0e f=
+d ff ff 80 3d c7 cf 6a 0d 00 75 0b c6 05 be cf 6a 0d 01 90 <0f> 0b 90 45 31=
+ e4 e9 87 fe ff ff e8 5e 3e 9b ff 84 c0 0f 85 7a fe
+> RSP: 0018:ffffc90001b37428 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 1ffff92000366e98
+> RDX: 0000000000000000 RSI: 0000000000000016 RDI: 0000000000040dc0
+> RBP: ffffc90001b376d8 R08: 0000000000000005 R09: 0000000000000000
+> R10: 0000000080000000 R11: 656c6c616b7a7973 R12: 0000000400000000
+> R13: 0000000000000016 R14: 0000000000040dc0 R15: 0000000000000016
+> FS:  00007f10c4184640(0000) GS:ffff88802c600000(0000) knlGS:0000000000000=
+000
 > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000100030973 CR3: 000000010722c000 CR4: 00000000000006e0
+> CR2: 00007f10c4163658 CR3: 000000001bb8e000 CR4: 0000000000750ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> PKRU: 55555554
 > Call Trace:
->   <TASK>
->   ? show_regs+0x8c/0xa0
->   ? __die_body+0x23/0xa0
->   ? __die+0x3a/0x50
->   ? page_fault_oops+0x1d2/0x5c0
->   ? partition_sched_domains_locked+0x483/0x600
->   ? search_module_extables+0x2a/0xb0
->   ? search_exception_tables+0x67/0x90
->   ? kernelmode_fixup_or_oops+0x144/0x1b0
->   ? __bad_area_nosemaphore+0x211/0x360
->   ? up_read+0x3b/0x50
->   ? bad_area_nosemaphore+0x1a/0x30
->   ? exc_page_fault+0x890/0xd90
->   ? __lock_acquire.constprop.0+0x24f/0x8d0
->   ? __lock_acquire.constprop.0+0x24f/0x8d0
->   ? asm_exc_page_fault+0x26/0x30
->   ? partition_sched_domains_locked+0x483/0x600
->   ? partition_sched_domains_locked+0xf0/0x600
->   rebuild_sched_domains_locked+0x806/0xdc0
->   update_partition_sd_lb+0x118/0x130
->   cpuset_write_resmask+0xffc/0x1420
->   cgroup_file_write+0xb2/0x290
->   kernfs_fop_write_iter+0x194/0x290
->   new_sync_write+0xeb/0x160
->   vfs_write+0x16f/0x1d0
->   ksys_write+0x81/0x180
->   __x64_sys_write+0x21/0x30
->   x64_sys_call+0x2f25/0x4630
->   do_syscall_64+0x44/0xb0
->   entry_SYSCALL_64_after_hwframe+0x78/0xe2
-> RIP: 0033:0x7f44a553c887
+>  <TASK>
+>  __alloc_pages_node include/linux/gfp.h:238 [inline]
+>  alloc_pages_node include/linux/gfp.h:261 [inline]
+>  __kmalloc_large_node+0x88/0x1a0 mm/slub.c:3926
+>  __do_kmalloc_node mm/slub.c:3969 [inline]
+>  __kmalloc+0x370/0x480 mm/slub.c:3994
+>  kmalloc_array include/linux/slab.h:627 [inline]
+>  kcalloc include/linux/slab.h:658 [inline]
+>  hashtab_init+0x10a/0x270 security/selinux/ss/hashtab.c:42
+>  class_read+0x1e4/0xa10 security/selinux/ss/policydb.c:1331
+>  policydb_read+0x9b6/0x3850 security/selinux/ss/policydb.c:2565
+>  security_load_policy+0x15d/0x12b0 security/selinux/ss/services.c:2269
+>  sel_write_load+0x313/0x1b60 security/selinux/selinuxfs.c:600
+>  vfs_write+0x2b2/0x1090 fs/read_write.c:588
+>  ksys_write+0x122/0x250 fs/read_write.c:643
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xd5/0x270 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x6f/0x77
+> RIP: 0033:0x7f10c33958cd
+> Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f=
+7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f10c4183fa8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 00007f10c3534038 RCX: 00007f10c33958cd
+> RDX: 0000000000002000 RSI: 0000000020000000 RDI: 0000000000000005
+> RBP: 00007f10c341bb06 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 000000000000000b R14: 00007f10c3534038 R15: 00007f10c4164000
+>  </TASK>
 >
-> It can be reproduced with cammands:
-> cd /sys/fs/cgroup/
-> mkdir test
-> cd test/
-> echo +cpuset > ../cgroup.subtree_control
-> echo root > cpuset.cpus.partition
-> echo 0-3 > cpuset.cpus // 3 is nproc
-What do you mean by "3 is nproc"? Are there only 3 CPUs in the system? 
-What are the value of /sys/fs/cgroup/cpuset.cpu*?
->
-> This issue is caused by the incorrect rebuilding of scheduling domains.
-> In this scenario, test/cpuset.cpus.partition should be an invalid root
-> and should not trigger the rebuilding of scheduling domains. When calling
-> update_parent_effective_cpumask with partcmd_update, if newmask is not
-> null, it should recheck newmask whether there are cpus is available
-> for parect/cs that has tasks.
->
-> Fixes: 0c7f293efc87 ("cgroup/cpuset: Add cpuset.cpus.exclusive.effective for v2")
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> ---
->   kernel/cgroup/cpuset.c | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 40ec4abaf440..a9b6d56eeffa 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -1991,6 +1991,8 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->   			part_error = PERR_CPUSEMPTY;
->   			goto write_error;
->   		}
-> +		/* Check newmask again, whether cpus are available for parent/cs */
-> +		nocpu |= tasks_nocpu_error(parent, cs, newmask);
->   
->   		/*
->   		 * partcmd_update with newmask:
+> Thank you for taking the time to read this email and we look forward to w=
+orking with you further.
 
-The code change looks reasonable to me. However, I would like to know 
-more about the reproduction steps.
+It looks like you've enabled panic_on_warn and the warning/panic above
+is generated by __alloc_pages in response to loading a large and/or
+bogus SELinux policy.  With panic_on_warn disabled, the policy load
+should fail gracefully and the system should continue to run.  Have
+you done any testing with panic_on_warn disabled and noticed any
+unexpected behavior?
 
-Cheers,
-Longman
-
+--=20
+paul-moore.com
 
