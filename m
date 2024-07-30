@@ -1,157 +1,99 @@
-Return-Path: <linux-kernel+bounces-266833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1569940849
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:21:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02D59940854
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:24:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 249D51F23EC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:21:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34D141C22B37
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20E518E772;
-	Tue, 30 Jul 2024 06:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB40618EFF5;
+	Tue, 30 Jul 2024 06:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u94Qza5X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVNXooDT"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B563168489;
-	Tue, 30 Jul 2024 06:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71AF718EFD5;
+	Tue, 30 Jul 2024 06:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722320493; cv=none; b=AhkjJ5jbQZYO6faSnjvMVbJNWHTfMnliyzlCvsTNvVCPj67o3e76DsjHg2Aze61j/bRqZETwiUaGCE8jw0cJl8vTwssdODCKdqHNuDnK0EzBGgWySm1HDt+WMinXQdMUknU/nDD+g+QpgSl/vJN0AFLvcqB51LXLyy3tpJNZXOI=
+	t=1722320613; cv=none; b=NCTbypisq9SnlBEaECPgO3KdsFd5fGtZWOaPaR+0wAPgB5mmSjWK0x1CD53i2ZltkQ7D3qXmq1JKk7qjRljBlWXGHQlSr31Oow7xEXqn6Q9VmyVR1fvr22iHvkOEpypVEMhsuBsMrQnCLMWM1rrut6PKQSCqtXceJvuG+PNGja4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722320493; c=relaxed/simple;
-	bh=I8YEZoPXuK/rV+92d5hmzQkGsOnReI5ypdriFlV7UWU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=sw6drzgUDGB+J6ywWRycipK3zsAyV/6xrLCvwzTVhTs/K4gtjBTZmVo24hUN4frwq7jAXE9Zvpfu/qwz1oB3K3ODj6D3u+sdqHnVZGYkQnyR53VYf6APwU76auaWrl6WC4W1aPXzM8T4FtWTeBJrH8qKH0ATn68jedx4K8VTjPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u94Qza5X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F1D1C4AF09;
-	Tue, 30 Jul 2024 06:21:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722320492;
-	bh=I8YEZoPXuK/rV+92d5hmzQkGsOnReI5ypdriFlV7UWU=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=u94Qza5XRkMfpv8tn8GGGjPEl2SqqlnWaTJfCSJCwKRIH/SdKhSyWmpKV7bycx93t
-	 urgnzWdjgB84w6ityIkZO9zVW2Qb4F89/cKs5DPQh3FEt5rkhPO9B/jvJXb3vxTICA
-	 8js3zd6+wbXsBqm2GfC22Tvr0st3CJGHOcSfRa/Q7pwxqpFWfshuEIrnsgrtgPrnOg
-	 2nlyeT1MbSEH3jRSAIarKYew6pgJPjP8aXRZ7qBO7I6TLzPuxgBXjFNnXsixI2J4fQ
-	 d9+MDc4uTL6qzgbqXypOiETjb/J8JKatvHTjzkelbYJYbqODrRAtI1SFxAlvhPV5qa
-	 f0wXeXxTjd68A==
-Message-ID: <ad2e41f6-05e9-4ded-9e2a-d263e0bfeacc@kernel.org>
-Date: Tue, 30 Jul 2024 08:21:25 +0200
+	s=arc-20240116; t=1722320613; c=relaxed/simple;
+	bh=a8HKe7nWVj9A27Cm8KAmgztKTLuY1QbVvtkpFwJndHs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Onu+W8mb3offVT1eYUrwjNhvJy9dwUmWs267LH2WAcR2z1/3rQDwJv3jWcJuABgRLgLpyv8xAgg03eMayptZL1p2FPuc+aa5ZLVktta7ghtj80rls3UIfTR+aZ8F62NHxkaoXPxmEISMsOVJ28OVp4FqzCXMxuV2u8CPLXlKWF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVNXooDT; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5af6a1afa7bso3972041a12.1;
+        Mon, 29 Jul 2024 23:23:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722320610; x=1722925410; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=loIoRNYN1TT3oW5Nl89xFLXMprE3gwNGScDaaN9K4PE=;
+        b=DVNXooDTXyGGaWIlUn6OevqQzQF9L8vlG/QIu5yCMB+yBSi3hhCK2XF6kaCq4TZcMb
+         KsfYDcbFsJYEdOinHjs5JCYKIamxV0AeYyA43TNV/j9WjrlU/Jm/gIJ6iwK86lByWsre
+         zKFZ5cqSCWWT5AOHwcxq9Sgm7p5quLWgIoD/GbajlpkyxbZgJTEcYxqtFhb0EhdhmMlr
+         gHfzoyYNl8mb/sJnFKgV+s1doHVkah/cC9BTDEOkYkr/gz5+UxqgaCJBF4Xz7U6lxSIf
+         LYAgMQ4X+O2mOnOoPEQa4Z5f7WXPNpLf+0VWbaEJpG4bEhDVgzwDYAxuGxSzbCkhPige
+         Z+nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722320610; x=1722925410;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=loIoRNYN1TT3oW5Nl89xFLXMprE3gwNGScDaaN9K4PE=;
+        b=FJr0t726Xv2an/q6rlvBbSBESHoUSjjtFuyqHobh5NLACggwEDi01AUO/429fDSKRx
+         0AhV7Qh40vTt10ylKKIzIsEHGjw00aqv9zQQp22czlvG6gbdLh0k1JwSrD+DYBxWbWj7
+         qg1cS2zeFC+0KzEJa1Plcol22GbcKNbe9b7TVOkdHC8LFVpTO5Iht3zQajlIbhE8vuzO
+         1FXPWS1lR/PyAtYY9uS8ocp5xFxMmba+DPDajDRiGZwIQxRjaJ7YDpb57/SLwm+7xsMd
+         5n36/p4482yBVpinT+l0kOFKpNrfqIxgNIKpevX2t3NDJBnl9JGtixmkiCj4b7B4x+6j
+         NHGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNtetvkISbIMSdhhJ06zybV2Y+eXEAxJo4b1AHBJX6dWQKdrMXQJlYiSIxdLVKsDSahPygiGij1G8IDguDbK+Yz+gp1iDi8kVHaBKfc3h4sxglZhcShdR6GjORPqVnryfycYA4vBYQ0XA=
+X-Gm-Message-State: AOJu0Yzx+QMT1wfCPSwmCcJjQGrkTKf4bvaadAKh5y92m1HWKKZfsUcJ
+	8iCDCD2HG0VMA6Gw7InLRZQACgRz//ObVsN1qL4paIAIP98VZlZEhsNXSlT9
+X-Google-Smtp-Source: AGHT+IFx11+/zuOr2XYaUGYazy72AY+RJlOkV4NWohq2UPA9SUmnZCIlDOesuKYZVlzQrU/9m+En4w==
+X-Received: by 2002:a50:d4d6:0:b0:5a1:a447:9fab with SMTP id 4fb4d7f45d1cf-5b021d21e91mr4747849a12.28.1722320609365;
+        Mon, 29 Jul 2024 23:23:29 -0700 (PDT)
+Received: from caracal.museclub.art (p200300cf9f1ec5003008007610402bf2.dip0.t-ipconnect.de. [2003:cf:9f1e:c500:3008:76:1040:2bf2])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63590d76sm6826134a12.24.2024.07.29.23.23.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 23:23:28 -0700 (PDT)
+From: Eugene Shalygin <eugene.shalygin@gmail.com>
+To: eugene.shalygin@gmail.com
+Cc: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/1] (asus-ec-sensors): remove VRM temp X570-E GAMING
+Date: Tue, 30 Jul 2024 08:21:41 +0200
+Message-ID: <20240730062320.5188-1-eugene.shalygin@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: qcom,spmi-temp-alarm: Add compatible for
- GEN2 rev2 temp alarm
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Anjelique Melendez <quic_amelende@quicinc.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, amitk@kernel.org,
- thara.gopinath@gmail.com, andersson@kernel.org
-Cc: quic_collinsd@quicinc.com, rafael@kernel.org, daniel.lezcano@linaro.org,
- rui.zhang@intel.com, lukasz.luba@arm.com, linux-arm-msm@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240729231259.2122976-1-quic_amelende@quicinc.com>
- <20240729231259.2122976-2-quic_amelende@quicinc.com>
- <e4f17f44-522e-47bd-aafb-f93595298e7b@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <e4f17f44-522e-47bd-aafb-f93595298e7b@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 30/07/2024 08:19, Krzysztof Kozlowski wrote:
-> On 30/07/2024 01:12, Anjelique Melendez wrote:
->> Add compatible "qcom,spmi-temp-alarm-gen2-rev2" for SPMI temp alarm GEN2
->> revision 2 peripherals. GEN2 rev2 peripherals have individual temp DAC
->> registers to set temperature thresholds for over-temperature stages 1-3.
->> Registers are configured based on thermal zone trip definition.
->>
->> Signed-off-by: Anjelique Melendez <quic_amelende@quicinc.com>
->> ---
->>  .../devicetree/bindings/thermal/qcom,spmi-temp-alarm.yaml   | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/thermal/qcom,spmi-temp-alarm.yaml b/Documentation/devicetree/bindings/thermal/qcom,spmi-temp-alarm.yaml
->> index 30b22151aa82..f9af88d51c2d 100644
->> --- a/Documentation/devicetree/bindings/thermal/qcom,spmi-temp-alarm.yaml
->> +++ b/Documentation/devicetree/bindings/thermal/qcom,spmi-temp-alarm.yaml
->> @@ -12,14 +12,16 @@ maintainers:
->>  description:
->>    QPNP temperature alarm peripherals are found inside of Qualcomm PMIC chips
->>    that utilize the Qualcomm SPMI implementation. These peripherals provide an
->> -  interrupt signal and status register to identify high PMIC die temperature.
->> +  interrupt signal and status registers to identify high PMIC die temperature.
->>  
->>  allOf:
->>    - $ref: thermal-sensor.yaml#
->>  
->>  properties:
->>    compatible:
->> -    const: qcom,spmi-temp-alarm
->> +    enum:
->> +      - qcom,spmi-temp-alarm
->> +      - qcom,spmi-temp-alarm-gen2-rev2
-> 
-> Nah, no. I have no clue what is gen2 rev2 and no one would be able to
-> decipher it, even with usermanual. Do not invent some random versions.
-> If you want to use them, document them and make them available for public.
-> 
-> Use SoC compatibles. ONLY.
+There is no VRM temperature sensor in these motherboards.
 
-SoC->PMIC, obviously.
+v3: Change commit message, provide author's real name.
+v2: Fix typo in the commit message.
 
-Best regards,
-Krzysztof
+Ross Brown (1):
+  hwmon: (asus-ec-sensors) remove VRM temp X570-E GAMING
+
+ drivers/hwmon/asus-ec-sensors.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+2.45.2
 
 
