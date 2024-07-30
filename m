@@ -1,130 +1,149 @@
-Return-Path: <linux-kernel+bounces-267226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51629940EA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:07:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B7E3940EA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 820B01C2102E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:07:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 779D01C225EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AEEA197543;
-	Tue, 30 Jul 2024 10:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E7319885E;
+	Tue, 30 Jul 2024 10:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PLGWJ1Bz"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="PQpTmfjT"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C6418A92A;
-	Tue, 30 Jul 2024 10:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB42E1953BB
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722334061; cv=none; b=C5H/WIYvgHAMcx5RKc+6tBvOiCx2LjFfyRoyPfzg7XkpYPiX+RQHhaQ5cuMAIG8fZWNbtyn62NbWHXNwUk0xpgc/dwAgEU5WFr/6PDicTpBzad+NXZ0VNDcwYX0ZbL5itWe+9mO2VVJm+O1bpLoIdQfgdq35YskdGQMTYsG8zZw=
+	t=1722334114; cv=none; b=jZR2PuGL1K2iQ5w+yBRyyLwSSW3IrL8UTSIfRxMvJ57NjN47nT1JnzjeoBHS/D6DKpDQ4v+NoidBAmGkiej3exLkghFCDq7BlHVAIgxQat4+wSVdzKqPZFFimXJ5dRyD10C/6eBKJiPqtR9Z/pD/hpAjdHqlHsnUBn3Y65D1pk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722334061; c=relaxed/simple;
-	bh=SCRkjIBOxnLP+yJONqEtuUXJnYA4kS6A9y2fIvraAYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EvohF9IeKhx6i/OATGa9lAhmz5XLXJ59BlFv5UeOg/523kqZU/KYHEzRWuW9auwZ2ggquTAEqqV7/Ib5hungRXJA7StFSqeOUbsyfN3LTk4Hzbfwxg8lOm8X9fEt6BMia4dG/fy4rPD4XMVXWzGiVlhMW1fFh4u6P+yH34+g2WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PLGWJ1Bz; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722334057;
-	bh=QX2NbI1lfe6V2g/dcRwCQX5rEjKYwVZk2jTCLv+38Rw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PLGWJ1Bz/VFkxHZPSihUvbw1A7NwQXqNjjvE+8oYYkXt7ngr0CyRDuUKZeC6GyZ6s
-	 olmvNf5xbQMLajGXGCrsHRQMUYQ/4P37IEz8r9TqTqthOI77lc/V/FCD4fpXoYGcLu
-	 l5ovvOaZQ1JfJCHhmX7X9kj0DtEbU9IuPG5y9j3APJAHbEo7TlO9mBWSqyvb4QZJMv
-	 HE1C8I8BF4WPgaqpJ46+KmQlC+s2yicWz6lZqckliI1ktNEPsgUJdb6dTvPTr5BCt0
-	 8rIz5Zwu6/SKxYZHJT6PUucMG2baJ3fHyE7fD9Nl6TT2VBdndziUphA4JVOW8rUbbQ
-	 ogxGuJiZz5wig==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WY9rn4tzZz4wc1;
-	Tue, 30 Jul 2024 20:07:37 +1000 (AEST)
-Date: Tue, 30 Jul 2024 20:07:37 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the device-mapper tree
-Message-ID: <20240730200737.67bb4d4f@canb.auug.org.au>
-In-Reply-To: <622b892-d792-382c-46f8-fe5cfdba4df1@redhat.com>
-References: <20240709185733.4aac356a@canb.auug.org.au>
-	<49ab648e-3c89-d4d-f2f7-3c1e2aa2cab@redhat.com>
-	<20240710082824.30c8161d@canb.auug.org.au>
-	<622b892-d792-382c-46f8-fe5cfdba4df1@redhat.com>
+	s=arc-20240116; t=1722334114; c=relaxed/simple;
+	bh=RnWCz84PVjtWkbkwbunfz/EotkXeNNxFhFHG+6twB7Q=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=dYnmf3uPZQTqvEea1VQ0hB7qqOa4ViQZKMBSxqMorc0s9WfsnHP8nuXDMHPKgYg/om6Kpv4QwZUQko1t9Ls1Gh/b1i8UT5AnQ++LyV+mx/Y0qMV2Sqiz4kGtPqqpJUI01lwjrUs+rmnRgUGeNpcMciYgY+lQcSpkqlVzXEfeABg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=PQpTmfjT; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70d18112b60so3076058b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 03:08:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1722334111; x=1722938911; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=it0G31C3nK4iT57/TuCykaOG5f+2KUhsEgQE63zlvQ8=;
+        b=PQpTmfjTzCmEF7EbHiq6uxU1mWdmHpROX1MM9QkmV5hT1WbnF/ybwwjG6qVCNW/GeH
+         141Y/xA/WgrZf8eZV1yUWYqoJNkjyMuyCwpoN//+/qkCoCDsHlD3FlS87kncBuF35dqf
+         ymw3/+ySbj9OVC2VnuXq1nPF0R2OmdcXwP+ls=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722334111; x=1722938911;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=it0G31C3nK4iT57/TuCykaOG5f+2KUhsEgQE63zlvQ8=;
+        b=E7H8ZyJoDHsWUVQNVii1bDUVwjPWDJxBg1+Enxv4FAjTCO95wZ7FS8pyTFsyfr7HQB
+         YiyHZHXpd0zMBwfgljQ4cO62djPVcSY1+ktbIkYZRcGIKesRm3Czc4Vd/Yzze+rDziEC
+         /nrc43toCkj2z9VWZJ6dCaQGfOQKUKkEUeM0ZNNgZFZGZ1OFkPyUiOIYRVc3J+/4pS2K
+         JZU02QFixhBBFARopOJ2KPFAHnRcBkP7b8uc54CvgOq/VFaI5jflJRmvgwaOvsBKxo+H
+         VjsSRNySZO+A135xYvgjUARd0BD9c1ilhfZAqNxb8QAvY3ZVqGx3CShzeBVr2qatBA4I
+         TNzA==
+X-Forwarded-Encrypted: i=1; AJvYcCX95XUAvcBsoIDjW5MIafZ0fDQEnzvz4rdlnKCaMI9nSN99tMVMAkrPkk02t8SRXdkcqSugZizGfgRXbCjpd2/f4w8t0azLymPqMe96
+X-Gm-Message-State: AOJu0YzjBfE1yFHMItOQoL7XESvwGIJZka27+EMDY+T8CNt14H5ShoZR
+	erly9AvbCd22Eo9LZTR9u0/4u74ii1+mZq3v9xga6N9qa1fAbqzN15w1wJi8Gg==
+X-Google-Smtp-Source: AGHT+IGshW2OzxRzfxWGvcbO0sAFmjyAkWIraUtC7GDL6IIXZLZQRc2Ic/SOA1XlSk6flzreTwMvTw==
+X-Received: by 2002:a05:6a00:3e22:b0:70b:5368:a212 with SMTP id d2e1a72fcca58-70efe49ddcbmr2198191b3a.15.1722334110893;
+        Tue, 30 Jul 2024 03:08:30 -0700 (PDT)
+Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead6e33e2sm8106343b3a.28.2024.07.30.03.08.21
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2024 03:08:30 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Jacobe Zang <jacobe.zang@wesion.com>, Krzysztof Kozlowski <krzk@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>, <heiko@sntech.de>, <kvalo@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>, <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+CC: <efectn@protonmail.com>, <dsimic@manjaro.org>, <jagan@edgeble.ai>, <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>, <arend@broadcom.com>, <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>, <megi@xff.cz>, <duoming@zju.edu.cn>, <bhelgaas@google.com>, <minipli@grsecurity.net>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, Nick Xie <nick@khadas.com>
+Date: Tue, 30 Jul 2024 12:08:19 +0200
+Message-ID: <191031cb638.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <TYZPR03MB7001AA581B8B63AC19A7977C80B02@TYZPR03MB7001.apcprd03.prod.outlook.com>
+References: <20240730033053.4092132-1-jacobe.zang@wesion.com>
+ <20240730033053.4092132-3-jacobe.zang@wesion.com>
+ <191025b5268.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <f45c1fa7-f321-4a1f-b65c-6ed326a18268@kernel.org>
+ <191030eac78.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <TYZPR03MB7001AA581B8B63AC19A7977C80B02@TYZPR03MB7001.apcprd03.prod.outlook.com>
+User-Agent: AquaMail/1.51.5 (build: 105105504)
+Subject: Re: [PATCH v5 2/5] dt-bindings: net: wireless: brcm4329-fmac: add clock description for AP6275P
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/0tWX9EdL_Nt15MA_Iga7rKY";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
---Sig_/0tWX9EdL_Nt15MA_Iga7rKY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On July 30, 2024 12:00:25 PM Jacobe Zang <jacobe.zang@wesion.com> wrote:
 
-Hi all,
-
-On Wed, 10 Jul 2024 17:48:39 +0200 (CEST) Mikulas Patocka <mpatocka@redhat.=
-com> wrote:
+>>> On 30/07/2024 08:37, Arend Van Spriel wrote:
+>>>> + Linus W
+>>>>
+>>>> On July 30, 2024 5:31:15 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
+>>>>
+>>>>> Not only AP6275P Wi-Fi device but also all Broadcom wireless devices allow
+>>>>> external low power clock input. In DTS the clock as an optional choice in
+>>>>> the absence of an internal clock.
+>>>>>
+>>>>> Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+>>>>> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+>>>>> ---
+>>>>> .../bindings/net/wireless/brcm,bcm4329-fmac.yaml          | 8 ++++++++
+>>>>> 1 file changed, 8 insertions(+)
+>>>>>
+>>>>> diff --git
+>>>>> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+>>>>> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+>>>>> index 2c2093c77ec9a..a3607d55ef367 100644
+>>>>> --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+>>>>> @@ -122,6 +122,14 @@ properties:
+>>>>> NVRAM. This would normally be filled in by the bootloader from platform
+>>>>> configuration data.
+>>>>>
+>>>>> +  clocks:
+>>>>> +    items:
+>>>>> +      - description: External Low Power Clock input (32.768KHz)
+>>>>> +
+>>>>> +  clock-names:
+>>>>> +    items:
+>>>>> +      - const: lpo
+>>>>> +
+>>>>
+>>>> We still have an issue that this clock input is also present in the
+>>>> bindings specification broadcom-bluetooth.yaml (not in bluetooth
+>>>> subfolder). This clock is actually a chip resource. What happens if both
+>>>> are defined and both wifi and bt drivers try to enable this clock? Can this
+>>>> be expressed in yaml or can we only put a textual warning in the property
+>>>> descriptions?
+>>>
+>>> Just like all clocks, what would happen? It will be enabled.
+>>
+>> Oh, wow! Cool stuff. But seriously is it not a problem to have two entities
+>> controlling one and the same clock? Is this use-case taken into account by
+>> the clock framework?
 >
-> On Wed, 10 Jul 2024, Stephen Rothwell wrote:
->=20
-> > On Tue, 9 Jul 2024 11:56:27 +0200 (CEST) Mikulas Patocka <mpatocka@redh=
-at.com> wrote: =20
-> > >
-> > > On Tue, 9 Jul 2024, Stephen Rothwell wrote:
-> > >  =20
-> > > > After merging the device-mapper tree, today's linux-next build (htm=
-ldocs)
-> > > > produced this warning:
-> > > >=20
-> > > > Documentation/admin-guide/device-mapper/dm-crypt.rst:168: ERROR: Un=
-expected indentation.
-> > > >=20
-> > > > Introduced by commit
-> > > >=20
-> > > >   04a1020ad350 ("dm-crypt: limit the size of encryption requests") =
-=20
-> > >=20
-> > > How should it be fixed? Delete the '-' character? Or some other chang=
-e? =20
-> >=20
-> > Looking a few lines above shows indented paragraphs without the '-'
-> > which seems to work. =20
->=20
-> I hopefully fixed that.
+> I have enabled the same clock both in bluetooth and wifi just now, they worked
+> well. Maybe this make sense?
 
-I am sill seeing this warning.
+What happens if you unload one of the drivers? Also would like to know if 
+you are using an nvram file. If so can you share it's content.
 
---=20
-Cheers,
-Stephen Rothwell
+Regards,
+Arend
 
---Sig_/0tWX9EdL_Nt15MA_Iga7rKY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaou2kACgkQAVBC80lX
-0GyY+Qf5AQGTiFOmxB4oNTZVWDbjQVBVSvVe6pOIYynoV6cFnkD6OaaBMJrdLAZh
-btSJTfvMMbfuhNY8B1y2ewnnQtOKLhnaZW3GFxZZjeg5lQxlZ4FuI6V5JYHwVUnd
-Q3GB55dTv9JzMgMgmNDHEOVbm8mDA59nI9+CXCyyCuKwFlo3bACFQ+adXuL9Yo+B
-RBs+lPBgDc1IS957NBjXhxAKo5ODRIkthMNFBxed7TZEDD7MQ8pp/v0GXfbiMePr
-eT3w+ZTh/p7afsMfn4RkfvqRag07brtXoXH2i7/nUlWXFxNEHB99j7NfxTInuAq/
-yH6vibp4wUHXt68wyWf8b17pDxKu+g==
-=V0FE
------END PGP SIGNATURE-----
-
---Sig_/0tWX9EdL_Nt15MA_Iga7rKY--
 
