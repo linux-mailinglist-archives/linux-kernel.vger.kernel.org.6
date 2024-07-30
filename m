@@ -1,107 +1,107 @@
-Return-Path: <linux-kernel+bounces-266890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031BA940913
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:09:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E4D940916
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A094A1F2167C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:09:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DBBD1F238D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0F218EFD5;
-	Tue, 30 Jul 2024 07:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F57318EFD5;
+	Tue, 30 Jul 2024 07:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Q+oyKM7U"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tchadelicard.fr header.i=@tchadelicard.fr header.b="AeAC7koe"
+Received: from qs51p00im-qukt01072701.me.com (qs51p00im-qukt01072701.me.com [17.57.155.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6083C54774
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DD654774
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.155.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722323352; cv=none; b=iJ3jxpr1Qm14F09wjAxHD2ez0rjxPXEAMIVtLYTytz1XMacQhXmEOHP5sHfVfatg66d4v2XPpIrZQ7w9dZZEbFRZoeFyqWK54CLqGl30XT0C/TNwyivdQ/Crjr7d2EWGnnNBZ58YUjy+uMt7Pu665ekqGPpIYP+C+Yy2+2NIWXE=
+	t=1722323365; cv=none; b=UYJIEdAVKxocAR3lfNSN6Lx26+M6AmQ+/+YvTzjtIg6vgX3GVaORKyBoWNPr9ph56PN3phh0IeTUbflYK2zuPYD+gd6rEN5zDiHzi1f3QqQlCJMMaU13E4Y5RtQ85cYy7O5oJGqHpu20XcndvqNgFgSxlpQgG0EH6Dbb418NTTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722323352; c=relaxed/simple;
-	bh=aUXBVwEuXvr8ZvqtozeYi9Lu0ovEhgcBBeJw/0xKvnE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aazTixN+zL9CgLjP6LLMo1Vp1Vl4HwfIe1wBnP8pFtB5I3V7fVzcDXsWQPC1/ZbxW8Aym+8+IRQ1rk4kU4itOM6PoyT2yDojvhM6OrnO8J7UaXCOsQurx9c1aoImoHK56LfEOUTgePE6E9RmVjtPhKPhmgzdhI+IfHuOCjtjZ60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Q+oyKM7U; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f0407330a3so7580871fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 00:09:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1722323347; x=1722928147; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lVMhYxj4qNnzwO4iqD+18Ai3QfZ1Axvw0kbd5FN9fVs=;
-        b=Q+oyKM7U4B/GrfxqheftuquRC7eUPVm9NHH3PdgulVBGsCmyzMDGKbT27jSVQ0yQwx
-         7SsQ5YNwu2sgkJhD/POc8jWqcgX5GvexiYukMMS9hCLMRHMOo5inb1UqOgId2Z/AA0UZ
-         tek+LTDQ6IRYmYlxe37SwAKVpBXuPrbaaz+mK5hS1eyel5ppDkCuxuNoyhEg7q43gGnm
-         N1jVRipxXr6z2nQlueOh6B6ZDU2mCZojCCz+UnHBs05UC4rfl2c3Z6c6G7dxtXzr93Cn
-         by2XzwjtJPyt0LnRhZkowzZbmyP9X0TEQo5zIAJokHVmDrDXvMIMRzr3m1YMPGRQvprj
-         Ocxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722323347; x=1722928147;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lVMhYxj4qNnzwO4iqD+18Ai3QfZ1Axvw0kbd5FN9fVs=;
-        b=unt/hTfZRmYIZtOmitCWOyKA5EWjYq15km1ifITOsCQx+LYzdlKbCdp2Dfxf52JGAM
-         uAu+CONypSBX7bp5P4Rsd1i953Cfh0C38AtEbxlAEoQFjr1tJoSNhSZC7oS5hZh1qevk
-         SliGEXtyofNeBkBCuK4clMD6GbpjIvFM3xdte6rdJchicY7bBA0ixQBFtb7Prk4Tc3Yz
-         tqoJj9/jJ1mLki+/zhZLBsugU5OptIFgyjoAt+Q2TsbNA2A+a0D1gv1RlellZuqOofnO
-         uuoPH9DDQ2WDACiaAf8Edn6rzRgmCWUq/xLPR/RskHaEBVhBPn2QZdfaDiSgdypPM3jv
-         1HoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVm4xWoshYryx7WYegFB3sGIfv62jJetNRj6IwQ2SxnHOXuwaSuojEovhW/uWVfWuD3ndK2kvZLFwcxXCE2pq/4/mWNYrC9ZLfzjyYD
-X-Gm-Message-State: AOJu0YyAVbzp+Yt4UT1bfXpOAAtbjZxOsS/RUAQmPqy1Wm/JmBfJA9n8
-	D/GudfTS0/wCfleoy1/VxeRWmAjgE4+tXw0DKU0aP6HzHNbZQuUlWcath3VAKIs=
-X-Google-Smtp-Source: AGHT+IFeNNsOEIsAWFdV4yWL2SghnTx8Z1eLwgdOiT5AgajQW3bsdyzMbPjzTwMNqrHkz03C42ZeVg==
-X-Received: by 2002:a2e:7c02:0:b0:2ef:2e8f:73e9 with SMTP id 38308e7fff4ca-2f12ee1bd2dmr64461041fa.37.1722323346904;
-        Tue, 30 Jul 2024 00:09:06 -0700 (PDT)
-Received: from ?IPV6:2001:a61:137b:5001:be5a:c750:b487:ff1b? ([2001:a61:137b:5001:be5a:c750:b487:ff1b])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5afb9422c41sm5153828a12.82.2024.07.30.00.09.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 00:09:06 -0700 (PDT)
-Message-ID: <e72cc56a-3066-4cb8-848d-bfe27a48c095@suse.com>
-Date: Tue, 30 Jul 2024 09:09:05 +0200
+	s=arc-20240116; t=1722323365; c=relaxed/simple;
+	bh=kJTM5OSjqQG73H22CuzIYM1jlcdVej8ovXRYaPLd3nU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k9w15pZaj+OzJxPq20rxGem/3e2Xx3WDI7+MpbxE7PhRhIvOuWGv83gHlFIvXUrSGQfwkeeeABln9vRSewBFGBBnfv0FAbD5zS2Tl4NOxPnAxs7T/zXl0v7UtUyCKU0ZCg0ZGp5Hk0Du8K98x/rZVyHLLWUTuUQlnIISnjYGWsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tchadelicard.fr; spf=pass smtp.mailfrom=tchadelicard.fr; dkim=pass (2048-bit key) header.d=tchadelicard.fr header.i=@tchadelicard.fr header.b=AeAC7koe; arc=none smtp.client-ip=17.57.155.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tchadelicard.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tchadelicard.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tchadelicard.fr;
+	s=sig1; t=1722323363;
+	bh=PtjiLJz39WshI27PtYqJJc6smMxXeB8+aRNl+TPayjA=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=AeAC7koeT3b51WqLGTM6BRJB1npuynCRb+PnzpZv5Wp8utjPksKzsJIakJ/16Opvk
+	 6RGk5mI/X1HfVClapyfpSmkNVlq/rqMPbxkTNmU0X4PLbqdyW2+1TKhh2MeEZ3YKNB
+	 JrhrYKv0Vo5AQkGNthuhG5aJvvPs3HBGPYGkgHpdmV4lqWiW4tPQhNzo3uiuuPuWWf
+	 eLa9Y7VhSdfIQqWtnMsC0BzZn5YHjmzDhAaWoNGSqqSdY4hw2Yj6Coi3FIVyoyHehb
+	 0ecdiLkbGuh3ZGXFRiO9liAq3kZz5kHjFQiOuSNaE0JvqMVMCSFH2lrT5SOcgQSwOH
+	 DKKJcK6Daw3fg==
+Received: from localhost.localdomain (qs51p00im-dlb-asmtp-mailmevip.me.com [17.57.155.28])
+	by qs51p00im-qukt01072701.me.com (Postfix) with ESMTPSA id C739D15C02AA;
+	Tue, 30 Jul 2024 07:09:20 +0000 (UTC)
+From: Tchadel Icard <hello@tchadelicard.fr>
+To: hdegoede@redhat.com,
+	mchehab@kernel.org,
+	sakari.ailus@linux.intel.com,
+	gregkh@linuxfoundation.org,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: ~lkcamp/patches@lists.sr.ht,
+	helen.koike@collabora.com
+Subject: [PATCH] staging: rtl8712: Fix move '{' to previous line
+Date: Tue, 30 Jul 2024 07:09:10 +0000
+Message-Id: <20240730070910.34996-1-hello@tchadelicard.fr>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: storage: ene_ub6250: Fix right shift warnings
-To: Abhishek Tamboli <abhishektamboli9@gmail.com>, stern@rowland.harvard.edu
-Cc: gregkh@linuxfoundation.org, usb-storage@lists.one-eyed-alien.net,
- linux-usb@vger.kernel.org, skhan@linuxfoundation.org,
- dan.carpenter@linaro.org, rbmarliere@gmail.com,
- linux-kernel-mentees@lists.linuxfoundation.org, linux-kernel@vger.kernel.org
-References: <20240729182348.451436-1-abhishektamboli9@gmail.com>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <20240729182348.451436-1-abhishektamboli9@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: zu5NxvG3f28LtPYCsDGI_5Ix_Mt-21AC
+X-Proofpoint-GUID: zu5NxvG3f28LtPYCsDGI_5Ix_Mt-21AC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-30_07,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0 bulkscore=0
+ clxscore=1030 mlxscore=0 malwarescore=0 adultscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2407300052
 
+Fix checkpatch error "ERROR: that open brace {
+should be on the previous line"
 
+Signed-off-by: Tchadel Icard <hello@tchadelicard.fr>
+---
+Hello,
+This is my first commit.
+It fixes styling errors.
+Thank you for your time.
+---
+---
+ .../isp/kernels/iterator/iterator_1.0/ia_css_iterator.host.c   | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-On 29.07.24 20:23, Abhishek Tamboli wrote:
-> Change bl_len from u16 to u32 to accommodate the necessary bit shifts.
-
-Hi,
-
-while this patch is technically correct, it papers over the issue.
-Could you please
-
-1. use a constant, where a constant is used
-2. use the macros for converting endianness
-
-	Regards
-		Oliver
+diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/iterator/iterator_1.0/ia_css_iterator.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/iterator/iterator_1.0/ia_css_iterator.host.c
+index 5f186fb03..15386a773 100644
+--- a/drivers/staging/media/atomisp/pci/isp/kernels/iterator/iterator_1.0/ia_css_iterator.host.c
++++ b/drivers/staging/media/atomisp/pci/isp/kernels/iterator/iterator_1.0/ia_css_iterator.host.c
+@@ -65,8 +65,7 @@ int ia_css_iterator_configure(const struct ia_css_binary *binary,
+ 	 * the original out res. for video pipe, it has two output pins --- out and
+ 	 * vf_out, so it can keep these two resolutions already. */
+ 	if (binary->info->sp.pipeline.mode == IA_CSS_BINARY_MODE_PREVIEW &&
+-	    binary->vf_downscale_log2 > 0)
+-	{
++	    binary->vf_downscale_log2 > 0) {
+ 		/* TODO: Remove this after preview output decimation is fixed
+ 		 * by configuring out&vf info files properly */
+ 		my_info.padded_width <<= binary->vf_downscale_log2;
+-- 
+2.20.1
 
 
