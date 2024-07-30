@@ -1,156 +1,165 @@
-Return-Path: <linux-kernel+bounces-267710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9052A9414A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:45:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D95F2941493
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:43:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C25931C23567
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:45:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 088CD1C23584
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417B71A2C0B;
-	Tue, 30 Jul 2024 14:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859541A2575;
+	Tue, 30 Jul 2024 14:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="A1xB0i4i"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zjjGA15H";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7OaQboz2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zjjGA15H";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7OaQboz2"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2A31A2566;
-	Tue, 30 Jul 2024 14:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9071A2551;
+	Tue, 30 Jul 2024 14:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722350689; cv=none; b=inTsXRh5QKsYwiezEEBJpoy+r+cf+BwoKHNKaeNWKghWSP4adMzcOh2D9R5Bq44qorcU54rLdx1AM0dvurfSvaa3u+6saroMa8Azp+iTFcAD6qtp/H1Gd/dd/P1FdolFw4P8fH15P5LK5v49dnT0UL4RICzHmMTAJCHyli5SNTM=
+	t=1722350620; cv=none; b=sGLhf/bgx2lmcYN7Y5llUmmsEOTNT7PlKov9cDgfl5cH8q5tnHQ0LyhCccljSlxQqqcJu4Z9TGBybgRwlQWIfNWf+QvD6zum7t6osW6F7P6U2ClyRq5nSQ6HBbWwv4xn7z3ICB5WKHlGH++gJOVAUnPx0AOU8lv7exg/5pZTtpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722350689; c=relaxed/simple;
-	bh=Zg7Gu26EzKMKzHxOQ7zHevd4M+HPi10basJAJS3MVFQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=RhoHRqWkz15bQuBkrf09vAf04TI6Ey9IDV3p+WGl1If9JTy2bGVglnwtszCg3eMh4QKObAPi3R7FbmVOf+9N0H+0GAbVgkpdQgE78NYgf/z2/gfZesu1zupD8SAwoZsjAdBi9k6J1vbXxe1oOBmc7EjWuy+xnkPzYByQZ5QvnNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=A1xB0i4i; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46U8v0si024037;
-	Tue, 30 Jul 2024 14:43:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GMNruIY+K9jpwicdaVc+cy6vXtLs87UZzM1h6GqsOvo=; b=A1xB0i4iAicv5dNV
-	qRKGlTCiWBIAUi681fjSuqGV6+GJ3VPM/h5U2qGP7h0D1TmxV2jcz6HuHZx7B9+6
-	bZLtmXx2D3pxSqz+tK84hkdNoyrQc5LhDp2kcd1Xnikg2kIHz5k0VabHV1JISarG
-	1t9E3w2h7zj/xFRiW38pUhzGPCknQromC+JRWSblciT7yvo5JuxxotrNqwBbaaxE
-	e0udjC2BxxcqmsYvfSjtrQoM78PfN2++LP0FuxVx7vzLtvbe3snEEOk/v4bPmoMv
-	w8PlRmyd7thAoua2ZKpfJ36YVEiQta/u6uCr9vHUZ2uO30NIvKPTUkQCopJstIiU
-	9fEfGg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40pw4512pv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 14:43:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46UEhOP1007100
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 14:43:24 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 30 Jul
- 2024 07:43:23 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 30 Jul 2024 07:43:22 -0700
-Subject: [PATCH 5/5] locking/ww_mutex/test: add MODULE_DESCRIPTION()
+	s=arc-20240116; t=1722350620; c=relaxed/simple;
+	bh=rTwVk2J/RcmrWLsU/+r8mhdzqqJDDv7Rm5x2fdiM2VA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PNQoj8OXmStfdf3xtE2rSbAqMdS/7G8p4yESFiJYH4BGe0+GDB+KSuK7s+47zwyne7XwRAO0Q8dvJts05Tz7W8Waqootm7PCAZZpTbyKNAV48W1a5xOKHIkDpsaU1MM3P8VndUGl0o5hlOvl8L9wwh5mgXS1fxDfNJc6otwea6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zjjGA15H; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7OaQboz2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zjjGA15H; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7OaQboz2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2174121A5B;
+	Tue, 30 Jul 2024 14:43:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722350617;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KMznMV7ed1sKVDX1/xlWhY3W7e1CcErQgKBRfz19rbM=;
+	b=zjjGA15HwjyR5qBMOwE51inK/m7ELMBn1ObyaaQPm6R9m6jgoG7rwhETdW/0l5wxTLppoE
+	hINVqOPgkl+T+iHAQ6MQIF57qzjZYNfjvUn5/hOfYQLO8A/LnijomfiE69QbiVfQlMRuTT
+	IW9vXx2PqateVXlD+G1jid6/FtTDQY0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722350617;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KMznMV7ed1sKVDX1/xlWhY3W7e1CcErQgKBRfz19rbM=;
+	b=7OaQboz2gofeYlp76mOPOHRJSoSqdGHrYaneCteMx7pnjBG78HKZDkU+eSa1zFX1stUyXm
+	aUv9HJSk1RrtyYDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722350617;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KMznMV7ed1sKVDX1/xlWhY3W7e1CcErQgKBRfz19rbM=;
+	b=zjjGA15HwjyR5qBMOwE51inK/m7ELMBn1ObyaaQPm6R9m6jgoG7rwhETdW/0l5wxTLppoE
+	hINVqOPgkl+T+iHAQ6MQIF57qzjZYNfjvUn5/hOfYQLO8A/LnijomfiE69QbiVfQlMRuTT
+	IW9vXx2PqateVXlD+G1jid6/FtTDQY0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722350617;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KMznMV7ed1sKVDX1/xlWhY3W7e1CcErQgKBRfz19rbM=;
+	b=7OaQboz2gofeYlp76mOPOHRJSoSqdGHrYaneCteMx7pnjBG78HKZDkU+eSa1zFX1stUyXm
+	aUv9HJSk1RrtyYDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F1EB713297;
+	Tue, 30 Jul 2024 14:43:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id udGPOhj8qGZ5cQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 30 Jul 2024 14:43:36 +0000
+Date: Tue, 30 Jul 2024 16:43:35 +0200
+From: David Sterba <dsterba@suse.cz>
+To: syzbot <syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com>
+Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] kernel BUG in clear_inode
+Message-ID: <20240730144335.GH17473@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <000000000000eabe1d0619c48986@google.com>
+ <00000000000097e583061a45bfcf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240730-module_description_orphans-v1-5-7094088076c8@quicinc.com>
-References: <20240730-module_description_orphans-v1-0-7094088076c8@quicinc.com>
-In-Reply-To: <20240730-module_description_orphans-v1-0-7094088076c8@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton
-	<akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Russell King
-	<linux@armlinux.org.uk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Masami
- Hiramatsu" <mhiramat@kernel.org>,
-        Karol Herbst <karolherbst@gmail.com>,
-        "Pekka Paalanen" <ppaalanen@gmail.com>,
-        Dave Hansen
-	<dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter
- Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        "Alexandre Torgue"
-	<alexandre.torgue@foss.st.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Michael Ellerman
-	<mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy
-	<christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>, Jeremy Kerr
-	<jk@ozlabs.org>,
-        Joel Stanley <joel@jms.id.au>, Alistar Popple
-	<alistair@popple.id.au>,
-        Eddie James <eajames@linux.ibm.com>,
-        Andrew Jeffery
-	<andrew@codeconstruct.com.au>,
-        Will Deacon <will@kernel.org>, Waiman Long
-	<longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <nouveau@lists.freedesktop.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>, <linux-pm@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <linux-fsi@lists.ozlabs.org>,
-        <linux-aspeed@lists.ozlabs.org>,
-        Jeff Johnson
-	<quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: CL9Lpp5ClDhqO0GAeDXKPiCN_WgHsJDS
-X-Proofpoint-ORIG-GUID: CL9Lpp5ClDhqO0GAeDXKPiCN_WgHsJDS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_11,2024-07-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- suspectscore=0 adultscore=0 clxscore=1015 impostorscore=0 malwarescore=0
- lowpriorityscore=0 mlxlogscore=934 phishscore=0 bulkscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2407300099
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000097e583061a45bfcf@google.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=399230c250e8119c];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[67ba3c42bcbb4665d3ad];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,suse.cz:replyto,storage.googleapis.com:url,imap1.dmz-prg2.suse.org:helo,appspotmail.com:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -1.30
 
-Fix the 'make W=1' warning:
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
+On Thu, Jun 06, 2024 at 10:05:29PM -0700, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    d30d0e49da71 Merge tag 'net-6.10-rc3' of git://git.kernel...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1736820a980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=399230c250e8119c
+> dashboard link: https://syzkaller.appspot.com/bug?extid=67ba3c42bcbb4665d3ad
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a9aa22980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14c57f16980000
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-d30d0e49.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/f1276023ed77/vmlinux-d30d0e49.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/a33f372d4fb8/bzImage-d30d0e49.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/7fc863ff127d/mount_0.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> kernel BUG at fs/inode.c:626!
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- kernel/locking/test-ww_mutex.c | 1 +
- 1 file changed, 1 insertion(+)
+BUG_ON(inode->i_state & I_CLEAR);
 
-diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
-index 78719e1ef1b1..10a5736a21c2 100644
---- a/kernel/locking/test-ww_mutex.c
-+++ b/kernel/locking/test-ww_mutex.c
-@@ -697,3 +697,4 @@ module_exit(test_ww_mutex_exit);
- 
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Intel Corporation");
-+MODULE_DESCRIPTION("API test facility for ww_mutexes");
-
--- 
-2.42.0
-
+The bits are not manipulated directly in filesystems but the inode is in
+a bad state in evict. The reported bug looks valid and there's a
+reproducer.
 
