@@ -1,48 +1,60 @@
-Return-Path: <linux-kernel+bounces-267879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E339418A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:24:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9024941918
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62574286A1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:24:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31EE6B2AA73
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9B9189916;
-	Tue, 30 Jul 2024 16:23:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D0F18990F;
-	Tue, 30 Jul 2024 16:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1807E1898F8;
+	Tue, 30 Jul 2024 16:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GsLfLhOU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573781898E1;
+	Tue, 30 Jul 2024 16:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722356609; cv=none; b=PeG3QFw/cQX2US0VKb9EKBdvJllNm2nORQkK3fS5KBGjMsrwPhCDVxFYK5uYEg3EctdwGKhLL7MvGyaaROQEeGTw4CuFlsHhEM+3JweJlgZk2iaa1zYOZ3jQ8uSAl02MHdobVwoO5HqSUoxz3vN9I9j880WzYHDIFEwg2mQgDNI=
+	t=1722356677; cv=none; b=F4KLdlEF1hrqlOqBdOcFMyH9o9uemdMyYPK9CGwmACi+hUmlSpUugXgNcRbwiFBc1CiaIxRbpr+go67m//GtGU3GY2NtdFuTFGmzYoDE96uad5e0UsT/cIN0+1Gl+Qza0ILr9KXe6josq+aBnLqvrMurEhzwx3Jq8AQgWJIjl4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722356609; c=relaxed/simple;
-	bh=WffStKI47PzavbHJV+rtpu1pvEvWWJoVUagtZPzxrEA=;
+	s=arc-20240116; t=1722356677; c=relaxed/simple;
+	bh=uT6R5uY0ZH4GFNGa0yn0GoapUoLl0in7iX4GIpT4gNM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MchkYK0X3pH9ZbHc68vHPi0YaIzpdqaf93ZnNom1++8kaKblcGgjZmmXRsw6x7JN9rb3lI92kk1LRDCcRFpPfy4ovymOacMMzI63n4oj6GEjAk5LsAcv6WS8f48T49cVCQVhTh7Id5o0tLCkmlAF749VFXKY97zuGEAAk/DWGB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7BB601007;
-	Tue, 30 Jul 2024 09:23:52 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C007D3F5A1;
-	Tue, 30 Jul 2024 09:23:25 -0700 (PDT)
-Date: Tue, 30 Jul 2024 17:23:22 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Luke Parkin <luke.parkin@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	cristian.marussi@arm.com
-Subject: Re: [PATCH v4 4/5] firmware: arm_scmi: Create debugfs files for
- counts
-Message-ID: <ZqkTeq9KRW5GPC3X@pluto>
-References: <20240730093342.3558162-1-luke.parkin@arm.com>
- <20240730093342.3558162-5-luke.parkin@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YJgddg5PfUC61N9cRcrhzSMnaHL91GLwArAnmFD+jHtOAqlxVPv4Bzg0o+x70vQBTtj8GN0CUKcEOEWvUPr2PVBC1Q+4YdJY4rD5/t4d7NdzoISwmLZxCZZY4kgPnqpxMqODVmnAf4SamARlxTAeq1/R3xpvXx5cvEs5vDShE3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GsLfLhOU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3D96C4AF0E;
+	Tue, 30 Jul 2024 16:24:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722356677;
+	bh=uT6R5uY0ZH4GFNGa0yn0GoapUoLl0in7iX4GIpT4gNM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GsLfLhOU4GVqNpgcMqEVGQ/dOEm0ZWndU5EsN514S9YhDhoQ32T29dGTNexxOlAWg
+	 Lg0V5ctO85b821SACFkSY//w/SkH8fRskzv+QHm9Dp3K+U58bDJRYs2twr/xVoSV8V
+	 DAIjGSM6o1LBG3a9oxfuweI+c+vXYOlyszmCQvkbZ1t7gjAeD4dVobqmr8W0U1MTjk
+	 6wWBXNO7W9tJwzdmy6Kv8p//+E0ZfDS9mz1yvVgPYU+dvHa6apLZYVfBH5fMfcZF3q
+	 25X+Um3EUJPlRG5yGZbwGcytTBHNHePopxnH5Mm59hiuU25sJq01UHMxAwvxXS+RS5
+	 axOYC5yP2W7+Q==
+Date: Tue, 30 Jul 2024 10:24:35 -0600
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] dt-bindings: fuse: Move renesas,rcar-{efuse,otp}
+ to nvmem
+Message-ID: <20240730162435.GA1480758-robh@kernel.org>
+References: <cover.1721999833.git.geert+renesas@glider.be>
+ <1a3d4ff8ce34a5e676d1cb1fafd40525378e29a4.1721999833.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,14 +63,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240730093342.3558162-5-luke.parkin@arm.com>
+In-Reply-To: <1a3d4ff8ce34a5e676d1cb1fafd40525378e29a4.1721999833.git.geert+renesas@glider.be>
 
-On Tue, Jul 30, 2024 at 10:33:41AM +0100, Luke Parkin wrote:
-> Create debugfs files for the metrics in the debug_counters array
->
- 
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+On Fri, Jul 26, 2024 at 03:38:06PM +0200, Geert Uytterhoeven wrote:
+> The R-Car E-FUSE blocks can be modelled better using the nvmem
+> framework.
+> 
+> Replace the R-Car V3U example by an R-Car S4-8 ES1.2 example, to show
+> the definition of nvmem cells.  While at it, drop unneeded labels from
+> the examples, and fix indentation.
+> 
+> Add an entry to the MAINTAINERS file.
+> 
+> Reported-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3:
+>   - New.
+> 
+> I would expect that the calib@144 node needs:
+> 
+>     #nvmem-cell-cells = <0>;
+> 
+> but after adding that, "make dt_binding_check" starts complaining:
+> 
+>     Documentation/devicetree/bindings/nvmem/renesas,rcar-efuse.example.dtb: fuse@e6078800: nvmem-layout: 'oneOf' conditional failed, one must be fixed:
+> 	    '#address-cells', '#size-cells', 'calib@144' do not match any of the regexes: 'pinctrl-[0-9]+'
+> 	    Unevaluated properties are not allowed ('nvmem-cell-cells' was unexpected)
 
-Thanks,
-Cristian
+Did you want 'nvmem-cell-cells' or '#nvmem-cell-cells'?
+
+> 	    'kontron,sl28-vpd' was expected
+> 	    'onie,tlv-layout' was expected
+> 	    from schema $id: http://devicetree.org/schemas/nvmem/renesas,rcar-efuse.yaml#
+>     Documentation/devicetree/bindings/nvmem/renesas,rcar-efuse.example.dtb: fuse@e6078800: nvmem-layout: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'calib@144' were unexpected)
+> 	    from schema $id: http://devicetree.org/schemas/nvmem/renesas,rcar-efuse.yaml#
+>     Documentation/devicetree/bindings/nvmem/renesas,rcar-efuse.example.dtb: fuse@e6078800: Unevaluated properties are not allowed ('nvmem-layout' was unexpected)
+> 	    from schema $id: http://devicetree.org/schemas/nvmem/renesas,rcar-efuse.yaml#
 
