@@ -1,107 +1,173 @@
-Return-Path: <linux-kernel+bounces-267294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AAAF940FAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:41:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E35D940FB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA41B1F21202
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:41:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E542AB2869B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314C01A0728;
-	Tue, 30 Jul 2024 10:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bggJ3AuP"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7E912EBCE;
-	Tue, 30 Jul 2024 10:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D1719DFA4;
+	Tue, 30 Jul 2024 10:36:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AE019DF6E;
+	Tue, 30 Jul 2024 10:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722335722; cv=none; b=TM/46MI9biAumchCaoMQ53C6lJGRaQx8d/JLypaLVwbNSs/InKSUNUeULEpbiawEM5MhP0yE0792ZAKkc3jx82K2xoCPqhP4CduwuuJIseRUyuB9LzPIS0zfWYqE9YUG7Ga5dUXkrEuAZXa2qpHTx7PDssJrX+4eEvORPRqWxnU=
+	t=1722335780; cv=none; b=GPjNUU44cQ0laO64hhn+N+AGgtaRc8ZlVAgaNKI3bKO9y/W3V8UXgV+BfIYajKUAe9qURoqbO1CWw0E7qaSY+d69MwCuIfVcJIg7yLKyTh7nlbkkbCJGP55+kDANsu0JPIZ0MzNzctvGsr7Arq+waj8gYaxpuqomhZsxCc8wNKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722335722; c=relaxed/simple;
-	bh=rxxG15P5dtUF0Ys7cOHlwSHSam9D2lCrV5gOJFfMim8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=s3dpCNVZ9ufFITr/tdjzVAVv/fg5r72H7V40GC3k4XuVb3zUyuHOdrck8t0o8S6Cxu0n9nnEkCjXLng1Gsws6H21XQNx9sMxd79PeQpn1XnpNQ7ZO5XwzTCstfLtHB2VObBRWSrGFTOnM/c3hFVTPPxJzg4X96JeysaVKNcjUpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bggJ3AuP; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722335719;
-	bh=rxxG15P5dtUF0Ys7cOHlwSHSam9D2lCrV5gOJFfMim8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bggJ3AuP9Z+21DuCxjktjNK8n80+Ug3I6LACgVCIAo3vmBR75Jt4+9aFuJzWXQ00J
-	 W4s9ACe3TwiizC7zlfj+HwlXS7xknsKIPZzY9bllHFCKdl09Z3NgEdGK3asgSuLgyW
-	 sPB0xAozmraZRzUmCtbdkLVghlneMiEsPfhjqQgbsKzSBzVHkA03O54yrKj+02s4XO
-	 u850WLyow/P7+uc53jyNEryO+n6Fe7R3qtf5y8KjCTaP6gaH9D9+7jT5g/9v7fcVVx
-	 WutHAI8jlI/ntJB7079sqBUqfLrrTxC8liIWfYRD8T0MfUoJ0RfxdmWq4uAUNvz2rn
-	 fjf5dxh51kv8g==
-Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 91A4E3780B50;
-	Tue, 30 Jul 2024 10:35:18 +0000 (UTC)
-From: Laura Nao <laura.nao@collabora.com>
-To: skhan@linuxfoundation.org
-Cc: gregkh@linuxfoundation.org,
-	kernel@collabora.com,
-	laura.nao@collabora.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	nfraprado@collabora.com,
-	shuah@kernel.org
-Subject: Re: [PATCH] selftests: ksft: Track skipped tests when finishing the test suite
-Date: Tue, 30 Jul 2024 12:35:43 +0200
-Message-Id: <20240730103543.33884-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <2bb2d338-cd00-4ac2-b8bd-5579eae82637@linuxfoundation.org>
-References: <2bb2d338-cd00-4ac2-b8bd-5579eae82637@linuxfoundation.org>
+	s=arc-20240116; t=1722335780; c=relaxed/simple;
+	bh=RfiwyEUsPb8tPAYC80PiZ5qOL/iGu9KCxcDr+2YKA6M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KmbflGyPBCeNv3mfa/LcsghlBfQ7na0zPzsubcTo/RRNUNiqMHl0KKdieUi33ZqpHGv/DThVRzGTCebg+6AUSyVH1y8AgraCROmeBFE5sZSU09QFGLdkGmUUUyqLnl8rqLOIvwEgVWD6S0WEmIzK6rq/DrEPjk3/3W3P6++uMfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E68F1007;
+	Tue, 30 Jul 2024 03:36:42 -0700 (PDT)
+Received: from [10.57.94.83] (unknown [10.57.94.83])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 116653F766;
+	Tue, 30 Jul 2024 03:36:13 -0700 (PDT)
+Message-ID: <e05d2363-d3e4-4a23-9347-723454d603c9@arm.com>
+Date: Tue, 30 Jul 2024 11:36:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 05/15] arm64: Mark all I/O as non-secure shared
+Content-Language: en-GB
+To: Gavin Shan <gshan@redhat.com>, Steven Price <steven.price@arm.com>,
+ kvm@vger.kernel.org, kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240701095505.165383-1-steven.price@arm.com>
+ <20240701095505.165383-6-steven.price@arm.com>
+ <b20b7e5b-95aa-4fdb-88a7-72f8aa3da8db@redhat.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <b20b7e5b-95aa-4fdb-88a7-72f8aa3da8db@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 7/29/24 22:06, Shuah Khan wrote:
-> On 7/29/24 08:52, Laura Nao wrote:
->> Hi Shuah,
+Hi Gavin,
+
+Thanks for looking at the patch. Responses inline.
+
+On 30/07/2024 02:36, Gavin Shan wrote:
+> On 7/1/24 7:54 PM, Steven Price wrote:
+>> All I/O is by default considered non-secure for realms. As such
+>> mark them as shared with the host.
 >>
->> On 7/23/24 18:17, Shuah Khan wrote:
->>> On 7/22/24 09:43, Laura Nao wrote:
->>>> Consider skipped tests in addition to passed tests when evaluating the
->>>> overall result of the test suite in the finished() helper.
->>>>
+>> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>> Changes since v3:
+>>   * Add PROT_NS_SHARED to FIXMAP_PAGE_IO rather than overriding
+>>     set_fixmap_io() with a custom function.
+>>   * Modify ioreamp_cache() to specify PROT_NS_SHARED too.
+>> ---
+>>   arch/arm64/include/asm/fixmap.h | 2 +-
+>>   arch/arm64/include/asm/io.h     | 8 ++++----
+>>   2 files changed, 5 insertions(+), 5 deletions(-)
+>>
 > 
-> I am finally with you now. Can you please more information in your
-> short log and commit log.
+> I'm unable to understand this. Steven, could you please explain a bit how
+> PROT_NS_SHARED is turned to a shared (non-secure) mapping to hardware?
+> According to tf-rmm's implementation in 
+> tf-rmm/lib/s2tt/src/s2tt_pvt_defs.h,
+> a shared (non-secure) mapping is is identified by NS bit (bit#55). I find
+> difficulties how the NS bit is correlate with PROT_NS_SHARED. For example,
+> how the NS bit is set based on PROT_NS_SHARED.
+
+
+There are two things at play here :
+
+1. Stage1 mapping controlled by the Realm (Linux in this case, as above).
+2. Stage2 mapping controlled by the RMM (with RMI commands from NS Host).
+
+Also :
+The Realm's IPA space is divided into two halves (decided by the IPA 
+Width of the Realm, not the NSbit #55), protected (Lower half) and
+Unprotected (Upper half). All stage2 mappings of the "Unprotected IPA"
+will have the NS bit (#55) set by the RMM. By design, any MMIO access
+to an unprotected half is sent to the NS Host by RMM and any page
+the Realm wants to share with the Host must be in the Upper half
+of the IPA.
+
+What we do above is controlling the "Stage1" used by the Linux. i.e,
+for a given VA, we flip the Guest "PA" (in reality IPA) to the
+"Unprotected" alias.
+
+e.g., DTB describes a UART at address 0x10_0000 to Realm (with an IPA 
+width of 40, like in the normal VM case), emulated by the host. Realm is
+trying to map this I/O address into Stage1 at VA. So we apply the
+BIT(39) as PROT_NS_SHARED while creating the Stage1 mapping.
+
+ie., VA == stage1 ==> BIT(39) | 0x10_0000 =(IPA)== > 0x80_10_0000
+
+Now, the Stage2 mapping won't be present for this IPA if it is emulated
+and thus an access to "VA" causes a Stage2 Abort to the Host, which the
+RMM allows the host to emulate. Otherwise a shared page would have been
+mapped by the Host (and NS bit set at Stage2 by RMM), allowing the
+data to be shared with the host.
+
+Does that answer your question ?
+
+Suzuki
+
 > 
-> Isn't this a bug fix? Current logic before this change will report
-> tests failed if there are any skipped tests?
+>> diff --git a/arch/arm64/include/asm/fixmap.h 
+>> b/arch/arm64/include/asm/fixmap.h
+>> index 87e307804b99..f2c5e653562e 100644
+>> --- a/arch/arm64/include/asm/fixmap.h
+>> +++ b/arch/arm64/include/asm/fixmap.h
+>> @@ -98,7 +98,7 @@ enum fixed_addresses {
+>>   #define FIXADDR_TOT_SIZE    (__end_of_fixed_addresses << PAGE_SHIFT)
+>>   #define FIXADDR_TOT_START    (FIXADDR_TOP - FIXADDR_TOT_SIZE)
+>> -#define FIXMAP_PAGE_IO     __pgprot(PROT_DEVICE_nGnRE)
+>> +#define FIXMAP_PAGE_IO     __pgprot(PROT_DEVICE_nGnRE | PROT_NS_SHARED)
+>>   void __init early_fixmap_init(void);
+>> diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
+>> index 4ff0ae3f6d66..07fc1801c6ad 100644
+>> --- a/arch/arm64/include/asm/io.h
+>> +++ b/arch/arm64/include/asm/io.h
+>> @@ -277,12 +277,12 @@ static inline void __const_iowrite64_copy(void 
+>> __iomem *to, const void *from,
+>>   #define ioremap_prot ioremap_prot
+>> -#define _PAGE_IOREMAP PROT_DEVICE_nGnRE
+>> +#define _PAGE_IOREMAP (PROT_DEVICE_nGnRE | PROT_NS_SHARED)
+>>   #define ioremap_wc(addr, size)    \
+>> -    ioremap_prot((addr), (size), PROT_NORMAL_NC)
+>> +    ioremap_prot((addr), (size), (PROT_NORMAL_NC | PROT_NS_SHARED))
+>>   #define ioremap_np(addr, size)    \
+>> -    ioremap_prot((addr), (size), PROT_DEVICE_nGnRnE)
+>> +    ioremap_prot((addr), (size), (PROT_DEVICE_nGnRnE | PROT_NS_SHARED))
+>>   /*
+>>    * io{read,write}{16,32,64}be() macros
+>> @@ -303,7 +303,7 @@ static inline void __iomem 
+>> *ioremap_cache(phys_addr_t addr, size_t size)
+>>       if (pfn_is_map_memory(__phys_to_pfn(addr)))
+>>           return (void __iomem *)__phys_to_virt(addr);
+>> -    return ioremap_prot(addr, size, PROT_NORMAL);
+>> +    return ioremap_prot(addr, size, PROT_NORMAL | PROT_NS_SHARED);
+>>   }
+>>   /*
 > 
-> Can you send v2 calling it a fix and explain the problem clearly.
->
-
-v2 sent: https://lore.kernel.org/all/20240730102928.33182-1-laura.nao@collabora.com/
- 
-> This isn't problem in this patch, but I am concerned about how
-> simply calling tests passed without calling out skipped tests.
+> Thanks,
+> Gavin
 > 
-> This problem could be solved by printing a message at the end of tests
-> for non-zero skipped test conditions to say the coverage could be
-> increased by enabling config options.
->
 
-Right. We can send a separate patch to address this.
-
-Thanks!
-
-Laura
 
