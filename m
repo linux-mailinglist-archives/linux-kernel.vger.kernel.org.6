@@ -1,140 +1,137 @@
-Return-Path: <linux-kernel+bounces-268062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37ED0941FEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:45:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3A1941FF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 572201C2351F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:45:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED5F01F24C9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870B91AA3D5;
-	Tue, 30 Jul 2024 18:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BACC418950C;
+	Tue, 30 Jul 2024 18:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D6i1Nly1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="eIddPz1q"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6441AA3FF
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 18:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079731AA3D7;
+	Tue, 30 Jul 2024 18:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722365092; cv=none; b=Fm1KMnhoBkRvVGN3iN0w8J2tOwvvoeQO90+OhFmHwF8OzLPORGB8e28El0u+//7VPMuR1lk01jL+Hv3UJ9oyjL6GhW4tydNE87/2tG4z23xoNYZqVhj16OtrgyJz86yONjyb84huZiqpsaZmEgHsOTNGGtWXjhOL3qw3AGQlfiE=
+	t=1722365127; cv=none; b=i7oaZOU0H0aOh7bF6s8rUD0fG6j/AhB0bmtB3Fdx23nNSP5EMJlSgojrJSRjiumRHRytZolkeT7CgjFhiN8Rt8da/cpoRAj8pgsoPnnQIsB3/5XUhZdwciC4fc+lnWy6ha8MaSjy0qNt4WRjXMMIWI/Ci8a9Sq3UChMNy2pjn5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722365092; c=relaxed/simple;
-	bh=Y+/gz5qUpoR25K+n24Wpy2AG2PBd/RlwCNDMhPpD2Vg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RTKL/L+TvY3sAV/FX+6Bqjl217NdAjtp/s5v0bLOEbr9kSNk5Snz8lhNyXJd3fdxO8nlExP0i0MMmQ8WlUVNOhh6Slidc8gTU+ystAUmr3jdv8ZW5kyUqnOgHcZiYNTYCPPYmfxqmH6Gj9+zHGVICVxiWfw2vBilmx5j9gJ/6vQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D6i1Nly1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722365089;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=we6cMjtS27X2yzrxa43xXf+7pMvZNESLxYR2e6Nhvxo=;
-	b=D6i1Nly1jLQPt8pqJz3DXrRB1ofPP4mQf3JmmrhMJM/CrUWHR9cY1Y3EEAIeWfHYYNbJtW
-	BPNl7bVO5QvEeT/BVDUkyy5MNezOL1mUSo35ZSWujghcTX3CnarEh6TEigb4y+6N1fAMP2
-	4lVPE0wRWD+AbSqCO6RhV1AETB5x1P8=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-590-m13H86mmO_-_vtdU97dVJw-1; Tue, 30 Jul 2024 14:44:47 -0400
-X-MC-Unique: m13H86mmO_-_vtdU97dVJw-1
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-44fe325cd56so6128091cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:44:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722365087; x=1722969887;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=we6cMjtS27X2yzrxa43xXf+7pMvZNESLxYR2e6Nhvxo=;
-        b=EtQvDNmlXABH3lksqTlg7OBZgk2dvYHFDT+QoUHe/JPY6rEcjlGhDTuOx8sPHBSAnp
-         kFnyGjrKuT+b96pO463Ly+V6XztaNYWxDR23ct3WGHqTjG6XXSspGfyYxm1HfNyURLcF
-         sRiuN49tWmPNHaQcHNMlUTeAwGmtfJDCx20UAn9IGRE7NmkC4FogAuRGCRfBXmJExPkd
-         Q8xdOkrAMTC0QwTEA+VHs/2cW9zX8KoIfj7GRsOFb/oqmuBzgjTyIc1ZX7gGs9IUv8U6
-         hPng//axZN54o6ed78cJoTV+uDzEYhEZD/JGnGdGcm8CfWTtDGV1VveArKivzDAN8Ckw
-         0Kyg==
-X-Gm-Message-State: AOJu0YxZDzNhc9UM2I8I7osWV1dXNblglBektYvPvYc3vRBl9vhSb5Nr
-	fO8lyjnzm237f6hBXmn0K8bfCPntoOq/z+a3UtKoe9zgdQ4sfvRgpFx3APnEF9IcuorBLNgBCKO
-	31zXfJ+oVGVK4PzZCw9Z8+05tPwG0ovCnQJko8wwkd5XXq/nwX0cl/ud4E+wXbQ==
-X-Received: by 2002:a05:620a:2910:b0:7a1:e3e5:c6f with SMTP id af79cd13be357-7a1e3e513fcmr947293885a.9.1722365086958;
-        Tue, 30 Jul 2024 11:44:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHolbPklLWmv/+R+6JBgiAi3Lho9VqEd+2NZnVAe5Gt7Uz8YEdpcpKWmhat3pinDVriarC6Yw==
-X-Received: by 2002:a05:620a:2910:b0:7a1:e3e5:c6f with SMTP id af79cd13be357-7a1e3e513fcmr947292385a.9.1722365086408;
-        Tue, 30 Jul 2024 11:44:46 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73b2341sm668734685a.39.2024.07.30.11.44.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 11:44:45 -0700 (PDT)
-Date: Tue, 30 Jul 2024 14:44:43 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH v1 1/2] mm: let pte_lockptr() consume a pte_t pointer
-Message-ID: <Zqk0mzD68lImF3y4@x1n>
-References: <20240725183955.2268884-1-david@redhat.com>
- <20240725183955.2268884-2-david@redhat.com>
- <ZqPCjd35OdNRrcfl@x1n>
- <bf2069ed-f2b8-49d4-baf0-dbd2189362f9@redhat.com>
- <ZqQVDwv4RM-wIW7S@x1n>
- <9e671388-a5c6-4de1-8c85-b7af8aee7f44@redhat.com>
- <ZqfCmFUFyPU3WGES@x1n>
- <ZqfF2hhe60TE8xhQ@x1n>
- <da433043-d17c-43e0-ab6f-c4897061b4a1@redhat.com>
+	s=arc-20240116; t=1722365127; c=relaxed/simple;
+	bh=9n3sj/htmxTFmOWrdZYtljJoFQ7q9bBq4d373ID9rxU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i3dHHMaII41Lu2hWIY/xuIMZOQfonNwhIc7roj+KSKPOH2kP7kiVaBWNGME09tLE51tEXm+3r76ONIEH2zlkRXImC9wynVfrghJzXrDwdEigbZm4zJmVy53/2o5saTf2FCvr9LULup47G8U3KoiS43RuiqV3BmTpcQHDtNRf9+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=eIddPz1q reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 24eb596f75ef3048; Tue, 30 Jul 2024 20:45:23 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 93473956ED0;
+	Tue, 30 Jul 2024 20:45:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1722365123;
+	bh=9n3sj/htmxTFmOWrdZYtljJoFQ7q9bBq4d373ID9rxU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=eIddPz1qN22MdMozvW9jSvdsYlCEooVoDch7IlmTFQ4PkOD6ywHViX49gppj8i0XZ
+	 7gQF/xo2MI8qWMLJ0MDi+gaGF4GSHhM6SLpMqlTRFYn1kNx2XC94quqREfPRZYdWcw
+	 Mp/9yxNT9VYEeD6pCXh8Jyrm+1p5Bw4rA2yUCmC2lUJNgUTy6+uQVqEe3x6y0Qy5h7
+	 dxlGnCOxQvo90QLKGHCqUK6/wMnq5CF0vnoO93vv2wwWOSlO50uwdI7D44ub7Wlh/j
+	 xyfFdlr2ENCylgtOKwAqyy3Ys191P/0CeIMfKk33weI5ARPJYIQPsV3UQ8w0Z2toRi
+	 OLl1wGWSL2jZA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux ACPI <linux-acpi@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
+Subject:
+ [PATCH v1 02/17] thermal: core: Rearrange checks in
+ thermal_bind_cdev_to_trip()
+Date: Tue, 30 Jul 2024 20:45:22 +0200
+Message-ID: <15273675.JCcGWNJJiE@rjwysocki.net>
+In-Reply-To: <1922131.tdWV9SEqCh@rjwysocki.net>
+References: <1922131.tdWV9SEqCh@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <da433043-d17c-43e0-ab6f-c4897061b4a1@redhat.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeggddufedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
+ rhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=36 Fuz1=36 Fuz2=36
 
-On Mon, Jul 29, 2024 at 07:46:26PM +0200, David Hildenbrand wrote:
-> I see what you mean but this is a very similar pattern as used in
-> collapse_pte_mapped_thp(), no? There we have
-> 
-> start_pte = pte_offset_map_nolock(mm, pmd, haddr, &ptl);
-> ...
-> if (!pml)
-> 	spin_lock(ptl);
-> ...
-> pte_unmap(start_pte);
-> if (!pml)
-> 	spin_unlock(ptl);
-> 
-> 
-> Again, I don't have a strong opinion on this, but doing it more similar to
-> collapse_pte_mapped_thp() to obtain locks makes it clearer to me. But if I
-> am missing something obvious please shout and I'll change it.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Right.. I don't think that path can change the pte pgtable either, and
-there is even the line Hugh left showing it's impossible:
+It is not necessary to look up the thermal zone and the cooling device
+in the respective global lists to check whether or not they are
+registered.  It is sufficient to check whether or not their respective
+list nodes are empty for this purpose.
 
-	if (!start_pte)		/* mmap_lock + page lock should prevent this */
-		goto abort;
+Use the above observation to simplify thermal_bind_cdev_to_trip().  In
+addition, eliminate an unnecessary ternary operator from it.
 
-I was thinking maybe the page lock is the critical one, irrelevant of mmap
-lock.
+Moreover, add lockdep_assert_held() for thermal_list_lock to it because
+that lock must be held by its callers when it is running.
 
-No strong opinion either.  Not sure whether Hugh has some thoughts.  But
-maybe if we stick with pte_offset_map_nolock() and if there'll be a repost
-anyway, we could add a similar comment like this one showing that the pte
-pgtable should be actually as stable as the ptlock.
+No intentional functional impact.
 
-Thanks,
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/thermal_core.c |   16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
--- 
-Peter Xu
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -781,25 +781,17 @@ int thermal_bind_cdev_to_trip(struct the
+ {
+ 	struct thermal_instance *dev;
+ 	struct thermal_instance *pos;
+-	struct thermal_zone_device *pos1;
+-	struct thermal_cooling_device *pos2;
+ 	bool upper_no_limit;
+ 	int result;
+ 
+-	list_for_each_entry(pos1, &thermal_tz_list, node) {
+-		if (pos1 == tz)
+-			break;
+-	}
+-	list_for_each_entry(pos2, &thermal_cdev_list, node) {
+-		if (pos2 == cdev)
+-			break;
+-	}
++	lockdep_assert_held(&thermal_list_lock);
+ 
+-	if (tz != pos1 || cdev != pos2)
++	if (list_empty(&tz->node) || list_empty(&cdev->node))
+ 		return -EINVAL;
+ 
+ 	/* lower default 0, upper default max_state */
+-	lower = lower == THERMAL_NO_LIMIT ? 0 : lower;
++	if (lower == THERMAL_NO_LIMIT)
++		lower = 0;
+ 
+ 	if (upper == THERMAL_NO_LIMIT) {
+ 		upper = cdev->max_state;
+
+
 
 
