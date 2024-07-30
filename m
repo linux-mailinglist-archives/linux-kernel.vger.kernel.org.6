@@ -1,202 +1,151 @@
-Return-Path: <linux-kernel+bounces-267841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 396E9941700
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:06:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B89941B45
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ADCC1C20C7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:06:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 602902826CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB016189912;
-	Tue, 30 Jul 2024 16:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E78189903;
+	Tue, 30 Jul 2024 16:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WGG5/HkJ"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="jjKXsW7s"
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C19B3DABFE;
-	Tue, 30 Jul 2024 16:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4911B189502
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722355497; cv=none; b=Y6gqJm7C3zIL3P2wEy/IPJyqwJSru3eitB6EjHPTIE/5Xx5ZrCk4wDRL+z7b+KWxvUfOegNIHTFxsFw3J+Mh9/WM7P2owkVvGItupUi/ea+l398wuNq67iSDb11HvRMegRkwpBDhW0wC+lzXSO+Fii9RwdtjdKcPM2hduobH8FA=
+	t=1722358372; cv=none; b=MZEnSB699Xqjs1oS8OmHsxGujgdV+QxJuT/xn2r7OTK1KA23/cvrLnctjPwcYy7i2fpxlfxzmHAnI7tVAUIgtID8VYRlw4myRNIuM/AR58xeyvRNEekacEo6z5oBcItIKUeR7W9H5EMCWMF4DnBykiEY8lnh6dSi5zQuMBcaSdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722355497; c=relaxed/simple;
-	bh=w2If79lWwbWbJEfpkvSvIjHGyXXDg5JyR1TcCbacBAo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HtBOeBHY+vnnzq6zTNLmcr99cNKy++0/OECZmMvdVr08ro/OXlGaAh1VHCzicTjWoHDyWMHCRdYh5fbLuM0ZBt85FyniwS/Ui0vFbKCJGLWIF9I0W2niWA3vqYNNm3YB/rao09SLeZ4hiQwxZx+y6futECqZ++2sEfwuNLKuPO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WGG5/HkJ; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BB314E000D;
-	Tue, 30 Jul 2024 16:04:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1722355487;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a9tyEv6JiL2E2sj4V72RhLJVpp93RMHsSx3RfEM+Nf0=;
-	b=WGG5/HkJaXINyTfXkv5jOXFl5rql2F3GotcTKUfglD6L9wtok9Zcpp+WAOSvpMb5dFyuzR
-	wVtTiE55kIz2v0yXLn3thDO+n8BI5ZNAyYBnyJxs68zii5djFSU9z2ensc76VN8Ad+Do99
-	M6FzcK6IfGeS1WhQQ5SKOkLe/ECJgUJ0VhQzJZvpNyqTgO13OUtNGDJjY02HHssWccPntl
-	/H3DZfrsxZHdXejWCvXpsWzHWo9kM/PvoAzSeKUrVTorTAEHl/KIzDaW/VNAeo9ASRVJqa
-	0l0y0YCqC9TZYRQrI8vo3/prAClDPoWu+TYaiEWW0aKkHtDdJkhFcQTeVBmODw==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Tue, 30 Jul 2024 18:04:45 +0200
-Subject: [PATCH RESEND v3 3/4] clk: divider: Introduce
- CLK_DIVIDER_EVEN_INTEGERS flag
+	s=arc-20240116; t=1722358372; c=relaxed/simple;
+	bh=TehCO6G3NPKwIsnaiRX5ZLITMc67uRfDAWuQytzPkGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W0UpOf+M1uERjim0nwkTq4S+89IVsEEokFj02NMF0RtGxCnN/ihuGls5CvDBVpefC2txIkO9yeI+d/mWFjPHeyF1tzOXdhlypECj7Hir5FEgTNactsLmTf7Q8HXyiFexOoCymU1CarUVVwWxau+kyyI/iZmJtzp1VQWBaIZh0uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=jjKXsW7s; arc=none smtp.client-ip=209.85.222.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-83172682ab3so1180991241.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:52:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1722358370; x=1722963170; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7KQVeJhA8Nc1kr8jYgp61vZfNk5AG6Jp03s6AWyvfdM=;
+        b=jjKXsW7sXtoDmwGhf1Qnci431qaUuQEAsXwBMqHqupN01FAY/321TFfEdqu/FgVZ8L
+         rEhXvvBlwWnOqG6mx/kZIdQSHetHHY67XNBF7Tf288HeYrxpUtBWn8R+MsGG+EXIahRT
+         dLcEYU95DZDvTkhxrNBY4zmkdifJvn7oXrx4a/1pCvnb8r3eFUI94/MCOn8SFNr/b/zB
+         JnBSYHFoRtMAHJEBJ3HjR2OEA+OoyEnOERUmfltT1nB1NlMr0sC4d5j+JqUVEUcuQbqg
+         a0Uxewp6TNDuRajr75sAHHYTmOC9MGzCPWTQgnfYcTP45spfbEfkk6Do1qu9jdyoRy7f
+         aWxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722358370; x=1722963170;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7KQVeJhA8Nc1kr8jYgp61vZfNk5AG6Jp03s6AWyvfdM=;
+        b=lalv+re0PtM+DiDAfLunYxp8bFqAu0AsHDES5b2HnGYIcpHxKVElXOunCvNn3ngBVi
+         V94DEfx/Bj4XvpUdSAW8/nk/kh0DBQ0atMncXiI2/v5bUCDA3pm+TMvd9UHFQ3JLj/kN
+         N1MnHToRBZ8/iHRDLUQM6xpB8stizVNlxDOIBT+YRDJio+7jaJSZAcq6QDprb2lyiYxJ
+         Oae/yZ4D8Gb/7U6mDqmsGoT+J7TH3cZBaeGkw+wCyPrNh/b3G+rfHss0tVIc/xmyA6Q7
+         nmjdScWqpUXtzSIOWxTZKXCl269fcnQLPVk385HCXQcyGD9bXOiBYbk9jIgAy6cU31an
+         jGGg==
+X-Forwarded-Encrypted: i=1; AJvYcCViIYnnagYeREZDFQ4QB4MfYn9hl+k9CW06nLLNh6P8p8PVDM8SR53gBy1qobcPsShU+t2HfVbTvWDu3vwkkVjbfKEHq+zgqpCMm0Ln
+X-Gm-Message-State: AOJu0Yyz26/W96Zmz6Wu6WJ26DsA8iSaDQZzyiaVvUwuEIFruTQKPEYo
+	5G9SLzuBXonfOsEdmCSLCp1Tka5cKSma9kYcFAZzxuZP8wANM2chQ/dQ7h/vg6U=
+X-Google-Smtp-Source: AGHT+IG3kXzdFLdaIqxcSYNO6QXWKyhicCB56NAmLiiFCX5C4mUyPUoLIOyykWtzvpmjpM43ScoJaw==
+X-Received: by 2002:a05:6102:548b:b0:493:bbd7:3ec0 with SMTP id ada2fe7eead31-493fad0d470mr9105172137.23.1722358370045;
+        Tue, 30 Jul 2024 09:52:50 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73b8837sm657515485a.48.2024.07.30.09.52.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 09:52:49 -0700 (PDT)
+Date: Tue, 30 Jul 2024 02:12:27 -0400
+From: Gregory Price <gourry@gourry.net>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, dave.jiang@intel.com,
+	Jonathan.Cameron@huawei.com, horenchuang@bytedance.com,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	dan.j.williams@intel.com, lenb@kernel.org,
+	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Subject: Re: [PATCH] acpi/hmat,mm/memtier: always register hmat adist
+ calculation callback
+Message-ID: <ZqiES1T6PTQHD2Bl@PC2K9PVX.TheFacebook.com>
+References: <20240726215548.10653-1-gourry@gourry.net>
+ <87ttg91046.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZqelvPwM2MIG26wY@PC2K9PVX.TheFacebook.com>
+ <877cd3u1go.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <Zqh3-TWBkhyY5kPw@PC2K9PVX.TheFacebook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240730-mbly-clk-v3-3-4f90fad2f203@bootlin.com>
-References: <20240730-mbly-clk-v3-0-4f90fad2f203@bootlin.com>
-In-Reply-To: <20240730-mbly-clk-v3-0-4f90fad2f203@bootlin.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: b4 0.14.1
-X-GND-Sasl: theo.lebrun@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zqh3-TWBkhyY5kPw@PC2K9PVX.TheFacebook.com>
 
-Add CLK_DIVIDER_EVEN_INTEGERS flag to support divisor of 2, 4, 6, etc.
-The same divisor can be done using a table, which would be big and
-wasteful for a clock dividor of width 8 (256 entries).
+On Tue, Jul 30, 2024 at 01:19:53AM -0400, Gregory Price wrote:
+> On Tue, Jul 30, 2024 at 09:12:55AM +0800, Huang, Ying wrote:
+> > > Right now HMAT appears to be used prescriptively, this despite the fact
+> > > that there was a clear intent to separate CPU-nodes and non-CPU-nodes in
+> > > the memory-tier code. So this patch simply realizes this intent when the
+> > > hints are not very reasonable.
+> > 
+> > If HMAT isn't available, it's hard to put memory devices to
+> > appropriate memory tiers without other information.  In commit
+> > 992bf77591cb ("mm/demotion: add support for explicit memory tiers"),
+> > Aneesh pointed out that it doesn't work for his system to put
+> > non-CPU-nodes in lower tier.
+> > 
+> 
+> Per Aneesh in 992bf77591cb - The code explicitly states the intent is
+> to put non-CPU-nodes in a lower tier by default.
+> 
+> 
+>     The current implementation puts all nodes with CPU into the highest
+>     tier, and builds the tier hierarchy by establishing the per-node
+>     demotion targets based on the distances between nodes.
+> 
+> This is accurate for the current code
+> 
+> 
+>     The current tier initialization code always initializes each
+>     memory-only NUMA node into a lower tier.
+> 
+> This is *broken* for the currently upstream code.
+> 
+> This appears to be the result of the hmat adistance callback introduction
+> (though it may have been broken before that).
+> 
+> ~Gregory
 
-Require increasing flags size from u8 to u16 because
-CLK_DIVIDER_EVEN_INTEGERS is the eighth flag.
+Digging into the history further for the sake of completeness
 
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
----
- drivers/clk/clk-divider.c    | 12 +++++++++---
- include/linux/clk-provider.h | 11 +++++++----
- 2 files changed, 16 insertions(+), 7 deletions(-)
+6c542ab ("mm/demotion: build demotion targets based on ...")
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index a2c2b5203b0a..b6654c5c36d2 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -72,6 +72,8 @@ static unsigned int _get_maxdiv(const struct clk_div_table *table, u8 width,
- 		return clk_div_mask(width);
- 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
- 		return 1 << clk_div_mask(width);
-+	if (flags & CLK_DIVIDER_EVEN_INTEGERS)
-+		return 2 * (clk_div_mask(width) + 1);
- 	if (table)
- 		return _get_table_maxdiv(table, width);
- 	return clk_div_mask(width) + 1;
-@@ -97,6 +99,8 @@ static unsigned int _get_div(const struct clk_div_table *table,
- 		return 1 << val;
- 	if (flags & CLK_DIVIDER_MAX_AT_ZERO)
- 		return val ? val : clk_div_mask(width) + 1;
-+	if (flags & CLK_DIVIDER_EVEN_INTEGERS)
-+		return 2 * (val + 1);
- 	if (table)
- 		return _get_table_div(table, val);
- 	return val + 1;
-@@ -122,6 +126,8 @@ static unsigned int _get_val(const struct clk_div_table *table,
- 		return __ffs(div);
- 	if (flags & CLK_DIVIDER_MAX_AT_ZERO)
- 		return (div == clk_div_mask(width) + 1) ? 0 : div;
-+	if (flags & CLK_DIVIDER_EVEN_INTEGERS)
-+		return (div >> 1) - 1;
- 	if (table)
- 		return  _get_table_val(table, div);
- 	return div - 1;
-@@ -538,7 +544,7 @@ struct clk_hw *__clk_hw_register_divider(struct device *dev,
- 		struct device_node *np, const char *name,
- 		const char *parent_name, const struct clk_hw *parent_hw,
- 		const struct clk_parent_data *parent_data, unsigned long flags,
--		void __iomem *reg, u8 shift, u8 width, u8 clk_divider_flags,
-+		void __iomem *reg, u8 shift, u8 width, u16 clk_divider_flags,
- 		const struct clk_div_table *table, spinlock_t *lock)
- {
- 	struct clk_divider *div;
-@@ -610,7 +616,7 @@ EXPORT_SYMBOL_GPL(__clk_hw_register_divider);
- struct clk *clk_register_divider_table(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		void __iomem *reg, u8 shift, u8 width,
--		u8 clk_divider_flags, const struct clk_div_table *table,
-+		u16 clk_divider_flags, const struct clk_div_table *table,
- 		spinlock_t *lock)
- {
- 	struct clk_hw *hw;
-@@ -664,7 +670,7 @@ struct clk_hw *__devm_clk_hw_register_divider(struct device *dev,
- 		struct device_node *np, const char *name,
- 		const char *parent_name, const struct clk_hw *parent_hw,
- 		const struct clk_parent_data *parent_data, unsigned long flags,
--		void __iomem *reg, u8 shift, u8 width, u8 clk_divider_flags,
-+		void __iomem *reg, u8 shift, u8 width, u16 clk_divider_flags,
- 		const struct clk_div_table *table, spinlock_t *lock)
- {
- 	struct clk_hw **ptr, *hw;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 4a537260f655..cb348e502e41 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -675,13 +675,15 @@ struct clk_div_table {
-  * CLK_DIVIDER_BIG_ENDIAN - By default little endian register accesses are used
-  *	for the divider register.  Setting this flag makes the register accesses
-  *	big endian.
-+ * CLK_DIVIDER_EVEN_INTEGERS - clock divisor is 2, 4, 6, 8, 10, etc.
-+ *	Formula is 2 * (value read from hardware + 1).
-  */
- struct clk_divider {
- 	struct clk_hw	hw;
- 	void __iomem	*reg;
- 	u8		shift;
- 	u8		width;
--	u8		flags;
-+	u16		flags;
- 	const struct clk_div_table	*table;
- 	spinlock_t	*lock;
- };
-@@ -697,6 +699,7 @@ struct clk_divider {
- #define CLK_DIVIDER_READ_ONLY		BIT(5)
- #define CLK_DIVIDER_MAX_AT_ZERO		BIT(6)
- #define CLK_DIVIDER_BIG_ENDIAN		BIT(7)
-+#define CLK_DIVIDER_EVEN_INTEGERS	BIT(8)
- 
- extern const struct clk_ops clk_divider_ops;
- extern const struct clk_ops clk_divider_ro_ops;
-@@ -726,18 +729,18 @@ struct clk_hw *__clk_hw_register_divider(struct device *dev,
- 		struct device_node *np, const char *name,
- 		const char *parent_name, const struct clk_hw *parent_hw,
- 		const struct clk_parent_data *parent_data, unsigned long flags,
--		void __iomem *reg, u8 shift, u8 width, u8 clk_divider_flags,
-+		void __iomem *reg, u8 shift, u8 width, u16 clk_divider_flags,
- 		const struct clk_div_table *table, spinlock_t *lock);
- struct clk_hw *__devm_clk_hw_register_divider(struct device *dev,
- 		struct device_node *np, const char *name,
- 		const char *parent_name, const struct clk_hw *parent_hw,
- 		const struct clk_parent_data *parent_data, unsigned long flags,
--		void __iomem *reg, u8 shift, u8 width, u8 clk_divider_flags,
-+		void __iomem *reg, u8 shift, u8 width, u16 clk_divider_flags,
- 		const struct clk_div_table *table, spinlock_t *lock);
- struct clk *clk_register_divider_table(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		void __iomem *reg, u8 shift, u8 width,
--		u8 clk_divider_flags, const struct clk_div_table *table,
-+		u16 clk_divider_flags, const struct clk_div_table *table,
- 		spinlock_t *lock);
- /**
-  * clk_register_divider - register a divider clock with the clock framework
+    mm/demotion: build demotion targets based on explicit memory tiers
 
--- 
-2.45.2
+    This patch switch the demotion target building logic to use memory
+    tiers instead of NUMA distance.  All N_MEMORY NUMA nodes will be placed
+    in the default memory tier and additional memory tiers will be added by
+    drivers like dax kmem.
 
+The decision made in this patch breaks memory-tiers.c for all BIOS
+configured CXL devices that generate a DRAM node during early boot,
+but for which HMAT is absent or otherwise broken - the new HMAT code
+addresses the situation for when HMAT is present.
+
+Hardware supporting this style of configuration has been around for at
+least a few years now. I think we should at the very least consider adding
+an option to restore this (!N_CPU)=Lower Tier behavior - if not
+defaulting to the behavior when HMAT data is not present.
+
+~Gregory
 
