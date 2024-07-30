@@ -1,187 +1,177 @@
-Return-Path: <linux-kernel+bounces-267917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 199BA941BC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:58:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29632941BF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98E431F238E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:58:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB084B246AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228EF189918;
-	Tue, 30 Jul 2024 16:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jl9l2M87"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF403189BB1;
+	Tue, 30 Jul 2024 17:01:29 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0791898ED
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4087C156F30;
+	Tue, 30 Jul 2024 17:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722358731; cv=none; b=PTd65n2gQt0EvxKleXcI2o30eYg6LNn9Er6GfQDu4BqYaCon7x1jMrOCwsaHgJ0xsZGO9M4Kxcctai6gl/Jzg+gMfGQdBJh3ySaAdweqzTbjGClSa7//+xXsJkQabNaWF3DlncaHrpXFgIw81ku88e4coMMePj28+/qoiWrY8Uc=
+	t=1722358889; cv=none; b=j/w0ZqSILbYMftvqHH5YqxEdq0KKflG+w5PIR1LkcP1AcuJwARNL8+OMWOiOSPIgSbo0fTb2PEt0B4hXN+WvKKZGzDCkACxgpV/yErVcAcXLMetirh8xTAU2xL3xgi0Tcw3vcNCHXeCKEWKBk987be/aCfY4k89Mr6HBe/BsHI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722358731; c=relaxed/simple;
-	bh=MakCGp2MWoAV0Xc0eI7OesuYOc4aL/IhFc+YGoVClfU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aVzwRWQIPDXugR+HG6SndAV3p9sjSUdl5uEkF4WRFtJIb2wxdHNLSi91S3CdTmrfDsSSgEHpg4Bag9dnSIab5FL30azcHW0gZ7D+GLoufV3ZIa8a6zlWR+qdWKw4kLVYYPVaCUEOUe+BVHumm4ynEKp32utlI61su48j3Lym1/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jl9l2M87; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fd657c9199so2335ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:58:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722358729; x=1722963529; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RVx5Mo1cNi2O2SneJHVsg+dKHPp4XLpaPWsYQ7yBQn4=;
-        b=jl9l2M87d/q5Ua7i0XjNUaTg+HCoNtS9kGbINJ/rlkQIPlQO5/Gf3Qv16MEc4tzJIf
-         5CW3b6r5nMFjt0B8WOI27SC5MluCZM+Zk5jkzn3yYq1k6wuvdVY+Lvem3jJA32HmADkS
-         ldmc2dIyjo/zZ2jZ6MrnzaBfURsaIEIMPG1F/FQbQUoenWhmVWjxf2LO9zoo8SNjK9qU
-         YS79aAGlIFeQoIxHyN/T90066JTGM1g9rwUtTDmBEqB16/nhguDvkJ5s8iWmiaRIG3Ok
-         2TLrt8CUQxc5I5K97rDQMJYod5IjRnzwjxten3T0lrX7fex3XaxtsidpPAulKiMz/fPw
-         y1BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722358729; x=1722963529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RVx5Mo1cNi2O2SneJHVsg+dKHPp4XLpaPWsYQ7yBQn4=;
-        b=bQpl4j6sW86rKR6bVcH6k2aNPWH/DwSE2e/FxkEtqkfdoppxJqaFX/iBW3Sx8T9QPH
-         cq2SuHVvnpBKCiM68Gg8naJ3SqLopVDhzPr2mPRIO0mtV+/ybCnk/oQ0tfkkx1OSGUtx
-         v9xGCEd7bPDpBZ1RtizFbWLFu/DE39k+eI/KTNgCJyMu5goj2j4PcIuZoEjSWSoxVs2U
-         FE5r6d/UabxA4lRPgOKbKqBrh0Jiw8INoaDnzGZTociUYQbOr+AXU0+TmtYMTxOJu8OU
-         iWoA5DDdaKuBNpFXOrI9s5KeeCMyAzqLDgUcrSAOMh12iJDLkdRxo11kcuMFzSXEKxyF
-         zM/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXKDrA5Li2kRFLWUGryYSc2UxrIEmnukoMvOK2bKu6wsisHTJfKszj6DuHns+15fBgekBcMl2A6n1BkLiOoj2+c5T+Z6yjIxpfcecFJ
-X-Gm-Message-State: AOJu0Yz8ZiDDNLKTf6LsDssgynwAvRveJUgsqEYWC73fzAHJMRm698EH
-	p7KZzAPQ2VvPkQqefcEm7MqWqcoGQ9rhZi9qFlgPZf8NRYG5YWSl4e2N0o8n8YB4ELbPYgQ5f7e
-	FWrNA2FHjSXg8f+FcwoL3QVIHZIjLABsrknRQ
-X-Google-Smtp-Source: AGHT+IHWa3ie9Q2PNThh8ofQ9H8dtp0S/XjFcJgO/021VlJ48CH8lxwBbO7gPRgQ4MD6TOY1mSNEoi6JZ+e8wyYUvxs=
-X-Received: by 2002:a17:902:e546:b0:1fb:172a:f3d4 with SMTP id
- d9443c01a7336-1ff3784b8abmr3152005ad.8.1722358728382; Tue, 30 Jul 2024
- 09:58:48 -0700 (PDT)
+	s=arc-20240116; t=1722358889; c=relaxed/simple;
+	bh=Fl4YpwZG65rsVJag5s7RbOquj1urRIGQ0o3YX2Yzlp0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=SRRx6MwXoBVODab8j4xWnCb6BvSUegp2YI+FYZLfM22H5u2hAxbgLMu/k4Rbduacj0M5ImKFKhT6+wL+iAOAr8Gbn2H3cI6Zg2UzXJqnk9nSzATMhLF5Dqu9nhmpGiWVYvV1vQJGxzjG3nu1zdklMkXkigt2BmkN6ROD3i41V5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WYLz82CnZz6K8qR;
+	Wed, 31 Jul 2024 00:58:44 +0800 (CST)
+Received: from lhrpeml100003.china.huawei.com (unknown [7.191.160.210])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8C0C8140A70;
+	Wed, 31 Jul 2024 01:01:17 +0800 (CST)
+Received: from lhrpeml500006.china.huawei.com (7.191.161.198) by
+ lhrpeml100003.china.huawei.com (7.191.160.210) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 30 Jul 2024 18:01:17 +0100
+Received: from lhrpeml500006.china.huawei.com ([7.191.161.198]) by
+ lhrpeml500006.china.huawei.com ([7.191.161.198]) with mapi id 15.01.2507.039;
+ Tue, 30 Jul 2024 18:01:17 +0100
+From: Shiju Jose <shiju.jose@huawei.com>
+To: Borislav Petkov <bp@alien8.de>
+CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "tony.luck@intel.com" <tony.luck@intel.com>,
+	"rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
+	"mchehab@kernel.org" <mchehab@kernel.org>, "dan.j.williams@intel.com"
+	<dan.j.williams@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
+	"Jonathan Cameron" <jonathan.cameron@huawei.com>, "dave.jiang@intel.com"
+	<dave.jiang@intel.com>, "alison.schofield@intel.com"
+	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
+	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"david@redhat.com" <david@redhat.com>, "Vilas.Sridharan@amd.com"
+	<Vilas.Sridharan@amd.com>, "leo.duran@amd.com" <leo.duran@amd.com>,
+	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>, "rientjes@google.com"
+	<rientjes@google.com>, "jiaqiyan@google.com" <jiaqiyan@google.com>,
+	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "naoya.horiguchi@nec.com"
+	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
+	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
+	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
+	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
+	<duenwen@google.com>, "mike.malvestuto@intel.com"
+	<mike.malvestuto@intel.com>, "gthelen@google.com" <gthelen@google.com>,
+	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
+	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
+	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
+	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, tanxiaofei
+	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>, "Roberto
+ Sassu" <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
+	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
+	Linuxarm <linuxarm@huawei.com>
+Subject: RE: [PATCH v10 01/11] EDAC: Add generic EDAC RAS control feature
+ driver
+Thread-Topic: [PATCH v10 01/11] EDAC: Add generic EDAC RAS control feature
+ driver
+Thread-Index: AQHa33XRsQYYvx89v0isWis2IAG8f7IPNZuAgABNybA=
+Date: Tue, 30 Jul 2024 17:01:17 +0000
+Message-ID: <f83a17db2c054483a450af73f7b9966b@huawei.com>
+References: <20240726160556.2079-1-shiju.jose@huawei.com>
+	<20240726160556.2079-2-shiju.jose@huawei.com>
+ <20240730131611.GAZqjnm9D4ZJoGBIuZ@fat_crate.local>
+In-Reply-To: <20240730131611.GAZqjnm9D4ZJoGBIuZ@fat_crate.local>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729181931.2870851-1-irogers@google.com> <ZqkWoQEyJcU5xBZG@google.com>
-In-Reply-To: <ZqkWoQEyJcU5xBZG@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 30 Jul 2024 09:58:27 -0700
-Message-ID: <CAP-5=fUcuG7M6R80uwviwP2j62KDceDRRQM=Qf721bPBK1KYWg@mail.gmail.com>
-Subject: Re: [PATCH v2] perf cap: Tidy up and improve capability testing
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@arm.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Leo Yan <leo.yan@linux.dev>, Changbin Du <changbin.du@huawei.com>, 
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30, 2024 at 9:36=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Mon, Jul 29, 2024 at 11:19:31AM -0700, Ian Rogers wrote:
-> > Remove dependence on libcap. libcap is only used to query whether a
-> > capability is supported, which is just 1 capget system call.
-> >
-> > If the capget system call fails, fall back on root permission
-> > checking. Previously if libcap fails then the permission is assumed
-> > not present which may be pessimistic/wrong.
-> >
-> > Add a used_root out argument to perf_cap__capable to say whether the
-> > fall back root check was used. This allows the correct error message,
-> > "root" vs "users with the CAP_PERFMON or CAP_SYS_ADMIN capability", to
-> > be selected.
-> >
-> > Tidy uses of perf_cap__capable so that tests aren't repeated if capget
-> > isn't supported, to reduce calls or refactor similar to:
-> > https://lore.kernel.org/lkml/20240729004127.238611-3-namhyung@kernel.or=
-g/
->
-> I'm not familiar with the capability so it's hard to review the code but
-> it'd be better to split the code for perf_cap__capable() and its usage.
-
-There's an API change, passing the out arg if root checking was used,
-so this would turn into a mess.
-
-> > ---
-> > v2: fix syscall number and '>' should have been '>=3D'
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/Makefile.config  | 11 -------
-> >  tools/perf/builtin-ftrace.c | 44 ++++++++++++--------------
-> >  tools/perf/util/Build       |  2 +-
-> >  tools/perf/util/cap.c       | 63 ++++++++++++++++++++++++++-----------
-> >  tools/perf/util/cap.h       | 23 ++------------
-> >  tools/perf/util/symbol.c    |  8 ++---
-> >  tools/perf/util/util.c      | 12 +++++--
-> >  7 files changed, 81 insertions(+), 82 deletions(-)
-[snip]
-> > --- a/tools/perf/util/cap.c
-> > +++ b/tools/perf/util/cap.c
-[snip]
-> > +bool perf_cap__capable(int cap, bool *used_root)
-> > +{
-> > +     struct __user_cap_header_struct header =3D {
-> > +             .version =3D _LINUX_CAPABILITY_VERSION_3,
-> > +             .pid =3D getpid(),
-> > +     };
-> > +     struct __user_cap_data_struct data[MAX_LINUX_CAPABILITY_U32S];
-> > +     __u32 cap_val;
-> > +
-> > +     *used_root =3D false;
-> > +     while (syscall(SYS_capget, &header, &data[0]) =3D=3D -1) {
-> > +             /* Retry, first attempt has set the header.version correc=
-tly. */
-> > +             if (errno =3D=3D EINVAL && header.version !=3D _LINUX_CAP=
-ABILITY_VERSION_3 &&
-> > +                 header.version =3D=3D _LINUX_CAPABILITY_VERSION_1)
->
-> It seems you can just check it with _VERSION1.
-
-Similarly not familiar. Basically there used to be a data struct of 3
-u32s in v1, v2 shouldn't exist, v3 turned the data from an array of
-structs of size [1] to [2]. v3 has been present for 16 years as shown
-by its magic number 0x20080522 (v2.6.26 iirc - can't find the comment
-again). It seems a pretty safe bet that v3 is the version being used.
-In old kernels if the versions don't match they just return EINVAL and
-you have to try again like this loop:
-https://fossd.anu.edu.au/linux/v2.6.14/source/kernel/capability.c#L43
-```
-if (get_user(version, &header->version))
-  return -EFAULT;
-
-if (version !=3D _LINUX_CAPABILITY_VERSION) {
-  if (put_user(_LINUX_CAPABILITY_VERSION, &header->version))
-    return -EFAULT;
-   return -EINVAL;
-}
-```
-So testing v3 is almost certainly what we want, what's going to work
-and avoids a loop. In newer kernels the EINVAL isn't returned for a
-mismatch and the code just does the right thing for whatever version
-is requested.
-
-> But I'm not sure about what this code does.  Who set the version
-> correctly?  Is there any chance for an infinite loop?
-
-The system call could return EINVAL with _LINUX_CAPABILITY_VERSION_1
-and set the header.version to _LINUX_CAPABILITY_VERSION_1 again and
-return EINVAL again, the kernel would be broken but it would lead to
-an infinite loop.
-
-Thanks,
-Ian
+Pi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+RnJvbTogQm9yaXNsYXYgUGV0a292IDxicEBh
+bGllbjguZGU+DQo+U2VudDogMzAgSnVseSAyMDI0IDE0OjE2DQo+VG86IFNoaWp1IEpvc2UgPHNo
+aWp1Lmpvc2VAaHVhd2VpLmNvbT4NCj5DYzogbGludXgtZWRhY0B2Z2VyLmtlcm5lbC5vcmc7IGxp
+bnV4LWN4bEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPmFjcGlAdmdlci5rZXJuZWwub3JnOyBs
+aW51eC1tbUBrdmFjay5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+dG9ueS5s
+dWNrQGludGVsLmNvbTsgcmFmYWVsQGtlcm5lbC5vcmc7IGxlbmJAa2VybmVsLm9yZzsNCj5tY2hl
+aGFiQGtlcm5lbC5vcmc7IGRhbi5qLndpbGxpYW1zQGludGVsLmNvbTsgZGF2ZUBzdGdvbGFicy5u
+ZXQ7IEpvbmF0aGFuDQo+Q2FtZXJvbiA8am9uYXRoYW4uY2FtZXJvbkBodWF3ZWkuY29tPjsgZGF2
+ZS5qaWFuZ0BpbnRlbC5jb207DQo+YWxpc29uLnNjaG9maWVsZEBpbnRlbC5jb207IHZpc2hhbC5s
+LnZlcm1hQGludGVsLmNvbTsgaXJhLndlaW55QGludGVsLmNvbTsNCj5kYXZpZEByZWRoYXQuY29t
+OyBWaWxhcy5TcmlkaGFyYW5AYW1kLmNvbTsgbGVvLmR1cmFuQGFtZC5jb207DQo+WWF6ZW4uR2hh
+bm5hbUBhbWQuY29tOyByaWVudGplc0Bnb29nbGUuY29tOyBqaWFxaXlhbkBnb29nbGUuY29tOw0K
+Pkpvbi5HcmltbUBhbWQuY29tOyBkYXZlLmhhbnNlbkBsaW51eC5pbnRlbC5jb207DQo+bmFveWEu
+aG9yaWd1Y2hpQG5lYy5jb207IGphbWVzLm1vcnNlQGFybS5jb207IGp0aG91Z2h0b25AZ29vZ2xl
+LmNvbTsNCj5zb21hc3VuZGFyYW0uYUBocGUuY29tOyBlcmRlbWFrdGFzQGdvb2dsZS5jb207IHBn
+b25kYUBnb29nbGUuY29tOw0KPmR1ZW53ZW5AZ29vZ2xlLmNvbTsgbWlrZS5tYWx2ZXN0dXRvQGlu
+dGVsLmNvbTsgZ3RoZWxlbkBnb29nbGUuY29tOw0KPndzY2h3YXJ0ekBhbXBlcmVjb21wdXRpbmcu
+Y29tOyBkZmVyZ3Vzb25AYW1wZXJlY29tcHV0aW5nLmNvbTsNCj53YnNAb3MuYW1wZXJlY29tcHV0
+aW5nLmNvbTsgbmlmYW4uY3hsQGdtYWlsLmNvbTsgdGFueGlhb2ZlaQ0KPjx0YW54aWFvZmVpQGh1
+YXdlaS5jb20+OyBaZW5ndGFvIChCKSA8cHJpbWUuemVuZ0BoaXNpbGljb24uY29tPjsgUm9iZXJ0
+bw0KPlNhc3N1IDxyb2JlcnRvLnNhc3N1QGh1YXdlaS5jb20+OyBrYW5na2FuZy5zaGVuQGZ1dHVy
+ZXdlaS5jb207DQo+d2FuZ2h1aXFpYW5nIDx3YW5naHVpcWlhbmdAaHVhd2VpLmNvbT47IExpbnV4
+YXJtDQo+PGxpbnV4YXJtQGh1YXdlaS5jb20+DQo+U3ViamVjdDogUmU6IFtQQVRDSCB2MTAgMDEv
+MTFdIEVEQUM6IEFkZCBnZW5lcmljIEVEQUMgUkFTIGNvbnRyb2wgZmVhdHVyZQ0KPmRyaXZlcg0K
+Pg0KPk9uIEZyaSwgSnVsIDI2LCAyMDI0IGF0IDA1OjA1OjQ1UE0gKzAxMDAsIHNoaWp1Lmpvc2VA
+aHVhd2VpLmNvbSB3cm90ZToNCj4+IEZyb206IFNoaWp1IEpvc2UgPHNoaWp1Lmpvc2VAaHVhd2Vp
+LmNvbT4NCj4+DQo+PiBBZGQgZ2VuZXJpYyBFREFDIGRyaXZlciBzdXBwb3J0cyByZWdpc3Rlcmlu
+ZyBSQVMgZmVhdHVyZXMgc3VwcG9ydGVkIGluDQo+PiB0aGUgc3lzdGVtLiBUaGUgZHJpdmVyIGV4
+cG9zZXMgZmVhdHVyZSdzIGNvbnRyb2wgYXR0cmlidXRlcyB0byB0aGUNCj4+IHVzZXJzcGFjZSBp
+biAvc3lzL2J1cy9lZGFjL2RldmljZXMvPGRldi1uYW1lPi88cmFzLWZlYXR1cmU+Lw0KPj4NCj4+
+IENvLWRldmVsb3BlZC1ieTogSm9uYXRoYW4gQ2FtZXJvbiA8Sm9uYXRoYW4uQ2FtZXJvbkBodWF3
+ZWkuY29tPg0KPj4gU2lnbmVkLW9mZi1ieTogSm9uYXRoYW4gQ2FtZXJvbiA8Sm9uYXRoYW4uQ2Ft
+ZXJvbkBodWF3ZWkuY29tPg0KPj4gU2lnbmVkLW9mZi1ieTogU2hpanUgSm9zZSA8c2hpanUuam9z
+ZUBodWF3ZWkuY29tPg0KPj4gLS0tDQo+PiAgZHJpdmVycy9lZGFjL01ha2VmaWxlICAgICAgICAg
+ICAgfCAgIDEgKw0KPj4gIGRyaXZlcnMvZWRhYy9lZGFjX3Jhc19mZWF0dXJlLmMgIHwgMTgxDQo+
+PiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrICBpbmNsdWRlL2xpbnV4L2VkYWNfcmFz
+X2ZlYXR1cmUuaCB8DQo+PiA2NiArKysrKysrKysrKw0KPj4gIDMgZmlsZXMgY2hhbmdlZCwgMjQ4
+IGluc2VydGlvbnMoKykNCj4+ICBjcmVhdGUgbW9kZSAxMDA3NTUgZHJpdmVycy9lZGFjL2VkYWNf
+cmFzX2ZlYXR1cmUuYyAgY3JlYXRlIG1vZGUNCj4+IDEwMDc1NSBpbmNsdWRlL2xpbnV4L2VkYWNf
+cmFzX2ZlYXR1cmUuaA0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2VkYWMvTWFrZWZpbGUg
+Yi9kcml2ZXJzL2VkYWMvTWFrZWZpbGUgaW5kZXgNCj4+IDljMDk4OTM2OTViNy4uYzUzMmI1N2E2
+ZDhhIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9lZGFjL01ha2VmaWxlDQo+PiArKysgYi9kcml2
+ZXJzL2VkYWMvTWFrZWZpbGUNCj4+IEBAIC0xMCw2ICsxMCw3IEBAIG9iai0kKENPTkZJR19FREFD
+KQkJCTo9IGVkYWNfY29yZS5vDQo+Pg0KPj4gIGVkYWNfY29yZS15CTo9IGVkYWNfbWMubyBlZGFj
+X2RldmljZS5vIGVkYWNfbWNfc3lzZnMubw0KPj4gIGVkYWNfY29yZS15CSs9IGVkYWNfbW9kdWxl
+Lm8gZWRhY19kZXZpY2Vfc3lzZnMubyB3cS5vDQo+PiArZWRhY19jb3JlLXkJKz0gZWRhY19yYXNf
+ZmVhdHVyZS5vDQo+DQo+RURBQyBhbmQgUkFTIGFuZCBmZWF0dXJlPyENCj4NCj5PaCBib3kuDQo+
+DQo+RURBQyA9PSBSQVMuDQo+DQo+ImZlYXR1cmUiIGlzIHNpbGx5Lg0KPg0KPkxvb2tpbmcgYXQg
+dGhlIGNvZGUgYmVsb3csIHlvdSdyZSByZWdpc3RlcmluZyBhbiBFREFDIGRldmljZS4NCj4tIGVk
+YWNfcmFzX2Rldl9yZWdpc3RlcigpLg0KPg0KPlNvIHdoeSBpc24ndCB0aGlzIHRoaW5nIGluIGVk
+YWNfZGV2aWNlLmM/DQpTdXJlLiBUaGVuIGNhbiBJIGFkZCBkZWZpbml0aW9ucyBpbiBlZGFjX3Jh
+c19mZWF0dXJlLmggdG8gL2xpbnV4L2VkYWMuaD8gICAgDQoNCj4NCj4+IGRpZmYgLS1naXQgYS9p
+bmNsdWRlL2xpbnV4L2VkYWNfcmFzX2ZlYXR1cmUuaA0KPj4gYi9pbmNsdWRlL2xpbnV4L2VkYWNf
+cmFzX2ZlYXR1cmUuaA0KPj4gbmV3IGZpbGUgbW9kZSAxMDA3NTUNCj4+IGluZGV4IDAwMDAwMDAw
+MDAwMC4uOGYwZTBjNDdhNjE3DQo+PiAtLS0gL2Rldi9udWxsDQo+PiArKysgYi9pbmNsdWRlL2xp
+bnV4L2VkYWNfcmFzX2ZlYXR1cmUuaA0KPj4gQEAgLTAsMCArMSw2NiBAQA0KPj4gKy8qIFNQRFgt
+TGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wICovDQo+PiArLyoNCj4+ICsgKiBFREFDIFJBUyBj
+b250cm9sIGZlYXR1cmVzLg0KPj4gKyAqDQo+PiArICogQ29weXJpZ2h0IChjKSAyMDI0IEhpU2ls
+aWNvbiBMaW1pdGVkLg0KPj4gKyAqLw0KPj4gKw0KPj4gKyNpZm5kZWYgX19FREFDX1JBU19GRUFU
+X0gNCj4+ICsjZGVmaW5lIF9fRURBQ19SQVNfRkVBVF9IDQo+PiArDQo+PiArI2luY2x1ZGUgPGxp
+bnV4L3R5cGVzLmg+DQo+PiArI2luY2x1ZGUgPGxpbnV4L2VkYWMuaD4NCj4+ICsNCj4+ICsjZGVm
+aW5lIEVEQUNfUkFTX05BTUVfTEVOCTEyOA0KPj4gKw0KPj4gK2VudW0gZWRhY19yYXNfZmVhdCB7
+DQo+PiArCVJBU19GRUFUX1NDUlVCLA0KPj4gKwlSQVNfRkVBVF9FQ1MsDQo+PiArCVJBU19GRUFU
+X01BWA0KPj4gK307DQo+PiArDQo+PiArc3RydWN0IGVkYWNfZWNzX2V4X2luZm8gew0KPj4gKwl1
+MTYgbnVtX21lZGlhX2ZydXM7DQo+PiArfTsNCj4+ICsNCj4+ICsvKg0KPj4gKyAqIEVEQUMgUkFT
+IGZlYXR1cmUgaW5mb3JtYXRpb24gc3RydWN0dXJlICAqLyBzdHJ1Y3QgZWRhY19zY3J1Yl9kYXRh
+DQo+PiArew0KPj4gKwljb25zdCBzdHJ1Y3QgZWRhY19zY3J1Yl9vcHMgKm9wczsNCj4+ICsJdm9p
+ZCAqcHJpdmF0ZTsNCj4+ICt9Ow0KPj4gKw0KPj4gK3N0cnVjdCBlZGFjX2Vjc19kYXRhIHsNCj4+
+ICsJY29uc3Qgc3RydWN0IGVkYWNfZWNzX29wcyAqb3BzOw0KPj4gKwl2b2lkICpwcml2YXRlOw0K
+Pj4gK307DQo+DQo+U28gZWFjaCAiZmVhdHVyZSIgd291bGQgcmVxdWlyZSBhIHNlcGFyYXRlIHN0
+cnVjdCB0eXBlPw0KPg0KPldoeSBkb24ndCB5b3UgZGVmaW5lIGEgKnNpbmdsZSogc3RydWN0IHdo
+aWNoIGFjY29tb2RhdGVzIGFueSBSQVMNCj5mdW5jdGlvbmFsaXR5Pw0KRG9uZS4NCg0KPg0KPlRo
+eC4NCj4NCj4tLQ0KPlJlZ2FyZHMvR3J1c3MsDQo+ICAgIEJvcmlzLg0KPg0KPmh0dHBzOi8vcGVv
+cGxlLmtlcm5lbC5vcmcvdGdseC9ub3Rlcy1hYm91dC1uZXRpcXVldHRlDQo+DQoNClRoYW5rcywN
+ClNoaWp1DQo=
 
