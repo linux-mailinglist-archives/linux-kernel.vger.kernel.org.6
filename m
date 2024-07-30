@@ -1,96 +1,129 @@
-Return-Path: <linux-kernel+bounces-266810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1A169407FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:00:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEDC3940803
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F29DB229E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:00:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6825128450F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE98167D80;
-	Tue, 30 Jul 2024 06:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A246218D4B3;
+	Tue, 30 Jul 2024 06:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CI/bD4DX"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EB5YXv7l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7300516B75F;
-	Tue, 30 Jul 2024 06:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7215624;
+	Tue, 30 Jul 2024 06:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722319207; cv=none; b=Eht2Swf1MdCT6BegzfQMQaxZ9Y++yuuKLtgE/86bugeqjs1wUl4qSry5pGhjjDnS+utJoUAim09P+yqR5Vl+A6FXg2YrIy3w6qQEiplyOevkvDyGmwj9hEoG1/vmXf8Q9pQRfR9fqeCL7asNj2Sq29I1JE8v8tFJHEBmQjEFgFQ=
+	t=1722319414; cv=none; b=kBv//lnK2eLrw94WmlTruRVKZD/E60fiDJ8OhiN0hpysJ0OpT62INlf9ddv0CwRIXn+DegN1+ehDSitYaVun+h97mJJ9+gJRQNdqjTNjPyT80VPxIxgX7rlzvrzfwtwbvYBt9pDZ29N9L+N6acxMo+gm9CFH6LqaytPJnTt4Vg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722319207; c=relaxed/simple;
-	bh=qJg8BDX/xzPXVgUz2dxeadYmFh+9QA1KHD/agziyD6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YL/mXuSa25GetIaXJu2r1AoRdlQB2YcH/unTszM+zQqbkWfIq3FoW44hg1W6zIqjr6jvWLb3gH8xt6AG1UO+gp3DA7Yj3Asu66I+7HWh+tP3K38cDsK1DA2miAa9m+GjlDUHEKU9tW6YBDvP6lkMxuS8qdNqEovO41vwmEOw/1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CI/bD4DX; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DFD1540E01CD;
-	Tue, 30 Jul 2024 06:00:00 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id i6Y13pd-NalB; Tue, 30 Jul 2024 05:59:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1722319197; bh=E5fRFhwnAJ60HkJJn69/gb79SKqaN2fycXvpcvxTPng=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CI/bD4DXUKaNfykQ8mlT/DKqtmLpMzC2RyinSXuDWavWtRcC20n63mRFoYvZjuisX
-	 wxjnTHYexLna7yfDwg2TU5F5G57NFGU8oGUGwN6O6GCkD3VHUg94l0hEHDZr5AGnQB
-	 +Coahe3mwApoj3tzzlemau8JCo1WbL0jNaKvgxDEM3sTlVCtDVWF6JmgnWIpuHUR6r
-	 93pQCz/MlLVme6z2WL7xGShUe5GKvsUqQIrnjrVRwElJP8ByVyr9D2vPrIgjLfxr08
-	 4nUXmTmNrEUqpDeSRskExfP9YgpP0dFT//5jyDZ01ou2qMXFegKdFqLvTD2Qzy3e7K
-	 fq+qv0+e1uIf6fyOPq3qYNGChL++PuPDZMBxoRe3mc63txE3gEJ2I1q/EzscQxgq//
-	 N5PQStagacVj18w4Ug0zJcB/1WkVB1w9m9xPAF7hfJg7DZrtyU37eQDoxtX226Iv6F
-	 c7eLrSMStT7GqNZ6sIHJQzY0D3wsPjxzsNr5Wxvjir2IaXKMH1MQXxOO/2ujaXQ4Tv
-	 TJtLBsEAruZjUtWid2qLYqLRIPLsdq2QdWUpItjjdTJyTj0JVKqe1txaX4DJlyjb53
-	 wj2QbFl4hXr91CvRHAeC9P5HwIG0pQqV2T7eePB44GjBqt+06l7CCoYMIW2v3j9lai
-	 rClzYAk+63hOPNr13SH8U6iU=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BDCC340E019C;
-	Tue, 30 Jul 2024 05:59:48 +0000 (UTC)
-Date: Tue, 30 Jul 2024 07:59:41 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Paluri, PavanKumar" <papaluri@amd.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	Michael Roth <michael.roth@amd.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] x86/sev: Fix __reserved field in sev_config
-Message-ID: <20240730055941.GAZqiBTbPUtkgYTWfi@fat_crate.local>
-References: <20240729180808.366587-1-papaluri@amd.com>
- <20240729193210.GHZqfuOs-t9HuYPF_Y@fat_crate.local>
- <dcfc9264-959a-3bb5-95ad-548a6f019430@amd.com>
+	s=arc-20240116; t=1722319414; c=relaxed/simple;
+	bh=oL8vRiWidptUNxRTdT1hQz8E7qWGGM60Lp/Ehe5Ovtc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cS2PXXRsTXlUdZ5jIcNMUUiJlBE9/hETDLoL2zEY0hDLkSS7vRu/1WB3eG/qqt/ZCNaS22lAvCUBvlAzzICcN+9LkcC/V9GFdzp2skgzwYg+22Q1ibFQVBy6IKxhyFqPvIuDLyX7HD5HjccBpYjVWzgnk8kG2ldQ7olSNDNzqhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EB5YXv7l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1214C32782;
+	Tue, 30 Jul 2024 06:03:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722319413;
+	bh=oL8vRiWidptUNxRTdT1hQz8E7qWGGM60Lp/Ehe5Ovtc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EB5YXv7l9n3q695IC0pKlQVMp4pqApvOVDQteLhLc69Tvd35UcnGZZjZ8T0t3Bg6z
+	 YG0aNWW1kPKSkeyXObYIlgXo81ZW530aZApkmSmxg/yAnXBLS8xMKHH7izqUZzx0bx
+	 3DYQAIAEDU+eJonvn8CAYg7vY3DkABYZaujRPIErZUMYaUmAKChYwkYkEJHN1VCE2y
+	 5DXWoCMFg+9C6cGsDnc7Kos5dsfM/zcqEygjYTdmlgxcoNPzKWMQsLFJtruU6d6QUc
+	 6hEnCboEnRU9NWBQtA8qbbjrIyr2oS1I5Kj5xwbgR4Dg3YTm/3yKbRjRqaRhmzcVN3
+	 76ja7zN6Tk7vA==
+Message-ID: <841572d7-ecb6-4c11-a890-aa29fd58adf4@kernel.org>
+Date: Tue, 30 Jul 2024 08:03:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <dcfc9264-959a-3bb5-95ad-548a6f019430@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/5] dt-bindings: net: wireless: brcm4329-fmac: add
+ pci14e4,449d
+To: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org,
+ krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org
+Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
+ minipli@grsecurity.net, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com,
+ Arend van Spriel <arend.vanspriel@broadcom.com>
+References: <20240730033053.4092132-1-jacobe.zang@wesion.com>
+ <20240730033053.4092132-2-jacobe.zang@wesion.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240730033053.4092132-2-jacobe.zang@wesion.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 29, 2024 at 06:45:21PM -0500, Paluri, PavanKumar wrote:
-> I will re-spin a v2.
+On 30/07/2024 05:30, Jacobe Zang wrote:
+> It's the device id used by AP6275P which is the Wi-Fi module
+> used by Rockchip's RK3588 evaluation board and also used in
+> some other RK3588 boards.
+> 
+> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
 
-You don't have to - I'll fix it up.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
--- 
-Regards/Gruss,
-    Boris.
+Best regards,
+Krzysztof
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
