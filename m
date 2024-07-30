@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-267128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00142940D03
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:09:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50AD7940CF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91362B2C6AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:07:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 828A61C220FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CF4194AFC;
-	Tue, 30 Jul 2024 09:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150061946DC;
+	Tue, 30 Jul 2024 09:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LF7byxQP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KqeIWJVt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E62319414B
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABE9194099
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722330347; cv=none; b=Qjw13CJmVd5p+0/NkG6fzQCyRbCZaNiX4aVNIeYeh3JK3TX0L49PaDBFYshkpYFlKugeKmcuzVwRVYEIf3Ook5i8ECgjxe9j5noijWqGfvix0klIzWtwtF9qAdZVDi/j8qvx+wMJy3pnyYGzUse9UrZBfaWxueQAbQZR7EPnTQ4=
+	t=1722330404; cv=none; b=eHdmwuqycBgOhvEHs0DTDGXh6ZMH2ZysTrvYhW8M0mMtYcoaexl8KVsA72KWPFkADf6LPVT+6CMyIQ3mreJPfZxZCpvmFPuZ69e+X2i4TQjXFRlcF3Cb/2dXZbQ2gPgQrUmJdqlW3qAInipJddATH8JZWFzWIdRf5zs3eGQEcJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722330347; c=relaxed/simple;
-	bh=AMADz3cAvKTXjxmizkMCUls5b/7+qLUiUKoat0OUU9w=;
+	s=arc-20240116; t=1722330404; c=relaxed/simple;
+	bh=QjRmS85wZqkU1AN0FX7WxfEC2oAZFQRsNmwjnjV8QLo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kJlojR3peYGEgkY5np6E7iMqG7wHK7duTTXYTAmiBx+1e/3oVUl90QLe7Uy/ErrfYgBN+A9i6RU8GwSn1IZ0SkdVnWrL7BLx4MMYpPqRaP87inVaeq2V2y9e77rowjdaP/MGb0dEddNbkjRLxODnjtyk3xm3bws+IznDAIoyEso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LF7byxQP; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=RKnZEUgOcuY/zJImmlnW/b9O4HQBbhzaX5iyOqjQvIHEPnVFfQeqLqyv5/eKJtuCApaTft35kvaUZspbBqY8UZfGpR4pAiMAr5GM4NuJvFXblL+vT8pjvEotdZDZfNnkaK7HvI1jiR8+xeVf+KBbP8JV+gUqQ3KLZdckosZ4FbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KqeIWJVt; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722330344;
+	s=mimecast20190719; t=1722330401;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=y8G0Rsvl2ZfKQVim3WYEu/ULpMdQ5SB3TZr8FpmD1gs=;
-	b=LF7byxQPSh4tpVGk/8dOl4m1YawPMCp/IgX+IJvWLVgwmkeR0JVejiqQbF/nOxkQ/dpnzQ
-	/5cmEXty/6TPSiAM6A59cbhMdjYUbvAOIvD6Cf8lN8lr0KfeXA1TEHzZGAu6VdDCf3/wCg
-	l0TTxmfxW4xXmn9qmREzb8aPaOFCCsM=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references;
+	bh=BxxeyuA47wcjNGA3mvbjeqTm8nQHqWeitUh19HMLyPI=;
+	b=KqeIWJVt2SycGizAoGmZ4vg6DMYO113CYjjm64aLQUH9b70Sz+4ZAnXUNLmMP91lOnfYRT
+	C412GWEEswO+3clAAa7aSzP969/wRHSkXWI8ds4KdIoWXM1P88NP2j9O6b1V5rMSg6Tk0N
+	xEiUU7f/dGCbaYPpiCPAr3BsMnChAPo=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-92-nq1nlwC6Oey3z7GDkk_QAQ-1; Tue, 30 Jul 2024 05:05:39 -0400
-X-MC-Unique: nq1nlwC6Oey3z7GDkk_QAQ-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a7a9761bf6dso400442166b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 02:05:39 -0700 (PDT)
+ us-mta-155-EGwznhBEPNSAgJ1dCPw_nQ-1; Tue, 30 Jul 2024 05:06:40 -0400
+X-MC-Unique: EGwznhBEPNSAgJ1dCPw_nQ-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-428087d1ddfso6199045e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 02:06:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722330338; x=1722935138;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y8G0Rsvl2ZfKQVim3WYEu/ULpMdQ5SB3TZr8FpmD1gs=;
-        b=ikbTskr/1MneRhrbLf7TBJorLlzRijiSdG0WhhtFq9JB77vVk94oVgfBhZeaokTlcq
-         +9iBn9ePSm/rniwQEJOPl2mX0SkHlavPnpebT1Gjh933pr89YNJUQsmSQ+P/Uo1z7RsE
-         2BfkQO6vkZNZmqNy6bI+rp+xis8R/tZPRa4wJRawUxBwf6SCDh6uYq+8jVFOZhOEZ2n1
-         7gjSAvthJYpyCPboN6pL16Sv3JMmcepfuHPqUbzSoCleVgKCCihAkEP7HSljiPeyaOoT
-         lOGfSC8wK+OC4+wm0NAL0OmChc4aTP2PtyNd8DC6s+33iYcYj+tq9YJOHkeRk/DM6HxL
-         DjwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6mOeSnkbOZ+Xk7aG+z2TOd0SLfvAZd+9X4psdhFzCOMBqJ3DYQ0r9JlyfqZRdDHEyGCnuxdKazS+yoK2w1ExfrlbxBasPcx/D7XSY
-X-Gm-Message-State: AOJu0YzpL3j/o+Wm2UUwF31+nfnT/zF2O0cNlYvSlbnx5M7I7WXX5TWP
-	Q1awtSJ7p8PU+FP8z/FirVFIH8tO1ABDqDPQseYM4KwE/mYwJU8T3kH+cN6s2mMxU3drVJDWFSA
-	LEvsCFnttqPUdk5/sxPThtvxQrqL3JZ1J3sBDBo+rr4PmApWC7hFETCj1Vo7AUQ==
-X-Received: by 2002:a17:907:9803:b0:a6f:4f2c:1936 with SMTP id a640c23a62f3a-a7d4011446bmr605767466b.44.1722330338313;
-        Tue, 30 Jul 2024 02:05:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGyHe4aJyS1Uxr4GJW4wjt2WBKjxS53+1D2JV4zXUtkqi7IDeNByS7dwef5YTgCXCGFtY96FA==
-X-Received: by 2002:a17:907:9803:b0:a6f:4f2c:1936 with SMTP id a640c23a62f3a-a7d4011446bmr605763366b.44.1722330337702;
-        Tue, 30 Jul 2024 02:05:37 -0700 (PDT)
-Received: from [192.168.10.47] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7acab23157sm617304466b.33.2024.07.30.02.05.36
+        d=1e100.net; s=20230601; t=1722330399; x=1722935199;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BxxeyuA47wcjNGA3mvbjeqTm8nQHqWeitUh19HMLyPI=;
+        b=N9aRCRlxwM5KjrOmpo7oF7j7jl5Dy9jDj9pAhPmUqI2ekZ7Hur4A7x9c1qMEn0zbEM
+         4QcXg/+8o8SfYT8nXfiXRqQ6R9mkQ/2RGFHtHzoEuTAEA5voSz5UvE3Mmd2e7nvlgtBG
+         ZLfE12+2NOcpNqAh3Exle5UrmE/3Rysjiz5q3/YnmaYlPjycohjBX06luj3DMKbkIGVa
+         ie/awo4rKQ38kesJrlCnhlC3X3JV2a5sC66bAh+qJgzpei5FuC1bbYiduOvD7fCVyFIx
+         m9Ml/2xMPu+RkdGWYVgL1325UROiACjv0abI8/tMmjl4yU8AqAM/jLtZj1cTanPJA3Qh
+         cNvA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9F4RLTEIpP+l9yItIZEBjYArfoDRRU7Yc+BGEFA7heTZVqJIQlKf1Kq1q7AxcaSPhOG3wcYKbjxEy/hk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIo3kK2hGhdF9jmMgnZrn1Po7ko4NEaRhMojk/DY9MAtKKs9HY
+	nluHel5eazXW8SSByP+5noDFmk9j4Qd0KeYifE56UjhhGlNAFdlJOl/tyTZYUR8GsBRkfE7XdED
+	byhazQ33HqiFM5WU7I5EWoH07/KzLGdmK7vM0YHXwLmHqMsjGxP//down8gZM3g==
+X-Received: by 2002:a5d:59ad:0:b0:36b:3394:f06f with SMTP id ffacd0b85a97d-36b34e4dbf4mr7334918f8f.5.1722330398944;
+        Tue, 30 Jul 2024 02:06:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEmp7LztHoixicCdrLrICu3jCeZd6QkYLefYMR8c0hp+YRMZ0zkEGKJf4kGg2JSs1F38+yLUw==
+X-Received: by 2002:a5d:59ad:0:b0:36b:3394:f06f with SMTP id ffacd0b85a97d-36b34e4dbf4mr7334901f8f.5.1722330398454;
+        Tue, 30 Jul 2024 02:06:38 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:1712:4410:9110:ce28:b1de:d919? ([2a0d:3344:1712:4410:9110:ce28:b1de:d919])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b3686f73asm14032119f8f.113.2024.07.30.02.06.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 02:05:37 -0700 (PDT)
-Message-ID: <2da6b57e-d5c2-4016-b89b-d51700eeb845@redhat.com>
-Date: Tue, 30 Jul 2024 11:05:35 +0200
+        Tue, 30 Jul 2024 02:06:37 -0700 (PDT)
+Message-ID: <35c918f6-1919-4597-9113-398d5c633cc8@redhat.com>
+Date: Tue, 30 Jul 2024 11:06:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,192 +81,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 45/84] KVM: guest_memfd: Provide "struct page" as
- output from kvm_gmem_get_pfn()
-To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
- <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
- Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- kvmarm@lists.linux.dev, loongarch@lists.linux.dev,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, David Matlack <dmatlack@google.com>,
- David Stevens <stevensd@chromium.org>
-References: <20240726235234.228822-1-seanjc@google.com>
- <20240726235234.228822-46-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH net v2] net-sysfs: check device is present when showing
+ duplex
+To: Jamie Bainbridge <jamie.bainbridge@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, David Decotigny <decot@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shigeru Yoshida <syoshida@redhat.com>,
+ Johannes Berg <johannes@sipsolutions.net>
+References: <85228e43f4771609b290964a8983e8c567e22509.1722211917.git.jamie.bainbridge@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240726235234.228822-46-seanjc@google.com>
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <85228e43f4771609b290964a8983e8c567e22509.1722211917.git.jamie.bainbridge@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 7/27/24 01:51, Sean Christopherson wrote:
-> Provide the "struct page" associated with a guest_memfd pfn as an output
-> from __kvm_gmem_get_pfn() so that KVM guest page fault handlers can
-        ^^^^^^^^^^^^^^^^^^^^
+Hi,
 
-Just "kvm_gmem_get_pfn()".
+On 7/29/24 02:12, Jamie Bainbridge wrote:
+> A sysfs reader can race with a device reset or removal, attempting to
+> read device state when the device is not actuall present.
+> 
+> This is the same sort of panic as observed in commit 4224cfd7fb65
+> ("net-sysfs: add check for netdevice being present to speed_show"):
+> 
+>       [exception RIP: qed_get_current_link+17]
+>    #8 [ffffb9e4f2907c48] qede_get_link_ksettings at ffffffffc07a994a [qede]
+>    #9 [ffffb9e4f2907cd8] __rh_call_get_link_ksettings at ffffffff992b01a3
+>   #10 [ffffb9e4f2907d38] __ethtool_get_link_ksettings at ffffffff992b04e4
+>   #11 [ffffb9e4f2907d90] duplex_show at ffffffff99260300
+>   #12 [ffffb9e4f2907e38] dev_attr_show at ffffffff9905a01c
+>   #13 [ffffb9e4f2907e50] sysfs_kf_seq_show at ffffffff98e0145b
+>   #14 [ffffb9e4f2907e68] seq_read at ffffffff98d902e3
+>   #15 [ffffb9e4f2907ec8] vfs_read at ffffffff98d657d1
+>   #16 [ffffb9e4f2907f00] ksys_read at ffffffff98d65c3f
+>   #17 [ffffb9e4f2907f38] do_syscall_64 at ffffffff98a052fb
+> 
+>   crash> struct net_device.state ffff9a9d21336000
+>     state = 5,
+> 
+> state 5 is __LINK_STATE_START (0b1) and __LINK_STATE_NOCARRIER (0b100).
+> The device is not present, note lack of __LINK_STATE_PRESENT (0b10).
+> 
+> Resolve by adding the same netif_device_present() check to duplex_show.
+> 
+> Fixes: 8ae6daca85c8 ("ethtool: Call ethtool's get/set_settings callbacks with cleaned data")
 
-> directly put the page instead of having to rely on
-> kvm_pfn_to_refcounted_page().
+the patch LGTM, but it looks like the issue pre-exist WRT the above 
+blamed commit??! possibly:
 
-This will conflict with my series, where I'm introducing
-folio_file_pfn() and using it here:
-> -	page = folio_file_page(folio, index);
-> +	*page = folio_file_page(folio, index);
->   
-> -	*pfn = page_to_pfn(page);
-> +	*pfn = page_to_pfn(*page);
->   	if (max_order)
->   		*max_order = 0;
+Fixes: d519e17e2d01 ("net: export device speed and duplex via sysfs")
 
-That said, I think it's better to turn kvm_gmem_get_pfn() into
-kvm_gmem_get_page() here, and pull the page_to_pfn() or page_to_phys()
-to the caller as applicable.  This highlights that the caller always
-gets a refcounted page with guest_memfd.
+Also please explicitly CC people who gave feedback on previous revisions,
 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 901be9e420a4..bcc4a4c594ef 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4348,13 +4348,14 @@ static int kvm_faultin_pfn_private(struct kvm_vcpu *vcpu,
-  		return -EFAULT;
-  	}
-  
--	r = kvm_gmem_get_pfn(vcpu->kvm, fault->slot, fault->gfn, &fault->pfn,
-+	r = kvm_gmem_get_page(vcpu->kvm, fault->slot, fault->gfn, &fault->refcounted_page,
-  			     &max_order);
-  	if (r) {
-  		kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
-  		return r;
-  	}
-  
-+	fault->pfn = page_to_pfn(page);
-  	fault->map_writable = !(fault->slot->flags & KVM_MEM_READONLY);
-  	fault->max_level = kvm_max_private_mapping_level(vcpu->kvm, fault->pfn,
-  							 fault->max_level, max_order);
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index a16c873b3232..db4181d11f2e 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -3847,7 +3847,7 @@ static int __sev_snp_update_protected_guest_state(struct kvm_vcpu *vcpu)
-  	if (VALID_PAGE(svm->sev_es.snp_vmsa_gpa)) {
-  		gfn_t gfn = gpa_to_gfn(svm->sev_es.snp_vmsa_gpa);
-  		struct kvm_memory_slot *slot;
--		kvm_pfn_t pfn;
-+		struct page *page;
-  
-  		slot = gfn_to_memslot(vcpu->kvm, gfn);
-  		if (!slot)
-@@ -3857,7 +3857,7 @@ static int __sev_snp_update_protected_guest_state(struct kvm_vcpu *vcpu)
-  		 * The new VMSA will be private memory guest memory, so
-  		 * retrieve the PFN from the gmem backend.
-  		 */
--		if (kvm_gmem_get_pfn(vcpu->kvm, slot, gfn, &pfn, NULL))
-+		if (kvm_gmem_get_page(vcpu->kvm, slot, gfn, &page, NULL))
-  			return -EINVAL;
-  
-  		/*
-@@ -3873,7 +3873,7 @@ static int __sev_snp_update_protected_guest_state(struct kvm_vcpu *vcpu)
-  		svm->sev_es.snp_has_guest_vmsa = true;
-  
-  		/* Use the new VMSA */
--		svm->vmcb->control.vmsa_pa = pfn_to_hpa(pfn);
-+		svm->vmcb->control.vmsa_pa = page_to_phys(page);
-  
-  		/* Mark the vCPU as runnable */
-  		vcpu->arch.pv.pv_unhalted = false;
-@@ -3886,7 +3886,7 @@ static int __sev_snp_update_protected_guest_state(struct kvm_vcpu *vcpu)
-  		 * changes then care should be taken to ensure
-  		 * svm->sev_es.vmsa is pinned through some other means.
-  		 */
--		kvm_release_pfn_clean(pfn);
-+		kvm_release_page_clean(page);
-  	}
-  
-  	/*
-@@ -4687,6 +4687,7 @@ void sev_handle_rmp_fault(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code)
-  	struct kvm *kvm = vcpu->kvm;
-  	int order, rmp_level, ret;
-  	bool assigned;
-+	struct page *page;
-  	kvm_pfn_t pfn;
-  	gfn_t gfn;
-  
-@@ -4712,13 +4713,14 @@ void sev_handle_rmp_fault(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code)
-  		return;
-  	}
-  
--	ret = kvm_gmem_get_pfn(kvm, slot, gfn, &pfn, &order);
-+	ret = kvm_gmem_get_page(kvm, slot, gfn, &page, &order);
-  	if (ret) {
-  		pr_warn_ratelimited("SEV: Unexpected RMP fault, no backing page for private GPA 0x%llx\n",
-  				    gpa);
-  		return;
-  	}
-  
-+	pfn = page_to_pfn(page);
-  	ret = snp_lookup_rmpentry(pfn, &assigned, &rmp_level);
-  	if (ret || !assigned) {
-  		pr_warn_ratelimited("SEV: Unexpected RMP fault, no assigned RMP entry found for GPA 0x%llx PFN 0x%llx error %d\n",
-@@ -4770,7 +4772,7 @@ void sev_handle_rmp_fault(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code)
-  out:
-  	trace_kvm_rmp_fault(vcpu, gpa, pfn, error_code, rmp_level, ret);
-  out_no_trace:
--	put_page(pfn_to_page(pfn));
-+	kvm_release_page_unused(page);
-  }
-  
-  static bool is_pfn_range_shared(kvm_pfn_t start, kvm_pfn_t end)
-
-
-And the change in virt/kvm/guest_memfd.c then is just as trivial, apart
-from all the renaming:
-
--	*pfn = folio_file_pfn(folio, index);
-+	*page = folio_file_page(folio, index);
-
+Thanks,
 
 Paolo
 
