@@ -1,118 +1,105 @@
-Return-Path: <linux-kernel+bounces-267144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2849D940D5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:25:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04FCA940DB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84A98285418
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:25:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A52DB1F24720
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D70194C84;
-	Tue, 30 Jul 2024 09:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE63194C7B;
+	Tue, 30 Jul 2024 09:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="U8ZjN8M1"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="BDkdyyN1"
+Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E421194AF2;
-	Tue, 30 Jul 2024 09:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095CD188CC7;
+	Tue, 30 Jul 2024 09:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722331514; cv=none; b=PvzEVG9VjH3gHDxcJa/wb+a1I+iSJqh08vygq+tPssEZnyTtGScAk++fD9pRcCoo9ursYeaxNtkdcfb5t4T6RYtC/ImbwYHHQIXX3p4FOfuIOR88mz2PCA/xwwsDatMCXmQdtMaYUAQFn6Os6+eOa59yZ5wL3G+waKELkSCZ9AI=
+	t=1722331822; cv=none; b=r1DHyGfWgTAObTTLnTStxEglEgo874eGBen2nVvSGYZjhICUqBgOA8N4ENft7+vC6p8QoHkXNSSKp96C8p3KY5j2hNK5mv2ENRO+Zc8+9C3PqWG1KN5rDq6xSi0yEUspUfBMfah6Ie9ocUR1wLMv7CsqZ+RvchV4DNi5Q6+SbEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722331514; c=relaxed/simple;
-	bh=LV6HWM6DuQ9VHyfMX6QFrPrJ77gDJA4H7MMa1ftJpD0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fG4Qb9TWh6npv6DNZHZlcgPQt4PLbRIax4grZpxGhoYwdfGe6IJYmQzBabtuFEu0NfJef0Yvyu/OWrN2VzgNrrT7teKaeY9LF76ePGCOtHaW/jKBrWs+RztkM9vcNj2JXmb8RBt+WEvfWvwCPPgjweNsyKalipqxt520Y4qhcOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=U8ZjN8M1; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46U9OXXf8930143, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1722331473; bh=LV6HWM6DuQ9VHyfMX6QFrPrJ77gDJA4H7MMa1ftJpD0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=U8ZjN8M1Y77o9v8/DX1UVkoJzJ57Hlhsbr4DIqN8at5eocCKrHGqsivJFPDTV32jF
-	 7AjAJxzdpVsVwkha+k2H1CiV5IvGsG86NydVNZ1oUFZhtMmX0rlifmL0UA7KWYTOXN
-	 bnqbvYtTzrQFIDuxgdtzDvEE6sWAT2zKMO6KXqKHP+z4k/zf0Kfo2rUc5mMLm4PmQZ
-	 kGTa59CIQMnmfIpOA+f2IXLeSowz3qWFTQY7GX2VJ2AwFt4Oq13xL54isgJ+HvEkAU
-	 59izoX7d0c4SGrriM43RsdTs3ek9vBBDvWvH8eVGuLhSYMJzhhgDAo+XMHtGpDo+a9
-	 FQgoGzVlVxSdQ==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46U9OXXf8930143
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 30 Jul 2024 17:24:33 +0800
-Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 30 Jul 2024 17:24:33 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 30 Jul 2024 17:24:33 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
- RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
- 15.01.2507.035; Tue, 30 Jul 2024 17:24:33 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com"
-	<edumazet@google.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "andrew@lunn.ch"
-	<andrew@lunn.ch>,
-        "jiri@resnulli.us" <jiri@resnulli.us>,
-        "horms@kernel.org"
-	<horms@kernel.org>,
-        "rkannoth@marvell.com" <rkannoth@marvell.com>,
-        "jdamato@fastly.com" <jdamato@fastly.com>,
-        Ping-Ke Shih <pkshih@realtek.com>, Larry Chiu <larry.chiu@realtek.com>
-Subject: RE: [PATCH net-next v25 02/13] rtase: Implement the .ndo_open function
-Thread-Topic: [PATCH net-next v25 02/13] rtase: Implement the .ndo_open
- function
-Thread-Index: AQHa4X+gIt8gKL1ChE+yE/iOvi6B7bIOA7qAgAD9e+A=
-Date: Tue, 30 Jul 2024 09:24:32 +0000
-Message-ID: <24521b998abd478f88116950488fda17@realtek.com>
-References: <20240729062121.335080-1-justinlai0215@realtek.com>
-	<20240729062121.335080-3-justinlai0215@realtek.com>
- <20240729191559.1683ec63@kernel.org>
-In-Reply-To: <20240729191559.1683ec63@kernel.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1722331822; c=relaxed/simple;
+	bh=vavhuKswM/3UJ7RKw8cXf3oDRdQ9aHvYMqr5DHYL9qs=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=RVoOSCUMijASsVTFTHRImR/Q2QOUAd3enwzEaXmAy3qquypQGtwyuXl/ZmJsRKjenWOFKFmYM/w3aqw6V2jE+y6eQRhhNbpxBfkO5RC93++WZZrUv0JF0pbA4u0PB7gJTadbgKTBdAu80SPEBBaJ94PORyv7j/uL0anTFKnVyCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=BDkdyyN1; arc=none smtp.client-ip=203.205.221.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1722331517; bh=60gLN9JdTKEP1C1p1aBTRlyiT21+gnTSf3rmZ1dVFz4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=BDkdyyN1CoKwFdjDbkuPpTRfLbvI39D9poAOg9i/6JpkXFZZu01QkcNPMf95FWlkY
+	 tFhkknT5kAQfTFJDoOIRHjFDiDksgtInVQhbD5OEdFKxLQcdd6/xl0I9WmvzzrNaph
+	 Ah2eMXusay2E3OM1DGozSokk0r2kRl7YtEOLHWqE=
+Received: from localhost.localdomain ([36.111.64.84])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id 64E37C5C; Tue, 30 Jul 2024 17:25:14 +0800
+X-QQ-mid: xmsmtpt1722331514ti2mdsjo0
+Message-ID: <tencent_A7A264C6C6F9289CAE6046759239DCB45A0A@qq.com>
+X-QQ-XMAILINFO: MR/iVh5QLeienvsCx/U4UbqmyHgJAqVZxMmDyd7UbZm0Jje+Yv/zxqQ1QnJIzJ
+	 ZqVopIGUHbDdybBNKbul9/nw/sc3vmNfwgdoIf0EqoIQEp6hXpg3qs5SFegTswut74bOq46z1kkr
+	 ndnQ+nD/YsFRJmqpwKrQi8HVjahzD1wPDZjr6WHWHAekrjVtkV7kvNdzz7ZpCJ/OEGixLEcpV4zs
+	 jcEapJgjSAaPq8KW/+xBSBf9CvrkiHTg7/LRDbtcltFQhb6NyYp5RBp2bG54eyk1BaXE4HcNREmi
+	 HfEnlp/EZn0UYs9p7ACh3QOoNsExQS/TXLe250aYIsYNvOgQkBC4qPKpy1Csc16JJ9ovdRfgIqxh
+	 7lly1vbtgbZgHRoinmZrEL4IBsj7JVzohxqNXp8Dwk5Wge00G54H5BFIiiOqnOxaoh6hKFJdKQhh
+	 P14SjGPRVkd819d8FRHOosO7Mb+5zwlIlTMQiUgNBYDLvMuZQSDOlCFsQxsLG3lNjGByFBxVIXyU
+	 QhWnDXC2BS6JJwoEXLD9aseicAJqHBcNSq1jPzJzfdP9vx+YJP6kSQJjKHd+4lpA/GtO/0lgD1S3
+	 SRymxWEW2vLmCatg0k8FbZauP0SPbXHhqmLBx7D/A0G/6dwIUHjoquIkyXsOBvD+Y5MvBFB8l9bo
+	 2+NfgvEuPmTyHNHjj/HkPNNAKkhJerFdL2IoPJ5GkhIHVXpab6InfWzEvWQoLfSrICk3alMRnzx/
+	 HK0ngfTon/aaT6qWIY7ugzHBA3ea8pCz9e+V4B9AtqEpiyfQ7thPR6mSC1oJE8+EPRT5Ml2bTAyA
+	 km51CM9aEojt/yzJJ5fSSnCHyXeOHl4mTaRHwNEKEb1tO4Le4vyZcRy3uRtUhJAQEGb9PtJZK2z2
+	 FGKF66sq63zLECPLcysYur7ZZ3l2448RtxUJjp5gIYVCc3KkgSuxNxYlhby1iSndWw+TyEytvUL7
+	 T8DOvEHBScHZ8tzrlLWOTGymeh+sMKGTG0DFWA/3g72CI+y1ve/I6BzeKiojsZ+cEgPY2AB5Qyyi
+	 qAJAYJ0A==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: wujing <realwujing@qq.com>
+To: gregkh@linuxfoundation.org
+Cc: dongml2@chinatelecom.cn,
+	linux-kernel@vger.kernel.org,
+	menglong8.dong@gmail.com,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	realwujing@qq.com,
+	stable@vger.kernel.org,
+	yuanql9@chinatelecom.cn
+Subject: Re: Re: [PATCH] sched/fair: Correct CPU selection from isolated domain
+Date: Tue, 30 Jul 2024 17:25:13 +0800
+X-OQ-MSGID: <20240730092513.37979-1-realwujing@qq.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <2024073032-ferret-obtrusive-3ce4@gregkh>
+References: <2024073032-ferret-obtrusive-3ce4@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-> On Mon, 29 Jul 2024 14:21:10 +0800 Justin Lai wrote:
-> > +     page =3D page_pool_dev_alloc_pages(tp->page_pool);
-> > +     if (!page) {
-> > +             netdev_err(tp->dev, "failed to alloc page\n");
-> > +             goto err_out;
-> > +     }
-> > +
-> > +     buf_addr =3D page_address(page);
-> > +     mapping =3D page_pool_get_dma_addr(page);
-> > +
-> > +     skb =3D build_skb(buf_addr, PAGE_SIZE);
->=20
-> Don't build_skb() before packet was received.
->=20
-> One of the benefits of build_skb() is that the skb is supposed to be more=
- likely
-> to be still in CPU cache.
+> What "current patch"?
+>
+> confused,
+>
+> greg k-h
 
-Ok, I will modify it.
+```bash
+git remote -v
+stable  git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git (fetch)
+stable  git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git (push)
+```
 
-Thanks
-Justin
+```bash
+git branch
+*master
+```
+
+In the git repository information provided above, 8aeaffef8c6e is one of the
+output items from the command `git log -S 'cpumask_test_cpu(cpu, \
+sched_domain_span(sd))' --oneline kernel/sched/fair.c`.
+
 
