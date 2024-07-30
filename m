@@ -1,162 +1,196 @@
-Return-Path: <linux-kernel+bounces-267265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9062D940F4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:29:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1551940F51
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 133C8288E5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:29:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 620E81F234F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E2D198A04;
-	Tue, 30 Jul 2024 10:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676CC198A2C;
+	Tue, 30 Jul 2024 10:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="AlvhLVNM"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q6cbtZmg"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E658197A89
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1603519A282
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722335210; cv=none; b=MMULIygfHbd2ix8dgsUJc1OGokuUpVFTpnD77jgmbycQR0ilXvLOSirgjL4rO/8ooTBjsj8uMYOJsrkB7GTVRTV1+lFMI9+VHgYZvbBW2CCd514/I3T/WK0LRB9DLEOs0JyN6aeGqzm+TF1sIsDKkpbtoQ/6S2aLSczZxnJ/6BU=
+	t=1722335241; cv=none; b=JqxzzuLT0Vb9n5VflW9oM5vBh3DD0zn5bHZSsLtD58FM4zdk0J/oj7LduQM5g/Y/NnMzbbWJSaxWr8ONqUjFh/T4issGinvdGDfHvPfp33TOVqfQE8nCTOcDwfmjZzHr7CSPfozNzys+ZJuQBemKwkWpkD70Mnnx7mRgpLImgxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722335210; c=relaxed/simple;
-	bh=sxN7TLcnoHw+Zc2vz1WFQqMcQA3CmRtl7pUiHL9bTQA=;
-	h=Message-ID:Date:MIME-Version:Subject:References:To:From:
-	 In-Reply-To:Content-Type; b=NeZfyN15hStkwkY3IXRXp9XQUZPUTUX1UNA/uIiC70kdzijF3sloz26gfmNwz7fY6YweaapSpwMkMSa8MKhaKcTAiTzZmsBPcUuCUQ8DjiYZCCxSaY+oFTEy2cGlrcgOo/kHUPbxew0hOkBHye8surJ555HfJyYOB2lkoSqLn/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=AlvhLVNM; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fc49c0aaffso27585815ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 03:26:48 -0700 (PDT)
+	s=arc-20240116; t=1722335241; c=relaxed/simple;
+	bh=u4tTMuWsCVNpmS86dua+fcUTWVSCzwMjLhtud5iXe/k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=neIfinY00+AcMBSh7wyfzV11jWi7RRyZEkXkqS9aev9IhOJVTTU7a7a1C5OcviqfGdVbX55TDcNpA/dvMDu1v+1Ri1KR7JXkOEPtplIjKQTLE3xspKdBmbK4gGHO+gmdfHru6UBwy8cxDy8ylFB80ETIMLCy59kOKQryKcjhSfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q6cbtZmg; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70d2b921cdfso3783412b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 03:27:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1722335207; x=1722940007; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:to:references:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yGL/a5eKl6ga4jYFa8CAaUgPa6lWkZV0E7sMDpiOh+Y=;
-        b=AlvhLVNMzJbJDRQvnZMUokjEd8Y3Buqc+WcKqUYtm/U7GuGZOyjG51MOt0/GZsgpY+
-         XqiNo9ms5b4/iqVEh+HbII48umSkiCfhGk/evu6Tt8+OmksYKat18NZuIqtleWQp/CaX
-         5Pj5b+f5UwDwt04sexOsGKaDdS/TfQSrLCQzFxM9aoD1FKvrkagATVIJMJPFx4pDyezh
-         19K7WjbMLgQwu1GHcBKmvV06E0Zc/bet1k0nN7wpgZBoCOZYmEapXMScwUiOG71sPgia
-         JKI7DzcLX8PlM1lOpwFLv7D6wpvcWdGIxnFclF++WVcLoTPlkPdPICh5KKD7CNohoc9C
-         Tuxg==
+        d=linaro.org; s=google; t=1722335239; x=1722940039; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YAP4JgQUQf4P0DvGAseoga/op/oHSVepCvQsUTCDQr0=;
+        b=q6cbtZmgaWz+g+WV8KKOKrMt5WqnwKvF1PPNW2g32seu2cSsJfDsyUc4uVlYqZaEoe
+         TXpdoXxGQdSXd3lI8ZIKZuaM2rSl7DCrTIQ/qtr+h7jno0kmXjoALD0WuoIreXT6rLYb
+         uzG0wm0WV5v7Y5jxeq5Q3GbJEgl41wxGYaVwHjj5Z6zuW3ZZdDY7buSW1EHx9l2mPKI4
+         Dwrs4QK5ydNghax6uxPQEXCwvrTXATWeSgQGqiW1lgl5kylB5lIghh7ptoYez7/jMVon
+         32anTYLfKcG1Nq+8f3M2bO+R/GGVTgPvMA/EMR666Sq1dzI82autuuSKXEq2zuaxfDGb
+         Cy1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722335207; x=1722940007;
-        h=content-transfer-encoding:in-reply-to:from:to:references:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yGL/a5eKl6ga4jYFa8CAaUgPa6lWkZV0E7sMDpiOh+Y=;
-        b=BOEmYVzT9KO5tYtei5Sk0g7VaQezooxC/9JJuLVBlvJMjwG11Oxnt3SZ2rJyevy0O1
-         1/F89Y8UM0nfCzKoJvwUH8YoqfNf7XYS9FMCPfaB+K5d6rLJbbN+oCPqeNQJJKYjJ4N2
-         H/sir5mC0sxgiimRsqLmSfgLBKQ16EMri+IuLj3XQC/YaP5o9HFSqo5LKI/bbI9ESHJe
-         2aTMxe1VQnidzcyjDBa9YbV/eTV9lZuksCcn/cswPFBwqedXQAEm2oue0HLUYDjYI4ve
-         ZjEnQr3qP2GQ5hLiiZ9HXqnuzBEjDgl7QIyYVL6iz6eNoD0wpDgkSsDLvUREt7L+jC48
-         /KYA==
-X-Gm-Message-State: AOJu0YyACl0grSD4a8kMCJt/fPPZutRLz3G+QtOHsEiE8GBUlYIIqgeA
-	Giy1H3jeZ5bRfz4FfGKBXM7QUoR6f2oJcD0U7H5zMfTWMJ9gpU9a4g1wWsDt5Vz08j8FsOTFspg
-	k
-X-Google-Smtp-Source: AGHT+IEWoiWxEa7ypz//+PdFQcaYycXDAjX8fN0lZnLl2bZIxcgBu8wqvGs7AYO1MopNgSU7vZEhYw==
-X-Received: by 2002:a17:903:230c:b0:1fd:7664:d870 with SMTP id d9443c01a7336-1ff048e4ec3mr87874995ad.51.1722335207332;
-        Tue, 30 Jul 2024 03:26:47 -0700 (PDT)
-Received: from [10.84.153.104] ([203.208.167.151])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c7fd99sm98793245ad.47.2024.07.30.03.26.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 03:26:46 -0700 (PDT)
-Message-ID: <8f358bc7-e1ed-4631-bdc1-4134b8f84a34@bytedance.com>
-Date: Tue, 30 Jul 2024 18:26:44 +0800
+        d=1e100.net; s=20230601; t=1722335239; x=1722940039;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YAP4JgQUQf4P0DvGAseoga/op/oHSVepCvQsUTCDQr0=;
+        b=iF9KPd9KS3lK9QGdySGg7CuZxreZ62VJlJXIJzwi1Ai6l3TRemlxp62ekXIyJmytAC
+         ohfTZrS47WZV4cLMQWn2Z9fwe2F7kIOCccPr186+PPV2mUkacZz2o/5aFU/l7u7j82em
+         dtsgsX8BQq6AQDuYXNkY8fr0yoxkkyfuujBUaKnIQ+Zu72hJose78a72ovV2k0kpcUUJ
+         N4S0dtqBTV187XVvodXl1F+8UEk8qIVADepSph194U5+UDoswB3d7jEcVU307zYEKjoe
+         87Y7Gg0V39wd6nUPtKt9eO27nhDVwujqb1YRJ3YI/U/GK+aDR7BLXKp1HRJE7nG2z/zL
+         chHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdfZcXcmcQPSFycPB2sHqeNo5GZQTTOxR8/WqUsZqT7YqHGfMTuRVlLXnCPOAU0esriiSbK9qBcR895ZM8fjXPMLJRIoaHsGvtLuFE
+X-Gm-Message-State: AOJu0YzsjV4AUysIbjAGHBl+t7yZZ35KcpQhX7JxKGi2DrWlrBMpdCLm
+	CILe03Tyx2uvj9iWH4OsGWedwbosFsJ7VDXQs/PQoU98HHnFICtOyobTM182lBc=
+X-Google-Smtp-Source: AGHT+IH3JOYNeUn52TjnAuIMzRNvQUM5eXeoYBqqi/ynI2wdeeF43VWgZQHcjLfWP5NoZfwh4szhHQ==
+X-Received: by 2002:a05:6a20:7487:b0:1c4:8ddb:3fac with SMTP id adf61e73a8af0-1c4a12e0de9mr14002754637.23.1722335239141;
+        Tue, 30 Jul 2024 03:27:19 -0700 (PDT)
+Received: from localhost ([122.172.84.129])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb73b9b72sm12227081a91.22.2024.07.30.03.27.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 03:27:18 -0700 (PDT)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc: linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	=?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V5 0/8] Rust bindings for cpufreq and OPP core + sample driver
+Date: Tue, 30 Jul 2024 15:56:57 +0530
+Message-Id: <cover.1722334569.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sched/fair: Sync se's load_avg with cfs_rq in
- reweight_task
-References: <66ee1520-48b8-4229-8bdd-9746c8bea5fe@bytedance.com>
-To: linux-kernel <linux-kernel@vger.kernel.org>
-From: Chuyi Zhou <zhouchuyi@bytedance.com>
-In-Reply-To: <66ee1520-48b8-4229-8bdd-9746c8bea5fe@bytedance.com>
-X-Forwarded-Message-Id: <66ee1520-48b8-4229-8bdd-9746c8bea5fe@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Hello,
 
+This patch series introduces initial Rust bindings for two subsystems: cpufreq
+and Operating Performance Points (OPP). The bindings cover most of the
+interfaces exposed by these subsystems.
 
+Included in this series is a sample `cpufreq` driver, `rcpufreq-dt`, which is a
+duplicate of the existing `cpufreq-dt` driver. The `cpufreq-dt` driver is a
+generic, platform-agnostic, device-tree-based driver used on many ARM platforms.
 
--------- 转发的消息 --------
-主题: Re: [PATCH v2] sched/fair: Sync se's load_avg with cfs_rq in 
-reweight_task
-日期: Mon, 29 Jul 2024 11:06:33 +0800
-From: Chuyi Zhou <zhouchuyi@bytedance.com>
-收件人: Qais Yousef <qyousef@layalina.io>, K Prateek Nayak 
-<kprateek.nayak@amd.com>
-抄送: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
-rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, 
-vschneid@redhat.com, chengming.zhou@linux.dev
+Currently, the implementation has been tested using QEMU, verifying that
+frequency transitions, various configurations, and driver binding/unbinding
+functions as expected. However, performance measurements have not been
+conducted.
 
-Hello Qais,
+For those interested in trying these patches, along with a few dependencies,
+they can be found at:
 
-在 2024/7/29 04:14, Qais Yousef 写道:
-> On 07/22/24 10:47, K Prateek Nayak wrote:
->> (+ Qais)
->>
->> Hello Chuyi,
->>
->> On 7/20/2024 10:42 AM, Chuyi Zhou wrote:
->>> In reweight_task(), there are two situations:
->>>
->>> 1. The task was on_rq, then the task's load_avg is accurate because we
->>> synchronized it with cfs_rq through update_load_avg() in dequeue_task().
->>>
->>> 2. The task is sleeping, its load_avg might not have been updated for some
->>> time, which can result in inaccurate dequeue_load_avg() in
->>> reweight_entity().
->>>
->>> This patch solves this by using update_load_avg() to synchronize the
->>> load_avg of se with cfs_rq. For tasks were on_rq, since we already update
->>> load_avg to accurate values in dequeue_task(), this change will not have
->>> other effects due to the short time interval between the two updates.
->>>
->>> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
->>> ---
->>> Changes in v2:
->>> - change the description in commit log.
->>> - use update_load_avg() in reweight_task() rather than in reweight_entity
->>> suggested by chengming.
->>> - Link to v1: https://lore.kernel.org/lkml/20240716150840.23061-1-zhouchuyi@bytedance.com/
->>> ---
->>>    kernel/sched/fair.c | 3 +++
->>>    1 file changed, 3 insertions(+)
->>>
->>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>> index 9057584ec06d..b1e07ce90284 100644
->>> --- a/kernel/sched/fair.c
->>> +++ b/kernel/sched/fair.c
->>> @@ -3835,12 +3835,15 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
->>>    	}
->>>    }
->>> +static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags);
->>> +
->>>    void reweight_task(struct task_struct *p, const struct load_weight *lw)
->>>    {
->>>    	struct sched_entity *se = &p->se;
->>>    	struct cfs_rq *cfs_rq = cfs_rq_of(se);
->>>    	struct load_weight *load = &se->load;
->>> +	update_load_avg(cfs_rq, se, 0);
-> 
-> White space and a comment perhaps?
-> 
-> LGTM anyway.
+git://git.kernel.org/pub/scm/linux/kernel/git/vireshk/linux.git rust/cpufreq-dt
 
-Thanks for taking a look, will send another patch later.
+This series depends on foundational bindings for several other modules,
+including device/driver, platform driver, OF (Device Tree), clock, and cpumask.
+Support for these modules is not yet intended for upstream inclusion.
 
-(V3 
-link:https://lore.kernel.org/lkml/20240723114247.104848-1-zhouchuyi@bytedance.com/)
+The work is based on `staging/rust-device` from the Rust tree, which is derived
+from v6.10-rc1.
+
+V4->V5:
+- Rename Registration::register() as new().
+- Provide a new API: Registration::new_foreign_owned() and use it for
+  rcpufreq_dt driver.
+- Update MAINTAINERS file.
+
+V3->V4:
+- Fix bugs with freeing of OPP structure. Dropped the Drop routine and fixed
+  reference counting.
+- Registration object of the cpufreq core is modified a bit to remove the
+  registered field, and few other cleanups.
+- Use Devres for instead of platform data.
+- Improve SAFETY comments.
+
+V2->V3:
+- Rebased on latest rust-device changes, which removed `Data` and so few changes
+  were required to make it work.
+- use srctree links (Alice Ryhl).
+- Various changes the OPP creation APIs, new APIs: from_raw_opp() and
+  from_raw_opp_owned() (Alice Ryhl).
+- Inline as_raw() helpers (Alice Ryhl).
+- Add new interface (`OPP::Token`) for dynamically created OPPs.
+- Add Reviewed-by tag from Manos.
+- Modified/simplified cpufreq registration structure / method a bit.
+
+V1->V2:
+- Create and use separate bindings for OF, clk, cpumask, etc (not included in
+  this patchset but pushed to the above branch). This helped removing direct
+  calls from the driver.
+- Fix wrong usage of Pinning + Vec.
+- Use Token for OPP Config.
+- Use Opaque, transparent and Aref for few structures.
+- Broken down into smaller patches to make it easy for reviewers.
+- Based over staging/rust-device.
+
+Thanks.
+
+Viresh Kumar (8):
+  rust: Add initial bindings for OPP framework
+  rust: Extend OPP bindings for the OPP table
+  rust: Extend OPP bindings for the configuration options
+  rust: Add initial bindings for cpufreq framework
+  rust: Extend cpufreq bindings for policy and driver ops
+  rust: Extend cpufreq bindings for driver registration
+  rust: Extend OPP bindings with CPU frequency table
+  cpufreq: Add Rust based cpufreq-dt driver
+
+ MAINTAINERS                     |    2 +
+ drivers/cpufreq/Kconfig         |   12 +
+ drivers/cpufreq/Makefile        |    1 +
+ drivers/cpufreq/rcpufreq_dt.rs  |  221 +++++++
+ rust/bindings/bindings_helper.h |    2 +
+ rust/helpers.c                  |   15 +
+ rust/kernel/cpufreq.rs          | 1039 +++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs              |    4 +
+ rust/kernel/opp.rs              |  925 +++++++++++++++++++++++++++
+ 9 files changed, 2221 insertions(+)
+ create mode 100644 drivers/cpufreq/rcpufreq_dt.rs
+ create mode 100644 rust/kernel/cpufreq.rs
+ create mode 100644 rust/kernel/opp.rs
+
+-- 
+2.31.1.272.g89b43f80a514
+
 
