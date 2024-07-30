@@ -1,86 +1,90 @@
-Return-Path: <linux-kernel+bounces-266777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9229406AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:00:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE52F9406B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 747A61F23327
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:00:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DA851C2277F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA02B166314;
-	Tue, 30 Jul 2024 05:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HbQgr+K8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6F616191E;
+	Tue, 30 Jul 2024 05:04:01 +0000 (UTC)
+Received: from hkg.router.rivoreo (45.78.32.129.16clouds.com [45.78.32.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92027E792;
-	Tue, 30 Jul 2024 05:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DFE7E792;
+	Tue, 30 Jul 2024 05:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.78.32.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722315636; cv=none; b=BdIIWFwy9Eo2nauoF8oML/ui4MinDWtZZzgypJMzNoaykv0/mCnSRdZafaQJP7PRoHxmcdwu9X+ivLShRzxyjHwH/sWUx52qfL4RwtWM/LKUP7gXzRsqd1o7vxLL93sDbLwUSG97WxnqE//xH8tqsD7+tCIN49LnQj4UGmYIG9Y=
+	t=1722315841; cv=none; b=bTqEeLtQPDl+hgEOTn4jHLPIcYGh0752e792Za8Qz/93KQG+ShbTxfHKVvCbyBNEc9PF9J/trkcxXA/g3lDIiBaVSqUx7PsBVUIcJdKhfqsy9V/bKYd2z3fHtQQYCNH8jV7Tw81L1j4KfYV5NRrHPGOf3/xA72gH7Fii4U3OiK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722315636; c=relaxed/simple;
-	bh=/MRnOHMXITOkoV6huHsq4qMDTZ79Yk+2XE92a/hUAYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rS21yUIHyZXHP41VwBTz3egIeEH8RDqHPqeeFEyESa9kLYeWzN70Cu7x8WUBulArTginNhmCK01cRSGFowgoU9cWg+BAFfi2p+P2W9xsBT1LAaU2ziaIOC/8eK22fUeOOfbbzwd+YCu6xjoQYrELaIN6dAG2PrFcFCiJzTJsTpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HbQgr+K8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCBFFC32782;
-	Tue, 30 Jul 2024 05:00:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1722315635;
-	bh=/MRnOHMXITOkoV6huHsq4qMDTZ79Yk+2XE92a/hUAYg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HbQgr+K8pB4Updpqnfb9ZxNFrg/h9P0hY9JPGv1UV6vAYMC4vMS3MF8z4Vg1RD+il
-	 6jKP/MJxnR6RFV01v0jPh9jJpxjpLFwPnhcdry+5cHcr+a1wpbC9rjzRYRc52VZaZ/
-	 3PlIwtwDjFecoiBNHEzBmr5PR9j1muhJzpYOUAmU=
-Date: Tue, 30 Jul 2024 07:00:32 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: f_fs: Define pr_fmt
-Message-ID: <2024073004-crinkly-lark-d9d1@gregkh>
-References: <20240729-f_fs-pr_fmt-v1-1-8a0fc3196201@quicinc.com>
+	s=arc-20240116; t=1722315841; c=relaxed/simple;
+	bh=vzcBdUXqgSpR0Tr36QiwLkFOsVyrsRsd8QRfyJL0scA=;
+	h=Message-ID:Date:Subject:From:To:Cc:MIME-Version:Content-Type; b=MO1NvH8hkTEvzZUYmHVktmzsDQcwrYOVCN8iUX6AACDQKkeM08jpwja0PcW1IrVRDzgqE8hkupVnWamgHYtHZ9VH5VwWEQR9o5fJ9gPNwgLbAQqcRl0zRg48SlzCR7bIhqwDE3+CWoXYKP6vU1m/ekExr/ThNEWcqqwiczyWVxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rivoreo.one; spf=pass smtp.mailfrom=rivoreo.one; arc=none smtp.client-ip=45.78.32.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rivoreo.one
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivoreo.one
+Received: from tianjin2.rivoreo.one (unknown [10.100.1.128])
+	by hkg.router.rivoreo (Postfix) with ESMTPS id F3B6311CF0B;
+	Tue, 30 Jul 2024 05:03:57 +0000 (UTC)
+Received: from [10.1.105.1] (localhost [127.0.0.1])
+	by tianjin2.rivoreo.one (Postfix) with ESMTP id 215D46870F;
+	Tue, 30 Jul 2024 13:02:34 +0800 (CST)
+Received: from 10.12.4.102
+        (SquirrelMail authenticated user whr)
+        by _ with HTTP;
+        Tue, 30 Jul 2024 05:02:34 -0000
+Message-ID: <7aef67e6c45c7e91f1da4a9854b2f770.squirrel@_>
+Date: Tue, 30 Jul 2024 05:02:34 -0000
+Subject: [PATCH] of/irq: Make sure to update out_irq->np to the new parent
+From: "WHR" <whr@rivoreo.one>
+To: "Rob Herring" <robh@kernel.org>,
+ "Saravana Kannan" <saravanak@google.com>
+Cc: devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+User-Agent: SquirrelMail/1.4.23 [Rivoreo]
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729-f_fs-pr_fmt-v1-1-8a0fc3196201@quicinc.com>
+Content-Type: text/plain;charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Priority: 3 (Normal)
+Importance: Normal
 
-On Mon, Jul 29, 2024 at 03:53:50PM -0700, Bjorn Andersson wrote:
-> The majority of log entries of f_fs are generated with no indication of
-> their origin. Prefix these, using pr_fmt, to make the kernel log
-> clearer.
-> 
-> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> ---
->  drivers/usb/gadget/function/f_fs.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-> index d8b096859337..14ee43cb27b6 100644
-> --- a/drivers/usb/gadget/function/f_fs.c
-> +++ b/drivers/usb/gadget/function/f_fs.c
-> @@ -10,6 +10,7 @@
->   * Copyright (C) 2003 Agilent Technologies
->   */
->  
-> +#define pr_fmt(fmt) "f_fs: " fmt
+Commit 935df1bd40d43c4ee91838c42a20e9af751885cc has removed an
+assignment statement for 'out_irq->np' right after label 'skiplevel',
+causing the new parent acquired from function of_irq_find_parent didn't
+being stored to 'out_irq->np' as it supposed to. Under some conditions
+this can resuit in multiple corruptions and leakages to device nodes.
 
-Why not fix the driver up to use the proper dev_*() printing functions
-instead?
+Update 'out_irq->np' before jumping to label 'skiplevel'.
 
-Or, use KBUILD_MODNAME?
+Signed-off-by: WHR <whr@rivoreo.one>
+---
+ drivers/of/irq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-thanks,
+diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+index c94203ce65bb..580b33ce60d2 100644
+--- a/drivers/of/irq.c
++++ b/drivers/of/irq.c
+@@ -263,6 +263,7 @@ int of_irq_parse_raw(const __be32 *addr, struct
+of_phandle_args *out_irq)
+ 		if (imap == NULL) {
+ 			pr_debug(" -> no map, getting parent\n");
+ 			newpar = of_irq_find_parent(ipar);
++			out_irq->np = newpar;
+ 			goto skiplevel;
+ 		}
+ 		imaplen /= sizeof(u32);
+-- 
+2.30.2
 
-greg k-h
+
 
