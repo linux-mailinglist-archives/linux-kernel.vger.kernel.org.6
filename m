@@ -1,162 +1,165 @@
-Return-Path: <linux-kernel+bounces-267240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D212940ECC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:18:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CEA0940ED0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE3901C22655
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:18:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 992861F2441D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88DC1990DA;
-	Tue, 30 Jul 2024 10:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="HZ9oT61T"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6024B19B584;
+	Tue, 30 Jul 2024 10:18:00 +0000 (UTC)
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2125.outbound.protection.outlook.com [40.107.117.125])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6368E198A2C;
-	Tue, 30 Jul 2024 10:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D31191F91;
+	Tue, 30 Jul 2024 10:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.125
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722334676; cv=fail; b=rGAZrt9LzoFfOJrRCoGbeKOqlj6+VSSR/+ts4mSwccv0sVNxc2EIR+8IJmTJJdXJDf17yzMGBP8m7q7xFXckwfACDchKixMSbI2R3JvDfp7Jio4cB9dmg2DZYiDk8BmZSstREbtEecLBbO9Bxhoc64X3dG0M1lw2fkkXM3xKFWo=
+	t=1722334679; cv=fail; b=oSRg2cu5pjXKcqPpmSJx2tuPy94hxgAHA2QHnqfrGiI0m1v9YMLr09FZ7KftyEGAhoxhgjung1GPBs3Xrl08xQFuN60HK0HDcmmR9hiIPHyWe3jvG7qQ7jfbpeO8YKdgvUDD/m618eb5DGPm0Zrg5tJSFbZa+obJq8w3b+s279I=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722334676; c=relaxed/simple;
-	bh=B7GWLUfAXHgcEDHCSkPL5LUJmbCIJDinZsn05J9Eaqs=;
+	s=arc-20240116; t=1722334679; c=relaxed/simple;
+	bh=+qz6GEyzno2mHbveXHKnnTtjopEDvFudLirb4rmyDgc=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=FQ70P+/U2K5KO1480n9yrI5qslajm9tJWOjQDZCtjrkOva2SOhEZ5VAYCX/M6NkUxSI8HYYaOWZUemT8S1LOeyS9eQmez7dD91Da87ePgweOxYmg3MLnnOykH6dx67XCMigmgnikE2Qa6c0/4t3Xxk8IcMMiizSX81LPPLS3FiA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=HZ9oT61T; arc=fail smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46U0TE16001890;
-	Tue, 30 Jul 2024 03:17:46 -0700
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2168.outbound.protection.outlook.com [104.47.57.168])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 40pnp5hrkd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 03:17:45 -0700 (PDT)
+	 Content-Type:MIME-Version; b=EsKr2xppNvyZnN17N9AD+d4/xdmoy2AjwTFeQNjHg10M3yv7T/F4yev7s26E86wfn9SO2tOSHlWBjDGv10BH4LB98n2gRmxnkYt95Tukg0Ed/Sjn03E0zqFfzeaLjSLbjGuEgVw5pIRKSxV8fAxKWxbMTlrcZF1xY+EVg5QHs5A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com; spf=pass smtp.mailfrom=wesion.com; arc=fail smtp.client-ip=40.107.117.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wesion.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SiMcRCE0FcjOWcB1ki827IN9hxVxD3Cc/ujfvbZkTdRSrZVcvEICY/+81uBWImaTsM4J9iccW5t1N+Wuqs2+5rcf715lQVUWkIMSrcoebeKUJ0d/jz4xEap6Ooi8SjrT1yhcoAwrNQpP2HMmldjVvCDxaskTNxsQRN/07r0naquK0ryZSuc2bPIDPo7bD5TuuquqrGaN2FKOiugrAuxHgNYmBTcL8vv0YkI8h1tVWqMBV2DXfoLB1WPeW0QZ/yS+tPrnOvsaPjFN+IntWrrxbFyt8ar6Rq3xD8md1Tku8L+3k3vziqZSLC01Qrn3FMczIM7KEmqo+QvF+2s9GGozCA==
+ b=SdQMhljfWaUQ3TW/kGFzVSc3KWur3JssHi/HeKPPk88EYVPhRqNSSs+d668VcZxc04FrPBf7UbSwFQ+ctYQeZQUjlICCl5/gQlbY8RtaVpsTicXexroCRK6LxNbr3iffya2ld3gVJafkFjxrqHN9/JJJQJscVjXEUKjhSgyhF7dxHDGbILiwqYJ4IE1Pdkn0YLEAuJYoN74B+CLv9TdBtB0yhdW6O7sVa2fH5GzS8VIrgduJ+PrDa9kMCCSvKFIrFx3/yFChcgKynUfLe97kXdpMg/DAAkcX49oyfMWM0Abh7UTKiP01BO2XB8a0+StfLcJS4x6InfTLm6nYXZ9Y3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Bbay8HbqUwbh443S1+Tr/HgHHgt2EDTMO75tgYH8jNE=;
- b=DPoy1LcBwkpmRZUuRC7kColgn4pWLoe0p1aCqg5PAdU4zaY7F5WCRPwBZhvQQaRCFUDMQt6G5kYOfOsjoNuUMH7JPey+qxvlUINccTZyDkWh9EM1sVlBMZ7kVUF2PIao3J5cImstTe4fO0bOcCvjPdTOkLPxp6xlYRL1WgHbrVknxoJbiY6qRx2Ey6IzXj1ynLxMxiEdjR9VYm1iWcDEwTADgHUJlUX19Qm3CxbuCR906RApCo3h2kCD0dD5h/RwxnCxiW3Pk17DtffZc//HdFnHF/N1tFf9kIKX13/js5R+lxnenv/W4LzaSHmHLmN46NOMGM83CCjUNunMj4U2oQ==
+ bh=Y751EjFsLQ07IR5+M+TyOt+tXao53kM3NHpw8NBSce8=;
+ b=jWxqdBvhyAawjsfuln2h7LDa7Y9gYnIfspXqbGM6jqvAkpf9L+BJEE5LviM4VwasR8azTRqiv5RAgF1kKuxSZnWABp7ZWC9AjSdc5hBTdH19iga6qRnmj6hVAE8LHB6qb1xjflhMAzAAp+UgnUDLgamIgsgcJ6ci5W4DJv4k6hC7bILYIpGckTAHD97TxcLe9Oz/YBAop6Kp7w4Mx3VoeaibrjQWSpooxipIL1qJifBq5iASXTpwwiGuIheiYJ/jjVid8GCoqrrPuRs/WdTe/FWqex5kRN2LXFTywjt8+fi1fut/MoOwqrzdc7nFYxruEC3FG4mRdd557fdJfgdn+g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Bbay8HbqUwbh443S1+Tr/HgHHgt2EDTMO75tgYH8jNE=;
- b=HZ9oT61TJXCnclXePesG2iJYbv0wuKd0+K1WKo/F5d+DshWejdTjbBFWnuCWbDQq7IUaaJiD4Lw6FtSGmjtGTFd4zUQi08gm6eNVBqhac8XUcoBuufELox9yLdKVBa6qFZdhdH0Uq/BY/vsTL/u/go0PsmkfNIRaxm8hEX9QxmE=
-Received: from CO6PR18MB4098.namprd18.prod.outlook.com (2603:10b6:5:34b::5) by
- CO6PR18MB3810.namprd18.prod.outlook.com (2603:10b6:5:347::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7807.30; Tue, 30 Jul 2024 10:17:43 +0000
-Received: from CO6PR18MB4098.namprd18.prod.outlook.com
- ([fe80::5331:f53:fcd:d7e1]) by CO6PR18MB4098.namprd18.prod.outlook.com
- ([fe80::5331:f53:fcd:d7e1%3]) with mapi id 15.20.7828.016; Tue, 30 Jul 2024
- 10:17:43 +0000
-From: Witold Sadowski <wsadowski@marvell.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "robh@kernel.org"
-	<robh@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org"
-	<krzysztof.kozlowski+dt@linaro.org>,
-        "conor+dt@kernel.org"
-	<conor+dt@kernel.org>,
-        "pthombar@cadence.com" <pthombar@cadence.com>
-Subject: Re: [EXTERNAL] Re: [PATCH v11 4/9] spi: cadence: Add Marvell SDMA
- operations
-Thread-Topic: [EXTERNAL] Re: [PATCH v11 4/9] spi: cadence: Add Marvell SDMA
- operations
-Thread-Index: AQHa3eDeT7hCoHXe6U2h+hko158rtLIO+EEAgAAbc9CAAAJ1gIAAAQ4V
-Date: Tue, 30 Jul 2024 10:17:43 +0000
+ smtp.mailfrom=wesion.com; dmarc=pass action=none header.from=wesion.com;
+ dkim=pass header.d=wesion.com; arc=none
+Received: from TYZPR03MB7001.apcprd03.prod.outlook.com (2603:1096:400:26a::14)
+ by KL1PR03MB8753.apcprd03.prod.outlook.com (2603:1096:820:13d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Tue, 30 Jul
+ 2024 10:17:51 +0000
+Received: from TYZPR03MB7001.apcprd03.prod.outlook.com
+ ([fe80::78dd:5e68:1a9c:36c0]) by TYZPR03MB7001.apcprd03.prod.outlook.com
+ ([fe80::78dd:5e68:1a9c:36c0%6]) with mapi id 15.20.7784.020; Tue, 30 Jul 2024
+ 10:17:51 +0000
+From: Jacobe Zang <jacobe.zang@wesion.com>
+To: Arend Van Spriel <arend.vanspriel@broadcom.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "heiko@sntech.de" <heiko@sntech.de>, "kvalo@kernel.org"
+	<kvalo@kernel.org>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, Linus Walleij
+	<linus.walleij@linaro.org>
+CC: "efectn@protonmail.com" <efectn@protonmail.com>, "dsimic@manjaro.org"
+	<dsimic@manjaro.org>, "jagan@edgeble.ai" <jagan@edgeble.ai>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-rockchip@lists.infradead.org"
+	<linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "arend@broadcom.com" <arend@broadcom.com>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, "megi@xff.cz"
+	<megi@xff.cz>, "duoming@zju.edu.cn" <duoming@zju.edu.cn>,
+	"bhelgaas@google.com" <bhelgaas@google.com>, "minipli@grsecurity.net"
+	<minipli@grsecurity.net>, "brcm80211@lists.linux.dev"
+	<brcm80211@lists.linux.dev>, "brcm80211-dev-list.pdl@broadcom.com"
+	<brcm80211-dev-list.pdl@broadcom.com>, Nick Xie <nick@khadas.com>
+Subject: Re: [PATCH v5 2/5] dt-bindings: net: wireless: brcm4329-fmac: add
+ clock description for AP6275P
+Thread-Topic: [PATCH v5 2/5] dt-bindings: net: wireless: brcm4329-fmac: add
+ clock description for AP6275P
+Thread-Index:
+ AQHa4jDtxz/Ha1L1bk2aE8Abf13SIrIO0WeAgAAoWoCAAA5igIAAAC3WgAAEG4CAAAGzwg==
+Date: Tue, 30 Jul 2024 10:17:50 +0000
 Message-ID:
- <CO6PR18MB409801B2DCFEAD204F784711B0B02@CO6PR18MB4098.namprd18.prod.outlook.com>
-References: <20240724154739.582367-1-wsadowski@marvell.com>
- <20240724154739.582367-5-wsadowski@marvell.com>
- <CAMuHMdWnd8BOLVXpAy8CoFqKzYhp+vj6un=w7Umpo6OQ=Nxqng@mail.gmail.com>
- <CO6PR18MB4098B578E6DED1FF39C3ECF1B0B02@CO6PR18MB4098.namprd18.prod.outlook.com>
- <CAMuHMdUbTm++Vcf8f-wAnHgXF4wgJydE3dAn2hO0oAiTtMkouQ@mail.gmail.com>
-In-Reply-To:
- <CAMuHMdUbTm++Vcf8f-wAnHgXF4wgJydE3dAn2hO0oAiTtMkouQ@mail.gmail.com>
-Accept-Language: en-US, pl-PL
+ <TYZPR03MB7001DA7A89E278F73A4D2E6780B02@TYZPR03MB7001.apcprd03.prod.outlook.com>
+References: <20240730033053.4092132-1-jacobe.zang@wesion.com>
+ <20240730033053.4092132-3-jacobe.zang@wesion.com>
+ <191025b5268.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <f45c1fa7-f321-4a1f-b65c-6ed326a18268@kernel.org>
+ <191030eac78.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <TYZPR03MB7001AA581B8B63AC19A7977C80B02@TYZPR03MB7001.apcprd03.prod.outlook.com>
+ <191031cb638.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <191031cb638.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+Accept-Language: en-US, zh-CN
 Content-Language: en-US
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
 msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wesion.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO6PR18MB4098:EE_|CO6PR18MB3810:EE_
-x-ms-office365-filtering-correlation-id: 9a2a41b7-af02-4f50-75b3-08dcb080d9e0
+x-ms-traffictypediagnostic: TYZPR03MB7001:EE_|KL1PR03MB8753:EE_
+x-ms-office365-filtering-correlation-id: ae10f943-7b05-4413-b7a8-08dcb080de33
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020|38070700018;
 x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?AYnHU3CZ3R1FbUjnWovX2hjNqAfEMUsWEBEat34jMSOvwTlyfLTI9f+nc5?=
- =?iso-8859-1?Q?REetmzz5u2xcTwNPtiL+RGmB2arAnxts4GJl3bSsx4FwKJXlLZc6hXYbN9?=
- =?iso-8859-1?Q?NJddbPe85eNxh88w+k+gzTLcH2JX7hGycFH2Pr4LHahLbM7jSlH7V/W8Yg?=
- =?iso-8859-1?Q?AtgvRZy7xjPEhpK0UUgb8yVdtLvAvNjpcSFTsLtYpC3IXK7/It33/qIRzY?=
- =?iso-8859-1?Q?2ODR3T+oGiue/gICtWrHh8K+9FkxyCskH4s+CD4vRSGFHXw1s4PGFhK1Aa?=
- =?iso-8859-1?Q?Xexr7cUKBsWj++vZlMWpmDOMxWj05bGf92nddp++yvE0H7+VCk6qnEqDIV?=
- =?iso-8859-1?Q?aq6extSOLDdqAorCx6UMrZ2nrphDtPR2xu534sRpC26F5TgqA6i+OFeyuo?=
- =?iso-8859-1?Q?f6RWfY8VrDtpTK7NdtTV/TsO7gLkSg8r+6I/Wr7gGBH651SXm3JNGy89X4?=
- =?iso-8859-1?Q?akv/AeUhpO+jONae+8WGqS07KHSwykiVvz/su0ZiUrzRkUH3Di7AW+vYAs?=
- =?iso-8859-1?Q?/Gmm1VyUQrMXuaiK/El6vYICqEegeWTRamyuUFzetjHMnhJtJoXbjjeH4J?=
- =?iso-8859-1?Q?x+sr7cU6d3M5G1SdeEKljyebzLi6sQ+WcoJkr3xhuuKk8GEJ/7GIxV+/SW?=
- =?iso-8859-1?Q?FIyFzoZqZAOL1yJGV8ljXXFSGY/OIzcr5hb2/3+U79FpLP786Z+1Kumhrw?=
- =?iso-8859-1?Q?zG3B2sXC2nnn8EpAEQabTra5cbgGxt8/yaFvNCLSHr/+9FuvwniVFqlVIB?=
- =?iso-8859-1?Q?giBk3k/us2mYjoA/7Qx3r1ix+gBMSmNTe/gZuwdaLlCKAohK+OJVv/VbGX?=
- =?iso-8859-1?Q?nKhUBRjT6o8wmswXJz/ubRV3gCKu7tGaP8bmobARHyMgJA3V2203GjwHfx?=
- =?iso-8859-1?Q?ioqgEP6REzqqa1GNtdB48kZ3gvMDKaTdup8QoQG1xm27ekECUXSTLRFvRE?=
- =?iso-8859-1?Q?XY9E3SRwahQcrQy/GkAWu6ntZDiL/Q3mcSMCpVTfP3h0XorSIULqyU+UA4?=
- =?iso-8859-1?Q?G8hSepdPIwsGqNMxVLgV4YDgakDJG2t+viWEtY7k0vTPrUYKz5d5XCLmRB?=
- =?iso-8859-1?Q?eS7fyvOwBportk9Iv+46YBaHqJxNmr5hfOL9R0G9PiuF9sruAcvBwmdoJn?=
- =?iso-8859-1?Q?Lhjgc/XJM2ibFNmKQS1S8uMWxprNZUB+JHXDOuc8fBpJeywlATxt5XPz9B?=
- =?iso-8859-1?Q?31MphLayGYR39H8KdHBoL0JuiNDS6W6od6UZnqUab8izn5wbCQiMoeFS+0?=
- =?iso-8859-1?Q?5yjmvvJmJj1lUYiuDhpnS51k7m4YmAG2zAVBbFjjywtkvUavliPftc3OKY?=
- =?iso-8859-1?Q?cubucBUyktAEq3s6eUParvJM5lD0ygxLkdYMycf2VQQIz4EjHC6kzw+FXb?=
- =?iso-8859-1?Q?YwXh+lQRT2oz76DNkCQcuf7fC8m2aPZSzzNM8lZCaq97lC8G1IwwIZd4dO?=
- =?iso-8859-1?Q?IPSk2J/hNNj0yRnt0g0bRpxEIa2yn0YmLzAnCg=3D=3D?=
+ =?iso-8859-1?Q?tldED6YBXZ87wY60t4zu9aP3gkqBX90ujKNuJ5iJj/pDCI6B9o1Qy39t4t?=
+ =?iso-8859-1?Q?cNqyEQtDer4f3QLA8Z93/BdZA5x2tei/71zd50D3KajdsW8fGmtWZIciDH?=
+ =?iso-8859-1?Q?qFB4tQVy++B7dUxaysydx+Kk/dTp+I6ZIQX1b2ZwWtgpo2kEv9bPDVED6K?=
+ =?iso-8859-1?Q?M2r4enCHqJxGq0Jl4VgJxSHw9kDtiEtVNZOotsrcY8YG+BgTi8TGkGVmlJ?=
+ =?iso-8859-1?Q?UL/2i51zGLyb8JlfQGikhdqWzor37tY61CgKnslLJZ3aO8b+Z4IUVyL5AR?=
+ =?iso-8859-1?Q?RYRLFeBZvzyjvsTzqC964bmJJ9IRsvE2Tj0ChrS2egYwx1glekGNUPWXsZ?=
+ =?iso-8859-1?Q?1E4KDXWUwXlWHoBDRitkwu8u4o1SHAO5nqBKx8hgzoCfVag4RfPK+Q5tWe?=
+ =?iso-8859-1?Q?7oUCkExy7STrXqkgsaUHp5MbE9wCFJFRFacLIKm72O8LlCAOxILQiW0EEZ?=
+ =?iso-8859-1?Q?MCwcKWbkd4uAlbEA3IVpSbrROqqC0AiuAWMD7+B+Bx8Rx1Fo1LagnZ6Sfd?=
+ =?iso-8859-1?Q?sa2axf8eN5zaPPaf2fLd0pFYsEuT642E/5NYKdBXmLm6nU8++mk8tcjNy1?=
+ =?iso-8859-1?Q?hLzeoL00tq/EWECiqZ4Ilfm0Zng+C3yn7voi1w6LBRLM8Iyb11H6hZdnsu?=
+ =?iso-8859-1?Q?6uh+ztmKyJdw6J44h97ki2VWvxv5BQ0HkRbLchnbi6vBGfoErk+UyqKnMz?=
+ =?iso-8859-1?Q?BS+C5wGF5j/NrGdjNmyMeSxq+Prht+mVCDbt74/Uthk9+woG57XkiwhPjM?=
+ =?iso-8859-1?Q?cvJnObL8cNgO9zqkswLwbj6Ilz+egv9PfrMXTpws2lTgf683+c/HLOq1j5?=
+ =?iso-8859-1?Q?iw6mj3wakLbkJ5TFvSudOlAxsHgmT0PJ7RbWUQSAp6wZu4e7lDfkmaG6Lk?=
+ =?iso-8859-1?Q?ifZR4SsNWutZR2MkWJY2l04AS0clianHRLuP3LITqEjXF/cAcEFx016ahx?=
+ =?iso-8859-1?Q?7D+AwJp4zANLCojqzz/TsGdGZMdkLM5maJZZZni/K30R4PhGO8NyC/4Tou?=
+ =?iso-8859-1?Q?FvPPVRWgNNuseOD+0qgC05Rc1t4g3rYBjsPonaH5od2KKMHpb2qQFIqX2L?=
+ =?iso-8859-1?Q?pJtnvK01rwNubmyuvMx7pOoxId+SNulw8QoERvcO7EE8MiFEo6A4feTnWI?=
+ =?iso-8859-1?Q?sJlAmr79bWyWAcaRfWdjrHeF8gMW3/dMP+nhN44CQR4I0ZiZsSnoNu5ZnK?=
+ =?iso-8859-1?Q?x2nw7d+7YQAIHMcxnd7qZkzes+UUFjr5ngpHzUFIDR+9skVSpNysTV4cRd?=
+ =?iso-8859-1?Q?7JTsQh/Vw1Dj2aHCRyMoKLU1Kuw4bYJVSnW50d7EmrOx1xIbcwE7hYN2Qc?=
+ =?iso-8859-1?Q?lzgmkCw+LDjcWLI9VNawX7g1Rt26w39Fk8PHZviM/EBn4aIa8AkqlK8Ac6?=
+ =?iso-8859-1?Q?xNsKmkOIywFxsU5Awf0UXF56UsSQFTxhz/k7d7PTVUNNRdiYb019fJo6Xb?=
+ =?iso-8859-1?Q?ZWJI2HKNKFou7ixsat6mqFCYX4yyuByGFvoK8QkhuWgBFsp6qkmiV8bJQQ?=
+ =?iso-8859-1?Q?E=3D?=
 x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR18MB4098.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1102;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB7001.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020)(38070700018);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?t8z5UnTL4Rkt97KOfYvYeuhKA3sMP3m0scg7/EuVegdex77MRYE+RBiSRe?=
- =?iso-8859-1?Q?GInigV7DMJ/+FRd1PVMGnx0qO0jNl4Ei01b7RpTqpylMAIDqyI1QpbddxB?=
- =?iso-8859-1?Q?jSbs1SVOMWrsxEHTbSXgNJ4S4utoeF+QcV1dMY4P/U/BHpJ8j3QQK6CehZ?=
- =?iso-8859-1?Q?WEdNglBo2fi2tppjK9VVjp48++07km3MhEdxSAn1O20z4yhDYs2SGPJ1uf?=
- =?iso-8859-1?Q?Ru/QhQPBq3rS4YIT+tQ0I1P2Lbuil7Ioc/a1S7GS2NRAkFyOF/KBnjLpTe?=
- =?iso-8859-1?Q?Frwb9ei6dFsRFhjWwO3jUn3Afw9J1qLGxKfPaC5G/RvKL5U+g73XvEi1Pn?=
- =?iso-8859-1?Q?72GsLFjKyD2F5Ayb/0IlWtUOIy44Rg3b66RaPzOhNc7hGbIVopfZ5fr08H?=
- =?iso-8859-1?Q?VkqYDrTR3WYckXL6tXEZMRRDJNSYIMBGIT8TUzs1wAzVju0rqoWIVQF4lj?=
- =?iso-8859-1?Q?eufdEQ09MSaf97aoOO4fW7URAIZUT5fimHZsA+iuH0YUztH4X4FVdprQlH?=
- =?iso-8859-1?Q?rOQ+HnVddAVLwhQfV7I12TUmQ5bbFdQU7CgFamRmk3UWfCyOFMHF5r3ZVD?=
- =?iso-8859-1?Q?yKBmrq+0hNT4IXT4l1zWpHqEh9p6H6eYAAD24U4/l9fTlY7HA1hMuHh7yg?=
- =?iso-8859-1?Q?LuaueWmPhSEIkYsx8hn3UWhE08UNkbQ3PRRPzjMMLE2LRiDaik3uS47T4r?=
- =?iso-8859-1?Q?ZMFicWS2rm6TY7ucy6ZyQhtJ+XJGtbPxHxrk9RBKKZQMQzpHllACZjFHaI?=
- =?iso-8859-1?Q?V7ikLH9o2Kbqy5KEzRM9OVxvedwA42rVEeTuMdS8dNqL2uSJn4KaQSkYtW?=
- =?iso-8859-1?Q?/DyiKqXyW/9wnhxZ9q8YheTfQnNIMqD8JJ293pgitpN9SUUDSbo+wYhM0u?=
- =?iso-8859-1?Q?CBcsmQLOed67MCie7jOYTRjeEbgkVFN3jXuijzWRN+egG1NHNvG0bT4qjt?=
- =?iso-8859-1?Q?LAjUwa2gArxpVmjBJkZSIveBnPSDNVoSYK5KmUuQCbwh2yDphsLVqoQEMo?=
- =?iso-8859-1?Q?NSqHaZIFIFvrN2Iupfwnlaan/pZGyMM120XZYuP0adzZDm9CxxBEHOn2lZ?=
- =?iso-8859-1?Q?28o2fejokCij9ioPGKYQya/jJbUhSKZmksQX6LKGnnp3NbV4/BVlHZ6gij?=
- =?iso-8859-1?Q?YqoO4PcRR+e47zM79AF9izZ0Pbems7CyardwD2w7fs2NVEu8S6i9TLblVw?=
- =?iso-8859-1?Q?XgPo02micqP3xCjA1rgPpNmxSRhPCkoa01kjHW3uR5tkfQ1Lj/tTnynCP3?=
- =?iso-8859-1?Q?j5bpWcIoSYsakJ3/V4fcLl19PUXCihkRVLMKuG4h0c4SaXjTDvCyqFf1df?=
- =?iso-8859-1?Q?aK1PLyTDcI7VxdvRLZ/cq3K4hqsou5UOEKGx35ICfqAgxWixbi2EQ36VoM?=
- =?iso-8859-1?Q?KFxz70XCifmGKhCT5TXAXfib7WemXmDUmp6h1pXRHIM0rSaipahZE0cEZf?=
- =?iso-8859-1?Q?+0O9Uh5qUCNqppF5kCZnKdwLJlwf8MbgJCoD7wgG6uVu+3nkZZjoAb/Y3y?=
- =?iso-8859-1?Q?hOy+QnMn5jBuTS03OUODdmXy2hpU19KNPww5S4k9ybkzYuyr0r1liooaIv?=
- =?iso-8859-1?Q?IvL5M5TLyzvkyj62OurPt335i9uWPg1oEaRhzLQpzHLJChOPZQvczrOCNK?=
- =?iso-8859-1?Q?2MzhP/atJQ3Uvm6GGgI++TBoTafWteYiVD?=
+ =?iso-8859-1?Q?Sidzx+3jHusY6mGHGPEa+DicjiZMOfLjSX21iacyEBMAyCNrt476K8suvr?=
+ =?iso-8859-1?Q?cV1FO6ZcSlcoN/f/7iC68ATQWh/C+Uhk73Ka8qvs2tAriguJ3/3DIzaVsr?=
+ =?iso-8859-1?Q?+1pcf8jtPUXuiTdRRZ857CKz+UULuF50YwsU8Vx9j1IaMeivY/cvzJbxAM?=
+ =?iso-8859-1?Q?5QEHFdns7btEd5S1IbqV/02620OrZGdPSO7Zc+KzThgwIsbyFuboYRsviT?=
+ =?iso-8859-1?Q?wL1spp1ESUkwT+y1UQwroThs4R/Cy3G8lxL81lDdXTextW59Bt7Qk2E7Vv?=
+ =?iso-8859-1?Q?NuHzYQVyXn5iWPgLUAi4xDDyUCLliIsTzJOwA8buGh+LuB9Fh8Q75dDBHC?=
+ =?iso-8859-1?Q?ggXzfuQc7s15PrsZnqsvf4u6e5iMunQxpD/JbL6/CD0rPQvERaV+LKfiN3?=
+ =?iso-8859-1?Q?px5ko9XmzFhtkpIxAQzRZEuFWVoc92mcglvs1TbI6VhWwW2EfpuoaJsAw7?=
+ =?iso-8859-1?Q?WzvpWzXYoF1IN9Cg+BMjDCRfu4mx3bTDTj+WaonqzZfduPcgavtEsn84Iz?=
+ =?iso-8859-1?Q?fXVUnfNFTDHiEcwCK5bOJzbhK7n9kSwyI+vKkfpR9i4NPLIQrOnOX20Ca3?=
+ =?iso-8859-1?Q?kC+R1Pjv7usahU73/fusVCpNM9zcRT7xSW2dRZbijf7vCtZkzOIIJaR6CN?=
+ =?iso-8859-1?Q?nLEy7CCFiaxPqmxPbOEL1qdFcCjKJh2bYwQLC8g282ExZwzXwe/0o0WlKf?=
+ =?iso-8859-1?Q?NcPTe9fNi4ZSJKfJ3ZZJUAu4yU/RFA+wWFDbhc944P5nhEx0Gmmnp1eE1s?=
+ =?iso-8859-1?Q?y5/UW6G609ZTaiBs24M1XwQiytBHFUl3d+FmA/0BNx4ARH89SIpIFOTLM6?=
+ =?iso-8859-1?Q?em8WvJMRwetgkXMB6Er+eA3+9wa0Lwg6iataE5nIy5G0fydf7OL6h6vKah?=
+ =?iso-8859-1?Q?H/D/bnz14MmLG42KP2MvrWyHmPPYWApoR91RDpodJ6CbT3zpuHBV0Lkpzz?=
+ =?iso-8859-1?Q?bppy0tpS7c1cV8TEXJX7kL/OyAQgfr2uFxO1EYVoLy6lPuMMtKAq7psS0r?=
+ =?iso-8859-1?Q?ReLqSCBaRuvrT++1eg11OpoV8ZBVIfqLlUG9R70J/V3HxesV8V+NHzT+Kj?=
+ =?iso-8859-1?Q?Diu8LjUFDvEz3nPuLcneNGiaFLRxzWPJNuOVjI/Lvo1mZ32bIREHO2/eOK?=
+ =?iso-8859-1?Q?tVaD5RIY5TbSkRLaIehyjtw+EdwmNUowzSx8ETv/5fHUdr4hFcLPnkfJZy?=
+ =?iso-8859-1?Q?qN7OTQUgogWY+mIdIL0TkkV1Z7HhC1oRGsXvy+REsyBW8/L1/WW/BaEcMg?=
+ =?iso-8859-1?Q?s+8wJOkG7I59oABs9fcbUe0alx671K/AOt87gxgdTlHU5lydDdKDwNAVFE?=
+ =?iso-8859-1?Q?0f6prBLo2sy3yysJQmtes04SZOuL1S9RZ0H3pjaYLV3yzk00cJs/Q8E7Uq?=
+ =?iso-8859-1?Q?/HOKsO4ZkaH2xHFEsSWjsFLt9z/LB4qEU52Mzfuj2MQdW2NWZhhajWgjpT?=
+ =?iso-8859-1?Q?syTlRLRvOYcOfp0x8rPMG6+O9RHsSTZmdkeu1mqcpRspqHFb4yGfyUpc/K?=
+ =?iso-8859-1?Q?g+nvUfo97nALWBWaN0PLs4RfgygyYY9BX1ijvRG/udCpF9bvybSv0FsVUI?=
+ =?iso-8859-1?Q?m7hfu90UJATI+L/lXJfEafb2i22R2zEelk2cxcKdzEvBsmyIOJ5QNjJWJm?=
+ =?iso-8859-1?Q?3TpeIjaKwr/dRfLYez0dV+xK4sy2SJe2em?=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -165,34 +168,431 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
+X-OriginatorOrg: wesion.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4098.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a2a41b7-af02-4f50-75b3-08dcb080d9e0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2024 10:17:43.6920
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB7001.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae10f943-7b05-4413-b7a8-08dcb080de33
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2024 10:17:50.9480
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-id: 2dc3bd76-7ac2-4780-a5b7-6c6cc6b5af9b
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: YysGY2CS2NfejKLm0gJjcLpdM3VajQszTMx2ebFkhJ2kgQ6Nfs7DoGRKQMqDMtgq3IojW7IfYMqSKcpv2CJWpQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR18MB3810
-X-Proofpoint-GUID: ob_wvxdwYhfa3d_p1kyS_wNC0G8Gszix
-X-Proofpoint-ORIG-GUID: ob_wvxdwYhfa3d_p1kyS_wNC0G8Gszix
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_09,2024-07-26_01,2024-05-17_01
+X-MS-Exchange-CrossTenant-userprincipalname: ZdnuZ1xihxcjEY78MskuoEFLH2eHofe0hG8jBDf4oAoa0jiaXFRC6Njblt/jCVe3mj0y+OBbsVmOJydzn8eYtw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB8753
 
-Hi Geert=0A=
+>>>> On 30/07/2024 08:37, Arend Van Spriel wrote:=0A=
+>>>>> + Linus W=0A=
+>>>>>=0A=
+>>>>> On July 30, 2024 5:31:15 AM Jacobe Zang <jacobe.zang@wesion.com> wrot=
+e:=0A=
+>>>>>=0A=
+>>>>>> Not only AP6275P Wi-Fi device but also all Broadcom wireless devices=
+ allow=0A=
+>>>>>> external low power clock input. In DTS the clock as an optional choi=
+ce in=0A=
+>>>>>> the absence of an internal clock.=0A=
+>>>>>>=0A=
+>>>>>> Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>=0A=
+>>>>>> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>=0A=
+>>>>>> ---=0A=
+>>>>>> .../bindings/net/wireless/brcm,bcm4329-fmac.yaml          | 8 ++++++=
+++=0A=
+>>>>>> 1 file changed, 8 insertions(+)=0A=
+>>>>>>=0A=
+>>>>>> diff --git=0A=
+>>>>>> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.y=
+aml=0A=
+>>>>>> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.y=
+aml=0A=
+>>>>>> index 2c2093c77ec9a..a3607d55ef367 100644=0A=
+>>>>>> --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fm=
+ac.yaml=0A=
+>>>>>> +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fm=
+ac.yaml=0A=
+>>>>>> @@ -122,6 +122,14 @@ properties:=0A=
+>>>>>> NVRAM. This would normally be filled in by the bootloader from platf=
+orm=0A=
+>>>>>> configuration data.=0A=
+>>>>>>=0A=
+>>>>>> +  clocks:=0A=
+>>>>>> +    items:=0A=
+>>>>>> +      - description: External Low Power Clock input (32.768KHz)=0A=
+>>>>>> +=0A=
+>>>>>> +  clock-names:=0A=
+>>>>>> +    items:=0A=
+>>>>>> +      - const: lpo=0A=
+>>>>>> +=0A=
+>>>>>=0A=
+>>>>> We still have an issue that this clock input is also present in the=
 =0A=
-> drivers/spi/Kconfig, config SPI_CADENCE_XSPI:=0A=
+>>>>> bindings specification broadcom-bluetooth.yaml (not in bluetooth=0A=
+>>>>> subfolder). This clock is actually a chip resource. What happens if b=
+oth=0A=
+>>>>> are defined and both wifi and bt drivers try to enable this clock? Ca=
+n this=0A=
+>>>>> be expressed in yaml or can we only put a textual warning in the prop=
+erty=0A=
+>>>>> descriptions?=0A=
+>>>>=0A=
+>>>> Just like all clocks, what would happen? It will be enabled.=0A=
+>>>=0A=
+>>> Oh, wow! Cool stuff. But seriously is it not a problem to have two enti=
+ties=0A=
+>>> controlling one and the same clock? Is this use-case taken into account=
+ by=0A=
+>>> the clock framework?=0A=
+>>=0A=
+>> I have enabled the same clock both in bluetooth and wifi just now, they =
+worked=0A=
+>> well. Maybe this make sense?=0A=
+>=0A=
+> What happens if you unload one of the drivers? Also would like to know if=
 =0A=
->   -depends on OF && HAS_IOMEM=0A=
->   +depends on OF && HAS_IOMEM && 64BIT=0A=
+> you are using an nvram file. If so can you share it's content.=0A=
 =0A=
-Can that be send as separate patch, or whole patch series should be updated=
-?=0A=
+After rmmod the wifi relevant driver, bluetooth still works well. The conte=
+nt of=0A=
+nvram text shows below:=0A=
+# AP6275P_NVRAM_V1.1_20200702 =0A=
+# AP6271P_V00 board, iPA version.=0A=
+# nvram copied and edited from AP6271P_EVB_V01 EVB board //=0A=
+# SSID generated using Alberto's boardssid.py script:=0A=
+# ********************SUMMARY********************=0A=
+# Board Name: AP6271P_V00=0A=
+#SSID: 0x086d=0A=
+#macmid: 0x02df=0A=
+# Successfully made SSID entry in sromdefs.tcl.=0A=
+# Successfully made macmid entry in sromdefs.tcl.=0A=
+# Successfully made SSID entry in tblssid.py.=0A=
+# *************************************************=0A=
+# $ Copyright Broadcom $=0A=
+#=0A=
+#=0A=
+# <<Broadcom-WL-IPTag/Proprietary:>>=0A=
+NVRAMRev=3D$Rev: 874188 $=0A=
+sromrev=3D11=0A=
+boardrev=3D0x1213=0A=
+boardtype=3D0x08ed=0A=
+boardflags=3D0x00400201=0A=
+boardflags2=3D0xc0800000=0A=
+boardflags3=3D0x40002180=0A=
+#boardnum=3D57410=0A=
+macaddr=3D00:90:4c:12:d0:01=0A=
+jtag_irw=3D38=0A=
 =0A=
-Regards=0A=
-Witek=0A=
+#Regulatory specific=0A=
+ccode=3D0=0A=
+regrev=3D0=0A=
+=0A=
+# Board specific=0A=
+vendid=3D0x14e4=0A=
+devid=3D0x449d=0A=
+manfid=3D0x2d0=0A=
+antswitch=3D0=0A=
+pdgain5g=3D0=0A=
+pdgain2g=3D0=0A=
+aa2g=3D3=0A=
+aa5g=3D3=0A=
+agbg0=3D2=0A=
+agbg1=3D2=0A=
+aga0=3D2=0A=
+aga1=3D2=0A=
+extpagain2g=3D2=0A=
+extpagain5g=3D2=0A=
+rxgains2gelnagaina0=3D0=0A=
+rxgains2gtrisoa0=3D0=0A=
+rxgains2gtrelnabypa0=3D0=0A=
+rxgains5gelnagaina0=3D0=0A=
+rxgains5gtrisoa0=3D0=0A=
+rxgains5gtrelnabypa0=3D0=0A=
+rxgains5gmelnagaina0=3D0=0A=
+rxgains5gmtrisoa0=3D0=0A=
+rxgains5gmtrelnabypa0=3D0=0A=
+rxgains5ghelnagaina0=3D0=0A=
+rxgains5ghtrisoa0=3D0=0A=
+rxgains5ghtrelnabypa0=3D0=0A=
+rxgains2gelnagaina1=3D0=0A=
+rxgains2gtrisoa1=3D0=0A=
+rxgains2gtrelnabypa1=3D0=0A=
+rxgains5gelnagaina1=3D0=0A=
+rxgains5gtrisoa1=3D0=0A=
+rxgains5gtrelnabypa1=3D0=0A=
+rxgains5gmelnagaina1=3D0=0A=
+rxgains5gmtrisoa1=3D0=0A=
+rxgains5gmtrelnabypa1=3D0=0A=
+rxgains5ghelnagaina1=3D0=0A=
+rxgains5ghtrisoa1=3D0=0A=
+rxgains5ghtrelnabypa1=3D0=0A=
+=0A=
+#RSSI related=0A=
+# 2G=0A=
+rssicorrnorm_c0=3D4,4=0A=
+rssicorrnorm_c1=3D4,4=0A=
+# 5G=0A=
+rssicorrnorm5g_c0=3D5,5,5,5,5,5,5,5,5,5,5,5=0A=
+rssicorrnorm5g_c1=3D4,4,4,4,4,4,4,4,4,4,4,4=0A=
+=0A=
+=0A=
+#Two range TSSI=0A=
+tworangetssi2g=3D0=0A=
+tworangetssi5g=3D0=0A=
+lowpowerrange2g=3D0=0A=
+lowpowerrange5g=3D0=0A=
+low_adc_rate_en=3D1=0A=
+=0A=
+nocrc=3D1=0A=
+otpimagesize=3D502=0A=
+=0A=
+xtalfreq=3D37400=0A=
+=0A=
+txchain=3D3=0A=
+rxchain=3D3=0A=
+=0A=
+cckdigfilttype=3D2=0A=
+=0A=
+#bit mask for slice capability bit 0:2G bit 1:5G=0A=
+bandcap=3D3=0A=
+=0A=
+#TXBF Related=0A=
+rpcal2g=3D0=0A=
+rpcal5gb0=3D0=0A=
+rpcal5gb1=3D0=0A=
+rpcal5gb2=3D0=0A=
+rpcal5gb3=3D0=0A=
+=0A=
+=0A=
+#FDSS Related=0A=
+fdss_level_2g=3D4,4=0A=
+fdss_interp_en=3D1=0A=
+fdss_level_5g=3D3,3=0A=
+fdss_level_11ax_2g=3D3,3=0A=
+fdss_level_11ax_2g_ch1=3D3,3=0A=
+fdss_level_11ax_2g_ch11=3D3,3=0A=
+fdss_level_11ax_5g=3D3,3=0A=
+=0A=
+#Tempsense Related=0A=
+tempthresh=3D255=0A=
+tempoffset=3D40=0A=
+rawtempsense=3D0x1ff=0A=
+phycal_tempdelta=3D15=0A=
+temps_period=3D15=0A=
+temps_hysteresis=3D15=0A=
+=0A=
+#------------- TSSI Related -------------=0A=
+tssipos2g=3D1=0A=
+tssipos5g=3D1=0A=
+AvVmid_c0=3D2,127,4,92,4,91,4,91,4,94=0A=
+AvVmid_c1=3D2,127,4,93,4,93,4,95,3,110=0A=
+=0A=
+# CCK in case of multi mode 2=0A=
+pa2gccka0=3D-137,7810,-928=0A=
+pa2gccka1=3D-139,7853,-929=0A=
+# OFDM in case of multi_mode 2=0A=
+pa2ga0=3D-103,7727,-855=0A=
+pa2ga1=3D-126,7258,-826=0A=
+pa5ga0=3D-176,5703,-703,-180,5747,-708,-165,5994,-732,-146,6299,-757=0A=
+pa5ga1=3D-132,6132,-760,-107,6472,-769,-142,6184,-752,-108,7237,-858=0A=
+=0A=
+# Max power and offsets=0A=
+maxp2ga0=3D86=0A=
+maxp2ga1=3D86=0A=
+maxp5ga0=3D74,74,74,74=0A=
+maxp5ga1=3D68,68,68,70=0A=
+subband5gver=3D0x4=0A=
+paparambwver=3D3=0A=
+cckpwroffset0=3D0=0A=
+cckpwroffset1=3D0=0A=
+pdoffset40ma0=3D0x4433=0A=
+pdoffset80ma0=3D0x3232=0A=
+pdoffset40ma1=3D0x2333=0A=
+pdoffset80ma1=3D0x1222=0A=
+cckbw202gpo=3D0x2222=0A=
+cckbw20ul2gpo=3D0=0A=
+mcsbw202gpo=3D0x98533221=0A=
+mcsbw402gpo=3D0x44000000=0A=
+dot11agofdmhrbw202gpo=3D0x4444=0A=
+ofdmlrbw202gpo=3D0x0033=0A=
+mcsbw205glpo=3D0x49533322=0A=
+mcsbw405glpo=3D0xE9443342=0A=
+mcsbw805glpo=3D0xEC665542=0A=
+mcsbw1605glpo=3D0=0A=
+mcsbw205gmpo=3D0x49200000=0A=
+mcsbw405gmpo=3D0xE9443342=0A=
+mcsbw805gmpo=3D0xEC665542=0A=
+mcsbw1605gmpo=3D0=0A=
+mcsbw205ghpo=3D0x49312220=0A=
+#mcsbw405ghpo=3D0x84-1-1-2-2-2-5=0A=
+mcsbw405ghpo=3D0xC8221110=0A=
+#mcsbw405ghpo=3D0x88555555=0A=
+mcsbw805ghpo=3D0xCC443320=0A=
+powoffs2gtna0=3D0,0,0,0,0,0,0,0,0,0,0,0,0,0=0A=
+powoffs2gtna1=3D0,0,0,0,0,0,0,0,0,0,0,0,0,0=0A=
+mcs1024qam2gpo=3D0xDDDD=0A=
+mcs1024qam5glpo=3D0xFFFFCC=0A=
+mcs1024qam5gmpo=3D0xFFFFCC=0A=
+mcs1024qam5ghpo=3D0xFFFFCC=0A=
+mcs1024qam5gx1po=3D0xFFFFCC=0A=
+mcs1024qam5gx2po=3D0xFFFFCC=0A=
+mcs8poexp=3D0=0A=
+mcs9poexp=3D0=0A=
+mcs10poexp=3D0=0A=
+=0A=
+# 5G power offset per channel for band edge channel=0A=
+powoffs5g20mtna0=3D0,0,0,0,0,0,0=0A=
+powoffs5g20mtna1=3D0,0,0,0,0,0,0=0A=
+powoffs5g40mtna0=3D0,0,0,0,0=0A=
+powoffs5g40mtna1=3D0,0,0,0,0=0A=
+powoffs5g80mtna0=3D0,0,0,0,0=0A=
+powoffs5g80mtna1=3D0,0,0,0,0=0A=
+mcs11poexp=3D0=0A=
+=0A=
+#LTE Coex Related=0A=
+ltecxmux=3D0=0A=
+ltecxpadnum=3D0x0504=0A=
+ltecxfnsel=3D0x44=0A=
+ltecxgcigpio=3D0x04=0A=
+#OOB params=0A=
+#device_wake_opt=3D1=0A=
+host_wake_opt=3D0=0A=
+=0A=
+# SWCTRL Related=0A=
+=0A=
+swctrlmap_2g=3D0x10101010,0x06030401,0x04011010,0x000000,0x3FF=0A=
+swctrlmapext_2g=3D0x00000000,0x00000000,0x00000000,0x000000,0x000=0A=
+swctrlmap_5g=3D0x80408040,0x21240120,0x01208040,0x000000,0x3FF=0A=
+swctrlmapext_5g=3D0x00000000,0x00000000,0x00000000,0x000000,0x000=0A=
+clb2gslice0core0=3D0x01b=0A=
+clb2gslice1core0=3D0x000=0A=
+clb5gslice0core0=3D0x064=0A=
+clb5gslice1core0=3D0x000=0A=
+clb2gslice0core1=3D0x056=0A=
+clb2gslice1core1=3D0x000=0A=
+clb5gslice0core1=3D0x0a1=0A=
+clb5gslice1core1=3D0x000=0A=
+btc_prisel_ant_mask=3D0x2=0A=
+clb_swctrl_smask_ant0=3D0x27f=0A=
+clb_swctrl_smask_ant1=3D0x2f7=0A=
+muxenab=3D1=0A=
+=0A=
+#BT Coex 1:TDM=0A=
+btc_mode=3D1=0A=
+=0A=
+# --- PAPD Cal related params ----=0A=
+txwbpapden=3D0 # 0:NBPAPD 1:WBPAPD=0A=
+# NB PAPD Cal params=0A=
+nb_eps_offset=3D470,470=0A=
+nb_bbmult=3D66,66=0A=
+nb_papdcalidx=3D6,6=0A=
+nb_txattn=3D2,2=0A=
+nb_rxattn=3D1,1=0A=
+nb_eps_stopidx=3D63=0A=
+epsilonoff_5g20_c0=3D0,0,0,0=0A=
+epsilonoff_5g40_c0=3D0,0,0,0=0A=
+epsilonoff_5g80_c0=3D0,0,0,0=0A=
+epsilonoff_5g20_c1=3D0,0,0,0=0A=
+epsilonoff_5g40_c1=3D0,0,0,0=0A=
+epsilonoff_5g80_c1=3D0,0,-1,-1=0A=
+epsilonoff_2g20_c0=3D0=0A=
+epsilonoff_2g20_c1=3D0=0A=
+=0A=
+# energy detect threshold=0A=
+ed_thresh2g=3D-67=0A=
+ed_thresh5g=3D-67=0A=
+# energy detect threshold for EU=0A=
+eu_edthresh2g=3D-67=0A=
+eu_edthresh5g=3D-67=0A=
+=0A=
+#rpcal coef for imptxbf=0A=
+rpcal5gb0=3D238=0A=
+rpcal5gb1=3D228=0A=
+rpcal5gb2=3D222=0A=
+rpcal5gb3=3D229=0A=
+rpcal2g=3D15=0A=
+ocl=3D1=0A=
+bt_coex_chdep_div=3D1=0A=
+=0A=
+# OLPC Related=0A=
+disable_olpc=3D0=0A=
+olpc_thresh5g=3D32=0A=
+olpc_anchor5g=3D40=0A=
+olpc_thresh2g=3D32=0A=
+olpc_anchor2g=3D40=0A=
+=0A=
+#PAPR related=0A=
+paprdis=3D0=0A=
+paprrmcsgamma2g=3D500,550,550,-1,-1,-1,-1,-1,-1,-1,-1,-1=0A=
+paprrmcsgain2g=3D128,128,128,0,0,0,0,0,0,0,0,0=0A=
+paprrmcsgamma2g_ch13=3D500,550,550,-1,-1,-1,-1,-1,-1,-1,-1,-1=0A=
+paprrmcsgain2g_ch13=3D128,128,128,0,0,0,0,0,0,0,0,0=0A=
+paprrmcsgamma2g_ch1=3D500,550,550,-1,-1,-1,-1,-1,-1,-1,-1,-1=0A=
+paprrmcsgain2g_ch1=3D128,128,128,0,0,0,0,0,0,0,0,0=0A=
+paprrmcsgamma5g20=3D500,500,500,-1,-1,-1,-1,-1,-1,-1,-1,-1=0A=
+paprrmcsgain5g20=3D128,128,128,0,0,0,0,0,0,0,0,0=0A=
+paprrmcsgamma5g40=3D600,600,600,-1,-1,-1,-1,-1,-1,-1,-1,-1=0A=
+paprrmcsgain5g40=3D128,128,128,0,0,0,0,0,0,0,0,0=0A=
+paprrmcsgamma5g80=3D-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1=0A=
+paprrmcsgain5g80=3D0,0,0,0,0,0,0,0,0,0,0,0=0A=
+=0A=
+# Enable papd for cck when target pwr ge 16dBm=0A=
+cckpapd_pwrthresh=3D64=0A=
+=0A=
+## ULOFDMA Board limit PPRs for 2G20 ##=0A=
+ruppr2g20bpska0=3D0x0=0A=
+ruppr2g20bpska1=3D0x0=0A=
+ruppr2g20qpska0=3D0x0=0A=
+ruppr2g20qpska1=3D0x0=0A=
+ruppr2g20qam16a0=3D0x0=0A=
+ruppr2g20qam16a1=3D0x0=0A=
+ruppr2g20qam64a0=3D0x1=0A=
+ruppr2g20qam64a1=3D0x1=0A=
+ruppr2g20qam256a0=3D0x21084=0A=
+ruppr2g20qam256a1=3D0x21084=0A=
+ruppr2g20qam1024a0=3D0x0=0A=
+ruppr2g20qam1024a1=3D0x0=0A=
+## ULOFDMA Board limit PPRs for 5G20 ##=0A=
+ruppr5g20bpska0=3D0x20000=0A=
+ruppr5g20bpska1=3D0x20000=0A=
+ruppr5g20qpska0=3D0x18000=0A=
+ruppr5g20qpska1=3D0x18000=0A=
+ruppr5g20qam16a0=3D0x28000=0A=
+ruppr5g20qam16a1=3D0x28000=0A=
+ruppr5g20qam64a0=3D0x29086=0A=
+ruppr5g20qam64a1=3D0x29086=0A=
+ruppr5g20qam256a0=3D0x62908=0A=
+ruppr5g20qam256a1=3D0x62908=0A=
+ruppr5g20qam1024a0=3D0x70000=0A=
+ruppr5g20qam1024a1=3D0x70000=0A=
+## ULOFDMA Board limit PPRs for 5G40 ##=0A=
+ruppr5g40bpska0=3D0x638000=0A=
+ruppr5g40bpska1=3D0x638000=0A=
+ruppr5g40qpska0=3D0x840020=0A=
+ruppr5g40qpska1=3D0x840020=0A=
+ruppr5g40qam16a0=3D0x638001=0A=
+ruppr5g40qam16a1=3D0x638001=0A=
+ruppr5g40qam64a0=3D0x739085=0A=
+ruppr5g40qam64a1=3D0x739085=0A=
+ruppr5g40qam256a0=3D0x106a108=0A=
+ruppr5g40qam256a1=3D0x106a108=0A=
+ruppr5g40qam1024a0=3D0x1078000=0A=
+ruppr5g40qam1024a1=3D0x1078000=0A=
+## ULOFDMA Board limit PPRs for 5G80 ##=0A=
+ruppr5g80bpska0=3D0x0=0A=
+ruppr5g80bpska1=3D0x0=0A=
+ruppr5g80qpska0=3D0x0=0A=
+ruppr5g80qpska1=3D0x0=0A=
+ruppr5g80qam16a0=3D0x0=0A=
+ruppr5g80qam16a1=3D0x0=0A=
+ruppr5g80qam64a0=3D0x187218e7=0A=
+ruppr5g80qam64a1=3D0x187218e7=0A=
+ruppr5g80qam256a0=3D0x3904254a=0A=
+ruppr5g80qam256a1=3D0x3904254a=0A=
+ruppr5g80qam1024a0=3D0x49068000=0A=
+ruppr5g80qam1024a1=3D0x49068000=0A=
+=0A=
+=0A=
+---=0A=
+Best Regards=0A=
+Jacobe=0A=
+=0A=
 =0A=
 
