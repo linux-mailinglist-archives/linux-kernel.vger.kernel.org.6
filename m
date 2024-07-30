@@ -1,181 +1,141 @@
-Return-Path: <linux-kernel+bounces-267592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DABC94132D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:33:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 747FE94132E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A12251C234F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:33:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BF721F218C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7323D19F48D;
-	Tue, 30 Jul 2024 13:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7AC19EED4;
+	Tue, 30 Jul 2024 13:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ubMPzN2v";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7W2u5j1S";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ubMPzN2v";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7W2u5j1S"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMZO/WkW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9CA63D;
-	Tue, 30 Jul 2024 13:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640C363D;
+	Tue, 30 Jul 2024 13:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722346376; cv=none; b=UDu6CuQQ7+2UyF5cB8ENDtqYooPnpXheSLBtWNNnZCS6ogBSzs+F4OxwxjaO2ibeSUpST2a+P7xykHcZzIzNzSoBBis8KRtAW4+Vyim7hd937youpLU23yTHsCj2J8FREVDJ8hCAbzM3Be3Tg39y7oKXzPjMIjSp/NRlgsI7Aew=
+	t=1722346403; cv=none; b=hqn9I4kx73xc2oZ2x8kRJQmGK3A3a+xmnKweSc2KFNdf3fncv4Y3UgtZflPF+44C/zUNxouzG0jHNRCCNM3PQW+2/jlxQGZye9rlulxy/x1pQmaTXieo0dIAqftJMLhVKatg9hsk5G51FDliYRO4AedDaLaDML98zxgMjvaYJ4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722346376; c=relaxed/simple;
-	bh=adhNAza1pVf4N1QsdW9F7E1DGAcCpUgTsaAlRdYFLGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LuB+GEVo3CkmZiifRhjQ+EpundwITuS36OtHBkZ1Qhx00N+z07AHluFhqMK7EyPqE1Vb8jqGrWy14WA5zutz0y2yNvebxlhx8UzcTfJw6Jbu+J+BWm9+RDpuj+tmsDZL9o2il7GAjhfOl4QWJ5xVCiYit3i8RK8Jpe6OrS2ij88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ubMPzN2v; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7W2u5j1S; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ubMPzN2v; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7W2u5j1S; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 36F8921A79;
-	Tue, 30 Jul 2024 13:32:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722346373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5S44Wdgx/0xNGoWaOUDCn2p2slrl+ejMtJf7mRLMCow=;
-	b=ubMPzN2vfcCd/dgQUY4ppyFzIvjWJsKuUTfKKugCQg9SkjjXCjfvkGWcEIUerYSTyv6IMw
-	xic2aAyytSutmZb311JQfjP3W3UvPfvkfbqMqTIz5wHGg9+rPfFqF3Vdjf40RxXgfE2Csv
-	UIEUxjbcZWzFlovbZ8yHBCTin0MXEqY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722346373;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5S44Wdgx/0xNGoWaOUDCn2p2slrl+ejMtJf7mRLMCow=;
-	b=7W2u5j1STbAsm44iftW7SLwENGga7cLAt/0hK4cD1zg7q6qfQu4tgxUJZDisf1IU6Yldko
-	JZPpqqs+QZi+VXDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722346373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5S44Wdgx/0xNGoWaOUDCn2p2slrl+ejMtJf7mRLMCow=;
-	b=ubMPzN2vfcCd/dgQUY4ppyFzIvjWJsKuUTfKKugCQg9SkjjXCjfvkGWcEIUerYSTyv6IMw
-	xic2aAyytSutmZb311JQfjP3W3UvPfvkfbqMqTIz5wHGg9+rPfFqF3Vdjf40RxXgfE2Csv
-	UIEUxjbcZWzFlovbZ8yHBCTin0MXEqY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722346373;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5S44Wdgx/0xNGoWaOUDCn2p2slrl+ejMtJf7mRLMCow=;
-	b=7W2u5j1STbAsm44iftW7SLwENGga7cLAt/0hK4cD1zg7q6qfQu4tgxUJZDisf1IU6Yldko
-	JZPpqqs+QZi+VXDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 289A513983;
-	Tue, 30 Jul 2024 13:32:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0vCoCYXrqGbHWwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 30 Jul 2024 13:32:53 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D6406A099C; Tue, 30 Jul 2024 15:32:48 +0200 (CEST)
-Date: Tue, 30 Jul 2024 15:32:48 +0200
-From: Jan Kara <jack@suse.cz>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/7] jbd2: remove unneeded kmap for jh_in->b_frozen_data
- in jbd2_journal_write_metadata_buffer
-Message-ID: <20240730133248.k4ttccw3gla6xgoy@quack3>
-References: <20240730113335.2365290-1-shikemeng@huaweicloud.com>
- <20240730113335.2365290-5-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1722346403; c=relaxed/simple;
+	bh=OzCJBlJRtJE62n4s3JpmBfVWloZEiZIoA/XCH81Aiog=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JcQ1Yya/CnBT0rf0v0U/WY/mKjOYerDAbptZCSt0IEOk34zxz80fFV0yGt1S+qYOqe1tZ+EgZ0/eXfhTh0svijXl5hoA71PYjMip1UwGeO40y/BgY41YC3j5ZO312L6H6e+aHrqz+CtfXUug11iaaG+ooCd45vBBA5NYIp1Yofg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMZO/WkW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE728C32782;
+	Tue, 30 Jul 2024 13:33:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722346403;
+	bh=OzCJBlJRtJE62n4s3JpmBfVWloZEiZIoA/XCH81Aiog=;
+	h=From:Date:Subject:To:Cc:From;
+	b=gMZO/WkWBoJwenk/iVd8EKuGmkkHC0dVVvC+6XjTB6pgjgS4WYnrjZpM/1SAQOcYu
+	 Ojw5vJyqQCP4dz2dIcFkbcpkRM3cSReOsyCyFiU4aXpv2L+QmSLNl8e4+kbxqImy4b
+	 0CDY79I3cdcZFMblfZ53cWShw0yObb0S4F/IOQePgtPg3LoAhOduJoWl0HwxPy2+bG
+	 7Zv0d5qE5nS7N0hozi72GEFXHORxLBROMm0ELD1kyfLWkEawmm37vq/tOCARNqgJEf
+	 zA5EykYmXKJlWu7GD670IB7xkysWX+uIsy0wLxmqq1qk77Rkinshiv/vaD3he3wZMv
+	 nGoBP70pKMNvw==
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 30 Jul 2024 14:33:03 +0100
+Subject: [PATCH v3] KVM: arm64: Fix confusion in documentation for pKVM SME
+ assert
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730113335.2365290-5-shikemeng@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.60 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huaweicloud.com:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.60
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240730-kvm-arm64-sme-assert-v3-1-8699454e5cb8@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAI7rqGYC/4XNTQ6CMBCG4auQrh3TnykWV97DuKh2gAYB05JGQ
+ 7i7hZUujMt3ku+ZmUUKniI7FjMLlHz045BD7Qp2a+3QEHiXm0kukZccoUs92NCXCLEnsDHvJ9D
+ WHbR2SMaWLE8fgWr/3NjzJXfr4zSG1/YlifX6B0wCBGhXGYXGcV6bU0dhoPt+DA1bxSQ/Ff1Dk
+ auCqhJXzpWs8UtZluUN/eGRuv8AAAA=
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Fuad Tabba <tabba@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2488; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=OzCJBlJRtJE62n4s3JpmBfVWloZEiZIoA/XCH81Aiog=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmqOufdC7tv79b9MVzhVsrXtHEDRlNaY6Xjev9x7yb
+ bsn+o06JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZqjrnwAKCRAk1otyXVSH0Pd5B/
+ sEc0A3kbk2sDKyyxHoZzXfkXtbf5Xo7CfPJTOquLQ17eBMd9GRvv7ItBTPcRiJALI/43QjZICIgEhK
+ DoxBkeqKyI5n7pe/566ubkwgxa7+q62YipbxNaQhbJ3EFQh+wS7ly+KyKNVUy2oPTG26+5n0LfzbvG
+ 54wv/uIWtNrjdCJnP1imw5P15deAN+FVNChQX3FrxUtKC9cCN4Z92QOl2h7VOQS51Kb4BKdD+EObEj
+ jOL2kkQi16kpzdOIkRIAnqKqYy2+VOpgouvHMgx7H1kRb4Pxm80IyIEBxor8PBYdAZDPzzcXUwPfQU
+ lbIPmdAKJMugiwijHxPOJftI0xPoMh
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Tue 30-07-24 19:33:32, Kemeng Shi wrote:
-> Remove kmap for page of b_frozen_data from jbd2_alloc() which always
-> provides an address from the direct kernel mapping.
-> 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+As raised in the review comments for the original patch the assert and
+comment added in afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are
+disabled in protected mode") are bogus. The comments says that we check
+that we do not have SME enabled for a pKVM guest but the assert actually
+checks to see if the host has anything set in SVCR which is unrelated to
+the guest features or state, regardless of if those guests are protected
+or not. This check is also made in the hypervisor, it will refuse to run
+a guest if the check fails, so it appears that the assert here is
+intended to improve diagnostics.
 
-I don't think this is really a win. On majority of installations kmap is a
-noop anyway and for the remainder kmap_local() is cheap. And the
-readability of the code is just worse with this.
+Update the comment to reflect the check in the code, and to clarify that
+we do actually enforce this in the hypervisor. While we're here also
+update to use a WARN_ON_ONCE() to avoid log spam if this triggers.
 
-								Honza
+Fixes: afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are disabled in protected mode")
+Reviewed-by: Fuad Tabba <tabba@google.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v3:
+- Rebase onto v6.11-rc1.
+- Link to v2: https://lore.kernel.org/r/20240605-kvm-arm64-sme-assert-v2-1-54391b0032f4@kernel.org
 
-> ---
->  fs/jbd2/journal.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 312c7575b54f..9c1ffb0dc740 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -352,12 +352,13 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  		done_copy_out = 1;
->  		new_folio = virt_to_folio(jh_in->b_frozen_data);
->  		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
-> +		mapped_data = jh_in->b_frozen_data;
->  	} else {
->  		new_folio = bh_in->b_folio;
->  		new_offset = offset_in_folio(new_folio, bh_in->b_data);
-> +		mapped_data = kmap_local_folio(new_folio, new_offset);
->  	}
->  
-> -	mapped_data = kmap_local_folio(new_folio, new_offset);
->  	/*
->  	 * Fire data frozen trigger if data already wasn't frozen.  Do this
->  	 * before checking for escaping, as the trigger may modify the magic
-> @@ -373,7 +374,8 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  	 */
->  	if (*((__be32 *)mapped_data) == cpu_to_be32(JBD2_MAGIC_NUMBER))
->  		do_escape = 1;
-> -	kunmap_local(mapped_data);
-> +	if (!jh_in->b_frozen_data)
-> +		kunmap_local(mapped_data);
->  
->  	/*
->  	 * Do we need to do a data copy?
-> -- 
-> 2.30.0
-> 
+Changes in v2:
+- Commit message tweaks.
+- Change the assert to WARN_ON_ONCE().
+- Link to v1: https://lore.kernel.org/r/20240604-kvm-arm64-sme-assert-v1-1-5d98348d00f8@kernel.org
+---
+ arch/arm64/kvm/fpsimd.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/kvm/fpsimd.c b/arch/arm64/kvm/fpsimd.c
+index c53e5b14038d..8eca6b338bb2 100644
+--- a/arch/arm64/kvm/fpsimd.c
++++ b/arch/arm64/kvm/fpsimd.c
+@@ -92,11 +92,14 @@ void kvm_arch_vcpu_load_fp(struct kvm_vcpu *vcpu)
+ 	}
+ 
+ 	/*
+-	 * If normal guests gain SME support, maintain this behavior for pKVM
+-	 * guests, which don't support SME.
++	 * The pKVM hypervisor does not yet understand how to save or
++	 * restore SME state for the host so double check that if we
++	 * are running with pKVM we have disabled SME.  The hypervisor
++	 * enforces this when the guest is run, this check is for
++	 * clearer diagnostics.
+ 	 */
+-	WARN_ON(is_protected_kvm_enabled() && system_supports_sme() &&
+-		read_sysreg_s(SYS_SVCR));
++	WARN_ON_ONCE(is_protected_kvm_enabled() && system_supports_sme() &&
++		     read_sysreg_s(SYS_SVCR));
+ }
+ 
+ /*
+
+---
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+change-id: 20240604-kvm-arm64-sme-assert-5ad755d4e8a6
+
+Best regards,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Mark Brown <broonie@kernel.org>
+
 
