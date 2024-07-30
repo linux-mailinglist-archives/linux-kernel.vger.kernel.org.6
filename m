@@ -1,324 +1,172 @@
-Return-Path: <linux-kernel+bounces-266877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F679408F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:56:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E114E9408EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:55:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB1F31F2357A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:56:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11A851C22E4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33450190697;
-	Tue, 30 Jul 2024 06:55:21 +0000 (UTC)
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EC119005B;
+	Tue, 30 Jul 2024 06:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ZroeGkZ5"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C751C190679;
-	Tue, 30 Jul 2024 06:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE0F2114
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 06:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722322520; cv=none; b=tzWOfjTA7qmQPSzpZQ7rnrz8ULvkoaof+D5fTsgqZs2wEwryAg2Gdl7gd8PLNPEd7oX4YqVzDssNDzS4s0nvZ697XjpPvYlAZEHXjUUMlliGfwGivuxXVkiw+qPK72ii7HIIJkUpjuyMDHlK6THKG8VwSIBEJeWHNOhoxm2J7Gs=
+	t=1722322507; cv=none; b=D6hHf/EGcHV9p8044Dn+OWOYyNvkF9C2JNcTIcvIAz4gRPSv/2OpTS9j2f/uTZ+Zs1y6g8oNOTn1FTPZNl1OhomBvvc5frVo2xEOuJ8R39VRmQljiiHrPXl2/J1dPR+HEbym+CkICAdmD7yKxaHtaCKY3aZqQY36l5cBk3KV9lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722322520; c=relaxed/simple;
-	bh=PoHSTTNR1pOiYNNUBE7bjSLO9vqCQ+kY4ubAIS5usC0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=d648aLCqvB5YXGVDLmFV36tYhQ42et10lPqrphbxlImPpJqSZQdonGE5vCTBRg6sJpKQ62tuHga7NHKQLG1c/NlBIA4JSvPCjcyb4SUCdKyWKONuTP7AtacbOgB9K8Jb2+vRx2UKKBhAenX1yEX+A0RwzwxOiMMHDQuFtcs53UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-1fd9e6189d5so29650125ad.3;
-        Mon, 29 Jul 2024 23:55:18 -0700 (PDT)
+	s=arc-20240116; t=1722322507; c=relaxed/simple;
+	bh=xBO2MpYEwtBfpev2mKImPJcX9SjLu8M8dLyrQoCPX9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DsN3I1BWptn7mjcS7jdqdPIFZTReERWc0zxtVr+e3bxNJVq7P1JKeg/qy0Rhm4ZPl0SBOToSjIIVMv4gsz+HhbbdQBsgmJ6yo5w46atHxb6qOZH3pFomseFXEIALJ8R+kwNcBe9HQEO8GzrS3PDHLURYQ1ZLk3Zl9iDp/cM17vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ZroeGkZ5; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7a8553db90so600289966b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:55:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722322502; x=1722927302; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4+KXlpDUuYsmfJstf04E514Wv6wKYNLKlK179ZjkGZI=;
+        b=ZroeGkZ5R3bBZCfIk64smgcLne9VcfnzmeabtJChwfVQKg2pzKr/xk3b9MA40C53gb
+         GVhFcrC0WL4TVr4leT7657k144+TAdUQOhSUle+Pag+yXdZnSSNt7Dk27iXB/Jcvy/4P
+         Yrwrn2VlvcpUoSHTjOICkEFB5Ql5o7enCiVCxpM9bZSBN5ROCywIKPlIzXhQADsSUqGA
+         16cNJgzroExKUUWyzDXy9V4swJhfZoHJw8zS3uATI6Qu2346IEC3ytPl5QRd84ZD0oeI
+         OKAo92unC2tN2Z1HR1kKxm4yWcFTiTyVEgeosRoVfV5x7RvJ0Hp9jZtKTQWq4g9UoY2B
+         PAgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722322518; x=1722927318;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s5wItCNcIebvedYEvm9R9N3fFYU34EHG9QRxjv4o3IY=;
-        b=NQkgY39wcEwKuoRrZog2y5JuFwqqbnpdU9FOrt/34tzMvD8lBakU9WyC7mudbo7J/Y
-         +sGtKEvzxbByjzEGhsGjxnr45glEVaFbMy1e80lhOSou6VQWzq5cJLREuO2liKYfDa8r
-         OZOlydH/OUYrgXzLet1y6bi2tFyhewbrsp9cUZzF4AXcQvDNKR7gNYdooGEMptEUxxcV
-         C8c6Q2CA+hQEmrOxUrxpcfTcir9jFaZRHUVaVeWQXtoFmf8HC5frOWsDU8HeXHVDENvJ
-         7uxEjCpCpC1hjaOabrpIi4FasrTIMnIuw2UoH/8b1HduTDUKlrIHGf9+dLm7jYs7eH8i
-         AoBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmw7IBltkB+vmwni0zOreZzdIeKG1h6nfLW/eLzpP0nkpiJfd5E5jdXSdzL1i6Hw7bfxSysbogMJIvXIf0sqoJfhiO/78fD4Oa3WHc
-X-Gm-Message-State: AOJu0YzauOPgiw9rthfYT+WwFIrjJv2bvUGAj9gR34G7WkeixusgCl3u
-	Kxlo26Wia3D+Luuc71Hnz6kPdSsh3d1K74J1PEWu039j+pLPb/cf
-X-Google-Smtp-Source: AGHT+IGbpeqVJZThdkiblEwt3ilFhbSlAjidRzQS+YIwiYxJn6p66YtqNHxmXa/ulBa9vv6UOU0nog==
-X-Received: by 2002:a17:902:d506:b0:1fb:72b4:8775 with SMTP id d9443c01a7336-1ff0489f453mr88974555ad.40.1722322517939;
-        Mon, 29 Jul 2024 23:55:17 -0700 (PDT)
-Received: from localhost.localdomain ([111.48.58.10])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f1aa18sm94392875ad.190.2024.07.29.23.55.15
+        d=1e100.net; s=20230601; t=1722322502; x=1722927302;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4+KXlpDUuYsmfJstf04E514Wv6wKYNLKlK179ZjkGZI=;
+        b=tnomIDfdPN/d7z5S8Pa7biujJZTJMyTPT6npT57kvWXKJscmoNy9HM85eBhtHIJ+MY
+         9ISKQF8LVx0Owje3NlpCL0CzlZ0MelN5f0kAK5jut7vXm2yZUkXXTDUp3Eda+GhXqRtQ
+         gOWQJIbEiv6t+UQieytmiNyDIfmZROrNjuc/73MuuebOalRht2HS6fOQWIwvMx2j9CP3
+         /zjJjx2hcCgFElsRgkeiO08NE57HQ4Fjs78oecuvyjml4vazj7mHKBzcQn4JamgKqsEg
+         8IYclxrA8Mo8iQJ4L5ZV3eWbhPxDZWoRI81d9tKMGwNkGckqEBeqf0rGD35OBJB0AKDd
+         rxHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEuu8vG9K1yCH8gH7iDJoWvmxrSRlEJWa1ppCAbtRT33lq6p/cIQ/50mkvNposnQ9RaLr6VwPqjOn/aWkfcDU6uhqXVsqNCXSgDD93
+X-Gm-Message-State: AOJu0YwF+weCmioi5mKrylQt5LbI353R9ESrYrWOpFZD4FNCU88071B3
+	7g0Ivj/Dgmq9cAEciKQ0M/JspG9Zf+5f7XHWXhV/VIP9ZXfW3Q/ZYCbOQJM6tjc=
+X-Google-Smtp-Source: AGHT+IEqgokRSYk2wC8FR1bGSdqPzW+3LzeJgu7fScoPnHEMruuYbKorDJ/7Rcd8D2FgUHVp8UB7Gg==
+X-Received: by 2002:a17:906:d54f:b0:a72:7d5c:ace0 with SMTP id a640c23a62f3a-a7d3ff57f95mr799622566b.11.1722322501982;
+        Mon, 29 Jul 2024 23:55:01 -0700 (PDT)
+Received: from localhost (p50915eb1.dip0.t-ipconnect.de. [80.145.94.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab580b4sm598039966b.58.2024.07.29.23.55.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 23:55:17 -0700 (PDT)
-From: Xueqin Luo <luoxueqin@kylinos.cn>
-To: rafael@kernel.org,
-	pavel@ucw.cz,
-	len.brown@intel.com
-Cc: linux-pm@vger.kernel.org,
-	xiongxin@kylinos.cn,
-	linux-kernel@vger.kernel.org,
-	Xueqin Luo <luoxueqin@kylinos.cn>
-Subject: [RESEND PATCH 2/2] PM: Use sysfs_emit() and sysfs_emit_at() in "show" functions
-Date: Tue, 30 Jul 2024 14:54:54 +0800
-Message-Id: <20240730065454.2096296-3-luoxueqin@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240730065454.2096296-1-luoxueqin@kylinos.cn>
-References: <20240730065454.2096296-1-luoxueqin@kylinos.cn>
+        Mon, 29 Jul 2024 23:55:01 -0700 (PDT)
+Date: Tue, 30 Jul 2024 08:55:00 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Zheng Zucheng <zhengzucheng@huawei.com>, mingo@redhat.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, 
+	bristot@redhat.com, vschneid@redhat.com, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Nicolas Pitre <npitre@baylibre.com>
+Subject: Re: [PATCH v2 -next] sched/cputime: Fix mul_u64_u64_div_u64()
+ precision for cputime
+Message-ID: <pwir36nw3vfzcya7hkil5iop2vi45mbrvd7aevsanqiw22vl5w@ll2unlznmtmb>
+References: <20240725120315.212428-1-zhengzucheng@huawei.com>
+ <20240726023235.217771-1-zhengzucheng@huawei.com>
+ <20240726104429.GA21542@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="p2ayxcrepwcvayej"
+Content-Disposition: inline
+In-Reply-To: <20240726104429.GA21542@redhat.com>
 
-As Documentation/filesystems/sysfs.rst suggested,
-show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-the value to be returned to user space.
 
-No functional change intended.
+--p2ayxcrepwcvayej
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Xueqin Luo <luoxueqin@kylinos.cn>
----
- kernel/power/main.c | 70 ++++++++++++++++++++++-----------------------
- 1 file changed, 35 insertions(+), 35 deletions(-)
+Hello,
 
-diff --git a/kernel/power/main.c b/kernel/power/main.c
-index a9e0693aaf69..4ea4e2fa4da7 100644
---- a/kernel/power/main.c
-+++ b/kernel/power/main.c
-@@ -115,7 +115,7 @@ int pm_async_enabled = 1;
- static ssize_t pm_async_show(struct kobject *kobj, struct kobj_attribute *attr,
- 			     char *buf)
- {
--	return sprintf(buf, "%d\n", pm_async_enabled);
-+	return sysfs_emit(buf, "%d\n", pm_async_enabled);
- }
- 
- static ssize_t pm_async_store(struct kobject *kobj, struct kobj_attribute *attr,
-@@ -139,8 +139,8 @@ power_attr(pm_async);
- static ssize_t mem_sleep_show(struct kobject *kobj, struct kobj_attribute *attr,
- 			      char *buf)
- {
--	char *s = buf;
- 	suspend_state_t i;
-+	ssize_t sz = 0;
- 
- 	for (i = PM_SUSPEND_MIN; i < PM_SUSPEND_MAX; i++) {
- 		if (i >= PM_SUSPEND_MEM && cxl_mem_active())
-@@ -149,17 +149,17 @@ static ssize_t mem_sleep_show(struct kobject *kobj, struct kobj_attribute *attr,
- 			const char *label = mem_sleep_states[i];
- 
- 			if (mem_sleep_current == i)
--				s += sprintf(s, "[%s] ", label);
-+				sz += sysfs_emit_at(buf, sz, "[%s] ", label);
- 			else
--				s += sprintf(s, "%s ", label);
-+				sz += sysfs_emit_at(buf, sz, "%s ", label);
- 		}
- 	}
- 
- 	/* Convert the last space to a newline if needed. */
--	if (s != buf)
--		*(s-1) = '\n';
-+	if (sz)
-+		sz += sysfs_emit_at(buf, sz, "\n");
- 
--	return (s - buf);
-+	return sz;
- }
- 
- static suspend_state_t decode_suspend_state(const char *buf, size_t n)
-@@ -220,7 +220,7 @@ bool sync_on_suspend_enabled = !IS_ENABLED(CONFIG_SUSPEND_SKIP_SYNC);
- static ssize_t sync_on_suspend_show(struct kobject *kobj,
- 				   struct kobj_attribute *attr, char *buf)
- {
--	return sprintf(buf, "%d\n", sync_on_suspend_enabled);
-+	return sysfs_emit(buf, "%d\n", sync_on_suspend_enabled);
- }
- 
- static ssize_t sync_on_suspend_store(struct kobject *kobj,
-@@ -257,22 +257,22 @@ static const char * const pm_tests[__TEST_AFTER_LAST] = {
- static ssize_t pm_test_show(struct kobject *kobj, struct kobj_attribute *attr,
- 				char *buf)
- {
--	char *s = buf;
- 	int level;
-+	size_t sz = 0;
- 
- 	for (level = TEST_FIRST; level <= TEST_MAX; level++)
- 		if (pm_tests[level]) {
- 			if (level == pm_test_level)
--				s += sprintf(s, "[%s] ", pm_tests[level]);
-+				sz += sysfs_emit_at(buf, sz, "[%s] ", pm_tests[level]);
- 			else
--				s += sprintf(s, "%s ", pm_tests[level]);
-+				sz += sysfs_emit_at(buf, sz, "%s ", pm_tests[level]);
- 		}
- 
--	if (s != buf)
-+	if (sz)
- 		/* convert the last space to a newline */
--		*(s-1) = '\n';
-+		sz += sysfs_emit_at(buf, sz, "\n");
- 
--	return (s - buf);
-+	return sz;
- }
- 
- static ssize_t pm_test_store(struct kobject *kobj, struct kobj_attribute *attr,
-@@ -390,7 +390,7 @@ static const char * const suspend_step_names[] = {
- static ssize_t _name##_show(struct kobject *kobj,		\
- 		struct kobj_attribute *attr, char *buf)		\
- {								\
--	return sprintf(buf, format_str, suspend_stats._name);	\
-+	return sysfs_emit(buf, format_str, suspend_stats._name);	\
- }								\
- static struct kobj_attribute _name = __ATTR_RO(_name)
- 
-@@ -404,7 +404,7 @@ suspend_attr(max_hw_sleep, "%llu\n");
- static ssize_t _name##_show(struct kobject *kobj,		\
- 		struct kobj_attribute *attr, char *buf)		\
- {								\
--	return sprintf(buf, "%u\n",				\
-+	return sysfs_emit(buf, "%u\n",				\
- 		       suspend_stats.step_failures[step-1]);	\
- }								\
- static struct kobj_attribute _name = __ATTR_RO(_name)
-@@ -428,7 +428,7 @@ static ssize_t last_failed_dev_show(struct kobject *kobj,
- 	index %= REC_FAILED_NUM;
- 	last_failed_dev = suspend_stats.failed_devs[index];
- 
--	return sprintf(buf, "%s\n", last_failed_dev);
-+	return sysfs_emit(buf, "%s\n", last_failed_dev);
- }
- static struct kobj_attribute last_failed_dev = __ATTR_RO(last_failed_dev);
- 
-@@ -442,7 +442,7 @@ static ssize_t last_failed_errno_show(struct kobject *kobj,
- 	index %= REC_FAILED_NUM;
- 	last_failed_errno = suspend_stats.errno[index];
- 
--	return sprintf(buf, "%d\n", last_failed_errno);
-+	return sysfs_emit(buf, "%d\n", last_failed_errno);
- }
- static struct kobj_attribute last_failed_errno = __ATTR_RO(last_failed_errno);
- 
-@@ -456,7 +456,7 @@ static ssize_t last_failed_step_show(struct kobject *kobj,
- 	index %= REC_FAILED_NUM;
- 	step = suspend_stats.failed_steps[index];
- 
--	return sprintf(buf, "%s\n", suspend_step_names[step]);
-+	return sysfs_emit(buf, "%s\n", suspend_step_names[step]);
- }
- static struct kobj_attribute last_failed_step = __ATTR_RO(last_failed_step);
- 
-@@ -571,7 +571,7 @@ bool pm_print_times_enabled;
- static ssize_t pm_print_times_show(struct kobject *kobj,
- 				   struct kobj_attribute *attr, char *buf)
- {
--	return sprintf(buf, "%d\n", pm_print_times_enabled);
-+	return sysfs_emit(buf, "%d\n", pm_print_times_enabled);
- }
- 
- static ssize_t pm_print_times_store(struct kobject *kobj,
-@@ -604,7 +604,7 @@ static ssize_t pm_wakeup_irq_show(struct kobject *kobj,
- 	if (!pm_wakeup_irq())
- 		return -ENODATA;
- 
--	return sprintf(buf, "%u\n", pm_wakeup_irq());
-+	return sysfs_emit(buf, "%u\n", pm_wakeup_irq());
- }
- 
- power_attr_ro(pm_wakeup_irq);
-@@ -620,7 +620,7 @@ EXPORT_SYMBOL_GPL(pm_debug_messages_should_print);
- static ssize_t pm_debug_messages_show(struct kobject *kobj,
- 				      struct kobj_attribute *attr, char *buf)
- {
--	return sprintf(buf, "%d\n", pm_debug_messages_on);
-+	return sysfs_emit(buf, "%d\n", pm_debug_messages_on);
- }
- 
- static ssize_t pm_debug_messages_store(struct kobject *kobj,
-@@ -668,21 +668,21 @@ struct kobject *power_kobj;
- static ssize_t state_show(struct kobject *kobj, struct kobj_attribute *attr,
- 			  char *buf)
- {
--	char *s = buf;
-+	ssize_t sz = 0;
- #ifdef CONFIG_SUSPEND
- 	suspend_state_t i;
- 
- 	for (i = PM_SUSPEND_MIN; i < PM_SUSPEND_MAX; i++)
- 		if (pm_states[i])
--			s += sprintf(s,"%s ", pm_states[i]);
-+			sz += sysfs_emit_at(buf, sz, "%s ", pm_states[i]);
- 
- #endif
- 	if (hibernation_available())
--		s += sprintf(s, "disk ");
--	if (s != buf)
-+		sz += sysfs_emit_at(buf, sz, "disk ");
-+	if (sz)
- 		/* convert the last space to a newline */
--		*(s-1) = '\n';
--	return (s - buf);
-+		sz += sysfs_emit_at(buf, sz, "\n");
-+	return sz;
- }
- 
- static suspend_state_t decode_state(const char *buf, size_t n)
-@@ -782,7 +782,7 @@ static ssize_t wakeup_count_show(struct kobject *kobj,
- 	unsigned int val;
- 
- 	return pm_get_wakeup_count(&val, true) ?
--		sprintf(buf, "%u\n", val) : -EINTR;
-+		sysfs_emit(buf, "%u\n", val) : -EINTR;
- }
- 
- static ssize_t wakeup_count_store(struct kobject *kobj,
-@@ -824,17 +824,17 @@ static ssize_t autosleep_show(struct kobject *kobj,
- 	suspend_state_t state = pm_autosleep_state();
- 
- 	if (state == PM_SUSPEND_ON)
--		return sprintf(buf, "off\n");
-+		return sysfs_emit(buf, "off\n");
- 
- #ifdef CONFIG_SUSPEND
- 	if (state < PM_SUSPEND_MAX)
--		return sprintf(buf, "%s\n", pm_states[state] ?
-+		return sysfs_emit(buf, "%s\n", pm_states[state] ?
- 					pm_states[state] : "error");
- #endif
- #ifdef CONFIG_HIBERNATION
--	return sprintf(buf, "disk\n");
-+	return sysfs_emit(buf, "disk\n");
- #else
--	return sprintf(buf, "error");
-+	return sysfs_emit(buf, "error\n");
- #endif
- }
- 
-@@ -903,7 +903,7 @@ int pm_trace_enabled;
- static ssize_t pm_trace_show(struct kobject *kobj, struct kobj_attribute *attr,
- 			     char *buf)
- {
--	return sprintf(buf, "%d\n", pm_trace_enabled);
-+	return sysfs_emit(buf, "%d\n", pm_trace_enabled);
- }
- 
- static ssize_t
-@@ -940,7 +940,7 @@ power_attr_ro(pm_trace_dev_match);
- static ssize_t pm_freeze_timeout_show(struct kobject *kobj,
- 				      struct kobj_attribute *attr, char *buf)
- {
--	return sprintf(buf, "%u\n", freeze_timeout_msecs);
-+	return sysfs_emit(buf, "%u\n", freeze_timeout_msecs);
- }
- 
- static ssize_t pm_freeze_timeout_store(struct kobject *kobj,
--- 
-2.25.1
+On Fri, Jul 26, 2024 at 12:44:29PM +0200, Oleg Nesterov wrote:
+> On 07/26, Zheng Zucheng wrote:
+> >
+> > before call mul_u64_u64_div_u64(),
+> > stime =3D 175136586720000, rtime =3D 135989749728000, utime =3D 1416780=
+000.
+>=20
+> So stime + utime =3D=3D 175138003500000
+>=20
+> > after call mul_u64_u64_div_u64(),
+> > stime =3D 135989949653530
+>=20
+> Hmm. On x86 mul_u64_u64_div_u64(175136586720000, 135989749728000, 1751380=
+03500000)
+> returns 135989749728000 =3D=3D rtime, see below.
+>=20
+> Nevermind...
+>=20
+> > --- a/kernel/sched/cputime.c
+> > +++ b/kernel/sched/cputime.c
+> > @@ -582,6 +582,12 @@ void cputime_adjust(struct task_cputime *curr, str=
+uct prev_cputime *prev,
+> >  	}
+> > =20
+> >  	stime =3D mul_u64_u64_div_u64(stime, rtime, stime + utime);
+> > +	/*
+> > +	 * Because mul_u64_u64_div_u64() can approximate on some
+> > +	 * achitectures; enforce the constraint that: a*b/(b+c) <=3D a.
+> > +	 */
+> > +	if (unlikely(stime > rtime))
+> > +		stime =3D rtime;
+>=20
+> Thanks,
+>=20
+> Acked-by: Oleg Nesterov <oleg@redhat.com>
+>=20
+> -------------------------------------------------------------------------=
+------
+> But perhaps it makes sense to improve the accuracy of mul_u64_u64_div_u64=
+() ?
 
+Note there is a patch by Nicolas Pitre currently in mm-nonmm-unstable
+that makes mul_u64_u64_div_u64() precise. It was in next for a while as
+commit 3cc8bf1a81ef ("mul_u64_u64_div_u64: make it precise always")
+which might explain problems to reproduce the incorrect results.
+
+An obvious alternative to backporting this change to
+kernel/sched/cputime.c for stable is to backport Nicolas's patch
+instead. Andrew asked me to provide a justification to send Nicolas's
+patch for inclusion in the current devel cycle. So it might make it in
+before 6.11.
+
+Best regards
+Uwe
+
+--p2ayxcrepwcvayej
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaojkIACgkQj4D7WH0S
+/k5+5gf+MPiZNV9CvGBq3u8auK9aufxwOt6vmkyzS/B+5yUsy6vZnJD4r2ubv2UH
+FQPTxo7lHbwMQnNGLfCOmYQpdm6+kLUOZhNTLofBLKXfv8Rl8dgCHsedWorv0Pp2
+sNEXqAOZnIE2tovlXUb0Bb2rWLOf92B41qfDga24UkA9VH4Mr7ATCtEBLhsLJKbd
+zY7ydQOQVKSDbOEgrWhgDcw0ZliFqRQgwOmenAkQulGyvhaTIGuruWf2phCE2e6l
+87TJGiQKvwtmIFl4Ao0Z4xzw03GsDqZHdPi8jGIE/PfCKH5vQGjYIdMWxfgEg5BL
+rPp6Y91EEHX8t1zyphclqgkfLppNEQ==
+=w2uZ
+-----END PGP SIGNATURE-----
+
+--p2ayxcrepwcvayej--
 
