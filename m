@@ -1,102 +1,106 @@
-Return-Path: <linux-kernel+bounces-267833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 754259416BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:03:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363949416C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F16AEB2415C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:03:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67A591C23368
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ECD418801C;
-	Tue, 30 Jul 2024 16:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB936183CC1;
+	Tue, 30 Jul 2024 16:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iu3FEMSS"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LHOQaj++"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4893D188000;
-	Tue, 30 Jul 2024 16:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1078A187FFB;
+	Tue, 30 Jul 2024 16:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722355410; cv=none; b=acDK1cg+g+vjIiLZu5VKojsYwNEFmECGhzsA2t42MGY3XgcB0CFmJmG9SjpgkT7t+R43lWdx0vhoHZRnmJYDrmDZTSJhiIc+FMI5iw7Jr8T6T92CS2MECxBh5+DrAQsCHfqvBrHm5RBpx1F0nVXEZZ6wiJuSvcuBfl/1UmQzVAA=
+	t=1722355413; cv=none; b=jcCoqCagj6mvosU0MDGDvDt47xpP430wU1/H8gzISFZCRRh5CJXzU8aC52BOK+RFII8GV8+9DbOlLb6f5X44/DZ7AOl5thdf1wWkd0Wt1C7vrcTwcIcg5r9C4HJvE7YB/2FFpvX7vtvwKeSTA4ekc32zP9VhOW+foX269Xh5rPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722355410; c=relaxed/simple;
-	bh=uZoFF8Ov6/EBQDDdLguut3LJNAwS/6G5gVgfa4iA+wE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HJz9DN4LUxtIdIS9zRGbrtp207jAyfMTv/6Y5/534grR9eOSzwwHoQ8AdGfjRSbd5UVXJOc5DjHcTsGDjPachivHGzhbzYQn4aRU3fdOBRt4klqbF8qdWebVo1UdmB0fIaT5lgVkKjXFuHI7VFlOHndrUhQUyH8hlUmnwNMvmbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iu3FEMSS; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=0zpf2bL87ay4+ySAHsgB+7KzaVacNp04EBJi3/RRapo=; b=iu3FEMSSXfUN+byB63191+HYj1
-	+0dV1haacraidFulGRh1yU2AiAaO5iPyFy5uTtGtueBcgpSBcRtcldfxk7+qcIkswzLbylUOM7+Wl
-	DXWJDXO1QQ9wV6JOXM8de7QEzvqtKU0ClA7sxQ4xuIaA9gnGNjozjTDpFX2jXkBV+Y/ghDk3FaUGj
-	xpROcto3Gy7DISkp1Uy6zdRWNAMql7puQ3VIRC6PbAehdecTQb6l/heSO6SjHrecvbO4tk9ozC0WX
-	WhquCm5nYLIx4mp9g772yRCi2F6L7RurikdSUCg3tAlBPGl9MClXh+M/8YJzTa+V32/FNAdy8jsvn
-	nstf1SgQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sYpJj-000000052IX-2hnv;
-	Tue, 30 Jul 2024 16:03:16 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 786613003EA; Tue, 30 Jul 2024 18:03:14 +0200 (CEST)
-Date: Tue, 30 Jul 2024 18:03:14 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>,
-	Kees Cook <kees@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 2/2] rust: cfi: add support for CFI_CLANG with Rust
-Message-ID: <20240730160314.GP33588@noisy.programming.kicks-ass.net>
-References: <20240730-kcfi-v1-0-bbb948752a30@google.com>
- <20240730-kcfi-v1-2-bbb948752a30@google.com>
- <20240730103236.GK33588@noisy.programming.kicks-ass.net>
- <CABCJKuf+=bxrZphtFZ+N_t2whCS0gx2GVHybTzcNmY6TX6c7cw@mail.gmail.com>
+	s=arc-20240116; t=1722355413; c=relaxed/simple;
+	bh=RPtDT4R8CbQKDos6BAV/fwImTeno+coof9EPnsGzwsE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=hC64ZxLgsnhSR0GzQqsLhRaVZXysuP3ZEoyK4xiEY+G0wQTCY44VQAXhlzP8hd5/pbiLtI5Gw67jWMzg/HOwQZABkZDnRynac0aR4HzP6ps5PXp3vzLTXcrNex+eGE6CdybO3TgpOrRK52jcPpy+lCMjCzQl4QvvHWHJR1XozB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LHOQaj++; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 460C0C4AF10;
+	Tue, 30 Jul 2024 16:03:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722355412;
+	bh=RPtDT4R8CbQKDos6BAV/fwImTeno+coof9EPnsGzwsE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=LHOQaj++Amqup2mv+o2VvKI5XxVkLvhT7O2sOin6RgYlon7JQvYNiQG7UWuOiuY6q
+	 0CadX/X8mvTuTgetjJZlNr0GZ7h+PqTECKQXHsVkbpVUtZTA5QTszqVEkoM9J9UNPf
+	 cO3znnhp4AEC5SUlCqYFByJNzZnRKq6vQt/6TsXzYvlXzwXYI4YofGop+HZdimmLgq
+	 leN1UShxvSZ2De1LADpUlGAoS4HYXOmzIAMoy/fJQ7VlyCHNjLhOCCfz4acQv9bdZT
+	 c9P+QxcgRFN3+JAvi/nSiyVYmBCxTPRnYkXR9seBiWO6No9T/dJuejloiokfgWZ5Ct
+	 0QW9Poa991gIg==
+From: Mark Brown <broonie@kernel.org>
+To: f.fangjian@huawei.com, Devyn Liu <liudingyuan@huawei.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ jonathan.cameron@huawei.com, salil.mehta@huawei.com, 
+ shameerali.kolothum.thodi@huawei.com, shiju.jose@huawei.com, 
+ liuyonglong@huawei.com, yangyicong@huawei.com, yisen.zhuang@huawei.com, 
+ kong.kongxinwei@hisilicon.com
+In-Reply-To: <20240730032040.3156393-1-liudingyuan@huawei.com>
+References: <20240730032040.3156393-1-liudingyuan@huawei.com>
+Subject: Re: [PATCH 0/2] spi: hisi-kunpeng: Set verification for speed_hz
+ and max_frequency
+Message-Id: <172235541000.81832.8279048071901516716.b4-ty@kernel.org>
+Date: Tue, 30 Jul 2024 17:03:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABCJKuf+=bxrZphtFZ+N_t2whCS0gx2GVHybTzcNmY6TX6c7cw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On Tue, Jul 30, 2024 at 08:24:15AM -0700, Sami Tolvanen wrote:
-> On Tue, Jul 30, 2024 at 3:32 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Tue, Jul 30, 2024 at 09:40:12AM +0000, Alice Ryhl wrote:
-> > > From: Matthew Maurer <mmaurer@google.com>
-> > >
-> > > Make it possible to use the Control Flow Integrity (CFI) sanitizer when
-> > > Rust is enabled. Enabling CFI with Rust requires that CFI is configured
-> > > to normalize integer types so that all integer types of the same size
-> > > and signedness are compatible under CFI.
-> >
-> > I am assuming -- because I have to, because you're not actually saying
-> > anyting -- that this is fully compatible with the C version and all the
-> > fun and games we play with rewriting the function prologue for FineIBT
-> > and the like also work?
+On Tue, 30 Jul 2024 11:20:38 +0800, Devyn Liu wrote:
+> The speed_hz is specified by user, while the max_frequency is a
+> firmware-provided parameter for the SPI controller. Both are used
+> in the calculation of clk_div. To avoid calculation results outside
+> of a reasonable range and to prevent division by zero errors,
+> configuration for validation of speed_hz and max_frequency is added
+> in the code.
 > 
-> Rust uses the same LLVM backend for the actual code generation, so it
-> should be fully compatible.
+> [...]
 
-Yes, but we also combine that with -fpatchable-function-entry= for a
-very specific effect, and I don't think I see the Rust thingy do that.
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/2] spi: hisi-kunpeng: Add validation for the minimum value of speed_hz
+      commit: c3c4f22b7c814a6ee485ce294065836f8ede30fa
+[2/2] spi: hisi-kunpeng: Add verification for the max_frequency provided by the firmware
+      commit: 5127c42c77de18651aa9e8e0a3ced190103b449c
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
