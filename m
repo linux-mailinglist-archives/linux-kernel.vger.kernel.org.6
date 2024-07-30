@@ -1,37 +1,38 @@
-Return-Path: <linux-kernel+bounces-266716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1869405C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:21:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72CFA9405C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF7631C210C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:21:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D782283269
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B3815FA88;
-	Tue, 30 Jul 2024 03:20:53 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4441A14F9F9;
+	Tue, 30 Jul 2024 03:20:49 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E331C1854;
-	Tue, 30 Jul 2024 03:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4516C1854;
+	Tue, 30 Jul 2024 03:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722309652; cv=none; b=ACyMqfCPqgzeJTUS0htxQT5dtF+hY9RyDLvNarVnYP2NDWuYEWO2FzDGobzP4Iatvos4NybXumIxgD15B/P/SgwIowkB3gKNTthiPM+SYTyRJiAvzV1pXOAMsRc3CCqR3bW+jbXVwGaSiIy2Eabu+s10IaQ126+r6WxOYdxTqTA=
+	t=1722309648; cv=none; b=f1IrY5ATn6W97NRFHXqkFnp+leNylNT+q5GfpffwIGP21aNboWLOAKxtghF/Lz17/KjSCSbWqT8hnxFtCuBbRaknbZD1GJVrjkMmTQNETjkgedsTnzGw4d76bSRKZFwZqQKVO7y8CycRJLMYU+HYfHeyrT/sNCvYJw2ZAUCzJ6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722309652; c=relaxed/simple;
-	bh=tdoD4uHVjnuSZ6gIsaKJasSt28EnX8TfA8PXN0KJ9H4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B71d8kpGF8sCtex+9okRfDnBxB9dkeOirF9ms0xEk72UNBEa0yrKFsx3dO1xu16LograLLuZE5bDWcz62zhBgDTRj1Ev8rBm5p91MAJCbNq/criLIv+9+Ayqkob4BMBqlYzr9Ubfco5ce8wxjPqTsoAt3WDr+ab7V9jbQbFv1kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+	s=arc-20240116; t=1722309648; c=relaxed/simple;
+	bh=cjDA0KnD101v++Ruc7eXXGvZTpiP6zzAaMz/mM9Um4E=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IYlVcQZkvpuc5AoN6ikybMudUdmYgM1IJT++QZeaGyykLiCvUSF3u0adhLxgRIuvYaQQO/C77A9fHqZEDcKE7wTkGgIU19H+FSUVUIAoQS1BWZ5Wo17jybucIKqT6XuanIao3yoL0dYSwR5ze2chuX0uPcYqfL9NROulZBoDcWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WY0k20KDBz28fsh;
-	Tue, 30 Jul 2024 11:16:10 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WY0q45kjCzxVr7;
+	Tue, 30 Jul 2024 11:20:32 +0800 (CST)
 Received: from kwepemm600002.china.huawei.com (unknown [7.193.23.29])
-	by mail.maildlp.com (Postfix) with ESMTPS id 20C531A0188;
+	by mail.maildlp.com (Postfix) with ESMTPS id A5D0618009F;
 	Tue, 30 Jul 2024 11:20:42 +0800 (CST)
 Received: from localhost.huawei.com (10.90.30.45) by
  kwepemm600002.china.huawei.com (7.193.23.29) with Microsoft SMTP Server
@@ -44,10 +45,12 @@ CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<shameerali.kolothum.thodi@huawei.com>, <shiju.jose@huawei.com>,
 	<liuyonglong@huawei.com>, <yangyicong@huawei.com>, <yisen.zhuang@huawei.com>,
 	<kong.kongxinwei@hisilicon.com>, <liudingyuan@huawei.com>
-Subject: [PATCH 0/2] spi: hisi-kunpeng: Set verification for speed_hz and max_frequency
-Date: Tue, 30 Jul 2024 11:20:38 +0800
-Message-ID: <20240730032040.3156393-1-liudingyuan@huawei.com>
+Subject: [PATCH 1/2] spi: hisi-kunpeng: Add validation for the minimum value of speed_hz
+Date: Tue, 30 Jul 2024 11:20:39 +0800
+Message-ID: <20240730032040.3156393-2-liudingyuan@huawei.com>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20240730032040.3156393-1-liudingyuan@huawei.com>
+References: <20240730032040.3156393-1-liudingyuan@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,21 +62,31 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
  kwepemm600002.china.huawei.com (7.193.23.29)
 
-The speed_hz is specified by user, while the max_frequency is a
-firmware-provided parameter for the SPI controller. Both are used
-in the calculation of clk_div. To avoid calculation results outside
-of a reasonable range and to prevent division by zero errors,
-configuration for validation of speed_hz and max_frequency is added
-in the code.
+The speed specified by the user is used to calculate the clk_div based
+on the max_speed_hz in hisi_calc_effective_speed.  A very low speed
+value can lead to a clk_div larger than the variable range. Avoid this
+by setting the min_speed_hz so that such a small speed value is
+rejected.  __spi_validate() in spi.c will return -EINVAL for the
+specified speed_hz lower than min_speed_hz.
 
-Devyn Liu (2):
-  spi: hisi-kunpeng: Add validation for the minimum value of speed_hz
-  spi: hisi-kunpeng: Add verification for the max_frequency provided by
-    the firmware
+Signed-off-by: Devyn Liu <liudingyuan@huawei.com>
+Reviewed-by: Jay Fang <f.fangjian@huawei.com>
+---
+ drivers/spi/spi-hisi-kunpeng.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/spi/spi-hisi-kunpeng.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
+diff --git a/drivers/spi/spi-hisi-kunpeng.c b/drivers/spi/spi-hisi-kunpeng.c
+index 77e9738e42f6..6910b4d4c427 100644
+--- a/drivers/spi/spi-hisi-kunpeng.c
++++ b/drivers/spi/spi-hisi-kunpeng.c
+@@ -495,6 +495,7 @@ static int hisi_spi_probe(struct platform_device *pdev)
+ 	host->transfer_one = hisi_spi_transfer_one;
+ 	host->handle_err = hisi_spi_handle_err;
+ 	host->dev.fwnode = dev->fwnode;
++	host->min_speed_hz = DIV_ROUND_UP(host->max_speed_hz, CLK_DIV_MAX);
+ 
+ 	hisi_spi_hw_init(hs);
+ 
 -- 
 2.33.0
 
