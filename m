@@ -1,118 +1,114 @@
-Return-Path: <linux-kernel+bounces-266817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8102A940813
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:06:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C545940815
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0FC11C20CC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:06:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89B07B2187F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998A615FCED;
-	Tue, 30 Jul 2024 06:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3C0168481;
+	Tue, 30 Jul 2024 06:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="cxQe/C8+"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajwx3zDg"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F38624
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 06:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34598624
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 06:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722319574; cv=none; b=joVOMfI85ckU3k7XDF1si7HjrNDtWVbgici7AuOQQiihtRch0cbkqve3cMTuamWoU4BpVsDnRLzP3pdQo1pbRtm0jxS8/FcXUhvZ/2OEZ4DE0OkUXhK6zZa9MNUIiXJryhylcs31WMtEHautQWCE9+ehTOZIb7yxP+49jjONgjw=
+	t=1722319636; cv=none; b=HasTwXFiXsXbgu2QUIMSdqm3sOUoCs8qYZ/jJBoj6YhLg6zWTlykotvHdGn6oWvt2wX6HfaVItXCMWhgcoqtf8B1YkD7Yb0iBJc/+Dz8IHsI49Cjy3fQ34gmFpyOjbS+AfuFz83BvX7kPwVv5UsTT6uMJan5GHTnlg7Tqh4MAQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722319574; c=relaxed/simple;
-	bh=xuekcHc4T9wVcUBrL/CHZr6NJkTHKOHit3ADj+/ZeuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lc1wNaeOkky1cRu5GonfFamBSj6868qc3SJrTORtTRdDz8XThiuNo3A7FA2usvwqymkI5SfQk/1INvMI/UnRdqAxuAeNKq/m8FjUZUaZ88u1Hz7qJgsdRXjk3uLZsl3z1J4Ul71qFA9NpwjIRg4G5W3efTKDuP9TaGmse/kD6b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=cxQe/C8+; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fd69e44596so26226965ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:06:12 -0700 (PDT)
+	s=arc-20240116; t=1722319636; c=relaxed/simple;
+	bh=xx7l0osf5pbVBoH/iG0gF21Z8S+D1bCYbRoAPrGLdM0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OBvQcWhvhM1Zd3gsqNMMPXU9PQRAAIl/AbARUL6+IHS1A+MJHKKxm1qfnT3gQR5jnhUSgey/1v/uYGZusMv+EgloWu2LiZ3WMskx4tJJWWZrW9zvnWlYa7iPKUKg339doNyK/4RmI7s+ls2BC4NhHCNB9roiB8Q/zfrwfm6KpGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ajwx3zDg; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70d333d57cdso2771453b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:07:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1722319572; x=1722924372; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ghR+ox5/tsfe3PmXNdvY/LSvBA5a53YyAUx9h+7cnSQ=;
-        b=cxQe/C8+72Q6GBadCoPRiJXl5iGdRSwR9skMCfed5QXonXCKrWvJVIFiExSXG3T9La
-         10FCgNbrAFCLXAQm3DkPemrEh/y2N8zueCdOCp+GP1j3yJcTUI//YHveihY4/EzyzkTQ
-         0FCB/PmlEz1Smh9vn5jS0wpACkl8+O09zTCaoRcFu/DfVdR711k71DHJ64ISaVVUukl0
-         0jOELJ9SrCNz3MiHhTuyCPhNd05BcqbFY2eHSIcXUq8b3n9WuyUS2wbuq1vRH8WnPfxT
-         Dc//V0wpAaRe08PENCmKUbeQqio9LdDoDrxr3Htibi0P1cfvO0UgtEitIkdg7CKuJx5v
-         Gr2Q==
+        d=gmail.com; s=20230601; t=1722319634; x=1722924434; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JaL7FYBtATcRvs5LgUdqFH1RdIwqFz0K1+6W3wtHTYY=;
+        b=ajwx3zDgYUQ1O5W+Fe1lNGwk6nvkg3bl5dZnSlb0Uz3Rr3QZIdZ0KIDxXEOxqkEUaa
+         WDp67J9+mvYrWJ/e7V+0tQZD7JhIcBG0d7Yme4IwFUB9iqEzblu0iG7h3qce0EvD8F06
+         2TGBSyWFWChrTa7IrJkM37eNdCgjwcBOh42mD0k8MkVopqNiwoWfnUXq+qV2tgF97ga5
+         2lpVnwDkjTbxk1CrVJpS3StKinMfK0WCYZ7c5GUw5if3V6g0E5s/ZE3ZbzcMAJIUee6q
+         QH6MDjpHPfQIRT5JaJaGEORIsuQephULt4xvQmDgXeOFJ8I18ov/lIuwHnUVlJgUAvaY
+         WvjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722319572; x=1722924372;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ghR+ox5/tsfe3PmXNdvY/LSvBA5a53YyAUx9h+7cnSQ=;
-        b=A7mambmbl7+T/f52Ov/zTx7PVpoa8U+uiPwx92QQrW9AphqLlrVjTIkaDeEO8ho07l
-         HPW0nxSWpo3b/TVOqZf8j4klY7OJpAI/A0dCwEdPefdK9bKNCNHHb6sHy2bmuY6Izryt
-         xNfrI5U6tqjQ7/ECjZVQHTWJnvXIvwQdr0mxuMiK2AYcU+3ww8gJ5qhhLTEFgBfLHKUF
-         4x8IqAc0LFI7axC8Txq3QJ43LU7aAASzG3zJwdOt2FmVXcJza2GFMhpi3dJJCUSq3pGC
-         0cqSTHekUPvTpfhPH7hTT0kyi5Trg5pFacKQtUNFSVjTWc3yayOM68pX1uU6mJKfrCap
-         RKvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWv0+JCPIZR/Ahe5Ok7kDQlaSmfs0i0hAhH3QeMgebY4j2KqFurjGsItApwwpjbGwgIf2FsHzYKuMKuLPsIWkwSpbhEkeSFFRfndWE9
-X-Gm-Message-State: AOJu0Yze7s7bUjd1Pmgx3ZyYQaNlQMQOJNJDZcIh6GGxDQ8pFs2U1NHz
-	utVv/NeeM264+siLOxAEJwRuMhU/vs5w5qJesJdpMVuM9LkgeruoEUjxdqtOuXU=
-X-Google-Smtp-Source: AGHT+IG9aAumHt5LgoqTOtyw62prfZf7AwHJmiSCCsFccmXwsxBBdagmRPhV1gk0RVZYG8ODVR8BDw==
-X-Received: by 2002:a17:902:c40a:b0:1fd:65ad:d8a1 with SMTP id d9443c01a7336-1ff37c0c7d7mr15737105ad.21.1722319572373;
-        Mon, 29 Jul 2024 23:06:12 -0700 (PDT)
-Received: from [10.84.153.104] ([203.208.167.151])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f1aa0dsm93047105ad.187.2024.07.29.23.06.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jul 2024 23:06:12 -0700 (PDT)
-Message-ID: <85bca797-6ddd-4541-ade5-a75864870472@bytedance.com>
-Date: Tue, 30 Jul 2024 14:06:07 +0800
+        d=1e100.net; s=20230601; t=1722319634; x=1722924434;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JaL7FYBtATcRvs5LgUdqFH1RdIwqFz0K1+6W3wtHTYY=;
+        b=xBGfyXn5hBd094M4fa56InXcJl5mbJrPg/X19MD9szMIBwBaa5dAKYqyboUwdHPPh+
+         si37U2hxjiqouFt6ZM/U77rS0v2Lu4VV9ItutAPqRaHHv8IQfZ16pxOa0dSQUJH22nti
+         lwn+H7v3X2xDyphAIlBpty4A3SUR2AVEW2v1UwTP1c1lk7qRqFgLdM0I1RqjdXLlix/H
+         GQxId0ukycv6qN4G2OlkHIPxsSyQPtc0nzw82Y7jkUdMgkim4XDl2xLmuAO0XHBYNawv
+         BN6es9vVc3N+gMoVzmSSwUVlLFcuBR/RZMm0QvXvMARNJ9em3YYYCtHP+CrQTLZYATQG
+         ZScg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCjWx5CTislzvaA4zeevh3Ye+dWno0ld1WMhxsMcaFaQJM7p5HWnK26GcWWWs61msnfeigKbUW3e8lDKcWVPqxp5tuAa9h62OKpx59
+X-Gm-Message-State: AOJu0YySgYOUj9Gi0yTRL6YSfTKZ2ibnIlScUwD12ZKBwblOKbYz4vmu
+	gNFc+hQHJltPDEb78ce081F0DdToMYrOYOCxGWYk3sTbdY0E1MHb
+X-Google-Smtp-Source: AGHT+IHp1ixJxVULvC/EjTzN36eJCUG/wCIgrvEOGwgtOAcQ6vK1PryRB68wQtoNU8MJGCpNv2KE5Q==
+X-Received: by 2002:a05:6a20:6a10:b0:1c2:8d33:af69 with SMTP id adf61e73a8af0-1c4a13afd31mr8807135637.41.1722319634443;
+        Mon, 29 Jul 2024 23:07:14 -0700 (PDT)
+Received: from distilledx.localdomain ([2401:4900:6320:5c5f:a09c:1e46:e58e:e6c6])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7eef4f0sm93589375ad.178.2024.07.29.23.07.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 23:07:14 -0700 (PDT)
+From: Tejas Vipin <tejasvipin76@gmail.com>
+To: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	neil.armstrong@linaro.org,
+	quic_jesszhan@quicinc.com
+Cc: dianders@chromium.org,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Tejas Vipin <tejasvipin76@gmail.com>
+Subject: [PATCH v2 0/2] add more multi functions to streamline error handling
+Date: Tue, 30 Jul 2024 11:36:57 +0530
+Message-ID: <20240730060659.455953-1-tejasvipin76@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] psi: Inherit parent cgroup psi enable state
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: tj@kernel.org, hannes@cmpxchg.org, surenb@google.com,
- peterz@infradead.org, chengming.zhou@linux.dev, linux-kernel@vger.kernel.org
-References: <20240729034100.1876510-1-zhouchuyi@bytedance.com>
- <dxwvcccihuuxddycohyi5dj66o42rjekmkgxc7pzs344kvwuhd@3x6e5prw3xld>
-From: Chuyi Zhou <zhouchuyi@bytedance.com>
-In-Reply-To: <dxwvcccihuuxddycohyi5dj66o42rjekmkgxc7pzs344kvwuhd@3x6e5prw3xld>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hello Michal,
+This series adds more multi style functions and uses them in the 
+startek-kd070fhfid015 panel. Additionally it marks the older functions
+as deprecated.
+---
+Changes in v2:
+    - Improved formatting
+    - Rewrote hex as lowercase
+    - Marked old functions as deprecated
+    - Added more functions to transition
+---
+Tejas Vipin (2):
+  drm/mipi-dsi: add more multi functions for better error handling
+  drm/panel: startek-kd070fhfid015: transition to mipi_dsi wrapped
+    functions
 
-在 2024/7/29 19:37, Michal Koutný 写道:
-> Hello Chuyi.
-> 
-> On Mon, Jul 29, 2024 at 11:41:00AM GMT, Chuyi Zhou <zhouchuyi@bytedance.com> wrote:
->> This patch tries to solve this issue. When a child cgroup is created, it
->> would inherit the psi enabled state of the parent in group_init().
->> Once the enable state is found to be false in the css_populate_dir(), the
->> {cpu, io, memory}.pressure files will be hidden using cgroup_file_show().
-> 
-> I'd consider such an inheritance cgroupv1-ism. Notably,
-> mmemory.swappiness also had inheritance and it caused some headaches
-> because of its susceptibility to races (cgroup creation vs parent
-> configuration).
+ drivers/gpu/drm/drm_mipi_dsi.c                | 226 ++++++++++++++++++
+ .../drm/panel/panel-startek-kd070fhfid015.c   | 123 +++-------
+ include/drm/drm_mipi_dsi.h                    |  12 +
+ 3 files changed, 277 insertions(+), 84 deletions(-)
 
-Agree.
+-- 
+2.45.2
 
-> 
-> What about adding an option (mount option?) to determine the default of
-> per-cgroup pressure accounting?
-> (Based on reading about your use case in other mail.) With that you
-> could only enable it for the "online" groups of interest.
-> 
-
-Yes. We can add a another mount option to disable the default PSI 
-accounting and enable the pod we interest.
-
-Thanks.
 
