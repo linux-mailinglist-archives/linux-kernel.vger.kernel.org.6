@@ -1,82 +1,84 @@
-Return-Path: <linux-kernel+bounces-267283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A23FB940F8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:37:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA2F940EE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46C2F1F27766
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:37:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBE4F1C22957
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1824019EEC8;
-	Tue, 30 Jul 2024 10:32:01 +0000 (UTC)
-Received: from mail115-95.sinamail.sina.com.cn (mail115-95.sinamail.sina.com.cn [218.30.115.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA32198852;
+	Tue, 30 Jul 2024 10:22:27 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553AB19E7F2
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2131F208DA;
+	Tue, 30 Jul 2024 10:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722335520; cv=none; b=kwhXeICU+yS9oZU5iXfsFarrPNhPdp24JWg1pwNas46TDTWOxqfasiB2pTLjTpCr+WDtLiRNM0zYN9FH7BJgd67dz+y7P3LmA2yrPnIkAgPEi0MjPNZdzjolbqiAEMr9w9tMO/f4Hix+CnBos7M/VBOazXMAYVuWEQEyEtXfe/c=
+	t=1722334946; cv=none; b=SV5kHUMa/JEsiGcAYvPE+Jlh6ryIBoMpvzSnXkq2CGVC1U1Kc84ZzsQxPFTh6+2h/ry810VsYCCMvSkRlNTfTE+E7EDsiMNNb2rTrWLBPlZAo/OTbWy02vtit+P2klPemJRNJ+7zmna16u9SIAFNsg1jvsnZhfGksuAUPsvrel4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722335520; c=relaxed/simple;
-	bh=fHagWOwq4NW10fYxjt4TKFsUQTKtXPpkpWNC+7lN75I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CdQIguzuSIhXJKaTX5GJA3k0iw6rLGcBY9ClgR1qy3D4+kluQ15BaeL5WTTvIqtn1aJt6D6JUAoWZk+xYgx2tai3HeJqsASaC1qdJXtsP6X6J63RWjN7cgNvn3TySTv3fr/dvgRyNGxjdME1PeGNLZZzhpCsltjfZ1EYsEgJ2sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.8.37])
-	by sina.com (10.185.250.23) with ESMTP
-	id 66A8BED1000035C3; Tue, 30 Jul 2024 18:22:12 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 5479958913416
-X-SMAIL-UIID: B41EF79B58854A399F9EF1DA04D1DA37-20240730-182212-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [wireguard?] WARNING in kthread_unpark (2)
-Date: Tue, 30 Jul 2024 18:22:00 +0800
-Message-Id: <20240730102200.2312-1-hdanton@sina.com>
-In-Reply-To: <000000000000e9a538061e64cae7@google.com>
-References: 
+	s=arc-20240116; t=1722334946; c=relaxed/simple;
+	bh=BivS+la4gSjtSh1xdp30RqJ5DGQazYFqoa7A16gtlZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k1K0FapuMOEh0RdsUXLvls6EfsXNa0Zovdtw9pMPPgYEUKScM80pM1Feb8QqSBmV0WR892nrCUGfxUcRTLlVfzUus67ztWYdtQehoQbkSFhTkP+LZ2U4AJWCn2VLP/R1yZovmVDqwnoR8cmdkHNlisXuINBprQuhFEZRWuUMRV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sYjzi-000000000f5-09Ad;
+	Tue, 30 Jul 2024 10:22:14 +0000
+Date: Tue, 30 Jul 2024 11:22:06 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Felix Fietkau <nbd@nbd.name>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH net v2] net: ethernet: mtk_eth_soc: drop clocks unused by
+ Ethernet driver
+Message-ID: <Zqi-zr32ZXl0AyzR@makrotopia.org>
+References: <5f7fc409ecae7794e4f09d90437db1dd9e4e7132.1722207277.git.daniel@makrotopia.org>
+ <20240729190634.33c50e2a@kernel.org>
+ <738f69e6-1e8d-4acc-adfa-9592505723fe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <738f69e6-1e8d-4acc-adfa-9592505723fe@redhat.com>
 
-On Mon, 29 Jul 2024 08:48:30 -0700
-> syzbot has found a reproducer for the following issue on:
+On Tue, Jul 30, 2024 at 10:53:19AM +0200, Paolo Abeni wrote:
+> On 7/30/24 04:06, Jakub Kicinski wrote:
+> > On Mon, 29 Jul 2024 00:00:23 +0100 Daniel Golle wrote:
+> > > Clocks for SerDes and PHY are going to be handled by standalone drivers
+> > > for each of those hardware components. Drop them from the Ethernet driver.
+> > > 
+> > > The clocks which are being removed for this patch are responsible for
+> > > the for the SerDes PCS and PHYs used for the 2nd and 3rd MAC which are
+> > > anyway not yet supported. Hence backwards compatibility is not an issue.
+> > 
+> > What user visible issue is it fixing, then?
 > 
-> HEAD commit:    dc1c8034e31b minmax: simplify min()/max()/clamp() implemen..
-> git tree:       upstream
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1022b573980000
+> Indeed this looks like more a cleanup than a fix. @Daniel why net-next
+> without fixes tag is not a suitable target here?
 
-#syz test upstream  dc1c8034e31b
-
---- x/kernel/workqueue.c
-+++ y/kernel/workqueue.c
-@@ -2679,7 +2679,8 @@ static void worker_attach_to_pool(struct
- 		worker->flags |= WORKER_UNBOUND;
- 	} else {
- 		WARN_ON_ONCE(pool->flags & POOL_BH);
--		kthread_set_per_cpu(worker->task, pool->cpu);
-+		if (!worker->rescue_wq)
-+			kthread_set_per_cpu(worker->task, pool->cpu);
- 	}
- 
- 	if (worker->rescue_wq)
---
+There is no user visible issue. I didn't know that this would be the
+condition for going into 'net'. I will resend the patch to net-next.
 
