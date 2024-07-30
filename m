@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-267115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47DFB940CB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:01:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363F9940CC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BA341C24BBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:01:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 688881C247CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D3E19408E;
-	Tue, 30 Jul 2024 09:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBDE1940AB;
+	Tue, 30 Jul 2024 09:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z42ia4CV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rV3IkzG6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5EA944E;
-	Tue, 30 Jul 2024 09:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AE4944E;
+	Tue, 30 Jul 2024 09:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722330103; cv=none; b=CIGNREXd0gr+q8s7onMPSrUUpG7yhWak5bc9aH4AhV+sVxn87hV8UnKRGb48mIxyauUYMe0nWWKIrpSU8mlBz9YOXayYbBTF8IrDfxUOu/KPzwr3ygpEwhUKq2gQnKt1q+XvRKTfD9jAu15XopBO6Relh/Gti2OOySzS48XXHVo=
+	t=1722330142; cv=none; b=EUHjteHM7tQil/Idq4c+f35qLEuNoFnEn3o0D+3M2aiBI1A1TwOKtXMXRdiu5vVuOK/x6xTcMXvZe9gNYsZqYmUCE5YaxKqp5yCQttpKYGlZtCCx51MdEojqwP62AbR87yntkQx++YMmjJzDA9Vn5gkBrX2I/5r2zlRAsb5mIsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722330103; c=relaxed/simple;
-	bh=u+hG7S/8LwpabqbN+3cXg3zN7GnJesSJ19ebqFRAYaM=;
+	s=arc-20240116; t=1722330142; c=relaxed/simple;
+	bh=r5dBOMR7bs1s41C5jVdGoH7gdAxP1r0lFxVieBqtqYg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RX7Gx1fI/4qfe2uoZT959HafA5JZQRO6p0oNW4vWEWZBHW1tvIb/OoOwE5bz5aVnhZbFHuMKPSUOKhpYl5Dwizo3RpyL655+Sg6Ib4WXgwmUXsMbOAl6Kg1LiO60k3qpzHDCvhP8G7PVjgCshU1VWIkRioLoY2UWgETRh0v3o50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z42ia4CV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E83C1C4AF09;
-	Tue, 30 Jul 2024 09:01:33 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=pZC6U4Fh+S8mPHAGAQieLKW8qeexTEUAI+LOrAHF4ybSz3IqaY2pzDXWcn3MI8Bg3dxs01B/T4xwt4YKqz8NqYvFsxEeBvMurKcnaj8ltJWUdZ4Cr2K02eCi/Duj6Bpme2G9CadO2zdOeHee0J1UOPk/NkRHlh6wLemCWXZVvaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rV3IkzG6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 363BAC4AF0B;
+	Tue, 30 Jul 2024 09:02:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722330102;
-	bh=u+hG7S/8LwpabqbN+3cXg3zN7GnJesSJ19ebqFRAYaM=;
+	s=k20201202; t=1722330141;
+	bh=r5dBOMR7bs1s41C5jVdGoH7gdAxP1r0lFxVieBqtqYg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Z42ia4CV1fqEXUxrwNfDZhJBqeEZlxnf3IwaRvewBdvrMdk/EyNYPrED2uIkKdgxB
-	 rv7bz0NVyHxnhYDcMBe5sfKdjBDSoxfL8hXBEGlumL1FEvHSr3SWNVJr1D3c/tsw/A
-	 2xQxhujXYEPRTP+SsOg9yuflDq8oQi+twXF2iUxfV4Ix4ITjS2w9x1qWGvM8i11SNV
-	 89iaRz9ZGgQ6c905mQFfSbQ1f+6LZcaQODAII3ax7cripVuoZF8kJUom62X/Ho4xNW
-	 EhxaXtsTdL6Lm8YE2eKRPhwjKHMJ3hXP/eDBL3nNAL55a/wYjQwMwuQnBKXdMEAfRe
-	 Ti7jfkEppCaqw==
-Message-ID: <f45c1fa7-f321-4a1f-b65c-6ed326a18268@kernel.org>
-Date: Tue, 30 Jul 2024 11:01:31 +0200
+	b=rV3IkzG6wYyzwqyCE8jy0qRMruz/ZMPvLJ20o37OsUuub1PutqbJCzZyLw0p+/LeV
+	 noITHXXzz0JSin1XyeoxxuHE8AohIdU3zN7+HdImv2XVJMaF405r38uS6h/v1ruWC6
+	 KYIXcbOx2A81BMLjKyTzWb7KoIeiGrDruRSHgXOR3VvlnCCz9OCKDCfc2K6yZHUKhL
+	 O3tWdId8wmnQDe9gHcF/pQ/hzAnon+GC+9w8fSiHetnSvrhTuzONLsKS38kOHbB2e+
+	 HGk5EwdjHKz9pTBEBtga+7XIPbdlp0nj5oiDJJr+m+LhSATXMj5BNKZXEXNc9bFLEg
+	 b1QWqobqa39Hg==
+Message-ID: <075e6978-c699-41c5-91b0-9f79469c6fab@kernel.org>
+Date: Tue, 30 Jul 2024 11:02:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,23 +49,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/5] dt-bindings: net: wireless: brcm4329-fmac: add
- clock description for AP6275P
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>,
- Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org, krzk+dt@kernel.org,
- heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
- minipli@grsecurity.net, brcm80211@lists.linux.dev,
- brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com
-References: <20240730033053.4092132-1-jacobe.zang@wesion.com>
- <20240730033053.4092132-3-jacobe.zang@wesion.com>
- <191025b5268.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+Subject: Re: [PATCH 01/11] dt-bindings: arm: qcom,ids: Add IDs for SM7325
+ family
+To: Danila Tikhonov <danila@jiaxyga.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+ konrad.dybcio@linaro.org, rafael@kernel.org, viresh.kumar@linaro.org,
+ heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org,
+ kees@kernel.org, tony.luck@intel.com, gpiccoli@igalia.com,
+ sudeep.holla@arm.com, quic_rjendra@quicinc.com, andre.przywara@arm.com,
+ ulf.hansson@linaro.org, davidwronek@gmail.com, neil.armstrong@linaro.org,
+ heiko.stuebner@cherry.de, rafal@milecki.pl, macromorgan@hotmail.com,
+ linus.walleij@linaro.org, dmitry.baryshkov@linaro.org,
+ johan+linaro@kernel.org, javier.carrasco.cruz@gmail.com,
+ quic_kriskura@quicinc.com, lpieralisi@kernel.org, fekz115@gmail.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux@mainlining.org
+References: <20240729201843.142918-1-danila@jiaxyga.com>
+ <20240729201843.142918-2-danila@jiaxyga.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -111,52 +113,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <191025b5268.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <20240729201843.142918-2-danila@jiaxyga.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 30/07/2024 08:37, Arend Van Spriel wrote:
-> + Linus W
+On 29/07/2024 22:18, Danila Tikhonov wrote:
+> Add Qualcomm SM7325/SM7325P (yupik) SoC IDs.
 > 
-> On July 30, 2024 5:31:15 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
-> 
->> Not only AP6275P Wi-Fi device but also all Broadcom wireless devices allow
->> external low power clock input. In DTS the clock as an optional choice in
->> the absence of an internal clock.
->>
->> Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
->> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
->> ---
->> .../bindings/net/wireless/brcm,bcm4329-fmac.yaml          | 8 ++++++++
->> 1 file changed, 8 insertions(+)
->>
->> diff --git 
->> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml 
->> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->> index 2c2093c77ec9a..a3607d55ef367 100644
->> --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->> +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->> @@ -122,6 +122,14 @@ properties:
->> NVRAM. This would normally be filled in by the bootloader from platform
->> configuration data.
->>
->> +  clocks:
->> +    items:
->> +      - description: External Low Power Clock input (32.768KHz)
->> +
->> +  clock-names:
->> +    items:
->> +      - const: lpo
->> +
-> 
-> We still have an issue that this clock input is also present in the 
-> bindings specification broadcom-bluetooth.yaml (not in bluetooth 
-> subfolder). This clock is actually a chip resource. What happens if both 
-> are defined and both wifi and bt drivers try to enable this clock? Can this 
-> be expressed in yaml or can we only put a textual warning in the property 
-> descriptions?
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+> ---
+>  include/dt-bindings/arm/qcom,ids.h | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Just like all clocks, what would happen? It will be enabled.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
