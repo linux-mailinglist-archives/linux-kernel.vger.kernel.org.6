@@ -1,54 +1,73 @@
-Return-Path: <linux-kernel+bounces-267448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E22D94119C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:12:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1AF9411A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 162F0283BB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:12:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FF40283E35
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049EB19E7E2;
-	Tue, 30 Jul 2024 12:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4817419E7E4;
+	Tue, 30 Jul 2024 12:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKz9gHxE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jCS60ClH"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D3186AEE;
-	Tue, 30 Jul 2024 12:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC22386AEE;
+	Tue, 30 Jul 2024 12:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722341557; cv=none; b=cPZCK/gmf+Br7pLKjG/aAAEBZHAB+F2ZXeZuI0eQv/4ccDsvKGxj4fztbTPS3uE8uDDTmYqUordKcmfjJijBrwxtZko5vSHoeXtw/PGefaYLbk8voxA+CbiS/Ne5cHKhTJQ7IjVJ6HivvR70/ryBktE9WVIuQ6B1Rk7EOZCC1i4=
+	t=1722341628; cv=none; b=SYi2D/Q98why6ddWUAv3P2mQPNdSc2UfoE1FU0lROaP+TeIooz+1gfqqWpA/8e5A4I9sLYU4P7uTwvUlaLjI4AOgs5kgRDuTy4r2/jAHH2c4f/rsmk7Qvc202RFkWRyAIcsA8bw4btWxHo6c4KqcQoasYbzYwyw56R4x3Ou5CXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722341557; c=relaxed/simple;
-	bh=YQrm1TvqV0uuelPFISXxIWUf+doyA9P+r6cqTfNL/DA=;
+	s=arc-20240116; t=1722341628; c=relaxed/simple;
+	bh=DGtauJHCr0FZld4Ft5Qk/tU7dgtHaE+AsK0ORYRV2oQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QW60maRDHdcCiTwFTnfYqriYEmEfbmRddwAVhq48yp8EY1MRMd7GIk+m9O7bxC+oUwjPljGayF4a6WJyifa+Tpx/mh9UfaLnMaen3VjoNUfyVbRyOIjS9bBCMWmqczZVIu2SXXbfNBDN+Id6Qxzfe0XMw+oWSShP6/JDhNupGmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jKz9gHxE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB6EAC32782;
-	Tue, 30 Jul 2024 12:12:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722341556;
-	bh=YQrm1TvqV0uuelPFISXxIWUf+doyA9P+r6cqTfNL/DA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jKz9gHxE8KM8qobqi2rw1AIXk0GNdC0Hp5FGouCf6B1WeiOohFc9uY3mBbngY6Sv3
-	 OsjwmtqWByy72XzHqivuSMlQIbxQoUwM6F3oFgujIJdFzvUsVUIQTkBUUVu3u4Tid0
-	 vd1qtTvA446HQ6IPl5q4l9JAJ9hLe6niW0GeXvF+DcyKw0pXY1yhC8nkYw2+f8z7zI
-	 r9apFvT3MpMldysicqjlKyM4mjTaC1AanehahtIffsXF3X1dvDEfb2e93obKv2uvYv
-	 Zm0m4NEbY+oKUguNnLx4ZgZWYAgrH9K4eKXe0um6vOAjTWktVnFmHHARu9Ls+MOv6O
-	 O2qsZAKQ7sKww==
-Date: Tue, 30 Jul 2024 14:12:33 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <20240730-sitzplatz-vollbad-c269e4298a58@brauner>
-References: <20240726100041.142b6e35@canb.auug.org.au>
- <20240730090059.721de7cf@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tLyXIWSJOR9ICxhBH0zhIKIDuPoI+bwUZbiy5yjK7yaFwcyIm4/tTyNEU39zP3MId3Oyl1PQJ4UJjHOUaYopp63rsJ9swJ/UOwlEe2h6crpjZ2GdHN4ylWcyRSkm+X5kMWQFtelAo7KGnUbUQDe7Pn3a9+7+kXywe1mTXBf1Kyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jCS60ClH; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=UXeY05NSq152fyD8Tat83B75Y3dwXggOdGcXPcJNsJk=; b=jCS60ClHbhABG+HN4d++Hwfxor
+	b7aUF1hYwl0LcXDpNa+ChaXU+ri659VAXu2KfY+ikXnpJfpdf1pZ5lm/GuniD1liOngs6wGOH2C34
+	IeMRaFxd7LixnvBsLb02b2K8BVzo1ulrY7IIgd3ckUJmWdB8MIPeJvUKXwqwPt56U0vesJjwuVgvF
+	HYO3uTatKjzKEBerEtiu3NFIBQqevvuSgn9oEn5ZcaBebCnPgLQAPGwYhTlwq+3JacsL8sefEnosI
+	dixn/GXVH5pap+dvZO072jQYfZXi1+uSg0PlvRxpZdKNiRWPb/u9op2Rq8aQsEypC2XumAcQxlpbO
+	qdT0nHgg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sYljV-0000000Eep2-0V7D;
+	Tue, 30 Jul 2024 12:13:37 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 28DAC3003EA; Tue, 30 Jul 2024 14:13:36 +0200 (CEST)
+Date: Tue, 30 Jul 2024 14:13:36 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 1/2] cfi: add CONFIG_CFI_ICALL_NORMALIZE_INTEGERS
+Message-ID: <20240730121336.GL33588@noisy.programming.kicks-ass.net>
+References: <20240730-kcfi-v1-0-bbb948752a30@google.com>
+ <20240730-kcfi-v1-1-bbb948752a30@google.com>
+ <CANiq72nxq0gnCXbQfFiZ4jErLptR8juyNzv1mKL_MEyWyDQdWA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,37 +76,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240730090059.721de7cf@canb.auug.org.au>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72nxq0gnCXbQfFiZ4jErLptR8juyNzv1mKL_MEyWyDQdWA@mail.gmail.com>
 
-On Tue, Jul 30, 2024 at 09:00:59AM GMT, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Fri, 26 Jul 2024 10:00:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Tue, Jul 30, 2024 at 01:38:33PM +0200, Miguel Ojeda wrote:
+> On Tue, Jul 30, 2024 at 11:40 AM Alice Ryhl <aliceryhl@google.com> wrote:
 > >
-> > After merging the vfs-brauner tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> > 
-> > In file included from fs/smb/server/unicode.c:14:
-> > fs/smb/server/smb_common.h:46: error: "F_CREATED" redefined [-Werror]
-> >    46 | #define F_CREATED       2
-> >       | 
-> > In file included from include/linux/fcntl.h:6,
-> >                  from include/linux/fs.h:26,
-> >                  from fs/smb/server/unicode.c:9:
-> > include/uapi/linux/fcntl.h:20: note: this is the location of the previous definition
-> >    20 | #define F_CREATED       (F_LINUX_SPECIFIC_BASE + 4)
-> >       | 
-> > cc1: all warnings being treated as errors
-> > 
-> > Caused by commit
-> > 
-> >   a621ce4eed14 ("fcntl: add F_CREATED")
-> > 
-> > Is that commit really intended for this merge window?
-> > 
-> > I have used the vfs-brauner tree from next-20240725 for today.
+> > Introduce a Kconfig option for enabling the experimental option to
+> > normalize integer types. This ensures that integer types of the same
+> > size and signedness are considered compatible by the Control Flow
+> > Integrity sanitizer.
+> >
+> > This option exists for compatibility with Rust, as C and Rust do not
+> > have the same set of integer types. There are cases where C has two
+> > different integer types of the same size and alignment, but Rust only
+> > has one integer type of that size and alignment. When Rust calls into
+> > C functions using such types in their signature, this results in CFI
+> > failures.
+> >
+> > This patch introduces a dedicated option for this because it is
+> > undesirable to have CONFIG_RUST affect CC_FLAGS in this way.
 > 
-> I am still getting this build failure.
+> Is there any case where we would want CFI_ICALL_NORMALIZE_INTEGERS
+> when Rust is not enabled, then? If not, is the idea here to make this
+> an explicit extra question in the config before enabling Rust? Or why
+> wouldn't it be done automatically?
 
-Sorry, this is now fixed!
+I suspect CFI_ICALL_NORMALIZE_INTEGERS breaks ABI, then again, Linux
+doesn't promise or preserve ABI except for the SYSCALL layer. So yeah,
+meh.
 
