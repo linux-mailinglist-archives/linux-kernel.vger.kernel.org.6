@@ -1,109 +1,149 @@
-Return-Path: <linux-kernel+bounces-267196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4778940E42
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:51:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 426DB940E76
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 702321F247DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:51:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95661F2207E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2295F196D8D;
-	Tue, 30 Jul 2024 09:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SOSD2aEI"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D0F199389;
+	Tue, 30 Jul 2024 09:58:51 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF241196D8E
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4C6195FE5;
+	Tue, 30 Jul 2024 09:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722333079; cv=none; b=pNzyUB6zZasKe/UJzHlV1JsHqzPRxVD8klLj3bw4mhKkeR+7JGs56Ok1iDJVOWMI9ytd8uCstWyft4eYVe7i2FHLx3Qj8X6HpYBWbDfHKePq7bBLAQbcPzgZplmvZ+dHGCmAQurAPetBrRs6SV7T4yHey2VL1a79gAjh998w8fA=
+	t=1722333530; cv=none; b=Iuvuq2XU1M3P+jVkpSedA2GtGwvfmgwwpOnDNTlSwv87BvQL3TLxk/ZrSt5ImkHeRNrBxR6iQaw/S0H5wJJ0tLgfxEpmzRvucdl9kCW2Z7y4CvVdHS6MSVencOfYkXcWLZZRiFRI6L4JsG5b58qm0LTL3hlV1RfmvguBJvoixXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722333079; c=relaxed/simple;
-	bh=pG0/q22Jl93ehcd5L6RcUyPD4cxH1wdOucz6oiQ7oEY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PS/RlpKiirCtq6tp6AOTw8RousVonCyF0WIiQZjp5SFEMjHjHo+upHrVL4vrIK9e4GJP0Il8Q7aUnaJ1ee/rTob2OQXhvWGlRqmATSQBnqheJEJT1uHNZn7FAiDAEAa8Wu1/Vhr9QslCAzYxo93yJ++iQIzKrnYQfIA8UEK2L2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SOSD2aEI; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42817bee9e8so21931635e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 02:51:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722333076; x=1722937876; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pG0/q22Jl93ehcd5L6RcUyPD4cxH1wdOucz6oiQ7oEY=;
-        b=SOSD2aEI9Y6QCL8OQZuej2rMi0QGlDnHJnIpWyz+DkoLPq1LzWL2FL5XzV0CE+TRad
-         iz3wg4WSo4yCn2LlwtTfZUuVj8FmUChJwWixd/oOoudRjDGGUzC6PJd+YK0xQ2mU3qhJ
-         4+G/rd99VAi4RE7KBVCdEYOPIv1hd5r2woo9THGWX0sATBTMF8xUg3wpIDSjU8gSRegn
-         ilQk/LWTOtviuKP6r7K7f3yIJ1qw5x7iMj0fzuDhemtyiw0Yz/P9F36Aw8mkkXAmtSxJ
-         OzSkTW9OGBTENv7l90jVF68NMK61EvRnb8eQnq/pYAh0CW4aQRKZXmDkAk95S2CCp4tK
-         uc3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722333076; x=1722937876;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pG0/q22Jl93ehcd5L6RcUyPD4cxH1wdOucz6oiQ7oEY=;
-        b=vhaqXPHIWjnjYFgnszDJcIV5HGJoW6Gvuflnfczu4f11g2KhoyN2aBwrR5nbuTlYfa
-         T1ZIyEdSo2zaZhI1TSvjyKzjOS2/cG4ZQOTjLK0qKawYH7vS95JHASFgzkDQ+nPbrTdQ
-         HdhkxKhFTnGaVt/6zl2XKIGr+bbV+dXnMcvKTyzob3jZ8V95Q0ulSarZzHCGRe43SXq4
-         qBu2+8NGt2uDsh1OoUgnOeBaH3yYZT9LlwGTLsAUlX2tqttEtFF653eqQp0g/7R38Y5v
-         Gvmr2/ptE3AgR78JHgo8qs58MyPVlxESXkZEG62raHczVl0kk31kTtPNEh2qn0AIWtJY
-         ymnw==
-X-Forwarded-Encrypted: i=1; AJvYcCXqmxXpZZFAED/A/c0nEHeGshrWg4dixfeG/LEBkk7wTHo+OJetRCu3Pc1a2nhHBIswY8xkl1rcSe+DYRcj5ezIR0rddtcW136NGEAo
-X-Gm-Message-State: AOJu0YzKXrzrbokprqhPBzXwS90TmDlg/MEiP2sZJPMeuUQp0u9UA9N+
-	mwKTHuTRQPxi9HixDPdB4neqzBeGAD1UVsZeUGeRiGbk59ipPs6hY5oku7kEykge8fZqw7GGaDa
-	MBsIRDsVQtKoUz0A9dxHJoTYfhu3bi7Y3bytQ
-X-Google-Smtp-Source: AGHT+IFP5k+X/a8etFEgTfWg0cxDTZKAXEQzGf1YY1CabSPV9fG2FeY05fu9q7Y4QTzlK3SCKS05MTgrpT9lmBurHNk=
-X-Received: by 2002:adf:f7c1:0:b0:368:31c7:19d3 with SMTP id
- ffacd0b85a97d-36b5cee3060mr7555279f8f.9.1722333075916; Tue, 30 Jul 2024
- 02:51:15 -0700 (PDT)
+	s=arc-20240116; t=1722333530; c=relaxed/simple;
+	bh=WlU574jLMQuNk5+lBuLDz//M2KDX46PA/hO5ZdTtgkE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pqG34PHY5mHbxMDutb20Zd3XxsnmmnJy6guVYDW+9gQPFYjR1phZjTK3Hgei6aDl24HVQKt5dFI/EFL33onSxVfNBlqiMmw6MJtT7zZT2gGVcr5b96exOUb5oRrtO6+XJevt9ioRffPNnS0CcW/XwQ3eK98UuWs73037e15bBEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WY9fK6chTz1L9FL;
+	Tue, 30 Jul 2024 17:58:33 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id D69A2180100;
+	Tue, 30 Jul 2024 17:58:43 +0800 (CST)
+Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 30 Jul
+ 2024 17:58:43 +0800
+From: Chen Ridong <chenridong@huawei.com>
+To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+	<longman@redhat.com>, <adityakali@google.com>, <sergeh@kernel.org>
+CC: <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] cgroup/cpuset: fix panic caused by partcmd_update
+Date: Tue, 30 Jul 2024 09:51:26 +0000
+Message-ID: <20240730095126.2328303-1-chenridong@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730-kcfi-v1-0-bbb948752a30@google.com> <20240730-kcfi-v1-1-bbb948752a30@google.com>
-In-Reply-To: <20240730-kcfi-v1-1-bbb948752a30@google.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 30 Jul 2024 11:51:03 +0200
-Message-ID: <CAH5fLghz8psC499vVochcW-jC+utDXQonoAvwc-9Na4+31Hdig@mail.gmail.com>
-Subject: Re: [PATCH 1/2] cfi: add CONFIG_CFI_ICALL_NORMALIZE_INTEGERS
-To: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Sami Tolvanen <samitolvanen@google.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-On Tue, Jul 30, 2024 at 11:40=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> Introduce a Kconfig option for enabling the experimental option to
-> normalize integer types. This ensures that integer types of the same
-> size and signedness are considered compatible by the Control Flow
-> Integrity sanitizer.
->
-> This option exists for compatibility with Rust, as C and Rust do not
-> have the same set of integer types. There are cases where C has two
-> different integer types of the same size and alignment, but Rust only
-> has one integer type of that size and alignment. When Rust calls into
-> C functions using such types in their signature, this results in CFI
-> failures.
+We find a bug as below:
+BUG: unable to handle page fault for address: 00000003
+PGD 0 P4D 0
+Oops: 0000 [#1] PREEMPT SMP NOPTI
+CPU: 3 PID: 358 Comm: bash Tainted: G        W I        6.6.0-10893-g60d6
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/4
+RIP: 0010:partition_sched_domains_locked+0x483/0x600
+Code: 01 48 85 d2 74 0d 48 83 05 29 3f f8 03 01 f3 48 0f bc c2 89 c0 48 9
+RSP: 0018:ffffc90000fdbc58 EFLAGS: 00000202
+RAX: 0000000100000003 RBX: ffff888100b3dfa0 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000002fe80
+RBP: ffff888100b3dfb0 R08: 0000000000000001 R09: 0000000000000000
+R10: ffffc90000fdbcb0 R11: 0000000000000004 R12: 0000000000000002
+R13: ffff888100a92b48 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007f44a5425740(0000) GS:ffff888237d80000(0000) knlGS:0000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000100030973 CR3: 000000010722c000 CR4: 00000000000006e0
+Call Trace:
+ <TASK>
+ ? show_regs+0x8c/0xa0
+ ? __die_body+0x23/0xa0
+ ? __die+0x3a/0x50
+ ? page_fault_oops+0x1d2/0x5c0
+ ? partition_sched_domains_locked+0x483/0x600
+ ? search_module_extables+0x2a/0xb0
+ ? search_exception_tables+0x67/0x90
+ ? kernelmode_fixup_or_oops+0x144/0x1b0
+ ? __bad_area_nosemaphore+0x211/0x360
+ ? up_read+0x3b/0x50
+ ? bad_area_nosemaphore+0x1a/0x30
+ ? exc_page_fault+0x890/0xd90
+ ? __lock_acquire.constprop.0+0x24f/0x8d0
+ ? __lock_acquire.constprop.0+0x24f/0x8d0
+ ? asm_exc_page_fault+0x26/0x30
+ ? partition_sched_domains_locked+0x483/0x600
+ ? partition_sched_domains_locked+0xf0/0x600
+ rebuild_sched_domains_locked+0x806/0xdc0
+ update_partition_sd_lb+0x118/0x130
+ cpuset_write_resmask+0xffc/0x1420
+ cgroup_file_write+0xb2/0x290
+ kernfs_fop_write_iter+0x194/0x290
+ new_sync_write+0xeb/0x160
+ vfs_write+0x16f/0x1d0
+ ksys_write+0x81/0x180
+ __x64_sys_write+0x21/0x30
+ x64_sys_call+0x2f25/0x4630
+ do_syscall_64+0x44/0xb0
+ entry_SYSCALL_64_after_hwframe+0x78/0xe2
+RIP: 0033:0x7f44a553c887
 
-This should say signedness where it says alignment.
+It can be reproduced with cammands:
+cd /sys/fs/cgroup/
+mkdir test
+cd test/
+echo +cpuset > ../cgroup.subtree_control
+echo root > cpuset.cpus.partition
+cat /sys/fs/cgroup/cpuset.cpus.effective
+0-3
+echo 0-3 > cpuset.cpus // taking away all cpus from root
 
-Alice
+This issue is caused by the incorrect rebuilding of scheduling domains.
+In this scenario, test/cpuset.cpus.partition should be an invalid root
+and should not trigger the rebuilding of scheduling domains. When calling
+update_parent_effective_cpumask with partcmd_update, if newmask is not
+null, it should recheck newmask whether there are cpus is available
+for parect/cs that has tasks.
+
+Fixes: 0c7f293efc87 ("cgroup/cpuset: Add cpuset.cpus.exclusive.effective for v2")
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
+---
+ kernel/cgroup/cpuset.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 40ec4abaf440..a9b6d56eeffa 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -1991,6 +1991,8 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+ 			part_error = PERR_CPUSEMPTY;
+ 			goto write_error;
+ 		}
++		/* Check newmask again, whether cpus are available for parent/cs */
++		nocpu |= tasks_nocpu_error(parent, cs, newmask);
+ 
+ 		/*
+ 		 * partcmd_update with newmask:
+-- 
+2.34.1
+
 
