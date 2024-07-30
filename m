@@ -1,142 +1,123 @@
-Return-Path: <linux-kernel+bounces-269328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8379F94319D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:04:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE8679431D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C1DC1C21811
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:04:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69281B24EA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C881B29C5;
-	Wed, 31 Jul 2024 14:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528AF1B3F04;
+	Wed, 31 Jul 2024 14:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OjNMzXHC"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="jPWOReDo"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94489539A
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD6B1B3748
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722434640; cv=none; b=DAvJADjiZn1VNEYsKpGLfyTFU6GzjO1YjCSd4d3oRVhWefGIeDjXzeeG5p1CLj1bDOK8JjQ9wVJvHqgLbqH43pq237ICOCiW2GR+VAAVIWkUH+fRUH8oIy8TQApYGDDmBELHdGKieJwX0Kviiw9NydA7bHJckNWJ9chH7hnoAsQ=
+	t=1722435314; cv=none; b=om1wdU4HPdAisRCAF8j4ag1Qf83mScS8svBDj8HNynUDvRBgqZ+FXd/N/Hzf/2r8gjJ6XgQq+RX0sR1Mti5ZSi1RV9lEM3ILTatETKLObwXApWagdr7NyKqjRdN/M/0Rd9vDa/EpOgYrhifiyGXwFD5o2V7aNydyIp0SwQoH2Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722434640; c=relaxed/simple;
-	bh=D1M4qobNo6/byC8NtmRxPXGoeJ8Fh56/AkBlYvAV15A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BL+9lPjLHfUCuyo6WxPUKsLXpHcNW7URx3W/NHmJvBy9Bcur/Ae6F5ir0mazTbOVPl6duezcJwSWirdSWeosoiNbLAds2IBM9nYm+CvMvj4tZTNofTUoV5WiaY3ErIt3W5Sw8A47EeHFBFjDdGoEDM57deBGzXJtvN8LZMlIPQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OjNMzXHC; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7a1d436c95fso348450285a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:03:57 -0700 (PDT)
+	s=arc-20240116; t=1722435314; c=relaxed/simple;
+	bh=r4t/RSO2hnjEe6G0UZz+W/1GYVcTqgB0/PT6VIY5r9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kCWTV9D2mQYAm1KBYAtSe7fzoirZMndyS5XO+ZO5j3ofOQPvm1/35FeJvHwN4MBNm+GtT8goEqnszRxx+5UJcYhJTZL4IHbYJ+SXTltdAaDdIGiIchO2n4hsoodyG5RMVeIwd1jNFmTuS1HgtfobQZLT8X++r5Z2NsCTbgfs/aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=jPWOReDo; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6b7aed340daso34782116d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:15:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722434636; x=1723039436; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i4DF39bXHqM22vPDaxx0jf8PeJHrvsLZ1HojprmA9v8=;
-        b=OjNMzXHC9Ph746oin9yo+vQPwNcnIKS5ZFIaUOQopr3KQ3IpdwJqf/cT11MeMH8VRM
-         MPiSLYv983F4T10eWP/YAUPgZtNCKPAomvSXi/gpJKv9lh+EEo1/5HVS58t1qmZwx0Hb
-         gMkySK4DTDb79+kGl+pBzkkfoPHdrrOM7Z3Sa9Fe1qtH69DfdyUabLL+IWeWcHHPgS9Q
-         s6WqxDaonKJJF6etflqHRnCzMVgA5SOt4gsOU90wdkJay8AtvP03oSbSDNL/NlAXy6at
-         G+IzOaX6CD2TbaUjGseR2Y9ZVRkfC7g1iebvg6LF2eBwkbRdwOzsh1r5E9ko1M0bmHqd
-         XVeQ==
+        d=gourry.net; s=google; t=1722435312; x=1723040112; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nZoGyjJaWEwHv/KfoCIN2q0gBEBBi+yquexZmDv5wAQ=;
+        b=jPWOReDofvGe9fFrLP9YyShxbJFutSpldxfOK/lc83oI+PG114J/apwW/o5BKp2BHu
+         XIK1uSQFinqafLqbjZ8p5hHYDiXzstGFzRyZodOtbQ+zXegeQPFCpFJVmf7UILT6GbBq
+         x9Cz5p3XVcKRx8F7ZBRGB3X3znna0wLiFiM46MumeX8hsCFqb0ja7CJXpSWrEYpX8qOw
+         LKXErYzR9OL47IeAMh7O4vhCN9QHtc3EVXplsuFaUGRIv4rV7fey8aUALT0/0VvItykK
+         PJ80qjb+mX6R4aQTL5JuG/tIFsSnzYLW5XG0sNeloVZhBT4b5B8Aa+IL9+sz9B3wGeWS
+         dhDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722434636; x=1723039436;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i4DF39bXHqM22vPDaxx0jf8PeJHrvsLZ1HojprmA9v8=;
-        b=T7NbiDXeAWsdG8yBVzxxZdnpw1O8akR9FatJusConzJzXSbVVcA39TIIx7csfPjgDE
-         yJL5808j5v6IHseMDndFsOVfiXBt2q0hHFWH2kYOtKhaDYMDi5pS1fKiC4CLp/qPzbMQ
-         aHUgBFOzKhpmaG7Z2ELJcoPsMIUEosxtpA0OWsE+46lHXTQXPLY0wwR30nQbGEswqTQr
-         EEny0VMwsddduWb40ACviRHDJ875VEqa9Mc4dDGH3Rh3uuqlCajnKBKNxcWLCjlrFrAm
-         v2UA8KqOnK2YgFkSnRQ0GkrQNoUxtQ2m/w0vQj4N5DWem1FLxK9nBO2u2Q9LGMEK0TSQ
-         UUSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWa03puwXCUT1o9KqhDoHMjXf7zs+jhvMpi4SVrnzwZIeifpQc3/V6RfnIHhpU8drZ4oPy+m+RGnbYllE5vCrFp4WBgu2k1uzgwGiuY
-X-Gm-Message-State: AOJu0YzBwJR/Vs6j3J0RYKxSYNpmRUIdoDP9AizA93Oy6Sph8JjZHPjN
-	Xta3cgaVN1N0OZH/1yAQSx7Kkj2QOIVGg5qlei8wMy4Tgmu5QSW1ZZNFG0mwl8E=
-X-Google-Smtp-Source: AGHT+IFZpsZcRQMO3SWvy/2uIMxwzoxDRslmzIHZG5q6LOdcyQCok1uwx5A6NW4ANDHmzNQUcL7iZg==
-X-Received: by 2002:a05:620a:4092:b0:79f:68a:4d11 with SMTP id af79cd13be357-7a1e52302cfmr1965850585a.3.1722434636384;
-        Wed, 31 Jul 2024 07:03:56 -0700 (PDT)
-Received: from [192.168.40.12] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1e6c5c15csm544060685a.25.2024.07.31.07.03.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 07:03:56 -0700 (PDT)
-Message-ID: <f894f9dd-e6e9-4877-b9d0-2f50800d0b4b@baylibre.com>
-Date: Wed, 31 Jul 2024 10:03:53 -0400
+        d=1e100.net; s=20230601; t=1722435312; x=1723040112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nZoGyjJaWEwHv/KfoCIN2q0gBEBBi+yquexZmDv5wAQ=;
+        b=PceFrx7RR94+8YUI9Qn50xnDiAOchAGRlWn9+bFeeusY4ZrlLsc5PxpvA7M41DsBZR
+         LAFzEerPq8BjcgwkcJkvw60fZaVXe/29A6lA8f1IKCWtvjCgzFQZaicpoclxe4Kh8U7l
+         8yiq9Q4i0ddRXgalDnaPnk2T4YYNuu/Wjo4uYKzJ3O7kUVY8O4ttlI/flow6yufJv3Z4
+         dOpxMRB0EStLFxHK2dLbFF7b2qFXlqJihrR9O4JtpJaEzkNiJG8YLMt9D/Uyu63aJkud
+         IRXQUoIgZKbHt9bN3ExVh0kR0q+f3RFosOsFeyStOip8jfRjsE7tLBkV4ySuG8aC91cc
+         BtYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWzVzWkRWW7TcnpLGV//eXnQ65GiqKadBW0+YhI+A86NO6FA0+NGue5sj8lmiBYvQvyM7Tb+uqwiY5BwmDSpLGArynHATfd/JNW42BI
+X-Gm-Message-State: AOJu0YxUpOZZWkFzSCyvxlJcFY68k5G+S0Ok54nD5R8BKVSzFSMgQShK
+	6mUYak68pKwWYHqRfYrLpULi/H/d46ZoMBIm/s7FSETjELUBfyRHHd2kGqdj9sw=
+X-Google-Smtp-Source: AGHT+IFNREONZgm7zLR0cLrVINRHZAuZJz57NqpdO1aQ2JjmTspGlBRsHUwaFMQ8H7vcv4eyfHiRWw==
+X-Received: by 2002:ad4:5c6f:0:b0:6b5:d9ef:d56d with SMTP id 6a1803df08f44-6bb559c3461mr182732716d6.21.1722435311609;
+        Wed, 31 Jul 2024 07:15:11 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3fa950a3sm74461836d6.90.2024.07.31.07.15.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 07:15:11 -0700 (PDT)
+Date: Tue, 30 Jul 2024 16:26:06 -0400
+From: Gregory Price <gourry@gourry.net>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, dave.jiang@intel.com,
+	Jonathan.Cameron@huawei.com, horenchuang@bytedance.com,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	dan.j.williams@intel.com, lenb@kernel.org,
+	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Subject: Re: [PATCH] acpi/hmat,mm/memtier: always register hmat adist
+ calculation callback
+Message-ID: <ZqlMXuBxi2oShb-u@PC2K9PVX.TheFacebook.com>
+References: <20240726215548.10653-1-gourry@gourry.net>
+ <87ttg91046.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZqelvPwM2MIG26wY@PC2K9PVX.TheFacebook.com>
+ <877cd3u1go.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZqhbePA9Egcxyx7o@PC2K9PVX.TheFacebook.com>
+ <87cymupd7r.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZqlF0hn6Jh4Ybl-p@PC2K9PVX.TheFacebook.com>
+ <878qxiowmy.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/3] iio: adc: add new ad7625 driver
-To: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- David Lechner <dlechner@baylibre.com>,
- Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20240731-ad7625_r1-v1-0-a1efef5a2ab9@baylibre.com>
-Content-Language: en-US
-From: Trevor Gamblin <tgamblin@baylibre.com>
-In-Reply-To: <20240731-ad7625_r1-v1-0-a1efef5a2ab9@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <878qxiowmy.fsf@yhuang6-desk2.ccr.corp.intel.com>
 
+On Wed, Jul 31, 2024 at 03:20:37PM +0800, Huang, Ying wrote:
+> Gregory Price <gourry@gourry.net> writes:
+> >
+> > In this case, the system is configured explicitly so that kmem does not
+> > manage it. In fact, some systems still cannot be managed with
+> > EFI_MEMORY_SP due to hpa!=spa issues that the driver cannot manage.
+> 
+> Sorry, I don't understand.  IIUC, kmem.c can manage almost any memory
+> range via drivers/dax/hmem.  Please check
+> 
+> drivers/dax/hmem/device.c
+> drivers/dax/hmem/hmem.c
+> 
+> Could you elaborate why kmem.c doesn't work for some memory range?
+> 
 
-On 2024-07-31 9:48 a.m., Trevor Gamblin wrote:
-> This series adds a new driver for the Analog Devices Inc. AD7625,
-> AD7626, AD7960, and AD7961. These chips are part of a family of
-> LVDS-based SAR ADCs. The initial driver implementation does not support
-> the devices' self-clocked mode, although that can be added later.
->
-> One aspect that is still uncertain is whether there should be a
-> devicetree property indicating if the DCO+/- pins are connected, so
-> specific feedback on that is appreciated.
->
-> The devices make use of two offset PWM signals, one to trigger
-> conversions and the other as a burst signal for transferring data to the
-> host. These rely on the new PWM waveform functionality being
-> reviewed in [1].
->
-> This work is being done by BayLibre and on behalf of Analog Devices
-> Inc., hence the maintainers are @analog.com.
->
-> Special thanks to David Lechner for his guidance and reviews.
+Sorry I misunderstood, I thought you meant the cxl+kmem/hmem subsystem
+interaction and handing configuration of the CXL device over to the
+kernel.
 
-I forgot to actually include:
+The boot parameter is not likely to be a solution for us but I will look
+at it.
 
-[1] 
-https://lore.kernel.org/linux-pwm/cover.1722261050.git.u.kleine-koenig@baylibre.com
-
->
-> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
-> ---
-> Trevor Gamblin (3):
->        dt-bindings: iio: adc: add AD762x/AD796x ADCs
->        iio: adc: ad7625: add driver
->        docs: iio: new docs for ad7625 driver
->
->   .../devicetree/bindings/iio/adc/adi,ad7625.yaml    | 176 ++++++
->   Documentation/iio/ad7625.rst                       |  91 +++
->   MAINTAINERS                                        |  11 +
->   drivers/iio/adc/Kconfig                            |  15 +
->   drivers/iio/adc/Makefile                           |   1 +
->   drivers/iio/adc/ad7625.c                           | 626 +++++++++++++++++++++
->   6 files changed, 920 insertions(+)
-> ---
-> base-commit: ac6a258892793f0a255fe7084ec2b612131c67fc
-> change-id: 20240730-ad7625_r1-60d17ea28958
->
-> Best regards,
+> > But I think a feature that worked in 5.x should work in 6.x, and right
+> > now the change in node placement breaks hardware that worked with 5.x
+> > which happened to have broken or missing HMAT.
 
