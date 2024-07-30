@@ -1,119 +1,124 @@
-Return-Path: <linux-kernel+bounces-267367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DE9D9410BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:39:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9090B9410B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50D1E285548
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:39:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43C9028670A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F245519EEB6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071C519E7C7;
 	Tue, 30 Jul 2024 11:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ggu7e6RW"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q6gb7aG5"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CC6187340;
-	Tue, 30 Jul 2024 11:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C5312DD88
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722339528; cv=none; b=biwARn236M6GTSUBQwviEVKkURZYj2a01dxFGjkiDNfFW7/BHKCsdLXx0RIyKhp59YyKrwQJTPZ5j7xcEJUGOFuJg4INPhckjoBf6tKCyHK4Spoio0JSXBsKQsMhpSymIgBo+ECTAUJoE+zaFLhzI+kchfKeiCrH1KE3fh4YDns=
+	t=1722339527; cv=none; b=ogr4Ruh2fg+ucb9ONe7X3fnmCxTdCLjNR+n0Cy1bKle0gVXBuDUssDev7WpfHV642vk2/1zzulMmm6F5lh/vU0NruH7102RCJ/bH6/LjfZ1YC53c9xOZkb1cTKudM7voc6SdgZfNGaKRdSMzuwfnO1OeoBnRRHe5b3H6wGsn2Mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722339528; c=relaxed/simple;
-	bh=k6w1etxIs9PSlhD2L8oROb/OhyqyBb5Zw5PxUdBQKh8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=atJWPbeKNNDz+dGM4B6RjFJkXm5TLuj6Fkmoz0NPFVz4gnvPTSvNkXk5Oo01ndZ0CNeHGO9ldIQB4b8cMht8VzOUBUpQ1SK59pG6OXg4EC9hZYhaTmNNjXuSyIar2+k+X5zXgfnnP+dv4HSG90m9OAiWOavmb62BZ2PS6iG1R+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ggu7e6RW; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1722339527; c=relaxed/simple;
+	bh=gMX/uY3P00RuMEhik2gboHQR3I6sJ6AQz4rzZO6AJn8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EIne9qMv1dKbL5WR4wOcrj65X78ZAqlKNr9SiaQL/3ngec2iGPRocZno+HXhwTj5nvlwgFoE7IY12ftoBZLTKKwyZmLDsrXQi9m3VE4AcklRRSImnLcRW1fOddeGscS+A53ycxO9EAE2dVV7My7JDvhHkGnOytX5He85qq2kG0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q6gb7aG5; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc60c3ead4so27469005ad.0;
-        Tue, 30 Jul 2024 04:38:46 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fc56fd4de1so26326755ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 04:38:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722339526; x=1722944326; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k6w1etxIs9PSlhD2L8oROb/OhyqyBb5Zw5PxUdBQKh8=;
-        b=Ggu7e6RWlD+L9CF7F5311suivNh/gW+AS9SRfB5n3/7ZVHMKDLz42AhTDGSDE4p3MD
-         iZeFhG8oPY75Z60auLANFh6iua4yB7RKyldP3afdoLhuRFWkgmofGNYAmJs76KLOD3qR
-         pz7jnDttn33eQOFyzt52QMAPxaOdFJKR0GDhdIdpnIJLmFtZCdLj2yLDeDZzuP3ZmfHl
-         iaDQg+AzGyihsYD1IVMnzOTXjc702VFEP4cMelu8iTHvJuoIqBJos6yK8H1tifyjscvW
-         krjWeRfNqN/UvQ4E6evqx868+lryJcw328eguR87JnQFhLodFl1TW0lXosbqALe/lRAa
-         Seuw==
+        d=gmail.com; s=20230601; t=1722339525; x=1722944325; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8MFqGZ8807+PNXQ8BnyhmtNVvHRUHtuiqEf4+LLnxW4=;
+        b=Q6gb7aG5mKK/nHrD6dj176JtynQbc72PQJo0nRbAmYz0lo7NHFlDBiFpYd1b1lZcD+
+         A2vykQu1BV60qlrhC6DQbx2COooSiqYcB3TxtTduhlzJC89UlZ6C19wWRjkvI4gpKomj
+         bqYldhHtMCUyhOcpMCsxWAVS54Cy64k5nkV41jKSJQpb+zzbfRtJZ1JOmugF/8V+YxHw
+         N4QmxHkKtQMLBk9aBRgJRFUgQ0jOvRW9ZrDwgCZxI0fxqGgX+UOZzA9t3CRjKJaGLzPt
+         GkmsCkOrjyUI+cUiA86X5r2eKJfK2Bb5IQFoypPOOgWNVrGxG2VWtR22jrwo6vCK320s
+         CMiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722339526; x=1722944326;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k6w1etxIs9PSlhD2L8oROb/OhyqyBb5Zw5PxUdBQKh8=;
-        b=qPnrBo6xnIDLzqU6H8G687mhQ1SnYULhN1HDd4BpmWOOahRpATnfPGIyKY3mom0SHu
-         F9LvvjLzV3mHoQ20f6+blUeGQE1Jji/nP0YoMn0vI/q1n+VlPUFshgp1AXggxGX/YPAI
-         iZOW/RXDzjYDBUaSbv9kjKF6MLoERPNNEsHWgUjh8tzV5vAVNHlv4UPo141J3peG0YuY
-         tVaWA/cN6msoJOUI0D6+5I1cGAtDxI0arMmYL8QixCPoi/L/+gVVgW0WJU7sa/lCK1hR
-         1cw1rVzHDNFpMKRki67K9tRtMgfFUzmyBLUsd+SQtPwOLf5LFfUMDjON83+5G1Fl78a3
-         y8NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDA1ydJwxhqEhHwXMIMfxXyXj6QEUQ0EeKDv3XHHBqKGZDCFjpsQdfO3LbgIlsCYn6l0fjYsV/VgTPgEnLbTOj+KXB6NKEW0SZVjMfkj5ZhZfW3+h0Ia00jFaIo6Xc4dqkxqkrdaaVAMpKlYJSrekp6TJv198eSE5isqFiD7tdBA7nAiPqFmWC8xA=
-X-Gm-Message-State: AOJu0YzOpz1AV9+IDJLxr/9GrhJqEsmEJN3sHsZUN/b2xb4zrVQJ/eaO
-	7K3PaDWuIqLm8U5KLd28JuISJvhiFE4NdY96NpnxsRq4w4vOO14w2oJlTUQ8RPWBvpJRzF+HsYp
-	+EUGoWys90LO/MryEnQNErakBHxk=
-X-Google-Smtp-Source: AGHT+IEyFfR0JL+UM/RQIvp2FGsc8TUErm9I4F/AWWlIlBta6ShgvlT1kNcu3Z8LXkGFKHiM44u0YnZfRWxtkE672Mk=
-X-Received: by 2002:a17:90b:4a07:b0:2c9:9643:98f4 with SMTP id
- 98e67ed59e1d1-2cf7e097f0fmr9022074a91.5.1722339526064; Tue, 30 Jul 2024
- 04:38:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722339525; x=1722944325;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8MFqGZ8807+PNXQ8BnyhmtNVvHRUHtuiqEf4+LLnxW4=;
+        b=MQdWR5FtmCwc02XnlNZhuM4OLhnO636QVK36IRco9TsZBuuP+bqBgqsIsVK6jnCjlL
+         LlgtS7/vugKxQwux/LiwFKk/HTCEwGCjKYaUseWcVROQcash3UVrRpCsRr+5ledAdXUQ
+         bgLUZwX+ovDOYYtjEvU6Jah0qNHsIUVi0SK89m9FB8QOxq6uvXx5dUAC16uTFiTi+wDr
+         r/hLYTzEGQkglmSDYjXcnpFEO5YiCOcPya7oD13KWag674WmT0YIy3XwgNaUFXYdQRyd
+         1e5Qw8mW1qvILdnhlDiVOTuD8sWBMhrNLLmCY2h+RG6BBxNdSPCQy4DGfJ2LO/8Rb487
+         UWfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+HcZKqP7l+YG0K3LIJSp+aDCKvoiuNI4BRO3/mGd5laJnycOB8VKGcUpvtSMN+mjSnJy/aSfCOt50JCtk4bMq+A/Gbj0+ot2/eCsv
+X-Gm-Message-State: AOJu0YwGaXA7oRXvXe5STGpXNYIwk4H6905gvNAfnR95hBoUn3/BTkip
+	ssZgZ8gxcF68VgxbF3XEIPaNOI1mWOOWtPMoxjAD9V90rcW8hKo/
+X-Google-Smtp-Source: AGHT+IEBBOHnFCkjS4erYNgJjiprwps8xwQLgMn5LY7rnBhZttmUOgpWuMTyJ9yoYQq+SzqmMUcUrQ==
+X-Received: by 2002:a17:902:e850:b0:1fb:4f57:6a65 with SMTP id d9443c01a7336-1ff37c3167fmr25480215ad.30.1722339525125;
+        Tue, 30 Jul 2024 04:38:45 -0700 (PDT)
+Received: from [192.168.255.10] ([43.132.141.21])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f1ac12sm99336475ad.186.2024.07.30.04.38.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 04:38:44 -0700 (PDT)
+Message-ID: <5ed6a7fa-31e0-4516-8cbf-8a725377aa32@gmail.com>
+Date: Tue, 30 Jul 2024 19:38:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730-kcfi-v1-0-bbb948752a30@google.com> <20240730-kcfi-v1-1-bbb948752a30@google.com>
-In-Reply-To: <20240730-kcfi-v1-1-bbb948752a30@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 30 Jul 2024 13:38:33 +0200
-Message-ID: <CANiq72nxq0gnCXbQfFiZ4jErLptR8juyNzv1mKL_MEyWyDQdWA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] cfi: add CONFIG_CFI_ICALL_NORMALIZE_INTEGERS
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Sami Tolvanen <samitolvanen@google.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 18/22] mm/zsmalloc: introduce __zpdesc_clear_movable
+To: Sergey Senozhatsky <senozhatsky@chromium.org>, alexs@kernel.org
+Cc: Vitaly Wool <vitaly.wool@konsulko.com>, Miaohe Lin
+ <linmiaohe@huawei.com>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, minchan@kernel.org,
+ willy@infradead.org, david@redhat.com, 42.hyeyoo@gmail.com,
+ Yosry Ahmed <yosryahmed@google.com>, nphamcs@gmail.com
+References: <20240729112534.3416707-1-alexs@kernel.org>
+ <20240729112534.3416707-19-alexs@kernel.org>
+ <20240730093419.GA16599@google.com>
+Content-Language: en-US
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <20240730093419.GA16599@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 30, 2024 at 11:40=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> Introduce a Kconfig option for enabling the experimental option to
-> normalize integer types. This ensures that integer types of the same
-> size and signedness are considered compatible by the Control Flow
-> Integrity sanitizer.
->
-> This option exists for compatibility with Rust, as C and Rust do not
-> have the same set of integer types. There are cases where C has two
-> different integer types of the same size and alignment, but Rust only
-> has one integer type of that size and alignment. When Rust calls into
-> C functions using such types in their signature, this results in CFI
-> failures.
->
-> This patch introduces a dedicated option for this because it is
-> undesirable to have CONFIG_RUST affect CC_FLAGS in this way.
 
-Is there any case where we would want CFI_ICALL_NORMALIZE_INTEGERS
-when Rust is not enabled, then? If not, is the idea here to make this
-an explicit extra question in the config before enabling Rust? Or why
-wouldn't it be done automatically?
 
-Thanks!
+On 7/30/24 5:34 PM, Sergey Senozhatsky wrote:
+> On (24/07/29 19:25), alexs@kernel.org wrote:
+> [..]
+>> +static inline void __zpdesc_clear_movable(struct zpdesc *zpdesc)
+>> +{
+>> +	__ClearPageMovable(zpdesc_page(zpdesc));
+>> +}
+> 
+> [..]
+> 
+>> @@ -846,7 +846,7 @@ static void reset_zpdesc(struct zpdesc *zpdesc)
+>>  {
+>>  	struct page *page = zpdesc_page(zpdesc);
+>>  
+>> -	__ClearPageMovable(page);
+>> +	__zpdesc_clear_movable(zpdesc);
+>>  	ClearPagePrivate(page);
+> 
+> Just a quick question, I see that you wrote wrappers for pretty
+> much everything, including SetPagePrivate(), but not for
+> ClearPagePrivate()?
 
-Cheers,
-Miguel
+Hi Sergey,
+
+Thanks for comment!
+Yes, it's better to have one for clear, I'll sent a patch soon.
+
+Alex
 
