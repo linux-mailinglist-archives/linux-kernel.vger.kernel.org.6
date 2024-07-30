@@ -1,75 +1,80 @@
-Return-Path: <linux-kernel+bounces-267059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C22940BE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:40:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AFFA940BE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 632DE1F2431A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:40:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5C4E28702E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1414A1946B3;
-	Tue, 30 Jul 2024 08:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEEA193087;
+	Tue, 30 Jul 2024 08:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G2xEQgme"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ePL6XFMJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D391192B91
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9107156C4B
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 08:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722328786; cv=none; b=lpF3AjZZClHQoUG/qX0Its6mRCiZv/aietxeII6BDlSVU2U9tV7KwEWqh+Aw6RXe12b/DlKa1f7J9y3hsTRxvZvHWcnRwV2HuRxVqXWDlH+RgZ9dzsK2LQW9eKmwJyhnB0UQStSnK1LeYn+lnlLauh0f0a4071EUdiS5Xw/Qrvg=
+	t=1722328810; cv=none; b=c/OS6bjbfxtl1R0xMoMYtRQ9K0H9S4Z5skYTVHwqg7YW1TaMcotDCvTf94GbMlMm2ZXyUumbeMmpGpS8xx1OvrKknzBkmz8zxaJkadQksbHZl/tyh2WB+Hfug2tZuS+AGUhhJDx2B6RzOnOfHgGHPIZ1MmfIfMPEwWT2l/c4wYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722328786; c=relaxed/simple;
-	bh=kpdQG6yB98uaLHzj03tYd/l6KR69dRR6ZSb3cvXgUII=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PxHp4x5IRR0Cc5bfKaDTLIeBWX4zvQpxkfQ3/hzjGlkYznuf4YH1eDdCyUIITHQyUD8ApL1sQpv0z4/sV3wcLLhE0KuJ8cRisvzzXG/47pXid+bBjKhDdrZls6cck9w3EpdDZvN/WC9qidHsjqTvsP2MTgBRuJSw7K+E1AHrXk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G2xEQgme; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42817f1eb1fso20315285e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 01:39:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722328782; x=1722933582; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=/mAglCNUGdccjoyEA9UGpBCtWXf2TmguD9tkOS0Mdk4=;
-        b=G2xEQgme/6jjeKuVjTWqJKnJkUu8DWsbdCIIzgBQT1QQJV76Q9uobo9ML8Iwu79uhr
-         tXTaiL7E9uMpSsTNzz1ZdZHjvDpRJhlhuDQHNfqbxFLXnnmCb+HD5ozDI4zkq4yhBcO1
-         uD89gt4Oh1tCo1WJDKrkaH6RQBTtuTxXnRXutvnt5MaRUNPORNpflKqQR/Ef0Tph8NEY
-         1vglvvzISGLIGEiLgyXswvoq48FqdBXgX7QnZLLbIAA5XQpX1rQJM3VXWFprGnpzXjNR
-         glhiAf3kn/B6Ho7kd0s9gy45hKFpOAMr6B45YH5i0w0Pgw1BgIpWYfVRwsoy0ztB0Bxl
-         /6tw==
+	s=arc-20240116; t=1722328810; c=relaxed/simple;
+	bh=NGZTfcDIkt504PlnPC9GVq42FjdsjEOxS77ZG3YvA2g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Oog1fG0mTY7+mM6ZKHWn/VLHG/IHrbyg9XTl3Ex23iKOVkLcLJKb4lACFKSecFj6r84sJAHeEWAsjV3MY+XvzFZWncCZLYK72nBoy82o6uKjX2Zh8l2oGOulgLv22uXlhzz79tynzCOJLs+Qvfd1qayzXdRm47kXf1B1V6ScPJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ePL6XFMJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722328807;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fK4x0arZ+5YauyehRPI0eZhno5tLBSj2Ghx8XLr1ySg=;
+	b=ePL6XFMJ+kxVM6Qndl1WiXDqSvCeBjIW6NSp+esURjanl0NWgOPk8JeYUtpjcLT9lFbymG
+	bdp64raNudNQPd7iDuS6HkUSfrTLNqYjtoVE2PcdQlprtYVlSDI2jkkuaRm0/7ao8ZSG7/
+	+OUt9FpdqAJhf5LprRcIOC59eHoop/A=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-487-6BhzLykUN0eYnQtFKy22Lw-1; Tue, 30 Jul 2024 04:40:05 -0400
+X-MC-Unique: 6BhzLykUN0eYnQtFKy22Lw-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4280b4a34c8so25442405e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 01:40:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722328782; x=1722933582;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/mAglCNUGdccjoyEA9UGpBCtWXf2TmguD9tkOS0Mdk4=;
-        b=O6zn4QHdZJrgJMwldfx5NYoRVKNGQjEz/OjNILyEJO9mgkzAUI8BT+fwvwFQZxCDgw
-         642968p4cjjVhp7tyTWlYlaVWmim9g1MdDSBV656XKDhsRWgNjB9UAA7dTMNb34buxt8
-         A9KQCrax6DxUSnCibx9sBErm0XtgU8QY8VyXCnF9qJfQx8c0Xgp2Tbu9QgPH3dqKpTpJ
-         GKThJKT6z8YPzfhilQGU5rQZVst+uZINwBgRPLZTQuQXUXFKrBZIWxyNtNBWJtFIYNKA
-         oohPXdMJGTehHDDH1Hni953qf3KhJCMWVDuhwIgWn6JfF0vt7mUx9NekxiL6ZQhBgcfm
-         Jhew==
-X-Forwarded-Encrypted: i=1; AJvYcCWGt8RjwVD94pKWGOVasN3Auw3MtY+pH9ORId87QGMAOwohQVJwzkrV86Cgur4QSOzZfgQgJX+wHjO0Ji9B6cF3OjeUCYFgtlf3O/f5
-X-Gm-Message-State: AOJu0YyXhIRsTSSzY8zID1BZwAT8/zHmJ6KWiO+hp5qgQMeXEWyFdnOU
-	PmeC7JngX8rDpp9dMsmkI6NRx44xocKrN5Gl5WyHI1cp15izPCwocFoM9zaZhI04XUPgixohjHg
-	/
-X-Google-Smtp-Source: AGHT+IENMcR5jIX/gXj+EPZjFabTgRcbsQcgq6YQWbyvsrf9KC5wqYnfeWPzcHlh/nwwHxI3zHhcMQ==
-X-Received: by 2002:a05:600c:458f:b0:428:16a0:1c3d with SMTP id 5b1f17b1804b1-42816a07e88mr61865585e9.19.1722328782375;
-        Tue, 30 Jul 2024 01:39:42 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4281c79ea02sm72099245e9.46.2024.07.30.01.39.41
+        d=1e100.net; s=20230601; t=1722328804; x=1722933604;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fK4x0arZ+5YauyehRPI0eZhno5tLBSj2Ghx8XLr1ySg=;
+        b=gCVapwAjrTkywfawz8vO+RdGdAVxSt1CbzzNMQjGRiPXQbjLWAV65E6LUaQt8seRIG
+         v1lZPF+lyM5pmeWP4KMO1yqh55yavP2PK+d6cKOUEPlqrVVoOMamaXOQe/vKoo7GE6Ym
+         YqaMPefV+FRWRnRNqbJGm8a5moiVOGPnfsn1REC5hkf++gMdcVxwGZHaPYaLgoUmx4Kd
+         7HB9hkGAZRCNT8OP5LabISny6mv/+6o79fc2iormZM7kge/yFGERzPsJ3qzLcazpG28I
+         BsN3n+8L8QKXsMidCl8JaGtwDdifyEfL5cKdCwDK2OK7uC3FyjYONL1ivJ8OMvSXanNM
+         bfMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXlDujspKVQaVED7Wzb8vbaAIvgFWKQybc1hQF9WTRg7LQmtRrqJWxhJiwbfVgyw6bMFVP1fH9q7C3WjWjKKql5DIM2sC/UBIpJlPMZ
+X-Gm-Message-State: AOJu0YzCmUM3BRSnWuOd0HIWtpNg7VyWIL0MXyxW+Z+0TbG3sohW1548
+	7LNXrmyC3mEqbJhFYTqwXOjX+OHVEw3kDt8J6M/6QJoMcwMnzf/s8k6oFIsCf0Co6cUqun8EjRd
+	bSNL3hE2+mYbW8skGE7sMHPRV2XpqAIERsLPJ3za+eDiRauwMceABZT13qnYLrQTz5cGVpw==
+X-Received: by 2002:a05:600c:3541:b0:428:314:f08e with SMTP id 5b1f17b1804b1-42811d736f4mr64822035e9.5.1722328804526;
+        Tue, 30 Jul 2024 01:40:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRnrwtF9jVWc4rdhVvg0daLyUQZWvU9LZ4am4GRq7T1Ti2yXlgf04o7fDSk/yBvnl5kl6dBQ==
+X-Received: by 2002:a05:600c:3541:b0:428:314:f08e with SMTP id 5b1f17b1804b1-42811d736f4mr64821765e9.5.1722328803948;
+        Tue, 30 Jul 2024 01:40:03 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c706:4e00:31ad:5274:e21c:b59? (p200300cbc7064e0031ad5274e21c0b59.dip0.t-ipconnect.de. [2003:cb:c706:4e00:31ad:5274:e21c:b59])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42805749f46sm205546385e9.22.2024.07.30.01.40.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 01:39:41 -0700 (PDT)
-Message-ID: <dc66cd0d-6807-4613-89a8-296ce5dd2daf@linaro.org>
-Date: Tue, 30 Jul 2024 10:39:40 +0200
+        Tue, 30 Jul 2024 01:40:03 -0700 (PDT)
+Message-ID: <47fe3480-a4a4-465b-8972-c6507c7a76ee@redhat.com>
+Date: Tue, 30 Jul 2024 10:40:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,158 +82,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soundwire: stream: fix programming slave ports for
- non-continous port maps
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- Vinod Koul <vkoul@kernel.org>, Bard Liao <yung-chuan.liao@linux.intel.com>,
- Sanyog Kale <sanyog.r.kale@intel.com>, Shreyas NC <shreyas.nc@intel.com>,
- alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20240729140157.326450-1-krzysztof.kozlowski@linaro.org>
- <095d7119-8221-450a-9616-2df6a0df4c77@linux.intel.com>
- <22b20ad7-8a25-4cb2-a24e-d6841b219977@linaro.org>
+Subject: Re: [PATCH v1 1/2] mm: let pte_lockptr() consume a pte_t pointer
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>
+References: <20240725183955.2268884-1-david@redhat.com>
+ <20240725183955.2268884-2-david@redhat.com> <ZqPCjd35OdNRrcfl@x1n>
+ <bf2069ed-f2b8-49d4-baf0-dbd2189362f9@redhat.com> <ZqQVDwv4RM-wIW7S@x1n>
+ <9e671388-a5c6-4de1-8c85-b7af8aee7f44@redhat.com>
+ <12bae4c3-5dda-4798-9f6a-3ac040111551@bytedance.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <22b20ad7-8a25-4cb2-a24e-d6841b219977@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <12bae4c3-5dda-4798-9f6a-3ac040111551@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 30/07/2024 10:23, Krzysztof Kozlowski wrote:
-> On 29/07/2024 16:25, Pierre-Louis Bossart wrote:
->>
->>
->> On 7/29/24 16:01, Krzysztof Kozlowski wrote:
->>> Two bitmasks in 'struct sdw_slave_prop' - 'source_ports' and
->>> 'sink_ports' - define which ports to program in
->>> sdw_program_slave_port_params().  The masks are used to get the
->>> appropriate data port properties ('struct sdw_get_slave_dpn_prop') from
->>> an array.
->>>
->>> Bitmasks can be non-continuous or can start from index different than 0,
->>> thus when looking for matching port property for given port, we must
->>> iterate over mask bits, not from 0 up to number of ports.
->>>
->>> This fixes allocation and programming slave ports, when a source or sink
->>> masks start from further index.
->>>
->>> Fixes: f8101c74aa54 ("soundwire: Add Master and Slave port programming")
->>> Cc: <stable@vger.kernel.org>
->>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> This is a valid change to optimize how the port are accessed.
->>
->> But the commit message is not completely clear, the allocation in
->> mipi_disco.c is not modified and I don't think there's anything that
->> would crash. If there are non-contiguous ports, we will still allocate
->> space that will not be initialized/used.
->>
->> 	/* Allocate memory for set bits in port lists */
->> 	nval = hweight32(prop->source_ports);
->> 	prop->src_dpn_prop = devm_kcalloc(&slave->dev, nval,
->> 					  sizeof(*prop->src_dpn_prop),
->> 					  GFP_KERNEL);
->> 	if (!prop->src_dpn_prop)
->> 		return -ENOMEM;
->>
->> 	/* Read dpn properties for source port(s) */
->> 	sdw_slave_read_dpn(slave, prop->src_dpn_prop, nval,
->> 			   prop->source_ports, "source");
->>
->> IOW, this is a valid change, but it's an optimization, not a fix in the
->> usual sense of 'kernel oops otherwise'.
->>
->> Am I missing something?
->>
->> BTW, the notion of DPn is that n > 0. DP0 is a special case with
->> different properties, BIT(0) cannot be set for either of the sink/source
->> port bitmask.
+>> ... also because I still want to understand why the PTL of the PMD table
+>> is required at all. What if we lock it first and somebody else wants to
+>> lock it after us while we already ripped it out? Sure there must be some
+>> reason for the lock, I just don't understand it yet :/.
 > 
-> I think we speak about two different things. port num > 1, that's
-> correct. But index for src_dpn_prop array is something different. Look
-> at mipi-disco sdw_slave_read_dpn():
-> 
-> 173         u32 bit, i = 0;
-> ...
-> 178         addr = ports;
-> 179         /* valid ports are 1 to 14 so apply mask */
-> 180         addr &= GENMASK(14, 1);
-> 181
-> 182         for_each_set_bit(bit, &addr, 32) {
-> ...
-> 186                 dpn[i].num = bit;
-> 
-> 
-> so dpn[0..i] = 1..n
-> where i is also the bit in the mask.
-> 
-> Similar implementation was done in Qualcomm wsa and wcd codecs like:
-> array indexed from 0:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/sound/soc/codecs/wcd938x-sdw.c?h=v6.11-rc1#n51
-> 
-> genmask from 0, with a mistake:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/sound/soc/codecs/wcd938x-sdw.c?h=v6.11-rc1#n1255
-> 
-> The mistake I corrected here:
-> https://lore.kernel.org/all/20240726-asoc-wcd-wsa-swr-ports-genmask-v1-0-d4d7a8b56f05@linaro.org/
-> 
-> To summarize, the mask does not denote port numbers (1...14) but indices
-> of the dpn array which are from 0..whatever (usually -1 from port number).
+> For pmd lock, I think this is needed to clear the pmd entry
+> (pmdp_collapse_flush()). For pte lock, there should be the following two
+> reasons:
 > 
 
-Let me also complete this with a real life example of my work in
-progress. I want to use same dpn_prop array for sink and source ports
-and use different masks. The code in progress is:
+Thanks for the details.
 
-https://git.codelinaro.org/krzysztof.kozlowski/linux/-/commit/ef709a0e8ab2498751305367e945df18d7a05c78#6f965d7b74e712a5cfcbc1cca407b85443a66bac_2147_2157
+My current understanding correct that removing *empty* page tables is
+currently only possible if we can guarantee that nothing would try modifying the
+page tables after we drop the PTE page table lock, but we would be happy if someone
+would walk an empty page table while we remove it as long as the access is read-only.
 
-Without this patch, I get -EINVAL from sdw_get_slave_dpn_prop():
-  soundwire sdw-master-1-0: Program transport params failed: -22
+In retract_page_tables() I thought that would be guaranteed as we prevent refaults
+from the page cache and exclude any uffd + anon handling using the big hammer
+(if any could be active, disallow zapping the page table).
 
-Best regards,
-Krzysztof
+What I am still not quite getting is what happens if someone would grab the PTE page
+table lock after we released it -- and how that really protects us here.
+
+
+I assume it's the
+
+spin_lock(ptl);
+if (likely(pmd_same(pmdval, pmdp_get_lockless(pmd)))) {
+...
+
+handling in __pte_offset_map_lock() that guarantees that.
+
+
+That indeed means that pte_offset_map_nolock() requires similar checks after
+obtaining the PTL (for the cases where we are not holding the PMD table lock
+and can be sure that we are the one ripping out that table right now).
+
+
+> 1. release it after clearing pmd entry, then we can capture the changed
+>      pmd in pte_offset_map_lock() etc after holding this pte lock.
+>      (This is also what I did in my patchset)
+
+Yes, I get it now.
+
+> 
+> 2. As mentioned in the comments, we may be concurrent with
+>      userfaultfd_ioctl(), but we do not hold the read lock of mmap (or
+>      read lock of vma), so the VM_UFFD_WP may be set. Therefore, we need
+>      to hold the pte lock to check whether a new pte entry has been
+>      inserted.
+>      (See commit[1] for more details)
+
+
+Yes, I see we tried to document that magic and it is still absolutely confusing :)
+
+But at least now it's clearer to me why retract_page_tables() uses slightly different
+locking than collapse_pte_mapped_thp().
+
+Maybe we should look into letting collapse_pte_mapped_thp() use a similar approach as
+retract_page_tables() to at least make it more consistent. That topic is also touched
+in a98460494b16.
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
