@@ -1,147 +1,109 @@
-Return-Path: <linux-kernel+bounces-267168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 011F6940DEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:38:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9221940DD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E62A9B27EB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:35:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 744C02862B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38C419D88A;
-	Tue, 30 Jul 2024 09:33:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1D9195F1B;
-	Tue, 30 Jul 2024 09:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81E1195980;
+	Tue, 30 Jul 2024 09:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YKMboIxK"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F62194C8E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722332039; cv=none; b=FF9L9zknLFv3QkpTfUmomQX1J2EeX7Gzo8l8/8MVGVo4QwhBYlphWHd9H+rQP9bvMLRx/YWxXPIrUZ5djX8XoLn/fAwOvHm9EjzGDl6BAhzkw8jo/wQcPvoglRE6uBRxSyV1vZ3a5jtInAeM5552tjwjKL5+L7k02IBJsIPwObg=
+	t=1722332067; cv=none; b=jc19iFyuEc42mTNDJu8xUt8OLlRXiyn67xnE/ORVpzvaGUzV1ppSOAZ7eA/hWOkSvDfWRo4fij24UWONdVs8ioUMOtet13d/ilAIGuRmgaNA8Zwb43CFCi8plr3/o+vKPgItuKWQntOF1QfVIqrtZKb6x17t4BSoIFjXhZphXCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722332039; c=relaxed/simple;
-	bh=TJPENER+B2Jz4m32spSDSEAwTA4y6ADJgEabTovBD50=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sbTjDtRKKfaetJ2pz4RfZ/OQeOafmW0SAB/7CZW5Ec7kqeuOhUshr4txJL9KDExNbM9VqHc8ZRlX7K5Di+3QOyyd2hpCdIG80Ycrji1R/36t1H6W61nBbHYP164aEqb9zKgV0o9xbCnIic2+4tK1P8A0inFt63FW59wcer/QDTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1CF93168F;
-	Tue, 30 Jul 2024 02:34:23 -0700 (PDT)
-Received: from thinkcentre-m93p.cambridge.arm.com (thinkcentre-m93p.cambridge.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7D41D3F5A1;
-	Tue, 30 Jul 2024 02:33:56 -0700 (PDT)
-From: Luke Parkin <luke.parkin@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	cristian.marussi@arm.com,
-	Luke Parkin <luke.parkin@arm.com>
-Subject: [PATCH v4 5/5] firmware: arm_scmi: Reset counters
-Date: Tue, 30 Jul 2024 10:33:42 +0100
-Message-Id: <20240730093342.3558162-6-luke.parkin@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240730093342.3558162-1-luke.parkin@arm.com>
-References: <20240730093342.3558162-1-luke.parkin@arm.com>
+	s=arc-20240116; t=1722332067; c=relaxed/simple;
+	bh=U392Lou8sH3zXoESW/5Uec1AYG+M5rvnwiqZyT7YZ2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JX2ZTLJ7ywnzKiK6W42YDzHwwLqDY62C+tt59/jYWAC2kn5ivw2ySbkNY/HT6/uj8Ez9zt2MBU83EI8K6LY0Xy3hNm1TjxtzK/oxS3nGqXpU9mNuMqrjW5MQMn16jHvukCRLiBPk6PrJQoMW0ECWAQFkQ7J3H+yolmCMZrGa19U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YKMboIxK; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-260209df55dso2659738fac.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 02:34:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1722332065; x=1722936865; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WlIH/Z9lg65usVJ6Q+sWdgJtNwPdkT/vb1dBLC+klJ8=;
+        b=YKMboIxKLRYkPhrAm5HM1rgm7eCg6HVp0cqiC6JjyQYTeiZkBqas43Qnt/YT7sp20U
+         XZDIE+Be994rhGywgnEwgdHuji0uFhoNVglxNWTSxx1cAUHjaxuWcug9mgECFq23klcu
+         wxDyry17yq3oJZY3GeB3qsU/KuZstWxC0yWCk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722332065; x=1722936865;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WlIH/Z9lg65usVJ6Q+sWdgJtNwPdkT/vb1dBLC+klJ8=;
+        b=Af7UJIPUqr5A8tVV5BJwSEaaVCOEjEH6sgMtM1aOE6m230e/YnPt5gq5ijXKykHQ8T
+         6fxkV4t1zBXnD/kGaJdEWgqWe9VsBSJaW3Ga3w2OMIfd97CiXw5HHDAnVh4WjzjzQV6/
+         uB7Xf7Js+/5UdAu5i93IPebkTfZVCQDoz+XOW8w1etpLAvsU/QKftTBjKObyyMxzMUDg
+         BJZNqpN7xwDKrNBLW6zXwrafL80G6wVfMBpjFAsfr/a4F2K8gi1QYZtbauo7h1fAL5as
+         WvgD8FQeByZ/EeOdzuh+sh+AcbNcYMdHWBGcp0sx54v85dOjrxqdFbNcadcx1hIkyQl8
+         2qrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWg96Pa/ZG4/bPt8Paxml7v3Wbfri7Fr/2q/b1+bjrXGSOSz+ArpCkOh0lCzu4rs170ZJuFpDtWcD/fX1b0YOyyG1ycTRugvox8UjrC
+X-Gm-Message-State: AOJu0YzsGF365QJMwCRCSXKiFbs1P81CCDShQRUV1b0dr17w2VsuMKas
+	wYcZwLcpaUAt8MqnzaTA53tRUPAaDu5zLZnC14gFjnOPCnfGGNgFJL1qv50kOg==
+X-Google-Smtp-Source: AGHT+IEtpTNelSJsHuUJQEyjsPuC4VppOP9xG/HQ0SY22h82hmhZkLT8BMI401j3xIJhPhh6VNieAw==
+X-Received: by 2002:a05:6871:3325:b0:25a:eca3:6b59 with SMTP id 586e51a60fabf-267d4f21ab3mr15030469fac.40.1722332064777;
+        Tue, 30 Jul 2024 02:34:24 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:a51d:b844:f0ff:3c91])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead89e53fsm8099158b3a.187.2024.07.30.02.34.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 02:34:24 -0700 (PDT)
+Date: Tue, 30 Jul 2024 18:34:19 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: alexs@kernel.org
+Cc: Vitaly Wool <vitaly.wool@konsulko.com>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	minchan@kernel.org, willy@infradead.org, senozhatsky@chromium.org,
+	david@redhat.com, 42.hyeyoo@gmail.com,
+	Yosry Ahmed <yosryahmed@google.com>, nphamcs@gmail.com
+Subject: Re: [PATCH v4 18/22] mm/zsmalloc: introduce __zpdesc_clear_movable
+Message-ID: <20240730093419.GA16599@google.com>
+References: <20240729112534.3416707-1-alexs@kernel.org>
+ <20240729112534.3416707-19-alexs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729112534.3416707-19-alexs@kernel.org>
 
-Allow writing to atomics to reset
-Create reset_all counters debugfs file to reset all counters
+On (24/07/29 19:25), alexs@kernel.org wrote:
+[..]
+> +static inline void __zpdesc_clear_movable(struct zpdesc *zpdesc)
+> +{
+> +	__ClearPageMovable(zpdesc_page(zpdesc));
+> +}
 
-Signed-off-by: Luke Parkin <luke.parkin@arm.com>
----
-v3->v4
-Use basic writing to allow any number to be set rather than forcing
-	a set to 0
----
- drivers/firmware/arm_scmi/driver.c | 45 +++++++++++++++++++++---------
- 1 file changed, 32 insertions(+), 13 deletions(-)
+[..]
 
-diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index ec6434692d1a..9e8720c27d51 100644
---- a/drivers/firmware/arm_scmi/driver.c
-+++ b/drivers/firmware/arm_scmi/driver.c
-@@ -2847,6 +2847,24 @@ static int scmi_device_request_notifier(struct notifier_block *nb,
- 	return NOTIFY_OK;
- }
- 
-+static ssize_t reset_all_on_write(struct file *filp, const char __user *buf,
-+				  size_t count, loff_t *ppos)
-+{
-+	struct scmi_debug_info *dbg = filp->private_data;
-+
-+	for (int i = 0; i < SCMI_DEBUG_COUNTERS_LAST; i++)
-+		atomic_set(&dbg->counters[i], 0);
-+
-+	return count;
-+}
-+
-+static const struct file_operations fops_reset_counts = {
-+	.owner = THIS_MODULE,
-+	.open = simple_open,
-+	.llseek = no_llseek,
-+	.write = reset_all_on_write,
-+};
-+
- static void scmi_debugfs_counters_setup(struct scmi_debug_info *dbg,
- 					struct dentry *trans)
- {
-@@ -2854,32 +2872,33 @@ static void scmi_debugfs_counters_setup(struct scmi_debug_info *dbg,
- 
- 	counters = debugfs_create_dir("counters", trans);
- 
--	debugfs_create_atomic_t("sent_ok", 0400, counters,
-+	debugfs_create_atomic_t("sent_ok", 0600, counters,
- 				&dbg->counters[SENT_OK]);
--	debugfs_create_atomic_t("sent_fail", 0400, counters,
-+	debugfs_create_atomic_t("sent_fail", 0600, counters,
- 				&dbg->counters[SENT_FAIL]);
--	debugfs_create_atomic_t("sent_fail_polling_unsupported", 0400, counters,
-+	debugfs_create_atomic_t("sent_fail_polling_unsupported", 0600, counters,
- 				&dbg->counters[SENT_FAIL_POLLING_UNSUPPORTED]);
--	debugfs_create_atomic_t("sent_fail_channel_not_found", 0400, counters,
-+	debugfs_create_atomic_t("sent_fail_channel_not_found", 0600, counters,
- 				&dbg->counters[SENT_FAIL_CHANNEL_NOT_FOUND]);
--	debugfs_create_atomic_t("response_ok", 0400, counters,
-+	debugfs_create_atomic_t("response_ok", 0600, counters,
- 				&dbg->counters[RESPONSE_OK]);
--	debugfs_create_atomic_t("notif_ok", 0400, counters,
-+	debugfs_create_atomic_t("notif_ok", 0600, counters,
- 				&dbg->counters[NOTIF_OK]);
--	debugfs_create_atomic_t("dlyd_resp_ok", 0400, counters,
-+	debugfs_create_atomic_t("dlyd_resp_ok", 0600, counters,
- 				&dbg->counters[DLYD_RESPONSE_OK]);
--	debugfs_create_atomic_t("xfers_resp_timeout", 0400, counters,
-+	debugfs_create_atomic_t("xfers_resp_timeout", 0600, counters,
- 				&dbg->counters[XFERS_RESPONSE_TIMEOUT]);
--	debugfs_create_atomic_t("response_polled_ok", 0400, counters,
-+	debugfs_create_atomic_t("response_polled_ok", 0600, counters,
- 				&dbg->counters[RESPONSE_POLLED_OK]);
--	debugfs_create_atomic_t("err_msg_unexpected", 0400, counters,
-+	debugfs_create_atomic_t("err_msg_unexpected", 0600, counters,
- 				&dbg->counters[ERR_MSG_UNEXPECTED]);
--	debugfs_create_atomic_t("err_msg_invalid", 0400, counters,
-+	debugfs_create_atomic_t("err_msg_invalid", 0600, counters,
- 				&dbg->counters[ERR_MSG_INVALID]);
--	debugfs_create_atomic_t("err_msg_nomem", 0400, counters,
-+	debugfs_create_atomic_t("err_msg_nomem", 0600, counters,
- 				&dbg->counters[ERR_MSG_NOMEM]);
--	debugfs_create_atomic_t("err_protocol", 0400, counters,
-+	debugfs_create_atomic_t("err_protocol", 0600, counters,
- 				&dbg->counters[ERR_PROTOCOL]);
-+	debugfs_create_file("reset", 0200, counters, dbg, &fops_reset_counts);
- }
- 
- static void scmi_debugfs_common_cleanup(void *d)
--- 
-2.34.1
+> @@ -846,7 +846,7 @@ static void reset_zpdesc(struct zpdesc *zpdesc)
+>  {
+>  	struct page *page = zpdesc_page(zpdesc);
+>  
+> -	__ClearPageMovable(page);
+> +	__zpdesc_clear_movable(zpdesc);
+>  	ClearPagePrivate(page);
 
+Just a quick question, I see that you wrote wrappers for pretty
+much everything, including SetPagePrivate(), but not for
+ClearPagePrivate()?
 
