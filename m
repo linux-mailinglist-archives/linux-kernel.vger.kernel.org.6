@@ -1,122 +1,100 @@
-Return-Path: <linux-kernel+bounces-267473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEFC99411EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:30:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B42F9411E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 002F5B2779A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:30:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6664F1C21331
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B277319F460;
-	Tue, 30 Jul 2024 12:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCAA219EED5;
+	Tue, 30 Jul 2024 12:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ew2cx06N";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VoPzqG9E"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KkUnA/32"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DC019E806;
-	Tue, 30 Jul 2024 12:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0445418F2FF;
+	Tue, 30 Jul 2024 12:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722342612; cv=none; b=L7M4zSX35lMvNunPpIxTMp+UguSBf73zPhjG2oY79OZbiqxShwlJTfMI1hmvV77P7KVwhe/filYrN+ANn7j2eIBohlN3B772iZHT5DjIHkwWE2Z6t3Xj/jJw/12l17NRL3/q9h2m8DNQW95Tg0oTr79TKZ9xyK1SNNJAjX8KnAM=
+	t=1722342597; cv=none; b=KM/4N43sq2SHReYbLciNSuWemMTLKK1tNlnL5pHmEK4MyTD3zE0cV1unOlOqUpK5PfbpyziSOJQrWZPaGAH9sBYanYXccGc3PSw5iMg1GzoJryOJzAVSjZxLRYEwWNGQ9xGsRCqShNXzo4bv/BC2mBZP5gtkaA9h82Poz8eqzxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722342612; c=relaxed/simple;
-	bh=hqxK3UPv3AG0wmnnvcnxtmPF4bcE21QtxbMnxK6s4UE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=nhACIl6gWIgzeJ75wnOrWTS3pwX4ZJvilveGvFgfcI0i+/lHqaLXilspiCRPVZZjM8gu70KBN3n9/wO9lVqTrDzMa1L6jFz0SYgx5tQ1VFrZXy7P98Upvc2IOij1XDgrMg7uCoXdFC/UKretDhqyqqew5pqxPlRfLfjju3sr9dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ew2cx06N; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VoPzqG9E; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 592A011406C6;
-	Tue, 30 Jul 2024 08:30:06 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Tue, 30 Jul 2024 08:30:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1722342606;
-	 x=1722429006; bh=ax3TXgeI0glaNper8z6NQUCsYmUmZbRtOqbs4F5ZhP8=; b=
-	ew2cx06N36TZLnPoA3qP/yJfj8+6WzBmd02olrS4IuTty2o3Gh2iJtbJFahu5Li3
-	fmpOIGydjfA9jUfpbcdtgLz6fJgCWjtQHs6TzJ8eYPdFiknh7lA/zQdvP/FHT6a4
-	XMFJRc7smZIodEzizNE/0hRSO9cUeDMqFLvsLtAB3ZVJPZ4Nm+eqTfu1QEDn7vPI
-	YjPlvl6n3+KHlObtLY6sYV2GIiS9R5NUV7bbPWrW0P/7lqmvMhkkcbFli7XhtOik
-	G0tAO2Zz0Q3hQUuTXYiL42jR6bXHf/et8VgoSCGpwKsb0Qk1ZgxahYoYULZYt06J
-	QHEErjuaLj5B4jNEiXvyOQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722342606; x=
-	1722429006; bh=ax3TXgeI0glaNper8z6NQUCsYmUmZbRtOqbs4F5ZhP8=; b=V
-	oPzqG9E0aL4ntE/dmnKG42Mz1vIrFM9gbSuhxa9Y61kyGXJ5lX2okqbaSy5Mi6x7
-	oM2XncvGQRZdTmtiTYLlRCtfwEcsVIh0QcxWJ13ZFqC+isgG4rftii899+O82ZmF
-	QKK0QeCqizPwc5jlLfYf8+Jj8p5E8mW6K1kpNZanJ6+1IzRm02hBMlaY5mYUd1GS
-	HeOT+yIpgTjxu1w1s0sJyzxwiuOQaF+L567zSesegWfZ1E+B89mVCi7HWl/gfAsh
-	9IFO5AtKRRlkl388/ClPfSLnIXnoQ9YLm16wu1SfFNS+Kb924dlTp/n5ec+d9bsh
-	tlPMAhCRicRM1DCyAGPYw==
-X-ME-Sender: <xms:zdyoZicusJTH-Cp0DK9RdxpgwYL7VN6Uy_rOgpL3p6bAYu2yrbcj2A>
-    <xme:zdyoZsPMZD4SDQwuiyr8cTya5D8OeBWt2Slo3QKxoG01mFQacqF8oWAG4LUmo_3fO
-    FL4knPcZhROgfCQIPc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeggdehfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdv
-    ieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:zdyoZji5BvYNxSCMH64c3ZDcar69nmR-SiqdKkC2drelgpa55fQDOw>
-    <xmx:zdyoZv-YyF_7kosOpo0SywyRTqbb9VxceSyvcuy9Zt-BznwcaeKN3A>
-    <xmx:zdyoZusCNmu0xV_fsa1cTEBd9B3pzCgWTv1CmALm0pvYzPedjuh6UA>
-    <xmx:zdyoZmH8KChvWq7wHRyWz_OYIBynQGLjvNn1B0W63x70IgpM2n_rFw>
-    <xmx:ztyoZihrMVZYDQpyWHHvS1du2LKBTVnpijIsWUJA43JW1nXqjHc2pgpt>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 8D720B6008F; Tue, 30 Jul 2024 08:30:05 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1722342597; c=relaxed/simple;
+	bh=VwgmwLcqB9ZFY4Gq8oFzw8DPmba5sKvUZygIQYJUFJ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CM1WGLJyTYIX5Op/EgFbtrhPHQNb0FbZB7aaw0GjKfGE/QE0FjzNKPfe6Q/nzBOZBttsNpnwM185Kd1QpvtbJ0S8PfqhU/juFdCcuuxtEADYYqgF7yk5elVWTHY5dxHyXmjjw9fAPXRTD/11CJH1a1OO2ufldv1iEaJ287fLoII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KkUnA/32; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D6B5C32782;
+	Tue, 30 Jul 2024 12:29:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722342596;
+	bh=VwgmwLcqB9ZFY4Gq8oFzw8DPmba5sKvUZygIQYJUFJ8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=KkUnA/32/zuP2yfY+2BHZWzBcAP6eKFvYJzwWg50srUl6w+CFGAAsp0WSVoyBsClT
+	 RqacX6MYF5YOZXuFyCH1T+vUJ++Nz0X1eEHzYVtQCG70dV6lycBDRT1l0bC44Pawpd
+	 +iPYigs44yG43C7YtEGs+CmmNOd07N1gVv7oVL3sAsGWuDWypjD0wUHbrIyVdGM4TS
+	 vrI0xEOfD8OBBv8DrpRSzlAYcZ84bFwSacznjY87leU+5uoMBw6sHmr0W8MuWdQEGa
+	 PdIEIXWlUrWuRQDGAlE0qFxCsmO+XkMEeW2ssvA5Zhnhvuu4KAm3BW6AkdQu1fHQWH
+	 w+/JLXA6Quvug==
+From: Christian Brauner <brauner@kernel.org>
+To: dhowells@redhat.com,
+	jlayton@kernel.org,
+	Max Kellermann <max.kellermann@ionos.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	willy@infradead.org,
+	linux-cachefs@redhat.com,
+	linux-fsdevel@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] fs/netfs/fscache_io: remove the obsolete "using_pgpriv2" flag
+Date: Tue, 30 Jul 2024 14:29:46 +0200
+Message-ID: <20240730-bogen-absuchen-8ab2d9ba0406@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240729092828.857383-1-max.kellermann@ionos.com>
+References: <20240729092828.857383-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 30 Jul 2024 14:29:44 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Anshuman Khandual" <anshuman.khandual@arm.com>,
- linux-kernel@vger.kernel.org
-Cc: "Andrew Morton" <akpm@linux-foundation.org>,
- "Yury Norov" <yury.norov@gmail.com>,
- "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
- Linux-Arch <linux-arch@vger.kernel.org>, "Ard Biesheuvel" <ardb@kernel.org>
-Message-Id: <79960e1a-6fa1-4d15-b842-0dc4d6a2bc1b@app.fastmail.com>
-In-Reply-To: <08e6c85e-2c82-4c15-bfe7-d42900d1c68f@arm.com>
-References: <20240725054808.286708-1-anshuman.khandual@arm.com>
- <08e6c85e-2c82-4c15-bfe7-d42900d1c68f@arm.com>
-Subject: Re: [PATCH V2 0/2] uapi: Add support for GENMASK_U128()
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1287; i=brauner@kernel.org; h=from:subject:message-id; bh=VwgmwLcqB9ZFY4Gq8oFzw8DPmba5sKvUZygIQYJUFJ8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaStuLPXbsNutWrb//0s9qtDC+4qLxCUPskaGWuox6y2J pWnfcXUjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIm0bWL4Z6Y6h3Vi5b6S3S8m Bl+YNE1i6+I5d4u91me4+v1Y+SriThTD/7znfiksf3dX7a+6M2XhuqRz75nya4/vVRJP31p8af4 DfQ4A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 30, 2024, at 06:29, Anshuman Khandual wrote:
-> On 7/25/24 11:18, Anshuman Khandual wrote:
->> 
->> - Wrapped genmask_u128_test() with CONFIG_ARCH_SUPPORTS_INT128
->> - Defined __BITS_PER_U128 unconditionally as 128
->> - Defined __GENMASK_U128() via new _BIT128()
->> - Dropped _U128() and _AC128()
->
-> Does the changed series look good ? Please do let me know if something
-> further needs to be changed. Thank you.
+On Mon, 29 Jul 2024 11:28:28 +0200, Max Kellermann wrote:
+> This fixes a crash bug caused by commit ae678317b95e ("netfs: Remove
+> deprecated use of PG_private_2 as a second writeback flag") by
+> removing a leftover folio_end_private_2() call after all calls to
+> folio_start_private_2() had been removed by the commit.
+> 
+> By calling folio_end_private_2() without folio_start_private_2(), the
+> folio refcounter breaks and causes trouble like RCU stalls and general
+> protection faults.
+> 
+> [...]
 
-Yes, these look fine to me, please add
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-One detail: You are not actually using __BITS_PER_U128 at
-all now, so I think it would be better to not add it at all.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] fs/netfs/fscache_io: remove the obsolete "using_pgpriv2" flag
+      https://git.kernel.org/vfs/vfs/c/f7244a2b1d4c
 
