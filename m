@@ -1,124 +1,180 @@
-Return-Path: <linux-kernel+bounces-267998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5AB5941F2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:05:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E0AA941F30
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5017F1F238B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:05:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08A631C226A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C6C189902;
-	Tue, 30 Jul 2024 18:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB0318801C;
+	Tue, 30 Jul 2024 18:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="gTLNW1Bf"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="F1BsCVrc"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7291917D8BB;
-	Tue, 30 Jul 2024 18:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F92183CD5
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 18:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722362749; cv=none; b=MIdyBL7XykeW/4xdI6YYkA+S0XrZkrEgMOMbBAss/caxkCC4rbC7uUk+J7hXjkOIs8wOLNOKrGZzJXFnxcPqaRWFLbBlOKUEpiYw8IASIE8Mr5BE29JnujrP78lnGRPi8CeRIKBo8KAayHPgik7qX1TI0bwCnCiBQ7tA12y9Zp4=
+	t=1722362874; cv=none; b=OXzaxlJaqXBW5hK5XIWnWudsf8kZbog1CiC7ImATZxhMoL4JVvV5CJmKQC1+Om264Q8vkU66itta0ZoN6UTJ4iuCz4jRpMCW+/8P6AGDBd+NsCA43oagp6vCGHpMTqgU3LRj+JSrL5RfFSdoSytQbItEbwSW89A5RofV4+mzhb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722362749; c=relaxed/simple;
-	bh=1eB6g6HeJ03uqsCA2JMrfAN4wqesA1hbtTRJ/6jKMLs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t9igqJ9GYO0flGjUsvYhmD7tbnzk5qb0H8YZeY8Rw78+wEqsqVrmahVeJHS7s7wxA+GrSbN1eChQn0gHpbKPfQ0zhGegom5+fKQ4v3OVgNhe5mI5nwj2qkKRB6L+EB/KD7sgneruoHV+lbN3MMGWqUBUSkzhEAx58g8egMdoXKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=gTLNW1Bf; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1722362726; x=1722967526; i=wahrenst@gmx.net;
-	bh=EBLycss/rG9rOzogO/BwdFtzgsIKTGDNL5zpnPZfUAo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=gTLNW1Bf8oLgaF6Wg1JQ16fp44XW8fFmszpgyimNbxO/J1Ms6bRfte01OgOqSdtA
-	 MpQ1ysjna1Jqq429TJ7mNgnUlXZvKgKj7BUk8cPTbpgGMtcnnW1bDMDEChWgEnMSo
-	 S9b/bFDKBsqWCFn9wk+zAacRC6K8so9uKe/GuDJ7+7ybgRHrye4Ngom2GPxfdTpkZ
-	 ROWKHEuWp/1QLPHXMGBl53UfvBNqlVpK+qZ99OHfQqziYS7UDZ5TjD+L1Cpa9hQiY
-	 KVqSjfgdAbleaABn+gEnVtSAs0Yv9PD1KhwPR1Iebl3S1WjRX/6bG2bFEWhzgBQDT
-	 okitYyHiae00OJCytQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MFKGP-1sRxKm3spV-007Lwq; Tue, 30
- Jul 2024 20:05:26 +0200
-Message-ID: <e0692316-f8c5-4ddc-ab39-ba70cbfbdf28@gmx.net>
-Date: Tue, 30 Jul 2024 20:05:24 +0200
+	s=arc-20240116; t=1722362874; c=relaxed/simple;
+	bh=bYNR/btMc8dzDhzuaBsxtAvjoc9Jjq6/rWmwqhOdxWU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=APwlL1kv1hagWc1chIMCzvFNbHcFGh01nr/GXcXBgKwAhWNffZ6n41l2UJu2XtbFfjFf2GCxQvC/2G6RENMn320qsqhBllYdbclFTU/v+CRNWLR5ohoihG5L/GfswBsKlTJPAJYsyrQrjQs37V4KP+X7y5gYqFS4W8GoltlvfJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=F1BsCVrc; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2cd48e1095aso619232a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:07:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=wbinvd.org; s=wbinvd; t=1722362872; x=1722967672; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=H48IHRHyRWWq9dKQtedJa/9T79oz7qCSKd+qUxCh+SE=;
+        b=F1BsCVrc1Fjr+qSivthwhGsh1Abj3zbicys6Mpk7DYRWTWLxBi8p5jD11TTlZmEv1x
+         JXGRg1PE0ZZRlFx1RAbqmi39EvTA+vEkiW3g4KesRkV3Lsea89SP9ljNIXbPsQLwn67m
+         kGZ2Zvx29ujFPHwFik4HHxIRbKpkvfpSF0VTvan/MSD++eyydaWvgklSBFZTqgS7ct1v
+         vsqbnE487CxE2DR5KeFp9hOVkmxnRALP8Q0W1vz7F4+ZYRvUrAfQ4iLY7UINWS6lu5fW
+         K7E3VLIV6Ti11Z3g0SLyTYTI/iWVZFmNkSq65lFHlVhRhd0Mu6//PidBLLhRbDL0Rkgr
+         XsmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722362872; x=1722967672;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H48IHRHyRWWq9dKQtedJa/9T79oz7qCSKd+qUxCh+SE=;
+        b=NNqHWYkzR8JBT9vjxnScseddp47zLp0nvh84iJ4aHDQfUiVwXxz23KUhBnyPPrwWIX
+         FWCI46Dxj+F1vuhcg0DDf2gdN5sBEvbdT7RqYEDSiE7hGwVlyznFjYiQECjpLPq5O9bi
+         ALzwyLdONhgusUGy8EqKLtBUCdh/auqbElZLVhvW5i3n9a6Qd/iLB5bsg7XVo3Ln3yWO
+         EeC3XAAFI2vcSudddAmN61p4vPHAFWaRSyiwCwc57ShrG8Xonp2Iy7/fNXQIl9rkGPwM
+         V5Fl6RZdO9/glKEfFxIXGsTMkH27p6+yWdRtfC9AczfDRUK0UapJP8rkA7rEK14Vk0Yl
+         XUZQ==
+X-Gm-Message-State: AOJu0YyTJX2v60J7h8z+KIp2owyaxjJ74dKFZWARpEfisVhflHicZ2SH
+	tiobzhSiyf0JRnsBl72qhCW7V/OYhA/nVc5xsc/ZgiJR37kwv+cpWEhT19cP5kBvJe40LfRRg0s
+	Yaqc=
+X-Google-Smtp-Source: AGHT+IGfcTXFdpNRj7O+g8JFWE4wg32EG1JY9VNUITgF3zpAtMYSf6QoI8qu+3SgYlVL0bHX53DAbQ==
+X-Received: by 2002:a17:90b:3104:b0:2c8:e8ed:8a33 with SMTP id 98e67ed59e1d1-2cf2612d0bbmr12646309a91.4.1722362872426;
+        Tue, 30 Jul 2024 11:07:52 -0700 (PDT)
+Received: from mozart.vkv.me ([192.184.165.72])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cf28c56790sm10914941a91.11.2024.07.30.11.07.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 11:07:51 -0700 (PDT)
+From: Calvin Owens <calvin@wbinvd.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-wireless@vger.kernel.org,
+	Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Kalle Valo <kvalo@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Calvin Owens <calvin@wbinvd.org>,
+	David Lin <yu-hao.lin@nxp.com>
+Subject: [PATCH] wifi: mwifiex: Fix two buggy list traversals
+Date: Tue, 30 Jul 2024 11:05:30 -0700
+Message-Id: <ff796ca4b4f5610bc2d4a479b8cafbb595c7b3a1.1722362534.git.calvin@wbinvd.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: vchiq: Avoid mixing bulk_userdata kernel and
- userspace pointer
-To: Umang Jain <umang.jain@ideasonboard.com>, linux-staging@lists.linux.dev
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Yang Li <yang.lee@linux.alibaba.com>, Arnd Bergmann <arnd@arndb.de>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240730170840.1603752-1-umang.jain@ideasonboard.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20240730170840.1603752-1-umang.jain@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:r6F2ajqwTFiDIIcdGiKC7cRFQTFfWOMNiLHRho78BPgzvQHRE66
- 7TTcjjxJT7tzttbXeobj4O6hm+eIwC90RfIp3nbXHtYdVDktbFTmcFJj7Hyrgzrwyq4ULMI
- 1gRt7yqGzmEcu7tYHnM4/jaTAoacxzQt8bMVu16YbPw28cQHFPDL39n0mLfzkPjU8/OXlBj
- OZZVv9ziff4tm/g5iyJ9Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:iv4rs+u/dYY=;yruVDa7Z0GAFOwmpfrVkmPPzvpQ
- JzIekW53Lh9Mzyx04s+Byb/YyLrgYms+976UkwHYdfN0MCRsndciDXvyOvCDn26EZXWdWnJKD
- RtmZmJu9ZqOa2eog7A+dc+rOJ9124EKoJp4n0fx9oY1m03BdD9N/8oALSbM/zpvM3x9v+bBP3
- kcRl3LKvCXFuixxGFMNEF99pDvGssnTtXOyNzNhEGV4SkhuLomkX0HInBqerFyeh+URXPQfhP
- H+fKzl3AYhFHVpV7GDKcsq8eHS2JRWjtRawuAS9kcxDUWti/4Mx2toFKwFA77mS/vFyKn9fiz
- G4OLL3spcYjmtIJBaz+epUxTyHnik9N+o5EZseTUybdOGpUfuHFbBHBrBlrnWs6kib6y4c0ez
- diHF71KkigDpC0RTswzJ3q89D7xwG6AfCmmKE+XXk2VNAiA52ZCnL37GJRDmpSOwaqfRKLT4G
- iItrxu6H4P4a/8RfeWSafosVT7jPU8Zsv8a5lINzYKUW6h1UHtFn/pIQ/NnbSlAEC1thdDfIZ
- lcLXFXyDn71GyUc1fzYglhWvqXiKYR2NAKF4fV3WAmeBbFmEaSgU8ndvxVer7dV1ZWx/YM2o6
- sLpMDjwNMdpKSCjUx4u+hMC2ncPDdCxh2P3cjpkbq2ADx/Clf9sXTsieTDxrvyBpVWv7YnAaV
- UmLsNUYKjxk9Cmyn8T4X82rtWXp59doUKE8SYnW41ijSeN0J9i/spgAzmDCAQ8NUrJVMuLGh8
- 2F6h44yWTszTIB0QAkfT/pdEafnlDpxojr8XHLg6ya+l97wS6a5PADTakBsRcCvFk3896tOeA
- ykJREuvEzk2DFdfvP56o9VUQ==
+Content-Transfer-Encoding: 8bit
 
-Hi Umang,
+Both of these list traversals use list_for_each_entry_safe(), yet drop
+the lock protecting the list during the traversal.
 
-Am 30.07.24 um 19:08 schrieb Umang Jain:
-> In vchiq_dev.c, there are two places where the __user bulk_userdata
-> pointer to set to a kernel-space pointer which then gives relevant
-> Sparse warnings as below:
->
-> vchiq_dev.c:328:26: warning: incorrect type in assignment (different add=
-ress spaces)
-> vchiq_dev.c:328:26:    expected void *[assigned] userdata
-> vchiq_dev.c:328:26:    got void [noderef] __user *userdata
-> vchiq_dev.c:543:47: warning: incorrect type in assignment (different add=
-ress spaces)
-> vchiq_dev.c:543:47:    expected void [noderef] __user *[addressable] [as=
-signed] bulk_userdata
-> vchiq_dev.c:543:47:    got void *bulk_userdata
->
-> This is solved by adding additional functional argument to track the
-> userspace bulk_userdata separately and passing it accordingly to
-> completion handlers.
-IMO this patch fixes the issue for spare, but don't address the
-confusing member naming for humans. It's not clear that "userdata" is a
-kernel pointer and "uuserdata" is a pointer to userspace. It would be
-nice to avoid the word "user" for kernel pointer in this case.
+Because the _safe() iterator stores a pointer to the next list node
+locally so the current node can be deleted, dropping the lock this way
+means the next "cached" list_head might be freed by another caller,
+leading the iterator to dereference pointers in freed memory after
+reacquiring the lock.
 
-Thanks
+Fix by moving to-be-deleted objects to an on-stack list before actually
+deleting them, so the lock can be held for the entire traversal.
+
+This is a bit ugly, because mwifiex_del_rx_reorder_entry() will still
+take the rx_reorder_tbl_lock to delete the item from the two on-stack
+lists introduced in this patch. But that is just ugly, not wrong, and
+the function has other callers... making the locking conditional seems
+strictly uglier.
+
+I discovered this bug while studying the new "nxpwifi" driver, which was
+sent to the mailing list about a month ago:
+
+https://lore.kernel.org/lkml/20240621075208.513497-1-yu-hao.lin@nxp.com/
+
+...but it turns out the new 11n_rxreorder.c in nxpwifi is essentially
+exactly identical to mwifiex, save for s/mwifiex/nxpwifi/, so I wanted
+to pass along a bugfix for the original driver as well.
+
+I only have an IW612, so this patch was only tested on "nxpwifi".
+
+Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+---
+ .../wireless/marvell/mwifiex/11n_rxreorder.c  | 26 +++++++++----------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/net/wireless/marvell/mwifiex/11n_rxreorder.c b/drivers/net/wireless/marvell/mwifiex/11n_rxreorder.c
+index 10690e82358b..fbaecfd32429 100644
+--- a/drivers/net/wireless/marvell/mwifiex/11n_rxreorder.c
++++ b/drivers/net/wireless/marvell/mwifiex/11n_rxreorder.c
+@@ -249,20 +249,20 @@ mwifiex_11n_get_rx_reorder_tbl(struct mwifiex_private *priv, int tid, u8 *ta)
+ void mwifiex_11n_del_rx_reorder_tbl_by_ta(struct mwifiex_private *priv, u8 *ta)
+ {
+ 	struct mwifiex_rx_reorder_tbl *tbl, *tmp;
++	LIST_HEAD(tmplist);
+ 
+ 	if (!ta)
+ 		return;
+ 
+ 	spin_lock_bh(&priv->rx_reorder_tbl_lock);
+-	list_for_each_entry_safe(tbl, tmp, &priv->rx_reorder_tbl_ptr, list) {
+-		if (!memcmp(tbl->ta, ta, ETH_ALEN)) {
+-			spin_unlock_bh(&priv->rx_reorder_tbl_lock);
+-			mwifiex_del_rx_reorder_entry(priv, tbl);
+-			spin_lock_bh(&priv->rx_reorder_tbl_lock);
+-		}
+-	}
++	list_for_each_entry_safe(tbl, tmp, &priv->rx_reorder_tbl_ptr, list)
++		if (!memcmp(tbl->ta, ta, ETH_ALEN))
++			list_move_tail(&tbl->list, &tmplist);
+ 	spin_unlock_bh(&priv->rx_reorder_tbl_lock);
+ 
++	list_for_each_entry_safe(tbl, tmp, &tmplist, list)
++		mwifiex_del_rx_reorder_entry(priv, tbl);
++
+ 	return;
+ }
+ 
+@@ -785,17 +785,15 @@ void mwifiex_11n_ba_stream_timeout(struct mwifiex_private *priv,
+ void mwifiex_11n_cleanup_reorder_tbl(struct mwifiex_private *priv)
+ {
+ 	struct mwifiex_rx_reorder_tbl *del_tbl_ptr, *tmp_node;
++	LIST_HEAD(tmplist);
+ 
+ 	spin_lock_bh(&priv->rx_reorder_tbl_lock);
+-	list_for_each_entry_safe(del_tbl_ptr, tmp_node,
+-				 &priv->rx_reorder_tbl_ptr, list) {
+-		spin_unlock_bh(&priv->rx_reorder_tbl_lock);
+-		mwifiex_del_rx_reorder_entry(priv, del_tbl_ptr);
+-		spin_lock_bh(&priv->rx_reorder_tbl_lock);
+-	}
+-	INIT_LIST_HEAD(&priv->rx_reorder_tbl_ptr);
++	list_splice_tail_init(&priv->rx_reorder_tbl_ptr, &tmplist);
+ 	spin_unlock_bh(&priv->rx_reorder_tbl_lock);
+ 
++	list_for_each_entry_safe(del_tbl_ptr, tmp_node, &tmplist, list)
++		mwifiex_del_rx_reorder_entry(priv, del_tbl_ptr);
++
+ 	mwifiex_reset_11n_rx_seq_num(priv);
+ }
+ 
+-- 
+2.39.2
+
 
