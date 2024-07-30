@@ -1,133 +1,152 @@
-Return-Path: <linux-kernel+bounces-268164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9071994210C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:50:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D055942111
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4894D282383
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:50:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90C771C235D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6525C18CBED;
-	Tue, 30 Jul 2024 19:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C117D18CBE6;
+	Tue, 30 Jul 2024 19:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kEu/mmju"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="j71S+jl8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661E813AD13;
-	Tue, 30 Jul 2024 19:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD1D189904;
+	Tue, 30 Jul 2024 19:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722369000; cv=none; b=GRuKhwj4f3MoqaO3qlWqzOhQgEGv9Rp1MwU8GJRYgj3BwnfPACDq2un2YcdgBUiWSDiwqttptx1SFNI6qq0FR6NG8lL7tqj/i4lHK+3e6hlLPH4FJvb2VW+0Oxi4gCByn8e/eQG7HDVvX7pR6REWIIJWm+VShfYVlHnOZMDNb7Q=
+	t=1722369043; cv=none; b=ZRcyclvAwQQ9EyVKKvCoCkAXIVejauvr5NNgBbG6C2IhCP+x5GI5EpRRRbd0Bl+dumwJYwhELngPQap7Wr6WB7AyOd1hxSsbestn9KuCA9nt/mBpQ9/j68A8Scs872GsOD9H4XwMOBkxX8pz9OQXWbK6o2rOj9nH9SNM2IOBkvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722369000; c=relaxed/simple;
-	bh=uW/cUr2MvcluZ2/oUSH96R6Ae5h6L0EBkLyM6UGBWlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fVr4UoTXjywHzIx9YtQX8pmrriIxH+CQM6N3dtt8Zt15+mGYkUeKKJVwEIHouwLKQLTPp5mmfCM5LxYr42v8G8p1N0YOexdk828azU2QVt/ALzLF+TUF5B0D74vHGi8M2z5cl/Ec6UQp5g7bAGYilYo6envBqA0/6b4l4dg4XMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kEu/mmju; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70d1c655141so3546295b3a.1;
-        Tue, 30 Jul 2024 12:49:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722368999; x=1722973799; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1XqsIBuR2d65pkoTcMib3SHObnFtV2VvkWqAzRn++NI=;
-        b=kEu/mmjuNmqqFsS7gEV0gyc4LQT5ZUE+h5EMMbUWvwOXO8PGKdaSioS5vK60Clksjd
-         Nb4FYqZ8YwxjQqcn7GuWS5QJnJIJdJuI+dXgdGS5SG6NBhVrnbf9vVAbgKYZYtK7GuQp
-         CICudDn552u/OYp4pOL6u4Dqrr1PNI6gxb584AkDN/wzxXAYvBW/BFGOAO5iwRsaAI46
-         a5xRDHkQdZ7Ei9Vz46UltZOTt16atUF2OSohAw2/7GGm7I0fuQCvsg/984evXVg0p7sH
-         wdQyjh0iDSar43MH/DatSxPpBbt56Caam1BToiW6XDfgzxrkSh8mpf2Bfv46kP4P4ZaO
-         9QaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722368999; x=1722973799;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1XqsIBuR2d65pkoTcMib3SHObnFtV2VvkWqAzRn++NI=;
-        b=EypBmviemB3VHDWpEfYLB2JeH587IHtVJHZBFbzMHUwECAk6RUGr7KRYwYP494vOEr
-         G18r35yGknfMo9sBVhsw0nl/htI82Cn46hQUWOUJtddi7NsXwKj5UILYbz58nGfW/zno
-         7un5GA31la4XU/cTTkutNK8d/gq3GyksaOKmCISTMchaZE98Qe9XgzGWmhEYu4krqRDk
-         Myf2R9OQIPYspJoWVkjRe+E7W8WQINjv3sKbXN2zwrXfZqmB2s6EgjxZz+8u43ZAnA4k
-         lcpHHd4Yz45JZ81rWas8MzP3UdjmeG/o3RuRZKHNkNZbUouVd8BoZ8gQpTRMVRXnR+iI
-         +/WA==
-X-Forwarded-Encrypted: i=1; AJvYcCVygkGjaPOT9rJnbIB5wRAR+HyQg2nuFnk1/dOqwGV7sQeq1CxNPAblSvnjk52Q8lUKhuKzgsY7GqF8aM8sozoSw4KR89QOQqDcqRpKOxhAjL4Fq/oOvmnR0KQp+Z5VXA2Zms0J
-X-Gm-Message-State: AOJu0Yw+uwaD/jB+UMIa99QXAiVWn195GusP22sUwAZnoVcdG+3kSD8W
-	8QXlMbijAjkchcXo7UVTxhIgskX6nyCd1TXBJaLoyUE8wfzbv4zq
-X-Google-Smtp-Source: AGHT+IHMofISf8ufHbwXnDvSjNtSEFNZzRptii26XJJ1D92mEtUxcrKRXGJT3wiXryOSkzNe2+u7yQ==
-X-Received: by 2002:a05:6a20:2455:b0:1c2:8d16:c681 with SMTP id adf61e73a8af0-1c4a13a47d7mr10418021637.34.1722368998718;
-        Tue, 30 Jul 2024 12:49:58 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ee0190sm105934855ad.160.2024.07.30.12.49.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 12:49:58 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 30 Jul 2024 09:49:57 -1000
-From: "tj@kernel.org" <tj@kernel.org>
-To: Boy Wu =?utf-8?B?KOWQs+WLg+iqvCk=?= <Boy.Wu@mediatek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"boris@bur.io" <boris@bur.io>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-	"axboe@kernel.dk" <axboe@kernel.dk>,
-	Iverlin Wang =?utf-8?B?KOeOi+iLs+mclik=?= <Iverlin.Wang@mediatek.com>,
-	"josef@toxicpanda.com" <josef@toxicpanda.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v4] blk-cgroup: Replace u64 sync with spinlock for iostat
-Message-ID: <ZqlD5WXx39E8xVnA@slm.duckdns.org>
-References: <20240718084112.12202-1-boy.wu@mediatek.com>
- <ZpmF8HJsuefjC7Xr@slm.duckdns.org>
- <00c595a16b4e96ae56973ac2ce586f6ad736059f.camel@mediatek.com>
- <ZpqjCVxSAV-Q7Yhy@slm.duckdns.org>
- <e944e61fb64e5094aa6a0afef652359734619ba5.camel@mediatek.com>
+	s=arc-20240116; t=1722369043; c=relaxed/simple;
+	bh=ic/Ft85fbFZZFwRHh96XBUCi50DE5yzS8pnjSamgQQk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Glxc0AMG25zOFQ4ZR3v5m/KdfrM2EqK02DtpcHsamRNBFeWc0YWq7H5w5yta5XOsqZcEBLZlj/4g0KPwMqXBbPllL7R/qdR0ep1OwRrip1QueMYhm8Uj8l+7DfcwrzXR22On+qr+F/znZaYs9NOnkUwTndabXmrHDk7kKRenvno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=j71S+jl8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UFt83T011943;
+	Tue, 30 Jul 2024 19:50:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+r2zziTW3sg3RGdlP2efvq
+	m43Tppbw/bVKRMKJ3QqRQ=; b=j71S+jl8RS2c18fT4Q2PtMn9gOygA14bo+h0Z9
+	gvWkUysj8tipdDTMWTPlUC6vk02zZ6cBbg84303YCDrA1++M9i35f6DN32oOlRFJ
+	d/vuaBzYrHT9Sri+TfCs21DleoDjC/5gsr80bUKmtP8MjVziNdqUqTzAdA7+yPve
+	oVDElH9Q5SfM/mLRxvWcLMbc4FpMdyFJR4XxKcCobp7jwHY31HF4BRPwURajZG5a
+	ueRtvglybS4JkNNocbCit3AHO4dN2QLMm+EmHX7WG5cw2sXGkgYPVLcrgiWUedNe
+	tx42eT6BEVfqUkCwJjJxEoZi22Va2+4xeDb7+cpNZRqrm/8A==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mryu0v6y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 19:50:29 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46UJoLrR018492
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 19:50:21 GMT
+Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 30 Jul 2024 12:50:20 -0700
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        Bjorn Andersson
+	<quic_bjorande@quicinc.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+CC: <dri-devel@lists.freedesktop.org>, <quic_jesszhan@quicinc.com>,
+        <swboyd@chromium.org>, <dianders@chromium.org>, <andersson@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] drm/msm/dp: enable widebus on all relevant chipsets
+Date: Tue, 30 Jul 2024 12:50:11 -0700
+Message-ID: <20240730195012.2595980-1-quic_abhinavk@quicinc.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e944e61fb64e5094aa6a0afef652359734619ba5.camel@mediatek.com>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 2Q1tANMX2mldGRJY--Fq_LC2ZxJ3DW5u
+X-Proofpoint-GUID: 2Q1tANMX2mldGRJY--Fq_LC2ZxJ3DW5u
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-30_15,2024-07-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 suspectscore=0 bulkscore=0 adultscore=0 spamscore=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=999
+ mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407300136
 
-Hello, Boy.
+Hardware document indicates that widebus is recommended on DP on all
+MDSS chipsets starting version 5.x.x and above.
 
-On Fri, Jul 26, 2024 at 03:43:27AM +0000, Boy Wu (吳勃誼) wrote:
-...
-> The use of a spinlock with u64 sync is suggested in
-> include/linux/u64_stats_sync.h:33.
-> 
->  * Usage :
->  *
->  * Stats producer (writer) should use following template granted it
-> already got
->  * an exclusive access to counters (a lock is already taken, or per cpu
->  * data is used [in a non preemptable context])
->  *
->  *   spin_lock_bh(...) or other synchronization to get exclusive access
->  *   ...
->  *   u64_stats_update_begin(&stats->syncp);
->  *   u64_stats_add(&stats->bytes64, len); // non atomic operation
->  *   u64_stats_inc(&stats->packets64);    // non atomic operation
->  *   u64_stats_update_end(&stats->syncp);
-> 
-> Is this a incorrect statment?
+Follow the guideline and mark widebus support on all relevant
+chipsets for DP.
 
-That's not incorrect and it'd make sense if we really want to use u64_sync -
-e.g. the reader is hot path. Here, just a spinlock would be simpler and do
-fine.
+Fixes: 766f705204a0 ("drm/msm/dp: Remove now unused connector_type from desc")
+Fixes: 1b2d98bdd7b7 ("drm/msm/dp: Add DisplayPort controller for SM8650")
+Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/gpu/drm/msm/dp/dp_display.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Thanks.
-
+diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+index aead7d27305d..bbba016ebff7 100644
+--- a/drivers/gpu/drm/msm/dp/dp_display.c
++++ b/drivers/gpu/drm/msm/dp/dp_display.c
+@@ -119,7 +119,7 @@ struct msm_dp_desc {
+ };
+ 
+ static const struct msm_dp_desc sc7180_dp_descs[] = {
+-	{ .io_start = 0x0ae90000, .id = MSM_DP_CONTROLLER_0 },
++	{ .io_start = 0x0ae90000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
+ 	{}
+ };
+ 
+@@ -130,9 +130,9 @@ static const struct msm_dp_desc sc7280_dp_descs[] = {
+ };
+ 
+ static const struct msm_dp_desc sc8180x_dp_descs[] = {
+-	{ .io_start = 0x0ae90000, .id = MSM_DP_CONTROLLER_0 },
+-	{ .io_start = 0x0ae98000, .id = MSM_DP_CONTROLLER_1 },
+-	{ .io_start = 0x0ae9a000, .id = MSM_DP_CONTROLLER_2 },
++	{ .io_start = 0x0ae90000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
++	{ .io_start = 0x0ae98000, .id = MSM_DP_CONTROLLER_1, .wide_bus_supported = true },
++	{ .io_start = 0x0ae9a000, .id = MSM_DP_CONTROLLER_2, .wide_bus_supported = true },
+ 	{}
+ };
+ 
+@@ -149,7 +149,7 @@ static const struct msm_dp_desc sc8280xp_dp_descs[] = {
+ };
+ 
+ static const struct msm_dp_desc sm8650_dp_descs[] = {
+-	{ .io_start = 0x0af54000, .id = MSM_DP_CONTROLLER_0 },
++	{ .io_start = 0x0af54000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
+ 	{}
+ };
+ 
 -- 
-tejun
+2.44.0
+
 
