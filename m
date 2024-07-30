@@ -1,187 +1,90 @@
-Return-Path: <linux-kernel+bounces-267849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC86941742
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:09:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DE3941750
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94BA01F23291
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:09:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D72481C2342D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221AE18C906;
-	Tue, 30 Jul 2024 16:07:23 +0000 (UTC)
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58562189517;
+	Tue, 30 Jul 2024 16:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hgzOEf/O"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC5C8BE8;
-	Tue, 30 Jul 2024 16:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA50818800D;
+	Tue, 30 Jul 2024 16:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722355642; cv=none; b=ook4JrX06MZwqaZ1+U+qMlFABh01qMwteDvuPNANeS2XVsQgdKKGZwb6f024QFtitL26/HERJzupqeDnuJccMlSS3R7ZMUhO/CuB+0/gBqXVAORMLr1O6La+vLixjWMgjoz19ORwdacuAUB5pERbco2cdhNGYHS6AHiVWkQtc7A=
+	t=1722355681; cv=none; b=gLLxm+jO09AYnfXAcXMY7XQGyRtt4obdY5xASoCk0EjmvG2tGakBEDpvBGBhJ9gSIFvRElSPO7QbTZiMCqIy6API1lqCqffKAfb/Rv0dSPIXKwdmey7ti1MGDVYi5iKPEalASC/tnhSxU+UHsvdElq4R24TzH/pJnBXpqyiGQvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722355642; c=relaxed/simple;
-	bh=dhqY0KClrOHz9Bgs+eQ2QG+9Gbo3M6x3sJdvXwUVOr4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FxXU1EvCKqOYhlNcA3YZPtgTtFrDmEJEqxvYhdcF0YkRjmJMJ2M6LheIPb7WFX+UY38+akkouBERae4sp1UxZUn4fzJkdN2mSAluRQ/4r06AUJAOLABQ8hdeU/9aJIyRhDfWg7lPxdxwlUbMBV1Hm4b/OThOYWZ9FuvbITuFdG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70eaf5874ddso3392786b3a.3;
-        Tue, 30 Jul 2024 09:07:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722355640; x=1722960440;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zY3A3bjMwl/xakhQKOWczIT8h4RUzVdcokU/Gw/k280=;
-        b=okQZqLJ3o0XIlFfhdCKD2BvDWQnHepkH9/PVJq8his+2xpi1D8mXaWdVIcctFAiqEN
-         5Z3JgsN8ZUMrL+G710DlnF5vZpwGCkgj6jaWn79RS4ZIRcfxC53DWLVNnLb/a57aG1KS
-         PanQgo1YNM7PRumzfcOqLrtlhnFqRW4ZspiAYJKc/9ijCR6a4ChDrCiFbDEZ9JXQchgD
-         IVbqy2vv2Vx2MLtEqI4muPVQ9H8kbjN7Z5yF0Slnq/bZchkIXFArGwMN+4hzec8j3xbx
-         L6YSpT5549OaOt/opYf2RMptw6N1qURVc+lwnj4Z3dE6PPpGhXQiDpABotSOTBCZi93x
-         EhNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnZ1ZGVtctM5eUKH+mKABFP23fFQpjC11OMyUq+lrV+n2SC1JOHNdNKYc/an6GISLNWsrMmqHxgWUidoC14tQixW1YecFLYZfmhAOF8jdUhWLvwYxw5a7mX/Bf5QViQhfrfINocaAkbUoF72Fo7g==
-X-Gm-Message-State: AOJu0Yw2yiZ/yHhM+K9WC+POKXHFWYnjEzLqiAQiUA0SPBE7BexyMG/o
-	yzH4BGmJavwuxEHFqUVkSzQhFvLOMPmVs+XGh5zxftuwJpkCp1K1wBqVJneMk6eS/vmm25xO4KQ
-	nDy2GzUP4Y6PIME2YoqQes1v/DeR3gw==
-X-Google-Smtp-Source: AGHT+IFPOpPr/lLGepmjmsk410a7eDGyhM24Ao+ihf6Y/9ftMuf69cTw69sQa2yrWT6jh3ZJIl69fWenHJzPaVWRY1s=
-X-Received: by 2002:a17:90a:cf83:b0:2c9:8380:e97b with SMTP id
- 98e67ed59e1d1-2cf7e1b861emr10029427a91.4.1722355640335; Tue, 30 Jul 2024
- 09:07:20 -0700 (PDT)
+	s=arc-20240116; t=1722355681; c=relaxed/simple;
+	bh=2VoCCEGCWH1okrC4/aYJVH1VOXJFu16fNG1bvUcPhDU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=ZG6xwnIaXNtIbLKjWAzFep8uAQi4HWnwRqWPUM6LMav0n61boux6c7w/bUiZY1BKcMXza+XTm6pyhpo96hk80ZfeWy8H48DvYvBRe5y6BKznIXWirrK7uRkZi8J1VYUerMoEkfLwo6AMXBnXX5cL0q1y45hwCQ/uFqxR+o9dvKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hgzOEf/O; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9D4682000B;
+	Tue, 30 Jul 2024 16:07:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1722355678;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2VoCCEGCWH1okrC4/aYJVH1VOXJFu16fNG1bvUcPhDU=;
+	b=hgzOEf/OuSaHGErpC2JGzfT2mOp0qWfS/+MIzexGit9bXgf2ramVkGwo4fQj+/B/CjFefE
+	0NWrfFAcCV+kJgH+e0ePtsFwpsQDFP8VZ9EHfgKYprSS/dv7rfahxyXlSaKOZVXzWAA/js
+	/GZ+8AITkIbtB3FRxEEhOhKQ3DxvXGwh10eEyxmhe1Pobp+Pz6BpVrgLxEdlRhjIcwkWxS
+	ugHNboEIn1lsmkc8ETYHj5Sp1Hmj4Uv7bzrU5sR7A89H+tlF5ZxYE+X1SRhY241b3Ob/7W
+	ZYPV/DgEkaukVpdnoAuTAAvW0EBI44FDm4cPyU4GQoGS1RB4whrGv7gL+kAcGQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240729004127.238611-1-namhyung@kernel.org> <20240729004127.238611-3-namhyung@kernel.org>
- <CAP-5=fVt_k=MzGUhMQzS7YRXQ7xzKEFa9+E4kV0D4BPHCNabGw@mail.gmail.com>
-In-Reply-To: <CAP-5=fVt_k=MzGUhMQzS7YRXQ7xzKEFa9+E4kV0D4BPHCNabGw@mail.gmail.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Tue, 30 Jul 2024 09:07:08 -0700
-Message-ID: <CAM9d7chf5LDQPbNuCwgO-3U_onvqPtj=Oqhu4ZBB6q_UtQANow@mail.gmail.com>
-Subject: Re: [PATCH 2/4] perf ftrace: Factor out check_ftrace_capable()
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
-	Steven Rostedt <rostedt@goodmis.org>, Changbin Du <changbin.du@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 30 Jul 2024 18:07:57 +0200
+Message-Id: <D3304R02WPLT.VCW0EQMVM52N@bootlin.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH RESEND v2 0/2] Add Mobileye EyeQ reset support
+Cc: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vladimir
+ Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Philipp Zabel"
+ <p.zabel@pengutronix.de>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
+X-Mailer: aerc 0.18.1-0-gaa8319bc591f
+References: <20240730-mbly-reset-v2-0-00b870a6a2ff@bootlin.com>
+In-Reply-To: <20240730-mbly-reset-v2-0-00b870a6a2ff@bootlin.com>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-Hi Ian,
+Hello all,
 
-On Mon, Jul 29, 2024 at 11:23=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
-ote:
->
-> On Sun, Jul 28, 2024 at 5:41=E2=80=AFPM Namhyung Kim <namhyung@kernel.org=
-> wrote:
-> >
-> > The check is a common part of the ftrace commands, let's move it out.
-> >
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
->
-> The whole ifdefs and perf_cap__capable seemed wrong, not least as we'd
-> like the error message to be accurate not just when libcap is present,
-> so I sent out;
-> https://lore.kernel.org/lkml/20240729181931.2870851-1-irogers@google.com/
-> which I think can supersede this.
+On Tue Jul 30, 2024 at 6:06 PM CEST, Th=C3=A9o Lebrun wrote:
+> This is a new iteration on the Mobileye system-controller series. It
+> used to be sent as a single series [0], but has been split in the
+> previous revision (see [1], [2], [3], [4]) to faciliate merging.
 
-Thanks for the change!  I'll reply to the patch.
-Namhyung
+This is a friendly RESEND of the Mobileye system-controller reset
+series. It rebases with no issue on v6.11-rc1, and works as expected on
+real hardware.
 
->
-> > ---
-> >  tools/perf/builtin-ftrace.c | 44 +++++++++++++++++--------------------
-> >  1 file changed, 20 insertions(+), 24 deletions(-)
-> >
-> > diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
-> > index 33c52ebda2fd..978608ecd89c 100644
-> > --- a/tools/perf/builtin-ftrace.c
-> > +++ b/tools/perf/builtin-ftrace.c
-> > @@ -59,6 +59,22 @@ static void ftrace__workload_exec_failed_signal(int =
-signo __maybe_unused,
-> >         done =3D true;
-> >  }
-> >
-> > +static int check_ftrace_capable(void)
-> > +{
-> > +       if (!(perf_cap__capable(CAP_PERFMON) ||
-> > +             perf_cap__capable(CAP_SYS_ADMIN))) {
-> > +               pr_err("ftrace only works for %s!\n",
-> > +#ifdef HAVE_LIBCAP_SUPPORT
-> > +               "users with the CAP_PERFMON or CAP_SYS_ADMIN capability=
-"
-> > +#else
-> > +               "root"
-> > +#endif
-> > +               );
-> > +               return -1;
-> > +       }
-> > +       return 0;
-> > +}
-> > +
-> >  static int __write_tracing_file(const char *name, const char *val, boo=
-l append)
-> >  {
-> >         char *file;
-> > @@ -586,18 +602,6 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace=
-)
-> >                 .events =3D POLLIN,
-> >         };
-> >
-> > -       if (!(perf_cap__capable(CAP_PERFMON) ||
-> > -             perf_cap__capable(CAP_SYS_ADMIN))) {
-> > -               pr_err("ftrace only works for %s!\n",
-> > -#ifdef HAVE_LIBCAP_SUPPORT
-> > -               "users with the CAP_PERFMON or CAP_SYS_ADMIN capability=
-"
-> > -#else
-> > -               "root"
-> > -#endif
-> > -               );
-> > -               return -1;
-> > -       }
-> > -
-> >         select_tracer(ftrace);
-> >
-> >         if (reset_tracing_files(ftrace) < 0) {
-> > @@ -902,18 +906,6 @@ static int __cmd_latency(struct perf_ftrace *ftrac=
-e)
-> >         };
-> >         int buckets[NUM_BUCKET] =3D { };
-> >
-> > -       if (!(perf_cap__capable(CAP_PERFMON) ||
-> > -             perf_cap__capable(CAP_SYS_ADMIN))) {
-> > -               pr_err("ftrace only works for %s!\n",
-> > -#ifdef HAVE_LIBCAP_SUPPORT
-> > -               "users with the CAP_PERFMON or CAP_SYS_ADMIN capability=
-"
-> > -#else
-> > -               "root"
-> > -#endif
-> > -               );
-> > -               return -1;
-> > -       }
-> > -
-> >         trace_fd =3D prepare_func_latency(ftrace);
-> >         if (trace_fd < 0)
-> >                 goto out;
-> > @@ -1220,6 +1212,10 @@ int cmd_ftrace(int argc, const char **argv)
-> >         signal(SIGCHLD, sig_handler);
-> >         signal(SIGPIPE, sig_handler);
-> >
-> > +       ret =3D check_ftrace_capable();
-> > +       if (ret < 0)
-> > +               return -1;
-> > +
-> >         ret =3D perf_config(perf_ftrace_config, &ftrace);
-> >         if (ret < 0)
-> >                 return -1;
-> > --
-> > 2.46.0.rc1.232.g9752f9e123-goog
-> >
+Thanks,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
