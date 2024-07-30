@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-268221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD0D9421E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:50:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8DF59421DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 004631F2535C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:50:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ACD81F252B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD1018E051;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DFC15FCED;
 	Tue, 30 Jul 2024 20:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MX4//iqT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ESIC2VSg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7775018562A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7779E187861;
 	Tue, 30 Jul 2024 20:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722372633; cv=none; b=Bes5B4zGO6xUHFq/K8+0wHuHSVow4N0FyVbtXoMu1UoRxHmeX8Kt7Boo7E4kqqrgCoP/XZFsuOQv4JAwuRLKy7qtBcZDroUysajXcGp7ZdHzZ7oYVltYdxHv5TrtcWIX8hHkweJPi0mV2DbVUpw0Y0jZKrAnr0xUNfKmHA0Uqb8=
+	t=1722372633; cv=none; b=itRTAxnQcYyKaRjzlTB5WAmLCDztOfnwHTlvXJWlt/LqkijyYhZiaEvOL1yvlFQa2wfBB49XXvcpw6vJZGe5s5kjy/XRddHhrhD/tf+EWVmQ2jjaOUlRmH1Pmy86RPhOYL6QqEi4beGiDR4IKVgReJq1FPfxI0kKAP4nwwswzKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722372633; c=relaxed/simple;
-	bh=b2IxN54gwI0ZZihIlpMveC0fYHrEctJnVgLs2cEaq2U=;
+	bh=MgCVRhA1euoE+9YhaIxZKyIRf/DwiRAkhRG0WzHNhEg=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=OtLDK6HoIaly3qT4Hcc6bUZZCQVpoNPmlV0E/FZbmNAfH8GijRtq6eg9JFCnfLjXlSURM1KrjRepZT+KP5/uTzLlHXw6K2/KkDWwNHJ2P0lGdkNRt7Hm6CYvi5g9vlUt4qjIYarL66KvAydtt3tA8UiLhLSmJVLSUfv+Hi2ykJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MX4//iqT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EB2E1C4AF0E;
-	Tue, 30 Jul 2024 20:50:32 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Y0BGsOYdc51FGZxDlTrtbuWg2AkL21ORJBpSSS9gjXm7iAGi4gdwynus2D18HlhLm9W1S1VShCE9Kr9waJY1L5KsGP0uO9WwHTl24oh6DU/llo0iVCCBk5EjpMh0F9UbDk7ArZUUiEc48z58B+OgKlLDCcDiW+yavqZbifcApmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ESIC2VSg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0B88AC4AF11;
+	Tue, 30 Jul 2024 20:50:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722372633;
-	bh=b2IxN54gwI0ZZihIlpMveC0fYHrEctJnVgLs2cEaq2U=;
+	bh=MgCVRhA1euoE+9YhaIxZKyIRf/DwiRAkhRG0WzHNhEg=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=MX4//iqTNi+XloB0AZR/v1GPsYMDLyK2BD4RHGTwD3TCKqyTePIwnnvre9aTnKO/R
-	 FiyiR5xUxrs5sd/I+WwEKeZoykVpsRqmsX58HFOKejcjK8zg7F0n81eWAwUkEm3P5N
-	 V4UcAnvK1prjW5FD9ZidvXVYNwYK+oGmPD3t3dImh8vbTSmIqa0dPXtllKupazJKU3
-	 9nRv/4bSU5TTfSjILJycfqIewRC4D3gYy59SiZ/j15eiO+DQEYgDqm3daBT/Vq3f1S
-	 lp2dpjHDtzD7vybr+pEC5XayCmqqavvMf9bzQGk/+zFy3HA7FP6tGzcoTVTjsGinB0
-	 BDgNHNyLdN2ig==
+	b=ESIC2VSg6TVKifsfwvGrLTAsJVYhNgh2de8nxhFueEktUtfCcMvQF1mIgigL7ZJyl
+	 tKI3nf27XW0mogHxEULS+aSdCzzeRyxFU2SHdnVl76IPZJgbjPkC1cZU/6gq43sPba
+	 9BEgkMzgN83XJ+pvWucCqbCDmuO5j3Vd+oQ498lb21iNUgnHK8oltmHNIaO2P/CF2L
+	 yARaCnq1fG768CavgLQGLX4R1p2IsUoU9ENqU1nc6wojBGDko+Ktkw+k1xHChk/dbb
+	 Xo7egu6vnxsywT7CTyRpdVYNvnBpQKTlzBod/UBM/dcTE6apvD04d9S4yIxqO0Bz/7
+	 1WJsQ/GyrzSiQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D762DC6E398;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E9297C43619;
 	Tue, 30 Jul 2024 20:50:32 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,37 +51,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v2] bpf: kprobe: remove unused declaring of
- bpf_kprobe_override
+Subject: Re: [PATCH v4] tools/bpf:Fix the wrong format specifier
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172237263287.10299.9053781144488747339.git-patchwork-notify@kernel.org>
+ <172237263295.10299.13717406365394258197.git-patchwork-notify@kernel.org>
 Date: Tue, 30 Jul 2024 20:50:32 +0000
-References: <20240730053733.885785-1-dongml2@chinatelecom.cn>
-In-Reply-To: <20240730053733.885785-1-dongml2@chinatelecom.cn>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: mhiramat@kernel.org, rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, dongml2@chinatelecom.cn
+References: <20240724111120.11625-1-zhujun2@cmss.chinamobile.com>
+In-Reply-To: <20240724111120.11625-1-zhujun2@cmss.chinamobile.com>
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>
+Cc: qmo@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to bpf/bpf-next.git (master)
 by Andrii Nakryiko <andrii@kernel.org>:
 
-On Tue, 30 Jul 2024 13:37:33 +0800 you wrote:
-> After the commit 66665ad2f102 ("tracing/kprobe: bpf: Compare instruction
-> pointer with original one"), "bpf_kprobe_override" is not used anywhere
-> anymore, and we can remove it now.
+On Wed, 24 Jul 2024 04:11:20 -0700 you wrote:
+> The format specifier of "unsigned int" in printf() should be "%u", not
+> "%d".
 > 
-> Fixes: 66665ad2f102 ("tracing/kprobe: bpf: Compare instruction pointer with original one")
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+> ---
+> Changes:
+> v2:
+> modify commit info
+> v3:
+> fix compile warning
+> v4:
+> Thanks! But unsigned seems relevant here, and it doesn't make much sense
+> to change the type of the int just because we don't have the right
+> specifier in the printf(), does it? Sorry, I should have been more
+> explicit: the warning on v1 and v2 can be addressed by simply removing
+> the "space flag" from the format string, in other words:
 > 
 > [...]
 
 Here is the summary with links:
-  - [bpf-next,v2] bpf: kprobe: remove unused declaring of bpf_kprobe_override
-    https://git.kernel.org/bpf/bpf-next/c/1cbe8143fd2f
+  - [v4] tools/bpf:Fix the wrong format specifier
+    https://git.kernel.org/bpf/bpf-next/c/781f0bbbdade
 
 You are awesome, thank you!
 -- 
