@@ -1,135 +1,108 @@
-Return-Path: <linux-kernel+bounces-266892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2792794091A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:10:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40CEF94091C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 592561C2142C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:10:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01FF12844CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 07:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7BD18FC88;
-	Tue, 30 Jul 2024 07:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1584118EFF3;
+	Tue, 30 Jul 2024 07:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GwKzE5PS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="fnk/43Go"
+Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5451684AE;
-	Tue, 30 Jul 2024 07:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF9C150981
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 07:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722323419; cv=none; b=L+SlJhON2bK4QlJqN2SRvvYgpMAouJhSfr2IkwkYK0VyirBjVRC6gqJQL5OJUwRp5SZ+AO4dFNyOteVyzev+JUmkMHx5v8SYoexCWXsW/2vX58PLHtxKpwNCLWNYBe0RNpH04nove4dXMG59ETdbzqD8Q6itIzrcQAcsrj08W6Y=
+	t=1722323482; cv=none; b=WrdFSLm0Rh0RiizivrmGyOQkJK6sO+/ljGcUBAMqflXP1Zshzzd4s5xKJ2RkTDrF9MSxVIPUHHkxwS6r37a+ONX7yfumOFlg7pjEKVFvZrhcuSunRch77DCZuZ8JTrlhgP5UX5S31wlQP8yjsmizguwJSnqBf9/1hzmy1Babbvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722323419; c=relaxed/simple;
-	bh=GUWz/L+RjN1eK2NlbCl9iO62NjmD7WZ4K1+nUzB/NLM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eyFzp2EtkuAiE+wvYRQtfm+jfVoY4heWO/nVKSMoTXGAkee1valCUYxg0ycw+NfMAJwKdzj0CFGMuj7eNoJEwwFPorGNbT9XcqFUUl9NzkQ7igRFeVnSDj1zk/3jXTjtseZhQiheQBRMsfGkMyifObdBRS+/6pKKVWq4HuFNDjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GwKzE5PS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TNMFgK011935;
-	Tue, 30 Jul 2024 07:10:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=1f6D8j20cHi5d/NqXz9m7T
-	BZoHNULVKP779qPhvQ7Vk=; b=GwKzE5PSEZoF49Fehyc/+bzZefDmGW1dp/0GGX
-	XU0uvt3BMkK4+43IrbXXji2E+BWggZfpmQIeBNhxZXWANbW41lBHRKN2wUhcEevU
-	6cvwjv96+pvGj4YBO9pL8HlAmgh1FE8rb02BG/0fLz1TcgWS3EsVWL+BqXVioGYA
-	RATAoenI1+S5SY/P5L7aPTMer0skrXm4VAnEtJUEg/1boJ1fjXxv/2FPeEiFx5SG
-	eC5jPEAlFA77UqLJ006i4jYRGPhppR7t/hOMG39aFasM6v0upW4OGvZS04h4bnhu
-	n3HMQkD0J91VTrwHtdPlgkNNRHicYqjQDWjWn39ajAGWAEYQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mt68pc8e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 07:10:14 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46U7ADAh002377
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 07:10:13 GMT
-Received: from hu-abhishes-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 30 Jul 2024 00:10:10 -0700
-From: Abhishek Singh <quic_abhishes@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
-CC: Abhishek Singh <quic_abhishes@quicinc.com>, <gregkh@linuxfoundation.org>,
-        <quic_bkumar@quicinc.com>, <linux-kernel@vger.kernel.org>,
-        <quic_ktadakam@quicinc.com>, <quic_chennak@quicinc.com>,
-        <dri-devel@lists.freedesktop.org>
-Subject: [PATCH v1] misc: fastrpc: Trigger a panic using BUG_ON in device release
-Date: Tue, 30 Jul 2024 12:39:45 +0530
-Message-ID: <20240730070945.4174823-1-quic_abhishes@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1722323482; c=relaxed/simple;
+	bh=GEPj04JmoCgXOe4WCmAyy3NgAbiGw36D79b9P5r4TRs=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=mF85GU7OH52MoZmxr0vP3dijMQUzqTQTAFldRT2UPrqHUj74qBljRQR/vHtwuTlYfkE+ZwPaM6Y5/1iYtZF9SN2u8cx1wtoFH4CPDOi5aq2OSukohVIPbSEOiqlyC9LPEpwQRmLm5AMF3jLZZP7cv2wSREyLMoHSHNLAzmfDQSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=fnk/43Go; arc=none smtp.client-ip=203.205.221.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1722323476; bh=hsKrDsbFmiXtekqhMmrRnCYwYxG76SWUBxZQ5Lytsdw=;
+	h=From:To:Cc:Subject:Date;
+	b=fnk/43GonYvpvTb8rHb2R/U6oStODxa4DaVbfqUHUsSEDOY2Wu0r8eP9qwMwvu3B2
+	 4Y0F0f6ujKuyDXHg1PPHO0Xbj9QUx69cgAe1TH6uHhfyOlyy9/7BoCVxVXUVfe9Nl/
+	 xYVunzwE3U/h2UQww9G3zY6rBsK0iulrKXaumTRk=
+Received: from localhost.localdomain ([36.111.64.84])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 2CD88887; Tue, 30 Jul 2024 15:11:13 +0800
+X-QQ-mid: xmsmtpt1722323473t9w32s7wc
+Message-ID: <tencent_E2C5C1A1B50F453656C6C7FB140CD3AFB305@qq.com>
+X-QQ-XMAILINFO: NAtipnnbTPea/lPgy65sokbF3GvXJm4tAMsp4fpZ/fjMmk0+iSyOefNnLNX+Or
+	 8aFm017/+YZ8//41ds5NwMYcvX3EPMABaIF/wU8qrq607WNke7B2BGvFzLJLe3+bRv9n02QVWqEj
+	 e7eTcJEB+V4RyqQYLWQ/W0cofRQmo3hRWi1GlzC9+x5mrLAP0RgkLhOv2h7t+R1YWUm3rXoqdjOy
+	 LNa7u2ZBVlaAZYCvG9OL5KaOEPU+sxER/iQLVR6f57Zt4NPbYdeXkEMhPukNt5lG7aAdO46mOjH/
+	 6SxcVtOosmy4/MOWyYRc/wo7If5DrgHaxNU0WHg7nSa8bvTXod7PdaEO3WjT4lF2WG+Smvp0gUBW
+	 ttxENTjZKDJH67QAeS4PlDQkV4fPCbeJcaHcDVFOLU1hQBsWgRRAMIye9CoJh17yVmpEyHV9gmXv
+	 AAFHNyMX0IuQuboPnGDTiQeoKoFfP93cJAvbNYlpJB/QEWExPhV+Yrsf9bMvTlS37Dray8a+aGGk
+	 U0Sa6nIK+I+1i7MLti7H1Kmj++x1wRU6blEhGec6ARZPFHj4fheYK6Qvx4pl+DR5QyxeyuwKg/DR
+	 iAoFDt3zClvxCkanhcv/q0JmptM0UtsWobUmgfoRdG3Pg+8rZx2NbyX1yPZg1sEOK4cPDXcnW3f4
+	 qzxcvqAwJLj8M3etLO98VuiOat9wBBRE1am8esMVgyADv1S4Jwp29+QMaS2kSLE8gABwCHPTiLzQ
+	 VPr+/BO2AF6r9I+sXBmzRQfRlBlJFVTR5kn7c3F5/BSnuOOS6lvSxq3HnkUON717ZJ/303Q40VeD
+	 FdBrRcrAv+u2wZY5MuUC3JEOSp47/YBhOTKkGP5J07562Jky2sExwMzek2amB+vEvuCKeFz6utj4
+	 o6ARJyyYL2yFl+ddL0Z9UshckWdEuWYz7igO9mVwRyt8LpaOO8wENdiOoAnQxXQouyzwmYQ77Ix+
+	 xjOqu1oK3Wg0YSbtL62RVZp/MUULoWzJFGq4AJrlreAL7iEb7NEg==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: wujing <realwujing@qq.com>
+To: mingo@redhat.com,
+	peterz@infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	dongml2@chinatelecom.cn,
+	wujing <realwujing@qq.com>,
+	QiLiang Yuan <yuanql9@chinatelecom.cn>
+Subject: [PATCH] sched/fair: Correct CPU selection from isolated domain
+Date: Tue, 30 Jul 2024 15:10:50 +0800
+X-OQ-MSGID: <20240730071050.78478-1-realwujing@qq.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: nEyyhOn6poZlE8gyoTP7qt0cSrT0Dp5b
-X-Proofpoint-GUID: nEyyhOn6poZlE8gyoTP7qt0cSrT0Dp5b
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_07,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 adultscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0
- impostorscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
- clxscore=1011 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407300052
 
-The user process on ARM closes the device node while closing the
-session, triggers a remote call to terminate the PD running on the
-DSP. If the DSP is in an unstable state and cannot process the remote
-request from the HLOS, glink fails to deliver the kill request to the
-DSP, resulting in a timeout error. Currently, this error is ignored,
-and the session is closed, causing all the SMMU mappings associated
-with that specific PD to be removed. However, since the PD is still
-operational on the DSP, any attempt to access these SMMU mappings
-results in an SMMU fault, leading to a panic.  As the SMMU mappings
-have already been removed, there is no available information on the
-DSP to determine the root cause of its unresponsiveness to remote
-calls. As the DSP is unresponsive to all process remote calls, use
-BUG_ON to prevent the removal of SMMU mappings and to properly
-identify the root cause of the DSP’s unresponsiveness to the remote
-calls.
+We encountered an issue where the kernel thread `ksmd` runs on the PMD
+dedicated isolated core, leading to high latency in OVS packets.
 
-Signed-off-by: Abhishek Singh <quic_abhishes@quicinc.com>
+Upon analysis, we discovered that this is caused by the current
+select_idle_smt() function not taking the sched_domain mask into account.
+
+Kernel version: linux-4.19.y
+
+Signed-off-by: wujing <realwujing@qq.com>
+Signed-off-by: QiLiang Yuan <yuanql9@chinatelecom.cn>
 ---
- drivers/misc/fastrpc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ kernel/sched/fair.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 5204fda51da3..bac9c749564c 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -97,6 +97,7 @@
- #define FASTRPC_RMID_INIT_CREATE_STATIC	8
- #define FASTRPC_RMID_INIT_MEM_MAP      10
- #define FASTRPC_RMID_INIT_MEM_UNMAP    11
-+#define PROCESS_KILL_SC 0x01010000
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 09f82c84474b..0950cabfc1d0 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6171,7 +6171,8 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
+ 		return -1;
  
- /* Protection Domain(PD) ids */
- #define ROOT_PD		(0)
-@@ -1128,6 +1129,9 @@ static int fastrpc_invoke_send(struct fastrpc_session_ctx *sctx,
- 	fastrpc_context_get(ctx);
- 
- 	ret = rpmsg_send(cctx->rpdev->ept, (void *)msg, sizeof(*msg));
-+	/* trigger panic if glink communication is broken and the message is for PD kill */
-+	BUG_ON((ret == -ETIMEDOUT) && (handle == FASTRPC_INIT_HANDLE) &&
-+			(ctx->sc == PROCESS_KILL_SC));
- 
- 	if (ret)
- 		fastrpc_context_put(ctx);
+ 	for_each_cpu(cpu, cpu_smt_mask(target)) {
+-		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
++		if (!cpumask_test_cpu(cpu, &p->cpus_allowed) ||
++			!cpumask_test_cpu(cpu, sched_domain_span(sd)))
+ 			continue;
+ 		if (available_idle_cpu(cpu))
+ 			return cpu;
 -- 
-2.25.1
+2.45.2
 
 
