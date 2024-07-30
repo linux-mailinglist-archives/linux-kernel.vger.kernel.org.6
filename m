@@ -1,180 +1,140 @@
-Return-Path: <linux-kernel+bounces-268274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318E1942290
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:10:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18F1D942294
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 224B61C2367C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:10:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4515A1C23801
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011A418E059;
-	Tue, 30 Jul 2024 22:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A4618E053;
+	Tue, 30 Jul 2024 22:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XiwDkB08"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="Uyy87Box"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50721AA3C3;
-	Tue, 30 Jul 2024 22:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7277B1AA3ED
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722377415; cv=none; b=klaaRGFJyNhYdiAFm4ZzCiVNcKb1dY6Jc+GEdk4NKIRnLyeMLMpfe9FkPssM5S+3KvuRLbrfYrdSNuM5xaRit2BFlRrkihxBzeM2WDiNEtXbvri8Q14ddZwm5V2diKlD4wOqw6nD1+huLowsfxXvYVXTyFL5a93b+6u/nUw8O8o=
+	t=1722377629; cv=none; b=sg/2zus82ZueG1aCnFBfbF11KG1sfFkjFJ5zcjqOK4AQyZVHaartrkTRPOH0Mg0pb+gWRO4HttTRfWvoNa4HvjhML4YL+uXXcJkIv6QbDRlc61ewN/N+vjO/zobZKXEEZXJhGQ2CGr0ldQchab8JFCaT+ISlfRmRDDiRkwyYjkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722377415; c=relaxed/simple;
-	bh=oaBDzAiNweARh2YBJ/TpniEey9iDmA4MZbkYPg07MPQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pqDV2FB1g/xZA61BDWfAsoUHUTZCxgPLQVc8DiryRRqeyx3aSdkR+wQRStZfkOealUDENLvCI0efIR8AXhr9pHDPd2hsExFj22Y3UTNXWdBz6Qeft4Z9bxngpKERo3aUKz6fF+pQUWrfGSdZVdYhRXRGuWmiZ1dE2XTtaUmU60M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XiwDkB08; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70d18112b60so280454b3a.1;
-        Tue, 30 Jul 2024 15:10:13 -0700 (PDT)
+	s=arc-20240116; t=1722377629; c=relaxed/simple;
+	bh=seTDC/WMyGR+N//njC0hW8zhYniFJcu+7Yvl71N5Lf4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=jv2Sb3afXFW0MPjYl+01irggdRDrqahsYA1D5+cFwE4op6gAmapzS2rnVris0Bbvpg9Y1bkPWSbvqI2WrMj1xMnqJCGU+L3oOjbUmhNb34Ho+JagoZywwXS7+L/gtngWm+lutV1Jig9nBLh1PCTobWfdMFa0i71REUTizrOOFe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=Uyy87Box; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a1c49632deso7127735a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:13:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722377413; x=1722982213; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ul3wMxMCyuqyiQKRLMzSkYPeDtvquKgSAZvk3UdpdAI=;
-        b=XiwDkB08JpoLIY9N0CocXf5Vq+6BcM1ZVEmNURnG0q2/KlPRLW/f0ogzDtMPmWR7Sn
-         yvZEZn3CsqOL1amv/NiCCLJp+XGjPRWTSNLi+1fzHNxjAGsC6i6qje2qq84fQ3f43qE5
-         ShCiTA9SAkmskgvfbrhVXjRxaaFZQ4Z6VV8eeeq5Tw7qCU5mlXcXPfip4XWtvq7OlPUI
-         MIfA3aY4G7rLS+/aPXdNkg/SGqL1/If2ehLQSmY8oQfZkCTCclW4fMtLp1gn+lO4v3m9
-         S+81S8XcoouDksPZSSR/IDQJbkf7hZ6RxfqcPxdsZm3amV9QA97hesI0T6ZFdYFmvSXg
-         DDXg==
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1722377627; x=1722982427; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G6KPFchYV60jxiYsM1WLejLobqSkE3bZqlVL+pXLWsc=;
+        b=Uyy87Box8ww8deKeqdoghCI1BE8+zeJ7BtoKlupuPa0yWUXwHZUccEXPugACdQA55l
+         t+UsnaXu40mROTdIYdcQJUnA9JOA3jQlZnGNaqtb3ki4y8mGxRhbX5DHS6rJtm6i1a6z
+         ojFb9DhsXEyHcT3E0tT0ZIv359fkOizhZ9ySobemDw4xS4SLq01GuKK2DcAdg7qeOW25
+         VO7RIYYIWTuE/fcgQYWIC/MM8t7jrzo1NTRCGD+b5a5EFe0SKQ3THQfYOy9QzyiZFX9e
+         CDXrMp2IYG4WmO6B7fbBQ5QVz272jvmxfBVIlUp71hfJMug0JCmDEnOw8JAGbzF2JglO
+         PeIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722377413; x=1722982213;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ul3wMxMCyuqyiQKRLMzSkYPeDtvquKgSAZvk3UdpdAI=;
-        b=gAzcy4TGyFOgx42lHClV2KEtISGUbrKZWE2DiYbpJhtw/O6DoDDGjcoDT5WKm9j79q
-         A6+P+o3YNkpbCnSe8bRFbl1qd62SzFkQTUPYyMarRMLg/D2fL37ETbhfHptrppVtS1Hy
-         Nq1Hcgeu7w/BS9XpBMWyXsuUspNNV5Ksm8i91fXPnndnVW0CemmpWeAk3oAwopPYIWAb
-         r12JpoekoghyIRpsDDPyP44XsrisMYsnUQA26m3YAZqgM9+jVVDiZyZ/T7SX7X/NlALm
-         XTQ4zjC5RtgLwomfhL1p4hMj+oJgZMKuDLvF8gewU5B7Ih9ypqevCpWk0l632bBFeCVR
-         FGWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWB0PI8q1kMYMyxXI4KxTj0p9Etd93WDIlDM+BPLcSTOHo3PE9LGqCiuoU2IE+Kx+2e2AGgCIXsEmPy3PXlMKQn+ByPcttd+lKz94PJ5VvIgBrS/WpNyE0nQr3cmUr2IwXSbQblGUd6pTUYcMZO
-X-Gm-Message-State: AOJu0Yy0HJ3XeisNt9EcCRbEJNiyynSRfkhOTaCRspmow6im9en3SGLh
-	HhfDkk5NNxhCcPg2dNzuOoVES9dQmyndsZeZsFLNJRlUhZlVVRD9
-X-Google-Smtp-Source: AGHT+IEDt1eFM48dZvG+UKaY1ieJl4LuSH5ixaHLOwrBPTZOulu63KVgNXvjFCy9EZXeffAncACvbA==
-X-Received: by 2002:a05:6a00:2171:b0:70c:e1ec:4233 with SMTP id d2e1a72fcca58-70efe42830dmr4416137b3a.6.1722377412938;
-        Tue, 30 Jul 2024 15:10:12 -0700 (PDT)
-Received: from OPEN-HORIZONS.attlocal.net ([2600:1700:65a0:8110::c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead87d58asm9159109b3a.177.2024.07.30.15.10.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 15:10:12 -0700 (PDT)
-From: Alexander Hall <bearodark@gmail.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: Alexander Hall <bearodark@gmail.com>,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5] Bluetooth: btusb: Add MediaTek MT7925-B22M support ID 0x13d3:0x3604
-Date: Tue, 30 Jul 2024 15:08:25 -0700
-Message-ID: <20240730220824.224298-3-bearodark@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1722377627; x=1722982427;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G6KPFchYV60jxiYsM1WLejLobqSkE3bZqlVL+pXLWsc=;
+        b=ooYN2CVE69Pk3vLkRFr551VLMdVI9TIXG2iSVrjjC6+pLHb7l3ezK1v3uM/TVFuWCC
+         TWL8Mfmxiq5PenELuM5Z5YVWCSJnfVNsoA4JklpcUDjLhFb31S15uJ31FsK/PT1x4Cfp
+         civrmvwmMhhhDLU4R/iiClOc0ykJLdKQbyu0v8L5aUFCEErJsl6yZRxLqCqEcS+FJOK0
+         ZqCeZzC+XOggdZPuqDnIYVIyqT8FZMf+DjYS46/XICBKbc9m8yLePtOUfMEHU+Ti4I6f
+         uIRQT4yCP4CAstKUL4Gzr/D6nwZsC0Dlrhwfp7m03QI6/prmecScXpSoK7aKD55CkPQV
+         B1Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCXVHUzRfmYzXX4Zntopis2qlhF+33mcnxXA/nZVPzt9Mw5+YkYrWfxPgf6WGmy7FWR8gFc8Ilbi5xTjdykOvpP/unwor6xTT10nZPj4
+X-Gm-Message-State: AOJu0Yz3xQwUvwFQClvpHOKdNZz3MGLSrJo39PBtS+hwJAXhH9tSXVQc
+	gIjcC0n5usLi2KM05LwowNJDrhR39Yb7szDuEX4bBfG80TEWkfD/PtgkZ5g7+ck=
+X-Google-Smtp-Source: AGHT+IFgdXEJaG1nk0KaMSYpcKvYIsAboDqtw4g8LJabhQ7XXLIhipbewucBVuWCPKJnNzq5M+se9g==
+X-Received: by 2002:a50:8e50:0:b0:5a1:f680:5470 with SMTP id 4fb4d7f45d1cf-5b0205d613emr9144848a12.13.1722377626447;
+        Tue, 30 Jul 2024 15:13:46 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:10b5:fc01:4198:a192:529f:265d])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac6377e06fsm7876066a12.28.2024.07.30.15.13.45
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2024 15:13:45 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH] clk: hisilicon: Remove unnecessary local variable
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <817eef56fa3dcd4238198c7a964adfef.sboyd@kernel.org>
+Date: Wed, 31 Jul 2024 00:13:34 +0200
+Cc: abel.vesa@linaro.org,
+ angelogioacchino.delregno@collabora.com,
+ christophe.jaillet@wanadoo.fr,
+ dinguyen@kernel.org,
+ erick.archer@gmx.com,
+ mturquette@baylibre.com,
+ robh@kernel.org,
+ linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <2E69FE3D-5D1B-4952-959F-06603BA21D98@toblux.com>
+References: <20240710201844.710365-2-thorsten.blum@toblux.com>
+ <817eef56fa3dcd4238198c7a964adfef.sboyd@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-This patch fixes bluetooth support on the MediaTek MT7925 WiFi 7 +
-BT 5.3 M.2 chipset that I purchased from aliexpress (and which
-arrived today). The PCB states that it is an MT7925B22M.
+On 30. Jul 2024, at 01:23, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Thorsten Blum (2024-07-10 13:18:45)
+>> diff --git a/drivers/clk/hisilicon/clk-hi3559a.c =
+b/drivers/clk/hisilicon/clk-hi3559a.c
+>> index c79a94f6d9d2..30d5a6ba8fa5 100644
+>> --- a/drivers/clk/hisilicon/clk-hi3559a.c
+>> +++ b/drivers/clk/hisilicon/clk-hi3559a.c
+>> @@ -407,7 +407,7 @@ static unsigned long clk_pll_recalc_rate(struct =
+clk_hw *hw,
+>>                unsigned long parent_rate)
+>> {
+>>        struct hi3559av100_clk_pll *clk =3D to_pll_clk(hw);
+>> -       u64 frac_val, fbdiv_val, refdiv_val;
+>> +       u64 frac_val, fbdiv_val;
+>>        u32 postdiv1_val, postdiv2_val;
+>>        u32 val;
+>=20
+> I see 'val' is u32 here.
+>=20
+>>        u64 tmp, rate;
+>> @@ -435,13 +435,12 @@ static unsigned long clk_pll_recalc_rate(struct =
+clk_hw *hw,
+>>        val =3D readl_relaxed(clk->ctrl_reg2);
+>>        val =3D val >> clk->refdiv_shift;
+>>        val &=3D ((1 << clk->refdiv_width) - 1);
+>> -       refdiv_val =3D val;
+>>=20
+>>        /* rate =3D 24000000 * (fbdiv + frac / (1<<24) ) / refdiv  */
+>>        rate =3D 0;
+>>        tmp =3D 24000000 * fbdiv_val + (24000000 * frac_val) / (1 << =
+24);
+>>        rate +=3D tmp;
+>> -       do_div(rate, refdiv_val);
+>> +       do_div(rate, val);
+>=20
+> So this can be div_u64() now?
 
-Device from /sys/kernel/debug/usb/devices:
+Yes, it could be.
 
-T:  Bus=03 Lev=02 Prnt=03 Port=02 Cnt=01 Dev#=  4 Spd=480  MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=13d3 ProdID=3604 Rev= 1.00
-S:  Manufacturer=MediaTek Inc.
-S:  Product=Wireless_Device
-S:  SerialNumber=000000000
-C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
-A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
-E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
-E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
-I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
-E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
-E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
+Is div_u64() preferred over do_div() when the remainder doesn't matter?
 
-High fidelity images I took of the chip itself for future reference:
-https://archive.org/details/MediaTek-MT7925B22M/
-
-Webpage the chip was purchased from, note it is different from the
-images taken:
-https://web.archive.org/web/20240620021119/https://www.aliexpress.
-us/item/3256806821207897.html
-
-Signed-off-by: Alexander Hall <bearodark@gmail.com>
----
-Changes from v1:
-It was suggested that the (now removed) aliexpress link be run through
-  archive.org, however aliexpress is incompatible with waybacks
-  scraping tool, and as an alternative I have taken high resolution
-  images of the actual chip I received and put them on archive.org.
-The prefix of this patch was changed to `Bluetooth:` as suggested
-Maintainers and open lists have been auto CC'd as suggested, via
-  get_maintainers.pl
-Changes from v2:
-  the commit name has been updated to include the device:vendor id to be
-  clearer
-  web archive eventually came through so I have readded the link to that
-  aswell
-Changes from v3:
-  tabs replaced with spaces, Signed-off-by now matches From sender
-Changes from v4:
-  remove trailing whitespace that gitlint failed on
-
-
- drivers/bluetooth/btusb.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index e384ef6ff..2ea46a0e6 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -691,6 +691,9 @@ static const struct usb_device_id quirks_table[] = {
- 	{ USB_DEVICE(0x13d3, 0x3603), .driver_info = BTUSB_MEDIATEK |
- 						     BTUSB_WIDEBAND_SPEECH |
- 						     BTUSB_VALID_LE_STATES },
-+	{ USB_DEVICE(0x13d3, 0x3604), .driver_info = BTUSB_MEDIATEK |
-+						     BTUSB_WIDEBAND_SPEECH |
-+						     BTUSB_VALID_LE_STATES },
- 
- 	/* Additional Realtek 8723AE Bluetooth devices */
- 	{ USB_DEVICE(0x0930, 0x021d), .driver_info = BTUSB_REALTEK },
--- 
-2.45.1
-
+Thanks,
+Thorsten=
 
