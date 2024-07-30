@@ -1,130 +1,210 @@
-Return-Path: <linux-kernel+bounces-268021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8BF0941F77
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:22:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E89AB941F7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F8F1F24E9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:22:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74BF51F24D8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925DC18A6DD;
-	Tue, 30 Jul 2024 18:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922EE18B473;
+	Tue, 30 Jul 2024 18:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/AQuwy/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="VllSNXeU"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D5918A6A9;
-	Tue, 30 Jul 2024 18:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D13B188011;
+	Tue, 30 Jul 2024 18:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722363707; cv=none; b=OMIGLNE/OkNOnDC+4FDZaljOiJVAIvh7isONkE05PhqiYG4o1+9vpCfLMYOfiI+R9/alhdeDNwcYbY+CSBw/az35l63abDXjxC/Sul2JKxEFLmtl2+rlWT9Jv/oNluO3ofq9+vZCFRyxJjhivx1qtxHEDRoWHfXFu3gtgyQLfHU=
+	t=1722363719; cv=none; b=fuHA+kRZhnBG3bHvUYqBiPcwGpUh1sJp8zEKxSXlW0iOkMBw/6Ux13Xc96Hd0U/KmdoN9o5z3yytXamPjGDEn+jGIZ24TrnZrlrlIxTns3D4a4BAKQo6wQdbSz5dOLRjmthDs5GnzNzw/A9zFWdQRd6LZZDDfkQCumwTZP2rltM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722363707; c=relaxed/simple;
-	bh=JjAjY9PUjdVhv+rkOwE/alH+xmzy/v1WwqDMl5Ts8j4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ttMBLBHTSjTHTeFii1mpKIBvKhRk+MKfftJwOhS6v05cBH1VasfXA+eOKws4kYQymq3zBc9C+ymPHWlIk8vQTjl2Cuqj+aR4+ZQHhz4Otr4CPdzZYlQlmmFgtKDEgJ7wIe17FjSIKWRfuM3rVu9j3MvPKAr5KoW5rdY6mdIv5bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/AQuwy/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DCB1C32782;
-	Tue, 30 Jul 2024 18:21:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722363707;
-	bh=JjAjY9PUjdVhv+rkOwE/alH+xmzy/v1WwqDMl5Ts8j4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=F/AQuwy/VjBpNrZuCl7Z/87ze8ukDAj5U0ttJzM9DTPPPqPZ7zZdO1SK8iw8cTlPq
-	 u7kD2BmGN2Z7CLDape1mRfX8oFb/VxRpzDySuniUKo9zUQ+quJ9+Z6IfGJfDPHmsMo
-	 yVq/CL9T7JYZF6y7FGqtY+zj8VT/vyMcdxa6D5anlAcH7j8qFbCdm+kOBqn/jl0ubK
-	 Uo0gESvzmghZH7hlc4E8mHb6mvqTICtWghelqv/WUyT/WIC9NfGyCdf2dRb67xyN8Q
-	 xBQ5Un6Yx1DIrYaQADlvhGcv400meRcknIr/Mi+c9A8x2RKKXVXjujrZxgG/MR60gv
-	 +nlhex2vZLz7Q==
-Date: Tue, 30 Jul 2024 19:21:39 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Abhash jha <abhashkumarjha123@gmail.com>
-Cc: linux-iio@vger.kernel.org, anshulusr@gmail.com, lars@metafoo.de,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] iio: light: ltr390: Add ALS channel and support
- for gain and resolution
-Message-ID: <20240730192139.063b7a85@jic23-huawei>
-In-Reply-To: <CAG=0RqKuhn-WHjMbEqq4bCQOs9ERPKZR_udeCf3noqz+TzULyA@mail.gmail.com>
-References: <20240729115056.355466-1-abhashkumarjha123@gmail.com>
-	<20240729115056.355466-3-abhashkumarjha123@gmail.com>
-	<20240729205329.57390e20@jic23-huawei>
-	<CAG=0RqKuhn-WHjMbEqq4bCQOs9ERPKZR_udeCf3noqz+TzULyA@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722363719; c=relaxed/simple;
+	bh=EfLcgc+QvrXR30l2a0w2IX5i1JNNXIEVvGDNJX6FF7s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oFE8NyLCDuwJxXHYaSmrDdkfEWR4OGlGUioQUX0rkWLn/FJ/pa8gBV9M97efsnYSWCPXi0d1ZCM9Udg53j5XTaHJC37pqPFdeBQYPyPyZx7bMSLsdzZ0RZfET9tWiIeEKLUtO7SZ58sRAphfqsb1Wu/baH3ttKUOwkKNV+XsRhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=VllSNXeU reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 0dfcb0ba80d42fc1; Tue, 30 Jul 2024 20:21:55 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 0014B956ED0;
+	Tue, 30 Jul 2024 20:21:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1722363715;
+	bh=EfLcgc+QvrXR30l2a0w2IX5i1JNNXIEVvGDNJX6FF7s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=VllSNXeUf4zhNmAzSs2NG9zYmxhD9H7roYO5WDQ+lKI4y9rGl0IDXpICELXT+5yav
+	 cxmOW9HGr2vgJGS3+n063vWRGMBhlkpzS1sYQKRebRS8iOm880IHFJOhviq25+b3rX
+	 xaON4/Ps3c2H5Uc+2tgmTqsRkV45Juc7IT42I8+iPtKShq03aMTg1JlCl6zSxNspr+
+	 DfDI3EPb2tU6F2g0Tpfd7a5Y5y34T5ZM+CIRZSqXYJyqGYVeDJJYHXt5WkgvwfFKG0
+	 TY+8VykkzeUHywEL+Rzr30IN/F5pnE7AL+bcLs3rODnTSF23oXPPM9diBVHFPJNmxh
+	 yTSWZTvlFm95Q==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux ACPI <linux-acpi@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
+Subject:
+ [PATCH v1 07/17] thermal: core: Move thermal zone locking out of bind/unbind
+ functions
+Date: Tue, 30 Jul 2024 20:21:54 +0200
+Message-ID: <2681296.7s5MMGUR32@rjwysocki.net>
+In-Reply-To: <1922131.tdWV9SEqCh@rjwysocki.net>
+References: <1922131.tdWV9SEqCh@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeggdduvdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
+ rhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=18 Fuz1=18 Fuz2=18
 
-On Tue, 30 Jul 2024 12:47:10 +0530
-Abhash jha <abhashkumarjha123@gmail.com> wrote:
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> On Tue, Jul 30, 2024 at 1:23=E2=80=AFAM Jonathan Cameron <jic23@kernel.or=
-g> wrote:
-> >
-> > On Mon, 29 Jul 2024 17:20:54 +0530
-> > Abhash Jha <abhashkumarjha123@gmail.com> wrote:
-> > =20
-> > > Add new ALS channel and allow reading raw and scale values.
-> > > Also provide gain and resolution configuration for ALS channel.
-> > > Add automatic mode switching between the UVS and ALS channel
-> > > based on which channel is being accessed.
-> > > The default mode in which the sensor start is ALS mode.
-> > >
-> > > Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com> =20
-> > Hi Abhash,
-> >
-> > Patch looks good but one quick question.
-> > Why not present an IIO_LIGHT channel?  Needs to be converted
-> > to be illuminance (with scale / offset applied) rather than IIO_INTENSI=
-TY
-> > which we use when the frequency response is different from the requirem=
-ents
-> > to measure Lux (and the units get very vague!)
-> >
-> > Looks like what you have here is close, but not quite the right scale
-> > factor as not including integration time and the mysterious 0.6 on the =
-datasheet. =20
->=20
-> Yes, I just noticed it now. I will provide the integration time and
-> 0.6 as part of the
-> scale calculation in the next version.
->=20
-> >
-> > If we can provide a signal scaled to illuminance that tends to be a lot
-> > more useful for things like screen brightness control because it should
-> > be close at least to other light sensors.
-> > =20
-> Hi Jonathan,
-> It did not occur to me that the IIO_LIGHT channel could be used
-> directly and hence I
-> went with the IIO_INTENSITY approach.
-> Yes we could provide the IIO_LIGHT channel and perform lux calculation
-> in the driver.
-> Would that mean forgoing the IIO_INTENSITY channel? Or do we keep both?
+Since thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip()
+acquire the thermal zone lock, the locking rules for their callers get
+complicated.  In particular, the thermal zone lock cannot be acquired
+in any code path leading to one of these functions even though it might
+be useful to do so.
 
-Expose the scaling as _scale for the light channel and don't expose
-intensity (as it will be the _raw value anyway).
+To address this, remove the thermal zone locking from both these
+functions, add lockdep assertions for the thermal zone lock to both
+of them and make their callers acquire the thermal zone lock instead.
 
-It's rare to see a linear function for intensity to lux transform but
-I think there are one or two others like this.  Mostly the transform
-is nonlinear and involves multiple intensity channels which is why
-we normally have those and IIO_LIGHT.
+No intentional functional impact.
 
-Thanks,
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/thermal.c         |    2 +-
+ drivers/thermal/thermal_core.c |   30 ++++++++++++++++++++++--------
+ 2 files changed, 23 insertions(+), 9 deletions(-)
 
-Jonathan
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -789,6 +789,7 @@ int thermal_bind_cdev_to_trip(struct the
+ 	int result;
+ 
+ 	lockdep_assert_held(&thermal_list_lock);
++	lockdep_assert_held(&tz->lock);
+ 
+ 	if (list_empty(&tz->node) || list_empty(&cdev->node))
+ 		return -EINVAL;
+@@ -851,7 +852,6 @@ int thermal_bind_cdev_to_trip(struct the
+ 	if (result)
+ 		goto remove_trip_file;
+ 
+-	mutex_lock(&tz->lock);
+ 	mutex_lock(&cdev->lock);
+ 
+ 	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+@@ -868,7 +868,6 @@ int thermal_bind_cdev_to_trip(struct the
+ 	thermal_governor_update_tz(tz, THERMAL_TZ_BIND_CDEV);
+ 
+ 	mutex_unlock(&cdev->lock);
+-	mutex_unlock(&tz->lock);
+ 
+ 	return 0;
+ 
+@@ -892,11 +891,19 @@ int thermal_zone_bind_cooling_device(str
+ 				     unsigned long upper, unsigned long lower,
+ 				     unsigned int weight)
+ {
++	int ret;
++
+ 	if (trip_index < 0 || trip_index >= tz->num_trips)
+ 		return -EINVAL;
+ 
+-	return thermal_bind_cdev_to_trip(tz, &tz->trips[trip_index].trip, cdev,
+-					 upper, lower, weight);
++	mutex_lock(&tz->lock);
++
++	ret = thermal_bind_cdev_to_trip(tz, &tz->trips[trip_index].trip, cdev,
++					upper, lower, weight);
++
++	mutex_unlock(&tz->lock);
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(thermal_zone_bind_cooling_device);
+ 
+@@ -919,7 +926,8 @@ int thermal_unbind_cdev_from_trip(struct
+ 	struct thermal_trip_desc *td = trip_to_trip_desc(trip);
+ 	struct thermal_instance *pos, *next;
+ 
+-	mutex_lock(&tz->lock);
++	lockdep_assert_held(&tz->lock);
++
+ 	mutex_lock(&cdev->lock);
+ 
+ 	list_for_each_entry_safe(pos, next, &td->thermal_instances, trip_node) {
+@@ -930,13 +938,11 @@ int thermal_unbind_cdev_from_trip(struct
+ 			thermal_governor_update_tz(tz, THERMAL_TZ_UNBIND_CDEV);
+ 
+ 			mutex_unlock(&cdev->lock);
+-			mutex_unlock(&tz->lock);
+ 			goto free;
+ 		}
+ 	}
+ 
+ 	mutex_unlock(&cdev->lock);
+-	mutex_unlock(&tz->lock);
+ 
+ 	return -ENODEV;
+ 
+@@ -954,10 +960,18 @@ int thermal_zone_unbind_cooling_device(s
+ 				       int trip_index,
+ 				       struct thermal_cooling_device *cdev)
+ {
++	int ret;
++
+ 	if (trip_index < 0 || trip_index >= tz->num_trips)
+ 		return -EINVAL;
+ 
+-	return thermal_unbind_cdev_from_trip(tz, &tz->trips[trip_index].trip, cdev);
++	mutex_lock(&tz->lock);
++
++	ret = thermal_unbind_cdev_from_trip(tz, &tz->trips[trip_index].trip, cdev);
++
++	mutex_unlock(&tz->lock);
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(thermal_zone_unbind_cooling_device);
+ 
+Index: linux-pm/drivers/acpi/thermal.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/thermal.c
++++ linux-pm/drivers/acpi/thermal.c
+@@ -609,7 +609,7 @@ static int acpi_thermal_bind_unbind_cdev
+ 		.thermal = thermal, .cdev = cdev, .bind = bind
+ 	};
+ 
+-	return for_each_thermal_trip(thermal, bind_unbind_cdev_cb, &bd);
++	return thermal_zone_for_each_trip(thermal, bind_unbind_cdev_cb, &bd);
+ }
+ 
+ static int
 
->=20
-> Abhash
->=20
-> > Jonathan =20
+
 
 
