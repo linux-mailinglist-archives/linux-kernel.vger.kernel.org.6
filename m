@@ -1,128 +1,140 @@
-Return-Path: <linux-kernel+bounces-267341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C07A94107A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:29:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4110394107C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B2E81F25E3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:29:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70CD31C22C43
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738EB19DFAB;
-	Tue, 30 Jul 2024 11:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900DA18A92F;
+	Tue, 30 Jul 2024 11:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j0hyiaym";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dESyCu4j"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="WG4o4ScU"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CCE19DF41;
-	Tue, 30 Jul 2024 11:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454AB19DF8E;
+	Tue, 30 Jul 2024 11:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722338969; cv=none; b=S9LY8JvbIAu4KwM2HNe2lDAgSFrjyPGkQtgWJis+qNOYDFMNJWCZkEWCpoo9iWs9KtiQ2GRHRI0uEe+7ZreifnoYG/RxMhhM5bZUxBU6iy9RJptOVdlo9mFX5sMBkJLhTIM9INW1FsKC7IxOLA8TkUOP09dm2CjHTEZAmJR4W/U=
+	t=1722338977; cv=none; b=APS15u4KbrxbZvnK4grV6EG3/z1PI6FCHxlPrWmSlaOlj8fPyooc6SqdXoJBtVDZiM24V6hgdO+26bWUGxYhjbYEuQ+4upolTbJrK8CEIxtPk0AMyUP11CJLhOJbtG4kFEcFMrp5YTjOoohSlJ/ObZdyf4FaeOMfdIkhOT77ZTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722338969; c=relaxed/simple;
-	bh=aIydPvqJA2em2PQ8rQgyo2FGOfcmh0a+5O18l211/5U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=T5Vz/og/GuqUu3WbUL8MEUOg9y0wgpJqBsx/y/bTJyOk2WIMdbRTHbdx3O4HOdt4fF4W0WBidKVbDPM7On7z3V++q8B+HVha3Je0o8fOJWwlyLow2N5Rs0Rj5UjU6a8K0cuXYD7zr1MBDvSmQqpl73KSOq6m1LBdx1SkWrzMC4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j0hyiaym; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dESyCu4j; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722338966;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qTD/R6R0srsJVGCxFPEOiXeBb576WkIuMblUhuZTAbo=;
-	b=j0hyiaymqL2DdUjfhT3Vq0LnIl2oArFS1FLzP578NQGGFzOiqLlMNqsbt6rjN+Ts1NYhMX
-	hTteEza9ncc0tIAiPLacR2x7rVilXwngsw2He58eFrf9wBJ39c+6yug3MzcP+pBKrT5K8V
-	dNDh3x744TmfA9gCPjtwNFdoVemdimoMw0DeiWxc2JKwjPqVks3o4cnO/bzBZJzVpAO7gi
-	11S/6xt/4D+26Oo0QfMFCiXmNu31a8mGJ9DPSoDO/BMaFJLY/aqebsnZCXL7PmX4jV6L/v
-	CAWjBF/O+iq757EStkCoBbkbHX4HMSiD3xH4APxcwicPBwK9U+GhEDY6WnLokA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722338966;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qTD/R6R0srsJVGCxFPEOiXeBb576WkIuMblUhuZTAbo=;
-	b=dESyCu4j7dkif/Co9M2x5fkynoy1U9lTlSvznKsKHWhLCxufiHK9LkvWqpoVaTLzn6CBKV
-	B1HHfPLKWXVrvyBg==
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tianyang Zhang <zhangtianyang@loongson.cn>, corbet@lwn.net,
- alexs@kernel.org, siyanteng@loongson.cn, kernel@xen0n.name,
- jiaxun.yang@flygoat.com, gaoliang@loongson.cn, wangliupu@loongson.cn,
- lvjianmin@loongson.cn, yijun@loongson.cn, mhocko@suse.com,
- akpm@linux-foundation.org, dianders@chromium.org, maobibo@loongson.cn,
- xry111@xry111.site, zhaotianrui@loongson.cn, nathan@kernel.org,
- yangtiezhu@loongson.cn, zhoubinbin@loongson.cn, loongarch@lists.linux.dev,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Huacai Chen
- <chenhuacai@loongson.cn>
-Subject: Re: [PATCH V7] LoongArch: Add AVEC irqchip support
-In-Reply-To: <CAAhV-H7c0Gtjf-6iS-E4nviMqmPWpJMNwvhWf0fLBx75pDXtrQ@mail.gmail.com>
-References: <20240726102443.12471-1-zhangtianyang@loongson.cn>
- <87o76kuqza.ffs@tglx>
- <CAAhV-H7c0Gtjf-6iS-E4nviMqmPWpJMNwvhWf0fLBx75pDXtrQ@mail.gmail.com>
-Date: Tue, 30 Jul 2024 13:29:26 +0200
-Message-ID: <87r0bb6ru1.ffs@tglx>
+	s=arc-20240116; t=1722338977; c=relaxed/simple;
+	bh=/1pWOQ14ozSfFQK/tkD76Lfh3dTPGMLPwzHVYx5iXcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d3Ls+0jHmMxAslpsqNn4255Gm2BKVnxz2aI9/f0gviLoB7SKOZI+xfCQMBaHQ8jbJn267en7pOu/pu21jb6xm4jSrw3bEdqNvQqZbgha/KCNxh+yUVyPAJiIDUzzc1bMUKEF/14MDwPvvB2DcItyx4lcK66zkDGO4hnkJVuv6s0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=WG4o4ScU; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Ki2/TBdxrP8a5ktzFO1CppFcT6yCDwCNmjbPTgHYyOU=; b=WG4o4ScUMxSc7o8zseeiqpQR2R
+	A5QrjYcAfq5DmnxWbzcz+pmsorwKH6DTRKFGM+XxCU4pv73wLY5s/MNYX/6OTD0+LSTEUnbYqxuO/
+	+w1p80cOCofWLFSvNTVOvO+PstkZ5piTrHRQtW3zziwgsHRv4K1pgfQ/7yGHG+D0kBaG9XuvR4xjC
+	hfT7/fl+0mbNdihbOo66oSdQXXgZivTF94hhTuN4lmg87zxxaz7XSUXHsQ1AtsUhSuB0tUdXgpgpE
+	YV2dx/0JH5IPlJcVZDT+G+i5ypiuawUr34nwKWlZKHlvdCK1tNLHSa+6CbxCuWkuJltgxtjXpzOsw
+	t+9YcbIA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55588)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sYl2k-0006Zg-07;
+	Tue, 30 Jul 2024 12:29:26 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sYl2m-0005EG-Mh; Tue, 30 Jul 2024 12:29:28 +0100
+Date: Tue, 30 Jul 2024 12:29:28 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
+	andrew@lunn.ch, horms@kernel.org, hkallweit1@gmail.com,
+	richardcochran@gmail.com, rdunlap@infradead.org,
+	bryan.whitehead@microchip.com, edumazet@google.com,
+	pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net-next V2 3/4] net: lan743x: Migrate phylib to phylink
+Message-ID: <ZqjOmOzNLE0+oYP2@shell.armlinux.org.uk>
+References: <20240716113349.25527-1-Raju.Lakkaraju@microchip.com>
+ <20240716113349.25527-4-Raju.Lakkaraju@microchip.com>
+ <Zqdd1mfSUDK9EifJ@shell.armlinux.org.uk>
+ <ZqjE9A8laPxYP1ta@HYD-DK-UNGSW21.microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqjE9A8laPxYP1ta@HYD-DK-UNGSW21.microchip.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Huacai!
+On Tue, Jul 30, 2024 at 04:18:20PM +0530, Raju Lakkaraju wrote:
+> Ok. 
+> After change, i ran the checkpatch script. it's giving follwoing warning
+> i.e.
+> "CHECK: Comparison to NULL could be written "dn"" 
+> 
+> Is it OK ?
 
-On Tue, Jul 30 2024 at 16:51, Huacai Chen wrote:
-> On Fri, Jul 26, 2024 at 11:12=E2=80=AFPM Thomas Gleixner <tglx@linutronix=
-.de> wrote:
->> > +     while (true) {
->> > +             vector =3D csr_read64(LOONGARCH_CSR_IRR);
->> > +             if (vector & IRR_INVALID_MASK)
->> > +                     break;
->> > +
->> > +             vector &=3D IRR_VECTOR_MASK;
->> > +
->> > +             d =3D this_cpu_read(irq_map[vector]);
->> > +             if (d)
->> > +                     generic_handle_irq_desc(d);
->> > +             else {
->>
->> See bracket rules.
-> Do you mean even if there is only one statement in the if condition,
-> we still need to do like this?
-> if (xxx) {
->     yyy;
-> } else {
->     zzz;
-> }
+Assuming its referring to:
 
-Yes. It's documented.
+        return dn != NULL;
 
->> > +     msi_domain =3D pci_msi_create_irq_domain(pch_msi_handle[0],
->> > +                                            &pch_msi_domain_info_v2, =
-parent);
->>
->> Please don't do that. Convert this to use per device MSI domains.
-> OK, thanks. But it is better to split the conversion to another patch
-> (so we can convert both V1 and V2).
+in a function that returns a bool, I find that utterly perverse, and I
+suggest in this case ignoring checkpatch.
 
-Why adding it first?
+> > > +static int lan743x_phylink_connect(struct lan743x_adapter *adapter)
+> > > +{
+> > > +     struct device_node *dn = adapter->pdev->dev.of_node;
+> > > +     struct net_device *dev = adapter->netdev;
+> > > +     struct fixed_phy_status fphy_status = {
+> > > +             .link = 1,
+> > > +             .speed = SPEED_1000,
+> > > +             .duplex = DUPLEX_FULL,
+> > > +     };
+> > > +     struct phy_device *phydev;
+> > > +     int ret;
+> > > +
+> > > +     if (dn)
+> > > +             ret = phylink_of_phy_connect(adapter->phylink, dn, 0);
+> > > +
+> > > +     if (!dn || (ret && !lan743x_phy_handle_exists(dn))) {
+> > > +             phydev = phy_find_first(adapter->mdiobus);
+> > > +             if (!phydev) {
+> > > +                     if (((adapter->csr.id_rev & ID_REV_ID_MASK_) ==
+> > > +                           ID_REV_ID_LAN7431_) || adapter->is_pci11x1x) {
+> > > +                             phydev = fixed_phy_register(PHY_POLL,
+> > > +                                                         &fphy_status,
+> > > +                                                         NULL);
+> > > +                             if (IS_ERR(phydev)) {
+> > > +                                     netdev_err(dev, "No PHY/fixed_PHY found\n");
+> > > +                                     return PTR_ERR(phydev);
+> > > +                             }
+> > 
+> > Eww. Given that phylink has its own internal fixed-PHY support, can we
+> > not find some way to avoid the legacy fixed-PHY usage here?
+> 
+> Yes. I agree with you. This is very much valid suggestion.
+> Andrew also gave same suggestion.
+> 
+> Currently we don't have Device Tree support for LAN743X driver. 
+> For SFP support, I create the software-node an passing the paramters there.
+> 
+> I don't have fixed-PHY hardware setup currently.
+> I would like to take this as action item to fix it after SFP support commits.
 
-This can be done per interrupt chip. See the conversion series for
-ARM[64]:
+Note that SFP shouldn't be using a fixed-phy at all.
 
-    https://lore.kernel.org/r/20240623142137.448898081@linutronix.de
-
-Thanks,
-
-        tglx
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
