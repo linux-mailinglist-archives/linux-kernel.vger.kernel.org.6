@@ -1,78 +1,126 @@
-Return-Path: <linux-kernel+bounces-267804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211D09415A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:46:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A6F1941677
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75B49B23475
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:46:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC5FBB22B24
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3FD1A2C11;
-	Tue, 30 Jul 2024 15:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A08D1BE873;
+	Tue, 30 Jul 2024 16:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hfel.co.uk header.i=@hfel.co.uk header.b="QiYZId+I"
-Received: from imx.hfel.co.uk (imx.hfel.co.uk [185.209.160.110])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="nyuzWyqJ"
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5E82A1BB
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.209.160.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE2F1BE23F
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722354394; cv=none; b=uGQL4A7B6mK6jpohCG1YEhhrwA6l3PtVWxvYlPFDMm1PZsOlK5va326KPj6kPYZFmU4Jw4g3sZgrNk5oZn9IpRckHpMa9ZdTXb8ePS/wcl7IymohgAIEhourWmlqzWe4Ypvt8EP1/npq7ZahZwgvx9HY7S2KnAtfQ0e+SbOQMrQ=
+	t=1722355219; cv=none; b=kOIjMXrutP+tH/VcLq4lE98bVC0S+66MDeBZPRvuen5oRnUF5QqZx4uipYETeqNkoWLcdvNeQuwapjgb+iPL7wo07dVaV6Xwo+BFwu0FOVOrL3hhxwhqsB9a1qigBtpGtv93l+x2c6cGyBaTTZKyt6795vZZtRuIjnUw/svVDM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722354394; c=relaxed/simple;
-	bh=QpGUXo1p/U7TCvHhofv2wP5mWlKUkFjERkTq/aN26cY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MVlRseXwFQdKbNf4+i7OSjJL4TuqwQRUOokatiZhcWHzqzbv0wGFl9Ga2bVHnOzBlxVLcxXmSt/EZdafrPlLCtyPs//px70CY4ZvLNDTpHicRtNAHt6lDex78ymnXxi/P+T9eIgECnO1gqQ0u0+MMDmmdTpfRwz6viiAt0qnZW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hfel.co.uk; spf=pass smtp.mailfrom=hfel.co.uk; dkim=pass (2048-bit key) header.d=hfel.co.uk header.i=@hfel.co.uk header.b=QiYZId+I; arc=none smtp.client-ip=185.209.160.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hfel.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hfel.co.uk
-Received: from [45.145.42.199] (unknown [45.145.42.199])
-	by imx.hfel.co.uk (Postfix) with ESMTPA id D59FA9F917
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 17:24:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hfel.co.uk;
-	s=default; t=1722101071;
-	bh=QpGUXo1p/U7TCvHhofv2wP5mWlKUkFjERkTq/aN26cY=; h=From:To:Subject;
-	b=QiYZId+IqVBl+x+xCNo0bnhpCyE5zZ+mZ1nmTlxrYDqVxH6TUvg1Tt4Jlm8c9Sjor
-	 S0WZydlpjMVammFmOv9rcdnAopPIwHfVu5XqruOIOFio0cjJdW0sACYo3WUjvNyMZ1
-	 BmL7+eEpckyAS17BL9e91vK7OCdCPy8LcMRuj8p2yvAOshXD4BQx9QRNzkbrZAPqM/
-	 kCEe0gdDj1Rbw/XpGtW8KjYbi0596ftn8tqlgNBNzS81tFWAF1pRaTZAnXJpZ4VRDF
-	 g60SqVKPHYTPSD/cP3vWoHdg9ZWSh2D6rXp1f4UFmfBS3BVv1Cb7UKdecneEtyD6pQ
-	 CqWR6gb4wZ4Mw==
-Authentication-Results: imx.hfel.co.uk;
-	spf=pass (sender IP is 45.145.42.199) smtp.mailfrom=newman@hfel.co.uk smtp.helo=[45.145.42.199]
-Received-SPF: pass (imx.hfel.co.uk: connection is authenticated)
-Reply-To: officeinfo@capitalsforce.com
-From: Arthur Wilson<newman@hfel.co.uk>
-To: linux-kernel@vger.kernel.org
-Subject: Collateral-Free Loan.
-Date: 27 Jul 2024 19:24:29 +0200
-Message-ID: <20240727192429.7A426194190B2538@hfel.co.uk>
+	s=arc-20240116; t=1722355219; c=relaxed/simple;
+	bh=mCh601FrRtPxjpmD6wTsae7FGFqTSFvvavFvDhd9LnI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V/i6U5en8hcQVO7pjpbInxOhJy8rwyMmNyiJj/fpRF9ZqCY9lkco+yFHFeQNKvHe31hbd7gpW80iYevF8yNqwhCXpXALDAZzf1ZsB2D5p3h811yMsh8yY0pXB6jQxC0DfGIqxykBaTKhfPlsBKX12CHhPz7oLNQbkOX/JOLsB0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=nyuzWyqJ; arc=none smtp.client-ip=209.85.217.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4928989e272so1129118137.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:00:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1722355216; x=1722960016; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ebSu3UElL8dKrK505UtfSRAh4jbtzC8DMHGUOIQGm/A=;
+        b=nyuzWyqJID1+9n4yHSdJ8yP0dcTZQrXCr+yT6oD2PBfMFklD2z9JCBubRwnGxCZC93
+         FlOqMi0PMh6oZvMH/40Ul7+kzE5yB0jws7Nuk1fySJEAwpzG5wmbIzM8DR+wU8edIGPJ
+         6c2fcej1jARgTQ0hcZI6H/Fil1nNsJlqN+lG2zeH065UtJ9WWA7FBaBJxV8iYIiAJ/cV
+         hZOnK3UmgKTF6Blban3ZvcWHcdWNMock4tNMzUMFlo7Dia0/D9BRDEZA5Uks4kIAhl5Z
+         eerUqmd5Twu2HVfNXVXDXRUmw+VjlXtooIYHzX1E8Cln7cXA7+XpAf2aoAhJ8/0AP8/Q
+         ActQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722355216; x=1722960016;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ebSu3UElL8dKrK505UtfSRAh4jbtzC8DMHGUOIQGm/A=;
+        b=bDMRnINsFMM+SytANK6qEBheMoZyWrQ1LA+VpK/cYRsvsPreintILxRhbiW64HZ95H
+         3/J9QK9jbVzcEhBiBjp7PRR30ZS/anfqIfoWGw9o8IWhwsBtnoF7bA615UfRSQT1fPd4
+         WAJZ3s7xuqAlBGzrUJobkjU+dkmSnUMGn+9WJZQAgkbzcNIzmwrloMdxNO29euoXNrNc
+         kjPNAwBr/OEnQ5MC63xn52WEmXnbk32GkjojAsvgXCbXVoivqZTBZASMZvnIabO0wr0Y
+         ag5vC6Axjwteg8wSh/K5aGN60nzH47hKmyJRoKg6+yat3ZZLa7ERMTvrmQjguanEmlhX
+         Pr2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUbisoODO5ReKKb2DSNY0XlsP5qqu1Wiia7oEoyw8kteZmPg8v/32Xs3ceBini5IZnLYs+13GK7lb0d2OLJaeGjh+aqzldyskPZDiDW
+X-Gm-Message-State: AOJu0YzHQW+E3umGzEiC4K6cDNDWkLLfoeopY82I2Ytm+ulBK2GO1Pes
+	0W7TCFq8sQbZBYG9I4/UW2KmTSMD2uJQRcL79FdSjdVns6zMXIK077vFxUuELOk=
+X-Google-Smtp-Source: AGHT+IG64oD/0BAxRTYSk9Um5ejrwHurtyJiWine+vs8I2db0quwR2iEnh/I3UfX946vZydcmQjuVg==
+X-Received: by 2002:a05:6102:3ec2:b0:493:b2b4:3708 with SMTP id ada2fe7eead31-493fad54e1fmr12048280137.27.1722355216237;
+        Tue, 30 Jul 2024 09:00:16 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73b2036sm653148085a.38.2024.07.30.09.00.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 09:00:15 -0700 (PDT)
+Date: Tue, 30 Jul 2024 01:19:53 -0400
+From: Gregory Price <gourry@gourry.net>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, dave.jiang@intel.com,
+	Jonathan.Cameron@huawei.com, horenchuang@bytedance.com,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	dan.j.williams@intel.com, lenb@kernel.org,
+	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Subject: Re: [PATCH] acpi/hmat,mm/memtier: always register hmat adist
+ calculation callback
+Message-ID: <Zqh3-TWBkhyY5kPw@PC2K9PVX.TheFacebook.com>
+References: <20240726215548.10653-1-gourry@gourry.net>
+ <87ttg91046.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZqelvPwM2MIG26wY@PC2K9PVX.TheFacebook.com>
+ <877cd3u1go.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877cd3u1go.fsf@yhuang6-desk2.ccr.corp.intel.com>
 
-Greetings!
+On Tue, Jul 30, 2024 at 09:12:55AM +0800, Huang, Ying wrote:
+> > Right now HMAT appears to be used prescriptively, this despite the fact
+> > that there was a clear intent to separate CPU-nodes and non-CPU-nodes in
+> > the memory-tier code. So this patch simply realizes this intent when the
+> > hints are not very reasonable.
+> 
+> If HMAT isn't available, it's hard to put memory devices to
+> appropriate memory tiers without other information.  In commit
+> 992bf77591cb ("mm/demotion: add support for explicit memory tiers"),
+> Aneesh pointed out that it doesn't work for his system to put
+> non-CPU-nodes in lower tier.
+> 
 
-We offer quick, collateral-free financing for economically viable=20
-projects and/or businesses of all sizes, including startups and=20
-existing businesses.
-If you are seeking funding for a specific shovel-ready project,=20
-you will be funded at 2% principal annual interest.
-If you would like to collaborate with us as a middleman/
-facilitator, you will earn 2% of the total project cost or loan=20
-as your commission for every successful loan or project funding=20
-deal facilitated by you.
-Please get in touch if this is of interest to you.
+Per Aneesh in 992bf77591cb - The code explicitly states the intent is
+to put non-CPU-nodes in a lower tier by default.
 
-Regards,
-Arthur Wilson.
+
+    The current implementation puts all nodes with CPU into the highest
+    tier, and builds the tier hierarchy by establishing the per-node
+    demotion targets based on the distances between nodes.
+
+This is accurate for the current code
+
+
+    The current tier initialization code always initializes each
+    memory-only NUMA node into a lower tier.
+
+This is *broken* for the currently upstream code.
+
+This appears to be the result of the hmat adistance callback introduction
+(though it may have been broken before that).
+
+~Gregory
 
