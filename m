@@ -1,90 +1,92 @@
-Return-Path: <linux-kernel+bounces-268094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA2494204A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:06:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A03F94204E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 777EC28419D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:06:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4C791F23F8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1744018B46F;
-	Tue, 30 Jul 2024 19:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D6B18A6C8;
+	Tue, 30 Jul 2024 19:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOOwPDnG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=urja.dev header.i=@urja.dev header.b="aUFxCHV5"
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C031AA3C5;
-	Tue, 30 Jul 2024 19:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C681AA3C3
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 19:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722366363; cv=none; b=pNq+/jaQY74tA4KL1MCELp6eOjS8GtXpds+FBRTaoSoyDol3Gv7l976zNuTVPYieLNXyBJ1OqDi7zrUeoHG93tAQBrO60Pq76D8A8vjjCr2uKKKFB1JMz83TXmrqEnT7LDa5McaRYSXnqXoVEw9HwApeh2xX7UfKTAql6UnGo7g=
+	t=1722366485; cv=none; b=NxvvQv6Bjbw/hpNzddJXcvpgLXT++ES6QQtp0VD5h5JU8I8fIetQJPkjVgzIKyDZQiVfJkECjLzPz5LAz8L7yPgMttCBuhtw5eNErkBrK4VOkj6ddzG9OLhE9i1qmm/qo7+ywAYQFGvWilpK1TltZuCKIqxfov/gHFy6qDM3gqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722366363; c=relaxed/simple;
-	bh=kgqS2ZqR7iWB0gKNoKq2Vmx7MtJRc3IeMqQ4iYYBCO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M3EXQDCEvE+rlyhoh1y4OGmTiesFp43Pu4x8+aUF2i8FDGsJPsymclOK+Vtyfmcerna61yGikklnuy5rs9xgztqTS6eQFo3DceSh1cyxRHnTsZI6jF93RdI+Ov6k6NZeQAaaw4Rs4RGyRwyyNFHS0VfH22GIdbTe+moeW9dSNQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOOwPDnG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FFA6C32782;
-	Tue, 30 Jul 2024 19:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722366362;
-	bh=kgqS2ZqR7iWB0gKNoKq2Vmx7MtJRc3IeMqQ4iYYBCO0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rOOwPDnGF7/sKuRqbaqy15zf9ElOWENrqUnQCHvo7ELxOvQ0+0mFRn9FM65+c8WvM
-	 W+TAjnDAFvY7NyCDI0z4mAoYX/P5vLQhmwGGTpzC7/62wJr6uXbpQv9Wc2NOr44NHh
-	 yfGayq+bW1ze7Cf8rk0kTbeQQFO8UXEia+cn6nSqCKn9zKpzHaeIWOEY26Qkmnicxq
-	 zByY7WScQWWT0hQ+Rv7+jXn7vHkMtuggUq4M/EsqJ7vJaUSQwaAyS+Ph9nOGW98Ee8
-	 +pJYwr6e1RQM4phKHDnFHMsTWH/+0289HUxyN82vnYWvO1cpDEL3Oh+SVdP0FZhkBo
-	 F1NiOF0vKSPuA==
-Date: Tue, 30 Jul 2024 20:05:59 +0100
-From: Simon Horman <horms@kernel.org>
-To: John Wang <wangzq.jn@gmail.com>
-Cc: Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: mctp: Consistent peer address handling in ioctl
- tag allocation
-Message-ID: <20240730190559.GK1967603@kernel.org>
-References: <20240730034031.87151-1-wangzhiqiang02@ieisystem.com>
+	s=arc-20240116; t=1722366485; c=relaxed/simple;
+	bh=saWhBVeizg0sVdQ6Vyt/B9QfErmZv7ysjEY0xq8TAOE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Nvjq65jGWbW5cC2d/7rSBq+2oJyAuNocHtk/GvX1h5LgaWjOK6cwtQd/NP71MKglD59hNMCnYVMTJnyloptodDNXLOqD9bBGy9OuB0Nlo7aKtIoCCvbt9EOSamlce511g1K3gZleSfrlvzl8iOaF3f9yYIUk5lQ12/U+rUoam7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=urja.dev; spf=pass smtp.mailfrom=urja.dev; dkim=pass (2048-bit key) header.d=urja.dev header.i=@urja.dev header.b=aUFxCHV5; arc=none smtp.client-ip=188.165.51.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=urja.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=urja.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=urja.dev;
+	s=protonmail2; t=1722366468; x=1722625668;
+	bh=saWhBVeizg0sVdQ6Vyt/B9QfErmZv7ysjEY0xq8TAOE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=aUFxCHV5ErqO3t7yUec1AfkzKBfaFOwLT82kEXZZrP7LeW8bxa6e0Sd/5pGIstwbp
+	 38uzczgEbnprMAOobCU8H16XypQucvojDavpe/Di2dVSsWbwrZWuNYbkC/nDmg4IVA
+	 DTHyAtNY4gisw7thO38HFgC92/taDGBZeXpWt/9ZUlZQCo8EB320A9kuyWeRMTNbjl
+	 GxRvPUlvjY7jFIBOrlMy85Ps/A2o+UTbGMR60qaCCpu/iRr8wh2hVBHCzsn9SkQwf6
+	 l96gFluuMUMEk8xOFbQpZXIIv9FveJ7ennssyZgZ+E1p9Rw0Rn6owlMDdGXtiGtICW
+	 bnZIbMi1ZEtjA==
+Date: Tue, 30 Jul 2024 19:07:44 +0000
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+From: Urja <urja@urja.dev>
+Cc: Lee Jones <lee@kernel.org>, Dmitrii Osipenko <dmitry.osipenko@collabora.com>, Mark Brown <broonie@kernel.org>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@collabora.com, stable@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] mfd: rk8xx: Fix shutdown handler
+Message-ID: <lJ87fvo0QzsVinjBdNVA7jnCEFm0-GBVJhFpFwKWCIS1M-kiuXP_mefSzm8G2Iplic1LlekmwUD6OODDJAtiDOPuDZ08HT965Tkmibgn6fE=@urja.dev>
+In-Reply-To: <20240730180903.81688-1-sebastian.reichel@collabora.com>
+References: <20240730180903.81688-1-sebastian.reichel@collabora.com>
+Feedback-ID: 82529409:user:proton
+X-Pm-Message-ID: 6ad94b037d6329c541045aad68e64fee5a4c1d46
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730034031.87151-1-wangzhiqiang02@ieisystem.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30, 2024 at 11:40:31AM +0800, John Wang wrote:
-> When executing ioctl to allocate tags, if the peer address is 0,
-> mctp_alloc_local_tag now replaces it with 0xff. However, during tag
-> dropping, this replacement is not performed, potentially causing the key
-> not to be dropped as expected.
-> 
-> Signed-off-by: John Wang <wangzhiqiang02@ieisystem.com>
-> Change-Id: I9c75aa8aff4bc048dd3be563f7f50a6fb14dc028
+Hi,
 
-Hi John,
+On Tuesday, 30 July 2024 at 9:05 PM, Sebastian Reichel <sebastian.reichel@c=
+ollabora.com> wrote:
 
-This is not a full review, so I would recommend waiting for feedback
-from others, but please:
+> To avoid this we keep the SYS_OFF_MODE_POWER_OFF_PREPARE handler for the
+> SPI backend. This is not great, but at least avoids regressions and the
+> fix should be small enough to allow backporting.
+>=20
+> As a side-effect this also works around a shutdown problem on the Asus
+> C201. For reasons unknown that skips calling the prepare handler and
+> directly calls the final shutdown handler.
 
-1. Do not include the Change-Id as it is not obvious what public
-   resource it references
-2. As this is a fix targeted at net, please do include a Fixes tag,
-   indicating the commit where this user-visible problem first
-   manifested.
+I can clarify that bit a little - basically, when the handler is registered
+as a poweroff prepare handler, the kernel thinks that the C201 cannot power=
+off
+and converts the poweroff into a halt, so I assume the
+power_off_handler_list is empty - which makes sense, the C201 has no firmwa=
+re
+to call or other poweroff methods that I'd be aware of.
+(See kernel/reboot.c line 746 and 683.)=20
 
-Also, as an aside, please wait 24h between posting updated patches.
-Link: https://docs.kernel.org/process/maintainer-netdev.html
+Anyways, this patch works on the C201 (tested on top of 6.11-rc1).
+Tested-by: Urja <urja@urja.dev>
 
-...
+Thank you
+--
+Urja Rannikko
 
