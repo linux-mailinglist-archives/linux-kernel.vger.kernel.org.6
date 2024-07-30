@@ -1,155 +1,108 @@
-Return-Path: <linux-kernel+bounces-268320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F82942328
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:55:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6BF894232A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3E8B1F234E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:55:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 908D71F23275
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23003191F85;
-	Tue, 30 Jul 2024 22:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CBF191F67;
+	Tue, 30 Jul 2024 22:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fGPdAVwv"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="chJMdlIU"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCE6190074
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58E718CC1E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722380104; cv=none; b=jOuNC4rBZvlm4Z4/rUgLihaZHCbVe0c+mSiTJlaMSI2y3EkypDAEyyAo3vDBKpIPtZ3XQOuwM6fzqplYvadaBZ566GGWyex6qISXcys6+bKeo1F2gkpGnGoHDjfq363FCPDUvUb32+44ytSa0OVqnfasB9lixUTk9r1cSHlEsEI=
+	t=1722380181; cv=none; b=nzFOD3JQlQHRL9QcsOEQPBgIbfOaO2f3b4CUtcoIyi2LvbACppgYZI1NgyX4nZG67X9QYxRSPGsjk1GhnDKCLO2a3FQY7oIVbVigpqLCfVx3bJbPgw8G6XmuhddpC3UK+P4Bfmunqux8lwtRObC/SKeyl04lDF8RaF6r2JU6VqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722380104; c=relaxed/simple;
-	bh=WZ3/rWEXG8g86e90yrwydrXqWQuW6onnuGzyWKbn2Cc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NadkZXbqTto6ccmKWqoXD0ZZ2zXcizJCaln3d16sfEx0/cvIsHfx/WfmHjCnBp8xG7NkHWErPiPc65Y2g/DNAOKxkKVa33Jf9eckb2GqFMX80e+7ro0Lj6kOAcB8xQqu/TffgNZSJWJCvP0TYmFl7crMff88oSv7C9SGRWzIVZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fGPdAVwv; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3748ec0cae2so1453585ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:55:02 -0700 (PDT)
+	s=arc-20240116; t=1722380181; c=relaxed/simple;
+	bh=Jy1zXet50TvN+hFwIwsUpfDkUL5Lu8EsnFXzE1Xq/iI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L4Tz/mOkvECEL0NtXS4wHQz342KkiaIM3oYb9fJKeAK4BiaxB18hmeGmVk64/cuj8Um0EN5TDd451TaaMlOyLuhEDSh2Z088syXRcKjFYkdsvAopj5YVpA7HJ3B6RMpXR1/x5JrqUU0lVjKhKNe+/HOdYfW0o7lQ2BD/j4lrYfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=chJMdlIU; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70d333d57cdso3558578b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:56:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722380102; x=1722984902; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qoyRtMzVDOTOSVMcNBNPwWShL7yqzSfNXIrJBWdDdno=;
-        b=fGPdAVwvg8Te6xkdzyuFDRlTbtmI5s01ZjNmo5X02i2TP34fY9zgVSDaXxRP9jvIWV
-         rrJX31cpLOO7UyimW1qaD/BLiEsJqpKpby1QUQaVBjW5XP8Npwx7UoHnof3xNmHldkIa
-         xp0HGB0g6zjysS5vENlwPPxa7Oz8T4ERSXQuo=
+        d=gmail.com; s=20230601; t=1722380179; x=1722984979; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hpezHkvdjy1MlA+dO0gKXwYP8ordkQyr69OAF6y3Pjs=;
+        b=chJMdlIUndbooojtYL7u6ztEzvyjOuLHka7+gqBp1/HbBsTBiulvAKpAoTT2QJT5x/
+         7PNvlCqp5a5qF3Z55a8q5H7nF74jI4H6AfPhhjeGaYRj5X5vUfmBxc9vQQ2kOjRflIyb
+         fErKXRs4AvjZ/y8JMbRLfNTwe+bOyUmMMlVD8MmgW7sCi+lVvGBjkrYaEyasCc6YgRli
+         Fchk9/AQmH3Q2Hrlgu8wQoHZBsmxmwnJ9wtXvtiB5dMNhOLtP4yH5bu8PW05cCYZFeMC
+         BxlbJ0ASwlWziwPrtxiwXvNYNEkmYbFHC5h5sYV21+Ma21BwvgKNgjpIp1FjrfdXj9Su
+         CP/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722380102; x=1722984902;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qoyRtMzVDOTOSVMcNBNPwWShL7yqzSfNXIrJBWdDdno=;
-        b=basIUMqXuMtBksCxKa5eQGnR5lAhraJigoHGWCd7YDDADl4Kr4z3rjfz0GquPZz/JI
-         v4ihGXTqYAJJrKyVSQxgBc3MevMcSzW91lId5eWVqY/qSAJlstwXb8q7CCOpUh2EeRvu
-         Rm+Dweea4cQLn9XnSHY7d1wGiAAU7wSLTYRUCb+rG+yOm/sCeDtGMc4oJYyHaMw0L65B
-         o45geodeY3D4P7DDlPdZI+G9fxirKbmnsMcnmX5W1c/+W8vbArDVHBB60TT1m5jjSzbu
-         6iMnmr8S0jD+FZ0fSmOCLTWzDTGzjZgN2sgbTIQVHbzeqmWRRszmnuA+XJMrp/7TqVXG
-         extA==
-X-Forwarded-Encrypted: i=1; AJvYcCXY5qlbE2TT4n/UCPQLxgIkMZTz/4iOXdzBnlBAqJiRymoGcUxHOXFE0MVCygeT8gaQnd4UZvANX5m+sjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl1bVWAflzOabSJXOUwo2j3AoVuplGXfobeDT2HRwjX04SbWrf
-	QywfXqUD+8jHkGufYjXoOJpNIOyULccgB/QB2Kva2JHpkFZFf59VI9g9u1N+qDQ=
-X-Google-Smtp-Source: AGHT+IE0J88IPs6PTLB5D2s6BzsB0tgWoXin9ud9y3oLV0lml4OOF8/cS9mwwDY/V0gR4AHkSVf9iw==
-X-Received: by 2002:a05:6e02:1fcf:b0:381:c5f0:20d5 with SMTP id e9e14a558f8ab-39a22c4add5mr127399165ab.0.1722380101694;
-        Tue, 30 Jul 2024 15:55:01 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39af7929ba2sm25175015ab.3.2024.07.30.15.55.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 15:55:01 -0700 (PDT)
-Message-ID: <f1a6d13b-a5b8-45c2-bd45-b44b5b70a25d@linuxfoundation.org>
-Date: Tue, 30 Jul 2024 16:55:00 -0600
+        d=1e100.net; s=20230601; t=1722380179; x=1722984979;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hpezHkvdjy1MlA+dO0gKXwYP8ordkQyr69OAF6y3Pjs=;
+        b=j3azUOrN6cTpf/HsHwCVfPU1eRE1TTlQri7ZoUtSbhWycXaVOpGTn73HxiKKuKSWgp
+         rFD8GVH+3G5wIwllna+TcMQcqqr26gyXfv0HsviNQTCI5dbzK0lvn94xMkvglIB1QnPu
+         9CaSbcJmAp/ExI4ajsFuJ5OXNvyFp4V88A8meD2vblNJwuJaseho+CoLKJGzbvYE4RbG
+         kJfSMTVetmcKzvq5LSZ1NUr8rBKGcFXN7YjWcPZv6D1TWHAKJPlfg23jvGnu8Ef+qkjk
+         he/UVJaDCkwY7r5+Q589nwtAmJI1tWXyNXgEGTWuRhZnC/hfhHLTgYFa2tSpHEkC4n6I
+         kkUg==
+X-Forwarded-Encrypted: i=1; AJvYcCU14NEkxTTNFvAuTU1SF70H/CubjCTCjdwu5NRCj/pIbh2HWOEqwBEsui3Gw5axAU9Ac8iuQ0X2o/IU6gQD3m/ai9XNF+5yNR7har1u
+X-Gm-Message-State: AOJu0YyzoRJM10vt25J/UhTzMut4gdvopAGtcS92DBXcTvXD7o3R5woa
+	pTnDwTzkQ9VTZlHL4DztQh4+KG96XdK/6p1aGuGZa4Wn+OHRx0NGmRzkkw==
+X-Google-Smtp-Source: AGHT+IEFsNvh6YZbrzZOxYWiNatZm9h2D+IzSj1fF1gCLZedtbzz+noDtkqPWsgKmSkEqz2qKNP5Kw==
+X-Received: by 2002:a05:6a00:2e90:b0:705:9ddb:db6b with SMTP id d2e1a72fcca58-70ecea2ed28mr11584399b3a.13.1722380178823;
+        Tue, 30 Jul 2024 15:56:18 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8a2bebsm8917764b3a.212.2024.07.30.15.56.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 15:56:18 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 30 Jul 2024 12:56:17 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, jiangshanlai@gmail.com,
+	christian.koenig@amd.com, ltuikov89@gmail.com, daniel@ffwll.ch
+Subject: Re: [RFC PATCH 1/3] workqueue: Add interface for user-defined
+ workqueue lockdep map
+Message-ID: <ZqlvkdIoZAkVrvvx@slm.duckdns.org>
+References: <20240730221742.2248527-1-matthew.brost@intel.com>
+ <20240730221742.2248527-2-matthew.brost@intel.com>
+ <ZqlqYLZWCiLKhVJf@slm.duckdns.org>
+ <Zqlu8gq2d8mtn7rC@DUT025-TGLU.fm.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Converting kselftest test modules to kunit
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Kees Cook <keescook@chromium.org>, davidgow@google.com
-Cc: "open list : KERNEL SELFTEST FRAMEWORK"
- <linux-kselftest@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- kunit-dev@googlegroups.com, "kernel@collabora.com" <kernel@collabora.com>,
- Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>
-References: <327831fb-47ab-4555-8f0b-19a8dbcaacd7@collabora.com>
- <533826b3-8bc4-40f8-a491-5bb5614469c3@linuxfoundation.org>
- <a3083ad4-e9dc-40da-bf57-8391bcd96a6c@collabora.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <a3083ad4-e9dc-40da-bf57-8391bcd96a6c@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zqlu8gq2d8mtn7rC@DUT025-TGLU.fm.intel.com>
 
-On 7/29/24 01:55, Muhammad Usama Anjum wrote:
-> On 7/27/24 12:35 AM, Shuah Khan wrote:
->> On 7/15/24 04:09, Muhammad Usama Anjum wrote:
->>> Hi Kees and All,
->>>
->>> There are several tests in kselftest subsystem which load modules to tests
->>> the internals of the kernel. Most of these test modules are just loaded by
->>> the kselftest, their status isn't read and reported to the user logs. Hence
->>> they don't provide benefit of executing those tests.
->>>
->>> I've found patches from Kees where he has been converting such kselftests
->>> to kunit tests [1]. The probable motivation is to move tests output of
->>> kselftest subsystem which only triggers tests without correctly reporting
->>> the results. On the other hand, kunit is there to test the kernel's
->>> internal functions which can't be done by userspace.
->>>
->>> Kselftest:    Test user facing APIs from userspace
->>> Kunit:        Test kernel's internal functions from kernelspace
->>>
->>> This brings me to conclusion that kselftest which are loading modules to
->>> test kernelspace should be converted to kunit tests. I've noted several
->>> such kselftests.
->>>
->>> This is just my understanding. Please mention if I'm correct above or more
->>> reasons to support kselftest test modules transformation into kunit test.
->>>
->>> [1] https://lore.kernel.org/all/20221018082824.never.845-kees@kernel.org/
->>>
->>
->> Please make sure you aren't taking away the ability to run these tests during
->> boot.
-> The kunit tests are usually run at boot time. They can be run later as
-> well. So I'm not trying to remove any functionality. Rather adding a way
-> where failures would actually be detected.
-> 
->> It doesn't make sense to convert every single test especially when it
->> is intended to be run during boot without dependencies - not as a kunit test
->> but a regression test during boot.
-> I started investigating when these lib kselftests were just loading the
-> test module without checking if test actually passed/failed (which proves
-> that this type of kselftests can never detect regression as it doesn't
-> process the results). It was strange. Hence I found out the conversion of
-> such kselftests to kunit tests done by Kees and started this thread for
-> discussion before doing actual work and sending patches.
-> 
->>
+On Tue, Jul 30, 2024 at 10:53:38PM +0000, Matthew Brost wrote:
+> I didn't want to change the export alloc_workqueue() arguments so I went
+> with this approach. Are you suggesting export a new function
+> alloc_workqueue_lockdep_map() which will share an internal
+> implementation with the existing alloc_workqueue() but passes in a
+> lockdep map? That could work.
 
-I explained this on two other threads. If you don't know how this test
-is used why are you making this change?
+Yeah, add a new exported function which takes lockdep_map and make
+alloc_workqueue() to call that with the embedded map. No need to make the
+latter inline either.
 
->> bitmap is one example - pay attention to the config help test - bitmap
->> one clearly states it runs regression testing during boot. Any test that
->> says that isn't a candidate for conversion.
-> Please can you explain what do you mean by bitmap testing during boot? As
-> far as I understand, the kselftests are usespace tests and are run after
-> kernel has booted completely and userspace has started. It cannot be
-> regarded as testing during boot.
-> 
+Thanks.
 
-I responded to David - let me know you would like me to repeat it.
-
-thanks,
--- Shuah
-
+-- 
+tejun
 
