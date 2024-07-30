@@ -1,144 +1,91 @@
-Return-Path: <linux-kernel+bounces-267685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11545941453
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:27:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57A5B941457
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:27:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42E811C20C58
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:27:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88A4B1C22EF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E309D529;
-	Tue, 30 Jul 2024 14:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3431A2568;
+	Tue, 30 Jul 2024 14:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKy6wAdR"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aRQPTTe7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE831A255F;
-	Tue, 30 Jul 2024 14:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4358C1A2559
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722349603; cv=none; b=iJN53mDU5625bUOjuHGir9ZIJtvYpAh1J1/XoktP8l3ia9rD6F/3dS2nsiEcKkSVeagl7x6wgC6U8UkyMrwsaKLADOyvzNrAlW0fc8bzQ7YZaktiKmsm/swHjXBTmW/NjG5ObzEdG8edlKV6sFHYjkFMxqeV6BvZu3Kv6QxpMAA=
+	t=1722349620; cv=none; b=tqeQ2B33TEKB1yFPIAkbxj9nOHpun3pXPT/ne+qKFndhKXjv5YYs2E4KKzSFQr1YjDYEqUURgg0PdLxmYsAuzkiApap7Wn36OsMN4i8gl4M4WDmiGeej+gerhDASrAAKPZ7QJ+CPRVJlev0aAMnKudJs3HqPn/7Rs2UzTMYJX5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722349603; c=relaxed/simple;
-	bh=Qt/UfB4zNTUWDjBkoJRjyNL0poNjeKX274lJz+2B3A4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ci2ECKLXYHkWTlong34DA9hpE9xjo1YAfwDqEdVE7iV6U/HPQ2h867D0PkMZiCMM35GWIEY3wehO59B/0POsFA4RDg3WnOaIo+wf2rPJytdUMf75uiu3gSwRgseGkHl/bdb1RSn4eWRJVOHPAnoxwOqf0oKvPlclEetT+i7PZmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EKy6wAdR; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-59589a9be92so7028984a12.2;
-        Tue, 30 Jul 2024 07:26:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722349601; x=1722954401; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F2BJJA4TAF9/LiRxJWO/jSMth8qVK7VTphNa2oVP9/g=;
-        b=EKy6wAdRJYsxW3PMO8DZVCSMxpdaz3I4TXn/GQ1Bf5yNscBsjYMn8hCQMKR9ljoevp
-         KevVhkvym2SGTg2w6Jt++ezg5+LxwYzGeeO3SRlK45Ny6b+i0ryMPa74tjDAKxTGvPbJ
-         SMFPWaqNlWT1aMa5lYD7Qk7I9hox1bR1Bq4ilV0KpjZwJ4VCjyIU8nEtHsp+DZUoHRPT
-         sFZPSaHs8dXWZg3WTSZ4sE6gE3uXkx/A6/uBWJFjOXWTTkSREyxZPTbih3IxEYSyBUK5
-         tm6/oYkMOz+zBNzJrmHz9m9oJRDqdFIzXDBa8wks5qfIuImqxNV19cr/s4MEZweCFAfa
-         577Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722349601; x=1722954401;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F2BJJA4TAF9/LiRxJWO/jSMth8qVK7VTphNa2oVP9/g=;
-        b=kvynMPytvxTCYggyVzpVA7LQWbY38BufhCFO+zUTyS8FGQJAwC3MzSEL3xG6uy6gov
-         hm7jeyGdJQxi0zt0RJ2QiKdi3h+sPfuOSrvd+xUOFvbwwbDQR8jxcmUAaQCBBmsj8KHA
-         wcZhD/sGy/IJmEDhyasjINAfTddeF59jYIbP2SNiZPO4BnZDQgSAYjDxa4ApWMoqCU7T
-         +ylc7WToor3XClWrr9bh7WtDETiNOJzT0cm3TZyNrJvnshdXe8X6NNkUxBAgrFteuIAo
-         JS1O7eLraMsRcUNBRRRQVcWvbDrGi5chWu6CILSlQGflRED/Rt/A4z/30UuD4E+l29MF
-         1ESg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSOT4A9BM8djakjGZJa1AyHsdMgpC2JXxhzorJ9aZVofxXCe2EStho57izVW8Din5rDoY0tM1HwOJjAkH537DhB0Nec11Mk4q2x0EKCwfLIbUgjECqe34w8S7CibWFy2gFZLSK/Q6AuQ==
-X-Gm-Message-State: AOJu0YyABSWY26l/1CIctT0k5t7rYqKXmpT7OW+VTFl6bac21h8Fld88
-	X9Nol/W8N4YmZADT0hHu+M7Hf3t/QW6+xW3VGYjIsfCsqOuGe18J5yQFPlIor/YLzHQH+kf3fbG
-	ygNvsnmtwOO4xL5NmWm8WlzmrR8ZuuA==
-X-Google-Smtp-Source: AGHT+IGL0saf7WRa1TzF/fPTy+5z6N2A4MAbOuaTNeNW0c6l+eyZ0QsrGTeLQCbCwkD2Z5gAFbs/+N/Swbrrj5KOTg0=
-X-Received: by 2002:a05:6402:26c2:b0:5a3:3553:9aaf with SMTP id
- 4fb4d7f45d1cf-5b0201034a1mr8128434a12.2.1722349599677; Tue, 30 Jul 2024
- 07:26:39 -0700 (PDT)
+	s=arc-20240116; t=1722349620; c=relaxed/simple;
+	bh=QwOqJyMeabVVRXz2SZZrMQsxGHIjnHfDQSOp9Mld0Ok=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=P4OkWe4F1OfnSwzdJVVXkYRYxtZrop23gp5yGQjqx+yVWgq40Qms0ZHI/clR1hgMomyY2qZ64hrL6Z2whw1Dr9p5KdXDidhW36tzJ919H75JXxCnUJcXx0bRAAj5QDdEO+5UHUf2IVDXg71n9BRg/C4nv1nWQTBHqWb7j+jBCFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aRQPTTe7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722349618;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HN99UYk8Kh6g/3OE9am3X/kGbGNdhXjLG7Bh6vntP4U=;
+	b=aRQPTTe7x59fWJwfSJ7vHyxpYCh4yQO7916O1UbWBF4Ch2znvVwL6w3ANXE3bDjFCghFZp
+	T7h+kHIm+x2BEhCDAcNajdwQXXOb7OpEMFxzuqoVZdBX4tuBi6TuTHT8O6Wghmgrk9qSVQ
+	ImFewi491LftShpr9mSXGMxyM+X3wcs=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-416-inhxdHUVP768Hgmk5_Y2BQ-1; Tue,
+ 30 Jul 2024 10:26:55 -0400
+X-MC-Unique: inhxdHUVP768Hgmk5_Y2BQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 957731956080;
+	Tue, 30 Jul 2024 14:26:53 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.216])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E4ECC1955D42;
+	Tue, 30 Jul 2024 14:26:50 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240729090639.852732-1-max.kellermann@ionos.com>
+References: <20240729090639.852732-1-max.kellermann@ionos.com>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: dhowells@redhat.com, jlayton@kernel.org, willy@infradead.org,
+    linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+    ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    stable@vger.kernel.org
+Subject: Re: [PATCH] fs/ceph/addr: pass using_pgpriv2=false to fscache_write_to_cache()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729205726.7923-1-robdclark@gmail.com> <20240729205726.7923-2-robdclark@gmail.com>
- <Zqi5rUQqWa9wZCva@linaro.org>
-In-Reply-To: <Zqi5rUQqWa9wZCva@linaro.org>
-From: Rob Clark <robdclark@gmail.com>
-Date: Tue, 30 Jul 2024 07:26:27 -0700
-Message-ID: <CAF6AEGvDJO7T8DMZLy7764AxO1fqPmUWDm2eh1gqV5T-sTfKOQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: x1e80100-yoga: Update panel bindings
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Rob Clark <robdclark@chromium.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3516607.1722349609.1@warthog.procyon.org.uk>
+Date: Tue, 30 Jul 2024 15:26:49 +0100
+Message-ID: <3516608.1722349609@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Tue, Jul 30, 2024 at 3:00=E2=80=AFAM Stephan Gerhold
-<stephan.gerhold@linaro.org> wrote:
->
-> On Mon, Jul 29, 2024 at 01:57:25PM -0700, Rob Clark wrote:
-> > From: Rob Clark <robdclark@chromium.org>
-> >
-> > Use the correct panel compatible, and wire up enable-gpio.  It is wired
-> > up in the same way as the x1e80100-crd.
-> >
-> > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-> > ---
-> > Note that the power-source differs from the CRD.  Figured that out by
-> > diffing $debugfs/gpio.
-> >
-> >  .../dts/qcom/x1e80100-lenovo-yoga-slim7x.dts    | 17 +++++++++++++++--
-> >  1 file changed, 15 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b=
-/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-> > index 70977e9fa266..6f8d52c368a4 100644
-> > --- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-> > +++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-> > [...]
-> > @@ -669,6 +672,16 @@ &pcie6a_phy {
-> >       status =3D "okay";
-> >  };
-> >
-> > +&pmc8380_3_gpios {
-> > +     edp_bl_en: edp-bl-en-state {
-> > +             pins =3D "gpio4";
-> > +             function =3D "normal";
-> > +             power-source =3D <0>; /* 1.8V */
->
-> Hm, are you sure the firmware sets it like this?
->
-> power-source =3D <0> is typically VPH, i.e. the main battery supply
-> voltage or similar. This will definitely be higher than 1.8V. It seems a
-> bit odd to use a variable voltage source for a GPIO...
+For the moment, ceph has to continue using PG_private_2.  It doesn't use
+netfs_writepages().  I have mostly complete patches to fix that, but they got
+popped onto the back burner for a bit.
 
-:shrug:
+I've finally managed to get cephfs set up and can now reproduce the hang
+you're seeing.
 
-Board level stuff is a bit outside my area of expertise, but it's what
-made /sys/kernel/debug/gpio match for gpiochip3 gpio4 and it's what
-made the panel work.  Using <1> resulted in a black screen.
+David
 
-AFAIU Srini has a yoga 7x as well, and perhaps knows how to read ACPI
-better than I do, so maybe he can double check.
-
-BR,
--R
-
-> Thanks,
-> Stephan
 
