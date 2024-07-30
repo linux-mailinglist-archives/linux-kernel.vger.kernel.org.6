@@ -1,53 +1,79 @@
-Return-Path: <linux-kernel+bounces-268154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F269420E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:45:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F9DE9420E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D9C1C23505
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:45:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17B3C2864B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F2B18CC01;
-	Tue, 30 Jul 2024 19:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9836818DF6B;
+	Tue, 30 Jul 2024 19:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpJMeF/a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+F60rMn"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3909318991F;
-	Tue, 30 Jul 2024 19:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F93149C41;
+	Tue, 30 Jul 2024 19:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722368632; cv=none; b=AUdeH1tnVP2JJy/b0ZJdRsxGW0iMDBlbZ5MnjZP6dL17I7c7YjsX+ljxPOpvnfKS676rksQtFLEdk2DgKWtvbrLaKZ1VplSyIheQW8E/Fdyb2shbC6D9O/vGpQkccbFKWzBE9jW4QPJ7GKbq5wiMuWFTJF3Qj7lqNwbS7y8UeVE=
+	t=1722368669; cv=none; b=PkA1dP6VxZvj0LUSV7b3DWiY3d+UHEakN+svW96rAQUZYL9+5hI7CazgpGOJ9SRo038MpPA7prMRJ76VOuh/lFOg3JuQpjdc2hJlSUkSr8tXNeEu/sBk/oy+s2LLzT+HKv9b+xaptow34O0HDLu7YweSZfYLSwRMTmWW2Xaz3+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722368632; c=relaxed/simple;
-	bh=VpiOq6EFkVYobmmtpujUtbY2EDrMaIz8r37j6lzSw+0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o4x1nF7eClviC9ok2e5eBh642kCWqURJ8Aes77MjoZLNwqfl7ZyhGR/9i76iBRlUDgGzFFtmYpLXRua4fcYuSwPbunCPG8GGdwNT/8RBANzxBhGpo0JJgxjj5qFCZ2PakpLUW9FOqtawE+IZXuRkOXeU4iXGafMbFiMXCzJtDmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rpJMeF/a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5E84C32782;
-	Tue, 30 Jul 2024 19:43:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722368631;
-	bh=VpiOq6EFkVYobmmtpujUtbY2EDrMaIz8r37j6lzSw+0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rpJMeF/ai0Ptkcc62zMu9iNiTx+1PkcLaXGYPG/jqz2MLQ/6xcNvnArP68d9H6Iza
-	 8EaLLMELqYMvGoTM/tFBuqmiZ6l/e7VWULYXs0OqETS5v6ZZaeiXJwrlvsgASfIF4x
-	 hwV9yrw0vz+Vw2Vdq6wXtmpga2Ftvmi7b5pnubZBJMKA0LTjcWv056V7oxUzFpt8t3
-	 XTt+OoB5yWhCEs+UVph4NtunG+o7tVIaCS3kWBsRTLXCgELZKyFSJ32lYihYyJVoAT
-	 P1sV0ofI642sxteBTn6ErJ1QKqFqrO9Kq+/tSHLEuYiZbZ4dXV0+j/iK7gXHFDAOJ+
-	 cRPfd0uUTuy3Q==
-From: Michael Walle <mwalle@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Walle <mwalle@kernel.org>
-Subject: [PATCH] usb: gadget: f_acm: make bInterfaceProtocol configurable
-Date: Tue, 30 Jul 2024 21:43:37 +0200
-Message-Id: <20240730194337.2583784-1-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1722368669; c=relaxed/simple;
+	bh=I+MltSMS3fJwbWf/vbAZoKpKwSTSmjHX2ugCTSePSak=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fY1HXL6XFJL30RUzNI49Zq3xUHrWUhpf2n3mtF2n+0dlpGdr4cXNRKhCnH2fhQv7WmLP4h+if28QuTjvoCkOihEiaRolHwzPVUbox+7XqGsOOQZNP6Wtpas565PxB6KjWA6s6aCUWbBeByJyEdDYo7maZP8wFXrCJehpye5qQy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+F60rMn; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70eec5f2401so2422216b3a.3;
+        Tue, 30 Jul 2024 12:44:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722368667; x=1722973467; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KZF3btgT97s4Zp1oA1tWvH59JdAR8MZ3lk2QFNVm6fQ=;
+        b=O+F60rMnkW45B0T+9BSEnyHBoVKKUZL7iW3/WDP8dqKgDiWrJlYQAs3wy2q2AFL2uG
+         hGfYgTb2CJUNoFiW+Uy0GXIaBi7HKknEIEh05DRf8zmk1BHyPDp2/39n88dhlrtqXZ9E
+         LtSkt4/X71+N64pqF56tY681Q2oBsKX3uqeCe7o97LQCruNPXPfbZN4568QzwzVf/aQE
+         6KLoDvVyBByF0r767eOWZp1OzYZreSm7Al2TClAGKFBuUToJvPXd45nQyf+AsvWLA4Ha
+         HXiru5XENEUzoKWSPLkij5uexhh5k/FtHzxXcFatH1Wp4AOs3oZAwWGQCkKFSccOT76Y
+         Ft0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722368667; x=1722973467;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KZF3btgT97s4Zp1oA1tWvH59JdAR8MZ3lk2QFNVm6fQ=;
+        b=uegeydvPrzGIrLmjZU49MVk3wQGOTbPm8HTxnhiRkLTXTU0h36JdOAtRRUSTdCZWeh
+         7aC8LBOqNo3kXLvft5/7ZDVR6kUsWbwrD50TtXeWcGzgWxRsJU/z/2rcDIxO5FQlHIUo
+         jGWwOscv2Nb3KMXeeN9wFR8cTr/Hm3hCLr5nWtev1/kNRQl7mfL5u8RYmrZgPzIrooYq
+         Hr+C31hFNDkBmzJCoKip4J06mwWPsCBQtkzDJlj1T+g42mydofZ6dD+SP5LOkF+pRIhH
+         jKjHyS9ayDaC6oc2pt/sqyX/S8+HoU/zHviNLtE/F0KyMc7Z8utX9/DQ1K9njkAeWRrA
+         cirg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8n1aWXTJBYNopANVgl//vlb4stNLzYYG/78t4vNqtsrn6kFF36Z5YdJQ4PV4D2GRhc9tXlEHwARZMG+JAl+0PcTz9AWwVVr0zGhUMaOaN9jHAfZP6hoHnoUOCx92Gabnj3zxmJZz9pmukZO9Z
+X-Gm-Message-State: AOJu0YxM/WGeyLADofIUjsaxTR3HnSF46si9zPw8jB+J25GHFK8d4lVE
+	834I4D37Fa1TgTfyMZ+b79iKhtV4pFHJ8pchJScUZqZJMjvaCAgz
+X-Google-Smtp-Source: AGHT+IFt0v4jhFEoQCGWd0QBnzevTPz4WQYjsnJTLE9usRouXj6clPF7sQZqViQJog0W3ZULkwM0Tw==
+X-Received: by 2002:a05:6a00:80a:b0:70d:2a5d:867f with SMTP id d2e1a72fcca58-70eceda1f9cmr14761580b3a.21.1722368667505;
+        Tue, 30 Jul 2024 12:44:27 -0700 (PDT)
+Received: from OPEN-HORIZONS.attlocal.net ([2600:1700:65a0:8110::c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8122ddsm8785561b3a.133.2024.07.30.12.44.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 12:44:26 -0700 (PDT)
+From: Alexander Hall <bearodark@gmail.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Alexander Hall <bearodark@gmail.com>,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] Bluetooth: btusb: Add MediaTek MT7925-B22M support ID 0x13d3:0x3604
+Date: Tue, 30 Jul 2024 12:43:42 -0700
+Message-ID: <20240730194342.129610-2-bearodark@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,175 +82,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The bInterfaceProtocol is hardcoded to USB_CDC_ACM_PROTO_AT_V25TER. This
-will lead to problems with ModemManger which will gladly try to probe
-that port as a modem if the gadget also has a network function.
-ModemManager will try to send AT commands to the ACM port. Make the
-bInterfaceProtocol configurable.
+This patch fixes bluetooth support on the MediaTek MT7925 WiFi 7 +
+BT 5.3 M.2 chipset that I purchased from aliexpress (and which 
+arrived today). The PCB states that it is an MT7925B22M.
 
-This will also set bFunctionProtocol to the same value, see commit
-5c8db070b448 ("USB: Change acm_iad_descriptor bFunctionProtocol to
-USB_CDC_ACM_PROTO_AT_V25TER") for more details.
+Device from /sys/kernel/debug/usb/devices:
 
-Signed-off-by: Michael Walle <mwalle@kernel.org>
+T:  Bus=03 Lev=02 Prnt=03 Port=02 Cnt=01 Dev#=  4 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=13d3 ProdID=3604 Rev= 1.00
+S:  Manufacturer=MediaTek Inc.
+S:  Product=Wireless_Device
+S:  SerialNumber=000000000
+C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
+A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
+
+High fidelity images I took of the chip itself for future reference:
+https://archive.org/details/MediaTek-MT7925B22M/
+
+Webpage the chip was purchased from, note it is different from the
+images taken:
+https://web.archive.org/web/20240620021119/https://www.aliexpress.
+us/item/3256806821207897.html
+
+Signed-off-by: Alexander Hall <bearodark@gmail.com>
 ---
-See the following link for the filter logic:
-https://gitlab.freedesktop.org/mobile-broadband/ModemManager/-/blob/main/src/mm-filter.c?ref_type=heads#L303
----
- .../ABI/testing/configfs-usb-gadget-acm       |  7 +++
- drivers/usb/gadget/function/f_acm.c           | 50 ++++++++++++++++++-
- drivers/usb/gadget/function/u_serial.h        |  4 ++
- 3 files changed, 59 insertions(+), 2 deletions(-)
+Changes from v1:
+It was suggested that the (now removed) aliexpress link be run through
+  archive.org, however aliexpress is incompatible with waybacks
+  scraping tool, and as an alternative I have taken high resolution
+  images of the actual chip I received and put them on archive.org.
+The prefix of this patch was changed to `Bluetooth:` as suggested
+Maintainers and open lists have been auto CC'd as suggested, via
+  get_maintainers.pl
+Changes from v2:
+  the commit name has been updated to include the device:vendor id to be
+  clearer
+  web archive eventually came through so I have readded the link to that
+  aswell
+Changes from v3:
+  tabs replaced with spaces, Signed-off-by now matches From sender
 
-diff --git a/Documentation/ABI/testing/configfs-usb-gadget-acm b/Documentation/ABI/testing/configfs-usb-gadget-acm
-index d21092d75a05..25e68be9eb66 100644
---- a/Documentation/ABI/testing/configfs-usb-gadget-acm
-+++ b/Documentation/ABI/testing/configfs-usb-gadget-acm
-@@ -6,3 +6,10 @@ Description:
- 		This item contains just one readonly attribute: port_num.
- 		It contains the port number of the /dev/ttyGS<n> device
- 		associated with acm function's instance "name".
-+
-+What:		/config/usb-gadget/gadget/functions/acm.name/protocol
-+Date:		Aug 2024
-+KernelVersion:	6.13
-+Description:
-+		Reported bInterfaceProtocol for the ACM device. For legacy
-+		reasons, this defaults to 1 (USB_CDC_ACM_PROTO_AT_V25TER).
-diff --git a/drivers/usb/gadget/function/f_acm.c b/drivers/usb/gadget/function/f_acm.c
-index 724b2631f249..b78f46586a0f 100644
---- a/drivers/usb/gadget/function/f_acm.c
-+++ b/drivers/usb/gadget/function/f_acm.c
-@@ -41,6 +41,7 @@ struct f_acm {
- 	struct gserial			port;
- 	u8				ctrl_id, data_id;
- 	u8				port_num;
-+	u8				bInterfaceProtocol;
+
+ drivers/bluetooth/btusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index e384ef6ff..2ea46a0e6 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -691,6 +691,9 @@ static const struct usb_device_id quirks_table[] = {
+ 	{ USB_DEVICE(0x13d3, 0x3603), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH |
+ 						     BTUSB_VALID_LE_STATES },
++	{ USB_DEVICE(0x13d3, 0x3604), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH |
++						     BTUSB_VALID_LE_STATES },
  
- 	u8				pending;
- 
-@@ -89,7 +90,7 @@ acm_iad_descriptor = {
- 	.bInterfaceCount = 	2,	// control + data
- 	.bFunctionClass =	USB_CLASS_COMM,
- 	.bFunctionSubClass =	USB_CDC_SUBCLASS_ACM,
--	.bFunctionProtocol =	USB_CDC_ACM_PROTO_AT_V25TER,
-+	/* .bFunctionProtocol = DYNAMIC */
- 	/* .iFunction =		DYNAMIC */
- };
- 
-@@ -101,7 +102,7 @@ static struct usb_interface_descriptor acm_control_interface_desc = {
- 	.bNumEndpoints =	1,
- 	.bInterfaceClass =	USB_CLASS_COMM,
- 	.bInterfaceSubClass =	USB_CDC_SUBCLASS_ACM,
--	.bInterfaceProtocol =	USB_CDC_ACM_PROTO_AT_V25TER,
-+	/* .bInterfaceProtocol = DYNAMIC */
- 	/* .iInterface = DYNAMIC */
- };
- 
-@@ -663,6 +664,9 @@ acm_bind(struct usb_configuration *c, struct usb_function *f)
- 		goto fail;
- 	acm->notify = ep;
- 
-+	acm_iad_descriptor.bFunctionProtocol = acm->bInterfaceProtocol;
-+	acm_control_interface_desc.bInterfaceProtocol = acm->bInterfaceProtocol;
-+
- 	/* allocate notification */
- 	acm->notify_req = gs_alloc_req(ep,
- 			sizeof(struct usb_cdc_notification) + 2,
-@@ -719,8 +723,14 @@ static void acm_unbind(struct usb_configuration *c, struct usb_function *f)
- static void acm_free_func(struct usb_function *f)
- {
- 	struct f_acm		*acm = func_to_acm(f);
-+	struct f_serial_opts	*opts;
-+
-+	opts = container_of(f->fi, struct f_serial_opts, func_inst);
- 
- 	kfree(acm);
-+	mutex_lock(&opts->lock);
-+	opts->refcnt--;
-+	mutex_unlock(&opts->lock);
- }
- 
- static void acm_resume(struct usb_function *f)
-@@ -761,7 +771,11 @@ static struct usb_function *acm_alloc_func(struct usb_function_instance *fi)
- 	acm->port.func.disable = acm_disable;
- 
- 	opts = container_of(fi, struct f_serial_opts, func_inst);
-+	mutex_lock(&opts->lock);
- 	acm->port_num = opts->port_num;
-+	acm->bInterfaceProtocol = opts->protocol;
-+	opts->refcnt++;
-+	mutex_unlock(&opts->lock);
- 	acm->port.func.unbind = acm_unbind;
- 	acm->port.func.free_func = acm_free_func;
- 	acm->port.func.resume = acm_resume;
-@@ -812,11 +826,42 @@ static ssize_t f_acm_port_num_show(struct config_item *item, char *page)
- 
- CONFIGFS_ATTR_RO(f_acm_, port_num);
- 
-+static ssize_t f_acm_protocol_show(struct config_item *item, char *page)
-+{
-+	return sprintf(page, "%u\n", to_f_serial_opts(item)->protocol);
-+}
-+
-+static ssize_t f_acm_protocol_store(struct config_item *item,
-+		const char *page, size_t count)
-+{
-+	struct f_serial_opts *opts = to_f_serial_opts(item);
-+	int ret;
-+
-+	mutex_lock(&opts->lock);
-+
-+	if (opts->refcnt) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
-+
-+	ret = kstrtou8(page, 0, &opts->protocol);
-+	if (ret)
-+		goto out;
-+	ret = count;
-+
-+out:
-+	mutex_unlock(&opts->lock);
-+	return ret;
-+}
-+
-+CONFIGFS_ATTR(f_acm_, protocol);
-+
- static struct configfs_attribute *acm_attrs[] = {
- #ifdef CONFIG_U_SERIAL_CONSOLE
- 	&f_acm_attr_console,
- #endif
- 	&f_acm_attr_port_num,
-+	&f_acm_attr_protocol,
- 	NULL,
- };
- 
-@@ -843,6 +888,7 @@ static struct usb_function_instance *acm_alloc_instance(void)
- 	opts = kzalloc(sizeof(*opts), GFP_KERNEL);
- 	if (!opts)
- 		return ERR_PTR(-ENOMEM);
-+	opts->protocol = USB_CDC_ACM_PROTO_AT_V25TER;
- 	opts->func_inst.free_func_inst = acm_free_instance;
- 	ret = gserial_alloc_line(&opts->port_num);
- 	if (ret) {
-diff --git a/drivers/usb/gadget/function/u_serial.h b/drivers/usb/gadget/function/u_serial.h
-index 901d99310bc4..1782d7d7f7be 100644
---- a/drivers/usb/gadget/function/u_serial.h
-+++ b/drivers/usb/gadget/function/u_serial.h
-@@ -17,6 +17,10 @@
- struct f_serial_opts {
- 	struct usb_function_instance func_inst;
- 	u8 port_num;
-+	u8 protocol;
-+
-+	struct mutex lock;
-+	int refcnt;
- };
- 
- /*
+ 	/* Additional Realtek 8723AE Bluetooth devices */
+ 	{ USB_DEVICE(0x0930, 0x021d), .driver_info = BTUSB_REALTEK },
 -- 
-2.39.2
+2.45.1
 
 
