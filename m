@@ -1,92 +1,157 @@
-Return-Path: <linux-kernel+bounces-268310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D66C6942310
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:43:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16CE7942315
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 858911F2497E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:43:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C454C28831E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F671917D6;
-	Tue, 30 Jul 2024 22:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B6C191F7C;
+	Tue, 30 Jul 2024 22:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lnboNwLx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ptv5EuxX"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2671018DF9D
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4AA145A11;
+	Tue, 30 Jul 2024 22:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722379387; cv=none; b=ml2AW/BnEOotaprsnUk7kAgSkWDJSPFkMcD3CTOwgynR2sQBUrDws36iCcOEwnHbn0kuRsTWsupBrmtuu4pcq6cGe07ArF6alKkYG2kIhAIJgyHVWll0hxS3bYUbitmqMI8bDVMC+2g7VON8Yz4MMfrYoJW+1FWOPbbWK3P9Y8E=
+	t=1722379476; cv=none; b=QmAaHlYUpRcVGqvKrLC5bxunehrexoRatMdcw81nI25gq3vxvqkHkGYCmnhi7A+q9oTU8YC9zlqXq19Eca7UoIs+UcDpDPKWQfAJ4DjQ0tv0+BkUjH7a5VGOM972/Vb6/dR1mtI9pBJgMpXcfex7hj+7YS6b5/wyL0/RsCVx/E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722379387; c=relaxed/simple;
-	bh=C3lXJgJCovoa1FrP2K9NxLwNt79kRXHdx71rpFLCEkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WZTnnCMPL8f290nacL2q04pWco4MCKcs1Kb8WUacQnQJWM3Chcoob76R+vsjZuBwWJWvgqNttqU6gaNA9atyxFNMUoWyEkcaAAeBynS1wtYzzmyg4qNQ4TUXPOc7I8WC0mO9QvPpme0tfeNOC9iw0COBBF0QfGDT0nCeUaNafXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lnboNwLx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A8A0C32782;
-	Tue, 30 Jul 2024 22:43:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722379386;
-	bh=C3lXJgJCovoa1FrP2K9NxLwNt79kRXHdx71rpFLCEkM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lnboNwLxJyFxKtEaiWymk9Q/n8Xy6nev/WHULsWLoGXfvLKMZzR7y2YlrIeBvjlxU
-	 eMF2cmvQliHYtglKf4G4fh3NFOoMZo0NBDXFtXeFC4oWc38RtPpoqFtTZBXkmoLiVM
-	 RaRWYejEfeAjQuGneuuNZ+HzVf6qxnrmdaYS3oBWzfqKyh3fwA3njHUT/AUCN50kWN
-	 wE0LROsis7tkzP6Qmroke4mn2IJg/R1L6XdiRq2s9BkGYGg9123JvIIyCxot3kf623
-	 dQyMiRWLwtj0Fta+STtU1GplxxzJ8OBkyESgXw6fc0hlFO6YNn9tY1R2EqfjTE0Fpb
-	 rn6T5vmno+9qg==
-Date: Wed, 31 Jul 2024 00:43:02 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: urezki@gmail.com, hch@infradead.org, vbabka@suse.cz, mhocko@suse.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 3/4] mm: vrealloc: properly document __GFP_ZERO behavior
-Message-ID: <ZqlsdtTWhRahFWmy@pollux.localdomain>
-References: <20240730185049.6244-1-dakr@kernel.org>
- <20240730185049.6244-4-dakr@kernel.org>
- <20240730141953.a30fa50c0ba060fe0a765730@linux-foundation.org>
+	s=arc-20240116; t=1722379476; c=relaxed/simple;
+	bh=g3i1r6sz4u6swLwricrOGwLtZUE/aR1WYBX7piT3zk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=C7iuT/eApBPcMcJv8qfgm30um3TvGAJOyB0/HSGVuEc6BF9o2d6DEvGb5CbnWGhMYsPsoQFsMY9E8pePi+kLL4FtzX13miAcsL/Guz2YA51SO2LOC/GaEKYsf1GSfbQ9D5EROZIJ3JwW630u91rYJ7p3aIDICBM7WOPEF1dGiYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ptv5EuxX; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UGa5Ol015122;
+	Tue, 30 Jul 2024 22:44:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8Ml+kASE5kxe6i1s8298aQxOVGMC1WE/aeiBMirvJfU=; b=ptv5EuxXBuK0Erv5
+	0TDxoOqO0cpgKxHgmWOFq/5NHzc3sy33jXszoiq3VN2RyXl9UAZMhHoF1R0kK/NE
+	4t/eBPVY8dnrGpl6uBK3exzbLaFBVekFLbeDyE0e+T7IKUwISMS3KmHmmxQxXE92
+	DxHt1sTTLipjVzmeAWdNua/HTiI3zwUBaHQmFwaFUB2KGis1QaiMK8JGLpLyrkTf
+	rAr9fv5UDR//oYdRVYhkNLozn9ela3zLlkJS2oQLTGF9Y1Dzct0KH3ZgMXuxc9Kf
+	z0dcAT5AyIFMrYQg8ycRJ5K9c/uEdnEP6lfuDHXPl0wUX5K/B6Btx758x1k5rKtK
+	xlWPtw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mqw796qq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 22:44:20 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46UMiJFX019644
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 22:44:19 GMT
+Received: from [10.110.63.167] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 30 Jul
+ 2024 15:44:18 -0700
+Message-ID: <35402164-dce0-b972-bf98-c025fe5620f0@quicinc.com>
+Date: Tue, 30 Jul 2024 15:44:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730141953.a30fa50c0ba060fe0a765730@linux-foundation.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 4/5] thermal: qcom-spmi-temp-alarm: add support for GEN2
+ rev 2 PMIC peripherals
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <amitk@kernel.org>, <thara.gopinath@gmail.com>, <andersson@kernel.org>,
+        <quic_collinsd@quicinc.com>, <rafael@kernel.org>,
+        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240729231259.2122976-1-quic_amelende@quicinc.com>
+ <20240729231259.2122976-5-quic_amelende@quicinc.com>
+ <pzu2ijzkofzxpehpc4yphj5567ijdrxngqrepaq54njdagjenh@3vxmezjoepqg>
+From: Anjelique Melendez <quic_amelende@quicinc.com>
+In-Reply-To: <pzu2ijzkofzxpehpc4yphj5567ijdrxngqrepaq54njdagjenh@3vxmezjoepqg>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: fYnkxKTnxcwsEnfeiuEGqL0KpYdOSqRH
+X-Proofpoint-GUID: fYnkxKTnxcwsEnfeiuEGqL0KpYdOSqRH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-30_18,2024-07-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 spamscore=0 impostorscore=0 lowpriorityscore=0
+ clxscore=1011 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
+ phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407300157
 
-On Tue, Jul 30, 2024 at 02:19:53PM -0700, Andrew Morton wrote:
-> On Tue, 30 Jul 2024 20:49:43 +0200 Danilo Krummrich <dakr@kernel.org> wrote:
+>>  
+>> +/* Configure TEMP_DAC registers based on DT thermal_zone trips */
+>> +static int qpnp_tm_gen2_rev2_update_trip_temps(struct qpnp_tm_chip *chip)
+>> +{
+>> +	struct thermal_trip trip = {0};
+>> +	int ret, ntrips, i;
+>> +
+>> +	ntrips = thermal_zone_get_num_trips(chip->tz_dev);
+>> +	/* Keep hardware defaults if no DT trips are defined. */
+>> +	if (ntrips <= 0)
+>> +		return 0;
+>> +
+>> +	for (i = 0; i < ntrips; i++) {
+>> +		ret = thermal_zone_get_trip(chip->tz_dev, i, &trip);
+>> +		if (ret < 0)
+>> +			return ret;
+>> +
+>> +		ret = qpnp_tm_gen2_rev2_set_temp_thresh(chip, i, trip.temperature);
+>> +		if (ret < 0)
+>> +			return ret;
+>> +	}
+>> +
+>> +	/* Verify that trips are strictly increasing. */
 > 
-> > Properly document that if __GFP_ZERO logic is requested, callers must
-> > ensure that, starting with the initial memory allocation, every
-> > subsequent call to this API for the same memory allocation is flagged
-> > with __GFP_ZERO. Otherwise, it is possible that __GFP_ZERO is not fully
-> > honored by this API.
+> There is no such requirement in the DT bindings. Please don't invent
+> artificial restrictions, especially if they are undocumented.
 > 
-> I appear to have just seen this, in a separate mailing.
 
-What you have seen in a separate mail is a similar patch for krealloc() [1].
-This one is a fixup for vrealloc() from a previous submission you've applied to
-mm-unstable.
+This is not an entirely new restirction. Currently the temp alarm driver
+has hardcoded temperature thresholds options which are "strictly increasing"
+(https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/thermal/qcom/qcom-spmi-temp-alarm.c?h=v6.11-rc1#n44). 
+The threshold values are initially configured based on the stage 2 critical trip
+temperature.
+For newer PMICs, we have individual temperature registers for stage 1, 2, and 3,
+so we instead configure each threshold temperature as defined in DT. In general
+since stage 1 = warning, stage 2 = system should shut down, stage 3 = emergency shutdown,
+we would expect for temperature thresholds to increase for each stage
+(https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/drivers/thermal?h=v5.4.281&id=f1599f9e4cd6f1dd0cad202853fb830854f4e944).
 
-> 
-> Please, slow down.  We have two months.  Await reviewer feedback, spend
-> time over those changelogs, value clarity and accuracy and completeness
-> over hastiness.  The only reason for rushing things is if a patch is
-> disrupting ongoing testing of the linux-next tree.
+I agree that we are missing some documentation but since the trips are defined in the
+thermal_zone node what is the best way to mention this requirement? Will adding a
+few sentences to qcom,spmi-temp-alarm.yaml description be enough? Do we need
+to make changes to thermal_zone.yaml so that dt_binding_check catches this requirement? 
 
-There was a discussion in [2], which lead to this fixup series.
-
-In terms of changelogs this series is indeed a bit "lax", since I have
-recognized that you queue up fixup patches for changes that did already land in
-mm-unstable to be squashed into the original commits later on.
-
-[1] https://lore.kernel.org/linux-mm/20240730194214.31483-1-dakr@kernel.org/
-[2] https://lore.kernel.org/linux-mm/20240722163111.4766-1-dakr@kernel.org/T/#m065a7f875b44dc945dd535c2b7168c3d77a98993
+>> +	for (i = 1; i < STAGE_COUNT; i++) {
+>> +		if (chip->temp_dac_map[i] <= chip->temp_dac_map[i - 1]) {
+>> +			dev_err(chip->dev, "Threshold %d=%ld <= threshold %d=%ld\n",
+>> +				i, chip->temp_dac_map[i], i - 1,
+>> +				chip->temp_dac_map[i - 1]);
+>> +			return -EINVAL;
+>> +		}
+>> +	}
+>> +
+>> +	return 0;
+Thanks,
+Anjelique
 
