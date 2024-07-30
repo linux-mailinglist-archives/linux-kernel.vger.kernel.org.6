@@ -1,213 +1,274 @@
-Return-Path: <linux-kernel+bounces-267127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58CE4940D16
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:11:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00142940D03
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9BDFB2C1AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:06:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91362B2C6AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65BC194A62;
-	Tue, 30 Jul 2024 09:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CF4194AFC;
+	Tue, 30 Jul 2024 09:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Ao+MDKzK"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2060.outbound.protection.outlook.com [40.107.117.60])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LF7byxQP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DE6944E;
-	Tue, 30 Jul 2024 09:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722330321; cv=fail; b=gf3zBzuW4rEAfn3GC5Ckt3gnhX77iQvV3l/e5BBzpHgPPGUk1uiPPf052AihB5aqCgA0a5HhpApgJQHRDvRn9kWHzI1rwwewFrokiy3Krkie7URsfqI5OdyWrlwJvGW3I07Qp8yn2EgHvCgyF7uznhL5/DRw4uXasCjjSD8M7MI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722330321; c=relaxed/simple;
-	bh=coH/PKLHV9U5FF9RcbmVP3yfXbG4w+SgzpbaRTcNksA=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jo9UydhaPCdAf+OinesVFAKzB3Ohbq+hyDoOELcHn3WDsPuFgFoUAD4vmBgCkbAX0QjONw8YTRR6fBaag/L49nEru24K+c6LLI1Z7h+P1sTdQwa7TrIRDepjjLAQiSshI3Ir9W5x3kZ0NFX6DssenNOg+MBzZmgO5Y9gE2DeCgs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Ao+MDKzK; arc=fail smtp.client-ip=40.107.117.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DlFy1sroSb0z7PT6SbyGucXRPXSXlonTc4UmTRuBR0AreXcaq8/58BxdIJtu2lVO2OONuJ7iBToo/1nPcvLH5fHq2c/tlbkbL/oit/87M9r2wke4iVOhn/bRKtnvctHa+3GRIZggk2vHJmeZjLTb3l1alSjPcJ/LncuNtEa0nryOvbCcK560RjTUUIOUfLXxjNulZ/1dAt/jOn7HumUK0axKKMa/qOfoPynTGPc0oeDbQt2L9wISqnlB8khwqWTQSTLTs+MgECSLgZStljaSSpL/5YmY2O8bZVeU3mA0mw8Y4Sv+DhuE3zPdW706/c9T7EZXVicOwStp0tS1WEwGgQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r0BB77gICVMZigc4rPzu+hSqkkPM6I1y+9lzinL2Hq8=;
- b=Pse4ZWsdHK9mL9S5ucF9RH6vomxFi9dNG/hoVs3kf3RhX9nFo13hOLS8pvOamjKBre8wr1ZJ6+55HBXsDg0ICu87zuxDsh0iMY+D+5iRwJYoKkjQ0oLAAsPgsf+6geQi7pSVCvxHVw5n8qfFW+0koxBdnY63hfpCIVroCD+RKch/aQoTTBMNI7QmIQy1teIIgSrgLccfr9AN5uADnQvi3eaSUmc5zObHSJMquagG5POaQJdEujXnocVWUw13FXLbIU/8QeYz+24gJG5BkUf+F3X/uey4d2r0PNzVfhExECyDUN5aFD1vV4VJ7I7lh6txwaDtACpPrF4pOtmDSmMPtw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r0BB77gICVMZigc4rPzu+hSqkkPM6I1y+9lzinL2Hq8=;
- b=Ao+MDKzKr6t3vWAq8nDWpDBaIWlOcTxRlyXbda+vVYEgKmULeeW/DPpdWhstN8l/DFVV4BajSWxE9i3ZiZuk4s9kbJnevbdyDfZtsGlspuXyPvZUqq7fVoykSbrEK2OvP/mF0IEI/6Bi/bRaNLC332o2W7W0uDhQy7n2ZYaZZxmDy91dMGNqAw/QmL5/p10Pf1WXpW+vG6XMJPx8/mJ2l3sPbha2apodAjyyhdYwAiMLVCit1v7pWEDlkqVQHlgi8tlZXxhqoj83SU5fChhbjGyGsLQsJEBAqkIMpGJvYfg4PGlUelAz2itcd/bmSMHJVnjDkVoz9/p0it/mUEdtsg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
- by PUZPR06MB6053.apcprd06.prod.outlook.com (2603:1096:301:11a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.26; Tue, 30 Jul
- 2024 09:05:13 +0000
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7807.026; Tue, 30 Jul 2024
- 09:05:13 +0000
-Message-ID: <25cf34bd-b11f-4097-87b5-39e6b4a27d85@vivo.com>
-Date: Tue, 30 Jul 2024 17:05:08 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] Introduce DMA_HEAP_ALLOC_AND_READ_FILE heap flag
-To: Sumit Semwal <sumit.semwal@linaro.org>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T.J. Mercier" <tjmercier@google.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
- opensource.kernel@vivo.com
-References: <20240730075755.10941-1-link@vivo.com>
- <Zqiqv7fomIp1IPS_@phenom.ffwll.local>
-From: Huan Yang <link@vivo.com>
-In-Reply-To: <Zqiqv7fomIp1IPS_@phenom.ffwll.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR02CA0046.apcprd02.prod.outlook.com
- (2603:1096:3:18::34) To PUZPR06MB5676.apcprd06.prod.outlook.com
- (2603:1096:301:f8::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E62319414B
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722330347; cv=none; b=Qjw13CJmVd5p+0/NkG6fzQCyRbCZaNiX4aVNIeYeh3JK3TX0L49PaDBFYshkpYFlKugeKmcuzVwRVYEIf3Ook5i8ECgjxe9j5noijWqGfvix0klIzWtwtF9qAdZVDi/j8qvx+wMJy3pnyYGzUse9UrZBfaWxueQAbQZR7EPnTQ4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722330347; c=relaxed/simple;
+	bh=AMADz3cAvKTXjxmizkMCUls5b/7+qLUiUKoat0OUU9w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kJlojR3peYGEgkY5np6E7iMqG7wHK7duTTXYTAmiBx+1e/3oVUl90QLe7Uy/ErrfYgBN+A9i6RU8GwSn1IZ0SkdVnWrL7BLx4MMYpPqRaP87inVaeq2V2y9e77rowjdaP/MGb0dEddNbkjRLxODnjtyk3xm3bws+IznDAIoyEso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LF7byxQP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722330344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=y8G0Rsvl2ZfKQVim3WYEu/ULpMdQ5SB3TZr8FpmD1gs=;
+	b=LF7byxQPSh4tpVGk/8dOl4m1YawPMCp/IgX+IJvWLVgwmkeR0JVejiqQbF/nOxkQ/dpnzQ
+	/5cmEXty/6TPSiAM6A59cbhMdjYUbvAOIvD6Cf8lN8lr0KfeXA1TEHzZGAu6VdDCf3/wCg
+	l0TTxmfxW4xXmn9qmREzb8aPaOFCCsM=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-92-nq1nlwC6Oey3z7GDkk_QAQ-1; Tue, 30 Jul 2024 05:05:39 -0400
+X-MC-Unique: nq1nlwC6Oey3z7GDkk_QAQ-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a7a9761bf6dso400442166b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 02:05:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722330338; x=1722935138;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y8G0Rsvl2ZfKQVim3WYEu/ULpMdQ5SB3TZr8FpmD1gs=;
+        b=ikbTskr/1MneRhrbLf7TBJorLlzRijiSdG0WhhtFq9JB77vVk94oVgfBhZeaokTlcq
+         +9iBn9ePSm/rniwQEJOPl2mX0SkHlavPnpebT1Gjh933pr89YNJUQsmSQ+P/Uo1z7RsE
+         2BfkQO6vkZNZmqNy6bI+rp+xis8R/tZPRa4wJRawUxBwf6SCDh6uYq+8jVFOZhOEZ2n1
+         7gjSAvthJYpyCPboN6pL16Sv3JMmcepfuHPqUbzSoCleVgKCCihAkEP7HSljiPeyaOoT
+         lOGfSC8wK+OC4+wm0NAL0OmChc4aTP2PtyNd8DC6s+33iYcYj+tq9YJOHkeRk/DM6HxL
+         DjwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6mOeSnkbOZ+Xk7aG+z2TOd0SLfvAZd+9X4psdhFzCOMBqJ3DYQ0r9JlyfqZRdDHEyGCnuxdKazS+yoK2w1ExfrlbxBasPcx/D7XSY
+X-Gm-Message-State: AOJu0YzpL3j/o+Wm2UUwF31+nfnT/zF2O0cNlYvSlbnx5M7I7WXX5TWP
+	Q1awtSJ7p8PU+FP8z/FirVFIH8tO1ABDqDPQseYM4KwE/mYwJU8T3kH+cN6s2mMxU3drVJDWFSA
+	LEvsCFnttqPUdk5/sxPThtvxQrqL3JZ1J3sBDBo+rr4PmApWC7hFETCj1Vo7AUQ==
+X-Received: by 2002:a17:907:9803:b0:a6f:4f2c:1936 with SMTP id a640c23a62f3a-a7d4011446bmr605767466b.44.1722330338313;
+        Tue, 30 Jul 2024 02:05:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGyHe4aJyS1Uxr4GJW4wjt2WBKjxS53+1D2JV4zXUtkqi7IDeNByS7dwef5YTgCXCGFtY96FA==
+X-Received: by 2002:a17:907:9803:b0:a6f:4f2c:1936 with SMTP id a640c23a62f3a-a7d4011446bmr605763366b.44.1722330337702;
+        Tue, 30 Jul 2024 02:05:37 -0700 (PDT)
+Received: from [192.168.10.47] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7acab23157sm617304466b.33.2024.07.30.02.05.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 02:05:37 -0700 (PDT)
+Message-ID: <2da6b57e-d5c2-4016-b89b-d51700eeb845@redhat.com>
+Date: Tue, 30 Jul 2024 11:05:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|PUZPR06MB6053:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d4398c0-2f70-4348-2a59-08dcb076b890
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|52116014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MTB5MXNHT2Vha1paeXJZM3dKZTR5ZGFCMFNZdGd2L3NodmQzcU42c2laSTRn?=
- =?utf-8?B?YU16TExqaVZnclhUWHpQUVF5Uy94b1Erd0wydmdhcHU4UWFMSVo1K3ZpeGJZ?=
- =?utf-8?B?eWdYRWZmNmZNZUwwUWN4NHBVRU9PekxUZGdOMTFUbXROK1hnelBjYzNKRTM0?=
- =?utf-8?B?Z0ZqNDB3MjJudTdXOVZwRHZTQ0o2bW1lRUIzWEhUMGNUVjY5ZDhyc0dtOU9Z?=
- =?utf-8?B?N3RPd3IrNVZ1b09zZE5RYUFZVE9QaTVFeXZzTnN5WWQ4WnoyQklyNnBRS2JW?=
- =?utf-8?B?Z05YVmdKWHVOa0lKaDdPV0xsUGV6dXVUeTViSmdsZjVKL1ZLQ3RSYWNiZE5y?=
- =?utf-8?B?R0Nuc0VCT2NsQWZwdVJFNk5WQnZKZ20xR3lhRll6dXNlRDJMQzY2bHBTMVpS?=
- =?utf-8?B?TmxOM2xVWWRFOXNhUFJkSWV6Qkp4SUJPVFpTWThEcXZTZVc3dkU4cm5hVGc3?=
- =?utf-8?B?SjkvUStkOVpHdDFIR25nUjRSL2lHOXVMdnZETVlZSEFQaXNSNnNVWmlXODho?=
- =?utf-8?B?Um5qVUxzbU10cE50MjlGdWppNEVTRmkwbFpFOEdUakxuVGhBQnpBNjRmUGdu?=
- =?utf-8?B?MGU5Wjl2SkRXL3A2QzJNWlpETTZZZERyT0ZZWGdLeWxEYU9EYWRjTDFZSUFu?=
- =?utf-8?B?VEUxM1k5cms0SVduaGg5OEplU21Vbmpxa2dMKzlnekc0eXNMazhKM3puK2Vl?=
- =?utf-8?B?SmJ2ekFBTE5VNy9sN0g1TXNrY1ZFc2JnTkxPaWErN0tiek8wT0NIbjk4Ny9v?=
- =?utf-8?B?TjNJRTVXNHh5TEh0bk92dWFTdjB6OGkwaE5kYWhyNDdwWUU4VGJ1M1I3VTlX?=
- =?utf-8?B?Vkk2a2I5NlowSCt3Tkx1a1RoMWI5NGRyMGxJdzJBTlhwajJEa0VKRlErR1Nj?=
- =?utf-8?B?N243MGtLdFZUaVoxSTR4K2tDUnhiQ010UHNZZ3RIa0E1aEdVbVJkYzg0ZWxJ?=
- =?utf-8?B?dTRaWXJ1WjJHbUpQR2k2YjI5WmNGZTBIelVwUlBWMjg4bk8wY1pYMVhBSGZN?=
- =?utf-8?B?ZmdhVVh5M1k0WWFPWEhoYVVYNXlqRTBLajRBWEp6OThZUitER2FWRzdyTUVW?=
- =?utf-8?B?aGw0cG9vQktGU3o2MHpkMGhQMm93MUJFWWJ4dFBYSHU0Wm1vL0tOeDZGSTMv?=
- =?utf-8?B?akpEcExNSWdjNnc4UnBkTklBd0JuK1UyN1VLempsa21zd3JQL2E0czZSbEp3?=
- =?utf-8?B?bG9FeEtEd0x6OHYrMzI0ZTB3bGFWQlJMNkplZ1RCYXVCOVhYb2ZUNlc5d2Rp?=
- =?utf-8?B?YzEyL3ZQMHhNYjJONGp0VTBPaUhBV2dnTUdldmNFYmhHNHd4ODBDYnl3U09W?=
- =?utf-8?B?Yk05WjR5RjdYRmQ1T1YrN0NVL3Z0Z1gzZ3RYWmV3UHlDcFo1eHdnV1NmdXdQ?=
- =?utf-8?B?TVZPT0h6MUdmc0NqTUJDOCtiSkVEYVhMYVIrOU5lOElqN2dEOWgvazlmNG9Z?=
- =?utf-8?B?WDdvMVcxQzQzOTNUM2czRWFEdGxXbjdVOUF5dTFOUUxYV0QwRGRSd2xBcTVQ?=
- =?utf-8?B?RndBR2hvY3gzTTE1Ymgrb2JiTzJYOGVWS3FiYlBxb1R3dHpBL2JjUUt6VG50?=
- =?utf-8?B?eTN6UnRDMjZDeGlzU1hUYzBVTnBRYnFTaGlwSnl6dmw5Rjg5SXpaTWhTdUs0?=
- =?utf-8?B?R1J0UkdkWjZGUlJscnhpNTBDcGJEc0U3bjVyZEp6V3RETFFlV3FwWFNORk5X?=
- =?utf-8?B?bFd0eHh5UzIxNVluSlhlaVF0VHNOWW51QjBWVUEvd3RvZVdhRkd4SjZXZDJo?=
- =?utf-8?B?UzRjdU51ekt3VmZIVEhlMmp1UU5YaXBJblhTRXdzL2psQ3JHM0UrYm0yc2Ft?=
- =?utf-8?Q?LsQsYO9jkyHFAQJEq4DyQgUSp3mxeY/GhRGCI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(52116014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UFZOQlJ4L1JKK1Jpbytyd21FazlzMEpOUHFvV1BKU3JaKzlMdXR1dEtlaXdT?=
- =?utf-8?B?WmxRb3EzNlM3bE9ZemphbTBDeE91RGs3bUhJaWk5OWZnc0NsRVU5Ym0vMVQx?=
- =?utf-8?B?MmFtWlJwYVpSZ3ZaRUNtYStocEYvd3BZeHlpNldiWlUvZURkMW8vVmI3L3c1?=
- =?utf-8?B?QWkrdzZGWHFoUDJNWDZ5dGdyN1VJVWZ0YkRBUnBvckl4Q2VaMzhyejVqa3Yz?=
- =?utf-8?B?elVJdkY2UnY1Yk5PTVNvSllJRHpWT2RDMDNLTlRxWWtiSEZwUmFQYW1KMk5w?=
- =?utf-8?B?ZzNVLzE1Myt2dEh2Yis2b0l1VW45blZLRG9FT2pSYXREM0szNXcwZDBJemZP?=
- =?utf-8?B?bmUwQzZ5bGZDcFFwQUFnWmpBMmMxWmNqVVk5dVZqa0xRMmdJc2l1NExHWC8w?=
- =?utf-8?B?UFZEV21HVStlRlFzU1QrUnF3U1BIc2FtOWRBcmhySWFHc1NnVFdLUHV2LzFu?=
- =?utf-8?B?YVJ2VC85M0t1OEVHa1F1Ui9lYTVwUVlIT1FBSm5lV29UQ2preE8zbHlpNml1?=
- =?utf-8?B?TktnM3Y2S1JLSVNwWDVjSXdVRXZadGlhMVA0M0VmclRGV1FaMFVnUHNqN3Uy?=
- =?utf-8?B?ZURmUFVBMnhDTVpxTG1yUnF0QkdmUC85ZzJJWDh4WisxL0FaYkhZcHZwOVVG?=
- =?utf-8?B?djFSWHFpWkZ4em9oRTk0Umw1dTBWc2UxTm5jMlphVlcxalBGZnd5QVV4K0FP?=
- =?utf-8?B?NDZyUDRYZ2lFa1MrOWtaSVJzMnRYTGhiZXBVWUlyNmJ2QmJZaXp2L1NMcnE5?=
- =?utf-8?B?U0l6Zlpzc2dIeU9sa0tZeTJQd1pZUmJndDFraEl1WExaeENwRGR2ME9ITmZD?=
- =?utf-8?B?UWpYcS9nZlQ3MjgwV3ZFK1BraWxSNDVhc3VreXlNaitwSUdtMU1qbXo0UHhl?=
- =?utf-8?B?U1RoZnVvNDFXdjgydmd0eFRWaDFGUnRGRjJKM3JyNm9hYTV2ZU4xemJJQU53?=
- =?utf-8?B?ZVRDcUl0YjNCUFg4T0t6WE5OdkZ0ZEc5eTBVU0R5WFNtQWxBQlcvR09VOFl5?=
- =?utf-8?B?V3Q4ekh0MHVDa3hZWE5QMGFPSlY2Q2Q2eHZzWnFibVBFMkJPZ21qdm9iUDBy?=
- =?utf-8?B?WFcwMm9kMDhOTEVYZTlUZm5sQWFCT0tTdVBmZjMxRUNoQitwVWQ4VFhEMGIy?=
- =?utf-8?B?ZUNER1ZhZUg5R1BKUWhIRWMzbDFBNW5MSlFUU01mUTNTakxVcnB1c2E2OXBk?=
- =?utf-8?B?bmZTNWI2OVF2d1hiSTU2Y1Z4OGlTMDV2V3B0d1ordWRrNEJmQ1JuUDgyVmF0?=
- =?utf-8?B?Q0hPTkZKZFRPL25xOENSVHArY2VaZHE5NWtOS2JvYmlHVlBiTy9nWi9VcFBL?=
- =?utf-8?B?aFVkVWIrSU9oVjdXdE11eWtOdGFzTGFCakZBRTR5UU9pekFBdjNJYlAwbU9H?=
- =?utf-8?B?OXIwWEhCd0t1N3BHYUpKdGtnSU15T0dtWFhKbWsrSkpoSXcvZEM5OFNtMnlL?=
- =?utf-8?B?R0hqRE4yK2pRL2NKWjExdEszbW1iU1JDeVRPUmxrcEJISnc4OTBNU2dJOWNh?=
- =?utf-8?B?a2dQb1YrWmR6RzFGMEZYaE93UWozbGNWTXZWQ3R0M3NGRUp4NGNXVElQTDNB?=
- =?utf-8?B?dDlZZXJ2c3IwZEtFOXZaK1RsVGZtVTlDYVp5bHgwOVVRdlRmRWRoRDFDZm1Y?=
- =?utf-8?B?VDFzZVNwS1U3Zk8vVEhjQnJvdW0xdEhJVHVvWG1ZN1d1WXlOek9XTDg4SVJu?=
- =?utf-8?B?T09QdVdvMnZOS2lwcFo2eGRHVkNBcmpOY0JzSFBvbHFhOHRuMVZ5b05ObFZT?=
- =?utf-8?B?NmxHUE9ZNjdZMStuSlhpYS9HVDYwVkh0Zzl4Rko2N1drMlorSWZYaVIzayti?=
- =?utf-8?B?a2g0MDZDaG1ieHpPUVpHVEtHRnFSeTJ1WW1NT2NKazZnN1Z1WlRTVFJTVHpq?=
- =?utf-8?B?TTNLRENzcFQyYU9TQlIrUWRVclgvT2pibVdRYW1nQ2JlWXFYUGE2MTFCL29w?=
- =?utf-8?B?aGtWZFh4bTNXMnJTdmJJcjZVUUErbXJDbU1PWGdnYm9jWkQxMDRkNG41OWY5?=
- =?utf-8?B?aXFUampqVVE4TFUySUwvZG50STd6dXd1ZlNPNEJVb2IzUUFUM3p4UHI3TFM0?=
- =?utf-8?B?aVNXOTNYS3FKNzQvSzkzR1pwMjRSRmtPVHJFc2lpbkp5S0NsZmtJMDF6REN1?=
- =?utf-8?Q?JSTiTziinbBbmLgtD6uSHUdtZ?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d4398c0-2f70-4348-2a59-08dcb076b890
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 09:05:13.0542
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yPVtYT8BKJ36APL7FZ9duj8ekv9YtYNXkNqHhxW5LdmMWdhMSeDGO9R0L0Bo9Pb9CATGGpE4A/GdS1DkxyXc5w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB6053
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 45/84] KVM: guest_memfd: Provide "struct page" as
+ output from kvm_gmem_get_pfn()
+To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
+ <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
+ Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, loongarch@lists.linux.dev,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, David Matlack <dmatlack@google.com>,
+ David Stevens <stevensd@chromium.org>
+References: <20240726235234.228822-1-seanjc@google.com>
+ <20240726235234.228822-46-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20240726235234.228822-46-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 7/27/24 01:51, Sean Christopherson wrote:
+> Provide the "struct page" associated with a guest_memfd pfn as an output
+> from __kvm_gmem_get_pfn() so that KVM guest page fault handlers can
+        ^^^^^^^^^^^^^^^^^^^^
+
+Just "kvm_gmem_get_pfn()".
+
+> directly put the page instead of having to rely on
+> kvm_pfn_to_refcounted_page().
+
+This will conflict with my series, where I'm introducing
+folio_file_pfn() and using it here:
+> -	page = folio_file_page(folio, index);
+> +	*page = folio_file_page(folio, index);
+>   
+> -	*pfn = page_to_pfn(page);
+> +	*pfn = page_to_pfn(*page);
+>   	if (max_order)
+>   		*max_order = 0;
+
+That said, I think it's better to turn kvm_gmem_get_pfn() into
+kvm_gmem_get_page() here, and pull the page_to_pfn() or page_to_phys()
+to the caller as applicable.  This highlights that the caller always
+gets a refcounted page with guest_memfd.
+
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 901be9e420a4..bcc4a4c594ef 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -4348,13 +4348,14 @@ static int kvm_faultin_pfn_private(struct kvm_vcpu *vcpu,
+  		return -EFAULT;
+  	}
+  
+-	r = kvm_gmem_get_pfn(vcpu->kvm, fault->slot, fault->gfn, &fault->pfn,
++	r = kvm_gmem_get_page(vcpu->kvm, fault->slot, fault->gfn, &fault->refcounted_page,
+  			     &max_order);
+  	if (r) {
+  		kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
+  		return r;
+  	}
+  
++	fault->pfn = page_to_pfn(page);
+  	fault->map_writable = !(fault->slot->flags & KVM_MEM_READONLY);
+  	fault->max_level = kvm_max_private_mapping_level(vcpu->kvm, fault->pfn,
+  							 fault->max_level, max_order);
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index a16c873b3232..db4181d11f2e 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -3847,7 +3847,7 @@ static int __sev_snp_update_protected_guest_state(struct kvm_vcpu *vcpu)
+  	if (VALID_PAGE(svm->sev_es.snp_vmsa_gpa)) {
+  		gfn_t gfn = gpa_to_gfn(svm->sev_es.snp_vmsa_gpa);
+  		struct kvm_memory_slot *slot;
+-		kvm_pfn_t pfn;
++		struct page *page;
+  
+  		slot = gfn_to_memslot(vcpu->kvm, gfn);
+  		if (!slot)
+@@ -3857,7 +3857,7 @@ static int __sev_snp_update_protected_guest_state(struct kvm_vcpu *vcpu)
+  		 * The new VMSA will be private memory guest memory, so
+  		 * retrieve the PFN from the gmem backend.
+  		 */
+-		if (kvm_gmem_get_pfn(vcpu->kvm, slot, gfn, &pfn, NULL))
++		if (kvm_gmem_get_page(vcpu->kvm, slot, gfn, &page, NULL))
+  			return -EINVAL;
+  
+  		/*
+@@ -3873,7 +3873,7 @@ static int __sev_snp_update_protected_guest_state(struct kvm_vcpu *vcpu)
+  		svm->sev_es.snp_has_guest_vmsa = true;
+  
+  		/* Use the new VMSA */
+-		svm->vmcb->control.vmsa_pa = pfn_to_hpa(pfn);
++		svm->vmcb->control.vmsa_pa = page_to_phys(page);
+  
+  		/* Mark the vCPU as runnable */
+  		vcpu->arch.pv.pv_unhalted = false;
+@@ -3886,7 +3886,7 @@ static int __sev_snp_update_protected_guest_state(struct kvm_vcpu *vcpu)
+  		 * changes then care should be taken to ensure
+  		 * svm->sev_es.vmsa is pinned through some other means.
+  		 */
+-		kvm_release_pfn_clean(pfn);
++		kvm_release_page_clean(page);
+  	}
+  
+  	/*
+@@ -4687,6 +4687,7 @@ void sev_handle_rmp_fault(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code)
+  	struct kvm *kvm = vcpu->kvm;
+  	int order, rmp_level, ret;
+  	bool assigned;
++	struct page *page;
+  	kvm_pfn_t pfn;
+  	gfn_t gfn;
+  
+@@ -4712,13 +4713,14 @@ void sev_handle_rmp_fault(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code)
+  		return;
+  	}
+  
+-	ret = kvm_gmem_get_pfn(kvm, slot, gfn, &pfn, &order);
++	ret = kvm_gmem_get_page(kvm, slot, gfn, &page, &order);
+  	if (ret) {
+  		pr_warn_ratelimited("SEV: Unexpected RMP fault, no backing page for private GPA 0x%llx\n",
+  				    gpa);
+  		return;
+  	}
+  
++	pfn = page_to_pfn(page);
+  	ret = snp_lookup_rmpentry(pfn, &assigned, &rmp_level);
+  	if (ret || !assigned) {
+  		pr_warn_ratelimited("SEV: Unexpected RMP fault, no assigned RMP entry found for GPA 0x%llx PFN 0x%llx error %d\n",
+@@ -4770,7 +4772,7 @@ void sev_handle_rmp_fault(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code)
+  out:
+  	trace_kvm_rmp_fault(vcpu, gpa, pfn, error_code, rmp_level, ret);
+  out_no_trace:
+-	put_page(pfn_to_page(pfn));
++	kvm_release_page_unused(page);
+  }
+  
+  static bool is_pfn_range_shared(kvm_pfn_t start, kvm_pfn_t end)
 
 
-在 2024/7/30 16:56, Daniel Vetter 写道:
-> [????????? daniel.vetter@ffwll.ch ????????? https://aka.ms/LearnAboutSenderIdentification?????????????]
->
-> On Tue, Jul 30, 2024 at 03:57:44PM +0800, Huan Yang wrote:
->> UDMA-BUF step:
->>    1. memfd_create
->>    2. open file(buffer/direct)
->>    3. udmabuf create
->>    4. mmap memfd
->>    5. read file into memfd vaddr
-> Yeah this is really slow and the worst way to do it. You absolutely want
-> to start _all_ the io before you start creating the dma-buf, ideally with
-> everything running in parallel. But just starting the direct I/O with
-> async and then creating the umdabuf should be a lot faster and avoid
-That's greate,  Let me rephrase that, and please correct me if I'm wrong.
+And the change in virt/kvm/guest_memfd.c then is just as trivial, apart
+from all the renaming:
 
-UDMA-BUF step:
-   1. memfd_create
-   2. mmap memfd
-   3. open file(buffer/direct)
-   4. start thread to async read
-   3. udmabuf create
+-	*pfn = folio_file_pfn(folio, index);
++	*page = folio_file_page(folio, index);
 
-With this, can improve
 
-> needlessly serialization operations.
->
-> The other issue is that the mmap has some overhead, but might not be too
-> bad.
-Yes, the time spent on page fault in mmap should be negligible compared 
-to the time spent on file read.
-> -Sima
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
+Paolo
+
 
