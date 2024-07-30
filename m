@@ -1,123 +1,158 @@
-Return-Path: <linux-kernel+bounces-267951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A679941D89
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:18:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDF1941D78
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC11B1C203F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:18:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D01C01C236B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E581A76BC;
-	Tue, 30 Jul 2024 17:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CAA1A76BA;
+	Tue, 30 Jul 2024 17:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CnN/oQnG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QpJt54++"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378361A76A4;
-	Tue, 30 Jul 2024 17:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44691A76B3
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722359899; cv=none; b=jDy/ECTz+wS74cOaUArFPrB4GZmNLPs4E0NIsJtO631uNa2h9SgSgapLcHjTjPsLy1qnhwLFAgdFs9fkuT6YWr4ridDXhkQ2+mbGwWCIqXzVS418G3EpKE+gIQ0aLYtlmq2mDkKIUxtuxdHZXDGTIGFkJBrho9nzmS0DtquuF5w=
+	t=1722359869; cv=none; b=lonrKXAjrE6L54LQlqSQa8FEpolrMy5hpglV0yU0sdEYwqUq4H89PpoaP4a7eRiiv85+MEwmXl+Hrxx3KAYCVQM7qC1+K91vtSY3ndhc1mpubDeMbsEJBxpD8EwXvI8TMqnP0bdfaiQvZgeidhsWaLgFI8p28LYD421yRFIZU6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722359899; c=relaxed/simple;
-	bh=f4i4xE+BfkRSnAyJYbOavl4rmSYFjTr6XuQKvpYEwvA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uX/4h6HK0picHyFXPvW2F2FbprdqqlMB8W4uf8eb3vpuZhW2oOik75u/NQ5w12VCM4A9tz6fg2lDgj+yHiKAPwu2eOn0cBhimNmSbtHG2o6ENDYRPFJCNGt3lLqsP8ZBMSzEBqKSswtz0yQHMNE7dohVP6i5qcos6rw2gLmy+RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CnN/oQnG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UB2WKM022716;
-	Tue, 30 Jul 2024 17:16:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	48yGHuVSgox+ECw9IMmv63UkiH/YE0SBuryhRBz3Rg0=; b=CnN/oQnGIPuNZl7w
-	kyeWjX7zlpapIlfND+PssZpKOWOgOx1YMTQLo7Ho+RJRJu9SGZI1rFgFQ/5uwipc
-	yTaOY1otqySfxmNYcIEP0YeBXJdKOIgRfVQogUFut4eHAsh03Qk55CYCb9+q+tf1
-	rmDCM+fEJmtzFZ9WzkxGRAByiFcpXWrUMyts2APGOXnxg5hxuifuJWkD44VDPYq7
-	Y/8/miOKD0YsrRdY5iEXVrt4gb9Nn8ExRXlylPL5NwQa//uDG68qsxgIFk5/axQJ
-	GbHWhNKT58lwS4PkPe+vFFawHGVAiHNYldcdHppLQg+d6hTKYMq18SiORUHiNYXu
-	Ko7eAg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mpkf0fvf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 17:16:02 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46UHG2bp021722
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 17:16:02 GMT
-Received: from [10.110.9.42] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 30 Jul
- 2024 10:16:01 -0700
-Message-ID: <d766e2e8-9f3f-af3a-bb5e-633b11bce941@quicinc.com>
-Date: Tue, 30 Jul 2024 10:16:00 -0700
+	s=arc-20240116; t=1722359869; c=relaxed/simple;
+	bh=7S8qBivfmksIDCRjowz+E3chlu8P6UM7PipkX6yM/Eo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P6G8U4iEEGVMZMuW6BD+LA995TAMtC6GQPTzS0OfQ4+FQcBzqfRhuaZiGievuEd2aO/hGh+vdfC+9hPOH2nfY/yQnCn/CX6OBeWYa9R9N1h/PUUDrp8t0qnEWM93vuaxyNYCWEjqhCJLXZ9I31r8bRzx/JU518SeKnER6Bfyrjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QpJt54++; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722359866;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s7X5S4hdI3KRREsro0BMCE0/9TvraRM4Id7gYH2wZOw=;
+	b=QpJt54++rejzAD9xW02vG7ipgzifxYowpSfaRPvDNdx0qqXKw0xcLyq3iPdo9bvFIAyA5A
+	qHC8hQ1nvUpGTjXW492jRHt9IBT/R0NIwZzVZOG5WE42btvdZcyvggs8oyYk8ZWOgYvQFD
+	ZSQWaX7xRYgva+7t/0U2/bpOMhZDU4E=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-693-YS0d8ur5OP21uxpvspE9ZA-1; Tue,
+ 30 Jul 2024 13:17:41 -0400
+X-MC-Unique: YS0d8ur5OP21uxpvspE9ZA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 246271955D4A;
+	Tue, 30 Jul 2024 17:17:39 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.179])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 09EDF1955F3B;
+	Tue, 30 Jul 2024 17:17:35 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 30 Jul 2024 19:17:38 +0200 (CEST)
+Date: Tue, 30 Jul 2024 19:17:34 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org,
+	jolsa@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] uprobes: shift put_uprobe() from delete_uprobe() to
+ uprobe_unregister()
+Message-ID: <20240730171733.GA10822@redhat.com>
+References: <20240730123421.GA9085@redhat.com>
+ <20240730123457.GA9108@redhat.com>
+ <CAEf4BzZ=vMh9=t3iH+pqwTDaYGfXvuF-0BqaLsOgAx2qV7Vqzw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] iommu/arm-smmu-qcom: Work around SDM845 Adreno SMMU w/
- 16K pages
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio
-	<konradybcio@gmail.com>
-CC: Rob Clark <robdclark@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>, Will Deacon <will@kernel.org>,
-        Robin
- Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>
-References: <20240729-topic-845_gpu_smmu-v1-1-8e372abbde41@kernel.org>
- <osxynb352ubxgcb5tv3u7mskkon23nmm3gxkfiiiqss5zp67jf@fv5d6bob2rgp>
- <CAF6AEGuWULwrJDWW37nQhByTpc-2bBYVv3b_Ac6OCwaJ83Ed9w@mail.gmail.com>
- <CAA8EJpp9zaQSKbis7J9kYTudTt=RFhfbzeayz3b-VbGQENtqeA@mail.gmail.com>
- <3332c732-4555-46bf-af75-aa36ce2d58df@gmail.com>
- <CAA8EJppZsNTqh_KxD=BWXjmedA1ogeMa74cA=vVbCWAU7A-qgQ@mail.gmail.com>
-Content-Language: en-US
-From: Trilok Soni <quic_tsoni@quicinc.com>
-In-Reply-To: <CAA8EJppZsNTqh_KxD=BWXjmedA1ogeMa74cA=vVbCWAU7A-qgQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: eSOi-WzErNBVgqrWVIIBQ-c3D6Mlfx4Y
-X-Proofpoint-GUID: eSOi-WzErNBVgqrWVIIBQ-c3D6Mlfx4Y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_13,2024-07-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- mlxlogscore=778 priorityscore=1501 impostorscore=0 malwarescore=0
- lowpriorityscore=0 spamscore=0 phishscore=0 adultscore=0 mlxscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407300118
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzZ=vMh9=t3iH+pqwTDaYGfXvuF-0BqaLsOgAx2qV7Vqzw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 7/30/2024 1:50 AM, Dmitry Baryshkov wrote:
->>>>>> SDM845's Adreno SMMU is unique in that it actually advertizes support
->>>>>> for 16K (and 32M) pages, which doesn't hold for newer SoCs.
-> My question is about forbidding 16k pages for sdm845 only or for other
-> chips too. I'd assume that it shouldn't also work for other smmu-v2
-> platforms.
+Thanks for looking at this!
 
-Yes, my understanding was that SMMUv2 based IPs doesn't have 16k support
-and it is only starting from SMMUv3. 
+On 07/30, Andrii Nakryiko wrote:
+>
+> BTW, do you have anything against me changing refcounting so that
+> uprobes_tree itself doesn't hold a refcount, and all the refcounting
+> is done based on consumers holding implicit refcount and whatever
+> temporary get/put uprobe is necessary for runtime uprobe/uretprobe
+> functioning.
 
+No, I have nothing against.
 
--- 
----Trilok Soni
+To be honest, I don't really understand the value of this change, but
+a) this is probably because I didn't see a separate patch(es) which
+does this and b) assuming that it doesn't complicate the code too much
+I won't argue in any case ;)
+
+And in fact I had your proposed change in mind when I did these cleanups.
+I think that they can even simplify this change, at least I hope they can
+not complicate it.
+
+> BTW, do you plan
+> any more clean ups like this? It's a bit of a moving target because of
+> your refactoring, so I'd appreciate some stability to build upon :)
+
+Well yes... may be this week.
+
+I'd like to (try to) optimize/de-uglify register_for_each_vma() for
+the multiple-consumers case. And, more importantly, the case when perf
+does uprobe_register() + uprobe_apply().
+
+But. All these changes will only touch the register_for_each_vma() paths,
+so this is completely orthogonal to this series and your and/or Peter's
+changes.
+
+> Also, can you please push this and your previous patch set into some
+> branch somewhere I can pull from, preferably based on the latest
+> linux-trace's probes/for-next? Thanks!
+
+Cough ;)
+
+No, sorry, I can't. I lost my kernel.org account years ago (and this is
+the second time this has happened!), but since I am a lazy dog I didn't
+even bother to try to restore it.
+
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+
+Thanks!
+
+> > @@ -1102,10 +1100,16 @@ void uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
+> >                 err = register_for_each_vma(uprobe, NULL);
+> >
+> >         /* TODO : cant unregister? schedule a worker thread */
+> > -       if (!err && !uprobe->consumers)
+> > -               delete_uprobe(uprobe);
+> > +       if (!err) {
+> > +               if (!uprobe->consumers)
+> > +                       delete_uprobe(uprobe);
+> > +               else
+> > +                       err = -EBUSY;
+>
+> This bit is weird because really it's not an error... but this makes
+> this change simpler and moves put_uprobe outside of rwsem.
+
+Agreed, uprobe->consumers != NULL is not an error. But we don't return
+this error code, just we need to ensure that "err == 0" means that
+"delete_uprobe() was actually called".
+
+> With my
+> proposed change to refcounting schema this would be unnecessary,
+
+Yes.
+
+Oleg.
 
 
