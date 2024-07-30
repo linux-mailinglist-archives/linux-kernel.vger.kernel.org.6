@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-266819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEEEB940818
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:07:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71AE5940819
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 08:07:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 951D828445B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:07:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F32EE1F23D91
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 06:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C4616848F;
-	Tue, 30 Jul 2024 06:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D74C18E769;
+	Tue, 30 Jul 2024 06:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VOTzc7/p"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bEulmHf2"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DDD624
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 06:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C694618D4B3
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 06:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722319644; cv=none; b=V6DLYXLOyhGWMQLYb2ki4jexN2HGHVccOhrQVp8xVq8LRBE7XR6nkzu22tkxJkc5d7WVwB5iFzWZaNGZ0aG7Rr9aOjA60OB2/Wkq4mRoNtR63HH2/SSxLS7vH9bkjvRAJNW/iA0uCjXsAXB8hjswKZV9OZLgSqHIZVz6aSIfm0E=
+	t=1722319651; cv=none; b=dPDQ2xQ4emc2/uDnS9hM5mj2i6AJimcinfzQ/XKh7ZmkXrt6GIhjvj/FMhVmOxSvuwPYp1EEACh3aQ1fN/thmFRW7bYhiGr7fLDd2IUFbTU5Cb+DnPetbfjV6a0mXUiIhItqdZqUA5uv4N+x63MAReR/GnBcdTWvOgtDX8yCXoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722319644; c=relaxed/simple;
-	bh=Ot2i4JTP6rs0pE6hCNTi9YckcHJoyZ3Com3tk3zJHeE=;
+	s=arc-20240116; t=1722319651; c=relaxed/simple;
+	bh=ZXI/JZSqWXhXkKTOEa/XOyUoMkMdq3Kiw1EydseD9g4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gbjhPn8vuoFOeKOvN7zOKvDAeg6xRiz1o13pnlbno/uGbCExhnNZs/yXjwMNznYjNvu7zCT21NCY8EQuIMe+5ZwdJnydIsfpIGNrkGHiinIoL+uzpurArP/iolFHWW6Z5I7GkHHfrSoJ7kc0BOY1OO3MPnTCe3vkPwGp2NVmXcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VOTzc7/p; arc=none smtp.client-ip=209.85.214.182
+	 MIME-Version; b=MDCnxaYhbxm2oGr0qEeVs82kK9pQ4QQvtBTiC5F9FynIQa5rYAHqKZ7FtetVs6FpEkN9kCU4S1OpVTXe+gHHkzq1nIlUNBTGiFmDHS+Sv0JyBuHwuxAJU0SxuL06/TbxQ243z4Vs3u83tnrEtGUN1xn7BqFMXYBNa+Yckq2JUfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bEulmHf2; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fc611a0f8cso26224305ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:07:22 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fd6ed7688cso27949715ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 23:07:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722319642; x=1722924442; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722319649; x=1722924449; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Wd9hAjyCQBhloSpV+RDMeaB1mHd7Gugwt3ADGi253Hk=;
-        b=VOTzc7/pZN3hogAq7B5K2SYul+7iPEu9uG/pDK7mTzSBzvAQu8IRfIEUtYw3k9uBC5
-         ft10+EuwE595HCqVKPktnmoiBOUP8n+oO3xqUfzTZCTjVtPEO4BiuNmuypR6rfDclOfU
-         kaMw/MCITBgAd7qfl1fNVkIfvgHCeOaVJAtZVzKW/c3HX3g2vpHLSHCEregfQJ5YOHTf
-         5WnbD9kVawzcM3Ho1JBaqCcraUbmBLayQmQmTO2cqnnxokpU7zDcbQ4iuAHJ+rytb2bT
-         PaRd+BqlBo4WAchPogEfsEiDxeql8qpvmTIQWLmjIyE76NSWilUL+LP0sMjJ72NeZfaT
-         98aA==
+        bh=2nUjLNuPhA0ZemM5E+a6+HXIf2vTrBCrMNImUmEpou0=;
+        b=bEulmHf2D0GAchm6wzB5AhuWyEct0f/NJ6N+ypzmuN0n52hsKOWvYO1WMfzQZt1FQx
+         uMWoYXYj+1iZYgqtx/awp23i1bibcBdHAR+jgKdNHS4drVF90o2aZTp9DjZMyCTVCzy6
+         oDtk2fbhwqUkeqw50Od4a1aA7CrHSQgfdar5cAIihokcZpki12u4Rd2NH/6LkkqHS/AP
+         bRWtq+WvlKJk+EuSkJLMna/wnwRPfIRbkwCkAlkKuIioREJLH4v0NTehyvI0eSa5690n
+         uLfZkAP59U0VLrsyVHP2YeH8FlLNYohGAaIavAJuGBoXiWH9JoEDZWZey7HT8Vq+N8EK
+         THDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722319642; x=1722924442;
+        d=1e100.net; s=20230601; t=1722319649; x=1722924449;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Wd9hAjyCQBhloSpV+RDMeaB1mHd7Gugwt3ADGi253Hk=;
-        b=iaKEryC2bbQf8QuC1LqU5T11jqKjtYHeSD7FBk3UoG+w4nh+BBIswVwn6ybhIbN1wg
-         Mi85sjUUs3jfebaH3bim8w9eVrcblxGKPq6ftEKIZoV37zsXttcnMesQ+1h7CVrwdxgs
-         53pk97BAkzJg6JXiue5kP9FO/dsCYS83LlyOjkJsTjaeFz/pAd6hgyjDY4HnSW7ZpI1v
-         H/eyOIFS6LGMNA7nKdaK175J3j4DCWEHt5wv3+ofoWhNaGby0RJ3EobikodQHu4KRDaB
-         hSQq04BqadbkmiSgfZEemQAxR3smGFDq0+jsjEuhpLPI3Uy2mgT+de1v5WCbN3lGwsMX
-         VQbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDPHYdAmYv55LvQjmH6fSojWSeNRUcD6CBW0M8I3XRoLse9ss6lGcwPWUUxukhrlJiBW7xaHnmksKTWyI21L3/0kx1qD+I9aX2LBMk
-X-Gm-Message-State: AOJu0YwiXTH9vG936fTHKzhNi9CFrTqKFmmDl9M/YsdJ7MpoWZgw1toe
-	xEh9p94KeH7FrOcE89UmrU13inGoWg90fiIz5Ejhe1ZKLIdMDWFRWCdtJg==
-X-Google-Smtp-Source: AGHT+IHHJKGESTzjusjXTWlelC6jOCMHOpDpQ+ColI/hjVJOD7iieFAtQqc0fAJKYgCWr7iv1menIw==
-X-Received: by 2002:a17:902:f54b:b0:1fb:1faa:96b7 with SMTP id d9443c01a7336-1ff047ddcf4mr92385015ad.9.1722319642135;
-        Mon, 29 Jul 2024 23:07:22 -0700 (PDT)
+        bh=2nUjLNuPhA0ZemM5E+a6+HXIf2vTrBCrMNImUmEpou0=;
+        b=u3mbDLYWXsOgZEpsJIFUYPlg1P8qk8qK1pPeqGLQtSOaqL6hf3uKFqagL3ikgxjptY
+         nIrlG/tfkIe2Eaa9yoU8BrP5BWVgjGeVOX0eMJpk9Evb7yHFPfGu7saCkYOSzCyFd0CV
+         6ev1cutDzK/AQQqdTVOFiHp7z7MBrs2HyTkQzzRj0Sh0d7gd9yNz6tIQZhsYq3W3iiHB
+         whAUQd70nDN00urQkme1HptXTvBREzbBnoCZovP+xbkEPn41goHxxqz7xf9mZd6jhTeH
+         qFSFA+xf/V30jfz0lT5ZtqwPYWjpPCAXLWYGdEEL5isF/ndPPL36rxcq+sC8Ld6egGgl
+         EHSg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8c6zK59a3K8l387hhuQHki8fztVQbNS0Jd8w3X6ibe1i/7fR6y/toReg6bRyLe6f3g2JvqK4kSv3Vsoy4Nz8dHejS3F8gSUWZsZKz
+X-Gm-Message-State: AOJu0Yx/q0DGtrdX5c0mp75PevUlLJpYTsweNjHA3T75fhwT/x3Jm96/
+	7IWeiKWW68CUDOKuNgcUbI6Qjp05Q3Ur55/pyZdEK7dQ5lv7LABy
+X-Google-Smtp-Source: AGHT+IFCAk8xtEo9IOGEMHT4pM4XLaFJu1tAipcjmvjw2BFrQGf8AKqe85DxNjL12FVVm0m2oMcE2g==
+X-Received: by 2002:a17:903:2289:b0:1fb:37fa:fedb with SMTP id d9443c01a7336-1ff04805bb5mr83419115ad.10.1722319649042;
+        Mon, 29 Jul 2024 23:07:29 -0700 (PDT)
 Received: from distilledx.localdomain ([2401:4900:6320:5c5f:a09c:1e46:e58e:e6c6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7eef4f0sm93589375ad.178.2024.07.29.23.07.14
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7eef4f0sm93589375ad.178.2024.07.29.23.07.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 23:07:21 -0700 (PDT)
+        Mon, 29 Jul 2024 23:07:28 -0700 (PDT)
 From: Tejas Vipin <tejasvipin76@gmail.com>
 To: maarten.lankhorst@linux.intel.com,
 	mripard@kernel.org,
@@ -78,9 +78,9 @@ Cc: dianders@chromium.org,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Tejas Vipin <tejasvipin76@gmail.com>
-Subject: [PATCH v2 1/2] drm/mipi-dsi: add more multi functions for better error handling
-Date: Tue, 30 Jul 2024 11:36:58 +0530
-Message-ID: <20240730060659.455953-2-tejasvipin76@gmail.com>
+Subject: [PATCH v2 2/2] drm/panel: startek-kd070fhfid015: transition to mipi_dsi wrapped functions
+Date: Tue, 30 Jul 2024 11:36:59 +0530
+Message-ID: <20240730060659.455953-3-tejasvipin76@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240730060659.455953-1-tejasvipin76@gmail.com>
 References: <20240730060659.455953-1-tejasvipin76@gmail.com>
@@ -92,381 +92,219 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add more functions that can benefit from being multi style and mark
-older variants as deprecated to eventually convert all mipi_dsi functions
-to multi style.
+Use multi style wrapped functions for mipi_dsi in the
+startek-kd070fhfid015 panel.
 
 Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
 ---
- drivers/gpu/drm/drm_mipi_dsi.c | 226 +++++++++++++++++++++++++++++++++
- include/drm/drm_mipi_dsi.h     |  12 ++
- 2 files changed, 238 insertions(+)
+ .../drm/panel/panel-startek-kd070fhfid015.c   | 123 ++++++------------
+ 1 file changed, 39 insertions(+), 84 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
-index a471c46f5ca6..05ea7df5dec1 100644
---- a/drivers/gpu/drm/drm_mipi_dsi.c
-+++ b/drivers/gpu/drm/drm_mipi_dsi.c
-@@ -603,6 +603,8 @@ EXPORT_SYMBOL(mipi_dsi_shutdown_peripheral);
-  * mipi_dsi_turn_on_peripheral() - sends a Turn On Peripheral command
-  * @dsi: DSI peripheral device
-  *
-+ * This function is deprecated. Use mipi_dsi_turn_on_peripheral_multi() instead.
-+ *
-  * Return: 0 on success or a negative error code on failure.
-  */
- int mipi_dsi_turn_on_peripheral(struct mipi_dsi_device *dsi)
-@@ -652,6 +654,7 @@ EXPORT_SYMBOL(mipi_dsi_set_maximum_return_packet_size);
-  * @pps_selector: Select PPS from the table of pre-stored or uploaded PPS entries
-  *
-  * Enable or disable Display Stream Compression on the peripheral.
-+ * This function is deprecated. Use mipi_dsi_compression_mode_ext_multi() instead.
-  *
-  * Return: 0 on success or a negative error code on failure.
-  */
-@@ -703,6 +706,7 @@ EXPORT_SYMBOL(mipi_dsi_compression_mode);
-  * @pps: VESA DSC 1.1 Picture Parameter Set
-  *
-  * Transmit the VESA DSC 1.1 Picture Parameter Set to the peripheral.
-+ * This function is deprecated. Use mipi_dsi_picture_parameter_set_multi() instead.
-  *
-  * Return: 0 on success or a negative error code on failure.
-  */
-@@ -1037,6 +1041,8 @@ EXPORT_SYMBOL(mipi_dsi_dcs_read);
-  * mipi_dsi_dcs_nop() - send DCS nop packet
-  * @dsi: DSI peripheral device
-  *
-+ * This function is deprecated. Use mipi_dsi_dcs_nop_multi() instead.
-+ *
-  * Return: 0 on success or a negative error code on failure.
-  */
- int mipi_dsi_dcs_nop(struct mipi_dsi_device *dsi)
-@@ -1055,6 +1061,8 @@ EXPORT_SYMBOL(mipi_dsi_dcs_nop);
-  * mipi_dsi_dcs_soft_reset() - perform a software reset of the display module
-  * @dsi: DSI peripheral device
-  *
-+ * This function is deprecated. Use mipi_dsi_dcs_soft_reset_multi() instead.
-+ *
-  * Return: 0 on success or a negative error code on failure.
-  */
- int mipi_dsi_dcs_soft_reset(struct mipi_dsi_device *dsi)
-@@ -1124,6 +1132,8 @@ EXPORT_SYMBOL(mipi_dsi_dcs_get_pixel_format);
-  *    display module except interface communication
-  * @dsi: DSI peripheral device
-  *
-+ * This function is deprecated. Use mipi_dsi_dcs_enter_sleep_mode_multi() instead.
-+ *
-  * Return: 0 on success or a negative error code on failure.
-  */
- int mipi_dsi_dcs_enter_sleep_mode(struct mipi_dsi_device *dsi)
-@@ -1143,6 +1153,8 @@ EXPORT_SYMBOL(mipi_dsi_dcs_enter_sleep_mode);
-  *    module
-  * @dsi: DSI peripheral device
-  *
-+ * This function is deprecated. Use mipi_dsi_dcs_exit_sleep_mode_multi() instead.
-+ *
-  * Return: 0 on success or a negative error code on failure.
-  */
- int mipi_dsi_dcs_exit_sleep_mode(struct mipi_dsi_device *dsi)
-@@ -1162,6 +1174,8 @@ EXPORT_SYMBOL(mipi_dsi_dcs_exit_sleep_mode);
-  *    display device
-  * @dsi: DSI peripheral device
-  *
-+ * This function is deprecated. Use mipi_dsi_dcs_set_display_off_multi() instead.
-+ *
-  * Return: 0 on success or a negative error code on failure.
-  */
- int mipi_dsi_dcs_set_display_off(struct mipi_dsi_device *dsi)
-@@ -1181,6 +1195,8 @@ EXPORT_SYMBOL(mipi_dsi_dcs_set_display_off);
-  *    display device
-  * @dsi: DSI peripheral device
-  *
-+ * This function is deprecated. Use mipi_dsi_dcs_set_display_on_multi() instead.
-+ *
-  * Return: 0 on success or a negative error code on failure
-  */
- int mipi_dsi_dcs_set_display_on(struct mipi_dsi_device *dsi)
-@@ -1202,6 +1218,9 @@ EXPORT_SYMBOL(mipi_dsi_dcs_set_display_on);
-  * @start: first column of frame memory
-  * @end: last column of frame memory
-  *
-+ * This function is deprecated. Use mipi_dsi_dcs_set_column_address_multi()
-+ * instead.
-+ *
-  * Return: 0 on success or a negative error code on failure.
-  */
- int mipi_dsi_dcs_set_column_address(struct mipi_dsi_device *dsi, u16 start,
-@@ -1226,6 +1245,9 @@ EXPORT_SYMBOL(mipi_dsi_dcs_set_column_address);
-  * @start: first page of frame memory
-  * @end: last page of frame memory
-  *
-+ * This function is deprecated. Use mipi_dsi_dcs_set_page_address_multi()
-+ * instead.
-+ *
-  * Return: 0 on success or a negative error code on failure.
-  */
- int mipi_dsi_dcs_set_page_address(struct mipi_dsi_device *dsi, u16 start,
-@@ -1268,6 +1290,8 @@ EXPORT_SYMBOL(mipi_dsi_dcs_set_tear_off);
-  * @dsi: DSI peripheral device
-  * @mode: the Tearing Effect Output Line mode
-  *
-+ * This function is deprecated. Use mipi_dsi_dcs_set_tear_on_multi() instead.
-+ *
-  * Return: 0 on success or a negative error code on failure
-  */
- int mipi_dsi_dcs_set_tear_on(struct mipi_dsi_device *dsi,
-@@ -1291,6 +1315,9 @@ EXPORT_SYMBOL(mipi_dsi_dcs_set_tear_on);
-  * @dsi: DSI peripheral device
-  * @format: pixel format
-  *
-+ * This function is deprecated. Use mipi_dsi_dcs_set_pixel_format_multi()
-+ * instead.
-+ *
-  * Return: 0 on success or a negative error code on failure.
-  */
- int mipi_dsi_dcs_set_pixel_format(struct mipi_dsi_device *dsi, u8 format)
-@@ -1334,6 +1361,9 @@ EXPORT_SYMBOL(mipi_dsi_dcs_set_tear_scanline);
-  * @dsi: DSI peripheral device
-  * @brightness: brightness value
-  *
-+ * This function is deprecated. Use mipi_dsi_dcs_set_display_brightness_multi()
-+ * instead.
-+ *
-  * Return: 0 on success or a negative error code on failure.
-  */
- int mipi_dsi_dcs_set_display_brightness(struct mipi_dsi_device *dsi,
-@@ -1357,6 +1387,9 @@ EXPORT_SYMBOL(mipi_dsi_dcs_set_display_brightness);
-  * @dsi: DSI peripheral device
-  * @brightness: brightness value
-  *
-+ * This function is deprecated. Use mipi_dsi_dcs_get_display_brightness_multi()
-+ * instead.
-+ *
-  * Return: 0 on success or a negative error code on failure.
-  */
- int mipi_dsi_dcs_get_display_brightness(struct mipi_dsi_device *dsi,
-@@ -1639,6 +1672,199 @@ void mipi_dsi_dcs_set_tear_on_multi(struct mipi_dsi_multi_context *ctx,
- }
- EXPORT_SYMBOL(mipi_dsi_dcs_set_tear_on_multi);
+diff --git a/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c b/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
+index 0156689f41cd..f1df727b9183 100644
+--- a/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
++++ b/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
+@@ -24,10 +24,10 @@
+ #include <drm/drm_modes.h>
+ #include <drm/drm_panel.h>
  
-+/**
-+ * mipi_dsi_turn_on_peripheral_multi() - sends a Turn On Peripheral command
-+ * @ctx: Context for multiple DSI transactions
-+ *
-+ * Like mipi_dsi_turn_on_peripheral() but deals with errors in a way that
-+ * makes it convenient to make several calls in a row.
-+ */
-+void mipi_dsi_turn_on_peripheral_multi(struct mipi_dsi_multi_context *ctx)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	struct device *dev = &dsi->dev;
-+	int ret;
-+
-+	if (ctx->accum_err)
-+		return;
-+
-+	ret = mipi_dsi_turn_on_peripheral(dsi);
-+	if (ret < 0) {
-+		ctx->accum_err = ret;
-+		dev_err(dev, "Failed to turn on peripheral: %d\n",
-+			ctx->accum_err);
-+	}
-+}
-+EXPORT_SYMBOL(mipi_dsi_turn_on_peripheral_multi);
-+
-+/**
-+ * mipi_dsi_dcs_soft_reset_multi() - perform a software reset of the display module
-+ * @ctx: Context for multiple DSI transactions
-+ *
-+ * Like mipi_dsi_dcs_soft_reset() but deals with errors in a way that
-+ * makes it convenient to make several calls in a row.
-+ */
-+void mipi_dsi_dcs_soft_reset_multi(struct mipi_dsi_multi_context *ctx)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	struct device *dev = &dsi->dev;
-+	int ret;
-+
-+	if (ctx->accum_err)
-+		return;
-+
-+	ret = mipi_dsi_dcs_soft_reset(dsi);
-+	if (ret < 0) {
-+		ctx->accum_err = ret;
-+		dev_err(dev, "Failed to mipi_dsi_dcs_soft_reset: %d\n",
-+			ctx->accum_err);
-+	}
-+}
-+EXPORT_SYMBOL(mipi_dsi_dcs_soft_reset_multi);
-+
-+/**
-+ * mipi_dsi_dcs_set_display_brightness_multi() - sets the brightness value of
-+ *	the display
-+ * @ctx: Context for multiple DSI transactions
-+ * @brightness: brightness value
-+ *
-+ * Like mipi_dsi_dcs_set_display_brightness() but deals with errors in a way that
-+ * makes it convenient to make several calls in a row.
-+ */
-+void mipi_dsi_dcs_set_display_brightness_multi(struct mipi_dsi_multi_context *ctx,
-+					       u16 brightness)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	struct device *dev = &dsi->dev;
-+	int ret;
-+
-+	if (ctx->accum_err)
-+		return;
-+
-+	ret = mipi_dsi_dcs_set_display_brightness(dsi, brightness);
-+	if (ret < 0) {
-+		ctx->accum_err = ret;
-+		dev_err(dev, "Failed to write display brightness: %d\n",
-+			ctx->accum_err);
-+	}
-+}
-+EXPORT_SYMBOL(mipi_dsi_dcs_set_display_brightness_multi);
-+
-+/**
-+ * mipi_dsi_dcs_set_pixel_format_multi() - sets the pixel format for the RGB image
-+ *	data used by the interface
-+ * @ctx: Context for multiple DSI transactions
-+ * @format: pixel format
-+ *
-+ * Like mipi_dsi_dcs_set_pixel_format() but deals with errors in a way that
-+ * makes it convenient to make several calls in a row.
-+ */
-+void mipi_dsi_dcs_set_pixel_format_multi(struct mipi_dsi_multi_context *ctx,
-+					 u8 format)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	struct device *dev = &dsi->dev;
-+	int ret;
-+
-+	if (ctx->accum_err)
-+		return;
-+
-+	ret = mipi_dsi_dcs_set_pixel_format(dsi, format);
-+	if (ret < 0) {
-+		ctx->accum_err = ret;
-+		dev_err(dev, "Failed to set pixel format: %d\n",
-+			ctx->accum_err);
-+	}
-+}
-+EXPORT_SYMBOL(mipi_dsi_dcs_set_pixel_format_multi);
-+
-+/**
-+ * mipi_dsi_dcs_set_column_address_multi() - define the column extent of the
-+ *	frame memory accessed by the host processor
-+ * @ctx: Context for multiple DSI transactions
-+ * @start: first column of frame memory
-+ * @end: last column of frame memory
-+ *
-+ * Like mipi_dsi_dcs_set_column_address() but deals with errors in a way that
-+ * makes it convenient to make several calls in a row.
-+ */
-+void mipi_dsi_dcs_set_column_address_multi(struct mipi_dsi_multi_context *ctx,
-+					   u16 start, u16 end)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	struct device *dev = &dsi->dev;
-+	int ret;
-+
-+	if (ctx->accum_err)
-+		return;
-+
-+	ret = mipi_dsi_dcs_set_column_address(dsi, start, end);
-+	if (ret < 0) {
-+		ctx->accum_err = ret;
-+		dev_err(dev, "Failed to set column address: %d\n",
-+			ctx->accum_err);
-+	}
-+}
-+EXPORT_SYMBOL(mipi_dsi_dcs_set_column_address_multi);
-+
-+/**
-+ * mipi_dsi_dcs_set_page_address_multi() - define the page extent of the
-+ *	frame memory accessed by the host processor
-+ * @ctx: Context for multiple DSI transactions
-+ * @start: first page of frame memory
-+ * @end: last page of frame memory
-+ *
-+ * Like mipi_dsi_dcs_set_page_address() but deals with errors in a way that
-+ * makes it convenient to make several calls in a row.
-+ */
-+void mipi_dsi_dcs_set_page_address_multi(struct mipi_dsi_multi_context *ctx,
-+					 u16 start, u16 end)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	struct device *dev = &dsi->dev;
-+	int ret;
-+
-+	if (ctx->accum_err)
-+		return;
-+
-+	ret = mipi_dsi_dcs_set_page_address(dsi, start, end);
-+	if (ret < 0) {
-+		ctx->accum_err = ret;
-+		dev_err(dev, "Failed to set page address: %d\n",
-+			ctx->accum_err);
-+	}
-+}
-+EXPORT_SYMBOL(mipi_dsi_dcs_set_page_address_multi);
-+
-+/**
-+ * mipi_dsi_dcs_get_display_brightness_multi() - gets the current brightness value
-+ *    of the display
-+ * @ctx: Context for multiple DSI transactions
-+ * @brightness: brightness value
-+ *
-+ * Like mipi_dsi_dcs_get_display_brightness() but deals with errors in a way that
-+ * makes it convenient to make several calls in a row.
-+ */
-+void mipi_dsi_dcs_get_display_brightness_multi(struct mipi_dsi_multi_context *ctx,
-+					       u16 *brightness)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	struct device *dev = &dsi->dev;
-+	int ret;
-+
-+	if (ctx->accum_err)
-+		return;
-+
-+	ret = mipi_dsi_dcs_get_display_brightness(dsi, brightness);
-+	if (ret < 0) {
-+		ctx->accum_err = ret;
-+		dev_err(dev, "Failed to get display brightness: %d\n",
-+			ctx->accum_err);
-+	}
-+}
-+EXPORT_SYMBOL(mipi_dsi_dcs_get_display_brightness_multi);
-+
-+
- static int mipi_dsi_drv_probe(struct device *dev)
+-#define DSI_REG_MCAP	0xB0
+-#define DSI_REG_IS	0xB3 /* Interface Setting */
+-#define DSI_REG_IIS	0xB4 /* Interface ID Setting */
+-#define DSI_REG_CTRL	0xB6
++#define DSI_REG_MCAP	0xb0
++#define DSI_REG_IS	0xb3 /* Interface Setting */
++#define DSI_REG_IIS	0xb4 /* Interface ID Setting */
++#define DSI_REG_CTRL	0xb6
+ 
+ enum {
+ 	IOVCC = 0,
+@@ -52,92 +52,55 @@ static inline struct stk_panel *to_stk_panel(struct drm_panel *panel)
+ static int stk_panel_init(struct stk_panel *stk)
  {
- 	struct mipi_dsi_driver *drv = to_mipi_dsi_driver(dev->driver);
-diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
-index 0f520eeeaa8e..7c6239d7b492 100644
---- a/include/drm/drm_mipi_dsi.h
-+++ b/include/drm/drm_mipi_dsi.h
-@@ -365,6 +365,18 @@ void mipi_dsi_dcs_set_display_off_multi(struct mipi_dsi_multi_context *ctx);
- void mipi_dsi_dcs_set_display_on_multi(struct mipi_dsi_multi_context *ctx);
- void mipi_dsi_dcs_set_tear_on_multi(struct mipi_dsi_multi_context *ctx,
- 				    enum mipi_dsi_dcs_tear_mode mode);
-+void mipi_dsi_turn_on_peripheral_multi(struct mipi_dsi_multi_context *ctx);
-+void mipi_dsi_dcs_soft_reset_multi(struct mipi_dsi_multi_context *ctx);
-+void mipi_dsi_dcs_set_display_brightness_multi(struct mipi_dsi_multi_context *ctx,
-+					       u16 brightness);
-+void mipi_dsi_dcs_set_pixel_format_multi(struct mipi_dsi_multi_context *ctx,
-+					 u8 format);
-+void mipi_dsi_dcs_set_column_address_multi(struct mipi_dsi_multi_context *ctx,
-+					   u16 start, u16 end);
-+void mipi_dsi_dcs_set_page_address_multi(struct mipi_dsi_multi_context *ctx,
-+					   u16 start, u16 end);
-+void mipi_dsi_dcs_get_display_brightness_multi(struct mipi_dsi_multi_context *ctx,
-+					       u16 *brightness);
+ 	struct mipi_dsi_device *dsi = stk->dsi;
+-	struct device *dev = &stk->dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
  
- /**
-  * mipi_dsi_generic_write_seq - transmit data using a generic write packet
+-	ret = mipi_dsi_dcs_soft_reset(dsi);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to mipi_dsi_dcs_soft_reset: %d\n", ret);
+-		return ret;
+-	}
+-	mdelay(5);
++	mipi_dsi_dcs_soft_reset_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 5);
++	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 120);
+ 
+-	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set exit sleep mode: %d\n", ret);
+-		return ret;
+-	}
+-	msleep(120);
+-
+-	mipi_dsi_generic_write_seq(dsi, DSI_REG_MCAP, 0x04);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_MCAP, 0x04);
+ 
+ 	/* Interface setting, video mode */
+-	mipi_dsi_generic_write_seq(dsi, DSI_REG_IS, 0x14, 0x08, 0x00, 0x22, 0x00);
+-	mipi_dsi_generic_write_seq(dsi, DSI_REG_IIS, 0x0C, 0x00);
+-	mipi_dsi_generic_write_seq(dsi, DSI_REG_CTRL, 0x3A, 0xD3);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_IS, 0x14, 0x08, 0x00, 0x22, 0x00);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_IIS, 0x0c, 0x00);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_CTRL, 0x3a, 0xd3);
+ 
+-	ret = mipi_dsi_dcs_set_display_brightness(dsi, 0x77);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to write display brightness: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, 0x77);
+ 
+-	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY,
+-			       MIPI_DCS_WRITE_MEMORY_START);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_CONTROL_DISPLAY,
++				     MIPI_DCS_WRITE_MEMORY_START);
+ 
+-	ret = mipi_dsi_dcs_set_pixel_format(dsi, 0x77);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set pixel format: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_pixel_format_multi(&dsi_ctx, 0x77);
++	mipi_dsi_dcs_set_column_address_multi(&dsi_ctx, 0, stk->mode->hdisplay - 1);
++	mipi_dsi_dcs_set_page_address_multi(&dsi_ctx, 0, stk->mode->vdisplay - 1);
+ 
+-	ret = mipi_dsi_dcs_set_column_address(dsi, 0, stk->mode->hdisplay - 1);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set column address: %d\n", ret);
+-		return ret;
+-	}
+-
+-	ret = mipi_dsi_dcs_set_page_address(dsi, 0, stk->mode->vdisplay - 1);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set page address: %d\n", ret);
+-		return ret;
+-	}
+-
+-	return 0;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static int stk_panel_on(struct stk_panel *stk)
+ {
+ 	struct mipi_dsi_device *dsi = stk->dsi;
+-	struct device *dev = &stk->dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
+ 
+-	ret = mipi_dsi_dcs_set_display_on(dsi);
+-	if (ret < 0)
+-		dev_err(dev, "failed to set display on: %d\n", ret);
++	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
+ 
+-	mdelay(20);
++	mipi_dsi_msleep(&dsi_ctx, 20);
+ 
+-	return ret;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static void stk_panel_off(struct stk_panel *stk)
+ {
+ 	struct mipi_dsi_device *dsi = stk->dsi;
+-	struct device *dev = &stk->dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
+ 
+ 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+ 
+-	ret = mipi_dsi_dcs_set_display_off(dsi);
+-	if (ret < 0)
+-		dev_err(dev, "failed to set display off: %d\n", ret);
+-
+-	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+-	if (ret < 0)
+-		dev_err(dev, "failed to enter sleep mode: %d\n", ret);
++	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
++	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
+ 
+-	msleep(100);
++	mipi_dsi_msleep(&dsi_ctx, 100);
+ }
+ 
+ static int stk_panel_unprepare(struct drm_panel *panel)
+@@ -155,7 +118,6 @@ static int stk_panel_unprepare(struct drm_panel *panel)
+ static int stk_panel_prepare(struct drm_panel *panel)
+ {
+ 	struct stk_panel *stk = to_stk_panel(panel);
+-	struct device *dev = &stk->dsi->dev;
+ 	int ret;
+ 
+ 	gpiod_set_value(stk->reset_gpio, 0);
+@@ -175,16 +137,12 @@ static int stk_panel_prepare(struct drm_panel *panel)
+ 	gpiod_set_value(stk->reset_gpio, 1);
+ 	mdelay(10);
+ 	ret = stk_panel_init(stk);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to init panel: %d\n", ret);
++	if (ret < 0)
+ 		goto poweroff;
+-	}
+ 
+ 	ret = stk_panel_on(stk);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set panel on: %d\n", ret);
++	if (ret < 0)
+ 		goto poweroff;
+-	}
+ 
+ 	return 0;
+ 
+@@ -235,13 +193,13 @@ static int stk_panel_get_modes(struct drm_panel *panel,
+ static int dsi_dcs_bl_get_brightness(struct backlight_device *bl)
+ {
+ 	struct mipi_dsi_device *dsi = bl_get_data(bl);
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+ 	u16 brightness;
+ 
+ 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+-	ret = mipi_dsi_dcs_get_display_brightness(dsi, &brightness);
+-	if (ret < 0)
+-		return ret;
++	mipi_dsi_dcs_get_display_brightness_multi(&dsi_ctx, &brightness);
++	if (dsi_ctx.accum_err)
++		return dsi_ctx.accum_err;
+ 
+ 	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
+ 	return brightness & 0xff;
+@@ -250,18 +208,15 @@ static int dsi_dcs_bl_get_brightness(struct backlight_device *bl)
+ static int dsi_dcs_bl_update_status(struct backlight_device *bl)
+ {
+ 	struct mipi_dsi_device *dsi = bl_get_data(bl);
+-	struct device *dev = &dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
+ 
+ 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+-	ret = mipi_dsi_dcs_set_display_brightness(dsi, bl->props.brightness);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set DSI control: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, bl->props.brightness);
++	if (dsi_ctx.accum_err)
++		return dsi_ctx.accum_err;
+ 
+ 	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
+-	return 0;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static const struct backlight_ops dsi_bl_ops = {
 -- 
 2.45.2
 
