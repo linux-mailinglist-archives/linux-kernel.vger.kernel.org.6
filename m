@@ -1,170 +1,123 @@
-Return-Path: <linux-kernel+bounces-267621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1921B941378
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:46:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DDC5941388
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 15:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41A781C22E66
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:46:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECD851F25200
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B4B19FA9D;
-	Tue, 30 Jul 2024 13:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gi5hdVhm"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B5C173;
-	Tue, 30 Jul 2024 13:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B45F1A08A9;
+	Tue, 30 Jul 2024 13:48:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D52319FA92;
+	Tue, 30 Jul 2024 13:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722347176; cv=none; b=GmvMWSIbXYGPRwimpdjC14B49P+h23O2/VR/zlX6Gpxn1lxtXzoC4JD8xPdCc5BJ3OTsXVqFWDCemwjb92qRJJgkybKPVXum9nEpn4+MaZAgZ6urQ4dOi1fHRn+hmENKmrmG82RegKo+QYa+D25e9zFtnUU+koPJ/DhPI8kZH9w=
+	t=1722347314; cv=none; b=XVCB5OrAbqAQFT2SZcZ7uREFTkePNMF9yiQcXIrsdTFv86MFEOS1BIZoWV0kIES9PX9tvMKSc6XofJySy8i2MC81IwZm4l8LMXGuTfnp6c9yXggZnm/7JJo46EHggWImdWjKRaMa2HGS7sEyVs5+ekK9cHyxE2ttImCMR78Dcms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722347176; c=relaxed/simple;
-	bh=kPKAW/PMUqlp0aXtylPpwRqwlYdmFo85OGJYcqN5WLc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tBAIbLV4ClNGDQIS4cB/8wIye1pe0d/ZKvrfd6ZuH1VaJViHim7Ea+koEQisUXwemwZ2T2oaopPHop9xT+psjeIXxaq9gP0nVs2Rw1ih+sNvSm5+WvNdWtyr/OrVFDE9yvALBPXzW19CtzCTBqSnJ6DRVLJupjNxvm5WI05eKzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gi5hdVhm; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=y4B8Bibf3cMg8sJe0NMBWovQbOHW1Vbl/sWae146Sjc=; b=gi5hdVhmspWihcRoGl/873CpaW
-	xZWsAW97z560SkAr3fU5a9q9VRUs9+0X0hRw0bN9snPf04IQbxXbcVZvul7qpBru9Vr0k5iW/v5lS
-	GDFzEplX9C0MZNaWZit+ZeLSOXprY9FRRRs7c6mWzM9vabWtLyyxtoI2hBXxDlvir6aFTN1ShB53Y
-	tvmGha60bA/AbHSJEbdf3t8nojcsnnTS+OausvNRAUzqNhNOxKMvqysGahi+mMMCVaSLjGWpH1UoR
-	Bi9DGXquIWQHztVyrkwvjAFZfD/nNQGyH/3WVOIQfyFSq6/fBaLEZztCshc/mn6YURwkvoxNyGQaP
-	+q7BKcrw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sYnB0-000000050pu-18wA;
-	Tue, 30 Jul 2024 13:46:06 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 35DB33003EA; Tue, 30 Jul 2024 15:46:05 +0200 (CEST)
-Date: Tue, 30 Jul 2024 15:46:05 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org,
-	andrii@kernel.org, linux-kernel@vger.kernel.org,
-	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org,
-	clm@meta.com, bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
-Message-ID: <20240730134605.GO33588@noisy.programming.kicks-ass.net>
-References: <20240708091241.544262971@infradead.org>
- <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
- <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
- <20240709090153.GF27299@noisy.programming.kicks-ass.net>
- <91d37ad3-137b-4feb-8154-4deaa4b11dc3@paulmck-laptop>
- <20240709142943.GL27299@noisy.programming.kicks-ass.net>
- <Zo1hBFS7c_J-Yx-7@casper.infradead.org>
- <20240710091631.GT27299@noisy.programming.kicks-ass.net>
- <20240710094013.GF28838@noisy.programming.kicks-ass.net>
- <CAJuCfpF3eSwW_Z48e0bykCh=8eohAuACxjXBbUV_sjrVwezxdw@mail.gmail.com>
+	s=arc-20240116; t=1722347314; c=relaxed/simple;
+	bh=U85CGb9iXVNpcxFNKqQSP4h3se4004m4qgotfyoFwbI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e5btOX4zNOVewQ8N17dTKmSXwhP+ahEJJt9FJ/4w9m/17rQeq1FLeYd5eeiLGa/lfaFjNo+o8JTPKhmZdRapA+UR8Sn5fJCl1xcd8Lw2QbVPOq9Tt0H9LyzlrkrMBI7jp+XcRCLpyPO7Y7E70WNWi1Ah4h3+FiekG389AIM1hiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 668071007;
+	Tue, 30 Jul 2024 06:48:56 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F13E83F5A1;
+	Tue, 30 Jul 2024 06:48:27 -0700 (PDT)
+Message-ID: <dc2a28b6-566c-4c17-9834-874513f1d4f1@arm.com>
+Date: Tue, 30 Jul 2024 14:48:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpF3eSwW_Z48e0bykCh=8eohAuACxjXBbUV_sjrVwezxdw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 24/37] kvx: Add memory management
+To: Christoph Hellwig <hch@infradead.org>, ysionneau@kalrayinc.com
+Cc: linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+ "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Nick Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
+ <jvetter@kalrayinc.com>, Clement Leger <clement@clement-leger.fr>,
+ Guillaume Thouvenin <thouveng@gmail.com>,
+ Jean-Christophe Pince <jcpince@gmail.com>,
+ Jules Maselbas <jmaselbas@zdiv.net>, Julien Hascoet
+ <jhascoet@kalrayinc.com>, Louis Morhet <lmorhet@kalrayinc.com>,
+ =?UTF-8?Q?Marc_Poulhi=C3=A8s?= <dkm@kataplop.net>,
+ Marius Gligor <mgligor@kalrayinc.com>,
+ Vincent Chardon <vincent.chardon@elsys-design.com>,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-25-ysionneau@kalrayinc.com>
+ <Zp5zrkwyagnkoY7F@infradead.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <Zp5zrkwyagnkoY7F@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 22, 2024 at 12:09:21PM -0700, Suren Baghdasaryan wrote:
-> On Wed, Jul 10, 2024 at 2:40 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Wed, Jul 10, 2024 at 11:16:31AM +0200, Peter Zijlstra wrote:
-> >
-> > > If it were an actual sequence count, I could make it work, but sadly,
-> > > not. Also, vma_end_write() seems to be missing :-( If anything it could
-> > > be used to lockdep annotate the thing.
+On 22/07/2024 3:58 pm, Christoph Hellwig wrote:
+>> +#include "../../../drivers/iommu/dma-iommu.h"
 > 
-> Thanks Matthew for forwarding me this discussion!
+> This is not a public header as you can guess from the file path.
 > 
-> > >
-> > > Mooo.. I need to stare more at this to see if perhaps it can be made to
-> > > work, but so far, no joy :/
-> >
-> > See, this is what I want, except I can't close the race against VMA
-> > modification because of that crazy locking scheme :/
+>> +	switch (dir) {
+>> +	case DMA_TO_DEVICE:
+>> +		break;
+>> +	case DMA_FROM_DEVICE:
+>> +		break;
+>> +
+>> +	case DMA_BIDIRECTIONAL:
+>> +		inval_dcache_range(paddr, size);
 > 
-> Happy to explain more about this crazy locking scheme. The catch is
-> that we can write-lock a VMA only while holding mmap_lock for write
-> and we unlock all write-locked VMAs together when we drop that
-> mmap_lock:
+> Doing this just for bidirectional is weird unless your architecture
+> never does any speculative prefetching.  Other architectures
+> include DMA_FROM_DEVICE here.
 > 
-> mmap_write_lock(mm);
-> vma_start_write(vma1);
-> vma_start_write(vma2);
-> ...
-> mmap_write_unlock(mm); -> vma_end_write_all(mm); // unlocks all locked vmas
+>> +#ifdef CONFIG_IOMMU_DMA
+>> +void arch_teardown_dma_ops(struct device *dev)
+>> +{
+>> +	dev->dma_ops = NULL;
+>> +}
+>> +#endif /* CONFIG_IOMMU_DMA*/
 > 
-> This is done because oftentimes we need to lock multiple VMAs when
-> modifying the address space (vma merge/split) and unlocking them
-> individually would be more expensive than unlocking them in bulk by
-> incrementing mm->mm_lock_seq.
+> This should not be needed right now.
 
-Right, but you can do that without having it quite this insane.
+More than that, per 8b80549f1bc6, it's now actually a latent bug.
 
-You can still make mm_lock_seq a proper seqcount, and still have
-vma_end_write() -- even if its an empty stub only used for validation.
+>  And will be completley
+> useless once we do the direct calls to dma-iommu which we plan
+> to do for Linux 6.12.
+> 
+>> +void arch_setup_dma_ops(struct device *dev, bool coherent)
+>> +{
+>> +	dev->dma_coherent = coherent;
+>> +	if (device_iommu_mapped(dev))
+>> +		iommu_setup_dma_ops(dev);
+>> +}
+> 
+> And this seems odd, as iommu_setup_dma_ops is called from the iommu
+> code and you shouldn't need it here.
 
-That is, something like the below, which adds a light barrier, ensures
-that mm_lock_seq is a proper sequence count.
+Yeah, this smells like it was based on the old arm64 code, but then 
+rebased without reference to the equivalent arm64 changes, hence the 
+#include hack. Enabling iommu-dma for an architecture should now be a 
+one-liner in drivers/iommu/Kconfig, however I don't see an IOMMU driver 
+being added in this series so it's not clear it's actually necessary (yet).
 
-diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
-index de9dc20b01ba..daa19d1a3022 100644
---- a/include/linux/mmap_lock.h
-+++ b/include/linux/mmap_lock.h
-@@ -104,6 +104,8 @@ static inline void mmap_write_lock(struct mm_struct *mm)
- {
- 	__mmap_lock_trace_start_locking(mm, true);
- 	down_write(&mm->mmap_lock);
-+	WRITE_ONCE(mm->mm_lock_seq, mm->mm_lock_seq+1);
-+	smp_wmb();
- 	__mmap_lock_trace_acquire_returned(mm, true, true);
- }
- 
-
-With the above addition we could write (although I think we still need
-the RCU_SLAB thing on files_cachep):
-
-static struct uprobe *__find_active_uprobe(unsigned long bp_vaddr)
-{
-	struct mm_struct *mm = current->mm;
-	struct uprobe *uprobe = NULL;
-	struct vm_area_struct *vma;
-	struct inode *inode;
-	loff_t offset;
-	int seq;
-
-	guard(rcu)();
-
-	seq = READ_ONCE(mm->mm_lock_seq);
-	smp_rmb();
-	do {
-		vma = find_vma(mm, bp_vaddr);
-		if (!vma)
-			return NULL;
-
-		if (!valid_vma(vma, false))
-			return NULL;
-
-		inode = file_inode(vma->vm_file);
-		offset = vaddr_to_offset(vma, bp_vaddr);
-
-	} while (smp_rmb(), seq != READ_ONCE(mm->mm_lock_seq));
-
-	return find_uprobe(inode, offset);
-}
-
+Thanks,
+Robin.
 
