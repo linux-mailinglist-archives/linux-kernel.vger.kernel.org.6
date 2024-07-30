@@ -1,128 +1,186 @@
-Return-Path: <linux-kernel+bounces-267281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0DB3940F90
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:37:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA8D940F84
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 12:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 973FDB29DB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:36:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FE241C22A55
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 10:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0ED19D8AE;
-	Tue, 30 Jul 2024 10:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA67319ADAC;
+	Tue, 30 Jul 2024 10:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e+91zWYW"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FC/eXwEH"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0659C19DF70
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3802418E746
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 10:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722335474; cv=none; b=qAEZ8EG7HilrJYQYKGFUDcMaUmCN6dXx/sptUBc2gw7cJX1T3pW24Pb38dc+4oGgPUGYVFeAv7pwh2FvUGK7E7LZJ/49v1Nhhvz91MemBSrteIkA51xZr3BuWhdq9fJGlH2sE7N5dBI7ePvFAWYXjUJNEZMOZ9Cfb8jc9p01EYo=
+	t=1722335444; cv=none; b=qLdkf5nDm607UqM6LDPvOWwfFICCmWo9tH29fEkudoxCE5yMW4uZF0vuja4IkjGPhwrjKtRKOj/lsOWwYAT27kIQxlSewMQVdv11VXN4sy5Ezjeg5+SLxXGyvr2q92TXK14uWqmIdre9ug6T3GNxyfm0nKOX68HtXyBVTprzlYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722335474; c=relaxed/simple;
-	bh=+0SgFk0UCcjyFQ1ag4543DDdAqZ4f+PJCAgSBXmnExE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nhErOi60DVT4kvh1TfWgxLwu3N6Oe1Rr9qn6VheABuvtWRF3w4uaOYjxt4uIEv9m4xTDE2dHQQe9C7BxQ1mJ+tQsFfb8TV7IMutlK+qo6u2/VKG9d2xwAfLY1KCgB756vCWAwHlphKrOzymKQg5jbWTbQ8TZgGjKnuVCBRaT2/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e+91zWYW; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso12551a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 03:31:12 -0700 (PDT)
+	s=arc-20240116; t=1722335444; c=relaxed/simple;
+	bh=+SZusJMwP5eTibZ0Xgy1WVMZxJPy4VghvcWPJCa+v2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RwhBhG596Tc4jN8qBq88EQXYgZtYjUPpsGdusczoWPzMt4Ou0zZH1Ex1ofFOkIXFNKUZ/quPpzyRXdqCi+k/Cy6lKVDN0xBWMhqO7dQiXsHdSfgRhLO/a+VeGERUR20JBPAnsiEwHTJEXhq4I4bOmk5sfittzpr35OXo4e1jxNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FC/eXwEH; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7aac70e30dso562071366b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 03:30:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722335471; x=1722940271; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+0SgFk0UCcjyFQ1ag4543DDdAqZ4f+PJCAgSBXmnExE=;
-        b=e+91zWYWEOuT6I91MfEkBYQIgqSKKziJfArfmDWp9AgkAyiKH1vnaOAjARAw4QWDnl
-         BgU9JodlRMlA/b5hHAZlX/X9c6hcRrepKLlkHX/4rqmWWS2X0lrDWTrBcPCQooL0lE/X
-         /tTfBFL0PQlDUg14RZHwu0rFpnEourqUFvIsayhsBtW65ETzgRbMW2rq2G2ihh5pPRoi
-         EVPjXESgXnSUh+UZpUqDldz8+ECnvKBgnQiTImDnWVr1A2lWMi2NLWBzWF3CZOH0dLIb
-         uL+Fg0zeKo1hRnZ2hkkAzEwXep1SXWkv6//gdXYnigCitnDy+3O5fZGBYOIX8hPTj4bt
-         WBcg==
+        d=linaro.org; s=google; t=1722335440; x=1722940240; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gfgTeO7eFehEfuHZo0dSc8+LCrIJf/o/Tpdg8fxovkI=;
+        b=FC/eXwEHe+1YqH+wwKuOMai2VT7ZmZqh6eRRF33Y/d5LQefLFjk4sqMsMHrflheGxJ
+         3+aTTh8rpMI/wOHcjX1HmhayCbUIXQT1kyjpRqyZBZaLYWTJn+JL9dHVWXyofisIohiu
+         5eL5u2LC7DI/zcyv+eGpXIDW6rjORiciDXORmVyR7CJ2M5GTR8uGing/Js+yaQpHP66r
+         YVxmC8yXsTPhMha2vvaUV6ADT+nQ+G+WFvp8B1y1TJBNxpvSx+tgIljhFK5im0dp5/F2
+         3YqqkH+VJnfNF8Aut7oMCPDdFU9GsEugUuSjjRLO+G2eKNR0bQgE5VvNIdIRPndWwlTO
+         UIDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722335471; x=1722940271;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+0SgFk0UCcjyFQ1ag4543DDdAqZ4f+PJCAgSBXmnExE=;
-        b=hLJ/jjGZuUeFXs+NfFcJ9SNXzt3HONlNhwW1lkoHuza+ftbFwY3kIj/f9NLT6WqXHV
-         FwVfyur5hKSoUn47SFMMM4EorrEnTVLlHeSA1XoTM+dFolnlZR8EamXL3gp7UsCTZPDP
-         DFZJ5uwRQDn7IO1e5ETBWG1liIxTDhJ7kasHjdouxLYrD04tldgs2KQWJY/hbmx2AcxG
-         nbUSP8jVsnSP4X7T9S3Gp+VvCB9xDmWXQVkZbWh8wCweoEZr4KOIjo44G1YAWD/SmOXc
-         wybXbSangdMEDhZLbUXZyKRF/A5qoBwxzjYwiVEFUqyG6+pd2uUQLiDs6wSTwD/Lj1Kk
-         cMsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvyTenGYVhlHrJZRLnpZJhd3WQTl0uF/gykfU17Sb65FU8f6qBbgt4CCAzY2/VLBPRMP9H/FlZNVmP+OmoCKJVizBgxwXvzGMehXhl
-X-Gm-Message-State: AOJu0YxRlXarczaBbwEmLJvkDMwvus731OgyisCILx8q4hCMVSjDaeE4
-	TKqj+t4RHtqbWSqtWQsGMrtGupPgWhvZ+PpNHll1piUFKnktahUuUs8GeYWRRDaKyjn0alJ0+Mq
-	x/VDufVIhnHBT67JFM/kV0yzu+M63mDkGGpnp
-X-Google-Smtp-Source: AGHT+IGLmcA5xxV1M4r6CbwNmSSM8fTDUc0WCfwWsdfAZHZjtPV8UqocY2ggpWtoUek+6I5ATI4LjP7xq1XesXiYQV0=
-X-Received: by 2002:a05:6402:35c3:b0:5a0:d4ce:59a6 with SMTP id
- 4fb4d7f45d1cf-5b45f835dbbmr100114a12.2.1722335470822; Tue, 30 Jul 2024
- 03:31:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722335440; x=1722940240;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gfgTeO7eFehEfuHZo0dSc8+LCrIJf/o/Tpdg8fxovkI=;
+        b=Qe1bgjHlLDTYa39DlA8L8NBMRCuQK0UyzXco6ppLe2g+qXldPSrmEpzYydQl6tPfS3
+         uhF/teu40XcNdpnLDEgjyOxJnkOLRTsJLhHPdvYa34Y+NtUHcg9DKp3DJaX/pBmyH18E
+         N23Qe8n5pWQUQ+siTuvVmNME+AQtouAFg1lscl0eY59sprBVcnANk7MtFYGc4JsBQ7BS
+         gy1xxkd7Xd9Sy0Zh5PgfRZwHSmaHz6H8jPNgWeaTLHsEjLVqPedLoDWSVC8hcjGfSEwo
+         J9PmAoQufjH1pnaxkfwST5nInwgaQ3U0QccEetAF9WTCZTWz5MkiE6wk3Df1hkM/x6QO
+         PScQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFqU34AEPm44W8+c2Vjot6wGjO02uC0KB1xK1J1KBebM4bh7AOQIVibbDHbZWf9Saad9xfoXT3q9px9ujF856saypJDZFArtxNZVBE
+X-Gm-Message-State: AOJu0YzUjeJppAVU0iS/KsBZ6yysk4x7EJjiHzj60sHkaX1j6YYuICEJ
+	wGzjoIJQltDtBCKBqUYauogYoounvzD6XLsSwiYTlt45vbALkTYESZ5czLyf6sk=
+X-Google-Smtp-Source: AGHT+IGxx92z7IX9vhw/RN+EO3wwfQ/M++6atfLPhpUAf+bjo2ykfbCE8+G6Hz0TR83vimf4DR4ZTQ==
+X-Received: by 2002:a17:906:dc8b:b0:a7a:aa35:4091 with SMTP id a640c23a62f3a-a7d3ff5b256mr842252966b.25.1722335440243;
+        Tue, 30 Jul 2024 03:30:40 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff1f:b280:8303:a4e9:79c5:e939])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab4ddefsm625461366b.59.2024.07.30.03.30.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 03:30:39 -0700 (PDT)
+Date: Tue, 30 Jul 2024 12:30:38 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Stephan Gerhold <stephan@gerhold.net>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, alsa-devel@alsa-project.org,
+	linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Adam Skladowski <a39.skl@gmail.com>
+Subject: Re: [PATCH] ASoC: dt-bindings: qcom,apq8016-sbc-sndcard: move to
+ separate binding
+Message-ID: <ZqjAzgoKo-5vaCtK@linaro.org>
+References: <20240723083300.35605-1-krzysztof.kozlowski@linaro.org>
+ <ZqVXUI37fNB5D0DM@gerhold.net>
+ <3d9f76c1-2e14-43dc-b438-5fac94ffc73e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725-kasan-tsbrcu-v3-0-51c92f8f1101@google.com>
- <20240725-kasan-tsbrcu-v3-1-51c92f8f1101@google.com> <CA+fCnZe-x+JOUN1P-H-i0_3ys+XgpZBKU_zi06XBRfmN+OzO+w@mail.gmail.com>
- <CAG48ez0hAN-bJtQtbTiNa15qkHQ+67hy95Aybgw24LyNWbuU0g@mail.gmail.com> <CA+fCnZckG1Ww9wNcXRuCwdovK5oW3dq98Uq4up-WYOmddA9icA@mail.gmail.com>
-In-Reply-To: <CA+fCnZckG1Ww9wNcXRuCwdovK5oW3dq98Uq4up-WYOmddA9icA@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 30 Jul 2024 12:30:34 +0200
-Message-ID: <CAG48ez17_Etm_-AMaJHENq=QjtCRqNcCe9VUDvNw8En49wKybg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] kasan: catch invalid free before SLUB
- reinitializes the object
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
-	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Marco Elver <elver@google.com>, kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3d9f76c1-2e14-43dc-b438-5fac94ffc73e@kernel.org>
 
-On Sat, Jul 27, 2024 at 2:47=E2=80=AFAM Andrey Konovalov <andreyknvl@gmail.=
-com> wrote:
-> On Fri, Jul 26, 2024 at 3:52=E2=80=AFPM Jann Horn <jannh@google.com> wrot=
-e:
-> >
-> > > Do we still need this patch?
-> >
-> > I just tried removing this patch from the series; without it, the
-> > kmem_cache_invalid_free kunit test fails because the kmem_cache_free()
-> > no longer synchronously notices that the pointer is misaligned. I
-> > guess I could change the testcase like this to make the tests pass
-> > without this patch, but I'd like to hear from you or another KASAN
-> > person whether you think that's a reasonable change:
->
-> Ah, I see. I think detecting a bug earlier if we can is better. So I
-> don't mind keeping this patch, was just confused by the commit
-> message.
+On Sun, Jul 28, 2024 at 12:30:12PM +0200, Krzysztof Kozlowski wrote:
+> On 27/07/2024 22:23, Stephan Gerhold wrote:
+> > On Tue, Jul 23, 2024 at 10:33:00AM +0200, Krzysztof Kozlowski wrote:
+> >> The APQ8016 SBC and MSM8916 QDSP6 sound cards are a bit different from
+> >> others: they have additional IO muxing address space and pin control.
+> >> Move them to separate schema, so the original qcom,sm8250.yaml will be
+> >> easier to manage.  New schema is going to grow for other platforms
+> >> having more of IO muxing address spaces.
+> >>
+> >> Cc: Adam Skladowski <a39.skl@gmail.com>
+> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >> ---
+> >> .../sound/qcom,apq8016-sbc-sndcard.yaml       | 205 ++++++++++++++++++
+> >> .../bindings/sound/qcom,sm8250.yaml           | 137 ------------
+> >> 2 files changed, 205 insertions(+), 137 deletions(-)
+> >> create mode 100644 Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml b/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml
+> >> new file mode 100644
+> >> index 000000000000..6ad451549036
+> >> [...]
+> >> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+> >> index c9076dcd44c1..1d3acdc0c733 100644
+> >> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+> >> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+> >> @@ -27,9 +27,7 @@ properties:
+> >>               - qcom,sm8650-sndcard
+> >>           - const: qcom,sm8450-sndcard
+> >>       - enum:
+> >> -          - qcom,apq8016-sbc-sndcard
+> >>           - qcom,apq8096-sndcard
+> >> -          - qcom,msm8916-qdsp6-sndcard
+> >>           - qcom,qcm6490-idp-sndcard
+> >>           - qcom,qcs6490-rb3gen2-sndcard
+> >>           - qcom,qrb5165-rb5-sndcard
+> >> @@ -58,18 +56,6 @@ properties:
+> >>     $ref: /schemas/types.yaml#/definitions/string
+> >>     description: User visible long sound card name
+> >>
+> >> -  pin-switches:
+> >> -    description: List of widget names for which pin switches should be created.
+> >> -    $ref: /schemas/types.yaml#/definitions/string-array
+> >> -
+> >> -  widgets:
+> >> -    description: User specified audio sound widgets.
+> >> -    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> >> -
+> > 
+> > These two properties are also valid and supported on all newer
+> > platforms, please keep them here! There are certain use cases where
+> > these are needed independent of the platform, e.g. to control an analog
+> > switch or mux connected to speaker or headphone outputs.
+> > 
+> > I agree that it is cleaner to move the IO muxing to a new schema though.
+> > Perhaps we could define something like a shared qcom,sndcard-common.yaml
+> > schema to avoid duplication for these generic properties? In the Linux
+> > driver, these are handled for all platforms in sound/soc/qcom/common.c.
+> 
+> This was added to the common driver code but it does not mean it is
+> reasonable binding. I don't understand why for example we even accept
+> here aux-devs, instead of putting them into one of DAI links.
+> 
 
-ack, changed it in v4
+The auxiliary devices (typically analog audio components) are not
+necessarily related to one particular digital audio interface link. It
+is typically the case (e.g. an analog speaker amplifier connected in
+parallel to the headphone output of one of the codecs), but I don't
+think we can assume that as a general rule. There are often multiple DAI
+links that go to one codec and then it might be tricky to decide which
+of the DAI links the aux-dev belongs to.
 
-> Adding on top of my comments from before: I think if you move
-> check_slab_free() out of poison_slab_object() (but add to
-> __kasan_mempool_poison_object()), and move is_kfence_address() and
-> kasan_arch_is_ready() to poison_slab_object()'s callers, you won't
-> even need the free_validation_result enum, so the patch should become
-> simpler.
+> The pin-switches and widgets could be used, but are they? The only valid
+> argument to keep them is that you added them to common driver code.
 
-right, makes sense, changed in v4
+These go hand in hand with the aux-devs property. If you have multiple
+analog audio components connected to a codec output (e.g. an analog
+speaker amplifier connected to the codec headphone output) then the
+pin-switches/widgets describe that the output paths (speaker and
+headphones) should be separately controllable.
 
-> You can also rename check_slab_free() to check_slab_allocation() to
-> make it be named similarly to the already existing
-> check_page_allocation().
+The alternative for pin-switches and widgets in the DT is to hardcode
+them in the ASoC board/machine driver with a separate board-specific
+compatible. Personally, I would prefer to keep the machine driver
+specific to the SoC instead of having definitions for each and every
+board.
 
-done in v4
+Thanks,
+Stephan
 
