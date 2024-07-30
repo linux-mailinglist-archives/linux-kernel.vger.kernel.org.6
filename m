@@ -1,304 +1,181 @@
-Return-Path: <linux-kernel+bounces-268072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D7C942009
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:52:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5A6494200D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A53282A28
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:52:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8EF41C22CCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE861482F3;
-	Tue, 30 Jul 2024 18:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C64518A6DD;
+	Tue, 30 Jul 2024 18:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dWuKcRby"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="H6EDESz8"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A4F1AA3D0
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 18:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A003B1482F3
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 18:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722365532; cv=none; b=D1Ksmejnv6jj/hG8LkzGqsPVTsvvJjwiMqMFEtvFFiuaEpIUJjY+Rr6hzBC9xu2M8T5H9q2Lo5itIrjgIJqQ3FvZZNKFrJvj0edQOAfMRyduojt5bruN3+GG8ikLCnPBE2QduxCynKijqn+qzjlQBIGxnMZ/LUftg7r5F+hQZAg=
+	t=1722365634; cv=none; b=jauVMYxhBRQ43ULjoUhRznc2J+jh3wv2ugpQWcuvxaNlqUwYzkm2dypnbM2iM+LB+vtNmNc2/Y2IfAR5zyfPqgsUuEkJWQenGjkHDwOldBPlGOwW0dpFn5y5z0w+2OpGt5qJb99HgB7pexoni3KS9K+fEamY9bociCMndvA/fXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722365532; c=relaxed/simple;
-	bh=riniWKHEmj3X689knihuF1Y2pcd2cCjGp03KBgM7p2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=six/AkkztVTf48Y65q+iltkrIv41IS8icKqfR48+PX3AtBpGyoUKORgDpauGUjDkl/PgT1gdfVbWw4BiMJhYUjHp9aIMVo7C9k7E3/jIUos343cFR8xhfTUD/2WzSyGJGBmwBaPN49pZhNOowuXErQQdYljHEP2I2VJdbdv/PG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dWuKcRby; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240730185207euoutp019e68cc54800e3473e02ad3f7a2ba441b~nElJNRNsm1157711577euoutp01a
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 18:52:07 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240730185207euoutp019e68cc54800e3473e02ad3f7a2ba441b~nElJNRNsm1157711577euoutp01a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1722365527;
-	bh=XUNVEVBUHu1MPJWO59vj8nIO541Z7GC1J8wR3j5KZH0=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=dWuKcRbyK7oE4ShiHJAB/gfNCKccE9hMoqAKBUxctqefPzXYJWr9HWStN+N7MsL/i
-	 0UWFGyUrormx/TbE/Y9G+hazj6O8nsPfoJbucR7J+30eTaKomrJ6VQPfLBtnhOA2A8
-	 Z4v7PHnUvc+qa8x7zQnlGOEdjMVNs7AgEcPCzmLs=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240730185206eucas1p1df436db2791401ea0be3eae5ebebaac2~nElI_oNaC2664426644eucas1p1c;
-	Tue, 30 Jul 2024 18:52:06 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id A2.9C.09620.65639A66; Tue, 30
-	Jul 2024 19:52:06 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240730185206eucas1p28b14a1d9802ce2703bd13edc75e1b55d~nElIXt5sj0112901129eucas1p2c;
-	Tue, 30 Jul 2024 18:52:06 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240730185206eusmtrp13b917d5a00e2d87d1ffa7e475320f451~nElIW_h_C2512925129eusmtrp1e;
-	Tue, 30 Jul 2024 18:52:06 +0000 (GMT)
-X-AuditID: cbfec7f5-d31ff70000002594-9f-66a9365685ef
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 35.E4.08810.65639A66; Tue, 30
-	Jul 2024 19:52:06 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240730185205eusmtip254116d38b5380f42798cb0aecb28208d~nElHe4d8e1554215542eusmtip2E;
-	Tue, 30 Jul 2024 18:52:05 +0000 (GMT)
-Message-ID: <3c4b978b-b1fe-42d2-b1a7-a58609433f3c@samsung.com>
-Date: Tue, 30 Jul 2024 20:52:04 +0200
+	s=arc-20240116; t=1722365634; c=relaxed/simple;
+	bh=BUOJ19Sx2S+tjma5mr84benPkdA9XqkBnmJ6+BWRz7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qhIBW6JOVKsTUfh7Fl06TAyOjpfDFbJWwzjFok/rNBUB7zw4CWYprfChBpyEWOolhQjQLmK+yqhB7aC1PmsX2VyDwDhiHAfWj6R6OAAtW50M3LH92LV7FH5l0QP6Dwo5Ph/iyblE8/wqb7SHGZ/gtBagJkvof85l3fhc/HaMZ7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=H6EDESz8; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7abf92f57bso638181366b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:53:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1722365631; x=1722970431; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=X/aWSJuydHws7A1g+QbY9VBGsBopZyR9+EuLrgpUIJk=;
+        b=H6EDESz8jzbTcfArGm4A8klGXIeTPe0kp9sPhZIbuWS3tnq0l8vFxPPK/GoxA/fkJw
+         +FGpAyWQFheX/mQyueMY/1iP/bkCXHy1JfiyRI2VbknozHaSRweSJNC9o11KjoWzP0uX
+         DKSyAR4/AmruQQrzmYBV5mpqJAlu1fSspceVI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722365631; x=1722970431;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X/aWSJuydHws7A1g+QbY9VBGsBopZyR9+EuLrgpUIJk=;
+        b=BkTc6dZBeCHJIQsYn2O6P9o4UR6zsqAfkVAcJOyAjyE6GR5etohnabR5UZWBHQ1Efy
+         qE5COih5pE+v5vBWsxZaeUL388xgrZBnj2ngbG02tdquf8U1wggjz4URcz6Wp8XjCMXg
+         mnQ+raUd8d1FMbtvAAxHEuSRv5dB+gFX082a+XqHHmMs9UiJ/hatrM2s1ci22RfiorRf
+         P/7Nb8y84rZW4JmlDQWNpV6jvh6Gmu5CfM5AOE39HKY+4WG22X/vi6lBlt+A1KM8SBv9
+         KwXseSwqz6WfuUYkDCgDteKb/G8U6HkaCxdvFPxVhyvXbzuiQx+FJ7/56VPFbtiKWGwU
+         9rlQ==
+X-Gm-Message-State: AOJu0YyqSnzgezF3QVFRuvJ0bZg4FjENmD2sxMaFENOaTfemQHE3AKLI
+	UWF4jrM5YmZAMk4hAYBmXmoxw+r7Gcs0GK31JXOuLdidkxzP2xgkLUglQSu3WIHQxg6jujS+6JS
+	P9GqUfQ==
+X-Google-Smtp-Source: AGHT+IG3LwQh3JCiObWLnldwNdkRHd4vDhBreyHhiGuV3NSC/ccG+ob928PPm4Gj6iQYQIlTOatyOA==
+X-Received: by 2002:a17:907:d06:b0:a7a:8cc7:ca48 with SMTP id a640c23a62f3a-a7d40128924mr845050666b.46.1722365630586;
+        Tue, 30 Jul 2024 11:53:50 -0700 (PDT)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab536cesm676680066b.84.2024.07.30.11.53.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 11:53:48 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a3b866ebc9so6855046a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:53:48 -0700 (PDT)
+X-Received: by 2002:a50:aa8a:0:b0:58b:35ef:88c4 with SMTP id
+ 4fb4d7f45d1cf-5b0223da61bmr6687869a12.37.1722365627759; Tue, 30 Jul 2024
+ 11:53:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm: kmem: add lockdep assertion to obj_cgroup_memcg
-To: Muchun Song <songmuchun@bytedance.com>, hannes@cmpxchg.org,
-	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, akpm@linux-foundation.org, vbabka@kernel.org
-Cc: cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20240725094330.72537-1-songmuchun@bytedance.com>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH/e3ezW02uU3Ng5bCSMkyNynrUhIWlSuNpCgjglx5p5KabGlp
-	GSsjH1ith83mqwep2Zwy0lKTcqWb6HxGqWUj0sTViLQkTaxt18r/Pud7fud8zzn82Bi/genF
-	Tkg+QcmSJYkCFhevb5vuXr1/3QOpSKEVkcU1GhY5UFGIkw91u8j+xmIW+V7zm0l+nirHyPKG
-	Dzh5VeNBjqlLGGSLuQsjc8bNeJiLeM6oYYlffPmKiXVVuSyxbuKas9hY+AsX31EUYOJJnU+U
-	80FuaCyVmJBGyYSbYrjxUwWjzJR76089aq1lKlDn6jzEYQOxFmrvXsLtzCcqEcx+jM9DXBt/
-	RzBccQOng0kE7S8LmH8rdO2lTDpRgeBS6XkWHXxD8HhK4ejFIzbBXPEHB+OEH9SoCpxpfTG0
-	3xpx6B6EL5iHCh26GxEBbZZeB7sTnQi01WftjBG74dabBgbNnjA0UuZgFhEMedY8lp05Nq93
-	Y1UY/cYXsuqKMPtAQGRzwHLR7EyPvRUuWEcRzW5gMTya15dCx/V8fL4Awe1fZgYdKBEoxobm
-	KzbCu64Zmx3bZhEANY1COwKxGVRGjEZXGLAupmdwhWv1qnmZBzkX+XQPf1AbtP9cW3r6MCUS
-	qBdcRb1gS/WCbdT/bW8jvAp5UqnypDhKviaZOhkklyTJU5Pjgo4eT9Ih2+/qmDP8eIIqLd+C
-	9IjBRnoEbEzgzjv86r6Uz4uVpGdQsuOHZamJlFyPvNm4wJPnF+tL8Yk4yQnqGEWlULK/WQab
-	46VgSLFPV4u7rTJ50aqYJo+ihh1Lwmezi175VaWXins+1ZvQg5+a9cOHuqNTcjGrdN9WbV/z
-	7zOm8P6lz1RaTkpdSFmaaNlU//PY19OMtxE/wkKCD3hFY0bhm+qZnXXZy8dP+mSoQ7a7NJaX
-	SL1DmyZWBe69/FqQJMz0jq4uE+3LTA+b5Q42irRZvU0xaU+2ud5URi55OxjZETCS04wFuC0v
-	EY6eK1GZlMv2bImMOOLvNKn0MO4p9/kITj2lqXdIcsuwW6j2dNSOrCOLKmdymTpRYKYlUaUy
-	GJy0GeGua1sjq4V8YjjKFKjXT2RM529wb6td4XPF5E88tf4cMpnyDQECXB4vCV6JyeSSP33B
-	6e3MAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsVy+t/xe7phZivTDLb+Y7GYs34Nm8WN5TNY
-	LFZv8rW4vGsOm8W9Nf9ZLV5/W8ZssWznQxaLiWtELZ7PmstkcfD+OWaLjpf3WRy4Pf6dWMPm
-	cfjNe2aPTas62Tw2fZrE7nFixm8Wj4UNU5k9Pm+SC2CP0rMpyi8tSVXIyC8usVWKNrQw0jO0
-	tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0Mv4NvUpa8Fi84otRzewNjCe0e1i5OSQEDCR
-	2HRyHiuILSSwlFHi+2J3iLiMxMlpDawQtrDEn2tdbF2MXEA17xklbu3ZzwSS4BWwk/g35yEL
-	iM0ioCqxfvpUdoi4oMTJmU/A4qIC8hL3b80AiwsLeEsce3WRHWSQiMAZRomnO9aDFTEL+Eo8
-	nn2RGeIKW4nv+3eyQ8TFJW49mQ+2jE3AUKLrLcgVnBycQIvvPF/FDFFjJtG1tYsRwpaXaN46
-	m3kCo9AsJHfMQjJqFpKWWUhaFjCyrGIUSS0tzk3PLTbUK07MLS7NS9dLzs/dxAiM1m3Hfm7e
-	wTjv1Ue9Q4xMHIyHGCU4mJVEeOOvLE0T4k1JrKxKLcqPLyrNSS0+xGgKDIyJzFKiyfnAdJFX
-	Em9oZmBqaGJmaWBqaWasJM7rWdCRKCSQnliSmp2aWpBaBNPHxMEp1cCUwO+620xuifgM3seV
-	morR09886ar8o/FllUjyAoX2e54CnDuKj4ldMOecaaugk1U8Ra5eR+dJuIoee6nIpfr1D7e4
-	chvXFDFKtHxW3el/RNXp7r/dyW7fY3ddm5AjukL8+8lt5ZrTz2p/jLgwuf3x8vqnriayL9Xq
-	8t+8v3Do2bvbvUozJD/M3rVNfufTgKTWF5IbBeZ84S16/fe9qvVO39kK030kP057+MT3X9k7
-	1us+674t+rkqpH+i1dblIabLG7kUn+3y4K08ZHN9NrtMrdbz5aFzbM3mLfhX8aPUi2OC929t
-	HjMnc7+LE7JzQn7cj733ovCMpuS8p85ft697sWrdm9khHx3dRa7dWfR7qRJLcUaioRZzUXEi
-	AKFiKQBfAwAA
-X-CMS-MailID: 20240730185206eucas1p28b14a1d9802ce2703bd13edc75e1b55d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240730185206eucas1p28b14a1d9802ce2703bd13edc75e1b55d
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240730185206eucas1p28b14a1d9802ce2703bd13edc75e1b55d
-References: <20240725094330.72537-1-songmuchun@bytedance.com>
-	<CGME20240730185206eucas1p28b14a1d9802ce2703bd13edc75e1b55d@eucas1p2.samsung.com>
+References: <CAHk-=wiyNokz0d3b=GRORij=mGvwoYHy=+bv6m2Hu_VqNdg66g@mail.gmail.com>
+ <f8677c93-a76d-473c-8abc-8dc7b4403691@roeck-us.net> <b7ecddb7-4486-4b2d-9179-82250cf830e7@roeck-us.net>
+In-Reply-To: <b7ecddb7-4486-4b2d-9179-82250cf830e7@roeck-us.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 30 Jul 2024 11:53:31 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj2BYPvYQAQa-pyT3hERcd2pVw+rL5kw7Y=-8PA3JTDAg@mail.gmail.com>
+Message-ID: <CAHk-=wj2BYPvYQAQa-pyT3hERcd2pVw+rL5kw7Y=-8PA3JTDAg@mail.gmail.com>
+Subject: Re: Linux 6.11-rc1
+To: Guenter Roeck <linux@roeck-us.net>, Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Anvin <hpa@zytor.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	"the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 25.07.2024 11:43, Muchun Song wrote:
-> The obj_cgroup_memcg() is supposed to safe to prevent the returned
-> memory cgroup from being freed only when the caller is holding the
-> rcu read lock or objcg_lock or cgroup_mutex. It is very easy to
-> ignore thoes conditions when users call some upper APIs which call
-> obj_cgroup_memcg() internally like mem_cgroup_from_slab_obj() (See
-> the link below). So it is better to add lockdep assertion to
-> obj_cgroup_memcg() to find those issues ASAP.
+[ Adding x86-32 entry code people, more context at the thread in:
+
+  https://lore.kernel.org/all/3f65bfad-bd04-4651-bbe3-e2b1925f1a13@kernel.dk/
+
+  for people who were dragged in late ]
+
+On Tue, 30 Jul 2024 at 10:04, Guenter Roeck <linux@roeck-us.net> wrote:
 >
-> Because there is no user of obj_cgroup_memcg() holding objcg_lock
-> to make the returned memory cgroup safe, do not add objcg_lock
-> assertion (We should export objcg_lock if we really want to do).
-> Additionally, this is some internal implementation detail of memcg
-> and should not be accessible outside memcg code.
->
-> Some users like __mem_cgroup_uncharge() do not care the lifetime
-> of the returned memory cgroup, which just want to know if the
-> folio is charged to a memory cgroup, therefore, they do not need
-> to hold the needed locks. In which case, introduce a new helper
-> folio_memcg_charged() to do this. Compare it to folio_memcg(), it
-> could eliminate a memory access of objcg->memcg for kmem, actually,
-> a really small gain.
->
-> Link: https://lore.kernel.org/all/20240718083607.42068-1-songmuchun@bytedance.com/
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> From the crash log:
 
-This patch landed in today's linux-next as commit 230b2f1f31b9 ("mm: 
-kmem: add lockdep assertion to obj_cgroup_memcg"). I my tests I found 
-that it triggers the following warning on Debian bookworm/sid system 
-image running under QEMU RISCV64:
+The full log is more informative, at
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1 at include/linux/memcontrol.h:373 
-mem_cgroup_from_slab_obj+0x13e/0x1ea
-Modules linked in:
-CPU: 0 UID: 0 PID: 1 Comm: systemd Not tainted 6.10.0+ #15154
-Hardware name: riscv-virtio,qemu (DT)
-epc : mem_cgroup_from_slab_obj+0x13e/0x1ea
-  ra : mem_cgroup_from_slab_obj+0x13c/0x1ea
-...
-[<ffffffff80257256>] mem_cgroup_from_slab_obj+0x13e/0x1ea
-[<ffffffff801f0b3e>] list_lru_del_obj+0xa6/0xc2
-[<ffffffff8027c6c6>] d_lru_del+0x8c/0xa4
-[<ffffffff8027da60>] __dentry_kill+0x15e/0x17a
-[<ffffffff8027ec3c>] dput.part.0+0x242/0x3e6
-[<ffffffff8027edee>] dput+0xe/0x18
-[<ffffffff8027324c>] lookup_fast+0x80/0xce
-[<ffffffff80273e28>] walk_component+0x20/0x13c
-[<ffffffff802747e2>] path_lookupat+0x64/0x16c
-[<ffffffff80274bf4>] filename_lookup+0x76/0x122
-[<ffffffff80274d80>] user_path_at+0x30/0x4a
-[<ffffffff802d12bc>] __riscv_sys_name_to_handle_at+0x52/0x1d8
-[<ffffffff80b60324>] do_trap_ecall_u+0x14e/0x1da
-[<ffffffff80b6c546>] handle_exception+0xca/0xd6
-irq event stamp: 198187
-hardirqs last  enabled at (198187): [<ffffffff8028ca9e>] 
-lookup_mnt+0x186/0x308
-hardirqs last disabled at (198186): [<ffffffff8028ca74>] 
-lookup_mnt+0x15c/0x308
-softirqs last  enabled at (198172): [<ffffffff800e34f6>] 
-cgroup_apply_control_enable+0x1f6/0x2fc
-softirqs last disabled at (198170): [<ffffffff800e34d8>] 
-cgroup_apply_control_enable+0x1d8/0x2fc
----[ end trace 0000000000000000 ]---
+  http://server.roeck-us.net/qemu/x86-nosmp/
 
-Similar warning appears on ARM64 Debian bookworm system. Reverting it on 
-top of linux-next hides the issue, but I assume this is not the best way 
-to fix it.
+which has that config too.
 
-I'm testing kernel built from riscv/defconfig with PROVE_LOCKING, 
-DEBUG_ATOMIC_SLEEP, DEBUG_DRIVER and DEBUG_DEVRES options enabled.
+> [    3.605247] sr 2:0:0:0: Attached scsi generic sg0 type 5
+> [    3.764508] sched_clock: Marking stable (3740032902, 23766486)->(3766853760, -3054372)
+> [    3.768164] registered taskstats version 1
+> [    3.768271] Loading compiled-in X.509 certificates
+> [    3.990683] Btrfs loaded, zoned=no, fsverity=no
+> [    4.005012] cryptomgr_test (68) used greatest stack depth: 6136 bytes left
+> [    4.029889] traps: PANIC: double fault, error_code: 0x0
 
-> ---
-> v3:
->   - Use lockdep_assert_once(Vlastimil).
->
-> v2:
->   - Remove mention of objcg_lock in obj_cgroup_memcg()(Shakeel Butt).
->
->   include/linux/memcontrol.h | 20 +++++++++++++++++---
->   mm/memcontrol.c            |  6 +++---
->   2 files changed, 20 insertions(+), 6 deletions(-)
->
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index fc94879db4dff..95f823deafeca 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -360,11 +360,11 @@ static inline bool folio_memcg_kmem(struct folio *folio);
->    * After the initialization objcg->memcg is always pointing at
->    * a valid memcg, but can be atomically swapped to the parent memcg.
->    *
-> - * The caller must ensure that the returned memcg won't be released:
-> - * e.g. acquire the rcu_read_lock or css_set_lock.
-> + * The caller must ensure that the returned memcg won't be released.
->    */
->   static inline struct mem_cgroup *obj_cgroup_memcg(struct obj_cgroup *objcg)
->   {
-> +	lockdep_assert_once(rcu_read_lock_held() || lockdep_is_held(&cgroup_mutex));
->   	return READ_ONCE(objcg->memcg);
->   }
->   
-> @@ -438,6 +438,19 @@ static inline struct mem_cgroup *folio_memcg(struct folio *folio)
->   	return __folio_memcg(folio);
->   }
->   
-> +/*
-> + * folio_memcg_charged - If a folio is charged to a memory cgroup.
-> + * @folio: Pointer to the folio.
-> + *
-> + * Returns true if folio is charged to a memory cgroup, otherwise returns false.
-> + */
-> +static inline bool folio_memcg_charged(struct folio *folio)
-> +{
-> +	if (folio_memcg_kmem(folio))
-> +		return __folio_objcg(folio) != NULL;
-> +	return __folio_memcg(folio) != NULL;
-> +}
-> +
->   /**
->    * folio_memcg_rcu - Locklessly get the memory cgroup associated with a folio.
->    * @folio: Pointer to the folio.
-> @@ -454,7 +467,6 @@ static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
->   	unsigned long memcg_data = READ_ONCE(folio->memcg_data);
->   
->   	VM_BUG_ON_FOLIO(folio_test_slab(folio), folio);
-> -	WARN_ON_ONCE(!rcu_read_lock_held());
->   
->   	if (memcg_data & MEMCG_DATA_KMEM) {
->   		struct obj_cgroup *objcg;
-> @@ -463,6 +475,8 @@ static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
->   		return obj_cgroup_memcg(objcg);
->   	}
->   
-> +	WARN_ON_ONCE(!rcu_read_lock_held());
-> +
->   	return (struct mem_cgroup *)(memcg_data & ~OBJEXTS_FLAGS_MASK);
->   }
->   
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 622d4544edd24..3da0284573857 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -2366,7 +2366,7 @@ void mem_cgroup_cancel_charge(struct mem_cgroup *memcg, unsigned int nr_pages)
->   
->   static void commit_charge(struct folio *folio, struct mem_cgroup *memcg)
->   {
-> -	VM_BUG_ON_FOLIO(folio_memcg(folio), folio);
-> +	VM_BUG_ON_FOLIO(folio_memcg_charged(folio), folio);
->   	/*
->   	 * Any of the following ensures page's memcg stability:
->   	 *
-> @@ -4617,7 +4617,7 @@ void __mem_cgroup_uncharge(struct folio *folio)
->   	struct uncharge_gather ug;
->   
->   	/* Don't touch folio->lru of any random page, pre-check: */
-> -	if (!folio_memcg(folio))
-> +	if (!folio_memcg_charged(folio))
->   		return;
->   
->   	uncharge_gather_clear(&ug);
-> @@ -4662,7 +4662,7 @@ void mem_cgroup_replace_folio(struct folio *old, struct folio *new)
->   		return;
->   
->   	/* Page cache replacement: new folio already charged? */
-> -	if (folio_memcg(new))
-> +	if (folio_memcg_charged(new))
->   		return;
->   
->   	memcg = folio_memcg(old);
+Double faults are bad bad juju.  Nasty to debug, because it means
+something went wrong at a horribly bad time.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+> [    4.030613] EIP: asm_exc_page_fault+0x0/0x10
 
+Sadly, this mainly says that taking a page fault was part of the
+horribly bad time.
+
+> [    4.031389]  <ENTRY_TRAMPOLINE>
+> [    4.031392]  ? asm_exc_int3+0x10/0x10
+> ...
+> [    4.033360]  ? asm_exc_int3+0x10/0x10
+> [    4.033368]  ? restore_all_switch_stack+0x65/0xe6
+> [    4.033386]  </ENTRY_TRAMPOLINE>
+
+Yeah "restore_all_switch_stack" is also part of "horribly bad time".
+
+And from the full log, I see that the "..." is a *lot* of asm_exc_int3+0x10.
+
+Which makes me think it's asm_exc_int3 just recursively failing.
+
+Which will cause a stack overflow, and then - after a time - a double fault.
+
+[ Time passes, I build the i386 kernel image with your config just to
+get an image that looks like yours ]
+
+Hmm. I think the stack dump output confused me. Because
+"asm_exc_int3+0x10/0x10" doesn't end up making much sense, but it
+turns out that "asm_exc_int3+0x10" is actually the same as
+'asm_exc_page_fault'.
+
+So it smells like we're taking a page fault, but somehow the page
+fault text address has been unmapped, so taking a page fault causes a
+page fault and then we end up finally in that same "no more stack,
+double fault" situation.
+
+Either page table corruption, or some issue with the page table mitigation.
+
+The fact that it started happening with the block merge may be because
+the block code causes some major corruption, or may just be random bad
+luck and it just changed some alignment somewhere, and exposed a
+hidden but pre-existing issue.
+
+Jens separately said that he can see it with gcc-11, but not his
+regular compiler, so regardless it seems to be compiler-dependent.
+
+Let's see it x86 people have some idea, but that
+
+   restore_all_switch_stack+0x65/0xe6
+
+and doing an objdump to see the code generation, it is literally here:
+
+        0f 20 d8                mov    %cr3,%eax
+        0d 00 10 00 00          or     $0x1000,%eax
+        0f 22 d8                mov    %eax,%cr3
+        eb 16                   jmp    <restore_all_switch_stack+0x7d>
+
+with that "jmp" instruction being the restore_all_switch_stack+0x65 address.
+
+So the infinite page faults seem to literally happen right after the
+"mov %eax,%cr3".
+
+Definitely something wrong with the page tables. But where that
+wrongness comes from, I have no idea.
+
+            Linus
 
