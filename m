@@ -1,163 +1,92 @@
-Return-Path: <linux-kernel+bounces-267336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A7B94106C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:24:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3082F94106D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 13:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2875A1C20F2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:24:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 627D81C2238F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C4A19E7D8;
-	Tue, 30 Jul 2024 11:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C78C19DF73;
+	Tue, 30 Jul 2024 11:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="bKVMqyYc"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q0PC9Yzk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF181993B0;
-	Tue, 30 Jul 2024 11:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570DB18EFED
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 11:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722338640; cv=none; b=NIjplMJoHCUF5lpFMEiJ8sinOoxUzesAqIdamhuQlX+zlt0uJj4X4bfSNraXhuRAhrYX/eU+rrhgpDEy9LbSN5Hr/g6T32rgI6stygfuTmzM2WEE9p+8maNMxGi88wJ+RdOID0cplc4d2GFvdMA/FRHpd6+MEFK0y8/cI0ph7XE=
+	t=1722338658; cv=none; b=jrD0cnT4C6LVTFP5P9u1r4dRIDD7FfzXM41GvlVBn61Y0imknESXp5X1Co6crCPMy94B5ZLFA/RkRHLFXdferiYsDTJwPdhirqouD9HNhBKbBUU8kld7dLcv0xiCt18pPEk+wo0EqlKE6ImSgFbZHeQgoLcWK0j3nkl5mNkv0TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722338640; c=relaxed/simple;
-	bh=pOA0+hxVfOzNZYEWL0amhMKDYvzHYLXnQpE9r0FHK8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pLddsRfHnYqoBnAOtM+jc12mmoXgHhBUsKPIFJk46n0CcC+auji9a49w61KkntoltuAN+ZP/BU0dKVdmBWtNJHJVWu9P63Ovw1ajRfnbNmzoaqi2fYn6XfCWNd236iWig//pR6SDlTjwx+mQPnF2ydfA3QFtiWiDVRWQypgfztw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=bKVMqyYc; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=/KjOC3r37EogMaWUzeIP1eZFMIvbYUyiLZJrxK8c0Kk=; b=bKVMqyYcjJ2Min/cT7k5ohWK5N
-	RjmDvjJdvdSWvLAZ8VG62e97C1MTtHeAu2HpP1tkbb7ldpbjObedkCgLPvvsLYkyMOWpsduRC8g3W
-	f8zt8EDcPH9+tg/86eq31UTscOG85zeEtpWGgUL2/oTo2M7Fz1mwumOCv2yireeRM54L/KJFdjHit
-	vUxG8jnWPk45FgOfsNAv/KhoZVEUO6Go2tNNRAAkLEs3UzuY9sl3dPLXA0NlHqpx+g0GPF7KSslUf
-	Uq5k/fEiLVAQoH9HYIE6lK3CEvU8Ihv/xFPRKW130dvkUKCG2S43SBvaBoDBhEQQ0N+WhoGUEyiXA
-	Mz5CUjOA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57712)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sYkxD-0006Yd-1d;
-	Tue, 30 Jul 2024 12:23:43 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sYkxF-0005E8-VO; Tue, 30 Jul 2024 12:23:46 +0100
-Date: Tue, 30 Jul 2024 12:23:45 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Brad Griffis <bgriffis@nvidia.com>
-Subject: Re: [RESEND PATCH net-next v3 2/4] net: phy: aquantia: wait for FW
- reset before checking the vendor ID
-Message-ID: <ZqjNQW5HhTUgCc5x@shell.armlinux.org.uk>
-References: <20240708075023.14893-3-brgl@bgdev.pl>
- <8ac00a45-ac61-41b4-9f74-d18157b8b6bf@nvidia.com>
+	s=arc-20240116; t=1722338658; c=relaxed/simple;
+	bh=FstNwrfsX5X7GY12ufzHw8RhOHEWqp+Zb6hF3L2QyEw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gQu7S+v98uJOHnxLGgYJ2aecLI9hp/l7BwcAgTWiMf7EFfzqOqOBFLudpFlOTrGhl6z2rn5ebX7taLSD0GXmVhGlqm7qzkheWXVAxlWAYxIqKzt2yg0cT4MTvsk4HKZ5V9jI/KKWFDd2WP8pOmM8db+GBIThrMjUHHTDZoQP6io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q0PC9Yzk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8819AC32782;
+	Tue, 30 Jul 2024 11:24:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722338658;
+	bh=FstNwrfsX5X7GY12ufzHw8RhOHEWqp+Zb6hF3L2QyEw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=q0PC9Yzkm8atb0xilzRFm0z9wGS/xfgYkjlkMxV3TVh2roxXMFMIZBFvo/v8pgR9l
+	 wh9xfiIP9GwXvDvE5HIn0DHHmUzOdggPa8ycSXB0bNN0tUi4n3UThc4uXAfPJY86IX
+	 NR93f07dSVaIJQkmR0TXtgLOwtbA8X7nt5xCl09XcpbbmKo2oswSsM7/hKsU4Wrx6N
+	 H6lTIeE9dLWVPF3axeanttYRCpaqYwZrXhmDY8dwtOIFjtAU7A1Nr6IAgQbZJRQhOS
+	 kB8VaDtruP8Q+fgNN+VOEm+tVCBSOgD8fWqf5bFLBZScAL6W0fIp6vjGCObQY0tmNR
+	 sbwNvx8SK02Tw==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: "Michael Walle" <mwalle@kernel.org>
+Cc: "Brian Norris" <computersforpeace@gmail.com>,
+  <linux-mtd@lists.infradead.org>,  "Miquel Raynal"
+ <miquel.raynal@bootlin.com>,  "Pratyush Yadav" <pratyush@kernel.org>,
+  "Richard Weinberger" <richard@nod.at>,  "Tudor Ambarus"
+ <tudor.ambarus@linaro.org>,  "Vignesh Raghavendra" <vigneshr@ti.com>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mtd: spi-nor: micron-st: Add n25q064a WP support
+In-Reply-To: <D32OADQF733D.3CVS3ZRPEBL2O@kernel.org> (Michael Walle's message
+	of "Tue, 30 Jul 2024 08:51:05 +0200")
+References: <20240726185825.142733-1-computersforpeace@gmail.com>
+	<D32OADQF733D.3CVS3ZRPEBL2O@kernel.org>
+Date: Tue, 30 Jul 2024 13:24:15 +0200
+Message-ID: <mafs034nr2kdc.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8ac00a45-ac61-41b4-9f74-d18157b8b6bf@nvidia.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain
 
-On Tue, Jul 30, 2024 at 10:59:59AM +0100, Jon Hunter wrote:
-> Hi Bartosz,
-> 
-> On 08/07/2024 08:50, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > 
-> > Checking the firmware register before it complete the boot process makes
-> > no sense, it will report 0 even if FW is available from internal memory.
-> > Always wait for FW to boot before continuing or we'll unnecessarily try
-> > to load it from nvmem/filesystem and fail.
-> > 
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >   drivers/net/phy/aquantia/aquantia_firmware.c | 4 ++++
-> >   1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/drivers/net/phy/aquantia/aquantia_firmware.c b/drivers/net/phy/aquantia/aquantia_firmware.c
-> > index 0c9640ef153b..524627a36c6f 100644
-> > --- a/drivers/net/phy/aquantia/aquantia_firmware.c
-> > +++ b/drivers/net/phy/aquantia/aquantia_firmware.c
-> > @@ -353,6 +353,10 @@ int aqr_firmware_load(struct phy_device *phydev)
-> >   {
-> >   	int ret;
-> > +	ret = aqr_wait_reset_complete(phydev);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> >   	/* Check if the firmware is not already loaded by pooling
-> >   	 * the current version returned by the PHY. If 0 is returned,
-> >   	 * no firmware is loaded.
-> 
-> 
-> Although this fixed another issue we were seeing with this driver, we have
-> been reviewing this change and have a question about it.
-> 
-> According to the description for the function aqr_wait_reset_complete() this
-> function is intended to give the device time to load firmware and check
-> there is a valid firmware ID.
-> 
-> If a valid firmware ID (non-zero) is detected, then
-> aqr_wait_reset_complete() will return 0 (because phy_read_mmd_poll_timeout()
-> returns 0 on success and -ETIMEDOUT upon a timeout).
-> 
-> If it times out, then it would appear that with the above code we don't
-> attempt to load the firmware by any other means?
+On Tue, Jul 30 2024, Michael Walle wrote:
 
-I'm also wondering about aqr_wait_reset_complete(). It uses
-phy_read_mmd_poll_timeout(), which prints an error message if it times
-out (which means no firmware has been loaded.) If we're then going on to
-attempt to load firmware, the error is not an error at all. So, I think
-while phy_read_poll_timeout() is nice and convenient, we need something
-like:
+> Hi,
+>
+> On Fri Jul 26, 2024 at 8:58 PM CEST, Brian Norris wrote:
+>> These flash chips are used on Google / TP-Link / ASUS OnHub devices, and
+>> OnHub devices are write-protected by default (same as any other
+>> ChromeOS/Chromebook system). I've referred to datasheets, and tested on
+>> OnHub devices.
+>
+> Out of curiosity, there is also a hardware write protect switch
+> somehow, right? At least that's my understanding how verify boot
+> works.
+>
+>>
+>> Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+>
+> This looks good:
+> Reviewed-by: Michael Walle <mwalle@kernel.org>
 
-#define phy_read_poll_timeout_quiet(phydev, regnum, val, cond, sleep_us, \
-                                    timeout_us, sleep_before_read) \
-({ \
-        int __ret, __val; \
-        __ret = read_poll_timeout(__val = phy_read, val, \
-                                  __val < 0 || (cond), \
-                sleep_us, timeout_us, sleep_before_read, phydev, regnum); \
-        if (__val < 0) \
-                __ret = __val; \
-        __ret; \
-})
-
-#define phy_read_poll_timeout(phydev, regnum, val, cond, sleep_us, \
-                                timeout_us, sleep_before_read) \
-({ \
-        int __ret = phy_read_poll_timeout_quiet(phydev, regnum, val, cond, \
-						sleep_us, timeout_us, \
-						sleep_before_read); \
-        if (__ret) \
-                phydev_err(phydev, "%s failed: %d\n", __func__, __ret); \
-        __ret; \
-})
-
-and aqr_wait_reset_complete() needs to use phy_read_poll_timeout_quiet().
+Applied to spi-nor/next. Thanks, both!
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Regards,
+Pratyush Yadav
 
