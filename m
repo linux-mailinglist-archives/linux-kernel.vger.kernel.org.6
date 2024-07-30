@@ -1,93 +1,68 @@
-Return-Path: <linux-kernel+bounces-267875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78C12941855
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:21:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E76B194186B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A922B1C23E68
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:21:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FD5D282E65
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A9918991C;
-	Tue, 30 Jul 2024 16:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAcg5fZ1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B138B1A6190;
-	Tue, 30 Jul 2024 16:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903F8189517;
+	Tue, 30 Jul 2024 16:21:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635B71A617E;
+	Tue, 30 Jul 2024 16:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722356430; cv=none; b=hUriAUi+dqYBD+s7OPDyjPDmNY/62w+YAFp25tRDch1UGUlToqx/9q6+BhJfN0u8bfFUHZuY7aVEkljd+O1cY0w1vhjDRDYvISaEAmUvyBIpdmrtDUxUuxnr/8tQV7+CZWpSij9lT05G3XR39eEsJgEThlTo8cuUajTk6eBt8h4=
+	t=1722356486; cv=none; b=D1spc4xiFdsTAzwK5x7C2q2Nzci7KG5UKjryp1x5VYqk1M73CjiYTy3kQXvPYS31lWn37UsWThtbbZ0hZukHZKzUSFVZWzFmuyjXIpvNQ+tAEte22766Gei+QU+2CtdP/8YbyGqJ26tjR5vYciBZw4GPpyAOTUnz88cv/JecFuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722356430; c=relaxed/simple;
-	bh=BUUyY1NTz3JrwklnZ/Mk1s3DehDybPuYkwhI5XkEtLg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=TH3IxE55ZtTxYsaYK7CmiffMJ8spqLR4oJeHrn1Fj4shj1rmAy99VTMKDEjNaR0j1YNNlWAilZPNOAbBZNmcvMhBGhazcErsI+dqbHftwkvTY2DjSf5fIOHUJsLIPamG6BRL75JupdI6SPeYaT68SOEFVCSYpEq5OF9ZqajxxCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WAcg5fZ1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 85926C4AF0C;
-	Tue, 30 Jul 2024 16:20:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722356430;
-	bh=BUUyY1NTz3JrwklnZ/Mk1s3DehDybPuYkwhI5XkEtLg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=WAcg5fZ1skHq3iYqMc8IUfB/jA7JF4wcIzUJSb7VvWTkC3VWJ9cKGK6B/VoUaT9EM
-	 iEESRyZtsKQJpXDXeSpdk/tk/N2XVgJB4H10fKKY/C4cl1/d1mefL3hDmgbMDni52n
-	 OV5rO/OBi6OcEEP7X1trOUvQn//pUsrJBGSAIFU81u04QCz46/NfyYuk219b5PsCRR
-	 T97IbGQkEzwQDug5bzCN3zYpH2nLX1WyqbLefxuAC1MFcM2QJiOYvhfpn1HV/TwveW
-	 aYSOTuhn7jWLZuFafDSWDOLdU+ZBc3F7/L3kFnYbLU+z8Y6F88DmWCABtExJhokD7p
-	 y7aATP87ypOpA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 73D1DC6E398;
-	Tue, 30 Jul 2024 16:20:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1722356486; c=relaxed/simple;
+	bh=ie9/9gx3ARFRW0pM8mPcKQOsuD9ZYZdMZoovobmOJpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ca7U3CJ9b+7W1A+EePmwtcS7J95EC42Mh8yXXFy5F77VvvFklfTDy0+87wRt34h6Bs6/ldFg3ennKjkpK5PgZeOPWoN4Ko7vwKd2LqnFsFxw1dkvU6NbyMHg2Y6G1NwPLVPJkM1tJDE3GpFL24OyR1jR70L/IPC2ZVrxGswRF+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1743A1007;
+	Tue, 30 Jul 2024 09:21:47 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 57E3D3F5A1;
+	Tue, 30 Jul 2024 09:21:20 -0700 (PDT)
+Date: Tue, 30 Jul 2024 17:21:12 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Luke Parkin <luke.parkin@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
+	cristian.marussi@arm.com
+Subject: Re: [PATCH v4 2/5] firmware: arm_scmi: Add support for tracking
+ metrics
+Message-ID: <ZqkS-G2QvplYNxSA@pluto>
+References: <20240730093342.3558162-1-luke.parkin@arm.com>
+ <20240730093342.3558162-3-luke.parkin@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: mvpp2: Don't re-use loop iterator
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172235643047.2398.10999820377012165647.git-patchwork-notify@kernel.org>
-Date: Tue, 30 Jul 2024 16:20:30 +0000
-References: <eaa8f403-7779-4d81-973d-a9ecddc0bf6f@stanley.mountain>
-In-Reply-To: <eaa8f403-7779-4d81-973d-a9ecddc0bf6f@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: stefanc@marvell.com, marcin.s.wojtas@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730093342.3558162-3-luke.parkin@arm.com>
 
-Hello:
+On Tue, Jul 30, 2024 at 10:33:39AM +0100, Luke Parkin wrote:
+> Add a new optional config option for tracking, configurable
+> 	at build.
+> Add methods for counting key metrics
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+This commit message is a bit messed up, BUT it is fine, NO need to
+respin a v5 just for this, we'll fix this on merge.
 
-On Wed, 24 Jul 2024 11:06:56 -0500 you wrote:
-> This function has a nested loop.  The problem is that both the inside
-> and outside loop use the same variable as an iterator.  I found this
-> via static analysis so I'm not sure the impact.  It could be that it
-> loops forever or, more likely, the loop exits early.
-> 
-> Fixes: 3a616b92a9d1 ("net: mvpp2: Add TX flow control support for jumbo frames")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> [...]
+Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
 
-Here is the summary with links:
-  - [net] net: mvpp2: Don't re-use loop iterator
-    https://git.kernel.org/netdev/net/c/0aa3ca956c46
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks,
+Cristian
 
