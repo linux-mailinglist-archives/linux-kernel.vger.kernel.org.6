@@ -1,54 +1,74 @@
-Return-Path: <linux-kernel+bounces-267132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16FF5940D0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:10:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66421940D0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B6F71C21350
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:10:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED42228206A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555EC194133;
-	Tue, 30 Jul 2024 09:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF2D194121;
+	Tue, 30 Jul 2024 09:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="t4I8lzRx"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="SU94Izkp"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4546190053;
-	Tue, 30 Jul 2024 09:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5F21946B3
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722330606; cv=none; b=GscSo5F/QdIFKQtCr+t7qtMXVF9V8ID5aggkFLP3gIczpt6SIf8awpij0T5uFQn+j30HXro0s2MBGNaqcFLY55flAsFQnftqvejDxTBGAdzivZRGeAKFF28soTHQ+LfVsPpMAQJ/BXSY6+GCyWsxu160uiEGSEWRrLMnUFutzLs=
+	t=1722330613; cv=none; b=P/u5cm/SwFovRfcMpDCekP1D53Dgz+XxobjwpGSfEJn6NXGa130i9rGBZUl9BDKdK772KnFnBnaj4O1qNo+pT6+hif+PgFQwQLVITP2WqbxZZrCzcHEj42jWU8dfssJgQ/FBFQkI+4nKFKnoK+iHY/HHKABhV80WbzKwLrgAKE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722330606; c=relaxed/simple;
-	bh=g5zASnwUhqABB8AiTnlNqyPjhXEMSOhFOC44f1Jxv/w=;
+	s=arc-20240116; t=1722330613; c=relaxed/simple;
+	bh=Qmy6jOBAgGUO438SRI4dEoA0I03EgO90+KvaYpIjXEg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=obRFnN79TpYhv0GwqUW6IBPzEVhLa3YIZ4LSAzBzUZStPZ4MvgkoZ5gRdKsH6rnXnn2+s8b/WPzqTedSsCxWwrrwN/FkEKBPm0vh/SX3Px7Qx2akVTpi928tWeBqrXYq2h+951NnR98n8ZDY9czueUgsECDyjVw/mVa3ZyP+ndA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=t4I8lzRx; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722330601;
-	bh=g5zASnwUhqABB8AiTnlNqyPjhXEMSOhFOC44f1Jxv/w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t4I8lzRxaNhVGQAl3kwBSHOhMik/SZSlcUHGdpHApo3Snaw6tBcBArZS2LbCTN7L4
-	 utg0qHx1jxKLL8K06zXvO/lBPnDwfIn0gSMy9gxdxO6sL0K/VUmQBmej+M6l9Tmirj
-	 +kcdTkLaw91nJGCnbzidpRgpSekyLDVPtSG1+TPL+0bFeEoPqkQ2c8svGpLcaMfdBE
-	 siubDkNhMf/VU+LWuoxHUldvThoC/u46WOlixGLRgVqeXTjvEMK6NKkzu4LctfpGnO
-	 82vw8CbV3dchg8L2ZvMoc39WVb1oGZT558FlchHoIp2jKWfM9YYFl7MlGZN17KFt8Y
-	 S1ic020JLJitw==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8C0F23780BC9;
-	Tue, 30 Jul 2024 09:10:00 +0000 (UTC)
-Message-ID: <c6400b3c-109b-4f40-9163-88ae2b53c73b@collabora.com>
-Date: Tue, 30 Jul 2024 11:09:59 +0200
+	 In-Reply-To:Content-Type; b=u+AIvimt3S+Yjuohtij4CyHsHC2cSJ7FeYyQT9DX0MFNw5dV1PP5u0fown3ehempsAGae3IvHo3ltEqK+jhjV8/AN8H80Hy4s18Ube46e/PLpwnJftZp/UQjMJQCv1yNifLtXjOsuckHBYimlD1Y+WH6WzI3lJqwIl+7NckQaCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=SU94Izkp; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70d22b6dab0so274317b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 02:10:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1722330611; x=1722935411; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KSclq4pThTSCwT9YqJqbII2VQ5xJ9oUgsdFqEmgr39M=;
+        b=SU94Izkp9M0Bfl/iywhT2xOJPn3p2CsBLJ59HgNcXwHLE6sdNGf1CJ0PQqtQl8D0wz
+         v8D13crPxM9zpJ2m7NAd14IHofalQhcXrE8sMdn8wK86LcN+Bzzh2rk/+Vb2EWSJsWZl
+         SPA70LWx00uDw9tgavl8/2x49dztxKIda9cZrKqpsQuj5/OWKGJf54gAslc/Oy4ktcI3
+         +XrNW9uG7QOKxHtN88NOXGL22ltd7mytMYvSUK5f0/YCuqrQybVOlODrSHNyFyV3oVdj
+         PZxW8vHUAdPOFstrMwwBrxGjJ4zEenOTreN1RYkxOtJtPwEvy1U+3URbg7vOwwzQ9Vjq
+         jr6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722330611; x=1722935411;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KSclq4pThTSCwT9YqJqbII2VQ5xJ9oUgsdFqEmgr39M=;
+        b=W97eFE8QoQmxg1pFDkrCA2ylGL+siGnNhTXiPxkwT6HINdy/bcxn5KLVq4nYpPd5Oo
+         pdw4SNpugnb64J9YiQy6KURB7y0aCKDUEDYoVaThwrgjI0L+X1cn+/McmdCGSebg16iY
+         5FDglW9MrUVLqvhe5CVnPUcXCyUzjM0ZaMRNGBHgJOGt+a4+WkpdYQ0lsW2haGEH9SRS
+         uc3+07P0EDDcQUY4WcJWzUST2wUYtTB1a1Iz9t70JQhKIMYPmZFpj+DECSwkoHavL1Du
+         /+AXVXKf/mPDYlYd6GvSFWjqt21SJ8sYAytkM66M0hDUjCNtXauntOkQtyv+lIt82FMN
+         zS7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUqDk8m//HEXZg9CEZjLoxRnyfgS9sPY104hYYg97g9LveM8oD8GPbFFDt85SaTGtRoThVpzgOconJ+P/sXFqRvqob7pTWBayOvDCv3
+X-Gm-Message-State: AOJu0YyqDHogz9hBmYoCZXyd/D7xNBAxwS7SGeeTCO5M4JccQRax5mcQ
+	bYvPSCvfKYzYxD6Ctwn0YFrzymlOecKqD6EPIOqWPNyuZzX2s4+xhuB5wa9qD5nw+o2+ftS8d63
+	Z
+X-Google-Smtp-Source: AGHT+IH44yi8Et9gv9K/PUkEjphadp45oqr8JhJ+BDFwdfghMnYs0seqPjSnpcyasrI9OPdJ+JNyBw==
+X-Received: by 2002:a05:6a20:43a2:b0:1c3:b15b:f86b with SMTP id adf61e73a8af0-1c476f37bfcmr13171480637.0.1722330610947;
+        Tue, 30 Jul 2024 02:10:10 -0700 (PDT)
+Received: from [10.255.168.175] ([139.177.225.232])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb74e83b2sm12043744a91.46.2024.07.30.02.10.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 02:10:10 -0700 (PDT)
+Message-ID: <a3206cfe-34c4-4b43-9399-40a715f5fbaa@bytedance.com>
+Date: Tue, 30 Jul 2024 17:10:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,337 +76,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: mediatek: mt8195: Add missing clock for xhci1
- controller
-To: Chen-Yu Tsai <wenst@chromium.org>,
- =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, kernel@collabora.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, Macpaul Lin <macpaul.lin@mediatek.com>
-References: <20240722-usb-1129-probe-pci-clk-fix-v1-1-99ea804228b6@collabora.com>
- <CAGXv+5H_pxR18sHeqdWPy9_FARrnLwyyOHV4VXCn9p5OExseiQ@mail.gmail.com>
- <f12ba385-090b-4772-8c52-e515e25b00ac@collabora.com>
- <CAGXv+5G92=-k5MDH4BPcM8tgPwcGTJ60trJwr7BwTGHD=wpnDw@mail.gmail.com>
- <51f0f4f3-11a5-4d74-981e-3f24f8475c7f@collabora.com>
- <CAGXv+5F-U6O3dQdU2L8bR5V+D=PLreACZYCh5sxBY3PFrex1zg@mail.gmail.com>
- <de0b0daa-2a35-4286-b4db-4f646073a04c@collabora.com>
- <CAGXv+5EvzRr8h5vnuV2h=zkVwkVp3fShDP_45BpaO0HkivuDtQ@mail.gmail.com>
- <c3e38dae-646f-471a-ae40-150b8f86cac0@collabora.com>
- <be8a0047-3a37-4e25-b4aa-ab34adff4418@notapiano>
- <CAGXv+5EybBNiapMDcnvW5kMKm_ig8kta6-XsGYAFss8EOyKCCg@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v1 1/2] mm: let pte_lockptr() consume a pte_t pointer
 Content-Language: en-US
-In-Reply-To: <CAGXv+5EybBNiapMDcnvW5kMKm_ig8kta6-XsGYAFss8EOyKCCg@mail.gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>
+References: <20240725183955.2268884-1-david@redhat.com>
+ <20240725183955.2268884-2-david@redhat.com> <ZqPCjd35OdNRrcfl@x1n>
+ <bf2069ed-f2b8-49d4-baf0-dbd2189362f9@redhat.com> <ZqQVDwv4RM-wIW7S@x1n>
+ <9e671388-a5c6-4de1-8c85-b7af8aee7f44@redhat.com>
+ <12bae4c3-5dda-4798-9f6a-3ac040111551@bytedance.com>
+ <47fe3480-a4a4-465b-8972-c6507c7a76ee@redhat.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <47fe3480-a4a4-465b-8972-c6507c7a76ee@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Il 30/07/24 06:17, Chen-Yu Tsai ha scritto:
-> On Tue, Jul 30, 2024 at 2:14 AM Nícolas F. R. A. Prado
-> <nfraprado@collabora.com> wrote:
->>
->> On Mon, Jul 29, 2024 at 02:34:27PM +0200, AngeloGioacchino Del Regno wrote:
->>> Il 29/07/24 12:48, Chen-Yu Tsai ha scritto:
->>>> On Mon, Jul 29, 2024 at 4:54 PM AngeloGioacchino Del Regno
->>>> <angelogioacchino.delregno@collabora.com> wrote:
->>>>>
->>>>> Il 29/07/24 10:07, Chen-Yu Tsai ha scritto:
->>>>>> On Mon, Jul 29, 2024 at 3:59 PM AngeloGioacchino Del Regno
->>>>>> <angelogioacchino.delregno@collabora.com> wrote:
->>>>>>>
->>>>>>> Il 26/07/24 17:11, Chen-Yu Tsai ha scritto:
->>>>>>>> On Fri, Jul 26, 2024 at 8:11 PM AngeloGioacchino Del Regno
->>>>>>>> <angelogioacchino.delregno@collabora.com> wrote:
->>>>>>>>>
->>>>>>>>> Il 25/07/24 12:34, Chen-Yu Tsai ha scritto:
->>>>>>>>>> Hi,
->>>>>>>>>>
->>>>>>>>>> On Mon, Jul 22, 2024 at 11:27 PM Nícolas F. R. A. Prado
->>>>>>>>>> <nfraprado@collabora.com> wrote:
->>>>>>>>>>>
->>>>>>>>>>> Currently if the xhci1 controller happens to probe before the pcie1
->>>>>>>>>>> controller then it fails with the following errors:
->>>>>>>>>>>
->>>>>>>>>>> xhci-mtk 11290000.usb: clocks are not stable (0x1003d0f)
->>>>>>>>>>> xhci-mtk 11290000.usb: can't setup: -110
->>>>>>>>>>> xhci-mtk: probe of 11290000.usb failed with error -110
->>>>>>>>>>>
->>>>>>>>>>> The issue has been tracked down to the CLK_INFRA_AO_PCIE_P1_TL_96M
->>>>>>>>>>> clock, although exactly why this pcie clock is needed for the usb
->>>>>>>>>>> controller is still unknown. Add the clock to the xhci1 controller so it
->>>>>>>>>>> always probes successfully and use a placeholder clock name for it.
->>>>>>>>>>>
->>>>>>>>>>> Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
->>>>>>>>>>> Closes: https://lore.kernel.org/all/9fce9838-ef87-4d1b-b3df-63e1ddb0ec51@notapiano/
->>>>>>>>>>> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
->>>>>>>>>>
->>>>>>>>>> So I asked MediaTek about this, and it seems the correct thing to do is
->>>>>>>>>> disable USB 3 on this host controller using the following snippet. The
->>>>>>>>>> snippet is copy-pasted from our issue tracker and won't apply directly.
->>>>>>>>>>
->>>>>>>>>> This is also seen in mt8395-kontron-3-5-sbc-i1200.dts, on which xhci1
->>>>>>>>>> is used only for USB 2.0 on an M.2 slot.
->>>>>>>>>>
->>>>>>>>>
->>>>>>>>> Uhm, okay, but why should USB3 be disabled on a controller that supports USB3?
->>>>>>>>>
->>>>>>>>> I agree about disabling it on specific boards that use only the USB 2.0 lines of
->>>>>>>>> this controller, but doing that globally looks wrong... and looks like being a
->>>>>>>>> workaround for an error that gets solved with adding a clock as well.
->>>>>>>>>
->>>>>>>>> In short, the question is: why would that be the correct thing to do?
->>>>>>>>
->>>>>>>> We can disable it in mt8195-cherry.dtsi then?
->>>>>>>
->>>>>>> That device does not use this controller, so yes we can disable it, but that still
->>>>>>> doesn't resolve the issue pointed out by Nicolas...!
->>>>>>
->>>>>> No. I mean disable USB3 on this port. Also see the next paragraph.
->>>>>>
->>>>>
->>>>> Yes, sorry I was meaning the same - but I effectively wrote "disable controller"
->>>>> instead, my bad.
->>>>>
->>>>>>> Please note that the issue that he sees doesn't happen only on Tomato, but also on
->>>>>>> other MediaTek MT8195/MT8395 boards - and applying this commit makes disabling the
->>>>>>> controller, or disabling the USB 3 lines on the controller, kinda redundant, as
->>>>>>> this will effectively fix probing it... but again, fixing the actual issue with
->>>>>>> this controller is something that must be done.
->>>>>>
->>>>>> If those other boards use the XHCI1 USB3 lines for ... USB3, then the USB3
->>>>>> PHY should also be tied to XHCI1, right now due to the Cherry Chromebook
->>>>>> design, only the USB2 PHY is tied to it.
->>>>>>
->>>>>
->>>>> Yes, I am aware of that.
->>>>>
->>>>>>> Disabling the controller on Tomato is a different topic - here we are discussing
->>>>>>> about fixing the issue, and that will happen, again, on any board that has this
->>>>>>> controller enabled with USB3 lines. :-)
->>>>>>>
->>>>>>> So, unless there is any specific reason for which applying this commit is a bad
->>>>>>> idea, or any alternative fix to this that is better than the proposed one, and
->>>>>>> not a workaround... I'm applying this one.
->>>>>>
->>>>>> Didn't I just relay what MediaTek says is the correct fix? Disable USB3
->>>>>> for this port on devices where the serial pairs are used for PCIe instead
->>>>>> of USB3.
->>>>>>
->>>>>
->>>>> I think there must've been some misunderstanding here.
->>>>>
->>>>> Yes you did relay what MediaTek is the correct fix, and I agree that the USB3 must
->>>>> be disabled on devices where those serial pairs are used for PCIe instead of USB,
->>>>> or on devices where those are completely unused.
->>>>
->>>> OK. I will send a patch for Tomato as you asked.
->>>>
->>>>> This, though, will fix the issue only on those devices (because we are disabling
->>>>> those lines entirely, so depending on how we see it, this might not be a fix but
->>>>> rather a workaround).
->>>>
->>>> I would say that is a more accurate description of the hardware, so a fix.
->>>>
->>>
->>> I can accept a patch for Tomato with a Fixes tag. Yes.
->>>
->>>>> If we don't apply this fix, any board that uses those pairs for USB 3 instead will
->>>>> still show the same "clocks are not stable" error, leaving them with a broken port.
->>>>>
->>>>> And I believe that because the clocks are not routed externally but rather are
->>>>> internal to the SoC, so, if INFRA_AO_PCIE_P1_TL_96M is necessary for that USB 3
->>>>> port to work, a board that intends to use those pairs for USB3 would still need
->>>>> this exact clock to actually get that port to work.
->>>>
->>>> I couldn't reproduce the issue by disabling pcie1 as Nicolas mentioned.
->>>> I don't have any more to add to this though. Sorry for the noise.
->>
->> Huh, that's surprising. FWIW I just reproduced with kernel next-20240729,
->> upstream defconfig (besides a CONFIG_USB_ONBOARD_DEV=n to be able to boot from
->> my USB drive), and the pcie1 node in mt8195-cherry.dtsi disabled. Hardware is
->> mt8195-cherry-tomato-r2.
->>
->> Also, I just tested adding
->>
->> diff --git a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
->> index fe5400e17b0f..a60c4d1419df 100644
->> --- a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
->> +++ b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
->> @@ -1401,6 +1401,7 @@ &xhci0 {
->>   &xhci1 {
->>          status = "okay";
->>
->> +       mediatek,u3p-dis-msk = <0x1>;
->>          rx-fifo-depth = <3072>;
->>          vusb33-supply = <&mt6359_vusb_ldo_reg>;
->>          vbus-supply = <&usb_vbus>;
->>
->> And that fixed the issue as well. So as far as fixing the error on Tomato, this
->> patch works too, and makes more sense.
-> 
-> Could you also try adding the USB3 PHY instead of disabling U3 on the
-> controller? As:
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> index 2ee45752583c..61b3c202a8cd 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> @@ -1444,7 +1444,7 @@ xhci1: usb@11290000 {
->                                <0 0x11293e00 0 0x0100>;
->                          reg-names = "mac", "ippc";
->                          interrupts = <GIC_SPI 530 IRQ_TYPE_LEVEL_HIGH 0>;
-> -                       phys = <&u2port1 PHY_TYPE_USB2>;
-> +                       phys = <&u2port1 PHY_TYPE_USB2>, <&u3port1
-> PHY_TYPE_USB3>;
->                          assigned-clocks = <&topckgen CLK_TOP_USB_TOP_1P>,
->                                            <&topckgen CLK_TOP_SSUSB_XHCI_1P>;
->                          assigned-clock-parents = <&topckgen
-> CLK_TOP_UNIVPLL_D5_D4>,
-> 
-> I wanted to test this, but I couldn't actually reproduce the error.
-> 
->> However I agree with Angelo that a board that does use USB3 on this controller
->> would still need the original patch adding the PCIE clock to work. But such a
->> board doesn't currently exist, does it? And we don't actually know if USB3
->> really works in that case. Or why this clock is needed. So there are a few
->> unknowns...
-> 
-> MacPaul seems to have one. He mentioned to me that he doesn't need the patch
-> adding the PCIE clock, but needs "mediatek,force-mode" instead.
-> 
-> Looking at the comments around "mediatek,force-mode" in the driver, it
-> seems that the PHY defaults to PCIe mode. A combination of not initializing
-> the PHY to USB3 and turning on the PCIe related clock might be what is
-> allowing the PHY to respond to the controller? This is just a guess though.
-> 
+Hi David,
 
-I was just about to pick this patch, but now with this comment making a lot of
-sense... I'm not sure that picking this is the right thing to do anymore :-)
-
-Nicolas, can you please check if "mediatek,force-mode" makes it to work without
-said clock?
-
-If it works, this means that the PHY driver (or something else) is, and has always
-been, at fault - so there's a bug elsewhere and must be fixed.
-
-Cheers,
-Angelo
-
->> Anyway, I really don't know what option would be better. Just let me know if I
->> should resend a patch or CC me in any alternative patch.
-> 
-> I'll send the patches to fix up pure USB2 usage. Given we have conflicting
-> reports on whether the PCIe clock is needed, I ask that you try the PHY
-> assignment change first.
-> 
-> 
-> Thanks
-> ChenYu
-> 
->> Thanks,
->> Nícolas
+On 2024/7/30 16:40, David Hildenbrand wrote:
+>>> ... also because I still want to understand why the PTL of the PMD table
+>>> is required at all. What if we lock it first and somebody else wants to
+>>> lock it after us while we already ripped it out? Sure there must be some
+>>> reason for the lock, I just don't understand it yet :/.
 >>
->>>>
->>>
->>> Sometimes the noise actually opens some eyes around (be it mine or whoever else's),
->>> so as long as it is constructive, I don't see it as noise.
->>>
->>> In short: no worries! :-)
->>>
->>>>> As for Tomato itself - I agree that we must add the u3p-dis-msk=0x1 flag, yes,
->>>>> and we will, but I'm purely talking about - again - an eventual board that would
->>>>> not have that property because USB3 is exposed/used for real.
->>>>
->>>> I think it would make more sense to fix the `phys = ` statement in mt8195.dtsi
->>>> to list both the USB2 and USB3 PHYs. At the board level, for boards only
->>>> using USB2, we would have the overriding `phys = ` statement alongside the
->>>> `mediatek,u3p-dis-mask` property. Does that make sense to you?
->>>>
->>>
->>> Yeah, that'd make sense, though I'm not sure if the driver can cope with that: in
->>> that case, we'd obviously need "two" patches and not one :-)
->>>
->>> Cheers!
->>>
->>>>
->>>> Thanks
->>>> ChenYu
->>>>
->>>>> Cheers,
->>>>> Angelo
->>>>>
->>>>>>
->>>>>> Regards
->>>>>> ChenYu
->>>>>>
->>>>>>> Cheers,
->>>>>>> Angelo
->>>>>>>
->>>>>>>>
->>>>>>>> ChenYu
->>>>>>>>
->>>>>>>>> Cheers,
->>>>>>>>> Angelo
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> ChenYu
->>>>>>>>>>
->>>>>>>>>> index 8b7307cdefc6..2dac9f706a58
->>>>>>>>>> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->>>>>>>>>> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->>>>>>>>>> @@ -1447,6 +1447,7 @@
->>>>>>>>>>                                            "xhci_ck";
->>>>>>>>>>                              mediatek,syscon-wakeup = <&pericfg 0x400 104>;
->>>>>>>>>>                              wakeup-source;
->>>>>>>>>> +                       mediatek,u3p-dis-msk = <0x1>;
->>>>>>>>>>                              status = "disabled";
->>>>>>>>>>                      };
->>>>>>>>>>
->>>>>>>>>>> ---
->>>>>>>>>>>       arch/arm64/boot/dts/mediatek/mt8195.dtsi | 10 ++++++++--
->>>>>>>>>>>       1 file changed, 8 insertions(+), 2 deletions(-)
->>>>>>>>>>>
->>>>>>>>>>> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->>>>>>>>>>> index 2ee45752583c..cc5169871f1c 100644
->>>>>>>>>>> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->>>>>>>>>>> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->>>>>>>>>>> @@ -1453,9 +1453,15 @@ xhci1: usb@11290000 {
->>>>>>>>>>>                                       <&topckgen CLK_TOP_SSUSB_P1_REF>,
->>>>>>>>>>>                                       <&apmixedsys CLK_APMIXED_USB1PLL>,
->>>>>>>>>>>                                       <&clk26m>,
->>>>>>>>>>> -                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>;
->>>>>>>>>>> +                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>,
->>>>>>>>>>> +                                /*
->>>>>>>>>>> +                                 * This clock is required due to a hardware
->>>>>>>>>>> +                                 * bug. The 'frmcnt_ck' clock name is used as a
->>>>>>>>>>> +                                 * placeholder.
->>>>>>>>>>> +                                 */
->>>>>>>>>>> +                                <&infracfg_ao CLK_INFRA_AO_PCIE_P1_TL_96M>;
->>>>>>>>>>>                              clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck",
->>>>>>>>>>> -                                     "xhci_ck";
->>>>>>>>>>> +                                     "xhci_ck", "frmcnt_ck";
->>>>>>>>>>>                              mediatek,syscon-wakeup = <&pericfg 0x400 104>;
->>>>>>>>>>>                              wakeup-source;
->>>>>>>>>>>                              status = "disabled";
->>>>>>>>>>>
->>>>>>>>>>> ---
->>>>>>>>>>> base-commit: dee7f101b64219f512bb2f842227bd04c14efe30
->>>>>>>>>>> change-id: 20240722-usb-1129-probe-pci-clk-fix-ef8646f46aac
->>>>>>>>>>>
->>>>>>>>>>> Best regards,
->>>>>>>>>>> --
->>>>>>>>>>> Nícolas F. R. A. Prado <nfraprado@collabora.com>
->>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>
->>>>>>>>>
->>>>>>>>>
->>>>>>>
->>>>>
->>>
->>>
->>>
+>> For pmd lock, I think this is needed to clear the pmd entry
+>> (pmdp_collapse_flush()). For pte lock, there should be the following two
+>> reasons:
+>>
+> 
+> Thanks for the details.
+> 
+> My current understanding correct that removing *empty* page tables is
+> currently only possible if we can guarantee that nothing would try 
+> modifying the
+> page tables after we drop the PTE page table lock, but we would be happy 
+> if someone
+> would walk an empty page table while we remove it as long as the access 
+> is read-only.
+> 
+> In retract_page_tables() I thought that would be guaranteed as we 
+> prevent refaults
+> from the page cache and exclude any uffd + anon handling using the big 
+> hammer
+> (if any could be active, disallow zapping the page table).
+> 
+> What I am still not quite getting is what happens if someone would grab 
+> the PTE page
+> table lock after we released it -- and how that really protects us here.
+> 
+> 
+> I assume it's the
+> 
+> spin_lock(ptl);
+> if (likely(pmd_same(pmdval, pmdp_get_lockless(pmd)))) {
+> ...
+> 
+> handling in __pte_offset_map_lock() that guarantees that.
 
+Yes.
+
+> 
+> 
+> That indeed means that pte_offset_map_nolock() requires similar checks 
+> after
+> obtaining the PTL (for the cases where we are not holding the PMD table 
+> lock
+> and can be sure that we are the one ripping out that table right now).
+
+Yes, if the PTE page will be freed concurrently, then the pmd entry
+needs to be rechecked after acquiring the PTL. So I made
+pte_offset_map_nolock() return pmdval in my patch[1], and then we
+can do the following:
+
+start_pte = pte_offset_map_nolock(mm, pmd, &pmdval, addr, &ptl);
+spin_lock(ptl)
+if (likely(pmd_same(pmdval, pmdp_get_lockless(pmd)))) {
+...
+
+
+[1]. 
+https://lore.kernel.org/lkml/7f5233f9f612c7f58abf218852fb1042d764940b.1719570849.git.zhengqi.arch@bytedance.com/
+
+> 
+> 
+>> 1. release it after clearing pmd entry, then we can capture the changed
+>>      pmd in pte_offset_map_lock() etc after holding this pte lock.
+>>      (This is also what I did in my patchset)
+> 
+> Yes, I get it now.
+> 
+>>
+>> 2. As mentioned in the comments, we may be concurrent with
+>>      userfaultfd_ioctl(), but we do not hold the read lock of mmap (or
+>>      read lock of vma), so the VM_UFFD_WP may be set. Therefore, we need
+>>      to hold the pte lock to check whether a new pte entry has been
+>>      inserted.
+>>      (See commit[1] for more details)
+> 
+> 
+> Yes, I see we tried to document that magic and it is still absolutely 
+> confusing :)
+> 
+> But at least now it's clearer to me why retract_page_tables() uses 
+> slightly different
+> locking than collapse_pte_mapped_thp().
+> 
+> Maybe we should look into letting collapse_pte_mapped_thp() use a 
+> similar approach as
+> retract_page_tables() to at least make it more consistent. That topic is 
+> also touched
+> in a98460494b16.
+
+Agree, more consistency is better.
+
+Thanks,
+Qi
+
+> 
 
