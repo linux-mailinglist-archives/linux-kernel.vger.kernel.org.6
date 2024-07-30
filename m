@@ -1,151 +1,103 @@
-Return-Path: <linux-kernel+bounces-268249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D943E942231
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:29:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D831942230
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:29:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F6242851EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:29:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE2DF285481
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB961AA3FF;
-	Tue, 30 Jul 2024 21:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F2318E040;
+	Tue, 30 Jul 2024 21:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="orImmod+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GraOL9S2"
-Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="r5v4qWLv"
+Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C292918E034
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 21:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931331AA3FF;
+	Tue, 30 Jul 2024 21:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722374945; cv=none; b=HnefejZd0/fneQoOuor97dXhFNxJMQsnSpIa0M8ZJboC7hNJPSGu89aET5n2GtMd7BASeePkVylM82odWPL8hS1Qx3R++OXn6Hs0WfdhJvuiM3ZIL3VrCb+yW8J6KJIkKyFQSTz5IVrKLmeyl87vaAiX/dOLdwBS4zWciEnYSnM=
+	t=1722374943; cv=none; b=VzVVvQgybJS7fGd+BwMREf1Wxh4XZY6pKj3E5svWJTFjtG16GyT1/Uy41OgGzbr4XM2dp8SYH7bQos8MFbBQbcVBn/kY/OiCqcOvD9kV+8Zf4hVc7AobCvawj/fySAT7EnSWLg7njwKusnfEgjIwohoVp5CCdLVhNXd+0lz8+L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722374945; c=relaxed/simple;
-	bh=knetGNY6C2cwa8GAt8v6/ka8CsMwLOtRrOoMRfOt+Tc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=bm+Avj1nS67cV/o3MOXGWJomIP49aJKaPtrAiE+xYpR82FAf4T1gnDQmTGy90e1qk/G/CooBpD/qPqAJ0UAUtgWzrhxPmgwYXQ45DFFILDW1asKXnIrmifNv88BkXkRa2m3JI+7geOw01147kZVoXz5byQ6g8+iHLhnt276aqBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=orImmod+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GraOL9S2; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id C96091140153;
-	Tue, 30 Jul 2024 17:29:02 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Tue, 30 Jul 2024 17:29:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1722374942;
-	 x=1722461342; bh=pj+zRGkBP4jzT0UyToQqkBSXMgwDnGHAUOJTMSKIYWg=; b=
-	orImmod+ozNn1vWgAK1BsUAAX0FX6nW1ghgZ8yqxCXgDX3u2zHgS3OFVkPanlw95
-	2JVCkwnlmBE+3IyPaSDfBxj9u7PXp6I2YeY4VhK2oTH2UEAt2iuN8iQCzMHNRczE
-	1gV5pO9tb6gyvbK60DNr6Gsy+VpPOZlhzPHJNU6BurhxCX+FdYflMYRUhytw1WFs
-	HPk0aSCc7/IePXpA0hMCrsEJSDmJoMYHiHzBoQcY8y+EIuTrDTWOp/ig653Ze5fG
-	/u48xoCDNAtyRN2umYAt8TWH1VHli1NLCDdyCLLCMhnMa9mIY8xY172au2WXhV7g
-	rI7zKgsKxopcKPi/2oYCvA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722374942; x=
-	1722461342; bh=pj+zRGkBP4jzT0UyToQqkBSXMgwDnGHAUOJTMSKIYWg=; b=G
-	raOL9S2uNtcvplA8lOc/BCdjbQLFBkFvoKgBnXxzhALZmvd2L+QpsAU6UWY35Esb
-	6pWyP85HsP0WAyHMPz2oqrUVOGB+Cs0Tr3JFkxfStAVaBwN59Sum+SS3+cCtJ1hR
-	sCb3r+aM0gwFlsYqe6Za/VGvzpp/cEn2ppKgF/R5VBq6C4F3oSrvWrhqWUTZWCgB
-	g1uFAICMMhv0oJWOyFUlGCIjsmv4u/NYYiYljNSAcwcLp9+DjlffE4tn3myMBMfD
-	Znwts43WzukS0Q036yLbFBe9zFr19HvrntQHGRm/aZ4gsdb95D1Kxe4DlgWYOJJM
-	d334mgp0PWcXbX+aWWVZw==
-X-ME-Sender: <xms:HVupZiiyl1n_vGsbHYjxGq3E7Pb_28t4DBbidHVKWYkaptOl7lT7pg>
-    <xme:HVupZjDnfKSQBK70GLSDoeLV2X8FFNqPKUn5BhdhhhikeLm6ZEhGaNDEA93eZS1CH
-    6AK_r3xClg1yY1CC8I>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeggdduieefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefh
-    vdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:HlupZqHng_jNweIr1krthia7_o2cCvrMjatNyYsRSZjYf17jUmKjyQ>
-    <xmx:HlupZrSxk72pQ9B6i0lyr00tlmmmjuhvoMDozwrZDELxNjLWsXOCXw>
-    <xmx:HlupZvwlvo9b86J0v6MNH3XOA0OXBAm5VJg1O2LMPj1Iayhr1Ttj8w>
-    <xmx:HlupZp4wTRdSQhCUqhZCb88zZhhJBykuQFcGql188NL_3dCgwkcT5Q>
-    <xmx:HlupZkI9RG2-oQBSINCfcLwcffjE5eKiB8D2V6GaclzIey-muZ9PR814>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id D0B2DB6008D; Tue, 30 Jul 2024 17:29:01 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1722374943; c=relaxed/simple;
+	bh=d9DOTRd8kAc5fw35sUzIu6WzsI7yQjrSEqrfuiFNqYU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mG75mp3v+WWkdurTjG6U+YzkHTq8HaLuQIbSfC2af86MjVFV4I+GtJp3/5wJ9CH8N0l5GwyzQe7HQNCMM2XXGn1n5sUGQdmKEUFelMRGBCsMGh/aJZI/akgk5XtWOXLos0wfHiyJIkscLfUgTGQ+uMsfnpjlPYbqle0/1FSlI/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=r5v4qWLv; arc=none smtp.client-ip=198.252.153.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
+Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx1.riseup.net (Postfix) with ESMTPS id 4WYSyz5ckCzDqP4;
+	Tue, 30 Jul 2024 21:28:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+	t=1722374940; bh=d9DOTRd8kAc5fw35sUzIu6WzsI7yQjrSEqrfuiFNqYU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=r5v4qWLvY4/kGsvFw1l0EuORSd7UcVGRmb6wgORcG7y1hed/N22dH34KKS9gpgrG+
+	 f0iKMvwycIR1QJ+hM2D+QLGIC9Y1iVI74nbC5EgvO/njW6faT7Jmwkf+JpZp4UuQXI
+	 iNaBENHjU0RsW47rB0wf1J+pacwFPB6DJMPvy+jc=
+X-Riseup-User-ID: 7192E67EA91FC2267A7FC0DECF5ABE72E1EF159850640A75E2FA476C35DB71A3
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4WYSyy0yn3zJtLb;
+	Tue, 30 Jul 2024 21:28:57 +0000 (UTC)
+From: =?UTF-8?q?Santiago=20Ruano=20Rinc=C3=B3n?= <santiagorr@riseup.net>
+To: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: helen.koike@collabora.com,
+	~lkcamp/patches@lists.sr.ht
+Subject: [PATCH v3 1/2] staging: media: sdis: move open brace to a new line
+Date: Wed, 31 Jul 2024 06:28:53 +0900
+Message-Id: <20240730212854.474708-1-santiagorr@riseup.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 30 Jul 2024 23:28:40 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Stefan Wahren" <wahrenst@gmx.net>,
- "Umang Jain" <umang.jain@ideasonboard.com>, linux-staging@lists.linux.dev
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Florian Fainelli" <florian.fainelli@broadcom.com>,
- "Ray Jui" <rjui@broadcom.com>, "Scott Branden" <sbranden@broadcom.com>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Kieran Bingham" <kieran.bingham@ideasonboard.com>,
- "laurent.pinchart" <laurent.pinchart@ideasonboard.com>,
- "Yang Li" <yang.lee@linux.alibaba.com>,
- "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Message-Id: <3d3b7368-93b2-4c0d-845e-4099c2de9dc1@app.fastmail.com>
-In-Reply-To: <e0692316-f8c5-4ddc-ab39-ba70cbfbdf28@gmx.net>
-References: <20240730170840.1603752-1-umang.jain@ideasonboard.com>
- <e0692316-f8c5-4ddc-ab39-ba70cbfbdf28@gmx.net>
-Subject: Re: [PATCH] staging: vchiq: Avoid mixing bulk_userdata kernel and userspace
- pointer
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 30, 2024, at 20:05, Stefan Wahren wrote:
-> Hi Umang,
->
-> Am 30.07.24 um 19:08 schrieb Umang Jain:
->> In vchiq_dev.c, there are two places where the __user bulk_userdata
->> pointer to set to a kernel-space pointer which then gives relevant
->> Sparse warnings as below:
->>
->> vchiq_dev.c:328:26: warning: incorrect type in assignment (different address spaces)
->> vchiq_dev.c:328:26:    expected void *[assigned] userdata
->> vchiq_dev.c:328:26:    got void [noderef] __user *userdata
->> vchiq_dev.c:543:47: warning: incorrect type in assignment (different address spaces)
->> vchiq_dev.c:543:47:    expected void [noderef] __user *[addressable] [assigned] bulk_userdata
->> vchiq_dev.c:543:47:    got void *bulk_userdata
->>
->> This is solved by adding additional functional argument to track the
->> userspace bulk_userdata separately and passing it accordingly to
->> completion handlers.
-> IMO this patch fixes the issue for spare, but don't address the
-> confusing member naming for humans. It's not clear that "userdata" is a
-> kernel pointer and "uuserdata" is a pointer to userspace. It would be
-> nice to avoid the word "user" for kernel pointer in this case.
+Fix checkpatch error "ERROR: open brace '{' following function
+definitions go on the next line" in sdis_1.0/ia_css_sdis.host.c:239.
 
-Right, also you need to provide a much better explanation about
-how the code is meant to work, and what this opaque pointer
-is meant to do.
+Signed-off-by: Santiago Ruano Rincón <santiagorr@riseup.net>
 
-Ideally this should be cleaned up in a way that completely
-avoids passing both user and kernel data at the same time.
+---
+This is one of my first patches. Could you please tell me if is there
+anything wrong with it? Thank you.
 
-A small step would be to separate out the "struct bulk_waiter
-*bulk_waiter" argument and make that typesafe.
+V3: Insert the change history (including for V2)
 
-You can also wrap vchiq_bulk_transfer() in order to have
-four separate functions based on the different 'mode'
-values and have them only take the arguments they actually
-need.
+V2: Remove spurious [PATCH] header from the Subject, inserted by mistake
+---
+ .../atomisp/pci/isp/kernels/sdis/sdis_1.0/ia_css_sdis.host.c   | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-    Arnd
+diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/sdis/sdis_1.0/ia_css_sdis.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/sdis/sdis_1.0/ia_css_sdis.host.c
+index bf0a768f8..cabacfc84 100644
+--- a/drivers/staging/media/atomisp/pci/isp/kernels/sdis/sdis_1.0/ia_css_sdis.host.c
++++ b/drivers/staging/media/atomisp/pci/isp/kernels/sdis/sdis_1.0/ia_css_sdis.host.c
+@@ -239,7 +239,8 @@ void ia_css_sdis_clear_coefficients(
+ int
+ ia_css_get_dvs_statistics(
+     struct ia_css_dvs_statistics	       *host_stats,
+-    const struct ia_css_isp_dvs_statistics *isp_stats) {
++    const struct ia_css_isp_dvs_statistics *isp_stats)
++{
+ 	struct ia_css_isp_dvs_statistics_map *map;
+ 	int ret = 0;
+ 
+-- 
+2.39.2
+
 
