@@ -1,64 +1,81 @@
-Return-Path: <linux-kernel+bounces-268156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D66E9420EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:46:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1DB9420F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 21:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ED5BB25D5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:46:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4F1E1F2358C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13D618CBF2;
-	Tue, 30 Jul 2024 19:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3A118C92E;
+	Tue, 30 Jul 2024 19:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aKM4hSs9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XbcdKZXk"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7648149C41;
-	Tue, 30 Jul 2024 19:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752B01AA3D8;
+	Tue, 30 Jul 2024 19:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722368728; cv=none; b=ZklC8vaDkQP/x4EHDEk30rKM3VthYtd2bZRPNMww0l6KDxMA6xsPeRIhrt9hG/q7ZoYFsiRkONN9d2LLtG7+metkFxQcPJvFNwvQlrLVdJSTFIdqTXhe0B/5WRb1F5Lwu2Xtw3cyBZo97U/FE+KjBa/rSfOVcdcgRe7PxOED7ZE=
+	t=1722368779; cv=none; b=ZIzzJR3Vq3G7B04ViR9UuQCiwIFjsMZCTheTo0/ZMl19Bg0cAU6do2O08mlM+mvTMKyNuO5rase/z82HYrq8+GlNfe1ERVfM1oQbipucocaysXjCGBpfwOVF/W3ZB/avY3rydgrgqLuEpIO24CLyVJwkHqZXQrN8C4Z4ZZfNico=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722368728; c=relaxed/simple;
-	bh=Cn8UGTm+5clbj1815kjTPqeoSHJJ041j85Ym5yyD1oQ=;
+	s=arc-20240116; t=1722368779; c=relaxed/simple;
+	bh=17zOcnzZrgNhjFFUqQ4WpBx9LqKRgttSoVYETyk4/Es=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FBB1fsYZOlJHzo1pxWPC6Twk4g/RWSqQccxb4EN2TFFp6p2DIB8XMc/ep7OXneXaIdVlgQZTLnjhi/BMYZbX393oZgv+N80XWqFdN6ovRjhncd0xSvgPJKMfmP5aqbcrpDMM7U3e2HgZtZssnsyNBNsfBGv1iQGBdDysrOC9wNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aKM4hSs9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34374C32782;
-	Tue, 30 Jul 2024 19:45:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722368727;
-	bh=Cn8UGTm+5clbj1815kjTPqeoSHJJ041j85Ym5yyD1oQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aKM4hSs94pSbl8XDmbASUr+D13FvPq2tlNPTxpf1huOglb+fLDrpNZigvyNl2YhSM
-	 /PTHADLsxd+sKipAXOlAppKGc4qbA44CDlEY86inE4tB2L/neWdCci6xc3Swsk2CMX
-	 DnpHd5KRcM5Gh4n+G6GbvKbJPiAsq3unNoCQS2/ryvqhK7czQdp9nCw7YXcCx2B77z
-	 NDZODbO2Qo8rsBRMW4LfooAeWKSOoJhV9wIVSvYBa3yGRoXMni5DHdYhbqpLpXkmM8
-	 f3EN5y7N1Y506GilLvp5UOVLMvcZ+S7YZQcIR7HAP2NZ2hxp06u5MwCiZCTI2jINWy
-	 0Cdw4phunBnuA==
-Date: Tue, 30 Jul 2024 13:45:26 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
-	Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>
-Subject: Re: [PATCH v2 2/5] dt-bindings: soc: qcom: smd-rpm: add generic
- compatibles
-Message-ID: <172236872511.2035012.2163751854672645367.robh@kernel.org>
-References: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
- <20240729-fix-smd-rpm-v2-2-0776408a94c5@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DA30wxiFw3u+mZTG7bj8e71Yod9oZx0OJt/q0Ht5g2D7bfaQZPZFXSGdovVsVKgGvG2YBFGQOdCKBa4u98cCe8NGBFTG1hAHktn5FHLVx91lymLs+YR49VmhUdBA+YZSH0dX7cW7tqoz4Q87UR+F8r5MIwkbvkZmjSU7BV+28u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XbcdKZXk; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7afd1aeac83so199407a12.0;
+        Tue, 30 Jul 2024 12:46:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722368778; x=1722973578; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1kiwEizSLwu4XdpvfoIH937YfwtOhGy+O7LwlixDIWw=;
+        b=XbcdKZXkKsRxwm4IVsjvguMduFGLxQyAl8iAPuvtYIx9vUyFKIrACTFtEdmHDF6+/Z
+         o3kO5KlcDb0rvik+AMfCVfY3OC/zamZqGoA9RGVxFAlSzXUjw3x+pE0nlrbwVc5fK+si
+         gNUBJZszeKG/P++jd47S3p+QKNUxPcpLZj6AZEFBFL0jtHe/XJtseNK9quIxquYCeI29
+         /xY44yccoYyd9knqr1WTrG0E1wwY1ymc2rgVfROLIpQTxqdnpflvRTbL/83HBxK3/geg
+         VoAy0yaaS0ctvqnydlXlUtU/Wtrm7nQLq1vtS/yizGvH9W+Tni+K0+eECiJgpaGJXOSQ
+         sicg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722368778; x=1722973578;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1kiwEizSLwu4XdpvfoIH937YfwtOhGy+O7LwlixDIWw=;
+        b=MCq39CLW+SHEdOw+7edLUw9TYmOOCLg8aLisinC1ClY4nAtstqL4633mnBneFM4Ot0
+         yUY0/CmYv97QluoxU+GgH8XSRNeCeXKDW9867uzhcsfJzO9omCdX4zuDxUYEkuq6o2b9
+         B5fyUm3/P51qxqn+V1bWYAJSd8aSadcruT7RuaDAo1YuVnHpGKTBrr6bn2eH0m1nSrmC
+         +3FPpPbRSUS3/NXfEJ+2M/GRsFb+NFLREQN0MrWp9OeHoc2hqJoetI8Fv831/47qywAE
+         Kf6OqBAvjmOKz6d8eTB34lxi/PB1RGhx2pte4UwRF07oqfathc2QtG43USU/iBGXOWpd
+         zSaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwgzMOaVJjI/fuk5hltPDSTyJPU6gbURsEszbojnDXlnW70Ka9VeURvafXkQwcNOH6EHrZNI/LT5Q0ml/kqcrOhz3p4HbJBIOkShQdxtwsaCylB6NTdcMV8R+qKQBUzpQ7vnxGkQ==
+X-Gm-Message-State: AOJu0YwXja2ryk340jRRKqa+ekpZAwSGCz1AP1r8+aQ3YyVaWTIPFq5O
+	VKFgswBMF9/ih6CiF271m2QKE6qWN2WodRG0d/DKUDuZacHZyDLn
+X-Google-Smtp-Source: AGHT+IEp+jlW4bLVCppdNp9IVsJNhg7Hs5KjXrUrEVU38si0CImg6+lHQiFXPuYhxbB/Ao6bwnZO3A==
+X-Received: by 2002:a17:90a:c718:b0:2c7:c5f5:1c72 with SMTP id 98e67ed59e1d1-2cfcab126fcmr4930239a91.13.1722368777605;
+        Tue, 30 Jul 2024 12:46:17 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cf28c7b3d4sm11243910a91.18.2024.07.30.12.46.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 12:46:15 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 30 Jul 2024 09:46:14 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Chen Ridong <chenridong@huawei.com>
+Cc: lizefan.x@bytedance.com, hannes@cmpxchg.org, longman@redhat.com,
+	adityakali@google.com, sergeh@kernel.org, mkoutny@suse.com,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 -next] cgroup/cpuset: remove child_ecpus_count
+Message-ID: <ZqlDBuH2kbK3PT6I@slm.duckdns.org>
+References: <20240724102418.2213801-1-chenridong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,24 +84,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240729-fix-smd-rpm-v2-2-0776408a94c5@linaro.org>
+In-Reply-To: <20240724102418.2213801-1-chenridong@huawei.com>
 
-
-On Mon, 29 Jul 2024 22:52:15 +0300, Dmitry Baryshkov wrote:
-> Add two generic compatibles to all smd-rpm devices, they follow the same
-> RPMSG protocol and are either accessed through the smd-edge or through
-> the glink-edge.
+On Wed, Jul 24, 2024 at 10:24:18AM +0000, Chen Ridong wrote:
+> The child_ecpus_count variable was previously used to update
+> sibling cpumask when parent's effective_cpus is updated. However, it became
+> obsolete after commit e2ffe502ba45 ("cgroup/cpuset: Add
+> cpuset.cpus.exclusive for v2"). It should be removed.
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  .../devicetree/bindings/clock/qcom,rpmcc.yaml      |  2 +-
->  .../bindings/remoteproc/qcom,glink-rpm-edge.yaml   |  2 +-
->  .../bindings/remoteproc/qcom,rpm-proc.yaml         |  4 +-
->  .../devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml | 74 ++++++++++------------
->  .../devicetree/bindings/soc/qcom/qcom,smd.yaml     |  2 +-
->  5 files changed, 38 insertions(+), 46 deletions(-)
-> 
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Applied to cgroup/for-6.12 w/ the {} Waiman pointed out Restored.
 
+Thanks.
+
+-- 
+tejun
 
