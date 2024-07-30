@@ -1,117 +1,133 @@
-Return-Path: <linux-kernel+bounces-267890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F9B941961
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:32:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFCC5941968
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2B381F2533E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:32:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 651C5284872
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964C118990B;
-	Tue, 30 Jul 2024 16:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0003183CDA;
+	Tue, 30 Jul 2024 16:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="QnvKyE+P"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="MbWuQbYB"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DD7189513
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F431A6199
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 16:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722357100; cv=none; b=ZVxCojKZ/Tnq8UQFDPeafriBM72xkFYV7HkPqul+oy48cAGEkqiqzPDcNyZqH9UTZU8qKuW+JbADGbTuCeu1uTfG0A6GHmP2lzPh0MOYegz39jU+K3sIxYU0i3rknE06OTwrZ71xBl76N+ncZxIMm/tIUed+dutQCFObs4ItK2k=
+	t=1722357110; cv=none; b=RLNmVQkJfX9tmnNogHoqY7L0bSW5KxJvy7Kb8i4v0oQijCVsqu1EvzPFDh/JyHbQnJHWVbA3IlnevS6SsCycrqTwMDObaKBEDEuhuza4L3gAYGsh5sZ5BOQUD3LpKyCgfAG0Uc0NQ0KGo7eEBi9xychq7FfpmM3xC8KTknZliHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722357100; c=relaxed/simple;
-	bh=nyrerJDyhxrjVhddkZkyuAsVrv4YgfVF935QAWq/eAk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jzZnduQZL013mo92OWJDfLFaMnsUFA+ykQGjobpPFVUOz6VwBb7KViyUJ8BmC2pSNG7QBXqpAhyAvyk1a/1PtefkyXt3Hl4oFI+3PQuHXdEkq9O7KAf5YzqkotBIxAe/fIZqjJZH0Q/jWi+vH9S26K4/i5vwbY57swnxuiBuOyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=QnvKyE+P; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7a8a4f21aeso627411666b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:31:38 -0700 (PDT)
+	s=arc-20240116; t=1722357110; c=relaxed/simple;
+	bh=C4eh0fmTz0+252ic1Rz388oLSSyUr4bpLJf+JQixmUA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=YLXimntQeWsj7kDXVHMc/YoyESdFC2UrFqfXZk3IaIhxuultDaD3SSOh2p3wOsYGfiblS6MHcw/HcEBfDO1FPggzQLWmL/57QWc19/P/j9pJVauu7o6vrgfgDSp1YifkJ9Oz+pci1vcCnhyY4D7ZkiL/FHsvGrw8mIEcB7jXHoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=MbWuQbYB; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-39ae90034bdso19881075ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:31:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1722357097; x=1722961897; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E5cj6IhKT08G/JY9sA9ZAZBlaQGsxU+ED4GyGLcLHJ8=;
-        b=QnvKyE+P7ei24VE0NqPYK3qsHjeemZi0qale+y13a3WGNC/yFv3GBiAmw0By4yXeLq
-         chDpI2yu/44/lcwrtidEjFufcEWGYJlHMshTqSW9i6rgwXCrlWRB7w+MqhXKUCBB7Jc4
-         ltl1mSZgefuYvaX2j2xHBm9uvuMmqtYKVN/AcQuFqfmKs6iHzP7NFfMf2vjcD8XRM5Yp
-         9QnlC+TWA8R5mp46TPJvZpkYKEKcYXk2GSE5lyf3ICAG1tX6Rje3bqXUDzC1SmGjL4E3
-         lAohMo5bN7gi1XmciGbR2jjmW2w2u5sKJJB2ilmSYAGdEWxazHWfKAyr95t+bDoTfTXn
-         TERA==
+        d=ieee.org; s=google; t=1722357106; x=1722961906; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:references:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WNBJvcFevwmgBZA9//H4dblcQszt8ZqZ+jbcb4XqUhA=;
+        b=MbWuQbYBuEaEn5At2enlSy9kxprcU/x71Lq+xbNfcNXGjo2qM4i2LJU1WFq63HnlOX
+         croWrmESKwADhXypNl5Q6yECRdVc2JdzdR9v4P9UuI1qUgAWCU/8DIaMYlb1BSS32K44
+         4ZWumJp9aObz1a0WX+ftVaKh19u2g3ZoJQ4N0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722357097; x=1722961897;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E5cj6IhKT08G/JY9sA9ZAZBlaQGsxU+ED4GyGLcLHJ8=;
-        b=p/C2wObWVOEqoCWJGGPDS19EPKUjUOFBsNuPzQg7kgwc+S3/6Z1WLp5wLGa6e2FkY4
-         n+weWMO6OFdWorLQGRzcree8Pad+XAiX9hHynPEr6WExlzNmhfLBe9MGRzwcKVtJgOCA
-         2hgHOZLU2RF6rW1f7ZyURdwqsL9slAfrUQZF1pVAJiajL4Cvph940uUaXfdoikuc3b5h
-         nVGE64R/uvGn7I9cNDv1Ls4gfSFQ7WzodRVjWvu/5uibGpTVFjhaUYOZ4D4r9177v4oZ
-         yq+G8QyRWF7hEddp08sZekwaSmzCKHxSPUzN6qZ9Lw7QE95hbiXxBa9h/vIHYN/AD6Mq
-         gPag==
-X-Forwarded-Encrypted: i=1; AJvYcCU9Yp4ClZcA8Iqo9S6zLvchftL+OPnfXThH9OtI6luhTrV1fLpar5B9nbMsbFkpr2zXACaAcmxso5OVrVhS4RWL+3U71W+iXqCuDjOy
-X-Gm-Message-State: AOJu0YxPnsRRA6Seu1lKXOra8nGOPdS4aQB5S6ythhgsfwph/pVI8AMu
-	zuNMGo9kosnJ77wkIp+psZuQrtKzbhMzAYRF5wfww5aBswK3lH516YQehcpzqg8qDUnlQD8aSen
-	iOoD7wLRFrS6/ah4XRq9yTA/2frH0I2mVPwRPEw==
-X-Google-Smtp-Source: AGHT+IH7khnXrujEv1gKQnGzEfjEWyF4QEf2ukDbjiCueUR6RcV66FHsXp7NckoSkFnWoeFBMNqlnHILehdexStSq60=
-X-Received: by 2002:a17:907:7284:b0:a77:dd1c:6273 with SMTP id
- a640c23a62f3a-a7d3ff7cb6fmr795199266b.12.1722357096904; Tue, 30 Jul 2024
- 09:31:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722357106; x=1722961906;
+        h=content-transfer-encoding:in-reply-to:references:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WNBJvcFevwmgBZA9//H4dblcQszt8ZqZ+jbcb4XqUhA=;
+        b=pOqQQE33cuzVbc6+e32yq3/OBfPTbjVEk8ar8TZKy13o4WfkeL/TtwruTWdeTntglA
+         h+4Z/YxRAiuIGvBaZ7qXPpZ4LtDB4fOg5/mzykqRe7h+KXXyTVYMOWwORnuYJx9SrrU9
+         9ZcAshWjcsUPOGHkq4mgr7ZNZZZvV1FY4ucEwIoY6Q+bCis9TvZooM9WsgboH7vBzXud
+         fft56w7vFWb/BnOhYDrQa1Li5O5w1P0xHg7sTo4c8FFgJvX9qS+9DDSTOD5etWoO3mRC
+         1nW0wxMtZtEu7+mvjhMr2lQbrgEANjSsLie01iLyWqBWNUCsf1maF1O3MwuDMMVZ62PC
+         Axxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVaw9VVAGv2lcDCdmibqV7zrWRNZviLVClD4zC8+mWXBZoIjs/vvHaTMD9q+0M7fTYgOytmtSXTkEyY8PJudt4UJHe78k5cripJD2sO
+X-Gm-Message-State: AOJu0YzDABPs2AKWwqigHpKJibwlOM0mY8jbBLBkHy/kqqqtejGGQgv2
+	nz42bNlDqvOdfqlJLtLt9OtxmVPU2g7ydDaPqwJO6xprvt4KOupcBHsuplk7tQ==
+X-Google-Smtp-Source: AGHT+IEHkfnVgoIPIizd+q5uKxNaKPx3+5xQ2nPzwl2AgH3Q91Fem7hTqlgzJdUkSyc28QiVHZJZTw==
+X-Received: by 2002:a05:6e02:20ea:b0:380:f340:ad66 with SMTP id e9e14a558f8ab-39aec42d8e9mr143720905ab.26.1722357106157;
+        Tue, 30 Jul 2024 09:31:46 -0700 (PDT)
+Received: from [10.211.55.3] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.googlemail.com with ESMTPSA id e9e14a558f8ab-39a22e7e79fsm48336615ab.4.2024.07.30.09.31.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 09:31:45 -0700 (PDT)
+Message-ID: <3f987064-c955-4554-81fa-03b21dfa51e8@ieee.org>
+Date: Tue, 30 Jul 2024 11:31:44 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729092828.857383-1-max.kellermann@ionos.com> <20240730-bogen-absuchen-8ab2d9ba0406@brauner>
-In-Reply-To: <20240730-bogen-absuchen-8ab2d9ba0406@brauner>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Tue, 30 Jul 2024 18:31:26 +0200
-Message-ID: <CAKPOu+9DPbtpDOtmLf=kSvK8Vw7OQfET4-Tn6bHAcXe90HFpKg@mail.gmail.com>
-Subject: Re: [PATCH v2] fs/netfs/fscache_io: remove the obsolete
- "using_pgpriv2" flag
-To: Christian Brauner <brauner@kernel.org>
-Cc: dhowells@redhat.com, jlayton@kernel.org, willy@infradead.org, 
-	linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org, 
-	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: MAINTAINERS: Demote Qualcomm IPA to
+ "maintained"
+Content-Language: en-US
+From: Alex Elder <elder@ieee.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Alex Elder <elder@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240730104016.22103-1-krzysztof.kozlowski@linaro.org>
+ <31f49da0-403c-40af-b61b-8e05f5b343e8@ieee.org>
+In-Reply-To: <31f49da0-403c-40af-b61b-8e05f5b343e8@ieee.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 30, 2024 at 2:30=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
-> Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-> Patches in the vfs.fixes branch should appear in linux-next soon.
->
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
->
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
->
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.fixes
->
-> [1/1] fs/netfs/fscache_io: remove the obsolete "using_pgpriv2" flag
->       https://git.kernel.org/vfs/vfs/c/f7244a2b1d4c
+On 7/30/24 11:29 AM, Alex Elder wrote:
+> On 7/30/24 5:40 AM, Krzysztof Kozlowski wrote:
+>> To the best of my knowledge, Alex Elder is not being paid to support
+>> Qualcomm IPA networking drivers, so drop the status from "supported" to
+>> "maintained".
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> I hadn't thought much about the distinction, and it might not
+> make a lot of difference right now.  But it's true I'm not
+> being *paid* to maintain the IPA driver (but will continue).
+> 
+> Acked-by: Alex Elder <elder@kernel.org>
 
-Hi Christian,
+Oh, and to be clear, please keep it "Maintained" and not
+"Odd Fixes".
 
-thanks, but this patch turned out to be bad; see
-https://lore.kernel.org/linux-fsdevel/3575457.1722355300@warthog.procyon.or=
-g.uk/
-for a better candidate. I guess David will post it for merging soon.
-Please revert mine.
+					-Alex
 
-Max
+
+> 
+> 
+>> ---
+>>
+>> ... or maybe this should be Odd Fixes?
+>> ---
+>>   MAINTAINERS | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 43e7668aacb0..f1c80c9fc213 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -18452,7 +18452,7 @@ F:    drivers/usb/misc/qcom_eud.c
+>>   QCOM IPA DRIVER
+>>   M:    Alex Elder <elder@kernel.org>
+>>   L:    netdev@vger.kernel.org
+>> -S:    Supported
+>> +S:    Maintained
+>>   F:    drivers/net/ipa/
+>>   QEMU MACHINE EMULATOR AND VIRTUALIZER SUPPORT
+> 
+
 
