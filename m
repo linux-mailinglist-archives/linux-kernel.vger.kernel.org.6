@@ -1,121 +1,180 @@
-Return-Path: <linux-kernel+bounces-268271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8535394228A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:04:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 318E1942290
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 303051F24C7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:04:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 224B61C2367C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E873F18DF96;
-	Tue, 30 Jul 2024 22:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011A418E059;
+	Tue, 30 Jul 2024 22:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2H1+98X"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XiwDkB08"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49931AA3C3
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 22:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50721AA3C3;
+	Tue, 30 Jul 2024 22:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722377088; cv=none; b=H09WJ24p9c+zFHMl7slVCXO1CWL2wDIHrgO35rcH8UCkq3+4+d3IsECvVgHLBumJzTJZhWhXvwMpqcL4xMS8a/OMsY/PRx/jNZYTe8KoZNmpbYR6f/hzDbr+LWW2lIw1YqKkFfXc3pYKvIugJnRJV9HuQMA2qwpGn4TDDfSAcgo=
+	t=1722377415; cv=none; b=klaaRGFJyNhYdiAFm4ZzCiVNcKb1dY6Jc+GEdk4NKIRnLyeMLMpfe9FkPssM5S+3KvuRLbrfYrdSNuM5xaRit2BFlRrkihxBzeM2WDiNEtXbvri8Q14ddZwm5V2diKlD4wOqw6nD1+huLowsfxXvYVXTyFL5a93b+6u/nUw8O8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722377088; c=relaxed/simple;
-	bh=JNUuu08aetr0kAyJKfiCeHBUw+nwdSQtOt/9BVqIqAw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SBgIXXtJHem23EFzqceebcKxHwMmtL5EOXxLW3WR2shOTCtNyyOJ3fyT1zCZR5xPeQv6cHIf4T9/NES6YZvbDhPEM6nvvabtHnAfb4h9yF7rwlegQd/juH+NCHLHtBojsFyXJJGlSCh61K9El9gX4a5w0S3EM6uymxe+eOzzuw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z2H1+98X; arc=none smtp.client-ip=209.85.219.53
+	s=arc-20240116; t=1722377415; c=relaxed/simple;
+	bh=oaBDzAiNweARh2YBJ/TpniEey9iDmA4MZbkYPg07MPQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pqDV2FB1g/xZA61BDWfAsoUHUTZCxgPLQVc8DiryRRqeyx3aSdkR+wQRStZfkOealUDENLvCI0efIR8AXhr9pHDPd2hsExFj22Y3UTNXWdBz6Qeft4Z9bxngpKERo3aUKz6fF+pQUWrfGSdZVdYhRXRGuWmiZ1dE2XTtaUmU60M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XiwDkB08; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6b97097f7fdso31856106d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 15:04:46 -0700 (PDT)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70d18112b60so280454b3a.1;
+        Tue, 30 Jul 2024 15:10:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722377086; x=1722981886; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JNUuu08aetr0kAyJKfiCeHBUw+nwdSQtOt/9BVqIqAw=;
-        b=Z2H1+98XWJ4opQ8LpmzoqIol7OlA/LZBa9t78FiGApyJhIyJpxqb6V5db51fhqgIuB
-         L1Mq/MmNF8ZpH+ttpcpY6RtJGEhjQodSywXXfWbHxgT7zQnZplcYVBX0p+oMTr02o7Qz
-         7taASF7i/PPn0ZJ+SZdhY6+R/DYZibU9vsDHdet0i+gDLQYVyB93Ubsrhx2eBevIDbwG
-         1UpeqKHVhx7qXBeoYF1fkYLQ6aJB4FG3zB7k0OtbGm2L6F/4WJbOYmM+Gmdkxw71CLr9
-         T8diJ26gfKHxHbgyLHDIGrOM0cCGXVxKzQCpSQ43a28zcVNlE0XRzphn7ApY2qBrjPSM
-         0vNQ==
+        d=gmail.com; s=20230601; t=1722377413; x=1722982213; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ul3wMxMCyuqyiQKRLMzSkYPeDtvquKgSAZvk3UdpdAI=;
+        b=XiwDkB08JpoLIY9N0CocXf5Vq+6BcM1ZVEmNURnG0q2/KlPRLW/f0ogzDtMPmWR7Sn
+         yvZEZn3CsqOL1amv/NiCCLJp+XGjPRWTSNLi+1fzHNxjAGsC6i6qje2qq84fQ3f43qE5
+         ShCiTA9SAkmskgvfbrhVXjRxaaFZQ4Z6VV8eeeq5Tw7qCU5mlXcXPfip4XWtvq7OlPUI
+         MIfA3aY4G7rLS+/aPXdNkg/SGqL1/If2ehLQSmY8oQfZkCTCclW4fMtLp1gn+lO4v3m9
+         S+81S8XcoouDksPZSSR/IDQJbkf7hZ6RxfqcPxdsZm3amV9QA97hesI0T6ZFdYFmvSXg
+         DDXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722377086; x=1722981886;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JNUuu08aetr0kAyJKfiCeHBUw+nwdSQtOt/9BVqIqAw=;
-        b=JQqIDXyXeTZlihVst+ckkeU4dc9c/OkheTb1aYbPpQoWobhbXFnyDmddmu51Z/Lpyg
-         0xYafbw94+UyXawNnYG14J9PGO0nn6Dn++BdIaPWP81wNZVfQzHfb0+855df9PUNyNsW
-         hyd7SbIEK6L65ZrCLmxxFP8e1x1nKB+Ezzva83xiZy/Igf5MEsKa98WnCDTAKbTJQIcc
-         KfYjxG1HH/7LMxF21OxF/BmbC4EoWhF9Hp40ggEf/sqC+gjdcsHDWlWC6HOSQ260biJq
-         iVFOR/vIIR5wm8N8w3Mp6qHWenm9ALFto8dt5U61BYDIthi1pH42mfl2tlGzRbVlRobc
-         JTwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXuKQcTb9ctcPrZrJrpfKAwUD+Ci73V+5ZIxKF7jcyxZVqsjoOTzKrnrFvxblwmj9RGTi/WqlwEoB6Y434uktb3yz/r95wfPCLuwm1p
-X-Gm-Message-State: AOJu0Yy0yRg7Y6NPxpysuX/pbgr0G+A1Movzbzc1QB8A4Pxey+Pv2Epo
-	oeG6kjI7VS//rQYIbMZlaiq2hFRprUDiu0Nq69acjCFvvyhyknHvACXsmtQruhTCOr4cZ2lOIb4
-	oia7J0tVvj8FLgs0cMTvkdmjIv1Q=
-X-Google-Smtp-Source: AGHT+IGti6ygUSDEPOvtPmC0MgdDJOv2wcoxn3kUfSFBqhd1GW2v1xZ73SkeVnsrMBGe5103du1tiR8KtkaqbPo5PtA=
-X-Received: by 2002:a05:6214:4119:b0:6b4:b179:8eea with SMTP id
- 6a1803df08f44-6bb5597d3bamr131210226d6.3.1722377085642; Tue, 30 Jul 2024
- 15:04:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722377413; x=1722982213;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ul3wMxMCyuqyiQKRLMzSkYPeDtvquKgSAZvk3UdpdAI=;
+        b=gAzcy4TGyFOgx42lHClV2KEtISGUbrKZWE2DiYbpJhtw/O6DoDDGjcoDT5WKm9j79q
+         A6+P+o3YNkpbCnSe8bRFbl1qd62SzFkQTUPYyMarRMLg/D2fL37ETbhfHptrppVtS1Hy
+         Nq1Hcgeu7w/BS9XpBMWyXsuUspNNV5Ksm8i91fXPnndnVW0CemmpWeAk3oAwopPYIWAb
+         r12JpoekoghyIRpsDDPyP44XsrisMYsnUQA26m3YAZqgM9+jVVDiZyZ/T7SX7X/NlALm
+         XTQ4zjC5RtgLwomfhL1p4hMj+oJgZMKuDLvF8gewU5B7Ih9ypqevCpWk0l632bBFeCVR
+         FGWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWB0PI8q1kMYMyxXI4KxTj0p9Etd93WDIlDM+BPLcSTOHo3PE9LGqCiuoU2IE+Kx+2e2AGgCIXsEmPy3PXlMKQn+ByPcttd+lKz94PJ5VvIgBrS/WpNyE0nQr3cmUr2IwXSbQblGUd6pTUYcMZO
+X-Gm-Message-State: AOJu0Yy0HJ3XeisNt9EcCRbEJNiyynSRfkhOTaCRspmow6im9en3SGLh
+	HhfDkk5NNxhCcPg2dNzuOoVES9dQmyndsZeZsFLNJRlUhZlVVRD9
+X-Google-Smtp-Source: AGHT+IEDt1eFM48dZvG+UKaY1ieJl4LuSH5ixaHLOwrBPTZOulu63KVgNXvjFCy9EZXeffAncACvbA==
+X-Received: by 2002:a05:6a00:2171:b0:70c:e1ec:4233 with SMTP id d2e1a72fcca58-70efe42830dmr4416137b3a.6.1722377412938;
+        Tue, 30 Jul 2024 15:10:12 -0700 (PDT)
+Received: from OPEN-HORIZONS.attlocal.net ([2600:1700:65a0:8110::c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead87d58asm9159109b3a.177.2024.07.30.15.10.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 15:10:12 -0700 (PDT)
+From: Alexander Hall <bearodark@gmail.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Alexander Hall <bearodark@gmail.com>,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5] Bluetooth: btusb: Add MediaTek MT7925-B22M support ID 0x13d3:0x3604
+Date: Tue, 30 Jul 2024 15:08:25 -0700
+Message-ID: <20240730220824.224298-3-bearodark@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725232813.2260665-1-nphamcs@gmail.com> <20240725232813.2260665-2-nphamcs@gmail.com>
- <CAJD7tkY4Jt_OXDEsUN9jzQkrF4mEeLA0BxyNKppSK8k9xL-xKw@mail.gmail.com>
- <20240730033929.GB2866591@cmpxchg.org> <CAJD7tka1tPA=qGFJcf4n1MM20A4WoL0cA28jDcyoc0y+48+0bw@mail.gmail.com>
-In-Reply-To: <CAJD7tka1tPA=qGFJcf4n1MM20A4WoL0cA28jDcyoc0y+48+0bw@mail.gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Tue, 30 Jul 2024 15:04:34 -0700
-Message-ID: <CAKEwX=OTSD37qznj9dquA=VKHxGBkdu2d=cYZRwTshsjwtGcBA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] zswap: implement a second chance algorithm for
- dynamic zswap shrinker
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	kernel-team@meta.com, linux-kernel@vger.kernel.org, flintglass@gmail.com, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 30, 2024 at 11:46=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com=
-> wrote:
->
-> I also think it's important to clarify that there are two mechanisms
-> that control the writeback rate with this patch, the reference bit
-> proportional slowdown (protecting against writeback of recently
-> swapped out pages), and nr_swapins protection (feedback from swapins
-> of recently written back pages).
+This patch fixes bluetooth support on the MediaTek MT7925 WiFi 7 +
+BT 5.3 M.2 chipset that I purchased from aliexpress (and which
+arrived today). The PCB states that it is an MT7925B22M.
 
-Regarding this - perhaps I wasn't being clear, but I did include both
-in the changelog. The latter is this paragraph:
+Device from /sys/kernel/debug/usb/devices:
 
-"We will still maintain the count of swapins, which is consumed and
-subtracted from the lru size in zswap_shrinker_count(), to further
-penalize past overshrinking that led to disk swapins. The idea is that
-had we considered this many more pages in the LRU active/protected, they
-would not have been written back and we would not have had to swapped
-them in."
+T:  Bus=03 Lev=02 Prnt=03 Port=02 Cnt=01 Dev#=  4 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=13d3 ProdID=3604 Rev= 1.00
+S:  Manufacturer=MediaTek Inc.
+S:  Product=Wireless_Device
+S:  SerialNumber=000000000
+C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
+A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
 
-I also replicate this comment in the nr_swapin explanation - see
-struct zswap_lruvec_state.
+High fidelity images I took of the chip itself for future reference:
+https://archive.org/details/MediaTek-MT7925B22M/
 
-Same goes with the second chance algorithm - I did briefly explain it
-in shrink_memcg_cb(), as well as the changelog.
+Webpage the chip was purchased from, note it is different from the
+images taken:
+https://web.archive.org/web/20240620021119/https://www.aliexpress.
+us/item/3256806821207897.html
 
->
-> Maybe we can move things around to make it more obvious how these
-> mechanisms work hand in hand, or have a comment somewhere describing
-> the writeback mechanism.
+Signed-off-by: Alexander Hall <bearodark@gmail.com>
+---
+Changes from v1:
+It was suggested that the (now removed) aliexpress link be run through
+  archive.org, however aliexpress is incompatible with waybacks
+  scraping tool, and as an alternative I have taken high resolution
+  images of the actual chip I received and put them on archive.org.
+The prefix of this patch was changed to `Bluetooth:` as suggested
+Maintainers and open lists have been auto CC'd as suggested, via
+  get_maintainers.pl
+Changes from v2:
+  the commit name has been updated to include the device:vendor id to be
+  clearer
+  web archive eventually came through so I have readded the link to that
+  aswell
+Changes from v3:
+  tabs replaced with spaces, Signed-off-by now matches From sender
+Changes from v4:
+  remove trailing whitespace that gitlint failed on
 
-Hmm let me add some documentation for this near
-zswap_shrinker_{scan|count}() definitions:
+
+ drivers/bluetooth/btusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index e384ef6ff..2ea46a0e6 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -691,6 +691,9 @@ static const struct usb_device_id quirks_table[] = {
+ 	{ USB_DEVICE(0x13d3, 0x3603), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH |
+ 						     BTUSB_VALID_LE_STATES },
++	{ USB_DEVICE(0x13d3, 0x3604), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH |
++						     BTUSB_VALID_LE_STATES },
+ 
+ 	/* Additional Realtek 8723AE Bluetooth devices */
+ 	{ USB_DEVICE(0x0930, 0x021d), .driver_info = BTUSB_REALTEK },
+-- 
+2.45.1
+
 
