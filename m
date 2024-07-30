@@ -1,176 +1,123 @@
-Return-Path: <linux-kernel+bounces-267731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCC79414DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:54:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0569414DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AA8D28532D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:54:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F0C61C231C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B815C1A2540;
-	Tue, 30 Jul 2024 14:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="k4nikfp7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EoHZh95N";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="No34d1P/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bHm5F9Yb"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B43522F;
-	Tue, 30 Jul 2024 14:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F2C1A2C1E;
+	Tue, 30 Jul 2024 14:54:40 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F9A1A2577
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 14:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722351275; cv=none; b=CJaRkELKw6kDRgagv0PgJDw++lbHyBbAv11HongJi+uhXEyrbdfacfxqQGNJ32+0J8lzUYFWTlSc2Lo3O9831fWunpYAurwBy9+7AYtpMV19/8YghsmZx7TWzOBgGoE311dq2zMpknO8/X4GM363Mw4H3V+rFoxUYg84tMs43IY=
+	t=1722351280; cv=none; b=BEV13D6T4X0Xox0dNCe0IN79FTP68guCB0zzVcP6tGVIGGxj7LYgN5otBwuG0ygtPBCeQDFN35gkJnndomiVucbZjxQSNpxDLXJcTJjJU55Wg/vT5xA2WM2lZViC8PgOXVPCL6DlwwfsuvOJxNld7LXogIiDCuEPE308zmMyfpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722351275; c=relaxed/simple;
-	bh=eoBz7DZXyGnakFnT9s80tl6gZOZ7j45QZlDaKSDg+Y0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UXvLNSBS88fEvcwE7lVhyOebrOvrjDf5CEXjF3Bvqb1alYumHcSvds5+r3zVoGjqmPiOJcPpnMNxJG+TNymW90stzfPDv6qU3JtiJPjyZa1BsJfta+Hvd94oK/4bmELLtF3i/quFOt0/a4JaaxANPED6skcxoj4nS78VrJj5jI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=k4nikfp7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EoHZh95N; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=No34d1P/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bHm5F9Yb; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4AD6021B37;
-	Tue, 30 Jul 2024 14:54:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722351272;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t5+nDvUmATTyO1yOKHtzCdpzQMbc17d7hC+xU2dcTbs=;
-	b=k4nikfp77iQM4hpJMCohxjkc/4SvOYBZYsYZScL8KgG6R8qfNZ8u0wD96gzMqsU96gVHqe
-	pTVVewy5XjPdJoj0OOMtIL17DpSWc8R1zDW1An7aNI7RxoOoclT/uGV86J3aHTu07v8Bqn
-	EN9YHf70/1J0PT3gg+HWJwGvGAO5eso=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722351272;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t5+nDvUmATTyO1yOKHtzCdpzQMbc17d7hC+xU2dcTbs=;
-	b=EoHZh95NGAc25JK3GlxdjgsPT2eA840/kX8c9OIeFJoNmzxENH9Qvrvcw/weWudCOvVOTZ
-	V8Z6YrT+eonMPcBg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="No34d1P/";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=bHm5F9Yb
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722351271;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t5+nDvUmATTyO1yOKHtzCdpzQMbc17d7hC+xU2dcTbs=;
-	b=No34d1P/GCSPE3baETZQwNLGZq5hs7jwddjvZoffUGj60hU7lx5scH9u+pGNhsi0sUmSDS
-	/cYVswFXzwP9qXiuPxR7dA1S7VkzogWtu5KLH+ceyWyQZz5AM3u0XltOQT2Hnvn4LdefpP
-	Hw0btBA19O9EIgzu4u8hHzV8TqlfYJo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722351271;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t5+nDvUmATTyO1yOKHtzCdpzQMbc17d7hC+xU2dcTbs=;
-	b=bHm5F9YbWFAekKwXCaB9BzGW+eDA4MnniW3pTUvaNo2VJUnKYHE86u5qv6sna9zQiILm2k
-	nTYYeK60osdQibDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3236A13297;
-	Tue, 30 Jul 2024 14:54:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8K69C6f+qGbhdAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 30 Jul 2024 14:54:31 +0000
-Date: Tue, 30 Jul 2024 16:54:25 +0200
-From: David Sterba <dsterba@suse.cz>
-To: syzbot <syzbot+bce6ef1d850c98d6d157@syzkaller.appspotmail.com>
-Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [btrfs?] general protection fault in put_pwq_unlocked
-Message-ID: <20240730145425.GL17473@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <0000000000009a4d470618f599f2@google.com>
+	s=arc-20240116; t=1722351280; c=relaxed/simple;
+	bh=D+dqNVllEU8lT2cgVsxsWINdUlJF87pze3+Qcm2ehQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ChfKlUURIKNfne9+jmORlx+anb2nqYMRROPRC39BZ+uOzuUzlGgqtIVNexKrFM1JgPzU1DkIp6/R4kNbA73g2YJZwM/x76Aabprq3O2CaEgT/4u5T9RFBYAYm8jn/++DGn7592rRLaaTK/GQLJTtDjMFLeairVWsci5cfcW5msk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [36.44.126.21])
+	by gateway (Coremail) with SMTP id _____8Axz+ur_qhmmo0EAA--.16105S3;
+	Tue, 30 Jul 2024 22:54:35 +0800 (CST)
+Received: from [192.168.0.108] (unknown [36.44.126.21])
+	by front1 (Coremail) with SMTP id qMiowMAxHsen_qhmycEGAA--.34081S3;
+	Tue, 30 Jul 2024 22:54:33 +0800 (CST)
+Message-ID: <05ce0eba-22f6-ed0d-5005-227251decf50@loongson.cn>
+Date: Tue, 30 Jul 2024 22:54:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000009a4d470618f599f2@google.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [1.49 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=6be91306a8917025];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TAGGED_RCPT(0.00)[bce6ef1d850c98d6d157];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[storage.googleapis.com:url,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,syzkaller.appspot.com:url,appspotmail.com:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spamd-Bar: +
-X-Rspamd-Queue-Id: 4AD6021B37
-X-Spam-Level: *
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: 1.49
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH 1/2] objtool/LoongArch: Restrict stack operation
+ instruction
+Content-Language: en-US
+To: Jinyang He <hejinyang@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240730061901.21485-1-yangtiezhu@loongson.cn>
+ <20240730061901.21485-2-yangtiezhu@loongson.cn>
+ <4ac60afc-de6b-acf6-c9e6-1f45c0680dbe@loongson.cn>
+ <6ee45e77-eb22-c4ac-ee47-6a329236eeb7@loongson.cn>
+ <ca433beb-e3cd-8036-cc05-5f4cc1a735fa@loongson.cn>
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+In-Reply-To: <ca433beb-e3cd-8036-cc05-5f4cc1a735fa@loongson.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMAxHsen_qhmycEGAA--.34081S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7uw47uFW5Kw1ruryUJF4fWFX_yoW8Cr1rpr
+	yfJa1UJFZ8Gr1fCr1qqr1DWFyYyryxJ34DWr45ta15Aws0va4Sqr1UXF4j9a1DXrs3JrWY
+	yrWrZry3Zr9xXabCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
+	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
+	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j1
+	WlkUUUUU=
 
-On Tue, May 21, 2024 at 05:03:03AM -0700, syzbot wrote:
-> Hello,
+On 7/30/24 18:57, Jinyang He wrote:
 > 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    8f6a15f095a6 Merge tag 'cocci-for-6.10' of git://git.kerne..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1736b784980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=6be91306a8917025
-> dashboard link: https://syzkaller.appspot.com/bug?extid=bce6ef1d850c98d6d157
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/f30c87f89d17/disk-8f6a15f0.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/3d73f0e35e13/vmlinux-8f6a15f0.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/3d524f6fb25b/bzImage-8f6a15f0.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+bce6ef1d850c98d6d157@syzkaller.appspotmail.com
-> 
-> BTRFS info (device loop3): last unmount of filesystem c9fe44da-de57-406a-8241-57ec7d4412cf
-> Oops: general protection fault, probably for non-canonical address 0xe01ffbf11002a143: 0000 [#1] PREEMPT SMP KASAN PTI
-> KASAN: maybe wild-memory-access in range [0x00ffff8880150a18-0x00ffff8880150a1f]
+> On 2024-07-30 17:49, Tiezhu Yang wrote:
+>> On 07/30/2024 05:28 PM, Jinyang He wrote:
+>>> On 2024-07-30 14:19, Tiezhu Yang wrote:
+>>>
+>>>> After commit a0f7085f6a63 ("LoongArch: Add RANDOMIZE_KSTACK_OFFSET
+>>>> support"), the code flow of do_syscall() was changed when compiled
+>>>> with GCC due to the secondary stack of add_random_kstack_offset(),
+>>>> something like this:
+>>>>
+>>>>    addi.d          $sp, $sp, -32
+>>>>    st.d            $fp, $sp, 16
+>>>>    st.d            $ra, $sp, 24
+>>>>    addi.d          $fp, $sp, 32
+>>>>    ...
+>>>>    sub.d           $sp, $sp, $t1
+>>> Have you checked the ORC info whether is right or tried backtrace which
+>>> passed do_syscall? The "sub.d $sp, $sp, $t1" has modified the $sp so the
+>>> $sp cannot express CFA here. This patch just clear the warning but 
+>>> ignore
+>>> the validity of ORC info. The wrong ORC info may cause illegally access
+>>> memory when backtrace.
+>>
+>> I did testing many times before submitting, the call trace is
+>> expected when testing "echo l > /proc/sysrq-trigger".
+> Make sure the RANDOMIZE_KSTACK_OFFSET is enable. I tested it by
+> CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT=y on qemu and it did
+> not show the frame about handle_syscall.
 
-Most likely this was a side effect of bug fixed by commit f3a5367c679d
-("btrfs: protect folio::private when attaching extent buffer folios").
-The timeframe corresponds with increased number of bogus errors caused by
-use-after-free of a page.
+I tested with the defconfig, CONFIG_RANDOMIZE_KSTACK_OFFSET is set but
+CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT is not set, the call trace has
+handle_syscall() which is the previous frame of do_syscall(), and the
+orc dump info is correct.
 
-The fix is best guess.
+Let me modify the config file and test again with the following configs:
+CONFIG_RANDOMIZE_KSTACK_OFFSET=y CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT=y
 
-#syz fix: btrfs: protect folio::private when attaching extent buffer folios
+If there exists problem, I will fix it.
+
+Thanks,
+Tiezhu
+
 
