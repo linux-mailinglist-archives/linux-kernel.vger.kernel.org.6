@@ -1,187 +1,158 @@
-Return-Path: <linux-kernel+bounces-267961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8362941EA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:31:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F949941E65
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 19:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8328B2A4C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:27:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC2D0285EF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 17:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8AE31A76C9;
-	Tue, 30 Jul 2024 17:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4297D188016;
+	Tue, 30 Jul 2024 17:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cFaH+AD3"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nXgaEszb"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848431A76BF;
-	Tue, 30 Jul 2024 17:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331671A76B4;
+	Tue, 30 Jul 2024 17:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722360435; cv=none; b=QR/vd6wekj2b5GJ9bqc0qjIV5259hAwtYWwAuiC02VyYNHZ+ggst9MXqKKB6yjzc4c1227nI/7Tq61DGtpEwPwmc2egrq78SnWc9WWpmw4dqPfiiHhDExfE2DPr8babAXKsJVqJZt0fPhLHlMjOeXTk3VKJT4yx1ki8/MsB/JdM=
+	t=1722360499; cv=none; b=PqolimUGfIf9qgjUQL7MGHPQ2Uf8nn5PVneHcvur9AdBNSb9VmUYUIdTqn2puj+1vwDMQF9Iu8w4DooFVZ4eu6A7fE7zr4JwLgApmUC2KnIJNONEB6cxwuKV8wn991wG9VZI8RZ8WFyLaflwTC9h6eJHlwEKhxdHBlt+utFFYII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722360435; c=relaxed/simple;
-	bh=6p98u6SIWlhiVPjvsPXIichyblzQjYvfVT+RJ4u9t1E=;
+	s=arc-20240116; t=1722360499; c=relaxed/simple;
+	bh=8BZ/+0c6LLhCVOq9k2EINS3eEOtUNO6eq6SWmLze7J4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tch57oXDXRxkDBtf4tMpx/FeZv3WwyjCIFkbeTVh3m9by0kP1Eo9lnxF+dPvjk9rsrRcIn2bl0atzg2PgsZYQR6k8WOenwE7BS9TOfw1Y6QuY1IfZReGhVvrAPcrNGlcY4/OK8C9M+kW1PhKj7Q2Bl51gsApPhtOYhf0by7yxos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cFaH+AD3; arc=none smtp.client-ip=209.85.216.53
+	 To:Cc:Content-Type; b=cBBU2DZEQena0Sats4PX4/Da8GZu2FeZuGXaGtoHJid2JG4S2hhpQFfSv2TsT/JMW7+eHW2lo77Z92VLTZzlr2fG4+5K6Ks0ldl5wclkKif1wNbqFAyG5Ehnbnm3u3Dgooij7GpgI11/rRUPO7f8TYYG6lPOSGXRvIZ/iEDVUUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nXgaEszb; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2cb585375f6so3522840a91.3;
-        Tue, 30 Jul 2024 10:27:14 -0700 (PDT)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2cf78366187so2945609a91.3;
+        Tue, 30 Jul 2024 10:28:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722360434; x=1722965234; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722360497; x=1722965297; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CuhSbZfPq+Y1KO4HN8+egIKvw/xvt2Rrevesh1kZBJ4=;
-        b=cFaH+AD3moFnrl3dRz4LcvjdA9zecQPtgInw9UBCSPfupLNmvt043mjkmfENCsydGL
-         oCPZjwDuiGPY+ePaPzd92eFfqmKt1h1r4WidFQa1TaFZ3Z4PIMTURjJ+uSTezHzgtnYX
-         O6Q9Q6YuFSe3LIm2Lm0jmgh06gfT6ILZsrU0AxSivof+kvQojQ/XJ75CsY0yx1z7+qBO
-         uEUy94fVY1JOrbdt6/6+yYoS+BnFk/9ZSlF9hXR0thNqz33cY6JiJgzAT0XC7z6AsoFH
-         MxMo7mRfUzOyxFouILoYZ3Z202evLDC+SaFOWIWlUVzEeNEH/3G7x9FSF1yzagbsGjsr
-         2FIg==
+        bh=8BZ/+0c6LLhCVOq9k2EINS3eEOtUNO6eq6SWmLze7J4=;
+        b=nXgaEszbt0UOyEfIYHFXgTQkWeKWohcuczrueIDnTwaYDHlQoRB5knBMpwQAR3FQbc
+         OiJ1Z791GNbDW7q7dhXf/x10g/m4YZK2+JdIOPP7llTIhOtdNnSENCuffDZJWLEikgE9
+         hX8vX4gnwttmCXZb1eBQiS96yLaWilb3gEHZeuNjtk+jhVtme/+GAC8yOXu8lHjKaXkq
+         W8evZk9yW2tMzN5D9qWB1okIURRDVogrxzFWcsdcCnvO/Ozy7TrfNQeQanDqCYxDKIl8
+         o7s5DcH4KbVovMtSkDjt7pSrMfV9g1JnuRligm/CpDSgfi1Q4wFX0TkTT3u9+meY9rbM
+         j0ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722360434; x=1722965234;
+        d=1e100.net; s=20230601; t=1722360497; x=1722965297;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CuhSbZfPq+Y1KO4HN8+egIKvw/xvt2Rrevesh1kZBJ4=;
-        b=A1w4dDnvscTZG5Sb8jam1uK5hgLwf2WTU/znlDRFUrFIsJ0Dae+2QcUWoKqcide8Gv
-         X5hZHjWxvLbI4n4AAgcDTrhMvGAMZOyb33smO+WPQ2RV1GY+4dFqXPeNALMIC7rfYEdV
-         KlDv+j3G635+qvLIkkKMQ6KGGqmyagc29Un0PObnZACVl9spES3G5hEMA2gXchflBxc1
-         bpwkcZahyWdxrzF6YYgJVm2iV15J1OGX9rR9iNFbKBlwHJ1tvifB8WiQQIAJk0VEn8In
-         6CnM05AK3MWn1jqK6MuT6L1YuWfBBYGjJFlivfKq0jriWMuOUhZZFsOwOx0QqG1h5XK0
-         W0Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCXS9nrqgsuyj8RYpZ3lZnR8EjbQuo1Tx1MssneWOQqjc6xv/J5pCux8uXMoRjLgWK8kkLD9uTO0V0RENhEKcFnmBUlobYS0hz8YDyJ14gc7gqtlrHJbdD/6feB1/kFS0SecotnMTh5RR8VL3e7klmpu
-X-Gm-Message-State: AOJu0Yww9jS/MVuXZSmsWfwSzq5QsB9tQ0CzhKlIkGyWqaI0Ae6ps1j3
-	jlchXJE3i3p1XXiNI0/noe9pkxAB/ujFayN2YQQvpgQ92HO5roGU7uQBzhIYDmlpbI/xemsrokj
-	qooZMlmgt0OCR5XTXzJ3ADhasMgJCxg==
-X-Google-Smtp-Source: AGHT+IGyFsC7HtS+vcCAFkEG6c3/pZQY9ndO8lwrAr/jOWY1HEkXVfMbtT4EPMLKGJ6cXR84zz3jk9btVaOgA1mGI44=
-X-Received: by 2002:a17:90a:9e6:b0:2c9:8b23:15ba with SMTP id
- 98e67ed59e1d1-2cf7e71fcb4mr12928584a91.42.1722360433715; Tue, 30 Jul 2024
- 10:27:13 -0700 (PDT)
+        bh=8BZ/+0c6LLhCVOq9k2EINS3eEOtUNO6eq6SWmLze7J4=;
+        b=fRsAHwflunKq0ROSOrraXa/CVi9dzCPY/dITtmA/VrvVgTl5/iGbqPxmRHQZoutRdZ
+         G+/PfcKgOuCtZZbVkBseEvuy3IidW6LWiObG1feIIfMO1c1cnUbhEtbP7z15b1/k2XGR
+         x0HDl99ana+eVoQX4N/pDd5pZfHO9TjjGyVHo55q+wz3jruU6+/6FPFUa+zD6Yu/nW+P
+         GOGsjSk9x8S5fQynyBMhLV1k7DQZsivkNONanb6GWfPU3LoGRRWQ7mGQlA44rlKYg6qT
+         Xmkxs8ofKcELgoEWQfvn4lhyRGubTtCFJnPQ2emtqMIx8EUblRZG4j6WTqRgrTBuPdNT
+         G+iw==
+X-Forwarded-Encrypted: i=1; AJvYcCWjt2SG+0KTOdleOAyuT1BsOPFGANHtsEgpMo47/IVUdFKCxwo39kfhhNba80VBAZ9OwAP3HgepatHWofjU5Tks1/q606AmnVexPgklZXXMWcl0+KwyYQng8wsnw9Q7LD7Q
+X-Gm-Message-State: AOJu0YwRVHwAOrnjR2D9ljvPixjlsN8JnVfpaIIgpvceEazWERFNR4fJ
+	zQkEzswW+RNx4ucdTqcaZ9aBbsdjvuOBVenMfeK6ux7zeK4Z0aWTzqzGL/iTkEwIOGfMQM00hqx
+	ch5zGQqkOfXi+py5mktI5+JRtsks=
+X-Google-Smtp-Source: AGHT+IFQj44xGrJQzBKXeAfqMiTWnJw1eB1EU3KpViUSxTKAmGZvV4rwEMp8Y8nHHQuuAQ0LIG+XNDrBv2GFl4azYnQ=
+X-Received: by 2002:a17:90a:e544:b0:2c9:7849:4e28 with SMTP id
+ 98e67ed59e1d1-2cf7e60bedbmr14036584a91.27.1722360497433; Tue, 30 Jul 2024
+ 10:28:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730123421.GA9085@redhat.com> <20240730123457.GA9108@redhat.com>
- <CAEf4BzZ=vMh9=t3iH+pqwTDaYGfXvuF-0BqaLsOgAx2qV7Vqzw@mail.gmail.com> <20240730171733.GA10822@redhat.com>
-In-Reply-To: <20240730171733.GA10822@redhat.com>
+References: <20240725051511.57112-1-me@manjusaka.me> <08e180da-e841-427d-bed6-3ba8d73e8519@linux.dev>
+ <c7952df9-5830-45d3-89bb-b45f2b030e24@gmail.com> <6511ce2a-1c7d-497c-aeb6-d4f0b17271ed@linux.dev>
+ <2c6b1737-0a96-44ed-afe9-655444121984@gmail.com> <CAEf4BzbL0xfdCEYmzfQ4qCWQxKJAK=TwsdS3k=L58AoVyObL3Q@mail.gmail.com>
+ <0f5b7717-fad3-4c89-bacf-7a11baf7a9df@gmail.com> <CAEf4BzZCz+sLuAUF65SaHqPUemsUb0WBhAhLYoaAs54VfH1V2w@mail.gmail.com>
+ <a1ba10df-b521-40f7-941f-ab94b1bf9890@gmail.com> <CAEf4BzZhsQeDn8biUnt9WXt6RVcW_PPX76YFyZo6CjEXGKTdDg@mail.gmail.com>
+ <9f68005d-511f-4223-af8f-69fb885024a1@gmail.com>
+In-Reply-To: <9f68005d-511f-4223-af8f-69fb885024a1@gmail.com>
 From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 30 Jul 2024 10:27:01 -0700
-Message-ID: <CAEf4BzYiBgqJwmh=rJiL+5gfwbZprEp81wnmq219w5j5WEGAFg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] uprobes: shift put_uprobe() from delete_uprobe() to uprobe_unregister()
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org, 
-	jolsa@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
+Date: Tue, 30 Jul 2024 10:28:05 -0700
+Message-ID: <CAEf4BzbzM85_946eB95e9U6stknBh4ucLMKVo5SEqUsihe4K1A@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2] bpf: Add bpf_check_attach_target_with_klog
+ method to output failure logs to kernel
+To: Leon Hwang <hffilwlqm@gmail.com>
+Cc: Yonghong Song <yonghong.song@linux.dev>, Zheao Li <me@manjusaka.me>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30, 2024 at 10:17=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wr=
+On Mon, Jul 29, 2024 at 8:32=E2=80=AFPM Leon Hwang <hffilwlqm@gmail.com> wr=
 ote:
 >
-> Thanks for looking at this!
 >
-> On 07/30, Andrii Nakryiko wrote:
+>
+> On 30/7/24 05:01, Andrii Nakryiko wrote:
+> > On Fri, Jul 26, 2024 at 9:04=E2=80=AFPM Leon Hwang <hffilwlqm@gmail.com=
+> wrote:
+> >>
+> >>
+> >>
+> >> On 2024/7/27 08:12, Andrii Nakryiko wrote:
+> >>> On Thu, Jul 25, 2024 at 7:57=E2=80=AFPM Leon Hwang <hffilwlqm@gmail.c=
+om> wrote:
+> >>>>
+> >>>>
+> >>>>
+>
+> [...]
+>
+> >>>>
+> >>>> Is it OK to add a tracepoint here? I think tracepoint is more generi=
+c
+> >>>> than retsnoop-like way.
+> >>>
+> >>> I personally don't see a problem with adding tracepoint, but how woul=
+d
+> >>> it look like, given we are talking about vararg printf-style function
+> >>> calls? I'm not sure how that should be represented in such a way as t=
+o
+> >>> make it compatible with tracepoints and not cause any runtime
+> >>> overhead.
+> >>
+> >> The tracepoint is not about vararg printf-style function calls.
+> >>
+> >> It is to trace the reason why it fails to bpf_check_attach_target() at
+> >> attach time.
+> >>
 > >
-> > BTW, do you have anything against me changing refcounting so that
-> > uprobes_tree itself doesn't hold a refcount, and all the refcounting
-> > is done based on consumers holding implicit refcount and whatever
-> > temporary get/put uprobe is necessary for runtime uprobe/uretprobe
-> > functioning.
->
-> No, I have nothing against.
->
-> To be honest, I don't really understand the value of this change, but
-> a) this is probably because I didn't see a separate patch(es) which
-> does this and b) assuming that it doesn't complicate the code too much
-> I won't argue in any case ;)
->
-> And in fact I had your proposed change in mind when I did these cleanups.
-> I think that they can even simplify this change, at least I hope they can
-> not complicate it.
-
-I just find this logic to drop refcount if the consumer list is empty
-super confusing and hard to intuitively reason about. It's just very
-unconventional and seems problematic every time I think about this.
-
-Either way, we can discuss once you see the code, it's not really
-complicated if I stick to refcount_t instead of my fancy atomic-based
-refcounting.
-
->
-> > BTW, do you plan
-> > any more clean ups like this? It's a bit of a moving target because of
-> > your refactoring, so I'd appreciate some stability to build upon :)
->
-> Well yes... may be this week.
->
-> I'd like to (try to) optimize/de-uglify register_for_each_vma() for
-> the multiple-consumers case. And, more importantly, the case when perf
-> does uprobe_register() + uprobe_apply().
->
-> But. All these changes will only touch the register_for_each_vma() paths,
-> so this is completely orthogonal to this series and your and/or Peter's
-> changes.
->
-
-Ok, sounds good, it would be nice to keep the other part more or less
-intact for the time being. Thanks!
-
-> > Also, can you please push this and your previous patch set into some
-> > branch somewhere I can pull from, preferably based on the latest
-> > linux-trace's probes/for-next? Thanks!
->
-> Cough ;)
->
-> No, sorry, I can't. I lost my kernel.org account years ago (and this is
-> the second time this has happened!), but since I am a lazy dog I didn't
-> even bother to try to restore it.
-
-It doesn't have to be kernel.org repo :-P Github would work just fine,
-but ok, if it's too much trouble I'll just go download emails one by
-one and apply them locally.
-
->
-> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
->
-> Thanks!
->
-> > > @@ -1102,10 +1100,16 @@ void uprobe_unregister(struct uprobe *uprobe,=
- struct uprobe_consumer *uc)
-> > >                 err =3D register_for_each_vma(uprobe, NULL);
-> > >
-> > >         /* TODO : cant unregister? schedule a worker thread */
-> > > -       if (!err && !uprobe->consumers)
-> > > -               delete_uprobe(uprobe);
-> > > +       if (!err) {
-> > > +               if (!uprobe->consumers)
-> > > +                       delete_uprobe(uprobe);
-> > > +               else
-> > > +                       err =3D -EBUSY;
+> > Oh, that changes things. I don't think we can keep adding extra
+> > tracepoints for various potential reasons that BPF prog might be
+> > failing to verify.
 > >
-> > This bit is weird because really it's not an error... but this makes
-> > this change simpler and moves put_uprobe outside of rwsem.
+> > But there is usually no need either. This particular code already
+> > supports emitting extra information into verifier log, you just have
+> > to provide that. This is done by libbpf automatically, can't your
+> > library of choice do the same (if BPF program failed).
+> >
+> > Why go to all this trouble if we already have a facility to debug
+> > issues like this. Note every issue is logged into verifier log, but in
+> > this case it is.
+> >
 >
-> Agreed, uprobe->consumers !=3D NULL is not an error. But we don't return
-> this error code, just we need to ensure that "err =3D=3D 0" means that
-> "delete_uprobe() was actually called".
->
+> Yeah, it is unnecessary to add tracepoint here, as we are able to trace
+> the log message in bpf_log() arguments with retsnoop.
 
-yep
+My point was that you don't even need retsnoop, you can just ask for
+verifier log directly, that's the main way to understand and debug BPF
+program verification/load failures.
 
-> > With my
-> > proposed change to refcounting schema this would be unnecessary,
 >
-> Yes.
->
-> Oleg.
->
+> Thanks,
+> Leon
 
