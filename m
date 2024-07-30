@@ -1,198 +1,111 @@
-Return-Path: <linux-kernel+bounces-266712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29BA69405B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:15:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC06E9405AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 05:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D96A1C2142C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:15:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8364B283D53
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F00C42C0B;
-	Tue, 30 Jul 2024 03:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2B214659D;
+	Tue, 30 Jul 2024 03:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XAr3ZfZI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hu66/o76"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB56C1854
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 03:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573A12114
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 03:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722309336; cv=none; b=fjZtu9WGWvZdzLOrYNrZGmaacUhH5efhhf+/xlTqxA8w6j+N/A8rnXtLgBuvVhoserYdJBx09MFS/91Qvs5Uw4hMeDIFaPyZLkd8Ph/x2fEuqco+3m96xDA6mLMbb7hsh2CHfsOLwSGM4Q1jN5mmcizUBan52rv7cg9VD7QMzzY=
+	t=1722309335; cv=none; b=RFjNxgAz7Zt6vwUp3yfkrNn0gGZVvwl39/lrv2Qgd0ftwlsm3GCgYagvRYxJHhWS5/ZKxpzPHsK9Ka0hoIrzQgr7/gFsYQTW/ticBUCzSbX5r7E9JWdO/3eYg1aT6zoPly2V2GySLx7mXEO+mwei8lygVYSMfHPH6pv8wv9mfQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722309336; c=relaxed/simple;
-	bh=rHFV5LxTvCi8ppfT7h9UEuUOdoZOpakOV28TNR4w/Ww=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UClgCZBpdRKnlQQ8XupoZTL224vqMBDILm77ybdVL8DJjYeo+YvP0M8oRKOFaAAF7z0+qxPvDpsdPEgwMruA67oCpdQ9NJ6MgosQJRJVc+1yCBktJBsGTCib+CFj+r4U1wMKkwecC3KTv/9luyk3jBs/KorKk8jjeHmai9xL5g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XAr3ZfZI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722309332;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xPcpg+QMPUVRrYNQm9FrtSfNfOo7KqJjD9nMBOe921k=;
-	b=XAr3ZfZIA10yx1EL79xqG0CHO8bDus77jsym4RpNesKDhf16SUI605FW7fIZt8Ktzfg0xV
-	puM085UgQDUYfMSFtqQppMGGySnh2wg4Tofm+mB8IUbqT1N0hvpoegsWIaxfNMYC4K/Vou
-	aLTNfykBKJX8DeQeEjy2REg49rquA9k=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-213-tWu4k1AnPWehQSEfZfMTdg-1; Mon,
- 29 Jul 2024 23:15:21 -0400
-X-MC-Unique: tWu4k1AnPWehQSEfZfMTdg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C32971955D44;
-	Tue, 30 Jul 2024 03:15:18 +0000 (UTC)
-Received: from [10.2.16.36] (unknown [10.2.16.36])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A560D1955F40;
-	Tue, 30 Jul 2024 03:15:16 +0000 (UTC)
-Message-ID: <a93a670c-27fa-4159-a910-ccb17066edc0@redhat.com>
-Date: Mon, 29 Jul 2024 23:15:15 -0400
+	s=arc-20240116; t=1722309335; c=relaxed/simple;
+	bh=1CKkz3zxFpHgFERnc0F1vpBPw+j05grDqYO4v5We1FA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C+khmx5/rjZ9N7or1EnstHwetJ4eY+yXVpf4N15ZH4LPv4pu6EWZqfgf37Ee57XHtMB0Q5wyE7EFUpY+lNb1B/8viuxEOhiQZE4t0sRPAGTCPa8+MF3T8nOKWDCW89o0zPEP5HaRO6meknJeFAdZrWYE43xtSwvF+LqAyC06xCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hu66/o76; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6b7aed340daso25028016d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:15:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722309333; x=1722914133; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nto1jrvILAsl/5NefBeJdv0jQDCPstv39lORcSktRro=;
+        b=Hu66/o76b1+2PfFvELquXOjiN4O6HRzDZCLVOumOpHCJHH2AxF90vYYypK0ciPLcUb
+         dOSpxIKlmFfs8+EeEjsMW8qXZ55Z5pOs1nd+z1OdLdZ5wfQO5SWejkZTF3qMuGct7XcG
+         Xxt8yfh7Rwm7lljwLKuJRV8OEku9nS6tisQrWKWpyL+4DYIlCGx50fO7bevxKGhbRINJ
+         kW/oI/S8N/KSEYntQ3WDgb09ZZjkJNli+nklWplZme3Fj2jf32Zn/2tjrssVgdVBYPF0
+         X/gyrqbu9LrfQQDG+FH1TZiwIaoh92I45RYaQtQ448GqrR8iNIDttN9VPeiK0jpKsjhc
+         +7wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722309333; x=1722914133;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Nto1jrvILAsl/5NefBeJdv0jQDCPstv39lORcSktRro=;
+        b=No6iwpi+zVCce02XXkbrQJuVO8MF2vEZlKyvkLIJ8ilUxMroeFENYP50zY+Y5gcOHm
+         6SoxT+ojKI4vY7dS3iAxq9o0duxMRfXLYaLiumqguYTlvNf/ymqxKtFxFyiBuO3MrirX
+         PTE61w0kvSZdmr+nsovYbGpotQdcvNx6jOu5+iAWz5qAbuf7P36LnFO2nlhPNRlhR1N8
+         p4wmmcUKfUOij4rVXILBIhjOcTCSUcX9gKjxWDL2+X5m260S1ibsmPxx5JdzQWhxpFdl
+         A5RW6E7SPTgnkq1iUGPmpPo8Mme6T4bnFWxNULd0QB1WOgA6Smru+5FMfpIaz2Fw5Zw3
+         lkcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVerA5w+CNxBoGlJvP0ckjYSJOyIPqufWnQN0BDZ4XZK1ZQX5gg0doEwWX17guqAZppWf+I3+GZ2RAB7YtQicFT5yi+0g5p0Kaqw2sY
+X-Gm-Message-State: AOJu0YzPyTHs1IcEiGQxVuTBUQccpra1cJ5PTo7epldCmLXETvdLXAto
+	TfbG1wt30rkRtdspiOoCZd8af3wRtN5PRocmTxd4F0vVih1WHfULlZt5nfarAEAxu/UIvlBB44Q
+	qiR6VCqDdnxdJ9lf7YNE4+3s7E+k=
+X-Google-Smtp-Source: AGHT+IGJLl+etrv2QedB/ZTbVHfGz4EgTrx1v64zlfElJwuxkhWZ2VVNbHeEaLNR4QUlqczzPW/niHtUEf5CYsIyEIc=
+X-Received: by 2002:a05:6214:27ed:b0:6b9:9192:7948 with SMTP id
+ 6a1803df08f44-6bb557b5215mr114472856d6.0.1722309333076; Mon, 29 Jul 2024
+ 20:15:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cgroup/cpuset: fix panic caused by partcmd_update
-To: chenridong <chenridong@huawei.com>, tj@kernel.org,
- lizefan.x@bytedance.com, hannes@cmpxchg.org, adityakali@google.com,
- sergeh@kernel.org
-Cc: bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240730015316.2324188-1-chenridong@huawei.com>
- <0ba00b7c-5292-4242-b648-4ca8d4a457c6@redhat.com>
- <425f1151-14e6-43f6-810e-efe95f6f401e@huawei.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <425f1151-14e6-43f6-810e-efe95f6f401e@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20240726094618.401593-1-21cnbao@gmail.com> <20240726094618.401593-2-21cnbao@gmail.com>
+ <ZqhZ2sFhZ3-lyqz-@casper.infradead.org>
+In-Reply-To: <ZqhZ2sFhZ3-lyqz-@casper.infradead.org>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 30 Jul 2024 11:15:21 +0800
+Message-ID: <CAGsJ_4xK2oiVFdGyquwieO-jfHBokVtMvJ3T0jCcOE7PJpoAug@mail.gmail.com>
+Subject: Re: [PATCH v5 1/4] mm: swap: introduce swapcache_prepare_nr and
+ swapcache_clear_nr for large folios swap-in
+To: Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, ying.huang@intel.com, 
+	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com, 
+	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
+	kasong@tencent.com, linux-kernel@vger.kernel.org, mhocko@suse.com, 
+	minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
+	senozhatsky@chromium.org, shakeel.butt@linux.dev, shy828301@gmail.com, 
+	surenb@google.com, v-songbaohua@oppo.com, xiang@kernel.org, 
+	yosryahmed@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/29/24 22:55, chenridong wrote:
+On Tue, Jul 30, 2024 at 11:11=E2=80=AFAM Matthew Wilcox <willy@infradead.or=
+g> wrote:
 >
+> On Fri, Jul 26, 2024 at 09:46:15PM +1200, Barry Song wrote:
+> > +static inline int swapcache_prepare(swp_entry_t entry)
+> > +{
+> > +     return swapcache_prepare_nr(entry, 1);
+> > +}
 >
-> On 2024/7/30 10:34, Waiman Long wrote:
->> On 7/29/24 21:53, Chen Ridong wrote:
->>> We find a bug as below:
->>> BUG: unable to handle page fault for address: 00000003
->>> PGD 0 P4D 0
->>> Oops: 0000 [#1] PREEMPT SMP NOPTI
->>> CPU: 3 PID: 358 Comm: bash Tainted: G        W I 6.6.0-10893-g60d6
->>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 
->>> 04/4
->>> RIP: 0010:partition_sched_domains_locked+0x483/0x600
->>> Code: 01 48 85 d2 74 0d 48 83 05 29 3f f8 03 01 f3 48 0f bc c2 89 c0 
->>> 48 9
->>> RSP: 0018:ffffc90000fdbc58 EFLAGS: 00000202
->>> RAX: 0000000100000003 RBX: ffff888100b3dfa0 RCX: 0000000000000000
->>> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000002fe80
->>> RBP: ffff888100b3dfb0 R08: 0000000000000001 R09: 0000000000000000
->>> R10: ffffc90000fdbcb0 R11: 0000000000000004 R12: 0000000000000002
->>> R13: ffff888100a92b48 R14: 0000000000000000 R15: 0000000000000000
->>> FS:  00007f44a5425740(0000) GS:ffff888237d80000(0000) 
->>> knlGS:0000000000000
->>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> CR2: 0000000100030973 CR3: 000000010722c000 CR4: 00000000000006e0
->>> Call Trace:
->>>   <TASK>
->>>   ? show_regs+0x8c/0xa0
->>>   ? __die_body+0x23/0xa0
->>>   ? __die+0x3a/0x50
->>>   ? page_fault_oops+0x1d2/0x5c0
->>>   ? partition_sched_domains_locked+0x483/0x600
->>>   ? search_module_extables+0x2a/0xb0
->>>   ? search_exception_tables+0x67/0x90
->>>   ? kernelmode_fixup_or_oops+0x144/0x1b0
->>>   ? __bad_area_nosemaphore+0x211/0x360
->>>   ? up_read+0x3b/0x50
->>>   ? bad_area_nosemaphore+0x1a/0x30
->>>   ? exc_page_fault+0x890/0xd90
->>>   ? __lock_acquire.constprop.0+0x24f/0x8d0
->>>   ? __lock_acquire.constprop.0+0x24f/0x8d0
->>>   ? asm_exc_page_fault+0x26/0x30
->>>   ? partition_sched_domains_locked+0x483/0x600
->>>   ? partition_sched_domains_locked+0xf0/0x600
->>>   rebuild_sched_domains_locked+0x806/0xdc0
->>>   update_partition_sd_lb+0x118/0x130
->>>   cpuset_write_resmask+0xffc/0x1420
->>>   cgroup_file_write+0xb2/0x290
->>>   kernfs_fop_write_iter+0x194/0x290
->>>   new_sync_write+0xeb/0x160
->>>   vfs_write+0x16f/0x1d0
->>>   ksys_write+0x81/0x180
->>>   __x64_sys_write+0x21/0x30
->>>   x64_sys_call+0x2f25/0x4630
->>>   do_syscall_64+0x44/0xb0
->>>   entry_SYSCALL_64_after_hwframe+0x78/0xe2
->>> RIP: 0033:0x7f44a553c887
->>>
->>> It can be reproduced with cammands:
->>> cd /sys/fs/cgroup/
->>> mkdir test
->>> cd test/
->>> echo +cpuset > ../cgroup.subtree_control
->>> echo root > cpuset.cpus.partition
->>> echo 0-3 > cpuset.cpus // 3 is nproc
->> What do you mean by "3 is nproc"? Are there only 3 CPUs in the 
->> system? What are the value of /sys/fs/cgroup/cpuset.cpu*?
-> Yes, I tested it with qemu, only 3 cpus are available.
-> # cat /sys/fs/cgroup/cpuset.cpus.effective
-> 0-3
-> This case is taking all cpus away from root, test should fail to be a 
-> valid root, it should not rebuild scheduling domains.
-I see. So there are 4 CPUs in the systems. So nproc should be 4. That is 
-why I got confused when you said nproc is 3. I think you should clarify 
-this in your patch.
->
->>>
->>> This issue is caused by the incorrect rebuilding of scheduling domains.
->>> In this scenario, test/cpuset.cpus.partition should be an invalid root
->>> and should not trigger the rebuilding of scheduling domains. When 
->>> calling
->>> update_parent_effective_cpumask with partcmd_update, if newmask is not
->>> null, it should recheck newmask whether there are cpus is available
->>> for parect/cs that has tasks.
->>>
->>> Fixes: 0c7f293efc87 ("cgroup/cpuset: Add 
->>> cpuset.cpus.exclusive.effective for v2")
->>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->>> ---
->>>   kernel/cgroup/cpuset.c | 2 ++
->>>   1 file changed, 2 insertions(+)
->>>
->>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->>> index 40ec4abaf440..a9b6d56eeffa 100644
->>> --- a/kernel/cgroup/cpuset.c
->>> +++ b/kernel/cgroup/cpuset.c
->>> @@ -1991,6 +1991,8 @@ static int 
->>> update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->>>               part_error = PERR_CPUSEMPTY;
->>>               goto write_error;
->>>           }
->>> +        /* Check newmask again, whether cpus are available for 
->>> parent/cs */
->>> +        nocpu |= tasks_nocpu_error(parent, cs, newmask);
->>>           /*
->>>            * partcmd_update with newmask:
->>
->> The code change looks reasonable to me. However, I would like to know 
->> more about the reproduction steps.
+> Same comment as 2/4 -- there are only two callers of swapcache_prepre().
+> Just make that take the 'nr' argument and change both callers to pass 1.
 
-I am OK with this patch other than missing some information in your 
-reproduction step.
+make sense to me. As Baolin also needs this patch for shmem, I'm going
+to separate this one from this series and send a new version with the
+suggested change so that Andrew can pull it earlier.
 
-Cheers,
-Longman
-
+Thanks
+Barry
 
