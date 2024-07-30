@@ -1,121 +1,93 @@
-Return-Path: <linux-kernel+bounces-268281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92A2E9422A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:18:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 658C09422AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 382741F250D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:18:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C302BB24197
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 22:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFE51917C7;
-	Tue, 30 Jul 2024 22:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22AFE1917D2;
+	Tue, 30 Jul 2024 22:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M3MFS7ln"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZL9R2I6t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A0F157466;
-	Tue, 30 Jul 2024 22:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF3C18E030;
+	Tue, 30 Jul 2024 22:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722377873; cv=none; b=j7O3TEwGdZ6izpHr+0P5bQdMUaKVAkiAEr0AEEYUPDOqBvcylystv4xR1UAhAFs4XO/ANxPo/0SDMkrHTpjlRSHfcZh+hWXqlgR5SjQ7rXpgCkaB8vGjeql1lXltgC2qTtdQcewhBGEaHE5IrhJ4m2fV2ULY48eyMMayim124xU=
+	t=1722378032; cv=none; b=tqnA+cEVX9BI2Wp/yhG3gt3m3uVxKp2R7gxMmbnjvc00tP/1TKMnmE68F8P2jC48C9DMtb8ZnnoBtWjEw0Du7SQZNDrz5GCD/xbZ4aqSaUpbTRn07Z7STCxGfiK54Ya3vCu7lWC0+QqsfPhPYSw3PCRw+8ypXS1lkpsvnUK5q48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722377873; c=relaxed/simple;
-	bh=YybkcUYxUqpqpli8HO6mbkTLp9GQFuDUuGBq2RcnVow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rrW+CciKP46VmfePiOyEO1ouUGeqS3Cvfw5pmb6ST1SHPZyKLGjRz7wFfl9bv3CmlvETor+mH20uifT8ReH0EIjLwsfsDmkzFkRKyQQq3m6ROlM5AVujUsVqSbx1AoIlWhG2pOFjXSnIIeysPCY7hEs40U2h3GMSSB6+/msCwy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M3MFS7ln; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58C1AC32782;
-	Tue, 30 Jul 2024 22:17:52 +0000 (UTC)
+	s=arc-20240116; t=1722378032; c=relaxed/simple;
+	bh=NC39ToIiYStV2URdg0RupoAPdagiRdTNILO7HSacAmY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=tq5qioJwuSdPIEG5WMtYnbprX3JvnYG+MSq6hkdenLraJvkAsSiot9CjjmHp/1nMKHNv0tX/C5rboNMHOpHm5KBZcWJgtF6HPCB+qC/tOXuRl1YM/ycJtWft4GibWP6UDAoLDGstdNf/L7DXH3RPcr5NJtNEwtjVmFXn+YhDPMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZL9R2I6t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CFE4CC4AF13;
+	Tue, 30 Jul 2024 22:20:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722377872;
-	bh=YybkcUYxUqpqpli8HO6mbkTLp9GQFuDUuGBq2RcnVow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M3MFS7ln8pjCp1q+JHfKsxFSSUcvu3lpDofyDgXqUJJ0DJCFrWakWPrPXurSiCO8e
-	 qU5jMZKcY3+njjH9+OyvZBQ/mN5bVMNnOKUTzJGR/ufTfNKXWZdnCI9woPvoD1j8fZ
-	 ATuAIqBDKswoVEzPXdBi9kM1TQ7KHq3ZvfhoRhPO3XURTwNlMtHrZgsiKpeDHyZuSY
-	 fanRrpj34F/ZoBvYoULlc8QlKc81ZJJbHtGdH31ovYO9emF/OzBVU3YI8tTyivNGWV
-	 lZnFt4F5w29JJgs5A2H+6JXxwjvhFjzaDQWYYCG7Q8oPD6d1A49QZS6+De/XYxkzB4
-	 dmkmZVsqI6lCQ==
-Date: Wed, 31 Jul 2024 00:17:49 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Valentin Schneider <vschneid@redhat.com>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: RCU-Task[-Trace] VS EQS (was Re: [PATCH v3 13/25]
- context_tracking, rcu: Rename rcu_dynticks_task*() into rcu_task*())
-Message-ID: <ZqlmjVyWXIneklCm@pavilion.home>
-References: <20240724144325.3307148-1-vschneid@redhat.com>
- <20240724144325.3307148-14-vschneid@redhat.com>
- <ZqJiDlKtD4wvsv1j@localhost.localdomain>
- <31d78183-4526-41e8-90df-d03c95fdb9b2@paulmck-laptop>
+	s=k20201202; t=1722378031;
+	bh=NC39ToIiYStV2URdg0RupoAPdagiRdTNILO7HSacAmY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ZL9R2I6tTZdY24ihOhPuVMhJYRpquPlgGiA00fCFS0jlMQcqtsn+iacUB3SF0RiTE
+	 2kcGigYMUIr+/3mSKa7XFytxY75wQ+rTmwRhYfwPaiyXOzbWN3yqY8uuI2pDn3XDdO
+	 x3+tpvwVxtXx2QE4AaykTEGz3WGKxCV2LVp88AjW5XkuEkBTcpLUleiO8D+gKIx+DO
+	 exzsdMOgIjkumR6FCIJ6zh8JWXpQwwbMxoEqJKWNKkRsJVfPhpz861ZqSe8n0Nj/Ia
+	 yoZ2lhJV4etjn5VHVpAy2N2t//JL7IWOpJ5fOhgwjD523ISSW/TihWtOcZtke9pUeO
+	 bAHH/ESCt9VTA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C1F3AC43140;
+	Tue, 30 Jul 2024 22:20:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <31d78183-4526-41e8-90df-d03c95fdb9b2@paulmck-laptop>
+Subject: Re: [PATCH net V1] net: phy: micrel: Fix the KSZ9131 MDI-X status issue
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172237803179.26065.6593267198901302690.git-patchwork-notify@kernel.org>
+Date: Tue, 30 Jul 2024 22:20:31 +0000
+References: <20240725071125.13960-1-Raju.Lakkaraju@microchip.com>
+In-Reply-To: <20240725071125.13960-1-Raju.Lakkaraju@microchip.com>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
+ andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ edumazet@google.com, pabeni@redhat.com, horatiu.vultur@microchip.com,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ UNGLinuxDriver@microchip.com
 
-Le Tue, Jul 30, 2024 at 07:23:58AM -0700, Paul E. McKenney a écrit :
-> On Thu, Jul 25, 2024 at 04:32:46PM +0200, Frederic Weisbecker wrote:
-> > Le Wed, Jul 24, 2024 at 04:43:13PM +0200, Valentin Schneider a écrit :
-> > > -/* Turn on heavyweight RCU tasks trace readers on idle/user entry. */
-> > > -static __always_inline void rcu_dynticks_task_trace_enter(void)
-> > > +/* Turn on heavyweight RCU tasks trace readers on kernel exit. */
-> > > +static __always_inline void rcu_task_trace_exit(void)
-> > 
-> > Before I proceed on this last one, a few questions for Paul and others:
-> > 
-> > 1) Why is rcu_dynticks_task_exit() not called while entering in NMI?
-> >    Does that mean that NMIs aren't RCU-Task read side critical sections?
-> 
-> Because Tasks RCU Rude handles that case currently.  So good catch,
-> because this might need adjustment when we get rid of Tasks RCU Rude.
-> And both rcu_dynticks_task_enter() and rcu_dynticks_task_exit() look safe
-> to invoke from NMI handlers.  Memory ordering needs checking, of course.
-> 
-> Except that on architectures defining CONFIG_ARCH_WANTS_NO_INSTR, Tasks
-> RCU should instead check the ct_kernel_enter_state(RCU_DYNTICKS_IDX)
-> state, right?  And on those architectures, I believe that
-> rcu_dynticks_task_enter() and rcu_dynticks_task_exit() can just be no-ops.
-> Or am I missing something here?
+Hello:
 
-I think rcu_dynticks_task_enter() and rcu_dynticks_task_exit() are
-still needed anyway because the target task can migrate. So unless the rq is locked,
-it's hard to match a stable task_cpu() with the corresponding RCU_DYNTICKS_IDX.
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
+On Thu, 25 Jul 2024 12:41:25 +0530 you wrote:
+> The MDIX status is not accurately reflecting the current state after the link
+> partner has manually altered its MDIX configuration while operating in forced
+> mode.
 > 
-> > 2) Looking further into CONFIG_TASKS_TRACE_RCU_READ_MB=y, it seems to
-> >    allow for uses of rcu_read_[un]lock_trace() while RCU is not watching
-> >    (EQS). Is it really a good idea to support that? Are we aware of any
-> >    such potential usecase?
+> Access information about Auto mdix completion and pair selection from the
+> KSZ9131's Auto/MDI/MDI-X status register
 > 
-> I hope that in the longer term, there will be no reason to support this.
-> Right now, architectures not defining CONFIG_ARCH_WANTS_NO_INSTR must
-> support this because tracers really can attach probes where RCU is
-> not watching.
-> 
-> And even now, in architectures defining CONFIG_ARCH_WANTS_NO_INSTR, I
-> am not convinced that the early incoming and late outgoing CPU-hotplug
-> paths are handled correctly.  RCU is not watching them, but I am not so
-> sure that they are all marked noinstr as needed.
+> [...]
 
-Ok I see...
+Here is the summary with links:
+  - [net,V1] net: phy: micrel: Fix the KSZ9131 MDI-X status issue
+    https://git.kernel.org/netdev/net/c/84383b5ef4cd
 
-Thanks.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
