@@ -1,80 +1,47 @@
-Return-Path: <linux-kernel+bounces-267114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90042940CB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:01:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47DFB940CB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 11:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 470EA286038
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:01:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BA341C24BBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 09:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F023194ADD;
-	Tue, 30 Jul 2024 09:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D3E19408E;
+	Tue, 30 Jul 2024 09:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sslyd9/V"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z42ia4CV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8FA194A77
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 09:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5EA944E;
+	Tue, 30 Jul 2024 09:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722330006; cv=none; b=T6NfHIbm/V32XdEMzgI633C6H5s0Fb3kFt8eVqaxa1R2qUWWK6EV2NFCDL+6uHMBqc5yIyh9mJUpMCTlE3YOGrnMY6h6rAMmmBZYaylmbX1YjvbGC9guipvuToBWUYJusTEkTK7DwzwOPWcVucUfWeaCuvI5eelnKS/ySpMQAj8=
+	t=1722330103; cv=none; b=CIGNREXd0gr+q8s7onMPSrUUpG7yhWak5bc9aH4AhV+sVxn87hV8UnKRGb48mIxyauUYMe0nWWKIrpSU8mlBz9YOXayYbBTF8IrDfxUOu/KPzwr3ygpEwhUKq2gQnKt1q+XvRKTfD9jAu15XopBO6Relh/Gti2OOySzS48XXHVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722330006; c=relaxed/simple;
-	bh=M/AkRSTEBxVPMYGgrtIUkQpXASpWz++UT4T12uyKYr4=;
+	s=arc-20240116; t=1722330103; c=relaxed/simple;
+	bh=u+hG7S/8LwpabqbN+3cXg3zN7GnJesSJ19ebqFRAYaM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BNojTFOcDIbcXcdAojVi0fjxbg+D12Q6QTMhHcwE1mHzikIr5dZWNverqq6AANB6f9knNZNoZk0bhFeWhH7Eaqv89SK7PzGYpvxg6w2Bjc00ZBwqMA/wAxIzQPZKkLyyFswrKatMeVE6sJTLwTKn658ZaVYf+veTATF+qp/Zuos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sslyd9/V; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722330003;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3Vq57YbceZaPKW/jag25INSUT9w3HBYWgm/2iS/lmgI=;
-	b=Sslyd9/VDS93Nbkh5FbqukpEpRz1aE3Q13iTdBMxqNDOZt7i+OCcZZ/9SXSGxE9p+RzTy+
-	/Gl6UJTzpSJlKk9bh18U0XM8N6c2SNJl7/rMY7NefwJCAWAoGAK315ZPvGCyT5Cq6idE3x
-	x12oCQ+VPEChopU3O8MExwbKxk27u+o=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-665-RP787AjkOIuiE1pq1uaJpQ-1; Tue, 30 Jul 2024 05:00:01 -0400
-X-MC-Unique: RP787AjkOIuiE1pq1uaJpQ-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52fcf7eb289so4740472e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 02:00:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722330000; x=1722934800;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3Vq57YbceZaPKW/jag25INSUT9w3HBYWgm/2iS/lmgI=;
-        b=h0rGlzTKlX4CtE4rzHoxTQnL0zNenEUxf4Nl0SeGYIKSW3Xl0le07AO8oJm4VHUAbD
-         7TtdIO23QHx6/qhlrekecXD97nbDmeeIljJz+dp7PDqr04mYKCpVRAKm7aWwS3hmrD1q
-         264/HqVuiNrhV2HMftcnilLN/DluEZNb3J5r5mbQfNfeqdoYMhfU2xiTxoqFsr++irti
-         JaXG8p19f9381z0eEacsypW0/M5ZLyI4nMs8Gq8uj++kUlhnIEbcmAAE+4G3R4dSEtjn
-         kJgKtbkf3nNd6BxS7jXLim56W2EuoKZ4g7zIGGKtANOApqBKWb+Ms1dsjfe2sXFX84K9
-         BZtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXH4nzg419K0y7nyLwkGdRH/6EZ0xzA0nArCAwBSW6cBroayEuCpqaJ2RQPP9iQ1idiHLFQG6lmfnYciZXxOMfAb1kt9hHfVwn0Ggmx
-X-Gm-Message-State: AOJu0YwToYqv6sIKvTIWXrA899rVMli3ZQCpUsYlOhWVQNQuIoz4rLdD
-	ZJd3q/MhGJFiZqsZ1egHLR6q9JGYzKZFgcEM1wDJtdx6b77uIeYBq6rqWNzalN14chGa+a39PoD
-	e533hDSc+fdHSpRdTh31FUE/ceBt0f9A0QgjADra3vYNbhia8jv720P3MUucA9g==
-X-Received: by 2002:ac2:4bd4:0:b0:530:ac41:4ee with SMTP id 2adb3069b0e04-530ac410772mr853126e87.24.1722329999867;
-        Tue, 30 Jul 2024 01:59:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF1CX9fuid97Fo9k/P7XEAx/O03KlRJUJxp6LS6LdYujPfua6G8Lket79YT5PUqIa4JM4vZ8g==
-X-Received: by 2002:ac2:4bd4:0:b0:530:ac41:4ee with SMTP id 2adb3069b0e04-530ac410772mr853087e87.24.1722329999379;
-        Tue, 30 Jul 2024 01:59:59 -0700 (PDT)
-Received: from [192.168.10.47] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63590d76sm7021589a12.24.2024.07.30.01.59.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 01:59:58 -0700 (PDT)
-Message-ID: <bb2d52e8-ceff-46e8-83a1-4db535754aa0@redhat.com>
-Date: Tue, 30 Jul 2024 10:59:57 +0200
+	 In-Reply-To:Content-Type; b=RX7Gx1fI/4qfe2uoZT959HafA5JZQRO6p0oNW4vWEWZBHW1tvIb/OoOwE5bz5aVnhZbFHuMKPSUOKhpYl5Dwizo3RpyL655+Sg6Ib4WXgwmUXsMbOAl6Kg1LiO60k3qpzHDCvhP8G7PVjgCshU1VWIkRioLoY2UWgETRh0v3o50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z42ia4CV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E83C1C4AF09;
+	Tue, 30 Jul 2024 09:01:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722330102;
+	bh=u+hG7S/8LwpabqbN+3cXg3zN7GnJesSJ19ebqFRAYaM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Z42ia4CV1fqEXUxrwNfDZhJBqeEZlxnf3IwaRvewBdvrMdk/EyNYPrED2uIkKdgxB
+	 rv7bz0NVyHxnhYDcMBe5sfKdjBDSoxfL8hXBEGlumL1FEvHSr3SWNVJr1D3c/tsw/A
+	 2xQxhujXYEPRTP+SsOg9yuflDq8oQi+twXF2iUxfV4Ix4ITjS2w9x1qWGvM8i11SNV
+	 89iaRz9ZGgQ6c905mQFfSbQ1f+6LZcaQODAII3ax7cripVuoZF8kJUom62X/Ho4xNW
+	 EhxaXtsTdL6Lm8YE2eKRPhwjKHMJ3hXP/eDBL3nNAL55a/wYjQwMwuQnBKXdMEAfRe
+	 Ti7jfkEppCaqw==
+Message-ID: <f45c1fa7-f321-4a1f-b65c-6ed326a18268@kernel.org>
+Date: Tue, 30 Jul 2024 11:01:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,123 +49,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 50/84] KVM: VMX: Use __kvm_faultin_page() to get APIC
- access page/pfn
-To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
- <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
- Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- kvmarm@lists.linux.dev, loongarch@lists.linux.dev,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, David Matlack <dmatlack@google.com>,
- David Stevens <stevensd@chromium.org>
-References: <20240726235234.228822-1-seanjc@google.com>
- <20240726235234.228822-51-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v5 2/5] dt-bindings: net: wireless: brcm4329-fmac: add
+ clock description for AP6275P
+To: Arend Van Spriel <arend.vanspriel@broadcom.com>,
+ Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org, krzk+dt@kernel.org,
+ heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
+ minipli@grsecurity.net, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com
+References: <20240730033053.4092132-1-jacobe.zang@wesion.com>
+ <20240730033053.4092132-3-jacobe.zang@wesion.com>
+ <191025b5268.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240726235234.228822-51-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <191025b5268.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/27/24 01:51, Sean Christopherson wrote:
-> Use __kvm_faultin_page() get the APIC access page so that KVM can
-> precisely release the refcounted page, i.e. to remove yet another user
-> of kvm_pfn_to_refcounted_page().  While the path isn't handling a guest
-> page fault, the semantics are effectively the same; KVM just happens to
-> be mapping the pfn into a VMCS field instead of a secondary MMU.
+On 30/07/2024 08:37, Arend Van Spriel wrote:
+> + Linus W
 > 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/x86/kvm/vmx/vmx.c | 13 +++++++++----
->   1 file changed, 9 insertions(+), 4 deletions(-)
+> On July 30, 2024 5:31:15 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
 > 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 30032585f7dc..b109bd282a52 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -6786,8 +6786,10 @@ void vmx_set_apic_access_page_addr(struct kvm_vcpu *vcpu)
->   	struct kvm *kvm = vcpu->kvm;
->   	struct kvm_memslots *slots = kvm_memslots(kvm);
->   	struct kvm_memory_slot *slot;
-> +	struct page *refcounted_page;
->   	unsigned long mmu_seq;
->   	kvm_pfn_t pfn;
-> +	bool ign;
+>> Not only AP6275P Wi-Fi device but also all Broadcom wireless devices allow
+>> external low power clock input. In DTS the clock as an optional choice in
+>> the absence of an internal clock.
+>>
+>> Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+>> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+>> ---
+>> .../bindings/net/wireless/brcm,bcm4329-fmac.yaml          | 8 ++++++++
+>> 1 file changed, 8 insertions(+)
+>>
+>> diff --git 
+>> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml 
+>> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+>> index 2c2093c77ec9a..a3607d55ef367 100644
+>> --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+>> +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+>> @@ -122,6 +122,14 @@ properties:
+>> NVRAM. This would normally be filled in by the bootloader from platform
+>> configuration data.
+>>
+>> +  clocks:
+>> +    items:
+>> +      - description: External Low Power Clock input (32.768KHz)
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: lpo
+>> +
+> 
+> We still have an issue that this clock input is also present in the 
+> bindings specification broadcom-bluetooth.yaml (not in bluetooth 
+> subfolder). This clock is actually a chip resource. What happens if both 
+> are defined and both wifi and bt drivers try to enable this clock? Can this 
+> be expressed in yaml or can we only put a textual warning in the property 
+> descriptions?
 
-Even if you don't use it, call the out argument "writable".
+Just like all clocks, what would happen? It will be enabled.
 
-Paolo
-
->   
->   	/* Defer reload until vmcs01 is the current VMCS. */
->   	if (is_guest_mode(vcpu)) {
-> @@ -6823,7 +6825,7 @@ void vmx_set_apic_access_page_addr(struct kvm_vcpu *vcpu)
->   	 * controls the APIC-access page memslot, and only deletes the memslot
->   	 * if APICv is permanently inhibited, i.e. the memslot won't reappear.
->   	 */
-> -	pfn = gfn_to_pfn_memslot(slot, gfn);
-> +	pfn = __kvm_faultin_pfn(slot, gfn, FOLL_WRITE, &ign, &refcounted_page);
->   	if (is_error_noslot_pfn(pfn))
->   		return;
->   
-> @@ -6834,10 +6836,13 @@ void vmx_set_apic_access_page_addr(struct kvm_vcpu *vcpu)
->   		vmcs_write64(APIC_ACCESS_ADDR, pfn_to_hpa(pfn));
->   
->   	/*
-> -	 * Do not pin apic access page in memory, the MMU notifier
-> -	 * will call us again if it is migrated or swapped out.
-> +	 * Do not pin the APIC access page in memory so that it can be freely
-> +	 * migrated, the MMU notifier will call us again if it is migrated or
-> +	 * swapped out.  KVM backs the memslot with anonymous memory, the pfn
-> +	 * should always point at a refcounted page (if the pfn is valid).
->   	 */
-> -	kvm_release_pfn_clean(pfn);
-> +	if (!WARN_ON_ONCE(!refcounted_page))
-> +		kvm_release_page_clean(refcounted_page);
->   
->   	/*
->   	 * No need for a manual TLB flush at this point, KVM has already done a
+Best regards,
+Krzysztof
 
 
