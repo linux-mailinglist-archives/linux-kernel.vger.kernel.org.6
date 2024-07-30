@@ -1,124 +1,161 @@
-Return-Path: <linux-kernel+bounces-267698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-267697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0177894147A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:35:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC0DE941476
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 16:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 338051C231E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:35:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDC2C1C23390
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 14:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869061A256E;
-	Tue, 30 Jul 2024 14:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988641A2554;
+	Tue, 30 Jul 2024 14:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kewX3bjr"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lveC34ux";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Dyl3NohD";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lveC34ux";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Dyl3NohD"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A91C18FC75;
-	Tue, 30 Jul 2024 14:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA141974FE;
+	Tue, 30 Jul 2024 14:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722350117; cv=none; b=rj5+yuBW4a1e1KKGDcE7vQRkZR5Id/3hWazFcQ6D7ljs7zai40YHq8bqFoOiSajHquCkb+zjnZcVqohsHxkcAePj6JgdJbyMgFZVbQ1MB3ZSg1HhXminFwJ1ZaDM4ONc/vRjuhWSaFW2Te1hl9LnaqBHJDkq53ekbVTS/+49nEQ=
+	t=1722350101; cv=none; b=n2ah2sj0lkwsTa6+q7YyxpO5zlVEKLpwLoyZcFVcd8kWVPY8w/kxCcVojIBcQnaoRHwZ+q6rwtUBpr0o8Cbc288pY1FgsR1cc3lPlV/+GuNeRv21vjfsyjlbYbTZZobBu4h9yOYi12/DhMqKRU478Xol77mTniMFViC7o8ibfzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722350117; c=relaxed/simple;
-	bh=JhY1Y3ip6eClPY+P/MEpnktsK/w4JKZqqsx2mtxqIW0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=PmZvSqtLqeiTru4+ShNs/9oUltVqdOxuOdpAM1+dTRFGWJvuhBzHh/XQA7qTI6VWUlJO72/7fVqFRPbpsux09HUwG/N7oLsUSOzmy3s4iWOee+jze9ms9J+LFEhgWLdLkF0izVL18c5lEhSM1don2C2BHtCwMbZJFqfHazuq3tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kewX3bjr; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1722350086; x=1722954886; i=markus.elfring@web.de;
-	bh=erEqLbR3UVJtu/sTLZpah7HRshWQQmK1WXT0v24AMf4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=kewX3bjrpOFxrz5++x+RjIH9lwU7yHgteiCr8NNG2iKcHwA9Rv5K2oo5Fq05Jccy
-	 u1OLivaeaOh9tT2ZbZQcI79egbLEMagrvEiC/vE/6bA59FtYCkpWaEpkll4auyWyp
-	 4FjNxl0MBA4p022WNCtvkTh5oSP1kQYHfxJDMvQlwNt8K2YK7Z3PaqGOJMVhxpABw
-	 cjYj9+fGG1yEhQey4FE39jbE3i8zbdDAAknttS3G9RnOfltNl8III1BnWzy1xh5da
-	 E0qzCViMmnn4HC8CR81oFCuFh6CeQH+0PilPIxuv0zFk2XWj0G2ybtJrAjyFKMdBn
-	 M6+4PWuWtVBFueDYiw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MCXVX-1sQnKQ40kV-00Dp1b; Tue, 30
- Jul 2024 16:34:46 +0200
-Message-ID: <0962976e-18c7-478a-a829-8e1cc6cfa60f@web.de>
-Date: Tue, 30 Jul 2024 16:34:44 +0200
+	s=arc-20240116; t=1722350101; c=relaxed/simple;
+	bh=DE5VwUIvt+/DgNhOhMtv+MxZfjTd5/xDz0WMobXoGlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RJRFphfRB4KIm53NLHP7CirYlTUzQiG2Gbrzc+YuYHu6NrzbFz1XA4K5XSulF/Hw5ritPRIaQz6lUXDSO8G6v+DljGW4tm2DjIrzoYINME83FkheeVcTVZpei4rgyW/t2AJQv/WUGHzuCjiJ9Yl40NMu+f4lRVqWysFFHoYrrO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lveC34ux; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Dyl3NohD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lveC34ux; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Dyl3NohD; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 49A9D1F806;
+	Tue, 30 Jul 2024 14:34:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722350098;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZMcBKJspiHxIimdOw35dFAyKryswSJXkjzZ9uG9Fico=;
+	b=lveC34uxCWMD5DGYAyS2XcuvdtDK4RSvVpvrLjqA0TShVMd4dVGSDkJcwbJq88f7t2qZ3l
+	UMteqp9Vo9D1t5W1Gt1akFZR/BvCrYctQF/0b4UOnZNpJbjzgJx8/NWyGUfCFfXebNCAee
+	Xwtltb9DNyhGK942dc5BL1g5+F843yQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722350098;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZMcBKJspiHxIimdOw35dFAyKryswSJXkjzZ9uG9Fico=;
+	b=Dyl3NohDnuKRPuOZcn5GMhOFd6UNNW5iBoBYqoaFRo68LOSvhRCOPqx48ESh3k0EwO04hs
+	mF55k53K73tq1rDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722350098;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZMcBKJspiHxIimdOw35dFAyKryswSJXkjzZ9uG9Fico=;
+	b=lveC34uxCWMD5DGYAyS2XcuvdtDK4RSvVpvrLjqA0TShVMd4dVGSDkJcwbJq88f7t2qZ3l
+	UMteqp9Vo9D1t5W1Gt1akFZR/BvCrYctQF/0b4UOnZNpJbjzgJx8/NWyGUfCFfXebNCAee
+	Xwtltb9DNyhGK942dc5BL1g5+F843yQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722350098;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZMcBKJspiHxIimdOw35dFAyKryswSJXkjzZ9uG9Fico=;
+	b=Dyl3NohDnuKRPuOZcn5GMhOFd6UNNW5iBoBYqoaFRo68LOSvhRCOPqx48ESh3k0EwO04hs
+	mF55k53K73tq1rDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2351D13297;
+	Tue, 30 Jul 2024 14:34:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 550tCBL6qGYBbwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 30 Jul 2024 14:34:58 +0000
+Date: Tue, 30 Jul 2024 16:34:52 +0200
+From: David Sterba <dsterba@suse.cz>
+To: syzbot <syzbot+1b5f11df288ca3853de9@syzkaller.appspotmail.com>
+Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] general protection fault in
+ apply_wqattrs_cleanup
+Message-ID: <20240730143452.GG17473@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <00000000000059334d0619fcb362@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Florian Sylvestre <fsylvestre@baylibre.com>,
- Julien Stephan <jstephan@baylibre.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Paul Elder <paul.elder@ideasonboard.com>,
- Phi-bang Nguyen <pnguyen@baylibre.com>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, Andy Hsieh <andy.hsieh@mediatek.com>,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240729-add-mtk-isp-3-0-support-v6-4-c374c9e0c672@baylibre.com>
-Subject: Re: [PATCH v6 4/5] media: platform: mediatek: isp_30: add mediatek
- ISP3.0 camsv
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240729-add-mtk-isp-3-0-support-v6-4-c374c9e0c672@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:dpx+dzgS4rW78tkaB9aMkyTJNBcagz1rU5j0sT7u24JC04ElGVN
- zVuwH6ocADUqXpNuiUpRdXTBwSFv0BunGwPCPU+qhOPOdNggiNIkW+1jXBweJH1M+nILp+u
- BOGlM7fY1gLbspxNIl03lpu718r6ieuO2NglvMvVhZCfyWIw5Wut3bBUsYzmFH+uYXyB3hC
- yQNxVRLz2nZo0KArbKkhw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000059334d0619fcb362@google.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=998c63c06e77f5e7];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[1b5f11df288ca3853de9];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,imap1.dmz-prg2.suse.org:helo,suse.cz:replyto];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:hxC21qntc+E=;/GbKhZlfiRbRlhYCom9CM8c+8jX
- L61vx2JfQJyc4ETmCdHawr735TIgG7j+TCFemXle819vYxBZWAmZeoC6UZ7+VnZ++YoZrjtBc
- u/z//q++eqRjbeHWGMJ4lqPgqUQosEBirpoKD9P441Cvbr1lr3okdH82vAz18hGpo7eg9NRqF
- 6D2ddFlf91S3XiBpLicTq9Jg5wG9bQ4Hx8AxdnBr0Y1LXsJkzaeNU4tt4ZILU5vjd7DV+4C0C
- 9AY6J+qd8QYbBKN43rokJNKk95+9WyoiS5MK2T2tvyKaUpKpztguEISxvfwf37y69gC2wELs5
- XvJHPvpZbORH6I2c1KvNJO0LKmCP/2BsewCnr2lhFivQ09Mz+GmFR/W9fNfjpj6FDLm1lzE1p
- lyJPzl80vsVt3+ldiy0Glfrba1T/8rrG+18t6dauBEQaNK9Oi6b8KididULkV03Ut4mDirbAU
- i3U2aaQUoN5777C4RqvcmsgLRFtWlEIq5oMpoeru7QuB8oRAmUFfds6ALETihsg25zvs7Zqwb
- UhaUzHK8StxaeCwOq1nYLXY+W36nKpbjpjxoXp0eRgbQv9RZwIcmgfkhNjJsV7/qZyahzAzjV
- 15SVxcoEJ9c0hZtDjPbrVnoClCH9nJkPEfDcXb76nqlXWbBA9vtValOe0rWpChBwjZwOs0sSq
- t+sYC1Ni7+Wa2fowBOffupFc8c8gu4vmyJeM5h3mC3QTB8363fcbz53aI0ui4p4xuadEWIeOb
- j8FVFgipPSfqyMtHGFiEZfKdL7rvefZDl3ZOw2GU4nbOwtBnOlGun6ZenExbafJqjWhT4MZtr
- 5HK3PiHpXM5CSEh0i2p6/T/g==
+X-Spam-Score: -1.30
 
-> From: Phi-bang Nguyen <pnguyen@baylibre.com>
->
-> This driver provides a path to bypass the SoC ISP so that image data
-> coming from the SENINF can go directly into memory without any image
-> processing. This allows the use of an external ISP.
->
-> Signed-off-by: Phi-bang Nguyen <pnguyen@baylibre.com>
-=E2=80=A6
+On Mon, Jun 03, 2024 at 06:56:31AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    c3f38fa61af7 Linux 6.10-rc2
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=127bdaba980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=998c63c06e77f5e7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=1b5f11df288ca3853de9
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: i386
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
 
-How does information from such a change description fit to details
-from an other notification?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.11-rc1#n396
+Most likely this was a side effect of bug fixed by commit f3a5367c679d
+("btrfs: protect folio::private when attaching extent buffer folios").
 
-=E2=80=A6
-The following address failed:
+The timeframe corresponds with increased number of bogus errors caused
+by use-after-free of a page. The stack trace reported by syzbot is
+inside allocation, likely reusing a page.
 
-    pnguyen@baylibre.com:
-        SMTP error from remote server for RCPT TO command, host: aspmx.l.g=
-oogle.com (74.125.133.27) reason: 550-5.1.1 The email account that you tri=
-ed to reach does not exist.
-=E2=80=A6
+The fix is best guess.
 
-
-Regards,
-Markus
+#syz fix: btrfs: protect folio::private when attaching extent buffer folios
 
