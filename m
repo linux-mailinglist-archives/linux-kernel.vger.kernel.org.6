@@ -1,159 +1,226 @@
-Return-Path: <linux-kernel+bounces-268058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FEF941FD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:41:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C83941FDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 20:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8BE01F24F67
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:41:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 410591F24C23
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 18:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B181AA3CF;
-	Tue, 30 Jul 2024 18:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85781AA3C8;
+	Tue, 30 Jul 2024 18:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="do2UeeMf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YsSD+dkK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="PkL3bOis"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E730F1AA3C3
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 18:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD71C1AA3C0;
+	Tue, 30 Jul 2024 18:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722364865; cv=none; b=CwIfM/MfTYKBQgySaillki+ZQ39xrRJZKDbnq1TAKhdmV6rlvjLxtIKBIuRt5/Q7q0fPRm2Vx6wMGEMhcHHntuizDO9uLj0jVVv4FSgPcfXBWM1EV947PvgOQk1hEPMTyMynb7uEji6s/NUseel+kc3tyuf8IO1a7+jlpA1LREA=
+	t=1722364897; cv=none; b=BwEphKdw/TT8xjIRalVENEYPJSWUOLMHgRWQ/kViL3QAZMFdzvye9h0PcPvuctqABcMiOrMCEOChR1bYboz37JSuykDzyIDmzjeCR9m1dMNNpACW8/sSg2SEWaKsgta5RwiNS9DAAv2UCg0e87Ubeah7TQLLZSJEol7jGNuWR/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722364865; c=relaxed/simple;
-	bh=HdDz1asFNv6r6ws0GmkiQ7wpyxY71Ul1bRE2sKNl0fo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Y3OToA11Ts2U53fsjCSHiLfv5YPlfl5pQkVgID6vZzbu2VkrCB4rLx0LuYWpFZGRKMHDDnzXKwSFk8uznqQhMy1j6Y+f6I0PSaoHzEHJhZJqAj31yVi6PeyEaei/hEY7/Bc7avvLfQDqv2uDOENRx2tdwzwvXX8J3OPNwZ81sMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=do2UeeMf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YsSD+dkK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722364861;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dWNUezlVVzVUbvkFF2B8z+arPed9lXpTmrQXYTht/ws=;
-	b=do2UeeMfVoTgiFeW14ultUjy/ZCxQRiLg/tG5t8NRns0nzbChtgx7MF6Jd5WLmgx6AcwqB
-	KokIW65z7mdFsqUuH2xQs4CdrZeAOI/OJqKCOuel8Upvf4zySISbPzrlYIflpvsDsTgTUw
-	080UeijTwZUhKbEJUuQ27X5OkrMlovC4H3w6pIAzMXurumhYX/XGBQ4M9o0Oq0cAO89zgv
-	S0XDPojmsxGgtOe7kdoCM4SlTdH4T9phuo+vmaO4/zA0vB7ON7qh9RI2at37DYAxIjINVH
-	ScvpSFwOqegjJwrvu+Z7Veasd3DpmMN6nhZsPka7juNSKTEYkv2wvywhTKumVA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722364861;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dWNUezlVVzVUbvkFF2B8z+arPed9lXpTmrQXYTht/ws=;
-	b=YsSD+dkKMUeIKgBg7hYEIsun6Pd9S5CwUxGSwpjEgaWhVwtQoRNesXamjEYxYHYpgQnjXf
-	GW7kTWgQHTFposAQ==
-To: "Alexey Gladkov (Intel)" <legion@kernel.org>,
- linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev
-Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Andrew Morton
- <akpm@linux-foundation.org>, Yuan Yao <yuan.yao@intel.com>, Geert
- Uytterhoeven <geert@linux-m68k.org>, Yuntao Wang <ytcoode@gmail.com>, Kai
- Huang <kai.huang@intel.com>, Baoquan He <bhe@redhat.com>, Oleg Nesterov
- <oleg@redhat.com>, Joerg Roedel <jroedel@suse.de>, Tom Lendacky
- <thomas.lendacky@amd.com>, cho@microsoft.com, decui@microsoft.com,
- John.Starks@microsoft.com
-Subject: Re: [PATCH v1 4/4] x86/tdx: Implement movs for MMIO
-In-Reply-To: <c24855b0003df4397e3931f35d7ec285db5bc8bf.1722356794.git.legion@kernel.org>
-References: <cover.1722356794.git.legion@kernel.org>
- <c24855b0003df4397e3931f35d7ec285db5bc8bf.1722356794.git.legion@kernel.org>
-Date: Tue, 30 Jul 2024 20:41:00 +0200
-Message-ID: <871q3a7mf7.ffs@tglx>
+	s=arc-20240116; t=1722364897; c=relaxed/simple;
+	bh=/D+6mF4WoUoIOgFnDdNwfI9NAMMRMfYs+QPiPg2rjqI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZH3byBnM8aQceW9u6XE1ACOTxr2uiiMjfl6T0eXvRfIJo0igL5vRkm6Rgi2L6Vf8YaXJwX6Q4wnB4Wk0Iwr4M7jRxBqCcRWri1ocDSkGe6vIDqyUprmgr1rZONRdOfWi3BDOhwNHcMbSXMlmziAsRG1kIFLoVeodLeIEWgLjK9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=PkL3bOis; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id f5a4c46a7cce13f3; Tue, 30 Jul 2024 20:41:32 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 29FB0956ED0;
+	Tue, 30 Jul 2024 20:41:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1722364892;
+	bh=/D+6mF4WoUoIOgFnDdNwfI9NAMMRMfYs+QPiPg2rjqI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=PkL3bOissDY++Mtq9TPvghc8PnoR/A1DctrrMilMjynDUpsFEgwKsW1dM3KPQ5Xx+
+	 ia5qs89nzh3yDsYl0gAkd0HuQhejVaTR8NRPB0IGWSJIvtnHRBJc1WpObUKVb4tldw
+	 Mi3lG8ZBaN/B7G/WdvlUy3Da7fDNc3QrEltbXNnFoqgEkl8jd8y805rsusQhcfYyf1
+	 BnO7VcuBJXB+ChBBj7Hu+U14/QyswnjItn1OO04GGmZfmj/GIJav/Wu1L54ikyfSXv
+	 ayJ5oOzweM+6+kCjQyBP/PWLP1NHQrOYOB3CvrDrwQY8Vckz/eJ2f5u7x9GdN8GSfz
+	 p5gurAMwJIfpQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux ACPI <linux-acpi@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
+Subject: [PATCH v1 16/17] thermal: code: Clean up trip bind/unbind functions
+Date: Tue, 30 Jul 2024 20:41:31 +0200
+Message-ID: <18551558.sWSEgdgrri@rjwysocki.net>
+In-Reply-To: <1922131.tdWV9SEqCh@rjwysocki.net>
+References: <1922131.tdWV9SEqCh@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeggdduvdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
+ rhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=24 Fuz1=24 Fuz2=24
 
-On Tue, Jul 30 2024 at 19:35, Alexey Gladkov wrote:
-> Adapt AMD's implementation of the MOVS instruction. Since the
-> implementations are similar, it is possible to reuse the code.
->
-> MOVS emulation consists of dividing it into a series of read and write
-> operations, which in turn will be validated separately.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Please split this into two patches:
+Make thermal_bind_cdev_to_trip() take a struct cooling_spec pointer
+to reduce the number of its arguments, change the return type of
+thermal_unbind_cdev_from_trip() to void and rearrange the code in
+thermal_zone_cdev_binding() to reduce the indentation level.
 
-    1) Splitting out the AMD code
-    2) Adding it for Intel
-> @@ -369,72 +369,17 @@ static enum es_result vc_decode_insn(struct es_em_ctxt *ctxt)
->  static enum es_result vc_write_mem(struct es_em_ctxt *ctxt,
->  				   char *dst, char *buf, size_t size)
->  {
-> -	unsigned long error_code = X86_PF_PROT | X86_PF_WRITE;
-> +	unsigned long error_code;
-> +	int ret = __put_iomem(dst, buf, size);
+No intentional functional impact.
 
-Variable ordering....
-  
-> +static int handle_mmio_movs(struct insn *insn, struct pt_regs *regs, int size, struct ve_info *ve)
-> +{
-> +	unsigned long ds_base, es_base;
-> +	unsigned char *src, *dst;
-> +	unsigned char buffer[8];
-> +	int off, ret;
-> +	bool rep;
-> +
-> +	/*
-> +	 * The in-kernel code must use a special API that does not use MOVS.
-> +	 * If the MOVS instruction is received from in-kernel, then something
-> +	 * is broken.
-> +	 */
-> +	WARN_ON_ONCE(!user_mode(regs));
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/thermal_core.c |   54 +++++++++++++++--------------------------
+ 1 file changed, 21 insertions(+), 33 deletions(-)
 
-Then it should return here and not try to continue, no?
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -761,15 +761,7 @@ struct thermal_zone_device *thermal_zone
+  * @tz:		pointer to struct thermal_zone_device
+  * @trip:	trip point the cooling devices is associated with in this zone.
+  * @cdev:	pointer to struct thermal_cooling_device
+- * @upper:	the Maximum cooling state for this trip point.
+- *		THERMAL_NO_LIMIT means no upper limit,
+- *		and the cooling device can be in max_state.
+- * @lower:	the Minimum cooling state can be used for this trip point.
+- *		THERMAL_NO_LIMIT means no lower limit,
+- *		and the cooling device can be in cooling state 0.
+- * @weight:	The weight of the cooling device to be bound to the
+- *		thermal zone. Use THERMAL_WEIGHT_DEFAULT for the
+- *		default value
++ * @c:		cooling specification for @trip and @cdev
+  *
+  * This interface function bind a thermal cooling device to the certain trip
+  * point of a thermal zone device.
+@@ -780,8 +772,7 @@ struct thermal_zone_device *thermal_zone
+ static int thermal_bind_cdev_to_trip(struct thermal_zone_device *tz,
+ 				     struct thermal_trip *trip,
+ 				     struct thermal_cooling_device *cdev,
+-				     unsigned long upper, unsigned long lower,
+-				     unsigned int weight)
++				     struct cooling_spec *c)
+ {
+ 	struct thermal_trip_desc *td = trip_to_trip_desc(trip);
+ 	struct thermal_instance *dev, *instance;
+@@ -795,17 +786,17 @@ static int thermal_bind_cdev_to_trip(str
+ 		return -EINVAL;
+ 
+ 	/* lower default 0, upper default max_state */
+-	if (lower == THERMAL_NO_LIMIT)
+-		lower = 0;
++	if (c->lower == THERMAL_NO_LIMIT)
++		c->lower = 0;
+ 
+-	if (upper == THERMAL_NO_LIMIT) {
+-		upper = cdev->max_state;
++	if (c->upper == THERMAL_NO_LIMIT) {
++		c->upper = cdev->max_state;
+ 		upper_no_limit = true;
+ 	} else {
+ 		upper_no_limit = false;
+ 	}
+ 
+-	if (lower > upper || upper > cdev->max_state)
++	if (c->lower > c->upper || c->upper > cdev->max_state)
+ 		return -EINVAL;
+ 
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+@@ -815,11 +806,11 @@ static int thermal_bind_cdev_to_trip(str
+ 	dev->tz = tz;
+ 	dev->cdev = cdev;
+ 	dev->trip = trip;
+-	dev->upper = upper;
++	dev->upper = c->upper;
+ 	dev->upper_no_limit = upper_no_limit;
+-	dev->lower = lower;
++	dev->lower = c->lower;
+ 	dev->target = THERMAL_NO_TARGET;
+-	dev->weight = weight;
++	dev->weight = c->weight;
+ 
+ 	result = ida_alloc(&tz->ida, GFP_KERNEL);
+ 	if (result < 0)
+@@ -893,12 +884,10 @@ free_mem:
+  * This interface function unbind a thermal cooling device from the certain
+  * trip point of a thermal zone device.
+  * This function is usually called in the thermal zone device .unbind callback.
+- *
+- * Return: 0 on success, the proper error value otherwise.
+  */
+-static int thermal_unbind_cdev_from_trip(struct thermal_zone_device *tz,
+-					 struct thermal_trip *trip,
+-					 struct thermal_cooling_device *cdev)
++static void thermal_unbind_cdev_from_trip(struct thermal_zone_device *tz,
++					  struct thermal_trip *trip,
++					  struct thermal_cooling_device *cdev)
+ {
+ 	struct thermal_trip_desc *td = trip_to_trip_desc(trip);
+ 	struct thermal_instance *pos, *next;
+@@ -921,7 +910,7 @@ static int thermal_unbind_cdev_from_trip
+ 
+ 	mutex_unlock(&cdev->lock);
+ 
+-	return -ENODEV;
++	return;
+ 
+ free:
+ 	device_remove_file(&tz->device, &pos->weight_attr);
+@@ -929,7 +918,6 @@ free:
+ 	sysfs_remove_link(&tz->device.kobj, pos->name);
+ 	ida_free(&tz->ida, pos->id);
+ 	kfree(pos);
+-	return 0;
+ }
+ 
+ static void thermal_release(struct device *dev)
+@@ -968,7 +956,6 @@ static void thermal_zone_cdev_binding(st
+ 				      struct thermal_cooling_device *cdev)
+ {
+ 	struct thermal_trip_desc *td;
+-	int ret;
+ 
+ 	if (!tz->ops.should_bind)
+ 		return;
+@@ -982,13 +969,14 @@ static void thermal_zone_cdev_binding(st
+ 			.lower = THERMAL_NO_LIMIT,
+ 			.weight = THERMAL_WEIGHT_DEFAULT
+ 		};
++		int ret;
+ 
+-		if (tz->ops.should_bind(tz, trip, cdev, &c)) {
+-			ret = thermal_bind_cdev_to_trip(tz, trip, cdev, c.upper,
+-							c.lower, c.weight);
+-			if (ret)
+-				print_bind_err_msg(tz, trip, cdev, ret);
+-		}
++		if (!tz->ops.should_bind(tz, trip, cdev, &c))
++			continue;
++
++		ret = thermal_bind_cdev_to_trip(tz, trip, cdev, &c);
++		if (ret)
++			print_bind_err_msg(tz, trip, cdev, ret);
+ 	}
+ 
+ 	mutex_unlock(&tz->lock);
 
-> +int __get_iomem(char *src, char *buf, size_t size)
-> +{
-> +	/*
-> +	 * This function uses __get_user() independent of whether kernel or user
-> +	 * memory is accessed. This works fine because __get_user() does no
-> +	 * sanity checks of the pointer being accessed. All that it does is
-> +	 * to report when the access failed.
-> +	 *
-> +	 * Also, this function runs in atomic context, so __get_user() is not
-> +	 * allowed to sleep. The page-fault handler detects that it is running
-> +	 * in atomic context and will not try to take mmap_sem and handle the
-> +	 * fault, so additional pagefault_enable()/disable() calls are not
-> +	 * needed.
-> +	 *
-> +	 * The access can't be done via copy_from_user() here because
-> +	 * mmio_read_mem() must not use string instructions to access unsafe
-> +	 * memory. The reason is that MOVS is emulated by the #VC handler by
-> +	 * splitting the move up into a read and a write and taking a nested #VC
-> +	 * exception on whatever of them is the MMIO access. Using string
-> +	 * instructions here would cause infinite nesting.
-> +	 */
-> +	switch (size) {
-> +	case 1: {
-> +		u8 d1;
-> +		u8 __user *s = (u8 __user *)src;
 
-One line for the variables is enough
 
-		u8 d1, __user *s = (u8 __user *)src;
-
-No?
-
-> +	case 8: {
-> +		u64 d8;
-> +		u64 __user *s = (u64 __user *)src;
-> +		if (__get_user(d8, s))
-
-Lacks newline between variable declaration and code.
-
-Thanks,
-
-        tglx
 
