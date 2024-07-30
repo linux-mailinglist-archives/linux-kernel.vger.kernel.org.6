@@ -1,90 +1,274 @@
-Return-Path: <linux-kernel+bounces-266611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2575494033A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:14:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 371C094033C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 03:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D485C282F64
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:14:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B9C51C20E93
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 01:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25D5B8C13;
-	Tue, 30 Jul 2024 01:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qEseTiOI"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E5B8C0B;
+	Tue, 30 Jul 2024 01:14:27 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CA433C8
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 01:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5D0C121
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 01:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722302050; cv=none; b=K86am/5XtqpusOX9eSF6RRxrxisTxCt30/IvBIFLjMi6fbDamUua7+SnUSTUSpPRUuxEBMURjmNe0vaIQNCM9VizWP89UrqIJAvcCrgsgo8bz/L9D2zh+U6aT1EQQOfBlnwqWWwpld/BoB3zmr045pbhTtCncvxjYeCmsG7PfbY=
+	t=1722302066; cv=none; b=YDOKLXcRpuZMOMj+WHwtYP55tlTrIjviUP9ZBQBIwAqkHJ8dKsD//LQb1kZNsbXRj1vQNLyXRjPNMED7CXkk2GEnDgG98vfElw7dmu0WN5g9EANnKLfKKHJNZEc5YCbiJRob0iDhM0V7VO8iQLsdoO6LLgHDmQ4b2G4zdufL8Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722302050; c=relaxed/simple;
-	bh=sZOnK1aeLSOPpk9wS2utqsMObUtLnJUI/AIc757QsFY=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=DRDJKUt+/UQaG8J+PfqeyypR3Z6namvgq/WyIrWl49js9EcmknYiF0yNMaMoxisLCFLQ8/yvhKWiEcaid//ZC87MZA+K2H8s1YohTEk7PfsZk9E9pg2Wx0m4ZNofEopUHaD25S4dDn0yf386PcGL03hEzQWuop8RFUZDV6Ds41I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qEseTiOI; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1722302040; h=Message-ID:Subject:Date:From:To;
-	bh=01UZHdydYYAgRYChk9eT/vFNzPkghP7L50ewNEGelrk=;
-	b=qEseTiOIx/vjzlJHjqmlu1eDYgHH19q9L4RBXLdo3KZeTqKCgYvLPnkQfblz5Mhztxdn2JgHCCVSNZR6CcPhp5HDagYn8iYDIFD+bhAMAL8AcnOpAB3idOFdX2OkPHv4RrMTfcpIYDQSpIb/TwhYQ8YjPvUPVFAnDAv3nxIFIV4=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0WBdZO0r_1722302039;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WBdZO0r_1722302039)
-          by smtp.aliyun-inc.com;
-          Tue, 30 Jul 2024 09:13:59 +0800
-Message-ID: <1722302031.9577713-3-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH] tools/virtio:Fix the wrong format specifier
-Date: Tue, 30 Jul 2024 09:13:51 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>
-Cc: eperezma@redhat.com,
- zhujun2@cmss.chinamobile.com,
- virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- mst@redhat.com,
- jasowang@redhat.com
-References: <20240724074108.9530-1-zhujun2@cmss.chinamobile.com>
-In-Reply-To: <20240724074108.9530-1-zhujun2@cmss.chinamobile.com>
+	s=arc-20240116; t=1722302066; c=relaxed/simple;
+	bh=VbC5Ry7oO86TTGqe9Hlg5hRVCm20i7CIlucnXJxdJEY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cUcymg3RnvATphUFTqur58R2FEO8Wdl6askyiXtr8efJ0rudIeQ8iZlxLYsM5mwX/Ytgm6Z3zK1lj4GwE9eQf68kZmxm6fZaBSdREzWjYh1kwEIY0P7xf0DzgyFKkSINQ6Ll26iqZyI6GJukCMEnlz1pfxcl61MV8bsgSU1yo0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81faf98703eso157705239f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:14:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722302063; x=1722906863;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e8wZ3BzgZACh5NT8rDj7wtLR8KDVautj/orLprnxuiI=;
+        b=JCuLrl3c7fyAGvFAr39AXPIH1Krm7HzVg/s1jbjo1YcenN8MyrcuWEJR8DIfT4ZubG
+         0yJclu2STL2fWN6O55LBPPnI4FmLtoqhwVTNWv98HE+8kSNuV1OTMUV3GgNuMd+0s0kY
+         rXESIOTcwjiYXXuCWElZ3h1qpqS/5KkeE1WOCBgvfP3QCUBnhL6s7/IHb5rMT+5/pCsq
+         fLv5dTBrRDwtPwfQLJJq/nzxJhXghDM6Tlz+qJ0q5DEfogLqVZ658RYuH/bbHqyIYs3K
+         PN24TIeoevYPgH1L+sXrHoWMo925+Kz667Q/XjbNy7lfAa27JEBq5/aVviIHxPN9WBK3
+         AWXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXO8IXCLIKKiyI8RPsVWJCjJm4Xg8yHAvNzaryXGFHGg35ZzD5iiEJEUhPTwhK1G9SFPtNr7x9SCvxwwUTwLiNRGIkksaxFUbVqU/SN
+X-Gm-Message-State: AOJu0YyluZydy+sPnzIw00APYHct+nUAuifrj66B+7b0tx3EwvBeH7ce
+	FdpuOoZNaiH8zAJnb3YYWXHM7+Jl7Kyuqq9sEta+yEFJZSmcz1OwOrXo+cwZErEULwPlPeoFfQ+
+	h/EwSwRn5ReC47Ob7p0kxLQ8hwpJo5XASjgD6FkOgrgbS+xeQ5zZLBXg=
+X-Google-Smtp-Source: AGHT+IEebg3YBFTCMof91VUkPj8pU/yj2oOqFuE1kMI7UqTRXV/ISZqZ1dF/V1XY3AHRHxbMte8PgGBAeMpWPGl9WatCzL6HZZiC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6638:1383:b0:4bb:624c:5a7f with SMTP id
+ 8926c6da1cb9f-4c63d51ff5bmr304730173.1.1722302063619; Mon, 29 Jul 2024
+ 18:14:23 -0700 (PDT)
+Date: Mon, 29 Jul 2024 18:14:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b2c0fc061e6cb26b@google.com>
+Subject: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Read in journal_entry_dev_usage_to_text
+From: syzbot <syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 24 Jul 2024 00:41:08 -0700, Zhu Jun <zhujun2@cmss.chinamobile.com> wrote:
-> The unsigned int should use "%u" instead of "%d".
->
-> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+Hello,
 
-Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+syzbot found the following issue on:
+
+HEAD commit:    1722389b0d86 Merge tag 'net-6.11-rc1' of git://git.kernel...
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1544b603980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b698a1b2fcd7ef5f
+dashboard link: https://syzkaller.appspot.com/bug?extid=05d7520be047c9be86e0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1686c69d980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=150a1611980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e3f4ec8ccf7c/disk-1722389b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f19bcd908282/vmlinux-1722389b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d93604974a98/bzImage-1722389b.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/f4a9cf51fd0b/mount_0.gz
+
+The issue was bisected to:
+
+commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sat Sep 23 22:41:51 2023 +0000
+
+    bcachefs: Ignore unknown mount options
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=147b3b0d980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=167b3b0d980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=127b3b0d980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com
+Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
+
+loop0: detected capacity change from 0 to 32768
+==================================================================
+BUG: KASAN: slab-out-of-bounds in journal_entry_dev_usage_to_text+0x109/0x1d0 fs/bcachefs/journal_io.c:731
+Read of size 8 at addr ffff88807a286000 by task syz-executor816/5214
+
+CPU: 1 UID: 0 PID: 5214 Comm: syz-executor816 Not tainted 6.10.0-syzkaller-12562-g1722389b0d86 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ journal_entry_dev_usage_to_text+0x109/0x1d0 fs/bcachefs/journal_io.c:731
+ bch2_sb_clean_to_text+0x138/0x240 fs/bcachefs/sb-clean.c:251
+ bch2_sb_field_validate+0x201/0x2e0 fs/bcachefs/super-io.c:1229
+ bch2_sb_validate+0xa69/0xe00 fs/bcachefs/super-io.c:468
+ __bch2_read_super+0xc1b/0x1370 fs/bcachefs/super-io.c:823
+ bch2_fs_open+0x246/0xdf0 fs/bcachefs/super.c:2084
+ bch2_fs_get_tree+0x731/0x1700 fs/bcachefs/fs.c:1933
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1789
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f14389cf06a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe1945e9d8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffe1945e9f0 RCX: 00007f14389cf06a
+RDX: 0000000020005b00 RSI: 0000000020005b40 RDI: 00007ffe1945e9f0
+RBP: 0000000000000004 R08: 00007ffe1945ea30 R09: 0000000000005b72
+R10: 0000000000000000 R11: 0000000000000282 R12: 0000000000000000
+R13: 00007ffe1945ea30 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+
+Allocated by task 5214:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
+ kasan_kmalloc include/linux/kasan.h:211 [inline]
+ __do_kmalloc_node mm/slub.c:4158 [inline]
+ __kmalloc_node_track_caller_noprof+0x225/0x440 mm/slub.c:4177
+ __do_krealloc mm/slab_common.c:1280 [inline]
+ krealloc_noprof+0x7d/0x120 mm/slab_common.c:1313
+ bch2_sb_realloc+0x2d2/0x660 fs/bcachefs/super-io.c:189
+ read_one_super+0x73b/0xf40 fs/bcachefs/super-io.c:660
+ __bch2_read_super+0x873/0x1370 fs/bcachefs/super-io.c:751
+ bch2_fs_open+0x246/0xdf0 fs/bcachefs/super.c:2084
+ bch2_fs_get_tree+0x731/0x1700 fs/bcachefs/fs.c:1933
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1789
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88807a284000
+ which belongs to the cache kmalloc-8k of size 8192
+The buggy address is located 0 bytes to the right of
+ allocated 8192-byte region [ffff88807a284000, ffff88807a286000)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7a280
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+ksm flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xfdffffff(slab)
+raw: 00fff00000000040 ffff888015442280 ffffea0000948200 0000000000000003
+raw: 0000000000000000 0000000080020002 00000001fdffffff 0000000000000000
+head: 00fff00000000040 ffff888015442280 ffffea0000948200 0000000000000003
+head: 0000000000000000 0000000080020002 00000001fdffffff 0000000000000000
+head: 00fff00000000003 ffffea0001e8a001 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd2040(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 4879, tgid 4879 (rcS), ts 34538747384, free_ts 34514158572
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
+ prep_new_page mm/page_alloc.c:1501 [inline]
+ get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3438
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4696
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2321
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2484
+ new_slab mm/slub.c:2537 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3723
+ __slab_alloc+0x58/0xa0 mm/slub.c:3813
+ __slab_alloc_node mm/slub.c:3866 [inline]
+ slab_alloc_node mm/slub.c:4025 [inline]
+ __kmalloc_cache_noprof+0x1d5/0x2c0 mm/slub.c:4184
+ kmalloc_noprof include/linux/slab.h:681 [inline]
+ kzalloc_noprof include/linux/slab.h:807 [inline]
+ tomoyo_print_bprm security/tomoyo/audit.c:26 [inline]
+ tomoyo_init_log+0x11ce/0x2050 security/tomoyo/audit.c:264
+ tomoyo_supervisor+0x38a/0x11f0 security/tomoyo/common.c:2089
+ tomoyo_audit_env_log security/tomoyo/environ.c:36 [inline]
+ tomoyo_env_perm+0x178/0x210 security/tomoyo/environ.c:63
+ tomoyo_environ security/tomoyo/domain.c:672 [inline]
+ tomoyo_find_next_domain+0x1384/0x1cf0 security/tomoyo/domain.c:878
+ tomoyo_bprm_check_security+0x115/0x180 security/tomoyo/tomoyo.c:102
+ security_bprm_check+0x65/0x90 security/security.c:1191
+ search_binary_handler fs/exec.c:1809 [inline]
+ exec_binprm fs/exec.c:1863 [inline]
+ bprm_execve+0xa56/0x1770 fs/exec.c:1914
+ do_execveat_common+0x55f/0x6f0 fs/exec.c:2021
+page last free pid 4878 tgid 4878 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1094 [inline]
+ free_unref_page+0xd19/0xea0 mm/page_alloc.c:2608
+ discard_slab mm/slub.c:2583 [inline]
+ __put_partials+0xeb/0x130 mm/slub.c:3051
+ put_cpu_partial+0x17c/0x250 mm/slub.c:3126
+ __slab_free+0x2ea/0x3d0 mm/slub.c:4343
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9e/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:322
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3988 [inline]
+ slab_alloc_node mm/slub.c:4037 [inline]
+ kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4044
+ vm_area_alloc+0x24/0x1d0 kernel/fork.c:471
+ mmap_region+0xc3d/0x2090 mm/mmap.c:2944
+ do_mmap+0x8f9/0x1010 mm/mmap.c:1468
+ vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:588
+ ksys_mmap_pgoff+0x4f1/0x720 mm/mmap.c:1514
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88807a285f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff88807a285f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff88807a286000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                   ^
+ ffff88807a286080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88807a286100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
 
 
-> ---
->  tools/virtio/ringtest/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/tools/virtio/ringtest/main.c b/tools/virtio/ringtest/main.c
-> index 5a18b2301a63..e471d8e7cfaa 100644
-> --- a/tools/virtio/ringtest/main.c
-> +++ b/tools/virtio/ringtest/main.c
-> @@ -276,7 +276,7 @@ static void help(void)
->  	fprintf(stderr, "Usage: <test> [--help]"
->  		" [--host-affinity H]"
->  		" [--guest-affinity G]"
-> -		" [--ring-size R (default: %d)]"
-> +		" [--ring-size R (default: %u)]"
->  		" [--run-cycles C (default: %d)]"
->  		" [--batch b]"
->  		" [--outstanding o]"
-> --
-> 2.17.1
->
->
->
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
