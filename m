@@ -1,140 +1,160 @@
-Return-Path: <linux-kernel+bounces-268494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4496894254D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:15:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B4D942552
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5203B243D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:14:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56A1A1F24531
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3801B964;
-	Wed, 31 Jul 2024 04:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28B81B978;
+	Wed, 31 Jul 2024 04:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8JfWHLu"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YZDWNjdK"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A42D51C
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 04:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFD31946B;
+	Wed, 31 Jul 2024 04:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722399290; cv=none; b=Umd9Pg2Q9J3/9caBVAMLZY7+LZ/2NdvCdA5U5q+PEMct2tVkB50TwMjryjUpJ1cb6hjaMFdNLfGvD+KVFTnYFMPoqg/eSZ/fhyUqHdpNO9/iTkxi6i7DWuyLCrDxg6IhbvPGw/kr9Y9zowgBlzVjR6KWr3PklyYVZWtAAydSIwA=
+	t=1722399573; cv=none; b=i0ermHzSJ2OYA8TybscpyGJzTGM+i0G1ejufdLwc1bDwqqHfC3Ztn1aTbFzP/ItNRqdx7Ha29hgDqM0qHOba7MHUc+z5y30eLgoGBk2C9FXX1E09O9C12FpksItf6zBvfRlB/yFYsJmiB6ot38kA6x+nSfoZ2bY/EjZeKsJ2YEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722399290; c=relaxed/simple;
-	bh=iWf9tURr24PLvKdM/gsrZGW46AiQA+Nol1wnwIHK64w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WWOjQ8o9VJ4dZvTR/N5S8MUAGnfFDZpKlHx1KVtODmerGUYlI0JPMkcS222CjyS4ESgwMXtZRgOUnpuij1twghuTjaIo44J6F2lEw7cYepZ65vUI+710DAjpl1qTN30j1WhdCjutRFfz35DO7yT4E+dtZSdpOUWtOBGbkyuj7kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P8JfWHLu; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-709346604a7so2100163a34.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 21:14:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722399288; x=1723004088; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DNL7NFkFF5FUxcfpExxj2V2R2UfPEnaSrY2fTx/MR1s=;
-        b=P8JfWHLux9mH95ISVtfzjkV71P0uPJN5zXHCMFeMfDa5bTS2oxrhoROOJweVHRa1JM
-         P8VjASx2uxXnrTzIgAw2kxTDoOZ1pkLblP3KLrLwb6qVWSXPtYifG4I55XLur0oTO98o
-         l+7VULcQ4+Y8EUs8soV4AcYBZb/ayHFKAW77I+KF6TH0HYxBe69GwGyuAV2LBJNRZQd9
-         hMLKv9ByJjAjcP2cl/HM/tD+dEctlhwpcq7jKZvtx2ZXHWF+aMzNFT8MFLeOomerXTzt
-         S7e2kUWgr2xzrDpb7HhPkN9TymRmsOT/kjdzevuWiAA5Nrj/aHJXtpSzWHLNHdcpH3MM
-         bDtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722399288; x=1723004088;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DNL7NFkFF5FUxcfpExxj2V2R2UfPEnaSrY2fTx/MR1s=;
-        b=PEBGX+e41yniJ2W4ba5xkuzWzn752DaTZhEdbLoovmoL1j2OfSsgx2zb9kFZWoqEPm
-         pbu0nroQgssrZLQ1bCF991P2YXy1btjgXc7q4/SED1IhJYhgh1fHS5R0aNHeVBqrU6vD
-         KT37KJyLb91dj0oB31rGrkfdrsj+KO0e7zC9AQ8OO5VsS7d90SSmQqNgM4WSEO+IX0qM
-         68C/4C5NbIk6mGxtzDohqieYzUwyCHz/vXBH71RTaFBjI8MKRuMvV4E36U+icUf+UY7l
-         TV1eHPipEQogViDmLqMm5fUny+3ExpJeNiq9xz4n+4NhFXwta1TlKcHL5+hCmUFeCvej
-         suvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNdtbICj193ulBQ6sfSyh4PNrRTCvYEVqtpixxdqyfIzBRVVdfJlZYEcEORWjlNANzpF/B4sQcUbrbqh8o+yl3mn2XPN+CjwpjU6t/
-X-Gm-Message-State: AOJu0YzSoDtfpOkcyDKWqZ6vj6g7YMPHyDaZBG43ONWG+/QMyOrq5yw8
-	A7HIZAyoSJ2qY8O5g6OeIeI/bFuPKS8ciqe09rcSF6ktz5BuDLCm
-X-Google-Smtp-Source: AGHT+IEX1prPmIFIeqrORL9JH3Dud7a2tNptrr6Vggd45C+iXglyBbfvs5ramvLw9JlVo4nqcrEEtw==
-X-Received: by 2002:a9d:5f09:0:b0:703:fdda:fe2b with SMTP id 46e09a7af769-70940c0e09amr14129305a34.11.1722399287720;
-        Tue, 30 Jul 2024 21:14:47 -0700 (PDT)
-Received: from [192.168.255.10] ([43.132.141.21])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8aa702sm9107977b3a.215.2024.07.30.21.14.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 21:14:47 -0700 (PDT)
-Message-ID: <c614ec0c-ff5c-4ef6-8542-53ee5308f62a@gmail.com>
-Date: Wed, 31 Jul 2024 12:14:42 +0800
+	s=arc-20240116; t=1722399573; c=relaxed/simple;
+	bh=kcnjy5i6cO6yrVWbwoFm9x0bXbL65298JLCAh5v7YIA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZQv1l1p3qvN0En9hq6TLVDc1R9KABMmtkYZRdJaydxrhgZQLYEXWfXA76FDohFVnt+IBvsxuY35hlBZVCTNupXlAJumQ5HGP5vlFHrjIGwu7lIq4EpPqOSzWx5voRustAW6EMSvcX+FGchvnPSL/ehfO7FTN58Hqpk4rD8AF/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YZDWNjdK; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46V4JIct040415;
+	Tue, 30 Jul 2024 23:19:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1722399558;
+	bh=vQe4fF41AGeNLxLgnXwroJucdLZVFvdpjUifD+n7Kps=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=YZDWNjdKPRR34T3+hTFsRRkscVyENtleSG5RIk2s/w0Ngy13lfQm55FjROuZdwes0
+	 vwAp+0JR24fsrDf2JLrIev0eofwjr0ydBlfYnF9wX2woN/wXsot7oNzGJdSo8jfw7o
+	 r6c9VW5dLauNu9PUKJLuKh3i7r203TY3x0Pjwsj8=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46V4JIqG060103
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 30 Jul 2024 23:19:18 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 30
+ Jul 2024 23:19:17 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 30 Jul 2024 23:19:17 -0500
+Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46V4JH0k077287;
+	Tue, 30 Jul 2024 23:19:17 -0500
+Date: Wed, 31 Jul 2024 09:49:16 +0530
+From: Manorit Chawdhry <m-chawdhry@ti.com>
+To: Nishanth Menon <nm@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Udit Kumar
+	<u-kumar1@ti.com>,
+        Neha Malcom Francis <n-francis@ti.com>,
+        Aniket Limaye
+	<a-limaye@ti.com>
+Subject: Re: [PATCH v2 2/3] arm64: dts: ti: Introduce J742S2 SoC family
+Message-ID: <20240731041916.stcbvkr6ovd7t5vk@uda0497581>
+References: <20240730-b4-upstream-j742s2-v2-0-6aedf892156c@ti.com>
+ <20240730-b4-upstream-j742s2-v2-2-6aedf892156c@ti.com>
+ <20240730123343.mqafgpj4zcnd5vs4@plaything>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 22/22] mm/zsmalloc: update comments for page->zpdesc
- changes
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: alexs@kernel.org, Vitaly Wool <vitaly.wool@konsulko.com>,
- Miaohe Lin <linmiaohe@huawei.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, minchan@kernel.org, willy@infradead.org,
- david@redhat.com, 42.hyeyoo@gmail.com, Yosry Ahmed <yosryahmed@google.com>,
- nphamcs@gmail.com
-References: <20240729112534.3416707-1-alexs@kernel.org>
- <20240729112534.3416707-23-alexs@kernel.org>
- <20240730093726.GB16599@google.com>
- <8fc7939b-416a-4328-9df2-488f17783543@gmail.com>
- <20240731021619.GD16599@google.com>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <20240731021619.GD16599@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240730123343.mqafgpj4zcnd5vs4@plaything>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+Hi Nishanth,
 
-
-On 7/31/24 10:16 AM, Sergey Senozhatsky wrote:
-> On (24/07/30 19:45), Alex Shi wrote:
->> On 7/30/24 5:37 PM, Sergey Senozhatsky wrote:
->>> On (24/07/29 19:25), alexs@kernel.org wrote:
->>>>
->>>> From: Alex Shi <alexs@kernel.org>
->>>>
->>>
->>> Usually some simple commit message is still expected.
->>
->> Uh, my fault. Just forgive this part, is the following log fine?
->>
->>     After the page to zpdesc conversion, there still left few comments or
->>     function named with page not zpdesc, let's update the comments and
->>     rename function create_page_chain() as create_zpdesc_chain().
+On 07:33-20240730, Nishanth Menon wrote:
+> On 12:43-20240730, Manorit Chawdhry wrote:
+> > This device is a subset of J784S4 and shares the same memory map and
+> > thus the nodes are being reused from J784S4 to avoid duplication.
+> > 
+> > Here are some of the salient features of the J742S2 automotive grade
+> > application processor:
+> > 
+> > The J742S2 SoC belongs to the K3 Multicore SoC architecture platform,
+> > providing advanced system integration in automotive, ADAS and industrial
+> > applications requiring AI at the network edge. This SoC extends the K3
+> > Jacinto 7 family of SoCs with focus on raising performance and
+> > integration while providing interfaces, memory architecture and compute
+> > performance for multi-sensor, high concurrency applications.
+> > 
+> > Some changes that this devices has from J784S4 are:
+> > * 4x Cortex-A72 vs 8x Cortex-A72
+> > * 3x C7x DSP vs 4x C7x DSP
+> > * 4 port ethernet switch vs 8 port ethernet switch
+> > 
+> > ( Refer Table 2-1 for Device comparison with J7AHP )
+> > Link: https://www.ti.com/lit/pdf/spruje3 (TRM)
+> > Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
+> > ---
+> >  arch/arm64/boot/dts/ti/k3-j742s2-main.dtsi | 44 ++++++++++++++++++++++++++++++
+> >  arch/arm64/boot/dts/ti/k3-j742s2.dtsi      | 26 ++++++++++++++++++
+> >  2 files changed, 70 insertions(+)
+> > 
+[...]
+> > + */
+> > +
+> > +#include "k3-j784s4.dtsi"
+> > +
+> > +/ {
+> > +	model = "Texas Instruments K3 J742S2 SoC";
+> > +	compatible = "ti,j742s2";
+> > +
+> > +	cpus {
+> > +		cpu-map {
+> > +			/delete-node/ cluster1;
+> > +		};
+> > +	};
+> > +
+> > +	/delete-node/ cpu4;
+> > +	/delete-node/ cpu5;
+> > +	/delete-node/ cpu6;
+> > +	/delete-node/ cpu7;
 > 
-> A bit of a different thing, still documentation related tho: do
-> we want to do something about comments that mention page_lock in
-> zsmalloc.c?
+> I suggest refactoring by renaming the dtsi files as common and split out
+> j784s4 similar to j722s/am62p rather than using /delete-node/
+> 
 
-Good question!
+I don't mind the suggestion Nishanth if there is a reason behind it.
+Could you tell why we should not be using /delete-node/? 
 
-There are some comments mentioned about the page_lock in the file, but missed
-in the header of file, so how about the following adding:
+Regards,
+Manorit
 
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 731055ccef23..eac110edbff0 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -25,6 +25,8 @@
-  *
-  * Usage of struct zpdesc(page) flags:
-  *     PG_private: identifies the first component page
-+ *     PG_lock: lock all component pages for a zspage free, serialize with
-+ *              migration
-  */
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-
-Thanks a lot!
+> 
+> > +};
+> > +
+> > +#include "k3-j742s2-main.dtsi"
+> > 
+> > -- 
+> > 2.45.1
+> > 
+> 
+> -- 
+> Regards,
+> Nishanth Menon
+> Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
