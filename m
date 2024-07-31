@@ -1,119 +1,108 @@
-Return-Path: <linux-kernel+bounces-268487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D19942534
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:59:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2AD0942539
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319B7284A98
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:59:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543A628529A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6FD218B09;
-	Wed, 31 Jul 2024 03:58:59 +0000 (UTC)
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271B619478;
+	Wed, 31 Jul 2024 04:06:19 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF88B17C79;
-	Wed, 31 Jul 2024 03:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDC9168B7
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 04:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722398339; cv=none; b=B/7XYG3jHMJEcuBA0ZJqWeTP71Rf14pWU4Zq5pe1pi1fGAL0b+mfYosBNUeEwdLDi8aESvJ19MQiZbniYa2TcBOW2HN+VHuu+CIjnfQLfCFiKEAaDoHq2L2IW5EpyAywsVGUR8gOc0sxJ7hO3b3NmKRF8CQSUmyL3w9QmpEit7g=
+	t=1722398778; cv=none; b=EOXD22doAIh+ArMvKw9PWgIU+mM7fc6/7hHNL7fEBYZrAWxi2tehijMPG5biqU1RAUX6qVmgUY47xOV/K2isxGl14zD+FaHXx4ULImylx1zzAcK9oz2mEG8EsKBFSJGbZm/8a2mUJboMzyEcN1sH2oKWL2/3S7vOsmQRkxoHqhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722398339; c=relaxed/simple;
-	bh=ougaziKjpP9vYBdQ/eQQ9PSKfCAVex/UZXujKrhWLvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WM4UMkYAqe1tPq5tdl4wHV3Y0iXOKqUkrv6/7w6RpPT+GjRk4bjNszQ0rh7pXsdPMTzsNqn0cUilO3ZTpOg7v/mevSgn8ue6Z3Pb1s/MzigVLl/sjAI4KBOGBU1bfixTpmkp7JpqG8s6AX3YY5pYXrCxuhbnsZ1J8Jn0WGxlLw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-X-QQ-mid: bizesmtpsz10t1722398318tzbd49
-X-QQ-Originating-IP: zaN2RZXjY5yumKHQpNgBOt3RUlbALZrG/vIACwMTkBk=
-Received: from [10.20.53.89] ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 31 Jul 2024 11:58:36 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 6473966221935116780
-Message-ID: <49F442796158E773+c51253ff-8051-4c25-9c95-e5305d13628b@uniontech.com>
-Date: Wed, 31 Jul 2024 11:58:35 +0800
+	s=arc-20240116; t=1722398778; c=relaxed/simple;
+	bh=HvPzVMiU27AiqUOuPHJU8lPP/W0QnMiCSLD5oFUOIhQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CZ/vRKMrEaF+qyb9B+yo9TqDoFRsMzgzq27J+EC7vOk9XtyqrdziAI6NkkVJT+YD6o9GIclXYl16er/3C8wx0UITplAFwo/mSkTPgkpm3yS2daCDXutw5gLR8ufgshtSpayDPl0hrlNVHDWfmucS+EBNgq500AxHMnienxF/sTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from ubt.. (unknown [210.73.53.31])
+	by APP-01 (Coremail) with SMTP id qwCowAAnL0spuKlmWXZdAg--.7845S2;
+	Wed, 31 Jul 2024 12:06:04 +0800 (CST)
+From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V2 0/3] riscv: mm: Add soft-dirty and uffd-wp support
+Date: Wed, 31 Jul 2024 12:04:41 +0800
+Message-Id: <20240731040444.3384790-1-zhangchunyan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/cpufeatures: SGX: Adjust the error message when BIOS
- does not support SGX
-To: "Huang, Kai" <kai.huang@intel.com>, "seanjc@google.com"
- <seanjc@google.com>
-Cc: "baimingcong@uniontech.com" <baimingcong@uniontech.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
- "bp@alien8.de" <bp@alien8.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "jarkko@kernel.org" <jarkko@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>, "x86@kernel.org"
- <x86@kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
- "xiangzelong@uniontech.com" <xiangzelong@uniontech.com>,
- "wubo@uniontech.com" <wubo@uniontech.com>,
- "guanwentao@uniontech.com" <guanwentao@uniontech.com>,
- "haitao.huang@linux.intel.com" <haitao.huang@linux.intel.com>
-References: <D345627B0A699F37+20240730024931.1026933-1-wangyuli@uniontech.com>
- <a56bc12f6c60107c935db31d7330d28980ac4d5a.camel@intel.com>
- <ZqkpSX8xfbny7L0e@google.com>
- <9b1b4ef92b8d70bf8072fbbd07f70f82335b9040.camel@intel.com>
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <9b1b4ef92b8d70bf8072fbbd07f70f82335b9040.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAAnL0spuKlmWXZdAg--.7845S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw17trWDGF1fZryUCr4Uurg_yoW8JFykpa
+	9xCw15tryYkr1IyrsxAr1qgw15X3WfG3s0yry3X34ktw45WF4UZr9Yk3W8Jw18Ja42vr90
+	ka1UGry5Cw4kZaUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvSb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjc
+	xK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JV
+	WxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_Jw0_
+	GFylc2xSY4AK67AK6r45MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI
+	8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AK
+	xVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI
+	8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280
+	aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43
+	ZEXa7IU8u6wtUUUUU==
+X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiBwwPB2apggyjfAAAsd
 
-On 2024/7/31 06:48, Huang, Kai wrote:
+This patchset adds soft dirty and userfaultfd write protect tracking support
+for RISC-V.
 
->> FWIW, this could easily happen with a virtual machine, e.g. running an old QEMU
->> with `-cpu host`.
->>
-> Hmm.. it appears so, if the old Qemu doesn't have SGX support.  Thanks.
->
-> Perhaps "SGX disabled or unsupported by BIOS." or "SGX not enabled by
-> BIOS" is slightly better than the current "SGX disabled by BIOS", but I
-> am not sure whether it is worth patching.
+As described in the patches, we are trying to utilize only one free PTE bit to
+support three kernel features (devmap, soft-dirty,uffd-wp). Users cannot have
+them supported at the same time (have to select one when building the kernel).
 
-Of course, most kernel developers are incredibly busy and are reluctant 
-to spend their time
+This patchset has been tested with:
+1) The kselftest mm suite in which soft-dirty, madv_populate, test_unmerge_uffd_wp,
+and uffd-unit-tests run and pass, and no regressions are observed in any of the
+other tests.
 
-on those little changes.
+2) CRIU:
+- 'criu check --feature mem_dirty_track' returns supported
+- incremental_dumps works fine
+- zdtm test suite can run under host mode
 
+V1 -> V2:
+- Add uffd-wp supported;
+- Make soft-dirty uffd-wp and devmap mutually exclusive which all use the same PTE bit;
+- Add test results of CRIU in the cover-letter.
 
-However, the user base of Linux is gradually shifting from 
-'professionals' to 'general users'.
+Chunyan Zhang (3):
+  riscv: mm: Prepare for reuse PTE RSW bit(9)
+  riscv: mm: Add soft-dirty page tracking support
+  riscv: mm: Add uffd write-protect support
 
-As I mentioned in the commit msg. I hope to make kernel logs clearer and 
-more understandable,
-
-reducing confusion for those who are unfamiliar with the codebase.
-
-
-It's important that any change in upstream can potentially impact 
-countless users.
-
-
-Sincerely,
+ arch/riscv/Kconfig                    |  34 ++++++-
+ arch/riscv/include/asm/pgtable-64.h   |   2 +-
+ arch/riscv/include/asm/pgtable-bits.h |  31 ++++++
+ arch/riscv/include/asm/pgtable.h      | 132 +++++++++++++++++++++++++-
+ 4 files changed, 196 insertions(+), 3 deletions(-)
 
 -- 
-WangYuli
+2.34.1
 
 
