@@ -1,101 +1,134 @@
-Return-Path: <linux-kernel+bounces-269767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C305E9436B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:49:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7F0D9436B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CDE0281D9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:49:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 622C5281AA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6BA1304BF;
-	Wed, 31 Jul 2024 19:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9781607B7;
+	Wed, 31 Jul 2024 19:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uWpqsSHx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AQU0Kb06"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FzwcgcEJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BFF18044;
-	Wed, 31 Jul 2024 19:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB1614831F;
+	Wed, 31 Jul 2024 19:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722455369; cv=none; b=nh5+1jC2UAGegceIfm+sVdspSY98iNJLYBGUK/KTbBQ2ir0Qa1SKQ3Cz59jOsX/+qzqbhAP0CLw89YFU9MmvDfjuG7uyGjVeiecmQ9tNvTIYssjQc8ZvRDaH3uBP8lNp59/Gktm38M+3G7pjI8Uz/YrCw2xlZc7MJWpCcAR88yc=
+	t=1722455370; cv=none; b=SNaGv/Wn2TrUhhVqWtfw1Mv1GnfDT5cVjs7EK5gi7tsBn2K1cMtubYpVgYTL/vmA/5HJVc+LeQH8FD1mv8VmQOfYX0m6ozAYbIXsXpRlDhP9iMA6WeQYIrzOqI0GAE8tEyYrLbQlXMqjNT9wGknm3p3O3DfqGK17hFAQw7Hmrfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722455369; c=relaxed/simple;
-	bh=9OIJQf1Vo2Zgm2lXwUO3v0n7h0wbf2yvDoyIUZH40E8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=d46mXFmTBZr95nJNHijKq2aatubGd+XhjGfR7EBgNUVP/h+7GJOqbvI0VvlVYE1Ok2B3pqFT34oyNM+2ymFz3HSPi9faGBHB1zItb0Tj4nAOIuF3fZUsYblflPoqcdv7K+YMgO5TSHUVifwqO28G+6GdWqKtCRyLZ9TzVqThHiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uWpqsSHx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AQU0Kb06; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722455365;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mKGWpfNeiy6ZIL3ItuS4pR1aXovCHXyZTiygwKozo50=;
-	b=uWpqsSHx0M5aXg0JmzQTfGeG+Fv2SgCQ/EaOsdV7saAUEAUz26OJD1ZBWDBf99LHchBip/
-	8g/gvNHA9mW4XrvtSomfItC/QVFTVR3h/Ah0fGvseGEY1jJlV3hdcKAtkfOQHzf9nDPdbh
-	y5QMf5/zKPQq9tKr3rLpdKyZbJf7xtKgxTHnNJ2Ah0vYsbjL+Fs9g+ChVhGN3EG8cKa8Ha
-	gQ4XNVj4ZtBk6rb0hnCjfo11ppTK6rE6Pp033p+kWLRdBUS68rVGE8NdRUUh2x9j/HJpiu
-	O/ebepUC5aiz820QDddNHEo9BiUnAfySfKYnODVPe5IeKB2/jqvCfRsPo8ZGfg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722455365;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mKGWpfNeiy6ZIL3ItuS4pR1aXovCHXyZTiygwKozo50=;
-	b=AQU0Kb06pGL0FVW0OXacd86rNFzk6ddsIsys2lvzwIKp5zt6ZdObDcIVc20jcG9iJwjwxE
-	j2nhDiA9BdRM6/BA==
-To: WangYuli <wangyuli@uniontech.com>, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, wangyuli@uniontech.com,
- seanjc@google.com, xiangzelong@uniontech.com
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, wubo@uniontech.com,
- guanwentao@uniontech.com, baimingcong@uniontech.com,
- linux-sgx@vger.kernel.org, jarkko@kernel.org,
- haitao.huang@linux.intel.com, Kai Huang <kai.huang@intel.com>
-Subject: Re: [PATCH v2] x86/cpu: Adjust the error message when BIOS does not
- support SGX
-In-Reply-To: <D3C34BA892161BCF+20240731153056.303909-1-wangyuli@uniontech.com>
-References: <D3C34BA892161BCF+20240731153056.303909-1-wangyuli@uniontech.com>
-Date: Wed, 31 Jul 2024 21:49:25 +0200
-Message-ID: <87zfpx4a0q.ffs@tglx>
+	s=arc-20240116; t=1722455370; c=relaxed/simple;
+	bh=PUpvq4IvGstISJBnqSrlDq4K2g9I2Ugc4NXAsXQFQ+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=G4txADYvLFxqVv5LbsZjGY3IoMT6tb7uC6fxol3ckjKREWccI6gXGyIeMvsdjmV3dEPXjx2k220hylMdwHbHcmRsl4Awr8a7L6NyrH9Lhlv5QwOJTFaXfoYZQXHZzNQ9WvLANXFHxcZxDjoPJLU502VJd+EwtZizpA6fnVL37ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FzwcgcEJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 118DEC4AF09;
+	Wed, 31 Jul 2024 19:49:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722455369;
+	bh=PUpvq4IvGstISJBnqSrlDq4K2g9I2Ugc4NXAsXQFQ+Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=FzwcgcEJ2HxUeoOcvMsJeNsPl6w9Kj08seE75vXEQtKYVaw9J5f5kGITSMChJ5ngg
+	 nyOup++1xb53SaOvf2JQ6WZNlC0k9CcImr85jS76aolvFVD1FC92psCq2PvJTtVh43
+	 JSm+TZmXzo9IqPIorv/zUDNb7zcBKywFNjDBjzOenBlkIy7+dBWQj4PvcAIYmwZWJd
+	 mnRfyHxi402vgsIw2XNgcy189EIbANEqBOYCgpV2Nbwbgkc9WXc2wGBBi/g4AHzyUm
+	 adI7kyJrsRNPmnjJPx8nunXdyVHshIdNVxYRsg7P4rs98iTyg7W80qr3kqBAvFNRer
+	 5IIcm7AENs1qQ==
+Date: Wed, 31 Jul 2024 14:49:27 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Sunil V L <sunilvl@ventanamicro.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-pci@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Anup Patel <anup@brainfault.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Robert Moore <robert.moore@intel.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Haibo Xu <haibo1.xu@intel.com>,
+	Atish Kumar Patra <atishp@rivosinc.com>,
+	Drew Fustini <dfustini@tenstorrent.com>
+Subject: Re: [PATCH v7 08/17] ACPI: pci_link: Clear the dependencies after
+ probe
+Message-ID: <20240731194927.GA78106@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729142241.733357-9-sunilvl@ventanamicro.com>
 
-On Wed, Jul 31 2024 at 23:30, wangyuli@uniontech.com wrote:
-> When SGX is not supported by the BIOS, the kernel log still output
-> the error 'SGX disabled by BIOS', which can be confusing since
-> there might not be an SGX-related option in the BIOS settings.
->
-> As a kernel, it's difficult to distinguish between the BIOS not
-> supporting SGX and the BIOS supporting SGX but it's disabled.
->
-> Therefore, update the error message to
-> 'SGX disabled or unsupported by BIOS' to make it easier for those
-> reading kernel logs to understand what's happening.
->
-> Reported-by: Bo Wu <wubo@uniontech.com>
-> Link: https://github.com/linuxdeepin/developer-center/issues/10032
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
-> Link: https://lore.kernel.org/all/a30f7700c7817b3e7e2f2bdb37d5c10a318b2c3b.camel@intel.com/
-> Signed-off-by: Zelong Xiang <xiangzelong@uniontech.com>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+On Mon, Jul 29, 2024 at 07:52:30PM +0530, Sunil V L wrote:
+> RISC-V platforms need to use dependencies between PCI host bridge, Link
+> devices and the interrupt controllers to ensure probe order. The
+> dependency is like below.
+> 
+> Interrupt controller <-- Link Device <-- PCI Host bridge.
+> 
+> If there is no dependency added between Link device and PCI Host Bridge,
+> then the PCI end points can get probed prior to link device, unable to
+> get mapping for INTx.
 
-This Signed-off-by chain is invalid. See:
+This sentence is missing a word or something.  Maybe it's supposed to
+say something like this:
 
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#sign-your-work-the-developer-s-certificate-of-origin
+  If there is no dependency between Link device and PCI Host Bridge,
+  then PCI devices may be probed prior to Link devices.  If a PCI
+  device is probed before its Link device, we won't be able to find
+  its INTx mapping.
 
-Thanks,
+> So, add the link device's HID to dependency honor list and also clear it
+> after its probe.
 
-        tglx
+It looks like *this* patch only clears it after probe.  And the commit
+log doesn't say why we need to clear the dependency.
+
+> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
+> ---
+>  drivers/acpi/pci_link.c | 2 ++
+>  drivers/acpi/scan.c     | 1 +
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/drivers/acpi/pci_link.c b/drivers/acpi/pci_link.c
+> index aa1038b8aec4..b727db968f33 100644
+> --- a/drivers/acpi/pci_link.c
+> +++ b/drivers/acpi/pci_link.c
+> @@ -748,6 +748,8 @@ static int acpi_pci_link_add(struct acpi_device *device,
+>  	if (result)
+>  		kfree(link);
+>  
+> +	acpi_dev_clear_dependencies(device);
+> +
+>  	return result < 0 ? result : 1;
+>  }
+>  
+> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> index 28a221f956d7..753539a1f26b 100644
+> --- a/drivers/acpi/scan.c
+> +++ b/drivers/acpi/scan.c
+> @@ -863,6 +863,7 @@ static const char * const acpi_honor_dep_ids[] = {
+>  	"INTC10CF", /* IVSC (MTL) driver must be loaded to allow i2c access to camera sensors */
+>  	"RSCV0001", /* RISC-V PLIC */
+>  	"RSCV0002", /* RISC-V APLIC */
+> +	"PNP0C0F",  /* PCI Link Device */
+>  	NULL
+>  };
+>  
+> -- 
+> 2.43.0
+> 
 
