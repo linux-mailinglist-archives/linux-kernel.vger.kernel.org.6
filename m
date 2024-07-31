@@ -1,215 +1,217 @@
-Return-Path: <linux-kernel+bounces-269103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6577E942DA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:00:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECFE7942DAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 889621C23848
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:00:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CDBB1C21BFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0131AE846;
-	Wed, 31 Jul 2024 12:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22A91AE86E;
+	Wed, 31 Jul 2024 12:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hHKKb14G";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1VJjiVbt";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hHKKb14G";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1VJjiVbt"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kln8riWt"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CBD18DF93;
-	Wed, 31 Jul 2024 12:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2B918DF93;
+	Wed, 31 Jul 2024 12:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722427239; cv=none; b=igNrw7KR9k3uGc+B/AaYX3ivp+wNfJf15sxIzWwef9kr39h/qkwf5UWY4ZKTPxXkTI8JTm3QRdHxoPdbdGUrLvTlfviHiC2Gb53YYp38syQ//bUik4c6G13elhaYMzuivBr1FVcToW9u26k/vifjWxeCnSd6pUiUaoUg1UkXk1g=
+	t=1722427317; cv=none; b=GBceeHYmKHMoQJMelwYO5c7+nEfahK5gDLklq5T+6SSMJ21BhQgWQlL3lcgVBEKyXFoukK3cKP3ER/F6S4oHke7PXNpuAUMWxkaUtJmzgezf9+UU05qcdaGV6a2Hyr31SvU8XW8iFCRiPg2dJmNZun70Gwvq2ON3BVBCCRkq2G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722427239; c=relaxed/simple;
-	bh=7X0glzCv49a4A0vWSYBw540pwDZNymabwjdOBbQ0rJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hFauXijTpQU2Q6fij6TbQjFwZ2Pf+KxceXOtTrOzlTqQ+wTiG4Xgws/02lbmyHeKY1Xbtb2Nf2Svyk7MRPIQHpHKiif9l4beYjTljB5ImMZUBnnvnkDgtPuYtqQ3qG1pKhITsn6P8VUPWCp6wmMMLoFzbqbN8XX0ZuH+PKzbixE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hHKKb14G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1VJjiVbt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hHKKb14G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1VJjiVbt; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1CDD11F84B;
-	Wed, 31 Jul 2024 12:00:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722427236; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j0f3WWCUuOxHtv6OXlvNwnzPFYtZMQULMScewqyDVa8=;
-	b=hHKKb14GhBR6DZB1ELkzOxgIbC4/Pfh2fRIkdYobYSNLF3XKhPH1gYVVD1IeEWTZdg/ROT
-	WjM16FasoNKVxVdYfvuKoosgSr9H6+ZmQKNBsUSc0v8Oilt7ExmcRwkuP3GXbnoYZzi1Ez
-	SUqLE/TZEgYwoaUUcee9plunah3ZP14=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722427236;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j0f3WWCUuOxHtv6OXlvNwnzPFYtZMQULMScewqyDVa8=;
-	b=1VJjiVbt6y+CVAj3VUIwvXf0LzLIQQNTU3T1ER6DSZ2eETA04o2gBO17TOJh7Y4St/VX0h
-	egU/kPWMNI+fUUCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722427236; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j0f3WWCUuOxHtv6OXlvNwnzPFYtZMQULMScewqyDVa8=;
-	b=hHKKb14GhBR6DZB1ELkzOxgIbC4/Pfh2fRIkdYobYSNLF3XKhPH1gYVVD1IeEWTZdg/ROT
-	WjM16FasoNKVxVdYfvuKoosgSr9H6+ZmQKNBsUSc0v8Oilt7ExmcRwkuP3GXbnoYZzi1Ez
-	SUqLE/TZEgYwoaUUcee9plunah3ZP14=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722427236;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j0f3WWCUuOxHtv6OXlvNwnzPFYtZMQULMScewqyDVa8=;
-	b=1VJjiVbt6y+CVAj3VUIwvXf0LzLIQQNTU3T1ER6DSZ2eETA04o2gBO17TOJh7Y4St/VX0h
-	egU/kPWMNI+fUUCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E06CA1368F;
-	Wed, 31 Jul 2024 12:00:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id z8TINmMnqmYPRwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 31 Jul 2024 12:00:35 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 99F59A099C; Wed, 31 Jul 2024 14:00:29 +0200 (CEST)
-Date: Wed, 31 Jul 2024 14:00:29 +0200
-From: Jan Kara <jack@suse.cz>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] jbd2: remove unneeded done_copy_out variable in
- jbd2_journal_write_metadata_buffer
-Message-ID: <20240731120029.coefse52w2kwpuip@quack3>
-References: <20240731062247.2380440-1-shikemeng@huaweicloud.com>
- <20240731062247.2380440-6-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1722427317; c=relaxed/simple;
+	bh=LVjov7ClVWhHYmB27oJpJCKYTDKiwHUtuAGM7drOpZs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GtXRLVBW+ik1TwNQV0HC7cvfGmeCdI6/7niykXrFJZR4NkmssFQX66GG0Paa/Sh/sfUTKgIsle/Rmu++/51oZ/7xXTM6CpuRyQyLKUM5b86ukKl8/m7dIoBYOiJF2a3eVzrxhanTr0hK92BOvV7p2fcUtB8ISkfY4v2P5Z6Rg5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kln8riWt; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-44ff132ff9cso32526141cf.2;
+        Wed, 31 Jul 2024 05:01:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722427313; x=1723032113; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DdxVctv+DdSXKhp2nW8V2B7yfwAa9gWaT7Efbbf2MUs=;
+        b=Kln8riWt/2sCcqnfj7MU4WZ4NWqFZy815ymwHnro7Vw8FP+V/HZNO5yEVKHtgTbEId
+         wIzQK2jO7sZ0/ciTBRmBx2gYCIXI5dPGxI/dy+feersBcnxAXxfomUGNF+jNs5YJeRuJ
+         3HzrwCY4qjoUID0fm2ETxSQLJYYZmLJtMSk9MLlBNANvxKlieFfwb/43Qz7o9/eV9PV7
+         xprki3sg/cIHzImwKKI05QWDlYoOklCzUVMv3U99VhsX+c0xeOHLzk9QGurBP1KPi8PI
+         qpNJaIEKufYD2HD4Vo1DTGsMopU+TVt7mgQfQU+QfYx6d1QDczIeZ/YAZfeWL+f10oyf
+         cEPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722427313; x=1723032113;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DdxVctv+DdSXKhp2nW8V2B7yfwAa9gWaT7Efbbf2MUs=;
+        b=bJBNqmmhlbA75oeypAvRCq3jQgHUgO0FQjRhGnl7eCz9mVZ7kN49VSFZqyPz4mAYb/
+         wqOLcyczvjpthrY95b8AcyNxSayBDQ0SfNxgmafgdkhBgnJ9R3RHqrO/Mu81eEm1Q8TC
+         6Wah8pB7dQbmyr4RKHA/cFu7+F4dkznvFzLVOH8hDT8+twVyaHqeXWm6Hf1dQyBHXxtG
+         40kFTEQFs+zKEudXUi0BcacTivzq2txQ5lW9z0lfchIJkAUgprWA2rRMHbI8YJ6hqFkC
+         FhWJyzTjyVkhU+V4mL6Ww3utAZxTs61b4z56LDXWeHyF4WJtjaoxnqD2CiuOF6X35jCd
+         ztuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWeltVgVvDKSaU+brk1pyM2DD0zySS9ZRhydjrnxysiO952uvglUplzrG9mmBmwG2BqnuyCeDUBlF4CPNh1b0ZGhNCse8z/lBzR3H4r2eY7PCYEO9f6s0YXRHj8B1QBpF1Yvm/5qMFNGYSGMNP8yK3PS6wq6JQZUwwO5osF2sV5AZaFSOWLz4qtzhKIPgyxYnvzJZ5U9zQHJFKKaz3ZQH9O
+X-Gm-Message-State: AOJu0YwIjl45ldU8NPsZIQPO6wBNhIXktfrRSyJz8uNvohDjp4IyVuvW
+	++Mg/eQ7XmG9Le4u/kmbPokl34IrVdCqcRbEgwJxHS4r9NhDsAGaI6Z3QROfdMK4yLgE2BNnCy+
+	nLiK0TFFrzQqA/mM+m8wG9SUExXk=
+X-Google-Smtp-Source: AGHT+IFi2BbcxJpNlMrpYMLQzS7Jo6R2My/hEHuRqvwqwW1vOU0rinmMmWgsYL/ghObViGzEfNFNw52JVfzra3ViMP4=
+X-Received: by 2002:ac8:5806:0:b0:44f:f9ce:25df with SMTP id
+ d75a77b69052e-45004f4bf36mr164398711cf.46.1722427313075; Wed, 31 Jul 2024
+ 05:01:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731062247.2380440-6-shikemeng@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.60 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,huaweicloud.com:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.60
+References: <20240731061132.703368-1-jacobe.zang@wesion.com>
+ <20240731061132.703368-5-jacobe.zang@wesion.com> <0a78a0fb-0a5e-424f-a801-4a63b9ee1a49@gmail.com>
+ <3ded8aea-ee11-43da-9dd7-1259cf931747@broadcom.com>
+In-Reply-To: <3ded8aea-ee11-43da-9dd7-1259cf931747@broadcom.com>
+From: Alexey Charkov <alchark@gmail.com>
+Date: Wed, 31 Jul 2024 15:01:41 +0300
+Message-ID: <CABjd4YxiSY0A0iVHGHw9RDey+avxmzUapoLLLyf=80MzVX0yWA@mail.gmail.com>
+Subject: Re: [PATCH v6 4/5] wifi: brcmfmac: Add optional lpo clock enable support
+To: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org, krzk+dt@kernel.org, 
+	heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org, 
+	efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com, minipli@grsecurity.net, 
+	brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com, 
+	nick@khadas.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 31-07-24 14:22:44, Kemeng Shi wrote:
-> It's more intuitive to use jh_in->b_frozen_data directly instead of
-> done_copy_out variable. Simply remove unneeded done_copy_out variable
-> and use b_frozen_data instead.
-> 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+On Wed, Jul 31, 2024 at 2:15=E2=80=AFPM Arend van Spriel
+<arend.vanspriel@broadcom.com> wrote:
+>
+> On 7/31/2024 12:16 PM, Alexey Charkov wrote:
+> > Hi Jacobe,
+> >
+> >
+> > On 31/07/2024 9:11 am, Jacobe Zang wrote:
+> >  > WiFi modules often require 32kHz clock to function. Add support to
+> >  > enable the clock to PCIe driver and move "brcm,bcm4329-fmac" check
+> >  > to the top of brcmf_of_probe
+> >  >
+> >  > Co-developed-by: Ondrej Jirman <megi@xff.cz>
+> >  > Signed-off-by: Ondrej Jirman <megi@xff.cz>
+> >  > Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+> >  > ---
+> >  >  .../net/wireless/broadcom/brcm80211/brcmfmac/of.c    | 12 +++++++++=
+++-
+> >  >  1 file changed, 11 insertions(+), 1 deletion(-)
+> >  >
+> >  > diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+> > b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+> >  > index e406e11481a62..7e0a2ad5c7c8a 100644
+> >  > --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+> >  > +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+> >  > @@ -6,6 +6,7 @@
+> >  >  #include <linux/of.h>
+> >  >  #include <linux/of_irq.h>
+> >  >  #include <linux/of_net.h>
+> >  > +#include <linux/clk.h>
+> >  >
+> >  >  #include <defs.h>
+> >  >  #include "debug.h"
+> >  > @@ -70,12 +71,16 @@ void brcmf_of_probe(struct device *dev, enum
+> > brcmf_bus_type bus_type,
+> >  >  {
+> >  >      struct brcmfmac_sdio_pd *sdio =3D &settings->bus.sdio;
+> >  >      struct device_node *root, *np =3D dev->of_node;
+> >  > +    struct clk *clk;
+> >  >      const char *prop;
+> >  >      int irq;
+> >  >      int err;
+> >  >      u32 irqf;
+> >  >      u32 val;
+> >  >
+> >  > +    if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
+> >  > +        return;
+> >
+> > Did you test this? The DTS patch you sent as part of this series doesn'=
+t
+> > list "brcm,bcm4329-fmac" in the compatible, so this will probably retur=
+n
+> > right here, skipping over the rest of your patch.
+> >
+> > Please test before resending, both with and without the driver for the
+> > Bluetooth part of the chip (since it also touches clocks).
+> >
+> > You are also changing the behavior for other systems by putting this
+> > check further up the probe path, which might break things for no reason=
+.
+> > Better put your clk-related addition below where this check was
+> > originally, rather than reorder stuff you don't have to reorder.
+>
+> That was upon my suggestion. That check was originally at the top of the
+> function, but people added stuff before that. I agree that makes the
+> compatible "brcm,brcm4329-fmac" required which is what the textual
+> binding stated before the switch to YAML was made:
+>
+> """
+> Broadcom BCM43xx Fullmac wireless SDIO devices
+>
+> This node provides properties for controlling the Broadcom wireless
+> device. The
+> node is expected to be specified as a child node to the SDIO controller t=
+hat
+> connects the device to the system.
+>
+> Required properties:
+>
+>   - compatible : Should be "brcm,bcm4329-fmac".
+> """
+>
+> Not sure whether this is still true for YAML version (poor YAML reading
+> skills ;-) ), but it should as the switch from textual to YAML should
+> not have changed the bindings specification.
+>
+> >  > +
+> >  >      /* Apple ARM64 platforms have their own idea of board type,
+> > passed in
+> >  >       * via the device tree. They also have an antenna SKU parameter
+> >  >       */
+> >  > @@ -113,8 +118,13 @@ void brcmf_of_probe(struct device *dev, enum
+> > brcmf_bus_type bus_type,
+> >  >          of_node_put(root);
+> >  >      }
+> >  >
+> >  > -    if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
+> >  > +    clk =3D devm_clk_get_optional_enabled(dev, "lpo");
+> >  > +    if (!IS_ERR_OR_NULL(clk)) {
+> >  > +        brcmf_dbg(INFO, "enabling 32kHz clock\n");
+> >  > +        clk_set_rate(clk, 32768);
+> >  > +    } else {
+> >  >          return;
+> >
+> > Why return here? If the clock is optional, a lot of systems will not
+> > have it - that shouldn't prevent the driver from probing. And you are
+> > still not handling the -EPROBE_DEFER case which was mentioned on your
+> > previous submission.
+>
+> Right. The else statement above could/should be:
+>
+> } else if (clk && PTR_ERR(clk) =3D=3D -EPROBE_DEFER) {
+>          return PTR_ERR(clk);
+> }
 
-Looks good. Feel free to add:
+... plus change the function prototype to return int and propagate
+that error code through brcmf_get_module_param to brcmf_pcie_probe's
+return value. I guess checking clk for NULL is also redundant in this
+case?
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/jbd2/journal.c | 21 ++++++++-------------
->  1 file changed, 8 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 9c1ffb0dc740..f17d05bc61df 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -318,7 +318,6 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  				  struct buffer_head **bh_out,
->  				  sector_t blocknr)
->  {
-> -	int done_copy_out = 0;
->  	int do_escape = 0;
->  	char *mapped_data;
->  	struct buffer_head *new_bh;
-> @@ -349,7 +348,6 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  	 * we use that version of the data for the commit.
->  	 */
->  	if (jh_in->b_frozen_data) {
-> -		done_copy_out = 1;
->  		new_folio = virt_to_folio(jh_in->b_frozen_data);
->  		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
->  		mapped_data = jh_in->b_frozen_data;
-> @@ -357,17 +355,15 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  		new_folio = bh_in->b_folio;
->  		new_offset = offset_in_folio(new_folio, bh_in->b_data);
->  		mapped_data = kmap_local_folio(new_folio, new_offset);
-> -	}
-> -
-> -	/*
-> -	 * Fire data frozen trigger if data already wasn't frozen.  Do this
-> -	 * before checking for escaping, as the trigger may modify the magic
-> -	 * offset.  If a copy-out happens afterwards, it will have the correct
-> -	 * data in the buffer.
-> -	 */
-> -	if (!done_copy_out)
-> +		/*
-> +		 * Fire data frozen trigger if data already wasn't frozen. Do
-> +		 * this before checking for escaping, as the trigger may modify
-> +		 * the magic offset.  If a copy-out happens afterwards, it will
-> +		 * have the correct data in the buffer.
-> +		 */
->  		jbd2_buffer_frozen_trigger(jh_in, mapped_data,
->  					   jh_in->b_triggers);
-> +	}
->  
->  	/*
->  	 * Check for escaping
-> @@ -380,7 +376,7 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  	/*
->  	 * Do we need to do a data copy?
->  	 */
-> -	if (do_escape && !done_copy_out) {
-> +	if (do_escape && !jh_in->b_frozen_data) {
->  		char *tmp;
->  
->  		spin_unlock(&jh_in->b_state_lock);
-> @@ -408,7 +404,6 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  copy_done:
->  		new_folio = virt_to_folio(jh_in->b_frozen_data);
->  		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
-> -		done_copy_out = 1;
->  	}
->  
->  	/*
-> -- 
-> 2.30.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Best,
+Alexey
 
