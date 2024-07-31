@@ -1,113 +1,129 @@
-Return-Path: <linux-kernel+bounces-269463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B87943346
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:28:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 727B5943314
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BED3B2CA3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:22:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A56C1F2A47E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097331BC067;
-	Wed, 31 Jul 2024 15:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11DD1BD4FF;
+	Wed, 31 Jul 2024 15:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oU8/J9El"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="pjHYquub"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3213D1799F;
-	Wed, 31 Jul 2024 15:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA0B168DC
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722439188; cv=none; b=C0CuZe2BwE70F3sgbVufZSE9To5DiSC6anlUwirQ+t2MjscFtuWoE/16w+vYVGMcNamy1xiPb+LSZlAuTxz4oX/QTsft4oL6j2GYRiFQS4+nm2F7DO96DsnfnWb1PggQ8Yc47/0Wi3WcXDE9xKobnGeedZr93BSqWjva0TMUWY0=
+	t=1722439265; cv=none; b=jxwsDvbuxOyzaRjMvw6MDFsuQsNTjTz8nmNyoMl2p/PS3r4Syobpnu50aZCEAeoVxnMqepkT9VBKbtjPwB+aKobOVIi3fXl267Vw9jRZGzGi9FkO7pmcDv8edRplST0Sn+zNSMOkMhr/nUmaWoG3BymtcLZIpBcEJpCXlY4BPyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722439188; c=relaxed/simple;
-	bh=M4l/MvBogF76/75u0nQ1zmhwmlxJgPNmJ1Dn9CGWYbg=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=tjyoOYt1HmPrtgJ4MBoIl9DHop2Is4O8jjjSkjz1JtGOJfD9G7KR9jZrWTIlgWpK4Fgeun0Xi2uW7GspR2NnkNdube1Mj4cs3M+Rn5xxSijP4+4reesUPsSQ3XPxWnURDpGab9iJmqmPKgms/UZNvuQ8Z9RHIsr1PxYJCYM5ALw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oU8/J9El; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8C74C116B1;
-	Wed, 31 Jul 2024 15:19:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722439188;
-	bh=M4l/MvBogF76/75u0nQ1zmhwmlxJgPNmJ1Dn9CGWYbg=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=oU8/J9ElYttHWJsYCZ3hPaH/+UwwToM2MnKMOLV576yB0u3X3sp+amzxgtLggRtx5
-	 +yQPMtUpjJs9zAvbU+WiDyPWf6qVT7x3Wgg7oHbKK3Io5LePyvPrsHMUg9+HX3GQDn
-	 lVboCjMT7QcSxtwkY8+0AX1nWh5JT+7KP2KLfw3OvW0YwFS38gQZOhBuVqK8S9jAjq
-	 P6C2Yg28fuG95mAX1H9OYVk2jiPduLGVclCCOKKsIBFWodSsE3c7AWjv96g3L54yc9
-	 1lI63Vz76YDf4HL6tW5d6eHQlkPtdAfkFr2dEJ43CspuNskdsUIgfWscdNAwE/AD12
-	 KFKdVeoXIQ2Mg==
-Date: Wed, 31 Jul 2024 09:19:46 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1722439265; c=relaxed/simple;
+	bh=+SbEPfgpH/hFpT3PraiDHygVL8HF/LfftQ6Q2/alDBI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rusS+6o6qII1lrXPK8s9dCVd+EqBc9kKpN6DOCgLfBPkvlrmII6oRZq4VcTzeQoYcKMcW8LBRMgTBIBUiJh0I0il7FOHL+AGbGEXJ7SkNFeQzgsNLHA3DErke9eoaFPDeHiPD5aTjev2JTqvpRm5ooVw8Td3btyXealdKoF4Aa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=pjHYquub; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ef2c56da6cso68659881fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:21:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1722439261; x=1723044061; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cCiWYkROgI93lDUlu4n/pJ2oJ0YJVxVSXcd616C/MpE=;
+        b=pjHYquubKRl3L86ysoDJEzOsGOVdRJT8ADRT2JrB23OvcOJ/jlHVW40mAm1rsUtnam
+         CoyS5i6/q5APK+nbB4B1nrW7QxD/h3fGcug5EGDeZ5QwRyW7st4YP7x6bkcc18VJHq2P
+         tOVf3cUtbbCIVqNehCZZsjjgyq8MzYOJ7v6N1E6N5r0gnSAv0cacskg65t2TaRu67mzt
+         0nAB0e96HVOqeghifkgPfpHmdO+vL6b7v/sNmZI9yCMF1p/l6eaERK+0x6dlKO8TrDBk
+         o7tWScWHDdsEjV4WhI/iBvQr1rO1AeEIKp4K/qEL+CnE+HTfIygYN59bqwGHxjnpdmKC
+         7JmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722439261; x=1723044061;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cCiWYkROgI93lDUlu4n/pJ2oJ0YJVxVSXcd616C/MpE=;
+        b=FYwbJEn3o7KJgJ22VHMn5sOhLb6CfHO8MdDttCGBYBF5Qg4fC7sSom6uY4Bujmz4Yp
+         0u/z30kng26Ya+6UnzrZ2NF7S/Ct4XCMBdgrgbZkMa1Rzz7EJ1042nQaRAb5sBuZIQvN
+         ud0YQ2vhS4oRqMMlFSQd67ByNzkG5P6o5pH07FNSceXSec0JLKAiFzyER8Kb4rzPSwBX
+         IDodSzW/jJb8mSjBTidpV57rVVrGtWNwkDP2BgRjzyzjOk99d91JPAR/5VWbLUD7zHZH
+         hfyo9BzmDOkp28Fz3i5L12zCKBAbODXMdFNy4V9AJT2PmBZGCKZEn5pFwPu1qHRl17AJ
+         bjQw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/His9+0Mh0q+WxCwRAUOd0J+xoVh8Rpe+P1hKIzYH87TJvm7HGvF8a7fqQebn4YhSlpXUAOMtxcwp89ywoL3j56989jwcwXcW85SR
+X-Gm-Message-State: AOJu0Yz1L4dqKwmd9pe5HO9CLbsUCVE7Sm00XKqWVGO4J7fiZH9R6oXy
+	75JWoDr53Sb2qrGBnjMwTwSrP5+S8BoyB/Aiwa0OC/m624RxpR3f1G1cpjz+RjM=
+X-Google-Smtp-Source: AGHT+IG7CJt6t5qJCHyGKp/mo0NxzGfDkWvMcEe7uZh6E+y4pDooAoq7eQ5eZ+XU3qjbqC+bGpxAvg==
+X-Received: by 2002:a2e:b059:0:b0:2ef:2685:177d with SMTP id 38308e7fff4ca-2f12ecd5249mr94676691fa.20.1722439261120;
+        Wed, 31 Jul 2024 08:21:01 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:9c3f:3dd8:b524:cb31])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b8addd6sm24752925e9.20.2024.07.31.08.21.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 08:21:00 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/3] Bluetooth: hci_qca: fix post merge window regressions
+Date: Wed, 31 Jul 2024 17:20:47 +0200
+Message-Id: <20240731-hci_qca_fixes-v1-0-59dad830b243@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Trevor Gamblin <tgamblin@baylibre.com>
-Cc: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jonathan Cameron <jic23@kernel.org>, 
- Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Lars-Peter Clausen <lars@metafoo.de>, devicetree@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, linux-doc@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-In-Reply-To: <20240731-ad7625_r1-v1-1-a1efef5a2ab9@baylibre.com>
-References: <20240731-ad7625_r1-v1-0-a1efef5a2ab9@baylibre.com>
- <20240731-ad7625_r1-v1-1-a1efef5a2ab9@baylibre.com>
-Message-Id: <172243918673.970734.12577572126650200260.robh@kernel.org>
-Subject: Re: [PATCH RFC 1/3] dt-bindings: iio: adc: add AD762x/AD796x ADCs
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE9WqmYC/x3LTQqAIBBA4avIrBP8CZSuEiGiU87GSiEC8e5Jy
+ 4/Ha1CxEFZYWIOCD1U684CcGITk84Gc4jAooWZhtOQpkLuDdzu9WLlF4y1G7aPVMJ6r4B/Gsm6
+ 9f49zeyVfAAAA
+To: Marcel Holtmann <marcel@holtmann.org>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+ Wren Turkal <wt@penguintechs.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, 
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=796;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=+SbEPfgpH/hFpT3PraiDHygVL8HF/LfftQ6Q2/alDBI=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmqlZXE4Md+7XSIQbpcxIMM18fw5OanFFl7W4Tu
+ 1Ja4wiNyteJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZqpWVwAKCRARpy6gFHHX
+ csM3EAC7cQyjytCwjdWldEJKGVoDSHCh78bW0xAi4x69G03mNNhTXSljpnkfoCK5KUIuGEc4WKM
+ ZJm5OaAssDLTyT7HhoEll/HqTLFbNk+Hkhrx5iTfVMIuOQAQqxNYbbtZE2JcASImLgvuoOXkzA2
+ FwPJsDUBlw0ekxOgjiTlk7j2ZVI2fOdxHgBt5IfuphGOiPJoVHSraxwBs0j2cjqOL6A9sk6navq
+ uN4++kvBJ0+1DwQvovnfI3YykF3tGGp9hl1OAY4En2RZxfXUxUlLfgzyBSjEYHnlUbxLTlBzztq
+ NkuQ8BIA4m9udC0IHADa1meXRQN1OWFVEjV4cxGAEMGQiDo78m4K1svlSz0CD42POLon43SEUql
+ E/54JvHDpCQHQOMxg0O5XZ7KJAK5MtfmrEQmXOk95JLabA0bKd7W0Ns6OcNY/Bkr/kvuuKNC7Ks
+ hDqSEd2VMevjHDb55ZtvfZeOniMczJGQR5wrprYi7jmfwVhsWIrKB5HDOvW62MDLT8eTNNxfcUT
+ 4I3Vj31Yd9lItxLAnn3aiStZZqlE+rR/q3rHp0A4XKZMveAKEXpX2kEPJDfQ+NsNqeJuOaV3T2y
+ 9qc9+pmdMfHxzR81tXhE6lXli6fkUKP+MAoVOjnIQbXgVEWvgg3t5o4cP193K45ev/sBXAmhdkx
+ /BSCgVyhvXdJtYQ==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
+Here are the fixes for regressions reported by Wren and Dmitry. I could
+reproduce the crash on db820c and so I was able to test it but patch 2/3
+could use a Tested-by from Wren on QCA6390.
 
-On Wed, 31 Jul 2024 09:48:03 -0400, Trevor Gamblin wrote:
-> This adds a binding specification for the Analog Devices Inc. AD7625,
-> AD7626, AD7960, and AD7961 ADCs.
-> 
-> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
-> ---
->  .../devicetree/bindings/iio/adc/adi,ad7625.yaml    | 176 +++++++++++++++++++++
->  MAINTAINERS                                        |   9 ++
->  2 files changed, 185 insertions(+)
-> 
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (3):
+      Bluetooth: hci_qca: don't call pwrseq_power_off() twice for QCA6390
+      Bluetooth: hci_qca: fix QCA6390 support on non-DT platforms
+      Bluetooth: hci_qca: fix a NULL-pointer derefence at shutdown
 
-My bot found errors running 'make dt_binding_check' on your patch:
+ drivers/bluetooth/hci_qca.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
+---
+base-commit: cd19ac2f903276b820f5d0d89de0c896c27036ed
+change-id: 20240731-hci_qca_fixes-8e7a8ed3ad83
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml:120:1: [error] syntax error: expected <block end>, but found '-' (syntax)
-
-dtschema/dtc warnings/errors:
-make[2]: *** Deleting file 'Documentation/devicetree/bindings/iio/adc/adi,ad7625.example.dts'
-Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml:120:1: did not find expected key
-make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/iio/adc/adi,ad7625.example.dts] Error 1
-make[2]: *** Waiting for unfinished jobs....
-./Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml:120:1: did not find expected key
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml: ignoring, error parsing file
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
-make: *** [Makefile:240: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240731-ad7625_r1-v1-1-a1efef5a2ab9@baylibre.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
