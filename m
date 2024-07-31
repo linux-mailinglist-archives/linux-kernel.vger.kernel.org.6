@@ -1,173 +1,127 @@
-Return-Path: <linux-kernel+bounces-269950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E457943929
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:02:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3531794392D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF1B62826E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:02:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D289D1F21E26
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E4616D4FF;
-	Wed, 31 Jul 2024 23:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820E416D4FF;
+	Wed, 31 Jul 2024 23:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1V41JND"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MpeFz383"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0DC101EE;
-	Wed, 31 Jul 2024 23:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8CB49625
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 23:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722466958; cv=none; b=TTOzaL6oM5FbG82KKfn9dksCBBIti37/RKur0P3afoYIK0No9g32BRaqRmBI3o/4N3qf+/Jn1Awc/2Jr7GhTRwn/MuhoTKXbBfSO1gaIU4q9CFr7eNv5gb+yhR8tmT6Gnz91Bkq/0O2Rs7J4GNWNXDWLJT0Y2ExBCyIDMgkv6hk=
+	t=1722467094; cv=none; b=g5S1x7TSURhUT0eCGffIFcdTuSHZ9oWffHLZtl/NVYzmfi3nu4d10xaSniZx4YzVLom1TQhkLxjTStPe5KysOlgssycf4tfjtCqtkKNDwOVjwlFFs+nK4Qvz49YzHUshxMs5TZr+uebKeP37mSbAb1mSxH/9qQEEu6u/Iza+/LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722466958; c=relaxed/simple;
-	bh=T3h7NIC263TS4VjgpaJsYcFVLKjUz1wp3oH8WWzKtl0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NvRJf7yWE2RjPFXafReCmhBxMadtYzAamhzi1rGDA6FDJYe7E7orP2XWWStIco+gGimPJpFLKA0f3GJIjr/QEaxIqbk+kbF5uHDdn5eX7DgNs31W3vsrcWhHSE66M09h447RWpaSZ2Na0Kf+saQ8SWM6Vs097N3sob8+clUhITs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B1V41JND; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-428119da952so39579105e9.0;
-        Wed, 31 Jul 2024 16:02:36 -0700 (PDT)
+	s=arc-20240116; t=1722467094; c=relaxed/simple;
+	bh=nR6iB48+sc2V+utiCDRETEq+7Xcu1mt9j9UEGabxaNc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SA+zgNu7oFmR03oPB2pVykPNT3SWpPGwO3hBcSUIq1TVxx8ubAcl3pf93itjpWCo3xoaWqIViczTmbxznukZ97PXLqPm8Dvws9vXiWS6gIKo4IZoZZGFRcYjPt6PCFF85P9o8wKBHcpQJbdXBqh8hPTXwO2n1l/9v/4XdvS69Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MpeFz383; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-397c57e5f32so2644395ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:04:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722466955; x=1723071755; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5J6VZcNo0LtNQ5f0ps5pzEZ8PgHvh7UDv7Qgap+Mbjg=;
-        b=B1V41JNDA8+8dyJ2M+/2EdGAAz0dPfAKydwylSPbF5Jvp5/rEU8MYU+Fkqu1FgqBoe
-         dEUevRYHBhi2937zWa/cvvTo11FuelBI92XP1DXfs8JItJ7p1wHBJzDC32v7Vifpp24a
-         hn/kmqiH871KcTa1GO4HoV3kNm/KSJyL9jCpjVs/WNLEmsJmzzt6BlmHS1NMjFzrNc0L
-         lt3wRi28XhrZaJoyNkwhf0ofHlDWPg4m/EN90U9kL/+HVKInjSNOXTthzQhxnzGvFeDM
-         /79lQxcNZo8USbjd8/AujsdcLNqQbAk7ZdGfXfgMeTL9ruW/VFOMGFRV9pBkuEZHzZj5
-         zQ7A==
+        d=linuxfoundation.org; s=google; t=1722467092; x=1723071892; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Rc1mYDYh45s96NuQaciGq8TqvL9Yep3EQj0f6ctL3fs=;
+        b=MpeFz383Si67YKrLMeuXOUHj2mpNls0yEIfcdjIv/CkIbO43m2oWREdD0kE15pJwJ4
+         h2n121qt4vrN4UKiCN5n6Z9oDhMQ8Oh/oDt2VjO50nGCIanx0eE5wLnS/Ase911bVUls
+         FlLFHjemjaXOWEp2UMpPQ0fOqYKLzju20PNkw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722466955; x=1723071755;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5J6VZcNo0LtNQ5f0ps5pzEZ8PgHvh7UDv7Qgap+Mbjg=;
-        b=pjbbtXaJ6Voh2CA3lYUP+lOaJZjV904ecigydJUNzoV9edmnga1op84+Vr4a4E0y70
-         bJWXVSryR3AXcxfvgfbiOZTWKepx93lmJmcWZqCW1rM3brqIt2CmWI4YxUN8XjwZiHWK
-         hayYt5nHEID2PdzEEhfME3H9QpG2rbrP2eZIm3gWRZJJFl8/z+awNQM4eZkS0FHV/435
-         EyCObDdSSZqqC1JWILkAdR5zw6PcIyPp8XTTiJO/ntrSmz86Y1ZvriXxNK/zXwOKGnoK
-         3GDPTMQoCFar2mLgYZ1jnVyODm0Rz1s/uwzwXcxn+EkuJdGGOjPIP9vspZBkfS97J19b
-         natg==
-X-Forwarded-Encrypted: i=1; AJvYcCVG4664uUwiVRfIY2t4GdTQDloXeEcbOf+zaWGrYOIC7lF+34pUjkkWqozGecRTSzMSgKoRtC3zKiF55RTuDwNO0ZUpvLQecXsLEoR+F93oBwG400YwPYIJG4V919FOeu8MMzmcBvxqWw==
-X-Gm-Message-State: AOJu0Yx7Vt+fuOv3BQtExK1X9vLxoN2BvQqvkbNf7NxTaHZnWCYnDpiT
-	ReYqd6TwTMyckeAIH+aHQQNq6PPYo8De6a9JrJVzDY8S25jhWZys
-X-Google-Smtp-Source: AGHT+IEdmZ6Tq+R0aohGrLw8B3uVS9OsbbEWsd1pnFEYVKwRYVznc7DlJgb2QViXJoV8iTVcmvfCSg==
-X-Received: by 2002:a05:600c:1385:b0:426:5e8e:410a with SMTP id 5b1f17b1804b1-428b030c91bmr5519885e9.24.1722466955197;
-        Wed, 31 Jul 2024 16:02:35 -0700 (PDT)
-Received: from alessandro-pc.station (net-37-119-36-202.cust.vodafonedsl.it. [37.119.36.202])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282baacd7fsm35534635e9.18.2024.07.31.16.02.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 16:02:34 -0700 (PDT)
-From: Alessandro Zanni <alessandro.zanni87@gmail.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	skhan@linuxfoundation.org
-Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: arm: socfpga: Add Altera SOCFPGA SDRAM EDAS
-Date: Thu,  1 Aug 2024 01:02:26 +0200
-Message-ID: <20240731230231.12917-1-alessandro.zanni87@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1722467092; x=1723071892;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rc1mYDYh45s96NuQaciGq8TqvL9Yep3EQj0f6ctL3fs=;
+        b=aYJMFHXq/UJgkd+Twwbu5x1KNjjAlGz+PNdk+2ofe+ShwAePaqU+T7GreUpp6Ff1oa
+         4t4OjcbShAbhh/bifPDF2rrPfYeMwCDDgHavoc9dXLdXsNZQj+CTLOyyzLglgOfOcp4W
+         jmomjzXvb4U4eRixtbywxr2oX4dSXxxJqiaoA7cXpcRGoYUAp29Qw0Zqa1JZeN385vx3
+         +X6roJJTsxDoglYRLJZsn6p0yG/lLEtDNJ6XwYwz5MKAEL8FWJ68NUq1fhIY8IEF5lN8
+         +seHAAhWShWXoGO0VZ2jVVArrsRKYAo24DMUbkxhABOGvh/yBAWcLkC/KcNok5XyUm3x
+         HGMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXH2rmqA/U3X1A8jy3x7M3TlsacKPTM4s9quZdiAJZWE+6Ngeegd4Tf0dd3aslnZ0Pd6bhlsq4bP0XEME6ti42lujBGu3JuEB3+Q0AY
+X-Gm-Message-State: AOJu0YwkPfmIKTEB7DlKRJiqDq+joey1uAqbX2+COYnyhwzOhPqGhC7b
+	BCbsmX02DA4xIN94a5aNwqPRhKbqqurhUZMn+DugccbhBQxvgXSL9mOHfQUgmKYn+8fwGXFDx4c
+	4
+X-Google-Smtp-Source: AGHT+IEQq9JC/vWnd7Mmi1lortZtAXTkPlkycj6lilOeQPsFnE8PsK5Sb4+qywTIrc7XIcl/UC00vQ==
+X-Received: by 2002:a92:c56c:0:b0:375:a4f9:e701 with SMTP id e9e14a558f8ab-39b183a1dadmr5114375ab.3.1722467092259;
+        Wed, 31 Jul 2024 16:04:52 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39ae7b07a92sm48873055ab.62.2024.07.31.16.04.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 16:04:51 -0700 (PDT)
+Message-ID: <cba9b382-84ec-4170-9935-aee7c0042705@linuxfoundation.org>
+Date: Wed, 31 Jul 2024 17:04:51 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: ksft: Track skipped tests when finishing the
+ test suite
+To: Laura Nao <laura.nao@collabora.com>
+Cc: gregkh@linuxfoundation.org, kernel@collabora.com,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ nfraprado@collabora.com, shuah@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <2bb2d338-cd00-4ac2-b8bd-5579eae82637@linuxfoundation.org>
+ <20240730103543.33884-1-laura.nao@collabora.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240730103543.33884-1-laura.nao@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Added new yaml file that substitues the old txt file.
+On 7/30/24 04:35, Laura Nao wrote:
+> On 7/29/24 22:06, Shuah Khan wrote:
+>> On 7/29/24 08:52, Laura Nao wrote:
+>>> Hi Shuah,
+>>>
+>>> On 7/23/24 18:17, Shuah Khan wrote:
+>>>> On 7/22/24 09:43, Laura Nao wrote:
+>>>>> Consider skipped tests in addition to passed tests when evaluating the
+>>>>> overall result of the test suite in the finished() helper.
+>>>>>
+>>
+>> I am finally with you now. Can you please more information in your
+>> short log and commit log.
+>>
+>> Isn't this a bug fix? Current logic before this change will report
+>> tests failed if there are any skipped tests?
+>>
+>> Can you send v2 calling it a fix and explain the problem clearly.
+>>
+> 
+> v2 sent: https://lore.kernel.org/all/20240730102928.33182-1-laura.nao@collabora.com/
+>   
+>> This isn't problem in this patch, but I am concerned about how
+>> simply calling tests passed without calling out skipped tests.
+>>
+>> This problem could be solved by printing a message at the end of tests
+>> for non-zero skipped test conditions to say the coverage could be
+>> increased by enabling config options.
+>>
+> 
+> Right. We can send a separate patch to address this.
 
-Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
----
- .../arm/altera/socfpga-sdram-edac.txt         | 15 ------
- .../arm/altera/socfpga-sdram-edac.yaml        | 46 +++++++++++++++++++
- 2 files changed, 46 insertions(+), 15 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt
- create mode 100644 Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.yaml
+Yes please. Thank you.
 
-diff --git a/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt b/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt
-deleted file mode 100644
-index f5ad0ff69fae..000000000000
---- a/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt
-+++ /dev/null
-@@ -1,15 +0,0 @@
--Altera SOCFPGA SDRAM Error Detection & Correction [EDAC]
--The EDAC accesses a range of registers in the SDRAM controller.
--
--Required properties:
--- compatible : should contain "altr,sdram-edac" or "altr,sdram-edac-a10"
--- altr,sdr-syscon : phandle of the sdr module
--- interrupts : Should contain the SDRAM ECC IRQ in the
--	appropriate format for the IRQ controller.
--
--Example:
--	sdramedac {
--		compatible = "altr,sdram-edac";
--		altr,sdr-syscon = <&sdr>;
--		interrupts = <0 39 4>;
--	};
-diff --git a/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.yaml b/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.yaml
-new file mode 100644
-index 000000000000..78fbe31e4a2b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.yaml
-@@ -0,0 +1,46 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/altera/socfpga-sdram-edac.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Altera SOCFPGA SDRAM Error Detection & Correction [EDAC]
-+
-+maintainers:
-+  - Dinh Nguyen <dinguyen@kernel.org>
-+
-+description:
-+  The EDAC accesses a range of registers in the SDRAM controller.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - altr,sdram-edac
-+              - altr,sdram-edac-a10
-+
-+  altr,sdr-syscon:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: 
-+      Phandle of the sdr module
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - altr,sdr-syscon
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    sdramedac {
-+      compatible = "altr,sdram-edac";
-+      altr,sdr-syscon = <&sdr>;
-+      interrupts = <0 39 4>;
-+    };
-+
-+...
--- 
-2.43.0
-
+thanks,
+-- Shuah
 
