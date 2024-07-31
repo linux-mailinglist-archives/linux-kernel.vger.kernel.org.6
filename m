@@ -1,116 +1,125 @@
-Return-Path: <linux-kernel+bounces-269828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C0D94373F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:42:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF939943742
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9926283AFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:42:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B7192827AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11AE1684AD;
-	Wed, 31 Jul 2024 20:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FaNAh4m5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KWZWuQ/j"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B679166316;
+	Wed, 31 Jul 2024 20:43:27 +0000 (UTC)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946421607B7;
-	Wed, 31 Jul 2024 20:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E0FD512;
+	Wed, 31 Jul 2024 20:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722458551; cv=none; b=RtOHgxg9oXPnQPKWA7PaN4OW/wrudM25lOOtAzFTpZR242hjn4b6yzfMU3oFsubiOpEbsCUkXsVi9uUVQzcXhiWO3R0fVE7YSQJLUHrIBq13jxObxvyqXQop+XkoyTX5palhkfgKG6j3Bkgk1Ucv93e7YsZcFWb15BwqspaggMU=
+	t=1722458607; cv=none; b=Sx7vJDdIoQhNKoL93/i6bkzGBjLcCCUEOmJbDjPnXfQR/ad6AbmCvIR+PGoQtlDnJH/zvwLn5fsvxEqrKeYhHEhYhcgMAoAKaRsila/VlGg4UTfTxqDsB+0OwFex/jQCN6UcijGoamqtO7SdNM4zhGUAw9Z1OcO6e9cAKcDS/eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722458551; c=relaxed/simple;
-	bh=dOyZ1Sek8HoJU/p17Y2r+u7nuSiHoOF73MPvoL/r+QE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DLCepw3b3WB1wDStEoTJDpJMRP7dk3V0txEnKx2X6iOPxu8TkmXzHqqBN15TPI9g7UliuUFzz/R5+aqv1sOaUIw7lZUyt+5wWk7voK9ZPAIqo+AoaYpqHi+VDrWozHlqP/Gu0z959/poEAJ57i/ewa01do+ygPRURy+fM9WNZj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FaNAh4m5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KWZWuQ/j; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722458547;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MBVcrUhpLPegJjGqjS/cwXdw3G5n9gw3ZxokXCgffPg=;
-	b=FaNAh4m5ehNCZjdVtIV95kJeXTvN5iYiatVr2VnW4AGjcrVIzMHtLce+eY63olidN/TJqT
-	YVKG4q7A9e54i8ZVrh0b2lgoz+5K2v8MIBx4UYQ0ZZirVXmjN7napqcrZMn/bym9q3PamY
-	4DbYVDgJRYmTG2XvePktMAYCfR0LQmAbKkbnUz/trrZyzVMqdbGZJn4Nqq0zh/1bXpshRm
-	miyu9+FHzjVOk/w667785Pdq+aq5afYF5hh0rXb/fdGtrNq4w7z758KvGPKQQocoHFngB2
-	ma/ulF/1KspaMg34ce/A8E1SgdEVFR1L730dqmz0bd8KFwIL5w+k0hcmUeVglA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722458547;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MBVcrUhpLPegJjGqjS/cwXdw3G5n9gw3ZxokXCgffPg=;
-	b=KWZWuQ/jVRpzYRz0d2yIgm8/Fkvp89Hh2kUA68lQYhPNYmUXNW3J5hZv2fGkWJ3dY8kJJD
-	js0MaYM/RmZ1v1BQ==
-To: Bjorn Helgaas <helgaas@kernel.org>, Joseph Jang <jjang@nvidia.com>
-Cc: shuah@kernel.org, mochs@nvidia.com, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/1] selftest: drivers: Add support its msi hwirq checking
-In-Reply-To: <20240731192436.GA76176@bhelgaas>
-References: <20240731192436.GA76176@bhelgaas>
-Date: Wed, 31 Jul 2024 22:42:27 +0200
-Message-ID: <87sevp47kc.ffs@tglx>
+	s=arc-20240116; t=1722458607; c=relaxed/simple;
+	bh=XwoMm5/T+XVDXoHxo4PpcBf7NA0bt9kqObHe378nvK0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mqhPGPaf3JJlIY5h0ZxoswHOPLPpHqzOYjMmacov2hkiiD3/oxFxE/aC+xCWwuqB5cUVABH/V3m8y+LyhSbNt+TbQ3N9X2wFed/TPjTwkOjhsUFDjQaiW9VqmVTvoeOGdW6JTNFpPWO4aWjfDeY5WMg2TW28351IX2HbmvpD/JQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7a9e25008aso825869266b.0;
+        Wed, 31 Jul 2024 13:43:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722458604; x=1723063404;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OpaLVy9cGDD/4a3pTebZNXdqhtawtxouZpwolMeqF/U=;
+        b=fpcPltFLOLOsb1V8qzVbPYQlLnddMEBuszjBwQbQ0rmHrUqiya2q3jNThLCAQ1grmS
+         Z5iC/jzhvYPJX5tTcVG+EwOwK0vSv/yAT/3tGq6aCcO/XMny0M41e1lrE9/rvpMxl5uS
+         wejR2VKFhd0esfNz41TE2co/cp5NiwnYkskrrNVu/DPDzGsG90bWgJK29cwksQPdV5ET
+         CSW4fJvBC+ua2SO+dYXnFdiz5zuKXNAGOEGr98p3525aQqPhHSfHeyKFZPNK9cE8Hpvk
+         z2LYkszGCoopiXQA8Rh1gUkzbDpyzttl+3QUNDBIe4Ilcl2vEyyfrLOjosadZIlDLue5
+         FNdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXdZqszyLHI5kBiiHZYHrLCeeQbZDc9UnKkUFhjMiJd+up5RMRK3Cacv8isKWQB7vRbyz264sNf9ddbQik=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfwytULTXG5nLbJNAJUEbd64yLzPQPdJotnU77mO7EXm217MEl
+	BndLZPSjlizzzxAMXjixMtuMjDgfmS6O2Ja3jLSjoPZBXIZrRqF2
+X-Google-Smtp-Source: AGHT+IFP6EXNPQVMEuPDDEIg+Hft7xijxVY4K8EGnpJs1qXsRK9TQ1sL8HwU6bdJeFSwecbN3wCKbg==
+X-Received: by 2002:a17:907:e9f:b0:a77:c824:b4c5 with SMTP id a640c23a62f3a-a7daf9b165fmr18011166b.18.1722458603371;
+        Wed, 31 Jul 2024 13:43:23 -0700 (PDT)
+Received: from [127.0.0.1] (p200300f6f732f200fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f732:f200:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab4dec6sm807454366b.61.2024.07.31.13.43.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 13:43:22 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+Subject: [PATCH v3 0/5] btrfs: fix relocation on RAID stripe-tree
+ filesystems
+Date: Wed, 31 Jul 2024 22:43:02 +0200
+Message-Id: <20240731-debug-v3-0-f9b7ed479b10@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANahqmYC/1WMwQ6CMBAFf4Xs2ZqlxbZ48j+MB0q30GjAtNpoC
+ P9uIZLocV7ezASRgqcIx2KCQMlHPw4ZxK6Atm+Gjpi3mYEjr1BxySyZZ8dc6UjjgRqhDOTvPZD
+ zr7VzvmTufXyM4b1mU7msW6H+FlLJkDk0wipt60ro05XCQLf9GDpYEon/aAI3jWdNaJISFbWmk
+ X/aPM8f3cRahtIAAAA=
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+ David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Johannes Thumshirn <johannes.thumshirn@wdc.com>, Qu Wenruo <wqu@suse.com>, 
+ Johannes Thumshirn <jthumshirn@wdc.com>, Filipe Manana <fdmanana@suse.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1303; i=jth@kernel.org;
+ h=from:subject:message-id; bh=XwoMm5/T+XVDXoHxo4PpcBf7NA0bt9kqObHe378nvK0=;
+ b=owGbwMvMwCV2ad4npfVdsu8YT6slMaStWvhSuEqkq9dDyj3GRMa7ed+BhpxF9rMuHw7ifizhE
+ Nu207u1o5SFQYyLQVZMkeV4qO1+CdMj7FMOvTaDmcPKBDKEgYtTACbC9Zbhn1KwiHVsPN+STemp
+ X3xZWrKr3+eYSepwBEluz1q2dn9pPyNDx0rOB56u8bvSZZcVCjlULwyI80gMn3+1kqMzjOGm73R
+ mAA==
+X-Developer-Key: i=jth@kernel.org; a=openpgp;
+ fpr=EC389CABC2C4F25D8600D0D00393969D2D760850
 
-On Wed, Jul 31 2024 at 14:24, Bjorn Helgaas wrote:
-> On Wed, May 29, 2024 at 06:27:27PM -0700, Joseph Jang wrote:
->> Validate there are no duplicate ITS-MSI hwirqs from the
->> /sys/kernel/irq/*/hwirq.
->> 
->> One example log show 2 duplicated MSI entries in the /proc/interrupts.
->> 
->> 150: 0 ... ITS-MSI 3355443200 Edge      pciehp
->> 152: 0 ... ITS-MSI 3355443200 Edge      pciehp
->
-> I don't know how ITS-MSI works, so I don't know whether it's an error
-> that both entries mention 3355443200.
->
-> 3355443200 == 0xc8000000, which looks like it could be an address or
-> address/data pair or something, and it does make sense to me that if
-> two devices write the same MSI address/data, it should result in the
-> same IRQ.
+When doing relocation on RST backed filesystems, there is a possibility of
+a scatter-gather list corruption.
 
-That was an issue with truncation which got fixed some time ago:
+See patch 4 for details.
 
-  https://lore.kernel.org/all/20240115135649.708536-1-vidyas@nvidia.com/
+CI Link: https://github.com/btrfs/linux/actions/runs/10143804038
 
-> It seems like maybe this is a generic issue, i.e., if this is a
-> problem, maybe it would affect *other* kinds of MSI too, not just
-> ITS-MSI?
+---
+Changes in v3:
+- Re-base onto for-next with folio->page conversion applied.
+- Collected reviews.
+- Link to v2: https://lore.kernel.org/r/20240730-debug-v2-0-38e6607ecba6@kernel.org
 
-It's the same for ALL interrupts whether MSI or not.
+Changes in v2:
+- Change RST lookup error message to debug
+- Link to v1: https://lore.kernel.org/r/20240729-debug-v1-0-f0b3d78d9438@kernel.org
 
-The requirement is that for any interrupt chip all hardware interrupt
-numbers related to a particular chip must be unique.
+---
+Johannes Thumshirn (5):
+      btrfs: don't dump stripe-tree on lookup error
+      btrfs: rename btrfs_io_stripe::is_scrub to rst_search_commit_root
+      btrfs: set rst_search_commit_root in case of relocation
+      btrfs: don't readahead the relocation inode on RST
+      btrfs: change RST lookup error message to debug
 
-Adding a ITS-MSI specific parser is just wrong. It's a generic problem
-and has absolutely nothing to do with ITS or MSI.
+ fs/btrfs/bio.c              |  3 ++-
+ fs/btrfs/raid-stripe-tree.c |  8 +++-----
+ fs/btrfs/relocation.c       | 14 ++++++++++----
+ fs/btrfs/scrub.c            |  2 +-
+ fs/btrfs/volumes.h          |  2 +-
+ 5 files changed, 17 insertions(+), 12 deletions(-)
+---
+base-commit: 27d58e7d992b58ae7091270dc179e1dcbd6561f8
+change-id: 20240726-debug-f1fe805ea37b
 
-Aside of that the proposed parser does not even work anymore on 6.11
-because we switched ARM[64] over to per device domains during the merge
-window.
+Best regards,
+-- 
+Johannes Thumshirn <jth@kernel.org>
 
-So if we want a selftest for the correctness of the hardware interrupt
-numbers then it should grab the per interrupt sysfs entry 'chip_name'
-and 'hwirq' pairs and do an analysis per 'chip_name' whether all
-hardware interrupt numbers for a chip are unique.
-
-Thanks,
-
-        tglx
 
