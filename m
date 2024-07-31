@@ -1,112 +1,104 @@
-Return-Path: <linux-kernel+bounces-269834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF5094374C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:44:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB68794374F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCF051C22375
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:44:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87B3A284CCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5928D16D9B8;
-	Wed, 31 Jul 2024 20:43:32 +0000 (UTC)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6D71607B0;
+	Wed, 31 Jul 2024 20:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="S/Dd5ysZ"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BEC16CD37;
-	Wed, 31 Jul 2024 20:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623886CDBA;
+	Wed, 31 Jul 2024 20:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722458611; cv=none; b=Cc5hhm1C7Uick7My2RSEDb3Mt2QGb/5dwPsqWshVdw+i4/amVrZ7AHxkmrWc6r1OgmbZtgterERH4MoKZ8kucL06xtXeqThbsu/uCALVc/6+djKEY8Dc7ytFz/lOB/hzJ4jcV3bbD+SgceU70ckHXtJz/dmk7r83b0Sb10f7Ytw=
+	t=1722458647; cv=none; b=MTeOiZsFIT+C5DF84v2p0lo/btCt8iL/MY7eCX/wHm4Iam/rsW1SOiD/CeQM6BCF8MWEMmHDpL9DbAlIYOgKfkOW4FOuP5mMCvTGj9WsH41+T3AkXkIC/rUvR5xvZv0NeYkRIJItKzxfS7+oXPLMV90oCcf29mC1x6C1cy3N8h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722458611; c=relaxed/simple;
-	bh=tZboRP/+4mQacUKXIXwDMXZs+JVgoNI5V9YgSrvr6Xc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SuhTs0AJnbHEjBWmRgp5eqTBu1HRl5LKoWDY3+jjOHzOmx7fECCeHvn329WMP++pOKGHPln0GsNRjzUSDVrkXteRE1ythaihBGh6FwMxeFOstcXOjt0+VV47ailUeaUFKKycP3rtP/ogls6jb0eRVkuIXp8lqHD+vstUUOxN47Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7aada2358fso239370366b.0;
-        Wed, 31 Jul 2024 13:43:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722458608; x=1723063408;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2DT2eMmJlRPISGpF1p5jkVFugCIV2VDJkFyEE/4PTkw=;
-        b=iAG2HZ6vMVQ351z3g+IByjvt500mP1+F74BHbYN4JG/hb6kIzJmuhZ8tuCI/R9opeV
-         ApQC78WVEZD89I/yxpv78pU5r1FjCi8oDPtFCXifaKRdOTSlv9JPAyH38o85+9NP2euH
-         yA9ZMpGedAg38mle5WY+s02oRVa5LB+2mnVGQjyZ5alsQRZoMU5WX3hVFRbQWaPmJP8g
-         S7mieIcFnYd/bpbFCev1Ep8vhCmaDWss9iRg1owAV+ThtBPdpUWsVZ1c4efvO1dxCe5d
-         IwEQbUhWM0mYe3EJVZncBeNAgfBBoHxGpPzchuIgRI4kTEmld/Y/X/qf8AtGPcd/7Sf6
-         TjSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBDb4hgmbVDZ1s2BnFZQf33qeHqipZkB8BHJnehpI86HryJ6XTbO50I2IMfZ85EbvlZ1CBbxAZyL5tDeZH9uwRLqCU7CtqpJ7qUZoU
-X-Gm-Message-State: AOJu0YxuB7Xn1HOQWFhVbHHGgMLkEODQ38JEWT36U92WyeoE8qdwlfbr
-	RtRtqUgmmM2ciCk6Zt5jGBKs8bW7opmMDRzLeIRR1GIJ4C388YBz
-X-Google-Smtp-Source: AGHT+IEhZ7af1XwaJVMpX3tSWKyNoHRVTS48+Zbg7o9RXstO8RpmECDHgCkOQIGsxKeXjmYQ983Rvg==
-X-Received: by 2002:a17:907:1b07:b0:a72:5967:b34 with SMTP id a640c23a62f3a-a7daee5335fmr21872866b.22.1722458608428;
-        Wed, 31 Jul 2024 13:43:28 -0700 (PDT)
-Received: from [127.0.0.1] (p200300f6f732f200fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f732:f200:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab4dec6sm807454366b.61.2024.07.31.13.43.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 13:43:28 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-Date: Wed, 31 Jul 2024 22:43:07 +0200
-Subject: [PATCH v3 5/5] btrfs: change RST lookup error message to debug
+	s=arc-20240116; t=1722458647; c=relaxed/simple;
+	bh=/XdVYAt7G3/Mi5Brgz+YdXrag0bk6daRF2v2yYgub4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jX9Mmatf0HKc3kyfptOXoO2jGgCvld8fDxEtL81Zh3uXueIohg6csaTWn/11ZbkZrOhFNmnyfkM+x4tbrWI0BIU6Z4SuyPflNw2c/HuPqXVhvjhEUyvTW+8WLVImLyfqULUbu1tgjD/IDVdYVLpVxXWJe2s1BNFOfpBM1qug8HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=S/Dd5ysZ; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=k4hc+2mjONWCmoezqc8BzbnSj0fCe0qUKPYxQEFW1RE=; b=S/Dd5ysZ5myhvxirP5Vm5Uyv7h
+	ApIxIv4vCtBXKr++PG1BEJgV4t5RH42/P1DfypBs4TpwBQlaVRSEhi+chvGJ17caxo8uk/3kargH+
+	mlD+oDz+2inCKXqimGSk8a6+vGc5dxdQtaOka8lMpXZSCi2KxyYFqAXJ8u7EurFLW8LrvkC5ANlKO
+	2ITNeywKAliYiQ5aBrNNer2QduohqVCTMns3HmucYUqT0rQ2BZnMqd3ARQfBaon7C41CtmSl6nJHP
+	37/pZtqGumXblpTm0lJU78gQsQVISxmMiK3TiheDlDiZCi4KoJRklwPlME7S0xZAOG2GfTjrBi11R
+	b2CMhXMg==;
+Received: from [2001:9e8:9fa:4501:3235:adff:fed0:37e6] (port=38360 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1sZGAm-009E2d-Ub;
+	Wed, 31 Jul 2024 22:43:49 +0200
+Date: Wed, 31 Jul 2024 22:43:44 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+	Ben Hutchings <ben@decadent.org.uk>
+Subject: Re: [PATCH 1/4] modpost: remove unused HOST_ELFCLASS
+Message-ID: <20240731-gainful-smoky-nautilus-f8fdd4@lindesnes>
+References: <20240727074526.1771247-1-masahiroy@kernel.org>
+ <20240727074526.1771247-2-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240731-debug-v3-5-f9b7ed479b10@kernel.org>
-References: <20240731-debug-v3-0-f9b7ed479b10@kernel.org>
-In-Reply-To: <20240731-debug-v3-0-f9b7ed479b10@kernel.org>
-To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
- David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Johannes Thumshirn <johannes.thumshirn@wdc.com>, Qu Wenruo <wqu@suse.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1008; i=jth@kernel.org;
- h=from:subject:message-id; bh=ZDUzLvgB6IiCMYV7UPQGbGhRKgjVEj0Z00Tth7gECio=;
- b=owGbwMvMwCV2ad4npfVdsu8YT6slMaStWvhqyqlVe1hXcufPzjlUInS63r7A98GDv5aZzzeuy
- ODVvNoY2VHKwiDGxSArpshyPNR2v4TpEfYph16bwcxhZQIZwsDFKQAT2XGZkaH1XOaxg09S5ld7
- 73r59ftFNT++gPQF0YkyAb9nv+u4KZvN8N+j7o/egpuSF3X/zz64uLhG3CBXMHFWntedZXc7Zq+
- /aMkMAA==
-X-Developer-Key: i=jth@kernel.org; a=openpgp;
- fpr=EC389CABC2C4F25D8600D0D00393969D2D760850
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240727074526.1771247-2-masahiroy@kernel.org>
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+On Sat, Jul 27, 2024 at 04:42:01PM +0900, Masahiro Yamada wrote:
+> HOST_ELFCLASS is output to elfconfig.h, but it is not used in modpost.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> 
+>  scripts/mod/mk_elfconfig.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/scripts/mod/mk_elfconfig.c b/scripts/mod/mk_elfconfig.c
+> index 680eade89be1..aca96b3aada0 100644
+> --- a/scripts/mod/mk_elfconfig.c
+> +++ b/scripts/mod/mk_elfconfig.c
+> @@ -39,12 +39,6 @@ main(int argc, char **argv)
+>  		exit(1);
+>  	}
+>  
+> -	if (sizeof(unsigned long) == 4) {
+> -		printf("#define HOST_ELFCLASS ELFCLASS32\n");
+> -	} else if (sizeof(unsigned long) == 8) {
+> -		printf("#define HOST_ELFCLASS ELFCLASS64\n");
+> -	}
+> -
+>  	endian_test.s = 0x0102;
+>  	if (memcmp(endian_test.c, "\x01\x02", 2) == 0)
+>  		printf("#define HOST_ELFDATA ELFDATA2MSB\n");
+> -- 
+> 2.43.0
+> 
+> 
 
-Now that RAID stripe-tree lookup failures are not treated as a fatal issue
-any more, change the RAID stripe-tree lookup error message to debug level.
-
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
- fs/btrfs/raid-stripe-tree.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
-index 28a545367be7..4c859b550f6c 100644
---- a/fs/btrfs/raid-stripe-tree.c
-+++ b/fs/btrfs/raid-stripe-tree.c
-@@ -284,7 +284,7 @@ int btrfs_get_raid_extent_offset(struct btrfs_fs_info *fs_info,
- 	if (ret > 0)
- 		ret = -ENOENT;
- 	if (ret && ret != -EIO && !stripe->rst_search_commit_root) {
--		btrfs_err(fs_info,
-+		btrfs_debug(fs_info,
- 		"cannot find raid-stripe for logical [%llu, %llu] devid %llu, profile %s",
- 			  logical, logical + *length, stripe->dev->devid,
- 			  btrfs_bg_type_to_raid_name(map_type));
-
--- 
-2.43.0
-
+Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
 
