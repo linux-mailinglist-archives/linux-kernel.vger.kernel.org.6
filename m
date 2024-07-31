@@ -1,234 +1,110 @@
-Return-Path: <linux-kernel+bounces-269161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E79942EA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:36:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04AE9942E96
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 648891C21610
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:36:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DAFBB22EB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4134B1B1409;
-	Wed, 31 Jul 2024 12:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fq0Dk+YT"
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99451B012E
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B271B0119;
+	Wed, 31 Jul 2024 12:35:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112B3193072;
+	Wed, 31 Jul 2024 12:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722429315; cv=none; b=UpzUxkWZUYAkolm97/2tPSFSKomjGWDy3y8EmWoaDHPsSuvOeGZn2Kl05ltQbKqgN8MetgGqzrsMXzQy/W+T4tbCuPrzL0MVABkljcKcgc0edGht3PvFubYkG4nBqDv0/KbNFaVVpIM34Z6M9T8PZdHsGWuprkO+oQPBhe4ViHA=
+	t=1722429310; cv=none; b=H4b89W0PQ0kt3Y8bd7k0Ic8l0wB0JACVu7Y2ilxNI4dbl2mvV866y2mSHO8ckqAJgpugY+xleZqI12fg7UzGNUirpJvp4D41wZ/xbNbi3StCbD0ZEEiRC2lUdnwzILq4yuP5myyAJ/ONI7RKccXYVLsooo90TpY8o+rsEPvbqSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722429315; c=relaxed/simple;
-	bh=F7g6Jwb0g+6zJzbakncV3Hcpjd44JyJqciMFM3KHbkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DLUh5MHcbZDTlV5DrrHLGQ1fDhuUlxFH0+0C8+7Z66OJNt4COSqXwc0Pr1vYN3jTWRxM/RCoWjFvgty/UPP7CGyYUlU6KktEEuto4dProZ8b+J9PED/koQ596jDoAFIjnA3xloUtlupuqW21hFmX6Mv0ilnT8BmJY5+amVuAjdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fq0Dk+YT; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4929540f38dso1618276137.2
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 05:35:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722429313; x=1723034113; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9plYtmRP80+wBlogJewa2d7p+Jj8DwjpEDlvgRHRWB0=;
-        b=Fq0Dk+YTzwRDG/fKkbe/amDNLOOvrkAVP3ALPEeceBaphyCWOkJqGoMmROnmE0oHS9
-         sJ4HswK8I5X2L1iugJicSc04QK9box5nTIZIMRUWdWVBQEwJ8R7XTWfLW9/Lh9tY4xQn
-         oHM0gXPGCuZJ/0+9+iOHyebktPxC/n/BpARyVOpDyHpJBU8iv8c4fGH6IZvwg5jSouwt
-         EiTKlua0Rc5qxgaV0wzm9Z7BAI6wIknmJMagMWSWyxETZ4ak67CKl4iLi+2d9DRgdrmQ
-         WT0PKHOcvKVO+KF/Un4aho9RzCtEY4KOeIkaYcs4MmrkcEHK/q9UzYro6/QqBKBDKmPI
-         +law==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722429313; x=1723034113;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9plYtmRP80+wBlogJewa2d7p+Jj8DwjpEDlvgRHRWB0=;
-        b=teHn7N1Qqm8AczzYF3Yy07HMqlw9VlCAEW+g8Nd/DMBd5terfvf3XTAm4z0oMQ70Ah
-         60ZQpzcxbgFU54lv/2xr4V9XwPwVuWIdww5BbYqVbf69uVT8j96TqUpE9bDutCS4xKZk
-         IyCgH3KdIQ2QG4Z3gzX6PBWdqEB9X3fxBbmiias8pgaK+BxAavcQ0MB2Enn96AbBGI6K
-         KTCmtAV7m5gTvYIOFOnfgXzdeaXMHZoQwZc5TsXh0MocOu7/HJxpOapSA/526DBtwNR3
-         49jNkRJXCOFSAzX7T2QFCsE+e1DVwhvrX5I4iHoXKy2QEJnYJn55vx+i3LuQcU0nl2e6
-         P2fg==
-X-Forwarded-Encrypted: i=1; AJvYcCURHZKpXRX3gOtIxumvjR2lZCrHvgZ4VBolhr5awHRiQMuDjcOmjCd+juniOHFTuLLpe+gD51EIRdlVrH0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4etjeWT1mTK0WcxUS3lYzY4s9X3jDSBxKn+fdwQsc39IWYecD
-	60sWhWFKHVPguic6mHw9glsYUBnyaQaAmdNJq5NdkkHqlJMbW2NtaASFVyZp/et97ZjyuvzzSBz
-	ix4zA3seKk3N+fXkZhmVV1S0nL/imWFTZ+2cHtw==
-X-Google-Smtp-Source: AGHT+IGN7M9FJCdRY3tkah4AXjZbzv47boPqqFbb4PPEhjPuCbgfBfVFwzyXe0/MWeRtskwNEueTT6O9SNvE7rYef2A=
-X-Received: by 2002:a05:6102:548b:b0:493:e713:c0ff with SMTP id
- ada2fe7eead31-493fa15f9b3mr17451687137.4.1722429312654; Wed, 31 Jul 2024
- 05:35:12 -0700 (PDT)
+	s=arc-20240116; t=1722429310; c=relaxed/simple;
+	bh=QDhUH0NrptmRx0+ialx0kp8xmjW/WIOSe4tR2tjeT8Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mk4xiNQeBc8gPsUX8AP/eg9cEBHCpsqHUz+Bb11eWmDYGWiWYrSdQ7jLl90eV0Trn/Z2SQTzlnRm2DhVPBmRl/xyfU+W0QYpXEIJgW5iQscOH1uGpshhEe2ORJ5BDEj4aMchQ5UJ0cWEJg6WC5I432bsXVBPeGCj7NwIJlhfzSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8E781007;
+	Wed, 31 Jul 2024 05:35:32 -0700 (PDT)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D7C053F766;
+	Wed, 31 Jul 2024 05:35:04 -0700 (PDT)
+Date: Wed, 31 Jul 2024 13:35:02 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Subject: Re: [PATCH v6 1/7] dt-bindings: firmware: add i.MX95 SCMI Extension
+ protocol
+Message-ID: <ZqovdlPcnBbZn0Ue@bogus>
+References: <20240718-imx95-bbm-misc-v2-v6-0-18f008e16e9d@nxp.com>
+ <20240718-imx95-bbm-misc-v2-v6-1-18f008e16e9d@nxp.com>
+ <dee6e871-daa3-4886-be57-e4d4b3fa198d@kernel.org>
+ <PAXPR04MB84592DE4592FC5D270F0820B88B12@PAXPR04MB8459.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730151639.792277039@linuxfoundation.org>
-In-Reply-To: <20240730151639.792277039@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 31 Jul 2024 18:05:01 +0530
-Message-ID: <CA+G9fYuotiGuEVYgNp5hGh3tWJcGykZycfH7kzAC2PgxwPWfrQ@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/568] 6.6.44-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB84592DE4592FC5D270F0820B88B12@PAXPR04MB8459.eurprd04.prod.outlook.com>
 
-On Tue, 30 Jul 2024 at 21:21, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.44 release.
-> There are 568 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 01 Aug 2024 15:14:54 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.44-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Wed, Jul 31, 2024 at 12:18:28PM +0000, Peng Fan wrote:
+> > Subject: Re: [PATCH v6 1/7] dt-bindings: firmware: add i.MX95 SCMI
+> > Extension protocol
+> > 
+> > On 18/07/2024 09:41, Peng Fan (OSS) wrote:
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > Add i.MX SCMI Extension protocols bindings for:
+> > > - Battery Backed Module(BBM) Protocol
+> > >   This contains persistent storage (GPR), an RTC, and the ON/OFF
+> > button.
+> > >   The protocol can also provide access to similar functions
+> > implemented via
+> > >   external board components.
+> > > - MISC Protocol.
+> > >   This includes controls that are misc settings/actions that must be
+> > exposed
+> > >   from the SM to agents. They are device specific and are usually
+> > define to
+> > >   access bit fields in various mix block control modules, IOMUX_GPR,
+> > and
+> > >   other GPR/CSR owned by the SM.
+> > >
+> > > Reviewed-by: "Rob Herring (Arm)" <robh@kernel.org>
+> > 
+> > Why quotes? Which tools did you use?
+> 
+> I could not recall why have this. I will drop and resend the patchset.
+> 
 
+Resend only if you have any other comments addressed, no spin just for this
+one please.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* kernel: 6.6.44-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 7d0be44d622fe39aeb7f09de19807d1dce272100
-* git describe: v6.6.43-569-g7d0be44d622f
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.4=
-3-569-g7d0be44d622f
-
-## Test Regressions (compared to v6.6.42-17-ge83c10183573)
-
-## Metric Regressions (compared to v6.6.42-17-ge83c10183573)
-
-## Test Fixes (compared to v6.6.42-17-ge83c10183573)
-
-## Metric Fixes (compared to v6.6.42-17-ge83c10183573)
-
-## Test result summary
-total: 246982, pass: 213532, fail: 3566, skip: 29419, xfail: 465
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 127 total, 127 passed, 0 failed
-* arm64: 36 total, 36 passed, 0 failed
-* i386: 27 total, 27 passed, 0 failed
-* mips: 24 total, 24 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 34 total, 34 passed, 0 failed
-* riscv: 17 total, 17 passed, 0 failed
-* s390: 12 total, 12 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 31 total, 30 passed, 1 failed
-
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-smoketest
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+Regards,
+Sudeep
 
