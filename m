@@ -1,109 +1,131 @@
-Return-Path: <linux-kernel+bounces-268397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4710494242D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:36:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 690B294242E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7059E1C22A17
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:36:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3181F284CAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6ED6C8C7;
-	Wed, 31 Jul 2024 01:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AE7C2FD;
+	Wed, 31 Jul 2024 01:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="y/Wrdc65"
-Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h5jDQBuF"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C7F4C80;
-	Wed, 31 Jul 2024 01:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6445E747F
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 01:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722389763; cv=none; b=p1cogMrsbw3AYFHKRFwosQXUFU88chSesa/hOgM5OTFhVFxUJ5p/86PiSi/D2WGcn7Ya8ofPYsba373HjRfFXt4bf0JE34sNyJNM+xzPXdY2lZaEf50DSfO2+cp0n9zPtymyF7TigmULWdsnVR0GSIjE7JQOcSXBIZCKU/6gZgk=
+	t=1722389791; cv=none; b=Vc3DKSF3TslA6dQyDV3DLL37CrNgPfXrKG0KSM5KzMwBoha1Y5KvwAcngjYDjyPDEL/n4JpEqCQgWRXMKK1p0E2BUmE+VVgCNL/FVJ8oW/ECW/ixgu1UCtOCRVVyjjuOmWfrBOI91SnaIPNhIl6ORFsj5krUWF/t94VpauXrjos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722389763; c=relaxed/simple;
-	bh=dTqWL5q4Eij9ZmgP3ZNingNO/Df/MzIfctKb2/wovK4=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Xd2lMJHJB/6DBCd4n0h6/+48i1xQFqOeU5E6HGmrxo7+9XFUs/U2Nj3A7Taru8W6o7oOlKSVGM2MD7OypbiiYTf2gIwxWp55yiQpoTZRwDq6rMXII85amGANWJLk1jfUWTtjxHLznaUAeu3YU26k2H7jn8z7DNvse0eVE4JKW/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=y/Wrdc65; arc=none smtp.client-ip=203.205.221.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1722389758; bh=kkAa6icvMy++tO8DHmrSjlvrPU6/p29/N18+pIiRkuQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=y/Wrdc65CRS+e9hQvNsom4Hsb3bHhPosghQa6wlReGzQKD26p6lfUsOwYzAjjK+r9
-	 ObNXzaky5/jGiw657MLbe2dYlSvR2T3/IwoyR6ncm1uJz/YvPUJXVIAyh8+aPB+JQE
-	 jJjIrFIBlg5Bb6qMK/oSqk1gRUSsm6PAUKrBdb6Q=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
-	id 8F8032B0; Wed, 31 Jul 2024 09:35:56 +0800
-X-QQ-mid: xmsmtpt1722389756tyrsd2zy4
-Message-ID: <tencent_DB74336E9E1D1B304BFF1B3F25DBBAA6BB08@qq.com>
-X-QQ-XMAILINFO: M0PjjqbLT90wiVmMAq+zrkzh4WfQc8DcvUQTYRyyFNArWnC4jOFixdAa4SoKt3
-	 h27BsQpTeqVwwFJKHFhueKYxO0TiUjz9N9q/JYl2tYoMGiaYQvJzY+Y+tSyNTki/d4GlSLuwtXnT
-	 8sDjk//IxJmyK0a4m1INpe7D7HwLes/m8CU4UijugO9XcMboAPQ1wnuB36xkD259mv/3L7joqxA2
-	 +yoYy0LqUSGbR1KAqMNRlcG3PU+OG12GfjpYwOc0ZZoxrVEN6QP6pKxCV1Idq8eDfln5/pSq27nm
-	 UIDLuAyLPYmm7nBFam/g7O7yChroviTWUo0l5u2wgeyTPysMwXLUzPTdbjV39jHDFRujF3OroWSp
-	 +SIsSLFkcAbrwbF/G3jmlaJuqHWf5C7mGW0FU+BxNyOX06RggZOXxWy7GibLopjPgUBMSKKRJao2
-	 UmUWrzCK7jJMeQFe9SDiriue6yDGKl1rCnBcds6OF/dzStlRRiVYSrcwAD6x0aP66X26F5Ysu9YB
-	 F2aLoiXsKE+T+Hp2zXIwzi5UHmeTVoo2UACgb8bLGQtO4V20ouTVrCQNiqJ5lGYo20d+1IpueNyJ
-	 MfaJkOZ4EV4HaHli6KeXCHK7fmQ5Az4vUROLXeoHlkqhnJTJEnYlDO3Ib8hqAZgNknYjEFQ7//XU
-	 6t/SFuF45iFxNDKGK+QZNEG2jFxHAmGQHRwRx27h2z/g6DA/I/GiEr1f3awjLDDmOhSbmsQYF6O6
-	 500lCYvvITybeZ8fI4Uo2rp/sHwQbBzEuX4ELuEMP5HMUXIxtwzgRVOAF9XOTqBRiY0GM4lQ0Myr
-	 /ZmCNDrTg4jDoUx6xEvtMVQqsXggjQKEjHP8mzfXXZpjdYBLu2gofuVl+ieS+mwP9TAc+FBv2jaG
-	 P5x6R60QACmqFLtrisrERlVascMutKTcGLqovqVD6yAJLS+XaQTg6FxpVxXxzFFlbTPHX1YwO9
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Edward Adam Davis <eadavis@qq.com>
-To: kent.overstreet@linux.dev
-Cc: eadavis@qq.com,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V2] bcachefs: Add checks for entry's _data bytes
-Date: Wed, 31 Jul 2024 09:35:56 +0800
-X-OQ-MSGID: <20240731013556.38650-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <apj4zcnnq5nwcly4mnl76uiuwibkzayqd3beeum3p436kycksf@co4yrhzxo7kl>
-References: <apj4zcnnq5nwcly4mnl76uiuwibkzayqd3beeum3p436kycksf@co4yrhzxo7kl>
+	s=arc-20240116; t=1722389791; c=relaxed/simple;
+	bh=eSzJfzUYnKqe36BXtfv5ZvpHrJeSlTrH1eHLlWfoDOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bnz4mNq+7+9MMs3i+wm5o0rkTNNcuo2D6uGZT03y0jEqeQPqCLa5IdLInnRKr0Cdn+xDAAh6GkTVj50/7eX2HfCsoYUxA4DXRMski7CL3MsDbYED/zwNj+i28zM+US84bAarcRYHHb03GlFLI0wkEM2ZpeHzGoRVQrt1RG1GPoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h5jDQBuF; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70d2d7e692eso4182135b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 18:36:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722389790; x=1722994590; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mwjtumsy+UxHmt2SoXzIudT1ss3Em21PFEzhVzZB/tw=;
+        b=h5jDQBuFsngRNSfGCOTjv5ASityvxHdWxCOkXLdFIZH6rElhDCnALftsxgfyE6rZjs
+         zdVfeObqxG2lvxxGDqeq7erE+YTN0blJRZL+GJhF3SWugaz/F4H+ju3kYv+CgAeSVVsG
+         TfUFKJn7bFG+5AX/MjZ7zaYxafraNuu/KfoDdCf71PyedGRCy7K8exg76PQQanBgCH37
+         EwJAYGajlt69CYEviKuR7BXJa8cnDtqQ6g2bYQkqQXXCPpC43UpjJKp7oi1IQCs4AR30
+         NSkVB555g8JG4Z6TGUfiHZQwrrUGMImMUoPVVsjxvlbdnI9QouwIJJ+KwzvEnFfsTo0s
+         cbuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722389790; x=1722994590;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mwjtumsy+UxHmt2SoXzIudT1ss3Em21PFEzhVzZB/tw=;
+        b=l7AA4QxftnzMrD9YHatN7QV46jBvUDDPUMshQ7f9NFZVNRdCVamJP4o/7HFW9R2ktY
+         OG4+TLMtnGNXlgkH/Ri/ekmfgjKnXnr3g5nwRt72JS/BXChd67cUfBAGsBhrPdDd2Vpv
+         pAjz2N9Dj1YPTFtzhYJ+NekCQGgT9ES1mUmLOjk+RUX9g65bDuYmly9uIM23MXOr4Xt2
+         cn0BmpbQLU+0aP+F8Q28qvVjFKLMyL7mFGBMarIUFdoSSobxrDnpwqjo50ynePMw2H0+
+         O29hF2Kgg2mq9keeNCm9aT+jXGt5YZuxr+jaI0iK0vhQCGbOv7xKTKdBYNncJ6Pv+ZCb
+         IT6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXkrcRcliq9uL31eT3i9O2+anqJ4LqMoFE8mrvd3xOooLRR8vBc4IYHSfjeJgWOl7WNnsg6lc5NzcK44Y8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCX+gfqFGFOyH6ER9M69GUA8fz6TxvSjeYVLgJZ7L3djqGxxyS
+	b1BEp4sj04VYqdagf6kO4SJNxzDaaYc45aITttukM3h8/PXRKwH4
+X-Google-Smtp-Source: AGHT+IGsBp+s7v3vzAlJAZSt65IVOhX1pdbnhROQD7WQbmHTJTAKib9LG14nVWLIySTryJ1l5o6orQ==
+X-Received: by 2002:a05:6a00:6f5b:b0:70d:2ae2:ceed with SMTP id d2e1a72fcca58-70ecea1ae3dmr9756911b3a.7.1722389789524;
+        Tue, 30 Jul 2024 18:36:29 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70eeac70b21sm3695138b3a.51.2024.07.30.18.36.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 18:36:29 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 30 Jul 2024 15:36:27 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
+	Ingo Molnar <mingo@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [GIT PULL] sched_ext: Initial pull request for v6.11
+Message-ID: <ZqmVG9ZiktN6bnm0@slm.duckdns.org>
+References: <ZpWjbCQPtuUcvo8r@slm.duckdns.org>
+ <20240723163358.GM26750@noisy.programming.kicks-ass.net>
+ <ZqAFtfSijJ-KMVHo@slm.duckdns.org>
+ <20240724085221.GO26750@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240724085221.GO26750@noisy.programming.kicks-ass.net>
 
-syzbot report slab-out-of-bounds in journal_entry_dev_usage_to_text,
-it because vstruct_bytes(entry) smaller than sizeof(struct
-jset_entry_dev_usage), overflow occurs when calculating the difference in
-jset_entry_dev_usage_nr_types(u).
+Hello,
 
-Reported-by: syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/bcachefs/bcachefs_format.h | 5 +++++
- 1 file changed, 5 insertions(+)
+On Wed, Jul 24, 2024 at 10:52:21AM +0200, Peter Zijlstra wrote:
+...
+> So pick_task() came from the SCHED_CORE crud, which does a remote pick
+> and as such isn't able to do a put -- remote is still running its
+> current etc.
+> 
+> So pick_task() *SHOULD* already be considering its current and pick
+> that if it is a better candidate than whatever is on the queue.
+> 
+> If we have a pick_task() that doesn't do that, it's a pre-existing bug
+> and needs fixing anyhow.
 
-diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
-index e3b1bde489c3..d536da101e89 100644
---- a/fs/bcachefs/bcachefs_format.h
-+++ b/fs/bcachefs/bcachefs_format.h
-@@ -1252,6 +1252,11 @@ struct jset_entry_dev_usage {
- 
- static inline unsigned jset_entry_dev_usage_nr_types(struct jset_entry_dev_usage *u)
- {
-+	if (vstruct_bytes(&u->entry) < sizeof(struct jset_entry_dev_usage)) {
-+		pr_info("entry data bytes %u is too small", vstruct_bytes(&u->entry));
-+		return 0;
-+	}
-+
- 	return (vstruct_bytes(&u->entry) - sizeof(struct jset_entry_dev_usage)) /
- 		sizeof(struct jset_entry_dev_usage_type);
- }
+Right, I don't think it affects SCX in any significant way. Either way
+should be fine.
+
+...
+> > Yeah, this came up before. On UP, SCX either needs to call the balance
+> > callback as that's where the whole dispatch logic is called from (which
+> > makes sense for it as dispatching often involves balancing operations), or
+> > SCX itself needs to call it directly in a matching sequence. Just enabling
+> > balance callback on UP && SCX would be the cleanest.
+> 
+> Or make scx hard depend on SMP? Are there really still people using !SMP
+> -- and I suppose more importantly, do we care?
+> 
+> I mean, they could always run an SMP kernel on their UP potato if they
+> *really* feel they need this.
+
+Maybe, but at the same time, it's also just some isolated cruft that enables
+UP support, so both sides of the scale seem similarly light-weight? I lean
+towards "why not support it?" but don't feel particularly strongly about it.
+
+Thanks.
+
 -- 
-2.43.0
-
+tejun
 
