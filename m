@@ -1,152 +1,114 @@
-Return-Path: <linux-kernel+bounces-269630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F74943517
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:40:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CD7094351C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7F97B21A99
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:40:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C30F1C21B87
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334E5374F1;
-	Wed, 31 Jul 2024 17:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DBF3A1B5;
+	Wed, 31 Jul 2024 17:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b8wftGCH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fky8v2DZ"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999B43D551
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 17:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13525381A4
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 17:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722447626; cv=none; b=KpPCo9thCK8tqg38as51rApM0fATJ+9wyqG47HXom9RyU1lrsE6NRCqYj953Uhl+HBOB5v6+hcfC4SAvQOTbfua8NSCz3r8SxKs80Imkm2DFw5tbtfWbbqgQFJAKsLwXk4PRCxiuRjpregTI05ziqHE01QU4Da6RZr36Czt/LUE=
+	t=1722447854; cv=none; b=EW8ZNDkytsgkPkCzxsKj1XRq0h479fFmz2wyD9fJc0YjABxqMi/NiDTTr8Q5+mGVsPooyc+oPVtdu7jgXIc9cToz91VinXlwvYvmhlAf8we4TTIzZxSqIZDslyFETdpWcTo8TEsVirnIosd0Y70sphaYIlFS8zCbuALHbx1G2jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722447626; c=relaxed/simple;
-	bh=YGB5pJc3ndjG2MKoPuf30zjg6eQqFwcL3FK7Idj61Cg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CwT/5FSf3OwEKrg8zkpgJUzHlvukNjD7zc6fifgZ4VECmV3mOtXsgqC5y2LV5FQWOa3RMTvNuxnHXj73vTqN3NQcNZT2d7q0zSOr4OTYCe0xYYClln1fqy4WNbapKwHSwQb7FMxCaUGiPf7sSPyyGCHuOpl5HPQuor/4bNcOw2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b8wftGCH; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722447624; x=1753983624;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=YGB5pJc3ndjG2MKoPuf30zjg6eQqFwcL3FK7Idj61Cg=;
-  b=b8wftGCHuuOotTbz6HyXoQY+INWkp79kGm8/X3pyj+Xy8/sYVoGuvjI5
-   3LlCPmi5WqrjF/W7BCp/AlboCmcStoevWypMWMy5jZlD9N5k/JA4GhI0L
-   ctCNcrmCqEtrtczMHYaqoBzrYg94ZAzDnuyj9+H5i5bJHLTiTxWUJIO7N
-   UXLWnNte8h9CtYrnLUOhSctebhh/bL1hBokcvd3UkO4BWfLU0A0UbLB+K
-   fXch33y+ui9fviEei4XWSUkxQNdnT1MQXrOOLSK/OefSA5ymBUi4RAqhL
-   UAC0E7sl5qhQ1/RZoC6+RJgFFtuayRZFG5gUwiU1eFngCoG2RrrX0C6L8
-   A==;
-X-CSE-ConnectionGUID: MKj2blrkQlm5KOxqW+Excg==
-X-CSE-MsgGUID: U4KqDvhXR+qy39FYqPk44Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="31497655"
-X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="31497655"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 10:40:23 -0700
-X-CSE-ConnectionGUID: SGgE4PnRQViOi+BRTMk+4w==
-X-CSE-MsgGUID: uXFphPNLQxetv2IQGunkfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="59397678"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.183])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 10:40:17 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Alex Deucher
- <alexander.deucher@amd.com>, Christian =?utf-8?Q?K=C3=B6nig?=
- <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Harry
- Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Rodrigo
- Siqueira <Rodrigo.Siqueira@amd.com>, Mario Limonciello
- <mario.limonciello@amd.com>, Matt Hartley <matt.hartley@gmail.com>, Kieran
- Levin <ktl@framework.net>, Hans de Goede <hdegoede@redhat.com>, Xinhui Pan
- <Xinhui.Pan@amd.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>, Thomas
- =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Subject: Re: [PATCH v3 0/2] drm: minimum backlight overrides and
- implementation for amdgpu
-In-Reply-To: <20240731-amdgpu-min-backlight-quirk-v3-0-46d40bb21a62@weissschuh.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240731-amdgpu-min-backlight-quirk-v3-0-46d40bb21a62@weissschuh.net>
-Date: Wed, 31 Jul 2024 20:40:12 +0300
-Message-ID: <87v80lwjcz.fsf@intel.com>
+	s=arc-20240116; t=1722447854; c=relaxed/simple;
+	bh=8kj4IaTGSnIoJ73AMoeqJoBXV3s476EBHK5JcoCuOf0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GjEkq7t6IQJ8rqt1n0Ue9lle+dFXexAiSRZlXQi6SN+D1jBn/aiOy7Oi0DGs7U1K+PRKQAYaw7UAjJyNbVMTsa4s0QSsmcj5KgxlUYKkN6wLXwBGMJ8JWeu9v6t2BU1rqPSkNO5+LmH3sZrrmPuN2T1HdTpjigl0IjfirCT5+0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fky8v2DZ; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-81f8bc5af74so35122039f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 10:44:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1722447851; x=1723052651; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x6lecl9114nb1aO1eoXo+LK+IzPR8aY11XXCBjTQO6o=;
+        b=fky8v2DZK0Dq/j9SVV97FaZze8JItkKN95HhMo1XvfrbZa83oKK5h648MhRvFrxviH
+         xSwv7bxNgvKFQySXcZ01b7qejnd8xswHGQZfhJk8qM06QWzcIy4ok0VWZwli4vPiswC2
+         dVOMu6roG97WEM0PXKDP9AYX527Z0A2oXSnAs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722447851; x=1723052651;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x6lecl9114nb1aO1eoXo+LK+IzPR8aY11XXCBjTQO6o=;
+        b=jvSoSHvSery1loxD1BeI+UUGFA15eg8ZnvNgU6189YK3e54dKqLaWs4Qav9DigysrJ
+         7Cr5S71tEAE30/g+AKN5+QorOuH5DkwqpyFbi57NalrjYRty3xYrAw15KdQ0h+rzmvYw
+         waboCp/LO9qpa3fIEEuVAsBxan2Ofw8vpxzxdMFILvQwxJ5D2WrwarHszCd5R9a/F01F
+         HGZAiOIHEjf6CNI3JPXTv2eYMVmFPUiVpl7fykANaL/IYeu9WI7riCBdUj8yLxZR6Z61
+         InitqfEiAzS2E4c2PegXaV99opKzLBTOhcPlCqAYA99NzuEyRnkSw5f6wFrxGb8CXsZH
+         sHKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUo5vK9caHqh0YsoVBq7QM4MmNcmSOHHqhRz3Jwj3RlpYKNysbeMYlSeKMbWqzVeRAmM0Qq+ZflPR6Dm49Kj3cvKfDi1hfSAq5r4jH6
+X-Gm-Message-State: AOJu0Yx75Pxdvfk6ueF/Sm93tLkoj0jJ+iZwLlW4v/vBkmMlG4W7/7+U
+	W3nlrv0VdfgafneZL07KjJ30F9+nnaI9aRp9cupoagHPkX5kWu8ybOc9ssCZTak=
+X-Google-Smtp-Source: AGHT+IEApGy1keF/uYZ5p9Ukh/OxeXMECiYTn6y9QEOut1KFWNxFshaLHNDidYV4n+Wbi5Z+5sQw8Q==
+X-Received: by 2002:a5e:c74a:0:b0:81f:8cd4:2015 with SMTP id ca18e2360f4ac-81fcc1598b7mr2618739f.2.1722447851158;
+        Wed, 31 Jul 2024 10:44:11 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c29fbd9e64sm3331066173.107.2024.07.31.10.44.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 10:44:10 -0700 (PDT)
+Message-ID: <71f31fb9-2ef4-4bbf-99fd-83e30d6e9422@linuxfoundation.org>
+Date: Wed, 31 Jul 2024 11:44:10 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/exec: Fix grammar in an error message.
+To: Chang Yu <marcus.yu.56@gmail.com>, ebiederm@xmission.com
+Cc: kees@kernel.org, shuah@kernel.org, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ chang.yu.56@protonmail.com, Shuah Khan <skhan@linuxfoundation.org>
+References: <ZqCBSPFfMeghhRGQ@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <ZqCBSPFfMeghhRGQ@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 31 Jul 2024, Thomas Wei=C3=9Fschuh <linux@weissschuh.net> wrote:
-> The value of "min_input_signal" returned from ATIF on a Framework AMD 13
-> is "12". This leads to a fairly bright minimum display backlight.
->
-> Add a generic override helper for the user to override the settings
-> provided by the firmware through the kernel cmdline.
-> Also add amdgpu as a user of that helper.
->
-> One solution would be a fixed firmware version, which was announced but
-> has no timeline.
-
-The flip side is that if we add this now, it pretty much has a timeline:
-We'll have to carry and support it forever.
-
-It's not a great prospect for something so specific. Not to mention that
-the limits are generally there for electrical minimums that should not
-be overridden. And before you know it, we'll have bug reports about
-flickering screens...
-
-BR,
-Jani.
-
-
->
-> This helper does conflict with the mode override via the cmdline.
-> Only one can be specified.
-> IMO the mode override can be extended to also handle "min-brightness"
-> when that becomes necessary.
->
+On 7/23/24 22:21, Chang Yu wrote:
+> Replace "not ... nor" in the error message with "neither ... nor".
+> 
+> Signed-off-by: Chang Yu <marcus.yu.56@gmail.com>
 > ---
-> Changes in v3:
-> - Switch to cmdline override parameter
-> - Link to v2: https://lore.kernel.org/r/20240623-amdgpu-min-backlight-qui=
-rk-v2-0-cecf7f49da9b@weissschuh.net
->
-> Changes in v2:
-> - Introduce proper drm backlight quirk infrastructure
-> - Quirk by EDID and DMI instead of only DMI
-> - Limit quirk to only single Framework 13 matte panel
-> - Link to v1: https://lore.kernel.org/r/20240610-amdgpu-min-backlight-qui=
-rk-v1-1-8459895a5b2a@weissschuh.net
->
-> ---
-> Thomas Wei=C3=9Fschuh (2):
->       drm/connector: add drm_connector_get_cmdline_min_brightness_overrid=
-e()
->       drm/amd/display: implement minimum brightness override
->
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  6 ++++
->  drivers/gpu/drm/drm_connector.c                   | 34 +++++++++++++++++=
-++++++
->  include/drm/drm_connector.h                       |  2 ++
->  3 files changed, 42 insertions(+)
-> ---
-> base-commit: 36821612eb3091a21f7f4a907b497064725080c3
-> change-id: 20240610-amdgpu-min-backlight-quirk-8402fd8e736a
->
-> Best regards,
+>   tools/testing/selftests/exec/execveat.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/exec/execveat.c b/tools/testing/selftests/exec/execveat.c
+> index 6418ded40bdd..071e03532cba 100644
+> --- a/tools/testing/selftests/exec/execveat.c
+> +++ b/tools/testing/selftests/exec/execveat.c
+> @@ -117,7 +117,7 @@ static int check_execveat_invoked_rc(int fd, const char *path, int flags,
+>   	}
+>   	if ((WEXITSTATUS(status) != expected_rc) &&
+>   	    (WEXITSTATUS(status) != expected_rc2)) {
+> -		ksft_print_msg("child %d exited with %d not %d nor %d\n",
+> +		ksft_print_msg("child %d exited with %d neither %d nor %d\n",
+>   			       child, WEXITSTATUS(status), expected_rc,
+>   			       expected_rc2);
+>   		ksft_test_result_fail("%s\n", test_name);
 
---=20
-Jani Nikula, Intel
+
+Applied to linux-kselftest next for Linux 6.12-rc1
+
+thanks,
+-- Shuah
 
