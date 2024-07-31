@@ -1,219 +1,173 @@
-Return-Path: <linux-kernel+bounces-269461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C7094330C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:21:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2068994330E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:22:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC1D11C209E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:21:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0C7C1F2A474
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF5B1CAAC;
-	Wed, 31 Jul 2024 15:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05641BC09E;
+	Wed, 31 Jul 2024 15:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AJJ75reD"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ovyT8T4g"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2050.outbound.protection.outlook.com [40.107.236.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79F717741;
-	Wed, 31 Jul 2024 15:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722439116; cv=none; b=cbF1kth5ZvQ7CDLQktLweToEN2Swn0cZcExtlBKwkVWSBNU0PgPWJ8Nj9bORwjYCglkKz/4/6KorJG3v6KekDd4XLh7Zpb1FfFOM25jaLsPaiJP4Y+CXygRXiBSti6cPRc4DIjCT1IUK+yk7NPRQwp9pQZzR3fI/tlabfbYHZno=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722439116; c=relaxed/simple;
-	bh=lAUgPsvmwcI5gDVQTdCGu1WnO/70naEh8fqJP0rlrd4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aN36QH9JNbxuqLA/3se5LxtO6rIf+PFurRArp3czwJ5JpQGn373T92hsIjoZEWRgzy8dmi8J7nktAqR8Cc0snDV9mPQ9p8OWr0DgDB17J97Ag3vW+8uf7l9HOeqNENOrusLgP5JrOu9+zN8pn9s/hiFYOFAkRTopPzVpkEhsgAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AJJ75reD; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46VFIM3s082023;
-	Wed, 31 Jul 2024 10:18:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722439102;
-	bh=GKzPtifXeFUhvADnUjGHY8DqkpY6PksV+4ieiYc2giU=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=AJJ75reD3OgZOTwN0SmGjpV4+neBoE+XprN4SLaIvKnHwR+oic19wos/68BWHOGr5
-	 9Y4j+R2Sg1GjAJKsL85LWdCGYRALwribBA2iuTRLAwM3RfHL7NVmzrCO2my9KZLmJp
-	 sA6PG63uxT8TFoZGYWOvAR3qxz5Nrhy1y93j51Bs=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46VFIMbm019662
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 31 Jul 2024 10:18:22 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 31
- Jul 2024 10:18:21 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 31 Jul 2024 10:18:21 -0500
-Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46VFIKWH077527;
-	Wed, 31 Jul 2024 10:18:21 -0500
-Date: Wed, 31 Jul 2024 20:48:20 +0530
-From: Manorit Chawdhry <m-chawdhry@ti.com>
-To: Andrew Davis <afd@ti.com>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
-        Neha Malcom
- Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>
-Subject: Re: [PATCH v2 2/3] arm64: dts: ti: Introduce J742S2 SoC family
-Message-ID: <20240731151820.tf6tzgj2wrc5vh5j@uda0497581>
-References: <20240730-b4-upstream-j742s2-v2-0-6aedf892156c@ti.com>
- <20240730-b4-upstream-j742s2-v2-2-6aedf892156c@ti.com>
- <20240730123343.mqafgpj4zcnd5vs4@plaything>
- <20240731041916.stcbvkr6ovd7t5vk@uda0497581>
- <20240731110607.7fb42mgcsf2apodv@unshaven>
- <20240731135714.p53lki7mihzxcyk2@uda0497581>
- <087ee9e2-50ec-4791-a534-b3ebbf594fe6@ti.com>
- <20240731145810.xoxal3ef7i3relru@uda0497581>
- <c6497a37-695b-45d8-b413-2b338e3f42a7@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C95117741
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722439136; cv=fail; b=pc+rcwgKvszT/E8BBbzKZNsiDu0agUoiFHIqS6ZCCI4r9DYL/02FI08tyTKQlsfW619cKl2tgmqYzRTNb3CNysfVqviWLHVg7Rper0Tg92TL3nc/VbfJrLAxrP/pOQPmABDK04XV1cRbRtjQZ6reK4iAACuqIQnkDbqJKNj4jNY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722439136; c=relaxed/simple;
+	bh=7YrLm0mw3dNnpCEKhL+8E3KI9KasOBBIm6d1MN8gHTs=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LwjMfYd1Swzj5IVvMID5epTbVLd2H29Ga2h2CUBz2h8uS5A6GyQfqs7jgW/6pF1yiT42VbnTYlzp2V5eozjpLHcrMuef/a9JZ28Pvd94rAFu07qP4/yNEGtnR7KAz27DwgXD/0Nw3ytfkZEAU4ZHNvfcsUFBPymGrln+kbLANUE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ovyT8T4g; arc=fail smtp.client-ip=40.107.236.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=P1/G8mfadtWKrrWLMUMwPhT40U4+8ZRjPbtQbzFu27wuwe+gGshApCvcBaRddtpBRENvYuKeFXHw2KgspwOnIvOxCTVQw3U6siZwSqKloaOgGxBIaZghQJzb+vlFsdmwfWGqHva3+tbyUdgxyDg/qfJ0yRHzCs5XGIca7A5+73DObkpgluQqH7tWDCmH6Udwt7QjayDrcAHTgyQox8MKSlAHQzki9YnybRNNlpgnnTvgs/bKjxZOcKBQwKHSFde89SvmGb8aIgoerrijsk2ZrrQFhViIW+Eymki2glrk8aQRidKsDDkzB7h10TpYPYEOxMzDC06OmJocK6m2qcKkeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xbUbWOh5A5cHtKkFDWjqoqYIwXiIZHHvUOmRVLaHZ04=;
+ b=OOxWqqYYy14K+gTyvqdh8RAautAVB8/LqKkxukRermisD49VJNZn0/zk40zlwlY61swt0Ym1enkKSvr8MLlsYst4RxcOCRZPdIYfQz1zNvprcBVQ46t4EHKeH8TCbWBcL67ULJGV6jeyA3kmpp8GYTuKtLJrg1Pw5wP3GxTljxs33J4e6MrqGKIyxihM5qv9C3Z0aJImz+fJQEWYkM+cHGV/d3X+uRzSO8QSJaEkGxRx1we9wGsvNZ3XOHUoUi/8WXiBFhEXrt6lAClN05PJmQ7+dZr8iajS0WAqPMxv2CDJXb3Qog/BDOzvYxA8bs1DacQ7Pzd/4dDf35PDSRM5tg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=huawei.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xbUbWOh5A5cHtKkFDWjqoqYIwXiIZHHvUOmRVLaHZ04=;
+ b=ovyT8T4grYs8iixNQKusvDZEqSuHy/a0G2mXuaruXE70MnrFPHwb5BmKlUjQTC6sLv9IvqnYF6putgZosxL4yqpM9zo4LwDIse6wkIvQcE9qbyPuI76cXm5ErzeHy4Q9LPyKLTlY11wqa5+UQ+9GM6o+Cvml8HFTs5VHWrUZ/nI=
+Received: from DM6PR01CA0018.prod.exchangelabs.com (2603:10b6:5:296::23) by
+ MW6PR12MB8913.namprd12.prod.outlook.com (2603:10b6:303:247::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22; Wed, 31 Jul
+ 2024 15:18:51 +0000
+Received: from DS1PEPF0001708E.namprd03.prod.outlook.com
+ (2603:10b6:5:296:cafe::70) by DM6PR01CA0018.outlook.office365.com
+ (2603:10b6:5:296::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21 via Frontend
+ Transport; Wed, 31 Jul 2024 15:18:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS1PEPF0001708E.mail.protection.outlook.com (10.167.17.134) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7828.19 via Frontend Transport; Wed, 31 Jul 2024 15:18:49 +0000
+Received: from BLRRASHENOY1 (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 31 Jul
+ 2024 10:18:45 -0500
+From: Gautham R.Shenoy <gautham.shenoy@amd.com>
+To: Yue Haibing <yuehaibing@huawei.com>, <mingo@redhat.com>,
+	<peterz@infradead.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+	<vschneid@redhat.com>, <kent.overstreet@linux.dev>
+CC: <linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
+Subject: Re: [PATCH -next] sched: Remove unused extern ia64_set_curr_task()
+In-Reply-To: <20240731102737.1797655-1-yuehaibing@huawei.com>
+References: <20240731102737.1797655-1-yuehaibing@huawei.com>
+Date: Wed, 31 Jul 2024 20:48:35 +0530
+Message-ID: <87mslxsi7o.fsf@BLR-5CG11610CF.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <c6497a37-695b-45d8-b413-2b338e3f42a7@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF0001708E:EE_|MW6PR12MB8913:EE_
+X-MS-Office365-Filtering-Correlation-Id: 032c9bb2-5999-47c0-a2fb-08dcb17414a7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?PHmLa/OTBLjG7UNr/bZd1l8Wxe0GS4m0Y85O9F3bRkW3Q9yKF+ve4BTsnb0+?=
+ =?us-ascii?Q?USlIE5Ibbm5l9zaBJJ/oqy21DT0hPhY2dFfZH8sVaJxUXv+05Zl49BgCBaH8?=
+ =?us-ascii?Q?G9acpDJI/Tm1uV0sL54EbMdpSTtSdVrrgh4sZcl2kdCJkBjN0XA0Bpq/gbZ3?=
+ =?us-ascii?Q?YFdsDAX0rZOm0LxfGb3OrQBdw6LYmfB06JNLhBV7tFCsXwHZ22wqYF4cI/B3?=
+ =?us-ascii?Q?plyQE4GCPOhEkVjuuRp6UflxIWBcF5C0hhuJGzsroqIXvHY7hroj5WRbPR4R?=
+ =?us-ascii?Q?UDf9pVrPeWGved6isYgBANAixAQDP878/gyqcDWRRH2qETMpV82ppbEM7K9c?=
+ =?us-ascii?Q?zrAeGhQR9er7tRn8naW3jAd4MHP1msoerUrzrWUOwc2pXi1hUu0tJQ4IW6Q0?=
+ =?us-ascii?Q?Y4B2ke0u6FfUm9Ka2j5ZQk4GP+/X3CZhmYld1dPAuo1zRIFRW4FVBiStq8RR?=
+ =?us-ascii?Q?wpxFhaSD0TGMPCBPgCSQGTpbGbW5UnqEI/Y8vr6kN1HNSDfZ1CxTT9gR7Qan?=
+ =?us-ascii?Q?tdBkrLaRbK5OWKyN10a7KSRihkwYu77WJpz+QBJJL1z1I3gnjmeHV7WcwR0i?=
+ =?us-ascii?Q?XbiMjcLAT3eZ/zh9ocTOipDaYNzED3tFWePP68u37My0B0+REpZ9+4zBo1F3?=
+ =?us-ascii?Q?Teu4fOoxb8ewRfpx5ldNQ9NVZarnJo2xYTVrJXlMmrxFQl3xm2msQw13st3m?=
+ =?us-ascii?Q?4Frazf54jAjxJnL8rqpEUgRdAsGMdfgW/DUh3pcCCbmlgR2i1NT0PVZuaxNw?=
+ =?us-ascii?Q?Kc1O2SI7hhLwnKWsOc7EU/0KhVlgqTM6cbU3Gh1TQCGOEs4k7ithp56lLMLS?=
+ =?us-ascii?Q?QUonnDZIVRFeYEKLMZGqgQIi+46ZqcvHF4xdEjyczgYXjC4nmXDAony43FIP?=
+ =?us-ascii?Q?kv9FHGM5JHSBbYBkfSBVzh1rvNPK7qz1qqb7s+ksDF2LWFBkxyGpaNc/3Bh+?=
+ =?us-ascii?Q?O73h34uC6f9CQnqug29A0EKdcEOXf0prTukxwslGF9/YrLUPmfTAxv33kZY4?=
+ =?us-ascii?Q?fnsF1o5tOQ2327N6yJlOwNUcBI7uAYIRIYbQ7dti65me38qrXVJn3Ll0FOV+?=
+ =?us-ascii?Q?QTpa37XrHi1ClHV4Cl6mmxxShW9QfyV3/CTYAyyv5ebQT+XrYco+TBkvBPXN?=
+ =?us-ascii?Q?pya9mZBiVIuvgBgogdrn2p3Ok8rt7wa0OENwi+QWv17dnVdDTjAt6oPMSLEL?=
+ =?us-ascii?Q?YklxnLo7bTT+3xcyew1dET8SwLo9UjZLgOs6HDaWJFmJO3B2RFxJ/fhwV29A?=
+ =?us-ascii?Q?5KwUnXj+hMwFqt3mBek3btW78ZeyrB8QA7kcjnMnVF//RH9lxAgt/MzeAUlr?=
+ =?us-ascii?Q?dSZrP1D29v39eOpIhABCPnOjLqya5NAshOf6o/uZIHL/qwoRQTU0uF6NcCyP?=
+ =?us-ascii?Q?d+YRbWLnRbSBSjsn8oisPtOd67ImGQfDPb6L5nZMOnCO0fFsCOLKo+273K4o?=
+ =?us-ascii?Q?F1ieJbYwan1Mre/6C8tLgXULLWW6qCantbK0epBUB6SFZseOL3PHCA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 15:18:49.9527
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 032c9bb2-5999-47c0-a2fb-08dcb17414a7
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF0001708E.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8913
 
-Hi Andrew,
+Yue Haibing <yuehaibing@huawei.com> writes:
 
-On 10:03-20240731, Andrew Davis wrote:
-> On 7/31/24 9:58 AM, Manorit Chawdhry wrote:
-> > Hi Andrew,
-> > 
-> > On 09:37-20240731, Andrew Davis wrote:
-> > > On 7/31/24 8:57 AM, Manorit Chawdhry wrote:
-> > > > Hi Nishanth,
-> > > > 
-> > > > On 06:06-20240731, Nishanth Menon wrote:
-> > > > > On 09:49-20240731, Manorit Chawdhry wrote:
-> > > > > > > > + */
-> > > > > > > > +
-> > > > > > > > +#include "k3-j784s4.dtsi"
-> > > > > > > > +
-> > > > > > > > +/ {
-> > > > > > > > +	model = "Texas Instruments K3 J742S2 SoC";
-> > > > > > > > +	compatible = "ti,j742s2";
-> > > > > > > > +
-> > > > > > > > +	cpus {
-> > > > > > > > +		cpu-map {
-> > > > > > > > +			/delete-node/ cluster1;
-> > > > > > > > +		};
-> > > > > > > > +	};
-> > > > > > > > +
-> > > > > > > > +	/delete-node/ cpu4;
-> > > > > > > > +	/delete-node/ cpu5;
-> > > > > > > > +	/delete-node/ cpu6;
-> > > > > > > > +	/delete-node/ cpu7;
-> > > > > > > 
-> > > > > > > I suggest refactoring by renaming the dtsi files as common and split out
-> > > > > > > j784s4 similar to j722s/am62p rather than using /delete-node/
-> > > > > > > 
-> > > > > > 
-> > > > > > I don't mind the suggestion Nishanth if there is a reason behind it.
-> > > > > > Could you tell why we should not be using /delete-node/?
-> > > > > > 
-> > > > > 
-> > > > > Maintenance, readability and sustenance are the reasons. This is a
-> > > > > optimized die. It will end up having it's own changes in property
-> > > > > and integration details. While reuse is necessary, modifying the
-> > > > > properties with overrides and /delete-nodes/ creates maintenance
-> > > > > challenges down the road. We already went down this road with am62p
-> > > > > reuse with j722s, and eventually determined split and reuse is the
-> > > > > best option. See [1] for additional guidance.
-> > > > > 
-> > > > > 
-> > > > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n189
-> > > > 
-> > > > Thank you for giving some reasoning, would do the needful!
-> > > > 
-> > > 
-> > > This refactor will require some interesting naming for the
-> > > common SoC files. Based on your name for the EVM, I'm guessing
-> > > you will go with
-> > 
-> > One other reason I was trying to avoid that and going with
-> > /delete-node/. For such a small delta change tbh, this churn doesn't
-> > feel worth the effort to me and is just gonna create confusion.
-> > 
-> > EVM one was required as Rob did raise an interesting point and we did
-> > require a soc file that wasn't existing with the previous patchset but
-> > now for deleting just 4 cpus and 1 dsp, am gonna have to rename all the
-> > files, change the hierarchical structure, add all the cpus again with
-> > some weird naming for the file as don't know if some other soc is gonna
-> > come up in future so don't wanna clutter the file names as well with
-> > j784s4-j742s2-j7xxx.dtsi which is just gonna create another set of mess
-> > in future.
-> > 
-> 
-> Which is why I would suggesting getting the name picked and agreed on
-> here before you start doing the renames (renames for .dtsi files are not
-> a problem, only the final .dtb names seem to require stability as the
-> bootloader tend to load them by name, and those are not changing)
-> 
-> What is wrong with just k3-j784s4-common.dtsi? All future spins of
-> this base device can include from this file. Every spin doesn't need
-> to be in the common file's name.
+> Commit cf8e8658100d ("arch: Remove Itanium (IA-64) architecture")
+> remove the function but left this declaration.
 
-Yeah, was gonna go with that file only right now, but now would I have
+Yup. This declaration is no longer needed.
 
-- k3-j784s4-mcu-wakeup-common.dtsi ( this is not required at this stage,
-but ig for consistency better to now itself )
-- k3-j784s4-main-common.dtsi ( all dsps excluding c7x_3 )
-- k3-j784s4-thermal-common.dtsi ( not required again but consistency )
-- k3-j784s4-common.dtsi ( all this won't have the cpu but will have all
-						  other ranges including for the last dsp and all )
-- k3-j784s4.dtsi ( have 8 cores )
-- k3-j784s4-main.dtsi ( have an additional dsp )
-- k3-j742s2.dtsi ( have 4 cores )
-- k3-j742s2-main.dtsi ( have firmware name overrides )
+>
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 
-I do find it confusing while developing but mostly people would have to get
-used to developing in common files and hoping that things should be
-okay. 
+FWIW,
 
-Regards,
-Manorit
-> 
-> Andrew
-> 
-> > Regards,
-> > Manorit
-> > 
-> > > 
-> > > k3-j784s4-common.dtsi
-> > > 
-> > > included from the real k3-j784s4.dtsi and the new k3-j742s2.dtsi?
-> > > 
-> > > Too bad the Jacinto SoC names don't use a hierarchical naming. :(
-> > > 
-> > > J7<family><part><spin><etc>..
-> > > 
-> > > Andrew
-> > > 
-> > > > Regards,
-> > > > Manorit
-> > > > 
-> > > > > 
-> > > > > -- 
-> > > > > Regards,
-> > > > > Nishanth Menon
-> > > > > Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-> > > > 
+Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+
+> ---
+>  include/linux/sched.h | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 75138bf70da3..067b3a997299 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1852,7 +1852,6 @@ static __always_inline bool is_idle_task(const struct task_struct *p)
+>  }
+>  
+>  extern struct task_struct *curr_task(int cpu);
+> -extern void ia64_set_curr_task(int cpu, struct task_struct *p);
+>  
+>  void yield(void);
+>  
+> -- 
+> 2.34.1
 
