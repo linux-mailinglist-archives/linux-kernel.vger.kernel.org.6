@@ -1,82 +1,157 @@
-Return-Path: <linux-kernel+bounces-269579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45490943479
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:53:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84661943487
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E27EF1F26263
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:53:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E811C2331B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2221BD4E4;
-	Wed, 31 Jul 2024 16:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDA71BD4E7;
+	Wed, 31 Jul 2024 16:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n/mv1jIc"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="efz3Csix"
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D84434CDE;
-	Wed, 31 Jul 2024 16:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C6634CDE;
+	Wed, 31 Jul 2024 16:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722444737; cv=none; b=Upsfg5kWrD/y7fXDLc08Er3YH2Jcak3h6zP2LJiiOu2CRfkmeic8vKpLyJMwG985oRo0CE05fVryE1FGsm/dfZseLoQGLiXxS3jYXfGoifbjtL3hSvZEQ45hYTvXvNwT5k03AEGAkcp77resPsSXWqwpFmSomzuCZuBuVxQCQjE=
+	t=1722444981; cv=none; b=FQxd4umSaqYJebSutF7r286rMswyVb3QRuOZGVJZVp22fKNrwMpS6KR70bAusHnuwa7lcHFFfhmJg4jS11uwyb5tViSLPUGXwVTaR9FKActoMPUaU953B5+f2EYnfkb+ceQW7dx4TxL/lldLLHOSh+R7y1tONE12icaUGHDwU1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722444737; c=relaxed/simple;
-	bh=Py0+MUMLyP+amcrYsRQm71NOW2FLNIcd6AfpvH7QLjU=;
+	s=arc-20240116; t=1722444981; c=relaxed/simple;
+	bh=Z1l84i7WFLY3J70ZGQGL5lORuV+MntauxP/4ole/9iU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aS/vdBKAMpbfrgPW04/vxmLSQvNmyfacSq36Mv7vtNHnnIqF3LTsg5l8PCxyjzoBVZkpW6xvN8eANFp9vAjAy023MaLAl5B6VM5qnt6OkFlzSJK1PABv0q5WYaWh/jA4tab7zfcSaOjssUhFjV20QU8Z+fFA6TIRs3Lj0P4jstU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=n/mv1jIc; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=uS3PB/nOV7xS+49bHYTfiM3ByvwnlgbLTqGRyHNUujwwDm4+b1vFM3VW4tpO24a1qSSG0Zey/fFMGao/lTM88P+AJnyzmYMVyulNNiQyAPdAOkOxPc6DlVmoW7vAbRybtkw942bB4gCt0SZ+ix5NGyQyl4P4O5rmwaSPAL9ZFbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=efz3Csix; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=4X8mvoBdcFqyLtDyn+RpakBZQHl2koRfp36O76+J8IE=; b=n/mv1jIcFfqCWKkKbptzGtFXvo
-	0/7jkcF/VDqPqrrfl5Wcsi5XvvobtlzeqBOGKwi0MvPpLOxF6MTgKTXVbrFm1Z+EBzlnDs6AFHwJx
-	iJQ/yeFzihq9sBMprpamy16IGxIsISw9iZ/2e9PSxaFadX27UV80owE5YBRNNgtgHH7Y5Muks84WW
-	RoVcEbPvJJBwy8+M+3rNecMU7FX9D0iz82YBW8zUCzMcdXwEgQD+OJOowOK55KV4Sat0wIKsVDiIv
-	D7XGqc3GdW/fMi2lsUDrvxXAT71gtXFtF4AydsiYubLPcPmVpc+V4rMcEDP3fCrYKMGD/X7CsSjAo
-	FFQyrA8w==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sZCYe-0000000GLu2-0Y5p;
-	Wed, 31 Jul 2024 16:52:12 +0000
-Date: Wed, 31 Jul 2024 17:52:12 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
-	brauner@kernel.org, david@fromorbit.com, jack@suse.cz,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH 5/6] iomap: drop unnecessary state_lock when setting ifs
- uptodate bits
-Message-ID: <ZqprvNM5itMbanuH@casper.infradead.org>
-References: <20240731091305.2896873-1-yi.zhang@huaweicloud.com>
- <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=+Y3CbVRYq6I9qI+FCwLhJRP1pML6FNbZG9fc1WfeQgs=; b=efz3Csixxs9JsqLUSMNMRJqMpA
+	JG6+T46amFlrIk8zCukmNh5GWHhUYKeE3RGjnynOb3CJ+nzMHjGXQ8yW9GBE+D7eUjRKv/QYcxlwK
+	DKJEHEXkxjj4SxysjiNhmudWlmTeJB98BRGSYkkA+33wsfd/RsEMSQv7eN+XnYICPqQNFdvz715BQ
+	JD1R/8pE0dXDZQLW8r3XtVK3bfSZJ5JTEnmUj0u9RDY1lQg4E/RGSL0e1AudtQXxwO5+HtmRkzrqm
+	eMRi2apUXu0CruNI68G2dMJ2LwIQiw2hVH3eKfp0nqyJCKAv7I3eRlzblmuslx047IkXbALv1vWZN
+	fLtIczjw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sZCcZ-0000000GMD8-1NIH;
+	Wed, 31 Jul 2024 16:56:15 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D6D0E300820; Wed, 31 Jul 2024 18:56:14 +0200 (CEST)
+Date: Wed, 31 Jul 2024 18:56:14 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, andrii@kernel.org, mhiramat@kernel.org,
+	jolsa@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] uprobes: make uprobe_register() return struct
+ uprobe *
+Message-ID: <20240731165614.GI33588@noisy.programming.kicks-ass.net>
+References: <20240729134444.GA12293@redhat.com>
+ <20240729134535.GA12332@redhat.com>
+ <CAEf4Bza1_njsVUad8so9EFxy8VmJsTfzaaAahBYFtOqdF1HAjA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4Bza1_njsVUad8so9EFxy8VmJsTfzaaAahBYFtOqdF1HAjA@mail.gmail.com>
 
-On Wed, Jul 31, 2024 at 05:13:04PM +0800, Zhang Yi wrote:
-> Commit '1cea335d1db1 ("iomap: fix sub-page uptodate handling")' fix a
-> race issue when submitting multiple read bios for a page spans more than
-> one file system block by adding a spinlock(which names state_lock now)
-> to make the page uptodate synchronous. However, the race condition only
-> happened between the read I/O submitting and completeing threads, it's
-> sufficient to use page lock to protect other paths, e.g. buffered write
-> path. After large folio is supported, the spinlock could affect more
-> about the buffered write performance, so drop it could reduce some
-> unnecessary locking overhead.
+On Wed, Jul 31, 2024 at 09:18:00AM -0700, Andrii Nakryiko wrote:
+> On Mon, Jul 29, 2024 at 6:45 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > This way uprobe_unregister() and uprobe_apply() can use "struct uprobe *"
+> > rather than inode + offset. This simplifies the code and allows to avoid
+> > the unnecessary find_uprobe() + put_uprobe() in these functions.
+> >
+> > TODO: uprobe_unregister() still needs get_uprobe/put_uprobe to ensure that
+> > this uprobe can't be freed before up_write(&uprobe->register_rwsem).
+> >
+> > Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> > ---
+> >  include/linux/uprobes.h     | 15 +++++-----
+> >  kernel/events/uprobes.c     | 56 +++++++++++++++----------------------
+> >  kernel/trace/bpf_trace.c    | 25 ++++++++---------
+> >  kernel/trace/trace_uprobe.c | 26 ++++++++---------
+> >  4 files changed, 55 insertions(+), 67 deletions(-)
+> >
+> 
+> You'll need something like below to not break our bpf_testmod. And
+> please send pull patch sets, not individually updated patches, it's a
+> PITA to deal with. Thanks!
 
-This patch doesn't work.  If we get two read completions at the same
-time for blocks belonging to the same folio, they will both write to
-the uptodate array at the same time.
+Do I stuff this on top of Oleg's patch or do you want me to fold it in
+one of them?
+
+> commit 9f739a9997ab833394196459fa7e6dd4d13dd48b (HEAD -> uprobes-oleg-cleanups)
+> Author: Andrii Nakryiko <andrii@kernel.org>
+> Date:   Wed Jul 31 09:15:46 2024 -0700
+> 
+>     uprobes: fix bpf_testmod after uprobe_register/uprobe_unregister API change
+> 
+>     Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> 
+> diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+> b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+> index 5f152afdec2f..73a6b041bcce 100644
+> --- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+> +++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+> @@ -431,6 +431,7 @@ uprobe_ret_handler(struct uprobe_consumer *self,
+> unsigned long func,
+>  }
+> 
+>  struct testmod_uprobe {
+> +       struct uprobe *uprobe;
+>         struct path path;
+>         loff_t offset;
+>         struct uprobe_consumer consumer;
+> @@ -458,12 +459,14 @@ static int testmod_register_uprobe(loff_t offset)
+>         if (err)
+>                 goto out;
+> 
+> -       err = uprobe_register(d_real_inode(uprobe.path.dentry),
+> -                             offset, 0, &uprobe.consumer);
+> -       if (err)
+> +       uprobe.uprobe = uprobe_register(d_real_inode(uprobe.path.dentry),
+> +                                       offset, 0, &uprobe.consumer);
+> +       if (IS_ERR(uprobe.uprobe)) {
+>                 path_put(&uprobe.path);
+> -       else
+> +               uprobe.uprobe = NULL;
+> +       } else {
+>                 uprobe.offset = offset;
+> +       }
+> 
+>  out:
+>         mutex_unlock(&testmod_uprobe_mutex);
+> @@ -474,10 +477,10 @@ static void testmod_unregister_uprobe(void)
+>  {
+>         mutex_lock(&testmod_uprobe_mutex);
+> 
+> -       if (uprobe.offset) {
+> -               uprobe_unregister(d_real_inode(uprobe.path.dentry),
+> -                                 uprobe.offset, &uprobe.consumer);
+> +       if (uprobe.uprobe) {
+> +               uprobe_unregister(uprobe.uprobe, &uprobe.consumer);
+>                 uprobe.offset = 0;
+> +               uprobe.uprobe = NULL;
+>         }
+> 
+>         mutex_unlock(&testmod_uprobe_mutex);
+> 
+> 
+> [...]
 
