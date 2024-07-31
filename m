@@ -1,616 +1,1870 @@
-Return-Path: <linux-kernel+bounces-268743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BFD79428A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:04:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0753A9428A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1E14284240
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:04:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 561B11F2422C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87EB81A7F87;
-	Wed, 31 Jul 2024 08:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC311A7217;
+	Wed, 31 Jul 2024 08:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="r7zDyAdU";
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ZDuaJ+GX"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eFpVNWwf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D712450E2;
-	Wed, 31 Jul 2024 08:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.154.123
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722413043; cv=fail; b=M9cQX32CqPnZzaJRDi5voBKYwgHdTLuFJL2YbmsTo+or8ON+73UR78VCyDmW6j3ZcBJP+E+m8HLLImgHXPCwqJwkeh0RAjhawsaaKcF0BRNJN/3fhAe1v0LCY2/iQOfhEv+zeRMg+swCutBDcsAgyRqAzs7JrRZ6XCcKD2lrLdU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722413043; c=relaxed/simple;
-	bh=H52PXA1DvgnVNZG7WkrrHdK+8MeqZASLxWxSiHW1ZM8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LSFXG18czwxvE7cnPrsgQYxCW1dNF3hWEAyLaOEO6957Ys1DwBEO5xbeLZ5HpIwRWa/yh+0RVK4TwKOngh4OWzrs43iOhEcfS/5XwbuUB9KuhoB5uaDt6T4ieskB7h0aBiPfxttj0zWNOQ+9fZNC5pTqYxH6qadzCh1GzP+3ey4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=r7zDyAdU; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ZDuaJ+GX; arc=fail smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1722413040; x=1753949040;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=H52PXA1DvgnVNZG7WkrrHdK+8MeqZASLxWxSiHW1ZM8=;
-  b=r7zDyAdUekhFAxxWnee/cGNf/DVy81zL/IFA/DrsukSglYylNi+2co9i
-   H4j2Igh86UvmvCPQuRj8/cN4rL1CPku22JDGPirr8iobWDaNxo5Tus5pG
-   CPP1U09Wij+VuAA3sBie+bMOALL+pANdYXOni7Uo98S7frgRvMwID80VH
-   0c+XcwcSMVwxJBVVbI5n1FO/fffxjBq9ME5JTMrXd4qkyV5o+wwFZLrYu
-   VBAl9aKXArd22VG9tYSWfI4SN4h32Ir1eq628PVn0v9sxccP+ba9QckEI
-   vrxYEGi+Az53SdmAg7ABZ39B9eTt33i1RCF0SqazWVVnn2EsiBRFZUcbl
-   A==;
-X-CSE-ConnectionGUID: p1ACDtvoSdKiY09jElWCZg==
-X-CSE-MsgGUID: G5ktsR86T7ie/xbB83npHw==
-X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
-   d="scan'208";a="30564968"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 31 Jul 2024 01:03:57 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 31 Jul 2024 01:03:39 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (10.10.215.250)
- by email.microchip.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Wed, 31 Jul 2024 01:03:39 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GM2sV6k51fDSVzZ9Rte++WZ3cG37rtfb5KWezyY6wmIO15vsdboBm+eYz0kBEBC1Abhy8/weIPpRbDaCKeus9LszDikyOnw4AWq9+Bu3mSKuBSOur5I4jg/T+lCuaLmVU1DAkBfNl9jtD/jyeSgPsA6UP/ZOkH/N3JaddQS5C0e0KVT9prYwRNsKmzHcNUIpAHrKFhW8Yt+qrYn4IUIHzZiIYaZI8PuNn1mtCk7zT4kpEiiSejsQVEpmNGGCnemGs6LGcnwncW/yDaYp9vDzq2jEJvo1N4lje7gdunxy/u6XFgNJJIbmP5p8ARu9d16qHKIxjRe/6xTPSXgmjrnJLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H52PXA1DvgnVNZG7WkrrHdK+8MeqZASLxWxSiHW1ZM8=;
- b=Ra4jrivaGMrKBYU9rc5HuWpFf4D3gM21llpDjM//RXvP2VpjHFQSk3DiI3naotJhYshA+9sCxZiRIrFwBZgQFirqt4W4Pn6DIAtp5M+ii12Tea+gHnN8b4Zi9i8wBZQplTKfUlB/wJkoFDF9ARbe7j+xr20v1RyuLuQ9CuXGTlimz4Wx1MKs1EaC4d4TAe5P5MiXlvvDTdmBFzeF1ib0AVeBIj3w5kd5qh5J7gQFeW5zxVRpLPhHJK3WNqIiogCimJpph4K++e2K0UE49yDnnIIeFEjSTShSUXXzxoKfIG4/HHr44AwPGEZB9hL/lJhfNGIa+fg49V0+JTVyPv75tQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H52PXA1DvgnVNZG7WkrrHdK+8MeqZASLxWxSiHW1ZM8=;
- b=ZDuaJ+GXHbL1RvwAgXGnHjsybBnNNGLpPyAvanPo1gpYSXUVqhQk4fwxTbv4lTmWtdTQ4SZT/gou4AkkpKs1I68a7bb8xuu883O1PKo1ViujgdK+w0wT9wKx0Cbfum6m4dhk7RsqrSDRC8S/QxFEpbWI4nrT22czOJQLSzbU625k7AyG1KmJqz6T60ctMC6VZNNIUrFrtukFqLNlHWf2JiOV+yo/19Hr9LvdHxCuHPd5fE9oiExWE1I+Lz6XJamqvrWEW3MJovQM6bVWYs6ZILh8spxL0haea5kmZsQ+fkMTCf2KdIEwp1Wl18vH0EzTXdWPnfSsmB3+QzKAHOrNRQ==
-Received: from SA1PR11MB8278.namprd11.prod.outlook.com (2603:10b6:806:25b::19)
- by MW3PR11MB4571.namprd11.prod.outlook.com (2603:10b6:303:59::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Wed, 31 Jul
- 2024 08:03:36 +0000
-Received: from SA1PR11MB8278.namprd11.prod.outlook.com
- ([fe80::84fa:e267:e389:fa9]) by SA1PR11MB8278.namprd11.prod.outlook.com
- ([fe80::84fa:e267:e389:fa9%5]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
- 08:03:36 +0000
-From: <Parthiban.Veerasooran@microchip.com>
-To: <linux@bigler.io>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <saeedm@nvidia.com>,
-	<anthony.l.nguyen@intel.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <andrew@lunn.ch>, <corbet@lwn.net>,
-	<linux-doc@vger.kernel.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-	<devicetree@vger.kernel.org>, <Horatiu.Vultur@microchip.com>,
-	<ruanjinjie@huawei.com>, <Steen.Hegelund@microchip.com>,
-	<vladimir.oltean@nxp.com>, <masahiroy@kernel.org>, <alexanderduyck@fb.com>,
-	<krzk+dt@kernel.org>, <robh@kernel.org>, <rdunlap@infradead.org>,
-	<hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<UNGLinuxDriver@microchip.com>, <Thorsten.Kummermehr@microchip.com>,
-	<Pier.Beruto@onsemi.com>, <Selvamani.Rajagopal@onsemi.com>,
-	<Nicolas.Ferre@microchip.com>, <benjamin.bigler@bernformulastudent.ch>
-Subject: Re: [PATCH net-next v5 13/14] microchip: lan865x: add driver support
- for Microchip's LAN865X MAC-PHY
-Thread-Topic: [PATCH net-next v5 13/14] microchip: lan865x: add driver support
- for Microchip's LAN865X MAC-PHY
-Thread-Index: AQHa4jaTAREq0XzH102IOZrpnjB75bIOy38AgAGwUIA=
-Date: Wed, 31 Jul 2024 08:03:36 +0000
-Message-ID: <6f31208e-d7da-44ad-92f2-54bbc22b390f@microchip.com>
-References: <20240730040906.53779-1-Parthiban.Veerasooran@microchip.com>
- <20240730040906.53779-14-Parthiban.Veerasooran@microchip.com>
- <c88f30906053214a207220e97b49868f@mail.infomaniak.com>
-In-Reply-To: <c88f30906053214a207220e97b49868f@mail.infomaniak.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR11MB8278:EE_|MW3PR11MB4571:EE_
-x-ms-office365-filtering-correlation-id: 21649881-6018-4da5-a30e-08dcb13747b9
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?T3NrSW1SVTV6Qy9OT0RnMkpqR3Fmc2E1MFJ2eHU2VmtFcGhwdi9xL3VFcGNZ?=
- =?utf-8?B?ZTlqTlFueCtRTXRObzkyRllYbXA2dW0xRllrMS9nMGk0QjVQYzRoT0UxRHMz?=
- =?utf-8?B?bmM0ayt5U0lpQVBJdUFQSHo3R2dNbXdISXU3MUo5VVhZamtrUHppZDFBTGZh?=
- =?utf-8?B?a1JKa0g3VHRDdmpGOG1YcVJtUWY1NktNWHhzZlpGMDBnY1lscE8zMkhPWWJv?=
- =?utf-8?B?VitOdXNNZjlGdExnQlM1eVpGM2pPYzNSN01saVlYdEN5ZGpLZ0E5MXJYRms0?=
- =?utf-8?B?eUE4dnNGbENCeTA0ZjdzTjJlallYQWRDWFZVMFVTQjJoTmhCMmx3L3c2Ykpx?=
- =?utf-8?B?enFXR0gyb1pHR2hWTkFKRlNNNHZuQ1ZyY1NCZThtai9BN2VheGRYSGpXUVMv?=
- =?utf-8?B?cG93K0owdlNaM0dxcE1SZldwSFJUaTNhUldkSmJXQXgwbU05dHJyZVlLZTFw?=
- =?utf-8?B?czVwdEVpUVc1YnU5QjA1QU9PUWRIUGMwSWIrME5HQVRGK1cvT0RuaXVqQWwx?=
- =?utf-8?B?SS9qeG9Gd0dmbjdCN2ZUWGM5bzgrSGQ1c3NPakFldld4aUZlOGZHWHVzSmFr?=
- =?utf-8?B?RVM3blB5cnpHL1Y1clJKNG4xUTBwUDJpK2J2cU53Sm9FM0NEWVZYL3ZadzZJ?=
- =?utf-8?B?cDlkS2tvM1NRd015THhyR3htUmJNOGJrM015bnpRTWZvZXZqeFVlR2JDNFQ1?=
- =?utf-8?B?Y2hGcHplQlh5Y0VTNWpkajZqakZjZWlFejFsemR3MEpib2RTOWhQWDZDbnVL?=
- =?utf-8?B?clBSUEUyMUdKY3dLaDI1TmRNcFUrb09KU3ZzRGZIMXluemFrZmtwd2lBcWVw?=
- =?utf-8?B?NE5vRlY2bXZEaWFYcVNDWThydEo2NG9WTDF1Ny9jVjhWaS9yUGVBMHZSbjZS?=
- =?utf-8?B?bXNtbWpha2cxY1RFODREMnJWakFhZUxFd3hpVjV3T2hkVjlLRkMzbE8yd2RQ?=
- =?utf-8?B?dmFIKzJqdm9OdGNVTzZNQytNKzdkUDNvdEc5bVIwRms0dGNINjFYbkxGQngr?=
- =?utf-8?B?Wm9lWU9GWlFmUWxndlFhYkhXTDFzNHhzY2NEbm9tK0hqOFcrZUZRbUR4SU12?=
- =?utf-8?B?U0huMDkvWWhMNzdZb1NKTWVXOXRWREZxQXRtT1ZqVjFoQWY5c2ZIbXJzSjBC?=
- =?utf-8?B?MnlLSTFta1IyM2V0V2t0ZDc2cHNsRjlYWmxScnI0dHhjb2R4MVJ1SmJZZFB2?=
- =?utf-8?B?SUZaTEtnK2U5Vkxrei9TYTlBR3pCSS9BK091ZE02SHF1UENHU0p0NENBaHJq?=
- =?utf-8?B?VWZ4S210V1NMMDNQcURxK3Z5SWJxQWlIam1RTHdSRkRCdndIV2FrblVaMUo5?=
- =?utf-8?B?cTl2KytCbmlicG9yQ3RIMWxXVzBhWmVtemNHckkzdmorTVcrU1RjbGhGNGJG?=
- =?utf-8?B?elBqU3poTms5VmVBY1FaZ3ZzOFdZVDFuOHhHVHFpcEJZQjhqeE00emV0Uktq?=
- =?utf-8?B?Nis2Yk1VWFJkM1FhS1lBNEh1dE9uUmxvc2pDb2E3d2Eza2JQcS91U1FEdDhu?=
- =?utf-8?B?SHdnaVE0TUloQWoyWHBIMkw0MytHQWlYM2RMOXFlSXVUUXc4VVFjcC9ZRmhQ?=
- =?utf-8?B?WlFOS3NYZ3AzTU1PY2w3ODRYangwTkhtNkZseHBaWW1mY1JjYzNtTVB6UzZY?=
- =?utf-8?B?MlBtSlYvZXhBZFROWER6ZTY0ZUQ5ZEF4N2twTGcwVjNuSEJnUWZzSWhVdktJ?=
- =?utf-8?B?VGFlNHRhRXljNHYxNFV4VGlnQ3RDNlhFQ2llZVhxQkpnay8rTVJEVTRZR3Ba?=
- =?utf-8?B?SXdhcjZibGNXU3dtaEF6U2FFZzZTeC9lc1M4bUJKYTZCYVFYb0dYNmRGSU91?=
- =?utf-8?B?Y282YTA0ellvekxzS01SUEtUSHUzWEszTW01UUx6Vk5sNkRsalJLNE83a2FC?=
- =?utf-8?B?MlFEanBpbURzaU5uczk5bnNvL3RNYWVCemFuSEVuOE1wT3c9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB8278.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?SVBQM3UzNXhxdXZDN3hFZFQ4Q1kxWnMyNGdWcXNrRkJUUklKN1JFREhmQlpw?=
- =?utf-8?B?d2dZM0h6ZmE1TmR5YXlOdHlnMWE1ZGRDazBYelpHaysyb241b2xmVW4waElI?=
- =?utf-8?B?eFhTNEkwaFlTQS9OUTJqYWxXNzBvK3ZnN2tQZzBSRlV1bmo5bzB1MHBLOFdT?=
- =?utf-8?B?U2VuNVEzZ0VBcnFaQkJaaEp4K3ZLTUM3SkgyN3d0dDE0VW1vdzN6ZHBsNC93?=
- =?utf-8?B?MVloSld1ZUtIT0NFdHBZYmQ4Y3RaUTBBcjZyNkZkQ2pWbHpVeFlXZ2JUSkpY?=
- =?utf-8?B?bkNOWHZ0NE1TT0NWS0Q1a3VDRFN2M1d1VmRKWmJuN1dhVUo0cU02WGNPMUM1?=
- =?utf-8?B?d1FldGZtUGM3ZDhIbjB3bk9tWWxqT0dnTGx6MHI1TDNaNVg4alV6akRIQUIr?=
- =?utf-8?B?bXFtYXpGZzJhUGlvNHp3aDBIamZLMTZMdWdqTGhLb0EzaGErK0kra1ZmeU5T?=
- =?utf-8?B?Y1FIVm4xeWpoRnZ0dkhWUXNQWUNOWG93MDB0a21WQlYyVXZnT3VmQnR3ekI1?=
- =?utf-8?B?WVhxWEVuSkw1dWZObURoV2czZUgxZlRuazV0OGlnTUYyMlR4Mm9kL0dTclBj?=
- =?utf-8?B?RG5iR2lvbFgxZTd0SG1nMDFwSmVtZUo5aWRPSVNHVU1PV3JMTGcyWEJrYmVw?=
- =?utf-8?B?c0xwKzRhcDZueUpDYlhRUGJDdFZpNGRtdy9jNVJjUFMvTURzZE9Eckw2QnNI?=
- =?utf-8?B?TTBQSmxicjdYd2tRZXVqcERHc3ZvUUdEdGpBd084aFRJM2VSL1I4NUVvN0Yy?=
- =?utf-8?B?eUtsc1REUzhYYi81SUF5WGRSYmY1UkhLWnJYN0x4OUtkUkFtWkI2dzAwWDFi?=
- =?utf-8?B?TDhNaklFM2prMXNGNmFnUjNXSFhJMDlwN2NHZ25hRUZ1TEl4U0podTR3YmhQ?=
- =?utf-8?B?VEN3dEdQZTZ4L0JWZFZoaE1xNnVac0V2dVl6Vk8vNE1xV05aZmVWZHBWYkNS?=
- =?utf-8?B?QVo2ZjlrekxyUFN1d3p5MC96RWx5aGtvVFN5WGZjMHNmTm1jdEFKOHpZc1Np?=
- =?utf-8?B?K3laQnFXKzJRODRSMU9hNUMxbWs1MUptWFJEMWx3eFBTNUhWd1RQS0V5dDdy?=
- =?utf-8?B?SHZoZTBrU3FEdlMxWis1dFFPa1I0K1oyMEJWRDJyVXM1RE1NVm1MZmYvZVYv?=
- =?utf-8?B?Q0syWkZCdWRmUzNKVGNNNmlCVDlnbFEvRzhsSm0vNFdqZDJVdnZHZ0s0L1A1?=
- =?utf-8?B?SGJ1a0V4YUJSVkJQOXAvbW9lSlRPRXBOTVR6OWVIZlRLb1AyWkJuYVoyZzdE?=
- =?utf-8?B?dGdEdGVOTTU5enRCR2d2TnBVRkhWZ0o1c0hhNXRCeU80aWJNR1R0amdpNGY4?=
- =?utf-8?B?bjU3aHYwR2c2aC9hREFEMnpHU2xscWV3THpGbzJxSGZiRmtWWHFOdlpHREJI?=
- =?utf-8?B?emJLd3JPeEFlQ2FRdTl5VE00ODhMSDdhVnU1MmFMWk9IdUI0c0d1ekh3b3h5?=
- =?utf-8?B?M2x0L2x2S0JCNmpJOStlQmRlaVJrRHhoNldJNThHc3hQamtJaE9MdmhnbWRQ?=
- =?utf-8?B?WTY3UkNRRlE2SkRRbUVWZktkSEZ4R1U5MnI1M2d3bmJ6RzNDS0hSLzFSdWhh?=
- =?utf-8?B?TFpRU0JrMm96eFN5aDJQT1BFU2hUY01pZEc0K0x5QWJlb0ZJcEJKdDRuVXVo?=
- =?utf-8?B?V2Uwb2ZCUjVtaVVBalBTUVBucEJFUFVWTVpucDRHbUxZQ0F6blRQYzFUVEtE?=
- =?utf-8?B?V0Jtd3ZVcmFoejEyd042NkxKRno5emprS1VkUDJrZGZtUkZjN21kZWkrNkEx?=
- =?utf-8?B?TXdILzRXRlN5REd0Q1ZEZCtZOWtnWGtVTURRU3BFUTJiZ0lKMVhKYitodWdH?=
- =?utf-8?B?YzEwems2eVhvZ1hqbE9GZXpkcmJ6d0xtRGkwV1FLcDZ6UnhsV0RoT1dFSDdY?=
- =?utf-8?B?bGUwNWhmRm5ZblVhOTNRNUh0ZVlLRU1vS244bVM0N2Y4aEo0bk5OSTBxN1RJ?=
- =?utf-8?B?M2R6U2Q5bVlkRkZ5RkF2OE5WUG5Gd2VkeXprLzlFc1BxeHV4QVdOWTYxcXNy?=
- =?utf-8?B?UWttb2Roc2xpL0Z3L1M4MHJpcFFhMzRFRndQYkRYRi9QVUo5RFdwR3g4d3VO?=
- =?utf-8?B?QjVaN1ZtaFQ2UnlDa25lbmNyRFdHSVBUS3BhOVlaV0wrNGVIL3c2Vjl4aW5H?=
- =?utf-8?B?c3JTUHRlYmp1bnJYd2h0QTUvTXA3ang0aHZyd0dQSmJFaGZXWVp6azZwb1Bi?=
- =?utf-8?B?Snc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5392374D1C9D5546AB51EEBA4CDA9E58@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA6E1A76D5;
+	Wed, 31 Jul 2024 08:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722413075; cv=none; b=IFzZMLXddcliuLkkvir1EzF0qyaEUuFEYIWArRrw50l1wJQ2wHGgUdeHcVGnEMf8q5yyBJ9Zb+9jp6SHW37xCJxC6/K2oAxEb3r6kdmmCRhdAJ2ItEUyW8wX8hQAVuZUM+T1/aJxjTm1hyuE22QVVsmN6Qu4+OsnsDp8Wq1+a80=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722413075; c=relaxed/simple;
+	bh=pY3lmEE/lrrUS74wxdm6nH+iJ3/cPDAoNl30tUhDfQ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W/KC1Q61Cn5e3Ud5+WUAfjWstBQY+ekUBuwiGBOnGRBoNUREqLTvfEJeTQZEfzE+2kz1t0kwKJeLGK4IeFC+jLiYaySqd5VHqpLMXlrbjbvM5Mhq+1HZGLEbySoEgQnFmTbs+4m7lrKupLx0aN/YgkYZjW7CyNniqk1D7n6e4Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eFpVNWwf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88AB4C116B1;
+	Wed, 31 Jul 2024 08:04:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722413074;
+	bh=pY3lmEE/lrrUS74wxdm6nH+iJ3/cPDAoNl30tUhDfQ4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eFpVNWwfLxkePiSWRPvpn7IWMgSRipB0/AjQbfYHi2UWhHh7pvvfT6ni4ZrZDnOFP
+	 mCOk7z+Nl2XSYLfJPRk314okMMbk577tFiccZ6BdL7D3WJZhCrYmEqpanSGEkuCcIQ
+	 uErXDDtdHVAxulOoiysYA9qRzOSCLgxWclSAYw38=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org
+Subject: [PATCH 6.1 000/441] 6.1.103-rc2 review
+Date: Wed, 31 Jul 2024 10:04:22 +0200
+Message-ID: <20240731073151.415444841@linuxfoundation.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB8278.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21649881-6018-4da5-a30e-08dcb13747b9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2024 08:03:36.3962
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: G88XiAZv1Vdg6uYTQCeOj+7R9qELrXotuyDypizUgS6UlDkxb7DXUYBrySzqfYNdgJQWd7u94qdTx8mleUOpyw/JP2iyTHKSN7Z6N6sZ4okTBmMJUrgeVmBOsOXY4Uf5
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4571
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.103-rc2.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-6.1.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 6.1.103-rc2
+X-KernelTest-Deadline: 2024-08-02T07:32+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-SGkgU3RlZmFuLA0KDQpPbiAzMC8wNy8yNCAxMTo0NiBhbSwgU3RlZmFuIEJpZ2xlciB3cm90ZToN
-Cj4gRVhURVJOQUwgRU1BSUw6IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRz
-IHVubGVzcyB5b3Uga25vdyB0aGUgY29udGVudCBpcyBzYWZlDQo+IA0KPiBIaSBQYXJ0aGliYW4N
-Cj4gDQo+IFRoYW5rcyBmb3IgdjUuIEkgdGVzdGVkIGFuZCBhZnRlciBzb21lIGZpeGVzIGl0IHdv
-cmtzIChJJ20gc3RpbGwgb24gNi42LnkgYnV0IGl0IHdhcyBlYXN5IHRvIGFwcGx5IHRoZSBwYXRj
-aGVzKS4NCj4gDQo+IEkgZm91bmQgdGhlIGZvbGxvd2luZyBpc3N1ZXM6DQo+IA0KPiAxKSBzZXQg
-b2YgTWFjLUFkZHIgaXMgbm90IHdvcmtpbmcgY29ycmVjdGx5DQo+IGJlIHdhcmUgdG8gdGhlIGZh
-Y3QgdGhhdCBldGhfY29tbWl0X21hY19hZGRyX2NoYW5nZSgpIHRha2VzIHRoZSBwb2ludGVyIHRv
-IHRoZSBzb2NrYWRkciBhbmQgbm90IHRvIHRoZSBzYV9kYXRhDQo+IA0KPiBkcml2ZXJzL25ldC9l
-dGhlcm5ldC9taWNyb2NoaXAvbGFuODY1eC9sYW44NjV4LmMNCj4gQEAgLTI3OCw3ICsyNzgsNyBA
-QCBzdGF0aWMgaW50IGxhbjg2NXhfc2V0X21hY19hZGRyZXNzKHN0cnVjdCBuZXRfZGV2aWNlICpu
-ZXRkZXYsIHZvaWQgKmFkZHIpDQo+ICAgICAgICAgIGlmIChyZXQpDQo+ICAgICAgICAgICAgICAg
-ICAgcmV0dXJuIHJldDsNCj4gLSAgICAgICAgZXRoX2NvbW1pdF9tYWNfYWRkcl9jaGFuZ2UobmV0
-ZGV2LCBhZGRyZXNzLT5zYV9kYXRhKTsNCj4gKyAgICAgICBldGhfY29tbWl0X21hY19hZGRyX2No
-YW5nZShuZXRkZXYsIGFkZHJlc3MpOw0KQWggb2ssIHNvcnJ5IGZvciB0aGUgd3Jvbmcgb25lLiBT
-dXJlIHdpbGwgY29ycmVjdCBpdCBpbiB0aGUgbmV4dCB2ZXJzaW9uLg0KPiANCj4gMikgTWlzc2lu
-ZyBzeW1ib2wgZXhwb3J0DQo+IGRyaXZlcnMvbmV0L2V0aGVybmV0L29hX3RjNi5jDQo+IEBAIC0x
-MjI0LDYgKzEyMjQsOCBAQCBpbnQgb2FfdGM2X3plcm9fYWxpZ25fcmVjZWl2ZV9mcmFtZV9lbmFi
-bGUoc3RydWN0IG9hX3RjNiAqdGM2KQ0KPiAgICAgICAgICByZXR1cm4gb2FfdGM2X3dyaXRlX3Jl
-Z2lzdGVyKHRjNiwgT0FfVEM2X1JFR19DT05GSUcwLCByZWd2YWwpOw0KPiAgIH0NCj4gK0VYUE9S
-VF9TWU1CT0xfR1BMKG9hX3RjNl96ZXJvX2FsaWduX3JlY2VpdmVfZnJhbWVfZW5hYmxlKTsNClll
-cywgSSBhbHJlYWR5IGNoYW5nZWQgaXQgaW4gdGhlIHJlcG9zdGVkIHY1IGR1ZSB0byBuZXQtbmV4
-dCB3aW5kb3cgd2FzIA0KY2xvc2VkIHByZXZpb3VzbHkuDQo+IA0KPiAzKSBNeSBwYXRjaCBmb3Ig
-TXVsdGljYXN0IHN1cHBvcnQgd2FzIGluY29tcGxldGUNCj4gU29ycnkgZm9yIHRoaXMuIEkgZGlk
-IGZvcmdvdHQgdG8gd3JpdGUgdGhhdCB0aGUgTUFDX05FVF9DRkdfTVVMVElDQVNUX01PREUgbXVz
-dCBiZSBzZXQuDQo+IEkgYWRkaXRpb24gSSBhbHNvIGFkZGVkIHRoZSBjb3JyZWN0IGltcGxlbWVu
-YXRpb24gZm9yIElGRl9BTExNVUxUSQ0KPiANCj4gZHJpdmVycy9uZXQvZXRoZXJuZXQvbWljcm9j
-aGlwL2xhbjg2NXgvbGFuODY1eC5jDQo+IEBAIC0zMzAsNiArMzMwLDIyIEBAIHN0YXRpYyB2b2lk
-IGxhbjg2NXhfc2V0X3NwZWNpZmljX211bHRpY2FzdF9hZGRyKHN0cnVjdCBuZXRfZGV2aWNlICpu
-ZXRkZXYpDQo+ICAgICAgICAgICAgICAgICAgbmV0ZGV2X2VycihuZXRkZXYsICJGYWlsZWQgdG8g
-d3JpdGUgcmVnX2hhc2hsIik7DQo+ICAgfQ0KPiANCj4gK3N0YXRpYyB2b2lkIGxhbjg2NXhfc2V0
-X2FsbF9tdWx0aWNhc3RfYWRkcihzdHJ1Y3QgbmV0X2RldmljZSAqbmV0ZGV2KQ0KPiArew0KPiAr
-ICAgICAgIHN0cnVjdCBsYW44NjV4X3ByaXYgKnByaXYgPSBuZXRkZXZfcHJpdihuZXRkZXYpOw0K
-PiArICAgICAgIHUzMiBoYXNoX2xvID0gMHhmZmZmZmZmZjsNCj4gKyAgICAgICB1MzIgaGFzaF9o
-aSA9IDB4ZmZmZmZmZmY7DQo+ICsNCj4gKyAgICAgICAvKiBFbmFibGluZyBzcGVjaWZpYyBtdWx0
-aWNhc3QgYWRkcmVzc2VzICovDQo+ICsgICAgICAgaWYgKG9hX3RjNl93cml0ZV9yZWdpc3Rlcihw
-cml2LT50YzYsIExBTjg2NVhfUkVHX01BQ19IX0hBU0gsIGhhc2hfaGkpKSB7DQo+ICsgICAgICAg
-ICAgICAgICBuZXRkZXZfZXJyKG5ldGRldiwgIkZhaWxlZCB0byB3cml0ZSByZWdfaGFzaGgiKTsN
-Cj4gKyAgICAgICAgICAgICAgIHJldHVybjsNCj4gKyAgICAgICB9DQo+ICsNCj4gKyAgICAgICBp
-ZiAob2FfdGM2X3dyaXRlX3JlZ2lzdGVyKHByaXYtPnRjNiwgTEFOODY1WF9SRUdfTUFDX0xfSEFT
-SCwgaGFzaF9sbykpDQo+ICsgICAgICAgICAgICAgICBuZXRkZXZfZXJyKG5ldGRldiwgIkZhaWxl
-ZCB0byB3cml0ZSByZWdfaGFzaGwiKTsNCj4gK30NCj4gKw0KPiAgIHN0YXRpYyB2b2lkIGxhbjg2
-NXhfbXVsdGljYXN0X3dvcmtfaGFuZGxlcihzdHJ1Y3Qgd29ya19zdHJ1Y3QgKndvcmspDQo+ICAg
-ew0KPiAgICAgICAgICBzdHJ1Y3QgbGFuODY1eF9wcml2ICpwcml2ID0gY29udGFpbmVyX29mKHdv
-cmssIHN0cnVjdCBsYW44NjV4X3ByaXYsDQo+IEBAIC0zNDMsMTQgKzM1OSwxNSBAQCBzdGF0aWMg
-dm9pZCBsYW44NjV4X211bHRpY2FzdF93b3JrX2hhbmRsZXIoc3RydWN0IHdvcmtfc3RydWN0ICp3
-b3JrKQ0KPiAgICAgICAgICAgICAgICAgIHJlZ3ZhbCAmPSAofk1BQ19ORVRfQ0ZHX1VOSUNBU1Rf
-TU9ERSk7DQo+ICAgICAgICAgIH0gZWxzZSBpZiAocHJpdi0+bmV0ZGV2LT5mbGFncyAmIElGRl9B
-TExNVUxUSSkgew0KPiAgICAgICAgICAgICAgICAgIC8qIEVuYWJsaW5nIGFsbCBtdWx0aWNhc3Qg
-bW9kZSAqLw0KPiArICAgICAgICAgICAgICAgbGFuODY1eF9zZXRfYWxsX211bHRpY2FzdF9hZGRy
-KHByaXYtPm5ldGRldik7DQo+ICAgICAgICAgICAgICAgICAgcmVndmFsICY9ICh+TUFDX05FVF9D
-RkdfUFJPTUlTQ1VPVVNfTU9ERSk7DQo+ICAgICAgICAgICAgICAgICAgcmVndmFsIHw9IE1BQ19O
-RVRfQ0ZHX01VTFRJQ0FTVF9NT0RFOw0KPiAgICAgICAgICAgICAgICAgIHJlZ3ZhbCAmPSAofk1B
-Q19ORVRfQ0ZHX1VOSUNBU1RfTU9ERSk7DQo+ICAgICAgICAgIH0gZWxzZSBpZiAoIW5ldGRldl9t
-Y19lbXB0eShwcml2LT5uZXRkZXYpKSB7DQo+ICAgICAgICAgICAgICAgICAgbGFuODY1eF9zZXRf
-c3BlY2lmaWNfbXVsdGljYXN0X2FkZHIocHJpdi0+bmV0ZGV2KTsNCj4gICAgICAgICAgICAgICAg
-ICByZWd2YWwgJj0gKH5NQUNfTkVUX0NGR19QUk9NSVNDVU9VU19NT0RFKTsNCj4gLSAgICAgICAg
-ICAgICAgIHJlZ3ZhbCAmPSAofk1BQ19ORVRfQ0ZHX01VTFRJQ0FTVF9NT0RFKTsNCj4gLSAgICAg
-ICAgICAgICAgIHJlZ3ZhbCB8PSBNQUNfTkVUX0NGR19VTklDQVNUX01PREU7DQo+ICsgICAgICAg
-ICAgICAgICByZWd2YWwgfD0gTUFDX05FVF9DRkdfTVVMVElDQVNUX01PREU7DQo+ICsgICAgICAg
-ICAgICAgICByZWd2YWwgJj0gKH5NQUNfTkVUX0NGR19VTklDQVNUX01PREUpOw0KPiAgICAgICAg
-ICB9IGVsc2Ugew0KU3VyZSwgSSB3aWxsIGNvbnNpZGVyIHRoaXMgaW4gdGhlIG5leHQgdmVyc2lv
-bi4gVGhhbmtzIGEgbG90IGZvciB5b3VyIA0Kc3VwcG9ydCBvbiB0aGlzLg0KDQpCZXN0IHJlZ2Fy
-ZHMsDQpQYXJ0aGliYW4gVg0KPiANCj4gVGhhbmtzIGZvciB5b3VyIHdvcmsuDQo+IEJlc3QgUmVn
-YXJkcw0KPiBTdGVmYW4NCj4gDQo+IA0KPiBBbSAyMDI0LTA3LTMwVDA2OjA5OjA1LjAwMCswMjow
-MCBoYXQgUGFydGhpYmFuIFZlZXJhc29vcmFuIDxQYXJ0aGliYW4uVmVlcmFzb29yYW5AbWljcm9j
-aGlwLmNvbT4gZ2VzY2hyaWViZW46DQo+IA0KPj4gICBUaGUgTEFOODY1MC8xIGlzIGRlc2lnbmVk
-IHRvIGNvbmZvcm0gdG8gdGhlIE9QRU4gQWxsaWFuY2UgMTBCQVNFLVQxeA0KPj4gTUFDLVBIWSBT
-ZXJpYWwgSW50ZXJmYWNlIHNwZWNpZmljYXRpb24sIFZlcnNpb24gMS4xLiBUaGUgSUVFRSBDbGF1
-c2UgNA0KPj4gTUFDIGludGVncmF0aW9uIHByb3ZpZGVzIHRoZSBsb3cgcGluIGNvdW50IHN0YW5k
-YXJkIFNQSSBpbnRlcmZhY2UgdG8gYW55DQo+PiBtaWNyb2NvbnRyb2xsZXIgdGhlcmVmb3JlIHBy
-b3ZpZGluZyBFdGhlcm5ldCBmdW5jdGlvbmFsaXR5IHdpdGhvdXQNCj4+IHJlcXVpcmluZyBNQUMg
-aW50ZWdyYXRpb24gd2l0aGluIHRoZSBtaWNyb2NvbnRyb2xsZXIuIFRoZSBMQU44NjUwLzENCj4+
-IG9wZXJhdGVzIGFzIGFuIFNQSSBjbGllbnQgc3VwcG9ydGluZyBTQ0xLIGNsb2NrIHJhdGVzIHVw
-IHRvIGEgbWF4aW11bSBvZg0KPj4gMjUgTUh6LiBUaGlzIFNQSSBpbnRlcmZhY2Ugc3VwcG9ydHMg
-dGhlIHRyYW5zZmVyIG9mIGJvdGggZGF0YSAoRXRoZXJuZXQNCj4+IGZyYW1lcykgYW5kIGNvbnRy
-b2wgKHJlZ2lzdGVyIGFjY2VzcykuDQo+Pg0KPj4gQnkgZGVmYXVsdCwgdGhlIGNodW5rIGRhdGEg
-cGF5bG9hZCBpcyA2NCBieXRlcyBpbiBzaXplLiBUaGUgRXRoZXJuZXQNCj4+IE1lZGlhIEFjY2Vz
-cyBDb250cm9sbGVyIChNQUMpIG1vZHVsZSBpbXBsZW1lbnRzIGEgMTAgTWJwcyBoYWxmIGR1cGxl
-eA0KPj4gRXRoZXJuZXQgTUFDLCBjb21wYXRpYmxlIHdpdGggdGhlIElFRUUgODAyLjMgc3RhbmRh
-cmQuIDEwQkFTRS1UMVMNCj4+IHBoeXNpY2FsIGxheWVyIHRyYW5zY2VpdmVyIGludGVncmF0ZWQg
-aXMgaW50byB0aGUgTEFOODY1MC8xLiBUaGUgUEhZIGFuZA0KPj4gTUFDIGFyZSBjb25uZWN0ZWQg
-dmlhIGFuIGludGVybmFsIE1lZGlhIEluZGVwZW5kZW50IEludGVyZmFjZSAoTUlJKS4NCj4+DQo+
-PiBTaWduZWQtb2ZmLWJ5OiBQYXJ0aGliYW4gVmVlcmFzb29yYW4gPFBhcnRoaWJhbi5WZWVyYXNv
-b3JhbkBtaWNyb2NoaXAuY29tPg0KPj4gLS0tDQo+PiAgIE1BSU5UQUlORVJTICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICB8ICAgNiArDQo+PiAgIGRyaXZlcnMvbmV0L2V0aGVybmV0
-L21pY3JvY2hpcC9LY29uZmlnICAgICAgICB8ICAgMSArDQo+PiAgIGRyaXZlcnMvbmV0L2V0aGVy
-bmV0L21pY3JvY2hpcC9NYWtlZmlsZSAgICAgICB8ICAgMSArDQo+PiAgIC4uLi9uZXQvZXRoZXJu
-ZXQvbWljcm9jaGlwL2xhbjg2NXgvS2NvbmZpZyAgICB8ICAxOSArDQo+PiAgIC4uLi9uZXQvZXRo
-ZXJuZXQvbWljcm9jaGlwL2xhbjg2NXgvTWFrZWZpbGUgICB8ICAgNiArDQo+PiAgIC4uLi9uZXQv
-ZXRoZXJuZXQvbWljcm9jaGlwL2xhbjg2NXgvbGFuODY1eC5jICB8IDM5MSArKysrKysrKysrKysr
-KysrKysNCj4+ICAgNiBmaWxlcyBjaGFuZ2VkLCA0MjQgaW5zZXJ0aW9ucygrKQ0KPj4gICBjcmVh
-dGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvZXRoZXJuZXQvbWljcm9jaGlwL2xhbjg2NXgvS2Nv
-bmZpZw0KPj4gICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvZXRoZXJuZXQvbWljcm9j
-aGlwL2xhbjg2NXgvTWFrZWZpbGUNCj4+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0
-L2V0aGVybmV0L21pY3JvY2hpcC9sYW44NjV4L2xhbjg2NXguYw0KPj4NCj4+IGRpZmYgLS1naXQg
-YS9NQUlOVEFJTkVSUyBiL01BSU5UQUlORVJTDQo+PiBpbmRleCBlZTQ5MGI5ZTM2M2MuLjkwNzUy
-MjI3NzAxMCAxMDA2NDQNCj4+IC0tLSBhL01BSU5UQUlORVJTDQo+PiArKysgYi9NQUlOVEFJTkVS
-Uw0KPj4gQEAgLTE0OTQ5LDYgKzE0OTQ5LDEyIEBAIEw6ICAgbmV0ZGV2QHZnZXIua2VybmVsLm9y
-Zw0KPj4gICBTOiAgIE1haW50YWluZWQNCj4+ICAgRjogICBkcml2ZXJzL25ldC9ldGhlcm5ldC9t
-aWNyb2NoaXAvbGFuNzQzeF8qDQo+Pg0KPj4gK01JQ1JPQ0hJUCBMQU44NjUwLzEgMTBCQVNFLVQx
-UyBNQUNQSFkgRVRIRVJORVQgRFJJVkVSDQo+PiArTTogICBQYXJ0aGliYW4gVmVlcmFzb29yYW4g
-PHBhcnRoaWJhbi52ZWVyYXNvb3JhbkBtaWNyb2NoaXAuY29tPg0KPj4gK0w6ICAgbmV0ZGV2QHZn
-ZXIua2VybmVsLm9yZw0KPj4gK1M6ICAgTWFpbnRhaW5lZA0KPj4gK0Y6ICAgZHJpdmVycy9uZXQv
-ZXRoZXJuZXQvbWljcm9jaGlwL2xhbjg2NXgvbGFuODY1eC5jDQo+PiArDQo+PiAgIE1JQ1JPQ0hJ
-UCBMQU44N3h4L0xBTjkzN3ggVDEgUEhZIERSSVZFUg0KPj4gICBNOiAgIEFydW4gUmFtYWRvc3Mg
-PGFydW4ucmFtYWRvc3NAbWljcm9jaGlwLmNvbT4NCj4+ICAgUjogICBVTkdMaW51eERyaXZlckBt
-aWNyb2NoaXAuY29tDQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWljcm9j
-aGlwL0tjb25maWcgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9taWNyb2NoaXAvS2NvbmZpZw0KPj4g
-aW5kZXggNDNiYTcxZTgyMjYwLi4wNmNhNzk2NjkwNTMgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJz
-L25ldC9ldGhlcm5ldC9taWNyb2NoaXAvS2NvbmZpZw0KPj4gKysrIGIvZHJpdmVycy9uZXQvZXRo
-ZXJuZXQvbWljcm9jaGlwL0tjb25maWcNCj4+IEBAIC01Niw2ICs1Niw3IEBAIGNvbmZpZyBMQU43
-NDNYDQo+PiAgICAgICAgICBUbyBjb21waWxlIHRoaXMgZHJpdmVyIGFzIGEgbW9kdWxlLCBjaG9v
-c2UgTSBoZXJlLiBUaGUgbW9kdWxlIHdpbGwgYmUNCj4+ICAgICAgICAgIGNhbGxlZCBsYW43NDN4
-Lg0KPj4NCj4+ICtzb3VyY2UgImRyaXZlcnMvbmV0L2V0aGVybmV0L21pY3JvY2hpcC9sYW44NjV4
-L0tjb25maWciDQo+PiAgIHNvdXJjZSAiZHJpdmVycy9uZXQvZXRoZXJuZXQvbWljcm9jaGlwL2xh
-bjk2NngvS2NvbmZpZyINCj4+ICAgc291cmNlICJkcml2ZXJzL25ldC9ldGhlcm5ldC9taWNyb2No
-aXAvc3Bhcng1L0tjb25maWciDQo+PiAgIHNvdXJjZSAiZHJpdmVycy9uZXQvZXRoZXJuZXQvbWlj
-cm9jaGlwL3ZjYXAvS2NvbmZpZyINCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5l
-dC9taWNyb2NoaXAvTWFrZWZpbGUgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9taWNyb2NoaXAvTWFr
-ZWZpbGUNCj4+IGluZGV4IGJiZDM0OTI2NGU2Zi4uMTVkZmJiMzIxMDU3IDEwMDY0NA0KPj4gLS0t
-IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWljcm9jaGlwL01ha2VmaWxlDQo+PiArKysgYi9kcml2
-ZXJzL25ldC9ldGhlcm5ldC9taWNyb2NoaXAvTWFrZWZpbGUNCj4+IEBAIC05LDYgKzksNyBAQCBv
-YmotJChDT05GSUdfTEFONzQzWCkgKz0gbGFuNzQzeC5vDQo+Pg0KPj4gICBsYW43NDN4LW9ianMg
-Oj0gbGFuNzQzeF9tYWluLm8gbGFuNzQzeF9ldGh0b29sLm8gbGFuNzQzeF9wdHAubw0KPj4NCj4+
-ICtvYmotJChDT05GSUdfTEFOODY1WCkgKz0gbGFuODY1eC8NCj4+ICAgb2JqLSQoQ09ORklHX0xB
-Tjk2NlhfU1dJVENIKSArPSBsYW45NjZ4Lw0KPj4gICBvYmotJChDT05GSUdfU1BBUlg1X1NXSVRD
-SCkgKz0gc3Bhcng1Lw0KPj4gICBvYmotJChDT05GSUdfVkNBUCkgKz0gdmNhcC8NCj4+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9taWNyb2NoaXAvbGFuODY1eC9LY29uZmlnIGIv
-ZHJpdmVycy9uZXQvZXRoZXJuZXQvbWljcm9jaGlwL2xhbjg2NXgvS2NvbmZpZw0KPj4gbmV3IGZp
-bGUgbW9kZSAxMDA2NDQNCj4+IGluZGV4IDAwMDAwMDAwMDAwMC4uZjNkNjBkMTRlMjAyDQo+PiAt
-LS0gL2Rldi9udWxsDQo+PiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9taWNyb2NoaXAvbGFu
-ODY1eC9LY29uZmlnDQo+PiBAQCAtMCwwICsxLDE5IEBADQo+PiArIyBTUERYLUxpY2Vuc2UtSWRl
-bnRpZmllcjogR1BMLTIuMC1vbmx5DQo+PiArIw0KPj4gKyMgTWljcm9jaGlwIExBTjg2NXggRHJp
-dmVyIFN1cHBvcnQNCj4+ICsjDQo+PiArDQo+PiAraWYgTkVUX1ZFTkRPUl9NSUNST0NISVANCj4+
-ICsNCj4+ICtjb25maWcgTEFOODY1WA0KPj4gKyAgICAgdHJpc3RhdGUgIkxBTjg2NXggc3VwcG9y
-dCINCj4+ICsgICAgIGRlcGVuZHMgb24gU1BJDQo+PiArICAgICBkZXBlbmRzIG9uIE9BX1RDNg0K
-Pj4gKyAgICAgaGVscA0KPj4gKyAgICAgICBTdXBwb3J0IGZvciB0aGUgTWljcm9jaGlwIExBTjg2
-NTAvMSBSZXYuQjEgTUFDUEhZIEV0aGVybmV0IGNoaXAuIEl0DQo+PiArICAgICAgIHVzZXMgT1BF
-TiBBbGxpYW5jZSAxMEJBU0UtVDF4IFNlcmlhbCBJbnRlcmZhY2Ugc3BlY2lmaWNhdGlvbi4NCj4+
-ICsNCj4+ICsgICAgICAgVG8gY29tcGlsZSB0aGlzIGRyaXZlciBhcyBhIG1vZHVsZSwgY2hvb3Nl
-IE0gaGVyZS4gVGhlIG1vZHVsZSB3aWxsIGJlDQo+PiArICAgICAgIGNhbGxlZCBsYW44NjV4Lg0K
-Pj4gKw0KPj4gK2VuZGlmICMgTkVUX1ZFTkRPUl9NSUNST0NISVANCj4+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL25ldC9ldGhlcm5ldC9taWNyb2NoaXAvbGFuODY1eC9NYWtlZmlsZSBiL2RyaXZlcnMv
-bmV0L2V0aGVybmV0L21pY3JvY2hpcC9sYW44NjV4L01ha2VmaWxlDQo+PiBuZXcgZmlsZSBtb2Rl
-IDEwMDY0NA0KPj4gaW5kZXggMDAwMDAwMDAwMDAwLi45ZjVkZDg5YzFlYjgNCj4+IC0tLSAvZGV2
-L251bGwNCj4+ICsrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L21pY3JvY2hpcC9sYW44NjV4L01h
-a2VmaWxlDQo+PiBAQCAtMCwwICsxLDYgQEANCj4+ICsjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVy
-OiBHUEwtMi4wLW9ubHkNCj4+ICsjDQo+PiArIyBNYWtlZmlsZSBmb3IgdGhlIE1pY3JvY2hpcCBM
-QU44NjV4IERyaXZlcg0KPj4gKyMNCj4+ICsNCj4+ICtvYmotJChDT05GSUdfTEFOODY1WCkgKz0g
-bGFuODY1eC5vDQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWljcm9jaGlw
-L2xhbjg2NXgvbGFuODY1eC5jIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWljcm9jaGlwL2xhbjg2
-NXgvbGFuODY1eC5jDQo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPj4gaW5kZXggMDAwMDAwMDAw
-MDAwLi5iMjVjOTI3NjU5ZjQNCj4+IC0tLSAvZGV2L251bGwNCj4+ICsrKyBiL2RyaXZlcnMvbmV0
-L2V0aGVybmV0L21pY3JvY2hpcC9sYW44NjV4L2xhbjg2NXguYw0KPj4gQEAgLTAsMCArMSwzOTEg
-QEANCj4+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMCsNCj4+ICsvKg0KPj4g
-KyAqIE1pY3JvY2hpcCdzIExBTjg2NXggMTBCQVNFLVQxUyBNQUMtUEhZIGRyaXZlcg0KPj4gKyAq
-DQo+PiArICogQXV0aG9yOiBQYXJ0aGliYW4gVmVlcmFzb29yYW4gPHBhcnRoaWJhbi52ZWVyYXNv
-b3JhbkBtaWNyb2NoaXAuY29tPg0KPj4gKyAqLw0KPj4gKw0KPj4gKyNpbmNsdWRlIDxsaW51eC9t
-b2R1bGUuaD4NCj4+ICsjaW5jbHVkZSA8bGludXgva2VybmVsLmg+DQo+PiArI2luY2x1ZGUgPGxp
-bnV4L3BoeS5oPg0KPj4gKyNpbmNsdWRlIDxsaW51eC9vYV90YzYuaD4NCj4+ICsNCj4+ICsjZGVm
-aW5lIERSVl9OQU1FICAgICAgICAgICAgICAgICAgICAgImxhbjg2NTAiDQo+PiArDQo+PiArLyog
-TUFDIE5ldHdvcmsgQ29udHJvbCBSZWdpc3RlciAqLw0KPj4gKyNkZWZpbmUgTEFOODY1WF9SRUdf
-TUFDX05FVF9DVEwgICAgICAgICAgICAgIDB4MDAwMTAwMDANCj4+ICsjZGVmaW5lIE1BQ19ORVRf
-Q1RMX1RYRU4gICAgICAgICAgICAgQklUKDMpIC8qIFRyYW5zbWl0IEVuYWJsZSAqLw0KPj4gKyNk
-ZWZpbmUgTUFDX05FVF9DVExfUlhFTiAgICAgICAgICAgICBCSVQoMikgLyogUmVjZWl2ZSBFbmFi
-bGUgKi8NCj4+ICsNCj4+ICsvKiBNQUMgTmV0d29yayBDb25maWd1cmF0aW9uIFJlZyAqLw0KPj4g
-KyNkZWZpbmUgTEFOODY1WF9SRUdfTUFDX05FVF9DRkcgICAgICAgICAgICAgIDB4MDAwMTAwMDEN
-Cj4+ICsjZGVmaW5lIE1BQ19ORVRfQ0ZHX1BST01JU0NVT1VTX01PREUgQklUKDQpDQo+PiArI2Rl
-ZmluZSBNQUNfTkVUX0NGR19NVUxUSUNBU1RfTU9ERSAgIEJJVCg2KQ0KPj4gKyNkZWZpbmUgTUFD
-X05FVF9DRkdfVU5JQ0FTVF9NT0RFICAgICBCSVQoNykNCj4+ICsNCj4+ICsvKiBNQUMgSGFzaCBS
-ZWdpc3RlciBCb3R0b20gKi8NCj4+ICsjZGVmaW5lIExBTjg2NVhfUkVHX01BQ19MX0hBU0ggICAg
-ICAgICAgICAgICAweDAwMDEwMDIwDQo+PiArLyogTUFDIEhhc2ggUmVnaXN0ZXIgVG9wICovDQo+
-PiArI2RlZmluZSBMQU44NjVYX1JFR19NQUNfSF9IQVNIICAgICAgICAgICAgICAgMHgwMDAxMDAy
-MQ0KPj4gKy8qIE1BQyBTcGVjaWZpYyBBZGRyIDEgQm90dG9tIFJlZyAqLw0KPj4gKyNkZWZpbmUg
-TEFOODY1WF9SRUdfTUFDX0xfU0FERFIxICAgICAweDAwMDEwMDIyDQo+PiArLyogTUFDIFNwZWNp
-ZmljIEFkZHIgMSBUb3AgUmVnICovDQo+PiArI2RlZmluZSBMQU44NjVYX1JFR19NQUNfSF9TQURE
-UjEgICAgIDB4MDAwMTAwMjMNCj4+ICsNCj4+ICtzdHJ1Y3QgbGFuODY1eF9wcml2IHsNCj4+ICsg
-ICAgIHN0cnVjdCB3b3JrX3N0cnVjdCBtdWx0aWNhc3Rfd29yazsNCj4+ICsgICAgIHN0cnVjdCBu
-ZXRfZGV2aWNlICpuZXRkZXY7DQo+PiArICAgICBzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpOw0KPj4g
-KyAgICAgc3RydWN0IG9hX3RjNiAqdGM2Ow0KPj4gK307DQo+PiArDQo+PiArc3RhdGljIGludCBs
-YW44NjV4X3NldF9od19tYWNhZGRyX2xvd19ieXRlcyhzdHJ1Y3Qgb2FfdGM2ICp0YzYsIGNvbnN0
-IHU4ICptYWMpDQo+PiArew0KPj4gKyAgICAgdTMyIHJlZ3ZhbDsNCj4+ICsNCj4+ICsgICAgIHJl
-Z3ZhbCA9IChtYWNbM10gPDwgMjQpIHwgKG1hY1syXSA8PCAxNikgfCAobWFjWzFdIDw8IDgpIHwg
-bWFjWzBdOw0KPj4gKw0KPj4gKyAgICAgcmV0dXJuIG9hX3RjNl93cml0ZV9yZWdpc3Rlcih0YzYs
-IExBTjg2NVhfUkVHX01BQ19MX1NBRERSMSwgcmVndmFsKTsNCj4+ICt9DQo+PiArDQo+PiArc3Rh
-dGljIGludCBsYW44NjV4X3NldF9od19tYWNhZGRyKHN0cnVjdCBsYW44NjV4X3ByaXYgKnByaXYs
-IGNvbnN0IHU4ICptYWMpDQo+PiArew0KPj4gKyAgICAgaW50IHJlc3RvcmVfcmV0Ow0KPj4gKyAg
-ICAgdTMyIHJlZ3ZhbDsNCj4+ICsgICAgIGludCByZXQ7DQo+PiArDQo+PiArICAgICAvKiBDb25m
-aWd1cmUgTUFDIGFkZHJlc3MgbG93IGJ5dGVzICovDQo+PiArICAgICByZXQgPSBsYW44NjV4X3Nl
-dF9od19tYWNhZGRyX2xvd19ieXRlcyhwcml2LT50YzYsIG1hYyk7DQo+PiArICAgICBpZiAocmV0
-KQ0KPj4gKyAgICAgICAgICAgICByZXR1cm4gcmV0Ow0KPj4gKw0KPj4gKyAgICAgLyogUHJlcGFy
-ZSBhbmQgY29uZmlndXJlIE1BQyBhZGRyZXNzIGhpZ2ggYnl0ZXMgKi8NCj4+ICsgICAgIHJlZ3Zh
-bCA9IChtYWNbNV0gPDwgOCkgfCBtYWNbNF07DQo+PiArICAgICByZXQgPSBvYV90YzZfd3JpdGVf
-cmVnaXN0ZXIocHJpdi0+dGM2LCBMQU44NjVYX1JFR19NQUNfSF9TQUREUjEsDQo+PiArICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgcmVndmFsKTsNCj4+ICsgICAgIGlmICghcmV0KQ0K
-Pj4gKyAgICAgICAgICAgICByZXR1cm4gMDsNCj4+ICsNCj4+ICsgICAgIC8qIFJlc3RvcmUgdGhl
-IG9sZCBNQUMgYWRkcmVzcyBsb3cgYnl0ZXMgZnJvbSBuZXRkZXYgaWYgdGhlIG5ldyBNQUMNCj4+
-ICsgICAgICAqIGFkZHJlc3MgaGlnaCBieXRlcyBzZXR0aW5nIGZhaWxlZC4NCj4+ICsgICAgICAq
-Lw0KPj4gKyAgICAgcmVzdG9yZV9yZXQgPSBsYW44NjV4X3NldF9od19tYWNhZGRyX2xvd19ieXRl
-cyhwcml2LT50YzYsDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIHByaXYtPm5ldGRldi0+ZGV2X2FkZHIpOw0KPj4gKyAgICAgaWYgKHJlc3Rv
-cmVfcmV0KQ0KPj4gKyAgICAgICAgICAgICByZXR1cm4gcmVzdG9yZV9yZXQ7DQo+PiArDQo+PiAr
-ICAgICByZXR1cm4gcmV0Ow0KPj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgdm9pZA0KPj4gK2xhbjg2
-NXhfZ2V0X2RydmluZm8oc3RydWN0IG5ldF9kZXZpY2UgKm5ldGRldiwgc3RydWN0IGV0aHRvb2xf
-ZHJ2aW5mbyAqaW5mbykNCj4+ICt7DQo+PiArICAgICBzdHJzY3B5KGluZm8tPmRyaXZlciwgRFJW
-X05BTUUsIHNpemVvZihpbmZvLT5kcml2ZXIpKTsNCj4+ICsgICAgIHN0cnNjcHkoaW5mby0+YnVz
-X2luZm8sIGRldl9uYW1lKG5ldGRldi0+ZGV2LnBhcmVudCksDQo+PiArICAgICAgICAgICAgIHNp
-emVvZihpbmZvLT5idXNfaW5mbykpOw0KPj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgY29uc3Qgc3Ry
-dWN0IGV0aHRvb2xfb3BzIGxhbjg2NXhfZXRodG9vbF9vcHMgPSB7DQo+PiArICAgICAuZ2V0X2Ry
-dmluZm8gICAgICAgID0gbGFuODY1eF9nZXRfZHJ2aW5mbywNCj4+ICsgICAgIC5nZXRfbGlua19r
-c2V0dGluZ3MgPSBwaHlfZXRodG9vbF9nZXRfbGlua19rc2V0dGluZ3MsDQo+PiArICAgICAuc2V0
-X2xpbmtfa3NldHRpbmdzID0gcGh5X2V0aHRvb2xfc2V0X2xpbmtfa3NldHRpbmdzLA0KPj4gK307
-DQo+PiArDQo+PiArc3RhdGljIGludCBsYW44NjV4X3NldF9tYWNfYWRkcmVzcyhzdHJ1Y3QgbmV0
-X2RldmljZSAqbmV0ZGV2LCB2b2lkICphZGRyKQ0KPj4gK3sNCj4+ICsgICAgIHN0cnVjdCBsYW44
-NjV4X3ByaXYgKnByaXYgPSBuZXRkZXZfcHJpdihuZXRkZXYpOw0KPj4gKyAgICAgc3RydWN0IHNv
-Y2thZGRyICphZGRyZXNzID0gYWRkcjsNCj4+ICsgICAgIGludCByZXQ7DQo+PiArDQo+PiArICAg
-ICByZXQgPSBldGhfcHJlcGFyZV9tYWNfYWRkcl9jaGFuZ2UobmV0ZGV2LCBhZGRyKTsNCj4+ICsg
-ICAgIGlmIChyZXQgPCAwKQ0KPj4gKyAgICAgICAgICAgICByZXR1cm4gcmV0Ow0KPj4gKw0KPj4g
-KyAgICAgaWYgKGV0aGVyX2FkZHJfZXF1YWwoYWRkcmVzcy0+c2FfZGF0YSwgbmV0ZGV2LT5kZXZf
-YWRkcikpDQo+PiArICAgICAgICAgICAgIHJldHVybiAwOw0KPj4gKw0KPj4gKyAgICAgcmV0ID0g
-bGFuODY1eF9zZXRfaHdfbWFjYWRkcihwcml2LCBhZGRyZXNzLT5zYV9kYXRhKTsNCj4+ICsgICAg
-IGlmIChyZXQpDQo+PiArICAgICAgICAgICAgIHJldHVybiByZXQ7DQo+PiArDQo+PiArICAgICBl
-dGhfY29tbWl0X21hY19hZGRyX2NoYW5nZShuZXRkZXYsIGFkZHJlc3MtPnNhX2RhdGEpOw0KPj4g
-Kw0KPj4gKyAgICAgcmV0dXJuIDA7DQo+PiArfQ0KPj4gKw0KPj4gK3N0YXRpYyB1MzIgZ2V0X2Fk
-ZHJlc3NfYml0KHU4IGFkZHJbRVRIX0FMRU5dLCB1MzIgYml0KQ0KPj4gK3sNCj4+ICsgICAgIHJl
-dHVybiAoKGFkZHJbYml0IC8gOF0pID4+IChiaXQgJSA4KSkgJiAxOw0KPj4gK30NCj4+ICsNCj4+
-ICtzdGF0aWMgdTMyIGxhbjg2NXhfaGFzaCh1OCBhZGRyW0VUSF9BTEVOXSkNCj4+ICt7DQo+PiAr
-ICAgICB1MzIgaGFzaF9pbmRleCA9IDA7DQo+PiArDQo+PiArICAgICBmb3IgKGludCBpID0gMDsg
-aSA8IDY7IGkrKykgew0KPj4gKyAgICAgICAgICAgICB1MzIgaGFzaCA9IDA7DQo+PiArDQo+PiAr
-ICAgICAgICAgICAgIGZvciAoaW50IGogPSAwOyBqIDwgODsgaisrKQ0KPj4gKyAgICAgICAgICAg
-ICAgICAgICAgIGhhc2ggXj0gZ2V0X2FkZHJlc3NfYml0KGFkZHIsIChqICogNikgKyBpKTsNCj4+
-ICsNCj4+ICsgICAgICAgICAgICAgaGFzaF9pbmRleCB8PSAoaGFzaCA8PCBpKTsNCj4+ICsgICAg
-IH0NCj4+ICsNCj4+ICsgICAgIHJldHVybiBoYXNoX2luZGV4Ow0KPj4gK30NCj4+ICsNCj4+ICtz
-dGF0aWMgdm9pZCBsYW44NjV4X3NldF9zcGVjaWZpY19tdWx0aWNhc3RfYWRkcihzdHJ1Y3QgbmV0
-X2RldmljZSAqbmV0ZGV2KQ0KPj4gK3sNCj4+ICsgICAgIHN0cnVjdCBsYW44NjV4X3ByaXYgKnBy
-aXYgPSBuZXRkZXZfcHJpdihuZXRkZXYpOw0KPj4gKyAgICAgc3RydWN0IG5ldGRldl9od19hZGRy
-ICpoYTsNCj4+ICsgICAgIHUzMiBoYXNoX2xvID0gMDsNCj4+ICsgICAgIHUzMiBoYXNoX2hpID0g
-MDsNCj4+ICsNCj4+ICsgICAgIG5ldGRldl9mb3JfZWFjaF9tY19hZGRyKGhhLCBuZXRkZXYpIHsN
-Cj4+ICsgICAgICAgICAgICAgdTMyIGJpdF9udW0gPSBsYW44NjV4X2hhc2goaGEtPmFkZHIpOw0K
-Pj4gKw0KPj4gKyAgICAgICAgICAgICBpZiAoYml0X251bSAmZ3Q7PSBCSVQoNSkpDQo+PiArICAg
-ICAgICAgICAgICAgICAgICAgaGFzaF9oaSB8PSAoMSA8PCAoYml0X251bSAtIEJJVCg1KSkpOw0K
-Pj4gKyAgICAgICAgICAgICBlbHNlDQo+PiArICAgICAgICAgICAgICAgICAgICAgaGFzaF9sbyB8
-PSAoMSA8PCBiaXRfbnVtKTsNCj4+ICsgICAgIH0NCj4+ICsNCj4+ICsgICAgIC8qIEVuYWJsaW5n
-IHNwZWNpZmljIG11bHRpY2FzdCBhZGRyZXNzZXMgKi8NCj4+ICsgICAgIGlmIChvYV90YzZfd3Jp
-dGVfcmVnaXN0ZXIocHJpdi0+dGM2LCBMQU44NjVYX1JFR19NQUNfSF9IQVNILCBoYXNoX2hpKSkg
-ew0KPj4gKyAgICAgICAgICAgICBuZXRkZXZfZXJyKG5ldGRldiwgIkZhaWxlZCB0byB3cml0ZSBy
-ZWdfaGFzaGgiKTsNCj4+ICsgICAgICAgICAgICAgcmV0dXJuOw0KPj4gKyAgICAgfQ0KPj4gKw0K
-Pj4gKyAgICAgaWYgKG9hX3RjNl93cml0ZV9yZWdpc3Rlcihwcml2LT50YzYsIExBTjg2NVhfUkVH
-X01BQ19MX0hBU0gsIGhhc2hfbG8pKQ0KPj4gKyAgICAgICAgICAgICBuZXRkZXZfZXJyKG5ldGRl
-diwgIkZhaWxlZCB0byB3cml0ZSByZWdfaGFzaGwiKTsNCj4+ICt9DQo+PiArDQo+PiArc3RhdGlj
-IHZvaWQgbGFuODY1eF9tdWx0aWNhc3Rfd29ya19oYW5kbGVyKHN0cnVjdCB3b3JrX3N0cnVjdCAq
-d29yaykNCj4+ICt7DQo+PiArICAgICBzdHJ1Y3QgbGFuODY1eF9wcml2ICpwcml2ID0gY29udGFp
-bmVyX29mKHdvcmssIHN0cnVjdCBsYW44NjV4X3ByaXYsDQo+PiArICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIG11bHRpY2FzdF93b3JrKTsNCj4+ICsgICAgIHUz
-MiByZWd2YWwgPSAwOw0KPj4gKw0KPj4gKyAgICAgaWYgKHByaXYtPm5ldGRldi0+ZmxhZ3MgJiBJ
-RkZfUFJPTUlTQykgew0KPj4gKyAgICAgICAgICAgICAvKiBFbmFibGluZyBwcm9taXNjdW91cyBt
-b2RlICovDQo+PiArICAgICAgICAgICAgIHJlZ3ZhbCB8PSBNQUNfTkVUX0NGR19QUk9NSVNDVU9V
-U19NT0RFOw0KPj4gKyAgICAgICAgICAgICByZWd2YWwgJj0gKH5NQUNfTkVUX0NGR19NVUxUSUNB
-U1RfTU9ERSk7DQo+PiArICAgICAgICAgICAgIHJlZ3ZhbCAmPSAofk1BQ19ORVRfQ0ZHX1VOSUNB
-U1RfTU9ERSk7DQo+PiArICAgICB9IGVsc2UgaWYgKHByaXYtPm5ldGRldi0+ZmxhZ3MgJiBJRkZf
-QUxMTVVMVEkpIHsNCj4+ICsgICAgICAgICAgICAgLyogRW5hYmxpbmcgYWxsIG11bHRpY2FzdCBt
-b2RlICovDQo+PiArICAgICAgICAgICAgIHJlZ3ZhbCAmPSAofk1BQ19ORVRfQ0ZHX1BST01JU0NV
-T1VTX01PREUpOw0KPj4gKyAgICAgICAgICAgICByZWd2YWwgfD0gTUFDX05FVF9DRkdfTVVMVElD
-QVNUX01PREU7DQo+PiArICAgICAgICAgICAgIHJlZ3ZhbCAmPSAofk1BQ19ORVRfQ0ZHX1VOSUNB
-U1RfTU9ERSk7DQo+PiArICAgICB9IGVsc2UgaWYgKCFuZXRkZXZfbWNfZW1wdHkocHJpdi0+bmV0
-ZGV2KSkgew0KPj4gKyAgICAgICAgICAgICBsYW44NjV4X3NldF9zcGVjaWZpY19tdWx0aWNhc3Rf
-YWRkcihwcml2LT5uZXRkZXYpOw0KPj4gKyAgICAgICAgICAgICByZWd2YWwgJj0gKH5NQUNfTkVU
-X0NGR19QUk9NSVNDVU9VU19NT0RFKTsNCj4+ICsgICAgICAgICAgICAgcmVndmFsICY9ICh+TUFD
-X05FVF9DRkdfTVVMVElDQVNUX01PREUpOw0KPj4gKyAgICAgICAgICAgICByZWd2YWwgfD0gTUFD
-X05FVF9DRkdfVU5JQ0FTVF9NT0RFOw0KPj4gKyAgICAgfSBlbHNlIHsNCj4+ICsgICAgICAgICAg
-ICAgLyogZW5hYmxpbmcgbG9jYWwgbWFjIGFkZHJlc3Mgb25seSAqLw0KPj4gKyAgICAgICAgICAg
-ICBpZiAob2FfdGM2X3dyaXRlX3JlZ2lzdGVyKHByaXYtPnRjNiwgTEFOODY1WF9SRUdfTUFDX0hf
-SEFTSCwNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAwKSkgew0K
-Pj4gKyAgICAgICAgICAgICAgICAgICAgIG5ldGRldl9lcnIocHJpdi0+bmV0ZGV2LCAiRmFpbGVk
-IHRvIHdyaXRlIHJlZ19oYXNoaCIpOw0KPj4gKyAgICAgICAgICAgICAgICAgICAgIHJldHVybjsN
-Cj4+ICsgICAgICAgICAgICAgfQ0KPj4gKyAgICAgICAgICAgICBpZiAob2FfdGM2X3dyaXRlX3Jl
-Z2lzdGVyKHByaXYtPnRjNiwgTEFOODY1WF9SRUdfTUFDX0xfSEFTSCwNCj4+ICsgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAwKSkgew0KPj4gKyAgICAgICAgICAgICAgICAg
-ICAgIG5ldGRldl9lcnIocHJpdi0+bmV0ZGV2LCAiRmFpbGVkIHRvIHdyaXRlIHJlZ19oYXNobCIp
-Ow0KPj4gKyAgICAgICAgICAgICAgICAgICAgIHJldHVybjsNCj4+ICsgICAgICAgICAgICAgfQ0K
-Pj4gKyAgICAgfQ0KPj4gKyAgICAgaWYgKG9hX3RjNl93cml0ZV9yZWdpc3Rlcihwcml2LT50YzYs
-IExBTjg2NVhfUkVHX01BQ19ORVRfQ0ZHLCByZWd2YWwpKQ0KPj4gKyAgICAgICAgICAgICBuZXRk
-ZXZfZXJyKHByaXYtPm5ldGRldiwNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAiRmFpbGVk
-IHRvIGVuYWJsZSBwcm9taXNjdW91cy9tdWx0aWNhc3Qvbm9ybWFsIG1vZGUiKTsNCj4+ICt9DQo+
-PiArDQo+PiArc3RhdGljIHZvaWQgbGFuODY1eF9zZXRfbXVsdGljYXN0X2xpc3Qoc3RydWN0IG5l
-dF9kZXZpY2UgKm5ldGRldikNCj4+ICt7DQo+PiArICAgICBzdHJ1Y3QgbGFuODY1eF9wcml2ICpw
-cml2ID0gbmV0ZGV2X3ByaXYobmV0ZGV2KTsNCj4+ICsNCj4+ICsgICAgIHNjaGVkdWxlX3dvcmso
-JnByaXYtPm11bHRpY2FzdF93b3JrKTsNCj4+ICt9DQo+PiArDQo+PiArc3RhdGljIG5ldGRldl90
-eF90IGxhbjg2NXhfc2VuZF9wYWNrZXQoc3RydWN0IHNrX2J1ZmYgKnNrYiwNCj4+ICsgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgbmV0X2RldmljZSAqbmV0ZGV2KQ0K
-Pj4gK3sNCj4+ICsgICAgIHN0cnVjdCBsYW44NjV4X3ByaXYgKnByaXYgPSBuZXRkZXZfcHJpdihu
-ZXRkZXYpOw0KPj4gKw0KPj4gKyAgICAgcmV0dXJuIG9hX3RjNl9zdGFydF94bWl0KHByaXYtPnRj
-Niwgc2tiKTsNCj4+ICt9DQo+PiArDQo+PiArc3RhdGljIGludCBsYW44NjV4X2h3X2Rpc2FibGUo
-c3RydWN0IGxhbjg2NXhfcHJpdiAqcHJpdikNCj4+ICt7DQo+PiArICAgICB1MzIgcmVndmFsOw0K
-Pj4gKw0KPj4gKyAgICAgaWYgKG9hX3RjNl9yZWFkX3JlZ2lzdGVyKHByaXYtPnRjNiwgTEFOODY1
-WF9SRUdfTUFDX05FVF9DVEwsIMKudmFsKSkNCj4+ICsgICAgICAgICAgICAgcmV0dXJuIC1FTk9E
-RVY7DQo+PiArDQo+PiArICAgICByZWd2YWwgJj0gfihNQUNfTkVUX0NUTF9UWEVOIHwgTUFDX05F
-VF9DVExfUlhFTik7DQo+PiArDQo+PiArICAgICBpZiAob2FfdGM2X3dyaXRlX3JlZ2lzdGVyKHBy
-aXYtPnRjNiwgTEFOODY1WF9SRUdfTUFDX05FVF9DVEwsIHJlZ3ZhbCkpDQo+PiArICAgICAgICAg
-ICAgIHJldHVybiAtRU5PREVWOw0KPj4gKw0KPj4gKyAgICAgcmV0dXJuIDA7DQo+PiArfQ0KPj4g
-Kw0KPj4gK3N0YXRpYyBpbnQgbGFuODY1eF9uZXRfY2xvc2Uoc3RydWN0IG5ldF9kZXZpY2UgKm5l
-dGRldikNCj4+ICt7DQo+PiArICAgICBzdHJ1Y3QgbGFuODY1eF9wcml2ICpwcml2ID0gbmV0ZGV2
-X3ByaXYobmV0ZGV2KTsNCj4+ICsgICAgIGludCByZXQ7DQo+PiArDQo+PiArICAgICBuZXRpZl9z
-dG9wX3F1ZXVlKG5ldGRldik7DQo+PiArICAgICBwaHlfc3RvcChuZXRkZXYtPnBoeWRldik7DQo+
-PiArICAgICByZXQgPSBsYW44NjV4X2h3X2Rpc2FibGUocHJpdik7DQo+PiArICAgICBpZiAocmV0
-KSB7DQo+PiArICAgICAgICAgICAgIG5ldGRldl9lcnIobmV0ZGV2LCAiRmFpbGVkIHRvIGRpc2Fi
-bGUgdGhlIGhhcmR3YXJlOiAlZFxuIiwgcmV0KTsNCj4+ICsgICAgICAgICAgICAgcmV0dXJuIHJl
-dDsNCj4+ICsgICAgIH0NCj4+ICsNCj4+ICsgICAgIHJldHVybiAwOw0KPj4gK30NCj4+ICsNCj4+
-ICtzdGF0aWMgaW50IGxhbjg2NXhfaHdfZW5hYmxlKHN0cnVjdCBsYW44NjV4X3ByaXYgKnByaXYp
-DQo+PiArew0KPj4gKyAgICAgdTMyIHJlZ3ZhbDsNCj4+ICsNCj4+ICsgICAgIGlmIChvYV90YzZf
-cmVhZF9yZWdpc3Rlcihwcml2LT50YzYsIExBTjg2NVhfUkVHX01BQ19ORVRfQ1RMLCDCrnZhbCkp
-DQo+PiArICAgICAgICAgICAgIHJldHVybiAtRU5PREVWOw0KPj4gKw0KPj4gKyAgICAgcmVndmFs
-IHw9IE1BQ19ORVRfQ1RMX1RYRU4gfCBNQUNfTkVUX0NUTF9SWEVOOw0KPj4gKw0KPj4gKyAgICAg
-aWYgKG9hX3RjNl93cml0ZV9yZWdpc3Rlcihwcml2LT50YzYsIExBTjg2NVhfUkVHX01BQ19ORVRf
-Q1RMLCByZWd2YWwpKQ0KPj4gKyAgICAgICAgICAgICByZXR1cm4gLUVOT0RFVjsNCj4+ICsNCj4+
-ICsgICAgIHJldHVybiAwOw0KPj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgaW50IGxhbjg2NXhfbmV0
-X29wZW4oc3RydWN0IG5ldF9kZXZpY2UgKm5ldGRldikNCj4+ICt7DQo+PiArICAgICBzdHJ1Y3Qg
-bGFuODY1eF9wcml2ICpwcml2ID0gbmV0ZGV2X3ByaXYobmV0ZGV2KTsNCj4+ICsgICAgIGludCBy
-ZXQ7DQo+PiArDQo+PiArICAgICByZXQgPSBsYW44NjV4X2h3X2VuYWJsZShwcml2KTsNCj4+ICsg
-ICAgIGlmIChyZXQpIHsNCj4+ICsgICAgICAgICAgICAgbmV0ZGV2X2VycihuZXRkZXYsICJGYWls
-ZWQgdG8gZW5hYmxlIGhhcmR3YXJlOiAlZFxuIiwgcmV0KTsNCj4+ICsgICAgICAgICAgICAgcmV0
-dXJuIHJldDsNCj4+ICsgICAgIH0NCj4+ICsNCj4+ICsgICAgIHBoeV9zdGFydChuZXRkZXYtPnBo
-eWRldik7DQo+PiArDQo+PiArICAgICByZXR1cm4gMDsNCj4+ICt9DQo+PiArDQo+PiArc3RhdGlj
-IGNvbnN0IHN0cnVjdCBuZXRfZGV2aWNlX29wcyBsYW44NjV4X25ldGRldl9vcHMgPSB7DQo+PiAr
-ICAgICAubmRvX29wZW4gICAgICAgICAgICAgICA9IGxhbjg2NXhfbmV0X29wZW4sDQo+PiArICAg
-ICAubmRvX3N0b3AgICAgICAgICAgICAgICA9IGxhbjg2NXhfbmV0X2Nsb3NlLA0KPj4gKyAgICAg
-Lm5kb19zdGFydF94bWl0ICAgICAgICAgPSBsYW44NjV4X3NlbmRfcGFja2V0LA0KPj4gKyAgICAg
-Lm5kb19zZXRfcnhfbW9kZSAgICAgICAgPSBsYW44NjV4X3NldF9tdWx0aWNhc3RfbGlzdCwNCj4+
-ICsgICAgIC5uZG9fc2V0X21hY19hZGRyZXNzICAgID0gbGFuODY1eF9zZXRfbWFjX2FkZHJlc3Ms
-DQo+PiArfTsNCj4+ICsNCj4+ICtzdGF0aWMgaW50IGxhbjg2NXhfcHJvYmUoc3RydWN0IHNwaV9k
-ZXZpY2UgKnNwaSkNCj4+ICt7DQo+PiArICAgICBzdHJ1Y3QgbmV0X2RldmljZSAqbmV0ZGV2Ow0K
-Pj4gKyAgICAgc3RydWN0IGxhbjg2NXhfcHJpdiAqcHJpdjsNCj4+ICsgICAgIGludCByZXQ7DQo+
-PiArDQo+PiArICAgICBuZXRkZXYgPSBhbGxvY19ldGhlcmRldihzaXplb2Yoc3RydWN0IGxhbjg2
-NXhfcHJpdikpOw0KPj4gKyAgICAgaWYgKCFuZXRkZXYpDQo+PiArICAgICAgICAgICAgIHJldHVy
-biAtRU5PTUVNOw0KPj4gKw0KPj4gKyAgICAgcHJpdiA9IG5ldGRldl9wcml2KG5ldGRldik7DQo+
-PiArICAgICBwcml2LT5uZXRkZXYgPSBuZXRkZXY7DQo+PiArICAgICBwcml2LT5zcGkgPSBzcGk7
-DQo+PiArICAgICBzcGlfc2V0X2RydmRhdGEoc3BpLCBwcml2KTsNCj4+ICsgICAgIElOSVRfV09S
-SygmcHJpdi0+bXVsdGljYXN0X3dvcmssIGxhbjg2NXhfbXVsdGljYXN0X3dvcmtfaGFuZGxlcik7
-DQo+PiArDQo+PiArICAgICBwcml2LT50YzYgPSBvYV90YzZfaW5pdChzcGksIG5ldGRldik7DQo+
-PiArICAgICBpZiAoIXByaXYtPnRjNikgew0KPj4gKyAgICAgICAgICAgICByZXQgPSAtRU5PREVW
-Ow0KPj4gKyAgICAgICAgICAgICBnb3RvIGZyZWVfbmV0ZGV2Ow0KPj4gKyAgICAgfQ0KPj4gKw0K
-Pj4gKyAgICAgLyogQXMgcGVyIHRoZSBwb2ludCBzMyBpbiB0aGUgYmVsb3cgZXJyYXRhLCBTUEkg
-cmVjZWl2ZSBFdGhlcm5ldCBmcmFtZQ0KPj4gKyAgICAgICogdHJhbnNmZXIgbWF5IGhhbHQgd2hl
-biBzdGFydGluZyB0aGUgbmV4dCBmcmFtZSBpbiB0aGUgc2FtZSBkYXRhIGJsb2NrDQo+PiArICAg
-ICAgKiAoY2h1bmspIGFzIHRoZSBlbmQgb2YgYSBwcmV2aW91cyBmcmFtZS4gVGhlIFJGQSBmaWVs
-ZCBzaG91bGQgYmUNCj4+ICsgICAgICAqIGNvbmZpZ3VyZWQgdG8gMDFiIG9yIDEwYiBmb3IgcHJv
-cGVyIG9wZXJhdGlvbi4gSW4gdGhlc2UgbW9kZXMsIG9ubHkNCj4+ICsgICAgICAqIG9uZSByZWNl
-aXZlIEV0aGVybmV0IGZyYW1lIHdpbGwgYmUgcGxhY2VkIGluIGEgc2luZ2xlIGRhdGEgYmxvY2su
-DQo+PiArICAgICAgKiBXaGVuIHRoZSBSRkEgZmllbGQgaXMgd3JpdHRlbiB0byAwMWIsIHJlY2Vp
-dmVkIGZyYW1lcyB3aWxsIGJlIGZvcmNlZA0KPj4gKyAgICAgICogdG8gb25seSBzdGFydCBpbiB0
-aGUgZmlyc3Qgd29yZCBvZiB0aGUgZGF0YSBibG9jayBwYXlsb2FkIChTV089MCkuIEFzDQo+PiAr
-ICAgICAgKiByZWNvbW1lbmRlZCwgZW5hYmxlIHplcm8gYWxpZ24gcmVjZWl2ZSBmcmFtZSBmZWF0
-dXJlIGZvciBwcm9wZXINCj4+ICsgICAgICAqIG9wZXJhdGlvbi4NCj4+ICsgICAgICAqDQo+PiAr
-ICAgICAgKiBodHRwczovL3d3MS5taWNyb2NoaXAuY29tL2Rvd25sb2Fkcy9hZW1Eb2N1bWVudHMv
-ZG9jdW1lbnRzL0FJUy9Qcm9kdWN0RG9jdW1lbnRzL0VycmF0YS9MQU44NjUwLTEtRXJyYXRhLTgw
-MDAxMDc1LnBkZg0KPj4gKyAgICAgICovDQo+PiArICAgICByZXQgPSBvYV90YzZfemVyb19hbGln
-bl9yZWNlaXZlX2ZyYW1lX2VuYWJsZShwcml2LT50YzYpOw0KPj4gKyAgICAgaWYgKHJldCkgew0K
-Pj4gKyAgICAgICAgICAgICBkZXZfZXJyKCZzcGktPmRldiwgIkZhaWxlZCB0byBzZXQgWkFSRkU6
-ICVkXG4iLCByZXQpOw0KPj4gKyAgICAgICAgICAgICBnb3RvIG9hX3RjNl9leGl0Ow0KPj4gKyAg
-ICAgfQ0KPj4gKw0KPj4gKyAgICAgLyogR2V0IHRoZSBNQUMgYWRkcmVzcyBmcm9tIHRoZSBTUEkg
-ZGV2aWNlIHRyZWUgbm9kZSAqLw0KPj4gKyAgICAgaWYgKGRldmljZV9nZXRfZXRoZGV2X2FkZHJl
-c3MoJnNwaS0+ZGV2LCBuZXRkZXYpKQ0KPj4gKyAgICAgICAgICAgICBldGhfaHdfYWRkcl9yYW5k
-b20obmV0ZGV2KTsNCj4+ICsNCj4+ICsgICAgIHJldCA9IGxhbjg2NXhfc2V0X2h3X21hY2FkZHIo
-cHJpdiwgbmV0ZGV2LT5kZXZfYWRkcik7DQo+PiArICAgICBpZiAocmV0KSB7DQo+PiArICAgICAg
-ICAgICAgIGRldl9lcnIoJnNwaS0+ZGV2LCAiRmFpbGVkIHRvIGNvbmZpZ3VyZSBNQUM6ICVkXG4i
-LCByZXQpOw0KPj4gKyAgICAgICAgICAgICBnb3RvIG9hX3RjNl9leGl0Ow0KPj4gKyAgICAgfQ0K
-Pj4gKw0KPj4gKyAgICAgbmV0ZGV2LT5pZl9wb3J0ID0gSUZfUE9SVF8xMEJBU0VUOw0KPj4gKyAg
-ICAgbmV0ZGV2LT5pcnEgPSBzcGktPmlycTsNCj4+ICsgICAgIG5ldGRldi0+bmV0ZGV2X29wcyA9
-ICZsYW44NjV4X25ldGRldl9vcHM7DQo+PiArICAgICBuZXRkZXYtPmV0aHRvb2xfb3BzID0gJmxh
-bjg2NXhfZXRodG9vbF9vcHM7DQo+PiArDQo+PiArICAgICByZXQgPSByZWdpc3Rlcl9uZXRkZXYo
-bmV0ZGV2KTsNCj4+ICsgICAgIGlmIChyZXQpIHsNCj4+ICsgICAgICAgICAgICAgZGV2X2Vycigm
-c3BpLT5kZXYsICJSZWdpc3RlciBuZXRkZXYgZmFpbGVkIChyZXQgPSAlZCkiLCByZXQpOw0KPj4g
-KyAgICAgICAgICAgICBnb3RvIG9hX3RjNl9leGl0Ow0KPj4gKyAgICAgfQ0KPj4gKw0KPj4gKyAg
-ICAgcmV0dXJuIDA7DQo+PiArDQo+PiArb2FfdGM2X2V4aXQ6DQo+PiArICAgICBvYV90YzZfZXhp
-dChwcml2LT50YzYpOw0KPj4gK2ZyZWVfbmV0ZGV2Og0KPj4gKyAgICAgZnJlZV9uZXRkZXYocHJp
-di0+bmV0ZGV2KTsNCj4+ICsgICAgIHJldHVybiByZXQ7DQo+PiArfQ0KPj4gKw0KPj4gK3N0YXRp
-YyB2b2lkIGxhbjg2NXhfcmVtb3ZlKHN0cnVjdCBzcGlfZGV2aWNlICpzcGkpDQo+PiArew0KPj4g
-KyAgICAgc3RydWN0IGxhbjg2NXhfcHJpdiAqcHJpdiA9IHNwaV9nZXRfZHJ2ZGF0YShzcGkpOw0K
-Pj4gKw0KPj4gKyAgICAgY2FuY2VsX3dvcmtfc3luYygmcHJpdi0+bXVsdGljYXN0X3dvcmspOw0K
-Pj4gKyAgICAgdW5yZWdpc3Rlcl9uZXRkZXYocHJpdi0+bmV0ZGV2KTsNCj4+ICsgICAgIG9hX3Rj
-Nl9leGl0KHByaXYtPnRjNik7DQo+PiArICAgICBmcmVlX25ldGRldihwcml2LT5uZXRkZXYpOw0K
-Pj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgY29uc3Qgc3RydWN0IHNwaV9kZXZpY2VfaWQgc3BpZGV2
-X3NwaV9pZHNbXSA9IHsNCj4+ICsgICAgIHsgLm5hbWUgPSAibGFuODY1MCIgfSwNCj4+ICsgICAg
-IHt9LA0KPj4gK307DQo+PiArDQo+PiArc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQg
-bGFuODY1eF9kdF9pZHNbXSA9IHsNCj4+ICsgICAgIHsgLmNvbXBhdGlibGUgPSAibWljcm9jaGlw
-LGxhbjg2NTAiIH0sDQo+PiArICAgICB7IC8qIFNlbnRpbmVsICovIH0NCj4+ICt9Ow0KPj4gK01P
-RFVMRV9ERVZJQ0VfVEFCTEUob2YsIGxhbjg2NXhfZHRfaWRzKTsNCj4+ICsNCj4+ICtzdGF0aWMg
-c3RydWN0IHNwaV9kcml2ZXIgbGFuODY1eF9kcml2ZXIgPSB7DQo+PiArICAgICAuZHJpdmVyID0g
-ew0KPj4gKyAgICAgICAgICAgICAubmFtZSA9IERSVl9OQU1FLA0KPj4gKyAgICAgICAgICAgICAu
-b2ZfbWF0Y2hfdGFibGUgPSBsYW44NjV4X2R0X2lkcywNCj4+ICsgICAgICB9LA0KPj4gKyAgICAg
-LnByb2JlID0gbGFuODY1eF9wcm9iZSwNCj4+ICsgICAgIC5yZW1vdmUgPSBsYW44NjV4X3JlbW92
-ZSwNCj4+ICsgICAgIC5pZF90YWJsZSA9IHNwaWRldl9zcGlfaWRzLA0KPj4gK307DQo+PiArbW9k
-dWxlX3NwaV9kcml2ZXIobGFuODY1eF9kcml2ZXIpOw0KPj4gKw0KPj4gK01PRFVMRV9ERVNDUklQ
-VElPTihEUlZfTkFNRSAiIDEwQmFzZS1UMVMgTUFDUEhZIEV0aGVybmV0IERyaXZlciIpOw0KPj4g
-K01PRFVMRV9BVVRIT1IoIlBhcnRoaWJhbiBWZWVyYXNvb3JhbiA8cGFydGhpYmFuLnZlZXJhc29v
-cmFuQG1pY3JvY2hpcC5jb20+Iik7DQo+PiArTU9EVUxFX0xJQ0VOU0UoIkdQTCIpOw0KPj4gLS0N
-Cj4+IDIuMzQuMQ0KDQo=
+This is the start of the stable review cycle for the 6.1.103 release.
+There are 441 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
+
+Responses should be made by Fri, 02 Aug 2024 07:30:23 +0000.
+Anything received after that time might be too late.
+
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.103-rc2.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+and the diffstat can be found below.
+
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 6.1.103-rc2
+
+Russell Currey <ruscur@russell.cc>
+    powerpc/pseries: Avoid hcall in plpks_is_available() on non-pseries
+
+Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+    fs: don't allow non-init s_user_ns for filesystems without FS_USERNS_MOUNT
+
+Leon Romanovsky <leon@kernel.org>
+    nvme-pci: add missing condition check for existence of mapped data
+
+Pavel Begunkov <asml.silence@gmail.com>
+    io_uring: fix io_match_task must_hold
+
+Artem Chernyshev <artem.chernyshev@red-soft.ru>
+    iommu: sprd: Avoid NULL deref in sprd_iommu_hw_en
+
+Thomas Richter <tmricht@linux.ibm.com>
+    s390/cpum_cf: Fix endless loop in CF_DIAG event stop
+
+Gerd Bayer <gbayer@linux.ibm.com>
+    s390/pci: Allow allocation of more than 1 MSI interrupt
+
+Gerd Bayer <gbayer@linux.ibm.com>
+    s390/pci: Refactor arch_setup_msi_irqs()
+
+ethanwu <ethanwu@synology.com>
+    ceph: fix incorrect kmalloc size of pagevec mempool
+
+Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+    ASoC: Intel: use soc_intel_is_byt_cr() only when IOSF_MBI is reachable
+
+Conor Dooley <conor.dooley@microchip.com>
+    spi: spidev: add correct compatible for Rohm BH2228FV
+
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+    spi: spidev: order compatibles alphabetically
+
+Vincent Tremblay <vincent@vtremblay.dev>
+    spidev: Add Silicon Labs EM3581 device compatible
+
+Bart Van Assche <bvanassche@acm.org>
+    nvme-pci: Fix the instructions for disabling power management
+
+Steve Wilkins <steve.wilkins@raymarine.com>
+    spi: microchip-core: fix init function not setting the master and motorola modes
+
+Yang Yingliang <yangyingliang@huawei.com>
+    spi: microchip-core: switch to use modern name
+
+Steve Wilkins <steve.wilkins@raymarine.com>
+    spi: microchip-core: only disable SPI controller when register value change requires it
+
+Naga Sureshkumar Relli <nagasuresh.relli@microchip.com>
+    spi: microchip-core: fix the issues in the isr
+
+Daniel Baluta <daniel.baluta@nxp.com>
+    ASoC: SOF: imx8m: Fix DSP control regmap retrieval
+
+Markus Elfring <elfring@users.sourceforge.net>
+    auxdisplay: ht16k33: Drop reference after LED registration
+
+Al Viro <viro@zeniv.linux.org.uk>
+    lirc: rc_dev_get_from_fd(): fix file leak
+
+Al Viro <viro@zeniv.linux.org.uk>
+    powerpc: fix a file leak in kvm_vcpu_ioctl_enable_cap()
+
+Xiao Liang <shaw.leon@gmail.com>
+    apparmor: Fix null pointer deref when receiving skb during sock creation
+
+Dan Carpenter <dan.carpenter@linaro.org>
+    mISDN: Fix a use after free in hfcmulti_tx()
+
+Fred Li <dracodingfly@gmail.com>
+    bpf: Fix a segment issue when downgrading gso_size
+
+Petr Machata <petrm@nvidia.com>
+    net: nexthop: Initialize all fields in dumped nexthops
+
+Simon Horman <horms@kernel.org>
+    net: stmmac: Correct byte order of perfect_match
+
+Shigeru Yoshida <syoshida@redhat.com>
+    tipc: Return non-zero value from tipc_udp_addr2str() on error
+
+Florian Westphal <fw@strlen.de>
+    netfilter: nft_set_pipapo_avx2: disable softinterrupts
+
+Johannes Berg <johannes.berg@intel.com>
+    net: bonding: correctly annotate RCU in bond_should_notify_peers()
+
+Ido Schimmel <idosch@nvidia.com>
+    ipv4: Fix incorrect source address in Record Route option
+
+Gregory CLEMENT <gregory.clement@bootlin.com>
+    MIPS: SMP-CPS: Fix address for GCR_ACCESS register for CM3 and later
+
+Liwei Song <liwei.song.lsong@gmail.com>
+    tools/resolve_btfids: Fix comparison of distinct pointer types warning in resolve_btfids
+
+Hou Tao <houtao1@huawei.com>
+    bpf, events: Use prog to emit ksymbol event for main program
+
+Lance Richardson <rlance@google.com>
+    dma: fix call order in dmam_free_coherent
+
+Michal Luczaj <mhal@rbox.co>
+    af_unix: Disable MSG_OOB handling for sockets in sockmap/sockhash
+
+Andrii Nakryiko <andrii@kernel.org>
+    libbpf: Fix no-args func prototype BTF dumping syntax
+
+Masahiro Yamada <masahiroy@kernel.org>
+    kbuild: avoid build error when single DTB is turned into composite DTB
+
+Chao Yu <chao@kernel.org>
+    f2fs: fix to update user block counts in block_operations()
+
+Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+    watchdog: rzg2l_wdt: Check return status of pm_runtime_put()
+
+Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+    watchdog: rzg2l_wdt: Use pm_runtime_resume_and_get()
+
+Sheng Yong <shengyong@oppo.com>
+    f2fs: fix start segno of large section
+
+Johannes Berg <johannes.berg@intel.com>
+    um: time-travel: fix signal blocking race/hang
+
+Johannes Berg <johannes.berg@intel.com>
+    um: time-travel: fix time-travel-start option
+
+Ma Ke <make24@iscas.ac.cn>
+    phy: cadence-torrent: Check return value on register read
+
+Vignesh Raghavendra <vigneshr@ti.com>
+    dmaengine: ti: k3-udma: Fix BCHAN count with UHC and HC channels
+
+Jeongjun Park <aha310510@gmail.com>
+    jfs: Fix array-index-out-of-bounds in diFree
+
+Douglas Anderson <dianders@chromium.org>
+    kdb: Use the passed prompt in kdb_position_cursor()
+
+Arnd Bergmann <arnd@arndb.de>
+    kdb: address -Wformat-security warnings
+
+Johannes Berg <johannes.berg@intel.com>
+    wifi: mac80211: check basic rates validity
+
+Johannes Berg <johannes.berg@intel.com>
+    wifi: mac80211: track capability/opmode NSS separately
+
+Rameshkumar Sundaram <quic_ramess@quicinc.com>
+    wifi: mac80211: Allow NSS change only up to capability
+
+Pavel Begunkov <asml.silence@gmail.com>
+    io_uring/io-wq: limit retrying worker initialisation
+
+Lukas Wunner <lukas@wunner.de>
+    PCI/DPC: Fix use-after-free on concurrent DPC and hot-removal
+
+Ira Weiny <ira.weiny@intel.com>
+    PCI: Introduce cleanup helpers for device reference counts and locks
+
+Ryusuke Konishi <konishi.ryusuke@gmail.com>
+    nilfs2: handle inconsistent state in nilfs_btnode_create_block()
+
+WangYuli <wangyuli@uniontech.com>
+    Bluetooth: btusb: Add Realtek RTL8852BE support ID 0x13d3:0x3591
+
+Hilda Wu <hildawu@realtek.com>
+    Bluetooth: btusb: Add RTL8852BE device 0489:e125 to device tables
+
+Jiri Olsa <jolsa@kernel.org>
+    bpf: Synchronize dispatcher update with bpf_dispatcher_xdp_func
+
+Ilya Dryomov <idryomov@gmail.com>
+    rbd: don't assume RBD_LOCK_STATE_LOCKED for exclusive mappings
+
+Ilya Dryomov <idryomov@gmail.com>
+    rbd: rename RBD_LOCK_STATE_RELEASING and releasing_wait
+
+Dragan Simic <dsimic@manjaro.org>
+    drm/panfrost: Mark simple_ondemand governor as softdep
+
+Lucas Stach <l.stach@pengutronix.de>
+    drm/etnaviv: don't block scheduler when GPU is still active
+
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+    MIPS: Loongson64: Test register availability before use
+
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+    MIPS: Loongson64: reset: Prioritise firmware service
+
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+    MIPS: Loongson64: Remove memory node for builtin-dtb
+
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+    MIPS: Loongson64: env: Hook up Loongsson-2K
+
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+    MIPS: dts: loongson: Fix GMAC phy node
+
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+    MIPS: ip30: ip30-console: Add missing include
+
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+    MIPS: dts: loongson: Add ISA node
+
+Aleksandr Mishin <amishin@t-argos.ru>
+    remoteproc: imx_rproc: Fix refcount mistake in imx_rproc_addr_init
+
+Aleksandr Mishin <amishin@t-argos.ru>
+    remoteproc: imx_rproc: Skip over memory region when node value is NULL
+
+Gwenael Treuveur <gwenael.treuveur@foss.st.com>
+    remoteproc: stm32_rproc: Fix mailbox interrupts queuing
+
+Ilya Dryomov <idryomov@gmail.com>
+    rbd: don't assume rbd_is_lock_owner() for exclusive mappings
+
+Eric Biggers <ebiggers@kernel.org>
+    dm-verity: fix dm_is_verity_target() when dm-verity is builtin
+
+Michael Ellerman <mpe@ellerman.id.au>
+    selftests/sigaltstack: Fix ppc64 GCC build
+
+Bart Van Assche <bvanassche@acm.org>
+    RDMA/iwcm: Fix a use-after-free related to destroying CM IDs
+
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+    platform: mips: cpu_hwmon: Disable driver on unsupported hardware
+
+Thomas Gleixner <tglx@linutronix.de>
+    watchdog/perf: properly initialize the turbo mode timestamp and rearm counter
+
+Joy Chakraborty <joychakr@google.com>
+    rtc: isl1208: Fix return value of nvmem callbacks
+
+Imre Deak <imre.deak@intel.com>
+    drm/i915/dp: Reset intel_dp->link_trained before retraining the link
+
+Wayne Lin <Wayne.Lin@amd.com>
+    drm/dp_mst: Fix all mstb marked as not probed after suspend/resume
+
+Alex Deucher <alexander.deucher@amd.com>
+    drm/amdgpu/sdma5.2: Update wptr registers as well as doorbell
+
+Nitin Gote <nitin.r.gote@intel.com>
+    drm/i915/gt: Do not consider preemption during execlists_dequeue for gen8
+
+Adrian Hunter <adrian.hunter@intel.com>
+    perf/x86/intel/pt: Fix a topa_entry base address calculation
+
+Marco Cavenati <cavenati.marco@gmail.com>
+    perf/x86/intel/pt: Fix topa_entry base length
+
+Kan Liang <kan.liang@linux.intel.com>
+    perf/x86/intel/uncore: Fix the bits of the CHA extended umask for SPR
+
+Frederic Weisbecker <frederic@kernel.org>
+    perf: Fix event leak upon exec and file release
+
+Frederic Weisbecker <frederic@kernel.org>
+    perf: Fix event leak upon exit
+
+Nilesh Javali <njavali@marvell.com>
+    scsi: qla2xxx: validate nvme_local_port correctly
+
+Shreyas Deodhar <sdeodhar@marvell.com>
+    scsi: qla2xxx: Complete command early within lock
+
+Quinn Tran <qutran@marvell.com>
+    scsi: qla2xxx: Fix flash read failure
+
+Quinn Tran <qutran@marvell.com>
+    scsi: qla2xxx: Use QP lock to search for bsg
+
+Shreyas Deodhar <sdeodhar@marvell.com>
+    scsi: qla2xxx: Fix for possible memory corruption
+
+Quinn Tran <qutran@marvell.com>
+    scsi: qla2xxx: Unable to act on RSCN for port online
+
+Manish Rangankar <mrangankar@marvell.com>
+    scsi: qla2xxx: During vport delete send async logout explicitly
+
+Joy Chakraborty <joychakr@google.com>
+    rtc: cmos: Fix return value of nvmem callbacks
+
+Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+    mm/numa_balancing: teach mpol_to_str about the balancing mode
+
+Shenwei Wang <shenwei.wang@nxp.com>
+    irqchip/imx-irqsteer: Handle runtime power management correctly
+
+Zijun Hu <quic_zijuhu@quicinc.com>
+    devres: Fix memory leakage caused by driver API devm_free_percpu()
+
+Zijun Hu <quic_zijuhu@quicinc.com>
+    devres: Fix devm_krealloc() wasting memory
+
+Ahmed Zaki <ahmed.zaki@intel.com>
+    ice: Add a per-VF limit on number of FDIR filters
+
+Bailey Forrest <bcf@google.com>
+    gve: Fix an edge case for TSO skb validity check
+
+Zijun Hu <quic_zijuhu@quicinc.com>
+    kobject_uevent: Fix OOB access within zap_modalias_env()
+
+Takashi Iwai <tiwai@suse.de>
+    ASoC: amd: yc: Support mic on Lenovo Thinkpad E16 Gen 2
+
+Nathan Chancellor <nathan@kernel.org>
+    kbuild: Fix '-S -c' in x86 stack protector scripts
+
+Ross Lagerwall <ross.lagerwall@citrix.com>
+    decompress_bunzip2: fix rare decompression failure
+
+Fedor Pchelkin <pchelkin@ispras.ru>
+    ubi: eba: properly rollback inside self_check_eba
+
+Bastien Curutchet <bastien.curutchet@bootlin.com>
+    clk: davinci: da8xx-cfgchip: Initialize clk_init_data before use
+
+Chao Yu <chao@kernel.org>
+    f2fs: fix return value of f2fs_convert_inline_inode()
+
+Chao Yu <chao@kernel.org>
+    f2fs: fix to don't dirty inode for readonly filesystem
+
+Chao Yu <chao@kernel.org>
+    f2fs: fix to force buffered IO on inline_data inode
+
+Saurav Kashyap <skashyap@marvell.com>
+    scsi: qla2xxx: Return ENOBUFS if sg_cnt is more than one for ELS cmds
+
+Huacai Chen <chenhuacai@kernel.org>
+    fs/ntfs3: Update log->page_{mask,bits} if log->page_size changed
+
+tuhaowen <tuhaowen@uniontech.com>
+    dev/parport: fix the array out-of-bounds risk
+
+Carlos Llamas <cmllamas@google.com>
+    binder: fix hang of unregistered readers
+
+Huacai Chen <chenhuacai@kernel.org>
+    PCI: loongson: Enable MSI in LS7A Root Complex
+
+Manivannan Sadhasivam <mani@kernel.org>
+    PCI: rockchip: Use GPIOD_OUT_LOW flag while requesting ep_gpio
+
+Niklas Cassel <cassel@kernel.org>
+    PCI: dw-rockchip: Fix initial PERST# GPIO value
+
+Wei Liu <wei.liu@kernel.org>
+    PCI: hv: Return zero, not garbage, when reading PCI_INTERRUPT_PIN
+
+John David Anglin <dave@mx3210.local>
+    parisc: Fix warning at drivers/pci/msi/msi.h:121
+
+Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+    hwrng: amd - Convert PCIBIOS_* return codes to errnos
+
+Alan Stern <stern@rowland.harvard.edu>
+    tools/memory-model: Fix bug in lock.cat
+
+wangdicheng <wangdicheng@kylinos.cn>
+    ALSA: usb-audio: Add a quirk for Sonix HD USB Camera
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: usb-audio: Move HD Webcam quirk to the right place
+
+wangdicheng <wangdicheng@kylinos.cn>
+    ALSA: usb-audio: Fix microphone sound on HD webcam.
+
+Sean Christopherson <seanjc@google.com>
+    KVM: nVMX: Request immediate exit iff pending nested event needs injection
+
+Sean Christopherson <seanjc@google.com>
+    KVM: VMX: Split out the non-virtualization part of vmx_interrupt_blocked()
+
+Ricardo Ribalda <ribalda@chromium.org>
+    media: uvcvideo: Fix integer overflow calculating timestamp
+
+Jan Kara <jack@suse.cz>
+    jbd2: make jbd2_journal_get_max_txn_bufs() internal
+
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+    leds: mt6360: Fix memory leak in mt6360_init_isnk_properties()
+
+Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+    leds: ss4200: Convert PCIBIOS_* return codes to errnos
+
+Jay Buddhabhatti <jay.buddhabhatti@amd.com>
+    drivers: soc: xilinx: check return status of get_api_version()
+
+Rafael Beims <rafael.beims@toradex.com>
+    wifi: mwifiex: Fix interface type change
+
+Mickaël Salaün <mic@digikod.net>
+    selftests/landlock: Add cred_transfer test
+
+levi.yun <yeoreum.yun@arm.com>
+    trace/pid_list: Change gfp flags in pid_list_fill_irq()
+
+Pavel Begunkov <asml.silence@gmail.com>
+    io_uring: tighten task exit cancellations
+
+Baokun Li <libaokun1@huawei.com>
+    ext4: make sure the first directory block is not a hole
+
+Baokun Li <libaokun1@huawei.com>
+    ext4: check dot and dotdot of dx_root before making dir indexed
+
+Paolo Pisati <p.pisati@gmail.com>
+    m68k: amiga: Turn off Warp1260 interrupts during boot
+
+Jan Kara <jack@suse.cz>
+    udf: Avoid using corrupted block bitmap buffer
+
+Frederic Weisbecker <frederic@kernel.org>
+    task_work: Introduce task_work_cancel() again
+
+Frederic Weisbecker <frederic@kernel.org>
+    task_work: s/task_work_cancel()/task_work_cancel_func()/
+
+Steve French <stfrench@microsoft.com>
+    cifs: mount with "unix" mount option for SMB1 incorrectly handled
+
+Steve French <stfrench@microsoft.com>
+    cifs: fix reconnect with SMB1 UNIX Extensions
+
+Steve French <stfrench@microsoft.com>
+    cifs: fix potential null pointer use in destroy_workqueue in init_cifs error path
+
+Fedor Pchelkin <pchelkin@ispras.ru>
+    apparmor: use kvfree_sensitive to free data->data
+
+Pierre Gondois <pierre.gondois@arm.com>
+    sched/fair: Use all little CPUs for CPU-bound workloads
+
+Sung Joon Kim <sungjoon.kim@amd.com>
+    drm/amd/display: Check for NULL pointer
+
+Shreyas Deodhar <sdeodhar@marvell.com>
+    scsi: qla2xxx: Fix optrom version displayed in FDMI
+
+Ma Ke <make24@iscas.ac.cn>
+    drm/gma500: fix null pointer dereference in psb_intel_lvds_get_modes
+
+Ma Ke <make24@iscas.ac.cn>
+    drm/gma500: fix null pointer dereference in cdv_intel_lvds_get_modes
+
+Jan Kara <jack@suse.cz>
+    ext2: Verify bitmap and itable block numbers before using them
+
+Chao Yu <chao@kernel.org>
+    hfs: fix to initialize fields of hfs_inode_info after hfs_alloc_inode()
+
+Igor Pylypiv <ipylypiv@google.com>
+    ata: libata-scsi: Honor the D_SENSE bit for CK_COND=1 and no error
+
+Dikshita Agarwal <quic_dikshita@quicinc.com>
+    media: venus: fix use after free in vdec_close
+
+Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
+    char: tpm: Fix possible memory leak in tpm_bios_measurements_open()
+
+Eric Sandeen <sandeen@redhat.com>
+    fuse: verify {g,u}id mount options correctly
+
+Tejun Heo <tj@kernel.org>
+    sched/fair: set_load_weight() must also call reweight_task() for SCHED_IDLE tasks
+
+Nicolas Dichtel <nicolas.dichtel@6wind.com>
+    ipv6: take care of scope when choosing the src addr
+
+Nicolas Dichtel <nicolas.dichtel@6wind.com>
+    ipv4: fix source address selection with route leak
+
+Pavel Begunkov <asml.silence@gmail.com>
+    kernel: rerun task_work while freezing in get_signal()
+
+Chengen Du <chengen.du@canonical.com>
+    af_packet: Handle outgoing VLAN packets without hardware offloading
+
+Breno Leitao <leitao@debian.org>
+    net: netconsole: Disable target before netpoll cleanup
+
+Yu Liao <liaoyu15@huawei.com>
+    tick/broadcast: Make takeover of broadcast hrtimer reliable
+
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+    dt-bindings: thermal: correct thermal zone node name limit
+
+Ard Biesheuvel <ardb@kernel.org>
+    x86/efistub: Revert to heap allocated boot_params for PE entrypoint
+
+Ard Biesheuvel <ardb@kernel.org>
+    x86/efistub: Avoid returning EFI_SUCCESS on error
+
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+    mm: mmap_lock: replace get_memcg_path_buf() with on-stack buffer
+
+Yu Zhao <yuzhao@google.com>
+    mm/mglru: fix div-by-zero in vmpressure_calc_level()
+
+Miaohe Lin <linmiaohe@huawei.com>
+    mm/hugetlb: fix possible recursive locking detected warning
+
+Jann Horn <jannh@google.com>
+    landlock: Don't lose track of restrictions on cred_transfer
+
+Yang Yang <yang.yang@vivo.com>
+    sbitmap: fix io hung due to race on sbitmap_word::cleared
+
+linke li <lilinke99@qq.com>
+    sbitmap: use READ_ONCE to access map->word
+
+Kemeng Shi <shikemeng@huaweicloud.com>
+    sbitmap: rewrite sbitmap_find_bit_in_index to reduce repeat code
+
+Kemeng Shi <shikemeng@huaweicloud.com>
+    sbitmap: remove unnecessary calculation of alloc_hint in __sbitmap_get_shallow
+
+Carlos López <clopez@suse.de>
+    s390/dasd: fix error checks in dasd_copy_pair_store()
+
+Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+    fs/ntfs3: Keep runs for $MFT::$ATTR_DATA and $MFT::$ATTR_BITMAP
+
+Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+    fs/ntfs3: Missed error return
+
+Csókás, Bence <csokas.bence@prolan.hu>
+    rtc: interface: Add RTC offset to alarm after fix-up
+
+Ryusuke Konishi <konishi.ryusuke@gmail.com>
+    nilfs2: avoid undefined behavior in nilfs_cnt32_ge macro
+
+David Hildenbrand <david@redhat.com>
+    fs/proc/task_mmu: indicate PM_FILE for PMD-mapped file THP
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    pinctrl: renesas: r8a779g0: Fix TPU suffixes
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    pinctrl: renesas: r8a779g0: Fix TCLK suffixes
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    pinctrl: renesas: r8a779g0: FIX PWM suffixes
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    pinctrl: renesas: r8a779g0: Fix IRQ suffixes
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    pinctrl: renesas: r8a779g0: Fix (H)SCIF3 suffixes
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    pinctrl: renesas: r8a779g0: Fix (H)SCIF1 suffixes
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    pinctrl: renesas: r8a779g0: Fix FXR_TXEN[AB] suffixes
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    pinctrl: renesas: r8a779g0: Fix CANFD5 suffix
+
+Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+    fs/ntfs3: Fix field-spanning write in INDEX_HDR
+
+Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+    fs/ntfs3: Replace inode_trylock with inode_lock
+
+Peng Fan <peng.fan@nxp.com>
+    pinctrl: freescale: mxs: Fix refcount of child
+
+Yang Yingliang <yangyingliang@huawei.com>
+    pinctrl: ti: ti-iodelay: fix possible memory leak when pinctrl_enable() fails
+
+Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+    pinctrl: ti: ti-iodelay: Drop if block with always false condition
+
+Yang Yingliang <yangyingliang@huawei.com>
+    pinctrl: single: fix possible memory leak when pinctrl_enable() fails
+
+Yang Yingliang <yangyingliang@huawei.com>
+    pinctrl: core: fix possible memory leak when pinctrl_enable() fails
+
+Dmitry Yashin <dmt.yashin@gmail.com>
+    pinctrl: rockchip: update rk3308 iomux routes
+
+Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+    fs/ntfs3: Add missing .dirty_folio in address_space_operations
+
+Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+    fs/ntfs3: Fix getting file type
+
+Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+    fs/ntfs3: Missed NI_FLAG_UPDATE_PARENT setting
+
+Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+    fs/ntfs3: Fix transform resident to nonresident for compressed files
+
+Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+    fs/ntfs3: Merge synonym COMPRESSION_UNIT and NTFS_LZNT_CUNIT
+
+Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+    fs/ntfs3: Use ALIGN kernel macro
+
+Martin Willi <martin@strongswan.org>
+    net: dsa: b53: Limit chip-wide jumbo frame config to CPU ports
+
+Martin Willi <martin@strongswan.org>
+    net: dsa: mv88e6xxx: Limit chip-wide frame size config to CPU ports
+
+Ido Schimmel <idosch@nvidia.com>
+    ipv4: Fix incorrect TOS in fibmatch route get reply
+
+Ido Schimmel <idosch@nvidia.com>
+    ipv4: Fix incorrect TOS in route get reply
+
+Pablo Neira Ayuso <pablo@netfilter.org>
+    net: flow_dissector: use DEBUG_NET_WARN_ON_ONCE
+
+Florian Westphal <fw@strlen.de>
+    netfilter: nf_set_pipapo: fix initial map fill
+
+Florian Westphal <fw@strlen.de>
+    netfilter: nft_set_pipapo: constify lookup fn args where possible
+
+Pablo Neira Ayuso <pablo@netfilter.org>
+    netfilter: ctnetlink: use helper function to calculate expect ID
+
+Jack Wang <jinpu.wang@ionos.com>
+    bnxt_re: Fix imm_data endianness
+
+Jon Pan-Doh <pandoh@google.com>
+    iommu/vt-d: Fix identity map bounds in si_domain_init()
+
+Yanfei Xu <yanfei.xu@intel.com>
+    iommu/vt-d: Fix to convert mm pfn to dma pfn
+
+Chengchang Tang <tangchengchang@huawei.com>
+    RDMA/hns: Fix insufficient extend DB for VFs.
+
+Chengchang Tang <tangchengchang@huawei.com>
+    RDMA/hns: Fix undifined behavior caused by invalid max_sge
+
+Chengchang Tang <tangchengchang@huawei.com>
+    RDMA/hns: Fix shift-out-bounds when max_inline_data is 0
+
+Chengchang Tang <tangchengchang@huawei.com>
+    RDMA/hns: Fix missing pagesize and alignment check in FRMR
+
+Junxian Huang <huangjunxian6@hisilicon.com>
+    RDMA/hns: Fix unmatch exception handling when init eq table fails
+
+Junxian Huang <huangjunxian6@hisilicon.com>
+    RDMA/hns: Check atomic wr length
+
+Nick Bowler <nbowler@draconx.ca>
+    macintosh/therm_windtunnel: fix module unload.
+
+Michael Ellerman <mpe@ellerman.id.au>
+    powerpc/xmon: Fix disassembly CPU feature checks
+
+Frank Li <Frank.Li@nxp.com>
+    PCI: dwc: Fix index 0 incorrectly being interpreted as a free ATU slot
+
+Manivannan Sadhasivam <mani@kernel.org>
+    PCI: qcom-ep: Disable resources unconditionally during PERST# assert
+
+Dominique Martinet <dominique.martinet@atmark-techno.com>
+    MIPS: Octeron: remove source file executable bit
+
+Lorenzo Bianconi <lorenzo@kernel.org>
+    clk: en7523: fix rate divider for slic and spi clocks
+
+Stephen Boyd <swboyd@chromium.org>
+    clk: qcom: Park shared RCGs upon registration
+
+Nivas Varadharajan Mugunthakumar <nivasx.varadharajan.mugunthakumar@intel.com>
+    crypto: qat - extend scope of lock in adf_cfg_add_key_value_param()
+
+Denis Arefev <arefev@swemel.ru>
+    net: missing check virtio
+
+Michael S. Tsirkin <mst@redhat.com>
+    vhost/vsock: always initialize seqpacket_allow
+
+Dan Carpenter <dan.carpenter@linaro.org>
+    PCI: endpoint: Fix error handling in epf_ntb_epc_cleanup()
+
+Dan Carpenter <dan.carpenter@linaro.org>
+    PCI: endpoint: Clean up error handling in vpci_scan_bus()
+
+Aleksandr Mishin <amishin@t-argos.ru>
+    ASoC: amd: Adjust error handling in case of absent codec device
+
+Dmitry Torokhov <dmitry.torokhov@gmail.com>
+    Input: elan_i2c - do not leave interrupt disabled on suspend failure
+
+Leon Romanovsky <leon@kernel.org>
+    RDMA/device: Return error earlier if port in not valid
+
+Arnd Bergmann <arnd@arndb.de>
+    mtd: make mtd_test.c a separate module
+
+Chen Ni <nichen@iscas.ac.cn>
+    ASoC: max98088: Check for clk_prepare_enable() error
+
+Nathan Lynch <nathanl@linux.ibm.com>
+    powerpc/prom: Add CPU info to hardware description string later
+
+Aleksandr Mishin <amishin@t-argos.ru>
+    ASoC: qcom: Adjust issues in case of DT error in asoc_qcom_lpass_cpu_platform_probe()
+
+Honggang LI <honggangli@163.com>
+    RDMA/rxe: Don't set BTH_ACK_MASK for UC or UD QPs
+
+Or Har-Toov <ohartoov@nvidia.com>
+    RDMA/mlx5: Use sq timestamp as QP timestamp when RoCE is disabled
+
+Leon Romanovsky <leon@kernel.org>
+    RDMA/mlx4: Fix truncated output warning in alias_GUID.c
+
+Leon Romanovsky <leon@kernel.org>
+    RDMA/mlx4: Fix truncated output warning in mad.c
+
+Andrei Lalaev <andrei.lalaev@anton-paar.com>
+    Input: qt1050 - handle CHIP_ID reading error
+
+Konrad Dybcio <konrad.dybcio@linaro.org>
+    interconnect: qcom: qcm2290: Fix mas_snoc_bimc RPM master ID
+
+Taniya Das <quic_tdas@quicinc.com>
+    clk: qcom: gpucc-sm8350: Park RCG's clk source at XO during disable
+
+Leon Romanovsky <leon@kernel.org>
+    RDMA/cache: Release GID table even if leak is detected
+
+Sourabh Jain <sourabhjain@linux.ibm.com>
+    powerpc/kexec_file: fix cpus node update to FDT
+
+Sourabh Jain <sourabhjain@linux.ibm.com>
+    powerpc/kexec: make the update_cpus_node() function public
+
+Russell Currey <ruscur@russell.cc>
+    powerpc/pseries: Add helper to get PLPKS password length
+
+Nayna Jain <nayna@linux.ibm.com>
+    powerpc/pseries: Expose PLPKS config values, support additional fields
+
+Russell Currey <ruscur@russell.cc>
+    powerpc/pseries: Move plpks.h to include directory
+
+Andrew Donnellan <ajd@linux.ibm.com>
+    powerpc/pseries: Fix alignment of PLPKS structures and buffers
+
+Chiara Meiohas <cmeiohas@nvidia.com>
+    RDMA/mlx5: Set mkeys for dmabuf at PAGE_SIZE
+
+James Clark <james.clark@arm.com>
+    coresight: Fix ref leak when of_coresight_parse_endpoint() fails
+
+Antoniu Miclaus <antoniu.miclaus@analog.com>
+    iio: frequency: adrf6780: rm clk provider include
+
+Taniya Das <quic_tdas@quicinc.com>
+    clk: qcom: camcc-sc7280: Add parent dependency to all camera GDSCs
+
+Taniya Das <quic_tdas@quicinc.com>
+    clk: qcom: gcc-sc7280: Update force mem core bit for UFS ICE clock
+
+Konrad Dybcio <konrad.dybcio@linaro.org>
+    clk: qcom: branch: Add helper functions for setting retain bits
+
+Marek Vasut <marek.vasut+renesas@mailbox.org>
+    PCI: rcar: Demote WARN() to dev_warn_ratelimited() in rcar_pcie_wakeup()
+
+Aleksandr Mishin <amishin@t-argos.ru>
+    PCI: keystone: Fix NULL pointer dereference in case of DT error in ks_pcie_setup_rc_app_regs()
+
+Siddharth Vadapalli <s-vadapalli@ti.com>
+    PCI: keystone: Don't enable BAR 0 for AM654x
+
+Siddharth Vadapalli <s-vadapalli@ti.com>
+    PCI: keystone: Relocate ks_pcie_set/clear_dbi_mode()
+
+Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+    PCI: Fix resource double counting on remove & rescan
+
+Benjamin Coddington <bcodding@redhat.com>
+    SUNRPC: Fixup gss_status tracepoint error output
+
+Andreas Larsson <andreas@gaisler.com>
+    sparc64: Fix incorrect function signature and add prototype for prom_cif_init
+
+Jan Kara <jack@suse.cz>
+    ext4: avoid writing unitialized memory to disk in EA inodes
+
+Luis Henriques (SUSE) <luis.henriques@linux.dev>
+    ext4: don't track ranges in fast_commit if inode has inlined data
+
+Olga Kornievskaia <kolga@netapp.com>
+    NFSv4.1 another fix for EXCHGID4_FLAG_USE_PNFS_DS for DS server
+
+NeilBrown <neilb@suse.de>
+    SUNRPC: avoid soft lockup when transmitting UDP to reachable server.
+
+Chuck Lever <chuck.lever@oracle.com>
+    xprtrdma: Fix rpcrdma_reqs_reset()
+
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+    mfd: omap-usb-tll: Use struct_size to allocate tll
+
+Arnd Bergmann <arnd@arndb.de>
+    mfd: rsmu: Split core code into separate module
+
+Adrian Hunter <adrian.hunter@intel.com>
+    perf intel-pt: Fix exclude_guest setting
+
+Adrian Hunter <adrian.hunter@intel.com>
+    perf intel-pt: Fix aux_watermark calculation for 64-bit size
+
+Dikshita Agarwal <quic_dikshita@quicinc.com>
+    media: venus: flush all buffers in output plane streamoff
+
+Luis Henriques (SUSE) <luis.henriques@linux.dev>
+    ext4: fix infinite loop when replaying fast_commit
+
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+    Revert "leds: led-core: Fix refcount leak in of_led_get()"
+
+Chen Ni <nichen@iscas.ac.cn>
+    drm/qxl: Add check for drm_cvt_mode
+
+Lucas Stach <l.stach@pengutronix.de>
+    drm/etnaviv: fix DMA direction handling for cached RW buffers
+
+Namhyung Kim <namhyung@kernel.org>
+    perf report: Fix condition in sort__sym_cmp()
+
+James Clark <james.clark@arm.com>
+    perf test: Make test_arm_callgraph_fp.sh more robust
+
+James Clark <james.clark@arm.com>
+    perf tests: Fix test_arm_callgraph_fp variable expansion
+
+Spoorthy S <spoorts2@in.ibm.com>
+    perf tests arm_callgraph_fp: Address shellcheck warnings about signal names and adding double quotes for expression
+
+Namhyung Kim <namhyung@kernel.org>
+    perf test: Replace arm callgraph fp test workload with leafloop
+
+Abhinav Kumar <quic_abhinavk@quicinc.com>
+    drm/msm/dpu: drop validity checks for clear_pending_flush() ctl op
+
+Jonathan Marek <jonathan@marek.ca>
+    drm/msm/dsi: set VIDEO_COMPRESSION_MODE_CTRL_WC
+
+Hans de Goede <hdegoede@redhat.com>
+    leds: trigger: Unregister sysfs attributes before calling deactivate()
+
+Hsiao Chien Sung <shawn.sung@mediatek.com>
+    drm/mediatek: Add OVL compatible name for MT8195
+
+Hsiao Chien Sung <shawn.sung@mediatek.com>
+    drm/mediatek: Add missing plane settings when async update
+
+Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+    media: renesas: vsp1: Store RPF partition configuration per RPF instance
+
+Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+    media: renesas: vsp1: Fix _irqsave and _irq mix
+
+Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+    media: rcar-csi2: Cleanup subdevice in remove()
+
+Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+    media: rcar-csi2: Disable runtime_pm in probe error
+
+Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+    media: rcar-vin: Fix YUYV8_1X16 handling for CSI-2
+
+Daniel Schaefer <dhs@frame.work>
+    media: uvcvideo: Override default flags
+
+Aleksandr Burakov <a.burakov@rosalinux.ru>
+    saa7134: Unchecked i2c_transfer function result fixed
+
+David Hildenbrand <david@redhat.com>
+    s390/uv: Don't call folio_wait_writeback() without a folio reference
+
+Matthew Wilcox (Oracle) <willy@infradead.org>
+    s390/mm: Convert gmap_make_secure to use a folio
+
+Matthew Wilcox (Oracle) <willy@infradead.org>
+    s390/mm: Convert make_page_secure to use a folio
+
+ChiYuan Huang <cy_huang@richtek.com>
+    media: v4l: async: Fix NULL pointer dereference in adding ancillary links
+
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+    media: i2c: Fix imx412 exposure control
+
+Ricardo Ribalda <ribalda@chromium.org>
+    media: imon: Fix race getting ictx->lock
+
+Zheng Yejian <zhengyejian1@huawei.com>
+    media: dvb-usb: Fix unexpected infinite loop in dvb_usb_read_remote_control()
+
+Mikhail Kobuk <m.kobuk@ispras.ru>
+    media: pci: ivtv: Add check for DMA map result
+
+Douglas Anderson <dianders@chromium.org>
+    drm/panel: boe-tv101wum-nl6: Check for errors on the NOP in prepare()
+
+Douglas Anderson <dianders@chromium.org>
+    drm/panel: boe-tv101wum-nl6: If prepare fails, disable GPIO before regulators
+
+Tim Van Patten <timvp@google.com>
+    drm/amdgpu: Remove GC HW IP 9.3.0 from noretry=1
+
+Friedrich Vock <friedrich.vock@gmx.de>
+    drm/amdgpu: Check if NBIO funcs are NULL in amdgpu_device_baco_exit
+
+Lijo Lazar <lijo.lazar@amd.com>
+    drm/amd/pm: Fix aldebaran pcie speed reporting
+
+Douglas Anderson <dianders@chromium.org>
+    drm/mipi-dsi: Fix theoretical int overflow in mipi_dsi_dcs_write_seq()
+
+Javier Martinez Canillas <javierm@redhat.com>
+    drm/mipi-dsi: Fix mipi_dsi_dcs_write_seq() macro definition format
+
+Andy Yan <andy.yan@rock-chips.com>
+    drm/rockchip: vop2: Fix the port mux of VP2
+
+Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>
+    net: bridge: mst: Check vlan state for egress decision
+
+Taehee Yoo <ap420073@gmail.com>
+    xdp: fix invalid wait context of page_pool_destroy()
+
+Amit Cohen <amcohen@nvidia.com>
+    selftests: forwarding: devlink_lib: Wait for udev events after reloading
+
+Tengda Wu <wutengda@huaweicloud.com>
+    bpf: Fix null pointer dereference in resolve_prog_type() for BPF_PROG_TYPE_EXT
+
+Alan Maguire <alan.maguire@oracle.com>
+    bpf: Eliminate remaining "make W=1" warnings in kernel/bpf/btf.o
+
+Alexey Kodanev <aleksei.kodanev@bell-sw.com>
+    bna: adjust 'name' buf size of bna_tcb and bna_ccb structures
+
+Alan Maguire <alan.maguire@oracle.com>
+    bpf: annotate BTF show functions with __printf
+
+Geliang Tang <tanggeliang@kylinos.cn>
+    selftests/bpf: Close obj in error path in xdp_adjust_tail
+
+Geliang Tang <tanggeliang@kylinos.cn>
+    selftests/bpf: Close fd in error path in drop_on_reuseport
+
+John Stultz <jstultz@google.com>
+    locking/rwsem: Add __always_inline annotation to __down_write_common() and inlined callers
+
+Johannes Berg <johannes.berg@intel.com>
+    wifi: virt_wifi: don't use strlen() in const context
+
+Gaosheng Cui <cuigaosheng1@huawei.com>
+    gss_krb5: Fix the error handling path for crypto_sync_skcipher_setkey
+
+En-Wei Wu <en-wei.wu@canonical.com>
+    wifi: virt_wifi: avoid reporting connection success with wrong SSID
+
+Aleksandr Mishin <amishin@t-argos.ru>
+    wifi: rtw89: Fix array index mistake in rtw89_sta_info_get_iter()
+
+Zhang Rui <rui.zhang@intel.com>
+    perf/x86/intel/cstate: Fix Alderlake/Raptorlake/Meteorlake
+
+Adrian Hunter <adrian.hunter@intel.com>
+    perf: Fix default aux_watermark calculation
+
+Adrian Hunter <adrian.hunter@intel.com>
+    perf: Prevent passing zero nr_pages to rb_alloc_aux()
+
+Adrian Hunter <adrian.hunter@intel.com>
+    perf: Fix perf_aux_size() for greater-than 32-bit size
+
+Adrian Hunter <adrian.hunter@intel.com>
+    perf/x86/intel/pt: Fix pt_topa_entry_for_page() address calculation
+
+Tao Chen <chen.dylane@gmail.com>
+    bpftool: Mount bpffs when pinmaps path not under the bpffs
+
+Pablo Neira Ayuso <pablo@netfilter.org>
+    netfilter: nf_tables: rise cap on SELinux secmark context
+
+Ismael Luceno <iluceno@suse.de>
+    ipvs: Avoid unnecessary calls to skb_is_gso_sctp
+
+Donglin Peng <dolinux.peng@gmail.com>
+    libbpf: Checking the btf_type kind when fixing variable offsets
+
+Csókás, Bence <csokas.bence@prolan.hu>
+    net: fec: Fix FEC_ECR_EN1588 being cleared on link-down
+
+Csókás Bence <csokas.bence@prolan.hu>
+    net: fec: Refactor: #define magic constants
+
+Baochen Qiang <quic_bqiang@quicinc.com>
+    wifi: cfg80211: handle 2x996 RU allocation in cfg80211_calculate_bitrate_he()
+
+Baochen Qiang <quic_bqiang@quicinc.com>
+    wifi: cfg80211: fix typo in cfg80211_calculate_bitrate_he()
+
+Baochen Qiang <quic_bqiang@quicinc.com>
+    wifi: ath11k: fix wrong handling of CCMP256 and GCMP ciphers
+
+Thomas Gleixner <tglx@linutronix.de>
+    jump_label: Fix concurrency issues in static_key_slow_dec()
+
+Dmitry Safonov <0x7f454c46@gmail.com>
+    jump_label: Prevent key->enabled int overflow
+
+Uros Bizjak <ubizjak@gmail.com>
+    jump_label: Use atomic_try_cmpxchg() in static_key_slow_inc_cpuslocked()
+
+Thomas Gleixner <tglx@linutronix.de>
+    perf/x86: Serialize set_attr_rdpmc()
+
+Ido Schimmel <idosch@nvidia.com>
+    mlxsw: spectrum_acl: Fix ACL scale regression and firmware errors
+
+Ido Schimmel <idosch@nvidia.com>
+    mlxsw: spectrum_acl_erp: Fix object nesting warning
+
+Ido Schimmel <idosch@nvidia.com>
+    lib: objagg: Fix general protection fault
+
+Geliang Tang <tanggeliang@kylinos.cn>
+    selftests/bpf: Check length of recv in test_sockmap
+
+Guangguan Wang <guangguan.wang@linux.alibaba.com>
+    net/smc: set rmb's SG_MAX_SINGLE_ALLOC limitation only when CONFIG_ARCH_NO_SG_CHAIN is defined
+
+Eric Dumazet <edumazet@google.com>
+    tcp: fix races in tcp_v[46]_err()
+
+Eric Dumazet <edumazet@google.com>
+    tcp: fix race in tcp_write_err()
+
+Eric Dumazet <edumazet@google.com>
+    tcp: add tcp_done_with_error() helper
+
+Eric Dumazet <edumazet@google.com>
+    tcp: annotate lockless access to sk->sk_err
+
+Eric Dumazet <edumazet@google.com>
+    tcp: annotate lockless accesses to sk->sk_err_soft
+
+Hagar Hemdan <hagarhem@amazon.com>
+    net: esp: cleanup esp_output_tail_tcp() in case of unsupported ESPINTCP
+
+Geliang Tang <tanggeliang@kylinos.cn>
+    selftests/bpf: Fix prog numbers in test_sockmap
+
+Ivan Babrou <ivan@cloudflare.com>
+    bpftool: Un-const bpf_func_info to fix it for llvm 17 and newer
+
+Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
+    wifi: brcmsmac: LCN PHY code is used for BCM4313 2G-only device
+
+Marek Behún <kabel@kernel.org>
+    firmware: turris-mox-rwtm: Initialize completion before mailbox
+
+Marek Behún <kabel@kernel.org>
+    firmware: turris-mox-rwtm: Fix checking return value of wait_for_completion_timeout()
+
+Marek Behún <kabel@kernel.org>
+    firmware: turris-mox-rwtm: Do not complete if there are no waiters
+
+Christophe Leroy <christophe.leroy@csgroup.eu>
+    vmlinux.lds.h: catch .bss..L* sections into BSS")
+
+Dmitry Torokhov <dmitry.torokhov@gmail.com>
+    ARM: spitz: fix GPIO assignment for backlight
+
+Thorsten Blum <thorsten.blum@toblux.com>
+    m68k: cmpxchg: Fix return value for default case in __arch_xchg()
+
+Luca Weiss <luca.weiss@fairphone.com>
+    arm64: dts: qcom: sm6350: Add missing qcom,non-secure-domain property
+
+Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+    arm64: dts: rockchip: Add missing power-domains for rk356x vop_mmu
+
+Chen Ni <nichen@iscas.ac.cn>
+    x86/xen: Convert comma to semicolon
+
+Eero Tamminen <oak@helsinkinet.fi>
+    m68k: atari: Fix TT bootup freeze / unexpected (SCU) interrupt messages
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    arm64: dts: renesas: r9a07g054: Add missing hypervisor virtual timer IRQ
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    arm64: dts: renesas: r9a07g044: Add missing hypervisor virtual timer IRQ
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    arm64: dts: renesas: r9a07g043u: Add missing hypervisor virtual timer IRQ
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    arm64: dts: renesas: r8a779g0: Add missing hypervisor virtual timer IRQ
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    arm64: dts: renesas: r8a779f0: Add missing hypervisor virtual timer IRQ
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    arm64: dts: renesas: r8a779a0: Add missing hypervisor virtual timer IRQ
+
+Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+    arm64: dts: renesas: Drop specifying the GIC_CPU_MASK_SIMPLE() for GICv3 systems
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    arm64: dts: renesas: r8a779g0: Add secondary CA76 CPU cores
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    arm64: dts: renesas: r8a779g0: Add L3 cache controller
+
+Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+    arm64: dts: rockchip: Fix mic-in-differential usage on rk3568-evb1-v10
+
+Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+    arm64: dts: rockchip: Drop invalid mic-in-differential on rk3568-rock-3a
+
+Jerome Brunet <jbrunet@baylibre.com>
+    arm64: dts: amlogic: gx: correct hdmi clocks
+
+Chen-Yu Tsai <wenst@chromium.org>
+    arm64: dts: mediatek: mt8183-kukui-jacuzzi: Add ports node for anx7625
+
+Rafał Miłecki <rafal@milecki.pl>
+    arm64: dts: mediatek: mt7622: fix "emmc" pinctrl mux
+
+Chen-Yu Tsai <wenst@chromium.org>
+    arm64: dts: mediatek: mt8183-kukui: Drop bogus output-enable property
+
+Michael Walle <mwalle@kernel.org>
+    ARM: dts: imx6qdl-kontron-samx6i: fix PCIe reset polarity
+
+Michael Walle <mwalle@kernel.org>
+    ARM: dts: imx6qdl-kontron-samx6i: fix SPI0 chip selects
+
+Michael Walle <mwalle@kernel.org>
+    ARM: dts: imx6qdl-kontron-samx6i: fix board reset
+
+Michael Walle <mwalle@kernel.org>
+    ARM: dts: imx6qdl-kontron-samx6i: fix PHY reset
+
+Michael Walle <mwalle@kernel.org>
+    ARM: dts: imx6qdl-kontron-samx6i: fix phy-mode
+
+Jerome Brunet <jbrunet@baylibre.com>
+    arm64: dts: amlogic: sm1: fix spdif compatibles
+
+Jonas Karlman <jonas@kwiboo.se>
+    arm64: dts: rockchip: Increase VOP clk rate on RK3328
+
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+    soc: qcom: pdr: fix parsing of domains lists
+
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+    soc: qcom: pdr: protect locator_addr with the main mutex
+
+Esben Haabendal <esben@geanix.com>
+    memory: fsl_ifc: Make FSL_IFC config visible and selectable
+
+Primoz Fiser <primoz.fiser@norik.com>
+    OPP: ti: Fix ti_opp_supply_probe wrong return values
+
+Primoz Fiser <primoz.fiser@norik.com>
+    cpufreq: ti-cpufreq: Handle deferred probe with dev_err_probe()
+
+Jay Buddhabhatti <jay.buddhabhatti@amd.com>
+    soc: xilinx: rename cpu_number1 to dummy_cpu_number
+
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+    arm64: dts: qcom: msm8996: specify UFS core_clk frequencies
+
+Jonas Karlman <jonas@kwiboo.se>
+    arm64: dts: rockchip: Update WIFi/BT related nodes on rk3308-rock-pi-s
+
+Jonas Karlman <jonas@kwiboo.se>
+    arm64: dts: rockchip: Add mdio and ethernet-phy nodes to rk3308-rock-pi-s
+
+Jonas Karlman <jonas@kwiboo.se>
+    arm64: dts: rockchip: Add pinctrl for UART0 to rk3308-rock-pi-s
+
+Jonas Karlman <jonas@kwiboo.se>
+    arm64: dts: rockchip: Add sdmmc related properties on rk3308-rock-pi-s
+
+Stephen Boyd <swboyd@chromium.org>
+    soc: qcom: rpmh-rsc: Ensure irqs aren't disabled by rpmh_rsc_send_data() callers
+
+Marc Gonzalez <mgonzalez@freebox.fr>
+    arm64: dts: qcom: msm8998: enable adreno_smmu by default
+
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+    arm64: dts: qcom: msm8996-xiaomi-common: drop excton from the USB PHY
+
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+    arm64: dts: qcom: sm8450: add power-domain to UFS PHY
+
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+    arm64: dts: qcom: sm8250: add power-domain to UFS PHY
+
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+    arm64: dts: qcom: sm8250: switch UFS QMP PHY to new style of bindings
+
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+    arm64: dts: qcom: sm6350: add power-domain to UFS PHY
+
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+    arm64: dts: qcom: sdm845: add power-domain to UFS PHY
+
+Guenter Roeck <linux@roeck-us.net>
+    hwmon: (max6697) Fix swapped temp{1,8} critical alarms
+
+Guenter Roeck <linux@roeck-us.net>
+    hwmon: (max6697) Fix underflow when writing limit attributes
+
+Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+    pwm: atmel-tcb: Fix race condition and convert to guards
+
+Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+    pwm: atmel-tcb: Don't track polarity in driver data
+
+Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+    pwm: atmel-tcb: Unroll atmel_tcb_pwm_set_polarity() into only caller
+
+Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+    pwm: atmel-tcb: Put per-channel data into driver data
+
+Yao Zi <ziyao@disroot.org>
+    drm/meson: fix canvas release in bind function
+
+Gaosheng Cui <cuigaosheng1@huawei.com>
+    nvmet-auth: fix nvmet_auth hash error handling
+
+Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+    pwm: stm32: Always do lazy disabling
+
+Wayne Tung <chineweff@gmail.com>
+    hwmon: (adt7475) Fix default duty on fan is disabled
+
+Chen Ridong <chenridong@huawei.com>
+    cgroup/cpuset: Prevent UAF in proc_cpuset_show()
+
+Kees Cook <keescook@chromium.org>
+    kernfs: Convert kernfs_path_from_node_locked() from strlcpy() to strscpy()
+
+Randy Dunlap <rdunlap@infradead.org>
+    kernfs: fix all kernel-doc warnings and multiple typos
+
+Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+    x86/platform/iosf_mbi: Convert PCIBIOS_* return codes to errnos
+
+Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+    x86/pci/xen: Fix PCIBIOS_* return code handling
+
+Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+    x86/pci/intel_mid_pci: Fix PCIBIOS_* return code handling
+
+Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+    x86/of: Return consistent error type from x86_of_pci_irq_enable()
+
+Chao Yu <chao@kernel.org>
+    hfsplus: fix to avoid false alarm of circular locking
+
+Christoph Hellwig <hch@lst.de>
+    block: initialize integrity buffer to zero before writing it to media
+
+Jinyoung Choi <j-young.choi@samsung.com>
+    block: cleanup bio_integrity_prep
+
+Nitesh Shetty <nj.shetty@samsung.com>
+    block: refactor to use helper
+
+Christoph Hellwig <hch@lst.de>
+    ubd: untagle discard vs write zeroes not support handling
+
+Christoph Hellwig <hch@lst.de>
+    ubd: refactor the interrupt handler
+
+Tzung-Bi Shih <tzungbi@kernel.org>
+    platform/chrome: cros_ec_debugfs: fix wrong EC message version
+
+Li Nan <linan122@huawei.com>
+    md: fix deadlock between mddev_suspend and flush bio
+
+Frederic Weisbecker <frederic@kernel.org>
+    rcu/tasks: Fix stale task snaphot for Tasks Trace
+
+Arnd Bergmann <arnd@arndb.de>
+    EDAC, i10nm: make skx_common.o a separate module
+
+Chen Ni <nichen@iscas.ac.cn>
+    spi: atmel-quadspi: Add missing check for clk_prepare
+
+Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
+    spi: spi-microchip-core: Fix the number of chip selects supported
+
+Esben Haabendal <esben@geanix.com>
+    powerpc/configs: Update defconfig with now user-visible CONFIG_FSL_IFC
+
+
+-------------
+
+Diffstat:
+
+ .../devicetree/bindings/thermal/thermal-zones.yaml |   5 +-
+ Makefile                                           |   4 +-
+ arch/arm/boot/dts/imx6q-kontron-samx6i.dtsi        |  23 -
+ arch/arm/boot/dts/imx6qdl-kontron-samx6i.dtsi      |  14 +-
+ arch/arm/mach-pxa/spitz.c                          |  30 +-
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        |   4 +-
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi         |   4 +-
+ arch/arm64/boot/dts/amlogic/meson-sm1.dtsi         |   4 +-
+ .../boot/dts/mediatek/mt7622-bananapi-bpi-r64.dts  |   4 +-
+ arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts       |   4 +-
+ .../boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi    |  25 +-
+ arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi     |   2 -
+ .../arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi |   1 -
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              |   2 +-
+ arch/arm64/boot/dts/qcom/msm8998.dtsi              |   1 -
+ arch/arm64/boot/dts/qcom/sdm845.dtsi               |   2 +
+ arch/arm64/boot/dts/qcom/sm6350.dtsi               |   4 +
+ arch/arm64/boot/dts/qcom/sm8250.dtsi               |  22 +-
+ arch/arm64/boot/dts/qcom/sm8450.dtsi               |   2 +
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi          |  14 +-
+ arch/arm64/boot/dts/renesas/r8a779f0.dtsi          |  14 +-
+ arch/arm64/boot/dts/renesas/r8a779g0.dtsi          |  82 ++-
+ arch/arm64/boot/dts/renesas/r9a07g043u.dtsi        |  11 +-
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi         |  11 +-
+ arch/arm64/boot/dts/renesas/r9a07g044c1.dtsi       |   7 -
+ arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi       |   7 -
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi         |  11 +-
+ arch/arm64/boot/dts/renesas/r9a07g054l1.dtsi       |   7 -
+ arch/arm64/boot/dts/rockchip/rk3308-rock-pi-s.dts  |  71 +-
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi           |   4 +-
+ arch/arm64/boot/dts/rockchip/rk3568-evb1-v10.dts   |   2 +-
+ arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts    |   4 -
+ arch/arm64/boot/dts/rockchip/rk356x.dtsi           |   1 +
+ arch/m68k/amiga/config.c                           |   9 +
+ arch/m68k/atari/ataints.c                          |   6 +-
+ arch/m68k/include/asm/cmpxchg.h                    |   2 +-
+ arch/mips/boot/dts/loongson/loongson64-2k1000.dtsi |  21 +-
+ arch/mips/include/asm/mach-loongson64/boot_param.h |   2 +
+ arch/mips/include/asm/mips-cm.h                    |   4 +
+ arch/mips/kernel/smp-cps.c                         |   5 +-
+ arch/mips/loongson64/env.c                         |   8 +
+ arch/mips/loongson64/reset.c                       |  38 +-
+ arch/mips/loongson64/smp.c                         |  23 +-
+ arch/mips/pci/pcie-octeon.c                        |   0
+ arch/mips/sgi-ip30/ip30-console.c                  |   1 +
+ arch/parisc/Kconfig                                |   1 +
+ arch/powerpc/configs/85xx-hw.config                |   2 +
+ arch/powerpc/include/asm/kexec.h                   |   4 +
+ .../{platforms/pseries => include/asm}/plpks.h     |  73 ++-
+ arch/powerpc/kernel/prom.c                         |  12 +-
+ arch/powerpc/kexec/core_64.c                       | 112 ++++
+ arch/powerpc/kexec/file_load_64.c                  |  87 ---
+ arch/powerpc/kvm/powerpc.c                         |   4 +-
+ arch/powerpc/platforms/pseries/plpks.c             | 173 ++++-
+ arch/powerpc/xmon/ppc-dis.c                        |  33 +-
+ arch/s390/kernel/perf_cpum_cf.c                    |  14 +-
+ arch/s390/kernel/uv.c                              |  58 +-
+ arch/s390/pci/pci_irq.c                            | 110 ++--
+ arch/sparc/include/asm/oplib_64.h                  |   1 +
+ arch/sparc/prom/init_64.c                          |   3 -
+ arch/sparc/prom/p1275.c                            |   2 +-
+ arch/um/drivers/ubd_kern.c                         |  50 +-
+ arch/um/kernel/time.c                              |   4 +-
+ arch/um/os-Linux/signal.c                          | 118 +++-
+ arch/x86/events/core.c                             |   3 +
+ arch/x86/events/intel/cstate.c                     |   7 +-
+ arch/x86/events/intel/pt.c                         |   4 +-
+ arch/x86/events/intel/pt.h                         |   4 +-
+ arch/x86/events/intel/uncore_snbep.c               |   6 +-
+ arch/x86/include/asm/kvm_host.h                    |   2 +-
+ arch/x86/kernel/devicetree.c                       |   2 +-
+ arch/x86/kvm/vmx/nested.c                          |   2 +-
+ arch/x86/kvm/vmx/vmx.c                             |  11 +-
+ arch/x86/kvm/vmx/vmx.h                             |   1 +
+ arch/x86/kvm/x86.c                                 |   4 +-
+ arch/x86/pci/intel_mid_pci.c                       |   4 +-
+ arch/x86/pci/xen.c                                 |   4 +-
+ arch/x86/platform/intel/iosf_mbi.c                 |   4 +-
+ arch/x86/xen/p2m.c                                 |   4 +-
+ block/bio-integrity.c                              |  21 +-
+ drivers/android/binder.c                           |   4 +-
+ drivers/ata/libata-scsi.c                          |   7 +-
+ drivers/auxdisplay/ht16k33.c                       |   1 +
+ drivers/base/devres.c                              |  11 +-
+ drivers/block/rbd.c                                |  35 +-
+ drivers/bluetooth/btusb.c                          |   4 +
+ drivers/char/hw_random/amd-rng.c                   |   4 +-
+ drivers/char/tpm/eventlog/common.c                 |   2 +
+ drivers/clk/clk-en7523.c                           |   9 +-
+ drivers/clk/davinci/da8xx-cfgchip.c                |   4 +-
+ drivers/clk/qcom/camcc-sc7280.c                    |   5 +
+ drivers/clk/qcom/clk-branch.h                      |  26 +
+ drivers/clk/qcom/clk-rcg2.c                        |  32 +
+ drivers/clk/qcom/gcc-sc7280.c                      |   3 +
+ drivers/clk/qcom/gpucc-sm8350.c                    |   5 +-
+ drivers/cpufreq/ti-cpufreq.c                       |   2 +-
+ drivers/crypto/qat/qat_common/adf_cfg.c            |   6 +-
+ drivers/dma/ti/k3-udma.c                           |   4 +-
+ drivers/edac/Makefile                              |  10 +-
+ drivers/edac/skx_common.c                          |  21 +-
+ drivers/edac/skx_common.h                          |   4 +-
+ drivers/firmware/efi/libstub/x86-stub.c            |  25 +-
+ drivers/firmware/turris-mox-rwtm.c                 |  23 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c         |   2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c            |   1 -
+ drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c             |  12 +
+ drivers/gpu/drm/amd/display/dc/core/dc_surface.c   |   3 +-
+ drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c     |   4 +-
+ drivers/gpu/drm/display/drm_dp_mst_topology.c      |   4 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c              |   6 +-
+ drivers/gpu/drm/etnaviv/etnaviv_sched.c            |   9 +-
+ drivers/gpu/drm/gma500/cdv_intel_lvds.c            |   3 +
+ drivers/gpu/drm/gma500/psb_intel_lvds.c            |   3 +
+ drivers/gpu/drm/i915/display/intel_dp.c            |   2 +
+ .../gpu/drm/i915/gt/intel_execlists_submission.c   |   6 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c             |   2 +
+ drivers/gpu/drm/mediatek/mtk_drm_plane.c           |   2 +
+ drivers/gpu/drm/meson/meson_drv.c                  |  37 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        |   3 +-
+ .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c    |   3 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h         |   3 +-
+ drivers/gpu/drm/msm/dsi/dsi_host.c                 |   3 +
+ drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c     |   8 +-
+ drivers/gpu/drm/panfrost/panfrost_drv.c            |   1 +
+ drivers/gpu/drm/qxl/qxl_display.c                  |   3 +
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c       |   2 +-
+ drivers/hwmon/adt7475.c                            |   2 +-
+ drivers/hwmon/max6697.c                            |   5 +-
+ drivers/hwtracing/coresight/coresight-platform.c   |   4 +-
+ drivers/iio/frequency/adrf6780.c                   |   1 -
+ drivers/infiniband/core/cache.c                    |  14 +-
+ drivers/infiniband/core/device.c                   |   6 +-
+ drivers/infiniband/core/iwcm.c                     |  11 +-
+ drivers/infiniband/hw/bnxt_re/ib_verbs.c           |   8 +-
+ drivers/infiniband/hw/bnxt_re/qplib_fp.h           |   6 +-
+ drivers/infiniband/hw/hns/hns_roce_device.h        |   6 +
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c         |  40 +-
+ drivers/infiniband/hw/hns/hns_roce_mr.c            |   5 +
+ drivers/infiniband/hw/hns/hns_roce_qp.c            |   4 +-
+ drivers/infiniband/hw/hns/hns_roce_srq.c           |   2 +-
+ drivers/infiniband/hw/mlx4/alias_GUID.c            |   2 +-
+ drivers/infiniband/hw/mlx4/mad.c                   |   2 +-
+ drivers/infiniband/hw/mlx5/mlx5_ib.h               |  13 +
+ drivers/infiniband/hw/mlx5/odp.c                   |   6 +-
+ drivers/infiniband/sw/rxe/rxe_req.c                |   7 +-
+ drivers/input/keyboard/qt1050.c                    |   7 +-
+ drivers/input/mouse/elan_i2c_core.c                |   2 +
+ drivers/interconnect/qcom/qcm2290.c                |   2 +-
+ drivers/iommu/intel/iommu.c                        |  22 +-
+ drivers/iommu/sprd-iommu.c                         |   2 +-
+ drivers/irqchip/irq-imx-irqsteer.c                 |  24 +-
+ drivers/isdn/hardware/mISDN/hfcmulti.c             |   7 +-
+ drivers/leds/flash/leds-mt6360.c                   |   5 +-
+ drivers/leds/led-class.c                           |   1 -
+ drivers/leds/led-triggers.c                        |   2 +-
+ drivers/leds/leds-ss4200.c                         |   7 +-
+ drivers/macintosh/therm_windtunnel.c               |   2 +-
+ drivers/md/dm-verity-target.c                      |  16 +-
+ drivers/md/md.c                                    |  26 +-
+ drivers/media/i2c/imx412.c                         |   9 +-
+ drivers/media/pci/ivtv/ivtv-udma.c                 |   8 +
+ drivers/media/pci/ivtv/ivtv-yuv.c                  |   6 +
+ drivers/media/pci/ivtv/ivtvfb.c                    |   6 +-
+ drivers/media/pci/saa7134/saa7134-dvb.c            |   8 +-
+ drivers/media/platform/qcom/venus/vdec.c           |   3 +-
+ .../media/platform/renesas/rcar-vin/rcar-csi2.c    |   5 +-
+ drivers/media/platform/renesas/rcar-vin/rcar-dma.c |  16 +-
+ drivers/media/platform/renesas/vsp1/vsp1_histo.c   |  20 +-
+ drivers/media/platform/renesas/vsp1/vsp1_pipe.h    |   2 +-
+ drivers/media/platform/renesas/vsp1/vsp1_rpf.c     |   8 +-
+ drivers/media/rc/imon.c                            |   5 +-
+ drivers/media/rc/lirc_dev.c                        |   4 +-
+ drivers/media/usb/dvb-usb/dvb-usb-init.c           |  35 +-
+ drivers/media/usb/uvc/uvc_ctrl.c                   |   9 +-
+ drivers/media/usb/uvc/uvc_video.c                  |  10 +-
+ drivers/media/v4l2-core/v4l2-async.c               |   3 +
+ drivers/memory/Kconfig                             |   2 +-
+ drivers/mfd/Makefile                               |   6 +-
+ drivers/mfd/omap-usb-tll.c                         |   3 +-
+ drivers/mfd/rsmu_core.c                            |   2 +
+ drivers/mtd/nand/raw/Kconfig                       |   3 +-
+ drivers/mtd/tests/Makefile                         |  34 +-
+ drivers/mtd/tests/mtd_test.c                       |   9 +
+ drivers/mtd/ubi/eba.c                              |   3 +-
+ drivers/net/bonding/bond_main.c                    |   7 +-
+ drivers/net/dsa/b53/b53_common.c                   |   3 +
+ drivers/net/dsa/mv88e6xxx/chip.c                   |   3 +-
+ drivers/net/ethernet/brocade/bna/bna_types.h       |   2 +-
+ drivers/net/ethernet/brocade/bna/bnad.c            |  11 +-
+ drivers/net/ethernet/freescale/fec_main.c          |  52 +-
+ drivers/net/ethernet/google/gve/gve_tx_dqo.c       |  22 +-
+ drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c  |   2 +-
+ drivers/net/ethernet/intel/ice/ice_fdir.h          |   3 +
+ drivers/net/ethernet/intel/ice/ice_virtchnl_fdir.c |  16 +
+ drivers/net/ethernet/intel/ice/ice_virtchnl_fdir.h |   1 +
+ .../ethernet/mellanox/mlxsw/spectrum_acl_atcam.c   |  18 +-
+ .../mellanox/mlxsw/spectrum_acl_bloom_filter.c     |   2 +-
+ .../net/ethernet/mellanox/mlxsw/spectrum_acl_erp.c |  13 -
+ .../ethernet/mellanox/mlxsw/spectrum_acl_tcam.h    |   9 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |   2 +-
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    |   2 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h         |   2 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |   4 +-
+ drivers/net/netconsole.c                           |   2 +-
+ drivers/net/wireless/ath/ath11k/dp_rx.c            |   3 +-
+ drivers/net/wireless/ath/ath11k/dp_rx.h            |   3 +
+ drivers/net/wireless/ath/ath11k/mac.c              |  15 +-
+ .../broadcom/brcm80211/brcmsmac/phy/phy_lcn.c      |  18 +-
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c    |   2 +
+ drivers/net/wireless/realtek/rtw89/debug.c         |   2 +-
+ drivers/net/wireless/virt_wifi.c                   |  20 +-
+ drivers/nvme/host/pci.c                            |   5 +-
+ drivers/nvme/target/auth.c                         |  14 +-
+ drivers/opp/ti-opp-supply.c                        |   6 +-
+ drivers/parport/procfs.c                           |  24 +-
+ drivers/pci/controller/dwc/pci-keystone.c          | 156 +++--
+ drivers/pci/controller/dwc/pcie-designware-ep.c    |  13 +-
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c      |   2 +-
+ drivers/pci/controller/dwc/pcie-qcom-ep.c          |   6 -
+ drivers/pci/controller/pci-hyperv.c                |   4 +-
+ drivers/pci/controller/pci-loongson.c              |  13 +
+ drivers/pci/controller/pcie-rcar-host.c            |   6 +-
+ drivers/pci/controller/pcie-rockchip.c             |   2 +-
+ drivers/pci/endpoint/functions/pci-epf-vntb.c      |  19 +-
+ drivers/pci/pci.c                                  |   6 +-
+ drivers/pci/setup-bus.c                            |   6 +-
+ drivers/phy/cadence/phy-cadence-torrent.c          |   3 +
+ drivers/pinctrl/core.c                             |  12 +-
+ drivers/pinctrl/freescale/pinctrl-mxs.c            |   4 +-
+ drivers/pinctrl/pinctrl-rockchip.c                 |  17 +-
+ drivers/pinctrl/pinctrl-single.c                   |   7 +-
+ drivers/pinctrl/renesas/pfc-r8a779g0.c             | 716 ++++++++++-----------
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c            |  14 +-
+ drivers/platform/chrome/cros_ec_debugfs.c          |   1 +
+ drivers/platform/mips/cpu_hwmon.c                  |   3 +
+ drivers/pwm/pwm-atmel-tcb.c                        |  66 +-
+ drivers/pwm/pwm-stm32.c                            |   5 +-
+ drivers/remoteproc/imx_rproc.c                     |  10 +-
+ drivers/remoteproc/stm32_rproc.c                   |   2 +-
+ drivers/rtc/interface.c                            |   9 +-
+ drivers/rtc/rtc-cmos.c                             |  10 +-
+ drivers/rtc/rtc-isl1208.c                          |  11 +-
+ drivers/s390/block/dasd_devmap.c                   |  10 +-
+ drivers/scsi/qla2xxx/qla_bsg.c                     |  98 +--
+ drivers/scsi/qla2xxx/qla_def.h                     |   3 +
+ drivers/scsi/qla2xxx/qla_gs.c                      |  35 +-
+ drivers/scsi/qla2xxx/qla_init.c                    |  87 ++-
+ drivers/scsi/qla2xxx/qla_inline.h                  |   8 +
+ drivers/scsi/qla2xxx/qla_mid.c                     |   2 +-
+ drivers/scsi/qla2xxx/qla_nvme.c                    |   5 +-
+ drivers/scsi/qla2xxx/qla_os.c                      |   7 +-
+ drivers/scsi/qla2xxx/qla_sup.c                     | 108 +++-
+ drivers/soc/qcom/pdr_interface.c                   |   8 +-
+ drivers/soc/qcom/rpmh-rsc.c                        |   7 +-
+ drivers/soc/qcom/rpmh.c                            |   1 -
+ drivers/soc/xilinx/xlnx_event_manager.c            |  15 +-
+ drivers/soc/xilinx/zynqmp_power.c                  |   4 +-
+ drivers/spi/atmel-quadspi.c                        |  11 +-
+ drivers/spi/spi-microchip-core.c                   | 188 +++---
+ drivers/spi/spidev.c                               |  15 +-
+ drivers/vhost/vsock.c                              |   4 +-
+ drivers/watchdog/rzg2l_wdt.c                       |  22 +-
+ fs/ceph/super.c                                    |   3 +-
+ fs/ext2/balloc.c                                   |  11 +-
+ fs/ext4/extents_status.c                           |   2 +
+ fs/ext4/fast_commit.c                              |   6 +
+ fs/ext4/namei.c                                    |  73 ++-
+ fs/ext4/xattr.c                                    |   6 +
+ fs/f2fs/checkpoint.c                               |  10 +-
+ fs/f2fs/file.c                                     |   2 +
+ fs/f2fs/inline.c                                   |   6 +-
+ fs/f2fs/inode.c                                    |   3 +
+ fs/f2fs/segment.h                                  |   3 +-
+ fs/fuse/inode.c                                    |  24 +-
+ fs/hfs/inode.c                                     |   3 +
+ fs/hfsplus/bfind.c                                 |  15 +-
+ fs/hfsplus/extents.c                               |   9 +-
+ fs/hfsplus/hfsplus_fs.h                            |  21 +
+ fs/jbd2/commit.c                                   |   2 +-
+ fs/jbd2/journal.c                                  |   5 +
+ fs/jfs/jfs_imap.c                                  |   5 +-
+ fs/kernfs/dir.c                                    | 112 ++--
+ fs/kernfs/file.c                                   |  18 +-
+ fs/kernfs/inode.c                                  |   8 +-
+ fs/kernfs/kernfs-internal.h                        |   2 +-
+ fs/kernfs/mount.c                                  |  10 +-
+ fs/kernfs/symlink.c                                |   2 +-
+ fs/nfs/nfs4client.c                                |   6 +-
+ fs/nfs/nfs4proc.c                                  |   2 +-
+ fs/nilfs2/btnode.c                                 |  25 +-
+ fs/nilfs2/btree.c                                  |   4 +-
+ fs/nilfs2/segment.c                                |   2 +-
+ fs/ntfs3/attrib.c                                  |  17 +-
+ fs/ntfs3/bitmap.c                                  |   2 +-
+ fs/ntfs3/dir.c                                     |   3 +-
+ fs/ntfs3/file.c                                    |   5 +-
+ fs/ntfs3/frecord.c                                 |   2 +-
+ fs/ntfs3/fslog.c                                   |   5 +-
+ fs/ntfs3/fsntfs.c                                  |   2 +-
+ fs/ntfs3/index.c                                   |   4 +-
+ fs/ntfs3/inode.c                                   |   3 +-
+ fs/ntfs3/ntfs.h                                    |  13 +-
+ fs/ntfs3/ntfs_fs.h                                 |   2 +
+ fs/proc/task_mmu.c                                 |   2 +
+ fs/smb/client/cifsfs.c                             |   8 +-
+ fs/smb/client/connect.c                            |  24 +-
+ fs/super.c                                         |  11 +
+ fs/udf/balloc.c                                    |  15 +-
+ fs/udf/super.c                                     |   3 +-
+ include/asm-generic/vmlinux.lds.h                  |   2 +-
+ include/drm/drm_mipi_dsi.h                         |  21 +-
+ include/linux/bpf_verifier.h                       |   2 +-
+ include/linux/hugetlb.h                            |   1 +
+ include/linux/jbd2.h                               |   5 -
+ include/linux/jump_label.h                         |  21 +-
+ include/linux/mlx5/qp.h                            |   9 +-
+ include/linux/objagg.h                             |   1 -
+ include/linux/pci.h                                |   2 +
+ include/linux/perf_event.h                         |   1 +
+ include/linux/sbitmap.h                            |   5 +
+ include/linux/task_work.h                          |   3 +-
+ include/linux/virtio_net.h                         |  11 +
+ include/net/ip_fib.h                               |   1 +
+ include/net/tcp.h                                  |   1 +
+ include/trace/events/rpcgss.h                      |   2 +-
+ include/uapi/linux/netfilter/nf_tables.h           |   2 +-
+ include/uapi/linux/zorro_ids.h                     |   3 +
+ io_uring/io-wq.c                                   |  10 +-
+ io_uring/io_uring.c                                |   5 +-
+ io_uring/timeout.c                                 |   2 +-
+ kernel/bpf/btf.c                                   |  10 +-
+ kernel/bpf/dispatcher.c                            |   5 +
+ kernel/cgroup/cgroup-v1.c                          |   2 +-
+ kernel/cgroup/cgroup.c                             |   4 +-
+ kernel/cgroup/cpuset.c                             |  15 +-
+ kernel/debug/kdb/kdb_io.c                          |   6 +-
+ kernel/dma/mapping.c                               |   2 +-
+ kernel/events/core.c                               |  77 ++-
+ kernel/events/internal.h                           |   2 +-
+ kernel/events/ring_buffer.c                        |   4 +-
+ kernel/irq/manage.c                                |   2 +-
+ kernel/jump_label.c                                | 101 ++-
+ kernel/locking/rwsem.c                             |   6 +-
+ kernel/rcu/tasks.h                                 |  10 +
+ kernel/sched/core.c                                |  37 +-
+ kernel/sched/fair.c                                |   9 +-
+ kernel/sched/sched.h                               |   2 +-
+ kernel/signal.c                                    |   8 +
+ kernel/task_work.c                                 |  34 +-
+ kernel/time/tick-broadcast.c                       |  23 +
+ kernel/trace/pid_list.c                            |   4 +-
+ kernel/watchdog_hld.c                              |  11 +-
+ lib/decompress_bunzip2.c                           |   3 +-
+ lib/kobject_uevent.c                               |  17 +-
+ lib/objagg.c                                       |  18 +-
+ lib/sbitmap.c                                      |  83 ++-
+ mm/hugetlb.c                                       |   2 +-
+ mm/mempolicy.c                                     |  18 +-
+ mm/mmap_lock.c                                     | 175 +----
+ mm/vmscan.c                                        |   1 -
+ net/bridge/br_forward.c                            |   4 +-
+ net/core/filter.c                                  |  15 +-
+ net/core/flow_dissector.c                          |   2 +-
+ net/core/xdp.c                                     |   4 +-
+ net/ipv4/esp4.c                                    |   3 +-
+ net/ipv4/fib_semantics.c                           |  13 +-
+ net/ipv4/fib_trie.c                                |   1 +
+ net/ipv4/nexthop.c                                 |   7 +-
+ net/ipv4/route.c                                   |  18 +-
+ net/ipv4/tcp.c                                     |  13 +-
+ net/ipv4/tcp_input.c                               |  34 +-
+ net/ipv4/tcp_ipv4.c                                |  19 +-
+ net/ipv4/tcp_output.c                              |   2 +-
+ net/ipv4/tcp_timer.c                               |  10 +-
+ net/ipv6/addrconf.c                                |   3 +-
+ net/ipv6/esp6.c                                    |   3 +-
+ net/ipv6/tcp_ipv6.c                                |  19 +-
+ net/mac80211/cfg.c                                 |  23 +-
+ net/mac80211/ieee80211_i.h                         |   2 +-
+ net/mac80211/rate.c                                |   2 +-
+ net/mac80211/sta_info.h                            |   6 +-
+ net/mac80211/vht.c                                 |  37 +-
+ net/netfilter/ipvs/ip_vs_proto_sctp.c              |   4 +-
+ net/netfilter/nf_conntrack_netlink.c               |   3 +-
+ net/netfilter/nft_set_pipapo.c                     |  22 +-
+ net/netfilter/nft_set_pipapo.h                     |  27 +-
+ net/netfilter/nft_set_pipapo_avx2.c                |  81 ++-
+ net/packet/af_packet.c                             |  86 ++-
+ net/smc/smc_core.c                                 |   5 +-
+ net/sunrpc/auth_gss/gss_krb5_keys.c                |   2 +-
+ net/sunrpc/clnt.c                                  |   3 +-
+ net/sunrpc/xprtrdma/frwr_ops.c                     |   3 +-
+ net/sunrpc/xprtrdma/verbs.c                        |  16 +-
+ net/tipc/udp_media.c                               |   5 +-
+ net/unix/af_unix.c                                 |  41 +-
+ net/unix/unix_bpf.c                                |   3 +
+ net/wireless/util.c                                |   8 +-
+ scripts/Makefile.lib                               |   6 +-
+ scripts/gcc-x86_32-has-stack-protector.sh          |   2 +-
+ scripts/gcc-x86_64-has-stack-protector.sh          |   2 +-
+ security/apparmor/lsm.c                            |   7 +
+ security/apparmor/policy.c                         |   2 +-
+ security/apparmor/policy_unpack.c                  |   1 +
+ security/keys/keyctl.c                             |   2 +-
+ security/landlock/cred.c                           |  11 +-
+ sound/soc/amd/acp-es8336.c                         |   4 +-
+ sound/soc/amd/yc/acp6x-mach.c                      |   7 +
+ sound/soc/codecs/max98088.c                        |  10 +-
+ sound/soc/intel/common/soc-intel-quirks.h          |   2 +-
+ sound/soc/qcom/lpass-cpu.c                         |   4 +
+ sound/soc/sof/imx/imx8m.c                          |   2 +-
+ sound/usb/mixer.c                                  |   7 +
+ sound/usb/quirks.c                                 |   4 +
+ tools/bpf/bpftool/common.c                         |   2 +-
+ tools/bpf/bpftool/prog.c                           |   4 +
+ tools/bpf/resolve_btfids/main.c                    |   2 +-
+ tools/lib/bpf/btf_dump.c                           |   8 +-
+ tools/lib/bpf/linker.c                             |  11 +-
+ tools/memory-model/lock.cat                        |  20 +-
+ tools/perf/arch/x86/util/intel-pt.c                |  15 +-
+ tools/perf/tests/shell/test_arm_callgraph_fp.sh    |  64 +-
+ tools/perf/tests/workloads/leafloop.c              |  20 +-
+ tools/perf/util/sort.c                             |   2 +-
+ tools/testing/selftests/bpf/prog_tests/sk_lookup.c |   2 +-
+ .../selftests/bpf/prog_tests/xdp_adjust_tail.c     |   2 +-
+ .../bpf/progs/btf_dump_test_case_multidim.c        |   4 +-
+ .../bpf/progs/btf_dump_test_case_syntax.c          |   4 +-
+ tools/testing/selftests/bpf/test_sockmap.c         |   9 +-
+ .../drivers/net/mlxsw/spectrum-2/tc_flower.sh      |  55 +-
+ tools/testing/selftests/landlock/base_test.c       |  74 +++
+ tools/testing/selftests/landlock/config            |   5 +-
+ tools/testing/selftests/net/fib_tests.sh           |  24 +-
+ .../selftests/net/forwarding/devlink_lib.sh        |   2 +
+ .../selftests/sigaltstack/current_stack_pointer.h  |   2 +-
+ 434 files changed, 4164 insertions(+), 2483 deletions(-)
+
+
 
