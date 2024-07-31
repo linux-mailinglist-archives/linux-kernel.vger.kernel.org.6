@@ -1,130 +1,242 @@
-Return-Path: <linux-kernel+bounces-268599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7A79426AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:28:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB1689426BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE3A61F260F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:28:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 282E71C2427E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C462716D32E;
-	Wed, 31 Jul 2024 06:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A63D16DC20;
+	Wed, 31 Jul 2024 06:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d+etlb/B"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ZJnFzIL4"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2061.outbound.protection.outlook.com [40.107.117.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA8F16C69B
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722407208; cv=none; b=ttKTCBLiHqfDlKdC3juegefx6prjJ+FIIu/aYfDlewyeh1N3KIfncs+pTaXrNGSsOp3prQiB0/koZX9aUfGOW6Vly6YWqN/Dk+IVhy/DziwwrL0eSCyIkk36phFEpTiZY2M8xh09qHGT74edn2V+OX0WHBD7FLLOj0MYqWPnXjg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722407208; c=relaxed/simple;
-	bh=gN+pByoqcvM3L5Qti+k0iekH32RjU9EFODfZ4olPsFI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ctOhy0vYg+e2zRPLVCTxQ5ORZMnYqujjrmGmS6mcExogsjzDXV+p814UVpjFfPxhQnE6OEKSSrl1iKezNKeFiR/LLfkEnXXNRpaURqiGxqa5H+osA5K/Ggw6v7lxHk5WYfnsrO/0B4XSNgYO0ow380M5v90IZhczoj8g/77XeYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=d+etlb/B; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70d1a74a43bso3783304b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 23:26:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722407205; x=1723012005; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6mTCTozL1kMNiDQohIkyeCe1qQLXGcgts2Oa5sMWeIQ=;
-        b=d+etlb/Bk11p16l6WHTkVHcjAe7dKQZiwLjprVAkMQyxgUYuFpI32k7acSrFaULeqZ
-         RzF7XERdr1Y32X59sbY6tsRPqp2LEsCq9qBIMd/OlIq21H83uNoLaUHK6eRRjjr4KWB4
-         Au9XZ6kNVn4vZoWWmhb/F5KNg73PJUQ3N2K40=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722407205; x=1723012005;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6mTCTozL1kMNiDQohIkyeCe1qQLXGcgts2Oa5sMWeIQ=;
-        b=a+GzFj2vG5kgTwVPXcPP14mRY5Qs7f+jPtu92ZYMFG54swEb6o/zAso955f8I5SlKS
-         ja3OUJfzVjoWQfyaHTA4b4uSpdXbBwRVYMcCwRbhxKZ2TnMdpBR+1CioQInzr3SNn7O1
-         zjyOZCdigedgAwp4H8CyObbT5W3Fz3seomwUhte+Cflrc4eTQqYrdL/rLNuGRhbspBC+
-         REIy0o9nu34+uPyCnnN+GF82p8/sAf8C50yVbH8s2yR4+1Ptm4XAoenNbH60Z0hwb3hk
-         TkWSRM+Y3mc/+tmviTxBNmmG1y4wtJGS9K1bTskoPrzd8qPCQawb1zErBBjpDTDZqNa5
-         pkdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXs3iYTGmBP79TSCO+Qv6+xEi5psRcoynR8Dt2j6OPxAtvIyNTL01bQqVPRFaOaetd507kZYrus7vGbZXPHdY84RsFAZ+fWmercSong
-X-Gm-Message-State: AOJu0YyxsWiZQadDZmJZ05+n6o/heaod8M9lZpN0wUU/IeZN84sFgFr0
-	v4QwSdXqlKlEf1H5MB2hEZGW53J0E9E5orsq0WUTTfvW5CRxRrWG90xJGUalrA==
-X-Google-Smtp-Source: AGHT+IFmp3+Q0xJ6154cwrPQLay9JBsUxdGaxHPITgVws1imP/cPhOraXxHtZKMmmYBhj+WRwQV++g==
-X-Received: by 2002:a05:6a00:391e:b0:70d:3420:931e with SMTP id d2e1a72fcca58-70ecea2eea9mr11327502b3a.15.1722407205065;
-        Tue, 30 Jul 2024 23:26:45 -0700 (PDT)
-Received: from yuanhsinte.c.googlers.com (46.165.189.35.bc.googleusercontent.com. [35.189.165.46])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead6e1084sm9322308b3a.25.2024.07.30.23.26.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 23:26:44 -0700 (PDT)
-From: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Date: Wed, 31 Jul 2024 06:26:36 +0000
-Subject: [PATCH v2 2/2] dt-bindings: arm64: mediatek: Add
- kukui-jacuzzi-cerise board
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F2116D4EF;
+	Wed, 31 Jul 2024 06:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722407221; cv=fail; b=m3OZbL1688vkeFFRD7MSYjHVgatb7aZqtdFa4fJGuV1JYYlXK3rZzmnSi70RyF5RaYkhSytRmE+GLUy06svgG3QUzxNnVMB+O0q9CaLIpY/NBc/M6aI4tVhKpPLhHFK19HNZe8mYz8FT6FehQ/yoZtrEg/Vx9D1AJsEVTCyfz+I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722407221; c=relaxed/simple;
+	bh=3S8fUKgvOoAJ6ilK7+5LLibE1JN4dhfGhG5+jLYydM4=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=bkjcdv17H64/JTT0xUQc/ZIVk2RECahs/MXP1oUgqwUrJkqQ5QyxrfG7NWh8EdcHNzEYM9oZuLjBAfH8ZQj6EJ2Br7uG4as+EOODBpdFwpkDYJkXZIPicYzOTzXaodiCdyYa4QZ1tL/LJP3umF/uc/gN9dnLf/hS4wZAjeBn4og=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ZJnFzIL4; arc=fail smtp.client-ip=40.107.117.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s1rAW7S2vVMgTBJb0sFzJuTplqU1HK8MfeCNmjRXsc5103PaLGO4OZd3KAzxxfcIqTk64xbgijEUHOPUy7ajT0XFVsqGRev+51bXpuQmJGahdaEhJT785lbgUnv9s4vwksqe75eHCbgf4KLPCEpBrd88P17ycQKvfsSr6xSgLmOIvnwPEqsplVll8vBoPnB8jTe7XaE0Gb2Xrb8BD5dNZzimY50QfxVKTpE2E9T4UcNEIWxhyWKsjgXe8kGrEJr4E9raZxl8cc8q/3ZR4Ov1PdVpqwuUUbhBRqMy4RVDBwKgpHaGPy72uFIHaqfFL8N/lTIkAyJkzVkvVw4cdqQMmA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f5qh3ztOAiwwoA98nzSe8h2NnoEfP1iipqo4UkErlLE=;
+ b=VeSyka8vbHnBHLU24mE2muXHBtH4rAolygCcAotPpZNs4JrhnP7OGPUB0vMURSG+a0iH3K3ngD+xgj24Dy4dMj57SomzxqhmfwroGVQjaBSWllMFwEnojqOl/Biw/gflxyHMrvlhbC5nSwdNyN6GYhf1Z9dIfhN6JrWlK0p2sQ9Hj6pLJ9SfxfYT77jddwwDryw995NzxTd3Q0xJTzW6/U5dXmGPiAb58fI58KV9i/FL8V/YsHIvsyOJWisAbAYoyfLqCChFs0CgKaeT+XF/IOxIQSc3U2bbf2eizk0ceL4Pj1Ww8OjxheNzm0pTjrPimEHuYA0X1xI3yywk/nJlkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f5qh3ztOAiwwoA98nzSe8h2NnoEfP1iipqo4UkErlLE=;
+ b=ZJnFzIL4DDgZIZ8S05k9FsDSWhI0h7jBUTg3o/7MIQWXybyq7/8CcGTMZDoR8vhGWZiAEJpljrpnrBAJVe6ToExNOLn4sbdCDWyfPIwmLHkcUQybQ1xZwkIa2GOLTa+nudOhfQ7PlTM2d5Qfq2n1abSz26cGFov4rvc+cvkedRqzTi8eDqmhjrSyXhSXg8BJlMJUS1noD0/fj+ssK2wBZoqyEns4vjlUAdoZTAqgeu9lNnjfBruLRuu3ScPtpjzEcFPOu7EUIzeHA3txmtHhO7rOHsBvvTR1PGfEFRjOAc3yVLaxdD4xTVV/gxoridTt1COSK2dCmHSXbtKsTHD1XA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by SG2PR06MB5084.apcprd06.prod.outlook.com (2603:1096:4:1cb::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Wed, 31 Jul
+ 2024 06:26:53 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
+ 06:26:53 +0000
+From: Huan Yang <link@vivo.com>
+To: Gerd Hoffmann <kraxel@redhat.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Huan Yang <link@vivo.com>
+Subject: [PATCH v2] udmabuf: use kmem_cache to alloc udmabuf folio
+Date: Wed, 31 Jul 2024 14:26:42 +0800
+Message-ID: <20240731062642.1164140-1-link@vivo.com>
+X-Mailer: git-send-email 2.45.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR06CA0017.apcprd06.prod.outlook.com
+ (2603:1096:4:186::15) To PUZPR06MB5676.apcprd06.prod.outlook.com
+ (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240731-jacuzzi_dt-v2-2-4995335daa30@chromium.org>
-References: <20240731-jacuzzi_dt-v2-0-4995335daa30@chromium.org>
-In-Reply-To: <20240731-jacuzzi_dt-v2-0-4995335daa30@chromium.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Hsin-Te Yuan <yuanhsinte@chromium.org>
-X-Mailer: b4 0.13.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|SG2PR06MB5084:EE_
+X-MS-Office365-Filtering-Correlation-Id: c39cd229-bd3c-4fd2-fd92-08dcb129c499
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dQYRm0xhcRTNH+LOGF0oweOquNVO4n+yAna2ESh42Je5iyWUjDBJissYvUM4?=
+ =?us-ascii?Q?+WNtbE5blRBs36oXOtmVue/EqyDWqLrib8P8+Zpy1KQ8Ib8XAF7XSflh4U0v?=
+ =?us-ascii?Q?Y/VWSwPPJ1mQ0FHSI8+J1A6JYOSzrwyBZ3qcCW6+Vzm0r0ysrAA/SOCCAhBL?=
+ =?us-ascii?Q?qSM3RPU4NBxdBsBW0VkF8WlPhFw51KmhnQ3cnd/jYI+DAJD9vRRcK+O20V8c?=
+ =?us-ascii?Q?NE2XMKb5UgNysSPuvdtRDQojbpqQ2I6XP4RuSaMps9OcCdfZJeaRPy8mlbwv?=
+ =?us-ascii?Q?pEuM4LcDBVYAyXMnvcUNUDfwTcjhebpDoo4OEvS7FDIF7psIGKFsgySqpoVv?=
+ =?us-ascii?Q?7BadR0lCr/f25l+i3arp8WH096utKU1iX+5wQFXc6gMkv/KZbXKW421xdxBs?=
+ =?us-ascii?Q?BOAfoTC/hgLnLNC3s9+FAHdhuxZvs3po72vxNTpc/g+RKmVtks6AQ/9Cck7X?=
+ =?us-ascii?Q?Tt0M8fyyZQakyoVq+JivFNamiYqxr+TiRXkbhkGx+wl/N0rY0Ni8Vg+ytDg/?=
+ =?us-ascii?Q?36chVGIvomyihLdO0s5BTyxAEJ+ZBX0broqN+NSYjZFzJ3KteoD+gG//AUcr?=
+ =?us-ascii?Q?v+kh75FjXGXukKBPrFwqMTDudatDxjcAhe+BRHeyqimIzwLMFXISPmHKaowX?=
+ =?us-ascii?Q?PBTj2LB1tz8mfz+RNDaLV/ciH6mOkZewu4KykxhAITsmaHuQOzYn47sjoYr8?=
+ =?us-ascii?Q?wNVFeT4rCnvTbuXBGVA+1XlSYRldlhtnLRV0SNKk53/1stzC2urLqnXQIzp6?=
+ =?us-ascii?Q?g+xDTx1mOXrP9thDnANoNJwepWQ+o7dE6fNE7BL1uYRclFf8HLM693zUflkC?=
+ =?us-ascii?Q?KheQbRWbh7AUKQCMEL20k/4KTgU4FSMZHQFRgoFS0wLnsLcke0U5BlsjLz/p?=
+ =?us-ascii?Q?DkqydgPAFp9/nsVjAm9vyAtb5aRm0JSoF8r6igrJJFezyYdOWvHX8VkQv+6t?=
+ =?us-ascii?Q?J2oimrQqbcOaTJZGX+OPiaVfQlCF5UYrigW1/Vnwogr28r9F0301DOmjrfiY?=
+ =?us-ascii?Q?Kjuwxp5zqTzwW9vSH40EgITwDJRUOMLWKPvxVckQS+YWDUMRaXCUT4cYvmeu?=
+ =?us-ascii?Q?H1MJjEItLQEkP4CPdIk8/Sgx8yTcuvTMu9ifXNIZO6pohUrLSGcSMgVNgPDW?=
+ =?us-ascii?Q?/6wdZpZaCfQTBJcJnxDwpO8oAdiC4NzskjUqNNLqs7z2UVl4NTLAs4y/4SSY?=
+ =?us-ascii?Q?ktwqbIKC0kagWYRvmGDEkZUCZdc0P7YOvlhcKwwfYRdoXeGjEeCjWtpsR/X9?=
+ =?us-ascii?Q?yuPXViG6ymPksCjbLqpalGHDKrW7EEfjSuwTpZiECTRmbDMMi1qhgf1K7ITy?=
+ =?us-ascii?Q?Tgtzo/wEbsra5czFIIYCY19/5kKpGGHvYAkvBD55zdP0XCYpOE35y/S7b6RO?=
+ =?us-ascii?Q?IqioGNhPBeMIM3hCVsfYMoVlnkTZg5oc5nPyYDuJSHPtvDC2uA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?6qwY2bFQIBXopiEQhgNwzSqtyXHKQjrHDwLOlP61p4TfupSoA09kbIwlbexk?=
+ =?us-ascii?Q?R3JZtSRiyAKsLwzlALUEd1x6RBwAEvs+dBI4O489GNfi9MW4BdGFk14UmqVA?=
+ =?us-ascii?Q?Clc1MZOL9p84mtWUCDGk148OVcZEimw03HVUecMnl80r7y9lT2KAgtQ3vHBi?=
+ =?us-ascii?Q?4z+xh9ddEB+rGHWxzWeIN1UM2hYffqjRMYPkDiTCOLSWNMQJh+Hh6UMTPyD2?=
+ =?us-ascii?Q?3mOYgFRaUs8sU4rnY13ej7Ia5SAaBvPi2tD7vjC6Sx2OIaTPWG38Xth2pZaK?=
+ =?us-ascii?Q?rM/Az1+GC5Xhx4LFig3LOdj4+iVUqrYGdJjFs0QWqJffv8TGjFrzgF3wZ8TR?=
+ =?us-ascii?Q?Y9NcuZXkb5pHVC91g9bY0r5rEmlDHSsBjoZlq2XW6vLtd0TX8T7ICVVzNBY6?=
+ =?us-ascii?Q?as/0LzmAo4JWPC0gc+EvOTZm7g05n63VB8a1RA2Ql+wrq/Mnj8yUffCZQdUs?=
+ =?us-ascii?Q?fmXtmGk95Ip6hX4PhtJm1oPziwTAWxcQGr8vEBOfQPDFAO7gxUP580g7BFOP?=
+ =?us-ascii?Q?YGiJgLlOsoKXQZ1LeG6I+HTuPlnFB7YcSaSS28pO+uCeTHvkXScxBNASRaQQ?=
+ =?us-ascii?Q?pmHpv1bQkEQiKX4WLCGUQ5xIfjXWn5vZBxwDhxCquoqhp1tGNKqdu9X3uInE?=
+ =?us-ascii?Q?ngb6RhuxuOTI0uxQVKOmCq98JRnOssXCBVnM+ZPCqwKdxXjf56LONFkAW/Js?=
+ =?us-ascii?Q?MXA59g10nkiZD4POfNi7n+4IuFq+Uo2wnz1kFEltoXVn4jOG45QUNhHILKGk?=
+ =?us-ascii?Q?tA1CYzyzUF5VDPjSk4uqTX1wNDPZtbJToxH9RbabsHvgRXfKv34wKGv0AKK2?=
+ =?us-ascii?Q?dUAnhjafZYvwEuD+w9PP8NHKH9wzwueR6SUHzCD8dFM51Jqgqr9MFy2sCPrG?=
+ =?us-ascii?Q?PL5+BJDFOl/LMhvpklLFRtuOcbrHI+AOdxiof+Dn+j1HkJHG8aKF5PKoQE5u?=
+ =?us-ascii?Q?f6hGNX2W9DNN4tmC45LSJxu25zwH5RjKjaPmFhhrpdmLun7oDMDpdmSuf3J3?=
+ =?us-ascii?Q?LYRcYSKdz+hutQZwvSyy5FXI6Ff9KiACBt/LZ3fh7wJGEdEorn+9tx++rudf?=
+ =?us-ascii?Q?/Jp4HrpaubxLKpz1fZ9bKsdhT2SjXlJosV2TmaMpcBWTgjLWnKVT3GI3CL+G?=
+ =?us-ascii?Q?m0Pd9iM80F8W64+rZ9KgSoeP9mFEInPTs+Kn47XpAi5WGGWnZdOUjnDZlz+Z?=
+ =?us-ascii?Q?nYMrsRhhWqoELvFYkVxH+wKBoQEJelxHNsgnb8AlOWWXysCEzatExjXaJLG0?=
+ =?us-ascii?Q?JWbVDlkJTOXb3GidUa1ZjQqbw/y+nRkdJhYSO0m4ynJioA+hhrObdj5ztNPM?=
+ =?us-ascii?Q?4RLQr7YfirSbYvJKHOA46CxD+oAcD8c26pgajfw1/JIYowIQApUvszizrbaP?=
+ =?us-ascii?Q?ZfE4f0uz1/Jgq8NIoAu7gKTSOJMJROqVHKlJcgIi1M38BOfHNav1XFM56l/7?=
+ =?us-ascii?Q?Dfq56jfFndI6Zj4P6K9Dj+Y2s7BdqV9xVVWUYLfYh1QDqJ+dQGWsO7qZ7T0l?=
+ =?us-ascii?Q?aDU9M7NqX4XqrLmrPimSSzCbupRBCB1IEMYLP4DsIlA8w6sTO2zysrOeAzaD?=
+ =?us-ascii?Q?Y/a2YWYtXDu+UXOnTQR+pqU4IixHmbhNRJM4WHU7?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c39cd229-bd3c-4fd2-fd92-08dcb129c499
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 06:26:53.2803
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Bq/hGQpwXEj41YKdKhy0r6vwTttYwsExRzXdIA0HAv2/W8Fb+lFs3BNNUwSkRujhqm96/JNSXbIaeZp/XGGvoQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR06MB5084
 
-Cerise is known as ASUS Chromebook CZ1.
-Stern is known as ASUS Chromebook Flip CZ1.
+The current udmabuf_folio contains a list_head and the corresponding
+folio pointer, with a size of 24 bytes. udmabuf_folio uses kmalloc to
+allocate memory.
 
-They are almost identical. The only difference is that Cerise is a
-clamshell device without touchscreen and Stern is a convertible device.
+However, kmalloc is a public pool, starting from 64 bytes. This means
+that each udmabuf_folio allocation will waste 40 bytes.
 
-Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Considering that each udmabuf creates a folio corresponding to a
+udmabuf_folio, the wasted memory can be significant in the case of
+memory fragmentation.
+
+Furthermore, if udmabuf is frequently used, the allocation and
+deallocation of udmabuf_folio will also be frequent.
+
+Therefore, this patch adds a kmem_cache dedicated to the allocation and
+deallocation of udmabuf_folio.This is expected to improve the
+performance of allocation and deallocation within the expected range,
+while also avoiding memory waste.
+
+Signed-off-by: Huan Yang <link@vivo.com>
 ---
- Documentation/devicetree/bindings/arm/mediatek.yaml | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+v2 -> v1: fix double unregister, remove unlikely
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
-index 1d4bb50fcd8d..087773a43673 100644
---- a/Documentation/devicetree/bindings/arm/mediatek.yaml
-+++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
-@@ -146,6 +146,20 @@ properties:
-         items:
-           - const: google,burnet
-           - const: mediatek,mt8183
-+      - description: Google Cerise (ASUS Chromebook CZ1)
-+        items:
-+          - enum:
-+              - google,cerise-sku0
-+              - google,cerise-rev3-sku0
-+          - const: google,cerise
-+          - const: mediatek,mt8183
-+      - description: Google Stern (ASUS Chromebook Flip CZ1)
-+        items:
-+          - enum:
-+              - google,cerise-sku1
-+              - google,cerise-rev3-sku1
-+          - const: google,cerise
-+          - const: mediatek,mt8183
-       - description: Google Cozmo (Acer Chromebook 314)
-         items:
-           - const: google,cozmo
+ drivers/dma-buf/udmabuf.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+index 047c3cd2ceff..c112c58ef09a 100644
+--- a/drivers/dma-buf/udmabuf.c
++++ b/drivers/dma-buf/udmabuf.c
+@@ -24,6 +24,8 @@ static int size_limit_mb = 64;
+ module_param(size_limit_mb, int, 0644);
+ MODULE_PARM_DESC(size_limit_mb, "Max size of a dmabuf, in megabytes. Default is 64.");
+ 
++static struct kmem_cache *udmabuf_folio_cachep;
++
+ struct udmabuf {
+ 	pgoff_t pagecount;
+ 	struct folio **folios;
+@@ -169,7 +171,7 @@ static void unpin_all_folios(struct list_head *unpin_list)
+ 		unpin_folio(ubuf_folio->folio);
+ 
+ 		list_del(&ubuf_folio->list);
+-		kfree(ubuf_folio);
++		kmem_cache_free(udmabuf_folio_cachep, ubuf_folio);
+ 	}
+ }
+ 
+@@ -178,7 +180,7 @@ static int add_to_unpin_list(struct list_head *unpin_list,
+ {
+ 	struct udmabuf_folio *ubuf_folio;
+ 
+-	ubuf_folio = kzalloc(sizeof(*ubuf_folio), GFP_KERNEL);
++	ubuf_folio = kmem_cache_alloc(udmabuf_folio_cachep, GFP_KERNEL);
+ 	if (!ubuf_folio)
+ 		return -ENOMEM;
+ 
+@@ -491,11 +493,20 @@ static int __init udmabuf_dev_init(void)
+ 					   DMA_BIT_MASK(64));
+ 	if (ret < 0) {
+ 		pr_err("Could not setup DMA mask for udmabuf device\n");
+-		misc_deregister(&udmabuf_misc);
+-		return ret;
++		goto err;
++	}
++
++	udmabuf_folio_cachep = KMEM_CACHE(udmabuf_folio, 0);
++	if (!udmabuf_folio_cachep) {
++		ret = -ENOMEM;
++		goto err;
+ 	}
+ 
+ 	return 0;
++
++err:
++	misc_deregister(&udmabuf_misc);
++	return ret;
+ }
+ 
+ static void __exit udmabuf_dev_exit(void)
+
+base-commit: cd19ac2f903276b820f5d0d89de0c896c27036ed
 -- 
-2.46.0.rc1.232.g9752f9e123-goog
+2.45.2
 
 
