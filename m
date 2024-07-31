@@ -1,107 +1,101 @@
-Return-Path: <linux-kernel+bounces-269041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19208942CAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:05:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E551F942CD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8432DB22EF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:05:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07FF01C2142B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B616B1AD3E7;
-	Wed, 31 Jul 2024 11:05:30 +0000 (UTC)
-Received: from mail115-80.sinamail.sina.com.cn (mail115-80.sinamail.sina.com.cn [218.30.115.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369131AD9EA;
+	Wed, 31 Jul 2024 11:06:34 +0000 (UTC)
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752DB145FEF
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36AF1B0133
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722423930; cv=none; b=q4XI0WlPTzbQ9yja+s6+XupGKoSQaDB6J+rL5Hns1AS9tsp5H4fl3d5DHRMH+WU3mrgStjV+cRvCSjbDwvlF6/gGzMay1/RP6M5J6u3n6ZSRvODKmS5rVRPnxM4UB2aW1avmjXOukr34/2yOZyOKk/dI3R7I6G5+IenWf4JLzBY=
+	t=1722423993; cv=none; b=IO4jY/pCyinFQpm8SgQjcRvjk4KPI94ZOZhNPsLkAgn/yEZuu6EzQMw1uAEFcZoFi69Y1ws9E6qdLz22W59d1yG3GkkkBNxV/WRzWtNQYgaf3WELzyLqYeA+Hd/Ny4v/V3yZctbkuqSg1WYVwt8zl+IohGTXJFkrqvXqxw4bYnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722423930; c=relaxed/simple;
-	bh=VvGEt5SbCWBDF4LqTHePuTYmBdf3+qKKqzuuP6pw+rY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=q5bxinlynxnR33UjKJWn5JJhH9PQmXckEYGiFlmjDcrUJ0Lmu+9syHN5RGTYkl7FbV6CCMcYM6bkikvmOQrOl+EBRTdOR5d91MmvnUnZojyFuHG6VUw56a5x4KpfD0r7B5GT7prKrknuvvGSN3ckGyT6hS17eVinoLf3XB9NVbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.69.52])
-	by sina.com (10.185.250.23) with ESMTP
-	id 66AA1A6600000BC2; Wed, 31 Jul 2024 19:05:13 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 1289078913422
-X-SMAIL-UIID: 9FCC5E6F593D4DCF86F85C3034590D91-20240731-190513-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [wireguard?] WARNING in kthread_unpark (2)
-Date: Wed, 31 Jul 2024 19:05:01 +0800
-Message-Id: <20240731110501.2425-1-hdanton@sina.com>
-In-Reply-To: <000000000000e9a538061e64cae7@google.com>
-References: 
+	s=arc-20240116; t=1722423993; c=relaxed/simple;
+	bh=dOyIOG9bAIEMgUL/lfBwC5nC2+cdXzNNtcrGu35hluk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=K7e5aPbu6JZJ5cowJHe2q/IBfZdjDakXMq4gLvChzP7WZdDxyIgdonLaO1xw22rYCtwRbuhfuEegMHLAl3pXowonUxAaP9ajHdHz+K05zxWTyD752F8HfROHVbwRSKwSjwMrhGTX4wSModjd8zFo4yfGxa2Pdb3HGXEQ53Hm/go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=185.125.25.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WYq6722Tpz1KK;
+	Wed, 31 Jul 2024 13:06:23 +0200 (CEST)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WYq661mx4zR92;
+	Wed, 31 Jul 2024 13:06:22 +0200 (CEST)
+From: Quentin Schulz <foss+kernel@0leil.net>
+Subject: [PATCH 0/2] fix eMMC/SPI flash corruption when audio has been used
+ on RK3399 Puma
+Date: Wed, 31 Jul 2024 13:05:27 +0200
+Message-Id: <20240731-puma-emmc-6-v1-0-4e28eadf32d0@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHcaqmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDc2ND3YLS3ETd1NzcZF0z3WRDE8NUC0tDIyODJCWgjoKi1LTMCrBp0bG
+ 1tQArVyiAXQAAAA==
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Judy Hsiao <judyhsiao@chromium.org>, 
+ Brian Norris <briannorris@chromium.org>
+Cc: stable@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Quentin Schulz <quentin.schulz@cherry.de>, 
+ foss+kernel@0leil.net
+X-Mailer: b4 0.14.0
+X-Infomaniak-Routing: alpha
 
-On Mon, 29 Jul 2024 08:48:30 -0700
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    dc1c8034e31b minmax: simplify min()/max()/clamp() implemen..
-> git tree:       upstream
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1022b573980000
+In commit 91419ae0420f ("arm64: dts: rockchip: use BCLK to GPIO switch
+on rk3399"), an additional pinctrl state was added whose default pinmux
+is for 8ch i2s0. However, Puma only has 2ch i2s0. It's been overriding
+the pinctrl-0 property but the second property override was missed in
+the aforementioned commit.
 
-#syz test upstream  dc1c8034e31b
+On Puma, a hardware slider called "BIOS Disable/Normal Boot" can disable
+eMMC and SPI to force booting from SD card. Another software-controlled
+GPIO is then configured to override this behavior to make eMMC and SPI
+available without human intervention. This is currently done in U-Boot
+and it was enough until the aforementioned commit.
 
---- x/kernel/workqueue.c
-+++ y/kernel/workqueue.c
-@@ -2679,7 +2679,8 @@ static void worker_attach_to_pool(struct
- 		worker->flags |= WORKER_UNBOUND;
- 	} else {
- 		WARN_ON_ONCE(pool->flags & POOL_BH);
--		kthread_set_per_cpu(worker->task, pool->cpu);
-+		if (!worker->rescue_wq)
-+			kthread_set_per_cpu(worker->task, pool->cpu);
- 	}
- 
- 	if (worker->rescue_wq)
---- x/drivers/input/misc/yealink.c
-+++ y/drivers/input/misc/yealink.c
-@@ -438,6 +438,8 @@ static void urb_irq_callback(struct urb
- 
- 	yealink_do_idle_tasks(yld);
- 
-+	if (status == -EPROTO)
-+		return;
- 	if (!yld->shutdown) {
- 		ret = usb_submit_urb(yld->urb_ctl, GFP_ATOMIC);
- 		if (ret && ret != -EPERM)
-@@ -452,9 +454,12 @@ static void urb_ctl_callback(struct urb
- 	struct yealink_dev *yld = urb->context;
- 	int ret = 0, status = urb->status;
- 
--	if (status)
-+	if (status) {
- 		dev_err(&yld->intf->dev, "%s - urb status %d\n",
- 			__func__, status);
-+		if (status == -EPROTO)
-+			return;
-+	}
- 
- 	switch (yld->ctl_data->cmd) {
- 	case CMD_KEYPRESS:
---
+Indeed, because of this additional not-yet-overridden property, this
+software-controlled GPIO is now muxed in a state that does not override
+this hardware slider anymore, rendering SPI and eMMC flashes unusable.
+
+Let's override the property with the 2ch pinmux to fix this.
+
+While at it, add a GPIO hog for this software-controlled GPIO to make it
+explicit and also make it reserve the pin through the pinctrl subsystem
+to make sure nobody can mistakenly request it for something else: better
+have a non-working feature than eMMC/SPI being corrupted "randomly"!
+
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+Quentin Schulz (2):
+      arm64: dts: rockchip: fix eMMC/SPI corruption when audio has been used on RK3399 Puma
+      arm64: dts: rockchip: override BIOS_DISABLE signal via GPIO hog on RK3399 Puma
+
+ arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi | 36 ++++++++++++++++++++++++---
+ 1 file changed, 33 insertions(+), 3 deletions(-)
+---
+base-commit: e4fc196f5ba36eb7b9758cf2c73df49a44199895
+change-id: 20240731-puma-emmc-6-c141e891220b
+
+Best regards,
+-- 
+Quentin Schulz <quentin.schulz@cherry.de>
+
 
