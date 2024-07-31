@@ -1,167 +1,143 @@
-Return-Path: <linux-kernel+bounces-269635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88819943526
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:46:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B50289434D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0F1EB22BF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:46:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E75181C22F87
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C733A8F0;
-	Wed, 31 Jul 2024 17:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11F81BD503;
+	Wed, 31 Jul 2024 17:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dvTxmvOJ"
-Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bc+bQCH7"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B907617543;
-	Wed, 31 Jul 2024 17:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35D51BD4FB;
+	Wed, 31 Jul 2024 17:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722447994; cv=none; b=I9HTZUgYrIxBrIbjJ0Dr8zSQf0TNn1tf7NHa1UOeOlacAtLvISOZdYn6B2T3A99whln7pkV29MZgfAg+Mhr5aesymIuonzIz+VyOFVWbF9tbVOQPhYzwr4TYizYBGSv/ld+QdCYIObEhKUZhXaPMtIwL8C0R3A8G8Py5YD03AW8=
+	t=1722445980; cv=none; b=DgTBfW8iTXtYmnBG3qDmNUOgBZmwIOxVuX6wpCWzD/NVA1Ch4AmtKcJN8CwzOcU/FCjzjjzUzYFNflGNTuWw3JM67JAWe/UNOnelLcHGmJUrffGliELon87nO1PeRjBT+SJ/1rMOAbwF5nuyOM7rxoElyEw9+v94LQwBskzt4hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722447994; c=relaxed/simple;
-	bh=VYynSQlkqfKPdPrpqBX9BNsxQD2Rk2GmDS0e1sRFgFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=id6TSi7bHjkICxR1ZbYJIJHCeZxqfTHPgj+RUFFfg1ROMO9N0jkCOh9AYS+sWIx6a2n3AYsIBS0aMOMXcRgSbuFLl2sbDtvwvEUwSZu91fCw5YoJXpqowzEEumaJalW+2xxayMS8i8ls4BD9Qp01BC/9drf1OUgnqRRA2W5n9ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dvTxmvOJ; arc=none smtp.client-ip=80.12.242.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id ZCrRsJemgWPKVZCrRsG3Ul; Wed, 31 Jul 2024 19:11:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722445898;
-	bh=l/N7BL6uXIDoiEcTV0sQ9X+6QKDbvzDQWB0h4bM+lFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=dvTxmvOJZbGhRxoANl70qmf7S2ZSEKLOcNeA9hLaqEFBvPQUcsA6f9iuxkqiSgiAu
-	 MJOoqNaHkAis3+RugHTH6u2kXY+UKzaEFLzfPZwMxF3sTZAm+DeHEmp8yjO3uU9F4/
-	 HSwpkttWi+aUh05ALFIE3fLkL1l2S7CFYAmCcXxBYnZ6RRTnafAawtCfja3mIbTWEZ
-	 6A2+ULcm7D39ArVc/5GdclhHK+BrJw5SBb9cp1nSTKfIHbxlA3sxI7pVOwjp+D37d2
-	 mKUR4ccBalvZNLsOncet2VLSiWwX5OYVyTA1j2PZVVbsSrR8/EMAhCmdjzjd2Nq9wr
-	 Xqk1uLNDRGQzA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Wed, 31 Jul 2024 19:11:38 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <0fbca32a-d0e9-4884-9839-be1714543398@wanadoo.fr>
-Date: Wed, 31 Jul 2024 19:11:37 +0200
+	s=arc-20240116; t=1722445980; c=relaxed/simple;
+	bh=r65fSjPQ8O9ACzXWIzjVq2aULtuRMZ7QPY0CSn2vRDY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mZugg53ltuj3atkqMLSUsG3jjempRVBWGV+rnt2EKGaia+xL1wdq0H0ZNrORf2f8m7poOrbqZuQ4oMZgSUggpb9nfYlgVNrIqkr1wd0lxGg8lXjPKX3Wcwo7qews9M+4bQoyFIH+NOftQV22/u45/sG3C7r5YzQRAP8g2mGvc5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bc+bQCH7; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2cf11b91813so3999011a91.1;
+        Wed, 31 Jul 2024 10:12:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722445978; x=1723050778; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zDSCWhELRBdtlc7/5+Htsyc9brjO2KaQhGoF8NY2ITg=;
+        b=Bc+bQCH7ze4x5IOkLN3h6iLJ8OG2Jc78wwan6Ob2x5XmiK/WfUDWMlVPsF16mjCuwq
+         +Qi2ZeSqszeb/FX9J+lfwG7oR1Am+fAsaYlSRxkAmGGJrxaJLYUd3g0wUmYmiRvSTaNm
+         2TRwD+6n3OXQH0yOoJMXS+o6Bz9+y7aGu/j5sp3e/TqlQih3Xqeg7OUB+dREpAQTOU9A
+         FsNW920f4hRIK8zles57+C/5qlY5EK6lVunSeQJj7Mr6N7Ne13CGp6ONHGummPFQTZ6L
+         fSuLzGg4M51p8Dcuo3yY7rYgMs7+8dUe7joMSDzti6SPt5zcOdjeJl/Ob+3IMQ37qOzm
+         BPXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722445978; x=1723050778;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zDSCWhELRBdtlc7/5+Htsyc9brjO2KaQhGoF8NY2ITg=;
+        b=sUrD2F5yk+Ck47J8SbL6a5aSiw6QZsDL9SbikeTiyTLn91EDmUWQo07cJuPRy0am21
+         CSSKByRqmUhnUZBmrxKFFffIqgvFLbaBqCqYacn78iyVuJJHESJ9suvtumtOKZrCpSVL
+         vkgtplNGH/kH/Sevx6GL9/RsN10E5Bjg4YmMRBgzPBBsSyPdTPT3GzzYsrabmOzwcuDi
+         iiX0wVbEVYwZto78QSaimc9kM6dYofEWCzk+Nx7JqoboYG0l0r6b04FyNjvoLw29Izc2
+         YUWXXahFj+mW5GayvbfYEJcfsFIl7BH0w9y24/aIH6x6AD9Hv8IRB5CXwlZop/TqJXk2
+         YoJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVY8Y1iVLd1c8FORNW6byWSujCRWJe8FmAPr4owoIvys0Jnaez4blK/fJbK78xDjMOk3t6XlRfK0zwcWcY6CsQUqXG9qCSNlXOgg1LwZtaEfXFg4fehQxqV08s2xnHgEKMborOQ+t3U3HgTxzH/YtKb
+X-Gm-Message-State: AOJu0YwsFmg1uMQ9bB/fVztARqt8BTvmB5SxB5elHeo6QEVyxfaghzQM
+	Pyrr/BMTxao6x8h7gltT1wqhw4HuuPtBDnl74VwUBlNpv730jlF9sXSrXGQB4MvaBRNPolB4/LD
+	GHI7Qt8jAqKoYqYQbZJdVRna3Duc=
+X-Google-Smtp-Source: AGHT+IGaonZcBJspp25j6c3POADFGz9J5x0DFcX1Z2PPjOvRj/EFikdZvqegcHo9A2jVLebbB+ZtZHEoCwulXyiU2ZY=
+X-Received: by 2002:a17:90a:bb83:b0:2c9:888a:7a7b with SMTP id
+ 98e67ed59e1d1-2cf7e1ffa35mr14141634a91.25.1722445978002; Wed, 31 Jul 2024
+ 10:12:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] udmabuf: use kmem_cache to alloc udmabuf folio
-To: Huan Yang <link@vivo.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20240731073752.1225177-1-link@vivo.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240731073752.1225177-1-link@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240729134444.GA12293@redhat.com> <20240729134535.GA12332@redhat.com>
+ <CAEf4Bza1_njsVUad8so9EFxy8VmJsTfzaaAahBYFtOqdF1HAjA@mail.gmail.com>
+ <20240731165614.GI33588@noisy.programming.kicks-ass.net> <CAEf4BzZXze8wRQwEJSy5nFzH=uk4wZPHY-gWw6j7iZfeBEiO0g@mail.gmail.com>
+ <20240731170551.GK33588@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240731170551.GK33588@noisy.programming.kicks-ass.net>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 31 Jul 2024 10:12:45 -0700
+Message-ID: <CAEf4BzYTMTNoGbL6keMhj4hRty-tw5XDeiLHOXMJxRyxZv6Efg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] uprobes: make uprobe_register() return struct
+ uprobe *
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, andrii@kernel.org, mhiramat@kernel.org, 
+	jolsa@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le 31/07/2024 à 09:37, Huan Yang a écrit :
-> The current udmabuf_folio contains a list_head and the corresponding
-> folio pointer, with a size of 24 bytes. udmabuf_folio uses kmalloc to
-> allocate memory.
-> 
-> However, kmalloc is a public pool, starting from 8,16,32 bytes.
-> Additionally, if the size is not aligned with the kmalloc size, it will
-> be rounded up to the corresponding size.
-> This means that each udmabuf_folio allocation will get 32 bytes, and
-> waste 8 bytes.
-> 
-> Considering that each udmabuf creates a folio corresponding to a
-> udmabuf_folio, the wasted memory can be significant in the case of
-> memory fragmentation.
-> 
-> Furthermore, if udmabuf is frequently used, the allocation and
-> deallocation of udmabuf_folio will also be frequent.
-> 
-> Therefore, this patch adds a kmem_cache dedicated to the allocation and
-> deallocation of udmabuf_folio.This is expected to improve the
-> performance of allocation and deallocation within the expected range,
-> while also avoiding memory waste.
-> 
-> Signed-off-by: Huan Yang <link@vivo.com>
-> ---
-> v3 -> v2: fix error description.
-> v2 -> v1: fix double unregister, remove unlikely.
->   drivers/dma-buf/udmabuf.c | 19 +++++++++++++++----
->   1 file changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-> index 047c3cd2ceff..c112c58ef09a 100644
-> --- a/drivers/dma-buf/udmabuf.c
-> +++ b/drivers/dma-buf/udmabuf.c
-> @@ -24,6 +24,8 @@ static int size_limit_mb = 64;
->   module_param(size_limit_mb, int, 0644);
->   MODULE_PARM_DESC(size_limit_mb, "Max size of a dmabuf, in megabytes. Default is 64.");
->   
-> +static struct kmem_cache *udmabuf_folio_cachep;
-> +
->   struct udmabuf {
->   	pgoff_t pagecount;
->   	struct folio **folios;
-> @@ -169,7 +171,7 @@ static void unpin_all_folios(struct list_head *unpin_list)
->   		unpin_folio(ubuf_folio->folio);
->   
->   		list_del(&ubuf_folio->list);
-> -		kfree(ubuf_folio);
-> +		kmem_cache_free(udmabuf_folio_cachep, ubuf_folio);
->   	}
->   }
->   
-> @@ -178,7 +180,7 @@ static int add_to_unpin_list(struct list_head *unpin_list,
->   {
->   	struct udmabuf_folio *ubuf_folio;
->   
-> -	ubuf_folio = kzalloc(sizeof(*ubuf_folio), GFP_KERNEL);
-> +	ubuf_folio = kmem_cache_alloc(udmabuf_folio_cachep, GFP_KERNEL);
->   	if (!ubuf_folio)
->   		return -ENOMEM;
->   
-> @@ -491,11 +493,20 @@ static int __init udmabuf_dev_init(void)
->   					   DMA_BIT_MASK(64));
->   	if (ret < 0) {
->   		pr_err("Could not setup DMA mask for udmabuf device\n");
-> -		misc_deregister(&udmabuf_misc);
-> -		return ret;
-> +		goto err;
-> +	}
-> +
-> +	udmabuf_folio_cachep = KMEM_CACHE(udmabuf_folio, 0);
-> +	if (!udmabuf_folio_cachep) {
-> +		ret = -ENOMEM;
-> +		goto err;
->   	}
->   
->   	return 0;
-> +
-> +err:
-> +	misc_deregister(&udmabuf_misc);
-> +	return ret;
->   }
->   
->   static void __exit udmabuf_dev_exit(void)
+On Wed, Jul 31, 2024 at 10:05=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
+>
+> On Wed, Jul 31, 2024 at 10:01:47AM -0700, Andrii Nakryiko wrote:
+> > On Wed, Jul 31, 2024 at 9:56=E2=80=AFAM Peter Zijlstra <peterz@infradea=
+d.org> wrote:
+> > >
+> > > On Wed, Jul 31, 2024 at 09:18:00AM -0700, Andrii Nakryiko wrote:
+> > > > On Mon, Jul 29, 2024 at 6:45=E2=80=AFAM Oleg Nesterov <oleg@redhat.=
+com> wrote:
+> > > > >
+> > > > > This way uprobe_unregister() and uprobe_apply() can use "struct u=
+probe *"
+> > > > > rather than inode + offset. This simplifies the code and allows t=
+o avoid
+> > > > > the unnecessary find_uprobe() + put_uprobe() in these functions.
+> > > > >
+> > > > > TODO: uprobe_unregister() still needs get_uprobe/put_uprobe to en=
+sure that
+> > > > > this uprobe can't be freed before up_write(&uprobe->register_rwse=
+m).
+> > > > >
+> > > > > Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> > > > > Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> > > > > ---
+> > > > >  include/linux/uprobes.h     | 15 +++++-----
+> > > > >  kernel/events/uprobes.c     | 56 +++++++++++++++----------------=
+------
+> > > > >  kernel/trace/bpf_trace.c    | 25 ++++++++---------
+> > > > >  kernel/trace/trace_uprobe.c | 26 ++++++++---------
+> > > > >  4 files changed, 55 insertions(+), 67 deletions(-)
+> > > > >
+> > > >
+> > > > You'll need something like below to not break our bpf_testmod. And
+> > > > please send pull patch sets, not individually updated patches, it's=
+ a
+> > > > PITA to deal with. Thanks!
+> > >
+> > > Do I stuff this on top of Oleg's patch or do you want me to fold it i=
+n
+> > > one of them?
+> >
+> > Please fold so we have better (potential) bisectability of BPF
+> > selftests, thanks!
+>
+> Fold where, patch 5?
 
-Hi,
+Yep, this one, where Oleg changed uprobe_register/uprobe_unregister API.
 
-should a kmem_cache_destroy() be also added in udmabuf_dev_exit()?
-
-CJ
-
-> 
-> base-commit: cd19ac2f903276b820f5d0d89de0c896c27036ed
-
+But note, I did the lazy thing and just copy/pasted `git show` output
+into Gmail. So all the whitespaces are butchered and unlikely you'll
+be able to apply that patch as is. My expectation was that Oleg will
+just incorporate that by hand and will send the final v4 patch set.
 
