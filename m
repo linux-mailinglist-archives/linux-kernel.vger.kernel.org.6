@@ -1,53 +1,56 @@
-Return-Path: <linux-kernel+bounces-269734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA4294363F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:18:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05ADE943641
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3F6C1F23835
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:18:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68F5FB25B1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5F316F297;
-	Wed, 31 Jul 2024 19:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAB3170822;
+	Wed, 31 Jul 2024 19:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8pspgt7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hz2lxk8R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F47716F0E8
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 19:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FE51607A4;
+	Wed, 31 Jul 2024 19:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722453256; cv=none; b=X0iSprk/knbE/nAQ/0hQc++Y4VSqvdtSkuemhbas7u9/zTRcmdCxkhoDTbQaTnvVYOJyW2s9qthmBoP7OFJosFI5wGfC1rkYS3Pa7/h+Qf+uVEabZjo5trbGpPNf+mqM+p620BOQqBhl8RyPCwfP2ew5LYAgX8yypClzXJukEBQ=
+	t=1722453258; cv=none; b=Cwra+HEZuRzbtbBDQYHnnU5hmTQ+4iB208nssEong+dBaejjxsyknsU6Ots+BJsK0UtQjG/VQtni37MFkpRS0z0tcrC+8SfuZWzOdncknisR9zKqw6RpLkiPMptBaRUneKAGSkk2wQJwrFYOxu5i6RqcBFr8d8Y2NtRrOtELcDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722453256; c=relaxed/simple;
-	bh=ukYI81uokU0BeUwLmOS4D2F7xXqpS+znxKl1c+2meMI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i9vT4I+wfP4xd0LQInWRXY0fuSXIgGSJssxkm77JRwb9WvAb22UEA16ayUR7hqPt6B545BcGtISKxbOJ7m7sj9LynSCNetMKVTqIOw0myH/tjMg5NKhI0oJH0XccPO3XvpZA2tg2LnmH62Q0+jNsG0E4t2TQnKc5gyW3pT7WLM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8pspgt7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A3A4C4AF0F;
-	Wed, 31 Jul 2024 19:14:16 +0000 (UTC)
+	s=arc-20240116; t=1722453258; c=relaxed/simple;
+	bh=ubh3NLrklndLBiuUONv6qIaq58iV67suw8/xEa83+Qw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WPivOm0gF91Cz3g9ialMBC4kV+BpiYRGi6qa+19hLs/JfvV5SDtI3knx/SlnkXbGDYhW5bwQyF37xAhJ5/YvYTjd8QYBgczypG1QDNgpPeSj7oHa/oyXjmFbuez4tjHnEPyM7C0CL57rKo2RFbCqO7EZwh52QyfNNuFUP8++scQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hz2lxk8R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59D50C116B1;
+	Wed, 31 Jul 2024 19:14:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722453256;
-	bh=ukYI81uokU0BeUwLmOS4D2F7xXqpS+znxKl1c+2meMI=;
+	s=k20201202; t=1722453258;
+	bh=ubh3NLrklndLBiuUONv6qIaq58iV67suw8/xEa83+Qw=;
 	h=From:To:Cc:Subject:Date:From;
-	b=m8pspgt7W2gbKhsOsQGmqzBdH11VC2v7GYkGwIUcPv8JBrKmw0zw+ebsn1b174T2L
-	 iRrapwnXNksDnITIlRBULpE+MHPef8H4GCIUEuk1THlg8pZFL1qXxBe84mWn+52cZw
-	 1arhglWORDbPwqnTihpVdSjQXhva5h593MX+vj9KeAd9pJPPX/JHG4e2yEdpbMY+e2
-	 2OOPxrt3hvBmWmVxwt42iNGFeWKWN96lhBTYMxcWfTFlsf7jqkDjHPuBeyRmKcaXMv
-	 3lKaVE0adICprVohWDcWjVMpDG7SB2uF7j5kP7CTKqIV6Y9QAWx2/6loG3XMQEzzeV
-	 YimlvggdmFp/g==
+	b=hz2lxk8Rlt6QZc1C1Lk0LOHWeqWymGDaLPmM2IP6MJuKfOE3BHx5eDqAq6YQ8wALu
+	 dz5LesUs5DdW7rwkiVQ0it2/nlnn0e8i63/Sg8cWAuM2hoh6CtvnYJ+6OxyY8HjxfX
+	 0TvcegbX0EhP8HTYq3a6C2qNLxIqOuzyKktqQ7nNAxJDjLl9rfqDzlbU5T/5bRxKDd
+	 0ngxttAnY83AyKk+adYDpMhjh9UdnUhYiSnFoeht0jKJnSuukpoWPiqdkD2lSnjJrn
+	 Sy6/XQ8Sb64+NVzxaFsdCZko+4iv8xMHv33r5WJ9XkymSDKIL9X2C/yYE1qduSaEhB
+	 US6+iEUJ87VKQ==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mtd: Use of_property_read_bool()
-Date: Wed, 31 Jul 2024 13:13:00 -0600
-Message-ID: <20240731191312.1710417-22-robh@kernel.org>
+To: Sean Wang <sean.wang@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-mediatek@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] pinctrl: mediatek: Use of_property_read_bool()
+Date: Wed, 31 Jul 2024 13:13:01 -0600
+Message-ID: <20240731191312.1710417-23-robh@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -58,33 +61,34 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Use of_property_read_bool() to read boolean properties rather than
-of_get_property(). This is part of a larger effort to remove callers
-of of_get_property() and similar functions. of_get_property() leaks
-the DT property data pointer which is a problem for dynamically
-allocated nodes which may be freed.
+of_find_property(). This is part of a larger effort to remove callers
+of of_find_property() and similar functions. of_find_property() leaks
+the DT struct property and data pointers which is a problem for
+dynamically allocated nodes which may be freed.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/mtd/parsers/ofpart_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/mediatek/pinctrl-paris.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mtd/parsers/ofpart_core.c b/drivers/mtd/parsers/ofpart_core.c
-index e7b8e9d0a910..abfa68798918 100644
---- a/drivers/mtd/parsers/ofpart_core.c
-+++ b/drivers/mtd/parsers/ofpart_core.c
-@@ -157,10 +157,10 @@ static int parse_fixed_partitions(struct mtd_info *master,
- 			partname = of_get_property(pp, "name", &len);
- 		parts[i].name = partname;
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+index e12316c42698..87e958d827bf 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.c
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+@@ -1044,11 +1044,8 @@ int mtk_paris_pinctrl_probe(struct platform_device *pdev)
  
--		if (of_get_property(pp, "read-only", &len))
-+		if (of_property_read_bool(pp, "read-only"))
- 			parts[i].mask_flags |= MTD_WRITEABLE;
+ 	hw->nbase = hw->soc->nbase_names;
  
--		if (of_get_property(pp, "lock", &len))
-+		if (of_property_read_bool(pp, "lock"))
- 			parts[i].mask_flags |= MTD_POWERUP_LOCK;
+-	if (of_find_property(hw->dev->of_node,
+-			     "mediatek,rsel-resistance-in-si-unit", NULL))
+-		hw->rsel_si_unit = true;
+-	else
+-		hw->rsel_si_unit = false;
++	hw->rsel_si_unit = of_property_read_bool(hw->dev->of_node,
++						 "mediatek,rsel-resistance-in-si-unit");
  
- 		if (of_property_read_bool(pp, "slc-mode"))
+ 	spin_lock_init(&hw->lock);
+ 
 -- 
 2.43.0
 
