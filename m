@@ -1,153 +1,131 @@
-Return-Path: <linux-kernel+bounces-268379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 143509423EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:43:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9449423B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32EC31C22C57
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:43:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 060FE285EEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCB5523A;
-	Wed, 31 Jul 2024 00:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14CD2900;
+	Wed, 31 Jul 2024 00:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hN9IFKrl"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YpbLC2Dk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7724C8E
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 00:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B09C7FD;
+	Wed, 31 Jul 2024 00:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722386622; cv=none; b=Q1s7pyq/LFKXxxKTwbTBrR4yrRIMTx4n4uI3ht6lwZ5somEdc4w08Jkxjhe/r84Jhxk2U2a7mIF2pDnAXmpdt6O9hEY5/pRhFhp2EFyfksPk0u9zqpjkh9F1oxf9L+xHbI0euevAwdckfKc+rCkp2qQ6YQAh2ECfq82vPCd4QQk=
+	t=1722384310; cv=none; b=DleqnxhYRsQ2224JPNh06yc/PFvPPbXZq9j8as5wfGuYPn4GbTJnxxiuS1xU3xcUY+qT9Q5Wq+Ke3S0s6TtaW6m8mCUZpcOigEPowEmkBQTMCWQg4f5EFCDS52PGkhcn1eOCpDbne+n+02FOWxUqLdtrQeIPs93JzbumPc+S8JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722386622; c=relaxed/simple;
-	bh=B8nS+HrchXt/TOq7CuC6gM8fOzsr+yNKA1+6iyCftCI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=LCY1ILPZ/8daOsggC5JTfbZA32zl0cpHp/SS+rhhPo9yrMvYyqJt50okr1/C7kRgmcN7JPaJSr3mAQeY+Ny1HqmuMAQSALsreK8VUItx63XhIbpSnlYTsySONAf14D9hTFO4s55u2vpAis8lBTkq29pabVpzk6aPscgP9T5nIMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hN9IFKrl; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240731004337epoutp0303e2d9a83b8469f00a64dcc8b077a2ab~nJYDS30Lx0031700317epoutp03J
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 00:43:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240731004337epoutp0303e2d9a83b8469f00a64dcc8b077a2ab~nJYDS30Lx0031700317epoutp03J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1722386617;
-	bh=a3IzWK5fitZJcQaGmkzyEQOcVdVpt6d41Zx8xDRd+Mg=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=hN9IFKrlYzE1hZNQ57E3RtPqI7Ug4i9vMNMr5CTJ0EJ4xQdfrVlBTEvv6MCUJNChD
-	 9pBddJPKQXQJXUtNbqD/g2dM4JYmrYygg7rfOB0Lwv+hTNKQ33hvLOXQ/WezHHG7SL
-	 Ac1DIBJqq0AuBhxzankhsniiDmmpUL0JVOtybUaM=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20240731004337epcas1p3290553a74b02376cfed9220c20607cf3~nJYDBfu461919819198epcas1p3H;
-	Wed, 31 Jul 2024 00:43:37 +0000 (GMT)
-Received: from epsmgec1p1-new.samsung.com (unknown [182.195.36.227]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4WYYHX5qDfz4x9Q3; Wed, 31 Jul
-	2024 00:43:36 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	DB.F9.19509.8B889A66; Wed, 31 Jul 2024 09:43:36 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240731004335epcas1p382229e79bdaf3f2d48b0f3faa7414ea6~nJYBdGAZh2218522185epcas1p3d;
-	Wed, 31 Jul 2024 00:43:35 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240731004335epsmtrp2372edfe6c42e4f748b0252ea939bdd9c~nJYBcfOB62816828168epsmtrp2M;
-	Wed, 31 Jul 2024 00:43:35 +0000 (GMT)
-X-AuditID: b6c32a4c-9ebcba8000004c35-1b-66a988b88e3a
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	65.31.08456.7B889A66; Wed, 31 Jul 2024 09:43:35 +0900 (KST)
-Received: from VDBS1327.vd.sec.samsung.net (unknown [168.219.243.39]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240731004335epsmtip129d22900c31bac57eaf2f21dc0c8616d~nJYBOktVm2059420594epsmtip1x;
-	Wed, 31 Jul 2024 00:43:35 +0000 (GMT)
-From: Manjae Cho <manjae.cho@samsung.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, Manjae Cho
-	<manjae.cho@samsung.com>
-Subject: [PATCH v2] staging: rtl8723bs: Improve MAR register definition and
- usage
-Date: Wed, 31 Jul 2024 08:10:48 +0900
-Message-Id: <20240730231046.412876-1-manjae.cho@samsung.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1722384310; c=relaxed/simple;
+	bh=/lIIeNoHyasDW8eVa8mloH62NADC/12tw0iVP9lb8oQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rUW7Z2ADlnblrTwH44g+Xw8aGY5bxFFUkoDO3pwbyj/vbfVBrHW4yDyt4XxNzx9myoWLLd5PS0WwgnCe59ai4ZBEnSc5pOym1zlxjV9gLPcfItFex4xOzhOz/MzDSfQhwAde04LLDrqvhIiOrKSWyuj4N7GAIUwzu3UYxY/CD+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YpbLC2Dk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30146C32782;
+	Wed, 31 Jul 2024 00:04:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722384309;
+	bh=/lIIeNoHyasDW8eVa8mloH62NADC/12tw0iVP9lb8oQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YpbLC2DkPkdlxNQ3CyWVzOCyU0qqir8qddA0+YlLv+8V67g/AQoc48q+PyAFpDzxn
+	 if4+n7GTeCAJhzm2cM+Ha5MdKuX2qe7Kew2dULqkrTA50ftLBgjLmBmAJjTETmTAUQ
+	 MxB/w3juFkZABJvUQ5XN0XWJBMqOAnRkdHXW3XodS/0gYhPXbcIXXIu9+bbbzeZ2eA
+	 Pk8r9zmxkzbEshihcHApjjt7FQ8a1iZB5W/OJ/osEJcMAoH/PzwUIW4lEOBfA6MaBw
+	 OAC5nR+02Ki/fJ7q/nvnhY3/ZV0DdEaa3cB6v3fGeXUsQHs4VLSiIV+iGC/N7PXPHI
+	 Cieba4OL40Gag==
+Date: Wed, 31 Jul 2024 01:04:54 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
+	corbet@lwn.net, marcelo.schmitt1@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/7] Add support for AD4000 series of ADCs
+Message-ID: <a76c50b6-b1a4-4e99-b353-51ee3454ef0e@sirena.org.uk>
+References: <cover.1720810545.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPKsWRmVeSWpSXmKPExsWy7bCmnu6OjpVpBsva9SyaF69ns7i8aw6b
-	xZHPqRavj99gc2Dx2D93DbvHi80zGT36tqxi9Pi8SS6AJSrbJiM1MSW1SCE1Lzk/JTMv3VbJ
-	OzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwdoo5JCWWJOKVAoILG4WEnfzqYov7QkVSEj
-	v7jEVim1ICWnwKxArzgxt7g0L10vL7XEytDAwMgUqDAhO+PK6gaWgl7Oij2fW1gbGE+xdzFy
-	ckgImEhM3fqcqYuRi0NIYA+jxNmObVDOJ0aJP+3XoJxvjBJdt/awwLRM2L2QDSKxl1Fi8s6/
-	UFW/GCU+3t7K2MXIwcEmoCkxfa0fSIOIgJzEk9t/mEFsZoE0iVVXX7OB2MICwRIvdu5nBbFZ
-	BFQl/r5qYgZp5RWwkTh0Mg9il7zEzEvfwU7lFRCUODnzCQvEGHmJ5q2zmUHWSghsYpfoPfiR
-	CaLBRWLDnvVQhwpLvDq+BepPKYnP7/ayQdjFEkv/bIKqqZF42joDyjaW+HnuE9gNzEDnr9+l
-	D7GLT+Ld1x5WkLCEAK9ER5sQRLWKxPlVG5ggwlISDQcNIcIeEjeubgMLCwnESjw6HTGBUW4W
-	kvtnIbl/FsKqBYzMqxilUguKc9NTkw0LDHXzUsvhMZmcn7uJEZzStHx2MH5f/1fvECMTB+Mh
-	RgkOZiUR3vgrS9OEeFMSK6tSi/Lji0pzUosPMZoCA3Uis5Rocj4wqeaVxBuaWBqYmBmZWBhb
-	GpspifOeuVKWKiSQnliSmp2aWpBaBNPHxMEp1cC0+uGfCQ0ebz5n/1rBZHHq7uEjJ9y4IzTk
-	SznWhO+Ld8y9NvmEstB1b8m57G/anrTw8p7e+1xFz+SOyeIXXntk0865vtrEXjZrRm+9ZS2r
-	Ne+OvkPq9vHZUdPPXXgquHzHiboDDWe28H2X4ojco/4vZO/H9bfyRSV/tPvl7Fe2CJ4m+fpA
-	xrLcZdwXlj0MXvT//RWLybaT1df/2HX7rPjN79wq3Atmpv8WcN81cYOOb8nUO5tKjPauuc/l
-	EeaWPkfa0HdFhlLwtp7PsdLfleavlS88/OchA8e/RRKamm4z1ybrVJ9Kmp7R8/dK1ew3vKXR
-	C6Y2yrqfDXrt7zX1UaPEz8+fDaOtF89PW7DjS0xYmhJLcUaioRZzUXEiAA9kw6XyAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOLMWRmVeSWpSXmKPExsWy7bCSnO72jpVpBn8uqVo0L17PZnF51xw2
-	iyOfUy1eH7/B5sDisX/uGnaPF5tnMnr0bVnF6PF5k1wASxSXTUpqTmZZapG+XQJXxpXVDSwF
-	vZwVez63sDYwnmLvYuTkkBAwkZiweyFbFyMXh5DAbkaJe3tPskAkpCTutzUxdzFyANnCEocP
-	F0PU/GCU+H9hIitInE1AU2L6Wj+QchEBOYknt/8wg9jMAhkS376cYQOxhQUCJe6sfs4KYrMI
-	qEr8fQUxklfARuLQyTyITfISMy99BzuHV0BQ4uTMJywQY+QlmrfOZp7AyDcLSWoWktQCRqZV
-	jJKpBcW56bnFhgVGeanlesWJucWleel6yfm5mxjBYaeltYNxz6oPeocYmTgYDzFKcDArifDG
-	X1maJsSbklhZlVqUH19UmpNafIhRmoNFSZz32+veFCGB9MSS1OzU1ILUIpgsEwenVAPT6bKb
-	OzNmJtnuCNpfsXb5qXdql94XGLpPiorUtpyeIPAvqlu/eOuHd3OjdrMGqIWmHN+xOaTm1Stm
-	Ne59UXXff8+vc5i/L/U4u/y+LYUR3gIMjVXeQmVmfD+WsZcz7nFOqz/WPfGsmpiVVcRlz8R1
-	K7/nlyYzzt0VsYjvx+Uzco5Vi57/XBQa/1RUOTx+6sMgfQmOZXEOBlxvorNYErd1/2OfLfpW
-	wLyaT6jr8NeNmiwFMsorVBjYnt9YraynGCZwOks7ymb/+YU+eW5/lwT9Z/skkZTOb/ZupRXP
-	RN9NTjqz8lY5bLGLVLyz8kUB15JZxSbH22w+GV/wkjL7J1OwTXBvWPYf/tAPU6/mPVViKc5I
-	NNRiLipOBAAKu6WEqgIAAA==
-X-CMS-MailID: 20240731004335epcas1p382229e79bdaf3f2d48b0f3faa7414ea6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240731004335epcas1p382229e79bdaf3f2d48b0f3faa7414ea6
-References: <CGME20240731004335epcas1p382229e79bdaf3f2d48b0f3faa7414ea6@epcas1p3.samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Arvazn/Tx4fbX1Zo"
+Content-Disposition: inline
+In-Reply-To: <cover.1720810545.git.marcelo.schmitt@analog.com>
+X-Cookie: May all your PUSHes be POPped.
 
-This patch improves the usage of the MAR register by updating the relevant
-macro definitions and ensuring consistent usage across the codebase.
 
-Signed-off-by: Manjae Cho <manjae.cho@samsung.com>
----
-v2: Fix line length
+--Arvazn/Tx4fbX1Zo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- drivers/staging/rtl8723bs/include/hal_com_reg.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Fri, Jul 12, 2024 at 04:20:00PM -0300, Marcelo Schmitt wrote:
+> This patch series extends the SPI bitbang, gpio, and spi-engine controllers to
+> support configurable MOSI line idle states.
 
-diff --git a/drivers/staging/rtl8723bs/include/hal_com_reg.h b/drivers/staging/rtl8723bs/include/hal_com_reg.h
-index baf326d53a46..93aa391fa749 100644
---- a/drivers/staging/rtl8723bs/include/hal_com_reg.h
-+++ b/drivers/staging/rtl8723bs/include/hal_com_reg.h
-@@ -151,8 +151,8 @@
- #define REG_BSSID						0x0618
- #define REG_MAR							0x0620
- 
--#define MAR0						REG_MAR		/* Multicast Address Register, Offset 0x0620-0x0623 */
--#define MAR4						(REG_MAR + 4)	/* Multicast Address Register, Offset 0x0624-0x0627 */
-+#define MAR0		REG_MAR		/* Multicast Address Register, Offset 0x0620-0x0623 */
-+#define MAR4		(REG_MAR + 4)	/* Multicast Address Register, Offset 0x0624-0x0627 */
- 
- #define REG_MAC_SPEC_SIFS				0x063A
- /*  20100719 Joseph: Hardware register definition change. (HW datasheet v54) */
--- 
-2.25.1
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-mosi-config
+
+for you to fetch changes up to 96472f18a4affdaff5013a836c48375f1eddb4a4:
+
+  dt-bindings: iio: adc: Add AD4000 (2024-07-29 01:19:55 +0100)
+
+----------------------------------------------------------------
+spi: Support MOSI idle configuration
+
+Add support for configuring the idle state of the MOSI signal in
+controllers.
+
+----------------------------------------------------------------
+Marcelo Schmitt (5):
+      spi: Enable controllers to extend the SPI protocol with MOSI idle configuration
+      spi: bitbang: Implement support for MOSI idle state configuration
+      spi: spi-gpio: Add support for MOSI idle state configuration
+      spi: spi-axi-spi-engine: Add support for MOSI idle configuration
+      dt-bindings: iio: adc: Add AD4000
+
+ .../devicetree/bindings/iio/adc/adi,ad4000.yaml    | 197 +++++++++++++++++++++
+ Documentation/spi/spi-summary.rst                  |  83 +++++++++
+ MAINTAINERS                                        |   7 +
+ drivers/spi/spi-axi-spi-engine.c                   |  15 +-
+ drivers/spi/spi-bitbang.c                          |  24 +++
+ drivers/spi/spi-gpio.c                             |  12 +-
+ drivers/spi/spi.c                                  |   6 +
+ include/linux/spi/spi_bitbang.h                    |   1 +
+ include/uapi/linux/spi/spi.h                       |   5 +-
+ 9 files changed, 344 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+
+--Arvazn/Tx4fbX1Zo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmapf6UACgkQJNaLcl1U
+h9AiwQf/XcIk98YDz7GB9SR622tsKCJ2y0tmd2LudEfcjtQiRohCQdCwiuz+NXBS
+91FYydVEhAwxKN6hnZTxtbyJzojW0/BJIPrumlZnmAyK6C29fP8PRg7TblEYjWxt
+0tjWZ/7G6IWR3D6lpBKkyeSxuYrfmrJyaU2Fd9X1+LDeqkU0JwuhUAheXsExHlBM
+u+eECotMLQS2OS8/dsHy5ykuURF4pF3rrQ//luefyqiyqKXR53jXChduQximqJ6o
+uUgWTzcBulW87+3JmBmamPL6/9rUCy6lai6rzjCiNS7735LeaGjUJtC1TDOpcnJb
+AETnGo6zbOwwiR4fMjtILzCRqaJQiA==
+=EV5D
+-----END PGP SIGNATURE-----
+
+--Arvazn/Tx4fbX1Zo--
 
