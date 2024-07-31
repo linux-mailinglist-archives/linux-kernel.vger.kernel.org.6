@@ -1,58 +1,51 @@
-Return-Path: <linux-kernel+bounces-269748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6B1943665
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:28:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0773A943664
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC078B22972
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:28:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A0851C2223A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B82166316;
-	Wed, 31 Jul 2024 19:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6703156F30;
+	Wed, 31 Jul 2024 19:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="QihTxrdq"
-Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T69FbPm9"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5E9149C51;
-	Wed, 31 Jul 2024 19:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8078F219FF;
+	Wed, 31 Jul 2024 19:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722454068; cv=none; b=R5n2o2ACAZqLUHS2V3R/XjqGmLg+K/13ogOjuN0XN9GH61SofSWk2Mg5fBr9RPYzAPBrfYelSx9SV+naboeaEQ8zRFq0ODk0uusEkBls17rfAvTVc2fQDqpsQS9Cw6i9FwrXTDhl4eZdaLdmf2buQVAHeyj1IXESo5OhaJjCBSU=
+	t=1722454066; cv=none; b=Aq9p/mVOf7YPBYvHPa5wi78I9doX39YAoWcmt4frjsmRmW6qezB4q5qhF66pwfXHglmvOplyU9/Yi1AbMOvex1ErjrHB8V+MC5lgLkx0hQzP05WPh3QoTiC9mcC2DIJhDhoTm4Bks0P8/HOfiNPrxIwKR/TmZBEIshTOEygipCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722454068; c=relaxed/simple;
-	bh=Mhx8E0fT9obAxJYSTGJ2xXP2P1OHW/oSmyU+JnM5NMI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mDlBjFBWzABfcexKUgcS1n402IImIqQMat9mRfm0yV6/nHAcF1pOvSSlPp9yfGQb+a5f+TvT0nHHE6Db87pzAsdW87/INx2nOPJ5NztEAsi6KG2+Ez/oImZPlszvq3rIIr1EBJCZh31jCSTHi2PNcQ3YluXbMJbkSLjLmlGi0kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=QihTxrdq; arc=none smtp.client-ip=185.226.149.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
-	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1sZEz2-008LM1-1t; Wed, 31 Jul 2024 21:27:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
-	Cc:To:Subject:From:MIME-Version:Date:Message-ID;
-	bh=5cZZTTx5MpJgwdaoTjtIaSNaIM4FcBhy+Kr0FE1iKtU=; b=QihTxrdqEswI3MLvYwAESwnzUX
-	jI9p+Z15WK/vcr4r0tVB3W+ejqL80bbMyrIlGLL90Uw9BVR9tgV3acAkPXyLsH8S8354Izgw5Knc2
-	8k3fDR3N5MSaxcTeFoKF9uLBbJ3h5rW06BThrMvrUBRQ+7qGCQlawvxcXm61ROfSSDIb4GZxyJqyk
-	MtYKJEheuwNKg6wo5Vr03SvT+ogdL9dXn9ZPRl6Q0ss26/RiQB+ef0GuEUPN/kitutvbkCKcaAmgu
-	vz+nvONjMVcSFBlmgvXKpWPD4zVbqOrgcKE01nnk/+H4EA65QQg16sr1mLAQ5k2LUQmcH4laK/g9d
-	BU3iPZ7w==;
-Received: from [10.9.9.74] (helo=submission03.runbox)
-	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1sZEz1-0005EC-Ju; Wed, 31 Jul 2024 21:27:35 +0200
-Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1sZEyj-004luM-V7; Wed, 31 Jul 2024 21:27:18 +0200
-Message-ID: <9c77a7f7-4932-498a-ac51-65a5e755c926@rbox.co>
-Date: Wed, 31 Jul 2024 21:27:16 +0200
+	s=arc-20240116; t=1722454066; c=relaxed/simple;
+	bh=NQ4zOAgDS+g0eFTvmmGPXEvyIAmBQb+Oa6VhLGuQzyE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ecACK5tHDpKfqeSc2GnH2WcKHy688rZAIkEtVEHGCLjE6P9KehQHuefz+8VbAMSy3dygsRem60nrmBXcVGlaGs6jYjkat0S072rCou3/MTTd8l8xyjrtfSNZFdbq4Ks6URP/8/hRgB+N1OfoD7JOKM4u8ICspbA6VQb2HMUKV5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T69FbPm9; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E5251FF804;
+	Wed, 31 Jul 2024 19:27:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1722454054;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vmFYIjz7BwroUiQCbjrJtatEglxmooXjM7H6XpOVo64=;
+	b=T69FbPm9rWYD8fQ3Gv1ludeIeOPWanqetTYcG7+UeoyFvoY2tSgV1nrUfohLiWvrrrcuFj
+	tMSGjI7kYFKBtVKZDHKFCWQsfPyKqi1zr1OCZV5Hs+Gs/5HpSmULuE3bRxjzA7X9DLblhh
+	1X9mehuV7aHYnIkgxiFdnApBeNOAozDPrZOz6s5UF878PPafBc/zNYc8WbkM8b0tjMny7B
+	pE1R96vOgQuOd6762kkjLzib06fMXpexslX6e1AlqziabENFz5ZlGjAb06wwbbLRSlZ72x
+	nwR60GWPh1Gvl/ag67OP/pcih3UliFplucVeeH9KDoTi0nRZvWaXioa7W72wzw==
+Message-ID: <c405781e-1ada-4f93-8d12-3d532eaeb4a0@bootlin.com>
+Date: Wed, 31 Jul 2024 21:27:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,79 +53,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Michal Luczaj <mhal@rbox.co>
-Subject: Re: [PATCH] KVM: Fix error path in kvm_vm_ioctl_create_vcpu() on
- xa_store() failure
-To: Sean Christopherson <seanjc@google.com>
-Cc: Will Deacon <will@kernel.org>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Alexander Potapenko <glider@google.com>, Marc Zyngier <maz@kernel.org>
-References: <20240730155646.1687-1-will@kernel.org>
- <ccd40ae1-14aa-454e-9620-b34154f03e53@rbox.co> <Zql3vMnR86mMvX2w@google.com>
- <20240731133118.GA2946@willie-the-truck>
- <3e5f7422-43ce-44d4-bff7-cc02165f08c0@rbox.co> <Zqpj8M3xhPwSVYHY@google.com>
-Content-Language: pl-PL, en-GB
-In-Reply-To: <Zqpj8M3xhPwSVYHY@google.com>
+Subject: Re: [PATCH bpf-next v4 0/3] selftests/bpf: convert test_dev_cgroup to
+ test_progs
+To: patchwork-bot+netdevbpf@kernel.org
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+ shuah@kernel.org, ebpf@linuxfoundation.org, thomas.petazzoni@bootlin.com,
+ alan.maguire@oracle.com, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240731-convert_dev_cgroup-v4-0-849425d90de6@bootlin.com>
+ <172245123319.23492.11789565242662835897.git-patchwork-notify@kernel.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+In-Reply-To: <172245123319.23492.11789565242662835897.git-patchwork-notify@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-On 7/31/24 18:18, Sean Christopherson wrote:
-> On Wed, Jul 31, 2024, Michal Luczaj wrote:
->> On 7/31/24 15:31, Will Deacon wrote:
->>> On Tue, Jul 30, 2024 at 04:31:08PM -0700, Sean Christopherson wrote:
->>>> On Tue, Jul 30, 2024, Michal Luczaj wrote:
->>>>> On 7/30/24 17:56, Will Deacon wrote:
->>>>>> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
->>>>>> index d0788d0a72cc..b80dd8cead8c 100644
->>>>>> --- a/virt/kvm/kvm_main.c
->>>>>> +++ b/virt/kvm/kvm_main.c
->>>>>> @@ -4293,7 +4293,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
->>>>>>  
->>>>>>  	if (KVM_BUG_ON(xa_store(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, 0), kvm)) {
->>>>>>  		r = -EINVAL;
->>>>>> -		goto kvm_put_xa_release;
->>>>>> +		goto err_xa_release;
->>>>>>  	}
->>>>>>  
->>>>>>  	/*
->>>>>> @@ -4310,6 +4310,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
->>>>>>  
->>>>>>  kvm_put_xa_release:
->>>>>>  	kvm_put_kvm_no_destroy(kvm);
->>>>>> +err_xa_release:
->>>>>>  	xa_release(&kvm->vcpu_array, vcpu->vcpu_idx);
->>>>>>  unlock_vcpu_destroy:
->>>>>>  	mutex_unlock(&kvm->lock);
->>>>>
->>>>> My bad for neglecting the "impossible" path. Thanks for the fix.
->>>>>
->>>>> I wonder if it's complete. If we really want to consider the possibility of
->>>>> this xa_store() failing, then keeping vCPU fd installed and calling
->>>>> kmem_cache_free(kvm_vcpu_cache, vcpu) on the error path looks wrong.
->>>>
->>>> Yeah, the vCPU is exposed to userspace, freeing its assets will just cause
->>>> different problems.  KVM_BUG_ON() will prevent _new_ vCPU ioctl() calls (and kick
->>>> running vCPUs out of the guest), but it doesn't interrupt other CPUs, e.g. if
->>>> userspace is being sneaking and has already invoked a vCPU ioctl(), KVM will hit
->>>> a use-after-free (several of them).
->>>
->>> Damn, yes. Just because we haven't returned the fd yet, doesn't mean
->>> userspace can't make use of it.
->>>
->>>> As Michal alluded to, it should be impossible for xa_store() to fail since KVM
->>>> pre-allocates/reserves memory.  Given that, deliberately leaking the vCPU seems
->>>> like the least awful "solution".
->>>
->>> Could we actually just move the xa_store() before the fd creation? I
->>> can't immediately see any issues with that...
->>
->> Hah, please see commit afb2acb2e3a3 :) Long story short: create_vcpu_fd()
->> can legally fail, which must be handled gracefully, which would involve
->> destruction of an already xa_store()ed vCPU, which is racy.
+On 7/31/24 20:40, patchwork-bot+netdevbpf@kernel.org wrote:
+> Hello:
 > 
-> Ya, the basic problem is that we have two ways of publishing the vCPU, fd and
-> vcpu_array, with no way of setting both atomically.  Given that xa_store() should
-> never fail, I vote we do the simple thing and deliberately leak the memory.
+> This series was applied to bpf/bpf-next.git (master)
+> by Martin KaFai Lau <martin.lau@kernel.org>:
+> 
+> On Wed, 31 Jul 2024 08:37:24 +0200 you wrote:
+>> Hello,
+>> this small series aims to integrate test_dev_cgroup in test_progs so it
+>> could be run automatically in CI. The new version brings a few differences
+>> with the current one:
+>> - test now uses directly syscalls instead of wrapping commandline tools
+>>   into system() calls
+>> - test_progs manipulates /dev/null (eg: redirecting test logs into it), so
+>>   disabling access to it in the bpf program confuses the tests. To fix this,
+>>   the first commit modifies the bpf program to allow access to char devices
+>>   1:3 (/dev/null), and disable access to char devices 1:5 (/dev/zero)
+>> - once test is converted, add a small subtest to also check for device type
+>>   interpretation (char or block)
+>> - paths used in mknod tests are now in /dev instead of /tmp: due to the CI
+>>   runner organisation and mountpoints manipulations, trying to create nodes
+>>   in /tmp leads to errors unrelated to the test (ie, mknod calls refused by
+>>   kernel, not the bpf program). I don't understand exactly the root cause
+>>   at the deepest point (all I see in CI is an -ENXIO error on mknod when trying to
+>>   create the node in tmp, and I can not make sense out of it neither
+>>   replicate it locally), so I would gladly take inputs from anyone more
+>>   educated than me about this.
+>>
+>> [...]
+> 
+> Here is the summary with links:
+>   - [bpf-next,v4,1/3] selftests/bpf: do not disable /dev/null device access in cgroup dev test
+>     https://git.kernel.org/bpf/bpf-next/c/ba6a9018502e
+>   - [bpf-next,v4,2/3] selftests/bpf: convert test_dev_cgroup to test_progs
+>     https://git.kernel.org/bpf/bpf-next/c/d83d8230e415
+>   - [bpf-next,v4,3/3] selftests/bpf: add wrong type test to cgroup dev
+>     https://git.kernel.org/bpf/bpf-next/c/84cdbff4a935
+> 
+> You are awesome, thank you!
 
-I agree it's a good idea. So for a failed xa_store(), just drop the goto?
+For the record, I am not receiving the notification about my patches being
+merged (well, I receive it at least thanks to the mailing list, but not as the
+author). I see that my email address looks pretty broken in the recipient field.
+Could patchwork automation be confused by "customized" identity ?
+
+-- 
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
