@@ -1,139 +1,155 @@
-Return-Path: <linux-kernel+bounces-268979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70BA0942BDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:22:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 558AE942BDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AA87282EC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:22:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C6111C214ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF5B1AC450;
-	Wed, 31 Jul 2024 10:22:35 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECED1AAE3D;
+	Wed, 31 Jul 2024 10:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RzeoUsJ4"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D9D1AC448
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 10:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759601A7F9B
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 10:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722421355; cv=none; b=OL9Z7FPYnk9ezGEHehJN79SsxkZZvPkuzB56uMYFUJ59uDXM/LLTu5MIdEVYObwj1jWM0eD/mqIbv0+xLltVBMqZsyGACd8nELdBZ8ifIAdcBkaOnm2chHk14PHt6dKLbdp1FIwwdHCWU/ymkGjmJbA8tUYqM4BeLxJ6KypbgrY=
+	t=1722421350; cv=none; b=Xg2DSdg3b2Al9ePvHq3me4Nzz3q6IZ9ZnRA4lMumdd8wXcjCUVIBXB9tU/f8fD18rKVjLsuJ8oyppVu9zSXCOrS3zs6xvXgfPg6zOtbSxG/Zx6wjWrgeDmg280y8y/cAYnYqotCUGSTMFFm18OonORHfA8KEocy8aPHe5gY9IOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722421355; c=relaxed/simple;
-	bh=2QIVfWw+izX2Q9sW6wEFXb6cVCKckp1adDc8HzFw+2A=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YafLlYHJtJ4mewxXCDlb8Wdu2yqmoeyK40vpVoEUGFQ/Ca4sEps2Qzuiaop4iNhmHyDvxbwoW6J8py+s8lXBaOrSPbMt3gnuglkd2zNAq1wpLUm/cKnwzUWYuQGd4U3KbfoD41k7ltSSyk2kv7Yq+19S5dOoGO/7Js+dDhkblU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WYp2D5kJhz1j6LY;
-	Wed, 31 Jul 2024 18:17:56 +0800 (CST)
-Received: from dggpeml500003.china.huawei.com (unknown [7.185.36.200])
-	by mail.maildlp.com (Postfix) with ESMTPS id 837DA14037C;
-	Wed, 31 Jul 2024 18:22:30 +0800 (CST)
-Received: from huawei.com (10.44.142.84) by dggpeml500003.china.huawei.com
- (7.185.36.200) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 31 Jul
- 2024 18:22:30 +0800
-From: Yu Liao <liaoyu15@huawei.com>
-To: <tglx@linutronix.de>, <00107082@163.com>
-CC: <liaoyu15@huawei.com>, <liwei391@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <x86@kernel.org>
-Subject: [PATCH] tick/broadcast: Fix smp_processor_id()-in-preemptible warnings
-Date: Wed, 31 Jul 2024 18:19:28 +0800
-Message-ID: <20240731101928.132591-1-liaoyu15@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1722421350; c=relaxed/simple;
+	bh=Q9ociHUAqKywTUlfHPzQF1LeNBZNAYh/Lbh0l/ZXFNk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b6TI3OfGhSIvtx7eTvfndaBzbnHahvmv/Ey1qvGKr4uq3RTZ5vh0Em3Ijv37jAOn5rnAjWmoYioBR0jeJhcah7C4e8ufTyPlKF0ZB4wgHEkLYo4BjZxEAy0mO0J9gp9OCmjxb245kxg2i05KcFWNETbWcADG6nSPX9P8czq+itg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RzeoUsJ4; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1722421339; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=9h+g/1oD2W/YdX4QEHKvjvVLn4FL9lC4w/DaudYh6/w=;
+	b=RzeoUsJ4ivRrSD366DH9mmPDvuHKPaQQxDe/7Fa+wYs+5FYU2i69zpLhl7jjrAz31R2yA8sfEUpwI9IOYmbn84QLG8fRBCMWFbQZTioWlnmjFUkbgv88lsTJE2TPqkPhc41PBMRMgAkcDVjzNpyjWIms31SavnxsznfvST7uKP4=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045220184;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0WBj2509_1722421337;
+Received: from 30.97.56.76(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WBj2509_1722421337)
+          by smtp.aliyun-inc.com;
+          Wed, 31 Jul 2024 18:22:18 +0800
+Message-ID: <ba3e3dfa-d019-4991-9e3a-d73ffa83bb36@linux.alibaba.com>
+Date: Wed, 31 Jul 2024 18:22:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] mm: shmem: avoid allocating huge pages larger than
+ MAX_PAGECACHE_ORDER for shmem
+To: Kefeng Wang <wangkefeng.wang@huawei.com>, Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org,
+ david@redhat.com, ryan.roberts@arm.com, ziy@nvidia.com, gshan@redhat.com,
+ ioworker0@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <117121665254442c3c7f585248296495e5e2b45c.1722404078.git.baolin.wang@linux.alibaba.com>
+ <CAGsJ_4xmHY06VAKzXxCFcovPkrR0WOR28jXbaeD5VyUBHWzn_w@mail.gmail.com>
+ <c55d7ef7-78aa-4ed6-b897-c3e03a3f3ab7@linux.alibaba.com>
+ <87769ae8-b6c6-4454-925d-1864364af9c8@huawei.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <87769ae8-b6c6-4454-925d-1864364af9c8@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpeml500003.china.huawei.com (7.185.36.200)
 
-David reports that commit f7d43dd206e7 ("tick/broadcast: Make takeover
-of broadcast hrtimer reliable") introduced the following splat with
-CONFIG_DEBUG_PREEMPT enabled:
 
- [ 1734.414952] BUG: using smp_processor_id() in preemptible [00000000] code: systemd-sleep/4619
- [ 1734.414957] caller is hotplug_cpu__broadcast_tick_pull+0x1c/0xc0
- [ 1734.414964] CPU: 0 UID: 0 PID: 4619 Comm: systemd-sleep Tainted: P           OE      6.11.0-rc1-linan-4 #292
- [ 1734.414968] Tainted: [P]=PROPRIETARY_MODULE, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
- [ 1734.414969] Hardware name: Micro-Star International Co., Ltd. MS-7B89/B450M MORTAR MAX (MS-7B89), BIOS 2.80 06/10/2020
- [ 1734.414970] Call Trace:
- [ 1734.414974]  <TASK>
- [ 1734.414978]  dump_stack_lvl+0x60/0x80
- [ 1734.414982]  check_preemption_disabled+0xce/0xe0
- [ 1734.414987]  hotplug_cpu__broadcast_tick_pull+0x1c/0xc0
- [ 1734.414996]  takedown_cpu+0x97/0x130
- [ 1734.414999]  cpuhp_invoke_callback+0xf8/0x450
 
-this_cpu_ptr() calls smp_processor_id() in a preemptible context. Fix
-this by moving the this_cpu operation to interrupt disable code segment.
+On 2024/7/31 17:59, Kefeng Wang wrote:
+> 
+> 
+> On 2024/7/31 16:56, Baolin Wang wrote:
+>>
+>>
+>> On 2024/7/31 14:18, Barry Song wrote:
+>>> On Wed, Jul 31, 2024 at 1:46 PM Baolin Wang
+>>> <baolin.wang@linux.alibaba.com> wrote:
+>>>>
+>>>> Similar to commit d659b715e94ac ("mm/huge_memory: avoid PMD-size 
+>>>> page cache
+>>>> if needed"), ARM64 can support 512MB PMD-sized THP when the base 
+>>>> page size is
+>>>> 64KB, which is larger than the maximum supported page cache size 
+>>>> MAX_PAGECACHE_ORDER.
+>>>> This is not expected. To fix this issue, use 
+>>>> THP_ORDERS_ALL_FILE_DEFAULT for
+>>>> shmem to filter allowable huge orders.
+>>>>
+>>>> Fixes: e7a2ab7b3bb5 ("mm: shmem: add mTHP support for anonymous shmem")
+>>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>
+>>> Reviewed-by: Barry Song <baohua@kernel.org>
+>>
+>> Thanks for reviewing.
+>>
+>>>
+>>>> ---
+>>>>   mm/shmem.c | 4 ++--
+>>>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/mm/shmem.c b/mm/shmem.c
+>>>> index 2faa9daaf54b..a4332a97558c 100644
+>>>> --- a/mm/shmem.c
+>>>> +++ b/mm/shmem.c
+>>>> @@ -1630,10 +1630,10 @@ unsigned long 
+>>>> shmem_allowable_huge_orders(struct inode *inode,
+>>>>          unsigned long within_size_orders = 
+>>>> READ_ONCE(huge_shmem_orders_within_size);
+>>>>          unsigned long vm_flags = vma->vm_flags;
+>>>>          /*
+>>>> -        * Check all the (large) orders below HPAGE_PMD_ORDER + 1 that
+>>>> +        * Check all the (large) orders below MAX_PAGECACHE_ORDER + 
+>>>> 1 that
+>>>>           * are enabled for this vma.
+>>>
+>>> Nit:
+>>> THP_ORDERS_ALL_FILE_DEFAULT should be self-explanatory enough.
+>>> I feel we don't need this comment?
+>>
+>> Sure.
+>>
+>> Andrew, please help to squash the following changes into this patch. 
+>> Thanks.
+> 
+> Maybe drop unsigned long orders too?
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 6af95f595d6f..8485eb6f2ec4 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1638,11 +1638,6 @@ unsigned long shmem_allowable_huge_orders(struct 
+> inode *inode,
+>          unsigned long mask = READ_ONCE(huge_shmem_orders_always);
+>          unsigned long within_size_orders = 
+> READ_ONCE(huge_shmem_orders_within_size);
+>          unsigned long vm_flags = vma ? vma->vm_flags : 0;
+> -       /*
+> -        * Check all the (large) orders below HPAGE_PMD_ORDER + 1 that
+> -        * are enabled for this vma.
+> -        */
+> -       unsigned long orders = BIT(PMD_ORDER + 1) - 1;
+>          bool global_huge;
+>          loff_t i_size;
+>          int order;
+> @@ -1698,7 +1693,7 @@ unsigned long shmem_allowable_huge_orders(struct 
+> inode *inode,
+>          if (global_huge)
+>                  mask |= READ_ONCE(huge_shmem_orders_inherit);
+> 
+> -       return orders & mask;
+> +       return THP_ORDERS_ALL_FILE_DEFAULT & mask;
+>   }
 
-Also, use __this_cpu_read() instead of this_cpu_ptr() to save a few
-instructions.
-
-this_cpu_ptr(&tick_cpu_device):
-  callq  0xffffffff81ef4a30 <debug_smp_processor_id>
-  mov    $0x20b60,%r12
-  mov    %eax,%eax
-  add    -0x7d7cb4e0(,%rax,8),%r12
-  callq  0xffffffff81ef4a30 <debug_smp_processor_id>
-  mov    %eax,%eax
-  lock btr %rax,0x23f5fc6(%rip)
-  mov    (%r12),%rax
-  mov    $0x1,%esi
-  mov    0x18(%rax),%rdi
-
-__this_cpu_read(tick_cpu_device.evtdev):
-  mov    $0xffffffff82742a33,%rdi
-  callq  0xffffffff81ef4a60 <__this_cpu_preempt_check>
-  mov    %gs:0x7eed2098(%rip),%r12        # 0x20b60 <tick_cpu_device>
-  callq  0xffffffff81ef4a30 <debug_smp_processor_id>
-  mov    %eax,%eax
-  lock btr %rax,0x23f5fc8(%rip)
-  mov    0x18(%r12),%rdi
-  mov    $0x1,%esi
-
-Fixes: f7d43dd206e7 ("tick/broadcast: Make takeover of broadcast hrtimer reliable")
-Reported-by: David Wang <00107082@163.com>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Yu Liao <liaoyu15@huawei.com>
----
- kernel/time/tick-broadcast.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/time/tick-broadcast.c b/kernel/time/tick-broadcast.c
-index b4843099a8da..85f7d0017e90 100644
---- a/kernel/time/tick-broadcast.c
-+++ b/kernel/time/tick-broadcast.c
-@@ -1141,7 +1141,6 @@ void tick_broadcast_switch_to_oneshot(void)
- #ifdef CONFIG_HOTPLUG_CPU
- void hotplug_cpu__broadcast_tick_pull(int deadcpu)
- {
--	struct tick_device *td = this_cpu_ptr(&tick_cpu_device);
- 	struct clock_event_device *bc;
- 	unsigned long flags;
- 
-@@ -1167,8 +1166,10 @@ void hotplug_cpu__broadcast_tick_pull(int deadcpu)
- 		 * device to avoid the starvation.
- 		 */
- 		if (tick_check_broadcast_expired()) {
-+			struct clock_event_device *dev = __this_cpu_read(tick_cpu_device.evtdev);
-+
- 			cpumask_clear_cpu(smp_processor_id(), tick_broadcast_force_mask);
--			tick_program_event(td->evtdev->next_event, 1);
-+			tick_program_event(dev->next_event, 1);
- 		}
- 
- 		/* This moves the broadcast assignment to this CPU: */
--- 
-2.33.0
-
+Yes. Good point. Thanks.
+(Hope Andrew can help to squash these changes :))
 
