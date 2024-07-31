@@ -1,248 +1,152 @@
-Return-Path: <linux-kernel+bounces-268760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD869428FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:16:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E929428FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F79D1C2236E
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:16:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74F261C21DFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731F31A76D3;
-	Wed, 31 Jul 2024 08:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A4D1A8BFE;
+	Wed, 31 Jul 2024 08:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="SWOkhZj/"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pp5Iksg8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382111A721B
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6291A721B;
+	Wed, 31 Jul 2024 08:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722413789; cv=none; b=QfkLBcYDzNAgda5Hf/AJ0CHSyDS5pGm6jHinAxqyBxNbPAFIe8u2C/IljTG7aT5rluCTNE1qZ0dlI+yY4vkXsk6OWOfUhsyGZqFsNahSZQdiMyyn9PIpcXUsQgoJzE0BGb2httWWCXUhpsu9q4YNswi3mk4QExMu0gR/omre5yU=
+	t=1722413794; cv=none; b=SsulWiT/fKbwVaT4epdMpVVRAFWQrznAz6fVwWSy0esAuLqefDm3cBfl7LHoYBgd3kgrrJamCnYQakQrNqgMuCQQ3YKdalTcEZ7p+E6KtNoSa1E6JJiVXtmmzOku3dxy6t8YVfqxLN19nXc8gCl5BzZPg2bQ++2wf2yGEIPfd1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722413789; c=relaxed/simple;
-	bh=VRqKAJOy6m4p+YhsIn8BA6La5LcxiXKw7xYaFwK534M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EXNwPBqaKS4nat6lcEgFzsA7lVWaiBi+KpN5IvNlElm62K+THO4RAcdurXtC3lCKg+n6rmjOi/5U9i2vpKAMQXHprpawK0sm58puRpnBQNcxkrEj5cjJYpShYYXzUVoWix6H3ni4pXKZRgrzASn6xFwBWk5cEApYWlAkoc7Jd2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=SWOkhZj/; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a156557026so7554108a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 01:16:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1722413785; x=1723018585; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m/fSCJ0gO5y0QMag6R2NrJhuJS3/7JER7LSWOIvnsvI=;
-        b=SWOkhZj/qyWNAUxDd4AVSvWctkRq4W5wUjdEcXaYUAHXDHT6HqGIyYoYwS6XYZSuQw
-         Nbn+fVT14R/gLdTmPTuyYiP5TkfUvMpCZNRC6L2V/fqlEkee0b3bxahIxrpThPp92Mdx
-         uip7/8S+UNEfYUjAwx9bqJGskAcOfSDNRojg7xX0808KJt5gP09fZug2CB1SeIZhJH68
-         bdEEm3vw76C7bP8h4obms9dPsjhUWHVLorIJLAV1/5+FqMq66LVzdG3bo0WPTY08QZSV
-         ZVt7J6Re0b99Hj4M8RdILwy+PnADKMRnOTdL3TugVs6qPiIb9b7nRBadOfEoRkAtNpI0
-         vJDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722413785; x=1723018585;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m/fSCJ0gO5y0QMag6R2NrJhuJS3/7JER7LSWOIvnsvI=;
-        b=goOemfZg2N+afi7t6wGfmkLJi+2oCk9kWs8lDzXuTeVpTTEtFdaI/llwEUUcrx4H3r
-         fXFPlHOr4I/qU4BWnLSik94PK+n0Z2fY0mLdhTmUh/UOju0drJjqKDet5AD9p2byUaMt
-         FOM2WARjAe1oETgVVsF+Q+UR5oPmgYmBlJ1MPTA7ovzA4pteR+I+/ixKZesTO7sBBjFk
-         Xm1TrEuUPgLHlPDqvmmOtb8fmiJhd5TOqNQ/iTEpd5GlBY1t8yBn3v6/xijmmgqKFvIO
-         P2dD5J7Lc13IgkExc2CmoyrZs7+DFydClDBxCS2Kie2oU2QU8ZL0CDoe6aar2/vx/FPF
-         G2YA==
-X-Forwarded-Encrypted: i=1; AJvYcCWADWBlo4J5aCGiIxL4EpxMLhxlOMJLwvmYpFKh0ElEgCLE8t22FXE0AFLNOXsKDIkIEEBnIuRd0YTmifMPjz5KQFuKtobTSiTzWK1p
-X-Gm-Message-State: AOJu0YzEnBDEWTqw4lbInEqTNE9F7VBZLuvaSSGijzODlUlfRbQgMeTu
-	7km13ejSBMJMaww4ap+hnyEKiYkqWoudgWCmitnooU2Robx61QRqeqpdp+su2woclKhRhMPtLQf
-	hZCigvi95MfpoZD2SM/ZBVopEZs0ZlMdsRq0a/w==
-X-Google-Smtp-Source: AGHT+IGMx4OsR5EFVYblD0lSG7d0iAtZq7q9ZxsA5v2ifPUDJLxXPMkDubiklXhu29AiH6QOnClEEMDErMS7Ph87Q94=
-X-Received: by 2002:a17:907:2da0:b0:a77:dd1c:6276 with SMTP id
- a640c23a62f3a-a7d3fdb7ac7mr1210454866b.7.1722413785535; Wed, 31 Jul 2024
- 01:16:25 -0700 (PDT)
+	s=arc-20240116; t=1722413794; c=relaxed/simple;
+	bh=5oRKcekbyt486+TVjpwgoDMS2097DCQbNNHp9RC330U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cRWI9TliGdl4HSAQI+cGmRiqloiyMhvMYP0yFZM+EL+QzNCGCe5RgjbrVoTvLuvap/lgLUS5kYiY7BvMx96AItgjCX2Mw5EYmbGoykXJEUDgmg7T/GlzPG+NrLxEobtWuxy7Mt4atPmPPM1a6eOmjY478jZ2R2wq42IIlj+LRZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pp5Iksg8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98A5BC4AF0B;
+	Wed, 31 Jul 2024 08:16:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722413793;
+	bh=5oRKcekbyt486+TVjpwgoDMS2097DCQbNNHp9RC330U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Pp5Iksg8yMhKHR3IBfURNqMVd5UzchffW65fqmBMfGE7BShyrt7sLA1NxhWvnoFAE
+	 zFaVcULFslmd+KJR8GdU1dL4LJsKmxaY5ww+Cb9BR5M0j3X3MujHqW7tQ8Nql8N5MP
+	 W82jiMj1O7THB90SjCI3qBtzAJyMlob81gb0tBXTnNVyAj1uMgPg/LWZnvbEJkZSrY
+	 aIwTIo72ekX8yGc6lhjZZjUGaaGxvAXq3zSUYfSPNLsNhO7Wre1Mbt3PuNHFTuX66D
+	 Vp+O62JomYGvDZpWfMF1L7WUy8Gl7iZdcsO7BMGanqtuqwdCMK3ldokt0cT01h363x
+	 0vWx4Vc4F28lA==
+Message-ID: <bb696e60-642f-43f1-9ccf-972e1d839bcd@kernel.org>
+Date: Wed, 31 Jul 2024 10:16:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729091532.855688-1-max.kellermann@ionos.com>
- <3575457.1722355300@warthog.procyon.org.uk> <CAKPOu+9_TQx8XaB2gDKzwN-YoN69uKoZGiCDPQjz5fO-2ztdFQ@mail.gmail.com>
-In-Reply-To: <CAKPOu+9_TQx8XaB2gDKzwN-YoN69uKoZGiCDPQjz5fO-2ztdFQ@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Wed, 31 Jul 2024 10:16:14 +0200
-Message-ID: <CAKPOu+-4C7qPrOEe=trhmpqoC-UhCLdHGmeyjzaUymg=k93NEA@mail.gmail.com>
-Subject: Re: [PATCH] netfs, ceph: Revert "netfs: Remove deprecated use of
- PG_private_2 as a second writeback flag"
-To: David Howells <dhowells@redhat.com>
-Cc: Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, 
-	Jeff Layton <jlayton@kernel.org>, willy@infradead.org, ceph-devel@vger.kernel.org, 
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] dt-bindings: arm64: mediatek: Add
+ kukui-jacuzzi-cerise board
+To: Hsin-Te Yuan <yuanhsinte@chromium.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240731-jacuzzi_dt-v2-0-4995335daa30@chromium.org>
+ <20240731-jacuzzi_dt-v2-2-4995335daa30@chromium.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240731-jacuzzi_dt-v2-2-4995335daa30@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 30, 2024 at 6:28=E2=80=AFPM Max Kellermann <max.kellermann@iono=
-s.com> wrote:
-> If I understand this correctly, my other problem (the
-> folio_attach_private conflict between netfs and ceph) I posted in
-> https://lore.kernel.org/ceph-devel/CAKPOu+8q_1rCnQndOj3KAitNY2scPQFuSS-Ax=
-eGru02nP9ZO0w@mail.gmail.com/
-> was caused by my (bad) patch after all, wasn't it?
+On 31/07/2024 08:26, Hsin-Te Yuan wrote:
+> Cerise is known as ASUS Chromebook CZ1.
+> Stern is known as ASUS Chromebook Flip CZ1.
+> 
+> They are almost identical. The only difference is that Cerise is a
+> clamshell device without touchscreen and Stern is a convertible device.
+> 
+> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+> ---
+>  Documentation/devicetree/bindings/arm/mediatek.yaml | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
+> index 1d4bb50fcd8d..087773a43673 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
+> +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
+> @@ -146,6 +146,20 @@ properties:
+>          items:
+>            - const: google,burnet
+>            - const: mediatek,mt8183
+> +      - description: Google Cerise (ASUS Chromebook CZ1)
+> +        items:
+> +          - enum:
+> +              - google,cerise-sku0
+> +              - google,cerise-rev3-sku0
+> +          - const: google,cerise
+> +          - const: mediatek,mt8183
+> +      - description: Google Stern (ASUS Chromebook Flip CZ1)
+> +        items:
+> +          - enum:
+> +              - google,cerise-sku1
+> +              - google,cerise-rev3-sku1
+> +          - const: google,cerise
 
-It was not caused by my bad patch. Without my patch, but with your
-revert instead I just got a crash (this time, I enabled lots of
-debugging options in the kernel, including KASAN) - it's the same
-crash as in the post I linked in my previous email:
+Why not google,stern? If this is not compatible with cerise and has
+different name, I think logical would be to have different compatible -
+either here or the first one.
 
- ------------[ cut here ]------------
- WARNING: CPU: 13 PID: 3621 at fs/ceph/caps.c:3386
-ceph_put_wrbuffer_cap_refs+0x416/0x500
- Modules linked in:
- CPU: 13 PID: 3621 Comm: rsync Not tainted 6.10.2-cm4all2-vm+ #176
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01=
-/2014
- RIP: 0010:ceph_put_wrbuffer_cap_refs+0x416/0x500
- Code: e8 af 7f 50 01 45 84 ed 75 27 45 8d 74 24 ff e9 cf fd ff ff e8
-ab ea 64 ff e9 4c fc ff ff 31 f6 48 89 df e8 3c 86 ff ff eb b5 <0f> 0b
-e9 7a ff ff ff 31 f6 48 89 df e8 29 86 ff ff eb cd 0f 0b 48
- RSP: 0018:ffff88813c57f868 EFLAGS: 00010286
- RAX: dffffc0000000000 RBX: ffff88823dc66588 RCX: 0000000000000000
- RDX: 1ffff11047b8cda7 RSI: ffff88823dc66df0 RDI: ffff88823dc66d38
- RBP: 0000000000000001 R08: 0000000000000000 R09: fffffbfff5f9a8cd
- R10: ffffffffafcd466f R11: 0000000000000001 R12: 0000000000000000
- R13: ffffea000947af00 R14: 00000000ffffffff R15: 0000000000000356
- FS:  00007f1e82957b80(0000) GS:ffff888a73400000(0000) knlGS:00000000000000=
-00
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 0000559037dacea8 CR3: 000000013f1b2002 CR4: 00000000001706b0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- Call Trace:
-  <TASK>
-  ? __warn+0xc8/0x2c0
-  ? ceph_put_wrbuffer_cap_refs+0x416/0x500
-  ? report_bug+0x257/0x2b0
-  ? handle_bug+0x3c/0x70
-  ? exc_invalid_op+0x13/0x40
-  ? asm_exc_invalid_op+0x16/0x20
-  ? ceph_put_wrbuffer_cap_refs+0x416/0x500
-  ? ceph_put_wrbuffer_cap_refs+0x2e/0x500
-  ceph_invalidate_folio+0x241/0x310
-  truncate_cleanup_folio+0x277/0x330
-  truncate_inode_pages_range+0x1b4/0x940
-  ? __pfx_truncate_inode_pages_range+0x10/0x10
-  ? __lock_acquire+0x19f3/0x5c10
-  ? __lock_acquire+0x19f3/0x5c10
-  ? __pfx___lock_acquire+0x10/0x10
-  ? __pfx___lock_acquire+0x10/0x10
-  ? srso_alias_untrain_ret+0x1/0x10
-  ? lock_acquire+0x186/0x490
-  ? find_held_lock+0x2d/0x110
-  ? kvm_sched_clock_read+0xd/0x20
-  ? local_clock_noinstr+0x9/0xb0
-  ? __pfx_lock_release+0x10/0x10
-  ? lockdep_hardirqs_on_prepare+0x275/0x3e0
-  ceph_evict_inode+0xd5/0x530
-  evict+0x251/0x560
-  __dentry_kill+0x17b/0x500
-  dput+0x393/0x690
-  __fput+0x40e/0xa60
-  __x64_sys_close+0x78/0xd0
-  do_syscall_64+0x82/0x130
-  ? lockdep_hardirqs_on_prepare+0x275/0x3e0
-  ? syscall_exit_to_user_mode+0x9f/0x190
-  ? do_syscall_64+0x8e/0x130
-  ? lockdep_hardirqs_on_prepare+0x275/0x3e0
-  ? lockdep_hardirqs_on_prepare+0x275/0x3e0
-  ? syscall_exit_to_user_mode+0x9f/0x190
-  ? do_syscall_64+0x8e/0x130
-  ? do_syscall_64+0x8e/0x130
-  ? lockdep_hardirqs_on_prepare+0x275/0x3e0
-  entry_SYSCALL_64_after_hwframe+0x76/0x7e
- RIP: 0033:0x7f1e823178e0
- Code: 0d 00 00 00 eb b2 e8 ff f7 01 00 66 2e 0f 1f 84 00 00 00 00 00
-0f 1f 44 00 00 80 3d 01 1d 0e 00 00 74 17 b8 03 00 00 00 0f 05 <48> 3d
-00 f0 ff ff 77 48 c3 0f 1f 80 00 00 00 00 48 83 ec 18 89 7c
- RSP: 002b:00007ffe16c2e108 EFLAGS: 00000202 ORIG_RAX: 0000000000000003
- RAX: ffffffffffffffda RBX: 000000000000001e RCX: 00007f1e823178e0
- RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000001
- RBP: 00007f1e8219bc08 R08: 0000000000000000 R09: 0000559037df64b0
- R10: fe04b91e88691591 R11: 0000000000000202 R12: 0000000000000001
- R13: 0000000000000000 R14: 00007ffe16c2e220 R15: 0000000000000001
-  </TASK>
- irq event stamp: 26945
- hardirqs last  enabled at (26951): [<ffffffffaaac5a99>]
-console_unlock+0x189/0x1b0
- hardirqs last disabled at (26956): [<ffffffffaaac5a7e>]
-console_unlock+0x16e/0x1b0
- softirqs last  enabled at (26518): [<ffffffffaa962375>] irq_exit_rcu+0x95/=
-0xc0
- softirqs last disabled at (26513): [<ffffffffaa962375>] irq_exit_rcu+0x95/=
-0xc0
- ---[ end trace 0000000000000000 ]---
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
- BUG: KASAN: null-ptr-deref in ceph_put_snap_context+0x18/0x50
- Write of size 4 at addr 0000000000000356 by task rsync/3621
+Best regards,
+Krzysztof
 
- CPU: 13 PID: 3621 Comm: rsync Tainted: G        W
-6.10.2-cm4all2-vm+ #176
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01=
-/2014
- Call Trace:
-  <TASK>
-  dump_stack_lvl+0x74/0xd0
-  kasan_report+0xb9/0xf0
-  ? ceph_put_snap_context+0x18/0x50
-  kasan_check_range+0xeb/0x1a0
-  ceph_put_snap_context+0x18/0x50
-  ceph_invalidate_folio+0x249/0x310
-  truncate_cleanup_folio+0x277/0x330
-  truncate_inode_pages_range+0x1b4/0x940
-  ? __pfx_truncate_inode_pages_range+0x10/0x10
-  ? __lock_acquire+0x19f3/0x5c10
-  ? __lock_acquire+0x19f3/0x5c10
-  ? __pfx___lock_acquire+0x10/0x10
-  ? __pfx___lock_acquire+0x10/0x10
-  ? srso_alias_untrain_ret+0x1/0x10
-  ? lock_acquire+0x186/0x490
-  ? find_held_lock+0x2d/0x110
-  ? kvm_sched_clock_read+0xd/0x20
-  ? local_clock_noinstr+0x9/0xb0
-  ? __pfx_lock_release+0x10/0x10
-  ? lockdep_hardirqs_on_prepare+0x275/0x3e0
-  ceph_evict_inode+0xd5/0x530
-  evict+0x251/0x560
-  __dentry_kill+0x17b/0x500
-  dput+0x393/0x690
-  __fput+0x40e/0xa60
-  __x64_sys_close+0x78/0xd0
-  do_syscall_64+0x82/0x130
-  ? lockdep_hardirqs_on_prepare+0x275/0x3e0
-  ? syscall_exit_to_user_mode+0x9f/0x190
-  ? do_syscall_64+0x8e/0x130
-  ? lockdep_hardirqs_on_prepare+0x275/0x3e0
-  ? lockdep_hardirqs_on_prepare+0x275/0x3e0
-  ? syscall_exit_to_user_mode+0x9f/0x190
-  ? do_syscall_64+0x8e/0x130
-  ? do_syscall_64+0x8e/0x130
-  ? lockdep_hardirqs_on_prepare+0x275/0x3e0
-  entry_SYSCALL_64_after_hwframe+0x76/0x7e
- RIP: 0033:0x7f1e823178e0
- Code: 0d 00 00 00 eb b2 e8 ff f7 01 00 66 2e 0f 1f 84 00 00 00 00 00
-0f 1f 44 00 00 80 3d 01 1d 0e 00 00 74 17 b8 03 00 00 00 0f 05 <48> 3d
-00 f0 ff ff 77 48 c3 0f 1f 80 00 00 00 00 48 83 ec 18 89 7c
- RSP: 002b:00007ffe16c2e108 EFLAGS: 00000202 ORIG_RAX: 0000000000000003
- RAX: ffffffffffffffda RBX: 000000000000001e RCX: 00007f1e823178e0
- RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000001
- RBP: 00007f1e8219bc08 R08: 0000000000000000 R09: 0000559037df64b0
- R10: fe04b91e88691591 R11: 0000000000000202 R12: 0000000000000001
- R13: 0000000000000000 R14: 00007ffe16c2e220 R15: 0000000000000001
-  </TASK>
 
