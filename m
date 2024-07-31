@@ -1,75 +1,174 @@
-Return-Path: <linux-kernel+bounces-268358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8E29423A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:59:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073D69423A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FEFEB23D51
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 23:59:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B41C5285591
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96A11946CC;
-	Tue, 30 Jul 2024 23:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A8725757;
+	Wed, 31 Jul 2024 00:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GaWJTz7s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ewGzNSiD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042D118DF7B;
-	Tue, 30 Jul 2024 23:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CB21AA3E3
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 00:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722383954; cv=none; b=TJqhX97+r1q+5yNW24BlWUmY3ENKQx9A82IQDUDaiaXK9ZkpKg7pGNtG00isY0kodyqfYzXom1FjxiDaJSaSMHIMIotEyfSskon0y96kgqcSM3N3ynrt4qLsYK9uXVFYmrOgH0s+SNx0y9YHaJ07h1d605k4iuikqC+ojoOdjJw=
+	t=1722384042; cv=none; b=UvE2C1bC/lmsSG7KTFcEST7wX6GAjcyUQRzV0dR359tQo+wyZjabF9EcitG4zRr5Njzyf1+3TDCHNICKSVOwDW+wSOcH/YeFzTGulSAy7Eju27waA0mt753oaFKsAZh7Q9QZ9g34XNkAnTfKs41FzMHrpLAsuiaCBswli9RK8L0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722383954; c=relaxed/simple;
-	bh=bOSfBfu48OQoW+y0suZVARTS2ibFatRunHlnSxblh7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n25JIGFWnXsiUw9fXs9DXWu2FAeSBjesQRiVm0jIUeZulwkjWGTnkrJVGdFM9eH6Sgu6WS9pJ5yTHqIvBzWCiVbMA+wKBxhzt0yXAntr8lVo2M1q7sLpaGuKvBlrh1+JUzRPvtih6/hD4QQMu7J9nK5YqIWyz/OOA72Hp2/BxsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GaWJTz7s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CFF5C32782;
-	Tue, 30 Jul 2024 23:59:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722383953;
-	bh=bOSfBfu48OQoW+y0suZVARTS2ibFatRunHlnSxblh7A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GaWJTz7sPmUdpgzOiosnIGcA1y7+zQ6MY3Y8eNVnB2HFH4r8tTCst48TXgrFEKn+y
-	 4fFAOKmP+H+DdlErX50tI6B4FkxZMuZi/kV2RmxChz65A0WEsBcogiIxee/FTe9QLp
-	 MnExB5VrA2+yMVZiw80UqDOo9KD6tPEFPVJW3+gQfRAqxzZEl/T3Ii6u50WNA3p6xe
-	 OKog30WzDXbK/bpbMRpmnctUfDtfZni64vNaH9Nzff6M0y1/KIvPHstpZI0xfCuZnz
-	 8Ody4XsO4OsYkHeyCe1roJFWmxR2Ubv4YtHrq4n3Nw4LnJhWemKMZUgbH2pkKlApvy
-	 /v9jDXGY7EOww==
-Date: Tue, 30 Jul 2024 16:59:12 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- idosch@nvidia.com, jiri@resnulli.us, amcohen@nvidia.com,
- liuhangbin@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
-Subject: Re: [PATCH net] rtnetlink: fix possible deadlock in
- team_port_change_check
-Message-ID: <20240730165912.67600510@kernel.org>
-In-Reply-To: <20240730152210.25153-1-aha310510@gmail.com>
-References: <20240730152210.25153-1-aha310510@gmail.com>
+	s=arc-20240116; t=1722384042; c=relaxed/simple;
+	bh=dPtgxEF39y7tufQdF+g0puYtqRlVBHzeN+kaxzB5Bdg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eYtUexznlaiAOcp0jbpdQCd5NzmR/Hjc2kCQNysP9FZjRaEDfx2gCDtPQc5Pe3p0mxbwXLyC8ZaKxOt8kaeCNuUzYMTi1B454AM8rFlZhHVTCDhrco4SqN/LGl8OcXhnZbKgqAhouKOyGnKxLYiExlIUbSFcM0xxiclvr6X1Qy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ewGzNSiD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722384038;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DqY5AwvBWg4EHFX8v7m/gB2IpLCYEyw1Y9QmtLSSf7M=;
+	b=ewGzNSiDTjohqvqgpu94+K8LjDrEYUfqxc3cKkCjlhf7dYu3NP4xtG+tnhSyzpgKhwYkMR
+	YX8SdEHZWsC9TOVnfFcXgsFtQHRIXW62N89ys5JCoa9SrhFE5W8HEga1VnxIsKjUyeLr+Q
+	aRdAxaBa3VIpsDzjVv18mNSqDtuPbEI=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-352-x-8CEpv0MEuYKfg9aXRM7w-1; Tue,
+ 30 Jul 2024 20:00:34 -0400
+X-MC-Unique: x-8CEpv0MEuYKfg9aXRM7w-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1E4841955D48;
+	Wed, 31 Jul 2024 00:00:28 +0000 (UTC)
+Received: from [10.22.16.52] (unknown [10.22.16.52])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 80331300018D;
+	Wed, 31 Jul 2024 00:00:25 +0000 (UTC)
+Message-ID: <5ea8f4f4-14f7-4df2-b0a2-cae5d6697dc6@redhat.com>
+Date: Tue, 30 Jul 2024 20:00:24 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH-cgroup v7] cgroup: Show # of subsystem CSSes in
+ cgroup.stat
+To: Tejun Heo <tj@kernel.org>
+Cc: Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Kamalesh Babulal <kamalesh.babulal@oracle.com>
+References: <20240715150034.2583772-1-longman@redhat.com>
+ <ZpVcxlx1VR3FaoYI@google.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <ZpVcxlx1VR3FaoYI@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, 31 Jul 2024 00:22:10 +0900 Jeongjun Park wrote:
-> do_setlink() changes the flag of the device and then enslaves it. However,
-> in this case, if the IFF_UP flag is set, the enslavement process calls
-> team_add_slave() to acquire 'team->lock', but when dev_open() opens the
-> newly enslaved device, the NETDEV_UP event occurs, and as a result,
-> a deadlock occurs when team_port_change_check() tries to acquire 
-> 'team->lock' again.
 
-You can't change behavior like this, see ec4ffd100ffb396ec
--- 
-pw-bot: reject
+On 7/15/24 13:30, Roman Gushchin wrote:
+> On Mon, Jul 15, 2024 at 11:00:34AM -0400, Waiman Long wrote:
+>> Cgroup subsystem state (CSS) is an abstraction in the cgroup layer to
+>> help manage different structures in various cgroup subsystems by being
+>> an embedded element inside a larger structure like cpuset or mem_cgroup.
+>>
+>> The /proc/cgroups file shows the number of cgroups for each of the
+>> subsystems.  With cgroup v1, the number of CSSes is the same as the
+>> number of cgroups.  That is not the case anymore with cgroup v2. The
+>> /proc/cgroups file cannot show the actual number of CSSes for the
+>> subsystems that are bound to cgroup v2.
+>>
+>> So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
+>> we can't tell by looking at /proc/cgroups which cgroup subsystems may
+>> be responsible.
+>>
+>> As cgroup v2 had deprecated the use of /proc/cgroups, the hierarchical
+>> cgroup.stat file is now being extended to show the number of live and
+>> dying CSSes associated with all the non-inhibited cgroup subsystems that
+>> have been bound to cgroup v2. The number includes CSSes in the current
+>> cgroup as well as in all the descendants underneath it.  This will help
+>> us pinpoint which subsystems are responsible for the increasing number
+>> of dying (nr_dying_descendants) cgroups.
+>>
+>> The CSSes dying counts are stored in the cgroup structure itself
+>> instead of inside the CSS as suggested by Johannes. This will allow
+>> us to accurately track dying counts of cgroup subsystems that have
+>> recently been disabled in a cgroup. It is now possible that a zero
+>> subsystem number is coupled with a non-zero dying subsystem number.
+>>
+>> The cgroup-v2.rst file is updated to discuss this new behavior.
+>>
+>> With this patch applied, a sample output from root cgroup.stat file
+>> was shown below.
+>>
+>> 	nr_descendants 56
+>> 	nr_subsys_cpuset 1
+>> 	nr_subsys_cpu 43
+>> 	nr_subsys_io 43
+>> 	nr_subsys_memory 56
+>> 	nr_subsys_perf_event 57
+>> 	nr_subsys_hugetlb 1
+>> 	nr_subsys_pids 56
+>> 	nr_subsys_rdma 1
+>> 	nr_subsys_misc 1
+>> 	nr_dying_descendants 30
+>> 	nr_dying_subsys_cpuset 0
+>> 	nr_dying_subsys_cpu 0
+>> 	nr_dying_subsys_io 0
+>> 	nr_dying_subsys_memory 30
+>> 	nr_dying_subsys_perf_event 0
+>> 	nr_dying_subsys_hugetlb 0
+>> 	nr_dying_subsys_pids 0
+>> 	nr_dying_subsys_rdma 0
+>> 	nr_dying_subsys_misc 0
+>>
+>> Another sample output from system.slice/cgroup.stat was:
+>>
+>> 	nr_descendants 34
+>> 	nr_subsys_cpuset 0
+>> 	nr_subsys_cpu 32
+>> 	nr_subsys_io 32
+>> 	nr_subsys_memory 34
+>> 	nr_subsys_perf_event 35
+>> 	nr_subsys_hugetlb 0
+>> 	nr_subsys_pids 34
+>> 	nr_subsys_rdma 0
+>> 	nr_subsys_misc 0
+>> 	nr_dying_descendants 30
+>> 	nr_dying_subsys_cpuset 0
+>> 	nr_dying_subsys_cpu 0
+>> 	nr_dying_subsys_io 0
+>> 	nr_dying_subsys_memory 30
+>> 	nr_dying_subsys_perf_event 0
+>> 	nr_dying_subsys_hugetlb 0
+>> 	nr_dying_subsys_pids 0
+>> 	nr_dying_subsys_rdma 0
+>> 	nr_dying_subsys_misc 0
+>>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+> Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+
+Tejun, is this patch ready to be merged or do you have other suggestion 
+you have in mind?
+
+Thanks,
+Longman
+
 
