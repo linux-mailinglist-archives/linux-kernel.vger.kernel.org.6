@@ -1,132 +1,104 @@
-Return-Path: <linux-kernel+bounces-269081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7AF8942D54
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:37:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80FC2942D5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8176C282E68
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:37:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C58B2872AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774C61AD9EC;
-	Wed, 31 Jul 2024 11:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB50D1AED3C;
+	Wed, 31 Jul 2024 11:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CwDK/pds"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="bxLoMOPO"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1F01A8BEF;
-	Wed, 31 Jul 2024 11:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB531AE878
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722425817; cv=none; b=UXO5zBm2McbBmx0cT1coK2C1UzDkxldT/3A7tvdFndOpXudvJjzhR4OK5HO38TtPxwga7f69V0ypfk6SGwfpzCS++oVaQFFdPDVEqVg1z+0k6p4XlZo7lEGYB9D8IXkm7bwfIP5QLlWsSL9r7vyBgEDBySHVI3e6mfdwoXKEDfc=
+	t=1722425834; cv=none; b=XViGE2uyE1clpkVLcAkSQYUWPktIhfUPstyQou/yVBuYgIVRcJGJq0nojOpKueIsDvEOLf/8kDZLsGb+pjaur749nfmNg24RKxmgJW1/ccyUyEPceR8s+tcu/o9uGbQYBukcja7e34dDES+O4hfesNLr63YJp1Wk8WO4nh4pZO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722425817; c=relaxed/simple;
-	bh=DvxRYb8t1EwWUAm27DIBnObbDa/lEizruMwpmgZsz2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DnMK0GjCTrrg0a8ddG9qAwQsrx8QiMAdCbWRUCVWNkOIUqOuduCuVn19Wo4+JzwdE3/KptAZQ98Oa671xNkeZhdMRVvYrMNPE+xTcvpRwgm7v75XewrZIwIBH38CcuN/U5WXBT482fW5+pGuFFK8N7aN/xJwM+pTQEelIXnzils=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CwDK/pds; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722425816; x=1753961816;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DvxRYb8t1EwWUAm27DIBnObbDa/lEizruMwpmgZsz2c=;
-  b=CwDK/pdskefcQYijEjOrMSOShcnxg6P5CzvAu9EnHvBqN1G37o+QehDz
-   ziEuGNRQJV5aI/XA3naR+LfBXznFG9xpAf3U+L4bVGb9L1/A69yeWQsiV
-   8PBIehBRYUBbjkYX63XDG043VSotI1GwFmmH/83/pO4xsi9Cg98ReZqEK
-   om1yjfpvSJQM1lbAlDTHSFKSUZYNM96v1g+MJlPkMDJW2ucoNVnEOrASb
-   BLAdxp4ivv1zzRp6BJ0F6xP/wSgvWahzm9fkul/Fs35eYuu7onmZroCd6
-   BTiGHJFQlh0yrdjELRWKoCWGQItQRF9G/5gJ2KfYjZ0Uiyn314SvoP8/z
-   g==;
-X-CSE-ConnectionGUID: oG+WMpGASje1sIhozbvZtQ==
-X-CSE-MsgGUID: TWjuMWt0QOaVZoKP9qd3Uw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="20454552"
-X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="20454552"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 04:36:55 -0700
-X-CSE-ConnectionGUID: GOq9DN9kTZ+xvVgfLA40KA==
-X-CSE-MsgGUID: RfkRdjaTSzehKNbqcHf2aw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="54651188"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 31 Jul 2024 04:36:49 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 479C516B; Wed, 31 Jul 2024 14:36:47 +0300 (EEST)
-Date: Wed, 31 Jul 2024 14:36:47 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Shivank Garg <shivankg@amd.com>
-Cc: ardb@kernel.org, bp@alien8.de, brijesh.singh@amd.com, corbet@lwn.net, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, jan.kiszka@siemens.com, jgross@suse.com, 
-	kbingham@kernel.org, linux-doc@vger.kernel.org, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org, michael.roth@amd.com, 
-	mingo@redhat.com, peterz@infradead.org, rick.p.edgecombe@intel.com, 
-	sandipan.das@amd.com, thomas.lendacky@amd.com, x86@kernel.org
-Subject: Re: [PATCH 0/3] x86: Make 5-level paging support unconditional for
- x86-64
-Message-ID: <jczq52e6vrluqobqzejakdo3mdxqiqohdzbwmq64uikrm2h52n@l2bgf4ir7pj6>
-References: <80734605-1926-4ac7-9c63-006fe3ea6b6a@amd.com>
- <87wml16hye.ffs@tglx>
+	s=arc-20240116; t=1722425834; c=relaxed/simple;
+	bh=gmAAodUXdgnNESvRXNAekJJqooqvvUxv3wuMM+/4RoA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mNHyTZidrYpvxns6oAoZoxJIi01xAZ0b3k5JqipQEUk3fR9jaXjMMlORewOJhKW+FE1EJ2npSqIB9sT7aK4eq7kR9V3yKZa380/h3eepmgFBeNrk2GczzZWgEVUuywrQHwNNFzg+iirjWvKxqryUVEKGzOtCaaBYzkljZ2zpRhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=bxLoMOPO; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7abe5aa9d5so656939766b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 04:37:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1722425831; x=1723030631; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5iVqiOcI/Lm61Kn6z1In0PhQoNC9BfNgfzLWAbxhDSI=;
+        b=bxLoMOPOeudPozRvAPyB7PabtaNkaJp9NcIjy/NUHVUHtZy91XIeOZFdzZEqHTQWgR
+         MtUxk5AV7lcG1PbWvNlM5IgjD6iNy1yXFsmlxkuT4AUs1yF5WffguciTZrncOJ4la9TR
+         YnI5p6HwgEYW8UjjtNSwuXG2qfKAOMVyQ3/bWbAsiGP8LUIfotLsicQsMs8N9CeyPeti
+         ymMXVq94xmEGSpEYKMrQzj1GlB9x9eGADLRR8SxUuZy9RouPx0G15ssbdl4dTK8iEvFt
+         QbH8lJT8pSA0UJjyb5oGmX/T5flpOKEkI7sXJzaWW5sh9YXbnhXqil2bD+R6KTzJZtHa
+         AcCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722425831; x=1723030631;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5iVqiOcI/Lm61Kn6z1In0PhQoNC9BfNgfzLWAbxhDSI=;
+        b=Ds5xt0NBrjGdpwifMfwQWc5VC7qroAsKHh/VvTZfBHEb+FPQJ9goB1W9hF8dKiEYOe
+         po+cKW+ikrm8ktWVBPP3Px2mfayiInZbbPtwJbMEkgKSzh+yqQT12ICqt5zqHjes7If3
+         n8fE6zeBk+oypXhr/mP4qmXVLGf3sAvGeqPTnlKgJbbThH7ESATBc5I2xqnjVSi6Lbl2
+         hrf4jCHnw/q6ZakW36teH/kDALRf5tYTZ0cSkldfC0tMn24ycwbNgEPFgj6pUOt58aXK
+         4PAWp6qWx8dWerZGdhJ+crtO7tPgDN5lFyFpRZd5GXg8DuGifE1MpA6zUuFxf6MRmG9O
+         pU4w==
+X-Forwarded-Encrypted: i=1; AJvYcCU2n3r8vy6U+V6RD+Vzgzp01IQc8snd+6i43ZwKYLMf2A6oGhmA0hm9Rkmt9FA13nciwbDVdnLc2nSLf5cWL4xDT1XL5H49zwMZywDH
+X-Gm-Message-State: AOJu0YySzoMx37mQbnqm9il3kZJB4pMC3NFKzh7hP118QUkbtah8gcwd
+	cmBhQgYYYxXp5EMp7QZPqHcsafRfDce5CxX2AWUh+nwC7ahf97Jp2/D9ilKVvXncj7unEjx3jkN
+	GSr6Jw3vFOQypCaYSTR03eJm5S8FyVO6uVMsDLg==
+X-Google-Smtp-Source: AGHT+IGKzF7L3tGT7YjvoFGJDwdINXnVaS2Vxa/MttoDWTfIP0ZESkvvOTXarzXIGvRKUq2y7x6k6CcvXSEnf4eYun4=
+X-Received: by 2002:a17:907:6d1b:b0:a77:e55a:9e8c with SMTP id
+ a640c23a62f3a-a7d40128ab4mr796501666b.47.1722425831422; Wed, 31 Jul 2024
+ 04:37:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87wml16hye.ffs@tglx>
+References: <20240729091532.855688-1-max.kellermann@ionos.com>
+ <3575457.1722355300@warthog.procyon.org.uk> <CAKPOu+9_TQx8XaB2gDKzwN-YoN69uKoZGiCDPQjz5fO-2ztdFQ@mail.gmail.com>
+ <CAKPOu+-4C7qPrOEe=trhmpqoC-UhCLdHGmeyjzaUymg=k93NEA@mail.gmail.com> <3717298.1722422465@warthog.procyon.org.uk>
+In-Reply-To: <3717298.1722422465@warthog.procyon.org.uk>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Wed, 31 Jul 2024 13:37:00 +0200
+Message-ID: <CAKPOu+-4LQM2-Ciro0LbbhVPa+YyHD3BnLL+drmG5Ca-b4wmLg@mail.gmail.com>
+Subject: Re: [PATCH] netfs, ceph: Revert "netfs: Remove deprecated use of
+ PG_private_2 as a second writeback flag"
+To: David Howells <dhowells@redhat.com>
+Cc: Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, 
+	Jeff Layton <jlayton@kernel.org>, willy@infradead.org, ceph-devel@vger.kernel.org, 
+	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024 at 11:15:05AM +0200, Thomas Gleixner wrote:
-> On Wed, Jul 31 2024 at 14:27, Shivank Garg wrote:
-> > lmbench:lat_pagefault: Metric- page-fault time (us) - Lower is better
-> >                 4-Level PT              5-Level PT		% Change
-> > THP-never       Mean:0.4068             Mean:0.4294		5.56
-> >                 95% CI:0.4057-0.4078    95% CI:0.4287-0.4302
-> >
-> > THP-Always      Mean: 0.4061            Mean: 0.4288		% Change
-> >                 95% CI: 0.4051-0.4071   95% CI: 0.4281-0.4295	5.59
-> >
-> > Inference:
-> > 5-level page table shows increase in page-fault latency but it does
-> > not significantly impact other benchmarks.
-> 
-> 5% regression on lmbench is a NONO.
+On Wed, Jul 31, 2024 at 12:41=E2=80=AFPM David Howells <dhowells@redhat.com=
+> wrote:
 
-Yeah, that's a biggy.
-
-In our testing (on Intel HW) we didn't see any significant difference
-between 4- and 5-level paging. But we were focused on TLB fill latency.
-In both bare metal and in VMs. Maybe something wrong in the fault path?
-
-It requires a closer look.
-
-Shivank, could you share how you run lat_pagefault? What file size? How
-parallel you run it?...
-
-It would also be nice to get perf traces. Maybe it is purely SW issue.
-
-> 5-level page tables add a cost in every hardware page table walk. That's
-> a matter of fact and there is absolutely no reason to inflict this cost
-> on everyone.
+> >  ------------[ cut here ]------------
+> >  WARNING: CPU: 13 PID: 3621 at fs/ceph/caps.c:3386
+> > ceph_put_wrbuffer_cap_refs+0x416/0x500
 >
-> The solution to this to make the 5-level mechanics smarter by evaluating
-> whether the machine has enough memory to require 5-level tables and
-> select the depth at boot time.
+> Is that "WARN_ON_ONCE(ci->i_auth_cap);" for you?
 
-Let's understand the reason first.
+Yes, and that happens because no "capsnap" was found, because the
+"snapc" parameter is 0x356 (NETFS_FOLIO_COPY_TO_CACHE); no
+snap_context with address 0x356 could be found, of course.
 
-The risk with your proposal is that 5-level paging will not get any
-testing and rot over time.
-
-I would like to keep it on, if possible.
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Max
 
