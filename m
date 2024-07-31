@@ -1,200 +1,119 @@
-Return-Path: <linux-kernel+bounces-268508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8E6942589
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:41:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22FFF94258D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ECD2285DEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:41:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF8871F248DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629E7224D7;
-	Wed, 31 Jul 2024 04:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D15288B1;
+	Wed, 31 Jul 2024 04:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="upIUvmPK"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E351AAD7
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 04:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=whu.edu.cn header.i=@whu.edu.cn header.b="Rqs+8PuD"
+Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58E2224D7;
+	Wed, 31 Jul 2024 04:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722400864; cv=none; b=SH1ww07niB++ozox3qpSaFqDkUzVIhYo97txCBhahVIYM7yq0k1Gl/a7AKm1DTUF3cERz8fEN92ofrk4aKoNDA/JymARocwNYxzDcjAdPlwTB+QYSUMe5hPhtM1pY87tVWx9delPwVMYJxBa6tKjJV2r3zyHj+Mv/yf+slIvQWc=
+	t=1722401757; cv=none; b=WvMAzItfvUWkmTP728fFC23D0Io4HogXThi3qr12JO/k/6BhtCVv4aDf6AON4jUWUFsH0tlYHvHWPP/9x3Bc4227YeWf2IQ7d3JAcdO7pyF+lmQIlcM7b+kmYgmZuuRdA/DEVXMctlpHsu7taqdnqaZVp3/LxZT+iMuuoIcKaT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722400864; c=relaxed/simple;
-	bh=zsHKKCvI3vbY/OZw3s6miDFxzIOliWYQC0nNKGvCyw8=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=ISnEh92ZD4R4sonVlvt/CkLj+K+kDLYbQvkbTnexVMCoyrxydsheWDMzCVbH4C0Pbl21OoqXFizJcwcvX3D3Q2MVXpFk4C57FZf56rXpMJZzDNkYh5Hsjx+1mIASrAIpB2Xa71pFxIAmH9ko7SyQJ9mLmfH+yXlcNtNrP9iUYj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=upIUvmPK; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240731044100epoutp040f27d0c3694403a64fb4d54bec08bd96~nMnT5PCIw2573425734epoutp04p
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 04:41:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240731044100epoutp040f27d0c3694403a64fb4d54bec08bd96~nMnT5PCIw2573425734epoutp04p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1722400860;
-	bh=xsNWFr8kV3xs1EkHFyhGWB6KglLADpNSgzeXkX6WF/8=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=upIUvmPKEAAdCYnBzBjFrXpTbqgwutzokSVnOtZ38V2JExBMncZKLR8VBFGOX/UUu
-	 sSqT2zwuoNp2/J4S1St4BD7PDQwFXOyG5LkMp7VaPF7y6D8I94TmaG1DEW6CcM6PBR
-	 grf0pMWxPvLJbP6MYlmBFv72QHY2mjU9VWTqgPoc=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240731044059epcas5p30032b30b155676921cb07339fef9d1a8~nMnTL_oYl2956429564epcas5p3P;
-	Wed, 31 Jul 2024 04:40:59 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.179]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4WYfYP5dCjz4x9Q0; Wed, 31 Jul
-	2024 04:40:57 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	40.AC.19863.950C9A66; Wed, 31 Jul 2024 13:40:57 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240731044048epcas5p16c8d21d75a3fbceb121a5b1971c88d61~nMnI9Bgod2320023200epcas5p1_;
-	Wed, 31 Jul 2024 04:40:48 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240731044048epsmtrp2561370da01d1894867fb7317e1826b92~nMnI8A2m20138801388epsmtrp2t;
-	Wed, 31 Jul 2024 04:40:48 +0000 (GMT)
-X-AuditID: b6c32a50-ef5fe70000004d97-ee-66a9c059aea7
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	B1.C8.08456.050C9A66; Wed, 31 Jul 2024 13:40:48 +0900 (KST)
-Received: from FDSFTE596 (unknown [107.122.82.131]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240731044044epsmtip166638025d041fa102bcd8a6fa4a09c37~nMnFVedAk0349203492epsmtip1W;
-	Wed, 31 Jul 2024 04:40:44 +0000 (GMT)
-From: "Swathi K S" <swathi.ks@samsung.com>
-To: "'Andrew Lunn'" <andrew@lunn.ch>
-Cc: <krzk@kernel.org>, <robh@kernel.org>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<conor+dt@kernel.org>, <richardcochran@gmail.com>,
-	<mcoquelin.stm32@gmail.com>, <alim.akhtar@samsung.com>,
-	<linux-fsd@tesla.com>, <netdev@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<alexandre.torgue@foss.st.com>, <peppe.cavallaro@st.com>,
-	<joabreu@synopsys.com>, <rcsekar@samsung.com>, <ssiddha@tesla.com>,
-	<jayati.sahu@samsung.com>, <pankaj.dubey@samsung.com>,
-	<ravi.patel@samsung.com>, <gost.dev@samsung.com>
-In-Reply-To: <1090d2c2-196f-4635-90a0-c73ded00cead@lunn.ch>
-Subject: RE: [PATCH v4 3/4] arm64: dts: fsd: Add Ethernet support for FSYS0
- Block of FSD SoC
-Date: Wed, 31 Jul 2024 10:10:43 +0530
-Message-ID: <00b301dae303$d065caf0$713160d0$@samsung.com>
+	s=arc-20240116; t=1722401757; c=relaxed/simple;
+	bh=V0dHtxVer2moH1gvpNDCzKcbUL8qtbkqVCcMZNNeRXA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HXW7cDyXUZMLfofeQTgX6gAhDzl9iq+H1AMPl8/CYTIcRMCUssYUvmxr4NdcsJ/EIT9LgyzC+1C8cCP5l7MQ6VhSLKNgpPr6bGhGnwq04e7Za8t0vpbddgUWRVvqg2Sc9giiJePBAspZpXphajGEuyVfpPQzn9LMT9vK8gUhNck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=whu.edu.cn; spf=pass smtp.mailfrom=whu.edu.cn; dkim=fail (0-bit key) header.d=whu.edu.cn header.i=@whu.edu.cn header.b=Rqs+8PuD reason="key not found in DNS"; arc=none smtp.client-ip=209.97.181.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=whu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whu.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=whu.edu.cn; s=dkim; h=Received:Received:From:To:Cc:Subject:
+	Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:
+	Content-Transfer-Encoding; bh=V0dHtxVer2moH1gvpNDCzKcbUL8qtbkqVC
+	cMZNNeRXA=; b=Rqs+8PuDpLExA8o+rbDyJ+eHteZqpJp5Lz1oQiFMdQubu27r70
+	nDnsRjWD6KbXi5bbhyLuhliuQe4sGUM4L12B3tTUdcr1SoSyJWuzTjyYW1lNh+X9
+	62KDjxNUKUDpmO6iWpFQDgnTeUSTH3QCHJkOsux/lqpv8wDCSRTPjgSVk=
+Received: from whu.edu.cn (unknown [10.1.14.8])
+	by app2 (Coremail) with SMTP id Bw4BCgCnXBLMw6lm8e8SAA--.42801S2;
+	Wed, 31 Jul 2024 12:55:40 +0800 (CST)
+Received: from zehuixu-vmwarevirtualplatform.localdomain (unknown [82.130.46.207])
+	by mtasvr (Coremail) with SMTP id _____wA35MPGw6lmtMILAA--.3809S2;
+	Wed, 31 Jul 2024 12:55:38 +0800 (CST)
+From: Zehui Xu <zehuixu@whu.edu.cn>
+To: ojeda@kernel.org
+Cc: zehuixu@whu.edu.cn,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: Kbuild: Skip -fmin-function-alignment in bindgen flags
+Date: Wed, 31 Jul 2024 07:55:22 +0300
+Message-ID: <20240731045532.7779-1-zehuixu@whu.edu.cn>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240730222053.37066-1-zehuixu@whu.edu.cn>
+References: <20240730222053.37066-1-zehuixu@whu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQD2Gw94KDf30OIcDBeWExyH9iGvOgKN91N8AfSZAbcBCoUV+7OtaInw
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf1CTdRzHe7Y9ewYG9zA0vqDhblAoHLDFgO9K1A7Oey6rg7ATzGvt4IEt
-	xra2YdDlIQgekkwpENrBnBPqnEg2BgIHtBbKAcrQBA7vMDDgkNkAVyQY0sZG+d/r8/l+fr0/
-	3/swqMzvsSCGWKoiFVKhhE33prX9sjssMt18OYtz17YLrjw6j8BJbRsdWicsVNjUPUSBddYS
-	GrzQO4TCmZsPMThu7qDA3oEGCnygt6PQar2GweE2NQqNv4+icGr+MPy1s44Oa609FFg+Oo1C
-	7dpVFN7UvQKXBx8jUN/6JwbXba0InFrswqBmuB2FvbfmqHC9qx2D+kkdun87Ybo8TiFmzrZi
-	RIdmAiN0xjzCaDhNJ1oaComOdgeFWOgZoRNqkwEhfu7hEjNPu6mE6ScHQjwvrscIhzE42fdI
-	zh4RKcwkFSxSmiHLFEuzE9gHUwWJgtg4DjeSy4fxbJZUmEsmsJPeTY48IJY4V8JmHRNK8pyu
-	ZKFSyY7eu0chy1ORLJFMqUpgk/JMiZwnj1IKc5V50uwoKal6k8vhvBHrDPwkR1Q+VInI17fk
-	X+orw04gau9yxIsBcB6omTSiLmbiXQjQ1Lxejng7+QkCev++T3EbywioqrbQNzNWTs2i7odu
-	BAyNaeluYw4Bi0VNG7XoeDjQq3swF2/FQ4G2voriYio+hIKvhnEXe+FvgZLlGsTF/vjHoML8
-	YINp+GtgbOHkBvvgfFDU/A/dzX6g/9tpmrvOTnD9jzqqeyIWWJn5ztmX4ex1AMyNHHGHBIAb
-	K2eortkAPu8FRoqLae74JDAx0OzJ9QfzfSbMzUHAYe/2qBSAK+oRT7wITKxWevz7gPleHc3V
-	i4rvBj90Rrvdr4LqgWaPRF9Q8Wya4vb7gHbtJoeANduop2QgaGtcwM4hbM0LyjQvKNO8IEHz
-	fzcdQjMgQaRcmZtNZsTKuZFS8vP/PjxDlmtENi4mPLkduXJtLcqCUBiIBQEMKnurj+BeYxbT
-	J1NY8AWpkAkUeRJSaUFinfuupAZty5A5T06qEnB5fA4vLi6Ox4+J47IDfGyl9ZlMPFuoInNI
-	Uk4qNvMoDK+gE5TUnMKj/sHSkpSYjkRjeVN1SPVt6N/gl2KweT8KFJTVLr7HVzMr64oOGfaV
-	rvQXGD4KIbzK+qPkMflLs6aWqay19DtJ9sHnjeJBe29B2nxEc23fy6LV7ZbOpzlE2uyXXN07
-	uyIO8QK2mcwNnNRb9pdSIsRLh0cnu/CZHz+9ePY0/c5v9y+V+Play9NSjqHWQjCeeibQXvD+
-	Q+6H/nOsD04Vhq7GNy190/GkhlPRMJa/pexiZUu64bEj2ME+uaPv+tXJ2L902on9cnGi5O3+
-	8zEjxxOqzolaTDbz9Ge5Efl3x/fqs1NAaCIa5tvUsyNsZzRTz49/dvRG9MHQ28YLpbyvj7Np
-	SpGQG05VKIX/AtLOUgO6BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjleLIzCtJLcpLzFFi42LZdlhJTjfgwMo0g47/ihY/X05jtHgwbxub
-	xfm7h5gt1uw9x2Qx53wLi8X8I+dYLZ4ee8RucfPATiaLI6eWMFncW/SO1eL8+Q3sFhe29bFa
-	bHp8jdXi4atwi8u75rBZzDi/j8mi69oTVot5f9eyWhxbIGbx7fQbRotFW7+wW/x/vZXR4uGH
-	PewWsy7sYLU4cuYFs8X/PTvYLRY9WMDqIO2xZeVNJo+n/VvZPXbOusvusWBTqcemVZ1sHpuX
-	1Hvs3PGZyeP9vqtsHn1bVjF6HNxn6PH0x15mjy37PzN6/Guay+7xeZNcAF8Ul01Kak5mWWqR
-	vl0CV0bXuYmMBf+5KxYf72BvYOzj6mLk5JAQMJH42faMtYuRi0NIYDejRHvPDXaIhKTEp+ap
-	rBC2sMTKf8/ZIYqeMUr0Pe4EK2IT0JJY1LcPzBYRUJGYN3cKE0gRs8ArVokHp6ewQHS8YpSY
-	uv0W2ChOAWuJlm/TGUFsYYEYiRkrWplAbBYBVYnr75vB4rwClhKN6/6wQdiCEidnPgEaxAE0
-	VU+ibSNYCbOAvMT2t3OYIa5TkPj5dBkrSImIgJvEi6tRECXiEkd/9jBPYBSehWTQLIRBs5AM
-	moWkYwEjyypGydSC4tz03GLDAqO81HK94sTc4tK8dL3k/NxNjOAko6W1g3HPqg96hxiZOBgP
-	MUpwMCuJ8MZfWZomxJuSWFmVWpQfX1Sak1p8iFGag0VJnPfb694UIYH0xJLU7NTUgtQimCwT
-	B6dUA1NTTXD1Nr3kuHDdPapuqte0qqtymQ45tdqt2j3D4u00kxubmdzvHWxPvxaw7/cK3o8H
-	4vQstOIq8q3OT57zVLTnfkLpZP0jd8SPzkx7npCgc06x4d2F0CsyU8sm7m725D7YPX/itxct
-	6sInLM21D998n/pPs8TVfPGxmPRb3+3U/xyxmCip5vrtZmTAigAhg6CAxxtfbOW2erJhT+AP
-	0ZhbB/wVbU/HV505qHxqbejJ5+e05LVmTnI9o/Kw6J/6pWuOpS7dnMfM7uZZtspV17udvLtb
-	NLduYm5NaMD0b0sVUjffdg5tmXSB78mS53lPnqywP8v4yNr+y/RDK7OFlj9yrvoVdCJo6yoZ
-	xzOlRbOUWIozEg21mIuKEwGUnJ4LoQMAAA==
-X-CMS-MailID: 20240731044048epcas5p16c8d21d75a3fbceb121a5b1971c88d61
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240730092907epcas5p1b81eaf13a57535e32e11709602aeee06
-References: <20240730091648.72322-1-swathi.ks@samsung.com>
-	<CGME20240730092907epcas5p1b81eaf13a57535e32e11709602aeee06@epcas5p1.samsung.com>
-	<20240730091648.72322-4-swathi.ks@samsung.com>
-	<1090d2c2-196f-4635-90a0-c73ded00cead@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Bw4BCgCnXBLMw6lm8e8SAA--.42801S2
+Authentication-Results: app2; spf=neutral smtp.mail=zehuixu@whu.edu.cn
+	;
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cr13Gw47KF4rGw4kGw1xKrg_yoW8AFWrpF
+	W3KFyakws5GFn5Kr1xCr4Fva10vw1ftay5Grn0ga4kZa13WF93GrWfKr4av39rZr1fC3y2
+	qanFqFyUJ3Z5Z37anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkIb7Iv0xC_Cr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4UJVW0owA2z4x0Y4vE
+	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzx
+	vE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VCjz48v1sIEY20_GF4lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
+	8JMxkIecxEwVCm-wCF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r4xMxC20s02
+	6xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr
+	4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxG
+	rwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8Jw
+	CI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2
+	z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7xRRJPEDUUUUU==
+X-CM-SenderInfo: qsqrmjqqqqijqqxyq4lkxovvfxof0/1tbiAQYPA2apDkweRwAAsf
 
+On 31.7.2024 2.39, Miguel Ojeda wrote:
+> On Wed, Jul 31, 2024 at 12:21 AM Zehui Xu <zehuixu@whu.edu.cn> wrote:
+>>
+>> GCC recently added the -fmin-function-alignment option, which will appear in GCC 14. However, this flag can cause issues when passed to the Rust Makefile and affect the bindgen process. Bindgen relies on libclang to parse C code, and currently does not support the -fmin-function-alignment flag, leading to compilation failures when GCC 14 is used.
+>>
+>> This patch addresses the issue by adding -fmin-function-alignment to the bindgen_skip_c_flags in rust/Makefile, ensuring it is skipped during the bindgen process. This prevents the flag from causing compilation issues and maintains compatibility with the upcoming GCC 14.
+>
+> Thanks for the patch!
+>
+>> This is my first patch to the kernel, if there are any issues or improvements needed, please let me know. ;)
+>
+> It looks OK, a couple nits are that you would normally not put this
+> line here (in the commit message), but below the --- line (which
+> means it would not go into the repository).
+>
+> In addition, normally you would: wrap your commit messages to a
+> reasonable length, use scripts/checkpatch.pl to check for this and
+> other issues, use the "Link" tag instead of "Reference:", avoid
+> leaving empty lines between tags and ideally use git format-patch
+> --base to specify the base of your patch (not really needed in many
+> cases, but it is always nice to have around).
+>
+> If you can try that and send a v2, that would be nice.
+>
+> But apart from those nits, it seems fine -- welcome!
+>
+> Cheers,
+> Miguel
 
+Thanks for your nits, Miguel! I have applied your suggestions and submitted a v2 patch:
+https://lore.kernel.org/all/20240731034112.6060-1-zehuixu@whu.edu.cn/
 
-> -----Original Message-----
-> From: Andrew Lunn <andrew@lunn.ch>
-> Sent: 31 July 2024 01:46
-> To: Swathi K S <swathi.ks@samsung.com>
-> Cc: krzk@kernel.org; robh@kernel.org; davem@davemloft.net;
-> edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
-> conor+dt@kernel.org; richardcochran@gmail.com;
-> mcoquelin.stm32@gmail.com; alim.akhtar@samsung.com; linux-
-> fsd@tesla.com; netdev@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-stm32@st-md-mailman.stormreply.com; linux-
-> arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
-> alexandre.torgue@foss.st.com; peppe.cavallaro@st.com;
-> joabreu@synopsys.com; rcsekar@samsung.com; ssiddha@tesla.com;
-> jayati.sahu@samsung.com; pankaj.dubey@samsung.com;
-> ravi.patel@samsung.com; gost.dev@samsung.com
-> Subject: Re: [PATCH v4 3/4] arm64: dts: fsd: Add Ethernet support for
-FSYS0
-> Block of FSD SoC
-> 
-> > +&ethernet_0 {
-> > +	status = "okay";
-> > +
-> > +	fixed-link {
-> > +		speed = <1000>;
-> > +		full-duplex;
-> > +	};
-> > +};
-> > +
-> 
-> What is the interface connected to? A switch?
-
-Hi Andrew, 
-Thanks for the quick review. AFAIK, this has been discussed earlier. I am
-providing the links to the same here for quick reference. 
-
-[1] https://lkml.org/lkml/2024/7/29/419
-[2] https://lkml.org/lkml/2024/6/6/817
-[3] https://lkml.org/lkml/2024/6/6/507
-[4] https://lkml.org/lkml/2023/8/14/1341
-
-Please let us know if you have any further queries on this.
-
-> 
-> 	Andrew
-
-Regards,
-Swathi
+---
+Cheers,
+Zehui
 
 
