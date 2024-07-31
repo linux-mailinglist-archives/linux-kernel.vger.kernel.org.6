@@ -1,116 +1,111 @@
-Return-Path: <linux-kernel+bounces-269036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22FF4942CA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:58:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9369942CA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 553CE1C21A87
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:58:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 540831F26FF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30571AC44F;
-	Wed, 31 Jul 2024 10:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2E71AC456;
+	Wed, 31 Jul 2024 10:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ROQFSSPP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MYZQhOwn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A891A8C0C;
-	Wed, 31 Jul 2024 10:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FFD1A8C0C;
+	Wed, 31 Jul 2024 10:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722423531; cv=none; b=Ly2uATJQ8n07ElB/RHMZcOcwTG+XatlXjX5nV2ugTkhrSrWSaJx87oPGCverLUvzcMyBptZx9KpVh0AGQbOYQZmHpAoWNsIEeMIMPa49t6Rxu9Zn5SCgwkcXoS/MlbmEDPZN/tMGtA6EKr678V9A7mDkpzgBc1AKXq7UN09Yt90=
+	t=1722423557; cv=none; b=I4i9XPhMCqhdhuioc3S60j6fJCV+HlJcsCu2THYcHNy4IAurhKfqi70G9PxioBgG4VEChPoTZyalAvhE8EWU+a9O9jAJehwGaleadSt+A3o1Y2xgfOAebz8OiV/bjLcJ7qY+yDRd1mOaXN39C3/hsGPuOlaOSXLsVC6nuRaVVts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722423531; c=relaxed/simple;
-	bh=VW4oCYZr2JYAYnVYbwqq9fI4vsIbWEW1k7HmyYQ1HNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a1eveRBUGnS5lUaqMoY3fy7fL6d6uFTbaBeFOCKbLNn7bL6WWBUNuPodvUDGB5Rqm7nI1sro2DlizxVXk2BuDrRb58xAcGEJpoAZlND8PMAR8pCQUjNZLcsk++VR64G/yUAxNkK3KQrf+Oj6GHy6eotQG8wffmp3IqqrriuIgE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ROQFSSPP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3311C116B1;
-	Wed, 31 Jul 2024 10:58:49 +0000 (UTC)
+	s=arc-20240116; t=1722423557; c=relaxed/simple;
+	bh=WAt+uKUcWmsl15ThUfwoCHfKCOypKIoAIzDoID2uCro=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dOFUHjVVx+pdMcv8FkIdeRuYs1e2ms2HdNSi+8VhLYUx4JLrQv+Q8QelQf1/lPrOuAVr4q2d3KW+1c1+/XplwVtIh8qGE5Gka41J0yD1hqvXJg+7s3zT3SYUULP/vRzue88qSvtOBIqii6wrPSQ1wzfxS1bn36jsqJKEzx1Q9ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MYZQhOwn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5A88C4AF10;
+	Wed, 31 Jul 2024 10:59:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722423530;
-	bh=VW4oCYZr2JYAYnVYbwqq9fI4vsIbWEW1k7HmyYQ1HNA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ROQFSSPPiZmZ6D3D2Cqo87i46k5tKnpMAo2siKc7e2tbHhsQBAzU0cEHU04TKzYvO
-	 lNhUiv4e+dNE+iE8hVniddGFyPIaost5T855kX6LjBdBU0P2oz2DOCtHWxJMQirWyA
-	 jXPLrAnq9yJN/EgqmyMJVULcMbwEWJE9u/78wkJcH2P6cNkEhFKIxISx528SA85Ha9
-	 LcXXY0x7s9HQ6bPJTH/hK8M5ePXEfKEG2f0t5NkowPeGTZzw7sV+vUJlciPbKCMyGc
-	 M8yf9ZoRYsYSwpyYIkoAsdHmdootVQe9QQS/2Nt9CLuvXALNzD6AZl8cdZeEQH7pb+
-	 OMk1QeccRx+sw==
-Date: Wed, 31 Jul 2024 16:28:46 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: kishon@kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: qcom: qmp: Add debug prints for register writes
-Message-ID: <ZqoY5kFLDEmkb495@matsya>
-References: <20240730100351.51454-1-manivannan.sadhasivam@linaro.org>
+	s=k20201202; t=1722423556;
+	bh=WAt+uKUcWmsl15ThUfwoCHfKCOypKIoAIzDoID2uCro=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MYZQhOwnMd7DGLOMs49T9UkHY7p+38xxoap4wFimL58ep0kXeKmhKehWIF6+V1YvO
+	 Qp08ixMRHLJfvw0MZxIUX1ICqMYqYELvWEeu48g3Tit+MgDxRby9ryviAmGoB/3ffD
+	 ptGFN24Cmjhb47ZJGz1MWQo6emMDNmZCv9odI81Gz6SoEVjd9RWUzLU86/u7sSQxRf
+	 FdS+4un6uQPnxz46Y50YmbfYewRKsorylo+G3rewR0F9AN/eVNi5zNa4Oxr/X1P0CU
+	 rpAJ31zd4L8gST8XG0GP6jf6VKK9BSDIy4qI6iJ3RAw6iZhiYxRn2RKetCS52kGK4R
+	 V+ZHlIxgWEiJQ==
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-26123e59c8aso666179fac.1;
+        Wed, 31 Jul 2024 03:59:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUUQiQj8Rjzwd24h5pRTX9TTZeO/3kRpdXExSSi9s8t4kOWgB9EoRHfcEg8s3U9ORt18DHosUhK4jQ=@vger.kernel.org, AJvYcCUwF5kGyKOujh1lNgIwtCPcWIiX8H6RsbB8Bg/WgcPNEiUycFC/H9coYk2BPrf0B/46d+eLX+ghgjY=@vger.kernel.org, AJvYcCXEPzC02uG1foDHsYhb32GloajRWVw5stdEq12gjLhTh6JWMqPK36jNJDXrR6tRb/bHwustmdah3Ry+YTfK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1/HnO8moItt747SmBJLIPFlTKPjH7BO1X5Arl1HN4Jr40pOU6
+	HxQRqUFW+MSXaEjIhmVpvH7XR/9NRUu4/Ln1WVSuQgF3zBuodnN6lbqb4RoU43ZmfPJdxREbRG5
+	RWd+RW7eQkO4XXEiiMwP5OsgBgk4=
+X-Google-Smtp-Source: AGHT+IEnDZbw2dFh8GGsUt2bFDG9W3nBtCNuFqKxK18Y/P1eEfHY17D0uoNuEG4z99VyYqLxmmpsTcZJjxYb2hp3wh4=
+X-Received: by 2002:a4a:df47:0:b0:5d5:bc1f:daa with SMTP id
+ 006d021491bc7-5d5bc1f0f75mr10929184eaf.1.1722423555797; Wed, 31 Jul 2024
+ 03:59:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730100351.51454-1-manivannan.sadhasivam@linaro.org>
+References: <20240731095223.2778-1-ilpo.jarvinen@linux.intel.com>
+In-Reply-To: <20240731095223.2778-1-ilpo.jarvinen@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 31 Jul 2024 12:59:04 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gv3xe=bmGQVDuk_wMczA5u0ASvBOQJSKShW=nAfg7hxQ@mail.gmail.com>
+Message-ID: <CAJZ5v0gv3xe=bmGQVDuk_wMczA5u0ASvBOQJSKShW=nAfg7hxQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] docs: thermal: Remove extra parenthesis
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-pm@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 30-07-24, 15:33, Manivannan Sadhasivam wrote:
-> These register prints are useful to validate the init sequence against the
-> Qcom internal documentation and also to share with the Qcom hw engineers to
-> debug issues related to PHY.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On Wed, Jul 31, 2024 at 11:52=E2=80=AFAM Ilpo J=C3=A4rvinen
+<ilpo.jarvinen@linux.intel.com> wrote:
+>
+> thermal_zone_device_register() prototype in the thermal zone device
+> interface documentation has double closing parenthesis. Remove one
+> of them.
+>
+> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
 > ---
->  drivers/phy/qualcomm/phy-qcom-qmp-common.h | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-common.h b/drivers/phy/qualcomm/phy-qcom-qmp-common.h
-> index 799384210509..e6a6bcfcac28 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-common.h
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-common.h
-> @@ -9,6 +9,7 @@
->  struct qmp_phy_init_tbl {
->  	unsigned int offset;
->  	unsigned int val;
-> +	char *name;
->  	/*
->  	 * mask of lanes for which this register is written
->  	 * for cases when second lane needs different values
-> @@ -20,6 +21,7 @@ struct qmp_phy_init_tbl {
->  	{				\
->  		.offset = o,		\
->  		.val = v,		\
-> +		.name = #o,		\
->  		.lane_mask = 0xff,	\
->  	}
->  
-> @@ -27,6 +29,7 @@ struct qmp_phy_init_tbl {
->  	{				\
->  		.offset = o,		\
->  		.val = v,		\
-> +		.name = #o,		\
->  		.lane_mask = l,		\
->  	}
->  
-> @@ -45,6 +48,7 @@ static inline void qmp_configure_lane(void __iomem *base,
->  		if (!(t->lane_mask & lane_mask))
->  			continue;
->  
-> +		pr_debug("QMP PHY: Writing: %s --> 0x%02x\n", t->name, t->val);
+>  Documentation/driver-api/thermal/sysfs-api.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/driver-api/thermal/sysfs-api.rst b/Documentati=
+on/driver-api/thermal/sysfs-api.rst
+> index 6c1175c6afba..63ed1801ac40 100644
+> --- a/Documentation/driver-api/thermal/sysfs-api.rst
+> +++ b/Documentation/driver-api/thermal/sysfs-api.rst
+> @@ -43,7 +43,7 @@ temperature) and throttle appropriate devices.
+>                                       int trips, int mask, void *devdata,
+>                                       struct thermal_zone_device_ops *ops=
+,
+>                                       const struct thermal_zone_params *t=
+zp,
+> -                                     int passive_delay, int polling_dela=
+y))
+> +                                     int passive_delay, int polling_dela=
+y)
+>
+>      This interface function adds a new thermal zone device (sensor) to
+>      /sys/class/thermal folder as `thermal_zone[0-*]`. It tries to bind a=
+ll the
+> --
 
-This lgtm, but fails to help when offset _might_ be incorrect, including
-the offset value as well (not just the name) would be better imo... 
+I was about to apply this, but then I realized that the function in
+question doesn't even exist any more.
 
->  		writel(t->val, base + t->offset);
->  	}
->  }
-> -- 
-> 2.25.1
-
--- 
-~Vinod
+Let me have a look at this file.
 
