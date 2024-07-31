@@ -1,161 +1,179 @@
-Return-Path: <linux-kernel+bounces-268419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C393294247D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:19:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 968EC942480
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73D74285B82
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:19:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 178AC1F232DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473A412B73;
-	Wed, 31 Jul 2024 02:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CjFk1R4j"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A70F12B73;
+	Wed, 31 Jul 2024 02:29:54 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DA412B63;
-	Wed, 31 Jul 2024 02:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B4B101C4;
+	Wed, 31 Jul 2024 02:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722392345; cv=none; b=C+OGW1fVd2MxfYcUZ09OCndcxuUvNYz5A38V4n9nEfXwvTEjLlQnd92gchCvkVeOVHcTj/fU6lEVv9USg0GrxoCFWatIVyPqeQbC73eWcopC7Z6ylFAxHMyGc/5h+iGNizBpQPqQYJ1jHdk27lNlibrcyUPuScB24u81yf4eoIY=
+	t=1722392994; cv=none; b=EVGlvCKPXXKXnSkeT/p+yIN277j9Wxts+7HcUUCmjLudjl11c8iTBIPwSmQleDTrQN6mxL5RhQ6agK6/Sso6NlvjVKiYI20L+pVALbH75vNToRQUoOutKlnYPHykmdXlq+IFUM87/m3ip26laEZFxvda/TnH03w4RtbRHlfZeak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722392345; c=relaxed/simple;
-	bh=psVZlw9PpG9cw5fogbCKd62dVx/dheAvsRci2ZwK2Vc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tnrwlVS/BrrngHu6ofNCYcndvNsIPj67y3+BDQZyjS+h5WzjZS5443N5nX1Hk/s38UiLQoq2EzxUyH+co5wzLUz0GiJHHbbw9i/ZSiT1kskdvI5yWezjnDvFDPZKGTVibQowvr1SR5b18BNVHWpGneoQx9FHEA0eF81ZJpzIzA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CjFk1R4j; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-81ff6a80cbbso1499310241.1;
-        Tue, 30 Jul 2024 19:19:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722392343; x=1722997143; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EuTTBgp92FvKs6e3kX5RBQcJaA1lmI6qmSNZuE7MUYw=;
-        b=CjFk1R4jn9AEVIy1N9rLXWX4iHxnhB1+gtWwvWage1NfdyXWoDxTc3+MCzOaOmQkmZ
-         IgTf+Yrqsnsqso/4qXJAuAvp37NpreBxb/Sh2aG/PTLBEFfwlQaDAfKJWCfvjck+aPh5
-         qmHTK5koE/WXWXMe82/7i1eWJrFltCc/SageOqYoBDwqQd1JVeVyWT7obDGq+fFhgiCc
-         YkGSyXiP3Uho9YgXDPHgX0aNhgtSWYEgKgsM6/nxpCiK4lMeG5SKKH7W09HAj7q0Hsyo
-         oVryHp/T3ynYxuxAMaZRdPfmDCqEnKWof6aIFUvAPhWYeagvfb7/BebGGtbmaO7VCSMN
-         SQ3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722392343; x=1722997143;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EuTTBgp92FvKs6e3kX5RBQcJaA1lmI6qmSNZuE7MUYw=;
-        b=NV7jWltCXQGH4Ug20CJbDAcrm8A9C+DChYpVvbnqI3r3paFfNQPwYPc2nW7zcJSF63
-         qi6FtBmgsfWdiKQMA47f6cRuNigig75ANZnqFIjbr7OcctDEuU73pT2PrmdL9Kc6SP5i
-         OCTaBy+eIvESF34lI/hDCqZdyS7tXLV0/OOF2hkEBmlbn5ngaWG5E+4c6NdDcCco31Fx
-         JQs4agu1868FNORjzznDRcQKiJlZW4a9YMGOlbSHIKqwyixBdTDNUUutfOhoA+IFAkGf
-         erh9zs3eOdCPAZpI74WD5ATmKJ4zZgqVUaVEXtnKI7dUYr86wZ9TwN3ZUp25ZhcGvdr8
-         EOPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUu72AB14VsDsFsnlbXXWswEoo3wepEaX4nYWQXCDKKWC6K3LSoCkkEF74NtqrqXUHyypQQJVRBHfgRsu1tiq/n4I7aTTCNmJaAeAsXz3Hyi6uE+rddTKNQhkLrcRKlB7odhhG8+AlFGdOPbyC5U2XhdfkrVHm9DuCpwhj1juHt5YI=
-X-Gm-Message-State: AOJu0Yx9hTsBtALlSa2XQRrDY/z2iqjhTWkXtXS65arxgjUnOdDWgFk/
-	GPEEgWkQv1zy6h9F6sZnIHlsqWJwxp01AV8it51DJoVFRYWz4rppQrPKn8EcD+3ruL53pmxcN2J
-	70ZmmE92lGbJwS6Vct/t/0GSiXf8=
-X-Google-Smtp-Source: AGHT+IET32HsRUmh5QkmUwiju7XuwyuRfEv3IIhJFoZqlfnE3LGBqWMtNG5FTioR1NG2RfcEAUn/nvMGw2OZ8dW8FGQ=
-X-Received: by 2002:a05:6102:2909:b0:493:badb:74ef with SMTP id
- ada2fe7eead31-493fad48fdcmr13920389137.26.1722392342815; Tue, 30 Jul 2024
- 19:19:02 -0700 (PDT)
+	s=arc-20240116; t=1722392994; c=relaxed/simple;
+	bh=LlnuslYaQ8KhVwTZAdfKpQYUoDOj4pvU43UCsUm8Vsc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EyLpMcwIZaUX3XqiFVBSZ3GCDBS4fXxeKJYOHunYMlybjxv5XxW7t6ZV/2EQ2oLeaTjdWIJ7veRWVapo1qFwd7WrK1RSKc/aa9U/Np4+Uut3aqgQqRkm3MYxJ8M6uZ4D2ybpKTzcUylWdukKAZrFnGLRfWZbWfpbbH65nmFk8ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 46V2RVdo047322;
+	Wed, 31 Jul 2024 10:27:31 +0800 (+08)
+	(envelope-from Dongliang.Cui@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WYbSg58Mvz2MNxgJ;
+	Wed, 31 Jul 2024 10:21:39 +0800 (CST)
+Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Wed, 31 Jul 2024 10:27:28 +0800
+From: Dongliang Cui <dongliang.cui@unisoc.com>
+To: <linkinjeon@kernel.org>, <sj1557.seo@samsung.com>, <hch@infradead.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <niuzhiguo84@gmail.com>, <hao_hao.wang@unisoc.com>, <ke.wang@unisoc.com>,
+        <dongliang.cui@unisoc.com>, Zhiguo Niu <zhiguo.niu@unisoc.com>
+Subject: [PATCH v3] exfat: check disk status during buffer write
+Date: Wed, 31 Jul 2024 10:27:15 +0800
+Message-ID: <20240731022715.4044482-1-dongliang.cui@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730114426.511-1-justinjiang@vivo.com>
-In-Reply-To: <20240730114426.511-1-justinjiang@vivo.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 31 Jul 2024 10:18:49 +0800
-Message-ID: <CAGsJ_4xdnQjQyJVMfN7ZSW3OMvJhFRErjwMGSCDZACQOVWeesw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] mm: tlb swap entries batch async release
-To: Zhiguo Jiang <justinjiang@vivo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>, 
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Nick Piggin <npiggin@gmail.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, linux-arch@vger.kernel.org, cgroups@vger.kernel.org, 
-	opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 46V2RVdo047322
 
-On Tue, Jul 30, 2024 at 7:44=E2=80=AFPM Zhiguo Jiang <justinjiang@vivo.com>=
- wrote:
->
-> The main reasons for the prolonged exit of a background process is the
-> time-consuming release of its swap entries. The proportion of swap memory
-> occupied by the background process increases with its duration in the
-> background, and after a period of time, this value can reach 60% or more.
+We found that when writing a large file through buffer write, if the
+disk is inaccessible, exFAT does not return an error normally, which
+leads to the writing process not stopping properly.
 
-Do you know the reason? Could they be contending for a cluster lock or
-something?
-Is there any perf data or flamegraph available here?
+To easily reproduce this issue, you can follow the steps below:
 
-> Additionally, the relatively lengthy path for releasing swap entries
-> further contributes to the longer time required for the background proces=
-s
-> to release its swap entries.
->
-> In the multiple background applications scenario, when launching a large
-> memory application such as a camera, system may enter a low memory state,
-> which will triggers the killing of multiple background processes at the
-> same time. Due to multiple exiting processes occupying multiple CPUs for
-> concurrent execution, the current foreground application's CPU resources
-> are tight and may cause issues such as lagging.
->
-> To solve this problem, we have introduced the multiple exiting process
-> asynchronous swap memory release mechanism, which isolates and caches
-> swap entries occupied by multiple exit processes, and hands them over
-> to an asynchronous kworker to complete the release. This allows the
-> exiting processes to complete quickly and release CPU resources. We have
-> validated this modification on the products and achieved the expected
-> benefits.
->
-> It offers several benefits:
-> 1. Alleviate the high system cpu load caused by multiple exiting
->    processes running simultaneously.
-> 2. Reduce lock competition in swap entry free path by an asynchronous
+1. format a device to exFAT and then mount (with a full disk erase)
+2. dd if=/dev/zero of=/exfat_mount/test.img bs=1M count=8192
+3. eject the device
 
- Do you have data on which lock is affected? Could it be a cluster lock?
+You may find that the dd process does not stop immediately and may
+continue for a long time.
 
->    kworker instead of multiple exiting processes parallel execution.
-> 3. Release memory occupied by exiting processes more efficiently.
->
-> Zhiguo Jiang (2):
->   mm: move task_is_dying to h headfile
->   mm: tlb: multiple exiting processes's swap entries async release
->
->  include/asm-generic/tlb.h |  50 +++++++
->  include/linux/mm_types.h  |  58 ++++++++
->  include/linux/oom.h       |   6 +
->  mm/memcontrol.c           |   6 -
->  mm/memory.c               |   3 +-
->  mm/mmu_gather.c           | 297 ++++++++++++++++++++++++++++++++++++++
->  6 files changed, 413 insertions(+), 7 deletions(-)
->  mode change 100644 =3D> 100755 include/asm-generic/tlb.h
->  mode change 100644 =3D> 100755 include/linux/mm_types.h
->  mode change 100644 =3D> 100755 include/linux/oom.h
->  mode change 100644 =3D> 100755 mm/memcontrol.c
->  mode change 100644 =3D> 100755 mm/memory.c
->  mode change 100644 =3D> 100755 mm/mmu_gather.c
+The root cause of this issue is that during buffer write process,
+exFAT does not need to access the disk to look up directory entries
+or the FAT table (whereas FAT would do) every time data is written.
+Instead, exFAT simply marks the buffer as dirty and returns,
+delegating the writeback operation to the writeback process.
 
-Can you check your local filesystem to determine why you're running
-the chmod command?
+If the disk cannot be accessed at this time, the error will only be
+returned to the writeback process, and the original process will not
+receive the error, so it cannot be returned to the user side.
 
->
-> --
-> 2.39.0
->
+When the disk cannot be accessed normally, an error should be returned
+to stop the writing process.
 
-Thanks
-Barry
+Signed-off-by: Dongliang Cui <dongliang.cui@unisoc.com>
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+---
+Changes in v3:
+ - Implement .shutdown to monitor disk status.
+---
+ fs/exfat/exfat_fs.h | 10 ++++++++++
+ fs/exfat/inode.c    |  3 +++
+ fs/exfat/super.c    | 11 +++++++++++
+ 3 files changed, 24 insertions(+)
+
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index ecc5db952deb..c6cf36070aa3 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -148,6 +148,9 @@ enum {
+ #define DIR_CACHE_SIZE		\
+ 	(DIV_ROUND_UP(EXFAT_DEN_TO_B(ES_MAX_ENTRY_NUM), SECTOR_SIZE) + 1)
+ 
++/* Superblock flags */
++#define EXFAT_FLAGS_SHUTDOWN	1
++
+ struct exfat_dentry_namebuf {
+ 	char *lfn;
+ 	int lfnbuf_len; /* usually MAX_UNINAME_BUF_SIZE */
+@@ -267,6 +270,8 @@ struct exfat_sb_info {
+ 	unsigned int clu_srch_ptr; /* cluster search pointer */
+ 	unsigned int used_clusters; /* number of used clusters */
+ 
++	unsigned long s_exfat_flags; /* Exfat superblock flags */
++
+ 	struct mutex s_lock; /* superblock lock */
+ 	struct mutex bitmap_lock; /* bitmap lock */
+ 	struct exfat_mount_options options;
+@@ -338,6 +343,11 @@ static inline struct exfat_inode_info *EXFAT_I(struct inode *inode)
+ 	return container_of(inode, struct exfat_inode_info, vfs_inode);
+ }
+ 
++static inline int exfat_forced_shutdown(struct super_block *sb)
++{
++	return test_bit(EXFAT_FLAGS_SHUTDOWN, &EXFAT_SB(sb)->s_exfat_flags);
++}
++
+ /*
+  * If ->i_mode can't hold 0222 (i.e. ATTR_RO), we use ->i_attrs to
+  * save ATTR_RO instead of ->i_mode.
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index dd894e558c91..b1b814183494 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -452,6 +452,9 @@ static int exfat_write_begin(struct file *file, struct address_space *mapping,
+ {
+ 	int ret;
+ 
++	if (unlikely(exfat_forced_shutdown(mapping->host->i_sb)))
++		return -EIO;
++
+ 	*pagep = NULL;
+ 	ret = block_write_begin(mapping, pos, len, pagep, exfat_get_block);
+ 
+diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+index 323ecebe6f0e..9d7d9c4ba55a 100644
+--- a/fs/exfat/super.c
++++ b/fs/exfat/super.c
+@@ -167,6 +167,16 @@ static int exfat_show_options(struct seq_file *m, struct dentry *root)
+ 	return 0;
+ }
+ 
++static void exfat_shutdown(struct super_block *sb)
++{
++	struct exfat_sb_info *sbi = EXFAT_SB(sb);
++
++	if (exfat_forced_shutdown(sb))
++		return;
++
++	set_bit(EXFAT_FLAGS_SHUTDOWN, &sbi->s_exfat_flags);
++}
++
+ static struct inode *exfat_alloc_inode(struct super_block *sb)
+ {
+ 	struct exfat_inode_info *ei;
+@@ -193,6 +203,7 @@ static const struct super_operations exfat_sops = {
+ 	.sync_fs	= exfat_sync_fs,
+ 	.statfs		= exfat_statfs,
+ 	.show_options	= exfat_show_options,
++	.shutdown	= exfat_shutdown,
+ };
+ 
+ enum {
+-- 
+2.25.1
+
 
