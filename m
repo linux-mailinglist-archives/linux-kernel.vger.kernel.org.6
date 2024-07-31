@@ -1,517 +1,294 @@
-Return-Path: <linux-kernel+bounces-268826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AA049429EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:06:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87D619429E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E086F1F25A95
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:06:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019AA1F23940
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AEA1AAE1E;
-	Wed, 31 Jul 2024 09:06:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F102718CBE2;
-	Wed, 31 Jul 2024 09:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08321AAE39;
+	Wed, 31 Jul 2024 09:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F8PhhiJn"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B5E1A8C1A;
+	Wed, 31 Jul 2024 09:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722416766; cv=none; b=WS5xYT4Kjwnis4NEC5ZfPskmQKzNTfZAXuF1q+hcZn2BxM1gqEvCHsHXQkus4aWzwBPz0I2AUyzOzTU1N9kES7SdhdV4hUifyFVwB2zP8grSWxkB4lgYCQA6HwF/JTzE/7lZk/WuBraXNJfsfPMofe2BcCle0ef9F74Mlf2CvuE=
+	t=1722416599; cv=none; b=CMV+uDdqL08BuB/cKZrcYvRML33tszDVm3cZwba7igfhKmVQjWI3ACsViRdD6w4+nYotwBavPpmJXZqwBnW6HZD4qkylmFZ8DbJx1sgmzOSJejVOjvyWHKEl2PKTN1epxNtmNu+UzaXGEMus0OfLBVdJNfv0OQZVL5URNs8OYMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722416766; c=relaxed/simple;
-	bh=ZBP69a7Qz9AKbdvVTW2t0/bNPMxBzb6bEMYliDYZoMs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VelYKtAEKJE4/8I9KMgD/yN5T+3p0k+snzUbUQACW+XYnJPL5ZwH3dhK0SSKV15xDG1IsWtbTJ1zNAV+RFePAKRbFM01RJwV1eTNp3y8zBfDejV3602JcOFLT5oVD14Ugio31HbhKuT1sypfibexP51tOVFWMxVNFXJaA/spvng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 284DD1007;
-	Wed, 31 Jul 2024 02:06:29 -0700 (PDT)
-Received: from [10.57.94.83] (unknown [10.57.94.83])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A80913F5A1;
-	Wed, 31 Jul 2024 02:06:00 -0700 (PDT)
-Message-ID: <cde39215-1203-4f98-9145-ecf0078c48be@arm.com>
-Date: Wed, 31 Jul 2024 10:05:59 +0100
+	s=arc-20240116; t=1722416599; c=relaxed/simple;
+	bh=PbnpjxzZUgWhez3rYqbFM1+yNwv02Wmdr67+IMH/5bQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nHJGi5zgCOG74X9rYtDErf+eKZCVwptKLB+Y/23BOopM00Np/Z8gb3zfqCzp5CihojGBhBUytldUd6oMrC8g7AxC4QsXAryE8Jiya2vKVI1Vs4ubUjM+3VD7c0b4p1p27Yigu9AkpqkzxHDpk4bMjaNKPs0rV7nug4wtAT33L+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F8PhhiJn; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5a1337cfbb5so9194619a12.3;
+        Wed, 31 Jul 2024 02:03:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722416596; x=1723021396; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PbnpjxzZUgWhez3rYqbFM1+yNwv02Wmdr67+IMH/5bQ=;
+        b=F8PhhiJnXFmdvnw+UJQhLNXLuPziGnuktcwW+voRBN3LD9O2FacU/ch8iX+5a7Z/Gq
+         rDYB8ShHOXp6uwt8uarnN0HfZL8kI3PX54FtvvdJM+HJ3XYWlZFqMTEyuQ1aUQmd7uZ9
+         AdNyxzXuPuclXoJmCU+seKbUKABU4ItJCmwXZz4KZo7odc61Nba0Wl52u8eiuxkDUn76
+         ZxAR3N8eSBGRB9/WeYXi5BLh3sc1d+HsgmhGil8VNNSZJldA6dt6eGGd5nj4DX1a/+Yl
+         1LthtOg3EZrIB/7vgqX3hLNNFkSduu/SaEHUdeqgVagPomDUjoNYKSW07JApNV5QL4xM
+         pIxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722416596; x=1723021396;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PbnpjxzZUgWhez3rYqbFM1+yNwv02Wmdr67+IMH/5bQ=;
+        b=Gy0+fpNz/gSNHR6iwCH68E7agGylPt2XvNJhYZxnahW9yyJOpdEvU1z2Vol1S/99tD
+         CQj9Iup1X5o2LenW7bQ7udbz1CE7Nj8LVkfbnpLiG+9enrq9Nn/FiApOsuK5vRC0dp4O
+         pT5BK7zykB+1lPD8C9vrfRlJ3UBzEivygvb2fa0u8cPR5qha106tGPk2ag9BHpb6PZdT
+         t73rL+/LaVzEWApkTkSCX0oHF9OzBbFD0Km+J/jTkmUtam2PpC9nx9L2hUIcJYAfUQPj
+         ahl97WsUPJSEKRABBE5wiC5m1L8hhJScnzrW15iurqfDWrK8Qckc7S65CoBkXAc/z+Wh
+         Kn8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWsD39fpB+b5Z31uF7pw5Jl88vCl59RrrDRrCbKjdGAccIkS8shP5rz5P0Pbl+WHvUnjm/YNaFPkXzVBbHbUUy+yuJqg7VogsF6J/H/P7h3TTIAjW3ICZ+sx4hXWiEHg6pN/nOFSAMLp37sk5qH9VD58Py7LdKuv9i8gJyNKMk3Mp4/Hw==
+X-Gm-Message-State: AOJu0YyaS+NXAAElBp9UaI0QOMK/ZHng+KlUD4gfZaWeWHZn2MmAGe72
+	55TINJDxveEKHEHdfWArz5+ZrvnRCJEZLuURpoEscjUbpiUBMdCE
+X-Google-Smtp-Source: AGHT+IGk4m9yO+qkTyZG6r+mscXD08GHV8YL9cPQJy7zv9k9jOYUBtHN2HK5OGbYXkk8TGu5fZn71A==
+X-Received: by 2002:a50:baa9:0:b0:57c:7471:a0dd with SMTP id 4fb4d7f45d1cf-5b0206ce157mr8358031a12.12.1722416595478;
+        Wed, 31 Jul 2024 02:03:15 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63590e7esm8381855a12.36.2024.07.31.02.03.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 02:03:15 -0700 (PDT)
+Message-ID: <f6c9f7730541a6a97e4ce0005bb4cf600973e691.camel@gmail.com>
+Subject: Re: [PATCH RFC 2/5] iio: adc: ad4030: add driver for ad4030-24
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, Esteban Blanc <eblanc@baylibre.com>
+Cc: baylibre-upstreaming@groups.io, Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+Date: Wed, 31 Jul 2024 11:07:14 +0200
+In-Reply-To: <20240728160408.4b810505@jic23-huawei>
+References: <20240627-eblanc-ad4630_v1-v1-0-fdc0610c23b0@baylibre.com>
+	 <20240627-eblanc-ad4630_v1-v1-2-fdc0610c23b0@baylibre.com>
+	 <0036d44542f8cf45c91c867f0ddd7b45d1904d6b.camel@gmail.com>
+	 <D2ZIG2NK223D.J9VK1MWOICE3@baylibre.com>
+	 <20240728160408.4b810505@jic23-huawei>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/15] arm64: Detect if in a realm and set RIPAS RAM
-Content-Language: en-GB
-To: Gavin Shan <gshan@redhat.com>, Steven Price <steven.price@arm.com>,
- kvm@vger.kernel.org, kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240701095505.165383-1-steven.price@arm.com>
- <20240701095505.165383-4-steven.price@arm.com>
- <2b4f0496-99f4-4bc6-af6c-a8be8fca69a8@redhat.com>
- <7203814a-1a1d-41c4-8fc5-95216e2febcd@arm.com>
- <3e30f7b8-c7a4-4ab9-8afc-a48c84e62728@redhat.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <3e30f7b8-c7a4-4ab9-8afc-a48c84e62728@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 31/07/2024 08:03, Gavin Shan wrote:
-> Hi Suzuki,
-> 
-> On 7/30/24 11:51 PM, Suzuki K Poulose wrote:
->> On 30/07/2024 00:37, Gavin Shan wrote:
->>> On 7/1/24 7:54 PM, Steven Price wrote:
->>>> From: Suzuki K Poulose <suzuki.poulose@arm.com>
->>>>
->>>> Detect that the VM is a realm guest by the presence of the RSI
->>>> interface.
->>>>
->>>> If in a realm then all memory needs to be marked as RIPAS RAM 
->>>> initially,
->>>> the loader may or may not have done this for us. To be sure iterate 
->>>> over
->>>> all RAM and mark it as such. Any failure is fatal as that implies the
->>>> RAM regions passed to Linux are incorrect - which would mean failing
->>>> later when attempting to access non-existent RAM.
->>>>
->>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>>> Co-developed-by: Steven Price <steven.price@arm.com>
->>>> Signed-off-by: Steven Price <steven.price@arm.com>
->>>> ---
->>>> Changes since v3:
->>>>   * Provide safe/unsafe versions for converting memory to protected,
->>>>     using the safer version only for the early boot.
->>>>   * Use the new psci_early_test_conduit() function to avoid calling an
->>>>     SMC if EL3 is not present (or not configured to handle an SMC).
->>>> Changes since v2:
->>>>   * Use DECLARE_STATIC_KEY_FALSE rather than "extern struct
->>>>     static_key_false".
->>>>   * Rename set_memory_range() to rsi_set_memory_range().
->>>>   * Downgrade some BUG()s to WARN()s and handle the condition by
->>>>     propagating up the stack. Comment the remaining case that ends in a
->>>>     BUG() to explain why.
->>>>   * Rely on the return from rsi_request_version() rather than checking
->>>>     the version the RMM claims to support.
->>>>   * Rename the generic sounding arm64_setup_memory() to
->>>>     arm64_rsi_setup_memory() and move the call site to setup_arch().
->>>> ---
->>>>   arch/arm64/include/asm/rsi.h      | 64 +++++++++++++++++++++++++
->>>>   arch/arm64/include/asm/rsi_cmds.h | 22 +++++++++
->>>>   arch/arm64/kernel/Makefile        |  3 +-
->>>>   arch/arm64/kernel/rsi.c           | 77 
->>>> +++++++++++++++++++++++++++++++
->>>>   arch/arm64/kernel/setup.c         |  8 ++++
->>>>   5 files changed, 173 insertions(+), 1 deletion(-)
->>>>   create mode 100644 arch/arm64/include/asm/rsi.h
->>>>   create mode 100644 arch/arm64/kernel/rsi.c
->>>>
->>>> diff --git a/arch/arm64/include/asm/rsi.h 
->>>> b/arch/arm64/include/asm/rsi.h
->>>> new file mode 100644
->>>> index 000000000000..29fdc194d27b
->>>> --- /dev/null
->>>> +++ b/arch/arm64/include/asm/rsi.h
->>>> @@ -0,0 +1,64 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0-only */
->>>> +/*
->>>> + * Copyright (C) 2024 ARM Ltd.
->>>> + */
->>>> +
->>>> +#ifndef __ASM_RSI_H_
->>>> +#define __ASM_RSI_H_
->>>> +
->>>> +#include <linux/jump_label.h>
->>>> +#include <asm/rsi_cmds.h>
->>>> +
->>>> +DECLARE_STATIC_KEY_FALSE(rsi_present);
->>>> +
->>>> +void __init arm64_rsi_init(void);
->>>> +void __init arm64_rsi_setup_memory(void);
->>>> +static inline bool is_realm_world(void)
->>>> +{
->>>> +    return static_branch_unlikely(&rsi_present);
->>>> +}
->>>> +
->>>> +static inline int rsi_set_memory_range(phys_addr_t start, 
->>>> phys_addr_t end,
->>>> +                       enum ripas state, unsigned long flags)
->>>> +{
->>>> +    unsigned long ret;
->>>> +    phys_addr_t top;
->>>> +
->>>> +    while (start != end) {
->>>> +        ret = rsi_set_addr_range_state(start, end, state, flags, 
->>>> &top);
->>>> +        if (WARN_ON(ret || top < start || top > end))
->>>> +            return -EINVAL;
->>>> +        start = top;
->>>> +    }
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>
->>> @flags has been defined as int instead of unsigned long, which is 
->>> inconsistent
->>> to TF-RMM's definitions since it has type of 'unsigned long'.
->>
->> Sorry, do you mean that TF-RMM treats the "flags" as an "int" instead of
->> unsigned long and we should be consistent with TF-RMM ? If so, I don't
->> think that is correct. We should be compliant to the RMM spec, which
->> describes "RsiRipasChangeFlags" as a 64bit value and thus must be
->> 'unsigned long' as we used here.
->>
-> 
-> No worries, I guess I didn't make myself clear enough. Sorry about that.
-> Let me explain it with more details. @flag is passed down as the following
-> call trace shows.
-> 
->    rsi_set_memory_range_protected_safe
->      rsi_set_memory_range                             // 
-> RSI_NO_CHANGE_DESTROYED
->        rsi_set_addr_range_state
->          arm_smccc_smc(SMC_RSI_IPA_STATE_SET, ...)
-> 
-> The kernel defines RSI_CHANGE_DESTROYED as a "int" value, but same flag has
-> been defined as 'unsigned int' value in tf-rmm. However, kernel uses 
-> 'unsigned
-> long' flags to hold it.
-> 
->    // kernel's prototype - 'unsigned long flags'
->    static inline int rsi_set_memory_range(phys_addr_t start, phys_addr_t 
-> end,
->                                         enum ripas state, unsigned long 
-> flags)
-> 
->    // kernel's definition - 'int'
->    #define RSI_CHANGE_DESTROYED    0
+On Sun, 2024-07-28 at 16:04 +0100, Jonathan Cameron wrote:
+> One quick comment form me inline.
+>=20
+> The short version is non power of 2 storage is not an option because
+> it is a major ABI change and we aren't paying the cost of complexity
+> that brings to userspace for a very small number of drivers where
+> there is any real advantage to packing them tighter.
+>=20
+> >=20
+> > > So, from the datasheet, figure 39 we have something like a multiplexe=
+r
+> > > where we
+> > > can have:
+> > >=20
+> > > - averaged data;
+> > > - normal differential;
+> > > - test pattern (btw, useful to have it in debugfs - but can come late=
+r);
+> > > - 8 common mode bits;
+> > >=20
+> > > While the average, normal and test pattern are really mutual exclusiv=
+e,
+> > > the
+> > > common mode voltage is different in the way that it's appended to
+> > > differential
+> > > sample. Making it kind of an aggregated thingy. Thus I guess it can m=
+ake
+> > > sense
+> > > for us to see them as different channels from a SW perspective (even =
+more
+> > > since
+> > > gain and offset only apply to the differential data). But there are a
+> > > couple of
+> > > things I don't like (have concerns):
+> > >=20
+> > > * You're pushing the CM channels into the end. So when we a 2 channel
+> > > device
+> > > we'll have:
+> > >=20
+> > > =C2=A0in_voltage0 - diff
+> > > =C2=A0in_voltage1 - diff
+> > > =C2=A0in_voltage2 - CM associated with chan0
+> > > =C2=A0in_voltage0 - CM associated with chan1
+> > >=20
+> > > I think we could make it so the CM channel comes right after the chan=
+nel
+> > > where
+> > > it's data belongs too. So for example, odd channels would be CM chann=
+els
+> > > (and
+> > > labels could also make sense).=C2=A0=20
+> >=20
+> > I must agree with you it would make more sense.
+> >=20
+> > > Other thing that came to mind is if we could somehow use differential=
+ =3D
+> > > true
+> > > here. Having something like:
+> > >=20
+> > > in_voltage1_in_voltage0_raw - diff data
+> > > ...
+> > > And the only thing for CM would be:
+> > >=20
+> > > in_voltage1_raw
+> > > in_voltage1_scale
+> > >=20
+> > > (not sure if the above is doable with ext_info - maybe only with
+> > > device_attrs)
+> > >=20
+> > > The downside of the above is that we don't have a way to separate the=
+ scan
+> > > elements. Meaning that we don't have a way to specify the scan_type f=
+or
+> > > both the
+> > > common mode and differential voltage. That said, I wonder if it is th=
+at
+> > > useful
+> > > to buffer the common mode stuff? Alternatively, we could just have th=
+e
+> > > scan_type
+> > > for the diff data and apps really wanting the CM voltage could still
+> > > access the
+> > > raw data. Not pretty, I know...=C2=A0=20
+> >=20
+> > At the moment the way I "separate" them is by looking at the
+> > `active_scan_mask`. If the user asked for differential channel only, I =
+put
+> > the
+> > chip in differential only mode. If all the channels are asked, I put
+> > the chip in differential + common mode. This way there is no need to
+> > separate anything in differential mode. See below for an example where
+> > this started.
+> >=20
+> > > However, even if we go with the two separate channels there's one thi=
+ng
+> > > that
+> > > concerns me. Right now we have diff data with 32 for storage bits and=
+ CM
+> > > data
+> > > with 8 storage bits which means the sample will be 40 bits and in rea=
+lity
+> > > we
+> > > just have 32. Sure, now we have SW buffering so we can make it work b=
+ut
+> > > the
+> > > ultimate goal is to support HW buffering where we won't be able to to=
+uch
+> > > the
+> > > sample and thus we can't lie about the sample size. Could you run any=
+ test
+> > > with
+> > > this approach on a HW buffer setup?=C2=A0=C2=A0=20
+> >=20
+> > Let's take AD4630-24 in diff+cm mode as an example. We would have 4
+> > channels:
+> > - Ch0 diff with 24 bits of realbits and 24 bits of storagebits
+> > - Ch0 cm with 8 bits of realbits and 8 bits of storagebits
+> > - Ch1 diff with 24 bits of realbits and 24 bits of storagebits
+> > - Ch1 cm with 8 bits of realbits and 8 bits of storagebits
+> > ChX diff realbits + ChX cm realbits =3D 32 bits which is one sample as =
+sent
+> > by the chip.
+> >=20
+> > The problem I faced when trying to do this in this series is that IIO
+> > doesn't
+> > seem to like 24 storagebits and the data would get garbled. In diff onl=
+y
+> > mode with the same channel setup (selecting only Ch0 diff and Ch1 diff)
+> > the data is also garbled. I used iio-oscilloscope software to test this
+> > setup.
+> > Here is the output with iio_readdev:
+> > ```
+> > # iio_readdev -s 1 ad4630-24 voltage0
+> > WARNING: High-speed mode not enabled
+> > Unable to refill buffer: Invalid argument (22)
+> > ```
+> >=20
+> > I think this is happening when computing the padding to align ch1 diff.
+> > In `iio_compute_scan_bytes` this line `bytes =3D ALIGN(bytes, length);`
+> > will be invoked with bytes =3D 3 and length =3D 3 when selecting ch0 di=
+ff
+> > and ch1 diff (AD4630-24 in differential mode). The output is 5. As
+> > specified in linux/align.h:
+> > > @a is a power of 2=C2=A0=20
+> > In our case `a` is `length`, and 3 is not a power of 2.
+> >=20
+> > It works fine with Ch0/1 diff with 24 realbits and 32 storagebits with =
+8
+> > bits shift.
+> >=20
+> > Intrestingly, a similar setup works great on AD4630-16:
+> > - Ch0 diff with 16 bits of realbits and 16 bits of storagebits
+> > - Ch0 cm with 8 bits of realbits and 8 bits of storagebits
+> > - Ch1 diff with 16 bits of realbits and 16 bits of storagebits
+> > - Ch1 cm with 8 bits of realbits and 8 bits of storagebits
+> >=20
+> > In `iio_compute_scan_bytes` we will have ALIGN(3, 2) which will output
+> > 4, everything is fine. The output of iio-oscilloscope is as expected,
+> > a clean sinewave and iio_readdev does not throw an error.
+> >=20
+> > All this to say that at the moment, I'm not sure how I will be able to
+> > put the CM byte in a separate channel for AD4630-24 without buffering i=
+t.
+> > It would be useful to return a "packed" buffer.
+>=20
+> Whilst it might be useful to allow non power of 2 storage formats,
+> that's a break of the IIO userspace ABI so that isn't an approach to
+> consider. You must shuffle the data in the driver.
 
-Thanks for the detailed explanation, you are right, we should fix it.
+Yeah, I do agree the breakage is really not the way to go...
 
-> 
->    // tf-rmm's definition - 'unsigned int'
->    #define U(_x)                 (unsigned int)(_x)
->    #define RSI_CHANGE_DESTROYED  U(0)
-> 
->>>
->>>> +/*
->>>> + * Convert the specified range to RAM. Do not use this if you rely 
->>>> on the
->>>> + * contents of a page that may already be in RAM state.
->>>> + */
->>>> +static inline int rsi_set_memory_range_protected(phys_addr_t start,
->>>> +                         phys_addr_t end)
->>>> +{
->>>> +    return rsi_set_memory_range(start, end, RSI_RIPAS_RAM,
->>>> +                    RSI_CHANGE_DESTROYED);
->>>> +}
->>>> +
->>>> +/*
->>>> + * Convert the specified range to RAM. Do not convert any pages 
->>>> that may have
->>>> + * been DESTROYED, without our permission.
->>>> + */
->>>> +static inline int rsi_set_memory_range_protected_safe(phys_addr_t 
->>>> start,
->>>> +                              phys_addr_t end)
->>>> +{
->>>> +    return rsi_set_memory_range(start, end, RSI_RIPAS_RAM,
->>>> +                    RSI_NO_CHANGE_DESTROYED);
->>>> +}
->>>> +
->>>> +static inline int rsi_set_memory_range_shared(phys_addr_t start,
->>>> +                          phys_addr_t end)
->>>> +{
->>>> +    return rsi_set_memory_range(start, end, RSI_RIPAS_EMPTY, 0);
->>>> +}
->>>> +#endif
->>>
->>> s/0/RSI_NO_CHANGE_DESTROYED
->>
->> This is not required as we do not care if the GRANULE was destroyed or
->> not, since it is going to be "UNUSED" anyway in a protected way 
->> (RIPAS_EMPTY). And we do not rely on the contents of the memory being
->> preserved, when the page is made shared (In fact we cannot do that
->> with Arm CCA).
->>
->> Thus we do not get any security benefits with the flag. The flag is ONLY
->> useful, when the Realm does a "blanket" IPA_STATE_SET(RIPAS_RAM) for
->> all of its memory area described as RAM. In this case, we want to make
->> sure that the Host hasn't destroyed any DATA that was loaded (and
->> measured) in the "NEW" state.
->>
->> e.g, Host loads Kernel at Addr X in RAM (which is transitioned to 
->> RIPAS_RAM, measured in RIM by RMM) and ACTIVATEs the Realm. Host could 
->> then destroy some pages of the loaded image before the Realm boots (thus
->> transitioning into DESTROYED). But for the Realm, at early boot, it is
->> much easier to "mark" the entire RAM region as RIPAS_RAM,
->>
->>
->> for_each_memory_region(region) {
->>      set_ipa_state_range(region->start, region->end, RIPAS_RAM, 
->> RSI_NO_CHANGE_DESTROYED);
->> }
->>
->> rather than performing:
->>
->> for_each_granule(g in DRAM) :
->>
->> switch (rsi_get_ipa_state(g)) {
->> case RIPAS_EMPTY: rsi_set_ipa_state(g, RIPAS_RAM); break;
->> case RIPAS_RAM: break; /* Nothing to do */
->> case DESTROYED: BUG();
->> }
->>
->>
-> 
-> The point was 0 and RSI_NO_CHANGE_DESTROYED are interchangeable. Since 
-> RSI_NO_CHANGE_DESTROYED
-> has been defined as 0, why we don't used RSI_NO_CHANGE_DESTROYED?
+OTOH, I'm seeing more and more of these devices with kind of multiplexed
+data/channels in one sample (like cm and diff in this case) and while in SW
+buffering we can workaround it in the driver, for HW buffering things may b=
+e not
+that "simple".
 
-Ah, my bad. But like I said, we should instead use the 
-RSI_CHANGE_DESTROYED for transitions to EMPTY.
+Not sure what we can do about it but one concept that came to mind when I w=
+as
+giving some thinking about this was kind of a virtual scan element that wou=
+ld
+essentially map/link to a (physical) scan element (so virtual_scan + scan =
+=3D
+storage_size of the real scan element). Kind of a basic idea for now and I'=
+m not
+really sure how much work would this be or even how could we expose this to
+userspace without breaking current ABI (basically if it's doable at all :))=
+.
 
-Suzuki
+The only other option I see for these kind of devices (if there's nothing w=
+e can
+do in HW for shuffling data) is to expose a different channel setup that do=
+es
+not "lie" about the sample size. And it's up to userspace to parse the samp=
+le
+data. Far from pretty though...
 
-
-
-> 
->>
->>> s/#endif/#endif /* __ASM_RSI_H_ */
->>>
->>>> diff --git a/arch/arm64/include/asm/rsi_cmds.h 
->>>> b/arch/arm64/include/asm/rsi_cmds.h
->>>> index 89e907f3af0c..acb557dd4b88 100644
->>>> --- a/arch/arm64/include/asm/rsi_cmds.h
->>>> +++ b/arch/arm64/include/asm/rsi_cmds.h
->>>> @@ -10,6 +10,11 @@
->>>>   #include <asm/rsi_smc.h>
->>>> +enum ripas {
->>>> +    RSI_RIPAS_EMPTY,
->>>> +    RSI_RIPAS_RAM,
->>>> +};
->>>> +
->>>>   static inline unsigned long rsi_request_version(unsigned long req,
->>>>                           unsigned long *out_lower,
->>>>                           unsigned long *out_higher)
->>>> @@ -35,4 +40,21 @@ static inline unsigned long 
->>>> rsi_get_realm_config(struct realm_config *cfg)
->>>>       return res.a0;
->>>>   }
->>>> +static inline unsigned long rsi_set_addr_range_state(phys_addr_t 
->>>> start,
->>>> +                             phys_addr_t end,
->>>> +                             enum ripas state,
->>>> +                             unsigned long flags,
->>>> +                             phys_addr_t *top)
->>>> +{
->>>> +    struct arm_smccc_res res;
->>>> +
->>>> +    arm_smccc_smc(SMC_RSI_IPA_STATE_SET, start, end, state,
->>>> +              flags, 0, 0, 0, &res);
->>>> +
->>>> +    if (top)
->>>> +        *top = res.a1;
->>>> +
->>>> +    return res.a0;
->>>> +}
->>>> +
->>>>   #endif
->>>> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
->>>> index 763824963ed1..a483b916ed11 100644
->>>> --- a/arch/arm64/kernel/Makefile
->>>> +++ b/arch/arm64/kernel/Makefile
->>>> @@ -33,7 +33,8 @@ obj-y            := debug-monitors.o entry.o irq.o 
->>>> fpsimd.o        \
->>>>                  return_address.o cpuinfo.o cpu_errata.o        \
->>>>                  cpufeature.o alternative.o cacheinfo.o        \
->>>>                  smp.o smp_spin_table.o topology.o smccc-call.o    \
->>>> -               syscall.o proton-pack.o idle.o patching.o pi/
->>>> +               syscall.o proton-pack.o idle.o patching.o pi/    \
->>>> +               rsi.o
->>>>   obj-$(CONFIG_COMPAT)            += sys32.o signal32.o            \
->>>>                          sys_compat.o
->>>> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
->>>> new file mode 100644
->>>> index 000000000000..f01bff9dab04
->>>> --- /dev/null
->>>> +++ b/arch/arm64/kernel/rsi.c
->>>> @@ -0,0 +1,77 @@
->>>> +// SPDX-License-Identifier: GPL-2.0-only
->>>> +/*
->>>> + * Copyright (C) 2023 ARM Ltd.
->>>> + */
->>>> +
->>>> +#include <linux/jump_label.h>
->>>> +#include <linux/memblock.h>
->>>> +#include <linux/psci.h>
->>>> +#include <asm/rsi.h>
->>>> +
->>>> +DEFINE_STATIC_KEY_FALSE_RO(rsi_present);
->>>> +EXPORT_SYMBOL(rsi_present);
->>>> +
->>>> +static bool rsi_version_matches(void)
->>>> +{
->>>> +    unsigned long ver_lower, ver_higher;
->>>> +    unsigned long ret = rsi_request_version(RSI_ABI_VERSION,
->>>> +                        &ver_lower,
->>>> +                        &ver_higher);
->>>> +
->>>> +    if (ret == SMCCC_RET_NOT_SUPPORTED)
->>>> +        return false;
->>>> +
->>>> +    if (ret != RSI_SUCCESS) {
->>>> +        pr_err("RME: RMM doesn't support RSI version %u.%u. 
->>>> Supported range: %lu.%lu-%lu.%lu\n",
->>>> +               RSI_ABI_VERSION_MAJOR, RSI_ABI_VERSION_MINOR,
->>>> +               RSI_ABI_VERSION_GET_MAJOR(ver_lower),
->>>> +               RSI_ABI_VERSION_GET_MINOR(ver_lower),
->>>> +               RSI_ABI_VERSION_GET_MAJOR(ver_higher),
->>>> +               RSI_ABI_VERSION_GET_MINOR(ver_higher));
->>>> +        return false;
->>>> +    }
->>>> +
->>>> +    pr_info("RME: Using RSI version %lu.%lu\n",
->>>> +        RSI_ABI_VERSION_GET_MAJOR(ver_lower),
->>>> +        RSI_ABI_VERSION_GET_MINOR(ver_lower));
->>>> +
->>>> +    return true;
->>>> +}
->>>> +
->>>> +void __init arm64_rsi_setup_memory(void)
->>>> +{
->>>> +    u64 i;
->>>> +    phys_addr_t start, end;
->>>> +
->>>> +    if (!is_realm_world())
->>>> +        return;
->>>> +
->>>> +    /*
->>>> +     * Iterate over the available memory ranges and convert the 
->>>> state to
->>> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->>>                                               blocks and convert them to
->>
->> TBH, I don't see any significant difference between the two. Am I
->> missing something ?
->>
-> 
-> for_each_mem_range() is a helper provided by memory block management 
-> module.
-> So 'memory block' sounds like more accurate than broadly used term "memory
-> range" here.
-> 
->>>
->>>> +     * protected memory. We should take extra care to ensure that 
->>>> we DO NOT
->>>> +     * permit any "DESTROYED" pages to be converted to "RAM".
->>>> +     *
->>>> +     * BUG_ON is used because if the attempt to switch the memory to
->>>> +     * protected has failed here, then future accesses to the 
->>>> memory are
->>>> +     * simply going to be reflected as a fault which we can't handle.
->>>> +     * Bailing out early prevents the guest limping on and dieing 
->>>> later.
->>>> +     */
->>>> +    for_each_mem_range(i, &start, &end) {
->>>> +        BUG_ON(rsi_set_memory_range_protected_safe(start, end));
->>>> +    }
->>>> +}
->>>> +
->>>
->>> If I'm understanding the code completely, this changes the memory 
->>> state from
->>> RIPAS_EMPTY to RIPAS_RAM so that the following page faults can be 
->>> routed to
->>> host properly. Otherwise, a SEA is injected to the realm according to
->>> tf-rmm/runtime/core/exit.c::handle_data_abort(). The comments can be 
->>> more
->>> explicit to replace "fault" with "SEA (Synchronous External Abort)".
->>
->> Agreed.  SEA is more accurate than fault.
->>
-> 
-> Ok.
-> 
->>>
->>> Besides, this forces a guest exit with reason RMI_EXIT_RIPAS_CHANGE 
->>> which is
->>> handled by the host, where RMI_RTT_SET_RIPAS is triggered to convert 
->>> the memory
->>> state from RIPAS_EMPTY to RIPAS_RAM. The question is why the 
->>> conversion can't
->>> be done by VMM (QEMU)?
->>
->> A VMM could potentially do this via INIT_RIPAS at Realm creation for
->> the entire RAM. But, as far as the Realm is concerned it is always 
->> safer to do this step and is relatively a lightweight operation at 
->> boot. Physical pages need not be allocated/mapped in stage2 with the 
->> IPA State change.
->>
-> 
-> Ok. Thanks for the explanation.
-> 
->>
->> Suzuki
->>>
->>>> +void __init arm64_rsi_init(void)
->>>> +{
->>>> +    /*
->>>> +     * If PSCI isn't using SMC, RMM isn't present. Don't try to 
->>>> execute an
->>>> +     * SMC as it could be UNDEFINED.
->>>> +     */
->>>> +    if (!psci_early_test_conduit(SMCCC_CONDUIT_SMC))
->>>> +        return;
->>>> +    if (!rsi_version_matches())
->>>> +        return;
->>>> +
->>>> +    static_branch_enable(&rsi_present);
->>>> +}
->>>> +
->>>> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
->>>> index a096e2451044..143f87615af0 100644
->>>> --- a/arch/arm64/kernel/setup.c
->>>> +++ b/arch/arm64/kernel/setup.c
->>>> @@ -43,6 +43,7 @@
->>>>   #include <asm/cpu_ops.h>
->>>>   #include <asm/kasan.h>
->>>>   #include <asm/numa.h>
->>>> +#include <asm/rsi.h>
->>>>   #include <asm/scs.h>
->>>>   #include <asm/sections.h>
->>>>   #include <asm/setup.h>
->>>> @@ -293,6 +294,11 @@ void __init __no_sanitize_address 
->>>> setup_arch(char **cmdline_p)
->>>>        * cpufeature code and early parameters.
->>>>        */
->>>>       jump_label_init();
->>>> +    /*
->>>> +     * Init RSI before early param so that "earlycon" console uses the
->>>> +     * shared alias when in a realm
->>>> +     */
->>>> +    arm64_rsi_init();
->>>>       parse_early_param();
->>>>       dynamic_scs_init();
->>>> @@ -328,6 +334,8 @@ void __init __no_sanitize_address 
->>>> setup_arch(char **cmdline_p)
->>>>       arm64_memblock_init();
->>>> +    arm64_rsi_setup_memory();
->>>> +
->>>>       paging_init();
->>>>       acpi_table_upgrade();
->>>
-> 
-> Thanks,
-> Gavin
-> 
-
+- Nuno S=C3=A1
 
