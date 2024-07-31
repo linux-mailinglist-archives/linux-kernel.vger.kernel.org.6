@@ -1,119 +1,139 @@
-Return-Path: <linux-kernel+bounces-269658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59159943575
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:13:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D29D94357F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01BB21F22169
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:13:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F16B41F2200E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F171F3EA69;
-	Wed, 31 Jul 2024 18:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818F1482CA;
+	Wed, 31 Jul 2024 18:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LKJgh6Vq"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XdxtNm5j"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31E138FA6
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148B03BBF2;
+	Wed, 31 Jul 2024 18:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722449595; cv=none; b=exWogRoc7rMrK0tgFwKdHHou0IGjKCA68nALFFInm5RnW/oRAgpAJteiIHhV3cqL8jWgB9uFjVKqmYFzHzH6ABbLssIRipMbnJG8Z9WhIFA3xqaNTZuTuI2y2i9jPdbnBWk3iJ8Bb9t9FpCA2yvTWA1ehPC7dr5DDnWPMqRwFtQ=
+	t=1722449674; cv=none; b=R0NNgvW/qUIgbA6IgSdWYWp3sVC8tuVD1cD8nIUcNaSxx5VoLvG+u/ec807ExJbeBH8FNPMzz0X2cGbf4JmNWkI9DmM7jbq/K6xib5b7iS9vJPNitoH/On3vcBTZGmSItUuXqjivOThvLt4ifIwP3ZxkxFCXehrU9FyvpRBZNmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722449595; c=relaxed/simple;
-	bh=uQwOrxQmn4UWuOdYTz/ZFVXWCNeQRZ3Mc8Mz/PrYA1E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e5GhvW91Z/dJBh6wNxtwNFRBL0h3e6vb6o+eDUnAMtIMRCVOlNCPHYCA/mX1tBeGTOZ1f968/UJFV8U19Smyqh4hjzsloCoWQpAkFPKZHaeB1ZNhMa2LGVfJJkxHynKpnlC6BGlaZKWo+Of+BE7p80LT5n63NnFcU4oUGK+rJi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LKJgh6Vq; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-812796ac793so31140039f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:13:13 -0700 (PDT)
+	s=arc-20240116; t=1722449674; c=relaxed/simple;
+	bh=Pp0vWyL7VeDKadleGOEHNTdhDMPNVXeakIX5tgvvsCU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m5cXv0CFfIuWTKgBURXbCUV6jNQ8yuMOsiysmwOiXYk7D+Oz2hPEkbJLfEXs9i4pQJL0sPgKtagVG7dwjR8Qhh4WB4PaetWPGzYcccs8Dz0WG9jrqsbamoVhNfq+E7NP7pBTvLhTuHnIQDJ2q7DISYmDt0fJISSELkt/apR35SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XdxtNm5j; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3684e8220f9so695951f8f.1;
+        Wed, 31 Jul 2024 11:14:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722449593; x=1723054393; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9U9Aeo88raKDsbH9TG7H5YN1vzWt4rRDmAinflLvkZ4=;
-        b=LKJgh6Vq8t2oIct4QSI7B7b0sjNqG9lQ5K41NH0USiieBt2LcX/oFy40qw5t8CAue0
-         UkxRL1HxzeDpMxBWDm5WTV3lhaDAQDscwLKKY7gVPTEC25kpyxAwzGQuF24QT8C7kdzQ
-         Y1c1l/rzJS6a9Y4l7J0QBqAzN9rnPOOFtxMhQ=
+        d=gmail.com; s=20230601; t=1722449671; x=1723054471; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pp0vWyL7VeDKadleGOEHNTdhDMPNVXeakIX5tgvvsCU=;
+        b=XdxtNm5jvf2ukVXdfu/2pFEfwrjpiI25CyYbxqrDGe2klH14/y3aSQ6XSI+YwkGQbw
+         atNUcciuw+dJ5lqTkV62dyTEeoV96ta6vcjEm8nNNDPDPpwf7Tnzgqmj4IzPofm93WdS
+         thwQnbsiQvm1BSwS8AAPGHJPiobLitebFssQIlRb8ToE46q1/pL9+M/zVHrmaqKH6HlQ
+         fEpdcjapz/+23AA7D5d5ApoLedbJ+4Iqms8TQ0ETQx/w+vbwo3UnSmSvv5cTL3phwgXD
+         IhDgxwI+VbnkcxJ0NkZZwJdUiOb9i5aMHcGnsbk8+jSqHEULAcRl7RLoMdVBLed9hiw4
+         +jUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722449593; x=1723054393;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9U9Aeo88raKDsbH9TG7H5YN1vzWt4rRDmAinflLvkZ4=;
-        b=ivH2G+ndsY1HIeNejmvpcHByzlZm/hh+xK45jCxXwPquKEKbPF8hPox2m9A/B2YXuS
-         I8kVL2QOnRpbjqFWmoM/kypt0kLuxaVG1G16Wnr8DkMR2LGz5rQTrkkQSpjsj/k0PsWP
-         UKQAPs5E+JqICJJki21cNDDFOHifKwa6TgnL0wSUp2wWi9ZsXOZeEtAhQGhgU2Whymze
-         gyvSJCvps8hx30SzkenVvQ6dlYDNKea64OiwL8EsabXDiUCp53mDCockMQwVB2R7sFPw
-         Y2AcEfnhg6Gc+8Asih83npMce+amjLUbJaQLlG1FqRUO8Zro+i3og7Wyshy4dmLBIjcI
-         8aAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUg90OESsiWgf18Sag9nMYuIYdUZnsbnKJZblQDjeyh9p2ApziQw3Cl1q7uGnCVXYfgf5g8zOhLot7y7iw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVTVbWen9mkkRAyI1ed+JjzOKcaCb962EoDae80Fj+qYOJAwNc
-	oTeC22yJ+DhV3D+y2305dKZlOdaiHEkyuC8QA4YFK7JI4Q1sHDIB5ezEIDeyeXY=
-X-Google-Smtp-Source: AGHT+IEHDc/6KXUE+4h4v4FSTmQPsunt90tpxasZpI82+oz/OgCHb5Aq6q70sUiWXESPFmm2+pk1Tw==
-X-Received: by 2002:a6b:ea0d:0:b0:81f:8f3a:5689 with SMTP id ca18e2360f4ac-81fcc13167emr9584739f.0.1722449592803;
-        Wed, 31 Jul 2024 11:13:12 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-81f88597d83sm390466939f.6.2024.07.31.11.13.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 11:13:12 -0700 (PDT)
-Message-ID: <2fb7e346-f49c-4a4a-812b-2b6d3c0edd25@linuxfoundation.org>
-Date: Wed, 31 Jul 2024 12:13:11 -0600
+        d=1e100.net; s=20230601; t=1722449671; x=1723054471;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pp0vWyL7VeDKadleGOEHNTdhDMPNVXeakIX5tgvvsCU=;
+        b=DFSYsgb/4FTbifeganFqZPbe5CBf3ArKeD3jSkB1W4wJd4vYFruG+6BPbFCQf4vtdv
+         u5GEw8M2Kr7mMvH1rBtNvPX79Y20PmhdSm6P7/D1mXzk/XuqXN17GKO+YQntvQKeuWNo
+         YNJQx0WlT9fqdDvLW+JlV7UmUGIAYe+MdkR0N4Zjpv0/wu6j0e64ivDvmdbNHf3mfgQo
+         uGHPB+hAAUmrER9eHyum5yPZfZVUSHjyGlRKXHyELonSFVnG9tsxzTdcNXsw0pw46MV7
+         uEUPK5nXNbD7llH9QbRQ7B6T0pdU3bPr2b6qdkSWVAg29esOgygIPWMdNwUhjsFGv0BE
+         NMwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlB+ZaOqV6VX+u9BVl1k133RSwYXFHdLu0mS1h2tlYeiKf6Qkobg/L7xZVeaf6Ec7CM6J+925rOxFg2AUp97FksRIUgv3qDUSeqPRfOR3AmlVze3mJsotkt+CT3SWncO9eCmRrLQObjhGtukCTotb8e6/6y9nY5sDiHdjrR0gXxzzCFEej+v3DL3O/rj7TQ4PS/pzywsY62Mn4wBW5JNPbuSHm9nKl5rMU
+X-Gm-Message-State: AOJu0YwnvVtCrT2Dc6h4nVjzlEsSUvG40QNthfZ12B4FjHjEAvn/S2aq
+	S/EU9sH0ZURS/UFd9eZtMIvd4jLGar3ORYtltEkG/uOBSfHa/8ocJLtEuM1gFLGA5Ocawub2Afk
+	DuUWu8SkXeKOKaurw+n6uLq82qQM=
+X-Google-Smtp-Source: AGHT+IGv2ta3BQ/aeYaFuo6uJnDIs2Oh1PDBCcZrH55JaT3W4vssxSHelAFkF3XSYf9nggWCe12LvyT/WHK2KvkPs3c=
+X-Received: by 2002:a05:6000:4582:b0:365:aec0:e191 with SMTP id
+ ffacd0b85a97d-36b8c8fdbdbmr4052808f8f.21.1722449671103; Wed, 31 Jul 2024
+ 11:14:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests: lib: remove strscpy test
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Kees Cook <kees@kernel.org>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240725121212.808206-1-usama.anjum@collabora.com>
- <9d5c0793-e90a-4549-92b1-41ad06b85de6@linuxfoundation.org>
- <d26b317b-edda-4bb8-a022-912cd1f76b3a@collabora.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <d26b317b-edda-4bb8-a022-912cd1f76b3a@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240731124505.2903877-1-linyunsheng@huawei.com> <20240731124505.2903877-5-linyunsheng@huawei.com>
+In-Reply-To: <20240731124505.2903877-5-linyunsheng@huawei.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Wed, 31 Jul 2024 11:13:54 -0700
+Message-ID: <CAKgT0UcqdeSJdjZ_FfwyCnT927TwOkE4zchHLOkrBEmhGzex9g@mail.gmail.com>
+Subject: Re: [PATCH net-next v12 04/14] mm: page_frag: add '_va' suffix to
+ page_frag API
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Subbaraya Sundeep <sbhatta@marvell.com>, Jeroen de Borst <jeroendb@google.com>, 
+	Praveen Kaligineedi <pkaligineedi@google.com>, Shailend Chand <shailend@google.com>, 
+	Eric Dumazet <edumazet@google.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Sunil Goutham <sgoutham@marvell.com>, 
+	Geetha sowjanya <gakula@marvell.com>, hariprasad <hkelam@marvell.com>, Felix Fietkau <nbd@nbd.name>, 
+	Sean Wang <sean.wang@mediatek.com>, Mark Lee <Mark-MC.Lee@mediatek.com>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Keith Busch <kbusch@kernel.org>, 
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	Chaitanya Kulkarni <kch@nvidia.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>, 
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, intel-wired-lan@lists.osuosl.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-nvme@lists.infradead.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux.dev, linux-mm@kvack.org, bpf@vger.kernel.org, 
+	linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/31/24 02:32, Muhammad Usama Anjum wrote:
-> On 7/31/24 3:37 AM, Shuah Khan wrote:
->> On 7/25/24 06:11, Muhammad Usama Anjum wrote:
->>> The strscpy test loads test_strscpy module for testing. But test_strscpy
->>> was converted to Kunit (see fixes). Hence remove strscpy.
->>>
->>> Fixes: 41eefc46a3a4 ("string: Convert strscpy() self-test to KUnit")
->>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->>> ---
->>> Changes since v1:
->>> - Remove from Makefile and config file as well
->>> ---
->>
->> As mentioned in other threads on this conversion to kunit and removal
->> of kselfttest - NACK on this patch.
->>
->> Please don't send me any more of these conversion and removal patches.
-> This patch is removing a dead kselftest as its corresponding test module
-> was moved years ago (in 2022). This test has been failing since then. It
-> seems like misunderstanding that I'm removing something.
-> 
+On Wed, Jul 31, 2024 at 5:50=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
+m> wrote:
+>
+> Currently the page_frag API is returning 'virtual address'
+> or 'va' when allocing and expecting 'virtual address' or
+> 'va' as input when freeing.
+>
+> As we are about to support new use cases that the caller
+> need to deal with 'struct page' or need to deal with both
+> 'va' and 'struct page'. In order to differentiate the API
+> handling between 'va' and 'struct page', add '_va' suffix
+> to the corresponding API mirroring the page_pool_alloc_va()
+> API of the page_pool. So that callers expecting to deal with
+> va, page or both va and page may call page_frag_alloc_va*,
+> page_frag_alloc_pg*, or page_frag_alloc* API accordingly.
+>
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
 
+I am naking this patch. It is a pointless rename that is just going to
+obfuscate the git history for these callers.
 
-Thank you for the clarification
-
-Applied linux-kselftest for Linux 6.12-rc1
-
-thanks,
--- Shuah
+As I believe I said before I would prefer to see this work more like
+the handling of __get_free_pages and __free_pages in terms of the use
+of pages versus pointers and/or longs. Pushing this API aside because
+you want to reuse the name for something different isn't a valid
+reason to rename an existing API and will just lead to confusion.
 
