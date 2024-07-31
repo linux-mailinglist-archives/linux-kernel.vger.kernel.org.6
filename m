@@ -1,108 +1,132 @@
-Return-Path: <linux-kernel+bounces-269901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C7A3943842
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:50:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C84CA943848
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D9AE1C20A09
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:50:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B1D91F223E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA3916C869;
-	Wed, 31 Jul 2024 21:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92241607B0;
+	Wed, 31 Jul 2024 21:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="st6nFkJe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFXIhAa4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F371AA3CC;
-	Wed, 31 Jul 2024 21:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F3D160860;
+	Wed, 31 Jul 2024 21:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722462632; cv=none; b=UGeuIrnhV8fVviB3NVWnqjmh8QtXVXhyvIrb6HmR/a2sle5+dndBRSzcVV1Ad5nF1o0HFkl6IxR6B4a20JWtJahxCM2BuN6u4IQlo/hgWfQlvWV5I3feCB8Pzhdx1OjqJo4QNWh762W6LO9qv5kOBJzWF+6oQ0eQDRwPdtGNEQw=
+	t=1722462729; cv=none; b=qMX9SZjSQ/9YKrqTk+yYtEIaAKZ0NIuwvg08qaeHZ096A9VwqUo5HcQE+WCgKuKGtkzxrmFHR8rYOobuTjhLtUjogeIUAUyyk75e+A9civh1nLd4gUJdwMzm+R0YgiKBkYhtB/g4oPrHZusPgX0yhIY3UEvC+Y+BjzVqlhfKQBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722462632; c=relaxed/simple;
-	bh=0azJuawRfkEQ9HX+igteIayZs72LS6c7O2Oeet8LuRo=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=BBzqx1z8k7x1HEwGzETHxVMMuVFXCyWTyGvUECHs7k14nocrqiUE0D2lUHzPuY4F1SW5DauoFI9+z4xgvQbio9N5CsEFDmOnQwlozFDfTM5JPOIic67BBkAc8xFi115ArUiWAadx+WCfUQsQTKr+2eV1YPA8mDJygQMIsEjdFlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=st6nFkJe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57E55C116B1;
-	Wed, 31 Jul 2024 21:50:31 +0000 (UTC)
+	s=arc-20240116; t=1722462729; c=relaxed/simple;
+	bh=dMejEloAEVcCZyvgcOEVM+yjF7rV83Fb47hNrMHcm60=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MHtg85PDOyVMQsMOpVm4QzLbSbjoTb7w0Wg1uVKqyYDHDWMJvjMOAptLFzmY9WniKf5mGoB0+ID81F6U9MtpljBUH1PR814rnc+stEwhVXMklfKk8mX4DH4tZfL1mYWZ6iWppgIoOacSbwlOvD9pxgRG1MuUTtR8OYZPknsO4mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFXIhAa4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98839C4AF10;
+	Wed, 31 Jul 2024 21:52:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722462631;
-	bh=0azJuawRfkEQ9HX+igteIayZs72LS6c7O2Oeet8LuRo=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=st6nFkJeVyvso6mJ9pYQILExCWK2BJ6swehZjA0W/wcofPPej2A8Qz6aXDpOvJ1ga
-	 q+W7xaPeswbUOw9If9CPZLsh2LWdaYRqs24VYZiUJkS9sXd9AMsxA9U+pXY3YjtEOc
-	 ydhx3fq/O/4byPRVkWqyxW8KgSCl3tvTXf9RbDD4WBn6wCh2nw34q4wyzux3Uh43p1
-	 9D72vOzPGyxpnzzKdXHC1f0x+ilTJs3T0cZ30BLsKl/8CPFZwnpZUl2OWagewSQjoF
-	 Hf1qhG7L7fnRBhjcBPECFqIgXeFkG26mE07xLG2GfuTsB4/xzEbgXoQUWHhmadi98w
-	 iVvfmdhYZ8DOg==
-Message-ID: <f8da29fb6aa8e212f786521b92c10163.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1722462728;
+	bh=dMejEloAEVcCZyvgcOEVM+yjF7rV83Fb47hNrMHcm60=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OFXIhAa49ozspRb+Vkg+haQ1CJdlME/Xu6FJdG8xHm7AzdmrR0yzch+x0i9bROVyY
+	 A7wd3yYyAt+eCNuFst9nR2ZQS/1gpYyvZOzG/cuh2mlrXx6WzgcLLOyi12IUWANWpx
+	 h8dSoJG1kAWngOTiF0/6RrXOEz6P42V5R+CIQai4isVMDTBYGAvSi1IewPlHxhqdY8
+	 7wYaZEhcMyhOkfCLDmRYEmNbNpGUW/p+Att0Sfiiq6WqbV3DJ/P0kVgHLqPYbB+F+N
+	 ZvD9Jkl3Xu6RT1X8KGEr2viOY0DavTkf5K8zxAMghH1Cu+pYg1q+Ae5sLsXF+hOpaq
+	 Lgp93F6wJDETw==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5afa207b8bfso6450764a12.0;
+        Wed, 31 Jul 2024 14:52:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUjhpIWkT9GxUjipgmLwwtWoDWTF3iKPV0Yy2RJJ2QHj6+LZno4PJY+O5uWzIdFljSXJKSIQMya/1QhnkVMPcTarQuVCd99MkqX+HMZcdr14eP1Bh67n2jMtfWa1+OEziYwONsz1wOW7ekXKhfyXbL/3QRaCxDehn+7IWr99sAlPhjnpZ3fG25ozOE8BaU5vOMHiProJcN3CQlW8Xiuefc=
+X-Gm-Message-State: AOJu0YyJ1yCbKxmbc23v/hsQIZpLTNBQdq+ZFHUO+P7K4RXMu39zClxj
+	BxfFRtepXB0W4VHl0vIQkOfWFNMmNWwbZq61cWX1P8F9nlGb8bd8/GUBC0viu6Rhl1Y8gIh3czJ
+	paNakYdR8BcxxNQ7yqeugXLbVqYM=
+X-Google-Smtp-Source: AGHT+IG6u+LBC1U/4ah8Phx3p1l/q7k/uRvdbCWTGY0uN3N8etMJmLSzVrI0hwkofLSh7v3Pv8RNG16kgZqR0K/TkXM=
+X-Received: by 2002:a05:6402:3d6:b0:5a1:73fc:6bd4 with SMTP id
+ 4fb4d7f45d1cf-5b6ff0005f4mr189800a12.19.1722462727169; Wed, 31 Jul 2024
+ 14:52:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240731072405.197046-1-alexghiti@rivosinc.com>
+ <20240731072405.197046-3-alexghiti@rivosinc.com> <ea55bb29-c3ba-4e71-a76a-f788c4a7ea16@redhat.com>
+In-Reply-To: <ea55bb29-c3ba-4e71-a76a-f788c4a7ea16@redhat.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Thu, 1 Aug 2024 06:51:55 +0900
+X-Gmail-Original-Message-ID: <CAJF2gTTGpTG6Va+7Sa9t2BFGFc5oy-yR5zEdiWretygO1jD_Ww@mail.gmail.com>
+Message-ID: <CAJF2gTTGpTG6Va+7Sa9t2BFGFc5oy-yR5zEdiWretygO1jD_Ww@mail.gmail.com>
+Subject: Re: [PATCH v4 02/13] riscv: Do not fail to build on byte/halfword
+ operations with Zawrs
+To: Waiman Long <longman@redhat.com>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Andrea Parri <parri.andrea@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Leonardo Bras <leobras@redhat.com>, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2E69FE3D-5D1B-4952-959F-06603BA21D98@toblux.com>
-References: <20240710201844.710365-2-thorsten.blum@toblux.com> <817eef56fa3dcd4238198c7a964adfef.sboyd@kernel.org> <2E69FE3D-5D1B-4952-959F-06603BA21D98@toblux.com>
-Subject: Re: [PATCH] clk: hisilicon: Remove unnecessary local variable
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: abel.vesa@linaro.org, angelogioacchino.delregno@collabora.com, christophe.jaillet@wanadoo.fr, dinguyen@kernel.org, erick.archer@gmx.com, mturquette@baylibre.com, robh@kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Date: Wed, 31 Jul 2024 14:50:29 -0700
-User-Agent: alot/0.10
 
-Quoting Thorsten Blum (2024-07-30 15:13:34)
-> On 30. Jul 2024, at 01:23, Stephen Boyd <sboyd@kernel.org> wrote:
-> > Quoting Thorsten Blum (2024-07-10 13:18:45)
-> >> diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilic=
-on/clk-hi3559a.c
-> >> index c79a94f6d9d2..30d5a6ba8fa5 100644
-> >> --- a/drivers/clk/hisilicon/clk-hi3559a.c
-> >> +++ b/drivers/clk/hisilicon/clk-hi3559a.c
-> >> @@ -407,7 +407,7 @@ static unsigned long clk_pll_recalc_rate(struct cl=
-k_hw *hw,
-> >>                unsigned long parent_rate)
-> >> {
-> >>        struct hi3559av100_clk_pll *clk =3D to_pll_clk(hw);
-> >> -       u64 frac_val, fbdiv_val, refdiv_val;
-> >> +       u64 frac_val, fbdiv_val;
-> >>        u32 postdiv1_val, postdiv2_val;
-> >>        u32 val;
-> >=20
-> > I see 'val' is u32 here.
-> >=20
-> >>        u64 tmp, rate;
-> >> @@ -435,13 +435,12 @@ static unsigned long clk_pll_recalc_rate(struct =
-clk_hw *hw,
-> >>        val =3D readl_relaxed(clk->ctrl_reg2);
-> >>        val =3D val >> clk->refdiv_shift;
-> >>        val &=3D ((1 << clk->refdiv_width) - 1);
-> >> -       refdiv_val =3D val;
-> >>=20
-> >>        /* rate =3D 24000000 * (fbdiv + frac / (1<<24) ) / refdiv  */
-> >>        rate =3D 0;
-> >>        tmp =3D 24000000 * fbdiv_val + (24000000 * frac_val) / (1 << 24=
-);
-> >>        rate +=3D tmp;
-> >> -       do_div(rate, refdiv_val);
-> >> +       do_div(rate, val);
-> >=20
-> > So this can be div_u64() now?
->=20
-> Yes, it could be.
->=20
-> Is div_u64() preferred over do_div() when the remainder doesn't matter?
+On Thu, Aug 1, 2024 at 1:27=E2=80=AFAM Waiman Long <longman@redhat.com> wro=
+te:
+>
+> On 7/31/24 03:23, Alexandre Ghiti wrote:
+> > riscv does not have lr instructions on byte and halfword but the
+> > qspinlock implementation actually uses such atomics provided by the
+> > Zabha extension, so those sizes are legitimate.
+>
+> Note that the native qspinlock code only need halfword atomic cmpxchg
+> operation. However, if you also plan to use paravirtual qspinlock, you
+> need to have byte-level atomic cmpxchg().
+Thx for reminding me; I will update paravirt qspinlock after these
+patches merge.
 
-Yes. The comment above the function says
+Zabha & Zcas extension provides byte and half-word atomic cmpxchg.
 
-  This is the most common 64bit divide and should be used if possible,
-  as many 32bit archs can optimize this variant better than a full 64bit
-  divide.
+>
+> Cheers,
+> Longman
+>
+> >
+> > Then instead of failing to build, just fallback to the !Zawrs path.
+> >
+> > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> > ---
+> >   arch/riscv/include/asm/cmpxchg.h | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/=
+cmpxchg.h
+> > index ebbce134917c..9ba497ea18a5 100644
+> > --- a/arch/riscv/include/asm/cmpxchg.h
+> > +++ b/arch/riscv/include/asm/cmpxchg.h
+> > @@ -268,7 +268,8 @@ static __always_inline void __cmpwait(volatile void=
+ *ptr,
+> >               break;
+> >   #endif
+> >       default:
+> > -             BUILD_BUG();
+> > +             /* RISC-V doesn't have lr instructions on byte and half-w=
+ord. */
+> > +             goto no_zawrs;
+> >       }
+> >
+> >       return;
+>
+
+
+--=20
+Best Regards
+ Guo Ren
 
