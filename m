@@ -1,291 +1,149 @@
-Return-Path: <linux-kernel+bounces-269673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5785A9435A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:28:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75B2D9435A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B0111C21B9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:28:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99E4E1C21F40
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D1416C863;
-	Wed, 31 Jul 2024 18:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915E138F83;
+	Wed, 31 Jul 2024 18:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="IQAhvYCx"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fTRlVpUZ"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3027538F83
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE553F9CC
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722450477; cv=none; b=ZEiamdgw2YuO4FtplELZoBTZoMNdC5eh+BrkXLBvYuHXJqQAYGE5vkKoBWrsscYricL7fj8XHGViFVGg79EZsZdom1Bri0sXqSk1N7M5zihoeoKsIrXasamo33sNSeM72LToVD6+n7KQlUl1u8xGPMHn32zx2PDoTd0rtFE9kSw=
+	t=1722450514; cv=none; b=lJhwhSTrdnLZ0jKoQso/xYQWC77GWvjRj+bDQzwcrg1QxX4lGghdrC0adiywBMvUc1DyCrFPS3oPd0vRUFEZCRekyPb/Sdkl5fcF2oG8fA1EwbnG4F48qsUUiTJKXKedigGrJX0dZLu9wx23ci1jy4e1oZdgTr+fWt2pPhWQGMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722450477; c=relaxed/simple;
-	bh=uLYhM3mqRUA7JFjiVzBcuUukGUgFzsuf8ldrAopQol8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dki64i+CmpoWAcEHUHUpWsrYhAetwFz45jM77JE2b/GYb2VYhukBb9vQp50x2z5rcmgaox6ffx5RGEYLeF0xHPEudt2x+6H3XBuF3+7LFQ76tGqukFZv11RwJff37nCfOpMVRDgt97PXExoCLuiUB0ewT4MOVWAH9NeJoAXDiXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=IQAhvYCx; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7a9185e1c0so596393466b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:27:53 -0700 (PDT)
+	s=arc-20240116; t=1722450514; c=relaxed/simple;
+	bh=LoEnpyZdjxa7YTVgUWETn4KKToh/DGNRLXn0j7zShNU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U8wpl9LLBJ5m+6EnnSdb215eukRJtcvYxmDrVPvoDHtBt4TdggBYf/7G5d1h5FeYMylaIUK6fYHY07EcM46cwzJND0Hs+VcWs20n6+268KNhOvqBzsSKoBHYw4jAMSgXk7utm3Xdt8nJaISqVoMC9diV8JP9K2DoQy/BKshtagw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fTRlVpUZ; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-661369ff30aso46648777b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:28:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1722450472; x=1723055272; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=aSlQMWOS2cfD31MS+LRE9FHYtYVvkkaeMpy/rYl4HqI=;
-        b=IQAhvYCxdpDV3dY0YuniJbQhW9hNrFuWmFXAuvhuMllFtNMCJHf3iO+VDGVN59l8yv
-         ltHF36UjM1tx+E1Ok621XkgMq0qPfiOIh4T2rEDB+uehQfDgxk+BvVP5SVL7zxanVASy
-         p/1yCF0eoWcxV/CGjGteeCxPexacgSoMzVq0Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722450472; x=1723055272;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1722450512; x=1723055312; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aSlQMWOS2cfD31MS+LRE9FHYtYVvkkaeMpy/rYl4HqI=;
-        b=pVBulnHcxNvRi/JX72kUX8Mlm0IeZ40wyuWrlnMoy05WIfhRHuM3nFq5VxF3kXAs+z
-         DGcOQdMujChEfAVLeo9Adv3WZtfoJG7YSFR0TwLqO3Mtk9zxnS1dbbnGEhbWyAQeT/cX
-         PS7L+fZPjB9GqSC6nHKHfU0UD0OzKi852K5nTMteeHMpMZsKKUll/2sAsU7G78QkXBuY
-         td5RV41eDNZ+DpFtYNzvGXKWU5QQmYIvb15d2bptXqQNpAt/aC7HH/Lferv+d9So0T7a
-         1KcQ05E+7oWVAkeyH/cIk2N5bTckf2iYAtU7N7BefwrZSDZtKaM/YYkWar9IYnRFOlTR
-         fcLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaYM2lLa4moFK2SHxoFKfeDz/Bmgn4bBeTzUTziPwwOaIf2hYx63ZuCZ5HPcJgPA4sn0XXjrc9TcnMj5FJgVQ7+un8n2K8D4vIlAM8
-X-Gm-Message-State: AOJu0YwoRP5wla0zLwhNsFcZr9K8Mp801Wmi2nTfEDJ+TQifMQHDf7GB
-	NJhqP1CXxldu698dV5RO2Fq1cTnlG6wNqRUSy37HvuvKNVVY3SKxtJ+CXIFB+g==
-X-Google-Smtp-Source: AGHT+IFjgipzlSGv4on7zoRV8/fLE0J8azpy6u+zOeUmRysaU+zHnVAiE21WtdprCbx2QlJ902LI9w==
-X-Received: by 2002:a17:906:d263:b0:a79:7f94:8a73 with SMTP id a640c23a62f3a-a7d40003423mr951780366b.20.1722450472237;
-        Wed, 31 Jul 2024 11:27:52 -0700 (PDT)
-Received: from [192.168.178.137] (f215227.upc-f.chello.nl. [80.56.215.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acac632cesm796796666b.96.2024.07.31.11.27.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 11:27:51 -0700 (PDT)
-Message-ID: <c6833a64-4676-4303-a8e6-662693e7270b@broadcom.com>
-Date: Wed, 31 Jul 2024 20:27:50 +0200
+        bh=UZQiTCpakrmI/hG6ccbr7ADOzk36Y11Q6omsUDXJBR0=;
+        b=fTRlVpUZjpANWrl0L+1w4U2oH+cg6on3TOfnNlqP+RpU5YVwetu+X44S/ZFjp/YRko
+         5/vgKh47+F+DG3GRIR0aKa0pHhn/rGK0A3NM3YhQlfktPs106c0u+zm91Vvf109Z/ncv
+         u7UVpE+iunWcJNcacUJc3rO2kQ8vrEFq68RmfB5al8w33KDMJVhAWSdsNGcJZPT6yqWy
+         atKEiZgVw692VQ4woDAu7Xl6Ay/6T5pLeUJpwedmpkfWtkeS26kimn5M+KES8sMrxBIY
+         3mcAb2UAVCcFEPHVzXZw2HDgkjgeR9tmfpyfTNY4mQowUTWIdBtSnqd3SzTQRL4AAFx5
+         1N2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722450512; x=1723055312;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UZQiTCpakrmI/hG6ccbr7ADOzk36Y11Q6omsUDXJBR0=;
+        b=AzWCqswEIkS8ZwvZCmS9Fr8HF+iasOemYBL+YlVqsGxwpKci8RfS3omWdJ2NBtTagd
+         jkTInXvmj5eI3MGtgs2MUOc9WB7SQR3Vv2uaP8Qhfv/98YaSMmUNYcEOXewrj75ziTJP
+         QiqYBw0Rsr1ceDOXIlZ3us8+gUmq/VGmkOuAwj69l+sQwCdZ/85cyumtRzpfILU37H8E
+         TDRdhpLDX3Pc9SnK7OLPwuPohcf1HP1KoH9cltg6NCMheEwHcwb55uBxibZF0uekIiI9
+         wgVMl2xvsB4Yj63ulAg5nhdLsE2LXe/LLgshyszX9/NmW02eR6236cLdTMUxuEzNPArx
+         RAJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUara4Bd2qHC4M0oW4KTXrEw0CPRTMKvnVm1dLT4UIAEQexYiCC1ViHxhKmMVLoI7x8kxL79YNR+kcIrfADMIR3FsAfKLaRURxBLjNG
+X-Gm-Message-State: AOJu0YzA/QvLPKl1DFu9jGdvJqwV7uEn70GgF4bglUUpLmbzQX723Du3
+	sCPtssnEoyKUZJhsBdWLqqE3cEMJFJw8d3qOlSssoHrfpvJr3Nh/+b0jhzBrXNA7v85RHWftLSi
+	Qd9f92QFKepJBfElfMzOdgeagvP/Eaj7o+NdM2g==
+X-Google-Smtp-Source: AGHT+IGkcmUq+gWGlEnHu1TDME5ReG9CGFf/FdG16ffSla45VUSMcNw0dtEakvWLuX/KIOkHadrm/0K0Fv9MS3xe+7E=
+X-Received: by 2002:a81:9e0f:0:b0:651:a00f:698a with SMTP id
+ 00721157ae682-67a0a136bdfmr151536777b3.38.1722450512137; Wed, 31 Jul 2024
+ 11:28:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/5] dt-bindings: net: wireless: brcm4329-fmac: add
- clock description for AP6275P
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org, krzk+dt@kernel.org,
- heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org,
- Linus Walleij <linus.walleij@linaro.org>, efectn@protonmail.com,
- dsimic@manjaro.org, jagan@edgeble.ai, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, arend@broadcom.com,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org, megi@xff.cz,
- duoming@zju.edu.cn, bhelgaas@google.com, minipli@grsecurity.net,
- brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
- nick@khadas.com, Andy Green <andy@warmcat.com>
-References: <20240730033053.4092132-3-jacobe.zang@wesion.com>
- <191025b5268.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
- <f45c1fa7-f321-4a1f-b65c-6ed326a18268@kernel.org>
- <191030eac78.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
- <3d3b8e0a-7492-4db1-bd73-c30a488edaa7@kernel.org>
- <191035b8c28.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
- <k3dhdsa5bjzad2ha5e2uurg2azzs773ier5thkot4w2qcvnv54@yuf52eluqsae>
- <dd381dc1-454f-4ecd-adb7-55de2e15d592@broadcom.com>
- <sgfd5ccltsi7mjbybmdbs3fmsfcp3vqtpitdac7exzgxav53kk@6lwogbq4fhks>
- <1910959c1f8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
- <cn4vykgbj6mhiikyco5uvyfa424njoun67hsoof4lbwvscwoc2@5xfl4q5mvooy>
-Content-Language: en-US
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
- 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
-In-Reply-To: <cn4vykgbj6mhiikyco5uvyfa424njoun67hsoof4lbwvscwoc2@5xfl4q5mvooy>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240129204717.9091-1-semen.protsenko@linaro.org>
+ <8659d79a-e18e-4591-be9e-817d0ab63b75@linaro.org> <ae202942-fdc0-4913-bd37-c167440807af@linaro.org>
+In-Reply-To: <ae202942-fdc0-4913-bd37-c167440807af@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Wed, 31 Jul 2024 13:28:21 -0500
+Message-ID: <CAPLW+4nxhQRzaEZzxZEOPKpdDxN1mCrpURYPN3+tUa_W+2G06g@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Add entry for Samsung Exynos850 SoC
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Jaewon Kim <jaewon02.kim@samsung.com>, 
+	Mateusz Majewski <m.majewski2@samsung.com>, Henrik Grimler <henrik@grimler.se>, 
+	David Virag <virag.david003@gmail.com>, Artur Weber <aweber.kernel@gmail.com>, 
+	Raymond Hackley <raymondhackley@protonmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/31/2024 7:50 PM, Sebastian Reichel wrote:
-> Hi,
-> 
-> On Wed, Jul 31, 2024 at 05:12:43PM GMT, Arend Van Spriel wrote:
->> On July 31, 2024 3:54:52 PM Sebastian Reichel
->> <sebastian.reichel@collabora.com> wrote:
->>> On Wed, Jul 31, 2024 at 02:57:37PM GMT, Arend van Spriel wrote:
->>>> On 7/30/2024 7:38 PM, Sebastian Reichel wrote:
->>>>> On Tue, Jul 30, 2024 at 01:16:57PM GMT, Arend Van Spriel wrote:
->>>>>> On July 30, 2024 12:18:20 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>>>
->>>>>>> On 30/07/2024 11:52, Arend Van Spriel wrote:
->>>>>>>> On July 30, 2024 11:01:43 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>>>>>
->>>>>>>>> On 30/07/2024 08:37, Arend Van Spriel wrote:
->>>>>>>>>> + Linus W
->>>>>>>>>>
->>>>>>>>>> On July 30, 2024 5:31:15 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
->>>>>>>>>>
->>>>>>>>>>> Not only AP6275P Wi-Fi device but also all Broadcom wireless devices allow
->>>>>>>>>>> external low power clock input. In DTS the clock as an optional choice in
->>>>>>>>>>> the absence of an internal clock.
->>>>>>>>>>>
->>>>>>>>>>> Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
->>>>>>>>>>> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
->>>>>>>>>>> ---
->>>>>>>>>>> .../bindings/net/wireless/brcm,bcm4329-fmac.yaml          | 8 ++++++++
->>>>>>>>>>> 1 file changed, 8 insertions(+)
->>>>>>>>>>>
->>>>>>>>>>> diff --git
->>>>>>>>>>> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->>>>>>>>>>> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->>>>>>>>>>> index 2c2093c77ec9a..a3607d55ef367 100644
->>>>>>>>>>> --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->>>>>>>>>>> +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->>>>>>>>>>> @@ -122,6 +122,14 @@ properties:
->>>>>>>>>>> NVRAM. This would normally be filled in by the bootloader from platform
->>>>>>>>>>> configuration data.
->>>>>>>>>>>
->>>>>>>>>>> +  clocks:
->>>>>>>>>>> +    items:
->>>>>>>>>>> +      - description: External Low Power Clock input (32.768KHz)
->>>>>>>>>>> +
->>>>>>>>>>> +  clock-names:
->>>>>>>>>>> +    items:
->>>>>>>>>>> +      - const: lpo
->>>>>>>>>>> +
->>>>>>>>>>
->>>>>>>>>> We still have an issue that this clock input is also present in the
->>>>>>>>>> bindings specification broadcom-bluetooth.yaml (not in bluetooth
->>>>>>>>>> subfolder). This clock is actually a chip resource. What happens if both
->>>>>>>>>> are defined and both wifi and bt drivers try to enable this clock? Can this
->>>>>>>>>> be expressed in yaml or can we only put a textual warning in the property
->>>>>>>>>> descriptions?
->>>>>>>>>
->>>>>>>>> Just like all clocks, what would happen? It will be enabled.
->>>>>>>>
->>>>>>>> Oh, wow! Cool stuff. But seriously is it not a problem to have two entities
->>>>>>>> controlling one and the same clock? Is this use-case taken into account by
->>>>>>>> the clock framework?
->>>>>>>
->>>>>>> Yes, it is handled correctly. That's a basic use-case, handled by CCF
->>>>>>> since some years (~12?). Anyway, whatever OS is doing (or not doing)
->>>>>>> with the clocks is independent of the bindings here. The question is
->>>>>>
->>>>>> Agree. Probably the bindings would not be the place to document this if it
->>>>>> would be an issue.
->>>>>>
->>>>>>> about hardware - does this node, which represents PCI interface of the
->>>>>>> chip, has/uses the clocks.
->>>>>>
->>>>>> The schematics I found for the wifi module and the khadas edge platform show
->>>>>> these are indeed wired to the chip.
->>>>>
->>>>> I have a Rockchip RK3588 Evaluation Board on my desk, which uses the
->>>>> same WLAN AP6275P module. I think I already commented on a prior
->>>>> version of this series: The LPO clock is needed to make the PCIe
->>>>> device visible on the bus. That means this series only works if the
->>>>> clock has already been running. Otherwise the PCIe driver will never
->>>>> be probed. To become visible the devices requires:
->>>>>
->>>>> 1. The LPO clock to be enabled
->>>>> 2. Power to be applied
->>>>> 3. The WL_EN gpio to be configured correctly
->>>>>
->>>>> If one of the above is not met, the device will not even appear in
->>>>> 'lspci'. I believe the binding needs to take into consideration, that
->>>>> pwrseq is needed for the PCIe side. Fortuantely the heavy lifting of
->>>>> creating the proper infrastructure for this has already been done by
->>>>> Bartosz Golaszewski for Qualcomm WLAN chips. What is missing is a
->>>>> pwrseq driver for the Broadcom chip (or this specific module?).
->>>>
->>>> That does not really make sense. There is no relation between the LPO clock
->>>> and the PCIe clocks so 1) being a requirement for probing the device looks
->>>> odd. It also does not match past experience when I assisted Andy Green in
->>>> getting this module up and running almost two years ago.
->>>
->>> Well, first of all I can easily reproduce this on my RK3588 EVB1. I
->>> intentionally ignore any bluetooth bits to avoid cross-effects from
->>> bluetooth enabling any clocks / regulators / GPIOs and make sure the
->>> RTC output clock is disabled at boot time (i.e. boot once without
->>> any reference to the RTC clock and without 'clk_ignore_unused'
->>> kernel argument). When booting up like this the WLAN device is not
->>> visible in 'lspci' despite the WL_REG_ON GPIO being hogged. If I
->>> additionally hack the RTC output clock to be enabled the WLAN device
->>> becomes visible in 'lspci'.
->>>
->>> The datasheet fully explains this:
->>>
->>> https://www.lcsc.com/datasheet/lcsc_datasheet_2203281730_AMPAK-Tech-AP6275P_C2984107.pdf
->>>
->>> PDF Page 23/24 (20/21 in the footer) has the Host Interface Timing
->>> Diagram. WL_REG_ON should only be enabled after 2 cycles from LPO.
->>> That means with LPO being disabled WL_REG_ON cannot be enabled. I'm
->>> pretty sure WL_REG_ON means WLAN_REGULATOR_ON, so the logic is not
->>> powered. On page 27 (24 in the footer) there is also a PCIe Power-On
->>> Timing diagram, which shows that WL_REG_ON must be enabled before
->>> the PCIe refclk is enabled.
->>>
->>> So there is a specific power up sequence, which must be followed.
->>
->> The chip also has an (less accurate) internal LPO so the 32khz sleep clock
->> in the diagram does not have to be an external clock. Maybe Ampak
->> bootstrapped the chip to disable the internal clock. Dunno.
->>
->> What Andy needed back then to get firmware running was a change in the nvram
->> file to force using the internal LPO, but the device was already visible on
->> the PCIe bus.
-> 
-> mh, I just tested again and I can no longer reproduce the LPO
-> requirement for PCIe detection. Maybe it was something else all
-> along (I did most of my tests quite some time ago).
-> Sorry for the noise.
+On Fri, Jul 26, 2024 at 10:17=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 30/01/2024 08:29, Krzysztof Kozlowski wrote:
+> > On 29/01/2024 21:47, Sam Protsenko wrote:
+> >> Add maintainers entry for the Samsung Exynos850 SoC based platforms.
+> >>
+> >> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> >> ---
+> >>  MAINTAINERS | 10 ++++++++++
+> >>  1 file changed, 10 insertions(+)
+> >>
+> >> diff --git a/MAINTAINERS b/MAINTAINERS
+> >> index 939f6dd0ef6a..77c10cc669f8 100644
+> >> --- a/MAINTAINERS
+> >> +++ b/MAINTAINERS
+> >> @@ -19281,6 +19281,16 @@ B:  mailto:linux-samsung-soc@vger.kernel.org
+> >>  F:  Documentation/devicetree/bindings/sound/samsung*
+> >>  F:  sound/soc/samsung/
+> >>
+> >> +SAMSUNG EXYNOS850 SoC SUPPORT
+> >> +M:  Sam Protsenko <semen.protsenko@linaro.org>
+> >> +L:  linux-arm-kernel@lists.infradead.org (moderated for non-subscribe=
+rs)
+> >> +L:  linux-samsung-soc@vger.kernel.org
+> >
+> > Sorry, but I am still against individual SoC entries in maintainers,
+> > like I replied multiple times and pointed to the updated
+> > get_maintainers.pl script to fetch emails from boards.
+>
+> I retract my earlier statement.
+>
+> Some background: I was really hoping that scripts/get_maintainers.pl
+> patch, which adds fetching emails from files (e.g. DTS), will be picked
+> up, but it has been few years, few resends and there is no conclusion. I
+> don't think it will be ever merged, thus this email.
+>
+> Since C files do not have in-file "maintainer" entry and particular
+> drivers have MAINTAINERS-file entries, then why DTS should be different?
+>
+> I'll take the patch after merge window.
+>
 
-Hi Sebastian,
+Thank you, Krzysztof! I'll happily look after this platform. Please
+let me know if you want me to rebase/resend this patch.
 
-Thanks for letting it know.
-
-Regards,
-Arend
+> +Cc few other folks,
+>
+> I understand that with lei/lore filters one can easily track patches
+> sent for particular boards or SoCs, but being listed in MAINTAINERS have
+> a bit bigger meaning. Therefore if any of you consider / want to add
+> themself to MAINTAINERS for particular DTS, then go ahead. By DTS I
+> mean: particular boards (e.g. Galaxy Tab 3 family) or particular SoC
+> (e.g. Exynos850 like here).
+>
+> Best regards,
+> Krzysztof
+>
 
