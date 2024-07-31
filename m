@@ -1,233 +1,230 @@
-Return-Path: <linux-kernel+bounces-268637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D55A942729
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:50:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9597794272C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C34BE1F219B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:50:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C171F22803
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A6873501;
-	Wed, 31 Jul 2024 06:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA41A5C8EF;
+	Wed, 31 Jul 2024 06:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AMOUJDcg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ANeWDiib"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2042.outbound.protection.outlook.com [40.107.117.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF2E1A4F30
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722408565; cv=none; b=iM4HNUBJSF/HlIpy2PCeXhyid+20Gkn9YU3r17CUso87Loo9jOi582ctiZ94V+ztz0tyMR2XWpDOtoOo6C1TUOYuvdmZdipN+sv/wZWyp3+8caiuoRqwiLY9ft5QW4reTI5d7rIvhAOu9eDnwyzGTqvjqLW2obMNuwGcz88z4QA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722408565; c=relaxed/simple;
-	bh=85G3706WeHs7PoCDO0Xz686T8+2PYBWAt+EG2DvBdnI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Rp4XpFAUM8g1uusZtfoGz6aHnm11955zd+s0job8dJfCaLkntiXvlGARrd3I2cwmq68ejNEWz52yq5awuN7yIhLklyvMs8H8CF2EGg/jVZ6BCjnLerdnbMydwouLBPbhPxyYKQ9TND+i7DnuQKsGFNyD7Z278vC3lqt28vxLKnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AMOUJDcg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB2BAC4AF10;
-	Wed, 31 Jul 2024 06:49:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722408565;
-	bh=85G3706WeHs7PoCDO0Xz686T8+2PYBWAt+EG2DvBdnI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=AMOUJDcgdP60QBUC88rmHTe5Zh5zwohd44U8WH5Mb1wQQYcEx7vIwtAClpIFy2Vep
-	 b5TCQohg1ZdP/NBc9R12JO5c+3POLfosUwJxSVVgL3YJPH+mJZcaDkxN2XRSdmQnlJ
-	 +M0v5rpBl/KCbWZeh+i9qT0Mmrq/9SBgo40ysEYmdscvJ8m7fqdAEOUUqhlFANjjY8
-	 WXyVIFS6v+o5UptA+VlTlgf+jJj/8W8zZ8qG533WKAIP2A3hqoO7cFz6wr7jFbGY4i
-	 VgAaYleNOW8uvKIOePo1Jt+9uBrxyYtcVxMkdDpToS6WQBLjgXSwc2zlHLJqV+ppZq
-	 jbZi35hcEDjNw==
-From: chrisl@kernel.org
-Date: Tue, 30 Jul 2024 23:49:21 -0700
-Subject: [PATCH v5 9/9] mm: swap: add a adaptive full cluster cache reclaim
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED82717D2;
+	Wed, 31 Jul 2024 06:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722408714; cv=fail; b=nnwusZMFiROg7m2QNaU5+pHW8Q5d500KNwC7YAVkDr8StM4UUjo8J8msHwE1dCIenl2Dc7dsEipYNGRbjrPRf7SD+YoXsQPTg2r30VBqiksqQAODFGCKh0vmgNjJOq3GH2PVa2jsj1jMZsIvVw24lsBinl8TSbYpR3i9xP5mzU8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722408714; c=relaxed/simple;
+	bh=hlFDQRdXIsLaJ+0UepwewvfgiTE1RDIbDWX7UWZGWHo=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=A/QJLCo1emMan4zhZVHC5w2FPHDezoBxpn8gry0ICzcFpe4kY3GnbIiQ/Igxss6im8qMTUN8qQyERpDMm9wKhgCAIuE8lQnnC5gYAr6+oOeBiPDZ4a1qkvVBcdjocu5cLh+LrlX361C78UU6b8+/2r6z0nKYcmXCHNwAxib+Wj4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ANeWDiib; arc=fail smtp.client-ip=40.107.117.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HWu8GoxfiBpxqdkRDgBv9FAylS8mZaDnpc2l83LcBPhoCVyLuuh+jR+/Az4EjPmo0hG7vlkgh7G+Q8ywAsu93jLs1+ARODSw1nt1LmGlkJ59ZXF+0bXoOe4uHBVo8mFvVtqgKZTiTgGZ2a6zGEzer5eKwfGiFULnScPL0CDcgcakYPjTVyd9SOylZFHODPOQKAH8fQimYAIKVfBLPLtLCnhEnWYhGP/Iv/G9AV4OU19czjNlofwMC2WyrrM8kELfdMp/le3POUmnv/tuTKcTRbG/S7NQtrenJ4xEZSdUbeSL0ElQQxf5yoHzRS5xAyIXeDlu8jyo37TwtMMloPKm7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=i3veoaQjIdWTy2ikVuNZYwz3n7DbIVPufqW/C5yMM6Q=;
+ b=lngyYXhiom/Dt2LhvrRV9ZM3a2IcFaDHzWF91nOPRlOZv90Oy/ZAzG0Sa4vfhqw2u/6PgRm8LoFKF/L0r4Im776hoBzayzQO24OL0ySPIA5hML/v/fzE8L0PmiAz1NU5zCXiBijEsVq9M23AjAA+Z2FWsRCdQnbY+SQcW5EnG2Y+Diupq34O7WtRIXwOT8Bs8W8mxMBFO5um57mQRg8lwHOB6yzg0jY2CgoD7i1jipfLcYqw/5BQmZfY2d6wAX+ljFmKVFKNeC5zsvktG4kPbGNSyfDnIo0BwEeBkE4mDg6FSAfrNBT0TjcJt8ZOX+hEbGIkiY/wOT5O77VakBzBdQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i3veoaQjIdWTy2ikVuNZYwz3n7DbIVPufqW/C5yMM6Q=;
+ b=ANeWDiibMmdBrRgD7NS9uChjjP/jogBx8l/EFS7l4nVzD2EGn2YzxpmYu1zrs4G0apdmWAu9YRJI2ddxW6BndQzhlynFiFhEY/LX4/wqV3hHUJ9N17Q6U4gTkyzGGIZqnvM43zYUATCVBgY0RiKhsOlLaQF0gdWo7Xcnjxc3XTviawPrG7gLeSPCDmujYdWmXK4QJ08vKGtStQuKVBOceuhNWoFp255ugv/2Turdnw3mDIKu4RiKHdlkdjBS83VgPkUXFDx6SqD+i/HXfeKBKka0SLlbREXgr7oeIpHNSXgRDU8NZi46o1XPFWA/Jommr9xh87Glg6MZVlOjr0eH8g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ JH0PR06MB6939.apcprd06.prod.outlook.com (2603:1096:990:66::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7807.27; Wed, 31 Jul 2024 06:51:47 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%3]) with mapi id 15.20.7828.016; Wed, 31 Jul 2024
+ 06:51:47 +0000
+From: Rong Qianfeng <rongqianfeng@vivo.com>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Rong Qianfeng <rongqianfeng@vivo.com>
+Subject: [PATCH] mm/filemap: In page fault retry path skip filemap_map_pages() if no read-ahead pages
+Date: Wed, 31 Jul 2024 14:51:28 +0800
+Message-Id: <20240731065128.50971-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.39.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY2PR06CA0037.apcprd06.prod.outlook.com
+ (2603:1096:404:2e::25) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240730-swap-allocator-v5-9-cb9c148b9297@kernel.org>
-References: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
-In-Reply-To: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kairui Song <kasong@tencent.com>, Hugh Dickins <hughd@google.com>, 
- Ryan Roberts <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
- Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org, 
- linux-mm@kvack.org, Chris Li <chrisl@kernel.org>, 
- Barry Song <baohua@kernel.org>
-X-Mailer: b4 0.13.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|JH0PR06MB6939:EE_
+X-MS-Office365-Filtering-Correlation-Id: d6da644a-8581-48d0-5b94-08dcb12d3f5c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MxBYz1tnwjR3bcNtX63hoyxt/EQ6ucwBS0LKec/kaSvd6iN8zFTGsZygAxTt?=
+ =?us-ascii?Q?zyAgmfEFgnUgrfgfKarUTFB1pp533JgI0Iyxy1bsPzPQXHBsGp5n8DcMvnis?=
+ =?us-ascii?Q?5VswJ2GUUipOjDJEC3rlfOjgr3aR5Gap5CX5CKIizPVfVirQsWr9o+SRvkxX?=
+ =?us-ascii?Q?sB8RGf4ED1hmQhk0isNDYz4NpnxHcIlXrYO1inn8nd9fcfrj+OJftB/xQgdq?=
+ =?us-ascii?Q?FN9aDRU+SqTc2yja02j5yBO/+2KemoOQEk45drYfcvecKl60hCKFVCIXrrGs?=
+ =?us-ascii?Q?WypIC8ZsV2LV6AmNi6TQNlKjIbTCGSQdb9xuQg6XDOtzMCYa+g1Bi5CbfH25?=
+ =?us-ascii?Q?NoeJohVLGJcuZx+mJGrX171xf0xQso7kHc0P0fbNIVJm3Ig3JoMERPssXbnQ?=
+ =?us-ascii?Q?vWyRJ9qa0JCSiv21bSqyE0v3R8mGu/VMGb6rxK5TP9sTYFo6d64Tr9+0iOL8?=
+ =?us-ascii?Q?4Pift/ObuK+4gggIrH7EbOY/ZtgpX0q8BlNOIQLenhum3Em/F9VZPD1cgDPL?=
+ =?us-ascii?Q?OZfxt3BweQgC45+02INVuTybkzOEPdqmOVuscZ82AhX6irqEghG/NvACW60b?=
+ =?us-ascii?Q?4fo2C5ZsDn9P5wjtFdScYTVn4fOyFxpQ4MiuHWoaTK47RSbz0Hg78u2UYIbR?=
+ =?us-ascii?Q?2wf/4nDwNE4o2iXYjiDlr5oGr/nZ/KRpRoNmTQ9V5Y7tkADbzeD6OBEWIjpV?=
+ =?us-ascii?Q?T399d8llLb4XDzXbripLu+45XQju7IgZwPi4GmfC5V0zq9S2oDNpEOxnIJAS?=
+ =?us-ascii?Q?/AL5MF01ZLzlAny75bQByYsj6ktNxrXHOFRXs1R3MFrOMyETtFCWcL7TO2xb?=
+ =?us-ascii?Q?dQkJu4wBY7mpK54CoegaSxAyytZJQ3Zj8BgU8tBwqhiMU+3JXEUU8oLuF7fi?=
+ =?us-ascii?Q?gLbWa0t3HRlMORCt5RwYIARojKrK+CM03BF/NpFbCe0VSw63qeqsVwOlrI82?=
+ =?us-ascii?Q?FOIDJia60su6KPfMDxHgbiExeXHknLCBFi+RvNmLwNRn59pJYIeI8ns+0Z/m?=
+ =?us-ascii?Q?cCaOrfsi8vVj8JVaiGwCmPzUNsV8yoijjsWVOmFxfE8h277+RilGv+skqoqs?=
+ =?us-ascii?Q?mDCFiTDzfzw1qkRMAlUNbo7smIcqboT2kzn5ft0FNnPDsyLVjqV9WOLql9HA?=
+ =?us-ascii?Q?EBUvrguOsGUS7YCJEP9icCXF5UbuZncDNdvh63n+9q2Mk0+bxP46QzML8wUw?=
+ =?us-ascii?Q?epjdebzlHIXXp7s2vpYaJVhWAhG3izZSxB8iw7P1R7dOnUoB3b8zKAmxLOK6?=
+ =?us-ascii?Q?gNqRDYedSAttO7SvHbbhDy6VFcWFTYve1GlICxFNjrGlBQ59oWrvt0sj5oQc?=
+ =?us-ascii?Q?7XyjvIXGcIpiTB68hF3J+hNEGq5J0FlYw+jrcgwLsGNMzuyWaNRiq3TsSmm9?=
+ =?us-ascii?Q?13tNeJJ2viT1IbPWOfyUm3qAK8EdfF41JEiRWigAOKkExjtvlA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Pw6FpsqEvhghUkV5At6WpQayPwmPvvj3ERGfpGJePrWC4RNX40yhPJ3B+1B6?=
+ =?us-ascii?Q?BY7H7xHV9XWDlwHnFpciWtmjST+FgZ1hvCe+hcgAjISJkmqpFZi00w7wAIig?=
+ =?us-ascii?Q?Ko/sR3ftJuwVrmsMCFTgYctadqpCAmqOLBlN2TTNoG/CgwFgDJGhDOzSMKwQ?=
+ =?us-ascii?Q?0UHoh4NlrMR93wiu/x22QtgSmqWLC0VIdRTP5seitliRn4plFr2fa8DKqoa9?=
+ =?us-ascii?Q?M5s4vVrOOIsaCVOWyGlga93P3rT8E/7TcbXqJZ1Iu0dCfbXCIKiRNRBMDigC?=
+ =?us-ascii?Q?XZ/l83ItLf3+lTt4ibNiM7TbpDtPM2X5ycqRr9XA1wPz1cNDjVMzkvaedmQt?=
+ =?us-ascii?Q?jThkhqzQ/Nv+hDwQUovV4+Go2E4BgjzRgmqpLbN4/OscylWBtpNJl69KBCmZ?=
+ =?us-ascii?Q?DBOWH7gdut5UkbyW1Ntpw2CrFLR1KnVJAXvWjmcNsD5SSsMwRGq/r1E9mAvm?=
+ =?us-ascii?Q?3YFG7535oWLyghKdRTS9lYgNPsMslAGfcDKrA9UmohMUL+eFAq+tGE2TdrND?=
+ =?us-ascii?Q?1JDJpWhu/plcruywNCTRBxmaPinAro3PrAzj/NOZfF9gpIcAd/sHKz5n4gYd?=
+ =?us-ascii?Q?8nWPV1vcC6gLDjj14bsoTy3N1OfdhJpadptzVprbICgFFxx0faWrjc7onjFo?=
+ =?us-ascii?Q?e/RqaQ4WOilyOTDrUQ0K16sRTQSZ9yt928rKIsexFwMlUMWYp+fKCRbiUfue?=
+ =?us-ascii?Q?Cjip31kGDchY/thE40mhWKQUTaz9+1+hBigBFe6kL6yC6OwEkZqmUl3jjYVK?=
+ =?us-ascii?Q?qllae9C6i7WI1Fog9enXgkCmZgV7eNGGL/V//NC+toV81bg+ONRYUavI1Yuv?=
+ =?us-ascii?Q?c+X9E26JQcM1P1+0GisAA3ygfi12jHC7/3gLPlVr14bJs+EFQCa/NhumEp/v?=
+ =?us-ascii?Q?oma0zD8T9MPbvrjhf9oa+6MyiJOA7j/AG09c43xtEOxh2h5vIxfygk3gWiZW?=
+ =?us-ascii?Q?ptiq4cPyEhk4nQtCj86dwWnVcvGWKwI/A76UfbYEijIPpguTXkJ8K1VLq05i?=
+ =?us-ascii?Q?uVsc3hVuTlQgRLIvQHRT9TWijVAd94k1kzTNYbBuPD1oqtfH+lNlU4G7w3DM?=
+ =?us-ascii?Q?3783Ikzjs18HuDEK//9mYC/S6BhDFAdQiegf/B+SmPzdT8BHTGDmVZmH2Pv7?=
+ =?us-ascii?Q?YXh3IuTsBSukF77wERnoDHEKTcnltenLgqh5Std4lgyQ0nMAWREzFv0kc3qc?=
+ =?us-ascii?Q?flsX8lzTqmfYwYCf/PddeBNPbZBBPt9QRj1O7WEyyM93WU44wKlSRxUs+Tg9?=
+ =?us-ascii?Q?/iSH2RFc+62EnUDcA62H4tj9ezEfDht5ay864edlKgBMFvDOB8pCTectH69b?=
+ =?us-ascii?Q?L9RGqSqXPhqX8HwcpP+7avaeR9+/SmqxzFeskFezufkW6RNJH49k5jy96aHm?=
+ =?us-ascii?Q?XP77/+lNKQky+aF/4TcKC+m5n5LqRz0LEm5koHmKt/LF9tfM4CCwpibjWRzD?=
+ =?us-ascii?Q?1K+kFP0wvV8icY+FF8WcsZfsAw6liX8o7hzySbUmurM8xwp1b64qkqJAtz4p?=
+ =?us-ascii?Q?/CdUYEATyGlD6fJElDGWxeMNWyYfTFS9hhIW68PTIIMuNaOfpd6Ok4uN5rZw?=
+ =?us-ascii?Q?3FyMzKg0wfOBiOYxxVBvSZVzx6XXvSIv/fpy56gw?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d6da644a-8581-48d0-5b94-08dcb12d3f5c
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 06:51:47.6377
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eNfNye5kBJ7Wukasx59q2N9aLps/Ai9yQbN9XA9Zcl1fMKOdzVNpKkwanI0ayr9QOsJEKyBvJdcxYh/WOgnVBw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6939
 
-From: Kairui Song <kasong@tencent.com>
+In filemap_fault(), if don't want read-ahead, the process is as follows:
 
-Link all full cluster with one full list, and reclaim from it when the
-allocation have ran out of all usable clusters.
+First, __filemap_get_folio alloc one new folio, because PG_uptodate is not
+set, filemap_read_folio() will be called later to read data into the folio.
+Secondly, before returning, it will check whether the per vma lock or
+mmap_lock is released. If the lock is released, VM_FAULT_RETRY is returned,
+which means that the page fault path needs retry again. Finally,
+filemap_map_pages() is called in do_fault_around() to establish a page
+table mapping for the previous folio.
 
-There are many reason a folio can end up being in the swap cache while
-having no swap count reference. So the best way to search for such slots
-is still by iterating the swap clusters.
+Because filemap_read_folio() just read the data of one folio, without
+read-ahead pages, it is no needs to go through the do_fault_around() again
+in the page fault retry path.
 
-With the list as an LRU, iterating from the oldest cluster and keep them
-rotating is a very doable and clean way to free up potentially not inuse
-clusters.
-
-When any allocation failure, try reclaim and rotate only one cluster.
-This is adaptive for high order allocations they can tolerate fallback.
-So this avoids latency, and give the full cluster list an fair chance
-to get reclaimed. It release the usage stress for the fallback order 0
-allocation or following up high order allocation.
-
-If the swap device is getting very full, reclaim more aggresively to
-ensure no OOM will happen. This ensures order 0 heavy workload won't go
-OOM as order 0 won't fail if any cluster still have any space.
-
-Signed-off-by: Kairui Song <kasong@tencent.com>
+Signed-off-by: Rong Qianfeng <rongqianfeng@vivo.com>
 ---
- include/linux/swap.h |  1 +
- mm/swapfile.c        | 68 +++++++++++++++++++++++++++++++++++++++++-----------
- 2 files changed, 55 insertions(+), 14 deletions(-)
+ mm/filemap.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 9eb740563d63..145e796dab84 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -298,6 +298,7 @@ struct swap_info_struct {
- 	unsigned long *zeromap;		/* vmalloc'ed bitmap to track zero pages */
- 	struct swap_cluster_info *cluster_info; /* cluster info. Only for SSD */
- 	struct list_head free_clusters; /* free clusters list */
-+	struct list_head full_clusters; /* full clusters list */
- 	struct list_head nonfull_clusters[SWAP_NR_ORDERS];
- 					/* list of cluster that contains at least one free slot */
- 	struct list_head frag_clusters[SWAP_NR_ORDERS];
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 50e7f600a9a1..9872e0dbfc72 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -440,10 +440,7 @@ static void swap_cluster_schedule_discard(struct swap_info_struct *si,
- 			SWAP_MAP_BAD, SWAPFILE_CLUSTER);
- 
- 	VM_BUG_ON(ci->flags & CLUSTER_FLAG_FREE);
--	if (ci->flags & CLUSTER_FLAG_NONFULL)
--		list_move_tail(&ci->list, &si->discard_clusters);
--	else
--		list_add_tail(&ci->list, &si->discard_clusters);
-+	list_move_tail(&ci->list, &si->discard_clusters);
- 	ci->flags = 0;
- 	schedule_work(&si->discard_work);
- }
-@@ -453,10 +450,7 @@ static void __free_cluster(struct swap_info_struct *si, struct swap_cluster_info
- 	lockdep_assert_held(&si->lock);
- 	lockdep_assert_held(&ci->lock);
- 
--	if (ci->flags & CLUSTER_FLAG_NONFULL)
--		list_move_tail(&ci->list, &si->free_clusters);
--	else
--		list_add_tail(&ci->list, &si->free_clusters);
-+	list_move_tail(&ci->list, &si->free_clusters);
- 	ci->flags = CLUSTER_FLAG_FREE;
- 	ci->order = 0;
- }
-@@ -576,12 +570,9 @@ static void dec_cluster_info_page(struct swap_info_struct *p,
- 
- 	if (!(ci->flags & CLUSTER_FLAG_NONFULL)) {
- 		VM_BUG_ON(ci->flags & CLUSTER_FLAG_FREE);
--		if (ci->flags & CLUSTER_FLAG_FRAG) {
-+		if (ci->flags & CLUSTER_FLAG_FRAG)
- 			p->frag_cluster_nr[ci->order]--;
--			list_move_tail(&ci->list, &p->nonfull_clusters[ci->order]);
--		} else {
--			list_add_tail(&ci->list, &p->nonfull_clusters[ci->order]);
--		}
-+		list_move_tail(&ci->list, &p->nonfull_clusters[ci->order]);
- 		ci->flags = CLUSTER_FLAG_NONFULL;
- 	}
- }
-@@ -674,7 +665,7 @@ static void cluster_alloc_range(struct swap_info_struct *si, struct swap_cluster
- 			  (CLUSTER_FLAG_FREE | CLUSTER_FLAG_NONFULL | CLUSTER_FLAG_FRAG)));
- 		if (ci->flags & CLUSTER_FLAG_FRAG)
- 			si->frag_cluster_nr[ci->order]--;
--		list_del(&ci->list);
-+		list_move_tail(&ci->list, &si->full_clusters);
- 		ci->flags = 0;
- 	}
- }
-@@ -718,6 +709,46 @@ static unsigned int alloc_swap_scan_cluster(struct swap_info_struct *si, unsigne
- 	return offset;
+diff --git a/mm/filemap.c b/mm/filemap.c
+index d62150418b91..f29adf5cf081
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3105,6 +3105,15 @@ static int lock_folio_maybe_drop_mmap(struct vm_fault *vmf, struct folio *folio,
+ 	return 1;
  }
  
-+static void swap_reclaim_full_clusters(struct swap_info_struct *si)
++static inline bool want_readahead(unsigned long vm_flags, struct file_ra_state *ra)
 +{
-+	long to_scan = 1;
-+	unsigned long offset, end;
-+	struct swap_cluster_info *ci;
-+	unsigned char *map = si->swap_map;
-+	int nr_reclaim, total_reclaimed = 0;
++	if (vm_flags & VM_RAND_READ || !ra->ra_pages)
++		return false;
 +
-+	if (atomic_long_read(&nr_swap_pages) <= SWAPFILE_CLUSTER)
-+		to_scan = si->inuse_pages / SWAPFILE_CLUSTER;
-+
-+	while (!list_empty(&si->full_clusters)) {
-+		ci = list_first_entry(&si->full_clusters, struct swap_cluster_info, list);
-+		list_move_tail(&ci->list, &si->full_clusters);
-+		offset = cluster_offset(si, ci);
-+		end = min(si->max, offset + SWAPFILE_CLUSTER);
-+		to_scan--;
-+
-+		while (offset < end) {
-+			if (READ_ONCE(map[offset]) == SWAP_HAS_CACHE) {
-+				spin_unlock(&si->lock);
-+				nr_reclaim = __try_to_reclaim_swap(si, offset,
-+								   TTRS_ANYWAY | TTRS_DIRECT);
-+				spin_lock(&si->lock);
-+				if (nr_reclaim > 0) {
-+					offset += nr_reclaim;
-+					total_reclaimed += nr_reclaim;
-+					continue;
-+				} else if (nr_reclaim < 0) {
-+					offset += -nr_reclaim;
-+					continue;
-+				}
-+			}
-+			offset++;
-+		}
-+		if (to_scan <= 0 || total_reclaimed)
-+			break;
-+	}
++	return true;
 +}
 +
  /*
-  * Try to get swap entries with specified order from current cpu's swap entry
-  * pool (a cluster). This might involve allocating a new cluster for current CPU
-@@ -826,7 +857,15 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
- 				goto done;
- 		}
- 	}
-+
- done:
-+	/* Try reclaim from full clusters if device is nearfull */
-+	if (vm_swap_full() && (!found || (si->pages - si->inuse_pages) < SWAPFILE_CLUSTER)) {
-+		swap_reclaim_full_clusters(si);
-+		if (!found && !order && si->pages != si->inuse_pages)
-+			goto new_cluster;
-+	}
-+
- 	cluster->next[order] = offset;
- 	return found;
- }
-@@ -3126,6 +3165,7 @@ static int setup_swap_map_and_extents(struct swap_info_struct *p,
- 	nr_good_pages = maxpages - 1;	/* omit header page */
+  * Synchronous readahead happens when we don't even find a page in the page
+  * cache at all.  We don't want to perform IO under the mmap sem, so if we have
+@@ -3141,9 +3150,7 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+ #endif
  
- 	INIT_LIST_HEAD(&p->free_clusters);
-+	INIT_LIST_HEAD(&p->full_clusters);
- 	INIT_LIST_HEAD(&p->discard_clusters);
+ 	/* If we don't want any read-ahead, don't bother */
+-	if (vm_flags & VM_RAND_READ)
+-		return fpin;
+-	if (!ra->ra_pages)
++	if (!want_readahead(vm_flags, ra))
+ 		return fpin;
  
- 	for (i = 0; i < SWAP_NR_ORDERS; i++) {
-
+ 	if (vm_flags & VM_SEQ_READ) {
+@@ -3191,7 +3198,7 @@ static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
+ 	unsigned int mmap_miss;
+ 
+ 	/* If we don't want any read-ahead, don't bother */
+-	if (vmf->vma->vm_flags & VM_RAND_READ || !ra->ra_pages)
++	if (!want_readahead(vmf->vma->vm_flags, ra))
+ 		return fpin;
+ 
+ 	mmap_miss = READ_ONCE(ra->mmap_miss);
+@@ -3612,6 +3619,14 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 	unsigned long rss = 0;
+ 	unsigned int nr_pages = 0, mmap_miss = 0, mmap_miss_saved, folio_type;
+ 
++	/*
++	 * If no other read-ahead pages, return zero will
++	 * call __do_fault() to end the page fault path.
++	 */
++	if ((vmf->flags & FAULT_FLAG_TRIED) &&
++	    !want_readahead(vma->vm_flags, &file->f_ra))
++		return 0;
++
+ 	rcu_read_lock();
+ 	folio = next_uptodate_folio(&xas, mapping, end_pgoff);
+ 	if (!folio)
 -- 
-2.46.0.rc1.232.g9752f9e123-goog
+2.39.0
 
 
