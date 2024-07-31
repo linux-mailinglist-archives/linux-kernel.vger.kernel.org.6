@@ -1,193 +1,116 @@
-Return-Path: <linux-kernel+bounces-268503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4C50942577
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:32:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B64C994257A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DAB2B21306
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:32:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6BF01C2175B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBE31C6A8;
-	Wed, 31 Jul 2024 04:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6FE1BDCF;
+	Wed, 31 Jul 2024 04:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aAcQmm0M"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FFB52905;
-	Wed, 31 Jul 2024 04:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="Janxiiu6"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BF918039;
+	Wed, 31 Jul 2024 04:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722400333; cv=none; b=OFRbTTZn8LpUKhxeFFNiyrvk7HZ1qw4Y+4NK4wZ83LdNsoJA0urN8A2Q4EVbIIvvL16/TZ/ksj4Vnd1TvwkqxJdbdeHaOxHCQW3iLGZdvhvV3RbZPMlnKom4XVVc1waSf8Z8GX0hfPYK9KopqQ71SsmmVtL8G0tjlmNkSbfUQNs=
+	t=1722400484; cv=none; b=UImTXgKa0HuoVQ/ixjFiFKND2O05G4a0u01N6CIt2gxEp+nJWwFwudjQZkceuSpW7jN6dBkfeVYT/TnbuFYF4bYoL81efqGjNb5dMXC11Sc8W9fKuYVvCDllR6NJPzitJ9ZWMY2+VOudGMOAqXFRl3WZJhCeTNsCxXBRtGsLwsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722400333; c=relaxed/simple;
-	bh=h44KVnerduX9inrmeDUbCf9NxZrv1J7MvZZmRpuKDzQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=k19aQ372bFNULzwTAk79itZMZ2rpi/Oik5khUJRw6tK4oPh407oAeWRKJbZqUKcfjgam0whCXE1GgRBQ5Fcl4Q426Jg5OaL41v2irEaIeEsIDsmoRvuL4kk8eN2PrjZy0ATvN2fNOWcOCqCAbQXLJ+nhcCXtMEJkPHqvMQbTFx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aAcQmm0M; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46V3niD7018574;
-	Wed, 31 Jul 2024 04:32:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eOw1SfT+lwxVj64zgTKra3HRzXSeZVXKizDkw6U7rVA=; b=aAcQmm0MxOrNe19l
-	GAfj2nsvcNCd9IlwFQxg6PCOegL3HwFPM6LShVo6lF3nfHoBKhkeU9MFY7VmN6lk
-	FjeHgMyvrfUsN+xBaxeJHZcrgOIPUxTymGgX/uautjVzi2WSYRUcz+ZEEXX2DkgP
-	IRTJTVw+n17pVbHeW+Yf1URNwSr/1BwLeCXgzuzjmMGDSkD2I8+A6N7eiQcDcFEa
-	4Lqu5nS9PBmH6TRznduyZ1UKyqzpu4fgMVqeraCB564ekWi7/cYuEUpYalAk7xV5
-	uM2A7Cl/JWehjyS+lwxAHc4p49uAIfgSJzedD3fqhX5m/w2eP/UUbLUQgvvOESZh
-	59dhMw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40ms96sy9y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 04:32:03 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46V4W1qN014387
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 04:32:01 GMT
-Received: from [10.216.9.150] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 30 Jul
- 2024 21:31:59 -0700
-Message-ID: <ea5e7343-af67-ceeb-3448-5fd7dee495e3@quicinc.com>
-Date: Wed, 31 Jul 2024 10:01:55 +0530
+	s=arc-20240116; t=1722400484; c=relaxed/simple;
+	bh=V/VsL1iJdl/lK6/fE4RPn3MWXns7iKkHGw5IqqZ/5Lg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=qVaCj3HMpZnmvY/ANOCc5c3zVbjMFU1RXyOM+xOuklTSc50lo1jsYtIEhr7A+JXlJ92MfSUiJJmOaxR2T9pF2z010sSoN+5rIQ3tD4cihqFfceUwKaFbM7YdWYS/gbUhLbYPpDmVGreklwGmExEOiXg18CKSgfygxYQUbUEpuEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=Janxiiu6 reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=QDgJcuUHtS0SBybOgwNpLvXjX2NfykPkpulIsNo07AE=; b=J
+	anxiiu62deFbXXuRuU5b+BOBuXhEJWLpVoQlW1a8hfANdWuO4LNTbSgNchtEW2PX
+	BzsmDowQK9N/hr10HkWSSKS7acfxBCD+y3oSQpXeAxs6xE/+T9Y41B2RhRuU8YRy
+	9jpwXPFi/G93MCBfqbN7OEODayU1elVpGYVd3sciQU=
+Received: from 00107082$163.com ( [111.35.189.52] ) by
+ ajax-webmail-wmsvr-40-104 (Coremail) ; Wed, 31 Jul 2024 12:33:36 +0800
+ (CST)
+Date: Wed, 31 Jul 2024 12:33:36 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Xiaojian Du" <xiaojidu@amd.com>
+Cc: perry.yuan@amd.com, Alexander.Deucher@amd.com, Li.Meng@amd.com, 
+	Mario.Limonciello@amd.com, Xiaojian.Du@amd.com, Xinmei.Huang@amd.com, 
+	gautham.shenoy@amd.com, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com, 
+	viresh.kumar@linaro.org
+Subject: Re: [Regression] 6.11.0-rc1: AMD CPU boot with error when CPPC
+ feature disabled by BIOS
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <7e2275d5-19dc-555e-e8e1-ed79b408c0e3@amd.com>
+References: <20240730140111.4491-1-00107082@163.com>
+ <1d5f4859-6810-355f-3e0e-ed1c9e53c3f4@amd.com>
+ <2c2569aa.47a.191062d0d40.Coremail.00107082@163.com>
+ <9c229562-06f8-fad8-8f3d-a236733ce699@amd.com>
+ <51a44058.3913.19106dea781.Coremail.00107082@163.com>
+ <7e2275d5-19dc-555e-e8e1-ed79b408c0e3@amd.com>
+X-NTES-SC: AL_Qu2ZAPibv0wq4CaQZ+kZnEYQheY4XMKyuPkg1YJXOp80tiTLyB48X0BMLXjU0f6EMzKxjye1dBdoxcZGUIRpYpkwYpNAGAUCb3CbjOKIT5m/
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] PCI: qcom-ep: Move controller cleanups to
- qcom_pcie_perst_deassert()
-Content-Language: en-US
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240729122245.33410-1-manivannan.sadhasivam@linaro.org>
- <98264d15-fb30-32e0-7eba-72b3a50347e0@quicinc.com>
- <20240729135547.GA35559@thinkpad>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20240729135547.GA35559@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: gQ6wWUIaVwIJw2oXYbROFUUIntJ2aJp-
-X-Proofpoint-GUID: gQ6wWUIaVwIJw2oXYbROFUUIntJ2aJp-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-31_01,2024-07-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 phishscore=0
- priorityscore=1501 clxscore=1015 lowpriorityscore=0 spamscore=0
- adultscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407310032
+Message-ID: <6cddbf5f.4164.1910710a3b2.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3n6uhvqlmWiNNAA--.43203W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqRQtqmVOB4NuvQAEsC
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-
-
-On 7/29/2024 7:25 PM, Manivannan Sadhasivam wrote:
-> On Mon, Jul 29, 2024 at 05:58:31PM +0530, Krishna Chaitanya Chundru wrote:
->>
->>
->> On 7/29/2024 5:52 PM, Manivannan Sadhasivam wrote:
->>> Currently, the endpoint cleanup function dw_pcie_ep_cleanup() and EPF
->>> deinit notify function pci_epc_deinit_notify() are called during the
->>> execution of qcom_pcie_perst_assert() i.e., when the host has asserted
->>> PERST#. But quickly after this step, refclk will also be disabled by the
->>> host.
->>>
->>> All of the Qcom endpoint SoCs supported as of now depend on the refclk from
->>> the host for keeping the controller operational. Due to this limitation,
->>> any access to the hardware registers in the absence of refclk will result
->>> in a whole endpoint crash. Unfortunately, most of the controller cleanups
->>> require accessing the hardware registers (like eDMA cleanup performed in
->>> dw_pcie_ep_cleanup(), powering down MHI EPF etc...). So these cleanup
->>> functions are currently causing the crash in the endpoint SoC once host
->>> asserts PERST#.
->>>
->>> One way to address this issue is by generating the refclk in the endpoint
->>> itself and not depending on the host. But that is not always possible as
->>> some of the endpoint designs do require the endpoint to consume refclk from
->>> the host (as I was told by the Qcom engineers).
->>>
->>> So let's fix this crash by moving the controller cleanups to the start of
->>> the qcom_pcie_perst_deassert() function. qcom_pcie_perst_deassert() is
->>> called whenever the host has deasserted PERST# and it is guaranteed that
->>> the refclk would be active at this point. So at the start of this function,
->>> the controller cleanup can be performed. Once finished, rest of the code
->>> execution for PERST# deassert can continue as usual.
->>>
->> How about doing the cleanup as part of pme turnoff message.
->> As host waits for L23 ready from the device side. we can use that time
->> to cleanup the host before sending L23 ready.
->>
-> 
-> Yes, but that's only applicable if the host properly powers down the device. But
-> it won't work in the case of host crash or host abrupt poweroff.
-> 
-> - Mani
-> 
-Ack.
-
-- Krishna Chaitanya.
->> - Krishna Chaitanya.
->>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->>> ---
->>>    drivers/pci/controller/dwc/pcie-qcom-ep.c | 12 ++++++++++--
->>>    1 file changed, 10 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
->>> index 2319ff2ae9f6..e024b4dcd76d 100644
->>> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
->>> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
->>> @@ -186,6 +186,8 @@ struct qcom_pcie_ep_cfg {
->>>     * @link_status: PCIe Link status
->>>     * @global_irq: Qualcomm PCIe specific Global IRQ
->>>     * @perst_irq: PERST# IRQ
->>> + * @cleanup_pending: Cleanup is pending for the controller (because refclk is
->>> + *                   needed for cleanup)
->>>     */
->>>    struct qcom_pcie_ep {
->>>    	struct dw_pcie pci;
->>> @@ -214,6 +216,7 @@ struct qcom_pcie_ep {
->>>    	enum qcom_pcie_ep_link_status link_status;
->>>    	int global_irq;
->>>    	int perst_irq;
->>> +	bool cleanup_pending;
->>>    };
->>>    static int qcom_pcie_ep_core_reset(struct qcom_pcie_ep *pcie_ep)
->>> @@ -389,6 +392,12 @@ static int qcom_pcie_perst_deassert(struct dw_pcie *pci)
->>>    		return ret;
->>>    	}
->>> +	if (pcie_ep->cleanup_pending) {
->>> +		pci_epc_deinit_notify(pci->ep.epc);
->>> +		dw_pcie_ep_cleanup(&pci->ep);
->>> +		pcie_ep->cleanup_pending = false;
->>> +	}
->>> +
->>>    	/* Assert WAKE# to RC to indicate device is ready */
->>>    	gpiod_set_value_cansleep(pcie_ep->wake, 1);
->>>    	usleep_range(WAKE_DELAY_US, WAKE_DELAY_US + 500);
->>> @@ -522,10 +531,9 @@ static void qcom_pcie_perst_assert(struct dw_pcie *pci)
->>>    {
->>>    	struct qcom_pcie_ep *pcie_ep = to_pcie_ep(pci);
->>> -	pci_epc_deinit_notify(pci->ep.epc);
->>> -	dw_pcie_ep_cleanup(&pci->ep);
->>>    	qcom_pcie_disable_resources(pcie_ep);
->>>    	pcie_ep->link_status = QCOM_PCIE_EP_LINK_DISABLED;
->>> +	pcie_ep->cleanup_pending = true;
->>>    }
->>>    /* Common DWC controller ops */
-> 
+QXQgMjAyNC0wNy0zMSAxMjoyMTowNSwgIlhpYW9qaWFuIER1IiA8eGlhb2ppZHVAYW1kLmNvbT4g
+d3JvdGU6Cj4KPk9uIDIwMjQvNy8zMSAxMTozOSwgRGF2aWQgV2FuZyB3cm90ZToKPj4gQXQgMjAy
+NC0wNy0zMSAxMToxNjoxNCwgIlhpYW9qaWFuIER1IiA8eGlhb2ppZHVAYW1kLmNvbT4gd3JvdGU6
+Cj4+PiBPbiAyMDI0LzcvMzEgODoyNSwgRGF2aWQgV2FuZyB3cm90ZToKPj4+PiBIaSBEdSwKPj4+
+Pgo+Pj4+IFRoYW5rcyBmb3IgdGhlIHF1aWNrIHJlc3BvbnNlCj4+Pj4KPj4+PiAuLi4KPj4+PiBJ
+IGZlZWwgdGhhdCB5b3UgYXJlIGFyZ3VpbmcgZm9yIHRoZSB3YXJuaW5nIGFuZCB0aGUgZXJyb3Jz
+IHNlcGFyYXRlbHkuCj4+Pj4gU2VwYXJhdGVseSwgICBJIGFncmVlIHdhcm5pbmcgb3IgZXJyb3Ig
+bWVzc2FnZSBtYWtlIHNlbnNlIGFzIHlvdSBleHBsYWluZWQsICBidXQgdG9nZXRoZXIgSSBmZWVs
+IGNvbmZ1c2VkOgo+Pj4+IFJlY2VpdmluZyBhIHdhcm5pbmcgdGhhdCBDUFBDIGZlYXR1cmUgaXMg
+ZGlzYWJsZSBieSBCSU9TIGFscmVhZHkgbm90aWZ5IHVzZXJzIHRoYXQgYW1kLXBzdGF0ZSB3b3Vs
+ZCBub3Qgd29yaywgcmlnaHQ/Cj5XYXJuaW5nIGlzIG5vdCBlbm91Z2gsIGVycm9yIHdpbGwgZ3Vp
+ZGUgdXNlciB0byBzd2l0Y2ggdG8gYWNwaSBjcHUgCj5kcml2ZXIgb3Igc2VlayBtb3JlIHN1cHBv
+cnQgZnJvbSBPRU0uCj4+Pj4gSXMgaXQgcG9zc2libGUsIHRoYXQgdGhvc2UgdHdvIGNvbmRpdGlv
+biBjb2V4aXN0czogQ1BQQyBpcyBkaXNhYmxlZCBieSBCSU9TLCBhbmQgIGFtZC1wc3RhdGUgY291
+bGQgZnVuY3Rpb24gcHJvcGVybHk/Cj4+Pj4KPj4+PiAgIAo+Cj5ObyBwb3NzaWJsZSwgdGhlIGN1
+cnJlbnQgYW1kLXBzdGF0ZSBkcml2ZXIgaXMgYmFzZWQgb24gQ1BQQyBmZWF0dXJlLgo+Cj5UaGFu
+a3MuCj5YaWFvamlhbgo+CgpTbywgd2hhdCBhYm91dCB0aGUgcGF0Y2ggSSBtZW50aW9uZWQ6ICB3
+aGVuIENQUEMgaXMgZGlzYWJsZWQgYnkgIEJJT1MsIHByaW50IHdhcm5pbmcgbWVzc2FnZSBhbmQg
+YWJvcnQgYW1kLXBzdGF0ZSBkcml2ZXIgcmVnaXN0cmF0aW9uPwooSSBtYWRlIGEgY29kZSBibG9j
+ayBtaXN0YWtlIGluIHRoZSBwYXRjaCBJIHBvc3RlZCBiZWZvcmUpCgpkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9jcHVmcmVxL2FtZC1wc3RhdGUuYyBiL2RyaXZlcnMvY3B1ZnJlcS9hbWQtcHN0YXRlLmMK
+aW5kZXggNjhjNjE2YjU3MmYyLi5iMDZmYWVhNThmZDQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvY3B1
+ZnJlcS9hbWQtcHN0YXRlLmMKKysrIGIvZHJpdmVycy9jcHVmcmVxL2FtZC1wc3RhdGUuYwpAQCAt
+MTgzNyw4ICsxODM3LDYgQEAgc3RhdGljIGJvb2wgYW1kX2NwcGNfc3VwcG9ydGVkKHZvaWQpCiAg
+ICAgICAgICogSWYgdGhlIENQUEMgZmVhdHVyZSBpcyBkaXNhYmxlZCBpbiB0aGUgQklPUyBmb3Ig
+cHJvY2Vzc29ycyB0aGF0IHN1cHBvcnQgTVNSLWJhc2VkIENQUEMsCiAgICAgICAgICogdGhlIEFN
+RCBQc3RhdGUgZHJpdmVyIG1heSBub3QgZnVuY3Rpb24gY29ycmVjdGx5LgogICAgICAgICAqIENo
+ZWNrIHRoZSBDUFBDIGZsYWcgYW5kIGRpc3BsYXkgYSB3YXJuaW5nIG1lc3NhZ2UgaWYgdGhlIHBs
+YXRmb3JtIHN1cHBvcnRzIENQUEMuCi0gICAgICAgICogTm90ZTogYmVsb3cgY2hlY2tpbmcgY29k
+ZSB3aWxsIG5vdCBhYm9ydCB0aGUgZHJpdmVyIHJlZ2lzdGVyYXRpb24gcHJvY2VzcyBiZWNhdXNl
+IG9mCi0gICAgICAgICogdGhlIGNvZGUgaXMgYWRkZWQgZm9yIGRlYnVnZ2luZyBwdXJwb3Nlcy4K
+ICAgICAgICAgKi8KICAgICAgICBpZiAoIWNwdV9mZWF0dXJlX2VuYWJsZWQoWDg2X0ZFQVRVUkVf
+Q1BQQykpIHsKICAgICAgICAgICAgICAgIGlmIChjcHVfZmVhdHVyZV9lbmFibGVkKFg4Nl9GRUFU
+VVJFX1pFTjEpIHx8IGNwdV9mZWF0dXJlX2VuYWJsZWQoWDg2X0ZFQVRVUkVfWkVOMikpIHsKQEAg
+LTE4NTYsNiArMTg1NCw3IEBAIHN0YXRpYyBib29sIGFtZF9jcHBjX3N1cHBvcnRlZCh2b2lkKQot
+ICAgICAgICBpZiAod2FybikKKyAgICAgICAgaWYgKHdhcm4pIHsKICAgICAgICAgICAgICAgIHBy
+X3dhcm5fb25jZSgiVGhlIENQUEMgZmVhdHVyZSBpcyBzdXBwb3J0ZWQgYnV0IGN1cnJlbnRseSBk
+aXNhYmxlZCBieSB0aGUgQklPUy5cbiIKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICJQbGVhc2UgZW5hYmxlIGl0IGlmIHlvdXIgQklPUyBoYXMgdGhlIENQUEMgb3B0aW9u
+LlxuIik7CisgICAgICAgICAgICAgICByZXR1cm4gZmFsc2U7CisgICAgICAgICB9CiAgICAgICAg
+cmV0dXJuIHRydWU7CiB9IAoKCgpUaGFua3MKRGF2aWQKCg==
 
