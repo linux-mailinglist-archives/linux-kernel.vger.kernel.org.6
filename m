@@ -1,389 +1,159 @@
-Return-Path: <linux-kernel+bounces-268757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B9399428F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:14:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856B09428E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:11:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F60B1C21DFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:14:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CA6B284C26
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1081A7F7E;
-	Wed, 31 Jul 2024 08:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC8D1A7206;
+	Wed, 31 Jul 2024 08:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QG9fpHzH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="XzpWOj9u"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBB81A7F69
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEC61A7F6C
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722413665; cv=none; b=GFxQcrG2VMkOI321plYoC/GPZTcEpPxaOBKzeaS1ikoC9QvtdNFRFqV/ovTYZppAJiwTxAj2wvwgi9bjJmVhyc2a/Xe82Z2STESJk2IPxLM+9gRSGPfJzBFTGZbdpc7Al4d1ID4g7ztdV0YioTMBJztJGfzoKmq7PZ8Pg5sLlG4=
+	t=1722413479; cv=none; b=la1cs9nAkRm77ulknIAXBXUSNom2PX3QeolHYfaoBA2uWnKZo409fuXnvDBaacfRZk7w71xFTWI7pNbJV0YSIFMFlBzZzbNI/DlvHP86HhFTabYm9YU8ApZ9xsfes/TO1RT/7c5HEG2tsUT69vOVnZNHUiiqd6tgkW2SPiOK9PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722413665; c=relaxed/simple;
-	bh=UCCKngBTuDNcbUeBWfP8clKPoH+ZkSZAq71DcbxlTpI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PZmO0SMsZewY7lCrxDum+BKILmXc4Xbmdvu2PYNxW4p22tKnYipoBHM1Pe0Brlqe1n7srJteC3OOce/P86MEBN2O1ijGPVOyA97/7pfrCdyeCMd6Kig5SHhS1AeSmqWs0Ahq4mVOT/hnJGI6NTthtFnlTTMl5D4jzfKjyx2CIXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QG9fpHzH; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722413663; x=1753949663;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=UCCKngBTuDNcbUeBWfP8clKPoH+ZkSZAq71DcbxlTpI=;
-  b=QG9fpHzHOi1VMtn3VjXuVh97EmHF68kSWCkXhonyXdnBNVZk/Zvv9Roh
-   NuJzbdbf1RyVKN8ChyS5mZ9qX300jiwfvS4G1lt79X1F1B4PYLVEXjcOU
-   VPAoPNQ7bzUNU3O+bnk363Z0tjRMxaEG2fLdDVBFr9y6SEPQ5+roBJN1M
-   JdSF5oAw83pdaBq3tHQVuhcc9C0N/JFfFynSxdVEhAHwl32qkIZY+vIz1
-   LKR7ZjKgvmp008IKIcoG86b6IRPjfIBOo/m6wkQmrt6yBtM1hADMcw3JD
-   Jdb85/49W0FXf+kTMCGT53hDyQcFzY2pBnhD3ppd56tduayVQCOJRQ63e
-   Q==;
-X-CSE-ConnectionGUID: B2xt7ZbETICucmWEnUkucw==
-X-CSE-MsgGUID: jcrhq9S9TEODJsqjRY6Hfw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="20159358"
-X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
-   d="scan'208";a="20159358"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 01:14:22 -0700
-X-CSE-ConnectionGUID: EJW/ZoMfSR+H0S8TjpvUSg==
-X-CSE-MsgGUID: 37rCRItNQkS6foiIdfkg0w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
-   d="scan'208";a="54297820"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 01:14:18 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org,  linux-mm@kvack.org,
-  baolin.wang@linux.alibaba.com,  chrisl@kernel.org,  david@redhat.com,
-  hannes@cmpxchg.org,  hughd@google.com,  kaleshsingh@google.com,
-  kasong@tencent.com,  linux-kernel@vger.kernel.org,  mhocko@suse.com,
-  minchan@kernel.org,  nphamcs@gmail.com,  ryan.roberts@arm.com,
-  senozhatsky@chromium.org,  shakeel.butt@linux.dev,  shy828301@gmail.com,
-  surenb@google.com,  v-songbaohua@oppo.com,  willy@infradead.org,
-  xiang@kernel.org,  yosryahmed@google.com
-Subject: Re: [PATCH 1/1] mm: swap: add nr argument in swapcache_prepare and
- swapcache_clear to support large folios
-In-Reply-To: <20240730071339.107447-2-21cnbao@gmail.com> (Barry Song's message
-	of "Tue, 30 Jul 2024 19:13:39 +1200")
-References: <20240730071339.107447-1-21cnbao@gmail.com>
-	<20240730071339.107447-2-21cnbao@gmail.com>
-Date: Wed, 31 Jul 2024 16:10:44 +0800
-Message-ID: <874j86oubf.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1722413479; c=relaxed/simple;
+	bh=2Gl8bDEMJ7EROOAewtyGSnYyggrq+9cliJTSl46a0AU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=owl+JloZ7mV96OCDRAnhIj4DWjaPhqsYPr+qG0c9wwymlihvtNIrTS3NdxPR1fRLRGFofN40f9SgozoJhZUYR5MiV+EzvebM3DMMFPYTm+ZshsIrHIY/Nq7PYXbw+ySDffrdP5H6bt5iA8lvQ7OySAQC1hubuMYVvTO4Xgp5qRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=XzpWOj9u; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7a8553db90so747374866b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 01:11:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1722413476; x=1723018276; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/6o5eOKMgYVhFfCfAX4KZTyTvIb4CeiZ7EcRemTMKgE=;
+        b=XzpWOj9uEN/HBmC9Nti+ZlboUO4ecfQm5gr1NLQKCQc0igzf0i5g79lvBw2D+a65WX
+         /6dTtywIK7b7CvxNlUopjQwCTaWtv7bGOEzztsDGFqWJQP8Dlsc+OZnxBvgFl3f5WYW1
+         oXTwrmJUAaYDjI+DI64eTa8DT0jxSX0P1IyJ5YJUWFEEt+/yK7wAe1Uvd7uk9fI2AkaT
+         Nu4eyojBTu0TBMdYRwSreHYknBNCZYLJBwxEeOtvYxYLQ7PaF6W+GirnfKJAWwZdea+J
+         GADeRlayoG2b6FfyGv9oRNvpxy7gfyrMJngbXCTVowCEXWwk4GQLQIgAn0Zq6616Z+Qh
+         FEEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722413476; x=1723018276;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/6o5eOKMgYVhFfCfAX4KZTyTvIb4CeiZ7EcRemTMKgE=;
+        b=Tr+ZLHOpCf/qR9Z+I60kSJM4ooRtlywkMjXS+qWQP9AB6xqC5KWkf0zwqR+LYlp4jw
+         jcYwsSAsx1yNzEHGMI3A/mtvpZPspdANmgtDk01qXmOE7KXyys/0cwtfp30EDaVoLkS4
+         vv9Lqt/wP5hIUGiyCCSuxnF/Gz+x8togqTBPqCf4pIRfjvRwC24HFMYirON61S5DfWB4
+         54H628XYXpHg2tAXr0A0m+BTuFbLYfmfWqusnTFR1QhyMat1AGlx1wuHJkDtqcIQO9p+
+         vkHGjo3y/u1wIP1NH0012W7ZKkJnAPLnzYXnDRiYhkD+251bWF1F7mPmAa6XqG8o96DX
+         UHAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3Qg0QqjxYy8YSH1fGIgD9G5E5QIbCZiCFhT9OjMxfrn4xJCMKAo12cEDP5sg3EphxanAve+Hs4tD4J9J3zdRIwpidHi0VNbFUeZmz
+X-Gm-Message-State: AOJu0YxeB7A5hEA5C6IXSU1QMV0w76IxPBZ8CtMci8lTd67OpvEjUPGf
+	yjBeSylBnmRlyUNBCov3l2yyo6T8SgvWs+SPbp88rKyXnwBNeiWHiY5E67VMF2w=
+X-Google-Smtp-Source: AGHT+IF8KtMuBT/lx87J71F/lRrgIXThKYLKm0Q9zh/TR0QeaI4sQXL1DHSiINUT/9ZA+lMCzDpL5Q==
+X-Received: by 2002:a17:907:1b26:b0:a7a:af5d:f312 with SMTP id a640c23a62f3a-a7d4011442emr913154866b.46.1722413475678;
+        Wed, 31 Jul 2024 01:11:15 -0700 (PDT)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad414e2sm738525466b.127.2024.07.31.01.11.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 01:11:15 -0700 (PDT)
+Date: Wed, 31 Jul 2024 10:11:14 +0200
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
+Subject: Re: [PATCH v12 58/84] KVM: RISC-V: Use kvm_faultin_pfn() when
+ mapping pfns into the guest
+Message-ID: <20240731-a5f8928d385945f049e5f96e@orel>
+References: <20240726235234.228822-1-seanjc@google.com>
+ <20240726235234.228822-59-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240726235234.228822-59-seanjc@google.com>
 
-Hi, Barry,
-
-Barry Song <21cnbao@gmail.com> writes:
-
-> From: Barry Song <v-songbaohua@oppo.com>
->
-> Right now, swapcache_prepare() and swapcache_clear() supports one entry
-> only, to support large folios, we need to handle multiple swap entries.
->
-> To optimize stack usage, we iterate twice in __swap_duplicate(): the
-> first time to verify that all entries are valid, and the second time
-> to apply the modifications to the entries.
->
-> Currently, we're using nr=1 for the existing users.
->
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+On Fri, Jul 26, 2024 at 04:52:07PM GMT, Sean Christopherson wrote:
+> Convert RISC-V to __kvm_faultin_pfn()+kvm_release_faultin_page(), which
+> are new APIs to consolidate arch code and provide consistent behavior
+> across all KVM architectures.
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->  include/linux/swap.h |   4 +-
->  mm/memory.c          |   6 +--
->  mm/swap.h            |   5 ++-
->  mm/swap_state.c      |   2 +-
->  mm/swapfile.c        | 101 +++++++++++++++++++++++++------------------
->  5 files changed, 68 insertions(+), 50 deletions(-)
->
-> diff --git a/include/linux/swap.h b/include/linux/swap.h
-> index ba7ea95d1c57..5b920fa2315b 100644
-> --- a/include/linux/swap.h
-> +++ b/include/linux/swap.h
-> @@ -480,7 +480,7 @@ extern int get_swap_pages(int n, swp_entry_t swp_entries[], int order);
->  extern int add_swap_count_continuation(swp_entry_t, gfp_t);
->  extern void swap_shmem_alloc(swp_entry_t);
->  extern int swap_duplicate(swp_entry_t);
-> -extern int swapcache_prepare(swp_entry_t);
-> +extern int swapcache_prepare(swp_entry_t entry, int nr);
->  extern void swap_free_nr(swp_entry_t entry, int nr_pages);
->  extern void swapcache_free_entries(swp_entry_t *entries, int n);
->  extern void free_swap_and_cache_nr(swp_entry_t entry, int nr);
-> @@ -554,7 +554,7 @@ static inline int swap_duplicate(swp_entry_t swp)
->  	return 0;
->  }
+>  arch/riscv/kvm/mmu.c | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
+> index 806f68e70642..f73d6a79a78c 100644
+> --- a/arch/riscv/kvm/mmu.c
+> +++ b/arch/riscv/kvm/mmu.c
+> @@ -601,6 +601,7 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+>  	bool logging = (memslot->dirty_bitmap &&
+>  			!(memslot->flags & KVM_MEM_READONLY)) ? true : false;
+>  	unsigned long vma_pagesize, mmu_seq;
+> +	struct page *page;
 >  
-> -static inline int swapcache_prepare(swp_entry_t swp)
-> +static inline int swapcache_prepare(swp_entry_t swp, int nr)
->  {
->  	return 0;
->  }
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 833d2cad6eb2..b8675617a5e3 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4081,7 +4081,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  			 * reusing the same entry. It's undetectable as
->  			 * pte_same() returns true due to entry reuse.
->  			 */
-> -			if (swapcache_prepare(entry)) {
-> +			if (swapcache_prepare(entry, 1)) {
->  				/* Relax a bit to prevent rapid repeated page faults */
->  				schedule_timeout_uninterruptible(1);
->  				goto out;
-> @@ -4387,7 +4387,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  out:
->  	/* Clear the swap cache pin for direct swapin after PTL unlock */
->  	if (need_clear_cache)
-> -		swapcache_clear(si, entry);
-> +		swapcache_clear(si, entry, 1);
->  	if (si)
->  		put_swap_device(si);
->  	return ret;
-> @@ -4403,7 +4403,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  		folio_put(swapcache);
+>  	/* We need minimum second+third level pages */
+>  	ret = kvm_mmu_topup_memory_cache(pcache, gstage_pgd_levels);
+> @@ -631,7 +632,7 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+>  
+>  	/*
+>  	 * Read mmu_invalidate_seq so that KVM can detect if the results of
+> -	 * vma_lookup() or gfn_to_pfn_prot() become stale priort to acquiring
+> +	 * vma_lookup() or __kvm_faultin_pfn() become stale priort to acquiring
+                                                            ^ while here
+						could fix this typo
+
+>  	 * kvm->mmu_lock.
+>  	 *
+>  	 * Rely on mmap_read_unlock() for an implicit smp_rmb(), which pairs
+> @@ -647,7 +648,7 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+>  		return -EFAULT;
 >  	}
->  	if (need_clear_cache)
-> -		swapcache_clear(si, entry);
-> +		swapcache_clear(si, entry, 1);
->  	if (si)
->  		put_swap_device(si);
+>  
+> -	hfn = gfn_to_pfn_prot(kvm, gfn, is_write, &writable);
+> +	hfn = kvm_faultin_pfn(vcpu, gfn, is_write, &writable, &page);
+>  	if (hfn == KVM_PFN_ERR_HWPOISON) {
+>  		send_sig_mceerr(BUS_MCEERR_AR, (void __user *)hva,
+>  				vma_pageshift, current);
+> @@ -681,11 +682,7 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+>  		kvm_err("Failed to map in G-stage\n");
+>  
+>  out_unlock:
+> -	if ((!ret || ret == -EEXIST) && writable)
+> -		kvm_set_pfn_dirty(hfn);
+> -	else
+> -		kvm_release_pfn_clean(hfn);
+> -
+> +	kvm_release_faultin_page(kvm, page, ret && ret != -EEXIST, writable);
+>  	spin_unlock(&kvm->mmu_lock);
 >  	return ret;
-> diff --git a/mm/swap.h b/mm/swap.h
-> index baa1fa946b34..7c6330561d84 100644
-> --- a/mm/swap.h
-> +++ b/mm/swap.h
-> @@ -59,7 +59,7 @@ void __delete_from_swap_cache(struct folio *folio,
->  void delete_from_swap_cache(struct folio *folio);
->  void clear_shadow_from_swap_cache(int type, unsigned long begin,
->  				  unsigned long end);
-> -void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry);
-> +void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry, int nr);
->  struct folio *swap_cache_get_folio(swp_entry_t entry,
->  		struct vm_area_struct *vma, unsigned long addr);
->  struct folio *filemap_get_incore_folio(struct address_space *mapping,
-> @@ -120,7 +120,7 @@ static inline int swap_writepage(struct page *p, struct writeback_control *wbc)
->  	return 0;
 >  }
->  
-> -static inline void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry)
-> +static inline void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry, int nr)
->  {
->  }
->  
-> @@ -172,4 +172,5 @@ static inline unsigned int folio_swap_flags(struct folio *folio)
->  	return 0;
->  }
->  #endif /* CONFIG_SWAP */
-> +
+> -- 
+> 2.46.0.rc1.232.g9752f9e123-goog
+> 
+>
 
-NITPICK: Is it necessary to add a blank line here?  But I don't think a
-new version is necessary if this is the only change needed.
-
->  #endif /* _MM_SWAP_H */
-> diff --git a/mm/swap_state.c b/mm/swap_state.c
-> index a1726e49a5eb..b06f2a054f5a 100644
-> --- a/mm/swap_state.c
-> +++ b/mm/swap_state.c
-> @@ -477,7 +477,7 @@ struct folio *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
->  		/*
->  		 * Swap entry may have been freed since our caller observed it.
->  		 */
-> -		err = swapcache_prepare(entry);
-> +		err = swapcache_prepare(entry, 1);
->  		if (!err)
->  			break;
->  
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 5f73a8553371..757d38a86f56 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -3363,7 +3363,7 @@ void si_swapinfo(struct sysinfo *val)
->  }
->  
->  /*
-> - * Verify that a swap entry is valid and increment its swap map count.
-> + * Verify that nr swap entries are valid and increment their swap map counts.
->   *
->   * Returns error code in following case.
->   * - success -> 0
-> @@ -3373,60 +3373,77 @@ void si_swapinfo(struct sysinfo *val)
->   * - swap-cache reference is requested but the entry is not used. -> ENOENT
->   * - swap-mapped reference requested but needs continued swap count. -> ENOMEM
->   */
-> -static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
-> +static int __swap_duplicate(swp_entry_t entry, unsigned char usage, int nr)
->  {
->  	struct swap_info_struct *p;
->  	struct swap_cluster_info *ci;
->  	unsigned long offset;
->  	unsigned char count;
->  	unsigned char has_cache;
-> -	int err;
-> +	int err, i;
->  
->  	p = swp_swap_info(entry);
->  
->  	offset = swp_offset(entry);
-> +	VM_WARN_ON(nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
->  	ci = lock_cluster_or_swap_info(p, offset);
->  
-> -	count = p->swap_map[offset];
-> +	err = 0;
-> +	for (i = 0; i < nr; i++) {
-> +		count = p->swap_map[offset + i];
->  
-> -	/*
-> -	 * swapin_readahead() doesn't check if a swap entry is valid, so the
-> -	 * swap entry could be SWAP_MAP_BAD. Check here with lock held.
-> -	 */
-> -	if (unlikely(swap_count(count) == SWAP_MAP_BAD)) {
-> -		err = -ENOENT;
-> -		goto unlock_out;
-> -	}
-> +		/*
-> +		 * swapin_readahead() doesn't check if a swap entry is valid, so the
-> +		 * swap entry could be SWAP_MAP_BAD. Check here with lock held.
-> +		 */
-> +		if (unlikely(swap_count(count) == SWAP_MAP_BAD)) {
-> +			err = -ENOENT;
-> +			goto unlock_out;
-> +		}
->  
-> -	has_cache = count & SWAP_HAS_CACHE;
-> -	count &= ~SWAP_HAS_CACHE;
-> -	err = 0;
-> +		has_cache = count & SWAP_HAS_CACHE;
-> +		count &= ~SWAP_HAS_CACHE;
->  
-> -	if (usage == SWAP_HAS_CACHE) {
-> +		if (usage == SWAP_HAS_CACHE) {
-> +			/* set SWAP_HAS_CACHE if there is no cache and entry is used */
-> +			if (!has_cache && count)
-> +				continue;
-> +			else if (has_cache)		/* someone else added cache */
-> +				err = -EEXIST;
-> +			else				/* no users remaining */
-> +				err = -ENOENT;
->  
-> -		/* set SWAP_HAS_CACHE if there is no cache and entry is used */
-> -		if (!has_cache && count)
-> -			has_cache = SWAP_HAS_CACHE;
-> -		else if (has_cache)		/* someone else added cache */
-> -			err = -EEXIST;
-> -		else				/* no users remaining */
-> -			err = -ENOENT;
-> +		} else if (count || has_cache) {
->  
-> -	} else if (count || has_cache) {
-> +			if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)
-> +				continue;
-> +			else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_MAX)
-> +				err = -EINVAL;
-> +			else if (swap_count_continued(p, offset + i, count))
-> +				continue;
-
-IIUC, this will make the change to swap map directly instead of
-verification.  If the verification failed for some entry later, the
-count will be wrong?  Or I missed something?
-
-> +			else
-> +				err = -ENOMEM;
-> +		} else
-> +			err = -ENOENT;			/* unused swap entry */
->  
-> -		if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)
-> +		if (err)
-> +			goto unlock_out;
-> +	}
-> +
-> +	for (i = 0; i < nr; i++) {
-> +		count = p->swap_map[offset + i];
-> +		has_cache = count & SWAP_HAS_CACHE;
-> +		count &= ~SWAP_HAS_CACHE;
-> +
-> +		if (usage == SWAP_HAS_CACHE)
-> +			has_cache = SWAP_HAS_CACHE;
-> +		else if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)
->  			count += usage;
-> -		else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_MAX)
-> -			err = -EINVAL;
-> -		else if (swap_count_continued(p, offset, count))
-> -			count = COUNT_CONTINUED;
->  		else
-> -			err = -ENOMEM;
-> -	} else
-> -		err = -ENOENT;			/* unused swap entry */
-> +			count = COUNT_CONTINUED;
->  
-> -	if (!err)
-> -		WRITE_ONCE(p->swap_map[offset], count | has_cache);
-> +		WRITE_ONCE(p->swap_map[offset + i], count | has_cache);
-> +	}
->  
->  unlock_out:
->  	unlock_cluster_or_swap_info(p, ci);
-> @@ -3439,7 +3456,7 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
->   */
->  void swap_shmem_alloc(swp_entry_t entry)
->  {
-> -	__swap_duplicate(entry, SWAP_MAP_SHMEM);
-> +	__swap_duplicate(entry, SWAP_MAP_SHMEM, 1);
->  }
->  
->  /*
-> @@ -3453,29 +3470,29 @@ int swap_duplicate(swp_entry_t entry)
->  {
->  	int err = 0;
->  
-> -	while (!err && __swap_duplicate(entry, 1) == -ENOMEM)
-> +	while (!err && __swap_duplicate(entry, 1, 1) == -ENOMEM)
->  		err = add_swap_count_continuation(entry, GFP_ATOMIC);
->  	return err;
->  }
->  
->  /*
-> - * @entry: swap entry for which we allocate swap cache.
-> + * @entry: first swap entry from which we allocate nr swap cache.
->   *
-> - * Called when allocating swap cache for existing swap entry,
-> + * Called when allocating swap cache for existing swap entries,
->   * This can return error codes. Returns 0 at success.
->   * -EEXIST means there is a swap cache.
->   * Note: return code is different from swap_duplicate().
->   */
-> -int swapcache_prepare(swp_entry_t entry)
-> +int swapcache_prepare(swp_entry_t entry, int nr)
->  {
-> -	return __swap_duplicate(entry, SWAP_HAS_CACHE);
-> +	return __swap_duplicate(entry, SWAP_HAS_CACHE, nr);
->  }
->  
-> -void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry)
-> +void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry, int nr)
->  {
->  	unsigned long offset = swp_offset(entry);
->  
-> -	cluster_swap_free_nr(si, offset, 1, SWAP_HAS_CACHE);
-> +	cluster_swap_free_nr(si, offset, nr, SWAP_HAS_CACHE);
->  }
->  
->  struct swap_info_struct *swp_swap_info(swp_entry_t entry)
-
---
-Best Regards,
-Huang, Ying
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
