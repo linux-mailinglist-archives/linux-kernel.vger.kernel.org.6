@@ -1,124 +1,136 @@
-Return-Path: <linux-kernel+bounces-268378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD9BB9423E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:42:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E25AC9423F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CEE01C211C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:42:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 202131C22E4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FF48462;
-	Wed, 31 Jul 2024 00:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3582B748D;
+	Wed, 31 Jul 2024 00:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jZDZjJYO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bYy20JAC"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778624C8E;
-	Wed, 31 Jul 2024 00:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3146B28E7
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 00:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722386531; cv=none; b=OXmSdx1X5lv6H9J2SVE4wjMa84vg7KW17xUdysEHEnZZ+4j71vu8TCSKbctECg0MYMxtFRBOgtUAZ9aoHMglLWKxQxjl1abppQHM9ir9CNqbtLXOuexTcmJnb3yYXYa3rdX/hPhlnwFedQTSCa5OVICEd1n7w1CwilEqoZdTLKY=
+	t=1722386967; cv=none; b=mrD+/P/dWhWy+I7YDcsdjGhidQJ5c87TFN0LDOir6B6aDHqmpJPx5CoikWUZQvnzm1IRx3wYp4UU5koVSj3zy34O5wWh9W3EdT1ZiqzqTmNQUpCbOuvJlfSBWWQtvp4SJ+kXU+BH6662o9iywObSN7KXhkHeMQnLFJdjvd0v1fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722386531; c=relaxed/simple;
-	bh=O4xKrZS0mD61y2mmy9XSZokqEuXtHHJywllfTfjU1Qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZgbrG5TFjBGI2amjUs15xpYTlgdTIuqMPo1bnn5MHaGRH56mGX/69gK0buSDVVViHSCSHUC/GVU8NTWcJycH4ZXjokJvS68WWBsletiS2Bk++oUTQ1DJ6NSmxwjDGxUnbs9JC1+ToBDUbmUqnnmN6Q5lMMYt6Z7YhqOZLyv+OeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jZDZjJYO; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722386529; x=1753922529;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=O4xKrZS0mD61y2mmy9XSZokqEuXtHHJywllfTfjU1Qs=;
-  b=jZDZjJYO2oLmO67QIZdvbjYxnDP4hDWYpMnxIXjSbYa4VcmW2w2R/xwU
-   CEOv52epRCfaq5M28THNVoNWQwxFhYczKTfxfDV/vKPnldrymeDVe8Or3
-   rxOSZiQO2DnRPUZ9CJFoLQxT9mRihK9q4M9NEHgXCKxcRULjNfALfN688
-   aMSRrt98T4efWgbgmVt9hs30adXs0WAPN2JtdWFM6LAHJX/xzAcy8WL0N
-   2s+X3bO7v7bWz8RiiWEn2r0c4llEJ4W+7dB47eRZKVNVfeXQ2ezUWsNqC
-   0L4BBjPv9Ze4NRTwnzpSZ0lcQ2TPu2/4BuhOgNyu/qYfLM+cGDrHvwDgN
-   Q==;
-X-CSE-ConnectionGUID: OXpa/bGQSpeJGWhUcJf1Fg==
-X-CSE-MsgGUID: mY1oA04qRRaNr6AFGdrY6Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="20366628"
-X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
-   d="scan'208";a="20366628"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 17:42:09 -0700
-X-CSE-ConnectionGUID: bnJBAGRGRsuyS6UmKTgdCA==
-X-CSE-MsgGUID: Oi3+YHQ+RA2GPR1+qmLOoA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
-   d="scan'208";a="54205829"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 30 Jul 2024 17:42:08 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sYxPo-000tXp-0g;
-	Wed, 31 Jul 2024 00:42:04 +0000
-Date: Wed, 31 Jul 2024 08:41:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bibo Mao <maobibo@loongson.cn>, Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: oe-kbuild-all@lists.linux.dev, WANG Xuerui <kernel@xen0n.name>,
-	kvm@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	x86@kernel.org, Song Gao <gaosong@loongson.cn>
-Subject: Re: [PATCH v4 1/3] LoongArch: KVM: Enable paravirt feature control
- from VMM
-Message-ID: <202407310823.RbRdbUkV-lkp@intel.com>
-References: <20240730075344.1215681-2-maobibo@loongson.cn>
+	s=arc-20240116; t=1722386967; c=relaxed/simple;
+	bh=UZtlcR+Q0ZNh0gQLiKGf4UEajTLx3ddmbJkuC4aZo0Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lITw01y066Ts/fZtiGofzY3yOiHZBlHAqYwL/fdc0BTYncWiMLaGQUUL5i89dDM4fitXVPm8SkYy9K+InXh2iNnL1ro0zDogPLxA+/K1c8pALxPLHGDo1SKlOwvjYfBGCwlz0KWATJu6LRxWiOlgplknPa4YdkgBbuCLO4JKaFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bYy20JAC; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70d23caf8ddso4564595b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:49:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722386965; x=1722991765; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vzObc05aPc52UiOVMyTXImOoRUGXGrutktUE8jBFtBI=;
+        b=bYy20JACeyDKN5pufWSC2tRG2T1Nb76G1d/aPACkFAN0C7wzhS0XvRGMc40cxGgYlL
+         e9gEXX6wXg8qYxOK6k/Q9DkvnTQ9JhRlkCeljD7ABMr3QUiW6ho+oH7Sa4qiJhTjkQj1
+         wlOGSyUxpk2kE/CK6Q43MtgQxW5rfthdPt85PaxZqfewCoGKqgUJDjv7mIQBAj1uhjAG
+         wkFAiNcETe7MuTKCpRkFiJd4Q97I/Hc0CR13n6BAn87t6/xzJo+1OstMixkcM6kLSVJ9
+         aaAYuV2LCgwIQIL4QE24d9dBfyPB+QlzCiii/d/bCkrh4RX8B41CE/rmWXFWgJ8EY8tN
+         xisw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722386965; x=1722991765;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vzObc05aPc52UiOVMyTXImOoRUGXGrutktUE8jBFtBI=;
+        b=Z0tBLMoFQzQCKIZY62TWxtOyl4/N/ugBdexPAI6olk11YahthpccedFsN1/j6JZ45k
+         lvrm2y7ulZDX/pJRHcCcotG11ZMloAs7WgFSbnhTybpaqD6YVqgv2RIxxsiesEC9Si4G
+         PRPSte1I3qGtm4thyN3V2jykGofU2dy/A3zeuehYlBZNJ62lHawvMZoZgYbGQANV59Vh
+         IiBWLd1op42eHZ7wQBCHcRK7W6hw6F54QVLsR1ks4Ry+jjjOH0Bcw0Xi1gLW8aCDlx97
+         FBLHeCmFLHzO6FOMSxj1IOVo0WUsRArThs5YjJyUmkFF9Eh/svU5LexPsW2r8EiR2ASu
+         5OKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKe9NQFfJbRzve1q85Ws/0vf0vjWq9/i4LQdXTNeeTHvZSLOhRgIWGq/DM5HeJrdwmQX2NM4MduPZyqr+gUIc5QL11HJXazyAp0SA3
+X-Gm-Message-State: AOJu0YyKxJ8CHNImWH/eCRHL7cM+G9ouPDWNJfhKnHDVji2gItVn3iDU
+	cWJ90lHWwvKaAvp0o4Il5upEHuHMmL7Sj48OqCJA4nA+iKqmenLzbtmgtQ==
+X-Google-Smtp-Source: AGHT+IGs5mton0rDOBOv3LX32rVq+TkhuohKJ8C5I8UeYNXk4WRk9Y0rEBnc4Wg62q/x6Gx7QlPCTA==
+X-Received: by 2002:a05:6a20:2449:b0:1c3:ce0f:bfb2 with SMTP id adf61e73a8af0-1c4a12c5cd6mr16248745637.23.1722386965288;
+        Tue, 30 Jul 2024 17:49:25 -0700 (PDT)
+Received: from localhost.localdomain (h101-111-009-128.hikari.itscom.jp. [101.111.9.128])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8837edsm9344745b3a.148.2024.07.30.17.49.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 17:49:24 -0700 (PDT)
+From: Takero Funaki <flintglass@gmail.com>
+To: Johannes Weiner <hannes@cmpxchg.org>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Takero Funaki <flintglass@gmail.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/2] mm: zswap: fixes for global shrinker
+Date: Wed, 31 Jul 2024 00:49:08 +0000
+Message-ID: <20240731004918.33182-1-flintglass@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730075344.1215681-2-maobibo@loongson.cn>
+Content-Transfer-Encoding: 8bit
 
-Hi Bibo,
+This series addresses issues in the zswap global shrinker that could not
+shrink stored pages. With this series, the shrinker continues to shrink
+pages until it reaches the accept threshold more reliably, gives much
+higher writeback when the zswap pool limit is hit.
 
-kernel test robot noticed the following build errors:
+v5 is additional cleanup on comments I missed in the last thread, and
+adds Acked-by and Reviewed-by tags into the patch 1.
+No behavioral changes have been made since v4:
+https://lore.kernel.org/lkml/20240727230635.3170-1-flintglass@gmail.com/
 
-[auto build test ERROR on 8400291e289ee6b2bf9779ff1c83a291501f017b]
+Chnaged in v5:
+- Cleaned up more comments (Yosry)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bibo-Mao/LoongArch-KVM-Enable-paravirt-feature-control-from-VMM/20240730-155814
-base:   8400291e289ee6b2bf9779ff1c83a291501f017b
-patch link:    https://lore.kernel.org/r/20240730075344.1215681-2-maobibo%40loongson.cn
-patch subject: [PATCH v4 1/3] LoongArch: KVM: Enable paravirt feature control from VMM
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20240731/202407310823.RbRdbUkV-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240731/202407310823.RbRdbUkV-lkp@intel.com/reproduce)
+Changes in v4:
+- Updated comments and commit logs to clarify expected behaviors (Yosry,
+  Nhat)
+- Merged duplicated spin_unlock() in if branches (Nhat)
+- Renamed writeback attempts counter (Nhat, Chengming)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407310823.RbRdbUkV-lkp@intel.com/
+Changes in v3:
+- Extract fixes for shrinker as a separate patch series.
+- Fix comments and commit messages. (Chengming, Yosry)
+- Drop logic to detect rare doubly advancing cursor. (Yosry)
 
-All errors (new ones prefixed by >>):
+Changes in v2:
+mm: zswap: fix global shrinker memcg iteration:
+- Change the loop style (Yosry, Nhat, Shakeel)
+mm: zswap: fix global shrinker error handling logic:
+- Change error code for no-writeback memcg. (Yosry)
+- Use nr_scanned to check if lru is empty. (Yosry)
 
-   scripts/genksyms/parse.y: warning: 9 shift/reduce conflicts [-Wconflicts-sr]
-   scripts/genksyms/parse.y: warning: 5 reduce/reduce conflicts [-Wconflicts-rr]
-   scripts/genksyms/parse.y: note: rerun with option '-Wcounterexamples' to generate conflict counterexamples
->> error: arch/loongarch/include/uapi/asm/kvm_para.h: missing "WITH Linux-syscall-note" for SPDX-License-Identifier
-   make[3]: *** [scripts/Makefile.headersinst:63: usr/include/asm/kvm_para.h] Error 1
-   make[3]: Target '__headers' not remade because of errors.
-   make[2]: *** [Makefile:1290: headers] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:224: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:224: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
+Changes in v1:
+mm: zswap: fix global shrinker memcg iteration:
+- Drop and reacquire spinlock before skipping a memcg.
+- Add some comment to clarify the locking mechanism.
+
+---
+
+Takero Funaki (2):
+  mm: zswap: fix global shrinker memcg iteration
+  mm: zswap: fix global shrinker error handling logic
+
+ mm/zswap.c | 106 ++++++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 76 insertions(+), 30 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
