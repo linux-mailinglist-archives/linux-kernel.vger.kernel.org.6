@@ -1,180 +1,185 @@
-Return-Path: <linux-kernel+bounces-269369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFDD6943217
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:37:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37C95943226
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96166280EDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:36:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2D46281C40
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62BC1BBBC5;
-	Wed, 31 Jul 2024 14:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAD21BBBF7;
+	Wed, 31 Jul 2024 14:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E9++bOVO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PbKaWnOY"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2047.outbound.protection.outlook.com [40.107.223.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A8A1B29C5
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722436614; cv=none; b=GPJoOM3gXQGWgoWjAzAtagBAda9VKok656AVMcE95Jfq6Jkcu3Z1bYOFAJd7dzOaFFEWreWt96m/FRyZk1fPpLeXa2kQi+dlUewUrx5pD289Q4BOq3XS233Qvz/pGn1DDaL79DaN3SobbCTEnQNY7QWooBONe8xJXlniQyzwScg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722436614; c=relaxed/simple;
-	bh=b+zJh0LfeAwcriCDN0IFPXgYnuWSc8EdOTJ24IqmUxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AcdzLn77lL1pvQD7p2M+JjGrtHuTcHzFhAO9ohfabylNdAHKY5fW4Hlh0U1n7u26A+VAHdzka6+Gv66QfCUCg3zyh9zb7s9bu6ESZTrFdfVQXRHiYUHmPqp7mCPUXLmYDDKSCOTdag/q3lPGBS2YheuWSBfJPA6ku4GO3BT0iIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E9++bOVO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722436611;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SqbXQIxHbpb1hqzKRna/+RFAtjmaMliX6p7yM3qg7No=;
-	b=E9++bOVOerkdCht7de1hhopL1zxR+O9nNlvaihH+qlPPBO5uzWmqUwHAFbCEeLMNw8HzZA
-	1zM+L3YsCPlZNCLEj/xR77dpJGP7nLBtTZSATVYG8B4ZvMvEOxa0sZZTe/2g6cfUUNYa0J
-	F4/xmqGnMxSnBxHm+BiuKa0ceJEbNAw=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-613-81ebYxS0OCenb6rpI3Aieg-1; Wed,
- 31 Jul 2024 10:36:46 -0400
-X-MC-Unique: 81ebYxS0OCenb6rpI3Aieg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5B36A1954128;
-	Wed, 31 Jul 2024 14:36:43 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.9.52])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 49AF619560AE;
-	Wed, 31 Jul 2024 14:36:38 +0000 (UTC)
-Date: Wed, 31 Jul 2024 10:36:35 -0400
-From: Phil Auld <pauld@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>, John Stultz <jstultz@google.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Joel Fernandes <joelaf@google.com>,
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Zimuzo Ezeozue <zezeozue@google.com>,
-	Youssef Esmat <youssefesmat@google.com>,
-	Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Metin Kaya <Metin.Kaya@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com,
-	Connor O'Brien <connoro@google.com>
-Subject: Re: [PATCH v11 7/7] sched: Split scheduler and execution contexts
-Message-ID: <20240731143635.GB188529@pauld.westford.csb>
-References: <20240709203213.799070-1-jstultz@google.com>
- <20240709203213.799070-8-jstultz@google.com>
- <20240712150158.GM27299@noisy.programming.kicks-ass.net>
- <CANDhNCrkf1Uz42V3vMFChp1nKnkeHH7ZPxd_gC4KOMmWPcRVgQ@mail.gmail.com>
- <Zqn_0XIcxTpHxswZ@jlelli-thinkpadt14gen4.remote.csb>
- <20240731113720.GB33588@noisy.programming.kicks-ass.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C9E1DDC9;
+	Wed, 31 Jul 2024 14:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722436661; cv=fail; b=K+W6GmQxVd52Cl25zS0HhVKSVA6wh4DF/YVOUAXFZ4ohSMvPxbAxthBiY5+B/Q4qhMpxOExGs55XeGH87pIa1pj7Q5VHjycGhpzI0yEFRHXSyA0tWqnY5jifpC7ndSXxzGr3j1b4q9kwxBAXsuqPAsF3WZVKXADZJtAFh6ZVqNQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722436661; c=relaxed/simple;
+	bh=bxnY19o6pPmTix1flyLltP0l18xq6oyV2uxM4DowdP4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Go/dP0JvVL/dXX8sIgkyZecoR3pz7PjwPK43PkcAngy6QyR7wTaX5kORQ3C64GAg9h5FEDP+N8Vxgo7Fr5FV70ZvdNLDGBvnoMQrpYO8l/80Iy1R0zkgFSFkuOPch1O6RDhnGLEefl0g81ZvaSiL/qqIpnD7LYORYeGdZDyQNSc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PbKaWnOY; arc=fail smtp.client-ip=40.107.223.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oLBQkOUfs0CITdCWhLBLHZ27CQEcpUl2FODKyWRTlH3O2nUpwVkNEvBZaAgwCIKQnII5XEZLNYnaN3oaY1c2Iko13y8Q5tN0tHsx+V0HwKLlh62BzHIWDM++cSUWkWkJ9unz1ioJOMk59yxEOCbAOGN3mLzTvMjVuYv0db/BDzBfstmBu6PhwZyasyia5Wqnuc+6bf9NN18MHX70qVDp5Ebm+DTqAgWFDRnqZnPRrufBChnn+jvJfZd0jI2LORsKds+wrEDc/uoiU7q9fBMnARW+8OcuRo6TIGrxcbB/8iTIy3CX8LOmiv3ZOzJQDwWGiuXvCwdJxdUrbkv9jPGN2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MeDUULQtWm/kyvL5w6tSM/K6BP5RDE1YfylxD87KvYw=;
+ b=ZQ1pF+nXAmJ7hk6UPKWPUxeuJW19kGaeFZzR64mMS4EJVslyfepgrE7TXE7t2WRHLdRnBzr/sjy22S4TTeHuk8SipAZH0i0D1djArgKXCNMI7CZk1tM84v25l7BlQGYghlGD9miElI6QhGYU0xS8gTdgbZ1niNWyoCXJtH4QsKrGg7qeN7Y3GFVYTivqyA/VTCCWxBbfwdD1xf6SvePL+AOvD5cAdgcbDJ5NYMznXyZWs/OGYjSfNG6bKA7NoL4qyl4yZLzi7D5FSwHe20P4ibS64H+ZrlkZUYGJUNm9RimtnxD20Cm/2rwQx660wSBD9APnZBiodTfED4oUqJQsgw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MeDUULQtWm/kyvL5w6tSM/K6BP5RDE1YfylxD87KvYw=;
+ b=PbKaWnOY4Ueb0/S0IyZf0U6oCYpKW54/4DHHfLJmPDzCMGuby49vFtS4yt3XShTJwWq1um7XPxCmEgjqu6pbwJaplJqhSkr9BUXMrUPtrYbUBkJhxa94ADGAdaf86Q1iXNsGG0hq2///TMpvCtPK57V8w53WiRdddYp/G1v0mgg=
+Received: from BL1PR13CA0246.namprd13.prod.outlook.com (2603:10b6:208:2ba::11)
+ by IA1PR12MB8311.namprd12.prod.outlook.com (2603:10b6:208:3fa::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Wed, 31 Jul
+ 2024 14:37:33 +0000
+Received: from BL6PEPF00022575.namprd02.prod.outlook.com
+ (2603:10b6:208:2ba:cafe::6b) by BL1PR13CA0246.outlook.office365.com
+ (2603:10b6:208:2ba::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.29 via Frontend
+ Transport; Wed, 31 Jul 2024 14:37:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL6PEPF00022575.mail.protection.outlook.com (10.167.249.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7828.19 via Frontend Transport; Wed, 31 Jul 2024 14:37:32 +0000
+Received: from jallen-jump-host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 31 Jul
+ 2024 09:37:31 -0500
+From: John Allen <john.allen@amd.com>
+To: <pbonzini@redhat.com>, <kvm@vger.kernel.org>, <seanjc@google.com>
+CC: <thomas.lendacky@amd.com>, <bp@alien8.de>, <mlevitsk@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <x86@kernel.org>, <yazen.ghannam@amd.com>,
+	John Allen <john.allen@amd.com>
+Subject: [PATCH v2] KVM: x86: Advertise SUCCOR and OVERFLOW_RECOV cpuid bits
+Date: Wed, 31 Jul 2024 14:36:49 +0000
+Message-ID: <20240731143649.17082-1-john.allen@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240731113720.GB33588@noisy.programming.kicks-ass.net>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00022575:EE_|IA1PR12MB8311:EE_
+X-MS-Office365-Filtering-Correlation-Id: 26182e5a-2a5a-4abc-0241-08dcb16e502c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ky91cJXKQElIXRdsaqR3hocQoas+gbtqDge6PaVf5Y9XfRgPBhTugh6HS03J?=
+ =?us-ascii?Q?aJDSO1EL9p/NutaMPwPzcdlTwXBzdVaghQcHK5+qHBedvK5UurKHIA75ia1b?=
+ =?us-ascii?Q?J9lC9G2IjhDfK34I6hQ39VZICcVGYlLsdyUEaweG52HO9R+KeqL7wfdfy7Y5?=
+ =?us-ascii?Q?7Jju2KrpvXVvGxTD99t9fsUCuZJ/OK0La8gvlU8zTqYDSeHLQgy/ukMaFLym?=
+ =?us-ascii?Q?38Il5qkQa5hAAskCoZ1b3fV2rmaRPYLeB0DiLDNOAAeB4qZmZFIH7auwBQk/?=
+ =?us-ascii?Q?mmsvATrNonVR5u/MZfwWt6gHp0cNgDwkwHDuqsL5xNjIURN6J2qBXUPkH0P4?=
+ =?us-ascii?Q?rnUuK/07tGEBqJHCStaS1BNaZpZa03TPwCUgener6fG+aZNxLBePkRAFBS6f?=
+ =?us-ascii?Q?uclPj0l27vT7FYM7b0udcGafb12GeLOT1PaE+Tkm6P7uIf7R1YgLXwh+T7r3?=
+ =?us-ascii?Q?jXnMSIwo418mBxj7rLjCaaxjjL0v0G4K4VDxEaGGpAFDUYaAvpuf17SYQ/an?=
+ =?us-ascii?Q?IPf/tujCDCScrrXsZBeWetWC95GXbTr5onNOHTN2SWX3BWUjgLlDvGaLhrnC?=
+ =?us-ascii?Q?4ks3Jw5ME6YoUVdW96QisntWFhb+BGVcU6jIzj30Evau0wtcTM39yXAxcBTH?=
+ =?us-ascii?Q?/az9wN3TKmlfPoijuiouS444rFs7ORfRNxhBlBPODuTmqrJ3cV/0m7vFOSad?=
+ =?us-ascii?Q?RWVqT9bySVQ4i2gHxHSRhlbYLesbxcZD3GKe3CjiH02P3WamC+YJKOX7FrLZ?=
+ =?us-ascii?Q?lao7fIxd2r4FW1ITraxjpW40A3AFbue1l2jpubpQ5phbqOaXb+8m8DwR0TMb?=
+ =?us-ascii?Q?EeubuCZTsiMPXlkecm/8i7w5VzdTnZeTSCjFeY42UKxTLvERbtQn02e43hM6?=
+ =?us-ascii?Q?Qmv61U8qrohBS80579rlotwQV0Cqi+hfyMTD3zxEa1JZNVHnK+l4I73RI+v4?=
+ =?us-ascii?Q?bOt+27rL/nxla8b63c+8vjQ1ORbuY6DqB6HgJf6BFMrO6tq2hfGPNPT/9TAY?=
+ =?us-ascii?Q?2Hqfz+8lomnHu/l54hqlQdxmg1/eCUb+NluUCSy+T1ckuksrdpLhQAeSOgte?=
+ =?us-ascii?Q?DrTlizPdnriHtsWaRmYfS6r5RoHM0G69kB3YnkDrgdkAKW8/PWb81DEOiVEF?=
+ =?us-ascii?Q?7usKPvTjsvtEdiGPkmEH1yAs5iPDrmcc8BmkaLULaWsIWS1ZRrRuTCk/PmVe?=
+ =?us-ascii?Q?hVAwS7tuzwhxmBoEXovBnoPRX4xE5HFd7LlB7mO+3VG1MSTdyyi+sZbkEzzo?=
+ =?us-ascii?Q?j+TLpRnldLqZdmUhSkMtDUtDHNX4ZC7dqT7WBY2SlfRQmGxqgkU6wypgJA9l?=
+ =?us-ascii?Q?CD5PmEgDG8lq7BoWw5JY46yA24EBRMQNRyzwOeKpaS3T9e8qotsD7FB0DZbL?=
+ =?us-ascii?Q?Vexgr1jpQT9jgfxVmRfHLsTlnkFU9xTgP7CsfYzXmPRCkB5qV5cRSh+iOVCB?=
+ =?us-ascii?Q?b6MhoFsoNCFo7aRRk61tyqelbtdKJ9t8?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 14:37:32.8254
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 26182e5a-2a5a-4abc-0241-08dcb16e502c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00022575.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8311
 
-On Wed, Jul 31, 2024 at 01:37:20PM +0200 Peter Zijlstra wrote:
-> 
-> Sorry for the delay, I need the earth to stop spinning so goddamn fast
-> :-) 36 hours days ftw or so... Oh wait, that'd mean other people also
-> increase the amount of crap they send my way, don't it?
-> 
-> Damn..
-> 
-> On Wed, Jul 31, 2024 at 11:11:45AM +0200, Juri Lelli wrote:
-> > Hi John,
-> > 
-> > On 12/07/24 12:10, John Stultz wrote:
-> > > On Fri, Jul 12, 2024 at 8:02 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> > > >
-> > > > On Tue, Jul 09, 2024 at 01:31:50PM -0700, John Stultz wrote:
-> > > > > From: Peter Zijlstra <peterz@infradead.org>
-> > > > >
-> > > > > Let's define the scheduling context as all the scheduler state
-> > > > > in task_struct for the task selected to run, and the execution
-> > > > > context as all state required to actually run the task.
-> > > > >
-> > > > > Currently both are intertwined in task_struct. We want to
-> > > > > logically split these such that we can use the scheduling
-> > > > > context of the task selected to be scheduled, but use the
-> > > > > execution context of a different task to actually be run.
-> > > > >
-> > > > > To this purpose, introduce rq_selected() macro to point to the
-> > > > > task_struct selected from the runqueue by the scheduler, and
-> > > > > will be used for scheduler state, and preserve rq->curr to
-> > > > > indicate the execution context of the task that will actually be
-> > > > > run.
-> > > >
-> > > > > * Swapped proxy for selected for clarity
-> > > >
-> > > > I'm not loving this naming...  what does selected even mean? What was
-> > > > wrong with proxy? -- (did we have this conversation before?)
-> > > 
-> > > So yeah, this came up earlier:
-> > > https://lore.kernel.org/lkml/CANDhNCr3acrEpBYd2LVkY3At=HCDZxGWqbMMwzVJ-Mn--dv3DA@mail.gmail.com/
-> > > 
-> > > My big concern is that the way proxy was used early in the series
-> > > seemed to be inverted from how the term is commonly used.
-> > > 
-> > > A proxy is one who takes an action on behalf of someone else.
-> 
-> Ah, I see your confusion.
-> 
-> > > In this case we have a blocked task that was picked to run, but then
-> > > we run another task in its place. Intuitively, this makes the proxy
-> > > the one that actually runs, not the one that was picked. But the
-> > > earliest versions of the patch had this flipped, and caused lots of
-> > > conceptual confusion in the discussions I had with folks about what
-> > > the patch was doing (as well as my own confusion initially working on
-> > > the patch).
-> > 
-> > I don't think I have strong preferences either way, but I actually
-> > considered the proxy to be the blocked donor (the one picked by the
-> > scheduler to run), as it makes the owner use its properties, acting as a
-> > proxy for the owner.
-> 
-> This. But I suspect we both suffer from not being native English
-> speakers.
-> 
-> Would 'donor' work in this case?
->
-> Then the donor gets all the accounting done on it, while we execute
-> curr.
-> 
+Handling deferred, uncorrected MCEs on AMD guests is now possible with
+additional support in qemu. Ensure that the SUCCOR and OVERFLOW_RECOV
+bits are advertised to the guest in KVM.
 
-"donor" works for me and is more expressive (and shorter) than
-"selected". Fwiw.
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: John Allen <john.allen@amd.com>
+---
+v2:
+  - Add cpuid_entry_override for CPUID_8000_0007_EBX.
+  - Handle masking bits in arch/x86/kvm/cpuid.c
+---
+ arch/x86/kvm/cpuid.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-
-
-Cheers,
-Phil
-
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 2617be544480..f8e1fd409cee 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -743,6 +743,11 @@ void kvm_set_cpu_caps(void)
+ 	if (!tdp_enabled && IS_ENABLED(CONFIG_X86_64))
+ 		kvm_cpu_cap_set(X86_FEATURE_GBPAGES);
+ 
++	kvm_cpu_cap_mask(CPUID_8000_0007_EBX,
++		F(OVERFLOW_RECOV) |
++		F(SUCCOR)
++	);
++
+ 	kvm_cpu_cap_init_kvm_defined(CPUID_8000_0007_EDX,
+ 		SF(CONSTANT_TSC)
+ 	);
+@@ -1237,11 +1242,12 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+ 		entry->edx &= ~GENMASK(17, 16);
+ 		break;
+ 	case 0x80000007: /* Advanced power management */
++		cpuid_entry_override(entry, CPUID_8000_0007_EBX);
+ 		cpuid_entry_override(entry, CPUID_8000_0007_EDX);
+ 
+ 		/* mask against host */
+ 		entry->edx &= boot_cpu_data.x86_power;
+-		entry->eax = entry->ebx = entry->ecx = 0;
++		entry->eax = entry->ecx = 0;
+ 		break;
+ 	case 0x80000008: {
+ 		/*
 -- 
+2.34.1
 
 
