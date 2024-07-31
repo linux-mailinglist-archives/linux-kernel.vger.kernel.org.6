@@ -1,108 +1,128 @@
-Return-Path: <linux-kernel+bounces-269519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEBA69433BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:56:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE3799433BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89A151F2286D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:56:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35A11C243E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979E01BBBD9;
-	Wed, 31 Jul 2024 15:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QKvg0pVv"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAECF1BBBE1;
+	Wed, 31 Jul 2024 15:57:01 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301E21799F
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE0C1799F
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722441360; cv=none; b=s094qQP45ZEMChB8LXXAdMcinj+s5rnF3uT7Pm6gsSuWAql2FUApG8FmtJG76LHfwjQcSfxKHeh/XpdQU+Gvukg7ozpmnyRfOU1/yynL3QFKmPUCxTDWGh+xe8muYDjAMzfrWPKXZP7NKcjlh415qk0/UJQaT/uo5AfdJqpdq5I=
+	t=1722441421; cv=none; b=j5BDtBwPAWcVwRCoPxtY2exxee9RWuXJTOtUy2/eZm7D0EYQxsKzOVWuG65RfD3ZFFaaK6Cqy/eOmFei+W+68S4D8mJRu83E6c8jK3bga31FoPTwz3aDqhtXEjhJjVq+UhkyiWFYYqiJKbeJAuFPUH0cVh2RUUgjk3Zo9rYcDag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722441360; c=relaxed/simple;
-	bh=6XF4YIj59e7zrAsbn8/nH1a0LI0bb8OJzuqyiCDeigQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kWgmJHEz3SzGt95gnZKN29B88ROvDaQWVzVxWjQfHEywOWSpU8p8fKq4cUSo+XJVKQToh7mis5pWiJv8CjlOD5B8Evx3BjZS/TEW6iwQDPvEUihsHjSxPx3rimQM3IeCwruha3FS1KHt1j/k1lHh5u85ZhRxmoVH8vDXo1KtRBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QKvg0pVv; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=oqWCpJ/IOCwO3N+Fd14LHfpkFTfnRK6w+dw2iKEizK0=; b=QKvg0pVvfP6GByrjF5RTsBd/IB
-	0mrOk5uiFo6vls/A43wl+u85uZKa4S+R4qZY83pFjAhqjY1AQ4ogWQ+6VZLVnL+LoFsaTNT0yVoc7
-	uu1zEt0fGwDDHNMlEGkAIjmi72AW85gUSBHXye3SLFPhd5C1AG/gdSBJEsfTY9nMLbUrrpYdeXMFI
-	t/k0azIIASgptrjPpHKNw/ew9RF0da5fJLxmkiY3S5c/da16tlibloclyqW9dIQ1y5iMCLfCrd7tR
-	zyqPjK/Uagvbo63IZdWIPhVyM/CutGfLENWb6fGSWnDcngDXb9UQ1dg7eIOGmNP3UXFq4G/PSlQiq
-	kVUZaZNw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sZBg8-0000000GJ0l-3nCK;
-	Wed, 31 Jul 2024 15:55:53 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A971B300820; Wed, 31 Jul 2024 17:55:51 +0200 (CEST)
-Date: Wed, 31 Jul 2024 17:55:51 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Guenter Roeck <linux@roeck-us.net>, Jens Axboe <axboe@kernel.dk>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Peter Anvin <hpa@zytor.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: Linux 6.11-rc1
-Message-ID: <20240731155551.GF33588@noisy.programming.kicks-ass.net>
-References: <CAHk-=wiyNokz0d3b=GRORij=mGvwoYHy=+bv6m2Hu_VqNdg66g@mail.gmail.com>
- <f8677c93-a76d-473c-8abc-8dc7b4403691@roeck-us.net>
- <b7ecddb7-4486-4b2d-9179-82250cf830e7@roeck-us.net>
- <CAHk-=wj2BYPvYQAQa-pyT3hERcd2pVw+rL5kw7Y=-8PA3JTDAg@mail.gmail.com>
- <20240730192237.GR33588@noisy.programming.kicks-ass.net>
- <231e7a2e-7e2e-4b82-b084-8943b2236de0@kernel.dk>
- <20240730193841.GS33588@noisy.programming.kicks-ass.net>
- <daef7867-b548-4acb-b8bf-0bdeb057d6a4@roeck-us.net>
- <20240731122002.GE33588@noisy.programming.kicks-ass.net>
- <87mslx67dm.ffs@tglx>
+	s=arc-20240116; t=1722441421; c=relaxed/simple;
+	bh=jjFUvWKuOM2iF3uyF+5xmTwgqm8OWHiXn3t1DxgNq6Y=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=DtvKROjkEaZPAXH+qc6lOIotE6sZ/JD06z6TAXWrhD4GHYD0IQWsda2lG6cM7SBbhdH4oDSo7bUx0QhdZZfjK2wCJ4KLknwybF6VKCUjTnWSzFi0xBtYBg78W2czdGTgxUuQhMC954h7+7/6RPuAYN0HULDAfkY1gmcxrSi75Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-232-y2AfI9EuPCilBFg4_mYNkQ-1; Wed, 31 Jul 2024 16:56:56 +0100
+X-MC-Unique: y2AfI9EuPCilBFg4_mYNkQ-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 31 Jul
+ 2024 16:56:15 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 31 Jul 2024 16:56:15 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Linus Torvalds' <torvalds@linuxfoundation.org>
+CC: Arnd Bergmann <arnd@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, Matthew Wilcox
+	<willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, Andrew Morton
+	<akpm@linux-foundation.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Dan Carpenter
+	<dan.carpenter@linaro.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
+	"pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, Mateusz Guzik
+	<mjguzik@gmail.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "Lorenzo
+ Stoakes" <lorenzo.stoakes@oracle.com>
+Subject: RE: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
+Thread-Topic: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
+Thread-Index: Adrg+PsJWBOjJVDsQ/+qaYGHKHGutQAEaRMAAANJSHAAAfkwAAACaxqgAGQsLzQABAMbUAACpmiTABKeZ/AADgjwAAACU/gQ
+Date: Wed, 31 Jul 2024 15:56:15 +0000
+Message-ID: <fbdf2df07e7140dbb96dcda48d4da270@AcuMS.aculab.com>
+References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
+ <5cd3e11780df40b0b771da5548966ebd@AcuMS.aculab.com>
+ <CAHk-=wj=Zv+mMuqJQJptH9zGFhPXqku9YKyR7Vo4f0O0HEcbxw@mail.gmail.com>
+ <b47fad1d0cf8449886ad148f8c013dae@AcuMS.aculab.com>
+ <CAHk-=wgH0oETG1eY9WS79aKrPqYZZzfOYxjtgmyr7jH52c8vsg@mail.gmail.com>
+ <e718056c1999497ebf8726af49475701@AcuMS.aculab.com>
+ <CAHk-=wj900Q3FtEWJFGADQ0EbmYwBHW8cWzB0p0nvFck=0+y6A@mail.gmail.com>
+ <e946e002-8ca8-4a09-a800-d117c89b39d3@app.fastmail.com>
+ <CAHk-=whCvSUpbOawsbj4A6EUT7jO8562FG+vqiLQvW0CBBZZzA@mail.gmail.com>
+ <CAHk-=wgRDupSBzUX_N_Qo_eaYyDfOH=VTihhikN36cGxCc+jvg@mail.gmail.com>
+ <f88a19d1-c374-43d1-a905-1e973fb6ce5a@app.fastmail.com>
+ <8111159a-c571-4c71-b731-184af56b5cb1@app.fastmail.com>
+ <CAHk-=wgLsFdNert_OfCmRon7Y9+ETnjxkz_UA5mv0=1RB71kww@mail.gmail.com>
+ <CAHk-=widciTZs3CCoi7X2+4SnVWrKu1Jv2uOV9+oewXGen7Q9A@mail.gmail.com>
+ <73d65e2553e543069f9969ccec4ea9b3@AcuMS.aculab.com>
+ <CAHk-=wgP+Fm=O2tYtS=3fDB7Vh+=rSYCC1mjqxcTQ=024G0qYw@mail.gmail.com>
+ <CAHk-=whNTuPVeOSB6bG7YRXeYym9anS2QawRHEKRJe2MQuOPPA@mail.gmail.com>
+ <0549691a6a3d4f7a9e77003b70fcf6fe@AcuMS.aculab.com>
+ <CAHk-=whwrXgtOrr6AKQTSYSG5V820cSsMcUjRhapnoqCh+Ciog@mail.gmail.com>
+In-Reply-To: <CAHk-=whwrXgtOrr6AKQTSYSG5V820cSsMcUjRhapnoqCh+Ciog@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87mslx67dm.ffs@tglx>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On Wed, Jul 31, 2024 at 03:03:33PM +0200, Thomas Gleixner wrote:
-> On Wed, Jul 31 2024 at 14:20, Peter Zijlstra wrote:
-> > On Tue, Jul 30, 2024 at 01:24:34PM -0700, Guenter Roeck wrote:
-> >> An interesting bit of information: The problem is seen with many,
-> >> but not all CPUs. For example, I don't see it with athlon, n270, Dhyana,
-> >> or EPYC. qemu32 is affected, but qemu64 is fine. But on the other side
-> >> both kvm32 and kvm64 are affected.
-> >
-> > pti=off makes it go away, could be those CPU models don't have meltdown
-> > and as such don't enable PTI.
-> 
-> The AMD ones don't have meltdown and neither does n270 which is an
-> in-order atom.
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMzEgSnVseSAyMDI0IDE2OjM4DQo+IE9uIFdl
+ZCwgMzEgSnVsIDIwMjQgYXQgMDE6MTAsIERhdmlkIExhaWdodCA8RGF2aWQuTGFpZ2h0QGFjdWxh
+Yi5jb20+IHdyb3RlOg0KPiA+DQo+ID4gVGhlIF9fVU5JUVVFX0lEXygpIGRlZmluZSBqdXN0IHNl
+ZW1lZCBleGNlc3NpdmUgLSBlc3BlY2lhbGx5DQo+ID4gc2luY2UgYWxsIGNvbXBpbGVyIHZlcnNp
+b25zIHN1cHBvcnQgX19DT1VOVEVSX18uDQo+IA0KPiBZZXMsIHdlIGNvdWxkIHByb2JhYmx5IGp1
+c3Qgc2ltcGxpZnkgaXQuDQouLi4NCj4gU28gdGhhdCAicHJlZml4IiBsaXRlcmFsbHkgZXhpc3Rz
+IGJlY2F1c2UgaXQgbGl0ZXJhbGx5IHdhc24ndCB1bmlxdWUNCj4gZW5vdWdoIHdpdGhvdXQgaXQu
+DQoNCkkgZG9uJ3QgcmVtZW1iZXIgdGhhdCBmYXIgYmFjayA6LSkNCg0KPiBBbmQgdGhlICJfX1VO
+SVFVRV9JRF8iIHRoaW5nIGlzIHByb2JhYmx5IGJlY2F1c2UgdGhhdCB3YXkgaXQgd2FzDQo+IGNs
+ZWFyZXIgd2hhdCB3YXMgZ29pbmcgb24gd2hlbiBzb21ldGhpbmcgd2VudCB3cm9uZy4NCj4gDQo+
+IEJ1dCB0b2dldGhlciB0aGV5IHJlYWxseSBlbmQgdXAgYmVpbmcgYSBzb21ld2hhdCB1bnJlYWRh
+YmxlIG1lc3MuDQo+IA0KPiBUaGF0IHNhaWQsIEkgZGlkIGVuZCB1cCBsaWtpbmcgdGhlICJwcmVm
+aXgiIHBhcnQgd2hlbiBsb29raW5nIGF0DQo+IGV4cGFuc2lvbnMsIGJlY2F1c2UgaXQgaGVscHMg
+c2hvdyAid2hpY2giIGV4cGFuc2lvbiBpdCBpcyAoaWUgInhfMTIzIg0KPiBhbmQgInlfMTI0IiB3
+ZXJlIGNsZWFyZXIgdGhhbiBqdXN0IHNvbWUgcHVyZSBjb3VudGVyIHZhbHVlIHRoYXQNCj4gZG9l
+c24ndCBoYXZlIGFueSByZWxhdGlvbnNoaXAgdG8gdGhlIG9yaWdpbiBhdCBhbGwgaW4gdGhlIG5h
+bWUpLg0KDQpJIGd1ZXNzIHRoYXQgb25jZSB0aGUgY2FsbGVyLXN1cHBsaWVkIHByZWZpeCB3YXMg
+YWRkZWQgdGhlIGZpeGVkDQpfX1VOSVFVRV9JRF8gYml0IGNvdWxkIGp1c3QgaGF2ZSBiZWVuIHJl
+bW92ZWQuDQoNCj4gQnV0IEkgZGlkIGNoYW5nZSBpdCB0byAieF8iIGZyb20gIl9feCIsIGJlY2F1
+c2UgdGhhdCB3YXkgaXQgd2FzDQo+IG1pbmltYWwsIHlldCBjbGVhcmx5IHNlcGFyYXRlIGZyb20g
+dGhlIGNvdW50ZXIgbnVtYmVyIChpZSAieF8xMjMiIHdhcw0KPiBiZXR0ZXIgdGhhbiAiX194MTIz
+IikuDQoNCkluZGVlZC4uLg0KDQpJIGdvdCBhbm5veWVkIGJlY2F1c2UgdGhlIHVuaXF1ZSAneCcg
+YW5kICd5JyBmb3IgbWluKCkgZW5kIHVwDQpoYXZpbmcgZGlmZmVyIG51bWJlcnMgLSB3aGljaCBj
+YW4gbWFrZSBpdCBoYXJkZXIgc2VlIHdoYXQgaXMgZ29pbmcNCm9uIHdpdGggbmVzdGVkIGV4cGFu
+c2lvbnMuDQpJIG1pZ2h0IGV2ZW4gaGF2ZSBkb25lIGEgZ2xvYmFsIHJlcGxhY2UgdG8gZ2V0IHJp
+ZCBvZiB0aGUgX19VTklRVUVfSURfDQp0ZXh0IGluIGFuIGF0dGVtcHQgdG8gbWFrZSB0aGUgZXhw
+YW5zaW9ucyByZWFkYWJsZS4NCg0KUGVyaGFwcyBzb21ldGhpbmcgbGlrZToNCiNkZWZpbmUgZG9f
+Zm9vKHgsIHVuaXEpICh7IFwNCglfX2F1dG9fdHlwZSBfeF8jI3VuaXEgPSB6OyBcDQoJLi4NCg0K
+I2RlZmluZSBmb29fcmVsYXkoeCwgY291bnRlcikgZG9fZm9vKHgsIGNvdW50ZXIpDQojZGVmaW5l
+IGZvbyh4KSBmb29fcmVsYXkoeCwgX19DT1VOVEVSX18pDQppcyB0aGUgd2F5IHRvIG9yZ2FuaXNl
+IGl0Lg0KU2luY2UgeW91IGRvbid0IGdldCBhIHVuaXF1ZSBudW1iZXIgdW50aWwgX19DT1VOVEVS
+X18gaXMgZXhwYW5kZWQNCmluc2lkZSBmb29fcmVsYXkoKS4NCg0KCURhdmlkDQoNCi0NClJlZ2lz
+dGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24g
+S2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-Right, so Thomas found that i386-pti fails to map the entire entry text.
-Specifically pti_clone_pgtable() hard relies -- and does not verify --
-that the start address is aligned to the given granularity.
-
-Now, i386 does not align __entry_text_start, and so the termination
-condition goes sideways and pte_clone_entry() does not always work right
-and it becomes a games of code layout roulette.
-
-Still trying to figure out what the right fix is. I've tried page
-aligning the section and using PTE cloning, and that works -- mostly. If
-you hit a source PMD the clone logic still does a PMD level clone and
-that might not be what we want, see the alignment thing again.
-
-Also, should we just kill PTI on 32bit perhaps?
 
