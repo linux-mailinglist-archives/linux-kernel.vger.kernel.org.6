@@ -1,153 +1,134 @@
-Return-Path: <linux-kernel+bounces-269043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B5B942CB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:05:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8A06942CB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7A3E1C233B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:05:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62FF81F21A79
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92081AD404;
-	Wed, 31 Jul 2024 11:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA3D145FEF;
+	Wed, 31 Jul 2024 11:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CMUQ0ECW"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qF7LA2TX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8D51AD3F9
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F691AD3E0;
+	Wed, 31 Jul 2024 11:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722423951; cv=none; b=OzPQvKUUN2TksXinQwDcKC9Kc1WQ6Mnrl4J7aGiA9LXzfXq6YASPx+d35lfMsST6wAGpfnQaIGZL5JEw8VzOtEgWCKFiF2QHHrUtL7iyiHOJq3We7BAueIGNbkTJ0XDxRdNnbtNfQv0T3vnyQEo93izEj/jJxgdMKJgziP7p9+w=
+	t=1722423974; cv=none; b=ZkPpkxOwWdYb377cxHNyuFQJYggyJi5EPgsVWwI5N7jyYfwf0yB0gfzoci/WUUgbLeUciO8tqDefP9CnaefNg9kFcIWvBMyZajYHX0286/Qi8Uif8S1tLd3FFcqUjlQoYZ8dhGbtC0cPUYPltBJNlji7OMas1F2GVCmZ3ShN4Mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722423951; c=relaxed/simple;
-	bh=//GSB42wgXP39sk35xIC+sgfbAdG/9SwGHKDomDs7yY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qRXYDIM44F8ls6mv5GhfhiSCswMTKQjocDZdLT7tqWcEi/bUHefywok37xcgqGpFMqE+hbfqITtN5WLAfdb1kvQ7jfSVP6YjNORjXQQhXqY6aXgctk5uRLvUxw3St9gAhgtp7n4WfmSwBhepq6gMdUlf/hCn1lOfDVIXlIScECM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CMUQ0ECW; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7ac449a0e6so448020766b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 04:05:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722423946; x=1723028746; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3zHZhqSVXf2HkABk+DZ8Q5SgQKd9H1rooCMpNtitq44=;
-        b=CMUQ0ECW1O6OxMwq4nCRki/FnGv8hBkHXp07aXvuiPbggwu1TMFwar8YOdMvRlwJTp
-         PAORXItAzrRn9n9Z3Bop4P63AFepqndYfXVAItolmrPmnQw+d/IDOz25LrTSZgYqU0Gz
-         I/f2ac6S8FuxrVUcLQFO8j0W+Rpiszj1Mf50Uj9C0kIvtePvYzDg5u5i0lElFi3EaCV0
-         rs5yEjlXKvWxRKuVggj6Ge9QXwg7tpAYKdPbap5JGLeM8WMM7OXV2nREnXuG65mIlIG8
-         +VyyVIPMR5t4WifqOZ+rayuFajMwyDi6UZ66VBnvFHdjsGmIuYk8kiXYdwL0vhecxsFQ
-         bihQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722423946; x=1723028746;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3zHZhqSVXf2HkABk+DZ8Q5SgQKd9H1rooCMpNtitq44=;
-        b=G5hfbDj6AuPbKkmJqXNNDqyZfFvXDk3yJz15GyXnRzX9PvyIPftkszCUiDsodd+tHf
-         mjquufBO2qfi1BEs79jVpk1P6j8t1KmA9EHiWBOAyJRrWudY3qrK8X6QxpBFtG/CFZGb
-         X7zVxwNbzzRrYnkeSHMmshIo08ghz0n9aKdLWMfv9YRPt9ICQDzNLIeZSfwrbMCSVqcK
-         e/uDzz0cEWCW6F3KTyLhPQBUFKNqelF+m0PlKQFypi8UiIBWcE/UBEHySQ/FdiFRnVoc
-         rbFiWQ56DDKimJHHV02eC2TsTf2DQ3MV6AMy27n4xSzXS4xcPk/F0nDq9e61ByUoQXql
-         nskQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWoy1n/xplorTnwh1Cojbdu9NxH5N728fSk24Y4mV1zORtdJG8iHEljVMgkjD9CZfkDybWn3Zd/mQ0X6z1WGkhleM+fP1XfMqivdg9a
-X-Gm-Message-State: AOJu0Yz9kc7ypfOgHfxckWmOKo8gEQceQRelkSTQQNbCevsZK0kTKGxL
-	JHm4dP0y0nnOrIJ2+TewtgPhev63O3Fo4wi8jR8pvG0AvboLiGKQ3o0Gcovw0QY=
-X-Google-Smtp-Source: AGHT+IH2oR+s73uziggKv8cXJAHk7fi6jbzfjUJQS6p5k3kcmFCpvXvLtedygEiSA5RzC1zNwUhFgA==
-X-Received: by 2002:a17:907:2da3:b0:a7a:8378:625e with SMTP id a640c23a62f3a-a7d4000978fmr1114222266b.26.1722423945989;
-        Wed, 31 Jul 2024 04:05:45 -0700 (PDT)
-Received: from ?IPV6:2a02:8109:aa0d:be00::7424? ([2a02:8109:aa0d:be00::7424])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acac60f14sm748502766b.91.2024.07.31.04.05.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 04:05:45 -0700 (PDT)
-Message-ID: <ca130fd6-b885-4bbb-9f08-676af8697b8d@linaro.org>
-Date: Wed, 31 Jul 2024 13:05:44 +0200
+	s=arc-20240116; t=1722423974; c=relaxed/simple;
+	bh=/rfAcMxmb9Inbh+7ExU4M83JIezLRz9H62MSXp9vrNo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tDGzAYoOk6cXBqVuhaUjUlwlMuMxE+lj+/kuFIBgEvJJRX/lWl1sPSDBYM4zWE4w5agR/CEkT83iIm3jmPPvHF38T+eG5lmmtYlAnCAGbecgYkuHixVQjrAUOL7cI9jZvvE5jlSC0k+nvjbZL3ZNKVbxUaBBFitU3OQ8+OeWiHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qF7LA2TX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21661C116B1;
+	Wed, 31 Jul 2024 11:06:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722423973;
+	bh=/rfAcMxmb9Inbh+7ExU4M83JIezLRz9H62MSXp9vrNo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=qF7LA2TXrhtxHz0qspjrfYX0o76b0TLfCxZ1BeLRgJ9RURp5+BUXm3nDornSLbPnM
+	 sJF2LyRn4bgB8gmDsbBtkZU2qCmOxDlzQg97V5hFZGBySFA2uBmW/eovCMH8jftrB6
+	 n3XtTwLxaxl3Ft+U6zwBnY2iFCezA68b/eTFKhxdgDpsRTOz4AOaWCeuq/YziGOARp
+	 TCPu09ZYSnpi/BCfD7w+5MwDi9+ciB341xNPPc0GM0Lk9AytBprMGcExzzL1dTBs1Q
+	 DGTVGNpyp65/Sazlg8x+bup5uJmHDntFiPiedh1piJk3t8AWObSxlu6x3EgikBskz5
+	 RXbmfv+IlzgSw==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net 0/7] mptcp: fix endpoints with 'signal' and 'subflow'
+ flags
+Date: Wed, 31 Jul 2024 13:05:52 +0200
+Message-Id: <20240731-upstream-net-20240731-mptcp-endp-subflow-signal-v1-0-c8a9b036493b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/11] arm64: dts: qcom: sm6115-pro1x: Add PCA9534 IO
- Expander
-To: Dang Huynh <danct12@riseup.net>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240731-qx1050-feature-expansion-v3-0-b945527fa5d2@riseup.net>
- <20240731-qx1050-feature-expansion-v3-2-b945527fa5d2@riseup.net>
-Content-Language: en-US
-From: Caleb Connolly <caleb.connolly@linaro.org>
-In-Reply-To: <20240731-qx1050-feature-expansion-v3-2-b945527fa5d2@riseup.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJAaqmYC/z2NQQ6CMBAAv0L27CYtohK/YjyUdoubwNJ0i5IQ/
+ m7jwePMYWYHpcykcG92yPRm5UUq2FMD/uVkJORQGVrTduZ2trgmLZncjEIF/3ZOxSckCQl1HeK
+ 0fFB5FDeh7W24dsbHC/VQqylT5O13fEBtwPM4vt5JEOuGAAAA
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2643; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=/rfAcMxmb9Inbh+7ExU4M83JIezLRz9H62MSXp9vrNo=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmqhqizHzJ45FoScJiCMQ7UFLVRlOv2AdAuCj+x
+ vdgEnTPdlCJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZqoaogAKCRD2t4JPQmmg
+ cwO9D/9jqHN2oEdo0gttmKyD1a4kT3fCPO1IKQNDrfNuky/PjBx6gIYpyHNeAKHVs3GzN2anlyF
+ pKzYHhOyK0s5hQaOoBraWzCJJ+xE0ChUOUt8K/R8zvUn2PdNocuPGGeXEfrnAe4eaVZLKIPtfwy
+ U5dsNzWpQKHEFNwTwy+6dcwtQXPzYKpEZF2tRXoQl39cLrw6aMryHvJn2Zn5moRnEcsXFtnyOxz
+ dI9G+9XKPwzbGFfz+8Ujru1KJNFkhPwkXh8c7pUE/zH6ZhtFnSXcfjhxKPR0dPizZQWQiMRTX8D
+ 7KfiyiDK1qxkz1CsJIgiHH///JyWUjuiLqvoCQZ8w0Mogr9Dxss+NU3TLSFnskWRa0vaVXq0iX2
+ 3/2BrqLbfafS32XeQ7biX8un0kxORRm82N2gYZdL4n/5c2m6WiRuaLQZcOKM4rh5gbhmc0cYO2E
+ cCQNf1wdqd0o97/3YIIXpiSnq0Yys6zTKSRUQ3VPXSrVuK7Wccp65adYdt36/d1YWEKdFVdIHfs
+ VdYxc86G118tVf5zczzx9nK4BDwF270KUxoljII7P3IotkyUZhWmlRVy9jqL13VZjks/7Kl1cWP
+ JHOfBT9InfKaB1U3+n7f8qJsgPGtdBQDI4tGk4A4zEuN0IDOnXI2qg9KLnhVZFdZMN6kw4aOJSB
+ 8sgTIweTqNIj+bA==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
+When looking at improving the user experience around the MPTCP endpoints
+setup, I noticed that setting an endpoint with both the 'signal' and the
+'subflow' flags -- as it has been done in the past by users according to
+bug reports we got -- was resulting on only announcing the endpoint, but
+not using it to create subflows: the 'subflow' flag was then ignored.
 
+My initial thought was to modify IPRoute2 to warn the user when the two
+flags were set, but it doesn't sound normal to ignore one of them. I
+then looked at modifying the kernel not to allow having the two flags
+set, but when discussing about that with Mat, we thought it was maybe
+not ideal to do that, as there might be use-cases, we might break some
+configs. Then I saw it was working before v5.17. So instead, I fixed the
+support on the kernel side (patch 5) using Paolo's suggestion. This also
+includes a fix on the options side (patch 1: for v5.11+), an explicit
+deny of some options combinations (patch 2: for v5.18+), and some
+refactoring (patches 3 and 4) to ease the inclusion of the patch 5.
 
-On 31/07/2024 08:18, Dang Huynh wrote:
-> F(x)tec Pro1X comes with PCA9534 IO Expander, it is used for enabling
-> touch screen VDD/VDDIO and keyboard's caps lock LED.
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Signed-off-by: Dang Huynh <danct12@riseup.net>
-> ---
->   arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts | 21 +++++++++++++++++++++
->   1 file changed, 21 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts b/arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts
-> index 70f479a63f2e..47e446249af6 100644
-> --- a/arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts
-> +++ b/arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts
-> @@ -70,6 +70,23 @@ &dispcc {
->   	status = "disabled";
->   };
->   
-> +&gpi_dma0 {
-> +	status = "okay";
-> +};
-> +
-> +&i2c1 {
-> +	status = "okay";
-> +	/* Clock frequency was not specified downstream, let's park it to 100 KHz */
+While at it, I added a new selftest (patch 7) to validate this case --
+including a modification of the chk_add_nr helper to inverse the sides
+were the counters are checked (patch 6) -- and allowed ADD_ADDR echo
+just after the MP_JOIN 3WHS.
 
-This is the default, so you can drop this comment.
+The selftests modification have the same Fixes tag as the previous
+commit, but no 'Cc: Stable': if the backport can work, that's good --
+but it still need to be verified by running the selftests -- if not, no
+need to worry, many CIs will use the selftests from the last stable
+version to validate previous stable releases.
 
-Reviewed-by: Caleb Connolly <caleb.connolly@linaro.org>
-> +	clock-frequency = <100000>;
-> +
-> +	pca9534: gpio@21 {
-> +		compatible = "nxp,pca9534";
-> +		reg = <0x21>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +	};
-> +};
-> +
->   &pm6125_gpios {
->   	vol_up_n: vol-up-n-state {
->   		pins = "gpio5";
-> @@ -89,6 +106,10 @@ &pon_resin {
->   	status = "okay";
->   };
->   
-> +&qupv3_id_0 {
-> +	status = "okay";
-> +};
-> +
->   &rpm_requests {
->   	regulators-0 {
->   		compatible = "qcom,rpm-pm6125-regulators";
-> 
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Matthieu Baerts (NGI0) (7):
+      mptcp: fully established after ADD_ADDR echo on MPJ
+      mptcp: pm: deny endp with signal + subflow + port
+      mptcp: pm: reduce indentation blocks
+      mptcp: pm: don't try to create sf if alloc failed
+      mptcp: pm: do not ignore 'subflow' if 'signal' flag is also set
+      selftests: mptcp: join: ability to invert ADD_ADDR check
+      selftests: mptcp: join: test both signal & subflow
 
+ net/mptcp/options.c                             |  3 +-
+ net/mptcp/pm_netlink.c                          | 47 +++++++++++++--------
+ tools/testing/selftests/net/mptcp/mptcp_join.sh | 55 ++++++++++++++++++-------
+ 3 files changed, 73 insertions(+), 32 deletions(-)
+---
+base-commit: 0bf50cead4c4710d9f704778c32ab8af47ddf070
+change-id: 20240731-upstream-net-20240731-mptcp-endp-subflow-signal-181d640cf5e8
+
+Best regards,
 -- 
-// Caleb (they/them)
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
