@@ -1,56 +1,51 @@
-Return-Path: <linux-kernel+bounces-269796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF389436F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:16:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCCBE9436F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:16:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDE5D281EFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:16:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4421AB210BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B431D16D4C2;
-	Wed, 31 Jul 2024 20:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C94616D4DE;
+	Wed, 31 Jul 2024 20:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o3lFIqEb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XoWhjMA3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14BB1662F6;
-	Wed, 31 Jul 2024 20:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5183316D4CC;
+	Wed, 31 Jul 2024 20:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722456886; cv=none; b=bbIgn4jH92IJE2RCwXBRlWTgLFgRD46x1reJTbEAlnmWE4ZYhsx3OawhbVPp8XkrVXmRFvuyW4Rt3BzUkhC5yJMRpe1V/nhap4IjZtQXWFV12yq3TfwUB2y2kZrX2KLL8VzOY/fuJOIwmMApTPfzCEbReLzzW/1aG7RJbNMVoUo=
+	t=1722456887; cv=none; b=A6E6S0qWpnaB94Yl1/R8UVpXrjCm+WF6MIBujNIXWO1NXsZGwHG6nkb4XPKyWIKcuE/NRIVysBbWq1X/1OvyFXE+L9hT5ZgoRg/ElQgG1R5+UrdP6bJf1RNpdEYH4dEH89Riw/HrENnn7eLT7QqwYLhpAEk0j7hinWBaVfqdVHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722456886; c=relaxed/simple;
-	bh=tMhpetnh40I4ns0pZylCMUve7dx/xgFLkF9dXVERM4s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=agCct40Fv/NUqOtnurqsTVjxcIoGVk/zX0h+1qGalB5Bd6ZbvliBRsITwHGAJuZhwNIDzGcZZuknL0toSlGXNqGuUuMq1PABGfNW3Hy5hjPcJwTULQojrs/wQvoEcNnsagJGiHSjIN1gvtPbGGKU2/byOj/W/SZ+5sO7JMODnbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o3lFIqEb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F34AC116B1;
-	Wed, 31 Jul 2024 20:14:45 +0000 (UTC)
+	s=arc-20240116; t=1722456887; c=relaxed/simple;
+	bh=AEdwWlvteHHQecBlSLo/JPooQPgXPrKgh0jWglAl+7c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G/X8SQe+brAm8TWG8/U5h+V8aQAu2zMjdLwk2u85tLSzd4UuVb3CWbIAJUCfHEhZb06vdRwisSg+Y/CmN2L3lYDC4KKZuwXqCOsphEUJmpV1VNujaq4Ofwgx4UUDyU32KVOdSO8YqmQvrn31QK/36y2E9OmBu/LQNrE4e4WykzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XoWhjMA3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D114C4AF0C;
+	Wed, 31 Jul 2024 20:14:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722456885;
-	bh=tMhpetnh40I4ns0pZylCMUve7dx/xgFLkF9dXVERM4s=;
+	s=k20201202; t=1722456887;
+	bh=AEdwWlvteHHQecBlSLo/JPooQPgXPrKgh0jWglAl+7c=;
 	h=From:To:Cc:Subject:Date:From;
-	b=o3lFIqEbQjiSdrOEgD3ceFQvHfj6ERRDdjoc+GJptOG7PuNLNBdmJZ3anKVI29D7U
-	 hJh9/b7/vxrS8Gq9DzOKO4g/QZWXtsdN6pQg85LTrXvVZ6l3IEdbHFYEl/fZxGuqDH
-	 HVd29BFrgTfRbz8BXTB0tE9gO4eglT6ARvYBiZfGQCoShhbqZKmIlaOlkeIgyqdexn
-	 Nq56e1u4zYba3yIPs7wkuY42B/wWwKnc0+NdMHHHOB94wMZddm+LtNL1Vm5Ipy+FcZ
-	 oT3zTVPsIT/Cf/TgPNidlJJzgyDe4V//D8rltpe0QsGSKEBSVlOP46LDtxIVPGGtC1
-	 APDFXx2OiLN5w==
+	b=XoWhjMA3qcCZuHCCkJZIbmo9tsIAT28PDG9n4bad6KGSp9E78RTjf2vnNkorh1cJJ
+	 YWhO1xwXnstRnh3ba61TT7WYLyM6e3xlkVR/sEmf3NhqMCpA60eyLIFr0MHKk0+rSa
+	 EHRcBHtmATsQyuSUCF86WKjZu6T/ZXaZX4efNBkL0qKm/OTMvZIHbjr8+SeBFcL/aR
+	 DwpY9bO7jXWfsnFprNmnLSblPD1gIoHOLyJDivwDs2Oh5qag/SwIXlZNXXtlXqysKp
+	 L+sDMy0gv1m4V890DWSCxLE9TL8nreI1Hgj54H/+FDN5cNi9cK8lBsvqEwSZmV/74B
+	 faW+HZ/uqiU7A==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: linux-pwm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: at91: Use of_property_count_u32_elems() to get property length
-Date: Wed, 31 Jul 2024 14:14:02 -0600
-Message-ID: <20240731201407.1838385-7-robh@kernel.org>
+Subject: [PATCH] pwm: lp3943: Use of_property_count_u32_elems() to get property length
+Date: Wed, 31 Jul 2024 14:14:03 -0600
+Message-ID: <20240731201407.1838385-8-robh@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -70,26 +65,36 @@ be freed.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/clk/at91/dt-compat.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/pwm/pwm-lp3943.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
-index a32dc2111b90..f5a5f9ba7634 100644
---- a/drivers/clk/at91/dt-compat.c
-+++ b/drivers/clk/at91/dt-compat.c
-@@ -563,9 +563,10 @@ of_at91_clk_pll_get_characteristics(struct device_node *np)
- 	if (num_cells < 2 || num_cells > 4)
- 		return NULL;
+diff --git a/drivers/pwm/pwm-lp3943.c b/drivers/pwm/pwm-lp3943.c
+index 61189cea1046..f0e94c9e5956 100644
+--- a/drivers/pwm/pwm-lp3943.c
++++ b/drivers/pwm/pwm-lp3943.c
+@@ -218,7 +218,7 @@ static int lp3943_pwm_parse_dt(struct device *dev,
+ 	struct lp3943_platform_data *pdata;
+ 	struct lp3943_pwm_map *pwm_map;
+ 	enum lp3943_pwm_output *output;
+-	int i, err, proplen, count = 0;
++	int i, err, count = 0;
+ 	u32 num_outputs;
  
--	if (!of_get_property(np, "atmel,pll-clk-output-ranges", &tmp))
-+	num_output = of_property_count_u32_elems(np, "atmel,pll-clk-output-ranges");
-+	if (num_output <= 0)
- 		return NULL;
--	num_output = tmp / (sizeof(u32) * num_cells);
-+	num_output /= num_cells;
+ 	if (!node)
+@@ -234,11 +234,8 @@ static int lp3943_pwm_parse_dt(struct device *dev,
+ 	 */
  
- 	characteristics = kzalloc(sizeof(*characteristics), GFP_KERNEL);
- 	if (!characteristics)
+ 	for (i = 0; i < LP3943_NUM_PWMS; i++) {
+-		if (!of_get_property(node, name[i], &proplen))
+-			continue;
+-
+-		num_outputs = proplen / sizeof(u32);
+-		if (num_outputs == 0)
++		num_outputs = of_property_count_u32_elems(node, name[i]);
++		if (num_outputs <= 0)
+ 			continue;
+ 
+ 		output = devm_kcalloc(dev, num_outputs, sizeof(*output),
 -- 
 2.43.0
 
