@@ -1,90 +1,72 @@
-Return-Path: <linux-kernel+bounces-269876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD2169437F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:27:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 546F99437F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F5D9B23E4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:27:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8671C1C23CDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D469C16D318;
-	Wed, 31 Jul 2024 21:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E61116D4E5;
+	Wed, 31 Jul 2024 21:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IK4H1uez"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="enzRL0mX"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1B816C86C
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 21:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8A816D4C0
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 21:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722461165; cv=none; b=MBiTIivETAVIf4nxaYUgVr8OfByxjobDr1TdBoTV9mNiXYby8LNe2ECWbli4csEmKaVBK9/6/X6o+uFAVMjMl3gs8ZA3mBfP+Aya/M8dl5Lf/2ZT3YYJPDULq6ZDtpiVCTGZH3XjiUjrzrPca1Qvsy7jtDYG1zsfU/5A2wT/Os8=
+	t=1722461189; cv=none; b=UOwnVVrGU++vxbYKyOC2xw6ByoLyTe1LESlVNXzzwIHnvclM376tRg6l1lSoPRsHOheMqd/GB537xr2fWJgeX0o5xzp7EshwELgyjmrpR8lzAH7lQja1H27Jc1c27FpJ4HMzAuFmZxvGmlvhVx88u756rGhvC/KTW0Wz2JcAvHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722461165; c=relaxed/simple;
-	bh=wJqZinwQDfOcdmnW4ZL4CO1V5KkxCLaHjUfw+VxoVJU=;
+	s=arc-20240116; t=1722461189; c=relaxed/simple;
+	bh=jssOBMtwefVTqQ5mDVZIxmCimLUmPAjHIr4iA1/JjvQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MC2XpDmegrZiK0tJ1jiD99nIRy5Zxrwr4bo5pPZ5JrZdNtEJZ7f/X6qWglLHkVTCXzLqva8BpNqfVt6BY+80xeLCouOS+zjOyXBZhd22vMXej1e1a18aMVugVTMFSth4/LpKSnTq/OeO8lq4uPytKbZLYwzUHNXWHJ+Pwh9DU+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IK4H1uez; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722461163;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7TRUxYTLzYZ5rhCTZsxQPqbtc51PlpFIcUNUImpU7Vc=;
-	b=IK4H1uezeJciTRTYE3jDt2c/B2wnOF0NpeaD2okCOHdwFWdNJRaFO9fSMt2RA2oNIE+0uO
-	bxF68zcmUT6zdETlz2FFDT3d87DXmN+DQmqPoP+Y1SNhN1r0gxstvWa4ICAqsJiK4WJvgo
-	NEeVdP0ExJ633f0NR7lnf1loNrTUpu0=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-491-M2LgQCrXML2FMz9rkbpQ_A-1; Wed, 31 Jul 2024 17:26:01 -0400
-X-MC-Unique: M2LgQCrXML2FMz9rkbpQ_A-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ef244cdd30so64056081fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:26:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722461160; x=1723065960;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7TRUxYTLzYZ5rhCTZsxQPqbtc51PlpFIcUNUImpU7Vc=;
-        b=wjyWfgnVsPzUtOg/IfJYcAYMGPXzKUszL1uBdtVKCD13uJpwwNy+EhxQJMnbLIsgWH
-         IBS/6ZmzLO8D7UgP6LesKHoMyv90IzZ9CpRQT6DBRytiDkz8OIbFxyTayci5c8ekA6Sp
-         d5K9XdxzRLoKSd0CAdmMZYUPUA1NlScbIXPLL56u3RxJ5E4OgBsjeNY+KQeIaq4ANeQp
-         uWHygxd+irKWdqX9eGHszgQ6fIxe+bkrIsrb4wZfmCXtjayv7nK4JpCxwPpWtQ8zxCN3
-         tFy92Wa8Cn5/eP8sFaIteMbg79cxv5OwNrmO4a9A2bhFbR15GttYmoku4mXDE4HXBTOB
-         s2Og==
-X-Forwarded-Encrypted: i=1; AJvYcCUNYpiCgtcektFlKz6DSlDSS/jjn6EYw/4l2tSgmqiJ8lvjvsaRTOSIo8hnPbJmu1dQQMmbGajMvScaynx+dtIKxsVOpWQN5+tcgk5T
-X-Gm-Message-State: AOJu0YyoofBpnMbdiBmRT0YPlvXagTefd0e3ta7vuTIw5P96eCPMnSig
-	olnYFaqsk0rdVmwrVuP/DdCpSoEk2Vw8A3xtNCtjyeeLVOiQKjCmK3BKQPa88sHi9RNDUMVRNMN
-	dV0r8bpTpl1zEy8Uc+dAjJ41M8Uh/ZOdyfhYrsJjXK/MO0xLgw7Xv24JTWrB/Ig==
-X-Received: by 2002:a2e:380b:0:b0:2ef:2443:ac8c with SMTP id 38308e7fff4ca-2f1533ab1ddmr3483081fa.31.1722461159395;
-        Wed, 31 Jul 2024 14:25:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHIXn3AhsXUgtbnPlhnFXcqTpzKMkzJeCcf1n2YR70oWJ6bCl6GOib1rUPlhXEQ2MUOewM2VQ==
-X-Received: by 2002:a2e:380b:0:b0:2ef:2443:ac8c with SMTP id 38308e7fff4ca-2f1533ab1ddmr3482861fa.31.1722461158392;
-        Wed, 31 Jul 2024 14:25:58 -0700 (PDT)
-Received: from redhat.com ([2.55.44.248])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac6377d005sm9105489a12.38.2024.07.31.14.25.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 14:25:57 -0700 (PDT)
-Date: Wed, 31 Jul 2024 17:25:52 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>,
-	Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
-Subject: Re: [PATCH V4 net-next 3/3] virtio-net: synchronize operstate with
- admin state on up/down
-Message-ID: <20240731172020-mutt-send-email-mst@kernel.org>
-References: <20240731025947.23157-1-jasowang@redhat.com>
- <20240731025947.23157-4-jasowang@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QvUHEmHsTjxga9PxbVyPA8ux0pkxP49WWvsBBXwidXO+QD3N6YJVMVhELMcVhFVYHmum1wKZ5YC73sxPOrx2wTZ2gosrRHlh1jLpy5UTP3NkL/HFRuftaV3PMe314D+AGVpKAD7mYHSs01wT6COVw+isFyC9p7o/JF9ODxw4pQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=enzRL0mX; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=7UantihI0biLHmzOvhvLs1/a48/spgItsd+twM2z2/0=; b=enzRL0mXkgpNjUgKm7+SDC5/21
+	GWSPepLIkSm3kBuTH7M3LPA9T6ggrQrxYc5xDlYwFP5U4QuPX0Q8iodARXZThQ6TK23CCKA/IVW1T
+	bBOxdMdDnVgI0VpGy28kVxWgjU6p00637GXIuUkV8bf+ZnHOeX/285W47STmomb3m6mDauTZstrpy
+	AWe/MNx27kiWdpyoM8WkgCvvDbuo0t8+QnJMnUd93iGRMvlMJQXbj0/UJJrBY1rfZFP0qFO1qVGzS
+	4oFIKXDKqpY/yfuAjK8kK1WOGvo0P8FItJRiP4K8wNHrmC7f/0xK8FAo75UWrNyxDPyzr4bpO3ct4
+	AJ/v41WQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sZGq0-00000005IQ2-2K6m;
+	Wed, 31 Jul 2024 21:26:25 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 311C1300820; Wed, 31 Jul 2024 23:26:24 +0200 (CEST)
+Date: Wed, 31 Jul 2024 23:26:24 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Guenter Roeck <linux@roeck-us.net>, Jens Axboe <axboe@kernel.dk>,
+	Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Peter Anvin <hpa@zytor.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: Linux 6.11-rc1
+Message-ID: <20240731212624.GZ40213@noisy.programming.kicks-ass.net>
+References: <daef7867-b548-4acb-b8bf-0bdeb057d6a4@roeck-us.net>
+ <20240731122002.GE33588@noisy.programming.kicks-ass.net>
+ <87mslx67dm.ffs@tglx>
+ <20240731155551.GF33588@noisy.programming.kicks-ass.net>
+ <CAHk-=wjhQ-TTg40xSP5dP0a1_90LMbxhvX0bsVBdv3wpQN2xQQ@mail.gmail.com>
+ <20240731163105.GG33588@noisy.programming.kicks-ass.net>
+ <20240731165108.GH33588@noisy.programming.kicks-ass.net>
+ <87bk2d5v83.ffs@tglx>
+ <20240731212007.GW26599@noisy.programming.kicks-ass.net>
+ <CAHk-=wjSs62k3p7sS3uR7TSTsZg1q8-=Vm0douhodk2R0FqP=Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,226 +75,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240731025947.23157-4-jasowang@redhat.com>
+In-Reply-To: <CAHk-=wjSs62k3p7sS3uR7TSTsZg1q8-=Vm0douhodk2R0FqP=Q@mail.gmail.com>
 
-On Wed, Jul 31, 2024 at 10:59:47AM +0800, Jason Wang wrote:
-> This patch synchronize operstate with admin state per RFC2863.
+On Wed, Jul 31, 2024 at 02:23:02PM -0700, Linus Torvalds wrote:
+> On Wed, 31 Jul 2024 at 14:20, Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > The alternative is ripping that level thing out entirely, and simply
+> > duplicate anything we find in the page-tables.
 > 
-> This is done by trying to toggle the carrier upon open/close and
-> synchronize with the config change work. This allows propagate status
-> correctly to stacked devices like:
-> 
-> ip link add link enp0s3 macvlan0 type macvlan
-> ip link set link enp0s3 down
-> ip link show
-> 
-> Before this patch:
-> 
-> 3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000
->     link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
-> ......
-> 5: macvlan0@enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
->     link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
-> 
-> After this patch:
-> 
-> 3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000
->     link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
-> ...
-> 5: macvlan0@enp0s3: <NO-CARRIER,BROADCAST,MULTICAST,UP,M-DOWN> mtu 1500 qdisc noqueue state LOWERLAYERDOWN mode DEFAULT group default qlen 1000
->     link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
-> 
-> Cc: Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>
-> Cc: Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> That looks clean to me, and don't we want to clone the minimal range
+> anyway - even on x86-64?
 
-Changelog?
+x86_64 has everything PMD aligned. It *should* never encounter a PTE.
 
-> ---
->  drivers/net/virtio_net.c | 84 ++++++++++++++++++++++++++--------------
->  1 file changed, 54 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index 0383a3e136d6..0cb93261eba1 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -2878,6 +2878,7 @@ static int virtnet_enable_queue_pair(struct virtnet_info *vi, int qp_index)
->  	return err;
->  }
->  
-> +
->  static void virtnet_cancel_dim(struct virtnet_info *vi, struct dim *dim)
->  {
->  	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_VQ_NOTF_COAL))
-
-hmm
-
-> @@ -2885,6 +2886,25 @@ static void virtnet_cancel_dim(struct virtnet_info *vi, struct dim *dim)
->  	net_dim_work_cancel(dim);
->  }
->  
-> +static void virtnet_update_settings(struct virtnet_info *vi)
-> +{
-> +	u32 speed;
-> +	u8 duplex;
-> +
-> +	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_SPEED_DUPLEX))
-> +		return;
-> +
-> +	virtio_cread_le(vi->vdev, struct virtio_net_config, speed, &speed);
-> +
-> +	if (ethtool_validate_speed(speed))
-> +		vi->speed = speed;
-> +
-> +	virtio_cread_le(vi->vdev, struct virtio_net_config, duplex, &duplex);
-> +
-> +	if (ethtool_validate_duplex(duplex))
-> +		vi->duplex = duplex;
-> +}
-> +
-
-I already commented on this approach.  This is now invoked on each open,
-lots of extra VM exits. No bueno, people are working hard to keep setup
-overhead under control. Handle this in the config change interrupt -
-your new infrastructure is perfect for this.
-
-
->  static int virtnet_open(struct net_device *dev)
->  {
->  	struct virtnet_info *vi = netdev_priv(dev);
-> @@ -2903,6 +2923,16 @@ static int virtnet_open(struct net_device *dev)
->  			goto err_enable_qp;
->  	}
->  
-> +	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
-> +		if (vi->status & VIRTIO_NET_S_LINK_UP)
-> +			netif_carrier_on(vi->dev);
-> +		virtio_config_driver_enable(vi->vdev);
-> +	} else {
-> +		vi->status = VIRTIO_NET_S_LINK_UP;
-> +		netif_carrier_on(dev);
-> +		virtnet_update_settings(vi);
-> +	}
-> +
->  	return 0;
->  
->  err_enable_qp:
-> @@ -3381,12 +3411,18 @@ static int virtnet_close(struct net_device *dev)
->  	disable_delayed_refill(vi);
->  	/* Make sure refill_work doesn't re-enable napi! */
->  	cancel_delayed_work_sync(&vi->refill);
-> +	/* Make sure config notification doesn't schedule config work */
-
-it's clear what this does even without a comment.
-what you should comment on, and do not, is *why*.
-
-> +	virtio_config_driver_disable(vi->vdev);
-> +	/* Make sure status updating is cancelled */
-
-same
-
-also what "status updating"? confuses more than this clarifies.
-
-> +	cancel_work_sync(&vi->config_work);
->  
->  	for (i = 0; i < vi->max_queue_pairs; i++) {
->  		virtnet_disable_queue_pair(vi, i);
->  		virtnet_cancel_dim(vi, &vi->rq[i].dim);
->  	}
->  
-> +	netif_carrier_off(dev);
-> +
->  	return 0;
->  }
->  
-> @@ -5085,25 +5121,6 @@ static void virtnet_init_settings(struct net_device *dev)
->  	vi->duplex = DUPLEX_UNKNOWN;
->  }
->  
-> -static void virtnet_update_settings(struct virtnet_info *vi)
-> -{
-> -	u32 speed;
-> -	u8 duplex;
-> -
-> -	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_SPEED_DUPLEX))
-> -		return;
-> -
-> -	virtio_cread_le(vi->vdev, struct virtio_net_config, speed, &speed);
-> -
-> -	if (ethtool_validate_speed(speed))
-> -		vi->speed = speed;
-> -
-> -	virtio_cread_le(vi->vdev, struct virtio_net_config, duplex, &duplex);
-> -
-> -	if (ethtool_validate_duplex(duplex))
-> -		vi->duplex = duplex;
-> -}
-> -
->  static u32 virtnet_get_rxfh_key_size(struct net_device *dev)
->  {
->  	return ((struct virtnet_info *)netdev_priv(dev))->rss_key_size;
-> @@ -6514,6 +6531,11 @@ static int virtnet_probe(struct virtio_device *vdev)
->  		goto free_failover;
->  	}
->  
-> +	/* Forbid config change notification until ndo_open. */
-
-notifications
-
-Disable, not forbid.
-
-> +	virtio_config_driver_disable(vi->vdev);
-> +	/* Make sure status updating work is done */
-
-
-
-> +	cancel_work_sync(&vi->config_work);
-> +
->  	virtio_device_ready(vdev);
->  
->  	virtnet_set_queues(vi, vi->curr_queue_pairs);
-> @@ -6563,6 +6585,19 @@ static int virtnet_probe(struct virtio_device *vdev)
->  		vi->device_stats_cap = le64_to_cpu(v);
->  	}
->  
-> +	/* Assume link up if device can't report link status,
-> +           otherwise get link status from config. */
-> +        netif_carrier_off(dev);
-> +        if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
-> +		/* This is safe as config notification change has been
-
-config change notification
-
-> +		   disabled. */
-> +                virtnet_config_changed_work(&vi->config_work);
-> +        } else {
-> +                vi->status = VIRTIO_NET_S_LINK_UP;
-> +                virtnet_update_settings(vi);
-> +                netif_carrier_on(dev);
-> +        }
-> +
->  	rtnl_unlock();
->  
->  	err = virtnet_cpu_notif_add(vi);
-> @@ -6571,17 +6606,6 @@ static int virtnet_probe(struct virtio_device *vdev)
->  		goto free_unregister_netdev;
->  	}
->  
-> -	/* Assume link up if device can't report link status,
-> -	   otherwise get link status from config. */
-> -	netif_carrier_off(dev);
-> -	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
-> -		schedule_work(&vi->config_work);
-> -	} else {
-> -		vi->status = VIRTIO_NET_S_LINK_UP;
-> -		virtnet_update_settings(vi);
-> -		netif_carrier_on(dev);
-> -	}
-> -
->  	for (i = 0; i < ARRAY_SIZE(guest_offloads); i++)
->  		if (virtio_has_feature(vi->vdev, guest_offloads[i]))
->  			set_bit(guest_offloads[i], &vi->guest_offloads);
-> -- 
-> 2.31.1
+Also, this thing blindly clones the format the kernel page-tables have,
+it will not split a PMD into multiple PTE entries just to clone a
+smaller range. It is super simple.
 
 
