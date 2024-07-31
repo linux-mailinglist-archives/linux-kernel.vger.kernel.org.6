@@ -1,138 +1,164 @@
-Return-Path: <linux-kernel+bounces-268754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64EAB9428E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:11:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1A759428EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AA9F1F24272
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:11:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69B7E282441
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24501A7F91;
-	Wed, 31 Jul 2024 08:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ljmJzg/4"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD831A7F89;
+	Wed, 31 Jul 2024 08:12:30 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E491A7F73
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741E11A4F1C
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722413500; cv=none; b=K+76b5deqkg6h0EFxyofR53rCm+6pq0nFRZ8MKVBrfVu2XDMcPP7B3kRQka3HNEp7CTOwCmnGPxNQVqreRVFGbV/iG9ad3hwSiv0igqNGx4v1TnHAUQMtJCQqqgm4do+LAL6jG+tyUNqBsTFFL73S6VK7mDIEqMTf3IHeExWBZ0=
+	t=1722413550; cv=none; b=Sl252EvanjfvAZRvzIMEtolNvn15ekA6rslN5H34EBIcwfQ9t2xYLmW5chr8V6LGs0eA0YJ8OdcdBIrdreKyWZuCGWFaVHbcQzq9pu9R+cpE481NrlUetKGGoJLGRiBCJCBKsPLP8seOBeqWVHdMpmJDQjs32WHsUu5C3umUKVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722413500; c=relaxed/simple;
-	bh=7y80z9vltmygihtb/PjFOov0Ly9Wsms87Ew+RYBWeW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kBCIp4rolCFjRruViqSDz5+kAvqhdwCUrJvZPGBnZr5EJ7lRGT46HNoOWh7edAHgbC6uC7w7QGBZfHwkGWtPaLSR8O8antj+uBcr+f31kL+ZxSvYJp9R28hv9F9Q+trfrqp9ndkWYcykYxdT3qFDFiCMzQ3bQ82IP1aeg4+HCDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ljmJzg/4; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7ab76558a9so119819966b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 01:11:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1722413496; x=1723018296; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1i19l7d1eZbhVp7fQ4bZoRAfF6lLDsSZcH8bPmRvWiA=;
-        b=ljmJzg/4owDxVh+e/Y5IplkrJqQFXrUt/UsdVFppTAHmeSuaRCs6gFJPwsUhOetk5U
-         8Qi8gPqctr+dySdVxfx6WSuXd2FWZOEtU/ccypiqT/9rqLCetZzVZTeJOsSChpqURl99
-         IoCakMeFMBRwcq+cVcKGmaxRlda3Rwf4zjflscBFPbezlSL1800T7SlnIV9qbhbdkIvJ
-         jA/LaNY2UcABUqzCoQrXr8SXJ4xXKmHNN2687lMSz1IuDopF6H5tOxiwp67eYGyLgZzj
-         8U5mURCuz8NXDdj95Pe2LS3EjEwZ30WQ4X108WbcBet/VrKo7qufR1UFCEt09DROLTHH
-         rXZA==
+	s=arc-20240116; t=1722413550; c=relaxed/simple;
+	bh=qvJpor+LrL/+K3X0/nxl5ABeRnDyAXVwXQac/wHVRvo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Lf3xXblEh2wZwpZrhEHlVeSoqek09RofMariwKq4Uwqo0viJWBa06XjnSWXpBeoTqqu0qfYtrrQWPZJgDSsip+nQkb+d2j2M36kS67Jgppx3Y2NAhBlEUws476uQjoltcpuNwoE9oA4ovbPK3IqcVxHSZ/+T0FBHDt/GHelBHO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-397e0efded3so106619685ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 01:12:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722413496; x=1723018296;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1i19l7d1eZbhVp7fQ4bZoRAfF6lLDsSZcH8bPmRvWiA=;
-        b=GJifXks2Kz5RkVTdUikuFiGr+Z+VRMotafnQ3IcYGW49oeb3ACZk+HlvnKrmAZ6Dy7
-         A5C0ljgfm3xSPq03MJHkVDVEq0DZ5Fh8kfEotWhVOHd8O495eUzNrdNurJcaL+ALVflk
-         YIMQSaOKC8OK4SC5iQ4pXvW7LRw4UxeqNFYZQbYqBRCKOZHzNa36OxBiPe5VlzRMH0yo
-         oj/J/cZygOI3fR66AyKwWS/Q4+lY7zwr/VUfoD4E2mEm/RRcWJamDbtl52qEtQ2rBHsL
-         OGBlyjaSaX+wTdGAhShN4z91V0d6szJ45XZgYctsnEAeOrUeB2QFk6oZRqtORYPho+gq
-         LSaA==
-X-Forwarded-Encrypted: i=1; AJvYcCV29zArafIS8AsWJeoCp8LVLmDunvDziSlHKTMRZAS4J695A54M0drV/6GYVQDrc493WCX7qbUinLnADZiBwVlYFspvLz93aw6W99YP
-X-Gm-Message-State: AOJu0YxbZZqT++X6cIsLyf0dq7OEAWsT2VoWQpKR7op7K03pcyeltRMb
-	AhE+X4M3MBuno3Cm9d6v3CGR3jOL4cxs1pl4z0OuXXl0xIDUxNNpGXi2f7nmGYs=
-X-Google-Smtp-Source: AGHT+IEAM3rgFV5Nss1oeOJc4d0T/p6GjpLY5HpQ/UfV3bepvtCwNBml7jly3uQHrfiUKxZe0LrJkQ==
-X-Received: by 2002:a17:907:60cb:b0:a7d:88c4:2897 with SMTP id a640c23a62f3a-a7d88c437b8mr269366466b.2.1722413495475;
-        Wed, 31 Jul 2024 01:11:35 -0700 (PDT)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acadb8361sm734690366b.207.2024.07.31.01.11.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 01:11:35 -0700 (PDT)
-Date: Wed, 31 Jul 2024 10:11:34 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, loongarch@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
-Subject: Re: [PATCH v12 56/84] KVM: RISC-V: Mark "struct page" pfns dirty iff
- a stage-2 PTE is installed
-Message-ID: <20240731-0456655970f6ae99f907de43@orel>
-References: <20240726235234.228822-1-seanjc@google.com>
- <20240726235234.228822-57-seanjc@google.com>
+        d=1e100.net; s=20230601; t=1722413547; x=1723018347;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CVTKQyRC9LK9ysbvwuUUt5aZLW04t0wRCTT0WqX7JWg=;
+        b=PmjVsgZlTaQ1TIxdW0vCXKj+w7aXvbZqqVBP4rUv66dU2BG2r/Uko/KiLakdh6tEW4
+         /agWstREBjnBWWB9c1jhw7wBRqTM8ZZTcEFjeMfUlyG+SxXwPt/kNstJ/9R8TXIKIhe4
+         dYKAjF3pomPYNjeZFrrGnv+hKmxJChwhBugEErm2lunzaGrTg9i9kYrs1Xf+5w/1RwxY
+         wJNXLW2z1Cvst5VgVZvH5VXW+tH6GAXSUWoWgcs/oNMgpYQvLP/xgAv/5U5tHfZLkHVf
+         vgWRSi6vzZcA/vNPKPtcMTPJifqyBZEynSpbsD0KbM+1HShvJ1oEc5PoGlGzWwCmKPfJ
+         rOiw==
+X-Forwarded-Encrypted: i=1; AJvYcCXkPaq0jtc37NvDciU9jxW7F8nilPP6cLtbQ3xxp7Ko3wP+T0g2/hdzgyMz3doElEny44KDSCWrzc3NPCW+y3aMChiYiGRR2bV1wYgR
+X-Gm-Message-State: AOJu0Yw/4wkGNaTG9pRzUHfzTtza4o685jhniCm038H70H7o+CS8azzd
+	cr02PVDaBePF97AFUS2GpNpf1umfPKNLC8nl6h+MZlfwBpxQJ6k0/ZKiLyrVa+tntSfy03UnkbU
+	1/KCNLMPUwE8mvlm9KshLWH+vSzwGSUS+vC1ZFjJx0rPB0lLgePWuXck=
+X-Google-Smtp-Source: AGHT+IFngX/W//rbF0BAH2Q/79wqR6rvNFnLJa7T4lGBOJL3HDXIigWQk12LHJ7LCvkCWDA+hRhH3TwpyLegeIYwAts46tu0VDGH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240726235234.228822-57-seanjc@google.com>
+X-Received: by 2002:a05:6e02:b22:b0:396:dc3a:72f2 with SMTP id
+ e9e14a558f8ab-39aec40c813mr10289205ab.3.1722413547584; Wed, 31 Jul 2024
+ 01:12:27 -0700 (PDT)
+Date: Wed, 31 Jul 2024 01:12:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a90e8c061e86a76b@google.com>
+Subject: [syzbot] [squashfs?] KMSAN: uninit-value in pick_link
+From: syzbot <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, phillip@squashfs.org.uk, 
+	squashfs-devel@lists.sourceforge.net, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 26, 2024 at 04:52:05PM GMT, Sean Christopherson wrote:
-> Don't mark pages dirty if KVM bails from the page fault handler without
-> installing a stage-2 mapping, i.e. if the page is guaranteed to not be
-> written by the guest.
-> 
-> In addition to being a (very) minor fix, this paves the way for converting
-> RISC-V to use kvm_release_faultin_page().
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/riscv/kvm/mmu.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
-> index b63650f9b966..06aa5a0d056d 100644
-> --- a/arch/riscv/kvm/mmu.c
-> +++ b/arch/riscv/kvm/mmu.c
-> @@ -669,7 +669,6 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
->  		goto out_unlock;
->  
->  	if (writable) {
-> -		kvm_set_pfn_dirty(hfn);
->  		mark_page_dirty(kvm, gfn);
->  		ret = gstage_map_page(kvm, pcache, gpa, hfn << PAGE_SHIFT,
->  				      vma_pagesize, false, true);
-> @@ -682,6 +681,9 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
->  		kvm_err("Failed to map in G-stage\n");
->  
->  out_unlock:
-> +	if ((!ret || ret == -EEXIST) && writable)
-> +		kvm_set_pfn_dirty(hfn);
-> +
->  	spin_unlock(&kvm->mmu_lock);
->  	kvm_set_pfn_accessed(hfn);
->  	kvm_release_pfn_clean(hfn);
-> -- 
-> 2.46.0.rc1.232.g9752f9e123-goog
->
+Hello,
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+syzbot found the following issue on:
 
+HEAD commit:    2f8c4f506285 Merge tag 'auxdisplay-for-v6.11-tag1' of git:..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=145d019d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea3a063e5f96c3d6
+dashboard link: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1629a655980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16bfb899980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ed9f828b1910/disk-2f8c4f50.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b8bdff998eb1/vmlinux-2f8c4f50.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/41b7030717aa/bzImage-2f8c4f50.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/6b20d8f48921/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 8
+=====================================================
+BUG: KMSAN: uninit-value in pick_link+0xd8c/0x1690 fs/namei.c:1850
+ pick_link+0xd8c/0x1690 fs/namei.c:1850
+ step_into+0x156f/0x1640 fs/namei.c:1909
+ open_last_lookups fs/namei.c:3674 [inline]
+ path_openat+0x39da/0x6100 fs/namei.c:3883
+ do_filp_open+0x20e/0x590 fs/namei.c:3913
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1416
+ do_sys_open fs/open.c:1431 [inline]
+ __do_sys_openat fs/open.c:1447 [inline]
+ __se_sys_openat fs/open.c:1442 [inline]
+ __x64_sys_openat+0x2a1/0x310 fs/open.c:1442
+ x64_sys_call+0x1fe/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4719
+ alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2263
+ alloc_pages_noprof mm/mempolicy.c:2343 [inline]
+ folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2350
+ filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1008
+ do_read_cache_folio+0x12a/0xfd0 mm/filemap.c:3753
+ do_read_cache_page mm/filemap.c:3855 [inline]
+ read_cache_page+0x63/0x1d0 mm/filemap.c:3864
+ read_mapping_page include/linux/pagemap.h:907 [inline]
+ page_get_link+0x73/0xab0 fs/namei.c:5272
+ pick_link+0xd6c/0x1690
+ step_into+0x156f/0x1640 fs/namei.c:1909
+ open_last_lookups fs/namei.c:3674 [inline]
+ path_openat+0x39da/0x6100 fs/namei.c:3883
+ do_filp_open+0x20e/0x590 fs/namei.c:3913
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1416
+ do_sys_open fs/open.c:1431 [inline]
+ __do_sys_openat fs/open.c:1447 [inline]
+ __se_sys_openat fs/open.c:1442 [inline]
+ __x64_sys_openat+0x2a1/0x310 fs/open.c:1442
+ x64_sys_call+0x1fe/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 0 UID: 0 PID: 5191 Comm: syz-executor190 Not tainted 6.10.0-syzkaller-12708-g2f8c4f506285 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
