@@ -1,263 +1,230 @@
-Return-Path: <linux-kernel+bounces-268388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B011894240B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:06:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD4B94240F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6FF7B23B98
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:06:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7403285926
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885698F49;
-	Wed, 31 Jul 2024 01:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC878F54;
+	Wed, 31 Jul 2024 01:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gPfME1Xw"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="TqPc41y3"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E042F37;
-	Wed, 31 Jul 2024 01:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722387959; cv=none; b=hFjDxHWBWAN1pmlY4ziY+YNPGaeBK10FR1vySbt7VI1NdLn3It+G+DNUWmMzYXIpoAUT+VMWg71OTtKvWWZfeN9RS+RaQ+xuo0zdhR4Ts9rn8qTnRLrOmobtS9f2vj8gGffbe/C40Y+rn8JXzOlmFgg1knawNsd0dvcSxAvhH4E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722387959; c=relaxed/simple;
-	bh=di3rbEeVr0sa9MFEnfNsUReIXLyPPC9C92q/Sp/gq8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p0RcZ8Qb83T95bCu/kzGtIci+bGhh+qpb/aAQEczZYrwnBJ8pSdT7D28mbY4jnS54YWdD6jN38teGmeFMnV9goiFLFlU4/JUTgJGTQX9N85RHK4wTjSw+7MP8I7hffEs/pgvkYOBgpprGcjeVyyxHoRNHRGoGvWBsLQraIJ3avs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gPfME1Xw; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fd70ba6a15so37094615ad.0;
-        Tue, 30 Jul 2024 18:05:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722387957; x=1722992757; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UmWYrFFBXc+W/UjXwhIBzE2u4A4ubZF2p/m+px8209Q=;
-        b=gPfME1XwtkdBKvYjMPRx1L1R4hLCRwv7pHoF1eZcAUXz2ySWpxq5KeoFnWYBgaF4H9
-         CLVA1Y7Thgf7eBwW7ySDqEJteATs+ZG64vU/o5cgEbkZrToeKtFy88VDlNxosVT5h+e0
-         BKWdoGdRzbdv4jIaWLBro+JupuqZ0XCC2SlzVMgS8pSGqm/UD1A+2BGUv38zMT9Eu4jJ
-         TheYv0LjlfLAv161/VQVqmYDp4e3zrDCQxaShLcONgRufYrvPsx3N40dWj6VvZlyTVbe
-         Bcyp+5B6WCaRLnebK49rOEMUfH0qEBCi6biom1N/1936gMDzuLLwvpci2xKS18VpaRdq
-         x3fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722387957; x=1722992757;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UmWYrFFBXc+W/UjXwhIBzE2u4A4ubZF2p/m+px8209Q=;
-        b=ljEPKmwYeKVdZXxD8eGGv+7X1is5oN6nto+emqkOLoreOP5QbX6IPDZoeBcrTebeJa
-         NV5Lyut5SXO3SebKMY76pn2yDw08nAxeG2RdBGYoSpftRbjuhO6ZzjZyIyG+Wexo8M1o
-         oNOMJ0QnQUBu4Tnk30CXFLJ0sj+bW0+4W7bbYUb7wfz16k3EY7sLKCKyxXxWgzhluDQ9
-         u5bxF63tweao06Xe3UR8imQXTxCiXONjbYSsAW/AUY9qX89pGnjdt0EeChoQmTXzm6G+
-         ETw5h7jbD5Scu29WLHLGL5hBoGClnF3Wj/ZFfV9rEtvTQUW/WsUzHNF9KWVfIrUzkRlj
-         n1OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU88qtJsz5rMBNRqeADaXofYn7aqcBmfTISeLoNCsjnOMUbaXXYp8kvBD/yakKuh87s3uTHpFNW6LUi1BEavRl0aPoqSZHM7DvWsUuSlpv3g74FW1g/rlYgntMjiUwEAD2qw8OoC5U=
-X-Gm-Message-State: AOJu0YyyHhiFwBRq7tU0mvPLm4JYcqbxCCt+Bd23+hhqSZbL/FKczuKJ
-	VAQU1kVBc0MTFbkL7u/0ijS/B6kg34hRZ1w2bPGEiCDXFDIiVUNaXX975A==
-X-Google-Smtp-Source: AGHT+IH4D0mZbxlaseFMClzF2hXzRJT5BLHOoE/CoOTOom7BwtP4i5xwc5qsAdaWuU9puxhR5uX/Iw==
-X-Received: by 2002:a17:90a:e989:b0:2cf:ce3a:4fef with SMTP id 98e67ed59e1d1-2cfce3a523emr3279752a91.19.1722387957042;
-        Tue, 30 Jul 2024 18:05:57 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc46b93fsm52258a91.34.2024.07.30.18.05.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 18:05:56 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 30 Jul 2024 15:05:55 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Qais Yousef <qyousef@layalina.io>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
-	void@manifault.com, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com, mingo@redhat.com, peterz@infradead.org,
-	David Vernet <dvernet@meta.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 2/2] sched_ext: Add cpuperf support
-Message-ID: <ZqmN8w8YofaNY79C@slm.duckdns.org>
-References: <20240619031250.2936087-1-tj@kernel.org>
- <20240619031250.2936087-3-tj@kernel.org>
- <20240724234527.6m43t36puktdwn2g@airbuntu>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CB5748F;
+	Wed, 31 Jul 2024 01:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.145.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722388204; cv=fail; b=BsNIAwdDWOtNaTizVKwXaCUjVAaSpbN2/aDrVdJl99VgBgPm2kBLHKnAO0x0cOnsOq38YA5YMm/xvuFjYFouif0A5gjigSejQOQuRSwoCZv3EtJYfVioa1AFzvEr7rJW1Pzi4FnPKxMD2bHRQxY1b4RXB6IOGb3mR7iErjq/2tg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722388204; c=relaxed/simple;
+	bh=6KzYBqpYK9CkigmOJ/0YNbiI5DH+ecOJK9ZtLz/V9SQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=pGJpH2HDhoCpLzZMtVDvtb/puCi8uRu80KMm3fc82E7EvcF8yP/IF2pImlSEs4DBMQlkbbt5A1TkrogkDwgP9eI0C2g7sUPFxKjaCe6pF4gflCB9aNtF5muYL71wgLuWA1O8yNeOGtpWz32slNi4C4TTsu4mZu1+aehHzdQj33A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=TqPc41y3; arc=fail smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UNqkw6003717;
+	Tue, 30 Jul 2024 18:10:00 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from
+	:to:cc:subject:date:message-id:references:in-reply-to
+	:content-type:content-id:content-transfer-encoding:mime-version;
+	 s=s2048-2021-q4; bh=6KzYBqpYK9CkigmOJ/0YNbiI5DH+ecOJK9ZtLz/V9SQ
+	=; b=TqPc41y35i33Z4j/FMI4zm9g29YG/tlsNDsh78r+ZDF8RNs7R7jrU9CRlaj
+	P4u1LL1wTyYSEFsw791j9OJEykwN8CWFGsSOHu+2pqbHik4bmWBNP2G/Gn0jlPPZ
+	GlK2XQa6JBX+SSd725ADYUCbWRpt5lLO2uvTAD3kgo3pc84VRSU1OmGTTLXUWiDt
+	nZD5aJnERKtSNMaFFnjgzOvyb/ZwUDkikNpFR/uoEU4zUDBF6zvXoMjGP0/FZpa3
+	jcazcD4sIZ1PNcmo786DHb81Q8/Z7ic5UPfIFMx/zRLRYOMcdjqvaUGWi38Pygsy
+	oXtfBMLPHKr6pr6ZZIaUJBMNG3w==
+Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04lp2040.outbound.protection.outlook.com [104.47.73.40])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 40qa6g0c66-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jul 2024 18:10:00 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WZ/uuaQm/cCrYAe+GkN3AHKu4v4QeTuyl1VEEQyeB07QiEiNLwFZXtENoNoAUKEcLZLlaQ9a2Grh6lpbS8GL94Ji9g7+/aaI/UWs7X3vFr5JWVDL852IbBFAdOsxd55Bwksq2yYC14H/2umW1+xEW2NX3Swfmnf2dPscWlRnSxJjWlnp6smLVOlKG2QzUXnOInxT71wWA4Squ23UwQKLsJDzbYakNPmt/a12ZjGbOilVsH/zuIL9TMf74YIB8wHea/e9Mdn9x4e51gXC8AgQ7Ny6ZY0wieQEeocowH2D6NUCDOKZ9Qnnb3dxwu7V5byCZc2CrwlAj3huB/KlbKOn/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6KzYBqpYK9CkigmOJ/0YNbiI5DH+ecOJK9ZtLz/V9SQ=;
+ b=yauBgwAl07ZlKeIv5x3iV2vz5/EefXH+8kXfSUmejwL0USRiCbkjOWZTnadhHZBBSyBpVzffy45gj6C/N8ktfsoxjggMNPO4JRdwoz1b99UBk3JplY0LDk2vyMqqacAcNXpGmyvUy25Knja6a/qcqY+ZiNF+g6CFzpUUTHGuJf5+99JJXeHBxNX1E8l/iHIZO6muebazHQV1zXY0QUmvLAFJ461+O8I4YcFu/9bkaQre61CXnQC2sXZ4Ciboo80vDgeyKTTzNseUuZGPh49yZIvYGQv2kU5LzvTjquas+MMoImdLcklmF1R7Sep/Ot7fbj8t7LsBbTBSUsLDVX93oA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
+ dkim=pass header.d=meta.com; arc=none
+Received: from SA1PR15MB5109.namprd15.prod.outlook.com (2603:10b6:806:1dc::10)
+ by PH0PR15MB4230.namprd15.prod.outlook.com (2603:10b6:510:2b::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Wed, 31 Jul
+ 2024 01:09:57 +0000
+Received: from SA1PR15MB5109.namprd15.prod.outlook.com
+ ([fe80::662b:d7bd:ab1b:2610]) by SA1PR15MB5109.namprd15.prod.outlook.com
+ ([fe80::662b:d7bd:ab1b:2610%4]) with mapi id 15.20.7828.016; Wed, 31 Jul 2024
+ 01:09:56 +0000
+From: Song Liu <songliubraving@meta.com>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+CC: Song Liu <song@kernel.org>,
+        "live-patching@vger.kernel.org"
+	<live-patching@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        "jikos@kernel.org" <jikos@kernel.org>,
+        "mbenes@suse.cz" <mbenes@suse.cz>,
+        "pmladek@suse.com" <pmladek@suse.com>,
+        "joe.lawrence@redhat.com" <joe.lawrence@redhat.com>,
+        "nathan@kernel.org"
+	<nathan@kernel.org>,
+        "morbo@google.com" <morbo@google.com>,
+        "justinstitt@google.com" <justinstitt@google.com>,
+        "mcgrof@kernel.org"
+	<mcgrof@kernel.org>,
+        "thunder.leizhen@huawei.com"
+	<thunder.leizhen@huawei.com>,
+        "kees@kernel.org" <kees@kernel.org>,
+        Kernel
+ Team <kernel-team@meta.com>,
+        "mmaurer@google.com" <mmaurer@google.com>,
+        "samitolvanen@google.com" <samitolvanen@google.com>,
+        "rostedt@goodmis.org"
+	<rostedt@goodmis.org>
+Subject: Re: [PATCH 3/3] tracing/kprobes: Use APIs that matches symbols with
+ .llvm.<hash> suffix
+Thread-Topic: [PATCH 3/3] tracing/kprobes: Use APIs that matches symbols with
+ .llvm.<hash> suffix
+Thread-Index: AQHa4hsg5jHMjp8ZBkauqUpgUlR4erIPPcGAgADKswA=
+Date: Wed, 31 Jul 2024 01:09:56 +0000
+Message-ID: <CBD9DDC5-B679-44A3-B225-C60F14DC762C@fb.com>
+References: <20240730005433.3559731-1-song@kernel.org>
+ <20240730005433.3559731-4-song@kernel.org>
+ <20240730220417.33bd5f0d75c3742c413136d1@kernel.org>
+In-Reply-To: <20240730220417.33bd5f0d75c3742c413136d1@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-mailer: Apple Mail (2.3774.600.62)
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR15MB5109:EE_|PH0PR15MB4230:EE_
+x-ms-office365-filtering-correlation-id: aa1036b8-73f2-48d5-af55-08dcb0fd7e21
+x-fb-source: Internal
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?UHRHZThZUUE0NmpPTEhVRTY1azltQU1JUXdjZmwwWmVPZXZBS0w3MkxKek9h?=
+ =?utf-8?B?Vkp4aHFmVVhxdFU3U1hWem40Z0FpVGNRYm10RU1RV0llT3BENWFmNDBoeWo5?=
+ =?utf-8?B?NXR1YUhsOGp6eDdaRjB3dVdEb29TVXI4SGtPMVNSeUFPNHR6azBpVEpSWExi?=
+ =?utf-8?B?dzM3SE1oTmJkUjdlYUEvNXhpcHV4WXdRSkNMWXRvSkRVUzhkYkErNCtZUkMw?=
+ =?utf-8?B?aU1Qc3NtOGYzS2xsU2ppQ0lOQW1qU2pzNWFleExrKzYxVzIwcGZXazV1TkZ4?=
+ =?utf-8?B?RzRvaU9VTnprQldiVzJLQjIzdVhUZFRTeDZ1SlBCUHNKYmRFNm9ZN0UxNXVD?=
+ =?utf-8?B?eGxzS1FiVjlHOG4zZldkQ3F6a1NzZ01kQ2ZacXZTQzBKRUpqeEJCQ1NKeG9p?=
+ =?utf-8?B?bHZEMHhWTGgrZGljdG9pY3ZCUW1pemQvaDMwbzVpZ3ArS2NMdjh2b0o1bXBi?=
+ =?utf-8?B?VWhYL2MvdGdqM3IwTHpObFRhNUJRY2pMQXJsZ3JrTHVqNis4SHZRVmJVeUpx?=
+ =?utf-8?B?akFxLys1R1hpVVd5NFBBa254aFNHUlhwME5MSFlaRlQ1akJSaFdZeTNIZ2Ir?=
+ =?utf-8?B?QVBzYkVFNHp0U0pSQjdJUm1pNnlkS29ZdCtTMVFSaWNJZlNSN2d2aDcrcHZh?=
+ =?utf-8?B?NWtrYXVnbUpMZTdzWFBkbnlVdHlDWlY0Q3ZRTEs4OEdaZy9LRjJaZWllUlgw?=
+ =?utf-8?B?akhXVjArSDZjY3Z1L0l5RVFnWER3cWhNNjRvUE1EKy9CTGtVM1ptNFRXUU9m?=
+ =?utf-8?B?emcyY0t5VEZKSDljY0NZZkpCSmpxc0FSTjNQQ0o4SnZnUkExZDREd2MrTjBs?=
+ =?utf-8?B?d01YdmRxMGgwbVlTaEsxOUJLam12YlBQOXFxR0Y3d0g2R2ZSd005bnpTYU9I?=
+ =?utf-8?B?Wit1ZlU5Wi8zUUQxdkVZQ3lYRUJFa3lvTVFNUm9FMndqemxURDhrbEtUUUxI?=
+ =?utf-8?B?b3d2MUxaK216NFFnMXZ3YnQydGh3b3dRRHQ2dWxIcFhkem56Z3hYZVlyVUV1?=
+ =?utf-8?B?azFHdGdKdTlvSXBTcGtqUTRuZUwvbDZxS3F1MnRReFJHYmdZWW03UWlRZlhX?=
+ =?utf-8?B?M0x2UWt6dDh3MVh1YzFpUzEwKzFqZTdhT3hITWdPZ28zR0h0SEVnVDRyYm1T?=
+ =?utf-8?B?TlZ4Q2R1TVBBQzJGYW1NcTlhUkpHKy9jdEk2WFBGYW4wbExmTThkOTFxYThI?=
+ =?utf-8?B?d1BaenZETXJXb05zeUhwRlNpYXI3UzdYMUZsVURqekg0UEt3OTFDcFVoRXB3?=
+ =?utf-8?B?QUxwQjNDVEd5VU03eTZsRFZzM0txTWdaMnF2ZVdVS1dkM1JnOHdYeWx0bHZ5?=
+ =?utf-8?B?UldTUXdXWThLajBHV0svak9WZ2ZhREVyc21Eak16dG9pSmowRjAwVVcvRUt4?=
+ =?utf-8?B?Qmt4czJyQ2FHbEt4L3Z3aW53cS9oa2ZtOGVJeUNub0JnaTNBRndVamZ3RXRH?=
+ =?utf-8?B?TVNYeUM4MTBqOHZnWDBCUUhyWFZQdE83SGVzUktjL1RJWnpabUxjY211N283?=
+ =?utf-8?B?QUFKMFNIVDJ5VkRueVJEVmlMRkFJK0FQbURlSjVZdi9kSjE5dlNOOVVtRVYr?=
+ =?utf-8?B?TmpRUTNiN1BLc0FjUktOR21nN040V2RuTlhCNUt0cElCVGdTZTF1L0ZQdStu?=
+ =?utf-8?B?bzlLaU0zeGc3T09QN0JUd2xrNDhyRW10ZGpGdndkanBGVkpmTTNCYzBNamVJ?=
+ =?utf-8?B?b0J2c2gvLzBPR0lwMUl1VkZYK2lTcUpOU0RuK3lGOTdTM0QyWUNaMDJnK3Rv?=
+ =?utf-8?B?cjRRRFlSZ3lVL2NvNTczNWFybnV3NElHY1ZzaXlZQmY2Yzg4enZHZmNWTWk1?=
+ =?utf-8?B?aURhSXpLSjgvaW43UGlEMFd0WXoxUkJjOHN6b3J4eWRXYmV0S2ZHTi8wVkZC?=
+ =?utf-8?B?OTU0WGtaTExWa2xWajFjUllpMUNRSEswS1FUQXFEcU5pYXc9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5109.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?TXduc3ROVUdVZkhyOFdpeXU5VncyLzBiZXp4d1N3eEREVUxIdjFwemRtN05L?=
+ =?utf-8?B?bWxqOHIxWm1SVmlRK2Nvb2ZxS3pZdW14cG1hd2NwR2N0NTdZOEEvWS8zNTM0?=
+ =?utf-8?B?RnpBaThOK3ROMzhGbXA0WlljMHNGdVdiMUI1aWFjRFhpUEF5NnRidU5nMmVN?=
+ =?utf-8?B?clAyTy9sZ1FrcTFKVVJsa3J2TEJ5dVhkcXdXNjJuck9keTQ0TG5UeVRFY29J?=
+ =?utf-8?B?SEwxcERqb3A0RE1mSFl1cmFNd1BWNkdZMVBiTEIwdG00TytlYnV3VGdDUnZ2?=
+ =?utf-8?B?RmVJSDlxL0ZFWFlZRURQaWdFWDZ4UXNIS1VDWktUbWhmYmd4YW5EKzRBT0ho?=
+ =?utf-8?B?K0cxakhoVWtZSTY3RUlYZzB3Ym5YenR2R3B1MGYvSURkZlBoc3cwQkJqdmg2?=
+ =?utf-8?B?emlTd3djYzNZazc2S0w4clJCS1FOWEdYRXEvemozVFluZCs2Q1pUK1BFQVRI?=
+ =?utf-8?B?eFZxWjU2UlZnNGx3UVc1d2dSTFFvTVc3MjY2ZEtHU2RmSnZweHhtQ3BueE93?=
+ =?utf-8?B?azBhTndsNExEMUFXMmxNcjluNnJRU2xvd0xhZ0VkSjB6NTRDeGJXcGI3cndw?=
+ =?utf-8?B?TmdPL0JDNERsdW1iZmhxRTUrb3ozK1dYWmdVbEpGZFpER2diOFZuNkVMZW1P?=
+ =?utf-8?B?a3AwRzk4L2FUTXM1TFN3UUZ2eXl3SWhrMVRhTCtrUVpCV3lNZzNGZUErelFJ?=
+ =?utf-8?B?SFJMYkxHNHFVb1VNeWN5Mk42REIrQWJlL3JCZ2ZPQXYxQU9tMmgvOWpjT09G?=
+ =?utf-8?B?MGVscnZiODBDbXFhTlA0N2x3cGNCTDlkeGJDVG5sVVROeVFsdS9pMXBmT0Vo?=
+ =?utf-8?B?MjRzK1VwZmlUTXRKT0NjVUFkNHk3UEtyTkxMcXcxc1NlcW5mT3duRTlQZ0JC?=
+ =?utf-8?B?S1QxM3VwT1RNOVdWejFDUjI1UHA3b1FrN2x6cUxNbHlpZTNXRG1ETzVwUk5K?=
+ =?utf-8?B?TkhWWnF4UkFudkNQQURwZWlyaHk2WTRIWVpMeWZaYmRSN1JpM0krTEJ5WUQx?=
+ =?utf-8?B?djZHTzdkS3VZWVh4VEt1MWRIRlVLSWhrVFFFQ3k3T2VWcE5oYTJGZnJkRitx?=
+ =?utf-8?B?TVF2Zm5MMXkzTVZTa1haU2s2ek90YVQwblI2NW9oOGt6Z28zdkVpY0QxSHk1?=
+ =?utf-8?B?Q1BtS3UyUXA4Q1VyQ2xYWllXd3poOEFQQzFoZUtZL0dXWWR2V2RSOG5Lb0Fl?=
+ =?utf-8?B?NmZrWDI3dXRERnRNM3ZKSnhVRGhsTlNhajlBdmF1SkkwWHZLd2ZUMkFBbFJI?=
+ =?utf-8?B?NTVCREVFSzVhNkpwQWx6TkpuODQxTkpnUjc4bGFyWXZCektSZWhVOXdLWkR6?=
+ =?utf-8?B?UDA0RCt5TlByRHF1YUVtanQyWVZ6TGF1RWtQQkNkbE1rNWRLanVGZThONE11?=
+ =?utf-8?B?TkJvVjVhZnhLYlhRbDZvQk5jTnZuVE5IdlNFbTJ4dlR5VERpbVFqMnRmN1M5?=
+ =?utf-8?B?bitwVGtiYytCNUxlckJFcDdmbUg4alRzSU91cGNuRmxsTlY2ZE9sanRjVGVY?=
+ =?utf-8?B?WGIzNTZGNmE1YWlNTEY1VVJDdHN2bnIzeTJ6U3JFMFNFalprNkVVUlBVb3Bw?=
+ =?utf-8?B?Z05IMTVuWnhma2JwMEJlcXBuY2xFRWF0cjVkT0ZDRHlScHpvblRzZ2dxNytR?=
+ =?utf-8?B?M1NmcFg4b2tnRVhUNHFvNkh3VnpZMUt3RlAzR1NPaUtWcWVDQ01OYTZjY25q?=
+ =?utf-8?B?NmE5eEdGdjBORUx2SWRrVFUyVjJ5TkUzY292NkhYVFFVaEsrYmdRcVcyNERL?=
+ =?utf-8?B?TFhCVU5aL285bm5xT3ovQmlSQ1d4aGV1b3ZlY0p4djZIaXVGVDZkdFlXRWd4?=
+ =?utf-8?B?Ynd1aXp4OC9aY09ILzlQQXVrSkNGMzVNNTg5YWJpRUxHRit0UklSUDhtTUE0?=
+ =?utf-8?B?N2d1STVTT2ZrcGFrMVpXSm5JWm9jbktibGRab2ZHcCtMVkJlSVROVWJUdlZj?=
+ =?utf-8?B?YWd1bVZLTk93WXZJRGx6WmhpVEZiK3k5YlR4UnFDcFlUbHQwSXRJMmhLazRZ?=
+ =?utf-8?B?NVA1M2dveXpyb01LNGQ3aWQrekRxY1J4blBFaUhKMmpmcjliNzZ1Q3pWNnFF?=
+ =?utf-8?B?dzN5YUtJM2p0V3A1UTFFV0RHMUY0SSttMmZWYzJrd1ZlTnh1c0MxWElqOCtp?=
+ =?utf-8?B?bXRGNnVYWFpYNVYxWHlOL1lmVEZyQmtxbzJLOWNQNTk3ellIZ1BSNngwOCs0?=
+ =?utf-8?B?OEE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FBA560F123C2994DA63D71F8D859D1E6@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240724234527.6m43t36puktdwn2g@airbuntu>
+X-OriginatorOrg: meta.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5109.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa1036b8-73f2-48d5-af55-08dcb0fd7e21
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2024 01:09:56.8688
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: SWClUuGDWsP2zBgyhwKGXxDKUsm9EZ6uW1d5BdLy8KuyemFLWuZy/pzcbmRYDBbdT3uVnVCH7nkm2V4kgZNS2Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR15MB4230
+X-Proofpoint-ORIG-GUID: hgKqkZJKpq31MZeSomFp8hjwNNqeVt7H
+X-Proofpoint-GUID: hgKqkZJKpq31MZeSomFp8hjwNNqeVt7H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-30_21,2024-07-30_01,2024-05-17_01
 
-Hello, Qais.
-
-On Thu, Jul 25, 2024 at 12:45:27AM +0100, Qais Yousef wrote:
-> On 06/18/24 17:12, Tejun Heo wrote:
-> > sched_ext currently does not integrate with schedutil. When schedutil is the
-> > governor, frequencies are left unregulated and usually get stuck close to
-> > the highest performance level from running RT tasks.
-> 
-> Have you tried to investigate why is that? By default RT run at max frequency.
-> Only way to prevent them from doing that is by using uclamp
-> 
-> 	https://kernel.org/doc/html/latest/scheduler/sched-util-clamp.html#sched-util-clamp-min-rt-default
-> 
-> If that's not the cause, then it's likely something else is broken.
-
-Nothing is necessarily broken. SCX just wasn't providing any signal to
-schedutil before this patch, so schedutil ends up just going by with the
-occasional signals from RT.
-
-...
-> What is exactly the problem you're seeing? You shouldn't need to set
-> performance directly. Are you trying to fix a problem, or add a new feature?
-
-I'm having a hard time following the question. When active, the BPF
-scheduler is the only one who can tell how much each CPU is being used, and
-the straightforward to integrate with schedutil is by indicating what the
-current CPU utilization level is which is the signal that schedutil takes
-from each scheduler class.
-
-> > This gives direct control over CPU performance setting to the BPF scheduler.
-> 
-> Why would we need to do that?  schedutil is supposed to operate in utilization
-
-Because nobody else knows? No one *can* know. Schedutil is driven by the
-utilization signal from the scheduler. Here, the scheduler is implemented in
-BPF. Nothing else knows how much workload each CPU is going to get. Note
-that the kernel side does not have any meaningful information re. task <->
-CPU relationship. That can change on every dispatch. Only the BPF scheduler
-itself knows how the CPUs are going to be used.
-
-> signal. Overriding it with custom unknown changes makes it all random governor
-> based on what's current bpf sched_ext is loaded? This make bug reports and
-> debugging problems a lot harder.
-
-If schedutil is misbehaving while an SCX scheduler is loaded, it's the BPF
-scheduler's fault. There isn't much else to it.
-
-> I do hope by the way that loading external scheduler does cause the kernel to
-> be tainted. With these random changes, it's hard to know if it is a problem in
-> the kernel or with external out of tree entity. Out of tree modules taint the
-> kernel, so should loading sched_ext.
-
-Out of tree modules can cause corruptions which can have lasting impacts on
-the system even after the module is unloaded. That's why we keep the
-persistent taint flags - to remember that the current misbehavior has a
-reasonable chance of being impacted by what happened to the system
-beforehand. Kernel bugs aside, SCX schedulers shouldn't leave persistent
-impacts on the system. In those cases, we usually mark the dumps which SCX
-already does.
-
-> It should not cause spurious reports, nor prevent us from changing the code
-> without worrying about breaking out of tree code.
-
-Oh yeah, we can and will make compatibility breaking changes. Not
-willy-nilly, hopefully.
-
-...
-> > +	/*
-> > +	 * The heuristics in this function is for the fair class. For SCX, the
-> > +	 * performance target comes directly from the BPF scheduler. Let's just
-> > +	 * follow it.
-> > +	 */
-> > +	if (scx_switched_all())
-> > +		return false;
-> 
-> Why do you need to totally override? What problems did you find in current util
-> value and what have you done to try to fix it first rather than override it
-> completely?
-
-Because it's way cleaner this way. Otherwise, we need to keep calling into
-update_blocked_averages() so that the fair class's util metrics can decay
-(it often doesn't decay completely due to math inaccuracies but Vincent was
-looking at it). When switched_all(), the fair class is not used at all and
-keeping calling it to decay the utility metrics to zero seems kinda silly.
-
-...
-> > +/**
-> > + * scx_bpf_cpuperf_cap - Query the maximum relative capacity of a CPU
-> > + * @cpu: CPU of interest
-> > + *
-> > + * Return the maximum relative capacity of @cpu in relation to the most
-> > + * performant CPU in the system. The return value is in the range [1,
-> > + * %SCX_CPUPERF_ONE]. See scx_bpf_cpuperf_cur().
-> > + */
-> > +__bpf_kfunc u32 scx_bpf_cpuperf_cap(s32 cpu)
-> > +{
-> > +	if (ops_cpu_valid(cpu, NULL))
-> > +		return arch_scale_cpu_capacity(cpu);
-> > +	else
-> > +		return SCX_CPUPERF_ONE;
-> > +}
-> 
-> Hmm. This is tricky. It looks fine, but I worry about changing how we want to
-> handle capacities in the future and then being tied down forever with out of
-> tree sched_ext not being able to load.
-> 
-> How are we going to protect against such potential changes? Just make it a NOP?
-
-So, if it's a necessary change, we just break the API and update the
-out-of-tree schedulers accordingly. With BPF's CO-RE and supporting
-features, we can handle quite a bit of backward compatibility - ie. it's
-cumbersome but usually possible to provide BPF-side helpers that allow
-updated BPF schedulers to be loaded in both old and new kernels, so it
-usually isn't *that* painful.
-
-> A bit hypothetical but so far these are considered internal scheduler details
-> that could change anytime with no consequence. With this attaching to this info
-> changing them will become a lot harder as there's external dependencies that
-> will fail to load or work properly. And what is the regression rule in this
-> case?
-
-This is not different from any other BPF hooks and has been discussed many
-times. As I wrote before, we don't want to change for no reason but we
-definitely can change things if necessary.
-
-> You should make all functions return an error to future proof them against
-> suddenly disappearing.
-
-Really, no need to be that draconian.
-
-...
-> > +__bpf_kfunc void scx_bpf_cpuperf_set(u32 cpu, u32 perf)
-> > +{
-> > +	if (unlikely(perf > SCX_CPUPERF_ONE)) {
-> > +		scx_ops_error("Invalid cpuperf target %u for CPU %d", perf, cpu);
-> > +		return;
-> > +	}
-> > +
-> > +	if (ops_cpu_valid(cpu, NULL)) {
-> > +		struct rq *rq = cpu_rq(cpu);
-> > +
-> > +		rq->scx.cpuperf_target = perf;
-> > +
-> > +		rcu_read_lock_sched_notrace();
-> > +		cpufreq_update_util(cpu_rq(cpu), 0);
-> > +		rcu_read_unlock_sched_notrace();
-> > +	}
-> > +}
-> 
-> Is the problem that you break how util signal works in sched_ext? Or you want
-> the fine control? We expect user application to use uclamp to set their perf
-> requirement. And sched_ext should not break util signal, no? If it does and
-> there's a good reason for it, then it is not compatible with schedutil, as the
-> name indicates it operates on util signal as defined in PELT.
-> 
-> You can always use min_freq/max_freq in sysfs to force min and max frequencies
-> without hacking the governor. I don't advise it though and I'd recommend trying
-> to be compatible with schedutil as-is rather than modify it. Consistency is
-> a key.
-
-It's not hacking the governor and uclamp should work the same way on top.
-The BPF scheduler is the only thing that can tell how and how much a given
-CPU is going to be used. There is no way for the kernel to project per-CPU
-utilization without asking the BPF scheduler.
-
-Thanks.
-
--- 
-tejun
+SGkgTWFzYW1pLA0KDQo+IE9uIEp1bCAzMCwgMjAyNCwgYXQgNjowNOKAr0FNLCBNYXNhbWkgSGly
+YW1hdHN1IDxtaGlyYW1hdEBrZXJuZWwub3JnPiB3cm90ZToNCj4gDQo+IE9uIE1vbiwgMjkgSnVs
+IDIwMjQgMTc6NTQ6MzMgLTA3MDANCj4gU29uZyBMaXUgPHNvbmdAa2VybmVsLm9yZz4gd3JvdGU6
+DQo+IA0KPj4gVXNlIHRoZSBuZXcga2FsbHN5bXMgQVBJcyB0aGF0IG1hdGNoZXMgc3ltYm9scyBu
+YW1lIHdpdGggLmxsdm0uPGhhc2g+DQo+PiBzdWZmaXguIFRoaXMgYWxsb3dzIHVzZXJzcGFjZSB0
+b29scyB0byBnZXQga3Byb2JlcyBvbiB0aGUgZXhwZWN0ZWQNCj4+IGZ1bmN0aW9uIG5hbWUsIHdo
+aWxlIHRoZSBhY3R1YWwgc3ltYm9sIGhhcyBhIC5sbHZtLjxoYXNoPiBzdWZmaXguDQo+PiANCj4g
+DQo+IF9rcHJvYmVfYWRkckBrZXJuZWwva3Byb2Jlcy5jIG1heSBhbHNvIGZhaWwgd2l0aCB0aGlz
+IGNoYW5nZS4NCj4gDQoNClRoYW5rcyBmb3IgY2F0Y2hpbmcgdGhpcyEgSSB3aWxsIGZpeCB0aGlz
+IGluIHRoZSBuZXh0IHZlcnNpb24uIA0KDQpTb25nDQoNCg0KDQoNCg==
 
