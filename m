@@ -1,183 +1,326 @@
-Return-Path: <linux-kernel+bounces-268749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F8469428D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:08:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E729428DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A24FB22500
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:08:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD7F81F241AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA541A8BE3;
-	Wed, 31 Jul 2024 08:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7F81A7F6C;
+	Wed, 31 Jul 2024 08:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="t/RxFkd0"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XD5VOvBF"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4531A7F83
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262B7450E2
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722413259; cv=none; b=tUFRevHObpDIkkF0pN44DrC8yaGifiyToeQCwaI7Uju3Nts5SxstR2QL+fIIHI5/dKSiOza3AKdTl8/dBg/dCA3UNS7hL7/SZhET3Wjks3yX9JS/gYNUYOelTDBKzdV9mWZ+kSz9gRnSPBYVWPNZ8loIVh3AfWfIKpvf2vYzGRk=
+	t=1722413357; cv=none; b=Cje1qiqgfqgmRrGy+BSJL45H/j2ttQHyJDh/9S8Fpn/a4pMVdnlXIaeO4n8XZn0ElW9SuK+eA7RQ3dFdeBeLi2AaYUZ2pnFhJ1VqCSOFxSF74jwjbjT12JOQa15cvubt36h7DjJN98Mn5OdGoMiGKFk+m8NoLnBWpkm0W0d2rpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722413259; c=relaxed/simple;
-	bh=sJSne7FvUaCGqRE++yqsmdYIUgUzrbYV/gqTygAMAkY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KS0Loq4N1mOrRakplcx7K7wZuIA+MLJuJPIUS0nkF5h69zR6L2Alciu3AxBvNexppZmTVa8wmxhp+rbHDKra0ILl+UT4idNC7fw02LVIOA9UN5bbOpJ0KXRWVkU/tArs/8dXlsCMZI4z/VPHrZSu9f01aDUybtpSsHQHx91CFaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=t/RxFkd0; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1722413248; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=DSxArOXpMYYo5QvLWFHxWEb/Rcp06yq06zBpX4yplY0=;
-	b=t/RxFkd03KWda9R0qUqgPt4yADXslPTVVdoZOFPnK0cTaZbbLP34T5qevcybkov1b7wCYAvXMfgpMUkFfy6aeJ5/hrzgasw/R8bLq5Va0LfveAXUYeNht4uLC0vJTAxjAFuxDLMhMa9DFrsLzLojNyM+KFwrgQCg0jgqxliuY44=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R741e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=hongzhen@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0WBikPVL_1722413247;
-Received: from localhost(mailfrom:hongzhen@linux.alibaba.com fp:SMTPD_---0WBikPVL_1722413247)
-          by smtp.aliyun-inc.com;
-          Wed, 31 Jul 2024 16:07:28 +0800
-From: Hongzhen Luo <hongzhen@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org,
-	lihongbo22@huawei.com
-Cc: linux-kernel@vger.kernel.org,
-	Hongzhen Luo <hongzhen@linux.alibaba.com>
-Subject: [PATCH RFC v2 2/2] erofs: apply the page cache share feature
-Date: Wed, 31 Jul 2024 16:07:04 +0800
-Message-ID: <20240731080704.678259-3-hongzhen@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240731080704.678259-1-hongzhen@linux.alibaba.com>
-References: <20240731080704.678259-1-hongzhen@linux.alibaba.com>
+	s=arc-20240116; t=1722413357; c=relaxed/simple;
+	bh=aAsGuhgsJ+RcZGg7s9FG2ZamtSJAOlPEpsbp/fvZJb4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=X0dehGallxcMEjPJpesjr1QLgWjp3xeCFlW6+rn562Aa9RxKi3LjpSd/PM1swHXo2cPS9pdWnv9qdoA3vHjC5YNHzWu97nFnxDQdDE6sQKDw9E1n99zVLEPD1D9NewLZOly3SOc4eIrsTRK3tV6LQDHRvT+a4SHVtu7Gn3wgUBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XD5VOvBF; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240731080906euoutp0214f93205e16ffda6057d63293444e1f1~nPdAZ7O2k2530825308euoutp02j
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:09:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240731080906euoutp0214f93205e16ffda6057d63293444e1f1~nPdAZ7O2k2530825308euoutp02j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1722413346;
+	bh=psYRFhcGmf3wASUpnlXo7MO1TNPFdUhRoiHoQgtDZCo=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=XD5VOvBFNBL/+QW1U7DgwZsv3VIUPMEpb0aTllIBlBevNwTO4HbRZxmqSxI5i0vX1
+	 IKUrMznjxNr0Ojj11jPvnp9bommxASRljjhCUejVCiX69hNS1LZMChe9g9bvSPkamN
+	 3G5Bi5rcMDbaXBo40gKrNXMO7EMMVsjG6eTcdfb4=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240731080906eucas1p2fb77f38a7fc88b0c014b3a28cd07f1ca~nPdAH029l3133931339eucas1p22;
+	Wed, 31 Jul 2024 08:09:06 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 06.A3.09620.121F9A66; Wed, 31
+	Jul 2024 09:09:06 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240731080905eucas1p24352cabf1a359cd5839430d8ad253628~nPc-uQ8kC2025620256eucas1p2n;
+	Wed, 31 Jul 2024 08:09:05 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240731080905eusmtrp29d35ab5ac72a39255cb24cc2958d0918~nPc-tbGmS1490014900eusmtrp2v;
+	Wed, 31 Jul 2024 08:09:05 +0000 (GMT)
+X-AuditID: cbfec7f5-d1bff70000002594-95-66a9f1214d25
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 44.03.08810.121F9A66; Wed, 31
+	Jul 2024 09:09:05 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240731080904eusmtip25d4cabef9e369b48b58821ba815301df~nPc__Csa-3130431304eusmtip2s;
+	Wed, 31 Jul 2024 08:09:04 +0000 (GMT)
+Message-ID: <9ccb51d9-df7a-4c8d-8b52-d0485de32f4c@samsung.com>
+Date: Wed, 31 Jul 2024 10:09:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] mm: kmem: add lockdep assertion to obj_cgroup_memcg
+To: Muchun Song <muchun.song@linux.dev>
+Cc: Muchun Song <songmuchun@bytedance.com>, Johannes Weiner
+	<hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, Roman Gushchin
+	<roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, Andrew
+	Morton <akpm@linux-foundation.org>, vbabka@kernel.org,
+	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <B54AF0F4-6CE8-4791-868E-62C7704AB832@linux.dev>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNKsWRmVeSWpSXmKPExsWy7djP87pKH1emGZxfx2gxZ/0aNosby2ew
+	WKze5GtxedccNot7a/6zWrz+tozZYtnOhywWE9eIWjyfNZfJ4uD9c8wWHS/vszhwe/w7sYbN
+	4/Cb98wem1Z1snls+jSJ3ePEjN8sHgsbpjJ7fN4kF8AexWWTkpqTWZZapG+XwJXx/95vloKv
+	dhWbjpxga2BcZ9LFyMkhIWAicWD9QdYuRi4OIYEVjBKXLqxnhHC+MEp8mzwNyvkMlHnRxw7T
+	0vFlCjNEYjmjxOvPu9khnI+MEp9X72UCqeIVsJNYPOk+M4jNIqAq0XPxBxtEXFDi5MwnLCC2
+	qIC8xP1bM8CmCgt4Sxx7dRHMFhFQl7j29BnYUGaBq0wSOw8/A2tmFhCXuPVkPtgCNgFDia63
+	XWBxTgFbiYlzF7NA1MhLbH87B+w8CYFuTolNu74yQ9ztIvFizTE2CFtY4tXxLVD/yEj83wky
+	FKShnVFiwe/7UM4ERomG57cYIaqsJe6c+wXUzQG0QlNi/S59EFNCwFFi+glmCJNP4sZbQYgb
+	+CQmbZsOFeaV6GgTgpihJjHr+Dq4rQcvXGKewKg0CylYZiH5chaSb2YhrF3AyLKKUTy1tDg3
+	PbXYOC+1XK84Mbe4NC9dLzk/dxMjMH2d/nf86w7GFa8+6h1iZOJgPMQowcGsJMIrdHJlmhBv
+	SmJlVWpRfnxRaU5q8SFGaQ4WJXFe1RT5VCGB9MSS1OzU1ILUIpgsEwenVAOT5j5uhWg/H/Zs
+	C7bpUsEHr7zQ6jzV0pbUorno4lLdpWqb//6peWsXu2mi4JLZq27M9EgWS8zmy96/bsehdSb7
+	ZxppM4Xn9B7pYj+292rG829nn1ks9WWRqu0ykXmzpbfSacurN1Pmv7H5c4VZKO71opv3l0yx
+	uHbl/4WSruhs+X1qu3YVTfB11y94c/zCmbP7yjmK3GIct95TyripI/bN3ntSt/47p5I02yPW
+	33Ycks5KOK/ds+nK2yqp1QkTqs5oLGm+YJWZ+EtwWVT4pYCyQCE/Qe2GPSmJjLXF+4WXJ6T+
+	m9nAHbl69pwL3QXvephuv9+u2HL85rJPK6/zJN9iktscoBS97ewHrqDQldG8SizFGYmGWsxF
+	xYkAecgzQM4DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLIsWRmVeSWpSXmKPExsVy+t/xe7qKH1emGby/oWwxZ/0aNosby2ew
+	WKze5GtxedccNot7a/6zWrz+tozZYtnOhywWE9eIWjyfNZfJ4uD9c8wWHS/vszhwe/w7sYbN
+	4/Cb98wem1Z1snls+jSJ3ePEjN8sHgsbpjJ7fN4kF8AepWdTlF9akqqQkV9cYqsUbWhhpGdo
+	aaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJfx/95vloKvdhWbjpxga2BcZ9LFyMkhIWAi
+	0fFlCjOILSSwlFFiW5c7RFxG4uS0BlYIW1jiz7Uuti5GLqCa94wSc8++AGvgFbCTWDzpPpjN
+	IqAq0XPxBxtEXFDi5MwnLCC2qIC8xP1bM9hBbGEBb4ljry6C2SIC6hLXnj5jBxnKLHCdSeLk
+	+m/MEBt+MkpcuN4NtppZQFzi1pP5TCA2m4ChRNfbLrANnAK2EhPnLmaBqDGT6NraxQhhy0ts
+	fzuHeQKj0Cwkh8xCMmoWkpZZSFoWMLKsYhRJLS3OTc8tNtQrTswtLs1L10vOz93ECIzXbcd+
+	bt7BOO/VR71DjEwcjIcYJTiYlUR4hU6uTBPiTUmsrEotyo8vKs1JLT7EaAoMjYnMUqLJ+cCE
+	kVcSb2hmYGpoYmZpYGppZqwkzutZ0JEoJJCeWJKanZpakFoE08fEwSnVwLSbLUHIeqX9zrTo
+	wz/XXZ8/s2Nt+QSPXTqzy9135gQ/vbl+1pbykw/uXahZvVagfd0JhW17WNkP3mzxjd92sv5D
+	zo48sQmCiR7mZ9Yd1K1rL8gXe/8o4M0fwePBJx6YXwl0yrP03WYtyPjE6NWx87sY3z1/qCvj
+	ptKeVPDygHte6jvL+c6KUXcY438t+CB25c/rla3X1odF/Mtfo8t90lVlm+65noLwSaZpFlFx
+	XP+eP7c5tpktdmXyycg9rA/PdDAyMJWsuMjErV4yazZvq5608Fub6TMqTIRvxKtqOF0wYaw7
+	cepOyIJpeU3T9yv87DHm5f64v3J727qtFt6C7f/emt44MDngj9oELsZVN+2UWIozEg21mIuK
+	EwHUiaYXYAMAAA==
+X-CMS-MailID: 20240731080905eucas1p24352cabf1a359cd5839430d8ad253628
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240730185206eucas1p28b14a1d9802ce2703bd13edc75e1b55d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240730185206eucas1p28b14a1d9802ce2703bd13edc75e1b55d
+References: <20240725094330.72537-1-songmuchun@bytedance.com>
+	<CGME20240730185206eucas1p28b14a1d9802ce2703bd13edc75e1b55d@eucas1p2.samsung.com>
+	<3c4b978b-b1fe-42d2-b1a7-a58609433f3c@samsung.com>
+	<B54AF0F4-6CE8-4791-868E-62C7704AB832@linux.dev>
 
-This modifies relevant functions to apply the page cache
-share feature.
+On 31.07.2024 09:02, Muchun Song wrote:
+>> On Jul 31, 2024, at 02:52, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>>
+>> On 25.07.2024 11:43, Muchun Song wrote:
+>>> The obj_cgroup_memcg() is supposed to safe to prevent the returned
+>>> memory cgroup from being freed only when the caller is holding the
+>>> rcu read lock or objcg_lock or cgroup_mutex. It is very easy to
+>>> ignore thoes conditions when users call some upper APIs which call
+>>> obj_cgroup_memcg() internally like mem_cgroup_from_slab_obj() (See
+>>> the link below). So it is better to add lockdep assertion to
+>>> obj_cgroup_memcg() to find those issues ASAP.
+>>>
+>>> Because there is no user of obj_cgroup_memcg() holding objcg_lock
+>>> to make the returned memory cgroup safe, do not add objcg_lock
+>>> assertion (We should export objcg_lock if we really want to do).
+>>> Additionally, this is some internal implementation detail of memcg
+>>> and should not be accessible outside memcg code.
+>>>
+>>> Some users like __mem_cgroup_uncharge() do not care the lifetime
+>>> of the returned memory cgroup, which just want to know if the
+>>> folio is charged to a memory cgroup, therefore, they do not need
+>>> to hold the needed locks. In which case, introduce a new helper
+>>> folio_memcg_charged() to do this. Compare it to folio_memcg(), it
+>>> could eliminate a memory access of objcg->memcg for kmem, actually,
+>>> a really small gain.
+>>>
+>>> Link: https://lore.kernel.org/all/20240718083607.42068-1-songmuchun@bytedance.com/
+>>> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+>> This patch landed in today's linux-next as commit 230b2f1f31b9 ("mm:
+>> kmem: add lockdep assertion to obj_cgroup_memcg"). I my tests I found
+>> that it triggers the following warning on Debian bookworm/sid system
+>> image running under QEMU RISCV64:
+> Thanks for your report.
+>
+> I'd like to say excellent since it indeed indicates this patch works
+> well. Your report is actually a bug that I fixed it in [1] but not
+> related to this patch.
+>
+> [1] https://lore.kernel.org/all/20240718083607.42068-1-songmuchun@bytedance.com/
 
-Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
----
-v2: Make adjustments based on the latest implementation.
-v1: https://lore.kernel.org/all/20240722065355.1396365-5-hongzhen@linux.alibaba.com/
----
- fs/erofs/inode.c | 23 +++++++++++++++++++++++
- fs/erofs/super.c | 23 +++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
+Confirmed. Applying [1] on top of next-20240730 fixes this issue without 
+reverting $subject.
 
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index 5f6439a63af7..9f1e7332cff9 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -5,6 +5,7 @@
-  * Copyright (C) 2021, Alibaba Cloud
-  */
- #include "xattr.h"
-+#include "pagecache_share.h"
- 
- #include <trace/events/erofs.h>
- 
-@@ -229,10 +230,22 @@ static int erofs_fill_inode(struct inode *inode)
- 	switch (inode->i_mode & S_IFMT) {
- 	case S_IFREG:
- 		inode->i_op = &erofs_generic_iops;
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+		erofs_pcs_fill_inode(inode);
-+#endif
- 		if (erofs_inode_is_data_compressed(vi->datalayout))
- 			inode->i_fop = &generic_ro_fops;
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+		else {
-+			if (vi->fprt_len > 0)
-+				inode->i_fop = &erofs_pcs_file_fops;
-+			else
-+				inode->i_fop = &erofs_file_fops;
-+		}
-+#else
- 		else
- 			inode->i_fop = &erofs_file_fops;
-+#endif
- 		break;
- 	case S_IFDIR:
- 		inode->i_op = &erofs_dir_iops;
-@@ -325,6 +338,16 @@ struct inode *erofs_iget(struct super_block *sb, erofs_nid_t nid)
- 			return ERR_PTR(err);
- 		}
- 		unlock_new_inode(inode);
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+		if ((inode->i_mode & S_IFMT) == S_IFREG &&
-+		    EROFS_I(inode)->fprt_len > 0) {
-+			err = erofs_pcs_add(inode);
-+			if (err) {
-+				iget_failed(inode);
-+				return ERR_PTR(err);
-+			}
-+		}
-+#endif
- 	}
- 	return inode;
- }
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 35268263aaed..a42e65ef7fc7 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -11,6 +11,7 @@
- #include <linux/fs_parser.h>
- #include <linux/exportfs.h>
- #include "xattr.h"
-+#include "pagecache_share.h"
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/erofs.h>
-@@ -95,6 +96,10 @@ static struct inode *erofs_alloc_inode(struct super_block *sb)
- 
- 	/* zero out everything except vfs_inode */
- 	memset(vi, 0, offsetof(struct erofs_inode, vfs_inode));
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+	INIT_LIST_HEAD(&vi->pcs_list);
-+	init_rwsem(&vi->pcs_rwsem);
-+#endif
- 	return &vi->vfs_inode;
- }
- 
-@@ -108,6 +113,21 @@ static void erofs_free_inode(struct inode *inode)
- 	kmem_cache_free(erofs_inode_cachep, vi);
- }
- 
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+static void erofs_destroy_inode(struct inode *inode)
-+{
-+	struct erofs_inode *vi = EROFS_I(inode);
-+
-+	if ((inode->i_mode & S_IFMT) == S_IFREG &&
-+	    EROFS_I(inode)->fprt_len > 0) {
-+		if (erofs_pcs_remove(inode))
-+			erofs_err(inode->i_sb, "pcs: fail to remove inode.");
-+		kfree(vi->fprt);
-+		vi->fprt = NULL;
-+	}
-+}
-+#endif
-+
- static bool check_layout_compatibility(struct super_block *sb,
- 				       struct erofs_super_block *dsb)
- {
-@@ -937,6 +957,9 @@ static int erofs_show_options(struct seq_file *seq, struct dentry *root)
- const struct super_operations erofs_sops = {
- 	.put_super = erofs_put_super,
- 	.alloc_inode = erofs_alloc_inode,
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+	.destroy_inode = erofs_destroy_inode,
-+#endif
- 	.free_inode = erofs_free_inode,
- 	.statfs = erofs_statfs,
- 	.show_options = erofs_show_options,
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+>> ------------[ cut here ]------------
+>> WARNING: CPU: 0 PID: 1 at include/linux/memcontrol.h:373
+>> mem_cgroup_from_slab_obj+0x13e/0x1ea
+>> Modules linked in:
+>> CPU: 0 UID: 0 PID: 1 Comm: systemd Not tainted 6.10.0+ #15154
+>> Hardware name: riscv-virtio,qemu (DT)
+>> epc : mem_cgroup_from_slab_obj+0x13e/0x1ea
+>>   ra : mem_cgroup_from_slab_obj+0x13c/0x1ea
+>> ...
+>> [<ffffffff80257256>] mem_cgroup_from_slab_obj+0x13e/0x1ea
+>> [<ffffffff801f0b3e>] list_lru_del_obj+0xa6/0xc2
+>> [<ffffffff8027c6c6>] d_lru_del+0x8c/0xa4
+>> [<ffffffff8027da60>] __dentry_kill+0x15e/0x17a
+>> [<ffffffff8027ec3c>] dput.part.0+0x242/0x3e6
+>> [<ffffffff8027edee>] dput+0xe/0x18
+>> [<ffffffff8027324c>] lookup_fast+0x80/0xce
+>> [<ffffffff80273e28>] walk_component+0x20/0x13c
+>> [<ffffffff802747e2>] path_lookupat+0x64/0x16c
+>> [<ffffffff80274bf4>] filename_lookup+0x76/0x122
+>> [<ffffffff80274d80>] user_path_at+0x30/0x4a
+>> [<ffffffff802d12bc>] __riscv_sys_name_to_handle_at+0x52/0x1d8
+>> [<ffffffff80b60324>] do_trap_ecall_u+0x14e/0x1da
+>> [<ffffffff80b6c546>] handle_exception+0xca/0xd6
+>> irq event stamp: 198187
+>> hardirqs last  enabled at (198187): [<ffffffff8028ca9e>]
+>> lookup_mnt+0x186/0x308
+>> hardirqs last disabled at (198186): [<ffffffff8028ca74>]
+>> lookup_mnt+0x15c/0x308
+>> softirqs last  enabled at (198172): [<ffffffff800e34f6>]
+>> cgroup_apply_control_enable+0x1f6/0x2fc
+>> softirqs last disabled at (198170): [<ffffffff800e34d8>]
+>> cgroup_apply_control_enable+0x1d8/0x2fc
+>> ---[ end trace 0000000000000000 ]---
+>>
+>> Similar warning appears on ARM64 Debian bookworm system. Reverting it on
+>> top of linux-next hides the issue, but I assume this is not the best way
+>> to fix it.
+>>
+>> I'm testing kernel built from riscv/defconfig with PROVE_LOCKING,
+>> DEBUG_ATOMIC_SLEEP, DEBUG_DRIVER and DEBUG_DEVRES options enabled.
+>>
+>>> ---
+>>> v3:
+>>>   - Use lockdep_assert_once(Vlastimil).
+>>>
+>>> v2:
+>>>   - Remove mention of objcg_lock in obj_cgroup_memcg()(Shakeel Butt).
+>>>
+>>>   include/linux/memcontrol.h | 20 +++++++++++++++++---
+>>>   mm/memcontrol.c            |  6 +++---
+>>>   2 files changed, 20 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+>>> index fc94879db4dff..95f823deafeca 100644
+>>> --- a/include/linux/memcontrol.h
+>>> +++ b/include/linux/memcontrol.h
+>>> @@ -360,11 +360,11 @@ static inline bool folio_memcg_kmem(struct folio *folio);
+>>>    * After the initialization objcg->memcg is always pointing at
+>>>    * a valid memcg, but can be atomically swapped to the parent memcg.
+>>>    *
+>>> - * The caller must ensure that the returned memcg won't be released:
+>>> - * e.g. acquire the rcu_read_lock or css_set_lock.
+>>> + * The caller must ensure that the returned memcg won't be released.
+>>>    */
+>>>   static inline struct mem_cgroup *obj_cgroup_memcg(struct obj_cgroup *objcg)
+>>>   {
+>>> + lockdep_assert_once(rcu_read_lock_held() || lockdep_is_held(&cgroup_mutex));
+>>>    return READ_ONCE(objcg->memcg);
+>>>   }
+>>>
+>>> @@ -438,6 +438,19 @@ static inline struct mem_cgroup *folio_memcg(struct folio *folio)
+>>>    return __folio_memcg(folio);
+>>>   }
+>>>
+>>> +/*
+>>> + * folio_memcg_charged - If a folio is charged to a memory cgroup.
+>>> + * @folio: Pointer to the folio.
+>>> + *
+>>> + * Returns true if folio is charged to a memory cgroup, otherwise returns false.
+>>> + */
+>>> +static inline bool folio_memcg_charged(struct folio *folio)
+>>> +{
+>>> + if (folio_memcg_kmem(folio))
+>>> + return __folio_objcg(folio) != NULL;
+>>> + return __folio_memcg(folio) != NULL;
+>>> +}
+>>> +
+>>>   /**
+>>>    * folio_memcg_rcu - Locklessly get the memory cgroup associated with a folio.
+>>>    * @folio: Pointer to the folio.
+>>> @@ -454,7 +467,6 @@ static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
+>>>    unsigned long memcg_data = READ_ONCE(folio->memcg_data);
+>>>
+>>>    VM_BUG_ON_FOLIO(folio_test_slab(folio), folio);
+>>> - WARN_ON_ONCE(!rcu_read_lock_held());
+>>>
+>>>    if (memcg_data & MEMCG_DATA_KMEM) {
+>>>    struct obj_cgroup *objcg;
+>>> @@ -463,6 +475,8 @@ static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
+>>>    return obj_cgroup_memcg(objcg);
+>>>    }
+>>>
+>>> + WARN_ON_ONCE(!rcu_read_lock_held());
+>>> +
+>>>    return (struct mem_cgroup *)(memcg_data & ~OBJEXTS_FLAGS_MASK);
+>>>   }
+>>>
+>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>>> index 622d4544edd24..3da0284573857 100644
+>>> --- a/mm/memcontrol.c
+>>> +++ b/mm/memcontrol.c
+>>> @@ -2366,7 +2366,7 @@ void mem_cgroup_cancel_charge(struct mem_cgroup *memcg, unsigned int nr_pages)
+>>>
+>>>   static void commit_charge(struct folio *folio, struct mem_cgroup *memcg)
+>>>   {
+>>> - VM_BUG_ON_FOLIO(folio_memcg(folio), folio);
+>>> + VM_BUG_ON_FOLIO(folio_memcg_charged(folio), folio);
+>>>    /*
+>>>     * Any of the following ensures page's memcg stability:
+>>>     *
+>>> @@ -4617,7 +4617,7 @@ void __mem_cgroup_uncharge(struct folio *folio)
+>>>    struct uncharge_gather ug;
+>>>
+>>>    /* Don't touch folio->lru of any random page, pre-check: */
+>>> - if (!folio_memcg(folio))
+>>> + if (!folio_memcg_charged(folio))
+>>>    return;
+>>>
+>>>    uncharge_gather_clear(&ug);
+>>> @@ -4662,7 +4662,7 @@ void mem_cgroup_replace_folio(struct folio *old, struct folio *new)
+>>>    return;
+>>>
+>>>    /* Page cache replacement: new folio already charged? */
+>>> - if (folio_memcg(new))
+>>> + if (folio_memcg_charged(new))
+>>>    return;
+>>>
+>>>    memcg = folio_memcg(old);
+>> Best regards
+>> -- 
+>> Marek Szyprowski, PhD
+>> Samsung R&D Institute Poland
+>
+>
+Best regards
 -- 
-2.43.5
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
