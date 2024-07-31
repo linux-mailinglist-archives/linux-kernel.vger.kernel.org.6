@@ -1,126 +1,220 @@
-Return-Path: <linux-kernel+bounces-268571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31C1F942659
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:18:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CA9F942662
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B93ADB24AA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:18:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4733F281B5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A97716CD2F;
-	Wed, 31 Jul 2024 06:17:37 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F9C1667CD;
+	Wed, 31 Jul 2024 06:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="HdH3BuTa"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3248E61FDF;
-	Wed, 31 Jul 2024 06:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C169683CA1
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722406656; cv=none; b=s+6flaNfFBSFZ24SzATt/eKrB5TcuLUF1mJEoBSQGiBqKTyXLMOFxNTpPvEq9sRXP75aJ9lOlMjU4JhIo2RWiuUG6YE0DB3FsL+a5JYpnrabfTLpAT5mU03bVdwqJp8xf7rZvAE4aKlGpEECVCFrnkMiZwhj8KEa5pz6NzFwriA=
+	t=1722406688; cv=none; b=Dm99MTQYsR5MkjlQxQA94k3bB3tW0uHaeT+bAO/6IXuDTFfUkdDxL/iBOSph5cR7gBjaLm/Fw1nf/iSlBVHfQc6DfdLNKB/86ZY2RUvcphlVpjDdrJ88YC3SkVdi/yr6/IueDc7i3EYnBZSWn28DdfKaHYoQvnEu+JRe8cAVThI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722406656; c=relaxed/simple;
-	bh=YM/SgtpE2smUDyS2bmA9l0A/LX9fLBtn3R6YCrgqOgM=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ZMBo5fiUAF4Gc5+4ubP/9NoTD+cshc1KZFOWQ0LDGsSlmmNuZB5BE77407SIde+/clwikTBvSvL8WFlnE0huBQwRXTftgts4Jf84aMtSUYDsgp4KH0nkfQUHod/ml3aFaYsNQKlPSSFvY1ZbE0qrxxf6k1taxURgrCiqokKBB/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WYhhT4y9Yz4f3jrq;
-	Wed, 31 Jul 2024 14:17:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 945071A018D;
-	Wed, 31 Jul 2024 14:17:26 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgAXPoT01qlmsONnAQ--.46040S3;
-	Wed, 31 Jul 2024 14:17:26 +0800 (CST)
-Subject: Re: [PATCH 7/7] jbd2: remove unneeded check of ret in jbd2_fc_get_buf
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- jack@suse.com
-References: <20240730113335.2365290-1-shikemeng@huaweicloud.com>
- <20240730113335.2365290-8-shikemeng@huaweicloud.com>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <a5da8406-ed52-b71f-4766-a16e8d175496@huaweicloud.com>
-Date: Wed, 31 Jul 2024 14:17:24 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1722406688; c=relaxed/simple;
+	bh=3TD+IGRLb5fmL9uN/xIlWcShtt4fFIxTIOP6c4SxY6I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZlNX4fvjIYHftpTkuGLC6GFKxIGjIgv27GHvvUipbyqkoARtsNk//mKlQLGqSnRAhCGwL45GdatGAh3hw0I58rrxRoyCH8zQpgzXXzo7pyTV2dyThkOHoUrZG7p8oP1lFMu5KyZdz+xmQg78UhKzTZHfSD4kPGdhq7svrAzqwVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=HdH3BuTa; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 549F33F6AF
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:17:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1722406678;
+	bh=ssw5x/CYADqMGy84FcI3TzdNl42qVwl89rpsqSqpOiY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=HdH3BuTaVjrPCIgtS1PV+4gTIg91Ug4fPtE4dV1GtxpAaobDDUGRYywUEkskjyVpY
+	 yafhtp9tSNJKRzxikcK4VYIkBIggjNJC7qHAvpas57I7H8BWr9Ors0BURYKzL09r2C
+	 dr2YWyMz4dRaDG1JYBwljWuMfpKKnvjpir6XH9Z5dPix8xYsaE8+h5vSbYg3VCWrN4
+	 lBHDGXg+ShJWY+s9WJRqIPwlyfEML3QAyFjppf/UpPbTaAKz8w8IGrhtlQTNDkMt6F
+	 wutaC4ap+KBrCeta/Y/yWZn0K1MfHAZEZm017XlBLXsxFi1kYUDZ3uoCu9jUToooIq
+	 z4mwotMMeeIWg==
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2cb4bcdd996so674285a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 23:17:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722406676; x=1723011476;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ssw5x/CYADqMGy84FcI3TzdNl42qVwl89rpsqSqpOiY=;
+        b=Z3FtHjDfIXTJyenjdq13OH2tjj3gEYnN/K5H+Mhso77xDGTkfA1MesbviFfMCPSHsO
+         Z/JLCTUJsvf7qeFCfhNYb7iU49KhtgEN+vQGQ+PRN5kUbq9vdKso/24PFGJb9j10REBa
+         Km64eRjAvbMQFFU2jfKRKFJkzt7h3KhkeIyWSL/gtImG5cmK5/Sc0zZ4F7gD2NkRtfyb
+         KkxNjMJ1y1eTtcu2wCODxEEuGLnmOVVlRveGdIGGyhX/qpaHuq5hPndHpTgVjtl0PnU0
+         YL3C4qQhjImsfmWs9yNdCmdcWX6RNNpV6vihWycJ+383/pMWmNu9tHeYWusl0B/nJpr/
+         NhAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLH3+gLHgbQzvbQPKcUvQx3JNrSl/1tSGIL07F6DjdILvXMSwWt4MdKT7cuP6utgbjCHiaovm6+hrmZcIZ/VlwJnpm44sjgF1R0wqN
+X-Gm-Message-State: AOJu0YwjTY5hCjF1jl7dzB3+2AsIbgEXqDZ0RwbnnUYm3EUw8qPXUT64
+	MV6sQXiTC+ruJeZMnGhpycAVRvUkMxCOe9aViAJqAmH7qn6yN6n8z8ErSbxsukvR+zP9wxaLzLZ
+	8CfMlEmcT3uEccxirKjzXuDHoNQADNAkymMFlXajEMk1bycA6Unvzf7Wxb5zN26766QhMcVtOJ0
+	hg0ZQK11/pcQIdHGym7eI6V25cgjOpKf5Nd7L8HxittRgRou6HFr10Hh7Q1xHTyig=
+X-Received: by 2002:a17:90b:3907:b0:2cb:50b8:e59d with SMTP id 98e67ed59e1d1-2cfcab119b5mr7125413a91.12.1722406676587;
+        Tue, 30 Jul 2024 23:17:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFHiNHt0e8r+J16WpmTX658h3SHjZ4qclCo5nuyNo1MeoazeMAVzJCq/CVbDiXLbAfOteubHgc26cPv1m8AaaM=
+X-Received: by 2002:a17:90b:3907:b0:2cb:50b8:e59d with SMTP id
+ 98e67ed59e1d1-2cfcab119b5mr7125392a91.12.1722406676190; Tue, 30 Jul 2024
+ 23:17:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240730113335.2365290-8-shikemeng@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAXPoT01qlmsONnAQ--.46040S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7JFy5ZF4kGw4kZr1rKFyDJrb_yoWDCrc_Xr
-	W8Zr9rZrZxWF1rAF4rC3y8WrnIqws7Zr1kW34xt397KF1Uta1Yq348trW5K39rJF92yr43
-	A3Wa9w40kr9rCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4AYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v2
-	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU80fO7
-	UUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <20240726062601.674078-1-kai.heng.feng@canonical.com>
+ <2048df524f8be7ed200bc92eb1c6efe106f0ed19.camel@intel.com>
+ <CAAd53p5ftAjtfb-uCcVKR8G0JfoGnA_a0Se1E_vPeietgOENOg@mail.gmail.com> <CAJZ5v0i9Qt3OFKCbqkd-q4VKYreV2PZZpQ2Km9az2htANG5zxA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0i9Qt3OFKCbqkd-q4VKYreV2PZZpQ2Km9az2htANG5zxA@mail.gmail.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Date: Wed, 31 Jul 2024 14:17:44 +0800
+Message-ID: <CAAd53p4macNjQN3i8vaf1s-5vj_7esKw37nqoUN1h+XqjQk71w@mail.gmail.com>
+Subject: Re: [PATCH] intel_idle: Add Jasper Lake and Elkhart Lake support
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Zhang, Rui" <rui.zhang@intel.com>, 
+	"jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>, "lenb@kernel.org" <lenb@kernel.org>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
+	"artem.bityutskiy@linux.intel.com" <artem.bityutskiy@linux.intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/7/30 19:33, Kemeng Shi wrote:
-> Simply return -EINVAL if j_fc_off is invalid to avoid repeated check of
-> ret.
-> 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> ---
->  fs/jbd2/journal.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index dc18b9f7c999..6f90f7b8e9e5 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -842,12 +842,8 @@ int jbd2_fc_get_buf(journal_t *journal, struct buffer_head **bh_out)
->  		fc_off = journal->j_fc_off;
->  		blocknr = journal->j_fc_first + fc_off;
->  		journal->j_fc_off++;
-> -	} else {
-> -		ret = -EINVAL;
-> -	}
-> -
-> -	if (ret)
-> -		return ret;
-> +	} else
-> +		return -EINVAL;
->  
+On Tue, Jul 30, 2024 at 9:59=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>
+> On Mon, Jul 29, 2024 at 6:08=E2=80=AFAM Kai-Heng Feng
+> <kai.heng.feng@canonical.com> wrote:
+> >
+> > [+Cc Rafael, Srinivas]
+> >
+> > On Fri, Jul 26, 2024 at 2:52=E2=80=AFPM Zhang, Rui <rui.zhang@intel.com=
+> wrote:
+> > >
+> > > On Fri, 2024-07-26 at 14:26 +0800, Kai-Heng Feng wrote:
+> > > > Without proper C-state support, the CPU can take long time to exit =
+to
+> > > > C0
+> > > > to handle IRQ and perform DMA.
+> > >
+> > > Can you provide more details?
+> > >
+> > > Say, what cstate is entered w/ and w/o this patch?
+> >
+> > Without the patch it's ACPI C1, C2 and C3.
+>
+> They are called like this because they come from ACPI _CST.  You need
+> to use turbostat (or equivalent) to check what C-states really are
+> entered.
 
-I'd like this style, just a suggestion.
+Both C1, C2 and C3 have some residencies.
 
-	if (journal->j_fc_off + journal->j_fc_first >= journal->j_fc_last)
-		return -EINVAL;
+>
+> >
+> > >
+> > > can you show the output of "grep .
+> > > /sys/devices/system/cpu/cpu0/cpuidle/state*/*" without this patch?
+> >
+> > /sys/devices/system/cpu/cpu0/cpuidle$ grep . */*
+> > state0/above:0
+> > state0/below:631
+> > state0/default_status:enabled
+> > state0/desc:CPUIDLE CORE POLL IDLE
+> > state0/disable:0
+> > state0/latency:0
+> > state0/name:POLL
+> > state0/power:4294967295
+> > state0/rejected:0
+> > state0/residency:0
+> > state0/time:19513
+> > state0/usage:635
+> > state1/above:26
+> > state1/below:12437
+> > state1/default_status:enabled
+> > state1/desc:ACPI FFH MWAIT 0x0
+>
+> This is C1 AFAICS.
+>
+> > state1/disable:0
+> > state1/latency:1
+> > state1/name:C1_ACPI
+> > state1/power:0
+> > state1/rejected:0
+> > state1/residency:1
+> > grep: state1/s2idle: Is a directory
+> > state1/time:18621370
+> > state1/usage:74523
+> > state2/above:1690
+> > state2/below:17
+> > state2/default_status:enabled
+> > state2/desc:ACPI FFH MWAIT 0x31
+>
+> This looks like something that used to be called "C7s".
+>
+> > state2/disable:0
+> > state2/latency:253
+> > state2/name:C2_ACPI
+> > state2/power:0
+> > state2/rejected:0
+> > state2/residency:759
+> > grep: state2/s2idle: Is a directory
+> > state2/time:7063052
+> > state2/usage:7909
+> > state3/above:13111
+> > state3/below:0
+> > state3/default_status:enabled
+> > state3/desc:ACPI FFH MWAIT 0x60
+>
+> And this looks like C10.
+>
+> > state3/disable:0
+> > state3/latency:1048
+> > state3/name:C3_ACPI
+> > state3/power:0
+> > state3/rejected:0
+> > state3/residency:3144
+> > grep: state3/s2idle: Is a directory
+> > state3/time:4451519230
+> > state3/usage:55467
+> >
+> >
+> > >
+> > > >
+> > > > The data collect via wult shows the latency is similar to Broxton, =
+so
+> > > > use the existing table to support C-state on JSL and EHL.
+> > >
+> > > so you have done cstate measurement on the EHL using wult?
+> > > can you share more details about the measurement results?
+> >
+> > I look at the "spikes" of the aggregated graph. Not sure if it's the
+> > right way to interpret the graph though.
+> >
+> > It will be much better if Intel can add the proper C-states table for
+> > JSL and EHL.
+>
+> So what's missing in the above, from the technical standpoint?
 
-	fc_off = journal->j_fc_off;
-	blocknr = journal->j_fc_first + fc_off;
-	journal->j_fc_off++;
+The crucial part to make the issue (i.e. slow ethernet) is
+".disable_promotion_to_c1e =3D true".
 
-	...
+Can we use that for EHL and JSL?
 
-Thanks,
-Yi.
-
-
->  	ret = jbd2_journal_bmap(journal, blocknr, &pblock);
->  	if (ret)
-> 
-
+Kai-Heng
 
