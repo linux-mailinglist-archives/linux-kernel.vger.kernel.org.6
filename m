@@ -1,100 +1,106 @@
-Return-Path: <linux-kernel+bounces-268785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9620D94293E
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:33:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79644942944
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6CF61C20A64
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:33:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3635D283EE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474871A8BF5;
-	Wed, 31 Jul 2024 08:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6B51A8BEF;
+	Wed, 31 Jul 2024 08:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mglWlz8x"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cBiaV14n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF37B1A7F88;
-	Wed, 31 Jul 2024 08:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2C41A7F86;
+	Wed, 31 Jul 2024 08:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722414778; cv=none; b=Fl4MfY1W1/dd6YwHz6j+yp3z6OuxA9bFiQb1mXFvbNghdax5sGf+1cAwwrFP2y0BAATwG9KZbs5fEBX32nUKYZkW10RnI/655QRfw5+q+rZ4MS3kCZb1MXquW3EUFcht/2geXewpb6zj7ipjajE+SuEQ3TkewgCBEeOtnAvomDQ=
+	t=1722414858; cv=none; b=tP0mvJQ4Wm38yStuLDh45Qgqo2sBexq0e7I3f+XHssZuyxay/f+DxlCbOvXXcB0cjc5bmyT+ik83HaYA/bDQEkONCrlp3r7ZdwWQDEREmv/Q6YAVp8sOnpATPcpUYjAbbYhj6u0d+YpVu1jzXVQwdzaAz6875KNxQVViyxc1xJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722414778; c=relaxed/simple;
-	bh=BT5OMlEAinKUsmKz9lIJ/tsSgv8Sb9+xPMgHxyDr6LQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OiCMUEYoKJrJ92nn5e5PQe3oxYkWh2RE+jlJ49C9HiuE/BAomJ5K5qq4eTLzats4I4GqtfTbx32P8h1VAXVmdhVZPXHwR7wbkaWgZZMYYf66AcLhL6mTSAzG18Aj9J6EXTFeNtaESCmR2oNSnqzLVKpYp4e5szPcsm+R0b0U0OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mglWlz8x; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722414775;
-	bh=BT5OMlEAinKUsmKz9lIJ/tsSgv8Sb9+xPMgHxyDr6LQ=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=mglWlz8xqJee68O0XScP32fP0eqSNP7Azio7VUcMinctOSw4IewSs7IgnAF3vV+eM
-	 j8h4w8YUvr1Qhjnb9E7EKJ/E8nzLEUOSlTHZlTRmARDkqCt/EBF2N8LPnu6vcRqaXX
-	 qgmezealPtIFlO4a7XBC9fBfxBFqecugsjedkmUktQoYCWFXCJbYPgHbfP06lfcHRQ
-	 SkouYx3J+2+Nc+Wh1J6hbxCTX4msMiT/G6CrsEXYIcxDfhDm2Su/Hyedj4GMcU6hC5
-	 TQZ8GbPt1AvcVFv97kIeBUOUePhZjLhX2ugha56JnyR3j2c9T7Tzt2oGUsXRY0obpo
-	 Gbjd6d90xpjAA==
-Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6AF75378000B;
-	Wed, 31 Jul 2024 08:32:53 +0000 (UTC)
-Message-ID: <d26b317b-edda-4bb8-a022-912cd1f76b3a@collabora.com>
-Date: Wed, 31 Jul 2024 13:32:48 +0500
+	s=arc-20240116; t=1722414858; c=relaxed/simple;
+	bh=8+E4Mx6nsvQdhnv7jB7tqDc4lCt4yb/9UOa+s297XNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QPjoGzq3Ej9PUlhdNn2KdhktLOCEs4qh5AAjC03940umsh/vBDP/Cy1pdQR0Bp/xJF2nJNvCSvODs1tYvEFwImFndVJeXMVR7GpDu14bxfbSLQyRPF63voM1p4wJmwXh40UYE/aeOIekxCoPAOqsIXMLcOSg23583WNBQCCmcVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cBiaV14n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74327C4AF09;
+	Wed, 31 Jul 2024 08:34:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722414857;
+	bh=8+E4Mx6nsvQdhnv7jB7tqDc4lCt4yb/9UOa+s297XNE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cBiaV14nHYc6s6VsYITJu5KaTaND7A+yUt2pxHnlCgrctD+bEyovKK9gh54uvDbM1
+	 4FMo5eAGQaRxD7vm1F7ydwm47jxYymyheech1ZO1L3JW00kI0cGBWMA0xTkjQ9Eq2h
+	 BF/QLpsFT1TB/AT86cO551Ppvn2JpU5fd/+E3bEs=
+Date: Wed, 31 Jul 2024 10:34:14 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Abhishek Tamboli <abhishektamboli9@gmail.com>
+Cc: skhan@linuxfoundation.org, dan.carpenter@linaro.org,
+	rbmarliere@gmail.com, christophe.jaillet@wanadoo.fr,
+	Chris.Wulff@biamp.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: gadget: u_audio: Use C99 syntax for array
+ initializers
+Message-ID: <2024073102-calculate-disabled-8700@gregkh>
+References: <20240729174639.446105-1-abhishektamboli9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH v2] selftests: lib: remove strscpy test
-To: Shuah Khan <skhan@linuxfoundation.org>, Kees Cook <kees@kernel.org>
-References: <20240725121212.808206-1-usama.anjum@collabora.com>
- <9d5c0793-e90a-4549-92b1-41ad06b85de6@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <9d5c0793-e90a-4549-92b1-41ad06b85de6@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729174639.446105-1-abhishektamboli9@gmail.com>
 
-On 7/31/24 3:37 AM, Shuah Khan wrote:
-> On 7/25/24 06:11, Muhammad Usama Anjum wrote:
->> The strscpy test loads test_strscpy module for testing. But test_strscpy
->> was converted to Kunit (see fixes). Hence remove strscpy.
->>
->> Fixes: 41eefc46a3a4 ("string: Convert strscpy() self-test to KUnit")
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->> Changes since v1:
->> - Remove from Makefile and config file as well
->> ---
+On Mon, Jul 29, 2024 at 11:16:39PM +0530, Abhishek Tamboli wrote:
+> Convert array initializers to C99 syntax by adding the '=' after each
+> designated initializer. This change resolves warnings from smatch
+> about obsolete array initializers.
 > 
-> As mentioned in other threads on this conversion to kunit and removal
-> of kselfttest - NACK on this patch.
+> drivers/usb/gadget/function/u_audio.c:1117:20:warning: obsolete array initializer, use C99 syntax
+> drivers/usb/gadget/function/u_audio.c:1124:28:warning: obsolete array initializer, use C99 syntax
+> drivers/usb/gadget/function/u_audio.c:1131:19:warning: obsolete array initializer, use C99 syntax
+> drivers/usb/gadget/function/u_audio.c:1138:27:warning: obsolete array initializer, use C99 syntax
+> drivers/usb/gadget/function/u_audio.c:1145:25:warning: obsolete array initializer, use C99 syntax
 > 
-> Please don't send me any more of these conversion and removal patches.
-This patch is removing a dead kselftest as its corresponding test module
-was moved years ago (in 2022). This test has been failing since then. It
-seems like misunderstanding that I'm removing something.
-
-> 
-> thanks,
-> -- Shuah
+> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+> ---
+>  drivers/usb/gadget/function/u_audio.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
 
--- 
-BR,
-Muhammad Usama Anjum
+Hi,
+
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
